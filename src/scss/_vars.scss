@@ -1,0 +1,56 @@
+/*
+Copyright 2019 The Tekton Authors
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+@import '~carbon-components/scss/globals/scss/vars';
+
+$not-run: #535e67;
+$not-run-bg: transparent;
+$not-run-bg-hover: #e5e8eb;
+$not-run-fg: inherit;
+$not-run-strong-bg: transparent;
+$not-run-strong-fg: inherit;
+
+$waiting: #535e67;
+$waiting-bg: transparent;
+$waiting-bg-hover: #e5e8eb;
+$waiting-fg: inherit;
+$waiting-strong-bg: transparent;
+$waiting-strong-fg: inherit;
+
+$running: $brand-01;
+$running-bg: $brand-01;
+$running-bg-hover: #5485c4;
+$running-fg: white;
+$running-strong-bg: $brand-01;
+$running-strong-fg: white;
+
+$success: #5d8726;
+$success-bg: #5d8726;
+$success-bg-hover: #65932a;
+$success-fg: white;
+$success-strong-bg: #5d8726;
+$success-strong-fg: white;
+
+$failed: #ad1625;
+$failed-bg: #ad1625;
+$failed-bg-hover: #cb1a2c;
+$failed-fg: white;
+$failed-strong-bg: #ad1625;
+$failed-strong-fg: white;
+
+$unknown: #535e67;
+$unknown-bg: transparent;
+$unknown-bg-hover: #e5e8eb;
+$unknown-fg: inherit;
+$unknown-strong-bg: #535e67;
+$unknown-strong-fg: white;
