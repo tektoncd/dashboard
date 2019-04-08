@@ -1,0 +1,104 @@
+/*
+Copyright 2019 The Tekton Authors
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+@import '../../scss/vars';
+
+.task {
+  list-style-type: none;
+
+  &:not([data-succeeded]) > a {
+    text-shadow: 0.2px 0 0 #272d33ab; // increase weight slightly
+    background-color: $waiting-bg;
+    color: $waiting-fg;
+    &:hover {
+      background-color: $waiting-bg-hover;
+    }
+    &:after {
+      height: 1px;
+      left: -1px;
+      right: -1px;
+    }
+    .task-icon {
+      fill: $waiting-fg;
+    }
+  }
+  &[data-succeeded='True'] > a {
+    background-color: $success-bg;
+    color: $success-fg;
+    &:hover {
+      background-color: $success-bg-hover;
+    }
+    .task-icon {
+      fill: $success-fg;
+    }
+  }
+  &[data-succeeded='False'] > a {
+    background-color: $failed-bg;
+    color: $failed-fg;
+    &:hover {
+      background-color: $failed-bg-hover;
+    }
+    .task-icon {
+      fill: $failed-fg;
+    }
+  }
+  &[data-succeeded='Unknown'][data-reason='Pending'] > a {
+    background-color: $running-bg;
+    color: $running-fg;
+    &:hover {
+      background-color: $running-bg-hover;
+    }
+    .task-icon {
+      fill: $running-fg;
+    }
+  }
+
+  > a {
+    display: block;
+    position: relative;
+    padding: 0 1.25rem;
+    text-decoration: none;
+    color: inherit;
+    margin: 1px;
+    line-height: 2.2rem;
+    white-space: nowrap;
+    font-size: 0.76rem;
+    letter-spacing: 0.06rem;
+
+    &:after {
+      content: '';
+      position: absolute;
+      height: 2px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: black;
+      opacity: 0.15;
+    }
+  }
+
+  .task-icon {
+    vertical-align: text-top;
+    margin-right: 0.7rem;
+    width: 1rem;
+    height: 1rem;
+
+    &.spinner {
+      position: relative;
+      top: -0.1rem;
+      left: -0.1rem;
+      width: 20px;
+      height: 20px;
+    }
+  }
+}

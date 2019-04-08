@@ -1,0 +1,19 @@
+.step-status {
+  padding: 1.3rem 1.6rem;
+
+  > .title {
+    font-weight: bold;
+    font-size: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  > pre {
+    font-family: ibm-plex-mono, monospace;
+    font-size: 0.68rem;
+    line-height: 0.95rem;
+    white-space: pre-wrap;
+    word-break: break-all;
+    overflow: hidden;
+    text-shadow: 0.1px 0.1px 0 #272d3340;
+  }
+}

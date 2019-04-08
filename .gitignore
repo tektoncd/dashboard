@@ -1,0 +1,19 @@
+# compiled output
+/coverage
+/dist
+/storybook-static
+/tmp
+
+# config
+.npmrc
+
+# dependencies
+/node_modules
+
+# misc
+npm-debug.log
+yarn-error.log
+
+# System Files
+.DS_Store
+Thumbs.db
