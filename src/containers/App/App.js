@@ -14,7 +14,7 @@ limitations under the License.
 import React from 'react';
 import { hot } from 'react-hot-loader';
 import {
-  BrowserRouter as Router,
+  HashRouter as Router,
   Redirect,
   Route,
   Switch
