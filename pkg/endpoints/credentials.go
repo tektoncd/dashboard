@@ -10,6 +10,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+
 package endpoints
 
 import (
@@ -25,18 +26,18 @@ import (
 )
 
 type credential struct {
-	Id              string            `json:"id"`
+	ID              string            `json:"id"`
 	Username        string            `json:"username"`
 	Password        string            `json:"password"`
 	Description     string            `json:"description"`
 	Type            string            `json:"type"` // must have the value 'accesstoken' or 'userpass'
 	ResourceVersion string            `json:"resourceVersion,omitempty"`
-	Url             map[string]string `json:"url"`
+	URL             map[string]string `json:"url"`
 }
 
-var LABEL_SELECTOR string = "restknative=true" // must have format "<key>=<value>"
-var TYPE_ACCESS_TOKEN string = "accesstoken"
-var TYPE_USER_PASS string = "userpass"
+var labelSelector = "tektondashboard=true" // must have format "<key>=<value>"
+var typeAccessToken = "accesstoken"
+var typeUserPass = "userpass"
 
 /* API route for getting all credentials in a given namespace
  * Required path parameters:
@@ -52,7 +53,7 @@ func (r Resource) getAllCredentials(request *restful.Request, response *restful.
 	}
 
 	// Get secrets from the resource K8sClient
-	secrets, err := r.K8sClient.CoreV1().Secrets(requestNamespace).List(metav1.ListOptions{LabelSelector: LABEL_SELECTOR})
+	secrets, err := r.K8sClient.CoreV1().Secrets(requestNamespace).List(metav1.ListOptions{LabelSelector: labelSelector})
 	if err != nil {
 		errorMessage := fmt.Sprintf("Error getting secrets from K8sClient: %s.", err.Error())
 		response.WriteErrorString(http.StatusInternalServerError, errorMessage)
@@ -79,19 +80,19 @@ func (r Resource) getAllCredentials(request *restful.Request, response *restful.
 func (r Resource) getCredential(request *restful.Request, response *restful.Response) {
 	// Get path parameters
 	requestNamespace := request.PathParameter("namespace")
-	requestId := request.PathParameter("id")
+	requestID := request.PathParameter("id")
 
 	// Verify namespace exists
 	if !r.verifyNamespaceExists(requestNamespace, response) {
 		return
 	}
 	// Verify secret exists
-	if !r.verifySecretExists(requestId, requestNamespace, response) {
+	if !r.verifySecretExists(requestID, requestNamespace, response) {
 		return
 	}
 
 	// Get secret from the resource K8sClient
-	secret, err := r.K8sClient.CoreV1().Secrets(requestNamespace).Get(requestId, metav1.GetOptions{})
+	secret, err := r.K8sClient.CoreV1().Secrets(requestNamespace).Get(requestID, metav1.GetOptions{})
 	if err != nil {
 		errorMessage := fmt.Sprintf("Error getting secret from K8sClient: %s.", err.Error())
 		utils.RespondErrorAndMessage(response, err, errorMessage, http.StatusInternalServerError)
@@ -161,13 +162,13 @@ func (r Resource) createCredential(request *restful.Request, response *restful.R
 func (r Resource) updateCredential(request *restful.Request, response *restful.Response) {
 	// Get path parameters
 	requestNamespace := request.PathParameter("namespace")
-	requestId := request.PathParameter("id")
+	requestID := request.PathParameter("id")
 	// Get query parameters
 	cred := credential{}
 	if err := getQueryEntity(&cred, request, response); err != nil {
 		return
 	}
-	cred.Id = requestId
+	cred.ID = requestID
 
 	// Verify required query parameters are in cred
 	if !r.verifyCredentialParameters(cred, response) {
@@ -179,7 +180,7 @@ func (r Resource) updateCredential(request *restful.Request, response *restful.R
 		return
 	}
 	// Verify secret exists
-	if !r.verifySecretExists(requestId, requestNamespace, response) {
+	if !r.verifySecretExists(requestID, requestNamespace, response) {
 		return
 	}
 
@@ -205,19 +206,19 @@ func (r Resource) updateCredential(request *restful.Request, response *restful.R
 func (r Resource) deleteCredential(request *restful.Request, response *restful.Response) {
 	// Get path parameters
 	requestNamespace := request.PathParameter("namespace")
-	requestId := request.PathParameter("id")
+	requestID := request.PathParameter("id")
 
 	// Verify namespace exists
 	if !r.verifyNamespaceExists(requestNamespace, response) {
 		return
 	}
 	// Verify secret exists
-	if !r.verifySecretExists(requestId, requestNamespace, response) {
+	if !r.verifySecretExists(requestID, requestNamespace, response) {
 		return
 	}
 
 	// Get secret from the resource K8sClient
-	err := r.K8sClient.CoreV1().Secrets(requestNamespace).Delete(requestId, &metav1.DeleteOptions{})
+	err := r.K8sClient.CoreV1().Secrets(requestNamespace).Delete(requestID, &metav1.DeleteOptions{})
 	if err != nil {
 		errorMessage := fmt.Sprintf("Error deleting secret from K8sClient: %s.", err.Error())
 		utils.RespondErrorAndMessage(response, err, errorMessage, http.StatusInternalServerError)
@@ -265,19 +266,19 @@ func (r Resource) verifySecretExists(secretName string, namespace string, respon
  *  - Type (must have the value 'accesstoken' or 'userpass')
  */
 func (r Resource) verifyCredentialParameters(cred credential, response *restful.Response) bool {
-	if cred.Id == "" ||
+	if cred.ID == "" ||
 		cred.Username == "" ||
 		cred.Password == "" ||
-		cred.Url == nil ||
-		(cred.Type != TYPE_ACCESS_TOKEN && cred.Type != TYPE_USER_PASS) {
+		cred.URL == nil ||
+		(cred.Type != typeAccessToken && cred.Type != typeUserPass) {
 
-		errorMessage := fmt.Sprintf("Error: username, password, id, url and type ('%s' or '%s') must all be supplied.", TYPE_ACCESS_TOKEN, TYPE_USER_PASS)
+		errorMessage := fmt.Sprintf("Error: username, password, id, url and type ('%s' or '%s') must all be supplied.", typeAccessToken, typeUserPass)
 		utils.RespondErrorMessage(response, errorMessage, http.StatusBadRequest)
 		return false
 	}
-	for key, _ := range cred.Url {
+	for key := range cred.URL {
 		if strings.Index(key, "tekton.dev/docker-") != 0 && strings.Index(key, "tekton.dev/git-") != 0 {
-			errorMessage := fmt.Sprintf("Error: url key must start with \"tekton.dev/docker-\" or \"tekton.dev/get-\" invalid url: %s", key)
+			errorMessage := fmt.Sprintf("Error: URL key must start with \"tekton.dev/docker-\" or \"tekton.dev/get-\" invalid URL: %s", key)
 			utils.RespondErrorMessage(response, errorMessage, http.StatusBadRequest)
 			return false
 		}
@@ -299,12 +300,12 @@ func getQueryEntity(entityPointer interface{}, request *restful.Request, respons
 // Convert K8s secret struct into credential struct
 func secretToCredential(secret *corev1.Secret) credential {
 	cred := credential{
-		Id:              secret.GetName(),
+		ID:              secret.GetName(),
 		Username:        string(secret.Data["username"]),
 		Password:        "********",
 		Description:     string(secret.Data["description"]),
 		Type:            string(secret.Data["type"]),
-		Url:             secret.ObjectMeta.Annotations,
+		URL:             secret.ObjectMeta.Annotations,
 		ResourceVersion: secret.GetResourceVersion(),
 	}
 	return cred
@@ -315,17 +316,17 @@ func credentialToSecret(cred credential, namespace string, response *restful.Res
 	// Create new secret struct
 	secret := corev1.Secret{}
 	secret.SetNamespace(namespace)
-	secret.SetName(cred.Id)
+	secret.SetName(cred.ID)
 	secret.Type = corev1.SecretTypeBasicAuth
 	secret.Data = make(map[string][]byte)
 	secret.Data["username"] = []byte(cred.Username)
 	secret.Data["password"] = []byte(cred.Password)
 	secret.Data["description"] = []byte(cred.Description)
 	secret.Data["type"] = []byte(cred.Type)
-	secret.ObjectMeta.Annotations = cred.Url
+	secret.ObjectMeta.Annotations = cred.URL
 
 	// Add label
-	keyValue := strings.Split(LABEL_SELECTOR, "=")
+	keyValue := strings.Split(labelSelector, "=")
 	if len(keyValue) != 2 {
 		errorMessage := "Error setting label for secret"
 		utils.RespondErrorMessage(response, errorMessage, http.StatusInternalServerError)
