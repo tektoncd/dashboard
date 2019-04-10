@@ -27,7 +27,6 @@ import {
 
 import Header from '../../components/Header';
 
-import { getPipelineRuns } from '../../api';
 import { getPipelineRunStatusIcon, getStatus } from '../../utils';
 
 /* istanbul ignore next */
@@ -126,7 +125,7 @@ class PipelineRuns extends Component {
                           data-reason={reason}
                           data-status={status}
                         >
-                          {getPipelineRunStatusIcon({ reason, status })}
+                          <button onClick={cancelPipelineRun(pipelineRunName)}>{getPipelineRunStatusIcon({ reason, status })}</button>
                           {pipelineRun.status.conditions[0].message}
                         </StructuredListCell>
                         <StructuredListCell>
