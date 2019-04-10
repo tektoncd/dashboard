@@ -13,12 +13,12 @@ limitations under the License.
 
 import { deleteRequest, get, post, put } from './comms';
 
-const apiRoot = '/api';
+const apiRoot = '/apis';
 
 export function getAPI(type, id = '', namespace = 'default') {
   return [
     apiRoot,
-    '/v1/namespaces/',
+    '/tekton.dev/v1alpha1/namespaces/',
     encodeURIComponent(namespace),
     '/',
     type,
@@ -38,7 +38,7 @@ export function checkData(data) {
 }
 
 export function getPipelines() {
-  const uri = getAPI('pipeline');
+  const uri = getAPI('pipelines');
   return get(uri).then(checkData);
 }
 
@@ -48,7 +48,7 @@ export function getPipeline(name) {
 }
 
 export function getPipelineRuns() {
-  const uri = getAPI('pipelinerun');
+  const uri = getAPI('pipelineruns');
   return get(uri).then(checkData);
 }
 

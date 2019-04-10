@@ -12,9 +12,9 @@ module.exports = merge(common, {
     overlay: true,
     port: process.env.PORT || PORT,
     proxy: {
-      '/api': {
+      '/apis': {
         target: process.env.API_DOMAIN || API_DOMAIN,
-        pathRewrite: { '^/api': '' }
+        //pathRewrite: { '^/api': '' }
       }
     },
     stats: 'minimal'
