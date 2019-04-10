@@ -1,3 +1,5 @@
+package endpoints
+
 /*
 Copyright 2019 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -10,7 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package endpoints
 
 import (
 	"encoding/json"
@@ -1096,7 +1097,7 @@ func TestCreatePipelineRunBadRequest(t *testing.T) {
 		Spec: v1alpha1.PipelineSpec{},
 	}
 
-	_, err := r.PipelineClient.Pipelines("ns1").Create(&pipeline1)
+	_, err := r.PipelineClient.TektonV1alpha1().Pipelines("ns1").Create(&pipeline1)
 	if err != nil {
 		t.Errorf("FAIL: error creating test pipeline: %s", err)
 	}
@@ -1127,7 +1128,7 @@ func TestCreatePipelineRunSuccess(t *testing.T) {
 		Spec: v1alpha1.PipelineSpec{},
 	}
 
-	_, err := r.PipelineClient.Pipelines("ns1").Create(&pipeline1)
+	_, err := r.PipelineClient.TektonV1alpha1().Pipelines("ns1").Create(&pipeline1)
 	if err != nil {
 		t.Errorf("FAIL: error creating test pipeline: %s", err)
 	}
@@ -1176,7 +1177,7 @@ func TestCreatePipelineRunGitResource(t *testing.T) {
 		Spec: v1alpha1.PipelineSpec{},
 	}
 
-	_, err := r.PipelineClient.Pipelines("ns1").Create(&pipeline1)
+	_, err := r.PipelineClient.TektonV1alpha1().Pipelines("ns1").Create(&pipeline1)
 	if err != nil {
 		t.Errorf("FAIL: error creating test pipeline: %s", err)
 	}
@@ -1194,7 +1195,7 @@ func TestCreatePipelineRunGitResource(t *testing.T) {
 	resp := dummyRestfulResponse(httpWriter)
 	r.createPipelineRun(pipelineRunRequestRestful, resp)
 
-	pipelineResourceList, err := r.PipelineClient.PipelineResources("ns1").List(metav1.ListOptions{})
+	pipelineResourceList, err := r.PipelineClient.TektonV1alpha1().PipelineResources("ns1").List(metav1.ListOptions{})
 
 	numberOfGitResources := 0
 
@@ -1227,7 +1228,7 @@ func TestCreatePipelineRunImageResource(t *testing.T) {
 		Spec: v1alpha1.PipelineSpec{},
 	}
 
-	_, err := r.PipelineClient.Pipelines("ns1").Create(&pipeline1)
+	_, err := r.PipelineClient.TektonV1alpha1().Pipelines("ns1").Create(&pipeline1)
 	if err != nil {
 		t.Errorf("FAIL: error creating test pipeline: %s", err)
 	}
@@ -1245,7 +1246,7 @@ func TestCreatePipelineRunImageResource(t *testing.T) {
 	resp := dummyRestfulResponse(httpWriter)
 	r.createPipelineRun(pipelineRunRequestRestful, resp)
 
-	pipelineResourceList, err := r.PipelineClient.PipelineResources("ns1").List(metav1.ListOptions{})
+	pipelineResourceList, err := r.PipelineClient.TektonV1alpha1().PipelineResources("ns1").List(metav1.ListOptions{})
 
 	numberOfImageResources := 0
 
@@ -1278,7 +1279,7 @@ func TestCreatePipelineRunGitAndImageResource(t *testing.T) {
 		Spec: v1alpha1.PipelineSpec{},
 	}
 
-	_, err := r.PipelineClient.Pipelines("ns1").Create(&pipeline1)
+	_, err := r.PipelineClient.TektonV1alpha1().Pipelines("ns1").Create(&pipeline1)
 	if err != nil {
 		t.Errorf("FAIL: error creating test pipeline: %s", err)
 	}
@@ -1298,7 +1299,7 @@ func TestCreatePipelineRunGitAndImageResource(t *testing.T) {
 	resp := dummyRestfulResponse(httpWriter)
 	r.createPipelineRun(pipelineRunRequestRestful, resp)
 
-	pipelineResourceList, err := r.PipelineClient.PipelineResources("ns1").List(metav1.ListOptions{})
+	pipelineResourceList, err := r.PipelineClient.TektonV1alpha1().PipelineResources("ns1").List(metav1.ListOptions{})
 
 	numberOfGitResources := 0
 	numberOfImageResources := 0
