@@ -157,8 +157,7 @@
   version = "v1.1.6"
 
 [[projects]]
-  branch = "master"
-  digest = "1:53b0d0e6fa6c4e75c7e59241b22087d19ab1e2708fe82e565924d9de5fcecb55"
+  digest = "1:0231e0f16aa69b20ccd76c0655955549227535d72459f0b9a568db1f74b3afa8"
   name = "github.com/knative/eventing-sources"
   packages = [
     "pkg/apis/sources/v1alpha1",
@@ -166,7 +165,8 @@
     "pkg/client/clientset/versioned/typed/sources/v1alpha1",
   ]
   pruneopts = "UT"
-  revision = "8461419b96f9155119f8c7d97ab82b2532c3f46f"
+  revision = "32ce3778fa1bc46ed0b0ade16d5c57f343cafa4d"
+  version = "v0.5.0"
 
 [[projects]]
   branch = "master"
@@ -179,15 +179,7 @@
     "kmp",
   ]
   pruneopts = "UT"
-  revision = "28cfa161499b88cc5a71cfb7cf8a59fc34bff3d3"
-
-[[projects]]
-  digest = "1:31e761d97c76151dde79e9d28964a812c46efc5baee4085b86f68f0c654450de"
-  name = "github.com/konsorten/go-windows-terminal-sequences"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "f55edac94c9bbba5d6182a4be46d86a2c9b5b50e"
-  version = "v1.0.2"
+  revision = "a674efb8e14f92870f8727f89ce9ee0fff503aec"
 
 [[projects]]
   branch = "master"
@@ -196,30 +188,6 @@
   packages = ["."]
   pruneopts = "UT"
   revision = "81af80346b1a01caae0cbc27fd3c1ba5b11e189f"
-
-[[projects]]
-  digest = "1:2fa7b0155cd54479a755c629de26f888a918e13f8857a2c442205d825368e084"
-  name = "github.com/mattn/go-colorable"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "3a70a971f94a22f2fa562ffcc7a0eb45f5daf045"
-  version = "v0.1.1"
-
-[[projects]]
-  digest = "1:e150b5fafbd7607e2d638e4e5cf43aa4100124e5593385147b0a74e2733d8b0d"
-  name = "github.com/mattn/go-isatty"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "c2a7a6ca930a4cd0bc33a3f298eb71960732a3a7"
-  version = "v0.0.7"
-
-[[projects]]
-  branch = "master"
-  digest = "1:2b32af4d2a529083275afc192d1067d8126b578c7a9613b26600e4df9c735155"
-  name = "github.com/mgutz/ansi"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "9520e82c474b0a04dd04f8a40959027271bab992"
 
 [[projects]]
   digest = "1:33422d238f147d247752996a26574ac48dcf472976eda7f5134015f06bf16563"
@@ -254,14 +222,6 @@
   version = "v2.0.1"
 
 [[projects]]
-  digest = "1:fd61cf4ae1953d55df708acb6b91492d538f49c305b364a014049914495db426"
-  name = "github.com/sirupsen/logrus"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "8bdbc7bcc01dcbb8ec23dc8a28e332258d25251f"
-  version = "v1.4.1"
-
-[[projects]]
   digest = "1:c1b1102241e7f645bc8e0c22ae352e8f0dc6484b6cb4d132fa9f24174e0119e2"
   name = "github.com/spf13/pflag"
   packages = ["."]
@@ -291,26 +251,7 @@
     "pkg/templating",
   ]
   pruneopts = "UT"
-  revision = "c463f1230adc340ee96c02c60f074fff83240210"
-
-[[projects]]
-  digest = "1:39a425f98fb19427061a693fe6bf0683c9bddec4b25b17067e34fdb465e39cb9"
-  name = "github.com/x-cray/logrus-prefixed-formatter"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "bb2702d423886830dee131692131d35648c382e2"
-  version = "v0.5.2"
-
-[[projects]]
-  branch = "master"
-  digest = "1:31b8a662fa45ffcd0a8c9db58e564c54d3f6a1d6ad7ecbab264abe8e1b26fc52"
-  name = "github.ibm.com/dev-ex/microclimate-devops"
-  packages = [
-    "logging",
-    "utils",
-  ]
-  pruneopts = "UT"
-  revision = "07559419b4d1ddf716eda0c8dc0ac3305ea1ef7f"
+  revision = "b622847f958c3e4e1c585e7cd2b2e791999fd854"
 
 [[projects]]
   digest = "1:3c1a69cdae3501bf75e76d0d86dc6f2b0a7421bc205c0cb7b96b19eed464a34d"
@@ -434,17 +375,6 @@
   pruneopts = "UT"
   revision = "54a98f90d1c46b7731eb8fb305d2a321c30ef610"
   version = "v1.5.0"
-
-[[projects]]
-  digest = "1:39f43a9ea4af920abf322d1770c5fbf337286cb174a25827b22e1da72dcfdb5c"
-  name = "gopkg.in/go-playground/webhooks.v3"
-  packages = [
-    ".",
-    "github",
-  ]
-  pruneopts = "UT"
-  revision = "8ffb2ffc32b7af2c7e940944eccba4dcd66c692a"
-  version = "v3.13.0"
 
 [[projects]]
   digest = "1:2d1fbdc6777e5408cabeb02bf336305e724b925ff4546ded0fa8715a7267922a"
@@ -694,9 +624,7 @@
     "github.com/tektoncd/pipeline/pkg/client/clientset/versioned",
     "github.com/tektoncd/pipeline/pkg/client/clientset/versioned/fake",
     "github.com/tektoncd/pipeline/pkg/client/informers/externalversions",
-    "github.ibm.com/dev-ex/microclimate-devops/utils",
     "go.uber.org/zap",
-    "gopkg.in/go-playground/webhooks.v3/github",
     "k8s.io/api/core/v1",
     "k8s.io/apimachinery/pkg/apis/meta/v1",
     "k8s.io/client-go/kubernetes",

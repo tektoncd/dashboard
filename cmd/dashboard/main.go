@@ -18,9 +18,8 @@ import (
 	"time"
 
 	restful "github.com/emicklei/go-restful"
-	eventsrcclient "github.com/knative/eventing-sources/pkg/client/clientset/versioned/typed/sources/v1alpha1"
-	endpoints "github.com/tektoncd/dashboard/endpoints"
-	logging "github.com/tektoncd/dashboard/logging"
+	endpoints "github.com/tektoncd/dashboard/pkg/endpoints"
+	logging "github.com/tektoncd/dashboard/pkg/logging"
 	clientset "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	k8sclientset "k8s.io/client-go/kubernetes"
@@ -72,22 +71,13 @@ func main() {
 		logging.Log.Info("Got a k8s client")
 	}
 
-	eventSrcClient, err := eventsrcclient.NewForConfig(cfg)
-	if err != nil {
-		logging.Log.Errorf("error building event source client: %s", err.Error())
-	} else {
-		logging.Log.Info("got an event source client")
-	}
-
 	resource := endpoints.Resource{
 		PipelineClient: pipelineClient,
 		K8sClient:      k8sClient,
-		EventSrcClient: eventSrcClient,
 	}
 
 	logging.Log.Info("Registering REST endpoints")
 	resource.RegisterEndpoints(wsContainer)
-	resource.RegisterWebhook(wsContainer)
 	resource.RegisterWebsocket(wsContainer)
 
 	namespace := os.Getenv("PIPELINE_RUN_NAMESPACE")

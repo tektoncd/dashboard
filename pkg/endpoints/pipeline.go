@@ -139,7 +139,8 @@ func (r Resource) getPipeline(request *restful.Request, response *restful.Respon
 	response.WriteEntity(pipeline)
 }
 
-/* Get all pipelines in a given namespace: the caller needs to handle any errors */
+/* Get all pipelines in a given namespace: the caller needs to handle any errors,
+an empty v1alpha1.Pipeline{} is returned if no pipeline is found */
 func (r Resource) getPipelineImpl(name, namespace string) (v1alpha1.Pipeline, error) {
 	logging.Log.Debugf("in getPipelineImpl, name %s, namespace %s", name, namespace)
 
@@ -147,7 +148,7 @@ func (r Resource) getPipelineImpl(name, namespace string) (v1alpha1.Pipeline, er
 	pipeline, err := pipelines.Get(name, metav1.GetOptions{})
 	if err != nil {
 		logging.Log.Errorf("could not retrieve the pipeline called %s in namespace %s", name, namespace)
-		return *pipeline, err
+		return v1alpha1.Pipeline{}, err
 	}
 	logging.Log.Debugf("Found the pipeline definition OK")
 	return *pipeline, nil
