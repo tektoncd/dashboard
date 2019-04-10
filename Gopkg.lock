@@ -158,6 +158,21 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:3937bdb15c3b7cc66a1c80b96d89acaf60c75489e8080c2666062b8d16e7c898"
+  name = "github.com/knative/eventing-sources"
+  packages = [
+    "pkg/apis/sources/v1alpha1",
+    "pkg/client/clientset/versioned",
+    "pkg/client/clientset/versioned/fake",
+    "pkg/client/clientset/versioned/scheme",
+    "pkg/client/clientset/versioned/typed/sources/v1alpha1",
+    "pkg/client/clientset/versioned/typed/sources/v1alpha1/fake",
+  ]
+  pruneopts = "UT"
+  revision = "8461419b96f9155119f8c7d97ab82b2532c3f46f"
+
+[[projects]]
+  branch = "master"
   digest = "1:58dc2abfa0d3901dde142cd636abf13d495f37c125564390c7a5791d1fa29e80"
   name = "github.com/knative/pkg"
   packages = [
@@ -208,6 +223,14 @@
   pruneopts = "UT"
   revision = "5f041e8faa004a95c88a202771f4cc3e991971e6"
   version = "v2.0.1"
+
+[[projects]]
+  digest = "1:cf31692c14422fa27c83a05292eb5cbe0fb2775972e8f1f8446a71549bd8980b"
+  name = "github.com/pkg/errors"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "ba968bfe8b2f7e042a574c888954fccecfa385b4"
+  version = "v0.8.1"
 
 [[projects]]
   digest = "1:c1b1102241e7f645bc8e0c22ae352e8f0dc6484b6cb4d132fa9f24174e0119e2"
@@ -282,11 +305,9 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:c745644c88df7496196bf316dd0e813f1908215ff29e96622c2fc194f21bac0c"
+  digest = "1:c8879109b3d04b0a15c587821781276273901bcb71da902757eac904b271f672"
   name = "golang.org/x/net"
   packages = [
-    "context",
-    "context/ctxhttp",
     "http/httpguts",
     "http2",
     "http2/hpack",
@@ -294,17 +315,6 @@
   ]
   pruneopts = "UT"
   revision = "eb5bcb51f2a31c7d5141d810b70815c05d9c9146"
-
-[[projects]]
-  branch = "master"
-  digest = "1:9927d6aceb89d188e21485f42a7a254e67e6fdcf4260aba375fe18e3c300dfb4"
-  name = "golang.org/x/oauth2"
-  packages = [
-    ".",
-    "internal",
-  ]
-  pruneopts = "UT"
-  revision = "9f3314589c9a9136388751d9adae6b0ed400978a"
 
 [[projects]]
   branch = "master"
@@ -349,20 +359,15 @@
   revision = "9d24e82272b4f38b78bc8cff74fa936d31ccd8ef"
 
 [[projects]]
-  digest = "1:6eb6e3b6d9fffb62958cf7f7d88dbbe1dd6839436b0802e194c590667a40412a"
-  name = "google.golang.org/appengine"
+  digest = "1:39f43a9ea4af920abf322d1770c5fbf337286cb174a25827b22e1da72dcfdb5c"
+  name = "gopkg.in/go-playground/webhooks.v3"
   packages = [
-    "internal",
-    "internal/base",
-    "internal/datastore",
-    "internal/log",
-    "internal/remote_api",
-    "internal/urlfetch",
-    "urlfetch",
+    ".",
+    "github",
   ]
   pruneopts = "UT"
-  revision = "54a98f90d1c46b7731eb8fb305d2a321c30ef610"
-  version = "v1.5.0"
+  revision = "8ffb2ffc32b7af2c7e940944eccba4dcd66c692a"
+  version = "v3.13.0"
 
 [[projects]]
   digest = "1:2d1fbdc6777e5408cabeb02bf336305e724b925ff4546ded0fa8715a7267922a"
@@ -381,7 +386,7 @@
   version = "v2.2.2"
 
 [[projects]]
-  digest = "1:faf52d216e0d651ee48a5ee8fb43f818a6c36bf4246282a5e30b8985da5581ff"
+  digest = "1:6163e6e8fcdb2c545db15aa5fe492fb5c2d59ad54f58fa1cba07f12ceac6d77b"
   name = "k8s.io/api"
   packages = [
     "admissionregistration/v1alpha1",
@@ -395,12 +400,10 @@
     "authorization/v1beta1",
     "autoscaling/v1",
     "autoscaling/v2beta1",
-    "autoscaling/v2beta2",
     "batch/v1",
     "batch/v1beta1",
     "batch/v2alpha1",
     "certificates/v1beta1",
-    "coordination/v1beta1",
     "core/v1",
     "events/v1beta1",
     "extensions/v1beta1",
@@ -417,11 +420,11 @@
     "storage/v1beta1",
   ]
   pruneopts = "UT"
-  revision = "145d52631d00cbfe68490d19ae4f0f501fd31a95"
-  version = "kubernetes-1.12.6"
+  revision = "4e7be11eab3ffcfc1876898b8272df53785a9504"
+  version = "kubernetes-1.11.3"
 
 [[projects]]
-  digest = "1:94babe94a374f3367bc9606841879a72591bef89a7370751b0cc3957f0d8c804"
+  digest = "1:3cbbb704cb3d6a91d3e332897ec20918fd978d6b95b9684203940ad478fa4178"
   name = "k8s.io/apimachinery"
   packages = [
     "pkg/api/equality",
@@ -456,7 +459,6 @@
     "pkg/util/intstr",
     "pkg/util/json",
     "pkg/util/mergepatch",
-    "pkg/util/naming",
     "pkg/util/net",
     "pkg/util/rand",
     "pkg/util/runtime",
@@ -472,11 +474,11 @@
     "third_party/forked/golang/reflect",
   ]
   pruneopts = "UT"
-  revision = "01f179d85dbce0f2e0e4351a92394b38694b7cae"
-  version = "kubernetes-1.12.6"
+  revision = "def12e63c512da17043b4f0293f52d1006603d9f"
+  version = "kubernetes-1.11.3"
 
 [[projects]]
-  digest = "1:38b619740b74c3596fce093a1f6cf70245259797538454662ff3973067a80e2b"
+  digest = "1:071d41a12bd624439e8bbf00fa180f08673510ea3d77f608933511a250c1d348"
   name = "k8s.io/client-go"
   packages = [
     "discovery",
@@ -507,8 +509,6 @@
     "kubernetes/typed/autoscaling/v1/fake",
     "kubernetes/typed/autoscaling/v2beta1",
     "kubernetes/typed/autoscaling/v2beta1/fake",
-    "kubernetes/typed/autoscaling/v2beta2",
-    "kubernetes/typed/autoscaling/v2beta2/fake",
     "kubernetes/typed/batch/v1",
     "kubernetes/typed/batch/v1/fake",
     "kubernetes/typed/batch/v1beta1",
@@ -517,8 +517,6 @@
     "kubernetes/typed/batch/v2alpha1/fake",
     "kubernetes/typed/certificates/v1beta1",
     "kubernetes/typed/certificates/v1beta1/fake",
-    "kubernetes/typed/coordination/v1beta1",
-    "kubernetes/typed/coordination/v1beta1/fake",
     "kubernetes/typed/core/v1",
     "kubernetes/typed/core/v1/fake",
     "kubernetes/typed/events/v1beta1",
@@ -574,8 +572,8 @@
     "util/retry",
   ]
   pruneopts = "UT"
-  revision = "78295b709ec6fa5be12e35892477a326dea2b5d3"
-  version = "kubernetes-1.12.6"
+  revision = "2cefa64ff137e128daeddbd1775cd775708a05bf"
+  version = "kubernetes-1.11.3"
 
 [[projects]]
   branch = "master"
@@ -593,17 +591,30 @@
   pruneopts = "UT"
   revision = "ef739b027d6ca5a347fdba88dec315e56ee14b2e"
 
+[[projects]]
+  digest = "1:84a8609383bec11b71d52dd813f33f1d16614b91966940bdc2aa79bea864fa25"
+  name = "sigs.k8s.io/controller-runtime"
+  packages = ["pkg/runtime/scheme"]
+  pruneopts = "UT"
+  revision = "f6f0bc9611363b43664d08fb097ab13243ef621d"
+  version = "v0.1.9"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
     "github.com/emicklei/go-restful",
     "github.com/gorilla/websocket",
+    "github.com/knative/eventing-sources/pkg/apis/sources/v1alpha1",
+    "github.com/knative/eventing-sources/pkg/client/clientset/versioned/fake",
+    "github.com/knative/eventing-sources/pkg/client/clientset/versioned/typed/sources/v1alpha1",
+    "github.com/pkg/errors",
     "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1",
     "github.com/tektoncd/pipeline/pkg/client/clientset/versioned",
     "github.com/tektoncd/pipeline/pkg/client/clientset/versioned/fake",
     "github.com/tektoncd/pipeline/pkg/client/informers/externalversions",
     "go.uber.org/zap",
+    "gopkg.in/go-playground/webhooks.v3/github",
     "k8s.io/api/core/v1",
     "k8s.io/apimachinery/pkg/apis/meta/v1",
     "k8s.io/client-go/kubernetes",
