@@ -23,13 +23,13 @@ import (
 	"strings"
 	"time"
 
-	"github.ibm.com/swiss-cloud/devops-back-end/pkg/broadcaster"
+	"github.com/tektoncd/dashboard/pkg/broadcaster"
+	"github.ibm.com/dev-ex/microclimate-devops/utils"
 
 	restful "github.com/emicklei/go-restful"
+	logging "github.com/tektoncd/dashboard/logging"
 	v1alpha1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
 	informers "github.com/tektoncd/pipeline/pkg/client/informers/externalversions"
-	logging "github.ibm.com/swiss-cloud/devops-back-end/logging"
-	"github.ibm.com/swiss-cloud/devops-back-end/pkg/utils"
 	gh "gopkg.in/go-playground/webhooks.v3/github"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"

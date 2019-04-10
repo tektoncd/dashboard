@@ -19,9 +19,9 @@ import (
 
 	restful "github.com/emicklei/go-restful"
 	eventsrcclient "github.com/knative/eventing-sources/pkg/client/clientset/versioned/typed/sources/v1alpha1"
+	endpoints "github.com/tektoncd/dashboard/endpoints"
+	logging "github.com/tektoncd/dashboard/logging"
 	clientset "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
-	endpoints "github.ibm.com/swiss-cloud/devops-back-end/endpoints"
-	logging "github.ibm.com/swiss-cloud/devops-back-end/logging"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	k8sclientset "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
