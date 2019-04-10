@@ -71,6 +71,8 @@ func main() {
 	logging.Log.Info("Registering REST endpoints")
 	resource.RegisterEndpoints(wsContainer)
 	resource.RegisterWebsocket(wsContainer)
+	resource.RegisterHealthProbes(wsContainer)
+	resource.RegisterReadinessProbes(wsContainer)
 
 	stopCh := signals.SetupSignalHandler()
 	resource.StartPipelineRunController(stopCh)

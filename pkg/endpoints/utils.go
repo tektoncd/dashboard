@@ -62,19 +62,43 @@ func (r Resource) RegisterEndpoints(container *restful.Container) {
 	wsv1.Route(wsv1.PUT("/{namespace}/credentials/{id}").To(r.updateCredential))
 	wsv1.Route(wsv1.DELETE("/{namespace}/credentials/{id}").To(r.deleteCredential))
 
-	wsv1.Route(wsv1.GET("/{namespace}/health").To(r.checkHealth))
-
 	container.Add(wsv1)
 }
 
 func (r Resource) RegisterWebsocket(container *restful.Container) {
 	logging.Log.Info("Adding API for websocket")
-	wsv1 := new(restful.WebService)
-	wsv1.
+	wsv2 := new(restful.WebService)
+	wsv2.
 		Path("/v1/websocket").
 		Consumes(restful.MIME_JSON).
 		Produces(restful.MIME_JSON)
-	wsv1.Route(wsv1.GET("/logs").To(r.establishPipelineLogsWebsocket))
-	wsv1.Route(wsv1.GET("/pipelineruns").To(r.establishPipelineRunsWebsocket))
-	container.Add(wsv1)
+	wsv2.Route(wsv2.GET("/logs").To(r.establishPipelineLogsWebsocket))
+	wsv2.Route(wsv2.GET("/pipelineruns").To(r.establishPipelineRunsWebsocket))
+	container.Add(wsv2)
+}
+
+func (r Resource) RegisterHealthProbes(container *restful.Container) {
+	logging.Log.Info("Adding API for health")
+	wsv3 := new(restful.WebService)
+	wsv3.
+		Path("/health").
+		Consumes(restful.MIME_JSON).
+		Produces(restful.MIME_JSON)
+
+	wsv3.Route(wsv3.GET("/").To(r.checkHealth))
+
+	container.Add(wsv3)
+}
+
+func (r Resource) RegisterReadinessProbes(container *restful.Container) {
+	logging.Log.Info("Adding API for health")
+	wsv4 := new(restful.WebService)
+	wsv4.
+		Path("/readiness").
+		Consumes(restful.MIME_JSON).
+		Produces(restful.MIME_JSON)
+
+	wsv4.Route(wsv4.GET("/").To(r.checkHealth))
+
+	container.Add(wsv4)
 }
