@@ -133,7 +133,7 @@
     "apis/duck/v1alpha1",
     "kmp"
   ]
-  revision = "28cfa161499b88cc5a71cfb7cf8a59fc34bff3d3"
+  revision = "590eb946f1d3492e3e8d9a60850a6d5c7f85be36"
 
 [[projects]]
   branch = "master"
@@ -203,7 +203,7 @@
     "pkg/names",
     "pkg/templating"
   ]
-  revision = "c463f1230adc340ee96c02c60f074fff83240210"
+  revision = "40c9b4ab6a3dca803901c6c6ef53486e1933a07f"
 
 [[projects]]
   name = "go.uber.org/atomic"
@@ -265,7 +265,7 @@
     "unix",
     "windows"
   ]
-  revision = "4b34438f7a67ee5f45cc6132e2bad873a20324e9"
+  revision = "cc4d4f50624c67f0af3a3fa307f4be9ab9030144"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -359,6 +359,7 @@
   version = "kubernetes-1.12.6"
 
 [[projects]]
+  branch = "release-1.12"
   name = "k8s.io/apimachinery"
   packages = [
     "pkg/api/equality",
@@ -409,7 +410,6 @@
     "third_party/forked/golang/reflect"
   ]
   revision = "01f179d85dbce0f2e0e4351a92394b38694b7cae"
-  version = "kubernetes-1.12.6"
 
 [[projects]]
   name = "k8s.io/client-go"
@@ -526,6 +526,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "e611cf050c1995fd683f7aa25b8204a83721afedfa721f2a5eda4d2f6f47b827"
+  inputs-digest = "10ffe3ea41625362141e03934b2c8f31f119cebef0d5b40068192c19fbfacdf2"
   solver-name = "gps-cdcl"
   solver-version = 1
