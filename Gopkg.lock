@@ -157,18 +157,6 @@
   version = "v1.1.6"
 
 [[projects]]
-  digest = "1:0231e0f16aa69b20ccd76c0655955549227535d72459f0b9a568db1f74b3afa8"
-  name = "github.com/knative/eventing-sources"
-  packages = [
-    "pkg/apis/sources/v1alpha1",
-    "pkg/client/clientset/versioned/scheme",
-    "pkg/client/clientset/versioned/typed/sources/v1alpha1",
-  ]
-  pruneopts = "UT"
-  revision = "32ce3778fa1bc46ed0b0ade16d5c57f343cafa4d"
-  version = "v0.5.0"
-
-[[projects]]
   branch = "master"
   digest = "1:58dc2abfa0d3901dde142cd636abf13d495f37c125564390c7a5791d1fa29e80"
   name = "github.com/knative/pkg"
@@ -228,20 +216,6 @@
   pruneopts = "UT"
   revision = "298182f68c66c05229eb03ac171abe6e309ee79a"
   version = "v1.0.3"
-
-[[projects]]
-  branch = "master"
-  digest = "1:f9f144aab0a32f55fcfa49f2b64461affa903cdb8db918b89770668d852a13a1"
-  name = "github.com/tektoncd/dashboard"
-  packages = [
-    "pkg/broadcaster",
-    "pkg/endpoints",
-    "pkg/logging",
-    "pkg/utils",
-    "pkg/websocket",
-  ]
-  pruneopts = "UT"
-  revision = "ecc9da8a0c1d069cc89eddc21fbd1c7f948f8a6a"
 
 [[projects]]
   branch = "master"
@@ -619,25 +593,12 @@
   pruneopts = "UT"
   revision = "ef739b027d6ca5a347fdba88dec315e56ee14b2e"
 
-[[projects]]
-  digest = "1:84a8609383bec11b71d52dd813f33f1d16614b91966940bdc2aa79bea864fa25"
-  name = "sigs.k8s.io/controller-runtime"
-  packages = ["pkg/runtime/scheme"]
-  pruneopts = "UT"
-  revision = "f6f0bc9611363b43664d08fb097ab13243ef621d"
-  version = "v0.1.9"
-
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
     "github.com/emicklei/go-restful",
     "github.com/gorilla/websocket",
-    "github.com/tektoncd/dashboard/pkg/broadcaster",
-    "github.com/tektoncd/dashboard/pkg/endpoints",
-    "github.com/tektoncd/dashboard/pkg/logging",
-    "github.com/tektoncd/dashboard/pkg/utils",
-    "github.com/tektoncd/dashboard/pkg/websocket",
     "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1",
     "github.com/tektoncd/pipeline/pkg/client/clientset/versioned",
     "github.com/tektoncd/pipeline/pkg/client/clientset/versioned/fake",
