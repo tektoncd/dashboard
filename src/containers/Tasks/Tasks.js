@@ -26,47 +26,36 @@ import {
 } from 'carbon-components-react';
 
 import Header from '../../components/Header';
+import { getTasks } from '../../api';
 
-import { getPipelineRuns } from '../../api';
-import { getStatusIcon, getStatus } from '../../utils';
+import '../../components/Definitions/Definitions.scss';
 
 /* istanbul ignore next */
-class PipelineRuns extends Component {
+class Tasks extends Component {
   state = {
     error: null,
     loading: true,
-    pipelineRuns: []
+    tasks: []
   };
 
   async componentDidMount() {
     try {
-      const { match } = this.props;
-      const { pipelineName } = match.params;
-
-      let pipelineRuns = await getPipelineRuns();
-      pipelineRuns = pipelineRuns.filter(
-        pipelineRun => pipelineRun.spec.pipelineRef.name === pipelineName
-      );
-      this.setState({ pipelineRuns, loading: false });
+      const tasks = await getTasks();
+      this.setState({ tasks, loading: false });
     } catch (error) {
       this.setState({ error, loading: false });
     }
   }
 
   render() {
-    const { match } = this.props;
-    const { pipelineName } = match.params;
-    const { error, loading, pipelineRuns } = this.state;
+    const { error, loading, tasks } = this.state;
 
     return (
       <div className="definitions">
         <Header>
           <div className="definitions-header">
             <Breadcrumb>
-              <BreadcrumbItem>
-                <Link to="/pipelines">Pipelines</Link>
-              </BreadcrumbItem>
-              <BreadcrumbItem href="#">{pipelineName}</BreadcrumbItem>
+              <BreadcrumbItem href="#">Tasks</BreadcrumbItem>
             </Breadcrumb>
           </div>
         </Header>
@@ -81,56 +70,31 @@ class PipelineRuns extends Component {
               return (
                 <InlineNotification
                   kind="error"
-                  title="Error loading pipeline runs"
+                  title="Error loading tasks"
                   subtitle={JSON.stringify(error)}
                 />
               );
-            }
-
-            if (!pipelineRuns.length) {
-              return <span>No pipeline runs for {pipelineName}</span>;
             }
 
             return (
               <StructuredListWrapper border selection>
                 <StructuredListHead>
                   <StructuredListRow head>
-                    <StructuredListCell head>Pipeline Run</StructuredListCell>
-                    <StructuredListCell head>Status</StructuredListCell>
-                    <StructuredListCell head>
-                      Last Transition Time
-                    </StructuredListCell>
+                    <StructuredListCell head>Task</StructuredListCell>
                   </StructuredListRow>
                 </StructuredListHead>
                 <StructuredListBody>
-                  {pipelineRuns.map(pipelineRun => {
-                    const pipelineRunName = pipelineRun.metadata.name;
-                    const { lastTransitionTime, reason, status } = getStatus(
-                      pipelineRun
-                    );
-
+                  {tasks.map(task => {
+                    const taskName = task.metadata.name;
                     return (
                       <StructuredListRow
                         className="definition"
-                        key={pipelineRun.metadata.uid}
+                        key={task.metadata.uid}
                       >
                         <StructuredListCell>
-                          <Link
-                            to={`/pipelines/${pipelineName}/runs/${pipelineRunName}`}
-                          >
-                            {pipelineRunName}
+                          <Link to={`/tasks/${taskName}/runs`} >
+                            {taskName}
                           </Link>
-                        </StructuredListCell>
-                        <StructuredListCell
-                          className="status"
-                          data-reason={reason}
-                          data-status={status}
-                        >
-                          {getStatusIcon({ reason, status })}
-                          {pipelineRun.status.conditions[0].message}
-                        </StructuredListCell>
-                        <StructuredListCell>
-                          {lastTransitionTime}
                         </StructuredListCell>
                       </StructuredListRow>
                     );
@@ -145,4 +109,4 @@ class PipelineRuns extends Component {
   }
 }
 
-export default PipelineRuns;
+export default Tasks;

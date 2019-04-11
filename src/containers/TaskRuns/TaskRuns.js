@@ -15,7 +15,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { InlineNotification } from 'carbon-components-react';
 
-import { getPipelineRun, getTaskRun, getTasks } from '../../api';
+import { getTaskRun, getTasks, getTaskRuns } from '../../api';
 
 import RunHeader from '../../components/RunHeader';
 import StepDetails from '../../components/StepDetails';
@@ -25,26 +25,32 @@ import { getStatus } from '../../utils';
 import '../../components/PipelineRun/PipelineRun.scss';
 
 /* istanbul ignore next */
-class PipelineRunContainer extends Component {
+class TaskRuns extends Component {
   state = {
     error: null,
     loading: true,
-    pipelineRun: {},
     selectedStepId: null,
     selectedTaskId: null,
     taskRuns: [],
     tasks: []
   };
 
-  componentDidMount() {
-    this.loadPipelineRunData();
+  async componentDidMount() {
+    try {
+      const { match } = this.props;
+      const { taskName } = match.params;
+
+     let taskRuns = await this.loadTaskRuns(taskName);
+    } catch (error) {
+      this.setState({ error, loading: false });
+    }
   }
 
   componentDidUpdate(prevProps) {
     const { match } = this.props;
-    const { pipelineRunName } = match.params;
-    if (pipelineRunName !== prevProps.match.params.pipelineRunName) {
-      this.loadPipelineRunData();
+    const { taskName } = match.params;
+    if (taskName !== prevProps.match.params.taskName) {
+      this.loadTaskRuns(taskName);
     }
   }
 
@@ -52,56 +58,19 @@ class PipelineRunContainer extends Component {
     this.setState({ selectedStepId, selectedTaskId });
   };
 
-  async loadPipelineRunData() {
-    const { match } = this.props;
-    const { pipelineRunName } = match.params;
-
-    try {
-      const [pipelineRun, tasks] = await Promise.all([
-        getPipelineRun(pipelineRunName),
-        getTasks()
-      ]);
-      const {
-        status: { taskRuns: taskRunsStatus }
-      } = pipelineRun;
-      const { message, status } = getStatus(pipelineRun);
-      if (status === 'False' && !taskRunsStatus) {
-        throw message;
-      }
-      const taskRunNames = Object.keys(taskRunsStatus);
-
-      this.setState(
-        {
-          pipelineRun,
-          tasks,
-          loading: false
-        },
-        () => {
-          this.loadTaskRuns(taskRunNames);
-        }
-      );
-    } catch (error) {
-      this.setState({ error, loading: false });
-    }
-  }
-
-  async loadTaskRuns(taskRunNames) {
-    let taskRuns = await Promise.all(
-      taskRunNames.map(taskRunName => getTaskRun(taskRunName))
-    );
-
-    const {
-      pipelineRun: {
-        status: { taskRuns: taskRunDetails }
-      }
-    } = this.state;
-
-    taskRuns = taskRuns.map(taskRun => {
+  async loadTaskRuns(taskName) {
+    const tasks = await getTasks();
+    const task = tasks.find(task => task.metadata.name === taskName);
+    let taskRuns = await getTaskRuns();
+    taskRuns = taskRuns.filter(taskRun => taskRun.spec.taskRef && 
+      taskRun.spec.taskRef.name === taskName).map(taskRun => {
       const taskName = taskRun.spec.taskRef.name;
       const taskRunName = taskRun.metadata.name;
       const { reason, status: succeeded } = getStatus(taskRun);
-      const { pipelineTaskName } = taskRunDetails[taskRunName];
-      const steps = this.steps(taskRun.status.steps, taskName);
+      const pipelineTaskName = taskRunName;
+      console.log(taskName + "CURRENT TASK NAME");
+      console.log(taskRunName + "CURRENT TASK RUN NAME");
+      const steps = this.steps(task, taskRun.status.steps, taskName);
       return {
         id: taskRun.metadata.uid,
         pipelineTaskName,
@@ -114,18 +83,19 @@ class PipelineRunContainer extends Component {
       };
     });
 
-    this.setState({ taskRuns });
+    this.setState({ taskRuns, task, loading: false });
   }
 
   step() {
     const { selectedStepId, selectedTaskId, taskRuns } = this.state;
     const taskRun = taskRuns.find(run => run.id === selectedTaskId);
     if (!taskRun) {
+      console.log("no task run")
       return {};
     }
-
     const step = taskRun.steps.find(s => s.id === selectedStepId);
     if (!step) {
+      console.log("no step")
       return {};
     }
 
@@ -141,15 +111,9 @@ class PipelineRunContainer extends Component {
     };
   }
 
-  steps(stepsStatus, taskName) {
-    const { tasks } = this.state;
-    const task = tasks.find(t => t.metadata.name === taskName);
-    if (!task) {
-      return [];
-    }
-
+  steps(task, stepsStatus, taskName) {
     const steps = task.spec.steps.map((step, index) => {
-      const stepStatus = stepsStatus[index];
+      const stepStatus = stepStatus ? stepsStatus[index] : {};
       let status;
       let reason;
       if (stepStatus.terminated) {
@@ -174,12 +138,12 @@ class PipelineRunContainer extends Component {
   }
 
   render() {
+    console.log("rerender")
     const { match } = this.props;
-    const { pipelineName, pipelineRunName } = match.params;
+    const { taskName, taskRunName } = match.params;
     const {
       error,
       loading,
-      pipelineRun,
       selectedStepId,
       selectedTaskId,
       taskRuns
@@ -199,29 +163,28 @@ class PipelineRunContainer extends Component {
       stepStatus,
       taskRun
     } = this.step();
-    const {
-      lastTransitionTime,
-      reason: pipelineRunReason,
-      status: pipelineRunStatus
-    } = getStatus(pipelineRun);
+
+    console.log({definition});
+        console.log({reason});
+            console.log({status});
+                console.log({stepName});
+                    console.log({stepStatus});
+                    console.log({taskRun});
 
     return (
       <div className="pipeline-run">
         <RunHeader
           error={errorMessage}
-          lastTransitionTime={lastTransitionTime}
+          lastTransitionTime=""
           loading={loading}
-          name={pipelineName}
-          runName={pipelineRunName}
-          reason={pipelineRunReason}
-          status={pipelineRunStatus}
-          type="pipelines"
+          name={taskName}
+          type="tasks"
         />
         <main>
           {error ? (
             <InlineNotification
               kind="error"
-              title="Error loading pipeline run"
+              title="Error loading task run"
               subtitle={JSON.stringify(
                 error,
                 Object.getOwnPropertyNames(error)
@@ -252,13 +215,4 @@ class PipelineRunContainer extends Component {
   }
 }
 
-PipelineRunContainer.propTypes = {
-  match: PropTypes.shape({
-    params: PropTypes.shape({
-      pipelineName: PropTypes.string.isRequired,
-      pipelineRunName: PropTypes.string.isRequired
-    }).isRequired
-  }).isRequired
-};
-
-export default PipelineRunContainer;
+export default TaskRuns;

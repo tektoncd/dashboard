@@ -28,7 +28,7 @@ import {
 import Header from '../../components/Header';
 import { getPipelines } from '../../api';
 
-import '../../components/Pipelines/Pipelines.scss';
+import '../../components/Definitions/Definitions.scss';
 
 /* istanbul ignore next */
 class Pipelines extends Component {
@@ -51,9 +51,9 @@ class Pipelines extends Component {
     const { error, loading, pipelines } = this.state;
 
     return (
-      <div className="pipelines">
+      <div className="definitions">
         <Header>
-          <div className="pipelines-header">
+          <div className="definitions-header">
             <Breadcrumb>
               <BreadcrumbItem href="#">Pipelines</BreadcrumbItem>
             </Breadcrumb>
@@ -88,7 +88,7 @@ class Pipelines extends Component {
                     const pipelineName = pipeline.metadata.name;
                     return (
                       <StructuredListRow
-                        className="pipeline"
+                        className="definition"
                         key={pipeline.metadata.uid}
                       >
                         <StructuredListCell>

@@ -16,41 +16,41 @@ import { storiesOf } from '@storybook/react';
 import { text } from '@storybook/addon-knobs';
 import StoryRouter from 'storybook-react-router';
 
-import PipelineRunHeader from './PipelineRunHeader';
+import RunHeader from './RunHeader';
 
-storiesOf('PipelineRunHeader', module)
+storiesOf('RunHeader', module)
   .addDecorator(StoryRouter())
   .add('default', () => (
-    <PipelineRunHeader
-      pipelineName={text('Pipeline Name', 'simple-pipeline')}
-      pipelineRunName={text('Pipeline Run Name', 'simple-pipeline-run-1')}
+    <RunHeader
+      name={text('Pipeline Name', 'simple-pipeline')}
+      runName={text('Pipeline Run Name', 'simple-pipeline-run-1')}
     />
   ))
   .add('running', () => (
-    <PipelineRunHeader
-      pipelineName={text('Pipeline Name', 'simple-pipeline')}
-      pipelineRunName={text('Pipeline Run Name', 'simple-pipeline-run-1')}
+    <RunHeader
+      name={text('Pipeline Name', 'simple-pipeline')}
+      runName={text('Pipeline Run Name', 'simple-pipeline-run-1')}
       reason="Running"
       status="Unknown"
     />
   ))
   .add('complete', () => (
-    <PipelineRunHeader
-      pipelineName={text('Pipeline Name', 'simple-pipeline')}
-      pipelineRunName={text('Pipeline Run Name', 'simple-pipeline-run-1')}
+    <RunHeader
+      name={text('Pipeline Name', 'simple-pipeline')}
+      runName={text('Pipeline Run Name', 'simple-pipeline-run-1')}
       status="True"
       reason="Completed"
     />
   ))
   .add('failed', () => (
-    <PipelineRunHeader
-      pipelineName={text('Pipeline Name', 'simple-pipeline')}
-      pipelineRunName={text('Pipeline Run Name', 'simple-pipeline-run-1')}
+    <RunHeader
+      name={text('Pipeline Name', 'simple-pipeline')}
+      runName={text('Pipeline Run Name', 'simple-pipeline-run-1')}
       status="False"
       reason="Failed"
     />
   ))
   .add('error', () => (
-    <PipelineRunHeader error={text('Error', 'Something went wrong')} />
+    <RunHeader error={text('Error', 'Something went wrong')} />
   ))
-  .add('loading', () => <PipelineRunHeader loading />);
+  .add('loading', () => <RunHeader loading />);

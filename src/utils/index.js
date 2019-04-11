@@ -21,7 +21,7 @@ export function getStatus(resource) {
   return conditions.find(condition => condition.type === 'Succeeded') || {};
 }
 
-export function getPipelineRunStatusIcon({ reason, status }) {
+export function getStatusIcon({ reason, status }) {
   if (status === 'Unknown' && reason === 'Running') {
     return <Spinner className="status-icon" />;
   }

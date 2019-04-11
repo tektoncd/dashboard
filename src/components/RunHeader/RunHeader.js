@@ -22,20 +22,21 @@ import {
 import { Link } from 'react-router-dom';
 
 import Header from '../Header';
-import { getPipelineRunStatusIcon } from '../../utils';
+import { getStatusIcon } from '../../utils';
 
-import './PipelineRunHeader.scss';
+import './RunHeader.scss';
 
-class PipelineRunHeader extends Component {
+class RunHeader extends Component {
   render() {
     const {
       error,
       lastTransitionTime,
       loading,
-      pipelineName,
-      pipelineRunName,
+      name,
+      runName,
       reason,
-      status
+      status,
+      type
     } = this.props;
 
     return (
@@ -47,11 +48,11 @@ class PipelineRunHeader extends Component {
         >
           <Breadcrumb>
             <BreadcrumbItem>
-              <Link to="/pipelines">Pipelines</Link>
+              <Link to={`/${type}`}>{type}</Link>
             </BreadcrumbItem>
-            {pipelineName && (
+            {name && (
               <BreadcrumbItem>
-                <Link to={`/pipelines/${pipelineName}`}>{pipelineName}</Link>
+                <Link to={`/${type}/${name}`}>{name}</Link>
               </BreadcrumbItem>
             )}
           </Breadcrumb>
@@ -64,12 +65,12 @@ class PipelineRunHeader extends Component {
               return <SkeletonPlaceholder className="header-skeleton" />;
             }
             return (
-              pipelineRunName && (
+              runName && (
                 <h1>
                   <div className="block-icon">
-                    {getPipelineRunStatusIcon({ reason, status })}
+                    {getStatusIcon({ reason, status })}
                   </div>
-                  {pipelineRunName}
+                  {runName}
                   <span className="status-label">{reason}</span>
                   <span className="time">{lastTransitionTime}</span>
                 </h1>
@@ -89,4 +90,4 @@ class PipelineRunHeader extends Component {
   }
 }
 
-export default PipelineRunHeader;
+export default RunHeader;

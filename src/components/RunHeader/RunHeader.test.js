@@ -12,44 +12,44 @@ limitations under the License.
 */
 
 import React from 'react';
-import PipelineRunHeader from './PipelineRunHeader';
+import RunHeader from './RunHeader';
 
 import { renderWithRouter } from '../../utils/test';
 
 const props = {
-  pipelineName: 'simple-pipeline',
-  pipelineRunName: 'simple-pipeline-run-1'
+  name: 'simple-pipeline',
+  runName: 'simple-pipeline-run-1'
 };
 
-it('PipelineRunHeader renders the provided content', () => {
-  const { queryByText } = renderWithRouter(<PipelineRunHeader {...props} />);
+it('RunHeader renders the provided content', () => {
+  const { queryByText } = renderWithRouter(<RunHeader {...props} />);
   expect(queryByText(/simple-pipeline/i)).toBeTruthy();
 });
 
-it('PipelineRunHeader renders the running state', () => {
+it('RunHeader renders the running state', () => {
   const { queryByText } = renderWithRouter(
-    <PipelineRunHeader {...props} status="Unknown" reason="Running" />
+    <RunHeader {...props} status="Unknown" reason="Running" />
   );
   expect(queryByText(/running/i)).toBeTruthy();
 });
 
-it('PipelineRunHeader renders the completed state', () => {
+it('RunHeader renders the completed state', () => {
   const { queryByText } = renderWithRouter(
-    <PipelineRunHeader {...props} status="True" reason="Completed" />
+    <RunHeader {...props} status="True" reason="Completed" />
   );
   expect(queryByText(/completed/i)).toBeTruthy();
 });
 
-it('PipelineRunHeader renders the failed state', () => {
+it('RunHeader renders the failed state', () => {
   const { queryByText } = renderWithRouter(
-    <PipelineRunHeader {...props} status="False" reason="Failed" />
+    <RunHeader {...props} status="False" reason="Failed" />
   );
   expect(queryByText(/failed/i)).toBeTruthy();
 });
 
-it('PipelineRunHeader renders the pending state', () => {
+it('RunHeader renders the pending state', () => {
   const { queryByText } = renderWithRouter(
-    <PipelineRunHeader {...props} error="an error message" />
+    <RunHeader {...props} error="an error message" />
   );
   expect(queryByText(/an error message/i)).toBeTruthy();
 });
