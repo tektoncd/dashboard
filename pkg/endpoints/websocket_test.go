@@ -195,7 +195,7 @@ func (r Resource) createTestPipelineRun(name, resourceVersion string) {
 // Util to update pipelinerun
 func (r Resource) updateTestPipelineRun(name, newResourceVersion string) {
 
-	httpReq := dummyHttpRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun/"+name, nil)
+	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun/"+name, nil)
 	req := dummyRestfulRequest(httpReq, "ns1", "")
 	httpWriter := httptest.NewRecorder()
 	resp := dummyRestfulResponse(httpWriter)
