@@ -75,6 +75,10 @@ func main() {
 	resource.RegisterHealthProbes(wsContainer)
 	resource.RegisterReadinessProbes(wsContainer)
 
+	logging.Log.Info("Search extensions")
+	installedNamespace := os.Getenv("INSTALLED_NAMESPACE")
+	resource.RegisterExtension(wsContainer, installedNamespace)
+
 	stopCh := signals.SetupSignalHandler()
 	resource.StartPipelineRunController(stopCh)
 

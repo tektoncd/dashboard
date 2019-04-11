@@ -14,10 +14,15 @@ limitations under the License.
 package endpoints
 
 import (
+	"strconv"
+	"net/http/httputil"
+	"net/url"
 	restful "github.com/emicklei/go-restful"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
 	"github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
 	k8sclientset "k8s.io/client-go/kubernetes"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	corev1 "k8s.io/api/core/v1"
 )
 
 // Resource - stores all types here that are reused throughout files
@@ -106,4 +111,46 @@ func (r Resource) RegisterReadinessProbes(container *restful.Container) {
 	wsv4.Route(wsv4.GET("/").To(r.checkHealth))
 
 	container.Add(wsv4)
+}
+
+// Store all types here that are reused throughout files
+type Extension struct {
+	Name string
+	Url  string
+	Port string
+}
+
+
+func (r Resource) RegisterExtension(container *restful.Container, namespace string) {
+	logging.Log.Info("Adding API for extensions")
+	svcs, err := r.K8sClient.CoreV1().Services(namespace).List(metav1.ListOptions{LabelSelector: "tekton-dashboard-extension=true"})
+	if err != nil {
+		logging.Log.Debug("no extension found")
+		return
+	}
+	ws := new(restful.WebService)
+	ws.
+		Path("/").
+		Consumes(restful.MIME_JSON).
+		Produces(restful.MIME_JSON)
+	for _, svc := range svcs.Items {
+		for key, url := range svc.ObjectMeta.Annotations{
+			if key == "tekton-dashboard-endpoints" {
+				logging.Log.Debugf("extension Url: %s", url)
+                                ext := Extension { Name: svc.ObjectMeta.Name, Url: url, Port: getPort(svc) }
+				ws.Route(ws.POST(url).To(ext.HandleExtension))
+			}
+		}
+	}
+	container.Add(ws)
+}
+
+func (ext Extension) HandleExtension(request *restful.Request, response *restful.Response) {
+	target, _ := url.Parse("http://" +  ext.Name + ":" + ext.Port + "/")
+	proxy := httputil.NewSingleHostReverseProxy(target)
+	proxy.ServeHTTP(response, request.Request)
+}
+
+func getPort(svc corev1.Service) string {
+	return strconv.Itoa(int(svc.Spec.Ports[0].Port))
 }
