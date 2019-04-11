@@ -10,6 +10,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+
 package main
 
 import (
@@ -44,7 +45,7 @@ func main() {
 		cfg, err = rest.InClusterConfig()
 	}
 	if err != nil {
-		logging.Log.Errorf("Error building kubeconfig from %s: %s", kubeconfig, err.Error())
+		logging.Log.Errorf("error building kubeconfig from %s: %s", kubeconfig, err.Error())
 	}
 
 	port := ":8080"
@@ -59,14 +60,14 @@ func main() {
 
 	pipelineClient, err := clientset.NewForConfig(cfg)
 	if err != nil {
-		logging.Log.Errorf("Error building pipeline clientset: %s", err.Error())
+		logging.Log.Errorf("error building pipeline clientset: %s", err.Error())
 	} else {
 		logging.Log.Info("Got a pipeline client")
 	}
 
 	k8sClient, err := k8sclientset.NewForConfig(cfg)
 	if err != nil {
-		logging.Log.Errorf("Error building k8s clientset: %s", err.Error())
+		logging.Log.Errorf("error building k8s clientset: %s", err.Error())
 	} else {
 		logging.Log.Info("Got a k8s client")
 	}

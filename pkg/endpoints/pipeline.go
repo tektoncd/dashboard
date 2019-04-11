@@ -92,7 +92,7 @@ type PipelineRunUpdateBody struct {
 	STATUS string `json:"status"`
 }
 
-// TaskRunLog represents a task run log
+// TaskRunLog - represents a task run's logs (including logs for containers)
 type TaskRunLog struct {
 	PodName string
 	// Containers correlating to Task step definitions
@@ -102,7 +102,7 @@ type TaskRunLog struct {
 	InitContainers []LogContainer
 }
 
-// LogContainer represents the containers for a given log
+// LogContainer - represents the logs for a given container
 type LogContainer struct {
 	Name string
 	Logs []string
@@ -694,9 +694,8 @@ func (r Resource) updatePipelineRun(request *restful.Request, response *restful.
 	if err != nil || pipelineRun == nil {
 		utils.RespondError(response, err, http.StatusNotFound)
 		return
-	} else {
-		logging.Log.Debug("Found the PipelineRun ok")
 	}
+	logging.Log.Debug("Found the PipelineRun ok")
 
 	// We've found the PipelineRun at this stage
 
@@ -730,9 +729,8 @@ func (r Resource) updatePipelineRun(request *restful.Request, response *restful.
 			logging.Log.Errorf("error updating PipelineRun status: %s", err)
 			utils.RespondError(response, err, http.StatusInternalServerError)
 			return
-		} else {
-			logging.Log.Debugf("PipelineRun status updated OK to %s", pipelineRun.Spec.Status)
 		}
+		logging.Log.Debugf("PipelineRun status updated OK to %s", pipelineRun.Spec.Status)
 	} else {
 		errorMsg := fmt.Sprintf("error: Status was already set to %s", desiredStatus)
 		logging.Log.Error(errorMsg)

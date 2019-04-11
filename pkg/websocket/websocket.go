@@ -10,6 +10,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+
 package websocket
 
 import (
@@ -19,11 +20,11 @@ import (
 
 	restful "github.com/emicklei/go-restful"
 	"github.com/gorilla/websocket"
-	logging "github.com/tektoncd/dashboard/pkg/logging"
 	broadcaster "github.com/tektoncd/dashboard/pkg/broadcaster"
+	logging "github.com/tektoncd/dashboard/pkg/logging"
 )
 
-// Attempts to upgrades connection from HTTP(S) to WS(S)
+// UpgradeToWebsocket attempts to upgrade connection from HTTP(S) to WS(S)
 func UpgradeToWebsocket(request *restful.Request, response *restful.Response) (*websocket.Conn, error) {
 	var writer http.ResponseWriter = response
 	logging.Log.Debug("Upgrading connection to websocket...")
@@ -36,20 +37,19 @@ func UpgradeToWebsocket(request *restful.Request, response *restful.Response) (*
 	return connection, err
 }
 
-// Discards text messages from the peer connection
+// WriteOnlyWebsocket discards text messages from the peer connection
 func WriteOnlyWebsocket(connection *websocket.Conn, b *broadcaster.Broadcaster) {
 	// The underlying connection is never closed so this cannot error
 	subscriber, _ := b.Subscribe()
 	go readControl(connection, b, subscriber)
 	go poll(connection)
 	write(connection, subscriber)
-
 }
 
 func readControl(connection *websocket.Conn, b *broadcaster.Broadcaster, s *broadcaster.Subscriber) {
 	for {
 		if _, _, err := connection.ReadMessage(); err != nil {
-			logging.Log.Error("Websocket connection to client lost:", err)
+			logging.Log.Error("websocket connection to client lost: ", err)
 			b.Unsubscribe(s)
 			return
 		}
@@ -79,7 +79,7 @@ func poll(connection *websocket.Conn) {
 	}
 }
 
-// Send close to client, then close connection
+// ReportClosing sends close to client then closes connection
 func ReportClosing(connection *websocket.Conn) {
 	connection.WriteControl(websocket.CloseMessage, nil, time.Now().Add(time.Millisecond*100))
 	connection.Close()
