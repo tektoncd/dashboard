@@ -32,10 +32,11 @@ class TaskRuns extends Component {
     selectedStepId: null,
     selectedTaskId: null,
     taskRuns: [],
-    tasks: []
+    task: null
   };
 
   async componentDidMount() {
+    console.log("test 1 = ");
     try {
       const { match } = this.props;
       const { taskName } = match.params;
@@ -68,9 +69,8 @@ class TaskRuns extends Component {
       const taskRunName = taskRun.metadata.name;
       const { reason, status: succeeded } = getStatus(taskRun);
       const pipelineTaskName = taskRunName;
-      console.log(taskName + "CURRENT TASK NAME");
-      console.log(taskRunName + "CURRENT TASK RUN NAME");
-      const steps = this.steps(task, taskRun.status.steps, taskName);
+      console.log({taskRun})
+      const steps = this.steps(task, taskRun.steps, taskName);
       return {
         id: taskRun.metadata.uid,
         pipelineTaskName,
@@ -138,7 +138,6 @@ class TaskRuns extends Component {
   }
 
   render() {
-    console.log("rerender")
     const { match } = this.props;
     const { taskName, taskRunName } = match.params;
     const {
