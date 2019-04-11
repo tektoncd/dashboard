@@ -15,7 +15,6 @@ package endpoints
 import (
 	restful "github.com/emicklei/go-restful"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
-	"github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
 )
 
 // RegisterPipeline
