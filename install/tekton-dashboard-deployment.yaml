@@ -33,3 +33,16 @@ spec:
         env:
         - name: PORT
           value: "9097"
+        # Currently PipelineRuns MUST happen in the same namespace as the install namespace of the Tekton dashboard
+        # the current requirement is that the below namespace values match 
+        - name: PIPELINE_RUN_NAMESPACE
+          value: "replace_me"
+        - name: INSTALLED_NAMESPACE
+          value: "replace_me"
+        # The service account to run PipelineRun pods under
+        # any secrets required for authentication will need to be patched to this service account
+        - name: PIPELINE_RUN_SERVICE_ACCOUNT
+          value: "replace_me"
+        # This is the registry location that PipelineRuns will push built images to 
+        - name: DOCKER_REGISTRY_LOCATION
+          value: "replace_me"
