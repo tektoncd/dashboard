@@ -1,4 +1,4 @@
-package endpoints 
+package endpoints
 
 import (
 	"os"
@@ -114,7 +114,7 @@ func sendRequests(t *testing.T, routes []string, httpMethod string) []string {
 			t.Errorf("Content-Location header not provided in %s method for resource type: %s",httpMethod,resourceType)
 		} else {
 			// "Content-Location" header is only set with single value
-			resourceLocations = append(resourceLocations,contentLocation[0]) 
+			resourceLocations = append(resourceLocations,contentLocation[0])
 		}
 	}
 	return resourceLocations

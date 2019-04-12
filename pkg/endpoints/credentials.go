@@ -116,7 +116,6 @@ func (r Resource) getCredential(request *restful.Request, response *restful.Resp
  *  - type (must have the value 'accesstoken' or 'userpass')
  */
 func (r Resource) createCredential(request *restful.Request, response *restful.Response) {
-	logging.Log.Info("CREATE CREDENTIAL")
 	// Get path parameter
 	requestNamespace := request.PathParameter("namespace")
 	// Get query parameters
