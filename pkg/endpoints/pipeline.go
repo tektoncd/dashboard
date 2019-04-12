@@ -164,17 +164,17 @@ func (r Resource) getAllPipelineRuns(request *restful.Request, response *restful
 
 	pipelinerunList, appError := r.GetAllPipelineRunsImpl(namespace, repository)
 	if appError.ERROR != nil {
-		logging.Log.Debugf("+%v", pipelinerunList.Items)
+		logging.Log.Errorf("there was a problem getting the PipelineRuns list: %s", appError.ERROR)
 		utils.RespondError(response, appError.ERROR, appError.CODE)
 	} else {
 		// no errors so return the pipeline run list
-		logging.Log.Debugf("+%v", pipelinerunList.Items)
+		logging.Log.Debugf("PipelineRun list: %v", pipelinerunList.Items)
 		response.WriteEntity(pipelinerunList)
 	}
 }
 
 /*GetAllPipelineRunsImpl - Returns a pointer to a list of PipelineRuns in a given namespace,
-optionally with a repository query as a parameter */
+an empty string repository query can be provided meaning that all PipelineRuns in the namespace will be returned  */
 func (r Resource) GetAllPipelineRunsImpl(namespace, repository string) (v1alpha1.PipelineRunList, AppError) {
 	logging.Log.Debugf("In getAllPipelineRunsImpl: namespace: `%s`, repository query: `%s`", namespace, repository)
 
@@ -185,7 +185,7 @@ func (r Resource) GetAllPipelineRunsImpl(namespace, repository string) (v1alpha1
 	if repository != "" {
 		server, org, repo, err := getGitValues(repository)
 		if err != nil {
-			errorMsg := "there was an error getting the Git values"
+			errorMsg := fmt.Sprintf("there was an error getting the Git values with repository query %s", repository)
 			logging.Log.Errorf("%s: %s", errorMsg, err)
 			return v1alpha1.PipelineRunList{}, AppError{err, errorMsg, http.StatusInternalServerError}
 		}
@@ -193,10 +193,11 @@ func (r Resource) GetAllPipelineRunsImpl(namespace, repository string) (v1alpha1
 		pipelinerunList, err = pipelineruns.List(metav1.ListOptions{LabelSelector: match})
 	} else {
 		pipelinerunList, err = pipelineruns.List(metav1.ListOptions{})
-		if err != nil {
-			return v1alpha1.PipelineRunList{}, AppError{err, "", http.StatusNotFound}
-		}
 	}
+	if err != nil {
+		return v1alpha1.PipelineRunList{}, AppError{err, "", http.StatusNotFound}
+	}
+
 	return *pipelinerunList, AppError{}
 }
 
@@ -232,18 +233,18 @@ func (r Resource) createPipelineRun(request *restful.Request, response *restful.
 	}
 }
 
-/*CreatePipelineRunImpl - Create a new manual pipeline run and resources in a given namespace */
+/*CreatePipelineRunImpl - Create a new manual pipeline run and resources in a given namespace
+method assumes you've already applied the yaml: so the pipeline definition and its tasks must exist upfront*/
 func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, namespace string) *AppError {
 
 	pipelineName := pipelineRunData.PIPELINENAME
 	serviceAccount := pipelineRunData.SERVICEACCOUNT
-	regsitryLocation := pipelineRunData.REGISTRYLOCATION
+	registryLocation := pipelineRunData.REGISTRYLOCATION
 
 	startTime := getDateTimeAsString()
 
 	generatedPipelineRunName := fmt.Sprintf("tekton-pipeline-run-%s", startTime)
 
-	// Assumes you've already applied the yml: so the pipeline definition and its tasks must exist upfront.
 	pipeline, err := r.getPipelineImpl(pipelineName, namespace)
 	if err != nil {
 		errorMsg := fmt.Sprintf("could not find the pipeline template %s in namespace %s", pipelineName, namespace)
@@ -252,8 +253,6 @@ func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, names
 	}
 
 	logging.Log.Debugf("Found the pipeline template %s OK", pipelineName)
-
-	registryURL := regsitryLocation
 
 	var gitResource v1alpha1.PipelineResourceRef
 	var imageResource v1alpha1.PipelineResourceRef
@@ -271,7 +270,7 @@ func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, names
 	}
 
 	imageTag := pipelineRunData.GITCOMMIT
-	imageName := fmt.Sprintf("%s/%s", registryURL, strings.ToLower(pipelineRunData.REPONAME))
+	imageName := fmt.Sprintf("%s/%s", registryLocation, strings.ToLower(pipelineRunData.REPONAME))
 	releaseName := fmt.Sprintf("%s-%s", strings.ToLower(pipelineRunData.REPONAME), pipelineRunData.GITCOMMIT)
 	repositoryName := strings.ToLower(pipelineRunData.REPONAME)
 
@@ -602,12 +601,13 @@ func getGitValues(url string) (gitServer, gitOrg, gitRepo string, err error) {
 		}
 	}
 
+	repoURL = strings.TrimSuffix(repoURL, "/")
+
 	// example at this point: github.com/tektoncd/pipeline
 	numSlashes := strings.Count(repoURL, "/")
 	if numSlashes < 2 {
 		return "", "", "", errors.New("Url didn't match the requirements (at least two slashes)")
 	}
-	repoURL = strings.TrimSuffix(repoURL, "/")
 
 	gitServer = repoURL[0:strings.Index(repoURL, "/")]
 	gitOrg = repoURL[strings.Index(repoURL, "/")+1 : strings.LastIndex(repoURL, "/")]
