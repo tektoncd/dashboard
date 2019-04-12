@@ -25,7 +25,7 @@ import { getStatus } from '../../utils';
 import '../../components/PipelineRun/PipelineRun.scss';
 
 /* istanbul ignore next */
-class TaskRuns extends Component {
+class TaskRunsContainer extends Component {
   state = {
     error: null,
     loading: true,
@@ -36,7 +36,6 @@ class TaskRuns extends Component {
   };
 
   async componentDidMount() {
-    console.log("test 1 = ");
     try {
       const { match } = this.props;
       const { taskName } = match.params;
@@ -70,18 +69,25 @@ class TaskRuns extends Component {
       const { reason, status: succeeded } = getStatus(taskRun);
       const pipelineTaskName = taskRunName;
       console.log({taskRun})
-      const steps = this.steps(task, taskRun.steps, taskName);
+      if(!taskRun.status.steps){
+        console.log(JSON.stringify(taskRun))
+      }
+      const taskRunSteps = this.steps(task, taskRun.status.steps, taskName);
       return {
         id: taskRun.metadata.uid,
         pipelineTaskName,
         pod: taskRun.status.podName,
         reason,
-        steps,
+        steps: taskRunSteps,
         succeeded,
         taskName,
         taskRunName
       };
     });
+
+    if(taskRuns.length == 0){
+      throw "Task has never been run";
+    }
 
     this.setState({ taskRuns, task, loading: false });
   }
@@ -90,12 +96,10 @@ class TaskRuns extends Component {
     const { selectedStepId, selectedTaskId, taskRuns } = this.state;
     const taskRun = taskRuns.find(run => run.id === selectedTaskId);
     if (!taskRun) {
-      console.log("no task run")
       return {};
     }
     const step = taskRun.steps.find(s => s.id === selectedStepId);
     if (!step) {
-      console.log("no step")
       return {};
     }
 
@@ -113,7 +117,7 @@ class TaskRuns extends Component {
 
   steps(task, stepsStatus, taskName) {
     const steps = task.spec.steps.map((step, index) => {
-      const stepStatus = stepStatus ? stepsStatus[index] : {};
+      const stepStatus = stepsStatus ? stepsStatus[index] : {};
       let status;
       let reason;
       if (stepStatus.terminated) {
@@ -139,7 +143,7 @@ class TaskRuns extends Component {
 
   render() {
     const { match } = this.props;
-    const { taskName, taskRunName } = match.params;
+    const { taskName } = match.params;
     const {
       error,
       loading,
@@ -162,13 +166,6 @@ class TaskRuns extends Component {
       stepStatus,
       taskRun
     } = this.step();
-
-    console.log({definition});
-        console.log({reason});
-            console.log({status});
-                console.log({stepName});
-                    console.log({stepStatus});
-                    console.log({taskRun});
 
     return (
       <div className="pipeline-run">
@@ -214,4 +211,12 @@ class TaskRuns extends Component {
   }
 }
 
-export default TaskRuns;
+TaskRunsContainer.propTypes = {
+  match: PropTypes.shape({
+    params: PropTypes.shape({
+      taskName: PropTypes.string.isRequired
+    }).isRequired
+  }).isRequired
+};
+
+export default TaskRunsContainer;

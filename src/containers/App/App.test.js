@@ -23,5 +23,5 @@ it('App renders successfully', () => {
     .mockImplementation(() => []);
   const { queryByText } = render(<App />);
   expect(queryByText(/pipelines/i)).toBeTruthy();
-  expect(getPipelines).toHaveBeenCalledTimes(1);
+  expect(queryByText(/tasks/i)).toBeTruthy();
 });

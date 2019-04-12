@@ -14,41 +14,40 @@ limitations under the License.
 import React from 'react';
 import { waitForElement } from 'react-testing-library';
 
-import PipelineRunContainer from './PipelineRun';
+import TaskRunsContainer from './TaskRuns';
 import * as API from '../../api';
 import { renderWithRouter } from '../../utils/test';
 
 beforeEach(jest.resetAllMocks);
 
-it('PipelineRunContainer renders', async () => {
-  const pipelineRunName = 'bar';
+it('TaskRunsContainer renders', async () => {
+  const taskName = 'taskName';
   const match = {
     params: {
-      pipelineName: 'foo',
-      pipelineRunName
+      taskName
     }
   };
-  const getPipelineRun = jest
-    .spyOn(API, 'getPipelineRun')
+  const getTasks = jest
+    .spyOn(API, 'getTasks')
     .mockImplementation(() => '');
-  const getTasks = jest.spyOn(API, 'getTasks').mockImplementation(() => '');
+  const tasksCall = jest.spyOn(API, 'getTasks').mockImplementation(() => '');
+  const taskRunsCall = jest.spyOn(API, 'getTaskRuns').mockImplementation(() => '');
   const { getByText } = renderWithRouter(
-    <PipelineRunContainer match={match} />
+    <TaskRunsContainer match={match} />
   );
-  await waitForElement(() => getByText(pipelineRunName));
-  expect(getPipelineRun).toHaveBeenCalledTimes(1);
-  expect(getTasks).toHaveBeenCalledTimes(1);
+  await waitForElement(() => getByText(taskName));
+  expect(tasksCall).toHaveBeenCalledTimes(1);
+  expect(taskRunsCall).toHaveBeenCalledTimes(0);
 });
 
-it('PipelineRunContainer handles error state', async () => {
+it('TaskRunsContainer handles error state', async () => {
   const match = {
     params: {
-      pipelineName: 'foo',
-      pipelineRunName: 'bar'
+      taskName: 'foo'
     }
   };
-  const getPipelineRun = jest
-    .spyOn(API, 'getPipelineRun')
+  const getTasks = jest
+    .spyOn(API, 'getTasks')
     .mockImplementation(() => {
       const error = new Error();
       error.response = {
@@ -57,8 +56,8 @@ it('PipelineRunContainer handles error state', async () => {
       throw error;
     });
   const { getByText } = renderWithRouter(
-    <PipelineRunContainer match={match} />
+    <TaskRunsContainer match={match} />
   );
   await waitForElement(() => getByText('Error'));
-  expect(getPipelineRun).toHaveBeenCalledTimes(1);
+  expect(getTasks).toHaveBeenCalledTimes(1);
 });
