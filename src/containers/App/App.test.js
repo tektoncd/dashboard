@@ -15,12 +15,8 @@ import React from 'react';
 import { render } from 'react-testing-library';
 
 import App from './App';
-import * as API from '../../api';
 
 it('App renders successfully', () => {
-  const getPipelines = jest
-    .spyOn(API, 'getPipelines')
-    .mockImplementation(() => []);
   const { queryByText } = render(<App />);
   expect(queryByText(/pipelines/i)).toBeTruthy();
   expect(queryByText(/tasks/i)).toBeTruthy();

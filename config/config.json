@@ -1,4 +1,4 @@
 {
-  "API_DOMAIN": "http://localhost:8001",
+  "API_DOMAIN": "http://localhost:31080",
   "PORT": "8000"
 }

@@ -15,7 +15,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { InlineNotification } from 'carbon-components-react';
 
-import { getTaskRun, getTasks, getTaskRuns } from '../../api';
+import { getTasks, getTaskRuns } from '../../api';
 
 import RunHeader from '../../components/RunHeader';
 import StepDetails from '../../components/StepDetails';
@@ -40,8 +40,7 @@ class TaskRunsContainer extends Component {
     try {
       const { match } = this.props;
       const { taskName } = match.params;
-
-     let taskRuns = await this.loadTaskRuns(taskName);
+      await this.loadTaskRuns(taskName);
     } catch (error) {
       this.setState({ error, loading: false });
     }
@@ -59,34 +58,40 @@ class TaskRunsContainer extends Component {
     this.setState({ selectedStepId, selectedTaskId });
   };
 
-  async loadTaskRuns(taskName) {
+  async loadTaskRuns(selectedTaskName) {
     let info;
     const tasks = await getTasks();
-    const task = tasks.find(task => task.metadata.name === taskName);
+    const task = tasks.find(
+      currentTask => currentTask.metadata.name === selectedTaskName
+    );
     let taskRuns = await getTaskRuns();
-    taskRuns = taskRuns.filter(taskRun => taskRun.spec.taskRef && 
-      taskRun.spec.taskRef.name === taskName).map(taskRun => {
-      const taskName = taskRun.spec.taskRef.name;
-      const taskRunName = taskRun.metadata.name;
-      const { reason, status: succeeded } = getStatus(taskRun);
-      const pipelineTaskName = taskRunName;
-      const taskRunSteps = this.steps(task, taskRun.status.steps, taskName);
-      const startTime = taskRun.status.startTime;
-      return {
-        id: taskRun.metadata.uid,
-        pipelineTaskName,
-        pod: taskRun.status.podName,
-        reason,
-        steps: taskRunSteps,
-        succeeded,
-        taskName,
-        taskRunName,
-        startTime
-      };
-    });
+    taskRuns = taskRuns
+      .filter(
+        taskRun =>
+          taskRun.spec.taskRef && taskRun.spec.taskRef.name === selectedTaskName
+      )
+      .map(taskRun => {
+        const taskName = taskRun.spec.taskRef.name;
+        const taskRunName = taskRun.metadata.name;
+        const { reason, status: succeeded } = getStatus(taskRun);
+        const pipelineTaskName = taskRunName;
+        const taskRunSteps = this.steps(task, taskRun.status.steps);
+        const { startTime } = taskRun.status;
+        return {
+          id: taskRun.metadata.uid,
+          pipelineTaskName,
+          pod: taskRun.status.podName,
+          reason,
+          steps: taskRunSteps,
+          succeeded,
+          taskName,
+          taskRunName,
+          startTime
+        };
+      });
 
-    if(taskRuns.length == 0){
-      info = "Task has never run";
+    if (taskRuns.length === 0) {
+      info = 'Task has never run';
     }
 
     this.setState({ taskRuns, task, info, loading: false });
@@ -115,7 +120,7 @@ class TaskRunsContainer extends Component {
     };
   }
 
-  steps(task, stepsStatus, taskName) {
+  steps(task, stepsStatus) {
     const steps = task.spec.steps.map((step, index) => {
       const stepStatus = stepsStatus ? stepsStatus[index] : {};
       let status;
@@ -141,16 +146,10 @@ class TaskRunsContainer extends Component {
     return steps;
   }
 
-  selectedTaskRun(){
-    const { selectedStepId, selectedTaskId, taskRuns } = this.state;
-    selectedTaskId ? taskRuns.find(run => run.id === selectedTaskId) : {}
-  }
-
   render() {
     const { match } = this.props;
     const { taskName } = match.params;
     const {
-      notification,
       loading,
       selectedStepId,
       selectedTaskId,
@@ -186,38 +185,41 @@ class TaskRunsContainer extends Component {
           type="Tasks"
         />
         <main>
-         { error ? (<InlineNotification
-                  kind="error"
-                  title="Error loading task run"
-                  subtitle={JSON.stringify(
-                    error,
-                    Object.getOwnPropertyNames(error))}
-                   />)
-                :
-                  (info ? (<InlineNotification
-                   kind="info"
-                   title="Task runs not available"
-                   subtitle={JSON.stringify(
-                     info,
-                     Object.getOwnPropertyNames(info))}/>) 
-                   :
-                   (<div className="tasks">
-                       <TaskTree
-                         onSelect={this.handleTaskSelected}
-                         selectedTaskId={selectedTaskId}
-                         taskRuns={taskRuns} />
-                       {selectedStepId && (
-                         <StepDetails
-                           definition={definition}
-                           reason={reason}
-                           status={status}
-                           stepName={stepName}
-                           stepStatus={stepStatus}
-                           taskRun={taskRun}
-                     />)}
-                    </div>))
-                }
-        </main> 
+          {error ? (
+            <InlineNotification
+              kind="error"
+              title="Error loading task run"
+              subtitle={JSON.stringify(
+                error,
+                Object.getOwnPropertyNames(error)
+              )}
+            />
+          ) : info ? (
+            <InlineNotification
+              kind="info"
+              title="Task runs not available"
+              subtitle={JSON.stringify(info, Object.getOwnPropertyNames(info))}
+            />
+          ) : (
+            <div className="tasks">
+              <TaskTree
+                onSelect={this.handleTaskSelected}
+                selectedTaskId={selectedTaskId}
+                taskRuns={taskRuns}
+              />
+              {selectedStepId && (
+                <StepDetails
+                  definition={definition}
+                  reason={reason}
+                  status={status}
+                  stepName={stepName}
+                  stepStatus={stepStatus}
+                  taskRun={taskRun}
+                />
+              )}
+            </div>
+          )}
+        </main>
       </div>
     );
   }

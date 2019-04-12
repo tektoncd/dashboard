@@ -20,7 +20,14 @@ import {
   Switch
 } from 'react-router-dom';
 
-import { PipelineRun, PipelineRuns, Pipelines, Tasks, TaskRuns, Home } from '..';
+import {
+  PipelineRun,
+  PipelineRuns,
+  Pipelines,
+  Tasks,
+  TaskRuns,
+  Home
+} from '..';
 
 import '../../components/App/App.scss';
 
@@ -33,11 +40,7 @@ const App = () => (
         exact
         to="/pipelines/:pipelineName/runs"
       />
-      <Redirect
-        from="/tasks/:taskName"
-        exact
-        to="/tasks/:taskName/runs"
-      />
+      <Redirect from="/tasks/:taskName" exact to="/tasks/:taskName/runs" />
       <Route path="/pipelines" exact component={Pipelines} />
       <Route path="/tasks" exact component={Tasks} />
       <Route
@@ -45,11 +48,7 @@ const App = () => (
         exact
         component={PipelineRuns}
       />
-      <Route
-        path="/tasks/:taskName/runs"
-        exact
-        component={TaskRuns}
-      />
+      <Route path="/tasks/:taskName/runs" exact component={TaskRuns} />
       <Route
         path="/pipelines/:pipelineName/runs/:pipelineRunName"
         component={PipelineRun}

@@ -92,9 +92,7 @@ class Tasks extends Component {
                         key={task.metadata.uid}
                       >
                         <StructuredListCell>
-                          <Link to={`/tasks/${taskName}/runs`} >
-                            {taskName}
-                          </Link>
+                          <Link to={`/tasks/${taskName}/runs`}>{taskName}</Link>
                         </StructuredListCell>
                       </StructuredListRow>
                     );

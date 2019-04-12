@@ -19,17 +19,17 @@ import TaskTree from './TaskTree';
 
 storiesOf('TaskTree', module).add('default', () => {
   const props = {
-  taskRuns: [
-    {
-      id: 'task',
-      pipelineTaskName: text('Task name', 'default task name'),
-      steps: [
-        { id: 'build', stepName: 'build' },
-        { id: 'test', stepName: 'test' }
-      ]
-    }
-  ]
-};
+    taskRuns: [
+      {
+        id: 'task',
+        pipelineTaskName: text('Task name', 'default task name'),
+        steps: [
+          { id: 'build', stepName: 'build' },
+          { id: 'test', stepName: 'test' }
+        ]
+      }
+    ]
+  };
   class TaskTreeWrapper extends Component {
     state = { selectedTaskId: null };
 

@@ -27,17 +27,36 @@ it('TaskRunsContainer renders', async () => {
       taskName
     }
   };
-  const getTasks = jest
-    .spyOn(API, 'getTasks')
-    .mockImplementation(() => '');
+  const getTasks = jest.spyOn(API, 'getTasks').mockImplementation(() => '');
   const tasksCall = jest.spyOn(API, 'getTasks').mockImplementation(() => '');
-  const taskRunsCall = jest.spyOn(API, 'getTaskRuns').mockImplementation(() => '');
-  const { getByText } = renderWithRouter(
-    <TaskRunsContainer match={match} />
-  );
+  const taskRunsCall = jest
+    .spyOn(API, 'getTaskRuns')
+    .mockImplementation(() => '');
+  const { getByText } = renderWithRouter(<TaskRunsContainer match={match} />);
   await waitForElement(() => getByText(taskName));
   expect(tasksCall).toHaveBeenCalledTimes(1);
   expect(taskRunsCall).toHaveBeenCalledTimes(0);
+});
+
+it('TaskRunsContainer handles info state', async () => {
+  const notificationMessage = 'Task runs not available';
+  const taskName = 'taskName';
+  const match = {
+    params: {
+      taskName
+    }
+  };
+  const getTasks = jest.spyOn(API, 'getTasks').mockImplementation(() => '');
+  const tasksCall = jest
+    .spyOn(API, 'getTasks')
+    .mockImplementation(() => [{ metadata: { name: taskName } }]);
+  const taskRunsCall = jest
+    .spyOn(API, 'getTaskRuns')
+    .mockImplementation(() => []);
+  const { getByText } = renderWithRouter(<TaskRunsContainer match={match} />);
+  await waitForElement(() => getByText(notificationMessage));
+  expect(tasksCall).toHaveBeenCalledTimes(1);
+  expect(taskRunsCall).toHaveBeenCalledTimes(1);
 });
 
 it('TaskRunsContainer handles error state', async () => {
@@ -46,18 +65,14 @@ it('TaskRunsContainer handles error state', async () => {
       taskName: 'foo'
     }
   };
-  const getTasks = jest
-    .spyOn(API, 'getTasks')
-    .mockImplementation(() => {
-      const error = new Error();
-      error.response = {
-        status: 504
-      };
-      throw error;
-    });
-  const { getByText } = renderWithRouter(
-    <TaskRunsContainer match={match} />
-  );
+  const getTasks = jest.spyOn(API, 'getTasks').mockImplementation(() => {
+    const error = new Error();
+    error.response = {
+      status: 504
+    };
+    throw error;
+  });
+  const { getByText } = renderWithRouter(<TaskRunsContainer match={match} />);
   await waitForElement(() => getByText('Error'));
   expect(getTasks).toHaveBeenCalledTimes(1);
 });
