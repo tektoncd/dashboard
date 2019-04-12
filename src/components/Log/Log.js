@@ -11,6 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+/* eslint-disable react/no-array-index-key */
 import React, { Component } from 'react';
 import { SkeletonText } from 'carbon-components-react';
 
@@ -34,7 +35,7 @@ class Log extends Component {
   }
 
   render() {
-    const { loading, log } = this.props;
+    const { loading, logs } = this.props;
 
     return (
       <pre className="log">
@@ -43,7 +44,7 @@ class Log extends Component {
         ) : (
           <>
             <Ansi className="log-content" linkify>
-              {log}
+              {logs.join('\n')}
             </Ansi>
             {this.logTrailer()}
           </>
@@ -54,7 +55,7 @@ class Log extends Component {
 }
 
 Log.defaultProps = {
-  log: 'No log available',
+  logs: ['No log available'],
   trailers: {
     Completed: 'Step completed',
     Error: 'Step failed'

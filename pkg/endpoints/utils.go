@@ -10,6 +10,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+
 package endpoints
 
 import (
@@ -22,13 +23,13 @@ import (
 	k8sclientset "k8s.io/client-go/kubernetes"
 )
 
-// Store all types here that are reused throughout files
+// Resource - stores all types here that are reused throughout files
 type Resource struct {
 	PipelineClient versioned.Interface
 	K8sClient      k8sclientset.Interface
 }
 
-// RegisterPipeline
+// RegisterEndpoints - this registers our actual endpoints!
 func (r Resource) RegisterEndpoints(container *restful.Container) {
 	wsv1 := new(restful.WebService)
 	wsv1.
@@ -37,6 +38,7 @@ func (r Resource) RegisterEndpoints(container *restful.Container) {
 		Produces(restful.MIME_JSON)
 
 	logging.Log.Info("Adding v1, and API for pipelines")
+
 	wsv1.Route(wsv1.GET("/{namespace}/pipeline").To(r.getAllPipelines))
 	wsv1.Route(wsv1.GET("/{namespace}/pipeline/{name}").To(r.getPipeline))
 
@@ -68,6 +70,7 @@ func (r Resource) RegisterEndpoints(container *restful.Container) {
 	container.Add(wsv1)
 }
 
+// RegisterWebsocket - this registers a websocket with which we can send log information to
 func (r Resource) RegisterWebsocket(container *restful.Container) {
 	logging.Log.Info("Adding API for websocket")
 	wsv2 := new(restful.WebService)
@@ -80,6 +83,7 @@ func (r Resource) RegisterWebsocket(container *restful.Container) {
 	container.Add(wsv2)
 }
 
+// RegisterHealthProbes - this registers the /health endpoint
 func (r Resource) RegisterHealthProbes(container *restful.Container) {
 	logging.Log.Info("Adding API for health")
 	wsv3 := new(restful.WebService)
@@ -91,8 +95,9 @@ func (r Resource) RegisterHealthProbes(container *restful.Container) {
 	container.Add(wsv3)
 }
 
+// RegisterReadinessProbes - this registers the /readiness endpoint
 func (r Resource) RegisterReadinessProbes(container *restful.Container) {
-	logging.Log.Info("Adding API for health")
+	logging.Log.Info("Adding API for readiness")
 	wsv4 := new(restful.WebService)
 	wsv4.
 		Path("/readiness")

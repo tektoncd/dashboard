@@ -21,7 +21,7 @@ import (
 func TestHealthEndpointPresent(t *testing.T) {
 	r := dummyResource()
 	httpWriter := httptest.NewRecorder()
-	bodyRequest := dummyHttpRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/health", nil)
+	bodyRequest := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/health", nil)
 	bodyRestful := dummyRestfulRequest(bodyRequest, "ns1", "")
 	resp := dummyRestfulResponse(httpWriter)
 	r.checkHealth(bodyRestful, resp)

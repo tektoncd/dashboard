@@ -36,22 +36,22 @@ func TestCredentials(t *testing.T) {
 	// Initialize test data
 	expectCreds := []credential{}
 	accessTokenCred := credential{
-		Id:          "credentialaccesstoken",
+		ID:          "credentialaccesstoken",
 		Username:    "personal-access-token",
 		Password:    "passwordaccesstoken",
 		Description: "access token credential",
 		Type:        "accesstoken",
-		Url: map[string]string{
+		URL: map[string]string{
 			"tekton.dev/git-0": "https://github.com",
 		},
 	}
 	userPassCred := credential{
-		Id:          "credentialuserpass",
+		ID:          "credentialuserpass",
 		Username:    "usernameuserpass",
 		Password:    "passworduserpass",
 		Description: "user password credential",
 		Type:        "userpass",
-		Url: map[string]string{
+		URL: map[string]string{
 			"tekton.dev/docker-0": "https://gcr.io",
 		},
 	}
@@ -111,7 +111,7 @@ func TestCredentials(t *testing.T) {
 
 	// DELETE credential accesstoken
 	t.Log("DELETE credential 'credentialaccesstoken' when it exists")
-	deleteCredentialTest(namespace, accessTokenCred.Id, "", r, t)
+	deleteCredentialTest(namespace, accessTokenCred.ID, "", r, t)
 
 	// READ ALL credentials when there is only the userpass credential
 	t.Log("READ all credentials when there is only 'credentialuserpass' ('credentialaccesstoken' was just deleted)")
@@ -122,7 +122,7 @@ func TestCredentials(t *testing.T) {
 
 	// DELETE credential userpass
 	t.Log("DELETE credential 'credentialuserpass' when it exists")
-	deleteCredentialTest(namespace, userPassCred.Id, "", r, t)
+	deleteCredentialTest(namespace, userPassCred.ID, "", r, t)
 
 	// READ ALL credentials when there are none
 	t.Log("READ all credentials when there are none ('credentialuserpass' was just deleted)")
@@ -142,56 +142,56 @@ func TestCredentialsErrors(t *testing.T) {
 	expectError := ""
 	invalidCreds := []credential{}
 
-	// (ERROR) CREATE and UPDATE invalid credentials missing username, password, id, url or type ('accesstoken' or 'userpass')
+	// (ERROR) CREATE and UPDATE invalid credentials missing username, password, ID, URL or type ('accesstoken' or 'userpass')
 	invalidCreds = []credential{
 		credential{
 			Username:    "personal-access-token",
-			Password:    "passwordaccesstoken",
+			Password:    "passordaccesstoken",
 			Description: "access token credential",
 			Type:        "accesstoken",
-			Url: map[string]string{
+			URL: map[string]string{
 				"tekton.dev/git-0": "https://github.com",
 			},
 		},
 		credential{
-			Id:          "credentialaccesstoken",
+			ID:          "credentialaccesstoken",
 			Password:    "passwordaccesstoken",
 			Description: "access token credential",
 			Type:        "accesstoken",
-			Url: map[string]string{
+			URL: map[string]string{
 				"tekton.dev/git-0": "https://github.com",
 			},
 		},
 		credential{
-			Id:          "credentialaccesstoken",
+			ID:          "credentialaccesstoken",
 			Username:    "personal-access-token",
 			Description: "access token credential",
 			Type:        "accesstoken",
-			Url: map[string]string{
+			URL: map[string]string{
 				"tekton.dev/git-0": "https://github.com",
 			},
 		},
 		credential{
-			Id:          "credentialaccesstoken",
+			ID:          "credentialaccesstoken",
 			Username:    "personal-access-token",
 			Password:    "passwordaccesstoken",
 			Description: "access token credential",
-			Url: map[string]string{
+			URL: map[string]string{
 				"tekton.dev/git-0": "https://github.com",
 			},
 		},
 		credential{
-			Id:          "credentialaccesstoken",
+			ID:          "credentialaccesstoken",
 			Username:    "personal-access-token",
 			Password:    "passwordaccesstoken",
 			Description: "access token credential",
 			Type:        "bogustype",
-			Url: map[string]string{
+			URL: map[string]string{
 				"tekton.dev/git-0": "https://github.com",
 			},
 		},
 		credential{
-			Id:          "credentialaccesstoken",
+			ID:          "credentialaccesstoken",
 			Username:    "personal-access-token",
 			Password:    "passwordaccesstoken",
 			Description: "access token credential",
@@ -199,6 +199,7 @@ func TestCredentialsErrors(t *testing.T) {
 		},
 	}
 	for _, invalidCred := range invalidCreds {
+		// Must match error message exactly in the verify function, careful if you change fields
 		expectError = fmt.Sprintf("Error: username, password, id, url and type ('accesstoken' or 'userpass') must all be supplied.")
 		createCredentialTest(namespace, invalidCred, expectError, r, t)
 		updateCredentialTest(namespace, invalidCred, expectError, r, t)
@@ -206,18 +207,18 @@ func TestCredentialsErrors(t *testing.T) {
 
 	invalidCreds = []credential{
 		credential{
-			Id:          "credentialaccesstoken",
+			ID:          "credentialaccesstoken",
 			Username:    "personal-access-token",
 			Password:    "passwordaccesstoken",
 			Description: "access token credential",
 			Type:        "accesstoken",
-			Url: map[string]string{
+			URL: map[string]string{
 				"tekton.dev/gitaa-0": "https://github.com",
 			},
 		},
 	}
 	for _, invalidCred := range invalidCreds {
-		expectError = fmt.Sprintf("Error: url key must start with \"tekton.dev/docker-\" or \"tekton.dev/get-\" invalid url: tekton.dev/gitaa-0")
+		expectError = fmt.Sprintf("Error: URL key must start with \"tekton.dev/docker-\" or \"tekton.dev/get-\" invalid URL: tekton.dev/gitaa-0")
 		createCredentialTest(namespace, invalidCred, expectError, r, t)
 		updateCredentialTest(namespace, invalidCred, expectError, r, t)
 	}
@@ -227,12 +228,12 @@ func TestCredentialsErrors(t *testing.T) {
 	// (ERROR) READ, UPDATE, and DELETE credentials that do not exist
 	invalidCreds = []credential{
 		credential{
-			Id:          "credentialaccesstoken",
+			ID:          "credentialaccesstoken",
 			Username:    "personal-access-token",
 			Password:    "passwordaccesstoken",
 			Description: "access token credential",
 			Type:        "accesstoken",
-			Url: map[string]string{
+			URL: map[string]string{
 				"tekton.dev/git-0": "https://github.com",
 			},
 		},
@@ -241,29 +242,29 @@ func TestCredentialsErrors(t *testing.T) {
 			Password:    "passwordaccesstoken",
 			Description: "access token credential",
 			Type:        "accesstoken",
-			Url: map[string]string{
+			URL: map[string]string{
 				"tekton.dev/git-0": "https://github.com",
 			},
 		},
 	}
 	for _, invalidCred := range invalidCreds {
-		expectError = fmt.Sprintf("Error getting secret from K8sClient: '%s'.", invalidCred.Id)
+		expectError = fmt.Sprintf("Error getting secret from K8sClient: '%s'.", invalidCred.ID)
 		readCredentialTest(namespace, invalidCred, expectError, r, t)
-		deleteCredentialTest(namespace, invalidCred.Id, expectError, r, t)
+		deleteCredentialTest(namespace, invalidCred.ID, expectError, r, t)
 	}
-	expectError = fmt.Sprintf("Error getting secret from K8sClient: '%s'.", invalidCreds[0].Id)
+	expectError = fmt.Sprintf("Error getting secret from K8sClient: '%s'.", invalidCreds[0].ID)
 	updateCredentialTest(namespace, invalidCreds[0], expectError, r, t)
 
 	// (ERROR) CREATE, READ, UPDATE, and DELETE credentials in a namespace that does not exist
 	bogusNamespace := "bogusnamespace"
 	expectError = fmt.Sprintf("Namespace provided does not exist: '%s'.", bogusNamespace)
 	cred := credential{
-		Id:          "credentialaccesstoken",
+		ID:          "credentialaccesstoken",
 		Username:    "personal-access-token",
 		Password:    "passwordaccesstoken",
 		Description: "access token credential",
 		Type:        "accesstoken",
-		Url: map[string]string{
+		URL: map[string]string{
 			"tekton.dev/git-0": "https://github.com",
 		},
 	}
@@ -271,13 +272,13 @@ func TestCredentialsErrors(t *testing.T) {
 	readAllCredentialsTest(bogusNamespace, []credential{cred}, expectError, r, t)
 	readCredentialTest(bogusNamespace, cred, expectError, r, t)
 	updateCredentialTest(bogusNamespace, cred, expectError, r, t)
-	deleteCredentialTest(bogusNamespace, cred.Id, expectError, r, t)
+	deleteCredentialTest(bogusNamespace, cred.ID, expectError, r, t)
 }
 
 /*
  * CREATE credential test
  * To function properly, [cred] must have the following fields:
- *  - id
+ *  - ID
  *  - username
  *  - password
  *  - type (must have the value 'accesstoken' or 'userpass')
@@ -286,7 +287,8 @@ func createCredentialTest(namespace string, cred credential, expectError string,
 	t.Logf("CREATE credential %+v", cred)
 	// Create dummy rest api request and response
 	jsonBody, _ := json.Marshal(cred)
-	httpReq := dummyHttpRequest("POST", "http://wwww.dummy.com:8383/v1/namespaces/"+namespace+"/credentials/", bytes.NewBuffer(jsonBody))
+	t.Logf("json body for create cred test: %s", jsonBody)
+	httpReq := dummyHTTPRequest("POST", "http://wwww.dummy.com:8383/v1/namespaces/"+namespace+"/credentials/", bytes.NewBuffer(jsonBody))
 	req := dummyRestfulRequest(httpReq, namespace, "")
 	httpWriter := httptest.NewRecorder()
 	resp := dummyRestfulResponse(httpWriter)
@@ -301,23 +303,23 @@ func createCredentialTest(namespace string, cred credential, expectError string,
 	}
 
 	// Verify against K8s client
-	testCredential(r.getK8sCredential(namespace, cred.Id), cred, t)
+	testCredential(r.getK8sCredential(namespace, cred.ID), cred, t)
 }
 
 /*
  * READ ALL credentials test
  * To function properly, [expectCreds] must have the same number of credentials as there are in the system
- * and they must be in the correct order (alphabetical by id field)
+ * and they must be in the correct order (alphabetical by ID field)
  */
 func readAllCredentialsTest(namespace string, expectCreds []credential, expectError string, r *Resource, t *testing.T) {
 	t.Logf("READ all credentials. Expecting: %+v", expectCreds)
-	// Create dummy rest api request and response
-	httpReq := dummyHttpRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/"+namespace+"/credentials/", nil)
+	// Create dummy REST API request and response
+	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/"+namespace+"/credentials/", nil)
 	req := dummyRestfulRequest(httpReq, namespace, "")
 	httpWriter := httptest.NewRecorder()
 	resp := dummyRestfulResponse(httpWriter)
 
-	// Test get all credentials
+	// Test to get all credentials
 	r.getAllCredentials(req, resp)
 
 	// Look for password "********"
@@ -338,22 +340,22 @@ func readAllCredentialsTest(namespace string, expectCreds []credential, expectEr
 		expectCreds[i].Password = credPasswords[i]
 	}
 
-	// Verify agains K8s client
+	// Verify against K8s client
 	testCredentials(r.getK8sCredentials(namespace), expectCreds, t)
-	t.Logf("READ all credentials 3. Expecting: %+v", expectCreds)
+	t.Logf("Done in READ all credentials. Expecting: %+v", expectCreds)
 }
 
 /*
  * READ credential test
- * To function properly, [expectCred] must have the "id" field
+ * To function properly, [expectCred] must have the "ID" field
  */
 func readCredentialTest(namespace string, expectCred credential, expectError string, r *Resource, t *testing.T) {
-	t.Logf("READ credential %s", expectCred.Id)
+	t.Logf("READ credential %s", expectCred.ID)
 	// Create dummy rest api request and response
-	httpReq := dummyHttpRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/"+namespace+"/credentials/"+expectCred.Id, nil)
+	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/"+namespace+"/credentials/"+expectCred.ID, nil)
 	req := dummyRestfulRequest(httpReq, namespace, "")
 	params := req.PathParameters()
-	params["id"] = expectCred.Id
+	params["id"] = expectCred.ID
 	httpWriter := httptest.NewRecorder()
 	resp := dummyRestfulResponse(httpWriter)
 
@@ -373,13 +375,13 @@ func readCredentialTest(namespace string, expectCred credential, expectError str
 	expectCred.Password = expectCredPassword
 
 	// Verify agains K8s client
-	testCredential(r.getK8sCredential(namespace, expectCred.Id), expectCred, t)
+	testCredential(r.getK8sCredential(namespace, expectCred.ID), expectCred, t)
 }
 
 /*
  * UPDATE credential test
  * To function properly, [cred] must have the following fields:
- *  - id
+ *  - ID
  *  - username
  *  - password
  *  - type (must have the value 'accesstoken' or 'userpass')
@@ -388,10 +390,10 @@ func updateCredentialTest(namespace string, cred credential, expectError string,
 	t.Logf("UPDATE credential %+v", cred)
 	// Create dummy rest api request and response
 	jsonBody, _ := json.Marshal(cred)
-	httpReq := dummyHttpRequest("PUT", "http://wwww.dummy.com:8383/v1/namespaces/"+namespace+"/credentials/"+cred.Id, bytes.NewBuffer(jsonBody))
+	httpReq := dummyHTTPRequest("PUT", "http://wwww.dummy.com:8383/v1/namespaces/"+namespace+"/credentials/"+cred.ID, bytes.NewBuffer(jsonBody))
 	req := dummyRestfulRequest(httpReq, namespace, "")
 	params := req.PathParameters()
-	params["id"] = cred.Id
+	params["id"] = cred.ID
 	httpWriter := httptest.NewRecorder()
 	resp := dummyRestfulResponse(httpWriter)
 
@@ -405,19 +407,19 @@ func updateCredentialTest(namespace string, cred credential, expectError string,
 	}
 
 	// Verify agains K8s client
-	testCredential(r.getK8sCredential(namespace, cred.Id), cred, t)
+	testCredential(r.getK8sCredential(namespace, cred.ID), cred, t)
 }
 
 /*
  * DELETE credential test
  */
-func deleteCredentialTest(namespace string, credId string, expectError string, r *Resource, t *testing.T) {
-	t.Logf("DELETE credential %s", credId)
+func deleteCredentialTest(namespace string, credID string, expectError string, r *Resource, t *testing.T) {
+	t.Logf("DELETE credential %s", credID)
 	// Create dummy rest api request and response
-	httpReq := dummyHttpRequest("DELETE", "http://wwww.dummy.com:8383/v1/namespaces/"+namespace+"/credentials/"+credId, nil)
+	httpReq := dummyHTTPRequest("DELETE", "http://wwww.dummy.com:8383/v1/namespaces/"+namespace+"/credentials/"+credID, nil)
 	req := dummyRestfulRequest(httpReq, namespace, "")
 	params := req.PathParameters()
-	params["id"] = credId
+	params["id"] = credID
 	httpWriter := httptest.NewRecorder()
 	resp := dummyRestfulResponse(httpWriter)
 
@@ -431,7 +433,7 @@ func deleteCredentialTest(namespace string, credId string, expectError string, r
 	}
 
 	// Verify agains K8s client
-	testCredential(r.getK8sCredential(namespace, credId), credential{}, t)
+	testCredential(r.getK8sCredential(namespace, credID), credential{}, t)
 }
 
 /*
@@ -443,24 +445,24 @@ func deleteCredentialTest(namespace string, credId string, expectError string, r
 func testParseResponse(body *bytes.Buffer, result interface{}, expectError string, t *testing.T) bool {
 	b, err := ioutil.ReadAll(body)
 	if err != nil {
-		t.Errorf("ERROR reading response body: %s", err.Error())
+		t.Errorf("FAIL: ERROR - reading response body: %s", err.Error())
 		return false
 	}
 	err = json.Unmarshal(b, result)
 	if err != nil {
 		resultError := string(b)
 		if resultError != expectError {
-			t.Errorf("ERROR: Error message == '%s', want '%s'", resultError, expectError)
+			t.Errorf("FAIL: ERROR - Error message == '%s', want '%s', body: %s", resultError, expectError, body)
 		}
 		return false
 	}
 	if expectError != "" {
-		t.Errorf("ERROR: Result == %+v, want error message '%s'", result, expectError)
+		t.Errorf("FAIL: ERROR - Result == %+v, want error message '%s'", result, expectError)
 	}
 	return true
 }
 
-// Compare two lists of credentials
+// Compares two lists of credentials
 func testCredentials(result []credential, expectResult []credential, t *testing.T) {
 	if len(result) != len(expectResult) {
 		t.Errorf("ERROR: Result == %+v, want %+v, different number of credentials", len(result), len(expectResult))
@@ -481,7 +483,7 @@ func testCredential(resultCred credential, expectCred credential, t *testing.T) 
 
 // Get all K8s client secrets with selector LABEL_SELECTOR
 func (r Resource) getK8sCredentials(namespace string) (credentials []credential) {
-	secrets, err := r.K8sClient.CoreV1().Secrets(namespace).List(metav1.ListOptions{LabelSelector: "restknative=true"})
+	secrets, err := r.K8sClient.CoreV1().Secrets(namespace).List(metav1.ListOptions{LabelSelector: "tektondashboard=true"})
 	if err != nil {
 		return
 	}

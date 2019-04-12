@@ -98,7 +98,7 @@ func sendRequests(t *testing.T, routes []string, httpMethod string) []string {
 			continue
 		}
 		requestBody := bytes.NewReader(b)
-		request := dummyHttpRequest(httpMethod,server.URL+route,requestBody)
+		request := dummyHTTPRequest(httpMethod,server.URL+route,requestBody)
 		t.Log("Request URL:",request.URL)
 		response, err := http.DefaultClient.Do(request)
 		if err != nil {
@@ -124,7 +124,7 @@ func sendRequests(t *testing.T, routes []string, httpMethod string) []string {
 func getRequests(t *testing.T, routes []string) {
 	for _, route := range routes {
 		t.Log("GET method:",route)
-		request := dummyHttpRequest(http.MethodGet,server.URL+route,bytes.NewReader([]byte{}))
+		request := dummyHTTPRequest(http.MethodGet,server.URL+route,bytes.NewReader([]byte{}))
 		t.Log("Request URL:",request.URL)
 		response, err := http.DefaultClient.Do(request)
 		if err != nil {
@@ -156,12 +156,12 @@ func fakeCRD(t *testing.T, crdType string) interface{} {
 	switch crdType {
 	case "credential":
 		return &credential{
-			Id:          "fake",
+			ID:          "fake",
 			Username:    "personal-access-token",
 			Password:    "passwordaccesstoken",
 			Description: "access token credential",
 			Type:        "accesstoken",
-			Url: map[string]string{
+			URL: map[string]string{
 				"tekton.dev/git-0": "https://github.com",
 			},
 		}
