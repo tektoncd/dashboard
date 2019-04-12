@@ -1,5 +1,3 @@
-package endpoints
-
 /*
 Copyright 2019 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,13 +11,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+package endpoints
+
 import (
 	"bytes"
 	"errors"
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -76,6 +75,8 @@ type ResourceBinding struct {
 //ManualPipelineRun - represents the data required to create a new PipelineRun
 type ManualPipelineRun struct {
 	PIPELINENAME      string `json:"pipelinename"`
+	REGISTRYLOCATION  string `json:"registrylocation,omitempty"`
+	SERVICEACCOUNT    string `json:"serviceaccount,omitempty"`
 	PIPELINERUNTYPE   string `json:"pipelineruntype,omitempty"`
 	GITRESOURCENAME   string `json:"gitresourcename,omitempty"`
 	IMAGERESOURCENAME string `json:"imageresourcename,omitempty"`
@@ -150,7 +151,7 @@ func (r Resource) getPipelineImpl(name, namespace string) (v1alpha1.Pipeline, er
 		logging.Log.Errorf("could not retrieve the pipeline called %s in namespace %s", name, namespace)
 		return v1alpha1.Pipeline{}, err
 	}
-	logging.Log.Debugf("Found the pipeline definition OK")
+	logging.Log.Debug("Found the pipeline definition OK")
 	return *pipeline, nil
 }
 
@@ -172,8 +173,7 @@ func (r Resource) getAllPipelineRuns(request *restful.Request, response *restful
 	}
 }
 
-// GetAllPipelineRunsImpl ...
-/* Returns a pointer to a list of PipelineRuns in a given namespace,
+/*GetAllPipelineRunsImpl - Returns a pointer to a list of PipelineRuns in a given namespace,
 optionally with a repository query as a parameter */
 func (r Resource) GetAllPipelineRunsImpl(namespace, repository string) (v1alpha1.PipelineRunList, AppError) {
 	logging.Log.Debugf("In getAllPipelineRunsImpl: namespace: `%s`, repository query: `%s`", namespace, repository)
@@ -185,7 +185,9 @@ func (r Resource) GetAllPipelineRunsImpl(namespace, repository string) (v1alpha1
 	if repository != "" {
 		server, org, repo, err := getGitValues(repository)
 		if err != nil {
-			logging.Log.Errorf("there was an error getting the Git values: %s", err)
+			errorMsg := "there was an error getting the Git values"
+			logging.Log.Errorf("%s: %s", errorMsg, err)
+			return v1alpha1.PipelineRunList{}, AppError{err, errorMsg, http.StatusInternalServerError}
 		}
 		match := gitServerLabel + "=" + server + "," + gitOrgLabel + "=" + org + "," + gitRepoLabel + "=" + repo
 		pipelinerunList, err = pipelineruns.List(metav1.ListOptions{LabelSelector: match})
@@ -230,31 +232,20 @@ func (r Resource) createPipelineRun(request *restful.Request, response *restful.
 	}
 }
 
-// CreatePipelineRunImpl ...
-/* Create a new manual pipeline run and resources in a given namespace */
+/*CreatePipelineRunImpl - Create a new manual pipeline run and resources in a given namespace */
 func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, namespace string) *AppError {
 
 	pipelineName := pipelineRunData.PIPELINENAME
-
-	saName := ""
-	providedSaName := os.Getenv("PIPELINE_RUN_SERVICE_ACCOUNT")
-	if providedSaName != "" {
-		saName = providedSaName
-	} else {
-		saName = "default"
-	}
-
-	logging.Log.Infof("PipelineRuns will be created in the namespace %s", namespace)
-	logging.Log.Infof("PipelineRuns will be created with the service account %s", saName)
+	serviceAccount := pipelineRunData.SERVICEACCOUNT
+	regsitryLocation := pipelineRunData.REGISTRYLOCATION
 
 	startTime := getDateTimeAsString()
 
-	// Assumes you've already applied the yml: so the pipeline definition and its tasks must exist upfront.
-	generatedPipelineRunName := fmt.Sprintf("devops-pipeline-run-%s", startTime)
+	generatedPipelineRunName := fmt.Sprintf("tekton-pipeline-run-%s", startTime)
 
+	// Assumes you've already applied the yml: so the pipeline definition and its tasks must exist upfront.
 	pipeline, err := r.getPipelineImpl(pipelineName, namespace)
-	// getPipelineImpl returns a null pipeline object if it doesn't exist, so be safe and check for that
-	if err != nil || pipeline.Name == "" {
+	if err != nil {
 		errorMsg := fmt.Sprintf("could not find the pipeline template %s in namespace %s", pipelineName, namespace)
 		logging.Log.Errorf(errorMsg)
 		return &AppError{err, errorMsg, http.StatusPreconditionFailed}
@@ -262,7 +253,7 @@ func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, names
 
 	logging.Log.Debugf("Found the pipeline template %s OK", pipelineName)
 
-	registryURL := os.Getenv("DOCKER_REGISTRY_LOCATION")
+	registryURL := regsitryLocation
 
 	var gitResource v1alpha1.PipelineResourceRef
 	var imageResource v1alpha1.PipelineResourceRef
@@ -302,9 +293,9 @@ func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, names
 		params = append(params, v1alpha1.Param{Name: "helm-secret", Value: pipelineRunData.HELMSECRET})
 	}
 	// PipelineRun yaml defines references to resources
-	newPipelineRunData := definePipelineRun(generatedPipelineRunName, namespace, saName, pipelineRunData.REPOURL, pipeline, v1alpha1.PipelineTriggerTypeManual, resources, params)
+	newPipelineRunData := definePipelineRun(generatedPipelineRunName, namespace, serviceAccount, pipelineRunData.REPOURL, pipeline, v1alpha1.PipelineTriggerTypeManual, resources, params)
 
-	logging.Log.Infof("Creating a new PipelineRun named %s in the namespace %s using the service account %s", generatedPipelineRunName, namespace, saName)
+	logging.Log.Infof("Creating a new PipelineRun named %s in the namespace %s", generatedPipelineRunName, namespace)
 
 	pipelineRun, err := r.PipelineClient.TektonV1alpha1().PipelineRuns(namespace).Create(newPipelineRunData)
 	if err != nil {
@@ -572,7 +563,7 @@ func (r Resource) createPipelineResource(resourceData ManualPipelineRun, namespa
 
 	startTime := getDateTimeAsString()
 
-	registryURL := os.Getenv("DOCKER_REGISTRY_LOCATION")
+	registryURL := resourceData.REGISTRYLOCATION
 	resourceName = fmt.Sprintf("%s-%s", resourceName, startTime)
 
 	var paramsForResource []v1alpha1.Param
