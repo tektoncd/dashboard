@@ -56,11 +56,11 @@ func (r Resource) RegisterEndpoints(container *restful.Container) {
 
 	wsv1.Route(wsv1.GET("/{namespace}/pipelinerunlog/{name}").To(r.getPipelineRunLog))
 
-	wsv1.Route(wsv1.GET("/{namespace}/credentials/").To(r.getAllCredentials))
-	wsv1.Route(wsv1.GET("/{namespace}/credentials/{id}").To(r.getCredential))
-	wsv1.Route(wsv1.POST("/{namespace}/credentials/").To(r.createCredential))
-	wsv1.Route(wsv1.PUT("/{namespace}/credentials/{id}").To(r.updateCredential))
-	wsv1.Route(wsv1.DELETE("/{namespace}/credentials/{id}").To(r.deleteCredential))
+	wsv1.Route(wsv1.GET("/{namespace}/credential").To(r.getAllCredentials))
+	wsv1.Route(wsv1.GET("/{namespace}/credential/{id}").To(r.getCredential))
+	wsv1.Route(wsv1.POST("/{namespace}/credential").To(r.createCredential))
+	wsv1.Route(wsv1.PUT("/{namespace}/credential/{id}").To(r.updateCredential))
+	wsv1.Route(wsv1.DELETE("/{namespace}/credential/{id}").To(r.deleteCredential))
 
 	container.Add(wsv1)
 }
@@ -83,7 +83,7 @@ func (r Resource) RegisterHealthProbes(container *restful.Container) {
 	wsv3.
 		Path("/health")
 
-	wsv3.Route(wsv3.GET("/").To(r.checkHealth))
+	wsv3.Route(wsv3.GET("").To(r.checkHealth))
 
 	container.Add(wsv3)
 }
@@ -94,14 +94,14 @@ func (r Resource) RegisterReadinessProbes(container *restful.Container) {
 	wsv4.
 		Path("/readiness")
 
-	wsv4.Route(wsv4.GET("/").To(r.checkHealth))
+	wsv4.Route(wsv4.GET("").To(r.checkHealth))
 
 	container.Add(wsv4)
 }
 
-// Write Content-Location header within PUT/POST methods
-// Content-Location is GET equivalent of the request route
+// Write Content-Location header within PUT/POST methods and set StatusCode to 201
 // Headers MUST be set before writing to body (if any) to succeed
-func setContentLocation(request *restful.Request, response *restful.Response) {
+func writeResponseLocation(request *restful.Request, response *restful.Response) {
 	response.AddHeader("Content-Location",request.SelectedRoutePath())
+	response.WriteHeader(201)
 }

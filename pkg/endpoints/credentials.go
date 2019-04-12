@@ -116,6 +116,7 @@ func (r Resource) getCredential(request *restful.Request, response *restful.Resp
  *  - type (must have the value 'accesstoken' or 'userpass')
  */
 func (r Resource) createCredential(request *restful.Request, response *restful.Response) {
+	logging.Log.Info("CREATE CREDENTIAL")
 	// Get path parameter
 	requestNamespace := request.PathParameter("namespace")
 	// Get query parameters
@@ -146,7 +147,7 @@ func (r Resource) createCredential(request *restful.Request, response *restful.R
 		utils.RespondErrorAndMessage(response, err, errorMessage, http.StatusBadRequest)
 		return
 	}
-	setContentLocation(request,response)
+	writeResponseLocation(request,response)
 }
 
 /* API route for updating a given credential
@@ -196,7 +197,7 @@ func (r Resource) updateCredential(request *restful.Request, response *restful.R
 		utils.RespondErrorAndMessage(response, err, errorMessage, http.StatusBadRequest)
 		return
 	}
-	setContentLocation(request,response)
+	writeResponseLocation(request,response)
 }
 
 /* API route for creating a given credential
