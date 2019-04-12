@@ -13,6 +13,9 @@ limitations under the License.
 package endpoints
 
 import (
+	"strings"
+	"net/http"
+
 	restful "github.com/emicklei/go-restful"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
 	"github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
@@ -101,7 +104,14 @@ func (r Resource) RegisterReadinessProbes(container *restful.Container) {
 
 // Write Content-Location header within PUT/POST methods and set StatusCode to 201
 // Headers MUST be set before writing to body (if any) to succeed
-func writeResponseLocation(request *restful.Request, response *restful.Response) {
-	response.AddHeader("Content-Location",request.SelectedRoutePath())
+func writeResponseLocation(request *restful.Request, response *restful.Response, identifier string) {
+	location := request.SelectedRoutePath()
+	for k,v := range request.PathParameters() {
+		location = strings.Replace(location,"{"+k+"}",v,-1)
+	}
+	if request.Request.Method == http.MethodPost {
+		location = location + "/" + identifier
+	}
+	response.AddHeader("Content-Location",location)
 	response.WriteHeader(201)
 }

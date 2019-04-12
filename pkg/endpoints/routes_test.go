@@ -45,6 +45,7 @@ func TestMain(m *testing.M) {
 	}
 
 	// Remove all Put methods that do not have a corresponding POST
+	// Cannot update what can not be created
 	postMap := make(map[string]struct{})
 	for _, route := range methodMap[http.MethodPost] {
 		postMap[route] = struct{}{}
@@ -68,24 +69,22 @@ func Test201Url(t *testing.T) {
 	// POST ROUTES:
 	t.Log("Checking POST routes for 201 StatusCode and valid Content-Location header")
 	// Make requests for all existing POST routes (POST data to get Content-Location header)
-	sendRequests(t,methodMap[http.MethodPost],http.MethodPost)
+	checkPostRoutes := sendRequests(t,methodMap[http.MethodPost],http.MethodPost)
 	// Validate Content-Location header
-	var postToGetRoutes []string
-	for _, r := range methodMap[http.MethodPost] {
-		postToGetRoutes = append(postToGetRoutes, r+"/fake")
-	}
-	getRequests(t,postToGetRoutes)
+	getRequests(t,checkPostRoutes)
 
 	// PUT ROUTES:
 	t.Log("Checking PUT routes for 201 StatusCode and valid Content-Location header")
 	// Make requests for all existing PUT routes (PUT "updates" data to the same values as POST to get Content-Location header)
-	sendRequests(t,methodMap[http.MethodPut],http.MethodPut)
+	checkPutRoutes := sendRequests(t,methodMap[http.MethodPut],http.MethodPut)
 	// Validate Content-Location header
-	getRequests(t,methodMap[http.MethodPut])
+	getRequests(t,checkPutRoutes)
 }
 
-
-func sendRequests(t *testing.T, routes []string, httpMethod string) {
+// POST/PUT CRDs according to routes
+// Return Content-Location of resources created
+func sendRequests(t *testing.T, routes []string, httpMethod string) []string {
+	var resourceLocations []string
 	for _, route := range routes {
 		t.Logf("%s method: %s",httpMethod,route)
 		resourceType := getResourceType(route,httpMethod)
@@ -110,13 +109,18 @@ func sendRequests(t *testing.T, routes []string, httpMethod string) {
 		if response.StatusCode != 201 {
 			t.Error("Status code not set to 201")
 		}
-		_, ok := response.Header["Content-Location"]
+		contentLocation, ok := response.Header["Content-Location"]
 		if !ok {
 			t.Errorf("Content-Location header not provided in %s method for resource type: %s",httpMethod,resourceType)
+		} else {
+			// "Content-Location" header is only set with single value
+			resourceLocations = append(resourceLocations,contentLocation[0]) 
 		}
 	}
+	return resourceLocations
 }
 
+// Check that resource exists
 func getRequests(t *testing.T, routes []string) {
 	for _, route := range routes {
 		t.Log("GET method:",route)
@@ -128,45 +132,6 @@ func getRequests(t *testing.T, routes []string) {
 			continue
 		}
 		t.Log("Response from server:",response)
-	}
-}
-
-// routeMap overrides global variable
-func makeRequests(t *testing.T, routes []string, httpMethod string) {
-	for _, route := range routes {
-		t.Logf("%s method: %s",httpMethod,route)
-		var requestBody *bytes.Reader = bytes.NewReader([]byte{})
-		var resourceType string
-		if isDataMethod(httpMethod) {
-			resourceType = getResourceType(route,httpMethod)
-			resource := fakeCRD(t,resourceType)
-			if resource == nil {
-				continue
-			}
-			b, err := json.Marshal(&resource)
-			if err != nil {
-				t.Error("Failed to marshal resource type:",resourceType)
-				continue
-			}
-			requestBody = bytes.NewReader(b)
-		}
-		request := dummyHttpRequest(httpMethod,server.URL+route,requestBody)
-		t.Log("Request URL:",request.URL)
-		response, err := http.DefaultClient.Do(request)
-		if err != nil {
-			t.Error("Response error from server:",err)
-			continue
-		}
-		t.Log("Response from server:",response)
-		if isDataMethod(httpMethod) {
-			if response.StatusCode != 201 {
-				t.Error("Status code not set to 201")
-			}
-			_, ok := response.Header["Content-Location"]
-			if !ok {
-				t.Errorf("Content-Location header not provided in %s method for resource type: %s",httpMethod,resourceType)
-			}
-		}
 	}
 }
 
@@ -186,12 +151,7 @@ func getResourceType(route string, httpMethod string) string {
 	}
 }
 
-func isDataMethod(httpMethod string) bool {
-	return httpMethod == http.MethodPost || httpMethod == http.MethodPut
-}
-
-
-// All identifiers/names should be "fake"
+// All identifiers/names must be set to "fake"
 func fakeCRD(t *testing.T, crdType string) interface{} {
 	switch crdType {
 	case "credential":
