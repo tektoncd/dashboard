@@ -14,6 +14,7 @@ package endpoints
 
 import (
 	"bytes"
+	"reflect"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -299,7 +300,7 @@ func createCredentialTest(namespace string, cred credential, expectError string,
 		return
 	}
 
-	// Verify agains K8s client
+	// Verify against K8s client
 	testCredential(r.getK8sCredential(namespace, cred.Id), cred, t)
 }
 
@@ -461,34 +462,20 @@ func testParseResponse(body *bytes.Buffer, result interface{}, expectError strin
 
 // Compare two lists of credentials
 func testCredentials(result []credential, expectResult []credential, t *testing.T) {
-	t.Logf("log result creds: %+v\n", result)
-	t.Logf("log expect creds: %+v\n", expectResult)
 	if len(result) != len(expectResult) {
-		t.Errorf("ERROR: Result == %+v, want %+v, different number of credentials", result, expectResult)
+		t.Errorf("ERROR: Result == %+v, want %+v, different number of credentials", len(result), len(expectResult))
 	}
 	for i := range expectResult {
-		expectCred := expectResult[i]
-		resultCred := result[i]
-		testCredential(resultCred, expectCred, t)
+		testCredential(result[i], expectResult[i], t)
 	}
 }
 
 // Compare two credentials
 func testCredential(resultCred credential, expectCred credential, t *testing.T) {
-	t.Logf("log result cred: %+v\n", resultCred)
-	t.Logf("log expect cred: %+v\n", expectCred)
-	// Result credential might have more fields than the expected one
-	if resultCred.Id != expectCred.Id ||
-		resultCred.Username != expectCred.Username ||
-		resultCred.Password != expectCred.Password ||
-		resultCred.Description != expectCred.Description ||
-		resultCred.Type != expectCred.Type {
-		t.Errorf("ERROR: Result == %+v, want %+v", resultCred, expectCred)
-	}
-	for key, _ := range expectCred.Url {
-		if _, ok := resultCred.Url[key]; !ok || resultCred.Url[key] != expectCred.Url[key] {
-			t.Errorf("ERROR: Result == %+v, want %+v for key %s", resultCred.Url, expectCred.Url, key)
-		}
+	t.Logf("Result cred: %+v\n", resultCred)
+	t.Logf("Expect cred: %+v\n", expectCred)
+	if !reflect.DeepEqual(resultCred,expectCred) {
+		t.Error("Credentials not equal")
 	}
 }
 
@@ -499,7 +486,7 @@ func (r Resource) getK8sCredentials(namespace string) (credentials []credential)
 		return
 	}
 	for _, secret := range secrets.Items {
-		credentials = append(credentials, secretToJson(&secret))
+		credentials = append(credentials, secretToCredential(&secret,false))
 	}
 	return credentials
 }
@@ -510,19 +497,5 @@ func (r Resource) getK8sCredential(namespace string, name string) (credential cr
 	if err != nil {
 		return
 	}
-	return secretToJson(secret)
-}
-
-// Convert K8s secret struct into credential struct
-func secretToJson(secret *corev1.Secret) credential {
-	cred := credential{
-		Id:              secret.GetName(),
-		Username:        string(secret.Data["username"]),
-		Password:        string(secret.Data["password"]),
-		Description:     string(secret.Data["description"]),
-		Type:            string(secret.Data["type"]),
-		Url:             secret.ObjectMeta.Annotations,
-		ResourceVersion: secret.GetResourceVersion(),
-	}
-	return cred
+	return secretToCredential(secret,false)
 }

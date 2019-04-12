@@ -63,7 +63,7 @@ func (r Resource) getAllCredentials(request *restful.Request, response *restful.
 	// Parse K8s secrets to credentials
 	creds := []credential{}
 	for _, secret := range secrets.Items {
-		creds = append(creds, secretToCredential(&secret))
+		creds = append(creds, secretToCredential(&secret,true))
 	}
 
 	// Write the response
@@ -99,7 +99,7 @@ func (r Resource) getCredential(request *restful.Request, response *restful.Resp
 	}
 
 	// Parse K8s secret to credential
-	cred := secretToCredential(secret)
+	cred := secretToCredential(secret,true)
 
 	// Write the response
 	response.AddHeader("Content-Type", "application/json")
@@ -146,6 +146,7 @@ func (r Resource) createCredential(request *restful.Request, response *restful.R
 		utils.RespondErrorAndMessage(response, err, errorMessage, http.StatusBadRequest)
 		return
 	}
+	setContentLocation(request,response)
 }
 
 /* API route for updating a given credential
@@ -195,6 +196,7 @@ func (r Resource) updateCredential(request *restful.Request, response *restful.R
 		utils.RespondErrorAndMessage(response, err, errorMessage, http.StatusBadRequest)
 		return
 	}
+	setContentLocation(request,response)
 }
 
 /* API route for creating a given credential
@@ -297,15 +299,18 @@ func getQueryEntity(entityPointer interface{}, request *restful.Request, respons
 }
 
 // Convert K8s secret struct into credential struct
-func secretToCredential(secret *corev1.Secret) credential {
+func secretToCredential(secret *corev1.Secret, mask bool) credential {
 	cred := credential{
 		Id:              secret.GetName(),
 		Username:        string(secret.Data["username"]),
-		Password:        "********",
+		Password:        string(secret.Data["password"]),
 		Description:     string(secret.Data["description"]),
 		Type:            string(secret.Data["type"]),
 		Url:             secret.ObjectMeta.Annotations,
 		ResourceVersion: secret.GetResourceVersion(),
+	}
+	if mask {
+		cred.Password = "********"
 	}
 	return cred
 }

@@ -81,9 +81,7 @@ func (r Resource) RegisterHealthProbes(container *restful.Container) {
 	logging.Log.Info("Adding API for health")
 	wsv3 := new(restful.WebService)
 	wsv3.
-		Path("/health").
-		Consumes(restful.MIME_JSON).
-		Produces(restful.MIME_JSON)
+		Path("/health")
 
 	wsv3.Route(wsv3.GET("/").To(r.checkHealth))
 
@@ -94,11 +92,16 @@ func (r Resource) RegisterReadinessProbes(container *restful.Container) {
 	logging.Log.Info("Adding API for health")
 	wsv4 := new(restful.WebService)
 	wsv4.
-		Path("/readiness").
-		Consumes(restful.MIME_JSON).
-		Produces(restful.MIME_JSON)
+		Path("/readiness")
 
 	wsv4.Route(wsv4.GET("/").To(r.checkHealth))
 
 	container.Add(wsv4)
+}
+
+// Write Content-Location header within PUT/POST methods
+// Content-Location is GET equivalent of the request route
+// Headers MUST be set before writing to body (if any) to succeed
+func setContentLocation(request *restful.Request, response *restful.Response) {
+	response.AddHeader("Content-Location",request.SelectedRoutePath())
 }
