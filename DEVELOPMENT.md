@@ -6,8 +6,9 @@ Many of the instructions here replicate what's in the [tektoncd/pipeline develop
 
 1. This project currently does not support being built with `ko`
 2. This project has not yet been tested with GKE
+3. The instructions here pertain to building the backend that lets us interact with Tekton resources. Frontend instructions are to follow.
 
-We would love to accomplish both of these tasks and to update this document, contributions welcome!
+We would love to accomplish these tasks and to update this document, contributions welcome!
 
 ### Requirements
 
