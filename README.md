@@ -8,7 +8,7 @@ Tekton Dashboard is a general purpose, web-based UI for Tekton Pipelines. It all
 
 ## Getting Started
 
-**Currently** to view the backend APIs, at `localhost:9087/v1/namespaces/<namespace>/<resource name>` for example:
+**Currently** to view the backend APIs, at `localhost:9097/v1/namespaces/<namespace>/<resource name>` for example:
   
 ```sh
 $ kubectl apply -f tekton-dashboard-deployment.yaml
