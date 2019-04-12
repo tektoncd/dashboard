@@ -20,7 +20,9 @@ You must install these tools:
 1. [`dep`](https://github.com/golang/dep): For managing external Go
    dependencies. - Please Install dep v0.5.0 or greater.
 1. [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/): For
-   interacting with your kube cluster
+   interacting with your kube cluster. 
+   
+   Note that there exists a bug in certain versions of `kubectl` whereby the `auth` field is missing from created secrets. Known good versions we've tested are __1.11.3__ and __1.13.2__.
    
 ### Checkout your fork
 
@@ -48,7 +50,8 @@ _Adding the `upstream` remote sets you up nicely for regularly
 
 ## Environment Setup
 
-We recommend Docker building, pushing, and replacing the yaml in `install` to refer to your built and pushed image.
+- We've had good success using Docker Desktop: ensure your Kubernetes cluster is healthy and you have plenty of disk space allocated as PVs will be created for PipelineRuns.
+- Ensure you can push images to a Docker registry - the above listed requirements are only for local development, otherwise we pull in the tooling for you in the image.
 
 ### Namespaces
 
@@ -59,8 +62,10 @@ Currently you must install the Tekton dashboard into the same namespace you wish
 While iterating on the project, you may need to:
 
 1. Docker build and push your image of the dashboard
-1. Update your `install` yaml to refer to your image location
-1. Run the Go tests, for example with: `docker build -f Dockerfile_test .`
+1. Run the Go tests with: `docker build -f Dockerfile_test .`
+1. Replace the `image` reference in the yaml located in the `install` folder to reference your built and pushed image's location
+1. Install the dashboard
+1. Interact with the created Kubernetes service - we've had success using Postman on Mac and data provided must be JSON
 
 Tekton Dashboard does not involve any custom resource definitions, we only interact with them.
 
@@ -70,7 +75,7 @@ After you've built and pushed the image, and modified the `install` yaml to refe
 `kubectl config current-context`):
 
 ```shell
-kubectl apply -f `install/tekton-dashboard-deployment.yaml``
+kubectl apply -f `install`
 ```
 
 ## Access the dashboard
