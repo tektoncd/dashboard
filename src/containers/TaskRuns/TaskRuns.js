@@ -22,12 +22,13 @@ import StepDetails from '../../components/StepDetails';
 import TaskTree from '../../components/TaskTree';
 import { getStatus } from '../../utils';
 
-import '../../components/PipelineRun/PipelineRun.scss';
+import '../../components/Run/Run.scss';
 
 /* istanbul ignore next */
 class TaskRunsContainer extends Component {
   state = {
     error: null,
+    info: null,
     loading: true,
     selectedStepId: null,
     selectedTaskId: null,
@@ -59,6 +60,7 @@ class TaskRunsContainer extends Component {
   };
 
   async loadTaskRuns(taskName) {
+    let info;
     const tasks = await getTasks();
     const task = tasks.find(task => task.metadata.name === taskName);
     let taskRuns = await getTaskRuns();
@@ -68,11 +70,8 @@ class TaskRunsContainer extends Component {
       const taskRunName = taskRun.metadata.name;
       const { reason, status: succeeded } = getStatus(taskRun);
       const pipelineTaskName = taskRunName;
-      console.log({taskRun})
-      if(!taskRun.status.steps){
-        console.log(JSON.stringify(taskRun))
-      }
       const taskRunSteps = this.steps(task, taskRun.status.steps, taskName);
+      const startTime = taskRun.status.startTime;
       return {
         id: taskRun.metadata.uid,
         pipelineTaskName,
@@ -81,15 +80,16 @@ class TaskRunsContainer extends Component {
         steps: taskRunSteps,
         succeeded,
         taskName,
-        taskRunName
+        taskRunName,
+        startTime
       };
     });
 
     if(taskRuns.length == 0){
-      throw "Task has never been run";
+      info = "Task has never run";
     }
 
-    this.setState({ taskRuns, task, loading: false });
+    this.setState({ taskRuns, task, info, loading: false });
   }
 
   step() {
@@ -100,7 +100,7 @@ class TaskRunsContainer extends Component {
     }
     const step = taskRun.steps.find(s => s.id === selectedStepId);
     if (!step) {
-      return {};
+      return { taskRun };
     }
 
     const { id, stepName, stepStatus, status, reason, ...definition } = step;
@@ -141,15 +141,22 @@ class TaskRunsContainer extends Component {
     return steps;
   }
 
+  selectedTaskRun(){
+    const { selectedStepId, selectedTaskId, taskRuns } = this.state;
+    selectedTaskId ? taskRuns.find(run => run.id === selectedTaskId) : {}
+  }
+
   render() {
     const { match } = this.props;
     const { taskName } = match.params;
     const {
-      error,
+      notification,
       loading,
       selectedStepId,
       selectedTaskId,
-      taskRuns
+      taskRuns,
+      error,
+      info
     } = this.state;
 
     // TODO: actual error handling
@@ -164,48 +171,53 @@ class TaskRunsContainer extends Component {
       status,
       stepName,
       stepStatus,
-      taskRun
+      taskRun = {}
     } = this.step();
 
     return (
-      <div className="pipeline-run">
+      <div className="run">
         <RunHeader
           error={errorMessage}
-          lastTransitionTime=""
+          lastTransitionTime={taskRun.startTime}
           loading={loading}
           name={taskName}
-          type="tasks"
+          runName={taskRun.taskRunName}
+          status={taskRun.succeeded}
+          type="Tasks"
         />
         <main>
-          {error ? (
-            <InlineNotification
-              kind="error"
-              title="Error loading task run"
-              subtitle={JSON.stringify(
-                error,
-                Object.getOwnPropertyNames(error)
-              )}
-            />
-          ) : (
-            <div className="tasks">
-              <TaskTree
-                onSelect={this.handleTaskSelected}
-                selectedTaskId={selectedTaskId}
-                taskRuns={taskRuns}
-              />
-              {selectedStepId && (
-                <StepDetails
-                  definition={definition}
-                  reason={reason}
-                  status={status}
-                  stepName={stepName}
-                  stepStatus={stepStatus}
-                  taskRun={taskRun}
-                />
-              )}
-            </div>
-          )}
-        </main>
+         { error ? (<InlineNotification
+                  kind="error"
+                  title="Error loading task run"
+                  subtitle={JSON.stringify(
+                    error,
+                    Object.getOwnPropertyNames(error))}
+                   />)
+                :
+                  (info ? (<InlineNotification
+                   kind="info"
+                   title="Task runs not available"
+                   subtitle={JSON.stringify(
+                     info,
+                     Object.getOwnPropertyNames(info))}/>) 
+                   :
+                   (<div className="tasks">
+                       <TaskTree
+                         onSelect={this.handleTaskSelected}
+                         selectedTaskId={selectedTaskId}
+                         taskRuns={taskRuns} />
+                       {selectedStepId && (
+                         <StepDetails
+                           definition={definition}
+                           reason={reason}
+                           status={status}
+                           stepName={stepName}
+                           stepStatus={stepStatus}
+                           taskRun={taskRun}
+                     />)}
+                    </div>))
+                }
+        </main> 
       </div>
     );
   }

@@ -22,7 +22,7 @@ import StepDetails from '../../components/StepDetails';
 import TaskTree from '../../components/TaskTree';
 import { getStatus } from '../../utils';
 
-import '../../components/PipelineRun/PipelineRun.scss';
+import '../../components/Run/Run.scss';
 
 /* istanbul ignore next */
 class PipelineRunContainer extends Component {
@@ -206,7 +206,7 @@ class PipelineRunContainer extends Component {
     } = getStatus(pipelineRun);
 
     return (
-      <div className="pipeline-run">
+      <div className="run">
         <RunHeader
           error={errorMessage}
           lastTransitionTime={lastTransitionTime}
