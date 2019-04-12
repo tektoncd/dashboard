@@ -116,30 +116,54 @@ The backend API offers the following endpoints at `/v1/namespaces/<namespace>`:
 
 GET endpoints:
 ```
-GET /v1/namespaces/<namespace>/pipeline                                  - get all pipelines
-GET /v1/namespaces/<namespace>/pipeline/<pipeline-name>                  - get <pipeline-name> pipeline
+GET /v1/namespaces/<namespace>/pipeline
+Get all Tekton Pipelines
 
-GET /v1/namespaces/<namespace>/pipelinerun                               - get all pipelineruns, also supports '?repository=https://gitserver/foo/bar' querying
-GET /v1/namespaces/<namespace>/pipelinerun/<pipelinerun-name>            - get <pipelinerun-name> pipelinerun
+GET /v1/namespaces/<namespace>/pipeline/<pipeline-name>
+Get a Tekton Pipeline by name
 
-GET /v1/namespaces/<namespace>/task                                      - get all tasks
-GET /v1/namespaces/<namespace>/task/<task-name>                          - get <task-name> task
+GET /v1/namespaces/<namespace>/pipelinerun
+Get all Tekton PipelineRuns, also supports '?repository=https://gitserver/foo/bar' querying
 
-GET /v1/namespaces/<namespace>/taskrun                                   - get all taskruns
-GET /v1/namespaces/<namespace>/taskrun/<taskrun-name>                    - get <taskrun-name> taskrun
+GET /v1/namespaces/<namespace>/pipelinerun/<pipelinerun-name>
+Get a Tekton PipelineRun by name
 
-GET /v1/namespaces/<namespace>/pipelineresource                          - get all pipelineresources
-GET /v1/namespaces/<namespace>/pipelineresource/<pipelineresource-name>  - get <pipelineresource-name> pipelineresource
+GET /v1/namespaces/<namespace>/task
+Get all Tekton tasks
 
-GET /v1/namespaces/<namespace>/log/<pod-name>                            - get log of <pod-name> pod
-GET /v1/namespaces/<namespace>/taskrunlog/<taskrun-name>                 - get log of <taskrun-name> taskrun
+GET /v1/namespaces/<namespace>/task/<task-name>
+Get a Tekton Task by name
 
-GET /v1/namespaces/<namespace>/credentials                               - get all credentials
-GET /v1/namespaces/<namespace>/credentials/<id>                          - get credential <id>
+GET /v1/namespaces/<namespace>/taskrun
+Get all Tekton TaskRuns
 
-GET /v1/websocket/logs                                                   - WIP, get websocket stream of logs
+GET /v1/namespaces/<namespace>/taskrun/<taskrun-name>
+Get a Tekton TaskRun by name
 
-GET /v1/namespaces/<namespace>/knative/installstatus                     - get install status of a Knative resource group -> the request body should contain the resource group to check for. Shorthand values are accepted for Knative serving and eventing-sources: use ("component": "serving" or "eventing-sources"). Any Kubernetes group can be used too, for example: `extensions/v1beta1`
+GET /v1/namespaces/<namespace>/pipelineresource
+Get all Tekton PipelineResources
+
+GET /v1/namespaces/<namespace>/pipelineresource/<pipelineresource-name>
+Get a Tekton PipelineResource by name
+
+GET /v1/namespaces/<namespace>/log/<pod-name>
+Get the logs for a Pod by name
+
+GET /v1/namespaces/<namespace>/taskrunlog/<taskrun-name>
+Get the logs for a TaskRun by name- get log of <taskrun-name> taskrun
+
+GET /v1/namespaces/<namespace>/credentials
+Get all credentials by name
+
+GET /v1/namespaces/<namespace>/credentials/<id>
+Get a credential by ID
+
+GET /v1/websocket/logs
+WIP, get a websocket stream of logs
+
+GET /v1/namespaces/<namespace>/knative/installstatus                     
+Get the install status of a Knative resource group .
+The request body should contain the resource group to check for. Shorthand values are accepted for Knative serving and eventing-sources: use ("component": "serving" or "eventing-sources"). Any Kubernetes group can be used too, for example: `extensions/v1beta1`
 
 Returns HTTP code 204 if the component is installed (any Kubernetes resource can be provided)
 Returns HTTP code 400 if a bad request is sent
@@ -149,14 +173,20 @@ Note that a check of the resource definition being registered is performed: not 
 
 POST endpoint:
 ```
-POST /v1/namespaces/<namespace>/credentials                              - create new credential    -> request body must contain id, username, password, and type ('accesstoken' or 'userpass')
+POST /v1/namespaces/<namespace>/credentials
+Create a new credential
+Request body must contain id, username, password, and type ('accesstoken' or 'userpass')
 ```
 
 PUT endpoints:
 ```
-PUT /v1/namespaces/<namespace>/credentials/<id>                          - update credential <id>       -> request body must contain username, password, and type ('accesstoken' or 'userpass')
+PUT /v1/namespaces/<namespace>/credentials/<id>                          
+Update credential by ID
+Request body must contain username, password, and type ('accesstoken' or 'userpass')
 
-PUT /v1/namespaces/<namespace>/pipelinerun/<pipelinerun-name>            - update pipelinerun status    -> request body must contain desired status ("status: "PipelineRunCancelled" to cancel a running one). 
+PUT /v1/namespaces/<namespace>/pipelinerun/<pipelinerun-name>
+Update pipelinerun status
+Request body must contain desired status ("status": "PipelineRunCancelled" to cancel a running one). 
 
 Returns HTTP code 204 if the PipelineRun was cancelled successfully (no contents are provided in the response)
 Returns HTTP code 400 if a bad request was used
@@ -167,5 +197,6 @@ Returns HTTP code 500 if the PipelineRun could not be stopped (an error has occu
 
 DELETE endpoint:
 ```
-DELETE /v1/namespaces/<namespace>/credentials/<id>                       - delete credential <id>
+DELETE /v1/namespaces/<namespace>/credentials/<id>
+Delete a credential by ID
 ```
