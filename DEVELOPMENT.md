@@ -78,7 +78,7 @@ To access the backend API:
 
 `kubectl port-forward $(kubectl get pod -l app=tekton-dashboard -o name) 9097:9097`
 
-Note that we have a big TODO which is to link up the frontend to the backend.
+Note that we have a big TODO which is to link up the frontend to the backend and to document how to build and run the frontend for yourself.
 
 ### Redeploy dashboard
 
