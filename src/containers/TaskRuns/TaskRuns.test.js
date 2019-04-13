@@ -27,7 +27,6 @@ it('TaskRunsContainer renders', async () => {
       taskName
     }
   };
-  const getTasks = jest.spyOn(API, 'getTasks').mockImplementation(() => '');
   const tasksCall = jest.spyOn(API, 'getTasks').mockImplementation(() => '');
   const taskRunsCall = jest
     .spyOn(API, 'getTaskRuns')
@@ -46,7 +45,6 @@ it('TaskRunsContainer handles info state', async () => {
       taskName
     }
   };
-  const getTasks = jest.spyOn(API, 'getTasks').mockImplementation(() => '');
   const tasksCall = jest
     .spyOn(API, 'getTasks')
     .mockImplementation(() => [{ metadata: { name: taskName } }]);
@@ -73,6 +71,6 @@ it('TaskRunsContainer handles error state', async () => {
     throw error;
   });
   const { getByText } = renderWithRouter(<TaskRunsContainer match={match} />);
-  await waitForElement(() => getByText('Error'));
+  await waitForElement(() => getByText('Error loading task run'));
   expect(getTasks).toHaveBeenCalledTimes(1);
 });

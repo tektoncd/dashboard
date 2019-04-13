@@ -35,3 +35,31 @@ export function getStatusIcon({ reason, status }) {
 
   return icon ? <Icon name={icon} className="status-icon" /> : null;
 }
+
+export function taskRunStep(selectedStepId, taskRun) {
+  if (!taskRun || !taskRun.steps) {
+    return {};
+  }
+  const step = taskRun.steps.find(s => s.id === selectedStepId);
+  if (!step) {
+    return {};
+  }
+
+  const { id, stepName, stepStatus, status, reason, ...definition } = step;
+
+  return {
+    definition,
+    reason,
+    stepName,
+    stepStatus,
+    status
+  };
+}
+
+export function selectedTask(selectedTaskName, tasks) {
+  return tasks.find(t => t.metadata.name === selectedTaskName);
+}
+
+export function selectedTaskRun(selectedTaskId, taskRuns) {
+  return taskRuns.find(run => run.id === selectedTaskId);
+}

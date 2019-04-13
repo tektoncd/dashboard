@@ -20,20 +20,18 @@ import { getTasks, getTaskRuns } from '../../api';
 import RunHeader from '../../components/RunHeader';
 import StepDetails from '../../components/StepDetails';
 import TaskTree from '../../components/TaskTree';
-import { getStatus } from '../../utils';
+import { getStatus, taskRunStep, selectedTaskRun } from '../../utils';
 
 import '../../components/Run/Run.scss';
 
 /* istanbul ignore next */
 class TaskRunsContainer extends Component {
   state = {
-    error: null,
-    info: null,
+    notification: null,
     loading: true,
     selectedStepId: null,
     selectedTaskId: null,
-    taskRuns: [],
-    task: null
+    taskRuns: []
   };
 
   async componentDidMount() {
@@ -42,7 +40,14 @@ class TaskRunsContainer extends Component {
       const { taskName } = match.params;
       await this.loadTaskRuns(taskName);
     } catch (error) {
-      this.setState({ error, loading: false });
+      let message = error;
+      if (error.response) {
+        message = error.response.status === 404 ? 'Not Found' : 'Error';
+      }
+      this.setState({
+        notification: { kind: 'error', message },
+        loading: false
+      });
     }
   }
 
@@ -59,7 +64,7 @@ class TaskRunsContainer extends Component {
   };
 
   async loadTaskRuns(selectedTaskName) {
-    let info;
+    let notification;
     const tasks = await getTasks();
     const task = tasks.find(
       currentTask => currentTask.metadata.name === selectedTaskName
@@ -75,14 +80,14 @@ class TaskRunsContainer extends Component {
         const taskRunName = taskRun.metadata.name;
         const { reason, status: succeeded } = getStatus(taskRun);
         const pipelineTaskName = taskRunName;
-        const taskRunSteps = this.steps(task, taskRun.status.steps);
+        const runSteps = this.steps(task, taskRun.status.steps);
         const { startTime } = taskRun.status;
         return {
           id: taskRun.metadata.uid,
           pipelineTaskName,
           pod: taskRun.status.podName,
           reason,
-          steps: taskRunSteps,
+          steps: runSteps,
           succeeded,
           taskName,
           taskRunName,
@@ -91,33 +96,13 @@ class TaskRunsContainer extends Component {
       });
 
     if (taskRuns.length === 0) {
-      info = 'Task has never run';
+      notification = {
+        kind: 'info',
+        message: 'Task has never run'
+      };
     }
 
-    this.setState({ taskRuns, task, info, loading: false });
-  }
-
-  step() {
-    const { selectedStepId, selectedTaskId, taskRuns } = this.state;
-    const taskRun = taskRuns.find(run => run.id === selectedTaskId);
-    if (!taskRun) {
-      return {};
-    }
-    const step = taskRun.steps.find(s => s.id === selectedStepId);
-    if (!step) {
-      return { taskRun };
-    }
-
-    const { id, stepName, stepStatus, status, reason, ...definition } = step;
-
-    return {
-      definition,
-      reason,
-      stepName,
-      stepStatus,
-      status,
-      taskRun
-    };
+    this.setState({ taskRuns, notification, loading: false });
   }
 
   steps(task, stepsStatus) {
@@ -146,6 +131,21 @@ class TaskRunsContainer extends Component {
     return steps;
   }
 
+  // once redux store is available errors will be handled properly with dedicated components
+  notification(notification) {
+    const { kind, message } = notification;
+    const titles = {};
+    titles.info = 'Task runs not available';
+    titles.error = 'Error loading task run';
+    return (
+      <InlineNotification
+        kind={kind}
+        title={titles[kind]}
+        subtitle={JSON.stringify(message, Object.getOwnPropertyNames(message))}
+      />
+    );
+  }
+
   render() {
     const { match } = this.props;
     const { taskName } = match.params;
@@ -154,29 +154,19 @@ class TaskRunsContainer extends Component {
       selectedStepId,
       selectedTaskId,
       taskRuns,
-      error,
-      info
+      notification
     } = this.state;
 
-    // TODO: actual error handling
-    let errorMessage;
-    if (error && error.response) {
-      errorMessage = error.response.status === 404 ? 'Not Found' : 'Error';
-    }
+    const taskRun = selectedTaskRun(selectedTaskId, taskRuns) || {};
 
-    const {
-      definition,
-      reason,
-      status,
-      stepName,
-      stepStatus,
-      taskRun = {}
-    } = this.step();
+    const { definition, reason, status, stepName, stepStatus } = taskRunStep(
+      selectedStepId,
+      taskRun
+    );
 
     return (
       <div className="run">
         <RunHeader
-          error={errorMessage}
           lastTransitionTime={taskRun.startTime}
           loading={loading}
           name={taskName}
@@ -185,21 +175,8 @@ class TaskRunsContainer extends Component {
           type="Tasks"
         />
         <main>
-          {error ? (
-            <InlineNotification
-              kind="error"
-              title="Error loading task run"
-              subtitle={JSON.stringify(
-                error,
-                Object.getOwnPropertyNames(error)
-              )}
-            />
-          ) : info ? (
-            <InlineNotification
-              kind="info"
-              title="Task runs not available"
-              subtitle={JSON.stringify(info, Object.getOwnPropertyNames(info))}
-            />
+          {notification ? (
+            this.notification(notification)
           ) : (
             <div className="tasks">
               <TaskTree

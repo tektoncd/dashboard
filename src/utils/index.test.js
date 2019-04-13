@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { getStatus } from '.';
+import { getStatus, taskRunStep, selectedTask } from '.';
 
 it('getStatus', () => {
   const taskRun = {
@@ -41,4 +41,62 @@ it('getStatus with no status', () => {
   const taskRun = {};
   const status = getStatus(taskRun);
   expect(status).toEqual({});
+});
+
+it('taskRunSteps with no taskRun', () => {
+  const taskRun = null;
+  const step = taskRunStep('selected run', taskRun);
+  expect(step).toEqual({});
+});
+
+it('taskRunStep with no taskRun', () => {
+  const taskRun = null;
+  const step = taskRunStep('selected run', taskRun);
+  expect(step).toEqual({});
+});
+
+it('taskRunStep with no steps', () => {
+  const taskRun = {};
+  const step = taskRunStep('selected run', taskRun);
+  expect(step).toEqual({});
+});
+
+it('taskRunStep with no steps', () => {
+  const stepName = 'testName';
+  const id = 'id';
+  const targetStep = { id, stepName };
+  const taskRun = { steps: [targetStep] };
+  const step = taskRunStep(id, taskRun);
+  expect(step.stepName).toEqual(stepName);
+});
+
+it('taskRunStep does not contain selected step', () => {
+  const stepName = 'testName';
+  const id = 'id';
+  const targetStep = { id, stepName };
+  const taskRun = { steps: [targetStep] };
+  const step = taskRunStep('wrong id', taskRun);
+  expect(step).toEqual({});
+});
+
+it('taskRunStep with step finds step', () => {
+  const stepName = 'testName';
+  const id = 'id';
+  const targetStep = { id, stepName };
+  const taskRun = { steps: [targetStep] };
+  const step = taskRunStep(id, taskRun);
+  expect(step.stepName).toEqual(stepName);
+});
+
+it('selectedTask find not exists', () => {
+  const taskName = 'testName';
+  const foundTask = selectedTask(taskName, []);
+  expect(foundTask).toEqual(undefined);
+});
+
+it('selectedTask find exists', () => {
+  const taskName = 'testName';
+  const expectedTask = { metadata: { name: taskName } };
+  const foundTask = selectedTask(taskName, [expectedTask]);
+  expect(foundTask.metadata.name).toEqual(taskName);
 });
