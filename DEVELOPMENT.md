@@ -143,6 +143,8 @@ Returns HTTP code 404 if an error occurred getting the Task list
 
 GET /v1/namespaces/<namespace>/task/<task-name>
 Get a Tekton Task by name
+Returns HTTP code 200 and the given Task in the given namespace if found
+Returns HTTP code 404 if an error occurred getting the TaskRun 
 
 GET /v1/namespaces/<namespace>/taskrun
 Get all Tekton TaskRuns
@@ -151,37 +153,88 @@ Returns HTTP code 404 if an error occurred getting the TaskRun list
 
 GET /v1/namespaces/<namespace>/taskrun/<taskrun-name>
 Get a Tekton TaskRun by name
+Returns HTTP code 200 and the given TaskRun in the given namespace if found
+Returns HTTP code 404 if an error occurred getting the TaskRun 
 
 GET /v1/namespaces/<namespace>/pipelineresource
 Get all Tekton PipelineResources
 Returns HTTP code 200 and a list of PipelineResources in the given namespace 
-Returns HTTP code 404 if an error occurred getting the PipelineRun list
+Returns HTTP code 404 if an error occurred getting the PipelineResource list
 
 GET /v1/namespaces/<namespace>/pipelineresource/<pipelineresource-name>
 Get a Tekton PipelineResource by name
+Returns HTTP code 200 and the given PipelineResource in the given namespace if found
+Returns HTTP code 404 if an error occurred getting the PipelineResource 
 
 GET /v1/namespaces/<namespace>/log/<pod-name>
 Get the logs for a Pod by name
+Returns HTTP code 200 and the pod's logs in the given namespace if found
+Returns HTTP code 404 if an error occurred getting the logs or no pod was found by name in the given namespace
 
 GET /v1/namespaces/<namespace>/taskrunlog/<taskrun-name>
-Get the logs for a TaskRun by name- get log of <taskrun-name> taskrun
+Get the logs for a TaskRun by name-
+Returns HTTP code 200 and the logs from a TaskRun
+
+Example payload response:
+
+{
+ "PodName": "run-pipeline0-pipeline0-task-bk48w-pod-0fd388",
+ "Steps": [
+  {
+   "ContainerName": "build-step-git-source-pipeline0-git-source-lqzds",
+   "Logs": [
+    "{\"level\":\"warn\",\"ts\":1554153223.112332,\"logger\":\"fallback-logger\",\"caller\":\"logging/config.go:65\",\"msg\":\"Fetch GitHub commit ID from kodata failed: \\\"ref: refs/heads/master\\\" is not a valid GitHub commit ID\"}",
+    "{\"level\":\"info\",\"ts\":1554153223.7619479,\"logger\":\"fallback-logger\",\"caller\":\"git-init/main.go:100\",\"msg\":\"Successfully cloned \\\"https://github.com/ncskier/tekton-pipeline-config\\\" @ \\\"master\\\" in path \\\"/workspace/git-source\\\"\"}"
+   ]
+  },
+  {
+   "ContainerName": "build-step-kubectl-apply",
+   "Logs": [
+    "task.tekton.dev/build-push created",
+    "task.tekton.dev/deploy-simple-kubectl-task created",
+    "pipeline.tekton.dev/simple-pipeline created"
+   ]
+  },
+  {
+   "ContainerName": "nop",
+   "Logs": [
+    "Build successful"
+   ]
+  },
+  {
+   "ContainerName": "build-step-credential-initializer-ml54v",
+   "Logs": [
+    "{\"level\":\"warn\",\"ts\":1554153217.318807,\"logger\":\"fallback-logger\",\"caller\":\"logging/config.go:65\",\"msg\":\"Fetch GitHub commit ID from kodata failed: \\\"ref: refs/heads/master\\\" is not a valid GitHub commit ID\"}",
+    "{\"level\":\"info\",\"ts\":1554153217.3199604,\"logger\":\"fallback-logger\",\"caller\":\"creds-init/main.go:40\",\"msg\":\"Credentials initialized.\"}"
+   ]
+  },
+  {
+   "ContainerName": "build-step-place-tools",
+   "Logs": null
+  }
+ ]
+}
+
+Returns HTTP code 404 if an error occurred getting the logs or TaskRun pod was found by name in the given namespace
 
 GET /v1/namespaces/<namespace>/credentials
 Get all credentials by name in the given namespace
+Returns HTTP code 503 if an error occurred getting the credentials
+Returns HTTP code 200 and the given credential as a Kubernetes secret in the given namespace with a blanked out password if found, otherwise an empty list is returned
 
 GET /v1/namespaces/<namespace>/credentials/<id>
 Get a credential by ID
-
-GET /v1/websocket/logs
-WIP, get a websocket stream of logs
+Returns HTTP code 503 if an error occurred getting the credential
+Returns HTTP code 200 and the given credential as a Kubernetes secret in the given namespace with a blanked out password, otherwise an empty list is returned
 
 GET /v1/namespaces/<namespace>/knative/installstatus                     
-Get the install status of a Knative resource group .
+Get the install status of a Knative resource group.
 The request body should contain the resource group to check for. Shorthand values are accepted for Knative serving and eventing-sources: use ("component": "serving" or "eventing-sources"). Any Kubernetes group can be used too, for example: `extensions/v1beta1`
 
 Returns HTTP code 204 if the component is installed (any Kubernetes resource can be provided)
 Returns HTTP code 400 if a bad request is sent
 Returns HTTP code 417 (expectation failed) if the resource is not registered
+
 Note that a check of the resource definition being registered is performed: not that pods are running and healthy.
 ```
 
@@ -190,6 +243,7 @@ POST endpoint:
 POST /v1/namespaces/<namespace>/credentials
 Create a new credential
 Request body must contain id, username, password, and type ('accesstoken' or 'userpass')
+
 ```
 
 PUT endpoints:
