@@ -263,7 +263,7 @@ func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, names
 		gitResource, err = r.createPipelineResourceForPipelineRun(pipelineRunData, namespace, pipelineRunData.GITRESOURCENAME, v1alpha1.PipelineResourceTypeGit)
 		if err != nil {
 			errorMsg := fmt.Sprintf("Could not create the PipelineResource of type Git with provdided name %s", pipelineRunData.GITRESOURCENAME)
-			logging.Log.Errorf(errorMsg)
+			logging.Log.Error(errorMsg)
 			return &AppResponse{err, errorMsg, http.StatusInternalServerError}
 		}
 		resources = append(resources, v1alpha1.PipelineResourceBinding{Name: pipelineRunData.GITRESOURCENAME, ResourceRef: gitResource})
@@ -273,7 +273,7 @@ func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, names
 		imageResource, err = r.createPipelineResourceForPipelineRun(pipelineRunData, namespace, pipelineRunData.IMAGERESOURCENAME, v1alpha1.PipelineResourceTypeImage)
 		if err != nil {
 			errorMsg := fmt.Sprintf("Could not create the PipelineResource of type Image with provdided name %s", pipelineRunData.IMAGERESOURCENAME)
-			logging.Log.Errorf(errorMsg)
+			logging.Log.Error(errorMsg)
 			return &AppResponse{err, errorMsg, http.StatusInternalServerError}
 		}
 		resources = append(resources, v1alpha1.PipelineResourceBinding{Name: pipelineRunData.IMAGERESOURCENAME, ResourceRef: imageResource})
@@ -306,7 +306,9 @@ func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, names
 	// PipelineRun yaml defines references to resources
 	newPipelineRunData, err := definePipelineRun(generatedPipelineRunName, namespace, serviceAccount, pipelineRunData.REPOURL, pipeline, v1alpha1.PipelineTriggerTypeManual, resources, params)
 	if err != nil {
-		logging.Log.Errorf("there was a problem defining the pipeline run: %s", err)
+		errorMsg := fmt.Sprintf("there was a problem defining the pipeline run: %s", err)
+		logging.Log.Error(errorMsg)
+		return &AppResponse{err, errorMsg, http.StatusInternalServerError}
 	}
 
 	logging.Log.Infof("Creating a new PipelineRun named %s in the namespace %s", generatedPipelineRunName, namespace)

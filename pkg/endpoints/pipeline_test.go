@@ -1178,16 +1178,10 @@ func TestCreatePipelineRunGitResource(t *testing.T) {
 		t.Errorf("FAIL: expected to find a single created PipelineResource of type Git, but found the number of Git PipelineResources to be %d", numberOfGitResources)
 	}
 
-	gitResource, err := r.PipelineClient.TektonV1alpha1().PipelineResources("ns1").Get(resourceName, metav1.GetOptions{})
-
-	actualRevision := gitResource.Spec.Params[0].Value
-	if actualRevision != revision {
-		t.Errorf("FAIL: the revision for the Git resource didn't match, wanted %s but was %s", revision, actualRevision)
-	}
-
-	actualURL := gitResource.Spec.Params[1].Value
-	if actualURL != repoURL {
-		t.Errorf("FAIL: the URL for the Git resource didn't match, wanted %s but was %s", repoURL, actualURL)
+	params := []string{revision, repoURL}
+	err = testPipelineResource(r, resourceName, "git", params)
+	if err != nil {
+		t.Error("FAIL: the values expected for the resource did not match the actual values of the created resource")
 	}
 
 	t.Logf("Pipeline resource list: %v", pipelineResourceList)
@@ -1234,11 +1228,10 @@ func TestCreatePipelineRunImageResource(t *testing.T) {
 		t.Errorf("FAIL: expected to find a single created PipelineResource of type image, but found the number of image PipelineResources to be %d", numberOfImageResources)
 	}
 
-	imageResource, err := r.PipelineClient.TektonV1alpha1().PipelineResources("ns1").Get(resourceName, metav1.GetOptions{})
-
-	actualURL := imageResource.Spec.Params[0].Value
-	if actualURL != expectedImageURL {
-		t.Errorf("FAIL: the URL for the Image resource didn't match, wanted %s but was %s", expectedImageURL, actualURL)
+	params := []string{expectedImageURL}
+	err = testPipelineResource(r, resourceName, "image", params)
+	if err != nil {
+		t.Error("FAIL: the values expected for the resource did not match the actual values of the created resource")
 	}
 
 	t.Logf("Pipeline resource list: %v", pipelineResourceList)
@@ -1301,23 +1294,16 @@ func TestCreatePipelineRunGitAndImageResource(t *testing.T) {
 		t.Errorf("FAIL: expected one created PipelineResource of type image but found the number of image PipelineResources to be %d", numberOfImageResources)
 	}
 
-	gitResource, err := r.PipelineClient.TektonV1alpha1().PipelineResources("ns1").Get(gitResourceName, metav1.GetOptions{})
-
-	actualRevision := gitResource.Spec.Params[0].Value
-	if actualRevision != revision {
-		t.Errorf("FAIL: the revision for the Git resource didn't match, wanted %s but was %s", revision, actualRevision)
+	params := []string{revision, repoURL}
+	err = testPipelineResource(r, gitResourceName, "git", params)
+	if err != nil {
+		t.Error("FAIL: the values expected for the resource did not match the actual values of the created resource")
 	}
 
-	actualURL := gitResource.Spec.Params[1].Value
-	if actualURL != repoURL {
-		t.Errorf("FAIL: the URL for the Git resource didn't match, wanted %s but was %s", repoURL, actualURL)
-	}
-
-	imageResource, err := r.PipelineClient.TektonV1alpha1().PipelineResources("ns1").Get(imageResourceName, metav1.GetOptions{})
-
-	actualImageURL := imageResource.Spec.Params[0].Value
-	if actualImageURL != expectedImageURL {
-		t.Errorf("FAIL: the URL for the Image resource didn't match, wanted %s but was %s", expectedImageURL, actualImageURL)
+	params = []string{expectedImageURL}
+	err = testPipelineResource(r, imageResourceName, "image", params)
+	if err != nil {
+		t.Error("FAIL: the values expected for the resource did not match the actual values of the created resource")
 	}
 
 	t.Logf("Pipeline resource list: %v", pipelineResourceList)
@@ -1348,5 +1334,27 @@ func createTestPipeline(r *Resource) error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func testPipelineResource(r *Resource, resourceName, resourceType string, params []string) error {
+	resource, err := r.PipelineClient.TektonV1alpha1().PipelineResources("ns1").Get(resourceName, metav1.GetOptions{})
+
+	if resourceType == "image" {
+		actualURL := resource.Spec.Params[0].Value
+		if actualURL != params[0] {
+			return err
+		}
+	} else if resourceType == "git" {
+		actualRevision := resource.Spec.Params[0].Value
+		if actualRevision != params[0] {
+			return err
+		}
+		actualURL := resource.Spec.Params[1].Value
+		if actualURL != params[1] {
+			return err
+		}
+	}
+
 	return nil
 }
