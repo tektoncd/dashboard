@@ -18,7 +18,7 @@ import (
 	logging "github.com/tektoncd/dashboard/pkg/logging"
 )
 
-// RegisterPipeline
+// Register APIs to interface with core Tekton/K8s pieces
 func (r Resource) RegisterEndpoints(container *restful.Container) {
 	wsv1 := new(restful.WebService)
 	wsv1.
