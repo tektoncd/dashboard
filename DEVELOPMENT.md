@@ -118,30 +118,44 @@ GET endpoints:
 ```
 GET /v1/namespaces/<namespace>/pipeline
 Get all Tekton Pipelines
+Returns HTTP code 200 and a list of Pipelines in the given namespace
+Returns HTTP code 404 if an error occurred getting the Pipeline list
 
 GET /v1/namespaces/<namespace>/pipeline/<pipeline-name>
 Get a Tekton Pipeline by name
+Returns HTTP code 200 and the given pipeline in the given namespace if found
+Returns HTTP code 404 if an error occurred getting the Pipeline
 
 GET /v1/namespaces/<namespace>/pipelinerun
 Get all Tekton PipelineRuns, also supports '?repository=https://gitserver/foo/bar' querying
+Returns HTTP code 200 and a list of PipelineRuns, optionally matching the above query, in the given namespace
+Returns HTTP code 404 if an error occurred getting the PipelineRun list
 
 GET /v1/namespaces/<namespace>/pipelinerun/<pipelinerun-name>
 Get a Tekton PipelineRun by name
+Returns HTTP code 200 and the given PipelineRun in the given namespace
+Returns HTTP code 404 if an error occurred getting the PipelineRun
 
 GET /v1/namespaces/<namespace>/task
 Get all Tekton tasks
+Returns HTTP code 200 and a list of Tasks in the given namespace 
+Returns HTTP code 404 if an error occurred getting the Task list
 
 GET /v1/namespaces/<namespace>/task/<task-name>
 Get a Tekton Task by name
 
 GET /v1/namespaces/<namespace>/taskrun
 Get all Tekton TaskRuns
+Returns HTTP code 200 and a list of TaskRuns in the given namespace 
+Returns HTTP code 404 if an error occurred getting the TaskRun list
 
 GET /v1/namespaces/<namespace>/taskrun/<taskrun-name>
 Get a Tekton TaskRun by name
 
 GET /v1/namespaces/<namespace>/pipelineresource
 Get all Tekton PipelineResources
+Returns HTTP code 200 and a list of PipelineResources in the given namespace 
+Returns HTTP code 404 if an error occurred getting the PipelineRun list
 
 GET /v1/namespaces/<namespace>/pipelineresource/<pipelineresource-name>
 Get a Tekton PipelineResource by name
@@ -153,7 +167,7 @@ GET /v1/namespaces/<namespace>/taskrunlog/<taskrun-name>
 Get the logs for a TaskRun by name- get log of <taskrun-name> taskrun
 
 GET /v1/namespaces/<namespace>/credentials
-Get all credentials by name
+Get all credentials by name in the given namespace
 
 GET /v1/namespaces/<namespace>/credentials/<id>
 Get a credential by ID
