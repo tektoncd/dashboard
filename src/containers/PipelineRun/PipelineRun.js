@@ -24,7 +24,8 @@ import {
   getStatus,
   selectedTask,
   taskRunStep,
-  selectedTaskRun
+  selectedTaskRun,
+  stepsStatus
 } from '../../utils';
 
 import '../../components/Run/Run.scss';
@@ -108,7 +109,7 @@ class PipelineRunContainer extends Component {
       const taskRunName = taskRun.metadata.name;
       const { reason, status: succeeded } = getStatus(taskRun);
       const { pipelineTaskName } = taskRunDetails[taskRunName];
-      const steps = this.steps(task, taskRun.status.steps);
+      const steps = stepsStatus(task.spec.steps, taskRun.status.steps);
       return {
         id: taskRun.metadata.uid,
         pipelineTaskName,
@@ -122,32 +123,6 @@ class PipelineRunContainer extends Component {
     });
 
     this.setState({ taskRuns });
-  }
-
-  steps(task, stepsStatus) {
-    const steps = task.spec.steps.map((step, index) => {
-      const stepStatus = stepsStatus ? stepsStatus[index] : {};
-      let status;
-      let reason;
-      if (stepStatus.terminated) {
-        status = 'terminated';
-        ({ reason } = stepStatus.terminated);
-      } else if (stepStatus.running) {
-        status = 'running';
-      } else if (stepStatus.waiting) {
-        status = 'waiting';
-      }
-
-      return {
-        ...step,
-        reason,
-        status,
-        stepStatus,
-        stepName: step.name,
-        id: step.name
-      };
-    });
-    return steps;
   }
 
   render() {

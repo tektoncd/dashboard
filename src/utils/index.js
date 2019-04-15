@@ -63,3 +63,29 @@ export function selectedTask(selectedTaskName, tasks) {
 export function selectedTaskRun(selectedTaskId, taskRuns) {
   return taskRuns.find(run => run.id === selectedTaskId);
 }
+
+export function stepsStatus(taskSteps, taskRunStepsStatus) {
+  const steps = taskSteps.map((step, index) => {
+    const stepStatus = taskRunStepsStatus ? taskRunStepsStatus[index] : {};
+    let status;
+    let reason;
+    if (stepStatus.terminated) {
+      status = 'terminated';
+      ({ reason } = stepStatus.terminated);
+    } else if (stepStatus.running) {
+      status = 'running';
+    } else if (stepStatus.waiting) {
+      status = 'waiting';
+    }
+
+    return {
+      ...step,
+      reason,
+      status,
+      stepStatus,
+      stepName: step.name,
+      id: step.name
+    };
+  });
+  return steps;
+}

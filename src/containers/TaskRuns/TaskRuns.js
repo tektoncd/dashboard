@@ -20,12 +20,32 @@ import { getTasks, getTaskRuns } from '../../api';
 import RunHeader from '../../components/RunHeader';
 import StepDetails from '../../components/StepDetails';
 import TaskTree from '../../components/TaskTree';
-import { getStatus, taskRunStep, selectedTaskRun } from '../../utils';
+import {
+  getStatus,
+  stepsStatus,
+  taskRunStep,
+  selectedTaskRun
+} from '../../utils';
 
 import '../../components/Run/Run.scss';
 
 /* istanbul ignore next */
 class TaskRunsContainer extends Component {
+  // once redux store is available errors will be handled properly with dedicated components
+  static notification(notification) {
+    const { kind, message } = notification;
+    const titles = {};
+    titles.info = 'Task runs not available';
+    titles.error = 'Error loading task run';
+    return (
+      <InlineNotification
+        kind={kind}
+        title={titles[kind]}
+        subtitle={JSON.stringify(message, Object.getOwnPropertyNames(message))}
+      />
+    );
+  }
+
   state = {
     notification: null,
     loading: true,
@@ -80,7 +100,7 @@ class TaskRunsContainer extends Component {
         const taskRunName = taskRun.metadata.name;
         const { reason, status: succeeded } = getStatus(taskRun);
         const pipelineTaskName = taskRunName;
-        const runSteps = this.steps(task, taskRun.status.steps);
+        const runSteps = stepsStatus(task.spec.steps, taskRun.status.steps);
         const { startTime } = taskRun.status;
         return {
           id: taskRun.metadata.uid,
@@ -103,47 +123,6 @@ class TaskRunsContainer extends Component {
     }
 
     this.setState({ taskRuns, notification, loading: false });
-  }
-
-  steps(task, stepsStatus) {
-    const steps = task.spec.steps.map((step, index) => {
-      const stepStatus = stepsStatus ? stepsStatus[index] : {};
-      let status;
-      let reason;
-      if (stepStatus.terminated) {
-        status = 'terminated';
-        ({ reason } = stepStatus.terminated);
-      } else if (stepStatus.running) {
-        status = 'running';
-      } else if (stepStatus.waiting) {
-        status = 'waiting';
-      }
-
-      return {
-        ...step,
-        reason,
-        status,
-        stepStatus,
-        stepName: step.name,
-        id: step.name
-      };
-    });
-    return steps;
-  }
-
-  // once redux store is available errors will be handled properly with dedicated components
-  notification(notification) {
-    const { kind, message } = notification;
-    const titles = {};
-    titles.info = 'Task runs not available';
-    titles.error = 'Error loading task run';
-    return (
-      <InlineNotification
-        kind={kind}
-        title={titles[kind]}
-        subtitle={JSON.stringify(message, Object.getOwnPropertyNames(message))}
-      />
-    );
   }
 
   render() {
@@ -176,7 +155,7 @@ class TaskRunsContainer extends Component {
         />
         <main>
           {notification ? (
-            this.notification(notification)
+            TaskRunsContainer.notification(notification)
           ) : (
             <div className="tasks">
               <TaskTree

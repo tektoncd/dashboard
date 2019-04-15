@@ -30,8 +30,7 @@ module.exports = {
     "react/jsx-filename-extension": "off",
     "react/destructuring-assignment": "off",
     "react/prop-types": "off",
-    "jsx-a11y/anchor-is-valid": "off",
-    "class-methods-use-this": "off"
+    "jsx-a11y/anchor-is-valid": "off"
   },
   "overrides": [
     {
