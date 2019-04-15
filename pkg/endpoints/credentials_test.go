@@ -36,7 +36,7 @@ func TestCredentials(t *testing.T) {
 	// Initialize test data
 	expectCreds := []credential{}
 	accessTokenCred := credential{
-		ID:          "credentialaccesstoken",
+		Name:          "credentialaccesstoken",
 		Username:    "personal-access-token",
 		Password:    "passwordaccesstoken",
 		Description: "access token credential",
@@ -46,7 +46,7 @@ func TestCredentials(t *testing.T) {
 		},
 	}
 	userPassCred := credential{
-		ID:          "credentialuserpass",
+		Name:          "credentialuserpass",
 		Username:    "usernameuserpass",
 		Password:    "passworduserpass",
 		Description: "user password credential",
@@ -111,7 +111,7 @@ func TestCredentials(t *testing.T) {
 
 	// DELETE credential accesstoken
 	t.Log("DELETE credential 'credentialaccesstoken' when it exists")
-	deleteCredentialTest(namespace, accessTokenCred.ID, "", r, t)
+	deleteCredentialTest(namespace, accessTokenCred.Name, "", r, t)
 
 	// READ ALL credentials when there is only the userpass credential
 	t.Log("READ all credentials when there is only 'credentialuserpass' ('credentialaccesstoken' was just deleted)")
@@ -122,7 +122,7 @@ func TestCredentials(t *testing.T) {
 
 	// DELETE credential userpass
 	t.Log("DELETE credential 'credentialuserpass' when it exists")
-	deleteCredentialTest(namespace, userPassCred.ID, "", r, t)
+	deleteCredentialTest(namespace, userPassCred.Name, "", r, t)
 
 	// READ ALL credentials when there are none
 	t.Log("READ all credentials when there are none ('credentialuserpass' was just deleted)")
@@ -139,10 +139,10 @@ func TestCredentialsErrors(t *testing.T) {
 	r.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace}})
 
 	// Initialize test data
-	expectError := ""
-	invalidCreds := []credential{}
+	var expectError string
+	var invalidCreds []credential
 
-	// (ERROR) CREATE and UPDATE invalid credentials missing username, password, ID, URL or type ('accesstoken' or 'userpass')
+	// (ERROR) CREATE and UPDATE invalid credentials missing Username, Password, Name, URL or invalid type (NOT 'accesstoken' or 'userpass')
 	invalidCreds = []credential{
 		credential{
 			Username:    "personal-access-token",
@@ -154,7 +154,7 @@ func TestCredentialsErrors(t *testing.T) {
 			},
 		},
 		credential{
-			ID:          "credentialaccesstoken",
+			Name:          "credentialaccesstoken",
 			Password:    "passwordaccesstoken",
 			Description: "access token credential",
 			Type:        "accesstoken",
@@ -163,7 +163,7 @@ func TestCredentialsErrors(t *testing.T) {
 			},
 		},
 		credential{
-			ID:          "credentialaccesstoken",
+			Name:          "credentialaccesstoken",
 			Username:    "personal-access-token",
 			Description: "access token credential",
 			Type:        "accesstoken",
@@ -172,7 +172,7 @@ func TestCredentialsErrors(t *testing.T) {
 			},
 		},
 		credential{
-			ID:          "credentialaccesstoken",
+			Name:          "credentialaccesstoken",
 			Username:    "personal-access-token",
 			Password:    "passwordaccesstoken",
 			Description: "access token credential",
@@ -181,7 +181,7 @@ func TestCredentialsErrors(t *testing.T) {
 			},
 		},
 		credential{
-			ID:          "credentialaccesstoken",
+			Name:          "credentialaccesstoken",
 			Username:    "personal-access-token",
 			Password:    "passwordaccesstoken",
 			Description: "access token credential",
@@ -191,7 +191,7 @@ func TestCredentialsErrors(t *testing.T) {
 			},
 		},
 		credential{
-			ID:          "credentialaccesstoken",
+			Name:          "credentialaccesstoken",
 			Username:    "personal-access-token",
 			Password:    "passwordaccesstoken",
 			Description: "access token credential",
@@ -200,14 +200,14 @@ func TestCredentialsErrors(t *testing.T) {
 	}
 	for _, invalidCred := range invalidCreds {
 		// Must match error message exactly in the verify function, careful if you change fields
-		expectError = fmt.Sprintf("Error: username, password, id, url and type ('accesstoken' or 'userpass') must all be supplied.")
+		expectError = "Error: username, password, id, url and type ('accesstoken' or 'userpass') must all be supplied."
 		createCredentialTest(namespace, invalidCred, expectError, r, t)
 		updateCredentialTest(namespace, invalidCred, expectError, r, t)
 	}
 
 	invalidCreds = []credential{
 		credential{
-			ID:          "credentialaccesstoken",
+			Name:          "credentialaccesstoken",
 			Username:    "personal-access-token",
 			Password:    "passwordaccesstoken",
 			Description: "access token credential",
@@ -228,7 +228,7 @@ func TestCredentialsErrors(t *testing.T) {
 	// (ERROR) READ, UPDATE, and DELETE credentials that do not exist
 	invalidCreds = []credential{
 		credential{
-			ID:          "credentialaccesstoken",
+			Name:          "credentialaccesstoken",
 			Username:    "personal-access-token",
 			Password:    "passwordaccesstoken",
 			Description: "access token credential",
@@ -248,18 +248,18 @@ func TestCredentialsErrors(t *testing.T) {
 		},
 	}
 	for _, invalidCred := range invalidCreds {
-		expectError = fmt.Sprintf("Error getting secret from K8sClient: '%s'.", invalidCred.ID)
+		expectError = fmt.Sprintf("Error getting secret from K8sClient: '%s'.", invalidCred.Name)
 		readCredentialTest(namespace, invalidCred, expectError, r, t)
-		deleteCredentialTest(namespace, invalidCred.ID, expectError, r, t)
+		deleteCredentialTest(namespace, invalidCred.Name, expectError, r, t)
 	}
-	expectError = fmt.Sprintf("Error getting secret from K8sClient: '%s'.", invalidCreds[0].ID)
+	expectError = fmt.Sprintf("Error getting secret from K8sClient: '%s'.", invalidCreds[0].Name)
 	updateCredentialTest(namespace, invalidCreds[0], expectError, r, t)
 
 	// (ERROR) CREATE, READ, UPDATE, and DELETE credentials in a namespace that does not exist
 	bogusNamespace := "bogusnamespace"
 	expectError = fmt.Sprintf("Namespace provided does not exist: '%s'.", bogusNamespace)
 	cred := credential{
-		ID:          "credentialaccesstoken",
+		Name:          "credentialaccesstoken",
 		Username:    "personal-access-token",
 		Password:    "passwordaccesstoken",
 		Description: "access token credential",
@@ -272,13 +272,13 @@ func TestCredentialsErrors(t *testing.T) {
 	readAllCredentialsTest(bogusNamespace, []credential{cred}, expectError, r, t)
 	readCredentialTest(bogusNamespace, cred, expectError, r, t)
 	updateCredentialTest(bogusNamespace, cred, expectError, r, t)
-	deleteCredentialTest(bogusNamespace, cred.ID, expectError, r, t)
+	deleteCredentialTest(bogusNamespace, cred.Name, expectError, r, t)
 }
 
 /*
  * CREATE credential test
  * To function properly, [cred] must have the following fields:
- *  - ID
+ *  - Name
  *  - username
  *  - password
  *  - type (must have the value 'accesstoken' or 'userpass')
@@ -303,13 +303,13 @@ func createCredentialTest(namespace string, cred credential, expectError string,
 	}
 
 	// Verify against K8s client
-	testCredential(r.getK8sCredential(namespace, cred.ID), cred, t)
+	testCredential(r.getK8sCredential(namespace, cred.Name), cred, t)
 }
 
 /*
  * READ ALL credentials test
  * To function properly, [expectCreds] must have the same number of credentials as there are in the system
- * and they must be in the correct order (alphabetical by ID field)
+ * and they must be in the correct order (alphabetical by Name field)
  */
 func readAllCredentialsTest(namespace string, expectCreds []credential, expectError string, r *Resource, t *testing.T) {
 	t.Logf("READ all credentials. Expecting: %+v", expectCreds)
@@ -347,15 +347,15 @@ func readAllCredentialsTest(namespace string, expectCreds []credential, expectEr
 
 /*
  * READ credential test
- * To function properly, [expectCred] must have the "ID" field
+ * To function properly, [expectCred] must have the "Name" field
  */
 func readCredentialTest(namespace string, expectCred credential, expectError string, r *Resource, t *testing.T) {
-	t.Logf("READ credential %s", expectCred.ID)
+	t.Logf("READ credential %s", expectCred.Name)
 	// Create dummy rest api request and response
-	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/"+namespace+"/credentials/"+expectCred.ID, nil)
+	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/"+namespace+"/credentials/"+expectCred.Name, nil)
 	req := dummyRestfulRequest(httpReq, namespace, "")
 	params := req.PathParameters()
-	params["id"] = expectCred.ID
+	params["id"] = expectCred.Name
 	httpWriter := httptest.NewRecorder()
 	resp := dummyRestfulResponse(httpWriter)
 
@@ -375,25 +375,25 @@ func readCredentialTest(namespace string, expectCred credential, expectError str
 	expectCred.Password = expectCredPassword
 
 	// Verify agains K8s client
-	testCredential(r.getK8sCredential(namespace, expectCred.ID), expectCred, t)
+	testCredential(r.getK8sCredential(namespace, expectCred.Name), expectCred, t)
 }
 
 /*
  * UPDATE credential test
  * To function properly, [cred] must have the following fields:
- *  - ID
- *  - username
- *  - password
- *  - type (must have the value 'accesstoken' or 'userpass')
+ *  - Name
+ *  - Username
+ *  - Password
+ *  - Type (must have the value 'accesstoken' or 'userpass')
  */
 func updateCredentialTest(namespace string, cred credential, expectError string, r *Resource, t *testing.T) {
 	t.Logf("UPDATE credential %+v", cred)
 	// Create dummy rest api request and response
 	jsonBody, _ := json.Marshal(cred)
-	httpReq := dummyHTTPRequest("PUT", "http://wwww.dummy.com:8383/v1/namespaces/"+namespace+"/credentials/"+cred.ID, bytes.NewBuffer(jsonBody))
+	httpReq := dummyHTTPRequest("PUT", "http://wwww.dummy.com:8383/v1/namespaces/"+namespace+"/credentials/"+cred.Name, bytes.NewBuffer(jsonBody))
 	req := dummyRestfulRequest(httpReq, namespace, "")
 	params := req.PathParameters()
-	params["id"] = cred.ID
+	params["id"] = cred.Name
 	httpWriter := httptest.NewRecorder()
 	resp := dummyRestfulResponse(httpWriter)
 
@@ -407,19 +407,19 @@ func updateCredentialTest(namespace string, cred credential, expectError string,
 	}
 
 	// Verify agains K8s client
-	testCredential(r.getK8sCredential(namespace, cred.ID), cred, t)
+	testCredential(r.getK8sCredential(namespace, cred.Name), cred, t)
 }
 
 /*
  * DELETE credential test
  */
-func deleteCredentialTest(namespace string, credID string, expectError string, r *Resource, t *testing.T) {
-	t.Logf("DELETE credential %s", credID)
+func deleteCredentialTest(namespace string, credName string, expectError string, r *Resource, t *testing.T) {
+	t.Logf("DELETE credential %s", credName)
 	// Create dummy rest api request and response
-	httpReq := dummyHTTPRequest("DELETE", "http://wwww.dummy.com:8383/v1/namespaces/"+namespace+"/credentials/"+credID, nil)
+	httpReq := dummyHTTPRequest("DELETE", "http://wwww.dummy.com:8383/v1/namespaces/"+namespace+"/credentials/"+credName, nil)
 	req := dummyRestfulRequest(httpReq, namespace, "")
 	params := req.PathParameters()
-	params["id"] = credID
+	params["name"] = credName
 	httpWriter := httptest.NewRecorder()
 	resp := dummyRestfulResponse(httpWriter)
 
@@ -433,7 +433,7 @@ func deleteCredentialTest(namespace string, credID string, expectError string, r
 	}
 
 	// Verify agains K8s client
-	testCredential(r.getK8sCredential(namespace, credID), credential{}, t)
+	testCredential(r.getK8sCredential(namespace, credName), credential{}, t)
 }
 
 /*
@@ -483,7 +483,7 @@ func testCredential(resultCred credential, expectCred credential, t *testing.T) 
 
 // Get all K8s client secrets with selector LABEL_SELECTOR
 func (r Resource) getK8sCredentials(namespace string) (credentials []credential) {
-	secrets, err := r.K8sClient.CoreV1().Secrets(namespace).List(metav1.ListOptions{LabelSelector: "tektondashboard=true"})
+	secrets, err := r.K8sClient.CoreV1().Secrets(namespace).List(metav1.ListOptions{LabelSelector: dashboardLabelSelector})
 	if err != nil {
 		return
 	}

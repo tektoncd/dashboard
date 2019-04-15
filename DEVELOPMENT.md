@@ -294,7 +294,7 @@ __Credentials__
 PUT /v1/namespaces/<namespace>/credentials/<id>                          
 Update credential by ID
 Request body must contain id, username, password, type ('accesstoken' or 'userpass'), description and the URL that the credential will be used for (e.g. the Git server)
-Returns HTTP code 201 if the credential was updated OK and sets the 'Content-Location' header
+Returns HTTP code 204 if the credential was updated OK (no contents are provided in the response)
 Returns HTTP code 400 if a bad request was provided or if an error occurs updating the credential
 ```
 

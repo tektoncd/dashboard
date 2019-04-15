@@ -26,7 +26,7 @@ import (
 )
 
 type credential struct {
-	ID              string            `json:"id"`
+	Name             string           `json:"name"`
 	Username        string            `json:"username"`
 	Password        string            `json:"password"`
 	Description     string            `json:"description"`
@@ -35,9 +35,14 @@ type credential struct {
 	URL             map[string]string `json:"url"`
 }
 
-var labelSelector = "tektondashboard=true" // must have format "<key>=<value>"
 var typeAccessToken = "accesstoken"
 var typeUserPass = "userpass"
+
+const (
+	dashboardKey string = "tekton-dashboard"
+	dashboardValue string = "true"
+	dashboardLabelSelector string = dashboardKey+"="+dashboardValue // must have format "<key>=<value>"
+)
 
 /* API route for getting all credentials in a given namespace
  * Required path parameters:
@@ -53,7 +58,7 @@ func (r Resource) getAllCredentials(request *restful.Request, response *restful.
 	}
 
 	// Get secrets from the resource K8sClient
-	secrets, err := r.K8sClient.CoreV1().Secrets(requestNamespace).List(metav1.ListOptions{LabelSelector: labelSelector})
+	secrets, err := r.K8sClient.CoreV1().Secrets(requestNamespace).List(metav1.ListOptions{LabelSelector: dashboardLabelSelector})
 	if err != nil {
 		errorMessage := fmt.Sprintf("Error getting secrets from K8sClient: %s.", err.Error())
 		response.WriteErrorString(http.StatusInternalServerError, errorMessage)
@@ -80,19 +85,19 @@ func (r Resource) getAllCredentials(request *restful.Request, response *restful.
 func (r Resource) getCredential(request *restful.Request, response *restful.Response) {
 	// Get path parameters
 	requestNamespace := request.PathParameter("namespace")
-	requestID := request.PathParameter("id")
+	requestName := request.PathParameter("name")
 
 	// Verify namespace exists
 	if !r.verifyNamespaceExists(requestNamespace, response) {
 		return
 	}
 	// Verify secret exists
-	if !r.verifySecretExists(requestID, requestNamespace, response) {
+	if !r.verifySecretExists(requestName, requestNamespace, response) {
 		return
 	}
 
 	// Get secret from the resource K8sClient
-	secret, err := r.K8sClient.CoreV1().Secrets(requestNamespace).Get(requestID, metav1.GetOptions{})
+	secret, err := r.K8sClient.CoreV1().Secrets(requestNamespace).Get(requestName, metav1.GetOptions{})
 	if err != nil {
 		errorMessage := fmt.Sprintf("Error getting secret from K8sClient: %s.", err.Error())
 		utils.RespondErrorAndMessage(response, err, errorMessage, http.StatusInternalServerError)
@@ -147,7 +152,7 @@ func (r Resource) createCredential(request *restful.Request, response *restful.R
 		utils.RespondErrorAndMessage(response, err, errorMessage, http.StatusBadRequest)
 		return
 	}
-	writeResponseLocation(request,response,cred.ID)
+	writeResponseLocation(request,response,cred.Name)
 }
 
 /* API route for updating a given credential
@@ -163,13 +168,13 @@ func (r Resource) createCredential(request *restful.Request, response *restful.R
 func (r Resource) updateCredential(request *restful.Request, response *restful.Response) {
 	// Get path parameters
 	requestNamespace := request.PathParameter("namespace")
-	requestID := request.PathParameter("id")
+	requestName := request.PathParameter("name")
 	// Get query parameters
 	cred := credential{}
 	if err := getQueryEntity(&cred, request, response); err != nil {
 		return
 	}
-	cred.ID = requestID
+	cred.Name = requestName
 
 	// Verify required query parameters are in cred
 	if !r.verifyCredentialParameters(cred, response) {
@@ -181,7 +186,7 @@ func (r Resource) updateCredential(request *restful.Request, response *restful.R
 		return
 	}
 	// Verify secret exists
-	if !r.verifySecretExists(requestID, requestNamespace, response) {
+	if !r.verifySecretExists(requestName, requestNamespace, response) {
 		return
 	}
 
@@ -197,7 +202,7 @@ func (r Resource) updateCredential(request *restful.Request, response *restful.R
 		utils.RespondErrorAndMessage(response, err, errorMessage, http.StatusBadRequest)
 		return
 	}
-	writeResponseLocation(request,response,cred.ID)
+	response.WriteHeader(204)
 }
 
 /* API route for creating a given credential
@@ -208,19 +213,19 @@ func (r Resource) updateCredential(request *restful.Request, response *restful.R
 func (r Resource) deleteCredential(request *restful.Request, response *restful.Response) {
 	// Get path parameters
 	requestNamespace := request.PathParameter("namespace")
-	requestID := request.PathParameter("id")
+	requestName := request.PathParameter("name")
 
 	// Verify namespace exists
 	if !r.verifyNamespaceExists(requestNamespace, response) {
 		return
 	}
 	// Verify secret exists
-	if !r.verifySecretExists(requestID, requestNamespace, response) {
+	if !r.verifySecretExists(requestName, requestNamespace, response) {
 		return
 	}
 
 	// Get secret from the resource K8sClient
-	err := r.K8sClient.CoreV1().Secrets(requestNamespace).Delete(requestID, &metav1.DeleteOptions{})
+	err := r.K8sClient.CoreV1().Secrets(requestNamespace).Delete(requestName, &metav1.DeleteOptions{})
 	if err != nil {
 		errorMessage := fmt.Sprintf("Error deleting secret from K8sClient: %s.", err.Error())
 		utils.RespondErrorAndMessage(response, err, errorMessage, http.StatusInternalServerError)
@@ -268,13 +273,13 @@ func (r Resource) verifySecretExists(secretName string, namespace string, respon
  *  - Type (must have the value 'accesstoken' or 'userpass')
  */
 func (r Resource) verifyCredentialParameters(cred credential, response *restful.Response) bool {
-	if cred.ID == "" ||
+	if cred.Name == "" ||
 		cred.Username == "" ||
 		cred.Password == "" ||
 		cred.URL == nil ||
 		(cred.Type != typeAccessToken && cred.Type != typeUserPass) {
 
-		errorMessage := fmt.Sprintf("Error: username, password, id, url and type ('%s' or '%s') must all be supplied.", typeAccessToken, typeUserPass)
+		errorMessage := fmt.Sprintf("Error: username, password, name, url and type ('%s' or '%s') must all be supplied.", typeAccessToken, typeUserPass)
 		utils.RespondErrorMessage(response, errorMessage, http.StatusBadRequest)
 		return false
 	}
@@ -302,7 +307,7 @@ func getQueryEntity(entityPointer interface{}, request *restful.Request, respons
 // Convert K8s secret struct into credential struct
 func secretToCredential(secret *corev1.Secret, mask bool) credential {
 	cred := credential{
-		ID:              secret.GetName(),
+		Name:              secret.GetName(),
 		Username:        string(secret.Data["username"]),
 		Password:        string(secret.Data["password"]),
 		Description:     string(secret.Data["description"]),
@@ -321,7 +326,7 @@ func credentialToSecret(cred credential, namespace string, response *restful.Res
 	// Create new secret struct
 	secret := corev1.Secret{}
 	secret.SetNamespace(namespace)
-	secret.SetName(cred.ID)
+	secret.SetName(cred.Name)
 	secret.Type = corev1.SecretTypeBasicAuth
 	secret.Data = make(map[string][]byte)
 	secret.Data["username"] = []byte(cred.Username)
@@ -330,17 +335,9 @@ func credentialToSecret(cred credential, namespace string, response *restful.Res
 	secret.Data["type"] = []byte(cred.Type)
 	secret.ObjectMeta.Annotations = cred.URL
 
-	// Add label
-	keyValue := strings.Split(labelSelector, "=")
-	if len(keyValue) != 2 {
-		errorMessage := "Error setting label for secret"
-		utils.RespondErrorMessage(response, errorMessage, http.StatusInternalServerError)
-		return nil, false
+	labels := map[string]string {
+		dashboardKey: dashboardValue,
 	}
-	key := keyValue[0]
-	value := keyValue[1]
-	labels := make(map[string]string)
-	labels[key] = value
 	secret.SetLabels(labels)
 
 	// Return secret
