@@ -14,7 +14,6 @@ limitations under the License.
 package endpoints
 
 import (
-	"strings"
 	"net/http"
 
 	restful "github.com/emicklei/go-restful"
@@ -110,10 +109,7 @@ func (r Resource) RegisterReadinessProbes(container *restful.Container) {
 // Write Content-Location header within PUT/POST methods and set StatusCode to 201
 // Headers MUST be set before writing to body (if any) to succeed
 func writeResponseLocation(request *restful.Request, response *restful.Response, identifier string) {
-	location := request.SelectedRoutePath()
-	for k,v := range request.PathParameters() {
-		location = strings.Replace(location,"{"+k+"}",v,-1)
-	}
+	location := request.Request.URL.Path
 	if request.Request.Method == http.MethodPost {
 		location = location + "/" + identifier
 	}
