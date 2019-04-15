@@ -5,12 +5,14 @@
 approvers:
 - a-roberts
 - alangreene
+- mnuttall
+- skaegi
+
+reviewers:
 - akihikokuroda
 - carolynmabbott
 - dibbles
 - jessm12
-- mnuttall
 - ncskier
-- skaegi
 - steveodonovan
 - vtereso

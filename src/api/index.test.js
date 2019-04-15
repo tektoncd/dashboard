@@ -20,6 +20,7 @@ import {
   createPipelineRun,
   deleteCredential,
   getAPI,
+  getAPIRoot,
   getCredential,
   getCredentials,
   getPipeline,
@@ -36,6 +37,20 @@ import {
   getTasks,
   updateCredential
 } from '.';
+
+beforeEach(jest.resetAllMocks);
+
+describe('getAPIRoot', () => {
+  it('handles base URL with trailing slash', () => {
+    window.history.pushState({}, 'Title', '/path/#hash');
+    expect(getAPIRoot()).toContain('/path/api');
+  });
+
+  it('handles base URL without trailing slash', () => {
+    window.history.pushState({}, 'Title', '/path#hash');
+    expect(getAPIRoot()).toContain('/path/api');
+  });
+});
 
 describe('getAPI', () => {
   it('returns a URI containing the given type', () => {
