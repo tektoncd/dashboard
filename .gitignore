@@ -3,12 +3,14 @@
 /dist
 /storybook-static
 /tmp
+main
 
 # config
 .npmrc
 
 # dependencies
 /node_modules
+/vendor
 
 # misc
 npm-debug.log
@@ -17,3 +19,5 @@ yarn-error.log
 # System Files
 .DS_Store
 Thumbs.db
+
+

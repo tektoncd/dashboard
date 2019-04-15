@@ -13,9 +13,17 @@ limitations under the License.
 
 import { deleteRequest, get, post, put } from './comms';
 
-const { href, hash } = window.location;
-const baseURL = href.replace(hash, '');
-const apiRoot = `${baseURL}api`;
+export function getAPIRoot() {
+  const apiPrefix = 'api';
+  const { href, hash } = window.location;
+  let baseURL = href.replace(hash, '');
+  if (!baseURL.endsWith('/')) {
+    baseURL += '/';
+  }
+  return `${baseURL}${apiPrefix}`;
+}
+
+const apiRoot = getAPIRoot();
 
 export function getAPI(type, id = '', namespace = 'default') {
   return [
