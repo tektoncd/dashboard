@@ -46,15 +46,16 @@ func TestMain(m *testing.M) {
 
 	// Remove all Put methods that do not have a corresponding POST
 	// Cannot update what can not be created
-	postMap := make(map[string]struct{})
+	checkMap := make(map[string]struct{})
 	for _, route := range methodMap[http.MethodPost] {
-		postMap[route] = struct{}{}
+		// Add identifier like PUT routes
+		checkMap[route+"/fake"] = struct{}{}
 	}
 
 	oldPutRoutes := methodMap[http.MethodPut]
 	var newPutRoutes []string
 	for _, route := range oldPutRoutes {
-		if _, ok := postMap[route]; ok {
+		if _, ok := checkMap[route]; ok {
 			newPutRoutes = append(newPutRoutes, route)
 		}
 	}

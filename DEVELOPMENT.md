@@ -270,7 +270,7 @@ POST /v1/namespaces/<namespace>/credentials
 Create a new credential
 Request body must contain id, username, password, type ('accesstoken' or 'userpass'), description and the URL that the credential will be used for (e.g. the Git server)
 
-Returns HTTP code 200 if the credential was created OK
+Returns HTTP code 201 if the credential was created OK and sets the 'Content-Location' header
 Returns HTTP code 400 if a bad request was provided
 Returns HTTP code 406 if no body is provided
 Returns HTTP code 500 if an error occurred creating the credential
@@ -294,7 +294,7 @@ __Credentials__
 PUT /v1/namespaces/<namespace>/credentials/<id>                          
 Update credential by ID
 Request body must contain id, username, password, type ('accesstoken' or 'userpass'), description and the URL that the credential will be used for (e.g. the Git server)
-Returns HTTP code 200 and nothing else if the credential was updated OK
+Returns HTTP code 201 if the credential was updated OK and sets the 'Content-Location' header
 Returns HTTP code 400 if a bad request was provided or if an error occurs updating the credential
 ```
 
