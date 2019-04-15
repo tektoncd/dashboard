@@ -219,12 +219,13 @@ Returns HTTP code 404 if an error occurred getting the logs or TaskRun pod was f
 
 GET /v1/namespaces/<namespace>/credentials
 Get all credentials by name in the given namespace
-Returns HTTP code 503 if an error occurred getting the credentials
+Returns HTTP code 500 if an error occurred getting the credentials
 Returns HTTP code 200 and the given credential as a Kubernetes secret in the given namespace with a blanked out password if found, otherwise an empty list is returned
 
 GET /v1/namespaces/<namespace>/credentials/<id>
 Get a credential by ID
-Returns HTTP code 503 if an error occurred getting the credential
+Returns HTTP code 400 if the credential does not exist by name or an invalid namespace was provided
+Returns HTTP code 500 if an error occurred getting the credential
 Returns HTTP code 200 and the given credential as a Kubernetes secret in the given namespace with a blanked out password, otherwise an empty list is returned
 
 GET /v1/namespaces/<namespace>/knative/installstatus                     
@@ -236,21 +237,39 @@ Returns HTTP code 400 if a bad request is sent
 Returns HTTP code 417 (expectation failed) if the resource is not registered
 
 Note that a check of the resource definition being registered is performed: not that pods are running and healthy.
+
 ```
 
 POST endpoint:
 ```
 POST /v1/namespaces/<namespace>/credentials
 Create a new credential
-Request body must contain id, username, password, and type ('accesstoken' or 'userpass')
+Request body must contain id, username, password, type ('accesstoken' or 'userpass'), description and the URL that the credential will be used for (e.g. the Git server)
 
+Returns HTTP code 200 if the credential was created OK
+Returns HTTP code 400 if a bad request was provided
+Returns HTTP code 406 if no body is provided
+Returns HTTP code 500 if an error occurred creating the credential
+
+Example POST (non-trivial as it involves the URL map):
+
+{
+    "id": "mysecretname",
+    "username": "a-roberts",
+    "password": "mypassword",
+    "type": "userpass",
+    "description": "my secret for github",
+    "url": {"tekton.dev/git-0": "https://github.com"}    
+}
 ```
 
 PUT endpoints:
 ```
 PUT /v1/namespaces/<namespace>/credentials/<id>                          
 Update credential by ID
-Request body must contain username, password, and type ('accesstoken' or 'userpass')
+Request body must contain id, username, password, type ('accesstoken' or 'userpass'), description and the URL that the credential will be used for (e.g. the Git server)
+Returns HTTP code 200 and nothing else if the credential was updated OK
+Returns HTTP code 400 if a bad request was provided or if an error occurs updating the credential
 
 PUT /v1/namespaces/<namespace>/pipelinerun/<pipelinerun-name>
 Update pipelinerun status
@@ -267,4 +286,8 @@ DELETE endpoint:
 ```
 DELETE /v1/namespaces/<namespace>/credentials/<id>
 Delete a credential by ID
+
+Returns HTTP code 200 if the credential was deleted
+Returns HTTP code 400 if a bad request was used or if the secret was not found
+Returns HTTP code 500 if the found credential could not be deleted
 ```
