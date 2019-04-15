@@ -75,8 +75,8 @@ func main() {
 	resource.RegisterHealthProbes(wsContainer)
 	resource.RegisterReadinessProbes(wsContainer)
 
-	logging.Log.Info("Search extensions")
 	installedNamespace := os.Getenv("INSTALLED_NAMESPACE")
+	logging.Log.Infof("Searching for extensions in the namespace %s", installedNamespace)
 	resource.RegisterExtension(wsContainer, installedNamespace)
 
 	stopCh := signals.SetupSignalHandler()

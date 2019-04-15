@@ -25,6 +25,11 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
+// extensionLabel - service with this extensionLabel is registered as extension
+const extensionLabel =  "tekton-dashboard-extension=true"  
+// urlKey - extension path is specified by the annotation with the urlKey 
+const urlKey = "tekton-dashboard-endpoints"
+
 // Resource - stores all types here that are reused throughout files
 type Resource struct {
 	PipelineClient versioned.Interface
@@ -113,19 +118,21 @@ func (r Resource) RegisterReadinessProbes(container *restful.Container) {
 	container.Add(wsv4)
 }
 
-// Store all types here that are reused throughout files
+// Back-end extension: Requests to the URL are passthrough to the Port of the Name service (extension)
+// "label: tekton-dashboard-extension=true" in the service defines the extention
+// "annotation: tekton-dashboard-endpoints=<URL>" spacifies the path for the extension
 type Extension struct {
 	Name string
-	Url  string
+	URL  string
 	Port string
 }
 
-
+// RegisterExtension - this discovers the extensions and registers them as the REST API extension 
 func (r Resource) RegisterExtension(container *restful.Container, namespace string) {
 	logging.Log.Info("Adding API for extensions")
-	svcs, err := r.K8sClient.CoreV1().Services(namespace).List(metav1.ListOptions{LabelSelector: "tekton-dashboard-extension=true"})
+	svcs, err := r.K8sClient.CoreV1().Services(namespace).List(metav1.ListOptions{LabelSelector: extensionLabel})
 	if err != nil {
-		logging.Log.Debug("no extension found")
+		logging.Log.Errorf("no extension found: %s", err)
 		return
 	}
 	ws := new(restful.WebService)
@@ -133,11 +140,12 @@ func (r Resource) RegisterExtension(container *restful.Container, namespace stri
 		Path("/").
 		Consumes(restful.MIME_JSON).
 		Produces(restful.MIME_JSON)
+
 	for _, svc := range svcs.Items {
 		for key, url := range svc.ObjectMeta.Annotations{
-			if key == "tekton-dashboard-endpoints" {
-				logging.Log.Debugf("extension Url: %s", url)
-                                ext := Extension { Name: svc.ObjectMeta.Name, Url: url, Port: getPort(svc) }
+			if key == urlKey {
+				logging.Log.Debugf("extension URL: %s", url)
+                                ext := Extension { Name: svc.ObjectMeta.Name, URL: url, Port: getPort(svc) }
 				ws.Route(ws.POST(url).To(ext.HandleExtension))
 			}
 		}
@@ -145,12 +153,14 @@ func (r Resource) RegisterExtension(container *restful.Container, namespace stri
 	container.Add(ws)
 }
 
+// HandleExtension - this route request to the extention path to the extention service
 func (ext Extension) HandleExtension(request *restful.Request, response *restful.Response) {
 	target, _ := url.Parse("http://" +  ext.Name + ":" + ext.Port + "/")
 	proxy := httputil.NewSingleHostReverseProxy(target)
 	proxy.ServeHTTP(response, request.Request)
 }
 
+// getPort - this get the port of the service
 func getPort(svc corev1.Service) string {
 	return strconv.Itoa(int(svc.Spec.Ports[0].Port))
 }
