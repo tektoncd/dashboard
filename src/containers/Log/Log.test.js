@@ -20,13 +20,21 @@ import * as API from '../../api';
 beforeEach(jest.resetAllMocks);
 
 it('LogContainer renders', async () => {
+  const stepName = 'step';
   const taskRunName = 'taskRun';
   const getTaskRunLog = jest
     .spyOn(API, 'getTaskRunLog')
-    .mockImplementation(() => 'testing');
+    .mockImplementation(() => ({
+      StepContainers: [
+        {
+          Name: `build-step-${stepName}`,
+          Logs: ['testing']
+        }
+      ]
+    }));
 
   const { container, getByText } = render(
-    <LogContainer taskRunName={taskRunName} />
+    <LogContainer stepName={stepName} taskRunName={taskRunName} />
   );
   await waitForElement(() => getByText('testing'));
 
@@ -34,12 +42,16 @@ it('LogContainer renders', async () => {
   expect(getTaskRunLog).toHaveBeenCalledWith(taskRunName);
 
   const anotherTaskRunName = 'anotherTaskRun';
-  render(<LogContainer taskRunName={anotherTaskRunName} />, { container });
+  render(
+    <LogContainer stepName={stepName} taskRunName={anotherTaskRunName} />,
+    { container }
+  );
   expect(getTaskRunLog).toHaveBeenCalledTimes(2);
   expect(getTaskRunLog).toHaveBeenCalledWith(anotherTaskRunName);
 });
 
 it('LogContainer handles error case', async () => {
+  const stepName = 'step';
   const taskRunName = 'taskRun';
   const getTaskRunLog = jest
     .spyOn(API, 'getTaskRunLog')
@@ -47,8 +59,51 @@ it('LogContainer handles error case', async () => {
       throw new Error();
     });
 
-  const { getByText } = render(<LogContainer taskRunName={taskRunName} />);
+  const { getByText } = render(
+    <LogContainer stepName={stepName} taskRunName={taskRunName} />
+  );
   await waitForElement(() => getByText('Unable to fetch log'));
+
+  expect(getTaskRunLog).toHaveBeenCalledTimes(1);
+  expect(getTaskRunLog).toHaveBeenCalledWith(taskRunName);
+});
+
+it('LogContainer handles empty logs', async () => {
+  const stepName = 'step';
+  const taskRunName = 'taskRun';
+  const getTaskRunLog = jest
+    .spyOn(API, 'getTaskRunLog')
+    .mockImplementation(() => ({
+      StepContainers: [
+        {
+          Name: `build-step-${stepName}`,
+          Logs: null
+        }
+      ]
+    }));
+
+  const { getByText } = render(
+    <LogContainer stepName={stepName} taskRunName={taskRunName} />
+  );
+  await waitForElement(() => getByText('No log available'));
+
+  expect(getTaskRunLog).toHaveBeenCalledTimes(1);
+  expect(getTaskRunLog).toHaveBeenCalledWith(taskRunName);
+});
+
+it('LogContainer handles missing step logs', async () => {
+  const stepName = 'step';
+  const taskRunName = 'taskRun';
+  const getTaskRunLog = jest
+    .spyOn(API, 'getTaskRunLog')
+    .mockImplementation(() => ({
+      StepContainers: []
+    }));
+
+  const { getByText } = render(
+    <LogContainer stepName={stepName} taskRunName={taskRunName} />
+  );
+  await waitForElement(() => getByText('No log available'));
 
   expect(getTaskRunLog).toHaveBeenCalledTimes(1);
   expect(getTaskRunLog).toHaveBeenCalledWith(taskRunName);

@@ -10,6 +10,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+
 package endpoints
 
 import (
@@ -64,6 +65,7 @@ type PipelineRunUpdateBody struct {
 	STATUS string `json:"status"`
 }
 
+// TaskRunLog - represents a task run's logs (including logs for containers)
 type TaskRunLog struct {
 	PodName string
 	// Containers correlating to Task step definitions
@@ -73,6 +75,7 @@ type TaskRunLog struct {
 	InitContainers []LogContainer
 }
 
+// LogContainer - represents the logs for a given container
 type LogContainer struct {
 	Name string
 	Logs []string
@@ -118,9 +121,8 @@ func (r Resource) getPipelineImpl(name, namespace string) (v1alpha1.Pipeline, er
 	if err != nil {
 		logging.Log.Errorf("could not retrieve the pipeline called %s in namespace %s", name, namespace)
 		return *pipeline, err
-	} else {
-		logging.Log.Debugf("Found the pipeline definition OK")
 	}
+	logging.Log.Debug("Found the pipeline definition OK")
 	return *pipeline, nil
 }
 
@@ -489,9 +491,8 @@ func (r Resource) updatePipelineRun(request *restful.Request, response *restful.
 	if err != nil || pipelineRun == nil {
 		utils.RespondError(response, err, http.StatusNotFound)
 		return
-	} else {
-		logging.Log.Debug("Found the PipelineRun ok")
 	}
+	logging.Log.Debug("Found the PipelineRun ok")
 
 	// We've found the PipelineRun at this stage
 
@@ -525,9 +526,8 @@ func (r Resource) updatePipelineRun(request *restful.Request, response *restful.
 			logging.Log.Errorf("error updating PipelineRun status: %s", err)
 			utils.RespondError(response, err, http.StatusInternalServerError)
 			return
-		} else {
-			logging.Log.Debugf("PipelineRun status updated OK to %s", pipelineRun.Spec.Status)
 		}
+		logging.Log.Debugf("PipelineRun status updated OK to %s", pipelineRun.Spec.Status)
 	} else {
 		errorMsg := fmt.Sprintf("error: Status was already set to %s", desiredStatus)
 		logging.Log.Error(errorMsg)

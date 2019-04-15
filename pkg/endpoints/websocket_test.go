@@ -40,6 +40,10 @@ var CreationsRecorded = 0
 var UpdatesRecorded = 0
 var DeletionsRecorded = 0
 
+var CreationMutex = &sync.Mutex{}
+var UpdateMutex = &sync.Mutex{}
+var DeleteMutex = &sync.Mutex{}
+
 func TestLogWebsocket(t *testing.T) {
 	T = t
 	T.Log("Enter TestLogWebsocket...")
@@ -156,11 +160,17 @@ func clientWebsocket(websocketEndpoint string, readDeadline time.Duration, wg *s
 				}
 				switch resp.MessageType {
 				case "PipelineRunCreated":
+					CreationMutex.Lock()
 					CreationsRecorded++
+					CreationMutex.Unlock()
 				case "PipelineRunUpdated":
+					UpdateMutex.Lock()
 					UpdatesRecorded++
+					UpdateMutex.Unlock()
 				case "PipelineRunDeleted":
+					DeleteMutex.Lock()
 					DeletionsRecorded++
+					DeleteMutex.Unlock()
 				}
 				//Print out websocket data received
 				fmt.Printf("%v\n", resp)
@@ -195,7 +205,7 @@ func (r Resource) createTestPipelineRun(name, resourceVersion string) {
 // Util to update pipelinerun
 func (r Resource) updateTestPipelineRun(name, newResourceVersion string) {
 
-	httpReq := dummyHttpRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun/"+name, nil)
+	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun/"+name, nil)
 	req := dummyRestfulRequest(httpReq, "ns1", "")
 	httpWriter := httptest.NewRecorder()
 	resp := dummyRestfulResponse(httpWriter)
