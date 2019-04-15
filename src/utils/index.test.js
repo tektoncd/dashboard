@@ -108,20 +108,6 @@ it('stepsStatus no steps', () => {
   expect(steps).toEqual([]);
 });
 
-it('stepsStatus no steps', () => {
-  const taskSteps = [];
-  const taskRunStepsStatus = [];
-  const steps = stepsStatus(taskSteps, taskRunStepsStatus);
-  expect(steps).toEqual([]);
-});
-
-it('stepsStatus no status', () => {
-  const taskSteps = [];
-  const taskRunStepsStatus = undefined;
-  const steps = stepsStatus(taskSteps, taskRunStepsStatus);
-  expect(steps).toEqual([]);
-});
-
 it('stepsStatus no status', () => {
   const taskSteps = [];
   const taskRunStepsStatus = undefined;
