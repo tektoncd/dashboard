@@ -24,6 +24,8 @@ storiesOf('RunHeader', module)
     <RunHeader
       name={text('Pipeline Name', 'simple-pipeline')}
       runName={text('Pipeline Run Name', 'simple-pipeline-run-1')}
+      type={text('Run Type', 'pipelines')}
+      typeLabel={text('Run Type Label', 'Pipelines')}
     />
   ))
   .add('running', () => (
@@ -32,6 +34,8 @@ storiesOf('RunHeader', module)
       runName={text('Pipeline Run Name', 'simple-pipeline-run-1')}
       reason="Running"
       status="Unknown"
+      type={text('Run Type', 'pipelines')}
+      typeLabel={text('Run Type Label', 'Pipelines')}
     />
   ))
   .add('complete', () => (
@@ -40,6 +44,8 @@ storiesOf('RunHeader', module)
       runName={text('Pipeline Run Name', 'simple-pipeline-run-1')}
       status="True"
       reason="Completed"
+      type={text('Run Type', 'pipelines')}
+      typeLabel={text('Run Type Label', 'Pipelines')}
     />
   ))
   .add('failed', () => (
@@ -48,6 +54,8 @@ storiesOf('RunHeader', module)
       runName={text('Pipeline Run Name', 'simple-pipeline-run-1')}
       status="False"
       reason="Failed"
+      type={text('Run Type', 'pipelines')}
+      typeLabel={text('Run Type Label', 'Pipelines')}
     />
   ))
   .add('error', () => (

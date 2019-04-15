@@ -21,12 +21,12 @@ import {
 } from 'react-router-dom';
 
 import {
+  Home,
   PipelineRun,
   PipelineRuns,
   Pipelines,
   Tasks,
-  TaskRuns,
-  Home
+  TaskRuns
 } from '..';
 
 import '../../components/App/App.scss';

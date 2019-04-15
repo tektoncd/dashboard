@@ -36,7 +36,8 @@ class RunHeader extends Component {
       runName,
       reason,
       status,
-      type
+      type,
+      typeLabel
     } = this.props;
 
     return (
@@ -48,7 +49,7 @@ class RunHeader extends Component {
         >
           <Breadcrumb>
             <BreadcrumbItem>
-              <Link to={`/${type}`}>{type}</Link>
+              <Link to={`/${type}`}>{typeLabel}</Link>
             </BreadcrumbItem>
             {name && (
               <BreadcrumbItem>

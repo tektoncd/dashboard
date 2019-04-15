@@ -34,9 +34,10 @@ class TaskRunsContainer extends Component {
   // once redux store is available errors will be handled properly with dedicated components
   static notification(notification) {
     const { kind, message } = notification;
-    const titles = {};
-    titles.info = 'Task runs not available';
-    titles.error = 'Error loading task run';
+    const titles = {
+      info: 'Task runs not available',
+      error: 'Error loading task run'
+    };
     return (
       <InlineNotification
         kind={kind}
@@ -151,7 +152,8 @@ class TaskRunsContainer extends Component {
           name={taskName}
           runName={taskRun.taskRunName}
           status={taskRun.succeeded}
-          type="Tasks"
+          type="tasks"
+          typeLabel="Tasks"
         />
         <main>
           {notification ? (

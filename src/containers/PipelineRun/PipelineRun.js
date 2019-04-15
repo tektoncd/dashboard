@@ -22,8 +22,8 @@ import StepDetails from '../../components/StepDetails';
 import TaskTree from '../../components/TaskTree';
 import {
   getStatus,
-  selectedTask,
   taskRunStep,
+  selectedTask,
   selectedTaskRun,
   stepsStatus
 } from '../../utils';
@@ -167,6 +167,7 @@ class PipelineRunContainer extends Component {
           reason={pipelineRunReason}
           status={pipelineRunStatus}
           type="pipelines"
+          typeLabel="Pipelines"
         />
         <main>
           {error ? (

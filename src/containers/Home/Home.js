@@ -47,14 +47,14 @@ const Home = () => {
             </StructuredListRow>
           </StructuredListHead>
           <StructuredListBody>
-            <StructuredListRow className="pipeline" key="pipeline">
+            <StructuredListRow className="pipeline">
               <StructuredListCell>
-                <Link to="/pipelines">pipelines</Link>
+                <Link to="/pipelines">Pipelines</Link>
               </StructuredListCell>
             </StructuredListRow>
-            <StructuredListRow className="pipeline" key="tasks">
+            <StructuredListRow className="pipeline">
               <StructuredListCell>
-                <Link to="/tasks">tasks</Link>
+                <Link to="/tasks">Tasks</Link>
               </StructuredListCell>
             </StructuredListRow>
           </StructuredListBody>
