@@ -15,10 +15,12 @@ package endpoints
 
 import (
 	"encoding/json"
+	"io"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
+	restful "github.com/emicklei/go-restful"
 	v1alpha1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -1091,26 +1093,14 @@ func TestCreatePipelineRunBadRequest(t *testing.T) {
 
 	r := dummyResource()
 
-	pipeline1 := v1alpha1.Pipeline{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: "Pipeline1",
-		},
-		Spec: v1alpha1.PipelineSpec{},
-	}
-
-	_, err := r.PipelineClient.TektonV1alpha1().Pipelines("ns1").Create(&pipeline1)
+	err := createTestPipeline(r)
 	if err != nil {
 		t.Errorf("FAIL: error creating test pipeline: %s", err)
 	}
 
-	httpWriter := httptest.NewRecorder()
-
 	badRequestPipelineRunBody := strings.NewReader(`{"fielddoesnotexist": "pipeline",}`)
-
-	badRequestPipelineRunRequest := dummyHTTPRequest("POST", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun", badRequestPipelineRunBody)
-	badRequestPipelineRunRequestRestful := dummyRestfulRequest(badRequestPipelineRunRequest, "ns1", "")
-	resp := dummyRestfulResponse(httpWriter)
-	r.createPipelineRun(badRequestPipelineRunRequestRestful, resp)
+	request, resp := createDummyPipelineRunQuery(badRequestPipelineRunBody)
+	r.createPipelineRun(request, resp)
 
 	if resp.StatusCode() != 400 {
 		t.Errorf("FAIL: should have been recognised as a 400, got %d", resp.StatusCode())
@@ -1122,26 +1112,14 @@ func TestCreatePipelineRunSuccess(t *testing.T) {
 
 	r := dummyResource()
 
-	pipeline1 := v1alpha1.Pipeline{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: "Pipeline1",
-		},
-		Spec: v1alpha1.PipelineSpec{},
-	}
-
-	_, err := r.PipelineClient.TektonV1alpha1().Pipelines("ns1").Create(&pipeline1)
+	err := createTestPipeline(r)
 	if err != nil {
 		t.Errorf("FAIL: error creating test pipeline: %s", err)
 	}
 
-	httpWriter := httptest.NewRecorder()
-
 	pipelineRunBody := strings.NewReader(`{"pipelinename": "Pipeline1"}`)
-
-	pipelineRunRequest := dummyHTTPRequest("POST", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun", pipelineRunBody)
-	pipelineRunRequestRestful := dummyRestfulRequest(pipelineRunRequest, "ns1", "")
-	resp := dummyRestfulResponse(httpWriter)
-	r.createPipelineRun(pipelineRunRequestRestful, resp)
+	request, resp := createDummyPipelineRunQuery(pipelineRunBody)
+	r.createPipelineRun(request, resp)
 
 	if resp.StatusCode() != 204 {
 		t.Errorf("FAIL: should have been recognised as a 204, got %d", resp.StatusCode())
@@ -1153,14 +1131,10 @@ func TestCreatePipelineRunNoPipeline(t *testing.T) {
 
 	r := dummyResource()
 
-	httpWriter := httptest.NewRecorder()
-
 	pipelineRunBody := strings.NewReader(`{"pipelinename": "Pipelinedoesnotexist"}`)
+	request, resp := createDummyPipelineRunQuery(pipelineRunBody)
+	r.createPipelineRun(request, resp)
 
-	pipelineRunRequest := dummyHTTPRequest("POST", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun", pipelineRunBody)
-	pipelineRunRequestRestful := dummyRestfulRequest(pipelineRunRequest, "ns1", "")
-	resp := dummyRestfulResponse(httpWriter)
-	r.createPipelineRun(pipelineRunRequestRestful, resp)
 	if resp.StatusCode() != 412 {
 		t.Errorf("FAIL: should have been recognised as a 412, got %d", resp.StatusCode())
 	}
@@ -1171,19 +1145,13 @@ func TestCreatePipelineRunGitResource(t *testing.T) {
 
 	r := dummyResource()
 
-	pipeline1 := v1alpha1.Pipeline{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: "Pipeline1",
-		},
-		Spec: v1alpha1.PipelineSpec{},
-	}
-
-	_, err := r.PipelineClient.TektonV1alpha1().Pipelines("ns1").Create(&pipeline1)
+	err := createTestPipeline(r)
 	if err != nil {
 		t.Errorf("FAIL: error creating test pipeline: %s", err)
 	}
 
-	httpWriter := httptest.NewRecorder()
+	repoURL := "http://github.com/testorg/testrepo"
+	revision := "12345"
 
 	pipelineRunBody := strings.NewReader(
 		`{"pipelinename":    "Pipeline1",
@@ -1191,23 +1159,35 @@ func TestCreatePipelineRunGitResource(t *testing.T) {
 			"gitcommit":       "12345",
 			"repourl":         "http://github.com/testorg/testrepo"}`)
 
-	pipelineRunRequest := dummyHTTPRequest("POST", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun", pipelineRunBody)
-	pipelineRunRequestRestful := dummyRestfulRequest(pipelineRunRequest, "ns1", "")
-	resp := dummyRestfulResponse(httpWriter)
-	r.createPipelineRun(pipelineRunRequestRestful, resp)
+	request, resp := createDummyPipelineRunQuery(pipelineRunBody)
+	r.createPipelineRun(request, resp)
 
 	pipelineResourceList, err := r.PipelineClient.TektonV1alpha1().PipelineResources("ns1").List(metav1.ListOptions{})
 
 	numberOfGitResources := 0
+	resourceName := ""
 
 	for _, pipelineResource := range pipelineResourceList.Items {
 		if pipelineResource.Spec.Type == "git" {
 			numberOfGitResources++
+			resourceName = pipelineResource.Name
 		}
 	}
 
 	if numberOfGitResources != 1 {
 		t.Errorf("FAIL: expected to find a single created PipelineResource of type Git, but found the number of Git PipelineResources to be %d", numberOfGitResources)
+	}
+
+	gitResource, err := r.PipelineClient.TektonV1alpha1().PipelineResources("ns1").Get(resourceName, metav1.GetOptions{})
+
+	actualRevision := gitResource.Spec.Params[0].Value
+	if actualRevision != revision {
+		t.Errorf("FAIL: the revision for the Git resource didn't match, wanted %s but was %s", revision, actualRevision)
+	}
+
+	actualURL := gitResource.Spec.Params[1].Value
+	if actualURL != repoURL {
+		t.Errorf("FAIL: the URL for the Git resource didn't match, wanted %s but was %s", repoURL, actualURL)
 	}
 
 	t.Logf("Pipeline resource list: %v", pipelineResourceList)
@@ -1222,19 +1202,10 @@ func TestCreatePipelineRunImageResource(t *testing.T) {
 
 	r := dummyResource()
 
-	pipeline1 := v1alpha1.Pipeline{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: "Pipeline1",
-		},
-		Spec: v1alpha1.PipelineSpec{},
-	}
-
-	_, err := r.PipelineClient.TektonV1alpha1().Pipelines("ns1").Create(&pipeline1)
+	err := createTestPipeline(r)
 	if err != nil {
 		t.Errorf("FAIL: error creating test pipeline: %s", err)
 	}
-
-	httpWriter := httptest.NewRecorder()
 
 	pipelineRunBody := strings.NewReader(
 		`{"pipelinename":      "Pipeline1",
@@ -1242,23 +1213,32 @@ func TestCreatePipelineRunImageResource(t *testing.T) {
 			"gitcommit":       	 "12345",
 			"reponame":        	 "testreponame"}`)
 
-	pipelineRunRequest := dummyHTTPRequest("POST", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun", pipelineRunBody)
-	pipelineRunRequestRestful := dummyRestfulRequest(pipelineRunRequest, "ns1", "")
-	resp := dummyRestfulResponse(httpWriter)
-	r.createPipelineRun(pipelineRunRequestRestful, resp)
+	expectedImageURL := "/testreponame:12345"
+
+	request, resp := createDummyPipelineRunQuery(pipelineRunBody)
+	r.createPipelineRun(request, resp)
 
 	pipelineResourceList, err := r.PipelineClient.TektonV1alpha1().PipelineResources("ns1").List(metav1.ListOptions{})
 
 	numberOfImageResources := 0
+	resourceName := ""
 
 	for _, pipelineResource := range pipelineResourceList.Items {
 		if pipelineResource.Spec.Type == "image" {
 			numberOfImageResources++
+			resourceName = pipelineResource.Name
 		}
 	}
 
 	if numberOfImageResources != 1 {
 		t.Errorf("FAIL: expected to find a single created PipelineResource of type image, but found the number of image PipelineResources to be %d", numberOfImageResources)
+	}
+
+	imageResource, err := r.PipelineClient.TektonV1alpha1().PipelineResources("ns1").Get(resourceName, metav1.GetOptions{})
+
+	actualURL := imageResource.Spec.Params[0].Value
+	if actualURL != expectedImageURL {
+		t.Errorf("FAIL: the URL for the Image resource didn't match, wanted %s but was %s", expectedImageURL, actualURL)
 	}
 
 	t.Logf("Pipeline resource list: %v", pipelineResourceList)
@@ -1273,19 +1253,14 @@ func TestCreatePipelineRunGitAndImageResource(t *testing.T) {
 
 	r := dummyResource()
 
-	pipeline1 := v1alpha1.Pipeline{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: "Pipeline1",
-		},
-		Spec: v1alpha1.PipelineSpec{},
-	}
-
-	_, err := r.PipelineClient.TektonV1alpha1().Pipelines("ns1").Create(&pipeline1)
+	err := createTestPipeline(r)
 	if err != nil {
 		t.Errorf("FAIL: error creating test pipeline: %s", err)
 	}
 
-	httpWriter := httptest.NewRecorder()
+	revision := "12345"
+	repoURL := "http://github.com/testorg/testrepo"
+	expectedImageURL := "/testreponame:12345"
 
 	pipelineRunBody := strings.NewReader(
 		`{"pipelinename":      "Pipeline1",
@@ -1295,10 +1270,8 @@ func TestCreatePipelineRunGitAndImageResource(t *testing.T) {
 			"reponame":          "testreponame",
 			"repourl":           "http://github.com/testorg/testrepo"}`)
 
-	pipelineRunRequest := dummyHTTPRequest("POST", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun", pipelineRunBody)
-	pipelineRunRequestRestful := dummyRestfulRequest(pipelineRunRequest, "ns1", "")
-	resp := dummyRestfulResponse(httpWriter)
-	r.createPipelineRun(pipelineRunRequestRestful, resp)
+	request, resp := createDummyPipelineRunQuery(pipelineRunBody)
+	r.createPipelineRun(request, resp)
 
 	pipelineResourceList, err := r.PipelineClient.TektonV1alpha1().PipelineResources("ns1").List(metav1.ListOptions{})
 
@@ -1307,11 +1280,16 @@ func TestCreatePipelineRunGitAndImageResource(t *testing.T) {
 
 	resourceListingAsItems := pipelineResourceList.Items
 
+	gitResourceName := ""
+	imageResourceName := ""
+
 	for _, pipelineResource := range resourceListingAsItems {
 		if pipelineResource.Spec.Type == "git" {
 			numberOfGitResources++
+			gitResourceName = pipelineResource.Name
 		} else if pipelineResource.Spec.Type == "image" {
 			numberOfImageResources++
+			imageResourceName = pipelineResource.Name
 		}
 	}
 
@@ -1323,7 +1301,52 @@ func TestCreatePipelineRunGitAndImageResource(t *testing.T) {
 		t.Errorf("FAIL: expected one created PipelineResource of type image but found the number of image PipelineResources to be %d", numberOfImageResources)
 	}
 
+	gitResource, err := r.PipelineClient.TektonV1alpha1().PipelineResources("ns1").Get(gitResourceName, metav1.GetOptions{})
+
+	actualRevision := gitResource.Spec.Params[0].Value
+	if actualRevision != revision {
+		t.Errorf("FAIL: the revision for the Git resource didn't match, wanted %s but was %s", revision, actualRevision)
+	}
+
+	actualURL := gitResource.Spec.Params[1].Value
+	if actualURL != repoURL {
+		t.Errorf("FAIL: the URL for the Git resource didn't match, wanted %s but was %s", repoURL, actualURL)
+	}
+
+	imageResource, err := r.PipelineClient.TektonV1alpha1().PipelineResources("ns1").Get(imageResourceName, metav1.GetOptions{})
+
+	actualImageURL := imageResource.Spec.Params[0].Value
+	if actualImageURL != expectedImageURL {
+		t.Errorf("FAIL: the URL for the Image resource didn't match, wanted %s but was %s", expectedImageURL, actualImageURL)
+	}
+
+	t.Logf("Pipeline resource list: %v", pipelineResourceList)
+
 	if resp.StatusCode() != 204 {
 		t.Errorf("FAIL: should have been recognised as a 204, got %d", resp.StatusCode())
 	}
+}
+
+func createDummyPipelineRunQuery(pipelineRunBody io.Reader) (*restful.Request, *restful.Response) {
+	httpWriter := httptest.NewRecorder()
+
+	pipelineRunRequest := dummyHTTPRequest("POST", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun", pipelineRunBody)
+	pipelineRunRequestRestful := dummyRestfulRequest(pipelineRunRequest, "ns1", "")
+	resp := dummyRestfulResponse(httpWriter)
+	return pipelineRunRequestRestful, resp
+}
+
+func createTestPipeline(r *Resource) error {
+	pipeline1 := v1alpha1.Pipeline{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "Pipeline1",
+		},
+		Spec: v1alpha1.PipelineSpec{},
+	}
+
+	_, err := r.PipelineClient.TektonV1alpha1().Pipelines("ns1").Create(&pipeline1)
+	if err != nil {
+		return err
+	}
+	return nil
 }

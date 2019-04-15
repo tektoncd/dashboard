@@ -44,8 +44,8 @@ type BuildInformation struct {
 	TIMESTAMP string
 }
 
-// AppError represents an error with a code, message, and the error itself
-type AppError struct {
+// AppResponse represents an error with a code, message, and the error itself
+type AppResponse struct {
 	ERROR   error
 	MESSAGE string
 	CODE    int
@@ -162,10 +162,10 @@ func (r Resource) getAllPipelineRuns(request *restful.Request, response *restful
 
 	logging.Log.Debugf("In getAllPipelineRuns: namespace: `%s`, repository query: `%s`", namespace, repository)
 
-	pipelinerunList, appError := r.GetAllPipelineRunsImpl(namespace, repository)
-	if appError.ERROR != nil {
-		logging.Log.Errorf("there was a problem getting the PipelineRuns list: %s", appError.ERROR)
-		utils.RespondError(response, appError.ERROR, appError.CODE)
+	pipelinerunList, appResponse := r.GetAllPipelineRunsImpl(namespace, repository)
+	if appResponse.ERROR != nil {
+		logging.Log.Errorf("there was a problem getting the PipelineRuns list: %s", appResponse.ERROR)
+		utils.RespondError(response, appResponse.ERROR, appResponse.CODE)
 	} else {
 		// no errors so return the pipeline run list
 		logging.Log.Debugf("PipelineRun list: %v", pipelinerunList.Items)
@@ -175,7 +175,7 @@ func (r Resource) getAllPipelineRuns(request *restful.Request, response *restful
 
 /*GetAllPipelineRunsImpl - Returns a pointer to a list of PipelineRuns in a given namespace,
 an empty string repository query can be provided meaning that all PipelineRuns in the namespace will be returned  */
-func (r Resource) GetAllPipelineRunsImpl(namespace, repository string) (v1alpha1.PipelineRunList, AppError) {
+func (r Resource) GetAllPipelineRunsImpl(namespace, repository string) (v1alpha1.PipelineRunList, AppResponse) {
 	logging.Log.Debugf("In getAllPipelineRunsImpl: namespace: `%s`, repository query: `%s`", namespace, repository)
 
 	pipelineruns := r.PipelineClient.TektonV1alpha1().PipelineRuns(namespace)
@@ -187,7 +187,7 @@ func (r Resource) GetAllPipelineRunsImpl(namespace, repository string) (v1alpha1
 		if err != nil {
 			errorMsg := fmt.Sprintf("there was an error getting the Git values with repository query %s", repository)
 			logging.Log.Errorf("%s: %s", errorMsg, err)
-			return v1alpha1.PipelineRunList{}, AppError{err, errorMsg, http.StatusInternalServerError}
+			return v1alpha1.PipelineRunList{}, AppResponse{err, errorMsg, http.StatusInternalServerError}
 		}
 		match := gitServerLabel + "=" + server + "," + gitOrgLabel + "=" + org + "," + gitRepoLabel + "=" + repo
 		pipelinerunList, err = pipelineruns.List(metav1.ListOptions{LabelSelector: match})
@@ -195,10 +195,10 @@ func (r Resource) GetAllPipelineRunsImpl(namespace, repository string) (v1alpha1
 		pipelinerunList, err = pipelineruns.List(metav1.ListOptions{})
 	}
 	if err != nil {
-		return v1alpha1.PipelineRunList{}, AppError{err, "", http.StatusNotFound}
+		return v1alpha1.PipelineRunList{}, AppResponse{err, "", http.StatusNotFound}
 	}
 
-	return *pipelinerunList, AppError{}
+	return *pipelinerunList, AppResponse{}
 }
 
 /* Get a given pipeline run by name in a given namespace */
@@ -235,7 +235,7 @@ func (r Resource) createPipelineRun(request *restful.Request, response *restful.
 
 /*CreatePipelineRunImpl - Create a new manual pipeline run and resources in a given namespace
 method assumes you've already applied the yaml: so the pipeline definition and its tasks must exist upfront*/
-func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, namespace string) *AppError {
+func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, namespace string) *AppResponse {
 
 	pipelineName := pipelineRunData.PIPELINENAME
 	serviceAccount := pipelineRunData.SERVICEACCOUNT
@@ -249,7 +249,7 @@ func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, names
 	if err != nil {
 		errorMsg := fmt.Sprintf("could not find the pipeline template %s in namespace %s", pipelineName, namespace)
 		logging.Log.Errorf(errorMsg)
-		return &AppError{err, errorMsg, http.StatusPreconditionFailed}
+		return &AppResponse{err, errorMsg, http.StatusPreconditionFailed}
 	}
 
 	logging.Log.Debugf("Found the pipeline template %s OK", pipelineName)
@@ -260,23 +260,35 @@ func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, names
 	resources := []v1alpha1.PipelineResourceBinding{}
 
 	if pipelineRunData.GITRESOURCENAME != "" {
-		gitResource = r.createPipelineResource(pipelineRunData, namespace, pipelineRunData.GITRESOURCENAME, v1alpha1.PipelineResourceTypeGit)
+		gitResource, err = r.createPipelineResourceForPipelineRun(pipelineRunData, namespace, pipelineRunData.GITRESOURCENAME, v1alpha1.PipelineResourceTypeGit)
+		if err != nil {
+			errorMsg := fmt.Sprintf("Could not create the PipelineResource of type Git with provdided name %s", pipelineRunData.GITRESOURCENAME)
+			logging.Log.Errorf(errorMsg)
+			return &AppResponse{err, errorMsg, http.StatusInternalServerError}
+		}
 		resources = append(resources, v1alpha1.PipelineResourceBinding{Name: pipelineRunData.GITRESOURCENAME, ResourceRef: gitResource})
 	}
 
 	if pipelineRunData.IMAGERESOURCENAME != "" {
-		imageResource = r.createPipelineResource(pipelineRunData, namespace, pipelineRunData.IMAGERESOURCENAME, v1alpha1.PipelineResourceTypeImage)
+		imageResource, err = r.createPipelineResourceForPipelineRun(pipelineRunData, namespace, pipelineRunData.IMAGERESOURCENAME, v1alpha1.PipelineResourceTypeImage)
+		if err != nil {
+			errorMsg := fmt.Sprintf("Could not create the PipelineResource of type Image with provdided name %s", pipelineRunData.IMAGERESOURCENAME)
+			logging.Log.Errorf(errorMsg)
+			return &AppResponse{err, errorMsg, http.StatusInternalServerError}
+		}
 		resources = append(resources, v1alpha1.PipelineResourceBinding{Name: pipelineRunData.IMAGERESOURCENAME, ResourceRef: imageResource})
 	}
 
+	repoName := pipelineRunData.REPONAME
 	imageTag := pipelineRunData.GITCOMMIT
-	imageName := fmt.Sprintf("%s/%s", registryLocation, strings.ToLower(pipelineRunData.REPONAME))
-	releaseName := fmt.Sprintf("%s-%s", strings.ToLower(pipelineRunData.REPONAME), pipelineRunData.GITCOMMIT)
-	repositoryName := strings.ToLower(pipelineRunData.REPONAME)
+	imageName := fmt.Sprintf("%s/%s", registryLocation, strings.ToLower(repoName))
+	releaseName := fmt.Sprintf("%s-%s", strings.ToLower(repoName), pipelineRunData.GITCOMMIT)
+	repositoryName := strings.ToLower(repoName)
 
 	var params []v1alpha1.Param
 	if pipelineRunData.PIPELINERUNTYPE == "helm" {
-		params = []v1alpha1.Param{{Name: "image-tag", Value: imageTag},
+		params = []v1alpha1.Param{
+			{Name: "image-tag", Value: imageTag},
 			{Name: "image-name", Value: imageName},
 			{Name: "release-name", Value: releaseName},
 			{Name: "repository-name", Value: repositoryName},
@@ -292,7 +304,10 @@ func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, names
 		params = append(params, v1alpha1.Param{Name: "helm-secret", Value: pipelineRunData.HELMSECRET})
 	}
 	// PipelineRun yaml defines references to resources
-	newPipelineRunData := definePipelineRun(generatedPipelineRunName, namespace, serviceAccount, pipelineRunData.REPOURL, pipeline, v1alpha1.PipelineTriggerTypeManual, resources, params)
+	newPipelineRunData, err := definePipelineRun(generatedPipelineRunName, namespace, serviceAccount, pipelineRunData.REPOURL, pipeline, v1alpha1.PipelineTriggerTypeManual, resources, params)
+	if err != nil {
+		logging.Log.Errorf("there was a problem defining the pipeline run: %s", err)
+	}
 
 	logging.Log.Infof("Creating a new PipelineRun named %s in the namespace %s", generatedPipelineRunName, namespace)
 
@@ -300,12 +315,12 @@ func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, names
 	if err != nil {
 		errorMsg := fmt.Sprintf("error creating the PipelineRun: %s", err)
 		logging.Log.Errorf(errorMsg)
-		return &AppError{err, errorMsg, http.StatusInternalServerError}
+		return &AppResponse{err, errorMsg, http.StatusInternalServerError}
 	}
 
-	errorMsg := fmt.Sprintf("PipelineRun created with name: %s", pipelineRun.Name)
-	logging.Log.Debugf(errorMsg)
-	return &AppError{err, errorMsg, http.StatusNoContent}
+	creationMsg := fmt.Sprintf("PipelineRun created with name: %s", pipelineRun.Name)
+	logging.Log.Debugf(creationMsg)
+	return &AppResponse{err, creationMsg, http.StatusNoContent}
 }
 
 /* Get a given pipeline resource by name in a given namespace */
@@ -514,14 +529,15 @@ func definePipelineRun(pipelineRunName, namespace, saName, repoUrl string,
 	pipeline v1alpha1.Pipeline,
 	triggerType v1alpha1.PipelineTriggerType,
 	resourceBinding []v1alpha1.PipelineResourceBinding,
-	params []v1alpha1.Param) *v1alpha1.PipelineRun {
+	params []v1alpha1.Param) (*v1alpha1.PipelineRun, error) {
 
 	gitServer, gitOrg, gitRepo := "", "", ""
-	err := errors.New("")
+	var err error
 	if repoUrl != "" {
 		gitServer, gitOrg, gitRepo, err = getGitValues(repoUrl)
 		if err != nil {
 			logging.Log.Errorf("there was an error getting the Git values: %s", err)
+			return &v1alpha1.PipelineRun{}, err
 		}
 	}
 
@@ -548,7 +564,7 @@ func definePipelineRun(pipelineRunName, namespace, saName, repoUrl string,
 		},
 	}
 	pipelineRunPointer := &pipelineRunData
-	return pipelineRunPointer
+	return pipelineRunPointer, nil
 }
 
 func getDateTimeAsString() string {
@@ -557,7 +573,7 @@ func getDateTimeAsString() string {
 
 // defines and creates a resource of a specifed type and returns a pipeline resource reference for this resource
 // takes a manual pipeline run data struct, namespace for the resource creation, resource name to refer to it and the resource type
-func (r Resource) createPipelineResource(resourceData ManualPipelineRun, namespace, resourceName string, resourceType v1alpha1.PipelineResourceType) v1alpha1.PipelineResourceRef {
+func (r Resource) createPipelineResourceForPipelineRun(resourceData ManualPipelineRun, namespace, resourceName string, resourceType v1alpha1.PipelineResourceType) (v1alpha1.PipelineResourceRef, error) {
 	logging.Log.Debug("Creating PipelineResource of type %s", resourceType)
 
 	startTime := getDateTimeAsString()
@@ -566,27 +582,25 @@ func (r Resource) createPipelineResource(resourceData ManualPipelineRun, namespa
 	resourceName = fmt.Sprintf("%s-%s", resourceName, startTime)
 
 	var paramsForResource []v1alpha1.Param
-	var typeToUse v1alpha1.PipelineResourceType
 	// Unique names are required so timestamp them.
 	if resourceType == v1alpha1.PipelineResourceTypeGit {
-		typeToUse = resourceType
 		paramsForResource = []v1alpha1.Param{{Name: "revision", Value: resourceData.GITCOMMIT}, {Name: "url", Value: resourceData.REPOURL}}
 	} else if resourceType == v1alpha1.PipelineResourceTypeImage {
 		urlToUse := fmt.Sprintf("%s/%s:%s", registryURL, strings.ToLower(resourceData.REPONAME), resourceData.GITCOMMIT)
-		typeToUse = resourceType
 		paramsForResource = []v1alpha1.Param{{Name: "url", Value: urlToUse}}
 	}
 
-	pipelineResource := definePipelineResource(resourceName, namespace, paramsForResource, typeToUse)
+	pipelineResource := definePipelineResource(resourceName, namespace, paramsForResource, resourceType)
 	createdPipelineImageResource, err := r.PipelineClient.TektonV1alpha1().PipelineResources(namespace).Create(pipelineResource)
 	if err != nil {
 		logging.Log.Errorf("could not create pipeline %s resource to be used in the pipeline, error: %s", resourceType, err)
+		return v1alpha1.PipelineResourceRef{}, err
 	} else {
-		logging.Log.Infof("Created pipeline %s resource %s successfully", typeToUse, createdPipelineImageResource.Name)
+		logging.Log.Infof("Created pipeline %s resource %s successfully", resourceType, createdPipelineImageResource.Name)
 	}
 
 	resourceRef := v1alpha1.PipelineResourceRef{Name: resourceName}
-	return resourceRef
+	return resourceRef, nil
 }
 
 // Returns the git server excluding transport, org and repo
