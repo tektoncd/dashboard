@@ -200,7 +200,7 @@ func TestCredentialsErrors(t *testing.T) {
 	}
 	for _, invalidCred := range invalidCreds {
 		// Must match error message exactly in the verify function, careful if you change fields
-		expectError = "Error: username, password, id, url and type ('accesstoken' or 'userpass') must all be supplied."
+		expectError = "Error: Username, Password, Name, URL and Type ('accesstoken' or 'userpass') must all be supplied."
 		createCredentialTest(namespace, invalidCred, expectError, r, t)
 		updateCredentialTest(namespace, invalidCred, expectError, r, t)
 	}
@@ -355,7 +355,7 @@ func readCredentialTest(namespace string, expectCred credential, expectError str
 	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/"+namespace+"/credentials/"+expectCred.Name, nil)
 	req := dummyRestfulRequest(httpReq, namespace, "")
 	params := req.PathParameters()
-	params["id"] = expectCred.Name
+	params["name"] = expectCred.Name
 	httpWriter := httptest.NewRecorder()
 	resp := dummyRestfulResponse(httpWriter)
 
@@ -393,7 +393,7 @@ func updateCredentialTest(namespace string, cred credential, expectError string,
 	httpReq := dummyHTTPRequest("PUT", "http://wwww.dummy.com:8383/v1/namespaces/"+namespace+"/credentials/"+cred.Name, bytes.NewBuffer(jsonBody))
 	req := dummyRestfulRequest(httpReq, namespace, "")
 	params := req.PathParameters()
-	params["id"] = cred.Name
+	params["name"] = cred.Name
 	httpWriter := httptest.NewRecorder()
 	resp := dummyRestfulResponse(httpWriter)
 

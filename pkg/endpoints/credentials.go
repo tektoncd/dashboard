@@ -26,7 +26,7 @@ import (
 )
 
 type credential struct {
-	Name             string           `json:"name"`
+	Name            string            `json:"name"`
 	Username        string            `json:"username"`
 	Password        string            `json:"password"`
 	Description     string            `json:"description"`
@@ -79,8 +79,8 @@ func (r Resource) getAllCredentials(request *restful.Request, response *restful.
 
 /* API route for getting a given credential by name in a given namespace
  * Required path parameters:
- *  - namespace
- *  - id
+ *  - Namespace
+ *  - Name
  */
 func (r Resource) getCredential(request *restful.Request, response *restful.Response) {
 	// Get path parameters
@@ -116,10 +116,10 @@ func (r Resource) getCredential(request *restful.Request, response *restful.Resp
  * Required path parameters:
  *  - namespace
  * Required query parameters:
- *  - id
- *  - username
- *  - password
- *  - type (must have the value 'accesstoken' or 'userpass')
+ *  - Name
+ *  - Username
+ *  - Password
+ *  - Type (must have the value 'accesstoken' or 'userpass')
  */
 func (r Resource) createCredential(request *restful.Request, response *restful.Response) {
 	// Get path parameter
@@ -156,14 +156,14 @@ func (r Resource) createCredential(request *restful.Request, response *restful.R
 }
 
 /* API route for updating a given credential
- * Cannot update the id field
+ * Cannot update the Name field
  * Required path parameters:
- *  - namespace
- *  - id
+ *  - Namespace
+ *  - Name
  * Required query parameters:
- *  - username
- *  - password
- *  - type (must have the value 'accesstoken' or 'userpass')
+ *  - Username
+ *  - Password
+ *  - Type (must have the value 'accesstoken' or 'userpass')
  */
 func (r Resource) updateCredential(request *restful.Request, response *restful.Response) {
 	// Get path parameters
@@ -207,8 +207,8 @@ func (r Resource) updateCredential(request *restful.Request, response *restful.R
 
 /* API route for creating a given credential
  * Required path parameters:
- *  - namespace
- *  - id
+ *  - Namespace
+ *  - Name
  */
 func (r Resource) deleteCredential(request *restful.Request, response *restful.Response) {
 	// Get path parameters
@@ -267,7 +267,7 @@ func (r Resource) verifySecretExists(secretName string, namespace string, respon
 
 /* Verify required parameters are in credential struct
  * Required parameters:
- *  - Id
+ *  - Name
  *  - Username
  *  - Password
  *  - Type (must have the value 'accesstoken' or 'userpass')
@@ -279,7 +279,7 @@ func (r Resource) verifyCredentialParameters(cred credential, response *restful.
 		cred.URL == nil ||
 		(cred.Type != typeAccessToken && cred.Type != typeUserPass) {
 
-		errorMessage := fmt.Sprintf("Error: username, password, name, url and type ('%s' or '%s') must all be supplied.", typeAccessToken, typeUserPass)
+		errorMessage := fmt.Sprintf("Error: Username, Password, Name, URL and Type ('%s' or '%s') must all be supplied.", typeAccessToken, typeUserPass)
 		utils.RespondErrorMessage(response, errorMessage, http.StatusBadRequest)
 		return false
 	}
