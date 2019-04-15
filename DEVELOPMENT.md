@@ -112,9 +112,11 @@ kubectl logs -l app=tekton-dashboard
 
 ## API definitions
 
-The backend API offers the following endpoints at `/v1/namespaces/<namespace>`:
+The backend API provides the following endpoints at `/v1/namespaces/<namespace>`:
 
-GET endpoints:
+__GET endpoints__
+
+__Pipelines__
 ```
 GET /v1/namespaces/<namespace>/pipeline
 Get all Tekton Pipelines
@@ -125,7 +127,10 @@ GET /v1/namespaces/<namespace>/pipeline/<pipeline-name>
 Get a Tekton Pipeline by name
 Returns HTTP code 200 and the given pipeline in the given namespace if found
 Returns HTTP code 404 if an error occurred getting the Pipeline
+```
 
+__PipelineRuns__
+```
 GET /v1/namespaces/<namespace>/pipelinerun
 Get all Tekton PipelineRuns, also supports '?repository=https://gitserver/foo/bar' querying
 Returns HTTP code 200 and a list of PipelineRuns, optionally matching the above query, in the given namespace
@@ -135,7 +140,10 @@ GET /v1/namespaces/<namespace>/pipelinerun/<pipelinerun-name>
 Get a Tekton PipelineRun by name
 Returns HTTP code 200 and the given PipelineRun in the given namespace
 Returns HTTP code 404 if an error occurred getting the PipelineRun
+```
 
+__Tasks__
+```
 GET /v1/namespaces/<namespace>/task
 Get all Tekton tasks
 Returns HTTP code 200 and a list of Tasks in the given namespace 
@@ -145,7 +153,10 @@ GET /v1/namespaces/<namespace>/task/<task-name>
 Get a Tekton Task by name
 Returns HTTP code 200 and the given Task in the given namespace if found
 Returns HTTP code 404 if an error occurred getting the TaskRun 
+```
 
+__TaskRuns__
+```
 GET /v1/namespaces/<namespace>/taskrun
 Get all Tekton TaskRuns
 Returns HTTP code 200 and a list of TaskRuns in the given namespace 
@@ -155,7 +166,10 @@ GET /v1/namespaces/<namespace>/taskrun/<taskrun-name>
 Get a Tekton TaskRun by name
 Returns HTTP code 200 and the given TaskRun in the given namespace if found
 Returns HTTP code 404 if an error occurred getting the TaskRun 
+```
 
+__PipelineResources__
+```
 GET /v1/namespaces/<namespace>/pipelineresource
 Get all Tekton PipelineResources
 Returns HTTP code 200 and a list of PipelineResources in the given namespace 
@@ -165,7 +179,10 @@ GET /v1/namespaces/<namespace>/pipelineresource/<pipelineresource-name>
 Get a Tekton PipelineResource by name
 Returns HTTP code 200 and the given PipelineResource in the given namespace if found
 Returns HTTP code 404 if an error occurred getting the PipelineResource 
+```
 
+__Logs__
+```
 GET /v1/namespaces/<namespace>/log/<pod-name>
 Get the logs for a Pod by name
 Returns HTTP code 200 and the pod's logs in the given namespace if found
@@ -216,7 +233,10 @@ Example payload response:
 }
 
 Returns HTTP code 404 if an error occurred getting the logs or TaskRun pod was found by name in the given namespace
+```
 
+__Credentials__
+```
 GET /v1/namespaces/<namespace>/credentials
 Get all credentials by name in the given namespace
 Returns HTTP code 500 if an error occurred getting the credentials
@@ -227,7 +247,10 @@ Get a credential by ID
 Returns HTTP code 400 if the credential does not exist by name or an invalid namespace was provided
 Returns HTTP code 500 if an error occurred getting the credential
 Returns HTTP code 200 and the given credential as a Kubernetes secret in the given namespace with a blanked out password, otherwise an empty list is returned
+```
 
+__Knative__
+```
 GET /v1/namespaces/<namespace>/knative/installstatus                     
 Get the install status of a Knative resource group.
 The request body should contain the resource group to check for. Shorthand values are accepted for Knative serving and eventing-sources: use ("component": "serving" or "eventing-sources"). Any Kubernetes group can be used too, for example: `extensions/v1beta1`
@@ -237,10 +260,11 @@ Returns HTTP code 400 if a bad request is sent
 Returns HTTP code 417 (expectation failed) if the resource is not registered
 
 Note that a check of the resource definition being registered is performed: not that pods are running and healthy.
-
 ```
 
-POST endpoint:
+__POST endpoints__
+
+__Credentials__
 ```
 POST /v1/namespaces/<namespace>/credentials
 Create a new credential
@@ -255,7 +279,7 @@ Example POST (non-trivial as it involves the URL map):
 
 {
     "id": "mysecretname",
-    "username": "a-roberts",
+    "username": "myusername",
     "password": "mypassword",
     "type": "userpass",
     "description": "my secret for github",
@@ -263,14 +287,19 @@ Example POST (non-trivial as it involves the URL map):
 }
 ```
 
-PUT endpoints:
+__PUT endpoints__
+
+__Credentials__
 ```
 PUT /v1/namespaces/<namespace>/credentials/<id>                          
 Update credential by ID
 Request body must contain id, username, password, type ('accesstoken' or 'userpass'), description and the URL that the credential will be used for (e.g. the Git server)
 Returns HTTP code 200 and nothing else if the credential was updated OK
 Returns HTTP code 400 if a bad request was provided or if an error occurs updating the credential
+```
 
+__PipelineRuns__
+```
 PUT /v1/namespaces/<namespace>/pipelinerun/<pipelinerun-name>
 Update pipelinerun status
 Request body must contain desired status ("status": "PipelineRunCancelled" to cancel a running one). 
@@ -282,7 +311,9 @@ Returns HTTP code 412 if the status was already set to that
 Returns HTTP code 500 if the PipelineRun could not be stopped (an error has occurred when updating the PipelineRun)
 ```
 
-DELETE endpoint:
+__DELETE endpoints__
+
+__Credentials__
 ```
 DELETE /v1/namespaces/<namespace>/credentials/<id>
 Delete a credential by ID
