@@ -42,7 +42,6 @@ export class Pipelines extends Component {
 
   async componentDidMount() {
     try {
-      // this.props.fetchPipelines();
       const pipelines = await getPipelines();
       this.setState({ pipelines, loading: false });
     } catch (error) {
