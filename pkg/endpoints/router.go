@@ -98,7 +98,7 @@ func (r Resource) RegisterReadinessProbes(container *restful.Container) {
 	container.Add(wsv4)
 }
 
-// Write Content-Location header within PUT/POST methods and set StatusCode to 201
+// Write Content-Location header within POST methods and set StatusCode to 201
 // Headers MUST be set before writing to body (if any) to succeed
 func writeResponseLocation(request *restful.Request, response *restful.Response, identifier string) {
 	location := request.Request.URL.Path
