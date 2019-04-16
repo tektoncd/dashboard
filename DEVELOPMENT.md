@@ -363,3 +363,17 @@ Returns HTTP code 200 if the credential was deleted
 Returns HTTP code 400 if a bad request was used or if the secret was not found
 Returns HTTP code 500 if the found credential could not be deleted
 ```
+
+## Extension 
+
+__Backend__
+
+Backend can be extended by registering backend extensions.
+The backend extension is discovered by adding the label and the annotation in the extension service.
+```
+  annotations:
+    tekton-dashboard-endpoints: /
+  labels:
+    tekton-dashboard-extension: "true"
+```
+Requests to the path specified in "tekton-dashboard-endpoints" annotation are routed to the extension service.
