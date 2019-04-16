@@ -232,7 +232,7 @@ func TestTaskRun(t *testing.T) {
 
 	// Test getAllTaskRuns function
 	// Sample request and response
-	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/taskrun/", nil)
+	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/taskrun", nil)
 	req := dummyRestfulRequest(httpReq, "ns1", "")
 	httpWriter := httptest.NewRecorder()
 	resp := dummyRestfulResponse(httpWriter)
@@ -253,6 +253,27 @@ func TestTaskRun(t *testing.T) {
 	}
 	if result.Items[0].Name != "TaskRun2" && result.Items[1].Name != "TaskRun2" {
 		t.Errorf("Task2 is not returned: %s, %s", result.Items[0].Name, result.Items[1].Name)
+	}
+
+	// Test getAllTaskRuns function with name query
+	// Sample request and response
+	httpReq = dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/taskrun?name=TaskRun1", nil)
+	req = dummyRestfulRequest(httpReq, "ns1", "")
+	httpWriter = httptest.NewRecorder()
+	resp = dummyRestfulResponse(httpWriter)
+
+	//  Test the function
+	r.getAllTaskRuns(req, resp)
+
+	// Decode the response
+	result = v1alpha1.TaskRunList{}
+	json.NewDecoder(httpWriter.Body).Decode(&result)
+	// Verify the response
+	if len(result.Items) != 1 {
+		t.Errorf("Number of tasks: expected: %d, returned: %d", 1, len(result.Items))
+	}
+	if result.Items[0].Name != "TaskRun1" {
+		t.Errorf("Task1 is not returned: %s", result.Items[0].Name)
 	}
 
 	// Test getTaskRun function
@@ -329,7 +350,7 @@ func TestPipelineRun(t *testing.T) {
 
 	// Test getAllPipelineRuns function
 	// Sample request and response
-	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun/", nil)
+	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun", nil)
 	req := dummyRestfulRequest(httpReq, "ns1", "")
 	httpWriter := httptest.NewRecorder()
 	resp := dummyRestfulResponse(httpWriter)
@@ -352,9 +373,31 @@ func TestPipelineRun(t *testing.T) {
 		t.Errorf("Task2 is not returned: %s, %s", result.Items[0].Name, result.Items[1].Name)
 	}
 
-	// Test getAllPipelineRuns function with query
+	// Test getAllPipelineRuns function with repository query
 	// Sample request and response
 	httpReq = dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun?repository=http://github.com/foo/bar", nil)
+	req = dummyRestfulRequest(httpReq, "ns1", "")
+	httpWriter = httptest.NewRecorder()
+	resp = dummyRestfulResponse(httpWriter)
+
+	//  Test the function
+	r.getAllPipelineRuns(req, resp)
+
+	// Decode the response
+	result = v1alpha1.PipelineRunList{}
+	json.NewDecoder(httpWriter.Body).Decode(&result)
+
+	// Verify the response
+	if len(result.Items) != 1 {
+		t.Errorf("Number of PipelineRuns: expected: %d, returned: %d", 1, len(result.Items))
+	}
+	if result.Items[0].Name != "PipelineRun1" {
+		t.Errorf("PipelineRun1 is not returned: %s", result.Items[0].Name)
+	}
+
+	// Test getAllPipelineRuns function with name query
+	// Sample request and response
+	httpReq = dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun?name=PipelineRun1", nil)
 	req = dummyRestfulRequest(httpReq, "ns1", "")
 	httpWriter = httptest.NewRecorder()
 	resp = dummyRestfulResponse(httpWriter)
