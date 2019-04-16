@@ -242,6 +242,15 @@ func (r Resource) deleteCredential(request *restful.Request, response *restful.R
 		utils.RespondErrorAndMessage(response, err, errorMessage, http.StatusInternalServerError)
 		return
 	}
+	// Patch service account
+	saName := ""
+	providedSaName := os.Getenv("PIPELINE_RUN_SERVICE_ACCOUNT")
+	if providedSaName != "" {
+		saName = providedSaName
+	} else {
+		saName = "default"
+	}
+	r.removeSecretFromSA(saName, requestID, requestNamespace)
 }
 
 // Returns true if the namespace exists in the resource K8sClient and false if it does not exist
@@ -360,7 +369,7 @@ func credentialToSecret(cred credential, namespace string, response *restful.Res
 	return &secret, true
 }
 
-// Add secret to service account 
+// addSecretToSA - Add secret to service account 
 func (r Resource) addSecretToSA(saName string, secretName string , namespaceName string) bool {
 	sa := corev1.ServiceAccount{
 		Secrets: []corev1.ObjectReference {{Name: secretName},},
@@ -374,6 +383,7 @@ func (r Resource) addSecretToSA(saName string, secretName string , namespaceName
 
 	logging.Log.Debugf("Service account to patch is %s", saName)
 	logging.Log.Debugf("Namespace of service account is %s", namespaceName)
+	logging.Log.Debugf("Patch string %s", string(marshaledSA))
 
 	_, err = r.K8sClient.CoreV1().ServiceAccounts(namespaceName).
 		Get(saName, metav1.GetOptions{})
@@ -396,4 +406,43 @@ func (r Resource) addSecretToSA(saName string, secretName string , namespaceName
 		return false
 	}
 	return true
+}
+
+// path - struct for patch operation
+type patch struct {
+	Op              string            `json:"op"`
+	Path            string            `json:"path"`
+}
+
+// removeSecretFromSA - remove secret from service account 
+func (r Resource) removeSecretFromSA(saName string, secretName string , namespaceName string) {
+	logging.Log.Debugf("Service account to patch is %s", saName)
+	logging.Log.Debugf("Namespace of service account is %s", namespaceName)
+
+	sa, err := r.K8sClient.CoreV1().ServiceAccounts(namespaceName).
+		Get(saName, metav1.GetOptions{})
+	if err != nil {
+		logging.Log.Errorf("error getting service sccount %s: %s", saName, err.Error())
+	}
+
+	var entry int
+	found := false
+	for i, secret := range sa.Secrets {
+		if secret.Name == secretName {
+			found = true;
+			entry = i
+		}
+	}
+	if found {
+		path := fmt.Sprintf("/secrets/%d", entry)
+		data := patch { Op: "remove", Path: path } 
+		patch, err := json.Marshal(data)
+		logging.Log.Debugf("Patch JSON:%s", string(patch))
+		_, err = r.K8sClient.CoreV1().ServiceAccounts(namespaceName).
+			Patch(saName, typesPatch.JSONPatchType, patch)
+		if err != nil {
+			logging.Log.Errorf("Error occurred: %+v", err)
+		}
+	}
+	return
 }
