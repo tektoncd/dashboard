@@ -146,7 +146,7 @@ func (r Resource) RegisterExtension(container *restful.Container, namespace stri
 	container.Add(ws)
 }
 
-// HandleExtension - this routes request to the extention service
+// HandleExtension - this routes request to the extension service
 func (ext Extension) HandleExtension(request *restful.Request, response *restful.Response) {
 	target, _ := url.Parse("http://" +  ext.Name + ":" + ext.Port + "/")
 	proxy := httputil.NewSingleHostReverseProxy(target)
