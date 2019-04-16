@@ -262,7 +262,7 @@ func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, names
 	if pipelineRunData.GITRESOURCENAME != "" {
 		gitResource, err = r.createPipelineResourceForPipelineRun(pipelineRunData, namespace, pipelineRunData.GITRESOURCENAME, v1alpha1.PipelineResourceTypeGit)
 		if err != nil {
-			errorMsg := fmt.Sprintf("Could not create the PipelineResource of type Git with provdided name %s", pipelineRunData.GITRESOURCENAME)
+			errorMsg := fmt.Sprintf("Could not create the PipelineResource of type Git with provided name %s", pipelineRunData.GITRESOURCENAME)
 			logging.Log.Error(errorMsg)
 			return &AppResponse{err, errorMsg, http.StatusInternalServerError}
 		}
@@ -272,7 +272,7 @@ func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, names
 	if pipelineRunData.IMAGERESOURCENAME != "" {
 		imageResource, err = r.createPipelineResourceForPipelineRun(pipelineRunData, namespace, pipelineRunData.IMAGERESOURCENAME, v1alpha1.PipelineResourceTypeImage)
 		if err != nil {
-			errorMsg := fmt.Sprintf("Could not create the PipelineResource of type Image with provdided name %s", pipelineRunData.IMAGERESOURCENAME)
+			errorMsg := fmt.Sprintf("Could not create the PipelineResource of type Image with provided name %s", pipelineRunData.IMAGERESOURCENAME)
 			logging.Log.Error(errorMsg)
 			return &AppResponse{err, errorMsg, http.StatusInternalServerError}
 		}
