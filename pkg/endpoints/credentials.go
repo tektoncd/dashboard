@@ -434,7 +434,7 @@ func (r Resource) removeSecretFromSA(saName string, secretName string , namespac
 		}
 	}
 	if found {
-		path := fmt.Sprintf("/secrets/%d", entry)
+		path := fmt.Sprintf("/secrets/%d/", entry)
 		data := patch { Op: "remove", Path: path } 
 		patch, err := json.Marshal(data)
 		logging.Log.Debugf("Patch JSON:%s", string(patch))
