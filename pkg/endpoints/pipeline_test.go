@@ -15,6 +15,7 @@ package endpoints
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http/httptest"
 	"strings"
@@ -1179,9 +1180,9 @@ func TestCreatePipelineRunGitResource(t *testing.T) {
 	}
 
 	params := []string{revision, repoURL}
-	err = testPipelineResource(r, resourceName, "git", params)
+	err = testPipelineResource(r, resourceName, v1alpha1.PipelineResourceTypeGit, params)
 	if err != nil {
-		t.Error("FAIL: the values expected for the resource did not match the actual values of the created resource")
+		t.Error(err)
 	}
 
 	t.Logf("Pipeline resource list: %v", pipelineResourceList)
@@ -1337,22 +1338,19 @@ func createTestPipeline(r *Resource) error {
 	return nil
 }
 
-func testPipelineResource(r *Resource, resourceName, resourceType string, params []string) error {
+func testPipelineResource(r *Resource, resourceName string, resourceType v1alpha1.PipelineResourceType, params []string) error {
 	resource, err := r.PipelineClient.TektonV1alpha1().PipelineResources("ns1").Get(resourceName, metav1.GetOptions{})
+	if err != nil {
+		return fmt.Errorf("FAIL: there was a problem getting the created resource")
+	}
 
-	if resourceType == "image" {
-		actualURL := resource.Spec.Params[0].Value
-		if actualURL != params[0] {
-			return err
-		}
-	} else if resourceType == "git" {
-		actualRevision := resource.Spec.Params[0].Value
-		if actualRevision != params[0] {
-			return err
-		}
-		actualURL := resource.Spec.Params[1].Value
-		if actualURL != params[1] {
-			return err
+	if resourceType != resource.Spec.Type {
+		return fmt.Errorf("FAIL: the type for the resource didn't match, wanted %s but was %s", resourceType, resource.Spec.Type)
+	}
+
+	for i := range params {
+		if params[i] != resource.Spec.Params[i].Value {
+			return fmt.Errorf("FAIL: the param for the resource didn't match, wanted %s but was %s", params[i], resource.Spec.Params[i].Value)
 		}
 	}
 
