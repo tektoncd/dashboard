@@ -1108,7 +1108,7 @@ func TestCreatePipelineRunBadRequest(t *testing.T) {
 	}
 }
 
-/* PipelineRun create successful 204 */
+/* PipelineRun create successful 201 */
 func TestCreatePipelineRunSuccess(t *testing.T) {
 
 	r := dummyResource()
@@ -1122,8 +1122,8 @@ func TestCreatePipelineRunSuccess(t *testing.T) {
 	request, resp := createDummyPipelineRunQuery(pipelineRunBody)
 	r.createPipelineRun(request, resp)
 
-	if resp.StatusCode() != 204 {
-		t.Errorf("FAIL: should have been recognised as a 204, got %d", resp.StatusCode())
+	if resp.StatusCode() != 201 {
+		t.Errorf("FAIL: should have been recognised as a 201, got %d", resp.StatusCode())
 	}
 }
 
@@ -1187,8 +1187,8 @@ func TestCreatePipelineRunGitResource(t *testing.T) {
 
 	t.Logf("Pipeline resource list: %v", pipelineResourceList)
 
-	if resp.StatusCode() != 204 {
-		t.Errorf("FAIL: should have been recognised as a 204, got %d", resp.StatusCode())
+	if resp.StatusCode() != 201 {
+		t.Errorf("FAIL: should have been recognised as a 201, got %d", resp.StatusCode())
 	}
 }
 
@@ -1237,8 +1237,8 @@ func TestCreatePipelineRunImageResource(t *testing.T) {
 
 	t.Logf("Pipeline resource list: %v", pipelineResourceList)
 
-	if resp.StatusCode() != 204 {
-		t.Errorf("FAIL: should have been recognised as a 204, got %d", resp.StatusCode())
+	if resp.StatusCode() != 201 {
+		t.Errorf("FAIL: should have been recognised as a 201, got %d", resp.StatusCode())
 	}
 }
 
@@ -1309,8 +1309,8 @@ func TestCreatePipelineRunGitAndImageResource(t *testing.T) {
 
 	t.Logf("Pipeline resource list: %v", pipelineResourceList)
 
-	if resp.StatusCode() != 204 {
-		t.Errorf("FAIL: should have been recognised as a 204, got %d", resp.StatusCode())
+	if resp.StatusCode() != 201 {
+		t.Errorf("FAIL: should have been recognised as a 201, got %d", resp.StatusCode())
 	}
 }
 

@@ -226,9 +226,9 @@ func (r Resource) createPipelineRun(request *restful.Request, response *restful.
 	}
 
 	createResponse := r.CreatePipelineRunImpl(pipelineRunData, namespace)
-	if createResponse.CODE == 204 {
-		response.WriteHeader(http.StatusNoContent)
-	} else { // anything other than 204 is an error - RespondError
+	if createResponse.CODE == 201 {
+		response.WriteHeader(http.StatusCreated)
+	} else { // anything other than 201 is an error - RespondError
 		utils.RespondError(response, createResponse.ERROR, createResponse.CODE)
 	}
 }
@@ -322,7 +322,7 @@ func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, names
 
 	creationMsg := fmt.Sprintf("PipelineRun created with name: %s", pipelineRun.Name)
 	logging.Log.Debugf(creationMsg)
-	return &AppResponse{err, creationMsg, http.StatusNoContent}
+	return &AppResponse{err, creationMsg, http.StatusCreated}
 }
 
 /* Get a given pipeline resource by name in a given namespace */
@@ -747,7 +747,7 @@ func (r Resource) updatePipelineRun(request *restful.Request, response *restful.
 	}
 	logging.Log.Debug("Update performed successfully, returning http code 204")
 	// Not to be confused with WriteEntity which always gives a 200 even if the parameter is something other than StatusOk
-	response.WriteHeader(http.StatusNoContent)
+	response.WriteHeader(http.StatusCreated)
 }
 
 // StartPipelineRunController - registers the code that reacts to changes in kube PipelineRuns
