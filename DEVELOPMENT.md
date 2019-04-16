@@ -6,7 +6,7 @@ Many of the instructions here replicate what's in the [tektoncd/pipeline develop
 
 1. This project currently does not support being built with `ko`
 2. This project has not yet been tested with GKE
-3. The instructions here pertain to building the backend that lets us interact with Tekton resources. Frontend instructions are to follow.
+3. The instructions here pertain to building and deploying the backend that lets us interact with Tekton resources, as well as running the frontend locally for development. Instructions for deploying the frontend with the backend are to follow.
 
 We would love to accomplish these tasks and to update this document, contributions welcome!
 
@@ -19,6 +19,7 @@ You must install these tools:
 1. [`git`](https://help.github.com/articles/set-up-git/): For source control
 1. [`dep`](https://github.com/golang/dep): For managing external Go
    dependencies. - Please Install dep v0.5.0 or greater.
+1. [Node.js & npm](https://nodejs.org/): For building and running the frontend locally. See `engines` in [package.json](./package.json) for versions used.
 1. [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/): For
    interacting with your kube cluster. 
    
@@ -109,6 +110,46 @@ To look at the dashboard logs, run:
 ```shell
 kubectl logs -l app=tekton-dashboard
 ```
+
+## Frontend
+
+### Install dependencies
+
+```bash
+npm install
+```
+
+### Development server
+
+Run `npm start` for a dev server. Navigate to `http://localhost:8000/` in your browser. The app will automatically hot-reload any changes to the source files, including CSS. If it is unable to hot-reload it will fallback to a full page refresh.
+
+Note: If you've exposed the backend by some other means than port-forwarding port 9097 as described above, update `API_DOMAIN` in `config/config.json` to provide the correct details.
+
+### Build
+
+Run `npm run build` to build the project. The build artifacts will be stored in the `dist/` directory. This will perform a production build of the static resources. It correctly bundles React in production mode and optimizes the build for the best performance. Filenames include hashes to facilitate long-term caching.
+
+### Running unit tests
+
+Run `npm test` to execute the unit tests via [Jest](https://jestjs.io/) in interactive watch mode. This also generates a code coverage report by default.
+
+Coverage threshold is set to 90%, if it falls below the threshold the test script will fail.
+
+Tests are defined in `*.test.js` files alongside the code under test.
+
+### Linting
+
+Run `npm run lint` to execute the linter (eslint + prettier). This will ensure code follows the conventions and standards used by the project.
+
+Run `npm run lint:fix` to automatically fix a number of types of problem including code style.
+
+### Storybook
+
+Run `npm run storybook` to start [storybook](https://storybook.js.org/) in development mode. Navigate to [`http://localhost:4000/`](http://localhost:4000/) in your browser. The app will automatically hot-reload any changes to the source files, including CSS.
+
+Stories are defined in `*.stories.js` files alongside their components.
+
+Run `npm run storybook:build` to build the static storybook files. The build artifacts will be stored in the `static-storybook/` directory and can be hosted on GitHub Pages or any other static resource server.
 
 ## API definitions
 
@@ -270,7 +311,7 @@ POST /v1/namespaces/<namespace>/credentials
 Create a new credential
 Request body must contain id, username, password, type ('accesstoken' or 'userpass'), description and the URL that the credential will be used for (e.g. the Git server)
 
-Returns HTTP code 200 if the credential was created OK
+Returns HTTP code 201 if the credential was created OK and sets the 'Content-Location' header
 Returns HTTP code 400 if a bad request was provided
 Returns HTTP code 406 if no body is provided
 Returns HTTP code 500 if an error occurred creating the credential
@@ -294,7 +335,7 @@ __Credentials__
 PUT /v1/namespaces/<namespace>/credentials/<id>                          
 Update credential by ID
 Request body must contain id, username, password, type ('accesstoken' or 'userpass'), description and the URL that the credential will be used for (e.g. the Git server)
-Returns HTTP code 200 and nothing else if the credential was updated OK
+Returns HTTP code 204 if the credential was updated OK (no contents are provided in the response)
 Returns HTTP code 400 if a bad request was provided or if an error occurs updating the credential
 ```
 

@@ -17,6 +17,8 @@ import (
 	"strconv"
 	"net/http/httputil"
 	"net/url"
+	"net/http"
+
 	restful "github.com/emicklei/go-restful"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -60,11 +62,11 @@ func (r Resource) RegisterEndpoints(container *restful.Container) {
 
 	wsv1.Route(wsv1.GET("/{namespace}/pipelinerunlog/{name}").To(r.getPipelineRunLog))
 
-	wsv1.Route(wsv1.GET("/{namespace}/credentials/").To(r.getAllCredentials))
-	wsv1.Route(wsv1.GET("/{namespace}/credentials/{id}").To(r.getCredential))
-	wsv1.Route(wsv1.POST("/{namespace}/credentials/").To(r.createCredential))
-	wsv1.Route(wsv1.PUT("/{namespace}/credentials/{id}").To(r.updateCredential))
-	wsv1.Route(wsv1.DELETE("/{namespace}/credentials/{id}").To(r.deleteCredential))
+	wsv1.Route(wsv1.GET("/{namespace}/credential").To(r.getAllCredentials))
+	wsv1.Route(wsv1.GET("/{namespace}/credential/{name}").To(r.getCredential))
+	wsv1.Route(wsv1.POST("/{namespace}/credential").To(r.createCredential))
+	wsv1.Route(wsv1.PUT("/{namespace}/credential/{name}").To(r.updateCredential))
+	wsv1.Route(wsv1.DELETE("/{namespace}/credential/{name}").To(r.deleteCredential))
 
 	container.Add(wsv1)
 }
@@ -87,11 +89,9 @@ func (r Resource) RegisterHealthProbes(container *restful.Container) {
 	logging.Log.Info("Adding API for health")
 	wsv3 := new(restful.WebService)
 	wsv3.
-		Path("/health").
-		Consumes(restful.MIME_JSON).
-		Produces(restful.MIME_JSON)
+		Path("/health")
 
-	wsv3.Route(wsv3.GET("/").To(r.checkHealth))
+	wsv3.Route(wsv3.GET("").To(r.checkHealth))
 
 	container.Add(wsv3)
 }
@@ -101,11 +101,9 @@ func (r Resource) RegisterReadinessProbes(container *restful.Container) {
 	logging.Log.Info("Adding API for readiness")
 	wsv4 := new(restful.WebService)
 	wsv4.
-		Path("/readiness").
-		Consumes(restful.MIME_JSON).
-		Produces(restful.MIME_JSON)
+		Path("/readiness")
 
-	wsv4.Route(wsv4.GET("/").To(r.checkHealth))
+	wsv4.Route(wsv4.GET("").To(r.checkHealth))
 
 	container.Add(wsv4)
 }
@@ -156,4 +154,14 @@ func (ext Extension) HandleExtension(request *restful.Request, response *restful
 // getPort - this gets the port of the service
 func getPort(svc corev1.Service) string {
 	return strconv.Itoa(int(svc.Spec.Ports[0].Port))
+}
+// Write Content-Location header within POST methods and set StatusCode to 201
+// Headers MUST be set before writing to body (if any) to succeed
+func writeResponseLocation(request *restful.Request, response *restful.Response, identifier string) {
+	location := request.Request.URL.Path
+	if request.Request.Method == http.MethodPost {
+		location = location + "/" + identifier
+	}
+	response.AddHeader("Content-Location",location)
+	response.WriteHeader(201)
 }
