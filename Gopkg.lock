@@ -219,20 +219,6 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:f9f144aab0a32f55fcfa49f2b64461affa903cdb8db918b89770668d852a13a1"
-  name = "github.com/tektoncd/dashboard"
-  packages = [
-    "pkg/broadcaster",
-    "pkg/endpoints",
-    "pkg/logging",
-    "pkg/utils",
-    "pkg/websocket",
-  ]
-  pruneopts = "UT"
-  revision = "ecc9da8a0c1d069cc89eddc21fbd1c7f948f8a6a"
-
-[[projects]]
-  branch = "master"
   digest = "1:aff35c0379f09633e57e10fcd3a00e7563a2669c668e184fe3e2f94a5915f028"
   name = "github.com/tektoncd/pipeline"
   packages = [
@@ -613,11 +599,6 @@
   input-imports = [
     "github.com/emicklei/go-restful",
     "github.com/gorilla/websocket",
-    "github.com/tektoncd/dashboard/pkg/broadcaster",
-    "github.com/tektoncd/dashboard/pkg/endpoints",
-    "github.com/tektoncd/dashboard/pkg/logging",
-    "github.com/tektoncd/dashboard/pkg/utils",
-    "github.com/tektoncd/dashboard/pkg/websocket",
     "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1",
     "github.com/tektoncd/pipeline/pkg/client/clientset/versioned",
     "github.com/tektoncd/pipeline/pkg/client/clientset/versioned/fake",
@@ -625,6 +606,7 @@
     "go.uber.org/zap",
     "k8s.io/api/core/v1",
     "k8s.io/apimachinery/pkg/apis/meta/v1",
+    "k8s.io/apimachinery/pkg/types",
     "k8s.io/client-go/kubernetes",
     "k8s.io/client-go/kubernetes/fake",
     "k8s.io/client-go/rest",
