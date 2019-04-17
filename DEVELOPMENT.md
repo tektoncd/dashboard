@@ -338,6 +338,14 @@ Returns HTTP code 417 (expectation failed) if the resource is not registered
 Note that a check of the resource definition being registered is performed: not that pods are running and healthy.
 ```
 
+__Extensions__
+```
+GET /v1/namespaces/<namespace>/extension
+Get all extensions in the given namespace
+Returns HTTP code 500 if an error occurred getting the extensionss
+Returns HTTP code 200 and the given extensions in the given namespace if found, otherwise an empty list is returned
+```
+
 __POST endpoints__
 
 __Credentials__
@@ -404,10 +412,12 @@ Returns HTTP code 500 if the found credential could not be deleted
 __Backend__
 
 Backend can be extended by registering backend extensions.
-The backend extension is discovered by adding the label and the annotation in the extension service.
+The backend extension is discovered by adding the label and the annotations in the extension service.
 ```
   annotations:
-    tekton-dashboard-endpoints: /
+    tekton-dashboard-endpoints: <path of the extension at the proxy>
+    tekton-dashboard-display-name: <display name of the extension>
+    tekton-dashboard-bundle-location: <ui bundle location of the extension>
   labels:
     tekton-dashboard-extension: "true"
 ```
