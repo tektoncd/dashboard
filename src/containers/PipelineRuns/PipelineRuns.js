@@ -28,7 +28,7 @@ import {
 import Header from '../../components/Header';
 import CancelButton from '../../components/CancelButton';
 
-import { getPipelineRuns } from '../../api';
+import { cancelPipelineRun, getPipelineRuns } from '../../api';
 import { getStatusIcon, getStatus, isRunning } from '../../utils';
 
 /* istanbul ignore next */
