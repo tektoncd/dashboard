@@ -20,26 +20,35 @@ import {
   Switch
 } from 'react-router-dom';
 
-import { PipelineRun, PipelineRuns, Pipelines } from '..';
+import {
+  Home,
+  PipelineRun,
+  PipelineRuns,
+  Pipelines,
+  Tasks,
+  TaskRuns
+} from '..';
 
 import '../../components/App/App.scss';
 
 const App = () => (
   <Router>
     <Switch>
-      <Redirect from="/" exact to="/pipelines" />
+      <Route path="/" exact component={Home} />
       <Redirect
         from="/pipelines/:pipelineName"
         exact
         to="/pipelines/:pipelineName/runs"
       />
-
+      <Redirect from="/tasks/:taskName" exact to="/tasks/:taskName/runs" />
       <Route path="/pipelines" exact component={Pipelines} />
+      <Route path="/tasks" exact component={Tasks} />
       <Route
         path="/pipelines/:pipelineName/runs"
         exact
         component={PipelineRuns}
       />
+      <Route path="/tasks/:taskName/runs" exact component={TaskRuns} />
       <Route
         path="/pipelines/:pipelineName/runs/:pipelineRunName"
         component={PipelineRun}

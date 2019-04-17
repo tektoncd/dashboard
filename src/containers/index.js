@@ -14,3 +14,6 @@ limitations under the License.
 export { default as PipelineRun } from './PipelineRun';
 export { default as PipelineRuns } from './PipelineRuns';
 export { default as Pipelines } from './Pipelines';
+export { default as Tasks } from './Tasks';
+export { default as TaskRuns } from './TaskRuns';
+export { default as Home } from './Home';

@@ -13,7 +13,6 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -27,41 +26,39 @@ import {
 } from 'carbon-components-react';
 
 import Header from '../../components/Header';
-import { getPipelines } from '../../api';
-import { fetchPipelines } from '../../actions/pipeline';
+import { getTasks } from '../../api';
 
 import '../../components/Definitions/Definitions.scss';
 
 /* istanbul ignore next */
-export class Pipelines extends Component {
+class Tasks extends Component {
   state = {
     error: null,
     loading: true,
-    pipelines: []
+    tasks: []
   };
 
   async componentDidMount() {
     try {
-      const pipelines = await getPipelines();
-      this.setState({ pipelines, loading: false });
+      const tasks = await getTasks();
+      this.setState({ tasks, loading: false });
     } catch (error) {
       this.setState({ error, loading: false });
     }
   }
 
   render() {
-    const { error, loading, pipelines } = this.state;
+    const { error, loading, tasks } = this.state;
 
     return (
       <div className="definitions">
         <Header>
           <div className="definitions-header">
             <Breadcrumb>
-              <BreadcrumbItem href="#">Pipelines</BreadcrumbItem>
+              <BreadcrumbItem href="#">Tasks</BreadcrumbItem>
             </Breadcrumb>
           </div>
         </Header>
-
         <main>
           {(() => {
             if (loading) {
@@ -72,7 +69,7 @@ export class Pipelines extends Component {
               return (
                 <InlineNotification
                   kind="error"
-                  title="Error loading pipelines"
+                  title="Error loading tasks"
                   subtitle={JSON.stringify(error)}
                 />
               );
@@ -82,21 +79,19 @@ export class Pipelines extends Component {
               <StructuredListWrapper border selection>
                 <StructuredListHead>
                   <StructuredListRow head>
-                    <StructuredListCell head>Pipeline</StructuredListCell>
+                    <StructuredListCell head>Task</StructuredListCell>
                   </StructuredListRow>
                 </StructuredListHead>
                 <StructuredListBody>
-                  {pipelines.map(pipeline => {
-                    const pipelineName = pipeline.metadata.name;
+                  {tasks.map(task => {
+                    const taskName = task.metadata.name;
                     return (
                       <StructuredListRow
                         className="definition"
-                        key={pipeline.metadata.uid}
+                        key={task.metadata.uid}
                       >
                         <StructuredListCell>
-                          <Link to={`/pipelines/${pipelineName}/runs`}>
-                            {pipelineName}
-                          </Link>
+                          <Link to={`/tasks/${taskName}/runs`}>{taskName}</Link>
                         </StructuredListCell>
                       </StructuredListRow>
                     );
@@ -111,7 +106,4 @@ export class Pipelines extends Component {
   }
 }
 
-export default connect(
-  null,
-  { fetchPipelines }
-)(Pipelines);
+export default Tasks;

@@ -13,8 +13,8 @@ limitations under the License.
 
 @import '../../scss/vars';
 
-.pipelines {
-  .pipelines-header {
+.definitions {
+  .definitions-header {
     background: white;
     padding-bottom: 1em;
 
@@ -36,7 +36,7 @@ limitations under the License.
     padding: 2em 5%;
   }
 
-  .pipeline .status {
+  .definition .status {
     .status-icon {
       margin-right: 0.5em;
       vertical-align: sub;

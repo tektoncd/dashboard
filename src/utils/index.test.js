@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { getStatus } from '.';
+import { getStatus, taskRunStep, selectedTask, stepsStatus } from '.';
 
 it('getStatus', () => {
   const taskRun = {
@@ -41,4 +41,139 @@ it('getStatus with no status', () => {
   const taskRun = {};
   const status = getStatus(taskRun);
   expect(status).toEqual({});
+});
+
+it('taskRunSteps with no taskRun', () => {
+  const taskRun = null;
+  const step = taskRunStep('selected run', taskRun);
+  expect(step).toEqual({});
+});
+
+it('taskRunStep with no taskRun', () => {
+  const taskRun = null;
+  const step = taskRunStep('selected run', taskRun);
+  expect(step).toEqual({});
+});
+
+it('taskRunStep with no steps', () => {
+  const taskRun = {};
+  const step = taskRunStep('selected run', taskRun);
+  expect(step).toEqual({});
+});
+
+it('taskRunStep with no steps', () => {
+  const stepName = 'testName';
+  const id = 'id';
+  const targetStep = { id, stepName };
+  const taskRun = { steps: [targetStep] };
+  const step = taskRunStep(id, taskRun);
+  expect(step.stepName).toEqual(stepName);
+});
+
+it('taskRunStep does not contain selected step', () => {
+  const stepName = 'testName';
+  const id = 'id';
+  const targetStep = { id, stepName };
+  const taskRun = { steps: [targetStep] };
+  const step = taskRunStep('wrong id', taskRun);
+  expect(step).toEqual({});
+});
+
+it('taskRunStep with step finds step', () => {
+  const stepName = 'testName';
+  const id = 'id';
+  const targetStep = { id, stepName };
+  const taskRun = { steps: [targetStep] };
+  const step = taskRunStep(id, taskRun);
+  expect(step.stepName).toEqual(stepName);
+});
+
+it('selectedTask find not exists', () => {
+  const taskName = 'testName';
+  const foundTask = selectedTask(taskName, []);
+  expect(foundTask).toEqual(undefined);
+});
+
+it('selectedTask find exists', () => {
+  const taskName = 'testName';
+  const expectedTask = { metadata: { name: taskName } };
+  const foundTask = selectedTask(taskName, [expectedTask]);
+  expect(foundTask.metadata.name).toEqual(taskName);
+});
+
+it('stepsStatus no steps', () => {
+  const taskSteps = [];
+  const taskRunStepsStatus = [];
+  const steps = stepsStatus(taskSteps, taskRunStepsStatus);
+  expect(steps).toEqual([]);
+});
+
+it('stepsStatus no status', () => {
+  const taskSteps = [];
+  const taskRunStepsStatus = undefined;
+  const steps = stepsStatus(taskSteps, taskRunStepsStatus);
+  expect(steps).toEqual([]);
+});
+
+it('stepsStatus step is running', () => {
+  const stepName = 'testStep';
+  const taskSteps = [{ name: stepName, image: 'test' }];
+  const taskRunStepsStatus = [{ running: { startedAt: '2019' } }];
+  const steps = stepsStatus(taskSteps, taskRunStepsStatus);
+  const returnedStep = steps[0];
+  expect(returnedStep.status).toEqual('running');
+  expect(returnedStep.stepName).toEqual(stepName);
+});
+
+it('stepsStatus step is completed', () => {
+  const reason = 'completed';
+  const stepName = 'testStep';
+  const taskSteps = [{ name: stepName, image: 'test' }];
+  const taskRunStepsStatus = [
+    {
+      terminated: {
+        exitCode: 0,
+        reason,
+        startedAt: '2019',
+        finishedAt: '2019',
+        containerID: 'containerd://testid'
+      }
+    }
+  ];
+  const steps = stepsStatus(taskSteps, taskRunStepsStatus);
+  const returnedStep = steps[0];
+  expect(returnedStep.status).toEqual('terminated');
+  expect(returnedStep.stepName).toEqual(stepName);
+  expect(returnedStep.reason).toEqual(reason);
+});
+
+it('stepsStatus step is terminated with error', () => {
+  const reason = 'Error';
+  const stepName = 'testStep';
+  const taskSteps = [{ name: stepName, image: 'test' }];
+  const taskRunStepsStatus = [
+    {
+      terminated: {
+        exitCode: 1,
+        reason,
+        startedAt: '2019',
+        finishedAt: '2019',
+        containerID: 'containerd://testid'
+      }
+    }
+  ];
+  const steps = stepsStatus(taskSteps, taskRunStepsStatus);
+  const returnedStep = steps[0];
+  expect(returnedStep.status).toEqual('terminated');
+  expect(returnedStep.stepName).toEqual(stepName);
+  expect(returnedStep.reason).toEqual(reason);
+});
+
+it('stepsStatus step is waiting', () => {
+  const stepName = 'testStep';
+  const taskSteps = [{ name: stepName, image: 'test' }];
+  const taskRunStepsStatus = [{ waiting: {} }];
+  const steps = stepsStatus(taskSteps, taskRunStepsStatus);
+  const returnedStep = steps[0];
+  expect(returnedStep.status).toEqual('waiting');
 });

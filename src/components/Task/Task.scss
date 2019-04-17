@@ -74,6 +74,8 @@ limitations under the License.
     white-space: nowrap;
     font-size: 0.76rem;
     letter-spacing: 0.06rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     &:after {
       content: '';

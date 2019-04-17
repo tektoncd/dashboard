@@ -14,16 +14,18 @@ We would love to accomplish these tasks and to update this document, contributio
 
 You must install these tools:
 
-1. [`go`](https://golang.org/doc/install): The language Tekton Dashboard is
-   built in
+1. [`go`](https://golang.org/doc/install): The language Tekton Dashboard is built in
 1. [`git`](https://help.github.com/articles/set-up-git/): For source control
-1. [`dep`](https://github.com/golang/dep): For managing external Go
-   dependencies. - Please Install dep v0.5.0 or greater.
+1. [`dep`](https://github.com/golang/dep): For managing external Go dependencies. - Please Install dep v0.5.0 or greater.
+1. [`ko`](https://github.com/google/ko): For development. `ko` version v0.1 or higher is required for `dashboard` to work correctly.
 1. [Node.js & npm](https://nodejs.org/): For building and running the frontend locally. See `engines` in [package.json](./package.json) for versions used.
-1. [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/): For
-   interacting with your kube cluster. 
+1. [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/): For interacting with your kube cluster. 
    
-   Note that there exists a bug in certain versions of `kubectl` whereby the `auth` field is missing from created secrets. Known good versions we've tested are __1.11.3__ and __1.13.2__.
+Your [`$GOPATH`] setting is critical for `ko apply` to function properly: a
+successful run will typically involve building pushing images instead of only
+configuring Kubernetes resources.
+
+Note that there exists a bug in certain versions of `kubectl` whereby the `auth` field is missing from created secrets. Known good versions we've tested are __1.11.3__ and __1.13.2__.
    
 ### Checkout your fork
 
@@ -54,6 +56,44 @@ _Adding the `upstream` remote sets you up nicely for regularly
 - We've had good success using Docker Desktop: ensure your Kubernetes cluster is healthy and you have plenty of disk space allocated as PVs will be created for PipelineRuns.
 - Ensure you can push images to a Docker registry - the above listed requirements are only for local development, otherwise we pull in the tooling for you in the image.
 
+1. `GOPATH`: If you don't have one, simply pick a directory and add
+   `export GOPATH=...`
+1. `$GOPATH/bin` on `PATH`: This is so that tooling installed via `go get` will
+   work properly.
+1. `KO_DOCKER_REPO`: The docker repository to which developer images should be
+   pushed (e.g. `gcr.io/[gcloud-project]` or `docker.io<myusername>`). You can also run a local registry
+   and set `KO_DOCKER_REPO` to reference the registry (e.g. at
+   `localhost:5000/mydashboardimages`).
+
+`.bashrc` example:
+
+```shell
+export GOPATH="$HOME/go"
+export PATH="${PATH}:${GOPATH}/bin"
+export KO_DOCKER_REPO='docker.io/myusername'
+```
+
+Make sure to configure
+[authentication](https://cloud.google.com/container-registry/docs/advanced-authentication#standalone_docker_credential_helper)
+for your `KO_DOCKER_REPO` if required. To be able to push images to
+`gcr.io/<project>`, you need to run this once:
+
+```shell
+gcloud auth configure-docker
+```
+
+The user you are using to interact with your k8s cluster must be a cluster admin
+to create role bindings:
+
+```shell
+# Using gcloud to get your current user
+USER=$(gcloud config get-value core/account)
+# Make that user a cluster admin
+kubectl create clusterrolebinding cluster-admin-binding \
+  --clusterrole=cluster-admin \
+  --user="${USER}"
+```
+
 ### Namespaces
 
 Currently you must install the Tekton dashboard into the same namespace you wish to create and get Tekton resources in.
@@ -62,9 +102,8 @@ Currently you must install the Tekton dashboard into the same namespace you wish
 
 While iterating on the project, you may need to:
 
-1. Docker build and push your image of the dashboard
-1. Run the Go tests with: `docker build -f Dockerfile_test .`
-1. Replace the `image` reference in the yaml located in the `install` folder to reference your built and pushed image's location
+1. Run `dep ensure -v` to retrieve dependencies required to build
+1. Run the Go tests in Docker with: `docker build -f Dockerfile_test .`
 1. Install the dashboard
 1. Interact with the created Kubernetes service - we've had success using Postman on Mac and data provided must be JSON
 
@@ -72,11 +111,11 @@ Tekton Dashboard does not involve any custom resource definitions, we only inter
 
 ## Install dashboard
 
-After you've built and pushed the image, and modified the `install` yaml to refer to your image, you can stand up a version of the dashboard on-cluster (to your
+You can stand up a version of the dashboard on-cluster (to your
 `kubectl config current-context`):
 
 ```shell
-kubectl apply -f `install`
+ko apply -f config/
 ```
 
 ## Access the dashboard
@@ -89,18 +128,14 @@ Note that we have a big TODO which is to link up the frontend to the backend and
 
 ### Redeploy dashboard
 
-As you make changes to the code, you can redeploy your dashboard by killing the pod and so the new container code will be used if it has been pushed. The pod is labelled with `tekton-dashboard` so you can do:
-
-```shell
-kubectl delete pod -l app=tekton-dashboard
-```
+As you make changes to the code, you can redeploy your dashboard by simply using `ko apply` against the `config` directory again.
 
 ### Tear it down
 
-You can remove the deployment and any pods that were created with:
+You can clean up everything with:
 
 ```shell
-kubectl delete deployment -l app=tekton-dashboard-deployment
+ko delete -f config/
 ```
 
 ## Accessing logs
@@ -123,7 +158,7 @@ npm install
 
 Run `npm start` for a dev server. Navigate to `http://localhost:8000/` in your browser. The app will automatically hot-reload any changes to the source files, including CSS. If it is unable to hot-reload it will fallback to a full page refresh.
 
-Note: If you've exposed the backend by some other means than port-forwarding port 9097 as described above, update `API_DOMAIN` in `config/config.json` to provide the correct details.
+Note: If you've exposed the backend by some other means than port-forwarding port 9097 as described above, update `API_DOMAIN` in `config_frontend/config.json` to provide the correct details.
 
 ### Build
 
