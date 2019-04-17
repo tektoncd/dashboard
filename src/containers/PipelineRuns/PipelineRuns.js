@@ -17,6 +17,7 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   InlineNotification,
+  Modal,
   StructuredListBody,
   StructuredListCell,
   StructuredListHead,
@@ -26,8 +27,10 @@ import {
 } from 'carbon-components-react';
 
 import Header from '../../components/Header';
+import CancelButton from '../../components/CancelButton';
 
-import { getPipelineRunStatusIcon, getStatus } from '../../utils';
+import { cancelPipelineRun, getPipelineRuns } from '../../api';
+import { getPipelineRunStatusIcon, getStatus, isPipelineRunning } from '../../utils';
 
 /* istanbul ignore next */
 class PipelineRuns extends Component {
@@ -99,6 +102,8 @@ class PipelineRuns extends Component {
                     <StructuredListCell head>
                       Last Transition Time
                     </StructuredListCell>
+                    <StructuredListCell head>
+                    </StructuredListCell>
                   </StructuredListRow>
                 </StructuredListHead>
                 <StructuredListBody>
@@ -125,11 +130,16 @@ class PipelineRuns extends Component {
                           data-reason={reason}
                           data-status={status}
                         >
-                          <button onClick={cancelPipelineRun(pipelineRunName)}>{getPipelineRunStatusIcon({ reason, status })}</button>
+                          {getPipelineRunStatusIcon({ reason, status })}
                           {pipelineRun.status.conditions[0].message}
                         </StructuredListCell>
                         <StructuredListCell>
                           {lastTransitionTime}
+                        </StructuredListCell>
+                        <StructuredListCell>
+                        { isPipelineRunning(reason, status) && 
+                          <CancelButton type="Ripeline Run" name={pipelineRunName} onCancel={cancelPipelineRun}/>
+                        }
                         </StructuredListCell>
                       </StructuredListRow>
                     );
