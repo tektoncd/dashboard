@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: tekton-dashboard
-        image: "CHANGE_ME:latest"
+        image: "CHANGE_ME/back-end:latest"
         imagePullPolicy: Always
         ports:
         - containerPort: 9097

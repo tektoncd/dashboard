@@ -8,10 +8,18 @@ Tekton Dashboard is a general purpose, web-based UI for Tekton Pipelines. It all
 
 ## Getting Started
 
-[coming soon] To deploy the dashboard, execute the following command:
-
+**Currently** to view the backend APIs, at `localhost:9097/v1/namespaces/<namespace>/<resource name>` for example:
+  
+```sh
+$ kubectl apply -f tekton-dashboard-deployment.yaml
+$ kubectl port-forward $(kubectl get pod -l app=tekton-dashboard -o name) 9097:9097
 ```
-sh
+
+**Coming soon**
+- All API definitions!
+- Deploying the dashboard without using the install yaml, and accessing using kubectl proxy. To deploy the dashboard, execute the following command:
+
+```sh
 $ kubectl apply -f https://raw.githubusercontent.com/tektoncd/dashboard/...
 ```
 
@@ -20,40 +28,14 @@ To access the Tekton Dashboard from your local workstation you must create a sec
 ```sh
 $ kubectl proxy
 ```
-Now access Dashboard at:
+Now access the Dashboard at:
 
 [`http://localhost:8001/api/v1/namespaces/tekton-pipelines/services/https:tekton-dashboard:/proxy/`](
 http://localhost:8001/api/v1/namespaces/tekton-pipelines/https:tekton-dashboard:/proxy/).
-
 
 ## Want to contribute
 
 We are so excited to have you!
 
 - See [CONTRIBUTING.md](https://github.com/tektoncd/pipeline/blob/master/CONTRIBUTING.md) for an overview of our processes
-- See [DEVELOPMENT.md](https://github.com/tektoncd/pipeline/blob/master/DEVELOPMENT.md) for how to get started
-
-
-## Development Notes
-
-Current back-end deployment notes:-
-
-```
-$ docker build -t YOUR_DOCKERHUB_ID/back-end .
-$ docker push YOUR_DOCKERHUB_ID/back-end
-```
-
-Edit install/tekton-dashboard-deployment.yaml and replace `CHANGE_ME` with YOUR_DOCKERHUB_ID, and save the file
-
-```
-$ kubectl apply -f ./install/tekton-dashboard-deployment.yaml
-```
-
-You can now port-forward to directly access the backend code.  If running in local kube environment you should be able to simply
-
-```
-$ kubectl get pods
-$ kubectl port-forward <dashboard_pod_name> 9097:9097
-```
-
-You should now be able to hit the REST endpoints in the backend code at localhost:9097
+- See [DEVELOPMENT.md](https://github.com/tektoncd/dashboard/blob/master/DEVELOPMENT.md) for how to get started
