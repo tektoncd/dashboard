@@ -152,6 +152,7 @@ func (r Resource) createCredential(request *restful.Request, response *restful.R
 		utils.RespondErrorAndMessage(response, err, errorMessage, http.StatusBadRequest)
 		return
 	}
+
 	writeResponseLocation(request, response, cred.Name)
 }
 
@@ -202,7 +203,8 @@ func (r Resource) updateCredential(request *restful.Request, response *restful.R
 		utils.RespondErrorAndMessage(response, err, errorMessage, http.StatusBadRequest)
 		return
 	}
-	writeResponseLocationUpdate(request, response, cred.Name)
+
+	response.WriteHeader(204)
 }
 
 /* API route for creating a given credential

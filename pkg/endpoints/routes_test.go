@@ -104,24 +104,13 @@ func TestContentLocation201(t *testing.T) {
 
 func TestPut204(t *testing.T) {
 	t.Log("Checking 204 for PUT Routes")
-	var resourceLocations []string
 	putFunc := func(t *testing.T, request *http.Request, response *http.Response) {
 		if response.StatusCode != 204 {
 			t.Error("Status code not set to 204")
 		}
-		contentLocation, ok := response.Header["Content-Location"]
-		if !ok {
-			t.Errorf("Failed: Content-Location header not provided in %s method for resource type: %s, response was: %v",
-				request.Method, getResourceType(request.URL.Path, request.Method), response)
-		} else {
-			// "Content-Location" header is only set with single value
-			resourceLocations = append(resourceLocations, contentLocation[0])
-		}
 	}
-	// Make requests for all existing PUT routes (PUT data to get Content-Location header)
+	// Make requests for all existing PUT routes
 	makeRequests(t, methodMap[http.MethodPut], http.MethodPut, putFunc)
-	// Validate Content-Location header
-	makeRequests(t, resourceLocations, http.MethodGet, nil)
 }
 
 func makeRequests(t *testing.T, routes []string, httpMethod string, postFunc func(t *testing.T, request *http.Request, response *http.Response)) {

@@ -108,14 +108,3 @@ func writeResponseLocation(request *restful.Request, response *restful.Response,
 	response.AddHeader("Content-Location", location)
 	response.WriteHeader(201)
 }
-
-// Write Content-Location header within PUT methods and set StatusCode to 204
-// Headers MUST be set before writing to body (if any) to succeed
-func writeResponseLocationUpdate(request *restful.Request, response *restful.Response, identifier string) {
-	location := request.Request.URL.Path
-	if request.Request.Method == http.MethodPost {
-		location = location + "/" + identifier
-	}
-	response.AddHeader("Content-Location", location)
-	response.WriteHeader(204)
-}
