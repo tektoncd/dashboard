@@ -8,6 +8,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	restful "github.com/emicklei/go-restful"
 	"github.com/satori/go.uuid"
@@ -71,14 +72,16 @@ func TestPut204(t *testing.T) {
 	// For credentials we get a 400 currently
 
 	/*
-		--- FAIL: TestPut204 (0.01s)
-	    routes_test.go:68: Checking 204 for PUT Routes
-	    routes_test.go:93: PUT method: /v1/namespaces/fake/pipelinerun/{name}
-	    routes_test.go:101: Response from server: &{404 Not Found 404 HTTP/1.1 1 1 map[Content-Length:[42] Content-Type:[text/plain] Date:[Wed, 17 Apr 2019 10:17:53 GMT]] 0xc0000cbd40 42 [] false false map[] 0xc0003b0200 <nil>}
-	    routes_test.go:74: Failed: Content-Location header not provided in PUT method for resource type: pipelinerun, response was: &{404 Not Found 404 HTTP/1.1 1 1 map[Content-Length:[42] Content-Type:[text/plain] Date:[Wed, 17 Apr 201910:17:53 GMT]] 0xc0000cbd40 42 [] false false map[] 0xc0003b0200 <nil>}
-	    routes_test.go:93: PUT method: /v1/namespaces/fake/credential/{name}
-	    routes_test.go:101: Response from server: &{400 Bad Request 400 HTTP/1.1 1 1 map[Content-Length:[46] Content-Type:[text/plain] Date:[Wed, 17 Apr 2019 10:17:53 GMT]] 0xc0000ca800 46 [] false false map[] 0xc0003b0300 <nil>}
-	    routes_test.go:74: Failed: Content-Location header not provided in PUT method for resource type: credential, response was: &{400 Bad Request 400 HTTP/1.1 1 1 map[Content-Length:[46] Content-Type:[text/plain] Date:[Wed, 17 Apr 2019 10:17:53 GMT]] 0xc0000ca800 46 [] false false map[] 0xc0003b0300 <nil>}
+			--- FAIL: TestPut204 (0.01s)
+		    routes_test.go:68: Checking 204 for PUT Routes
+		    routes_test.go:93: PUT method: /v1/namespaces/fake/pipelinerun/{name}
+				routes_test.go:101: Response from server: &{404 Not Found 404 HTTP/1.1 1 1 map[Content-Length:[42] Content-Type:[text/plain] Date:[Wed, 17 Apr 2019 10:17:53 GMT]] 0xc0000cbd40 42 [] false false map[] 0xc0003b0200 <nil>}
+
+		    routes_test.go:74: Failed: Content-Location header not provided in PUT method for resource type: pipelinerun, response was: &{404 Not Found 404 HTTP/1.1 1 1 map[Content-Length:[42] Content-Type:[text/plain] Date:[Wed, 17 Apr 201910:17:53 GMT]] 0xc0000cbd40 42 [] false false map[] 0xc0003b0200 <nil>}
+		    routes_test.go:93: PUT method: /v1/namespaces/fake/credential/{name}
+				routes_test.go:101: Response from server: &{400 Bad Request 400 HTTP/1.1 1 1 map[Content-Length:[46] Content-Type:[text/plain] Date:[Wed, 17 Apr 2019 10:17:53 GMT]] 0xc0000ca800 46 [] false false map[] 0xc0003b0300 <nil>}
+
+		    routes_test.go:74: Failed: Content-Location header not provided in PUT method for resource type: credential, response was: &{400 Bad Request 400 HTTP/1.1 1 1 map[Content-Length:[46] Content-Type:[text/plain] Date:[Wed, 17 Apr 2019 10:17:53 GMT]] 0xc0000ca800 46 [] false false map[] 0xc0003b0300 <nil>}
 	*/
 
 	var resourceLocations []string
@@ -163,9 +166,44 @@ func fakeCRD(t *testing.T, crdType string, identifier string) interface{} {
 		identifier = uuid.NewV4().String()
 	}
 	switch crdType {
+
 	case "pipelinerun":
 		{
-			return v1alpha1.PipelineRun{}
+
+			pipeline := v1alpha1.Pipeline{}
+			pipeline.Name = "fakepipeline"
+
+			resource := dummyResource()
+
+			createdPipeline, err := resource.PipelineClient.TektonV1alpha1().Pipelines(namespace).Create(&pipeline)
+			if err != nil {
+				t.Errorf("Error creating the fake pipeline to use: %s", err)
+			}
+			pipelineRunData := v1alpha1.PipelineRun{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "anything",
+					Namespace: namespace,
+					Labels: map[string]string{
+						"app":          "",
+						gitServerLabel: "github.com",
+						gitOrgLabel:    "foo",
+						gitRepoLabel:   "bar",
+					},
+				},
+
+				Spec: v1alpha1.PipelineRunSpec{
+					PipelineRef: v1alpha1.PipelineRef{Name: createdPipeline.Name},
+					// E.g. v1alpha1.PipelineTriggerTypeManual
+					Trigger:        v1alpha1.PipelineTrigger{Type: v1alpha1.PipelineTriggerTypeManual},
+					ServiceAccount: "default",
+					Timeout:        &metav1.Duration{Duration: 1 * time.Hour},
+					Resources:      nil,
+					Params:         nil,
+				},
+			}
+
+			return pipelineRunData
+
 		}
 	case "credential":
 		return &credential{
