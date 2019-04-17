@@ -378,7 +378,7 @@ func definePipelineRun(pipelineRunName, namespace, saName, gitServer, gitOrg, gi
 			Name:      pipelineRunName,
 			Namespace: namespace,
 			Labels: map[string]string{
-				"app":          "devops-knative",
+				"app":          "tekton-app",
 				gitServerLabel: gitServer,
 				gitOrgLabel:    gitOrg,
 				gitRepoLabel:   gitRepo,

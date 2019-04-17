@@ -43,7 +43,7 @@ func TestMain(m *testing.M) {
 			Name:      "fakeresource",
 			Namespace: namespace,
 			Labels: map[string]string{
-				"app":          "devops-knative",
+				"app":          "tekton-app",
 				gitServerLabel: "github.com",
 				gitOrgLabel:    "foo",
 				gitRepoLabel:   "bar",
