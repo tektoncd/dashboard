@@ -21,23 +21,15 @@ import (
 
 	fakeclientset "github.com/tektoncd/pipeline/pkg/client/clientset/versioned/fake"
 	fakek8sclientset "k8s.io/client-go/kubernetes/fake"
-	//"k8s.io/client-go/testing"
-	//"k8s.io/apimachinery/pkg/runtime"
 )
 
 func dummyK8sClientset() *fakek8sclientset.Clientset {
 	result := fakek8sclientset.NewSimpleClientset()
-	// result.PrependReactor("*","*",func(action testing.Action) (handled bool, ret runtime.Object, err error) {
-	// 	return false, nil, nil
-	// })
 	return result
 }
 
 func dummyClientset() *fakeclientset.Clientset {
 	result := fakeclientset.NewSimpleClientset()
-	// result.PrependReactor("*","*",func(action testing.Action) (handled bool, ret runtime.Object, err error) {
-	// 	return false, nil, nil
-	// })
 	return result
 }
 
