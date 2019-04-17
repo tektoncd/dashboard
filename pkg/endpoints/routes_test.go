@@ -122,6 +122,7 @@ func TestPut204(t *testing.T) {
 	*/
 
 	var resourceLocations []string
+
 	putFunc := func(t *testing.T, request *http.Request, response *http.Response) {
 		contentLocation, ok := response.Header["Content-Location"]
 		if !ok {
@@ -139,7 +140,7 @@ func TestPut204(t *testing.T) {
 			t.Error("Status code not set to 204")
 		}
 	}
-	makeRequests(t, resourceLocations, http.MethodPut, putFunc)
+	makeRequests(t, resourceLocations, http.MethodPut, nil)
 }
 
 func makeRequests(t *testing.T, routes []string, httpMethod string, postFunc func(t *testing.T, request *http.Request, response *http.Response)) {
