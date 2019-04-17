@@ -102,7 +102,8 @@ Currently you must install the Tekton dashboard into the same namespace you wish
 
 While iterating on the project, you may need to:
 
-1. Run the Go tests with: `docker build -f Dockerfile_test .`
+1. Run `dep ensure -v` to retrieve dependencies required to build
+1. Run the Go tests in Docker with: `docker build -f Dockerfile_test .`
 1. Install the dashboard
 1. Interact with the created Kubernetes service - we've had success using Postman on Mac and data provided must be JSON
 

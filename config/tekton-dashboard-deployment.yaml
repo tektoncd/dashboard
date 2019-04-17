@@ -18,7 +18,6 @@ spec:
       containers:
       - name: tekton-dashboard
         image: github.com/tektoncd/dashboard/cmd/dashboard
-        imagePullPolicy: Always
         ports:
         - containerPort: 9097
         livenessProbe:
