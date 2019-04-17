@@ -16,8 +16,7 @@ $ kubectl port-forward $(kubectl get pod -l app=tekton-dashboard -o name) 9097:9
 ```
 
 **Coming soon**
-- All API definitions!
-- Deploying the dashboard without using the install yaml, and accessing using kubectl proxy. To deploy the dashboard, execute the following command:
+- Deploying the dashboard without using the `config/` yaml, and accessing using kubectl proxy. To deploy the dashboard, execute the following command:
 
 ```sh
 $ kubectl apply -f https://raw.githubusercontent.com/tektoncd/dashboard/...

@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: tekton-dashboard
-        image: "CHANGE_ME/back-end:latest"
+        image: github.com/tektoncd/dashboard/cmd/dashboard
         imagePullPolicy: Always
         ports:
         - containerPort: 9097
