@@ -21,7 +21,7 @@ export function getStatus(resource) {
   return conditions.find(condition => condition.type === 'Succeeded') || {};
 }
 
-export function isPipelineRunning(reason, status){
+export function isPipelineRunning(reason, status) {
   return status === 'Unknown' && reason === 'Running';
 }
 

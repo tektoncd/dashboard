@@ -12,19 +12,19 @@ limitations under the License.
 */
 
 import React from 'react';
-import { render } from 'react-testing-library';
-import { configure, mount, shallow } from 'enzyme';
+import { configure, mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import CancelButton from './CancelButton';
-import { renderWithRouter } from '../../utils/test';
 
-configure({adapter: new Adapter()});
+configure({ adapter: new Adapter() });
 
 describe('Test Button component submit', () => {
   it('Test click event', () => {
     const mockCallBack = jest.fn();
 
-    const button = mount((<CancelButton onCancel={mockCallBack}>Ok!</CancelButton>));
+    const button = mount(
+      <CancelButton onCancel={mockCallBack}>Ok!</CancelButton>
+    );
     button.find('.cancel-button').simulate('click');
     button.find('.bx--btn--primary').simulate('click');
     expect(mockCallBack.mock.calls.length).toEqual(1);
@@ -35,10 +35,11 @@ describe('Test Button component', () => {
   it('Test click event', () => {
     const mockCallBack = jest.fn();
 
-    const button = mount((<CancelButton onCancel={mockCallBack}>Ok!</CancelButton>));
+    const button = mount(
+      <CancelButton onCancel={mockCallBack}>Ok!</CancelButton>
+    );
     button.find('.cancel-button').simulate('click');
     button.find('.bx--btn--secondary').simulate('click');
     expect(mockCallBack.mock.calls.length).toEqual(0);
   });
 });
-

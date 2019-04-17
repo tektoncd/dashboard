@@ -14,7 +14,9 @@ limitations under the License.
 /* eslint-disable react/no-array-index-key */
 import React, { Component } from 'react';
 
-import { Button, Icon, Modal } from 'carbon-components-react';
+import { Icon, Modal } from 'carbon-components-react';
+
+import './CancelButton.scss';
 
 class CancelButton extends Component {
   constructor(props, context) {
@@ -28,6 +30,12 @@ class CancelButton extends Component {
     };
   }
 
+  handleCancel = () => {
+    const { name, onCancel } = this.props;
+    onCancel(name);
+    this.handleClose();
+  };
+
   handleClose() {
     this.setState({ show: false });
   }
@@ -36,25 +44,35 @@ class CancelButton extends Component {
     this.setState({ show: true });
   }
 
-  handleCancel = ()=> {
-  	const { name, onCancel } = this.props;
-  	onCancel(name);
-  	this.handleClose();
+  render() {
+    const closeIcon = (
+      <Icon className="cancel-icon" name="icon--close--solid" />
+    );
+    const { show } = this.state;
+    const { type, name } = this.props;
+    return (
+      <>
+        <button
+          type="button"
+          className="cancel-button"
+          onClick={this.handleShow}
+        >
+          {closeIcon}
+        </button>
+        <Modal
+          open={show}
+          modalHeading={`Cancel ${type}`}
+          primaryButtonText="Yes"
+          secondaryButtonText="No"
+          onRequestClose={this.handleClose}
+          onRequestSubmit={this.handleCancel}
+          onSecondarySubmit={this.handleClose}
+        >
+          Are you sure you would like to cancel {type} {name} ?
+        </Modal>
+      </>
+    );
   }
-
-  render(){
-  	const closeIcon = <Icon className='cancel-icon' name='icon--close--solid' className="status-icon" />;
-  	const { show } = this.state;
-  	const { id, type, name, onCancel } = this.props;
-     return (<>
-     	<button className='cancel-button' onClick={this.handleShow}>{closeIcon}</button>
-	      <Modal id={id} open={show} modalHeading={"Cancel "+ type} primaryButtonText="Yes" secondaryButtonText="No" 
-	      onRequestClose={this.handleClose} onRequestSubmit={this.handleCancel} onSecondarySubmit={this.handleClose}>
-	        Are you sure you would like to cancel {type} {name} ?
-	      </Modal>
-        </>);
-  }
-
 }
 
 export default CancelButton;

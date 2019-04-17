@@ -17,7 +17,6 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   InlineNotification,
-  Modal,
   StructuredListBody,
   StructuredListCell,
   StructuredListHead,
@@ -30,7 +29,11 @@ import Header from '../../components/Header';
 import CancelButton from '../../components/CancelButton';
 
 import { cancelPipelineRun, getPipelineRuns } from '../../api';
-import { getPipelineRunStatusIcon, getStatus, isPipelineRunning } from '../../utils';
+import {
+  getPipelineRunStatusIcon,
+  getStatus,
+  isPipelineRunning
+} from '../../utils';
 
 /* istanbul ignore next */
 class PipelineRuns extends Component {
@@ -102,8 +105,7 @@ class PipelineRuns extends Component {
                     <StructuredListCell head>
                       Last Transition Time
                     </StructuredListCell>
-                    <StructuredListCell head>
-                    </StructuredListCell>
+                    <StructuredListCell head />
                   </StructuredListRow>
                 </StructuredListHead>
                 <StructuredListBody>
@@ -137,9 +139,13 @@ class PipelineRuns extends Component {
                           {lastTransitionTime}
                         </StructuredListCell>
                         <StructuredListCell>
-                        { isPipelineRunning(reason, status) && 
-                          <CancelButton type="Ripeline Run" name={pipelineRunName} onCancel={cancelPipelineRun}/>
-                        }
+                          {isPipelineRunning(reason, status) && (
+                            <CancelButton
+                              type="Ripeline Run"
+                              name={pipelineRunName}
+                              onCancel={cancelPipelineRun}
+                            />
+                          )}
                         </StructuredListCell>
                       </StructuredListRow>
                     );
