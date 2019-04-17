@@ -138,6 +138,7 @@ func (r Resource) getAllPipelineRuns(request *restful.Request, response *restful
 	pipelinerunInterface := r.PipelineClient.TektonV1alpha1().PipelineRuns(namespace)
 	var pipelinerunList *v1alpha1.PipelineRunList
 	var labelSelector string // key1=value1,key2=value2, ...
+	var fieldSelector string // metadata.something=something, ...
 	var err error
 
 	// repository query filter
@@ -150,20 +151,15 @@ func (r Resource) getAllPipelineRuns(request *restful.Request, response *restful
 		}
 		labelSelector = strings.Join(labels,",")
 	}
-	pipelinerunList, err = pipelinerunInterface.List(metav1.ListOptions{LabelSelector: labelSelector})
+	// name query filter
+	if name != "" {
+		fieldSelector = "metadata.name=" + name
+	}
+	pipelinerunList, err = pipelinerunInterface.List(metav1.ListOptions{LabelSelector: labelSelector,FieldSelector: fieldSelector})
 	logging.Log.Debugf("+%v", pipelinerunList.Items)
 	if err != nil {
 		utils.RespondError(response, err, http.StatusNotFound)
 		return
-	}
-	// name query filter
-	if name != "" {
-		for i := range pipelinerunList.Items {
-			pipelinerun := pipelinerunList.Items[i]
-			if pipelinerun.ObjectMeta.Name != name {
-				pipelinerunList.Items = append(pipelinerunList.Items[:i], pipelinerunList.Items[i+1:]...)
-			}
-		}
 	}
 	response.WriteEntity(pipelinerunList)
 }
@@ -234,19 +230,16 @@ func (r Resource) getAllTaskRuns(request *restful.Request, response *restful.Res
 	logging.Log.Debugf("In getAllTaskRuns, namespace: `%s`, name query: `%s`", namespace, name)
 
 	taskrunInterface := r.PipelineClient.TektonV1alpha1().TaskRuns(namespace)
-	taskrunList, err := taskrunInterface.List(metav1.ListOptions{})
+
+	var fieldSelector string // metadata.something=something, ...
+	// name query filter
+	if name != "" {
+		fieldSelector = "metadata.name=" + name
+	}
+	taskrunList, err := taskrunInterface.List(metav1.ListOptions{FieldSelector: fieldSelector})
 	if err != nil {
 		utils.RespondError(response, err, http.StatusNotFound)
 		return
-	}
-	// name query filter
-	if name != "" {
-		for i := range taskrunList.Items {
-			taskrun := taskrunList.Items[i]
-			if taskrun.ObjectMeta.Name != name {
-				taskrunList.Items = append(taskrunList.Items[:i],taskrunList.Items[i+1:]...)
-			}
-		}
 	}
 	response.WriteEntity(taskrunList)
 }
