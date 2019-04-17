@@ -537,7 +537,8 @@ func (r Resource) updatePipelineRun(request *restful.Request, response *restful.
 	}
 	logging.Log.Debug("Update performed successfully, returning http code 204")
 	// Not to be confused with WriteEntity which always gives a 200 even if the parameter is something other than StatusOk
-	response.WriteHeader(http.StatusNoContent)
+
+	writeResponseLocationUpdate(request, response, pipelineRun.Name)
 }
 
 // StartPipelineRunController - registers the code that reacts to changes in kube PipelineRuns
