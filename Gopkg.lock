@@ -210,26 +210,20 @@
   version = "v2.0.1"
 
 [[projects]]
+  digest = "1:274f67cb6fed9588ea2521ecdac05a6d62a8c51c074c1fccc6a49a40ba80e925"
+  name = "github.com/satori/go.uuid"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "f58768cc1a7a7e77a3bd49e98cdd21419399b6a3"
+  version = "v1.2.0"
+
+[[projects]]
   digest = "1:c1b1102241e7f645bc8e0c22ae352e8f0dc6484b6cb4d132fa9f24174e0119e2"
   name = "github.com/spf13/pflag"
   packages = ["."]
   pruneopts = "UT"
   revision = "298182f68c66c05229eb03ac171abe6e309ee79a"
   version = "v1.0.3"
-
-[[projects]]
-  branch = "master"
-  digest = "1:f9f144aab0a32f55fcfa49f2b64461affa903cdb8db918b89770668d852a13a1"
-  name = "github.com/tektoncd/dashboard"
-  packages = [
-    "pkg/broadcaster",
-    "pkg/endpoints",
-    "pkg/logging",
-    "pkg/utils",
-    "pkg/websocket",
-  ]
-  pruneopts = "UT"
-  revision = "ecc9da8a0c1d069cc89eddc21fbd1c7f948f8a6a"
 
 [[projects]]
   branch = "master"
@@ -613,11 +607,7 @@
   input-imports = [
     "github.com/emicklei/go-restful",
     "github.com/gorilla/websocket",
-    "github.com/tektoncd/dashboard/pkg/broadcaster",
-    "github.com/tektoncd/dashboard/pkg/endpoints",
-    "github.com/tektoncd/dashboard/pkg/logging",
-    "github.com/tektoncd/dashboard/pkg/utils",
-    "github.com/tektoncd/dashboard/pkg/websocket",
+    "github.com/satori/go.uuid",
     "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1",
     "github.com/tektoncd/pipeline/pkg/client/clientset/versioned",
     "github.com/tektoncd/pipeline/pkg/client/clientset/versioned/fake",

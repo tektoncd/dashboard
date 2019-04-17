@@ -1,7 +1,7 @@
 const merge = require('webpack-merge');
 
 const common = require('./webpack.common.js');
-const { API_DOMAIN, PORT } = require('./config/config.json');
+const { API_DOMAIN, PORT } = require('./config_frontend/config.json');
 
 module.exports = merge(common, {
   mode: 'development',
