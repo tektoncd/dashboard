@@ -17,34 +17,43 @@ import Log from '../../components/Log';
 import { getTaskRunLog } from '../../api';
 
 class LogContainer extends Component {
-  state = { log: null };
+  state = { logs: [] };
 
   componentDidMount() {
     this.loadLog();
   }
 
   componentDidUpdate(prevProps) {
-    const { taskRunName } = this.props;
-    if (taskRunName !== prevProps.taskRunName) {
+    const { stepName, taskRunName } = this.props;
+    if (
+      taskRunName !== prevProps.taskRunName ||
+      stepName !== prevProps.stepName
+    ) {
       this.loadLog();
     }
   }
 
   async loadLog() {
-    const { taskRunName } = this.props;
+    const { stepName, taskRunName } = this.props;
     if (taskRunName) {
       try {
-        const log = await getTaskRunLog(taskRunName);
-        this.setState({ log });
+        const logs = await getTaskRunLog(taskRunName);
+        const buildStepName = `build-step-${stepName}`;
+        const stepLog =
+          (logs.StepContainers &&
+            logs.StepContainers.find(l => l.Name === buildStepName)) ||
+          {};
+        this.setState({ logs: stepLog.Logs || undefined });
       } catch {
-        this.setState({ log: 'Unable to fetch log' });
+        this.setState({ logs: ['Unable to fetch log'] });
       }
     }
   }
 
   render() {
-    const { log } = this.state;
-    return <Log log={log} />;
+    const { stepName } = this.props;
+    const { logs } = this.state;
+    return <Log logs={logs} stepName={stepName} />;
   }
 }
 

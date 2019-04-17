@@ -1,0 +1,18 @@
+# The OWNERS file is used by prow to automatically merge approved PRs.
+# See https://github.com/kubernetes/test-infra/tree/master/prow/plugins/approve/approvers.
+# It supports a list of approvers and reviewers and their github names must be provided.
+
+approvers:
+- a-roberts
+- alangreene
+- mnuttall
+- skaegi
+
+reviewers:
+- akihikokuroda
+- carolynmabbott
+- dibbles
+- jessm12
+- ncskier
+- steveodonovan
+- vtereso

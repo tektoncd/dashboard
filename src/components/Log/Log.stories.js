@@ -20,6 +20,6 @@ const ansiLog = '\n=== demo-pipeline-run-1-build-skaffold-app-2mrdg-pod-59e217: 
 storiesOf('Log', module)
   .add('default', () => <Log />)
   .add('loading', () => <Log loading />)
-  .add('completed', () => <Log log="A log message" status="Completed" />)
-  .add('failed', () => <Log log="A log message" status="Error" />)
-  .add('ansi codes', () => <Log log={ansiLog} />);
+  .add('completed', () => <Log logs={['A log message']} status="Completed" />)
+  .add('failed', () => <Log logs={['A log message']} status="Error" />)
+  .add('ansi codes', () => <Log logs={[ansiLog]} />);

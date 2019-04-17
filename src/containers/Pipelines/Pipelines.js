@@ -13,6 +13,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -27,11 +28,12 @@ import {
 
 import Header from '../../components/Header';
 import { getPipelines } from '../../api';
+import { fetchPipelines } from '../../actions/pipeline';
 
 import '../../components/Definitions/Definitions.scss';
 
 /* istanbul ignore next */
-class Pipelines extends Component {
+export class Pipelines extends Component {
   state = {
     error: null,
     loading: true,
@@ -109,4 +111,7 @@ class Pipelines extends Component {
   }
 }
 
-export default Pipelines;
+export default connect(
+  null,
+  { fetchPipelines }
+)(Pipelines);
