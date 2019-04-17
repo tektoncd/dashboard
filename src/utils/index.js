@@ -21,7 +21,7 @@ export function getStatus(resource) {
   return conditions.find(condition => condition.type === 'Succeeded') || {};
 }
 
-export function getPipelineRunStatusIcon({ reason, status }) {
+export function getStatusIcon({ reason, status }) {
   if (status === 'Unknown' && reason === 'Running') {
     return <Spinner className="status-icon" />;
   }
@@ -34,4 +34,58 @@ export function getPipelineRunStatusIcon({ reason, status }) {
   }
 
   return icon ? <Icon name={icon} className="status-icon" /> : null;
+}
+
+export function taskRunStep(selectedStepId, taskRun) {
+  if (!taskRun || !taskRun.steps) {
+    return {};
+  }
+  const step = taskRun.steps.find(s => s.id === selectedStepId);
+  if (!step) {
+    return {};
+  }
+
+  const { id, stepName, stepStatus, status, reason, ...definition } = step;
+
+  return {
+    definition,
+    reason,
+    stepName,
+    stepStatus,
+    status
+  };
+}
+
+export function selectedTask(selectedTaskName, tasks) {
+  return tasks.find(t => t.metadata.name === selectedTaskName);
+}
+
+export function selectedTaskRun(selectedTaskId, taskRuns) {
+  return taskRuns.find(run => run.id === selectedTaskId);
+}
+
+export function stepsStatus(taskSteps, taskRunStepsStatus) {
+  const steps = taskSteps.map((step, index) => {
+    const stepStatus = taskRunStepsStatus ? taskRunStepsStatus[index] : {};
+    let status;
+    let reason;
+    if (stepStatus.terminated) {
+      status = 'terminated';
+      ({ reason } = stepStatus.terminated);
+    } else if (stepStatus.running) {
+      status = 'running';
+    } else if (stepStatus.waiting) {
+      status = 'waiting';
+    }
+
+    return {
+      ...step,
+      reason,
+      status,
+      stepStatus,
+      stepName: step.name,
+      id: step.name
+    };
+  });
+  return steps;
 }

@@ -31,5 +31,5 @@ it('App renders successfully', () => {
     </Provider>
   );
   expect(queryByText(/pipelines/i)).toBeTruthy();
-  expect(getPipelines).toHaveBeenCalledTimes(1);
+  expect(queryByText(/tasks/i)).toBeTruthy();
 });

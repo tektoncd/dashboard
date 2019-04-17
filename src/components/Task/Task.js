@@ -61,7 +61,7 @@ class Task extends Component {
     const icon = this.icon();
     return (
       <li className="task" data-succeeded={succeeded} data-reason={reason}>
-        <a href="#" onClick={this.handleClick}>
+        <a href="#" title={pipelineTaskName} onClick={this.handleClick}>
           {icon}
           {pipelineTaskName}
         </a>

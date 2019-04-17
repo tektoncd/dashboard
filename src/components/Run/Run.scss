@@ -11,9 +11,30 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-export { default as PipelineRun } from './PipelineRun';
-export { default as PipelineRuns } from './PipelineRuns';
-export { default as Pipelines } from './Pipelines';
-export { default as Tasks } from './Tasks';
-export { default as TaskRuns } from './TaskRuns';
-export { default as Home } from './Home';
+.run {
+  main {
+    padding: 2em 5%;
+  }
+
+  .tasks {
+    display: flex;
+    flex-wrap: nowrap;
+    border: 1px solid #dfe3e6;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.07);
+    min-height: calc(100vh - 16rem);
+    align-items: stretch;
+    background-color: white;
+  }
+
+  .task-tree {
+    flex-shrink: 0;
+  }
+
+  .step-details {
+    flex-grow: 1;
+  }
+
+  .bx--inline-notification__close-button{
+    visibility: hidden;
+  }
+}
