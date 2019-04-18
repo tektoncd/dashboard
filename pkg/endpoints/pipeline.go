@@ -225,9 +225,9 @@ func (r Resource) createPipelineRun(request *restful.Request, response *restful.
 		return
 	}
 
-	createResponse := r.CreatePipelineRunImpl(pipelineRunData, namespace)
+	createResponse, pipelineRunName := r.CreatePipelineRunImpl(pipelineRunData, namespace)
 	if createResponse.CODE == 201 {
-		response.WriteHeader(http.StatusCreated)
+		writeResponseLocation(request, response, pipelineRunName)
 	} else { // anything other than 201 is an error - RespondError
 		utils.RespondError(response, createResponse.ERROR, createResponse.CODE)
 	}
@@ -235,7 +235,7 @@ func (r Resource) createPipelineRun(request *restful.Request, response *restful.
 
 /*CreatePipelineRunImpl - Create a new manual pipeline run and resources in a given namespace
 method assumes you've already applied the yaml: so the pipeline definition and its tasks must exist upfront*/
-func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, namespace string) *AppResponse {
+func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, namespace string) (response *AppResponse, name string) {
 
 	pipelineName := pipelineRunData.PIPELINENAME
 	serviceAccount := pipelineRunData.SERVICEACCOUNT
@@ -249,7 +249,7 @@ func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, names
 	if err != nil {
 		errorMsg := fmt.Sprintf("could not find the pipeline template %s in namespace %s", pipelineName, namespace)
 		logging.Log.Errorf(errorMsg)
-		return &AppResponse{err, errorMsg, http.StatusPreconditionFailed}
+		return &AppResponse{err, errorMsg, http.StatusPreconditionFailed}, ""
 	}
 
 	logging.Log.Debugf("Found the pipeline template %s OK", pipelineName)
@@ -264,7 +264,7 @@ func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, names
 		if err != nil {
 			errorMsg := fmt.Sprintf("Could not create the PipelineResource of type Git with provided name %s", pipelineRunData.GITRESOURCENAME)
 			logging.Log.Error(errorMsg)
-			return &AppResponse{err, errorMsg, http.StatusInternalServerError}
+			return &AppResponse{err, errorMsg, http.StatusInternalServerError}, ""
 		}
 		resources = append(resources, v1alpha1.PipelineResourceBinding{Name: pipelineRunData.GITRESOURCENAME, ResourceRef: gitResource})
 	}
@@ -274,7 +274,7 @@ func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, names
 		if err != nil {
 			errorMsg := fmt.Sprintf("Could not create the PipelineResource of type Image with provided name %s", pipelineRunData.IMAGERESOURCENAME)
 			logging.Log.Error(errorMsg)
-			return &AppResponse{err, errorMsg, http.StatusInternalServerError}
+			return &AppResponse{err, errorMsg, http.StatusInternalServerError}, ""
 		}
 		resources = append(resources, v1alpha1.PipelineResourceBinding{Name: pipelineRunData.IMAGERESOURCENAME, ResourceRef: imageResource})
 	}
@@ -308,7 +308,7 @@ func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, names
 	if err != nil {
 		errorMsg := fmt.Sprintf("there was a problem defining the pipeline run: %s", err)
 		logging.Log.Error(errorMsg)
-		return &AppResponse{err, errorMsg, http.StatusInternalServerError}
+		return &AppResponse{err, errorMsg, http.StatusInternalServerError}, ""
 	}
 
 	logging.Log.Infof("Creating a new PipelineRun named %s in the namespace %s", generatedPipelineRunName, namespace)
@@ -317,12 +317,12 @@ func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, names
 	if err != nil {
 		errorMsg := fmt.Sprintf("error creating the PipelineRun: %s", err)
 		logging.Log.Errorf(errorMsg)
-		return &AppResponse{err, errorMsg, http.StatusInternalServerError}
+		return &AppResponse{err, errorMsg, http.StatusInternalServerError}, ""
 	}
 
 	creationMsg := fmt.Sprintf("PipelineRun created with name: %s", pipelineRun.Name)
 	logging.Log.Debugf(creationMsg)
-	return &AppResponse{err, creationMsg, http.StatusCreated}
+	return &AppResponse{err, creationMsg, http.StatusCreated}, pipelineRun.Name
 }
 
 /* Get a given pipeline resource by name in a given namespace */

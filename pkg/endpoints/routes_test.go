@@ -172,6 +172,14 @@ func makeRequestBody(t *testing.T, route string, httpMethod string) *bytes.Reade
 					t.Errorf("Failed to marshal resource type for PipelineRunUpdate: %s", err)
 					return nil
 				}
+			} else {
+				createBody := ManualPipelineRun{}
+				createBody.PIPELINENAME = "fakepipeline"
+				body, err = json.Marshal(createBody)
+				if err != nil {
+					t.Errorf("Failed to marshal resource type for PipelineRunCreate: %s", err)
+					return nil
+				}
 			}
 
 		} else {
