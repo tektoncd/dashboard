@@ -28,7 +28,7 @@ import {
 import Header from '../../components/Header';
 
 import { getPipelineRuns } from '../../api';
-import { getPipelineRunStatusIcon, getStatus } from '../../utils';
+import { getStatusIcon, getStatus } from '../../utils';
 
 /* istanbul ignore next */
 class PipelineRuns extends Component {
@@ -59,9 +59,9 @@ class PipelineRuns extends Component {
     const { error, loading, pipelineRuns } = this.state;
 
     return (
-      <div className="pipelines">
+      <div className="definitions">
         <Header>
-          <div className="pipelines-header">
+          <div className="definitions-header">
             <Breadcrumb>
               <BreadcrumbItem>
                 <Link to="/pipelines">Pipelines</Link>
@@ -111,7 +111,7 @@ class PipelineRuns extends Component {
 
                     return (
                       <StructuredListRow
-                        className="pipeline"
+                        className="definition"
                         key={pipelineRun.metadata.uid}
                       >
                         <StructuredListCell>
@@ -126,7 +126,7 @@ class PipelineRuns extends Component {
                           data-reason={reason}
                           data-status={status}
                         >
-                          {getPipelineRunStatusIcon({ reason, status })}
+                          {getStatusIcon({ reason, status })}
                           {pipelineRun.status.conditions[0].message}
                         </StructuredListCell>
                         <StructuredListCell>

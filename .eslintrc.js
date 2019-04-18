@@ -34,7 +34,7 @@ module.exports = {
   },
   "overrides": [
     {
-      "files": ["webpack.*.js", "config/setupTests.js", "*.stories.js"],
+      "files": ["webpack.*.js", "config_frontend/setupTests.js", "*.stories.js"],
       "rules": {
         "import/no-extraneous-dependencies": ["error", { "devDependencies": true }]
       }

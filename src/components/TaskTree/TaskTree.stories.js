@@ -13,23 +13,23 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { storiesOf } from '@storybook/react';
+import { text } from '@storybook/addon-knobs';
 
 import TaskTree from './TaskTree';
 
-const props = {
-  taskRuns: [
-    {
-      id: 'task',
-      pipelineTaskName: 'A Task',
-      steps: [
-        { id: 'build', stepName: 'build' },
-        { id: 'test', stepName: 'test' }
-      ]
-    }
-  ]
-};
-
 storiesOf('TaskTree', module).add('default', () => {
+  const props = {
+    taskRuns: [
+      {
+        id: 'task',
+        pipelineTaskName: text('Task name', 'default task name'),
+        steps: [
+          { id: 'build', stepName: 'build' },
+          { id: 'test', stepName: 'test' }
+        ]
+      }
+    ]
+  };
   class TaskTreeWrapper extends Component {
     state = { selectedTaskId: null };
 
