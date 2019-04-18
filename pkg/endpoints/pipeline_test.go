@@ -1094,7 +1094,7 @@ func TestCreatePipelineRunBadRequest(t *testing.T) {
 
 	r := dummyResource()
 
-	err := createTestPipeline(r)
+	err := CreateTestPipeline(r)
 	if err != nil {
 		t.Errorf("FAIL: error creating test pipeline: %s", err)
 	}
@@ -1113,7 +1113,7 @@ func TestCreatePipelineRunSuccess(t *testing.T) {
 
 	r := dummyResource()
 
-	err := createTestPipeline(r)
+	err := CreateTestPipeline(r)
 	if err != nil {
 		t.Errorf("FAIL: error creating test pipeline: %s", err)
 	}
@@ -1146,7 +1146,7 @@ func TestCreatePipelineRunGitResource(t *testing.T) {
 
 	r := dummyResource()
 
-	err := createTestPipeline(r)
+	err := CreateTestPipeline(r)
 	if err != nil {
 		t.Errorf("FAIL: error creating test pipeline: %s", err)
 	}
@@ -1197,7 +1197,7 @@ func TestCreatePipelineRunImageResource(t *testing.T) {
 
 	r := dummyResource()
 
-	err := createTestPipeline(r)
+	err := CreateTestPipeline(r)
 	if err != nil {
 		t.Errorf("FAIL: error creating test pipeline: %s", err)
 	}
@@ -1247,7 +1247,7 @@ func TestCreatePipelineRunGitAndImageResource(t *testing.T) {
 
 	r := dummyResource()
 
-	err := createTestPipeline(r)
+	err := CreateTestPipeline(r)
 	if err != nil {
 		t.Errorf("FAIL: error creating test pipeline: %s", err)
 	}
@@ -1323,7 +1323,7 @@ func createDummyPipelineRunQuery(pipelineRunBody io.Reader) (*restful.Request, *
 	return pipelineRunRequestRestful, resp
 }
 
-func createTestPipeline(r *Resource) error {
+func CreateTestPipeline(r *Resource) error {
 	pipeline1 := v1alpha1.Pipeline{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "Pipeline1",
