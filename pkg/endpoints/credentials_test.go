@@ -125,10 +125,6 @@ func TestCredentials(t *testing.T) {
 		userPassCred,
 	}
 	readAllCredentialsTest(namespace, expectCreds, "", r, t)
-	// fake patch function for service account may not be implemented
-	//if r.checkSecretInSa(namespace, "default", "credentialaccesstoken", t) {
-	//	t.Error("FAIL: ERROR - service account still has the secret: credentialaccesstoken")
-	//}
 
 	// DELETE credential userpass
 	t.Log("DELETE credential 'credentialuserpass' when it exists")
@@ -138,10 +134,6 @@ func TestCredentials(t *testing.T) {
 	t.Log("READ all credentials when there are none ('credentialuserpass' was just deleted)")
 	expectCreds = []credential{}
 	readAllCredentialsTest(namespace, expectCreds, "", r, t)
-	// fake patch function for service account may not be implemented
-	//if r.checkSecretInSa(namespace, "default", "credentialuserpass", t) {
-	//	t.Error("FAIL: ERROR - service account still has the secret: credentialuserpass")
-	//}
 }
 
 // Test Credentials CRUD error reporting
@@ -520,11 +512,10 @@ func (r Resource) getK8sCredential(namespace string, name string) (credential cr
 func (r Resource) checkSecretInSa(namespace string, nameSa string, nameSecret string, t *testing.T) bool {
 	sa, err := r.K8sClient.CoreV1().ServiceAccounts(namespace).Get(nameSa, metav1.GetOptions{})
 	if err != nil {
-		t.Logf("Couldn't read service account: %+v\n", err)		
+		t.Errorf("Couldn't read service account: %+v\n", err)		
 		return false
 	}
 	for _, secret := range sa.Secrets {
-		t.Logf("Got secret : %+v\n", secret.Name)		
 		if secret.Name == nameSecret {	
 			return true
 		}

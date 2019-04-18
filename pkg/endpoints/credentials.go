@@ -380,7 +380,7 @@ func (r Resource) addSecretToSA(saName string, secretName string , namespaceName
 
 	marshaledSA, err := json.Marshal(sa)
 	if err != nil {
-		logging.Log.Errorf("Failed to marshal payload")
+		logging.Log.Errorf("failed to marshal payload")
 		return false
 	}
 
@@ -396,7 +396,7 @@ func (r Resource) addSecretToSA(saName string, secretName string , namespaceName
 		_, err = r.K8sClient.CoreV1().ServiceAccounts(namespaceName).
 			Create(&corev1.ServiceAccount{ObjectMeta: metav1.ObjectMeta{Name: saName,},})
 		if err != nil {
-			logging.Log.Errorf("Error occurred: %s", err.Error())
+			logging.Log.Errorf("error occurred: %s", err.Error())
 			return false
 		}
 	}
@@ -405,14 +405,14 @@ func (r Resource) addSecretToSA(saName string, secretName string , namespaceName
 		Patch(saName, typesPatch.StrategicMergePatchType, marshaledSA)
 
 	if err != nil {
-		logging.Log.Errorf("Error occurred: %s", err.Error())
+		logging.Log.Errorf("error occurred while patching service account %s: %s", saName, err.Error())
 		return false
 	}
 	return true
 }
 
 // path - struct for patch operation
-type patch struct {
+type Patch struct {
 	Op              string            `json:"op"`
 	Path            string            `json:"path"`
 }
@@ -432,19 +432,20 @@ func (r Resource) removeSecretFromSA(saName string, secretName string , namespac
 	found := false
 	for i, secret := range sa.Secrets {
 		if secret.Name == secretName {
-			found = true;
+			found = true
 			entry = i
+			break
 		}
 	}
 	if found {
 		path := fmt.Sprintf("/secrets/%d", entry)
-		data := []patch {{ Op: "remove", Path: path }} 
+		data := []Patch {{ Op: "remove", Path: path }} 
 		patch, err := json.Marshal(data)
 		logging.Log.Debugf("Patch JSON:%s", string(patch))
 		_, err = r.K8sClient.CoreV1().ServiceAccounts(namespaceName).
 			Patch(saName, typesPatch.JSONPatchType, patch)
 		if err != nil {
-			logging.Log.Errorf("Error occurred: %+v", err)
+			logging.Log.Errorf("error occurred while patching service account %s: %+v", saName, err)
 		}
 	}
 	return
