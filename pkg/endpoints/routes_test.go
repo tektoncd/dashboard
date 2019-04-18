@@ -213,7 +213,7 @@ func TestExtensionRegistration(t *testing.T) {
 			},
 		},
 	)
-	resource.RegisterExtension(wsContainer, namespace)
+	resource.RegisterExtensions(wsContainer, namespace)
 	routes := wsContainer.RegisteredWebServices()[0].Routes()
 	if len(routes) != 4 {
 		t.Errorf("Number of routes: expected: %d, returned: %d", 4, len(routes))

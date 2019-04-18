@@ -340,7 +340,7 @@ Note that a check of the resource definition being registered is performed: not 
 
 __Extensions__
 ```
-GET /v1/namespaces/<namespace>/extension
+GET /v1/extension
 Get all extensions in the given namespace
 Returns HTTP code 500 if an error occurred getting the extensionss
 Returns HTTP code 200 and the given extensions in the given namespace if found, otherwise an empty list is returned
@@ -416,8 +416,8 @@ The backend extension is discovered by adding the label and the annotations in t
 ```
   annotations:
     tekton-dashboard-endpoints: <path of the extension at the proxy>
-    tekton-dashboard-display-name: <display name of the extension>
-    tekton-dashboard-bundle-location: <ui bundle location of the extension>
+    tekton-dashboard-display-name: <display name of the extension>  (optional)
+    tekton-dashboard-bundle-location: <ui bundle location of the extension>  (optional)
   labels:
     tekton-dashboard-extension: "true"
 ```

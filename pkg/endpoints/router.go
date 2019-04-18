@@ -19,6 +19,7 @@ import (
 	"net/url"
 	"net/http"
 
+	"github.com/tektoncd/dashboard/pkg/utils"
 	restful "github.com/emicklei/go-restful"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -125,12 +126,12 @@ type Extension struct {
 }
 var	extensions     []Extension
 
-// RegisterExtension - this discovers the extensions and registers them as the REST API extension 
-func (r Resource) RegisterExtension(container *restful.Container, namespace string) {
+// RegisterExtensions - this discovers the extensions and registers them as the REST API extension 
+func (r Resource) RegisterExtensions(container *restful.Container, namespace string) {
 	logging.Log.Info("Adding API for extensions")
 	svcs, err := r.K8sClient.CoreV1().Services(namespace).List(metav1.ListOptions{LabelSelector: extensionLabel})
 	if err != nil {
-		logging.Log.Errorf("no extension found: %s", err)
+		logging.Log.Errorf("error occurred whilst looking for extensions: %s", err)
 		return
 	}
 	ws := new(restful.WebService)
@@ -142,7 +143,7 @@ func (r Resource) RegisterExtension(container *restful.Container, namespace stri
 	for _, svc := range svcs.Items {
 		url, ok := svc.ObjectMeta.Annotations[urlKey]
 		if ok {
-			logging.Log.Debugf("extension URL: %s", url)
+			logging.Log.Debugf("Extension URL: %s", url)
 			ext := Extension { Name: svc.ObjectMeta.Name, URL: url, Port: getPort(svc),
  				DisplayName: svc.ObjectMeta.Annotations[displayNameKey],
 				BundleLocation: svc.ObjectMeta.Annotations[bundleLocationKey]}
@@ -154,22 +155,34 @@ func (r Resource) RegisterExtension(container *restful.Container, namespace stri
 			extensions = append(extensions, ext)
 		}
 	}
-	logging.Log.Debugf("extension: %+v", extensions)
+	logging.Log.Debugf("Extension: %+v", extensions)
 	container.Add(ws)
+
+	logging.Log.Info("Adding API for extension")
+	wsv1 := new(restful.WebService)
+	wsv1.
+		Path("/v1/extension")
+
+	wsv1.Route(wsv1.GET("").To(r.getAllExtensions))
+
+	container.Add(wsv1)
 }
 
 // HandleExtension - this routes request to the extension service
 func (ext Extension) HandleExtension(request *restful.Request, response *restful.Response) {
-	target, _ := url.Parse("http://" +  ext.Name + ":" + ext.Port + "/")
+	target, err := url.Parse("http://" +  ext.Name + ":" + ext.Port + "/")
+	if err != nil {
+		utils.RespondError(response, err, http.StatusInternalServerError)
+		return
+	}
 	proxy := httputil.NewSingleHostReverseProxy(target)
 	proxy.ServeHTTP(response, request.Request)
 }
 
-/* Get all extensions in a given namespace */
+/* Get all extensions in the installed namespace */
 func (r Resource) getAllExtensions(request *restful.Request, response *restful.Response) {
-	namespace := request.PathParameter("namespace")
-	logging.Log.Debugf("In getAllExtensions: namespace: %s", namespace)
-	logging.Log.Debugf("extension: %+v", extensions)
+	logging.Log.Debugf("In getAllExtensions")
+	logging.Log.Debugf("Extension: %+v", extensions)
 
 	response.AddHeader("Content-Type", "application/json")
 	response.WriteEntity(extensions)

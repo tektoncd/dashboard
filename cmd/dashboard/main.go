@@ -77,7 +77,7 @@ func main() {
 
 	installedNamespace := os.Getenv("INSTALLED_NAMESPACE")
 	logging.Log.Infof("Searching for extensions in the namespace %s", installedNamespace)
-	resource.RegisterExtension(wsContainer, installedNamespace)
+	resource.RegisterExtensions(wsContainer, installedNamespace)
 
 	stopCh := signals.SetupSignalHandler()
 	resource.StartPipelineRunController(stopCh)
