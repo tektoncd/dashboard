@@ -32,7 +32,6 @@ func TestMain(m *testing.M) {
 	resource := dummyResource()
 	resource.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace}})
 
-	CreateTestPipeline(resource)
 	pipeline := v1alpha1.Pipeline{}
 	pipeline.Name = "fakepipeline"
 
