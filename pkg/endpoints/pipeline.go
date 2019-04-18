@@ -131,7 +131,15 @@ func (r Resource) getAllPipelineRuns(request *restful.Request, response *restful
 	namespace := request.PathParameter("namespace")
 	repository := request.QueryParameter("repository")
 	name := request.QueryParameter("name")
-	logging.Log.Debugf("In getAllPipelineRuns: namespace: `%s`, repository query: `%s`, repository query: `%s`", namespace, repository, name)
+
+	var queryParams []string
+	if repository != "" { 
+		queryParams = append(queryParams,"repository: "+repository)
+	}
+	if name != "" { 
+		queryParams = append(queryParams,"name: "+name)
+	}
+	logging.Log.Debugf("In getAllPipelineRuns, namespace: %s, parameters: %s", namespace, strings.Join(queryParams,","))
 
 	pipelinerunInterface := r.PipelineClient.TektonV1alpha1().PipelineRuns(namespace)
 	var pipelinerunList *v1alpha1.PipelineRunList
@@ -223,7 +231,11 @@ func (r Resource) getTask(request *restful.Request, response *restful.Response) 
 func (r Resource) getAllTaskRuns(request *restful.Request, response *restful.Response) {
 	namespace := request.PathParameter("namespace")
 	name := request.QueryParameter("name")
-	logging.Log.Debugf("In getAllTaskRuns, namespace: `%s`, name query: `%s`", namespace, name)
+	var queryParams []string
+	if name != "" { 
+		queryParams = append(queryParams,"name: "+name)
+	}
+	logging.Log.Debugf("In getAllTaskRuns, namespace: %s, parameters: %s", namespace, strings.Join(queryParams,","))
 
 	taskrunInterface := r.PipelineClient.TektonV1alpha1().TaskRuns(namespace)
 
