@@ -39,9 +39,9 @@ var typeAccessToken = "accesstoken"
 var typeUserPass = "userpass"
 
 const (
-	dashboardKey string = "tekton-dashboard"
-	dashboardValue string = "true"
-	dashboardLabelSelector string = dashboardKey+"="+dashboardValue // must have format "<key>=<value>"
+	dashboardKey           string = "tekton-dashboard"
+	dashboardValue         string = "true"
+	dashboardLabelSelector string = dashboardKey + "=" + dashboardValue // must have format "<key>=<value>"
 )
 
 /* API route for getting all credentials in a given namespace
@@ -69,7 +69,7 @@ func (r Resource) getAllCredentials(request *restful.Request, response *restful.
 	// Parse K8s secrets to credentials
 	creds := []credential{}
 	for _, secret := range secrets.Items {
-		creds = append(creds, secretToCredential(&secret,true))
+		creds = append(creds, secretToCredential(&secret, true))
 	}
 
 	// Write the response
@@ -105,7 +105,7 @@ func (r Resource) getCredential(request *restful.Request, response *restful.Resp
 	}
 
 	// Parse K8s secret to credential
-	cred := secretToCredential(secret,true)
+	cred := secretToCredential(secret, true)
 
 	// Write the response
 	response.AddHeader("Content-Type", "application/json")
@@ -152,7 +152,8 @@ func (r Resource) createCredential(request *restful.Request, response *restful.R
 		utils.RespondErrorAndMessage(response, err, errorMessage, http.StatusBadRequest)
 		return
 	}
-	writeResponseLocation(request,response,cred.Name)
+
+	writeResponseLocation(request, response, cred.Name)
 }
 
 /* API route for updating a given credential
@@ -202,6 +203,7 @@ func (r Resource) updateCredential(request *restful.Request, response *restful.R
 		utils.RespondErrorAndMessage(response, err, errorMessage, http.StatusBadRequest)
 		return
 	}
+
 	response.WriteHeader(204)
 }
 
@@ -307,7 +309,7 @@ func getQueryEntity(entityPointer interface{}, request *restful.Request, respons
 // Convert K8s secret struct into credential struct
 func secretToCredential(secret *corev1.Secret, mask bool) credential {
 	cred := credential{
-		Name:              secret.GetName(),
+		Name:            secret.GetName(),
 		Username:        string(secret.Data["username"]),
 		Password:        string(secret.Data["password"]),
 		Description:     string(secret.Data["description"]),
@@ -335,7 +337,7 @@ func credentialToSecret(cred credential, namespace string, response *restful.Res
 	secret.Data["type"] = []byte(cred.Type)
 	secret.ObjectMeta.Annotations = cred.URL
 
-	labels := map[string]string {
+	labels := map[string]string{
 		dashboardKey: dashboardValue,
 	}
 	secret.SetLabels(labels)

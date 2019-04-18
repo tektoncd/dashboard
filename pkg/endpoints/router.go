@@ -199,6 +199,6 @@ func writeResponseLocation(request *restful.Request, response *restful.Response,
 	if request.Request.Method == http.MethodPost {
 		location = location + "/" + identifier
 	}
-	response.AddHeader("Content-Location",location)
+	response.AddHeader("Content-Location", location)
 	response.WriteHeader(201)
 }
