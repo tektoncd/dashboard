@@ -130,6 +130,7 @@ func (r Resource) getPipelineImpl(name, namespace string) (v1alpha1.Pipeline, er
 func (r Resource) getAllPipelineRuns(request *restful.Request, response *restful.Response) {
 	namespace := request.PathParameter("namespace")
 	repository := request.QueryParameter("repository")
+	// FakeClient does not support filtering by arbitrary fields(Only metadata.name/namespace), filtered post List()
 	name := request.QueryParameter("name")
 
 	var queryParams []string
@@ -144,7 +145,6 @@ func (r Resource) getAllPipelineRuns(request *restful.Request, response *restful
 	pipelinerunInterface := r.PipelineClient.TektonV1alpha1().PipelineRuns(namespace)
 	var pipelinerunList *v1alpha1.PipelineRunList
 	var labelSelector string // key1=value1,key2=value2, ...
-	var fieldSelector string // metadata.something=something, ...
 	var err error
 
 	// repository query filter
@@ -157,15 +157,18 @@ func (r Resource) getAllPipelineRuns(request *restful.Request, response *restful
 		}
 		labelSelector = strings.Join(labels,",")
 	}
-	// name query filter
-	if name != "" {
-		fieldSelector = "metadata.name=" + name
-	}
-	pipelinerunList, err = pipelinerunInterface.List(metav1.ListOptions{LabelSelector: labelSelector,FieldSelector: fieldSelector})
+	pipelinerunList, err = pipelinerunInterface.List(metav1.ListOptions{LabelSelector: labelSelector})
 	logging.Log.Debugf("+%v", pipelinerunList.Items)
 	if err != nil {
 		utils.RespondError(response, err, http.StatusNotFound)
 		return
+	}
+	if name != "" {
+		for i := range pipelinerunList.Items {
+			if pipelinerunList.Items[i].Name != name {
+				pipelinerunList.Items = append(pipelinerunList.Items[:i],pipelinerunList.Items[i+1:]...)
+			}
+		}
 	}
 	response.WriteEntity(pipelinerunList)
 }
@@ -230,6 +233,7 @@ func (r Resource) getTask(request *restful.Request, response *restful.Response) 
 /* Get all task runs in a given namespace, filters based on parameters */
 func (r Resource) getAllTaskRuns(request *restful.Request, response *restful.Response) {
 	namespace := request.PathParameter("namespace")
+	// FakeClient does not support filtering by arbitrary fields(Only metadata.name/namespace), filtered post List()
 	name := request.QueryParameter("name")
 	var queryParams []string
 	if name != "" {
@@ -238,16 +242,17 @@ func (r Resource) getAllTaskRuns(request *restful.Request, response *restful.Res
 	logging.Log.Debugf("In getAllTaskRuns, namespace: %s, parameters: %s", namespace, strings.Join(queryParams,","))
 
 	taskrunInterface := r.PipelineClient.TektonV1alpha1().TaskRuns(namespace)
-
-	var fieldSelector string // metadata.something=something, ...
-	// name query filter
-	if name != "" {
-		fieldSelector = "metadata.name=" + name
-	}
-	taskrunList, err := taskrunInterface.List(metav1.ListOptions{FieldSelector: fieldSelector})
+	taskrunList, err := taskrunInterface.List(metav1.ListOptions{})
 	if err != nil {
 		utils.RespondError(response, err, http.StatusNotFound)
 		return
+	}
+	if name != "" {
+		for i := range taskrunList.Items {
+			if taskrunList.Items[i].Name != name {
+				taskrunList.Items = append(taskrunList.Items[:i],taskrunList.Items[i+1:]...)
+			}
+		}
 	}
 	response.WriteEntity(taskrunList)
 }
