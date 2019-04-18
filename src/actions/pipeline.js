@@ -11,19 +11,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
+import { getPipelines } from '../api';
 
-import './utils/polyfills';
-import store from './store';
+export function fetchPipelinesSuccess(data) {
+  return {
+    type: 'PIPELINE_FETCH_SUCCESS',
+    data
+  };
+}
 
-import App from './containers/App';
-
-/* istanbul ignore next */
-ReactDOM.render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
-  document.getElementById('root')
-);
+export function fetchPipelines() {
+  return async dispatch => {
+    const pipelines = await getPipelines();
+    dispatch(fetchPipelinesSuccess(pipelines));
+    return pipelines;
+  };
+}

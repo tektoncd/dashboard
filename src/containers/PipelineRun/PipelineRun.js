@@ -17,12 +17,18 @@ import { InlineNotification } from 'carbon-components-react';
 
 import { getPipelineRun, getTaskRun, getTasks } from '../../api';
 
-import PipelineRunHeader from '../../components/PipelineRunHeader';
+import RunHeader from '../../components/RunHeader';
 import StepDetails from '../../components/StepDetails';
 import TaskTree from '../../components/TaskTree';
-import { getStatus } from '../../utils';
+import {
+  getStatus,
+  taskRunStep,
+  selectedTask,
+  selectedTaskRun,
+  stepsStatus
+} from '../../utils';
 
-import '../../components/PipelineRun/PipelineRun.scss';
+import '../../components/Run/Run.scss';
 
 /* istanbul ignore next */
 class PipelineRunContainer extends Component {
@@ -93,15 +99,17 @@ class PipelineRunContainer extends Component {
     const {
       pipelineRun: {
         status: { taskRuns: taskRunDetails }
-      }
+      },
+      tasks
     } = this.state;
 
     taskRuns = taskRuns.map(taskRun => {
       const taskName = taskRun.spec.taskRef.name;
+      const task = selectedTask(taskName, tasks);
       const taskRunName = taskRun.metadata.name;
       const { reason, status: succeeded } = getStatus(taskRun);
       const { pipelineTaskName } = taskRunDetails[taskRunName];
-      const steps = this.steps(taskRun.status.steps, taskName);
+      const steps = stepsStatus(task.spec.steps, taskRun.status.steps);
       return {
         id: taskRun.metadata.uid,
         pipelineTaskName,
@@ -115,62 +123,6 @@ class PipelineRunContainer extends Component {
     });
 
     this.setState({ taskRuns });
-  }
-
-  step() {
-    const { selectedStepId, selectedTaskId, taskRuns } = this.state;
-    const taskRun = taskRuns.find(run => run.id === selectedTaskId);
-    if (!taskRun) {
-      return {};
-    }
-
-    const step = taskRun.steps.find(s => s.id === selectedStepId);
-    if (!step) {
-      return {};
-    }
-
-    const { id, stepName, stepStatus, status, reason, ...definition } = step;
-
-    return {
-      definition,
-      reason,
-      stepName,
-      stepStatus,
-      status,
-      taskRun
-    };
-  }
-
-  steps(stepsStatus, taskName) {
-    const { tasks } = this.state;
-    const task = tasks.find(t => t.metadata.name === taskName);
-    if (!task) {
-      return [];
-    }
-
-    const steps = task.spec.steps.map((step, index) => {
-      const stepStatus = stepsStatus[index];
-      let status;
-      let reason;
-      if (stepStatus.terminated) {
-        status = 'terminated';
-        ({ reason } = stepStatus.terminated);
-      } else if (stepStatus.running) {
-        status = 'running';
-      } else if (stepStatus.waiting) {
-        status = 'waiting';
-      }
-
-      return {
-        ...step,
-        reason,
-        status,
-        stepStatus,
-        stepName: step.name,
-        id: step.name
-      };
-    });
-    return steps;
   }
 
   render() {
@@ -191,14 +143,13 @@ class PipelineRunContainer extends Component {
       errorMessage = error.response.status === 404 ? 'Not Found' : 'Error';
     }
 
-    const {
-      definition,
-      reason,
-      status,
-      stepName,
-      stepStatus,
+    const taskRun = selectedTaskRun(selectedTaskId, taskRuns) || {};
+
+    const { definition, reason, status, stepName, stepStatus } = taskRunStep(
+      selectedStepId,
       taskRun
-    } = this.step();
+    );
+
     const {
       lastTransitionTime,
       reason: pipelineRunReason,
@@ -206,15 +157,17 @@ class PipelineRunContainer extends Component {
     } = getStatus(pipelineRun);
 
     return (
-      <div className="pipeline-run">
-        <PipelineRunHeader
+      <div className="run">
+        <RunHeader
           error={errorMessage}
           lastTransitionTime={lastTransitionTime}
           loading={loading}
-          pipelineName={pipelineName}
-          pipelineRunName={pipelineRunName}
+          name={pipelineName}
+          runName={pipelineRunName}
           reason={pipelineRunReason}
           status={pipelineRunStatus}
+          type="pipelines"
+          typeLabel="Pipelines"
         />
         <main>
           {error ? (

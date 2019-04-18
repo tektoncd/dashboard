@@ -11,19 +11,24 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
+import pipelineReducer from './pipeline';
 
-import './utils/polyfills';
-import store from './store';
+it('handles init or unknown actions', () => {
+  expect(pipelineReducer(undefined, { type: 'does_not_exist' })).toEqual({});
+});
 
-import App from './containers/App';
+it('PIPELINE_FETCH_SUCCESS', () => {
+  const name = 'pipeline name';
+  const pipeline = {
+    metadata: {
+      name
+    },
+    other: 'content'
+  };
+  const action = {
+    type: 'PIPELINE_FETCH_SUCCESS',
+    data: [pipeline]
+  };
 
-/* istanbul ignore next */
-ReactDOM.render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
-  document.getElementById('root')
-);
+  expect(pipelineReducer({}, action)).toEqual({ [name]: pipeline });
+});

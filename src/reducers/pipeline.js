@@ -11,19 +11,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
+import keyBy from 'lodash.keyby';
 
-import './utils/polyfills';
-import store from './store';
-
-import App from './containers/App';
-
-/* istanbul ignore next */
-ReactDOM.render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
-  document.getElementById('root')
-);
+export default function pipeline(state = {}, action) {
+  switch (action.type) {
+    case 'PIPELINE_FETCH_SUCCESS':
+      return keyBy(action.data, 'metadata.name');
+    default:
+      return state;
+  }
+}

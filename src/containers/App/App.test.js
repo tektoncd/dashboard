@@ -12,16 +12,24 @@ limitations under the License.
 */
 
 import React from 'react';
+import { Provider } from 'react-redux';
 import { render } from 'react-testing-library';
+import configureStore from 'redux-mock-store';
 
 import App from './App';
 import * as API from '../../api';
 
 it('App renders successfully', () => {
+  const mockStore = configureStore();
+  const store = mockStore();
   const getPipelines = jest
     .spyOn(API, 'getPipelines')
     .mockImplementation(() => []);
-  const { queryByText } = render(<App />);
+  const { queryByText } = render(
+    <Provider store={store}>
+      <App />
+    </Provider>
+  );
   expect(queryByText(/pipelines/i)).toBeTruthy();
-  expect(getPipelines).toHaveBeenCalledTimes(1);
+  expect(queryByText(/tasks/i)).toBeTruthy();
 });
