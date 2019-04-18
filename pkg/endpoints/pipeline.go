@@ -133,10 +133,10 @@ func (r Resource) getAllPipelineRuns(request *restful.Request, response *restful
 	name := request.QueryParameter("name")
 
 	var queryParams []string
-	if repository != "" { 
+	if repository != "" {
 		queryParams = append(queryParams,"repository: "+repository)
 	}
-	if name != "" { 
+	if name != "" {
 		queryParams = append(queryParams,"name: "+name)
 	}
 	logging.Log.Debugf("In getAllPipelineRuns, namespace: %s, parameters: %s", namespace, strings.Join(queryParams,","))
@@ -232,7 +232,7 @@ func (r Resource) getAllTaskRuns(request *restful.Request, response *restful.Res
 	namespace := request.PathParameter("namespace")
 	name := request.QueryParameter("name")
 	var queryParams []string
-	if name != "" { 
+	if name != "" {
 		queryParams = append(queryParams,"name: "+name)
 	}
 	logging.Log.Debugf("In getAllTaskRuns, namespace: %s, parameters: %s", namespace, strings.Join(queryParams,","))
