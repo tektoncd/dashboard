@@ -11,11 +11,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { getPipelines, getPipelinesErrorMessage, isFetchingPipelines } from '.';
+import {
+  getPipelines,
+  getPipelinesErrorMessage,
+  getTasks,
+  getTasksErrorMessage,
+  isFetchingPipelines,
+  isFetchingTasks
+} from '.';
 import * as pipelineSelectors from './pipelines';
+import * as taskSelectors from './tasks';
 
 const pipelines = { fake: 'pipelines' };
-const state = { pipelines };
+const tasks = { fake: 'tasks' };
+const state = { pipelines, tasks };
 
 it('getPipelines', () => {
   jest
@@ -44,4 +53,25 @@ it('isFetchingPipelines', () => {
   expect(pipelineSelectors.isFetchingPipelines).toHaveBeenCalledWith(
     state.pipelines
   );
+});
+
+it('getTasks', () => {
+  jest.spyOn(taskSelectors, 'getTasks').mockImplementation(() => tasks);
+  expect(getTasks(state)).toEqual(tasks);
+  expect(taskSelectors.getTasks).toHaveBeenCalledWith(state.tasks);
+});
+
+it('getTasksErrorMessage', () => {
+  const errorMessage = 'fake error message';
+  jest
+    .spyOn(taskSelectors, 'getTasksErrorMessage')
+    .mockImplementation(() => errorMessage);
+  expect(getTasksErrorMessage(state)).toEqual(errorMessage);
+  expect(taskSelectors.getTasksErrorMessage).toHaveBeenCalledWith(state.tasks);
+});
+
+it('isFetchingTasks', () => {
+  jest.spyOn(taskSelectors, 'isFetchingTasks').mockImplementation(() => true);
+  expect(isFetchingTasks(state)).toBe(true);
+  expect(taskSelectors.isFetchingTasks).toHaveBeenCalledWith(state.tasks);
 });
