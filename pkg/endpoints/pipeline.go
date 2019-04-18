@@ -548,7 +548,7 @@ func definePipelineRun(pipelineRunName, namespace, saName, repoUrl string,
 			Name:      pipelineRunName,
 			Namespace: namespace,
 			Labels: map[string]string{
-				"app":          "devops-knative",
+				"app":          "tekton-app",
 				gitServerLabel: gitServer,
 				gitOrgLabel:    gitOrg,
 				gitRepoLabel:   gitRepo,
@@ -747,7 +747,8 @@ func (r Resource) updatePipelineRun(request *restful.Request, response *restful.
 	}
 	logging.Log.Debug("Update performed successfully, returning http code 204")
 	// Not to be confused with WriteEntity which always gives a 200 even if the parameter is something other than StatusOk
-	response.WriteHeader(http.StatusNoContent)
+
+	response.WriteHeader(204)
 }
 
 // StartPipelineRunController - registers the code that reacts to changes in kube PipelineRuns

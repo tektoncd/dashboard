@@ -3,20 +3,30 @@ package endpoints
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"strings"
 	"testing"
+<<<<<<< HEAD
 
 	restful "github.com/emicklei/go-restful"
 	uuid "github.com/satori/go.uuid"
+=======
+	"time"
+
+	restful "github.com/emicklei/go-restful"
+	"github.com/satori/go.uuid"
+	v1alpha1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
+>>>>>>> ffeaa88c28a994587089effe1f8dc9d04f27f653
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 var server *httptest.Server
 var methodMap = make(map[string][]string) // k, v := HTTP_METHOD, []route
+var fakePipelineRun *v1alpha1.PipelineRun
 
 // Set up
 const namespace string = "fake"
@@ -27,7 +37,44 @@ func TestMain(m *testing.M) {
 	resource := dummyResource()
 	resource.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace}})
 
+<<<<<<< HEAD
 	CreateTestPipeline(resource)
+=======
+	pipeline := v1alpha1.Pipeline{}
+	pipeline.Name = "fakepipeline"
+
+	createdPipeline, err := resource.PipelineClient.TektonV1alpha1().Pipelines(namespace).Create(&pipeline)
+	if err != nil {
+		fmt.Printf("Error creating the fake pipeline to use: %s", err)
+	}
+	pipelineRunData := v1alpha1.PipelineRun{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "fakeresource",
+			Namespace: namespace,
+			Labels: map[string]string{
+				"app":          "tekton-app",
+				gitServerLabel: "github.com",
+				gitOrgLabel:    "foo",
+				gitRepoLabel:   "bar",
+			},
+		},
+
+		Spec: v1alpha1.PipelineRunSpec{
+			PipelineRef:    v1alpha1.PipelineRef{Name: createdPipeline.Name},
+			Trigger:        v1alpha1.PipelineTrigger{Type: v1alpha1.PipelineTriggerTypeManual},
+			ServiceAccount: "default",
+			Timeout:        &metav1.Duration{Duration: 1 * time.Hour},
+			Resources:      nil,
+			Params:         nil,
+			Status:         "",
+		},
+	}
+
+	fakePipelineRun, err = resource.PipelineClient.TektonV1alpha1().PipelineRuns(namespace).Create(&pipelineRunData)
+	if err != nil {
+		fmt.Printf("Error creating the fake pipelinerun to use for tests: %s", err)
+	}
+>>>>>>> ffeaa88c28a994587089effe1f8dc9d04f27f653
 
 	resource.RegisterEndpoints(wsContainer)
 	resource.RegisterWebsocket(wsContainer)
@@ -67,6 +114,7 @@ func TestContentLocation201(t *testing.T) {
 
 func TestPut204(t *testing.T) {
 	t.Log("Checking 204 for PUT Routes")
+<<<<<<< HEAD
 	// Creating resources first, then update
 	var resourceLocations []string
 	postFunc := func(t *testing.T, request *http.Request, response *http.Response) {
@@ -80,28 +128,52 @@ func TestPut204(t *testing.T) {
 	}
 	makeRequests(t, methodMap[http.MethodPost], http.MethodPost, postFunc)
 	// Check for 204
+=======
+>>>>>>> ffeaa88c28a994587089effe1f8dc9d04f27f653
 	putFunc := func(t *testing.T, request *http.Request, response *http.Response) {
 		if response.StatusCode != 204 {
 			t.Error("Status code not set to 204")
 		}
 	}
+<<<<<<< HEAD
 	makeRequests(t, resourceLocations, http.MethodPut, putFunc)
 
+=======
+	// Make requests for all existing PUT routes
+	makeRequests(t, methodMap[http.MethodPut], http.MethodPut, putFunc)
+>>>>>>> ffeaa88c28a994587089effe1f8dc9d04f27f653
 }
 
 func makeRequests(t *testing.T, routes []string, httpMethod string, postFunc func(t *testing.T, request *http.Request, response *http.Response)) {
 	for _, route := range routes {
 		t.Logf("%s method: %s", httpMethod, route)
 		requestBody := makeRequestBody(t, route, httpMethod)
+<<<<<<< HEAD
 		request := dummyHTTPRequest(httpMethod, server.URL+route, requestBody)
 		response, err := http.DefaultClient.Do(request)
+=======
+		var request http.Request
+
+		if httpMethod == http.MethodPost {
+			request = *dummyHTTPRequest(httpMethod, server.URL+route, requestBody)
+		} else {
+			withID := strings.Replace(server.URL+route, "{name}", "fakeresource", -1)
+			fmt.Printf("With ID replaced {name} with fakeresource) is %s \n", withID)
+			request = *dummyHTTPRequest(httpMethod, withID, requestBody)
+		}
+		response, err := http.DefaultClient.Do(&request)
+>>>>>>> ffeaa88c28a994587089effe1f8dc9d04f27f653
 		if err != nil {
 			t.Error("Response error from server:", err)
 			continue
 		}
 		t.Log("Response from server:", response)
 		if postFunc != nil {
+<<<<<<< HEAD
 			postFunc(t, request, response)
+=======
+			postFunc(t, &request, response)
+>>>>>>> ffeaa88c28a994587089effe1f8dc9d04f27f653
 		}
 	}
 }
@@ -112,22 +184,58 @@ func makeRequestBody(t *testing.T, route string, httpMethod string) *bytes.Reade
 		var resource interface{}
 		// Pass the identifier for what is being updated
 		if httpMethod != http.MethodPost {
+<<<<<<< HEAD
 			identifierIndex := strings.LastIndex(route, "/") + 1
 			resource = fakeCRD(t, resourceType, route[identifierIndex:])
 		} else {
 			// Get unique identifier
+=======
+			// It's a PUT, we only support testing POSTs and PUTs currently
+			identifierIndex := strings.LastIndex(route, "/") + 1
+			routeToUse := route[identifierIndex:]
+			fmt.Printf("Route to use is %s for resource type %s \n", routeToUse, resourceType)
+			resource = fakeCRD(t, resourceType, routeToUse)
+
+		} else {
+			// Get unique identifier - this is for a POST
+>>>>>>> ffeaa88c28a994587089effe1f8dc9d04f27f653
 			resource = fakeCRD(t, resourceType, "")
 		}
 		if resource == nil {
 			return nil
 		}
 		var requestBody *bytes.Reader
+<<<<<<< HEAD
 		b, err := json.Marshal(&resource)
 		if err != nil {
 			t.Error("Failed to marshal resource type:", resourceType)
 			return nil
+=======
+		var body []byte
+		var err error
+
+		if resourceType == "pipelinerun" {
+			// request body should be status: PipelineRunCancelled
+			if httpMethod == http.MethodPut {
+				updateBody := PipelineRunUpdateBody{}
+				updateBody.STATUS = "PipelineRunCancelled"
+				body, err = json.Marshal(updateBody)
+				if err != nil {
+					t.Errorf("Failed to marshal resource type for PipelineRunUpdate: %s", err)
+					return nil
+				}
+			}
+
+		} else {
+			body, err = json.Marshal(&resource)
+			if err != nil {
+				t.Errorf("Failed to marshal resource type: %s, error: %s", resourceType, err)
+				return nil
+			}
+>>>>>>> ffeaa88c28a994587089effe1f8dc9d04f27f653
 		}
-		requestBody = bytes.NewReader(b)
+
+		requestBody = bytes.NewReader(body)
 		return requestBody
 	}
 	return bytes.NewReader([]byte{})
@@ -138,10 +246,19 @@ func makeRequestBody(t *testing.T, route string, httpMethod string) *bytes.Reade
 func getResourceType(route string, httpMethod string) string {
 	i := strings.Index(route, namespace) + len(namespace) + 1
 	if httpMethod == http.MethodPost {
-		return route[i:]
+		theType := route[i:]
+		fmt.Printf("Resource type (we're in a POST method) is: %s \n", theType)
+		return theType
 	}
+<<<<<<< HEAD
 	i2 := strings.Index(route[i:], "/")
 	return route[i : i+i2]
+=======
+	secondFinding := strings.Index(route[i:], "/")
+	theType := route[i : i+secondFinding]
+	fmt.Printf("Resource type (we're in a PUT method) is: %s \n", theType)
+	return theType
+>>>>>>> ffeaa88c28a994587089effe1f8dc9d04f27f653
 }
 
 func fakeCRD(t *testing.T, crdType string, identifier string) interface{} {
@@ -149,10 +266,16 @@ func fakeCRD(t *testing.T, crdType string, identifier string) interface{} {
 	if identifier == "" {
 		identifier = uuid.NewV4().String()
 	}
+	fmt.Printf("Creating a fake CRD for resource type %s \n", crdType)
+
 	switch crdType {
+	case "pipelinerun":
+		{
+			return fakePipelineRun
+		}
 	case "credential":
 		return &credential{
-			Name:        identifier,
+			Name:        "fakeresource",
 			Username:    "personal-access-token",
 			Password:    "passwordaccesstoken",
 			Description: "access token credential",
