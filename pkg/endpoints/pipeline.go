@@ -126,11 +126,9 @@ func (r Resource) getPipelineImpl(name, namespace string) (v1alpha1.Pipeline, er
 	return *pipeline, nil
 }
 
-/* Get all pipeline runs in a given namespace, filters based on query parameters */
+/* Get all pipeline runs in a given namespace, filters based on parameters */
 func (r Resource) getAllPipelineRuns(request *restful.Request, response *restful.Response) {
-	// Request Params
 	namespace := request.PathParameter("namespace")
-	// Query Params
 	repository := request.QueryParameter("repository")
 	name := request.QueryParameter("name")
 	logging.Log.Debugf("In getAllPipelineRuns: namespace: `%s`, repository query: `%s`, repository query: `%s`", namespace, repository, name)
@@ -221,11 +219,9 @@ func (r Resource) getTask(request *restful.Request, response *restful.Response) 
 	response.WriteEntity(task)
 }
 
-/* Get all task runs in a given namespace, filters based on query parameters */
+/* Get all task runs in a given namespace, filters based on parameters */
 func (r Resource) getAllTaskRuns(request *restful.Request, response *restful.Response) {
-	// Path params
 	namespace := request.PathParameter("namespace")
-	// Query params
 	name := request.QueryParameter("name")
 	logging.Log.Debugf("In getAllTaskRuns, namespace: `%s`, name query: `%s`", namespace, name)
 
