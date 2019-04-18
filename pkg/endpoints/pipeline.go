@@ -158,7 +158,6 @@ func (r Resource) getAllPipelineRuns(request *restful.Request, response *restful
 		labelSelector = strings.Join(labels,",")
 	}
 	pipelinerunList, err = pipelinerunInterface.List(metav1.ListOptions{LabelSelector: labelSelector})
-	logging.Log.Debugf("+%v", pipelinerunList.Items)
 	if err != nil {
 		utils.RespondError(response, err, http.StatusNotFound)
 		return
