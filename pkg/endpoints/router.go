@@ -73,7 +73,6 @@ func (r Resource) RegisterEndpoints(container *restful.Container) {
 	wsv1.Route(wsv1.PUT("/{namespace}/credential/{name}").To(r.updateCredential))
 	wsv1.Route(wsv1.DELETE("/{namespace}/credential/{name}").To(r.deleteCredential))
 
-	wsv1.Route(wsv1.GET("/{namespace}/extension").To(r.getAllExtensions))
 	container.Add(wsv1)
 }
 
@@ -161,7 +160,9 @@ func (r Resource) RegisterExtensions(container *restful.Container, namespace str
 	logging.Log.Info("Adding API for extension")
 	wsv1 := new(restful.WebService)
 	wsv1.
-		Path("/v1/extension")
+		Path("/v1/extension").
+		Consumes(restful.MIME_JSON).
+		Produces(restful.MIME_JSON)
 
 	wsv1.Route(wsv1.GET("").To(r.getAllExtensions))
 
