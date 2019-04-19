@@ -33,7 +33,30 @@ it('fetchPipelines', async () => {
 
   jest.spyOn(API, 'getPipelines').mockImplementation(() => pipelines);
 
-  const expectedActions = [fetchPipelinesSuccess(pipelines)];
+  const expectedActions = [
+    { type: 'PIPELINE_FETCH_REQUEST' },
+    fetchPipelinesSuccess(pipelines)
+  ];
+
+  await store.dispatch(fetchPipelines());
+  expect(store.getActions()).toEqual(expectedActions);
+});
+
+it('fetchPipelines error', async () => {
+  const middleware = [thunk];
+  const mockStore = configureStore(middleware);
+  const store = mockStore();
+
+  const error = new Error();
+
+  jest.spyOn(API, 'getPipelines').mockImplementation(() => {
+    throw error;
+  });
+
+  const expectedActions = [
+    { type: 'PIPELINE_FETCH_REQUEST' },
+    { type: 'PIPELINE_FETCH_FAILURE', error }
+  ];
 
   await store.dispatch(fetchPipelines());
   expect(store.getActions()).toEqual(expectedActions);

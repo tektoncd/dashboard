@@ -11,4 +11,22 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-export pipeline from './pipeline';
+import { combineReducers } from 'redux';
+
+import pipelines, * as pipelineSelectors from './pipelines';
+
+export default combineReducers({
+  pipelines
+});
+
+export function getPipelines(state) {
+  return pipelineSelectors.getPipelines(state.pipelines);
+}
+
+export function getPipelinesErrorMessage(state) {
+  return pipelineSelectors.getPipelinesErrorMessage(state.pipelines);
+}
+
+export function isFetchingPipelines(state) {
+  return pipelineSelectors.isFetchingPipelines(state.pipelines);
+}
