@@ -14,9 +14,11 @@ limitations under the License.
 import { combineReducers } from 'redux';
 
 import pipelines, * as pipelineSelectors from './pipelines';
+import tasks, * as taskSelectors from './tasks';
 
 export default combineReducers({
-  pipelines
+  pipelines,
+  tasks
 });
 
 export function getPipelines(state) {
@@ -29,4 +31,16 @@ export function getPipelinesErrorMessage(state) {
 
 export function isFetchingPipelines(state) {
   return pipelineSelectors.isFetchingPipelines(state.pipelines);
+}
+
+export function getTasks(state) {
+  return taskSelectors.getTasks(state.tasks);
+}
+
+export function getTasksErrorMessage(state) {
+  return taskSelectors.getTasksErrorMessage(state.tasks);
+}
+
+export function isFetchingTasks(state) {
+  return taskSelectors.isFetchingTasks(state.tasks);
 }

@@ -36,8 +36,7 @@ import {
 
 import '../../components/Definitions/Definitions.scss';
 
-/* istanbul ignore next */
-export class Pipelines extends Component {
+export /* istanbul ignore next */ class Pipelines extends Component {
   componentDidMount() {
     this.props.fetchPipelines();
   }
@@ -110,6 +109,7 @@ Pipelines.defaultProps = {
   pipelines: []
 };
 
+/* istanbul ignore next */
 function mapStateToProps(state) {
   return {
     error: getPipelinesErrorMessage(state),
