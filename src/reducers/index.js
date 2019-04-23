@@ -11,4 +11,36 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-export pipeline from './pipeline';
+import { combineReducers } from 'redux';
+
+import pipelines, * as pipelineSelectors from './pipelines';
+import tasks, * as taskSelectors from './tasks';
+
+export default combineReducers({
+  pipelines,
+  tasks
+});
+
+export function getPipelines(state) {
+  return pipelineSelectors.getPipelines(state.pipelines);
+}
+
+export function getPipelinesErrorMessage(state) {
+  return pipelineSelectors.getPipelinesErrorMessage(state.pipelines);
+}
+
+export function isFetchingPipelines(state) {
+  return pipelineSelectors.isFetchingPipelines(state.pipelines);
+}
+
+export function getTasks(state) {
+  return taskSelectors.getTasks(state.tasks);
+}
+
+export function getTasksErrorMessage(state) {
+  return taskSelectors.getTasksErrorMessage(state.tasks);
+}
+
+export function isFetchingTasks(state) {
+  return taskSelectors.isFetchingTasks(state.tasks);
+}

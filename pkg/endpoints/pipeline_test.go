@@ -236,6 +236,27 @@ func TestTaskRun(t *testing.T) {
 		t.Errorf("Task2 is not returned: %s, %s", result.Items[0].Name, result.Items[1].Name)
 	}
 
+	// Test getAllTaskRuns function with name query
+	// Sample request and response
+	httpReq = dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/taskrun?name=TaskRun1", nil)
+	req = dummyRestfulRequest(httpReq, "ns1", "")
+	httpWriter = httptest.NewRecorder()
+	resp = dummyRestfulResponse(httpWriter)
+
+	// //  Test the function
+	r.getAllTaskRuns(req, resp)
+
+	// // Decode the response
+	result = v1alpha1.TaskRunList{}
+	json.NewDecoder(httpWriter.Body).Decode(&result)
+	// Verify the response
+	if len(result.Items) != 1 {
+		t.Errorf("Number of tasks: expected: %d, returned: %d", 1, len(result.Items))
+	}
+	if result.Items[0].Name != "TaskRun1" {
+		t.Errorf("Task1 is not returned: %s", result.Items[0].Name)
+	}
+
 	// Test getTaskRun function
 	httpReq = dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/taskrun/TaskRun2", nil)
 	req = dummyRestfulRequest(httpReq, "ns1", "TaskRun2")
@@ -335,6 +356,28 @@ func TestPipelineRun(t *testing.T) {
 	result = v1alpha1.PipelineRunList{}
 	json.NewDecoder(httpWriter.Body).Decode(&result)
 
+	if len(result.Items) != 1 {
+		t.Errorf("Number of PipelineRuns: expected: %d, returned: %d", 1, len(result.Items))
+	}
+	if result.Items[0].Name != "PipelineRun1" {
+		t.Errorf("PipelineRun1 is not returned: %s", result.Items[0].Name)
+	}
+
+	// Test getAllPipelineRuns function with name query
+	// Sample request and response
+	httpReq = dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun?name=PipelineRun1", nil)
+	req = dummyRestfulRequest(httpReq, "ns1", "")
+	httpWriter = httptest.NewRecorder()
+	resp = dummyRestfulResponse(httpWriter)
+
+	// //  Test the function
+	r.getAllPipelineRuns(req, resp)
+
+	// Decode the response
+	result = v1alpha1.PipelineRunList{}
+	json.NewDecoder(httpWriter.Body).Decode(&result)
+
+	// Verify the response
 	if len(result.Items) != 1 {
 		t.Errorf("Number of PipelineRuns: expected: %d, returned: %d", 1, len(result.Items))
 	}

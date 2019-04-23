@@ -153,13 +153,23 @@ func (r Resource) getPipelineImpl(name, namespace string) (v1alpha1.Pipeline, er
 	return *pipeline, nil
 }
 
-/* Get all pipeline runs in a given namespace */
+/* Get all pipeline runs in a given namespace, filters based on parameters */
 func (r Resource) getAllPipelineRuns(request *restful.Request, response *restful.Response) {
 	namespace := request.PathParameter("namespace")
 	repository := request.QueryParameter("repository")
+	// FakeClient does not support filtering by arbitrary fields(Only metadata.name/namespace), filtered post List()
+	name := request.QueryParameter("name")
 
-	logging.Log.Debugf("In getAllPipelineRuns: namespace: `%s`, repository query: `%s`", namespace, repository)
+	var queryParams []string
+	if repository != "" {
+		queryParams = append(queryParams,"repository: "+repository)
+	}
+	if name != "" {
+		queryParams = append(queryParams,"name: "+name)
+	}
+	logging.Log.Debugf("In getAllPipelineRuns, namespace: %s, parameters: %s", namespace, strings.Join(queryParams,","))
 
+<<<<<<< HEAD
 	pipelinerunList, appResponse := r.GetAllPipelineRunsImpl(namespace, repository)
 	if appResponse.ERROR != nil {
 		logging.Log.Errorf("there was a problem getting the PipelineRuns list: %s", appResponse.ERROR)
@@ -178,9 +188,16 @@ func (r Resource) GetAllPipelineRunsImpl(namespace, repository string) (v1alpha1
 
 	pipelineruns := r.PipelineClient.TektonV1alpha1().PipelineRuns(namespace)
 
+=======
+	pipelinerunInterface := r.PipelineClient.TektonV1alpha1().PipelineRuns(namespace)
+>>>>>>> 37774296ad001f956ef966addfc5f194d54e13b3
 	var pipelinerunList *v1alpha1.PipelineRunList
+	var labelSelector string // key1=value1,key2=value2, ...
 	var err error
+
+	// repository query filter
 	if repository != "" {
+<<<<<<< HEAD
 		server, org, repo, err := getGitValues(repository)
 		if err != nil {
 			errorMsg := fmt.Sprintf("there was an error getting the Git values with repository query %s", repository)
@@ -191,6 +208,27 @@ func (r Resource) GetAllPipelineRunsImpl(namespace, repository string) (v1alpha1
 		pipelinerunList, err = pipelineruns.List(metav1.ListOptions{LabelSelector: match})
 	} else {
 		pipelinerunList, err = pipelineruns.List(metav1.ListOptions{})
+=======
+		server, org, repo := getGitValues(repository)
+		labels := []string {
+			gitServerLabel + "=" + server,
+			gitOrgLabel + "=" + org,
+			gitRepoLabel + "=" + repo,
+		}
+		labelSelector = strings.Join(labels,",")
+	}
+	pipelinerunList, err = pipelinerunInterface.List(metav1.ListOptions{LabelSelector: labelSelector})
+	if err != nil {
+		utils.RespondError(response, err, http.StatusNotFound)
+		return
+	}
+	if name != "" {
+		for i := range pipelinerunList.Items {
+			if pipelinerunList.Items[i].Name != name {
+				pipelinerunList.Items = append(pipelinerunList.Items[:i],pipelinerunList.Items[i+1:]...)
+			}
+		}
+>>>>>>> 37774296ad001f956ef966addfc5f194d54e13b3
 	}
 	if err != nil {
 		return v1alpha1.PipelineRunList{}, AppResponse{err, "", http.StatusNotFound}
@@ -366,18 +404,31 @@ func (r Resource) getTask(request *restful.Request, response *restful.Response) 
 	response.WriteEntity(task)
 }
 
-/* Get all task runs in a given namespace */
+/* Get all task runs in a given namespace, filters based on parameters */
 func (r Resource) getAllTaskRuns(request *restful.Request, response *restful.Response) {
 	namespace := request.PathParameter("namespace")
-	taskruns := r.PipelineClient.TektonV1alpha1().TaskRuns(namespace)
-	logging.Log.Debugf("In getAllTaskRuns, taskruns: %s, namespace: %s", taskruns, namespace)
+	// FakeClient does not support filtering by arbitrary fields(Only metadata.name/namespace), filtered post List()
+	name := request.QueryParameter("name")
+	var queryParams []string
+	if name != "" {
+		queryParams = append(queryParams,"name: "+name)
+	}
+	logging.Log.Debugf("In getAllTaskRuns, namespace: %s, parameters: %s", namespace, strings.Join(queryParams,","))
 
-	taskrunlist, err := taskruns.List(metav1.ListOptions{})
+	taskrunInterface := r.PipelineClient.TektonV1alpha1().TaskRuns(namespace)
+	taskrunList, err := taskrunInterface.List(metav1.ListOptions{})
 	if err != nil {
 		utils.RespondError(response, err, http.StatusNotFound)
 		return
 	}
-	response.WriteEntity(taskrunlist)
+	if name != "" {
+		for i := range taskrunList.Items {
+			if taskrunList.Items[i].Name != name {
+				taskrunList.Items = append(taskrunList.Items[:i],taskrunList.Items[i+1:]...)
+			}
+		}
+	}
+	response.WriteEntity(taskrunList)
 }
 
 /* Get a given task in a given namespace */
