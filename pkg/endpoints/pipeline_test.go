@@ -10,14 +10,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+
 package endpoints
 
 import (
 	"encoding/json"
+	"fmt"
+	"io"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
+	restful "github.com/emicklei/go-restful"
 	v1alpha1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -28,7 +32,6 @@ func TestTask(t *testing.T) {
 
 	r := dummyResource()
 
-	// sample tasks
 	task1 := v1alpha1.Task{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "Task1",
@@ -63,20 +66,16 @@ func TestTask(t *testing.T) {
 	}
 
 	// Test getAllTasks function
-	// Sample request and response
 	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/task/", nil)
 	req := dummyRestfulRequest(httpReq, "ns1", "")
 	httpWriter := httptest.NewRecorder()
 	resp := dummyRestfulResponse(httpWriter)
 
-	//  Test the function
 	r.getAllTasks(req, resp)
 
-	// Decode the response
 	result := v1alpha1.TaskList{}
 	json.NewDecoder(httpWriter.Body).Decode(&result)
 
-	// Verify the response
 	if len(result.Items) != 2 {
 		t.Errorf("Number of tasks: expected: %d, returned: %d", 2, len(result.Items))
 	}
@@ -88,20 +87,16 @@ func TestTask(t *testing.T) {
 	}
 
 	// Test getTask function
-	// Sample request and response
 	httpReq = dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/task/Task2", nil)
 	req = dummyRestfulRequest(httpReq, "ns1", "Task2")
 	httpWriter = httptest.NewRecorder()
 	resp = dummyRestfulResponse(httpWriter)
 
-	//  Test the function
 	r.getTask(req, resp)
 
-	// Decode the response
 	result1 := v1alpha1.Task{}
 	json.NewDecoder(httpWriter.Body).Decode(&result1)
 
-	// Verify the response
 	if result1.Name != "Task2" {
 		t.Errorf("Task2 is not returned: %s", result1.Name)
 	}
@@ -112,7 +107,6 @@ func TestPipeline(t *testing.T) {
 
 	r := dummyResource()
 
-	// sample pipelines
 	pipeline1 := v1alpha1.Pipeline{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "Pipeline1",
@@ -147,20 +141,16 @@ func TestPipeline(t *testing.T) {
 	}
 
 	// Test getAllPipelines function
-	// Sample request and response
 	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipeline/", nil)
 	req := dummyRestfulRequest(httpReq, "ns1", "")
 	httpWriter := httptest.NewRecorder()
 	resp := dummyRestfulResponse(httpWriter)
 
-	//  Test the function
 	r.getAllPipelines(req, resp)
 
-	// Decode the response
 	result := v1alpha1.PipelineList{}
 	json.NewDecoder(httpWriter.Body).Decode(&result)
 
-	// Verify the response
 	if len(result.Items) != 2 {
 		t.Errorf("Number of tasks: expected: %d, returned: %d", 2, len(result.Items))
 	}
@@ -172,20 +162,16 @@ func TestPipeline(t *testing.T) {
 	}
 
 	// Test getPipeline function
-	// Sample request and response
 	httpReq = dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipeline/Pipeline2", nil)
 	req = dummyRestfulRequest(httpReq, "ns1", "Pipeline2")
 	httpWriter = httptest.NewRecorder()
 	resp = dummyRestfulResponse(httpWriter)
 
-	//  Test the getPipeline function
 	r.getPipeline(req, resp)
 
-	// Decode the response
 	result1 := v1alpha1.Pipeline{}
 	json.NewDecoder(httpWriter.Body).Decode(&result1)
 
-	// Verify the response
 	if result1.Name != "Pipeline2" {
 		t.Errorf("Pipeline2 is not returned: %s", result1.Name)
 	}
@@ -196,7 +182,6 @@ func TestTaskRun(t *testing.T) {
 
 	r := dummyResource()
 
-	// sample TaskRuns
 	TaskRun1 := v1alpha1.TaskRun{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "TaskRun1",
@@ -231,20 +216,16 @@ func TestTaskRun(t *testing.T) {
 	}
 
 	// Test getAllTaskRuns function
-	// Sample request and response
-	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/taskrun", nil)
+	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/taskrun/", nil)
 	req := dummyRestfulRequest(httpReq, "ns1", "")
 	httpWriter := httptest.NewRecorder()
 	resp := dummyRestfulResponse(httpWriter)
 
-	//  Test the function
 	r.getAllTaskRuns(req, resp)
 
-	// Decode the response
 	result := v1alpha1.TaskRunList{}
 	json.NewDecoder(httpWriter.Body).Decode(&result)
 
-	// Verify the response
 	if len(result.Items) != 2 {
 		t.Errorf("Number of tasks: expected: %d, returned: %d", 2, len(result.Items))
 	}
@@ -277,20 +258,16 @@ func TestTaskRun(t *testing.T) {
 	}
 
 	// Test getTaskRun function
-	// Sample request and response
 	httpReq = dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/taskrun/TaskRun2", nil)
 	req = dummyRestfulRequest(httpReq, "ns1", "TaskRun2")
 	httpWriter = httptest.NewRecorder()
 	resp = dummyRestfulResponse(httpWriter)
 
-	//  Test the getTaskRun function
 	r.getTaskRun(req, resp)
 
-	// Decode the response
 	result1 := v1alpha1.TaskRun{}
 	json.NewDecoder(httpWriter.Body).Decode(&result1)
 
-	// Verify the response
 	if result1.Name != "TaskRun2" {
 		t.Errorf("TaskRun2 is not returned: %s", result1.Name)
 	}
@@ -311,7 +288,6 @@ func TestPipelineRun(t *testing.T) {
 	labels2["gitOrg"] = "foobar"
 	labels2["gitRepo"] = "barfoo"
 
-	// sample PipelineRuns
 	PipelineRun1 := v1alpha1.PipelineRun{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:   "PipelineRun1",
@@ -349,20 +325,16 @@ func TestPipelineRun(t *testing.T) {
 	}
 
 	// Test getAllPipelineRuns function
-	// Sample request and response
-	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun", nil)
+	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun/", nil)
 	req := dummyRestfulRequest(httpReq, "ns1", "")
 	httpWriter := httptest.NewRecorder()
 	resp := dummyRestfulResponse(httpWriter)
 
-	//  Test the function
 	r.getAllPipelineRuns(req, resp)
 
-	// Decode the response
 	result := v1alpha1.PipelineRunList{}
 	json.NewDecoder(httpWriter.Body).Decode(&result)
 
-	// Verify the response
 	if len(result.Items) != 2 {
 		t.Errorf("Number of tasks: expected: %d, returned: %d", 2, len(result.Items))
 	}
@@ -373,21 +345,17 @@ func TestPipelineRun(t *testing.T) {
 		t.Errorf("Task2 is not returned: %s, %s", result.Items[0].Name, result.Items[1].Name)
 	}
 
-	// Test getAllPipelineRuns function with repository query
-	// Sample request and response
+	// Test getAllPipelineRuns function with query
 	httpReq = dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun?repository=http://github.com/foo/bar", nil)
 	req = dummyRestfulRequest(httpReq, "ns1", "")
 	httpWriter = httptest.NewRecorder()
 	resp = dummyRestfulResponse(httpWriter)
 
-	//  Test the function
 	r.getAllPipelineRuns(req, resp)
 
-	// Decode the response
 	result = v1alpha1.PipelineRunList{}
 	json.NewDecoder(httpWriter.Body).Decode(&result)
 
-	// Verify the response
 	if len(result.Items) != 1 {
 		t.Errorf("Number of PipelineRuns: expected: %d, returned: %d", 1, len(result.Items))
 	}
@@ -402,7 +370,6 @@ func TestPipelineRun(t *testing.T) {
 	httpWriter = httptest.NewRecorder()
 	resp = dummyRestfulResponse(httpWriter)
 
-	// //  Test the function
 	r.getAllPipelineRuns(req, resp)
 
 	// Decode the response
@@ -418,20 +385,16 @@ func TestPipelineRun(t *testing.T) {
 	}
 
 	// Test getPipelineRun function
-	// Sample request and response
 	httpReq = dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun/PipelineRun2", nil)
 	req = dummyRestfulRequest(httpReq, "ns1", "PipelineRun2")
 	httpWriter = httptest.NewRecorder()
 	resp = dummyRestfulResponse(httpWriter)
 
-	//  Test the getPipelineRun function
 	r.getPipelineRun(req, resp)
 
-	// Decode the response
 	result1 := v1alpha1.PipelineRun{}
 	json.NewDecoder(httpWriter.Body).Decode(&result1)
 
-	// Verify the response
 	if result1.Name != "PipelineRun2" {
 		t.Errorf("PipelineRun2 is not returned: %s", result1.Name)
 	}
@@ -442,8 +405,6 @@ func TestTaskRunLog(t *testing.T) {
 
 	r := dummyResource()
 
-	// create containers
-	// Name
 	Container1 := corev1.Container{
 		Name: "Container1",
 	}
@@ -466,8 +427,6 @@ func TestTaskRunLog(t *testing.T) {
 		Name: "Container7",
 	}
 
-	// sample TaskRuns
-	// PodName
 	TaskRun1 := v1alpha1.TaskRun{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "TaskRun1",
@@ -496,7 +455,6 @@ func TestTaskRunLog(t *testing.T) {
 		},
 	}
 
-	// create pods
 	Pod1 := corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "Pod1",
@@ -548,7 +506,6 @@ func TestTaskRunLog(t *testing.T) {
 		t.Errorf("testTaskRun error: %s", err)
 	}
 
-	// Add sample Pods
 	_, err = r.K8sClient.CoreV1().Pods("ns1").Create(&Pod1)
 	if err != nil {
 		t.Errorf("test error: %s", err)
@@ -565,16 +522,13 @@ func TestTaskRunLog(t *testing.T) {
 	if err != nil {
 		t.Errorf("test error: %s", err)
 	}
-	// Add sample Containers
 
 	// Test getAllPipelineRuns function
-	// Sample request and response
 	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/taskrunlog/TaskRun1", nil)
 	req := dummyRestfulRequest(httpReq, "ns1", "TaskRun1")
 	httpWriter := httptest.NewRecorder()
 	resp := dummyRestfulResponse(httpWriter)
 
-	//  Test the function
 	r.getTaskRunLog(req, resp)
 	var taskRunLog TaskRunLog
 	if err := json.NewDecoder(httpWriter.Body).Decode(&taskRunLog); err != nil {
@@ -588,8 +542,6 @@ func TestPipelineRunLog(t *testing.T) {
 
 	r := dummyResource()
 
-	// create containers
-	// Name
 	Container1 := corev1.Container{
 		Name: "Container1",
 	}
@@ -612,8 +564,6 @@ func TestPipelineRunLog(t *testing.T) {
 		Name: "Container7",
 	}
 
-	// sample TaskRuns
-	// PodName
 	TaskRun1 := v1alpha1.TaskRun{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "TaskRun1",
@@ -641,8 +591,7 @@ func TestPipelineRunLog(t *testing.T) {
 			PodName: "Pod3",
 		},
 	}
-	// sample TaskRunsStatus
-	// PodName
+
 	taskRunStatus1 := v1alpha1.TaskRunStatus{
 		PodName: "Pod1",
 	}
@@ -668,8 +617,6 @@ func TestPipelineRunLog(t *testing.T) {
 		Status:           &taskRunStatus3,
 	}
 
-	// sample PipelineRuns
-	// Status.TaskRuns
 	PipelineRun1 := v1alpha1.PipelineRun{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "PipelineRun1",
@@ -695,8 +642,6 @@ func TestPipelineRunLog(t *testing.T) {
 		Spec: v1alpha1.PipelineRunSpec{},
 	}
 
-	// create pods
-	// Spec.Containers, Spec.InitContainers
 	Pod1 := corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "Pod1",
@@ -762,7 +707,6 @@ func TestPipelineRunLog(t *testing.T) {
 		t.Errorf("testTaskRun error: %s", err)
 	}
 
-	// Add sample Pods
 	_, err = r.K8sClient.CoreV1().Pods("ns1").Create(&Pod1)
 	if err != nil {
 		t.Errorf("test error: %s", err)
@@ -779,7 +723,6 @@ func TestPipelineRunLog(t *testing.T) {
 	if err != nil {
 		t.Errorf("test error: %s", err)
 	}
-	// Add sample Containers
 
 	// Test getAllPipelineRuns function
 	// Sample request and response
@@ -788,7 +731,6 @@ func TestPipelineRunLog(t *testing.T) {
 	httpWriter := httptest.NewRecorder()
 	resp := dummyRestfulResponse(httpWriter)
 
-	//  Test the function
 	r.getPipelineRunLog(req, resp)
 	if !strings.Contains(httpWriter.Body.String(), "Pod3") {
 		t.Errorf("Log doesn't have \"Pod3\"")
@@ -1187,4 +1129,272 @@ func TestPipelineRunUpdateStatusAlreadySet412(t *testing.T) {
 	if resp.StatusCode() != 412 {
 		t.Errorf("FAIL: should have received a http 412 code when setting the status to something already set, got %d", resp.StatusCode())
 	}
+}
+
+/* PipelineRun create bad request 400 */
+func TestCreatePipelineRunBadRequest(t *testing.T) {
+
+	r := dummyResource()
+
+	err := CreateTestPipeline(r)
+	if err != nil {
+		t.Errorf("FAIL: error creating test pipeline: %s", err)
+	}
+
+	badRequestPipelineRunBody := strings.NewReader(`{"fielddoesnotexist": "pipeline",}`)
+	request, resp := createDummyPipelineRunQuery(badRequestPipelineRunBody)
+	r.createPipelineRun(request, resp)
+
+	if resp.StatusCode() != 400 {
+		t.Errorf("FAIL: should have been recognised as a 400, got %d", resp.StatusCode())
+	}
+}
+
+/* PipelineRun create successful 201 */
+func TestCreatePipelineRunSuccess(t *testing.T) {
+
+	r := dummyResource()
+
+	err := CreateTestPipeline(r)
+	if err != nil {
+		t.Errorf("FAIL: error creating test pipeline: %s", err)
+	}
+
+	pipelineRunBody := strings.NewReader(`{"pipelinename": "Pipeline1"}`)
+	request, resp := createDummyPipelineRunQuery(pipelineRunBody)
+	r.createPipelineRun(request, resp)
+
+	if resp.StatusCode() != 201 {
+		t.Errorf("FAIL: should have been recognised as a 201, got %d", resp.StatusCode())
+	}
+}
+
+/* PipelineRun no Pipeline 412 */
+func TestCreatePipelineRunNoPipeline(t *testing.T) {
+
+	r := dummyResource()
+
+	pipelineRunBody := strings.NewReader(`{"pipelinename": "Pipelinedoesnotexist"}`)
+	request, resp := createDummyPipelineRunQuery(pipelineRunBody)
+	r.createPipelineRun(request, resp)
+
+	if resp.StatusCode() != 412 {
+		t.Errorf("FAIL: should have been recognised as a 412, got %d", resp.StatusCode())
+	}
+}
+
+/* PipelineRun create with Git resource */
+func TestCreatePipelineRunGitResource(t *testing.T) {
+
+	r := dummyResource()
+
+	err := CreateTestPipeline(r)
+	if err != nil {
+		t.Errorf("FAIL: error creating test pipeline: %s", err)
+	}
+
+	repoURL := "http://github.com/testorg/testrepo"
+	revision := "12345"
+
+	pipelineRunBody := strings.NewReader(
+		`{"pipelinename":    "Pipeline1",
+			"gitresourcename": "git-source",
+			"gitcommit":       "12345",
+			"repourl":         "http://github.com/testorg/testrepo"}`)
+
+	request, resp := createDummyPipelineRunQuery(pipelineRunBody)
+	r.createPipelineRun(request, resp)
+
+	pipelineResourceList, err := r.PipelineClient.TektonV1alpha1().PipelineResources("ns1").List(metav1.ListOptions{})
+
+	numberOfGitResources := 0
+	resourceName := ""
+
+	for _, pipelineResource := range pipelineResourceList.Items {
+		if pipelineResource.Spec.Type == "git" {
+			numberOfGitResources++
+			resourceName = pipelineResource.Name
+		}
+	}
+
+	if numberOfGitResources != 1 {
+		t.Errorf("FAIL: expected to find a single created PipelineResource of type Git, but found the number of Git PipelineResources to be %d", numberOfGitResources)
+	}
+
+	params := []string{revision, repoURL}
+	err = testPipelineResource(r, resourceName, v1alpha1.PipelineResourceTypeGit, params)
+	if err != nil {
+		t.Error(err)
+	}
+
+	t.Logf("Pipeline resource list: %v", pipelineResourceList)
+
+	if resp.StatusCode() != 201 {
+		t.Errorf("FAIL: should have been recognised as a 201, got %d", resp.StatusCode())
+	}
+}
+
+/* PipelineRun create with Image resource */
+func TestCreatePipelineRunImageResource(t *testing.T) {
+
+	r := dummyResource()
+
+	err := CreateTestPipeline(r)
+	if err != nil {
+		t.Errorf("FAIL: error creating test pipeline: %s", err)
+	}
+
+	pipelineRunBody := strings.NewReader(
+		`{"pipelinename":      "Pipeline1",
+			"imageresourcename": "image-source",
+			"gitcommit":       	 "12345",
+			"reponame":        	 "testreponame"}`)
+
+	expectedImageURL := "/testreponame:12345"
+
+	request, resp := createDummyPipelineRunQuery(pipelineRunBody)
+	r.createPipelineRun(request, resp)
+
+	pipelineResourceList, err := r.PipelineClient.TektonV1alpha1().PipelineResources("ns1").List(metav1.ListOptions{})
+
+	numberOfImageResources := 0
+	resourceName := ""
+
+	for _, pipelineResource := range pipelineResourceList.Items {
+		if pipelineResource.Spec.Type == "image" {
+			numberOfImageResources++
+			resourceName = pipelineResource.Name
+		}
+	}
+
+	if numberOfImageResources != 1 {
+		t.Errorf("FAIL: expected to find a single created PipelineResource of type image, but found the number of image PipelineResources to be %d", numberOfImageResources)
+	}
+
+	params := []string{expectedImageURL}
+	err = testPipelineResource(r, resourceName, "image", params)
+	if err != nil {
+		t.Error("FAIL: the values expected for the resource did not match the actual values of the created resource")
+	}
+
+	t.Logf("Pipeline resource list: %v", pipelineResourceList)
+
+	if resp.StatusCode() != 201 {
+		t.Errorf("FAIL: should have been recognised as a 201, got %d", resp.StatusCode())
+	}
+}
+
+/* PipelineRun create with Git resource and image resource */
+func TestCreatePipelineRunGitAndImageResource(t *testing.T) {
+
+	r := dummyResource()
+
+	err := CreateTestPipeline(r)
+	if err != nil {
+		t.Errorf("FAIL: error creating test pipeline: %s", err)
+	}
+
+	revision := "12345"
+	repoURL := "http://github.com/testorg/testrepo"
+	expectedImageURL := "/testreponame:12345"
+
+	pipelineRunBody := strings.NewReader(
+		`{"pipelinename":      "Pipeline1",
+			"imageresourcename": "image-source",
+			"gitresourcename":   "git-source",
+			"gitcommit":         "12345",
+			"reponame":          "testreponame",
+			"repourl":           "http://github.com/testorg/testrepo"}`)
+
+	request, resp := createDummyPipelineRunQuery(pipelineRunBody)
+	r.createPipelineRun(request, resp)
+
+	pipelineResourceList, err := r.PipelineClient.TektonV1alpha1().PipelineResources("ns1").List(metav1.ListOptions{})
+
+	numberOfGitResources := 0
+	numberOfImageResources := 0
+
+	resourceListingAsItems := pipelineResourceList.Items
+
+	gitResourceName := ""
+	imageResourceName := ""
+
+	for _, pipelineResource := range resourceListingAsItems {
+		if pipelineResource.Spec.Type == "git" {
+			numberOfGitResources++
+			gitResourceName = pipelineResource.Name
+		} else if pipelineResource.Spec.Type == "image" {
+			numberOfImageResources++
+			imageResourceName = pipelineResource.Name
+		}
+	}
+
+	if numberOfGitResources != 1 {
+		t.Errorf("FAIL: expected one created PipelineResource of type git but found the number of git PipelineResources to be %d", numberOfGitResources)
+	}
+
+	if numberOfImageResources != 1 {
+		t.Errorf("FAIL: expected one created PipelineResource of type image but found the number of image PipelineResources to be %d", numberOfImageResources)
+	}
+
+	params := []string{revision, repoURL}
+	err = testPipelineResource(r, gitResourceName, "git", params)
+	if err != nil {
+		t.Error("FAIL: the values expected for the resource did not match the actual values of the created resource")
+	}
+
+	params = []string{expectedImageURL}
+	err = testPipelineResource(r, imageResourceName, "image", params)
+	if err != nil {
+		t.Error("FAIL: the values expected for the resource did not match the actual values of the created resource")
+	}
+
+	t.Logf("Pipeline resource list: %v", pipelineResourceList)
+
+	if resp.StatusCode() != 201 {
+		t.Errorf("FAIL: should have been recognised as a 201, got %d", resp.StatusCode())
+	}
+}
+
+func createDummyPipelineRunQuery(pipelineRunBody io.Reader) (*restful.Request, *restful.Response) {
+	httpWriter := httptest.NewRecorder()
+
+	pipelineRunRequest := dummyHTTPRequest("POST", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun", pipelineRunBody)
+	pipelineRunRequestRestful := dummyRestfulRequest(pipelineRunRequest, "ns1", "")
+	resp := dummyRestfulResponse(httpWriter)
+	return pipelineRunRequestRestful, resp
+}
+
+func CreateTestPipeline(r *Resource) error {
+	pipeline1 := v1alpha1.Pipeline{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "Pipeline1",
+		},
+		Spec: v1alpha1.PipelineSpec{},
+	}
+
+	_, err := r.PipelineClient.TektonV1alpha1().Pipelines("ns1").Create(&pipeline1)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func testPipelineResource(r *Resource, resourceName string, resourceType v1alpha1.PipelineResourceType, params []string) error {
+	resource, err := r.PipelineClient.TektonV1alpha1().PipelineResources("ns1").Get(resourceName, metav1.GetOptions{})
+	if err != nil {
+		return fmt.Errorf("FAIL: there was a problem getting the created resource")
+	}
+
+	if resourceType != resource.Spec.Type {
+		return fmt.Errorf("FAIL: the type for the resource didn't match, wanted %s but was %s", resourceType, resource.Spec.Type)
+	}
+
+	for i := range params {
+		if params[i] != resource.Spec.Params[i].Value {
+			return fmt.Errorf("FAIL: the param for the resource didn't match, wanted %s but was %s", params[i], resource.Spec.Params[i].Value)
+		}
+	}
+
+	return nil
 }
