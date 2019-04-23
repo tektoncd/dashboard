@@ -780,7 +780,6 @@ func (r Resource) pipelineRunCreated(obj interface{}) {
 func (r Resource) pipelineRunUpdated(oldObj, newObj interface{}) {
 
 	if newObj.(*v1alpha1.PipelineRun).GetResourceVersion() != oldObj.(*v1alpha1.PipelineRun).GetResourceVersion() {
-		logging.Log.Debug("Pipelinerun update recorded")
 		data := broadcaster.SocketData{
 			MessageType: broadcaster.PipelineRunUpdated,
 			Payload:     newObj.(*v1alpha1.PipelineRun),
