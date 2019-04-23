@@ -575,11 +575,13 @@ func getDateTimeAsString() string {
 
 // defines and creates a resource of a specifed type and returns a pipeline resource reference for this resource
 // takes a manual pipeline run data struct, namespace for the resource creation, resource name to refer to it and the resource type
-func (r Resource) createPipelineResourceForPipelineRun(resourceData ManualPipelineRun, namespace, resourceName string, resourceType v1alpha1.PipelineResourceType) (v1alpha1.PipelineResourceRef, error) {
-	logging.Log.Debug("Creating PipelineResource of type %s", resourceType)
+func (r Resource) createPipelineResourceForPipelineRun(resourceData ManualPipelineRun, namespace, resourceName string,
+	resourceType v1alpha1.PipelineResourceType) (v1alpha1.PipelineResourceRef, error) {
+
+	logging.Log.Debugf("Creating PipelineResource of type %s", resourceType)
 
 	startTime := getDateTimeAsString()
-
+	å
 	registryURL := resourceData.REGISTRYLOCATION
 	resourceName = fmt.Sprintf("%s-%s", resourceName, startTime)
 
