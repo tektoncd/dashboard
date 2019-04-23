@@ -41,10 +41,10 @@ func main() {
 	}
 
 	port := ":8080"
-	portnumber := os.Getenv("PORT")
-	if portnumber != "" {
-		port = ":" + portnumber
-		logging.Log.Infof("Port number from config: %s", portnumber)
+	portNumber := os.Getenv("PORT")
+	if portNumber != "" {
+		port = ":" + portNumber
+		logging.Log.Infof("Port number from config: %s", portNumber)
 	}
 
 	wsContainer := restful.NewContainer()

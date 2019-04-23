@@ -14,29 +14,30 @@ limitations under the License.
 package utils
 
 import (
+	"strings"
+
 	restful "github.com/emicklei/go-restful"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
 )
 
-// RespondError ...
+// RespondError - logs and writes an error response with a desired status code
 func RespondError(response *restful.Response, err error, statusCode int) {
-	logging.Log.Error("[RespondError] Error:", err.Error())
-	logging.Log.Debugf("Response is %x\n", *response)
+	logging.Log.Error("Error: ", strings.Replace(err.Error(), "/", "", -1))
 	response.AddHeader("Content-Type", "text/plain")
 	response.WriteError(statusCode, err)
 }
 
-// RespondErrorMessage ...
+// RespondErrorMessage - logs and writes an error message with a desired status code
 func RespondErrorMessage(response *restful.Response, message string, statusCode int) {
-	logging.Log.Debug("[RespondErrorMessage] Message:", message)
+	logging.Log.Debugf("Error message: %s", message)
 	response.AddHeader("Content-Type", "text/plain")
 	response.WriteErrorString(statusCode, message)
 }
 
-// RespondErrorAndMessage ...
-func RespondErrorAndMessage(response *restful.Response, err error, message string, statusCode int) {
-	logging.Log.Error("[RespondErrorAndMessage] Error:", err.Error())
-	logging.Log.Infof("Message is %x\n", message)
+// RespondMessageAndLogError - logs and writes an error message with a desired status code and logs the error
+func RespondMessageAndLogError(response *restful.Response, err error, message string, statusCode int) {
+	logging.Log.Error("Error: ", strings.Replace(err.Error(), "/", "", -1))
+	logging.Log.Debugf("Message: %s", message)
 	response.AddHeader("Content-Type", "text/plain")
 	response.WriteErrorString(statusCode, message)
 }
