@@ -581,7 +581,7 @@ func (r Resource) createPipelineResourceForPipelineRun(resourceData ManualPipeli
 	logging.Log.Debugf("Creating PipelineResource of type %s", resourceType)
 
 	startTime := getDateTimeAsString()
-	å
+
 	registryURL := resourceData.REGISTRYLOCATION
 	resourceName = fmt.Sprintf("%s-%s", resourceName, startTime)
 
