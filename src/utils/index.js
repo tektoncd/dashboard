@@ -64,9 +64,11 @@ export function selectedTaskRun(selectedTaskId, taskRuns) {
   return taskRuns.find(run => run.id === selectedTaskId);
 }
 
-export function stepsStatus(taskSteps, taskRunStepsStatus) {
-  const steps = taskSteps.map((step, index) => {
-    const stepStatus = taskRunStepsStatus ? taskRunStepsStatus[index] : {};
+export function stepsStatus(taskSteps, taskRunStepsStatus = []) {
+  const steps = taskSteps.map(step => {
+    const stepStatus =
+      taskRunStepsStatus.find(status => status.name === step.name) || {};
+
     let status;
     let reason;
     if (stepStatus.terminated) {
