@@ -265,10 +265,10 @@ Returns HTTP code 200 and the pod's logs in the given namespace if found
 Returns HTTP code 404 if an error occurred getting the logs or no pod was found by name in the given namespace
 
 GET /v1/namespaces/<namespace>/taskrunlog/<taskrun-name>
-Get the logs for a TaskRun by name-
+Get the logs for a TaskRun by name
 Returns HTTP code 200 and the logs from a TaskRun
 
-Example payload response:
+Example payload response is formatted as so:
 
 {
  "PodName": "run-pipeline0-pipeline0-task-bk48w-pod-0fd388",
@@ -309,6 +309,11 @@ Example payload response:
 }
 
 Returns HTTP code 404 if an error occurred getting the logs or TaskRun pod was found by name in the given namespace
+
+
+GET /v1/namespaces/<namespace>/pipelinerunlog/<pipelinerun-name>
+Get the logs for a PipelineRun by name
+Returns HTTP code 200 and the logs from a PipelineRun (unformatted)
 ```
 
 __Credentials__
