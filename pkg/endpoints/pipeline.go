@@ -148,10 +148,8 @@ func (r Resource) getPipelineImpl(name, namespace string) (v1alpha1.Pipeline, er
 	pipelines := r.PipelineClient.TektonV1alpha1().Pipelines(namespace)
 	pipeline, err := pipelines.Get(name, metav1.GetOptions{})
 	if err != nil {
-		logging.Log.Errorf("could not retrieve the pipeline called %s in namespace %s", name, namespace)
 		return v1alpha1.Pipeline{}, err
 	}
-	logging.Log.Debug("Found the pipeline definition OK")
 	return *pipeline, nil
 }
 

@@ -14,14 +14,15 @@ limitations under the License.
 package utils
 
 import (
+	"strings"
+
 	restful "github.com/emicklei/go-restful"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
 )
 
 // RespondError - logs and writes an error response with a desired status code
 func RespondError(response *restful.Response, err error, statusCode int) {
-	logging.Log.Error("Error: ", err.Error())
-	logging.Log.Debugf("Response is: %v", response)
+	logging.Log.Error("Error: ", strings.Replace(err.Error(), "/", "", -1))
 	response.AddHeader("Content-Type", "text/plain")
 	response.WriteError(statusCode, err)
 }
@@ -35,7 +36,7 @@ func RespondErrorMessage(response *restful.Response, message string, statusCode 
 
 // RespondMessageAndLogError - logs and writes an error message with a desired status code and logs the error
 func RespondMessageAndLogError(response *restful.Response, err error, message string, statusCode int) {
-	logging.Log.Error("Error: ", err.Error())
+	logging.Log.Error("Error: ", strings.Replace(err.Error(), "/", "", -1))
 	logging.Log.Debugf("Message: %s", message)
 	response.AddHeader("Content-Type", "text/plain")
 	response.WriteErrorString(statusCode, message)
