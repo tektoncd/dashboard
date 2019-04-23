@@ -363,6 +363,28 @@ Example POST (non-trivial as it involves the URL map):
 }
 ```
 
+__PipelineRuns__
+```
+POST /v1/namespaces/<namespace>/pipelinerun                              - creates a new manual PipelineRun based on a specified Pipeline     
+-> request body must contain pipelinename for the pipeline to run 
+optional parameters listed below may be provided in the request body depending on requirements of the Pipeline.
+
+pipelineruntype can be specifed as 'helm' if your Pipeline is deploying with helm.
+
+gitresourcename, gitcommit, and repourl can be provided in the request body if your Pipeline requires a PipelineResource of type `git`
+imageresourcename, git commit and reponame can be provided in the request body if your Pipeline requires a PipelineResource of type `image`
+
+helmsecret and registrysecret are optional depending on whether the Pipeline requires secrets for accessing an insecure registry or using helm.
+
+serviceaccount can be provided to specify the serviceaccount to use for the pipelinerun.
+
+registrylocation can be provided to specify where you wish to push built images.
+
+Returns http 204 if the PipelineRun was created successfully (no content provided in the response)
+Returns 400 if a bad request was used
+Returns 412 if the Pipeline template to create the PipelineRun from could not be found
+```
+
 __PUT endpoints__
 
 __Credentials__
