@@ -370,7 +370,6 @@ func TestPipelineRun(t *testing.T) {
 	httpWriter = httptest.NewRecorder()
 	resp = dummyRestfulResponse(httpWriter)
 
-	// //  Test the function
 	r.getAllPipelineRuns(req, resp)
 
 	// Decode the response
