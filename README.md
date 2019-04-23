@@ -9,8 +9,21 @@ Tekton Dashboard is a general purpose, web-based UI for Tekton Pipelines. It all
 ## Getting Started
 
 **Currently** to view the backend APIs, at `localhost:9097/v1/namespaces/<namespace>/<resource name>` for example:
-  
+ 
+If you have `ko` and you're logged in to Dockerhub you can simply do:
+
 ```sh
+export KO_DOCKER_REPO=docker.io/<mydockername>
+ko apply -f config
+```
+
+This will build and push an image of the Tekton dashboard to a Dockerhub repository under your account.
+
+Alternatively you can do the following:
+
+```sh
+$ docker build -t <mydockername>/dashboard:<mytag> .
+- Replace the image path at `config/tekton-dashboard-deployment.yaml` with the value for <mydockername>/dashboard:<mytag>
 $ kubectl apply -f tekton-dashboard-deployment.yaml
 $ kubectl port-forward $(kubectl get pod -l app=tekton-dashboard -o name) 9097:9097
 ```
