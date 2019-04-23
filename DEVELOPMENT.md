@@ -340,7 +340,7 @@ Returns HTTP code 204 if the component is installed (any Kubernetes resource can
 Returns HTTP code 400 if a bad request is sent
 Returns HTTP code 417 (expectation failed) if the resource is not registered
 
-Note that a check of the resource definition being registered is performed: not that pods are running and healthy.
+Note that a check of the resource definition being registered is performed: not that pods are running and healthy
 ```
 
 __POST endpoints__
@@ -370,24 +370,38 @@ Example POST (non-trivial as it involves the URL map):
 
 __PipelineRuns__
 ```
-POST /v1/namespaces/<namespace>/pipelinerun                              - creates a new manual PipelineRun based on a specified Pipeline     
--> request body must contain pipelinename for the pipeline to run 
-optional parameters listed below may be provided in the request body depending on requirements of the Pipeline.
+POST /v1/namespaces/<namespace>/pipelinerun
+Creates a new manual PipelineRun based on a specified Pipeline
+Request body must contain pipelinename for the Pipeline to run 
 
-pipelineruntype can be specifed as 'helm' if your Pipeline is deploying with helm.
+Optional parameters listed below may be provided in the request body depending on requirements of the Pipeline:
 
-gitresourcename, gitcommit, and repourl can be provided in the request body if your Pipeline requires a PipelineResource of type `git`
-imageresourcename, git commit and reponame can be provided in the request body if your Pipeline requires a PipelineResource of type `image`
+  - pipelineruntype can be specifed as helm if your Pipeline is deploying with Helm
 
-helmsecret and registrysecret are optional depending on whether the Pipeline requires secrets for accessing an insecure registry or using helm.
+  - gitresourcename, gitcommit, and repourl can be provided in the request body if your Pipeline requires a PipelineResource of type `git`
+  - imageresourcename, gitcommit and reponame can be provided in the request body if your Pipeline requires a PipelineResource of type `image`
 
-serviceaccount can be provided to specify the serviceaccount to use for the pipelinerun.
+  - helmsecret and registrysecret are optional depending on whether the Pipeline requires secrets for accessing an insecure registry or using Helm
 
-registrylocation can be provided to specify where you wish to push built images.
+  - serviceaccount can be provided to specify the serviceaccount to use for the PipelineRun
 
-Returns http 204 if the PipelineRun was created successfully (no content provided in the response)
-Returns 400 if a bad request was used
-Returns 412 if the Pipeline template to create the PipelineRun from could not be found
+  - registrylocation can be provided to specify where you wish to push built images
+
+Returns HTTP code 201 if the PipelineRun was created successfully
+Returns HTTP code 400 if a bad request was provided
+Returns HTTP code 412 if the Pipeline to create the PipelineRun could not be found
+
+Example POST - for a Pipeline that clones a repository from GitHub and pushes to Dockerhub using a configured secret 
+{
+    "pipelinename": "mypipeline",
+    "serviceaccount": "tekton-pipelines",
+    "registrylocation": "dockerhubusername",
+    "gitresourcename": "mygitresourcename",
+    "imageresourcename": "myimageresourcename",
+    "gitcommit": "branchorcommit",
+    "repourl": "https://github.com/myorg/myrepo",
+    "reponame": "myrepo"
+}
 ```
 
 __PUT endpoints__
