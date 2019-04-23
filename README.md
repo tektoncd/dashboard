@@ -13,8 +13,8 @@ Tekton Dashboard is a general purpose, web-based UI for Tekton Pipelines. It all
 If you have `ko` and you're logged in to Dockerhub you can simply do:
 
 ```sh
-export KO_DOCKER_REPO=docker.io/<mydockername>
-ko apply -f config
+$ export KO_DOCKER_REPO=docker.io/<mydockername>
+$ ko apply -f config
 ```
 
 This will build and push an image of the Tekton dashboard to a Dockerhub repository under your account.
