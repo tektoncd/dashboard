@@ -158,12 +158,12 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:58dc2abfa0d3901dde142cd636abf13d495f37c125564390c7a5791d1fa29e80"
+  digest = "1:b6fca2d4933db5050e8729d0931acc650c2492daa13decc64ad62d48145f7d20"
   name = "github.com/knative/pkg"
   packages = [
     "apis",
     "apis/duck",
-    "apis/duck/v1alpha1",
+    "apis/duck/v1beta1",
     "kmp",
   ]
   pruneopts = "UT"
@@ -227,7 +227,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:aff35c0379f09633e57e10fcd3a00e7563a2669c668e184fe3e2f94a5915f028"
+  digest = "1:07ae092e1affb61ecc09de330fbedd53b77e68fdda590a3879db7fe8e57e709c"
   name = "github.com/tektoncd/pipeline"
   packages = [
     "pkg/apis/pipeline",
@@ -247,7 +247,7 @@
     "pkg/templating",
   ]
   pruneopts = "UT"
-  revision = "c463f1230adc340ee96c02c60f074fff83240210"
+  revision = "3415c18f7728476c132f692d9a55a70b7b194c5d"
 
 [[projects]]
   digest = "1:3c1a69cdae3501bf75e76d0d86dc6f2b0a7421bc205c0cb7b96b19eed464a34d"

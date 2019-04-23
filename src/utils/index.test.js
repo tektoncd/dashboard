@@ -118,7 +118,12 @@ it('stepsStatus no status', () => {
 it('stepsStatus step is running', () => {
   const stepName = 'testStep';
   const taskSteps = [{ name: stepName, image: 'test' }];
-  const taskRunStepsStatus = [{ running: { startedAt: '2019' } }];
+  const taskRunStepsStatus = [
+    {
+      name: stepName,
+      running: { startedAt: '2019' }
+    }
+  ];
   const steps = stepsStatus(taskSteps, taskRunStepsStatus);
   const returnedStep = steps[0];
   expect(returnedStep.status).toEqual('running');
@@ -131,6 +136,7 @@ it('stepsStatus step is completed', () => {
   const taskSteps = [{ name: stepName, image: 'test' }];
   const taskRunStepsStatus = [
     {
+      name: stepName,
       terminated: {
         exitCode: 0,
         reason,
@@ -153,6 +159,7 @@ it('stepsStatus step is terminated with error', () => {
   const taskSteps = [{ name: stepName, image: 'test' }];
   const taskRunStepsStatus = [
     {
+      name: stepName,
       terminated: {
         exitCode: 1,
         reason,
@@ -172,7 +179,7 @@ it('stepsStatus step is terminated with error', () => {
 it('stepsStatus step is waiting', () => {
   const stepName = 'testStep';
   const taskSteps = [{ name: stepName, image: 'test' }];
-  const taskRunStepsStatus = [{ waiting: {} }];
+  const taskRunStepsStatus = [{ name: stepName, waiting: {} }];
   const steps = stepsStatus(taskSteps, taskRunStepsStatus);
   const returnedStep = steps[0];
   expect(returnedStep.status).toEqual('waiting');
