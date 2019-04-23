@@ -11,17 +11,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { applyMiddleware, combineReducers, compose, createStore } from 'redux';
+import { applyMiddleware, compose, createStore } from 'redux';
 import thunk from 'redux-thunk';
 
-import * as reducers from '../reducers';
+import rootReducer from '../reducers';
 
 /* eslint-disable no-underscore-dangle */
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 /* eslint-enable */
 
 export function configureStore(initialState = {}) {
-  const rootReducer = combineReducers(reducers);
   const middleware = [thunk];
 
   return createStore(

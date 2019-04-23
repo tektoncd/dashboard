@@ -11,13 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import keyBy from 'lodash.keyby';
+import store from '.';
 
-export default function pipeline(state = {}, action) {
-  switch (action.type) {
-    case 'PIPELINE_FETCH_SUCCESS':
-      return keyBy(action.data, 'metadata.name');
-    default:
-      return state;
-  }
-}
+it('store', () => {
+  expect(store.getState()).toBeDefined();
+});

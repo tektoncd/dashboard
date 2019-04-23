@@ -265,10 +265,10 @@ Returns HTTP code 200 and the pod's logs in the given namespace if found
 Returns HTTP code 404 if an error occurred getting the logs or no pod was found by name in the given namespace
 
 GET /v1/namespaces/<namespace>/taskrunlog/<taskrun-name>
-Get the logs for a TaskRun by name-
+Get the logs for a TaskRun by name
 Returns HTTP code 200 and the logs from a TaskRun
 
-Example payload response:
+Example payload response is formatted as so:
 
 {
  "PodName": "run-pipeline0-pipeline0-task-bk48w-pod-0fd388",
@@ -309,6 +309,11 @@ Example payload response:
 }
 
 Returns HTTP code 404 if an error occurred getting the logs or TaskRun pod was found by name in the given namespace
+
+
+GET /v1/namespaces/<namespace>/pipelinerunlog/<pipelinerun-name>
+Get the logs for a PipelineRun by name
+Returns HTTP code 200 and the logs from a PipelineRun (unformatted)
 ```
 
 __Credentials__
@@ -335,7 +340,7 @@ Returns HTTP code 204 if the component is installed (any Kubernetes resource can
 Returns HTTP code 400 if a bad request is sent
 Returns HTTP code 417 (expectation failed) if the resource is not registered
 
-Note that a check of the resource definition being registered is performed: not that pods are running and healthy.
+Note that a check of the resource definition being registered is performed: not that pods are running and healthy
 ```
 
 __Extensions__
@@ -368,6 +373,42 @@ Example POST (non-trivial as it involves the URL map):
     "type": "userpass",
     "description": "my secret for github",
     "url": {"tekton.dev/git-0": "https://github.com"}    
+}
+```
+
+__PipelineRuns__
+```
+POST /v1/namespaces/<namespace>/pipelinerun
+Creates a new manual PipelineRun based on a specified Pipeline
+Request body must contain pipelinename for the Pipeline to run 
+
+Optional parameters listed below may be provided in the request body depending on requirements of the Pipeline:
+
+  - pipelineruntype can be specifed as helm if your Pipeline is deploying with Helm
+
+  - gitresourcename, gitcommit, and repourl can be provided in the request body if your Pipeline requires a PipelineResource of type `git`
+  - imageresourcename, gitcommit and reponame can be provided in the request body if your Pipeline requires a PipelineResource of type `image`
+
+  - helmsecret and registrysecret are optional depending on whether the Pipeline requires secrets for accessing an insecure registry or using Helm
+
+  - serviceaccount can be provided to specify the serviceaccount to use for the PipelineRun
+
+  - registrylocation can be provided to specify where you wish to push built images
+
+Returns HTTP code 201 if the PipelineRun was created successfully
+Returns HTTP code 400 if a bad request was provided
+Returns HTTP code 412 if the Pipeline to create the PipelineRun could not be found
+
+Example POST - for a Pipeline that clones a repository from GitHub and pushes to Dockerhub using a configured secret 
+{
+    "pipelinename": "mypipeline",
+    "serviceaccount": "tekton-pipelines",
+    "registrylocation": "dockerhubusername",
+    "gitresourcename": "mygitresourcename",
+    "imageresourcename": "myimageresourcename",
+    "gitcommit": "branchorcommit",
+    "repourl": "https://github.com/myorg/myrepo",
+    "reponame": "myrepo"
 }
 ```
 
@@ -407,6 +448,7 @@ Returns HTTP code 400 if a bad request was used or if the secret was not found
 Returns HTTP code 500 if the found credential could not be deleted
 ```
 
+
 ## Extension 
 
 __Backend__
@@ -422,3 +464,4 @@ The backend extension is discovered by adding the label and the annotations in t
     tekton-dashboard-extension: "true"
 ```
 Requests to the path specified in "tekton-dashboard-endpoints" annotation are routed to the extension service.
+

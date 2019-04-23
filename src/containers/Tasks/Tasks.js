@@ -12,7 +12,8 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
+import { connect } from 'react-redux';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -26,42 +27,37 @@ import {
 } from 'carbon-components-react';
 
 import Header from '../../components/Header';
-import { getTasks } from '../../api';
+import { fetchTasks } from '../../actions/tasks';
+import {
+  getTasks,
+  getTasksErrorMessage,
+  isFetchingTasks
+} from '../../reducers';
 
 import '../../components/Definitions/Definitions.scss';
 
-/* istanbul ignore next */
-class Tasks extends Component {
-  state = {
-    error: null,
-    loading: true,
-    tasks: []
-  };
-
-  async componentDidMount() {
-    try {
-      const tasks = await getTasks();
-      this.setState({ tasks, loading: false });
-    } catch (error) {
-      this.setState({ error, loading: false });
-    }
+export /* istanbul ignore next */ class Tasks extends Component {
+  componentDidMount() {
+    this.props.fetchTasks();
   }
 
   render() {
-    const { error, loading, tasks } = this.state;
+    const { error, loading, tasks } = this.props;
 
     return (
       <div className="definitions">
         <Header>
           <div className="definitions-header">
             <Breadcrumb>
-              <BreadcrumbItem href="#">Tasks</BreadcrumbItem>
+              <BreadcrumbItem>
+                <NavLink to="/tasks">Tasks</NavLink>
+              </BreadcrumbItem>
             </Breadcrumb>
           </div>
         </Header>
         <main>
           {(() => {
-            if (loading) {
+            if (loading && !tasks.length) {
               return <StructuredListSkeleton border />;
             }
 
@@ -70,7 +66,7 @@ class Tasks extends Component {
                 <InlineNotification
                   kind="error"
                   title="Error loading tasks"
-                  subtitle={JSON.stringify(error)}
+                  subtitle={error}
                 />
               );
             }
@@ -106,4 +102,24 @@ class Tasks extends Component {
   }
 }
 
-export default Tasks;
+Tasks.defaultProps = {
+  tasks: []
+};
+
+/* istanbul ignore next */
+function mapStateToProps(state) {
+  return {
+    error: getTasksErrorMessage(state),
+    loading: isFetchingTasks(state),
+    tasks: getTasks(state)
+  };
+}
+
+const mapDispatchToProps = {
+  fetchTasks
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Tasks);
