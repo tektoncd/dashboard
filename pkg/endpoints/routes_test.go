@@ -67,6 +67,7 @@ func TestMain(m *testing.M) {
 		fmt.Printf("Error creating the fake pipelinerun to use for tests: %s", err)
 	}
 
+	resource.RegisterWeb(wsContainer)
 	resource.RegisterEndpoints(wsContainer)
 	resource.RegisterWebsocket(wsContainer)
 	resource.RegisterHealthProbes(wsContainer)
@@ -80,6 +81,21 @@ func TestMain(m *testing.M) {
 	}
 	server = httptest.NewServer(wsContainer)
 	os.Exit(m.Run())
+}
+
+func TestGetWeb200(t *testing.T) {
+	t.Log("Checking GET route for 200 StatusCode")
+
+	getFunc := func(t *testing.T, request *http.Request, response *http.Response) {
+		t.Log("Response from server:", response)
+		if response.StatusCode != 200 {
+			t.Error("Status code not set to 200")
+		}
+	}
+
+	httpReq, _ := http.NewRequest(http.MethodGet, server.URL+"/", bytes.NewReader([]byte{}))
+	response, _ := http.DefaultClient.Do(httpReq)
+	getFunc(t, httpReq, response)
 }
 
 func TestContentLocation201(t *testing.T) {
@@ -290,7 +306,7 @@ func TestExtensionRegistration(t *testing.T) {
 		t.Errorf("Number of routes: expected: %d, returned: %d", 4, len(routes))
 		return
 	}
-	if routes[0].Path != "/path" {
+	if routes[0].Path != "/v1/path" {
 		t.Errorf("Correct path is not returned: %s", routes[0].Path)
 	}
 
