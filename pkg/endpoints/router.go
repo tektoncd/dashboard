@@ -161,7 +161,7 @@ func (r Resource) RegisterExtensions(container *restful.Container, namespace str
 	logging.Log.Info("Adding API for extension")
 	wsv1 := new(restful.WebService)
 	wsv1.
-		Path("/v1/extension").
+		Path("/v1/extensions").
 		Consumes(restful.MIME_JSON).
 		Produces(restful.MIME_JSON)
 
