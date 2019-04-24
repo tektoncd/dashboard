@@ -32,7 +32,7 @@ spec:
         env:
         - name: PORT
           value: "9097"
-        - name: INSTALL_NAMESPACE
+        - name: INSTALLED_NAMESPACE
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
