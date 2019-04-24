@@ -413,19 +413,19 @@ func (r Resource) addSecretToSA(saName string, secretName string , namespaceName
 
 // path - struct for patch operation
 type Patch struct {
-	Op              string            `json:"op"`
+	Operation       string            `json:"op"`
 	Path            string            `json:"path"`
 }
 
 // removeSecretFromSA - remove secret from service account 
 func (r Resource) removeSecretFromSA(saName string, secretName string , namespaceName string) {
-	logging.Log.Debugf("Service account to patch is %s", saName)
+	logging.Log.Debugf("Service account to unpatch is %s", saName)
 	logging.Log.Debugf("Namespace of service account is %s", namespaceName)
 
 	sa, err := r.K8sClient.CoreV1().ServiceAccounts(namespaceName).
 		Get(saName, metav1.GetOptions{})
 	if err != nil {
-		logging.Log.Errorf("error getting service sccount %s: %s", saName, err.Error())
+		logging.Log.Errorf("error getting service account %s: %s", saName, err.Error())
 	}
 
 	var entry int
@@ -439,7 +439,7 @@ func (r Resource) removeSecretFromSA(saName string, secretName string , namespac
 	}
 	if found {
 		path := fmt.Sprintf("/secrets/%d", entry)
-		data := []Patch {{ Op: "remove", Path: path }} 
+		data := []Patch {{ Operation: "remove", Path: path }} 
 		patch, err := json.Marshal(data)
 		logging.Log.Debugf("Patch JSON:%s", string(patch))
 		_, err = r.K8sClient.CoreV1().ServiceAccounts(namespaceName).
