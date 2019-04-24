@@ -18,6 +18,7 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"net/http"
+	"os"
 
 	"github.com/tektoncd/dashboard/pkg/utils"
 	restful "github.com/emicklei/go-restful"
@@ -34,6 +35,14 @@ const urlKey = "tekton-dashboard-endpoints"
 const bundleLocationKey = "tekton-dashboard-bundle-location"
 // displayNameKey - extension display name annotation 
 const displayNameKey = "tekton-dashboard-display-name"
+
+var webResourcesDir = os.Getenv("WEB_RESOURCES_DIR")
+
+func (r Resource) RegisterWeb(container *restful.Container) {
+	logging.Log.Info("Adding web api")
+
+	container.Handle("/", http.FileServer(http.Dir(webResourcesDir)))
+}
 
 // Register APIs to interface with core Tekton/K8s pieces
 func (r Resource) RegisterEndpoints(container *restful.Container) {
@@ -136,7 +145,7 @@ func (r Resource) RegisterExtensions(container *restful.Container, namespace str
 	}
 	ws := new(restful.WebService)
 	ws.
-		Path("/").
+		Path("/v1").
 		Consumes(restful.MIME_JSON).
 		Produces(restful.MIME_JSON)
 

@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "webpack --config webpack.prod.js",
+    "build_ko": "webpack --config webpack.prod.js --output-path='./cmd/dashboard/kodata/web' ",
     "eslint:check": "eslint --print-config . | eslint-config-prettier-check",
     "lint": "eslint --ignore-path .gitignore .",
     "lint:fix": "npm run lint -- --fix",

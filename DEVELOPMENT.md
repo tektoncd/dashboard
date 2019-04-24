@@ -114,17 +114,31 @@ Tekton Dashboard does not involve any custom resource definitions, we only inter
 You can stand up a version of the dashboard on-cluster (to your
 `kubectl config current-context`):
 
+First install and build the npm project.
+
+```shell
+npm install
+```
+
+There is a dedicated npm job for ko builds
+
+```shell
+npm run build_ko
+```
+
+This will build the static resources and add them to the `kodata` directory.
+
 ```shell
 ko apply -f config/
 ```
 
 ## Access the dashboard
 
-To access the backend API:
+To access the dashboard:
 
 `kubectl port-forward $(kubectl get pod -l app=tekton-dashboard -o name) 9097:9097`
 
-Note that we have a big TODO which is to link up the frontend to the backend and to document how to build and run the frontend for yourself.
+The web UI can be accessed at http://localhost:9097
 
 ### Redeploy dashboard
 
