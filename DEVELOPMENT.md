@@ -477,5 +477,9 @@ The backend extension is discovered by adding the label and the annotations in t
   labels:
     tekton-dashboard-extension: "true"
 ```
-Requests to the path specified in "tekton-dashboard-endpoints" annotation are routed to the extension service.
 
+1.Each extension is mounted onto /v1/extension/extension-name/ at the dashboard
+1.Requests to /v1/extension/extension-name/ are routed to / at the extension in question. / at the extension is always exposed in the expectation that many extensions will only need one endpoint.
+1.If tekton-dashboard-endpoints is set to foo then /v1/extension/extension-name/foo is routed to /foo at the extension
+1.Multiple context roots can be specified by using the . character to separate them: e.g. if tekton-dashboard-endpoints: foo.bar then /v1/extension/extension-name/foo is routed to /foo and /v1/extension/extension-name/bar is routed to /bar at the extension.
+1."/" is a reserved context root for javascript.  "tekton-dashboard-endpoints" must be always set if the extension has javascript.
