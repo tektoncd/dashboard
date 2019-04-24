@@ -36,6 +36,14 @@ export function getAPI(type, id = '', namespace = 'default') {
   ].join('');
 }
 
+export function getExtensionBaseURL(name) {
+  return `${apiRoot}/v1/extension/${name}`;
+}
+
+export function getExtensionBundleURL(name, bundlelocation) {
+  return `${getExtensionBaseURL(name)}/${bundlelocation}`;
+}
+
 export function checkData(data) {
   if (data.items) {
     return data.items;
@@ -139,4 +147,9 @@ export function updateCredential({ id, ...rest }) {
 export function deleteCredential(id) {
   const uri = getAPI('credentials', id);
   return deleteRequest(uri);
+}
+
+export function getExtensions() {
+  const uri = `${apiRoot}/v1/extensions`;
+  return get(uri);
 }
