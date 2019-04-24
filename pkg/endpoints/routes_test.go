@@ -239,3 +239,83 @@ func fakeCRD(t *testing.T, crdType string, identifier string) interface{} {
 		return nil
 	}
 }
+
+// 
+func TestExtensionRegistration(t *testing.T) {
+	t.Log("Checking extension registration")
+
+	wsContainer := restful.NewContainer()
+	resource := dummyResource()
+	// Correct extension
+	resource.K8sClient.CoreV1().Services(namespace).Create(
+		&corev1.Service{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: "extension", 
+				Annotations: map[string]string {"tekton-dashboard-endpoints": "/path", "tekton-dashboard-bundle-location": "Location", "tekton-dashboard-display-name": "Display Name"}, 
+				Labels: map[string]string {"tekton-dashboard-extension": "true",},
+			},
+			Spec: corev1.ServiceSpec {
+				Ports: []corev1.ServicePort{{Port: 9097}},
+			},
+		},
+	)
+	// Not extension
+	resource.K8sClient.CoreV1().Services(namespace).Create(
+		&corev1.Service{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: "none-extension", 
+				Annotations: map[string]string {"tekton-dashboard-endpoints": "/path", "tekton-dashboard-bundle-location": "Location", "tekton-dashboard-display-name": "Display Name"}, 
+			},
+			Spec: corev1.ServiceSpec {
+				Ports: []corev1.ServicePort{{Port: 9097}},
+			},
+		},
+	)
+	// Extension without path
+	resource.K8sClient.CoreV1().Services(namespace).Create(
+		&corev1.Service{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: "extension-missing-path", 
+				Annotations: map[string]string {"tekton-dashboard-bundle-location": "Location", "tekton-dashboard-display-name": "Display Name"}, 
+				Labels: map[string]string {"tekton-dashboard-extension": "true",},
+			},
+			Spec: corev1.ServiceSpec {
+				Ports: []corev1.ServicePort{{Port: 9097}},
+			},
+		},
+	)
+	resource.RegisterExtensions(wsContainer, namespace)
+	routes := wsContainer.RegisteredWebServices()[0].Routes()
+	if len(routes) != 4 {
+		t.Errorf("Number of routes: expected: %d, returned: %d", 4, len(routes))
+		return
+	}
+	if routes[0].Path != "/path" {
+		t.Errorf("Correct path is not returned: %s", routes[0].Path)
+	}
+
+
+	// Test getAllExtensions function
+	// Sample request and response
+	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/extensions/", nil)
+	req := dummyRestfulRequest(httpReq, "fake", "")
+	httpWriter := httptest.NewRecorder()
+	resp := dummyRestfulResponse(httpWriter)
+
+	//  Test the function
+	resource.getAllExtensions(req, resp)
+
+	// Decode the response
+	result := []Extension{}
+	json.NewDecoder(httpWriter.Body).Decode(&result)
+
+	// Verify the response
+	if len(result) != 1 {
+		t.Errorf("Number of tasks: expected: %d, returned: %d", 1, len(result))
+		return
+	}
+	if result[0].Name != "extension" {
+		t.Errorf("Extension is not returned: %s", result[0].Name)
+	}
+}
+
