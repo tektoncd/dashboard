@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
   Breadcrumb,
@@ -24,11 +25,11 @@ import {
 } from 'carbon-components-react';
 
 import Header from '../../components/Header';
+import { getExtensions } from '../../reducers';
 
 import '../../components/Definitions/Definitions.scss';
 
-/* istanbul ignore next */
-const Home = () => {
+export const Home = /* istanbul ignore next */ ({ extensions }) => {
   return (
     <div className="definitions">
       <Header>
@@ -57,6 +58,13 @@ const Home = () => {
                 <Link to="/tasks">Tasks</Link>
               </StructuredListCell>
             </StructuredListRow>
+            {!!extensions.length && (
+              <StructuredListRow className="pipeline">
+                <StructuredListCell>
+                  <Link to="/extensions">Extensions</Link>
+                </StructuredListCell>
+              </StructuredListRow>
+            )}
           </StructuredListBody>
         </StructuredListWrapper>
       </main>
@@ -64,4 +72,8 @@ const Home = () => {
   );
 };
 
-export default Home;
+const mapStateToProps = state => ({
+  extensions: getExtensions(state)
+});
+
+export default connect(mapStateToProps)(Home);

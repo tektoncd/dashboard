@@ -12,23 +12,29 @@ limitations under the License.
 */
 
 import React from 'react';
-import { Provider } from 'react-redux';
 import { render } from 'react-testing-library';
-import configureStore from 'redux-mock-store';
 
-import { App } from './App';
+import ErrorBoundary from './ErrorBoundary';
 
-it('App renders successfully', () => {
-  const mockStore = configureStore();
-  const store = mockStore({
-    extensions: { byName: {} }
-  });
+it('ErrorBoundary renders children', () => {
   const { queryByText } = render(
-    <Provider store={store}>
-      <App extensions={[]} fetchExtensions={() => {}} />
-    </Provider>
+    <ErrorBoundary>
+      <span>hello</span>
+    </ErrorBoundary>
   );
-  expect(queryByText(/pipelines/i)).toBeTruthy();
-  expect(queryByText(/tasks/i)).toBeTruthy();
-  expect(queryByText(/extensions/i)).toBeFalsy();
+  expect(queryByText(/hello/i)).toBeTruthy();
+});
+
+it('ErrorBoundary renders the error message', () => {
+  function Bomb() {
+    throw new Error();
+  }
+  jest.spyOn(console, 'error').mockImplementation(() => {}); // suppress error log from test output
+  const { queryByText } = render(
+    <ErrorBoundary>
+      <Bomb />
+    </ErrorBoundary>
+  );
+  expect(queryByText(/something went wrong/i)).toBeTruthy();
+  console.error.mockRestore(); // eslint-disable-line no-console
 });

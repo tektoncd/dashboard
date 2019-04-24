@@ -13,13 +13,27 @@ limitations under the License.
 
 import { combineReducers } from 'redux';
 
+import extensions, * as extensionSelectors from './extensions';
 import pipelines, * as pipelineSelectors from './pipelines';
 import tasks, * as taskSelectors from './tasks';
 
 export default combineReducers({
+  extensions,
   pipelines,
   tasks
 });
+
+export function getExtensions(state) {
+  return extensionSelectors.getExtensions(state.extensions);
+}
+
+export function getExtensionsErrorMessage(state) {
+  return extensionSelectors.getExtensionsErrorMessage(state.extensions);
+}
+
+export function isFetchingExtensions(state) {
+  return extensionSelectors.isFetchingExtensions(state.extensions);
+}
 
 export function getPipelines(state) {
   return pipelineSelectors.getPipelines(state.pipelines);

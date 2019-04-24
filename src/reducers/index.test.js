@@ -12,19 +12,55 @@ limitations under the License.
 */
 
 import {
+  getExtensions,
+  getExtensionsErrorMessage,
   getPipelines,
   getPipelinesErrorMessage,
   getTasks,
   getTasksErrorMessage,
+  isFetchingExtensions,
   isFetchingPipelines,
   isFetchingTasks
 } from '.';
+import * as extensionSelectors from './extensions';
 import * as pipelineSelectors from './pipelines';
 import * as taskSelectors from './tasks';
 
+const extensions = { fake: 'extensions' };
 const pipelines = { fake: 'pipelines' };
 const tasks = { fake: 'tasks' };
-const state = { pipelines, tasks };
+const state = { extensions, pipelines, tasks };
+
+it('getExtensions', () => {
+  jest
+    .spyOn(extensionSelectors, 'getExtensions')
+    .mockImplementation(() => extensions);
+  expect(getExtensions(state)).toEqual(extensions);
+  expect(extensionSelectors.getExtensions).toHaveBeenCalledWith(
+    state.extensions
+  );
+});
+
+it('getExtensionsErrorMessage', () => {
+  const errorMessage = 'fake error message';
+  jest
+    .spyOn(extensionSelectors, 'getExtensionsErrorMessage')
+    .mockImplementation(() => errorMessage);
+  expect(getExtensionsErrorMessage(state)).toEqual(errorMessage);
+  expect(extensionSelectors.getExtensionsErrorMessage).toHaveBeenCalledWith(
+    state.extensions
+  );
+});
+
+it('isFetchingExtensions', () => {
+  jest
+    .spyOn(extensionSelectors, 'isFetchingExtensions')
+    .mockImplementation(() => true);
+  expect(isFetchingExtensions(state)).toBe(true);
+  expect(extensionSelectors.isFetchingExtensions).toHaveBeenCalledWith(
+    state.extensions
+  );
+});
 
 it('getPipelines', () => {
   jest
