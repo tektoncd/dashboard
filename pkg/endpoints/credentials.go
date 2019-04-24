@@ -166,7 +166,7 @@ func (r Resource) createCredential(request *restful.Request, response *restful.R
 	}
 	if !r.addSecretToSA(saName, cred.Name, requestNamespace) {
 		errorMessage := fmt.Sprintf("Error adding secret in service account: %s", saName)
-		utils.RespondErrorAndMessage(response, nil, errorMessage, http.StatusBadRequest)
+		utils.RespondErrorMessage(response, errorMessage, http.StatusBadRequest)
 		return
 	}
 
