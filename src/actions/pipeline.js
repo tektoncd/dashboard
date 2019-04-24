@@ -22,8 +22,14 @@ export function fetchPipelinesSuccess(data) {
 
 export function fetchPipelines() {
   return async dispatch => {
-    const pipelines = await getPipelines();
-    dispatch(fetchPipelinesSuccess(pipelines));
+    dispatch({ type: 'PIPELINE_FETCH_REQUEST' });
+    let pipelines;
+    try {
+      pipelines = await getPipelines();
+      dispatch(fetchPipelinesSuccess(pipelines));
+    } catch (error) {
+      dispatch({ type: 'PIPELINE_FETCH_FAILURE', error });
+    }
     return pipelines;
   };
 }

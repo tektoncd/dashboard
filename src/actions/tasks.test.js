@@ -15,49 +15,49 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 
 import * as API from '../api';
-import { fetchPipelines, fetchPipelinesSuccess } from './pipeline';
+import { fetchTasks, fetchTasksSuccess } from './tasks';
 
-it('fetchPipelinesSuccess', () => {
+it('fetchTasksSuccess', () => {
   const data = { fake: 'data' };
-  expect(fetchPipelinesSuccess(data)).toEqual({
-    type: 'PIPELINE_FETCH_SUCCESS',
+  expect(fetchTasksSuccess(data)).toEqual({
+    type: 'TASKS_FETCH_SUCCESS',
     data
   });
 });
 
-it('fetchPipelines', async () => {
-  const pipelines = { fake: 'pipelines' };
+it('fetchTasks', async () => {
+  const tasks = { fake: 'tasks' };
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const store = mockStore();
 
-  jest.spyOn(API, 'getPipelines').mockImplementation(() => pipelines);
+  jest.spyOn(API, 'getTasks').mockImplementation(() => tasks);
 
   const expectedActions = [
-    { type: 'PIPELINE_FETCH_REQUEST' },
-    fetchPipelinesSuccess(pipelines)
+    { type: 'TASKS_FETCH_REQUEST' },
+    fetchTasksSuccess(tasks)
   ];
 
-  await store.dispatch(fetchPipelines());
+  await store.dispatch(fetchTasks());
   expect(store.getActions()).toEqual(expectedActions);
 });
 
-it('fetchPipelines error', async () => {
+it('fetchTasks error', async () => {
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const store = mockStore();
 
   const error = new Error();
 
-  jest.spyOn(API, 'getPipelines').mockImplementation(() => {
+  jest.spyOn(API, 'getTasks').mockImplementation(() => {
     throw error;
   });
 
   const expectedActions = [
-    { type: 'PIPELINE_FETCH_REQUEST' },
-    { type: 'PIPELINE_FETCH_FAILURE', error }
+    { type: 'TASKS_FETCH_REQUEST' },
+    { type: 'TASKS_FETCH_FAILURE', error }
   ];
 
-  await store.dispatch(fetchPipelines());
+  await store.dispatch(fetchTasks());
   expect(store.getActions()).toEqual(expectedActions);
 });

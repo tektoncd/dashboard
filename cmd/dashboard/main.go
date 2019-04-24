@@ -41,10 +41,10 @@ func main() {
 	}
 
 	port := ":8080"
-	portnumber := os.Getenv("PORT")
-	if portnumber != "" {
-		port = ":" + portnumber
-		logging.Log.Infof("Port number from config: %s", portnumber)
+	portNumber := os.Getenv("PORT")
+	if portNumber != "" {
+		port = ":" + portNumber
+		logging.Log.Infof("Port number from config: %s", portNumber)
 	}
 
 	wsContainer := restful.NewContainer()
@@ -74,6 +74,10 @@ func main() {
 	resource.RegisterWebsocket(wsContainer)
 	resource.RegisterHealthProbes(wsContainer)
 	resource.RegisterReadinessProbes(wsContainer)
+
+	installedNamespace := os.Getenv("INSTALLED_NAMESPACE")
+	logging.Log.Infof("Searching for extensions in the namespace %s", installedNamespace)
+	resource.RegisterExtensions(wsContainer, installedNamespace)
 
 	stopCh := signals.SetupSignalHandler()
 	resource.StartPipelineRunController(stopCh)

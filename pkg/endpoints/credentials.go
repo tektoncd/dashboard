@@ -103,7 +103,7 @@ func (r Resource) getCredential(request *restful.Request, response *restful.Resp
 	secret, err := r.K8sClient.CoreV1().Secrets(requestNamespace).Get(requestName, metav1.GetOptions{})
 	if err != nil {
 		errorMessage := fmt.Sprintf("Error getting secret from K8sClient: %s.", err.Error())
-		utils.RespondErrorAndMessage(response, err, errorMessage, http.StatusInternalServerError)
+		utils.RespondMessageAndLogError(response, err, errorMessage, http.StatusInternalServerError)
 		return
 	}
 
@@ -152,7 +152,7 @@ func (r Resource) createCredential(request *restful.Request, response *restful.R
 	// Create new secret in K8s client
 	if _, err := r.K8sClient.CoreV1().Secrets(requestNamespace).Create(secret); err != nil {
 		errorMessage := fmt.Sprintf("Error creating secret in K8sClient: %s", err.Error())
-		utils.RespondErrorAndMessage(response, err, errorMessage, http.StatusBadRequest)
+		utils.RespondMessageAndLogError(response, err, errorMessage, http.StatusBadRequest)
 		return
 	}
 
@@ -217,7 +217,7 @@ func (r Resource) updateCredential(request *restful.Request, response *restful.R
 	// Update secret in K8s client
 	if _, err := r.K8sClient.CoreV1().Secrets(requestNamespace).Update(secret); err != nil {
 		errorMessage := fmt.Sprintf("Error updating secret in K8sClient: %s", err.Error())
-		utils.RespondErrorAndMessage(response, err, errorMessage, http.StatusBadRequest)
+		utils.RespondMessageAndLogError(response, err, errorMessage, http.StatusBadRequest)
 		return
 	}
 
@@ -247,7 +247,7 @@ func (r Resource) deleteCredential(request *restful.Request, response *restful.R
 	err := r.K8sClient.CoreV1().Secrets(requestNamespace).Delete(requestName, &metav1.DeleteOptions{})
 	if err != nil {
 		errorMessage := fmt.Sprintf("Error deleting secret from K8sClient: %s.", err.Error())
-		utils.RespondErrorAndMessage(response, err, errorMessage, http.StatusInternalServerError)
+		utils.RespondMessageAndLogError(response, err, errorMessage, http.StatusInternalServerError)
 		return
 	}
 	// Patch service account
@@ -271,7 +271,7 @@ func (r Resource) namespaceExists(namespace string) error {
 func (r Resource) verifyNamespaceExists(namespace string, response *restful.Response) bool {
 	if err := r.namespaceExists(namespace); err != nil {
 		errorMessage := fmt.Sprintf("Namespace provided does not exist: '%s'.", namespace)
-		utils.RespondErrorAndMessage(response, err, errorMessage, http.StatusBadRequest)
+		utils.RespondMessageAndLogError(response, err, errorMessage, http.StatusBadRequest)
 		return false
 	}
 	return true
@@ -287,7 +287,7 @@ func (r Resource) secretExists(secretName string, namespace string) error {
 func (r Resource) verifySecretExists(secretName string, namespace string, response *restful.Response) bool {
 	if err := r.secretExists(secretName, namespace); err != nil {
 		errorMessage := fmt.Sprintf("Error getting secret from K8sClient: '%s'.", secretName)
-		utils.RespondErrorAndMessage(response, err, errorMessage, http.StatusBadRequest)
+		utils.RespondMessageAndLogError(response, err, errorMessage, http.StatusBadRequest)
 		return false
 	}
 	return true
@@ -326,7 +326,7 @@ func (r Resource) verifyCredentialParameters(cred credential, response *restful.
 func getQueryEntity(entityPointer interface{}, request *restful.Request, response *restful.Response) (err error) {
 	if err := request.ReadEntity(entityPointer); err != nil {
 		errorMessage := "Error parsing request body."
-		utils.RespondErrorAndMessage(response, err, errorMessage, http.StatusBadRequest)
+		utils.RespondMessageAndLogError(response, err, errorMessage, http.StatusBadRequest)
 		return err
 	}
 	return nil
