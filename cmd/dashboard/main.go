@@ -81,7 +81,7 @@ func main() {
 	resource.RegisterExtensions(wsContainer, installedNamespace)
 
 	stopCh := signals.SetupSignalHandler()
-	resource.StartPipelineRunController(stopCh)
+	resource.StartRunController(stopCh)
 
 	logging.Log.Infof("Creating server and entering wait loop")
 	server := &http.Server{Addr: port, Handler: wsContainer}

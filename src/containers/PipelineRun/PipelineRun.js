@@ -43,7 +43,7 @@ import {
   stepsStatus
 } from '../../utils';
 
-import store from '../../store/index';
+import { getStore } from '../../store/index';
 
 import '../../components/Run/Run.scss';
 
@@ -95,7 +95,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
 
   loadTaskRuns = (pipelineRun, taskRunNames) => {
     let runs = taskRunNames.map(taskRunName =>
-      getTaskRun(store.getState(), {
+      getTaskRun(getStore().getState(), {
         name: taskRunName,
         namespace: pipelineRun.metadata.namespace
       })

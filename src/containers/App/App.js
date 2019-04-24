@@ -50,6 +50,10 @@ export /* istanbul ignore next */ class App extends Component {
     this.props.fetchNamespaces();
   }
 
+  componentWillUnmount() {
+    this.props.onUnload();
+  }
+
   render() {
     const { extensions } = this.props;
 
@@ -126,7 +130,8 @@ export /* istanbul ignore next */ class App extends Component {
 }
 
 App.defaultProps = {
-  extensions: []
+  extensions: [],
+  onUnload: () => {}
 };
 
 /* istanbul ignore next */

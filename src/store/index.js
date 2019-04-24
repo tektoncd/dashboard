@@ -15,20 +15,32 @@ import { applyMiddleware, compose, createStore } from 'redux';
 import thunk from 'redux-thunk';
 
 import rootReducer from '../reducers';
+import { createWebSocketMiddleware } from './middleware';
 
 /* eslint-disable no-underscore-dangle */
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 /* eslint-enable */
 
-export function configureStore(initialState = {}) {
+let store; // eslint-disable-line
+
+export function configureStore({ initialState = {}, runsWebSocket }) {
+  if (store) {
+    return store;
+  }
   const middleware = [thunk];
 
-  return createStore(
+  if (runsWebSocket) {
+    middleware.push(createWebSocketMiddleware(runsWebSocket));
+  }
+
+  store = createStore(
     rootReducer,
     initialState,
     composeEnhancers(applyMiddleware(...middleware))
   );
+  return store;
 }
 
-const store = configureStore();
-export default store;
+export function getStore() {
+  return store;
+}
