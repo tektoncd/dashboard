@@ -144,7 +144,9 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
                         data-status={status}
                       >
                         {getStatusIcon({ reason, status })}
-                        {pipelineRun.status.conditions[0].message}
+                        {pipelineRun.status.conditions
+                          ? pipelineRun.status.conditions[0].message
+                          : ''}
                       </StructuredListCell>
                       <StructuredListCell>
                         {lastTransitionTime}

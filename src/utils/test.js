@@ -16,7 +16,7 @@ import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import { render } from 'react-testing-library'; // eslint-disable-line import/no-extraneous-dependencies
 
-export function renderWithRouter( // eslint-disable-line import/prefer-default-export
+export function renderWithRouter(
   ui,
   {
     route = '/',

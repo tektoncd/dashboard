@@ -36,7 +36,7 @@ import (
 // Make logger global
 var T *testing.T
 
-// Counters for pipelineruns websocket test
+// Counters for runs websocket test
 // Incremented atomically
 var CreationsRecorded int32
 var UpdatesRecorded int32
@@ -67,18 +67,18 @@ func TestLogWebsocket(t *testing.T) {
 	T.Log("Exit TestLogWebsocket")
 }
 
-func TestPipelineRunWebsocket(t *testing.T) {
+func TestRunWebsocket(t *testing.T) {
 	T = t
-	T.Log("Enter TestPipelineRunWebsocket...")
+	T.Log("Enter TestRunWebsocket...")
 
 	r, s2 := setupResourceAndServer()
 	defer s2.Close()
 
 	stopCh := signals.SetupSignalHandler()
-	r.StartPipelineRunController(stopCh)
+	r.StartRunController(stopCh)
 
 	devopsServer := strings.TrimPrefix(s2.URL, "https://")
-	websocketURL := url.URL{Scheme: "wss", Host: devopsServer, Path: "/v1/websockets/pipelineruns"}
+	websocketURL := url.URL{Scheme: "wss", Host: devopsServer, Path: "/v1/websockets/runs"}
 	websocketEndpoint := websocketURL.String()
 	const clients int = 10
 	connectionDur := time.Second * 1
@@ -89,9 +89,10 @@ func TestPipelineRunWebsocket(t *testing.T) {
 	}
 
 	// Wait until all broadcaster has registered all clients
-	awaitFatal(func() bool { return pipelineRunsBroadcaster.PoolSize() == clients },
-		fmt.Sprintf("Expected %d clients within pool before creating PipelineRuns", clients))
+	awaitFatal(func() bool { return runsBroadcaster.PoolSize() == clients },
+		fmt.Sprintf("Expected %d clients within pool before creating Runs", clients))
 
+	// PipelineRuns
 	// Create pipeline and wait until clients receive
 	r.createTestPipelineRun("WebsocketPipelinerun", "123456")
 	awaitFatal(func() bool { return atomic.LoadInt32(&CreationsRecorded) == int32(clients) },
@@ -107,13 +108,29 @@ func TestPipelineRunWebsocket(t *testing.T) {
 	awaitFatal(func() bool { return atomic.LoadInt32(&DeletionsRecorded) == int32(clients) },
 		fmt.Sprintf("Expected %d DeletionsRecorded", clients))
 
+	// TaskRuns
+	// Create task and wait until clients receive
+	r.createTestTaskRun("WebsocketTaskrun", "123456")
+	awaitFatal(func() bool { return atomic.LoadInt32(&CreationsRecorded) == int32(clients) },
+		fmt.Sprintf("Expected %d CreationsRecorded", clients))
+
+	// Update taskrun and wait until clients receive
+	r.updateTestTaskRun("WebsocketTaskrun", "654321")
+	awaitFatal(func() bool { return atomic.LoadInt32(&UpdatesRecorded) == int32(clients) },
+		fmt.Sprintf("Expected %d UpdatesRecorded", clients))
+
+	// Delete taskrun and wait until clients receive
+	r.deleteTestTaskRun("WebsocketTaskrun")
+	awaitFatal(func() bool { return atomic.LoadInt32(&DeletionsRecorded) == int32(clients) },
+		fmt.Sprintf("Expected %d DeletionsRecorded", clients))
+
 	T.Log("Waiting for clients to terminate...")
 	wg.Wait()
 
-	awaitFatal(func() bool { return pipelineRunsBroadcaster.PoolSize() == 0 },
-		"pipelineRunsBroadcaster pool should be empty")
+	awaitFatal(func() bool { return runsBroadcaster.PoolSize() == 0 },
+		"runsBroadcaster pool should be empty")
 
-	T.Log("Exit TestPipelineRunWebsocket")
+	T.Log("Exit TestRunWebsocket")
 }
 
 func clientWebsocket(websocketEndpoint string, readDeadline time.Duration, wg *sync.WaitGroup, identifier int) {
@@ -207,6 +224,53 @@ func (r Resource) updateTestPipelineRun(name, newResourceVersion string) {
 func (r Resource) deleteTestPipelineRun(name string) {
 	T.Logf("Deleting pipelinerun: %s\n", name)
 	_ = r.PipelineClient.TektonV1alpha1().PipelineRuns("ns1").Delete(name, &metav1.DeleteOptions{})
+}
+
+// Util to create taskrun
+func (r Resource) createTestTaskRun(name, resourceVersion string) {
+
+	TaskRun1 := v1alpha1.TaskRun{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:            name,
+			ResourceVersion: resourceVersion,
+		},
+		Spec: v1alpha1.TaskRunSpec{},
+	}
+
+	T.Log("Creating taskrun")
+	_, err := r.PipelineClient.TektonV1alpha1().TaskRuns("ns1").Create(&TaskRun1)
+	if err != nil {
+		T.Logf("Error creating taskrun: %s: %s\n", name, err.Error())
+	}
+}
+
+// Util to update taskrun
+func (r Resource) updateTestTaskRun(name, newResourceVersion string) {
+
+	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/taskruns/"+name, nil)
+	req := dummyRestfulRequest(httpReq, "ns1", "")
+	httpWriter := httptest.NewRecorder()
+	resp := dummyRestfulResponse(httpWriter)
+
+	//  Test the function
+	r.getTaskRun(req, resp)
+
+	// Decode the response
+	taskrun := v1alpha1.TaskRun{}
+	json.NewDecoder(httpWriter.Body).Decode(&taskrun)
+	taskrun.SetResourceVersion(newResourceVersion)
+
+	T.Logf("Updating taskrun %s\n", name)
+	_, err := r.PipelineClient.TektonV1alpha1().TaskRuns("ns1").Update(&taskrun)
+	if err != nil {
+		T.Logf("Error updating taskrun: %s: %s\n", name, err.Error())
+	}
+}
+
+// Util to delete taskrun
+func (r Resource) deleteTestTaskRun(name string) {
+	T.Logf("Deleting taskrun: %s\n", name)
+	_ = r.PipelineClient.TektonV1alpha1().TaskRuns("ns1").Delete(name, &metav1.DeleteOptions{})
 }
 
 // Util to setup dummy resource and TLSServer

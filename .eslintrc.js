@@ -26,6 +26,7 @@ module.exports = {
       "react"
   ],
   "rules": {
+    "import/prefer-default-export": "off",
     "no-case-declarations": "off",
     "no-template-curly-in-string": "off",
     "react/jsx-filename-extension": "off",

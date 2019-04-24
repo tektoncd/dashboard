@@ -26,6 +26,9 @@ const (
 	PipelineRunCreated messageType = "PipelineRunCreated"
 	PipelineRunDeleted messageType = "PipelineRunDeleted"
 	PipelineRunUpdated messageType = "PipelineRunUpdated"
+	TaskRunCreated messageType = "TaskRunCreated"
+	TaskRunDeleted messageType = "TaskRunDeleted"
+	TaskRunUpdated messageType = "TaskRunUpdated"
 )
 
 type SocketData struct {

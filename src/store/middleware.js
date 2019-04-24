@@ -11,11 +11,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as store from '.';
-
-beforeEach(jest.resetAllMocks);
-
-it('store', () => {
-  store.configureStore({});
-  expect(store.getStore().getState()).toBeDefined();
-});
+export function createWebSocketMiddleware(socket) {
+  return ({ dispatch }) => {
+    socket.addEventListener('message', event => {
+      if (event.type !== 'message') {
+        return;
+      }
+      const message = JSON.parse(event.data);
+      dispatch({ type: message.MessageType, payload: message.Payload });
+    });
+    return next => action => next(action);
+  };
+}

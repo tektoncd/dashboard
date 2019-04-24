@@ -156,9 +156,9 @@ export function getTaskRunsByTaskName(
   { name, namespace = getSelectedNamespace(state) }
 ) {
   const runs = getTaskRuns(state, { namespace });
-  return runs.filter(
-    taskRun => taskRun.spec.taskRef && taskRun.spec.taskRef.name === name
-  );
+  return runs.filter(taskRun => {
+    return taskRun.spec.taskRef && taskRun.spec.taskRef.name === name;
+  });
 }
 
 export function getTasks(
