@@ -297,7 +297,7 @@ func TestExtensionRegistration(t *testing.T) {
 
 	// Test getAllExtensions function
 	// Sample request and response
-	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/fake/extension/", nil)
+	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/extensions/", nil)
 	req := dummyRestfulRequest(httpReq, "fake", "")
 	httpWriter := httptest.NewRecorder()
 	resp := dummyRestfulResponse(httpWriter)
