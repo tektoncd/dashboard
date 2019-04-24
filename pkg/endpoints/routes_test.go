@@ -267,7 +267,20 @@ func TestExtensionRegistration(t *testing.T) {
 		&corev1.Service{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "extension", 
-				Annotations: map[string]string {"tekton-dashboard-endpoints": "/path", "tekton-dashboard-bundle-location": "Location", "tekton-dashboard-display-name": "Display Name"}, 
+				Annotations: map[string]string {"tekton-dashboard-endpoints": "first.next.last", "tekton-dashboard-bundle-location": "Location", "tekton-dashboard-display-name": "Display Name"}, 
+				Labels: map[string]string {"tekton-dashboard-extension": "true",},
+			},
+			Spec: corev1.ServiceSpec {
+				Ports: []corev1.ServicePort{{Port: 9097}},
+			},
+		},
+	)
+	// No endpoints
+	resource.K8sClient.CoreV1().Services(namespace).Create(
+		&corev1.Service{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: "extension2", 
+				Annotations: map[string]string {"tekton-dashboard-bundle-location": "Location", "tekton-dashboard-display-name": "Display Name"}, 
 				Labels: map[string]string {"tekton-dashboard-extension": "true",},
 			},
 			Spec: corev1.ServiceSpec {
@@ -287,26 +300,13 @@ func TestExtensionRegistration(t *testing.T) {
 			},
 		},
 	)
-	// Extension without path
-	resource.K8sClient.CoreV1().Services(namespace).Create(
-		&corev1.Service{
-			ObjectMeta: metav1.ObjectMeta{
-				Name: "extension-missing-path", 
-				Annotations: map[string]string {"tekton-dashboard-bundle-location": "Location", "tekton-dashboard-display-name": "Display Name"}, 
-				Labels: map[string]string {"tekton-dashboard-extension": "true",},
-			},
-			Spec: corev1.ServiceSpec {
-				Ports: []corev1.ServicePort{{Port: 9097}},
-			},
-		},
-	)
 	resource.RegisterExtensions(wsContainer, namespace)
 	routes := wsContainer.RegisteredWebServices()[0].Routes()
-	if len(routes) != 4 {
-		t.Errorf("Number of routes: expected: %d, returned: %d", 4, len(routes))
+	if len(routes) != 32 {
+		t.Errorf("Number of routes: expected: %d, returned: %d", 32, len(routes))
 		return
 	}
-	if routes[0].Path != "/v1/path" {
+	if routes[0].Path != "/v1/extension/extension/first" {
 		t.Errorf("Correct path is not returned: %s", routes[0].Path)
 	}
 
@@ -326,8 +326,8 @@ func TestExtensionRegistration(t *testing.T) {
 	json.NewDecoder(httpWriter.Body).Decode(&result)
 
 	// Verify the response
-	if len(result) != 1 {
-		t.Errorf("Number of tasks: expected: %d, returned: %d", 1, len(result))
+	if len(result) != 2 {
+		t.Errorf("Number of entries: expected: %d, returned: %d", 2, len(result))
 		return
 	}
 	if result[0].Name != "extension" {

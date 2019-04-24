@@ -15,6 +15,7 @@ package endpoints
 
 import (
 	"strconv"
+	"strings"
 	"net/http/httputil"
 	"net/url"
 	"net/http"
@@ -35,6 +36,8 @@ const urlKey = "tekton-dashboard-endpoints"
 const bundleLocationKey = "tekton-dashboard-bundle-location"
 // displayNameKey - extension display name annotation 
 const displayNameKey = "tekton-dashboard-display-name"
+// extensionRoot
+const extensionRoot = "/extension"
 
 var webResourcesDir = os.Getenv("WEB_RESOURCES_DIR")
 
@@ -150,19 +153,35 @@ func (r Resource) RegisterExtensions(container *restful.Container, namespace str
 		Produces(restful.MIME_JSON)
 
 	for _, svc := range svcs.Items {
+		base := extensionRoot + "/" + svc.ObjectMeta.Name
+		logging.Log.Debugf("Extension URL: %s", base)
 		url, ok := svc.ObjectMeta.Annotations[urlKey]
+		ext := Extension { Name: svc.ObjectMeta.Name, URL: url, Port: getPort(svc),
+			DisplayName: svc.ObjectMeta.Annotations[displayNameKey],
+			BundleLocation: svc.ObjectMeta.Annotations[bundleLocationKey]}
+		paths := []string{}
 		if ok {
-			logging.Log.Debugf("Extension URL: %s", url)
-			ext := Extension { Name: svc.ObjectMeta.Name, URL: url, Port: getPort(svc),
- 				DisplayName: svc.ObjectMeta.Annotations[displayNameKey],
-				BundleLocation: svc.ObjectMeta.Annotations[bundleLocationKey]}
-			// extension handler is registered at the url
-			ws.Route(ws.GET(url).To(ext.HandleExtension))
-			ws.Route(ws.POST(url).To(ext.HandleExtension))
-			ws.Route(ws.PUT(url).To(ext.HandleExtension))
-			ws.Route(ws.DELETE(url).To(ext.HandleExtension))
-			extensions = append(extensions, ext)
+			paths = strings.Split(url, ".")
+			if len(paths) == 0 {
+				paths = []string{""}
+			}
+		} else {
+			paths = []string{""}
 		}
+		for _, path := range paths {
+			// extension handler is registered at the url
+			routingPath := strings.TrimSuffix(base + "/" + path, "/")
+			logging.Log.Debugf("Registering path: %s", base + "/" + path)
+			ws.Route(ws.GET(routingPath).To(ext.HandleExtension))
+			ws.Route(ws.POST(routingPath).To(ext.HandleExtension))
+			ws.Route(ws.PUT(routingPath).To(ext.HandleExtension))
+			ws.Route(ws.DELETE(routingPath).To(ext.HandleExtension))
+			ws.Route(ws.GET(routingPath + "/{var:*}").To(ext.HandleExtension))
+			ws.Route(ws.POST(routingPath + "/{var:*}").To(ext.HandleExtension))
+			ws.Route(ws.PUT(routingPath + "/{var:*}").To(ext.HandleExtension))
+			ws.Route(ws.DELETE(routingPath + "/{var:*}").To(ext.HandleExtension))
+		}
+		extensions = append(extensions, ext)
 	}
 	logging.Log.Debugf("Extension: %+v", extensions)
 	container.Add(ws)
@@ -186,6 +205,9 @@ func (ext Extension) HandleExtension(request *restful.Request, response *restful
 		utils.RespondError(response, err, http.StatusInternalServerError)
 		return
 	}
+	logging.Log.Debugf("Path in URL: %+v", request.Request.URL.Path)
+	request.Request.URL.Path = strings.TrimPrefix(request.Request.URL.Path, "/v1/extension/" + ext.Name)
+	logging.Log.Debugf("Path in rerouting URL: %+v", request.Request.URL.Path)
 	proxy := httputil.NewSingleHostReverseProxy(target)
 	proxy.ServeHTTP(response, request.Request)
 }
