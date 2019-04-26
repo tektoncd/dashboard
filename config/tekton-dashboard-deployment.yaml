@@ -34,6 +34,8 @@ spec:
           value: "9097"
         - name: WEB_RESOURCES_DIR
           value: /var/run/ko/web
+        - name: PIPELINE_RUN_SERVICE_ACCOUNT
+          value: ""
         - name: INSTALLED_NAMESPACE
           valueFrom:
             fieldRef:
