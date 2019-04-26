@@ -14,13 +14,12 @@ limitations under the License.
 import { deleteRequest, get, post, put } from './comms';
 
 export function getAPIRoot() {
-  const apiPrefix = 'api';
   const { href, hash } = window.location;
   let baseURL = href.replace(hash, '');
   if (!baseURL.endsWith('/')) {
     baseURL += '/';
   }
-  return `${baseURL}${apiPrefix}`;
+  return baseURL;
 }
 
 const apiRoot = getAPIRoot();
@@ -35,6 +34,14 @@ export function getAPI(type, id = '', namespace = 'default') {
     '/',
     encodeURIComponent(id)
   ].join('');
+}
+
+export function getExtensionBaseURL(name) {
+  return `${apiRoot}/v1/extension/${name}`;
+}
+
+export function getExtensionBundleURL(name, bundlelocation) {
+  return `${getExtensionBaseURL(name)}/${bundlelocation}`;
 }
 
 export function checkData(data) {
@@ -140,4 +147,9 @@ export function updateCredential({ id, ...rest }) {
 export function deleteCredential(id) {
   const uri = getAPI('credentials', id);
   return deleteRequest(uri);
+}
+
+export function getExtensions() {
+  const uri = `${apiRoot}/v1/extensions`;
+  return get(uri);
 }

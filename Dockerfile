@@ -9,7 +9,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM golang:1.12-alpine as builder
+FROM node:10-alpine as nodeBuilder
+USER root
+WORKDIR /go/src/github.com/tektoncd/dashboard
+COPY . .
+RUN npm install
+RUN npm run build
+
+FROM golang:1.12-alpine as goBuilder
 USER root
 RUN apk add curl git
 RUN curl -fsSL -o /usr/local/bin/dep https://github.com/golang/dep/releases/download/v0.5.0/dep-linux-amd64 && chmod +x /usr/local/bin/dep
@@ -24,6 +31,8 @@ RUN addgroup -g 1000 kgroup && \
 USER 1000
 
 WORKDIR /go/src/github.com/tektoncd/dashboard
-COPY --from=builder /go/src/github.com/tektoncd/dashboard/tekton_dashboard_backend .
+ENV WEB_RESOURCES_DIR=./web
+COPY --from=nodeBuilder /go/src/github.com/tektoncd/dashboard/dist ./web
+COPY --from=goBuilder /go/src/github.com/tektoncd/dashboard/tekton_dashboard_backend .
 
 ENTRYPOINT ["./tekton_dashboard_backend"]

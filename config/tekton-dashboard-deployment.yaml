@@ -32,7 +32,9 @@ spec:
         env:
         - name: PORT
           value: "9097"
-        - name: INSTALL_NAMESPACE
+        - name: WEB_RESOURCES_DIR
+          value: /var/run/ko/web
+        - name: INSTALLED_NAMESPACE
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace

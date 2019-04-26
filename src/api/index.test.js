@@ -23,6 +23,7 @@ import {
   getAPIRoot,
   getCredential,
   getCredentials,
+  getExtensions,
   getPipeline,
   getPipelineResource,
   getPipelineResources,
@@ -299,6 +300,15 @@ it('deleteCredential', () => {
   fetchMock.delete('*', data);
   return deleteCredential(credentialId).then(response => {
     expect(response).toEqual(data);
+    fetchMock.restore();
+  });
+});
+
+it('getExtensions', () => {
+  const extensions = [{ fake: 'extension' }];
+  fetchMock.get(/extension/, extensions);
+  return getExtensions().then(response => {
+    expect(response).toEqual(extensions);
     fetchMock.restore();
   });
 });

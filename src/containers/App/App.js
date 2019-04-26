@@ -11,8 +11,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
-import { hot } from 'react-hot-loader';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { hot } from 'react-hot-loader/root';
 import {
   HashRouter as Router,
   Redirect,
@@ -21,6 +22,8 @@ import {
 } from 'react-router-dom';
 
 import {
+  Extension,
+  Extensions,
   Home,
   PipelineRun,
   PipelineRuns,
@@ -28,33 +31,78 @@ import {
   Tasks,
   TaskRuns
 } from '..';
+import { fetchExtensions } from '../../actions/extensions';
+import { getExtensions } from '../../reducers';
 
 import '../../components/App/App.scss';
 
-const App = () => (
-  <Router>
-    <Switch>
-      <Route path="/" exact component={Home} />
-      <Redirect
-        from="/pipelines/:pipelineName"
-        exact
-        to="/pipelines/:pipelineName/runs"
-      />
-      <Redirect from="/tasks/:taskName" exact to="/tasks/:taskName/runs" />
-      <Route path="/pipelines" exact component={Pipelines} />
-      <Route path="/tasks" exact component={Tasks} />
-      <Route
-        path="/pipelines/:pipelineName/runs"
-        exact
-        component={PipelineRuns}
-      />
-      <Route path="/tasks/:taskName/runs" exact component={TaskRuns} />
-      <Route
-        path="/pipelines/:pipelineName/runs/:pipelineRunName"
-        component={PipelineRun}
-      />
-    </Switch>
-  </Router>
-);
+export class App extends Component {
+  componentDidMount() {
+    this.props.fetchExtensions();
+  }
 
-export default hot(module)(App);
+  render() {
+    const { extensions } = this.props;
+
+    return (
+      <Router>
+        <Switch>
+          <Route path="/" exact component={Home} />
+          <Redirect
+            from="/pipelines/:pipelineName"
+            exact
+            to="/pipelines/:pipelineName/runs"
+          />
+          <Redirect from="/tasks/:taskName" exact to="/tasks/:taskName/runs" />
+          <Route path="/pipelines" exact component={Pipelines} />
+          <Route path="/tasks" exact component={Tasks} />
+          <Route
+            path="/pipelines/:pipelineName/runs"
+            exact
+            component={PipelineRuns}
+          />
+          <Route path="/tasks/:taskName/runs" exact component={TaskRuns} />
+          <Route
+            path="/pipelines/:pipelineName/runs/:pipelineRunName"
+            component={PipelineRun}
+          />
+          <Route path="/extensions" exact component={Extensions} />
+          {extensions
+            .filter(({ displayName }) => !!displayName)
+            .map(({ displayName, name, source }) => (
+              <Route
+                key={name}
+                path={`/extensions/${name}`}
+                render={({ match }) => (
+                  <Extension
+                    displayName={displayName}
+                    match={match}
+                    source={source}
+                  />
+                )}
+              />
+            ))}
+        </Switch>
+      </Router>
+    );
+  }
+}
+
+App.defaultProps = {
+  extensions: []
+};
+
+const mapStateToProps = state => ({
+  extensions: getExtensions(state)
+});
+
+const mapDispatchToProps = {
+  fetchExtensions
+};
+
+export default hot(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(App)
+);

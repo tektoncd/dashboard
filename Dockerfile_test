@@ -17,4 +17,5 @@ WORKDIR /go/src/github.com/tektoncd/dashboard/
 COPY . .
 RUN dep ensure -vendor-only
 WORKDIR /go/src/github.com/tektoncd/dashboard/pkg/endpoints
+ENV WEB_RESOURCES_DIR=/go/src/github.com/tektoncd/dashboard/testdata/web/
 RUN CGO_ENABLED=0 NAMESPACE=default GOOS=linux go test -v

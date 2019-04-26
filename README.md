@@ -8,7 +8,7 @@ Tekton Dashboard is a general purpose, web-based UI for Tekton Pipelines. It all
 
 ## Getting Started
 
-**Currently** to view the backend APIs, at `localhost:9097/v1/namespaces/<namespace>/<resource name>` for example:
+**Currently** to view the dashboard, at `localhost:9097/` 
  
 If you have `ko`:
 
@@ -17,6 +17,8 @@ Log in to Dockerhub and then use `ko`, for example:
 ```sh
 $ docker login
 $ export KO_DOCKER_REPO=docker.io/<mydockername>
+$ npm install
+$ npm run build_ko
 $ ko apply -f config
 ```
 

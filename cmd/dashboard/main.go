@@ -70,6 +70,7 @@ func main() {
 	}
 
 	logging.Log.Info("Registering REST endpoints")
+	resource.RegisterWeb(wsContainer)
 	resource.RegisterEndpoints(wsContainer)
 	resource.RegisterWebsocket(wsContainer)
 	resource.RegisterHealthProbes(wsContainer)
