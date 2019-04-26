@@ -43,8 +43,8 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       title: 'Tekton Dashboard',
+      favicon: path.resolve(__dirname, 'src/images', 'favicon.png'),
       template: path.resolve(__dirname, 'src', 'index.template.html'),
-      // favicon: 'public/favicon.png'
       meta: {
         viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no'
         // 'theme-color': '#4285f4'
