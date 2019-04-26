@@ -16,8 +16,8 @@ import { deleteRequest, get, post, put } from './comms';
 export function getAPIRoot() {
   const { href, hash } = window.location;
   let baseURL = href.replace(hash, '');
-  if (!baseURL.endsWith('/')) {
-    baseURL += '/';
+  if (baseURL.endsWith('/')) {
+    baseURL = baseURL.slice(0, -1);
   }
   return baseURL;
 }
