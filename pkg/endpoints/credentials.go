@@ -14,8 +14,10 @@ limitations under the License.
 package endpoints
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"strings"
 
 	restful "github.com/emicklei/go-restful"
@@ -23,6 +25,7 @@ import (
 	"github.com/tektoncd/dashboard/pkg/utils"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	typesPatch "k8s.io/apimachinery/pkg/types"
 )
 
 type credential struct {
@@ -153,6 +156,20 @@ func (r Resource) createCredential(request *restful.Request, response *restful.R
 		return
 	}
 
+	// Patch service account
+	saName := ""
+	providedSaName := os.Getenv("PIPELINE_RUN_SERVICE_ACCOUNT")
+	if providedSaName != "" {
+		saName = providedSaName
+	} else {
+		saName = "default"
+	}
+	if !r.addSecretToSA(saName, cred.Name, requestNamespace) {
+		errorMessage := fmt.Sprintf("error adding secret in service account: %s", saName)
+		utils.RespondErrorMessage(response, errorMessage, http.StatusBadRequest)
+		return
+	}
+
 	writeResponseLocation(request, response, cred.Name)
 }
 
@@ -233,6 +250,15 @@ func (r Resource) deleteCredential(request *restful.Request, response *restful.R
 		utils.RespondMessageAndLogError(response, err, errorMessage, http.StatusInternalServerError)
 		return
 	}
+	// Patch service account
+	saName := ""
+	providedSaName := os.Getenv("PIPELINE_RUN_SERVICE_ACCOUNT")
+	if providedSaName != "" {
+		saName = providedSaName
+	} else {
+		saName = "default"
+	}
+	r.removeSecretFromSA(saName, requestName, requestNamespace)
 }
 
 // Returns true if the namespace exists in the resource K8sClient and false if it does not exist
@@ -344,4 +370,82 @@ func credentialToSecret(cred credential, namespace string, response *restful.Res
 
 	// Return secret
 	return &secret, true
+}
+
+// addSecretToSA - Add secret to service account 
+func (r Resource) addSecretToSA(saName, secretName, namespaceName string) bool {
+	logging.Log.Debugf("Service account to patch is %s", saName)
+	logging.Log.Debugf("Namespace of service account is %s", namespaceName)
+	sa := corev1.ServiceAccount{
+		Secrets: []corev1.ObjectReference {{Name: secretName},},
+	}
+
+	marshaledSA, err := json.Marshal(sa)
+	if err != nil {
+		logging.Log.Errorf("failed to marshal the payload for the service account")
+		return false
+	}
+
+	logging.Log.Debugf("Patch string %s", string(marshaledSA))
+	_, err = r.K8sClient.CoreV1().ServiceAccounts(namespaceName).
+		Get(saName, metav1.GetOptions{})
+
+	if err != nil {
+		logging.Log.Infof("Service Account %s doesn't exist. Creating..", saName)
+		_, err = r.K8sClient.CoreV1().ServiceAccounts(namespaceName).
+			Create(&corev1.ServiceAccount{ObjectMeta: metav1.ObjectMeta{Name: saName,},})
+		if err != nil {
+			logging.Log.Errorf("error occurred: %s", err.Error())
+			return false
+		}
+	}
+
+	_, err = r.K8sClient.CoreV1().ServiceAccounts(namespaceName).
+		Patch(saName, typesPatch.StrategicMergePatchType, marshaledSA)
+
+	if err != nil {
+		logging.Log.Errorf("error occurred while patching service account %s: %s", saName, err.Error())
+		return false
+	}
+	return true
+}
+
+// path - struct for patch operation
+type Patch struct {
+	Operation       string            `json:"op"`
+	Path            string            `json:"path"`
+}
+
+// removeSecretFromSA - remove secret from service account 
+func (r Resource) removeSecretFromSA(saName string, secretName string , namespaceName string) {
+	logging.Log.Debugf("Service account to unpatch is %s", saName)
+	logging.Log.Debugf("Namespace of service account is %s", namespaceName)
+
+	sa, err := r.K8sClient.CoreV1().ServiceAccounts(namespaceName).
+		Get(saName, metav1.GetOptions{})
+	if err != nil {
+		logging.Log.Errorf("error getting service account %s: %s", saName, err.Error())
+	}
+
+	var entry int
+	found := false
+	for i, secret := range sa.Secrets {
+		if secret.Name == secretName {
+			found = true
+			entry = i
+			break
+		}
+	}
+	if found {
+		path := fmt.Sprintf("/secrets/%d", entry)
+		data := []Patch {{ Operation: "remove", Path: path }} 
+		patch, err := json.Marshal(data)
+		logging.Log.Debugf("Patch JSON: %s", string(patch))
+		_, err = r.K8sClient.CoreV1().ServiceAccounts(namespaceName).
+			Patch(saName, typesPatch.JSONPatchType, patch)
+		if err != nil {
+			logging.Log.Errorf("error occurred while patching service account %s: %+v", saName, err)
+		}
+	}
+	return
 }

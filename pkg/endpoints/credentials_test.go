@@ -63,10 +63,16 @@ func TestCredentials(t *testing.T) {
 	// CREATE credential accesstoken
 	t.Log("CREATE credential accesstoken")
 	createCredentialTest(namespace, accessTokenCred, "", r, t)
+	if !r.checkSecretInSa(namespace, "default", "credentialaccesstoken", t) {
+		t.Error("FAIL: ERROR - service account doesn't have the secret: credentialaccesstoken")
+	}
 
 	// CREATE credential userpass
 	t.Log("CREATE credential userpass")
 	createCredentialTest(namespace, userPassCred, "", r, t)
+	if !r.checkSecretInSa(namespace, "default", "credentialuserpass", t) {
+		t.Error("FAIL: ERROR - service account doesn't have the secret: credentialuserpass")
+	}
 
 	// READ ALL credentials when there is the accesstoken credential and userpass credential
 	t.Log("READ all credentials when there is 'credentialaccesstoken' and 'credentialuserpass'")
@@ -501,3 +507,19 @@ func (r Resource) getK8sCredential(namespace string, name string) (credential cr
 	}
 	return secretToCredential(secret,false)
 }
+
+// Get check service account secret
+func (r Resource) checkSecretInSa(namespace string, nameSa string, nameSecret string, t *testing.T) bool {
+	sa, err := r.K8sClient.CoreV1().ServiceAccounts(namespace).Get(nameSa, metav1.GetOptions{})
+	if err != nil {
+		t.Errorf("Couldn't read service account: %+v\n", err)		
+		return false
+	}
+	for _, secret := range sa.Secrets {
+		if secret.Name == nameSecret {	
+			return true
+		}
+	}
+	return false
+}
+
