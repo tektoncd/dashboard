@@ -52,7 +52,7 @@ func (r Resource) RegisterEndpoints(container *restful.Container) {
 		Consumes(restful.MIME_JSON).
 		Produces(restful.MIME_JSON)
 
-	logging.Log.Info("Adding v1, and API for pipelines")
+	logging.Log.Info("Adding v1, and API for k8s resources and pipelines")
 
 	wsv1.Route(wsv1.GET("/").To(r.getAllNamespaces))
 	wsv1.Route(wsv1.GET("/{namespace}/pipeline").To(r.getAllPipelines))
