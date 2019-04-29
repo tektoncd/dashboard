@@ -28,7 +28,9 @@ Alternatively you can do the following:
 
 ```sh
 $ docker build -t <mydockername>/dashboard:<mytag> .
+$ docker push <mydockername>/dashboard:<mytag>
 - Replace the image path at `config/tekton-dashboard-deployment.yaml` with the value for <mydockername>/dashboard:<mytag>
+- Replace the WEB_RESOURCES_DIR value in the same file with the value __./web__
 $ kubectl apply -f tekton-dashboard-deployment.yaml
 ```
 
