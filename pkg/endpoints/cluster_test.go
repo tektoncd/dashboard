@@ -29,7 +29,6 @@ func TestGetAllNamespaces(t *testing.T) {
 	namespace := "test-namespace"
 	r.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace}})
 
-	// Test getAllPipelines function
 	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/", nil)
 	req := dummyRestfulRequest(httpReq, "", "")
 	httpWriter := httptest.NewRecorder()
