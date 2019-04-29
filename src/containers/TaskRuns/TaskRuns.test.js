@@ -12,9 +12,11 @@ limitations under the License.
 */
 
 import React from 'react';
+import { Provider } from 'react-redux';
 import { waitForElement } from 'react-testing-library';
+import configureStore from 'redux-mock-store';
 
-import TaskRunsContainer from './TaskRuns';
+import { TaskRunsContainer } from './TaskRuns';
 import * as API from '../../api';
 import { renderWithRouter } from '../../utils/test';
 
@@ -27,11 +29,19 @@ it('TaskRunsContainer renders', async () => {
       taskName
     }
   };
+
+  const mockStore = configureStore();
+  const store = mockStore({});
   const tasksCall = jest.spyOn(API, 'getTasks').mockImplementation(() => '');
   const taskRunsCall = jest
     .spyOn(API, 'getTaskRuns')
     .mockImplementation(() => '');
-  const { getByText } = renderWithRouter(<TaskRunsContainer match={match} />);
+
+  const { getByText } = renderWithRouter(
+    <Provider store={store}>
+      <TaskRunsContainer match={match} />
+    </Provider>
+  );
   await waitForElement(() => getByText(taskName));
   expect(tasksCall).toHaveBeenCalledTimes(1);
   expect(taskRunsCall).toHaveBeenCalledTimes(0);
@@ -45,13 +55,21 @@ it('TaskRunsContainer handles info state', async () => {
       taskName
     }
   };
+
+  const mockStore = configureStore();
+  const store = mockStore({});
   const tasksCall = jest
     .spyOn(API, 'getTasks')
     .mockImplementation(() => [{ metadata: { name: taskName } }]);
   const taskRunsCall = jest
     .spyOn(API, 'getTaskRuns')
     .mockImplementation(() => []);
-  const { getByText } = renderWithRouter(<TaskRunsContainer match={match} />);
+
+  const { getByText } = renderWithRouter(
+    <Provider store={store}>
+      <TaskRunsContainer match={match} />
+    </Provider>
+  );
   await waitForElement(() => getByText(notificationMessage));
   expect(tasksCall).toHaveBeenCalledTimes(1);
   expect(taskRunsCall).toHaveBeenCalledTimes(1);
@@ -63,6 +81,10 @@ it('TaskRunsContainer handles error state', async () => {
       taskName: 'foo'
     }
   };
+
+  const mockStore = configureStore();
+  const store = mockStore({});
+
   const getTasks = jest.spyOn(API, 'getTasks').mockImplementation(() => {
     const error = new Error();
     error.response = {
@@ -70,7 +92,12 @@ it('TaskRunsContainer handles error state', async () => {
     };
     throw error;
   });
-  const { getByText } = renderWithRouter(<TaskRunsContainer match={match} />);
+
+  const { getByText } = renderWithRouter(
+    <Provider store={store}>
+      <TaskRunsContainer match={match} />
+    </Provider>
+  );
   await waitForElement(() => getByText('Error loading task run'));
   expect(getTasks).toHaveBeenCalledTimes(1);
 });

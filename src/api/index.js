@@ -24,7 +24,7 @@ export function getAPIRoot() {
 
 const apiRoot = getAPIRoot();
 
-export function getAPI(type, id = '', namespace = 'default') {
+export function getAPI(type, { name = '', namespace } = {}) {
   return [
     apiRoot,
     '/v1/namespaces/',
@@ -32,7 +32,7 @@ export function getAPI(type, id = '', namespace = 'default') {
     '/',
     type,
     '/',
-    encodeURIComponent(id)
+    encodeURIComponent(name)
   ].join('');
 }
 
@@ -54,68 +54,68 @@ export function checkData(data) {
   throw error;
 }
 
-export function getPipelines() {
-  const uri = getAPI('pipeline');
+export function getPipelines(namespace) {
+  const uri = getAPI('pipeline', { namespace });
   return get(uri).then(checkData);
 }
 
-export function getPipeline(name) {
-  const uri = getAPI('pipeline', name);
+export function getPipeline(name, namespace) {
+  const uri = getAPI('pipeline', { name, namespace });
   return get(uri);
 }
 
-export function getPipelineRuns() {
-  const uri = getAPI('pipelinerun');
+export function getPipelineRuns(namespace) {
+  const uri = getAPI('pipelinerun', { namespace });
   return get(uri).then(checkData);
 }
 
-export function getPipelineRun(name) {
-  const uri = getAPI('pipelinerun', name);
+export function getPipelineRun(name, namespace) {
+  const uri = getAPI('pipelinerun', { name, namespace });
   return get(uri);
 }
 
-export function cancelPipelineRun(name) {
-  const uri = getAPI('pipelinerun', name);
+export function cancelPipelineRun(name, namespace) {
+  const uri = getAPI('pipelinerun', { name, namespace });
   return put(uri, { status: 'PipelineRunCancelled' });
 }
 
-export function getTasks() {
-  const uri = getAPI('task');
+export function getTasks(namespace) {
+  const uri = getAPI('task', { namespace });
   return get(uri).then(checkData);
 }
 
-export function getTask(name) {
-  const uri = getAPI('task', name);
+export function getTask(name, namespace) {
+  const uri = getAPI('task', { name, namespace });
   return get(uri);
 }
 
-export function getTaskRuns() {
-  const uri = getAPI('taskrun');
+export function getTaskRuns(namespace) {
+  const uri = getAPI('taskrun', { namespace });
   return get(uri).then(checkData);
 }
 
-export function getTaskRun(name) {
-  const uri = getAPI('taskrun', name);
+export function getTaskRun(name, namespace) {
+  const uri = getAPI('taskrun', { name, namespace });
   return get(uri);
 }
 
-export function getPipelineResources() {
-  const uri = getAPI('pipelineresource');
+export function getPipelineResources(namespace) {
+  const uri = getAPI('pipelineresource', { namespace });
   return get(uri).then(checkData);
 }
 
-export function getPipelineResource(name) {
-  const uri = getAPI('pipelineresource', name);
+export function getPipelineResource(name, namespace) {
+  const uri = getAPI('pipelineresource', { name, namespace });
   return get(uri);
 }
 
-export function getPodLog(name) {
-  const uri = getAPI('log', name);
+export function getPodLog(name, namespace) {
+  const uri = getAPI('log', { name, namespace });
   return get(uri);
 }
 
-export function getTaskRunLog(name) {
-  const uri = getAPI('taskrunlog', name);
+export function getTaskRunLog(name, namespace) {
+  const uri = getAPI('taskrunlog', { name, namespace });
   return get(uri);
 }
 
@@ -124,28 +124,28 @@ export function createPipelineRun(payload) {
   return post(uri, payload);
 }
 
-export function getCredentials() {
-  const uri = getAPI('credentials');
+export function getCredentials(namespace) {
+  const uri = getAPI('credentials', { namespace });
   return get(uri).then(checkData);
 }
 
-export function getCredential(id) {
-  const uri = getAPI('credentials', id);
+export function getCredential(id, namespace) {
+  const uri = getAPI('credentials', { name: id, namespace });
   return get(uri);
 }
 
-export function createCredential({ id, ...rest }) {
-  const uri = getAPI('credentials');
+export function createCredential({ id, ...rest }, namespace) {
+  const uri = getAPI('credentials', { namespace });
   return post(uri, { id, ...rest });
 }
 
-export function updateCredential({ id, ...rest }) {
-  const uri = getAPI('credentials', id);
+export function updateCredential({ id, ...rest }, namespace) {
+  const uri = getAPI('credentials', { name: id, namespace });
   return put(uri, { id, ...rest });
 }
 
-export function deleteCredential(id) {
-  const uri = getAPI('credentials', id);
+export function deleteCredential(id, namespace) {
+  const uri = getAPI('credentials', { name: id, namespace });
   return deleteRequest(uri);
 }
 

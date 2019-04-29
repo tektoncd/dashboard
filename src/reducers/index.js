@@ -14,14 +14,20 @@ limitations under the License.
 import { combineReducers } from 'redux';
 
 import extensions, * as extensionSelectors from './extensions';
+import namespaces, * as namespaceSelectors from './namespaces';
 import pipelines, * as pipelineSelectors from './pipelines';
 import tasks, * as taskSelectors from './tasks';
 
 export default combineReducers({
   extensions,
+  namespaces,
   pipelines,
   tasks
 });
+
+export function getSelectedNamespace(state) {
+  return namespaceSelectors.getSelectedNamespace(state.namespaces);
+}
 
 export function getExtensions(state) {
   return extensionSelectors.getExtensions(state.extensions);
@@ -36,7 +42,8 @@ export function isFetchingExtensions(state) {
 }
 
 export function getPipelines(state) {
-  return pipelineSelectors.getPipelines(state.pipelines);
+  const namespace = getSelectedNamespace(state);
+  return pipelineSelectors.getPipelines(state.pipelines, namespace);
 }
 
 export function getPipelinesErrorMessage(state) {
@@ -48,7 +55,8 @@ export function isFetchingPipelines(state) {
 }
 
 export function getTasks(state) {
-  return taskSelectors.getTasks(state.tasks);
+  const namespace = getSelectedNamespace(state);
+  return taskSelectors.getTasks(state.tasks, namespace);
 }
 
 export function getTasksErrorMessage(state) {

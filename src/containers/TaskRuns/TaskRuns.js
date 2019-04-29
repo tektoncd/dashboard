@@ -12,10 +12,12 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { InlineNotification } from 'carbon-components-react';
 
 import { getTasks, getTaskRuns } from '../../api';
+import { getSelectedNamespace } from '../../reducers';
 
 import RunHeader from '../../components/RunHeader';
 import StepDetails from '../../components/StepDetails';
@@ -29,8 +31,7 @@ import {
 
 import '../../components/Run/Run.scss';
 
-/* istanbul ignore next */
-class TaskRunsContainer extends Component {
+export /* istanbul ignore next */ class TaskRunsContainer extends Component {
   // once redux store is available errors will be handled properly with dedicated components
   static notification(notification) {
     const { kind, message } = notification;
@@ -85,12 +86,13 @@ class TaskRunsContainer extends Component {
   };
 
   async loadTaskRuns(selectedTaskName) {
+    const { namespace } = this.props;
     let notification;
-    const tasks = await getTasks();
+    const tasks = await getTasks(namespace);
     const task = tasks.find(
       currentTask => currentTask.metadata.name === selectedTaskName
     );
-    let taskRuns = await getTaskRuns();
+    let taskRuns = await getTaskRuns(namespace);
     taskRuns = taskRuns
       .filter(
         taskRun =>
@@ -191,4 +193,11 @@ TaskRunsContainer.propTypes = {
   }).isRequired
 };
 
-export default TaskRunsContainer;
+/* istanbul ignore next */
+function mapStateToProps(state) {
+  return {
+    namespace: getSelectedNamespace(state)
+  };
+}
+
+export default connect(mapStateToProps)(TaskRunsContainer);

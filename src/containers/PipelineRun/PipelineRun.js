@@ -13,9 +13,11 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { InlineNotification } from 'carbon-components-react';
 
 import { getPipelineRun, getTaskRun, getTasks } from '../../api';
+import { getSelectedNamespace } from '../../reducers';
 
 import RunHeader from '../../components/RunHeader';
 import StepDetails from '../../components/StepDetails';
@@ -30,8 +32,7 @@ import {
 
 import '../../components/Run/Run.scss';
 
-/* istanbul ignore next */
-class PipelineRunContainer extends Component {
+export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   state = {
     error: null,
     loading: true,
@@ -59,13 +60,13 @@ class PipelineRunContainer extends Component {
   };
 
   async loadPipelineRunData() {
-    const { match } = this.props;
+    const { match, namespace } = this.props;
     const { pipelineRunName } = match.params;
 
     try {
       const [pipelineRun, tasks] = await Promise.all([
-        getPipelineRun(pipelineRunName),
-        getTasks()
+        getPipelineRun(pipelineRunName, namespace),
+        getTasks(namespace)
       ]);
       const {
         status: { taskRuns: taskRunsStatus }
@@ -92,8 +93,9 @@ class PipelineRunContainer extends Component {
   }
 
   async loadTaskRuns(taskRunNames) {
+    const { namespace } = this.props;
     let taskRuns = await Promise.all(
-      taskRunNames.map(taskRunName => getTaskRun(taskRunName))
+      taskRunNames.map(taskRunName => getTaskRun(taskRunName, namespace))
     );
 
     const {
@@ -213,4 +215,11 @@ PipelineRunContainer.propTypes = {
   }).isRequired
 };
 
-export default PipelineRunContainer;
+/* istanbul ignore next */
+function mapStateToProps(state) {
+  return {
+    namespace: getSelectedNamespace(state)
+  };
+}
+
+export default connect(mapStateToProps)(PipelineRunContainer);

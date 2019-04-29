@@ -29,7 +29,14 @@ import * as taskSelectors from './tasks';
 const extensions = { fake: 'extensions' };
 const pipelines = { fake: 'pipelines' };
 const tasks = { fake: 'tasks' };
-const state = { extensions, pipelines, tasks };
+const state = {
+  extensions,
+  namespaces: {
+    selected: 'default'
+  },
+  pipelines,
+  tasks
+};
 
 it('getExtensions', () => {
   jest
@@ -63,11 +70,15 @@ it('isFetchingExtensions', () => {
 });
 
 it('getPipelines', () => {
+  const namespace = 'default';
   jest
     .spyOn(pipelineSelectors, 'getPipelines')
     .mockImplementation(() => pipelines);
   expect(getPipelines(state)).toEqual(pipelines);
-  expect(pipelineSelectors.getPipelines).toHaveBeenCalledWith(state.pipelines);
+  expect(pipelineSelectors.getPipelines).toHaveBeenCalledWith(
+    state.pipelines,
+    namespace
+  );
 });
 
 it('getPipelinesErrorMessage', () => {
@@ -92,9 +103,10 @@ it('isFetchingPipelines', () => {
 });
 
 it('getTasks', () => {
+  const namespace = 'default';
   jest.spyOn(taskSelectors, 'getTasks').mockImplementation(() => tasks);
   expect(getTasks(state)).toEqual(tasks);
-  expect(taskSelectors.getTasks).toHaveBeenCalledWith(state.tasks);
+  expect(taskSelectors.getTasks).toHaveBeenCalledWith(state.tasks, namespace);
 });
 
 it('getTasksErrorMessage', () => {

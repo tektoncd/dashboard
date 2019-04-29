@@ -14,7 +14,7 @@ limitations under the License.
 import React from 'react';
 import { waitForElement } from 'react-testing-library';
 
-import PipelineRunContainer from './PipelineRun';
+import { PipelineRunContainer } from './PipelineRun';
 import * as API from '../../api';
 import { renderWithRouter } from '../../utils/test';
 

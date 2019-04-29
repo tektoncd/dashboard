@@ -15,6 +15,7 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 
 import * as API from '../api';
+import * as selectors from '../reducers';
 import { fetchPipelines, fetchPipelinesSuccess } from './pipeline';
 
 it('fetchPipelinesSuccess', () => {
@@ -26,16 +27,20 @@ it('fetchPipelinesSuccess', () => {
 });
 
 it('fetchPipelines', async () => {
+  const namespace = 'default';
   const pipelines = { fake: 'pipelines' };
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const store = mockStore();
 
+  jest
+    .spyOn(selectors, 'getSelectedNamespace')
+    .mockImplementation(() => namespace);
   jest.spyOn(API, 'getPipelines').mockImplementation(() => pipelines);
 
   const expectedActions = [
     { type: 'PIPELINE_FETCH_REQUEST' },
-    fetchPipelinesSuccess(pipelines)
+    fetchPipelinesSuccess(pipelines, namespace)
   ];
 
   await store.dispatch(fetchPipelines());
