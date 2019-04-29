@@ -1,0 +1,19 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: dashboard-extension
+  labels:
+    tekton-dashboard-extension: "true"
+  annotations:
+    tekton-dashboard-endpoints: "sample"
+    tekton-dashboard-display-name: "tekton_dashboard_extension"
+    tekton-dashboard-bundle-location: "/bundle"
+spec:
+  selector:
+    app: tekton-dashboard-extension
+  ports:
+  - protocol: TCP
+    port: 3000
+    targetPort: 3000
+  type:
+    NodePort
