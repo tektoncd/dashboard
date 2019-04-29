@@ -54,6 +54,8 @@ func (r Resource) RegisterEndpoints(container *restful.Container) {
 
 	logging.Log.Info("Adding v1, and API for pipelines")
 
+
+  wsv1.Route(wsv1.GET("/").To(r.getAllNamespaces))
 	wsv1.Route(wsv1.GET("/{namespace}/pipeline").To(r.getAllPipelines))
 	wsv1.Route(wsv1.GET("/{namespace}/pipeline/{name}").To(r.getPipeline))
 
