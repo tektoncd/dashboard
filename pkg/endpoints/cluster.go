@@ -14,21 +14,21 @@ limitations under the License.
 package endpoints
 
 import (
-  "github.com/emicklei/go-restful"
-  "github.com/tektoncd/dashboard/pkg/logging"
-  "github.com/tektoncd/dashboard/pkg/utils"
-  "net/http"
+	"github.com/emicklei/go-restful"
+	"github.com/tektoncd/dashboard/pkg/logging"
+	"github.com/tektoncd/dashboard/pkg/utils"
+	"net/http"
 
-  metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 func (r Resource) getAllNamespaces(request *restful.Request, response *restful.Response) {
-  namespaces, err := r.K8sClient.CoreV1().Namespaces().List(metav1.ListOptions{});
-  logging.Log.Debugf("In getAllNamespaces - : %s", namespaces)
+	namespaces, err := r.K8sClient.CoreV1().Namespaces().List(metav1.ListOptions{});
+	logging.Log.Debugf("In getAllNamespaces - : %s", namespaces)
 
-  if err != nil {
-    utils.RespondError(response, err, http.StatusNotFound)
-    return
-  }
-  response.WriteEntity(namespaces)
+	if err != nil {
+		utils.RespondError(response, err, http.StatusNotFound)
+		return
+	}
+	response.WriteEntity(namespaces)
 }
