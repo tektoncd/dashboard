@@ -60,13 +60,16 @@ describe('getAPI', () => {
   });
 
   it('returns a URI containing the given type and name', () => {
-    const uri = getAPI('pipeline', 'somename');
+    const uri = getAPI('pipeline', { name: 'somename' });
     expect(uri).toContain('pipeline');
     expect(uri).toContain('somename');
   });
 
   it('returns a URI containing the given, name, and namespace', () => {
-    const uri = getAPI('pipeline', 'somename', 'customnamespace');
+    const uri = getAPI('pipeline', {
+      name: 'somename',
+      namespace: 'customnamespace'
+    });
     expect(uri).toContain('pipeline');
     expect(uri).toContain('somename');
     expect(uri).toContain('customnamespace');

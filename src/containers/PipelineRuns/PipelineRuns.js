@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
   Breadcrumb,
@@ -28,10 +29,10 @@ import {
 import Header from '../../components/Header';
 
 import { getPipelineRuns } from '../../api';
+import { getSelectedNamespace } from '../../reducers';
 import { getStatusIcon, getStatus } from '../../utils';
 
-/* istanbul ignore next */
-class PipelineRuns extends Component {
+export /* istanbul ignore next */ class PipelineRuns extends Component {
   state = {
     error: null,
     loading: true,
@@ -40,10 +41,10 @@ class PipelineRuns extends Component {
 
   async componentDidMount() {
     try {
-      const { match } = this.props;
+      const { match, namespace } = this.props;
       const { pipelineName } = match.params;
 
-      let pipelineRuns = await getPipelineRuns();
+      let pipelineRuns = await getPipelineRuns(namespace);
       pipelineRuns = pipelineRuns.filter(
         pipelineRun => pipelineRun.spec.pipelineRef.name === pipelineName
       );
@@ -145,4 +146,11 @@ class PipelineRuns extends Component {
   }
 }
 
-export default PipelineRuns;
+/* istanbul ignore next */
+function mapStateToProps(state) {
+  return {
+    namespace: getSelectedNamespace(state)
+  };
+}
+
+export default connect(mapStateToProps)(PipelineRuns);

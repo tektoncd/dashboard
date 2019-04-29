@@ -12,21 +12,24 @@ limitations under the License.
 */
 
 import { getTasks } from '../api';
+import { getSelectedNamespace } from '../reducers';
 
-export function fetchTasksSuccess(data) {
+export function fetchTasksSuccess(data, namespace) {
   return {
     type: 'TASKS_FETCH_SUCCESS',
-    data
+    data,
+    namespace
   };
 }
 
 export function fetchTasks() {
-  return async dispatch => {
+  return async (dispatch, getState) => {
     dispatch({ type: 'TASKS_FETCH_REQUEST' });
     let tasks;
     try {
-      tasks = await getTasks();
-      dispatch(fetchTasksSuccess(tasks));
+      const namespace = getSelectedNamespace(getState());
+      tasks = await getTasks(namespace);
+      dispatch(fetchTasksSuccess(tasks, namespace));
     } catch (error) {
       dispatch({ type: 'TASKS_FETCH_FAILURE', error });
     }

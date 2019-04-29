@@ -12,11 +12,13 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import Log from '../../components/Log';
 import { getTaskRunLog } from '../../api';
+import { getSelectedNamespace } from '../../reducers';
 
-class LogContainer extends Component {
+export class LogContainer extends Component {
   state = { logs: [] };
 
   componentDidMount() {
@@ -34,10 +36,10 @@ class LogContainer extends Component {
   }
 
   async loadLog() {
-    const { stepName, taskRunName } = this.props;
+    const { namespace, stepName, taskRunName } = this.props;
     if (taskRunName) {
       try {
-        const logs = await getTaskRunLog(taskRunName);
+        const logs = await getTaskRunLog(taskRunName, namespace);
         const buildStepName = `build-step-${stepName}`;
         const stepLog =
           (logs.StepContainers &&
@@ -57,4 +59,11 @@ class LogContainer extends Component {
   }
 }
 
-export default LogContainer;
+/* istanbul ignore next */
+function mapStateToProps(state) {
+  return {
+    namespace: getSelectedNamespace(state)
+  };
+}
+
+export default connect(mapStateToProps)(LogContainer);

@@ -14,29 +14,19 @@ limitations under the License.
 import { combineReducers } from 'redux';
 import keyBy from 'lodash.keyby';
 
-function byId(state = {}, action) {
+function byName(state = {}, action) {
   switch (action.type) {
-    case 'PIPELINE_FETCH_SUCCESS':
-      return keyBy(action.data, 'metadata.uid');
+    case 'NAMESPACES_FETCH_SUCCESS':
+      return keyBy(action.data, 'metadata.name');
     default:
       return state;
   }
 }
 
-function byNamespace(state = {}, action) {
+function selected(state = 'default', action) {
   switch (action.type) {
-    case 'PIPELINE_FETCH_SUCCESS':
-      const pipelines = {};
-      action.data.forEach(pipeline => {
-        const { name, uid } = pipeline.metadata;
-        pipelines[name] = uid;
-      });
-
-      const { namespace } = action;
-      return {
-        ...state,
-        [namespace]: pipelines
-      };
+    case 'NAMESPACE_SELECT':
+      return action.namespace;
     default:
       return state;
   }
@@ -44,10 +34,10 @@ function byNamespace(state = {}, action) {
 
 function isFetching(state = false, action) {
   switch (action.type) {
-    case 'PIPELINE_FETCH_REQUEST':
+    case 'NAMESPACES_FETCH_REQUEST':
       return true;
-    case 'PIPELINE_FETCH_SUCCESS':
-    case 'PIPELINE_FETCH_FAILURE':
+    case 'NAMESPACES_FETCH_SUCCESS':
+    case 'NAMESPACES_FETCH_FAILURE':
       return false;
     default:
       return state;
@@ -56,10 +46,10 @@ function isFetching(state = false, action) {
 
 function errorMessage(state = null, action) {
   switch (action.type) {
-    case 'PIPELINE_FETCH_FAILURE':
+    case 'NAMESPACES_FETCH_FAILURE':
       return action.error.message;
-    case 'PIPELINE_FETCH_REQUEST':
-    case 'PIPELINE_FETCH_SUCCESS':
+    case 'NAMESPACES_FETCH_REQUEST':
+    case 'NAMESPACES_FETCH_SUCCESS':
       return null;
     default:
       return state;
@@ -67,27 +57,24 @@ function errorMessage(state = null, action) {
 }
 
 export default combineReducers({
-  byId,
-  byNamespace,
+  byName,
   errorMessage,
-  isFetching
+  isFetching,
+  selected
 });
 
-export function getPipelines(state, namespace) {
-  const pipelines = state.byNamespace[namespace];
-  return pipelines ? Object.values(pipelines).map(id => state.byId[id]) : [];
+export function getNamespaces(state) {
+  return Object.values(state.byName);
 }
 
-export function getPipeline(state, name, namespace) {
-  const pipelines = state.byNamespace[namespace] || {};
-  const pipelineId = pipelines[name];
-  return pipelineId ? state.byId[pipelineId] : null;
+export function getSelectedNamespace(state) {
+  return state.selected;
 }
 
-export function getPipelinesErrorMessage(state) {
+export function getNamespacesErrorMessage(state) {
   return state.errorMessage;
 }
 
-export function isFetchingPipelines(state) {
+export function isFetchingNamespaces(state) {
   return state.isFetching;
 }

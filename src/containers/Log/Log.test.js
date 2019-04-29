@@ -14,12 +14,13 @@ limitations under the License.
 import React from 'react';
 import { render, waitForElement } from 'react-testing-library';
 
-import LogContainer from './Log';
+import { LogContainer } from './Log';
 import * as API from '../../api';
 
 beforeEach(jest.resetAllMocks);
 
 it('LogContainer renders', async () => {
+  const namespace = 'namespace';
   const stepName = 'step';
   const taskRunName = 'taskRun';
   const getTaskRunLog = jest
@@ -34,23 +35,32 @@ it('LogContainer renders', async () => {
     }));
 
   const { container, getByText } = render(
-    <LogContainer stepName={stepName} taskRunName={taskRunName} />
+    <LogContainer
+      namespace={namespace}
+      stepName={stepName}
+      taskRunName={taskRunName}
+    />
   );
   await waitForElement(() => getByText('testing'));
 
   expect(getTaskRunLog).toHaveBeenCalledTimes(1);
-  expect(getTaskRunLog).toHaveBeenCalledWith(taskRunName);
+  expect(getTaskRunLog).toHaveBeenCalledWith(taskRunName, namespace);
 
   const anotherTaskRunName = 'anotherTaskRun';
   render(
-    <LogContainer stepName={stepName} taskRunName={anotherTaskRunName} />,
+    <LogContainer
+      namespace={namespace}
+      stepName={stepName}
+      taskRunName={anotherTaskRunName}
+    />,
     { container }
   );
   expect(getTaskRunLog).toHaveBeenCalledTimes(2);
-  expect(getTaskRunLog).toHaveBeenCalledWith(anotherTaskRunName);
+  expect(getTaskRunLog).toHaveBeenCalledWith(anotherTaskRunName, namespace);
 });
 
 it('LogContainer handles error case', async () => {
+  const namespace = 'namespace';
   const stepName = 'step';
   const taskRunName = 'taskRun';
   const getTaskRunLog = jest
@@ -60,15 +70,20 @@ it('LogContainer handles error case', async () => {
     });
 
   const { getByText } = render(
-    <LogContainer stepName={stepName} taskRunName={taskRunName} />
+    <LogContainer
+      namespace={namespace}
+      stepName={stepName}
+      taskRunName={taskRunName}
+    />
   );
   await waitForElement(() => getByText('Unable to fetch log'));
 
   expect(getTaskRunLog).toHaveBeenCalledTimes(1);
-  expect(getTaskRunLog).toHaveBeenCalledWith(taskRunName);
+  expect(getTaskRunLog).toHaveBeenCalledWith(taskRunName, namespace);
 });
 
 it('LogContainer handles empty logs', async () => {
+  const namespace = 'namespace';
   const stepName = 'step';
   const taskRunName = 'taskRun';
   const getTaskRunLog = jest
@@ -83,15 +98,20 @@ it('LogContainer handles empty logs', async () => {
     }));
 
   const { getByText } = render(
-    <LogContainer stepName={stepName} taskRunName={taskRunName} />
+    <LogContainer
+      namespace={namespace}
+      stepName={stepName}
+      taskRunName={taskRunName}
+    />
   );
   await waitForElement(() => getByText('No log available'));
 
   expect(getTaskRunLog).toHaveBeenCalledTimes(1);
-  expect(getTaskRunLog).toHaveBeenCalledWith(taskRunName);
+  expect(getTaskRunLog).toHaveBeenCalledWith(taskRunName, namespace);
 });
 
 it('LogContainer handles missing step logs', async () => {
+  const namespace = 'namespace';
   const stepName = 'step';
   const taskRunName = 'taskRun';
   const getTaskRunLog = jest
@@ -101,10 +121,14 @@ it('LogContainer handles missing step logs', async () => {
     }));
 
   const { getByText } = render(
-    <LogContainer stepName={stepName} taskRunName={taskRunName} />
+    <LogContainer
+      namespace={namespace}
+      stepName={stepName}
+      taskRunName={taskRunName}
+    />
   );
   await waitForElement(() => getByText('No log available'));
 
   expect(getTaskRunLog).toHaveBeenCalledTimes(1);
-  expect(getTaskRunLog).toHaveBeenCalledWith(taskRunName);
+  expect(getTaskRunLog).toHaveBeenCalledWith(taskRunName, namespace);
 });

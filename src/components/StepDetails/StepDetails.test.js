@@ -12,9 +12,19 @@ limitations under the License.
 */
 
 import React from 'react';
+import { Provider } from 'react-redux';
 import { render } from 'react-testing-library';
+import configureStore from 'redux-mock-store';
+
 import StepDetails from './StepDetails';
 
 it('StepDetails renders', () => {
-  render(<StepDetails />);
+  const mockStore = configureStore();
+  const store = mockStore({ namespaces: { selected: 'default' } });
+
+  render(
+    <Provider store={store}>
+      <StepDetails />
+    </Provider>
+  );
 });

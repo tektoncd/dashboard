@@ -15,7 +15,8 @@ import pipelinesReducer, * as selectors from './pipelines';
 
 it('handles init or unknown actions', () => {
   expect(pipelinesReducer(undefined, { type: 'does_not_exist' })).toEqual({
-    byName: {},
+    byId: {},
+    byNamespace: {},
     errorMessage: null,
     isFetching: false
   });
@@ -29,20 +30,25 @@ it('PIPELINE_FETCH_REQUEST', () => {
 
 it('PIPELINE_FETCH_SUCCESS', () => {
   const name = 'pipeline name';
+  const namespace = 'default';
+  const uid = 'some-uid';
   const pipeline = {
     metadata: {
-      name
+      name,
+      namespace,
+      uid
     },
     other: 'content'
   };
   const action = {
     type: 'PIPELINE_FETCH_SUCCESS',
-    data: [pipeline]
+    data: [pipeline],
+    namespace
   };
 
   const state = pipelinesReducer({}, action);
-  expect(selectors.getPipelines(state)).toEqual([pipeline]);
-  expect(selectors.getPipeline(state, name)).toEqual(pipeline);
+  expect(selectors.getPipelines(state, namespace)).toEqual([pipeline]);
+  expect(selectors.getPipeline(state, name, namespace)).toEqual(pipeline);
   expect(selectors.isFetchingPipelines(state)).toBe(false);
 });
 
@@ -56,4 +62,17 @@ it('PIPELINE_FETCH_FAILURE', () => {
 
   const state = pipelinesReducer({}, action);
   expect(selectors.getPipelinesErrorMessage(state)).toEqual(message);
+});
+
+it('getPipelines', () => {
+  const namespace = 'namespace';
+  const state = { byNamespace: {} };
+  expect(selectors.getPipelines(state, namespace)).toEqual([]);
+});
+
+it('getPipeline', () => {
+  const name = 'name';
+  const namespace = 'namespace';
+  const state = { byNamespace: {} };
+  expect(selectors.getPipeline(state, name, namespace)).toBeNull();
 });
