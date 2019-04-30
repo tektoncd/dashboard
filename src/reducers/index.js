@@ -89,6 +89,11 @@ export function isFetchingPipelineRuns(state) {
   return pipelineRunsSelectors.isFetchingPipelineRuns(state.pipelineRuns);
 }
 
+export function getTaskRun(state, name) {
+  const namespace = getSelectedNamespace(state);
+  return taskRunsSelectors.getTaskRun(state.taskRuns, name, namespace);
+}
+
 export function getTaskRuns(state) {
   const namespace = getSelectedNamespace(state);
   return taskRunsSelectors.getTaskRuns(state.taskRuns, namespace);

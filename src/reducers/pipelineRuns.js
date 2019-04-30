@@ -17,7 +17,7 @@ import keyBy from 'lodash.keyby';
 function byId(state = {}, action) {
   switch (action.type) {
     case 'PIPELINE_RUNS_FETCH_SUCCESS':
-      return keyBy(action.data, 'metadata.uid');
+      return { ...state, ...keyBy(action.data, 'metadata.uid') };
     default:
       return state;
   }
@@ -26,13 +26,13 @@ function byId(state = {}, action) {
 function byNamespace(state = {}, action) {
   switch (action.type) {
     case 'PIPELINE_RUNS_FETCH_SUCCESS':
-      const pipelineRuns = {};
+      const { namespace } = action;
+      const pipelineRuns = state[namespace] || {};
       action.data.forEach(pipelineRun => {
         const { name, uid } = pipelineRun.metadata;
         pipelineRuns[name] = uid;
       });
 
-      const { namespace } = action;
       return {
         ...state,
         [namespace]: pipelineRuns

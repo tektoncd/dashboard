@@ -61,7 +61,7 @@ export function selectedTask(selectedTaskName, tasks) {
   return tasks.find(t => t.metadata.name === selectedTaskName);
 }
 
-export function selectedTaskRun(selectedTaskId, taskRuns) {
+export function selectedTaskRun(selectedTaskId, taskRuns = []) {
   return taskRuns.find(run => run.id === selectedTaskId);
 }
 
