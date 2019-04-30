@@ -12,7 +12,9 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
-import { Icon } from 'carbon-components-react';
+import CheckmarkFilled from '@carbon/icons-react/lib/checkmark--filled/24';
+import ChevronRight from '@carbon/icons-react/lib/chevron--right/24';
+import CloseFilled from '@carbon/icons-react/lib/close--filled/16';
 
 import Spinner from '../Spinner';
 import { getStatus } from '../../utils';
@@ -27,16 +29,16 @@ class StepDetailsHeader extends Component {
       return <Spinner className="status-icon" />;
     }
 
-    let icon = 'icon--header--chevron';
+    let Icon = ChevronRight;
     if (status === 'terminated') {
       if (reason === 'Completed') {
-        icon = 'icon--checkmark--solid';
+        Icon = CheckmarkFilled;
       } else {
-        icon = 'icon--close--solid';
+        Icon = CloseFilled;
       }
     }
 
-    return <Icon name={icon} className="status-icon" />;
+    return <Icon className="status-icon" />;
   }
 
   statusLabel() {
