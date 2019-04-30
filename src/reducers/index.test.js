@@ -22,6 +22,7 @@ import {
   getPipelineRunsErrorMessage,
   getTasks,
   getTasksErrorMessage,
+  getTaskRun,
   getTaskRuns,
   getTaskRunsErrorMessage,
   isFetchingExtensions,
@@ -42,6 +43,7 @@ const extensions = { fake: 'extensions' };
 const pipelines = { fake: 'pipelines' };
 const pipelineRuns = { fake: 'pipelineRuns' };
 const tasks = { fake: 'tasks' };
+const taskRun = { fake: 'taskRun' };
 const taskRuns = { fake: 'taskRuns' };
 const state = {
   extensions,
@@ -187,6 +189,17 @@ it('isFetchingTasks', () => {
   jest.spyOn(taskSelectors, 'isFetchingTasks').mockImplementation(() => true);
   expect(isFetchingTasks(state)).toBe(true);
   expect(taskSelectors.isFetchingTasks).toHaveBeenCalledWith(state.tasks);
+});
+
+it('getTaskRun', () => {
+  const name = 'test';
+  jest.spyOn(taskRunsSelectors, 'getTaskRun').mockImplementation(() => taskRun);
+  expect(getTaskRun(state, 'test')).toEqual(taskRun);
+  expect(taskRunsSelectors.getTaskRun).toHaveBeenCalledWith(
+    state.taskRuns,
+    name,
+    namespace
+  );
 });
 
 it('getTaskRuns', () => {

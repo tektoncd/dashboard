@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { getTasks } from '../api';
+import { getTask, getTasks } from '../api';
 import { getSelectedNamespace } from '../reducers';
 
 export function fetchTasksSuccess(data, namespace) {
@@ -19,6 +19,21 @@ export function fetchTasksSuccess(data, namespace) {
     type: 'TASKS_FETCH_SUCCESS',
     data,
     namespace
+  };
+}
+
+export function fetchTask(name) {
+  return async (dispatch, getState) => {
+    dispatch({ type: 'TASKS_FETCH_REQUEST' });
+    let task;
+    try {
+      const namespace = getSelectedNamespace(getState());
+      task = await getTask(name, namespace);
+      dispatch(fetchTasksSuccess([task], namespace));
+    } catch (error) {
+      dispatch({ type: 'TASKS_FETCH_FAILURE', error });
+    }
+    return task;
   };
 }
 
