@@ -44,6 +44,7 @@ func TestCredentials(t *testing.T) {
 		URL: map[string]string{
 			"tekton.dev/git-0": "https://github.com",
 		},
+		ServiceAccount: "sa1",
 	}
 	userPassCred := credential{
 		Name:          "credentialuserpass",
@@ -54,6 +55,7 @@ func TestCredentials(t *testing.T) {
 		URL: map[string]string{
 			"tekton.dev/docker-0": "https://gcr.io",
 		},
+		ServiceAccount: "default",
 	}
 
 	// READ ALL credentials when there are none
@@ -63,7 +65,7 @@ func TestCredentials(t *testing.T) {
 	// CREATE credential accesstoken
 	t.Log("CREATE credential accesstoken")
 	createCredentialTest(namespace, accessTokenCred, "", r, t)
-	if !r.checkSecretInSa(namespace, "default", "credentialaccesstoken", t) {
+	if !r.checkSecretInSa(namespace, "sa1", "credentialaccesstoken", t) {
 		t.Error("FAIL: ERROR - service account doesn't have the secret: credentialaccesstoken")
 	}
 
