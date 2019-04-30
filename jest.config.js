@@ -27,7 +27,8 @@ module.exports = {
     }
   },
   moduleNameMapper: {
-    '\\.(png|svg|ttf|woff|woff2)$': '<rootDir>/config_frontend/__mocks__/fileMock.js',
+    '\\.(png|svg|ttf|woff|woff2)$':
+      '<rootDir>/config_frontend/__mocks__/fileMock.js',
     '\\.(css|scss)$': '<rootDir>/config_frontend/__mocks__/styleMock.js'
   },
   setupFilesAfterEnv: ['<rootDir>/config_frontend/setupTests.js'],
