@@ -12,7 +12,8 @@ limitations under the License.
 */
 
 import React from 'react';
-import { Icon } from 'carbon-components-react';
+import CheckmarkFilled from '@carbon/icons-react/lib/checkmark--filled/16';
+import CloseFilled from '@carbon/icons-react/lib/close--filled/16';
 
 import Spinner from '../components/Spinner';
 
@@ -26,14 +27,14 @@ export function getStatusIcon({ reason, status }) {
     return <Spinner className="status-icon" />;
   }
 
-  let icon;
+  let Icon;
   if (status === 'True') {
-    icon = 'icon--checkmark--solid';
+    Icon = CheckmarkFilled;
   } else if (status === 'False') {
-    icon = 'icon--close--solid';
+    Icon = CloseFilled;
   }
 
-  return icon ? <Icon name={icon} className="status-icon" /> : null;
+  return Icon ? <Icon className="status-icon" /> : null;
 }
 
 export function taskRunStep(selectedStepId, taskRun) {

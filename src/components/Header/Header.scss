@@ -13,12 +13,9 @@ limitations under the License.
 
 .header {
   background-color: white;
-  display: flex;
-  flex-direction: column;
   padding: 1em 5% 0;
 
   .banner {
-    align-self: flex-start;
     height: 2.5em;
     margin-bottom: 1em;
   }

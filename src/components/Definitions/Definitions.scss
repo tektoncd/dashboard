@@ -23,17 +23,14 @@ limitations under the License.
       height: 2rem;
       width: 15rem;
     }
-
-    h1 {
-      margin: 0.9rem 0 0;
-      font-size: 1.6rem;
-      line-height: 2rem;
-      height: 2rem;
-    }
   }
 
   main {
     padding: 2em 5%;
+
+    .bx--structured-list {
+      background-color: white;
+    }
   }
 
   .definition .status {
