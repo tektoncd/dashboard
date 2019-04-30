@@ -14,10 +14,29 @@ limitations under the License.
 import { combineReducers } from 'redux';
 import keyBy from 'lodash.keyby';
 
-function byName(state = {}, action) {
+function byId(state = {}, action) {
   switch (action.type) {
     case 'TASKS_FETCH_SUCCESS':
-      return keyBy(action.data, 'metadata.name');
+      return keyBy(action.data, 'metadata.uid');
+    default:
+      return state;
+  }
+}
+
+function byNamespace(state = {}, action) {
+  switch (action.type) {
+    case 'TASKS_FETCH_SUCCESS':
+      const tasks = {};
+      action.data.forEach(task => {
+        const { name, uid } = task.metadata;
+        tasks[name] = uid;
+      });
+
+      const { namespace } = action;
+      return {
+        ...state,
+        [namespace]: tasks
+      };
     default:
       return state;
   }
@@ -48,17 +67,21 @@ function errorMessage(state = null, action) {
 }
 
 export default combineReducers({
-  byName,
+  byId,
+  byNamespace,
   errorMessage,
   isFetching
 });
 
-export function getTasks(state) {
-  return Object.values(state.byName);
+export function getTasks(state, namespace) {
+  const tasks = state.byNamespace[namespace];
+  return tasks ? Object.values(tasks).map(id => state.byId[id]) : [];
 }
 
-export function getTask(state, name) {
-  return state.byName[name];
+export function getTask(state, name, namespace) {
+  const tasks = state.byNamespace[namespace] || {};
+  const taskId = tasks[name];
+  return taskId ? state.byId[taskId] : null;
 }
 
 export function getTasksErrorMessage(state) {

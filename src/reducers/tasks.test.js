@@ -15,7 +15,8 @@ import tasksReducer, * as selectors from './tasks';
 
 it('handles init or unknown actions', () => {
   expect(tasksReducer(undefined, { type: 'does_not_exist' })).toEqual({
-    byName: {},
+    byId: {},
+    byNamespace: {},
     errorMessage: null,
     isFetching: false
   });
@@ -29,20 +30,25 @@ it('TASKS_FETCH_REQUEST', () => {
 
 it('TASKS_FETCH_SUCCESS', () => {
   const name = 'task name';
+  const namespace = 'default';
+  const uid = 'some-uid';
   const task = {
     metadata: {
-      name
+      name,
+      namespace,
+      uid
     },
     other: 'content'
   };
   const action = {
     type: 'TASKS_FETCH_SUCCESS',
-    data: [task]
+    data: [task],
+    namespace
   };
 
   const state = tasksReducer({}, action);
-  expect(selectors.getTasks(state)).toEqual([task]);
-  expect(selectors.getTask(state, name)).toEqual(task);
+  expect(selectors.getTasks(state, namespace)).toEqual([task]);
+  expect(selectors.getTask(state, name, namespace)).toEqual(task);
   expect(selectors.isFetchingTasks(state)).toBe(false);
 });
 
@@ -56,4 +62,17 @@ it('TASKS_FETCH_FAILURE', () => {
 
   const state = tasksReducer({}, action);
   expect(selectors.getTasksErrorMessage(state)).toEqual(message);
+});
+
+it('getTasks', () => {
+  const namespace = 'namespace';
+  const state = { byNamespace: {} };
+  expect(selectors.getTasks(state, namespace)).toEqual([]);
+});
+
+it('getTask', () => {
+  const name = 'name';
+  const namespace = 'namespace';
+  const state = { byNamespace: {} };
+  expect(selectors.getTask(state, name, namespace)).toBeNull();
 });
