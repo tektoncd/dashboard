@@ -16,13 +16,17 @@ import { combineReducers } from 'redux';
 import extensions, * as extensionSelectors from './extensions';
 import namespaces, * as namespaceSelectors from './namespaces';
 import pipelines, * as pipelineSelectors from './pipelines';
+import pipelineRuns, * as pipelineRunsSelectors from './pipelineRuns';
 import tasks, * as taskSelectors from './tasks';
+import taskRuns, * as taskRunsSelectors from './taskRuns';
 
 export default combineReducers({
   extensions,
   namespaces,
   pipelines,
-  tasks
+  pipelineRuns,
+  tasks,
+  taskRuns
 });
 
 export function getSelectedNamespace(state) {
@@ -58,9 +62,59 @@ export function isFetchingPipelines(state) {
   return pipelineSelectors.isFetchingPipelines(state.pipelines);
 }
 
+export function getPipelineRuns(state) {
+  const namespace = getSelectedNamespace(state);
+  return pipelineRunsSelectors.getPipelineRuns(state.pipelineRuns, namespace);
+}
+
+export function getPipelineRunsByPipelineName(state, name) {
+  const runs = getPipelineRuns(state);
+  return runs.filter(pipelineRun => pipelineRun.spec.pipelineRef.name === name);
+}
+
+export function getPipelineRun(state, name) {
+  const namespace = getSelectedNamespace(state);
+  return pipelineRunsSelectors.getPipelineRun(
+    state.pipelineRuns,
+    name,
+    namespace
+  );
+}
+
+export function getPipelineRunsErrorMessage(state) {
+  return pipelineRunsSelectors.getPipelineRunsErrorMessage(state.pipelineRuns);
+}
+
+export function isFetchingPipelineRuns(state) {
+  return pipelineRunsSelectors.isFetchingPipelineRuns(state.pipelineRuns);
+}
+
+export function getTaskRuns(state) {
+  const namespace = getSelectedNamespace(state);
+  return taskRunsSelectors.getTaskRuns(state.taskRuns, namespace);
+}
+
+export function getTaskRunsErrorMessage(state) {
+  return taskRunsSelectors.getTaskRunsErrorMessage(state.taskRuns);
+}
+
+export function isFetchingTaskRuns(state) {
+  return taskRunsSelectors.isFetchingTaskRuns(state.taskRuns);
+}
+
+export function getTaskRunsByTaskName(state, name) {
+  const runs = getTaskRuns(state);
+  return runs.filter(taskRun => taskRun.spec.taskRef.name === name);
+}
+
 export function getTasks(state) {
   const namespace = getSelectedNamespace(state);
   return taskSelectors.getTasks(state.tasks, namespace);
+}
+
+export function getTask(state, name) {
+  const namespace = getSelectedNamespace(state);
+  return taskSelectors.getTask(state.tasks, name, namespace);
 }
 
 export function getTasksErrorMessage(state) {
