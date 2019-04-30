@@ -36,6 +36,7 @@ type credential struct {
 	Type            string            `json:"type"` // must have the value 'accesstoken' or 'userpass'
 	ResourceVersion string            `json:"resourceVersion,omitempty"`
 	URL             map[string]string `json:"url"`
+	ServiceAccount  string            `json:"serviceAccount,omitempty"`
 }
 
 var typeAccessToken = "accesstoken"
@@ -45,6 +46,7 @@ const (
 	dashboardKey           string = "tekton-dashboard"
 	dashboardValue         string = "true"
 	dashboardLabelSelector string = dashboardKey + "=" + dashboardValue // must have format "<key>=<value>"
+	serviceAccountLabelKey string = "service-account"
 )
 
 /* API route for getting all credentials in a given namespace
@@ -144,10 +146,7 @@ func (r Resource) createCredential(request *restful.Request, response *restful.R
 	}
 
 	// Create new secret struct
-	secret, ok := credentialToSecret(cred, requestNamespace, response)
-	if !ok {
-		return
-	}
+	secret := credentialToSecret(cred, requestNamespace, response)
 
 	// Create new secret in K8s client
 	if _, err := r.K8sClient.CoreV1().Secrets(requestNamespace).Create(secret); err != nil {
@@ -157,13 +156,8 @@ func (r Resource) createCredential(request *restful.Request, response *restful.R
 	}
 
 	// Patch service account
-	saName := ""
-	providedSaName := os.Getenv("PIPELINE_RUN_SERVICE_ACCOUNT")
-	if providedSaName != "" {
-		saName = providedSaName
-	} else {
-		saName = "default"
-	}
+	labels := secret.GetLabels()
+	saName, _ := labels[serviceAccountLabelKey]
 	if !r.addSecretToSA(saName, cred.Name, requestNamespace) {
 		errorMessage := fmt.Sprintf("error adding secret in service account: %s", saName)
 		utils.RespondErrorMessage(response, errorMessage, http.StatusBadRequest)
@@ -209,10 +203,7 @@ func (r Resource) updateCredential(request *restful.Request, response *restful.R
 	}
 
 	// Create secret struct
-	secret, ok := credentialToSecret(cred, requestNamespace, response)
-	if !ok {
-		return
-	}
+	secret := credentialToSecret(cred, requestNamespace, response)
 
 	// Update secret in K8s client
 	if _, err := r.K8sClient.CoreV1().Secrets(requestNamespace).Update(secret); err != nil {
@@ -244,21 +235,25 @@ func (r Resource) deleteCredential(request *restful.Request, response *restful.R
 	}
 
 	// Get secret from the resource K8sClient
-	err := r.K8sClient.CoreV1().Secrets(requestNamespace).Delete(requestName, &metav1.DeleteOptions{})
+	secret, err := r.K8sClient.CoreV1().Secrets(requestNamespace).Get(requestName, metav1.GetOptions{})
+	if err != nil {
+		errorMessage := fmt.Sprintf("Error getting secret from K8sClient: %s.", err.Error())
+		utils.RespondMessageAndLogError(response, err, errorMessage, http.StatusInternalServerError)
+		return
+	}
+
+	// Parse K8s secret to credential
+	cred := secretToCredential(secret, true)
+
+	// Delete secret from the resource K8sClient
+	err = r.K8sClient.CoreV1().Secrets(requestNamespace).Delete(requestName, &metav1.DeleteOptions{})
 	if err != nil {
 		errorMessage := fmt.Sprintf("Error deleting secret from K8sClient: %s.", err.Error())
 		utils.RespondMessageAndLogError(response, err, errorMessage, http.StatusInternalServerError)
 		return
 	}
 	// Patch service account
-	saName := ""
-	providedSaName := os.Getenv("PIPELINE_RUN_SERVICE_ACCOUNT")
-	if providedSaName != "" {
-		saName = providedSaName
-	} else {
-		saName = "default"
-	}
-	r.removeSecretFromSA(saName, requestName, requestNamespace)
+	r.removeSecretFromSA(cred.ServiceAccount, requestName, requestNamespace)
 }
 
 // Returns true if the namespace exists in the resource K8sClient and false if it does not exist
@@ -334,6 +329,8 @@ func getQueryEntity(entityPointer interface{}, request *restful.Request, respons
 
 // Convert K8s secret struct into credential struct
 func secretToCredential(secret *corev1.Secret, mask bool) credential {
+	labels := secret.GetLabels()
+	saName, _ := labels[serviceAccountLabelKey]
 	cred := credential{
 		Name:            secret.GetName(),
 		Username:        string(secret.Data["username"]),
@@ -342,6 +339,7 @@ func secretToCredential(secret *corev1.Secret, mask bool) credential {
 		Type:            string(secret.Data["type"]),
 		URL:             secret.ObjectMeta.Annotations,
 		ResourceVersion: secret.GetResourceVersion(),
+		ServiceAccount:  saName,
 	}
 	if mask {
 		cred.Password = "********"
@@ -350,7 +348,7 @@ func secretToCredential(secret *corev1.Secret, mask bool) credential {
 }
 
 // Convert credential struct into K8s secret struct
-func credentialToSecret(cred credential, namespace string, response *restful.Response) (*corev1.Secret, bool) {
+func credentialToSecret(cred credential, namespace string, response *restful.Response) *corev1.Secret {
 	// Create new secret struct
 	secret := corev1.Secret{}
 	secret.SetNamespace(namespace)
@@ -362,14 +360,26 @@ func credentialToSecret(cred credential, namespace string, response *restful.Res
 	secret.Data["description"] = []byte(cred.Description)
 	secret.Data["type"] = []byte(cred.Type)
 	secret.ObjectMeta.Annotations = cred.URL
+	saName := ""
+	if cred.ServiceAccount != "" {
+		saName = cred.ServiceAccount
+	} else {
+		providedSaName := os.Getenv("PIPELINE_RUN_SERVICE_ACCOUNT")
+		if providedSaName != "" {
+			saName = providedSaName
+		} else {
+			saName = "default"
+		}
+	}
 
 	labels := map[string]string{
 		dashboardKey: dashboardValue,
+		serviceAccountLabelKey: saName,
 	}
 	secret.SetLabels(labels)
 
 	// Return secret
-	return &secret, true
+	return &secret
 }
 
 // addSecretToSA - Add secret to service account 
