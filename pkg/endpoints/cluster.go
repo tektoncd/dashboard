@@ -24,11 +24,12 @@ import (
 
 func (r Resource) getAllNamespaces(request *restful.Request, response *restful.Response) {
 	namespaces, err := r.K8sClient.CoreV1().Namespaces().List(metav1.ListOptions{});
-	logging.Log.Debugf("In getAllNamespaces - : %s", namespaces)
+	logging.Log.Debugf("In getAllNamespaces")
 
 	if err != nil {
 		utils.RespondError(response, err, http.StatusNotFound)
 		return
 	}
+	logging.Log.Debugf("Found namespaces: %s, namespaces")
 	response.WriteEntity(namespaces)
 }

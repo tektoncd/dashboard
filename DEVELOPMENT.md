@@ -206,6 +206,14 @@ The backend API provides the following endpoints at `/v1/namespaces/<namespace>`
 
 __GET endpoints__
 
+__Namespaces__
+```
+GET /v1/namespaces/
+Get all namespaces for the cluster
+Returns HTTP code 200 and a list of namespaces in the cluster
+Returns HTTP code 404 if an error occurred getting the namespaces
+```
+
 __Pipelines__
 ```
 GET /v1/namespaces/<namespace>/pipeline
