@@ -129,8 +129,6 @@ export /* istanbul ignore next */ class TaskRunsContainer extends Component {
   }
 
   render() {
-    const { match } = this.props;
-    const { taskName } = match.params;
     const {
       loading,
       selectedStepId,
@@ -147,40 +145,35 @@ export /* istanbul ignore next */ class TaskRunsContainer extends Component {
     );
 
     return (
-      <div className="run">
+      <>
         <RunHeader
           lastTransitionTime={taskRun.startTime}
           loading={loading}
-          name={taskName}
           runName={taskRun.taskRunName}
           status={taskRun.succeeded}
-          type="tasks"
-          typeLabel="Tasks"
         />
-        <main>
-          {notification ? (
-            TaskRunsContainer.notification(notification)
-          ) : (
-            <div className="tasks">
-              <TaskTree
-                onSelect={this.handleTaskSelected}
-                selectedTaskId={selectedTaskId}
-                taskRuns={taskRuns}
+        {notification ? (
+          TaskRunsContainer.notification(notification)
+        ) : (
+          <div className="tasks">
+            <TaskTree
+              onSelect={this.handleTaskSelected}
+              selectedTaskId={selectedTaskId}
+              taskRuns={taskRuns}
+            />
+            {selectedStepId && (
+              <StepDetails
+                definition={definition}
+                reason={reason}
+                status={status}
+                stepName={stepName}
+                stepStatus={stepStatus}
+                taskRun={taskRun}
               />
-              {selectedStepId && (
-                <StepDetails
-                  definition={definition}
-                  reason={reason}
-                  status={status}
-                  stepName={stepName}
-                  stepStatus={stepStatus}
-                  taskRun={taskRun}
-                />
-              )}
-            </div>
-          )}
-        </main>
-      </div>
+            )}
+          </div>
+        )}
+      </>
     );
   }
 }

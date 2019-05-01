@@ -12,11 +12,9 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import {
-  Breadcrumb,
-  BreadcrumbItem,
   InlineNotification,
   StructuredListBody,
   StructuredListCell,
@@ -26,7 +24,6 @@ import {
   StructuredListWrapper
 } from 'carbon-components-react';
 
-import Header from '../../components/Header';
 import { fetchTasks } from '../../actions/tasks';
 import {
   getTasks,
@@ -45,59 +42,48 @@ export /* istanbul ignore next */ class Tasks extends Component {
     const { error, loading, tasks } = this.props;
 
     return (
-      <div className="definitions">
-        <Header>
-          <div className="definitions-header">
-            <Breadcrumb>
-              <BreadcrumbItem>
-                <NavLink to="/tasks">Tasks</NavLink>
-              </BreadcrumbItem>
-            </Breadcrumb>
-          </div>
-        </Header>
-        <main>
-          {(() => {
-            if (loading && !tasks.length) {
-              return <StructuredListSkeleton border />;
-            }
+      <>
+        {(() => {
+          if (loading && !tasks.length) {
+            return <StructuredListSkeleton border />;
+          }
 
-            if (error) {
-              return (
-                <InlineNotification
-                  kind="error"
-                  title="Error loading tasks"
-                  subtitle={error}
-                />
-              );
-            }
-
+          if (error) {
             return (
-              <StructuredListWrapper border selection>
-                <StructuredListHead>
-                  <StructuredListRow head>
-                    <StructuredListCell head>Task</StructuredListCell>
-                  </StructuredListRow>
-                </StructuredListHead>
-                <StructuredListBody>
-                  {tasks.map(task => {
-                    const taskName = task.metadata.name;
-                    return (
-                      <StructuredListRow
-                        className="definition"
-                        key={task.metadata.uid}
-                      >
-                        <StructuredListCell>
-                          <Link to={`/tasks/${taskName}/runs`}>{taskName}</Link>
-                        </StructuredListCell>
-                      </StructuredListRow>
-                    );
-                  })}
-                </StructuredListBody>
-              </StructuredListWrapper>
+              <InlineNotification
+                kind="error"
+                title="Error loading tasks"
+                subtitle={error}
+              />
             );
-          })()}
-        </main>
-      </div>
+          }
+
+          return (
+            <StructuredListWrapper border selection>
+              <StructuredListHead>
+                <StructuredListRow head>
+                  <StructuredListCell head>Task</StructuredListCell>
+                </StructuredListRow>
+              </StructuredListHead>
+              <StructuredListBody>
+                {tasks.map(task => {
+                  const taskName = task.metadata.name;
+                  return (
+                    <StructuredListRow
+                      className="definition"
+                      key={task.metadata.uid}
+                    >
+                      <StructuredListCell>
+                        <Link to={`/tasks/${taskName}/runs`}>{taskName}</Link>
+                      </StructuredListCell>
+                    </StructuredListRow>
+                  );
+                })}
+              </StructuredListBody>
+            </StructuredListWrapper>
+          );
+        })()}
+      </>
     );
   }
 }

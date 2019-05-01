@@ -12,11 +12,9 @@ limitations under the License.
 */
 
 import React from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import {
-  Breadcrumb,
-  BreadcrumbItem,
   InlineNotification,
   StructuredListBody,
   StructuredListCell,
@@ -26,7 +24,6 @@ import {
   StructuredListWrapper
 } from 'carbon-components-react';
 
-import Header from '../../components/Header';
 import {
   getExtensions,
   getExtensionsErrorMessage,
@@ -41,56 +38,44 @@ export const Extensions = /* istanbul ignore next */ ({
   extensions
 }) => {
   return (
-    <div className="definitions">
-      <Header>
-        <div className="definitions-header">
-          <Breadcrumb>
-            <BreadcrumbItem>
-              <NavLink to="/extensions">Extensions</NavLink>
-            </BreadcrumbItem>
-          </Breadcrumb>
-        </div>
-      </Header>
+    <>
+      {(() => {
+        if (loading && !extensions.length) {
+          return <StructuredListSkeleton border />;
+        }
 
-      <main>
-        {(() => {
-          if (loading && !extensions.length) {
-            return <StructuredListSkeleton border />;
-          }
-
-          if (error) {
-            return (
-              <InlineNotification
-                kind="error"
-                title="Error loading extensions"
-                subtitle={error}
-              />
-            );
-          }
-
+        if (error) {
           return (
-            <StructuredListWrapper border selection>
-              <StructuredListHead>
-                <StructuredListRow head>
-                  <StructuredListCell head>Extension</StructuredListCell>
-                </StructuredListRow>
-              </StructuredListHead>
-              <StructuredListBody>
-                {extensions.map(({ displayName, name }) => {
-                  return (
-                    <StructuredListRow className="definition" key={name}>
-                      <StructuredListCell>
-                        <Link to={`/extensions/${name}`}>{displayName}</Link>
-                      </StructuredListCell>
-                    </StructuredListRow>
-                  );
-                })}
-              </StructuredListBody>
-            </StructuredListWrapper>
+            <InlineNotification
+              kind="error"
+              title="Error loading extensions"
+              subtitle={error}
+            />
           );
-        })()}
-      </main>
-    </div>
+        }
+
+        return (
+          <StructuredListWrapper border selection>
+            <StructuredListHead>
+              <StructuredListRow head>
+                <StructuredListCell head>Extension</StructuredListCell>
+              </StructuredListRow>
+            </StructuredListHead>
+            <StructuredListBody>
+              {extensions.map(({ displayName, name }) => {
+                return (
+                  <StructuredListRow className="definition" key={name}>
+                    <StructuredListCell>
+                      <Link to={`/extensions/${name}`}>{displayName}</Link>
+                    </StructuredListCell>
+                  </StructuredListRow>
+                );
+              })}
+            </StructuredListBody>
+          </StructuredListWrapper>
+        );
+      })()}
+    </>
   );
 };
 

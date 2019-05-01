@@ -11,12 +11,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-.header {
-  background-color: white;
-  padding: 1em 5%;
+import React from 'react';
 
-  .banner {
-    height: 2.5em;
-    margin-bottom: 1em;
-  }
-}
+import Breadcrumbs from './Breadcrumbs';
+import { renderWithRouter } from '../../utils/test';
+
+it('Breadcrumbs renders with default content', () => {
+  const { queryByText } = renderWithRouter(
+    <Breadcrumbs match={{ url: '/' }} />
+  );
+  expect(queryByText(/home/i)).toBeTruthy();
+});
+
+it('Breadcrumbs renders the current path', () => {
+  const { queryByText } = renderWithRouter(
+    <Breadcrumbs match={{ url: '/pipelines/demo-pipeline' }} />
+  );
+  expect(queryByText(/demo-pipeline/i)).toBeTruthy();
+});

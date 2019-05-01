@@ -13,54 +13,45 @@ limitations under the License.
 
 @import '../../scss/vars';
 
-.definitions {
-  .definitions-header {
-    background: white;
-    padding-bottom: 1em;
+.header-skeleton {
+  margin-top: 0.9rem;
+  height: 2rem;
+  width: 15rem;
+}
 
-    .header-skeleton {
-      margin-top: 0.9rem;
-      height: 2rem;
-      width: 15rem;
-    }
+main {
+  .bx--structured-list {
+    background-color: white;
+  }
+}
+
+.definition .status {
+  .status-icon {
+    margin-right: 0.5em;
+    vertical-align: sub;
   }
 
-  main {
-    padding: 2em 5%;
-
-    .bx--structured-list {
-      background-color: white;
-    }
-  }
-
-  .definition .status {
+  &:not([data-status]) {
     .status-icon {
-      margin-right: 0.5em;
-      vertical-align: sub;
+      fill: $unknown;
     }
+  }
 
-    &:not([data-status]) {
-      .status-icon {
-        fill: $unknown;
-      }
+  &[data-status='True'] {
+    .status-icon {
+      fill: $success;
     }
+  }
 
-    &[data-status='True'] {
-      .status-icon {
-        fill: $success;
-      }
+  &[data-status='False'] {
+    .status-icon {
+      fill: $failed;
     }
+  }
 
-    &[data-status='False'] {
-      .status-icon {
-        fill: $failed;
-      }
-    }
-
-    &[data-status='Unknown'][data-reason='Running'] {
-      .status-icon {
-        fill: $running;
-      }
+  &[data-status='Unknown'][data-reason='Running'] {
+    .status-icon {
+      fill: $running;
     }
   }
 }

@@ -11,12 +11,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-.header {
-  background-color: white;
-  padding: 1em 5%;
-
-  .banner {
-    height: 2.5em;
-    margin-bottom: 1em;
-  }
-}
+export default from './Breadcrumbs';

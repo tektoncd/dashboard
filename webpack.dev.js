@@ -4,13 +4,13 @@ const common = require('./webpack.common.js');
 const { API_DOMAIN, PORT } = require('./config_frontend/config.json');
 
 const extensionConfig = {
-  '/api/v1/extensions': {
+  '/v1/extensions': {
     target: 'http://localhost:9999',
-    pathRewrite: { '^/api/v1/extensions': '' }
+    pathRewrite: { '^/v1/extensions': '' }
   },
-  '/api/v1/extension/dev-extension': {
+  '/v1/extension/dev-extension': {
     target: 'http://localhost:9999',
-    pathRewrite: { '^/api/v1/extension/dev-extension': '' }
+    pathRewrite: { '^/v1/extension/dev-extension': '' }
   }
 };
 

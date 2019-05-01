@@ -15,8 +15,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
-  Breadcrumb,
-  BreadcrumbItem,
   InlineNotification,
   StructuredListBody,
   StructuredListCell,
@@ -25,8 +23,6 @@ import {
   StructuredListSkeleton,
   StructuredListWrapper
 } from 'carbon-components-react';
-
-import Header from '../../components/Header';
 
 import { getPipelineRuns } from '../../api';
 import { getSelectedNamespace } from '../../reducers';
@@ -60,88 +56,75 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
     const { error, loading, pipelineRuns } = this.state;
 
     return (
-      <div className="definitions">
-        <Header>
-          <div className="definitions-header">
-            <Breadcrumb>
-              <BreadcrumbItem>
-                <Link to="/pipelines">Pipelines</Link>
-              </BreadcrumbItem>
-              <BreadcrumbItem href="#">{pipelineName}</BreadcrumbItem>
-            </Breadcrumb>
-          </div>
-        </Header>
+      <>
+        {(() => {
+          if (loading) {
+            return <StructuredListSkeleton border />;
+          }
 
-        <main>
-          {(() => {
-            if (loading) {
-              return <StructuredListSkeleton border />;
-            }
-
-            if (error) {
-              return (
-                <InlineNotification
-                  kind="error"
-                  title="Error loading pipeline runs"
-                  subtitle={JSON.stringify(error)}
-                />
-              );
-            }
-
-            if (!pipelineRuns.length) {
-              return <span>No pipeline runs for {pipelineName}</span>;
-            }
-
+          if (error) {
             return (
-              <StructuredListWrapper border selection>
-                <StructuredListHead>
-                  <StructuredListRow head>
-                    <StructuredListCell head>Pipeline Run</StructuredListCell>
-                    <StructuredListCell head>Status</StructuredListCell>
-                    <StructuredListCell head>
-                      Last Transition Time
-                    </StructuredListCell>
-                  </StructuredListRow>
-                </StructuredListHead>
-                <StructuredListBody>
-                  {pipelineRuns.map(pipelineRun => {
-                    const pipelineRunName = pipelineRun.metadata.name;
-                    const { lastTransitionTime, reason, status } = getStatus(
-                      pipelineRun
-                    );
-
-                    return (
-                      <StructuredListRow
-                        className="definition"
-                        key={pipelineRun.metadata.uid}
-                      >
-                        <StructuredListCell>
-                          <Link
-                            to={`/pipelines/${pipelineName}/runs/${pipelineRunName}`}
-                          >
-                            {pipelineRunName}
-                          </Link>
-                        </StructuredListCell>
-                        <StructuredListCell
-                          className="status"
-                          data-reason={reason}
-                          data-status={status}
-                        >
-                          {getStatusIcon({ reason, status })}
-                          {pipelineRun.status.conditions[0].message}
-                        </StructuredListCell>
-                        <StructuredListCell>
-                          {lastTransitionTime}
-                        </StructuredListCell>
-                      </StructuredListRow>
-                    );
-                  })}
-                </StructuredListBody>
-              </StructuredListWrapper>
+              <InlineNotification
+                kind="error"
+                title="Error loading pipeline runs"
+                subtitle={JSON.stringify(error)}
+              />
             );
-          })()}
-        </main>
-      </div>
+          }
+
+          if (!pipelineRuns.length) {
+            return <span>No pipeline runs for {pipelineName}</span>;
+          }
+
+          return (
+            <StructuredListWrapper border selection>
+              <StructuredListHead>
+                <StructuredListRow head>
+                  <StructuredListCell head>Pipeline Run</StructuredListCell>
+                  <StructuredListCell head>Status</StructuredListCell>
+                  <StructuredListCell head>
+                    Last Transition Time
+                  </StructuredListCell>
+                </StructuredListRow>
+              </StructuredListHead>
+              <StructuredListBody>
+                {pipelineRuns.map(pipelineRun => {
+                  const pipelineRunName = pipelineRun.metadata.name;
+                  const { lastTransitionTime, reason, status } = getStatus(
+                    pipelineRun
+                  );
+
+                  return (
+                    <StructuredListRow
+                      className="definition"
+                      key={pipelineRun.metadata.uid}
+                    >
+                      <StructuredListCell>
+                        <Link
+                          to={`/pipelines/${pipelineName}/runs/${pipelineRunName}`}
+                        >
+                          {pipelineRunName}
+                        </Link>
+                      </StructuredListCell>
+                      <StructuredListCell
+                        className="status"
+                        data-reason={reason}
+                        data-status={status}
+                      >
+                        {getStatusIcon({ reason, status })}
+                        {pipelineRun.status.conditions[0].message}
+                      </StructuredListCell>
+                      <StructuredListCell>
+                        {lastTransitionTime}
+                      </StructuredListCell>
+                    </StructuredListRow>
+                  );
+                })}
+              </StructuredListBody>
+            </StructuredListWrapper>
+          );
+        })()}
+      </>
     );
   }
 }
