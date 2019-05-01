@@ -42,7 +42,7 @@ it('TaskRunsContainer renders', async () => {
       <TaskRunsContainer match={match} />
     </Provider>
   );
-  await waitForElement(() => getByText(taskName));
+  await waitForElement(() => getByText(/tasks/i));
   expect(tasksCall).toHaveBeenCalledTimes(1);
   expect(taskRunsCall).toHaveBeenCalledTimes(0);
 });

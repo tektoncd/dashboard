@@ -11,12 +11,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-.header {
-  background-color: white;
-  padding: 1em 5%;
+import React from 'react';
+import { storiesOf } from '@storybook/react';
+import StoryRouter from 'storybook-react-router';
 
-  .banner {
-    height: 2.5em;
-    margin-bottom: 1em;
-  }
-}
+import Breadcrumbs from './Breadcrumbs';
+
+storiesOf('Breadcrumbs', module)
+  .addDecorator(StoryRouter())
+  .add('home', () => <Breadcrumbs match={{ url: '/' }} />)
+  .add('sub page', () => (
+    <Breadcrumbs match={{ url: '/pipelines/demo-pipeline' }} />
+  ));

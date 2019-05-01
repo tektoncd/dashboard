@@ -129,7 +129,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
 
   render() {
     const { match } = this.props;
-    const { pipelineName, pipelineRunName } = match.params;
+    const { pipelineRunName } = match.params;
     const {
       error,
       loading,
@@ -159,49 +159,41 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     } = getStatus(pipelineRun);
 
     return (
-      <div className="run">
+      <>
         <RunHeader
           error={errorMessage}
           lastTransitionTime={lastTransitionTime}
           loading={loading}
-          name={pipelineName}
           runName={pipelineRunName}
           reason={pipelineRunReason}
           status={pipelineRunStatus}
-          type="pipelines"
-          typeLabel="Pipelines"
         />
-        <main>
-          {error ? (
-            <InlineNotification
-              kind="error"
-              title="Error loading pipeline run"
-              subtitle={JSON.stringify(
-                error,
-                Object.getOwnPropertyNames(error)
-              )}
+        {error ? (
+          <InlineNotification
+            kind="error"
+            title="Error loading pipeline run"
+            subtitle={JSON.stringify(error, Object.getOwnPropertyNames(error))}
+          />
+        ) : (
+          <div className="tasks">
+            <TaskTree
+              onSelect={this.handleTaskSelected}
+              selectedTaskId={selectedTaskId}
+              taskRuns={taskRuns}
             />
-          ) : (
-            <div className="tasks">
-              <TaskTree
-                onSelect={this.handleTaskSelected}
-                selectedTaskId={selectedTaskId}
-                taskRuns={taskRuns}
+            {selectedStepId && (
+              <StepDetails
+                definition={definition}
+                reason={reason}
+                status={status}
+                stepName={stepName}
+                stepStatus={stepStatus}
+                taskRun={taskRun}
               />
-              {selectedStepId && (
-                <StepDetails
-                  definition={definition}
-                  reason={reason}
-                  status={status}
-                  stepName={stepName}
-                  stepStatus={stepStatus}
-                  taskRun={taskRun}
-                />
-              )}
-            </div>
-          )}
-        </main>
-      </div>
+            )}
+          </div>
+        )}
+      </>
     );
   }
 }

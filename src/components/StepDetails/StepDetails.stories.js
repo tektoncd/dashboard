@@ -12,15 +12,21 @@ limitations under the License.
 */
 
 import React from 'react';
+import { Provider } from 'react-redux';
 import { storiesOf } from '@storybook/react';
 
+import store from '../../store';
 import StepDetails from './StepDetails';
 
 storiesOf('StepDetails', module).add('default', () => (
-  <StepDetails
-    reason="Completed"
-    status="terminated"
-    stepName="build"
-    taskRun={{}}
-  />
+  <Provider store={store}>
+    <div style={{ alignSelf: 'stretch' }}>
+      <StepDetails
+        reason="Completed"
+        status="terminated"
+        stepName="build"
+        taskRun={{}}
+      />
+    </div>
+  </Provider>
 ));

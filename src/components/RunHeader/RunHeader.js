@@ -12,16 +12,8 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  SkeletonPlaceholder,
-  Tab,
-  Tabs
-} from 'carbon-components-react';
-import { Link } from 'react-router-dom';
+import { SkeletonPlaceholder, Tab, Tabs } from 'carbon-components-react';
 
-import Header from '../Header';
 import { getStatusIcon } from '../../utils';
 
 import './RunHeader.scss';
@@ -32,61 +24,45 @@ class RunHeader extends Component {
       error,
       lastTransitionTime,
       loading,
-      name,
       runName,
       reason,
-      status,
-      type,
-      typeLabel
+      status
     } = this.props;
 
     return (
-      <Header>
-        <div
-          className="pipeline-run-header"
-          data-succeeded={status}
-          data-reason={reason}
-        >
-          <Breadcrumb>
-            <BreadcrumbItem>
-              <Link to={`/${type}`}>{typeLabel}</Link>
-            </BreadcrumbItem>
-            {name && (
-              <BreadcrumbItem>
-                <Link to={`/${type}/${name}`}>{name}</Link>
-              </BreadcrumbItem>
-            )}
-          </Breadcrumb>
-
-          {(() => {
-            if (error) {
-              return <h1>{error}</h1>;
-            }
-            if (loading) {
-              return <SkeletonPlaceholder className="header-skeleton" />;
-            }
-            return (
-              runName && (
-                <h1>
-                  <div className="block-icon">
-                    {getStatusIcon({ reason, status })}
-                  </div>
-                  {runName}
-                  <span className="status-label">{reason}</span>
-                  <span className="time">{lastTransitionTime}</span>
-                </h1>
-              )
-            );
-          })()}
-          {/*
-            TODO: move this out to PipelineRun as sibling of the header.
-            Tab should contain TaskTree, StepDetails, etc.
-          */}
-          <Tabs>
-            <Tab label="Tasks" />
-          </Tabs>
-        </div>
-      </Header>
+      <div
+        className="pipeline-run-header"
+        data-succeeded={status}
+        data-reason={reason}
+      >
+        {(() => {
+          if (error) {
+            return <h1>{error}</h1>;
+          }
+          if (loading) {
+            return <SkeletonPlaceholder className="header-skeleton" />;
+          }
+          return (
+            runName && (
+              <h1>
+                <div className="block-icon">
+                  {getStatusIcon({ reason, status })}
+                </div>
+                {runName}
+                <span className="status-label">{reason}</span>
+                <span className="time">{lastTransitionTime}</span>
+              </h1>
+            )
+          );
+        })()}
+        {/*
+          TODO: move this out to PipelineRun as sibling of the header.
+          Tab should contain TaskTree, StepDetails, etc.
+        */}
+        <Tabs>
+          <Tab label="Tasks" />
+        </Tabs>
+      </div>
     );
   }
 }

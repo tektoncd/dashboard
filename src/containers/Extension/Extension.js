@@ -12,10 +12,7 @@ limitations under the License.
 */
 
 import React, { Component, Suspense } from 'react';
-import { NavLink } from 'react-router-dom';
-import { Breadcrumb, BreadcrumbItem } from 'carbon-components-react';
 
-import Header from '../../components/Header';
 import ErrorBoundary from '../../components/ErrorBoundary';
 
 import './globals';
@@ -33,28 +30,14 @@ export default /* istanbul ignore next */ class Extension extends Component {
   }
 
   render() {
-    const { displayName, match } = this.props;
     const { ExtensionComponent } = this.state;
 
     return (
-      <div className="pipelines">
-        <Header>
-          <div className="pipelines-header">
-            <Breadcrumb>
-              <BreadcrumbItem>
-                <NavLink to={match.url}>{displayName}</NavLink>
-              </BreadcrumbItem>
-            </Breadcrumb>
-          </div>
-        </Header>
-        <main>
-          <ErrorBoundary message="Error loading extension">
-            <Suspense fallback={<div>Loading...</div>}>
-              <ExtensionComponent />
-            </Suspense>
-          </ErrorBoundary>
-        </main>
-      </div>
+      <ErrorBoundary message="Error loading extension">
+        <Suspense fallback={<div>Loading...</div>}>
+          <ExtensionComponent />
+        </Suspense>
+      </ErrorBoundary>
     );
   }
 }

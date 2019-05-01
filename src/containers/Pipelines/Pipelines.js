@@ -12,11 +12,9 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import {
-  Breadcrumb,
-  BreadcrumbItem,
   InlineNotification,
   StructuredListBody,
   StructuredListCell,
@@ -26,7 +24,6 @@ import {
   StructuredListWrapper
 } from 'carbon-components-react';
 
-import Header from '../../components/Header';
 import { fetchPipelines } from '../../actions/pipeline';
 import {
   getPipelines,
@@ -45,62 +42,50 @@ export /* istanbul ignore next */ class Pipelines extends Component {
     const { error, loading, pipelines } = this.props;
 
     return (
-      <div className="definitions">
-        <Header>
-          <div className="definitions-header">
-            <Breadcrumb>
-              <BreadcrumbItem>
-                <NavLink to="/pipelines">Pipelines</NavLink>
-              </BreadcrumbItem>
-            </Breadcrumb>
-          </div>
-        </Header>
+      <>
+        {(() => {
+          if (loading && !pipelines.length) {
+            return <StructuredListSkeleton border />;
+          }
 
-        <main>
-          {(() => {
-            if (loading && !pipelines.length) {
-              return <StructuredListSkeleton border />;
-            }
-
-            if (error) {
-              return (
-                <InlineNotification
-                  kind="error"
-                  title="Error loading pipelines"
-                  subtitle={error}
-                />
-              );
-            }
-
+          if (error) {
             return (
-              <StructuredListWrapper border selection>
-                <StructuredListHead>
-                  <StructuredListRow head>
-                    <StructuredListCell head>Pipeline</StructuredListCell>
-                  </StructuredListRow>
-                </StructuredListHead>
-                <StructuredListBody>
-                  {pipelines.map(pipeline => {
-                    const pipelineName = pipeline.metadata.name;
-                    return (
-                      <StructuredListRow
-                        className="definition"
-                        key={pipeline.metadata.uid}
-                      >
-                        <StructuredListCell>
-                          <Link to={`/pipelines/${pipelineName}/runs`}>
-                            {pipelineName}
-                          </Link>
-                        </StructuredListCell>
-                      </StructuredListRow>
-                    );
-                  })}
-                </StructuredListBody>
-              </StructuredListWrapper>
+              <InlineNotification
+                kind="error"
+                title="Error loading pipelines"
+                subtitle={error}
+              />
             );
-          })()}
-        </main>
-      </div>
+          }
+
+          return (
+            <StructuredListWrapper border selection>
+              <StructuredListHead>
+                <StructuredListRow head>
+                  <StructuredListCell head>Pipeline</StructuredListCell>
+                </StructuredListRow>
+              </StructuredListHead>
+              <StructuredListBody>
+                {pipelines.map(pipeline => {
+                  const pipelineName = pipeline.metadata.name;
+                  return (
+                    <StructuredListRow
+                      className="definition"
+                      key={pipeline.metadata.uid}
+                    >
+                      <StructuredListCell>
+                        <Link to={`/pipelines/${pipelineName}/runs`}>
+                          {pipelineName}
+                        </Link>
+                      </StructuredListCell>
+                    </StructuredListRow>
+                  );
+                })}
+              </StructuredListBody>
+            </StructuredListWrapper>
+          );
+        })()}
+      </>
     );
   }
 }

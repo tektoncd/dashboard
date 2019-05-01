@@ -31,12 +31,14 @@ import {
   Tasks,
   TaskRuns
 } from '..';
+import Header from '../../components/Header';
+import Breadcrumbs from '../../components/Breadcrumbs';
 import { fetchExtensions } from '../../actions/extensions';
 import { getExtensions } from '../../reducers';
 
 import '../../components/App/App.scss';
 
-export class App extends Component {
+export /* istanbul ignore next */ class App extends Component {
   componentDidMount() {
     this.props.fetchExtensions();
   }
@@ -46,43 +48,54 @@ export class App extends Component {
 
     return (
       <Router>
-        <Switch>
-          <Route path="/" exact component={Home} />
-          <Redirect
-            from="/pipelines/:pipelineName"
-            exact
-            to="/pipelines/:pipelineName/runs"
-          />
-          <Redirect from="/tasks/:taskName" exact to="/tasks/:taskName/runs" />
-          <Route path="/pipelines" exact component={Pipelines} />
-          <Route path="/tasks" exact component={Tasks} />
-          <Route
-            path="/pipelines/:pipelineName/runs"
-            exact
-            component={PipelineRuns}
-          />
-          <Route path="/tasks/:taskName/runs" exact component={TaskRuns} />
-          <Route
-            path="/pipelines/:pipelineName/runs/:pipelineRunName"
-            component={PipelineRun}
-          />
-          <Route path="/extensions" exact component={Extensions} />
-          {extensions
-            .filter(({ displayName }) => !!displayName)
-            .map(({ displayName, name, source }) => (
-              <Route
-                key={name}
-                path={`/extensions/${name}`}
-                render={({ match }) => (
-                  <Extension
-                    displayName={displayName}
-                    match={match}
-                    source={source}
-                  />
-                )}
+        <>
+          <Header>
+            <Route path="*" component={Breadcrumbs} />
+          </Header>
+          <main>
+            <Switch>
+              <Route path="/" exact component={Home} />
+              <Redirect
+                from="/pipelines/:pipelineName"
+                exact
+                to="/pipelines/:pipelineName/runs"
               />
-            ))}
-        </Switch>
+              <Redirect
+                from="/tasks/:taskName"
+                exact
+                to="/tasks/:taskName/runs"
+              />
+              <Route path="/pipelines" exact component={Pipelines} />
+              <Route path="/tasks" exact component={Tasks} />
+              <Route
+                path="/pipelines/:pipelineName/runs"
+                exact
+                component={PipelineRuns}
+              />
+              <Route path="/tasks/:taskName/runs" exact component={TaskRuns} />
+              <Route
+                path="/pipelines/:pipelineName/runs/:pipelineRunName"
+                component={PipelineRun}
+              />
+              <Route path="/extensions" exact component={Extensions} />
+              {extensions
+                .filter(({ displayName }) => !!displayName)
+                .map(({ displayName, name, source }) => (
+                  <Route
+                    key={name}
+                    path={`/extensions/${name}`}
+                    render={({ match }) => (
+                      <Extension
+                        displayName={displayName}
+                        match={match}
+                        source={source}
+                      />
+                    )}
+                  />
+                ))}
+            </Switch>
+          </main>
+        </>
       </Router>
     );
   }
@@ -92,6 +105,7 @@ App.defaultProps = {
   extensions: []
 };
 
+/* istanbul ignore next */
 const mapStateToProps = state => ({
   extensions: getExtensions(state)
 });
