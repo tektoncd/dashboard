@@ -30,6 +30,6 @@ func (r Resource) getAllNamespaces(request *restful.Request, response *restful.R
 		utils.RespondError(response, err, http.StatusNotFound)
 		return
 	}
-	logging.Log.Debugf("Found namespaces: %s, namespaces")
+	logging.Log.Debugf("Found namespaces: %s", namespaces)
 	response.WriteEntity(namespaces)
 }
