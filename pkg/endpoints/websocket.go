@@ -32,7 +32,7 @@ var pipelineRunsBroadcaster = broadcaster.NewBroadcaster(pipelineRunsChannel)
 func (r Resource) establishPipelineLogsWebsocket(request *restful.Request, response *restful.Response) {
 	connection, err := websocket.UpgradeToWebsocket(request, response)
 	if err != nil {
-		logging.Log.Errorf("Could not upgrade to websocket connection: %s", err)
+		logging.Log.Errorf("could not upgrade to websocket connection: %s", err)
 	}
 	websocket.WriteOnlyWebsocket(connection, logBroadcaster)
 }
@@ -41,8 +41,7 @@ func (r Resource) establishPipelineLogsWebsocket(request *restful.Request, respo
 func (r Resource) establishPipelineRunsWebsocket(request *restful.Request, response *restful.Response) {
 	connection, err := websocket.UpgradeToWebsocket(request, response)
 	if err != nil {
-		logging.Log.Errorf("Could not upgrade to websocket connection: %s", err)
+		logging.Log.Errorf("could not upgrade to websocket connection: %s", err)
 	}
-
 	websocket.WriteOnlyWebsocket(connection, pipelineRunsBroadcaster)
 }

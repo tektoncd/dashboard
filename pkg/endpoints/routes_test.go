@@ -256,7 +256,6 @@ func fakeCRD(t *testing.T, crdType string, identifier string) interface{} {
 	}
 }
 
-// 
 func TestExtensionRegistration(t *testing.T) {
 	t.Log("Checking extension registration")
 
@@ -270,7 +269,7 @@ func TestExtensionRegistration(t *testing.T) {
 				Annotations: map[string]string {"tekton-dashboard-endpoints": "first.next.last", "tekton-dashboard-bundle-location": "Location", "tekton-dashboard-display-name": "Display Name"}, 
 				Labels: map[string]string {"tekton-dashboard-extension": "true",},
 			},
-			Spec: corev1.ServiceSpec {
+			Spec: corev1.ServiceSpec{
 				Ports: []corev1.ServicePort{{Port: 9097}},
 			},
 		},
@@ -283,7 +282,7 @@ func TestExtensionRegistration(t *testing.T) {
 				Annotations: map[string]string {"tekton-dashboard-bundle-location": "Location", "tekton-dashboard-display-name": "Display Name"}, 
 				Labels: map[string]string {"tekton-dashboard-extension": "true",},
 			},
-			Spec: corev1.ServiceSpec {
+			Spec: corev1.ServiceSpec{
 				Ports: []corev1.ServicePort{{Port: 9097}},
 			},
 		},
@@ -295,7 +294,7 @@ func TestExtensionRegistration(t *testing.T) {
 				Name: "none-extension", 
 				Annotations: map[string]string {"tekton-dashboard-endpoints": "/path", "tekton-dashboard-bundle-location": "Location", "tekton-dashboard-display-name": "Display Name"}, 
 			},
-			Spec: corev1.ServiceSpec {
+			Spec: corev1.ServiceSpec{
 				Ports: []corev1.ServicePort{{Port: 9097}},
 			},
 		},
@@ -309,7 +308,6 @@ func TestExtensionRegistration(t *testing.T) {
 	if routes[0].Path != "/v1/extension/extension/first" {
 		t.Errorf("Correct path is not returned: %s", routes[0].Path)
 	}
-
 
 	// Test getAllExtensions function
 	// Sample request and response
@@ -334,4 +332,3 @@ func TestExtensionRegistration(t *testing.T) {
 		t.Errorf("Extension is not returned: %s", result[0].Name)
 	}
 }
-

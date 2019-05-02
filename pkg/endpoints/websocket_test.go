@@ -20,6 +20,7 @@ import (
 	"net/url"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -36,14 +37,13 @@ import (
 var T *testing.T
 
 // Counters for pipelineruns websocket test
-var CreationsRecorded = 0
-var UpdatesRecorded = 0
-var DeletionsRecorded = 0
+// Incremented atomically
+var CreationsRecorded int32
+var UpdatesRecorded int32
+var DeletionsRecorded int32
 
-var CreationMutex = &sync.Mutex{}
-var UpdateMutex = &sync.Mutex{}
-var DeleteMutex = &sync.Mutex{}
-
+// No data is sent through the log websocket
+// Assert connection flow
 func TestLogWebsocket(t *testing.T) {
 	T = t
 	T.Log("Enter TestLogWebsocket...")
@@ -54,23 +54,16 @@ func TestLogWebsocket(t *testing.T) {
 	devopsServer := strings.TrimPrefix(s2.URL, "https://")
 	websocketURL := url.URL{Scheme: "wss", Host: devopsServer, Path: "/v1/websocket/logs"}
 	websocketEndpoint := websocketURL.String()
-	clientSize := 10
-	connectionDur := time.Second * 5
+	const clients int = 10
+	connectionDur := time.Second * 1
 	var wg sync.WaitGroup
-	for i := 1; i <= clientSize; i++ {
+	for i := 1; i <= clients; i++ {
 		wg.Add(1)
 		go clientWebsocket(websocketEndpoint, connectionDur, &wg, i)
 	}
 	T.Log("Waiting for clients to terminate...")
 	wg.Wait()
-
-	// Allow Devops websocket heart beat (every second) to detect failures/unsubscribe clients
-	time.Sleep(time.Second * 2)
-
-	// Ensure there aren't any listeners on broadcaster
-	poolSize := logBroadcaster.PoolSize()
-	checkTestResult("Subscribers", 0, poolSize)
-
+	awaitFatal(func() bool { return logBroadcaster.PoolSize() == 0 }, "logbroadcaster pool should be empty")
 	T.Log("Exit TestLogWebsocket")
 }
 
@@ -87,66 +80,57 @@ func TestPipelineRunWebsocket(t *testing.T) {
 	devopsServer := strings.TrimPrefix(s2.URL, "https://")
 	websocketURL := url.URL{Scheme: "wss", Host: devopsServer, Path: "/v1/websocket/pipelineruns"}
 	websocketEndpoint := websocketURL.String()
-	// Create 10 clients with a lifespan of 30 seconds (should be sufficient for test)
-	clients := 10
-	connectionDur := time.Second * 30
+	const clients int = 10
+	connectionDur := time.Second * 1
 	var wg sync.WaitGroup
 	for i := 1; i <= clients; i++ {
 		wg.Add(1)
 		go clientWebsocket(websocketEndpoint, connectionDur, &wg, i)
 	}
 
-	// Give chance for websockets to be created and check we have 10 subscribers
-	time.Sleep(time.Second * 2)
-	poolSize := pipelineRunsBroadcaster.PoolSize()
-	checkTestResult("Subscribers", 10, poolSize)
+	// Wait until all broadcaster has registered all clients
+	awaitFatal(func() bool { return pipelineRunsBroadcaster.PoolSize() == clients },
+		fmt.Sprintf("Expected %d clients within pool before creating PipelineRuns", clients))
 
+	// Create pipeline and wait until clients receive
 	r.createTestPipelineRun("WebsocketPipelinerun", "123456")
-	time.Sleep(time.Second * 5)
-	r.updateTestPipelineRun("WebsocketPipelinerun", "654321")
-	time.Sleep(time.Second * 5)
-	r.deleteTestPipelineRun("WebsocketPipelinerun")
-	time.Sleep(time.Second * 5)
+	awaitFatal(func() bool { return atomic.LoadInt32(&CreationsRecorded) == int32(clients) },
+		fmt.Sprintf("Expected %d CreationsRecorded", clients))
 
-	// Check that each subscriber received the notification of create, update, delete
-	// Basic check that we have 10 of each recorded
-	checkTestResult("CreationsRecorded", 10, CreationsRecorded)
-	checkTestResult("UpdatesRecorded", 10, UpdatesRecorded)
-	checkTestResult("DeletionsRecorded", 10, DeletionsRecorded)
+	// Update pipeline and wait until clients receive
+	r.updateTestPipelineRun("WebsocketPipelinerun", "654321")
+	awaitFatal(func() bool { return atomic.LoadInt32(&UpdatesRecorded) == int32(clients) },
+		fmt.Sprintf("Expected %d UpdatesRecorded", clients))
+
+	// Delete pipeline and wait until clients receive
+	r.deleteTestPipelineRun("WebsocketPipelinerun")
+	awaitFatal(func() bool { return atomic.LoadInt32(&DeletionsRecorded) == int32(clients) },
+		fmt.Sprintf("Expected %d DeletionsRecorded", clients))
 
 	T.Log("Waiting for clients to terminate...")
 	wg.Wait()
 
-	// Allow Devops websocket heart beat (every second) to detect failures/unsubscribe clients
-	time.Sleep(time.Second * 2)
-
-	// Ensure there aren't any listeners on broadcaster
-	poolSize = pipelineRunsBroadcaster.PoolSize()
-	checkTestResult("Subscribers", 0, poolSize)
+	awaitFatal(func() bool { return pipelineRunsBroadcaster.PoolSize() == 0 },
+		"pipelineRunsBroadcaster pool should be empty")
 
 	T.Log("Exit TestPipelineRunWebsocket")
 }
 
 func clientWebsocket(websocketEndpoint string, readDeadline time.Duration, wg *sync.WaitGroup, identifier int) {
-	defer wg.Done()
 	d := gorillaSocket.Dialer{TLSClientConfig: &tls.Config{RootCAs: nil, InsecureSkipVerify: true}}
-
 	connection, _, err := d.Dial(websocketEndpoint, nil)
 	if err != nil {
 		T.Fatalf("Dial error connecting to %s:, %s\n", websocketEndpoint, err)
 	}
-
 	doneChan := make(chan struct{})
 	deadlineTime := time.Now().Add(readDeadline)
 	connection.SetReadDeadline(deadlineTime)
-
 	go func() {
-		defer websocket.ReportClosing(connection)
 		defer close(doneChan)
+		defer websocket.ReportClosing(connection)
 		for {
 			messageType, message, err := connection.ReadMessage()
 			if err != nil {
-				// Case from closing connection
 				if !strings.Contains(err.Error(), "i/o timeout") {
 					T.Error("Read error:", err)
 				}
@@ -160,28 +144,22 @@ func clientWebsocket(websocketEndpoint string, readDeadline time.Duration, wg *s
 				}
 				switch resp.MessageType {
 				case "PipelineRunCreated":
-					CreationMutex.Lock()
-					CreationsRecorded++
-					CreationMutex.Unlock()
+					atomic.AddInt32(&CreationsRecorded, 1)
 				case "PipelineRunUpdated":
-					UpdateMutex.Lock()
-					UpdatesRecorded++
-					UpdateMutex.Unlock()
+					atomic.AddInt32(&UpdatesRecorded, 1)
 				case "PipelineRunDeleted":
-					DeleteMutex.Lock()
-					DeletionsRecorded++
-					DeleteMutex.Unlock()
+					atomic.AddInt32(&DeletionsRecorded, 1)
 				}
 				//Print out websocket data received
-				fmt.Printf("%v\n", resp)
+				T.Logf("%v\n", resp)
 			}
 		}
 	}()
 	<-doneChan
 	if time.Now().Sub(deadlineTime) < 0 {
-		fmt.Printf("Websocket[%d] terminated early", identifier)
-		T.Errorf("Websocket[%d] terminated early", identifier)
+		T.Errorf("Websocket[%d] terminated early\n", identifier)
 	}
+	wg.Done()
 }
 
 // Util to create pipelinerun
@@ -195,10 +173,10 @@ func (r Resource) createTestPipelineRun(name, resourceVersion string) {
 		Spec: v1alpha1.PipelineRunSpec{},
 	}
 
-	fmt.Println("Creating pipelinerun")
+	T.Log("Creating pipelinerun")
 	_, err := r.PipelineClient.TektonV1alpha1().PipelineRuns("ns1").Create(&PipelineRun1)
 	if err != nil {
-		fmt.Printf("Error creating pipelinerun: %s: %s\n", name, err.Error())
+		T.Logf("Error creating pipelinerun: %s: %s\n", name, err.Error())
 	}
 }
 
@@ -218,16 +196,16 @@ func (r Resource) updateTestPipelineRun(name, newResourceVersion string) {
 	json.NewDecoder(httpWriter.Body).Decode(&pipelinerun)
 	pipelinerun.SetResourceVersion(newResourceVersion)
 
-	fmt.Printf("Updating pipelinerun %s\n", name)
+	T.Logf("Updating pipelinerun %s\n", name)
 	_, err := r.PipelineClient.TektonV1alpha1().PipelineRuns("ns1").Update(&pipelinerun)
 	if err != nil {
-		fmt.Printf("Error updating pipelinerun: %s: %s\n", name, err.Error())
+		T.Logf("Error updating pipelinerun: %s: %s\n", name, err.Error())
 	}
 }
 
 // Util to delete pipelinerun
 func (r Resource) deleteTestPipelineRun(name string) {
-	fmt.Printf("Deleting pipelinerun: %s\n", name)
+	T.Logf("Deleting pipelinerun: %s\n", name)
 	_ = r.PipelineClient.TektonV1alpha1().PipelineRuns("ns1").Delete(name, &metav1.DeleteOptions{})
 }
 
@@ -245,8 +223,24 @@ func setupResourceAndServer() (*Resource, *httptest.Server) {
 // Util to check result
 func checkTestResult(variable string, expectedValue, actualValue int) {
 	if actualValue != expectedValue {
-		fmt.Printf("%s not equal to %d, recorded only %d", variable, expectedValue, actualValue)
 		T.Errorf("%s not equal to %d, recorded only %d", variable, expectedValue, actualValue)
 		T.FailNow()
+	}
+}
+
+// Checks condition until true
+// Use when there is no resource to wait on
+func awaitFatal(checkFunction func() bool, message string) {
+	fatalTimeout := time.Now().Add(time.Second * 5)
+	for {
+		if checkFunction() {
+			return
+		}
+		if time.Now().After(fatalTimeout) {
+			if message == "" {
+				message = "Fatal timeout reached"
+			}
+			T.Fatal(message)
+		}
 	}
 }
