@@ -13,7 +13,6 @@ limitations under the License.
 
 export { default as Extension } from './Extension';
 export { default as Extensions } from './Extensions';
-export { default as Home } from './Home';
 export { default as PipelineRun } from './PipelineRun';
 export { default as PipelineRuns } from './PipelineRuns';
 export { default as Pipelines } from './Pipelines';

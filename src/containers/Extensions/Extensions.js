@@ -62,6 +62,11 @@ export const Extensions = /* istanbul ignore next */ ({
               </StructuredListRow>
             </StructuredListHead>
             <StructuredListBody>
+              {!extensions.length && (
+                <StructuredListRow>
+                  <StructuredListCell>No extensions</StructuredListCell>
+                </StructuredListRow>
+              )}
               {extensions.map(({ displayName, name }) => {
                 return (
                   <StructuredListRow className="definition" key={name}>

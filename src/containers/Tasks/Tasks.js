@@ -26,6 +26,7 @@ import {
 
 import { fetchTasks } from '../../actions/tasks';
 import {
+  getSelectedNamespace,
   getTasks,
   getTasksErrorMessage,
   isFetchingTasks
@@ -36,6 +37,13 @@ import '../../components/Definitions/Definitions.scss';
 export /* istanbul ignore next */ class Tasks extends Component {
   componentDidMount() {
     this.props.fetchTasks();
+  }
+
+  componentDidUpdate(prevProps) {
+    const { namespace } = this.props;
+    if (namespace !== prevProps.namespace) {
+      this.props.fetchTasks();
+    }
   }
 
   render() {
@@ -66,6 +74,11 @@ export /* istanbul ignore next */ class Tasks extends Component {
                 </StructuredListRow>
               </StructuredListHead>
               <StructuredListBody>
+                {!tasks.length && (
+                  <StructuredListRow>
+                    <StructuredListCell>No tasks</StructuredListCell>
+                  </StructuredListRow>
+                )}
                 {tasks.map(task => {
                   const taskName = task.metadata.name;
                   return (
@@ -97,6 +110,7 @@ function mapStateToProps(state) {
   return {
     error: getTasksErrorMessage(state),
     loading: isFetchingTasks(state),
+    namespace: getSelectedNamespace(state),
     tasks: getTasks(state)
   };
 }

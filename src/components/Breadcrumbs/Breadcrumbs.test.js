@@ -18,14 +18,16 @@ import { renderWithRouter } from '../../utils/test';
 
 it('Breadcrumbs renders with default content', () => {
   const { queryByText } = renderWithRouter(
-    <Breadcrumbs match={{ url: '/' }} />
-  );
-  expect(queryByText(/home/i)).toBeTruthy();
-});
-
-it('Breadcrumbs renders the current path', () => {
-  const { queryByText } = renderWithRouter(
     <Breadcrumbs match={{ url: '/pipelines/demo-pipeline' }} />
   );
   expect(queryByText(/demo-pipeline/i)).toBeTruthy();
+});
+
+it('Breadcrumbs removes unnecessary segments', () => {
+  const { queryByText } = renderWithRouter(
+    <Breadcrumbs
+      match={{ url: '/pipelines/demo-pipeline/runs/demo-pipeline-run-1' }}
+    />
+  );
+  expect(queryByText(/runs/i)).toBeFalsy();
 });

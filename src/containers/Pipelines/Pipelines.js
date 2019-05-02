@@ -28,6 +28,7 @@ import { fetchPipelines } from '../../actions/pipeline';
 import {
   getPipelines,
   getPipelinesErrorMessage,
+  getSelectedNamespace,
   isFetchingPipelines
 } from '../../reducers';
 
@@ -36,6 +37,13 @@ import '../../components/Definitions/Definitions.scss';
 export /* istanbul ignore next */ class Pipelines extends Component {
   componentDidMount() {
     this.props.fetchPipelines();
+  }
+
+  componentDidUpdate(prevProps) {
+    const { namespace } = this.props;
+    if (namespace !== prevProps.namespace) {
+      this.props.fetchPipelines();
+    }
   }
 
   render() {
@@ -66,6 +74,11 @@ export /* istanbul ignore next */ class Pipelines extends Component {
                 </StructuredListRow>
               </StructuredListHead>
               <StructuredListBody>
+                {!pipelines.length && (
+                  <StructuredListRow>
+                    <StructuredListCell>No pipelines</StructuredListCell>
+                  </StructuredListRow>
+                )}
                 {pipelines.map(pipeline => {
                   const pipelineName = pipeline.metadata.name;
                   return (
@@ -99,6 +112,7 @@ function mapStateToProps(state) {
   return {
     error: getPipelinesErrorMessage(state),
     loading: isFetchingPipelines(state),
+    namespace: getSelectedNamespace(state),
     pipelines: getPipelines(state)
   };
 }

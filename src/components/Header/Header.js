@@ -14,6 +14,7 @@ limitations under the License.
 import React from 'react';
 
 import { Link } from 'react-router-dom';
+import { Header as CarbonHeader } from 'carbon-components-react/lib/components/UIShell';
 
 import './Header.scss';
 
@@ -21,7 +22,7 @@ import tektonBanner from '../../images/tekton-horizontal-color.png';
 
 export default function Header({ children }) {
   return (
-    <div className="header">
+    <CarbonHeader aria-label="Tekton Dashboard" className="header">
       <Link to="/">
         <img
           alt="Tekton logo and title"
@@ -30,6 +31,6 @@ export default function Header({ children }) {
         />
       </Link>
       {children && <div className="header-children">{children}</div>}
-    </div>
+    </CarbonHeader>
   );
 }

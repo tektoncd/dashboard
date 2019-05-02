@@ -38,7 +38,9 @@ export function getNamespaces(state) {
 }
 
 export function getExtensions(state) {
-  return extensionSelectors.getExtensions(state.extensions);
+  return extensionSelectors
+    .getExtensions(state.extensions)
+    .filter(({ displayName }) => !!displayName);
 }
 
 export function getExtensionsErrorMessage(state) {

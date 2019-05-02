@@ -15,13 +15,17 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { render } from 'react-testing-library';
 import configureStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
 
 import { App } from './App';
 
 it('App renders successfully', () => {
-  const mockStore = configureStore();
+  const middleware = [thunk];
+  const mockStore = configureStore(middleware);
   const store = mockStore({
-    extensions: { byName: {} }
+    extensions: { byName: {} },
+    namespaces: { byName: {} },
+    pipelines: { byNamespace: {} }
   });
   const { queryByText } = render(
     <Provider store={store}>
@@ -34,5 +38,5 @@ it('App renders successfully', () => {
   );
   expect(queryByText(/pipelines/i)).toBeTruthy();
   expect(queryByText(/tasks/i)).toBeTruthy();
-  expect(queryByText(/extensions/i)).toBeFalsy();
+  expect(queryByText(/extensions/i)).toBeTruthy();
 });
