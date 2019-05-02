@@ -14,7 +14,7 @@ limitations under the License.
 import { combineReducers } from 'redux';
 import keyBy from 'lodash.keyby';
 
-function byName(state = {}, action) {
+function byName(state = { default: {} }, action) {
   switch (action.type) {
     case 'NAMESPACES_FETCH_SUCCESS':
       return keyBy(action.data, 'metadata.name');
@@ -64,7 +64,7 @@ export default combineReducers({
 });
 
 export function getNamespaces(state) {
-  return Object.values(state.byName);
+  return Object.keys(state.byName);
 }
 
 export function getSelectedNamespace(state) {

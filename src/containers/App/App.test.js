@@ -25,7 +25,11 @@ it('App renders successfully', () => {
   });
   const { queryByText } = render(
     <Provider store={store}>
-      <App extensions={[]} fetchExtensions={() => {}} />
+      <App
+        extensions={[]}
+        fetchExtensions={() => {}}
+        fetchNamespaces={() => {}}
+      />
     </Provider>
   );
   expect(queryByText(/pipelines/i)).toBeTruthy();

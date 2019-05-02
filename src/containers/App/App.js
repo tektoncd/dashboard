@@ -34,6 +34,7 @@ import {
 import Header from '../../components/Header';
 import Breadcrumbs from '../../components/Breadcrumbs';
 import { fetchExtensions } from '../../actions/extensions';
+import { fetchNamespaces } from '../../actions/namespaces';
 import { getExtensions } from '../../reducers';
 
 import '../../components/App/App.scss';
@@ -41,6 +42,7 @@ import '../../components/App/App.scss';
 export /* istanbul ignore next */ class App extends Component {
   componentDidMount() {
     this.props.fetchExtensions();
+    this.props.fetchNamespaces();
   }
 
   render() {
@@ -111,7 +113,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  fetchExtensions
+  fetchExtensions,
+  fetchNamespaces
 };
 
 export default hot(

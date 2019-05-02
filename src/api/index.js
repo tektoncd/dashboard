@@ -153,3 +153,8 @@ export function getExtensions() {
   const uri = `${apiRoot}/v1/extensions`;
   return get(uri);
 }
+
+export function getNamespaces() {
+  const uri = `${apiRoot}/v1/namespaces`;
+  return get(uri).then(checkData);
+}

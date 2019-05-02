@@ -15,7 +15,9 @@ import namespacesReducer, * as selectors from './namespaces';
 
 it('handles init or unknown actions', () => {
   expect(namespacesReducer(undefined, { type: 'does_not_exist' })).toEqual({
-    byName: {},
+    byName: {
+      default: {}
+    },
     errorMessage: null,
     isFetching: false,
     selected: 'default'
@@ -29,25 +31,22 @@ it('NAMESPACES_FETCH_REQUEST', () => {
 });
 
 it('NAMESPACES_FETCH_SUCCESS', () => {
-  const name = 'pipeline name';
-  const namespace = 'default';
+  const name = 'default';
   const uid = 'some-uid';
-  const pipeline = {
+  const namespace = {
     metadata: {
       name,
-      namespace,
       uid
     },
     other: 'content'
   };
   const action = {
     type: 'NAMESPACES_FETCH_SUCCESS',
-    data: [pipeline],
-    namespace
+    data: [namespace]
   };
 
   const state = namespacesReducer({}, action);
-  expect(selectors.getNamespaces(state, namespace)).toEqual([pipeline]);
+  expect(selectors.getNamespaces(state)).toEqual([name]);
   expect(selectors.isFetchingNamespaces(state)).toBe(false);
 });
 
