@@ -39,14 +39,18 @@ import * as taskSelectors from './tasks';
 import * as taskRunsSelectors from './taskRuns';
 
 const namespace = 'default';
-const extensions = { fake: 'extensions' };
-const pipelines = { fake: 'pipelines' };
-const pipelineRuns = { fake: 'pipelineRuns' };
-const tasks = { fake: 'tasks' };
+const extension = { displayName: 'extension' };
+const pipelines = [{ fake: 'pipeline' }];
+const pipelineRuns = [{ fake: 'pipelineRun' }];
+const tasks = [{ fake: 'task' }];
 const taskRun = { fake: 'taskRun' };
-const taskRuns = { fake: 'taskRuns' };
+const taskRuns = [taskRun];
 const state = {
-  extensions,
+  extensions: {
+    byName: {
+      foo: extension
+    }
+  },
   namespaces: {
     selected: namespace
   },
@@ -78,8 +82,8 @@ it('getNamespaces', () => {
 it('getExtensions', () => {
   jest
     .spyOn(extensionSelectors, 'getExtensions')
-    .mockImplementation(() => extensions);
-  expect(getExtensions(state)).toEqual(extensions);
+    .mockImplementation(() => [extension]);
+  expect(getExtensions(state)).toEqual([extension]);
   expect(extensionSelectors.getExtensions).toHaveBeenCalledWith(
     state.extensions
   );

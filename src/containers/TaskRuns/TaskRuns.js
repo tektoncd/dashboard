@@ -20,6 +20,7 @@ import {
 } from 'carbon-components-react';
 
 import {
+  getSelectedNamespace,
   getTask,
   getTaskRunsByTaskName,
   getTaskRunsErrorMessage
@@ -76,9 +77,12 @@ export /* istanbul ignore next */ class TaskRunsContainer extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { match } = this.props;
+    const { match, namespace } = this.props;
     const { taskName } = match.params;
-    if (taskName !== prevProps.match.params.taskName) {
+    if (
+      taskName !== prevProps.match.params.taskName ||
+      namespace !== prevProps.namespace
+    ) {
       this.setState({ loading: true }); // eslint-disable-line
       this.props.fetchTask(taskName).then(() => {
         this.setState({ loading: false });
@@ -197,6 +201,7 @@ TaskRunsContainer.propTypes = {
 function mapStateToProps(state, props) {
   return {
     error: getTaskRunsErrorMessage(state),
+    namespace: getSelectedNamespace(state),
     taskRuns: getTaskRunsByTaskName(state, props.match.params.taskName),
     task: getTask(state, props.match.params.taskName)
   };

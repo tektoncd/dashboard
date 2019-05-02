@@ -16,15 +16,25 @@ import { connect } from 'react-redux';
 import { hot } from 'react-hot-loader/root';
 import {
   HashRouter as Router,
+  NavLink,
   Redirect,
   Route,
   Switch
 } from 'react-router-dom';
 
 import {
+  Content,
+  SideNav,
+  SideNavDetails,
+  SideNavHeader,
+  SideNavItems,
+  SideNavLink,
+  SideNavSwitcher
+} from 'carbon-components-react/lib/components/UIShell';
+
+import {
   Extension,
   Extensions,
-  Home,
   PipelineRun,
   PipelineRuns,
   Pipelines,
@@ -34,8 +44,12 @@ import {
 import Header from '../../components/Header';
 import Breadcrumbs from '../../components/Breadcrumbs';
 import { fetchExtensions } from '../../actions/extensions';
-import { fetchNamespaces } from '../../actions/namespaces';
-import { getExtensions } from '../../reducers';
+import { fetchNamespaces, selectNamespace } from '../../actions/namespaces';
+import {
+  getExtensions,
+  getNamespaces,
+  getSelectedNamespace
+} from '../../reducers';
 
 import '../../components/App/App.scss';
 
@@ -46,7 +60,7 @@ export /* istanbul ignore next */ class App extends Component {
   }
 
   render() {
-    const { extensions } = this.props;
+    const { extensions, namespace, namespaces } = this.props;
 
     return (
       <Router>
@@ -54,9 +68,33 @@ export /* istanbul ignore next */ class App extends Component {
           <Header>
             <Route path="*" component={Breadcrumbs} />
           </Header>
-          <main>
+          <SideNav isExpanded aria-label="Side navigation">
+            <SideNavHeader icon={<span />}>
+              <SideNavDetails title="Namespace">
+                <SideNavSwitcher
+                  labelText={namespace}
+                  onChange={event => {
+                    this.props.selectNamespace(event.target.value);
+                  }}
+                  options={namespaces}
+                />
+              </SideNavDetails>
+            </SideNavHeader>
+            <SideNavItems>
+              <SideNavLink element={NavLink} icon={<span />} to="/pipelines">
+                Pipelines
+              </SideNavLink>
+              <SideNavLink element={NavLink} icon={<span />} to="/tasks">
+                Tasks
+              </SideNavLink>
+              <SideNavLink element={NavLink} icon={<span />} to="/extensions">
+                Extensions
+              </SideNavLink>
+            </SideNavItems>
+          </SideNav>
+
+          <Content>
             <Switch>
-              <Route path="/" exact component={Home} />
               <Redirect
                 from="/pipelines/:pipelineName"
                 exact
@@ -80,24 +118,22 @@ export /* istanbul ignore next */ class App extends Component {
                 component={PipelineRun}
               />
               <Route path="/extensions" exact component={Extensions} />
-              {extensions
-                .filter(({ displayName }) => !!displayName)
-                .map(({ displayName, name, source }) => (
-                  <Route
-                    key={name}
-                    path={`/extensions/${name}`}
-                    render={({ match }) => (
-                      <Extension
-                        displayName={displayName}
-                        match={match}
-                        name={name}
-                        source={source}
-                      />
-                    )}
-                  />
-                ))}
+              {extensions.map(({ displayName, name, source }) => (
+                <Route
+                  key={name}
+                  path={`/extensions/${name}`}
+                  render={({ match }) => (
+                    <Extension
+                      displayName={displayName}
+                      match={match}
+                      source={source}
+                    />
+                  )}
+                />
+              ))}
+              <Redirect to="/pipelines" />
             </Switch>
-          </main>
+          </Content>
         </>
       </Router>
     );
@@ -105,17 +141,21 @@ export /* istanbul ignore next */ class App extends Component {
 }
 
 App.defaultProps = {
-  extensions: []
+  extensions: [],
+  namespaces: ['default']
 };
 
 /* istanbul ignore next */
 const mapStateToProps = state => ({
-  extensions: getExtensions(state)
+  extensions: getExtensions(state),
+  namespace: getSelectedNamespace(state),
+  namespaces: getNamespaces(state)
 });
 
 const mapDispatchToProps = {
   fetchExtensions,
-  fetchNamespaces
+  fetchNamespaces,
+  selectNamespace
 };
 
 export default hot(

@@ -11,6 +11,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+$feature-flags: (
+    ui-shell: true,
+);
+
 @import '~carbon-components/scss/globals/scss/styles';
 
 body {
@@ -19,4 +23,42 @@ body {
 
 main {
   padding: 2em 5%;
+}
+
+.bx--header ~ {
+  nav.bx--side-nav {
+    top: 7rem;
+    background-color: $ui-background;
+    border-top-color: $ui-03;
+    color: $text-01;
+
+    .bx--side-nav__header {
+      border-bottom-color: $ui-03;
+      padding-bottom: .5em;
+    }
+
+    .bx--side-nav__switcher {
+      .bx--side-nav__select {
+        -webkit-appearance: none;
+        background-color: $field-01;
+        color: $text-01;
+      }
+
+      .bx--side-nav__switcher-chevron {
+        fill: $icon-01;
+      }
+    }
+
+    .bx--side-nav__item:hover {
+      background-color: $hover-ui;
+    }
+
+    .bx--side-nav__link-text {
+      color: $text-01;
+    }
+  }
+
+  .bx--content {
+    margin-top: 7rem;
+  }
 }

@@ -15,23 +15,34 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Breadcrumb, BreadcrumbItem } from 'carbon-components-react';
 
-export default function Breadcrumbs({ match }) {
+export default function Breadcrumbs({ labels, match }) {
   const { url } = match;
-  const pathSegments = url.split('/').filter(Boolean);
+  const pathSegments = url
+    .split('/')
+    .filter(segment => !!segment && segment !== 'runs');
+
   return (
     <Breadcrumb>
-      <BreadcrumbItem>
-        <NavLink exact to="/">
-          Home
-        </NavLink>
-      </BreadcrumbItem>
-      {pathSegments.map((segment, index) => (
-        <BreadcrumbItem key={segment}>
-          <NavLink exact to={`/${pathSegments.slice(0, index + 1).join('/')}`}>
-            {segment}
-          </NavLink>
-        </BreadcrumbItem>
-      ))}
+      {pathSegments.map((segment, index) => {
+        const path = `/${pathSegments.slice(0, index + 1).join('/')}`;
+        return (
+          <BreadcrumbItem key={segment}>
+            <NavLink exact to={path}>
+              {labels[path] || segment}
+            </NavLink>
+          </BreadcrumbItem>
+        );
+      })}
     </Breadcrumb>
   );
 }
+
+const breadcrumbLabels = {
+  '/pipelines': 'Pipelines',
+  '/tasks': 'Tasks',
+  '/extensions': 'Extensions'
+};
+
+Breadcrumbs.defaultProps = {
+  labels: breadcrumbLabels
+};
