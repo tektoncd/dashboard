@@ -29,6 +29,10 @@ export function getSelectedNamespace(state) {
   return namespaceSelectors.getSelectedNamespace(state.namespaces);
 }
 
+export function getNamespaces(state) {
+  return namespaceSelectors.getNamespaces(state.namespaces);
+}
+
 export function getExtensions(state) {
   return extensionSelectors.getExtensions(state.extensions);
 }

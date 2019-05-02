@@ -24,6 +24,7 @@ import {
   getCredential,
   getCredentials,
   getExtensions,
+  getNamespaces,
   getPipeline,
   getPipelineResource,
   getPipelineResources,
@@ -312,6 +313,17 @@ it('getExtensions', () => {
   fetchMock.get(/extension/, extensions);
   return getExtensions().then(response => {
     expect(response).toEqual(extensions);
+    fetchMock.restore();
+  });
+});
+
+it('getNamespaces', () => {
+  const data = {
+    items: 'namespaces'
+  };
+  fetchMock.get(/namespaces/, data);
+  return getNamespaces().then(response => {
+    expect(response).toEqual(data.items);
     fetchMock.restore();
   });
 });

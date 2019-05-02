@@ -14,8 +14,10 @@ limitations under the License.
 import {
   getExtensions,
   getExtensionsErrorMessage,
+  getNamespaces,
   getPipelines,
   getPipelinesErrorMessage,
+  getSelectedNamespace,
   getTasks,
   getTasksErrorMessage,
   isFetchingExtensions,
@@ -23,20 +25,43 @@ import {
   isFetchingTasks
 } from '.';
 import * as extensionSelectors from './extensions';
+import * as namespaceSelectors from './namespaces';
 import * as pipelineSelectors from './pipelines';
 import * as taskSelectors from './tasks';
 
+const namespace = 'default';
 const extensions = { fake: 'extensions' };
 const pipelines = { fake: 'pipelines' };
 const tasks = { fake: 'tasks' };
 const state = {
   extensions,
   namespaces: {
-    selected: 'default'
+    selected: namespace
   },
   pipelines,
   tasks
 };
+
+it('getSelectedNamespace', () => {
+  jest
+    .spyOn(namespaceSelectors, 'getSelectedNamespace')
+    .mockImplementation(() => namespace);
+  expect(getSelectedNamespace(state)).toEqual(namespace);
+  expect(namespaceSelectors.getSelectedNamespace).toHaveBeenCalledWith(
+    state.namespaces
+  );
+});
+
+it('getNamespaces', () => {
+  const namespaces = [namespace];
+  jest
+    .spyOn(namespaceSelectors, 'getNamespaces')
+    .mockImplementation(() => namespaces);
+  expect(getNamespaces(state)).toEqual(namespaces);
+  expect(namespaceSelectors.getNamespaces).toHaveBeenCalledWith(
+    state.namespaces
+  );
+});
 
 it('getExtensions', () => {
   jest
