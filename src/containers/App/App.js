@@ -90,6 +90,7 @@ export /* istanbul ignore next */ class App extends Component {
                       <Extension
                         displayName={displayName}
                         match={match}
+                        name={name}
                         source={source}
                       />
                     )}

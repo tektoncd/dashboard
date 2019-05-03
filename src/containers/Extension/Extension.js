@@ -17,14 +17,50 @@ import ErrorBoundary from '../../components/ErrorBoundary';
 
 import './globals';
 
+/* istanbul ignore next */
+function dynamicImport(source, name) {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    const moduleId = `__tektonDashboardExtension_${name}`;
+
+    const cleanup = () => {
+      script.remove();
+      URL.revokeObjectURL(script.src);
+      delete window[moduleId];
+    };
+
+    script.type = 'module';
+    script.onerror = () => {
+      reject(new Error(`Failed to import ${source}`));
+      cleanup();
+    };
+
+    script.onload = () => {
+      resolve({ default: window[moduleId] });
+      cleanup();
+    };
+
+    const loaderModule = `import extension from '${source}'; window['${moduleId}'] = extension;`;
+    const loaderBlob = new Blob([loaderModule], { type: 'text/javascript' });
+    script.src = URL.createObjectURL(loaderBlob);
+
+    document.head.appendChild(script);
+  });
+}
+
 export default /* istanbul ignore next */ class Extension extends Component {
   constructor(props) {
     super(props);
 
-    const { source } = props;
-    const ExtensionComponent = React.lazy(() =>
-      import(/* webpackIgnore: true */ source)
-    );
+    const { name, source } = props;
+    const ExtensionComponent = React.lazy(() => {
+      try {
+        return new Function(`return import("${source}")`)(); // eslint-disable-line no-new-func
+      } catch (e) {
+        console.warn('dynamic module import not supported, trying fallback'); // eslint-disable-line no-console
+        return dynamicImport(source, name);
+      }
+    });
 
     this.state = { ExtensionComponent };
   }
