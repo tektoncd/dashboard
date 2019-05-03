@@ -1,11 +1,5 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-
-const styleLoader =
-  process.env.NODE_ENV !== 'production'
-    ? { loader: 'style-loader', options: { sourceMap: true } }
-    : MiniCssExtractPlugin.loader;
 
 module.exports = {
   entry: ['./src/index.js'],
@@ -20,14 +14,6 @@ module.exports = {
         use: [
           { loader: 'babel-loader', options: { cacheDirectory: true } },
           'eslint-loader'
-        ]
-      },
-      {
-        test: /\.scss$/,
-        use: [
-          styleLoader,
-          { loader: 'css-loader', options: { sourceMap: true } },
-          { loader: 'sass-loader', options: { sourceMap: true } }
         ]
       },
       {
@@ -47,9 +33,7 @@ module.exports = {
       template: path.resolve(__dirname, 'src', 'index.template.html'),
       meta: {
         viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no'
-        // 'theme-color': '#4285f4'
       }
-      // hash: true
     })
   ]
 };
