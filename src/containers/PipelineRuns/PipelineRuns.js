@@ -24,23 +24,36 @@ import {
   StructuredListWrapper
 } from 'carbon-components-react';
 
+import { getPipelineRuns } from '../../api';
+import { getSelectedNamespace } from '../../reducers';
 import { getStatusIcon, getStatus } from '../../utils';
-import { fetchPipelineRuns } from '../../actions/pipelineRuns';
-
-import {
-  getPipelineRunsByPipelineName,
-  getPipelineRunsErrorMessage,
-  isFetchingPipelineRuns
-} from '../../reducers';
 
 export /* istanbul ignore next */ class PipelineRuns extends Component {
+  state = {
+    error: null,
+    loading: true,
+    pipelineRuns: []
+  };
+
   async componentDidMount() {
-    this.props.fetchPipelineRuns();
+    try {
+      const { match, namespace } = this.props;
+      const { pipelineName } = match.params;
+
+      let pipelineRuns = await getPipelineRuns(namespace);
+      pipelineRuns = pipelineRuns.filter(
+        pipelineRun => pipelineRun.spec.pipelineRef.name === pipelineName
+      );
+      this.setState({ pipelineRuns, loading: false });
+    } catch (error) {
+      this.setState({ error, loading: false });
+    }
   }
 
   render() {
-    const { match, error, loading, pipelineRuns } = this.props;
+    const { match } = this.props;
     const { pipelineName } = match.params;
+    const { error, loading, pipelineRuns } = this.state;
 
     return (
       <>
@@ -117,22 +130,10 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
 }
 
 /* istanbul ignore next */
-function mapStateToProps(state, props) {
+function mapStateToProps(state) {
   return {
-    error: getPipelineRunsErrorMessage(state),
-    loading: isFetchingPipelineRuns(state),
-    pipelineRuns: getPipelineRunsByPipelineName(
-      state,
-      props.match.params.pipelineName
-    )
+    namespace: getSelectedNamespace(state)
   };
 }
 
-const mapDispatchToProps = {
-  fetchPipelineRuns
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(PipelineRuns);
+export default connect(mapStateToProps)(PipelineRuns);

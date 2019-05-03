@@ -16,11 +16,9 @@ import { Provider } from 'react-redux';
 import { waitForElement } from 'react-testing-library';
 import configureStore from 'redux-mock-store';
 
-import thunk from 'redux-thunk';
+import { TaskRunsContainer } from './TaskRuns';
 import * as API from '../../api';
-import TaskRunsContainer from './TaskRuns';
 import { renderWithRouter } from '../../utils/test';
-import store from '../../store';
 
 beforeEach(jest.resetAllMocks);
 
@@ -32,10 +30,12 @@ it('TaskRunsContainer renders', async () => {
     }
   };
 
-  jest
-    .spyOn(API, 'getTask')
-    .mockImplementation(() => [{ metadata: { name: taskName } }]);
-  jest.spyOn(API, 'getTaskRuns').mockImplementation(() => []);
+  const mockStore = configureStore();
+  const store = mockStore({});
+  const tasksCall = jest.spyOn(API, 'getTasks').mockImplementation(() => '');
+  const taskRunsCall = jest
+    .spyOn(API, 'getTaskRuns')
+    .mockImplementation(() => '');
 
   const { getByText } = renderWithRouter(
     <Provider store={store}>
@@ -43,6 +43,8 @@ it('TaskRunsContainer renders', async () => {
     </Provider>
   );
   await waitForElement(() => getByText(/tasks/i));
+  expect(tasksCall).toHaveBeenCalledTimes(1);
+  expect(taskRunsCall).toHaveBeenCalledTimes(0);
 });
 
 it('TaskRunsContainer handles info state', async () => {
@@ -54,29 +56,23 @@ it('TaskRunsContainer handles info state', async () => {
     }
   };
 
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const testStore = mockStore({
-    tasks: {
-      byNamespace: { default: {} }
-    },
-    namespaces: {
-      selected: 'default'
-    },
-    taskRuns: {
-      byId: {},
-      byNamespace: { default: {} },
-      errorMessage: null,
-      isFetching: false
-    }
-  });
+  const mockStore = configureStore();
+  const store = mockStore({});
+  const tasksCall = jest
+    .spyOn(API, 'getTasks')
+    .mockImplementation(() => [{ metadata: { name: taskName } }]);
+  const taskRunsCall = jest
+    .spyOn(API, 'getTaskRuns')
+    .mockImplementation(() => []);
 
   const { getByText } = renderWithRouter(
-    <Provider store={testStore}>
+    <Provider store={store}>
       <TaskRunsContainer match={match} />
     </Provider>
   );
   await waitForElement(() => getByText(notificationMessage));
+  expect(tasksCall).toHaveBeenCalledTimes(1);
+  expect(taskRunsCall).toHaveBeenCalledTimes(1);
 });
 
 it('TaskRunsContainer handles error state', async () => {
@@ -86,27 +82,22 @@ it('TaskRunsContainer handles error state', async () => {
     }
   };
 
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const testStore = mockStore({
-    tasks: {
-      byNamespace: { default: {} }
-    },
-    namespaces: {
-      selected: 'default'
-    },
-    taskRuns: {
-      byId: {},
-      byNamespace: { default: {} },
-      errorMessage: 'fake error message',
-      isFetching: false
-    }
+  const mockStore = configureStore();
+  const store = mockStore({});
+
+  const getTasks = jest.spyOn(API, 'getTasks').mockImplementation(() => {
+    const error = new Error();
+    error.response = {
+      status: 504
+    };
+    throw error;
   });
 
   const { getByText } = renderWithRouter(
-    <Provider store={testStore}>
+    <Provider store={store}>
       <TaskRunsContainer match={match} />
     </Provider>
   );
-  await waitForElement(() => getByText('Error loading task runs'));
+  await waitForElement(() => getByText('Error loading task run'));
+  expect(getTasks).toHaveBeenCalledTimes(1);
 });
