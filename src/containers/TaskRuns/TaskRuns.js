@@ -14,18 +14,10 @@ limitations under the License.
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import {
-  InlineNotification,
-  StructuredListSkeleton
-} from 'carbon-components-react';
+import { InlineNotification } from 'carbon-components-react';
 
-import {
-  getTask,
-  getTaskRunsByTaskName,
-  getTaskRunsErrorMessage,
-  isFetchingTask,
-  isFetchingTaskRuns
-} from '../../reducers';
+import { getTasks, getTaskRuns } from '../../api';
+import { getSelectedNamespace } from '../../reducers';
 
 import RunHeader from '../../components/RunHeader';
 import StepDetails from '../../components/StepDetails';
@@ -38,8 +30,6 @@ import {
 } from '../../utils';
 
 import '../../components/Run/Run.scss';
-import { fetchTask } from '../../actions/task';
-import { fetchTaskRuns } from '../../actions/taskRuns';
 
 export /* istanbul ignore next */ class TaskRunsContainer extends Component {
   // once redux store is available errors will be handled properly with dedicated components
@@ -60,24 +50,34 @@ export /* istanbul ignore next */ class TaskRunsContainer extends Component {
 
   state = {
     notification: null,
+    loading: true,
     selectedStepId: null,
     selectedTaskId: null,
-    runs: []
+    taskRuns: []
   };
 
-  componentDidMount() {
-    const { match } = this.props;
-    const { taskName } = match.params;
-    this.props.fetchTask(taskName)
-      .then(this.props.fetchTaskRuns())
-      .then(this.loadTaskRuns);
+  async componentDidMount() {
+    try {
+      const { match } = this.props;
+      const { taskName } = match.params;
+      await this.loadTaskRuns(taskName);
+    } catch (error) {
+      let message = error;
+      if (error.response) {
+        message = error.response.status === 404 ? 'Not Found' : 'Error';
+      }
+      this.setState({
+        notification: { kind: 'error', message },
+        loading: false
+      });
+    }
   }
 
   componentDidUpdate(prevProps) {
     const { match } = this.props;
     const { taskName } = match.params;
     if (taskName !== prevProps.match.params.taskName) {
-      this.props.fetchTask(taskName).then(this.loadTaskRuns(taskName));
+      this.loadTaskRuns(taskName);
     }
   }
 
@@ -85,29 +85,38 @@ export /* istanbul ignore next */ class TaskRunsContainer extends Component {
     this.setState({ selectedStepId, selectedTaskId });
   };
 
-  loadTaskRuns = () => {
+  async loadTaskRuns(selectedTaskName) {
+    const { namespace } = this.props;
     let notification;
-    const { task } = this.props;
-    const taskRuns = this.props.taskRunsByTaskName;
-    const runs = taskRuns.map(taskRun => {
-      const taskName = taskRun.spec.taskRef.name;
-      const taskRunName = taskRun.metadata.name;
-      const { reason, status: succeeded } = getStatus(taskRun);
-      const pipelineTaskName = taskRunName;
-      const runSteps = stepsStatus(task.spec.steps, taskRun.status.steps);
-      const { startTime } = taskRun.status;
-      return {
-        id: taskRun.metadata.uid,
-        pipelineTaskName,
-        pod: taskRun.status.podName,
-        reason,
-        steps: runSteps,
-        succeeded,
-        taskName,
-        taskRunName,
-        startTime
-      };
-    });
+    const tasks = await getTasks(namespace);
+    const task = tasks.find(
+      currentTask => currentTask.metadata.name === selectedTaskName
+    );
+    let taskRuns = await getTaskRuns(namespace);
+    taskRuns = taskRuns
+      .filter(
+        taskRun =>
+          taskRun.spec.taskRef && taskRun.spec.taskRef.name === selectedTaskName
+      )
+      .map(taskRun => {
+        const taskName = taskRun.spec.taskRef.name;
+        const taskRunName = taskRun.metadata.name;
+        const { reason, status: succeeded } = getStatus(taskRun);
+        const pipelineTaskName = taskRunName;
+        const runSteps = stepsStatus(task.spec.steps, taskRun.status.steps);
+        const { startTime } = taskRun.status;
+        return {
+          id: taskRun.metadata.uid,
+          pipelineTaskName,
+          pod: taskRun.status.podName,
+          reason,
+          steps: runSteps,
+          succeeded,
+          taskName,
+          taskRunName,
+          startTime
+        };
+      });
 
     if (taskRuns.length === 0) {
       notification = {
@@ -116,34 +125,19 @@ export /* istanbul ignore next */ class TaskRunsContainer extends Component {
       };
     }
 
-    this.setState({ runs, notification });
-  };
+    this.setState({ taskRuns, notification, loading: false });
+  }
 
   render() {
     const {
+      loading,
       selectedStepId,
       selectedTaskId,
-      runs,
+      taskRuns,
       notification
     } = this.state;
 
-    const { loading, error } = this.props;
-
-    if (loading && !runs.length) {
-      return <StructuredListSkeleton border />;
-    }
-
-    if (error) {
-      return (
-        <InlineNotification
-          kind="error"
-          title="Error loading task runs"
-          subtitle={error}
-        />
-      );
-    }
-
-    const taskRun = selectedTaskRun(selectedTaskId, runs) || {};
+    const taskRun = selectedTaskRun(selectedTaskId, taskRuns) || {};
 
     const { definition, reason, status, stepName, stepStatus } = taskRunStep(
       selectedStepId,
@@ -165,7 +159,7 @@ export /* istanbul ignore next */ class TaskRunsContainer extends Component {
             <TaskTree
               onSelect={this.handleTaskSelected}
               selectedTaskId={selectedTaskId}
-              taskRuns={runs}
+              taskRuns={taskRuns}
             />
             {selectedStepId && (
               <StepDetails
@@ -193,24 +187,10 @@ TaskRunsContainer.propTypes = {
 };
 
 /* istanbul ignore next */
-function mapStateToProps(state, props) {
+function mapStateToProps(state) {
   return {
-    error: getTaskRunsErrorMessage(state),
-    loading: isFetchingTaskRuns(state),
-    taskRunsByTaskName: getTaskRunsByTaskName(
-      state,
-      props.match.params.taskName
-    ),
-    task: getTask(state, props.match.params.taskName)
+    namespace: getSelectedNamespace(state)
   };
 }
 
-const mapDispatchToProps = {
-  fetchTask,
-  fetchTaskRuns
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(TaskRunsContainer);
+export default connect(mapStateToProps)(TaskRunsContainer);
