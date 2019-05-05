@@ -209,9 +209,11 @@ func (r Resource) GetAllPipelineRunsImpl(namespace, repository, name string) (v1
 		return v1alpha1.PipelineRunList{}, AppResponse{err, "", http.StatusNotFound}
 	}
 	if name != "" {
-		for i := range pipelinerunList.Items {
-			if pipelinerunList.Items[i].Name != name {
-				pipelinerunList.Items = append(pipelinerunList.Items[:i], pipelinerunList.Items[i+1:]...)
+		tmpItems := pipelinerunList.Items
+		pipelinerunList.Items = pipelinerunList.Items[:0]
+		for i := range tmpItems {
+			if tmpItems[i].Spec.PipelineRef.Name == name {
+				pipelinerunList.Items = append(pipelinerunList.Items, tmpItems[i])
 			}
 		}
 	}
@@ -404,9 +406,11 @@ func (r Resource) getAllTaskRuns(request *restful.Request, response *restful.Res
 		return
 	}
 	if name != "" {
-		for i := range taskrunList.Items {
-			if taskrunList.Items[i].Name != name {
-				taskrunList.Items = append(taskrunList.Items[:i], taskrunList.Items[i+1:]...)
+		tmpItems := taskrunList.Items
+		taskrunList.Items = taskrunList.Items[:0]
+		for i := range tmpItems {
+			if tmpItems[i].Spec.TaskRef.Name == name {
+				taskrunList.Items = append(taskrunList.Items, tmpItems[i])
 			}
 		}
 	}
