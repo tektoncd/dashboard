@@ -186,19 +186,32 @@ func TestTaskRun(t *testing.T) {
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "TaskRun1",
 		},
-		Spec: v1alpha1.TaskRunSpec{},
+		Spec: v1alpha1.TaskRunSpec{
+			TaskRef:        &v1alpha1.TaskRef{
+				Name: "Task1",
+			},
+		},
+
 	}
 	TaskRun2 := v1alpha1.TaskRun{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "TaskRun2",
 		},
-		Spec: v1alpha1.TaskRunSpec{},
+		Spec: v1alpha1.TaskRunSpec{
+			TaskRef:        &v1alpha1.TaskRef{
+				Name: "Task2",
+			},
+		},
 	}
 	TaskRun3 := v1alpha1.TaskRun{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "TaskRun3",
 		},
-		Spec: v1alpha1.TaskRunSpec{},
+		Spec: v1alpha1.TaskRunSpec{
+			TaskRef:        &v1alpha1.TaskRef{
+				Name: "Task3",
+			},
+		},
 	}
 
 	// Add sample TaskRuns
@@ -238,7 +251,7 @@ func TestTaskRun(t *testing.T) {
 
 	// Test getAllTaskRuns function with name query
 	// Sample request and response
-	httpReq = dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/taskrun?name=TaskRun1", nil)
+	httpReq = dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/taskrun?name=Task2", nil)
 	req = dummyRestfulRequest(httpReq, "ns1", "")
 	httpWriter = httptest.NewRecorder()
 	resp = dummyRestfulResponse(httpWriter)
@@ -253,8 +266,8 @@ func TestTaskRun(t *testing.T) {
 	if len(result.Items) != 1 {
 		t.Errorf("Number of tasks: expected: %d, returned: %d", 1, len(result.Items))
 	}
-	if result.Items[0].Name != "TaskRun1" {
-		t.Errorf("Task1 is not returned: %s", result.Items[0].Name)
+	if result.Items[0].Name != "TaskRun2" {
+		t.Errorf("TaskRun2 is not returned: %s", result.Items[0].Name)
 	}
 
 	// Test getTaskRun function
@@ -293,21 +306,33 @@ func TestPipelineRun(t *testing.T) {
 			Name:   "PipelineRun1",
 			Labels: labels1,
 		},
-		Spec: v1alpha1.PipelineRunSpec{},
+		Spec: v1alpha1.PipelineRunSpec{
+			PipelineRef: v1alpha1.PipelineRef{
+				Name: "Pipeline1",
+			},
+		},
 	}
 	PipelineRun2 := v1alpha1.PipelineRun{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:   "PipelineRun2",
 			Labels: labels2,
 		},
-		Spec: v1alpha1.PipelineRunSpec{},
+		Spec: v1alpha1.PipelineRunSpec{
+			PipelineRef: v1alpha1.PipelineRef{
+				Name: "Pipeline2",
+			},
+		},
 	}
 	PipelineRun3 := v1alpha1.PipelineRun{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:   "PipelineRun3",
 			Labels: labels1,
 		},
-		Spec: v1alpha1.PipelineRunSpec{},
+		Spec: v1alpha1.PipelineRunSpec{
+			PipelineRef: v1alpha1.PipelineRef{
+				Name: "Pipeline3",
+			},
+		},
 	}
 
 	// Add sample PipelineRuns
@@ -365,7 +390,7 @@ func TestPipelineRun(t *testing.T) {
 
 	// Test getAllPipelineRuns function with name query
 	// Sample request and response
-	httpReq = dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun?name=PipelineRun1", nil)
+	httpReq = dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun?name=Pipeline2", nil)
 	req = dummyRestfulRequest(httpReq, "ns1", "")
 	httpWriter = httptest.NewRecorder()
 	resp = dummyRestfulResponse(httpWriter)
@@ -380,8 +405,8 @@ func TestPipelineRun(t *testing.T) {
 	if len(result.Items) != 1 {
 		t.Errorf("Number of PipelineRuns: expected: %d, returned: %d", 1, len(result.Items))
 	}
-	if result.Items[0].Name != "PipelineRun1" {
-		t.Errorf("PipelineRun1 is not returned: %s", result.Items[0].Name)
+	if result.Items[0].Name != "PipelineRun2" {
+		t.Errorf("PipelineRun2 is not returned: %s", result.Items[0].Name)
 	}
 
 	// Test getPipelineRun function
