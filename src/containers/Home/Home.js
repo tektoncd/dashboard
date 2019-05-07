@@ -17,7 +17,6 @@ import { Link } from 'react-router-dom';
 import {
   StructuredListBody,
   StructuredListCell,
-  StructuredListHead,
   StructuredListRow,
   StructuredListWrapper
 } from 'carbon-components-react';
@@ -30,11 +29,6 @@ export const Home = /* istanbul ignore next */ ({ extensions }) => {
   return (
     <>
       <StructuredListWrapper border selection>
-        <StructuredListHead>
-          <StructuredListRow head>
-            <StructuredListCell head>Task</StructuredListCell>
-          </StructuredListRow>
-        </StructuredListHead>
         <StructuredListBody>
           <StructuredListRow className="pipeline">
             <StructuredListCell>
