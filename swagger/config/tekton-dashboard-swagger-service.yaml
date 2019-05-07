@@ -1,0 +1,18 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: dashboard-swagger
+  labels:
+    tekton-dashboard-extension: "true"
+  annotations:
+    tekton-dashboard-endpoints: "/"
+    tekton-dashboard-display-name: "tekton_dashboard_swagger"
+spec:
+  selector:
+    app: tekton-dashboard-swagger
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080
+  type:
+    NodePort

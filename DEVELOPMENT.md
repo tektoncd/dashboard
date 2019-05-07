@@ -198,6 +198,8 @@ Run `npm run storybook:build` to build the static storybook files. The build art
 
 ## API definitions
 
+API definitions are documented in the [OpenAPI](https://swagger.io/docs/specification/about/) format in addition to the document below.  Please maintain the [swagger/tekton-dashboard-api.yaml](swagger/tekton-dashboard-api.yaml) as well as this file when the API definitions are changed. The swagger UI is available as the extension of the Tekton dashboard.  Refer to [swagger/README.md](swagger/README.md) to enable it.
+
 The backend API provides the following endpoints at `/v1/namespaces/<namespace>`:
 
 __GET endpoints__

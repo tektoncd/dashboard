@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tekton-dashboard-swagger
+  labels: 
+    app: tekton-dashboard-swagger  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tekton-dashboard-swagger
+  template:
+    metadata:
+      name: tekton-dashboard-swagger
+      labels:
+        app: tekton-dashboard-swagger
+    spec:
+      containers:
+      - name: tekton-dashboard-swagger
+        image: <image name>:<image tag>
+        ports:
+        - containerPort: 8080
+

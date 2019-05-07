@@ -1,0 +1,788 @@
+openapi: 3.0.0
+info:
+  title: Tekton Dashboard
+  description: >-
+    Tekton Dashboard API provides the REST API access to the Tekton Pipeline resources.
+  version: 0.0.1
+servers:
+  - url: '{protocol}://{host}:{port}/v1/namespaces/{namespace}'
+    description: 'Running in the tekton-dashboard pod'
+    variables:
+      protocol:
+        enum:
+          - http
+          - https
+        default: http
+      host:
+        default: localhost
+      port:
+        default: '9097'
+      namespace:
+        default: tekton-pipelines
+        description: >-
+          namespace where the Tekton resources (Pipelines, Tasks, etc.) are
+          installed
+paths:
+  /pipelines/:
+    get:
+      summary: Returns a list of Pipelines
+      description: A Pipeline defines a list of tasks to execute in order. "https://github.com/tektoncd/pipeline/blob/master/docs/pipelines.md" for details
+      parameters:
+        - in: path
+          name: namespace
+          schema:
+            type: string
+            example: tekton-pipelines
+          required: true
+          description: namespace in which the Pipelines are installed
+      responses:
+        '200':
+          description: A JSON array of Pipelines
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/pipeline'
+        '404':
+          description: An error occurred getting the Pipeline list
+  '/pipelines/{name}':
+    get:
+      summary: Returns a sinlge Pipeline
+      description: A Pipeline defines a list of tasks to execute in order. "https://github.com/tektoncd/pipeline/blob/master/docs/pipelines.md" for details
+      parameters:
+        - in: path
+          name: namespace
+          schema:
+            type: string
+            example: tekton-pipelines
+          required: true
+          description: namespace in which the Pipelines are installed
+        - in: path
+          name: name
+          schema:
+            type: string
+            example: demo-pipeline
+          required: true
+          description: name of the Pipeline to retrieve
+      responses:
+        '200':
+          description: A JSON object representing the requested Pipeline
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pipeline'
+        '404':
+          description: An error occurred getting the Pipeline
+  /pipelineruns/:
+    get:
+      summary: Returns a list of PipelineRuns
+      description: Creation of a PipelineRun will trigger the creation of TaskRuns for each Task in your pipeline. "https://github.com/tektoncd/pipeline/blob/master/docs/pipelineruns.md" for details
+      parameters:
+        - in: path
+          name: namespace
+          schema:
+            type: string
+            example: tekton-pipelines
+          required: true
+          description: namespace in which the Pipelines are installed
+      responses:
+        '200':
+          description: A JSON array of PipelineRuns
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/pipelinerun'
+        '404':
+          description: An error occurred getting the PipelineRun list
+  '/pipelineruns/{name}':
+    get:
+      summary: Returns a sinlge PipelineRun
+      description: Creation of a PipelineRun will trigger the creation of TaskRuns for each Task in your pipeline. "https://github.com/tektoncd/pipeline/blob/master/docs/pipelineruns.md" for details.
+      parameters:
+        - in: path
+          name: namespace
+          schema:
+            type: string
+            example: tekton-pipelines
+          required: true
+          description: namespace in which the Pipelines are installed
+        - in: path
+          name: name
+          schema:
+            type: string
+            example: demo-pipelinerun
+          required: true
+          description: name of the PipelineRun to retrieve
+      responses:
+        '200':
+          description: A JSON object representing the requested PipelineRun
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pipelinerun'
+        '404':
+          description: An error occurred getting the PipelineRun
+  /pipelineresources/:
+    get:
+      summary: Returns a list of PipelineResources
+      description: PipelinesResources in a pipeline are the set of objects that are going to be used as inputs to a Task and can be output by a Task. "https://github.com/tektoncd/pipeline/blob/master/docs/resources.md" for details.
+      parameters:
+        - in: path
+          name: namespace
+          schema:
+            type: string
+            example: tekton-pipelines
+          required: true
+          description: namespace in which the Pipelines are installed
+      responses:
+        '200':
+          description: A JSON array of PipelineResources
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/pipelineresource'
+        '404':
+          description: An error occurred getting the PipelineResource list
+  '/pipelineresources/{name}':
+    get:
+      summary: Returns a sinlge PipelineResource
+      description: PipelinesResources in a pipeline are the set of objects that are going to be used as inputs to a Task and can be output by a Task. "https://github.com/tektoncd/pipeline/blob/master/docs/resources.md" for details.
+      parameters:
+        - in: path
+          name: namespace
+          schema:
+            type: string
+            example: tekton-pipelines
+          required: true
+          description: namespace in which the Pipelines are installed
+        - in: path
+          name: name
+          schema:
+            type: string
+            example: demo-pipelineresource
+          required: true
+          description: name of the PipelineResource to retrieve
+      responses:
+        '200':
+          description: A JSON object representing the requested PipelineResource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pipelineresource'
+        '404':
+          description: An error occurred getting the PipelineResource
+  /tasks/:
+    get:
+      summary: Returns a list of Tasks
+      description: A Task is a collection of sequential steps you would want to run as part of your continuous integration flow. "https://github.com/tektoncd/pipeline/blob/master/docs/tasks.md" for details.
+      parameters:
+        - in: path
+          name: namespace
+          schema:
+            type: string
+            example: tekton-pipelines
+          required: true
+          description: namespace in which the Pipelines are installed
+      responses:
+        '200':
+          description: A JSON array of Tasks
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/task'
+        '404':
+          description: An error occurred getting the Task list
+  '/tasks/{name}':
+    get:
+      summary: Returns a sinlge Task
+      description: A Task is a collection of sequential steps you would want to run as part of your continuous integration flow. "https://github.com/tektoncd/pipeline/blob/master/docs/tasks.md" for details.
+      parameters:
+        - in: path
+          name: namespace
+          schema:
+            type: string
+            example: tekton-pipelines
+          required: true
+          description: namespace in which the Pipelines are installed
+        - in: path
+          name: name
+          schema:
+            type: string
+            example: demo-task
+          required: true
+          description: name of the Task to retrieve
+      responses:
+        '200':
+          description: A JSON object representing the requested Task
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/task'
+        '404':
+          description: An error occurred getting the Task
+  /taskruns/:
+    get:
+      summary: Returns a list of TaskRuns
+      description: TaskRun resource object is used to create and run on-cluster processes to completion. "https://github.com/tektoncd/pipeline/blob/master/docs/taskruns.md" for details.
+      parameters:
+        - in: path
+          name: namespace
+          schema:
+            type: string
+            example: tekton-pipelines
+          required: true
+          description: namespace in which the Pipelines are installed
+      responses:
+        '200':
+          description: A JSON array of TaskRuns
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/taskrun'
+        '404':
+          description: An error occurred getting the TaskRun list
+  '/taskruns/{name}':
+    get:
+      summary: Returns a sinlge TaskRun
+      description: TaskRun resource object is used to create and run on-cluster processes to completion. "https://github.com/tektoncd/pipeline/blob/master/docs/taskruns.md" for details.
+      parameters:
+        - in: path
+          name: namespace
+          schema:
+            type: string
+            example: tekton-pipelines
+          required: true
+          description: namespace in which the Pipelines are installed
+        - in: path
+          name: name
+          schema:
+            type: string
+            example: demo-taskrun
+          required: true
+          description: name of the TaskRun to retrieve
+      responses:
+        '200':
+          description: A JSON object representing the requested TaskRun
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/taskrun'
+        '404':
+          description: An error occurred getting the TaskRun
+  '/logs/{pod-name}':
+    get:
+      summary: Returns a log of pod
+      parameters:
+        - in: path
+          name: namespace
+          schema:
+            type: string
+            example: tekton-pipelines
+          required: true
+          description: namespace in which the Pipelines are installed
+        - in: path
+          name: pod-name
+          schema:
+            type: string
+            example: demo-pod-xxx-xxx
+          required: true
+          description: name of the pod to retrieve
+      responses:
+        '200':
+          description: A log of the pod requested
+          content: 
+            "application/json": 
+              "schema": 
+                "type": "string"
+        '404':
+          description: An error occurred getting the log or no pod found by the given name
+  '/taskrunlogs/{taskrun-name}':
+    get:
+      summary: Returns a log of TaskRun
+      parameters:
+        - in: path
+          name: namespace
+          schema:
+            type: string
+            example: tekton-pipelines
+          required: true
+          description: namespace in which the Pipelines are installed
+        - in: path
+          name: taskrun-name
+          schema:
+            type: string
+            example: demo-taskrun
+          required: true
+          description: name of the taskrun to retrieve
+      responses:
+        '200':
+          description: A log of the taskrun requested
+          content: 
+            "application/json": 
+              "schema": 
+                "type": "string"
+  '/pipelinerunlogs/{pipelinerun-name}':
+    get:
+      summary: Returns a log of PipelineRun
+      parameters:
+        - in: path
+          name: namespace
+          schema:
+            type: string
+            example: tekton-pipelines
+          required: true
+          description: namespace in which the Pipelines are installed
+        - in: path
+          name: pipelinerun-name
+          schema:
+            type: string
+            example: demo-pipelinerun
+          required: true
+          description: name of the pipelinerun to retrieve
+      responses:
+        '200':
+          description: A log of the pipelinerun requested
+          content: 
+            "application/json": 
+              "schema": 
+                "type": "string"
+  /credentials/:
+    get:
+      summary: Returns a list of Credentials
+      description: Credential provides authentication for the build system using Kubernetes' first-class Secret types. "https://github.com/tektoncd/pipeline/blob/master/docs/auth.md" for details.
+      parameters:
+        - in: path
+          name: namespace
+          schema:
+            type: string
+            example: tekton-pipelines
+          required: true
+          description: namespace in which the Pipelines are installed
+      responses:
+        '200':
+          description: A JSON array of Credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/credential'
+  '/credentials/{name}':
+    get:
+      summary: Returns a sinlge Credential
+      description: Credential provides authentication for the build system using Kubernetes' first-class Secret types. "https://github.com/tektoncd/pipeline/blob/master/docs/auth.md" for details.
+      parameters:
+        - in: path
+          name: namespace
+          schema:
+            type: string
+            example: tekton-pipelines
+          required: true
+          description: namespace in which the Pipelines are installed
+        - in: path
+          name: name
+          schema:
+            type: string
+            example: demo-secret
+          required: true
+          description: name of the Credential to retrieve
+      responses:
+        '200':
+          description: A JSON object representing the requested Credential
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/credential'
+  '/credentials':
+    post:
+      summary: Creates a Credential
+      description: Credential provides authentication for the build system using Kubernetes' first-class Secret types. "https://github.com/tektoncd/pipeline/blob/master/docs/auth.md" for details.
+      parameters:
+        - in: path
+          name: namespace
+          schema:
+            type: string
+            example: tekton-pipelines
+          required: true
+          description: namespace in which the Pipelines are installed
+      requestBody:
+        description: A JSON object representing the requested Credential
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/credential'
+      responses:
+        '201':
+          description: Credential created OK and sets the 'Content-Location' header
+        '400':
+          description: Bad request
+        '406':
+          description: No request body
+        '500':
+          description: Internal error
+    put:
+      summary: Updates a Credential
+      description: Credential provides authentication for the build system using Kubernetes' first-class Secret types. "https://github.com/tektoncd/pipeline/blob/master/docs/auth.md" for details.
+      parameters:
+        - in: path
+          name: namespace
+          schema:
+            type: string
+            example: tekton-pipelines
+          required: true
+          description: namespace in which the Pipelines are installed
+        - in: path
+          name: name
+          schema:
+            type: string
+            example: demo-secret
+          required: true
+          description: name of the Credential to update
+      requestBody:
+        description: A JSON object representing the requested Credential
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+      responses:
+        '204':
+          description: Credential updated OK
+        '400':
+          description: Bad request
+    delete:
+      summary: Delete a Credential by name
+      description: Credential provides authentication for the build system using Kubernetes' first-class Secret types. "https://github.com/tektoncd/pipeline/blob/master/docs/auth.md" for details.
+      parameters:
+        - in: path
+          name: namespace
+          schema:
+            type: string
+            example: tekton-pipelines
+          required: true
+          description: namespace in which the Pipelines are installed
+        - in: path
+          name: name
+          schema:
+            type: string
+            example: demo-secret
+          required: true
+          description: name of the Credential to delete
+      responses:
+        '200':
+          description: Credential updated OK
+        '400':
+          description: Bad request
+        '500':
+          description: Internal error
+  '/pipelinerun':
+    post:
+      summary: Creates a PipelineRun
+      description: Optional extended description in CommonMark or HTML.
+      parameters:
+        - in: path
+          name: namespace
+          schema:
+            type: string
+            example: tekton-pipelines
+          required: true
+          description: namespace in which the Pipelines are installed
+      requestBody:
+        description: A JSON object representing the requested PipelineRun
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/pipelinerunrequest'
+      responses:
+        '201':
+          description: PipelineRun created OK
+        '400':
+          description: Bad request
+        '412':
+          description: No Pipeline to create the PipelineRun not found
+    put:
+      summary: Update a PipelineRun status
+      description: Optional extended description in CommonMark or HTML.
+      parameters:
+        - in: path
+          name: namespace
+          schema:
+            type: string
+            example: tekton-pipelines
+          required: true
+          description: namespace in which the Pipelines are installed
+        - in: path
+          name: name
+          schema:
+            type: string
+            example: demo-pipelinerun
+          required: true
+          description: name of the PipelineRun to update
+      requestBody:
+        description: A JSON object representing the requested PipelineRun
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/pipelinerunrequest'
+      responses:
+        '204':
+          description: PipelineRun canceled successfully
+        '400':
+          description: Bad request
+        '404':
+          description: Requested PipelineRun not found
+        '412':
+          description: Status was already set to that
+        '500':
+          description: PipelineRun could not be stopped
+components:
+  schemas:
+    metadata:
+      type: object
+      properties:
+        selfLink:
+          type: string
+        resourceVersion:
+          type: string
+    resource:
+      type: object
+      properties:
+        name:
+          type: string
+        type: 
+          type: string
+    pipelineTask:
+      type: object
+      properties:
+        name:
+          type: string
+        taskRef:
+          type: object
+          properties:
+            name:
+              type: string
+            king:
+              type: object
+            apiVersion:
+              type: string
+        runAfter:
+          type: array
+          items:
+            type: string
+        resources:
+          type: object
+        params:
+          type: array
+          items:
+            $ref: '#/components/schemas/pipelineParam'
+    pipelineParam:
+      type: object
+      properties:
+        name: 
+          type: string
+        value:
+          type: string
+        default:
+          type: string
+    pipeline:
+      type: object
+      properties:
+        spec:
+          type: object
+          properties:
+            resources:
+              type: array
+              items:
+                $ref: '#/components/schemas/resource'
+            tasks:
+              type: array
+              items:
+                $ref: '#/components/schemas/pipelineTask'
+            params:
+              type: array
+              items:
+                $ref: '#/components/schemas/pipelineParam'
+            status:
+              type: object
+        metadata:
+          $ref: '#/components/schemas/metadata'
+    pipelinerun:
+      type: object
+      properties:
+        spec:
+          type: object
+          properties:
+            pipelineRef:
+              type: object
+            trigger:
+              type: object
+            results:
+              type: object
+            status:
+              type: object
+            timeout:
+              type: object
+            nodeselector:
+              type: object
+            affinity:
+              type: object
+            resources:
+              type: array
+              items:
+                type: object
+            params:
+              type: array
+              items:
+                type: object
+            tolerations:
+              type: array
+              items:
+                type: object
+        metadata:
+          $ref: '#/components/schemas/metadata'
+    pipelineresource:
+      type: object
+      properties:
+        spec:
+          type: object
+          properties:
+            type:
+              type: object
+            params:
+              type: array
+              items:
+                type: object
+            secrets:
+              type: array
+              items:
+                type: object
+        metadata:
+          $ref: '#/components/schemas/metadata'
+    task:
+      type: object
+      properties:
+        spec:
+          type: object
+          properties:
+            inputs:
+              type: object
+            outputs:
+              type: object
+            steps:
+              type: array
+              items:
+                type: object
+            volumes:
+              type: array
+              items:
+                type: object
+            containerTemplete:
+              type: object
+        metadata:
+          $ref: '#/components/schemas/metadata'
+    taskrun:
+      type: object
+      properties:
+        spec:
+          type: object
+          properties:
+            trigger:
+              type: object
+            inputs:
+              type: object
+            outputs:
+              type: object
+            results:
+              type: object
+            serviceAccount:
+              type: string
+            taskRef:
+              type: object
+            taskSpec:
+              type: object
+            status:
+              type: object
+            timeout:
+              type: object
+            nodeSelector:
+              type: object
+            affinity:
+              type: object
+            tolerations:
+              type: array
+              items:
+                type: object
+        metadata:
+          $ref: '#/components/schemas/metadata'
+    credential:
+      type: object
+      properties:
+        name:
+          type: string
+        username:
+          type: string
+        password:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+        resourceVersion:
+          type: string
+        url:
+          type: array
+          items:
+            type: string 
+        serviceAccount:
+          type: string
+    pipelinerunrequest:
+      type: object
+      properties:
+        pipelinename:
+          type: string
+        serviceaccount:
+          type: string
+        registrylocation:
+          type: string
+        gitresourcename:
+          type: string
+        imageresourcename:
+          type: string
+        gitcommit:
+          type: string
+        repourl:
+          type: string
+        reponame:
+          type: string
+
+
+
