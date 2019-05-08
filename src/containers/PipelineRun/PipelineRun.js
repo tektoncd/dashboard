@@ -84,7 +84,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
 
   loadTaskRuns = (pipelineRun, taskRunNames) => {
     let runs = taskRunNames.map(taskRunName =>
-      getTaskRun(store.getState(), taskRunName)
+      getTaskRun(store.getState(), { name: taskRunName })
     );
 
     const {
@@ -205,7 +205,9 @@ function mapStateToProps(state, props) {
       getPipelineRunsErrorMessage(state) ||
       getTasksErrorMessage(state) ||
       getTaskRunsErrorMessage(state),
-    pipelineRun: getPipelineRun(state, props.match.params.pipelineRunName),
+    pipelineRun: getPipelineRun(state, {
+      name: props.match.params.pipelineRunName
+    }),
     tasks: getTasks(state)
   };
 }

@@ -123,10 +123,9 @@ function mapStateToProps(state, props) {
   return {
     error: getPipelineRunsErrorMessage(state),
     loading: isFetchingPipelineRuns(state),
-    pipelineRuns: getPipelineRunsByPipelineName(
-      state,
-      props.match.params.pipelineName
-    )
+    pipelineRuns: getPipelineRunsByPipelineName(state, {
+      name: props.match.params.pipelineName
+    })
   };
 }
 

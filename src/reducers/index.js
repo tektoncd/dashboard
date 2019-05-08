@@ -51,8 +51,10 @@ export function isFetchingExtensions(state) {
   return extensionSelectors.isFetchingExtensions(state.extensions);
 }
 
-export function getPipelines(state) {
-  const namespace = getSelectedNamespace(state);
+export function getPipelines(
+  state,
+  { namespace = getSelectedNamespace(state) } = {}
+) {
   return pipelineSelectors.getPipelines(state.pipelines, namespace);
 }
 
@@ -64,18 +66,25 @@ export function isFetchingPipelines(state) {
   return pipelineSelectors.isFetchingPipelines(state.pipelines);
 }
 
-export function getPipelineRuns(state) {
-  const namespace = getSelectedNamespace(state);
+export function getPipelineRuns(
+  state,
+  { namespace = getSelectedNamespace(state) } = {}
+) {
   return pipelineRunsSelectors.getPipelineRuns(state.pipelineRuns, namespace);
 }
 
-export function getPipelineRunsByPipelineName(state, name) {
-  const runs = getPipelineRuns(state);
+export function getPipelineRunsByPipelineName(
+  state,
+  { name, namespace = getSelectedNamespace(state) }
+) {
+  const runs = getPipelineRuns(state, { namespace });
   return runs.filter(pipelineRun => pipelineRun.spec.pipelineRef.name === name);
 }
 
-export function getPipelineRun(state, name) {
-  const namespace = getSelectedNamespace(state);
+export function getPipelineRun(
+  state,
+  { name, namespace = getSelectedNamespace(state) }
+) {
   return pipelineRunsSelectors.getPipelineRun(
     state.pipelineRuns,
     name,
@@ -91,13 +100,17 @@ export function isFetchingPipelineRuns(state) {
   return pipelineRunsSelectors.isFetchingPipelineRuns(state.pipelineRuns);
 }
 
-export function getTaskRun(state, name) {
-  const namespace = getSelectedNamespace(state);
+export function getTaskRun(
+  state,
+  { name, namespace = getSelectedNamespace(state) }
+) {
   return taskRunsSelectors.getTaskRun(state.taskRuns, name, namespace);
 }
 
-export function getTaskRuns(state) {
-  const namespace = getSelectedNamespace(state);
+export function getTaskRuns(
+  state,
+  { namespace = getSelectedNamespace(state) } = {}
+) {
   return taskRunsSelectors.getTaskRuns(state.taskRuns, namespace);
 }
 
@@ -109,18 +122,25 @@ export function isFetchingTaskRuns(state) {
   return taskRunsSelectors.isFetchingTaskRuns(state.taskRuns);
 }
 
-export function getTaskRunsByTaskName(state, name) {
-  const runs = getTaskRuns(state);
+export function getTaskRunsByTaskName(
+  state,
+  { name, namespace = getSelectedNamespace(state) }
+) {
+  const runs = getTaskRuns(state, { namespace });
   return runs.filter(taskRun => taskRun.spec.taskRef.name === name);
 }
 
-export function getTasks(state) {
-  const namespace = getSelectedNamespace(state);
+export function getTasks(
+  state,
+  { namespace = getSelectedNamespace(state) } = {}
+) {
   return taskSelectors.getTasks(state.tasks, namespace);
 }
 
-export function getTask(state, name) {
-  const namespace = getSelectedNamespace(state);
+export function getTask(
+  state,
+  { name, namespace = getSelectedNamespace(state) }
+) {
   return taskSelectors.getTask(state.tasks, name, namespace);
 }
 
