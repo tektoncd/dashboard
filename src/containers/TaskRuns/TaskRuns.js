@@ -203,8 +203,10 @@ function mapStateToProps(state, props) {
   return {
     error: getTaskRunsErrorMessage(state),
     namespace: getSelectedNamespace(state),
-    taskRuns: getTaskRunsByTaskName(state, props.match.params.taskName),
-    task: getTask(state, props.match.params.taskName)
+    taskRuns: getTaskRunsByTaskName(state, {
+      name: props.match.params.taskName
+    }),
+    task: getTask(state, { name: props.match.params.taskName })
   };
 }
 

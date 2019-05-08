@@ -13,10 +13,12 @@ limitations under the License.
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import * as ReactRedux from 'react-redux';
 import * as ReactRouterDOM from 'react-router-dom';
 import * as CarbonComponentsReact from 'carbon-components-react';
 
 window.CarbonComponentsReact = CarbonComponentsReact;
 window.React = React;
 window.ReactDOM = ReactDOM;
+window.ReactRedux = ReactRedux;
 window.ReactRouterDOM = ReactRouterDOM;

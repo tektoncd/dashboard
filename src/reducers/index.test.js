@@ -18,7 +18,9 @@ import {
   getPipelines,
   getPipelinesErrorMessage,
   getSelectedNamespace,
+  getPipelineRun,
   getPipelineRuns,
+  getPipelineRunsByPipelineName,
   getPipelineRunsErrorMessage,
   getTasks,
   getTasksErrorMessage,
@@ -153,6 +155,54 @@ it('getPipelineRuns', () => {
   );
 });
 
+it('getPipelineRunsByPipelineName', () => {
+  const id = 'pipelineId';
+  const name = 'pipelineName';
+  const pipeline = {
+    spec: {
+      pipelineRef: {
+        name
+      }
+    }
+  };
+  const pipelineRunsToFilter = [
+    pipeline,
+    { spec: { pipelineRef: { name: 'another pipeline' } } }
+  ];
+
+  const pipelineRunsState = {
+    pipelineRuns: {
+      byId: { [id]: pipeline },
+      byNamespace: { [namespace]: { [name]: id } }
+    }
+  };
+
+  jest
+    .spyOn(pipelineRunsSelectors, 'getPipelineRuns')
+    .mockImplementation(() => pipelineRunsToFilter);
+  expect(getPipelineRunsByPipelineName(pipelineRunsState, { name })).toEqual([
+    pipeline
+  ]);
+  expect(pipelineRunsSelectors.getPipelineRuns).toHaveBeenCalledWith(
+    pipelineRunsState.pipelineRuns,
+    namespace
+  );
+});
+
+it('getPipelineRun', () => {
+  const name = 'pipelineRunName';
+  const pipelineRun = { fake: 'pipelineRun' };
+  jest
+    .spyOn(pipelineRunsSelectors, 'getPipelineRun')
+    .mockImplementation(() => pipelineRun);
+  expect(getPipelineRun(state, { name })).toEqual(pipelineRun);
+  expect(pipelineRunsSelectors.getPipelineRun).toHaveBeenCalledWith(
+    state.pipelineRuns,
+    name,
+    namespace
+  );
+});
+
 it('getPipelineRunsErrorMessage', () => {
   const errorMessage = 'fake error message';
   jest
@@ -198,7 +248,7 @@ it('isFetchingTasks', () => {
 it('getTaskRun', () => {
   const name = 'test';
   jest.spyOn(taskRunsSelectors, 'getTaskRun').mockImplementation(() => taskRun);
-  expect(getTaskRun(state, 'test')).toEqual(taskRun);
+  expect(getTaskRun(state, { name: 'test' })).toEqual(taskRun);
   expect(taskRunsSelectors.getTaskRun).toHaveBeenCalledWith(
     state.taskRuns,
     name,
