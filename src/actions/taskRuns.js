@@ -22,13 +22,13 @@ export function fetchTaskRunsSuccess(data, namespace) {
   };
 }
 
-export function fetchTaskRuns() {
+export function fetchTaskRuns(taskName) {
   return async (dispatch, getState) => {
     dispatch({ type: 'TASK_RUNS_FETCH_REQUEST' });
     let taskRuns;
     try {
       const namespace = getSelectedNamespace(getState());
-      taskRuns = await getTaskRuns(namespace);
+      taskRuns = await getTaskRuns(namespace, taskName);
       dispatch(fetchTaskRunsSuccess(taskRuns, namespace));
     } catch (error) {
       dispatch({ type: 'TASK_RUNS_FETCH_FAILURE', error });

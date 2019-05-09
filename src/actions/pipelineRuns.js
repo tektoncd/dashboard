@@ -37,13 +37,13 @@ export function fetchPipelineRun(name) {
   };
 }
 
-export function fetchPipelineRuns() {
+export function fetchPipelineRuns(pipelineName) {
   return async (dispatch, getState) => {
     dispatch({ type: 'PIPELINE_RUNS_FETCH_REQUEST' });
     let pipelineRuns;
     try {
       const namespace = getSelectedNamespace(getState());
-      pipelineRuns = await getPipelineRuns(namespace);
+      pipelineRuns = await getPipelineRuns(namespace, pipelineName);
       dispatch(fetchPipelineRunsSuccess(pipelineRuns, namespace));
     } catch (error) {
       dispatch({ type: 'PIPELINE_RUNS_FETCH_FAILURE', error });

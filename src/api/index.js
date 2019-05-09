@@ -24,7 +24,7 @@ export function getAPIRoot() {
 
 const apiRoot = getAPIRoot();
 
-export function getAPI(type, { name = '', namespace } = {}) {
+export function getAPI(type, { name = '', namespace } = {}, queryParams) {
   return [
     apiRoot,
     '/v1/namespaces/',
@@ -32,7 +32,8 @@ export function getAPI(type, { name = '', namespace } = {}) {
     '/',
     type,
     '/',
-    encodeURIComponent(name)
+    encodeURIComponent(name),
+    queryParams ? `?${new URLSearchParams(queryParams).toString()}` : ''
   ].join('');
 }
 
@@ -64,8 +65,12 @@ export function getPipeline(name, namespace) {
   return get(uri);
 }
 
-export function getPipelineRuns(namespace) {
-  const uri = getAPI('pipelinerun', { namespace });
+export function getPipelineRuns(namespace, pipelineName) {
+  let queryParams;
+  if (pipelineName) {
+    queryParams = { name: pipelineName };
+  }
+  const uri = getAPI('pipelinerun', { namespace }, queryParams);
   return get(uri).then(checkData);
 }
 
@@ -89,8 +94,12 @@ export function getTask(name, namespace) {
   return get(uri);
 }
 
-export function getTaskRuns(namespace) {
-  const uri = getAPI('taskrun', { namespace });
+export function getTaskRuns(namespace, taskName) {
+  let queryParams;
+  if (taskName) {
+    queryParams = { name: taskName };
+  }
+  const uri = getAPI('taskrun', { namespace }, queryParams);
   return get(uri).then(checkData);
 }
 
