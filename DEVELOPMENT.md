@@ -382,14 +382,14 @@ __Credentials__
 ```
 POST /v1/namespaces/<namespace>/credentials
 Create a new credential
-Request body must contain name, username, password, type ('accesstoken' or 'userpass'), description and the URL that the credential will be used for (e.g. the Git server). It can also include serviceAccount that gets patched with the secret.
+Request body must contain a name and type ('accesstoken' or 'userpass'). They may contain a description and the URL that the credential will be used for (e.g. the Git server). It can also include serviceAccount that gets patched with the secret. Accesstokens must contain an 'accesstoken' and type userpass must contain 'username' and 'password'. 
 
 Returns HTTP code 201 if the credential was created OK and sets the 'Content-Location' header
 Returns HTTP code 400 if a bad request was provided
 Returns HTTP code 406 if no body is provided
 Returns HTTP code 500 if an error occurred creating the credential
 
-Example POST (non-trivial as it involves the URL map):
+Example POSTs (non-trivial as it involves the URL map):
 
 {
     "name": "mysecretname",
@@ -399,6 +399,12 @@ Example POST (non-trivial as it involves the URL map):
     "description": "my secret for github",
     "url": {"tekton.dev/git-0": "https://github.com"}
     "serviceAccount": "sa1"    
+}
+
+{
+    "name": "mytoken",
+    "type", "accesstoken",
+    "accesstoken": "34ecf56accce4"
 }
 ```
 
