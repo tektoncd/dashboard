@@ -29,20 +29,25 @@ import (
 )
 
 type credential struct {
-	Name            string            `json:"name"`
-	Username        string            `json:"username"`
-	Password        string            `json:"password"`
-	Description     string            `json:"description"`
-	Type            string            `json:"type"` // must have the value 'accesstoken' or 'userpass'
+	Name            string            `json:"name,omitempty"`
+	Type            string            `json:"type"` // must have the value 'accesstoken', 'userpass' or 'dockerregistry'
+	Username        string            `json:"username,omitempty"`
+	Password        string            `json:"password,omitempty"`
+	AccessToken     string            `json:"accesstoken,omitempty"`
+	DockerServer    string            `json:"dockerserver,omitempty"`
+	DockerUsername  string            `json:"dockerusername,omitempty"`
+	DockerEmail     string            `json:"dockeruseremail,omitempty"`
+	DockerPassword  string            `json:"dockerpassword,omitempty"`
+	Description     string            `json:"description,omitempty"`
 	ResourceVersion string            `json:"resourceVersion,omitempty"`
-	URL             map[string]string `json:"url"`
+	URL             map[string]string `json:"url,omitempty"`
 	ServiceAccount  string            `json:"serviceAccount,omitempty"`
 }
 
-var typeAccessToken = "accesstoken"
-var typeUserPass = "userpass"
-
 const (
+	typeAccessToken        string = "accesstoken"
+	typeUserPass           string = "userpass"
+	typeDockerRegistry     string = "dockerregistry"
 	dashboardKey           string = "tekton-dashboard"
 	dashboardValue         string = "true"
 	dashboardLabelSelector string = dashboardKey + "=" + dashboardValue // must have format "<key>=<value>"
@@ -290,30 +295,41 @@ func (r Resource) verifySecretExists(secretName string, namespace string, respon
 
 /* Verify required parameters are in credential struct
  * Required parameters:
+ *  - Type (must have the value 'accesstoken' 'userpass' or 'dockerregistry)
  *  - Name
+ * If type == userpass
  *  - Username
  *  - Password
- *  - Type (must have the value 'accesstoken' or 'userpass')
+ * else if type == accesstoken
+ *  - AccessToken
+ * else if type == dockerregistry
+ *  - DockerServer
+ *  - DockerUsername
+ *  - DockerPassword
  */
 func (r Resource) verifyCredentialParameters(cred credential, response *restful.Response) bool {
-	if cred.Name == "" ||
-		cred.Username == "" ||
-		cred.Password == "" ||
-		cred.URL == nil ||
-		(cred.Type != typeAccessToken && cred.Type != typeUserPass) {
-
-		errorMessage := fmt.Sprintf("Error: Username, Password, Name, URL and Type ('%s' or '%s') must all be supplied.", typeAccessToken, typeUserPass)
-		utils.RespondErrorMessage(response, errorMessage, http.StatusBadRequest)
-		return false
+	errorMessage := ""
+	if cred.Name == "" || cred.Type == "" || (cred.Type != typeAccessToken && cred.Type != typeUserPass && cred.Type != typeDockerRegistry) {
+		errorMessage = fmt.Sprintf("Error: Name and Type ('%s', '%s' or '%s' must be specified", typeAccessToken, typeUserPass, typeDockerRegistry)
+	} else if cred.Type == typeUserPass && (cred.Username == "" || cred.Password == "") {
+		errorMessage = fmt.Sprintf("Error: Username and Password must all be supplied for Type %s", cred.Type)
+	} else if cred.Type == typeAccessToken && cred.AccessToken == "" {
+		errorMessage = fmt.Sprintf("Error: AccessToken must be supplied for Type %s", cred.Type)
+	} else if cred.Type == typeDockerRegistry && (cred.DockerServer == "" || cred.DockerUsername == "" || cred.DockerPassword == "") {
+		errorMessage = fmt.Sprintf("Error: DockerServer, Username and Password must be supplied for Type %s", cred.Type)
 	}
 	for key := range cred.URL {
 		if strings.Index(key, "tekton.dev/docker-") != 0 && strings.Index(key, "tekton.dev/git-") != 0 {
-			errorMessage := fmt.Sprintf("Error: URL key must start with \"tekton.dev/docker-\" or \"tekton.dev/get-\" invalid URL: %s", key)
-			utils.RespondErrorMessage(response, errorMessage, http.StatusBadRequest)
-			return false
+			if errorMessage != "" {
+				errorMessage += "\n"
+			}
+			errorMessage += fmt.Sprintf("Error: URL key must start with \"tekton.dev/docker-\" or \"tekton.dev/git-\" invalid URL: %s\n", key)
 		}
 	}
-
+	if errorMessage != "" {
+		utils.RespondErrorMessage(response, errorMessage, http.StatusBadRequest)
+		return false
+	}
 	return true
 }
 
@@ -331,15 +347,30 @@ func getQueryEntity(entityPointer interface{}, request *restful.Request, respons
 func secretToCredential(secret *corev1.Secret, mask bool) credential {
 	labels := secret.GetLabels()
 	saName, _ := labels[serviceAccountLabelKey]
-	cred := credential{
-		Name:            secret.GetName(),
-		Username:        string(secret.Data["username"]),
-		Password:        string(secret.Data["password"]),
-		Description:     string(secret.Data["description"]),
-		Type:            string(secret.Data["type"]),
-		URL:             secret.ObjectMeta.Annotations,
-		ResourceVersion: secret.GetResourceVersion(),
-		ServiceAccount:  saName,
+	var cred credential
+	switch secretType := string(secret.Data["type"]); secretType {
+	case typeUserPass:
+		cred = credential{
+			Name:            secret.GetName(),
+			Username:        string(secret.Data["username"]),
+			Password:        string(secret.Data["password"]),
+			Description:     string(secret.Data["description"]),
+			Type:            secretType,
+			URL:             secret.ObjectMeta.Annotations,
+			ResourceVersion: secret.GetResourceVersion(),
+			ServiceAccount:  saName,
+		}
+	case typeAccessToken:
+		cred = credential{
+			Name:            secret.GetName(),
+			AccessToken:     string(secret.Data["accesstoken"]),
+			Description:     string(secret.Data["description"]),
+			Type:            secretType,
+			URL:             secret.ObjectMeta.Annotations,
+			ResourceVersion: secret.GetResourceVersion(),
+			ServiceAccount:  saName,
+		}
+		// TODO: support for typeDockerRegistry
 	}
 	if mask {
 		cred.Password = "********"
@@ -353,10 +384,18 @@ func credentialToSecret(cred credential, namespace string, response *restful.Res
 	secret := corev1.Secret{}
 	secret.SetNamespace(namespace)
 	secret.SetName(cred.Name)
-	secret.Type = corev1.SecretTypeBasicAuth
 	secret.Data = make(map[string][]byte)
-	secret.Data["username"] = []byte(cred.Username)
-	secret.Data["password"] = []byte(cred.Password)
+	switch cred.Type {
+	case typeUserPass:
+		secret.Type = corev1.SecretTypeBasicAuth
+		secret.Data["username"] = []byte(cred.Username)
+		secret.Data["password"] = []byte(cred.Password)
+	case typeAccessToken:
+		secret.Type = corev1.SecretTypeOpaque
+		secret.Data["accesstoken"] = []byte(cred.AccessToken)
+	default:
+		// TODO: add support for corev1.SecretTypeDockerConfigJson
+	}
 	secret.Data["description"] = []byte(cred.Description)
 	secret.Data["type"] = []byte(cred.Type)
 	secret.ObjectMeta.Annotations = cred.URL
@@ -373,7 +412,7 @@ func credentialToSecret(cred credential, namespace string, response *restful.Res
 	}
 
 	labels := map[string]string{
-		dashboardKey: dashboardValue,
+		dashboardKey:           dashboardValue,
 		serviceAccountLabelKey: saName,
 	}
 	secret.SetLabels(labels)
@@ -382,12 +421,12 @@ func credentialToSecret(cred credential, namespace string, response *restful.Res
 	return &secret
 }
 
-// addSecretToSA - Add secret to service account 
+// addSecretToSA - Add secret to service account
 func (r Resource) addSecretToSA(saName, secretName, namespaceName string) bool {
 	logging.Log.Debugf("Service account to patch is %s", saName)
 	logging.Log.Debugf("Namespace of service account is %s", namespaceName)
 	sa := corev1.ServiceAccount{
-		Secrets: []corev1.ObjectReference {{Name: secretName},},
+		Secrets: []corev1.ObjectReference{{Name: secretName}},
 	}
 
 	marshaledSA, err := json.Marshal(sa)
@@ -403,7 +442,7 @@ func (r Resource) addSecretToSA(saName, secretName, namespaceName string) bool {
 	if err != nil {
 		logging.Log.Infof("Service Account %s doesn't exist. Creating..", saName)
 		_, err = r.K8sClient.CoreV1().ServiceAccounts(namespaceName).
-			Create(&corev1.ServiceAccount{ObjectMeta: metav1.ObjectMeta{Name: saName,},})
+			Create(&corev1.ServiceAccount{ObjectMeta: metav1.ObjectMeta{Name: saName}})
 		if err != nil {
 			logging.Log.Errorf("error occurred: %s", err.Error())
 			return false
@@ -422,12 +461,12 @@ func (r Resource) addSecretToSA(saName, secretName, namespaceName string) bool {
 
 // path - struct for patch operation
 type Patch struct {
-	Operation       string            `json:"op"`
-	Path            string            `json:"path"`
+	Operation string `json:"op"`
+	Path      string `json:"path"`
 }
 
-// removeSecretFromSA - remove secret from service account 
-func (r Resource) removeSecretFromSA(saName string, secretName string , namespaceName string) {
+// removeSecretFromSA - remove secret from service account
+func (r Resource) removeSecretFromSA(saName string, secretName string, namespaceName string) {
 	logging.Log.Debugf("Service account to unpatch is %s", saName)
 	logging.Log.Debugf("Namespace of service account is %s", namespaceName)
 
@@ -448,7 +487,7 @@ func (r Resource) removeSecretFromSA(saName string, secretName string , namespac
 	}
 	if found {
 		path := fmt.Sprintf("/secrets/%d", entry)
-		data := []Patch {{ Operation: "remove", Path: path }} 
+		data := []Patch{{Operation: "remove", Path: path}}
 		patch, err := json.Marshal(data)
 		logging.Log.Debugf("Patch JSON: %s", string(patch))
 		_, err = r.K8sClient.CoreV1().ServiceAccounts(namespaceName).

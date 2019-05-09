@@ -242,9 +242,8 @@ func fakeCRD(t *testing.T, crdType string, identifier string) interface{} {
 	case "credential":
 		return &credential{
 			Name:        "fakeresource",
-			Username:    "personal-access-token",
-			Password:    "passwordaccesstoken",
-			Description: "access token credential",
+			AccessToken: "thisismyaccesstoken",
+			Description: "access token de jour",
 			Type:        "accesstoken",
 			URL: map[string]string{
 				"tekton.dev/git-0": "https://github.com",
@@ -265,9 +264,9 @@ func TestExtensionRegistration(t *testing.T) {
 	resource.K8sClient.CoreV1().Services(namespace).Create(
 		&corev1.Service{
 			ObjectMeta: metav1.ObjectMeta{
-				Name: "extension", 
-				Annotations: map[string]string {"tekton-dashboard-endpoints": "first.next.last", "tekton-dashboard-bundle-location": "Location", "tekton-dashboard-display-name": "Display Name"}, 
-				Labels: map[string]string {"tekton-dashboard-extension": "true",},
+				Name:        "extension",
+				Annotations: map[string]string{"tekton-dashboard-endpoints": "first.next.last", "tekton-dashboard-bundle-location": "Location", "tekton-dashboard-display-name": "Display Name"},
+				Labels:      map[string]string{"tekton-dashboard-extension": "true"},
 			},
 			Spec: corev1.ServiceSpec{
 				Ports: []corev1.ServicePort{{Port: 9097}},
@@ -278,9 +277,9 @@ func TestExtensionRegistration(t *testing.T) {
 	resource.K8sClient.CoreV1().Services(namespace).Create(
 		&corev1.Service{
 			ObjectMeta: metav1.ObjectMeta{
-				Name: "extension2", 
-				Annotations: map[string]string {"tekton-dashboard-bundle-location": "Location", "tekton-dashboard-display-name": "Display Name"}, 
-				Labels: map[string]string {"tekton-dashboard-extension": "true",},
+				Name:        "extension2",
+				Annotations: map[string]string{"tekton-dashboard-bundle-location": "Location", "tekton-dashboard-display-name": "Display Name"},
+				Labels:      map[string]string{"tekton-dashboard-extension": "true"},
 			},
 			Spec: corev1.ServiceSpec{
 				Ports: []corev1.ServicePort{{Port: 9097}},
@@ -291,8 +290,8 @@ func TestExtensionRegistration(t *testing.T) {
 	resource.K8sClient.CoreV1().Services(namespace).Create(
 		&corev1.Service{
 			ObjectMeta: metav1.ObjectMeta{
-				Name: "none-extension", 
-				Annotations: map[string]string {"tekton-dashboard-endpoints": "/path", "tekton-dashboard-bundle-location": "Location", "tekton-dashboard-display-name": "Display Name"}, 
+				Name:        "none-extension",
+				Annotations: map[string]string{"tekton-dashboard-endpoints": "/path", "tekton-dashboard-bundle-location": "Location", "tekton-dashboard-display-name": "Display Name"},
 			},
 			Spec: corev1.ServiceSpec{
 				Ports: []corev1.ServicePort{{Port: 9097}},
