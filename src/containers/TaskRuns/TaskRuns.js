@@ -66,13 +66,7 @@ export /* istanbul ignore next */ class TaskRunsContainer extends Component {
   componentDidMount() {
     const { match } = this.props;
     const { taskName } = match.params;
-    Promise.all([
-      this.props.fetchTask(taskName),
-      this.props.fetchTaskRuns()
-    ]).then(() => {
-      this.setState({ loading: false });
-      this.loadTaskRuns();
-    });
+    this.fetchTaskAndRuns(taskName);
   }
 
   componentDidUpdate(prevProps) {
@@ -80,10 +74,7 @@ export /* istanbul ignore next */ class TaskRunsContainer extends Component {
     const { taskName } = match.params;
     if (taskName !== prevProps.match.params.taskName) {
       this.setState({ loading: true }); // eslint-disable-line
-      this.props.fetchTask(taskName).then(() => {
-        this.setState({ loading: false });
-        this.loadTaskRuns();
-      });
+      this.fetchTaskAndRuns(taskName);
     }
   }
 
@@ -122,6 +113,16 @@ export /* istanbul ignore next */ class TaskRunsContainer extends Component {
     }
     this.setState({ taskRuns, notification });
   };
+
+  fetchTaskAndRuns(taskName) {
+    Promise.all([
+      this.props.fetchTask(taskName),
+      this.props.fetchTaskRuns(taskName)
+    ]).then(() => {
+      this.setState({ loading: false });
+      this.loadTaskRuns();
+    });
+  }
 
   render() {
     const {

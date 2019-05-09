@@ -123,6 +123,18 @@ it('getPipelineRuns', () => {
   });
 });
 
+it('getPipelineRuns With Query Params', () => {
+  const pipelineName = 'pipelineName';
+  const data = {
+    items: 'pipelineRuns'
+  };
+  fetchMock.get(/pipelinerun/, data);
+  return getPipelineRuns(pipelineName).then(pipelineRuns => {
+    expect(pipelineRuns).toEqual(data.items);
+    fetchMock.restore();
+  });
+});
+
 it('getPipelineRun', () => {
   const pipelineRunName = 'foo';
   const data = { fake: 'pipelineRun' };
@@ -174,6 +186,18 @@ it('getTaskRuns', () => {
   };
   fetchMock.get(/taskrun/, data);
   return getTaskRuns().then(taskRuns => {
+    expect(taskRuns).toEqual(data.items);
+    fetchMock.restore();
+  });
+});
+
+it('getTaskRuns With Query Params', () => {
+  const taskName = 'taskName';
+  const data = {
+    items: 'taskRuns'
+  };
+  fetchMock.get(/taskrun/, data);
+  return getTaskRuns(taskName).then(taskRuns => {
     expect(taskRuns).toEqual(data.items);
     fetchMock.restore();
   });

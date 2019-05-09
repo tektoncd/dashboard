@@ -35,7 +35,9 @@ import {
 
 export /* istanbul ignore next */ class PipelineRuns extends Component {
   async componentDidMount() {
-    this.props.fetchPipelineRuns();
+    const { params } = this.props.match;
+    const { pipelineName } = params;
+    this.props.fetchPipelineRuns(pipelineName);
   }
 
   render() {
