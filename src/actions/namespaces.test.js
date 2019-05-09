@@ -39,7 +39,7 @@ it('fetchNamespacesSuccess', () => {
 
 it('fetchNamespaces', async () => {
   const namespace = 'default';
-  const pipelines = { fake: 'pipelines' };
+  const namespaces = { fake: 'namespaces' };
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const store = mockStore();
@@ -47,11 +47,11 @@ it('fetchNamespaces', async () => {
   jest
     .spyOn(selectors, 'getSelectedNamespace')
     .mockImplementation(() => namespace);
-  jest.spyOn(API, 'getNamespaces').mockImplementation(() => pipelines);
+  jest.spyOn(API, 'getNamespaces').mockImplementation(() => namespaces);
 
   const expectedActions = [
     { type: 'NAMESPACES_FETCH_REQUEST' },
-    fetchNamespacesSuccess(pipelines, namespace)
+    fetchNamespacesSuccess(namespaces, namespace)
   ];
 
   await store.dispatch(fetchNamespaces());
