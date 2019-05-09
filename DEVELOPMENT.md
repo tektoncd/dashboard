@@ -231,6 +231,7 @@ Returns HTTP code 404 if an error occurred getting the Pipeline
 __PipelineRuns__
 ```
 GET /v1/namespaces/<namespace>/pipelinerun
+Get all Tekton PipelineRuns, also supports '?name=<pipeline-name>' querying
 Get all Tekton PipelineRuns, also supports '?repository=https://gitserver/foo/bar' querying
 Returns HTTP code 200 and a list of PipelineRuns, optionally matching the above query, in the given namespace
 Returns HTTP code 404 if an error occurred getting the PipelineRun list
@@ -258,6 +259,7 @@ __TaskRuns__
 ```
 GET /v1/namespaces/<namespace>/taskrun
 Get all Tekton TaskRuns
+Get all Tekton TaskRuns, also supports '?name=<task-name>' querying
 Returns HTTP code 200 and a list of TaskRuns in the given namespace 
 Returns HTTP code 404 if an error occurred getting the TaskRun list
 

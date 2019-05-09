@@ -14,8 +14,10 @@ limitations under the License.
 import React from 'react';
 import { waitForElement } from 'react-testing-library';
 
+import { Provider } from 'react-redux';
+import thunk from 'redux-thunk';
+import configureStore from 'redux-mock-store';
 import { PipelineRunContainer } from './PipelineRun';
-import * as API from '../../api';
 import { renderWithRouter } from '../../utils/test';
 
 beforeEach(jest.resetAllMocks);
@@ -28,16 +30,38 @@ it('PipelineRunContainer renders', async () => {
       pipelineRunName
     }
   };
-  const getPipelineRun = jest
-    .spyOn(API, 'getPipelineRun')
-    .mockImplementation(() => '');
-  const getTasks = jest.spyOn(API, 'getTasks').mockImplementation(() => '');
+  const middleware = [thunk];
+  const mockStore = configureStore(middleware);
+  const testStore = mockStore({
+    tasks: {
+      byNamespace: { default: {} }
+    },
+    namespaces: {
+      selected: 'default'
+    },
+    pipelineRuns: {
+      byId: {},
+      byNamespace: { default: {} },
+      errorMessage: null,
+      isFetching: false
+    }
+  });
+
   const { getByText } = renderWithRouter(
-    <PipelineRunContainer match={match} />
+    <Provider store={testStore}>
+      <PipelineRunContainer
+        match={match}
+        fetchTaskRuns={() => Promise.resolve()}
+        fetchPipelineRun={() => Promise.resolve()}
+        fetchTasks={() => Promise.resolve()}
+        error={null}
+        loading={false}
+      />
+    </Provider>
   );
-  await waitForElement(() => getByText(pipelineRunName));
-  expect(getPipelineRun).toHaveBeenCalledTimes(1);
-  expect(getTasks).toHaveBeenCalledTimes(1);
+  await waitForElement(() =>
+    getByText(`Pipeline Run ${pipelineRunName} not found`)
+  );
 });
 
 it('PipelineRunContainer handles error state', async () => {
@@ -47,18 +71,34 @@ it('PipelineRunContainer handles error state', async () => {
       pipelineRunName: 'bar'
     }
   };
-  const getPipelineRun = jest
-    .spyOn(API, 'getPipelineRun')
-    .mockImplementation(() => {
-      const error = new Error();
-      error.response = {
-        status: 504
-      };
-      throw error;
-    });
+
+  const middleware = [thunk];
+  const mockStore = configureStore(middleware);
+  const testStore = mockStore({
+    tasks: {
+      byNamespace: { default: {} }
+    },
+    namespaces: {
+      selected: 'default'
+    },
+    pipelineRuns: {
+      byId: {},
+      byNamespace: { default: {} },
+      errorMessage: 'Error',
+      isFetching: false
+    }
+  });
+
   const { getByText } = renderWithRouter(
-    <PipelineRunContainer match={match} />
+    <Provider store={testStore}>
+      <PipelineRunContainer
+        match={match}
+        error="Error"
+        fetchTaskRuns={() => Promise.resolve()}
+        fetchPipelineRun={() => Promise.resolve()}
+        fetchTasks={() => Promise.resolve()}
+      />
+    </Provider>
   );
-  await waitForElement(() => getByText('Error'));
-  expect(getPipelineRun).toHaveBeenCalledTimes(1);
+  await waitForElement(() => getByText('Error loading pipeline run'));
 });

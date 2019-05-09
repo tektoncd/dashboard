@@ -17,7 +17,7 @@ import keyBy from 'lodash.keyby';
 function byId(state = {}, action) {
   switch (action.type) {
     case 'TASKS_FETCH_SUCCESS':
-      return keyBy(action.data, 'metadata.uid');
+      return { ...state, ...keyBy(action.data, 'metadata.uid') };
     default:
       return state;
   }
@@ -26,13 +26,13 @@ function byId(state = {}, action) {
 function byNamespace(state = {}, action) {
   switch (action.type) {
     case 'TASKS_FETCH_SUCCESS':
-      const tasks = {};
+      const { namespace } = action;
+      const tasks = state[namespace] || {};
       action.data.forEach(task => {
         const { name, uid } = task.metadata;
         tasks[name] = uid;
       });
 
-      const { namespace } = action;
       return {
         ...state,
         [namespace]: tasks
