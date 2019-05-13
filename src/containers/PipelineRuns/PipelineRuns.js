@@ -30,11 +30,27 @@ import { fetchPipelineRuns } from '../../actions/pipelineRuns';
 import {
   getPipelineRunsByPipelineName,
   getPipelineRunsErrorMessage,
+  getSelectedNamespace,
   isFetchingPipelineRuns
 } from '../../reducers';
 
 export /* istanbul ignore next */ class PipelineRuns extends Component {
-  async componentDidMount() {
+  componentDidMount() {
+    this.fetchPipelineRuns();
+  }
+
+  componentDidUpdate(prevProps) {
+    const { match, namespace } = this.props;
+    const { pipelineName } = match.params;
+    const { match: prevMatch, namespace: prevNamespace } = prevProps;
+    const { pipelineName: prevPipelineName } = prevMatch.params;
+
+    if (namespace !== prevNamespace || pipelineName !== prevPipelineName) {
+      this.fetchPipelineRuns();
+    }
+  }
+
+  fetchPipelineRuns() {
     const { params } = this.props.match;
     const { pipelineName } = params;
     this.props.fetchPipelineRuns(pipelineName);
@@ -123,6 +139,7 @@ function mapStateToProps(state, props) {
   return {
     error: getPipelineRunsErrorMessage(state),
     loading: isFetchingPipelineRuns(state),
+    namespace: getSelectedNamespace(state),
     pipelineRuns: getPipelineRunsByPipelineName(state, {
       name: props.match.params.pipelineName
     })
