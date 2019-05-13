@@ -22,6 +22,7 @@ import {
 import {
   getPipelineRun,
   getPipelineRunsErrorMessage,
+  getSelectedNamespace,
   getTasks,
   getTaskRun,
   getTasksErrorMessage,
@@ -55,13 +56,21 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   };
 
   componentDidMount() {
-    const { match } = this.props;
+    this.fetchData();
+  }
+
+  componentDidUpdate(prevProps) {
+    const { match, namespace } = this.props;
     const { pipelineRunName } = match.params;
-    Promise.all([
-      this.props.fetchPipelineRun(pipelineRunName),
-      this.props.fetchTasks(),
-      this.props.fetchTaskRuns()
-    ]).then(() => this.setState({ loading: false }));
+    const { match: prevMatch, namespace: prevNamespace } = prevProps;
+    const { pipelineRunName: prevPipelineRunName } = prevMatch.params;
+
+    if (
+      namespace !== prevNamespace ||
+      pipelineRunName !== prevPipelineRunName
+    ) {
+      this.fetchData();
+    }
   }
 
   handleTaskSelected = (selectedTaskId, selectedStepId) => {
@@ -112,6 +121,19 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
 
     return runs;
   };
+
+  fetchData() {
+    const { match } = this.props;
+    const { pipelineRunName } = match.params;
+    this.setState({ loading: true }, async () => {
+      await Promise.all([
+        this.props.fetchPipelineRun(pipelineRunName),
+        this.props.fetchTasks(),
+        this.props.fetchTaskRuns()
+      ]);
+      this.setState({ loading: false });
+    });
+  }
 
   render() {
     const { match, error } = this.props;
@@ -205,6 +227,7 @@ function mapStateToProps(state, props) {
       getPipelineRunsErrorMessage(state) ||
       getTasksErrorMessage(state) ||
       getTaskRunsErrorMessage(state),
+    namespace: getSelectedNamespace(state),
     pipelineRun: getPipelineRun(state, {
       name: props.match.params.pipelineRunName
     }),
