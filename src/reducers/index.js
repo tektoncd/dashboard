@@ -37,6 +37,10 @@ export function getNamespaces(state) {
   return namespaceSelectors.getNamespaces(state.namespaces);
 }
 
+export function isFetchingNamespaces(state) {
+  return namespaceSelectors.isFetchingNamespaces(state.namespaces);
+}
+
 export function getExtensions(state) {
   return extensionSelectors.getExtensions(state.extensions);
 }
