@@ -28,6 +28,7 @@ import { getStatusIcon, getStatus } from '../../utils';
 import { fetchPipelineRuns } from '../../actions/pipelineRuns';
 
 import {
+  getPipelineRuns,
   getPipelineRunsByPipelineName,
   getPipelineRunsErrorMessage,
   getSelectedNamespace,
@@ -77,15 +78,14 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
             );
           }
 
-          if (!pipelineRuns.length) {
-            return <span>No pipeline runs for {pipelineName}</span>;
-          }
-
           return (
             <StructuredListWrapper border selection>
               <StructuredListHead>
                 <StructuredListRow head>
                   <StructuredListCell head>Pipeline Run</StructuredListCell>
+                  {!pipelineName && (
+                    <StructuredListCell head>Pipeline</StructuredListCell>
+                  )}
                   <StructuredListCell head>Status</StructuredListCell>
                   <StructuredListCell head>
                     Last Transition Time
@@ -93,8 +93,20 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
                 </StructuredListRow>
               </StructuredListHead>
               <StructuredListBody>
+                {!pipelineRuns.length && (
+                  <StructuredListRow>
+                    <StructuredListCell>
+                      {pipelineName ? (
+                        <span>No pipeline runs for {pipelineName}</span>
+                      ) : (
+                        <span>No pipeline runs</span>
+                      )}
+                    </StructuredListCell>
+                  </StructuredListRow>
+                )}
                 {pipelineRuns.map(pipelineRun => {
                   const pipelineRunName = pipelineRun.metadata.name;
+                  const pipelineRefName = pipelineRun.spec.pipelineRef.name;
                   const { lastTransitionTime, reason, status } = getStatus(
                     pipelineRun
                   );
@@ -106,11 +118,18 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
                     >
                       <StructuredListCell>
                         <Link
-                          to={`/pipelines/${pipelineName}/runs/${pipelineRunName}`}
+                          to={`/pipelines/${pipelineRefName}/runs/${pipelineRunName}`}
                         >
                           {pipelineRunName}
                         </Link>
                       </StructuredListCell>
+                      {!pipelineName && (
+                        <StructuredListCell>
+                          <Link to={`/pipelines/${pipelineRefName}`}>
+                            {pipelineRefName}
+                          </Link>
+                        </StructuredListCell>
+                      )}
                       <StructuredListCell
                         className="status"
                         data-reason={reason}
@@ -136,13 +155,16 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
 
 /* istanbul ignore next */
 function mapStateToProps(state, props) {
+  const { pipelineName } = props.match.params;
   return {
     error: getPipelineRunsErrorMessage(state),
     loading: isFetchingPipelineRuns(state),
     namespace: getSelectedNamespace(state),
-    pipelineRuns: getPipelineRunsByPipelineName(state, {
-      name: props.match.params.pipelineName
-    })
+    pipelineRuns: pipelineName
+      ? getPipelineRunsByPipelineName(state, {
+          name: props.match.params.pipelineName
+        })
+      : getPipelineRuns(state)
   };
 }
 

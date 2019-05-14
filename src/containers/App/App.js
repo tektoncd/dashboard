@@ -84,6 +84,9 @@ export /* istanbul ignore next */ class App extends Component {
               <SideNavLink element={NavLink} icon={<span />} to="/pipelines">
                 Pipelines
               </SideNavLink>
+              <SideNavLink element={NavLink} icon={<span />} to="/pipelineruns">
+                PipelineRuns
+              </SideNavLink>
               <SideNavLink element={NavLink} icon={<span />} to="/tasks">
                 Tasks
               </SideNavLink>
@@ -107,6 +110,7 @@ export /* istanbul ignore next */ class App extends Component {
               />
               <Route path="/pipelines" exact component={Pipelines} />
               <Route path="/tasks" exact component={Tasks} />
+              <Route path="/pipelineruns" component={PipelineRuns} />
               <Route
                 path="/pipelines/:pipelineName/runs"
                 exact
