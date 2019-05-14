@@ -2,8 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: tekton-dashboard
-  labels: 
-    app: tekton-dashboard-deployment  
+  labels:
+    app: tekton-dashboard-deployment
 spec:
   replicas: 1
   selector:

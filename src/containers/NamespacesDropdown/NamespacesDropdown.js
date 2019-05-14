@@ -17,15 +17,34 @@ import { Dropdown, DropdownSkeleton } from 'carbon-components-react';
 
 import { getNamespaces, isFetchingNamespaces } from '../../reducers';
 
-const NamespacesDropdown = ({ loading, ...dropdownProps }) => {
+const itemToElement = ({ text }) => {
+  return (
+    <span key={text} title={text}>
+      {text}
+    </span>
+  );
+};
+
+const itemToString = ({ text }) => text;
+
+const itemStringToObject = text => ({ text });
+
+const NamespacesDropdown = ({ items, loading, ...dropdownProps }) => {
   if (loading) {
     return <DropdownSkeleton {...dropdownProps} />;
   }
-  return <Dropdown {...dropdownProps} />;
+  const options = items.map(itemStringToObject);
+  return (
+    <Dropdown
+      {...dropdownProps}
+      itemToElement={itemToElement}
+      items={options}
+      itemToString={itemToString}
+    />
+  );
 };
 
 NamespacesDropdown.defaultProps = {
-  label: 'Namespace',
   items: [],
   loading: true
 };

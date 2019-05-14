@@ -44,7 +44,11 @@ storiesOf('NamespacesDropdown', module)
     });
     return (
       <Provider store={store}>
-        <NamespacesDropdown {...props} />
+        <NamespacesDropdown
+          {...props}
+          titleText="Namespace"
+          label="Namespace"
+        />
       </Provider>
     );
   })
