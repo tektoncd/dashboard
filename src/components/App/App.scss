@@ -25,8 +25,16 @@ main {
   padding: 2em 5%;
 }
 
+.bx--dropdown.bx--list-box {
+  margin: 0 1em 1.5em 1.5em;
+  border: none;
+  margin-bottom: 1.5em;
+  width: auto;
+}
+
 .bx--header ~ {
   nav.bx--side-nav {
+    padding-top: 1em;
     top: 7rem;
     background-color: $ui-background;
     border-top-color: $ui-03;
