@@ -68,7 +68,7 @@ export /* istanbul ignore next */ class App extends Component {
           <Header>
             <Route path="*" component={Breadcrumbs} />
           </Header>
-          <SideNav isExpanded aria-label="Side navigation">
+          <SideNav defaultExpanded expanded aria-label="Side navigation">
             <SideNavHeader icon={<span />}>
               <SideNavDetails title="Namespace">
                 <SideNavSwitcher
