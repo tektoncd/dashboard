@@ -1,5 +1,8 @@
 # Refer to https://golang.github.io/dep/docs/Gopkg.toml.html
 # for detailed Gopkg.toml documentation.
+required = [
+  "github.com/tektoncd/plumbing/scripts",
+]
 
 [[constraint]]
   name = "github.com/tektoncd/pipeline"
@@ -20,3 +23,7 @@
 [prune]
   go-tests = true
   unused-packages = true
+
+[[prune.project]]
+  name = "github.com/tektoncd/plumbing"
+  non-go = false
