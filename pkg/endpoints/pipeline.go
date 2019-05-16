@@ -409,7 +409,7 @@ func (r Resource) getAllTaskRuns(request *restful.Request, response *restful.Res
 		tmpItems := taskrunList.Items
 		taskrunList.Items = taskrunList.Items[:0]
 		for i := range tmpItems {
-			if tmpItems[i].Spec.TaskRef.Name == name {
+			if tmpItems[i].Spec.TaskRef != nil && tmpItems[i].Spec.TaskRef.Name == name {
 				taskrunList.Items = append(taskrunList.Items, tmpItems[i])
 			}
 		}
