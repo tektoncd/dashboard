@@ -186,11 +186,7 @@ func TestTaskRun(t *testing.T) {
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "TaskRun1",
 		},
-		Spec: v1alpha1.TaskRunSpec{
-			TaskRef:        &v1alpha1.TaskRef{
-				Name: "Task1",
-			},
-		},
+		Spec: v1alpha1.TaskRunSpec{},
 
 	}
 	TaskRun2 := v1alpha1.TaskRun{
