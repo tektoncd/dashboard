@@ -25,7 +25,14 @@ export function getHeaders(headers = {}) {
 
 export function checkStatus(response = {}) {
   if (response.ok) {
-    return response.status === 204 ? {} : response.json();
+    switch (response.status) {
+      case 201:
+        return response.headers;
+      case 204:
+        return {};
+      default:
+        return response.json();
+    }
   }
 
   const error = new Error(response.statusText);
