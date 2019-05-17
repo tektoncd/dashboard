@@ -19,9 +19,9 @@ import { getNamespaces, isFetchingNamespaces } from '../../reducers';
 
 const itemToElement = ({ text }) => {
   return (
-    <span key={text} title={text}>
+    <div key={text} title={text}>
       {text}
-    </span>
+    </div>
   );
 };
 
