@@ -22,14 +22,14 @@ export function fetchPipelinesSuccess(data, namespace) {
   };
 }
 
-export function fetchPipeline(name) {
+export function fetchPipeline({ name, namespace }) {
   return async (dispatch, getState) => {
     dispatch({ type: 'PIPELINES_FETCH_REQUEST' });
     let pipeline;
     try {
-      const namespace = getSelectedNamespace(getState());
-      pipeline = await getPipeline(name, namespace);
-      dispatch(fetchPipelinesSuccess([pipeline], namespace));
+      const requestedNamespace = namespace || getSelectedNamespace(getState());
+      pipeline = await getPipeline(name, requestedNamespace);
+      dispatch(fetchPipelinesSuccess([pipeline], requestedNamespace));
     } catch (error) {
       dispatch({ type: 'PIPELINES_FETCH_FAILURE', error });
     }
@@ -37,14 +37,14 @@ export function fetchPipeline(name) {
   };
 }
 
-export function fetchPipelines() {
+export function fetchPipelines({ namespace } = {}) {
   return async (dispatch, getState) => {
     dispatch({ type: 'PIPELINES_FETCH_REQUEST' });
     let pipelines;
     try {
-      const namespace = getSelectedNamespace(getState());
-      pipelines = await getPipelines(namespace);
-      dispatch(fetchPipelinesSuccess(pipelines, namespace));
+      const requestedNamespace = namespace || getSelectedNamespace(getState());
+      pipelines = await getPipelines(requestedNamespace);
+      dispatch(fetchPipelinesSuccess(pipelines, requestedNamespace));
     } catch (error) {
       dispatch({ type: 'PIPELINES_FETCH_FAILURE', error });
     }

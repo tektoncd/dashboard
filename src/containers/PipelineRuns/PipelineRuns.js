@@ -54,7 +54,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
   fetchPipelineRuns() {
     const { params } = this.props.match;
     const { pipelineName } = params;
-    this.props.fetchPipelineRuns(pipelineName);
+    this.props.fetchPipelineRuns({ pipelineName });
   }
 
   render() {

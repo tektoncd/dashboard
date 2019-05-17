@@ -47,7 +47,7 @@ it('fetchPipeline', async () => {
     fetchPipelinesSuccess([pipeline], namespace)
   ];
 
-  await store.dispatch(fetchPipeline());
+  await store.dispatch(fetchPipeline({ name: 'foo' }));
   expect(store.getActions()).toEqual(expectedActions);
 });
 
@@ -67,7 +67,7 @@ it('fetchPipeline error', async () => {
     { type: 'PIPELINES_FETCH_FAILURE', error }
   ];
 
-  await store.dispatch(fetchPipeline());
+  await store.dispatch(fetchPipeline({ name: 'foo' }));
   expect(store.getActions()).toEqual(expectedActions);
 });
 

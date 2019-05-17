@@ -22,14 +22,14 @@ export function fetchTasksSuccess(data, namespace) {
   };
 }
 
-export function fetchTask(name) {
+export function fetchTask({ name, namespace }) {
   return async (dispatch, getState) => {
     dispatch({ type: 'TASKS_FETCH_REQUEST' });
     let task;
     try {
-      const namespace = getSelectedNamespace(getState());
-      task = await getTask(name, namespace);
-      dispatch(fetchTasksSuccess([task], namespace));
+      const requestedNamespace = namespace || getSelectedNamespace(getState());
+      task = await getTask(name, requestedNamespace);
+      dispatch(fetchTasksSuccess([task], requestedNamespace));
     } catch (error) {
       dispatch({ type: 'TASKS_FETCH_FAILURE', error });
     }
@@ -37,14 +37,14 @@ export function fetchTask(name) {
   };
 }
 
-export function fetchTasks() {
+export function fetchTasks({ namespace } = {}) {
   return async (dispatch, getState) => {
     dispatch({ type: 'TASKS_FETCH_REQUEST' });
     let tasks;
     try {
-      const namespace = getSelectedNamespace(getState());
-      tasks = await getTasks(namespace);
-      dispatch(fetchTasksSuccess(tasks, namespace));
+      const requestedNamespace = namespace || getSelectedNamespace(getState());
+      tasks = await getTasks(requestedNamespace);
+      dispatch(fetchTasksSuccess(tasks, requestedNamespace));
     } catch (error) {
       dispatch({ type: 'TASKS_FETCH_FAILURE', error });
     }
