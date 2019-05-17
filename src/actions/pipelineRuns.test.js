@@ -16,7 +16,11 @@ import thunk from 'redux-thunk';
 
 import * as API from '../api';
 import * as selectors from '../reducers';
-import { fetchPipelineRuns, fetchPipelineRunsSuccess } from './pipelineRuns';
+import {
+  fetchPipelineRun,
+  fetchPipelineRuns,
+  fetchPipelineRunsSuccess
+} from './pipelineRuns';
 
 it('fetchPipelineRunsSuccess', () => {
   const data = { fake: 'data' };
@@ -26,9 +30,9 @@ it('fetchPipelineRunsSuccess', () => {
   });
 });
 
-it('fetchPipelineRuns', async () => {
+it('fetchPipelineRun', async () => {
+  const pipelineRun = { fake: 'pipelineRun' };
   const namespace = 'default';
-  const pipelines = { fake: 'pipelines' };
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const store = mockStore();
@@ -36,11 +40,48 @@ it('fetchPipelineRuns', async () => {
   jest
     .spyOn(selectors, 'getSelectedNamespace')
     .mockImplementation(() => namespace);
+  jest.spyOn(API, 'getPipelineRun').mockImplementation(() => pipelineRun);
+
+  const expectedActions = [
+    { type: 'PIPELINE_RUNS_FETCH_REQUEST' },
+    fetchPipelineRunsSuccess([pipelineRun])
+  ];
+
+  await store.dispatch(fetchPipelineRun({ name: 'foo' }));
+  expect(store.getActions()).toEqual(expectedActions);
+});
+
+it('fetchPipelineRun error', async () => {
+  const middleware = [thunk];
+  const mockStore = configureStore(middleware);
+  const store = mockStore();
+
+  const error = new Error();
+
+  jest.spyOn(API, 'getPipelineRun').mockImplementation(() => {
+    throw error;
+  });
+
+  const expectedActions = [
+    { type: 'PIPELINE_RUNS_FETCH_REQUEST' },
+    { type: 'PIPELINE_RUNS_FETCH_FAILURE', error }
+  ];
+
+  await store.dispatch(fetchPipelineRun({ name: 'foo' }));
+  expect(store.getActions()).toEqual(expectedActions);
+});
+
+it('fetchPipelineRuns', async () => {
+  const pipelines = { fake: 'pipelines' };
+  const middleware = [thunk];
+  const mockStore = configureStore(middleware);
+  const store = mockStore();
+
   jest.spyOn(API, 'getPipelineRuns').mockImplementation(() => pipelines);
 
   const expectedActions = [
     { type: 'PIPELINE_RUNS_FETCH_REQUEST' },
-    fetchPipelineRunsSuccess(pipelines, namespace)
+    fetchPipelineRunsSuccess(pipelines)
   ];
 
   await store.dispatch(fetchPipelineRuns());

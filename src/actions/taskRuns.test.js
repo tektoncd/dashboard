@@ -40,7 +40,7 @@ it('fetchTaskRuns', async () => {
 
   const expectedActions = [
     { type: 'TASK_RUNS_FETCH_REQUEST' },
-    fetchTaskRunsSuccess(tasks, namespace)
+    fetchTaskRunsSuccess(tasks)
   ];
 
   await store.dispatch(fetchTaskRuns());
