@@ -11,27 +11,42 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { getPipelines } from '../api';
+import { getPipeline, getPipelines } from '../api';
 import { getSelectedNamespace } from '../reducers';
 
 export function fetchPipelinesSuccess(data, namespace) {
   return {
-    type: 'PIPELINE_FETCH_SUCCESS',
+    type: 'PIPELINES_FETCH_SUCCESS',
     data,
     namespace
   };
 }
 
+export function fetchPipeline(name) {
+  return async (dispatch, getState) => {
+    dispatch({ type: 'PIPELINES_FETCH_REQUEST' });
+    let pipeline;
+    try {
+      const namespace = getSelectedNamespace(getState());
+      pipeline = await getPipeline(name, namespace);
+      dispatch(fetchPipelinesSuccess([pipeline], namespace));
+    } catch (error) {
+      dispatch({ type: 'PIPELINES_FETCH_FAILURE', error });
+    }
+    return pipeline;
+  };
+}
+
 export function fetchPipelines() {
   return async (dispatch, getState) => {
-    dispatch({ type: 'PIPELINE_FETCH_REQUEST' });
+    dispatch({ type: 'PIPELINES_FETCH_REQUEST' });
     let pipelines;
     try {
       const namespace = getSelectedNamespace(getState());
       pipelines = await getPipelines(namespace);
       dispatch(fetchPipelinesSuccess(pipelines, namespace));
     } catch (error) {
-      dispatch({ type: 'PIPELINE_FETCH_FAILURE', error });
+      dispatch({ type: 'PIPELINES_FETCH_FAILURE', error });
     }
     return pipelines;
   };

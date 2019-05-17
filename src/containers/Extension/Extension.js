@@ -15,6 +15,7 @@ import React, { Component, Suspense } from 'react';
 
 import ErrorBoundary from '../../components/ErrorBoundary';
 
+import * as actions from './actions';
 import * as selectors from '../../reducers';
 import './globals';
 
@@ -72,7 +73,7 @@ export default /* istanbul ignore next */ class Extension extends Component {
     return (
       <ErrorBoundary message="Error loading extension">
         <Suspense fallback={<div>Loading...</div>}>
-          <ExtensionComponent selectors={selectors} />
+          <ExtensionComponent actions={actions} selectors={selectors} />
         </Suspense>
       </ErrorBoundary>
     );

@@ -22,13 +22,13 @@ it('handles init or unknown actions', () => {
   });
 });
 
-it('PIPELINE_FETCH_REQUEST', () => {
-  const action = { type: 'PIPELINE_FETCH_REQUEST' };
+it('PIPELINES_FETCH_REQUEST', () => {
+  const action = { type: 'PIPELINES_FETCH_REQUEST' };
   const state = pipelinesReducer({}, action);
   expect(selectors.isFetchingPipelines(state)).toBe(true);
 });
 
-it('PIPELINE_FETCH_SUCCESS', () => {
+it('PIPELINES_FETCH_SUCCESS', () => {
   const name = 'pipeline name';
   const namespace = 'default';
   const uid = 'some-uid';
@@ -41,7 +41,7 @@ it('PIPELINE_FETCH_SUCCESS', () => {
     other: 'content'
   };
   const action = {
-    type: 'PIPELINE_FETCH_SUCCESS',
+    type: 'PIPELINES_FETCH_SUCCESS',
     data: [pipeline],
     namespace
   };
@@ -52,11 +52,11 @@ it('PIPELINE_FETCH_SUCCESS', () => {
   expect(selectors.isFetchingPipelines(state)).toBe(false);
 });
 
-it('PIPELINE_FETCH_FAILURE', () => {
+it('PIPELINES_FETCH_FAILURE', () => {
   const message = 'fake error message';
   const error = { message };
   const action = {
-    type: 'PIPELINE_FETCH_FAILURE',
+    type: 'PIPELINES_FETCH_FAILURE',
     error
   };
 

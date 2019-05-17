@@ -24,7 +24,7 @@ import {
   StructuredListWrapper
 } from 'carbon-components-react';
 
-import { fetchPipelines } from '../../actions/pipeline';
+import { fetchPipelines } from '../../actions/pipelines';
 import {
   getPipelines,
   getPipelinesErrorMessage,
