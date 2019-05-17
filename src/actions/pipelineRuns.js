@@ -22,14 +22,14 @@ export function fetchPipelineRunsSuccess(data, namespace) {
   };
 }
 
-export function fetchPipelineRun(name) {
+export function fetchPipelineRun({ name, namespace }) {
   return async (dispatch, getState) => {
     dispatch({ type: 'PIPELINE_RUNS_FETCH_REQUEST' });
     let pipelineRun;
     try {
-      const namespace = getSelectedNamespace(getState());
-      pipelineRun = await getPipelineRun(name, namespace);
-      dispatch(fetchPipelineRunsSuccess([pipelineRun], namespace));
+      const requestedNamespace = namespace || getSelectedNamespace(getState());
+      pipelineRun = await getPipelineRun(name, requestedNamespace);
+      dispatch(fetchPipelineRunsSuccess([pipelineRun], requestedNamespace));
     } catch (error) {
       dispatch({ type: 'PIPELINE_RUNS_FETCH_FAILURE', error });
     }
@@ -37,14 +37,14 @@ export function fetchPipelineRun(name) {
   };
 }
 
-export function fetchPipelineRuns(pipelineName) {
+export function fetchPipelineRuns({ pipelineName, namespace } = {}) {
   return async (dispatch, getState) => {
     dispatch({ type: 'PIPELINE_RUNS_FETCH_REQUEST' });
     let pipelineRuns;
     try {
-      const namespace = getSelectedNamespace(getState());
-      pipelineRuns = await getPipelineRuns(namespace, pipelineName);
-      dispatch(fetchPipelineRunsSuccess(pipelineRuns, namespace));
+      const requestedNamespace = namespace || getSelectedNamespace(getState());
+      pipelineRuns = await getPipelineRuns(requestedNamespace, pipelineName);
+      dispatch(fetchPipelineRunsSuccess(pipelineRuns, requestedNamespace));
     } catch (error) {
       dispatch({ type: 'PIPELINE_RUNS_FETCH_FAILURE', error });
     }

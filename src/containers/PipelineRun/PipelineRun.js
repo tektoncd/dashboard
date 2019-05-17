@@ -127,7 +127,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     const { pipelineRunName } = match.params;
     this.setState({ loading: true }, async () => {
       await Promise.all([
-        this.props.fetchPipelineRun(pipelineRunName),
+        this.props.fetchPipelineRun({ name: pipelineRunName }),
         this.props.fetchTasks(),
         this.props.fetchTaskRuns()
       ]);

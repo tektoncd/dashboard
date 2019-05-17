@@ -120,8 +120,8 @@ export /* istanbul ignore next */ class TaskRunsContainer extends Component {
 
   fetchTaskAndRuns(taskName) {
     Promise.all([
-      this.props.fetchTask(taskName),
-      this.props.fetchTaskRuns(taskName)
+      this.props.fetchTask({ name: taskName }),
+      this.props.fetchTaskRuns({ taskName })
     ]).then(() => {
       this.setState({ loading: false });
       this.loadTaskRuns();

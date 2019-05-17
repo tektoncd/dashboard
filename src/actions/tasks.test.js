@@ -43,7 +43,7 @@ it('fetchTask', async () => {
     fetchTasksSuccess([task], namespace)
   ];
 
-  await store.dispatch(fetchTask());
+  await store.dispatch(fetchTask({ name: 'foo' }));
   expect(store.getActions()).toEqual(expectedActions);
 });
 
@@ -63,7 +63,7 @@ it('fetchTask error', async () => {
     { type: 'TASKS_FETCH_FAILURE', error }
   ];
 
-  await store.dispatch(fetchTask());
+  await store.dispatch(fetchTask({ name: 'foo' }));
   expect(store.getActions()).toEqual(expectedActions);
 });
 
