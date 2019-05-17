@@ -16,7 +16,7 @@ import keyBy from 'lodash.keyby';
 
 function byId(state = {}, action) {
   switch (action.type) {
-    case 'PIPELINE_FETCH_SUCCESS':
+    case 'PIPELINES_FETCH_SUCCESS':
       return { ...state, ...keyBy(action.data, 'metadata.uid') };
     default:
       return state;
@@ -25,7 +25,7 @@ function byId(state = {}, action) {
 
 function byNamespace(state = {}, action) {
   switch (action.type) {
-    case 'PIPELINE_FETCH_SUCCESS':
+    case 'PIPELINES_FETCH_SUCCESS':
       const { namespace } = action;
       const pipelines = state[namespace] || {};
       action.data.forEach(pipeline => {
@@ -44,10 +44,10 @@ function byNamespace(state = {}, action) {
 
 function isFetching(state = false, action) {
   switch (action.type) {
-    case 'PIPELINE_FETCH_REQUEST':
+    case 'PIPELINES_FETCH_REQUEST':
       return true;
-    case 'PIPELINE_FETCH_SUCCESS':
-    case 'PIPELINE_FETCH_FAILURE':
+    case 'PIPELINES_FETCH_SUCCESS':
+    case 'PIPELINES_FETCH_FAILURE':
       return false;
     default:
       return state;
@@ -56,10 +56,10 @@ function isFetching(state = false, action) {
 
 function errorMessage(state = null, action) {
   switch (action.type) {
-    case 'PIPELINE_FETCH_FAILURE':
+    case 'PIPELINES_FETCH_FAILURE':
       return action.error.message;
-    case 'PIPELINE_FETCH_REQUEST':
-    case 'PIPELINE_FETCH_SUCCESS':
+    case 'PIPELINES_FETCH_REQUEST':
+    case 'PIPELINES_FETCH_SUCCESS':
       return null;
     default:
       return state;
