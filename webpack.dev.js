@@ -8,9 +8,9 @@ const extensionConfig = {
     target: 'http://localhost:9999',
     pathRewrite: { '^/v1/extensions': '' }
   },
-  '/v1/extension/dev-extension': {
+  '/v1/extensions/dev-extension': {
     target: 'http://localhost:9999',
-    pathRewrite: { '^/v1/extension/dev-extension': '' }
+    pathRewrite: { '^/v1/extensions/dev-extension': '' }
   }
 };
 

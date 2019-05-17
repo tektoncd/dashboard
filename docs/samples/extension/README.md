@@ -50,7 +50,7 @@ http://localhost:9097/v1/extensions/
 ```
 ## Access to the extension
 ```
-http://localhost:9097/extension/dashboard-extension/sample
+http://localhost:9097/extensions/dashboard-extension/sample
 ```
 ### Output:
 ```

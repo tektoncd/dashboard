@@ -217,12 +217,12 @@ Returns HTTP code 404 if an error occurred getting the namespaces
 
 __Pipelines__
 ```
-GET /v1/namespaces/<namespace>/pipeline
+GET /v1/namespaces/<namespace>/pipelines
 Get all Tekton Pipelines
 Returns HTTP code 200 and a list of Pipelines in the given namespace
 Returns HTTP code 404 if an error occurred getting the Pipeline list
 
-GET /v1/namespaces/<namespace>/pipeline/<pipeline-name>
+GET /v1/namespaces/<namespace>/pipelines/<pipeline-name>
 Get a Tekton Pipeline by name
 Returns HTTP code 200 and the given pipeline in the given namespace if found
 Returns HTTP code 404 if an error occurred getting the Pipeline
@@ -230,13 +230,13 @@ Returns HTTP code 404 if an error occurred getting the Pipeline
 
 __PipelineRuns__
 ```
-GET /v1/namespaces/<namespace>/pipelinerun
+GET /v1/namespaces/<namespace>/pipelineruns
 Get all Tekton PipelineRuns, also supports '?name=<pipeline-name>' querying
 Get all Tekton PipelineRuns, also supports '?repository=https://gitserver/foo/bar' querying
 Returns HTTP code 200 and a list of PipelineRuns, optionally matching the above query, in the given namespace
 Returns HTTP code 404 if an error occurred getting the PipelineRun list
 
-GET /v1/namespaces/<namespace>/pipelinerun/<pipelinerun-name>
+GET /v1/namespaces/<namespace>/pipelineruns/<pipelinerun-name>
 Get a Tekton PipelineRun by name
 Returns HTTP code 200 and the given PipelineRun in the given namespace
 Returns HTTP code 404 if an error occurred getting the PipelineRun
@@ -244,12 +244,12 @@ Returns HTTP code 404 if an error occurred getting the PipelineRun
 
 __Tasks__
 ```
-GET /v1/namespaces/<namespace>/task
+GET /v1/namespaces/<namespace>/tasks
 Get all Tekton tasks
 Returns HTTP code 200 and a list of Tasks in the given namespace 
 Returns HTTP code 404 if an error occurred getting the Task list
 
-GET /v1/namespaces/<namespace>/task/<task-name>
+GET /v1/namespaces/<namespace>/tasks/<task-name>
 Get a Tekton Task by name
 Returns HTTP code 200 and the given Task in the given namespace if found
 Returns HTTP code 404 if an error occurred getting the TaskRun 
@@ -257,13 +257,13 @@ Returns HTTP code 404 if an error occurred getting the TaskRun
 
 __TaskRuns__
 ```
-GET /v1/namespaces/<namespace>/taskrun
+GET /v1/namespaces/<namespace>/taskruns
 Get all Tekton TaskRuns
 Get all Tekton TaskRuns, also supports '?name=<task-name>' querying
 Returns HTTP code 200 and a list of TaskRuns in the given namespace 
 Returns HTTP code 404 if an error occurred getting the TaskRun list
 
-GET /v1/namespaces/<namespace>/taskrun/<taskrun-name>
+GET /v1/namespaces/<namespace>/taskruns/<taskrun-name>
 Get a Tekton TaskRun by name
 Returns HTTP code 200 and the given TaskRun in the given namespace if found
 Returns HTTP code 404 if an error occurred getting the TaskRun 
@@ -271,12 +271,12 @@ Returns HTTP code 404 if an error occurred getting the TaskRun
 
 __PipelineResources__
 ```
-GET /v1/namespaces/<namespace>/pipelineresource
+GET /v1/namespaces/<namespace>/pipelineresources
 Get all Tekton PipelineResources
 Returns HTTP code 200 and a list of PipelineResources in the given namespace 
 Returns HTTP code 404 if an error occurred getting the PipelineResource list
 
-GET /v1/namespaces/<namespace>/pipelineresource/<pipelineresource-name>
+GET /v1/namespaces/<namespace>/pipelineresources/<pipelineresource-name>
 Get a Tekton PipelineResource by name
 Returns HTTP code 200 and the given PipelineResource in the given namespace if found
 Returns HTTP code 404 if an error occurred getting the PipelineResource 
@@ -284,12 +284,12 @@ Returns HTTP code 404 if an error occurred getting the PipelineResource
 
 __Logs__
 ```
-GET /v1/namespaces/<namespace>/log/<pod-name>
+GET /v1/namespaces/<namespace>/logs/<pod-name>
 Get the logs for a Pod by name
 Returns HTTP code 200 and the pod's logs in the given namespace if found
 Returns HTTP code 404 if an error occurred getting the logs or no pod was found by name in the given namespace
 
-GET /v1/namespaces/<namespace>/taskrunlog/<taskrun-name>
+GET /v1/namespaces/<namespace>/taskrunlogs/<taskrun-name>
 Get the logs for a TaskRun by name
 Returns HTTP code 200 and the logs from a TaskRun
 
@@ -336,7 +336,7 @@ Example payload response is formatted as so:
 Returns HTTP code 404 if an error occurred getting the logs or TaskRun pod was found by name in the given namespace
 
 
-GET /v1/namespaces/<namespace>/pipelinerunlog/<pipelinerun-name>
+GET /v1/namespaces/<namespace>/pipelinerunlogs/<pipelinerun-name>
 Get the logs for a PipelineRun by name
 Returns HTTP code 200 and the logs from a PipelineRun (unformatted)
 ```
@@ -410,7 +410,7 @@ Example POSTs (non-trivial as it involves the URL map):
 
 __PipelineRuns__
 ```
-POST /v1/namespaces/<namespace>/pipelinerun
+POST /v1/namespaces/<namespace>/pipelineruns
 Creates a new manual PipelineRun based on a specified Pipeline
 Request body must contain pipelinename for the Pipeline to run 
 
@@ -457,7 +457,7 @@ Returns HTTP code 400 if a bad request was provided or if an error occurs updati
 
 __PipelineRuns__
 ```
-PUT /v1/namespaces/<namespace>/pipelinerun/<pipelinerun-name>
+PUT /v1/namespaces/<namespace>/pipelineruns/<pipelinerun-name>
 Update pipelinerun status
 Request body must contain desired status ("status": "PipelineRunCancelled" to cancel a running one). 
 
@@ -496,8 +496,8 @@ The backend extension is discovered by adding the label and the annotations in t
     tekton-dashboard-extension: "true"
 ```
 
-1.Each extension is mounted onto /v1/extension/extension-name/ at the dashboard
-1.Requests to /v1/extension/extension-name/ are routed to / at the extension in question. / at the extension is always exposed in the expectation that many extensions will only need one endpoint.
-1.If tekton-dashboard-endpoints is set to foo then /v1/extension/extension-name/foo is routed to /foo at the extension
-1.Multiple context roots can be specified by using the . character to separate them: e.g. if tekton-dashboard-endpoints: foo.bar then /v1/extension/extension-name/foo is routed to /foo and /v1/extension/extension-name/bar is routed to /bar at the extension.
+1.Each extension is mounted onto /v1/extensions/extension-name/ at the dashboard
+1.Requests to /v1/extensions/extension-name/ are routed to / at the extension in question. / at the extension is always exposed in the expectation that many extensions will only need one endpoint.
+1.If tekton-dashboard-endpoints is set to foo then /v1/extensions/extension-name/foo is routed to /foo at the extension
+1.Multiple context roots can be specified by using the . character to separate them: e.g. if tekton-dashboard-endpoints: foo.bar then /v1/extensions/extension-name/foo is routed to /foo and /v1/extensions/extension-name/bar is routed to /bar at the extension.
 1."/" is a reserved context root for javascript.  "tekton-dashboard-endpoints" must be always set if the extension has javascript.

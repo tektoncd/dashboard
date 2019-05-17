@@ -23,7 +23,7 @@ import (
 )
 
 func (r Resource) getAllNamespaces(request *restful.Request, response *restful.Response) {
-	namespaces, err := r.K8sClient.CoreV1().Namespaces().List(metav1.ListOptions{});
+	namespaces, err := r.K8sClient.CoreV1().Namespaces().List(metav1.ListOptions{})
 	logging.Log.Debugf("In getAllNamespaces")
 
 	if err != nil {
