@@ -60,19 +60,19 @@ function get_node() {
 }
 
 function node_test() {
+  local failed=0
   echo "Running node tests from $(pwd)"
   mkdir ~/.npm-global
   npm config set prefix '~/.npm-global'
   export PATH=$PATH:$HOME/.npm-global/bin
-  npm ci # similar to `npm install` but ensures all versions from lock file
-  npm run test:ci
+  npm ci || failed=1 # similar to `npm install` but ensures all versions from lock file
+  npm run test:ci || failed=1
   echo ""
+  return ${failed}
 }
 
 function pre_unit_tests() {
-  local failed=0
-  node_test || failed=1
-  return ${failed}
+  node_test
 }
 
 function extra_initialization() {
