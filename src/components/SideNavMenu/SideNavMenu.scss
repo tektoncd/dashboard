@@ -13,12 +13,16 @@ limitations under the License.
 
 @import '~carbon-components/scss/globals/scss/vars';
 
-.submenu-parent-item{
+.submenu-parent-item {
   margin-bottom: 1em;
   list-style: none;
+
+  .bx--side-nav__menu {
+    margin-top: .5em;
+  }
 }
 
-.submenu-title, .bx--side-nav__items .bx--label{
+.submenu-title, .bx--side-nav__items .bx--label {
   color: $text-01;
   margin-left: 1.5em;
   white-space: nowrap;
