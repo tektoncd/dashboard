@@ -14,11 +14,10 @@ limitations under the License.
 import { getPipeline, getPipelines } from '../api';
 import { getSelectedNamespace } from '../reducers';
 
-export function fetchPipelinesSuccess(data, namespace) {
+export function fetchPipelinesSuccess(data) {
   return {
     type: 'PIPELINES_FETCH_SUCCESS',
-    data,
-    namespace
+    data
   };
 }
 
@@ -29,7 +28,7 @@ export function fetchPipeline({ name, namespace }) {
     try {
       const requestedNamespace = namespace || getSelectedNamespace(getState());
       pipeline = await getPipeline(name, requestedNamespace);
-      dispatch(fetchPipelinesSuccess([pipeline], requestedNamespace));
+      dispatch(fetchPipelinesSuccess([pipeline]));
     } catch (error) {
       dispatch({ type: 'PIPELINES_FETCH_FAILURE', error });
     }
@@ -44,7 +43,7 @@ export function fetchPipelines({ namespace } = {}) {
     try {
       const requestedNamespace = namespace || getSelectedNamespace(getState());
       pipelines = await getPipelines(requestedNamespace);
-      dispatch(fetchPipelinesSuccess(pipelines, requestedNamespace));
+      dispatch(fetchPipelinesSuccess(pipelines));
     } catch (error) {
       dispatch({ type: 'PIPELINES_FETCH_FAILURE', error });
     }

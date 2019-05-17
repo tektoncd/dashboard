@@ -40,7 +40,7 @@ it('fetchTask', async () => {
 
   const expectedActions = [
     { type: 'TASKS_FETCH_REQUEST' },
-    fetchTasksSuccess([task], namespace)
+    fetchTasksSuccess([task])
   ];
 
   await store.dispatch(fetchTask({ name: 'foo' }));
@@ -77,19 +77,15 @@ it('fetchTasksSuccess', () => {
 
 it('fetchTasks', async () => {
   const tasks = { fake: 'tasks' };
-  const namespace = 'default';
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const store = mockStore();
 
-  jest
-    .spyOn(selectors, 'getSelectedNamespace')
-    .mockImplementation(() => namespace);
   jest.spyOn(API, 'getTasks').mockImplementation(() => tasks);
 
   const expectedActions = [
     { type: 'TASKS_FETCH_REQUEST' },
-    fetchTasksSuccess(tasks, namespace)
+    fetchTasksSuccess(tasks)
   ];
 
   await store.dispatch(fetchTasks());
