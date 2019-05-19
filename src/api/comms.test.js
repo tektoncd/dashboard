@@ -38,7 +38,7 @@ describe('checkStatus', () => {
     const json = jest.fn(() => data);
     expect(checkStatus({ ok: true, json })).toEqual(data);
   });
-  
+
   it('returns headers on successful create', () => {
     const status = 201;
     const headers = { fake: 'headers' };
