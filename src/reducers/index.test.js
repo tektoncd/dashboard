@@ -31,7 +31,8 @@ import {
   isFetchingPipelines,
   isFetchingPipelineRuns,
   isFetchingTasks,
-  isFetchingTaskRuns
+  isFetchingTaskRuns,
+  getTaskRunsByTaskName
 } from '.';
 import * as extensionSelectors from './extensions';
 import * as namespaceSelectors from './namespaces';
@@ -45,8 +46,10 @@ const extension = { displayName: 'extension' };
 const pipelines = [{ fake: 'pipeline' }];
 const pipelineRuns = [{ fake: 'pipelineRun' }];
 const tasks = [{ fake: 'task' }];
-const taskRun = { fake: 'taskRun' };
-const taskRuns = [taskRun];
+const taskName = 'myTask';
+const taskRun = { fake: 'taskRun', spec: { taskRef: { name: taskName } } };
+const inlineTaskRun = { fake: 'taskRun', spec: {} };
+const taskRuns = [taskRun, inlineTaskRun];
 const state = {
   extensions: {
     byName: {
@@ -265,6 +268,13 @@ it('getTaskRuns', () => {
     state.taskRuns,
     namespace
   );
+});
+
+it('getTaskRunsByTaskName', () => {
+  jest
+    .spyOn(taskRunsSelectors, 'getTaskRuns')
+    .mockImplementation(() => taskRuns);
+  expect(getTaskRunsByTaskName(state, { name: taskName })).toEqual([taskRun]);
 });
 
 it('getTaskRunsErrorMessage', () => {
