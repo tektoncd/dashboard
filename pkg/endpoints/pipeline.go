@@ -121,7 +121,7 @@ const gitRepoLabel = "gitRepo"
 
 /* Get all pipelines in a given namespace */
 func (r Resource) getAllPipelines(request *restful.Request, response *restful.Response) {
-	namespace := request.PathParameter("namespace")
+	namespace := utils.GetNamespace(request)
 	pipelines := r.PipelineClient.TektonV1alpha1().Pipelines(namespace)
 	logging.Log.Debugf("In getAllPipelines - namespace: %s", namespace)
 
@@ -161,7 +161,7 @@ func (r Resource) getPipelineImpl(name, namespace string) (v1alpha1.Pipeline, er
 
 /* Get all pipeline runs in a given namespace, filters based on parameters */
 func (r Resource) getAllPipelineRuns(request *restful.Request, response *restful.Response) {
-	namespace := request.PathParameter("namespace")
+	namespace := utils.GetNamespace(request)
 	repository := request.QueryParameter("repository")
 	// FakeClient does not support filtering by arbitrary fields(Only metadata.name/namespace), filtered post List()
 	name := request.QueryParameter("name")
@@ -371,7 +371,7 @@ func (r Resource) getPipelineResource(request *restful.Request, response *restfu
 
 /* Get all tasks in a given namespace */
 func (r Resource) getAllTasks(request *restful.Request, response *restful.Response) {
-	namespace := request.PathParameter("namespace")
+	namespace := utils.GetNamespace(request)
 	tasks := r.PipelineClient.TektonV1alpha1().Tasks(namespace)
 	logging.Log.Debugf("In getAllTasks: namespace: %s", namespace)
 
@@ -399,7 +399,7 @@ func (r Resource) getTask(request *restful.Request, response *restful.Response) 
 
 /* Get all task runs in a given namespace, filters based on parameters */
 func (r Resource) getAllTaskRuns(request *restful.Request, response *restful.Response) {
-	namespace := request.PathParameter("namespace")
+	namespace := utils.GetNamespace(request)
 	// FakeClient does not support filtering by arbitrary fields(Only metadata.name/namespace), filtered post List()
 	name := request.QueryParameter("name")
 	var queryParams []string
@@ -680,7 +680,7 @@ func (r Resource) getPipelineRunLog(request *restful.Request, response *restful.
 
 /* Get all pipeline resources in a given namespace */
 func (r Resource) getAllPipelineResources(request *restful.Request, response *restful.Response) {
-	namespace := request.PathParameter("namespace")
+	namespace := utils.GetNamespace(request)
 	pipelineresources := r.PipelineClient.TektonV1alpha1().PipelineResources(namespace)
 	logging.Log.Debugf("In getAllPipelineResources - namespace: %s", namespace)
 
@@ -799,3 +799,5 @@ func (r Resource) pipelineRunDeleted(obj interface{}) {
 
 	pipelineRunsChannel <- data
 }
+
+
