@@ -48,12 +48,7 @@ const (
  */
 func (r Resource) getAllCredentials(request *restful.Request, response *restful.Response) {
 	// Get path parameter
-	requestNamespace := request.PathParameter("namespace")
-
-	// Verify namespace exists
-	if !r.verifyNamespaceExists(requestNamespace, response) {
-		return
-	}
+	requestNamespace := utils.GetNamespace(request)
 
 	// Get secrets from the resource K8sClient
 	secrets, err := r.K8sClient.CoreV1().Secrets(requestNamespace).List(metav1.ListOptions{FieldSelector: "type=kubernetes.io/basic-auth"})

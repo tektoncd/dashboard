@@ -62,7 +62,9 @@ func TestCredentials(t *testing.T) {
 	r := dummyResource()
 	// Create the dummy namespace 'tekton-pipelines'
 	namespace := "tekton-pipelines"
+	secondNamespace := "tekton-pipelines-second-ns"
 	r.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace}})
+	r.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: secondNamespace}})
 
 	// Initialize test data
 	userPassCred := credential{
@@ -82,6 +84,16 @@ func TestCredentials(t *testing.T) {
 		Description: "second user password credential",
 		URL: map[string]string{
 			"tekton.dev/git-0": "https://my.git.org",
+		},
+		ServiceAccount: "default",
+	}
+	ns2BasicCred := credential{
+		Name:        "credentialuserpassns2",
+		Username:    "usernameuserpass",
+		Password:    "passworduserpass",
+		Description: "user password credential",
+		URL: map[string]string{
+			"tekton.dev/docker-0": "https://gcr.io",
 		},
 		ServiceAccount: "default",
 	}
@@ -108,6 +120,12 @@ func TestCredentials(t *testing.T) {
 	// READ credential userpass
 	t.Log("GET credential 'credentialuserpass' when it exists")
 	readCredentialTest(namespace, userPassCred, "", r, t)
+
+	createCredentialTest(secondNamespace, ns2BasicCred, "", r, t)
+
+	expectCreds = []credential{userPassCred, anotherBasicCred, ns2BasicCred}
+	readAllCredentialsTest("*", expectCreds, "", r, t)
+	deleteCredentialTest(secondNamespace, ns2BasicCred.Name, "", r, t)
 
 	// UPDATE credential userpass
 	t.Log("UPDATE credential 'credentialuserpass' when it exists")
@@ -233,7 +251,8 @@ func TestCredentialsRUDThatDoNotExist(t *testing.T) {
 		},
 	}
 	createCredentialTest(bogusNamespace, cred, expectedError, r, t)
-	readAllCredentialsTest(bogusNamespace, []credential{cred}, expectedError, r, t)
+	//empty expected for get all with unknown namespace
+	readAllCredentialsTest(bogusNamespace, []credential{}, "", r, t)
 	readCredentialTest(bogusNamespace, cred, expectedError, r, t)
 	updateCredentialTest(bogusNamespace, cred, expectedError, r, t)
 	deleteCredentialTest(bogusNamespace, cred.Name, expectedError, r, t)
@@ -312,6 +331,9 @@ func readAllCredentialsTest(namespace string, expectCreds []credential, expectEr
 	}
 
 	// Verify against K8s client
+	if namespace == "*"{
+		namespace = ""
+	}
 	testCredentials(r.getK8sCredentials(namespace), expectCreds, t)
 	t.Logf("Done in READ all credentials. Expecting: %+v", expectCreds)
 }
