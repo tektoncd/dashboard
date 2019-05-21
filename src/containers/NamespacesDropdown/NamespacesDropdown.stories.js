@@ -21,6 +21,7 @@ import thunk from 'redux-thunk';
 import NamespacesDropdown from './NamespacesDropdown';
 
 const props = {
+  id: 'namespaces dropdown',
   onChange: action('onChange')
 };
 
@@ -44,11 +45,7 @@ storiesOf('NamespacesDropdown', module)
     });
     return (
       <Provider store={store}>
-        <NamespacesDropdown
-          {...props}
-          titleText="Namespace"
-          label="Namespace"
-        />
+        <NamespacesDropdown {...props} />
       </Provider>
     );
   })

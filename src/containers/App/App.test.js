@@ -25,7 +25,8 @@ it('App renders successfully without extensions', () => {
   const store = mockStore({
     extensions: { byName: {} },
     namespaces: { byName: {} },
-    pipelines: { byNamespace: {} }
+    pipelines: { byNamespace: {} },
+    serviceAccounts: { byNamespace: {} }
   });
   const { queryByText } = render(
     <Provider store={store}>
@@ -47,7 +48,8 @@ it('App renders successfully with extensions', () => {
   const store = mockStore({
     extensions: { byName: {} },
     namespaces: { byName: {} },
-    pipelines: { byNamespace: {} }
+    pipelines: { byNamespace: {} },
+    serviceAccounts: { byNamespace: {} }
   });
   const { queryByText } = render(
     <Provider store={store}>

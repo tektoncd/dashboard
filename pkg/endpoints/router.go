@@ -79,6 +79,8 @@ func (r Resource) RegisterEndpoints(container *restful.Container) {
 	wsv1.Route(wsv1.GET("/{namespace}/taskruns").To(r.getAllTaskRuns))
 	wsv1.Route(wsv1.GET("/{namespace}/taskruns/{name}").To(r.getTaskRun))
 
+	wsv1.Route(wsv1.GET("/{namespace}/serviceaccounts").To(r.getAllServiceAccounts))
+
 	wsv1.Route(wsv1.GET("/{namespace}/logs/{name}").To(r.getPodLog))
 
 	wsv1.Route(wsv1.GET("/{namespace}/taskrunlogs/{name}").To(r.getTaskRunLog))
