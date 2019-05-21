@@ -11,12 +11,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-export { default as Extension } from './Extension';
-export { default as Extensions } from './Extensions';
-export { default as PipelineRun } from './PipelineRun';
-export { default as PipelineRuns } from './PipelineRuns';
-export { default as Pipelines } from './Pipelines';
-export { default as Secrets } from './Secrets';
-export { default as Tasks } from './Tasks';
-export { default as TaskRuns } from './TaskRuns';
-export { default as NamespacesDropdown } from './NamespacesDropdown';
+export { default } from './SecretsDeleteModal';

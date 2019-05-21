@@ -135,7 +135,7 @@ export function createPipelineRun(payload) {
 
 export function getCredentials(namespace) {
   const uri = getAPI('credentials', { namespace });
-  return get(uri).then(checkData);
+  return get(uri);
 }
 
 export function getCredential(id, namespace) {
