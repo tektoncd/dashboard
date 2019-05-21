@@ -14,10 +14,11 @@ limitations under the License.
 package endpoints
 
 import (
+	"net/http"
+
 	"github.com/emicklei/go-restful"
 	"github.com/tektoncd/dashboard/pkg/logging"
 	"github.com/tektoncd/dashboard/pkg/utils"
-	"net/http"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -30,6 +31,17 @@ func (r Resource) getAllNamespaces(request *restful.Request, response *restful.R
 		utils.RespondError(response, err, http.StatusNotFound)
 		return
 	}
-	logging.Log.Debugf("Found namespaces: %s", namespaces)
-	response.WriteEntity(namespaces)
+
+	var nameSpaceList = ""
+
+	for _, element := range namespaces.Items {
+		if nameSpaceList == "" {
+			nameSpaceList = element.Name
+		} else {
+			nameSpaceList = nameSpaceList + ", " + element.Name
+		}
+	}
+
+	logging.Log.Debugf("Found namespaces: %s", nameSpaceList)
+	response.WriteEntity(nameSpaceList)
 }
