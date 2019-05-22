@@ -34,5 +34,26 @@ failed=0
 header "Running e2e tests"
 # TODO: run your test here !
 
+#kubectl cluster-info
+output=$(kubectl cluster-info)
+logging.Log.Debugf("kubectl cluster-info :" $output)
+
+#Gets the cluster info in the style: https://localhost:6443
+output1=$(kubectl cluster-info | head -n 1)
+#echo "kubectl cluster-info | head -n 1 :" $output1
+logging.Log.Debugf("kubectl cluster-info | head -n 1 :" $output1)
+edited=$(echo "$output1" | sed 's/.*running at \([^ ]*\).*/\1/')
+#echo "Edited is: "$edited
+logging.Log.Debugf("Edited is: "$edited)
+
+
+
+#New fork (put in function sho can terminate easier)
+#should this be in different file as well so doesnt get run accidentily?????
+#function port_forward() {
+#    kubectl port-forward $(kubectl get pod -l app=tekton-dashboard -o name) 9097:9097
+#}
+
+
 (( failed )) && fail_test
 success
