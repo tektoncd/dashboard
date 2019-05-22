@@ -56,17 +56,6 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
 
   componentDidMount() {
     this.props.fetchNamespaces();
-    const secondaryButton = document.getElementsByClassName(
-      'bx--btn--secondary'
-    )[0];
-
-    const primaryButton = document.getElementsByClassName(
-      'bx--btn--primary'
-    )[0];
-    const closeButton = document.getElementsByClassName('bx--modal-close')[0];
-    secondaryButton.addEventListener('click', this.props.handleNew);
-    closeButton.addEventListener('click', this.props.handleNew);
-    primaryButton.addEventListener('click', this.handleSubmit);
   }
 
   componentWillUnmount() {
@@ -208,7 +197,7 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
   };
 
   render() {
-    const { open, namespaces } = this.props;
+    const { open, namespaces, handleNew } = this.props;
     const {
       name,
       namespace,
@@ -227,6 +216,9 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
         primaryButtonText="Submit"
         secondaryButtonText="Close"
         modalHeading="Create Secret"
+        onSecondarySubmit={handleNew}
+        onRequestSubmit={this.handleSubmit}
+        onRequestClose={handleNew}
       >
         <form>
           <UniversalFields
@@ -238,12 +230,12 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
             invalidFields={invalidFields}
           />
           <BasicAuthFields
-            accessTo={accessTo}
             username={username}
             password={password}
             serviceAccount={serviceAccount}
             handleChange={this.handleChange}
             invalidFields={invalidFields}
+            disabled={accessTo.trim() === ''}
           />
           <Annotations
             annotations={annotations}
@@ -251,7 +243,7 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
             handleRemove={this.handleRemove}
             handleAdd={this.handleAdd}
             invalidFields={invalidFields}
-            serviceAccount={serviceAccount}
+            disabled={serviceAccount.trim() === ''}
           />
         </form>
       </Modal>

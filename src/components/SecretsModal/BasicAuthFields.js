@@ -21,7 +21,7 @@ const BasicAuthFields = props => {
     password,
     handleChange,
     invalidFields,
-    accessTo,
+    disabled,
     serviceAccount
   } = props;
   return (
@@ -34,7 +34,7 @@ const BasicAuthFields = props => {
         labelText="Username:"
         onChange={handleChange}
         invalid={invalidFields.indexOf('username') > -1}
-        disabled={accessTo === ''}
+        disabled={disabled}
       />
       <br />
       <TextInput

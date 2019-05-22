@@ -17,7 +17,7 @@ import Annotations from './Annotations';
 
 it('Annotations shows blank fields', () => {
   const props = {
-    serviceAccount: '',
+    disabled: true,
     handleChange: function() {},
     invalidFields: [],
     annotations: [`tekton.dev/git-0`, '', `tekton.dev/git-1`, '', `tekton.dev/git-2`, ''],
@@ -33,7 +33,7 @@ it('Annotations shows blank fields', () => {
 
 it('Annotations shows disabled fields', () => {
   const props = {
-    serviceAccount: '',
+    disabled: true,
     handleChange: function() {},
     invalidFields: [],
     annotations: [`tekton.dev/git-0`, '', `tekton.dev/git-1`, '',],
@@ -50,7 +50,7 @@ it('Annotations shows disabled fields', () => {
 
 it('Annotations incorrect fields', () => {
   const props = {
-    serviceAccount: '',
+    disabled: false,
     handleChange: function() {},
     invalidFields: ['annotation1', 'annotation5'],
     annotations: [`tekton.dev/git-0`, '', `tekton.dev/git-1`, 'something', `tekton.dev/git-2`, ''],

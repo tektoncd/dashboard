@@ -17,7 +17,7 @@ import Close from '@carbon/icons-react/lib/close--outline/16';
 import { connect } from 'react-redux';
 import { InlineNotification } from 'carbon-components-react';
 import Modal from '../SecretsModal';
-import DeleteModal from '../SecretsDeleteModal';
+import DeleteModal from '../../components/SecretsDeleteModal';
 import Spinner from '../../components/Spinner';
 import Table from '../../components/SecretsTable';
 import {
@@ -62,7 +62,8 @@ export /* istanbul ignore next */ class Secrets extends Component {
 
   handleDeleteSecretClick = e => {
     let secretName;
-    if (e.target.nodeName === 'svg') secretName = e.currentTarget.id;
+    if (e.target.nodeName === 'svg' || e.target.nodeName === 'path')
+      secretName = e.currentTarget.id;
     else secretName = e.target.id;
     this.setState({
       openDeleteSecret: true,
@@ -89,21 +90,13 @@ export /* istanbul ignore next */ class Secrets extends Component {
         secret: secret.name,
         type: secret.type,
         annotations,
-        add: <Close />
+        add: <Close />,
+        classText: 'cellText',
+        classIcon: 'cellIcon',
+        handler: this.handleDeleteSecretClick,
+        testId: 'deleteIcon'
       };
     });
-
-    if (loading) {
-      initialRows = [
-        {
-          id: 'loading',
-          secret: <Spinner />,
-          type: <Spinner />,
-          annotations: <Spinner />,
-          add: <Spinner />
-        }
-      ];
-    }
 
     if (initialRows.length === 0) {
       initialRows = [
@@ -112,7 +105,27 @@ export /* istanbul ignore next */ class Secrets extends Component {
           secret: '-',
           type: '-',
           annotations: '-',
-          add: '-'
+          add: '-',
+          classText: 'cellTextNone',
+          classIcon: 'cellIconNone',
+          handler: null,
+          testId: null
+        }
+      ];
+    }
+
+    if (loading) {
+      initialRows = [
+        {
+          id: 'loading',
+          secret: <Spinner />,
+          type: <Spinner />,
+          annotations: <Spinner />,
+          add: <Spinner />,
+          classText: 'cellTextNone',
+          classIcon: 'cellIconNone',
+          handler: null,
+          testId: null
         }
       ];
     }
@@ -144,9 +157,6 @@ export /* istanbul ignore next */ class Secrets extends Component {
           initialHeaders={initialHeaders}
           initialRows={initialRows}
           handleNew={this.handleNewSecretClick}
-          handleDelete={this.handleDeleteSecretClick}
-          loading={loading}
-          secretsLength={secrets.length}
         />
         {openNewSecret ? (
           <Modal open={openNewSecret} handleNew={this.handleNewSecretClick} />

@@ -25,22 +25,8 @@ const {
   TableHeader
 } = DataTable;
 
-function getClassNameCell(rows, cells, current, loading) {
-  if ((rows === 0 || loading) && cells === current + 1) return 'cellIconNone';
-  if (cells === current + 1) return 'cellIcon';
-  if (rows === 0 || loading) return 'cellTextNone';
-  return 'cellText';
-}
-
 const SecretsTable = props => {
-  const {
-    initialRows,
-    initialHeaders,
-    handleNew,
-    handleDelete,
-    loading,
-    secretsLength
-  } = props;
+  const { initialRows, initialHeaders, handleNew } = props;
 
   return (
     <DataTable
@@ -59,12 +45,13 @@ const SecretsTable = props => {
                       <TableHeader
                         {...getHeaderProps({ header })}
                         className="cellText"
+                        key={header.key}
                       >
                         {header.header}
                       </TableHeader>
                     ) : (
                       <TableHeader
-                        key="add"
+                        key={header.key}
                         data-testid="addIcon"
                         className="cellIcon"
                         {...getHeaderProps({
@@ -81,42 +68,33 @@ const SecretsTable = props => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map(row => (
-                <TableRow key={row.id} className="row">
-                  {row.cells.map((cell, i) => (
+              {rows.map((row, index) => {
+                const lastCell =
+                  rows[index].cells[rows[index].cells.length - 1];
+                const secretName = row.cells[0].value;
+                return (
+                  <TableRow key={row.id} className="row">
+                    {row.cells.splice(0, row.cells.length - 1).map(cell => (
+                      <TableCell
+                        key={cell.id}
+                        id={cell.id}
+                        className={initialRows[index].classText}
+                      >
+                        {cell.value}
+                      </TableCell>
+                    ))}
                     <TableCell
-                      key={cell.id}
-                      id={
-                        row.cells.length === i + 1 && !loading
-                          ? row.cells[0].value
-                          : null
-                      }
-                      className={getClassNameCell(
-                        secretsLength,
-                        row.cells.length,
-                        i,
-                        loading
-                      )}
-                      onClick={
-                        row.cells.length === i + 1 &&
-                        !loading &&
-                        secretsLength !== 0
-                          ? handleDelete
-                          : null
-                      }
-                      data-testid={
-                        row.cells.length === i + 1 &&
-                        !loading &&
-                        secretsLength !== 0
-                          ? 'deleteIcon'
-                          : null
-                      }
+                      key={lastCell.id}
+                      id={secretName}
+                      className={initialRows[index].classIcon}
+                      onClick={initialRows[index].handler}
+                      data-testid={initialRows[index].testId}
                     >
-                      {cell.value}
+                      {lastCell.value}
                     </TableCell>
-                  ))}
-                </TableRow>
-              ))}
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </TableContainer>

@@ -21,7 +21,7 @@ it('BasicAuthFields renders with blank inputs', () => {
     password: '',
     serviceAccount: '',
     handleChange: function() {},
-    accessTo: '',
+    disabled: false,
     invalidFields: []
   };
   const { getByLabelText, getAllByDisplayValue } = render(<BasicAuthFields {...props} />);
@@ -37,7 +37,7 @@ it('BasicAuthFields shows disabled fields', () => {
     password: '',
     serviceAccount: '',
     handleChange: function() {},
-    accessTo: 'git',
+    disabled: false,
     invalidFields: []
   };
   const { getByDisplayValue } = render(<BasicAuthFields {...props} />);
@@ -57,7 +57,7 @@ it('BasicAuthFields incorrect fields', () => {
     password: 'text',
     serviceAccount: '',
     handleChange: function() {},
-    accessTo: '',
+    disabled: false,
     invalidFields: ['username', 'password']
   };
   const {} = render(<BasicAuthFields {...props} />);
