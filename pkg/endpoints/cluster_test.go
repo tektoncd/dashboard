@@ -46,3 +46,31 @@ func TestGetAllNamespaces(t *testing.T) {
 		t.Errorf("%s is not returned: %s, %s", namespace, result.Items[0].Name, result.Items[1].Name)
 	}
 }
+
+func TestGetAllServiceAccounts(t *testing.T) {
+
+	r := dummyResource()
+
+	namespace := "test-namespace"
+	r.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace}})
+
+	serviceAccount := "test-sa"
+	r.K8sClient.CoreV1().ServiceAccounts(namespace).Create(&corev1.ServiceAccount{ObjectMeta: metav1.ObjectMeta{Name: serviceAccount}})
+
+	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/test-namespace/serviceaccount", nil)
+	req := dummyRestfulRequest(httpReq, "", "")
+	httpWriter := httptest.NewRecorder()
+	resp := dummyRestfulResponse(httpWriter)
+
+	r.getAllServiceAccounts(req, resp)
+
+	result := corev1.ServiceAccountList{}
+	json.NewDecoder(httpWriter.Body).Decode(&result)
+
+	if len(result.Items) != 1 {
+		t.Errorf("Number of service accounts: expected: %d, returned: %d", 1, len(result.Items))
+	}
+	if result.Items[0].Name != serviceAccount {
+		t.Errorf("%s is not returned: %s, %s", serviceAccount, result.Items[0].Name, result.Items[1].Name)
+	}
+}
