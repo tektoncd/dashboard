@@ -6,14 +6,8 @@ Tekton Dashboard is a general purpose, web-based UI for Tekton Pipelines. It all
 
 ![Dashboard UI workloads page](docs/dashboard-ui.png)
 
-## Getting Started
-
-**Currently** to view the dashboard, at `localhost:9097/` 
- 
-If you have `ko`:
-
-Log in to Dockerhub and then use `ko`, for example:
-
+## Install Dashboard
+To install the Dashboard using `ko`:
 ```sh
 $ docker login
 $ export KO_DOCKER_REPO=docker.io/<mydockername>
@@ -22,44 +16,22 @@ $ npm run build_ko
 $ ko apply -f config
 ```
 
-This will build and push an image of the Tekton dashboard to a Dockerhub repository under your account.
+The `ko apply` command will build and push an image of the Tekton Dashboard to the Docker registry which you are logged into. Any Docker registry will do, but in this case it will push to Dockerhub.
 
-Alternatively you can do the following:
+The Dashboard can also be installed without `ko`:
 
 ```sh
 $ docker build -t <mydockername>/dashboard:<mytag> .
 $ docker push <mydockername>/dashboard:<mytag>
 ```
-- Replace the image path at `config/tekton-dashboard-deployment.yaml` with the value for <mydockername>/dashboard:<mytag>
+- Replace the image path at `config/tekton-dashboard.yaml` with the value for <mydockername>/dashboard:<mytag>
 - Replace the WEB_RESOURCES_DIR value in the same file with the value __./web__
 ```
-$ kubectl apply -f tekton-dashboard-deployment.yaml
+$ kubectl apply -f config
 ```
 
-Regardless of which installation mechanism you choose, do the following to access the dashboard: 
-
-```sh
-$ kubectl port-forward $(kubectl get pod -l app=tekton-dashboard -o name) 9097:9097
-```
-
-- Visit [localhost:9097](http://localhost:9097) in your web browser.
-
-**Coming soon**
-- Deploying the dashboard without using the `config/` yaml, and accessing using kubectl proxy. To deploy the dashboard, execute the following command:
-
-```sh
-$ kubectl apply -f https://raw.githubusercontent.com/tektoncd/dashboard/...
-```
-
-To access the Tekton Dashboard from your local workstation you must create a secure channel to your Kubernetes cluster. Run the following command:
-
-```sh
-$ kubectl proxy
-```
-Now access the Dashboard at:
-
-[`http://localhost:8001/api/v1/namespaces/tekton-pipelines/services/https:tekton-dashboard:/proxy/`](
-http://localhost:8001/api/v1/namespaces/tekton-pipelines/https:tekton-dashboard:/proxy/).
+## Accessing Dashboard
+The Dashboard has can be accessed through its ClusterIP Service by running `kubectl proxy`. Assuming default is the install namespace for the dashboard, you can access the web UI at `localhost:8001/api/v1/namespaces/default/services/tekton-dashboard:http/proxy/`
 
 ## Want to contribute
 
