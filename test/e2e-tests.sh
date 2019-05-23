@@ -34,6 +34,12 @@ failed=0
 header "Running e2e tests"
 # TODO: run your test here !
 
+#Fork port forward, once starts running never stops running until killed
+function port_forward() {
+    kubectl port-forward $(kubectl get pod -l app=tekton-dashboard -o name) 9097:9097
+}
+
+
 #kubectl cluster-info
 output=$(kubectl cluster-info)
 echo "kubectl cluster-info : $output"
@@ -47,7 +53,7 @@ echo "Edited is: $edited"
 port_forward &
 echo "dashboard forwarded to port 9097"
 fork_pid=$!
-echo "fork_pid = $fork-pid"
+echo "fork_pid = $fork_pid"
 
 pods=$(kubectl get pods)
 echo "Pods running are: $pods"
@@ -67,14 +73,10 @@ echo "pipelinerun running are: $pipelinerun"
 tasks=$(kubectl get tasks)
 echo "tasks running are: $tasks"
 
+
 kill -9 $fork_pid
 echo "killed port_forward"
 
-
-#Fork port forward, once starts running never stops running until killed
-function port_forward() {
-    kubectl port-forward $(kubectl get pod -l app=tekton-dashboard -o name) 9097:9097
-}
 
 
 (( failed )) && fail_test
