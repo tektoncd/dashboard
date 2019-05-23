@@ -16,6 +16,7 @@ package endpoints
 import (
 	"io"
 	"net/http"
+	"net/http/httptest"
 
 	restful "github.com/emicklei/go-restful"
 
@@ -33,12 +34,35 @@ func dummyClientset() *fakeclientset.Clientset {
 	return result
 }
 
+func dummyResource() *Resource {
+	resource := Resource{
+		PipelineClient: dummyClientset(),
+		K8sClient:      dummyK8sClientset(),
+	}
+	return &resource
+}
+
 func dummyHTTPRequest(method string, url string, body io.Reader) *http.Request {
 	httpReq, _ := http.NewRequest(method, url, body)
 	httpReq.Header.Set("Content-Type", "application/json")
 	return httpReq
 }
 
+// This should be used over dummyRestfulRequest/Response
+// Use alongside DummyHTTPRequest
+func dummyServer() (*httptest.Server, *Resource) {
+	wsContainer := restful.NewContainer()
+	resource := dummyResource()
+	resource.RegisterWeb(wsContainer)
+	resource.RegisterEndpoints(wsContainer)
+	resource.RegisterWebsocket(wsContainer)
+	resource.RegisterHealthProbes(wsContainer)
+	resource.RegisterReadinessProbes(wsContainer)
+	server := httptest.NewServer(wsContainer)
+	return server, resource
+}
+
+// Deprecate these
 func dummyRestfulResponse(httpWriter http.ResponseWriter) *restful.Response {
 	result := restful.NewResponse(httpWriter)
 	result.SetRequestAccepts(restful.MIME_JSON)
@@ -55,12 +79,4 @@ func dummyRestfulRequest(httpReq *http.Request, namespace string, name string) *
 		params["name"] = name
 	}
 	return restfulReq
-}
-
-func dummyResource() *Resource {
-	resource := Resource{
-		PipelineClient: dummyClientset(),
-		K8sClient:      dummyK8sClientset(),
-	}
-	return &resource
 }
