@@ -1,9 +1,10 @@
+# ------------------- Dashboard Deployment ------------------- #
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: tekton-dashboard
   labels:
-    app: tekton-dashboard-deployment
+    app: tekton-dashboard
 spec:
   replicas: 1
   selector:
@@ -40,3 +41,19 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
+---
+# ------------------- Dashboard Service ------------------- #
+kind: Service
+apiVersion: v1
+metadata:
+  name: tekton-dashboard
+  labels:
+    app: tekton-dashboard
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 9097
+      targetPort: 9097
+  selector:
+    app: tekton-dashboard

@@ -4,9 +4,8 @@
 
 Many of the instructions here replicate what's in the [tektoncd/pipeline development guide](https://github.com/tektoncd/pipeline/blob/master/DEVELOPMENT.md), with a couple of caveats currently.
 
-1. This project currently does not support being built with `ko`
-2. This project has not yet been tested with GKE
-3. The instructions here pertain to building and deploying the backend that lets us interact with Tekton resources, as well as running the frontend locally for development. Instructions for deploying the frontend with the backend are to follow.
+- This project has not yet been tested with GKE
+- The instructions here pertain to building and deploying the backend that lets us interact with Tekton resources, as well as running the frontend locally for development.
 
 We would love to accomplish these tasks and to update this document, contributions welcome!
 
@@ -135,11 +134,7 @@ ko apply -f config/
 
 ## Access the dashboard
 
-To access the dashboard:
-
-`kubectl port-forward $(kubectl get pod -l app=tekton-dashboard -o name) 9097:9097`
-
-The web UI can be accessed at http://localhost:9097
+The dashboard can be accessed by running `kubectl proxy`, which proxies requests through the API Server. Assuming `default` is the install namespace for the dashboard, you can access the web UI at `localhost:8001/api/v1/namespaces/default/services/tekton-dashboard:http/proxy/`
 
 ### Redeploy dashboard
 
