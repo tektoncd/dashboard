@@ -44,6 +44,23 @@ echo "kubectl cluster-info | head -n 1 : $output1"
 edited=$(echo "$output1" | sed 's/.*running at \([^ ]*\).*/\1/')
 echo "Edited is: $edited"
 
+pods=$(kubectl get pods)
+echo "Pods running are: $pods"
+
+deployments=$(kubectl get deployments)
+echo "Deployments running are: $deployments"
+
+pipeline=$(kubectl get pipeline)
+echo "pipeline running are: $pipeline"
+
+pipelineresource=$(kubectl get pipelineresource)
+echo "pipelineresource running are: $pipelineresource"
+
+pipelinerun=$(kubectl get pipelinerun)
+echo "pipelinerun running are: $pipelinerun"
+
+tasks=$(kubectl get tasks)
+echo "tasks running are: $tasks"
 
 
 #New fork (put in function sho can terminate easier)
