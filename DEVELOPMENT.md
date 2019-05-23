@@ -4,11 +4,8 @@
 
 Many of the instructions here replicate what's in the [tektoncd/pipeline development guide](https://github.com/tektoncd/pipeline/blob/master/DEVELOPMENT.md), with a couple of caveats currently.
 
-1. This project currently does not support being built with `ko`
-2. This project has not yet been tested with GKE
-3. The instructions here pertain to building and deploying the backend that lets us interact with Tekton resources, as well as running the frontend locally for development. Instructions for deploying the frontend with the backend are to follow.
-
-We would love to accomplish these tasks and to update this document, contributions welcome!
+- This project has not yet been tested with GKE
+- The instructions here pertain to building and deploying the backend that lets us interact with Tekton resources, as well as running the frontend locally for development.
 
 ### Requirements
 
@@ -16,7 +13,7 @@ You must install these tools:
 
 1. [`go`](https://golang.org/doc/install): The language Tekton Dashboard is built in
 1. [`git`](https://help.github.com/articles/set-up-git/): For source control
-1. [`dep`](https://github.com/golang/dep): For managing external Go dependencies. - Please Install dep v0.5.0 or greater.
+1. [`dep`](https://github.com/golang/dep): For managing external Go dependencies. - Please install dep v0.5.0 or greater.
 1. [`ko`](https://github.com/google/ko): For development. `ko` version v0.1 or higher is required for `dashboard` to work correctly.
 1. [Node.js & npm](https://nodejs.org/): For building and running the frontend locally. See `engines` in [package.json](./package.json) for versions used.
 1. [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/): For interacting with your kube cluster.
@@ -102,13 +99,23 @@ Currently you must install the Tekton dashboard into the same namespace you wish
 
 While iterating on the project, you may need to:
 
-1. Run `dep ensure -v` to retrieve dependencies required to build
-1. Run the Alpine based Go tests in Docker with: `docker build -f Dockerfile_test .`
-1. Run the Stretch based Go tests with race condition checking in Docker with: `docker build -f Dockerfile_race_test .`
-1. Install the dashboard
-1. Interact with the created Kubernetes service - we've had success using Postman on Mac and data provided must be JSON
+- Run `dep ensure -v` to retrieve dependencies required to build
+- Run the Alpine based Go tests in Docker with: `docker build -f Dockerfile_test .`
+- Run the Stretch based Go tests with race condition checking in Docker with: `docker build -f Dockerfile_race_test .`
+- Interact with the created Kubernetes service - we've had success using Postman on Mac and data provided must be JSON
 
-Tekton Dashboard does not involve any custom resource definitions, we only interact with them.
+## Makefile
+
+The Makefile has a few commands that can simplify some commands common to development.
+Run `make` or `make help` to see them all. The most important few are as follows:
+
+`make squash` - Runs the Dockerfile tests, formats all checked in files, then squashes your committed changes into a single commit (currently Prow does not have a squash strategy so we must do this locally). Usage: `make squash [RESET_TARGET=<SHA/Remote>] COMMIT=<Message>`
+
+`make test` - Runs go tests against local machine (much faster than dockerized tests)
+
+## CRD
+
+Tekton Dashboard does not create any custom resource definitions, we only interact with them.
 
 ## Install dashboard
 
