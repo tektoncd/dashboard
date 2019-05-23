@@ -33,6 +33,7 @@ const Annotations = props => {
       <div className="annotationRow" key={i}>
         <TextInput
           id={`annotation${i}`}
+          data-testid={`annotation${i}`}
           labelText=""
           key={`annotation${i}`}
           value={annotations[i]}
@@ -47,6 +48,7 @@ const Annotations = props => {
         </div>
         <TextInput
           id={`annotation${i + 1}`}
+          data-testid={`annotation${i + 1}`}
           labelText=""
           key={`annotation${i + 1}`}
           value={annotations[i + 1]}

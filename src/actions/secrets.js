@@ -22,6 +22,13 @@ export function fetchSecretsSuccess(data, namespace) {
   };
 }
 
+// export function fetchSecretsSuccess(data) {
+//   return {
+//     type: 'SECRETS_FETCH_SUCCESS',
+//     data
+//   };
+// }
+
 export function fetchSecrets({ namespace } = {}) {
   return async (dispatch, getState) => {
     dispatch({ type: 'SECRETS_FETCH_REQUEST' });
@@ -30,6 +37,7 @@ export function fetchSecrets({ namespace } = {}) {
       const selectedNamespace = namespace || getSelectedNamespace(getState());
       secrets = await getCredentials(selectedNamespace);
       dispatch(fetchSecretsSuccess(secrets, selectedNamespace));
+      // dispatch(fetchSecretsSuccess(secrets));
     } catch (e) {
       const error = new Error('Could not fetch secrets');
       dispatch({ type: 'SECRETS_FETCH_FAILURE', error });

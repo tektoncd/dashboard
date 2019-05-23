@@ -52,10 +52,10 @@ it('UniversalFields shows disabled fields', () => {
     ],
     invalidFields: []
   };
-  const { getByDisplayValue } = render(<UniversalFields {...props} />);
+  const { getByDisplayValue, getByTestId } = render(<UniversalFields {...props} />);
 
-  const namespaceInput = document.getElementById('namespace');
-  const accessToInput = document.getElementById('accessTo');
+  const namespaceInput = getByTestId('namespace');
+  const accessToInput = getByTestId('accessTo');
 
   expect(getByDisplayValue(/dummyName/i)).toBeTruthy();
   expect(namespaceInput.disabled).toBeFalsy();
@@ -77,11 +77,11 @@ it('UniversalFields incorrect fields', () => {
     ],
     invalidFields: ['name', 'accessTo']
   };
-  const {} = render(<UniversalFields {...props} />);
+  const { getByTestId } = render(<UniversalFields {...props} />);
 
-  const nameInput = document.getElementById('name');
-  const namespaceInput = document.getElementById('namespace');
-  const accessToInput = document.getElementById('accessTo');
+  const nameInput = getByTestId('name');
+  const namespaceInput = getByTestId('namespace');
+  const accessToInput = getByTestId('accessTo');
 
   expect(nameInput.getAttribute('data-invalid')).toBeTruthy();
   expect(accessToInput.getAttribute('data-invalid')).toBeTruthy();

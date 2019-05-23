@@ -24,44 +24,56 @@ import {
   clearNotification
 } from './secrets';
 
+const data = [
+  {
+    name: 'secret-name',
+    password: '********',
+    resourceVersion: '####',
+    serviceAccount: 'default',
+    type: 'userpass',
+    url: { 'tekton.dev/git-0': 'https://github.ibm.com' },
+    username: 'someUser@email.com'
+  }
+];
+const postData = {
+  name: 'secret-name',
+  namespace: 'default',
+  password: '********',
+  serviceAccount: 'default',
+  type: 'userpass',
+  url: { 'tekton.dev/git-0': 'https://github.ibm.com' },
+  username: 'someUser@email.com'
+};
+const response = { ok: true, status: 204 };
+const namespace = 'default';
+
 it('fetchSecretsSuccess', () => {
-  const data = { fake: 'data' };
-  expect(fetchSecretsSuccess(data)).toEqual({
+  expect(fetchSecretsSuccess(data, namespace)).toEqual({
     type: 'SECRETS_FETCH_SUCCESS',
-    data
+    data,
+    namespace
   });
 });
 
-// it('fetchSecrets', async () => {
-//   const namespace = 'default';
-//   const secrets = [
-//     {
-//       name: 'secret-name',
-//       password: '********',
-//       resourceVersion: '####',
-//       serviceAccount: 'default',
-//       type: 'userpass',
-//       url: { 'tekton.dev/git-0': 'https://github.ibm.com' },
-//       username: 'someUser@email.com'
-//     }
-//   ];
-//   const middleware = [thunk];
-//   const mockStore = configureStore(middleware);
-//   const store = mockStore();
-//
-//   jest
-//     .spyOn(selectors, 'getSelectedNamespace')
-//     .mockImplementation(() => namespace);
-//   jest.spyOn(API, 'getCredentials').mockImplementation(() => secrets);
-//
-//   const expectedActions = [
-//     { type: 'SECRETS_FETCH_REQUEST' },
-//     fetchSecretsSuccess(secrets, namespace)
-//   ];
-//
-//   await store.dispatch(fetchSecrets());
-//   expect(store.getActions()).toEqual(expectedActions);
-// });
+it('fetchSecrets', async () => {
+  const secrets = data;
+  const middleware = [thunk];
+  const mockStore = configureStore(middleware);
+  const store = mockStore();
+
+  jest
+    .spyOn(selectors, 'getSelectedNamespace')
+    .mockImplementation(() => namespace);
+  jest.spyOn(API, 'getCredentials').mockImplementation(() => secrets);
+
+  const expectedActions = [
+    { type: 'SECRETS_FETCH_REQUEST' },
+    fetchSecretsSuccess(secrets, namespace)
+  ];
+
+  await store.dispatch(fetchSecrets({ namespace }));
+  expect(store.getActions()).toEqual(expectedActions);
+});
 
 it('fetchSecrets error', async () => {
   const middleware = [thunk];
@@ -83,33 +95,36 @@ it('fetchSecrets error', async () => {
   expect(store.getActions()).toEqual(expectedActions);
 });
 
-// it('deleteSecret', async () => {
-//   const namespace = 'default';
-//   const secret = 'secret';
-//   const secrets = { fake: 'secrets' };
-//   const middleware = [thunk];
-//   const mockStore = configureStore(middleware);
-//   const store = mockStore();
-//
-//   jest
-//     .spyOn(API, 'deleteCredential')
-//     .mockImplementation((secret, namespace) => {});
-//
-//   const expectedActions = [
-//     { type: 'SECRET_DELETE_REQUEST' },
-//     { type: 'SECRET_DELETE_SUCCESS', id: secret },
-//     { type: 'SECRETS_FETCH_REQUEST' },
-//     fetchSecretsSuccess(secrets, namespace)
-//   ];
-//
-//   await store.dispatch(deleteSecret(secret, namespace));
-//   expect(store.getActions()).toEqual(expectedActions);
-// });
-
-it('deleteSecret error', async () => {
+it('deleteSecret', async () => {
   const namespace = 'default';
   const secret = 'secret';
   const secrets = { fake: 'secrets' };
+  const middleware = [thunk];
+  const mockStore = configureStore(middleware);
+  const store = mockStore();
+
+  jest
+    .spyOn(selectors, 'getSelectedNamespace')
+    .mockImplementation(() => namespace);
+  jest.spyOn(API, 'getCredentials').mockImplementation(() => secrets);
+
+  jest
+    .spyOn(API, 'deleteCredential')
+    .mockImplementation((secret, namespace) => {});
+
+  const expectedActions = [
+    { type: 'SECRET_DELETE_REQUEST' },
+    { type: 'SECRET_DELETE_SUCCESS', id: secret },
+    { type: 'SECRETS_FETCH_REQUEST' },
+    fetchSecretsSuccess(secrets, namespace)
+  ];
+
+  await store.dispatch(deleteSecret(secret, namespace));
+  expect(store.getActions()).toEqual(expectedActions);
+});
+
+it('deleteSecret error', async () => {
+  const secret = 'secret';
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const store = mockStore();
@@ -131,47 +146,30 @@ it('deleteSecret error', async () => {
   expect(store.getActions()).toEqual(expectedActions);
 });
 
-// it('createSecret', async () => {
-//   const namespace = 'default';
-//   const postData = {
-//     name: 'secret-name',
-//     namespace: 'default',
-//     password: '********',
-//     serviceAccount: 'default',
-//     type: 'userpass',
-//     url: { 'tekton.dev/git-0': 'https://github.ibm.com' },
-//     username: 'someUser@email.com'
-//   };
-//
-//   const secrets = [
-//     {
-//       name: 'secret-name',
-//       password: '********',
-//       resourceVersion: '####',
-//       serviceAccount: 'default',
-//       type: 'userpass',
-//       url: { 'tekton.dev/git-0': 'https://github.ibm.com' },
-//       username: 'someUser@email.com'
-//     }
-//   ];
-//
-//   const middleware = [thunk];
-//   const mockStore = configureStore(middleware);
-//   const store = mockStore();
-//
-//   jest
-//     .spyOn(API, 'createCredential')
-//     .mockImplementation((postData, namespace));
-//
-//   const expectedActions = [
-//     { type: 'SECRET_CREATE_REQUEST' },
-//     { type: 'SECRETS_FETCH_REQUEST' },
-//     fetchSecretsSuccess(secrets, namespace)
-//   ];
-//
-//   await store.dispatch(createSecret(postData, namespace));
-//   expect(store.getActions()).toEqual(expectedActions);
-// });
+it('createSecret', async () => {
+  const secrets = data;
+  const middleware = [thunk];
+  const mockStore = configureStore(middleware);
+  const store = mockStore();
+
+  jest
+    .spyOn(selectors, 'getSelectedNamespace')
+    .mockImplementation(() => namespace);
+  jest.spyOn(API, 'getCredentials').mockImplementation(() => secrets);
+
+  jest
+    .spyOn(API, 'createCredential')
+    .mockImplementation((postData, namespace) => response);
+
+  const expectedActions = [
+    { type: 'SECRET_CREATE_REQUEST' },
+    { type: 'SECRETS_FETCH_REQUEST' },
+    fetchSecretsSuccess(secrets, namespace)
+  ];
+
+  await store.dispatch(createSecret(postData, namespace));
+  expect(store.getActions()).toEqual(expectedActions);
+});
 
 it('createSecret error', async () => {
   const namespace = 'default';

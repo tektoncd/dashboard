@@ -57,12 +57,12 @@ it('Annotations incorrect fields', () => {
     handleAdd: function() {},
     handleRemove: function() {}
   };
-  const {} = render(<Annotations {...props} />);
+  const { getByTestId } = render(<Annotations {...props} />);
 
-  const annotation1Input = document.getElementById('annotation1');
-  const annotation2Input = document.getElementById('annotation2');
-  const annotation3Input = document.getElementById('annotation3');
-  const annotation5Input = document.getElementById('annotation5');
+  const annotation1Input = getByTestId('annotation1');
+  const annotation2Input = getByTestId('annotation2');
+  const annotation3Input = getByTestId('annotation3');
+  const annotation5Input = getByTestId('annotation5');
 
   expect(annotation1Input.getAttribute('data-invalid')).toBeTruthy();
   expect(annotation2Input.getAttribute('data-invalid')).toBeFalsy();

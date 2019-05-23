@@ -29,6 +29,7 @@ const UniversalFields = props => {
     <>
       <TextInput
         id="name"
+        data-testid="name"
         placeholder=""
         value={name}
         labelText="Name:"
@@ -41,6 +42,7 @@ const UniversalFields = props => {
       <Select
         className="input-modal"
         id="namespace"
+        data-testid="namespace"
         labelText="Namespace:"
         onChange={handleChange}
         value={selectedNamespace}
@@ -63,6 +65,7 @@ const UniversalFields = props => {
       <Select
         className="input-modal"
         id="accessTo"
+        data-testid="accessTo"
         labelText="Access To:"
         value={accessTo}
         onChange={handleChange}
