@@ -36,15 +36,13 @@ header "Running e2e tests"
 
 #kubectl cluster-info
 output=$(kubectl cluster-info)
-echo$("kubectl cluster-info : $output")
+echo "kubectl cluster-info : $output"
 
 #Gets the cluster info in the style: https://localhost:6443
 output1=$(kubectl cluster-info | head -n 1)
-#echo "kubectl cluster-info | head -n 1 :" $output1
-echo$("kubectl cluster-info | head -n 1 : $output1")
+echo "kubectl cluster-info | head -n 1 : $output1"
 edited=$(echo "$output1" | sed 's/.*running at \([^ ]*\).*/\1/')
-#echo "Edited is: "$edited
-echo$"Edited is: $edited")
+echo "Edited is: $edited"
 
 
 
