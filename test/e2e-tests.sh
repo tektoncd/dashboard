@@ -74,6 +74,11 @@ tasks=$(kubectl get tasks)
 echo "tasks running are: $tasks"
 
 
+kubectl apply -f Task.yaml
+
+tasks=$(kubectl get tasks)
+echo "tasks running are: $tasks"
+
 kill -9 $fork_pid
 echo "killed port_forward"
 
