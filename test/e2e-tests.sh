@@ -73,7 +73,7 @@ echo "pipelinerun running are: $pipelinerun"
 tasks=$(kubectl get tasks)
 echo "tasks running are: $tasks"
 
-echo pwd
+echo $PWD
 #kubectl apply -f Task.yaml
 
 tasks=$(kubectl get tasks)
