@@ -130,6 +130,17 @@ func TestPut204(t *testing.T) {
 	makeRequests(t, methodMap[http.MethodPut], http.MethodPut, putFunc)
 }
 
+func TestDelete204(t *testing.T) {
+	t.Log("Checking 204 for DELETE Routes")
+	deleteFunc := func(t *testing.T, request *http.Request, response *http.Response) {
+		if response.StatusCode != 204 {
+			t.Error("Status code not set to 204")
+		}
+	}
+	// Make requests for all existing DELETE routes
+	makeRequests(t, methodMap[http.MethodDelete], http.MethodDelete, deleteFunc)
+}
+
 func makeRequests(t *testing.T, routes []string, httpMethod string, postFunc func(t *testing.T, request *http.Request, response *http.Response)) {
 	for _, route := range routes {
 		t.Logf("%s method: %s", httpMethod, route)
@@ -140,7 +151,7 @@ func makeRequests(t *testing.T, routes []string, httpMethod string, postFunc fun
 			request = *dummyHTTPRequest(httpMethod, server.URL+route, requestBody)
 		} else {
 			withID := strings.Replace(server.URL+route, "{name}", "fakeresource", -1)
-			fmt.Printf("With ID replaced {name} with fakeresource) is %s \n", withID)
+			fmt.Printf("With ID replaced {name} with fakeresource is %s \n", withID)
 			request = *dummyHTTPRequest(httpMethod, withID, requestBody)
 		}
 		response, err := http.DefaultClient.Do(&request)

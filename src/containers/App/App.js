@@ -37,10 +37,10 @@ import {
   Pipelines,
   Secrets,
   Tasks,
-  TaskRuns
+  TaskRuns,
+  NamespacesDropdown
 } from '..';
 
-import NamespacesDropdown from '../NamespacesDropdown';
 import SideNavMenu from '../../components/SideNavMenu';
 import Header from '../../components/Header';
 import Breadcrumbs from '../../components/Breadcrumbs';

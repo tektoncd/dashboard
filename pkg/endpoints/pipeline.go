@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 
@@ -27,6 +26,7 @@ import (
 	"github.com/tektoncd/dashboard/pkg/utils"
 
 	restful "github.com/emicklei/go-restful"
+	uuid "github.com/satori/go.uuid"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
 	v1alpha1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
 	informers "github.com/tektoncd/pipeline/pkg/client/informers/externalversions"
@@ -93,7 +93,7 @@ type PipelineRunUpdateBody struct {
 	STATUS string `json:"status"`
 }
 
-// TaskRunLog - represents a task run's logs (including logs for containers)
+type PipelineRunLog []TaskRunLog
 type TaskRunLog struct {
 	PodName string
 	// Containers correlating to Task step definitions
@@ -108,6 +108,12 @@ type LogContainer struct {
 	Name string
 	Logs []string
 }
+
+const crdNameLengthLimit = 53
+
+// Unexported field within tekton
+// "github.com/tektoncd/pipeline/pkg/reconciler/v1alpha1/taskrun/resources"
+const containerPrefix = "build-step-"
 
 const gitServerLabel = "gitServer"
 const gitOrgLabel = "gitOrg"
@@ -261,9 +267,12 @@ func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, names
 	serviceAccount := pipelineRunData.SERVICEACCOUNT
 	registryLocation := pipelineRunData.REGISTRYLOCATION
 
-	startTime := getDateTimeAsString()
-
-	generatedPipelineRunName := fmt.Sprintf("tekton-pipeline-run-%s", startTime)
+	uuid := uuid.NewV4()
+	generatedPipelineRunName := fmt.Sprintf("tekton-pipeline-run-%s", uuid.String())
+	// Shorten name
+	if len(generatedPipelineRunName) > crdNameLengthLimit {
+		generatedPipelineRunName = generatedPipelineRunName[:crdNameLengthLimit-1]
+	}
 
 	pipeline, err := r.getPipelineImpl(pipelineName, namespace)
 	if err != nil {
@@ -470,63 +479,39 @@ func (r Resource) getTaskRunLog(request *restful.Request, response *restful.Resp
 		return
 	}
 
-	podname := taskRun.Status.PodName
-	pod, err := r.K8sClient.CoreV1().Pods(namespace).Get(podname, metav1.GetOptions{})
+	pod, err := r.K8sClient.CoreV1().Pods(namespace).Get(taskRun.Status.PodName, metav1.GetOptions{})
 	if err != nil {
 		utils.RespondError(response, err, http.StatusNotFound)
 		return
 	}
+	response.WriteEntity(makeTaskRunLog(r, namespace, pod))
+}
 
-	taskSpec := taskRun.Spec.TaskSpec
-	// Attempt to get taskSpec through TaskRef
-	if taskSpec == nil {
-		taskRef := taskRun.Spec.TaskRef
-		if taskRef != nil {
-			taskInterface := r.PipelineClient.TektonV1alpha1().Tasks(namespace)
-			task, err := taskInterface.Get(taskRef.Name, metav1.GetOptions{})
-			if err != nil {
-				utils.RespondError(response, err, http.StatusNotFound)
-				return
-			}
-			taskSpec = &(task.Spec)
-		}
-	}
-	// Unexported field within tekton
-	// "github.com/tektoncd/pipeline/pkg/reconciler/v1alpha1/taskrun/resources"
-	containerPrefix := "build-step-"
-	stepNames := make(map[string]struct{})
-	if taskSpec != nil {
-		for _, step := range taskSpec.Steps {
-			stepNames[containerPrefix+step.Name] = struct{}{}
-		}
-	}
-
+func makeTaskRunLog(r Resource, namespace string, pod *v1.Pod) TaskRunLog {
 	podContainers := pod.Spec.Containers
 	initContainers := pod.Spec.InitContainers
 
-	taskRunLog := TaskRunLog{PodName: podname}
+	taskRunLog := TaskRunLog{PodName: pod.Name}
 	buf := new(bytes.Buffer)
-	var podLogs io.ReadCloser
 	setContainers := func(containers []v1.Container, filter func(l LogContainer)) {
 		for _, container := range containers {
 			buf.Reset()
 			step := LogContainer{Name: container.Name}
-			req := r.K8sClient.CoreV1().Pods(namespace).GetLogs(podname, &v1.PodLogOptions{Container: container.Name})
+			req := r.K8sClient.CoreV1().Pods(namespace).GetLogs(pod.Name, &v1.PodLogOptions{Container: container.Name})
 			if req.URL().Path == "" {
 				continue
 			}
-			podLogs, err = req.Stream()
-			if err != nil {
+			podLogs, _ := req.Stream()
+			if podLogs == nil {
 				continue
 			}
-			_, err = io.Copy(buf, podLogs)
+			_, err := io.Copy(buf, podLogs)
 			if err != nil {
 				podLogs.Close()
 				continue
 			}
 			logs := strings.Split(buf.String(), "\n")
 			for _, log := range logs {
-				// Split does not flatten the search string
 				if log != "" {
 					step.Logs = append(step.Logs, log)
 				}
@@ -539,13 +524,13 @@ func (r Resource) getTaskRunLog(request *restful.Request, response *restful.Resp
 		taskRunLog.InitContainers = append(taskRunLog.InitContainers, l)
 	})
 	setContainers(podContainers, func(l LogContainer) {
-		if _, ok := stepNames[l.Name]; ok {
+		if strings.HasPrefix(l.Name, containerPrefix) {
 			taskRunLog.StepContainers = append(taskRunLog.StepContainers, l)
 		} else {
 			taskRunLog.PodContainers = append(taskRunLog.PodContainers, l)
 		}
 	})
-	response.WriteEntity(taskRunLog)
+	return taskRunLog
 }
 
 /* Create a new PipelineResource: this should be of type git or image */
@@ -561,7 +546,7 @@ func definePipelineResource(name, namespace string, params []v1alpha1.Param, res
 	return resourcePointer
 }
 
-/* Create a new PipelineRun - repoUrl, resourceBinding and params can be nill depending on the Pipeline
+/* Create a new PipelineRun - repoUrl, resourceBinding and params can be nil depending on the Pipeline
 each PipelineRun has a 1 hour timeout: */
 func definePipelineRun(pipelineRunName, namespace, saName, repoUrl string,
 	pipeline v1alpha1.Pipeline,
@@ -605,10 +590,6 @@ func definePipelineRun(pipelineRunName, namespace, saName, repoUrl string,
 	return pipelineRunPointer, nil
 }
 
-func getDateTimeAsString() string {
-	return strconv.FormatInt(time.Now().Unix(), 10)
-}
-
 // defines and creates a resource of a specifed type and returns a pipeline resource reference for this resource
 // takes a manual pipeline run data struct, namespace for the resource creation, resource name to refer to it and the resource type
 func (r Resource) createPipelineResourceForPipelineRun(resourceData ManualPipelineRun, namespace, resourceName string,
@@ -616,10 +597,13 @@ func (r Resource) createPipelineResourceForPipelineRun(resourceData ManualPipeli
 
 	logging.Log.Debugf("Creating PipelineResource of type %s", resourceType)
 
-	startTime := getDateTimeAsString()
-
+	uuid := uuid.NewV4()
 	registryURL := resourceData.REGISTRYLOCATION
-	resourceName = fmt.Sprintf("%s-%s", resourceName, startTime)
+	resourceName = fmt.Sprintf("%s-%s", resourceName, uuid.String())
+	// Shorten name
+	if len(resourceName) > crdNameLengthLimit {
+		resourceName = resourceName[:crdNameLengthLimit-1]
+	}
 
 	var paramsForResource []v1alpha1.Param
 	// Unique names are required so timestamp them.
@@ -682,37 +666,16 @@ func (r Resource) getPipelineRunLog(request *restful.Request, response *restful.
 		return
 	}
 
-	buf := new(bytes.Buffer)
-	var podLogs io.ReadCloser
-	for key, taskrunstatus := range pipelinerun.Status.TaskRuns {
+	var pipelineRunLogs PipelineRunLog
+	for _, taskrunstatus := range pipelinerun.Status.TaskRuns {
 		podname := taskrunstatus.Status.PodName
 		pod, err := r.K8sClient.CoreV1().Pods(namespace).Get(podname, metav1.GetOptions{})
 		if err != nil {
 			continue
 		}
-		containers := append(append([]v1.Container{}, pod.Spec.Containers...), pod.Spec.InitContainers...)
-		for _, container := range containers {
-			buf.WriteString("\n=== " + podname + ": " + key + ": " + container.Name + " ===\n")
-			req := r.K8sClient.CoreV1().Pods(namespace).GetLogs(podname, &v1.PodLogOptions{Container: container.Name})
-			if req.URL().Path == "" {
-				continue
-			}
-			podLogs, err = req.Stream()
-			if err != nil {
-				continue
-			}
-			_, err = io.Copy(buf, podLogs)
-			if err != nil {
-				podLogs.Close()
-				continue
-			}
-			podLogs.Close()
-		}
+		pipelineRunLogs = append(pipelineRunLogs, makeTaskRunLog(r, namespace, pod))
 	}
-
-	str := buf.String()
-	response.AddHeader("Content-Type", "text/plain")
-	response.WriteEntity(str)
+	response.WriteEntity(pipelineRunLogs)
 }
 
 /* Get all pipeline resources in a given namespace */

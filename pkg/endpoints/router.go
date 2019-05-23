@@ -14,10 +14,11 @@ limitations under the License.
 package endpoints
 
 import (
+	"os"
+	"fmt"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
-	"os"
 	"strconv"
 	"strings"
 
@@ -78,6 +79,8 @@ func (r Resource) RegisterEndpoints(container *restful.Container) {
 
 	wsv1.Route(wsv1.GET("/{namespace}/taskruns").To(r.getAllTaskRuns))
 	wsv1.Route(wsv1.GET("/{namespace}/taskruns/{name}").To(r.getTaskRun))
+
+	wsv1.Route(wsv1.GET("/{namespace}/serviceaccounts").To(r.getAllServiceAccounts))
 
 	wsv1.Route(wsv1.GET("/{namespace}/logs/{name}").To(r.getPodLog))
 
@@ -167,19 +170,17 @@ func (r Resource) RegisterExtensions(container *restful.Container, namespace str
 		ext := Extension{Name: svc.ObjectMeta.Name, URL: url, Port: getPort(svc),
 			DisplayName:    svc.ObjectMeta.Annotations[displayNameKey],
 			BundleLocation: svc.ObjectMeta.Annotations[bundleLocationKey]}
-		paths := []string{}
+		// Base extension path
+		paths := []string{""}
 		if ok {
-			paths = strings.Split(url, ".")
-			if len(paths) == 0 {
-				paths = []string{""}
+			if len(url) != 0 {
+				paths = strings.Split(url, ".")
 			}
-		} else {
-			paths = []string{""}
-		}
+		} 
 		for _, path := range paths {
 			// extension handler is registered at the url
 			routingPath := strings.TrimSuffix(base+"/"+path, "/")
-			logging.Log.Debugf("Registering path: %s", base+"/"+path)
+			logging.Log.Debugf("Registering path: %s", routingPath)
 			ws.Route(ws.GET(routingPath).To(ext.HandleExtension))
 			ws.Route(ws.POST(routingPath).To(ext.HandleExtension))
 			ws.Route(ws.PUT(routingPath).To(ext.HandleExtension))
@@ -203,7 +204,7 @@ func (ext Extension) HandleExtension(request *restful.Request, response *restful
 		return
 	}
 	logging.Log.Debugf("Path in URL: %+v", request.Request.URL.Path)
-	request.Request.URL.Path = strings.TrimPrefix(request.Request.URL.Path, "/v1"+extensionRoot+ext.Name)
+	request.Request.URL.Path = strings.TrimPrefix(request.Request.URL.Path, fmt.Sprintf("/v1%s/%s",extensionRoot,ext.Name))
 	logging.Log.Debugf("Path in rerouting URL: %+v", request.Request.URL.Path)
 	proxy := httputil.NewSingleHostReverseProxy(target)
 	proxy.ServeHTTP(response, request.Request)
