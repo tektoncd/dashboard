@@ -15,6 +15,7 @@ import { combineReducers } from 'redux';
 
 import extensions, * as extensionSelectors from './extensions';
 import namespaces, * as namespaceSelectors from './namespaces';
+import serviceAccounts, * as serviceAccountSelectors from './serviceAccounts';
 import pipelines, * as pipelineSelectors from './pipelines';
 import pipelineRuns, * as pipelineRunsSelectors from './pipelineRuns';
 import tasks, * as taskSelectors from './tasks';
@@ -26,7 +27,8 @@ export default combineReducers({
   pipelines,
   pipelineRuns,
   tasks,
-  taskRuns
+  taskRuns,
+  serviceAccounts
 });
 
 export function getSelectedNamespace(state) {
@@ -35,6 +37,22 @@ export function getSelectedNamespace(state) {
 
 export function getNamespaces(state) {
   return namespaceSelectors.getNamespaces(state.namespaces);
+}
+
+export function getServiceAccounts(
+  state,
+  { namespace = getSelectedNamespace(state) } = {}
+) {
+  return serviceAccountSelectors.getServiceAccounts(
+    state.serviceAccounts,
+    namespace
+  );
+}
+
+export function isFetchingServiceAccounts(state) {
+  return serviceAccountSelectors.isFetchingServiceAccounts(
+    state.serviceAccounts
+  );
 }
 
 export function isFetchingNamespaces(state) {

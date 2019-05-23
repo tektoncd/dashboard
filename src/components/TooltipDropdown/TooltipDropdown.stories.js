@@ -12,26 +12,21 @@ limitations under the License.
 */
 
 import React from 'react';
-import { connect } from 'react-redux';
+import { storiesOf } from '@storybook/react';
 
-import TooltipDropdown from '../../components/TooltipDropdown';
-import { getNamespaces, isFetchingNamespaces } from '../../reducers';
+import TooltipDropdown from './TooltipDropdown';
 
-const NamespacesDropdown = props => {
-  return <TooltipDropdown {...props} />;
+const props = {
+  id: 'tooltip-dropdown-id',
+  label: 'Select an item',
+  items: ['item 1', 'item 2', 'item 3'],
+  loading: false
 };
 
-NamespacesDropdown.defaultProps = {
-  items: [],
-  loading: true,
-  label: 'Select Namespace'
-};
-
-function mapStateToProps(state) {
-  return {
-    items: getNamespaces(state),
-    loading: isFetchingNamespaces(state)
-  };
-}
-
-export default connect(mapStateToProps)(NamespacesDropdown);
+storiesOf('TooltipDropdown', module)
+  .add('default', () => {
+    return <TooltipDropdown {...props} />;
+  })
+  .add('loading', () => {
+    return <TooltipDropdown {...props} loading />;
+  });
