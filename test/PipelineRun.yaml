@@ -1,0 +1,9 @@
+apiVersion: pipeline.knative.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  name: hello-pipeline-run
+spec:
+  pipelineRef:
+    name: hello-pipeline #Must be the same as name of pipeline
+  trigger:
+    type: manual

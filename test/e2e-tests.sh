@@ -79,8 +79,23 @@ echo "$tekton_repo_dir"
 kubectl apply -f $tekton_repo_dir/test/Task.yaml
 echo "kubectl apply -f tekton_repo_dir/test/Task.yaml"
 
+kubectl apply -f $tekton_repo_dir/test/TaskHelloWorld.yaml
+echo "kubectl apply -f tekton_repo_dir/test/TaskHelloWorld.yaml"
+
 tasks=$(kubectl get tasks)
 echo "tasks running are: $tasks"
+
+kubectl apply -f $tekton_repo_dir/test/Pipeline.yaml
+echo "kubectl apply -f tekton_repo_dir/test/Pipeline.yaml"
+
+pipeline=$(kubectl get pipeline)
+echo "pipeline running are: $pipeline"
+
+kubectl apply -f $tekton_repo_dir/test/PipelineRun.yaml
+echo "kubectl apply -f tekton_repo_dir/test/PipelineRun.yaml"
+
+pipelinerun=$(kubectl get pipelinerun)
+echo "pipelinerun running are: $pipelinerun"
 
 kill -9 $fork_pid
 echo "killed port_forward"
