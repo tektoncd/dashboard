@@ -73,8 +73,14 @@ echo "pipelinerun running are: $pipelinerun"
 tasks=$(kubectl get tasks)
 echo "tasks running are: $tasks"
 
-echo $PWD
-#kubectl apply -f Task.yaml
+
+kubectl apply -f tekton_repo_dir/dashboard/test/Task.yaml
+echo "kubectl apply -f tekton_repo_dir/dashboard/test/Task.yaml"
+
+kubectl apply -f tekton_repo_dir/test/Task.yaml
+echo "kubectl apply -f tekton_repo_dir/test/Task.yaml"
+
+
 
 tasks=$(kubectl get tasks)
 echo "tasks running are: $tasks"
