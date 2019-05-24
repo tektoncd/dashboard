@@ -25,23 +25,11 @@ import (
 
 func (r Resource) getAllNamespaces(request *restful.Request, response *restful.Response) {
 	namespaces, err := r.K8sClient.CoreV1().Namespaces().List(metav1.ListOptions{})
-	logging.Log.Debugf("In getAllNamespaces")
 
 	if err != nil {
 		utils.RespondError(response, err, http.StatusNotFound)
 		return
 	}
 
-	var nameSpaceList = ""
-
-	for _, element := range namespaces.Items {
-		if nameSpaceList == "" {
-			nameSpaceList = element.Name
-		} else {
-			nameSpaceList = nameSpaceList + ", " + element.Name
-		}
-	}
-
-	logging.Log.Debugf("Found namespaces: %s", nameSpaceList)
-	response.WriteEntity(nameSpaceList)
+	response.WriteEntity(namespaces)
 }
