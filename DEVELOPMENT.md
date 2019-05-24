@@ -19,14 +19,14 @@ You must install these tools:
 1. [`dep`](https://github.com/golang/dep): For managing external Go dependencies. - Please Install dep v0.5.0 or greater.
 1. [`ko`](https://github.com/google/ko): For development. `ko` version v0.1 or higher is required for `dashboard` to work correctly.
 1. [Node.js & npm](https://nodejs.org/): For building and running the frontend locally. See `engines` in [package.json](./package.json) for versions used.
-1. [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/): For interacting with your kube cluster. 
-   
+1. [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/): For interacting with your kube cluster.
+
 Your [`$GOPATH`] setting is critical for `ko apply` to function properly: a
 successful run will typically involve building pushing images instead of only
 configuring Kubernetes resources.
 
 Note that there exists a bug in certain versions of `kubectl` whereby the `auth` field is missing from created secrets. Known good versions we've tested are __1.11.3__ and __1.13.2__.
-   
+
 ### Checkout your fork
 
 The Go tools require that you clone the repository to the
@@ -215,6 +215,14 @@ Returns HTTP code 200 and a list of namespaces in the cluster
 Returns HTTP code 404 if an error occurred getting the namespaces
 ```
 
+__Service Accounts__
+```
+GET /v1/namespaces/<namespace>/serviceaccounts
+Get all ServiceAccounts
+Returns HTTP code 200 and a list of ServiceAccounts in the cluster
+Returns HTTP code 404 if an error occurred getting the ServiceAccounts
+```
+
 __Pipelines__
 ```
 GET /v1/namespaces/<namespace>/pipelines
@@ -246,13 +254,13 @@ __Tasks__
 ```
 GET /v1/namespaces/<namespace>/tasks
 Get all Tekton tasks
-Returns HTTP code 200 and a list of Tasks in the given namespace 
+Returns HTTP code 200 and a list of Tasks in the given namespace
 Returns HTTP code 404 if an error occurred getting the Task list
 
 GET /v1/namespaces/<namespace>/tasks/<task-name>
 Get a Tekton Task by name
 Returns HTTP code 200 and the given Task in the given namespace if found
-Returns HTTP code 404 if an error occurred getting the TaskRun 
+Returns HTTP code 404 if an error occurred getting the TaskRun
 ```
 
 __TaskRuns__
@@ -260,26 +268,26 @@ __TaskRuns__
 GET /v1/namespaces/<namespace>/taskruns
 Get all Tekton TaskRuns
 Get all Tekton TaskRuns, also supports '?name=<task-name>' querying
-Returns HTTP code 200 and a list of TaskRuns in the given namespace 
+Returns HTTP code 200 and a list of TaskRuns in the given namespace
 Returns HTTP code 404 if an error occurred getting the TaskRun list
 
 GET /v1/namespaces/<namespace>/taskruns/<taskrun-name>
 Get a Tekton TaskRun by name
 Returns HTTP code 200 and the given TaskRun in the given namespace if found
-Returns HTTP code 404 if an error occurred getting the TaskRun 
+Returns HTTP code 404 if an error occurred getting the TaskRun
 ```
 
 __PipelineResources__
 ```
 GET /v1/namespaces/<namespace>/pipelineresources
 Get all Tekton PipelineResources
-Returns HTTP code 200 and a list of PipelineResources in the given namespace 
+Returns HTTP code 200 and a list of PipelineResources in the given namespace
 Returns HTTP code 404 if an error occurred getting the PipelineResource list
 
 GET /v1/namespaces/<namespace>/pipelineresources/<pipelineresource-name>
 Get a Tekton PipelineResource by name
 Returns HTTP code 200 and the given PipelineResource in the given namespace if found
-Returns HTTP code 404 if an error occurred getting the PipelineResource 
+Returns HTTP code 404 if an error occurred getting the PipelineResource
 ```
 
 __Logs__
@@ -357,7 +365,7 @@ Returns HTTP code 200 and the given credential as a Kubernetes secret in the giv
 
 __Knative__
 ```
-GET /v1/namespaces/<namespace>/knative/installstatus                     
+GET /v1/namespaces/<namespace>/knative/installstatus
 Get the install status of a Knative resource group.
 The request body should contain the resource group to check for. Shorthand values are accepted for Knative serving and eventing-sources: use ("component": "serving" or "eventing-sources"). Any Kubernetes group can be used too, for example: `extensions/v1beta1`
 
@@ -382,7 +390,7 @@ __Credentials__
 ```
 POST /v1/namespaces/<namespace>/credentials
 Create a new credential
-Request body must contain a name and type ('accesstoken' or 'userpass'). They may contain a description and the URL that the credential will be used for (e.g. the Git server). It can also include serviceAccount that gets patched with the secret. Accesstokens must contain an 'accesstoken' and type userpass must contain 'username' and 'password'. 
+Request body must contain a name and type ('accesstoken' or 'userpass'). They may contain a description and the URL that the credential will be used for (e.g. the Git server). It can also include serviceAccount that gets patched with the secret. Accesstokens must contain an 'accesstoken' and type userpass must contain 'username' and 'password'.
 
 Returns HTTP code 201 if the credential was created OK and sets the 'Content-Location' header
 Returns HTTP code 400 if a bad request was provided
@@ -398,7 +406,7 @@ Example POSTs (non-trivial as it involves the URL map):
     "type": "userpass",
     "description": "my secret for github",
     "url": {"tekton.dev/git-0": "https://github.com"}
-    "serviceAccount": "sa1"    
+    "serviceAccount": "sa1"
 }
 
 {
@@ -412,7 +420,7 @@ __PipelineRuns__
 ```
 POST /v1/namespaces/<namespace>/pipelineruns
 Creates a new manual PipelineRun based on a specified Pipeline
-Request body must contain pipelinename for the Pipeline to run 
+Request body must contain pipelinename for the Pipeline to run
 
 Optional parameters listed below may be provided in the request body depending on requirements of the Pipeline:
 
@@ -431,7 +439,7 @@ Returns HTTP code 201 if the PipelineRun was created successfully
 Returns HTTP code 400 if a bad request was provided
 Returns HTTP code 412 if the Pipeline to create the PipelineRun could not be found
 
-Example POST - for a Pipeline that clones a repository from GitHub and pushes to Dockerhub using a configured secret 
+Example POST - for a Pipeline that clones a repository from GitHub and pushes to Dockerhub using a configured secret
 {
     "pipelinename": "mypipeline",
     "serviceaccount": "tekton-pipelines",
@@ -448,7 +456,7 @@ __PUT endpoints__
 
 __Credentials__
 ```
-PUT /v1/namespaces/<namespace>/credentials/<id>                          
+PUT /v1/namespaces/<namespace>/credentials/<id>
 Update credential by ID
 Request body must contain id, username, password, type ('accesstoken' or 'userpass'), description and the URL that the credential will be used for (e.g. the Git server)
 Returns HTTP code 204 if the credential was updated OK (no contents are provided in the response)
@@ -459,11 +467,11 @@ __PipelineRuns__
 ```
 PUT /v1/namespaces/<namespace>/pipelineruns/<pipelinerun-name>
 Update pipelinerun status
-Request body must contain desired status ("status": "PipelineRunCancelled" to cancel a running one). 
+Request body must contain desired status ("status": "PipelineRunCancelled" to cancel a running one).
 
 Returns HTTP code 204 if the PipelineRun was cancelled successfully (no contents are provided in the response)
 Returns HTTP code 400 if a bad request was used
-Returns HTTP code 404 if the requested PipelineRun could not be found 
+Returns HTTP code 404 if the requested PipelineRun could not be found
 Returns HTTP code 412 if the status was already set to that
 Returns HTTP code 500 if the PipelineRun could not be stopped (an error has occurred when updating the PipelineRun)
 ```
@@ -481,7 +489,7 @@ Returns HTTP code 500 if the found credential could not be deleted
 ```
 
 
-## Extension 
+## Extension
 
 __Backend__
 

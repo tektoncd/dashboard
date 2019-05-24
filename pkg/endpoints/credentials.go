@@ -259,6 +259,7 @@ func (r Resource) deleteCredential(request *restful.Request, response *restful.R
 	}
 	// Patch service account
 	r.removeSecretFromSA(cred.ServiceAccount, requestName, requestNamespace)
+	response.WriteHeader(204)
 }
 
 // Returns true if the namespace exists in the resource K8sClient and false if it does not exist
