@@ -4,9 +4,9 @@ metadata:
   name: hello-pipeline
 spec:
   tasks:
-  - name: do-hello-world
-    taskRef:
-      name: echo-hello-world
-  - name: do-hello-world-1
-    taskRef:
-      name: echo-hello-world-1
+    - name: do-hello-world
+      taskRef:
+        name: echo-hello-world
+    #- name: do-hello-world-1
+    #  taskRef:
+    #    name: echo-hello-world
