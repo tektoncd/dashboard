@@ -398,17 +398,11 @@ Example POSTs (non-trivial as it involves the URL map):
     "name": "mysecretname",
     "username": "myusername",
     "password": "mypassword",
-    "type": "userpass",
     "description": "my secret for github",
     "url": {"tekton.dev/git-0": "https://github.com"}
     "serviceAccount": "sa1"
 }
 
-{
-    "name": "mytoken",
-    "type", "accesstoken",
-    "accesstoken": "34ecf56accce4"
-}
 ```
 
 __PipelineRuns__
