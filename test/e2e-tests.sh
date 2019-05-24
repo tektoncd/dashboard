@@ -16,6 +16,7 @@
 
 # This script calls out to scripts in tektoncd/plumbing to setup a cluster
 # and deploy Tekton Pipelines to it for running integration tests.
+export tekton_repo_dir=$(git rev-parse --show-toplevel)
 
 source $(dirname $0)/e2e-common.sh
 
@@ -73,7 +74,7 @@ echo "pipelinerun running are: $pipelinerun"
 tasks=$(kubectl get tasks)
 echo "tasks running are: $tasks"
 
-
+echo "$tekton_repo_dir"
 kubectl apply -f tekton_repo_dir/dashboard/test/Task.yaml
 echo "kubectl apply -f tekton_repo_dir/dashboard/test/Task.yaml"
 
