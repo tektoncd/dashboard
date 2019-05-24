@@ -100,6 +100,8 @@ pipelinerun=$(kubectl get pipelinerun)
 echo "pipelinerun running are:"
 echo "$pipelinerun"
 
+wait_until_pods_running default
+
 pods=$(kubectl get pods)
 echo "Pods running are: "
 echo "$pods"
@@ -107,6 +109,9 @@ echo "$pods"
 deployments=$(kubectl get deployments)
 echo "Deployments running are: "
 echo "$deployments"
+
+#kubectl describe pod 
+
 
 kill -9 $fork_pid
 echo "killed port_forward"
