@@ -75,13 +75,9 @@ tasks=$(kubectl get tasks)
 echo "tasks running are: $tasks"
 
 echo "$tekton_repo_dir"
-kubectl apply -f tekton_repo_dir/dashboard/test/Task.yaml
-echo "kubectl apply -f tekton_repo_dir/dashboard/test/Task.yaml"
 
-kubectl apply -f tekton_repo_dir/test/Task.yaml
+kubectl apply -f $tekton_repo_dir/test/Task.yaml
 echo "kubectl apply -f tekton_repo_dir/test/Task.yaml"
-
-
 
 tasks=$(kubectl get tasks)
 echo "tasks running are: $tasks"
