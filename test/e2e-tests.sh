@@ -110,8 +110,13 @@ deployments=$(kubectl get deployments)
 echo "Deployments running are: "
 echo "$deployments"
 
-#kubectl describe pod 
+ksvc=$(kubectl get ksvc)
+echo "KSVC are:"
+echo "$ksvc"
 
+ssvc=$(kubectl get svc)
+echo "SVC are:"
+echo "$svc"
 
 kill -9 $fork_pid
 echo "killed port_forward"
