@@ -11,28 +11,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-.tasks {
-  display: flex;
-  flex-wrap: nowrap;
-  border: 1px solid #dfe3e6;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.07);
-  min-height: calc(100vh - 16rem);
-  align-items: stretch;
-  background-color: white;
-}
-
-.task-tree {
-  flex-shrink: 0;
-}
-
-.step-details {
-  flex-grow: 1;
-}
-
-.bx--inline-notification__close-button{
-  visibility: hidden;
-}
-
-.bx--snippet--multi{
-  overflow-x: auto
-}
+export { default } from './CustomResourceDefinition';

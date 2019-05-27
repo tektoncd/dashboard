@@ -125,7 +125,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
                       </StructuredListCell>
                       {!pipelineName && (
                         <StructuredListCell>
-                          <Link to={`/pipelines/${pipelineRefName}`}>
+                          <Link to={`/pipelines/${pipelineRefName}/runs`}>
                             {pipelineRefName}
                           </Link>
                         </StructuredListCell>

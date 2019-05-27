@@ -37,6 +37,7 @@ import {
   Pipelines,
   Tasks,
   TaskRuns,
+  CustomResourceDefinition,
   NamespacesDropdown
 } from '..';
 
@@ -112,16 +113,6 @@ export /* istanbul ignore next */ class App extends Component {
 
           <Content>
             <Switch>
-              <Redirect
-                from="/pipelines/:pipelineName"
-                exact
-                to="/pipelines/:pipelineName/runs"
-              />
-              <Redirect
-                from="/tasks/:taskName"
-                exact
-                to="/tasks/:taskName/runs"
-              />
               <Route path="/pipelines" exact component={Pipelines} />
               <Route path="/tasks" exact component={Tasks} />
               <Route path="/pipelineruns" component={PipelineRuns} />
@@ -149,6 +140,11 @@ export /* istanbul ignore next */ class App extends Component {
                   )}
                 />
               ))}
+              <Route
+                path="/:type/:name"
+                exact
+                component={CustomResourceDefinition}
+              />
               <Redirect to="/pipelines" />
             </Switch>
           </Content>

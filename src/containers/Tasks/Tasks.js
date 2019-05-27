@@ -24,6 +24,7 @@ import {
   StructuredListWrapper
 } from 'carbon-components-react';
 
+import Information16 from '@carbon/icons-react/lib/information/16';
 import { fetchTasks } from '../../actions/tasks';
 import {
   getSelectedNamespace,
@@ -71,6 +72,7 @@ export /* istanbul ignore next */ class Tasks extends Component {
               <StructuredListHead>
                 <StructuredListRow head>
                   <StructuredListCell head>Task</StructuredListCell>
+                  <StructuredListCell head />
                 </StructuredListRow>
               </StructuredListHead>
               <StructuredListBody>
@@ -88,6 +90,11 @@ export /* istanbul ignore next */ class Tasks extends Component {
                     >
                       <StructuredListCell>
                         <Link to={`/tasks/${taskName}/runs`}>{taskName}</Link>
+                      </StructuredListCell>
+                      <StructuredListCell>
+                        <Link title="task definition" to={`/tasks/${taskName}`}>
+                          <Information16 className="resource-info-icon" />
+                        </Link>
                       </StructuredListCell>
                     </StructuredListRow>
                   );
