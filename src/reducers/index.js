@@ -73,6 +73,13 @@ export function isFetchingExtensions(state) {
   return extensionSelectors.isFetchingExtensions(state.extensions);
 }
 
+export function getPipeline(
+  state,
+  { name, namespace = getSelectedNamespace(state) }
+) {
+  return pipelineSelectors.getPipeline(state.pipelines, name, namespace);
+}
+
 export function getPipelines(
   state,
   { namespace = getSelectedNamespace(state) } = {}

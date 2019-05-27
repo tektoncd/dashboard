@@ -14,6 +14,8 @@ limitations under the License.
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import Information16 from '@carbon/icons-react/lib/information/16';
+
 import {
   InlineNotification,
   StructuredListBody,
@@ -71,6 +73,7 @@ export /* istanbul ignore next */ class Pipelines extends Component {
               <StructuredListHead>
                 <StructuredListRow head>
                   <StructuredListCell head>Pipeline</StructuredListCell>
+                  <StructuredListCell head />
                 </StructuredListRow>
               </StructuredListHead>
               <StructuredListBody>
@@ -89,6 +92,14 @@ export /* istanbul ignore next */ class Pipelines extends Component {
                       <StructuredListCell>
                         <Link to={`/pipelines/${pipelineName}/runs`}>
                           {pipelineName}
+                        </Link>
+                      </StructuredListCell>
+                      <StructuredListCell>
+                        <Link
+                          title="pipeline definition"
+                          to={`/pipelines/${pipelineName}`}
+                        >
+                          <Information16 className="resource-info-icon" />
                         </Link>
                       </StructuredListCell>
                     </StructuredListRow>
