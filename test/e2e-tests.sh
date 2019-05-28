@@ -138,7 +138,7 @@ echo "Edited is: $edited"
 edited1=$(echo "$edited" | sed 's/.*rhttps://\([^ ]*\).*/\1/')
 echo "Edited is: $edited1"
 
-edited2=$(echo "$edited" | sed 's/ .*//'")
+edited2=$(echo "$edited" | sed 's/ .*//')
 echo "Edited is: $edited2"
 
 port_forward &
