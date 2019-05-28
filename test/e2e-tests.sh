@@ -199,24 +199,23 @@ ssvc=$(kubectl get svc)
 echo "SVC are:"
 echo "$svc"
 
-kill -9 $fork_pid
-echo "killed port_forward"
 
-response = curl "$edited"
-echo "response is :"
-echo "$repsonse"
-
-responsePipeline = curl "$edited/pipeline"
+responsePipeline = curl "$edited/v1/namespaces/default/pipelines"
 echo "response is :"
 echo "$responsePipeline"  
 
-responsePipelineRun = curl "$edited/pipelineruns"
+responsePipelineRun = curl "$edited/v1/namespaces/default/pipelineruns"
 echo "response is :"
 echo "$responsePipelineRun"  
 
-responseTask = curl "$edited/tasks"
+responseTask = curl "$edited/v1/namespaces/default/tasks"
 echo "response is :"
-echo "$responseTask"  
+echo "$responseTask" 
+
+
+
+kill -9 $fork_pid
+echo "killed port_forward" 
 
 (( failed )) && fail_test
 success
