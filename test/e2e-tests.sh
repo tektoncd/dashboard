@@ -36,17 +36,90 @@ failed=0
 header "Running e2e tests"
 # TODO: run your test here !
 
+function install_istio() {
+    if [ -z "$1" ]; then
+        echo "Usage ERROR for function: install_istio [version]"
+        echo "Missing [version]"
+        exit 1
+    fi
+    version="$1"
+    # Install on Minikube or Docker Desktop
+    kubectl apply --filename https://github.com/knative/serving/releases/download/${version}/istio-crds.yaml &&
+    curl -L https://github.com/knative/serving/releases/download/${version}/istio.yaml \
+      | kubectl apply --filename -
+
+    # This works but why are we only labelling the default namespace? 
+    # Isn't this needed on those namespaces in which we use knative-eventing?
+    # If not is Istio really required for our purposes? 
+    kubectl label namespace default istio-injection=enabled
+
+    # Wait until all the pods come up
+    wait_for_ready_pods istio-system 300 30
+}
+
+function install_knative_serving() {
+    if [ -z "$1" ]; then
+        echo "Usage ERROR for function: install_knative_serving [version]"
+        echo "Missing [version]"
+        exit 1
+    fi
+    version="$1"
+    curl -L https://github.com/knative/serving/releases/download/${version}/serving.yaml \
+    | kubectl apply --filename -
+    # Wait until all the pods come up
+    wait_for_ready_pods knative-serving 180 20
+}
+
+function install_knative_eventing() {
+    if [ -z "$1" ]; then
+        echo "Usage ERROR for function: install_knative_eventing [version]"
+        echo "Missing [version]"
+        exit 1
+    fi
+    version="$1"
+    kubectl apply --filename https://github.com/knative/eventing/releases/download/${version}/release.yaml
+    # Wait until all the pods come up
+    wait_for_ready_pods knative-eventing 180 20
+}
+
+# Note that eventing-sources.yaml was renamed from release.yaml in the v0.5.0 release, so this won't work for earlier releases as-is. 
+function install_knative_eventing_sources() {
+    if [ -z "$1" ]; then
+        echo "Usage ERROR for function: install_knative_eventing_sources [version]"
+        echo "Missing [version]"
+        exit 1
+    fi
+    version="$1"
+    kubectl apply --filename https://github.com/knative/eventing-sources/releases/download/${version}/eventing-sources.yaml
+    # Wait until all the pods come up
+    wait_for_ready_pods knative-sources 180 20
+}
+
+function wait_for_ready_pods() {
+    if [ -z "$1" ] || [ -z "$2" ]; then
+        echo "Usage ERROR for function: wait_for_ready_pods [namespace] [timeout] <sleepTime>"
+        [ -z "$1" ] && echo "Missing [namespace]"
+        [ -z "$2" ] && echo "Missing [timeout]"
+        exit 1
+    fi
+    namespace=$1
+    timeout_period=$2
+    timeout ${timeout_period} "kubectl get pods -n ${namespace} && [[ \$(kubectl get pods -n ${namespace} 2>&1 | grep -c -v -E '(Running|Completed|Terminating|STATUS)') -eq 0 ]]"
+}
+
+
+
+#Fork port forward, once starts running never stops running until killed
+function port_forward() {
+    kubectl port-forward $(kubectl get pod -l app=tekton-dashboard -o name) 9097:9097
+}
+
 echo "Installing knative version $KNATIVE_VERSION"
 install_istio $KNATIVE_VERSION
 install_knative_serving $KNATIVE_VERSION
 install_knative_eventing $KNATIVE_VERSION
 install_knative_eventing_sources $KNATIVE_VERSION
 echo "Installed knative version $KNATIVE_VERSION"
-
-#Fork port forward, once starts running never stops running until killed
-function port_forward() {
-    kubectl port-forward $(kubectl get pod -l app=tekton-dashboard -o name) 9097:9097
-}
 
 
 #kubectl cluster-info
