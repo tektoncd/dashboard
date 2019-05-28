@@ -88,9 +88,9 @@ export /* istanbul ignore next */ class App extends Component {
               </SideNavMenu>
               <NamespacesDropdown
                 titleText="Namespace"
-                selectedItem={{ text: namespace }}
+                selectedItem={{ id: namespace, text: namespace }}
                 onChange={event => {
-                  this.props.selectNamespace(event.selectedItem.text);
+                  this.props.selectNamespace(event.selectedItem.id);
                 }}
               />
               {extensions.length > 0 && (
