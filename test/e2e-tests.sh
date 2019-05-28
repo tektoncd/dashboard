@@ -199,16 +199,17 @@ ssvc=$(kubectl get svc)
 echo "SVC are:"
 echo "$svc"
 
+echo "response pipelne is : $edited/v1/namespaces/default/pipelines"
 
-responsePipeline = curl "$edited/v1/namespaces/default/pipelines"
+responsePipeline=$(curl "$edited/v1/namespaces/default/pipelines")
 echo "response is :"
 echo "$responsePipeline"  
 
-responsePipelineRun = curl "$edited/v1/namespaces/default/pipelineruns"
+responsePipelineRun=$(curl "$edited/v1/namespaces/default/pipelineruns")
 echo "response is :"
 echo "$responsePipelineRun"  
 
-responseTask = curl "$edited/v1/namespaces/default/tasks"
+responseTask=$(curl "$edited/v1/namespaces/default/tasks")
 echo "response is :"
 echo "$responseTask" 
 
