@@ -129,7 +129,10 @@ echo "kubectl cluster-info : $output"
 #Gets the cluster info in the style: https://localhost:6443
 output1=$(kubectl cluster-info | head -n 1)
 echo "kubectl cluster-info | head -n 1 : $output1"
-edited=$(echo "$output1" | sed 's/.*running at \([^ ]*\).*/\1/')
+#edited=$(echo "$output1" | sed 's/.*running at \([^ ]*\).*/\1/')
+edited1=$(echo "$output1" | sed 's/.*https:// \([^ ]*\).*/\1/')
+echo "Edited1 is $edited1"
+edited=$(echo "$edited1 | cut -f1 -d" "")
 echo "Edited is: $edited"
 
 port_forward &
@@ -199,17 +202,17 @@ ssvc=$(kubectl get svc)
 echo "SVC are:"
 echo "$svc"
 
-echo "response pipelne is : $edited/v1/namespaces/default/pipelines"
+echo "response pipelne is : https://$edited/v1/namespaces/default/pipelines"
 
-responsePipeline=$(curl "$edited/v1/namespaces/default/pipelines")
+responsePipeline=$(curl "https://$edited/v1/namespaces/default/pipelines")
 echo "response is :"
 echo "$responsePipeline"  
 
-responsePipelineRun=$(curl "$edited/v1/namespaces/default/pipelineruns")
+responsePipelineRun=$(curl "https://$edited/v1/namespaces/default/pipelineruns")
 echo "response is :"
 echo "$responsePipelineRun"  
 
-responseTask=$(curl "$edited/v1/namespaces/default/tasks")
+responseTask=$(curl "https://$edited/v1/namespaces/default/tasks")
 echo "response is :"
 echo "$responseTask" 
 
