@@ -492,6 +492,7 @@ func (r Resource) getTaskRunLog(request *restful.Request, response *restful.Resp
 		}
 	}
 	// Unexported field within tekton
+	// "github.com/tektoncd/pipeline/pkg/reconciler/v1alpha1/taskrun/resources"
 	containerPrefix := "build-step-"
 	stepNames := make(map[string]struct{})
 	if taskSpec != nil {

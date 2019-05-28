@@ -14,11 +14,10 @@ limitations under the License.
 import { getTask, getTasks } from '../api';
 import { getSelectedNamespace } from '../reducers';
 
-export function fetchTasksSuccess(data, namespace) {
+export function fetchTasksSuccess(data) {
   return {
     type: 'TASKS_FETCH_SUCCESS',
-    data,
-    namespace
+    data
   };
 }
 
@@ -29,7 +28,7 @@ export function fetchTask({ name, namespace }) {
     try {
       const requestedNamespace = namespace || getSelectedNamespace(getState());
       task = await getTask(name, requestedNamespace);
-      dispatch(fetchTasksSuccess([task], requestedNamespace));
+      dispatch(fetchTasksSuccess([task]));
     } catch (error) {
       dispatch({ type: 'TASKS_FETCH_FAILURE', error });
     }
@@ -44,7 +43,7 @@ export function fetchTasks({ namespace } = {}) {
     try {
       const requestedNamespace = namespace || getSelectedNamespace(getState());
       tasks = await getTasks(requestedNamespace);
-      dispatch(fetchTasksSuccess(tasks, requestedNamespace));
+      dispatch(fetchTasksSuccess(tasks));
     } catch (error) {
       dispatch({ type: 'TASKS_FETCH_FAILURE', error });
     }

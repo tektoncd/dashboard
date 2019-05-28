@@ -44,7 +44,7 @@ it('fetchPipeline', async () => {
 
   const expectedActions = [
     { type: 'PIPELINES_FETCH_REQUEST' },
-    fetchPipelinesSuccess([pipeline], namespace)
+    fetchPipelinesSuccess([pipeline])
   ];
 
   await store.dispatch(fetchPipeline({ name: 'foo' }));
@@ -72,20 +72,16 @@ it('fetchPipeline error', async () => {
 });
 
 it('fetchPipelines', async () => {
-  const namespace = 'default';
   const pipelines = { fake: 'pipelines' };
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const store = mockStore();
 
-  jest
-    .spyOn(selectors, 'getSelectedNamespace')
-    .mockImplementation(() => namespace);
   jest.spyOn(API, 'getPipelines').mockImplementation(() => pipelines);
 
   const expectedActions = [
     { type: 'PIPELINES_FETCH_REQUEST' },
-    fetchPipelinesSuccess(pipelines, namespace)
+    fetchPipelinesSuccess(pipelines)
   ];
 
   await store.dispatch(fetchPipelines());

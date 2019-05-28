@@ -66,7 +66,7 @@ func TestTask(t *testing.T) {
 	}
 
 	// Test getAllTasks function
-	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/task/", nil)
+	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/tasks/", nil)
 	req := dummyRestfulRequest(httpReq, "ns1", "")
 	httpWriter := httptest.NewRecorder()
 	resp := dummyRestfulResponse(httpWriter)
@@ -87,7 +87,7 @@ func TestTask(t *testing.T) {
 	}
 
 	// Test getTask function
-	httpReq = dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/task/Task2", nil)
+	httpReq = dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/tasks/Task2", nil)
 	req = dummyRestfulRequest(httpReq, "ns1", "Task2")
 	httpWriter = httptest.NewRecorder()
 	resp = dummyRestfulResponse(httpWriter)
@@ -141,7 +141,7 @@ func TestPipeline(t *testing.T) {
 	}
 
 	// Test getAllPipelines function
-	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipeline/", nil)
+	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelines/", nil)
 	req := dummyRestfulRequest(httpReq, "ns1", "")
 	httpWriter := httptest.NewRecorder()
 	resp := dummyRestfulResponse(httpWriter)
@@ -162,7 +162,7 @@ func TestPipeline(t *testing.T) {
 	}
 
 	// Test getPipeline function
-	httpReq = dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipeline/Pipeline2", nil)
+	httpReq = dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelines/Pipeline2", nil)
 	req = dummyRestfulRequest(httpReq, "ns1", "Pipeline2")
 	httpWriter = httptest.NewRecorder()
 	resp = dummyRestfulResponse(httpWriter)
@@ -194,7 +194,7 @@ func TestTaskRun(t *testing.T) {
 			Name: "TaskRun2",
 		},
 		Spec: v1alpha1.TaskRunSpec{
-			TaskRef:        &v1alpha1.TaskRef{
+			TaskRef: &v1alpha1.TaskRef{
 				Name: "Task2",
 			},
 		},
@@ -204,7 +204,7 @@ func TestTaskRun(t *testing.T) {
 			Name: "TaskRun3",
 		},
 		Spec: v1alpha1.TaskRunSpec{
-			TaskRef:        &v1alpha1.TaskRef{
+			TaskRef: &v1alpha1.TaskRef{
 				Name: "Task3",
 			},
 		},
@@ -225,7 +225,7 @@ func TestTaskRun(t *testing.T) {
 	}
 
 	// Test getAllTaskRuns function
-	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/taskrun/", nil)
+	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/taskruns/", nil)
 	req := dummyRestfulRequest(httpReq, "ns1", "")
 	httpWriter := httptest.NewRecorder()
 	resp := dummyRestfulResponse(httpWriter)
@@ -247,7 +247,7 @@ func TestTaskRun(t *testing.T) {
 
 	// Test getAllTaskRuns function with name query
 	// Sample request and response
-	httpReq = dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/taskrun?name=Task2", nil)
+	httpReq = dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/taskruns?name=Task2", nil)
 	req = dummyRestfulRequest(httpReq, "ns1", "")
 	httpWriter = httptest.NewRecorder()
 	resp = dummyRestfulResponse(httpWriter)
@@ -267,7 +267,7 @@ func TestTaskRun(t *testing.T) {
 	}
 
 	// Test getTaskRun function
-	httpReq = dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/taskrun/TaskRun2", nil)
+	httpReq = dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/taskruns/TaskRun2", nil)
 	req = dummyRestfulRequest(httpReq, "ns1", "TaskRun2")
 	httpWriter = httptest.NewRecorder()
 	resp = dummyRestfulResponse(httpWriter)
@@ -346,7 +346,7 @@ func TestPipelineRun(t *testing.T) {
 	}
 
 	// Test getAllPipelineRuns function
-	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun/", nil)
+	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelineruns/", nil)
 	req := dummyRestfulRequest(httpReq, "ns1", "")
 	httpWriter := httptest.NewRecorder()
 	resp := dummyRestfulResponse(httpWriter)
@@ -367,7 +367,7 @@ func TestPipelineRun(t *testing.T) {
 	}
 
 	// Test getAllPipelineRuns function with query
-	httpReq = dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun?repository=http://github.com/foo/bar", nil)
+	httpReq = dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelineruns?repository=http://github.com/foo/bar", nil)
 	req = dummyRestfulRequest(httpReq, "ns1", "")
 	httpWriter = httptest.NewRecorder()
 	resp = dummyRestfulResponse(httpWriter)
@@ -386,7 +386,7 @@ func TestPipelineRun(t *testing.T) {
 
 	// Test getAllPipelineRuns function with name query
 	// Sample request and response
-	httpReq = dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun?name=Pipeline2", nil)
+	httpReq = dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelineruns?name=Pipeline2", nil)
 	req = dummyRestfulRequest(httpReq, "ns1", "")
 	httpWriter = httptest.NewRecorder()
 	resp = dummyRestfulResponse(httpWriter)
@@ -406,7 +406,7 @@ func TestPipelineRun(t *testing.T) {
 	}
 
 	// Test getPipelineRun function
-	httpReq = dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun/PipelineRun2", nil)
+	httpReq = dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelineruns/PipelineRun2", nil)
 	req = dummyRestfulRequest(httpReq, "ns1", "PipelineRun2")
 	httpWriter = httptest.NewRecorder()
 	resp = dummyRestfulResponse(httpWriter)
@@ -545,7 +545,7 @@ func TestTaskRunLog(t *testing.T) {
 	}
 
 	// Test getAllPipelineRuns function
-	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/taskrunlog/TaskRun1", nil)
+	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/taskrunlogs/TaskRun1", nil)
 	req := dummyRestfulRequest(httpReq, "ns1", "TaskRun1")
 	httpWriter := httptest.NewRecorder()
 	resp := dummyRestfulResponse(httpWriter)
@@ -747,7 +747,7 @@ func TestPipelineRunLog(t *testing.T) {
 
 	// Test getAllPipelineRuns function
 	// Sample request and response
-	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerlog/PipelineRun1", nil)
+	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerunlogs/PipelineRun1", nil)
 	req := dummyRestfulRequest(httpReq, "ns1", "PipelineRun1")
 	httpWriter := httptest.NewRecorder()
 	resp := dummyRestfulResponse(httpWriter)
@@ -772,7 +772,7 @@ func TestPipelineRunLog(t *testing.T) {
 	Make sure you've got the templates all applied from the config directory so you've got a Pipeline and Task definitions.
 	Push code to the repository after verifying you've got a webhook and this kicks off a PipelineRun.
 	Retrieve the name of your PipelineRun e.g. with `kubectl get pipelinerun`.
-	With Postman send a PUT to <your kservice domain for the github event pipeline>/v1/namespaces/<namespace>/pipelinerun/<name of pipeline run>
+	With Postman send a PUT to <your kservice domain for the github event pipeline>/v1/namespaces/<namespace>/pipelineruns/<name of pipeline run>
 	In the body you want "status": "PipelineRunCancelled"
 	Observe the PipelineRun is cancelled.
 */
@@ -850,7 +850,7 @@ func TestPipelineRunUpdateBadRequest(t *testing.T) {
 	httpWriter := httptest.NewRecorder()
 
 	badRequestBody := strings.NewReader(`{"notstatus" : "foo"}`)
-	badRequest := dummyHTTPRequest("PUT", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun/PipelineRun1", badRequestBody)
+	badRequest := dummyHTTPRequest("PUT", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelineruns/PipelineRun1", badRequestBody)
 	badRequestRestful := dummyRestfulRequest(badRequest, "ns1", "PipelineRun1")
 	resp := dummyRestfulResponse(httpWriter)
 	r.updatePipelineRun(badRequestRestful, resp)
@@ -873,7 +873,7 @@ func TestPipelineRunUpdateNotFoundByName(t *testing.T) {
 	httpWriter := httptest.NewRecorder()
 
 	notFoundBody := strings.NewReader(`{"status" : "foo"}`)
-	notFoundRequest := dummyHTTPRequest("PUT", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun/IDoNotExist", notFoundBody)
+	notFoundRequest := dummyHTTPRequest("PUT", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelineruns/IDoNotExist", notFoundBody)
 	notFoundRestfulRequest := dummyRestfulRequest(notFoundRequest, "ns1", "IDoNotExist")
 	resp := dummyRestfulResponse(httpWriter)
 	r.updatePipelineRun(notFoundRestfulRequest, resp)
@@ -960,7 +960,7 @@ func TestPipelineRunUpdateNotFoundByNamespace(t *testing.T) {
 	httpWriter := httptest.NewRecorder()
 
 	notFoundBody := strings.NewReader(`{"status" : "foo"}`)
-	notFoundRequest := dummyHTTPRequest("PUT", "http://wwww.dummy.com:8383/v1/namespaces/notns1/pipelinerun/PipelineRun1", notFoundBody)
+	notFoundRequest := dummyHTTPRequest("PUT", "http://wwww.dummy.com:8383/v1/namespaces/notns1/pipelineruns/PipelineRun1", notFoundBody)
 	notFoundRestfulRequest := dummyRestfulRequest(notFoundRequest, "notns1", "PipelineRun1")
 	resp := dummyRestfulResponse(httpWriter)
 	r.updatePipelineRun(notFoundRestfulRequest, resp)
@@ -1046,7 +1046,7 @@ func TestPipelineRunUpdateAllGood(t *testing.T) {
 	httpWriter := httptest.NewRecorder()
 
 	goodRequestBody := strings.NewReader(`{"status" : "PipelineRunCancelled"}`)
-	goodRequest := dummyHTTPRequest("PUT", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun/PipelineRun1", goodRequestBody)
+	goodRequest := dummyHTTPRequest("PUT", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelineruns/PipelineRun1", goodRequestBody)
 	goodRequestRestful := dummyRestfulRequest(goodRequest, "ns1", "PipelineRun1")
 	resp := dummyRestfulResponse(httpWriter)
 	r.updatePipelineRun(goodRequestRestful, resp)
@@ -1130,7 +1130,7 @@ func TestPipelineRunUpdateStatusAlreadySet412(t *testing.T) {
 
 	statusCancelBody := strings.NewReader(`{"status": "PipelineRunCancelled"}`)
 
-	statusCancelRequest := dummyHTTPRequest("PUT", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun/PipelineRun1", statusCancelBody)
+	statusCancelRequest := dummyHTTPRequest("PUT", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelineruns/PipelineRun1", statusCancelBody)
 	statusCancelRestful := dummyRestfulRequest(statusCancelRequest, "ns1", "PipelineRun1")
 	resp := dummyRestfulResponse(httpWriter)
 	r.updatePipelineRun(statusCancelRestful, resp)
@@ -1142,7 +1142,7 @@ func TestPipelineRunUpdateStatusAlreadySet412(t *testing.T) {
 	// It's already set to be cancelled, so doing it again should give us a 412 response (pre-condition failed)
 
 	anotherCancelBody := strings.NewReader(`{"status": "PipelineRunCancelled"}`)
-	duplicatedStatusSet := dummyHTTPRequest("PUT", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun/PipelineRun1", anotherCancelBody)
+	duplicatedStatusSet := dummyHTTPRequest("PUT", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelineruns/PipelineRun1", anotherCancelBody)
 	duplicatedStatusSetRestful := dummyRestfulRequest(duplicatedStatusSet, "ns1", "PipelineRun1")
 	resp = dummyRestfulResponse(httpWriter)
 	r.updatePipelineRun(duplicatedStatusSetRestful, resp)
@@ -1380,7 +1380,7 @@ func TestCreatePipelineRunGitAndImageResource(t *testing.T) {
 func createDummyPipelineRunQuery(pipelineRunBody io.Reader) (*restful.Request, *restful.Response) {
 	httpWriter := httptest.NewRecorder()
 
-	pipelineRunRequest := dummyHTTPRequest("POST", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun", pipelineRunBody)
+	pipelineRunRequest := dummyHTTPRequest("POST", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelineruns", pipelineRunBody)
 	pipelineRunRequestRestful := dummyRestfulRequest(pipelineRunRequest, "ns1", "")
 	resp := dummyRestfulResponse(httpWriter)
 	return pipelineRunRequestRestful, resp

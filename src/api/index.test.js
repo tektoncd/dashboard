@@ -56,22 +56,22 @@ describe('getAPIRoot', () => {
 
 describe('getAPI', () => {
   it('returns a URI containing the given type', () => {
-    const uri = getAPI('pipeline');
-    expect(uri).toContain('pipeline');
+    const uri = getAPI('pipelines');
+    expect(uri).toContain('pipelines');
   });
 
   it('returns a URI containing the given type and name', () => {
-    const uri = getAPI('pipeline', { name: 'somename' });
-    expect(uri).toContain('pipeline');
+    const uri = getAPI('pipelines', { name: 'somename' });
+    expect(uri).toContain('pipelines');
     expect(uri).toContain('somename');
   });
 
   it('returns a URI containing the given, name, and namespace', () => {
-    const uri = getAPI('pipeline', {
+    const uri = getAPI('pipelines', {
       name: 'somename',
       namespace: 'customnamespace'
     });
-    expect(uri).toContain('pipeline');
+    expect(uri).toContain('pipelines');
     expect(uri).toContain('somename');
     expect(uri).toContain('customnamespace');
   });
@@ -95,7 +95,7 @@ it('getPipelines', () => {
   const data = {
     items: 'pipelines'
   };
-  fetchMock.get(/pipeline/, data);
+  fetchMock.get(/pipelines/, data);
   return getPipelines().then(pipelines => {
     expect(pipelines).toEqual(data.items);
     fetchMock.restore();
@@ -116,7 +116,7 @@ it('getPipelineRuns', () => {
   const data = {
     items: 'pipelineRuns'
   };
-  fetchMock.get(/pipelinerun/, data);
+  fetchMock.get(/pipelineruns/, data);
   return getPipelineRuns().then(pipelineRuns => {
     expect(pipelineRuns).toEqual(data.items);
     fetchMock.restore();
@@ -128,7 +128,7 @@ it('getPipelineRuns With Query Params', () => {
   const data = {
     items: 'pipelineRuns'
   };
-  fetchMock.get(/pipelinerun/, data);
+  fetchMock.get(/pipelineruns/, data);
   return getPipelineRuns(pipelineName).then(pipelineRuns => {
     expect(pipelineRuns).toEqual(data.items);
     fetchMock.restore();
@@ -163,7 +163,7 @@ it('getTasks', () => {
   const data = {
     items: 'tasks'
   };
-  fetchMock.get(/task/, data);
+  fetchMock.get(/tasks/, data);
   return getTasks().then(tasks => {
     expect(tasks).toEqual(data.items);
     fetchMock.restore();
@@ -184,7 +184,7 @@ it('getTaskRuns', () => {
   const data = {
     items: 'taskRuns'
   };
-  fetchMock.get(/taskrun/, data);
+  fetchMock.get(/taskruns/, data);
   return getTaskRuns().then(taskRuns => {
     expect(taskRuns).toEqual(data.items);
     fetchMock.restore();
@@ -196,7 +196,7 @@ it('getTaskRuns With Query Params', () => {
   const data = {
     items: 'taskRuns'
   };
-  fetchMock.get(/taskrun/, data);
+  fetchMock.get(/taskruns/, data);
   return getTaskRuns(taskName).then(taskRuns => {
     expect(taskRuns).toEqual(data.items);
     fetchMock.restore();
@@ -217,7 +217,7 @@ it('getPipelineResources', () => {
   const data = {
     items: 'pipelineResources'
   };
-  fetchMock.get(/pipelineresource/, data);
+  fetchMock.get(/pipelineresources/, data);
   return getPipelineResources().then(pipelineResources => {
     expect(pipelineResources).toEqual(data.items);
     fetchMock.restore();
@@ -334,7 +334,7 @@ it('deleteCredential', () => {
 
 it('getExtensions', () => {
   const extensions = [{ fake: 'extension' }];
-  fetchMock.get(/extension/, extensions);
+  fetchMock.get(/extensions/, extensions);
   return getExtensions().then(response => {
     expect(response).toEqual(extensions);
     fetchMock.restore();

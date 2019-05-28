@@ -38,7 +38,7 @@ export function getAPI(type, { name = '', namespace } = {}, queryParams) {
 }
 
 export function getExtensionBaseURL(name) {
-  return `${apiRoot}/v1/extension/${name}`;
+  return `${apiRoot}/v1/extensions/${name}`;
 }
 
 export function getExtensionBundleURL(name, bundlelocation) {
@@ -56,12 +56,12 @@ export function checkData(data) {
 }
 
 export function getPipelines(namespace) {
-  const uri = getAPI('pipeline', { namespace });
+  const uri = getAPI('pipelines', { namespace });
   return get(uri).then(checkData);
 }
 
 export function getPipeline(name, namespace) {
-  const uri = getAPI('pipeline', { name, namespace });
+  const uri = getAPI('pipelines', { name, namespace });
   return get(uri);
 }
 
@@ -70,27 +70,27 @@ export function getPipelineRuns(namespace, pipelineName) {
   if (pipelineName) {
     queryParams = { name: pipelineName };
   }
-  const uri = getAPI('pipelinerun', { namespace }, queryParams);
+  const uri = getAPI('pipelineruns', { namespace }, queryParams);
   return get(uri).then(checkData);
 }
 
 export function getPipelineRun(name, namespace) {
-  const uri = getAPI('pipelinerun', { name, namespace });
+  const uri = getAPI('pipelineruns', { name, namespace });
   return get(uri);
 }
 
 export function cancelPipelineRun(name, namespace) {
-  const uri = getAPI('pipelinerun', { name, namespace });
+  const uri = getAPI('pipelineruns', { name, namespace });
   return put(uri, { status: 'PipelineRunCancelled' });
 }
 
 export function getTasks(namespace) {
-  const uri = getAPI('task', { namespace });
+  const uri = getAPI('tasks', { namespace });
   return get(uri).then(checkData);
 }
 
 export function getTask(name, namespace) {
-  const uri = getAPI('task', { name, namespace });
+  const uri = getAPI('tasks', { name, namespace });
   return get(uri);
 }
 
@@ -99,32 +99,32 @@ export function getTaskRuns(namespace, taskName) {
   if (taskName) {
     queryParams = { name: taskName };
   }
-  const uri = getAPI('taskrun', { namespace }, queryParams);
+  const uri = getAPI('taskruns', { namespace }, queryParams);
   return get(uri).then(checkData);
 }
 
 export function getTaskRun(name, namespace) {
-  const uri = getAPI('taskrun', { name, namespace });
+  const uri = getAPI('taskruns', { name, namespace });
   return get(uri);
 }
 
 export function getPipelineResources(namespace) {
-  const uri = getAPI('pipelineresource', { namespace });
+  const uri = getAPI('pipelineresources', { namespace });
   return get(uri).then(checkData);
 }
 
 export function getPipelineResource(name, namespace) {
-  const uri = getAPI('pipelineresource', { name, namespace });
+  const uri = getAPI('pipelineresources', { name, namespace });
   return get(uri);
 }
 
 export function getPodLog(name, namespace) {
-  const uri = getAPI('log', { name, namespace });
+  const uri = getAPI('logs', { name, namespace });
   return get(uri);
 }
 
 export function getTaskRunLog(name, namespace) {
-  const uri = getAPI('taskrunlog', { name, namespace });
+  const uri = getAPI('taskrunlogs', { name, namespace });
   return get(uri);
 }
 

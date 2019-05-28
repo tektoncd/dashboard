@@ -52,7 +52,7 @@ func TestLogWebsocket(t *testing.T) {
 	defer s2.Close()
 
 	devopsServer := strings.TrimPrefix(s2.URL, "https://")
-	websocketURL := url.URL{Scheme: "wss", Host: devopsServer, Path: "/v1/websocket/logs"}
+	websocketURL := url.URL{Scheme: "wss", Host: devopsServer, Path: "/v1/websockets/logs"}
 	websocketEndpoint := websocketURL.String()
 	const clients int = 10
 	connectionDur := time.Second * 1
@@ -78,7 +78,7 @@ func TestPipelineRunWebsocket(t *testing.T) {
 	r.StartPipelineRunController(stopCh)
 
 	devopsServer := strings.TrimPrefix(s2.URL, "https://")
-	websocketURL := url.URL{Scheme: "wss", Host: devopsServer, Path: "/v1/websocket/pipelineruns"}
+	websocketURL := url.URL{Scheme: "wss", Host: devopsServer, Path: "/v1/websockets/pipelineruns"}
 	websocketEndpoint := websocketURL.String()
 	const clients int = 10
 	connectionDur := time.Second * 1
@@ -143,11 +143,11 @@ func clientWebsocket(websocketEndpoint string, readDeadline time.Duration, wg *s
 					return
 				}
 				switch resp.MessageType {
-				case "PipelineRunCreated":
+				case broadcaster.PipelineRunCreated:
 					atomic.AddInt32(&CreationsRecorded, 1)
-				case "PipelineRunUpdated":
+				case broadcaster.PipelineRunUpdated:
 					atomic.AddInt32(&UpdatesRecorded, 1)
-				case "PipelineRunDeleted":
+				case broadcaster.PipelineRunDeleted:
 					atomic.AddInt32(&DeletionsRecorded, 1)
 				}
 				//Print out websocket data received
@@ -183,7 +183,7 @@ func (r Resource) createTestPipelineRun(name, resourceVersion string) {
 // Util to update pipelinerun
 func (r Resource) updateTestPipelineRun(name, newResourceVersion string) {
 
-	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelinerun/"+name, nil)
+	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelineruns/"+name, nil)
 	req := dummyRestfulRequest(httpReq, "ns1", "")
 	httpWriter := httptest.NewRecorder()
 	resp := dummyRestfulResponse(httpWriter)

@@ -13,6 +13,7 @@ limitations under the License.
 
 import { combineReducers } from 'redux';
 import keyBy from 'lodash.keyby';
+import merge from 'lodash.merge';
 
 function byId(state = {}, action) {
   switch (action.type) {
@@ -26,17 +27,16 @@ function byId(state = {}, action) {
 function byNamespace(state = {}, action) {
   switch (action.type) {
     case 'PIPELINES_FETCH_SUCCESS':
-      const { namespace } = action;
-      const pipelines = state[namespace] || {};
-      action.data.forEach(pipeline => {
-        const { name, uid } = pipeline.metadata;
-        pipelines[name] = uid;
-      });
+      const namespaces = action.data.reduce((accumulator, pipeline) => {
+        const { name, namespace, uid } = pipeline.metadata;
+        return merge(accumulator, {
+          [namespace]: {
+            [name]: uid
+          }
+        });
+      }, {});
 
-      return {
-        ...state,
-        [namespace]: pipelines
-      };
+      return merge({}, state, namespaces);
     default:
       return state;
   }

@@ -178,7 +178,7 @@ func makeRequestBody(t *testing.T, route string, httpMethod string) *bytes.Reade
 		var body []byte
 		var err error
 
-		if resourceType == "pipelinerun" {
+		if resourceType == "pipelineruns" {
 			// request body should be status: PipelineRunCancelled
 			if httpMethod == http.MethodPut {
 				updateBody := PipelineRunUpdateBody{}
@@ -235,11 +235,11 @@ func fakeCRD(t *testing.T, crdType string, identifier string) interface{} {
 	fmt.Printf("Creating a fake CRD for resource type %s \n", crdType)
 
 	switch crdType {
-	case "pipelinerun":
+	case "pipelineruns":
 		{
 			return fakePipelineRun
 		}
-	case "credential":
+	case "credentials":
 		return &credential{
 			Name:        "fakeresource",
 			AccessToken: "thisismyaccesstoken",
@@ -300,17 +300,60 @@ func TestExtensionRegistration(t *testing.T) {
 	)
 	resource.RegisterExtensions(wsContainer, namespace)
 	routes := wsContainer.RegisteredWebServices()[0].Routes()
-	if len(routes) != 32 {
-		t.Errorf("Number of routes: expected: %d, returned: %d", 32, len(routes))
-		return
+	// Remove first route (getAllExtensions)
+	routes = routes[1:]
+
+	checkRouteMap := map[string]int{}
+	// Labels not supported on fake client, manual filter
+	serviceList, err := resource.K8sClient.CoreV1().Services(namespace).List(metav1.ListOptions{})
+	if err != nil {
+		t.Errorf("Error obtaining services from K8sClient")
 	}
-	if routes[0].Path != "/v1/extension/extension/first" {
-		t.Errorf("Correct path is not returned: %s", routes[0].Path)
+
+	// Extract all endpoints from extension services
+	endpoints := []string{}
+	for _, service := range serviceList.Items {
+		if extensionLabel := service.Annotations["tekton-dashboard-extension"]; extensionLabel == "true" {
+			extensionName := service.Name
+			endpointSlice := strings.Split(service.Annotations["tekton-dashboard-endpoints"], ".")
+			switch len(endpointSlice) {
+			case 0:
+				endpoints = append(endpoints, extensionName)
+			default:
+				for _, e := range endpointSlice {
+					endpoints = append(endpoints, fmt.Sprintf("%s/%s", extensionName, e))
+				}
+			}
+		}
+	}
+
+	// Tally all the registered routes for each extension path
+	for _, route := range routes {
+		if !strings.Contains(route.Path, "{var:*}") {
+			continue
+		}
+		noRootRoute := strings.TrimPrefix(route.Path, "/v1"+extensionRoot+"/")
+		extensionPath := noRootRoute[:strings.LastIndex(noRootRoute, "/")]
+		checkRouteMap[extensionPath]++
+	}
+	var checkSize int
+	// Ensure all extension paths have the same number of routes registered
+	for extensionName, count := range checkRouteMap {
+		if checkSize == 0 {
+			checkSize = count
+		}
+		if checkSize != count {
+			t.Errorf("Extension %s did not have all expected routes", extensionName)
+		}
+	}
+	// Ensure all routes were not empty
+	if checkSize == 0 {
+		t.Error("No routes registered on extensions")
 	}
 
 	// Test getAllExtensions function
 	// Sample request and response
-	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/extensions/", nil)
+	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1"+extensionRoot, nil)
 	req := dummyRestfulRequest(httpReq, "fake", "")
 	httpWriter := httptest.NewRecorder()
 	resp := dummyRestfulResponse(httpWriter)
