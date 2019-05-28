@@ -160,8 +160,8 @@ echo "$tekton_repo_dir"
 kubectl apply -f $tekton_repo_dir/test/Task.yaml
 echo "kubectl apply -f tekton_repo_dir/test/Task.yaml"
 
-kubectl apply -f $tekton_repo_dir/test/TaskHelloWorld.yaml
-echo "kubectl apply -f tekton_repo_dir/test/TaskHelloWorld.yaml"
+#kubectl apply -f $tekton_repo_dir/test/TaskHelloWorld.yaml
+#echo "kubectl apply -f tekton_repo_dir/test/TaskHelloWorld.yaml"
 
 tasks=$(kubectl get tasks)
 echo "tasks running are: "
@@ -202,7 +202,21 @@ echo "$svc"
 kill -9 $fork_pid
 echo "killed port_forward"
 
+response = curl "$edited"
+echo "response is :"
+echo "$repsonse"
 
+responsePipeline = curl "$edited/pipeline"
+echo "response is :"
+echo "$responsePipeline"  
+
+responsePipelineRun = curl "$edited/pipelineruns"
+echo "response is :"
+echo "$responsePipelineRun"  
+
+responseTask = curl "$edited/tasks"
+echo "response is :"
+echo "$responseTask"  
 
 (( failed )) && fail_test
 success
