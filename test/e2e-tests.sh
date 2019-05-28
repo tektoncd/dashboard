@@ -129,7 +129,7 @@ echo "kubectl cluster-info : $output"
 #Gets the cluster info in the style: https://localhost:6443
 output1=$(kubectl cluster-info | head -n 1)
 echo "kubectl cluster-info | head -n 1 : $output1"
-edited=$(echo "$output1" | | sed 's/.*://' #sed 's/.*running at \([^ ]*\).*/\1/')
+edited=$(echo "$output1" | | sed 's/.*://') #sed 's/.*running at \([^ ]*\).*/\1/')
 #edited1=$(echo "$output1" | sed 's/.*https://\([^ ]*\).*/\1/')
 #echo "Edited1 is $edited1"
 #edited=$(echo "$edited1 | sed 's/ .*//'") #cut -f1 -d" "")
