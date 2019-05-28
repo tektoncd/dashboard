@@ -273,14 +273,14 @@ it('getCredentials', () => {
   };
   fetchMock.get(/credentials/, data);
   return getCredentials().then(credentials => {
-    expect(credentials).toEqual(data.items);
+    expect(credentials).toEqual(data);
     fetchMock.restore();
   });
 });
 
 it('getCredential', () => {
   const credentialId = 'foo';
-  const data = { fake: 'credential' };
+  const data = { items: 'credential' };
   fetchMock.get(`end:${credentialId}`, data);
   return getCredential(credentialId).then(credential => {
     expect(credential).toEqual(data);
