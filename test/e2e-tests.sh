@@ -212,17 +212,17 @@ ssvc=$(kubectl get svc)
 echo "SVC are:"
 echo "$svc"
 
-echo "response pipelne is : https://$ip/v1/namespaces/default/pipelines"
+echo "response pipelne is : https://$ip:9097/v1/namespaces/default/pipelines"
 
-responsePipeline=$(curl "https://$ip/v1/namespaces/default/pipelines")
+responsePipeline=$(curl "https://$ip:9097/v1/namespaces/default/pipelines")
 echo "response is :"
 echo "$responsePipeline"  
 
-responsePipelineRun=$(curl "https://$ip/v1/namespaces/default/pipelineruns")
+responsePipelineRun=$(curl "https://$ip:9097/v1/namespaces/default/pipelineruns")
 echo "response is :"
 echo "$responsePipelineRun"  
 
-responseTask=$(curl "https://$ip/v1/namespaces/default/tasks")
+responseTask=$(curl "https://$ip:9097/v1/namespaces/default/tasks")
 echo "response is :"
 echo "$responseTask" 
 
