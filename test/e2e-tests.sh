@@ -135,7 +135,7 @@ edited=$(echo "$output1" | sed 's/.*://') #sed 's/.*running at \([^ ]*\).*/\1/')
 #edited=$(echo "$edited1 | sed 's/ .*//'") #cut -f1 -d" "")
 echo "Edited is: $edited"
 
-edited1=$(echo "$edited" | sed 's/.\{4\}$//') #| sed s'/[a-zA-Z]$//') #sed 's/.*https: \([^ ]*\).*/\1/')
+edited1=$(echo "$edited" | sed 's/.\{4\}$//')  #| sed s'/[a-zA-Z]$//') #sed 's/.*https: \([^ ]*\).*/\1/')
 echo "Edited1 is: $edited1"
 
 ip="https:$edited1"
