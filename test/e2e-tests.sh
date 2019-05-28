@@ -17,6 +17,7 @@
 # This script calls out to scripts in tektoncd/plumbing to setup a cluster
 # and deploy Tekton Pipelines to it for running integration tests.
 export tekton_repo_dir=$(git rev-parse --show-toplevel)
+export KNATIVE_VERSION="v0.5.0"
 
 source $(dirname $0)/e2e-common.sh
 
@@ -34,6 +35,13 @@ failed=0
 # Run the integration tests
 header "Running e2e tests"
 # TODO: run your test here !
+
+echo "Installing knative version $KNATIVE_VERSION"
+install_istio $KNATIVE_VERSION
+install_knative_serving $KNATIVE_VERSION
+install_knative_eventing $KNATIVE_VERSION
+install_knative_eventing_sources $KNATIVE_VERSION
+echo "Installed knative version $KNATIVE_VERSION"
 
 #Fork port forward, once starts running never stops running until killed
 function port_forward() {
