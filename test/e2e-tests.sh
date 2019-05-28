@@ -129,17 +129,20 @@ echo "kubectl cluster-info : $output"
 #Gets the cluster info in the style: https://localhost:6443
 output1=$(kubectl cluster-info | head -n 1)
 echo "kubectl cluster-info | head -n 1 : $output1"
-edited=$(echo "$output1" | sed 's/.*running at \([^ ]*\).*/\1/')
+edited=$(echo "$output1" | | sed 's/.*://' #sed 's/.*running at \([^ ]*\).*/\1/')
 #edited1=$(echo "$output1" | sed 's/.*https://\([^ ]*\).*/\1/')
 #echo "Edited1 is $edited1"
 #edited=$(echo "$edited1 | sed 's/ .*//'") #cut -f1 -d" "")
 echo "Edited is: $edited"
 
-edited1=$(echo "$edited" | sed 's/.*https: \([^ ]*\).*/\1/')
+edited1=$(echo "$edited" | sed s'/[a-zA-Z]$//' #sed 's/.*https: \([^ ]*\).*/\1/')
 echo "Edited1 is: $edited1"
 
-edited2=$(echo "$edited" | sed 's/ .*//')
-echo "Edited2 is: $edited2"
+ip="https:$edited1"
+echo "$ip"
+
+#edited2=$(echo "$edited" | sed 's/ .*//')
+#echo "Edited2 is: $edited2"
 
 port_forward &
 echo "dashboard forwarded to port 9097"
@@ -208,17 +211,17 @@ ssvc=$(kubectl get svc)
 echo "SVC are:"
 echo "$svc"
 
-echo "response pipelne is : https://$edited/v1/namespaces/default/pipelines"
+echo "response pipelne is : https://$ip/v1/namespaces/default/pipelines"
 
-responsePipeline=$(curl "https://$edited/v1/namespaces/default/pipelines")
+responsePipeline=$(curl "https://$ip/v1/namespaces/default/pipelines")
 echo "response is :"
 echo "$responsePipeline"  
 
-responsePipelineRun=$(curl "https://$edited/v1/namespaces/default/pipelineruns")
+responsePipelineRun=$(curl "https://$ip/v1/namespaces/default/pipelineruns")
 echo "response is :"
 echo "$responsePipelineRun"  
 
-responseTask=$(curl "https://$edited/v1/namespaces/default/tasks")
+responseTask=$(curl "https://$ip/v1/namespaces/default/tasks")
 echo "response is :"
 echo "$responseTask" 
 
