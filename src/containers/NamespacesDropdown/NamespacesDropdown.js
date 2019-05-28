@@ -21,16 +21,33 @@ const NamespacesDropdown = props => {
   return <TooltipDropdown {...props} />;
 };
 
+const allNamespacesLabel = 'All Namespaces';
+
 NamespacesDropdown.defaultProps = {
+  allNamespacesLabel,
   items: [],
   loading: true,
-  label: 'Select Namespace'
+  label: 'Select Namespace',
+  showAllNamespaces: false
 };
 
-function mapStateToProps(state) {
+/* istanbul ignore next */
+function mapStateToProps(state, ownProps) {
+  const { selectedItem, showAllNamespaces } = ownProps;
+
+  if (selectedItem && selectedItem.id === '*') {
+    selectedItem.text = allNamespacesLabel;
+  }
+
+  const items = getNamespaces(state);
+  if (showAllNamespaces) {
+    items.unshift({ id: '*', text: allNamespacesLabel });
+  }
+
   return {
-    items: getNamespaces(state),
-    loading: isFetchingNamespaces(state)
+    items,
+    loading: isFetchingNamespaces(state),
+    selectedItem
   };
 }
 

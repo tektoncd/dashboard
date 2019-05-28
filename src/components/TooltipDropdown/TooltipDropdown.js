@@ -14,9 +14,9 @@ limitations under the License.
 import React from 'react';
 import { Dropdown, DropdownSkeleton } from 'carbon-components-react';
 
-const itemToElement = ({ text }) => {
+const itemToElement = ({ id, text }) => {
   return (
-    <div key={text} title={text}>
+    <div key={id} title={text}>
       {text}
     </div>
   );
@@ -24,13 +24,19 @@ const itemToElement = ({ text }) => {
 
 const itemToString = ({ text }) => text;
 
-const itemStringToObject = text => ({ text });
+const itemToObject = item => {
+  if (typeof item === 'string') {
+    return { id: item, text: item };
+  }
+
+  return item;
+};
 
 const TooltipDropdown = ({ items, loading, ...dropdownProps }) => {
   if (loading) {
     return <DropdownSkeleton {...dropdownProps} />;
   }
-  const options = items.map(itemStringToObject);
+  const options = items.map(itemToObject);
   return (
     <Dropdown
       {...dropdownProps}
