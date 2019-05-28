@@ -14,10 +14,18 @@ limitations under the License.
 package endpoints
 
 import (
+<<<<<<< HEAD
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"os"
+=======
+	"os"
+	"fmt"
+	"net/http"
+	"net/http/httputil"
+	"net/url"
+>>>>>>> 43416c478a912f83d35cc5d5ab5bd39002d2220e
 	"strconv"
 	"strings"
 
@@ -64,6 +72,7 @@ func (r Resource) RegisterEndpoints(container *restful.Container) {
 	wsv1.Route(wsv1.GET("/").To(r.getAllNamespaces))
 	wsv1.Route(wsv1.GET("/{namespace}/pipelines").To(r.getAllPipelines))
 	wsv1.Route(wsv1.GET("/{namespace}/pipelines/{name}").To(r.getPipeline))
+<<<<<<< HEAD
 
 	wsv1.Route(wsv1.GET("/{namespace}/pipelineruns").To(r.getAllPipelineRuns))
 	wsv1.Route(wsv1.GET("/{namespace}/pipelineruns/{name}").To(r.getPipelineRun))
@@ -78,6 +87,24 @@ func (r Resource) RegisterEndpoints(container *restful.Container) {
 
 	wsv1.Route(wsv1.GET("/{namespace}/taskruns").To(r.getAllTaskRuns))
 	wsv1.Route(wsv1.GET("/{namespace}/taskruns/{name}").To(r.getTaskRun))
+=======
+
+	wsv1.Route(wsv1.GET("/{namespace}/pipelineruns").To(r.getAllPipelineRuns))
+	wsv1.Route(wsv1.GET("/{namespace}/pipelineruns/{name}").To(r.getPipelineRun))
+	wsv1.Route(wsv1.PUT("/{namespace}/pipelineruns/{name}").To(r.updatePipelineRun))
+	wsv1.Route(wsv1.POST("/{namespace}/pipelineruns").To(r.createPipelineRun))
+
+	wsv1.Route(wsv1.GET("/{namespace}/pipelineresources").To(r.getAllPipelineResources))
+	wsv1.Route(wsv1.GET("/{namespace}/pipelineresources/{name}").To(r.getPipelineResource))
+
+	wsv1.Route(wsv1.GET("/{namespace}/tasks").To(r.getAllTasks))
+	wsv1.Route(wsv1.GET("/{namespace}/tasks/{name}").To(r.getTask))
+
+	wsv1.Route(wsv1.GET("/{namespace}/taskruns").To(r.getAllTaskRuns))
+	wsv1.Route(wsv1.GET("/{namespace}/taskruns/{name}").To(r.getTaskRun))
+
+	wsv1.Route(wsv1.GET("/{namespace}/serviceaccounts").To(r.getAllServiceAccounts))
+>>>>>>> 43416c478a912f83d35cc5d5ab5bd39002d2220e
 
 	wsv1.Route(wsv1.GET("/{namespace}/logs/{name}").To(r.getPodLog))
 
@@ -167,19 +194,21 @@ func (r Resource) RegisterExtensions(container *restful.Container, namespace str
 		ext := Extension{Name: svc.ObjectMeta.Name, URL: url, Port: getPort(svc),
 			DisplayName:    svc.ObjectMeta.Annotations[displayNameKey],
 			BundleLocation: svc.ObjectMeta.Annotations[bundleLocationKey]}
-		paths := []string{}
+		// Base extension path
+		paths := []string{""}
 		if ok {
-			paths = strings.Split(url, ".")
-			if len(paths) == 0 {
-				paths = []string{""}
+			if len(url) != 0 {
+				paths = strings.Split(url, ".")
 			}
-		} else {
-			paths = []string{""}
-		}
+		} 
 		for _, path := range paths {
 			// extension handler is registered at the url
 			routingPath := strings.TrimSuffix(base+"/"+path, "/")
+<<<<<<< HEAD
 			logging.Log.Debugf("Registering path: %s", base+"/"+path)
+=======
+			logging.Log.Debugf("Registering path: %s", routingPath)
+>>>>>>> 43416c478a912f83d35cc5d5ab5bd39002d2220e
 			ws.Route(ws.GET(routingPath).To(ext.HandleExtension))
 			ws.Route(ws.POST(routingPath).To(ext.HandleExtension))
 			ws.Route(ws.PUT(routingPath).To(ext.HandleExtension))
@@ -203,7 +232,11 @@ func (ext Extension) HandleExtension(request *restful.Request, response *restful
 		return
 	}
 	logging.Log.Debugf("Path in URL: %+v", request.Request.URL.Path)
+<<<<<<< HEAD
 	request.Request.URL.Path = strings.TrimPrefix(request.Request.URL.Path, "/v1"+extensionRoot+ext.Name)
+=======
+	request.Request.URL.Path = strings.TrimPrefix(request.Request.URL.Path, fmt.Sprintf("/v1%s/%s",extensionRoot,ext.Name))
+>>>>>>> 43416c478a912f83d35cc5d5ab5bd39002d2220e
 	logging.Log.Debugf("Path in rerouting URL: %+v", request.Request.URL.Path)
 	proxy := httputil.NewSingleHostReverseProxy(target)
 	proxy.ServeHTTP(response, request.Request)

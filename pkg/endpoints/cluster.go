@@ -25,13 +25,17 @@ import (
 
 func (r Resource) getAllNamespaces(request *restful.Request, response *restful.Response) {
 	namespaces, err := r.K8sClient.CoreV1().Namespaces().List(metav1.ListOptions{})
+<<<<<<< HEAD
 	logging.Log.Debugf("In getAllNamespaces")
+=======
+>>>>>>> 43416c478a912f83d35cc5d5ab5bd39002d2220e
 
 	if err != nil {
 		utils.RespondError(response, err, http.StatusNotFound)
 		return
 	}
 
+<<<<<<< HEAD
 	var nameSpaceList = ""
 
 	for _, element := range namespaces.Items {
@@ -44,4 +48,21 @@ func (r Resource) getAllNamespaces(request *restful.Request, response *restful.R
 
 	logging.Log.Debugf("Found namespaces: %s", nameSpaceList)
 	response.WriteEntity(nameSpaceList)
+=======
+	response.WriteEntity(namespaces)
+>>>>>>> 43416c478a912f83d35cc5d5ab5bd39002d2220e
+}
+
+func (r Resource) getAllServiceAccounts(request *restful.Request, response *restful.Response) {
+	requestNamespace := request.PathParameter("namespace")
+
+	serviceAccounts, err := r.K8sClient.CoreV1().ServiceAccounts(requestNamespace).List(metav1.ListOptions{})
+	logging.Log.Debugf("In getAllServiceAccounts")
+
+	if err != nil {
+		utils.RespondError(response, err, http.StatusNotFound)
+		return
+	}
+	logging.Log.Debugf("Found service accounts: %s", serviceAccounts)
+	response.WriteEntity(serviceAccounts)
 }
