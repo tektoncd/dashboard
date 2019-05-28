@@ -130,9 +130,9 @@ echo "kubectl cluster-info : $output"
 output1=$(kubectl cluster-info | head -n 1)
 echo "kubectl cluster-info | head -n 1 : $output1"
 #edited=$(echo "$output1" | sed 's/.*running at \([^ ]*\).*/\1/')
-edited1=$(echo "$output1" | sed 's/.*https:// \([^ ]*\).*/\1/')
+edited1=$(echo "$output1" | sed 's/.*https://\([^ ]*\).*/\1/')
 echo "Edited1 is $edited1"
-edited=$(echo "$edited1 | cut -f1 -d" "")
+edited=$(echo "$edited1 | sed 's/ .*//'") #cut -f1 -d" "")
 echo "Edited is: $edited"
 
 port_forward &
