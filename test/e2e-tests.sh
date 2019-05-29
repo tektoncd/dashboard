@@ -213,7 +213,7 @@ echo "SVC are:"
 echo "$svc"
 
 echo "ip =$ip"
-curling=$(curl $ip)
+curling=$(curl -k $ip)
 echo "curling"
 
 echo "response pipelne is : $ip:9097/v1/namespaces/default/pipelines"
