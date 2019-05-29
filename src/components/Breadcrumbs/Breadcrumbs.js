@@ -40,7 +40,8 @@ export default function Breadcrumbs({ labels, match }) {
 const breadcrumbLabels = {
   '/pipelines': 'Pipelines',
   '/tasks': 'Tasks',
-  '/extensions': 'Extensions'
+  '/extensions': 'Extensions',
+  '/importresources': 'Import Tekton Resources'
 };
 
 Breadcrumbs.defaultProps = {

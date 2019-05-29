@@ -71,7 +71,7 @@ const namespacesByName = {
   blue: ''
 };
 
-const initialTextRegExp = new RegExp('select serviceaccount', 'i');
+const initialTextRegExp = new RegExp('select service account', 'i');
 
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
