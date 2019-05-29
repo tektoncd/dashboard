@@ -82,17 +82,21 @@ export /* istanbul ignore next */ class Tasks extends Component {
                   </StructuredListRow>
                 )}
                 {tasks.map(task => {
-                  const taskName = task.metadata.name;
+                  const { name: taskName, namespace, uid } = task.metadata;
                   return (
-                    <StructuredListRow
-                      className="definition"
-                      key={task.metadata.uid}
-                    >
+                    <StructuredListRow className="definition" key={uid}>
                       <StructuredListCell>
-                        <Link to={`/tasks/${taskName}/runs`}>{taskName}</Link>
+                        <Link
+                          to={`/namespaces/${namespace}/tasks/${taskName}/runs`}
+                        >
+                          {taskName}
+                        </Link>
                       </StructuredListCell>
                       <StructuredListCell>
-                        <Link title="task definition" to={`/tasks/${taskName}`}>
+                        <Link
+                          title="task definition"
+                          to={`/namespaces/${namespace}/tasks/${taskName}`}
+                        >
                           <Information16 className="resource-info-icon" />
                         </Link>
                       </StructuredListCell>
@@ -113,12 +117,15 @@ Tasks.defaultProps = {
 };
 
 /* istanbul ignore next */
-function mapStateToProps(state) {
+function mapStateToProps(state, props) {
+  const { namespace: namespaceParam } = props.match.params;
+  const namespace = namespaceParam || getSelectedNamespace(state);
+
   return {
     error: getTasksErrorMessage(state),
     loading: isFetchingTasks(state),
-    namespace: getSelectedNamespace(state),
-    tasks: getTasks(state)
+    namespace,
+    tasks: getTasks(state, { namespace })
   };
 }
 

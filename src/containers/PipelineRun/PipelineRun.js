@@ -22,7 +22,6 @@ import {
 import {
   getPipelineRun,
   getPipelineRunsErrorMessage,
-  getSelectedNamespace,
   getTasks,
   getTaskRun,
   getTasksErrorMessage,
@@ -60,10 +59,13 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { match, namespace } = this.props;
-    const { pipelineRunName } = match.params;
-    const { match: prevMatch, namespace: prevNamespace } = prevProps;
-    const { pipelineRunName: prevPipelineRunName } = prevMatch.params;
+    const { match } = this.props;
+    const { namespace, pipelineRunName } = match.params;
+    const { match: prevMatch } = prevProps;
+    const {
+      namespace: prevNamespace,
+      pipelineRunName: prevPipelineRunName
+    } = prevMatch.params;
 
     if (
       namespace !== prevNamespace ||
@@ -93,7 +95,10 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
 
   loadTaskRuns = (pipelineRun, taskRunNames) => {
     let runs = taskRunNames.map(taskRunName =>
-      getTaskRun(store.getState(), { name: taskRunName })
+      getTaskRun(store.getState(), {
+        name: taskRunName,
+        namespace: pipelineRun.metadata.namespace
+      })
     );
 
     const {
@@ -124,10 +129,10 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
 
   fetchData() {
     const { match } = this.props;
-    const { pipelineRunName } = match.params;
+    const { namespace, pipelineRunName } = match.params;
     this.setState({ loading: true }, async () => {
       await Promise.all([
-        this.props.fetchPipelineRun({ name: pipelineRunName }),
+        this.props.fetchPipelineRun({ name: pipelineRunName, namespace }),
         this.props.fetchTasks(),
         this.props.fetchTaskRuns()
       ]);
@@ -221,17 +226,21 @@ PipelineRunContainer.propTypes = {
 };
 
 /* istanbul ignore next */
-function mapStateToProps(state, props) {
+function mapStateToProps(state, ownProps) {
+  const { match } = ownProps;
+  const { namespace } = match.params;
+
   return {
     error:
       getPipelineRunsErrorMessage(state) ||
       getTasksErrorMessage(state) ||
       getTaskRunsErrorMessage(state),
-    namespace: getSelectedNamespace(state),
+    namespace,
     pipelineRun: getPipelineRun(state, {
-      name: props.match.params.pipelineRunName
+      name: ownProps.match.params.pipelineRunName,
+      namespace
     }),
-    tasks: getTasks(state)
+    tasks: getTasks(state, { namespace })
   };
 }
 

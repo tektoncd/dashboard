@@ -16,18 +16,12 @@ import { connect } from 'react-redux';
 import { hot } from 'react-hot-loader/root';
 import {
   HashRouter as Router,
-  NavLink,
   Redirect,
   Route,
   Switch
 } from 'react-router-dom';
 
-import {
-  Content,
-  SideNav,
-  SideNavItems,
-  SideNavLink
-} from 'carbon-components-react/lib/components/UIShell';
+import { Content } from 'carbon-components-react/lib/components/UIShell';
 
 import {
   Extension,
@@ -35,23 +29,18 @@ import {
   PipelineRun,
   PipelineRuns,
   Pipelines,
+  SideNav,
   Tasks,
   TaskRuns,
   CustomResourceDefinition,
-  NamespacesDropdown,
   ImportResources
 } from '..';
 
-import SideNavMenu from '../../components/SideNavMenu';
 import Header from '../../components/Header';
 import Breadcrumbs from '../../components/Breadcrumbs';
 import { fetchExtensions } from '../../actions/extensions';
 import { fetchNamespaces, selectNamespace } from '../../actions/namespaces';
-import {
-  getExtensions,
-  getNamespaces,
-  getSelectedNamespace
-} from '../../reducers';
+import { getExtensions, getSelectedNamespace } from '../../reducers';
 
 import '../../components/App/App.scss';
 
@@ -62,7 +51,7 @@ export /* istanbul ignore next */ class App extends Component {
   }
 
   render() {
-    const { extensions, namespace } = this.props;
+    const { extensions } = this.props;
 
     return (
       <Router>
@@ -70,68 +59,41 @@ export /* istanbul ignore next */ class App extends Component {
           <Header>
             <Route path="*" component={Breadcrumbs} />
           </Header>
-          <SideNav defaultExpanded expanded aria-label="Side navigation">
-            <SideNavItems>
-              <SideNavMenu title="Tekton">
-                <SideNavLink element={NavLink} icon={<span />} to="/pipelines">
-                  Pipelines
-                </SideNavLink>
-                <SideNavLink
-                  element={NavLink}
-                  icon={<span />}
-                  to="/pipelineruns"
-                >
-                  PipelineRuns
-                </SideNavLink>
-                <SideNavLink element={NavLink} icon={<span />} to="/tasks">
-                  Tasks
-                </SideNavLink>
-                <SideNavLink
-                  element={NavLink}
-                  icon={<span />}
-                  to="/importresources"
-                >
-                  Import Tekton resources
-                </SideNavLink>
-              </SideNavMenu>
-              <NamespacesDropdown
-                titleText="Namespace"
-                selectedItem={{ id: namespace, text: namespace }}
-                onChange={event => {
-                  this.props.selectNamespace(event.selectedItem.id);
-                }}
-              />
-              {extensions.length > 0 && (
-                <SideNavMenu title="Extensions">
-                  {extensions.map(({ displayName, name }) => (
-                    <SideNavLink
-                      element={NavLink}
-                      icon={<span />}
-                      to={`/extensions/${name}`}
-                      key={name}
-                      title={displayName}
-                    >
-                      {displayName}
-                    </SideNavLink>
-                  ))}
-                </SideNavMenu>
-              )}
-            </SideNavItems>
-          </SideNav>
+          <Route path="/namespaces/:namespace/*">
+            {props => <SideNav {...props} />}
+          </Route>
 
           <Content>
             <Switch>
               <Route path="/pipelines" exact component={Pipelines} />
+              <Route
+                path="/namespaces/:namespace/pipelines"
+                exact
+                component={Pipelines}
+              />
               <Route path="/tasks" exact component={Tasks} />
+              <Route
+                path="/namespaces/:namespace/tasks"
+                exact
+                component={Tasks}
+              />
               <Route path="/pipelineruns" component={PipelineRuns} />
               <Route
-                path="/pipelines/:pipelineName/runs"
+                path="/namespaces/:namespace/pipelineruns"
+                component={PipelineRuns}
+              />
+              <Route
+                path="/namespaces/:namespace/pipelines/:pipelineName/runs"
                 exact
                 component={PipelineRuns}
               />
-              <Route path="/tasks/:taskName/runs" exact component={TaskRuns} />
               <Route
-                path="/pipelines/:pipelineName/runs/:pipelineRunName"
+                path="/namespaces/:namespace/tasks/:taskName/runs"
+                exact
+                component={TaskRuns}
+              />
+              <Route
+                path="/namespaces/:namespace/pipelines/:pipelineName/runs/:pipelineRunName"
                 component={PipelineRun}
               />
               <Route path="/importresources" component={ImportResources} />
@@ -150,7 +112,7 @@ export /* istanbul ignore next */ class App extends Component {
                 />
               ))}
               <Route
-                path="/:type/:name"
+                path="/namespaces/:namespace/:type/:name"
                 exact
                 component={CustomResourceDefinition}
               />
@@ -164,15 +126,13 @@ export /* istanbul ignore next */ class App extends Component {
 }
 
 App.defaultProps = {
-  extensions: [],
-  namespaces: ['default']
+  extensions: []
 };
 
 /* istanbul ignore next */
 const mapStateToProps = state => ({
   extensions: getExtensions(state),
-  namespace: getSelectedNamespace(state),
-  namespaces: getNamespaces(state)
+  namespace: getSelectedNamespace(state)
 });
 
 const mapDispatchToProps = {

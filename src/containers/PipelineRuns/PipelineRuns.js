@@ -52,9 +52,12 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
   }
 
   fetchPipelineRuns() {
-    const { params } = this.props.match;
-    const { pipelineName } = params;
-    this.props.fetchPipelineRuns({ pipelineName });
+    const { match, namespace } = this.props;
+    const { pipelineName } = match.params;
+    this.props.fetchPipelineRuns({
+      pipelineName,
+      namespace
+    });
   }
 
   render() {
@@ -105,7 +108,10 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
                   </StructuredListRow>
                 )}
                 {pipelineRuns.map(pipelineRun => {
-                  const pipelineRunName = pipelineRun.metadata.name;
+                  const {
+                    name: pipelineRunName,
+                    namespace
+                  } = pipelineRun.metadata;
                   const pipelineRefName = pipelineRun.spec.pipelineRef.name;
                   const { lastTransitionTime, reason, status } = getStatus(
                     pipelineRun
@@ -118,14 +124,16 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
                     >
                       <StructuredListCell>
                         <Link
-                          to={`/pipelines/${pipelineRefName}/runs/${pipelineRunName}`}
+                          to={`/namespaces/${namespace}/pipelines/${pipelineRefName}/runs/${pipelineRunName}`}
                         >
                           {pipelineRunName}
                         </Link>
                       </StructuredListCell>
                       {!pipelineName && (
                         <StructuredListCell>
-                          <Link to={`/pipelines/${pipelineRefName}/runs`}>
+                          <Link
+                            to={`/namespaces/${namespace}/pipelines/${pipelineRefName}/runs`}
+                          >
                             {pipelineRefName}
                           </Link>
                         </StructuredListCell>
@@ -155,16 +163,19 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
 
 /* istanbul ignore next */
 function mapStateToProps(state, props) {
-  const { pipelineName } = props.match.params;
+  const { namespace: namespaceParam, pipelineName } = props.match.params;
+  const namespace = namespaceParam || getSelectedNamespace(state);
+
   return {
     error: getPipelineRunsErrorMessage(state),
     loading: isFetchingPipelineRuns(state),
-    namespace: getSelectedNamespace(state),
+    namespace,
     pipelineRuns: pipelineName
       ? getPipelineRunsByPipelineName(state, {
-          name: props.match.params.pipelineName
+          name: props.match.params.pipelineName,
+          namespace
         })
-      : getPipelineRuns(state)
+      : getPipelineRuns(state, { namespace })
   };
 }
 

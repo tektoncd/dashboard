@@ -14,6 +14,8 @@ limitations under the License.
 import { combineReducers } from 'redux';
 import keyBy from 'lodash.keyby';
 
+import { ALL_NAMESPACES } from '../constants';
+
 function byName(state = { default: {} }, action) {
   switch (action.type) {
     case 'NAMESPACES_FETCH_SUCCESS':
@@ -23,7 +25,7 @@ function byName(state = { default: {} }, action) {
   }
 }
 
-function selected(state = 'default', action) {
+function selected(state = ALL_NAMESPACES, action) {
   switch (action.type) {
     case 'NAMESPACE_SELECT':
       return action.namespace;

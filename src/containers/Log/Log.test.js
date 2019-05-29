@@ -36,7 +36,7 @@ it('LogContainer renders', async () => {
 
   const { container, getByText } = render(
     <LogContainer
-      namespace={namespace}
+      match={{ params: { namespace } }}
       stepName={stepName}
       taskRunName={taskRunName}
     />
@@ -49,7 +49,7 @@ it('LogContainer renders', async () => {
   const anotherTaskRunName = 'anotherTaskRun';
   render(
     <LogContainer
-      namespace={namespace}
+      match={{ params: { namespace } }}
       stepName={stepName}
       taskRunName={anotherTaskRunName}
     />,
@@ -71,7 +71,7 @@ it('LogContainer handles error case', async () => {
 
   const { getByText } = render(
     <LogContainer
-      namespace={namespace}
+      match={{ params: { namespace } }}
       stepName={stepName}
       taskRunName={taskRunName}
     />
@@ -99,7 +99,7 @@ it('LogContainer handles empty logs', async () => {
 
   const { getByText } = render(
     <LogContainer
-      namespace={namespace}
+      match={{ params: { namespace } }}
       stepName={stepName}
       taskRunName={taskRunName}
     />
@@ -122,7 +122,7 @@ it('LogContainer handles missing step logs', async () => {
 
   const { getByText } = render(
     <LogContainer
-      namespace={namespace}
+      match={{ params: { namespace } }}
       stepName={stepName}
       taskRunName={taskRunName}
     />
