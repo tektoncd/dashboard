@@ -231,12 +231,16 @@ echo "$svc"
 #echo "response is :"
 #echo "$responseTask" 
 
-USER=$(gcloud config get-value core/account)
+#USER=$(gcloud config get-value core/account)
 # Make that user a cluster admin
-kubectl create clusterrolebinding cluster-admin-binding \
-  --clusterrole=cluster-admin \
-  --user="${USER}"
-  
+#kubectl edit clusterrolebinding cluster-admin-binding \
+#  --clusterrole=cluster-admin \
+#  --user="${USER}"
+
+namespaces=$(kubectl get namespaces)
+echo "namespaces are:"
+echo "$namespaces"
+
 responseLocal=$(curl -k "127.0.0.1:9097/v1/namespaces/default/pipelines")
 echo "response is :"
 echo "$responseLocal" 
