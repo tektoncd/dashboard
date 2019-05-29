@@ -121,6 +121,9 @@ install_knative_eventing $KNATIVE_VERSION
 install_knative_eventing_sources $KNATIVE_VERSION
 echo "Installed knative version $KNATIVE_VERSION"
 
+echo "Applying test-rbac,yaml"
+kubectl apply -f $tekton_repo_dir/test/test-rbac.yaml
+echo "Applied test-rbac.yaml"
 
 #kubectl cluster-info
 output=$(kubectl cluster-info)
