@@ -212,6 +212,10 @@ ssvc=$(kubectl get svc)
 echo "SVC are:"
 echo "$svc"
 
+echo "ip =$ip"
+curling=$(curl $ip)
+echo "curling"
+
 echo "response pipelne is : $ip:9097/v1/namespaces/default/pipelines"
 
 responsePipeline=$(curl "$ip:9097/v1/namespaces/default/pipelines")
