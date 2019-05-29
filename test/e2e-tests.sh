@@ -248,6 +248,9 @@ responseLocal=$(curl -k "127.0.0.1:9097/v1/namespaces/default/pipelines")
 echo "response is :"
 echo "$responseLocal" 
 
+responseLocalName=$($responseLocal | jq -r 'name')
+echo "responseLocalName is : $responseLocalName"
+
 responseLocal1=$(curl -k "127.0.0.1:9097/v1/namespaces/default/pipelineruns")
 echo "response is :"
 echo "$responseLocal1"  
