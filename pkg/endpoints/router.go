@@ -14,11 +14,11 @@ limitations under the License.
 package endpoints
 
 import (
-	"os"
 	"fmt"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"os"
 	"strconv"
 	"strings"
 
@@ -176,7 +176,7 @@ func (r Resource) RegisterExtensions(container *restful.Container, namespace str
 			if len(url) != 0 {
 				paths = strings.Split(url, ".")
 			}
-		} 
+		}
 		for _, path := range paths {
 			// extension handler is registered at the url
 			routingPath := strings.TrimSuffix(base+"/"+path, "/")
@@ -204,7 +204,7 @@ func (ext Extension) HandleExtension(request *restful.Request, response *restful
 		return
 	}
 	logging.Log.Debugf("Path in URL: %+v", request.Request.URL.Path)
-	request.Request.URL.Path = strings.TrimPrefix(request.Request.URL.Path, fmt.Sprintf("/v1%s/%s",extensionRoot,ext.Name))
+	request.Request.URL.Path = strings.TrimPrefix(request.Request.URL.Path, fmt.Sprintf("/v1%s/%s", extensionRoot, ext.Name))
 	logging.Log.Debugf("Path in rerouting URL: %+v", request.Request.URL.Path)
 	proxy := httputil.NewSingleHostReverseProxy(target)
 	proxy.ServeHTTP(response, request.Request)

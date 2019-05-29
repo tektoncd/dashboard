@@ -21,5 +21,6 @@ export {
   default as CustomResourceDefinition
 } from './CustomResourceDefinition';
 export { default as TaskRuns } from './TaskRuns';
+export { default as ImportResources } from './ImportResources';
 export { default as NamespacesDropdown } from './NamespacesDropdown';
 export { default as ServiceAccountsDropdown } from './ServiceAccountsDropdown';
