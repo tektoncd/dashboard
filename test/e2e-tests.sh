@@ -218,15 +218,15 @@ echo "curling"
 
 echo "response pipelne is : $ip:9097/v1/namespaces/default/pipelines"
 
-responsePipeline=$(curl "$ip:9097/v1/namespaces/default/pipelines")
+responsePipeline=$(curl -k "$ip:9097/v1/namespaces/default/pipelines")
 echo "response is :"
 echo "$responsePipeline"  
 
-responsePipelineRun=$(curl "$ip:9097/v1/namespaces/default/pipelineruns")
+responsePipelineRun=$(curl -k "$ip:9097/v1/namespaces/default/pipelineruns")
 echo "response is :"
 echo "$responsePipelineRun"  
 
-responseTask=$(curl "$ip:9097/v1/namespaces/default/tasks")
+responseTask=$(curl -k "$ip:9097/v1/namespaces/default/tasks")
 echo "response is :"
 echo "$responseTask" 
 
