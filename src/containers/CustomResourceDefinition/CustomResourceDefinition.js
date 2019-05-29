@@ -25,7 +25,6 @@ import { fetchPipeline } from '../../actions/pipelines';
 
 import {
   getPipeline,
-  getSelectedNamespace,
   getTask,
   getTasksErrorMessage,
   getPipelinesErrorMessage
@@ -38,27 +37,35 @@ export /* istanbul ignore next */ class CustomResourceDefinition extends Compone
 
   componentDidMount() {
     const { match } = this.props;
-    const { name, type } = match.params;
-    this.fetch(type, name).then(() => this.setState({ loading: false }));
+    const { name, namespace, type } = match.params;
+    this.fetch({ name, namespace, type }).then(() =>
+      this.setState({ loading: false })
+    );
   }
 
   componentDidUpdate(prevProps) {
-    const { match, namespace } = this.props;
-    const { name, type } = match.params;
-    const { match: prevMatch, namespace: prevNamespace } = prevProps;
-    const { name: prevName, type: prevType } = prevMatch.params;
+    const { match } = this.props;
+    const { name, namespace, type } = match.params;
+    const { match: prevMatch } = prevProps;
+    const {
+      name: prevName,
+      namespace: prevNamespace,
+      type: prevType
+    } = prevMatch.params;
     if (namespace !== prevNamespace || name !== prevName || type !== prevType) {
       this.setState({ loading: true }); // eslint-disable-line
-      this.fetch(type, name).then(() => this.setState({ loading: false }));
+      this.fetch({ name, namespace, type }).then(() =>
+        this.setState({ loading: false })
+      );
     }
   }
 
-  fetch = (type, name) => {
+  fetch = ({ name, namespace, type }) => {
     switch (type) {
       case 'tasks':
-        return this.props.fetchTask({ name });
+        return this.props.fetchTask({ name, namespace });
       case 'pipelines':
-        return this.props.fetchPipeline({ name });
+        return this.props.fetchPipeline({ name, namespace });
       default:
         return Promise.resolve();
     }
@@ -93,14 +100,16 @@ export /* istanbul ignore next */ class CustomResourceDefinition extends Compone
 }
 
 /* istanbul ignore next */
-function mapStateToProps(state, props) {
+function mapStateToProps(state, ownProps) {
+  const { match } = ownProps;
+  const { namespace } = match.params;
   return {
-    namespace: getSelectedNamespace(state),
     error: getTasksErrorMessage(state) || getPipelinesErrorMessage(state),
+    namespace,
     resource:
-      props.match.params.type === 'tasks'
-        ? getTask(state, { name: props.match.params.name })
-        : getPipeline(state, { name: props.match.params.name })
+      ownProps.match.params.type === 'tasks'
+        ? getTask(state, { name: ownProps.match.params.name, namespace })
+        : getPipeline(state, { name: ownProps.match.params.name, namespace })
   };
 }
 

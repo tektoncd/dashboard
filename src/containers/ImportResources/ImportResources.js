@@ -89,7 +89,7 @@ export class ImportResources extends Component {
       .then(headers => {
         const logsURL = headers.get('Content-Location');
         const pipelineRunName = logsURL.substring(logsURL.lastIndexOf('/') + 1);
-        const finalURL = '/pipelines/pipeline0/runs/'.concat(pipelineRunName);
+        const finalURL = `/namespaces/${namespace}/pipelines/pipeline0/runs/${pipelineRunName}`;
         this.setState({
           logsURL: finalURL,
           submitSuccess: true,

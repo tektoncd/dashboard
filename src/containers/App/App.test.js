@@ -19,7 +19,7 @@ import thunk from 'redux-thunk';
 
 import { App } from './App';
 
-it('App renders successfully without extensions', () => {
+it('App renders successfully', () => {
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const store = mockStore({
@@ -39,36 +39,4 @@ it('App renders successfully without extensions', () => {
   );
   expect(queryByText(/pipelines/i)).toBeTruthy();
   expect(queryByText(/tasks/i)).toBeTruthy();
-  expect(queryByText(/extensions/i)).toBe(null);
-});
-
-it('App renders successfully with extensions', () => {
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const store = mockStore({
-    extensions: { byName: {} },
-    namespaces: { byName: {} },
-    pipelines: { byNamespace: {} },
-    serviceAccounts: { byNamespace: {} }
-  });
-  const { queryByText } = render(
-    <Provider store={store}>
-      <App
-        extensions={[
-          {
-            name: 'dashboard-esaxtension',
-            url: 'sample',
-            port: '3000',
-            displayname: 'tekton_dashboard_extension',
-            bundlelocation: '/bundle'
-          }
-        ]}
-        fetchExtensions={() => {}}
-        fetchNamespaces={() => {}}
-      />
-    </Provider>
-  );
-  expect(queryByText(/pipelines/i)).toBeTruthy();
-  expect(queryByText(/tasks/i)).toBeTruthy();
-  expect(queryByText(/extensions/i)).toBeTruthy();
 });

@@ -83,21 +83,20 @@ export /* istanbul ignore next */ class Pipelines extends Component {
                   </StructuredListRow>
                 )}
                 {pipelines.map(pipeline => {
-                  const pipelineName = pipeline.metadata.name;
+                  const { name, namespace, uid } = pipeline.metadata;
                   return (
-                    <StructuredListRow
-                      className="definition"
-                      key={pipeline.metadata.uid}
-                    >
+                    <StructuredListRow className="definition" key={uid}>
                       <StructuredListCell>
-                        <Link to={`/pipelines/${pipelineName}/runs`}>
-                          {pipelineName}
+                        <Link
+                          to={`/namespaces/${namespace}/pipelines/${name}/runs`}
+                        >
+                          {name}
                         </Link>
                       </StructuredListCell>
                       <StructuredListCell>
                         <Link
                           title="pipeline definition"
-                          to={`/pipelines/${pipelineName}`}
+                          to={`/namespaces/${namespace}/pipelines/${name}`}
                         >
                           <Information16 className="resource-info-icon" />
                         </Link>
@@ -119,12 +118,15 @@ Pipelines.defaultProps = {
 };
 
 /* istanbul ignore next */
-function mapStateToProps(state) {
+function mapStateToProps(state, props) {
+  const { namespace: namespaceParam } = props.match.params;
+  const namespace = namespaceParam || getSelectedNamespace(state);
+
   return {
     error: getPipelinesErrorMessage(state),
     loading: isFetchingPipelines(state),
-    namespace: getSelectedNamespace(state),
-    pipelines: getPipelines(state)
+    namespace,
+    pipelines: getPipelines(state, { namespace })
   };
 }
 

@@ -65,20 +65,20 @@ export /* istanbul ignore next */ class TaskRunsContainer extends Component {
   };
 
   componentDidMount() {
-    const { match } = this.props;
+    const { match, namespace } = this.props;
     const { taskName } = match.params;
-    this.fetchTaskAndRuns(taskName);
+    this.fetchTaskAndRuns(taskName, namespace);
   }
 
   componentDidUpdate(prevProps) {
     const { match, namespace } = this.props;
     const { taskName } = match.params;
-    if (
-      taskName !== prevProps.match.params.taskName ||
-      namespace !== prevProps.namespace
-    ) {
+    const { match: prevMatch, namespace: prevNamespace } = prevProps;
+    const { taskName: prevTaskName } = prevMatch.params;
+
+    if (taskName !== prevTaskName || namespace !== prevNamespace) {
       this.setState({ loading: true }); // eslint-disable-line
-      this.fetchTaskAndRuns(taskName);
+      this.fetchTaskAndRuns(taskName, namespace);
     }
   }
 
@@ -118,9 +118,9 @@ export /* istanbul ignore next */ class TaskRunsContainer extends Component {
     this.setState({ taskRuns, notification });
   };
 
-  fetchTaskAndRuns(taskName) {
+  fetchTaskAndRuns(taskName, namespace) {
     Promise.all([
-      this.props.fetchTask({ name: taskName }),
+      this.props.fetchTask({ name: taskName, namespace }),
       this.props.fetchTaskRuns({ taskName })
     ]).then(() => {
       this.setState({ loading: false });
@@ -199,14 +199,20 @@ TaskRunsContainer.propTypes = {
 };
 
 /* istanbul ignore next */
-function mapStateToProps(state, props) {
+function mapStateToProps(state, ownProps) {
+  const { match } = ownProps;
+  const { namespace: namespaceParam, taskName } = match.params;
+
+  const namespace = namespaceParam || getSelectedNamespace(state);
+
   return {
     error: getTaskRunsErrorMessage(state),
-    namespace: getSelectedNamespace(state),
+    namespace,
     taskRuns: getTaskRunsByTaskName(state, {
-      name: props.match.params.taskName
+      name: taskName,
+      namespace
     }),
-    task: getTask(state, { name: props.match.params.taskName })
+    task: getTask(state, { name: taskName, namespace })
   };
 }
 

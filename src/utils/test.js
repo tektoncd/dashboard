@@ -20,11 +20,12 @@ export function renderWithRouter( // eslint-disable-line import/prefer-default-e
   ui,
   {
     route = '/',
-    history = createMemoryHistory({ initialEntries: [route] })
+    history = createMemoryHistory({ initialEntries: [route] }),
+    container
   } = {}
 ) {
   return {
-    ...render(<Router history={history}>{ui}</Router>),
+    ...render(<Router history={history}>{ui}</Router>, { container }),
     // adding `history` to the returned utilities to allow us
     // to reference it in our tests (just try to avoid using
     // this to test implementation details).

@@ -12,11 +12,10 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 
 import Log from '../../components/Log';
 import { getTaskRunLog } from '../../api';
-import { getSelectedNamespace } from '../../reducers';
 
 export class LogContainer extends Component {
   state = { logs: [] };
@@ -26,17 +25,27 @@ export class LogContainer extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { stepName, taskRunName } = this.props;
+    const { match, stepName, taskRunName } = this.props;
+    const { namespace } = match.params;
+    const {
+      match: prevMatch,
+      stepName: prevStepName,
+      taskRunName: prevTaskRunName
+    } = prevProps;
+    const { namespace: prevNamespace } = prevMatch.params;
+
     if (
-      taskRunName !== prevProps.taskRunName ||
-      stepName !== prevProps.stepName
+      taskRunName !== prevTaskRunName ||
+      stepName !== prevStepName ||
+      namespace !== prevNamespace
     ) {
       this.loadLog();
     }
   }
 
   async loadLog() {
-    const { namespace, stepName, taskRunName } = this.props;
+    const { match, stepName, taskRunName } = this.props;
+    const { namespace } = match.params;
     if (taskRunName) {
       try {
         const logs = await getTaskRunLog(taskRunName, namespace);
@@ -59,11 +68,4 @@ export class LogContainer extends Component {
   }
 }
 
-/* istanbul ignore next */
-function mapStateToProps(state) {
-  return {
-    namespace: getSelectedNamespace(state)
-  };
-}
-
-export default connect(mapStateToProps)(LogContainer);
+export default withRouter(LogContainer);

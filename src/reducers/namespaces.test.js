@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import namespacesReducer, * as selectors from './namespaces';
+import { ALL_NAMESPACES } from '../constants';
 
 it('handles init or unknown actions', () => {
   expect(namespacesReducer(undefined, { type: 'does_not_exist' })).toEqual({
@@ -20,7 +21,7 @@ it('handles init or unknown actions', () => {
     },
     errorMessage: null,
     isFetching: false,
-    selected: 'default'
+    selected: ALL_NAMESPACES
   });
 });
 
