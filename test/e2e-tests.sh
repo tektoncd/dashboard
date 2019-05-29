@@ -213,25 +213,30 @@ ssvc=$(kubectl get svc)
 echo "SVC are:"
 echo "$svc"
 
-echo "ip =$ip"
-curling=$(curl -k $ip)
-echo "curling"
+#curling=$(curl -k $ip)
+#echo "ip =$ip"
+#echo "curling"
 
-echo "response pipelne is : $ip:9097/v1/namespaces/default/pipelines"
+#echo "response pipelne is : $ip:9097/v1/namespaces/default/pipelines"
 
-responsePipeline=$(curl -k "$ip:9097/v1/namespaces/default/pipelines")
-echo "response is :"
-echo "$responsePipeline"  
+#responsePipeline=$(curl -k "$ip:9097/v1/namespaces/default/pipelines")
+#echo "response is :"
+#echo "$responsePipeline"  
 
-responsePipelineRun=$(curl -k "$ip:9097/v1/namespaces/default/pipelineruns")
-echo "response is :"
-echo "$responsePipelineRun"  
+#responsePipelineRun=$(curl -k "$ip:9097/v1/namespaces/default/pipelineruns")
+#echo "response is :"
+#echo "$responsePipelineRun"  
 
-responseTask=$(curl -k "$ip:9097/v1/namespaces/default/tasks")
-echo "response is :"
-echo "$responseTask" 
+#responseTask=$(curl -k "$ip:9097/v1/namespaces/default/tasks")
+#echo "response is :"
+#echo "$responseTask" 
 
-
+USER=$(gcloud config get-value core/account)
+# Make that user a cluster admin
+kubectl create clusterrolebinding cluster-admin-binding \
+  --clusterrole=cluster-admin \
+  --user="${USER}"
+  
 responseLocal=$(curl -k "127.0.0.1:9097/v1/namespaces/default/pipelines")
 echo "response is :"
 echo "$responseLocal" 
