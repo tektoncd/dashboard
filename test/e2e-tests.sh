@@ -145,7 +145,8 @@ echo "ip is $ip"
 #edited2=$(echo "$edited" | sed 's/ .*//')
 #echo "Edited2 is: $edited2"
 
-port_forward &
+kubectl port-forward $(kubectl get pod -l app=tekton-dashboard -o name) 9097:9097 &
+#port_forward &
 echo "dashboard forwarded to port 9097"
 fork_pid=$!
 echo "fork_pid = $fork_pid"
