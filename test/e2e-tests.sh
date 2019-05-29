@@ -232,6 +232,18 @@ echo "response is :"
 echo "$responseTask" 
 
 
+responseLocal=$(curl -k "127.0.0.1:9097/v1/namespaces/default/pipelines")
+echo "response is :"
+echo "$responseLocal" 
+
+responseLocal1=$(curl -k "127.0.0.1:9097/v1/namespaces/default/pipelineruns")
+echo "response is :"
+echo "$responseLocal1"  
+
+responseLocal2=$(curl -k "127.0.0.1:9097/v1/namespaces/default/tasks")
+echo "response is :"
+echo "$responseLocal2" 
+
 
 kill -9 $fork_pid
 echo "killed port_forward" 
