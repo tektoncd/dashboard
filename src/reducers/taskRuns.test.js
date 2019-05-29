@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import taskRunsReducer, * as selectors from './taskRuns';
+import { ALL_NAMESPACES } from '../constants';
 
 it('handles init or unknown actions', () => {
   expect(taskRunsReducer(undefined, { type: 'does_not_exist' })).toEqual({
@@ -64,13 +65,20 @@ it('TASK_RUNS_FETCH_FAILURE', () => {
   expect(selectors.getTaskRunsErrorMessage(state)).toEqual(message);
 });
 
-it('getPipelineRuns', () => {
+it('getTaskRuns', () => {
   const namespace = 'namespace';
   const state = { byNamespace: {} };
   expect(selectors.getTaskRuns(state, namespace)).toEqual([]);
 });
 
-it('getPipelineRun', () => {
+it('getTaskRuns all namespaces', () => {
+  const namespace = ALL_NAMESPACES;
+  const taskRun = { fake: 'taskRun' };
+  const state = { byId: { id: taskRun } };
+  expect(selectors.getTaskRuns(state, namespace)).toEqual([taskRun]);
+});
+
+it('getTaskRun', () => {
   const name = 'name';
   const namespace = 'namespace';
   const state = { byNamespace: {} };

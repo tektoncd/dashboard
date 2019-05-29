@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import serviceAccountsReducer, * as selectors from './serviceAccounts';
+import { ALL_NAMESPACES } from '../constants';
 
 it('handles init or unknown actions', () => {
   expect(serviceAccountsReducer(undefined, { type: 'does_not_exist' })).toEqual(
@@ -71,4 +72,13 @@ it('getServiceAccounts', () => {
   const namespace = 'default';
   const state = { byNamespace: {} };
   expect(selectors.getServiceAccounts(state, namespace)).toEqual([]);
+});
+
+it('getServiceAccounts all namespaces', () => {
+  const namespace = ALL_NAMESPACES;
+  const serviceAccount = { fake: 'serviceAccount' };
+  const state = { byId: { id: serviceAccount } };
+  expect(selectors.getServiceAccounts(state, namespace)).toEqual([
+    serviceAccount
+  ]);
 });
