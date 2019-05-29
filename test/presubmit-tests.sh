@@ -72,6 +72,7 @@ function node_test() {
   local failed=0
   echo "Running node tests from $(pwd)"
   node_npm_install || failed=1
+  npm run lint || failed=1
   npm run test:ci || failed=1
   echo ""
   return ${failed}
