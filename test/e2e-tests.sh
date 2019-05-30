@@ -260,6 +260,15 @@ echo "response is :"
 echo "$responseLocal2" 
 
 
+ksvc=$(kubectl get ksvc)
+echo "KSVC are:"
+echo "$ksvc"
+
+ssvc=$(kubectl get svc)
+echo "SVC are:"
+echo "$svc"
+
+
 kill -9 $fork_pid
 echo "killed port_forward" 
 
