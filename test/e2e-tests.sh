@@ -107,6 +107,33 @@ function wait_for_ready_pods() {
     timeout ${timeout_period} "kubectl get pods -n ${namespace} && [[ \$(kubectl get pods -n ${namespace} 2>&1 | grep -c -v -E '(Running|Completed|Terminating|STATUS)') -eq 0 ]]"
 }
 
+function wait_for_ready_kservice() {
+    if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ]; then
+        echo "Usage ERROR for function: wait_for_ready_kservice [kservice] [namespace] [timeout] <sleepTime>"
+        [ -z "$1" ] && echo "Missing [kservice]"
+        [ -z "$2" ] && echo "Missing [namespace]"
+        [ -z "$3" ] && echo "Missing [timeout]"
+        exit 1
+    fi
+    kservice="$1"
+    namespace="$2"
+    timeout="$3"
+    sleepTime=${4:-"2"}
+    ctr=0
+    until [ "0" = "$(kservice_is_ready "$kservice" "$namespace")" ]; do
+        echo "waiting for ready $kservice kservice in namespace $namespace:"
+        kubectl get ksvc "$kservice" --namespace $namespace
+        if [ "$timeout" -ne "-1" ] && [ "$timeout" -le "$ctr" ]; then
+            echo "ERROR: kservice $kservice was not ready in install namespace ${namespace} after waiting ${timeout} seconds."
+            kubectl describe ksvc $kservice --namespace $namespace
+            return 1
+        fi
+        sleep "$sleepTime"
+        ctr=$((ctr+sleepTime))
+    done
+    kubectl get ksvc $kservice --namespace $namespace
+}
+
 
 
 #Fork port forward, once starts running never stops running until killed
@@ -285,6 +312,43 @@ echo "$svc"
 
 nport=$(kubectl get svc "istio-ingressgateway" --namespace istio-system --output 'jsonpath={.spec.ports[?(@.port==80)].nodePort}')
 echo "nport is $nport"
+
+#API configuration
+APP_NS="default"
+PIPELINE_NAME="simple-pipeline-insecure"
+IMAGE_SOURCE_NAME="docker-image"
+GIT_RESOURCE_NAME="git-source"
+GIT_COMMIT="master"
+REPO_NAME="knative-helloworld"
+REPO_URL="https://github.com/a-roberts/knative-helloworld"
+EXPECTED_RETURN_VALUE="Hello Go Sample v1!"
+KSVC_NAME="knative-helloworld"
+
+post_data='{
+        "pipelinename": "'${PIPELINE_NAME}'",
+        "imageresourcename": "'${IMAGE_SOURCE_NAME}'",
+        "gitresourcename": "'${GIT_RESOURCE_NAME}'",
+        "gitcommit": "'${GIT_COMMIT}'",
+        "reponame": "'${REPO_NAME}'",
+        "repourl": "'${REPO_URL}'",
+        "registrylocation": "'${DOCKERHUB_USERNAME}'",
+        "serviceaccount": "'${DASHBOARD_INSTALL_NS}'"
+    }'
+
+curl -H "Host: ${domain}" -X POST --header Content-Type:application/json -d "$post_data" http://${ip}:${nport}/v1/namespaces/${DASHBOARD_INSTALL_NS}/pipelinerun/
+echo "Curled"
+
+wait_for_ready_kservice "$REPO_NAME" "$APP_NS" 500 10
+
+domain=$(get_kserving_domain "$KSVC_NAME" "$APP_NS")
+echo $domain
+resp=$(curl -H "Host: ${domain}" ${ip})
+
+if [ "$EXPECTED_RETURN_VALUE" = "$resp" ]; then
+    echo "Pipeline Run successfully executed"
+else
+    echo "Pipeline Run error returned not expected message: $resp"
+
 
 kill -9 $fork_pid
 echo "killed port_forward" 
