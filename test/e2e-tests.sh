@@ -381,7 +381,7 @@ wait_for_ready_kservice "$REPO_NAME" "$APP_NS" 500 10
 
 domain=$(get_kserving_domain "$KSVC_NAME" "$APP_NS")
 echo $domain
-resp=$(curl -H "Host: ${domain}" ${ip})
+resp=$(curl -H $curlNport) #"Host: ${domain}" ${ip})
 
 if [ "$EXPECTED_RETURN_VALUE" = "$resp" ]; then
     echo "Pipeline Run successfully executed"
