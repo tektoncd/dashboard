@@ -266,6 +266,21 @@ wait_for_ready_pods istio-system 10000 30
 # Wait until all the pods come up
 wait_for_ready_pods istio-system 10000 30
 
+# Wait until all the pods come up
+wait_for_ready_pods istio-system 10000 30
+
+# Wait until all the pods come up
+wait_for_ready_pods istio-system 10000 30
+
+# Wait until all the pods come up
+wait_for_ready_pods istio-system 10000 30
+
+# Wait until all the pods come up
+wait_for_ready_pods istio-system 10000 30
+
+# Wait until all the pods come up
+wait_for_ready_pods istio-system 10000 30
+
 istios=$(kubectl get pods -n istio-system)
 echo "istio-system pods are"
 echo "$istios"
