@@ -364,10 +364,10 @@ post_data='{
         "serviceaccount": "'${DASHBOARD_INSTALL_NS}'"
     }'
 
-curlNport="127.0.0.1:$nport"
+curlNport="127.0.0.1:$nport/v1/namespaces/default/pipelinerun"
 echo "curl nport :$curlNport"
 
-curl -d -H Content-Type:application/json "$post_data" -X POST $curlNport/v1/namespaces/default/pipelinerun
+curl -d -H Content-Type:application/json "$post_data" -X POST $curlNport
 echo "Test curl"
 #domain=$(get_kserving_domain "tekton-dashboard-service" "$DASHBOARD_INSTALL_NS")
  #   echo $domain
