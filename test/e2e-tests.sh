@@ -151,6 +151,18 @@ function wait_for_ready_kservice() {
     kubectl get ksvc $kservice --namespace $namespace
 }
 
+function get_kserving_domain() {
+    if [ -z "$1" ] || [ -z "$2" ]; then
+        echo "Usage ERROR for function: get_kserving_domain [kservice] [namespace]"
+        [ -z "$1" ] && echo "Missing [kservice]"
+        [ -z "$2" ] && echo "Missing [namespace]"
+        exit 1
+    fi
+    kservice="$1"
+    namespace="$2"
+    kubectl get ksvc "$kservice" -n "$namespace" -o json | jq '.status.domain' | sed 's/"//g'
+}
+
 
 
 #Fork port forward, once starts running never stops running until killed
@@ -351,12 +363,12 @@ post_data='{
         "registrylocation": "'${DOCKERHUB_USERNAME}'",
         "serviceaccount": "'${DASHBOARD_INSTALL_NS}'"
     }'
-127.0.0.1:9097
+#127.0.0.1:9097
 
 domain=$(get_kserving_domain "tekton-dashboard-service" "$DASHBOARD_INSTALL_NS")
     echo $domain
 
-curlNport=$(127.0.0.1:$nport)
+curlNport="127.0.0.1:$nport"
 echo "curl nport :$curlNport"
 
 curl -H "Host: ${domain}" -X POST --header Content-Type:application/json -d "$post_data" ${curlNport}/v1/namespaces/${DASHBOARD_INSTALL_NS}/pipelinerun/
