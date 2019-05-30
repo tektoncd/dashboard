@@ -259,50 +259,11 @@ responseLocal2=$(curl -k "127.0.0.1:9097/v1/namespaces/default/tasks")
 echo "response is :"
 echo "$responseLocal2" 
 
-sleep 10
-
 ###FIX THIS - Istio pods not always coing up in time 
+sleep 20
 # Wait until all the pods come up
 wait_for_ready_pods istio-system 10000 300
 
-# Wait until all the pods come up
-wait_for_ready_pods istio-system 10000 300
-
-# Wait until all the pods come up
-wait_for_ready_pods istio-system 10000 300
-
-# Wait until all the pods come up
-wait_for_ready_pods istio-system 10000 300
-
-# Wait until all the pods come up
-wait_for_ready_pods istio-system 10000 300
-
-# Wait until all the pods come up
-wait_for_ready_pods istio-system 10000 300
-
-# Wait until all the pods come up
-wait_for_ready_pods istio-system 10000 300
-
-# Wait until all the pods come up
-wait_for_ready_pods istio-system 10000 300
-
-# Wait until all the pods come up
-wait_for_ready_pods istio-system 10000 300
-
-# Wait until all the pods come up
-wait_for_ready_pods istio-system 10000 300
-
-# Wait until all the pods come up
-wait_for_ready_pods istio-system 10000 300
-
-# Wait until all the pods come up
-wait_for_ready_pods istio-system 10000 300
-
-# Wait until all the pods come up
-wait_for_ready_pods istio-system 10000 300
-
-# Wait until all the pods come up
-wait_for_ready_pods istio-system 10000 300
 
 istios=$(kubectl get pods -n istio-system)
 echo "istio-system pods are"
