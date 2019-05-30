@@ -259,6 +259,7 @@ responseLocal2=$(curl -k "127.0.0.1:9097/v1/namespaces/default/tasks")
 echo "response is :"
 echo "$responseLocal2" 
 
+
 ###FIX THIS - Istio pods not always coing up in time 
 sleep 1m
 # Wait until all the pods come up
@@ -269,14 +270,10 @@ istios=$(kubectl get pods -n istio-system)
 echo "istio-system pods are"
 echo "$istios"
 
-logs=$(kubectl logs app=cluster-local-gateway -n istio-system -o name)
-echo "logs is: $logs"
 
-logs1=$(kubectl logs name=istio-citadel -n istio-system)
-echo "logs is: $logs1"
-
-logs2=$(kubectl logs -l app=istio-egressgateway -n istio-system)
-echo "logs is: $logs2"
+##How to get logs without numbers at the end 
+#logs=$(kubectl logs -l app=istio-egressgateway -n istio-system)
+#echo "logs is: $logs"
 
 ksvc=$(kubectl get ksvc)
 echo "KSVC are:"
@@ -285,6 +282,9 @@ echo "$ksvc"
 ssvc=$(kubectl get svc)
 echo "SVC are:"
 echo "$svc"
+
+nport=$(kubectl get svc "istio-ingressgateway" --namespace istio-system --output 'jsonpath={.spec.ports[?(@.port==80)].nodePort}')
+echo "nport is $nport"
 
 kill -9 $fork_pid
 echo "killed port_forward" 
