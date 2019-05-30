@@ -275,8 +275,8 @@ echo "logs is: $logs"
 logs1=$(kubectl logs name=istio-citadel -n istio-system)
 echo "logs is: $logs1"
 
-logs1=$(kubectl logs -l app=istio-egressgateway -n istio-system)
-echo "logs is: $logs1"
+logs2=$(kubectl logs -l app=istio-egressgateway -n istio-system)
+echo "logs is: $logs2"
 
 ksvc=$(kubectl get ksvc)
 echo "KSVC are:"
