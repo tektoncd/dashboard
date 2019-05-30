@@ -351,8 +351,15 @@ post_data='{
         "registrylocation": "'${DOCKERHUB_USERNAME}'",
         "serviceaccount": "'${DASHBOARD_INSTALL_NS}'"
     }'
+127.0.0.1:9097
 
-curl -H "Host: ${domain}" -X POST --header Content-Type:application/json -d "$post_data" 127.0.0.1:${nport}/v1/namespaces/${DASHBOARD_INSTALL_NS}/pipelinerun/
+domain=$(get_kserving_domain "tekton-dashboard-service" "$DASHBOARD_INSTALL_NS")
+    echo $domain
+
+curlNport=$(127.0.0.1:$nport)
+echo "curl nport :$curlNport"
+
+curl -H "Host: ${domain}" -X POST --header Content-Type:application/json -d "$post_data" ${curlNport}/v1/namespaces/${DASHBOARD_INSTALL_NS}/pipelinerun/
 echo "Curled"
 
 wait_for_ready_kservice "$REPO_NAME" "$APP_NS" 500 10
