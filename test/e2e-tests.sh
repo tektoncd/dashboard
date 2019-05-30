@@ -261,7 +261,7 @@ echo "$responseLocal2"
 
 
 # Wait until all the pods come up
-wait_for_ready_pods istio-system 300 30
+wait_for_ready_pods istio-system 
 
 istios=$(kubectl get pods -n istio-system)
 echo "istio-system pods are"
