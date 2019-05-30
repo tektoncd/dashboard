@@ -363,7 +363,6 @@ post_data='{
         "registrylocation": "'${DOCKERHUB_USERNAME}'",
         "serviceaccount": "'${DASHBOARD_INSTALL_NS}'"
     }'
-#127.0.0.1:9097
 
 curlNport="127.0.0.1:$nport"
 echo "curl nport :$curlNport"
