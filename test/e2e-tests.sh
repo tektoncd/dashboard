@@ -261,58 +261,58 @@ echo "$responseLocal2"
 
 ###FIX THIS - Istio pods not always coing up in time 
 # Wait until all the pods come up
-wait_for_ready_pods istio-system 10000 30
+wait_for_ready_pods istio-system 10000 300
+
+# Wait until all the pods come up
+wait_for_ready_pods istio-system 10000 300
+
+# Wait until all the pods come up
+wait_for_ready_pods istio-system 10000 300
+
+# Wait until all the pods come up
+wait_for_ready_pods istio-system 10000 300
+
+# Wait until all the pods come up
+wait_for_ready_pods istio-system 10000 300
+
+# Wait until all the pods come up
+wait_for_ready_pods istio-system 10000 300
+
+# Wait until all the pods come up
+wait_for_ready_pods istio-system 10000 300
+
+# Wait until all the pods come up
+wait_for_ready_pods istio-system 10000 300
+
+# Wait until all the pods come up
+wait_for_ready_pods istio-system 10000 300
+
+# Wait until all the pods come up
+wait_for_ready_pods istio-system 10000 300
+
+# Wait until all the pods come up
+wait_for_ready_pods istio-system 10000 300
+
+# Wait until all the pods come up
+wait_for_ready_pods istio-system 10000 300
 
 # Wait until all the pods come up
 wait_for_ready_pods istio-system 10000 30
 
 # Wait until all the pods come up
-wait_for_ready_pods istio-system 10000 30
-
-# Wait until all the pods come up
-wait_for_ready_pods istio-system 10000 30
-
-# Wait until all the pods come up
-wait_for_ready_pods istio-system 10000 30
-
-# Wait until all the pods come up
-wait_for_ready_pods istio-system 10000 30
-
-# Wait until all the pods come up
-wait_for_ready_pods istio-system 10000 30
-
-# Wait until all the pods come up
-wait_for_ready_pods istio-system 10000 30
-
-# Wait until all the pods come up
-wait_for_ready_pods istio-system 10000 30
-
-# Wait until all the pods come up
-wait_for_ready_pods istio-system 10000 30
-
-# Wait until all the pods come up
-wait_for_ready_pods istio-system 10000 30
-
-# Wait until all the pods come up
-wait_for_ready_pods istio-system 10000 30
-
-# Wait until all the pods come up
-wait_for_ready_pods istio-system 10000 30
-
-# Wait until all the pods come up
-wait_for_ready_pods istio-system 10000 30
+wait_for_ready_pods istio-system 10000 300
 
 istios=$(kubectl get pods -n istio-system)
 echo "istio-system pods are"
 echo "$istios"
 
-logs=$(kubectl get logs -l app=cluster-local-gateway -namespace istio-system)
+logs=$(kubectl log -l app=cluster-local-gateway -namespace istio-system)
 echo "logs is: $logs"
 
-logs1=$(kubectl get logs -l app=istio-citadel -namespace istio-system)
+logs1=$(kubectl log -l app=istio-citadel -namespace istio-system)
 echo "logs is: $logs1"
 
-logs1=$(kubectl get logs -l app=istio-egressgateway -namespace istio-system)
+logs1=$(kubectl log -l app=istio-egressgateway -namespace istio-system)
 echo "logs is: $logs1"
 
 ksvc=$(kubectl get ksvc)
