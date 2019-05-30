@@ -107,6 +107,23 @@ function wait_for_ready_pods() {
     timeout ${timeout_period} "kubectl get pods -n ${namespace} && [[ \$(kubectl get pods -n ${namespace} 2>&1 | grep -c -v -E '(Running|Completed|Terminating|STATUS)') -eq 0 ]]"
 }
 
+# Output 0 if the kservice "Ready" condition is True, 1 otherwise
+function kservice_is_ready() {
+    if [ -z "$1" ] || [ -z "$2" ]; then
+        echo "Usage ERROR for function: kservice_is_ready [kservice] [namespace]"
+        [ -z "$1" ] && echo "Missing [kservice]"
+        [ -z "$2" ] && echo "Missing [namespace]"
+        exit 1
+    fi
+    kservice=$1
+    namespace=$2
+
+    kubectl get ksvc "$kservice" -n "$namespace" -o json \
+        | jq '.status.conditions[] | select(.type == "Ready") | {status}' \
+        | grep "True" > /dev/null \
+        ; echo $?
+}
+
 function wait_for_ready_kservice() {
     if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ]; then
         echo "Usage ERROR for function: wait_for_ready_kservice [kservice] [namespace] [timeout] <sleepTime>"
