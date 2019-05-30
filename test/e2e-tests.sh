@@ -260,6 +260,13 @@ echo "response is :"
 echo "$responseLocal2" 
 
 
+# Wait until all the pods come up
+wait_for_ready_pods istio-system 300 30
+
+istios=$(kubectl get pods -n istio-system)
+echo "istio-system pods are"
+echo "$istios"
+
 ksvc=$(kubectl get ksvc)
 echo "KSVC are:"
 echo "$ksvc"
@@ -267,7 +274,6 @@ echo "$ksvc"
 ssvc=$(kubectl get svc)
 echo "SVC are:"
 echo "$svc"
-
 
 kill -9 $fork_pid
 echo "killed port_forward" 
