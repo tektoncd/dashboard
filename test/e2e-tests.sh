@@ -281,9 +281,39 @@ wait_for_ready_pods istio-system 10000 30
 # Wait until all the pods come up
 wait_for_ready_pods istio-system 10000 30
 
+# Wait until all the pods come up
+wait_for_ready_pods istio-system 10000 30
+
+# Wait until all the pods come up
+wait_for_ready_pods istio-system 10000 30
+
+# Wait until all the pods come up
+wait_for_ready_pods istio-system 10000 30
+
+# Wait until all the pods come up
+wait_for_ready_pods istio-system 10000 30
+
+# Wait until all the pods come up
+wait_for_ready_pods istio-system 10000 30
+
+# Wait until all the pods come up
+wait_for_ready_pods istio-system 10000 30
+
+# Wait until all the pods come up
+wait_for_ready_pods istio-system 10000 30
+
 istios=$(kubectl get pods -n istio-system)
 echo "istio-system pods are"
 echo "$istios"
+
+logs=$(kubectl get logs -l app=cluster-local-gateway -namespace istio-system)
+echo "logs is: $logs"
+
+logs1=$(kubectl get logs -l app=istio-citadel -namespace istio-system)
+echo "logs is: $logs1"
+
+logs1=$(kubectl get logs -l app=istio-egressgateway -namespace istio-system)
+echo "logs is: $logs1"
 
 ksvc=$(kubectl get ksvc)
 echo "KSVC are:"
