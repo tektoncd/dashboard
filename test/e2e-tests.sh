@@ -259,7 +259,7 @@ responseLocal2=$(curl -k "127.0.0.1:9097/v1/namespaces/default/tasks")
 echo "response is :"
 echo "$responseLocal2" 
 
-sleep 5
+sleep 10
 
 ###FIX THIS - Istio pods not always coing up in time 
 # Wait until all the pods come up
@@ -308,13 +308,13 @@ istios=$(kubectl get pods -n istio-system)
 echo "istio-system pods are"
 echo "$istios"
 
-logs=$(kubectl logs app=cluster-local-gateway -namespace istio-system)
+logs=$(kubectl logs app=cluster-local-gateway -n istio-system)
 echo "logs is: $logs"
 
-logs1=$(kubectl logs app=istio-citadel -namespace istio-system)
+logs1=$(kubectl logs app=istio-citadel -n istio-system)
 echo "logs is: $logs1"
 
-logs1=$(kubectl logs app=istio-egressgateway -namespace istio-system)
+logs1=$(kubectl logs app=istio-egressgateway -n istio-system)
 echo "logs is: $logs1"
 
 ksvc=$(kubectl get ksvc)
