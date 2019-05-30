@@ -367,12 +367,13 @@ post_data='{
 curlNport="127.0.0.1:$nport"
 echo "curl nport :$curlNport"
 
-
+curl -d -H Content-Type:application/json "$post_data" -X POST $curlNport/v1/namespaces/default/pipelinerun
+echo "Test curl"
 #domain=$(get_kserving_domain "tekton-dashboard-service" "$DASHBOARD_INSTALL_NS")
  #   echo $domain
 
-curl -X POST -H --header Content-Type:application/json -d "$post_data" ${curlNport}/v1/namespaces/${DASHBOARD_INSTALL_NS}/pipelinerun/
-echo "Curled"
+#curl -X POST -H --header Content-Type:application/json -d "$post_data" ${curlNport}/v1/namespaces/${DASHBOARD_INSTALL_NS}/pipelinerun/
+#echo "Curled"
 #curl -H "Host: ${domain}" -X POST --header Content-Type:application/json -d "$post_data" ${curlNport}/v1/namespaces/${DASHBOARD_INSTALL_NS}/pipelinerun/
 #echo "Curled"
 
