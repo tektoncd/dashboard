@@ -260,7 +260,7 @@ echo "response is :"
 echo "$responseLocal2" 
 
 ###FIX THIS - Istio pods not always coing up in time 
-sleep 20
+sleep 1m
 # Wait until all the pods come up
 wait_for_ready_pods istio-system 10000 300
 
@@ -269,13 +269,13 @@ istios=$(kubectl get pods -n istio-system)
 echo "istio-system pods are"
 echo "$istios"
 
-logs=$(kubectl logs app=cluster-local-gateway -n istio-system)
+logs=$(kubectl logs app=cluster-local-gateway -n istio-system -o name)
 echo "logs is: $logs"
 
-logs1=$(kubectl logs app=istio-citadel -n istio-system)
+logs1=$(kubectl logs name=istio-citadel -n istio-system)
 echo "logs is: $logs1"
 
-logs1=$(kubectl logs app=istio-egressgateway -n istio-system)
+logs1=$(kubectl logs -l app=istio-egressgateway -n istio-system)
 echo "logs is: $logs1"
 
 ksvc=$(kubectl get ksvc)
