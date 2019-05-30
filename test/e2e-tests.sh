@@ -335,7 +335,7 @@ post_data='{
         "serviceaccount": "'${DASHBOARD_INSTALL_NS}'"
     }'
 
-curl -H "Host: ${domain}" -X POST --header Content-Type:application/json -d "$post_data" ${ip}:${nport}/v1/namespaces/${DASHBOARD_INSTALL_NS}/pipelinerun/
+curl -H "Host: ${domain}" -X POST --header Content-Type:application/json -d "$post_data" 127.0.0.1:${nport}/v1/namespaces/${DASHBOARD_INSTALL_NS}/pipelinerun/
 echo "Curled"
 
 wait_for_ready_kservice "$REPO_NAME" "$APP_NS" 500 10
