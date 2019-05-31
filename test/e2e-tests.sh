@@ -407,7 +407,6 @@ post_data='{
 curlNport="https://127.0.0.1:$nport/v1/namespaces/default/pipelinerun"
 echo "curl nport :$curlNport"
 
-#echo %s "$URL" | xxd
 
 #echo "test curl with one lower"
 #nport1=$nport-1
