@@ -182,6 +182,21 @@ function install_istio_nodeport() {
     wait_for_ready_pods istio-system 300 30
 }
 
+function install_knative_serving_nodeport() {
+    if [ -z "$1" ]; then
+        echo "Usage ERROR for function: install_knative_serving_nodeport [version]"
+        echo "Missing [version]"
+        exit 1
+    fi
+    version="$1"
+    # Use NodePort instead of LoadBalancer for Minikube
+    curl -L https://github.com/knative/serving/releases/download/${version}/serving.yaml \
+    | sed 's/LoadBalancer/NodePort/' \
+    | kubectl apply --filename -
+    # Wait until all the pods come up
+    wait_for_ready_pods knative-serving 180 20
+}
+
 
 
 #Fork port forward, once starts running never stops running until killed
@@ -195,6 +210,7 @@ install_istio $KNATIVE_VERSION
 install_knative_serving $KNATIVE_VERSION
 install_knative_eventing $KNATIVE_VERSION
 install_knative_eventing_sources $KNATIVE_VERSION
+install_knative_serving_nodeport $KNATIVE_VERSION
 echo "Installed knative version $KNATIVE_VERSION"
 
 echo "Applying test-rbac,yaml"
