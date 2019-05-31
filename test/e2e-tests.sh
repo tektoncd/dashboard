@@ -413,10 +413,15 @@ echo "curl nport :$curlNport"
 #curl -H --header Content-Type:application/json -d "$post_data" -X POST "$curlNport2"
 #echo "Test curl with one lower"
 
-echo "Curling ip not lcoalhost"
-echo "curl -H --header Content-Type:application/json -d "$post_data" -X POST $ip:$nport"
-curl -H --header Content-Type:application/json -d "$post_data" -X POST "$ip:$nport"
-echo "Test curl"
+#echo "Curling ip not lcoalhost"
+#echo "curl -H --header Content-Type:application/json -d "$post_data" -X POST $ip:$nport"
+#curl -H --header Content-Type:application/json -d "$post_data" -X POST "$ip:$nport"
+#echo "Test curl"
+
+echo "curl -H --header Content-Type:application/json -d "$post_data" -X POST 127.0.0.1:$nport/v1/namespaces/default/pipelinerun"
+curl -H --header Content-Type:application/json -d "$post_data" -X POST "127.0.0.1:$nport/v1/namespaces/default/pipelinerun"
+echo "Test curl without http and https"
+
 
 echo "curl -H --header Content-Type:application/json -d "$post_data" -X POST $curlNport"
 curl -H --header Content-Type:application/json -d "$post_data" -X POST "$curlNport"
@@ -426,6 +431,8 @@ echo "test curl 2 http"
 curlNport2="http://127.0.0.1:$nport/v1/namespaces/default/pipelinerun"
 curl -H --header Content-Type:application/json -d "$post_data" -X POST "$curlNport2"
 echo "Test curl2"
+
+
 
 
 domain=$(get_kserving_domain "tekton-dashboard-service" "$DASHBOARD_INSTALL_NS")
