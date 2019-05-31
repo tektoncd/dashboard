@@ -367,7 +367,7 @@ ksvc=$(kubectl get ksvc)
 echo "KSVC are:"
 echo "$ksvc"
 
-ssvc=$(kubectl get svc)
+svc=$(kubectl get svc)
 echo "SVC are:"
 echo "$svc"
 
