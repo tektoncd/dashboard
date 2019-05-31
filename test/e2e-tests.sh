@@ -371,6 +371,9 @@ svc=$(kubectl get svc)
 echo "SVC are:"
 echo "$svc"
 
+svcT=$(kubectl describe svc tekton-dashboard)
+echo "svcT is $svcT"
+
 svcIstio=$(kubectl get svc -n istio-system)
 echo "svc isito are:"
 echo "$svcIstio"
