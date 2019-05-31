@@ -415,6 +415,10 @@ echo "curl nport :$curlNport"
 #curl -H --header Content-Type:application/json -d "$post_data" -X POST "$curlNport2"
 #echo "Test curl with one lower"
 
+echo "CUrling ip not lcoalhost"
+echo "curl -H --header Content-Type:application/json -d "$post_data" -X POST $ip:$nport"
+curl -H --header Content-Type:application/json -d "$post_data" -X POST "$ip:$nport"
+echo "Test curl"
 
 echo "curl -H --header Content-Type:application/json -d "$post_data" -X POST $curlNport"
 curl -H --header Content-Type:application/json -d "$post_data" -X POST "$curlNport"
@@ -426,13 +430,14 @@ curl -H --header Content-Type:application/json -d "$post_data" -X POST "$curlNpo
 echo "Test curl2"
 
 
-#domain=$(get_kserving_domain "tekton-dashboard-service" "$DASHBOARD_INSTALL_NS")
- #   echo $domain
+domain=$(get_kserving_domain "tekton-dashboard-service" "$DASHBOARD_INSTALL_NS")
+echo "domain is :$domain"
 
 #curl -X POST -H --header Content-Type:application/json -d "$post_data" ${curlNport}/v1/namespaces/${DASHBOARD_INSTALL_NS}/pipelinerun/
 #echo "Curled"
-#curl -H "Host: ${domain}" -X POST --header Content-Type:application/json -d "$post_data" ${curlNport}/v1/namespaces/${DASHBOARD_INSTALL_NS}/pipelinerun/
-#echo "Curled"
+echo "Curling original"
+curl -H "Host: ${domain}" -X POST --header Content-Type:application/json -d "$post_data" $curlNport/v1/namespaces/${DASHBOARD_INSTALL_NS}/pipelinerun/
+echo "Curled"
 
 wait_for_ready_kservice "$REPO_NAME" "$APP_NS" 500 10
 
