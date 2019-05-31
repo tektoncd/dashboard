@@ -388,10 +388,10 @@ PIPELINE_NAME="simple-pipeline-insecure"
 IMAGE_SOURCE_NAME="docker-image"
 GIT_RESOURCE_NAME="git-source"
 GIT_COMMIT="master"
-REPO_NAME="knative-helloworld"
-REPO_URL="https://github.com/a-roberts/knative-helloworld"
+REPO_NAME="go-hello-world"
+REPO_URL="https://github.com/ncskier/go-hello-world" #https://github.com/a-roberts/knative-helloworld"
 EXPECTED_RETURN_VALUE="Hello Go Sample v1!"
-KSVC_NAME="knative-helloworld"
+KSVC_NAME="go-hello-world"
 
 post_data='{
         "pipelinename": "'${PIPELINE_NAME}'",
