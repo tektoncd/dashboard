@@ -369,13 +369,13 @@ echo "curl nport :$curlNport"
 
 echo %s "$URL" | xxd
 
-echo "curl -d -H --header Content-Type:application/json "$post_data" -X POST $curlNport"
-curl -d -H --header Content-Type:application/json "$post_data" -X POST $curlNport
+echo "curl -H --header Content-Type:application/json -d "$post_data" -X POST $curlNport"
+curl -H --header Content-Type:application/json -d "$post_data" -X POST $"curlNport"
 echo "Test curl"
 
 echo "test curl 2 http"
 curlNport2="http://127.0.0.1:$nport/v1/namespaces/default/pipelinerun"
-curl -d -H --header Content-Type:application/json "$post_data" -X POST $curlNport2
+curl -H --header Content-Type:application/json -d "$post_data" -X POST "$curlNport2"
 echo "Test curl2"
 #domain=$(get_kserving_domain "tekton-dashboard-service" "$DASHBOARD_INSTALL_NS")
  #   echo $domain
