@@ -367,6 +367,8 @@ post_data='{
 curlNport="https://127.0.0.1:$nport/v1/namespaces/default/pipelinerun"
 echo "curl nport :$curlNport"
 
+echo %s "$URL" | xxd
+
 echo "curl -d -H --header Content-Type:application/json "$post_data" -X POST $curlNport"
 curl -d -H --header Content-Type:application/json "$post_data" -X POST $curlNport
 echo "Test curl"
