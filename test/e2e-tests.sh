@@ -163,6 +163,25 @@ function get_kserving_domain() {
     kubectl get ksvc "$kservice" -n "$namespace" -o json | jq '.status.domain' | sed 's/"//g'
 }
 
+function install_istio_nodeport() {
+    if [ -z "$1" ]; then
+        echo "Usage ERROR for function: install_istio_nodeport [version]"
+        echo "Missing [version]"
+        exit 1
+    fi
+    version="$1"
+    # Install on Minikube
+    # We are changing LoadBalancer to NodePort for the istio-ingress service)
+    kubectl apply --filename https://github.com/knative/serving/releases/download/${version}/istio-crds.yaml &&
+    curl -L https://github.com/knative/serving/releases/download/${version}/istio.yaml \
+    | sed 's/LoadBalancer/NodePort/' \
+    | kubectl apply --filename -
+    # Label the default namespace with istio-injection=enabled.
+    kubectl label namespace default istio-injection=enabled
+    # Wait until all the pods come up
+    wait_for_ready_pods istio-system 300 30
+}
+
 
 
 #Fork port forward, once starts running never stops running until killed
@@ -171,6 +190,7 @@ function port_forward() {
 }
 
 echo "Installing knative version $KNATIVE_VERSION"
+install_istio_nodeport $KNATIVE_VERSION
 install_istio $KNATIVE_VERSION
 install_knative_serving $KNATIVE_VERSION
 install_knative_eventing $KNATIVE_VERSION
@@ -373,11 +393,11 @@ echo "curl nport :$curlNport"
 
 #echo %s "$URL" | xxd
 
-echo "test curl with one lower"
-nport1=$nport-1
-curlNport2="127.0.0.1:$nport1/v1/namespaces/default/pipelinerun"
-curl -H --header Content-Type:application/json -d "$post_data" -X POST "$curlNport2"
-echo "Test curl with one lower"
+#echo "test curl with one lower"
+#nport1=$nport-1
+#curlNport2="127.0.0.1:$nport1/v1/namespaces/default/pipelinerun"
+#curl -H --header Content-Type:application/json -d "$post_data" -X POST "$curlNport2"
+#echo "Test curl with one lower"
 
 echo "curl -H --header Content-Type:application/json -d "$post_data" -X POST $curlNport"
 curl -H --header Content-Type:application/json -d "$post_data" -X POST $"curlNport"
