@@ -399,6 +399,7 @@ echo "curl nport :$curlNport"
 #curl -H --header Content-Type:application/json -d "$post_data" -X POST "$curlNport2"
 #echo "Test curl with one lower"
 
+
 echo "curl -H --header Content-Type:application/json -d "$post_data" -X POST $curlNport"
 curl -H --header Content-Type:application/json -d "$post_data" -X POST "$curlNport"
 echo "Test curl"
