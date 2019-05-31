@@ -326,11 +326,7 @@ echo "$svc"
 #echo "response is :"
 #echo "$responseTask" 
 
-#USER=$(gcloud config get-value core/account)
-# Make that user a cluster admin
-#kubectl edit clusterrolebinding cluster-admin-binding \
-#  --clusterrole=cluster-admin \
-#  --user="${USER}"
+
 
 namespaces=$(kubectl get namespaces)
 echo "namespaces are:"
