@@ -41,3 +41,11 @@ func RespondMessageAndLogError(response *restful.Response, err error, message st
 	response.AddHeader("Content-Type", "text/plain")
 	response.WriteErrorString(statusCode, message)
 }
+
+func GetNamespace(request *restful.Request) string {
+	namespace := request.PathParameter("namespace")
+	if namespace == "*" {
+		namespace = ""
+	}
+	return namespace
+}
