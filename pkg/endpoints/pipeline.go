@@ -96,10 +96,7 @@ type PipelineRunUpdateBody struct {
 type PipelineRunLog []TaskRunLog
 type TaskRunLog struct {
 	PodName string
-	// Containers correlating to Task step definitions
 	StepContainers []LogContainer
-	// Additional Containers correlating to Task e.g. PipelineResources
-	PodContainers  []LogContainer
 	InitContainers []LogContainer
 }
 
@@ -110,10 +107,6 @@ type LogContainer struct {
 }
 
 const crdNameLengthLimit = 53
-
-// Unexported field within tekton
-// "github.com/tektoncd/pipeline/pkg/reconciler/v1alpha1/taskrun/resources"
-const containerPrefix = "build-step-"
 
 const gitServerLabel = "gitServer"
 const gitOrgLabel = "gitOrg"
@@ -493,10 +486,10 @@ func makeTaskRunLog(r Resource, namespace string, pod *v1.Pod) TaskRunLog {
 
 	taskRunLog := TaskRunLog{PodName: pod.Name}
 	buf := new(bytes.Buffer)
-	setContainers := func(containers []v1.Container, filter func(l LogContainer)) {
+	setContainers := func(containers []v1.Container, logs *[]LogContainer) {
 		for _, container := range containers {
 			buf.Reset()
-			step := LogContainer{Name: container.Name}
+			logContainer := LogContainer{Name: container.Name}
 			req := r.K8sClient.CoreV1().Pods(namespace).GetLogs(pod.Name, &v1.PodLogOptions{Container: container.Name})
 			if req.URL().Path == "" {
 				continue
@@ -510,26 +503,18 @@ func makeTaskRunLog(r Resource, namespace string, pod *v1.Pod) TaskRunLog {
 				podLogs.Close()
 				continue
 			}
-			logs := strings.Split(buf.String(), "\n")
-			for _, log := range logs {
-				if log != "" {
-					step.Logs = append(step.Logs, log)
+			containerLogs := strings.Split(buf.String(), "\n")
+			for _, logLine := range containerLogs {
+				if logLine != "" {
+					logContainer.Logs = append(logContainer.Logs, logLine)
 				}
 			}
-			filter(step)
+			*logs = append(*logs,logContainer)
 			podLogs.Close()
 		}
 	}
-	setContainers(initContainers, func(l LogContainer) {
-		taskRunLog.InitContainers = append(taskRunLog.InitContainers, l)
-	})
-	setContainers(podContainers, func(l LogContainer) {
-		if strings.HasPrefix(l.Name, containerPrefix) {
-			taskRunLog.StepContainers = append(taskRunLog.StepContainers, l)
-		} else {
-			taskRunLog.PodContainers = append(taskRunLog.PodContainers, l)
-		}
-	})
+	setContainers(initContainers, &taskRunLog.InitContainers)
+	setContainers(podContainers, &taskRunLog.StepContainers)
 	return taskRunLog
 }
 
@@ -799,5 +784,3 @@ func (r Resource) pipelineRunDeleted(obj interface{}) {
 
 	pipelineRunsChannel <- data
 }
-
-

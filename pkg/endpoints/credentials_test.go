@@ -331,7 +331,7 @@ func readAllCredentialsTest(namespace string, expectCreds []credential, expectEr
 	}
 
 	// Verify against K8s client
-	if namespace == "*"{
+	if namespace == "*" {
 		namespace = ""
 	}
 	testCredentials(r.getK8sCredentials(namespace), expectCreds, t)
