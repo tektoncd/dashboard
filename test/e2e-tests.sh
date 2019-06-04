@@ -361,8 +361,8 @@ echo "$svc"
 # echo "svc isito are:"
 # echo "$svcIstio"
 
-nport=$(kubectl get svc "istio-ingressgateway" --namespace istio-system --output 'jsonpath={.spec.ports[?(@.port==80)].nodePort}')
-echo "nport is $nport"
+#nport=$(kubectl get svc "istio-ingressgateway" --namespace istio-system --output 'jsonpath={.spec.ports[?(@.port==80)].nodePort}')
+#echo "nport is $nport"
 
 #API configuration
 APP_NS="default"
@@ -386,8 +386,8 @@ post_data='{
         "serviceaccount": "'default'"
     }'
 
-curlNport="http://127.0.0.1:$nport/v1/namespaces/default/pipelinerun"
-echo "curl nport :$curlNport"
+#curlNport="http://127.0.0.1:$nport/v1/namespaces/default/pipelinerun"
+#echo "curl nport :$curlNport"
 
 
 #echo "test curl with one lower"
@@ -416,16 +416,22 @@ echo "curl nport :$curlNport"
 # echo "Test curl2"
 
 
+curlNport="http://127.0.0.1:31001/v1/namespaces/default/pipelinerun"
+echo "curl nport :$curlNport"
 
-
-domain=$(get_kserving_domain "tekton-dashboard-service" "default")
-echo "domain is :$domain"
-
-#curl -X POST -H --header Content-Type:application/json -d "$post_data" ${curlNport}/v1/namespaces/${DASHBOARD_INSTALL_NS}/pipelinerun/
-#echo "Curled"
 echo "Curling original"
-curl -H "Host: ${domain}" -X POST --header Content-Type:application/json -d "$post_data" $curlNport/v1/namespaces/default/pipelinerun/
+curl -X POST --header Content-Type:application/json -d "$post_data" $curlNport #/v1/namespaces/default/pipelinerun/
 echo "Curled"
+
+
+# domain=$(get_kserving_domain "tekton-dashboard-service" "default")
+# echo "domain is :$domain"
+
+# #curl -X POST -H --header Content-Type:application/json -d "$post_data" ${curlNport}/v1/namespaces/${DASHBOARD_INSTALL_NS}/pipelinerun/
+# #echo "Curled"
+# echo "Curling original"
+# curl -H "Host: ${domain}" -X POST --header Content-Type:application/json -d "$post_data" $curlNport/v1/namespaces/default/pipelinerun/
+# echo "Curled"
 
 wait_for_ready_kservice "$REPO_NAME" "$APP_NS" 500 10
 
