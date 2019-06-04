@@ -222,20 +222,20 @@ output=$(kubectl cluster-info)
 echo "kubectl cluster-info : $output"
 
 #Gets the cluster info in the style: https://localhost:6443
-output1=$(kubectl cluster-info | head -n 1)
-echo "kubectl cluster-info | head -n 1 : $output1"
-edited=$(echo "$output1" | sed 's/.*://') #sed 's/.*running at \([^ ]*\).*/\1/')
+#output1=$(kubectl cluster-info | head -n 1)
+#echo "kubectl cluster-info | head -n 1 : $output1"
+#edited=$(echo "$output1" | sed 's/.*://') #sed 's/.*running at \([^ ]*\).*/\1/')
 #edited1=$(echo "$output1" | sed 's/.*https://\([^ ]*\).*/\1/')
 #echo "Edited1 is $edited1"
 #edited=$(echo "$edited1 | sed 's/ .*//'") #cut -f1 -d" "")
-echo "Edited is: $edited"
+#echo "Edited is: $edited"
 
-edited1=$(echo "$edited" | sed 's/.\{4\}$//')  
-#| sed s'/[a-zA-Z]$//') #sed 's/.*https: \([^ ]*\).*/\1/')
-echo "Edited1 is: $edited1"
+# edited1=$(echo "$edited" | sed 's/.\{4\}$//')  
+# #| sed s'/[a-zA-Z]$//') #sed 's/.*https: \([^ ]*\).*/\1/')
+# echo "Edited1 is: $edited1"
 
-ip="https:$edited1"
-echo "ip is $ip"
+# ip="https:$edited1"
+# echo "ip is $ip"
 
 #edited2=$(echo "$edited" | sed 's/ .*//')
 #echo "Edited2 is: $edited2"
@@ -383,7 +383,7 @@ echo "nport is $nport"
 
 #API configuration
 APP_NS="default"
-PIPELINE_NAME="simple-pipeline-insecure"
+PIPELINE_NAME="hello-pipeline"
 IMAGE_SOURCE_NAME="docker-image"
 GIT_RESOURCE_NAME="git-source"
 GIT_COMMIT="master"
@@ -418,30 +418,30 @@ echo "curl nport :$curlNport"
 #curl -H --header Content-Type:application/json -d "$post_data" -X POST "$ip:$nport"
 #echo "Test curl"
 
-echo "curl -H --header Content-Type:application/json -d "$post_data" -X POST 127.0.0.1:$nport/v1/namespaces/default/pipelinerun"
-curl -H --header Content-Type:application/json -d "$post_data" -X POST "127.0.0.1:$nport/v1/namespaces/default/pipelinerun"
-echo "Test curl without http and https"
+# echo "curl -H --header Content-Type:application/json -d "$post_data" -X POST 127.0.0.1:$nport/v1/namespaces/default/pipelinerun"
+# curl -H --header Content-Type:application/json -d "$post_data" -X POST http://127.0.0.1:$nport/v1/namespaces/default/pipelinerun
+# echo "Test curl with http"
 
 
-echo "curl -H --header Content-Type:application/json -d "$post_data" -X POST $curlNport"
-curl -H --header Content-Type:application/json -d "$post_data" -X POST "$curlNport"
-echo "Test curl"
+# echo "curl -H --header Content-Type:application/json -d "$post_data" -X POST $curlNport"
+# curl -H --header Content-Type:application/json -d "$post_data" -X POST "$curlNport"
+# echo "Test curl"
 
-echo "test curl 2 http"
-curlNport2="http://127.0.0.1:$nport/v1/namespaces/default/pipelinerun"
-curl -H --header Content-Type:application/json -d "$post_data" -X POST "$curlNport2"
-echo "Test curl2"
-
-
+# echo "test curl 2 http"
+# curlNport2="http://127.0.0.1:$nport/v1/namespaces/default/pipelinerun"
+# curl -H --header Content-Type:application/json -d "$post_data" -X POST "$curlNport2"
+# echo "Test curl2"
 
 
-domain=$(get_kserving_domain "tekton-dashboard-service" "$DASHBOARD_INSTALL_NS")
+
+
+domain=$(get_kserving_domain "tekton-dashboard-service" "default")
 echo "domain is :$domain"
 
 #curl -X POST -H --header Content-Type:application/json -d "$post_data" ${curlNport}/v1/namespaces/${DASHBOARD_INSTALL_NS}/pipelinerun/
 #echo "Curled"
 echo "Curling original"
-curl -H "Host: ${domain}" -X POST --header Content-Type:application/json -d "$post_data" $curlNport/v1/namespaces/${DASHBOARD_INSTALL_NS}/pipelinerun/
+curl -H "Host: ${domain}" -X POST --header Content-Type:application/json -d "$post_data" $curlNport/v1/namespaces/default/pipelinerun/
 echo "Curled"
 
 wait_for_ready_kservice "$REPO_NAME" "$APP_NS" 500 10
