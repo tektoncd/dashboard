@@ -52,7 +52,6 @@ function wait_for_ready_pods() {
 
 
 kubectl port-forward $(kubectl get pod -l app=tekton-dashboard -o name) 9097:9097 &
-#port_forward &
 echo "dashboard forwarded to port 9097"
 
 
@@ -97,34 +96,7 @@ post_data='{
         "serviceaccount": "'default'"
     }'
 
-#curlNport="http://127.0.0.1:$nport/v1/namespaces/default/pipelinerun"
-#echo "curl nport :$curlNport"
 
-
-#echo "test curl with one lower"
-#nport1=$nport-1
-#curlNport2="127.0.0.1:$nport1/v1/namespaces/default/pipelinerun"
-#curl -H --header Content-Type:application/json -d "$post_data" -X POST "$curlNport2"
-#echo "Test curl with one lower"
-
-#echo "Curling ip not lcoalhost"
-#echo "curl -H --header Content-Type:application/json -d "$post_data" -X POST $ip:$nport"
-#curl -H --header Content-Type:application/json -d "$post_data" -X POST "$ip:$nport"
-#echo "Test curl"
-
-# echo "curl -H --header Content-Type:application/json -d "$post_data" -X POST 127.0.0.1:$nport/v1/namespaces/default/pipelinerun"
-# curl -H --header Content-Type:application/json -d "$post_data" -X POST http://127.0.0.1:$nport/v1/namespaces/default/pipelinerun
-# echo "Test curl with http"
-
-
-# echo "curl -H --header Content-Type:application/json -d "$post_data" -X POST $curlNport"
-# curl -H --header Content-Type:application/json -d "$post_data" -X POST "$curlNport"
-# echo "Test curl"
-
-# echo "test curl 2 http"
-# curlNport2="http://127.0.0.1:$nport/v1/namespaces/default/pipelinerun"
-# curl -H --header Content-Type:application/json -d "$post_data" -X POST "$curlNport2"
-# echo "Test curl2"
 
 
 curlNport="http://127.0.0.1:9097/v1/namespaces/default/pipelineruns/"
@@ -134,15 +106,6 @@ echo "Curling original"
 curl -X POST --header Content-Type:application/json -d "$post_data" $curlNport #/v1/namespaces/default/pipelinerun/
 echo "Curled"
 
-
-# domain=$(get_kserving_domain "tekton-dashboard-service" "default")
-# echo "domain is :$domain"
-
-# #curl -X POST -H --header Content-Type:application/json -d "$post_data" ${curlNport}/v1/namespaces/${DASHBOARD_INSTALL_NS}/pipelinerun/
-# #echo "Curled"
-# echo "Curling original"
-# curl -H "Host: ${domain}" -X POST --header Content-Type:application/json -d "$post_data" $curlNport/v1/namespaces/default/pipelinerun/
-# echo "Curled"
 
 
 
