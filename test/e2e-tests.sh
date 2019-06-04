@@ -416,7 +416,7 @@ post_data='{
 # echo "Test curl2"
 
 
-curlNport="http://127.0.0.1:31001/v1/namespaces/default/pipelinerun"
+curlNport="http://127.0.0.1:9097/v1/namespaces/default/pipelinerun"
 echo "curl nport :$curlNport"
 
 echo "Curling original"
