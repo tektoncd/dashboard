@@ -206,7 +206,7 @@ function port_forward() {
 
 echo "Installing knative version $KNATIVE_VERSION"
 install_istio_nodeport $KNATIVE_VERSION
-install_istio $KNATIVE_VERSION
+#install_istio $KNATIVE_VERSION
 install_knative_serving $KNATIVE_VERSION
 install_knative_eventing $KNATIVE_VERSION
 install_knative_eventing_sources $KNATIVE_VERSION
