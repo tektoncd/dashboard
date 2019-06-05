@@ -82,13 +82,12 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     const {
       status: { taskRuns: taskRunsStatus }
     } = pipelineRun;
-    const { message, status } = getStatus(pipelineRun);
-    if (status === 'False' && !taskRunsStatus) {
-      throw message;
-    }
-    const taskRunNames = Object.keys(taskRunsStatus);
-
-    return { pipelineRun, taskRunNames };
+    const { message, status, reason } = getStatus(pipelineRun);
+    return {
+      error: status === 'False' && !taskRunsStatus && { message, reason },
+      pipelineRun,
+      taskRunNames: taskRunsStatus && Object.keys(taskRunsStatus)
+    };
   };
 
   loadTaskRuns = (pipelineRun, taskRunNames) => {
@@ -165,7 +164,38 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       );
     }
 
-    const { pipelineRun, taskRunNames } = this.loadPipelineRunData();
+    const {
+      error: pipelineRunError,
+      pipelineRun,
+      taskRunNames
+    } = this.loadPipelineRunData();
+
+    const {
+      lastTransitionTime,
+      reason: pipelineRunReason,
+      status: pipelineRunStatus
+    } = getStatus(pipelineRun);
+
+    if (pipelineRunError) {
+      return (
+        <>
+          <RunHeader
+            lastTransitionTime={lastTransitionTime}
+            loading={loading}
+            runName={pipelineRunName}
+            reason="Error"
+            status={pipelineRunStatus}
+          />
+          <InlineNotification
+            kind="error"
+            title={`Unable to load PipelineRun details: ${
+              pipelineRunError.reason
+            }`}
+            subtitle={pipelineRunError.message}
+          />
+        </>
+      );
+    }
     const taskRuns = this.loadTaskRuns(pipelineRun, taskRunNames);
     const taskRun = selectedTaskRun(selectedTaskId, taskRuns) || {};
 
@@ -173,12 +203,6 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       selectedStepId,
       taskRun
     );
-
-    const {
-      lastTransitionTime,
-      reason: pipelineRunReason,
-      status: pipelineRunStatus
-    } = getStatus(pipelineRun);
 
     return (
       <>
