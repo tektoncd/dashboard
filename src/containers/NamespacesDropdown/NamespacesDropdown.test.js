@@ -12,26 +12,26 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, render } from 'react-testing-library';
+import { fireEvent, render, getNodeText } from 'react-testing-library';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import NamespacesDropdown from './NamespacesDropdown';
 
 const props = {
-  id: 'namespaces-dropdown',
-  label: 'Namespace'
+  id: 'namespaces-dropdown'
 };
 
 const byName = {
-  default: '',
-  'kube-public': '',
-  'kube-system': '',
-  'tekton-pipelines': ''
+  'namespace-1': '',
+  'namespace-2': '',
+  'namespace-3': ''
 };
 
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
+
+const initialTextRegExp = new RegExp('select namespace', 'i');
 
 it('NamespacesDropdown renders items based on Redux state', () => {
   const store = mockStore({
@@ -40,40 +40,66 @@ it('NamespacesDropdown renders items based on Redux state', () => {
       isFetching: false
     }
   });
-  const { getByText, queryByText } = render(
+  const { getByText, getAllByText, queryByText } = render(
     <Provider store={store}>
       <NamespacesDropdown {...props} />
     </Provider>
   );
-  fireEvent.click(getByText(/namespace/i));
+  fireEvent.click(getByText(initialTextRegExp));
   Object.keys(byName).forEach(item => {
-    const re = new RegExp(item, 'i');
-    expect(queryByText(re)).toBeTruthy();
+    expect(queryByText(new RegExp(item, 'i'))).toBeTruthy();
+  });
+  getAllByText(/namespace-/i).forEach(node => {
+    expect(getNodeText(node) in byName).toBeTruthy();
   });
 });
 
-it('NamespacesDropdown renders the selected namespace', () => {
+it('NamespacesDropdown renders controlled selection', () => {
   const store = mockStore({
     namespaces: {
       byName,
       isFetching: false
     }
   });
-  const { getByText, queryByText } = render(
+  // Select item 'namespace-1'
+  const { container, queryByText } = render(
+    <Provider store={store}>
+      <NamespacesDropdown {...props} selectedItem={{ text: 'namespace-1' }} />
+    </Provider>
+  );
+  expect(queryByText(/namespace-1/i)).toBeTruthy();
+  // Select item 'namespace-2'
+  render(
+    <Provider store={store}>
+      <NamespacesDropdown {...props} selectedItem={{ text: 'namespace-2' }} />
+    </Provider>,
+    { container }
+  );
+  expect(queryByText(/namespace-2/i)).toBeTruthy();
+  // No selected item (select item '')
+  render(
+    <Provider store={store}>
+      <NamespacesDropdown {...props} selectedItem="" />
+    </Provider>,
+    { container }
+  );
+  expect(queryByText(initialTextRegExp)).toBeTruthy();
+});
+
+it('NamespacesDropdown renders empty', () => {
+  const store = mockStore({
+    namespaces: {
+      byName: {},
+      isFetching: false
+    }
+  });
+
+  const { queryByText } = render(
     <Provider store={store}>
       <NamespacesDropdown {...props} />
     </Provider>
   );
-  fireEvent.click(getByText(/namespace/i));
-  fireEvent.click(getByText(/default/i));
-  Object.keys(byName).forEach(item => {
-    if (item !== 'default') {
-      const re = new RegExp(item, 'i');
-      expect(queryByText(re)).toBeFalsy();
-    }
-  });
-  expect(queryByText(/default/i)).toBeTruthy();
-  expect(queryByText(/namespace/i)).toBeFalsy();
+  expect(queryByText(/no namespaces found/i)).toBeTruthy();
 });
 
 it('NamespacesDropdown renders loading skeleton based on Redux state', () => {
@@ -89,7 +115,7 @@ it('NamespacesDropdown renders loading skeleton based on Redux state', () => {
       <NamespacesDropdown {...props} />
     </Provider>
   );
-  expect(queryByText(/namespace/i)).toBeFalsy();
+  expect(queryByText(initialTextRegExp)).toBeFalsy();
 });
 
 it('NamespacesDropdown handles onChange event', () => {
@@ -105,7 +131,7 @@ it('NamespacesDropdown handles onChange event', () => {
       <NamespacesDropdown {...props} onChange={onChange} />
     </Provider>
   );
-  fireEvent.click(getByText(/namespace/i));
-  fireEvent.click(getByText(/default/i));
+  fireEvent.click(getByText(initialTextRegExp));
+  fireEvent.click(getByText(/namespace-1/i));
   expect(onChange).toHaveBeenCalledTimes(1);
 });

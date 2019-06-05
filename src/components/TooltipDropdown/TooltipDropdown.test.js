@@ -22,22 +22,36 @@ const props = {
   loading: false
 };
 
+const initialTextRegExp = new RegExp('select an item', 'i');
+
 it('TooltipDropdown renders', () => {
   const { getByText, queryByText } = render(<TooltipDropdown {...props} />);
-  expect(queryByText(/select an item/i)).toBeTruthy();
-  fireEvent.click(getByText(/select an item/i));
+  expect(queryByText(initialTextRegExp)).toBeTruthy();
+  fireEvent.click(getByText(initialTextRegExp));
   props.items.forEach(item => {
-    const re = new RegExp(item, 'i');
-    expect(queryByText(re)).toBeTruthy();
+    expect(queryByText(new RegExp(item, 'i'))).toBeTruthy();
   });
   fireEvent.click(getByText(/item 1/i));
   expect(queryByText(/item 1/i)).toBeTruthy();
-  expect(queryByText(/select an item/i)).toBeFalsy();
+  expect(queryByText(initialTextRegExp)).toBeFalsy();
+});
+
+it('TooltipDropdown renders selected item', () => {
+  const { queryByText } = render(
+    <TooltipDropdown {...props} selectedItem={{ text: 'item 1' }} />
+  );
+  expect(queryByText(/item 1/i)).toBeTruthy();
+});
+
+it('TooltipDropdown renders empty', () => {
+  const { queryByText } = render(<TooltipDropdown {...props} items={[]} />);
+  expect(queryByText(/no items found/i)).toBeTruthy();
+  expect(queryByText(initialTextRegExp)).toBeFalsy();
 });
 
 it('TooltipDropdown renders loading skeleton', () => {
   const { queryByText } = render(<TooltipDropdown {...props} loading />);
-  expect(queryByText(/select an item/i)).toBeFalsy();
+  expect(queryByText(initialTextRegExp)).toBeFalsy();
 });
 
 it('TooltipDropdown handles onChange event', () => {
@@ -45,7 +59,7 @@ it('TooltipDropdown handles onChange event', () => {
   const { getByText } = render(
     <TooltipDropdown {...props} onChange={onChange} />
   );
-  fireEvent.click(getByText(/select an item/i));
+  fireEvent.click(getByText(initialTextRegExp));
   fireEvent.click(getByText(/item 1/i));
   expect(onChange).toHaveBeenCalledTimes(1);
 });

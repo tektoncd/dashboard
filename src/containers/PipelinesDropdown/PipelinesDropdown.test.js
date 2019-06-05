@@ -16,59 +16,60 @@ import { fireEvent, render, getNodeText } from 'react-testing-library';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import ServiceAccountsDropdown from './ServiceAccountsDropdown';
+import PipelinesDropdown from './PipelinesDropdown';
 import * as API from '../../api';
 
 const props = {
-  id: 'service-accounts-dropdown'
+  id: 'pipelines-dropdown',
+  'data-testid': 'pipelines-dropdown-testid'
 };
 
-const serviceAccountsByNamespace = {
+const pipelinesByNamespace = {
   blue: {
-    'service-account-1': 'id-service-account-1',
-    'service-account-2': 'id-service-account-2'
+    'pipeline-1': 'id-pipeline-1',
+    'pipeline-2': 'id-pipeline-2'
   },
   green: {
-    'service-account-3': 'id-service-account-3'
+    'pipeline-3': 'id-pipeline-3'
   }
 };
 
-const serviceAccountsById = {
-  'id-service-account-1': {
+const pipelinesById = {
+  'id-pipeline-1': {
     metadata: {
-      name: 'service-account-1',
+      name: 'pipeline-1',
       namespace: 'blue',
-      uid: 'id-service-account-1'
+      uid: 'id-pipeline-1'
     }
   },
-  'id-service-account-2': {
+  'id-pipeline-2': {
     metadata: {
-      name: 'service-account-2',
+      name: 'pipeline-2',
       namespace: 'blue',
-      uid: 'id-service-account-2'
+      uid: 'id-pipeline-2'
     }
   },
-  'id-service-account-3': {
+  'id-pipeline-3': {
     metadata: {
-      name: 'service-account-3',
+      name: 'pipeline-3',
       namespace: 'green',
-      uid: 'id-service-account-3'
+      uid: 'id-pipeline-3'
     }
   }
 };
 
-const serviceAccountsStoreDefault = {
-  serviceAccounts: {
-    byId: serviceAccountsById,
-    byNamespace: serviceAccountsByNamespace,
+const pipelinesStoreDefault = {
+  pipelines: {
+    byId: pipelinesById,
+    byNamespace: pipelinesByNamespace,
     isFetching: false
   }
 };
 
-const serviceAccountsStoreFetching = {
-  serviceAccounts: {
-    byId: serviceAccountsById,
-    byNamespace: serviceAccountsByNamespace,
+const pipelinesStoreFetching = {
+  pipelines: {
+    byId: pipelinesById,
+    byNamespace: pipelinesByNamespace,
     isFetching: true
   }
 };
@@ -92,13 +93,13 @@ const namespacesStoreGreen = {
   }
 };
 
-const initialTextRegExp = new RegExp('select service account', 'i');
+const initialTextRegExp = new RegExp('select pipeline', 'i');
 
 const checkDropdownItems = ({
   queryByText,
   getAllByText,
   testDict,
-  itemPrefixRegExp = new RegExp('service-account-', 'i')
+  itemPrefixRegExp = new RegExp('pipeline-', 'i')
 }) => {
   Object.keys(testDict).forEach(item => {
     expect(queryByText(new RegExp(item, 'i'))).toBeTruthy();
@@ -112,19 +113,17 @@ const middleware = [thunk];
 const mockStore = configureStore(middleware);
 
 beforeEach(() => {
-  jest
-    .spyOn(API, 'getServiceAccounts')
-    .mockImplementation(() => serviceAccountsById);
+  jest.spyOn(API, 'getPipelines').mockImplementation(() => pipelinesById);
 });
 
-it('ServiceAccountsDropdown renders items based on Redux state', () => {
+it('PipelinesDropdown renders items based on Redux state', () => {
   const store = mockStore({
-    ...serviceAccountsStoreDefault,
+    ...pipelinesStoreDefault,
     ...namespacesStoreBlue
   });
   const { getByText, getAllByText, queryByText } = render(
     <Provider store={store}>
-      <ServiceAccountsDropdown {...props} />
+      <PipelinesDropdown {...props} />
     </Provider>
   );
   // View items
@@ -132,18 +131,18 @@ it('ServiceAccountsDropdown renders items based on Redux state', () => {
   checkDropdownItems({
     getAllByText,
     queryByText,
-    testDict: serviceAccountsByNamespace.blue
+    testDict: pipelinesByNamespace.blue
   });
 });
 
-it('ServiceAccountsDropdown renders items based on Redux state when namespace changes', () => {
+it('PipelinesDropdown renders items based on Redux state when namespace changes', () => {
   const blueStore = mockStore({
-    ...serviceAccountsStoreDefault,
+    ...pipelinesStoreDefault,
     ...namespacesStoreBlue
   });
   const { container, getByText, getAllByText, queryByText } = render(
     <Provider store={blueStore}>
-      <ServiceAccountsDropdown {...props} />
+      <PipelinesDropdown {...props} />
     </Provider>
   );
   // View items
@@ -151,18 +150,18 @@ it('ServiceAccountsDropdown renders items based on Redux state when namespace ch
   checkDropdownItems({
     getAllByText,
     queryByText,
-    testDict: serviceAccountsByNamespace.blue
+    testDict: pipelinesByNamespace.blue
   });
   fireEvent.click(getByText(initialTextRegExp));
 
   // Change selected namespace from 'blue' to 'green'
   const greenStore = mockStore({
-    ...serviceAccountsStoreDefault,
+    ...pipelinesStoreDefault,
     ...namespacesStoreGreen
   });
   render(
     <Provider store={greenStore}>
-      <ServiceAccountsDropdown {...props} />
+      <PipelinesDropdown {...props} />
     </Provider>,
     { container }
   );
@@ -171,49 +170,43 @@ it('ServiceAccountsDropdown renders items based on Redux state when namespace ch
   checkDropdownItems({
     getAllByText,
     queryByText,
-    testDict: serviceAccountsByNamespace.green
+    testDict: pipelinesByNamespace.green
   });
 });
 
-it('ServiceAccountsDropdown renders controlled selection', () => {
+it('PipelinesDropdown renders controlled selection', () => {
   const store = mockStore({
-    ...serviceAccountsStoreDefault,
+    ...pipelinesStoreDefault,
     ...namespacesStoreBlue
   });
-  // Select item 'service-account-1'
+  // Select item 'pipeline-1'
   const { container, queryByText } = render(
     <Provider store={store}>
-      <ServiceAccountsDropdown
-        {...props}
-        selectedItem={{ text: 'service-account-1' }}
-      />
+      <PipelinesDropdown {...props} selectedItem={{ text: 'pipeline-1' }} />
     </Provider>
   );
-  expect(queryByText(/service-account-1/i)).toBeTruthy();
-  // Select item 'service-account-2'
+  expect(queryByText(/pipeline-1/i)).toBeTruthy();
+  // Select item 'pipeline-2'
   render(
     <Provider store={store}>
-      <ServiceAccountsDropdown
-        {...props}
-        selectedItem={{ text: 'service-account-2' }}
-      />
+      <PipelinesDropdown {...props} selectedItem={{ text: 'pipeline-2' }} />
     </Provider>,
     { container }
   );
-  expect(queryByText(/service-account-2/i)).toBeTruthy();
+  expect(queryByText(/pipeline-2/i)).toBeTruthy();
   // No selected item (select item '')
   render(
     <Provider store={store}>
-      <ServiceAccountsDropdown {...props} selectedItem="" />
+      <PipelinesDropdown {...props} selectedItem="" />
     </Provider>,
     { container }
   );
   expect(queryByText(initialTextRegExp)).toBeTruthy();
 });
 
-it('ServiceAccountsDropdown renders empty', () => {
+it('PipelinesDropdown renders empty', () => {
   const store = mockStore({
-    serviceAccounts: {
+    pipelines: {
       byId: {},
       byNamespace: {},
       isFetching: false
@@ -222,40 +215,40 @@ it('ServiceAccountsDropdown renders empty', () => {
   });
   const { queryByText } = render(
     <Provider store={store}>
-      <ServiceAccountsDropdown {...props} />
+      <PipelinesDropdown {...props} />
     </Provider>
   );
   expect(
-    queryByText(/no service accounts found in the 'blue' namespace/i)
+    queryByText(/no pipelines found in the 'blue' namespace/i)
   ).toBeTruthy();
   expect(queryByText(initialTextRegExp)).toBeFalsy();
 });
 
-it('ServiceAccountsDropdown renders loading skeleton based on Redux state', () => {
+it('PipelinesDropdown renders loading skeleton based on Redux state', () => {
   const store = mockStore({
-    ...serviceAccountsStoreFetching,
+    ...pipelinesStoreFetching,
     ...namespacesStoreBlue
   });
   const { queryByText } = render(
     <Provider store={store}>
-      <ServiceAccountsDropdown {...props} />
+      <PipelinesDropdown {...props} />
     </Provider>
   );
   expect(queryByText(initialTextRegExp)).toBeFalsy();
 });
 
-it('ServiceAccountsDropdown handles onChange event', () => {
+it('PipelinesDropdown handles onChange event', () => {
   const store = mockStore({
-    ...serviceAccountsStoreDefault,
+    ...pipelinesStoreDefault,
     ...namespacesStoreBlue
   });
   const onChange = jest.fn();
   const { getByText } = render(
     <Provider store={store}>
-      <ServiceAccountsDropdown {...props} onChange={onChange} />
+      <PipelinesDropdown {...props} onChange={onChange} />
     </Provider>
   );
   fireEvent.click(getByText(initialTextRegExp));
-  fireEvent.click(getByText(/service-account-1/i));
+  fireEvent.click(getByText(/pipeline-1/i));
   expect(onChange).toHaveBeenCalledTimes(1);
 });

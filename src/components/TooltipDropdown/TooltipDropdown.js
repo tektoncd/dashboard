@@ -22,7 +22,7 @@ const itemToElement = ({ id, text }) => {
   );
 };
 
-const itemToString = ({ text }) => text;
+const itemToString = item => (item ? item.text : '');
 
 const itemToObject = item => {
   if (typeof item === 'string') {
@@ -32,7 +32,13 @@ const itemToObject = item => {
   return item;
 };
 
-const TooltipDropdown = ({ items, loading, ...dropdownProps }) => {
+const TooltipDropdown = ({
+  items,
+  loading,
+  label,
+  emptyText,
+  ...dropdownProps
+}) => {
   if (loading) {
     return <DropdownSkeleton {...dropdownProps} />;
   }
@@ -43,13 +49,15 @@ const TooltipDropdown = ({ items, loading, ...dropdownProps }) => {
       itemToElement={itemToElement}
       items={options}
       itemToString={itemToString}
+      label={options.length === 0 ? emptyText : label}
     />
   );
 };
 
 TooltipDropdown.defaultProps = {
   items: [],
-  loading: true
+  loading: false,
+  emptyText: 'No items found'
 };
 
 export default TooltipDropdown;

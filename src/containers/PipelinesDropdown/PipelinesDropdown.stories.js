@@ -18,49 +18,40 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 
-import ServiceAccountsDropdown from './ServiceAccountsDropdown';
+import PipelinesDropdown from './PipelinesDropdown';
 
 const props = {
-  id: 'service accounts dropdown',
   onChange: action('onChange')
 };
 
-const serviceAccountsByNamespace = {
+const pipelinesByNamespace = {
   default: {
-    default: 'id-default',
-    'service-account-1': 'id-service-account-1',
-    'service-account-2': 'id-service-account-2',
-    'service-account-3': 'id-service-account-3'
+    'pipeline-1': 'id-pipeline-1',
+    'pipeline-2': 'id-pipeline-2',
+    'pipeline-3': 'id-pipeline-3'
   }
 };
 
-const serviceAccountsById = {
-  'id-default': {
+const pipelinesById = {
+  'id-pipeline-1': {
     metadata: {
-      name: 'default',
+      name: 'pipeline-1',
       namespace: 'default',
-      uid: 'id-default'
+      uid: 'id-pipeline-1'
     }
   },
-  'id-service-account-1': {
+  'id-pipeline-2': {
     metadata: {
-      name: 'service-account-1',
+      name: 'pipeline-2',
       namespace: 'default',
-      uid: 'id-service-account-1'
+      uid: 'id-pipeline-2'
     }
   },
-  'id-service-account-2': {
+  'id-pipeline-3': {
     metadata: {
-      name: 'service-account-2',
+      name: 'pipeline-3',
       namespace: 'default',
-      uid: 'id-service-account-2'
-    }
-  },
-  'id-service-account-3': {
-    metadata: {
-      name: 'service-account-3',
-      namespace: 'default',
-      uid: 'id-service-account-3'
+      uid: 'id-pipeline-3'
     }
   }
 };
@@ -75,12 +66,12 @@ const namespacesByName = {
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 
-storiesOf('ServiceAccountsDropdown', module)
+storiesOf('PipelinesDropdown', module)
   .add('default', () => {
     const store = mockStore({
-      serviceAccounts: {
-        byId: serviceAccountsById,
-        byNamespace: serviceAccountsByNamespace,
+      pipelines: {
+        byId: pipelinesById,
+        byNamespace: pipelinesByNamespace,
         isFetching: false
       },
       namespaces: {
@@ -90,13 +81,13 @@ storiesOf('ServiceAccountsDropdown', module)
     });
     return (
       <Provider store={store}>
-        <ServiceAccountsDropdown {...props} />
+        <PipelinesDropdown {...props} />
       </Provider>
     );
   })
   .add('empty', () => {
     const store = mockStore({
-      serviceAccounts: {
+      pipelines: {
         byId: {},
         byNamespace: {},
         isFetching: false
@@ -108,7 +99,7 @@ storiesOf('ServiceAccountsDropdown', module)
     });
     return (
       <Provider store={store}>
-        <ServiceAccountsDropdown {...props} />
+        <PipelinesDropdown {...props} />
       </Provider>
     );
   });
