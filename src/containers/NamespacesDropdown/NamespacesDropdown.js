@@ -26,8 +26,9 @@ const allNamespacesLabel = 'All Namespaces';
 NamespacesDropdown.defaultProps = {
   allNamespacesLabel,
   items: [],
-  loading: true,
+  loading: false,
   label: 'Select Namespace',
+  emptyText: 'No Namespaces found',
   showAllNamespaces: false
 };
 

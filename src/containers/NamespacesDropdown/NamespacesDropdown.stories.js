@@ -54,11 +54,11 @@ storiesOf('NamespacesDropdown', module)
       </Provider>
     );
   })
-  .add('loading', () => {
+  .add('empty', () => {
     const store = mockStore({
       namespaces: {
-        byName,
-        isFetching: true
+        byName: {},
+        isFetching: false
       }
     });
     return (

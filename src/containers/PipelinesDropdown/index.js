@@ -11,25 +11,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
-import { storiesOf } from '@storybook/react';
-
-import TooltipDropdown from './TooltipDropdown';
-
-const props = {
-  id: 'tooltip-dropdown-id',
-  label: 'Select an item',
-  items: ['item 1', 'item 2', 'item 3'],
-  loading: false
-};
-
-storiesOf('TooltipDropdown', module)
-  .add('default', () => {
-    return <TooltipDropdown {...props} />;
-  })
-  .add('loading', () => {
-    return <TooltipDropdown {...props} loading />;
-  })
-  .add('empty', () => {
-    return <TooltipDropdown {...props} items={[]} />;
-  });
+export { default } from './PipelinesDropdown';
