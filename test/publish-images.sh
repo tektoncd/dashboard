@@ -36,4 +36,9 @@ npm ci
 npm run build_ko
 
 export KO_DOCKER_REPO=gcr.io/tekton-nightly
-ko publish ./cmd/dashboard
+
+# Publish the image
+IMAGE=$(ko publish ./cmd/dashboard 2>&1 | grep "Loaded ko.local/dashboard" | sed -n -r '/[0-9]+\/[0-9]+\/[0-9]+ [0-9]+:[0-9]+:[0-9]+.*Loaded/ { s/.*Loaded //;p}')
+# Tag it
+gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENTIALS}
+gcloud -q container images add-tag ${IMAGE} ${KO_DOCKER_REPO}/dashboard:latest
