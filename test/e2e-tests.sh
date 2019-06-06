@@ -127,8 +127,12 @@ kubectl get pods
 #echo $domain
 kubectl get pipelineruns
 
+responsePipelineRun=$(curl "http://127.0.0.1:9097/v1/namespaces/default/pipelineruns")
+echo "response is :"
+echo "$responsePipelineRun"
+
 #$(app=hello-pipeline-run-1-do-hello-world -o name)
-pod=$(kubectl get pod -l app=app=hello-pipeline-run-1-do-hello-world -o name)
+pod=$(kubectl get pod -l app=hello-pipeline-run-1-do-hello-world -o name)
 
 resp=$(curl -i -H "Accept: application/json" -H "Content-Type: application/json"  http://127.0.0.1:9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
 
