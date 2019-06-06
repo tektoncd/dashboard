@@ -57,8 +57,8 @@ func (r Resource) RegisterEndpoints(container *restful.Container) {
 	wsv1 := new(restful.WebService)
 	wsv1.
 		Path("/v1/namespaces").
-		Consumes(restful.MIME_JSON).
-		Produces(restful.MIME_JSON)
+		Consumes(restful.MIME_JSON, "text/plain").
+		Produces(restful.MIME_JSON, "text/plain")
 
 	logging.Log.Info("Adding v1, and API for k8s resources and pipelines")
 

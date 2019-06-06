@@ -22,113 +22,110 @@ beforeEach(jest.resetAllMocks);
 it('LogContainer renders', async () => {
   const namespace = 'namespace';
   const stepName = 'step';
-  const taskRunName = 'taskRun';
-  const getTaskRunLog = jest
-    .spyOn(API, 'getTaskRunLog')
-    .mockImplementation(() => ({
-      StepContainers: [
-        {
-          Name: `build-step-${stepName}`,
-          Logs: ['testing']
-        }
-      ]
-    }));
+  const podName = 'taskRun';
+  const logs = 'loads of logs';
+  const getPodLog = jest.spyOn(API, 'getPodLog').mockImplementation(() => logs);
 
-  const { container, getByText } = render(
+  const { getByText } = render(
     <LogContainer
       match={{ params: { namespace } }}
       stepName={stepName}
-      taskRunName={taskRunName}
+      podName={podName}
     />
   );
-  await waitForElement(() => getByText('testing'));
+  await waitForElement(() => getByText(logs));
 
-  expect(getTaskRunLog).toHaveBeenCalledTimes(1);
-  expect(getTaskRunLog).toHaveBeenCalledWith(taskRunName, namespace);
+  expect(getPodLog).toHaveBeenCalledTimes(1);
+  expect(getPodLog).toHaveBeenCalledWith(
+    podName,
+    namespace,
+    `build-step-${stepName}`
+  );
 
-  const anotherTaskRunName = 'anotherTaskRun';
+  const anotherPodName = 'anotherPod';
   render(
     <LogContainer
       match={{ params: { namespace } }}
       stepName={stepName}
-      taskRunName={anotherTaskRunName}
-    />,
-    { container }
+      podName={anotherPodName}
+    />
   );
-  expect(getTaskRunLog).toHaveBeenCalledTimes(2);
-  expect(getTaskRunLog).toHaveBeenCalledWith(anotherTaskRunName, namespace);
+  expect(getPodLog).toHaveBeenCalledTimes(2);
+  expect(getPodLog).toHaveBeenCalledWith(
+    anotherPodName,
+    namespace,
+    `build-step-${stepName}`
+  );
 });
 
 it('LogContainer handles error case', async () => {
   const namespace = 'namespace';
   const stepName = 'step';
-  const taskRunName = 'taskRun';
-  const getTaskRunLog = jest
-    .spyOn(API, 'getTaskRunLog')
-    .mockImplementation(() => {
-      throw new Error();
-    });
+  const podName = 'pod';
+  const getPodLog = jest.spyOn(API, 'getPodLog').mockImplementation(() => {
+    throw new Error();
+  });
 
   const { getByText } = render(
     <LogContainer
       match={{ params: { namespace } }}
       stepName={stepName}
-      taskRunName={taskRunName}
+      podName={podName}
     />
   );
   await waitForElement(() => getByText('Unable to fetch log'));
 
-  expect(getTaskRunLog).toHaveBeenCalledTimes(1);
-  expect(getTaskRunLog).toHaveBeenCalledWith(taskRunName, namespace);
+  expect(getPodLog).toHaveBeenCalledTimes(1);
+  expect(getPodLog).toHaveBeenCalledWith(
+    podName,
+    namespace,
+    `build-step-${stepName}`
+  );
 });
 
 it('LogContainer handles empty logs', async () => {
   const namespace = 'namespace';
   const stepName = 'step';
-  const taskRunName = 'taskRun';
-  const getTaskRunLog = jest
-    .spyOn(API, 'getTaskRunLog')
-    .mockImplementation(() => ({
-      StepContainers: [
-        {
-          Name: `build-step-${stepName}`,
-          Logs: null
-        }
-      ]
-    }));
+  const podName = 'taskRun';
+  const getPodLog = jest.spyOn(API, 'getPodLog').mockImplementation(() => '');
 
-  const { getByText } = render(
+  render(
     <LogContainer
       match={{ params: { namespace } }}
       stepName={stepName}
-      taskRunName={taskRunName}
+      podName={podName}
     />
   );
-  await waitForElement(() => getByText('No log available'));
 
-  expect(getTaskRunLog).toHaveBeenCalledTimes(1);
-  expect(getTaskRunLog).toHaveBeenCalledWith(taskRunName, namespace);
+  expect(getPodLog).toHaveBeenCalledTimes(1);
+  expect(getPodLog).toHaveBeenCalledWith(
+    podName,
+    namespace,
+    `build-step-${stepName}`
+  );
 });
 
 it('LogContainer handles missing step logs', async () => {
   const namespace = 'namespace';
   const stepName = 'step';
-  const taskRunName = 'taskRun';
-  const getTaskRunLog = jest
-    .spyOn(API, 'getTaskRunLog')
-    .mockImplementation(() => ({
-      StepContainers: []
-    }));
+  const podName = 'pod';
+  const getPodLog = jest
+    .spyOn(API, 'getPodLog')
+    .mockImplementation(() => undefined);
 
   const { getByText } = render(
     <LogContainer
       match={{ params: { namespace } }}
       stepName={stepName}
-      taskRunName={taskRunName}
+      podName={podName}
     />
   );
   await waitForElement(() => getByText('No log available'));
 
-  expect(getTaskRunLog).toHaveBeenCalledTimes(1);
-  expect(getTaskRunLog).toHaveBeenCalledWith(taskRunName, namespace);
+  expect(getPodLog).toHaveBeenCalledTimes(1);
+  expect(getPodLog).toHaveBeenCalledWith(
+    podName,
+    namespace,
+    `build-step-${stepName}`
+  );
 });

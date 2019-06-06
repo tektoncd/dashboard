@@ -450,9 +450,16 @@ func (r Resource) getTaskRun(request *restful.Request, response *restful.Respons
 func (r Resource) getPodLog(request *restful.Request, response *restful.Response) {
 	namespace := request.PathParameter("namespace")
 	name := request.PathParameter("name")
+	container := request.QueryParameter("container")
 
-	logging.Log.Debugf("In getPodLog - name: %s, namespace: %s", name, namespace)
-	req := r.K8sClient.CoreV1().Pods(namespace).GetLogs(name, &v1.PodLogOptions{})
+	logging.Log.Debugf("In getPodLog - name: %s, namespace: %s, container %s", name, namespace, container)
+
+	logOptions := &v1.PodLogOptions{}
+	if container != "" {
+		logOptions = &v1.PodLogOptions{Container: container}
+	}
+
+	req := r.K8sClient.CoreV1().Pods(namespace).GetLogs(name, logOptions)
 	podLogs, err := req.Stream()
 	if err != nil {
 		utils.RespondError(response, err, http.StatusNotFound)

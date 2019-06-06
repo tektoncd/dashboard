@@ -122,8 +122,12 @@ export function getPipelineResource(name, namespace) {
   return get(uri);
 }
 
-export function getPodLog(name, namespace) {
-  const uri = getAPI('logs', { name, namespace });
+export function getPodLog(name, namespace, container) {
+  let queryParams;
+  if (container) {
+    queryParams = { container };
+  }
+  const uri = `${getAPI('logs', { name, namespace }, queryParams)}`;
   return get(uri);
 }
 
