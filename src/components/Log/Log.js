@@ -43,9 +43,7 @@ class Log extends Component {
           <SkeletonText paragraph width="30%" />
         ) : (
           <>
-            <Ansi className="log-content" linkify>
-              {logs.join('\n')}
-            </Ansi>
+            <Ansi className="log-content">{logs}</Ansi>
             {this.logTrailer()}
           </>
         )}
@@ -55,7 +53,7 @@ class Log extends Component {
 }
 
 Log.defaultProps = {
-  logs: ['No log available'],
+  logs: 'No log available',
   trailers: {
     Completed: 'Step completed',
     Error: 'Step failed'

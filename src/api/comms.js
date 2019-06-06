@@ -31,6 +31,9 @@ export function checkStatus(response = {}) {
       case 204:
         return {};
       default:
+        if (response.headers.get('content-type') === 'text/plain') {
+          return response.text();
+        }
         return response.json();
     }
   }
@@ -46,10 +49,10 @@ export function request(uri, options = defaultOptions) {
   }).then(checkStatus);
 }
 
-export function get(uri) {
+export function get(uri, headers) {
   return request(uri, {
     method: 'get',
-    headers: getHeaders()
+    headers: getHeaders(headers)
   });
 }
 

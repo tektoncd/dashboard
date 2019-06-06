@@ -23,7 +23,7 @@ import './StepDetails.scss';
 
 const StepDetails = props => {
   const { definition, reason, status, stepName, stepStatus, taskRun } = props;
-  const { taskRunName } = taskRun;
+  const { pod } = taskRun;
 
   return (
     <div className="step-details">
@@ -35,7 +35,12 @@ const StepDetails = props => {
       />
       <Tabs>
         <Tab className="details-tab" label="Logs">
-          <Log key={stepName} stepName={stepName} taskRunName={taskRunName} />
+          <Log
+            key={stepName}
+            stepName={stepName}
+            podName={pod}
+            stepStatus={stepStatus}
+          />
         </Tab>
         <Tab className="details-tab" label="Status">
           <StepStatus status={stepStatus} />

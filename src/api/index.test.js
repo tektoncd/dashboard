@@ -235,10 +235,18 @@ it('getPipelineResource', () => {
 });
 
 it('getPodLog', () => {
+  const namespace = 'default';
   const podName = 'foo';
-  const data = ['logs'];
-  fetchMock.get(`end:${podName}`, data);
-  return getPodLog(podName).then(log => {
+  const data = 'logs';
+  const responseConfig = {
+    body: data,
+    status: 200,
+    headers: { 'Content-Type': 'text/plain' }
+  };
+  fetchMock.get(`end:logs/${podName}`, responseConfig, {
+    sendAsJson: false
+  });
+  return getPodLog(podName, namespace).then(log => {
     expect(log).toEqual(data);
     fetchMock.restore();
   });
