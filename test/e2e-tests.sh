@@ -111,7 +111,7 @@ curlNport="http://127.0.0.1:9097/v1/namespaces/default/pipelineruns/"
 echo "curl nport :$curlNport"
 
 echo "Curling original"
-curl -X POST --header Content-Type:application/json -d "$post_data" $curlNport #/v1/namespaces/default/pipelinerun/
+curl -X POST --header Content-Type:application/json -d "$post_data" $curlNport 
 echo "Curled"
 
 #sleep 1m
@@ -125,7 +125,11 @@ kubectl get pods
 
 #domain=$(get_kserving_domain "$KSVC_NAME" "$APP_NS")
 #echo $domain
-#resp=$(curl -H $curlNport) #"Host: ${domain}" ${ip})
+kubectl get pipelineruns
+
+resp=$(curl -H $curlNport) #"Host: ${domain}" ${ip})
+
+echo "$resp"
 
 # if [ "$EXPECTED_RETURN_VALUE" = "$resp" ]; then
 #     echo "Pipeline Run successfully executed"
