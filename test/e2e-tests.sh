@@ -120,6 +120,21 @@ wait_until_pods_running default
 kubectl get pods 
 
 
+responseLocal=$(curl -k "127.0.0.1:9097/v1/namespaces/default/pipelines")
+echo "response is :"
+echo "$responseLocal" 
+
+#responseLocalName=$($responseLocal | jq -r 'name')
+#echo "responseLocalName is : $responseLocalName"
+
+responseLocal1=$(curl -k "127.0.0.1:9097/v1/namespaces/default/pipelineruns")
+echo "response is :"
+echo "$responseLocal1"  
+
+responseLocal2=$(curl -k "127.0.0.1:9097/v1/namespaces/default/tasks")
+echo "response is :"
+echo "$responseLocal2" 
+
 
 #wait_for_ready_kservice "$REPO_NAME" "$APP_NS" 500 10
 
