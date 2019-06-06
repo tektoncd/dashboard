@@ -127,7 +127,7 @@ kubectl get pods
 #echo $domain
 kubectl get pipelineruns
 
-resp=$(curl $curlNport) #"Host: ${domain}" ${ip})
+resp=$(curl GET $curlNport) #"Host: ${domain}" ${ip})
 
 echo "resp is :$resp"
 
