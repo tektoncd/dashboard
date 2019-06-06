@@ -82,6 +82,8 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
             return (
               <InlineNotification
                 kind="error"
+                hideCloseButton
+                lowContrast
                 title="Error loading pipeline runs"
                 subtitle={JSON.stringify(error)}
               />

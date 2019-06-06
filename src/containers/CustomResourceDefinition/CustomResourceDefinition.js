@@ -84,6 +84,8 @@ export /* istanbul ignore next */ class CustomResourceDefinition extends Compone
       return (
         <InlineNotification
           kind="error"
+          hideCloseButton
+          lowContrast
           title="Error loading resource"
           subtitle={JSON.stringify(error)}
         />

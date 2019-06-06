@@ -48,6 +48,8 @@ export const Extensions = /* istanbul ignore next */ ({
           return (
             <InlineNotification
               kind="error"
+              hideCloseButton
+              lowContrast
               title="Error loading extensions"
               subtitle={error}
             />

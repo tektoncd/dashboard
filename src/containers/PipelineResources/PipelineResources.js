@@ -71,6 +71,8 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
       return (
         <InlineNotification
           kind="error"
+          hideCloseButton
+          lowContrast
           title="Error loading PipelineResources"
           subtitle={JSON.stringify(error)}
         />

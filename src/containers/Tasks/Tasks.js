@@ -62,6 +62,8 @@ export /* istanbul ignore next */ class Tasks extends Component {
             return (
               <InlineNotification
                 kind="error"
+                hideCloseButton
+                lowContrast
                 title="Error loading tasks"
                 subtitle={error}
               />

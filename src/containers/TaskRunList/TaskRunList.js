@@ -68,6 +68,8 @@ export /* istanbul ignore next */ class TaskRunList extends Component {
             return (
               <InlineNotification
                 kind="error"
+                hideCloseButton
+                lowContrast
                 title="Error loading task runs"
                 subtitle={JSON.stringify(error)}
               />

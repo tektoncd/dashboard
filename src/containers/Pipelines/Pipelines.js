@@ -68,6 +68,8 @@ export /* istanbul ignore next */ class Pipelines extends Component {
             return (
               <InlineNotification
                 kind="error"
+                hideCloseButton
+                lowContrast
                 title="Error loading pipelines"
                 subtitle={error}
               />

@@ -337,6 +337,8 @@ class CreatePipelineRun extends React.Component {
             {errorMessage !== '' && (
               <InlineNotification
                 kind="error"
+                hideCloseButton
+                lowContrast
                 title="Error creating PipelineRun"
                 subtitle={errorMessage}
               />
@@ -344,6 +346,8 @@ class CreatePipelineRun extends React.Component {
             {this.state.submitValidationError && (
               <InlineNotification
                 kind="error"
+                hideCloseButton
+                lowContrast
                 title="Unable to submit"
                 subtitle="Please fix the fields with errors"
               />

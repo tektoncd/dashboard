@@ -17,15 +17,17 @@ import { generatePath, NavLink } from 'react-router-dom';
 import {
   SideNav as CarbonSideNav,
   SideNavItems,
-  SideNavLink
-} from 'carbon-components-react/lib/components/UIShell';
+  SideNavMenu,
+  SideNavMenuItem
+} from 'carbon-components-react';
 
 import { NamespacesDropdown } from '..';
-import SideNavMenu from '../../components/SideNavMenu';
 
 import { selectNamespace } from '../../actions/namespaces';
 import { getExtensions, getSelectedNamespace } from '../../reducers';
 import { ALL_NAMESPACES } from '../../constants';
+
+import './SideNav.scss';
 
 export class SideNav extends Component {
   componentDidMount() {
@@ -84,73 +86,76 @@ export class SideNav extends Component {
     const { extensions, namespace } = this.props;
 
     return (
-      <CarbonSideNav defaultExpanded expanded aria-label="Side navigation">
+      <CarbonSideNav
+        isFixedNav
+        expanded
+        isChildOfHeader={false}
+        aria-label="Side navigation"
+      >
         <SideNavItems>
-          <SideNavMenu title="Tekton">
-            <SideNavLink
+          <SideNavMenu defaultExpanded title="Tekton">
+            <SideNavMenuItem
               element={NavLink}
               icon={<span />}
               to={this.getPath('/pipelines')}
             >
               Pipelines
-            </SideNavLink>
-            <SideNavLink
+            </SideNavMenuItem>
+            <SideNavMenuItem
               element={NavLink}
               icon={<span />}
               to={this.getPath('/pipelineruns')}
             >
               PipelineRuns
-            </SideNavLink>
-            <SideNavLink
+            </SideNavMenuItem>
+            <SideNavMenuItem
               element={NavLink}
               icon={<span />}
               to={this.getPath('/pipelineresources')}
             >
               PipelineResources
-            </SideNavLink>
-            <SideNavLink
+            </SideNavMenuItem>
+            <SideNavMenuItem
               element={NavLink}
               icon={<span />}
               to={this.getPath('/tasks')}
             >
               Tasks
-            </SideNavLink>
-            <SideNavLink
+            </SideNavMenuItem>
+            <SideNavMenuItem
               element={NavLink}
               icon={<span />}
               to={this.getPath('/taskruns')}
             >
               TaskRuns
-            </SideNavLink>
-            <SideNavLink
-              element={NavLink}
-              icon={<span />}
-              to="/importresources"
-            >
-              Import Tekton resources
-            </SideNavLink>
+            </SideNavMenuItem>
           </SideNavMenu>
-          <NamespacesDropdown
+          <SideNavMenuItem
+            element={NamespacesDropdown}
             id="sidenav-namespace-dropdown"
             selectedItem={{ id: namespace, text: namespace }}
             showAllNamespaces
             onChange={this.selectNamespace}
           />
-          {extensions.length > 0 && (
-            <SideNavMenu title="Extensions">
-              {extensions.map(({ displayName, name }) => (
-                <SideNavLink
-                  element={NavLink}
-                  icon={<span />}
-                  to={`/extensions/${name}`}
-                  key={name}
-                  title={displayName}
-                >
-                  {displayName}
-                </SideNavLink>
-              ))}
-            </SideNavMenu>
-          )}
+          <SideNavMenuItem
+            element={NavLink}
+            icon={<span />}
+            to="/importresources"
+          >
+            Import Tekton resources
+          </SideNavMenuItem>
+          {extensions.length > 0 &&
+            extensions.map(({ displayName, name }) => (
+              <SideNavMenuItem
+                element={NavLink}
+                icon={<span />}
+                to={`/extensions/${name}`}
+                key={name}
+                title={displayName}
+              >
+                {displayName}
+              </SideNavMenuItem>
+            ))}
         </SideNavItems>
       </CarbonSideNav>
     );
