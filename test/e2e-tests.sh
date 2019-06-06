@@ -114,9 +114,11 @@ echo "Curling original"
 curl -X POST --header Content-Type:application/json -d "$post_data" $curlNport #/v1/namespaces/default/pipelinerun/
 echo "Curled"
 
-sleep 1m
+#sleep 1m
+wait_until_pods_running default
 
 kubectl get pods 
+
 
 
 #wait_for_ready_kservice "$REPO_NAME" "$APP_NS" 500 10
