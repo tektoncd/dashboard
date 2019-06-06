@@ -21,6 +21,7 @@ import {
 } from '../../reducers';
 import { fetchServiceAccounts } from '../../actions/serviceAccounts';
 import TooltipDropdown from '../../components/TooltipDropdown';
+import { ALL_NAMESPACES } from '../../constants';
 
 class ServiceAccountsDropdown extends React.Component {
   componentDidMount() {
@@ -35,14 +36,12 @@ class ServiceAccountsDropdown extends React.Component {
   }
 
   render() {
-    return (
-      <TooltipDropdown
-        {...this.props}
-        emptyText={`No Service Accounts found in the '${
-          this.props.namespace
-        }' namespace`}
-      />
-    );
+    const { namespace, ...rest } = this.props;
+    const emptyText =
+      namespace === ALL_NAMESPACES
+        ? `No Service Accounts found`
+        : `No Service Accounts found in the '${namespace}' namespace`;
+    return <TooltipDropdown {...rest} emptyText={emptyText} />;
   }
 }
 

@@ -22,24 +22,30 @@ limitations under the License.
 .outer {
   background-color: white;
   min-height: 46rem;
+
   .bx--dropdown.bx--list-box {
     margin: 0rem;
-    margin-bottom: 2.8rem;
     width: 30%;
     border-bottom: 1px solid $ui-04;
   }
+
   .bx--toast-notification {
     margin: 2.8rem;
   }
+
   .bx--dropdown__wrapper {
     margin-left: 2.8rem;
   }
+
   .bx--btn {
     margin-left: 2.8rem;
+    margin-top: 2.8rem;
   }
+
   .bx--form-item {
     margin: 2.8rem;
   }
+
   .bx--text-input__field-wrapper {
     width: 50%;
   }
