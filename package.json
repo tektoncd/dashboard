@@ -11,6 +11,7 @@
     "start": "webpack-dev-server --hot --config webpack.dev.js",
     "storybook": "start-storybook -p 5000",
     "storybook:build": "build-storybook",
+    "storybook:deploy": "storybook-to-ghpages",
     "test": "jest --watch",
     "test:ci": "jest"
   },
@@ -48,6 +49,7 @@
     "@storybook/addon-knobs": "^5.0.1",
     "@storybook/addon-viewport": "^5.0.1",
     "@storybook/react": "^5.0.1",
+    "@storybook/storybook-deployer": "^2.8.1",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^24.5.0",
     "babel-loader": "^8.0.5",
