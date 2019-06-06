@@ -24,6 +24,7 @@ import {
   StructuredListWrapper
 } from 'carbon-components-react';
 
+import { ALL_NAMESPACES } from '../../constants';
 import { getStatusIcon, getStatus } from '../../utils';
 import { fetchPipelineRuns } from '../../actions/pipelineRuns';
 
@@ -61,7 +62,13 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
   }
 
   render() {
-    const { match, error, loading, pipelineRuns } = this.props;
+    const {
+      match,
+      error,
+      loading,
+      namespace: selectedNamespace,
+      pipelineRuns
+    } = this.props;
     const { pipelineName } = match.params;
 
     return (
@@ -88,6 +95,9 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
                   <StructuredListCell head>Pipeline Run</StructuredListCell>
                   {!pipelineName && (
                     <StructuredListCell head>Pipeline</StructuredListCell>
+                  )}
+                  {selectedNamespace === ALL_NAMESPACES && (
+                    <StructuredListCell head>Namespace</StructuredListCell>
                   )}
                   <StructuredListCell head>Status</StructuredListCell>
                   <StructuredListCell head>
@@ -137,6 +147,9 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
                             {pipelineRefName}
                           </Link>
                         </StructuredListCell>
+                      )}
+                      {selectedNamespace === ALL_NAMESPACES && (
+                        <StructuredListCell>{namespace}</StructuredListCell>
                       )}
                       <StructuredListCell
                         className="status"

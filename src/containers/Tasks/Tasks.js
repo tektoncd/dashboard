@@ -25,6 +25,7 @@ import {
 } from 'carbon-components-react';
 
 import Information16 from '@carbon/icons-react/lib/information/16';
+import { ALL_NAMESPACES } from '../../constants';
 import { fetchTasks } from '../../actions/tasks';
 import {
   getSelectedNamespace,
@@ -48,7 +49,7 @@ export /* istanbul ignore next */ class Tasks extends Component {
   }
 
   render() {
-    const { error, loading, tasks } = this.props;
+    const { error, loading, namespace: selectedNamespace, tasks } = this.props;
 
     return (
       <>
@@ -72,6 +73,9 @@ export /* istanbul ignore next */ class Tasks extends Component {
               <StructuredListHead>
                 <StructuredListRow head>
                   <StructuredListCell head>Task</StructuredListCell>
+                  {selectedNamespace === ALL_NAMESPACES && (
+                    <StructuredListCell head>Namespace</StructuredListCell>
+                  )}
                   <StructuredListCell head />
                 </StructuredListRow>
               </StructuredListHead>
@@ -92,6 +96,9 @@ export /* istanbul ignore next */ class Tasks extends Component {
                           {taskName}
                         </Link>
                       </StructuredListCell>
+                      {selectedNamespace === ALL_NAMESPACES && (
+                        <StructuredListCell>{namespace}</StructuredListCell>
+                      )}
                       <StructuredListCell>
                         <Link
                           title="task definition"

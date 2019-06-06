@@ -26,6 +26,7 @@ import {
   StructuredListWrapper
 } from 'carbon-components-react';
 
+import { ALL_NAMESPACES } from '../../constants';
 import { fetchPipelines } from '../../actions/pipelines';
 import {
   getPipelines,
@@ -49,7 +50,12 @@ export /* istanbul ignore next */ class Pipelines extends Component {
   }
 
   render() {
-    const { error, loading, pipelines } = this.props;
+    const {
+      error,
+      loading,
+      namespace: selectedNamespace,
+      pipelines
+    } = this.props;
 
     return (
       <>
@@ -73,6 +79,9 @@ export /* istanbul ignore next */ class Pipelines extends Component {
               <StructuredListHead>
                 <StructuredListRow head>
                   <StructuredListCell head>Pipeline</StructuredListCell>
+                  {selectedNamespace === ALL_NAMESPACES && (
+                    <StructuredListCell head>Namespace</StructuredListCell>
+                  )}
                   <StructuredListCell head />
                 </StructuredListRow>
               </StructuredListHead>
@@ -93,6 +102,9 @@ export /* istanbul ignore next */ class Pipelines extends Component {
                           {name}
                         </Link>
                       </StructuredListCell>
+                      {selectedNamespace === ALL_NAMESPACES && (
+                        <StructuredListCell>{namespace}</StructuredListCell>
+                      )}
                       <StructuredListCell>
                         <Link
                           title="pipeline definition"
