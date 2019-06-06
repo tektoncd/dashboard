@@ -127,9 +127,9 @@ kubectl get pods
 #echo $domain
 kubectl get pipelineruns
 
-resp=$(curl -H $curlNport) #"Host: ${domain}" ${ip})
+resp=$(curl $curlNport) #"Host: ${domain}" ${ip})
 
-echo "$resp"
+echo "resp is :$resp"
 
 # if [ "$EXPECTED_RETURN_VALUE" = "$resp" ]; then
 #     echo "Pipeline Run successfully executed"
