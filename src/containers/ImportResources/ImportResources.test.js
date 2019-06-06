@@ -16,9 +16,10 @@ import { render, fireEvent, waitForElement } from 'react-testing-library';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
-import * as ImportResources from './ImportResources';
+import ImportResourcesContainer from './ImportResources';
 import * as API from '../../api';
 import { renderWithRouter } from '../../utils/test';
+import { ALL_NAMESPACES } from '../../constants';
 
 beforeEach(jest.resetAllMocks);
 
@@ -26,9 +27,14 @@ describe('ImportResources component', () => {
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const store = mockStore({
-    namespaces: { selected: 'default' },
+    namespaces: {
+      byName: { namespace1: true },
+      isFetching: false,
+      selected: ALL_NAMESPACES
+    },
     serviceAccounts: {
-      byNamespace: ['default'],
+      byId: {},
+      byNamespace: {},
       errorMessage: null,
       isFetching: false
     }
@@ -44,9 +50,10 @@ describe('ImportResources component', () => {
     jest
       .spyOn(API, 'createPipelineRun')
       .mockImplementation(() => Promise.resolve(headers));
-    const { getByTestId, getByText } = renderWithRouter(
+
+    const { getByLabelText, getByTestId, getByText } = renderWithRouter(
       <Provider store={store}>
-        <ImportResources.ImportResources />
+        <ImportResourcesContainer />
       </Provider>
     );
 
@@ -54,6 +61,10 @@ describe('ImportResources component', () => {
     fireEvent.change(repoURLField, {
       target: { value: 'https://example.com/test/testing' }
     });
+
+    fireEvent.click(getByLabelText(/namespace/i));
+    fireEvent.click(getByText(/select namespace/i));
+    fireEvent.click(getByText('namespace1'));
 
     fireEvent.click(getByText('Import and Apply'));
     await waitForElement(() =>
@@ -67,14 +78,18 @@ describe('ImportResources component', () => {
     jest
       .spyOn(API, 'createPipelineRun')
       .mockImplementation(() => Promise.reject(createPipelineRunResponseMock));
-    const { getByTestId, getByText } = render(
+    const { getByLabelText, getByTestId, getByText } = render(
       <Provider store={store}>
-        <ImportResources.ImportResources />
+        <ImportResourcesContainer />
       </Provider>
     );
 
     const repoURLField = getByTestId('repository-url-field');
     fireEvent.change(repoURLField, { target: { value: 'URL' } });
+
+    fireEvent.click(getByLabelText(/namespace/i));
+    fireEvent.click(getByText(/select namespace/i));
+    fireEvent.click(getByText('namespace1'));
 
     fireEvent.click(getByText('Import and Apply'));
     await waitForElement(() => getByText(/Please submit a valid URL/i));
@@ -83,7 +98,7 @@ describe('ImportResources component', () => {
   it('Failure to populate required field displays error', async () => {
     const { getByText } = render(
       <Provider store={store}>
-        <ImportResources.ImportResources />
+        <ImportResourcesContainer />
       </Provider>
     );
 
@@ -94,7 +109,7 @@ describe('ImportResources component', () => {
   it('URL TextInput handles onChange event', async () => {
     const { getByTestId, queryByDisplayValue } = render(
       <Provider store={store}>
-        <ImportResources.ImportResources />
+        <ImportResourcesContainer />
       </Provider>
     );
     const repoURLField = getByTestId('repository-url-field');

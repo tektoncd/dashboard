@@ -22,24 +22,31 @@ import {
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import './ImportResources.scss';
-
+import { ALL_NAMESPACES } from '../../constants';
 import { createPipelineRun } from '../../api';
-import ServiceAccountsDropdown from '../ServiceAccountsDropdown';
 import { getSelectedNamespace } from '../../reducers';
+import { NamespacesDropdown, ServiceAccountsDropdown } from '..';
+
+import './ImportResources.scss';
 
 export class ImportResources extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      directory: '',
+      invalidInput: false,
+      invalidNamespace: false,
+      logsURL: '',
+      namespace: props.navNamespace !== ALL_NAMESPACES && props.navNamespace,
       repositoryURL: '',
       serviceAccount: '',
-      submitSuccess: false,
-      invalidInput: false,
-      logsURL: '',
-      directory: ''
+      submitSuccess: false
     };
   }
+
+  handleNamespace = ({ selectedItem }) => {
+    this.setState({ invalidNamespace: false, namespace: selectedItem.id });
+  };
 
   handleServiceAccount = data => {
     this.setState({
@@ -57,32 +64,34 @@ export class ImportResources extends Component {
   };
 
   handleSubmit = event => {
-    const { namespace } = this.props;
+    event.preventDefault();
+
+    const {
+      directory: applydirectory,
+      namespace,
+      repositoryURL: repourl,
+      serviceAccount: serviceaccount
+    } = this.state;
     const pipelinename = 'pipeline0';
     const gitresourcename = 'git-source';
     const gitcommit = 'master';
-    const applydirectory = this.state.directory;
-    const repourl = this.state.repositoryURL;
-    const serviceaccount = this.state.serviceAccount;
+
     const payload = {
-      pipelinename,
-      serviceaccount,
-      gitresourcename,
+      applydirectory,
       gitcommit,
+      gitresourcename,
+      pipelinename,
       repourl,
-      applydirectory
+      serviceaccount
     };
 
-    if (repourl === '') {
+    if (repourl === '' || !namespace) {
       this.setState({
-        invalidInput: true
+        invalidInput: repourl === '',
+        invalidNamespace: !namespace
       });
       return;
     }
-
-    this.setState({
-      invalidInput: false
-    });
 
     const promise = createPipelineRun(payload, namespace);
     promise
@@ -108,10 +117,17 @@ export class ImportResources extends Component {
           default:
         }
       });
-    event.preventDefault();
   };
 
   render() {
+    const { namespace } = this.state;
+    const selectedNamespace = namespace
+      ? {
+          id: namespace,
+          text: namespace
+        }
+      : undefined;
+
     return (
       <div className="outer">
         <h1 className="ImportHeader">
@@ -119,46 +135,57 @@ export class ImportResources extends Component {
         </h1>
         <Form>
           <TextInput
-            required
-            type="URL"
+            data-testid="repository-url-field"
+            helperText="The location of the YAML definitions to be applied (Git URL's supported)"
+            id="import-repository-url"
             invalid={this.state.invalidInput}
             invalidText="Please submit a valid URL"
-            helperText="The location of the YAML definitions to be applied (Git URL's supported)"
             labelText="Repository URL"
-            placeholder="Enter repository URL"
-            data-testid="repository-url-field"
             name="repositoryURL"
-            value={this.state.repositoryURL}
             onChange={this.handleTextInput}
+            placeholder="Enter repository URL"
+            required
+            type="URL"
+            value={this.state.repositoryURL}
+          />
+          <NamespacesDropdown
+            id="import-namespaces-dropdown"
+            helperText="The namespace that the PipelineRun applying resources will run under"
+            invalid={this.state.invalidNamespace}
+            invalidText="Please select a namespace"
+            onChange={this.handleNamespace}
+            required
+            selectedItem={selectedNamespace}
+            titleText="Namespace"
           />
           <TextInput
-            helperText="The path from which resources will be applied at the
-          specified repository"
-            labelText="Repository directory (optional)"
-            placeholder="Enter repository directory"
             data-testid="directory-field"
+            helperText="The path from which resources will be applied at the specified repository"
+            id="import-directory"
+            labelText="Repository directory (optional)"
             name="directory"
-            value={this.state.directory}
             onChange={this.handleTextInput}
+            placeholder="Enter repository directory"
+            value={this.state.directory}
           />
           <ServiceAccountsDropdown
-            helperText="The SA that the PipelineRun applying resources will
-          run under"
-            titleText="Service Account (optional)"
             className="saDropdown"
+            helperText="The SA that the PipelineRun applying resources will run under"
+            id="import-service-accounts-dropdown"
             onChange={this.handleServiceAccount}
+            titleText="Service Account (optional)"
           />
           <Button kind="primary" onClick={this.handleSubmit}>
             Import and Apply
           </Button>
           {this.state.submitSuccess && (
             <ToastNotification
-              kind="success"
-              title="Triggered PipelineRun to apply Tekton resources"
-              subtitle=""
               caption={
                 <Link to={this.state.logsURL}>View status of this run</Link>
               }
+              kind="success"
+              title="Triggered PipelineRun to apply Tekton resources"
+              subtitle=""
             />
           )}
         </Form>
@@ -170,7 +197,7 @@ export class ImportResources extends Component {
 /* istanbul ignore next */
 function mapStateToProps(state) {
   return {
-    namespace: getSelectedNamespace(state)
+    navNamespace: getSelectedNamespace(state)
   };
 }
 
