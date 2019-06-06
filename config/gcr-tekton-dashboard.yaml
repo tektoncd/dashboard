@@ -1,0 +1,59 @@
+# ------------------- Dashboard Deployment ------------------- #
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tekton-dashboard
+  labels:
+    app: tekton-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tekton-dashboard
+  template:
+    metadata:
+      name: tekton-dashboard
+      labels:
+        app: tekton-dashboard
+    spec:
+      containers:
+      - name: tekton-dashboard
+        image: gcr.io/tekton-nightly/dashboard:latest
+        ports:
+        - containerPort: 9097
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 9097
+        readinessProbe:
+          httpGet:
+            path: /readiness
+            port: 9097
+        resources:
+        env:
+        - name: PORT
+          value: "9097"
+        - name: WEB_RESOURCES_DIR
+          value: /var/run/ko/web
+        - name: PIPELINE_RUN_SERVICE_ACCOUNT
+          value: ""
+        - name: INSTALLED_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+---
+# ------------------- Dashboard Service ------------------- #
+kind: Service
+apiVersion: v1
+metadata:
+  name: tekton-dashboard
+  labels:
+    app: tekton-dashboard
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 9097
+      targetPort: 9097
+  selector:
+    app: tekton-dashboard
