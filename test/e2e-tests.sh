@@ -36,6 +36,9 @@ install_dashboard_backend
  header "Running e2e tests"
 # # TODO: run your test here !
 
+echo "Applying test-rbac,yaml"
+kubectl apply -f $tekton_repo_dir/test/test-rbac.yaml
+echo "Applied test-rbac.yaml"
 
 
 function wait_for_ready_pods() {
