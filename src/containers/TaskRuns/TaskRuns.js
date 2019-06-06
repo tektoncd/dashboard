@@ -51,6 +51,8 @@ export /* istanbul ignore next */ class TaskRunsContainer extends Component {
     return (
       <InlineNotification
         kind={kind}
+        hideCloseButton
+        lowContrast
         title={titles[kind]}
         subtitle={JSON.stringify(message, Object.getOwnPropertyNames(message))}
       />

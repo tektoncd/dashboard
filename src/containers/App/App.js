@@ -21,7 +21,7 @@ import {
   Switch
 } from 'react-router-dom';
 
-import { Content } from 'carbon-components-react/lib/components/UIShell';
+import { Content } from 'carbon-components-react';
 
 import {
   CustomResourceDefinition,

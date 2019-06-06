@@ -153,6 +153,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       return (
         <InlineNotification
           kind="error"
+          hideCloseButton
+          lowContrast
           title="Error loading pipeline run"
           subtitle={JSON.stringify(error, Object.getOwnPropertyNames(error))}
         />
@@ -163,6 +165,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       return (
         <InlineNotification
           kind="info"
+          hideCloseButton
+          lowContrast
           title="Cannot load pipeline run"
           subtitle={`Pipeline Run ${pipelineRunName} not found`}
         />
@@ -193,6 +197,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           />
           <InlineNotification
             kind="error"
+            hideCloseButton
+            lowContrast
             title={`Unable to load PipelineRun details: ${
               pipelineRunError.reason
             }`}

@@ -85,6 +85,8 @@ export /* istanbul ignore next */ class PipelineResourceContainer extends Compon
       return (
         <InlineNotification
           kind="error"
+          hideCloseButton
+          lowContrast
           title="Error loading PipelineResource"
           subtitle={JSON.stringify(error, Object.getOwnPropertyNames(error))}
         />
@@ -95,6 +97,8 @@ export /* istanbul ignore next */ class PipelineResourceContainer extends Compon
       return (
         <InlineNotification
           kind="info"
+          hideCloseButton
+          lowContrast
           title="Cannot load PipelineResource"
           subtitle={`PipelineResource ${pipelineResourceName} not found`}
         />

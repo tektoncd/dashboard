@@ -13,23 +13,27 @@ limitations under the License.
 
 @import '~carbon-components/scss/globals/scss/vars';
 
-.submenu-parent-item {
-  margin-bottom: 1em;
-  list-style: none;
+.bx--header ~ {
+  nav.bx--side-nav {
+    top: 7rem;
+    border-top: 1px solid $ui-03;
 
-  .bx--side-nav__menu {
-    margin-top: .5em;
+    .bx--dropdown__wrapper {
+      margin-top: 1rem;
+      padding: 0 1rem;
+
+      .bx--label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        line-height: 1.125rem;
+        letter-spacing: 0.16px;
+      }
+
+      .bx--dropdown.bx--list-box {
+        border: none;
+        margin-bottom: 1.5em;
+        width: auto;
+      }
+    }
   }
-}
-
-.submenu-title, .bx--side-nav__items .bx--label {
-  color: $text-01;
-  margin-left: 1.5em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-size: 0.875rem;
-  font-weight: 600;
-  letter-spacing: 0.1px;
-  user-select: none;
 }
