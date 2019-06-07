@@ -106,7 +106,7 @@ func (r Resource) RegisterWebsocket(container *restful.Container) {
 		Consumes(restful.MIME_JSON).
 		Produces(restful.MIME_JSON)
 	wsv2.Route(wsv2.GET("/logs").To(r.establishPipelineLogsWebsocket))
-	wsv2.Route(wsv2.GET("/runs").To(r.establishRunsWebsocket))
+	wsv2.Route(wsv2.GET("/resources").To(r.establishResourcesWebsocket))
 	container.Add(wsv2)
 }
 

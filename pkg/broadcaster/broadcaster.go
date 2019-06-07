@@ -23,6 +23,14 @@ type messageType string
 // Reference outside of package
 const (
 	Log                messageType = "Log"
+	NamespaceCreated messageType = "NamespaceCreated"
+	NamespaceDeleted messageType = "NamespaceDeleted"
+	PipelineCreated messageType = "PipelineCreated"
+	PipelineDeleted messageType = "PipelineDeleted"
+	PipelineUpdated messageType = "PipelineUpdated"
+	TaskCreated messageType = "TaskCreated"
+	TaskDeleted messageType = "TaskDeleted"
+	TaskUpdated messageType = "TaskUpdated"
 	PipelineRunCreated messageType = "PipelineRunCreated"
 	PipelineRunDeleted messageType = "PipelineRunDeleted"
 	PipelineRunUpdated messageType = "PipelineRunUpdated"

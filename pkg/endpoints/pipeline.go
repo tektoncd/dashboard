@@ -765,25 +765,107 @@ func (r Resource) updatePipelineRun(request *restful.Request, response *restful.
 }
 
 // StartPipelineRunController - registers the code that reacts to changes in kube PipelineRuns
-func (r Resource) StartRunController(stopCh <-chan struct{}) {
-	logging.Log.Debug("Into StartRunController")
+func (r Resource) StartResourcesController(stopCh <-chan struct{}) {
+	logging.Log.Debug("Into StartResourcesController")
 
-	runsInformerFactory := informers.NewSharedInformerFactory(r.PipelineClient, time.Second*30)
-	pipelineRunInformer := runsInformerFactory.Tekton().V1alpha1().PipelineRuns()
+	resourcesInformerFactory := informers.NewSharedInformerFactory(r.PipelineClient, time.Second*30)
+	pipelineInformer := resourcesInformerFactory.Tekton().V1alpha1().Pipelines()
+	pipelineInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
+		AddFunc:    r.pipelineCreated,
+		UpdateFunc: r.pipelineUpdated,
+		DeleteFunc: r.pipelineDeleted,
+	})
+	taskInformer := resourcesInformerFactory.Tekton().V1alpha1().Tasks()
+	taskInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
+		AddFunc:    r.taskCreated,
+		UpdateFunc: r.taskUpdated,
+		DeleteFunc: r.taskDeleted,
+	})
+	pipelineRunInformer := resourcesInformerFactory.Tekton().V1alpha1().PipelineRuns()
 	pipelineRunInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc:    r.pipelineRunCreated,
 		UpdateFunc: r.pipelineRunUpdated,
 		DeleteFunc: r.pipelineRunDeleted,
 	})
-	taskRunInformer := runsInformerFactory.Tekton().V1alpha1().TaskRuns()
+	taskRunInformer := resourcesInformerFactory.Tekton().V1alpha1().TaskRuns()
 	taskRunInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc:    r.taskRunCreated,
 		UpdateFunc: r.taskRunUpdated,
 		DeleteFunc: r.taskRunDeleted,
 	})
 
-	go runsInformerFactory.Start(stopCh)
-	logging.Log.Info("Run Controller Started")
+	go resourcesInformerFactory.Start(stopCh)
+	logging.Log.Info("Resource Events Controller Started")
+}
+
+
+//pipeline events
+func (r Resource) pipelineCreated(obj interface{}) {
+	logging.Log.Debug("In pipelineCreated")
+
+	data := broadcaster.SocketData{
+		MessageType: broadcaster.PipelineCreated,
+		Payload:     obj.(*v1alpha1.Pipeline),
+	}
+
+	resourcesChannel <- data
+}
+
+func (r Resource) pipelineUpdated(oldObj, newObj interface{}) {
+
+	if newObj.(*v1alpha1.Pipeline).GetResourceVersion() != oldObj.(*v1alpha1.Pipeline).GetResourceVersion() {
+		data := broadcaster.SocketData{
+			MessageType: broadcaster.PipelineUpdated,
+			Payload:     newObj.(*v1alpha1.Pipeline),
+		}
+		resourcesChannel <- data
+	}
+}
+
+func (r Resource) pipelineDeleted(obj interface{}) {
+	logging.Log.Debug("In pipelineDeleted")
+
+	data := broadcaster.SocketData{
+		MessageType: broadcaster.PipelineDeleted,
+		Payload:     obj.(*v1alpha1.Pipeline),
+	}
+
+	resourcesChannel <- data
+}
+
+
+// task events
+func (r Resource) taskCreated(obj interface{}) {
+	logging.Log.Debug("In taskCreated")
+
+	data := broadcaster.SocketData{
+		MessageType: broadcaster.TaskCreated,
+		Payload:     obj.(*v1alpha1.Task),
+	}
+
+	resourcesChannel <- data
+}
+
+func (r Resource) taskUpdated(oldObj, newObj interface{}) {
+
+	if newObj.(*v1alpha1.Task).GetResourceVersion() != oldObj.(*v1alpha1.Task).GetResourceVersion() {
+		data := broadcaster.SocketData{
+			MessageType: broadcaster.TaskUpdated,
+			Payload:     newObj.(*v1alpha1.Task),
+		}
+		resourcesChannel <- data
+	}
+}
+
+func (r Resource) taskDeleted(obj interface{}) {
+	logging.Log.Debug("In taskDeleted")
+
+	data := broadcaster.SocketData{
+		MessageType: broadcaster.TaskDeleted,
+		Payload:     obj.(*v1alpha1.Task),
+	}
+
+	resourcesChannel <- data
 }
 
 //pipeline run events
@@ -795,7 +877,7 @@ func (r Resource) pipelineRunCreated(obj interface{}) {
 		Payload:     obj.(*v1alpha1.PipelineRun),
 	}
 
-	runsChannel <- data
+	resourcesChannel <- data
 }
 
 func (r Resource) pipelineRunUpdated(oldObj, newObj interface{}) {
@@ -805,7 +887,7 @@ func (r Resource) pipelineRunUpdated(oldObj, newObj interface{}) {
 			MessageType: broadcaster.PipelineRunUpdated,
 			Payload:     newObj.(*v1alpha1.PipelineRun),
 		}
-		runsChannel <- data
+		resourcesChannel <- data
 	}
 }
 
@@ -817,7 +899,7 @@ func (r Resource) pipelineRunDeleted(obj interface{}) {
 		Payload:     obj.(*v1alpha1.PipelineRun),
 	}
 
-	runsChannel <- data
+	resourcesChannel <- data
 }
 
 
@@ -830,7 +912,7 @@ func (r Resource) taskRunCreated(obj interface{}) {
 		Payload:     obj.(*v1alpha1.TaskRun),
 	}
 
-	runsChannel <- data
+	resourcesChannel <- data
 }
 
 func (r Resource) taskRunUpdated(oldObj, newObj interface{}) {
@@ -840,7 +922,7 @@ func (r Resource) taskRunUpdated(oldObj, newObj interface{}) {
 			MessageType: broadcaster.TaskRunUpdated,
 			Payload:     newObj.(*v1alpha1.TaskRun),
 		}
-		runsChannel <- data
+		resourcesChannel <- data
 	}
 }
 
@@ -852,7 +934,5 @@ func (r Resource) taskRunDeleted(obj interface{}) {
 		Payload:     obj.(*v1alpha1.TaskRun),
 	}
 
-	runsChannel <- data
+	resourcesChannel <- data
 }
-
-
