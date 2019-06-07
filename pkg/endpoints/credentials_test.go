@@ -76,6 +76,7 @@ func TestCredentials(t *testing.T) {
 			"tekton.dev/docker-0": "https://gcr.io",
 		},
 		ServiceAccount: "default",
+		Namespace: "tekton-pipelines",
 	}
 	anotherBasicCred := credential{
 		Name:        "gitcreds",
@@ -86,6 +87,7 @@ func TestCredentials(t *testing.T) {
 			"tekton.dev/git-0": "https://my.git.org",
 		},
 		ServiceAccount: "default",
+		Namespace: "tekton-pipelines",
 	}
 	ns2BasicCred := credential{
 		Name:        "credentialuserpassns2",
@@ -96,6 +98,7 @@ func TestCredentials(t *testing.T) {
 			"tekton.dev/docker-0": "https://gcr.io",
 		},
 		ServiceAccount: "default",
+		Namespace: "tekton-pipelines-second-ns",
 	}
 
 	// READ ALL credentials when there are none
