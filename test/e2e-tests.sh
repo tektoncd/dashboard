@@ -70,7 +70,7 @@ kubectl apply -f $tekton_repo_dir/test/Pipeline.yaml
 
 #API configuration
 APP_NS="default"
-PIPELINE_NAME="simple-pipeline-insecure"
+PIPELINE_NAME="simple-pipeline"
 IMAGE_SOURCE_NAME="docker-image"
 GIT_RESOURCE_NAME="git-source"
 GIT_COMMIT="master"
