@@ -17,7 +17,7 @@
 # This script calls out to scripts in tektoncd/plumbing to setup a cluster
 # and deploy Tekton Pipelines to it for running integration tests.
 export tekton_repo_dir=$(git rev-parse --show-toplevel)
-export KNATIVE_VERSION="v0.5.0"
+export KO_DOCKER_REPO=gcr.io/${E2E_PROJECT_ID}/${E2E_BASE_NAME}-e2e-img
 
 source $(dirname $0)/e2e-common.sh
 
@@ -59,27 +59,18 @@ kubectl port-forward $(kubectl get pod -l app=tekton-dashboard -o name) 9097:909
 echo "dashboard forwarded to port 9097"
 
 
+kubectl apply -f $tekton_repo_dir/test/build-task.yaml
 
-
-kubectl apply -f $tekton_repo_dir/test/Task.yaml
-echo "kubectl apply -f tekton_repo_dir/test/Task.yaml"
+kubectl apply -f $tekton_repo_dir/test/deploy-task.yaml
 
 
 kubectl apply -f $tekton_repo_dir/test/Pipeline.yaml
-echo "kubectl apply -f tekton_repo_dir/test/Pipeline.yaml"
-
-#kubectl apply -f $tekton_repo_dir/test/PipelineRun.yaml
-#echo "kubectl apply -f tekton_repo_dir/test/PipelineRun.yaml"
-
-
-wait_until_pods_running default
-
 
 
 
 #API configuration
 APP_NS="default"
-PIPELINE_NAME="hello-pipeline"
+PIPELINE_NAME="simple-pipeline-insecure"
 IMAGE_SOURCE_NAME="docker-image"
 GIT_RESOURCE_NAME="git-source"
 GIT_COMMIT="master"
@@ -89,13 +80,15 @@ EXPECTED_RETURN_VALUE="Hello Go Sample v1!"
 KSVC_NAME="go-hello-world"
 
 
-post_data='{
+   post_data='{
         "pipelinename": "'${PIPELINE_NAME}'",
+        "imageresourcename": "'${IMAGE_SOURCE_NAME}'",
+        "gitresourcename": "'${GIT_RESOURCE_NAME}'",
         "gitcommit": "'${GIT_COMMIT}'",
         "reponame": "'${REPO_NAME}'",
         "repourl": "'${REPO_URL}'",
-        "registrylocation": "'${DOCKERHUB_USERNAME}'",
-        "serviceaccount": "'default'"
+        "registrylocation": "'$KO_DOCKER_REPO'",
+        "serviceaccount": "'${APP_NS}'"
     }'
 
 curlNport="http://127.0.0.1:9097/v1/namespaces/default/pipelineruns/"
@@ -113,13 +106,15 @@ kubectl get pods
 
 kubectl get pipelineruns
 
-responsePipelineRun=$(curl -k "http://127.0.0.1:9097/v1/namespaces/default/pipelineruns")
-echo "response is :"
-echo "$responsePipelineRun"
+# responsePipelineRun=$(curl -k "http://127.0.0.1:9097/v1/namespaces/default/pipelineruns")
+# echo "response is :"
+# echo "$responsePipelineRun"
 
 
+echo "deployments are:"
 kubectl get deployments 
 
+echo "svc are:"
 kubectl get svc 
 
 # echo " -l app=tekton-app -o name attempt"

@@ -1,0 +1,58 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: build-push
+spec:
+  inputs:
+    resources:
+      - name: git-source
+        type: git
+    params:
+    - name: pathToDockerFile
+      description: The path to the dockerfile to build
+      default: /workspace/git-source/Dockerfile
+    - name: pathToContext
+      description: The build context used by Kaniko (https://github.com/GoogleContainerTools/kaniko#kaniko-build-contexts)
+      default: /workspace/git-source
+    - name: registry-secret
+      description: The docker image registry secret name
+      default: registry-secret
+  outputs:
+    resources:
+      - name: builtImage
+        type: image
+  steps:
+  - name: build
+    image: docker
+    command:
+    - docker
+    args:
+    - 'build'
+    - '-f'
+    - ${inputs.params.pathToDockerFile}
+    - '-t'
+    - ${outputs.resources.builtImage.url}
+    - ${inputs.params.pathToContext}
+    volumeMounts:
+    - name: docker-socket
+      mountPath: /var/run/docker.sock
+  - name: push
+    image: docker
+    command:
+    - sh
+    args:
+    - -c
+    - "mkdir -p /builder/home/.docker; ln -s -f /devops/secret/registry/.dockerconfigjson /builder/home/.docker/config.json; docker push ${outputs.resources.builtImage.url}"
+    volumeMounts:
+    - name: docker-socket
+      mountPath: /var/run/docker.sock
+    - name: registry-secret
+      mountPath: /devops/secret/registry
+  volumes:
+    - name: docker-socket
+      hostPath:
+        path: /var/run/docker.sock
+        type: Socket
+    - name: registry-secret
+      secret:
+        secretName: "${inputs.params.registry-secret}"
