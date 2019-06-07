@@ -25,13 +25,14 @@ import { ALL_NAMESPACES } from '../../constants';
 
 class ServiceAccountsDropdown extends React.Component {
   componentDidMount() {
-    this.props.fetchServiceAccounts();
+    const { namespace } = this.props;
+    this.props.fetchServiceAccounts({ namespace });
   }
 
   componentDidUpdate(prevProps) {
     const { namespace } = this.props;
     if (namespace !== prevProps.namespace) {
-      this.props.fetchServiceAccounts();
+      this.props.fetchServiceAccounts({ namespace });
     }
   }
 
@@ -52,11 +53,12 @@ ServiceAccountsDropdown.defaultProps = {
   titleText: 'Service Account'
 };
 
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
+  const namespace = ownProps.namespace || getSelectedNamespace(state);
   return {
-    items: getServiceAccounts(state).map(sa => sa.metadata.name),
+    items: getServiceAccounts(state, { namespace }).map(sa => sa.metadata.name),
     loading: isFetchingServiceAccounts(state),
-    namespace: getSelectedNamespace(state)
+    namespace
   };
 }
 
