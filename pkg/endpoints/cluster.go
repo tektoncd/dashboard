@@ -35,7 +35,7 @@ func (r Resource) getAllNamespaces(request *restful.Request, response *restful.R
 }
 
 func (r Resource) getAllServiceAccounts(request *restful.Request, response *restful.Response) {
-	requestNamespace := request.PathParameter("namespace")
+	requestNamespace := utils.GetNamespace(request)
 
 	serviceAccounts, err := r.K8sClient.CoreV1().ServiceAccounts(requestNamespace).List(metav1.ListOptions{})
 	logging.Log.Debugf("In getAllServiceAccounts")
