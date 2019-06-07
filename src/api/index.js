@@ -46,7 +46,7 @@ export function getExtensionBundleURL(name, bundlelocation) {
 }
 
 export function getRunsWebSocketURL() {
-  return `${apiRoot.replace(/^http/, 'ws')}/v1/websockets/runs`;
+  return `${apiRoot.replace(/^http/, 'ws')}/v1/websockets/resources`;
 }
 
 export function checkData(data) {
