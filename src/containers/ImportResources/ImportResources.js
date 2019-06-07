@@ -172,6 +172,7 @@ export class ImportResources extends Component {
             className="saDropdown"
             helperText="The SA that the PipelineRun applying resources will run under"
             id="import-service-accounts-dropdown"
+            namespace={namespace}
             onChange={this.handleServiceAccount}
             titleText="Service Account (optional)"
           />
