@@ -36,6 +36,7 @@ install_dashboard_backend
  header "Running e2e tests"
 # # TODO: run your test here !
 
+#Apply permissions to be able to curl endpoints 
 echo "Applying test-rbac,yaml"
 kubectl apply -f $tekton_repo_dir/test/test-rbac.yaml
 echo "Applied test-rbac.yaml"
@@ -64,12 +65,11 @@ kubectl apply -f $tekton_repo_dir/test/Task.yaml
 echo "kubectl apply -f tekton_repo_dir/test/Task.yaml"
 
 
-
 kubectl apply -f $tekton_repo_dir/test/Pipeline.yaml
 echo "kubectl apply -f tekton_repo_dir/test/Pipeline.yaml"
 
-kubectl apply -f $tekton_repo_dir/test/PipelineRun.yaml
-echo "kubectl apply -f tekton_repo_dir/test/PipelineRun.yaml"
+#kubectl apply -f $tekton_repo_dir/test/PipelineRun.yaml
+#echo "kubectl apply -f tekton_repo_dir/test/PipelineRun.yaml"
 
 
 wait_until_pods_running default
@@ -88,19 +88,7 @@ REPO_URL="https://github.com/ncskier/go-hello-world"
 EXPECTED_RETURN_VALUE="Hello Go Sample v1!"
 KSVC_NAME="go-hello-world"
 
-# post_data='{
-#         "pipelinename": "'${PIPELINE_NAME}'",
-#         "imageresourcename": "'${IMAGE_SOURCE_NAME}'",
-#         "gitresourcename": "'${GIT_RESOURCE_NAME}'",
-#         "gitcommit": "'${GIT_COMMIT}'",
-#         "reponame": "'${REPO_NAME}'",
-#         "repourl": "'${REPO_URL}'",
-#         "registrylocation": "'${DOCKERHUB_USERNAME}'",
-#         "serviceaccount": "'default'"
-#     }'
 
-
-#Dont need git resoucr name and image source name 
 post_data='{
         "pipelinename": "'${PIPELINE_NAME}'",
         "gitcommit": "'${GIT_COMMIT}'",
@@ -123,26 +111,6 @@ wait_until_pods_running default
 kubectl get pods 
 
 
-responseLocal=$(curl -k "127.0.0.1:9097/v1/namespaces/default/pipelines")
-echo "response is :"
-echo "$responseLocal" 
-
-#responseLocalName=$($responseLocal | jq -r 'name')
-#echo "responseLocalName is : $responseLocalName"
-
-responseLocal1=$(curl -k "127.0.0.1:9097/v1/namespaces/default/pipelineruns")
-echo "response is :"
-echo "$responseLocal1"  
-
-responseLocal2=$(curl -k "127.0.0.1:9097/v1/namespaces/default/tasks")
-echo "response is :"
-echo "$responseLocal2" 
-
-
-#wait_for_ready_kservice "$REPO_NAME" "$APP_NS" 500 10
-
-#domain=$(get_kserving_domain "$KSVC_NAME" "$APP_NS")
-#echo $domain
 kubectl get pipelineruns
 
 responsePipelineRun=$(curl -k "http://127.0.0.1:9097/v1/namespaces/default/pipelineruns")
