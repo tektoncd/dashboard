@@ -118,12 +118,31 @@ echo "response is :"
 echo "$responsePipelineRun"
 
 #$(app=hello-pipeline-run-1-do-hello-world -o name)
-pod=$(kubectl get pod app=hello-pipeline-run-1-do-hello-world -o name)
+echo "pod=$(kubectl get pod app=tekton-pipeline-run -o name) attempt"
+pod=$(kubectl get pod app=tekton-pipeline-run -o name)
+#pod=$(kubectl get pod app=hello-pipeline-run-1-do-hello-world -o name)
 
 resp=$(curl -k  http://127.0.0.1:9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
 
 echo "resp is :$resp"
 
+
+echo "pod=$(kubectl get pod -l app=tekton-pipeline-run -o name) attempt"
+pod=$(kubectl get pod -l app=tekton-pipeline-run -o name)
+#pod=$(kubectl get pod app=hello-pipeline-run-1-do-hello-world -o name)
+
+resp=$(curl -k  http://127.0.0.1:9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
+
+echo "resp is :$resp"
+
+
+echo "pod=$(kubectl get pod -l app=tekton-pipeline-run) attempt"
+pod=$(kubectl get pod -l =tekton-pipeline-run)
+#pod=$(kubectl get pod app=hello-pipeline-run-1-do-hello-world -o name)
+
+resp=$(curl -k  http://127.0.0.1:9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
+
+echo "resp is :$resp"
 # if [ "$EXPECTED_RETURN_VALUE" = "$resp" ]; then
 #     echo "Pipeline Run successfully executed"
 # else
