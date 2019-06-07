@@ -36,6 +36,7 @@ type credential struct {
 	ResourceVersion string            `json:"resourceVersion,omitempty"`
 	URL             map[string]string `json:"url,omitempty"`
 	ServiceAccount  string            `json:"serviceAccount,omitempty"`
+	Namespace       string            `json:"namespace,omitempty"`
 }
 
 const (
@@ -328,6 +329,7 @@ func secretToCredential(secret *corev1.Secret, mask bool) credential {
 		URL:             secret.ObjectMeta.Annotations,
 		ResourceVersion: secret.GetResourceVersion(),
 		ServiceAccount:  saName,
+		Namespace:       secret.GetNamespace(),
 	}
 	if mask {
 		cred.Password = "********"
@@ -343,6 +345,7 @@ func credentialToSecret(cred credential, namespace string, response *restful.Res
 	secret.SetName(cred.Name)
 	secret.Data = make(map[string][]byte)
 	secret.Type = corev1.SecretTypeBasicAuth
+	secret.Data["namespace"] = []byte(namespace)
 	secret.Data["username"] = []byte(cred.Username)
 	secret.Data["password"] = []byte(cred.Password)
 	secret.Data["description"] = []byte(cred.Description)
