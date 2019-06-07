@@ -118,7 +118,7 @@ echo "response is :"
 echo "$responsePipelineRun"
 
 #$(app=hello-pipeline-run-1-do-hello-world -o name)
-echo "pod=$(kubectl get pod app=tekton-pipeline-run -o name) attempt"
+echo "app=tekton-app -o name attempt"
 pod=$(kubectl get pod app=tekton-app -o name)
 #pod=$(kubectl get pod app=hello-pipeline-run-1-do-hello-world -o name)
 
@@ -127,7 +127,7 @@ resp=$(curl -k  http://127.0.0.1:9097/v1/namespaces/default/pod/$pod) #"Host: ${
 echo "resp is :$resp"
 
 
-echo "pod=$(kubectl get pod -l app=tekton-pipeline-run -o name) attempt"
+echo " -l app=tekton-app -o name attempt"
 pod=$(kubectl get pod -l app=tekton-app -o name)
 #pod=$(kubectl get pod app=hello-pipeline-run-1-do-hello-world -o name)
 
@@ -136,7 +136,7 @@ resp=$(curl -k  http://127.0.0.1:9097/v1/namespaces/default/pod/$pod) #"Host: ${
 echo "resp is :$resp"
 
 
-echo "pod=$(kubectl get pod -l app=tekton-pipeline-run) attempt"
+echo "-l app=tekton-app attempt"
 pod=$(kubectl get pod -l app=tekton-app)
 #pod=$(kubectl get pod app=hello-pipeline-run-1-do-hello-world -o name)
 
@@ -145,7 +145,7 @@ resp=$(curl -k  http://127.0.0.1:9097/v1/namespaces/default/pod/$pod) #"Host: ${
 echo "resp is :$resp"
 
 
-echo "pod=$(kubectl get pod -l app=tekton-pipeline-run)-n default attempt"
+echo "-l app=tekton-app -n default attempt"
 pod=$(kubectl get pod -l app=tekton-app -n default)
 #pod=$(kubectl get pod app=hello-pipeline-run-1-do-hello-world -o name)
 
