@@ -105,7 +105,7 @@ echo "Curling original"
 curl -X POST --header Content-Type:application/json -d "$post_data" $curlNport 
 echo "Curled"
 
-#sleep 1m
+sleep 1m
 wait_until_pods_running default
 
 kubectl get pods 
@@ -129,7 +129,6 @@ echo "resp is :$resp"
 
 echo " -l app=tekton-app -o name attempt"
 pod=$(kubectl get pod -l app=tekton-app -o name)
-#pod=$(kubectl get pod app=hello-pipeline-run-1-do-hello-world -o name)
 
 resp=$(curl -k  http://127.0.0.1:9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
 
@@ -138,7 +137,6 @@ echo "resp is :$resp"
 
 echo "-l app=tekton-app attempt"
 pod=$(kubectl get pod -l app=tekton-app)
-#pod=$(kubectl get pod app=hello-pipeline-run-1-do-hello-world -o name)
 
 resp=$(curl -k  http://127.0.0.1:9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
 
@@ -147,7 +145,6 @@ echo "resp is :$resp"
 
 echo "-l app=tekton-app -n default attempt"
 pod=$(kubectl get pod -l app=tekton-app -n default)
-#pod=$(kubectl get pod app=hello-pipeline-run-1-do-hello-world -o name)
 
 resp=$(curl -k  http://127.0.0.1:9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
 
