@@ -117,30 +117,25 @@ responsePipelineRun=$(curl -k "http://127.0.0.1:9097/v1/namespaces/default/pipel
 echo "response is :"
 echo "$responsePipelineRun"
 
-#$(app=hello-pipeline-run-1-do-hello-world -o name)
-echo "app=tekton-app -o name attempt"
-pod=$(kubectl get pod app=tekton-app -o name)
-#pod=$(kubectl get pod app=hello-pipeline-run-1-do-hello-world -o name)
 
-resp=$(curl -k  http://127.0.0.1:9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
+kubectl get deployments 
 
-echo "resp is :$resp"
+kubectl get svc 
 
+# echo " -l app=tekton-app -o name attempt"
+# pod=$(kubectl get pod -l app=tekton-app -o name)
 
-echo " -l app=tekton-app -o name attempt"
-pod=$(kubectl get pod -l app=tekton-app -o name)
+# resp=$(curl -k  http://127.0.0.1:9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
 
-resp=$(curl -k  http://127.0.0.1:9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
-
-echo "resp is :$resp"
+# echo "resp is :$resp"
 
 
-echo "-l app=tekton-app attempt"
-pod=$(kubectl get pod -l app=tekton-app)
+# echo "-l app=tekton-app attempt"
+# pod=$(kubectl get pod -l app=tekton-app)
 
-resp=$(curl -k  http://127.0.0.1:9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
+# resp=$(curl -k  http://127.0.0.1:9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
 
-echo "resp is :$resp"
+# echo "resp is :$resp"
 
 
 echo "-l app=tekton-app -n default attempt"
