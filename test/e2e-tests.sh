@@ -100,6 +100,16 @@ echo "Curled"
 sleep 1m
 wait_until_pods_running default
 
+
+#Not running after 6 mins, so debug in here 
+echo "Describing pods"
+kubectl describe pods
+
+##How to get logs without numbers at the end 
+#logs=$(kubectl logs -l app=istio-egressgateway -n istio-system)
+#echo "logs is: $logs"
+
+echo "Get pods is"
 kubectl get pods 
 
 
