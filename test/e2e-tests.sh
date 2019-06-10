@@ -120,6 +120,9 @@ kubectl get pipelineruns
 # echo "$responsePipelineRun"
 
 
+kubectl describe pipelineruns
+
+
 echo "deployments are:"
 kubectl get deployments 
 
