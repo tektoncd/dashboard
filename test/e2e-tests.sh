@@ -97,7 +97,7 @@ echo "Curling original"
 curl -X POST --header Content-Type:application/json -d "$post_data" $curlNport 
 echo "Curled"
 
-#sleep 1m
+sleep 1m
 wait_until_pods_running default
 
 
