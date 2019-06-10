@@ -32,6 +32,7 @@ import { fetchPipelineRun } from '../../actions/pipelineRuns';
 import { fetchTasks } from '../../actions/tasks';
 import { fetchTaskRuns } from '../../actions/taskRuns';
 
+import Rebuild from '../../components/Rebuild';
 import RunHeader from '../../components/RunHeader';
 import StepDetails from '../../components/StepDetails';
 import TaskTree from '../../components/TaskTree';
@@ -211,6 +212,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
 
     return (
       <>
+        <Rebuild />
+
         <RunHeader
           lastTransitionTime={lastTransitionTime}
           loading={loading}
