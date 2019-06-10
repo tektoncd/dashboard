@@ -63,7 +63,6 @@ kubectl apply -f $tekton_repo_dir/test/build-task.yaml
 
 kubectl apply -f $tekton_repo_dir/test/deploy-task.yaml
 
-
 kubectl apply -f $tekton_repo_dir/test/Pipeline.yaml
 
 
