@@ -235,6 +235,11 @@ export function getPodLog({ container, name, namespace }) {
   return get(uri, { Accept: 'text/plain' });
 }
 
+export function rebuildPipelineRun(namespace, payload) {
+  const uri = getAPI('rebuild', { namespace });
+  return post(uri, payload);
+}
+
 export function getCredentials(namespace) {
   const uri = getAPI('credentials', { namespace });
   return get(uri);

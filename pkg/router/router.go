@@ -106,6 +106,7 @@ func registerEndpoints(r endpoints.Resource, container *restful.Container) {
 	wsv1.Route(wsv1.PUT("/{namespace}/pipelineruns/{name}").To(r.UpdatePipelineRun))
 	wsv1.Route(wsv1.POST("/{namespace}/pipelineruns").To(r.CreatePipelineRun))
 
+	wsv1.Route(wsv1.POST("/{namespace}/rebuild").To(r.RebuildPipelineRun))
 	wsv1.Route(wsv1.GET("/{namespace}/ingress").To(r.GetIngress))
 
 	wsv1.Route(wsv1.GET("/{namespace}/taskrunlogs/{name}").To(r.GetTaskRunLog))
