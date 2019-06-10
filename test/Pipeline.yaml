@@ -1,39 +1,17 @@
 apiVersion: tekton.dev/v1alpha1
 kind: Pipeline
 metadata:
-  name: simple-pipeline
+  name: simple-pipeline-insecure
 spec:
   resources: 
   - name: git-source
     type: git
   - name: docker-image
     type: image
-  params:
-  - name: registry-secret
-    description: The docker image registry secret name
-    default: registry-secret
-  - name: helm-secret
-    description: The helm secret name
-    default: helm-secret
-  - name: release-name
-    description: The helm release name
-    default: release-name
-  - name: repository-name
-    description: The helm release name
-    default: microclimategotemplate
-  - name: image-tag
-    description: The image tag
-    default: image-tag
-  - name: image-name
-    description: The image name
-    default: image-name
-  - name: target-namespace
-    description: The target namespace
-    default: tekton-pipelines
   tasks:
   - name: build-simple
     taskRef:
-      name: build-push
+      name: build-push-insecure
     resources:
       inputs:
       - name: git-source
@@ -41,13 +19,10 @@ spec:
       outputs:
       - name: builtImage
         resource: docker-image
-    params:
-    - name: registry-secret
-      value: ${params.registry-secret}
   - name: deploy-simple
     runAfter: [build-simple]
     taskRef: 
-      name: deploy-simple-kubectl-task
+      name: deploy-simple-kubectl-task-insecure
     resources: 
       inputs:
       - name: git-source
