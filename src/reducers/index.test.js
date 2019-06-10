@@ -15,6 +15,9 @@ import {
   getExtensions,
   getExtensionsErrorMessage,
   getNamespaces,
+  getPipelineResource,
+  getPipelineResources,
+  getPipelineResourcesErrorMessage,
   getPipelineRun,
   getPipelineRuns,
   getPipelineRunsByPipelineName,
@@ -29,6 +32,7 @@ import {
   getTasks,
   getTasksErrorMessage,
   isFetchingExtensions,
+  isFetchingPipelineResources,
   isFetchingPipelineRuns,
   isFetchingPipelines,
   isFetchingTaskRuns,
@@ -36,6 +40,7 @@ import {
 } from '.';
 import * as extensionSelectors from './extensions';
 import * as namespaceSelectors from './namespaces';
+import * as pipelineResourcesSelectors from './pipelineResources';
 import * as pipelineSelectors from './pipelines';
 import * as pipelineRunsSelectors from './pipelineRuns';
 import * as taskSelectors from './tasks';
@@ -43,6 +48,7 @@ import * as taskRunsSelectors from './taskRuns';
 
 const namespace = 'default';
 const extension = { displayName: 'extension' };
+const pipelineResources = [{ fake: 'pipelineResource' }];
 const pipelines = [{ fake: 'pipeline' }];
 const pipelineRuns = [{ fake: 'pipelineRun' }];
 const tasks = [{ fake: 'task' }];
@@ -59,6 +65,7 @@ const state = {
   namespaces: {
     selected: namespace
   },
+  pipelineResources,
   pipelines,
   tasks
 };
@@ -145,6 +152,52 @@ it('isFetchingPipelines', () => {
   expect(pipelineSelectors.isFetchingPipelines).toHaveBeenCalledWith(
     state.pipelines
   );
+});
+
+it('getPipelineResources', () => {
+  jest
+    .spyOn(pipelineResourcesSelectors, 'getPipelineResources')
+    .mockImplementation(() => pipelineResources);
+  expect(getPipelineResources(state)).toEqual(pipelineResources);
+  expect(pipelineResourcesSelectors.getPipelineResources).toHaveBeenCalledWith(
+    state.pipelineResources,
+    namespace
+  );
+});
+
+it('getPipelineResource', () => {
+  const name = 'pipelineResourceName';
+  const pipelineResource = { fake: 'pipelineResource' };
+  jest
+    .spyOn(pipelineResourcesSelectors, 'getPipelineResource')
+    .mockImplementation(() => pipelineResource);
+  expect(getPipelineResource(state, { name })).toEqual(pipelineResource);
+  expect(pipelineResourcesSelectors.getPipelineResource).toHaveBeenCalledWith(
+    state.pipelineResources,
+    name,
+    namespace
+  );
+});
+
+it('getPipelineResourcesErrorMessage', () => {
+  const errorMessage = 'fake error message';
+  jest
+    .spyOn(pipelineResourcesSelectors, 'getPipelineResourcesErrorMessage')
+    .mockImplementation(() => errorMessage);
+  expect(getPipelineResourcesErrorMessage(state)).toEqual(errorMessage);
+  expect(
+    pipelineResourcesSelectors.getPipelineResourcesErrorMessage
+  ).toHaveBeenCalledWith(state.pipelineResources);
+});
+
+it('isFetchingPipelineResources', () => {
+  jest
+    .spyOn(pipelineResourcesSelectors, 'isFetchingPipelineResources')
+    .mockImplementation(() => true);
+  expect(isFetchingPipelineResources(state)).toBe(true);
+  expect(
+    pipelineResourcesSelectors.isFetchingPipelineResources
+  ).toHaveBeenCalledWith(state.pipelineResources);
 });
 
 it('getPipelineRuns', () => {

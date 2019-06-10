@@ -17,6 +17,7 @@ import extensions, * as extensionSelectors from './extensions';
 import namespaces, * as namespaceSelectors from './namespaces';
 import serviceAccounts, * as serviceAccountSelectors from './serviceAccounts';
 import pipelines, * as pipelineSelectors from './pipelines';
+import pipelineResources, * as pipelineResourcesSelectors from './pipelineResources';
 import pipelineRuns, * as pipelineRunsSelectors from './pipelineRuns';
 import tasks, * as taskSelectors from './tasks';
 import taskRuns, * as taskRunsSelectors from './taskRuns';
@@ -25,10 +26,11 @@ export default combineReducers({
   extensions,
   namespaces,
   pipelines,
+  pipelineResources,
   pipelineRuns,
+  serviceAccounts,
   tasks,
-  taskRuns,
-  serviceAccounts
+  taskRuns
 });
 
 export function getSelectedNamespace(state) {
@@ -93,6 +95,39 @@ export function getPipelinesErrorMessage(state) {
 
 export function isFetchingPipelines(state) {
   return pipelineSelectors.isFetchingPipelines(state.pipelines);
+}
+
+export function getPipelineResources(
+  state,
+  { namespace = getSelectedNamespace(state) } = {}
+) {
+  return pipelineResourcesSelectors.getPipelineResources(
+    state.pipelineResources,
+    namespace
+  );
+}
+
+export function getPipelineResource(
+  state,
+  { name, namespace = getSelectedNamespace(state) }
+) {
+  return pipelineResourcesSelectors.getPipelineResource(
+    state.pipelineResources,
+    name,
+    namespace
+  );
+}
+
+export function getPipelineResourcesErrorMessage(state) {
+  return pipelineResourcesSelectors.getPipelineResourcesErrorMessage(
+    state.pipelineResources
+  );
+}
+
+export function isFetchingPipelineResources(state) {
+  return pipelineResourcesSelectors.isFetchingPipelineResources(
+    state.pipelineResources
+  );
 }
 
 export function getPipelineRuns(
