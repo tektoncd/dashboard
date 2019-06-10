@@ -59,9 +59,9 @@ kubectl port-forward $(kubectl get pod -l app=tekton-dashboard -o name) 9097:909
 echo "dashboard forwarded to port 9097"
 
 
-kubectl apply -f $tekton_repo_dir/test/build-task.yaml
+kubectl apply -f $tekton_repo_dir/test/build-task-insecure.yaml
 
-kubectl apply -f $tekton_repo_dir/test/deploy-task.yaml
+kubectl apply -f $tekton_repo_dir/test/deploy-task-insecure.yaml
 
 kubectl apply -f $tekton_repo_dir/test/Pipeline.yaml
 
