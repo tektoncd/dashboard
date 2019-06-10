@@ -9,10 +9,10 @@ Tekton Dashboard is a general purpose, web-based UI for Tekton Pipelines. It all
 The Tekton Dashboard has a hosted image located at gcr.io/tekton-nightly/dashboard:latest  
 To install the latest dashboard using this image:
 ```
-kubectl apply -f config/gcr-tekton-dashboard.yaml
+kubectl apply -f config/release/gcr-tekton-dashboard.yaml
 ```
 
-Alternatively, the dashboard can be installed through the same Git Hub release asset:
+Alternatively, the dashboard can be installed through the same GitHub release asset:
 ```
 curl -L https://github.com/tektoncd/dashboard/releases/download/v0/gcr-tekton-dashboard.yaml | kubectl apply -f -
 ```
@@ -22,12 +22,10 @@ Development installation of the Dashboard uses `ko`:
 sh
 $ docker login
 $ export KO_DOCKER_REPO=docker.io/<mydockername>
-$ npm install
-$ npm run build_ko
-$ ko apply -f config/dev-tekton-dashboard.yaml
+$ ./install-dev.sh
 ```
 
-The `ko apply` command will build and push an image of the Tekton Dashboard to the Docker registry which you are logged into. Any Docker registry will do, but in this case it will push to Dockerhub.
+The `install-dev.sh` script will build and push an image of the Tekton Dashboard to the Docker registry which you are logged into. Any Docker registry will do, but in this case it will push to Dockerhub. It will also apply the Pipeline0 definition and task: this allows you to import Tekton resources from Git repositories. It will also build the static web content using `npm` scripts.
 
 ## Install on Minishift
 
@@ -36,7 +34,7 @@ The `ko apply` command will build and push an image of the Tekton Dashboard to t
 3. Install deployment config `$oc process -f config/templates/deploy.yaml | oc apply -f-`
 4. Install build config `$oc process -f config/templates/build.yaml | oc apply -f-`
 
-## Accessing Dashboard
+## Accessing the Dashboard
 The Dashboard has can be accessed through its ClusterIP Service by running `kubectl proxy`. Assuming default is the install namespace for the dashboard, you can access the web UI at `localhost:8001/api/v1/namespaces/default/services/tekton-dashboard:http/proxy/`
 
 ## Want to contribute
