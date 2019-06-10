@@ -13,7 +13,6 @@ limitations under the License.
 
 import React from 'react';
 import { waitForElement } from 'react-testing-library';
-
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
@@ -75,9 +74,16 @@ it('PipelineRunContainer handles error state', async () => {
 
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
+
   const testStore = mockStore({
     tasks: {
       byNamespace: { default: {} }
+    },
+    taskRuns: {
+      byId: {},
+      byNamespace: { default: {} },
+      errorMessage: null,
+      isFetching: false
     },
     namespaces: {
       selected: 'default'
