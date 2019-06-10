@@ -36,6 +36,10 @@ install_dashboard_backend
  header "Running e2e tests"
 # # TODO: run your test here !
 
+#Permissions 
+gcloud auth configure-docker
+
+
 #Apply permissions to be able to curl endpoints 
 echo "Applying test-rbac,yaml"
 kubectl apply -f $tekton_repo_dir/test/test-rbac.yaml
