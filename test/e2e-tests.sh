@@ -119,7 +119,7 @@ kubectl get pipelineruns
 
 kubectl describe pipelineruns
 ##How to get logs without numbers at the end 
-logs=$(kubectl logs -l app=tekton-app -n default)
+logs=$(kubectl logs -l app=tekton-app -n default -c build-step-push)
 echo "logs is: $logs"
 
 echo "deployments are:"
