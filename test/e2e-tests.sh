@@ -97,7 +97,7 @@ echo "Curling original"
 curl -X POST --header Content-Type:application/json -d "$post_data" $curlNport 
 echo "Curled"
 
-sleep 1m
+#sleep 1m
 wait_until_pods_running default
 
 
@@ -105,9 +105,6 @@ wait_until_pods_running default
 #echo "Describing pods"
 #kubectl describe pods
 
-##How to get logs without numbers at the end 
-#logs=$(kubectl logs -l app=istio-egressgateway -n istio-system)
-#echo "logs is: $logs"
 
 echo "Get pods is"
 kubectl get pods 
@@ -121,7 +118,9 @@ kubectl get pipelineruns
 
 
 kubectl describe pipelineruns
-
+##How to get logs without numbers at the end 
+logs=$(kubectl logs -l app=tekton-app -n default)
+echo "logs is: $logs"
 
 echo "deployments are:"
 kubectl get deployments 
