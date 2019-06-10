@@ -17,7 +17,6 @@ import (
 	"net/http"
 
 	"github.com/emicklei/go-restful"
-	"github.com/tektoncd/dashboard/pkg/logging"
 	"github.com/tektoncd/dashboard/pkg/utils"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
