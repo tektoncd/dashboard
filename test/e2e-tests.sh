@@ -69,7 +69,7 @@ kubectl apply -f $tekton_repo_dir/test/Pipeline.yaml
 
 #API configuration
 APP_NS="default"
-PIPELINE_NAME="simple-pipeline"
+PIPELINE_NAME="simple-pipeline-insecure"
 IMAGE_SOURCE_NAME="docker-image"
 GIT_RESOURCE_NAME="git-source"
 GIT_COMMIT="master"
@@ -102,8 +102,8 @@ wait_until_pods_running default
 
 
 #Not running after 6 mins, so debug in here 
-echo "Describing pods"
-kubectl describe pods
+#echo "Describing pods"
+#kubectl describe pods
 
 ##How to get logs without numbers at the end 
 #logs=$(kubectl logs -l app=istio-egressgateway -n istio-system)
