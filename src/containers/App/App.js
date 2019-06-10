@@ -28,6 +28,8 @@ import {
   Extension,
   Extensions,
   ImportResources,
+  PipelineResource,
+  PipelineResources,
   PipelineRun,
   PipelineRuns,
   Pipelines,
@@ -99,6 +101,21 @@ export /* istanbul ignore next */ class App extends Component {
               <Route
                 path="/namespaces/:namespace/pipelines/:pipelineName/runs/:pipelineRunName"
                 component={PipelineRun}
+              />
+              <Route
+                path="/pipelineresources"
+                exact
+                component={PipelineResources}
+              />
+              <Route
+                path="/namespaces/:namespace/pipelineresources"
+                exact
+                component={PipelineResources}
+              />
+              <Route
+                path="/namespaces/:namespace/pipelineresources/:pipelineResourceName"
+                exact
+                component={PipelineResource}
               />
               <Route path="/importresources" component={ImportResources} />
               <Route path="/extensions" exact component={Extensions} />

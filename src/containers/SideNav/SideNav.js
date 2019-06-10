@@ -104,6 +104,13 @@ export class SideNav extends Component {
             <SideNavLink
               element={NavLink}
               icon={<span />}
+              to={this.getPath('/pipelineresources')}
+            >
+              PipelineResources
+            </SideNavLink>
+            <SideNavLink
+              element={NavLink}
+              icon={<span />}
               to={this.getPath('/tasks')}
             >
               Tasks
