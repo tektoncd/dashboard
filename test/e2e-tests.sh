@@ -38,7 +38,7 @@ install_dashboard_backend
 
 
 #Install docker 
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
 
 apt-get install docker-ce docker-ce-cli containerd.io
 
