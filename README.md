@@ -38,8 +38,8 @@ The `install-dev.sh` script will build and push an image of the Tekton Dashboard
 
 1. Install [tektoncd-pipeline-operator](https://github.com/openshift/tektoncd-pipeline-operator#deploy-openshift-pipelines-operator-on-minikube-for-testing)
 2. [Checkout](https://github.com/tektoncd/dashboard/blob/master/DEVELOPMENT.md#checkout-your-fork) the repository
-3. Install deployment config `$oc process -f config/templates/deploy.yaml | oc apply -f-`
-4. Install build config `$oc process -f build.yaml | oc apply -f-`
+3. Install deployment config `$ oc process -f config/templates/deploy.yaml | oc apply -f-`
+4. Install build config `$ oc process -f build.yaml | oc apply -f-`
 
 ## Accessing the Dashboard
 
