@@ -37,7 +37,10 @@ install_dashboard_backend
 # # TODO: run your test here !
 
 #Permissions 
-gcloud auth configure-docker
+#gcloud auth configure-docker
+gcloud components install docker-credential-gcr
+docker-credential-gcr configure-docker
+
 
 
 #Apply permissions to be able to curl endpoints 
