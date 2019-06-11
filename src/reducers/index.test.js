@@ -15,24 +15,24 @@ import {
   getExtensions,
   getExtensionsErrorMessage,
   getNamespaces,
-  getPipelines,
-  getPipelinesErrorMessage,
-  getSelectedNamespace,
   getPipelineRun,
   getPipelineRuns,
   getPipelineRunsByPipelineName,
   getPipelineRunsErrorMessage,
-  getTasks,
-  getTasksErrorMessage,
+  getPipelines,
+  getPipelinesErrorMessage,
+  getSelectedNamespace,
   getTaskRun,
   getTaskRuns,
+  getTaskRunsByTaskName,
   getTaskRunsErrorMessage,
+  getTasks,
+  getTasksErrorMessage,
   isFetchingExtensions,
-  isFetchingPipelines,
   isFetchingPipelineRuns,
-  isFetchingTasks,
+  isFetchingPipelines,
   isFetchingTaskRuns,
-  getTaskRunsByTaskName
+  isFetchingTasks
 } from '.';
 import * as extensionSelectors from './extensions';
 import * as namespaceSelectors from './namespaces';

@@ -15,9 +15,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import {
+  getSelectedNamespace,
   getServiceAccounts,
-  isFetchingServiceAccounts,
-  getSelectedNamespace
+  isFetchingServiceAccounts
 } from '../../reducers';
 import { fetchServiceAccounts } from '../../actions/serviceAccounts';
 import TooltipDropdown from '../../components/TooltipDropdown';

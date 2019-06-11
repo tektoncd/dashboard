@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { render, fireEvent, waitForElement } from 'react-testing-library';
+import { fireEvent, render, waitForElement } from 'react-testing-library';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';

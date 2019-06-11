@@ -16,8 +16,8 @@ import { connect } from 'react-redux';
 
 import {
   getPipelines,
-  isFetchingPipelines,
-  getSelectedNamespace
+  getSelectedNamespace,
+  isFetchingPipelines
 } from '../../reducers';
 import { fetchPipelines } from '../../actions/pipelines';
 import TooltipDropdown from '../../components/TooltipDropdown';
