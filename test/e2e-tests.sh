@@ -44,7 +44,6 @@ apt-get install docker-ce docker-ce-cli containerd.io
 
 docker run hello-world
 
-
 #av=$(apt-cache madison docker-ce)
 #echo "versions available are:$av"
 
@@ -84,7 +83,12 @@ kubectl apply -f $tekton_repo_dir/test/deploy-task-insecure.yaml
 
 kubectl apply -f $tekton_repo_dir/test/Pipeline.yaml
 
-gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://gcr.io
+for i in {1..10}
+do
+    echo "try number $i"
+   gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://gcr.io
+done
+
 
 #echo "Ko docker repo:$KO_DOCKER_REPO"
 
