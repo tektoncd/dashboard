@@ -18,6 +18,12 @@ import { ALL_NAMESPACES } from '../constants';
 
 function byName(state = { default: {} }, action) {
   switch (action.type) {
+    case 'NamespaceCreated':
+      return { [action.payload.metadata.name]: action.payload, ...state };
+    case 'NamespaceDeleted':
+      const newState = { ...state };
+      delete newState[action.payload.metadata.name];
+      return newState;
     case 'NAMESPACES_FETCH_SUCCESS':
       return keyBy(action.data, 'metadata.name');
     default:
