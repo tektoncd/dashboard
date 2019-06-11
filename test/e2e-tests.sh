@@ -17,7 +17,7 @@
 # This script calls out to scripts in tektoncd/plumbing to setup a cluster
 # and deploy Tekton Pipelines to it for running integration tests.
 export tekton_repo_dir=$(git rev-parse --show-toplevel)
-export KO_DOCKER_REPO=gcr.io/${E2E_PROJECT_ID}/${E2E_BASE_NAME}-e2e-img
+#export KO_DOCKER_REPO=gcr.io/${E2E_PROJECT_ID}/${E2E_BASE_NAME}-e2e-img
 
 source $(dirname $0)/e2e-common.sh
 
@@ -35,6 +35,17 @@ install_dashboard_backend
 # Run the integration tests
  header "Running e2e tests"
 # # TODO: run your test here !
+
+
+#Install docker 
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+
+sudo docker run hello-world
+
+#av=$(apt-cache madison docker-ce)
+#echo "versions available are:$av"
 
 #Permissions 
 gcloud auth configure-docker
@@ -74,7 +85,7 @@ kubectl apply -f $tekton_repo_dir/test/Pipeline.yaml
 
 gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://gcr.io
 
-echo "Ko docker repo:$KO_DOCKER_REPO"
+#echo "Ko docker repo:$KO_DOCKER_REPO"
 
 
 
@@ -88,6 +99,7 @@ REPO_NAME="go-hello-world"
 REPO_URL="https://github.com/ncskier/go-hello-world" 
 EXPECTED_RETURN_VALUE="Hello Go Sample v1!"
 KSVC_NAME="go-hello-world"
+REGISTRY="gcr.io/${E2E_PROJECT_ID}/${E2E_BASE_NAME}-e2e-img"
 
 
    post_data='{
@@ -97,7 +109,7 @@ KSVC_NAME="go-hello-world"
         "gitcommit": "'${GIT_COMMIT}'",
         "reponame": "'${REPO_NAME}'",
         "repourl": "'${REPO_URL}'",
-        "registrylocation": "'$KO_DOCKER_REPO'",
+        "registrylocation": "'$REGISTRY'",
         "serviceaccount": "'${APP_NS}'"
     }'
 
