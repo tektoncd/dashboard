@@ -72,6 +72,10 @@ kubectl apply -f $tekton_repo_dir/test/deploy-task-insecure.yaml
 
 kubectl apply -f $tekton_repo_dir/test/Pipeline.yaml
 
+gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://gcr.io
+
+echo "Ko docker repo:$KO_DOCKER_REPO"
+
 
 
 #API configuration
