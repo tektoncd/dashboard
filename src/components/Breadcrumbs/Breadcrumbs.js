@@ -17,17 +17,25 @@ import { Breadcrumb, BreadcrumbItem } from 'carbon-components-react';
 
 export default function Breadcrumbs({ labels, match }) {
   const { url } = match;
-  const pathSegments = url
-    .split('/')
-    .filter(segment => !!segment && segment !== 'runs');
+  let pathSegments = url.split('/').filter(Boolean);
+
+  let namespacePrefix = '';
+  if (pathSegments[0] === 'namespaces') {
+    namespacePrefix = `/${pathSegments.slice(0, 2).join('/')}`;
+    pathSegments = pathSegments.slice(2);
+  }
 
   return (
     <Breadcrumb>
       {pathSegments.map((segment, index) => {
+        if (segment === 'runs') {
+          return null;
+        }
         const path = `/${pathSegments.slice(0, index + 1).join('/')}`;
+        const to = labels[path] ? path : `${namespacePrefix}${path}`;
         return (
           <BreadcrumbItem key={segment}>
-            <NavLink exact to={path}>
+            <NavLink exact to={to}>
               {labels[path] || segment}
             </NavLink>
           </BreadcrumbItem>
@@ -38,9 +46,11 @@ export default function Breadcrumbs({ labels, match }) {
 }
 
 const breadcrumbLabels = {
+  '/extensions': 'Extensions',
+  '/importresources': 'Import Tekton Resources',
+  '/pipelineruns': 'PipelineRuns',
   '/pipelines': 'Pipelines',
-  '/tasks': 'Tasks',
-  '/extensions': 'Extensions'
+  '/tasks': 'Tasks'
 };
 
 Breadcrumbs.defaultProps = {

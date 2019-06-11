@@ -26,6 +26,7 @@ import {
   StructuredListWrapper
 } from 'carbon-components-react';
 
+import { ALL_NAMESPACES } from '../../constants';
 import { fetchPipelines } from '../../actions/pipelines';
 import {
   getPipelines,
@@ -49,7 +50,12 @@ export /* istanbul ignore next */ class Pipelines extends Component {
   }
 
   render() {
-    const { error, loading, pipelines } = this.props;
+    const {
+      error,
+      loading,
+      namespace: selectedNamespace,
+      pipelines
+    } = this.props;
 
     return (
       <>
@@ -73,6 +79,9 @@ export /* istanbul ignore next */ class Pipelines extends Component {
               <StructuredListHead>
                 <StructuredListRow head>
                   <StructuredListCell head>Pipeline</StructuredListCell>
+                  {selectedNamespace === ALL_NAMESPACES && (
+                    <StructuredListCell head>Namespace</StructuredListCell>
+                  )}
                   <StructuredListCell head />
                 </StructuredListRow>
               </StructuredListHead>
@@ -83,21 +92,23 @@ export /* istanbul ignore next */ class Pipelines extends Component {
                   </StructuredListRow>
                 )}
                 {pipelines.map(pipeline => {
-                  const pipelineName = pipeline.metadata.name;
+                  const { name, namespace, uid } = pipeline.metadata;
                   return (
-                    <StructuredListRow
-                      className="definition"
-                      key={pipeline.metadata.uid}
-                    >
+                    <StructuredListRow className="definition" key={uid}>
                       <StructuredListCell>
-                        <Link to={`/pipelines/${pipelineName}/runs`}>
-                          {pipelineName}
+                        <Link
+                          to={`/namespaces/${namespace}/pipelines/${name}/runs`}
+                        >
+                          {name}
                         </Link>
                       </StructuredListCell>
+                      {selectedNamespace === ALL_NAMESPACES && (
+                        <StructuredListCell>{namespace}</StructuredListCell>
+                      )}
                       <StructuredListCell>
                         <Link
                           title="pipeline definition"
-                          to={`/pipelines/${pipelineName}`}
+                          to={`/namespaces/${namespace}/pipelines/${name}`}
                         >
                           <Information16 className="resource-info-icon" />
                         </Link>
@@ -119,12 +130,15 @@ Pipelines.defaultProps = {
 };
 
 /* istanbul ignore next */
-function mapStateToProps(state) {
+function mapStateToProps(state, props) {
+  const { namespace: namespaceParam } = props.match.params;
+  const namespace = namespaceParam || getSelectedNamespace(state);
+
   return {
     error: getPipelinesErrorMessage(state),
     loading: isFetchingPipelines(state),
-    namespace: getSelectedNamespace(state),
-    pipelines: getPipelines(state)
+    namespace,
+    pipelines: getPipelines(state, { namespace })
   };
 }
 

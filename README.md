@@ -5,30 +5,34 @@
 Tekton Dashboard is a general purpose, web-based UI for Tekton Pipelines. It allows users to manage and view Tekton Pipeline and Task runs and the resources involved in their creation, execution, and completion.
 
 ![Dashboard UI workloads page](docs/dashboard-ui.png)
-
 ## Install Dashboard
-To install the Dashboard using `ko`:
-```sh
+The Tekton Dashboard has a hosted image located at gcr.io/tekton-nightly/dashboard:latest  
+To install the latest dashboard using this image:
+```
+kubectl apply -f config/release/gcr-tekton-dashboard.yaml
+```
+
+Alternatively, the dashboard can be installed through the same GitHub release asset:
+```
+curl -L https://github.com/tektoncd/dashboard/releases/download/v0/gcr-tekton-dashboard.yaml | kubectl apply -f -
+```
+
+Development installation of the Dashboard uses `ko`:
+```
+sh
 $ docker login
 $ export KO_DOCKER_REPO=docker.io/<mydockername>
-$ npm install
-$ npm run build_ko
-$ ko apply -f config
+$ ./install-dev.sh
 ```
 
-The `ko apply` command will build and push an image of the Tekton Dashboard to the Docker registry which you are logged into. Any Docker registry will do, but in this case it will push to Dockerhub.
+The `install-dev.sh` script will build and push an image of the Tekton Dashboard to the Docker registry which you are logged into. Any Docker registry will do, but in this case it will push to Dockerhub. It will also apply the Pipeline0 definition and task: this allows you to import Tekton resources from Git repositories. It will also build the static web content using `npm` scripts.
 
-The Dashboard can also be installed without `ko`:
+## Install on Minishift
 
-```sh
-$ docker build -t <mydockername>/dashboard:<mytag> .
-$ docker push <mydockername>/dashboard:<mytag>
-```
-- Replace the image path at `config/tekton-dashboard.yaml` with the value for <mydockername>/dashboard:<mytag>
-- Replace the WEB_RESOURCES_DIR value in the same file with the value __./web__
-```
-$ kubectl apply -f config
-```
+1. Install [tektoncd-pipeline-operator](https://github.com/openshift/tektoncd-pipeline-operator#deploy-openshift-pipelines-operator-on-minikube-for-testing)
+2. [Checkout](https://github.com/tektoncd/dashboard/blob/master/DEVELOPMENT.md#checkout-your-fork) the repository
+3. Install deployment config `$oc process -f config/templates/deploy.yaml | oc apply -f-`
+4. Install build config `$oc process -f config/templates/build.yaml | oc apply -f-`
 
 ## Install on Minishift
 
@@ -37,7 +41,8 @@ $ kubectl apply -f config
 3. Install deployment config `$oc process -f config/templates/deploy.yaml | oc apply -f-`
 4. Install build config `$oc process -f build.yaml | oc apply -f-`
 
-## Accessing Dashboard
+## Accessing the Dashboard
+
 The Dashboard has can be accessed through its ClusterIP Service by running `kubectl proxy`. Assuming default is the install namespace for the dashboard, you can access the web UI at `localhost:8001/api/v1/namespaces/default/services/tekton-dashboard:http/proxy/`
 
 ## Want to contribute

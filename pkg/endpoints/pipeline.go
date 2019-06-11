@@ -85,6 +85,7 @@ type ManualPipelineRun struct {
 	REPOURL           string `json:"repourl,omitempty"`
 	HELMSECRET        string `json:"helmsecret,omitempty"`
 	REGISTRYSECRET    string `json:"registrysecret,omitempty"`
+	APPLYDIRECTORY    string `json:"applydirectory,omitempty"`
 }
 
 // PipelineRunUpdateBody - represents a request that a user may provide for updating a PipelineRun
@@ -121,7 +122,7 @@ const gitRepoLabel = "gitRepo"
 
 /* Get all pipelines in a given namespace */
 func (r Resource) getAllPipelines(request *restful.Request, response *restful.Response) {
-	namespace := request.PathParameter("namespace")
+	namespace := utils.GetNamespace(request)
 	pipelines := r.PipelineClient.TektonV1alpha1().Pipelines(namespace)
 	logging.Log.Debugf("In getAllPipelines - namespace: %s", namespace)
 
@@ -161,7 +162,7 @@ func (r Resource) getPipelineImpl(name, namespace string) (v1alpha1.Pipeline, er
 
 /* Get all pipeline runs in a given namespace, filters based on parameters */
 func (r Resource) getAllPipelineRuns(request *restful.Request, response *restful.Response) {
-	namespace := request.PathParameter("namespace")
+	namespace := utils.GetNamespace(request)
 	repository := request.QueryParameter("repository")
 	// FakeClient does not support filtering by arbitrary fields(Only metadata.name/namespace), filtered post List()
 	name := request.QueryParameter("name")
@@ -332,6 +333,10 @@ func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, names
 	if pipelineRunData.HELMSECRET != "" {
 		params = append(params, v1alpha1.Param{Name: "helm-secret", Value: pipelineRunData.HELMSECRET})
 	}
+	if pipelineRunData.APPLYDIRECTORY != "" {
+		params = append(params, v1alpha1.Param{Name: "apply-directory", Value: pipelineRunData.APPLYDIRECTORY})
+	}
+
 	// PipelineRun yaml defines references to resources
 	newPipelineRunData, err := definePipelineRun(generatedPipelineRunName, namespace, serviceAccount, pipelineRunData.REPOURL, pipeline, v1alpha1.PipelineTriggerTypeManual, resources, params)
 	if err != nil {
@@ -371,7 +376,7 @@ func (r Resource) getPipelineResource(request *restful.Request, response *restfu
 
 /* Get all tasks in a given namespace */
 func (r Resource) getAllTasks(request *restful.Request, response *restful.Response) {
-	namespace := request.PathParameter("namespace")
+	namespace := utils.GetNamespace(request)
 	tasks := r.PipelineClient.TektonV1alpha1().Tasks(namespace)
 	logging.Log.Debugf("In getAllTasks: namespace: %s", namespace)
 
@@ -399,7 +404,7 @@ func (r Resource) getTask(request *restful.Request, response *restful.Response) 
 
 /* Get all task runs in a given namespace, filters based on parameters */
 func (r Resource) getAllTaskRuns(request *restful.Request, response *restful.Response) {
-	namespace := request.PathParameter("namespace")
+	namespace := utils.GetNamespace(request)
 	// FakeClient does not support filtering by arbitrary fields(Only metadata.name/namespace), filtered post List()
 	name := request.QueryParameter("name")
 	var queryParams []string
@@ -445,9 +450,16 @@ func (r Resource) getTaskRun(request *restful.Request, response *restful.Respons
 func (r Resource) getPodLog(request *restful.Request, response *restful.Response) {
 	namespace := request.PathParameter("namespace")
 	name := request.PathParameter("name")
+	container := request.QueryParameter("container")
 
-	logging.Log.Debugf("In getPodLog - name: %s, namespace: %s", name, namespace)
-	req := r.K8sClient.CoreV1().Pods(namespace).GetLogs(name, &v1.PodLogOptions{})
+	logging.Log.Debugf("In getPodLog - name: %s, namespace: %s, container %s", name, namespace, container)
+
+	logOptions := &v1.PodLogOptions{}
+	if container != "" {
+		logOptions = &v1.PodLogOptions{Container: container}
+	}
+
+	req := r.K8sClient.CoreV1().Pods(namespace).GetLogs(name, logOptions)
 	podLogs, err := req.Stream()
 	if err != nil {
 		utils.RespondError(response, err, http.StatusNotFound)
@@ -680,7 +692,7 @@ func (r Resource) getPipelineRunLog(request *restful.Request, response *restful.
 
 /* Get all pipeline resources in a given namespace */
 func (r Resource) getAllPipelineResources(request *restful.Request, response *restful.Response) {
-	namespace := request.PathParameter("namespace")
+	namespace := utils.GetNamespace(request)
 	pipelineresources := r.PipelineClient.TektonV1alpha1().PipelineResources(namespace)
 	logging.Log.Debugf("In getAllPipelineResources - namespace: %s", namespace)
 
@@ -753,20 +765,28 @@ func (r Resource) updatePipelineRun(request *restful.Request, response *restful.
 }
 
 // StartPipelineRunController - registers the code that reacts to changes in kube PipelineRuns
-func (r Resource) StartPipelineRunController(stopCh <-chan struct{}) {
-	logging.Log.Debug("Into StartPipelineRunController")
+func (r Resource) StartRunController(stopCh <-chan struct{}) {
+	logging.Log.Debug("Into StartRunController")
 
-	pipelineRunInformerFactory := informers.NewSharedInformerFactory(r.PipelineClient, time.Second*30)
-	pipelineRunInformer := pipelineRunInformerFactory.Tekton().V1alpha1().PipelineRuns()
+	runsInformerFactory := informers.NewSharedInformerFactory(r.PipelineClient, time.Second*30)
+	pipelineRunInformer := runsInformerFactory.Tekton().V1alpha1().PipelineRuns()
 	pipelineRunInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc:    r.pipelineRunCreated,
 		UpdateFunc: r.pipelineRunUpdated,
 		DeleteFunc: r.pipelineRunDeleted,
 	})
-	go pipelineRunInformerFactory.Start(stopCh)
-	logging.Log.Info("PipelineRun Controller Started")
+	taskRunInformer := runsInformerFactory.Tekton().V1alpha1().TaskRuns()
+	taskRunInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
+		AddFunc:    r.taskRunCreated,
+		UpdateFunc: r.taskRunUpdated,
+		DeleteFunc: r.taskRunDeleted,
+	})
+
+	go runsInformerFactory.Start(stopCh)
+	logging.Log.Info("Run Controller Started")
 }
 
+//pipeline run events
 func (r Resource) pipelineRunCreated(obj interface{}) {
 	logging.Log.Debug("In pipelineRunCreated")
 
@@ -775,7 +795,7 @@ func (r Resource) pipelineRunCreated(obj interface{}) {
 		Payload:     obj.(*v1alpha1.PipelineRun),
 	}
 
-	pipelineRunsChannel <- data
+	runsChannel <- data
 }
 
 func (r Resource) pipelineRunUpdated(oldObj, newObj interface{}) {
@@ -785,7 +805,7 @@ func (r Resource) pipelineRunUpdated(oldObj, newObj interface{}) {
 			MessageType: broadcaster.PipelineRunUpdated,
 			Payload:     newObj.(*v1alpha1.PipelineRun),
 		}
-		pipelineRunsChannel <- data
+		runsChannel <- data
 	}
 }
 
@@ -797,5 +817,42 @@ func (r Resource) pipelineRunDeleted(obj interface{}) {
 		Payload:     obj.(*v1alpha1.PipelineRun),
 	}
 
-	pipelineRunsChannel <- data
+	runsChannel <- data
 }
+
+
+// task run events
+func (r Resource) taskRunCreated(obj interface{}) {
+	logging.Log.Debug("In taskRunCreated")
+
+	data := broadcaster.SocketData{
+		MessageType: broadcaster.TaskRunCreated,
+		Payload:     obj.(*v1alpha1.TaskRun),
+	}
+
+	runsChannel <- data
+}
+
+func (r Resource) taskRunUpdated(oldObj, newObj interface{}) {
+
+	if newObj.(*v1alpha1.TaskRun).GetResourceVersion() != oldObj.(*v1alpha1.TaskRun).GetResourceVersion() {
+		data := broadcaster.SocketData{
+			MessageType: broadcaster.TaskRunUpdated,
+			Payload:     newObj.(*v1alpha1.TaskRun),
+		}
+		runsChannel <- data
+	}
+}
+
+func (r Resource) taskRunDeleted(obj interface{}) {
+	logging.Log.Debug("In taskRunDeleted")
+
+	data := broadcaster.SocketData{
+		MessageType: broadcaster.TaskRunDeleted,
+		Payload:     obj.(*v1alpha1.TaskRun),
+	}
+
+	runsChannel <- data
+}
+
+

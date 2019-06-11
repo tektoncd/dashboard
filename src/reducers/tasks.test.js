@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import tasksReducer, * as selectors from './tasks';
+import { ALL_NAMESPACES } from '../constants';
 
 it('handles init or unknown actions', () => {
   expect(tasksReducer(undefined, { type: 'does_not_exist' })).toEqual({
@@ -68,6 +69,13 @@ it('getTasks', () => {
   const namespace = 'namespace';
   const state = { byNamespace: {} };
   expect(selectors.getTasks(state, namespace)).toEqual([]);
+});
+
+it('getTasks all namespaces', () => {
+  const namespace = ALL_NAMESPACES;
+  const task = { fake: 'task' };
+  const state = { byId: { id: task } };
+  expect(selectors.getTasks(state, namespace)).toEqual([task]);
 });
 
 it('getTask', () => {

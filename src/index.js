@@ -16,14 +16,22 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 
 import './utils/polyfills';
-import store from './store';
+import { configureStore } from './store';
+import { getRunsWebSocketURL } from './api';
 
 import App from './containers/App';
+
+const runsWebSocket = new WebSocket(getRunsWebSocketURL());
+function closeSocket() {
+  runsWebSocket.close();
+}
+
+const store = configureStore({ runsWebSocket });
 
 /* istanbul ignore next */
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    <App onUnload={closeSocket} />
   </Provider>,
   document.getElementById('root')
 );

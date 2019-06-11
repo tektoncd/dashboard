@@ -94,12 +94,12 @@ storiesOf('ServiceAccountsDropdown', module)
       </Provider>
     );
   })
-  .add('loading', () => {
+  .add('empty', () => {
     const store = mockStore({
       serviceAccounts: {
-        byId: serviceAccountsById,
-        byNamespace: serviceAccountsByNamespace,
-        isFetching: true
+        byId: {},
+        byNamespace: {},
+        isFetching: false
       },
       namespaces: {
         byName: namespacesByName,

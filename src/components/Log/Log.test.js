@@ -21,7 +21,7 @@ it('Log renders default content', () => {
 });
 
 it('Log renders the provided content', () => {
-  const { queryByText } = render(<Log logs={['testing']} />);
+  const { queryByText } = render(<Log logs="testing" />);
   expect(queryByText(/testing/i)).toBeTruthy();
 });
 
@@ -31,6 +31,6 @@ it('Log renders trailer', () => {
 });
 
 it('Log renders loading state', () => {
-  const { queryByText } = render(<Log loading logs={['testing']} />);
+  const { queryByText } = render(<Log loading logs="testing" />);
   expect(queryByText(/testing/i)).toBeFalsy();
 });

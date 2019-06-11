@@ -20,7 +20,6 @@ import thunk from 'redux-thunk';
 import * as API from '../../api';
 import TaskRuns from './TaskRuns';
 import { renderWithRouter } from '../../utils/test';
-import store from '../../store';
 
 beforeEach(jest.resetAllMocks);
 
@@ -31,18 +30,33 @@ it('TaskRunsContainer renders', async () => {
       taskName
     }
   };
-
+  const middleware = [thunk];
+  const mockStore = configureStore(middleware);
+  const testStore = mockStore({
+    tasks: {
+      byNamespace: { default: {} }
+    },
+    namespaces: {
+      selected: 'default'
+    },
+    taskRuns: {
+      byId: {},
+      byNamespace: { default: {} },
+      errorMessage: null,
+      isFetching: false
+    }
+  });
   jest
     .spyOn(API, 'getTask')
     .mockImplementation(() => [{ metadata: { name: taskName } }]);
   jest.spyOn(API, 'getTaskRuns').mockImplementation(() => []);
 
   const { getByText } = renderWithRouter(
-    <Provider store={store}>
+    <Provider store={testStore}>
       <TaskRuns match={match} />
     </Provider>
   );
-  await waitForElement(() => getByText(/tasks/i));
+  await waitForElement(() => getByText(/Task/i));
 });
 
 it('TaskRunsContainer handles info state', async () => {

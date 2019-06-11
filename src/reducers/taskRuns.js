@@ -15,8 +15,18 @@ import { combineReducers } from 'redux';
 import keyBy from 'lodash.keyby';
 import merge from 'lodash.merge';
 
+import { ALL_NAMESPACES } from '../constants';
+
 function byId(state = {}, action) {
   switch (action.type) {
+    case 'TaskRunCreated':
+    case 'TaskRunUpdated':
+      const runById = { [action.payload.metadata.uid]: action.payload };
+      return merge({}, state, runById);
+    case 'TaskRunDeleted':
+      const newState = { ...state };
+      delete newState[action.payload.metadata.uid];
+      return newState;
     case 'TASK_RUNS_FETCH_SUCCESS':
       return { ...state, ...keyBy(action.data, 'metadata.uid') };
     default:
@@ -26,6 +36,20 @@ function byId(state = {}, action) {
 
 function byNamespace(state = {}, action) {
   switch (action.type) {
+    case 'TaskRunCreated':
+    case 'TaskRunUpdated':
+      const run = {
+        [action.payload.metadata.namespace]: {
+          [action.payload.metadata.name]: action.payload.metadata.uid
+        }
+      };
+      return merge({}, state, run);
+    case 'TaskRunDeleted':
+      const newState = { ...state };
+      delete newState[action.payload.metadata.namespace][
+        action.payload.metadata.name
+      ];
+      return newState;
     case 'TASK_RUNS_FETCH_SUCCESS':
       const namespaces = action.data.reduce((accumulator, taskRun) => {
         const { name, namespace, uid } = taskRun.metadata;
@@ -74,6 +98,10 @@ export default combineReducers({
 });
 
 export function getTaskRuns(state, namespace) {
+  if (namespace === ALL_NAMESPACES) {
+    return Object.values(state.byId);
+  }
+
   const taskRuns = state.byNamespace[namespace];
   return taskRuns ? Object.values(taskRuns).map(id => state.byId[id]) : [];
 }

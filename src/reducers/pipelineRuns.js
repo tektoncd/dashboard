@@ -15,8 +15,18 @@ import { combineReducers } from 'redux';
 import keyBy from 'lodash.keyby';
 import merge from 'lodash.merge';
 
+import { ALL_NAMESPACES } from '../constants';
+
 function byId(state = {}, action) {
   switch (action.type) {
+    case 'PipelineRunCreated':
+    case 'PipelineRunUpdated':
+      const runById = { [action.payload.metadata.uid]: action.payload };
+      return merge({}, state, runById);
+    case 'PipelineRunDeleted':
+      const newState = { ...state };
+      delete newState[action.payload.metadata.uid];
+      return newState;
     case 'PIPELINE_RUNS_FETCH_SUCCESS':
       return { ...state, ...keyBy(action.data, 'metadata.uid') };
     default:
@@ -26,6 +36,20 @@ function byId(state = {}, action) {
 
 function byNamespace(state = {}, action) {
   switch (action.type) {
+    case 'PipelineRunCreated':
+    case 'PipelineRunUpdated':
+      const run = {
+        [action.payload.metadata.namespace]: {
+          [action.payload.metadata.name]: action.payload.metadata.uid
+        }
+      };
+      return merge({}, state, run);
+    case 'PipelineRunDeleted':
+      const newState = { ...state };
+      delete newState[action.payload.metadata.namespace][
+        action.payload.metadata.name
+      ];
+      return newState;
     case 'PIPELINE_RUNS_FETCH_SUCCESS':
       const namespaces = action.data.reduce((accumulator, pipelineRun) => {
         const { name, namespace, uid } = pipelineRun.metadata;
@@ -74,6 +98,10 @@ export default combineReducers({
 });
 
 export function getPipelineRuns(state, namespace) {
+  if (namespace === ALL_NAMESPACES) {
+    return Object.values(state.byId);
+  }
+
   const pipelineRuns = state.byNamespace[namespace];
   return pipelineRuns
     ? Object.values(pipelineRuns).map(id => state.byId[id])

@@ -36,7 +36,25 @@ describe('checkStatus', () => {
   it('returns json on success', () => {
     const data = 'fake data';
     const json = jest.fn(() => data);
-    expect(checkStatus({ ok: true, json })).toEqual(data);
+    expect(
+      checkStatus({
+        ok: true,
+        headers: { get: () => 'application/json' },
+        json
+      })
+    ).toEqual(data);
+  });
+
+  it('return text on success', () => {
+    const data = 'fake data';
+    const text = jest.fn(() => data);
+    expect(
+      checkStatus({
+        ok: true,
+        headers: { get: () => 'text/plain' },
+        text
+      })
+    ).toEqual(data);
   });
 
   it('returns headers on successful create', () => {

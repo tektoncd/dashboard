@@ -26,8 +26,13 @@ it('Breadcrumbs renders with default content', () => {
 it('Breadcrumbs removes unnecessary segments', () => {
   const { queryByText } = renderWithRouter(
     <Breadcrumbs
-      match={{ url: '/pipelines/demo-pipeline/runs/demo-pipeline-run-1' }}
+      match={{
+        url:
+          '/namespaces/default/pipelines/demo-pipeline/runs/demo-pipeline-run-1'
+      }}
     />
   );
+  expect(queryByText(/namespaces/i)).toBeFalsy();
+  expect(queryByText(/default/i)).toBeFalsy();
   expect(queryByText(/runs/i)).toBeFalsy();
 });

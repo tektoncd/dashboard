@@ -12,42 +12,63 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
+import { withRouter } from 'react-router-dom';
 import Log from '../../components/Log';
-import { getTaskRunLog } from '../../api';
-import { getSelectedNamespace } from '../../reducers';
+import { getPodLog } from '../../api';
 
 export class LogContainer extends Component {
-  state = { logs: [] };
+  state = { logs: '' };
 
   componentDidMount() {
     this.loadLog();
+    this.initPolling();
   }
 
   componentDidUpdate(prevProps) {
-    const { stepName, taskRunName } = this.props;
+    const { match, stepName, podName } = this.props;
+    const { namespace } = match.params;
+    const {
+      match: prevMatch,
+      stepName: prevStepName,
+      podName: prevPodName
+    } = prevProps;
+    const { namespace: prevNamespace } = prevMatch.params;
+
     if (
-      taskRunName !== prevProps.taskRunName ||
-      stepName !== prevProps.stepName
+      podName !== prevPodName ||
+      stepName !== prevStepName ||
+      namespace !== prevNamespace
     ) {
       this.loadLog();
     }
+    this.initPolling();
   }
 
+  componentWillUnmount() {
+    clearInterval(this.timer);
+  }
+
+  initPolling = () => {
+    const { stepStatus } = this.props;
+    if (!this.timer && stepStatus && !stepStatus.terminated) {
+      this.timer = setInterval(() => this.loadLog(), 4000);
+    }
+    if (this.timer && stepStatus && stepStatus.terminated) {
+      clearInterval(this.timer);
+    }
+  };
+
   async loadLog() {
-    const { namespace, stepName, taskRunName } = this.props;
-    if (taskRunName) {
+    const { match, stepName, podName } = this.props;
+    const { namespace } = match.params;
+    if (podName) {
       try {
-        const logs = await getTaskRunLog(taskRunName, namespace);
         const buildStepName = `build-step-${stepName}`;
-        const stepLog =
-          (logs.StepContainers &&
-            logs.StepContainers.find(l => l.Name === buildStepName)) ||
-          {};
-        this.setState({ logs: stepLog.Logs || undefined });
+        const logs = await getPodLog(podName, namespace, buildStepName);
+        this.setState({ logs: logs || undefined });
       } catch {
-        this.setState({ logs: ['Unable to fetch log'] });
+        this.setState({ logs: 'Unable to fetch log' });
       }
     }
   }
@@ -59,11 +80,4 @@ export class LogContainer extends Component {
   }
 }
 
-/* istanbul ignore next */
-function mapStateToProps(state) {
-  return {
-    namespace: getSelectedNamespace(state)
-  };
-}
-
-export default connect(mapStateToProps)(LogContainer);
+export default withRouter(LogContainer);

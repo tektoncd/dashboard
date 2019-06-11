@@ -23,7 +23,7 @@ import (
 	"strings"
 	"testing"
 
-	v1alpha1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
+	"github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -38,55 +38,65 @@ func TestTask(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error creating namespace '%s': %v\n", namespace, err)
 	}
+	namespace2 := "ns2"
+	_, secondNamespaceError := r.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace2}})
+	if secondNamespaceError != nil {
+		t.Fatalf("Error creating namespace '%s': %v\n", namespace2, secondNamespaceError)
+	}
 
-	tasks := []v1alpha1.Task{
-		v1alpha1.Task{
+	ns1Tasks := []v1alpha1.Task{
+		{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      "Task1",
 				Namespace: namespace,
 			},
 			Spec: v1alpha1.TaskSpec{},
 		},
-		v1alpha1.Task{
+		{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      "Task2",
 				Namespace: namespace,
 			},
 			Spec: v1alpha1.TaskSpec{},
 		},
-		v1alpha1.Task{
+	}
+
+	ns2Tasks := []v1alpha1.Task{
+		{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      "Task3",
-				Namespace: namespace,
+				Namespace: namespace2,
 			},
 			Spec: v1alpha1.TaskSpec{},
 		},
 	}
+
+	var tasks []v1alpha1.Task
+	tasks = append(tasks, ns1Tasks...)
+	tasks = append(tasks, ns2Tasks...)
+
 	for _, task := range tasks {
-		_, err := r.PipelineClient.TektonV1alpha1().Tasks(namespace).Create(&task)
+		_, err := r.PipelineClient.TektonV1alpha1().Tasks(task.ObjectMeta.Namespace).Create(&task)
 		if err != nil {
-			t.Fatalf("Error creating task '%s': %v\n", task.Name, err)
+			t.Fatalf("Error creating task '%s': %v\n", task.ObjectMeta.Name, err)
 		}
 	}
 
 	// Test getAllTasks function
-	httpReq := dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/tasks", server.URL, namespace), nil)
-	response, err := http.DefaultClient.Do(httpReq)
-	if err != nil {
-		t.Fatalf("getAllTasks response error: %v\n", err)
+	httpReq := dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/*/tasks", server.URL), nil)
+	response, _ := http.DefaultClient.Do(httpReq)
+	responseTaskList := v1alpha1.TaskList{}
+	if err := json.NewDecoder(response.Body).Decode(&responseTaskList); err != nil {
+		t.Fatalf("Error decoding getAllTasks response: %v\n", err)
 	} else {
-		responseTaskList := v1alpha1.TaskList{}
-		if err := json.NewDecoder(response.Body).Decode(&responseTaskList); err != nil {
-			t.Fatalf("Error decoding getAllTasks response: %v\n", err)
-		} else {
-			if len(responseTaskList.Items) != len(tasks) {
-				t.Error("All expected tasks were not returned")
-			}
+		if len(responseTaskList.Items) != len(tasks) {
+			t.Errorf("All expected tasks were not returned: expected %v, actual %v", len(tasks), len(responseTaskList.Items))
 		}
 	}
+
 	// Test getTask function
 	for _, task := range tasks {
-		httpReq := dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/tasks/%s", server.URL, namespace, task.Name), nil)
+		httpReq := dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/tasks/%s", server.URL, task.ObjectMeta.Namespace, task.Name), nil)
 		response, err := http.DefaultClient.Do(httpReq)
 		if err != nil {
 			t.Fatalf("Error getting task '%s': %v\n", task.Name, err)
@@ -101,6 +111,22 @@ func TestTask(t *testing.T) {
 			t.Fatalf("Response object %v did not equal expected %v\n", responseTask, task)
 		}
 	}
+
+	// Test getAllTasks for namespace function
+	httpReq = dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/tasks", server.URL, namespace), nil)
+	response, err = http.DefaultClient.Do(httpReq)
+	if err != nil {
+		t.Fatalf("getAllTasks response error: %v\n", err)
+	} else {
+		responseTaskList := v1alpha1.TaskList{}
+		if err := json.NewDecoder(response.Body).Decode(&responseTaskList); err != nil {
+			t.Fatalf("Error decoding getAllTasks response: %v\n", err)
+		} else {
+			if len(responseTaskList.Items) != len(ns1Tasks) {
+				t.Errorf("All expected tasks were not returned: expected %v, actual %v", len(ns1Tasks), len(responseTaskList.Items))
+			}
+		}
+	}
 }
 
 // Pipeline test
@@ -111,56 +137,65 @@ func TestPipeline(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error creating namespace '%s': %v\n", namespace, err)
 	}
+	namespace2 := "ns2"
+	_, secondNamespaceError := r.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace2}})
+	if secondNamespaceError != nil {
+		t.Fatalf("Error creating namespace '%s': %v\n", namespace2, secondNamespaceError)
+	}
 
-	pipelines := []v1alpha1.Pipeline{
-		v1alpha1.Pipeline{
+	ns1Pipelines := []v1alpha1.Pipeline{
+		{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      "Pipeline1",
 				Namespace: namespace,
 			},
 			Spec: v1alpha1.PipelineSpec{},
 		},
-		v1alpha1.Pipeline{
+		{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      "Pipeline2",
 				Namespace: namespace,
 			},
 			Spec: v1alpha1.PipelineSpec{},
 		},
-		v1alpha1.Pipeline{
+	}
+
+	ns2Pipelines := []v1alpha1.Pipeline{
+		{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      "Pipeline3",
-				Namespace: namespace,
+				Namespace: namespace2,
 			},
 			Spec: v1alpha1.PipelineSpec{},
 		},
 	}
 
+	var pipelines []v1alpha1.Pipeline
+	pipelines = append(pipelines, ns1Pipelines...)
+	pipelines = append(pipelines, ns2Pipelines...)
+
 	for _, pipeline := range pipelines {
-		_, err := r.PipelineClient.TektonV1alpha1().Pipelines(namespace).Create(&pipeline)
+		_, err := r.PipelineClient.TektonV1alpha1().Pipelines(pipeline.ObjectMeta.Namespace).Create(&pipeline)
 		if err != nil {
 			t.Fatalf("Error creating pipeline '%s': %v\n", pipeline.Name, err)
 		}
 	}
 
 	// Test getAllPipelines function
-	httpReq := dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/pipelines", server.URL, namespace), nil)
-	response, err := http.DefaultClient.Do(httpReq)
-	if err != nil {
-		t.Fatalf("getAllPipelines response error: %v\n", err)
+	httpReq := dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/*/pipelines", server.URL), nil)
+	response, _ := http.DefaultClient.Do(httpReq)
+	responsePipelineList := v1alpha1.PipelineList{}
+	if err := json.NewDecoder(response.Body).Decode(&responsePipelineList); err != nil {
+		t.Fatalf("Error decoding getAllPipelines response: %v\n", err)
 	} else {
-		responsePipelineList := v1alpha1.PipelineList{}
-		if err := json.NewDecoder(response.Body).Decode(&responsePipelineList); err != nil {
-			t.Fatalf("Error decoding getAllPipelines response: %v\n", err)
-		} else {
-			if len(responsePipelineList.Items) != len(pipelines) {
-				t.Error("All expected pipelines were not returned")
-			}
+		if len(responsePipelineList.Items) != len(pipelines) {
+			t.Errorf("All expected pipelines were not returned %v, actual %v", len(pipelines), len(responsePipelineList.Items))
 		}
 	}
+
 	// Test getPipeline function
 	for _, pipeline := range pipelines {
-		httpReq := dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/pipelines/%s", server.URL, namespace, pipeline.Name), nil)
+		httpReq := dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/pipelines/%s", server.URL, pipeline.ObjectMeta.Namespace, pipeline.Name), nil)
 		response, err := http.DefaultClient.Do(httpReq)
 		if err != nil {
 			t.Fatalf("Error getting pipeline '%s': %v\n", pipeline.Name, err)
@@ -175,6 +210,23 @@ func TestPipeline(t *testing.T) {
 			t.Fatalf("Response object %v did not equal expected %v\n", responsePipeline, pipeline)
 		}
 	}
+
+	// Test getAllPipelines in a namespace function
+	httpReq = dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/pipelines", server.URL, namespace), nil)
+	response, err = http.DefaultClient.Do(httpReq)
+	if err != nil {
+		t.Fatalf("getAllPipelines response error: %v\n", err)
+	} else {
+		responsePipelineList := v1alpha1.PipelineList{}
+		if err := json.NewDecoder(response.Body).Decode(&responsePipelineList); err != nil {
+			t.Fatalf("Error decoding getAllPipelines response: %v\n", err)
+		} else {
+			if len(responsePipelineList.Items) != len(ns1Pipelines) {
+				t.Errorf("All expected pipelines were not returned %v, actual %v", len(ns1Pipelines), len(responsePipelineList.Items))
+			}
+		}
+	}
+
 }
 
 // TaskRun test
@@ -246,7 +298,7 @@ func TestTaskRun(t *testing.T) {
 	}
 
 	// Test getAllTaskRuns function
-	httpReq := dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/taskruns", server.URL, namespace), nil)
+	httpReq := dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/*/taskruns", server.URL), nil)
 	response, err := http.DefaultClient.Do(httpReq)
 	if err != nil {
 		t.Fatalf("getAllTaskRuns response error: %v\n", err)
@@ -382,7 +434,7 @@ func TestPipelineRun(t *testing.T) {
 	}
 
 	// Test getAllPipelineRuns function
-	httpReq := dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/pipelineruns", server.URL, namespace), nil)
+	httpReq := dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/*/pipelineruns", server.URL), nil)
 	response, err := http.DefaultClient.Do(httpReq)
 	if err != nil {
 		t.Fatalf("getAllPipelineRuns response error: %v\n", err)
@@ -706,7 +758,6 @@ func TestPipelineRunLog(t *testing.T) {
 	2: 400 (bad request)
 	3: 404 (no such PipelineRun found in this namespace)
 	4: 500 (internal server error: we couldn't do the update)
-
 	The manual testing for this can be done as follows. Build the devops-back-end image, configure the handler/git repo yaml to point to a repository so you have a webhook.
 	Make sure you've got the templates all applied from the config directory so you've got a Pipeline and Task definitions.
 	Push code to the repository after verifying you've got a webhook and this kicks off a PipelineRun.

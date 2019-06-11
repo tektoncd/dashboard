@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import pipelinesReducer, * as selectors from './pipelines';
+import { ALL_NAMESPACES } from '../constants';
 
 it('handles init or unknown actions', () => {
   expect(pipelinesReducer(undefined, { type: 'does_not_exist' })).toEqual({
@@ -68,6 +69,13 @@ it('getPipelines', () => {
   const namespace = 'namespace';
   const state = { byNamespace: {} };
   expect(selectors.getPipelines(state, namespace)).toEqual([]);
+});
+
+it('getPipelines all namespaces', () => {
+  const namespace = ALL_NAMESPACES;
+  const pipeline = { fake: 'pipeline' };
+  const state = { byId: { id: pipeline } };
+  expect(selectors.getPipelines(state, namespace)).toEqual([pipeline]);
 });
 
 it('getPipeline', () => {

@@ -21,71 +21,44 @@ import {
 } from '../../reducers';
 import { fetchServiceAccounts } from '../../actions/serviceAccounts';
 import TooltipDropdown from '../../components/TooltipDropdown';
+import { ALL_NAMESPACES } from '../../constants';
 
 class ServiceAccountsDropdown extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      selectedItem: ''
-    };
-
-    this.onChange = this.onChange.bind(this);
-    this.resetSelectedItem = this.resetSelectedItem.bind(this);
-  }
-
   componentDidMount() {
-    this.props.fetchServiceAccounts();
+    const { namespace } = this.props;
+    this.props.fetchServiceAccounts({ namespace });
   }
 
   componentDidUpdate(prevProps) {
     const { namespace } = this.props;
     if (namespace !== prevProps.namespace) {
-      this.props.fetchServiceAccounts();
-      this.resetSelectedItem();
-    }
-  }
-
-  onChange({ selectedItem }) {
-    this.setState({
-      selectedItem
-    });
-    if (this.props.onChange) {
-      this.props.onChange({ selectedItem });
-    }
-  }
-
-  resetSelectedItem() {
-    const prevSelectedItem = this.state.selectedItem;
-    this.setState({
-      selectedItem: ''
-    });
-    if (prevSelectedItem !== '' && this.props.onChange) {
-      this.props.onChange({ selectedItem: '' });
+      this.props.fetchServiceAccounts({ namespace });
     }
   }
 
   render() {
-    return (
-      <TooltipDropdown
-        {...this.props}
-        selectedItem={this.state.selectedItem}
-        onChange={this.onChange}
-      />
-    );
+    const { namespace, ...rest } = this.props;
+    const emptyText =
+      namespace === ALL_NAMESPACES
+        ? `No Service Accounts found`
+        : `No Service Accounts found in the '${namespace}' namespace`;
+    return <TooltipDropdown {...rest} emptyText={emptyText} />;
   }
 }
 
 ServiceAccountsDropdown.defaultProps = {
   items: [],
-  loading: true,
-  label: 'Select ServiceAccount'
+  loading: false,
+  label: 'Select Service Account',
+  titleText: 'Service Account'
 };
 
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
+  const namespace = ownProps.namespace || getSelectedNamespace(state);
   return {
-    items: getServiceAccounts(state).map(sa => sa.metadata.name),
+    items: getServiceAccounts(state, { namespace }).map(sa => sa.metadata.name),
     loading: isFetchingServiceAccounts(state),
-    namespace: getSelectedNamespace(state)
+    namespace
   };
 }
 

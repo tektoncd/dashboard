@@ -45,6 +45,10 @@ export function getExtensionBundleURL(name, bundlelocation) {
   return `${getExtensionBaseURL(name)}/${bundlelocation}`;
 }
 
+export function getRunsWebSocketURL() {
+  return `${apiRoot.replace(/^http/, 'ws')}/v1/websockets/runs`;
+}
+
 export function checkData(data) {
   if (data.items) {
     return data.items;
@@ -118,8 +122,12 @@ export function getPipelineResource(name, namespace) {
   return get(uri);
 }
 
-export function getPodLog(name, namespace) {
-  const uri = getAPI('logs', { name, namespace });
+export function getPodLog(name, namespace, container) {
+  let queryParams;
+  if (container) {
+    queryParams = { container };
+  }
+  const uri = `${getAPI('logs', { name, namespace }, queryParams)}`;
   return get(uri);
 }
 
@@ -128,9 +136,9 @@ export function getTaskRunLog(name, namespace) {
   return get(uri);
 }
 
-export function createPipelineRun(payload) {
-  const uri = `${apiRoot}/`;
-  return post(uri, payload);
+export function createPipelineRun(params, namespace) {
+  const uri = getAPI('pipelineruns', { namespace });
+  return post(uri, params);
 }
 
 export function getCredentials(namespace) {

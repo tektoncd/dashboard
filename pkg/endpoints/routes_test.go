@@ -253,9 +253,9 @@ func fakeCRD(t *testing.T, crdType string, identifier string) interface{} {
 	case "credentials":
 		return &credential{
 			Name:        "fakeresource",
-			AccessToken: "thisismyaccesstoken",
-			Description: "access token de jour",
-			Type:        "accesstoken",
+			Username:    "thisismyusername",
+			Password:    "password",
+			Description: "cred de jour",
 			URL: map[string]string{
 				"tekton.dev/git-0": "https://github.com",
 			},

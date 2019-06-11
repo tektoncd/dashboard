@@ -11,8 +11,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import store from '.';
+import * as store from '.';
+
+beforeEach(jest.resetAllMocks);
 
 it('store', () => {
-  expect(store.getState()).toBeDefined();
+  store.configureStore({});
+  expect(store.getStore().getState()).toBeDefined();
 });

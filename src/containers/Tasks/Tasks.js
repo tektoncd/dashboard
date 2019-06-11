@@ -25,6 +25,7 @@ import {
 } from 'carbon-components-react';
 
 import Information16 from '@carbon/icons-react/lib/information/16';
+import { ALL_NAMESPACES } from '../../constants';
 import { fetchTasks } from '../../actions/tasks';
 import {
   getSelectedNamespace,
@@ -48,7 +49,7 @@ export /* istanbul ignore next */ class Tasks extends Component {
   }
 
   render() {
-    const { error, loading, tasks } = this.props;
+    const { error, loading, namespace: selectedNamespace, tasks } = this.props;
 
     return (
       <>
@@ -72,6 +73,9 @@ export /* istanbul ignore next */ class Tasks extends Component {
               <StructuredListHead>
                 <StructuredListRow head>
                   <StructuredListCell head>Task</StructuredListCell>
+                  {selectedNamespace === ALL_NAMESPACES && (
+                    <StructuredListCell head>Namespace</StructuredListCell>
+                  )}
                   <StructuredListCell head />
                 </StructuredListRow>
               </StructuredListHead>
@@ -82,17 +86,24 @@ export /* istanbul ignore next */ class Tasks extends Component {
                   </StructuredListRow>
                 )}
                 {tasks.map(task => {
-                  const taskName = task.metadata.name;
+                  const { name: taskName, namespace, uid } = task.metadata;
                   return (
-                    <StructuredListRow
-                      className="definition"
-                      key={task.metadata.uid}
-                    >
+                    <StructuredListRow className="definition" key={uid}>
                       <StructuredListCell>
-                        <Link to={`/tasks/${taskName}/runs`}>{taskName}</Link>
+                        <Link
+                          to={`/namespaces/${namespace}/tasks/${taskName}/runs`}
+                        >
+                          {taskName}
+                        </Link>
                       </StructuredListCell>
+                      {selectedNamespace === ALL_NAMESPACES && (
+                        <StructuredListCell>{namespace}</StructuredListCell>
+                      )}
                       <StructuredListCell>
-                        <Link title="task definition" to={`/tasks/${taskName}`}>
+                        <Link
+                          title="task definition"
+                          to={`/namespaces/${namespace}/tasks/${taskName}`}
+                        >
                           <Information16 className="resource-info-icon" />
                         </Link>
                       </StructuredListCell>
@@ -113,12 +124,15 @@ Tasks.defaultProps = {
 };
 
 /* istanbul ignore next */
-function mapStateToProps(state) {
+function mapStateToProps(state, props) {
+  const { namespace: namespaceParam } = props.match.params;
+  const namespace = namespaceParam || getSelectedNamespace(state);
+
   return {
     error: getTasksErrorMessage(state),
     loading: isFetchingTasks(state),
-    namespace: getSelectedNamespace(state),
-    tasks: getTasks(state)
+    namespace,
+    tasks: getTasks(state, { namespace })
   };
 }
 

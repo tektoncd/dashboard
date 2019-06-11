@@ -15,6 +15,8 @@ import { combineReducers } from 'redux';
 import keyBy from 'lodash.keyby';
 import merge from 'lodash.merge';
 
+import { ALL_NAMESPACES } from '../constants';
+
 function byId(state = {}, action) {
   switch (action.type) {
     case 'SERVICE_ACCOUNTS_FETCH_SUCCESS':
@@ -74,6 +76,10 @@ export default combineReducers({
 });
 
 export function getServiceAccounts(state, namespace) {
+  if (namespace === ALL_NAMESPACES) {
+    return Object.values(state.byId);
+  }
+
   const serviceAccounts = state.byNamespace[namespace];
   return serviceAccounts
     ? Object.values(serviceAccounts).map(id => state.byId[id])

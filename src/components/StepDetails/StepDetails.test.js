@@ -13,16 +13,16 @@ limitations under the License.
 
 import React from 'react';
 import { Provider } from 'react-redux';
-import { render } from 'react-testing-library';
 import configureStore from 'redux-mock-store';
 
+import { renderWithRouter } from '../../utils/test';
 import StepDetails from './StepDetails';
 
 it('StepDetails renders', () => {
   const mockStore = configureStore();
   const store = mockStore({ namespaces: { selected: 'default' } });
 
-  render(
+  renderWithRouter(
     <Provider store={store}>
       <StepDetails />
     </Provider>

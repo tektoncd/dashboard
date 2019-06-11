@@ -14,36 +14,50 @@ limitations under the License.
 import React from 'react';
 import { Dropdown, DropdownSkeleton } from 'carbon-components-react';
 
-const itemToElement = ({ text }) => {
+const itemToElement = ({ id, text }) => {
   return (
-    <div key={text} title={text}>
+    <div key={id} title={text}>
       {text}
     </div>
   );
 };
 
-const itemToString = ({ text }) => text;
+const itemToString = item => (item ? item.text : '');
 
-const itemStringToObject = text => ({ text });
+const itemToObject = item => {
+  if (typeof item === 'string') {
+    return { id: item, text: item };
+  }
 
-const TooltipDropdown = ({ items, loading, ...dropdownProps }) => {
+  return item;
+};
+
+const TooltipDropdown = ({
+  items,
+  loading,
+  label,
+  emptyText,
+  ...dropdownProps
+}) => {
   if (loading) {
     return <DropdownSkeleton {...dropdownProps} />;
   }
-  const options = items.map(itemStringToObject);
+  const options = items.map(itemToObject);
   return (
     <Dropdown
       {...dropdownProps}
       itemToElement={itemToElement}
       items={options}
       itemToString={itemToString}
+      label={options.length === 0 ? emptyText : label}
     />
   );
 };
 
 TooltipDropdown.defaultProps = {
   items: [],
-  loading: true
+  loading: false,
+  emptyText: 'No items found'
 };
 
 export default TooltipDropdown;

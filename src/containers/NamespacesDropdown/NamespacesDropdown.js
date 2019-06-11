@@ -16,21 +16,40 @@ import { connect } from 'react-redux';
 
 import TooltipDropdown from '../../components/TooltipDropdown';
 import { getNamespaces, isFetchingNamespaces } from '../../reducers';
+import { ALL_NAMESPACES } from '../../constants';
 
 const NamespacesDropdown = props => {
   return <TooltipDropdown {...props} />;
 };
 
+const allNamespacesLabel = 'All Namespaces';
+
 NamespacesDropdown.defaultProps = {
+  allNamespacesLabel,
   items: [],
-  loading: true,
-  label: 'Select Namespace'
+  loading: false,
+  label: 'Select Namespace',
+  emptyText: 'No Namespaces found',
+  showAllNamespaces: false
 };
 
-function mapStateToProps(state) {
+/* istanbul ignore next */
+function mapStateToProps(state, ownProps) {
+  const { selectedItem, showAllNamespaces } = ownProps;
+
+  if (selectedItem && selectedItem.id === ALL_NAMESPACES) {
+    selectedItem.text = allNamespacesLabel;
+  }
+
+  const items = getNamespaces(state);
+  if (showAllNamespaces) {
+    items.unshift({ id: ALL_NAMESPACES, text: allNamespacesLabel });
+  }
+
   return {
-    items: getNamespaces(state),
-    loading: isFetchingNamespaces(state)
+    items,
+    loading: isFetchingNamespaces(state),
+    selectedItem
   };
 }
 

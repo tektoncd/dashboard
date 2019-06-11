@@ -29,4 +29,7 @@ storiesOf('TooltipDropdown', module)
   })
   .add('loading', () => {
     return <TooltipDropdown {...props} loading />;
+  })
+  .add('empty', () => {
+    return <TooltipDropdown {...props} items={[]} />;
   });

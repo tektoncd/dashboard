@@ -12,6 +12,23 @@ limitations under the License.
 */
 
 import pipelineRunsReducer, * as selectors from './pipelineRuns';
+import { ALL_NAMESPACES } from '../constants';
+
+const createPipelineRun = (name, namespace, uid, content = 'other') => {
+  return {
+    metadata: {
+      name,
+      namespace,
+      uid
+    },
+    other: content
+  };
+};
+
+const name = 'pipeline name';
+const namespace = 'default';
+const uid = 'some-uid';
+const pipelineRun = createPipelineRun(name, namespace, uid);
 
 it('handles init or unknown actions', () => {
   expect(pipelineRunsReducer(undefined, { type: 'does_not_exist' })).toEqual({
@@ -29,17 +46,6 @@ it('PIPELINE_RUNS_FETCH_REQUEST', () => {
 });
 
 it('PIPELINE_RUNS_FETCH_SUCCESS', () => {
-  const name = 'pipeline name';
-  const namespace = 'default';
-  const uid = 'some-uid';
-  const pipelineRun = {
-    metadata: {
-      name,
-      namespace,
-      uid
-    },
-    other: 'content'
-  };
   const action = {
     type: 'PIPELINE_RUNS_FETCH_SUCCESS',
     data: [pipelineRun],
@@ -50,6 +56,58 @@ it('PIPELINE_RUNS_FETCH_SUCCESS', () => {
   expect(selectors.getPipelineRuns(state, namespace)).toEqual([pipelineRun]);
   expect(selectors.getPipelineRun(state, name, namespace)).toEqual(pipelineRun);
   expect(selectors.isFetchingPipelineRuns(state)).toBe(false);
+});
+
+it('PipelineRun Events', () => {
+  const action = {
+    type: 'PipelineRunCreated',
+    payload: pipelineRun,
+    namespace
+  };
+
+  const state = pipelineRunsReducer({}, action);
+  expect(selectors.getPipelineRuns(state, namespace)).toEqual([pipelineRun]);
+  expect(selectors.getPipelineRun(state, name, namespace)).toEqual(pipelineRun);
+  expect(selectors.isFetchingPipelineRuns(state)).toBe(false);
+
+  // update pipeline run
+  const updatedPipelineRun = createPipelineRun(
+    name,
+    namespace,
+    uid,
+    'updated content'
+  );
+  const updateAction = {
+    type: 'PipelineRunUpdated',
+    payload: updatedPipelineRun,
+    namespace
+  };
+  const updatedState = pipelineRunsReducer(state, updateAction);
+  expect(selectors.getPipelineRuns(updatedState, namespace)).toEqual([
+    updatedPipelineRun
+  ]);
+  expect(selectors.getPipelineRun(updatedState, name, namespace)).toEqual(
+    updatedPipelineRun
+  );
+
+  // delete pipeline run
+
+  const deleteAction = {
+    type: 'PipelineRunDeleted',
+    payload: pipelineRun,
+    namespace
+  };
+
+  const deletedPipelineRunState = pipelineRunsReducer(
+    updatedState,
+    deleteAction
+  );
+  expect(selectors.getPipelineRuns(deletedPipelineRunState, namespace)).toEqual(
+    []
+  );
+  expect(
+    selectors.getPipelineRun(deletedPipelineRunState, name, namespace)
+  ).toBeNull();
 });
 
 it('PIPELINE_RUNS_FETCH_FAILURE', () => {
@@ -65,14 +123,21 @@ it('PIPELINE_RUNS_FETCH_FAILURE', () => {
 });
 
 it('getPipelineRuns', () => {
-  const namespace = 'namespace';
+  const selectedNamespace = 'namespace';
   const state = { byNamespace: {} };
-  expect(selectors.getPipelineRuns(state, namespace)).toEqual([]);
+  expect(selectors.getPipelineRuns(state, selectedNamespace)).toEqual([]);
+});
+
+it('getPipelineRuns all namespaces', () => {
+  const selectedNamespace = ALL_NAMESPACES;
+  const state = { byId: { id: pipelineRun } };
+  expect(selectors.getPipelineRuns(state, selectedNamespace)).toEqual([
+    pipelineRun
+  ]);
 });
 
 it('getPipelineRun', () => {
-  const name = 'name';
-  const namespace = 'namespace';
+  const selectedNamespace = 'namespace';
   const state = { byNamespace: {} };
-  expect(selectors.getPipelineRun(state, name, namespace)).toBeNull();
+  expect(selectors.getPipelineRun(state, name, selectedNamespace)).toBeNull();
 });

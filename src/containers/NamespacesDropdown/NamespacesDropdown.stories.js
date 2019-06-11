@@ -14,6 +14,7 @@ limitations under the License.
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
+import { boolean } from '@storybook/addon-knobs';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
@@ -43,17 +44,21 @@ storiesOf('NamespacesDropdown', module)
         isFetching: false
       }
     });
+
     return (
       <Provider store={store}>
-        <NamespacesDropdown {...props} />
+        <NamespacesDropdown
+          {...props}
+          showAllNamespaces={boolean('showAllNamespaces', false)}
+        />
       </Provider>
     );
   })
-  .add('loading', () => {
+  .add('empty', () => {
     const store = mockStore({
       namespaces: {
-        byName,
-        isFetching: true
+        byName: {},
+        isFetching: false
       }
     });
     return (

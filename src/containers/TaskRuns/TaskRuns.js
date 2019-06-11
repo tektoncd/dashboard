@@ -58,27 +58,26 @@ export /* istanbul ignore next */ class TaskRunsContainer extends Component {
   }
 
   state = {
-    notification: null,
     loading: true,
     selectedStepId: null,
     selectedTaskId: null
   };
 
   componentDidMount() {
-    const { match } = this.props;
+    const { match, namespace } = this.props;
     const { taskName } = match.params;
-    this.fetchTaskAndRuns(taskName);
+    this.fetchTaskAndRuns(taskName, namespace);
   }
 
   componentDidUpdate(prevProps) {
     const { match, namespace } = this.props;
     const { taskName } = match.params;
-    if (
-      taskName !== prevProps.match.params.taskName ||
-      namespace !== prevProps.namespace
-    ) {
+    const { match: prevMatch, namespace: prevNamespace } = prevProps;
+    const { taskName: prevTaskName } = prevMatch.params;
+
+    if (taskName !== prevTaskName || namespace !== prevNamespace) {
       this.setState({ loading: true }); // eslint-disable-line
-      this.fetchTaskAndRuns(taskName);
+      this.fetchTaskAndRuns(taskName, namespace);
     }
   }
 
@@ -108,34 +107,21 @@ export /* istanbul ignore next */ class TaskRunsContainer extends Component {
         startTime
       };
     });
-    let notification;
-    if (taskRuns.length === 0) {
-      notification = {
-        kind: 'info',
-        message: 'Task has never run'
-      };
-    }
-    this.setState({ taskRuns, notification });
+    return taskRuns;
   };
 
-  fetchTaskAndRuns(taskName) {
+  fetchTaskAndRuns(taskName, namespace) {
     Promise.all([
-      this.props.fetchTask({ name: taskName }),
+      this.props.fetchTask({ name: taskName, namespace }),
       this.props.fetchTaskRuns({ taskName })
     ]).then(() => {
       this.setState({ loading: false });
-      this.loadTaskRuns();
     });
   }
 
   render() {
-    const {
-      loading,
-      notification,
-      selectedStepId,
-      selectedTaskId,
-      taskRuns
-    } = this.state;
+    const taskRuns = this.loadTaskRuns();
+    const { loading, selectedStepId, selectedTaskId } = this.state;
     const { error } = this.props;
 
     if (loading) {
@@ -146,6 +132,13 @@ export /* istanbul ignore next */ class TaskRunsContainer extends Component {
       return TaskRunsContainer.notification({
         kind: 'error',
         message: 'Error loading task runs'
+      });
+    }
+
+    if (taskRuns.length === 0) {
+      return TaskRunsContainer.notification({
+        kind: 'info',
+        message: 'Task has never run'
       });
     }
 
@@ -164,27 +157,23 @@ export /* istanbul ignore next */ class TaskRunsContainer extends Component {
           runName={taskRun.taskRunName}
           status={taskRun.succeeded}
         />
-        {notification ? (
-          TaskRunsContainer.notification(notification)
-        ) : (
-          <div className="tasks">
-            <TaskTree
-              onSelect={this.handleTaskSelected}
-              selectedTaskId={selectedTaskId}
-              taskRuns={taskRuns}
+        <div className="tasks">
+          <TaskTree
+            onSelect={this.handleTaskSelected}
+            selectedTaskId={selectedTaskId}
+            taskRuns={taskRuns}
+          />
+          {selectedStepId && (
+            <StepDetails
+              definition={definition}
+              reason={reason}
+              status={status}
+              stepName={stepName}
+              stepStatus={stepStatus}
+              taskRun={taskRun}
             />
-            {selectedStepId && (
-              <StepDetails
-                definition={definition}
-                reason={reason}
-                status={status}
-                stepName={stepName}
-                stepStatus={stepStatus}
-                taskRun={taskRun}
-              />
-            )}
-          </div>
-        )}
+          )}
+        </div>
       </>
     );
   }
@@ -199,14 +188,20 @@ TaskRunsContainer.propTypes = {
 };
 
 /* istanbul ignore next */
-function mapStateToProps(state, props) {
+function mapStateToProps(state, ownProps) {
+  const { match } = ownProps;
+  const { namespace: namespaceParam, taskName } = match.params;
+
+  const namespace = namespaceParam || getSelectedNamespace(state);
+
   return {
     error: getTaskRunsErrorMessage(state),
-    namespace: getSelectedNamespace(state),
+    namespace,
     taskRuns: getTaskRunsByTaskName(state, {
-      name: props.match.params.taskName
+      name: taskName,
+      namespace
     }),
-    task: getTask(state, { name: props.match.params.taskName })
+    task: getTask(state, { name: taskName, namespace })
   };
 }
 
