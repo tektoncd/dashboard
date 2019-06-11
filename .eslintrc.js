@@ -27,12 +27,16 @@ module.exports = {
   ],
   "rules": {
     "import/prefer-default-export": "off",
+    "jsx-a11y/anchor-is-valid": "off",
     "no-case-declarations": "off",
     "no-template-curly-in-string": "off",
     "react/jsx-filename-extension": "off",
     "react/destructuring-assignment": "off",
     "react/prop-types": "off",
-    "jsx-a11y/anchor-is-valid": "off"
+    "sort-imports": ["error", {
+        "ignoreCase": true,
+        "ignoreDeclarationSort": true
+    }]
   },
   "overrides": [
     {

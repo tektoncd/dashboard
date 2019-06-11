@@ -31,9 +31,9 @@ import StepDetails from '../../components/StepDetails';
 import TaskTree from '../../components/TaskTree';
 import {
   getStatus,
+  selectedTaskRun,
   stepsStatus,
-  taskRunStep,
-  selectedTaskRun
+  taskRunStep
 } from '../../utils';
 
 import '../../components/Run/Run.scss';

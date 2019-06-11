@@ -25,9 +25,9 @@ import { fetchPipeline } from '../../actions/pipelines';
 
 import {
   getPipeline,
+  getPipelinesErrorMessage,
   getTask,
-  getTasksErrorMessage,
-  getPipelinesErrorMessage
+  getTasksErrorMessage
 } from '../../reducers';
 
 export /* istanbul ignore next */ class CustomResourceDefinition extends Component {

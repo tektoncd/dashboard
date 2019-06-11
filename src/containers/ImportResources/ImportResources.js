@@ -14,10 +14,10 @@ limitations under the License.
 import React, { Component } from 'react';
 
 import {
-  ToastNotification,
-  TextInput,
   Button,
-  Form
+  Form,
+  TextInput,
+  ToastNotification
 } from 'carbon-components-react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';

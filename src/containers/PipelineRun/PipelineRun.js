@@ -22,10 +22,10 @@ import {
 import {
   getPipelineRun,
   getPipelineRunsErrorMessage,
-  getTasks,
   getTaskRun,
-  getTasksErrorMessage,
-  getTaskRunsErrorMessage
+  getTaskRunsErrorMessage,
+  getTasks,
+  getTasksErrorMessage
 } from '../../reducers';
 
 import { fetchPipelineRun } from '../../actions/pipelineRuns';
@@ -37,10 +37,10 @@ import StepDetails from '../../components/StepDetails';
 import TaskTree from '../../components/TaskTree';
 import {
   getStatus,
-  taskRunStep,
   selectedTask,
   selectedTaskRun,
-  stepsStatus
+  stepsStatus,
+  taskRunStep
 } from '../../utils';
 
 import { getStore } from '../../store/index';

@@ -15,25 +15,25 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { hot } from 'react-hot-loader/root';
 import {
-  HashRouter as Router,
   Redirect,
   Route,
+  HashRouter as Router,
   Switch
 } from 'react-router-dom';
 
 import { Content } from 'carbon-components-react/lib/components/UIShell';
 
 import {
+  CustomResourceDefinition,
   Extension,
   Extensions,
+  ImportResources,
   PipelineRun,
   PipelineRuns,
   Pipelines,
   SideNav,
-  Tasks,
   TaskRuns,
-  CustomResourceDefinition,
-  ImportResources
+  Tasks
 } from '..';
 
 import Header from '../../components/Header';

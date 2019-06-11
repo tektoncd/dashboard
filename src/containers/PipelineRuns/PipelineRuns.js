@@ -25,7 +25,7 @@ import {
 } from 'carbon-components-react';
 
 import { ALL_NAMESPACES } from '../../constants';
-import { getStatusIcon, getStatus } from '../../utils';
+import { getStatus, getStatusIcon } from '../../utils';
 import { fetchPipelineRuns } from '../../actions/pipelineRuns';
 
 import {
