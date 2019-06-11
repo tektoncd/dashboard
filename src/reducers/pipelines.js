@@ -19,6 +19,14 @@ import { ALL_NAMESPACES } from '../constants';
 
 function byId(state = {}, action) {
   switch (action.type) {
+    case 'PipelineCreated':
+    case 'PipelineUpdated':
+      const resourceById = { [action.payload.metadata.uid]: action.payload };
+      return merge({}, state, resourceById);
+    case 'PipelineDeleted':
+      const newState = { ...state };
+      delete newState[action.payload.metadata.uid];
+      return newState;
     case 'PIPELINES_FETCH_SUCCESS':
       return { ...state, ...keyBy(action.data, 'metadata.uid') };
     default:
@@ -28,6 +36,20 @@ function byId(state = {}, action) {
 
 function byNamespace(state = {}, action) {
   switch (action.type) {
+    case 'PipelineCreated':
+    case 'PipelineUpdated':
+      const resource = {
+        [action.payload.metadata.namespace]: {
+          [action.payload.metadata.name]: action.payload.metadata.uid
+        }
+      };
+      return merge({}, state, resource);
+    case 'PipelineDeleted':
+      const newState = { ...state };
+      delete newState[action.payload.metadata.namespace][
+        action.payload.metadata.name
+      ];
+      return newState;
     case 'PIPELINES_FETCH_SUCCESS':
       const namespaces = action.data.reduce((accumulator, pipeline) => {
         const { name, namespace, uid } = pipeline.metadata;

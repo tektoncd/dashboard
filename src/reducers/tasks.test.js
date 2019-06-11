@@ -14,6 +14,22 @@ limitations under the License.
 import tasksReducer, * as selectors from './tasks';
 import { ALL_NAMESPACES } from '../constants';
 
+const createTask = (name, namespace, uid, content = 'other') => {
+  return {
+    metadata: {
+      name,
+      namespace,
+      uid
+    },
+    other: content
+  };
+};
+
+const name = 'task name';
+const namespace = 'default';
+const uid = 'some-uid';
+const task = createTask(name, namespace, uid);
+
 it('handles init or unknown actions', () => {
   expect(tasksReducer(undefined, { type: 'does_not_exist' })).toEqual({
     byId: {},
@@ -30,17 +46,6 @@ it('TASKS_FETCH_REQUEST', () => {
 });
 
 it('TASKS_FETCH_SUCCESS', () => {
-  const name = 'task name';
-  const namespace = 'default';
-  const uid = 'some-uid';
-  const task = {
-    metadata: {
-      name,
-      namespace,
-      uid
-    },
-    other: 'content'
-  };
   const action = {
     type: 'TASKS_FETCH_SUCCESS',
     data: [task],
@@ -51,6 +56,41 @@ it('TASKS_FETCH_SUCCESS', () => {
   expect(selectors.getTasks(state, namespace)).toEqual([task]);
   expect(selectors.getTask(state, name, namespace)).toEqual(task);
   expect(selectors.isFetchingTasks(state)).toBe(false);
+});
+
+it('task Events', () => {
+  const action = {
+    type: 'TaskCreated',
+    payload: task,
+    namespace
+  };
+
+  const state = tasksReducer({}, action);
+  expect(selectors.getTasks(state, namespace)).toEqual([task]);
+  expect(selectors.getTask(state, name, namespace)).toEqual(task);
+  expect(selectors.isFetchingTasks(state)).toBe(false);
+
+  // update the task
+  const updatedTask = createTask(name, namespace, uid, 'updated content');
+  const updateAction = {
+    type: 'TaskUpdated',
+    payload: updatedTask,
+    namespace
+  };
+  const updatedState = tasksReducer(state, updateAction);
+  expect(selectors.getTasks(updatedState, namespace)).toEqual([updatedTask]);
+  expect(selectors.getTask(updatedState, name, namespace)).toEqual(updatedTask);
+
+  // delete the task
+  const deleteAction = {
+    type: 'TaskDeleted',
+    payload: task,
+    namespace
+  };
+
+  const deletedTaskState = tasksReducer(state, deleteAction);
+  expect(selectors.getTasks(deletedTaskState, namespace)).toEqual([]);
+  expect(selectors.getTask(deletedTaskState, name, namespace)).toBeNull();
 });
 
 it('TASKS_FETCH_FAILURE', () => {
@@ -66,21 +106,21 @@ it('TASKS_FETCH_FAILURE', () => {
 });
 
 it('getTasks', () => {
-  const namespace = 'namespace';
+  const selectedNamespace = 'namespace';
   const state = { byNamespace: {} };
-  expect(selectors.getTasks(state, namespace)).toEqual([]);
+  expect(selectors.getTasks(state, selectedNamespace)).toEqual([]);
 });
 
 it('getTasks all namespaces', () => {
-  const namespace = ALL_NAMESPACES;
-  const task = { fake: 'task' };
-  const state = { byId: { id: task } };
-  expect(selectors.getTasks(state, namespace)).toEqual([task]);
+  const selectedNamespace = ALL_NAMESPACES;
+  const selectedTask = { fake: 'task' };
+  const state = { byId: { id: selectedTask } };
+  expect(selectors.getTasks(state, selectedNamespace)).toEqual([selectedTask]);
 });
 
 it('getTask', () => {
-  const name = 'name';
-  const namespace = 'namespace';
+  const selectedName = 'name';
+  const selectedNamespace = 'namespace';
   const state = { byNamespace: {} };
-  expect(selectors.getTask(state, name, namespace)).toBeNull();
+  expect(selectors.getTask(state, selectedName, selectedNamespace)).toBeNull();
 });
