@@ -38,17 +38,17 @@ install_dashboard_backend
 
 
 #Install docker 
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+#curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
 
-apt-get install docker-ce docker-ce-cli containerd.io
+#apt-get install docker-ce docker-ce-cli containerd.io
 
-docker run hello-world
+#docker run hello-world
 
 #av=$(apt-cache madison docker-ce)
 #echo "versions available are:$av"
 
 #Permissions 
-gcloud auth configure-docker
+#gcloud auth configure-docker
 #gcloud components install docker-credential-gcr
 #docker-credential-gcr configure-docker
 
@@ -76,6 +76,7 @@ function wait_for_ready_pods() {
 kubectl port-forward $(kubectl get pod -l app=tekton-dashboard -o name) 9097:9097 &
 echo "dashboard forwarded to port 9097"
 
+kubectl apply -f $tekton_repo_dir/test/kaniko-build-task.yaml
 
 kubectl apply -f $tekton_repo_dir/test/build-task-insecure.yaml
 

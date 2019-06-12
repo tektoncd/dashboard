@@ -11,7 +11,7 @@ spec:
   tasks:
   - name: build-simple
     taskRef:
-      name: build-push-insecure
+      name: kaniko-build-push
     resources:
       inputs:
       - name: git-source
