@@ -793,6 +793,12 @@ func (r Resource) StartResourcesController(stopCh <-chan struct{}) {
 		UpdateFunc: r.taskRunUpdated,
 		DeleteFunc: r.taskRunDeleted,
 	})
+	pipelineResourceInformer := resourcesInformerFactory.Tekton().V1alpha1().PipelineResources()
+	pipelineResourceInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
+		AddFunc:    r.pipelineResourceCreated,
+		UpdateFunc: r.pipelineResourceUpdated,
+		DeleteFunc: r.pipelineResourceDeleted,
+	})
 
 	go resourcesInformerFactory.Start(stopCh)
 	logging.Log.Info("Resource Events Controller Started")
@@ -932,6 +938,39 @@ func (r Resource) taskRunDeleted(obj interface{}) {
 	data := broadcaster.SocketData{
 		MessageType: broadcaster.TaskRunDeleted,
 		Payload:     obj.(*v1alpha1.TaskRun),
+	}
+
+	resourcesChannel <- data
+}
+
+// pipeline resource events
+func (r Resource) pipelineResourceCreated(obj interface{}) {
+	logging.Log.Debug("In pipelineResourceCreated")
+
+	data := broadcaster.SocketData{
+		MessageType: broadcaster.PipelineResourceCreated,
+		Payload:     obj.(*v1alpha1.PipelineResource),
+	}
+
+	resourcesChannel <- data
+}
+
+func (r Resource) pipelineResourceUpdated(oldObj, newObj interface{}) {
+	if newObj.(*v1alpha1.PipelineResource).GetResourceVersion() != oldObj.(*v1alpha1.PipelineResource).GetResourceVersion() {
+		data := broadcaster.SocketData{
+			MessageType: broadcaster.PipelineResourceUpdated,
+			Payload:     newObj.(*v1alpha1.PipelineResource),
+		}
+		resourcesChannel <- data
+	}
+}
+
+func (r Resource) pipelineResourceDeleted(obj interface{}) {
+	logging.Log.Debug("In pipelineResourceDeleted")
+
+	data := broadcaster.SocketData{
+		MessageType: broadcaster.PipelineResourceDeleted,
+		Payload:     obj.(*v1alpha1.PipelineResource),
 	}
 
 	resourcesChannel <- data

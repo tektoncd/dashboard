@@ -50,6 +50,9 @@ var PipelineRunDeletionsRecorded int32
 var TaskRunCreationsRecorded int32
 var TaskRunUpdatesRecorded int32
 var TaskRunDeletionsRecorded int32
+var PipelineResourceCreationsRecorded int32
+var PipelineResourceUpdatesRecorded int32
+var PipelineResourceDeletionsRecorded int32
 
 // No data is sent through the log websocket
 // Assert connection flow
@@ -165,6 +168,22 @@ func TestRunWebsocket(t *testing.T) {
 	awaitFatal(func() bool { return atomic.LoadInt32(&TaskRunDeletionsRecorded) == int32(clients) },
 		fmt.Sprintf("Expected %d DeletionsRecorded for TaskRuns", clients))
 
+	// PipelineResources
+	// Create pipelineresource and wait until clients receive
+	r.createTestPipelineResource("WebsocketPipelineResource", "12345")
+	awaitFatal(func() bool { return atomic.LoadInt32(&PipelineResourceCreationsRecorded) == int32(clients) },
+		fmt.Sprintf("Expected %d CreationsRecorded for PipelineResources", clients))
+
+	// Update pipelineresource and wait until clients receive
+	r.updateTestPipelineResource("WebsocketPipelineResource", "65432")
+	awaitFatal(func() bool { return atomic.LoadInt32(&PipelineResourceUpdatesRecorded) == int32(clients) },
+		fmt.Sprintf("Expected %d UpdatesRecorded for PipelineResources", clients))
+
+	// Delete pipelineresource and wait until clients receive
+	r.deleteTestPipelineResource("WebsocketPipelineResource")
+	awaitFatal(func() bool { return atomic.LoadInt32(&PipelineResourceDeletionsRecorded) == int32(clients) },
+		fmt.Sprintf("Expected %d DeletionsRecorded for PipelineResources", clients))
+
 	T.Log("Waiting for clients to terminate...")
 	wg.Wait()
 
@@ -225,6 +244,12 @@ func clientWebsocket(websocketEndpoint string, readDeadline time.Duration, wg *s
 					atomic.AddInt32(&TaskRunUpdatesRecorded, 1)
 				case broadcaster.TaskRunDeleted:
 					atomic.AddInt32(&TaskRunDeletionsRecorded, 1)
+				case broadcaster.PipelineResourceCreated:
+					atomic.AddInt32(&PipelineResourceCreationsRecorded, 1)
+				case broadcaster.PipelineResourceUpdated:
+					atomic.AddInt32(&PipelineResourceUpdatesRecorded, 1)
+				case broadcaster.PipelineResourceDeleted:
+					atomic.AddInt32(&PipelineResourceDeletionsRecorded, 1)
 
 				}
 				//Print out websocket data received
@@ -424,6 +449,53 @@ func (r Resource) updateTestTaskRun(name, newResourceVersion string) {
 func (r Resource) deleteTestTaskRun(name string) {
 	T.Logf("Deleting taskrun: %s\n", name)
 	_ = r.PipelineClient.TektonV1alpha1().TaskRuns("ns1").Delete(name, &metav1.DeleteOptions{})
+}
+
+// Util to create pipelineresource
+func (r Resource) createTestPipelineResource(name, resourceVersion string) {
+
+	PipelineResource1 := v1alpha1.PipelineResource{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:            name,
+			ResourceVersion: resourceVersion,
+		},
+		Spec: v1alpha1.PipelineResourceSpec{},
+	}
+
+	T.Log("Creating pipelineresource")
+	_, err := r.PipelineClient.TektonV1alpha1().PipelineResources("ns1").Create(&PipelineResource1)
+	if err != nil {
+		T.Logf("Error creating pipelineresource: %s: %s\n", name, err.Error())
+	}
+}
+
+// Util to update pipelineresource
+func (r Resource) updateTestPipelineResource(name, newResourceVersion string) {
+
+	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelineresources/"+name, nil)
+	req := dummyRestfulRequest(httpReq, "ns1", "")
+	httpWriter := httptest.NewRecorder()
+	resp := dummyRestfulResponse(httpWriter)
+
+	//  Test the function
+	r.getPipelineResource(req, resp)
+
+	// Decode the response
+	pipelineResource := v1alpha1.PipelineResource{}
+	json.NewDecoder(httpWriter.Body).Decode(&pipelineResource)
+	pipelineResource.SetResourceVersion(newResourceVersion)
+
+	T.Logf("Updating pipelineresource %s\n", name)
+	_, err := r.PipelineClient.TektonV1alpha1().PipelineResources("ns1").Update(&pipelineResource)
+	if err != nil {
+		T.Logf("Error updating pipelineresource: %s: %s\n", name, err.Error())
+	}
+}
+
+// Util to delete pipelineresource
+func (r Resource) deleteTestPipelineResource(name string) {
+	T.Logf("Deleting pipelineresource: %s\n", name)
+	_ = r.PipelineClient.TektonV1alpha1().PipelineResources("ns1").Delete(name, &metav1.DeleteOptions{})
 }
 
 // Util to setup dummy resource and TLSServer
