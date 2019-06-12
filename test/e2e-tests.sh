@@ -84,11 +84,11 @@ kubectl apply -f $tekton_repo_dir/test/deploy-task-insecure.yaml
 
 kubectl apply -f $tekton_repo_dir/test/Pipeline.yaml
 
-for i in {1..10}
-do
-    echo "try number $i"
-   gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://gcr.io
-done
+# for i in {1..10}
+# do
+#     echo "try number $i"
+#    gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://gcr.io
+# done
 
 
 #echo "Ko docker repo:$KO_DOCKER_REPO"
@@ -146,10 +146,10 @@ kubectl get pipelineruns
 # echo "$responsePipelineRun"
 
 
-kubectl describe pipelineruns
+#kubectl describe pipelineruns
 ##How to get logs without numbers at the end 
-logs=$(kubectl logs -l app=tekton-app -n default -c build-step-push)
-echo "logs is: $logs"
+#logs=$(kubectl logs -l app=tekton-app -n default -c build-step-push)
+#echo "logs is: $logs"
 
 echo "deployments are:"
 kubectl get deployments 
@@ -172,8 +172,10 @@ kubectl get svc
 
 # echo "resp is :$resp"
 
+kubectl describe pods 
 
-echo "-l app=tekton-app -n default attempt"
+
+echo "-l app=go-hello-world -n default attempt"
 pod=$(kubectl get pod -l app=tekton-app -n default)
 
 resp=$(curl -k  http://127.0.0.1:9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
