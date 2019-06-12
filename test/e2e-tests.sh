@@ -177,7 +177,7 @@ resp=$(curl -k  http://127.0.0.1:$nport) #9097/v1/namespaces/default/pod/$pod) #
 
 echo "resp is :$resp"
 
-clusterip=$(kubectl get svc "go-hello-world" --namespace default --output 'jsonpath={.spec.cluster-ip')
+clusterip=$(kubectl get svc "go-hello-world" --namespace default --output 'jsonpath={.spec.cluster-ip}')
 echo "clusterip is $clusterip"
 
 echo "external ip attempt"
@@ -187,9 +187,18 @@ echo "resp is :$resp"
 
 
 echo "external ip number 2 attempt"
-CLUSTER_IP=$(kubectl get services/nfs-server -o go-template='{{(index.spec.clusterIP)}}');echo CLUSTER_IP=$CLUSTER_IP
+CLUSTER_IP=$(kubectl get services -o go-template='{{(index.spec.clusterIP)}}')
+echo "CLUSTER_IP=$CLUSTER_IP"
 
 resp=$(curl -k  http://$CLUSTER_IP:$nport) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
+
+echo "resp is :$resp"
+
+nport=$(kubectl get svc "go-hello-world" --namespace default --output 'jsonpath={.spec.ports[?(@.port==8080)].nodePort}')
+echo "nport is $nport"
+
+echo "localhost number 2 attempt"
+resp=$(curl -k  http://127.0.0.1:$nport) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
 
 echo "resp is :$resp"
 
