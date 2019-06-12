@@ -157,30 +157,34 @@ kubectl get deployments
 echo "svc are:"
 kubectl get svc 
 
-# echo " -l app=tekton-app -o name attempt"
-# pod=$(kubectl get pod -l app=tekton-app -o name)
-
-# resp=$(curl -k  http://127.0.0.1:9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
-
-# echo "resp is :$resp"
 
 
-# echo "-l app=tekton-app attempt"
-# pod=$(kubectl get pod -l app=tekton-app)
-
-# resp=$(curl -k  http://127.0.0.1:9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
-
-# echo "resp is :$resp"
-
-kubectl describe pods 
+#kubectl describe pods 
 
 
 echo "-l app=go-hello-world -n default attempt"
 pod=$(kubectl get pod -l app=tekton-app -n default)
 
-resp=$(curl -k  http://127.0.0.1:9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
+#Get port for svc and go to port address 
+#Try cluster port 
+#try cluster ip: port address 
+
+nport=$(kubectl get svc "go-hello-world" --default --output 'jsonpath={.spec.ports[?(@.port==80)].nodePort}')
+echo "nport is $nport"
+
+echo "localhost attempt"
+resp=$(curl -k  http://127.0.0.1:$nport #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
 
 echo "resp is :$resp"
+
+clusterip=$(kubectl get svc "go-hello-world" --default --output 'jsonpath={.spec.cluster-ip')
+echo "clusterip is $clusterip"
+
+echo "external ip attempt"
+resp=$(curl -k  http://$clusterip:$nport #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
+
+echo "resp is :$resp"
+
 
 #kubectl describe pod 
 # if [ "$EXPECTED_RETURN_VALUE" = "$resp" ]; then
