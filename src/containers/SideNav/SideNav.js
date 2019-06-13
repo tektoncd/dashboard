@@ -125,7 +125,6 @@ export class SideNav extends Component {
           </SideNavMenu>
           <NamespacesDropdown
             id="sidenav-namespace-dropdown"
-            titleText="Namespace"
             selectedItem={{ id: namespace, text: namespace }}
             showAllNamespaces
             onChange={this.selectNamespace}

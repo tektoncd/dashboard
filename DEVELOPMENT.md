@@ -418,7 +418,7 @@ Optional parameters listed below may be provided in the request body depending o
   - gitresourcename, gitcommit, and repourl can be provided in the request body if your Pipeline requires a PipelineResource of type `git`
   - imageresourcename, gitcommit and reponame can be provided in the request body if your Pipeline requires a PipelineResource of type `image`
 
-  - helmsecret and registrysecret are optional depending on whether the Pipeline requires secrets for accessing an insecure registry or using Helm
+  - helmsecret is optional depending on whether the Pipeline requires a secret for using Helm
 
   - serviceaccount can be provided to specify the serviceaccount to use for the PipelineRun
 

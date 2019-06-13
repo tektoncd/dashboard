@@ -25,13 +25,6 @@ main {
   padding: 2em 5%;
 }
 
-.bx--dropdown.bx--list-box {
-  margin: 0 1em 1.5em 1.5em;
-  border: none;
-  margin-bottom: 1.5em;
-  width: auto;
-}
-
 .bx--header ~ {
   nav.bx--side-nav {
     padding-top: 1em;
@@ -64,10 +57,31 @@ main {
     .bx--side-nav__link-text {
       color: $text-01;
     }
+
+    .bx--dropdown.bx--list-box {
+      margin: 0 1em 1.5em 1.5em;
+      border: none;
+      margin-bottom: 1.5em;
+      width: auto;
+    }
   }
 
   .bx--content {
     margin-top: 7rem;
     transform: none;
   }
+}
+
+.bx--modal-header,
+.bx--modal-content {
+  width: 100%;
+}
+
+.bx--modal-content,
+.bx--modal-header {
+  padding-right: 1rem;
+}
+
+.bx--modal-content {
+  margin-bottom: $carbon--spacing-07
 }

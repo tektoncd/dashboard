@@ -156,7 +156,6 @@ export class ImportResources extends Component {
             onChange={this.handleNamespace}
             required
             selectedItem={selectedNamespace}
-            titleText="Namespace"
           />
           <TextInput
             data-testid="directory-field"
