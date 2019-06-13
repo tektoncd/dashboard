@@ -14,7 +14,7 @@ limitations under the License.
 import { createNamespacedReducer } from './reducerCreators';
 import { ALL_NAMESPACES } from '../constants';
 
-export default createNamespacedReducer({ type: 'TaskRun' });
+export default () => createNamespacedReducer({ type: 'TaskRun' });
 
 export function getTaskRuns(state, namespace) {
   if (namespace === ALL_NAMESPACES) {
