@@ -23,7 +23,6 @@ import (
 	"time"
 
 	restful "github.com/emicklei/go-restful"
-	uuid "github.com/satori/go.uuid"
 	"github.com/tektoncd/dashboard/pkg/broadcaster"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
 	"github.com/tektoncd/dashboard/pkg/utils"
@@ -266,8 +265,8 @@ func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, names
 	serviceAccount := pipelineRunData.SERVICEACCOUNT
 	registryLocation := pipelineRunData.REGISTRYLOCATION
 
-	uuid := uuid.NewV4()
-	generatedPipelineRunName := fmt.Sprintf("tekton-pipeline-run-%s", uuid.String())
+	timestamp := time.Now().UnixNano()
+	generatedPipelineRunName := fmt.Sprintf("%s-run-%d", pipelineName, timestamp)
 	// Shorten name
 	if len(generatedPipelineRunName) > crdNameLengthLimit {
 		generatedPipelineRunName = generatedPipelineRunName[:crdNameLengthLimit-1]
@@ -288,7 +287,7 @@ func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, names
 	resources := []v1alpha1.PipelineResourceBinding{}
 
 	if pipelineRunData.GITRESOURCENAME != "" {
-		gitResource, err = r.createPipelineResourceForPipelineRun(pipelineRunData, namespace, pipelineRunData.GITRESOURCENAME, v1alpha1.PipelineResourceTypeGit)
+		gitResource, err = r.createPipelineResourceForPipelineRun(pipelineRunData, namespace, pipelineRunData.GITRESOURCENAME, v1alpha1.PipelineResourceTypeGit, timestamp)
 		if err != nil {
 			errorMsg := fmt.Sprintf("Could not create the PipelineResource of type Git with provided name %s", pipelineRunData.GITRESOURCENAME)
 			logging.Log.Error(errorMsg)
@@ -298,7 +297,7 @@ func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, names
 	}
 
 	if pipelineRunData.IMAGERESOURCENAME != "" {
-		imageResource, err = r.createPipelineResourceForPipelineRun(pipelineRunData, namespace, pipelineRunData.IMAGERESOURCENAME, v1alpha1.PipelineResourceTypeImage)
+		imageResource, err = r.createPipelineResourceForPipelineRun(pipelineRunData, namespace, pipelineRunData.IMAGERESOURCENAME, v1alpha1.PipelineResourceTypeImage, timestamp)
 		if err != nil {
 			errorMsg := fmt.Sprintf("Could not create the PipelineResource of type Image with provided name %s", pipelineRunData.IMAGERESOURCENAME)
 			logging.Log.Error(errorMsg)
@@ -600,13 +599,12 @@ func definePipelineRun(pipelineRunName, namespace, saName, repoUrl string,
 // defines and creates a resource of a specifed type and returns a pipeline resource reference for this resource
 // takes a manual pipeline run data struct, namespace for the resource creation, resource name to refer to it and the resource type
 func (r Resource) createPipelineResourceForPipelineRun(resourceData ManualPipelineRun, namespace, resourceName string,
-	resourceType v1alpha1.PipelineResourceType) (v1alpha1.PipelineResourceRef, error) {
+	resourceType v1alpha1.PipelineResourceType, timestamp int64) (v1alpha1.PipelineResourceRef, error) {
 
 	logging.Log.Debugf("Creating PipelineResource of type %s", resourceType)
 
-	uuid := uuid.NewV4()
 	registryURL := resourceData.REGISTRYLOCATION
-	resourceName = fmt.Sprintf("%s-%s", resourceName, uuid.String())
+	resourceName = fmt.Sprintf("%s-%d", resourceName, timestamp)
 	// Shorten name
 	if len(resourceName) > crdNameLengthLimit {
 		resourceName = resourceName[:crdNameLengthLimit-1]
