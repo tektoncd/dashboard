@@ -11,91 +11,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { combineReducers } from 'redux';
-import keyBy from 'lodash.keyby';
-import merge from 'lodash.merge';
-
+import { createNamespacedReducer } from './reducerCreators';
 import { ALL_NAMESPACES } from '../constants';
 
-function byId(state = {}, action) {
-  switch (action.type) {
-    case 'PipelineResourceCreated':
-    case 'PipelineResourceUpdated':
-      const resource = { [action.payload.metadata.uid]: action.payload };
-      return merge({}, state, resource);
-    case 'PipelineResourceDeleted':
-      const newState = { ...state };
-      delete newState[action.payload.metadata.uid];
-      return newState;
-    case 'PIPELINE_RESOURCES_FETCH_SUCCESS':
-      return { ...state, ...keyBy(action.data, 'metadata.uid') };
-    default:
-      return state;
-  }
-}
-
-function byNamespace(state = {}, action) {
-  switch (action.type) {
-    case 'PipelineResourceCreated':
-    case 'PipelineResourceUpdated':
-      const resource = {
-        [action.payload.metadata.namespace]: {
-          [action.payload.metadata.name]: action.payload.metadata.uid
-        }
-      };
-      return merge({}, state, resource);
-    case 'PipelineResourceDeleted':
-      const newState = { ...state };
-      delete newState[action.payload.metadata.namespace][
-        action.payload.metadata.name
-      ];
-      return newState;
-    case 'PIPELINE_RESOURCES_FETCH_SUCCESS':
-      const namespaces = action.data.reduce((accumulator, pipelineResource) => {
-        const { name, namespace, uid } = pipelineResource.metadata;
-        return merge(accumulator, {
-          [namespace]: {
-            [name]: uid
-          }
-        });
-      }, {});
-
-      return merge({}, state, namespaces);
-    default:
-      return state;
-  }
-}
-
-function isFetching(state = false, action) {
-  switch (action.type) {
-    case 'PIPELINE_RESOURCES_FETCH_REQUEST':
-      return true;
-    case 'PIPELINE_RESOURCES_FETCH_SUCCESS':
-    case 'PIPELINE_RESOURCES_FETCH_FAILURE':
-      return false;
-    default:
-      return state;
-  }
-}
-
-function errorMessage(state = null, action) {
-  switch (action.type) {
-    case 'PIPELINE_RESOURCES_FETCH_FAILURE':
-      return action.error.message;
-    case 'PIPELINE_RESOURCES_FETCH_REQUEST':
-    case 'PIPELINE_RESOURCES_FETCH_SUCCESS':
-      return null;
-    default:
-      return state;
-  }
-}
-
-export default combineReducers({
-  byId,
-  byNamespace,
-  errorMessage,
-  isFetching
-});
+export default createNamespacedReducer({ type: 'PipelineResource' });
 
 export function getPipelineResources(state, namespace) {
   if (namespace === ALL_NAMESPACES) {

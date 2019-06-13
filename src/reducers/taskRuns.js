@@ -11,91 +11,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { combineReducers } from 'redux';
-import keyBy from 'lodash.keyby';
-import merge from 'lodash.merge';
-
+import { createNamespacedReducer } from './reducerCreators';
 import { ALL_NAMESPACES } from '../constants';
 
-function byId(state = {}, action) {
-  switch (action.type) {
-    case 'TaskRunCreated':
-    case 'TaskRunUpdated':
-      const runById = { [action.payload.metadata.uid]: action.payload };
-      return merge({}, state, runById);
-    case 'TaskRunDeleted':
-      const newState = { ...state };
-      delete newState[action.payload.metadata.uid];
-      return newState;
-    case 'TASK_RUNS_FETCH_SUCCESS':
-      return { ...state, ...keyBy(action.data, 'metadata.uid') };
-    default:
-      return state;
-  }
-}
-
-function byNamespace(state = {}, action) {
-  switch (action.type) {
-    case 'TaskRunCreated':
-    case 'TaskRunUpdated':
-      const run = {
-        [action.payload.metadata.namespace]: {
-          [action.payload.metadata.name]: action.payload.metadata.uid
-        }
-      };
-      return merge({}, state, run);
-    case 'TaskRunDeleted':
-      const newState = { ...state };
-      delete newState[action.payload.metadata.namespace][
-        action.payload.metadata.name
-      ];
-      return newState;
-    case 'TASK_RUNS_FETCH_SUCCESS':
-      const namespaces = action.data.reduce((accumulator, taskRun) => {
-        const { name, namespace, uid } = taskRun.metadata;
-        return merge(accumulator, {
-          [namespace]: {
-            [name]: uid
-          }
-        });
-      }, {});
-
-      return merge({}, state, namespaces);
-    default:
-      return state;
-  }
-}
-
-function isFetching(state = false, action) {
-  switch (action.type) {
-    case 'TASK_RUNS_FETCH_REQUEST':
-      return true;
-    case 'TASK_RUNS_FETCH_SUCCESS':
-    case 'TASK_RUNS_FETCH_FAILURE':
-      return false;
-    default:
-      return state;
-  }
-}
-
-function errorMessage(state = null, action) {
-  switch (action.type) {
-    case 'TASK_RUNS_FETCH_FAILURE':
-      return action.error.message;
-    case 'TASK_RUNS_FETCH_REQUEST':
-    case 'TASK_RUNS_FETCH_SUCCESS':
-      return null;
-    default:
-      return state;
-  }
-}
-
-export default combineReducers({
-  byId,
-  byNamespace,
-  errorMessage,
-  isFetching
-});
+export default createNamespacedReducer({ type: 'TaskRun' });
 
 export function getTaskRuns(state, namespace) {
   if (namespace === ALL_NAMESPACES) {
