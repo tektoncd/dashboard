@@ -11,110 +11,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import pipelinesReducer, * as selectors from './pipelines';
+import * as creators from './reducerCreators';
+import createReducer, * as selectors from './pipelines';
 import { ALL_NAMESPACES } from '../constants';
 
-const createPipeline = (name, namespace, uid, content = 'other') => {
-  return {
-    metadata: {
-      name,
-      namespace,
-      uid
-    },
-    other: content
-  };
-};
-
-const name = 'pipeline name';
-const namespace = 'default';
-const uid = 'some-uid';
-const pipeline = createPipeline(name, namespace, uid);
-
-it('handles init or unknown actions', () => {
-  expect(pipelinesReducer(undefined, { type: 'does_not_exist' })).toEqual({
-    byId: {},
-    byNamespace: {},
-    errorMessage: null,
-    isFetching: false
-  });
-});
-
-it('PIPELINES_FETCH_REQUEST', () => {
-  const action = { type: 'PIPELINES_FETCH_REQUEST' };
-  const state = pipelinesReducer({}, action);
-  expect(selectors.isFetchingPipelines(state)).toBe(true);
-});
-
-it('PIPELINES_FETCH_SUCCESS', () => {
-  const action = {
-    type: 'PIPELINES_FETCH_SUCCESS',
-    data: [pipeline],
-    namespace
-  };
-
-  const state = pipelinesReducer({}, action);
-  expect(selectors.getPipelines(state, namespace)).toEqual([pipeline]);
-  expect(selectors.getPipeline(state, name, namespace)).toEqual(pipeline);
-  expect(selectors.isFetchingPipelines(state)).toBe(false);
-});
-
-it('Pipeline Events', () => {
-  const action = {
-    type: 'PipelineCreated',
-    payload: pipeline,
-    namespace
-  };
-
-  const state = pipelinesReducer({}, action);
-  expect(selectors.getPipelines(state, namespace)).toEqual([pipeline]);
-  expect(selectors.getPipeline(state, name, namespace)).toEqual(pipeline);
-  expect(selectors.isFetchingPipelines(state)).toBe(false);
-
-  // update pipeline
-  const updatedPipeline = createPipeline(
-    name,
-    namespace,
-    uid,
-    'updated content'
-  );
-  const updateAction = {
-    type: 'PipelineUpdated',
-    payload: updatedPipeline,
-    namespace
-  };
-  const updatedState = pipelinesReducer(state, updateAction);
-  expect(selectors.getPipelines(updatedState, namespace)).toEqual([
-    updatedPipeline
-  ]);
-  expect(selectors.getPipeline(updatedState, name, namespace)).toEqual(
-    updatedPipeline
-  );
-
-  // delete pipeline
-
-  const deleteAction = {
-    type: 'PipelineDeleted',
-    payload: pipeline,
-    namespace
-  };
-
-  const deletedPipelineState = pipelinesReducer(updatedState, deleteAction);
-  expect(selectors.getPipelines(deletedPipelineState, namespace)).toEqual([]);
-  expect(
-    selectors.getPipeline(deletedPipelineState, name, namespace)
-  ).toBeNull();
-});
-
-it('PIPELINES_FETCH_FAILURE', () => {
-  const message = 'fake error message';
-  const error = { message };
-  const action = {
-    type: 'PIPELINES_FETCH_FAILURE',
-    error
-  };
-
-  const state = pipelinesReducer({}, action);
-  expect(selectors.getPipelinesErrorMessage(state)).toEqual(message);
+it('creates a namespaced reducer for the correct type', () => {
+  const type = 'Pipeline';
+  jest.spyOn(creators, 'createNamespacedReducer');
+  createReducer();
+  expect(creators.createNamespacedReducer).toHaveBeenCalledWith({ type });
 });
 
 it('getPipelines', () => {

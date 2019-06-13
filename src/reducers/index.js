@@ -25,12 +25,12 @@ import taskRuns, * as taskRunsSelectors from './taskRuns';
 export default combineReducers({
   extensions,
   namespaces,
-  pipelines,
-  pipelineResources,
-  pipelineRuns,
+  pipelines: pipelines(),
+  pipelineResources: pipelineResources(),
+  pipelineRuns: pipelineRuns(),
   serviceAccounts,
-  tasks,
-  taskRuns
+  tasks: tasks(),
+  taskRuns: taskRuns()
 });
 
 export function getSelectedNamespace(state) {

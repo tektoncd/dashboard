@@ -14,7 +14,7 @@ limitations under the License.
 import { createNamespacedReducer } from './reducerCreators';
 import { ALL_NAMESPACES } from '../constants';
 
-export default createNamespacedReducer({ type: 'Pipeline' });
+export default () => createNamespacedReducer({ type: 'Pipeline' });
 
 export function getPipelines(state, namespace) {
   if (namespace === ALL_NAMESPACES) {

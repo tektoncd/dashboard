@@ -11,69 +11,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { combineReducers } from 'redux';
-import keyBy from 'lodash.keyby';
-import merge from 'lodash.merge';
-
+import { createNamespacedReducer } from './reducerCreators';
 import { ALL_NAMESPACES } from '../constants';
 
-function byId(state = {}, action) {
-  switch (action.type) {
-    case 'SERVICE_ACCOUNTS_FETCH_SUCCESS':
-      return { ...state, ...keyBy(action.data, 'metadata.uid') };
-    default:
-      return state;
-  }
-}
-
-function byNamespace(state = {}, action) {
-  switch (action.type) {
-    case 'SERVICE_ACCOUNTS_FETCH_SUCCESS':
-      const namespaces = action.data.reduce((accumulator, serviceAccount) => {
-        const { name, namespace, uid } = serviceAccount.metadata;
-        return merge(accumulator, {
-          [namespace]: {
-            [name]: uid
-          }
-        });
-      }, {});
-
-      return merge({}, state, namespaces);
-    default:
-      return state;
-  }
-}
-
-function isFetching(state = false, action) {
-  switch (action.type) {
-    case 'SERVICE_ACCOUNTS_FETCH_REQUEST':
-      return true;
-    case 'SERVICE_ACCOUNTS_FETCH_SUCCESS':
-    case 'SERVICE_ACCOUNTS_FETCH_FAILURE':
-      return false;
-    default:
-      return state;
-  }
-}
-
-function errorMessage(state = null, action) {
-  switch (action.type) {
-    case 'SERVICE_ACCOUNTS_FETCH_FAILURE':
-      return action.error.message;
-    case 'SERVICE_ACCOUNTS_FETCH_REQUEST':
-    case 'SERVICE_ACCOUNTS_FETCH_SUCCESS':
-      return null;
-    default:
-      return state;
-  }
-}
-
-export default combineReducers({
-  byId,
-  byNamespace,
-  errorMessage,
-  isFetching
-});
+export default () => createNamespacedReducer({ type: 'ServiceAccount' });
 
 export function getServiceAccounts(state, namespace) {
   if (namespace === ALL_NAMESPACES) {

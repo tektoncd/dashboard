@@ -11,8 +11,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import serviceAccountsReducer, * as selectors from './serviceAccounts';
+import createReducer, * as selectors from './serviceAccounts';
 import { ALL_NAMESPACES } from '../constants';
+
+const serviceAccountsReducer = createReducer();
 
 it('handles init or unknown actions', () => {
   expect(serviceAccountsReducer(undefined, { type: 'does_not_exist' })).toEqual(
