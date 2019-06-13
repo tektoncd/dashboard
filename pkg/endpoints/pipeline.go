@@ -22,12 +22,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/tektoncd/dashboard/pkg/broadcaster"
-	"github.com/tektoncd/dashboard/pkg/utils"
-
 	restful "github.com/emicklei/go-restful"
 	uuid "github.com/satori/go.uuid"
+	"github.com/tektoncd/dashboard/pkg/broadcaster"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
+	"github.com/tektoncd/dashboard/pkg/utils"
 	v1alpha1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
 	informers "github.com/tektoncd/pipeline/pkg/client/informers/externalversions"
 	v1 "k8s.io/api/core/v1"
@@ -84,7 +83,6 @@ type ManualPipelineRun struct {
 	REPONAME          string `json:"reponame,omitempty"`
 	REPOURL           string `json:"repourl,omitempty"`
 	HELMSECRET        string `json:"helmsecret,omitempty"`
-	REGISTRYSECRET    string `json:"registrysecret,omitempty"`
 	APPLYDIRECTORY    string `json:"applydirectory,omitempty"`
 }
 
@@ -327,9 +325,6 @@ func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, names
 		params = []v1alpha1.Param{{Name: "target-namespace", Value: namespace}}
 	}
 
-	if pipelineRunData.REGISTRYSECRET != "" {
-		params = append(params, v1alpha1.Param{Name: "registry-secret", Value: pipelineRunData.REGISTRYSECRET})
-	}
 	if pipelineRunData.HELMSECRET != "" {
 		params = append(params, v1alpha1.Param{Name: "helm-secret", Value: pipelineRunData.HELMSECRET})
 	}
@@ -804,7 +799,6 @@ func (r Resource) StartResourcesController(stopCh <-chan struct{}) {
 	logging.Log.Info("Resource Events Controller Started")
 }
 
-
 //pipeline events
 func (r Resource) pipelineCreated(obj interface{}) {
 	logging.Log.Debug("In pipelineCreated")
@@ -838,7 +832,6 @@ func (r Resource) pipelineDeleted(obj interface{}) {
 
 	resourcesChannel <- data
 }
-
 
 // task events
 func (r Resource) taskCreated(obj interface{}) {
@@ -907,7 +900,6 @@ func (r Resource) pipelineRunDeleted(obj interface{}) {
 
 	resourcesChannel <- data
 }
-
 
 // task run events
 func (r Resource) taskRunCreated(obj interface{}) {

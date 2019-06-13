@@ -18,6 +18,11 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 
 import { App } from './App';
+import * as API from '../../api';
+
+beforeEach(() => {
+  jest.spyOn(API, 'getPipelines').mockImplementation(() => {});
+});
 
 it('App renders successfully', () => {
   const middleware = [thunk];

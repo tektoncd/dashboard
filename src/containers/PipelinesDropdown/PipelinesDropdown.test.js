@@ -204,6 +204,25 @@ it('PipelinesDropdown renders controlled selection', () => {
   expect(queryByText(initialTextRegExp)).toBeTruthy();
 });
 
+it('PipelinesDropdown renders controlled namespace', () => {
+  const store = mockStore({
+    ...pipelinesStoreDefault,
+    ...namespacesStoreBlue
+  });
+  // Select namespace 'green'
+  const { queryByText, getByText, getAllByText } = render(
+    <Provider store={store}>
+      <PipelinesDropdown {...props} namespace="green" />
+    </Provider>
+  );
+  fireEvent.click(getByText(initialTextRegExp));
+  checkDropdownItems({
+    getAllByText,
+    queryByText,
+    testDict: pipelinesByNamespace.green
+  });
+});
+
 it('PipelinesDropdown renders empty', () => {
   const store = mockStore({
     pipelines: {

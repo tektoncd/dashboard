@@ -22,7 +22,7 @@ RUN apk add curl git
 RUN curl -fsSL -o /usr/local/bin/dep https://github.com/golang/dep/releases/download/v0.5.0/dep-linux-amd64 && chmod +x /usr/local/bin/dep
 WORKDIR /go/src/github.com/tektoncd/dashboard
 COPY . .
-RUN dep ensure -vendor-only 
+RUN dep ensure -vendor-only
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o tekton_dashboard_backend ./cmd/dashboard
 
 FROM alpine@sha256:7df6db5aa61ae9480f52f0b3a06a140ab98d427f86d8d5de0bedab9b8df6b1c0
