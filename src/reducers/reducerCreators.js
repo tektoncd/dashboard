@@ -78,7 +78,7 @@ function createByNamespaceReducer({ type }) {
   };
 }
 
-function createIsFetchingReducer({ type }) {
+export function createIsFetchingReducer({ type }) {
   const typePlural = typeToPlural(type);
   return function isFetching(state = false, action) {
     switch (action.type) {
@@ -93,7 +93,7 @@ function createIsFetchingReducer({ type }) {
   };
 }
 
-function createErrorMessageReducer({ type }) {
+export function createErrorMessageReducer({ type }) {
   const typePlural = typeToPlural(type);
   return function errorMessage(state = null, action) {
     switch (action.type) {
