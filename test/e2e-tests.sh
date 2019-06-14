@@ -163,7 +163,8 @@ kubectl get deployments
 echo "svc are:"
 kubectl get svc 
 
-
+kubectl port-forward $(kubectl get pod -l app=go-hello-world -o name) 8080 &
+echo "pod forwarded to port 8080"
 
 #kubectl describe pods 
 
@@ -179,11 +180,11 @@ echo "logs is: $logs"
 #try cluster ip: port address 
 
 #Gets the node port 
-nport=$(kubectl get svc "go-hello-world" --namespace default --output 'jsonpath={.spec.ports[?(@.port==8080)].nodePort}')
-echo "nport is $nport"
+#nport=$(kubectl get svc "go-hello-world" --namespace default --output 'jsonpath={.spec.ports[?(@.port==8080)].nodePort}')
+#echo "nport is $nport"
 
 echo "localhost attempt"
-resp=$(curl -k  http://127.0.0.1:$nport) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
+resp=$(curl -k  http://127.0.0.1:8080) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
 
 echo "resp is :$resp"
 
@@ -192,13 +193,13 @@ clusterip=$(kubectl get svc "go-hello-world" --namespace default --output 'jsonp
 echo "clusterip is $clusterip"
 
 echo "external ip attempt"
-resp=$(curl -k  http://$clusterip:$nport) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
+resp=$(curl -k  http://$clusterip:8080) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
 
 echo "resp is :$resp"
 
 
 echo "localhost attempt"
-resp=$(curl -k  localhost:$nport) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
+resp=$(curl -k  localhost:8080) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
 
 echo "resp is :$resp"
 
@@ -208,44 +209,16 @@ cat /etc/hosts
 hostname
 
 
- echo "ip address from cluster"
- resp=$(curl -k  $ip) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
+#  echo "ip address from cluster"
+#  resp=$(curl -k  $ip) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
 
- echo "resp is :$resp"
+#  echo "resp is :$resp"
 
   echo "ip address from cluster with node port"
- resp=$(curl -k  $ip:$nport) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
+ resp=$(curl -k  $ip:8080) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
 
  echo "resp is :$resp"
 
-
-  echo "ip address from cluster"
- resp=$(curl -k  http://$ip) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
-
- echo "resp is :$resp"
-
-echo "ip address from cluster"
- resp=$(curl -k  http://$ip:$nport) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
-
- echo "resp is :$resp"
-
-
-# echo "external ip attempt with no node port"
-# resp=$(curl -k  http://$clusterip:) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
-
-# echo "resp is :$resp"
-
-
-# echo "external ip attempt with no http"
-# resp=$(curl -k  $clusterip:) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
-
-# echo "resp is :$resp"
-
-
-# echo "external ip attempt with node port and no http"
-# resp=$(curl -k  $clusterip:$nport) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
-
-# echo "resp is :$resp"
 
 #kubectl describe pod 
 # if [ "$EXPECTED_RETURN_VALUE" = "$resp" ]; then
