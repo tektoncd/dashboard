@@ -37,27 +37,33 @@ install_dashboard_backend
 # # TODO: run your test here !
 
 
-#kubectl cluster-info
-output=$(kubectl cluster-info)
-echo "kubectl cluster-info : $output"
+# #kubectl cluster-info
+# output=$(kubectl cluster-info)
+# echo "kubectl cluster-info : $output"
 
-#Gets the cluster info in the style: https://localhost:6443
-output1=$(kubectl cluster-info | head -n 1)
-echo "kubectl cluster-info | head -n 1 : $output1"
+# #Gets the cluster info in the style: https://localhost:6443
+# output1=$(kubectl cluster-info | head -n 1)
+# echo "kubectl cluster-info | head -n 1 : $output1"
 
 
-edited=$(echo "$output1" | sed 's/.*://') #sed 's/.*running at \([^ ]*\).*/\1/')
-#edited1=$(echo "$output1" | sed 's/.*https://\([^ ]*\).*/\1/')
-#echo "Edited1 is $edited1"
-#edited=$(echo "$edited1 | sed 's/ .*//'") #cut -f1 -d" "")
-echo "Edited is: $edited"
+# edited=$(echo "$output1" | sed 's/.*://') #sed 's/.*running at \([^ ]*\).*/\1/')
+# #edited1=$(echo "$output1" | sed 's/.*https://\([^ ]*\).*/\1/')
+# #echo "Edited1 is $edited1"
+# #edited=$(echo "$edited1 | sed 's/ .*//'") #cut -f1 -d" "")
+# echo "Edited is: $edited"
 
-edited1=$(echo "$edited" | sed 's/.\{4\}$//')  
-#| sed s'/[a-zA-Z]$//') #sed 's/.*https: \([^ ]*\).*/\1/')
-echo "Edited1 is: $edited1"
+# edited1=$(echo "$edited" | sed 's/.\{4\}$//')  
+# #| sed s'/[a-zA-Z]$//') #sed 's/.*https: \([^ ]*\).*/\1/')
+# echo "Edited1 is: $edited1"
 
-ip="https:$edited1"
-echo "ip is $ip"
+# ip="https:$edited1"
+# echo "ip is $ip"
+
+# #edited2=$(echo "$edited" | sed 's/ .*//')
+# #echo "Edited2 is: $edited2"
+
+
+
 
 #Apply permissions to be able to curl endpoints 
 echo "Applying test-rbac,yaml"
@@ -66,26 +72,25 @@ echo "Applied test-rbac.yaml"
 
 
 function wait_for_ready_pods() {
-    if [ -z "$1" ] || [ -z "$2" ]; then
-        echo "Usage ERROR for function: wait_for_ready_pods [namespace] [timeout] <sleepTime>"
-        [ -z "$1" ] && echo "Missing [namespace]"
-        [ -z "$2" ] && echo "Missing [timeout]"
-        exit 1
-    fi
-    namespace=$1
-    timeout_period=$2
-    timeout ${timeout_period} "kubectl get pods -n ${namespace} && [[ \$(kubectl get pods -n ${namespace} 2>&1 | grep -c -v -E '(Running|Completed|Terminating|STATUS)') -eq 0 ]]"
+  if [ -z "$1" ] || [ -z "$2" ]; then
+      echo "Usage ERROR for function: wait_for_ready_pods [namespace] [timeout] <sleepTime>"
+      [ -z "$1" ] && echo "Missing [namespace]"
+      [ -z "$2" ] && echo "Missing [timeout]"
+      exit 1
+  fi
+  namespace=$1
+  timeout_period=$2
+  timeout ${timeout_period} "kubectl get pods -n ${namespace} && [[ \$(kubectl get pods -n ${namespace} --no-headers 2>&1 | grep -c -v -E '(Running|Completed|Terminating)') -eq 0 ]]"
 }
-
 
 kubectl port-forward $(kubectl get pod -l app=tekton-dashboard -o name) 9097:9097 &
 echo "dashboard forwarded to port 9097"
 
 kubectl apply -f $tekton_repo_dir/test/kaniko-build-task.yaml
 
-kubectl apply -f $tekton_repo_dir/test/deploy-task-insecure.yaml
-
 kubectl apply -f $tekton_repo_dir/test/build-task-insecure.yaml
+
+kubectl apply -f $tekton_repo_dir/test/deploy-task-insecure.yaml
 
 kubectl apply -f $tekton_repo_dir/test/Pipeline.yaml
 
@@ -122,24 +127,14 @@ curl -X POST --header Content-Type:application/json -d "$post_data" $curlNport
 echo "Curled"
 
 #sleep 1m
+wait_for_ready_pods default 1000 30
+echo "Pods should be ready 1000 30"
 #wait_until_pods_running default
-wait_for_ready_pods default 300 30
 
 echo "Get pods is"
 kubectl get pods 
 
-
-#kubectl get pipelineruns
-
-# responsePipelineRun=$(curl -k "http://127.0.0.1:9097/v1/namespaces/default/pipelineruns")
-# echo "response is :"
-# echo "$responsePipelineRun"
-
-
-#kubectl describe pipelineruns
-##How to get logs without numbers at the end 
-#logs=$(kubectl logs -l app=tekton-app -n default -c build-step-push)
-#echo "logs is: $logs"
+kubectl get pipelineruns
 
 echo "deployments are:"
 kubectl get deployments 
@@ -147,20 +142,19 @@ kubectl get deployments
 echo "svc are:"
 kubectl get svc 
 
-#Port forward the pod
 kubectl port-forward $(kubectl get pod -l app=go-hello-world -o name) 8080 &
 echo "pod forwarded to port 8080"
 
 echo "localhost attempt"
-resp=$(curl -k  http://127.0.0.1:8080) 
+resp=$(curl -k  http://127.0.0.1:8080) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
 
 echo "resp is :$resp"
 
-kubectl describe pod 
+
 if [ "$EXPECTED_RETURN_VALUE" = "$resp" ]; then
-    echo "Pipeline Run successfully executed"
-else
-    echo "Pipeline Run error returned not expected message: $resp"
+     echo "Pipeline Run successfully executed"
+ else
+     echo "Pipeline Run error returned not expected message: $resp"
 
 
 # kill -9 $fork_pid
