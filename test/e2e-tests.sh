@@ -189,6 +189,22 @@ echo "resp is :$resp"
 
 
 
+echo "external ip attempt with no node port"
+resp=$(curl -k  http://$clusterip:) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
+
+echo "resp is :$resp"
+
+
+echo "external ip attempt with no http"
+resp=$(curl -k  $clusterip:) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
+
+echo "resp is :$resp"
+
+
+echo "external ip attempt with node port and no http"
+resp=$(curl -k  $clusterip:$nport) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
+
+echo "resp is :$resp"
 
 #kubectl describe pod 
 # if [ "$EXPECTED_RETURN_VALUE" = "$resp" ]; then
