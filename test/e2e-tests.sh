@@ -85,6 +85,8 @@ kubectl apply -f $tekton_repo_dir/test/kaniko-build-task.yaml
 
 kubectl apply -f $tekton_repo_dir/test/deploy-task-insecure.yaml
 
+kubectl apply -f $tekton_repo_dir/test/build-task-insecure.yaml
+
 kubectl apply -f $tekton_repo_dir/test/Pipeline.yaml
 
 
