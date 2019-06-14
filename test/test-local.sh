@@ -16,10 +16,10 @@
 
 # This script calls out to scripts in tektoncd/plumbing to setup a cluster
 # and deploy Tekton Pipelines to it for running integration tests.
-export tekton_repo_dir=$(git rev-parse --show-toplevel)
+#export tekton_repo_dir=$(git rev-parse --show-toplevel)
 #export KO_DOCKER_REPO=gcr.io/${E2E_PROJECT_ID}/${E2E_BASE_NAME}-e2e-img
 
-source $(dirname $0)/e2e-common.sh
+#source $(dirname $0)/e2e-common.sh
 
 # Script entry point.
 
@@ -67,7 +67,7 @@ install_dashboard_backend
 
 #Apply permissions to be able to curl endpoints 
 echo "Applying test-rbac,yaml"
-kubectl apply -f $tekton_repo_dir/test/test-rbac.yaml
+kubectl apply -f test-rbac.yaml
 echo "Applied test-rbac.yaml"
 
 
@@ -94,13 +94,13 @@ function timeout() {
 kubectl port-forward $(kubectl get pod -l app=tekton-dashboard -o name) 9097:9097 &
 echo "dashboard forwarded to port 9097"
 
-kubectl apply -f $tekton_repo_dir/test/kaniko-build-task.yaml
+kubectl apply -f kaniko-build-task.yaml
 
-kubectl apply -f $tekton_repo_dir/test/build-task-insecure.yaml
+kubectl apply -f build-task-insecure.yaml
 
-kubectl apply -f $tekton_repo_dir/test/deploy-task-insecure.yaml
+kubectl apply -f deploy-task-insecure.yaml
 
-kubectl apply -f $tekton_repo_dir/test/Pipeline.yaml
+kubectl apply -f Pipeline.yaml
 
 
 #API configuration
