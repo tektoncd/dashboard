@@ -46,7 +46,7 @@ output1=$(kubectl cluster-info | head -n 1)
 echo "kubectl cluster-info | head -n 1 : $output1"
 
 
-edited=$(echo "$output1" | sed 's/.*https: //') #sed 's/.*running at \([^ ]*\).*/\1/')
+edited=$(echo "$output1" | sed 's/.*://') #sed 's/.*running at \([^ ]*\).*/\1/')
 #edited1=$(echo "$output1" | sed 's/.*https://\([^ ]*\).*/\1/')
 #echo "Edited1 is $edited1"
 #edited=$(echo "$edited1 | sed 's/ .*//'") #cut -f1 -d" "")
@@ -62,20 +62,6 @@ echo "ip is $ip"
 #edited2=$(echo "$edited" | sed 's/ .*//')
 #echo "Edited2 is: $edited2"
 
-#Install docker 
-#curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
-
-#apt-get install docker-ce docker-ce-cli containerd.io
-
-#docker run hello-world
-
-#av=$(apt-cache madison docker-ce)
-#echo "versions available are:$av"
-
-#Permissions 
-#gcloud auth configure-docker
-#gcloud components install docker-credential-gcr
-#docker-credential-gcr configure-docker
 
 
 
@@ -153,11 +139,6 @@ echo "Curled"
 
 sleep 1m
 wait_until_pods_running default
-
-
-#Not running after 6 mins, so debug in here 
-#echo "Describing pods"
-#kubectl describe pods
 
 
 echo "Get pods is"
