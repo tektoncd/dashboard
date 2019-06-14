@@ -46,7 +46,7 @@ export function taskRunStep(selectedStepId, taskRun) {
     return {};
   }
 
-  const { id, stepName, stepStatus, status, reason, ...definition } = step;
+  const { stepName, stepStatus, status, reason, ...definition } = step;
 
   return {
     definition,

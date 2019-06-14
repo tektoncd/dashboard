@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { getTaskRuns } from '../api';
+import { getTaskRun, getTaskRuns } from '../api';
 import { getSelectedNamespace } from '../reducers';
 
 export function fetchTaskRunsSuccess(data) {
@@ -33,5 +33,20 @@ export function fetchTaskRuns({ taskName, namespace } = {}) {
       dispatch({ type: 'TASK_RUNS_FETCH_FAILURE', error });
     }
     return taskRuns;
+  };
+}
+
+export function fetchTaskRun({ taskRunName, namespace } = {}) {
+  return async (dispatch, getState) => {
+    dispatch({ type: 'TASK_RUNS_FETCH_REQUEST' });
+    let taskRun;
+    try {
+      const requestedNamespace = namespace || getSelectedNamespace(getState());
+      taskRun = await getTaskRun(taskRunName, requestedNamespace);
+      dispatch(fetchTaskRunsSuccess([taskRun]));
+    } catch (error) {
+      dispatch({ type: 'TASK_RUNS_FETCH_FAILURE', error });
+    }
+    return taskRun;
   };
 }

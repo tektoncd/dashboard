@@ -118,6 +118,13 @@ export class SideNav extends Component {
             <SideNavLink
               element={NavLink}
               icon={<span />}
+              to={this.getPath('/taskruns')}
+            >
+              TaskRuns
+            </SideNavLink>
+            <SideNavLink
+              element={NavLink}
+              icon={<span />}
               to="/importresources"
             >
               Import Tekton resources
