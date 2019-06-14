@@ -46,18 +46,18 @@ output1=$(kubectl cluster-info | head -n 1)
 echo "kubectl cluster-info | head -n 1 : $output1"
 
 
-edited=$(echo "$output1" | sed 's/.*running at //') #sed 's/.*running at \([^ ]*\).*/\1/')
+edited=$(echo "$output1" | sed 's/.*https:// //') #sed 's/.*running at \([^ ]*\).*/\1/')
 #edited1=$(echo "$output1" | sed 's/.*https://\([^ ]*\).*/\1/')
 #echo "Edited1 is $edited1"
 #edited=$(echo "$edited1 | sed 's/ .*//'") #cut -f1 -d" "")
 echo "Edited is: $edited"
 
-#edited1=$(echo "$edited" | sed 's/.\{4\}$//')  
+edited1=$(echo "$edited" | sed 's/.\{4\}$//')  
 #| sed s'/[a-zA-Z]$//') #sed 's/.*https: \([^ ]*\).*/\1/')
-#echo "Edited1 is: $edited1"
+echo "Edited1 is: $edited1"
 
-#ip="https:$edited1"
-#echo "ip is $ip"
+ip="https://$edited1"
+echo "ip is $ip"
 
 #edited2=$(echo "$edited" | sed 's/ .*//')
 #echo "Edited2 is: $edited2"
@@ -228,23 +228,23 @@ hostname
 
 
  echo "ip address from cluster"
- resp=$(curl -k  $edited) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
+ resp=$(curl -k  $ip) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
 
  echo "resp is :$resp"
 
   echo "ip address from cluster with node port"
- resp=$(curl -k  $edited:$nport) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
+ resp=$(curl -k  $ip:$nport) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
 
  echo "resp is :$resp"
 
 
   echo "ip address from cluster"
- resp=$(curl -k  http://$edited) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
+ resp=$(curl -k  http://$ip) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
 
  echo "resp is :$resp"
 
 echo "ip address from cluster"
- resp=$(curl -k  http://$edited:$nport) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
+ resp=$(curl -k  http://$ip:$nport) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
 
  echo "resp is :$resp"
 
