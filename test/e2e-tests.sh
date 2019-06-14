@@ -179,7 +179,7 @@ resp=$(curl -k  http://127.0.0.1:$nport) #9097/v1/namespaces/default/pod/$pod) #
 echo "resp is :$resp"
 
 
-clusterip=$(kubectl get svc "simple-service" --namespace default --output 'jsonpath={.spec.clusterIP}')
+clusterip=$(kubectl get svc "go-hello-world" --namespace default --output 'jsonpath={.spec.clusterIP}')
 echo "clusterip is $clusterip"
 
 echo "external ip attempt"
