@@ -27,13 +27,12 @@ it('fetchExtensionsSuccess', () => {
 
 it('fetchExtensions', async () => {
   const bundlelocation = 'bundlelocation';
-  const displayname = 'displayname';
+  const displayName = 'displayName';
   const name = 'name';
   const url = 'url';
-  const extensions = [{ bundlelocation, displayname, name, url }];
-  const transformedExtensions = [
+  const extensions = [
     {
-      displayName: displayname,
+      displayName,
       name,
       source: API.getExtensionBundleURL(name, bundlelocation),
       url
@@ -47,7 +46,7 @@ it('fetchExtensions', async () => {
 
   const expectedActions = [
     { type: 'EXTENSIONS_FETCH_REQUEST' },
-    fetchExtensionsSuccess(transformedExtensions)
+    fetchExtensionsSuccess(extensions)
   ];
 
   await store.dispatch(fetchExtensions());
@@ -68,22 +67,6 @@ it('fetchExtensions error', async () => {
   const expectedActions = [
     { type: 'EXTENSIONS_FETCH_REQUEST' },
     { type: 'EXTENSIONS_FETCH_FAILURE', error }
-  ];
-
-  await store.dispatch(fetchExtensions());
-  expect(store.getActions()).toEqual(expectedActions);
-});
-
-it('fetchExtensions null', async () => {
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const store = mockStore();
-
-  jest.spyOn(API, 'getExtensions').mockImplementation(() => null);
-
-  const expectedActions = [
-    { type: 'EXTENSIONS_FETCH_REQUEST' },
-    fetchExtensionsSuccess([])
   ];
 
   await store.dispatch(fetchExtensions());

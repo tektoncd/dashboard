@@ -166,9 +166,17 @@ export function deleteCredential(id, namespace) {
   return deleteRequest(uri);
 }
 
-export function getExtensions() {
+export async function getExtensions() {
   const uri = `${apiRoot}/v1/extensions`;
-  return get(uri);
+  const extensions = await get(uri);
+  return (extensions || []).map(
+    ({ bundlelocation, displayname, name, url }) => ({
+      displayName: displayname,
+      name,
+      source: getExtensionBundleURL(name, bundlelocation),
+      url
+    })
+  );
 }
 
 export function getNamespaces() {
