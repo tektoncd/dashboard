@@ -37,6 +37,31 @@ install_dashboard_backend
 # # TODO: run your test here !
 
 
+#kubectl cluster-info
+output=$(kubectl cluster-info)
+echo "kubectl cluster-info : $output"
+
+#Gets the cluster info in the style: https://localhost:6443
+output1=$(kubectl cluster-info | head -n 1)
+echo "kubectl cluster-info | head -n 1 : $output1"
+
+
+edited=$(echo "$output1" | sed 's/.*running at //') #sed 's/.*running at \([^ ]*\).*/\1/')
+#edited1=$(echo "$output1" | sed 's/.*https://\([^ ]*\).*/\1/')
+#echo "Edited1 is $edited1"
+#edited=$(echo "$edited1 | sed 's/ .*//'") #cut -f1 -d" "")
+echo "Edited is: $edited"
+
+#edited1=$(echo "$edited" | sed 's/.\{4\}$//')  
+#| sed s'/[a-zA-Z]$//') #sed 's/.*https: \([^ ]*\).*/\1/')
+#echo "Edited1 is: $edited1"
+
+#ip="https:$edited1"
+#echo "ip is $ip"
+
+#edited2=$(echo "$edited" | sed 's/ .*//')
+#echo "Edited2 is: $edited2"
+
 #Install docker 
 #curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
 
@@ -202,23 +227,44 @@ cat /etc/hosts
 hostname
 
 
+ echo "ip address from cluster"
+ resp=$(curl -k  $edited) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
 
-echo "external ip attempt with no node port"
-resp=$(curl -k  http://$clusterip:) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
+ echo "resp is :$resp"
 
-echo "resp is :$resp"
+  echo "ip address from cluster with node port"
+ resp=$(curl -k  $edited:$nport) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
 
-
-echo "external ip attempt with no http"
-resp=$(curl -k  $clusterip:) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
-
-echo "resp is :$resp"
+ echo "resp is :$resp"
 
 
-echo "external ip attempt with node port and no http"
-resp=$(curl -k  $clusterip:$nport) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
+  echo "ip address from cluster"
+ resp=$(curl -k  http://$edited) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
 
-echo "resp is :$resp"
+ echo "resp is :$resp"
+
+echo "ip address from cluster"
+ resp=$(curl -k  http://$edited:$nport) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
+
+ echo "resp is :$resp"
+
+
+# echo "external ip attempt with no node port"
+# resp=$(curl -k  http://$clusterip:) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
+
+# echo "resp is :$resp"
+
+
+# echo "external ip attempt with no http"
+# resp=$(curl -k  $clusterip:) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
+
+# echo "resp is :$resp"
+
+
+# echo "external ip attempt with node port and no http"
+# resp=$(curl -k  $clusterip:$nport) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
+
+# echo "resp is :$resp"
 
 #kubectl describe pod 
 # if [ "$EXPECTED_RETURN_VALUE" = "$resp" ]; then
