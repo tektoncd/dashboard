@@ -16,7 +16,7 @@ import thunk from 'redux-thunk';
 
 import * as API from '../api';
 import * as selectors from '../reducers';
-import { fetchTaskRuns, fetchTaskRunsSuccess } from './taskRuns';
+import { fetchTaskRun, fetchTaskRuns, fetchTaskRunsSuccess } from './taskRuns';
 
 it('fetchTaskRunsSuccess', () => {
   const data = { fake: 'data' };
@@ -44,6 +44,27 @@ it('fetchTaskRuns', async () => {
   ];
 
   await store.dispatch(fetchTaskRuns());
+  expect(store.getActions()).toEqual(expectedActions);
+});
+
+it('fetchTaskRun', async () => {
+  const namespace = 'default';
+  const task = { fake: 'task' };
+  const middleware = [thunk];
+  const mockStore = configureStore(middleware);
+  const store = mockStore();
+
+  jest
+    .spyOn(selectors, 'getSelectedNamespace')
+    .mockImplementation(() => namespace);
+  jest.spyOn(API, 'getTaskRun').mockImplementation(() => task);
+
+  const expectedActions = [
+    { type: 'TASK_RUNS_FETCH_REQUEST' },
+    fetchTaskRunsSuccess([task])
+  ];
+
+  await store.dispatch(fetchTaskRun());
   expect(store.getActions()).toEqual(expectedActions);
 });
 
