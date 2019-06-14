@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { getExtensionBundleURL, getExtensions } from '../api';
+import { getExtensions } from '../api';
 
 export function fetchExtensionsSuccess(data) {
   return {
@@ -26,14 +26,6 @@ export function fetchExtensions() {
     let extensions;
     try {
       extensions = await getExtensions();
-      extensions = (extensions || []).map(
-        ({ bundlelocation, displayname, name, url }) => ({
-          displayName: displayname,
-          name,
-          source: getExtensionBundleURL(name, bundlelocation),
-          url
-        })
-      );
       dispatch(fetchExtensionsSuccess(extensions));
     } catch (error) {
       dispatch({ type: 'EXTENSIONS_FETCH_FAILURE', error });

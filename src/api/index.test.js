@@ -23,6 +23,7 @@ import {
   getAPIRoot,
   getCredential,
   getCredentials,
+  getExtensionBundleURL,
   getExtensions,
   getNamespaces,
   getPipeline,
@@ -341,10 +342,24 @@ it('deleteCredential', () => {
 });
 
 it('getExtensions', () => {
-  const extensions = [{ fake: 'extension' }];
+  const displayName = 'displayName';
+  const name = 'name';
+  const bundlelocation = 'bundlelocation';
+  const source = getExtensionBundleURL(name, bundlelocation);
+  const url = 'url';
+  const extensions = [{ displayname: displayName, name, bundlelocation, url }];
+  const transformedExtensions = [{ displayName, name, source, url }];
   fetchMock.get(/extensions/, extensions);
   return getExtensions().then(response => {
-    expect(response).toEqual(extensions);
+    expect(response).toEqual(transformedExtensions);
+    fetchMock.restore();
+  });
+});
+
+it('getExtensions null', () => {
+  fetchMock.get(/extensions/, 'null');
+  return getExtensions().then(response => {
+    expect(response).toEqual([]);
     fetchMock.restore();
   });
 });
