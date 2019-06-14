@@ -46,7 +46,7 @@ output1=$(kubectl cluster-info | head -n 1)
 echo "kubectl cluster-info | head -n 1 : $output1"
 
 
-edited=$(echo "$output1" | sed 's/.*https:// //') #sed 's/.*running at \([^ ]*\).*/\1/')
+edited=$(echo "$output1" | sed 's/.*https: //') #sed 's/.*running at \([^ ]*\).*/\1/')
 #edited1=$(echo "$output1" | sed 's/.*https://\([^ ]*\).*/\1/')
 #echo "Edited1 is $edited1"
 #edited=$(echo "$edited1 | sed 's/ .*//'") #cut -f1 -d" "")
@@ -56,7 +56,7 @@ edited1=$(echo "$edited" | sed 's/.\{4\}$//')
 #| sed s'/[a-zA-Z]$//') #sed 's/.*https: \([^ ]*\).*/\1/')
 echo "Edited1 is: $edited1"
 
-ip="https://$edited1"
+ip="https:$edited1"
 echo "ip is $ip"
 
 #edited2=$(echo "$edited" | sed 's/ .*//')
