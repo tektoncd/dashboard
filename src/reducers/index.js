@@ -28,7 +28,7 @@ export default combineReducers({
   pipelines: pipelines(),
   pipelineResources: pipelineResources(),
   pipelineRuns: pipelineRuns(),
-  serviceAccounts,
+  serviceAccounts: serviceAccounts(),
   tasks: tasks(),
   taskRuns: taskRuns()
 });
