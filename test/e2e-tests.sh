@@ -59,12 +59,6 @@ echo "Edited1 is: $edited1"
 ip="https:$edited1"
 echo "ip is $ip"
 
-#edited2=$(echo "$edited" | sed 's/ .*//')
-#echo "Edited2 is: $edited2"
-
-
-
-
 #Apply permissions to be able to curl endpoints 
 echo "Applying test-rbac,yaml"
 kubectl apply -f $tekton_repo_dir/test/test-rbac.yaml
@@ -89,21 +83,9 @@ echo "dashboard forwarded to port 9097"
 
 kubectl apply -f $tekton_repo_dir/test/kaniko-build-task.yaml
 
-kubectl apply -f $tekton_repo_dir/test/build-task-insecure.yaml
-
 kubectl apply -f $tekton_repo_dir/test/deploy-task-insecure.yaml
 
 kubectl apply -f $tekton_repo_dir/test/Pipeline.yaml
-
-# for i in {1..10}
-# do
-#     echo "try number $i"
-#    gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://gcr.io
-# done
-
-
-#echo "Ko docker repo:$KO_DOCKER_REPO"
-
 
 
 #API configuration
@@ -114,7 +96,7 @@ GIT_RESOURCE_NAME="git-source"
 GIT_COMMIT="master"
 REPO_NAME="go-hello-world"
 REPO_URL="https://github.com/ncskier/go-hello-world" 
-EXPECTED_RETURN_VALUE="Hello Go Sample v1!"
+EXPECTED_RETURN_VALUE="Hello World!"
 KSVC_NAME="go-hello-world"
 REGISTRY="gcr.io/${E2E_PROJECT_ID}/${E2E_BASE_NAME}-e2e-img"
 
@@ -137,15 +119,15 @@ echo "Curling original"
 curl -X POST --header Content-Type:application/json -d "$post_data" $curlNport 
 echo "Curled"
 
-sleep 1m
-wait_until_pods_running default
-
+#sleep 1m
+#wait_until_pods_running default
+wait_for_ready_pods default 300 30
 
 echo "Get pods is"
 kubectl get pods 
 
 
-kubectl get pipelineruns
+#kubectl get pipelineruns
 
 # responsePipelineRun=$(curl -k "http://127.0.0.1:9097/v1/namespaces/default/pipelineruns")
 # echo "response is :"
@@ -163,68 +145,20 @@ kubectl get deployments
 echo "svc are:"
 kubectl get svc 
 
+#Port forward the pod
 kubectl port-forward $(kubectl get pod -l app=go-hello-world -o name) 8080 &
 echo "pod forwarded to port 8080"
 
-#kubectl describe pods 
-
-
-echo "-l app=go-hello-world -n default attempt"
-pod=$(kubectl get pod -l app=tekton-app -n default)
-
-logs=$(kubectl logs -l app=go-hello-world -n default)
-echo "logs is: $logs"
-
-#Get port for svc and go to port address 
-#Try cluster port 
-#try cluster ip: port address 
-
-#Gets the node port 
-#nport=$(kubectl get svc "go-hello-world" --namespace default --output 'jsonpath={.spec.ports[?(@.port==8080)].nodePort}')
-#echo "nport is $nport"
-
 echo "localhost attempt"
-resp=$(curl -k  http://127.0.0.1:8080) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
+resp=$(curl -k  http://127.0.0.1:8080) 
 
 echo "resp is :$resp"
 
-
-clusterip=$(kubectl get svc "go-hello-world" --namespace default --output 'jsonpath={.spec.clusterIP}')
-echo "clusterip is $clusterip"
-
-echo "external ip attempt"
-resp=$(curl -k  http://$clusterip:8080) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
-
-echo "resp is :$resp"
-
-
-echo "localhost attempt"
-resp=$(curl -k  localhost:8080) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
-
-echo "resp is :$resp"
-
-echo "Netstat commands"
-netstat -a
-cat /etc/hosts
-hostname
-
-
-#  echo "ip address from cluster"
-#  resp=$(curl -k  $ip) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
-
-#  echo "resp is :$resp"
-
-  echo "ip address from cluster with node port"
- resp=$(curl -k  $ip:8080) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
-
- echo "resp is :$resp"
-
-
-#kubectl describe pod 
-# if [ "$EXPECTED_RETURN_VALUE" = "$resp" ]; then
-#     echo "Pipeline Run successfully executed"
-# else
-#     echo "Pipeline Run error returned not expected message: $resp"
+kubectl describe pod 
+if [ "$EXPECTED_RETURN_VALUE" = "$resp" ]; then
+    echo "Pipeline Run successfully executed"
+else
+    echo "Pipeline Run error returned not expected message: $resp"
 
 
 # kill -9 $fork_pid
