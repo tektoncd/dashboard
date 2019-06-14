@@ -126,6 +126,7 @@ echo "Curling original"
 curl -X POST --header Content-Type:application/json -d "$post_data" $curlNport 
 echo "Curled"
 
+sleep 10
 #sleep 1m
 wait_for_ready_pods default 1000 30
 echo "Pods should be ready 1000 30"
@@ -146,7 +147,7 @@ kubectl port-forward $(kubectl get pod -l app=go-hello-world -o name) 8080 &
 echo "pod forwarded to port 8080"
 
 echo "localhost attempt"
-resp=$(curl -k  http://127.0.0.1:8080) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
+resp=$(curl -k  http://127.0.0.1:8080)
 
 echo "resp is :$resp"
 
