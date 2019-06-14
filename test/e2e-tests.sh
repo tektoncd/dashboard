@@ -165,6 +165,9 @@ kubectl get svc
 echo "-l app=go-hello-world -n default attempt"
 pod=$(kubectl get pod -l app=tekton-app -n default)
 
+logs=$(kubectl logs -l app=go-hello-world -n default)
+echo "logs is: $logs"
+
 #Get port for svc and go to port address 
 #Try cluster port 
 #try cluster ip: port address 
@@ -186,6 +189,17 @@ echo "external ip attempt"
 resp=$(curl -k  http://$clusterip:$nport) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
 
 echo "resp is :$resp"
+
+
+echo "localhost attempt"
+resp=$(curl -k  localhost:$nport) #9097/v1/namespaces/default/pod/$pod) #"Host: ${domain}" ${ip})
+
+echo "resp is :$resp"
+
+echo "Netstat commands"
+netstat -a
+cat /etc/hosts
+hostname
 
 
 
