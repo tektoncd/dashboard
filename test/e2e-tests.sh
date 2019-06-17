@@ -112,7 +112,7 @@ wait_for_ready_pods default 1000 30
 wait_until_pods_running default
 
 echo "Kubenetes wait test"
-kubectl wait --for=condition=Ready pod/-l app=go-hello-world --timeout=60s
+kubectl wait --for=condition=Ready pod/go-hello-world --timeout=60s
 
 echo "Get pods is"
 kubectl get pods 
@@ -136,7 +136,7 @@ do
    resp=$(curl -k  http://127.0.0.1:8080)
    if [ "$resp" =! "" ]; then
         break
-   sleep     
+   sleep 3    
 done
 #resp=$(curl -k  http://127.0.0.1:8080)
 
