@@ -12,24 +12,8 @@ limitations under the License.
 */
 
 import { getExtensions } from '../api';
-
-export function fetchExtensionsSuccess(data) {
-  return {
-    type: 'EXTENSIONS_FETCH_SUCCESS',
-    data
-  };
-}
+import { fetchCollection } from './actionCreators';
 
 export function fetchExtensions() {
-  return async dispatch => {
-    dispatch({ type: 'EXTENSIONS_FETCH_REQUEST' });
-    let extensions;
-    try {
-      extensions = await getExtensions();
-      dispatch(fetchExtensionsSuccess(extensions));
-    } catch (error) {
-      dispatch({ type: 'EXTENSIONS_FETCH_FAILURE', error });
-    }
-    return extensions;
-  };
+  return fetchCollection('Extension', getExtensions);
 }

@@ -16,6 +16,7 @@ import thunk from 'redux-thunk';
 
 import * as API from '../api';
 import * as selectors from '../reducers';
+import * as creators from './actionCreators';
 import {
   fetchPipeline,
   fetchPipelines,
@@ -72,38 +73,22 @@ it('fetchPipeline error', async () => {
 });
 
 it('fetchPipelines', async () => {
-  const pipelines = { fake: 'pipelines' };
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const store = mockStore();
-
-  jest.spyOn(API, 'getPipelines').mockImplementation(() => pipelines);
-
-  const expectedActions = [
-    { type: 'PIPELINES_FETCH_REQUEST' },
-    fetchPipelinesSuccess(pipelines)
-  ];
-
-  await store.dispatch(fetchPipelines());
-  expect(store.getActions()).toEqual(expectedActions);
+  jest.spyOn(creators, 'fetchNamespacedCollection');
+  const namespace = 'namespace';
+  fetchPipelines({ namespace });
+  expect(creators.fetchNamespacedCollection).toHaveBeenCalledWith(
+    'Pipeline',
+    API.getPipelines,
+    { namespace }
+  );
 });
 
-it('fetchPipelines error', async () => {
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const store = mockStore();
-
-  const error = new Error();
-
-  jest.spyOn(API, 'getPipelines').mockImplementation(() => {
-    throw error;
-  });
-
-  const expectedActions = [
-    { type: 'PIPELINES_FETCH_REQUEST' },
-    { type: 'PIPELINES_FETCH_FAILURE', error }
-  ];
-
-  await store.dispatch(fetchPipelines());
-  expect(store.getActions()).toEqual(expectedActions);
+it('fetchPipelines no namespace', async () => {
+  jest.spyOn(creators, 'fetchNamespacedCollection');
+  fetchPipelines();
+  expect(creators.fetchNamespacedCollection).toHaveBeenCalledWith(
+    'Pipeline',
+    API.getPipelines,
+    { namespace: undefined }
+  );
 });

@@ -11,16 +11,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
-
 import * as API from '../api';
-import * as selectors from '../reducers';
-import {
-  fetchNamespaces,
-  fetchNamespacesSuccess,
-  selectNamespace
-} from './namespaces';
+import * as creators from './actionCreators';
+import { fetchNamespaces, selectNamespace } from './namespaces';
 
 it('selectNamespace', () => {
   const namespace = 'namespace';
@@ -29,51 +22,11 @@ it('selectNamespace', () => {
   });
 });
 
-it('fetchNamespacesSuccess', () => {
-  const data = { fake: 'data' };
-  expect(fetchNamespacesSuccess(data)).toEqual({
-    type: 'NAMESPACES_FETCH_SUCCESS',
-    data
-  });
-});
-
 it('fetchNamespaces', async () => {
-  const namespace = 'default';
-  const namespaces = { fake: 'namespaces' };
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const store = mockStore();
-
-  jest
-    .spyOn(selectors, 'getSelectedNamespace')
-    .mockImplementation(() => namespace);
-  jest.spyOn(API, 'getNamespaces').mockImplementation(() => namespaces);
-
-  const expectedActions = [
-    { type: 'NAMESPACES_FETCH_REQUEST' },
-    fetchNamespacesSuccess(namespaces, namespace)
-  ];
-
-  await store.dispatch(fetchNamespaces());
-  expect(store.getActions()).toEqual(expectedActions);
-});
-
-it('fetchNamespaces error', async () => {
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const store = mockStore();
-
-  const error = new Error();
-
-  jest.spyOn(API, 'getNamespaces').mockImplementation(() => {
-    throw error;
-  });
-
-  const expectedActions = [
-    { type: 'NAMESPACES_FETCH_REQUEST' },
-    { type: 'NAMESPACES_FETCH_FAILURE', error }
-  ];
-
-  await store.dispatch(fetchNamespaces());
-  expect(store.getActions()).toEqual(expectedActions);
+  jest.spyOn(creators, 'fetchCollection');
+  fetchNamespaces();
+  expect(creators.fetchCollection).toHaveBeenCalledWith(
+    'Namespace',
+    API.getNamespaces
+  );
 });

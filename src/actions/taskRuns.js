@@ -13,6 +13,7 @@ limitations under the License.
 
 import { getTaskRun, getTaskRuns } from '../api';
 import { getSelectedNamespace } from '../reducers';
+import { fetchNamespacedCollection } from './actionCreators';
 
 export function fetchTaskRunsSuccess(data) {
   return {
@@ -21,19 +22,11 @@ export function fetchTaskRunsSuccess(data) {
   };
 }
 
-export function fetchTaskRuns({ taskName, namespace } = {}) {
-  return async (dispatch, getState) => {
-    dispatch({ type: 'TASK_RUNS_FETCH_REQUEST' });
-    let taskRuns;
-    try {
-      const requestedNamespace = namespace || getSelectedNamespace(getState());
-      taskRuns = await getTaskRuns(requestedNamespace, taskName);
-      dispatch(fetchTaskRunsSuccess(taskRuns));
-    } catch (error) {
-      dispatch({ type: 'TASK_RUNS_FETCH_FAILURE', error });
-    }
-    return taskRuns;
-  };
+export function fetchTaskRuns({ namespace, taskName } = {}) {
+  return fetchNamespacedCollection('TaskRun', getTaskRuns, {
+    namespace,
+    taskName
+  });
 }
 
 export function fetchTaskRun({ taskRunName, namespace } = {}) {
