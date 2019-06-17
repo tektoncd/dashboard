@@ -115,7 +115,7 @@ echo "Curled"
 for i in {1..20}
 do
    #kubectl wait --for=condition=Ready pod/-l app=go-hello-world --timeout=30s
-   kubectl wait --for=condition=Ready deployments/go-hello-world --timeout=30s
+   kubectl wait --for=condition=available deployments/go-hello-world --timeout=30s
 
     sleep 5  
     
@@ -153,6 +153,7 @@ done
 echo "resp is :$resp"
 resp="${resp%%*( )}"
 echo "resp remove trailing whitespace is :$resp"
+echo "expected return value is $EXPECTED_RETURN_VALUE"
 
 if [ "$EXPECTED_RETURN_VALUE" = "$resp" ]; then
      echo "Pipeline Run successfully executed"
