@@ -11,64 +11,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
-
 import * as API from '../api';
-import { fetchExtensions, fetchExtensionsSuccess } from './extensions';
-
-it('fetchExtensionsSuccess', () => {
-  const data = { fake: 'data' };
-  expect(fetchExtensionsSuccess(data)).toEqual({
-    type: 'EXTENSIONS_FETCH_SUCCESS',
-    data
-  });
-});
+import { fetchExtensions } from './extensions';
+import * as creators from './actionCreators';
 
 it('fetchExtensions', async () => {
-  const bundlelocation = 'bundlelocation';
-  const displayName = 'displayName';
-  const name = 'name';
-  const url = 'url';
-  const extensions = [
-    {
-      displayName,
-      name,
-      source: API.getExtensionBundleURL(name, bundlelocation),
-      url
-    }
-  ];
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const store = mockStore();
-
-  jest.spyOn(API, 'getExtensions').mockImplementation(() => extensions);
-
-  const expectedActions = [
-    { type: 'EXTENSIONS_FETCH_REQUEST' },
-    fetchExtensionsSuccess(extensions)
-  ];
-
-  await store.dispatch(fetchExtensions());
-  expect(store.getActions()).toEqual(expectedActions);
-});
-
-it('fetchExtensions error', async () => {
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const store = mockStore();
-
-  const error = new Error();
-
-  jest.spyOn(API, 'getExtensions').mockImplementation(() => {
-    throw error;
-  });
-
-  const expectedActions = [
-    { type: 'EXTENSIONS_FETCH_REQUEST' },
-    { type: 'EXTENSIONS_FETCH_FAILURE', error }
-  ];
-
-  await store.dispatch(fetchExtensions());
-  expect(store.getActions()).toEqual(expectedActions);
+  jest.spyOn(creators, 'fetchCollection');
+  fetchExtensions();
+  expect(creators.fetchCollection).toHaveBeenCalledWith(
+    'Extension',
+    API.getExtensions
+  );
 });

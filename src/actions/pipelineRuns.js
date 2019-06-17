@@ -13,6 +13,7 @@ limitations under the License.
 
 import { getPipelineRun, getPipelineRuns } from '../api';
 import { getSelectedNamespace } from '../reducers';
+import { fetchNamespacedCollection } from './actionCreators';
 
 export function fetchPipelineRunsSuccess(data) {
   return {
@@ -36,17 +37,9 @@ export function fetchPipelineRun({ name, namespace }) {
   };
 }
 
-export function fetchPipelineRuns({ pipelineName, namespace } = {}) {
-  return async (dispatch, getState) => {
-    dispatch({ type: 'PIPELINE_RUNS_FETCH_REQUEST' });
-    let pipelineRuns;
-    try {
-      const requestedNamespace = namespace || getSelectedNamespace(getState());
-      pipelineRuns = await getPipelineRuns(requestedNamespace, pipelineName);
-      dispatch(fetchPipelineRunsSuccess(pipelineRuns));
-    } catch (error) {
-      dispatch({ type: 'PIPELINE_RUNS_FETCH_FAILURE', error });
-    }
-    return pipelineRuns;
-  };
+export function fetchPipelineRuns({ namespace, pipelineName } = {}) {
+  return fetchNamespacedCollection('PipelineRun', getPipelineRuns, {
+    namespace,
+    pipelineName
+  });
 }

@@ -17,6 +17,7 @@ import thunk from 'redux-thunk';
 import * as API from '../api';
 import * as selectors from '../reducers';
 import { fetchTaskRun, fetchTaskRuns, fetchTaskRunsSuccess } from './taskRuns';
+import * as creators from './actionCreators';
 
 it('fetchTaskRunsSuccess', () => {
   const data = { fake: 'data' };
@@ -27,24 +28,15 @@ it('fetchTaskRunsSuccess', () => {
 });
 
 it('fetchTaskRuns', async () => {
-  const namespace = 'default';
-  const tasks = { fake: 'tasks' };
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const store = mockStore();
-
-  jest
-    .spyOn(selectors, 'getSelectedNamespace')
-    .mockImplementation(() => namespace);
-  jest.spyOn(API, 'getTaskRuns').mockImplementation(() => tasks);
-
-  const expectedActions = [
-    { type: 'TASK_RUNS_FETCH_REQUEST' },
-    fetchTaskRunsSuccess(tasks)
-  ];
-
-  await store.dispatch(fetchTaskRuns());
-  expect(store.getActions()).toEqual(expectedActions);
+  jest.spyOn(creators, 'fetchNamespacedCollection');
+  const namespace = 'namespace';
+  const taskName = 'taskName';
+  fetchTaskRuns({ namespace, taskName });
+  expect(creators.fetchNamespacedCollection).toHaveBeenCalledWith(
+    'TaskRun',
+    API.getTaskRuns,
+    { namespace, taskName }
+  );
 });
 
 it('fetchTaskRun', async () => {
@@ -65,25 +57,5 @@ it('fetchTaskRun', async () => {
   ];
 
   await store.dispatch(fetchTaskRun());
-  expect(store.getActions()).toEqual(expectedActions);
-});
-
-it('fetchTaskRuns error', async () => {
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const store = mockStore();
-
-  const error = new Error();
-
-  jest.spyOn(API, 'getTaskRuns').mockImplementation(() => {
-    throw error;
-  });
-
-  const expectedActions = [
-    { type: 'TASK_RUNS_FETCH_REQUEST' },
-    { type: 'TASK_RUNS_FETCH_FAILURE', error }
-  ];
-
-  await store.dispatch(fetchTaskRuns());
   expect(store.getActions()).toEqual(expectedActions);
 });

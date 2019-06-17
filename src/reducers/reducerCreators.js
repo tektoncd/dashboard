@@ -14,11 +14,8 @@ limitations under the License.
 import { combineReducers } from 'redux';
 import keyBy from 'lodash.keyby';
 import merge from 'lodash.merge';
-import snakeCase from 'lodash.snakecase';
 
-function typeToPlural(type) {
-  return `${snakeCase(type).toUpperCase()}S`;
-}
+import { typeToPlural } from '../utils';
 
 function createByIdReducer({ type }) {
   const typePlural = typeToPlural(type);

@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
+import snakeCase from 'lodash.snakecase';
 import CheckmarkFilled from '@carbon/icons-react/lib/checkmark--filled/16';
 import CloseFilled from '@carbon/icons-react/lib/close--filled/16';
 
@@ -91,4 +92,8 @@ export function stepsStatus(taskSteps, taskRunStepsStatus = []) {
     };
   });
   return steps;
+}
+
+export function typeToPlural(type) {
+  return `${snakeCase(type).toUpperCase()}S`;
 }
