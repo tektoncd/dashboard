@@ -114,7 +114,7 @@ echo "Curled"
 
 for i in {1..20}
 do
-   kubectl wait --for=condition=Ready pod/-l app=go-hello-world --timeout=30s
+   kubectl wait --for=condition=Ready -l app=go-hello-world --timeout=30s
    
     sleep 5  
     
@@ -144,7 +144,7 @@ do
    if [ "$resp" != "" ] then
         break
     else    
-    sleep 5  
+        sleep 5  
     fi
 done
 #resp=$(curl -k  http://127.0.0.1:8080)
