@@ -114,8 +114,9 @@ echo "Curled"
 
 for i in {1..20}
 do
-   kubectl wait --for=condition=Ready -l app=go-hello-world --timeout=30s
-   
+   #kubectl wait --for=condition=Ready pod/-l app=go-hello-world --timeout=30s
+   kubectl wait --for=condition=Ready deployments/go-hello-world --timeout=30s
+
     sleep 5  
     
 done
@@ -125,8 +126,8 @@ done
 
 # kubectl get pipelineruns
 
-# echo "deployments are:"
-# kubectl get deployments 
+ echo "deployments are:"
+ kubectl get deployments 
 
 # echo "svc are:"
 # kubectl get svc 
