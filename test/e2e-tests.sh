@@ -110,7 +110,7 @@ echo "Curled"
 #Put in loop 
 #echo "Kubenetes wait test"
 #kubectl wait --for=condition=Ready pod/go-hello-world --timeout=60s
-#wait_for_ready_pods default 1000 30
+#wait_for_ready_pods default 1000 60
 
 for i in {1..20}
 do
