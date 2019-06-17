@@ -133,14 +133,12 @@ echo "localhost attempt"
 for i in {1..10}
 do
    echo "Number of time looped =$i"
-   resp=$(curl -k  http://127.0.0.1:8080)
+   export resp=$(curl -k  http://127.0.0.1:8080)
 
-   if [ "$resp" != "" ]; then
-        break
-    else    
-        sleep 3  
-
-
+   #if [ "$resp" != "" ]; then
+   #     break
+    #else    
+    sleep 3  
 done
 #resp=$(curl -k  http://127.0.0.1:8080)
 
