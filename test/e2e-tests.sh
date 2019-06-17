@@ -143,7 +143,8 @@ done
 #resp=$(curl -k  http://127.0.0.1:8080)
 
 echo "resp is :$resp"
-
+resp="${resp%%*}"
+echo "resp remove trailing whitespace is :$resp"
 
 if [ "$EXPECTED_RETURN_VALUE" = "$resp" ]; then
      echo "Pipeline Run successfully executed"
