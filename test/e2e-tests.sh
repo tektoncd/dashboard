@@ -112,7 +112,7 @@ wait_for_ready_pods default 1000 30
 wait_until_pods_running default
 
 echo "Kubenetes wait test"
-kubectl wait --for=condition=Ready deployments/go-hello-world --timeout=60s
+kubectl wait --for=condition=Ready pod/go-hello-world --timeout=60s
 
 echo "Get pods is"
 kubectl get pods 
@@ -143,7 +143,7 @@ done
 #resp=$(curl -k  http://127.0.0.1:8080)
 
 echo "resp is :$resp"
-resp="${resp%%*}"
+resp="${resp%%*( )}"
 echo "resp remove trailing whitespace is :$resp"
 
 if [ "$EXPECTED_RETURN_VALUE" = "$resp" ]; then
