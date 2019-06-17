@@ -111,8 +111,8 @@ wait_for_ready_pods default 1000 30
 #echo "Pods should be ready 1000 30"
 wait_until_pods_running default
 
-echo "Kubenetes wait test"
-kubectl wait --for=condition=Ready pod/go-hello-world --timeout=60s
+#echo "Kubenetes wait test"
+#kubectl wait --for=condition=Ready pod/go-hello-world --timeout=60s
 
 echo "Get pods is"
 kubectl get pods 
@@ -143,14 +143,14 @@ done
 #resp=$(curl -k  http://127.0.0.1:8080)
 
 echo "resp is :$resp"
-resp="${resp%%*( )}"
-echo "resp remove trailing whitespace is :$resp"
+#resp="${resp%%*( )}"
+#echo "resp remove trailing whitespace is :$resp"
 
 if [ "$EXPECTED_RETURN_VALUE" = "$resp" ]; then
      echo "Pipeline Run successfully executed"
  else
      echo "Pipeline Run error returned not expected message: $resp"
-
+fi
 
 # kill -9 $fork_pid
 # echo "killed port_forward" 
