@@ -36,35 +36,6 @@ install_dashboard_backend
  header "Running e2e tests"
 # # TODO: run your test here !
 
-
-# #kubectl cluster-info
-# output=$(kubectl cluster-info)
-# echo "kubectl cluster-info : $output"
-
-# #Gets the cluster info in the style: https://localhost:6443
-# output1=$(kubectl cluster-info | head -n 1)
-# echo "kubectl cluster-info | head -n 1 : $output1"
-
-
-# edited=$(echo "$output1" | sed 's/.*://') #sed 's/.*running at \([^ ]*\).*/\1/')
-# #edited1=$(echo "$output1" | sed 's/.*https://\([^ ]*\).*/\1/')
-# #echo "Edited1 is $edited1"
-# #edited=$(echo "$edited1 | sed 's/ .*//'") #cut -f1 -d" "")
-# echo "Edited is: $edited"
-
-# edited1=$(echo "$edited" | sed 's/.\{4\}$//')  
-# #| sed s'/[a-zA-Z]$//') #sed 's/.*https: \([^ ]*\).*/\1/')
-# echo "Edited1 is: $edited1"
-
-# ip="https:$edited1"
-# echo "ip is $ip"
-
-# #edited2=$(echo "$edited" | sed 's/ .*//')
-# #echo "Edited2 is: $edited2"
-
-
-
-
 #Apply permissions to be able to curl endpoints 
 echo "Applying test-rbac,yaml"
 kubectl apply -f $tekton_repo_dir/test/test-rbac.yaml
@@ -138,7 +109,7 @@ sleep 10
 #sleep 1m
 wait_for_ready_pods default 1000 30
 echo "Pods should be ready 1000 30"
-#wait_until_pods_running default
+wait_until_pods_running default
 
 echo "Get pods is"
 kubectl get pods 
