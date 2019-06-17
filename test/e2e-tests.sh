@@ -141,7 +141,7 @@ do
    echo "Number of time looped =$i"
    export resp=$(curl -k  http://127.0.0.1:8080)
 
-   if [ "$resp" != "" ] then
+   if [ "$resp" != "" ]; then
         break
     else    
         sleep 5  
