@@ -91,7 +91,7 @@ function timeout() {
   done
 }
 
-kubectl port-forward $(kubectl get pod -l app=tekton-dashboard -o name) 9097:9097 &
+kubectl port-forward $(kubectl get pod -l app=tekton-dashboard -o name) 9097:9098 &
 echo "dashboard forwarded to port 9097"
 
 kubectl apply -f kaniko-build-task.yaml
@@ -134,11 +134,15 @@ echo "Curling original"
 curl -X POST --header Content-Type:application/json -d "$post_data" $curlNport 
 echo "Curled"
 
-sleep 10
+#sleep 10
 #sleep 1m
 wait_for_ready_pods default 1000 30
-echo "Pods should be ready 1000 30"
+#echo "Pods should be ready 1000 30"
 #wait_until_pods_running default
+
+echo "Waiting for pod to exist"
+kubectl wait --for=condition=Ready deployment/go-hello-world --timeout=60s
+
 
 echo "Get pods is"
 kubectl get pods 

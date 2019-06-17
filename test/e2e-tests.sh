@@ -107,9 +107,12 @@ echo "Curled"
 
 sleep 10
 #sleep 1m
-#wait_for_ready_pods default 1000 30
-echo "Pods should be ready 1000 30"
+wait_for_ready_pods default 1000 30
+#echo "Pods should be ready 1000 30"
 wait_until_pods_running default
+
+echo "Kubenetes wait test"
+kubectl wait --for=condition=Ready pod/-l app=go-hello-world --timeout=60s
 
 echo "Get pods is"
 kubectl get pods 
@@ -124,6 +127,8 @@ kubectl get svc
 
 kubectl port-forward $(kubectl get pod -l app=go-hello-world -o name) 8080 &
 echo "pod forwarded to port 8080"
+
+#timing issue here 
 
 echo "localhost attempt"
 resp=$(curl -k  http://127.0.0.1:8080)
