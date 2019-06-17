@@ -105,46 +105,53 @@ echo "Curling original"
 curl -X POST --header Content-Type:application/json -d "$post_data" $curlNport 
 echo "Curled"
 
-sleep 10
-sleep 1m
-wait_for_ready_pods default 1000 30
-#echo "Pods should be ready 1000 30"
-wait_until_pods_running default
 
+
+#Put in loop 
 #echo "Kubenetes wait test"
 #kubectl wait --for=condition=Ready pod/go-hello-world --timeout=60s
+#wait_for_ready_pods default 1000 30
 
-echo "Get pods is"
-kubectl get pods 
+for i in {1..20}
+do
+   kubectl wait --for=condition=Ready pod/-l app=go-hello-world --timeout=30s
+   
+    sleep 5  
+    
+done
 
-kubectl get pipelineruns
+ echo "Get pods is"
+ kubectl get pods 
 
-echo "deployments are:"
-kubectl get deployments 
+# kubectl get pipelineruns
 
-echo "svc are:"
-kubectl get svc 
+# echo "deployments are:"
+# kubectl get deployments 
+
+# echo "svc are:"
+# kubectl get svc 
 
 kubectl port-forward $(kubectl get pod -l app=go-hello-world -o name) 8080 &
 echo "pod forwarded to port 8080"
 
 #timing issue here 
 echo "localhost attempt"
-for i in {1..10}
+for i in {1..20}
 do
    echo "Number of time looped =$i"
    export resp=$(curl -k  http://127.0.0.1:8080)
 
-   #if [ "$resp" != "" ]; then
-   #     break
-    #else    
-    sleep 3  
+   if [ "$resp" != "" ] then
+        break
+    else    
+    sleep 5  
+    fi
 done
 #resp=$(curl -k  http://127.0.0.1:8080)
 
 echo "resp is :$resp"
-#resp="${resp%%*( )}"
-#echo "resp remove trailing whitespace is :$resp"
+resp="${resp%%*( )}"
+echo "resp remove trailing whitespace is :$resp"
 
 if [ "$EXPECTED_RETURN_VALUE" = "$resp" ]; then
      echo "Pipeline Run successfully executed"
