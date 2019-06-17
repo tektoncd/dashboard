@@ -106,7 +106,7 @@ curl -X POST --header Content-Type:application/json -d "$post_data" $curlNport
 echo "Curled"
 
 sleep 10
-#sleep 1m
+sleep 1m
 wait_for_ready_pods default 1000 30
 #echo "Pods should be ready 1000 30"
 wait_until_pods_running default
@@ -129,9 +129,16 @@ kubectl port-forward $(kubectl get pod -l app=go-hello-world -o name) 8080 &
 echo "pod forwarded to port 8080"
 
 #timing issue here 
-
 echo "localhost attempt"
-resp=$(curl -k  http://127.0.0.1:8080)
+for i in {1..10}
+do
+   echo "Number of time looped =$i"
+   resp=$(curl -k  http://127.0.0.1:8080)
+   if [ "$resp" =! "" ]; then
+        break
+   sleep     
+done
+#resp=$(curl -k  http://127.0.0.1:8080)
 
 echo "resp is :$resp"
 
