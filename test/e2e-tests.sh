@@ -107,7 +107,7 @@ echo "Curled"
 
 sleep 10
 #sleep 1m
-wait_for_ready_pods default 1000 30
+#wait_for_ready_pods default 1000 30
 echo "Pods should be ready 1000 30"
 wait_until_pods_running default
 
