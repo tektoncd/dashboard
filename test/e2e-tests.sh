@@ -53,7 +53,7 @@ function dump_cluster_state() {
 }
 
 function fail_test() {
-  set_test_return_code 1
+  #set_test_return_code 1
   [[ -n $1 ]] && echo "ERROR: $1"
   dump_cluster_state
   exit 1
