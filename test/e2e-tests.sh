@@ -67,7 +67,7 @@ echo "dashboard forwarded to port 9097"
 
 kubectl apply -f $tekton_repo_dir/test/kaniko-build-task.yaml
 
-kubectl apply -f $tekton_repo_dir/test/build-task-insecure.yaml
+#kubectl apply -f $tekton_repo_dir/test/build-task-insecure.yaml
 
 kubectl apply -f $tekton_repo_dir/test/deploy-task-insecure.yaml
 
@@ -99,18 +99,8 @@ REGISTRY="gcr.io/${E2E_PROJECT_ID}/${E2E_BASE_NAME}-e2e-img"
     }'
 
 curlNport="http://127.0.0.1:9097/v1/namespaces/default/pipelineruns/"
-echo "curl nport :$curlNport"
 
-echo "Curling original"
 curl -X POST --header Content-Type:application/json -d "$post_data" $curlNport 
-echo "Curled"
-
-
-
-#Put in loop 
-#echo "Kubenetes wait test"
-#kubectl wait --for=condition=Ready pod/go-hello-world --timeout=60s
-#wait_for_ready_pods default 1000 60
 
 for i in {1..20}
 do
