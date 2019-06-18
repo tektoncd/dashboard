@@ -25,6 +25,14 @@ main {
   padding: 2em 5%;
 }
 
+h1 {
+  @include type-style('heading-02');
+}
+
+h2 {
+  @include type-style('heading-01');
+}
+
 .bx--header ~ {
   nav.bx--side-nav {
     padding-top: 1em;
@@ -88,4 +96,8 @@ main {
 
 .bx--structured-list-td {
   word-break: break-word;
+}
+
+.bx--data-table-container {
+  margin-top: $carbon--spacing-07;
 }

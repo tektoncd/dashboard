@@ -101,53 +101,101 @@ export /* istanbul ignore next */ class PipelineResourceContainer extends Compon
       );
     }
 
-    const { params, type } = pipelineResource.spec;
+    const { params, secrets, type } = pipelineResource.spec;
 
     return (
-      <DataTable
-        rows={params.map(({ name, value }) => ({
-          id: name,
-          name,
-          value
-        }))}
-        headers={[
-          { key: 'name', header: 'Param Name' },
-          { key: 'value', header: 'Value' }
-        ]}
-        render={({
-          rows,
-          headers,
-          getHeaderProps,
-          getRowProps,
-          getTableProps
-        }) => (
-          <TableContainer
-            title={pipelineResourceName}
-            description={`Type: ${type}`}
-          >
-            <Table {...getTableProps()}>
-              <TableHead>
-                <TableRow>
-                  {headers.map(header => (
-                    <TableHeader {...getHeaderProps({ header })}>
-                      {header.header}
-                    </TableHeader>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows.map(row => (
-                  <TableRow {...getRowProps({ row })}>
-                    {row.cells.map(cell => (
-                      <TableCell key={cell.id}>{cell.value}</TableCell>
+      <>
+        <h1>{pipelineResourceName}</h1>
+        <h2>{`Type: ${type}`}</h2>
+
+        <DataTable
+          rows={params.map(({ name, value }) => ({
+            id: name,
+            name,
+            value
+          }))}
+          headers={[
+            { key: 'name', header: 'Name' },
+            { key: 'value', header: 'Value' }
+          ]}
+          render={({
+            rows,
+            headers,
+            getHeaderProps,
+            getRowProps,
+            getTableProps
+          }) => (
+            <TableContainer title="Params">
+              <Table {...getTableProps()}>
+                <TableHead>
+                  <TableRow>
+                    {headers.map(header => (
+                      <TableHeader {...getHeaderProps({ header })}>
+                        {header.header}
+                      </TableHeader>
                     ))}
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {rows.map(row => (
+                    <TableRow {...getRowProps({ row })}>
+                      {row.cells.map(cell => (
+                        <TableCell key={cell.id}>{cell.value}</TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+        />
+
+        {secrets && (
+          <DataTable
+            rows={secrets.map(({ fieldName, secretKey, secretName }) => ({
+              id: fieldName,
+              fieldName,
+              secretKey,
+              secretName
+            }))}
+            headers={[
+              { key: 'fieldName', header: 'Field Name' },
+              { key: 'secretKey', header: 'Secret Key' },
+              { key: 'secretName', header: 'Secret Name' }
+            ]}
+            render={({
+              rows,
+              headers,
+              getHeaderProps,
+              getRowProps,
+              getTableProps
+            }) => (
+              <TableContainer title="Secrets">
+                <Table {...getTableProps()}>
+                  <TableHead>
+                    <TableRow>
+                      {headers.map(header => (
+                        <TableHeader {...getHeaderProps({ header })}>
+                          {header.header}
+                        </TableHeader>
+                      ))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {rows.map(row => (
+                      <TableRow {...getRowProps({ row })}>
+                        {row.cells.map(cell => (
+                          <TableCell key={cell.id}>{cell.value}</TableCell>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
+          />
         )}
-      />
+      </>
     );
   }
 }
