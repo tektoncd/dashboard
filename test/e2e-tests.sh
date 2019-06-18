@@ -104,9 +104,9 @@ do
     fi
   
 done
- if [ "$dashboardExists" = "false" ]; then
+if [ "$dashboardExists" = "false" ]; then
         fail_test "Test Failure, Not able to curl the dashboard"
- fi 
+fi 
 
 curlNport="http://127.0.0.1:9097/v1/namespaces/${APP_NS}/pipelineruns/"
 curl -X POST --header Content-Type:application/json -d "$post_data" $curlNport 
@@ -124,29 +124,30 @@ do
 done
 if [ "$deploymentExist" = "false" ]; then
         fail_test "Test Failure, go-hello-world deployment is not running"
-    fi 
+fi 
 
 kubectl port-forward $(kubectl get pod -l app=go-hello-world -o name) 8080 &
 
 podExists=false
 for i in {1..20}
 do
-    resp=$(curl -k  http://127.0.0.1:8080)
+    resp=$(curl -k  http://127.0.0.1:8081)
 
    if [ "$resp" != "" ]; then
         podExists=true
         if [ "$EXPECTED_RETURN_VALUE" = "$resp" ]; then
      echo "Pipeline Run successfully executed"
+     break
     else
      fail_test "Pipeline Run error returned not expected message: $resp"
     fi 
     else    
         sleep 5  
     fi 
-    done
-    if [ "$podExists" = "false" ]; then
+done
+if [ "$podExists" = "false" ]; then
         fail_test "Test Failure, Not able to curl the pod"
-    fi
+fi
 
 (( failed )) && fail_test
 success
