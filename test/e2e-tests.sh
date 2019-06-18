@@ -34,13 +34,17 @@ install_dashboard_backend
  header "Running e2e tests"
 # # TODO: run your test here !
 
+kubectl port-forward $(kubectl get pod -l app=tekton-dashboard -o name) 9097:9097 &
+
+#What happens when dashboard doesnt exist
+respF=$(curl -k  http://127.0.0.1:9097)
+echo "resp = $respF"
+
 #Apply permissions to be able to curl endpoints 
 kubectl apply -f $tekton_repo_dir/test/test-rbac.yaml
 kubectl apply -f $tekton_repo_dir/test/kaniko-build-task.yaml
 kubectl apply -f $tekton_repo_dir/test/deploy-task-insecure.yaml
 kubectl apply -f $tekton_repo_dir/test/Pipeline.yaml
-
-kubectl port-forward $(kubectl get pod -l app=tekton-dashboard -o name) 9097:9097 &
 
 #API configuration
 APP_NS="default"
@@ -68,6 +72,24 @@ REGISTRY="gcr.io/${E2E_PROJECT_ID}/${E2E_BASE_NAME}-e2e-img"
 
 curlNport="http://127.0.0.1:9097/v1/namespaces/$APP_NS/pipelineruns/"
 
+#For loop to check 9097 exists 
+for i in {1..20}
+do
+   export resp=$(curl -k  http://127.0.0.1:9097)
+   echo "resp = $resp"
+
+   if [ "$resp" = "" ]; then
+        break
+    else    
+        sleep 5  
+    fi
+    #if ["$i" = 20]; then
+    #    echo "Test Failure, Not able to curl the dashboard"
+    #    exit 1
+    #fi 
+done
+
+
 curl -X POST --header Content-Type:application/json -d "$post_data" $curlNport 
 
 for i in {1..20}
@@ -78,7 +100,7 @@ do
     else    
         sleep 5  
     fi 
-    if ["$i" = "20"]; then
+    if ["$i" = 20]; then
         echo "Test Failure, go-hello-world deployment is not running"
         exit 1
     fi 
@@ -95,7 +117,7 @@ do
     else    
         sleep 5  
     fi
-    if ["$i" = "20"]; then
+    if ["$i" = 20]; then
         echo "Test Failure, Not able to curl the pod"
         exit 1
     fi 
