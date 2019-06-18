@@ -74,16 +74,15 @@ REGISTRY="gcr.io/${E2E_PROJECT_ID}/${E2E_BASE_NAME}-e2e-img"
 for i in {1..20}
 do
    respF=$(curl -k  http://127.0.0.1:9097)
-   echo "Number $i resp =$respF 123"
    if [ "$respF" != "" ]; then
         break
     else    
         sleep 5  
     fi
-    #if ["$i" = 20]; then
-    #    echo "Test Failure, Not able to curl the dashboard"
-    #    exit 1
-    #fi 
+    if ["$i" -eq "20"]; then
+        echo "Test Failure, Not able to curl the dashboard"
+        exit 1
+    fi 
 done
 
 curlNport="http://127.0.0.1:9097/v1/namespaces/${APP_NS}/pipelineruns/"
@@ -98,7 +97,7 @@ do
     else    
         sleep 5  
     fi 
-    if (($i = 20)); then
+    if ["$i" -eq "20"]; then
         echo "Test Failure, go-hello-world deployment is not running"
         exit 1
     fi 
@@ -108,14 +107,14 @@ kubectl port-forward $(kubectl get pod -l app=go-hello-world -o name) 8080 &
 
 for i in {1..20}
 do
-   export resp=$(curl -k  http://127.0.0.1:8080)
+   export resp=$(curl -k  http://127.0.0.1:8081)
 
    if [ "$resp" != "" ]; then
         break
     else    
         sleep 5  
     fi
-    if (($i = 20)); then
+    if ["$i" -eq "20"]; then
         echo "Test Failure, Not able to curl the pod"
         exit 1
     fi 
