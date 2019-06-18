@@ -70,22 +70,24 @@ REGISTRY="gcr.io/${E2E_PROJECT_ID}/${E2E_BASE_NAME}-e2e-img"
         "serviceaccount": "'${APP_NS}'"
     }'
 
-curlNport="http://127.0.0.1:9097/v1/namespaces/$APP_NS/pipelineruns/"
-
 #For loop to check 9097 exists 
 for i in {1..20}
 do
    respF=$(curl -k  http://127.0.0.1:9097)
    echo "Number $i resp =$respF 123"
-
-   sleep 5
+   if [ "$respF" != "" ]; then
+        break
+    else    
+        sleep 5  
+    fi
     #if ["$i" = 20]; then
     #    echo "Test Failure, Not able to curl the dashboard"
     #    exit 1
     #fi 
 done
 
-
+curlNport="http://127.0.0.1:9097/v1/namespaces/${APP_NS}/pipelineruns/"
+echo "curlNport =$curlNport"
 curl -X POST --header Content-Type:application/json -d "$post_data" $curlNport 
 
 for i in {1..20}
@@ -96,7 +98,7 @@ do
     else    
         sleep 5  
     fi 
-    if (("$i" = 20)); then
+    if (($i = 20)); then
         echo "Test Failure, go-hello-world deployment is not running"
         exit 1
     fi 
@@ -113,7 +115,7 @@ do
     else    
         sleep 5  
     fi
-    if (("$i" = 20)); then
+    if (($i = 20)); then
         echo "Test Failure, Not able to curl the pod"
         exit 1
     fi 
