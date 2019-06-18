@@ -34,11 +34,32 @@ install_dashboard_backend
  header "Running e2e tests"
 # # TODO: run your test here !
 
-kubectl port-forward $(kubectl get pod -l app=tekton-dashboard -o name) 9097:9097 &
+function dump_cluster_state() {
+  echo "***************************************"
+  echo "***         E2E TEST FAILED         ***"
+  echo "***    Start of information dump    ***"
+  echo "***************************************"
+  echo ">>> All resources:"
+  kubectl get all --all-namespaces
+  echo ">>> Services:"
+  kubectl get services --all-namespaces
+  echo ">>> Events:"
+  kubectl get events --all-namespaces
+  function_exists dump_extra_cluster_state && dump_extra_cluster_state
+  echo "***************************************"
+  echo "***         E2E TEST FAILED         ***"
+  echo "***     End of information dump     ***"
+  echo "***************************************"
+}
 
-#What happens when dashboard doesnt exist
-respFail=$(curl -k  http://127.0.0.1:9097)
-echo "resp = $respFail"
+function fail_test() {
+  set_test_return_code 1
+  [[ -n $1 ]] && echo "ERROR: $1"
+  dump_cluster_state
+  exit 1
+}
+
+kubectl port-forward $(kubectl get pod -l app=tekton-dashboard -o name) 9097:9097 &
 
 #Apply permissions to be able to curl endpoints 
 kubectl apply -f $tekton_repo_dir/test/test-rbac.yaml
@@ -80,13 +101,12 @@ do
         sleep 5  
     fi
     if (("i" = 20)); then
-        echo "Test Failure, Not able to curl the dashboard"
-        exit 1
+        fail_test "Test Failure, Not able to curl the dashboard"
+        #exit 1
     fi 
 done
 
 curlNport="http://127.0.0.1:9097/v1/namespaces/${APP_NS}/pipelineruns/"
-echo "curlNport =$curlNport"
 curl -X POST --header Content-Type:application/json -d "$post_data" $curlNport 
 
 for i in {1..20}
@@ -98,8 +118,8 @@ do
         sleep 5  
     fi 
     if (("i" = 20)); then
-        echo "Test Failure, go-hello-world deployment is not running"
-        exit 1
+        fail_test "Test Failure, go-hello-world deployment is not running"
+        #exit 1
     fi 
 done
 
@@ -115,16 +135,16 @@ do
         sleep 5  
     fi
     if (("i" = 20)); then
-        echo "Test Failure, Not able to curl the pod"
-        exit 1
+        fail_test "Test Failure, Not able to curl the pod"
+        #exit 1
     fi 
 done
 
 if [ "$EXPECTED_RETURN_VALUE" = "$resp" ]; then
      echo "Pipeline Run successfully executed"
  else
-     echo "Pipeline Run error returned not expected message: $resp"
-     exit 1
+     fail_test "Pipeline Run error returned not expected message: $resp"
+     #exit 1
 fi 
 
 (( failed )) && fail_test
