@@ -37,8 +37,8 @@ install_dashboard_backend
 kubectl port-forward $(kubectl get pod -l app=tekton-dashboard -o name) 9097:9097 &
 
 #What happens when dashboard doesnt exist
-respF=$(curl -k  http://127.0.0.1:9097)
-echo "resp = $respF"
+respFail=$(curl -k  http://127.0.0.1:9097)
+echo "resp = $respFail"
 
 #Apply permissions to be able to curl endpoints 
 kubectl apply -f $tekton_repo_dir/test/test-rbac.yaml
@@ -75,14 +75,10 @@ curlNport="http://127.0.0.1:9097/v1/namespaces/$APP_NS/pipelineruns/"
 #For loop to check 9097 exists 
 for i in {1..20}
 do
-   export resp=$(curl -k  http://127.0.0.1:9097)
-   echo "resp = $resp"
+   respF=$(curl -k  http://127.0.0.1:9097)
+   echo "Number $i resp =$respF 123"
 
-   if [ "$resp" = "" ]; then
-        break
-    else    
-        sleep 5  
-    fi
+   sleep 5
     #if ["$i" = 20]; then
     #    echo "Test Failure, Not able to curl the dashboard"
     #    exit 1
@@ -100,7 +96,7 @@ do
     else    
         sleep 5  
     fi 
-    if ["$i" = 20]; then
+    if (("$i" = 20)); then
         echo "Test Failure, go-hello-world deployment is not running"
         exit 1
     fi 
@@ -117,7 +113,7 @@ do
     else    
         sleep 5  
     fi
-    if ["$i" = 20]; then
+    if (("$i" = 20)); then
         echo "Test Failure, Not able to curl the pod"
         exit 1
     fi 
