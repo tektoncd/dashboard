@@ -36,13 +36,11 @@ install_dashboard_backend
 
 #Apply permissions to be able to curl endpoints 
 kubectl apply -f $tekton_repo_dir/test/test-rbac.yaml
-
-kubectl port-forward $(kubectl get pod -l app=tekton-dashboard -o name) 9097:9097 &
-
 kubectl apply -f $tekton_repo_dir/test/kaniko-build-task.yaml
 kubectl apply -f $tekton_repo_dir/test/deploy-task-insecure.yaml
 kubectl apply -f $tekton_repo_dir/test/Pipeline.yaml
 
+kubectl port-forward $(kubectl get pod -l app=tekton-dashboard -o name) 9097:9097 &
 
 #API configuration
 APP_NS="default"
