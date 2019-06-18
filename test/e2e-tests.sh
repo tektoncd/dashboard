@@ -82,7 +82,7 @@ GIT_RESOURCE_NAME="git-source"
 GIT_COMMIT="master"
 REPO_NAME="go-hello-world"
 REPO_URL="https://github.com/ncskier/go-hello-world" 
-EXPECTED_RETURN_VALUE="Hello World!"
+EXPECTED_RETURN_VALUE="Hello World! "
 KSVC_NAME="go-hello-world"
 REGISTRY="gcr.io/${E2E_PROJECT_ID}/${E2E_BASE_NAME}-e2e-img"
 
@@ -150,11 +150,10 @@ do
         sleep 5  
     fi
 done
-#resp=$(curl -k  http://127.0.0.1:8080)
 
 #Extra trailing whitespace on resp
 echo "resp is :$resp"
-resp="${resp%%*( )}"
+#resp="${resp%%*( )}"
 echo "resp remove whitespace is :$resp 1"
 echo "expected return value  is :$EXPECTED_RETURN_VALUE 1"
 
