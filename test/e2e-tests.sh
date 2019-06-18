@@ -79,7 +79,7 @@ do
     else    
         sleep 5  
     fi
-    if ["$i" -eq "20"]; then
+    if (("i" = 20)); then
         echo "Test Failure, Not able to curl the dashboard"
         exit 1
     fi 
@@ -97,7 +97,7 @@ do
     else    
         sleep 5  
     fi 
-    if ["$i" -eq "20"]; then
+    if (("i" = 20)); then
         echo "Test Failure, go-hello-world deployment is not running"
         exit 1
     fi 
@@ -114,7 +114,7 @@ do
     else    
         sleep 5  
     fi
-    if ["$i" -eq "20"]; then
+    if (("i" = 20)); then
         echo "Test Failure, Not able to curl the pod"
         exit 1
     fi 
