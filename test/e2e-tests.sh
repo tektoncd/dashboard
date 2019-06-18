@@ -115,7 +115,7 @@ echo "Curled"
 for i in {1..20}
 do
    wait=$(kubectl wait --for=condition=available deployments/go-hello-world --timeout=30s)
-   if [ "$wait" != "deployment.extensions/go-hello-world condition met" ]; then
+   if [ "$wait" = "deployment.extensions/go-hello-world condition met" ]; then
         break
     else    
         sleep 5  
