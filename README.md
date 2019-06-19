@@ -39,7 +39,7 @@ The `install-dev.sh` script will build and push an image of the Tekton Dashboard
 4. Install build config `$oc process -f config/templates/build.yaml | oc apply -f-`
 
 ## Accessing the Dashboard
-The Dashboard has can be accessed through its ClusterIP Service by running `kubectl proxy`. Assuming default is the install namespace for the dashboard, you can access the web UI at `localhost:8001/api/v1/namespaces/default/services/tekton-dashboard:http/proxy/`
+The Dashboard can be accessed through its ClusterIP Service by running `kubectl proxy`. Assuming tekton-pipelines is the install namespace for the dashboard, you can access the web UI at `localhost:8001/api/v1/namespaces/tekton-pipelines/services/tekton-dashboard:http/proxy/`
 
 ## Want to contribute
 

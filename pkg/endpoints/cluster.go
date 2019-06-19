@@ -19,6 +19,7 @@ import (
 	"k8s.io/api/core/v1"
 	"k8s.io/client-go/tools/cache"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/emicklei/go-restful"
@@ -26,6 +27,27 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/informers"
 )
+
+/* Get all tasks in a given namespace */
+func (r Resource) proxyRequest(request *restful.Request, response *restful.Response) {
+	parsedUrl, err := url.Parse(request.Request.URL.String())
+	if err != nil {
+		utils.RespondError(response, err, http.StatusNotFound)
+		return
+	}
+	uri := request.PathParameter("subpath") + "?" + parsedUrl.RawQuery
+	forwardRequest := r.K8sClient.CoreV1().RESTClient().Verb(request.Request.Method).RequestURI(uri).Body(request.Request.Body)
+	for h, val := range request.Request.Header {
+		forwardRequest.SetHeader(h, val...);
+	}
+	responseBody, requestError := forwardRequest.Do().Raw()
+	if requestError != nil {
+		utils.RespondError(response, requestError, http.StatusNotFound)
+		return
+	}
+	logging.Log.Debugf("Forwarding to url : %s", forwardRequest.URL().String())
+	response.Write(responseBody)
+}
 
 func (r Resource) getAllNamespaces(request *restful.Request, response *restful.Response) {
 	namespaces, err := r.K8sClient.CoreV1().Namespaces().List(metav1.ListOptions{})

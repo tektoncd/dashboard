@@ -52,6 +52,21 @@ func (r Resource) RegisterWeb(container *restful.Container) {
 	container.Handle("/", http.FileServer(http.Dir(webResourcesDir)))
 }
 
+func (r Resource) ProxyEndpoint(container *restful.Container) {
+	proxy := new(restful.WebService)
+	proxy.Consumes(restful.MIME_JSON, "text/plain").
+		Produces(restful.MIME_JSON, "text/plain").
+		Path("/proxy")
+
+	logging.Log.Info("Adding proxy")
+
+	proxy.Route(proxy.GET("/{subpath:*}").To(r.proxyRequest))
+	proxy.Route(proxy.POST("/{subpath:*}").To(r.proxyRequest))
+	proxy.Route(proxy.PUT("/{subpath:*}").To(r.proxyRequest))
+	proxy.Route(proxy.DELETE("/{subpath:*}").To(r.proxyRequest))
+	container.Add(proxy)
+}
+
 // Register APIs to interface with core Tekton/K8s pieces
 func (r Resource) RegisterEndpoints(container *restful.Container) {
 	wsv1 := new(restful.WebService)

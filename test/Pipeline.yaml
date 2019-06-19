@@ -2,6 +2,7 @@ apiVersion: tekton.dev/v1alpha1
 kind: Pipeline
 metadata:
   name: simple-pipeline-insecure
+  namespace: tekton-pipelines
 spec:
   resources: 
   - name: git-source
