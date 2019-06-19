@@ -42,7 +42,7 @@ const SecretsTable = props => {
       annotations += `${key}: ${secret.annotations[key]}\n`;
     });
     return {
-      id: secret.uid,
+      id: `${secret.namespace}:${secret.name}`,
       secret: secret.name,
       annotations,
       add: <Close />
@@ -95,7 +95,6 @@ const SecretsTable = props => {
                 {rows.map((row, index) => {
                   const lastCell =
                     rows[index].cells[rows[index].cells.length - 1];
-                  const secretName = row.cells[0].value;
                   return (
                     <TableRow key={row.id} className="row">
                       {row.cells.splice(0, row.cells.length - 1).map(cell => (
@@ -109,7 +108,7 @@ const SecretsTable = props => {
                       ))}
                       <TableCell
                         key={lastCell.id}
-                        id={secretName}
+                        id={lastCell.id}
                         className="cellIcon"
                         onClick={handleDelete}
                         data-testid="deleteIcon"
