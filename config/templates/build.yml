@@ -27,6 +27,8 @@ objects:
       git:
         uri: https://github.com/tektoncd/dashboard.git
         ref: master
+    triggers:
+      - type: ConfigChange
     strategy:
       dockerStrategy:
         dockerfilePath: Dockerfile

@@ -93,10 +93,6 @@ kubectl create clusterrolebinding cluster-admin-binding \
   --user="${USER}"
 ```
 
-### Namespaces
-
-Currently you must install the Tekton dashboard into the same namespace you wish to create and get Tekton resources in.
-
 ## Iterating
 
 While iterating on the project, you may need to:
@@ -134,7 +130,7 @@ ko apply -f config/
 
 ## Access the dashboard
 
-The dashboard can be accessed by running `kubectl proxy`, which proxies requests through the API Server. Assuming `default` is the install namespace for the dashboard, you can access the web UI at `localhost:8001/api/v1/namespaces/default/services/tekton-dashboard:http/proxy/`
+The dashboard can be accessed by running `kubectl proxy`, which proxies requests through the API Server. You can access the web UI at `localhost:8001/api/v1/namespaces/tekton-pipelines/services/tekton-dashboard:http/proxy/`
 
 ### Redeploy dashboard
 

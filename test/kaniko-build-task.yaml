@@ -2,6 +2,7 @@ apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
   name: kaniko-build-push
+  namespace: tekton-pipelines
 spec:
   inputs:
     params:

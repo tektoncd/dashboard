@@ -31,23 +31,22 @@ install_dashboard_backend
 #Run the integration tests
 header "Running e2e tests"
 
-kubectl port-forward $(kubectl get pod -l app=tekton-dashboard -o name) 9097:9097 &
+kubectl port-forward $(kubectl get pod --namespace tekton-pipelines -l app=tekton-dashboard -o name)  --namespace tekton-pipelines 9097:9097 &
 dashboardForwardPID=$!
 
-#Apply permissions to be able to curl endpoints 
-kubectl apply -f $tekton_repo_dir/test/test-rbac.yaml
-kubectl apply -f $tekton_repo_dir/test/kaniko-build-task.yaml
-kubectl apply -f $tekton_repo_dir/test/deploy-task-insecure.yaml
-kubectl apply -f $tekton_repo_dir/test/Pipeline.yaml
+#Apply permissions to be able to curl endpoints
+kubectl apply -f $tekton_repo_dir/test/kaniko-build-task.yaml  --namespace tekton-pipelines
+kubectl apply -f $tekton_repo_dir/test/deploy-task-insecure.yaml  --namespace tekton-pipelines
+kubectl apply -f $tekton_repo_dir/test/Pipeline.yaml  --namespace tekton-pipelines
 
 #API configuration
-APP_NS="default"
+APP_SERVICE_ACCOUNT="tekton-dashboard"
 PIPELINE_NAME="simple-pipeline-insecure"
 IMAGE_SOURCE_NAME="docker-image"
 GIT_RESOURCE_NAME="git-source"
 GIT_COMMIT="master"
 REPO_NAME="go-hello-world"
-REPO_URL="https://github.com/ncskier/go-hello-world" 
+REPO_URL="https://github.com/ncskier/go-hello-world"
 EXPECTED_RETURN_VALUE="Hello World! "
 KSVC_NAME="go-hello-world"
 REGISTRY="gcr.io/${E2E_PROJECT_ID}/${E2E_BASE_NAME}-e2e-img"
@@ -60,10 +59,10 @@ post_data='{
   "reponame": "'${REPO_NAME}'",
   "repourl": "'${REPO_URL}'",
   "registrylocation": "'$REGISTRY'",
-  "serviceaccount": "'${APP_NS}'"
+  "serviceaccount": "'${APP_SERVICE_ACCOUNT}'"
 }'
 
-#For loop to check 9097 exists 
+#For loop to check 9097 exists
 dashboardExists=false
 for i in {1..20}
 do
@@ -80,26 +79,34 @@ if [ "$dashboardExists" = "false" ]; then
   fail_test "Test Failure, Not able to curl the Dashboard"
 fi 
 
-curlNodePort="http://127.0.0.1:9097/v1/namespaces/${APP_NS}/pipelineruns/"
-curl -X POST --header Content-Type:application/json -d "$post_data" $curlNodePort 
+namespaceResponse=$(curl -X GET --header Content-Type:application/json http://localhost:9097/proxy/api/v1/namespaces)
+
+echo $namespaceResponse
+
+if [[ $namespaceResponse != *"\"name\": \"default\""* ]]; then
+  fail_test "Could not get namespaces from dashboard proxy"
+fi
+
+curlNodePort="http://127.0.0.1:9097/v1/namespaces/tekton-pipelines/pipelineruns/"
+curl -X POST --header Content-Type:application/json -d "$post_data" $curlNodePort
 
 deploymentExist=false
 for i in {1..30}
 do
-  wait=$(kubectl wait --for=condition=available deployments/go-hello-world --timeout=30s)
+  wait=$(kubectl wait --namespace tekton-pipelines --for=condition=available deployments/go-hello-world --timeout=30s)
   if [ "$wait" = "deployment.extensions/go-hello-world condition met" ]; then
     deploymentExist=true
     break
-  else    
-    sleep 5  
-  fi 
+  else
+    sleep 5
+  fi
 done
 
 if [ "$deploymentExist" = "false" ]; then
   fail_test "Test Failure, go-hello-world deployment is not running"
-fi 
+fi
 
-kubectl port-forward $(kubectl get pod -l app=go-hello-world -o name) 8080 &
+kubectl port-forward $(kubectl get pod  --namespace tekton-pipelines -l app=go-hello-world -o name) --namespace tekton-pipelines 8080 &
 podForwardPID=$!
 
 podCurled=false
@@ -114,10 +121,10 @@ do
       break
     else
       fail_test "PipelineRun error, returned an incorrect message: $resp"
-    fi 
-  else    
-    sleep 5  
-  fi 
+    fi
+  else
+    sleep 5
+  fi
 done
 
 if [ "$podCurled" = "false" ]; then

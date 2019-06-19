@@ -2,6 +2,7 @@ apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata: 
   name: deploy-simple-kubectl-task-insecure
+  namespace: tekton-pipelines
 spec:
   inputs: 
     resources: 
