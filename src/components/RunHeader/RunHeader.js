@@ -48,7 +48,9 @@ class RunHeader extends Component {
                 <div className="block-icon">
                   {getStatusIcon({ reason, status })}
                 </div>
-                {runName}
+                <div className="run-name" title={runName}>
+                  {runName}
+                </div>
                 <span className="status-label">{reason}</span>
                 <span className="time">{lastTransitionTime}</span>
               </h1>
