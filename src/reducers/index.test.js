@@ -24,6 +24,8 @@ import {
   getPipelineRunsErrorMessage,
   getPipelines,
   getPipelinesErrorMessage,
+  getSecrets,
+  getSecretsErrorMessage,
   getSelectedNamespace,
   getTaskRun,
   getTaskRuns,
@@ -35,6 +37,7 @@ import {
   isFetchingPipelineResources,
   isFetchingPipelineRuns,
   isFetchingPipelines,
+  isFetchingSecrets,
   isFetchingTaskRuns,
   isFetchingTasks
 } from '.';
@@ -43,6 +46,7 @@ import * as namespaceSelectors from './namespaces';
 import * as pipelineResourcesSelectors from './pipelineResources';
 import * as pipelineSelectors from './pipelines';
 import * as pipelineRunsSelectors from './pipelineRuns';
+import * as secretSelectors from './secrets';
 import * as taskSelectors from './tasks';
 import * as taskRunsSelectors from './taskRuns';
 
@@ -51,6 +55,7 @@ const extension = { displayName: 'extension' };
 const pipelineResources = [{ fake: 'pipelineResource' }];
 const pipelines = [{ fake: 'pipeline' }];
 const pipelineRuns = [{ fake: 'pipelineRun' }];
+const secrets = [{ fake: 'secrets' }];
 const tasks = [{ fake: 'task' }];
 const taskName = 'myTask';
 const taskRun = { fake: 'taskRun', spec: { taskRef: { name: taskName } } };
@@ -67,6 +72,7 @@ const state = {
   },
   pipelineResources,
   pipelines,
+  secrets,
   tasks
 };
 
@@ -278,6 +284,34 @@ it('isFetchingPipelineRuns', () => {
   expect(pipelineRunsSelectors.isFetchingPipelineRuns).toHaveBeenCalledWith(
     state.pipelineRuns
   );
+});
+
+it('getSecrets', () => {
+  jest.spyOn(secretSelectors, 'getSecrets').mockImplementation(() => secrets);
+  expect(getSecrets(state)).toEqual(secrets);
+  expect(secretSelectors.getSecrets).toHaveBeenCalledWith(
+    state.secrets,
+    namespace
+  );
+});
+
+it('getSecretsErrorMessage', () => {
+  const errorMessage = 'fake error message';
+  jest
+    .spyOn(secretSelectors, 'getSecretsErrorMessage')
+    .mockImplementation(() => errorMessage);
+  expect(getSecretsErrorMessage(state)).toEqual(errorMessage);
+  expect(secretSelectors.getSecretsErrorMessage).toHaveBeenCalledWith(
+    state.secrets
+  );
+});
+
+it('isFetchingSecrets', () => {
+  jest
+    .spyOn(secretSelectors, 'isFetchingSecrets')
+    .mockImplementation(() => true);
+  expect(isFetchingSecrets(state)).toBe(true);
+  expect(secretSelectors.isFetchingSecrets).toHaveBeenCalledWith(state.secrets);
 });
 
 it('getTasks', () => {

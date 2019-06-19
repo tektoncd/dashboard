@@ -282,7 +282,7 @@ it('getCredentials', () => {
   };
   fetchMock.get(/credentials/, data);
   return getCredentials().then(credentials => {
-    expect(credentials).toEqual(data.items);
+    expect(credentials).toEqual(data);
     fetchMock.restore();
   });
 });
