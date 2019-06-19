@@ -32,32 +32,6 @@ install_dashboard_backend
 
 # Run the integration tests
  header "Running e2e tests"
-# # TODO: run your test here !
-
-function dump_cluster_state() {
-  echo "***************************************"
-  echo "***         E2E TEST FAILED         ***"
-  echo "***    Start of information dump    ***"
-  echo "***************************************"
-  echo ">>> All resources:"
-  kubectl get all --all-namespaces
-  echo ">>> Services:"
-  kubectl get services --all-namespaces
-  echo ">>> Events:"
-  kubectl get events --all-namespaces
-  function_exists dump_extra_cluster_state && dump_extra_cluster_state
-  echo "***************************************"
-  echo "***         E2E TEST FAILED         ***"
-  echo "***     End of information dump     ***"
-  echo "***************************************"
-}
-
-function fail_test() {
-  #set_test_return_code 1
-  [[ -n $1 ]] && echo "ERROR: $1"
-  dump_cluster_state
-  exit 1
-}
 
 kubectl port-forward $(kubectl get pod -l app=tekton-dashboard -o name) 9097:9097 &
 
@@ -78,7 +52,6 @@ REPO_URL="https://github.com/ncskier/go-hello-world"
 EXPECTED_RETURN_VALUE="Hello World! "
 KSVC_NAME="go-hello-world"
 REGISTRY="gcr.io/${E2E_PROJECT_ID}/${E2E_BASE_NAME}-e2e-img"
-
 
    post_data='{
         "pipelinename": "'${PIPELINE_NAME}'",
@@ -112,7 +85,7 @@ curlNport="http://127.0.0.1:9097/v1/namespaces/${APP_NS}/pipelineruns/"
 curl -X POST --header Content-Type:application/json -d "$post_data" $curlNport 
 
 deploymentExist=false
-for i in {1..20}
+for i in {1..30}
 do
    wait=$(kubectl wait --for=condition=available deployments/go-hello-world --timeout=30s)
    if [ "$wait" = "deployment.extensions/go-hello-world condition met" ]; then
@@ -128,13 +101,12 @@ fi
 
 kubectl port-forward $(kubectl get pod -l app=go-hello-world -o name) 8080 &
 
-podExists=false
+podCurled=false
 for i in {1..20}
 do
-    resp=$(curl -k  http://127.0.0.1:8081)
-
+    resp=$(curl -k  http://127.0.0.1:8080)
    if [ "$resp" != "" ]; then
-        podExists=true
+        podCurled=true
         if [ "$EXPECTED_RETURN_VALUE" = "$resp" ]; then
      echo "Pipeline Run successfully executed"
      break
@@ -145,7 +117,7 @@ do
         sleep 5  
     fi 
 done
-if [ "$podExists" = "false" ]; then
+if [ "$podCurled" = "false" ]; then
         fail_test "Test Failure, Not able to curl the pod"
 fi
 
