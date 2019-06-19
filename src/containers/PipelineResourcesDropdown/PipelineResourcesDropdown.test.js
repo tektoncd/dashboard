@@ -39,21 +39,24 @@ const pipelineResourcesById = {
       name: 'pipeline-resource-1',
       namespace: 'blue',
       uid: 'id-pipeline-resource-1'
-    }
+    },
+    spec: { type: 'type-1' }
   },
   'id-pipeline-resource-2': {
     metadata: {
       name: 'pipeline-resource-2',
       namespace: 'blue',
       uid: 'id-pipeline-resource-2'
-    }
+    },
+    spec: { type: 'type-2' }
   },
   'id-pipeline-resource-3': {
     metadata: {
       name: 'pipeline-resource-3',
       namespace: 'green',
       uid: 'id-pipeline-resource-3'
-    }
+    },
+    spec: { type: 'type-1' }
   }
 };
 
@@ -141,6 +144,33 @@ it('PipelineResourcesDropdown renders items based on Redux state', () => {
     queryByText,
     testDict: pipelineResourcesByNamespace.blue
   });
+});
+
+it('PipelineResourcesDropdown renders items based on type', () => {
+  const store = mockStore({
+    ...pipelineResourcesStoreDefault,
+    ...namespacesStoreBlue
+  });
+  const { container, getByText, queryByText } = render(
+    <Provider store={store}>
+      <PipelineResourcesDropdown {...props} type="type-1" />
+    </Provider>
+  );
+  // View items
+  fireEvent.click(getByText(initialTextRegExp));
+  expect(queryByText(/pipeline-resource-1/i)).toBeTruthy();
+  expect(queryByText(/pipeline-resource-2/i)).toBeFalsy();
+  fireEvent.click(getByText(initialTextRegExp));
+  render(
+    <Provider store={store}>
+      <PipelineResourcesDropdown {...props} type="type-2" />
+    </Provider>,
+    { container }
+  );
+  // View items
+  fireEvent.click(getByText(initialTextRegExp));
+  expect(queryByText(/pipeline-resource-1/i)).toBeFalsy();
+  expect(queryByText(/pipeline-resource-2/i)).toBeTruthy();
 });
 
 it('PipelineResourcesDropdown renders items based on Redux state when namespace changes', () => {
@@ -246,7 +276,6 @@ it('PipelineResourcesDropdown renders empty', () => {
     },
     ...namespacesStoreBlue
   });
-  // Select item 'pipeline-resource-1'
   const { queryByText } = render(
     <Provider store={store}>
       <PipelineResourcesDropdown {...props} />
@@ -267,13 +296,54 @@ it('PipelineResourcesDropdown renders empty all namespaces', () => {
     },
     ...namespacesStoreAll
   });
-  // Select item 'pipeline-resource-1'
   const { queryByText } = render(
     <Provider store={store}>
       <PipelineResourcesDropdown {...props} />
     </Provider>
   );
   expect(queryByText(/no pipeline resources found/i)).toBeTruthy();
+  expect(queryByText(initialTextRegExp)).toBeFalsy();
+});
+
+it('PipelineResourcesDropdown renders empty with type', () => {
+  const store = mockStore({
+    pipelineResources: {
+      byId: {},
+      byNamespace: {},
+      isFetching: false
+    },
+    ...namespacesStoreBlue
+  });
+  const { queryByText } = render(
+    <Provider store={store}>
+      <PipelineResourcesDropdown {...props} type="bogus" />
+    </Provider>
+  );
+  expect(
+    queryByText(
+      /no pipeline resources found of type 'bogus' in the 'blue' namespace/i
+    )
+  ).toBeTruthy();
+  expect(queryByText(initialTextRegExp)).toBeFalsy();
+});
+
+it('PipelineResourcesDropdown renders empty with type and all namespaces', () => {
+  const store = mockStore({
+    pipelineResources: {
+      byId: {},
+      byNamespace: {},
+      isFetching: false
+    },
+    ...namespacesStoreAll
+  });
+  const { queryByText } = render(
+    <Provider store={store}>
+      <PipelineResourcesDropdown {...props} type="bogus" />
+    </Provider>
+  );
+  expect(
+    queryByText(/no pipeline resources found of type 'bogus'/i)
+  ).toBeTruthy();
   expect(queryByText(initialTextRegExp)).toBeFalsy();
 });
 
