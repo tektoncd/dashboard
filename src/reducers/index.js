@@ -15,10 +15,11 @@ import { combineReducers } from 'redux';
 
 import extensions, * as extensionSelectors from './extensions';
 import namespaces, * as namespaceSelectors from './namespaces';
-import serviceAccounts, * as serviceAccountSelectors from './serviceAccounts';
 import pipelines, * as pipelineSelectors from './pipelines';
 import pipelineResources, * as pipelineResourcesSelectors from './pipelineResources';
 import pipelineRuns, * as pipelineRunsSelectors from './pipelineRuns';
+import secrets, * as secretSelectors from './secrets';
+import serviceAccounts, * as serviceAccountSelectors from './serviceAccounts';
 import tasks, * as taskSelectors from './tasks';
 import taskRuns, * as taskRunsSelectors from './taskRuns';
 
@@ -28,6 +29,7 @@ export default combineReducers({
   pipelines: pipelines(),
   pipelineResources: pipelineResources(),
   pipelineRuns: pipelineRuns(),
+  secrets,
   serviceAccounts: serviceAccounts(),
   tasks: tasks(),
   taskRuns: taskRuns()
@@ -216,4 +218,19 @@ export function getTasksErrorMessage(state) {
 
 export function isFetchingTasks(state) {
   return taskSelectors.isFetchingTasks(state.tasks);
+}
+
+export function getSecrets(
+  state,
+  { namespace = getSelectedNamespace(state) } = {}
+) {
+  return secretSelectors.getSecrets(state.secrets, namespace);
+}
+
+export function getSecretsErrorMessage(state) {
+  return secretSelectors.getSecretsErrorMessage(state.secrets);
+}
+
+export function isFetchingSecrets(state) {
+  return secretSelectors.isFetchingSecrets(state.secrets);
 }
