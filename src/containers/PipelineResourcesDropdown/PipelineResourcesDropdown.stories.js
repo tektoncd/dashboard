@@ -40,28 +40,32 @@ const pipelineResourcesById = {
       name: 'default',
       namespace: 'default',
       uid: 'id-default'
-    }
+    },
+    spec: { type: 'type-1' }
   },
   'id-pipeline-resource-1': {
     metadata: {
       name: 'pipeline-resource-1',
       namespace: 'default',
       uid: 'id-pipeline-resource-1'
-    }
+    },
+    spec: { type: 'type-1' }
   },
   'id-pipeline-resource-2': {
     metadata: {
       name: 'pipeline-resource-2',
       namespace: 'default',
       uid: 'id-pipeline-resource-2'
-    }
+    },
+    spec: { type: 'type-2' }
   },
   'id-pipeline-resource-3': {
     metadata: {
       name: 'pipeline-resource-3',
       namespace: 'default',
       uid: 'id-pipeline-resource-3'
-    }
+    },
+    spec: { type: 'type-2' }
   }
 };
 
@@ -91,6 +95,24 @@ storiesOf('PipelineResourcesDropdown', module)
       </Provider>
     );
   })
+  .add('default with type', () => {
+    const store = mockStore({
+      pipelineResources: {
+        byId: pipelineResourcesById,
+        byNamespace: pipelineResourcesByNamespace,
+        isFetching: false
+      },
+      namespaces: {
+        byName: namespacesByName,
+        selected: 'default'
+      }
+    });
+    return (
+      <Provider store={store}>
+        <PipelineResourcesDropdown {...props} type="type-1" />
+      </Provider>
+    );
+  })
   .add('empty', () => {
     const store = mockStore({
       pipelineResources: {
@@ -106,6 +128,24 @@ storiesOf('PipelineResourcesDropdown', module)
     return (
       <Provider store={store}>
         <PipelineResourcesDropdown {...props} />
+      </Provider>
+    );
+  })
+  .add('empty with type', () => {
+    const store = mockStore({
+      pipelineResources: {
+        byId: {},
+        byNamespace: {},
+        isFetching: false
+      },
+      namespaces: {
+        byName: namespacesByName,
+        selected: 'default'
+      }
+    });
+    return (
+      <Provider store={store}>
+        <PipelineResourcesDropdown {...props} type="bogus" />
       </Provider>
     );
   });
