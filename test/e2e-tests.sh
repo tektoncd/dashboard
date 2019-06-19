@@ -68,7 +68,7 @@ REGISTRY="gcr.io/${E2E_PROJECT_ID}/${E2E_BASE_NAME}-e2e-img"
 dashboardExists=false
 for i in {1..20}
 do
-   respF=$(curl -k  http://127.0.0.1:90979)
+   respF=$(curl -k  http://127.0.0.1:9097)
    if [ "$respF" != "" ]; then
         dashboardExists=true
         break
