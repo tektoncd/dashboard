@@ -1,9 +1,0 @@
-apiVersion: tekton.dev/v1alpha1
-kind: PipelineRun
-metadata:
-  name: hello-pipeline-run-1
-spec:
-  pipelineRef:
-    name: hello-pipeline
-  trigger:
-    type: manual
