@@ -1,0 +1,26 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata: 
+  name: deploy-simple-kubectl-task-insecure
+spec:
+  inputs: 
+    resources: 
+    - name: git-source
+      type: git
+    - name: image-out
+      type: image
+  steps:
+  - name: modify-yaml
+    image: ubuntu
+    command: ['/bin/bash']
+    args: ['-c', 'find ./git-source/config -type f -exec sed -i -e s!"image: PIPELINE_REPLACE:latest"!"image: ${IMG}"!g {} \;']
+    env:
+      - name: IMG
+        value: ${inputs.resources.image-out.url}
+  - name: install-new
+    image: lachlanevenson/k8s-kubectl
+    command: ['kubectl']
+    args: 
+    - 'apply'
+    - '-f'
+    - './git-source/config'
