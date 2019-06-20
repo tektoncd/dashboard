@@ -11,16 +11,33 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { getTask, getTasks } from '../api';
+import { getClusterTask, getClusterTasks, getTask, getTasks } from '../api';
 import {
+  fetchCollection,
   fetchNamespacedCollection,
-  fetchNamespacedResource
+  fetchNamespacedResource,
+  fetchResource
 } from './actionCreators';
 
 export function fetchTask({ name, namespace }) {
   return fetchNamespacedResource('Task', getTask, { name, namespace });
 }
 
+export function fetchClusterTask(name) {
+  return fetchResource('ClusterTask', getClusterTask, { name });
+}
+
 export function fetchTasks({ namespace } = {}) {
   return fetchNamespacedCollection('Task', getTasks, { namespace });
+}
+
+export function fetchClusterTasks() {
+  return fetchCollection('ClusterTask', getClusterTasks);
+}
+
+export function fetchTaskByType(name, type, namespace) {
+  if (type === 'clustertasks') {
+    return fetchClusterTask(name);
+  }
+  return fetchTask({ name, namespace });
 }

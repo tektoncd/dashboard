@@ -37,6 +37,20 @@ export function getAPI(type, { name = '', namespace } = {}, queryParams) {
   ].join('');
 }
 
+export function getTektonAPI(type, { name = '', namespace } = {}, queryParams) {
+  return [
+    apiRoot,
+    '/proxy/apis/tekton.dev/v1alpha1/',
+    namespace && namespace !== '*'
+      ? `namespaces/${encodeURIComponent(namespace)}/`
+      : '',
+    type,
+    '/',
+    encodeURIComponent(name),
+    queryParams ? `?${new URLSearchParams(queryParams).toString()}` : ''
+  ].join('');
+}
+
 export function getExtensionBaseURL(name) {
   return `${apiRoot}/v1/extensions/${name}`;
 }
@@ -91,6 +105,16 @@ export function cancelPipelineRun({ name, namespace }) {
 export function createPipelineRun({ namespace, payload }) {
   const uri = getAPI('pipelineruns', { namespace });
   return post(uri, payload);
+}
+
+export function getClusterTasks() {
+  const uri = getTektonAPI('clustertasks');
+  return get(uri).then(checkData);
+}
+
+export function getClusterTask({ name }) {
+  const uri = getTektonAPI('clustertasks', { name });
+  return get(uri);
 }
 
 export function getTasks({ namespace } = {}) {

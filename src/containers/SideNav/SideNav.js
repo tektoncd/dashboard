@@ -125,6 +125,13 @@ export class SideNav extends Component {
             <SideNavMenuItem
               element={NavLink}
               icon={<span />}
+              to="/clustertasks"
+            >
+              ClusterTasks
+            </SideNavMenuItem>
+            <SideNavMenuItem
+              element={NavLink}
+              icon={<span />}
               to={this.getPath('/taskruns')}
             >
               TaskRuns

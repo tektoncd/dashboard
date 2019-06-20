@@ -96,9 +96,12 @@ export /* istanbul ignore next */ class TaskRunList extends Component {
           )}
           {taskRuns.map(taskRun => {
             const { name, namespace } = taskRun.metadata;
-            const taskRefName = taskRun.spec.taskRef
-              ? taskRun.spec.taskRef.name
-              : '';
+            let taskRefName = '';
+            let taskRefKind = '';
+            if (taskRun.spec.taskRef) {
+              taskRefName = taskRun.spec.taskRef.name;
+              taskRefKind = taskRun.spec.taskRef.kind;
+            }
             const { lastTransitionTime, reason, status } = getStatus(taskRun);
             let message;
             if (!taskRun.status.conditions) {
@@ -124,7 +127,11 @@ export /* istanbul ignore next */ class TaskRunList extends Component {
                 </StructuredListCell>
                 <StructuredListCell>
                   <Link
-                    to={`/namespaces/${namespace}/tasks/${taskRefName}/runs`}
+                    to={
+                      taskRefKind === 'ClusterTask'
+                        ? `/clustertasks/${taskRefName}/runs`
+                        : `/namespaces/${namespace}/tasks/${taskRefName}/runs`
+                    }
                   >
                     {taskRefName}
                   </Link>

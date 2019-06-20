@@ -21,7 +21,7 @@ import {
 
 import {
   getSelectedNamespace,
-  getTask,
+  getTaskByType,
   getTaskRun,
   getTaskRunsErrorMessage
 } from '../../reducers';
@@ -32,8 +32,10 @@ import TaskTree from '../../components/TaskTree';
 import { getStatus, stepsStatus, taskRunStep } from '../../utils';
 
 import '../../components/Run/Run.scss';
-import { fetchTask } from '../../actions/tasks';
+import { fetchTask, fetchTaskByType } from '../../actions/tasks';
 import { fetchTaskRun } from '../../actions/taskRuns';
+
+const taskTypeKeys = { ClusterTask: 'clustertasks', Task: 'tasks' };
 
 export /* istanbul ignore next */ class TaskRunContainer extends Component {
   // once redux store is available errors will be handled properly with dedicated components
@@ -84,12 +86,14 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
   loadTaskRun = () => {
     const { task } = this.props;
     let { taskRun } = this.props;
+    let { steps } = taskRun.status;
+    if (task) {
+      steps = task.spec.steps; // eslint-disable-line
+    }
     const taskRunName = taskRun.metadata.name;
+    const taskRunNamespace = taskRun.metadata.namespace;
     const { reason, status: succeeded } = getStatus(taskRun);
-    const runSteps = stepsStatus(
-      task ? task.spec.steps : taskRun.status.steps,
-      taskRun.status.steps
-    );
+    const runSteps = stepsStatus(steps, taskRun.status.steps);
     const { startTime } = taskRun.status;
     taskRun = {
       id: taskRun.metadata.uid,
@@ -99,7 +103,8 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
       steps: runSteps,
       succeeded,
       taskRunName,
-      startTime
+      startTime,
+      namespace: taskRunNamespace
     };
     return taskRun;
   };
@@ -107,8 +112,13 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
   fetchTaskAndRuns(taskRunName, namespace) {
     this.props.fetchTaskRun({ name: taskRunName, namespace }).then(taskRun => {
       if (taskRun && taskRun.spec.taskRef) {
+        const { name, kind } = taskRun.spec.taskRef;
         this.props
-          .fetchTask({ name: taskRun.spec.taskRef.name, namespace })
+          .fetchTaskByType({
+            type: taskTypeKeys[kind],
+            name,
+            namespace
+          })
           .then(() => {
             this.setState({ loading: false });
           });
@@ -197,7 +207,11 @@ function mapStateToProps(state, ownProps) {
   });
   let task;
   if (taskRun && taskRun.spec.taskRef) {
-    task = getTask(state, { name: taskRun.spec.taskRef.name, namespace });
+    task = getTaskByType(state, {
+      type: taskTypeKeys[taskRun.spec.taskRef.kind],
+      name: taskRun.spec.taskRef.name,
+      namespace
+    });
   }
   return {
     error: getTaskRunsErrorMessage(state),
@@ -208,6 +222,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 const mapDispatchToProps = {
+  fetchTaskByType,
   fetchTask,
   fetchTaskRun
 };

@@ -27,6 +27,10 @@ module.exports = merge(common, {
       '/v1': {
         target: process.env.API_DOMAIN || API_DOMAIN,
         ws: true
+      },
+      '/proxy': {
+        target: process.env.API_DOMAIN || API_DOMAIN,
+        ws: true
       }
     },
     stats: 'minimal'
