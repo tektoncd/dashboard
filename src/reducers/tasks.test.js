@@ -11,33 +11,47 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as creators from './reducerCreators';
+import * as reducerCreators from './reducerCreators';
+import * as selectorCreators from './selectorCreators';
 import createReducer, * as selectors from './tasks';
-import { ALL_NAMESPACES } from '../constants';
+
+const name = 'task name';
+const namespace = 'default';
+const state = { fake: 'state' };
 
 it('creates a namespaced reducer for the correct type', () => {
   const type = 'Task';
-  jest.spyOn(creators, 'createNamespacedReducer');
+  jest.spyOn(reducerCreators, 'createNamespacedReducer');
   createReducer();
-  expect(creators.createNamespacedReducer).toHaveBeenCalledWith({ type });
+  expect(reducerCreators.createNamespacedReducer).toHaveBeenCalledWith({
+    type
+  });
 });
 
 it('getTasks', () => {
-  const selectedNamespace = 'namespace';
-  const state = { byNamespace: {} };
-  expect(selectors.getTasks(state, selectedNamespace)).toEqual([]);
-});
-
-it('getTasks all namespaces', () => {
-  const selectedNamespace = ALL_NAMESPACES;
-  const selectedTask = { fake: 'task' };
-  const state = { byId: { id: selectedTask } };
-  expect(selectors.getTasks(state, selectedNamespace)).toEqual([selectedTask]);
+  const collection = { fake: 'collection' };
+  jest
+    .spyOn(selectorCreators, 'getCollection')
+    .mockImplementation(() => collection);
+  expect(selectors.getTasks(state, namespace)).toEqual(collection);
 });
 
 it('getTask', () => {
-  const selectedName = 'name';
-  const selectedNamespace = 'namespace';
-  const state = { byNamespace: {} };
-  expect(selectors.getTask(state, selectedName, selectedNamespace)).toBeNull();
+  const resource = { fake: 'resource' };
+  jest
+    .spyOn(selectorCreators, 'getResource')
+    .mockImplementation(() => resource);
+  expect(selectors.getTask(state, name, namespace)).toEqual(resource);
+});
+
+it('getTasksErrorMessage', () => {
+  const errorMessage = 'errorMessage';
+  expect(selectors.getTasksErrorMessage({ errorMessage })).toEqual(
+    errorMessage
+  );
+});
+
+it('isFetchingTasks', () => {
+  const isFetching = 'isFetching';
+  expect(selectors.isFetchingTasks({ isFetching })).toEqual(isFetching);
 });

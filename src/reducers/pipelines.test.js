@@ -11,37 +11,47 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as creators from './reducerCreators';
+import * as reducerCreators from './reducerCreators';
+import * as selectorCreators from './selectorCreators';
 import createReducer, * as selectors from './pipelines';
-import { ALL_NAMESPACES } from '../constants';
+
+const name = 'pipeline name';
+const namespace = 'default';
+const state = { fake: 'state' };
 
 it('creates a namespaced reducer for the correct type', () => {
   const type = 'Pipeline';
-  jest.spyOn(creators, 'createNamespacedReducer');
+  jest.spyOn(reducerCreators, 'createNamespacedReducer');
   createReducer();
-  expect(creators.createNamespacedReducer).toHaveBeenCalledWith({ type });
+  expect(reducerCreators.createNamespacedReducer).toHaveBeenCalledWith({
+    type
+  });
 });
 
 it('getPipelines', () => {
-  const selectedNamespace = 'namespace';
-  const state = { byNamespace: {} };
-  expect(selectors.getPipelines(state, selectedNamespace)).toEqual([]);
-});
-
-it('getPipelines all namespaces', () => {
-  const selectedNamespace = ALL_NAMESPACES;
-  const selectedPipeline = { fake: 'pipeline' };
-  const state = { byId: { id: selectedPipeline } };
-  expect(selectors.getPipelines(state, selectedNamespace)).toEqual([
-    selectedPipeline
-  ]);
+  const collection = { fake: 'collection' };
+  jest
+    .spyOn(selectorCreators, 'getCollection')
+    .mockImplementation(() => collection);
+  expect(selectors.getPipelines(state, namespace)).toEqual(collection);
 });
 
 it('getPipeline', () => {
-  const selectedName = 'name';
-  const selectedNamespace = 'namespace';
-  const state = { byNamespace: {} };
-  expect(
-    selectors.getPipeline(state, selectedName, selectedNamespace)
-  ).toBeNull();
+  const resource = { fake: 'resource' };
+  jest
+    .spyOn(selectorCreators, 'getResource')
+    .mockImplementation(() => resource);
+  expect(selectors.getPipeline(state, name, namespace)).toEqual(resource);
+});
+
+it('getPipelinesErrorMessage', () => {
+  const errorMessage = 'errorMessage';
+  expect(selectors.getPipelinesErrorMessage({ errorMessage })).toEqual(
+    errorMessage
+  );
+});
+
+it('isFetchingPipelines', () => {
+  const isFetching = 'isFetching';
+  expect(selectors.isFetchingPipelines({ isFetching })).toEqual(isFetching);
 });

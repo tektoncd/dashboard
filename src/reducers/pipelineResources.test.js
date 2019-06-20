@@ -11,53 +11,51 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as creators from './reducerCreators';
+import * as reducerCreators from './reducerCreators';
+import * as selectorCreators from './selectorCreators';
 import createReducer, * as selectors from './pipelineResources';
-import { ALL_NAMESPACES } from '../constants';
 
-const createPipelineResource = (name, namespace, uid, params) => {
-  return {
-    metadata: {
-      name,
-      namespace,
-      uid
-    },
-    spec: {
-      params
-    }
-  };
-};
-
-const name = 'pipeline name';
+const name = 'pipeline resource name';
 const namespace = 'default';
-const uid = 'some-uid';
-const pipelineResource = createPipelineResource(name, namespace, uid);
+const state = { fake: 'state' };
 
 it('creates a namespaced reducer for the correct type', () => {
   const type = 'PipelineResource';
-  jest.spyOn(creators, 'createNamespacedReducer');
+  jest.spyOn(reducerCreators, 'createNamespacedReducer');
   createReducer();
-  expect(creators.createNamespacedReducer).toHaveBeenCalledWith({ type });
+  expect(reducerCreators.createNamespacedReducer).toHaveBeenCalledWith({
+    type
+  });
 });
 
 it('getPipelineResources', () => {
-  const selectedNamespace = 'namespace';
-  const state = { byNamespace: {} };
-  expect(selectors.getPipelineResources(state, selectedNamespace)).toEqual([]);
-});
-
-it('getPipelineResources all namespaces', () => {
-  const selectedNamespace = ALL_NAMESPACES;
-  const state = { byId: { id: pipelineResource } };
-  expect(selectors.getPipelineResources(state, selectedNamespace)).toEqual([
-    pipelineResource
-  ]);
+  const collection = { fake: 'collection' };
+  jest
+    .spyOn(selectorCreators, 'getCollection')
+    .mockImplementation(() => collection);
+  expect(selectors.getPipelineResources(state, namespace)).toEqual(collection);
 });
 
 it('getPipelineResource', () => {
-  const selectedNamespace = 'namespace';
-  const state = { byNamespace: {} };
-  expect(
-    selectors.getPipelineResource(state, name, selectedNamespace)
-  ).toBeNull();
+  const resource = { fake: 'resource' };
+  jest
+    .spyOn(selectorCreators, 'getResource')
+    .mockImplementation(() => resource);
+  expect(selectors.getPipelineResource(state, name, namespace)).toEqual(
+    resource
+  );
+});
+
+it('getPipelineResourcesErrorMessage', () => {
+  const errorMessage = 'errorMessage';
+  expect(selectors.getPipelineResourcesErrorMessage({ errorMessage })).toEqual(
+    errorMessage
+  );
+});
+
+it('isFetchingPipelineResources', () => {
+  const isFetching = 'isFetching';
+  expect(selectors.isFetchingPipelineResources({ isFetching })).toEqual(
+    isFetching
+  );
 });

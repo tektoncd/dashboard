@@ -12,25 +12,16 @@ limitations under the License.
 */
 
 import { createNamespacedReducer } from './reducerCreators';
-import { ALL_NAMESPACES } from '../constants';
+import { getCollection, getResource } from './selectorCreators';
 
 export default () => createNamespacedReducer({ type: 'PipelineResource' });
 
 export function getPipelineResources(state, namespace) {
-  if (namespace === ALL_NAMESPACES) {
-    return Object.values(state.byId);
-  }
-
-  const pipelineResources = state.byNamespace[namespace];
-  return pipelineResources
-    ? Object.values(pipelineResources).map(id => state.byId[id])
-    : [];
+  return getCollection(state, namespace);
 }
 
 export function getPipelineResource(state, name, namespace) {
-  const pipelineResources = state.byNamespace[namespace] || {};
-  const pipelineResourceId = pipelineResources[name];
-  return pipelineResourceId ? state.byId[pipelineResourceId] : null;
+  return getResource(state, name, namespace);
 }
 
 export function getPipelineResourcesErrorMessage(state) {
