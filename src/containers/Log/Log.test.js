@@ -31,6 +31,7 @@ it('LogContainer renders', async () => {
       match={{ params: { namespace } }}
       stepName={stepName}
       podName={podName}
+      namespace={namespace}
     />
   );
   await waitForElement(() => getByText(logs));
@@ -48,6 +49,7 @@ it('LogContainer renders', async () => {
       match={{ params: { namespace } }}
       stepName={stepName}
       podName={anotherPodName}
+      namespace={namespace}
     />
   );
   expect(getPodLog).toHaveBeenCalledTimes(2);
@@ -71,6 +73,7 @@ it('LogContainer handles error case', async () => {
       match={{ params: { namespace } }}
       stepName={stepName}
       podName={podName}
+      namespace={namespace}
     />
   );
   await waitForElement(() => getByText('Unable to fetch log'));
@@ -94,6 +97,7 @@ it('LogContainer handles empty logs', async () => {
       match={{ params: { namespace } }}
       stepName={stepName}
       podName={podName}
+      namespace={namespace}
     />
   );
 
@@ -118,6 +122,7 @@ it('LogContainer handles missing step logs', async () => {
       match={{ params: { namespace } }}
       stepName={stepName}
       podName={podName}
+      namespace={namespace}
     />
   );
   await waitForElement(() => getByText('No log available'));

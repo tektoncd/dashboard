@@ -13,7 +13,13 @@ limitations under the License.
 
 import * as API from '../api';
 import * as creators from './actionCreators';
-import { fetchTask, fetchTasks } from './tasks';
+import {
+  fetchClusterTask,
+  fetchClusterTasks,
+  fetchTask,
+  fetchTaskByType,
+  fetchTasks
+} from './tasks';
 
 it('fetchTask', async () => {
   jest.spyOn(creators, 'fetchNamespacedResource');
@@ -45,5 +51,50 @@ it('fetchTasks no params', async () => {
     'Task',
     API.getTasks,
     { namespace: undefined }
+  );
+});
+
+it('fetchClusterTask', async () => {
+  jest.spyOn(creators, 'fetchResource');
+  const name = 'clusterTaskName';
+  fetchClusterTask(name);
+  expect(creators.fetchResource).toHaveBeenCalledWith(
+    'ClusterTask',
+    API.getClusterTask,
+    { name }
+  );
+});
+
+it('fetchClusterTasks', async () => {
+  jest.spyOn(creators, 'fetchCollection');
+  fetchClusterTasks();
+  expect(creators.fetchCollection).toHaveBeenCalledWith(
+    'ClusterTask',
+    API.getClusterTasks
+  );
+});
+
+it('fetchClusterTaskByType', async () => {
+  jest.spyOn(creators, 'fetchResource');
+  const name = 'clusterTaskName';
+  fetchTaskByType(name, 'clustertasks');
+  expect(creators.fetchResource).toHaveBeenCalledWith(
+    'ClusterTask',
+    API.getClusterTask,
+    { name }
+  );
+});
+
+it('fetchTaskByType', async () => {
+  jest.spyOn(creators, 'fetchResource');
+  const name = 'clusterTaskName';
+
+  jest.spyOn(creators, 'fetchNamespacedCollection');
+  const namespace = 'namespace';
+  fetchTaskByType(name, 'tasks', namespace);
+  expect(creators.fetchNamespacedResource).toHaveBeenCalledWith(
+    'Task',
+    API.getTask,
+    { name, namespace }
   );
 });

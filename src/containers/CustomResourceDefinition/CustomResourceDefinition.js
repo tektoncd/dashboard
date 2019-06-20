@@ -20,10 +20,12 @@ import {
 
 import jsYaml from 'js-yaml';
 
-import { fetchTask } from '../../actions/tasks';
+import { fetchClusterTask, fetchTask } from '../../actions/tasks';
 import { fetchPipeline } from '../../actions/pipelines';
 
 import {
+  getClusterTask,
+  getClusterTasksErrorMessage,
   getPipeline,
   getPipelinesErrorMessage,
   getTask,
@@ -66,6 +68,8 @@ export /* istanbul ignore next */ class CustomResourceDefinition extends Compone
         return this.props.fetchTask({ name, namespace });
       case 'pipelines':
         return this.props.fetchPipeline({ name, namespace });
+      case 'clustertasks':
+        return this.props.fetchClusterTask(name);
       default:
         return Promise.resolve();
     }
@@ -104,18 +108,31 @@ export /* istanbul ignore next */ class CustomResourceDefinition extends Compone
 /* istanbul ignore next */
 function mapStateToProps(state, ownProps) {
   const { match } = ownProps;
+  const { name, type } = ownProps.match.params;
   const { namespace } = match.params;
+  const resourceMap = {
+    clustertasks: getClusterTask(state, name),
+    tasks: getTask(state, { name, namespace }),
+    pipelines: getPipeline(state, {
+      name,
+      namespace
+    })
+  };
+  const errorMap = {
+    clustertasks: getClusterTasksErrorMessage(state),
+    tasks: getTasksErrorMessage(state),
+    pipelines: getPipelinesErrorMessage(state)
+  };
+
   return {
-    error: getTasksErrorMessage(state) || getPipelinesErrorMessage(state),
+    error: errorMap[type],
     namespace,
-    resource:
-      ownProps.match.params.type === 'tasks'
-        ? getTask(state, { name: ownProps.match.params.name, namespace })
-        : getPipeline(state, { name: ownProps.match.params.name, namespace })
+    resource: resourceMap[type]
   };
 }
 
 const mapDispatchToProps = {
+  fetchClusterTask,
   fetchPipeline,
   fetchTask
 };

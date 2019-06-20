@@ -40,6 +40,7 @@ const StepDetails = props => {
             stepName={stepName}
             podName={pod}
             stepStatus={stepStatus}
+            namespace={taskRun.namespace}
           />
         </Tab>
         <Tab className="details-tab" label="Status">

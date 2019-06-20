@@ -57,6 +57,21 @@ export function fetchNamespacedCollection(
   };
 }
 
+export function fetchResource(resourceType, api, { ...rest }) {
+  const pluralType = typeToPlural(resourceType);
+  return async dispatch => {
+    dispatch({ type: `${pluralType}_FETCH_REQUEST` });
+    let data;
+    try {
+      data = await api({ ...rest });
+      dispatch(fetchSuccess(resourceType, [data]));
+    } catch (error) {
+      dispatch({ type: `${pluralType}_FETCH_FAILURE`, error });
+    }
+    return data;
+  };
+}
+
 export function fetchNamespacedResource(
   resourceType,
   api,

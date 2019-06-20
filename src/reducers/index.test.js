@@ -12,6 +12,8 @@ limitations under the License.
 */
 
 import {
+  getClusterTasks,
+  getClusterTasksErrorMessage,
   getExtensions,
   getExtensionsErrorMessage,
   getNamespaces,
@@ -33,6 +35,7 @@ import {
   getTaskRunsErrorMessage,
   getTasks,
   getTasksErrorMessage,
+  isFetchingClusterTasks,
   isFetchingExtensions,
   isFetchingPipelineResources,
   isFetchingPipelineRuns,
@@ -41,6 +44,7 @@ import {
   isFetchingTaskRuns,
   isFetchingTasks
 } from '.';
+import * as clusterTaskSelectors from './clusterTasks';
 import * as extensionSelectors from './extensions';
 import * as namespaceSelectors from './namespaces';
 import * as pipelineResourcesSelectors from './pipelineResources';
@@ -57,6 +61,7 @@ const pipelines = [{ fake: 'pipeline' }];
 const pipelineRuns = [{ fake: 'pipelineRun' }];
 const secrets = [{ fake: 'secrets' }];
 const tasks = [{ fake: 'task' }];
+const clusterTasks = [{ fake: 'clusterTask' }];
 const taskName = 'myTask';
 const taskRun = { fake: 'taskRun', spec: { taskRef: { name: taskName } } };
 const inlineTaskRun = { fake: 'taskRun', spec: {} };
@@ -73,7 +78,8 @@ const state = {
   pipelineResources,
   pipelines,
   secrets,
-  tasks
+  tasks,
+  clusterTasks
 };
 
 it('getSelectedNamespace', () => {
@@ -333,6 +339,37 @@ it('isFetchingTasks', () => {
   jest.spyOn(taskSelectors, 'isFetchingTasks').mockImplementation(() => true);
   expect(isFetchingTasks(state)).toBe(true);
   expect(taskSelectors.isFetchingTasks).toHaveBeenCalledWith(state.tasks);
+});
+
+it('getClusterTasks', () => {
+  jest
+    .spyOn(clusterTaskSelectors, 'getClusterTasks')
+    .mockImplementation(() => clusterTasks);
+  expect(getClusterTasks(state)).toEqual(clusterTasks);
+  expect(clusterTaskSelectors.getClusterTasks).toHaveBeenCalledWith(
+    state.clusterTasks
+  );
+});
+
+it('getClusterTasksErrorMessage', () => {
+  const errorMessage = 'fake error message';
+  jest
+    .spyOn(clusterTaskSelectors, 'getClusterTasksErrorMessage')
+    .mockImplementation(() => errorMessage);
+  expect(getClusterTasksErrorMessage(state)).toEqual(errorMessage);
+  expect(clusterTaskSelectors.getClusterTasksErrorMessage).toHaveBeenCalledWith(
+    state.clusterTasks
+  );
+});
+
+it('isFetchingClusterTasks', () => {
+  jest
+    .spyOn(clusterTaskSelectors, 'isFetchingClusterTasks')
+    .mockImplementation(() => true);
+  expect(isFetchingClusterTasks(state)).toBe(true);
+  expect(clusterTaskSelectors.isFetchingClusterTasks).toHaveBeenCalledWith(
+    state.clusterTasks
+  );
 });
 
 it('getTaskRun', () => {

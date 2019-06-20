@@ -13,6 +13,7 @@ limitations under the License.
 
 import { combineReducers } from 'redux';
 
+import clusterTasks, * as clusterTaskSelectors from './clusterTasks';
 import extensions, * as extensionSelectors from './extensions';
 import namespaces, * as namespaceSelectors from './namespaces';
 import pipelines, * as pipelineSelectors from './pipelines';
@@ -24,6 +25,7 @@ import tasks, * as taskSelectors from './tasks';
 import taskRuns, * as taskRunsSelectors from './taskRuns';
 
 export default combineReducers({
+  clusterTasks,
   extensions,
   namespaces,
   pipelines: pipelines(),
@@ -218,6 +220,31 @@ export function getTasksErrorMessage(state) {
 
 export function isFetchingTasks(state) {
   return taskSelectors.isFetchingTasks(state.tasks);
+}
+
+export function getClusterTasks(state) {
+  return clusterTaskSelectors.getClusterTasks(state.clusterTasks);
+}
+
+export function getClusterTask(state, name) {
+  return clusterTaskSelectors.getClusterTask(state.clusterTasks, name);
+}
+
+export function getClusterTasksErrorMessage(state) {
+  return clusterTaskSelectors.getClusterTasksErrorMessage(state.clusterTasks);
+}
+
+export function isFetchingClusterTasks(state) {
+  return clusterTaskSelectors.isFetchingClusterTasks(state.clusterTasks);
+}
+
+export function getTaskByType(
+  state,
+  { type, name, namespace = getSelectedNamespace(state) }
+) {
+  return type === 'clustertasks'
+    ? getClusterTask(state, name)
+    : getTask(state, { name, namespace });
 }
 
 export function getSecrets(

@@ -60,8 +60,7 @@ export class LogContainer extends Component {
   };
 
   async loadLog() {
-    const { match, stepName, podName } = this.props;
-    const { namespace } = match.params;
+    const { stepName, podName, namespace } = this.props;
     if (podName) {
       try {
         const container = `build-step-${stepName}`;

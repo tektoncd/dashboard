@@ -20,6 +20,7 @@ import {
 } from 'carbon-components-react';
 
 import {
+  getClusterTasks,
   getPipelineRun,
   getPipelineRunsErrorMessage,
   getTaskRun,
@@ -29,7 +30,7 @@ import {
 } from '../../reducers';
 
 import { fetchPipelineRun } from '../../actions/pipelineRuns';
-import { fetchTasks } from '../../actions/tasks';
+import { fetchClusterTasks, fetchTasks } from '../../actions/tasks';
 import { fetchTaskRuns } from '../../actions/taskRuns';
 
 import RunHeader from '../../components/RunHeader';
@@ -106,8 +107,13 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
 
     runs = runs.map(taskRun => {
       const taskName = taskRun.spec.taskRef.name;
-      const task = selectedTask(taskName, this.props.tasks);
+      const taskKind = taskRun.spec.taskRef.kind;
+      const task = selectedTask(
+        taskName,
+        taskKind === 'ClusterTask' ? this.props.clusterTasks : this.props.tasks
+      );
       const taskRunName = taskRun.metadata.name;
+      const taskRunNamespace = taskRun.metadata.namespace;
       const { reason, status: succeeded } = getStatus(taskRun);
       const { pipelineTaskName } = taskRunDetails[taskRunName];
       const steps = stepsStatus(task.spec.steps, taskRun.status.steps);
@@ -119,7 +125,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
         steps,
         succeeded,
         taskName,
-        taskRunName
+        taskRunName,
+        namespace: taskRunNamespace
       };
     });
 
@@ -133,6 +140,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       await Promise.all([
         this.props.fetchPipelineRun({ name: pipelineRunName, namespace }),
         this.props.fetchTasks(),
+        this.props.fetchClusterTasks(),
         this.props.fetchTaskRuns()
       ]);
       this.setState({ loading: false });
@@ -270,11 +278,13 @@ function mapStateToProps(state, ownProps) {
       name: ownProps.match.params.pipelineRunName,
       namespace
     }),
-    tasks: getTasks(state, { namespace })
+    tasks: getTasks(state, { namespace }),
+    clusterTasks: getClusterTasks(state)
   };
 }
 
 const mapDispatchToProps = {
+  fetchClusterTasks,
   fetchPipelineRun,
   fetchTasks,
   fetchTaskRuns

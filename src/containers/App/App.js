@@ -24,6 +24,7 @@ import {
 import { Content } from 'carbon-components-react';
 
 import {
+  ClusterTasks,
   CustomResourceDefinition,
   Extension,
   Extensions,
@@ -85,6 +86,7 @@ export /* istanbul ignore next */ class App extends Component {
                 exact
                 component={Tasks}
               />
+              <Route path="/clustertasks" exact component={ClusterTasks} />
               <Route path="/pipelineruns" component={PipelineRuns} />
               <Route
                 path="/namespaces/:namespace/pipelineruns"
@@ -107,7 +109,12 @@ export /* istanbul ignore next */ class App extends Component {
               />
               <Route path="/taskruns" component={TaskRunList} />
               <Route
-                path="/namespaces/:namespace/tasks/:taskName/runs"
+                path="/namespaces/:namespace/:taskType(tasks)/:taskName/runs"
+                exact
+                component={TaskRuns}
+              />
+              <Route
+                path="/:taskType(clustertasks)/:taskName/runs"
                 exact
                 component={TaskRuns}
               />
@@ -147,6 +154,11 @@ export /* istanbul ignore next */ class App extends Component {
               ))}
               <Route
                 path="/namespaces/:namespace/:type/:name"
+                exact
+                component={CustomResourceDefinition}
+              />
+              <Route
+                path="/:type/:name"
                 exact
                 component={CustomResourceDefinition}
               />
