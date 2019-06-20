@@ -12,29 +12,13 @@ limitations under the License.
 */
 
 import { getPipeline, getPipelines } from '../api';
-import { getSelectedNamespace } from '../reducers';
-import { fetchNamespacedCollection } from './actionCreators';
-
-export function fetchPipelinesSuccess(data) {
-  return {
-    type: 'PIPELINES_FETCH_SUCCESS',
-    data
-  };
-}
+import {
+  fetchNamespacedCollection,
+  fetchNamespacedResource
+} from './actionCreators';
 
 export function fetchPipeline({ name, namespace }) {
-  return async (dispatch, getState) => {
-    dispatch({ type: 'PIPELINES_FETCH_REQUEST' });
-    let pipeline;
-    try {
-      const requestedNamespace = namespace || getSelectedNamespace(getState());
-      pipeline = await getPipeline(name, requestedNamespace);
-      dispatch(fetchPipelinesSuccess([pipeline]));
-    } catch (error) {
-      dispatch({ type: 'PIPELINES_FETCH_FAILURE', error });
-    }
-    return pipeline;
-  };
+  return fetchNamespacedResource('Pipeline', getPipeline, { name, namespace });
 }
 
 export function fetchPipelines({ namespace } = {}) {

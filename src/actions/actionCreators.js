@@ -48,8 +48,28 @@ export function fetchNamespacedCollection(
     let data;
     try {
       const requestedNamespace = namespace || getSelectedNamespace(getState());
-      data = await api(requestedNamespace, ...Object.values(rest));
+      data = await api({ namespace: requestedNamespace, ...rest });
       dispatch(fetchSuccess(resourceType, data));
+    } catch (error) {
+      dispatch({ type: `${pluralType}_FETCH_FAILURE`, error });
+    }
+    return data;
+  };
+}
+
+export function fetchNamespacedResource(
+  resourceType,
+  api,
+  { namespace, ...rest }
+) {
+  const pluralType = typeToPlural(resourceType);
+  return async (dispatch, getState) => {
+    dispatch({ type: `${pluralType}_FETCH_REQUEST` });
+    let data;
+    try {
+      const requestedNamespace = namespace || getSelectedNamespace(getState());
+      data = await api({ namespace: requestedNamespace, ...rest });
+      dispatch(fetchSuccess(resourceType, [data]));
     } catch (error) {
       dispatch({ type: `${pluralType}_FETCH_FAILURE`, error });
     }

@@ -33,9 +33,9 @@ import {
   getPipelineRuns,
   getPipelines,
   getPodLog,
+  getServiceAccounts,
   getTask,
   getTaskRun,
-  getTaskRunLog,
   getTaskRuns,
   getTasks,
   updateCredential
@@ -104,10 +104,10 @@ it('getPipelines', () => {
 });
 
 it('getPipeline', () => {
-  const pipelineName = 'foo';
+  const name = 'foo';
   const data = { fake: 'pipeline' };
-  fetchMock.get(`end:${pipelineName}`, data);
-  return getPipeline(pipelineName).then(pipeline => {
+  fetchMock.get(`end:${name}`, data);
+  return getPipeline({ name }).then(pipeline => {
     expect(pipeline).toEqual(data);
     fetchMock.restore();
   });
@@ -130,29 +130,29 @@ it('getPipelineRuns With Query Params', () => {
     items: 'pipelineRuns'
   };
   fetchMock.get(/pipelineruns/, data);
-  return getPipelineRuns(pipelineName).then(pipelineRuns => {
+  return getPipelineRuns({ pipelineName }).then(pipelineRuns => {
     expect(pipelineRuns).toEqual(data.items);
     fetchMock.restore();
   });
 });
 
 it('getPipelineRun', () => {
-  const pipelineRunName = 'foo';
+  const name = 'foo';
   const data = { fake: 'pipelineRun' };
-  fetchMock.get(`end:${pipelineRunName}`, data);
-  return getPipelineRun(pipelineRunName).then(pipelineRun => {
+  fetchMock.get(`end:${name}`, data);
+  return getPipelineRun({ name }).then(pipelineRun => {
     expect(pipelineRun).toEqual(data);
     fetchMock.restore();
   });
 });
 
 it('cancelPipelineRun', () => {
-  const pipelineRunName = 'foo';
+  const name = 'foo';
   const payload = {
     status: 'PipelineRunCancelled'
   };
-  fetchMock.put(`end:${pipelineRunName}`, 204);
-  return cancelPipelineRun(pipelineRunName).then(() => {
+  fetchMock.put(`end:${name}`, 204);
+  return cancelPipelineRun({ name }).then(() => {
     expect(fetchMock.lastOptions()).toMatchObject({
       body: JSON.stringify(payload)
     });
@@ -172,10 +172,10 @@ it('getTasks', () => {
 });
 
 it('getTask', () => {
-  const taskName = 'foo';
+  const name = 'foo';
   const data = { fake: 'task' };
-  fetchMock.get(`end:${taskName}`, data);
-  return getTask(taskName).then(task => {
+  fetchMock.get(`end:${name}`, data);
+  return getTask({ name }).then(task => {
     expect(task).toEqual(data);
     fetchMock.restore();
   });
@@ -198,17 +198,17 @@ it('getTaskRuns With Query Params', () => {
     items: 'taskRuns'
   };
   fetchMock.get(/taskruns/, data);
-  return getTaskRuns(taskName).then(taskRuns => {
+  return getTaskRuns({ taskName }).then(taskRuns => {
     expect(taskRuns).toEqual(data.items);
     fetchMock.restore();
   });
 });
 
 it('getTaskRun', () => {
-  const taskRunName = 'foo';
+  const name = 'foo';
   const data = { fake: 'taskRun' };
-  fetchMock.get(`end:${taskRunName}`, data);
-  return getTaskRun(taskRunName).then(taskRun => {
+  fetchMock.get(`end:${name}`, data);
+  return getTaskRun({ name }).then(taskRun => {
     expect(taskRun).toEqual(data);
     fetchMock.restore();
   });
@@ -226,10 +226,10 @@ it('getPipelineResources', () => {
 });
 
 it('getPipelineResource', () => {
-  const pipelineResourceName = 'foo';
+  const name = 'foo';
   const data = { fake: 'pipelineResource' };
-  fetchMock.get(`end:${pipelineResourceName}`, data);
-  return getPipelineResource(pipelineResourceName).then(pipelineResource => {
+  fetchMock.get(`end:${name}`, data);
+  return getPipelineResource({ name }).then(pipelineResource => {
     expect(pipelineResource).toEqual(data);
     fetchMock.restore();
   });
@@ -237,27 +237,36 @@ it('getPipelineResource', () => {
 
 it('getPodLog', () => {
   const namespace = 'default';
-  const podName = 'foo';
+  const name = 'foo';
   const data = 'logs';
   const responseConfig = {
     body: data,
     status: 200,
     headers: { 'Content-Type': 'text/plain' }
   };
-  fetchMock.get(`end:logs/${podName}`, responseConfig, {
+  fetchMock.get(`end:logs/${name}`, responseConfig, {
     sendAsJson: false
   });
-  return getPodLog(podName, namespace).then(log => {
+  return getPodLog({ name, namespace }).then(log => {
     expect(log).toEqual(data);
     fetchMock.restore();
   });
 });
 
-it('getTaskRunLog', () => {
-  const taskRunName = 'foo';
-  const data = ['logs'];
-  fetchMock.get(`end:${taskRunName}`, data);
-  return getTaskRunLog(taskRunName).then(log => {
+it('getPodLog with container name', () => {
+  const namespace = 'default';
+  const name = 'foo';
+  const container = 'containerName';
+  const data = 'logs';
+  const responseConfig = {
+    body: data,
+    status: 200,
+    headers: { 'Content-Type': 'text/plain' }
+  };
+  fetchMock.get(`end:logs/${name}?container=${container}`, responseConfig, {
+    sendAsJson: false
+  });
+  return getPodLog({ container, name, namespace }).then(log => {
     expect(log).toEqual(data);
     fetchMock.restore();
   });
@@ -267,7 +276,7 @@ it('createPipelineRun', () => {
   const payload = { fake: 'payload' };
   const data = { fake: 'data' };
   fetchMock.post('*', data);
-  return createPipelineRun(payload).then(response => {
+  return createPipelineRun({ payload }).then(response => {
     expect(response).toEqual(data);
     expect(fetchMock.lastOptions()).toMatchObject({
       body: JSON.stringify(payload)
@@ -370,6 +379,15 @@ it('getNamespaces', () => {
   };
   fetchMock.get(/namespaces/, data);
   return getNamespaces().then(response => {
+    expect(response).toEqual(data.items);
+    fetchMock.restore();
+  });
+});
+
+it('getServiceAccounts', () => {
+  const data = { items: 'serviceaccounts' };
+  fetchMock.get(/serviceaccounts/, data);
+  return getServiceAccounts().then(response => {
     expect(response).toEqual(data.items);
     fetchMock.restore();
   });

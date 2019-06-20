@@ -93,7 +93,7 @@ export class ImportResources extends Component {
       return;
     }
 
-    const promise = createPipelineRun(payload, namespace);
+    const promise = createPipelineRun({ namespace, payload });
     promise
       .then(headers => {
         const logsURL = headers.get('Content-Location');

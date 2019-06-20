@@ -36,11 +36,11 @@ it('LogContainer renders', async () => {
   await waitForElement(() => getByText(logs));
 
   expect(getPodLog).toHaveBeenCalledTimes(1);
-  expect(getPodLog).toHaveBeenCalledWith(
-    podName,
-    namespace,
-    `build-step-${stepName}`
-  );
+  expect(getPodLog).toHaveBeenCalledWith({
+    container: `build-step-${stepName}`,
+    name: podName,
+    namespace
+  });
 
   const anotherPodName = 'anotherPod';
   render(
@@ -51,11 +51,11 @@ it('LogContainer renders', async () => {
     />
   );
   expect(getPodLog).toHaveBeenCalledTimes(2);
-  expect(getPodLog).toHaveBeenCalledWith(
-    anotherPodName,
-    namespace,
-    `build-step-${stepName}`
-  );
+  expect(getPodLog).toHaveBeenCalledWith({
+    container: `build-step-${stepName}`,
+    name: anotherPodName,
+    namespace
+  });
 });
 
 it('LogContainer handles error case', async () => {
@@ -76,11 +76,11 @@ it('LogContainer handles error case', async () => {
   await waitForElement(() => getByText('Unable to fetch log'));
 
   expect(getPodLog).toHaveBeenCalledTimes(1);
-  expect(getPodLog).toHaveBeenCalledWith(
-    podName,
-    namespace,
-    `build-step-${stepName}`
-  );
+  expect(getPodLog).toHaveBeenCalledWith({
+    container: `build-step-${stepName}`,
+    name: podName,
+    namespace
+  });
 });
 
 it('LogContainer handles empty logs', async () => {
@@ -98,11 +98,11 @@ it('LogContainer handles empty logs', async () => {
   );
 
   expect(getPodLog).toHaveBeenCalledTimes(1);
-  expect(getPodLog).toHaveBeenCalledWith(
-    podName,
-    namespace,
-    `build-step-${stepName}`
-  );
+  expect(getPodLog).toHaveBeenCalledWith({
+    container: `build-step-${stepName}`,
+    name: podName,
+    namespace
+  });
 });
 
 it('LogContainer handles missing step logs', async () => {
@@ -123,9 +123,9 @@ it('LogContainer handles missing step logs', async () => {
   await waitForElement(() => getByText('No log available'));
 
   expect(getPodLog).toHaveBeenCalledTimes(1);
-  expect(getPodLog).toHaveBeenCalledWith(
-    podName,
-    namespace,
-    `build-step-${stepName}`
-  );
+  expect(getPodLog).toHaveBeenCalledWith({
+    container: `build-step-${stepName}`,
+    name: podName,
+    namespace
+  });
 });
