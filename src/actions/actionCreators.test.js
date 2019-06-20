@@ -14,7 +14,11 @@ limitations under the License.
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 
-import { fetchCollection, fetchSuccess } from './actionCreators';
+import {
+  fetchCollection,
+  fetchNamespacedResource,
+  fetchSuccess
+} from './actionCreators';
 
 it('fetchSuccess', () => {
   const data = { fake: 'data' };
@@ -57,4 +61,45 @@ it('fetchCollection error', async () => {
 
   await store.dispatch(fetchCollection('Extension', fakeAPI));
   expect(store.getActions()).toEqual(expectedActions);
+});
+
+it('fetchNamespacedResource', async () => {
+  const data = { fake: 'data' };
+  const namespace = 'default';
+  const params = { name: 'name' };
+  const fakeAPI = jest.fn().mockImplementation(() => data);
+  const middleware = [thunk];
+  const mockStore = configureStore(middleware);
+  const store = mockStore({ namespaces: { selected: namespace } });
+
+  const expectedActions = [
+    { type: 'EXTENSIONS_FETCH_REQUEST' },
+    { type: 'EXTENSIONS_FETCH_SUCCESS', data: [data] }
+  ];
+
+  await store.dispatch(fetchNamespacedResource('Extension', fakeAPI, params));
+  expect(store.getActions()).toEqual(expectedActions);
+  expect(fakeAPI).toHaveBeenCalledWith({ ...params, namespace });
+});
+
+it('fetchNamespacedResource error', async () => {
+  const namespace = 'default';
+  const params = { name: 'name' };
+  const error = new Error();
+  const fakeAPI = jest.fn().mockImplementation(() => {
+    throw error;
+  });
+
+  const middleware = [thunk];
+  const mockStore = configureStore(middleware);
+  const store = mockStore({ namespaces: { selected: namespace } });
+
+  const expectedActions = [
+    { type: 'EXTENSIONS_FETCH_REQUEST' },
+    { type: 'EXTENSIONS_FETCH_FAILURE', error }
+  ];
+
+  await store.dispatch(fetchNamespacedResource('Extension', fakeAPI, params));
+  expect(store.getActions()).toEqual(expectedActions);
+  expect(fakeAPI).toHaveBeenCalledWith({ ...params, namespace });
 });

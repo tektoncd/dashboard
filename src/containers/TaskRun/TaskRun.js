@@ -103,7 +103,7 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
   };
 
   fetchTaskAndRuns(taskRunName, namespace) {
-    this.props.fetchTaskRun({ taskRunName, namespace }).then(taskRun => {
+    this.props.fetchTaskRun({ name: taskRunName, namespace }).then(taskRun => {
       if (taskRun && taskRun.spec.taskRef) {
         this.props
           .fetchTask({ name: taskRun.spec.taskRef.name, namespace })

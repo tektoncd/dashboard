@@ -11,20 +11,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
-
 import * as API from '../api';
-import * as selectors from '../reducers';
-import { fetchTaskRun, fetchTaskRuns, fetchTaskRunsSuccess } from './taskRuns';
+import { fetchTaskRun, fetchTaskRuns } from './taskRuns';
 import * as creators from './actionCreators';
 
-it('fetchTaskRunsSuccess', () => {
-  const data = { fake: 'data' };
-  expect(fetchTaskRunsSuccess(data)).toEqual({
-    type: 'TASK_RUNS_FETCH_SUCCESS',
-    data
-  });
+it('fetchTaskRun', async () => {
+  jest.spyOn(creators, 'fetchNamespacedResource');
+  const name = 'taskRunName';
+  const namespace = 'default';
+
+  fetchTaskRun({ name, namespace });
+  expect(creators.fetchNamespacedResource).toHaveBeenCalledWith(
+    'TaskRun',
+    API.getTaskRun,
+    { name, namespace }
+  );
 });
 
 it('fetchTaskRuns', async () => {
@@ -39,23 +40,12 @@ it('fetchTaskRuns', async () => {
   );
 });
 
-it('fetchTaskRun', async () => {
-  const namespace = 'default';
-  const task = { fake: 'task' };
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const store = mockStore();
-
-  jest
-    .spyOn(selectors, 'getSelectedNamespace')
-    .mockImplementation(() => namespace);
-  jest.spyOn(API, 'getTaskRun').mockImplementation(() => task);
-
-  const expectedActions = [
-    { type: 'TASK_RUNS_FETCH_REQUEST' },
-    fetchTaskRunsSuccess([task])
-  ];
-
-  await store.dispatch(fetchTaskRun());
-  expect(store.getActions()).toEqual(expectedActions);
+it('fetchTaskRuns no params', async () => {
+  jest.spyOn(creators, 'fetchNamespacedCollection');
+  fetchTaskRuns();
+  expect(creators.fetchNamespacedCollection).toHaveBeenCalledWith(
+    'TaskRun',
+    API.getTaskRuns,
+    { namespace: undefined, taskName: undefined }
+  );
 });

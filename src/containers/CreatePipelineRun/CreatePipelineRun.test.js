@@ -338,7 +338,10 @@ it('CreatePipelineRun submits form', async () => {
   fireEvent.click(getByText(/submit/i));
   await wait(() => expect(createPipelineRun).toHaveBeenCalledTimes(1));
   await wait(() =>
-    expect(createPipelineRun).toHaveBeenCalledWith(formValues, 'default')
+    expect(createPipelineRun).toHaveBeenCalledWith({
+      namespace: 'default',
+      payload: formValues
+    })
   );
 });
 

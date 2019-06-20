@@ -64,8 +64,12 @@ export class LogContainer extends Component {
     const { namespace } = match.params;
     if (podName) {
       try {
-        const buildStepName = `build-step-${stepName}`;
-        const logs = await getPodLog(podName, namespace, buildStepName);
+        const container = `build-step-${stepName}`;
+        const logs = await getPodLog({
+          container,
+          name: podName,
+          namespace
+        });
         this.setState({ logs: logs || undefined });
       } catch {
         this.setState({ logs: 'Unable to fetch log' });

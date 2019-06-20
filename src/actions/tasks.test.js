@@ -11,61 +11,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
-
 import * as API from '../api';
-import * as selectors from '../reducers';
 import * as creators from './actionCreators';
-import { fetchTask, fetchTasks, fetchTasksSuccess } from './tasks';
+import { fetchTask, fetchTasks } from './tasks';
 
 it('fetchTask', async () => {
-  const task = { fake: 'task' };
-  const namespace = 'default';
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const store = mockStore();
-
-  jest
-    .spyOn(selectors, 'getSelectedNamespace')
-    .mockImplementation(() => namespace);
-  jest.spyOn(API, 'getTask').mockImplementation(() => task);
-
-  const expectedActions = [
-    { type: 'TASKS_FETCH_REQUEST' },
-    fetchTasksSuccess([task])
-  ];
-
-  await store.dispatch(fetchTask({ name: 'foo' }));
-  expect(store.getActions()).toEqual(expectedActions);
-});
-
-it('fetchTask error', async () => {
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const store = mockStore();
-
-  const error = new Error();
-
-  jest.spyOn(API, 'getTask').mockImplementation(() => {
-    throw error;
-  });
-
-  const expectedActions = [
-    { type: 'TASKS_FETCH_REQUEST' },
-    { type: 'TASKS_FETCH_FAILURE', error }
-  ];
-
-  await store.dispatch(fetchTask({ name: 'foo' }));
-  expect(store.getActions()).toEqual(expectedActions);
-});
-
-it('fetchTasksSuccess', () => {
-  const data = { fake: 'data' };
-  expect(fetchTasksSuccess(data)).toEqual({
-    type: 'TASKS_FETCH_SUCCESS',
-    data
-  });
+  jest.spyOn(creators, 'fetchNamespacedResource');
+  const name = 'taskName';
+  const namespace = 'namespace';
+  fetchTask({ name, namespace });
+  expect(creators.fetchNamespacedResource).toHaveBeenCalledWith(
+    'Task',
+    API.getTask,
+    { name, namespace }
+  );
 });
 
 it('fetchTasks', async () => {

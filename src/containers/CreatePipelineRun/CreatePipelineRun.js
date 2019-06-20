@@ -215,7 +215,7 @@ class CreatePipelineRun extends React.Component {
       submitValidationError: false
     });
 
-    const namespaceValue = this.getNamespace();
+    const namespace = this.getNamespace();
     const pipelineValue = this.getPipeline();
     const payload = {
       pipelinename: pipelineValue,
@@ -229,12 +229,12 @@ class CreatePipelineRun extends React.Component {
       pipelineruntype: this.state.helmPipeline.value ? 'helm' : '',
       helmsecret: this.state.helmSecret.value
     };
-    const promise = createPipelineRun(payload, namespaceValue);
+    const promise = createPipelineRun({ namespace, payload });
     promise
       .then(headers => {
         const url = headers.get('Content-Location');
         const pipelineRunName = url.substring(url.lastIndexOf('/') + 1);
-        const finalURL = `/namespaces/${namespaceValue}/pipelines/${pipelineValue}/runs/${pipelineRunName}`;
+        const finalURL = `/namespaces/${namespace}/pipelines/${pipelineValue}/runs/${pipelineRunName}`;
         this.reset();
         this.props.onSuccess({ name: pipelineRunName, url: finalURL });
       })

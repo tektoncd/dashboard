@@ -59,17 +59,17 @@ export function checkData(data) {
   throw error;
 }
 
-export function getPipelines(namespace) {
+export function getPipelines({ namespace } = {}) {
   const uri = getAPI('pipelines', { namespace });
   return get(uri).then(checkData);
 }
 
-export function getPipeline(name, namespace) {
+export function getPipeline({ name, namespace }) {
   const uri = getAPI('pipelines', { name, namespace });
   return get(uri);
 }
 
-export function getPipelineRuns(namespace, pipelineName) {
+export function getPipelineRuns({ namespace, pipelineName } = {}) {
   let queryParams;
   if (pipelineName) {
     queryParams = { name: pipelineName };
@@ -78,32 +78,32 @@ export function getPipelineRuns(namespace, pipelineName) {
   return get(uri).then(checkData);
 }
 
-export function getPipelineRun(name, namespace) {
+export function getPipelineRun({ name, namespace }) {
   const uri = getAPI('pipelineruns', { name, namespace });
   return get(uri);
 }
 
-export function cancelPipelineRun(name, namespace) {
+export function cancelPipelineRun({ name, namespace }) {
   const uri = getAPI('pipelineruns', { name, namespace });
   return put(uri, { status: 'PipelineRunCancelled' });
 }
 
-export function createPipelineRun(payload, namespace) {
+export function createPipelineRun({ namespace, payload }) {
   const uri = getAPI('pipelineruns', { namespace });
   return post(uri, payload);
 }
 
-export function getTasks(namespace) {
+export function getTasks({ namespace } = {}) {
   const uri = getAPI('tasks', { namespace });
   return get(uri).then(checkData);
 }
 
-export function getTask(name, namespace) {
+export function getTask({ name, namespace }) {
   const uri = getAPI('tasks', { name, namespace });
   return get(uri);
 }
 
-export function getTaskRuns(namespace, taskName) {
+export function getTaskRuns({ namespace, taskName } = {}) {
   let queryParams;
   if (taskName) {
     queryParams = { name: taskName };
@@ -112,32 +112,27 @@ export function getTaskRuns(namespace, taskName) {
   return get(uri).then(checkData);
 }
 
-export function getTaskRun(name, namespace) {
+export function getTaskRun({ name, namespace }) {
   const uri = getAPI('taskruns', { name, namespace });
   return get(uri);
 }
 
-export function getPipelineResources(namespace) {
+export function getPipelineResources({ namespace } = {}) {
   const uri = getAPI('pipelineresources', { namespace });
   return get(uri).then(checkData);
 }
 
-export function getPipelineResource(name, namespace) {
+export function getPipelineResource({ name, namespace }) {
   const uri = getAPI('pipelineresources', { name, namespace });
   return get(uri);
 }
 
-export function getPodLog(name, namespace, container) {
+export function getPodLog({ container, name, namespace }) {
   let queryParams;
   if (container) {
     queryParams = { container };
   }
   const uri = `${getAPI('logs', { name, namespace }, queryParams)}`;
-  return get(uri);
-}
-
-export function getTaskRunLog(name, namespace) {
-  const uri = getAPI('taskrunlogs', { name, namespace });
   return get(uri);
 }
 
@@ -184,7 +179,7 @@ export function getNamespaces() {
   return get(uri).then(checkData);
 }
 
-export function getServiceAccounts(namespace) {
+export function getServiceAccounts({ namespace } = {}) {
   const uri = getAPI('serviceaccounts', { namespace });
   return get(uri).then(checkData);
 }
