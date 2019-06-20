@@ -11,76 +11,39 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import * as reducerCreators from './reducerCreators';
+import * as selectorCreators from './selectorCreators';
 import createReducer, * as selectors from './serviceAccounts';
-import { ALL_NAMESPACES } from '../constants';
 
-const serviceAccountsReducer = createReducer();
-
-it('handles init or unknown actions', () => {
-  expect(serviceAccountsReducer(undefined, { type: 'does_not_exist' })).toEqual(
-    {
-      byId: {},
-      byNamespace: {},
-      errorMessage: null,
-      isFetching: false
-    }
-  );
-});
-
-it('SERVICE_ACCOUNTS_FETCH_REQUEST', () => {
-  const action = { type: 'SERVICE_ACCOUNTS_FETCH_REQUEST' };
-  const state = serviceAccountsReducer({}, action);
-  expect(selectors.isFetchingServiceAccounts(state)).toBe(true);
-});
-
-it('SERVICE_ACCOUNTS_FETCH_SUCCESS', () => {
-  const name = 'service-account-name';
-  const namespace = 'default';
-  const uid = 'some-uid';
-  const serviceAccount = {
-    metadata: {
-      name,
-      namespace,
-      uid
-    },
-    other: 'content'
-  };
-  const action = {
-    type: 'SERVICE_ACCOUNTS_FETCH_SUCCESS',
-    data: [serviceAccount],
-    namespace
-  };
-
-  const state = serviceAccountsReducer({}, action);
-  expect(selectors.getServiceAccounts(state, namespace)).toEqual([
-    serviceAccount
-  ]);
-  expect(selectors.isFetchingServiceAccounts(state)).toBe(false);
-});
-
-it('SERVICE_ACCOUNTS_FETCH_FAILURE', () => {
-  const message = 'fake error message';
-  const error = { message };
-  const action = {
-    type: 'SERVICE_ACCOUNTS_FETCH_FAILURE',
-    error
-  };
-
-  const state = serviceAccountsReducer({}, action);
-  expect(selectors.getServiceAccountsErrorMessage(state)).toEqual(message);
+it('creates a namespaced reducer for the correct type', () => {
+  const type = 'ServiceAccount';
+  jest.spyOn(reducerCreators, 'createNamespacedReducer');
+  createReducer();
+  expect(reducerCreators.createNamespacedReducer).toHaveBeenCalledWith({
+    type
+  });
 });
 
 it('getServiceAccounts', () => {
+  const collection = { fake: 'collection' };
   const namespace = 'default';
-  const state = { byNamespace: {} };
-  expect(selectors.getServiceAccounts(state, namespace)).toEqual([]);
+  const state = { fake: 'state' };
+  jest
+    .spyOn(selectorCreators, 'getCollection')
+    .mockImplementation(() => collection);
+  expect(selectors.getServiceAccounts(state, namespace)).toEqual(collection);
 });
 
-it('getServiceAccounts all namespaces', () => {
-  const namespace = ALL_NAMESPACES;
-  const serviceAccount = { fake: 'serviceAccount' };
-  const state = { byId: { id: serviceAccount } };
-  expect(selectors.getServiceAccounts(state, namespace)).toEqual([
-    serviceAccount
-  ]);
+it('getServiceAccountsErrorMessage', () => {
+  const errorMessage = 'errorMessage';
+  expect(selectors.getServiceAccountsErrorMessage({ errorMessage })).toEqual(
+    errorMessage
+  );
+});
+
+it('isFetchingServiceAccounts', () => {
+  const isFetching = 'isFetching';
+  expect(selectors.isFetchingServiceAccounts({ isFetching })).toEqual(
+    isFetching
+  );
 });

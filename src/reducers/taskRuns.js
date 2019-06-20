@@ -12,23 +12,16 @@ limitations under the License.
 */
 
 import { createNamespacedReducer } from './reducerCreators';
-import { ALL_NAMESPACES } from '../constants';
+import { getCollection, getResource } from './selectorCreators';
 
 export default () => createNamespacedReducer({ type: 'TaskRun' });
 
 export function getTaskRuns(state, namespace) {
-  if (namespace === ALL_NAMESPACES) {
-    return Object.values(state.byId);
-  }
-
-  const taskRuns = state.byNamespace[namespace];
-  return taskRuns ? Object.values(taskRuns).map(id => state.byId[id]) : [];
+  return getCollection(state, namespace);
 }
 
 export function getTaskRun(state, name, namespace) {
-  const taskRuns = state.byNamespace[namespace] || {};
-  const taskRunId = taskRuns[name];
-  return taskRunId ? state.byId[taskRunId] : null;
+  return getResource(state, name, namespace);
 }
 
 export function getTaskRunsErrorMessage(state) {
