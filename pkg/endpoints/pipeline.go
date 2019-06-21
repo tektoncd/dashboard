@@ -81,6 +81,7 @@ type ManualPipelineRun struct {
 	GITCOMMIT         string `json:"gitcommit,omitempty"`
 	REPONAME          string `json:"reponame,omitempty"`
 	REPOURL           string `json:"repourl,omitempty"`
+	REVISION          string `json:"revision,omitempty"`
 	HELMSECRET        string `json:"helmsecret,omitempty"`
 	APPLYDIRECTORY    string `json:"applydirectory,omitempty"`
 }
@@ -116,6 +117,7 @@ const containerPrefix = "build-step-"
 const gitServerLabel = "gitServer"
 const gitOrgLabel = "gitOrg"
 const gitRepoLabel = "gitRepo"
+const revisionLabel = "revision"
 
 /* Get all pipelines in a given namespace */
 func (r Resource) getAllPipelines(request *restful.Request, response *restful.Response) {
@@ -161,10 +163,11 @@ func (r Resource) getPipelineImpl(name, namespace string) (v1alpha1.Pipeline, er
 func (r Resource) getAllPipelineRuns(request *restful.Request, response *restful.Response) {
 	namespace := utils.GetNamespace(request)
 	repository := request.QueryParameter("repository")
+	revision := request.QueryParameter("revision")
 	// FakeClient does not support filtering by arbitrary fields(Only metadata.name/namespace), filtered post List()
 	name := request.QueryParameter("name")
 
-	pipelinerunList, appResponse := r.GetAllPipelineRunsImpl(namespace, repository, name)
+	pipelinerunList, appResponse := r.GetAllPipelineRunsImpl(namespace, repository, revision, name)
 	if appResponse.ERROR != nil {
 		logging.Log.Errorf("there was a problem getting the PipelineRuns list: %s", appResponse.ERROR)
 		utils.RespondError(response, appResponse.ERROR, appResponse.CODE)
@@ -177,7 +180,7 @@ func (r Resource) getAllPipelineRuns(request *restful.Request, response *restful
 
 /*GetAllPipelineRunsImpl - Returns a pointer to a list of PipelineRuns in a given namespace,
 an empty string repository query can be provided meaning that all PipelineRuns in the namespace will be returned  */
-func (r Resource) GetAllPipelineRunsImpl(namespace, repository, name string) (v1alpha1.PipelineRunList, AppResponse) {
+func (r Resource) GetAllPipelineRunsImpl(namespace, repository, revision, name string) (v1alpha1.PipelineRunList, AppResponse) {
 
 	var queryParams []string
 	if repository != "" {
@@ -186,32 +189,29 @@ func (r Resource) GetAllPipelineRunsImpl(namespace, repository, name string) (v1
 	if name != "" {
 		queryParams = append(queryParams, "name: "+name)
 	}
-	logging.Log.Debugf("In getAllPipelineRunsImpl - namespace: %s, parameters: %s", namespace, strings.Join(queryParams, ","))
-
-	pipelinerunInterface := r.PipelineClient.TektonV1alpha1().PipelineRuns(namespace)
-	var pipelinerunList *v1alpha1.PipelineRunList
-	var labelSelector string // key1=value1,key2=value2, ...
-	var err error
-
-	// repository query filter
-	if repository != "" {
-		server, org, repo, err := getGitValues(repository)
-		if err != nil {
-			errorMsg := fmt.Sprintf("there was an error getting the Git values with repository query %s", repository)
-			logging.Log.Errorf("%s: %s", errorMsg, err)
-			return v1alpha1.PipelineRunList{}, AppResponse{err, errorMsg, http.StatusInternalServerError}
-		}
-		labels := []string{
-			gitServerLabel + "=" + server,
-			gitOrgLabel + "=" + org,
-			gitRepoLabel + "=" + repo,
-		}
-		labelSelector = strings.Join(labels, ",")
+	if revision != "" {
+		queryParams = append(queryParams, "revision: "+revision)
 	}
-	pipelinerunList, err = pipelinerunInterface.List(metav1.ListOptions{LabelSelector: labelSelector})
+
+	logging.Log.Debugf("In getAllPipelineRunsImpl - namespace: %s, parameters: %s", namespace, strings.Join(queryParams, ","))
+	// Non empty LabelSelector format: key1=value1,key2=value2, ...
+	var labelSelector string
+	labelMap, err := pipelineRunListLabels(repository, revision)
+	if err != nil {
+		logging.Log.Error(err)
+		return v1alpha1.PipelineRunList{}, AppResponse{err, err.Error(), http.StatusInternalServerError}
+	}
+	var labelSelectors []string
+	for key, value := range labelMap {
+		labelSelectors  = append(labelSelectors, fmt.Sprintf("%s=%s",key,value))
+	}
+	labelSelector = strings.Join(labelSelectors, ",")
+
+	pipelinerunList, err := r.PipelineClient.TektonV1alpha1().PipelineRuns(namespace).List(metav1.ListOptions{LabelSelector: labelSelector})
 	if err != nil {
 		return v1alpha1.PipelineRunList{}, AppResponse{err, "", http.StatusNotFound}
 	}
+	// Filter
 	if name != "" {
 		tmpItems := pipelinerunList.Items
 		pipelinerunList.Items = pipelinerunList.Items[:0]
@@ -332,7 +332,7 @@ func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, names
 	}
 
 	// PipelineRun yaml defines references to resources
-	newPipelineRunData, err := definePipelineRun(generatedPipelineRunName, namespace, serviceAccount, pipelineRunData.REPOURL, pipeline, v1alpha1.PipelineTriggerTypeManual, resources, params)
+	newPipelineRunData, err := definePipelineRun(generatedPipelineRunName, namespace, serviceAccount, pipelineRunData.REPOURL, pipelineRunData.REVISION, pipeline, v1alpha1.PipelineTriggerTypeManual, resources, params)
 	if err != nil {
 		errorMsg := fmt.Sprintf("there was a problem defining the pipeline run: %s", err)
 		logging.Log.Error(errorMsg)
@@ -552,34 +552,73 @@ func definePipelineResource(name, namespace string, params []v1alpha1.Param, res
 	return resourcePointer
 }
 
+// Returns common labels that should be set on all pipelineRuns 
+// Adds additional labels for non empty/valid repoURL
+func PipelineRunCommonLabels(repoURL string) (map[string]string, error) {
+	labels := map[string]string {
+		"app": "tekton-app",
+	}
+	// Set additional labels
+	if repoURL != "" {
+		gitServer, gitOrg, gitRepo := utils.RepoSplit(repoURL)
+		if gitServer == "" {
+			return nil, fmt.Errorf("Malformed repoURL[%s]",repoURL)
+		}
+		// Add labels
+		labels[gitServerLabel] = gitServer
+		labels[gitOrgLabel] = gitOrg
+		labels[gitRepoLabel] = gitRepo
+	}
+	return labels, nil
+}
+
+// Returns labels that should be set on a new pipelineRun
+// Defaults revision to master
+func NewPipelineRunLabels(repoURL, revision string) (map[string]string, error) {
+	labels, err := PipelineRunCommonLabels(repoURL)
+	if err != nil {
+		return nil, err
+	}
+	if labels[gitServerLabel] != "" {
+		if revision == "" {
+			revision = "master"
+		}
+		labels[revisionLabel] = revision
+	}
+	return labels, nil
+}
+
+// Returns labels used to list pipelineRuns
+func pipelineRunListLabels(repoURL, revision string) (map[string]string, error) {
+	labels, err := PipelineRunCommonLabels(repoURL)
+	if err != nil {
+		return nil, err
+	}
+	// Revision label is omitted without valid repository/git labels
+	if labels[gitServerLabel] != "" && revision != "" {
+		labels[revisionLabel] = revision
+	}
+	return labels, nil
+}
+
 /* Create a new PipelineRun - repoUrl, resourceBinding and params can be nil depending on the Pipeline
 each PipelineRun has a 1 hour timeout: */
-func definePipelineRun(pipelineRunName, namespace, saName, repoUrl string,
+func definePipelineRun(pipelineRunName, namespace, saName, repoUrl, revision string,
 	pipeline v1alpha1.Pipeline,
 	triggerType v1alpha1.PipelineTriggerType,
 	resourceBinding []v1alpha1.PipelineResourceBinding,
 	params []v1alpha1.Param) (*v1alpha1.PipelineRun, error) {
 
-	gitServer, gitOrg, gitRepo := "", "", ""
-	var err error
-	if repoUrl != "" {
-		gitServer, gitOrg, gitRepo, err = getGitValues(repoUrl)
-		if err != nil {
-			logging.Log.Errorf("there was an error getting the Git values: %s", err)
-			return &v1alpha1.PipelineRun{}, err
-		}
+	labels, err := NewPipelineRunLabels(repoUrl, revision)
+	if err != nil {
+		logging.Log.Error(err)
+		return &v1alpha1.PipelineRun{}, err
 	}
-
 	pipelineRunData := v1alpha1.PipelineRun{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      pipelineRunName,
 			Namespace: namespace,
-			Labels: map[string]string{
-				"app":          "tekton-app",
-				gitServerLabel: gitServer,
-				gitOrgLabel:    gitOrg,
-				gitRepoLabel:   gitRepo,
-			},
+			Labels: labels,
 		},
 
 		Spec: v1alpha1.PipelineRunSpec{
@@ -630,33 +669,6 @@ func (r Resource) createPipelineResourceForPipelineRun(resourceData ManualPipeli
 
 	resourceRef := v1alpha1.PipelineResourceRef{Name: resourceName}
 	return resourceRef, nil
-}
-
-// Returns the git server excluding transport, org and repo
-func getGitValues(url string) (gitServer, gitOrg, gitRepo string, err error) {
-	repoURL := ""
-	if url != "" {
-		url = strings.ToLower(url)
-		if strings.Contains(url, "https://") {
-			repoURL = strings.TrimPrefix(url, "https://")
-		} else {
-			repoURL = strings.TrimPrefix(url, "http://")
-		}
-	}
-
-	repoURL = strings.TrimSuffix(repoURL, "/")
-
-	// example at this point: github.com/tektoncd/pipeline
-	numSlashes := strings.Count(repoURL, "/")
-	if numSlashes < 2 {
-		return "", "", "", errors.New("Url didn't match the requirements (at least two slashes)")
-	}
-
-	gitServer = repoURL[0:strings.Index(repoURL, "/")]
-	gitOrg = repoURL[strings.Index(repoURL, "/")+1 : strings.LastIndex(repoURL, "/")]
-	gitRepo = repoURL[strings.LastIndex(repoURL, "/")+1:]
-
-	return gitServer, gitOrg, gitRepo, nil
 }
 
 /* Get the logs for a given pipelinerun by name in a given namespace */

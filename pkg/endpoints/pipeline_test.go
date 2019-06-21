@@ -30,212 +30,256 @@ import (
 
 // Namespaces are specified on K8s CRD initialization (not client creation) to assert DeepEqual
 
-// Task test
-func TestTask(t *testing.T) {
+// GET tasks + tasks/{name}
+func TestGETTasks(t *testing.T) {
 	server, r := dummyServer()
-	namespace := "ns1"
-	_, err := r.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace}})
-	if err != nil {
-		t.Fatalf("Error creating namespace '%s': %v\n", namespace, err)
-	}
-	namespace2 := "ns2"
-	_, secondNamespaceError := r.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace2}})
-	if secondNamespaceError != nil {
-		t.Fatalf("Error creating namespace '%s': %v\n", namespace2, secondNamespaceError)
-	}
+	defer server.Close()
 
-	ns1Tasks := []v1alpha1.Task{
-		{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      "Task1",
-				Namespace: namespace,
-			},
-			Spec: v1alpha1.TaskSpec{},
-		},
-		{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      "Task2",
-				Namespace: namespace,
-			},
-			Spec: v1alpha1.TaskSpec{},
-		},
+	namespaces := []string{
+		"ns1",
+		"ns2",
 	}
-
-	ns2Tasks := []v1alpha1.Task{
-		{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      "Task3",
-				Namespace: namespace2,
-			},
-			Spec: v1alpha1.TaskSpec{},
-		},
-	}
-
-	var tasks []v1alpha1.Task
-	tasks = append(tasks, ns1Tasks...)
-	tasks = append(tasks, ns2Tasks...)
-
-	for _, task := range tasks {
-		_, err := r.PipelineClient.TektonV1alpha1().Tasks(task.ObjectMeta.Namespace).Create(&task)
+	for _, namespace := range namespaces {
+		_, err := r.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace}})
 		if err != nil {
-			t.Fatalf("Error creating task '%s': %v\n", task.ObjectMeta.Name, err)
+			t.Fatalf("Error creating namespace '%s': %v\n", namespace, err)
 		}
 	}
+	namespaceTaskMap := map[string][]v1alpha1.Task{
+		namespaces[0]: []v1alpha1.Task{
+			{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "Task1",
+					Namespace: namespaces[0],
+				},
+				Spec: v1alpha1.TaskSpec{},
+			},
+			{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "Task2",
+					Namespace: namespaces[0],
+				},
+				Spec: v1alpha1.TaskSpec{},
+			},
+		},
+		namespaces[1]: []v1alpha1.Task{
+			{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "Task3",
+					Namespace: namespaces[1],
+				},
+				Spec: v1alpha1.TaskSpec{},
+			},
+		},
+	}
+	var allTasks int
 
-	// Test getAllTasks function
+	// Test getAllTasks: no tasks
 	httpReq := dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/*/tasks", server.URL), nil)
-	response, _ := http.DefaultClient.Do(httpReq)
+	response, err := http.DefaultClient.Do(httpReq)
+	if err != nil {
+		t.Fatalf("getAllTasks response error: %v\n", err)
+	}
 	responseTaskList := v1alpha1.TaskList{}
 	if err := json.NewDecoder(response.Body).Decode(&responseTaskList); err != nil {
 		t.Fatalf("Error decoding getAllTasks response: %v\n", err)
 	} else {
-		if len(responseTaskList.Items) != len(tasks) {
-			t.Errorf("All expected tasks were not returned: expected %v, actual %v", len(tasks), len(responseTaskList.Items))
+		if len(responseTaskList.Items) != 0 {
+			t.Fatal("No tasks expected")
 		}
 	}
-
-	// Test getTask function
-	for _, task := range tasks {
-		httpReq := dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/tasks/%s", server.URL, task.ObjectMeta.Namespace, task.Name), nil)
-		response, err := http.DefaultClient.Do(httpReq)
-		if err != nil {
-			t.Fatalf("Error getting task '%s': %v\n", task.Name, err)
-			continue
-		}
-		responseTask := v1alpha1.Task{}
-		if err := json.NewDecoder(response.Body).Decode(&responseTask); err != nil {
-			t.Fatalf("Error decoding getTask response: %v\n", err)
-			continue
-		}
-		if !reflect.DeepEqual(responseTask, task) {
-			t.Fatalf("Response object %v did not equal expected %v\n", responseTask, task)
+	// Create tasks
+	for _, namespacedTasks := range namespaceTaskMap {
+		for _, task := range namespacedTasks {
+			_, err := r.PipelineClient.TektonV1alpha1().Tasks(task.ObjectMeta.Namespace).Create(&task)
+			if err != nil {
+				t.Fatalf("Error creating task '%s': %v\n", task.ObjectMeta.Name, err)
+			}
+			allTasks++
 		}
 	}
-
-	// Test getAllTasks for namespace function
-	httpReq = dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/tasks", server.URL, namespace), nil)
+	// Test getAllTasks: all namespaces
+	httpReq = dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/*/tasks", server.URL), nil)
 	response, err = http.DefaultClient.Do(httpReq)
 	if err != nil {
 		t.Fatalf("getAllTasks response error: %v\n", err)
+	}
+	responseTaskList = v1alpha1.TaskList{}
+	if err := json.NewDecoder(response.Body).Decode(&responseTaskList); err != nil {
+		t.Fatalf("Error decoding getAllTasks response: %v\n", err)
 	} else {
-		responseTaskList := v1alpha1.TaskList{}
-		if err := json.NewDecoder(response.Body).Decode(&responseTaskList); err != nil {
-			t.Fatalf("Error decoding getAllTasks response: %v\n", err)
+		if len(responseTaskList.Items) != allTasks {
+			t.Errorf("All expected tasks were not returned: expected %v, actual %v", allTasks, len(responseTaskList.Items))
+		}
+	}
+	// Test getAllTasks: each namespace
+	for namespace, namespacedTasks := range namespaceTaskMap {
+		httpReq = dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/tasks", server.URL, namespace), nil)
+		response, err = http.DefaultClient.Do(httpReq)
+		if err != nil {
+			t.Fatalf("getAllTasks response error: %v\n", err)
 		} else {
-			if len(responseTaskList.Items) != len(ns1Tasks) {
-				t.Errorf("All expected tasks were not returned: expected %v, actual %v", len(ns1Tasks), len(responseTaskList.Items))
+			responseTaskList := v1alpha1.TaskList{}
+			if err := json.NewDecoder(response.Body).Decode(&responseTaskList); err != nil {
+				t.Fatalf("Error decoding getAllTasks response: %v\n", err)
+			} else {
+				if len(responseTaskList.Items) != len(namespacedTasks) {
+					t.Errorf("All expected tasks were not returned: expected %v, actual %v", len(namespacedTasks), len(responseTaskList.Items))
+				}
+			}
+		}
+	}
+	// Test getTask
+	for _, namespacedTasks := range namespaceTaskMap {
+		for _, task := range namespacedTasks {
+			httpReq := dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/tasks/%s", server.URL, task.ObjectMeta.Namespace, task.Name), nil)
+			response, err := http.DefaultClient.Do(httpReq)
+			if err != nil {
+				t.Fatalf("Error getting task '%s': %v\n", task.Name, err)
+				continue
+			}
+			responseTask := v1alpha1.Task{}
+			if err := json.NewDecoder(response.Body).Decode(&responseTask); err != nil {
+				t.Fatalf("Error decoding getTask response: %v\n", err)
+				continue
+			}
+			if !reflect.DeepEqual(responseTask, task) {
+				t.Fatalf("Response object %v did not equal expected %v\n", responseTask, task)
 			}
 		}
 	}
 }
 
-// Pipeline test
-func TestPipeline(t *testing.T) {
+// GET pipelines + pipelines/{name}
+func TestGETPipelines(t *testing.T) {
 	server, r := dummyServer()
-	namespace := "ns1"
-	_, err := r.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace}})
-	if err != nil {
-		t.Fatalf("Error creating namespace '%s': %v\n", namespace, err)
+	defer server.Close()
+	namespaces := []string{
+		"ns1",
+		"ns2",
 	}
-	namespace2 := "ns2"
-	_, secondNamespaceError := r.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace2}})
-	if secondNamespaceError != nil {
-		t.Fatalf("Error creating namespace '%s': %v\n", namespace2, secondNamespaceError)
-	}
-
-	ns1Pipelines := []v1alpha1.Pipeline{
-		{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      "Pipeline1",
-				Namespace: namespace,
-			},
-			Spec: v1alpha1.PipelineSpec{},
-		},
-		{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      "Pipeline2",
-				Namespace: namespace,
-			},
-			Spec: v1alpha1.PipelineSpec{},
-		},
-	}
-
-	ns2Pipelines := []v1alpha1.Pipeline{
-		{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      "Pipeline3",
-				Namespace: namespace2,
-			},
-			Spec: v1alpha1.PipelineSpec{},
-		},
-	}
-
-	var pipelines []v1alpha1.Pipeline
-	pipelines = append(pipelines, ns1Pipelines...)
-	pipelines = append(pipelines, ns2Pipelines...)
-
-	for _, pipeline := range pipelines {
-		_, err := r.PipelineClient.TektonV1alpha1().Pipelines(pipeline.ObjectMeta.Namespace).Create(&pipeline)
+	for _, namespace := range namespaces {
+		_, err := r.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace}})
 		if err != nil {
-			t.Fatalf("Error creating pipeline '%s': %v\n", pipeline.Name, err)
+			t.Fatalf("Error creating namespace '%s': %v\n", namespace, err)
 		}
 	}
 
-	// Test getAllPipelines function
+	namespacePipelineMap := map[string][]v1alpha1.Pipeline{
+		namespaces[0]: []v1alpha1.Pipeline{
+			{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "Pipeline1",
+					Namespace: namespaces[0],
+				},
+				Spec: v1alpha1.PipelineSpec{},
+			},
+			{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "Pipeline2",
+					Namespace: namespaces[0],
+				},
+				Spec: v1alpha1.PipelineSpec{},
+			},
+		},
+		namespaces[1]: []v1alpha1.Pipeline{
+			{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "Pipeline3",
+					Namespace: namespaces[1],
+				},
+				Spec: v1alpha1.PipelineSpec{},
+			},
+		},
+	}
+	var allPipelines int
+
+	// Test getAllPipelines: no pipelines
 	httpReq := dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/*/pipelines", server.URL), nil)
-	response, _ := http.DefaultClient.Do(httpReq)
+	response, err := http.DefaultClient.Do(httpReq)
+	if err != nil {
+		t.Fatalf("getAllPipelines response error: %v\n", err)
+	}
 	responsePipelineList := v1alpha1.PipelineList{}
 	if err := json.NewDecoder(response.Body).Decode(&responsePipelineList); err != nil {
 		t.Fatalf("Error decoding getAllPipelines response: %v\n", err)
 	} else {
-		if len(responsePipelineList.Items) != len(pipelines) {
-			t.Errorf("All expected pipelines were not returned %v, actual %v", len(pipelines), len(responsePipelineList.Items))
+		if len(responsePipelineList.Items) != 0 {
+			t.Fatal("No pipelines expected")
 		}
 	}
-
-	// Test getPipeline function
-	for _, pipeline := range pipelines {
-		httpReq := dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/pipelines/%s", server.URL, pipeline.ObjectMeta.Namespace, pipeline.Name), nil)
-		response, err := http.DefaultClient.Do(httpReq)
-		if err != nil {
-			t.Fatalf("Error getting pipeline '%s': %v\n", pipeline.Name, err)
-			continue
-		}
-		responsePipeline := v1alpha1.Pipeline{}
-		if err := json.NewDecoder(response.Body).Decode(&responsePipeline); err != nil {
-			t.Fatalf("Error decoding getPipeline response: %v\n", err)
-			continue
-		}
-		if !reflect.DeepEqual(responsePipeline, pipeline) {
-			t.Fatalf("Response object %v did not equal expected %v\n", responsePipeline, pipeline)
+	// Create pipelines
+	for _, namespacedPipelines := range namespacePipelineMap {
+		for _, pipeline := range namespacedPipelines {
+			_, err := r.PipelineClient.TektonV1alpha1().Pipelines(pipeline.ObjectMeta.Namespace).Create(&pipeline)
+			if err != nil {
+				t.Fatalf("Error creating pipeline '%s': %v\n", pipeline.Name, err)
+			}
+			allPipelines++
 		}
 	}
-
-	// Test getAllPipelines in a namespace function
-	httpReq = dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/pipelines", server.URL, namespace), nil)
+	// Test getAllPipelines: all namespaces
+	httpReq = dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/*/pipelines", server.URL), nil)
 	response, err = http.DefaultClient.Do(httpReq)
 	if err != nil {
 		t.Fatalf("getAllPipelines response error: %v\n", err)
+	}
+	responsePipelineList = v1alpha1.PipelineList{}
+	if err := json.NewDecoder(response.Body).Decode(&responsePipelineList); err != nil {
+		t.Fatalf("Error decoding getAllPipelines response: %v\n", err)
 	} else {
-		responsePipelineList := v1alpha1.PipelineList{}
-		if err := json.NewDecoder(response.Body).Decode(&responsePipelineList); err != nil {
-			t.Fatalf("Error decoding getAllPipelines response: %v\n", err)
+		if len(responsePipelineList.Items) != allPipelines {
+			t.Errorf("All expected pipelines were not returned %v, actual %v", allPipelines, len(responsePipelineList.Items))
+		}
+	}
+	// Test getAllPipelines: each namespaces
+	for namespace, namespacedPipelines := range namespacePipelineMap {
+		httpReq = dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/pipelines", server.URL, namespace), nil)
+		response, err = http.DefaultClient.Do(httpReq)
+		if err != nil {
+			t.Fatalf("getAllPipelines response error: %v\n", err)
 		} else {
-			if len(responsePipelineList.Items) != len(ns1Pipelines) {
-				t.Errorf("All expected pipelines were not returned %v, actual %v", len(ns1Pipelines), len(responsePipelineList.Items))
+			responsePipelineList := v1alpha1.PipelineList{}
+			if err := json.NewDecoder(response.Body).Decode(&responsePipelineList); err != nil {
+				t.Fatalf("Error decoding getAllPipelines response: %v\n", err)
+			} else {
+				if len(responsePipelineList.Items) != len(namespacedPipelines) {
+					t.Errorf("All expected pipelines were not returned %v, actual %v", len(namespacedPipelines), len(responsePipelineList.Items))
+				}
+			}
+		}
+	}
+	// Test getPipeline
+	for _, namespacedPipelines := range namespacePipelineMap {
+		for _, pipeline := range namespacedPipelines {
+			httpReq := dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/pipelines/%s", server.URL, pipeline.ObjectMeta.Namespace, pipeline.Name), nil)
+			response, err := http.DefaultClient.Do(httpReq)
+			if err != nil {
+				t.Fatalf("Error getting pipeline '%s': %v\n", pipeline.Name, err)
+				continue
+			}
+			responsePipeline := v1alpha1.Pipeline{}
+			if err := json.NewDecoder(response.Body).Decode(&responsePipeline); err != nil {
+				t.Fatalf("Error decoding getPipeline response: %v\n", err)
+				continue
+			}
+			if !reflect.DeepEqual(responsePipeline, pipeline) {
+				t.Fatalf("Response object %v did not equal expected %v\n", responsePipeline, pipeline)
 			}
 		}
 	}
 
 }
 
-// TaskRun test
-func TestTaskRun(t *testing.T) {
+// GET taskruns + taskruns/{name}
+func TestGETTaskRuns(t *testing.T) {
 	server, r := dummyServer()
+	defer server.Close()
+
 	namespace := "ns1"
 	_, err := r.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace}})
 	if err != nil {
-		t.Fatalf("Error creating namespace '%s': %s\n", namespace, err)
+		t.Fatalf("Error creating namespace '%s': %v\n", namespace, err)
 	}
 
 	taskRefName := "Task1"
@@ -289,15 +333,7 @@ func TestTaskRun(t *testing.T) {
 			},
 		},
 	}
-	taskRuns := append(unreferencedTaskRuns, referencedTaskRuns...)
-	for _, taskRun := range taskRuns {
-		_, err := r.PipelineClient.TektonV1alpha1().TaskRuns(namespace).Create(&taskRun)
-		if err != nil {
-			t.Fatalf("Error creating taskRun '%s': %v\n", taskRun.Name, err)
-		}
-	}
-
-	// Test getAllTaskRuns function
+	// Test getAllTaskRuns: no taskRuns
 	httpReq := dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/*/taskruns", server.URL), nil)
 	response, err := http.DefaultClient.Do(httpReq)
 	if err != nil {
@@ -307,12 +343,35 @@ func TestTaskRun(t *testing.T) {
 		if err := json.NewDecoder(response.Body).Decode(&responseTaskRunList); err != nil {
 			t.Fatalf("Error decoding getAllTaskRuns response: %v\n", err)
 		} else {
-			if len(responseTaskRunList.Items) != len(taskRuns) {
-				t.Error("All expected taskRuns were not returned")
+			if len(responseTaskRunList.Items) != 0 {
+				t.Fatal("No taskRuns expected")
 			}
 		}
 	}
-	// Test getAllTaskRuns function: name filter
+	// Create taskRuns
+	taskRuns := append(unreferencedTaskRuns, referencedTaskRuns...)
+	for _, taskRun := range taskRuns {
+		_, err := r.PipelineClient.TektonV1alpha1().TaskRuns(namespace).Create(&taskRun)
+		if err != nil {
+			t.Fatalf("Error creating taskRun '%s': %v\n", taskRun.Name, err)
+		}
+	}
+	// Test getAllTaskRuns: all namespaces
+	httpReq = dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/*/taskruns", server.URL), nil)
+	response, err = http.DefaultClient.Do(httpReq)
+	if err != nil {
+		t.Fatalf("getAllTaskRuns response error: %v\n", err)
+	} else {
+		responseTaskRunList := v1alpha1.TaskRunList{}
+		if err := json.NewDecoder(response.Body).Decode(&responseTaskRunList); err != nil {
+			t.Fatalf("Error decoding getAllTaskRuns response: %v\n", err)
+		} else {
+			if len(responseTaskRunList.Items) != len(taskRuns) {
+				t.Fatal("All expected taskRuns were not returned")
+			}
+		}
+	}
+	// Test getAllTaskRuns: name filter
 	httpReq = dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/taskruns?name=%s", server.URL, namespace, taskRefName), nil)
 	response, err = http.DefaultClient.Do(httpReq)
 	if err != nil {
@@ -327,7 +386,7 @@ func TestTaskRun(t *testing.T) {
 			}
 		}
 	}
-	// Test getTaskRun function
+	// Test getTaskRun
 	for _, taskRun := range taskRuns {
 		httpReq := dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/taskruns/%s", server.URL, namespace, taskRun.Name), nil)
 		response, err := http.DefaultClient.Do(httpReq)
@@ -346,27 +405,20 @@ func TestTaskRun(t *testing.T) {
 	}
 }
 
-// PipelineRun test
-func TestPipelineRun(t *testing.T) {
+// GET pipelineruns + pipelineruns/{name}
+func TestGETPipelineRuns(t *testing.T) {
 	server, r := dummyServer()
+	defer server.Close()
 	namespace := "ns1"
 	_, err := r.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace}})
 	if err != nil {
 		t.Fatalf("Error creating namespace '%s': %s\n", namespace, err)
 	}
 
-	labels1 := map[string]string{
-		"gitServer": "github.com",
-		"gitOrg":    "foo",
-		"gitRepo":   "bar",
-	}
-
-	labels2 := map[string]string{
-		"gitServer": "github.ibm.com",
-		"gitOrg":    "foobar",
-		"gitRepo":   "barfoo",
-	}
-	repository := fmt.Sprintf("https://%s/%s/%s", labels2["gitServer"], labels2["gitOrg"], labels2["gitRepo"])
+	repository := "https://github.com/foo/bar"
+	revision := "branchy"
+	labels1, _ := NewPipelineRunLabels(repository, "")
+	labels2, _ := NewPipelineRunLabels(repository, revision)
 
 	pipelineRefName := "Pipeline1"
 	// Pipelines referenced by PipelineRuns
@@ -425,6 +477,22 @@ func TestPipelineRun(t *testing.T) {
 			},
 		},
 	}
+	// Test getAllPipelineRuns: no pipelineRuns
+	httpReq := dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/*/pipelineruns", server.URL), nil)
+	response, err := http.DefaultClient.Do(httpReq)
+	if err != nil {
+		t.Fatalf("getAllPipelineRuns response error: %v\n", err)
+	} else {
+		responsePipelineRunList := v1alpha1.PipelineRunList{}
+		if err := json.NewDecoder(response.Body).Decode(&responsePipelineRunList); err != nil {
+			t.Fatalf("Error decoding getAllPipelineRuns response: %v\n", err)
+		} else {
+			if len(responsePipelineRunList.Items) != 0 {
+				t.Fatal("No pipelineRuns expected")
+			}
+		}
+	}
+	// Create pipelineRuns
 	pipelineRuns := append(unreferencedPipelineRuns, referencedPipelineRuns...)
 	for _, pipelineRun := range pipelineRuns {
 		_, err := r.PipelineClient.TektonV1alpha1().PipelineRuns(namespace).Create(&pipelineRun)
@@ -433,9 +501,9 @@ func TestPipelineRun(t *testing.T) {
 		}
 	}
 
-	// Test getAllPipelineRuns function
-	httpReq := dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/*/pipelineruns", server.URL), nil)
-	response, err := http.DefaultClient.Do(httpReq)
+	// Test getAllPipelineRuns: all namespaces
+	httpReq = dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/*/pipelineruns", server.URL), nil)
+	response, err = http.DefaultClient.Do(httpReq)
 	if err != nil {
 		t.Fatalf("getAllPipelineRuns response error: %v\n", err)
 	} else {
@@ -448,8 +516,23 @@ func TestPipelineRun(t *testing.T) {
 			}
 		}
 	}
-	// Test getAllPipelineRuns function: repository filter
+	// Test getAllPipelineRuns: repository filter
 	httpReq = dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/pipelineruns?repository=%s", server.URL, namespace, repository), nil)
+	response, err = http.DefaultClient.Do(httpReq)
+	if err != nil {
+		t.Fatalf("getAllPipelineRuns response error with filter repo '%s': %v\n", repository, err)
+	} else {
+		responsePipelineRunList := v1alpha1.PipelineRunList{}
+		if err := json.NewDecoder(response.Body).Decode(&responsePipelineRunList); err != nil {
+			t.Fatalf("Error decoding getAllPipelineRuns response: %v\n", err)
+		} else {
+			if len(responsePipelineRunList.Items) != len(pipelineRuns) {
+				t.Error("All expected pipelineRuns were not returned")
+			}
+		}
+	}
+	// Test getAllPipelineRuns: repository filter + revision filter
+	httpReq = dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/pipelineruns?repository=%s&revision=%s", server.URL, namespace, repository, revision), nil)
 	response, err = http.DefaultClient.Do(httpReq)
 	if err != nil {
 		t.Fatalf("getAllPipelineRuns response error with filter repo '%s': %v\n", repository, err)
@@ -463,7 +546,7 @@ func TestPipelineRun(t *testing.T) {
 			}
 		}
 	}
-	// Test getAllPipelineRuns function: name filter
+	// Test getAllPipelineRuns: name filter
 	httpReq = dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/pipelineruns?name=%s", server.URL, namespace, pipelineRefName), nil)
 	response, err = http.DefaultClient.Do(httpReq)
 	if err != nil {
@@ -478,7 +561,7 @@ func TestPipelineRun(t *testing.T) {
 			}
 		}
 	}
-	// Test getPipelineRun function
+	// Test getPipelineRun
 	for _, pipelineRun := range pipelineRuns {
 		httpReq := dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/pipelineruns/%s", server.URL, namespace, pipelineRun.Name), nil)
 		response, err := http.DefaultClient.Do(httpReq)
@@ -497,9 +580,10 @@ func TestPipelineRun(t *testing.T) {
 	}
 }
 
-// TaskRunLog test
-func TestTaskRunLog(t *testing.T) {
+// GET taskrunlogs
+func TestGETTaskRunLogs(t *testing.T) {
 	server, r := dummyServer()
+	defer server.Close()
 	namespace := "ns1"
 	_, err := r.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace}})
 	if err != nil {
@@ -559,7 +643,7 @@ func TestTaskRunLog(t *testing.T) {
 		}
 	}
 
-	// Test getTaskRunLog function
+	// Test getTaskRunLog
 	for _, taskRun := range taskRuns {
 		httpReq := dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/taskrunlogs/%s", server.URL, namespace, taskRun.Name), nil)
 		response, err := http.DefaultClient.Do(httpReq)
@@ -584,9 +668,10 @@ func TestTaskRunLog(t *testing.T) {
 	}
 }
 
-// PipelineRunLog test
-func TestPipelineRunLog(t *testing.T) {
+// GET pipelinerunlogs
+func TestGETPipelineRunLogs(t *testing.T) {
 	server, r := dummyServer()
+	defer server.Close()
 	namespace := "ns1"
 	_, err := r.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace}})
 	if err != nil {
@@ -714,7 +799,7 @@ func TestPipelineRunLog(t *testing.T) {
 		}
 	}
 
-	// Test getPipelineRunLog function
+	// Test getPipelineRunLog
 	for i, pipelineRun := range pipelineRuns {
 		httpReq := dummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/pipelinerunlogs/%s", server.URL, namespace, pipelineRun.Name), nil)
 		response, err := http.DefaultClient.Do(httpReq)
@@ -767,9 +852,10 @@ func TestPipelineRunLog(t *testing.T) {
 	Observe the PipelineRun is cancelled.
 */
 
-// PipelineRun update tests
-func TestPipelineRunUpdate(t *testing.T) {
+// PUT pipelineruns
+func TestPUTPipelineRun(t *testing.T) {
 	server, r := dummyServer()
+	defer server.Close()
 	namespace := "ns1"
 	_, err := r.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace}})
 	if err != nil {
@@ -849,7 +935,7 @@ func TestPipelineRunUpdate(t *testing.T) {
 			t.Fatalf("Error creating pipelineRun '%s': %v\n", pipelineRun.Name, err)
 		}
 	}
-	// Test updatePipelineRun function: good request
+	// Test updatePipelineRun: good request
 	httpRequestBody := strings.NewReader(`{"status" : "PipelineRunCancelled"}`)
 	httpReq := dummyHTTPRequest("PUT", fmt.Sprintf("%s/v1/namespaces/%s/pipelineruns/%s", server.URL, namespace, pipelineName), httpRequestBody)
 	response, err := http.DefaultClient.Do(httpReq)
@@ -874,7 +960,7 @@ func TestPipelineRunUpdate(t *testing.T) {
 			}
 		}
 	}
-	// Test updatePipelineRun function: bad request
+	// Test updatePipelineRun: bad request
 	httpRequestBody = strings.NewReader(`{"notstatus" : "foo"}`)
 	httpReq = dummyHTTPRequest("PUT", fmt.Sprintf("%s/v1/namespaces/%s/pipelineruns/%s", server.URL, namespace, pipelineName), httpRequestBody)
 	response, err = http.DefaultClient.Do(httpReq)
@@ -886,7 +972,7 @@ func TestPipelineRunUpdate(t *testing.T) {
 			t.Fatalf("Response code %d did not equal expected %d\n", response.StatusCode, expectedStatusCode)
 		}
 	}
-	// Test updatePipelineRun function: invalid pipelineRun name
+	// Test updatePipelineRun: invalid pipelineRun name
 	invalidPipelineRunName := "DNE"
 	httpRequestBody = strings.NewReader(`{"status" : "foo"}`)
 	httpReq = dummyHTTPRequest("PUT", fmt.Sprintf("%s/v1/namespaces/%s/pipelineruns/%s", server.URL, namespace, invalidPipelineRunName), httpRequestBody)
@@ -899,7 +985,7 @@ func TestPipelineRunUpdate(t *testing.T) {
 			t.Fatalf("Response code %d did not equal expected %d\n", response.StatusCode, expectedStatusCode)
 		}
 	}
-	// Test updatePipelineRun function: invalid namespace
+	// Test updatePipelineRun: invalid namespace
 	invalidNamespace := "DNE"
 	httpRequestBody = strings.NewReader(`{"status" : "foo"}`)
 	httpReq = dummyHTTPRequest("PUT", fmt.Sprintf("%s/v1/namespaces/%s/pipelineruns/%s", server.URL, invalidNamespace, pipelineName), httpRequestBody)
@@ -914,9 +1000,10 @@ func TestPipelineRunUpdate(t *testing.T) {
 	}
 }
 
-// PipelineRun creation tests
-func TestCreatePipelineRun(t *testing.T) {
+// POST pipelineruns
+func TestPOSTPipelineRuns(t *testing.T) {
 	server, r := dummyServer()
+	defer server.Close()
 	namespace := "ns1"
 	_, err := r.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace}})
 	if err != nil {
@@ -966,8 +1053,17 @@ func TestCreatePipelineRun(t *testing.T) {
 			REPONAME:          "testreponame",
 			REPOURL:           "http://github.com/testorg/testrepo",
 		},
+		ManualPipelineRun{
+			PIPELINENAME:      pipelineRefName,
+			IMAGERESOURCENAME: "image-source2",
+			GITRESOURCENAME:   "git-source2",
+			GITCOMMIT:         "12345",
+			REPONAME:          "testreponame",
+			REPOURL:           "http://github.com/testorg/testrepo",
+			REVISION:          "revision",
+		},
 	}
-	// Test createPipelineRun function: bad request
+	// Test createPipelineRun: bad request
 	httpRequestBody := strings.NewReader(`{"fielddoesnotexist": "pipeline",}`)
 	httpReq := dummyHTTPRequest("POST", fmt.Sprintf("%s/v1/namespaces/%s/pipelineruns", server.URL, namespace), httpRequestBody)
 	response, err := http.DefaultClient.Do(httpReq)
@@ -979,7 +1075,7 @@ func TestCreatePipelineRun(t *testing.T) {
 			t.Fatalf("Response code %d did not equal expected %d\n", response.StatusCode, expectedStatusCode)
 		}
 	}
-	// Test createPipelinerun function: non-existant pipeline reference
+	// Test createPipelinerun: non-existant pipeline reference
 	httpRequestBody = strings.NewReader(`{"pipelinename": "Pipelinedoesnotexist"}`)
 	httpReq = dummyHTTPRequest("POST", fmt.Sprintf("%s/v1/namespaces/%s/pipelineruns", server.URL, namespace), httpRequestBody)
 	response, err = http.DefaultClient.Do(httpReq)
@@ -991,7 +1087,7 @@ func TestCreatePipelineRun(t *testing.T) {
 			t.Fatalf("Response code %d did not equal expected %d\n", response.StatusCode, expectedStatusCode)
 		}
 	}
-	// Test createPipelineRun function: good requests with/without pipelineResources
+	// Test createPipelineRun: good requests with/without pipelineResources
 	for index, manualPipelineRun := range manualPipelineRuns {
 		jsonMarshalledBytes, err := json.Marshal(&manualPipelineRun)
 		if err != nil {
@@ -1011,7 +1107,25 @@ func TestCreatePipelineRun(t *testing.T) {
 			t.Fatalf("Response code %d did not equal expected %d\n", response.StatusCode, expectedStatusCode)
 			continue
 		}
-		// The manualPipelineRun resources names do not match the actual pipelineResourceRef
+		var responsePipelineRun v1alpha1.PipelineRun
+		// Get the pipelineRun for the v1alpha1.PipelineRunSpec Resources field
+		httpReq = dummyHTTPRequest("GET", fmt.Sprintf("%s/%s", server.URL, response.Header["Content-Location"][0]), nil)
+		response, err = http.DefaultClient.Do(httpReq)
+		if err := json.NewDecoder(response.Body).Decode(&responsePipelineRun); err != nil {
+			t.Fatalf("Error unmarshalling response into pipelineRun: %v\n", err)
+			continue
+		}
+		// Check labels set
+		if manualPipelineRun.REPOURL != "" {
+			labels, err := NewPipelineRunLabels(manualPipelineRun.REPOURL, manualPipelineRun.REVISION)
+			if err != nil {
+				t.Fatal("Unable to get labels for pipelinerun")
+			}
+			if !reflect.DeepEqual(responsePipelineRun.Labels,labels) {
+				t.Fatalf("Actual labels returned %v did not equal expected %v\n",responsePipelineRun.Labels,labels)
+			}
+		}
+		// The manualPipelineRun resources names do not match the actual pipelineResourceRef (postfixes are appended)
 		// Set to K8s client specified name if matching name on resource binding
 		expectedPipelineResources := map[string]*v1alpha1.PipelineResource{}
 		if manualPipelineRun.GITRESOURCENAME != "" {
@@ -1059,14 +1173,6 @@ func TestCreatePipelineRun(t *testing.T) {
 		}
 		// Skip checks if there are no expected pipelineResources
 		if len(expectedPipelineResources) == 0 {
-			continue
-		}
-		var responsePipelineRun v1alpha1.PipelineRun
-		// Get the pipelineRun for the v1alpha1.PipelineRunSpec Resources field
-		httpReq = dummyHTTPRequest("GET", fmt.Sprintf("%s/%s", server.URL, response.Header["Content-Location"][0]), nil)
-		response, err = http.DefaultClient.Do(httpReq)
-		if err := json.NewDecoder(response.Body).Decode(&responsePipelineRun); err != nil {
-			t.Fatalf("Error unmarshalling response into pipelineRun: %v\n", err)
 			continue
 		}
 		resourceBindings := responsePipelineRun.Spec.Resources

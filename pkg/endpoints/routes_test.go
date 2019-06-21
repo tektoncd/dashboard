@@ -13,7 +13,6 @@ import (
 	"time"
 
 	restful "github.com/emicklei/go-restful"
-	"github.com/satori/go.uuid"
 	v1alpha1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -239,10 +238,6 @@ func getResourceType(route string, httpMethod string) string {
 }
 
 func fakeCRD(t *testing.T, crdType string, identifier string) interface{} {
-	// Use this as the CRD identifier
-	if identifier == "" {
-		identifier = uuid.NewV4().String()
-	}
 	fmt.Printf("Creating a fake CRD for resource type %s \n", crdType)
 
 	switch crdType {

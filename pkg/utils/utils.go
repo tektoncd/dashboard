@@ -49,3 +49,23 @@ func GetNamespace(request *restful.Request) string {
 	}
 	return namespace
 }
+
+// url should be valid url of github repository
+// If any of the return values are empty, there was an error processing the url parameter
+func RepoSplit(url string) (server, org, repo string) {
+	var urlNoPrefix string
+	switch {
+	case strings.HasPrefix(url,"https://"):
+		urlNoPrefix = strings.TrimPrefix(url, "https://")
+	case strings.HasPrefix(url,"http://"):
+		urlNoPrefix = strings.TrimPrefix(url, "http://")
+	default:
+		return "", "", ""
+	}
+	// urlNoPrefix at this point: github.com/tektoncd/pipeline
+	values := strings.Split(urlNoPrefix,"/")
+	if len(values) != 3 {
+		return "", "", ""
+	}
+	return values[0], values[1], values[2]
+}
