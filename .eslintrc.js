@@ -26,6 +26,7 @@ module.exports = {
       "react"
   ],
   "rules": {
+    "curly": ["error", "all"],
     "import/prefer-default-export": "off",
     "jsx-a11y/anchor-is-valid": "off",
     "no-case-declarations": "off",
