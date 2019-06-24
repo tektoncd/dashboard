@@ -63,7 +63,7 @@ export class LogContainer extends Component {
     const { stepName, podName, namespace } = this.props;
     if (podName) {
       try {
-        const container = `build-step-${stepName}`;
+        const container = `step-${stepName}`;
         const logs = await getPodLog({
           container,
           name: podName,

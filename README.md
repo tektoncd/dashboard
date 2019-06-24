@@ -7,7 +7,7 @@ Tekton Dashboard is a general purpose, web-based UI for Tekton Pipelines. It all
 ![Dashboard UI workloads page](docs/dashboard-ui.png)
 
 ## Pre-requisites
-[Tekton Pipelines](https://github.com/tektoncd/pipeline) must be installed in order to use the Tekton Dashboard. Instructions to install Tekton Pipelines can be found [here](https://github.com/tektoncd/pipeline/blob/master/docs/install.md).
+[Tekton Pipelines](https://github.com/tektoncd/pipeline) 0.5 or later must be installed in order to use the Tekton Dashboard. Instructions to install Tekton Pipelines can be found [here](https://github.com/tektoncd/pipeline/blob/master/docs/install.md).
 
 ## Install Dashboard
 The Tekton Dashboard has a hosted image located at gcr.io/tekton-nightly/dashboard:latest
