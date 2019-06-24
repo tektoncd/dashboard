@@ -38,7 +38,7 @@ it('LogContainer renders', async () => {
 
   expect(getPodLog).toHaveBeenCalledTimes(1);
   expect(getPodLog).toHaveBeenCalledWith({
-    container: `build-step-${stepName}`,
+    container: `step-${stepName}`,
     name: podName,
     namespace
   });
@@ -54,7 +54,7 @@ it('LogContainer renders', async () => {
   );
   expect(getPodLog).toHaveBeenCalledTimes(2);
   expect(getPodLog).toHaveBeenCalledWith({
-    container: `build-step-${stepName}`,
+    container: `step-${stepName}`,
     name: anotherPodName,
     namespace
   });
@@ -80,7 +80,7 @@ it('LogContainer handles error case', async () => {
 
   expect(getPodLog).toHaveBeenCalledTimes(1);
   expect(getPodLog).toHaveBeenCalledWith({
-    container: `build-step-${stepName}`,
+    container: `step-${stepName}`,
     name: podName,
     namespace
   });
@@ -103,7 +103,7 @@ it('LogContainer handles empty logs', async () => {
 
   expect(getPodLog).toHaveBeenCalledTimes(1);
   expect(getPodLog).toHaveBeenCalledWith({
-    container: `build-step-${stepName}`,
+    container: `step-${stepName}`,
     name: podName,
     namespace
   });
@@ -129,7 +129,7 @@ it('LogContainer handles missing step logs', async () => {
 
   expect(getPodLog).toHaveBeenCalledTimes(1);
   expect(getPodLog).toHaveBeenCalledWith({
-    container: `build-step-${stepName}`,
+    container: `step-${stepName}`,
     name: podName,
     namespace
   });
