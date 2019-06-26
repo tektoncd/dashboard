@@ -57,107 +57,95 @@ export /* istanbul ignore next */ class TaskRunList extends Component {
       taskRuns
     } = this.props;
 
+    if (loading) {
+      return <StructuredListSkeleton border />;
+    }
+
+    if (error) {
+      return (
+        <InlineNotification
+          kind="error"
+          hideCloseButton
+          lowContrast
+          title="Error loading task runs"
+          subtitle={JSON.stringify(error)}
+        />
+      );
+    }
+
     return (
-      <>
-        {(() => {
-          if (loading) {
-            return <StructuredListSkeleton border />;
-          }
+      <StructuredListWrapper border selection>
+        <StructuredListHead>
+          <StructuredListRow head>
+            <StructuredListCell head>Task Run</StructuredListCell>
+            <StructuredListCell head>Task</StructuredListCell>
+            {selectedNamespace === ALL_NAMESPACES && (
+              <StructuredListCell head>Namespace</StructuredListCell>
+            )}
+            <StructuredListCell head>Status</StructuredListCell>
+            <StructuredListCell head>Last Transition Time</StructuredListCell>
+          </StructuredListRow>
+        </StructuredListHead>
+        <StructuredListBody>
+          {!taskRuns.length && (
+            <StructuredListRow>
+              <StructuredListCell>
+                <span>No pipeline runs</span>
+              </StructuredListCell>
+            </StructuredListRow>
+          )}
+          {taskRuns.map(taskRun => {
+            const { name, namespace } = taskRun.metadata;
+            const taskRefName = taskRun.spec.taskRef
+              ? taskRun.spec.taskRef.name
+              : '';
+            const { lastTransitionTime, reason, status } = getStatus(taskRun);
+            let message;
+            if (!taskRun.status.conditions) {
+              message = '';
+            } else if (
+              !taskRun.status.conditions[0].message &&
+              taskRun.status.conditions[0].status
+            ) {
+              message = 'All Steps have completed executing';
+            } else {
+              message = taskRun.status.conditions[0].message; // eslint-disable-line
+            }
 
-          if (error) {
             return (
-              <InlineNotification
-                kind="error"
-                hideCloseButton
-                lowContrast
-                title="Error loading task runs"
-                subtitle={JSON.stringify(error)}
-              />
-            );
-          }
-
-          return (
-            <StructuredListWrapper border selection>
-              <StructuredListHead>
-                <StructuredListRow head>
-                  <StructuredListCell head>Task Run</StructuredListCell>
-                  <StructuredListCell head>Task</StructuredListCell>
-                  {selectedNamespace === ALL_NAMESPACES && (
-                    <StructuredListCell head>Namespace</StructuredListCell>
-                  )}
-                  <StructuredListCell head>Status</StructuredListCell>
-                  <StructuredListCell head>
-                    Last Transition Time
-                  </StructuredListCell>
-                </StructuredListRow>
-              </StructuredListHead>
-              <StructuredListBody>
-                {!taskRuns.length && (
-                  <StructuredListRow>
-                    <StructuredListCell>
-                      <span>No pipeline runs</span>
-                    </StructuredListCell>
-                  </StructuredListRow>
+              <StructuredListRow
+                className="definition"
+                key={taskRun.metadata.uid}
+              >
+                <StructuredListCell>
+                  <Link to={`/namespaces/${namespace}/taskruns/${name}`}>
+                    {name}
+                  </Link>
+                </StructuredListCell>
+                <StructuredListCell>
+                  <Link
+                    to={`/namespaces/${namespace}/tasks/${taskRefName}/runs`}
+                  >
+                    {taskRefName}
+                  </Link>
+                </StructuredListCell>
+                {selectedNamespace === ALL_NAMESPACES && (
+                  <StructuredListCell>{namespace}</StructuredListCell>
                 )}
-                {taskRuns.map(taskRun => {
-                  const { name, namespace } = taskRun.metadata;
-                  const taskRefName = taskRun.spec.taskRef
-                    ? taskRun.spec.taskRef.name
-                    : '';
-                  const { lastTransitionTime, reason, status } = getStatus(
-                    taskRun
-                  );
-                  let message;
-                  if (!taskRun.status.conditions) {
-                    message = '';
-                  } else if (
-                    !taskRun.status.conditions[0].message &&
-                    taskRun.status.conditions[0].status
-                  ) {
-                    message = 'All Steps have completed executing';
-                  } else {
-                    message = taskRun.status.conditions[0].message; // eslint-disable-line
-                  }
-
-                  return (
-                    <StructuredListRow
-                      className="definition"
-                      key={taskRun.metadata.uid}
-                    >
-                      <StructuredListCell>
-                        <Link to={`/namespaces/${namespace}/taskruns/${name}`}>
-                          {name}
-                        </Link>
-                      </StructuredListCell>
-                      <StructuredListCell>
-                        <Link
-                          to={`/namespaces/${namespace}/tasks/${taskRefName}/runs`}
-                        >
-                          {taskRefName}
-                        </Link>
-                      </StructuredListCell>
-                      {selectedNamespace === ALL_NAMESPACES && (
-                        <StructuredListCell>{namespace}</StructuredListCell>
-                      )}
-                      <StructuredListCell
-                        className="status"
-                        data-reason={reason}
-                        data-status={status}
-                      >
-                        {getStatusIcon({ reason, status })}
-                        {message}
-                      </StructuredListCell>
-                      <StructuredListCell>
-                        {lastTransitionTime}
-                      </StructuredListCell>
-                    </StructuredListRow>
-                  );
-                })}
-              </StructuredListBody>
-            </StructuredListWrapper>
-          );
-        })()}
-      </>
+                <StructuredListCell
+                  className="status"
+                  data-reason={reason}
+                  data-status={status}
+                >
+                  {getStatusIcon({ reason, status })}
+                  {message}
+                </StructuredListCell>
+                <StructuredListCell>{lastTransitionTime}</StructuredListCell>
+              </StructuredListRow>
+            );
+          })}
+        </StructuredListBody>
+      </StructuredListWrapper>
     );
   }
 }
