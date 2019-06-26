@@ -23,14 +23,14 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 let store; // eslint-disable-line
 
-export function configureStore({ initialState = {}, runsWebSocket }) {
+export function configureStore({ initialState = {}, webSocket }) {
   if (store) {
     return store;
   }
   const middleware = [thunk];
 
-  if (runsWebSocket) {
-    middleware.push(createWebSocketMiddleware(runsWebSocket));
+  if (webSocket) {
+    middleware.push(createWebSocketMiddleware(webSocket));
   }
 
   store = createStore(
