@@ -14,15 +14,16 @@ limitations under the License.
 package endpoints
 
 import (
-	"github.com/tektoncd/dashboard/pkg/broadcaster"
-	"github.com/tektoncd/dashboard/pkg/logging"
-	"k8s.io/api/core/v1"
-	"k8s.io/client-go/tools/cache"
 	"net/http"
 	"net/url"
 	"time"
 
-	"github.com/emicklei/go-restful"
+	restful "github.com/emicklei/go-restful"
+	"github.com/tektoncd/dashboard/pkg/broadcaster"
+	"github.com/tektoncd/dashboard/pkg/logging"
+	"k8s.io/api/core/v1"
+	"k8s.io/client-go/tools/cache"
+
 	"github.com/tektoncd/dashboard/pkg/utils"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/informers"
@@ -38,7 +39,7 @@ func (r Resource) proxyRequest(request *restful.Request, response *restful.Respo
 	uri := request.PathParameter("subpath") + "?" + parsedUrl.RawQuery
 	forwardRequest := r.K8sClient.CoreV1().RESTClient().Verb(request.Request.Method).RequestURI(uri).Body(request.Request.Body)
 	for h, val := range request.Request.Header {
-		forwardRequest.SetHeader(h, val...);
+		forwardRequest.SetHeader(h, val...)
 	}
 	responseBody, requestError := forwardRequest.Do().Raw()
 	if requestError != nil {
@@ -57,6 +58,20 @@ func (r Resource) getAllNamespaces(request *restful.Request, response *restful.R
 		return
 	}
 	response.WriteEntity(namespaces)
+}
+
+func (r Resource) getIngress(request *restful.Request, response *restful.Response) {
+	requestNamespace := utils.GetNamespace(request)
+
+	ingress, err := r.K8sClient.ExtensionsV1beta1().Ingresses(requestNamespace).Get("tekton-dashboard", metav1.GetOptions{})
+
+	ingressHost := ingress.Spec.Rules[0].Host
+
+	if err != nil {
+		utils.RespondError(response, err, http.StatusNotFound)
+		return
+	}
+	response.WriteEntity(ingressHost)
 }
 
 func (r Resource) getAllServiceAccounts(request *restful.Request, response *restful.Response) {
@@ -106,4 +121,3 @@ func (r Resource) namespaceDeleted(obj interface{}) {
 
 	resourcesChannel <- data
 }
-
