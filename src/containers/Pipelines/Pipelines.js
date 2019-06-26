@@ -57,72 +57,64 @@ export /* istanbul ignore next */ class Pipelines extends Component {
       pipelines
     } = this.props;
 
+    if (loading && !pipelines.length) {
+      return <StructuredListSkeleton border />;
+    }
+
+    if (error) {
+      return (
+        <InlineNotification
+          kind="error"
+          hideCloseButton
+          lowContrast
+          title="Error loading pipelines"
+          subtitle={error}
+        />
+      );
+    }
+
     return (
-      <>
-        {(() => {
-          if (loading && !pipelines.length) {
-            return <StructuredListSkeleton border />;
-          }
-
-          if (error) {
+      <StructuredListWrapper border selection>
+        <StructuredListHead>
+          <StructuredListRow head>
+            <StructuredListCell head>Pipeline</StructuredListCell>
+            {selectedNamespace === ALL_NAMESPACES && (
+              <StructuredListCell head>Namespace</StructuredListCell>
+            )}
+            <StructuredListCell head />
+          </StructuredListRow>
+        </StructuredListHead>
+        <StructuredListBody>
+          {!pipelines.length && (
+            <StructuredListRow>
+              <StructuredListCell>No pipelines</StructuredListCell>
+            </StructuredListRow>
+          )}
+          {pipelines.map(pipeline => {
+            const { name, namespace, uid } = pipeline.metadata;
             return (
-              <InlineNotification
-                kind="error"
-                hideCloseButton
-                lowContrast
-                title="Error loading pipelines"
-                subtitle={error}
-              />
-            );
-          }
-
-          return (
-            <StructuredListWrapper border selection>
-              <StructuredListHead>
-                <StructuredListRow head>
-                  <StructuredListCell head>Pipeline</StructuredListCell>
-                  {selectedNamespace === ALL_NAMESPACES && (
-                    <StructuredListCell head>Namespace</StructuredListCell>
-                  )}
-                  <StructuredListCell head />
-                </StructuredListRow>
-              </StructuredListHead>
-              <StructuredListBody>
-                {!pipelines.length && (
-                  <StructuredListRow>
-                    <StructuredListCell>No pipelines</StructuredListCell>
-                  </StructuredListRow>
+              <StructuredListRow className="definition" key={uid}>
+                <StructuredListCell>
+                  <Link to={`/namespaces/${namespace}/pipelines/${name}/runs`}>
+                    {name}
+                  </Link>
+                </StructuredListCell>
+                {selectedNamespace === ALL_NAMESPACES && (
+                  <StructuredListCell>{namespace}</StructuredListCell>
                 )}
-                {pipelines.map(pipeline => {
-                  const { name, namespace, uid } = pipeline.metadata;
-                  return (
-                    <StructuredListRow className="definition" key={uid}>
-                      <StructuredListCell>
-                        <Link
-                          to={`/namespaces/${namespace}/pipelines/${name}/runs`}
-                        >
-                          {name}
-                        </Link>
-                      </StructuredListCell>
-                      {selectedNamespace === ALL_NAMESPACES && (
-                        <StructuredListCell>{namespace}</StructuredListCell>
-                      )}
-                      <StructuredListCell>
-                        <Link
-                          title="pipeline definition"
-                          to={`/namespaces/${namespace}/pipelines/${name}`}
-                        >
-                          <Information16 className="resource-info-icon" />
-                        </Link>
-                      </StructuredListCell>
-                    </StructuredListRow>
-                  );
-                })}
-              </StructuredListBody>
-            </StructuredListWrapper>
-          );
-        })()}
-      </>
+                <StructuredListCell>
+                  <Link
+                    title="pipeline definition"
+                    to={`/namespaces/${namespace}/pipelines/${name}`}
+                  >
+                    <Information16 className="resource-info-icon" />
+                  </Link>
+                </StructuredListCell>
+              </StructuredListRow>
+            );
+          })}
+        </StructuredListBody>
+      </StructuredListWrapper>
     );
   }
 }
