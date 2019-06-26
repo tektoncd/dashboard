@@ -19,6 +19,7 @@ import (
 	"testing"
 
 	corev1 "k8s.io/api/core/v1"
+	extensionsV1beta1 "k8s.io/api/extensions/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -72,5 +73,36 @@ func TestGetAllServiceAccounts(t *testing.T) {
 	}
 	if result.Items[0].Name != serviceAccount {
 		t.Errorf("%s is not returned: %s, %s", serviceAccount, result.Items[0].Name, result.Items[1].Name)
+	}
+}
+
+func TestGetIngress(t *testing.T) {
+
+	r := dummyResource()
+
+	hostName := "dashboard-host"
+	namespace := "test-namespace"
+	ingress := &extensionsV1beta1.Ingress{ObjectMeta: metav1.ObjectMeta{Name: "tekton-dashboard"}}
+	myRule := &extensionsV1beta1.IngressRule{}
+	myRule.Host = hostName
+
+	myRuleAsArray := make([]extensionsV1beta1.IngressRule, 1)
+	myRuleAsArray[0] = *myRule
+	ingress.Spec.Rules = myRuleAsArray
+
+	r.K8sClient.ExtensionsV1beta1().Ingresses(namespace).Create(ingress)
+
+	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/test-namespace/ingress", nil)
+	req := dummyRestfulRequest(httpReq, "test-namespace", "")
+	httpWriter := httptest.NewRecorder()
+	resp := dummyRestfulResponse(httpWriter)
+
+	r.getIngress(req, resp)
+
+	returnedIngress := ""
+	json.NewDecoder(httpWriter.Body).Decode(&returnedIngress)
+
+	if returnedIngress != "dashboard-host" {
+		t.Errorf("response for getting the Ingress host was %s, should have been dashboard-host", returnedIngress)
 	}
 }

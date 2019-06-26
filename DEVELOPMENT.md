@@ -214,6 +214,14 @@ Returns HTTP code 200 and a list of ServiceAccounts in the cluster
 Returns HTTP code 404 if an error occurred getting the ServiceAccounts
 ```
 
+__Dashboard Ingress__
+```
+GET /v1/namespaces/<namespace>/ingress
+Get the registered `tekton-dashboard` ingress host value
+Returns HTTP code 200 and the registered dashboard ingress host value 
+Returns HTTP code 404 if an error occurred getting the ingress
+```
+
 __Pipelines__
 ```
 GET /v1/namespaces/<namespace>/pipelines
