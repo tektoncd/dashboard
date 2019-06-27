@@ -46,6 +46,7 @@ export default function Breadcrumbs({ labels, match }) {
 }
 
 const breadcrumbLabels = {
+  '/clustertasks': 'ClusterTasks',
   '/extensions': 'Extensions',
   '/importresources': 'Import Tekton Resources',
   '/pipelineresources': 'PipelineResources',
