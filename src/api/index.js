@@ -74,26 +74,26 @@ export function checkData(data) {
 }
 
 export function getPipelines({ namespace } = {}) {
-  const uri = getAPI('pipelines', { namespace });
+  const uri = getTektonAPI('pipelines', { namespace });
   return get(uri).then(checkData);
 }
 
 export function getPipeline({ name, namespace }) {
-  const uri = getAPI('pipelines', { name, namespace });
+  const uri = getTektonAPI('pipelines', { name, namespace });
   return get(uri);
 }
 
 export function getPipelineRuns({ namespace, pipelineName } = {}) {
   let queryParams;
   if (pipelineName) {
-    queryParams = { name: pipelineName };
+    queryParams = { labelSelector: `tekton.dev/pipeline=${pipelineName}` };
   }
-  const uri = getAPI('pipelineruns', { namespace }, queryParams);
+  const uri = getTektonAPI('pipelineruns', { namespace }, queryParams);
   return get(uri).then(checkData);
 }
 
 export function getPipelineRun({ name, namespace }) {
-  const uri = getAPI('pipelineruns', { name, namespace });
+  const uri = getTektonAPI('pipelineruns', { name, namespace });
   return get(uri);
 }
 
@@ -118,36 +118,36 @@ export function getClusterTask({ name }) {
 }
 
 export function getTasks({ namespace } = {}) {
-  const uri = getAPI('tasks', { namespace });
+  const uri = getTektonAPI('tasks', { namespace });
   return get(uri).then(checkData);
 }
 
 export function getTask({ name, namespace }) {
-  const uri = getAPI('tasks', { name, namespace });
+  const uri = getTektonAPI('tasks', { name, namespace });
   return get(uri);
 }
 
 export function getTaskRuns({ namespace, taskName } = {}) {
   let queryParams;
   if (taskName) {
-    queryParams = { name: taskName };
+    queryParams = { labelSelector: `tekton.dev/task=${taskName}` };
   }
-  const uri = getAPI('taskruns', { namespace }, queryParams);
+  const uri = getTektonAPI('taskruns', { namespace }, queryParams);
   return get(uri).then(checkData);
 }
 
 export function getTaskRun({ name, namespace }) {
-  const uri = getAPI('taskruns', { name, namespace });
+  const uri = getTektonAPI('taskruns', { name, namespace });
   return get(uri);
 }
 
 export function getPipelineResources({ namespace } = {}) {
-  const uri = getAPI('pipelineresources', { namespace });
+  const uri = getTektonAPI('pipelineresources', { namespace });
   return get(uri).then(checkData);
 }
 
 export function getPipelineResource({ name, namespace }) {
-  const uri = getAPI('pipelineresources', { name, namespace });
+  const uri = getTektonAPI('pipelineresources', { name, namespace });
   return get(uri);
 }
 
