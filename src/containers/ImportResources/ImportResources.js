@@ -184,6 +184,7 @@ export class ImportResources extends Component {
                 <Link to={this.state.logsURL}>View status of this run</Link>
               }
               kind="success"
+              lowContrast
               title="Triggered PipelineRun to apply Tekton resources"
               subtitle=""
             />
