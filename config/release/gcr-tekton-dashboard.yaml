@@ -13,6 +13,7 @@ kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: tekton-dashboard-minimal
+  namespace: tekton-pipelines
 rules:
   - apiGroups: [""]
     resources: ["serviceaccounts"]
@@ -54,6 +55,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: tekton-dashboard
+  namespace: tekton-pipelines
   labels:
     app: tekton-dashboard
 spec:
@@ -99,6 +101,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: tekton-dashboard
+  namespace: tekton-pipelines
   labels:
     app: tekton-dashboard
 spec:
@@ -115,6 +118,7 @@ apiVersion: tekton.dev/v1alpha1
 kind: Pipeline
 metadata:
   name: pipeline0
+  namespace: tekton-pipelines
 spec:
   resources:
   - name: git-source
@@ -145,6 +149,7 @@ apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
   name: pipeline0-task
+  namespace: tekton-pipelines
 spec:
   inputs:
     resources:

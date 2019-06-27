@@ -5,6 +5,7 @@ apiVersion: tekton.dev/v1alpha1
 kind: Pipeline
 metadata:
   name: pipeline0
+  namespace: tekton-pipelines
 spec:
   resources:
   - name: git-source
