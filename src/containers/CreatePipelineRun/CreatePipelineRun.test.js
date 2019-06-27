@@ -12,34 +12,29 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, render, wait, waitForElement } from 'react-testing-library';
+import {
+  cleanup,
+  fireEvent,
+  render,
+  wait,
+  waitForElement
+} from 'react-testing-library';
 
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
 import CreatePipelineRun from './CreatePipelineRun';
 import * as API from '../../api';
+import * as store from '../../store';
+import * as reducers from '../../reducers';
 import { ALL_NAMESPACES } from '../../constants';
 
-const invalidK8sName = 'invalidName';
-const invalidK8sNameRegExp = /must consist of only lower case alphanumeric characters, -, and . with at most 253 characters/i;
-const invalidNoSpacesName = 'invalid name';
-const invalidNoSpacesNameRegExp = /must contain no spaces/i;
-
-const allNamespacesTestStore = {
+const namespacesTestStore = {
   namespaces: {
-    selected: ALL_NAMESPACES,
+    selected: 'namespace-1',
     byName: {
-      default: ''
-    },
-    isFetching: false
-  }
-};
-const defaultNamespacesTestStore = {
-  namespaces: {
-    selected: 'default',
-    byName: {
-      default: ''
+      'namespace-1': '',
+      'namespace-2': ''
     },
     isFetching: false
   }
@@ -47,17 +42,51 @@ const defaultNamespacesTestStore = {
 const pipelinesTestStore = {
   pipelines: {
     byNamespace: {
-      default: {
-        'pipeline-1': 'id-pipeline-1'
+      'namespace-1': {
+        'pipeline-1': 'id-pipeline-1',
+        'pipeline-2': 'id-pipeline-2'
+      },
+      'namespace-2': {
+        'pipeline-3': 'id-pipeline-3'
       }
     },
     byId: {
       'id-pipeline-1': {
         metadata: {
           name: 'pipeline-1',
-          namespace: 'default',
+          namespace: 'namespace-1',
           uid: 'id-pipeline-1'
+        },
+        spec: {
+          resources: [
+            { name: 'resource-1', type: 'type-1' },
+            { name: 'resource-2', type: 'type-2' }
+          ],
+          params: [
+            {
+              name: 'param-1',
+              description: 'description-1',
+              default: 'default-1'
+            },
+            { name: 'param-2' }
+          ]
         }
+      },
+      'id-pipeline-2': {
+        metadata: {
+          name: 'pipeline-2',
+          namespace: 'namespace-1',
+          uid: 'id-pipeline-2'
+        },
+        spec: {}
+      },
+      'id-pipeline-3': {
+        metadata: {
+          name: 'pipeline-3',
+          namespace: 'namespace-2',
+          uid: 'id-pipeline-3'
+        },
+        spec: {}
       }
     },
     isFetching: false
@@ -66,47 +95,71 @@ const pipelinesTestStore = {
 const serviceAccountsTestStore = {
   serviceAccounts: {
     byNamespace: {
-      default: {
+      'namespace-1': {
         'service-account-1': 'id-service-account-1'
+      },
+      'namespace-2': {
+        'service-account-2': 'id-service-account-2'
       }
     },
     byId: {
       'id-service-account-1': {
         metadata: {
           name: 'service-account-1',
-          namespace: 'default',
+          namespace: 'namespace-1',
           uid: 'id-service-account-1'
+        }
+      },
+      'id-service-account-2': {
+        metadata: {
+          name: 'service-account-2',
+          namespace: 'namespace-2',
+          uid: 'id-service-account-2'
         }
       }
     },
     isFetching: false
   }
 };
+const pipelineResourcesTestStore = {
+  pipelineResources: {
+    byNamespace: {
+      'namespace-1': {
+        'pipeline-resource-1': 'id-pipeline-resource-1',
+        'pipeline-resource-2': 'id-pipeline-resource-2'
+      }
+    },
+    byId: {
+      'id-pipeline-resource-1': {
+        metadata: { name: 'pipeline-resource-1' },
+        spec: { type: 'type-1' }
+      },
+      'id-pipeline-resource-2': {
+        metadata: { name: 'pipeline-resource-2' },
+        spec: { type: 'type-2' }
+      }
+    },
+    isFetching: false
+  }
+};
+const pipelineRunsTestStore = {
+  pipelineRuns: {
+    isFetching: false,
+    byId: {},
+    byNamespace: {}
+  }
+};
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
-const testStoreAllNamespaces = mockStore({
-  ...allNamespacesTestStore,
+const testStore = {
+  ...namespacesTestStore,
   ...pipelinesTestStore,
   ...serviceAccountsTestStore,
-  pipelineRuns: {
-    errorMessage: '',
-    isFetching: false,
-    byId: {},
-    byNamespace: {}
-  }
-});
-const testStoreDefaultNamespace = mockStore({
-  ...defaultNamespacesTestStore,
-  ...pipelinesTestStore,
-  ...serviceAccountsTestStore,
-  pipelineRuns: {
-    errorMessage: '',
-    isFetching: false,
-    byId: {},
-    byNamespace: {}
-  }
-});
+  ...pipelineResourcesTestStore,
+  ...pipelineRunsTestStore
+};
 
+afterEach(cleanup);
 beforeEach(() => {
   jest.resetAllMocks();
   jest
@@ -115,345 +168,408 @@ beforeEach(() => {
   jest
     .spyOn(API, 'getPipelines')
     .mockImplementation(() => pipelinesTestStore.pipelines.byId);
-  jest.spyOn(API, 'getPipelineRuns').mockImplementation(() => {});
+  jest
+    .spyOn(API, 'getPipelineResources')
+    .mockImplementation(
+      () => pipelineResourcesTestStore.pipelineResources.byId
+    );
+  jest
+    .spyOn(API, 'getPipelineRuns')
+    .mockImplementation(() => pipelineRunsTestStore.pipelineRuns.byId);
 });
 
-const fillNamespace = getByText => {
-  fireEvent.click(getByText(/select namespace/i));
-  fireEvent.click(getByText(/default/i));
+const props = {
+  open: true,
+  namespace: 'namespace-1'
 };
 
-const fillPipeline = getByText => {
+const validationErrorMsgRegExp = /please fix the fields with errors, then resubmit/i;
+const namespaceValidationErrorRegExp = /namespace cannot be empty/i;
+const pipelineValidationErrorRegExp = /pipeline cannot be empty/i;
+const pipelineResourceValidationErrorRegExp = /pipeline resources cannot be empty/i;
+const paramsValidationErrorRegExp = /params cannot be empty/i;
+const apiErrorRegExp = /error creating pipelinerun/i;
+
+const submitButton = allByText => {
+  return allByText(/create pipelinerun/i)[1];
+};
+
+const testPipelineSpec = (pipelineId, queryByText, queryByValue) => {
+  // Verify proper param and resource fields are displayed
+  const pipeline = pipelinesTestStore.pipelines.byId[pipelineId];
+  const paramsRegExp = /params/i;
+  const resourcesRegExp = /resources/i;
+  if (pipeline.spec.params) {
+    expect(queryByText(paramsRegExp)).toBeTruthy();
+    pipeline.spec.params.forEach(param => {
+      expect(queryByText(new RegExp(param.name, 'i'))).toBeTruthy();
+      if (param.description) {
+        expect(queryByText(new RegExp(param.description, 'i'))).toBeTruthy();
+      }
+      if (param.default) {
+        expect(queryByValue(new RegExp(param.default, 'i'))).toBeTruthy();
+      }
+    });
+  } else {
+    expect(queryByText(paramsRegExp)).toBeFalsy();
+  }
+  if (pipeline.spec.resources) {
+    expect(queryByText(resourcesRegExp)).toBeTruthy();
+    pipeline.spec.resources.forEach(resource => {
+      expect(queryByText(new RegExp(resource.name, 'i'))).toBeTruthy();
+      expect(queryByText(new RegExp(resource.type, 'i'))).toBeTruthy();
+    });
+  } else {
+    expect(queryByText(resourcesRegExp)).toBeFalsy();
+  }
+};
+
+const selectPipeline1 = getByText => {
   fireEvent.click(getByText(/select pipeline/i));
   fireEvent.click(getByText(/pipeline-1/i));
+  expect(getByText(/pipeline-1/i)).toBeTruthy();
 };
 
-const fillServiceAccount = getByText => {
-  fireEvent.click(getByText(/select service account/i));
-  fireEvent.click(getByText(/service-account-1/i));
+const fillPipeline1Resources = getByText => {
+  fireEvent.click(getByText(/select pipeline resource/i));
+  fireEvent.click(getByText(/pipeline-resource-1/i));
+  fireEvent.click(getByText(/select pipeline resource/i));
+  fireEvent.click(getByText(/pipeline-resource-2/i));
 };
 
-const fillRequiredFields = getByText => {
-  fillNamespace(getByText);
-  fillPipeline(getByText);
-  fillServiceAccount(getByText);
+const fillPipeline1Params = getByPlaceholderText => {
+  fireEvent.change(getByPlaceholderText(/default-1/i), {
+    target: { value: 'value-1' }
+  });
+  fireEvent.change(getByPlaceholderText(/param-2/i), {
+    target: { value: 'value-2' }
+  });
 };
 
-const testValidateTextInputField = (
-  placeholderTextRegExp,
-  textValue,
-  invalidTextRegExp
+const selectPipeline1AndFillSpec = (
+  getByText,
+  getByPlaceholderText,
+  queryByText,
+  queryByValue
 ) => {
-  const { getByText, getByPlaceholderText, queryByText } = render(
-    <Provider store={testStoreAllNamespaces}>
-      <CreatePipelineRun open />
-    </Provider>
-  );
-  fillRequiredFields(getByText);
-  // Set invalid text input
-  fireEvent.change(getByPlaceholderText(placeholderTextRegExp), {
-    target: { value: textValue }
-  });
-  expect(queryByText(invalidTextRegExp)).toBeTruthy();
-  fireEvent.click(getByText(/submit/i));
-  expect(queryByText(/unable to submit/i)).toBeTruthy();
-  // Set back to valid
-  fireEvent.change(getByPlaceholderText(placeholderTextRegExp), {
-    target: { value: '' }
-  });
-  expect(queryByText(invalidTextRegExp)).toBeFalsy();
+  // Select pipeline-1 and verify spec details are displayed
+  selectPipeline1(getByText);
+  testPipelineSpec('id-pipeline-1', queryByText, queryByValue);
+  // Fill pipeline spec
+  fillPipeline1Resources(getByText);
+  fillPipeline1Params(getByPlaceholderText);
 };
 
-it('CreatePipelineRun renders', () => {
-  const { queryByText } = render(
-    <Provider store={testStoreAllNamespaces}>
+it('CreatePipelineRun handles api error', async () => {
+  const mockTestStore = mockStore(testStore);
+  jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
+  const {
+    getByText,
+    getAllByText,
+    getByPlaceholderText,
+    queryByText,
+    queryByValue
+  } = render(
+    <Provider store={mockTestStore}>
+      <CreatePipelineRun {...props} />
+    </Provider>
+  );
+  selectPipeline1AndFillSpec(
+    getByText,
+    getByPlaceholderText,
+    queryByText,
+    queryByValue
+  );
+  // Submit
+  const errorResponseMock = {
+    response: { status: 400, text: () => Promise.resolve('') }
+  };
+  const createPipelineRun = jest
+    .spyOn(API, 'createPipelineRun')
+    .mockImplementation(() => Promise.reject(errorResponseMock));
+  fireEvent.click(submitButton(getAllByText));
+  await wait(() => expect(createPipelineRun).toHaveBeenCalledTimes(1));
+  await waitForElement(() => getByText(apiErrorRegExp));
+  await waitForElement(() => getByText(/error code 400/i));
+});
+
+it('CreatePipelineRun handles api error with text', async () => {
+  const mockTestStore = mockStore(testStore);
+  jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
+  const {
+    getByText,
+    getAllByText,
+    getByPlaceholderText,
+    queryByText,
+    queryByValue
+  } = render(
+    <Provider store={mockTestStore}>
+      <CreatePipelineRun {...props} />
+    </Provider>
+  );
+  selectPipeline1AndFillSpec(
+    getByText,
+    getByPlaceholderText,
+    queryByText,
+    queryByValue
+  );
+  // Submit
+  const errorResponseMock = {
+    response: { status: 401, text: () => Promise.resolve('example message') }
+  };
+  const createPipelineRun = jest
+    .spyOn(API, 'createPipelineRun')
+    .mockImplementation(() => Promise.reject(errorResponseMock));
+  fireEvent.click(submitButton(getAllByText));
+  await wait(() => expect(createPipelineRun).toHaveBeenCalledTimes(1));
+  await waitForElement(() => getByText(apiErrorRegExp));
+  await waitForElement(() => getByText(/error code 401 \(example message\)/i));
+});
+
+it('CreatePipelineRun renders empty', () => {
+  const { queryByText, queryAllByText, queryByPlaceholderText } = render(
+    <Provider store={mockStore(testStore)}>
       <CreatePipelineRun open />
     </Provider>
   );
   expect(queryByText(/create pipelinerun/i)).toBeTruthy();
+  expect(queryByText(/select namespace/i)).toBeTruthy();
+  expect(queryByText(/select pipeline/i)).toBeTruthy();
+  expect(queryByText(/select service account/i)).toBeTruthy();
+  expect(queryByPlaceholderText(/duration/i)).toBeTruthy();
+  expect(queryByText(/cancel/i)).toBeTruthy();
+  expect(submitButton(queryAllByText)).toBeTruthy();
 });
 
-it('CreatePipelineRun renders controlled pipeline selection', () => {
-  const { queryByText } = render(
-    <Provider store={testStoreAllNamespaces}>
-      <CreatePipelineRun open pipelineName="pipeline-1" namespace="default" />
+it('CreatePipelineRun renders pipeline', () => {
+  const mockTestStore = mockStore(testStore);
+  jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
+  const {
+    getByText,
+    getAllByText,
+    getByPlaceholderText,
+    queryByText,
+    queryByValue
+  } = render(
+    <Provider store={mockTestStore}>
+      <CreatePipelineRun {...props} />
     </Provider>
   );
-  expect(queryByText(/create pipelinerun/i)).toBeTruthy();
+  expect(queryByText(/namespace-1/i)).toBeTruthy();
+  // Select pipeline-1 and verify spec details are displayed
+  selectPipeline1(getByText);
+  testPipelineSpec('id-pipeline-1', queryByText, queryByValue);
+  // Fill pipeline spec
+  fillPipeline1Resources(getByText);
+  fillPipeline1Params(getByPlaceholderText);
+  expect(queryByText(/pipeline-resource-1/i)).toBeTruthy();
+  expect(queryByText(/pipeline-resource-2/i)).toBeTruthy();
+  expect(queryByValue(/value-1/i)).toBeTruthy();
+  expect(queryByValue(/value-2/i)).toBeTruthy();
+  // Select pipeline-1 and verify spec details do not change
+  fireEvent.click(getAllByText(/pipeline-1/i)[1]);
+  fireEvent.click(getAllByText(/pipeline-1/i)[2]);
+
+  // Select pipeline-2 and verify spec details are displayed
+  fireEvent.click(getAllByText(/pipeline-1/i)[1]);
+  fireEvent.click(getByText(/pipeline-2/i));
+  testPipelineSpec('id-pipeline-2', queryByText, queryByValue);
+});
+
+it('CreatePipelineRun renders pipeline controlled', () => {
+  // Display with pipeline-1 selected
+  const mockTestStore = mockStore(testStore);
+  const { rerender, queryByText, queryByValue } = render(
+    <Provider store={mockTestStore}>
+      <CreatePipelineRun {...props} pipelineRef="pipeline-1" />
+    </Provider>
+  );
+  expect(queryByText(/namespace-1/i)).toBeTruthy();
   expect(queryByText(/pipeline-1/i)).toBeTruthy();
-  expect(queryByText(/default/i)).toBeTruthy();
-});
-
-it('CreatePipelineRun renders namespace dropdown for selected namespace', () => {
-  const { queryByText } = render(
-    <Provider store={testStoreDefaultNamespace}>
-      <CreatePipelineRun open />
+  // Verify spec details are displayed
+  testPipelineSpec('id-pipeline-1', queryByText, queryByValue);
+  // Change selection to pipeline-2
+  rerender(
+    <Provider store={mockTestStore}>
+      <CreatePipelineRun {...props} pipelineRef="pipeline-2" />
     </Provider>
   );
-  expect(queryByText(/default/i)).toBeTruthy();
+  testPipelineSpec('id-pipeline-2', queryByText, queryByValue);
 });
 
 it('CreatePipelineRun resets pipeline and service account when namespace changes', () => {
-  const { getByText, getAllByText } = render(
-    <Provider store={testStoreDefaultNamespace}>
-      <CreatePipelineRun open />
+  const mockTestStore = mockStore(testStore);
+  jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
+  const { getByText, getAllByText, queryByText } = render(
+    <Provider store={mockTestStore}>
+      <CreatePipelineRun {...props} />
     </Provider>
   );
-  fillPipeline(getByText);
-  fillServiceAccount(getByText);
-  expect(getByText(/pipeline-1/i));
-  expect(getByText(/service-account-1/i));
-  fireEvent.click(getByText(/default/i));
-  fireEvent.click(getAllByText(/default/i)[1]);
-  expect(getByText(/pipeline-1/i));
-  expect(getByText(/service-account-1/i));
+  fireEvent.click(getByText(/select pipeline/i));
+  fireEvent.click(getByText(/pipeline-1/i));
+  fireEvent.click(getByText(/select service account/i));
+  fireEvent.click(getByText(/service-account-1/i));
+  // Change selected namespace to the same namespace (expect no change)
+  fireEvent.click(getByText(/namespace-1/i));
+  fireEvent.click(getAllByText(/namespace-1/i)[1]);
+  expect(queryByText(/pipeline-1/i)).toBeTruthy();
+  expect(queryByText(/service-account-1/i)).toBeTruthy();
+  // Change selected namespace
+  fireEvent.click(getByText(/namespace-1/i));
+  fireEvent.click(getByText(/namespace-2/i));
+  // Verify that pipeline and service account value have reset
+  expect(queryByText(/select pipeline/i)).toBeTruthy();
+  expect(queryByText(/select service account/i)).toBeTruthy();
 });
 
-it('CreatePipelineRun validates form namespace', () => {
-  const { getByText, queryByText } = render(
-    <Provider store={testStoreAllNamespaces}>
-      <CreatePipelineRun open />
+it('CreatePipelineRun resets pipeline and service account when namespace changes controlled', () => {
+  const mockTestStore = mockStore(testStore);
+  jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
+  const { rerender, getByText, queryByText } = render(
+    <Provider store={mockTestStore}>
+      <CreatePipelineRun {...props} />
     </Provider>
   );
-  fillServiceAccount(getByText);
-  fillPipeline(getByText);
-  fireEvent.click(getByText(/submit/i));
-  expect(queryByText(/unable to submit/i)).toBeTruthy();
-  expect(queryByText(/namespace cannot be empty/i)).toBeTruthy();
-});
-
-it('CreatePipelineRun validates form pipeline', () => {
-  const { getByText, queryByText } = render(
-    <Provider store={testStoreAllNamespaces}>
-      <CreatePipelineRun open />
+  fireEvent.click(getByText(/select pipeline/i));
+  fireEvent.click(getByText(/pipeline-1/i));
+  fireEvent.click(getByText(/select service account/i));
+  fireEvent.click(getByText(/service-account-1/i));
+  // Change selected namespace
+  rerender(
+    <Provider store={mockTestStore}>
+      <CreatePipelineRun {...props} namespace="namespace-2" />
     </Provider>
   );
-  fillNamespace(getByText);
-  fillServiceAccount(getByText);
-  fireEvent.click(getByText(/submit/i));
-  expect(queryByText(/unable to submit/i)).toBeTruthy();
-  expect(queryByText(/pipeline cannot be empty/i)).toBeTruthy();
+  // Verify that pipeline and service account value have reset
+  expect(queryByText(/select pipeline/i)).toBeTruthy();
+  expect(queryByText(/select service account/i)).toBeTruthy();
 });
 
-it('CreatePipelineRun validates form service account', () => {
-  const { getByText, queryByText } = render(
-    <Provider store={testStoreAllNamespaces}>
-      <CreatePipelineRun open />
+it('CreatePipelineRun submits form', () => {
+  const mockTestStore = mockStore(testStore);
+  jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
+  const {
+    getByText,
+    getAllByText,
+    getByPlaceholderText,
+    queryByText,
+    queryByValue
+  } = render(
+    <Provider store={mockTestStore}>
+      <CreatePipelineRun {...props} />
     </Provider>
   );
-  fillNamespace(getByText);
-  fillPipeline(getByText);
-  fireEvent.click(getByText(/submit/i));
-  expect(queryByText(/unable to submit/i)).toBeTruthy();
-  expect(queryByText(/service account cannot be empty/i)).toBeTruthy();
-});
-
-it('CreatePipelineRun validates form git resource name', () => {
-  testValidateTextInputField(
-    /git-source/i,
-    invalidK8sName,
-    invalidK8sNameRegExp
-  );
-});
-
-it('CreatePipelineRun validates form git repo url', () => {
-  testValidateTextInputField(
-    /https:\/\/github.com\/user\/project/i,
-    'I am not a URL',
-    /must be a valid url/i
-  );
-});
-
-it('CreatePipelineRun validates form git revision', () => {
-  testValidateTextInputField(
-    /master/i,
-    invalidNoSpacesName,
-    invalidNoSpacesNameRegExp
-  );
-});
-
-it('CreatePipelineRun validates form image name', () => {
-  testValidateTextInputField(
-    /docker-image/i,
-    invalidK8sName,
-    invalidK8sNameRegExp
-  );
-});
-
-it('CreatePipelineRun validates form image registry', () => {
-  testValidateTextInputField(
-    /registryname/i,
-    invalidNoSpacesName,
-    invalidNoSpacesNameRegExp
-  );
-});
-
-it('CreatePipelineRun validates form image repo', () => {
-  testValidateTextInputField(
-    /reponame/i,
-    invalidNoSpacesName,
-    invalidNoSpacesNameRegExp
-  );
-});
-
-it('CreatePipelineRun validates form helm secret', () => {
-  testValidateTextInputField(
-    /helm-secret/i,
-    invalidK8sName,
-    invalidK8sNameRegExp
-  );
-});
-
-it('CreatePipelineRun submits form', async () => {
-  const formValues = {
-    gitcommit: '',
-    gitresourcename: '',
-    helmsecret: '',
-    imageresourcename: '',
-    pipelinename: 'pipeline-1',
-    pipelineruntype: 'helm',
-    registrylocation: '',
-    reponame: '',
-    repourl: '',
-    serviceaccount: 'service-account-1'
-  };
-  const { getByText, getByTestId } = render(
-    <Provider store={testStoreAllNamespaces}>
-      <CreatePipelineRun open />
-    </Provider>
-  );
-  fillRequiredFields(getByText);
-  // Set Helm Pipeline
-  fireEvent.click(getByTestId('helm-pipeline-toggle'));
+  expect(queryByText(/namespace-1/i)).toBeTruthy();
+  // Select pipeline-1 and verify spec details are displayed
+  selectPipeline1(getByText);
+  testPipelineSpec('id-pipeline-1', queryByText, queryByValue);
+  // Fill pipeline spec
+  fillPipeline1Resources(getByText);
+  fillPipeline1Params(getByPlaceholderText);
+  // Fill service account
+  fireEvent.click(getByText(/select service account/i));
+  fireEvent.click(getByText(/service-account-1/i));
+  // Fill timeout
+  fireEvent.change(getByPlaceholderText(/duration/i), {
+    target: { value: '120' }
+  });
   // Submit
+  let pipelineRunName;
   const createPipelineRun = jest
     .spyOn(API, 'createPipelineRun')
-    .mockImplementation(() =>
-      Promise.resolve({
-        get: () => {
-          return '/v1/namespaces/default/pipelineruns//tekton-pipeline-run';
-        }
-      })
-    );
-  fireEvent.click(getByText(/submit/i));
-  await wait(() => expect(createPipelineRun).toHaveBeenCalledTimes(1));
-  await wait(() =>
-    expect(createPipelineRun).toHaveBeenCalledWith({
-      namespace: 'default',
-      payload: formValues
-    })
-  );
-});
-
-it('CreatePipelineRun handles error state', async () => {
-  const { getByText } = render(
-    <Provider store={testStoreAllNamespaces}>
-      <CreatePipelineRun open />
-    </Provider>
-  );
-  // Fill required fields
-  fillRequiredFields(getByText);
-  // Submit create request
-  const createPipelineRunResponseMock = {
-    response: { status: 400, text: () => Promise.resolve('test error message') }
+    .mockImplementation(payload => {
+      ({
+        metadata: { name: pipelineRunName }
+      } = payload);
+      return Promise.resolve({
+        get: () => '/v1/namespaces/default/pipelineruns//tekton-pipeline-run'
+      });
+    });
+  fireEvent.click(submitButton(getAllByText));
+  expect(createPipelineRun).toHaveBeenCalledTimes(1);
+  const payload = {
+    metadata: {
+      name: pipelineRunName
+    },
+    spec: {
+      pipelineRef: {
+        name: 'pipeline-1'
+      },
+      resources: [
+        { name: 'resource-1', resourceRef: { name: 'pipeline-resource-1' } },
+        { name: 'resource-2', resourceRef: { name: 'pipeline-resource-2' } }
+      ],
+      params: [
+        { name: 'param-1', value: 'value-1' },
+        { name: 'param-2', value: 'value-2' }
+      ],
+      serviceAccount: 'service-account-1',
+      timeout: '120'
+    }
   };
-  jest
-    .spyOn(API, 'createPipelineRun')
-    .mockImplementation(() => Promise.reject(createPipelineRunResponseMock));
-  fireEvent.click(getByText(/submit/i));
-  await waitForElement(() => getByText(/error creating pipelinerun/i));
-  await waitForElement(() => getByText(/test error message/i));
-});
-
-it('CreatePipelineRun handles error state 400', async () => {
-  const { getByText } = render(
-    <Provider store={testStoreAllNamespaces}>
-      <CreatePipelineRun open />
-    </Provider>
-  );
-  // Fill required fields
-  fillRequiredFields(getByText);
-  // Submit create request
-  const createPipelineRunResponseMock = {
-    response: { status: 400, text: () => Promise.resolve('') }
-  };
-  jest
-    .spyOn(API, 'createPipelineRun')
-    .mockImplementation(() => Promise.reject(createPipelineRunResponseMock));
-  fireEvent.click(getByText(/submit/i));
-  await waitForElement(() => getByText(/error creating pipelinerun/i));
-  await waitForElement(() => getByText(/bad request/i));
-});
-
-it('CreatePipelineRun handles error state 412', async () => {
-  const { getByText } = render(
-    <Provider store={testStoreAllNamespaces}>
-      <CreatePipelineRun open />
-    </Provider>
-  );
-  // Fill required fields
-  fillRequiredFields(getByText);
-  // Submit create request
-  const createPipelineRunResponseMock = {
-    response: { status: 412, text: () => Promise.resolve('') }
-  };
-  jest
-    .spyOn(API, 'createPipelineRun')
-    .mockImplementation(() => Promise.reject(createPipelineRunResponseMock));
-  fireEvent.click(getByText(/submit/i));
-  await waitForElement(() => getByText(/error creating pipelinerun/i));
-  await waitForElement(() => getByText(/pipeline not found/i));
-});
-
-it('CreatePipelineRun handles error state abnormal code', async () => {
-  const { getByText } = render(
-    <Provider store={testStoreAllNamespaces}>
-      <CreatePipelineRun open />
-    </Provider>
-  );
-  // Fill required fields
-  fillRequiredFields(getByText);
-  // Submit create request
-  const createPipelineRunResponseMock = {
-    response: { status: 0, text: () => Promise.resolve('') }
-  };
-  jest
-    .spyOn(API, 'createPipelineRun')
-    .mockImplementation(() => Promise.reject(createPipelineRunResponseMock));
-  fireEvent.click(getByText(/submit/i));
-  await waitForElement(() => getByText(/error creating pipelinerun/i));
-  await waitForElement(() => getByText(/error code 0/i));
-});
-
-it('CreatePipelineRun handles onSuccess event', async () => {
-  const onSuccess = jest.fn();
-  const { getByText } = render(
-    <Provider store={testStoreAllNamespaces}>
-      <CreatePipelineRun open onSuccess={onSuccess} />
-    </Provider>
-  );
-  // Fill required fields
-  fillRequiredFields(getByText);
-
-  // Submit create request
-  jest.spyOn(API, 'createPipelineRun').mockImplementation(() =>
-    Promise.resolve({
-      get: () => {
-        return '/v1/namespaces/default/pipelineruns//tekton-pipeline-run';
-      }
-    })
-  );
-  fireEvent.click(getByText(/submit/i));
-  await wait(() => expect(onSuccess).toHaveBeenCalledTimes(1));
+  expect(createPipelineRun).toHaveBeenCalledWith(payload, 'namespace-1');
 });
 
 it('CreatePipelineRun handles onClose event', () => {
   const onClose = jest.fn();
   const { getByText } = render(
-    <Provider store={testStoreAllNamespaces}>
+    <Provider store={mockStore(testStore)}>
       <CreatePipelineRun open onClose={onClose} />
     </Provider>
   );
   fireEvent.click(getByText(/cancel/i));
   expect(onClose).toHaveBeenCalledTimes(1);
+});
+
+it('CreatePipelineRun validates inputs', () => {
+  const mockTestStore = mockStore(testStore);
+  jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
+  const { getByText, getAllByText, getByPlaceholderText, queryByText } = render(
+    <Provider store={mockTestStore}>
+      <CreatePipelineRun {...props} namespace={ALL_NAMESPACES} />
+    </Provider>
+  );
+  // Test validation error on empty form submit
+  fireEvent.click(submitButton(getAllByText));
+  expect(queryByText(validationErrorMsgRegExp)).toBeTruthy();
+  expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
+  expect(queryByText(pipelineValidationErrorRegExp)).toBeTruthy();
+  // Fix validation error
+  fireEvent.click(getByText(/select namespace/i));
+  fireEvent.click(getByText(/namespace-1/i));
+  selectPipeline1(getByText);
+  expect(queryByText(pipelineValidationErrorRegExp)).toBeFalsy();
+  expect(queryByText(namespaceValidationErrorRegExp)).toBeFalsy();
+  // Test validation on pipeline1 spec
+  fireEvent.click(submitButton(getAllByText));
+  expect(queryByText(pipelineResourceValidationErrorRegExp)).toBeTruthy();
+  expect(queryByText(paramsValidationErrorRegExp)).toBeTruthy();
+  // Fix validation error
+  fillPipeline1Resources(getByText);
+  expect(queryByText(pipelineResourceValidationErrorRegExp)).toBeFalsy();
+  fillPipeline1Params(getByPlaceholderText);
+  expect(queryByText(paramsValidationErrorRegExp)).toBeFalsy();
+});
+
+it('CreatePipelineRun handles error getting pipeline', () => {
+  const mockTestStore = mockStore(testStore);
+  jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
+  jest.spyOn(reducers, 'getPipeline').mockImplementation(() => null);
+  const { getByText, queryByText } = render(
+    <Provider store={mockTestStore}>
+      <CreatePipelineRun {...props} />
+    </Provider>
+  );
+  selectPipeline1(getByText);
+  expect(queryByText(/error retrieving pipeline information/i)).toBeTruthy();
+});
+
+it('CreatePipelineRun handles error getting pipeline controlled', () => {
+  jest.spyOn(reducers, 'getPipeline').mockImplementation(() => null);
+  const { queryByText } = render(
+    <Provider store={mockStore(testStore)}>
+      <CreatePipelineRun {...props} pipelineRef="pipeline-1" />
+    </Provider>
+  );
+  expect(queryByText(/error retrieving pipeline information/i)).toBeTruthy();
 });
