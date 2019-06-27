@@ -21,6 +21,8 @@ import {
   deleteCredential,
   getAPI,
   getAPIRoot,
+  getClusterTask,
+  getClusterTasks,
   getCredential,
   getCredentials,
   getExtensionBundleURL,
@@ -38,6 +40,7 @@ import {
   getTaskRun,
   getTaskRuns,
   getTasks,
+  getTektonAPI,
   updateCredential
 } from '.';
 
@@ -67,7 +70,7 @@ describe('getAPI', () => {
     expect(uri).toContain('somename');
   });
 
-  it('returns a URI containing the given, name, and namespace', () => {
+  it('returns a URI containing the given type, name, and namespace', () => {
     const uri = getAPI('pipelines', {
       name: 'somename',
       namespace: 'customnamespace'
@@ -75,6 +78,39 @@ describe('getAPI', () => {
     expect(uri).toContain('pipelines');
     expect(uri).toContain('somename');
     expect(uri).toContain('customnamespace');
+  });
+});
+
+describe('getTektonAPI', () => {
+  it('returns a URI containing the given type', () => {
+    const uri = getTektonAPI('pipelines');
+    expect(uri).toContain('pipelines');
+  });
+
+  it('returns a URI containing the given type and name', () => {
+    const uri = getTektonAPI('pipelines', { name: 'somename' });
+    expect(uri).toContain('pipelines');
+    expect(uri).toContain('somename');
+  });
+
+  it('returns a URI containing the given type, name, and namespace', () => {
+    const uri = getTektonAPI('pipelines', {
+      name: 'somename',
+      namespace: 'customnamespace'
+    });
+    expect(uri).toContain('pipelines');
+    expect(uri).toContain('somename');
+    expect(uri).toContain('namespaces');
+    expect(uri).toContain('customnamespace');
+  });
+
+  it('returns a URI without namespace when omitted', () => {
+    const uri = getTektonAPI('clustertasks', {
+      name: 'somename'
+    });
+    expect(uri).toContain('clustertasks');
+    expect(uri).toContain('somename');
+    expect(uri).not.toContain('namespaces');
   });
 });
 
@@ -156,6 +192,27 @@ it('cancelPipelineRun', () => {
     expect(fetchMock.lastOptions()).toMatchObject({
       body: JSON.stringify(payload)
     });
+    fetchMock.restore();
+  });
+});
+
+it('getClusterTasks', () => {
+  const data = {
+    items: 'clustertasks'
+  };
+  fetchMock.get(/clustertasks/, data);
+  return getClusterTasks().then(tasks => {
+    expect(tasks).toEqual(data.items);
+    fetchMock.restore();
+  });
+});
+
+it('getClusterTask', () => {
+  const name = 'foo';
+  const data = { fake: 'clustertask' };
+  fetchMock.get(`end:${name}`, data);
+  return getClusterTask({ name }).then(task => {
+    expect(task).toEqual(data);
     fetchMock.restore();
   });
 });
