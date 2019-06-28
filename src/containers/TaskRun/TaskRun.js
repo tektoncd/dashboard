@@ -114,11 +114,7 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
       if (taskRun && taskRun.spec.taskRef) {
         const { name, kind } = taskRun.spec.taskRef;
         this.props
-          .fetchTaskByType({
-            type: taskTypeKeys[kind],
-            name,
-            namespace
-          })
+          .fetchTaskByType(name, taskTypeKeys[kind], namespace)
           .then(() => {
             this.setState({ loading: false });
           });
