@@ -118,8 +118,11 @@ export function getPipelineRun({ name, namespace }) {
 }
 
 export function cancelPipelineRun({ name, namespace }) {
-  const uri = getAPI('pipelineruns', { name, namespace });
-  return put(uri, { status: 'PipelineRunCancelled' });
+  return getPipelineRun({ name, namespace }).then(pipelineRun => {
+    pipelineRun.spec.status = 'PipelineRunCancelled'; // eslint-disable-line
+    const uri = getTektonAPI('pipelineruns', { name, namespace });
+    return put(uri, pipelineRun);
+  });
 }
 
 export function createPipelineRun({ namespace, payload }) {
@@ -199,6 +202,14 @@ export function getTaskRuns({ namespace, taskName } = {}) {
 export function getTaskRun({ name, namespace }) {
   const uri = getTektonAPI('taskruns', { name, namespace });
   return get(uri);
+}
+
+export function cancelTaskRun({ name, namespace }) {
+  return getTaskRun({ name, namespace }).then(taskRun => {
+    taskRun.spec.status = 'TaskRunCancelled'; // eslint-disable-line
+    const uri = getTektonAPI('taskruns', { name, namespace });
+    return put(uri, taskRun);
+  });
 }
 
 export function getPipelineResources({ namespace } = {}) {
