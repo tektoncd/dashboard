@@ -23,8 +23,14 @@ export function getStatus(resource) {
   return conditions.find(condition => condition.type === 'Succeeded') || {};
 }
 
+export function isRunning(reason, status) {
+  return (
+    status === 'Unknown' && (reason === 'Running' || reason === 'Building')
+  );
+}
+
 export function getStatusIcon({ reason, status }) {
-  if (status === 'Unknown' && reason === 'Running') {
+  if (isRunning(reason, status)) {
     return <Spinner className="status-icon" />;
   }
 

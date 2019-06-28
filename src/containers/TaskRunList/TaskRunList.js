@@ -25,7 +25,7 @@ import {
 } from 'carbon-components-react';
 
 import { ALL_NAMESPACES } from '../../constants';
-import { getStatus, getStatusIcon } from '../../utils';
+import { getStatus, getStatusIcon, isRunning } from '../../utils';
 import { fetchTaskRuns } from '../../actions/taskRuns';
 
 import {
@@ -34,6 +34,8 @@ import {
   getTaskRunsErrorMessage,
   isFetchingTaskRuns
 } from '../../reducers';
+import CancelButton from '../../components/CancelButton/CancelButton';
+import { cancelTaskRun } from '../../api';
 
 export /* istanbul ignore next */ class TaskRunList extends Component {
   componentDidMount() {
@@ -84,13 +86,14 @@ export /* istanbul ignore next */ class TaskRunList extends Component {
             )}
             <StructuredListCell head>Status</StructuredListCell>
             <StructuredListCell head>Last Transition Time</StructuredListCell>
+            <StructuredListCell head />
           </StructuredListRow>
         </StructuredListHead>
         <StructuredListBody>
           {!taskRuns.length && (
             <StructuredListRow>
               <StructuredListCell>
-                <span>No pipeline runs</span>
+                <span>No task runs</span>
               </StructuredListCell>
             </StructuredListRow>
           )}
@@ -148,6 +151,20 @@ export /* istanbul ignore next */ class TaskRunList extends Component {
                   {message}
                 </StructuredListCell>
                 <StructuredListCell>{lastTransitionTime}</StructuredListCell>
+                <StructuredListCell>
+                  {isRunning(reason, status) && (
+                    <CancelButton
+                      type="TaskRun"
+                      name={name}
+                      onCancel={() =>
+                        cancelTaskRun({
+                          name,
+                          namespace
+                        })
+                      }
+                    />
+                  )}
+                </StructuredListCell>
               </StructuredListRow>
             );
           })}

@@ -15,6 +15,7 @@ import fetchMock from 'fetch-mock';
 
 import {
   cancelPipelineRun,
+  cancelTaskRun,
   checkData,
   createCredential,
   createPipelineRun,
@@ -185,11 +186,33 @@ it('getPipelineRun', () => {
 
 it('cancelPipelineRun', () => {
   const name = 'foo';
+  const namespace = 'foospace';
+  const data = { fake: 'pipelineRun', spec: { status: 'running' } };
+  fetchMock.get(/pipelineruns/, Promise.resolve(data));
   const payload = {
-    status: 'PipelineRunCancelled'
+    fake: 'pipelineRun',
+    spec: { status: 'PipelineRunCancelled' }
   };
   fetchMock.put(`end:${name}`, 204);
-  return cancelPipelineRun({ name }).then(() => {
+  return cancelPipelineRun({ name, namespace }).then(() => {
+    expect(fetchMock.lastOptions()).toMatchObject({
+      body: JSON.stringify(payload)
+    });
+    fetchMock.restore();
+  });
+});
+
+it('cancelTaskRun', () => {
+  const name = 'foo';
+  const namespace = 'foospace';
+  const data = { fake: 'taskRun', spec: { status: 'running' } };
+  fetchMock.get(/taskruns/, Promise.resolve(data));
+  const payload = {
+    fake: 'taskRun',
+    spec: { status: 'TaskRunCancelled' }
+  };
+  fetchMock.put(`end:${name}`, 204);
+  return cancelTaskRun({ name, namespace }).then(() => {
     expect(fetchMock.lastOptions()).toMatchObject({
       body: JSON.stringify(payload)
     });

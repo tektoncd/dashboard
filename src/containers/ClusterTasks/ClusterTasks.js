@@ -50,7 +50,7 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
       return (
         <InlineNotification
           kind="error"
-          title="Error loading tasks"
+          title="Error loading cluster tasks"
           subtitle={error}
           lowContrast
         />

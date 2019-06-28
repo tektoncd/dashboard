@@ -29,7 +29,7 @@ import Add from '@carbon/icons-react/lib/add/16';
 import './PipelineRuns.scss';
 
 import { ALL_NAMESPACES } from '../../constants';
-import { getStatus, getStatusIcon } from '../../utils';
+import { getStatus, getStatusIcon, isRunning } from '../../utils';
 import { fetchPipelineRuns } from '../../actions/pipelineRuns';
 
 import {
@@ -39,6 +39,8 @@ import {
   getSelectedNamespace,
   isFetchingPipelineRuns
 } from '../../reducers';
+import CancelButton from '../../components/CancelButton/CancelButton';
+import { cancelPipelineRun } from '../../api';
 
 const initialState = {
   showCreatePipelineRunModal: false,
@@ -168,6 +170,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
               )}
               <StructuredListCell head>Status</StructuredListCell>
               <StructuredListCell head>Last Transition Time</StructuredListCell>
+              <StructuredListCell head />
             </StructuredListRow>
           </StructuredListHead>
           <StructuredListBody>
@@ -224,6 +227,20 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
                       : ''}
                   </StructuredListCell>
                   <StructuredListCell>{lastTransitionTime}</StructuredListCell>
+                  <StructuredListCell>
+                    {isRunning(reason, status) && (
+                      <CancelButton
+                        type="PipelineRun"
+                        name={pipelineRunName}
+                        onCancel={() =>
+                          cancelPipelineRun({
+                            name: pipelineRunName,
+                            namespace
+                          })
+                        }
+                      />
+                    )}
+                  </StructuredListCell>
                 </StructuredListRow>
               );
             })}
