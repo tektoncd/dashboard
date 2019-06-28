@@ -301,7 +301,7 @@ it('getPodLog', () => {
     status: 200,
     headers: { 'Content-Type': 'text/plain' }
   };
-  fetchMock.get(`end:logs/${name}`, responseConfig, {
+  fetchMock.get(`end:${name}/log`, responseConfig, {
     sendAsJson: false
   });
   return getPodLog({ name, namespace }).then(log => {
@@ -320,7 +320,7 @@ it('getPodLog with container name', () => {
     status: 200,
     headers: { 'Content-Type': 'text/plain' }
   };
-  fetchMock.get(`end:logs/${name}?container=${container}`, responseConfig, {
+  fetchMock.get(`end:${name}/log?container=${container}`, responseConfig, {
     sendAsJson: false
   });
   return getPodLog({ container, name, namespace }).then(log => {

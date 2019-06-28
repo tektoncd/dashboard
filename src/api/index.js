@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import { deleteRequest, get, post, put } from './comms';
+import { ALL_NAMESPACES } from '../constants';
 
 export function getAPIRoot() {
   const { href, hash } = window.location;
@@ -37,11 +38,30 @@ export function getAPI(type, { name = '', namespace } = {}, queryParams) {
   ].join('');
 }
 
+export function getKubeAPI(
+  type,
+  { name = '', namespace, subResource } = {},
+  queryParams
+) {
+  return [
+    apiRoot,
+    '/proxy/api/v1/',
+    namespace && namespace !== ALL_NAMESPACES
+      ? `namespaces/${encodeURIComponent(namespace)}/`
+      : '',
+    type,
+    '/',
+    encodeURIComponent(name),
+    subResource ? `/${subResource}` : '',
+    queryParams ? `?${new URLSearchParams(queryParams).toString()}` : ''
+  ].join('');
+}
+
 export function getTektonAPI(type, { name = '', namespace } = {}, queryParams) {
   return [
     apiRoot,
     '/proxy/apis/tekton.dev/v1alpha1/',
-    namespace && namespace !== '*'
+    namespace && namespace !== ALL_NAMESPACES
       ? `namespaces/${encodeURIComponent(namespace)}/`
       : '',
     type,
@@ -156,7 +176,11 @@ export function getPodLog({ container, name, namespace }) {
   if (container) {
     queryParams = { container };
   }
-  const uri = `${getAPI('logs', { name, namespace }, queryParams)}`;
+  const uri = `${getKubeAPI(
+    'pods',
+    { name, namespace, subResource: 'log' },
+    queryParams
+  )}`;
   return get(uri);
 }
 
@@ -199,11 +223,11 @@ export async function getExtensions() {
 }
 
 export function getNamespaces() {
-  const uri = `${apiRoot}/v1/namespaces`;
+  const uri = getKubeAPI('namespaces');
   return get(uri).then(checkData);
 }
 
 export function getServiceAccounts({ namespace } = {}) {
-  const uri = getAPI('serviceaccounts', { namespace });
+  const uri = getKubeAPI('serviceaccounts', { namespace });
   return get(uri).then(checkData);
 }
