@@ -23,8 +23,10 @@ function createByIdReducer({ type }) {
     switch (action.type) {
       case `${type}Created`:
       case `${type}Updated`:
-        const resource = { [action.payload.metadata.uid]: action.payload };
-        return merge({}, state, resource);
+        return {
+          ...state,
+          [action.payload.metadata.uid]: action.payload
+        };
       case `${type}Deleted`:
         const newState = { ...state };
         delete newState[action.payload.metadata.uid];
