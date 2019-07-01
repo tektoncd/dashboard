@@ -23,7 +23,7 @@ const createResource = (name, namespace, uid, other) => {
       namespace,
       uid
     },
-    other
+    ...other
   };
 };
 
@@ -80,24 +80,27 @@ it('PIPELINE_RESOURCES_FETCH_FAILURE', () => {
 });
 
 it('PipelineResource Events', () => {
+  const createdPipelineResource = createResource(name, namespace, uid, {
+    status: { running: true }
+  });
   const action = {
     type: 'PipelineResourceCreated',
-    payload: pipelineResource,
+    payload: createdPipelineResource,
     namespace
   };
 
   const state = reducer({}, action);
   expect(selectors.getPipelineResources(state, namespace)).toEqual([
-    pipelineResource
+    createdPipelineResource
   ]);
   expect(selectors.getPipelineResource(state, name, namespace)).toEqual(
-    pipelineResource
+    createdPipelineResource
   );
   expect(selectors.isFetchingPipelineResources(state)).toBe(false);
 
   // update pipeline resource
   const updatedPipelineResource = createResource(name, namespace, uid, {
-    fake: 'data'
+    status: { terminated: true }
   });
   const updateAction = {
     type: 'PipelineResourceUpdated',
@@ -113,7 +116,6 @@ it('PipelineResource Events', () => {
   );
 
   // delete pipeline resource
-
   const deleteAction = {
     type: 'PipelineResourceDeleted',
     payload: pipelineResource,
