@@ -27,7 +27,7 @@ import {
   ServiceAccountsDropdown
 } from '..';
 import { getPipeline } from '../../reducers';
-import { createPipelineRun } from '../../api';
+import { createPipelineRunAtProxy } from '../../api';
 import { getStore } from '../../store/index';
 
 import './CreatePipelineRun.scss';
@@ -211,42 +211,25 @@ class CreatePipelineRun extends React.Component {
     // Send API request to create PipelineRun
     const pipelineRef = this.getPipelineInfo(PIPELINE_REF);
     const namespace = this.getPipelineInfo(NAMESPACE);
-    const payload = {
-      metadata: {
-        name: `${pipelineRef}-run-${Date.now()}`
-      },
-      spec: {
-        pipelineRef: {
-          name: pipelineRef
-        },
-        resources: Object.keys(this.state.resources).map(name => ({
-          name,
-          resourceRef: { name: this.state.resources[name] }
-        })),
-        params: Object.keys(this.state.params).map(name => ({
-          name,
-          value: this.state.params[name]
-        })),
-        serviceAccount: this.state.serviceAccount,
-        timeout: this.state.timeout
-      }
-    };
-    // TODO: waiting for backend API endpoint to create arbitrary PipelineRun
-    const promise = createPipelineRun(payload, namespace);
-    promise
-      .then(headers => {
-        const url = headers.get('Content-Location');
-        const pipelineRunName = url.substring(url.lastIndexOf('/') + 1);
-        const finalURL = `/namespaces/${namespace}/pipelines/${pipelineRef}/runs/${pipelineRunName}`;
+    const { params, resources, serviceAccount, timeout } = this.state;
+    createPipelineRunAtProxy({
+      namespace,
+      pipelineName: pipelineRef,
+      resources,
+      params,
+      serviceAccount,
+      timeout
+    })
+      .then(response => {
         this.resetForm();
-        this.props.onSuccess({ name: pipelineRunName, url: finalURL });
+        this.props.onSuccess(response);
       })
       .catch(error => {
         error.response.text().then(text => {
           const statusCode = error.response.status;
           let errorMessage = `error code ${statusCode}`;
-          if (text !== '') {
-            errorMessage = `error code ${statusCode} (${text})`;
+          if (text) {
+            errorMessage = `${text} (error code ${statusCode})`;
           }
           this.setState({ submitError: errorMessage });
         });
@@ -335,27 +318,29 @@ class CreatePipelineRun extends React.Component {
               lowContrast
             />
           )}
-          <FormGroup legendText="">
-            <NamespacesDropdown
-              id="create-pipelinerun--namespaces-dropdown"
-              disabled={pipelineInfoDisabled}
-              invalid={validationError && !namespace}
-              invalidText="Namespace cannot be empty"
-              selectedItem={namespace ? { id: namespace, text: namespace } : ''}
-              onChange={this.handleNamespaceChange}
-            />
-            <PipelinesDropdown
-              id="create-pipelinerun--pipelines-dropdown"
-              namespace={namespace}
-              disabled={pipelineInfoDisabled}
-              invalid={validationError && !pipelineRef}
-              invalidText="Pipeline cannot be empty"
-              selectedItem={
-                pipelineRef ? { id: pipelineRef, text: pipelineRef } : ''
-              }
-              onChange={this.handlePipelineChange}
-            />
-          </FormGroup>
+          {!pipelineInfoDisabled && (
+            <FormGroup legendText="">
+              <NamespacesDropdown
+                id="create-pipelinerun--namespaces-dropdown"
+                invalid={validationError && !namespace}
+                invalidText="Namespace cannot be empty"
+                selectedItem={
+                  namespace ? { id: namespace, text: namespace } : ''
+                }
+                onChange={this.handleNamespaceChange}
+              />
+              <PipelinesDropdown
+                id="create-pipelinerun--pipelines-dropdown"
+                namespace={namespace}
+                invalid={validationError && !pipelineRef}
+                invalidText="Pipeline cannot be empty"
+                selectedItem={
+                  pipelineRef ? { id: pipelineRef, text: pipelineRef } : ''
+                }
+                onChange={this.handlePipelineChange}
+              />
+            </FormGroup>
+          )}
           {resourceSpecs && resourceSpecs.length !== 0 && (
             <FormGroup legendText="Pipeline Resources">
               {resourceSpecs.map(resourceSpec => (

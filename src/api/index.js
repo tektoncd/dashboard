@@ -127,6 +127,46 @@ export function createPipelineRun({ namespace, payload }) {
   return post(uri, payload);
 }
 
+export function createPipelineRunAtProxy({
+  namespace,
+  pipelineName,
+  resources,
+  params,
+  serviceAccount,
+  timeout
+}) {
+  // Create PipelineRun payload
+  // expect params and resources to be objects with keys 'name' and values 'value'
+  const payload = {
+    apiVersion: 'tekton.dev/v1alpha1',
+    kind: 'PipelineRun',
+    metadata: {
+      name: `${pipelineName}-run-${Date.now()}`
+    },
+    spec: {
+      pipelineRef: {
+        name: pipelineName
+      },
+      resources: Object.keys(resources).map(name => ({
+        name,
+        resourceRef: { name: resources[name] }
+      })),
+      params: Object.keys(params).map(name => ({
+        name,
+        value: params[name]
+      }))
+    }
+  };
+  if (serviceAccount) {
+    payload.spec.serviceAccount = serviceAccount;
+  }
+  if (timeout) {
+    payload.spec.timeout = timeout;
+  }
+  const uri = getTektonAPI('pipelineruns', { namespace });
+  return post(uri, payload);
+}
+
 export function getClusterTasks() {
   const uri = getTektonAPI('clustertasks');
   return get(uri).then(checkData);
