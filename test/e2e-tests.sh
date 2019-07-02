@@ -83,7 +83,7 @@ namespaceResponse=$(curl -X GET --header Content-Type:application/json http://lo
 
 echo $namespaceResponse
 
-if [[ $namespaceResponse != *"\"name\": \"default\""* ]]; then
+if [[ $namespaceResponse != *"NamespaceList"* ]]; then
   fail_test "Could not get namespaces from dashboard proxy"
 fi
 
