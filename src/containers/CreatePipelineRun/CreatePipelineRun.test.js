@@ -285,7 +285,7 @@ it('CreatePipelineRun handles api error', async () => {
     response: { status: 400, text: () => Promise.resolve('') }
   };
   const createPipelineRun = jest
-    .spyOn(API, 'createPipelineRun')
+    .spyOn(API, 'createPipelineRunAtProxy')
     .mockImplementation(() => Promise.reject(errorResponseMock));
   fireEvent.click(submitButton(getAllByText));
   await wait(() => expect(createPipelineRun).toHaveBeenCalledTimes(1));
@@ -318,12 +318,12 @@ it('CreatePipelineRun handles api error with text', async () => {
     response: { status: 401, text: () => Promise.resolve('example message') }
   };
   const createPipelineRun = jest
-    .spyOn(API, 'createPipelineRun')
+    .spyOn(API, 'createPipelineRunAtProxy')
     .mockImplementation(() => Promise.reject(errorResponseMock));
   fireEvent.click(submitButton(getAllByText));
   await wait(() => expect(createPipelineRun).toHaveBeenCalledTimes(1));
   await waitForElement(() => getByText(apiErrorRegExp));
-  await waitForElement(() => getByText(/error code 401 \(example message\)/i));
+  await waitForElement(() => getByText(/example message \(error code 401\)/i));
 });
 
 it('CreatePipelineRun renders empty', () => {
@@ -384,7 +384,7 @@ it('CreatePipelineRun renders pipeline controlled', () => {
       <CreatePipelineRun {...props} pipelineRef="pipeline-1" />
     </Provider>
   );
-  expect(queryByText(/namespace-1/i)).toBeTruthy();
+  expect(queryByText(/namespace-1/i)).toBeFalsy();
   expect(queryByText(/pipeline-1/i)).toBeTruthy();
   // Verify spec details are displayed
   testPipelineSpec('id-pipeline-1', queryByText, queryByValue);
@@ -474,40 +474,26 @@ it('CreatePipelineRun submits form', () => {
     target: { value: '120' }
   });
   // Submit
-  let pipelineRunName;
   const createPipelineRun = jest
-    .spyOn(API, 'createPipelineRun')
-    .mockImplementation(payload => {
-      ({
-        metadata: { name: pipelineRunName }
-      } = payload);
-      return Promise.resolve({
-        get: () => '/v1/namespaces/default/pipelineruns//tekton-pipeline-run'
-      });
-    });
+    .spyOn(API, 'createPipelineRunAtProxy')
+    .mockImplementation(() => Promise.resolve({}));
   fireEvent.click(submitButton(getAllByText));
   expect(createPipelineRun).toHaveBeenCalledTimes(1);
   const payload = {
-    metadata: {
-      name: pipelineRunName
+    namespace: 'namespace-1',
+    pipelineName: 'pipeline-1',
+    resources: {
+      'resource-1': 'pipeline-resource-1',
+      'resource-2': 'pipeline-resource-2'
     },
-    spec: {
-      pipelineRef: {
-        name: 'pipeline-1'
-      },
-      resources: [
-        { name: 'resource-1', resourceRef: { name: 'pipeline-resource-1' } },
-        { name: 'resource-2', resourceRef: { name: 'pipeline-resource-2' } }
-      ],
-      params: [
-        { name: 'param-1', value: 'value-1' },
-        { name: 'param-2', value: 'value-2' }
-      ],
-      serviceAccount: 'service-account-1',
-      timeout: '120'
-    }
+    params: {
+      'param-1': 'value-1',
+      'param-2': 'value-2'
+    },
+    serviceAccount: 'service-account-1',
+    timeout: '120'
   };
-  expect(createPipelineRun).toHaveBeenCalledWith(payload, 'namespace-1');
+  expect(createPipelineRun).toHaveBeenCalledWith(payload);
 });
 
 it('CreatePipelineRun handles onClose event', () => {

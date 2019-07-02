@@ -18,6 +18,7 @@ import {
   checkData,
   createCredential,
   createPipelineRun,
+  createPipelineRunAtProxy,
   deleteCredential,
   getAPI,
   getAPIRoot,
@@ -339,6 +340,49 @@ it('createPipelineRun', () => {
       body: JSON.stringify(payload)
     });
     fetchMock.restore();
+  });
+});
+
+it('createPipelineRunAtProxy', () => {
+  const mockDateNow = jest
+    .spyOn(Date, 'now')
+    .mockImplementation(() => 'fake-timestamp');
+  const pipelineName = 'fake-pipelineName';
+  const resources = { 'fake-resource-name': 'fake-resource-value' };
+  const params = { 'fake-param-name': 'fake-param-value' };
+  const serviceAccount = 'fake-serviceAccount';
+  const timeout = 'fake-timeout';
+  const payload = { pipelineName, resources, params, serviceAccount, timeout };
+  const data = {
+    apiVersion: 'tekton.dev/v1alpha1',
+    kind: 'PipelineRun',
+    metadata: {
+      name: `${pipelineName}-run-${Date.now()}`
+    },
+    spec: {
+      pipelineRef: {
+        name: pipelineName
+      },
+      resources: Object.keys(resources).map(name => ({
+        name,
+        resourceRef: { name: resources[name] }
+      })),
+      params: Object.keys(params).map(name => ({
+        name,
+        value: params[name]
+      })),
+      serviceAccount,
+      timeout
+    }
+  };
+  fetchMock.post('*', data);
+  return createPipelineRunAtProxy(payload).then(response => {
+    expect(response).toEqual(data);
+    expect(fetchMock.lastOptions()).toMatchObject({
+      body: JSON.stringify(data)
+    });
+    fetchMock.restore();
+    mockDateNow.mockRestore();
   });
 });
 
