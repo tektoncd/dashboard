@@ -181,7 +181,7 @@ export function getPodLog({ container, name, namespace }) {
     { name, namespace, subResource: 'log' },
     queryParams
   )}`;
-  return get(uri);
+  return get(uri, { Accept: 'text/plain' });
 }
 
 export function getCredentials(namespace) {

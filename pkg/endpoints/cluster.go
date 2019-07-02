@@ -17,19 +17,18 @@ import (
 	"net/http"
 	"net/url"
 	"time"
+	"encoding/json"
 
-	restful "github.com/emicklei/go-restful"
+	"github.com/emicklei/go-restful"
 	"github.com/tektoncd/dashboard/pkg/broadcaster"
 	"github.com/tektoncd/dashboard/pkg/logging"
 	"k8s.io/api/core/v1"
 	"k8s.io/client-go/tools/cache"
-
 	"github.com/tektoncd/dashboard/pkg/utils"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/informers"
 )
 
-/* Get all tasks in a given namespace */
 func (r Resource) proxyRequest(request *restful.Request, response *restful.Response) {
 	parsedUrl, err := url.Parse(request.Request.URL.String())
 	if err != nil {
@@ -38,15 +37,17 @@ func (r Resource) proxyRequest(request *restful.Request, response *restful.Respo
 	}
 	uri := request.PathParameter("subpath") + "?" + parsedUrl.RawQuery
 	forwardRequest := r.K8sClient.CoreV1().RESTClient().Verb(request.Request.Method).RequestURI(uri).Body(request.Request.Body)
-	for h, val := range request.Request.Header {
-		forwardRequest.SetHeader(h, val...)
-	}
-	responseBody, requestError := forwardRequest.Do().Raw()
+	forwardRequest.SetHeader("Content-Type", request.HeaderParameter("Content-Type"))
+	forwardResponse := forwardRequest.Do()
+
+	responseBody, requestError := forwardResponse.Raw()
 	if requestError != nil {
 		utils.RespondError(response, requestError, http.StatusNotFound)
 		return
 	}
+
 	logging.Log.Debugf("Forwarding to url : %s", forwardRequest.URL().String())
+	response.Header().Add("Content-Type", getContentType(responseBody))
 	response.Write(responseBody)
 }
 
@@ -120,4 +121,11 @@ func (r Resource) namespaceDeleted(obj interface{}) {
 	}
 
 	resourcesChannel <- data
+}
+
+func getContentType(content []byte) string {
+	if json.Valid(content) {
+		return "application/json"
+	}
+	return "text/plain"
 }
