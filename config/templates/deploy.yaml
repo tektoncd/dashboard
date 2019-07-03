@@ -216,5 +216,3 @@ objects:
       - apply
       - -f
       - ${inputs.params.pathToResourceFiles}/${inputs.params.apply-directory} 
-
-

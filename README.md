@@ -37,6 +37,10 @@ The `install-dev.sh` script will build and push an image of the Tekton Dashboard
 2. [Checkout](https://github.com/tektoncd/dashboard/blob/master/DEVELOPMENT.md#checkout-your-fork) the repository
 3. Install deployment config `$oc process -f config/templates/deploy.yaml | oc apply -f-`
 4. Install build config `$oc process -f config/templates/build.yaml | oc apply -f-`
+5. Wait until the pod `tekton-dashboard-1` is running in the tekton-pipelines namespace
+
+## Accessing the Dashboard on Minishift
+The Dashboard can be accessed by running `kubectl port-forward $(kubectl get pod --namespace tekton-pipelines -l app=tekton-dashboard -o name)  --namespace tekton-pipelines 9097:9097`. You can access the web UI at `http://localhost:9097/`
 
 ## Accessing the Dashboard
 The Dashboard can be accessed through its ClusterIP Service by running `kubectl proxy`. Assuming tekton-pipelines is the install namespace for the dashboard, you can access the web UI at `localhost:8001/api/v1/namespaces/tekton-pipelines/services/tekton-dashboard:http/proxy/`
