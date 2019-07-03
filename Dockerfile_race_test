@@ -16,11 +16,10 @@ USER root
 RUN apt-get install curl git
 
 RUN curl -fsSL -o /usr/local/bin/dep https://github.com/golang/dep/releases/download/v0.5.0/dep-linux-amd64 && chmod +x /usr/local/bin/dep
-WORKDIR /go/src/github.com/tektoncd/dashboard/
+WORKDIR /go/src/github.com/tektoncd/dashboard
 COPY . .
 RUN dep ensure -vendor-only
-WORKDIR /go/src/github.com/tektoncd/dashboard/pkg/endpoints
 ENV WEB_RESOURCES_DIR=/go/src/github.com/tektoncd/dashboard/testdata/web/
 
 # CGO_ENABLED=1 is needed for -race on go test
-RUN CGO_ENABLED=1 NAMESPACE=default GOOS=linux go test -race -v
+RUN CGO_ENABLED=1 NAMESPACE=default GOOS=linux go test -race -v ./...

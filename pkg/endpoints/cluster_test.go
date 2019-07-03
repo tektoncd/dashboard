@@ -11,77 +11,83 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package endpoints
+package endpoints_test
 
 import (
 	"encoding/json"
-	"net/http/httptest"
+	"fmt"
+	"net/http"
 	"testing"
 
+	"github.com/tektoncd/dashboard/pkg/testutils"
 	corev1 "k8s.io/api/core/v1"
 	extensionsV1beta1 "k8s.io/api/extensions/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func TestGetAllNamespaces(t *testing.T) {
+// GET namespaces
+func TestGETAllNamespaces(t *testing.T) {
+	server, _, namespace := testutils.DummyServer()
 
-	r := dummyResource()
-
-	namespace := "test-namespace"
-	r.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace}})
-
-	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/", nil)
-	req := dummyRestfulRequest(httpReq, "", "")
-	httpWriter := httptest.NewRecorder()
-	resp := dummyRestfulResponse(httpWriter)
-
-	r.getAllNamespaces(req, resp)
-
-	result := corev1.NamespaceList{}
-	json.NewDecoder(httpWriter.Body).Decode(&result)
-
-	if len(result.Items) != 1 {
-		t.Errorf("Number of namespaces: expected: %d, returned: %d", 1, len(result.Items))
+	namespaces := []corev1.Namespace{
+		// This namespace was created in DummyServer
+		corev1.Namespace{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: namespace,
+			},
+		},
 	}
-	if result.Items[0].Name != namespace {
-		t.Errorf("%s is not returned: %s, %s", namespace, result.Items[0].Name, result.Items[1].Name)
+
+	httpReq := testutils.DummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces", server.URL), nil)
+	response, _ := http.DefaultClient.Do(httpReq)
+	responseNamespaceList := corev1.NamespaceList{}
+	if err := json.NewDecoder(response.Body).Decode(&responseNamespaceList); err != nil {
+		t.Fatalf("Error decoding getAllNamespaces response: %v\n", err)
+	} else {
+		if err := testutils.ObjectListDeepEqual(namespaces, responseNamespaceList.Items); err != nil {
+			t.Fatalf(err.Error())
+		}
 	}
 }
 
-func TestGetAllServiceAccounts(t *testing.T) {
+// GET serviceaccounts
+func TestGETAllServiceAccounts(t *testing.T) {
+	server, r, namespace := testutils.DummyServer()
+	defer server.Close()
 
-	r := dummyResource()
-
-	namespace := "test-namespace"
-	r.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace}})
-
-	serviceAccount := "test-sa"
-	r.K8sClient.CoreV1().ServiceAccounts(namespace).Create(&corev1.ServiceAccount{ObjectMeta: metav1.ObjectMeta{Name: serviceAccount}})
-
-	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/test-namespace/serviceaccount", nil)
-	req := dummyRestfulRequest(httpReq, "", "")
-	httpWriter := httptest.NewRecorder()
-	resp := dummyRestfulResponse(httpWriter)
-
-	r.getAllServiceAccounts(req, resp)
-
-	result := corev1.ServiceAccountList{}
-	json.NewDecoder(httpWriter.Body).Decode(&result)
-
-	if len(result.Items) != 1 {
-		t.Errorf("Number of service accounts: expected: %d, returned: %d", 1, len(result.Items))
+	serviceAccounts := []corev1.ServiceAccount{
+		corev1.ServiceAccount{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      "test-sa",
+				Namespace: namespace,
+			},
+		},
 	}
-	if result.Items[0].Name != serviceAccount {
-		t.Errorf("%s is not returned: %s, %s", serviceAccount, result.Items[0].Name, result.Items[1].Name)
+	for _, serviceAccount := range serviceAccounts {
+		_, err := r.K8sClient.CoreV1().ServiceAccounts(namespace).Create(&serviceAccount)
+		if err != nil {
+			t.Fatalf("Error creating serviceAccount '%s': %v\n", serviceAccount.Name, err)
+		}
 	}
+
+	httpReq := testutils.DummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/serviceaccounts", server.URL, namespace), nil)
+	response, _ := http.DefaultClient.Do(httpReq)
+	responseServiceAccountList := corev1.ServiceAccountList{}
+	if err := json.NewDecoder(response.Body).Decode(&responseServiceAccountList); err != nil {
+		t.Fatalf("Error decoding getAllServiceAccounts response: %v\n", err)
+	} else {
+		if err := testutils.ObjectListDeepEqual(serviceAccounts, responseServiceAccountList.Items); err != nil {
+			t.Fatalf(err.Error())
+		}
+	}
+
 }
 
 func TestGetIngress(t *testing.T) {
-
-	r := dummyResource()
+	server, r, namespace := testutils.DummyServer()
+	defer server.Close()
 
 	hostName := "dashboard-host"
-	namespace := "test-namespace"
 	ingress := &extensionsV1beta1.Ingress{ObjectMeta: metav1.ObjectMeta{Name: "tekton-dashboard"}}
 	myRule := &extensionsV1beta1.IngressRule{}
 	myRule.Host = hostName
@@ -90,19 +96,19 @@ func TestGetIngress(t *testing.T) {
 	myRuleAsArray[0] = *myRule
 	ingress.Spec.Rules = myRuleAsArray
 
-	r.K8sClient.ExtensionsV1beta1().Ingresses(namespace).Create(ingress)
-
-	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/test-namespace/ingress", nil)
-	req := dummyRestfulRequest(httpReq, "test-namespace", "")
-	httpWriter := httptest.NewRecorder()
-	resp := dummyRestfulResponse(httpWriter)
-
-	r.getIngress(req, resp)
-
-	returnedIngress := ""
-	json.NewDecoder(httpWriter.Body).Decode(&returnedIngress)
-
-	if returnedIngress != "dashboard-host" {
-		t.Errorf("response for getting the Ingress host was %s, should have been dashboard-host", returnedIngress)
+	_, err := r.K8sClient.ExtensionsV1beta1().Ingresses(namespace).Create(ingress)
+	if err != nil {
+		t.Fatalf("Error creating ingress '%s': %v\n", ingress.Name, err)
 	}
+
+	httpReq := testutils.DummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/ingress", server.URL, namespace), nil)
+	response, _ := http.DefaultClient.Do(httpReq)
+	responseIngressHost := ""
+	if err := json.NewDecoder(response.Body).Decode(&responseIngressHost); err != nil {
+		t.Fatalf("Error decoding getIngress response: %v\n", err)
+	}
+	if responseIngressHost != hostName {
+		t.Errorf("Response for getting the Ingress host was %s, should have been %s", responseIngressHost, hostName)
+	}
+
 }

@@ -23,14 +23,12 @@ import (
 	"time"
 
 	restful "github.com/emicklei/go-restful"
-	"github.com/tektoncd/dashboard/pkg/broadcaster"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
 	"github.com/tektoncd/dashboard/pkg/utils"
 	v1alpha1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
-	informers "github.com/tektoncd/pipeline/pkg/client/informers/externalversions"
+
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/tools/cache"
 )
 
 //BuildInformation - information required to build a particular commit from a Git repository.
@@ -107,18 +105,18 @@ type LogContainer struct {
 	Logs []string
 }
 
-const crdNameLengthLimit = 53
+const CRDNameLengthLimit = 53
 
 // Unexported field within tekton
 // "github.com/tektoncd/pipeline/pkg/reconciler/v1alpha1/taskrun/resources"
-const containerPrefix = "build-step-"
+const ContainerPrefix = "build-step-"
 
-const gitServerLabel = "gitServer"
-const gitOrgLabel = "gitOrg"
-const gitRepoLabel = "gitRepo"
+const GitServerLabel = "gitServer"
+const GitOrgLabel = "gitOrg"
+const GitRepoLabel = "gitRepo"
 
 /* Get all pipelines in a given namespace */
-func (r Resource) getAllPipelines(request *restful.Request, response *restful.Response) {
+func (r Resource) GetAllPipelines(request *restful.Request, response *restful.Response) {
 	namespace := utils.GetNamespace(request)
 	pipelines := r.PipelineClient.TektonV1alpha1().Pipelines(namespace)
 	logging.Log.Debugf("In getAllPipelines - namespace: %s", namespace)
@@ -132,7 +130,7 @@ func (r Resource) getAllPipelines(request *restful.Request, response *restful.Re
 }
 
 /* API route for getting a given pipeline by name in a given namespace */
-func (r Resource) getPipeline(request *restful.Request, response *restful.Response) {
+func (r Resource) GetPipeline(request *restful.Request, response *restful.Response) {
 	name := request.PathParameter("name")
 	namespace := request.PathParameter("namespace")
 
@@ -158,13 +156,13 @@ func (r Resource) getPipelineImpl(name, namespace string) (v1alpha1.Pipeline, er
 }
 
 /* Get all pipeline runs in a given namespace, filters based on parameters */
-func (r Resource) getAllPipelineRuns(request *restful.Request, response *restful.Response) {
+func (r Resource) GetAllPipelineRuns(request *restful.Request, response *restful.Response) {
 	namespace := utils.GetNamespace(request)
 	repository := request.QueryParameter("repository")
 	// FakeClient does not support filtering by arbitrary fields(Only metadata.name/namespace), filtered post List()
 	name := request.QueryParameter("name")
 
-	pipelinerunList, appResponse := r.GetAllPipelineRunsImpl(namespace, repository, name)
+	pipelinerunList, appResponse := r.getAllPipelineRunsImpl(namespace, repository, name)
 	if appResponse.ERROR != nil {
 		logging.Log.Errorf("there was a problem getting the PipelineRuns list: %s", appResponse.ERROR)
 		utils.RespondError(response, appResponse.ERROR, appResponse.CODE)
@@ -177,7 +175,7 @@ func (r Resource) getAllPipelineRuns(request *restful.Request, response *restful
 
 /*GetAllPipelineRunsImpl - Returns a pointer to a list of PipelineRuns in a given namespace,
 an empty string repository query can be provided meaning that all PipelineRuns in the namespace will be returned  */
-func (r Resource) GetAllPipelineRunsImpl(namespace, repository, name string) (v1alpha1.PipelineRunList, AppResponse) {
+func (r Resource) getAllPipelineRunsImpl(namespace, repository, name string) (v1alpha1.PipelineRunList, AppResponse) {
 
 	var queryParams []string
 	if repository != "" {
@@ -202,9 +200,9 @@ func (r Resource) GetAllPipelineRunsImpl(namespace, repository, name string) (v1
 			return v1alpha1.PipelineRunList{}, AppResponse{err, errorMsg, http.StatusInternalServerError}
 		}
 		labels := []string{
-			gitServerLabel + "=" + server,
-			gitOrgLabel + "=" + org,
-			gitRepoLabel + "=" + repo,
+			GitServerLabel + "=" + server,
+			GitOrgLabel + "=" + org,
+			GitRepoLabel + "=" + repo,
 		}
 		labelSelector = strings.Join(labels, ",")
 	}
@@ -226,7 +224,7 @@ func (r Resource) GetAllPipelineRunsImpl(namespace, repository, name string) (v1
 }
 
 /* Get a given pipeline run by name in a given namespace */
-func (r Resource) getPipelineRun(request *restful.Request, response *restful.Response) {
+func (r Resource) GetPipelineRun(request *restful.Request, response *restful.Response) {
 	name := request.PathParameter("name")
 	namespace := request.PathParameter("namespace")
 
@@ -239,7 +237,7 @@ func (r Resource) getPipelineRun(request *restful.Request, response *restful.Res
 	response.WriteEntity(pipelinerun)
 }
 
-func (r Resource) createPipelineRun(request *restful.Request, response *restful.Response) {
+func (r Resource) CreatePipelineRun(request *restful.Request, response *restful.Response) {
 	namespace := request.PathParameter("namespace")
 
 	pipelineRunData := ManualPipelineRun{}
@@ -249,9 +247,9 @@ func (r Resource) createPipelineRun(request *restful.Request, response *restful.
 		return
 	}
 
-	createResponse, pipelineRunName := r.CreatePipelineRunImpl(pipelineRunData, namespace)
-	if createResponse.CODE == 201 {
-		writeResponseLocation(request, response, pipelineRunName)
+	createResponse, pipelineRunName := r.createPipelineRunImpl(pipelineRunData, namespace)
+	if createResponse.CODE == http.StatusCreated {
+		utils.WriteResponseLocation(request, response, pipelineRunName)
 	} else { // anything other than 201 is an error - RespondError
 		utils.RespondError(response, createResponse.ERROR, createResponse.CODE)
 	}
@@ -259,7 +257,7 @@ func (r Resource) createPipelineRun(request *restful.Request, response *restful.
 
 /*CreatePipelineRunImpl - Create a new manual pipeline run and resources in a given namespace
 method assumes you've already applied the yaml: so the pipeline definition and its tasks must exist upfront*/
-func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, namespace string) (response *AppResponse, name string) {
+func (r Resource) createPipelineRunImpl(pipelineRunData ManualPipelineRun, namespace string) (response *AppResponse, name string) {
 
 	pipelineName := pipelineRunData.PIPELINENAME
 	serviceAccount := pipelineRunData.SERVICEACCOUNT
@@ -268,8 +266,8 @@ func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, names
 	timestamp := time.Now().UnixNano()
 	generatedPipelineRunName := fmt.Sprintf("%s-run-%d", pipelineName, timestamp)
 	// Shorten name
-	if len(generatedPipelineRunName) > crdNameLengthLimit {
-		generatedPipelineRunName = generatedPipelineRunName[:crdNameLengthLimit-1]
+	if len(generatedPipelineRunName) > CRDNameLengthLimit {
+		generatedPipelineRunName = generatedPipelineRunName[:CRDNameLengthLimit-1]
 	}
 
 	pipeline, err := r.getPipelineImpl(pipelineName, namespace)
@@ -354,7 +352,7 @@ func (r Resource) CreatePipelineRunImpl(pipelineRunData ManualPipelineRun, names
 }
 
 /* Get a given pipeline resource by name in a given namespace */
-func (r Resource) getPipelineResource(request *restful.Request, response *restful.Response) {
+func (r Resource) GetPipelineResource(request *restful.Request, response *restful.Response) {
 	name := request.PathParameter("name")
 	namespace := request.PathParameter("namespace")
 	logging.Log.Debugf("In getPipelineResource, name: %s, namespace: %s", name, namespace)
@@ -369,7 +367,7 @@ func (r Resource) getPipelineResource(request *restful.Request, response *restfu
 }
 
 /* Get all tasks in a given namespace */
-func (r Resource) getAllTasks(request *restful.Request, response *restful.Response) {
+func (r Resource) GetAllTasks(request *restful.Request, response *restful.Response) {
 	namespace := utils.GetNamespace(request)
 	tasks := r.PipelineClient.TektonV1alpha1().Tasks(namespace)
 	logging.Log.Debugf("In getAllTasks: namespace: %s", namespace)
@@ -383,7 +381,7 @@ func (r Resource) getAllTasks(request *restful.Request, response *restful.Respon
 }
 
 /* Get a given task by name in a given namespace */
-func (r Resource) getTask(request *restful.Request, response *restful.Response) {
+func (r Resource) GetTask(request *restful.Request, response *restful.Response) {
 	namespace := request.PathParameter("namespace")
 	name := request.PathParameter("name")
 	logging.Log.Debugf("In getTask, name: %s, namespace: %s", name, namespace)
@@ -397,7 +395,7 @@ func (r Resource) getTask(request *restful.Request, response *restful.Response) 
 }
 
 /* Get all task runs in a given namespace, filters based on parameters */
-func (r Resource) getAllTaskRuns(request *restful.Request, response *restful.Response) {
+func (r Resource) GetAllTaskRuns(request *restful.Request, response *restful.Response) {
 	namespace := utils.GetNamespace(request)
 	// FakeClient does not support filtering by arbitrary fields(Only metadata.name/namespace), filtered post List()
 	name := request.QueryParameter("name")
@@ -426,7 +424,7 @@ func (r Resource) getAllTaskRuns(request *restful.Request, response *restful.Res
 }
 
 /* Get a given task in a given namespace */
-func (r Resource) getTaskRun(request *restful.Request, response *restful.Response) {
+func (r Resource) GetTaskRun(request *restful.Request, response *restful.Response) {
 	namespace := request.PathParameter("namespace")
 	name := request.PathParameter("name")
 
@@ -441,7 +439,7 @@ func (r Resource) getTaskRun(request *restful.Request, response *restful.Respons
 }
 
 /* Get the logs for a given pod by name in a given namespace */
-func (r Resource) getPodLog(request *restful.Request, response *restful.Response) {
+func (r Resource) GetPodLog(request *restful.Request, response *restful.Response) {
 	namespace := request.PathParameter("namespace")
 	name := request.PathParameter("name")
 	container := request.QueryParameter("container")
@@ -454,6 +452,9 @@ func (r Resource) getPodLog(request *restful.Request, response *restful.Response
 	}
 
 	req := r.K8sClient.CoreV1().Pods(namespace).GetLogs(name, logOptions)
+	if req.URL().Path == "" {
+		return
+	}
 	podLogs, err := req.Stream()
 	if err != nil {
 		utils.RespondError(response, err, http.StatusNotFound)
@@ -473,7 +474,7 @@ func (r Resource) getPodLog(request *restful.Request, response *restful.Response
 }
 
 /* Get the logs for a given task run by name in a given namespace */
-func (r Resource) getTaskRunLog(request *restful.Request, response *restful.Response) {
+func (r Resource) GetTaskRunLog(request *restful.Request, response *restful.Response) {
 	taskRunName := request.PathParameter("name")
 	namespace := request.PathParameter("namespace")
 
@@ -530,7 +531,7 @@ func makeTaskRunLog(r Resource, namespace string, pod *v1.Pod) TaskRunLog {
 		taskRunLog.InitContainers = append(taskRunLog.InitContainers, l)
 	})
 	setContainers(podContainers, func(l LogContainer) {
-		if strings.HasPrefix(l.Name, containerPrefix) {
+		if strings.HasPrefix(l.Name, ContainerPrefix) {
 			taskRunLog.StepContainers = append(taskRunLog.StepContainers, l)
 		} else {
 			taskRunLog.PodContainers = append(taskRunLog.PodContainers, l)
@@ -576,9 +577,9 @@ func definePipelineRun(pipelineRunName, namespace, saName, repoUrl string,
 			Namespace: namespace,
 			Labels: map[string]string{
 				"app":          "tekton-app",
-				gitServerLabel: gitServer,
-				gitOrgLabel:    gitOrg,
-				gitRepoLabel:   gitRepo,
+				GitServerLabel: gitServer,
+				GitOrgLabel:    gitOrg,
+				GitRepoLabel:   gitRepo,
 			},
 		},
 
@@ -606,8 +607,8 @@ func (r Resource) createPipelineResourceForPipelineRun(resourceData ManualPipeli
 	registryURL := resourceData.REGISTRYLOCATION
 	resourceName = fmt.Sprintf("%s-%d", resourceName, timestamp)
 	// Shorten name
-	if len(resourceName) > crdNameLengthLimit {
-		resourceName = resourceName[:crdNameLengthLimit-1]
+	if len(resourceName) > CRDNameLengthLimit {
+		resourceName = resourceName[:CRDNameLengthLimit-1]
 	}
 
 	var paramsForResource []v1alpha1.Param
@@ -660,7 +661,7 @@ func getGitValues(url string) (gitServer, gitOrg, gitRepo string, err error) {
 }
 
 /* Get the logs for a given pipelinerun by name in a given namespace */
-func (r Resource) getPipelineRunLog(request *restful.Request, response *restful.Response) {
+func (r Resource) GetPipelineRunLog(request *restful.Request, response *restful.Response) {
 	namespace := request.PathParameter("namespace")
 	name := request.PathParameter("name")
 
@@ -684,7 +685,7 @@ func (r Resource) getPipelineRunLog(request *restful.Request, response *restful.
 }
 
 /* Get all pipeline resources in a given namespace */
-func (r Resource) getAllPipelineResources(request *restful.Request, response *restful.Response) {
+func (r Resource) GetAllPipelineResources(request *restful.Request, response *restful.Response) {
 	namespace := utils.GetNamespace(request)
 	pipelineresources := r.PipelineClient.TektonV1alpha1().PipelineResources(namespace)
 	logging.Log.Debugf("In getAllPipelineResources - namespace: %s", namespace)
@@ -698,7 +699,7 @@ func (r Resource) getAllPipelineResources(request *restful.Request, response *re
 }
 
 /* Update a given PipelineRun by name in a given namespace */
-func (r Resource) updatePipelineRun(request *restful.Request, response *restful.Response) {
+func (r Resource) UpdatePipelineRun(request *restful.Request, response *restful.Response) {
 	name := request.PathParameter("name")
 	namespace := request.PathParameter("namespace")
 	logging.Log.Debugf("In updatePipelineRun - name: %s, namespace: %s", name, namespace)
@@ -727,7 +728,7 @@ func (r Resource) updatePipelineRun(request *restful.Request, response *restful.
 	logging.Log.Debugf("Current status of PipelineRun %s in namespace %s is: %s, wanting status: %s", name, namespace, currentStatus, desiredStatus)
 
 	// If there's anything else we want to allow, update this code
-	if desiredStatus != "PipelineRunCancelled" {
+	if desiredStatus != v1alpha1.PipelineRunSpecStatusCancelled {
 		errorMsg := "error updating PipelineRun status (bad request received), status must be set to PipelineRunCancelled."
 		logging.Log.Errorf(errorMsg)
 		err := errors.New(errorMsg)
@@ -755,213 +756,4 @@ func (r Resource) updatePipelineRun(request *restful.Request, response *restful.
 	// Not to be confused with WriteEntity which always gives a 200 even if the parameter is something other than StatusOk
 
 	response.WriteHeader(204)
-}
-
-// StartPipelineRunController - registers the code that reacts to changes in kube PipelineRuns
-func (r Resource) StartResourcesController(stopCh <-chan struct{}) {
-	logging.Log.Debug("Into StartResourcesController")
-
-	resourcesInformerFactory := informers.NewSharedInformerFactory(r.PipelineClient, time.Second*30)
-	pipelineInformer := resourcesInformerFactory.Tekton().V1alpha1().Pipelines()
-	pipelineInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc:    r.pipelineCreated,
-		UpdateFunc: r.pipelineUpdated,
-		DeleteFunc: r.pipelineDeleted,
-	})
-	taskInformer := resourcesInformerFactory.Tekton().V1alpha1().Tasks()
-	taskInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc:    r.taskCreated,
-		UpdateFunc: r.taskUpdated,
-		DeleteFunc: r.taskDeleted,
-	})
-	pipelineRunInformer := resourcesInformerFactory.Tekton().V1alpha1().PipelineRuns()
-	pipelineRunInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc:    r.pipelineRunCreated,
-		UpdateFunc: r.pipelineRunUpdated,
-		DeleteFunc: r.pipelineRunDeleted,
-	})
-	taskRunInformer := resourcesInformerFactory.Tekton().V1alpha1().TaskRuns()
-	taskRunInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc:    r.taskRunCreated,
-		UpdateFunc: r.taskRunUpdated,
-		DeleteFunc: r.taskRunDeleted,
-	})
-	pipelineResourceInformer := resourcesInformerFactory.Tekton().V1alpha1().PipelineResources()
-	pipelineResourceInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc:    r.pipelineResourceCreated,
-		UpdateFunc: r.pipelineResourceUpdated,
-		DeleteFunc: r.pipelineResourceDeleted,
-	})
-
-	go resourcesInformerFactory.Start(stopCh)
-	logging.Log.Info("Resource Events Controller Started")
-}
-
-//pipeline events
-func (r Resource) pipelineCreated(obj interface{}) {
-	logging.Log.Debug("In pipelineCreated")
-
-	data := broadcaster.SocketData{
-		MessageType: broadcaster.PipelineCreated,
-		Payload:     obj.(*v1alpha1.Pipeline),
-	}
-
-	resourcesChannel <- data
-}
-
-func (r Resource) pipelineUpdated(oldObj, newObj interface{}) {
-
-	if newObj.(*v1alpha1.Pipeline).GetResourceVersion() != oldObj.(*v1alpha1.Pipeline).GetResourceVersion() {
-		data := broadcaster.SocketData{
-			MessageType: broadcaster.PipelineUpdated,
-			Payload:     newObj.(*v1alpha1.Pipeline),
-		}
-		resourcesChannel <- data
-	}
-}
-
-func (r Resource) pipelineDeleted(obj interface{}) {
-	logging.Log.Debug("In pipelineDeleted")
-
-	data := broadcaster.SocketData{
-		MessageType: broadcaster.PipelineDeleted,
-		Payload:     obj.(*v1alpha1.Pipeline),
-	}
-
-	resourcesChannel <- data
-}
-
-// task events
-func (r Resource) taskCreated(obj interface{}) {
-	logging.Log.Debug("In taskCreated")
-
-	data := broadcaster.SocketData{
-		MessageType: broadcaster.TaskCreated,
-		Payload:     obj.(*v1alpha1.Task),
-	}
-
-	resourcesChannel <- data
-}
-
-func (r Resource) taskUpdated(oldObj, newObj interface{}) {
-
-	if newObj.(*v1alpha1.Task).GetResourceVersion() != oldObj.(*v1alpha1.Task).GetResourceVersion() {
-		data := broadcaster.SocketData{
-			MessageType: broadcaster.TaskUpdated,
-			Payload:     newObj.(*v1alpha1.Task),
-		}
-		resourcesChannel <- data
-	}
-}
-
-func (r Resource) taskDeleted(obj interface{}) {
-	logging.Log.Debug("In taskDeleted")
-
-	data := broadcaster.SocketData{
-		MessageType: broadcaster.TaskDeleted,
-		Payload:     obj.(*v1alpha1.Task),
-	}
-
-	resourcesChannel <- data
-}
-
-//pipeline run events
-func (r Resource) pipelineRunCreated(obj interface{}) {
-	logging.Log.Debug("In pipelineRunCreated")
-
-	data := broadcaster.SocketData{
-		MessageType: broadcaster.PipelineRunCreated,
-		Payload:     obj.(*v1alpha1.PipelineRun),
-	}
-
-	resourcesChannel <- data
-}
-
-func (r Resource) pipelineRunUpdated(oldObj, newObj interface{}) {
-
-	if newObj.(*v1alpha1.PipelineRun).GetResourceVersion() != oldObj.(*v1alpha1.PipelineRun).GetResourceVersion() {
-		data := broadcaster.SocketData{
-			MessageType: broadcaster.PipelineRunUpdated,
-			Payload:     newObj.(*v1alpha1.PipelineRun),
-		}
-		resourcesChannel <- data
-	}
-}
-
-func (r Resource) pipelineRunDeleted(obj interface{}) {
-	logging.Log.Debug("In pipelineRunDeleted")
-
-	data := broadcaster.SocketData{
-		MessageType: broadcaster.PipelineRunDeleted,
-		Payload:     obj.(*v1alpha1.PipelineRun),
-	}
-
-	resourcesChannel <- data
-}
-
-// task run events
-func (r Resource) taskRunCreated(obj interface{}) {
-	logging.Log.Debug("In taskRunCreated")
-
-	data := broadcaster.SocketData{
-		MessageType: broadcaster.TaskRunCreated,
-		Payload:     obj.(*v1alpha1.TaskRun),
-	}
-
-	resourcesChannel <- data
-}
-
-func (r Resource) taskRunUpdated(oldObj, newObj interface{}) {
-
-	if newObj.(*v1alpha1.TaskRun).GetResourceVersion() != oldObj.(*v1alpha1.TaskRun).GetResourceVersion() {
-		data := broadcaster.SocketData{
-			MessageType: broadcaster.TaskRunUpdated,
-			Payload:     newObj.(*v1alpha1.TaskRun),
-		}
-		resourcesChannel <- data
-	}
-}
-
-func (r Resource) taskRunDeleted(obj interface{}) {
-	logging.Log.Debug("In taskRunDeleted")
-
-	data := broadcaster.SocketData{
-		MessageType: broadcaster.TaskRunDeleted,
-		Payload:     obj.(*v1alpha1.TaskRun),
-	}
-
-	resourcesChannel <- data
-}
-
-// pipeline resource events
-func (r Resource) pipelineResourceCreated(obj interface{}) {
-	logging.Log.Debug("In pipelineResourceCreated")
-
-	data := broadcaster.SocketData{
-		MessageType: broadcaster.PipelineResourceCreated,
-		Payload:     obj.(*v1alpha1.PipelineResource),
-	}
-
-	resourcesChannel <- data
-}
-
-func (r Resource) pipelineResourceUpdated(oldObj, newObj interface{}) {
-	if newObj.(*v1alpha1.PipelineResource).GetResourceVersion() != oldObj.(*v1alpha1.PipelineResource).GetResourceVersion() {
-		data := broadcaster.SocketData{
-			MessageType: broadcaster.PipelineResourceUpdated,
-			Payload:     newObj.(*v1alpha1.PipelineResource),
-		}
-		resourcesChannel <- data
-	}
-}
-
-func (r Resource) pipelineResourceDeleted(obj interface{}) {
-	logging.Log.Debug("In pipelineResourceDeleted")
-
-	data := broadcaster.SocketData{
-		MessageType: broadcaster.PipelineResourceDeleted,
-		Payload:     obj.(*v1alpha1.PipelineResource),
-	}
-
-	resourcesChannel <- data
 }
