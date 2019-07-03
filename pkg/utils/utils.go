@@ -14,6 +14,8 @@ limitations under the License.
 package utils
 
 import (
+	"encoding/json"
+	"net/http"
 	"strings"
 
 	restful "github.com/emicklei/go-restful"
@@ -42,10 +44,28 @@ func RespondMessageAndLogError(response *restful.Response, err error, message st
 	response.WriteErrorString(statusCode, message)
 }
 
+// Write Content-Location header within POST methods and set StatusCode to 201
+// Headers MUST be set before writing to body (if any) to succeed
+func WriteResponseLocation(request *restful.Request, response *restful.Response, identifier string) {
+	location := request.Request.URL.Path
+	if request.Request.Method == http.MethodPost {
+		location = location + "/" + identifier
+	}
+	response.AddHeader("Content-Location", location)
+	response.WriteHeader(201)
+}
+
 func GetNamespace(request *restful.Request) string {
 	namespace := request.PathParameter("namespace")
 	if namespace == "*" {
 		namespace = ""
 	}
 	return namespace
+}
+
+func GetContentType(content []byte) string {
+	if json.Valid(content) {
+		return "application/json"
+	}
+	return "text/plain"
 }

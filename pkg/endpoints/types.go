@@ -6,6 +6,7 @@ import (
 )
 
 // Store all types here that are reused throughout files
+// Wrapper around all necessary clients used for endpoints
 type Resource struct {
 	PipelineClient versioned.Interface
 	K8sClient      k8sclientset.Interface

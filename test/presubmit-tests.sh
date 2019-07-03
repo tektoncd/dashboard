@@ -97,4 +97,9 @@ function extra_initialization() {
   node --version
 }
 
+function unit_tests() {
+  go test -v -race ./...
+  return $?
+}
+
 main $@
