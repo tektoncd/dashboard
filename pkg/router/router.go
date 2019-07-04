@@ -102,31 +102,13 @@ func registerEndpoints(r endpoints.Resource, container *restful.Container) {
 
 	logging.Log.Info("Adding v1, and API for k8s resources and pipelines")
 
-	wsv1.Route(wsv1.GET("/").To(r.GetAllNamespaces))
-	wsv1.Route(wsv1.GET("/{namespace}/pipelines").To(r.GetAllPipelines))
-	wsv1.Route(wsv1.GET("/{namespace}/pipelines/{name}").To(r.GetPipeline))
-
-	wsv1.Route(wsv1.GET("/{namespace}/pipelineruns").To(r.GetAllPipelineRuns))
 	wsv1.Route(wsv1.GET("/{namespace}/pipelineruns/{name}").To(r.GetPipelineRun))
 	wsv1.Route(wsv1.PUT("/{namespace}/pipelineruns/{name}").To(r.UpdatePipelineRun))
 	wsv1.Route(wsv1.POST("/{namespace}/pipelineruns").To(r.CreatePipelineRun))
 
-	wsv1.Route(wsv1.GET("/{namespace}/pipelineresources").To(r.GetAllPipelineResources))
-	wsv1.Route(wsv1.GET("/{namespace}/pipelineresources/{name}").To(r.GetPipelineResource))
-
-	wsv1.Route(wsv1.GET("/{namespace}/tasks").To(r.GetAllTasks))
-	wsv1.Route(wsv1.GET("/{namespace}/tasks/{name}").To(r.GetTask))
-
-	wsv1.Route(wsv1.GET("/{namespace}/taskruns").To(r.GetAllTaskRuns))
-	wsv1.Route(wsv1.GET("/{namespace}/taskruns/{name}").To(r.GetTaskRun))
-
-	wsv1.Route(wsv1.GET("/{namespace}/serviceaccounts").To(r.GetAllServiceAccounts))
 	wsv1.Route(wsv1.GET("/{namespace}/ingress").To(r.GetIngress))
 
-	wsv1.Route(wsv1.GET("/{namespace}/logs/{name}").To(r.GetPodLog))
-
 	wsv1.Route(wsv1.GET("/{namespace}/taskrunlogs/{name}").To(r.GetTaskRunLog))
-
 	wsv1.Route(wsv1.GET("/{namespace}/pipelinerunlogs/{name}").To(r.GetPipelineRunLog))
 
 	wsv1.Route(wsv1.GET("/{namespace}/credentials").To(r.GetAllCredentials))
@@ -146,7 +128,6 @@ func registerWebsocket(r endpoints.Resource, container *restful.Container) {
 		Path("/v1/websockets").
 		Consumes(restful.MIME_JSON).
 		Produces(restful.MIME_JSON)
-	wsv2.Route(wsv2.GET("/logs").To(r.EstablishPipelineLogsWebsocket))
 	wsv2.Route(wsv2.GET("/resources").To(r.EstablishResourcesWebsocket))
 	container.Add(wsv2)
 }

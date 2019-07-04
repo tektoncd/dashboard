@@ -47,16 +47,6 @@ func (r Resource) ProxyRequest(request *restful.Request, response *restful.Respo
 	response.Write(responseBody)
 }
 
-func (r Resource) GetAllNamespaces(request *restful.Request, response *restful.Response) {
-	namespaces, err := r.K8sClient.CoreV1().Namespaces().List(metav1.ListOptions{})
-
-	if err != nil {
-		utils.RespondError(response, err, http.StatusNotFound)
-		return
-	}
-	response.WriteEntity(namespaces)
-}
-
 func (r Resource) GetIngress(request *restful.Request, response *restful.Response) {
 	requestNamespace := utils.GetNamespace(request)
 
@@ -69,16 +59,4 @@ func (r Resource) GetIngress(request *restful.Request, response *restful.Respons
 		return
 	}
 	response.WriteEntity(ingressHost)
-}
-
-func (r Resource) GetAllServiceAccounts(request *restful.Request, response *restful.Response) {
-	requestNamespace := utils.GetNamespace(request)
-
-	serviceAccounts, err := r.K8sClient.CoreV1().ServiceAccounts(requestNamespace).List(metav1.ListOptions{})
-
-	if err != nil {
-		utils.RespondError(response, err, http.StatusNotFound)
-		return
-	}
-	response.WriteEntity(serviceAccounts)
 }

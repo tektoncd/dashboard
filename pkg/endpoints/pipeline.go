@@ -115,33 +115,6 @@ const GitServerLabel = "gitServer"
 const GitOrgLabel = "gitOrg"
 const GitRepoLabel = "gitRepo"
 
-/* Get all pipelines in a given namespace */
-func (r Resource) GetAllPipelines(request *restful.Request, response *restful.Response) {
-	namespace := utils.GetNamespace(request)
-	pipelines := r.PipelineClient.TektonV1alpha1().Pipelines(namespace)
-	logging.Log.Debugf("In getAllPipelines - namespace: %s", namespace)
-
-	pipelinelist, err := pipelines.List(metav1.ListOptions{})
-	if err != nil {
-		utils.RespondError(response, err, http.StatusNotFound)
-		return
-	}
-	response.WriteEntity(pipelinelist)
-}
-
-/* API route for getting a given pipeline by name in a given namespace */
-func (r Resource) GetPipeline(request *restful.Request, response *restful.Response) {
-	name := request.PathParameter("name")
-	namespace := request.PathParameter("namespace")
-
-	pipeline, err := r.getPipelineImpl(name, namespace)
-	if err != nil {
-		utils.RespondError(response, err, http.StatusNotFound)
-		return
-	}
-	response.WriteEntity(pipeline)
-}
-
 /* Get all pipelines in a given namespace: the caller needs to handle any errors,
 an empty v1alpha1.Pipeline{} is returned if no pipeline is found */
 func (r Resource) getPipelineImpl(name, namespace string) (v1alpha1.Pipeline, error) {
@@ -153,74 +126,6 @@ func (r Resource) getPipelineImpl(name, namespace string) (v1alpha1.Pipeline, er
 		return v1alpha1.Pipeline{}, err
 	}
 	return *pipeline, nil
-}
-
-/* Get all pipeline runs in a given namespace, filters based on parameters */
-func (r Resource) GetAllPipelineRuns(request *restful.Request, response *restful.Response) {
-	namespace := utils.GetNamespace(request)
-	repository := request.QueryParameter("repository")
-	// FakeClient does not support filtering by arbitrary fields(Only metadata.name/namespace), filtered post List()
-	name := request.QueryParameter("name")
-
-	pipelinerunList, appResponse := r.getAllPipelineRunsImpl(namespace, repository, name)
-	if appResponse.ERROR != nil {
-		logging.Log.Errorf("there was a problem getting the PipelineRuns list: %s", appResponse.ERROR)
-		utils.RespondError(response, appResponse.ERROR, appResponse.CODE)
-	} else {
-		// no errors so return the pipeline run list
-		logging.Log.Debugf("PipelineRun list: %v", pipelinerunList.Items)
-		response.WriteEntity(pipelinerunList)
-	}
-}
-
-/*GetAllPipelineRunsImpl - Returns a pointer to a list of PipelineRuns in a given namespace,
-an empty string repository query can be provided meaning that all PipelineRuns in the namespace will be returned  */
-func (r Resource) getAllPipelineRunsImpl(namespace, repository, name string) (v1alpha1.PipelineRunList, AppResponse) {
-
-	var queryParams []string
-	if repository != "" {
-		queryParams = append(queryParams, "repository: "+repository)
-	}
-	if name != "" {
-		queryParams = append(queryParams, "name: "+name)
-	}
-	logging.Log.Debugf("In getAllPipelineRunsImpl - namespace: %s, parameters: %s", namespace, strings.Join(queryParams, ","))
-
-	pipelinerunInterface := r.PipelineClient.TektonV1alpha1().PipelineRuns(namespace)
-	var pipelinerunList *v1alpha1.PipelineRunList
-	var labelSelector string // key1=value1,key2=value2, ...
-	var err error
-
-	// repository query filter
-	if repository != "" {
-		server, org, repo, err := getGitValues(repository)
-		if err != nil {
-			errorMsg := fmt.Sprintf("there was an error getting the Git values with repository query %s", repository)
-			logging.Log.Errorf("%s: %s", errorMsg, err)
-			return v1alpha1.PipelineRunList{}, AppResponse{err, errorMsg, http.StatusInternalServerError}
-		}
-		labels := []string{
-			GitServerLabel + "=" + server,
-			GitOrgLabel + "=" + org,
-			GitRepoLabel + "=" + repo,
-		}
-		labelSelector = strings.Join(labels, ",")
-	}
-	pipelinerunList, err = pipelinerunInterface.List(metav1.ListOptions{LabelSelector: labelSelector})
-	if err != nil {
-		return v1alpha1.PipelineRunList{}, AppResponse{err, "", http.StatusNotFound}
-	}
-	if name != "" {
-		tmpItems := pipelinerunList.Items
-		pipelinerunList.Items = pipelinerunList.Items[:0]
-		for i := range tmpItems {
-			if tmpItems[i].Spec.PipelineRef.Name == name {
-				pipelinerunList.Items = append(pipelinerunList.Items, tmpItems[i])
-			}
-		}
-	}
-
-	return *pipelinerunList, AppResponse{}
 }
 
 /* Get a given pipeline run by name in a given namespace */
@@ -349,128 +254,6 @@ func (r Resource) createPipelineRunImpl(pipelineRunData ManualPipelineRun, names
 	creationMsg := fmt.Sprintf("PipelineRun created with name: %s", pipelineRun.Name)
 	logging.Log.Debugf(creationMsg)
 	return &AppResponse{err, creationMsg, http.StatusCreated}, pipelineRun.Name
-}
-
-/* Get a given pipeline resource by name in a given namespace */
-func (r Resource) GetPipelineResource(request *restful.Request, response *restful.Response) {
-	name := request.PathParameter("name")
-	namespace := request.PathParameter("namespace")
-	logging.Log.Debugf("In getPipelineResource, name: %s, namespace: %s", name, namespace)
-
-	pipelineresources := r.PipelineClient.TektonV1alpha1().PipelineResources(namespace)
-	pipelineresource, err := pipelineresources.Get(name, metav1.GetOptions{})
-	if err != nil {
-		utils.RespondError(response, err, http.StatusNotFound)
-		return
-	}
-	response.WriteEntity(pipelineresource)
-}
-
-/* Get all tasks in a given namespace */
-func (r Resource) GetAllTasks(request *restful.Request, response *restful.Response) {
-	namespace := utils.GetNamespace(request)
-	tasks := r.PipelineClient.TektonV1alpha1().Tasks(namespace)
-	logging.Log.Debugf("In getAllTasks: namespace: %s", namespace)
-
-	tasklist, err := tasks.List(metav1.ListOptions{})
-	if err != nil {
-		utils.RespondError(response, err, http.StatusNotFound)
-		return
-	}
-	response.WriteEntity(tasklist)
-}
-
-/* Get a given task by name in a given namespace */
-func (r Resource) GetTask(request *restful.Request, response *restful.Response) {
-	namespace := request.PathParameter("namespace")
-	name := request.PathParameter("name")
-	logging.Log.Debugf("In getTask, name: %s, namespace: %s", name, namespace)
-	tasks := r.PipelineClient.TektonV1alpha1().Tasks(namespace)
-	task, err := tasks.Get(name, metav1.GetOptions{})
-	if err != nil {
-		utils.RespondError(response, err, http.StatusNotFound)
-		return
-	}
-	response.WriteEntity(task)
-}
-
-/* Get all task runs in a given namespace, filters based on parameters */
-func (r Resource) GetAllTaskRuns(request *restful.Request, response *restful.Response) {
-	namespace := utils.GetNamespace(request)
-	// FakeClient does not support filtering by arbitrary fields(Only metadata.name/namespace), filtered post List()
-	name := request.QueryParameter("name")
-	var queryParams []string
-	if name != "" {
-		queryParams = append(queryParams, "name: "+name)
-	}
-	logging.Log.Debugf("In getAllTaskRuns - namespace: %s, parameters: %s", namespace, strings.Join(queryParams, ","))
-
-	taskrunInterface := r.PipelineClient.TektonV1alpha1().TaskRuns(namespace)
-	taskrunList, err := taskrunInterface.List(metav1.ListOptions{})
-	if err != nil {
-		utils.RespondError(response, err, http.StatusNotFound)
-		return
-	}
-	if name != "" {
-		tmpItems := taskrunList.Items
-		taskrunList.Items = taskrunList.Items[:0]
-		for i := range tmpItems {
-			if tmpItems[i].Spec.TaskRef != nil && tmpItems[i].Spec.TaskRef.Name == name {
-				taskrunList.Items = append(taskrunList.Items, tmpItems[i])
-			}
-		}
-	}
-	response.WriteEntity(taskrunList)
-}
-
-/* Get a given task in a given namespace */
-func (r Resource) GetTaskRun(request *restful.Request, response *restful.Response) {
-	namespace := request.PathParameter("namespace")
-	name := request.PathParameter("name")
-
-	logging.Log.Debugf("In getTaskRun - name: %s, namespace: %s", name, namespace)
-	taskruns := r.PipelineClient.TektonV1alpha1().TaskRuns(namespace)
-	taskrun, err := taskruns.Get(name, metav1.GetOptions{})
-	if err != nil {
-		utils.RespondError(response, err, http.StatusNotFound)
-		return
-	}
-	response.WriteEntity(taskrun)
-}
-
-/* Get the logs for a given pod by name in a given namespace */
-func (r Resource) GetPodLog(request *restful.Request, response *restful.Response) {
-	namespace := request.PathParameter("namespace")
-	name := request.PathParameter("name")
-	container := request.QueryParameter("container")
-
-	logging.Log.Debugf("In getPodLog - name: %s, namespace: %s, container %s", name, namespace, container)
-
-	logOptions := &v1.PodLogOptions{}
-	if container != "" {
-		logOptions = &v1.PodLogOptions{Container: container}
-	}
-
-	req := r.K8sClient.CoreV1().Pods(namespace).GetLogs(name, logOptions)
-	if req.URL().Path == "" {
-		return
-	}
-	podLogs, err := req.Stream()
-	if err != nil {
-		utils.RespondError(response, err, http.StatusNotFound)
-		return
-	}
-	defer podLogs.Close()
-
-	buf := new(bytes.Buffer)
-	_, err = io.Copy(buf, podLogs)
-	if err != nil {
-		utils.RespondError(response, err, http.StatusNotFound)
-		return
-	}
-	str := buf.String()
-	response.AddHeader("Content-Type", "text/plain")
-	response.WriteEntity(str)
 }
 
 /* Get the logs for a given task run by name in a given namespace */
@@ -682,20 +465,6 @@ func (r Resource) GetPipelineRunLog(request *restful.Request, response *restful.
 		pipelineRunLogs = append(pipelineRunLogs, makeTaskRunLog(r, namespace, pod))
 	}
 	response.WriteEntity(pipelineRunLogs)
-}
-
-/* Get all pipeline resources in a given namespace */
-func (r Resource) GetAllPipelineResources(request *restful.Request, response *restful.Response) {
-	namespace := utils.GetNamespace(request)
-	pipelineresources := r.PipelineClient.TektonV1alpha1().PipelineResources(namespace)
-	logging.Log.Debugf("In getAllPipelineResources - namespace: %s", namespace)
-
-	pipelineresourcelist, err := pipelineresources.List(metav1.ListOptions{})
-	if err != nil {
-		utils.RespondError(response, err, http.StatusNotFound)
-		return
-	}
-	response.WriteEntity(pipelineresourcelist)
 }
 
 /* Update a given PipelineRun by name in a given namespace */

@@ -80,43 +80,6 @@ func (i *informerRecord) Delete() int32 {
 	return atomic.LoadInt32(&i.delete)
 }
 
-// No data is sent through the log websocket
-// Assert connection flow
-func TestWebsocketLogs(t *testing.T) {
-	t.Log("Enter TestLogWebsocket...")
-	server, _, _ := testutils.DummyServer()
-	defer server.Close()
-	devopsServer := strings.TrimPrefix(server.URL, "http://")
-	websocketURL := url.URL{Scheme: "ws", Host: devopsServer, Path: "/v1/websockets/logs"}
-	websocketEndpoint := websocketURL.String()
-	const clients int = 10
-	connectionDur := time.Second * 1
-	var wg sync.WaitGroup
-
-	for i := 1; i <= clients; i++ {
-		websocketChan := clientWebsocket(websocketEndpoint, connectionDur, t)
-		// Wait until connection timeout
-		go func() {
-			defer wg.Done()
-			for {
-				t.Log("Waiting for messages")
-				_, open := <-websocketChan
-				if !open {
-					return
-				}
-			}
-		}()
-		wg.Add(1)
-	}
-	t.Log("Waiting for clients to terminate...")
-	wg.Wait()
-	awaitFunction := func() bool {
-		return LogBroadcaster.PoolSize() == 0
-	}
-	awaitFatal(awaitFunction, t, "logbroadcaster pool should be empty")
-	t.Log("Exit TestLogWebsocket")
-}
-
 // Ensures all resource types sent over websocket are received as intended
 func TestWebsocketResources(t *testing.T) {
 	t.Log("Enter TestLogWebsocket...")
