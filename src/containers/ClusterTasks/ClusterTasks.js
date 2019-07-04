@@ -52,6 +52,7 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
           kind="error"
           title="Error loading tasks"
           subtitle={error}
+          lowContrast
         />
       );
     }
