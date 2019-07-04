@@ -20,68 +20,9 @@ import (
 	"testing"
 
 	"github.com/tektoncd/dashboard/pkg/testutils"
-	corev1 "k8s.io/api/core/v1"
 	extensionsV1beta1 "k8s.io/api/extensions/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
-
-// GET namespaces
-func TestGETAllNamespaces(t *testing.T) {
-	server, _, namespace := testutils.DummyServer()
-
-	namespaces := []corev1.Namespace{
-		// This namespace was created in DummyServer
-		corev1.Namespace{
-			ObjectMeta: metav1.ObjectMeta{
-				Name: namespace,
-			},
-		},
-	}
-
-	httpReq := testutils.DummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces", server.URL), nil)
-	response, _ := http.DefaultClient.Do(httpReq)
-	responseNamespaceList := corev1.NamespaceList{}
-	if err := json.NewDecoder(response.Body).Decode(&responseNamespaceList); err != nil {
-		t.Fatalf("Error decoding getAllNamespaces response: %v\n", err)
-	} else {
-		if err := testutils.ObjectListDeepEqual(namespaces, responseNamespaceList.Items); err != nil {
-			t.Fatalf(err.Error())
-		}
-	}
-}
-
-// GET serviceaccounts
-func TestGETAllServiceAccounts(t *testing.T) {
-	server, r, namespace := testutils.DummyServer()
-	defer server.Close()
-
-	serviceAccounts := []corev1.ServiceAccount{
-		corev1.ServiceAccount{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      "test-sa",
-				Namespace: namespace,
-			},
-		},
-	}
-	for _, serviceAccount := range serviceAccounts {
-		_, err := r.K8sClient.CoreV1().ServiceAccounts(namespace).Create(&serviceAccount)
-		if err != nil {
-			t.Fatalf("Error creating serviceAccount '%s': %v\n", serviceAccount.Name, err)
-		}
-	}
-
-	httpReq := testutils.DummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/serviceaccounts", server.URL, namespace), nil)
-	response, _ := http.DefaultClient.Do(httpReq)
-	responseServiceAccountList := corev1.ServiceAccountList{}
-	if err := json.NewDecoder(response.Body).Decode(&responseServiceAccountList); err != nil {
-		t.Fatalf("Error decoding getAllServiceAccounts response: %v\n", err)
-	} else {
-		if err := testutils.ObjectListDeepEqual(serviceAccounts, responseServiceAccountList.Items); err != nil {
-			t.Fatalf(err.Error())
-		}
-	}
-
-}
 
 func TestGetIngress(t *testing.T) {
 	server, r, namespace := testutils.DummyServer()
