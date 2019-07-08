@@ -130,7 +130,7 @@ it('deleteSecret error', async () => {
   const mockStore = configureStore(middleware);
   const store = mockStore();
 
-  const error = new Error('Could not delete secret secret');
+  const error = new Error('Could not delete secret "secret"');
 
   jest.spyOn(API, 'deleteCredential').mockImplementation(() => {
     throw error;
@@ -175,7 +175,7 @@ it('createSecret error', async () => {
   const store = mockStore();
 
   const error = new Error(
-    'Could not create secret secret-name in namespace default'
+    'Could not create secret "secret-name" in namespace default'
   );
 
   jest.spyOn(API, 'createCredential').mockImplementation(() => {

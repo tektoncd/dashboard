@@ -52,6 +52,7 @@ const breadcrumbLabels = {
   '/pipelineresources': 'PipelineResources',
   '/pipelineruns': 'PipelineRuns',
   '/pipelines': 'Pipelines',
+  '/secrets': 'Secrets',
   '/taskruns': 'TaskRuns',
   '/tasks': 'Tasks'
 };
