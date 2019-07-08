@@ -17,7 +17,7 @@ You must install these tools:
 1. [`git`](https://help.github.com/articles/set-up-git/): For source control
 1. [`dep`](https://github.com/golang/dep): For managing external Go dependencies. - Please Install dep v0.5.0 or greater.
 1. [`ko`](https://github.com/google/ko): For development. `ko` version v0.1 or higher is required for `dashboard` to work correctly.
-1. [Node.js & npm](https://nodejs.org/): For building and running the frontend locally. See `engines` in [package.json](./package.json) for versions used.
+1. [Node.js & npm](https://nodejs.org/): For building and running the frontend locally. See `engines` in [package.json](./package.json) for versions used. _Node.js 10.x is recommended_
 1. [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/): For interacting with your kube cluster.
 
 Your [`$GOPATH`] setting is critical for `ko apply` to function properly: a
@@ -110,10 +110,10 @@ Tekton Dashboard does not involve any custom resource definitions, we only inter
 You can stand up a version of the dashboard on-cluster (to your
 `kubectl config current-context`):
 
-First install and build the npm project.
+First install and build the npm project. Install with a clean slate of dependencies, if a node_modules folder is already present in the project root it will be automatically removed before install.
 
 ```shell
-npm install
+npm ci 
 ```
 
 There is a dedicated npm job for ko builds
@@ -422,3 +422,4 @@ The backend extension is discovered by adding the label and the annotations in t
 1. If tekton-dashboard-endpoints is set to foo then /v1/extensions/extension-name/foo is routed to /foo at the extension
 1. Multiple context roots can be specified by using the . character to separate them: e.g. if tekton-dashboard-endpoints: foo.bar then /v1/extensions/extension-name/foo is routed to /foo and /v1/extensions/extension-name/bar is routed to /bar at the extension.
 1. "/" is a reserved context root for javascript.  "tekton-dashboard-endpoints" must be always set if the extension has javascript.
+
