@@ -51,70 +51,64 @@ export /* istanbul ignore next */ class Tasks extends Component {
   render() {
     const { error, loading, namespace: selectedNamespace, tasks } = this.props;
 
+    if (loading && !tasks.length) {
+      return <StructuredListSkeleton border />;
+    }
+
+    if (error) {
+      return (
+        <InlineNotification
+          kind="error"
+          hideCloseButton
+          lowContrast
+          title="Error loading tasks"
+          subtitle={error}
+        />
+      );
+    }
+
     return (
-      <>
-        {(() => {
-          if (loading && !tasks.length) {
-            return <StructuredListSkeleton border />;
-          }
-
-          if (error) {
+      <StructuredListWrapper border selection>
+        <StructuredListHead>
+          <StructuredListRow head>
+            <StructuredListCell head>Task</StructuredListCell>
+            {selectedNamespace === ALL_NAMESPACES && (
+              <StructuredListCell head>Namespace</StructuredListCell>
+            )}
+            <StructuredListCell head />
+          </StructuredListRow>
+        </StructuredListHead>
+        <StructuredListBody>
+          {!tasks.length && (
+            <StructuredListRow>
+              <StructuredListCell>No tasks</StructuredListCell>
+            </StructuredListRow>
+          )}
+          {tasks.map(task => {
+            const { name: taskName, namespace, uid } = task.metadata;
             return (
-              <InlineNotification
-                kind="error"
-                title="Error loading tasks"
-                subtitle={error}
-              />
-            );
-          }
-
-          return (
-            <StructuredListWrapper border selection>
-              <StructuredListHead>
-                <StructuredListRow head>
-                  <StructuredListCell head>Task</StructuredListCell>
-                  {selectedNamespace === ALL_NAMESPACES && (
-                    <StructuredListCell head>Namespace</StructuredListCell>
-                  )}
-                  <StructuredListCell head />
-                </StructuredListRow>
-              </StructuredListHead>
-              <StructuredListBody>
-                {!tasks.length && (
-                  <StructuredListRow>
-                    <StructuredListCell>No tasks</StructuredListCell>
-                  </StructuredListRow>
+              <StructuredListRow className="definition" key={uid}>
+                <StructuredListCell>
+                  <Link to={`/namespaces/${namespace}/tasks/${taskName}/runs`}>
+                    {taskName}
+                  </Link>
+                </StructuredListCell>
+                {selectedNamespace === ALL_NAMESPACES && (
+                  <StructuredListCell>{namespace}</StructuredListCell>
                 )}
-                {tasks.map(task => {
-                  const { name: taskName, namespace, uid } = task.metadata;
-                  return (
-                    <StructuredListRow className="definition" key={uid}>
-                      <StructuredListCell>
-                        <Link
-                          to={`/namespaces/${namespace}/tasks/${taskName}/runs`}
-                        >
-                          {taskName}
-                        </Link>
-                      </StructuredListCell>
-                      {selectedNamespace === ALL_NAMESPACES && (
-                        <StructuredListCell>{namespace}</StructuredListCell>
-                      )}
-                      <StructuredListCell>
-                        <Link
-                          title="task definition"
-                          to={`/namespaces/${namespace}/tasks/${taskName}`}
-                        >
-                          <Information16 className="resource-info-icon" />
-                        </Link>
-                      </StructuredListCell>
-                    </StructuredListRow>
-                  );
-                })}
-              </StructuredListBody>
-            </StructuredListWrapper>
-          );
-        })()}
-      </>
+                <StructuredListCell>
+                  <Link
+                    title="task definition"
+                    to={`/namespaces/${namespace}/tasks/${taskName}`}
+                  >
+                    <Information16 className="resource-info-icon" />
+                  </Link>
+                </StructuredListCell>
+              </StructuredListRow>
+            );
+          })}
+        </StructuredListBody>
+      </StructuredListWrapper>
     );
   }
 }

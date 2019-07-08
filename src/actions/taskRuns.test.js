@@ -11,58 +11,41 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
-
 import * as API from '../api';
-import * as selectors from '../reducers';
-import { fetchTaskRuns, fetchTaskRunsSuccess } from './taskRuns';
+import { fetchTaskRun, fetchTaskRuns } from './taskRuns';
+import * as creators from './actionCreators';
 
-it('fetchTaskRunsSuccess', () => {
-  const data = { fake: 'data' };
-  expect(fetchTaskRunsSuccess(data)).toEqual({
-    type: 'TASK_RUNS_FETCH_SUCCESS',
-    data
-  });
+it('fetchTaskRun', async () => {
+  jest.spyOn(creators, 'fetchNamespacedResource');
+  const name = 'taskRunName';
+  const namespace = 'default';
+
+  fetchTaskRun({ name, namespace });
+  expect(creators.fetchNamespacedResource).toHaveBeenCalledWith(
+    'TaskRun',
+    API.getTaskRun,
+    { name, namespace }
+  );
 });
 
 it('fetchTaskRuns', async () => {
-  const namespace = 'default';
-  const tasks = { fake: 'tasks' };
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const store = mockStore();
-
-  jest
-    .spyOn(selectors, 'getSelectedNamespace')
-    .mockImplementation(() => namespace);
-  jest.spyOn(API, 'getTaskRuns').mockImplementation(() => tasks);
-
-  const expectedActions = [
-    { type: 'TASK_RUNS_FETCH_REQUEST' },
-    fetchTaskRunsSuccess(tasks)
-  ];
-
-  await store.dispatch(fetchTaskRuns());
-  expect(store.getActions()).toEqual(expectedActions);
+  jest.spyOn(creators, 'fetchNamespacedCollection');
+  const namespace = 'namespace';
+  const taskName = 'taskName';
+  fetchTaskRuns({ namespace, taskName });
+  expect(creators.fetchNamespacedCollection).toHaveBeenCalledWith(
+    'TaskRun',
+    API.getTaskRuns,
+    { namespace, taskName }
+  );
 });
 
-it('fetchTaskRuns error', async () => {
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const store = mockStore();
-
-  const error = new Error();
-
-  jest.spyOn(API, 'getTaskRuns').mockImplementation(() => {
-    throw error;
-  });
-
-  const expectedActions = [
-    { type: 'TASK_RUNS_FETCH_REQUEST' },
-    { type: 'TASK_RUNS_FETCH_FAILURE', error }
-  ];
-
-  await store.dispatch(fetchTaskRuns());
-  expect(store.getActions()).toEqual(expectedActions);
+it('fetchTaskRuns no params', async () => {
+  jest.spyOn(creators, 'fetchNamespacedCollection');
+  fetchTaskRuns();
+  expect(creators.fetchNamespacedCollection).toHaveBeenCalledWith(
+    'TaskRun',
+    API.getTaskRuns,
+    { namespace: undefined, taskName: undefined }
+  );
 });

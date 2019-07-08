@@ -82,7 +82,9 @@ class Step extends Component {
       >
         <a href="#" tabIndex="0" onClick={this.handleClick}>
           {icon}
-          {stepName}
+          <span className="step-name" title={stepName}>
+            {stepName}
+          </span>
           <span className="status-label">{statusLabel}</span>
         </a>
       </li>

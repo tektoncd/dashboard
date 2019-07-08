@@ -14,7 +14,7 @@ limitations under the License.
 import React from 'react';
 
 import { Link } from 'react-router-dom';
-import { Header as CarbonHeader } from 'carbon-components-react/lib/components/UIShell';
+import { Header as CarbonHeader } from 'carbon-components-react';
 
 import './Header.scss';
 

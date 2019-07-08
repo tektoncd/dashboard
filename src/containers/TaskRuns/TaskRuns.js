@@ -21,7 +21,7 @@ import {
 
 import {
   getSelectedNamespace,
-  getTask,
+  getTaskByType,
   getTaskRunsByTaskName,
   getTaskRunsErrorMessage
 } from '../../reducers';
@@ -31,13 +31,13 @@ import StepDetails from '../../components/StepDetails';
 import TaskTree from '../../components/TaskTree';
 import {
   getStatus,
+  selectedTaskRun,
   stepsStatus,
-  taskRunStep,
-  selectedTaskRun
+  taskRunStep
 } from '../../utils';
 
 import '../../components/Run/Run.scss';
-import { fetchTask } from '../../actions/tasks';
+import { fetchTaskByType } from '../../actions/tasks';
 import { fetchTaskRuns } from '../../actions/taskRuns';
 
 export /* istanbul ignore next */ class TaskRunsContainer extends Component {
@@ -51,6 +51,8 @@ export /* istanbul ignore next */ class TaskRunsContainer extends Component {
     return (
       <InlineNotification
         kind={kind}
+        hideCloseButton
+        lowContrast
         title={titles[kind]}
         subtitle={JSON.stringify(message, Object.getOwnPropertyNames(message))}
       />
@@ -65,19 +67,23 @@ export /* istanbul ignore next */ class TaskRunsContainer extends Component {
 
   componentDidMount() {
     const { match, namespace } = this.props;
-    const { taskName } = match.params;
-    this.fetchTaskAndRuns(taskName, namespace);
+    const { taskName, taskType } = match.params;
+    this.fetchTaskAndRuns(taskName, taskType, namespace);
   }
 
   componentDidUpdate(prevProps) {
     const { match, namespace } = this.props;
-    const { taskName } = match.params;
+    const { taskName, taskType } = match.params;
     const { match: prevMatch, namespace: prevNamespace } = prevProps;
-    const { taskName: prevTaskName } = prevMatch.params;
+    const { taskName: prevTaskName, taskType: prevTaskType } = prevMatch.params;
 
-    if (taskName !== prevTaskName || namespace !== prevNamespace) {
+    if (
+      taskName !== prevTaskName ||
+      namespace !== prevNamespace ||
+      taskType !== prevTaskType
+    ) {
       this.setState({ loading: true }); // eslint-disable-line
-      this.fetchTaskAndRuns(taskName, namespace);
+      this.fetchTaskAndRuns(taskName, taskType, namespace);
     }
   }
 
@@ -91,6 +97,7 @@ export /* istanbul ignore next */ class TaskRunsContainer extends Component {
     taskRuns = taskRuns.map(taskRun => {
       const taskName = taskRun.spec.taskRef.name;
       const taskRunName = taskRun.metadata.name;
+      const taskRunNamespace = taskRun.metadata.namespace;
       const { reason, status: succeeded } = getStatus(taskRun);
       const pipelineTaskName = taskRunName;
       const runSteps = stepsStatus(task.spec.steps, taskRun.status.steps);
@@ -104,15 +111,16 @@ export /* istanbul ignore next */ class TaskRunsContainer extends Component {
         succeeded,
         taskName,
         taskRunName,
-        startTime
+        startTime,
+        namespace: taskRunNamespace
       };
     });
     return taskRuns;
   };
 
-  fetchTaskAndRuns(taskName, namespace) {
+  fetchTaskAndRuns(taskName, taskType, namespace) {
     Promise.all([
-      this.props.fetchTask({ name: taskName, namespace }),
+      this.props.fetchTaskByKind(taskName, taskType, namespace),
       this.props.fetchTaskRuns({ taskName })
     ]).then(() => {
       this.setState({ loading: false });
@@ -120,7 +128,6 @@ export /* istanbul ignore next */ class TaskRunsContainer extends Component {
   }
 
   render() {
-    const taskRuns = this.loadTaskRuns();
     const { loading, selectedStepId, selectedTaskId } = this.state;
     const { error } = this.props;
 
@@ -134,6 +141,8 @@ export /* istanbul ignore next */ class TaskRunsContainer extends Component {
         message: 'Error loading task runs'
       });
     }
+
+    const taskRuns = this.loadTaskRuns();
 
     if (taskRuns.length === 0) {
       return TaskRunsContainer.notification({
@@ -190,7 +199,7 @@ TaskRunsContainer.propTypes = {
 /* istanbul ignore next */
 function mapStateToProps(state, ownProps) {
   const { match } = ownProps;
-  const { namespace: namespaceParam, taskName } = match.params;
+  const { namespace: namespaceParam, taskName, taskType } = match.params;
 
   const namespace = namespaceParam || getSelectedNamespace(state);
 
@@ -201,12 +210,12 @@ function mapStateToProps(state, ownProps) {
       name: taskName,
       namespace
     }),
-    task: getTask(state, { name: taskName, namespace })
+    task: getTaskByType(state, { type: taskType, name: taskName, namespace })
   };
 }
 
 const mapDispatchToProps = {
-  fetchTask,
+  fetchTaskByKind: fetchTaskByType,
   fetchTaskRuns
 };
 

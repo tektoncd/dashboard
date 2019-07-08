@@ -12,20 +12,16 @@ limitations under the License.
 */
 
 import React from 'react';
-import { SideNavLink } from 'carbon-components-react/lib/components/UIShell';
-import { NavLink } from 'react-router-dom';
-import SideNavMenu from '.';
-import { renderWithRouter } from '../../utils/test';
+import {
+  TextInput as CarbonTextInput,
+  TextInputSkeleton
+} from 'carbon-components-react';
 
-it('App renders successfully', () => {
-  const { queryByText } = renderWithRouter(
-    <SideNavMenu title="Tekton">
-      <SideNavLink element={NavLink} icon={<span />} to="/pipelines">
-        Pipelines
-      </SideNavLink>
-    </SideNavMenu>
-  );
+const TextInput = ({ loading, ...textInputProps }) => {
+  if (loading) {
+    return <TextInputSkeleton />;
+  }
+  return <CarbonTextInput {...textInputProps} />;
+};
 
-  expect(queryByText(/Tekton/i)).toBeTruthy();
-  expect(queryByText(/Pipelines/i)).toBeTruthy();
-});
+export default TextInput;

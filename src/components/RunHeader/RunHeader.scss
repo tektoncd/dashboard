@@ -24,12 +24,16 @@ limitations under the License.
   }
 
   h1 {
+    display: flex;
+    align-items: baseline;
     font-size: 1.6rem;
+    font-weight: 400;
     line-height: 2rem;
     height: 2rem;
 
     .block-icon {
       display: inline-flex;
+      flex-shrink: 0;
       vertical-align: middle;
       position: relative;
       top: -0.13rem;
@@ -42,6 +46,13 @@ limitations under the License.
       }
     }
 
+    .run-name {
+      min-width: 5rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
     .status-label {
       margin-left: 1.15rem;
       font-size: 0.95rem;
@@ -50,9 +61,10 @@ limitations under the License.
     }
 
     .time {
-      margin-left: 1.15rem;
+      margin: 0 1.15rem;
       font-size: 0.875rem;
       font-weight: 300;
+      white-space: nowrap;
     }
   }
 

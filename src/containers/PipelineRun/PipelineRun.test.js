@@ -54,6 +54,7 @@ it('PipelineRunContainer renders', async () => {
         fetchTaskRuns={() => Promise.resolve()}
         fetchPipelineRun={() => Promise.resolve()}
         fetchTasks={() => Promise.resolve()}
+        fetchClusterTasks={() => Promise.resolve()}
         error={null}
         loading={false}
       />
@@ -97,6 +98,7 @@ it('PipelineRunContainer handles error state', async () => {
         fetchTaskRuns={() => Promise.resolve()}
         fetchPipelineRun={() => Promise.resolve()}
         fetchTasks={() => Promise.resolve()}
+        fetchClusterTasks={() => Promise.resolve()}
       />
     </Provider>
   );

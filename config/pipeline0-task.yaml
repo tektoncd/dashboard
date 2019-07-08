@@ -5,6 +5,7 @@ apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
   name: pipeline0-task
+  namespace: tekton-pipelines
 spec:
   inputs:
     resources:

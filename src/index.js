@@ -17,16 +17,16 @@ import { Provider } from 'react-redux';
 
 import './utils/polyfills';
 import { configureStore } from './store';
-import { getRunsWebSocketURL } from './api';
+import { getWebSocketURL } from './api';
 
 import App from './containers/App';
 
-const runsWebSocket = new WebSocket(getRunsWebSocketURL());
+const webSocket = new WebSocket(getWebSocketURL());
 function closeSocket() {
-  runsWebSocket.close();
+  webSocket.close();
 }
 
-const store = configureStore({ runsWebSocket });
+const store = configureStore({ webSocket });
 
 /* istanbul ignore next */
 ReactDOM.render(

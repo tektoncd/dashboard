@@ -13,22 +13,28 @@ limitations under the License.
 
 import { combineReducers } from 'redux';
 
+import clusterTasks, * as clusterTaskSelectors from './clusterTasks';
 import extensions, * as extensionSelectors from './extensions';
 import namespaces, * as namespaceSelectors from './namespaces';
-import serviceAccounts, * as serviceAccountSelectors from './serviceAccounts';
 import pipelines, * as pipelineSelectors from './pipelines';
+import pipelineResources, * as pipelineResourcesSelectors from './pipelineResources';
 import pipelineRuns, * as pipelineRunsSelectors from './pipelineRuns';
+import secrets, * as secretSelectors from './secrets';
+import serviceAccounts, * as serviceAccountSelectors from './serviceAccounts';
 import tasks, * as taskSelectors from './tasks';
 import taskRuns, * as taskRunsSelectors from './taskRuns';
 
 export default combineReducers({
+  clusterTasks,
   extensions,
   namespaces,
-  pipelines,
-  pipelineRuns,
-  tasks,
-  taskRuns,
-  serviceAccounts
+  pipelines: pipelines(),
+  pipelineResources: pipelineResources(),
+  pipelineRuns: pipelineRuns(),
+  secrets,
+  serviceAccounts: serviceAccounts(),
+  tasks: tasks(),
+  taskRuns: taskRuns()
 });
 
 export function getSelectedNamespace(state) {
@@ -93,6 +99,39 @@ export function getPipelinesErrorMessage(state) {
 
 export function isFetchingPipelines(state) {
   return pipelineSelectors.isFetchingPipelines(state.pipelines);
+}
+
+export function getPipelineResources(
+  state,
+  { namespace = getSelectedNamespace(state) } = {}
+) {
+  return pipelineResourcesSelectors.getPipelineResources(
+    state.pipelineResources,
+    namespace
+  );
+}
+
+export function getPipelineResource(
+  state,
+  { name, namespace = getSelectedNamespace(state) }
+) {
+  return pipelineResourcesSelectors.getPipelineResource(
+    state.pipelineResources,
+    name,
+    namespace
+  );
+}
+
+export function getPipelineResourcesErrorMessage(state) {
+  return pipelineResourcesSelectors.getPipelineResourcesErrorMessage(
+    state.pipelineResources
+  );
+}
+
+export function isFetchingPipelineResources(state) {
+  return pipelineResourcesSelectors.isFetchingPipelineResources(
+    state.pipelineResources
+  );
 }
 
 export function getPipelineRuns(
@@ -181,4 +220,44 @@ export function getTasksErrorMessage(state) {
 
 export function isFetchingTasks(state) {
   return taskSelectors.isFetchingTasks(state.tasks);
+}
+
+export function getClusterTasks(state) {
+  return clusterTaskSelectors.getClusterTasks(state.clusterTasks);
+}
+
+export function getClusterTask(state, name) {
+  return clusterTaskSelectors.getClusterTask(state.clusterTasks, name);
+}
+
+export function getClusterTasksErrorMessage(state) {
+  return clusterTaskSelectors.getClusterTasksErrorMessage(state.clusterTasks);
+}
+
+export function isFetchingClusterTasks(state) {
+  return clusterTaskSelectors.isFetchingClusterTasks(state.clusterTasks);
+}
+
+export function getTaskByType(
+  state,
+  { type, name, namespace = getSelectedNamespace(state) }
+) {
+  return type === 'clustertasks'
+    ? getClusterTask(state, name)
+    : getTask(state, { name, namespace });
+}
+
+export function getSecrets(
+  state,
+  { namespace = getSelectedNamespace(state) } = {}
+) {
+  return secretSelectors.getSecrets(state.secrets, namespace);
+}
+
+export function getSecretsErrorMessage(state) {
+  return secretSelectors.getSecretsErrorMessage(state.secrets);
+}
+
+export function isFetchingSecrets(state) {
+  return secretSelectors.isFetchingSecrets(state.secrets);
 }

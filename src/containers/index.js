@@ -11,17 +11,28 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+export { default as ClusterTasks } from './ClusterTasks';
 export {
   default as CustomResourceDefinition
 } from './CustomResourceDefinition';
+export { default as CreatePipelineRun } from './CreatePipelineRun';
 export { default as Extension } from './Extension';
 export { default as Extensions } from './Extensions';
 export { default as ImportResources } from './ImportResources';
 export { default as NamespacesDropdown } from './NamespacesDropdown';
+export { default as PipelineResource } from './PipelineResource';
+export { default as PipelineResources } from './PipelineResources';
+export {
+  default as PipelineResourcesDropdown
+} from './PipelineResourcesDropdown';
 export { default as PipelineRun } from './PipelineRun';
 export { default as PipelineRuns } from './PipelineRuns';
 export { default as Pipelines } from './Pipelines';
+export { default as PipelinesDropdown } from './PipelinesDropdown';
+export { default as Secrets } from './Secrets';
 export { default as ServiceAccountsDropdown } from './ServiceAccountsDropdown';
 export { default as SideNav } from './SideNav';
 export { default as Tasks } from './Tasks';
+export { default as TaskRun } from './TaskRun';
+export { default as TaskRunList } from './TaskRunList';
 export { default as TaskRuns } from './TaskRuns';

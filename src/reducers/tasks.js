@@ -11,83 +11,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { combineReducers } from 'redux';
-import keyBy from 'lodash.keyby';
-import merge from 'lodash.merge';
+import { createNamespacedReducer } from './reducerCreators';
+import { getCollection, getResource } from './selectorCreators';
 
-import { ALL_NAMESPACES } from '../constants';
-
-function byId(state = {}, action) {
-  switch (action.type) {
-    case 'TASKS_FETCH_SUCCESS':
-      return { ...state, ...keyBy(action.data, 'metadata.uid') };
-    default:
-      return state;
-  }
-}
-
-function byNamespace(state = {}, action) {
-  switch (action.type) {
-    case 'TASKS_FETCH_SUCCESS':
-      const namespaces = action.data.reduce((accumulator, task) => {
-        const { name, namespace, uid } = task.metadata;
-        return merge(accumulator, {
-          [namespace]: {
-            [name]: uid
-          }
-        });
-      }, {});
-
-      return merge({}, state, namespaces);
-    default:
-      return state;
-  }
-}
-
-function isFetching(state = false, action) {
-  switch (action.type) {
-    case 'TASKS_FETCH_REQUEST':
-      return true;
-    case 'TASKS_FETCH_SUCCESS':
-    case 'TASKS_FETCH_FAILURE':
-      return false;
-    default:
-      return state;
-  }
-}
-
-function errorMessage(state = null, action) {
-  switch (action.type) {
-    case 'TASKS_FETCH_FAILURE':
-      return action.error.message;
-    case 'TASKS_FETCH_REQUEST':
-    case 'TASKS_FETCH_SUCCESS':
-      return null;
-    default:
-      return state;
-  }
-}
-
-export default combineReducers({
-  byId,
-  byNamespace,
-  errorMessage,
-  isFetching
-});
+export default () => createNamespacedReducer({ type: 'Task' });
 
 export function getTasks(state, namespace) {
-  if (namespace === ALL_NAMESPACES) {
-    return Object.values(state.byId);
-  }
-
-  const tasks = state.byNamespace[namespace];
-  return tasks ? Object.values(tasks).map(id => state.byId[id]) : [];
+  return getCollection(state, namespace);
 }
 
 export function getTask(state, name, namespace) {
-  const tasks = state.byNamespace[namespace] || {};
-  const taskId = tasks[name];
-  return taskId ? state.byId[taskId] : null;
+  return getResource(state, name, namespace);
 }
 
 export function getTasksErrorMessage(state) {

@@ -5,6 +5,51 @@ metadata:
   name: tekton-dashboard
 objects:
 - apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    labels:
+      app: tekton-dashboard
+    name: tekton-dashboard
+    namespace: tekton-pipelines
+- kind: ClusterRole
+  apiVersion: rbac.authorization.k8s.io/v1
+  metadata:
+    name: tekton-dashboard-minimal
+  rules:
+    - apiGroups: [""]
+      resources: ["serviceaccounts"]
+      verbs: ["get", "list", "update"]
+    - apiGroups: [""]
+      resources: ["pods", "services"]
+      verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
+    - apiGroups: [""]
+      resources: ["pods/log", "secrets", "namespaces", "events"]
+      verbs: ["get", "list", "watch"]
+    - apiGroups: ["extensions", "apps"]
+      resources: ["deployments"]
+      verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
+    - apiGroups: ["tekton.dev"]
+      resources: ["tasks", "clustertasks", "taskruns", "pipelines", "pipelineruns", "pipelineresources"]
+      verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
+    - apiGroups: ["tekton.dev"]
+      resources: ["taskruns/finalizers", "pipelineruns/finalizers"]
+      verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
+    - apiGroups: ["tekton.dev"]
+      resources: ["tasks/status", "clustertasks/status", "taskruns/status", "pipelines/status", "pipelineruns/status"]
+      verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: ClusterRoleBinding
+  metadata:
+    name: tekton-dashboard-minimal
+  subjects:
+    - kind: ServiceAccount
+      name: tekton-dashboard
+      namespace: tekton-pipelines
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: ClusterRole
+    name: tekton-dashboard-minimal
+- apiVersion: v1
   kind: DeploymentConfig
   metadata:
     labels:
@@ -31,6 +76,7 @@ objects:
           app: tekton-dashboard
           deploymentconfig: tekton-dashboard
       spec:
+        serviceAccountName: tekton-dashboard
         containers:
         - env:
           image: "tekton-pipelines/tekton-dashboard"
@@ -115,6 +161,61 @@ objects:
       application: tekton-dashboard
     name: tekton-dashboard
     namespace: tekton-pipelines
+- apiVersion: tekton.dev/v1alpha1
+  kind: Pipeline
+  metadata:
+    name: pipeline0
+    namespace: tekton-pipelines
+  spec:
+    resources:
+    - name: git-source
+      type: git
+    params:
+    - name: pathToResourceFiles
+      description: The path to the resource files to apply
+      default: /workspace/git-source
+    - name: apply-directory
+      description: The directory from which resources are to be applied
+      default: ""
+    tasks:
+    - name: pipeline0-task
+      taskRef:
+        name: pipeline0-task
+      params:
+      - name: pathToResourceFiles
+        value: ${params.pathToResourceFiles}
+      - name: apply-directory
+        value: ${params.apply-directory}
+      resources:
+        inputs:
+        - name: git-source
+          resource: git-source
+- apiVersion: tekton.dev/v1alpha1
+  kind: Task
+  metadata:
+    name: pipeline0-task
+    namespace: tekton-pipelines
+  spec:
+    inputs:
+      resources:
+      - name: git-source
+        type: git
+      params:
+      - name: pathToResourceFiles
+        description: The path to the resource files to apply
+        default: /workspace/git-source
+      - name: apply-directory
+        description: The directory from which resources are to be applied
+        default: ""
+    steps:
+    - name: kubectl-apply
+      image: lachlanevenson/k8s-kubectl
+      command:
+      - kubectl
+      args:
+      - apply
+      - -f
+      - ${inputs.params.pathToResourceFiles}/${inputs.params.apply-directory} 
 
 
 

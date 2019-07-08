@@ -22,13 +22,30 @@ type messageType string
 
 // Reference outside of package
 const (
-	Log                messageType = "Log"
-	PipelineRunCreated messageType = "PipelineRunCreated"
-	PipelineRunDeleted messageType = "PipelineRunDeleted"
-	PipelineRunUpdated messageType = "PipelineRunUpdated"
-	TaskRunCreated messageType = "TaskRunCreated"
-	TaskRunDeleted messageType = "TaskRunDeleted"
-	TaskRunUpdated messageType = "TaskRunUpdated"
+	Log                     messageType = "Log"
+	NamespaceCreated        messageType = "NamespaceCreated"
+	NamespaceDeleted        messageType = "NamespaceDeleted"
+	PipelineCreated         messageType = "PipelineCreated"
+	PipelineDeleted         messageType = "PipelineDeleted"
+	PipelineUpdated         messageType = "PipelineUpdated"
+	ClusterTaskCreated      messageType = "ClusterTaskCreated"
+	ClusterTaskDeleted      messageType = "ClusterTaskDeleted"
+	ClusterTaskUpdated      messageType = "ClusterTaskUpdated"
+	TaskCreated             messageType = "TaskCreated"
+	TaskDeleted             messageType = "TaskDeleted"
+	TaskUpdated             messageType = "TaskUpdated"
+	PipelineResourceCreated messageType = "PipelineResourceCreated"
+	PipelineResourceDeleted messageType = "PipelineResourceDeleted"
+	PipelineResourceUpdated messageType = "PipelineResourceUpdated"
+	PipelineRunCreated      messageType = "PipelineRunCreated"
+	PipelineRunDeleted      messageType = "PipelineRunDeleted"
+	PipelineRunUpdated      messageType = "PipelineRunUpdated"
+	TaskRunCreated          messageType = "TaskRunCreated"
+	TaskRunDeleted          messageType = "TaskRunDeleted"
+	TaskRunUpdated          messageType = "TaskRunUpdated"
+	ExtensionCreated        messageType = "ExtensionCreated"
+	ExtensionUpdated        messageType = "ExtensionUpdated"
+	ExtensionDeleted        messageType = "ExtensionDeleted"
 )
 
 type SocketData struct {

@@ -15,9 +15,21 @@ import { combineReducers } from 'redux';
 import keyBy from 'lodash.keyby';
 
 import { ALL_NAMESPACES } from '../constants';
+import {
+  createErrorMessageReducer,
+  createIsFetchingReducer
+} from './reducerCreators';
+
+const type = 'Namespace';
 
 function byName(state = { default: {} }, action) {
   switch (action.type) {
+    case 'NamespaceCreated':
+      return { [action.payload.metadata.name]: action.payload, ...state };
+    case 'NamespaceDeleted':
+      const newState = { ...state };
+      delete newState[action.payload.metadata.name];
+      return newState;
     case 'NAMESPACES_FETCH_SUCCESS':
       return keyBy(action.data, 'metadata.name');
     default:
@@ -34,29 +46,8 @@ function selected(state = ALL_NAMESPACES, action) {
   }
 }
 
-function isFetching(state = false, action) {
-  switch (action.type) {
-    case 'NAMESPACES_FETCH_REQUEST':
-      return true;
-    case 'NAMESPACES_FETCH_SUCCESS':
-    case 'NAMESPACES_FETCH_FAILURE':
-      return false;
-    default:
-      return state;
-  }
-}
-
-function errorMessage(state = null, action) {
-  switch (action.type) {
-    case 'NAMESPACES_FETCH_FAILURE':
-      return action.error.message;
-    case 'NAMESPACES_FETCH_REQUEST':
-    case 'NAMESPACES_FETCH_SUCCESS':
-      return null;
-    default:
-      return state;
-  }
-}
+const isFetching = createIsFetchingReducer({ type });
+const errorMessage = createErrorMessageReducer({ type });
 
 export default combineReducers({
   byName,

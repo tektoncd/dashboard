@@ -38,12 +38,36 @@ function dump_extra_cluster_state() {
   echo ">>> Pipeline webhook log:"
   kubectl -n tekton-pipelines logs $(get_app_pod tekton-pipelines-webhook tekton-pipelines)
   echo ">>> Dashboard backend log:"
-  kubectl -n tekton-pipelines logs $(get_app_pod tekton-dashboard default)
+  kubectl -n tekton-pipelines logs $(get_app_pod tekton-dashboard tekton-pipelines)
 }
 
 function install_dashboard_backend() {
   echo ">> Deploying the Dashboard backend"
   ko apply -f config/ || fail_test "Dashboard backend installation failed"
   # Wait for pods to be running in the namespaces we are deploying to
-  wait_until_pods_running default || fail_test "Dashboard backend did not come up"
+  wait_until_pods_running tekton-pipelines || fail_test "Dashboard backend did not come up"
+}
+
+function dump_cluster_state() {
+  echo "***************************************"
+  echo "***         E2E TEST FAILED         ***"
+  echo "***    Start of information dump    ***"
+  echo "***************************************"
+  echo ">>> All resources:"
+  kubectl get all --all-namespaces
+  echo ">>> Services:"
+  kubectl get services --all-namespaces
+  echo ">>> Events:"
+  kubectl get events --all-namespaces
+  function_exists dump_extra_cluster_state && dump_extra_cluster_state
+  echo "***************************************"
+  echo "***         E2E TEST FAILED         ***"
+  echo "***     End of information dump     ***"
+  echo "***************************************"
+}
+
+function fail_test() {
+  [[ -n $1 ]] && echo "ERROR: $1"
+  dump_cluster_state
+  exit 1
 }

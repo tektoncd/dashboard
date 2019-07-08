@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
+import snakeCase from 'lodash.snakecase';
 import CheckmarkFilled from '@carbon/icons-react/lib/checkmark--filled/16';
 import CloseFilled from '@carbon/icons-react/lib/close--filled/16';
 
@@ -22,8 +23,14 @@ export function getStatus(resource) {
   return conditions.find(condition => condition.type === 'Succeeded') || {};
 }
 
+export function isRunning(reason, status) {
+  return (
+    status === 'Unknown' && (reason === 'Running' || reason === 'Building')
+  );
+}
+
 export function getStatusIcon({ reason, status }) {
-  if (status === 'Unknown' && reason === 'Running') {
+  if (isRunning(reason, status)) {
     return <Spinner className="status-icon" />;
   }
 
@@ -46,7 +53,7 @@ export function taskRunStep(selectedStepId, taskRun) {
     return {};
   }
 
-  const { id, stepName, stepStatus, status, reason, ...definition } = step;
+  const { stepName, stepStatus, status, reason, ...definition } = step;
 
   return {
     definition,
@@ -91,4 +98,8 @@ export function stepsStatus(taskSteps, taskRunStepsStatus = []) {
     };
   });
   return steps;
+}
+
+export function typeToPlural(type) {
+  return `${snakeCase(type).toUpperCase()}S`;
 }

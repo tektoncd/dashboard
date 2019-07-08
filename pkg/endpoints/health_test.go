@@ -10,22 +10,23 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package endpoints
+package endpoints_test
 
 import (
-	"net/http/httptest"
+	"fmt"
+	"github.com/tektoncd/dashboard/pkg/testutils"
+	"net/http"
 	"testing"
 )
 
-// Check our health endpoint returns 204 when all is well
-func TestHealthEndpointPresent(t *testing.T) {
-	r := dummyResource()
-	httpWriter := httptest.NewRecorder()
-	bodyRequest := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/health", nil)
-	bodyRestful := dummyRestfulRequest(bodyRequest, "ns1", "")
-	resp := dummyRestfulResponse(httpWriter)
-	r.checkHealth(bodyRestful, resp)
-	if resp.StatusCode() != 204 {
-		t.Errorf("FAIL: should have been recognised as a 204 when we're up and running, got %d", resp.StatusCode())
+// GET health + readiness
+func TestGETHealthEndpoint(t *testing.T) {
+	server, _, _ := testutils.DummyServer()
+	defer server.Close()
+	httpReq := testutils.DummyHTTPRequest("GET", fmt.Sprintf("%s/health", server.URL), nil)
+	response, _ := http.DefaultClient.Do(httpReq)
+	expectedStatus := http.StatusNoContent
+	if response.StatusCode != expectedStatus {
+		t.Fatalf("Health check failed: expected statusCode %d, actual %d", expectedStatus, response.StatusCode)
 	}
 }

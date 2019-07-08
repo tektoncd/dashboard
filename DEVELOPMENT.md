@@ -17,7 +17,7 @@ You must install these tools:
 1. [`git`](https://help.github.com/articles/set-up-git/): For source control
 1. [`dep`](https://github.com/golang/dep): For managing external Go dependencies. - Please Install dep v0.5.0 or greater.
 1. [`ko`](https://github.com/google/ko): For development. `ko` version v0.1 or higher is required for `dashboard` to work correctly.
-1. [Node.js & npm](https://nodejs.org/): For building and running the frontend locally. See `engines` in [package.json](./package.json) for versions used.
+1. [Node.js & npm](https://nodejs.org/): For building and running the frontend locally. See `engines` in [package.json](./package.json) for versions used. _Node.js 10.x is recommended_
 1. [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/): For interacting with your kube cluster.
 
 Your [`$GOPATH`] setting is critical for `ko apply` to function properly: a
@@ -93,10 +93,6 @@ kubectl create clusterrolebinding cluster-admin-binding \
   --user="${USER}"
 ```
 
-### Namespaces
-
-Currently you must install the Tekton dashboard into the same namespace you wish to create and get Tekton resources in.
-
 ## Iterating
 
 While iterating on the project, you may need to:
@@ -114,10 +110,10 @@ Tekton Dashboard does not involve any custom resource definitions, we only inter
 You can stand up a version of the dashboard on-cluster (to your
 `kubectl config current-context`):
 
-First install and build the npm project.
+First install and build the npm project. Install with a clean slate of dependencies, if a node_modules folder is already present in the project root it will be automatically removed before install.
 
 ```shell
-npm install
+npm ci 
 ```
 
 There is a dedicated npm job for ko builds
@@ -134,7 +130,7 @@ ko apply -f config/
 
 ## Access the dashboard
 
-The dashboard can be accessed by running `kubectl proxy`, which proxies requests through the API Server. Assuming `default` is the install namespace for the dashboard, you can access the web UI at `localhost:8001/api/v1/namespaces/default/services/tekton-dashboard:http/proxy/`
+The dashboard can be accessed by running `kubectl proxy`, which proxies requests through the API Server. You can access the web UI at `localhost:8001/api/v1/namespaces/tekton-pipelines/services/tekton-dashboard:http/proxy/`
 
 ### Redeploy dashboard
 
@@ -202,96 +198,24 @@ The backend API provides the following endpoints at `/v1/namespaces/<namespace>`
 
 __GET endpoints__
 
-__Namespaces__
+__Dashboard Ingress__
 ```
-GET /v1/namespaces/
-Get all namespaces for the cluster
-Returns HTTP code 200 and a list of namespaces in the cluster
-Returns HTTP code 404 if an error occurred getting the namespaces
-```
-
-__Service Accounts__
-```
-GET /v1/namespaces/<namespace>/serviceaccounts
-Get all ServiceAccounts
-Returns HTTP code 200 and a list of ServiceAccounts in the cluster
-Returns HTTP code 404 if an error occurred getting the ServiceAccounts
-```
-
-__Pipelines__
-```
-GET /v1/namespaces/<namespace>/pipelines
-Get all Tekton Pipelines
-Returns HTTP code 200 and a list of Pipelines in the given namespace
-Returns HTTP code 404 if an error occurred getting the Pipeline list
-
-GET /v1/namespaces/<namespace>/pipelines/<pipeline-name>
-Get a Tekton Pipeline by name
-Returns HTTP code 200 and the given pipeline in the given namespace if found
-Returns HTTP code 404 if an error occurred getting the Pipeline
+GET /v1/namespaces/<namespace>/ingress
+Get the registered `tekton-dashboard` ingress host value
+Returns HTTP code 200 and the registered dashboard ingress host value 
+Returns HTTP code 404 if an error occurred getting the ingress
 ```
 
 __PipelineRuns__
 ```
-GET /v1/namespaces/<namespace>/pipelineruns
-Get all Tekton PipelineRuns, also supports '?name=<pipeline-name>' querying
-Get all Tekton PipelineRuns, also supports '?repository=https://gitserver/foo/bar' querying
-Returns HTTP code 200 and a list of PipelineRuns, optionally matching the above query, in the given namespace
-Returns HTTP code 404 if an error occurred getting the PipelineRun list
-
 GET /v1/namespaces/<namespace>/pipelineruns/<pipelinerun-name>
 Get a Tekton PipelineRun by name
 Returns HTTP code 200 and the given PipelineRun in the given namespace
 Returns HTTP code 404 if an error occurred getting the PipelineRun
 ```
 
-__Tasks__
-```
-GET /v1/namespaces/<namespace>/tasks
-Get all Tekton tasks
-Returns HTTP code 200 and a list of Tasks in the given namespace
-Returns HTTP code 404 if an error occurred getting the Task list
-
-GET /v1/namespaces/<namespace>/tasks/<task-name>
-Get a Tekton Task by name
-Returns HTTP code 200 and the given Task in the given namespace if found
-Returns HTTP code 404 if an error occurred getting the TaskRun
-```
-
-__TaskRuns__
-```
-GET /v1/namespaces/<namespace>/taskruns
-Get all Tekton TaskRuns
-Get all Tekton TaskRuns, also supports '?name=<task-name>' querying
-Returns HTTP code 200 and a list of TaskRuns in the given namespace
-Returns HTTP code 404 if an error occurred getting the TaskRun list
-
-GET /v1/namespaces/<namespace>/taskruns/<taskrun-name>
-Get a Tekton TaskRun by name
-Returns HTTP code 200 and the given TaskRun in the given namespace if found
-Returns HTTP code 404 if an error occurred getting the TaskRun
-```
-
-__PipelineResources__
-```
-GET /v1/namespaces/<namespace>/pipelineresources
-Get all Tekton PipelineResources
-Returns HTTP code 200 and a list of PipelineResources in the given namespace
-Returns HTTP code 404 if an error occurred getting the PipelineResource list
-
-GET /v1/namespaces/<namespace>/pipelineresources/<pipelineresource-name>
-Get a Tekton PipelineResource by name
-Returns HTTP code 200 and the given PipelineResource in the given namespace if found
-Returns HTTP code 404 if an error occurred getting the PipelineResource
-```
-
 __Logs__
 ```
-GET /v1/namespaces/<namespace>/logs/<pod-name>
-Get the logs for a Pod by name
-Returns HTTP code 200 and the pod's logs in the given namespace if found
-Returns HTTP code 404 if an error occurred getting the logs or no pod was found by name in the given namespace
-
 GET /v1/namespaces/<namespace>/taskrunlogs/<taskrun-name>
 Get the logs for a TaskRun by name
 Returns HTTP code 200 and the logs from a TaskRun
@@ -418,7 +342,7 @@ Optional parameters listed below may be provided in the request body depending o
   - gitresourcename, gitcommit, and repourl can be provided in the request body if your Pipeline requires a PipelineResource of type `git`
   - imageresourcename, gitcommit and reponame can be provided in the request body if your Pipeline requires a PipelineResource of type `image`
 
-  - helmsecret and registrysecret are optional depending on whether the Pipeline requires secrets for accessing an insecure registry or using Helm
+  - helmsecret is optional depending on whether the Pipeline requires a secret for using Helm
 
   - serviceaccount can be provided to specify the serviceaccount to use for the PipelineRun
 
@@ -493,8 +417,9 @@ The backend extension is discovered by adding the label and the annotations in t
     tekton-dashboard-extension: "true"
 ```
 
-1.Each extension is mounted onto /v1/extensions/extension-name/ at the dashboard
-1.Requests to /v1/extensions/extension-name/ are routed to / at the extension in question. / at the extension is always exposed in the expectation that many extensions will only need one endpoint.
-1.If tekton-dashboard-endpoints is set to foo then /v1/extensions/extension-name/foo is routed to /foo at the extension
-1.Multiple context roots can be specified by using the . character to separate them: e.g. if tekton-dashboard-endpoints: foo.bar then /v1/extensions/extension-name/foo is routed to /foo and /v1/extensions/extension-name/bar is routed to /bar at the extension.
-1."/" is a reserved context root for javascript.  "tekton-dashboard-endpoints" must be always set if the extension has javascript.
+1. Each extension is mounted onto /v1/extensions/extension-name/ at the dashboard
+1. Requests to /v1/extensions/extension-name/ are routed to / at the extension in question. / at the extension is always exposed in the expectation that many extensions will only need one endpoint.
+1. If tekton-dashboard-endpoints is set to foo then /v1/extensions/extension-name/foo is routed to /foo at the extension
+1. Multiple context roots can be specified by using the . character to separate them: e.g. if tekton-dashboard-endpoints: foo.bar then /v1/extensions/extension-name/foo is routed to /foo and /v1/extensions/extension-name/bar is routed to /bar at the extension.
+1. "/" is a reserved context root for javascript.  "tekton-dashboard-endpoints" must be always set if the extension has javascript.
+

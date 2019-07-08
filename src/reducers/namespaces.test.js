@@ -14,6 +14,16 @@ limitations under the License.
 import namespacesReducer, * as selectors from './namespaces';
 import { ALL_NAMESPACES } from '../constants';
 
+const name = 'default';
+const uid = 'some-uid';
+const namespace = {
+  metadata: {
+    name,
+    uid
+  },
+  other: 'content'
+};
+
 it('handles init or unknown actions', () => {
   expect(namespacesReducer(undefined, { type: 'does_not_exist' })).toEqual({
     byName: {
@@ -32,15 +42,6 @@ it('NAMESPACES_FETCH_REQUEST', () => {
 });
 
 it('NAMESPACES_FETCH_SUCCESS', () => {
-  const name = 'default';
-  const uid = 'some-uid';
-  const namespace = {
-    metadata: {
-      name,
-      uid
-    },
-    other: 'content'
-  };
   const action = {
     type: 'NAMESPACES_FETCH_SUCCESS',
     data: [namespace]
@@ -49,6 +50,26 @@ it('NAMESPACES_FETCH_SUCCESS', () => {
   const state = namespacesReducer({}, action);
   expect(selectors.getNamespaces(state)).toEqual([name]);
   expect(selectors.isFetchingNamespaces(state)).toBe(false);
+});
+
+it('Namespace Events', () => {
+  const action = {
+    type: 'NamespaceCreated',
+    payload: namespace
+  };
+
+  const state = namespacesReducer({}, action);
+  expect(selectors.getNamespaces(state)).toEqual([name]);
+  expect(selectors.isFetchingNamespaces(state)).toBe(false);
+
+  const deleteAction = {
+    type: 'NamespaceDeleted',
+    payload: namespace
+  };
+
+  const updatedState = namespacesReducer(state, deleteAction);
+  expect(selectors.getNamespaces(updatedState)).toEqual([]);
+  expect(selectors.isFetchingNamespaces(updatedState)).toBe(false);
 });
 
 it('NAMESPACES_FETCH_FAILURE', () => {
@@ -64,12 +85,12 @@ it('NAMESPACES_FETCH_FAILURE', () => {
 });
 
 it('NAMESPACE_SELECT', () => {
-  const namespace = 'some-namespace';
+  const selectedNamespace = 'some-namespace';
   const action = {
     type: 'NAMESPACE_SELECT',
-    namespace
+    namespace: selectedNamespace
   };
 
   const state = namespacesReducer({}, action);
-  expect(selectors.getSelectedNamespace(state)).toEqual(namespace);
+  expect(selectors.getSelectedNamespace(state)).toEqual(selectedNamespace);
 });

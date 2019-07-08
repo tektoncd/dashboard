@@ -5,8 +5,12 @@
 Tekton Dashboard is a general purpose, web-based UI for Tekton Pipelines. It allows users to manage and view Tekton Pipeline and Task runs and the resources involved in their creation, execution, and completion.
 
 ![Dashboard UI workloads page](docs/dashboard-ui.png)
+
+## Pre-requisites
+[Tekton Pipelines](https://github.com/tektoncd/pipeline) must be installed in order to use the Tekton Dashboard. Instructions to install Tekton Pipelines can be found [here](https://github.com/tektoncd/pipeline/blob/master/docs/install.md).
+
 ## Install Dashboard
-The Tekton Dashboard has a hosted image located at gcr.io/tekton-nightly/dashboard:latest  
+The Tekton Dashboard has a hosted image located at gcr.io/tekton-nightly/dashboard:latest
 To install the latest dashboard using this image:
 ```
 kubectl apply -f config/release/gcr-tekton-dashboard.yaml
@@ -31,8 +35,12 @@ The `install-dev.sh` script will build and push an image of the Tekton Dashboard
 
 1. Install [tektoncd-pipeline-operator](https://github.com/openshift/tektoncd-pipeline-operator#deploy-openshift-pipelines-operator-on-minikube-for-testing)
 2. [Checkout](https://github.com/tektoncd/dashboard/blob/master/DEVELOPMENT.md#checkout-your-fork) the repository
-3. Install deployment config `$oc process -f config/templates/deploy.yaml | oc apply -f-`
-4. Install build config `$oc process -f config/templates/build.yaml | oc apply -f-`
+3. Install deployment config `oc process -f config/templates/deploy.yaml | oc apply -f -`
+4. Install build config `oc process -f config/templates/build.yaml | oc apply -f -`
+5. Wait until the pod `tekton-dashboard-1` is running in the tekton-pipelines namespace
+
+## Accessing the Dashboard on Minishift
+The Dashboard can be accessed by running `kubectl port-forward $(kubectl get pod --namespace tekton-pipelines -l app=tekton-dashboard -o name)  --namespace tekton-pipelines 9097:9097`. You can access the web UI at `http://localhost:9097/`
 
 ## Install on Minishift
 

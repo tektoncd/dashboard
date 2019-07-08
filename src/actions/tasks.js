@@ -11,42 +11,33 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { getTask, getTasks } from '../api';
-import { getSelectedNamespace } from '../reducers';
-
-export function fetchTasksSuccess(data) {
-  return {
-    type: 'TASKS_FETCH_SUCCESS',
-    data
-  };
-}
+import { getClusterTask, getClusterTasks, getTask, getTasks } from '../api';
+import {
+  fetchCollection,
+  fetchNamespacedCollection,
+  fetchNamespacedResource,
+  fetchResource
+} from './actionCreators';
 
 export function fetchTask({ name, namespace }) {
-  return async (dispatch, getState) => {
-    dispatch({ type: 'TASKS_FETCH_REQUEST' });
-    let task;
-    try {
-      const requestedNamespace = namespace || getSelectedNamespace(getState());
-      task = await getTask(name, requestedNamespace);
-      dispatch(fetchTasksSuccess([task]));
-    } catch (error) {
-      dispatch({ type: 'TASKS_FETCH_FAILURE', error });
-    }
-    return task;
-  };
+  return fetchNamespacedResource('Task', getTask, { name, namespace });
+}
+
+export function fetchClusterTask(name) {
+  return fetchResource('ClusterTask', getClusterTask, { name });
 }
 
 export function fetchTasks({ namespace } = {}) {
-  return async (dispatch, getState) => {
-    dispatch({ type: 'TASKS_FETCH_REQUEST' });
-    let tasks;
-    try {
-      const requestedNamespace = namespace || getSelectedNamespace(getState());
-      tasks = await getTasks(requestedNamespace);
-      dispatch(fetchTasksSuccess(tasks));
-    } catch (error) {
-      dispatch({ type: 'TASKS_FETCH_FAILURE', error });
-    }
-    return tasks;
-  };
+  return fetchNamespacedCollection('Task', getTasks, { namespace });
+}
+
+export function fetchClusterTasks() {
+  return fetchCollection('ClusterTask', getClusterTasks);
+}
+
+export function fetchTaskByType(name, type, namespace) {
+  if (type === 'clustertasks') {
+    return fetchClusterTask(name);
+  }
+  return fetchTask({ name, namespace });
 }

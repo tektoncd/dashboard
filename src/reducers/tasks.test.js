@@ -11,76 +11,47 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import tasksReducer, * as selectors from './tasks';
-import { ALL_NAMESPACES } from '../constants';
+import * as reducerCreators from './reducerCreators';
+import * as selectorCreators from './selectorCreators';
+import createReducer, * as selectors from './tasks';
 
-it('handles init or unknown actions', () => {
-  expect(tasksReducer(undefined, { type: 'does_not_exist' })).toEqual({
-    byId: {},
-    byNamespace: {},
-    errorMessage: null,
-    isFetching: false
+const name = 'task name';
+const namespace = 'default';
+const state = { fake: 'state' };
+
+it('creates a namespaced reducer for the correct type', () => {
+  const type = 'Task';
+  jest.spyOn(reducerCreators, 'createNamespacedReducer');
+  createReducer();
+  expect(reducerCreators.createNamespacedReducer).toHaveBeenCalledWith({
+    type
   });
 });
 
-it('TASKS_FETCH_REQUEST', () => {
-  const action = { type: 'TASKS_FETCH_REQUEST' };
-  const state = tasksReducer({}, action);
-  expect(selectors.isFetchingTasks(state)).toBe(true);
-});
-
-it('TASKS_FETCH_SUCCESS', () => {
-  const name = 'task name';
-  const namespace = 'default';
-  const uid = 'some-uid';
-  const task = {
-    metadata: {
-      name,
-      namespace,
-      uid
-    },
-    other: 'content'
-  };
-  const action = {
-    type: 'TASKS_FETCH_SUCCESS',
-    data: [task],
-    namespace
-  };
-
-  const state = tasksReducer({}, action);
-  expect(selectors.getTasks(state, namespace)).toEqual([task]);
-  expect(selectors.getTask(state, name, namespace)).toEqual(task);
-  expect(selectors.isFetchingTasks(state)).toBe(false);
-});
-
-it('TASKS_FETCH_FAILURE', () => {
-  const message = 'fake error message';
-  const error = { message };
-  const action = {
-    type: 'TASKS_FETCH_FAILURE',
-    error
-  };
-
-  const state = tasksReducer({}, action);
-  expect(selectors.getTasksErrorMessage(state)).toEqual(message);
-});
-
 it('getTasks', () => {
-  const namespace = 'namespace';
-  const state = { byNamespace: {} };
-  expect(selectors.getTasks(state, namespace)).toEqual([]);
-});
-
-it('getTasks all namespaces', () => {
-  const namespace = ALL_NAMESPACES;
-  const task = { fake: 'task' };
-  const state = { byId: { id: task } };
-  expect(selectors.getTasks(state, namespace)).toEqual([task]);
+  const collection = { fake: 'collection' };
+  jest
+    .spyOn(selectorCreators, 'getCollection')
+    .mockImplementation(() => collection);
+  expect(selectors.getTasks(state, namespace)).toEqual(collection);
 });
 
 it('getTask', () => {
-  const name = 'name';
-  const namespace = 'namespace';
-  const state = { byNamespace: {} };
-  expect(selectors.getTask(state, name, namespace)).toBeNull();
+  const resource = { fake: 'resource' };
+  jest
+    .spyOn(selectorCreators, 'getResource')
+    .mockImplementation(() => resource);
+  expect(selectors.getTask(state, name, namespace)).toEqual(resource);
+});
+
+it('getTasksErrorMessage', () => {
+  const errorMessage = 'errorMessage';
+  expect(selectors.getTasksErrorMessage({ errorMessage })).toEqual(
+    errorMessage
+  );
+});
+
+it('isFetchingTasks', () => {
+  const isFetching = 'isFetching';
+  expect(selectors.isFetchingTasks({ isFetching })).toEqual(isFetching);
 });

@@ -43,7 +43,7 @@ it('SideNav renders with extensions', () => {
   );
   expect(queryByText(/pipelines/i)).toBeTruthy();
   expect(queryByText(/tasks/i)).toBeTruthy();
-  expect(queryByText(/extensions/i)).toBeTruthy();
+  expect(queryByText(/tekton_dashboard_extension/i)).toBeTruthy();
 });
 
 it('SideNav selects namespace based on URL', () => {

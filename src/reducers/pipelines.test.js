@@ -11,76 +11,47 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import pipelinesReducer, * as selectors from './pipelines';
-import { ALL_NAMESPACES } from '../constants';
+import * as reducerCreators from './reducerCreators';
+import * as selectorCreators from './selectorCreators';
+import createReducer, * as selectors from './pipelines';
 
-it('handles init or unknown actions', () => {
-  expect(pipelinesReducer(undefined, { type: 'does_not_exist' })).toEqual({
-    byId: {},
-    byNamespace: {},
-    errorMessage: null,
-    isFetching: false
+const name = 'pipeline name';
+const namespace = 'default';
+const state = { fake: 'state' };
+
+it('creates a namespaced reducer for the correct type', () => {
+  const type = 'Pipeline';
+  jest.spyOn(reducerCreators, 'createNamespacedReducer');
+  createReducer();
+  expect(reducerCreators.createNamespacedReducer).toHaveBeenCalledWith({
+    type
   });
 });
 
-it('PIPELINES_FETCH_REQUEST', () => {
-  const action = { type: 'PIPELINES_FETCH_REQUEST' };
-  const state = pipelinesReducer({}, action);
-  expect(selectors.isFetchingPipelines(state)).toBe(true);
-});
-
-it('PIPELINES_FETCH_SUCCESS', () => {
-  const name = 'pipeline name';
-  const namespace = 'default';
-  const uid = 'some-uid';
-  const pipeline = {
-    metadata: {
-      name,
-      namespace,
-      uid
-    },
-    other: 'content'
-  };
-  const action = {
-    type: 'PIPELINES_FETCH_SUCCESS',
-    data: [pipeline],
-    namespace
-  };
-
-  const state = pipelinesReducer({}, action);
-  expect(selectors.getPipelines(state, namespace)).toEqual([pipeline]);
-  expect(selectors.getPipeline(state, name, namespace)).toEqual(pipeline);
-  expect(selectors.isFetchingPipelines(state)).toBe(false);
-});
-
-it('PIPELINES_FETCH_FAILURE', () => {
-  const message = 'fake error message';
-  const error = { message };
-  const action = {
-    type: 'PIPELINES_FETCH_FAILURE',
-    error
-  };
-
-  const state = pipelinesReducer({}, action);
-  expect(selectors.getPipelinesErrorMessage(state)).toEqual(message);
-});
-
 it('getPipelines', () => {
-  const namespace = 'namespace';
-  const state = { byNamespace: {} };
-  expect(selectors.getPipelines(state, namespace)).toEqual([]);
-});
-
-it('getPipelines all namespaces', () => {
-  const namespace = ALL_NAMESPACES;
-  const pipeline = { fake: 'pipeline' };
-  const state = { byId: { id: pipeline } };
-  expect(selectors.getPipelines(state, namespace)).toEqual([pipeline]);
+  const collection = { fake: 'collection' };
+  jest
+    .spyOn(selectorCreators, 'getCollection')
+    .mockImplementation(() => collection);
+  expect(selectors.getPipelines(state, namespace)).toEqual(collection);
 });
 
 it('getPipeline', () => {
-  const name = 'name';
-  const namespace = 'namespace';
-  const state = { byNamespace: {} };
-  expect(selectors.getPipeline(state, name, namespace)).toBeNull();
+  const resource = { fake: 'resource' };
+  jest
+    .spyOn(selectorCreators, 'getResource')
+    .mockImplementation(() => resource);
+  expect(selectors.getPipeline(state, name, namespace)).toEqual(resource);
+});
+
+it('getPipelinesErrorMessage', () => {
+  const errorMessage = 'errorMessage';
+  expect(selectors.getPipelinesErrorMessage({ errorMessage })).toEqual(
+    errorMessage
+  );
+});
+
+it('isFetchingPipelines', () => {
+  const isFetching = 'isFetching';
+  expect(selectors.isFetchingPipelines({ isFetching })).toEqual(isFetching);
 });

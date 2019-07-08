@@ -10,13 +10,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package endpoints
+package endpoints_test
 
 import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	"net/http/httptest"
 	"net/url"
 	"strings"
 	"sync"
@@ -24,277 +23,225 @@ import (
 	"testing"
 	"time"
 
-	restful "github.com/emicklei/go-restful"
 	gorillaSocket "github.com/gorilla/websocket"
 	"github.com/tektoncd/dashboard/pkg/broadcaster"
+	. "github.com/tektoncd/dashboard/pkg/endpoints"
+	"github.com/tektoncd/dashboard/pkg/router"
+	"github.com/tektoncd/dashboard/pkg/testutils"
 	"github.com/tektoncd/dashboard/pkg/websocket"
 	v1alpha1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/sample-controller/pkg/signals"
+	"k8s.io/apimachinery/pkg/types"
+	"strconv"
 )
 
-// Make logger global
-var T *testing.T
-
-// Counters for runs websocket test
-// Incremented atomically
-var CreationsRecorded int32
-var UpdatesRecorded int32
-var DeletionsRecorded int32
-
-// No data is sent through the log websocket
-// Assert connection flow
-func TestLogWebsocket(t *testing.T) {
-	T = t
-	T.Log("Enter TestLogWebsocket...")
-
-	_, s2 := setupResourceAndServer()
-	defer s2.Close()
-
-	devopsServer := strings.TrimPrefix(s2.URL, "https://")
-	websocketURL := url.URL{Scheme: "wss", Host: devopsServer, Path: "/v1/websockets/logs"}
-	websocketEndpoint := websocketURL.String()
-	const clients int = 10
-	connectionDur := time.Second * 1
-	var wg sync.WaitGroup
-	for i := 1; i <= clients; i++ {
-		wg.Add(1)
-		go clientWebsocket(websocketEndpoint, connectionDur, &wg, i)
-	}
-	T.Log("Waiting for clients to terminate...")
-	wg.Wait()
-	awaitFatal(func() bool { return logBroadcaster.PoolSize() == 0 }, "logbroadcaster pool should be empty")
-	T.Log("Exit TestLogWebsocket")
+type informerRecord struct {
+	CRD string
+	// do not access directly
+	create int32
+	// do not access directly
+	update int32
+	// do not access directly
+	delete int32
 }
 
-func TestRunWebsocket(t *testing.T) {
-	T = t
-	T.Log("Enter TestRunWebsocket...")
+func NewInformerRecord(kind string, updatable bool) informerRecord {
+	newRecord := informerRecord{
+		CRD: kind,
+	}
+	// Identify non-upgradable records
+	if !updatable {
+		newRecord.update = -1
+	}
+	return newRecord
+}
 
-	r, s2 := setupResourceAndServer()
-	defer s2.Close()
+func (i *informerRecord) Handle(event string) {
+	switch event {
+	case "Created":
+		atomic.AddInt32(&i.create, 1)
+	case "Updated":
+		atomic.AddInt32(&i.update, 1)
+	case "Deleted":
+		atomic.AddInt32(&i.delete, 1)
+	}
+}
 
-	stopCh := signals.SetupSignalHandler()
-	r.StartRunController(stopCh)
+func (i *informerRecord) Create() int32 {
+	return atomic.LoadInt32(&i.create)
+}
 
-	devopsServer := strings.TrimPrefix(s2.URL, "https://")
-	websocketURL := url.URL{Scheme: "wss", Host: devopsServer, Path: "/v1/websockets/runs"}
+func (i *informerRecord) Update() int32 {
+	return atomic.LoadInt32(&i.update)
+}
+
+func (i *informerRecord) Delete() int32 {
+	return atomic.LoadInt32(&i.delete)
+}
+
+// Ensures all resource types sent over websocket are received as intended
+func TestWebsocketResources(t *testing.T) {
+	t.Log("Enter TestLogWebsocket...")
+	server, r, installNamespace := testutils.DummyServer()
+	defer server.Close()
+
+	devopsServer := strings.TrimPrefix(server.URL, "http://")
+	websocketURL := url.URL{Scheme: "ws", Host: devopsServer, Path: "/v1/websockets/resources"}
 	websocketEndpoint := websocketURL.String()
-	const clients int = 10
-	connectionDur := time.Second * 1
+	const clients int = 5
+	connectionDur := time.Second * 5
 	var wg sync.WaitGroup
-	for i := 1; i <= clients; i++ {
-		wg.Add(1)
-		go clientWebsocket(websocketEndpoint, connectionDur, &wg, i)
+
+	// Remove event suffixes
+	getKind := func(event string) string {
+		event = strings.TrimSuffix(event, "Created")
+		event = strings.TrimSuffix(event, "Updated")
+		event = strings.TrimSuffix(event, "Deleted")
+		return event
+	}
+	// CUD records
+	pipelineResourceRecord := NewInformerRecord(getKind(string(broadcaster.PipelineResourceCreated)), true)
+	pipelineRecord := NewInformerRecord(getKind(string(broadcaster.PipelineCreated)), true)
+	pipelineRunRecord := NewInformerRecord(getKind(string(broadcaster.PipelineRunCreated)), true)
+	taskRecord := NewInformerRecord(getKind(string(broadcaster.TaskCreated)), true)
+	clusterTaskRecord := NewInformerRecord(getKind(string(broadcaster.ClusterTaskCreated)), true)
+	taskRunRecord := NewInformerRecord(getKind(string(broadcaster.TaskRunCreated)), true)
+	extensionRecord := NewInformerRecord(getKind(string(broadcaster.ExtensionCreated)), true)
+	// CD records
+	namespaceRecord := NewInformerRecord(getKind(string(broadcaster.NamespaceCreated)), false)
+
+	// Route incoming socket data to correct informer
+	recordMap := map[string]*informerRecord{
+		pipelineResourceRecord.CRD: &pipelineResourceRecord,
+		pipelineRecord.CRD:         &pipelineRecord,
+		pipelineRunRecord.CRD:      &pipelineRunRecord,
+		taskRecord.CRD:             &taskRecord,
+		clusterTaskRecord.CRD:      &clusterTaskRecord,
+		taskRunRecord.CRD:          &taskRunRecord,
+		namespaceRecord.CRD:        &namespaceRecord,
+		extensionRecord.CRD:        &extensionRecord,
 	}
 
+	for i := 1; i <= clients; i++ {
+		websocketChan := clientWebsocket(websocketEndpoint, connectionDur, t)
+		// Wait until connection timeout
+		go func() {
+			defer wg.Done()
+			for {
+				socketData, open := <-websocketChan
+				if !open {
+					return
+				}
+				// Get CRD kind key to grab the correct informerRecord
+				messageType := getKind(string(socketData.MessageType))
+				informerRecord := recordMap[messageType]
+				// Get event type to update proper informerRecord field
+				eventType := strings.TrimPrefix(string(socketData.MessageType), messageType)
+				informerRecord.Handle(eventType)
+			}
+		}()
+		wg.Add(1)
+	}
+	awaitAllClients := func() bool {
+		return ResourcesBroadcaster.PoolSize() == clients
+	}
 	// Wait until all broadcaster has registered all clients
-	awaitFatal(func() bool { return runsBroadcaster.PoolSize() == clients },
-		fmt.Sprintf("Expected %d clients within pool before creating Runs", clients))
+	awaitFatal(awaitAllClients, t, fmt.Sprintf("Expected %d clients within pool", clients))
 
-	// PipelineRuns
-	// Create pipeline and wait until clients receive
-	r.createTestPipelineRun("WebsocketPipelinerun", "123456")
-	awaitFatal(func() bool { return atomic.LoadInt32(&CreationsRecorded) == int32(clients) },
-		fmt.Sprintf("Expected %d CreationsRecorded", clients))
+	// Create namespace used for CUD/CD functions
+	namespace := "ns1"
+	_, err := r.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace}})
+	if err != nil {
+		t.Fatalf("Error creating namespace '%s': %s\n", namespace, err)
+	}
+	// CUD/CD methods should create a single informer event for each type (Create|Update|Delete)
+	// Create, Update, and Delete records
+	CUDPipelineResources(r, t, namespace)
+	CUDPipelines(r, t, namespace)
+	CUDPipelineRuns(r, t, namespace)
+	CUDTasks(r, t, namespace)
+	CUDClusterTasks(r, t)
+	CUDTaskRuns(r, t, namespace)
+	CUDExtensions(r, t, installNamespace)
+	// Create and Delete records
 
-	// Update pipeline and wait until clients receive
-	r.updateTestPipelineRun("WebsocketPipelinerun", "654321")
-	awaitFatal(func() bool { return atomic.LoadInt32(&UpdatesRecorded) == int32(clients) },
-		fmt.Sprintf("Expected %d UpdatesRecorded", clients))
-
-	// Delete pipeline and wait until clients receive
-	r.deleteTestPipelineRun("WebsocketPipelinerun")
-	awaitFatal(func() bool { return atomic.LoadInt32(&DeletionsRecorded) == int32(clients) },
-		fmt.Sprintf("Expected %d DeletionsRecorded", clients))
-
-	// TaskRuns
-	// Create task and wait until clients receive
-	r.createTestTaskRun("WebsocketTaskrun", "123456")
-	awaitFatal(func() bool { return atomic.LoadInt32(&CreationsRecorded) == int32(clients) },
-		fmt.Sprintf("Expected %d CreationsRecorded", clients))
-
-	// Update taskrun and wait until clients receive
-	r.updateTestTaskRun("WebsocketTaskrun", "654321")
-	awaitFatal(func() bool { return atomic.LoadInt32(&UpdatesRecorded) == int32(clients) },
-		fmt.Sprintf("Expected %d UpdatesRecorded", clients))
-
-	// Delete taskrun and wait until clients receive
-	r.deleteTestTaskRun("WebsocketTaskrun")
-	awaitFatal(func() bool { return atomic.LoadInt32(&DeletionsRecorded) == int32(clients) },
-		fmt.Sprintf("Expected %d DeletionsRecorded", clients))
-
-	T.Log("Waiting for clients to terminate...")
+	// The namespace used above has already been created
+	// Only delete to ensure an equal number of Create|Delete|Clients as checked by informerRecords
+	t.Log("Deleting namespace")
+	err = r.K8sClient.CoreV1().Namespaces().Delete(namespace, &metav1.DeleteOptions{})
+	if err != nil {
+		t.Fatalf("Error deleting namespace: %s: %s\n", namespace, err.Error())
+	}
+	// Wait until connections terminate and all subscribers have been removed from pool
+	// This is our synchronization point to compare against each informerRecord
+	t.Log("Waiting for clients to terminate...")
 	wg.Wait()
+	awaitNoClients := func() bool {
+		return ResourcesBroadcaster.PoolSize() == 0
+	}
+	awaitFatal(awaitNoClients, t, "Pool should be empty")
 
-	awaitFatal(func() bool { return runsBroadcaster.PoolSize() == 0 },
-		"runsBroadcaster pool should be empty")
-
-	T.Log("Exit TestRunWebsocket")
+	// Check that all fields have been populated
+	for _, informerRecord := range recordMap {
+		t.Log(informerRecord)
+		creates := int(informerRecord.Create())
+		updates := int(informerRecord.Update())
+		deletes := int(informerRecord.Delete())
+		// records without an update hook/informer
+		if updates == -1 {
+			if creates != clients || creates != deletes {
+				t.Fatalf("CD informer %s creates[%d] and deletes[%d] not equal expected to value: %d\n", informerRecord.CRD, creates, deletes, clients)
+			}
+		} else {
+			if creates != clients || creates != deletes || creates != updates {
+				t.Fatalf("CUD informer %s creates[%d], updates[%d] and deletes[%d] not equal to expected value: %d\n", informerRecord.CRD, creates, updates, deletes, clients)
+			}
+		}
+	}
 }
 
-func clientWebsocket(websocketEndpoint string, readDeadline time.Duration, wg *sync.WaitGroup, identifier int) {
+// Abstract connection into a channel of broadcaster.SocketData
+// Closed channel = closed connection
+func clientWebsocket(websocketEndpoint string, readDeadline time.Duration, t *testing.T) <-chan broadcaster.SocketData {
 	d := gorillaSocket.Dialer{TLSClientConfig: &tls.Config{RootCAs: nil, InsecureSkipVerify: true}}
 	connection, _, err := d.Dial(websocketEndpoint, nil)
 	if err != nil {
-		T.Fatalf("Dial error connecting to %s:, %s\n", websocketEndpoint, err)
+		t.Fatalf("Dial error connecting to %s:, %s\n", websocketEndpoint, err)
 	}
-	doneChan := make(chan struct{})
 	deadlineTime := time.Now().Add(readDeadline)
 	connection.SetReadDeadline(deadlineTime)
+	clientChan := make(chan broadcaster.SocketData)
 	go func() {
-		defer close(doneChan)
+		defer close(clientChan)
 		defer websocket.ReportClosing(connection)
 		for {
 			messageType, message, err := connection.ReadMessage()
 			if err != nil {
 				if !strings.Contains(err.Error(), "i/o timeout") {
-					T.Error("Read error:", err)
+					t.Error("Read error:", err)
 				}
 				return
 			}
 			if messageType == gorillaSocket.TextMessage {
 				var resp broadcaster.SocketData
 				if err := json.Unmarshal(message, &resp); err != nil {
-					T.Error("Client Unmarshal error:", err)
+					t.Error("Client Unmarshal error:", err)
 					return
 				}
-				switch resp.MessageType {
-				case broadcaster.PipelineRunCreated:
-					atomic.AddInt32(&CreationsRecorded, 1)
-				case broadcaster.PipelineRunUpdated:
-					atomic.AddInt32(&UpdatesRecorded, 1)
-				case broadcaster.PipelineRunDeleted:
-					atomic.AddInt32(&DeletionsRecorded, 1)
-				}
-				//Print out websocket data received
-				T.Logf("%v\n", resp)
+				clientChan <- resp
+				// Print out websocket data received
+				t.Logf("%v\n", resp)
 			}
 		}
 	}()
-	<-doneChan
-	if time.Now().Sub(deadlineTime) < 0 {
-		T.Errorf("Websocket[%d] terminated early\n", identifier)
-	}
-	wg.Done()
-}
-
-// Util to create pipelinerun
-func (r Resource) createTestPipelineRun(name, resourceVersion string) {
-
-	PipelineRun1 := v1alpha1.PipelineRun{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:            name,
-			ResourceVersion: resourceVersion,
-		},
-		Spec: v1alpha1.PipelineRunSpec{},
-	}
-
-	T.Log("Creating pipelinerun")
-	_, err := r.PipelineClient.TektonV1alpha1().PipelineRuns("ns1").Create(&PipelineRun1)
-	if err != nil {
-		T.Logf("Error creating pipelinerun: %s: %s\n", name, err.Error())
-	}
-}
-
-// Util to update pipelinerun
-func (r Resource) updateTestPipelineRun(name, newResourceVersion string) {
-
-	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/pipelineruns/"+name, nil)
-	req := dummyRestfulRequest(httpReq, "ns1", "")
-	httpWriter := httptest.NewRecorder()
-	resp := dummyRestfulResponse(httpWriter)
-
-	//  Test the function
-	r.getPipelineRun(req, resp)
-
-	// Decode the response
-	pipelinerun := v1alpha1.PipelineRun{}
-	json.NewDecoder(httpWriter.Body).Decode(&pipelinerun)
-	pipelinerun.SetResourceVersion(newResourceVersion)
-
-	T.Logf("Updating pipelinerun %s\n", name)
-	_, err := r.PipelineClient.TektonV1alpha1().PipelineRuns("ns1").Update(&pipelinerun)
-	if err != nil {
-		T.Logf("Error updating pipelinerun: %s: %s\n", name, err.Error())
-	}
-}
-
-// Util to delete pipelinerun
-func (r Resource) deleteTestPipelineRun(name string) {
-	T.Logf("Deleting pipelinerun: %s\n", name)
-	_ = r.PipelineClient.TektonV1alpha1().PipelineRuns("ns1").Delete(name, &metav1.DeleteOptions{})
-}
-
-// Util to create taskrun
-func (r Resource) createTestTaskRun(name, resourceVersion string) {
-
-	TaskRun1 := v1alpha1.TaskRun{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:            name,
-			ResourceVersion: resourceVersion,
-		},
-		Spec: v1alpha1.TaskRunSpec{},
-	}
-
-	T.Log("Creating taskrun")
-	_, err := r.PipelineClient.TektonV1alpha1().TaskRuns("ns1").Create(&TaskRun1)
-	if err != nil {
-		T.Logf("Error creating taskrun: %s: %s\n", name, err.Error())
-	}
-}
-
-// Util to update taskrun
-func (r Resource) updateTestTaskRun(name, newResourceVersion string) {
-
-	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/ns1/taskruns/"+name, nil)
-	req := dummyRestfulRequest(httpReq, "ns1", "")
-	httpWriter := httptest.NewRecorder()
-	resp := dummyRestfulResponse(httpWriter)
-
-	//  Test the function
-	r.getTaskRun(req, resp)
-
-	// Decode the response
-	taskrun := v1alpha1.TaskRun{}
-	json.NewDecoder(httpWriter.Body).Decode(&taskrun)
-	taskrun.SetResourceVersion(newResourceVersion)
-
-	T.Logf("Updating taskrun %s\n", name)
-	_, err := r.PipelineClient.TektonV1alpha1().TaskRuns("ns1").Update(&taskrun)
-	if err != nil {
-		T.Logf("Error updating taskrun: %s: %s\n", name, err.Error())
-	}
-}
-
-// Util to delete taskrun
-func (r Resource) deleteTestTaskRun(name string) {
-	T.Logf("Deleting taskrun: %s\n", name)
-	_ = r.PipelineClient.TektonV1alpha1().TaskRuns("ns1").Delete(name, &metav1.DeleteOptions{})
-}
-
-// Util to setup dummy resource and TLSServer
-func setupResourceAndServer() (*Resource, *httptest.Server) {
-
-	r := dummyResource()
-	devopsContainer := restful.NewContainer()
-	r.RegisterWebsocket(devopsContainer)
-	s2 := httptest.NewTLSServer(devopsContainer)
-
-	return r, s2
-}
-
-// Util to check result
-func checkTestResult(variable string, expectedValue, actualValue int) {
-	if actualValue != expectedValue {
-		T.Errorf("%s not equal to %d, recorded only %d", variable, expectedValue, actualValue)
-		T.FailNow()
-	}
+	return clientChan
 }
 
 // Checks condition until true
 // Use when there is no resource to wait on
-func awaitFatal(checkFunction func() bool, message string) {
+// Must be on goroutine running test function: https://golang.org/pkg/testing/#T
+func awaitFatal(checkFunction func() bool, t *testing.T, message string) {
 	fatalTimeout := time.Now().Add(time.Second * 5)
 	for {
 		if checkFunction() {
@@ -304,7 +251,240 @@ func awaitFatal(checkFunction func() bool, message string) {
 			if message == "" {
 				message = "Fatal timeout reached"
 			}
-			T.Fatal(message)
+			t.Fatal(message)
 		}
 	}
 }
+
+// CUD functions
+
+func CUDPipelineResources(r *Resource, t *testing.T, namespace string) {
+	resourceVersion := "1"
+
+	pipelineResource := v1alpha1.PipelineResource{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:            "pipelineResource",
+			ResourceVersion: resourceVersion,
+		},
+	}
+
+	t.Log("Creating pipelineresource")
+	_, err := r.PipelineClient.TektonV1alpha1().PipelineResources(namespace).Create(&pipelineResource)
+	if err != nil {
+		t.Fatalf("Error creating pipelineresource: %s: %s\n", pipelineResource.Name, err.Error())
+	}
+
+	newVersion := "2"
+	pipelineResource.ResourceVersion = newVersion
+	t.Log("Updating pipelineresource")
+	_, err = r.PipelineClient.TektonV1alpha1().PipelineResources(namespace).Update(&pipelineResource)
+	if err != nil {
+		t.Fatalf("Error updating pipelineresource: %s: %s\n", pipelineResource.Name, err.Error())
+	}
+
+	t.Log("Deleting pipelineresource")
+	err = r.PipelineClient.TektonV1alpha1().PipelineResources(namespace).Delete(pipelineResource.Name, &metav1.DeleteOptions{})
+	if err != nil {
+		t.Fatalf("Error deleting pipelineresource: %s: %s\n", pipelineResource.Name, err.Error())
+	}
+}
+
+func CUDPipelines(r *Resource, t *testing.T, namespace string) {
+	resourceVersion := "1"
+
+	pipeline := v1alpha1.Pipeline{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:            "pipeline",
+			ResourceVersion: resourceVersion,
+		},
+	}
+
+	t.Log("Creating pipeline")
+	_, err := r.PipelineClient.TektonV1alpha1().Pipelines(namespace).Create(&pipeline)
+	if err != nil {
+		t.Fatalf("Error creating pipeline: %s: %s\n", pipeline.Name, err.Error())
+	}
+
+	newVersion := "2"
+	pipeline.ResourceVersion = newVersion
+	t.Log("Updating pipeline")
+	_, err = r.PipelineClient.TektonV1alpha1().Pipelines(namespace).Update(&pipeline)
+	if err != nil {
+		t.Fatalf("Error updating pipeline: %s: %s\n", pipeline.Name, err.Error())
+	}
+
+	t.Log("Deleting pipeline")
+	err = r.PipelineClient.TektonV1alpha1().Pipelines(namespace).Delete(pipeline.Name, &metav1.DeleteOptions{})
+	if err != nil {
+		t.Fatalf("Error deleting pipeline: %s: %s\n", pipeline.Name, err.Error())
+	}
+}
+
+func CUDPipelineRuns(r *Resource, t *testing.T, namespace string) {
+	resourceVersion := "1"
+
+	pipelineRun := v1alpha1.PipelineRun{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:            "pipelineRun",
+			ResourceVersion: resourceVersion,
+		},
+	}
+
+	t.Log("Creating pipelineRun")
+	_, err := r.PipelineClient.TektonV1alpha1().PipelineRuns(namespace).Create(&pipelineRun)
+	if err != nil {
+		t.Fatalf("Error creating pipelineRun: %s: %s\n", pipelineRun.Name, err.Error())
+	}
+
+	newVersion := "2"
+	pipelineRun.ResourceVersion = newVersion
+	t.Log("Updating pipelineRun")
+	_, err = r.PipelineClient.TektonV1alpha1().PipelineRuns(namespace).Update(&pipelineRun)
+	if err != nil {
+		t.Fatalf("Error updating pipelineRun: %s: %s\n", pipelineRun.Name, err.Error())
+	}
+
+	t.Log("Deleting pipelineRun")
+	err = r.PipelineClient.TektonV1alpha1().PipelineRuns(namespace).Delete(pipelineRun.Name, &metav1.DeleteOptions{})
+	if err != nil {
+		t.Fatalf("Error deleting pipelineRun: %s: %s\n", pipelineRun.Name, err.Error())
+	}
+}
+
+func CUDTasks(r *Resource, t *testing.T, namespace string) {
+	resourceVersion := "1"
+
+	task := v1alpha1.Task{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:            "task",
+			ResourceVersion: resourceVersion,
+		},
+	}
+
+	t.Log("Creating task")
+	_, err := r.PipelineClient.TektonV1alpha1().Tasks(namespace).Create(&task)
+	if err != nil {
+		t.Fatalf("Error creating task: %s: %s\n", task.Name, err.Error())
+	}
+
+	newVersion := "2"
+	task.ResourceVersion = newVersion
+	t.Log("Updating task")
+	_, err = r.PipelineClient.TektonV1alpha1().Tasks(namespace).Update(&task)
+	if err != nil {
+		t.Fatalf("Error updating task: %s: %s\n", task.Name, err.Error())
+	}
+
+	t.Log("Deleting task")
+	err = r.PipelineClient.TektonV1alpha1().Tasks(namespace).Delete(task.Name, &metav1.DeleteOptions{})
+	if err != nil {
+		t.Fatalf("Error deleting task: %s: %s\n", task.Name, err.Error())
+	}
+}
+
+func CUDClusterTasks(r *Resource, t *testing.T) {
+	resourceVersion := "1"
+
+	clusterTask := v1alpha1.ClusterTask{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:            "clusterTask",
+			ResourceVersion: resourceVersion,
+		},
+	}
+
+	t.Log("Creating clusterTask")
+	_, err := r.PipelineClient.TektonV1alpha1().ClusterTasks().Create(&clusterTask)
+	if err != nil {
+		t.Fatalf("Error creating clusterTask: %s: %s\n", clusterTask.Name, err.Error())
+	}
+
+	newVersion := "2"
+	clusterTask.ResourceVersion = newVersion
+	t.Log("Updating clusterTask")
+	_, err = r.PipelineClient.TektonV1alpha1().ClusterTasks().Update(&clusterTask)
+	if err != nil {
+		t.Fatalf("Error updating clusterTask: %s: %s\n", clusterTask.Name, err.Error())
+	}
+
+	t.Log("Deleting clusterTask")
+	err = r.PipelineClient.TektonV1alpha1().ClusterTasks().Delete(clusterTask.Name, &metav1.DeleteOptions{})
+	if err != nil {
+		t.Fatalf("Error deleting clusterTask: %s: %s\n", clusterTask.Name, err.Error())
+	}
+}
+
+func CUDTaskRuns(r *Resource, t *testing.T, namespace string) {
+	resourceVersion := "1"
+
+	taskRun := v1alpha1.TaskRun{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:            "taskRun",
+			ResourceVersion: resourceVersion,
+		},
+	}
+
+	t.Log("Creating taskRun")
+	_, err := r.PipelineClient.TektonV1alpha1().TaskRuns(namespace).Create(&taskRun)
+	if err != nil {
+		t.Fatalf("Error creating taskRun: %s: %s\n", taskRun.Name, err.Error())
+	}
+
+	newVersion := "2"
+	taskRun.ResourceVersion = newVersion
+	t.Log("Updating taskRun")
+	_, err = r.PipelineClient.TektonV1alpha1().TaskRuns(namespace).Update(&taskRun)
+	if err != nil {
+		t.Fatalf("Error updating taskRun: %s: %s\n", taskRun.Name, err.Error())
+	}
+
+	t.Log("Deleting taskRun")
+	err = r.PipelineClient.TektonV1alpha1().TaskRuns(namespace).Delete(taskRun.Name, &metav1.DeleteOptions{})
+	if err != nil {
+		t.Fatalf("Error deleting taskRun: %s: %s\n", taskRun.Name, err.Error())
+	}
+}
+
+func CUDExtensions(r *Resource, t *testing.T, namespace string) {
+	resourceVersion := "1"
+
+	extensionService := corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:            "extension",
+			ResourceVersion: resourceVersion,
+			UID:             types.UID(strconv.FormatInt(time.Now().UnixNano(), 10)),
+			Labels: map[string]string{
+				router.ExtensionLabelKey: router.ExtensionLabelValue,
+			},
+		},
+		Spec: corev1.ServiceSpec{
+			ClusterIP: "127.0.0.1",
+			Ports: []corev1.ServicePort{
+				{
+					Port: int32(1234),
+				},
+			},
+		},
+	}
+
+	t.Log("Creating extensionService")
+	_, err := r.K8sClient.CoreV1().Services(namespace).Create(&extensionService)
+	if err != nil {
+		t.Fatalf("Error creating extensionService: %s: %s\n", extensionService.Name, err.Error())
+	}
+
+	newVersion := "2"
+	extensionService.ResourceVersion = newVersion
+	t.Log("Updating extensionService")
+	_, err = r.K8sClient.CoreV1().Services(namespace).Update(&extensionService)
+	if err != nil {
+		t.Fatalf("Error updating extensionService: %s: %s\n", extensionService.Name, err.Error())
+	}
+
+	t.Log("Deleting extensionService")
+	err = r.K8sClient.CoreV1().Services(namespace).Delete(extensionService.Name, &metav1.DeleteOptions{})
+	if err != nil {
+		t.Fatalf("Error deleting extensionService: %s: %s\n", extensionService.Name, err.Error())
+	}
+}
+
+// CD functions

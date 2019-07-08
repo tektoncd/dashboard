@@ -11,66 +11,45 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package endpoints
+package endpoints_test
 
 import (
 	"encoding/json"
-	"net/http/httptest"
+	"fmt"
+	"net/http"
 	"testing"
 
-	corev1 "k8s.io/api/core/v1"
+	"github.com/tektoncd/dashboard/pkg/testutils"
+	extensionsV1beta1 "k8s.io/api/extensions/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func TestGetAllNamespaces(t *testing.T) {
+func TestGetIngress(t *testing.T) {
+	server, r, namespace := testutils.DummyServer()
+	defer server.Close()
 
-	r := dummyResource()
+	hostName := "dashboard-host"
+	ingress := &extensionsV1beta1.Ingress{ObjectMeta: metav1.ObjectMeta{Name: "tekton-dashboard"}}
+	myRule := &extensionsV1beta1.IngressRule{}
+	myRule.Host = hostName
 
-	namespace := "test-namespace"
-	r.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace}})
+	myRuleAsArray := make([]extensionsV1beta1.IngressRule, 1)
+	myRuleAsArray[0] = *myRule
+	ingress.Spec.Rules = myRuleAsArray
 
-	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/", nil)
-	req := dummyRestfulRequest(httpReq, "", "")
-	httpWriter := httptest.NewRecorder()
-	resp := dummyRestfulResponse(httpWriter)
-
-	r.getAllNamespaces(req, resp)
-
-	result := corev1.NamespaceList{}
-	json.NewDecoder(httpWriter.Body).Decode(&result)
-
-	if len(result.Items) != 1 {
-		t.Errorf("Number of namespaces: expected: %d, returned: %d", 1, len(result.Items))
+	_, err := r.K8sClient.ExtensionsV1beta1().Ingresses(namespace).Create(ingress)
+	if err != nil {
+		t.Fatalf("Error creating ingress '%s': %v\n", ingress.Name, err)
 	}
-	if result.Items[0].Name != namespace {
-		t.Errorf("%s is not returned: %s, %s", namespace, result.Items[0].Name, result.Items[1].Name)
+
+	httpReq := testutils.DummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/ingress", server.URL, namespace), nil)
+	response, _ := http.DefaultClient.Do(httpReq)
+	responseIngressHost := ""
+	if err := json.NewDecoder(response.Body).Decode(&responseIngressHost); err != nil {
+		t.Fatalf("Error decoding getIngress response: %v\n", err)
 	}
-}
-
-func TestGetAllServiceAccounts(t *testing.T) {
-
-	r := dummyResource()
-
-	namespace := "test-namespace"
-	r.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace}})
-
-	serviceAccount := "test-sa"
-	r.K8sClient.CoreV1().ServiceAccounts(namespace).Create(&corev1.ServiceAccount{ObjectMeta: metav1.ObjectMeta{Name: serviceAccount}})
-
-	httpReq := dummyHTTPRequest("GET", "http://wwww.dummy.com:8383/v1/namespaces/test-namespace/serviceaccount", nil)
-	req := dummyRestfulRequest(httpReq, "", "")
-	httpWriter := httptest.NewRecorder()
-	resp := dummyRestfulResponse(httpWriter)
-
-	r.getAllServiceAccounts(req, resp)
-
-	result := corev1.ServiceAccountList{}
-	json.NewDecoder(httpWriter.Body).Decode(&result)
-
-	if len(result.Items) != 1 {
-		t.Errorf("Number of service accounts: expected: %d, returned: %d", 1, len(result.Items))
+	if responseIngressHost != hostName {
+		t.Errorf("Response for getting the Ingress host was %s, should have been %s", responseIngressHost, hostName)
 	}
-	if result.Items[0].Name != serviceAccount {
-		t.Errorf("%s is not returned: %s, %s", serviceAccount, result.Items[0].Name, result.Items[1].Name)
-	}
+
 }

@@ -29,6 +29,7 @@ NamespacesDropdown.defaultProps = {
   items: [],
   loading: false,
   label: 'Select Namespace',
+  titleText: 'Namespace',
   emptyText: 'No Namespaces found',
   showAllNamespaces: false
 };

@@ -1,0 +1,50 @@
+package tekton
+
+import (
+	"github.com/tektoncd/dashboard/pkg/broadcaster"
+	"github.com/tektoncd/dashboard/pkg/endpoints"
+	logging "github.com/tektoncd/dashboard/pkg/logging"
+	v1alpha1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
+	tektoninformer "github.com/tektoncd/pipeline/pkg/client/informers/externalversions"
+	"k8s.io/client-go/tools/cache"
+)
+
+// Registers a Tekton controller/informer for tasks on sharedTektonInformerFactory
+func NewTaskController(sharedTektonInformerFactory tektoninformer.SharedInformerFactory) {
+	logging.Log.Debug("In NewTaskController")
+	taskInformer := sharedTektonInformerFactory.Tekton().V1alpha1().Tasks().Informer()
+	taskInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
+		AddFunc:    taskCreated,
+		UpdateFunc: taskUpdated,
+		DeleteFunc: taskDeleted,
+	})
+}
+
+func taskCreated(obj interface{}) {
+	logging.Log.Debug("Task Controller Create")
+	data := broadcaster.SocketData{
+		MessageType: broadcaster.TaskCreated,
+		Payload:     obj,
+	}
+	endpoints.ResourcesChannel <- data
+}
+
+func taskUpdated(oldObj, newObj interface{}) {
+	if newObj.(*v1alpha1.Task).GetResourceVersion() != oldObj.(*v1alpha1.Task).GetResourceVersion() {
+		logging.Log.Debug("Task Controller Update")
+		data := broadcaster.SocketData{
+			MessageType: broadcaster.TaskUpdated,
+			Payload:     newObj,
+		}
+		endpoints.ResourcesChannel <- data
+	}
+}
+
+func taskDeleted(obj interface{}) {
+	logging.Log.Debug("Task Controller Delete")
+	data := broadcaster.SocketData{
+		MessageType: broadcaster.TaskDeleted,
+		Payload:     obj,
+	}
+	endpoints.ResourcesChannel <- data
+}

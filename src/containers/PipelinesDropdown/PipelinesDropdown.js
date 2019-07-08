@@ -16,33 +16,33 @@ import { connect } from 'react-redux';
 
 import {
   getPipelines,
-  isFetchingPipelines,
-  getSelectedNamespace
+  getSelectedNamespace,
+  isFetchingPipelines
 } from '../../reducers';
 import { fetchPipelines } from '../../actions/pipelines';
 import TooltipDropdown from '../../components/TooltipDropdown';
+import { ALL_NAMESPACES } from '../../constants';
 
 class PipelinesDropdown extends React.Component {
   componentDidMount() {
-    this.props.fetchPipelines();
+    const { namespace } = this.props;
+    this.props.fetchPipelines({ namespace });
   }
 
   componentDidUpdate(prevProps) {
     const { namespace } = this.props;
     if (namespace !== prevProps.namespace) {
-      this.props.fetchPipelines();
+      this.props.fetchPipelines({ namespace });
     }
   }
 
   render() {
-    return (
-      <TooltipDropdown
-        {...this.props}
-        emptyText={`No Pipelines found in the '${
-          this.props.namespace
-        }' namespace`}
-      />
-    );
+    const { namespace, ...rest } = this.props;
+    const emptyText =
+      namespace === ALL_NAMESPACES
+        ? `No Pipelines found`
+        : `No Pipelines found in the '${namespace}' namespace`;
+    return <TooltipDropdown {...rest} emptyText={emptyText} />;
   }
 }
 
@@ -53,11 +53,14 @@ PipelinesDropdown.defaultProps = {
   titleText: 'Pipeline'
 };
 
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
+  const namespace = ownProps.namespace || getSelectedNamespace(state);
   return {
-    items: getPipelines(state).map(pipeline => pipeline.metadata.name),
+    items: getPipelines(state, { namespace }).map(
+      pipeline => pipeline.metadata.name
+    ),
     loading: isFetchingPipelines(state),
-    namespace: getSelectedNamespace(state)
+    namespace
   };
 }
 

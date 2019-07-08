@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import { getNamespaces } from '../api';
+import { fetchCollection } from './actionCreators';
 
 export function selectNamespace(namespace) {
   return {
@@ -20,23 +21,6 @@ export function selectNamespace(namespace) {
   };
 }
 
-export function fetchNamespacesSuccess(data) {
-  return {
-    type: 'NAMESPACES_FETCH_SUCCESS',
-    data
-  };
-}
-
 export function fetchNamespaces() {
-  return async dispatch => {
-    dispatch({ type: 'NAMESPACES_FETCH_REQUEST' });
-    let namespaces;
-    try {
-      namespaces = await getNamespaces();
-      dispatch(fetchNamespacesSuccess(namespaces));
-    } catch (error) {
-      dispatch({ type: 'NAMESPACES_FETCH_FAILURE', error });
-    }
-    return namespaces;
-  };
+  return fetchCollection('Namespace', getNamespaces);
 }

@@ -11,103 +11,90 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
-
 import * as API from '../api';
-import * as selectors from '../reducers';
-import { fetchTask, fetchTasks, fetchTasksSuccess } from './tasks';
-
-it('fetchTaskSuccess', () => {
-  const data = [{ fake: 'data' }];
-  expect(fetchTasksSuccess(data)).toEqual({
-    type: 'TASKS_FETCH_SUCCESS',
-    data
-  });
-});
+import * as creators from './actionCreators';
+import {
+  fetchClusterTask,
+  fetchClusterTasks,
+  fetchTask,
+  fetchTaskByType,
+  fetchTasks
+} from './tasks';
 
 it('fetchTask', async () => {
-  const task = { fake: 'task' };
-  const namespace = 'default';
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const store = mockStore();
-
-  jest
-    .spyOn(selectors, 'getSelectedNamespace')
-    .mockImplementation(() => namespace);
-  jest.spyOn(API, 'getTask').mockImplementation(() => task);
-
-  const expectedActions = [
-    { type: 'TASKS_FETCH_REQUEST' },
-    fetchTasksSuccess([task])
-  ];
-
-  await store.dispatch(fetchTask({ name: 'foo' }));
-  expect(store.getActions()).toEqual(expectedActions);
-});
-
-it('fetchTask error', async () => {
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const store = mockStore();
-
-  const error = new Error();
-
-  jest.spyOn(API, 'getTask').mockImplementation(() => {
-    throw error;
-  });
-
-  const expectedActions = [
-    { type: 'TASKS_FETCH_REQUEST' },
-    { type: 'TASKS_FETCH_FAILURE', error }
-  ];
-
-  await store.dispatch(fetchTask({ name: 'foo' }));
-  expect(store.getActions()).toEqual(expectedActions);
-});
-
-it('fetchTasksSuccess', () => {
-  const data = { fake: 'data' };
-  expect(fetchTasksSuccess(data)).toEqual({
-    type: 'TASKS_FETCH_SUCCESS',
-    data
-  });
+  jest.spyOn(creators, 'fetchNamespacedResource');
+  const name = 'taskName';
+  const namespace = 'namespace';
+  fetchTask({ name, namespace });
+  expect(creators.fetchNamespacedResource).toHaveBeenCalledWith(
+    'Task',
+    API.getTask,
+    { name, namespace }
+  );
 });
 
 it('fetchTasks', async () => {
-  const tasks = { fake: 'tasks' };
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const store = mockStore();
-
-  jest.spyOn(API, 'getTasks').mockImplementation(() => tasks);
-
-  const expectedActions = [
-    { type: 'TASKS_FETCH_REQUEST' },
-    fetchTasksSuccess(tasks)
-  ];
-
-  await store.dispatch(fetchTasks());
-  expect(store.getActions()).toEqual(expectedActions);
+  jest.spyOn(creators, 'fetchNamespacedCollection');
+  const namespace = 'namespace';
+  fetchTasks({ namespace });
+  expect(creators.fetchNamespacedCollection).toHaveBeenCalledWith(
+    'Task',
+    API.getTasks,
+    { namespace }
+  );
 });
 
-it('fetchTasks error', async () => {
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const store = mockStore();
+it('fetchTasks no params', async () => {
+  jest.spyOn(creators, 'fetchNamespacedCollection');
+  fetchTasks();
+  expect(creators.fetchNamespacedCollection).toHaveBeenCalledWith(
+    'Task',
+    API.getTasks,
+    { namespace: undefined }
+  );
+});
 
-  const error = new Error();
+it('fetchClusterTask', async () => {
+  jest.spyOn(creators, 'fetchResource');
+  const name = 'clusterTaskName';
+  fetchClusterTask(name);
+  expect(creators.fetchResource).toHaveBeenCalledWith(
+    'ClusterTask',
+    API.getClusterTask,
+    { name }
+  );
+});
 
-  jest.spyOn(API, 'getTasks').mockImplementation(() => {
-    throw error;
-  });
+it('fetchClusterTasks', async () => {
+  jest.spyOn(creators, 'fetchCollection');
+  fetchClusterTasks();
+  expect(creators.fetchCollection).toHaveBeenCalledWith(
+    'ClusterTask',
+    API.getClusterTasks
+  );
+});
 
-  const expectedActions = [
-    { type: 'TASKS_FETCH_REQUEST' },
-    { type: 'TASKS_FETCH_FAILURE', error }
-  ];
+it('fetchClusterTaskByType', async () => {
+  jest.spyOn(creators, 'fetchResource');
+  const name = 'clusterTaskName';
+  fetchTaskByType(name, 'clustertasks');
+  expect(creators.fetchResource).toHaveBeenCalledWith(
+    'ClusterTask',
+    API.getClusterTask,
+    { name }
+  );
+});
 
-  await store.dispatch(fetchTasks());
-  expect(store.getActions()).toEqual(expectedActions);
+it('fetchTaskByType', async () => {
+  jest.spyOn(creators, 'fetchResource');
+  const name = 'clusterTaskName';
+
+  jest.spyOn(creators, 'fetchNamespacedCollection');
+  const namespace = 'namespace';
+  fetchTaskByType(name, 'tasks', namespace);
+  expect(creators.fetchNamespacedResource).toHaveBeenCalledWith(
+    'Task',
+    API.getTask,
+    { name, namespace }
+  );
 });

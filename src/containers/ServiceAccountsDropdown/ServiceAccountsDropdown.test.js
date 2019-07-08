@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, render, getNodeText } from 'react-testing-library';
+import { fireEvent, getNodeText, render } from 'react-testing-library';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
@@ -211,6 +211,25 @@ it('ServiceAccountsDropdown renders controlled selection', () => {
   expect(queryByText(initialTextRegExp)).toBeTruthy();
 });
 
+it('ServiceAccountsDropdown renders controlled namespace', () => {
+  const store = mockStore({
+    ...serviceAccountsStoreDefault,
+    ...namespacesStoreBlue
+  });
+  // Select namespace 'green'
+  const { queryByText, getByText, getAllByText } = render(
+    <Provider store={store}>
+      <ServiceAccountsDropdown {...props} namespace="green" />
+    </Provider>
+  );
+  fireEvent.click(getByText(initialTextRegExp));
+  checkDropdownItems({
+    getAllByText,
+    queryByText,
+    testDict: serviceAccountsByNamespace.green
+  });
+});
+
 it('ServiceAccountsDropdown renders empty', () => {
   const store = mockStore({
     serviceAccounts: {
@@ -220,6 +239,7 @@ it('ServiceAccountsDropdown renders empty', () => {
     },
     ...namespacesStoreBlue
   });
+  // Select item 'service-account-1'
   const { queryByText } = render(
     <Provider store={store}>
       <ServiceAccountsDropdown {...props} />

@@ -15,30 +15,48 @@ package endpoints
 
 import (
 	"net/http"
+	"net/url"
 
-	"github.com/emicklei/go-restful"
+	restful "github.com/emicklei/go-restful"
+	"github.com/tektoncd/dashboard/pkg/logging"
+
 	"github.com/tektoncd/dashboard/pkg/utils"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func (r Resource) getAllNamespaces(request *restful.Request, response *restful.Response) {
-	namespaces, err := r.K8sClient.CoreV1().Namespaces().List(metav1.ListOptions{})
-
+/* Get all tasks in a given namespace */
+func (r Resource) ProxyRequest(request *restful.Request, response *restful.Response) {
+	parsedUrl, err := url.Parse(request.Request.URL.String())
 	if err != nil {
 		utils.RespondError(response, err, http.StatusNotFound)
 		return
 	}
-	response.WriteEntity(namespaces)
+	uri := request.PathParameter("subpath") + "?" + parsedUrl.RawQuery
+	forwardRequest := r.K8sClient.CoreV1().RESTClient().Verb(request.Request.Method).RequestURI(uri).Body(request.Request.Body)
+	forwardRequest.SetHeader("Content-Type", request.HeaderParameter("Content-Type"))
+	forwardResponse := forwardRequest.Do()
+
+	responseBody, requestError := forwardResponse.Raw()
+	if requestError != nil {
+		utils.RespondError(response, requestError, http.StatusNotFound)
+		return
+	}
+
+	logging.Log.Debugf("Forwarding to url : %s", forwardRequest.URL().String())
+	response.Header().Add("Content-Type", utils.GetContentType(responseBody))
+	response.Write(responseBody)
 }
 
-func (r Resource) getAllServiceAccounts(request *restful.Request, response *restful.Response) {
+func (r Resource) GetIngress(request *restful.Request, response *restful.Response) {
 	requestNamespace := utils.GetNamespace(request)
 
-	serviceAccounts, err := r.K8sClient.CoreV1().ServiceAccounts(requestNamespace).List(metav1.ListOptions{})
+	ingress, err := r.K8sClient.ExtensionsV1beta1().Ingresses(requestNamespace).Get("tekton-dashboard", metav1.GetOptions{})
+
+	ingressHost := ingress.Spec.Rules[0].Host
 
 	if err != nil {
 		utils.RespondError(response, err, http.StatusNotFound)
 		return
 	}
-	response.WriteEntity(serviceAccounts)
+	response.WriteEntity(ingressHost)
 }

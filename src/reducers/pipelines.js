@@ -11,83 +11,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { combineReducers } from 'redux';
-import keyBy from 'lodash.keyby';
-import merge from 'lodash.merge';
+import { createNamespacedReducer } from './reducerCreators';
+import { getCollection, getResource } from './selectorCreators';
 
-import { ALL_NAMESPACES } from '../constants';
-
-function byId(state = {}, action) {
-  switch (action.type) {
-    case 'PIPELINES_FETCH_SUCCESS':
-      return { ...state, ...keyBy(action.data, 'metadata.uid') };
-    default:
-      return state;
-  }
-}
-
-function byNamespace(state = {}, action) {
-  switch (action.type) {
-    case 'PIPELINES_FETCH_SUCCESS':
-      const namespaces = action.data.reduce((accumulator, pipeline) => {
-        const { name, namespace, uid } = pipeline.metadata;
-        return merge(accumulator, {
-          [namespace]: {
-            [name]: uid
-          }
-        });
-      }, {});
-
-      return merge({}, state, namespaces);
-    default:
-      return state;
-  }
-}
-
-function isFetching(state = false, action) {
-  switch (action.type) {
-    case 'PIPELINES_FETCH_REQUEST':
-      return true;
-    case 'PIPELINES_FETCH_SUCCESS':
-    case 'PIPELINES_FETCH_FAILURE':
-      return false;
-    default:
-      return state;
-  }
-}
-
-function errorMessage(state = null, action) {
-  switch (action.type) {
-    case 'PIPELINES_FETCH_FAILURE':
-      return action.error.message;
-    case 'PIPELINES_FETCH_REQUEST':
-    case 'PIPELINES_FETCH_SUCCESS':
-      return null;
-    default:
-      return state;
-  }
-}
-
-export default combineReducers({
-  byId,
-  byNamespace,
-  errorMessage,
-  isFetching
-});
+export default () => createNamespacedReducer({ type: 'Pipeline' });
 
 export function getPipelines(state, namespace) {
-  if (namespace === ALL_NAMESPACES) {
-    return Object.values(state.byId);
-  }
-
-  const pipelines = state.byNamespace[namespace];
-  return pipelines ? Object.values(pipelines).map(id => state.byId[id]) : [];
+  return getCollection(state, namespace);
 }
 
 export function getPipeline(state, name, namespace) {
-  const pipelines = state.byNamespace[namespace] || {};
-  const pipelineId = pipelines[name];
-  return pipelineId ? state.byId[pipelineId] : null;
+  return getResource(state, name, namespace);
 }
 
 export function getPipelinesErrorMessage(state) {

@@ -12,41 +12,21 @@ limitations under the License.
 */
 
 import { getPipelineRun, getPipelineRuns } from '../api';
-import { getSelectedNamespace } from '../reducers';
-
-export function fetchPipelineRunsSuccess(data) {
-  return {
-    type: 'PIPELINE_RUNS_FETCH_SUCCESS',
-    data
-  };
-}
+import {
+  fetchNamespacedCollection,
+  fetchNamespacedResource
+} from './actionCreators';
 
 export function fetchPipelineRun({ name, namespace }) {
-  return async (dispatch, getState) => {
-    dispatch({ type: 'PIPELINE_RUNS_FETCH_REQUEST' });
-    let pipelineRun;
-    try {
-      const requestedNamespace = namespace || getSelectedNamespace(getState());
-      pipelineRun = await getPipelineRun(name, requestedNamespace);
-      dispatch(fetchPipelineRunsSuccess([pipelineRun]));
-    } catch (error) {
-      dispatch({ type: 'PIPELINE_RUNS_FETCH_FAILURE', error });
-    }
-    return pipelineRun;
-  };
+  return fetchNamespacedResource('PipelineRun', getPipelineRun, {
+    name,
+    namespace
+  });
 }
 
-export function fetchPipelineRuns({ pipelineName, namespace } = {}) {
-  return async (dispatch, getState) => {
-    dispatch({ type: 'PIPELINE_RUNS_FETCH_REQUEST' });
-    let pipelineRuns;
-    try {
-      const requestedNamespace = namespace || getSelectedNamespace(getState());
-      pipelineRuns = await getPipelineRuns(requestedNamespace, pipelineName);
-      dispatch(fetchPipelineRunsSuccess(pipelineRuns));
-    } catch (error) {
-      dispatch({ type: 'PIPELINE_RUNS_FETCH_FAILURE', error });
-    }
-    return pipelineRuns;
-  };
+export function fetchPipelineRuns({ namespace, pipelineName } = {}) {
+  return fetchNamespacedCollection('PipelineRun', getPipelineRuns, {
+    namespace,
+    pipelineName
+  });
 }

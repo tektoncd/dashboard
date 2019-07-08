@@ -11,25 +11,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-@import '~carbon-components/scss/globals/scss/vars';
-
-.submenu-parent-item {
-  margin-bottom: 1em;
-  list-style: none;
-
-  .bx--side-nav__menu {
-    margin-top: .5em;
-  }
-}
-
-.submenu-title, .bx--side-nav__items .bx--label {
-  color: $text-01;
-  margin-left: 1.5em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-size: 0.875rem;
-  font-weight: 600;
-  letter-spacing: 0.1px;
-  user-select: none;
-}
+export { default } from './Secrets';

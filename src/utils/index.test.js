@@ -11,7 +11,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { getStatus, taskRunStep, selectedTask, stepsStatus } from '.';
+import {
+  getStatus,
+  selectedTask,
+  stepsStatus,
+  taskRunStep,
+  typeToPlural
+} from '.';
 
 it('getStatus', () => {
   const taskRun = {
@@ -183,4 +189,8 @@ it('stepsStatus step is waiting', () => {
   const steps = stepsStatus(taskSteps, taskRunStepsStatus);
   const returnedStep = steps[0];
   expect(returnedStep.status).toEqual('waiting');
+});
+
+it('typeToPlural', () => {
+  expect(typeToPlural('Extension')).toEqual('EXTENSIONS');
 });

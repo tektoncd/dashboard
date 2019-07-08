@@ -14,10 +14,10 @@ limitations under the License.
 import React, { Component } from 'react';
 
 import {
-  ToastNotification,
-  TextInput,
   Button,
-  Form
+  Form,
+  TextInput,
+  ToastNotification
 } from 'carbon-components-react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -93,7 +93,7 @@ export class ImportResources extends Component {
       return;
     }
 
-    const promise = createPipelineRun(payload, namespace);
+    const promise = createPipelineRun({ namespace, payload });
     promise
       .then(headers => {
         const logsURL = headers.get('Content-Location');
@@ -156,7 +156,6 @@ export class ImportResources extends Component {
             onChange={this.handleNamespace}
             required
             selectedItem={selectedNamespace}
-            titleText="Namespace"
           />
           <TextInput
             data-testid="directory-field"
@@ -185,6 +184,7 @@ export class ImportResources extends Component {
                 <Link to={this.state.logsURL}>View status of this run</Link>
               }
               kind="success"
+              lowContrast
               title="Triggered PipelineRun to apply Tekton resources"
               subtitle=""
             />

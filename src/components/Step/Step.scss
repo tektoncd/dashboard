@@ -33,7 +33,8 @@ limitations under the License.
   }
 
   > a {
-    display: block;
+    display: flex;
+    align-items: baseline;
     position: relative;
     padding: 0 2.25rem;
     text-decoration: none;
@@ -45,7 +46,8 @@ limitations under the License.
   }
 
   .step-icon {
-    vertical-align: text-top;
+    flex-shrink: 0;
+    align-self: center;
     margin-right: 0.55rem;
 
     &.spinner {
@@ -53,6 +55,12 @@ limitations under the License.
       top: -0.1rem;
       left: -0.1rem;
     }
+  }
+
+  .step-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .status-label {

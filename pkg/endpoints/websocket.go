@@ -22,26 +22,17 @@ import (
 
 // Define all broadcasters/channels
 // Keep broadcaster channels open indefinitely
-var logChannel = make(chan broadcaster.SocketData)
-var runsChannel = make(chan broadcaster.SocketData)
+var LogChannel = make(chan broadcaster.SocketData)
+var ResourcesChannel = make(chan broadcaster.SocketData)
 
-var logBroadcaster = broadcaster.NewBroadcaster(logChannel)
-var runsBroadcaster = broadcaster.NewBroadcaster(runsChannel)
-
-// Establish websocket and subscribe to pipeline log events
-func (r Resource) establishPipelineLogsWebsocket(request *restful.Request, response *restful.Response) {
-	connection, err := websocket.UpgradeToWebsocket(request, response)
-	if err != nil {
-		logging.Log.Errorf("could not upgrade to websocket connection: %s", err)
-	}
-	websocket.WriteOnlyWebsocket(connection, logBroadcaster)
-}
+var LogBroadcaster = broadcaster.NewBroadcaster(LogChannel)
+var ResourcesBroadcaster = broadcaster.NewBroadcaster(ResourcesChannel)
 
 // Establish websocket and subscribe to pipelinerun events
-func (r Resource) establishRunsWebsocket(request *restful.Request, response *restful.Response) {
+func (r Resource) EstablishResourcesWebsocket(request *restful.Request, response *restful.Response) {
 	connection, err := websocket.UpgradeToWebsocket(request, response)
 	if err != nil {
-		logging.Log.Errorf("could not upgrade to websocket connection: %s", err)
+		logging.Log.Errorf("Could not upgrade to websocket connection: %s", err)
 	}
-	websocket.WriteOnlyWebsocket(connection, runsBroadcaster)
+	websocket.WriteOnlyWebsocket(connection, ResourcesBroadcaster)
 }

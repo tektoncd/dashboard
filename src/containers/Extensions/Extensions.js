@@ -37,50 +37,46 @@ export const Extensions = /* istanbul ignore next */ ({
   loading,
   extensions
 }) => {
+  if (loading && !extensions.length) {
+    return <StructuredListSkeleton border />;
+  }
+
+  if (error) {
+    return (
+      <InlineNotification
+        kind="error"
+        hideCloseButton
+        lowContrast
+        title="Error loading extensions"
+        subtitle={error}
+      />
+    );
+  }
+
   return (
-    <>
-      {(() => {
-        if (loading && !extensions.length) {
-          return <StructuredListSkeleton border />;
-        }
-
-        if (error) {
+    <StructuredListWrapper border selection>
+      <StructuredListHead>
+        <StructuredListRow head>
+          <StructuredListCell head>Extension</StructuredListCell>
+        </StructuredListRow>
+      </StructuredListHead>
+      <StructuredListBody>
+        {!extensions.length && (
+          <StructuredListRow>
+            <StructuredListCell>No extensions</StructuredListCell>
+          </StructuredListRow>
+        )}
+        {extensions.map(({ displayName, name }) => {
           return (
-            <InlineNotification
-              kind="error"
-              title="Error loading extensions"
-              subtitle={error}
-            />
+            <StructuredListRow className="definition" key={name}>
+              <StructuredListCell>
+                <Link to={`/extensions/${name}`}>{displayName}</Link>
+              </StructuredListCell>
+            </StructuredListRow>
           );
-        }
-
-        return (
-          <StructuredListWrapper border selection>
-            <StructuredListHead>
-              <StructuredListRow head>
-                <StructuredListCell head>Extension</StructuredListCell>
-              </StructuredListRow>
-            </StructuredListHead>
-            <StructuredListBody>
-              {!extensions.length && (
-                <StructuredListRow>
-                  <StructuredListCell>No extensions</StructuredListCell>
-                </StructuredListRow>
-              )}
-              {extensions.map(({ displayName, name }) => {
-                return (
-                  <StructuredListRow className="definition" key={name}>
-                    <StructuredListCell>
-                      <Link to={`/extensions/${name}`}>{displayName}</Link>
-                    </StructuredListCell>
-                  </StructuredListRow>
-                );
-              })}
-            </StructuredListBody>
-          </StructuredListWrapper>
-        );
-      })()}
-    </>
+        })}
+      </StructuredListBody>
+    </StructuredListWrapper>
   );
 };
 

@@ -15,6 +15,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
+  Button,
   InlineNotification,
   StructuredListBody,
   StructuredListCell,
@@ -23,9 +24,12 @@ import {
   StructuredListSkeleton,
   StructuredListWrapper
 } from 'carbon-components-react';
+import { CreatePipelineRun } from '..';
+import Add from '@carbon/icons-react/lib/add/16';
+import './PipelineRuns.scss';
 
 import { ALL_NAMESPACES } from '../../constants';
-import { getStatusIcon, getStatus } from '../../utils';
+import { getStatus, getStatusIcon, isRunning } from '../../utils';
 import { fetchPipelineRuns } from '../../actions/pipelineRuns';
 
 import {
@@ -35,8 +39,25 @@ import {
   getSelectedNamespace,
   isFetchingPipelineRuns
 } from '../../reducers';
+import CancelButton from '../../components/CancelButton/CancelButton';
+import { cancelPipelineRun } from '../../api';
+
+const initialState = {
+  showCreatePipelineRunModal: false,
+  createdPipelineRun: null
+};
 
 export /* istanbul ignore next */ class PipelineRuns extends Component {
+  constructor(props) {
+    super(props);
+
+    this.handleCreatePipelineRunSuccess = this.handleCreatePipelineRunSuccess.bind(
+      this
+    );
+
+    this.state = initialState;
+  }
+
   componentDidMount() {
     this.fetchPipelineRuns();
   }
@@ -48,8 +69,29 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
     const { pipelineName: prevPipelineName } = prevMatch.params;
 
     if (namespace !== prevNamespace || pipelineName !== prevPipelineName) {
+      this.reset();
       this.fetchPipelineRuns();
     }
+  }
+
+  toggleModal = showCreatePipelineRunModal => {
+    this.setState({ showCreatePipelineRunModal });
+  };
+
+  handleCreatePipelineRunSuccess(newPipelineRun) {
+    const {
+      metadata: { namespace, name },
+      spec: {
+        pipelineRef: { name: pipelineName }
+      }
+    } = newPipelineRun;
+    const url = `/namespaces/${namespace}/pipelines/${pipelineName}/runs/${name}`;
+    this.toggleModal(false);
+    this.setState({ createdPipelineRun: { name, url } });
+  }
+
+  reset() {
+    this.setState(initialState);
   }
 
   fetchPipelineRuns() {
@@ -71,106 +113,139 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
     } = this.props;
     const { pipelineName } = match.params;
 
+    if (loading) {
+      return <StructuredListSkeleton border />;
+    }
+
+    if (error) {
+      return (
+        <InlineNotification
+          kind="error"
+          hideCloseButton
+          lowContrast
+          title="Error loading pipeline runs"
+          subtitle={JSON.stringify(error)}
+        />
+      );
+    }
+
     return (
       <>
-        {(() => {
-          if (loading) {
-            return <StructuredListSkeleton border />;
-          }
+        {this.state.createdPipelineRun && (
+          <InlineNotification
+            kind="success"
+            title="Successfully created PipelineRun"
+            subtitle={
+              <Link to={this.state.createdPipelineRun.url}>
+                {this.state.createdPipelineRun.name}
+              </Link>
+            }
+            lowContrast
+          />
+        )}
+        <Button
+          className="create-pipelinerun-button"
+          iconDescription="Create PipelineRun"
+          renderIcon={Add}
+          onClick={() => this.toggleModal(true)}
+        >
+          Create PipelineRun
+        </Button>
+        <CreatePipelineRun
+          open={this.state.showCreatePipelineRunModal}
+          onClose={() => this.toggleModal(false)}
+          onSuccess={this.handleCreatePipelineRunSuccess}
+          pipelineRef={pipelineName}
+          namespace={selectedNamespace}
+        />
+        <StructuredListWrapper border selection>
+          <StructuredListHead>
+            <StructuredListRow head>
+              <StructuredListCell head>Pipeline Run</StructuredListCell>
+              {!pipelineName && (
+                <StructuredListCell head>Pipeline</StructuredListCell>
+              )}
+              {selectedNamespace === ALL_NAMESPACES && (
+                <StructuredListCell head>Namespace</StructuredListCell>
+              )}
+              <StructuredListCell head>Status</StructuredListCell>
+              <StructuredListCell head>Last Transition Time</StructuredListCell>
+              <StructuredListCell head />
+            </StructuredListRow>
+          </StructuredListHead>
+          <StructuredListBody>
+            {!pipelineRuns.length && (
+              <StructuredListRow>
+                <StructuredListCell>
+                  {pipelineName ? (
+                    <span>No pipeline runs for {pipelineName}</span>
+                  ) : (
+                    <span>No pipeline runs</span>
+                  )}
+                </StructuredListCell>
+              </StructuredListRow>
+            )}
+            {pipelineRuns.map(pipelineRun => {
+              const { name: pipelineRunName, namespace } = pipelineRun.metadata;
+              const pipelineRefName = pipelineRun.spec.pipelineRef.name;
+              const { lastTransitionTime, reason, status } = getStatus(
+                pipelineRun
+              );
 
-          if (error) {
-            return (
-              <InlineNotification
-                kind="error"
-                title="Error loading pipeline runs"
-                subtitle={JSON.stringify(error)}
-              />
-            );
-          }
-
-          return (
-            <StructuredListWrapper border selection>
-              <StructuredListHead>
-                <StructuredListRow head>
-                  <StructuredListCell head>Pipeline Run</StructuredListCell>
+              return (
+                <StructuredListRow
+                  className="definition"
+                  key={pipelineRun.metadata.uid}
+                >
+                  <StructuredListCell>
+                    <Link
+                      to={`/namespaces/${namespace}/pipelines/${pipelineRefName}/runs/${pipelineRunName}`}
+                    >
+                      {pipelineRunName}
+                    </Link>
+                  </StructuredListCell>
                   {!pipelineName && (
-                    <StructuredListCell head>Pipeline</StructuredListCell>
+                    <StructuredListCell>
+                      <Link
+                        to={`/namespaces/${namespace}/pipelines/${pipelineRefName}/runs`}
+                      >
+                        {pipelineRefName}
+                      </Link>
+                    </StructuredListCell>
                   )}
                   {selectedNamespace === ALL_NAMESPACES && (
-                    <StructuredListCell head>Namespace</StructuredListCell>
+                    <StructuredListCell>{namespace}</StructuredListCell>
                   )}
-                  <StructuredListCell head>Status</StructuredListCell>
-                  <StructuredListCell head>
-                    Last Transition Time
+                  <StructuredListCell
+                    className="status"
+                    data-reason={reason}
+                    data-status={status}
+                  >
+                    {getStatusIcon({ reason, status })}
+                    {pipelineRun.status.conditions
+                      ? pipelineRun.status.conditions[0].message
+                      : ''}
+                  </StructuredListCell>
+                  <StructuredListCell>{lastTransitionTime}</StructuredListCell>
+                  <StructuredListCell>
+                    {isRunning(reason, status) && (
+                      <CancelButton
+                        type="PipelineRun"
+                        name={pipelineRunName}
+                        onCancel={() =>
+                          cancelPipelineRun({
+                            name: pipelineRunName,
+                            namespace
+                          })
+                        }
+                      />
+                    )}
                   </StructuredListCell>
                 </StructuredListRow>
-              </StructuredListHead>
-              <StructuredListBody>
-                {!pipelineRuns.length && (
-                  <StructuredListRow>
-                    <StructuredListCell>
-                      {pipelineName ? (
-                        <span>No pipeline runs for {pipelineName}</span>
-                      ) : (
-                        <span>No pipeline runs</span>
-                      )}
-                    </StructuredListCell>
-                  </StructuredListRow>
-                )}
-                {pipelineRuns.map(pipelineRun => {
-                  const {
-                    name: pipelineRunName,
-                    namespace
-                  } = pipelineRun.metadata;
-                  const pipelineRefName = pipelineRun.spec.pipelineRef.name;
-                  const { lastTransitionTime, reason, status } = getStatus(
-                    pipelineRun
-                  );
-
-                  return (
-                    <StructuredListRow
-                      className="definition"
-                      key={pipelineRun.metadata.uid}
-                    >
-                      <StructuredListCell>
-                        <Link
-                          to={`/namespaces/${namespace}/pipelines/${pipelineRefName}/runs/${pipelineRunName}`}
-                        >
-                          {pipelineRunName}
-                        </Link>
-                      </StructuredListCell>
-                      {!pipelineName && (
-                        <StructuredListCell>
-                          <Link
-                            to={`/namespaces/${namespace}/pipelines/${pipelineRefName}/runs`}
-                          >
-                            {pipelineRefName}
-                          </Link>
-                        </StructuredListCell>
-                      )}
-                      {selectedNamespace === ALL_NAMESPACES && (
-                        <StructuredListCell>{namespace}</StructuredListCell>
-                      )}
-                      <StructuredListCell
-                        className="status"
-                        data-reason={reason}
-                        data-status={status}
-                      >
-                        {getStatusIcon({ reason, status })}
-                        {pipelineRun.status.conditions
-                          ? pipelineRun.status.conditions[0].message
-                          : ''}
-                      </StructuredListCell>
-                      <StructuredListCell>
-                        {lastTransitionTime}
-                      </StructuredListCell>
-                    </StructuredListRow>
-                  );
-                })}
-              </StructuredListBody>
-            </StructuredListWrapper>
-          );
-        })()}
+              );
+            })}
+          </StructuredListBody>
+        </StructuredListWrapper>
       </>
     );
   }

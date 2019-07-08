@@ -11,124 +11,47 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import taskRunsReducer, * as selectors from './taskRuns';
-import { ALL_NAMESPACES } from '../constants';
+import * as reducerCreators from './reducerCreators';
+import * as selectorCreators from './selectorCreators';
+import createReducer, * as selectors from './taskRuns';
 
-const createTaskRun = (name, namespace, uid, content = 'other') => {
-  return {
-    metadata: {
-      name,
-      namespace,
-      uid
-    },
-    other: content
-  };
-};
-
-const name = 'task name';
+const name = 'task run name';
 const namespace = 'default';
-const uid = 'some-uid';
-const taskRun = createTaskRun(name, namespace, uid);
+const state = { fake: 'state' };
 
-it('handles init or unknown actions', () => {
-  expect(taskRunsReducer(undefined, { type: 'does_not_exist' })).toEqual({
-    byId: {},
-    byNamespace: {},
-    errorMessage: null,
-    isFetching: false
+it('creates a namespaced reducer for the correct type', () => {
+  const type = 'TaskRun';
+  jest.spyOn(reducerCreators, 'createNamespacedReducer');
+  createReducer();
+  expect(reducerCreators.createNamespacedReducer).toHaveBeenCalledWith({
+    type
   });
 });
 
-it('TASK_RUNS_FETCH_REQUEST', () => {
-  const action = { type: 'TASK_RUNS_FETCH_REQUEST' };
-  const state = taskRunsReducer({}, action);
-  expect(selectors.isFetchingTaskRuns(state)).toBe(true);
-});
-
-it('TASK_RUNS_FETCH_SUCCESS', () => {
-  const action = {
-    type: 'TASK_RUNS_FETCH_SUCCESS',
-    data: [taskRun],
-    namespace
-  };
-
-  const state = taskRunsReducer({}, action);
-  expect(selectors.getTaskRuns(state, namespace)).toEqual([taskRun]);
-  expect(selectors.getTaskRun(state, name, namespace)).toEqual(taskRun);
-  expect(selectors.isFetchingTaskRuns(state)).toBe(false);
-});
-
-it('TaskRun Events', () => {
-  const action = {
-    type: 'TaskRunCreated',
-    payload: taskRun,
-    namespace
-  };
-
-  const state = taskRunsReducer({}, action);
-  expect(selectors.getTaskRuns(state, namespace)).toEqual([taskRun]);
-  expect(selectors.getTaskRun(state, name, namespace)).toEqual(taskRun);
-  expect(selectors.isFetchingTaskRuns(state)).toBe(false);
-
-  // update the task run
-  const updatedTaskRun = createTaskRun(name, namespace, uid, 'updated content');
-  const updateAction = {
-    type: 'TaskRunUpdated',
-    payload: updatedTaskRun,
-    namespace
-  };
-  const updatedState = taskRunsReducer(state, updateAction);
-  expect(selectors.getTaskRuns(updatedState, namespace)).toEqual([
-    updatedTaskRun
-  ]);
-  expect(selectors.getTaskRun(updatedState, name, namespace)).toEqual(
-    updatedTaskRun
-  );
-
-  // delete the task run
-  const deleteAction = {
-    type: 'TaskRunDeleted',
-    payload: taskRun,
-    namespace
-  };
-
-  const deletedTaskRunState = taskRunsReducer(state, deleteAction);
-  expect(selectors.getTaskRuns(deletedTaskRunState, namespace)).toEqual([]);
-  expect(selectors.getTaskRun(deletedTaskRunState, name, namespace)).toBeNull();
-});
-
-it('TASK_RUNS_FETCH_FAILURE', () => {
-  const message = 'fake error message';
-  const error = { message };
-  const action = {
-    type: 'TASK_RUNS_FETCH_FAILURE',
-    error
-  };
-
-  const state = taskRunsReducer({}, action);
-  expect(selectors.getTaskRunsErrorMessage(state)).toEqual(message);
-});
-
 it('getTaskRuns', () => {
-  const selectedNamespace = 'namespace';
-  const state = { byNamespace: {} };
-  expect(selectors.getTaskRuns(state, selectedNamespace)).toEqual([]);
-});
-
-it('getTaskRuns all namespaces', () => {
-  const selectedNamespace = ALL_NAMESPACES;
-  const selectedTaskRun = { fake: 'taskRun' };
-  const state = { byId: { id: selectedTaskRun } };
-  expect(selectors.getTaskRuns(state, selectedNamespace)).toEqual([
-    selectedTaskRun
-  ]);
+  const collection = { fake: 'collection' };
+  jest
+    .spyOn(selectorCreators, 'getCollection')
+    .mockImplementation(() => collection);
+  expect(selectors.getTaskRuns(state, namespace)).toEqual(collection);
 });
 
 it('getTaskRun', () => {
-  const selectedName = 'name';
-  const selectedNamespace = 'namespace';
-  const state = { byNamespace: {} };
-  expect(
-    selectors.getTaskRun(state, selectedName, selectedNamespace)
-  ).toBeNull();
+  const resource = { fake: 'resource' };
+  jest
+    .spyOn(selectorCreators, 'getResource')
+    .mockImplementation(() => resource);
+  expect(selectors.getTaskRun(state, name, namespace)).toEqual(resource);
+});
+
+it('getTaskRunsErrorMessage', () => {
+  const errorMessage = 'errorMessage';
+  expect(selectors.getTaskRunsErrorMessage({ errorMessage })).toEqual(
+    errorMessage
+  );
+});
+
+it('isFetchingTaskRuns', () => {
+  const isFetching = 'isFetching';
+  expect(selectors.isFetchingTaskRuns({ isFetching })).toEqual(isFetching);
 });

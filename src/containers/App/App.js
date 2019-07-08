@@ -15,25 +15,31 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { hot } from 'react-hot-loader/root';
 import {
-  HashRouter as Router,
   Redirect,
   Route,
+  HashRouter as Router,
   Switch
 } from 'react-router-dom';
 
-import { Content } from 'carbon-components-react/lib/components/UIShell';
+import { Content } from 'carbon-components-react';
 
 import {
+  ClusterTasks,
+  CustomResourceDefinition,
   Extension,
   Extensions,
+  ImportResources,
+  PipelineResource,
+  PipelineResources,
   PipelineRun,
   PipelineRuns,
   Pipelines,
+  Secrets,
   SideNav,
-  Tasks,
+  TaskRun,
+  TaskRunList,
   TaskRuns,
-  CustomResourceDefinition,
-  ImportResources
+  Tasks
 } from '..';
 
 import Header from '../../components/Header';
@@ -75,30 +81,63 @@ export /* istanbul ignore next */ class App extends Component {
                 exact
                 component={Pipelines}
               />
+              <Route path="/secrets" exact component={Secrets} />
               <Route path="/tasks" exact component={Tasks} />
               <Route
                 path="/namespaces/:namespace/tasks"
                 exact
                 component={Tasks}
               />
+              <Route path="/clustertasks" exact component={ClusterTasks} />
               <Route path="/pipelineruns" component={PipelineRuns} />
               <Route
                 path="/namespaces/:namespace/pipelineruns"
                 component={PipelineRuns}
               />
               <Route
+                path="/namespaces/:namespace/taskruns"
+                exact
+                component={TaskRunList}
+              />
+              <Route
+                path="/namespaces/:namespace/taskruns/:taskRunName"
+                exact
+                component={TaskRun}
+              />
+              <Route
                 path="/namespaces/:namespace/pipelines/:pipelineName/runs"
                 exact
                 component={PipelineRuns}
               />
+              <Route path="/taskruns" component={TaskRunList} />
               <Route
-                path="/namespaces/:namespace/tasks/:taskName/runs"
+                path="/namespaces/:namespace/:taskType(tasks)/:taskName/runs"
+                exact
+                component={TaskRuns}
+              />
+              <Route
+                path="/:taskType(clustertasks)/:taskName/runs"
                 exact
                 component={TaskRuns}
               />
               <Route
                 path="/namespaces/:namespace/pipelines/:pipelineName/runs/:pipelineRunName"
                 component={PipelineRun}
+              />
+              <Route
+                path="/pipelineresources"
+                exact
+                component={PipelineResources}
+              />
+              <Route
+                path="/namespaces/:namespace/pipelineresources"
+                exact
+                component={PipelineResources}
+              />
+              <Route
+                path="/namespaces/:namespace/pipelineresources/:pipelineResourceName"
+                exact
+                component={PipelineResource}
               />
               <Route path="/importresources" component={ImportResources} />
               <Route path="/extensions" exact component={Extensions} />
@@ -117,6 +156,11 @@ export /* istanbul ignore next */ class App extends Component {
               ))}
               <Route
                 path="/namespaces/:namespace/:type/:name"
+                exact
+                component={CustomResourceDefinition}
+              />
+              <Route
+                path="/:type/:name"
                 exact
                 component={CustomResourceDefinition}
               />

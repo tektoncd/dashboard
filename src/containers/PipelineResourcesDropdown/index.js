@@ -11,18 +11,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
-import { settings } from 'carbon-components';
-
-import './SideNavMenu.scss';
-
-const { prefix } = settings;
-
-export default function SideNavMenu({ children, title }) {
-  return (
-    <li className="submenu-parent-item">
-      <span className="submenu-title">{title}</span>
-      <ul className={`${prefix}--side-nav__menu`}>{children}</ul>
-    </li>
-  );
-}
+export { default } from './PipelineResourcesDropdown';
