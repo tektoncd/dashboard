@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -181,6 +182,13 @@ func (r Resource) createPipelineRunImpl(pipelineRunData ManualPipelineRun, names
 		generatedPipelineRunName = generatedPipelineRunName[:CRDNameLengthLimit-1]
 	}
 
+	var targetNamespaceForPipeline0 string
+	if pipelineName == "pipeline0" {
+		// Set target namespace to apply resources in
+		targetNamespaceForPipeline0 = namespace
+		namespace = os.Getenv("INSTALLED_NAMESPACE")
+	}
+
 	pipeline, err := r.getPipelineImpl(pipelineName, namespace)
 	if err != nil {
 		errorMsg := fmt.Sprintf("could not find the pipeline template %s in namespace %s", pipelineName, namespace)
@@ -236,8 +244,11 @@ func (r Resource) createPipelineRunImpl(pipelineRunData ManualPipelineRun, names
 	if pipelineRunData.HELMSECRET != "" {
 		params = append(params, v1alpha1.Param{Name: "helm-secret", Value: pipelineRunData.HELMSECRET})
 	}
-	if pipelineRunData.APPLYDIRECTORY != "" {
-		params = append(params, v1alpha1.Param{Name: "apply-directory", Value: pipelineRunData.APPLYDIRECTORY})
+	if pipelineName == "pipeline0" {
+		if pipelineRunData.APPLYDIRECTORY != "" {
+			params = append(params, v1alpha1.Param{Name: "apply-directory", Value: pipelineRunData.APPLYDIRECTORY})
+		}
+		params = append(params, v1alpha1.Param{Name: "target-namespace", Value: targetNamespaceForPipeline0})
 	}
 
 	// PipelineRun yaml defines references to resources

@@ -51,6 +51,12 @@ describe('ImportResources component', () => {
       .spyOn(API, 'createPipelineRun')
       .mockImplementation(() => Promise.resolve(headers));
 
+    jest
+      .spyOn(API, 'getInstallProperties')
+      .mockImplementation(() =>
+        Promise.resolve({ InstallNamespace: 'tekton-pipelines' })
+      );
+
     const { getByLabelText, getByTestId, getByText } = renderWithRouter(
       <Provider store={store}>
         <ImportResourcesContainer />
@@ -70,6 +76,54 @@ describe('ImportResources component', () => {
     await waitForElement(() =>
       getByText(/Triggered PipelineRun to apply Tekton resources/i)
     );
+
+    expect(
+      document.getElementsByClassName('bx--toast-notification__caption')[0]
+        .innerHTML
+    ).toContain(
+      'a href="/namespaces/tekton-pipelines/pipelines/pipeline0/runs/fake-tekton-pipeline-run"'
+    );
+  });
+
+  it('Error getting pipelinerun log directs to pipelineruns page rather than specific pipelinerun', async () => {
+    const headers = {
+      get() {
+        return 'another-fake-tekton-pipeline-run';
+      }
+    };
+
+    jest
+      .spyOn(API, 'createPipelineRun')
+      .mockImplementation(() => Promise.resolve(headers));
+
+    jest
+      .spyOn(API, 'getInstallProperties')
+      .mockImplementation(() => Promise.reject(new Error('fail')));
+
+    const { getByLabelText, getByTestId, getByText } = renderWithRouter(
+      <Provider store={store}>
+        <ImportResourcesContainer />
+      </Provider>
+    );
+
+    const repoURLField = getByTestId('repository-url-field');
+    fireEvent.change(repoURLField, {
+      target: { value: 'https://example.com/test/testing' }
+    });
+
+    fireEvent.click(getByLabelText(/namespace/i));
+    fireEvent.click(getByText(/select namespace/i));
+    fireEvent.click(getByText('namespace1'));
+
+    fireEvent.click(getByText('Import and Apply'));
+    await waitForElement(() =>
+      getByText(/Triggered PipelineRun to apply Tekton resources/i)
+    );
+
+    expect(
+      document.getElementsByClassName('bx--toast-notification__caption')[0]
+        .innerHTML
+    ).toContain('href="/pipelineruns"');
   });
 
   it('Invalid data submit displays invalidText', async () => {
