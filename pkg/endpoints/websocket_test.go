@@ -105,6 +105,7 @@ func TestWebsocketResources(t *testing.T) {
 	pipelineRecord := NewInformerRecord(getKind(string(broadcaster.PipelineCreated)), true)
 	pipelineRunRecord := NewInformerRecord(getKind(string(broadcaster.PipelineRunCreated)), true)
 	taskRecord := NewInformerRecord(getKind(string(broadcaster.TaskCreated)), true)
+	clusterTaskRecord := NewInformerRecord(getKind(string(broadcaster.ClusterTaskCreated)), true)
 	taskRunRecord := NewInformerRecord(getKind(string(broadcaster.TaskRunCreated)), true)
 	extensionRecord := NewInformerRecord(getKind(string(broadcaster.ExtensionCreated)), true)
 	// CD records
@@ -116,6 +117,7 @@ func TestWebsocketResources(t *testing.T) {
 		pipelineRecord.CRD:         &pipelineRecord,
 		pipelineRunRecord.CRD:      &pipelineRunRecord,
 		taskRecord.CRD:             &taskRecord,
+		clusterTaskRecord.CRD:      &clusterTaskRecord,
 		taskRunRecord.CRD:          &taskRunRecord,
 		namespaceRecord.CRD:        &namespaceRecord,
 		extensionRecord.CRD:        &extensionRecord,
@@ -159,6 +161,7 @@ func TestWebsocketResources(t *testing.T) {
 	CUDPipelines(r, t, namespace)
 	CUDPipelineRuns(r, t, namespace)
 	CUDTasks(r, t, namespace)
+	CUDClusterTasks(r, t)
 	CUDTaskRuns(r, t, namespace)
 	CUDExtensions(r, t, installNamespace)
 	// Create and Delete records
@@ -376,6 +379,37 @@ func CUDTasks(r *Resource, t *testing.T, namespace string) {
 	err = r.PipelineClient.TektonV1alpha1().Tasks(namespace).Delete(task.Name, &metav1.DeleteOptions{})
 	if err != nil {
 		t.Fatalf("Error deleting task: %s: %s\n", task.Name, err.Error())
+	}
+}
+
+func CUDClusterTasks(r *Resource, t *testing.T) {
+	resourceVersion := "1"
+
+	clusterTask := v1alpha1.ClusterTask{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:            "clusterTask",
+			ResourceVersion: resourceVersion,
+		},
+	}
+
+	t.Log("Creating clusterTask")
+	_, err := r.PipelineClient.TektonV1alpha1().ClusterTasks().Create(&clusterTask)
+	if err != nil {
+		t.Fatalf("Error creating clusterTask: %s: %s\n", clusterTask.Name, err.Error())
+	}
+
+	newVersion := "2"
+	clusterTask.ResourceVersion = newVersion
+	t.Log("Updating clusterTask")
+	_, err = r.PipelineClient.TektonV1alpha1().ClusterTasks().Update(&clusterTask)
+	if err != nil {
+		t.Fatalf("Error updating clusterTask: %s: %s\n", clusterTask.Name, err.Error())
+	}
+
+	t.Log("Deleting clusterTask")
+	err = r.PipelineClient.TektonV1alpha1().ClusterTasks().Delete(clusterTask.Name, &metav1.DeleteOptions{})
+	if err != nil {
+		t.Fatalf("Error deleting clusterTask: %s: %s\n", clusterTask.Name, err.Error())
 	}
 }
 

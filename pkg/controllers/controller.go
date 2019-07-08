@@ -16,6 +16,7 @@ func StartTektonControllers(clientset tektonclientset.Interface, resyncDur time.
 	logging.Log.Info("Creating Tekton controllers")
 	tektonInformerFactory := tektoninformers.NewSharedInformerFactory(clientset, resyncDur)
 	// Add all tekton controllers
+	tektoncontroller.NewClusterTaskController(tektonInformerFactory)
 	tektoncontroller.NewTaskController(tektonInformerFactory)
 	tektoncontroller.NewTaskRunController(tektonInformerFactory)
 	tektoncontroller.NewPipelineController(tektonInformerFactory)
