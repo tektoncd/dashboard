@@ -63,6 +63,7 @@ func Register(resource endpoints.Resource) *restful.Container {
 	logging.Log.Info("Registering all endpoints")
 	registerWeb(wsContainer)
 	registerEndpoints(resource, wsContainer)
+	registerPropertiesEndpoint(resource, wsContainer)
 	registerWebsocket(resource, wsContainer)
 	registerHealthProbe(resource, wsContainer)
 	registerReadinessProbe(resource, wsContainer)
@@ -119,6 +120,7 @@ func registerEndpoints(r endpoints.Resource, container *restful.Container) {
 	wsv1.Route(wsv1.DELETE("/{namespace}/credentials/{name}").To(r.DeleteCredential))
 
 	container.Add(wsv1)
+
 }
 
 // RegisterWebsocket - this registers a websocket with which we can send log information to
@@ -155,6 +157,19 @@ func registerReadinessProbe(r endpoints.Resource, container *restful.Container) 
 	wsv4.Route(wsv4.GET("").To(r.CheckHealth))
 
 	container.Add(wsv4)
+}
+
+// Add endpoint for obtaining any properties we want to serve, such as install namespace
+func registerPropertiesEndpoint(r endpoints.Resource, container *restful.Container) {
+	logging.Log.Info("Adding API for properties")
+	wsDefaults := new(restful.WebService)
+	wsDefaults.
+		Path("/v1/properties").
+		Consumes(restful.MIME_JSON, "text/plain").
+		Produces(restful.MIME_JSON, "text/plain")
+
+	wsDefaults.Route(wsDefaults.GET("/").To(r.GetProperties))
+	container.Add(wsDefaults)
 }
 
 // Back-end extension: Requests to the URL are passed through to the Port of the Name service (extension)

@@ -14,15 +14,20 @@ limitations under the License.
 package endpoints
 
 import (
-	"net/http"
-	"net/url"
-
 	restful "github.com/emicklei/go-restful"
 	"github.com/tektoncd/dashboard/pkg/logging"
+	"net/http"
+	"net/url"
+	"os"
 
 	"github.com/tektoncd/dashboard/pkg/utils"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
+
+// Properties : properties we want to be able to retrieve via REST
+type Properties struct {
+	InstallNamespace string
+}
 
 /* Get all tasks in a given namespace */
 func (r Resource) ProxyRequest(request *restful.Request, response *restful.Response) {
@@ -59,4 +64,10 @@ func (r Resource) GetIngress(request *restful.Request, response *restful.Respons
 		return
 	}
 	response.WriteEntity(ingressHost)
+}
+
+func (r Resource) GetProperties(request *restful.Request, response *restful.Response) {
+
+	properties := Properties{InstallNamespace: os.Getenv("INSTALLED_NAMESPACE")}
+	response.WriteEntity(properties)
 }

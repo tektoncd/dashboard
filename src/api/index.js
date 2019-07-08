@@ -287,3 +287,8 @@ export function getServiceAccounts({ namespace } = {}) {
   const uri = getKubeAPI('serviceaccounts', { namespace });
   return get(uri).then(checkData);
 }
+
+export function getInstallProperties() {
+  const uri = `${apiRoot}/v1/properties`;
+  return get(uri);
+}
