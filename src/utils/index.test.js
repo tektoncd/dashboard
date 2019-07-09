@@ -191,6 +191,14 @@ it('stepsStatus step is waiting', () => {
   expect(returnedStep.status).toEqual('waiting');
 });
 
+it('stepsStatus init error', () => {
+  const stepName = 'git-source';
+  const taskRunStepsStatus = [{ name: stepName, terminated: { exitCode: 1 } }];
+  const steps = stepsStatus([], taskRunStepsStatus);
+  const returnedStep = steps[0];
+  expect(returnedStep.status).toEqual('terminated');
+});
+
 it('typeToPlural', () => {
   expect(typeToPlural('Extension')).toEqual('EXTENSIONS');
 });
