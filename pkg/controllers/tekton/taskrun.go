@@ -21,7 +21,7 @@ func NewTaskRunController(sharedTektonInformerFactory tektoninformer.SharedInfor
 }
 
 func taskRunCreated(obj interface{}) {
-	logging.Log.Debug("TaskRun Controller Create")
+	logging.Log.Debugf("TaskRun Controller detected taskRun '%s' created", obj.(*v1alpha1.TaskRun).Name)
 	data := broadcaster.SocketData{
 		MessageType: broadcaster.TaskRunCreated,
 		Payload:     obj,
@@ -31,7 +31,7 @@ func taskRunCreated(obj interface{}) {
 
 func taskRunUpdated(oldObj, newObj interface{}) {
 	if newObj.(*v1alpha1.TaskRun).GetResourceVersion() != oldObj.(*v1alpha1.TaskRun).GetResourceVersion() {
-		logging.Log.Debug("TaskRun Controller Update")
+		logging.Log.Debugf("TaskRun Controller detected taskRun '%s' updated", oldObj.(*v1alpha1.TaskRun).Name)
 		data := broadcaster.SocketData{
 			MessageType: broadcaster.TaskRunUpdated,
 			Payload:     newObj,
@@ -41,7 +41,7 @@ func taskRunUpdated(oldObj, newObj interface{}) {
 }
 
 func taskRunDeleted(obj interface{}) {
-	logging.Log.Debug("TaskRun Controller Delete")
+	logging.Log.Debugf("TaskRun Controller detected taskRun '%s' deleted", obj.(*v1alpha1.TaskRun).Name)
 	data := broadcaster.SocketData{
 		MessageType: broadcaster.TaskRunDeleted,
 		Payload:     obj,

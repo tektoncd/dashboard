@@ -34,7 +34,7 @@ func NewClusterTaskController(sharedTektonInformerFactory tektoninformer.SharedI
 }
 
 func clusterTaskCreated(obj interface{}) {
-	logging.Log.Debug("Cluster Task Controller Create")
+	logging.Log.Debugf("Cluster Task Controller detected clusterTask '%s' created", obj.(*v1alpha1.ClusterTask).Name)
 	data := broadcaster.SocketData{
 		MessageType: broadcaster.ClusterTaskCreated,
 		Payload:     obj,
@@ -44,7 +44,7 @@ func clusterTaskCreated(obj interface{}) {
 
 func clusterTaskUpdated(oldObj, newObj interface{}) {
 	if newObj.(*v1alpha1.ClusterTask).GetResourceVersion() != oldObj.(*v1alpha1.ClusterTask).GetResourceVersion() {
-		logging.Log.Debug("Cluster Task Controller Update")
+		logging.Log.Debugf("Cluster Task Controller detected clusterTask '%s' updated", oldObj.(*v1alpha1.ClusterTask).Name)
 		data := broadcaster.SocketData{
 			MessageType: broadcaster.ClusterTaskUpdated,
 			Payload:     newObj,
@@ -54,7 +54,7 @@ func clusterTaskUpdated(oldObj, newObj interface{}) {
 }
 
 func clusterTaskDeleted(obj interface{}) {
-	logging.Log.Debug("Cluster Task Controller Delete")
+	logging.Log.Debugf("Cluster Task Controller detected clusterTask '%s' deleted", obj.(*v1alpha1.ClusterTask).Name)
 	data := broadcaster.SocketData{
 		MessageType: broadcaster.ClusterTaskDeleted,
 		Payload:     obj,
