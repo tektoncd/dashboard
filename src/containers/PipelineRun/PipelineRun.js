@@ -130,6 +130,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       const taskRunNamespace = taskRun.metadata.namespace;
       const { reason, status: succeeded } = getStatus(taskRun);
       const { pipelineTaskName } = taskRunDetails[taskRunName];
+      const { params, resources: inputResources } = taskRun.spec.inputs;
+      const { resources: outputResources } = taskRun.spec.outputs;
       const steps = stepsStatus(task.spec.steps, taskRun.status.steps);
       return {
         id: taskRun.metadata.uid,
@@ -140,7 +142,10 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
         succeeded,
         taskName,
         taskRunName,
-        namespace: taskRunNamespace
+        namespace: taskRunNamespace,
+        inputResources,
+        outputResources,
+        params
       };
     });
 

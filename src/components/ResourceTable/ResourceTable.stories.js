@@ -11,18 +11,25 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-.step-details {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  align-items: stretch;
+import React from 'react';
+import { storiesOf } from '@storybook/react';
 
-  .bx--tabs {
-    margin-top: 0.4rem;
-    min-height: 2.5rem;
-  }
+import ResourceTable from '.';
 
-  .bx--data-table-container th{
-    width: 50%;
+const title = 'title';
+const id = 'id';
+const headerValue = 'header';
+const rowValue = 'row';
+const rows = [
+  {
+    id,
+    name: rowValue
   }
-}
+];
+const headers = [{ key: 'name', header: headerValue }];
+
+storiesOf('ResourceTable', module)
+  .add('default', () => <ResourceTable />)
+  .add('with content', () => (
+    <ResourceTable title={title} headers={headers} rows={rows} />
+  ));

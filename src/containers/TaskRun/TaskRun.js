@@ -94,6 +94,8 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
     const taskRunNamespace = taskRun.metadata.namespace;
     const { reason, status: succeeded } = getStatus(taskRun);
     const runSteps = stepsStatus(steps, taskRun.status.steps);
+    const { params, resources: inputResources } = taskRun.spec.inputs;
+    const { resources: outputResources } = taskRun.spec.outputs;
     const { startTime } = taskRun.status;
     taskRun = {
       id: taskRun.metadata.uid,
@@ -104,7 +106,10 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
       succeeded,
       taskRunName,
       startTime,
-      namespace: taskRunNamespace
+      namespace: taskRunNamespace,
+      params,
+      inputResources,
+      outputResources
     };
     return taskRun;
   };
