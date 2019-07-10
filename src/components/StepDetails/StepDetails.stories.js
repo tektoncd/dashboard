@@ -14,19 +14,22 @@ limitations under the License.
 import React from 'react';
 import { Provider } from 'react-redux';
 import { storiesOf } from '@storybook/react';
+import StoryRouter from 'storybook-react-router';
 
-import store from '../../store';
+import { configureStore } from '../../store';
 import StepDetails from './StepDetails';
 
-storiesOf('StepDetails', module).add('default', () => (
-  <Provider store={store}>
-    <div style={{ alignSelf: 'stretch' }}>
-      <StepDetails
-        reason="Completed"
-        status="terminated"
-        stepName="build"
-        taskRun={{}}
-      />
-    </div>
-  </Provider>
-));
+storiesOf('StepDetails', module)
+  .addDecorator(StoryRouter())
+  .add('default', () => (
+    <Provider store={configureStore({})}>
+      <div style={{ alignSelf: 'stretch' }}>
+        <StepDetails
+          reason="Completed"
+          status="terminated"
+          stepName="build"
+          taskRun={{}}
+        />
+      </div>
+    </Provider>
+  ));
