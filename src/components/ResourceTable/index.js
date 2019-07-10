@@ -11,18 +11,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-.step-details {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  align-items: stretch;
-
-  .bx--tabs {
-    margin-top: 0.4rem;
-    min-height: 2.5rem;
-  }
-
-  .bx--data-table-container th{
-    width: 50%;
-  }
-}
+export { default } from './ResourceTable';
