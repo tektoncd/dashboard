@@ -16,6 +16,11 @@
 
 # This script calls out to scripts in tektoncd/plumbing to setup a cluster
 # and deploy Tekton Pipelines to it for running integration tests.
+
+echo "e2e-tests.sh are currently not enabled - this script is simply returning 0 - all is OK!"
+echo "todo reenable them, see https://github.com/tektoncd/dashboard/issues/334#issuecomment-510095046 for details"
+exit 0;
+
 export tekton_repo_dir=$(git rev-parse --show-toplevel)
 source $(dirname $0)/e2e-common.sh
 
