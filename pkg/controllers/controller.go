@@ -34,6 +34,7 @@ func StartKubeControllers(clientset k8sclientset.Interface, resyncDur time.Durat
 	// Add all kube controllers
 	kubecontroller.NewExtensionController(kubeInformerFactory, installNamespace)
 	kubecontroller.NewNamespaceController(kubeInformerFactory)
+	kubecontroller.NewSecretController(kubeInformerFactory)
 	// Started once all controllers have been registered
 	logging.Log.Info("Starting Kube controllers")
 	kubeInformerFactory.Start(stopCh)

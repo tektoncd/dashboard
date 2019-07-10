@@ -22,7 +22,7 @@ func NewPipelineController(sharedTektonInformerFactory tektoninformer.SharedInfo
 
 //pipeline events
 func pipelineCreated(obj interface{}) {
-	logging.Log.Debug("Pipeline Controller Create")
+	logging.Log.Debugf("Pipeline Controller detected pipeline '%s' created", obj.(*v1alpha1.Pipeline).Name)
 	data := broadcaster.SocketData{
 		MessageType: broadcaster.PipelineCreated,
 		Payload:     obj,
@@ -32,7 +32,7 @@ func pipelineCreated(obj interface{}) {
 
 func pipelineUpdated(oldObj, newObj interface{}) {
 	if newObj.(*v1alpha1.Pipeline).GetResourceVersion() != oldObj.(*v1alpha1.Pipeline).GetResourceVersion() {
-		logging.Log.Debug("Pipeline Controller Update")
+		logging.Log.Debugf("Pipeline Controller detected pipeline '%s' updated", oldObj.(*v1alpha1.Pipeline).Name)
 		data := broadcaster.SocketData{
 			MessageType: broadcaster.PipelineUpdated,
 			Payload:     newObj,
@@ -42,7 +42,7 @@ func pipelineUpdated(oldObj, newObj interface{}) {
 }
 
 func pipelineDeleted(obj interface{}) {
-	logging.Log.Debug("Pipeline Controller Delete")
+	logging.Log.Debugf("Pipeline Controller detected pipeline '%s' deleted", obj.(*v1alpha1.Pipeline).Name)
 	data := broadcaster.SocketData{
 		MessageType: broadcaster.PipelineDeleted,
 		Payload:     obj,

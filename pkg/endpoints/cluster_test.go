@@ -24,7 +24,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func TestGetIngress(t *testing.T) {
+func TestGETIngress(t *testing.T) {
 	server, r, namespace := testutils.DummyServer()
 	defer server.Close()
 

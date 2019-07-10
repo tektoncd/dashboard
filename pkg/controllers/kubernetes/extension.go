@@ -31,7 +31,7 @@ func serviceCreated(obj interface{}) {
 	service := obj.(*v1.Service)
 	if service.Namespace == installNamespace {
 		if value := service.Labels[router.ExtensionLabelKey]; value == router.ExtensionLabelValue {
-			logging.Log.Debug("Extension Controller Create")
+			logging.Log.Debugf("Extension Controller detected extension '%s' created", service.Name)
 			router.RegisterExtension(service)
 			data := broadcaster.SocketData{
 				MessageType: broadcaster.ExtensionCreated,
@@ -50,11 +50,11 @@ func serviceUpdated(oldObj, newObj interface{}) {
 	// Updated services will still be in the same namespace
 	if oldService.Namespace == installNamespace {
 		if value := oldService.Labels[router.ExtensionLabelKey]; versionUpdated && value == router.ExtensionLabelValue {
-			logging.Log.Debug("Extension Controller Update: Remove old")
+			logging.Log.Debugf("Extension Controller Update: Removing old extension '%s'", oldService.Name)
 			router.UnregisterExtension(oldService)
 		}
 		if value := newService.Labels[router.ExtensionLabelKey]; versionUpdated && value == router.ExtensionLabelValue {
-			logging.Log.Debug("Extension Controller Update: Add new")
+			logging.Log.Debugf("Extension Controller Update: Add new extension '%s'", newService.Name)
 			router.RegisterExtension(newService)
 		}
 		newExtensions := len(router.GetExtensions())
@@ -89,7 +89,7 @@ func serviceDeleted(obj interface{}) {
 	service := obj.(*v1.Service)
 	if service.Namespace == installNamespace {
 		if value := service.Labels[router.ExtensionLabelKey]; value == router.ExtensionLabelValue {
-			logging.Log.Debug("Extension Controller Delete")
+			logging.Log.Debugf("Extension Controller detected extension '%s' deleted", service.Name)
 			router.UnregisterExtension(service)
 			data := broadcaster.SocketData{
 				MessageType: broadcaster.ExtensionDeleted,

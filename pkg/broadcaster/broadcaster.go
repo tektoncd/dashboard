@@ -46,6 +46,9 @@ const (
 	ExtensionCreated        messageType = "ExtensionCreated"
 	ExtensionUpdated        messageType = "ExtensionUpdated"
 	ExtensionDeleted        messageType = "ExtensionDeleted"
+	SecretCreated           messageType = "SecretCreated"
+	SecretDeleted           messageType = "SecretDeleted"
+	SecretUpdated           messageType = "SecretUpdated"
 )
 
 type SocketData struct {

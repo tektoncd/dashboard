@@ -21,7 +21,7 @@ func NewTaskController(sharedTektonInformerFactory tektoninformer.SharedInformer
 }
 
 func taskCreated(obj interface{}) {
-	logging.Log.Debug("Task Controller Create")
+	logging.Log.Debugf("Task Controller detected task '%s' created", obj.(*v1alpha1.Task).Name)
 	data := broadcaster.SocketData{
 		MessageType: broadcaster.TaskCreated,
 		Payload:     obj,
@@ -31,7 +31,7 @@ func taskCreated(obj interface{}) {
 
 func taskUpdated(oldObj, newObj interface{}) {
 	if newObj.(*v1alpha1.Task).GetResourceVersion() != oldObj.(*v1alpha1.Task).GetResourceVersion() {
-		logging.Log.Debug("Task Controller Update")
+		logging.Log.Debugf("Task Controller detected task '%s' updated", oldObj.(*v1alpha1.Task).Name)
 		data := broadcaster.SocketData{
 			MessageType: broadcaster.TaskUpdated,
 			Payload:     newObj,
@@ -41,7 +41,7 @@ func taskUpdated(oldObj, newObj interface{}) {
 }
 
 func taskDeleted(obj interface{}) {
-	logging.Log.Debug("Task Controller Delete")
+	logging.Log.Debugf("Task Controller detected task '%s' deleted", obj.(*v1alpha1.Task).Name)
 	data := broadcaster.SocketData{
 		MessageType: broadcaster.TaskDeleted,
 		Payload:     obj,
