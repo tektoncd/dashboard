@@ -42,8 +42,7 @@ import { fetchTaskRuns } from '../../actions/taskRuns';
 
 export /* istanbul ignore next */ class TaskRunsContainer extends Component {
   // once redux store is available errors will be handled properly with dedicated components
-  static notification(notification) {
-    const { kind, message } = notification;
+  static notification({ kind, message }) {
     const titles = {
       info: 'TaskRuns not available',
       error: 'Error loading TaskRun'
@@ -54,7 +53,7 @@ export /* istanbul ignore next */ class TaskRunsContainer extends Component {
         hideCloseButton
         lowContrast
         title={titles[kind]}
-        subtitle={JSON.stringify(message, Object.getOwnPropertyNames(message))}
+        subtitle={message}
       />
     );
   }

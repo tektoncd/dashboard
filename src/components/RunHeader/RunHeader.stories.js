@@ -58,7 +58,4 @@ storiesOf('RunHeader', module)
       typeLabel={text('Run Type Label', 'Pipelines')}
     />
   ))
-  .add('error', () => (
-    <RunHeader error={text('Error', 'Something went wrong')} />
-  ))
   .add('loading', () => <RunHeader loading />);

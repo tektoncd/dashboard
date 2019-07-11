@@ -29,6 +29,7 @@ import {
   getExtensionsErrorMessage,
   isFetchingExtensions
 } from '../../reducers';
+import { getErrorMessage } from '../../utils';
 
 import '../../components/Definitions/Definitions.scss';
 
@@ -48,7 +49,7 @@ export const Extensions = /* istanbul ignore next */ ({
         hideCloseButton
         lowContrast
         title="Error loading extensions"
-        subtitle={error}
+        subtitle={getErrorMessage(error)}
       />
     );
   }

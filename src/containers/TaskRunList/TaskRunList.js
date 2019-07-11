@@ -25,7 +25,12 @@ import {
 } from 'carbon-components-react';
 
 import { ALL_NAMESPACES } from '../../constants';
-import { getStatus, getStatusIcon, isRunning } from '../../utils';
+import {
+  getErrorMessage,
+  getStatus,
+  getStatusIcon,
+  isRunning
+} from '../../utils';
 import { fetchTaskRuns } from '../../actions/taskRuns';
 
 import {
@@ -70,7 +75,7 @@ export /* istanbul ignore next */ class TaskRunList extends Component {
           hideCloseButton
           lowContrast
           title="Error loading TaskRuns"
-          subtitle={JSON.stringify(error)}
+          subtitle={getErrorMessage(error)}
         />
       );
     }

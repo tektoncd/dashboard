@@ -38,6 +38,7 @@ import RunHeader from '../../components/RunHeader';
 import StepDetails from '../../components/StepDetails';
 import TaskTree from '../../components/TaskTree';
 import {
+  getErrorMessage,
   getStatus,
   selectedTask,
   selectedTaskRun,
@@ -188,7 +189,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           hideCloseButton
           lowContrast
           title="Error loading PipelineRun"
-          subtitle={JSON.stringify(error, Object.getOwnPropertyNames(error))}
+          subtitle={getErrorMessage(error)}
         />
       );
     }
