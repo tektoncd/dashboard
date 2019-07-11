@@ -19,8 +19,8 @@ import Breadcrumbs from './Breadcrumbs';
 
 storiesOf('Breadcrumbs', module)
   .addDecorator(StoryRouter())
-  .add('pipelines', () => <Breadcrumbs match={{ url: '/pipelines' }} />)
-  .add('pipeline run', () => (
+  .add('Pipelines', () => <Breadcrumbs match={{ url: '/pipelines' }} />)
+  .add('PipelineRun', () => (
     <Breadcrumbs
       match={{ url: '/pipelines/demo-pipeline/runs/demo-pipeline-run-1' }}
     />

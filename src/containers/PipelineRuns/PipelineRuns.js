@@ -123,7 +123,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
           kind="error"
           hideCloseButton
           lowContrast
-          title="Error loading pipeline runs"
+          title="Error loading PipelineRuns"
           subtitle={JSON.stringify(error)}
         />
       );
@@ -161,7 +161,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
         <StructuredListWrapper border selection>
           <StructuredListHead>
             <StructuredListRow head>
-              <StructuredListCell head>Pipeline Run</StructuredListCell>
+              <StructuredListCell head>PipelineRun</StructuredListCell>
               {!pipelineName && (
                 <StructuredListCell head>Pipeline</StructuredListCell>
               )}
@@ -178,9 +178,9 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
               <StructuredListRow>
                 <StructuredListCell>
                   {pipelineName ? (
-                    <span>No pipeline runs for {pipelineName}</span>
+                    <span>No PipelineRuns for {pipelineName}</span>
                   ) : (
-                    <span>No pipeline runs</span>
+                    <span>No PipelineRuns</span>
                   )}
                 </StructuredListCell>
               </StructuredListRow>

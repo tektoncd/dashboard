@@ -69,7 +69,7 @@ export /* istanbul ignore next */ class TaskRunList extends Component {
           kind="error"
           hideCloseButton
           lowContrast
-          title="Error loading task runs"
+          title="Error loading TaskRuns"
           subtitle={JSON.stringify(error)}
         />
       );
@@ -79,7 +79,7 @@ export /* istanbul ignore next */ class TaskRunList extends Component {
       <StructuredListWrapper border selection>
         <StructuredListHead>
           <StructuredListRow head>
-            <StructuredListCell head>Task Run</StructuredListCell>
+            <StructuredListCell head>TaskRun</StructuredListCell>
             <StructuredListCell head>Task</StructuredListCell>
             {selectedNamespace === ALL_NAMESPACES && (
               <StructuredListCell head>Namespace</StructuredListCell>
@@ -93,7 +93,7 @@ export /* istanbul ignore next */ class TaskRunList extends Component {
           {!taskRuns.length && (
             <StructuredListRow>
               <StructuredListCell>
-                <span>No task runs</span>
+                <span>No TaskRuns</span>
               </StructuredListCell>
             </StructuredListRow>
           )}

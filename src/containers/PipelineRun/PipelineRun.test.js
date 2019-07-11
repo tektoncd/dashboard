@@ -61,7 +61,7 @@ it('PipelineRunContainer renders', async () => {
     </Provider>
   );
   await waitForElement(() =>
-    getByText(`Pipeline Run ${pipelineRunName} not found`)
+    getByText(`PipelineRun ${pipelineRunName} not found`)
   );
 });
 
@@ -102,5 +102,5 @@ it('PipelineRunContainer handles error state', async () => {
       />
     </Provider>
   );
-  await waitForElement(() => getByText('Error loading pipeline run'));
+  await waitForElement(() => getByText('Error loading PipelineRun'));
 });

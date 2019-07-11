@@ -61,7 +61,7 @@ export /* istanbul ignore next */ class Tasks extends Component {
           kind="error"
           hideCloseButton
           lowContrast
-          title="Error loading tasks"
+          title="Error loading Tasks"
           subtitle={error}
         />
       );
@@ -81,7 +81,7 @@ export /* istanbul ignore next */ class Tasks extends Component {
         <StructuredListBody>
           {!tasks.length && (
             <StructuredListRow>
-              <StructuredListCell>No tasks</StructuredListCell>
+              <StructuredListCell>No Tasks</StructuredListCell>
             </StructuredListRow>
           )}
           {tasks.map(task => {
@@ -98,7 +98,7 @@ export /* istanbul ignore next */ class Tasks extends Component {
                 )}
                 <StructuredListCell>
                   <Link
-                    title="task definition"
+                    title="Task definition"
                     to={`/namespaces/${namespace}/tasks/${taskName}`}
                   >
                     <Information16 className="resource-info-icon" />

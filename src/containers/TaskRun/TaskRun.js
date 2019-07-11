@@ -42,8 +42,8 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
   static notification(notification) {
     const { kind, message } = notification;
     const titles = {
-      info: 'Task run not available',
-      error: 'Error loading task run'
+      info: 'TaskRun not available',
+      error: 'Error loading TaskRun'
     };
     return (
       <InlineNotification
@@ -135,7 +135,7 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
     if (error) {
       return TaskRunContainer.notification({
         kind: 'error',
-        message: 'Error loading task run'
+        message: 'Error loading TaskRun'
       });
     }
 
@@ -144,7 +144,7 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
     if (!taskRun) {
       return TaskRunContainer.notification({
         kind: 'info',
-        message: 'Task run not available'
+        message: 'TaskRun not available'
       });
     }
 
