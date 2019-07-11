@@ -20,7 +20,6 @@ import './RunHeader.scss';
 class RunHeader extends Component {
   render() {
     const {
-      error,
       lastTransitionTime,
       loading,
       pipelineRun,
@@ -36,9 +35,6 @@ class RunHeader extends Component {
         data-reason={reason}
       >
         {(() => {
-          if (error) {
-            return <h1>{error}</h1>;
-          }
           if (loading) {
             return <SkeletonPlaceholder className="header-skeleton" />;
           }

@@ -18,6 +18,14 @@ import CloseFilled from '@carbon/icons-react/lib/close--filled/16';
 
 import Spinner from '../components/Spinner';
 
+export function getErrorMessage(error) {
+  if (!error || typeof error === 'string') {
+    return error;
+  }
+
+  return JSON.stringify(error, Object.getOwnPropertyNames(error));
+}
+
 export function getStatus(resource) {
   const { conditions = [] } = resource.status || {};
   return conditions.find(condition => condition.type === 'Succeeded') || {};

@@ -27,6 +27,7 @@ import {
   getSecretsErrorMessage,
   isFetchingSecrets
 } from '../../reducers';
+import { getErrorMessage } from '../../utils';
 
 export /* istanbul ignore next */ class Secrets extends Component {
   constructor(props) {
@@ -80,7 +81,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
           <InlineNotification
             kind="error"
             title="Error:"
-            subtitle={error}
+            subtitle={getErrorMessage(error)}
             iconDescription="Clear Notification"
             className="notificationComponent"
             data-testid="errorNotificationComponent"

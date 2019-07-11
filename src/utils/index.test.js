@@ -12,12 +12,28 @@ limitations under the License.
 */
 
 import {
+  getErrorMessage,
   getStatus,
   selectedTask,
   stepsStatus,
   taskRunStep,
   typeToPlural
 } from '.';
+
+it('getErrorMessage falsy', () => {
+  expect(getErrorMessage()).toBeUndefined();
+});
+
+it('getErrorMessage string', () => {
+  const error = 'this is an error message';
+  expect(getErrorMessage(error)).toEqual(error);
+});
+
+it('getErrorMessage object', () => {
+  const message = 'this is an error message';
+  const error = new Error(message);
+  expect(getErrorMessage(error)).toContain(`"message":"${message}"`);
+});
 
 it('getStatus', () => {
   const taskRun = {

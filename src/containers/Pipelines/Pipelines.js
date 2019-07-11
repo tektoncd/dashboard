@@ -34,6 +34,7 @@ import {
   getSelectedNamespace,
   isFetchingPipelines
 } from '../../reducers';
+import { getErrorMessage } from '../../utils';
 
 import '../../components/Definitions/Definitions.scss';
 
@@ -68,7 +69,7 @@ export /* istanbul ignore next */ class Pipelines extends Component {
           hideCloseButton
           lowContrast
           title="Error loading Pipelines"
-          subtitle={error}
+          subtitle={getErrorMessage(error)}
         />
       );
     }

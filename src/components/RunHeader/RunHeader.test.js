@@ -46,10 +46,3 @@ it('RunHeader renders the failed state', () => {
   );
   expect(queryByText(/failed/i)).toBeTruthy();
 });
-
-it('RunHeader renders the pending state', () => {
-  const { queryByText } = renderWithRouter(
-    <RunHeader {...props} error="an error message" />
-  );
-  expect(queryByText(/an error message/i)).toBeTruthy();
-});

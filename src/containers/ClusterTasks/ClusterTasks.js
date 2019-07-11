@@ -31,6 +31,7 @@ import {
   getClusterTasksErrorMessage,
   isFetchingClusterTasks
 } from '../../reducers';
+import { getErrorMessage } from '../../utils';
 
 import '../../components/Definitions/Definitions.scss';
 
@@ -52,7 +53,7 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
           hideCloseButton
           kind="error"
           title="Error loading ClusterTasks"
-          subtitle={error}
+          subtitle={getErrorMessage(error)}
           lowContrast
         />
       );

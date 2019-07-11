@@ -29,7 +29,12 @@ import Add from '@carbon/icons-react/lib/add/16';
 import './PipelineRuns.scss';
 
 import { ALL_NAMESPACES } from '../../constants';
-import { getStatus, getStatusIcon, isRunning } from '../../utils';
+import {
+  getErrorMessage,
+  getStatus,
+  getStatusIcon,
+  isRunning
+} from '../../utils';
 import { fetchPipelineRuns } from '../../actions/pipelineRuns';
 
 import {
@@ -124,7 +129,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
           hideCloseButton
           lowContrast
           title="Error loading PipelineRuns"
-          subtitle={JSON.stringify(error)}
+          subtitle={getErrorMessage(error)}
         />
       );
     }

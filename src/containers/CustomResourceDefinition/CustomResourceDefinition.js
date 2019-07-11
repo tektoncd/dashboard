@@ -22,6 +22,7 @@ import jsYaml from 'js-yaml';
 
 import { fetchClusterTask, fetchTask } from '../../actions/tasks';
 import { fetchPipeline } from '../../actions/pipelines';
+import { getErrorMessage } from '../../utils';
 
 import {
   getClusterTask,
@@ -91,7 +92,7 @@ export /* istanbul ignore next */ class CustomResourceDefinition extends Compone
           hideCloseButton
           lowContrast
           title="Error loading resource"
-          subtitle={JSON.stringify(error)}
+          subtitle={getErrorMessage(error)}
         />
       );
     }

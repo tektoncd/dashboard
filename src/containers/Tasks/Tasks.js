@@ -33,6 +33,7 @@ import {
   getTasksErrorMessage,
   isFetchingTasks
 } from '../../reducers';
+import { getErrorMessage } from '../../utils';
 
 import '../../components/Definitions/Definitions.scss';
 
@@ -62,7 +63,7 @@ export /* istanbul ignore next */ class Tasks extends Component {
           hideCloseButton
           lowContrast
           title="Error loading Tasks"
-          subtitle={error}
+          subtitle={getErrorMessage(error)}
         />
       );
     }

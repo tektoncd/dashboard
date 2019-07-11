@@ -39,8 +39,7 @@ const taskTypeKeys = { ClusterTask: 'clustertasks', Task: 'tasks' };
 
 export /* istanbul ignore next */ class TaskRunContainer extends Component {
   // once redux store is available errors will be handled properly with dedicated components
-  static notification(notification) {
-    const { kind, message } = notification;
+  static notification({ kind, message }) {
     const titles = {
       info: 'TaskRun not available',
       error: 'Error loading TaskRun'
@@ -51,7 +50,7 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
         hideCloseButton
         lowContrast
         title={titles[kind]}
-        subtitle={JSON.stringify(message, Object.getOwnPropertyNames(message))}
+        subtitle={message}
       />
     );
   }
