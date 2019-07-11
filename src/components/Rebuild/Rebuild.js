@@ -23,19 +23,10 @@ export class Rebuild extends Component {
       event.preventDefault();
     }
 
-    /* The API accepts `pipelinerunname`, which we want to pass as JSON.
-       By default the linter will rename this variable to be `runName`, so prevent that */
-
-    /* eslint no-useless-rename: "error" */
-    const pipelinerunname = this.props.runName;
-    /* eslint no-useless-rename: "error" */
     const pipelineName = this.props.pipelineRun.spec.pipelineRef.name;
-    /* eslint no-useless-rename: "error" */
     const { namespace } = this.props.pipelineRun.metadata;
-    /* eslint no-useless-rename: "error" */
     const payload = {
-      /* eslint no-useless-rename: "error" */
-      pipelinerunname
+      pipelinerunname: this.props.runName
     };
 
     rebuildPipelineRun(namespace, payload)
@@ -52,19 +43,18 @@ export class Rebuild extends Component {
         });
       })
       .catch(error => {
-        console.log(error);
         const statusCode = error.response.status;
         switch (statusCode) {
           case 500:
             this.props.setShowRebuildNotification({
-              message: `An internal server error occurred when rebuilding this PipelineRun: check the dashboard and 
+              message: `An internal server error occurred when rebuilding this PipelineRun: check the dashboard and
                 extension pod logs for details`,
               kind: 'error'
             });
             break;
           default:
             this.props.setShowRebuildNotification({
-              message: `An error occurred when rebuilding this PipelineRun: check the dashboard and 
+              message: `An error occurred when rebuilding this PipelineRun: check the dashboard and
                 extension pod logs for details. Status code: ${statusCode}`,
               kind: 'error'
             });

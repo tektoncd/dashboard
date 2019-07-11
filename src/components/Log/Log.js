@@ -11,7 +11,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-/* eslint-disable react/no-array-index-key */
 import React, { Component } from 'react';
 import { SkeletonText } from 'carbon-components-react';
 
