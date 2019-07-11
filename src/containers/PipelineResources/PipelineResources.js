@@ -83,7 +83,7 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
       <StructuredListWrapper border selection>
         <StructuredListHead>
           <StructuredListRow head>
-            <StructuredListCell head>Pipeline Resource</StructuredListCell>
+            <StructuredListCell head>PipelineResource</StructuredListCell>
             {selectedNamespace === ALL_NAMESPACES && (
               <StructuredListCell head>Namespace</StructuredListCell>
             )}

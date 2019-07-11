@@ -182,7 +182,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           kind="error"
           hideCloseButton
           lowContrast
-          title="Error loading pipeline run"
+          title="Error loading PipelineRun"
           subtitle={JSON.stringify(error, Object.getOwnPropertyNames(error))}
         />
       );
@@ -194,8 +194,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           kind="info"
           hideCloseButton
           lowContrast
-          title="Cannot load pipeline run"
-          subtitle={`Pipeline Run ${pipelineRunName} not found`}
+          title="Cannot load PipelineRun"
+          subtitle={`PipelineRun ${pipelineRunName} not found`}
         />
       );
     }

@@ -38,13 +38,13 @@ class PipelineResourcesDropdown extends React.Component {
 
   render() {
     const { namespace, type, ...rest } = this.props;
-    let emptyText = `No Pipeline Resources found`;
+    let emptyText = 'No PipelineResources found';
     if (type && namespace !== ALL_NAMESPACES) {
-      emptyText = `No Pipeline Resources found of type '${type}' in the '${namespace}' namespace`;
+      emptyText = `No PipelineResources found of type '${type}' in the '${namespace}' namespace`;
     } else if (type) {
-      emptyText = `No Pipeline Resources found of type '${type}'`;
+      emptyText = `No PipelineResources found of type '${type}'`;
     } else if (namespace !== ALL_NAMESPACES) {
-      emptyText = `No Pipeline Resources found in the '${namespace}' namespace`;
+      emptyText = `No PipelineResources found in the '${namespace}' namespace`;
     }
     return <TooltipDropdown {...rest} emptyText={emptyText} />;
   }
@@ -53,8 +53,8 @@ class PipelineResourcesDropdown extends React.Component {
 PipelineResourcesDropdown.defaultProps = {
   items: [],
   loading: false,
-  label: 'Select Pipeline Resource',
-  titleText: 'Pipeline Resource'
+  label: 'Select PipelineResource',
+  titleText: 'PipelineResource'
 };
 
 function mapStateToProps(state, ownProps) {

@@ -186,7 +186,7 @@ const props = {
 const validationErrorMsgRegExp = /please fix the fields with errors, then resubmit/i;
 const namespaceValidationErrorRegExp = /namespace cannot be empty/i;
 const pipelineValidationErrorRegExp = /pipeline cannot be empty/i;
-const pipelineResourceValidationErrorRegExp = /pipeline resources cannot be empty/i;
+const pipelineResourceValidationErrorRegExp = /pipelineresources cannot be empty/i;
 const paramsValidationErrorRegExp = /params cannot be empty/i;
 const apiErrorRegExp = /error creating pipelinerun/i;
 
@@ -231,9 +231,9 @@ const selectPipeline1 = getByText => {
 };
 
 const fillPipeline1Resources = getByText => {
-  fireEvent.click(getByText(/select pipeline resource/i));
+  fireEvent.click(getByText(/select pipelineresource/i));
   fireEvent.click(getByText(/pipeline-resource-1/i));
-  fireEvent.click(getByText(/select pipeline resource/i));
+  fireEvent.click(getByText(/select pipelineresource/i));
   fireEvent.click(getByText(/pipeline-resource-2/i));
 };
 
