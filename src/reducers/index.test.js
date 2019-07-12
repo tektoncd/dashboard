@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import {
+  getClusterTask,
   getClusterTasks,
   getClusterTasksErrorMessage,
   getExtensions,
@@ -29,6 +30,7 @@ import {
   getSecrets,
   getSecretsErrorMessage,
   getSelectedNamespace,
+  getTaskByType,
   getTaskRun,
   getTaskRuns,
   getTaskRunsByTaskName,
@@ -60,8 +62,10 @@ const pipelineResources = [{ fake: 'pipelineResource' }];
 const pipelines = [{ fake: 'pipeline' }];
 const pipelineRuns = [{ fake: 'pipelineRun' }];
 const secrets = [{ fake: 'secrets' }];
-const tasks = [{ fake: 'task' }];
-const clusterTasks = [{ fake: 'clusterTask' }];
+const task = { fake: 'task' };
+const tasks = [task];
+const clusterTask = { fake: 'clusterTask' };
+const clusterTasks = [clusterTask];
 const taskName = 'myTask';
 const taskRun = { fake: 'taskRun', spec: { taskRef: { name: taskName } } };
 const inlineTaskRun = { fake: 'taskRun', spec: {} };
@@ -341,6 +345,17 @@ it('isFetchingTasks', () => {
   expect(taskSelectors.isFetchingTasks).toHaveBeenCalledWith(state.tasks);
 });
 
+it('getClusterTask', () => {
+  jest
+    .spyOn(clusterTaskSelectors, 'getClusterTask')
+    .mockImplementation(() => clusterTask);
+  expect(getClusterTask(state, taskName)).toEqual(clusterTask);
+  expect(clusterTaskSelectors.getClusterTask).toHaveBeenCalledWith(
+    state.clusterTasks,
+    taskName
+  );
+});
+
 it('getClusterTasks', () => {
   jest
     .spyOn(clusterTaskSelectors, 'getClusterTasks')
@@ -369,6 +384,29 @@ it('isFetchingClusterTasks', () => {
   expect(isFetchingClusterTasks(state)).toBe(true);
   expect(clusterTaskSelectors.isFetchingClusterTasks).toHaveBeenCalledWith(
     state.clusterTasks
+  );
+});
+
+it('getTaskByType', () => {
+  jest.spyOn(taskSelectors, 'getTask').mockImplementation(() => task);
+  expect(getTaskByType(state, { name: taskName, namespace })).toEqual(task);
+  expect(taskSelectors.getTask).toHaveBeenCalledWith(
+    state.tasks,
+    taskName,
+    namespace
+  );
+});
+
+it('getTaskByType clustertasks', () => {
+  jest
+    .spyOn(clusterTaskSelectors, 'getClusterTask')
+    .mockImplementation(() => clusterTask);
+  expect(
+    getTaskByType(state, { type: 'clustertasks', name: taskName })
+  ).toEqual(clusterTask);
+  expect(clusterTaskSelectors.getClusterTask).toHaveBeenCalledWith(
+    state.clusterTasks,
+    taskName
   );
 });
 
