@@ -46,7 +46,7 @@ export default combineReducers({
 });
 
 export function getClusterTasks(state) {
-  return state.byName ? Object.values(state.byName) : [];
+  return Object.values(state.byName);
 }
 
 export function getClusterTask(state, name) {

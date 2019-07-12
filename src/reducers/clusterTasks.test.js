@@ -45,6 +45,7 @@ it('CLUSTER_TASKS_FETCH_SUCCESS', () => {
 
   const state = clusterTasksReducer({}, action);
   expect(selectors.getClusterTasks(state)).toEqual([clusterTask]);
+  expect(selectors.getClusterTask(state, name)).toEqual(clusterTask);
   expect(selectors.isFetchingClusterTasks(state)).toBe(false);
 });
 

@@ -10,7 +10,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
+/* istanbul ignore file */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
@@ -28,7 +28,6 @@ function closeSocket() {
 
 const store = configureStore({ webSocket });
 
-/* istanbul ignore next */
 ReactDOM.render(
   <Provider store={store}>
     <App onUnload={closeSocket} />
