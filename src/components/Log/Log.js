@@ -13,12 +13,40 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { SkeletonText } from 'carbon-components-react';
-
+import { FixedSizeList as List } from 'react-window';
 import Ansi from 'ansi-to-react';
 
 import './Log.scss';
 
+const LogLine = ({ data, index, style }) => (
+  <div style={style}>
+    <Ansi>{data[index]}</Ansi>
+  </div>
+);
+
 class Log extends Component {
+  getLogList() {
+    const { logs, status } = this.props;
+
+    const itemSize = 15; // This should be kept in sync with the line-height in SCSS
+    const defaultHeight = 800;
+    const height = status
+      ? Math.min(defaultHeight, itemSize * logs.length)
+      : defaultHeight;
+
+    return (
+      <List
+        height={height}
+        itemCount={logs.length}
+        itemData={logs}
+        itemSize={itemSize}
+        width="100%"
+      >
+        {LogLine}
+      </List>
+    );
+  }
+
   logTrailer() {
     const { status, trailers } = this.props;
     const trailer = trailers[status];
@@ -34,15 +62,15 @@ class Log extends Component {
   }
 
   render() {
-    const { loading, logs } = this.props;
+    const { loading } = this.props;
 
     return (
       <pre className="log">
         {loading ? (
-          <SkeletonText paragraph width="30%" />
+          <SkeletonText paragraph width="60%" />
         ) : (
           <>
-            <Ansi className="log-content">{logs}</Ansi>
+            <div className="log-container">{this.getLogList()}</div>
             {this.logTrailer()}
           </>
         )}
@@ -52,7 +80,7 @@ class Log extends Component {
 }
 
 Log.defaultProps = {
-  logs: 'No log available',
+  logs: ['No log available'],
   trailers: {
     Completed: 'Step completed',
     Error: 'Step failed'
