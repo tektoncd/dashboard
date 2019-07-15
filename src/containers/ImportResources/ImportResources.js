@@ -175,7 +175,7 @@ export class ImportResources extends Component {
           />
           <TextInput
             data-testid="directory-field"
-            helperText="The path from which resources will be applied at the specified repository"
+            helperText="The location of the Tekton resources to import from the repository. Leave blank if the resources are at the top-level directory."
             id="import-directory"
             labelText="Repository directory (optional)"
             name="directory"
