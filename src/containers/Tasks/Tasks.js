@@ -33,6 +33,7 @@ import {
   getTasksErrorMessage,
   isFetchingTasks
 } from '../../reducers';
+import { getErrorMessage } from '../../utils';
 
 import '../../components/Definitions/Definitions.scss';
 
@@ -61,8 +62,8 @@ export /* istanbul ignore next */ class Tasks extends Component {
           kind="error"
           hideCloseButton
           lowContrast
-          title="Error loading tasks"
-          subtitle={error}
+          title="Error loading Tasks"
+          subtitle={getErrorMessage(error)}
         />
       );
     }
@@ -81,7 +82,7 @@ export /* istanbul ignore next */ class Tasks extends Component {
         <StructuredListBody>
           {!tasks.length && (
             <StructuredListRow>
-              <StructuredListCell>No tasks</StructuredListCell>
+              <StructuredListCell>No Tasks</StructuredListCell>
             </StructuredListRow>
           )}
           {tasks.map(task => {
@@ -98,7 +99,7 @@ export /* istanbul ignore next */ class Tasks extends Component {
                 )}
                 <StructuredListCell>
                   <Link
-                    title="task definition"
+                    title="Task definition"
                     to={`/namespaces/${namespace}/tasks/${taskName}`}
                   >
                     <Information16 className="resource-info-icon" />

@@ -7,7 +7,7 @@ Tekton Dashboard is a general purpose, web-based UI for Tekton Pipelines. It all
 ![Dashboard UI workloads page](docs/dashboard-ui.png)
 
 ## Pre-requisites
-[Tekton Pipelines](https://github.com/tektoncd/pipeline) must be installed in order to use the Tekton Dashboard. Instructions to install Tekton Pipelines can be found [here](https://github.com/tektoncd/pipeline/blob/master/docs/install.md).
+[Tekton Pipelines](https://github.com/tektoncd/pipeline) 0.5 or later must be installed in order to use the Tekton Dashboard. Instructions to install Tekton Pipelines can be found [here](https://github.com/tektoncd/pipeline/blob/master/docs/install.md).
 
 ## Install Dashboard
 The Tekton Dashboard has a hosted image located at gcr.io/tekton-nightly/dashboard:latest
@@ -35,12 +35,22 @@ The `install-dev.sh` script will build and push an image of the Tekton Dashboard
 
 1. Install [tektoncd-pipeline-operator](https://github.com/openshift/tektoncd-pipeline-operator#deploy-openshift-pipelines-operator-on-minikube-for-testing)
 2. [Checkout](https://github.com/tektoncd/dashboard/blob/master/DEVELOPMENT.md#checkout-your-fork) the repository
-3. Install deployment config `oc process -f config/templates/deploy.yaml | oc apply -f -`
-4. Install build config `oc process -f config/templates/build.yaml | oc apply -f -`
-5. Wait until the pod `tekton-dashboard-1` is running in the tekton-pipelines namespace
+
+If you want to install the dashboard into the tekton-pipelines namespace:
+- Install the Dashboard `./minishift-install-dashboard.sh`
+
+If you want to install the dashboard into any other namespace:
+- Install the Dashboard `./minishift-install-dashboard.sh -n {NAMESPACE}`
+
+3. Wait until the pod `tekton-dashboard-1` is running in the namespace the Dashboard is installed into
 
 ## Accessing the Dashboard on Minishift
-The Dashboard can be accessed by running `kubectl port-forward $(kubectl get pod --namespace tekton-pipelines -l app=tekton-dashboard -o name)  --namespace tekton-pipelines 9097:9097`. You can access the web UI at `http://localhost:9097/`
+The Dashboard can be accessed by running `kubectl port-forward $(kubectl get pod --namespace tekton-pipelines -l app=tekton-dashboard -o name)  --namespace tekton-pipelines 9097:9097` 
+If installed into a namespace other than tekton-pipelines then the dashboard can be accessed by running `kubectl port-forward $(kubectl get pod --namespace NAMESPACE -l app=tekton-dashboard -o name)  --namespace NAMESPACE 9097:9097`
+You can access the web UI at `http://localhost:9097/`
+
+## Uninstalling the Dashboard on Minishift
+The Dashboard can be uninstalled on Minishift by running the command `./minishift-delete-dashboard.sh` Use `-n {NAMESPACE}` on the end of the command if installed into a namespace other than `tekton-pipelines`
 
 ## Accessing the Dashboard
 The Dashboard can be accessed through its ClusterIP Service by running `kubectl proxy`. Assuming tekton-pipelines is the install namespace for the dashboard, you can access the web UI at `localhost:8001/api/v1/namespaces/tekton-pipelines/services/tekton-dashboard:http/proxy/`

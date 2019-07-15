@@ -13,17 +13,16 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { SkeletonPlaceholder, Tab, Tabs } from 'carbon-components-react';
-
 import { getStatusIcon } from '../../utils';
-
+import Rebuild from '../Rebuild';
 import './RunHeader.scss';
 
 class RunHeader extends Component {
   render() {
     const {
-      error,
       lastTransitionTime,
       loading,
+      pipelineRun,
       runName,
       reason,
       status
@@ -36,9 +35,6 @@ class RunHeader extends Component {
         data-reason={reason}
       >
         {(() => {
-          if (error) {
-            return <h1>{error}</h1>;
-          }
           if (loading) {
             return <SkeletonPlaceholder className="header-skeleton" />;
           }
@@ -53,6 +49,13 @@ class RunHeader extends Component {
                 </div>
                 <span className="status-label">{reason}</span>
                 <span className="time">{lastTransitionTime}</span>
+                {pipelineRun && (
+                  <Rebuild
+                    {...this.props}
+                    pipelineRun={pipelineRun}
+                    runName={runName}
+                  />
+                )}
               </h1>
             )
           );

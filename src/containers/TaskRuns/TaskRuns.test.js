@@ -60,7 +60,7 @@ it('TaskRunsContainer renders', async () => {
 });
 
 it('TaskRunsContainer handles info state', async () => {
-  const notificationMessage = 'Task runs not available';
+  const notificationMessage = 'TaskRuns not available';
   const taskName = 'taskName';
   const match = {
     params: {
@@ -122,5 +122,5 @@ it('TaskRunsContainer handles error state', async () => {
       <TaskRuns match={match} />
     </Provider>
   );
-  await waitForElement(() => getByText('Error loading task run'));
+  await waitForElement(() => getByText('Error loading TaskRun'));
 });

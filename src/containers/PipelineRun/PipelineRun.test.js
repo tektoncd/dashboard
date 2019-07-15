@@ -13,7 +13,6 @@ limitations under the License.
 
 import React from 'react';
 import { waitForElement } from 'react-testing-library';
-
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
@@ -61,7 +60,7 @@ it('PipelineRunContainer renders', async () => {
     </Provider>
   );
   await waitForElement(() =>
-    getByText(`Pipeline Run ${pipelineRunName} not found`)
+    getByText(`PipelineRun ${pipelineRunName} not found`)
   );
 });
 
@@ -75,9 +74,16 @@ it('PipelineRunContainer handles error state', async () => {
 
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
+
   const testStore = mockStore({
     tasks: {
       byNamespace: { default: {} }
+    },
+    taskRuns: {
+      byId: {},
+      byNamespace: { default: {} },
+      errorMessage: null,
+      isFetching: false
     },
     namespaces: {
       selected: 'default'
@@ -102,5 +108,5 @@ it('PipelineRunContainer handles error state', async () => {
       />
     </Provider>
   );
-  await waitForElement(() => getByText('Error loading pipeline run'));
+  await waitForElement(() => getByText('Error loading PipelineRun'));
 });

@@ -17,15 +17,15 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"net/http"
+	"net/http/httptest"
 	"reflect"
 	"strconv"
 	"strings"
 	"testing"
-
-	"github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
-	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	. "github.com/tektoncd/dashboard/pkg/endpoints"
 	"github.com/tektoncd/dashboard/pkg/testutils"
@@ -618,5 +618,139 @@ func TestPOSTCreatePipelineRuns(t *testing.T) {
 				t.Fatalf("Response object %v did not equal expected %v\n", actualPipelineResource, expectedPipelineResource)
 			}
 		}
+	}
+}
+
+func createPipelineForTesting(name, namespace string, server *httptest.Server, r *Resource, t *testing.T) *v1alpha1.Pipeline {
+	// Pipelines referenced by PipelineRuns
+	pipeline := &v1alpha1.Pipeline{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      name,
+			Namespace: namespace,
+		},
+		Spec: v1alpha1.PipelineSpec{},
+	}
+	_, err := r.PipelineClient.TektonV1alpha1().Pipelines(namespace).Create(pipeline)
+	if err != nil {
+		t.Fatalf("Error creating Pipeline '%s': %v", pipeline.Name, err)
+	}
+	return pipeline
+}
+
+func createPipelineRunForTesting(pipelineNameToUse, namespace string, server *httptest.Server, r *Resource, t *testing.T) *v1alpha1.PipelineRun {
+	manualPipelineRun := ManualPipelineRun{
+		PIPELINENAME:      pipelineNameToUse,
+		IMAGERESOURCENAME: "image-source-" + pipelineNameToUse,
+		GITRESOURCENAME:   "git-source - " + pipelineNameToUse,
+		GITCOMMIT:         "12345",
+		REPONAME:          "testreponame",
+		REPOURL:           "http://github.com/testorg/testrepo",
+	}
+
+	jsonMarshalledBytes, err := json.Marshal(&manualPipelineRun)
+	if err != nil {
+		t.Fatalf("Error marshalling manualPipelineRun: %v", err)
+	}
+
+	httpRequestBody := bytes.NewReader(jsonMarshalledBytes)
+	//
+	httpReq := testutils.DummyHTTPRequest("POST", fmt.Sprintf("%s/v1/namespaces/%s/pipelineruns", server.URL, namespace), httpRequestBody)
+	response, err := http.DefaultClient.Do(httpReq)
+
+	if err != nil {
+		t.Fatalf("Error getting create PipelineRun response for PipelineRun '%s': %v", pipelineNameToUse, err)
+	}
+	expectedStatusCode := 201
+	if response.StatusCode != expectedStatusCode {
+		t.Fatalf("Response code %d did not equal expected %d", response.StatusCode, expectedStatusCode)
+	}
+
+	foundPipelineRuns, err := r.PipelineClient.TektonV1alpha1().PipelineRuns(namespace).List(metav1.ListOptions{})
+	if len(foundPipelineRuns.Items) != 1 {
+		t.Errorf("Didn't find the PipelineRun to rebuild")
+	}
+	return &foundPipelineRuns.Items[0]
+}
+
+// Create a PipelineRun then rebuild it using the "from name" API.
+// Ensure it's identical apart from the name and resource version
+
+func TestRebuildWithExistingRunFromName(t *testing.T) {
+	server, r, namespace := testutils.DummyServer()
+	testPipelineNameToRun := "testPipeline1"
+
+	pipeline := createPipelineForTesting(testPipelineNameToRun, namespace, server, r, t)
+	pipelineRun := createPipelineRunForTesting(testPipelineNameToRun, namespace, server, r, t)
+
+	foundPipelineRuns, err := r.PipelineClient.TektonV1alpha1().PipelineRuns(namespace).List(metav1.ListOptions{})
+	if len(foundPipelineRuns.Items) != 1 {
+		t.Errorf("Didn't find a created PipelineRun, items: %v", foundPipelineRuns.Items)
+		t.Fail()
+	}
+
+	t.Logf("Created Pipeline: %v", pipeline)
+	t.Logf("Created PipelineRun: %v", pipelineRun)
+
+	rebuildRequest := RebuildRequest{
+		PIPELINERUNNAME: pipelineRun.Name,
+	}
+
+	jsonMarshalledRebuildBytes, err := json.Marshal(&rebuildRequest)
+	if err != nil {
+		t.Fatalf("Error marshalling rebuild request: %v", err)
+	}
+
+	t.Logf("rebuild payload: %v", string(jsonMarshalledRebuildBytes))
+
+	httpRequestRebuildBody := bytes.NewReader(jsonMarshalledRebuildBytes)
+	httpRebuildReq := testutils.DummyHTTPRequest("POST", fmt.Sprintf("%s/v1/namespaces/%s/rebuild", server.URL, namespace), httpRequestRebuildBody)
+	response, err := http.DefaultClient.Do(httpRebuildReq)
+
+	if response.StatusCode != 201 {
+		t.Errorf("Didn't get a response 201 from using rebuild, got %d instead", response.StatusCode)
+	}
+
+	// Check we've got a new rebuilt PipelineRun and its the same as the first (for params, resources, SA, namespace)
+	// It should be labelled and named accordingly
+	foundPipelineRuns, err = r.PipelineClient.TektonV1alpha1().PipelineRuns(namespace).List(metav1.ListOptions{})
+	if len(foundPipelineRuns.Items) != 2 {
+		t.Errorf("Didn't find a rebuilt PipelineRun, items: %v", foundPipelineRuns.Items)
+		t.Fail()
+	}
+
+	firstRun := foundPipelineRuns.Items[0]
+
+	firstRunParams := firstRun.Spec.Params
+	firstRunResources := firstRun.Spec.Resources
+	firstRunSA := firstRun.Spec.ServiceAccount
+	firstRunNS := firstRun.Namespace
+
+	secondRun := foundPipelineRuns.Items[1]
+
+	secondRunParams := secondRun.Spec.Params
+	secondRunResources := secondRun.Spec.Resources
+	secondRunSA := secondRun.Spec.ServiceAccount
+	secondRunNS := secondRun.Namespace
+
+	if !reflect.DeepEqual(firstRunParams, secondRunParams) {
+		t.Errorf("Parameters in the rebuilt run did not match")
+	}
+
+	if !reflect.DeepEqual(firstRunResources, secondRunResources) {
+		t.Errorf("Resources in the rebuilt run did not match")
+	}
+
+	if firstRunSA != secondRunSA {
+		t.Errorf("Service account in the rebuilt run did not match")
+	}
+
+	if firstRunNS != secondRunNS {
+		t.Errorf("Namespace in the rebuilt run did not match")
+	}
+
+	secondRunLabels := secondRun.GetLabels()
+
+	if strings.Contains(secondRunLabels["rebuilds"], firstRun.Name) == false {
+		t.Errorf("Rebuilt run was not labelled correctly: should be labelled containing rebuilds:%s, we see label: %s", firstRun.Name, secondRunLabels["rebuilds"])
 	}
 }

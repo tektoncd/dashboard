@@ -110,7 +110,12 @@ const SecretsTable = props => {
                         key={lastCell.id}
                         id={lastCell.id}
                         className="cellIcon"
-                        onClick={handleDelete}
+                        onClick={() => {
+                          handleDelete({
+                            name: secrets[index].name,
+                            namespace: secrets[index].namespace
+                          });
+                        }}
                         data-testid="deleteIcon"
                       >
                         {lastCell.value}

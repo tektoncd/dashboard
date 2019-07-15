@@ -29,6 +29,7 @@ export function configureStore({ initialState = {}, webSocket }) {
   }
   const middleware = [thunk];
 
+  /* istanbul ignore else */
   if (webSocket) {
     middleware.push(createWebSocketMiddleware(webSocket));
   }

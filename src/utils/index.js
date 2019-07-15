@@ -18,6 +18,14 @@ import CloseFilled from '@carbon/icons-react/lib/close--filled/16';
 
 import Spinner from '../components/Spinner';
 
+export function getErrorMessage(error) {
+  if (!error || typeof error === 'string') {
+    return error;
+  }
+
+  return JSON.stringify(error, Object.getOwnPropertyNames(error));
+}
+
 export function getStatus(resource) {
   const { conditions = [] } = resource.status || {};
   return conditions.find(condition => condition.type === 'Succeeded') || {};
@@ -97,6 +105,26 @@ export function stepsStatus(taskSteps, taskRunStepsStatus = []) {
       id: step.name
     };
   });
+
+  /*
+    In case of failure in an init step (git-source, init-creds, etc.),
+    include that step in the displayed list so we can surface status
+    and logs to aid the user in debugging.
+   */
+  taskRunStepsStatus.forEach(stepStatus => {
+    const { name: stepName, terminated } = stepStatus;
+    const step = taskSteps.find(taskStep => taskStep.name === stepName);
+    if (!step && terminated && terminated.exitCode !== 0) {
+      steps.push({
+        reason: terminated.reason,
+        status: 'terminated',
+        stepStatus,
+        stepName,
+        id: stepName
+      });
+    }
+  });
+
   return steps;
 }
 

@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -87,6 +88,11 @@ type ManualPipelineRun struct {
 // Currently only modifying the status is supported but this gives us scope for adding additional fields
 type PipelineRunUpdateBody struct {
 	STATUS string `json:"status"`
+}
+
+// PipelineRunRebuild - a name only for now
+type RebuildRequest struct {
+	PIPELINERUNNAME string `json:"pipelinerunname"`
 }
 
 type PipelineRunLog []TaskRunLog
@@ -525,4 +531,147 @@ func (r Resource) UpdatePipelineRun(request *restful.Request, response *restful.
 	// Not to be confused with WriteEntity which always gives a 200 even if the parameter is something other than StatusOk
 
 	response.WriteHeader(204)
+}
+
+func (r Resource) rebuildRun(name, namespace string) (*v1alpha1.PipelineRun, error) {
+	pipelineRuns := r.PipelineClient.TektonV1alpha1().PipelineRuns(namespace)
+	pipelineRun, err := pipelineRuns.Get(name, metav1.GetOptions{})
+
+	if err != nil {
+		logging.Log.Errorf("couldn't find the PipelineRun to rebuild, searched for %s in namespace %s", name, namespace)
+		return nil, err
+	} else {
+		logging.Log.Debugf("Found the PipelineRun to rebuild (%s in namespace %s)", name, namespace)
+	}
+
+	newPipelineRunData := pipelineRun
+	newPipelineRunData.Name = generateNewNameForRebuild(name)
+	newPipelineRunData.ResourceVersion = ""
+
+	// It's mandatory, so if it's not set already choose manual
+	if newPipelineRunData.Spec.Trigger.Type == "" {
+		newPipelineRunData.Spec.Trigger.Type = v1alpha1.PipelineTriggerTypeManual
+	}
+
+	currentLabels := pipelineRun.GetLabels()
+
+	if currentLabels != nil {
+		logging.Log.Debug("Didn't find any existing labels, so creating a new one")
+		withRebuildLabel := map[string]string{"rebuilds": pipelineRun.Name}
+		newPipelineRunData.SetLabels(withRebuildLabel)
+	} else {
+		logging.Log.Debug("Found existing label, adding rebuilds label")
+		currentLabels["rebuilds"] = pipelineRun.Name
+		newPipelineRunData.SetLabels(currentLabels)
+	}
+
+	logging.Log.Debugf("new PipelineRun data is: %v", newPipelineRunData)
+
+	rebuiltRun, err := r.PipelineClient.TektonV1alpha1().PipelineRuns(pipelineRun.Namespace).Create(newPipelineRunData)
+
+	if err != nil {
+		logging.Log.Errorf("an error occurred rebuilding the PipelineRun %s in namespace %s: %s", name, namespace, err)
+		return nil, err
+	}
+	return rebuiltRun, nil
+}
+
+// If the PipelineRun does not contain -r-*five digits*, add it. The five digits being time in nanoseconds.
+// If it does replace that r-*digits* with a new generated one using the new timestamp.
+
+func generateNewNameForRebuild(name string) string {
+	newName := name
+
+	endsInDashAndNumbers := false
+	// Has -r- in it already?
+	if strings.Contains(name, "-r-") {
+		lastIndexOfDash := strings.LastIndex(name, "-r-")
+		charsAfterLastIndex := name[lastIndexOfDash+2:]
+		// We found digits: no error when converting from str to int
+		if asANumber, err := strconv.Atoi(charsAfterLastIndex); err == nil {
+			endsInDashAndNumbers = true
+			// Get a timestamp now
+			newTimestamp := time.Now().Nanosecond()
+			previousTimestampAsString := strconv.Itoa(asANumber)
+			// We want it as a string to use in the name
+			newTimestampAsString := strconv.Itoa(newTimestamp)
+			// Get the last five chars
+			newStringTrimmed := fmt.Sprintf("-%s", newTimestampAsString[4:])
+			newName = strings.Replace(name, previousTimestampAsString, newStringTrimmed, 1)
+		}
+	}
+
+	// It doesn't already, so add this new suffix
+	if !endsInDashAndNumbers {
+		newName = fmt.Sprintf("%s-r-%s", newName, strconv.Itoa(time.Now().Nanosecond())[4:])
+	}
+
+	logging.Log.Debugf("Rebuilt PipelineRun name: %s", newName)
+
+	return newName
+}
+
+/* E.g. POST to http://localhost:9097/v1/namespaces/default/rebuild (provide name in the request body)
+   TODO eventually this would be great to take different params too as users may want to run the \
+	 same pipeline just with different inputs */
+
+func (r Resource) rebuildImpl(existingPipelineRun *v1alpha1.PipelineRun, existingPipelineRunName, namespace string) (*v1alpha1.PipelineRun, error) {
+	logging.Log.Debug("in rebuildImpl")
+
+	if existingPipelineRunName != "" {
+		// rebuildRun handles errors and logs them
+		rebuiltRun, err := r.rebuildRun(existingPipelineRunName, namespace)
+		if err != nil {
+			return nil, err
+		}
+		return rebuiltRun, nil
+	}
+
+	if existingPipelineRun != nil {
+		madeRun, err := r.PipelineClient.TektonV1alpha1().PipelineRuns(existingPipelineRun.Namespace).Create(existingPipelineRun)
+		if err != nil {
+			logging.Log.Errorf("error creating a new PipelineRun from spec: %s", err)
+			return nil, err
+		}
+		return madeRun, nil
+	}
+
+	return nil, errors.New("rebuild was called without a name of a PipelineRun to rebuild or a PipelineRun spec - nothing to do")
+}
+
+// RebuildPipelineRun rebuilds a given PipelineRun by name in a given namespace
+func (r Resource) RebuildPipelineRun(request *restful.Request, response *restful.Response) {
+	logging.Log.Debugf("in RebuildPipelineRun")
+	namespace := request.PathParameter("namespace")
+
+	requestData := RebuildRequest{}
+
+	if err := request.ReadEntity(&requestData); err != nil {
+		logging.Log.Errorf("error parsing request body on call to rebuild %s", err)
+		utils.RespondError(response, err, http.StatusBadRequest)
+		return
+	}
+
+	logging.Log.Debugf("Request data: %v", requestData)
+
+	if requestData.PIPELINERUNNAME != "" {
+		// It's a rebuild: they've provided a name and want a new one. This is a new PipelineRun.
+		logging.Log.Debug("No name has been provided and a request has been made to rebuild with the name of an existing PipelineRun")
+		logging.Log.Debugf("Rebuilding PipelineRun: %s", requestData.PIPELINERUNNAME)
+		// A lookup will be made for the run, so no need to provide full data
+		// Method handles any error reporting through logs
+		rebuiltRun, err := r.rebuildImpl(nil, requestData.PIPELINERUNNAME, namespace)
+		if err != nil {
+			utils.RespondError(response, err, http.StatusInternalServerError)
+			return
+		} else {
+			// All is well, include the name of the new rebuilt run in the response
+			logging.Log.Debugf("Rebuilt ok, name is: %s", rebuiltRun.Name)
+			utils.WriteResponseLocation(request, response, rebuiltRun.Name)
+			return
+		}
+	}
+	// We should never get here - but if so, they've given us a request we can't handle
+	logging.Log.Error("didn't receive a request we could actually handle!")
+	response.WriteHeader(http.StatusBadRequest)
 }

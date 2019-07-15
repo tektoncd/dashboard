@@ -28,6 +28,9 @@ const (
 	PipelineCreated         messageType = "PipelineCreated"
 	PipelineDeleted         messageType = "PipelineDeleted"
 	PipelineUpdated         messageType = "PipelineUpdated"
+	ClusterTaskCreated      messageType = "ClusterTaskCreated"
+	ClusterTaskDeleted      messageType = "ClusterTaskDeleted"
+	ClusterTaskUpdated      messageType = "ClusterTaskUpdated"
 	TaskCreated             messageType = "TaskCreated"
 	TaskDeleted             messageType = "TaskDeleted"
 	TaskUpdated             messageType = "TaskUpdated"
@@ -43,6 +46,9 @@ const (
 	ExtensionCreated        messageType = "ExtensionCreated"
 	ExtensionUpdated        messageType = "ExtensionUpdated"
 	ExtensionDeleted        messageType = "ExtensionDeleted"
+	SecretCreated           messageType = "SecretCreated"
+	SecretDeleted           messageType = "SecretDeleted"
+	SecretUpdated           messageType = "SecretUpdated"
 )
 
 type SocketData struct {

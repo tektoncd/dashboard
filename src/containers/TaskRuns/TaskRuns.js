@@ -42,11 +42,10 @@ import { fetchTaskRuns } from '../../actions/taskRuns';
 
 export /* istanbul ignore next */ class TaskRunsContainer extends Component {
   // once redux store is available errors will be handled properly with dedicated components
-  static notification(notification) {
-    const { kind, message } = notification;
+  static notification({ kind, message }) {
     const titles = {
-      info: 'Task runs not available',
-      error: 'Error loading task run'
+      info: 'TaskRuns not available',
+      error: 'Error loading TaskRun'
     };
     return (
       <InlineNotification
@@ -54,7 +53,7 @@ export /* istanbul ignore next */ class TaskRunsContainer extends Component {
         hideCloseButton
         lowContrast
         title={titles[kind]}
-        subtitle={JSON.stringify(message, Object.getOwnPropertyNames(message))}
+        subtitle={message}
       />
     );
   }
@@ -101,6 +100,8 @@ export /* istanbul ignore next */ class TaskRunsContainer extends Component {
       const { reason, status: succeeded } = getStatus(taskRun);
       const pipelineTaskName = taskRunName;
       const runSteps = stepsStatus(task.spec.steps, taskRun.status.steps);
+      const { params, resources: inputResources } = taskRun.spec.inputs;
+      const { resources: outputResources } = taskRun.spec.outputs;
       const { startTime } = taskRun.status;
       return {
         id: taskRun.metadata.uid,
@@ -112,7 +113,10 @@ export /* istanbul ignore next */ class TaskRunsContainer extends Component {
         taskName,
         taskRunName,
         startTime,
-        namespace: taskRunNamespace
+        namespace: taskRunNamespace,
+        params,
+        inputResources,
+        outputResources
       };
     });
     return taskRuns;
@@ -138,7 +142,7 @@ export /* istanbul ignore next */ class TaskRunsContainer extends Component {
     if (error) {
       return TaskRunsContainer.notification({
         kind: 'error',
-        message: 'Error loading task runs'
+        message: 'Error loading TaskRuns'
       });
     }
 

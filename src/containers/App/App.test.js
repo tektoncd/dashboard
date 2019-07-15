@@ -28,6 +28,7 @@ it('App renders successfully', () => {
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const store = mockStore({
+    secrets: { byNamespace: {} },
     extensions: { byName: {} },
     namespaces: { byName: {} },
     pipelines: { byNamespace: {} },

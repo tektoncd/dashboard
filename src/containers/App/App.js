@@ -34,6 +34,7 @@ import {
   PipelineRun,
   PipelineRuns,
   Pipelines,
+  Secrets,
   SideNav,
   TaskRun,
   TaskRunList,
@@ -80,6 +81,7 @@ export /* istanbul ignore next */ class App extends Component {
                 exact
                 component={Pipelines}
               />
+              <Route path="/secrets" exact component={Secrets} />
               <Route path="/tasks" exact component={Tasks} />
               <Route
                 path="/namespaces/:namespace/tasks"

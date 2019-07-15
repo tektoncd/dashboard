@@ -12,13 +12,13 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
-
 import { withRouter } from 'react-router-dom';
+
 import Log from '../../components/Log';
 import { getPodLog } from '../../api';
 
 export class LogContainer extends Component {
-  state = { logs: '' };
+  state = { logs: [] };
 
   componentDidMount() {
     this.loadLog();
@@ -63,23 +63,24 @@ export class LogContainer extends Component {
     const { stepName, podName, namespace } = this.props;
     if (podName) {
       try {
-        const container = `build-step-${stepName}`;
+        const container = `step-${stepName}`;
         const logs = await getPodLog({
           container,
           name: podName,
           namespace
         });
-        this.setState({ logs: logs || undefined });
+        this.setState({ logs: logs ? logs.split('\n') : undefined });
       } catch {
-        this.setState({ logs: 'Unable to fetch log' });
+        this.setState({ logs: ['Unable to fetch log'] });
       }
     }
   }
 
   render() {
-    const { stepName } = this.props;
+    const { stepName, stepStatus } = this.props;
+    const { reason } = (stepStatus && stepStatus.terminated) || {};
     const { logs } = this.state;
-    return <Log logs={logs} stepName={stepName} />;
+    return <Log logs={logs} stepName={stepName} status={reason} />;
   }
 }
 

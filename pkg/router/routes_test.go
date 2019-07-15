@@ -33,6 +33,7 @@ import (
 // Exclude testing of routes that contain any of these substring values
 var excludeRoutes []string = []string{
 	"/v1/websockets", // No response code
+	"rebuild",        // Returns 201
 	ExtensionRoot,    // Response codes dictated by extension logic
 	"health",         // Returns 204
 	"readiness",      // Returns 204

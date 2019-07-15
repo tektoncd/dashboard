@@ -25,6 +25,7 @@ import {
 } from 'carbon-components-react';
 
 import { ALL_NAMESPACES } from '../../constants';
+import { getErrorMessage } from '../../utils';
 import { fetchPipelineResources } from '../../actions/pipelineResources';
 
 import {
@@ -74,7 +75,7 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
           hideCloseButton
           lowContrast
           title="Error loading PipelineResources"
-          subtitle={JSON.stringify(error)}
+          subtitle={getErrorMessage(error)}
         />
       );
     }
@@ -83,7 +84,7 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
       <StructuredListWrapper border selection>
         <StructuredListHead>
           <StructuredListRow head>
-            <StructuredListCell head>Pipeline Resource</StructuredListCell>
+            <StructuredListCell head>PipelineResource</StructuredListCell>
             {selectedNamespace === ALL_NAMESPACES && (
               <StructuredListCell head>Namespace</StructuredListCell>
             )}

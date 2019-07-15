@@ -12,11 +12,13 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
   InlineNotification,
-  StructuredListSkeleton
+  StructuredListSkeleton,
+  ToastNotification
 } from 'carbon-components-react';
 
 import {
@@ -32,11 +34,11 @@ import {
 import { fetchPipelineRun } from '../../actions/pipelineRuns';
 import { fetchClusterTasks, fetchTasks } from '../../actions/tasks';
 import { fetchTaskRuns } from '../../actions/taskRuns';
-
 import RunHeader from '../../components/RunHeader';
 import StepDetails from '../../components/StepDetails';
 import TaskTree from '../../components/TaskTree';
 import {
+  getErrorMessage,
   getStatus,
   selectedTask,
   selectedTaskRun,
@@ -49,10 +51,18 @@ import { getStore } from '../../store/index';
 import '../../components/Run/Run.scss';
 
 export /* istanbul ignore next */ class PipelineRunContainer extends Component {
+  constructor(props) {
+    super(props);
+    this.setShowRebuildNotification = this.setShowRebuildNotification.bind(
+      this
+    );
+  }
+
   state = {
     selectedStepId: null,
     selectedTaskId: null,
-    loading: true
+    loading: true,
+    showRebuildNotification: false
   };
 
   componentDidMount() {
@@ -76,6 +86,10 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     }
   }
 
+  setShowRebuildNotification(value) {
+    this.setState({ showRebuildNotification: value });
+  }
+
   handleTaskSelected = (selectedTaskId, selectedStepId) => {
     this.setState({ selectedStepId, selectedTaskId });
   };
@@ -86,6 +100,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       status: { taskRuns: taskRunsStatus }
     } = pipelineRun;
     const { message, status, reason } = getStatus(pipelineRun);
+
     return {
       error: status === 'False' && !taskRunsStatus && { message, reason },
       pipelineRun,
@@ -116,6 +131,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       const taskRunNamespace = taskRun.metadata.namespace;
       const { reason, status: succeeded } = getStatus(taskRun);
       const { pipelineTaskName } = taskRunDetails[taskRunName];
+      const { params, resources: inputResources } = taskRun.spec.inputs;
+      const { resources: outputResources } = taskRun.spec.outputs;
       const steps = stepsStatus(task.spec.steps, taskRun.status.steps);
       return {
         id: taskRun.metadata.uid,
@@ -126,7 +143,10 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
         succeeded,
         taskName,
         taskRunName,
-        namespace: taskRunNamespace
+        namespace: taskRunNamespace,
+        inputResources,
+        outputResources,
+        params
       };
     });
 
@@ -151,7 +171,12 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     const { match, error } = this.props;
     const { pipelineRunName } = match.params;
 
-    const { selectedStepId, selectedTaskId, loading } = this.state;
+    const {
+      selectedStepId,
+      selectedTaskId,
+      loading,
+      showRebuildNotification
+    } = this.state;
 
     if (loading) {
       return <StructuredListSkeleton border />;
@@ -163,8 +188,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           kind="error"
           hideCloseButton
           lowContrast
-          title="Error loading pipeline run"
-          subtitle={JSON.stringify(error, Object.getOwnPropertyNames(error))}
+          title="Error loading PipelineRun"
+          subtitle={getErrorMessage(error)}
         />
       );
     }
@@ -175,8 +200,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           kind="info"
           hideCloseButton
           lowContrast
-          title="Cannot load pipeline run"
-          subtitle={`Pipeline Run ${pipelineRunName} not found`}
+          title="Cannot load PipelineRun"
+          subtitle={`PipelineRun ${pipelineRunName} not found`}
         />
       );
     }
@@ -199,6 +224,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           <RunHeader
             lastTransitionTime={lastTransitionTime}
             loading={loading}
+            pipelineRun={pipelineRun}
             runName={pipelineRunName}
             reason="Error"
             status={pipelineRunStatus}
@@ -225,12 +251,45 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
 
     return (
       <>
+        {showRebuildNotification && !showRebuildNotification.logsURL && (
+          // No logs URL? This indicates it hasn't been a successful rebuild
+          <ToastNotification
+            data-testid="rebuildfailurenotification"
+            lowContrast
+            subtitle=""
+            title={showRebuildNotification.message}
+            kind={showRebuildNotification.kind}
+            caption=""
+          />
+        )}
+
+        {showRebuildNotification && showRebuildNotification.logsURL && (
+          <ToastNotification
+            data-testid="rebuildsuccessnotification"
+            lowContrast
+            subtitle=""
+            title={showRebuildNotification.message}
+            kind={showRebuildNotification.kind}
+            caption={
+              <Link
+                id="newpipelinerunlink"
+                to={showRebuildNotification.logsURL}
+                onClick={() => this.setShowRebuildNotification(false)}
+              >
+                View status of this rebuilt run
+              </Link>
+            }
+          />
+        )}
+
         <RunHeader
           lastTransitionTime={lastTransitionTime}
           loading={loading}
+          pipelineRun={pipelineRun}
           runName={pipelineRunName}
           reason={pipelineRunReason}
           status={pipelineRunStatus}
+          setShowRebuildNotification={this.setShowRebuildNotification}
         />
         <div className="tasks">
           <TaskTree

@@ -16,6 +16,7 @@ func StartTektonControllers(clientset tektonclientset.Interface, resyncDur time.
 	logging.Log.Info("Creating Tekton controllers")
 	tektonInformerFactory := tektoninformers.NewSharedInformerFactory(clientset, resyncDur)
 	// Add all tekton controllers
+	tektoncontroller.NewClusterTaskController(tektonInformerFactory)
 	tektoncontroller.NewTaskController(tektonInformerFactory)
 	tektoncontroller.NewTaskRunController(tektonInformerFactory)
 	tektoncontroller.NewPipelineController(tektonInformerFactory)
@@ -33,6 +34,7 @@ func StartKubeControllers(clientset k8sclientset.Interface, resyncDur time.Durat
 	// Add all kube controllers
 	kubecontroller.NewExtensionController(kubeInformerFactory, installNamespace)
 	kubecontroller.NewNamespaceController(kubeInformerFactory)
+	kubecontroller.NewSecretController(kubeInformerFactory)
 	// Started once all controllers have been registered
 	logging.Log.Info("Starting Kube controllers")
 	kubeInformerFactory.Start(stopCh)

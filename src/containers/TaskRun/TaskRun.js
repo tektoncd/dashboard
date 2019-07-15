@@ -39,11 +39,10 @@ const taskTypeKeys = { ClusterTask: 'clustertasks', Task: 'tasks' };
 
 export /* istanbul ignore next */ class TaskRunContainer extends Component {
   // once redux store is available errors will be handled properly with dedicated components
-  static notification(notification) {
-    const { kind, message } = notification;
+  static notification({ kind, message }) {
     const titles = {
-      info: 'Task run not available',
-      error: 'Error loading task run'
+      info: 'TaskRun not available',
+      error: 'Error loading TaskRun'
     };
     return (
       <InlineNotification
@@ -51,7 +50,7 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
         hideCloseButton
         lowContrast
         title={titles[kind]}
-        subtitle={JSON.stringify(message, Object.getOwnPropertyNames(message))}
+        subtitle={message}
       />
     );
   }
@@ -94,6 +93,8 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
     const taskRunNamespace = taskRun.metadata.namespace;
     const { reason, status: succeeded } = getStatus(taskRun);
     const runSteps = stepsStatus(steps, taskRun.status.steps);
+    const { params, resources: inputResources } = taskRun.spec.inputs;
+    const { resources: outputResources } = taskRun.spec.outputs;
     const { startTime } = taskRun.status;
     taskRun = {
       id: taskRun.metadata.uid,
@@ -104,7 +105,10 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
       succeeded,
       taskRunName,
       startTime,
-      namespace: taskRunNamespace
+      namespace: taskRunNamespace,
+      params,
+      inputResources,
+      outputResources
     };
     return taskRun;
   };
@@ -135,7 +139,7 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
     if (error) {
       return TaskRunContainer.notification({
         kind: 'error',
-        message: 'Error loading task run'
+        message: 'Error loading TaskRun'
       });
     }
 
@@ -144,7 +148,7 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
     if (!taskRun) {
       return TaskRunContainer.notification({
         kind: 'info',
-        message: 'Task run not available'
+        message: 'TaskRun not available'
       });
     }
 

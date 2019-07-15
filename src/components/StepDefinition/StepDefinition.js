@@ -19,19 +19,76 @@ import React from 'react';
 import jsYaml from 'js-yaml';
 
 import './StepDefinition.scss';
+import { Link } from 'react-router-dom';
+import ResourceTable from '../ResourceTable';
 
-const StepDefinition = ({ definition }) => {
+const resourceTable = (title, namespace, resources) => {
+  return (
+    <ResourceTable
+      title={title}
+      rows={resources.map(({ name, resourceRef, resourceSpec }) => ({
+        id: name,
+        name,
+        value:
+          resourceRef && resourceRef.name ? (
+            <Link
+              to={`/namespaces/${namespace}/pipelineresources/${
+                resourceRef.name
+              }`}
+            >
+              {resourceRef.name}
+            </Link>
+          ) : (
+            <pre>{jsYaml.dump(resourceSpec)}</pre>
+          )
+      }))}
+      headers={[
+        { key: 'name', header: 'Name' },
+        { key: 'value', header: 'Value' }
+      ]}
+    />
+  );
+};
+
+const StepDefinition = ({ definition, taskRun }) => {
   const yaml = jsYaml.dump(definition);
   return (
     <div className="step-definition">
       <div className="title">Step definition:</div>
       <pre>{yaml}</pre>
+      {taskRun.params && (
+        <ResourceTable
+          title="Parameters"
+          rows={taskRun.params.map(({ name, value }) => ({
+            id: name,
+            name,
+            value
+          }))}
+          headers={[
+            { key: 'name', header: 'Name' },
+            { key: 'value', header: 'Value' }
+          ]}
+        />
+      )}
+      {taskRun.inputResources &&
+        resourceTable(
+          'Input Resources',
+          taskRun.namespace,
+          taskRun.inputResources
+        )}
+      {taskRun.outputResources &&
+        resourceTable(
+          'Output Resources',
+          taskRun.namespace,
+          taskRun.outputResources
+        )}
     </div>
   );
 };
 
 StepDefinition.defaultProps = {
-  definition: 'description: step definition not available'
+  definition: 'description: step definition not available',
+  taskRun: {}
 };
 
 export default StepDefinition;

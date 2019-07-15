@@ -105,8 +105,10 @@ func TestWebsocketResources(t *testing.T) {
 	pipelineRecord := NewInformerRecord(getKind(string(broadcaster.PipelineCreated)), true)
 	pipelineRunRecord := NewInformerRecord(getKind(string(broadcaster.PipelineRunCreated)), true)
 	taskRecord := NewInformerRecord(getKind(string(broadcaster.TaskCreated)), true)
+	clusterTaskRecord := NewInformerRecord(getKind(string(broadcaster.ClusterTaskCreated)), true)
 	taskRunRecord := NewInformerRecord(getKind(string(broadcaster.TaskRunCreated)), true)
 	extensionRecord := NewInformerRecord(getKind(string(broadcaster.ExtensionCreated)), true)
+	secretRecord := NewInformerRecord(getKind(string(broadcaster.SecretCreated)), true)
 	// CD records
 	namespaceRecord := NewInformerRecord(getKind(string(broadcaster.NamespaceCreated)), false)
 
@@ -116,9 +118,11 @@ func TestWebsocketResources(t *testing.T) {
 		pipelineRecord.CRD:         &pipelineRecord,
 		pipelineRunRecord.CRD:      &pipelineRunRecord,
 		taskRecord.CRD:             &taskRecord,
+		clusterTaskRecord.CRD:      &clusterTaskRecord,
 		taskRunRecord.CRD:          &taskRunRecord,
 		namespaceRecord.CRD:        &namespaceRecord,
 		extensionRecord.CRD:        &extensionRecord,
+		secretRecord.CRD:           &secretRecord,
 	}
 
 	for i := 1; i <= clients; i++ {
@@ -147,29 +151,18 @@ func TestWebsocketResources(t *testing.T) {
 	// Wait until all broadcaster has registered all clients
 	awaitFatal(awaitAllClients, t, fmt.Sprintf("Expected %d clients within pool", clients))
 
-	// Create namespace used for CUD/CD functions
-	namespace := "ns1"
-	_, err := r.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace}})
-	if err != nil {
-		t.Fatalf("Error creating namespace '%s': %s\n", namespace, err)
-	}
 	// CUD/CD methods should create a single informer event for each type (Create|Update|Delete)
 	// Create, Update, and Delete records
-	CUDPipelineResources(r, t, namespace)
-	CUDPipelines(r, t, namespace)
-	CUDPipelineRuns(r, t, namespace)
-	CUDTasks(r, t, namespace)
-	CUDTaskRuns(r, t, namespace)
+	CUDPipelineResources(r, t, installNamespace)
+	CUDPipelines(r, t, installNamespace)
+	CUDPipelineRuns(r, t, installNamespace)
+	CUDTasks(r, t, installNamespace)
+	CUDClusterTasks(r, t)
+	CUDTaskRuns(r, t, installNamespace)
+	CUDSecrets(r, t, installNamespace)
 	CUDExtensions(r, t, installNamespace)
 	// Create and Delete records
-
-	// The namespace used above has already been created
-	// Only delete to ensure an equal number of Create|Delete|Clients as checked by informerRecords
-	t.Log("Deleting namespace")
-	err = r.K8sClient.CoreV1().Namespaces().Delete(namespace, &metav1.DeleteOptions{})
-	if err != nil {
-		t.Fatalf("Error deleting namespace: %s: %s\n", namespace, err.Error())
-	}
+	CDNamespaces(r, t)
 	// Wait until connections terminate and all subscribers have been removed from pool
 	// This is our synchronization point to compare against each informerRecord
 	t.Log("Waiting for clients to terminate...")
@@ -379,6 +372,37 @@ func CUDTasks(r *Resource, t *testing.T, namespace string) {
 	}
 }
 
+func CUDClusterTasks(r *Resource, t *testing.T) {
+	resourceVersion := "1"
+
+	clusterTask := v1alpha1.ClusterTask{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:            "clusterTask",
+			ResourceVersion: resourceVersion,
+		},
+	}
+
+	t.Log("Creating clusterTask")
+	_, err := r.PipelineClient.TektonV1alpha1().ClusterTasks().Create(&clusterTask)
+	if err != nil {
+		t.Fatalf("Error creating clusterTask: %s: %s\n", clusterTask.Name, err.Error())
+	}
+
+	newVersion := "2"
+	clusterTask.ResourceVersion = newVersion
+	t.Log("Updating clusterTask")
+	_, err = r.PipelineClient.TektonV1alpha1().ClusterTasks().Update(&clusterTask)
+	if err != nil {
+		t.Fatalf("Error updating clusterTask: %s: %s\n", clusterTask.Name, err.Error())
+	}
+
+	t.Log("Deleting clusterTask")
+	err = r.PipelineClient.TektonV1alpha1().ClusterTasks().Delete(clusterTask.Name, &metav1.DeleteOptions{})
+	if err != nil {
+		t.Fatalf("Error deleting clusterTask: %s: %s\n", clusterTask.Name, err.Error())
+	}
+}
+
 func CUDTaskRuns(r *Resource, t *testing.T, namespace string) {
 	resourceVersion := "1"
 
@@ -453,4 +477,48 @@ func CUDExtensions(r *Resource, t *testing.T, namespace string) {
 	}
 }
 
+func CUDSecrets(r *Resource, t *testing.T, namespace string) {
+	resourceVersion := "1"
+
+	secret := corev1.Secret{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:            "secret",
+			ResourceVersion: resourceVersion,
+		},
+	}
+
+	_, err := r.K8sClient.CoreV1().Secrets(namespace).Create(&secret)
+	if err != nil {
+		t.Fatalf("Error creating secret: %s: %s\n", secret.Name, err.Error())
+	}
+
+	newVersion := "2"
+	secret.ResourceVersion = newVersion
+	t.Log("Updating secret")
+	_, err = r.K8sClient.CoreV1().Secrets(namespace).Update(&secret)
+	if err != nil {
+		t.Fatalf("Error updating secret: %s: %s\n", secret.Name, err.Error())
+	}
+
+	t.Log("Deleting secret")
+	err = r.K8sClient.CoreV1().Secrets(namespace).Delete(secret.Name, &metav1.DeleteOptions{})
+	if err != nil {
+		t.Fatalf("Error deleting secret: %s: %s\n", secret.Name, err.Error())
+	}
+}
+
 // CD functions
+
+func CDNamespaces(r *Resource, t *testing.T) {
+	namespace := "ns1"
+	_, err := r.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace}})
+	if err != nil {
+		t.Fatalf("Error creating namespace '%s': %s\n", namespace, err)
+	}
+
+	t.Log("Deleting namespace")
+	err = r.K8sClient.CoreV1().Namespaces().Delete(namespace, &metav1.DeleteOptions{})
+	if err != nil {
+		t.Fatalf("Error deleting namespace: %s: %s\n", namespace, err.Error())
+	}
+}

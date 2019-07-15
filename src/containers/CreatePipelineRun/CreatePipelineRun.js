@@ -342,7 +342,7 @@ class CreatePipelineRun extends React.Component {
             </FormGroup>
           )}
           {resourceSpecs && resourceSpecs.length !== 0 && (
-            <FormGroup legendText="Pipeline Resources">
+            <FormGroup legendText="PipelineResources">
               {resourceSpecs.map(resourceSpec => (
                 <PipelineResourcesDropdown
                   id={`create-pipelinerun--pr-dropdown-${resourceSpec.name}`}
@@ -354,7 +354,7 @@ class CreatePipelineRun extends React.Component {
                   invalid={
                     validationError && !this.state.resources[resourceSpec.name]
                   }
-                  invalidText="Pipeline Resources cannot be empty"
+                  invalidText="PipelineResources cannot be empty"
                   selectedItem={(() => {
                     const value = this.state.resources[resourceSpec.name];
                     return value ? { id: value, text: value } : '';

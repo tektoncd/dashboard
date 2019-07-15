@@ -102,7 +102,7 @@ const namespacesStoreAll = {
   }
 };
 
-const initialTextRegExp = new RegExp('select pipeline resource', 'i');
+const initialTextRegExp = new RegExp('select pipelineresource', 'i');
 
 const checkDropdownItems = ({
   queryByText,
@@ -282,7 +282,7 @@ it('PipelineResourcesDropdown renders empty', () => {
     </Provider>
   );
   expect(
-    queryByText(/no pipeline resources found in the 'blue' namespace/i)
+    queryByText(/no pipelineresources found in the 'blue' namespace/i)
   ).toBeTruthy();
   expect(queryByText(initialTextRegExp)).toBeFalsy();
 });
@@ -301,7 +301,7 @@ it('PipelineResourcesDropdown renders empty all namespaces', () => {
       <PipelineResourcesDropdown {...props} />
     </Provider>
   );
-  expect(queryByText(/no pipeline resources found/i)).toBeTruthy();
+  expect(queryByText(/no pipelineresources found/i)).toBeTruthy();
   expect(queryByText(initialTextRegExp)).toBeFalsy();
 });
 
@@ -321,7 +321,7 @@ it('PipelineResourcesDropdown renders empty with type', () => {
   );
   expect(
     queryByText(
-      /no pipeline resources found of type 'bogus' in the 'blue' namespace/i
+      /no pipelineresources found of type 'bogus' in the 'blue' namespace/i
     )
   ).toBeTruthy();
   expect(queryByText(initialTextRegExp)).toBeFalsy();
@@ -342,7 +342,7 @@ it('PipelineResourcesDropdown renders empty with type and all namespaces', () =>
     </Provider>
   );
   expect(
-    queryByText(/no pipeline resources found of type 'bogus'/i)
+    queryByText(/no pipelineresources found of type 'bogus'/i)
   ).toBeTruthy();
   expect(queryByText(initialTextRegExp)).toBeFalsy();
 });

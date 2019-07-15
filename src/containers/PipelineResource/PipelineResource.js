@@ -25,6 +25,7 @@ import {
   getPipelineResourcesErrorMessage,
   isFetchingPipelineResources
 } from '../../reducers';
+import { getErrorMessage } from '../../utils';
 
 import { fetchPipelineResource } from '../../actions/pipelineResources';
 
@@ -88,7 +89,7 @@ export /* istanbul ignore next */ class PipelineResourceContainer extends Compon
           hideCloseButton
           lowContrast
           title="Error loading PipelineResource"
-          subtitle={JSON.stringify(error, Object.getOwnPropertyNames(error))}
+          subtitle={getErrorMessage(error)}
         />
       );
     }

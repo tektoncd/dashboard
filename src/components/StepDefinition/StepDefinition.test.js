@@ -13,10 +13,11 @@ limitations under the License.
 
 import React from 'react';
 import { render } from 'react-testing-library';
+import { renderWithRouter } from '../../utils/test';
 import StepDefinition from './StepDefinition';
 
 it('StepDefinition renders default content', () => {
-  const { queryByText } = render(<StepDefinition />);
+  const { queryByText } = render(<StepDefinition taskRun={{}} />);
   expect(queryByText(/step definition not available/i)).toBeTruthy();
 });
 
@@ -26,8 +27,61 @@ it('StepDefinition renders the provided content', () => {
     command: ['docker'],
     name: 'test name'
   };
-  const { queryByText } = render(<StepDefinition definition={definition} />);
+  const { queryByText } = render(
+    <StepDefinition definition={definition} taskRun={{}} />
+  );
 
   expect(queryByText(/--someArg/)).toBeTruthy();
   expect(queryByText(/test name/)).toBeTruthy();
+  expect(queryByText(/Input Resources/)).toBeNull();
+  expect(queryByText(/Output Resources/)).toBeNull();
+  expect(queryByText(/Parameters/)).toBeNull();
+});
+
+it('StepDefinition renders the provided content with resources and params', () => {
+  const inputResourceName = 'testInputResource';
+  const outputResourceName = 'testOutputResource';
+  const testParamName = 'testParamName';
+  const testParam = 'testParam';
+  const taskRun = {
+    namespace: 'test',
+    inputResources: [
+      {
+        resourceRef: {
+          name: inputResourceName
+        }
+      }
+    ],
+    outputResources: [
+      {
+        resourceRef: {
+          name: outputResourceName
+        }
+      }
+    ],
+    params: [
+      {
+        name: testParamName,
+        value: testParam
+      }
+    ]
+  };
+  const definition = {
+    args: ['--someArg'],
+    command: ['docker'],
+    name: 'test name'
+  };
+  const { queryByText } = renderWithRouter(
+    <StepDefinition definition={definition} taskRun={taskRun} />
+  );
+
+  expect(queryByText(/--someArg/)).toBeTruthy();
+  expect(queryByText(/test name/)).toBeTruthy();
+  expect(queryByText(/Input Resources/)).toBeTruthy();
+  expect(queryByText(/Output Resources/)).toBeTruthy();
+  expect(queryByText(/Parameters/)).toBeTruthy();
+  expect(queryByText(testParamName)).toBeTruthy();
+  expect(queryByText(testParam)).toBeTruthy();
+  expect(queryByText(inputResourceName)).toBeTruthy();
+  expect(queryByText(outputResourceName)).toBeTruthy();
 });

@@ -29,7 +29,12 @@ import Add from '@carbon/icons-react/lib/add/16';
 import './PipelineRuns.scss';
 
 import { ALL_NAMESPACES } from '../../constants';
-import { getStatus, getStatusIcon, isRunning } from '../../utils';
+import {
+  getErrorMessage,
+  getStatus,
+  getStatusIcon,
+  isRunning
+} from '../../utils';
 import { fetchPipelineRuns } from '../../actions/pipelineRuns';
 
 import {
@@ -123,8 +128,8 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
           kind="error"
           hideCloseButton
           lowContrast
-          title="Error loading pipeline runs"
-          subtitle={JSON.stringify(error)}
+          title="Error loading PipelineRuns"
+          subtitle={getErrorMessage(error)}
         />
       );
     }
@@ -161,7 +166,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
         <StructuredListWrapper border selection>
           <StructuredListHead>
             <StructuredListRow head>
-              <StructuredListCell head>Pipeline Run</StructuredListCell>
+              <StructuredListCell head>PipelineRun</StructuredListCell>
               {!pipelineName && (
                 <StructuredListCell head>Pipeline</StructuredListCell>
               )}
@@ -178,9 +183,9 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
               <StructuredListRow>
                 <StructuredListCell>
                   {pipelineName ? (
-                    <span>No pipeline runs for {pipelineName}</span>
+                    <span>No PipelineRuns for {pipelineName}</span>
                   ) : (
-                    <span>No pipeline runs</span>
+                    <span>No PipelineRuns</span>
                   )}
                 </StructuredListCell>
               </StructuredListRow>

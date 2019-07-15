@@ -12,12 +12,28 @@ limitations under the License.
 */
 
 import {
+  getErrorMessage,
   getStatus,
   selectedTask,
   stepsStatus,
   taskRunStep,
   typeToPlural
 } from '.';
+
+it('getErrorMessage falsy', () => {
+  expect(getErrorMessage()).toBeUndefined();
+});
+
+it('getErrorMessage string', () => {
+  const error = 'this is an error message';
+  expect(getErrorMessage(error)).toEqual(error);
+});
+
+it('getErrorMessage object', () => {
+  const message = 'this is an error message';
+  const error = new Error(message);
+  expect(getErrorMessage(error)).toContain(`"message":"${message}"`);
+});
 
 it('getStatus', () => {
   const taskRun = {
@@ -189,6 +205,14 @@ it('stepsStatus step is waiting', () => {
   const steps = stepsStatus(taskSteps, taskRunStepsStatus);
   const returnedStep = steps[0];
   expect(returnedStep.status).toEqual('waiting');
+});
+
+it('stepsStatus init error', () => {
+  const stepName = 'git-source';
+  const taskRunStepsStatus = [{ name: stepName, terminated: { exitCode: 1 } }];
+  const steps = stepsStatus([], taskRunStepsStatus);
+  const returnedStep = steps[0];
+  expect(returnedStep.status).toEqual('terminated');
 });
 
 it('typeToPlural', () => {

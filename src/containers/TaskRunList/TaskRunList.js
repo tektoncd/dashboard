@@ -25,7 +25,12 @@ import {
 } from 'carbon-components-react';
 
 import { ALL_NAMESPACES } from '../../constants';
-import { getStatus, getStatusIcon, isRunning } from '../../utils';
+import {
+  getErrorMessage,
+  getStatus,
+  getStatusIcon,
+  isRunning
+} from '../../utils';
 import { fetchTaskRuns } from '../../actions/taskRuns';
 
 import {
@@ -69,8 +74,8 @@ export /* istanbul ignore next */ class TaskRunList extends Component {
           kind="error"
           hideCloseButton
           lowContrast
-          title="Error loading task runs"
-          subtitle={JSON.stringify(error)}
+          title="Error loading TaskRuns"
+          subtitle={getErrorMessage(error)}
         />
       );
     }
@@ -79,7 +84,7 @@ export /* istanbul ignore next */ class TaskRunList extends Component {
       <StructuredListWrapper border selection>
         <StructuredListHead>
           <StructuredListRow head>
-            <StructuredListCell head>Task Run</StructuredListCell>
+            <StructuredListCell head>TaskRun</StructuredListCell>
             <StructuredListCell head>Task</StructuredListCell>
             {selectedNamespace === ALL_NAMESPACES && (
               <StructuredListCell head>Namespace</StructuredListCell>
@@ -93,7 +98,7 @@ export /* istanbul ignore next */ class TaskRunList extends Component {
           {!taskRuns.length && (
             <StructuredListRow>
               <StructuredListCell>
-                <span>No task runs</span>
+                <span>No TaskRuns</span>
               </StructuredListCell>
             </StructuredListRow>
           )}

@@ -41,33 +41,27 @@ function validateInputs(value, id) {
   return true;
 }
 
-const initialState = {
-  name: '',
-  namespace: 'default',
-  accessTo: 'git',
-  username: '',
-  password: '',
-  serviceAccount: '',
-  annotations: [
-    {
-      label: `tekton.dev/git-0`,
-      value: '',
-      id: Math.random()
-        .toString(36)
-        .substr(2, 9)
-    }
-  ],
-  invalidFields: []
-};
-
 export /* istanbul ignore next */ class SecretsModal extends Component {
   constructor(props) {
     super(props);
-    this.state = initialState;
-  }
-
-  componentWillUnmount() {
-    this.setState(initialState);
+    this.state = {
+      name: '',
+      namespace: 'default',
+      accessTo: 'git',
+      username: '',
+      password: '',
+      serviceAccount: '',
+      annotations: [
+        {
+          label: `tekton.dev/git-0`,
+          value: '',
+          id: Math.random()
+            .toString(36)
+            .substr(2, 9)
+        }
+      ],
+      invalidFields: []
+    };
   }
 
   handleSubmit = () => {

@@ -53,7 +53,7 @@ export function deleteSecret(name, namespace) {
       await deleteCredential(name, namespace);
       dispatch({ type: 'SECRET_DELETE_SUCCESS', name, namespace });
     } catch (e) {
-      const error = new Error(`Could not delete secret ${name}`);
+      const error = new Error(`Could not delete secret "${name}"`);
       dispatch({ type: 'SECRET_DELETE_FAILURE', error });
     }
   };
@@ -68,7 +68,7 @@ export function createSecret(postData, namespace) {
       dispatch(fetchSecrets());
     } catch (e) {
       const error = new Error(
-        `Could not create secret ${postData.name} in namespace ${namespace}`
+        `Could not create secret "${postData.name}" in namespace ${namespace}`
       );
       dispatch({ type: 'SECRET_CREATE_FAILURE', error });
     }

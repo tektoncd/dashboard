@@ -17,14 +17,13 @@ limitations under the License.
   padding: 1.3rem 1.6rem;
   font-family: ibm-plex-mono, monospace;
   font-size: 0.68rem;
-  line-height: 0.95rem;
-  white-space: pre-wrap;
-  word-break: break-all;
+  line-height: 0.95rem; // Update the react-window List itemSize if changing this
   overflow: hidden;
   text-shadow: 0.1px 0.1px 0 #272d3340;
+  background-color: #f1f2f4;
 
-  &:not([data-exists]) {
-    background-color: #f1f2f4;
+  code {
+    white-space: pre;
   }
 
   .log-trailer {
@@ -40,7 +39,7 @@ limitations under the License.
     }
   }
 
-  .log-content:not(:empty) + .log-trailer {
+  .log-container:not(:empty) + .log-trailer {
     margin-top: 1rem;
   }
 }

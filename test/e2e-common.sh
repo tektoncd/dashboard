@@ -18,6 +18,21 @@
 
 source $(dirname $0)/../vendor/github.com/tektoncd/plumbing/scripts/e2e-tests.sh
 
+function print_diagnostic_info() {
+  # Adam's debugging as hello world is always pending rn!
+  echo "Printing PV information"
+  kubectl get pv -n tekton-pipelines
+  kubectl describe pv -n tekton-pipelines
+
+  echo "Printing PVC information"
+  kubectl get pvc -n tekton-pipelines
+  kubectl describe pvc -n tekton-pipelines
+
+  echo "Printing pod information"
+  kubectl describe pods -n tekton-pipelines
+  kubectl get pods -n tekton-pipelines -o yaml
+}
+
 function install_pipeline_crd() {
   echo ">> Deploying Tekton Pipelines"
   kubectl apply --filename https://storage.googleapis.com/tekton-releases/latest/release.yaml || fail_test "Tekton pipeline installation failed"

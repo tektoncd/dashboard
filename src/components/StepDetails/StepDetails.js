@@ -24,7 +24,6 @@ import './StepDetails.scss';
 const StepDetails = props => {
   const { definition, reason, status, stepName, stepStatus, taskRun } = props;
   const { pod } = taskRun;
-
   return (
     <div className="step-details">
       <StepDetailsHeader
@@ -47,7 +46,7 @@ const StepDetails = props => {
           <StepStatus status={stepStatus} />
         </Tab>
         <Tab className="details-tab" label="Details">
-          <StepDefinition definition={definition} />
+          <StepDefinition definition={definition} taskRun={taskRun} />
         </Tab>
       </Tabs>
     </div>

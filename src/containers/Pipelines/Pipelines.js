@@ -34,6 +34,7 @@ import {
   getSelectedNamespace,
   isFetchingPipelines
 } from '../../reducers';
+import { getErrorMessage } from '../../utils';
 
 import '../../components/Definitions/Definitions.scss';
 
@@ -67,8 +68,8 @@ export /* istanbul ignore next */ class Pipelines extends Component {
           kind="error"
           hideCloseButton
           lowContrast
-          title="Error loading pipelines"
-          subtitle={error}
+          title="Error loading Pipelines"
+          subtitle={getErrorMessage(error)}
         />
       );
     }
@@ -87,7 +88,7 @@ export /* istanbul ignore next */ class Pipelines extends Component {
         <StructuredListBody>
           {!pipelines.length && (
             <StructuredListRow>
-              <StructuredListCell>No pipelines</StructuredListCell>
+              <StructuredListCell>No Pipelines</StructuredListCell>
             </StructuredListRow>
           )}
           {pipelines.map(pipeline => {
@@ -104,7 +105,7 @@ export /* istanbul ignore next */ class Pipelines extends Component {
                 )}
                 <StructuredListCell>
                   <Link
-                    title="pipeline definition"
+                    title="Pipeline definition"
                     to={`/namespaces/${namespace}/pipelines/${name}`}
                   >
                     <Information16 className="resource-info-icon" />

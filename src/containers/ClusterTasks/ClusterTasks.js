@@ -31,6 +31,7 @@ import {
   getClusterTasksErrorMessage,
   isFetchingClusterTasks
 } from '../../reducers';
+import { getErrorMessage } from '../../utils';
 
 import '../../components/Definitions/Definitions.scss';
 
@@ -49,9 +50,10 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
     if (error) {
       return (
         <InlineNotification
+          hideCloseButton
           kind="error"
-          title="Error loading cluster tasks"
-          subtitle={error}
+          title="Error loading ClusterTasks"
+          subtitle={getErrorMessage(error)}
           lowContrast
         />
       );
@@ -60,14 +62,14 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
       <StructuredListWrapper border selection>
         <StructuredListHead>
           <StructuredListRow head>
-            <StructuredListCell head>Cluster Task</StructuredListCell>
+            <StructuredListCell head>ClusterTask</StructuredListCell>
             <StructuredListCell head />
           </StructuredListRow>
         </StructuredListHead>
         <StructuredListBody>
           {!clusterTasks.length && (
             <StructuredListRow>
-              <StructuredListCell>No cluster tasks</StructuredListCell>
+              <StructuredListCell>No ClusterTasks</StructuredListCell>
             </StructuredListRow>
           )}
           {clusterTasks.map(task => {
@@ -79,7 +81,7 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
                 </StructuredListCell>
                 <StructuredListCell>
                   <Link
-                    title="cluster task definition"
+                    title="ClusterTask definition"
                     to={`/clustertasks/${taskName}`}
                   >
                     <Information16 className="resource-info-icon" />
