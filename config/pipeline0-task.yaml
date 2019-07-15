@@ -17,7 +17,7 @@ spec:
       default: /workspace/git-source
     - name: apply-directory
       description: The directory from which resources are to be applied
-      default: ""
+      default: "."
     - name: target-namespace
       description: The namespace in which to create the resources being imported
       default: tekton-pipelines

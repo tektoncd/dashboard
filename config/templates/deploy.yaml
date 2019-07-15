@@ -176,7 +176,7 @@ objects:
       default: /workspace/git-source
     - name: apply-directory
       description: The directory from which resources are to be applied
-      default: ""
+      default: "."
     tasks:
     - name: pipeline0-task
       taskRef:
@@ -206,7 +206,7 @@ objects:
         default: /workspace/git-source
       - name: apply-directory
         description: The directory from which resources are to be applied
-        default: ""
+        default: "."
     steps:
     - name: kubectl-apply
       image: lachlanevenson/k8s-kubectl
