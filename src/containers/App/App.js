@@ -61,7 +61,7 @@ export /* istanbul ignore next */ class App extends Component {
   }
 
   render() {
-    const { extensions } = this.props;
+    const { extensions, namespace } = this.props;
 
     return (
       <Router>
@@ -149,6 +149,7 @@ export /* istanbul ignore next */ class App extends Component {
                     <Extension
                       displayName={displayName}
                       match={match}
+                      namespace={namespace}
                       source={source}
                     />
                   )}

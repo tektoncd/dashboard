@@ -73,7 +73,11 @@ export default /* istanbul ignore next */ class Extension extends Component {
     return (
       <ErrorBoundary message="Error loading extension">
         <Suspense fallback={<div>Loading...</div>}>
-          <ExtensionComponent actions={actions} selectors={selectors} />
+          <ExtensionComponent
+            namespace={this.props.namespace}
+            actions={actions}
+            selectors={selectors}
+          />
         </Suspense>
       </ErrorBoundary>
     );
