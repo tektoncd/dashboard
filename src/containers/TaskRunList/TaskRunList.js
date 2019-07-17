@@ -29,7 +29,8 @@ import {
   getErrorMessage,
   getStatus,
   getStatusIcon,
-  isRunning
+  isRunning,
+  sortRunsByStartTime
 } from '../../utils';
 import { fetchTaskRuns } from '../../actions/taskRuns';
 
@@ -79,6 +80,8 @@ export /* istanbul ignore next */ class TaskRunList extends Component {
         />
       );
     }
+
+    sortRunsByStartTime(taskRuns);
 
     return (
       <StructuredListWrapper border selection>

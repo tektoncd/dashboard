@@ -33,7 +33,8 @@ import {
   getErrorMessage,
   getStatus,
   getStatusIcon,
-  isRunning
+  isRunning,
+  sortRunsByStartTime
 } from '../../utils';
 import { fetchPipelineRuns } from '../../actions/pipelineRuns';
 
@@ -133,6 +134,8 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
         />
       );
     }
+
+    sortRunsByStartTime(pipelineRuns);
 
     return (
       <>
