@@ -17,7 +17,7 @@ metadata:
 rules:
   - apiGroups: [""]
     resources: ["serviceaccounts"]
-    verbs: ["get", "list", "update"]
+    verbs: ["get", "list", "update", "patch"]
   - apiGroups: [""]
     resources: ["pods", "services"]
     verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
@@ -26,7 +26,7 @@ rules:
     verbs: ["get", "list", "watch"]
   - apiGroups: [""]
     resources: ["secrets", "configmaps"]
-    verbs: ["get", "list", "create", "update", "watch"]
+    verbs: ["get", "list", "create", "update", "watch", "delete"]
   - apiGroups: ["extensions", "apps"]
     resources: ["deployments"]
     verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
