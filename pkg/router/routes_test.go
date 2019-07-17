@@ -373,13 +373,14 @@ func TestExtensionRegistration(t *testing.T) {
 
 	numLoops := 20;
 
-	for i := 0; i < numLoops; i++ {
-		otherNamespace := "ns1"
-		_, err := r.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: otherNamespace}})
-		if err != nil {
-			t.Fatalf("Error creating namespace '%s': %s\n", otherNamespace, err)
-		}
+	
+	otherNamespace := "ns1"
+	_, err := r.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: otherNamespace}})
+	if err != nil {
+		t.Fatalf("Error creating namespace '%s': %s\n", otherNamespace, err)
+	}
 
+	for i := 0; i < numLoops; i++ {
 		extensionEndpoints := []string{
 			"robots",
 			"secrets",
