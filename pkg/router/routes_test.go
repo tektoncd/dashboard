@@ -371,207 +371,214 @@ func TestExtensionRegistration(t *testing.T) {
 	server, r, installNamespace := testutils.DummyServer()
 	defer server.Close()
 
-	otherNamespace := "ns1"
-	_, err := r.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: otherNamespace}})
-	if err != nil {
-		t.Fatalf("Error creating namespace '%s': %s\n", otherNamespace, err)
-	}
+	numLoops := 20;
 
-	extensionEndpoints := []string{
-		"robots",
-		"secrets",
-		"pipelineruns",
-	}
-	extensionUrlValue := strings.Join(extensionEndpoints, ExtensionEndpointDelimiter)
-	extensionServers := []*httptest.Server{
-		testutils.DummyExtension(extensionEndpoints...),
-		testutils.DummyExtension(),
-	}
-	var extensionPorts []int32
-	for _, extensionServer := range extensionServers {
-		portDelimiterIndex := strings.LastIndex(extensionServer.URL, ":")
-		port, _ := strconv.Atoi(extensionServer.URL[portDelimiterIndex+1:])
-		extensionPorts = append(extensionPorts, int32(port))
-	}
+	for i := 0; i < numLoops; i++ {
+		otherNamespace := "ns1"
+		_, err := r.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: otherNamespace}})
+		if err != nil {
+			t.Fatalf("Error creating namespace '%s': %s\n", otherNamespace, err)
+		}
 
-	extensionServices := []corev1.Service{
-		corev1.Service{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      "extension1",
-				Namespace: installNamespace,
-				UID:       types.UID(strconv.FormatInt(time.Now().UnixNano(), 10)),
-				Annotations: map[string]string{
-					ExtensionUrlKey:            extensionUrlValue,
-					ExtensionBundleLocationKey: "Location",
-					ExtensionDisplayNameKey:    "Display Name",
+		extensionEndpoints := []string{
+			"robots",
+			"secrets",
+			"pipelineruns",
+		}
+		extensionUrlValue := strings.Join(extensionEndpoints, ExtensionEndpointDelimiter)
+		extensionServers := []*httptest.Server{
+			testutils.DummyExtension(extensionEndpoints...),
+			testutils.DummyExtension(),
+		}
+		var extensionPorts []int32
+		for _, extensionServer := range extensionServers {
+			portDelimiterIndex := strings.LastIndex(extensionServer.URL, ":")
+			port, _ := strconv.Atoi(extensionServer.URL[portDelimiterIndex+1:])
+			extensionPorts = append(extensionPorts, int32(port))
+		}
+
+		extensionServices := []corev1.Service{
+			corev1.Service{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "extension1",
+					Namespace: installNamespace,
+					UID:       types.UID(strconv.FormatInt(time.Now().UnixNano(), 10)),
+					Annotations: map[string]string{
+						ExtensionUrlKey:            extensionUrlValue,
+						ExtensionBundleLocationKey: "Location",
+						ExtensionDisplayNameKey:    "Display Name",
+					},
+					Labels: map[string]string{
+						ExtensionLabelKey: ExtensionLabelValue,
+					},
 				},
-				Labels: map[string]string{
-					ExtensionLabelKey: ExtensionLabelValue,
-				},
-			},
-			Spec: corev1.ServiceSpec{
-				ClusterIP: "127.0.0.1",
-				Ports: []corev1.ServicePort{
-					{
-						Port: extensionPorts[0],
+				Spec: corev1.ServiceSpec{
+					ClusterIP: "127.0.0.1",
+					Ports: []corev1.ServicePort{
+						{
+							Port: extensionPorts[0],
+						},
 					},
 				},
 			},
-		},
-		// No endpoints annotation
-		corev1.Service{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      "extension2",
-				Namespace: installNamespace,
-				UID:       types.UID(strconv.FormatInt(time.Now().UnixNano(), 10)),
-				Annotations: map[string]string{
-					ExtensionBundleLocationKey: "Location",
-					ExtensionDisplayNameKey:    "Display Name",
+			// No endpoints annotation
+			corev1.Service{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "extension2",
+					Namespace: installNamespace,
+					UID:       types.UID(strconv.FormatInt(time.Now().UnixNano(), 10)),
+					Annotations: map[string]string{
+						ExtensionBundleLocationKey: "Location",
+						ExtensionDisplayNameKey:    "Display Name",
+					},
+					Labels: map[string]string{
+						ExtensionLabelKey: ExtensionLabelValue,
+					},
 				},
-				Labels: map[string]string{
-					ExtensionLabelKey: ExtensionLabelValue,
-				},
-			},
-			Spec: corev1.ServiceSpec{
-				ClusterIP: "127.0.0.1",
-				Ports: []corev1.ServicePort{
-					{
-						Port: extensionPorts[1],
+				Spec: corev1.ServiceSpec{
+					ClusterIP: "127.0.0.1",
+					Ports: []corev1.ServicePort{
+						{
+							Port: extensionPorts[1],
+						},
 					},
 				},
 			},
-		},
-	}
+		}
 
-	nonExtensionServices := []corev1.Service{
-		corev1.Service{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      "non-extension",
-				Namespace: installNamespace,
-				Annotations: map[string]string{
-					ExtensionUrlKey:            "/path",
-					ExtensionBundleLocationKey: "Location",
-					ExtensionDisplayNameKey:    "Display Name",
+		nonExtensionServices := []corev1.Service{
+			corev1.Service{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "non-extension",
+					Namespace: installNamespace,
+					Annotations: map[string]string{
+						ExtensionUrlKey:            "/path",
+						ExtensionBundleLocationKey: "Location",
+						ExtensionDisplayNameKey:    "Display Name",
+					},
+				},
+				Spec: corev1.ServiceSpec{
+					Ports: []corev1.ServicePort{{Port: 9097}},
 				},
 			},
-			Spec: corev1.ServiceSpec{
-				Ports: []corev1.ServicePort{{Port: 9097}},
-			},
-		},
-		corev1.Service{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      "non-install-namespace-extension",
-				Namespace: otherNamespace,
-				UID:       types.UID(strconv.FormatInt(time.Now().UnixNano(), 10)),
-				Annotations: map[string]string{
-					ExtensionBundleLocationKey: "Location",
-					ExtensionDisplayNameKey:    "Display Name",
+			corev1.Service{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "non-install-namespace-extension",
+					Namespace: otherNamespace,
+					UID:       types.UID(strconv.FormatInt(time.Now().UnixNano(), 10)),
+					Annotations: map[string]string{
+						ExtensionBundleLocationKey: "Location",
+						ExtensionDisplayNameKey:    "Display Name",
+					},
+					Labels: map[string]string{
+						ExtensionLabelKey: ExtensionLabelValue,
+					},
 				},
-				Labels: map[string]string{
-					ExtensionLabelKey: ExtensionLabelValue,
-				},
-			},
-			Spec: corev1.ServiceSpec{
-				ClusterIP: "127.0.0.1",
-				Ports: []corev1.ServicePort{
-					{
-						Port: extensionPorts[1],
+				Spec: corev1.ServiceSpec{
+					ClusterIP: "127.0.0.1",
+					Ports: []corev1.ServicePort{
+						{
+							Port: extensionPorts[1],
+						},
 					},
 				},
 			},
-		},
-	}
-	services := append(extensionServices, nonExtensionServices...)
-	subscriber, _ := endpoints.ResourcesBroadcaster.Subscribe()
-	for _, svc := range services {
-		// Create, Delete, then reCreate each service to test register/unregister
-		_, err := r.K8sClient.CoreV1().Services(svc.Namespace).Create(&svc)
-		if err != nil {
-			t.Fatalf("Error creating service '%s': %v\n", svc.Name, err)
 		}
-		err = r.K8sClient.CoreV1().Services(svc.Namespace).Delete(svc.Name, &metav1.DeleteOptions{})
-		if err != nil {
-			t.Fatalf("Error creating service '%s': %v\n", svc.Name, err)
-		}
-		_, err = r.K8sClient.CoreV1().Services(svc.Namespace).Create(&svc)
-		if err != nil {
-			t.Fatalf("Error creating service '%s': %v\n", svc.Name, err)
-		}
-	}
-
-	timeout := time.After(5 * time.Second)
-	var extensionCreates int
-	var extensionDeletes int
-	subChan := subscriber.SubChan()
-	// Wait until all extension creates/deletes are registered by extensionInformer
-	for {
-		select {
-		case <-timeout:
-			t.Fatalf("Timed out waiting for expected services to be registered")
-		case event := <-subChan:
-			switch event.MessageType {
-			case broadcaster.ExtensionCreated:
-				extensionCreates++
-			case broadcaster.ExtensionDeleted:
-				extensionDeletes++
+		services := append(extensionServices, nonExtensionServices...)
+		subscriber, _ := endpoints.ResourcesBroadcaster.Subscribe()
+		for _, svc := range services {
+			// Create, Delete, then reCreate each service to test register/unregister
+			_, err := r.K8sClient.CoreV1().Services(svc.Namespace).Create(&svc)
+			if err != nil {
+				t.Fatalf("Error creating service '%s': %v\n", svc.Name, err)
+			}
+			err = r.K8sClient.CoreV1().Services(svc.Namespace).Delete(svc.Name, &metav1.DeleteOptions{})
+			if err != nil {
+				t.Fatalf("Error creating service '%s': %v\n", svc.Name, err)
+			}
+			_, err = r.K8sClient.CoreV1().Services(svc.Namespace).Create(&svc)
+			if err != nil {
+				t.Fatalf("Error creating service '%s': %v\n", svc.Name, err)
 			}
 		}
-		// All events captured from Create->Delete->Create above
-		if extensionCreates == 2*len(extensionServices) && extensionDeletes == len(extensionServices) {
-			break
-		}
-	}
 
-	// Labels not supported on fake client, manual filter
-	serviceList, err := r.K8sClient.CoreV1().Services(installNamespace).List(metav1.ListOptions{})
-	if err != nil {
-		t.Fatalf("Error obtaining services from K8sClient")
-	}
-
-	// Make requests by parsing service labels/annotations as extensions should
-	for _, service := range serviceList.Items {
-		if value := service.Labels[ExtensionLabelKey]; value == ExtensionLabelValue {
-			// Grab endpoints from service annotation if any
-			endpoints := strings.Split(service.Annotations[ExtensionUrlKey], ExtensionEndpointDelimiter)
-			if len(endpoints) == 0 {
-				endpoints = []string{""}
+		timeout := time.After(5 * time.Second)
+		var extensionCreates int
+		var extensionDeletes int
+		subChan := subscriber.SubChan()
+		// Wait until all extension creates/deletes are registered by extensionInformer
+		for {
+			select {
+			case <-timeout:
+				t.Fatalf("Timed out waiting for expected services to be registered")
+			case event := <-subChan:
+				switch event.MessageType {
+				case broadcaster.ExtensionCreated:
+					extensionCreates++
+				case broadcaster.ExtensionDeleted:
+					extensionDeletes++
+				}
 			}
-			httpMethods := []string{"GET", "POST", "PUT", "DELETE"}
-			// Look for response from registered routes
-			for _, endpoint := range endpoints {
-				for _, method := range httpMethods {
-					proxyUrl := strings.TrimSuffix(fmt.Sprintf("%s%s/%s/%s", server.URL, ExtensionRoot, service.Name, endpoint), "/")
-					t.Logf("PROXY URL: %s", proxyUrl)
-					httpReq := testutils.DummyHTTPRequest(method, proxyUrl, nil)
-					_, err := http.DefaultClient.Do(httpReq)
-					if err != nil {
-						t.Fatalf("Error getting response for %s with http method %s: %v\n", proxyUrl, method, err)
-					}
+			// All events captured from Create->Delete->Create above
+			if extensionCreates == 2*len(extensionServices) && extensionDeletes == len(extensionServices) {
+				break
+			}
+		}
 
-					// Test registered route accepts subroute wildcard
-					proxySubroute := proxyUrl + "/subroute1/subroute2"
-					httpReq = testutils.DummyHTTPRequest(method, proxySubroute, nil)
-					_, err = http.DefaultClient.Do(httpReq)
-					if err != nil {
-						t.Fatalf("Error getting response for %s with http method %s: %v\n", proxySubroute, method, err)
+		// Labels not supported on fake client, manual filter
+		serviceList, err := r.K8sClient.CoreV1().Services(installNamespace).List(metav1.ListOptions{})
+		if err != nil {
+			t.Fatalf("Error obtaining services from K8sClient")
+		}
+
+		// Make requests by parsing service labels/annotations as extensions should
+		for _, service := range serviceList.Items {
+			if value := service.Labels[ExtensionLabelKey]; value == ExtensionLabelValue {
+				// Grab endpoints from service annotation if any
+				endpoints := strings.Split(service.Annotations[ExtensionUrlKey], ExtensionEndpointDelimiter)
+				if len(endpoints) == 0 {
+					endpoints = []string{""}
+				}
+				httpMethods := []string{"GET", "POST", "PUT", "DELETE"}
+				// Look for response from registered routes
+				for _, endpoint := range endpoints {
+					for _, method := range httpMethods {
+						proxyUrl := strings.TrimSuffix(fmt.Sprintf("%s%s/%s/%s", server.URL, ExtensionRoot, service.Name, endpoint), "/")
+						t.Logf("PROXY URL: %s", proxyUrl)
+						httpReq := testutils.DummyHTTPRequest(method, proxyUrl, nil)
+						_, err := http.DefaultClient.Do(httpReq)
+						if err != nil {
+							t.Fatalf("Error getting response for %s with http method %s: %v\n", proxyUrl, method, err)
+						}
+
+						// Test registered route accepts subroute wildcard
+						proxySubroute := proxyUrl + "/subroute1/subroute2"
+						httpReq = testutils.DummyHTTPRequest(method, proxySubroute, nil)
+						_, err = http.DefaultClient.Do(httpReq)
+						if err != nil {
+							t.Fatalf("Error getting response for %s with http method %s: %v\n", proxySubroute, method, err)
+						}
 					}
 				}
 			}
 		}
-	}
-	// Test getAllExtensions function
-	httpReq := testutils.DummyHTTPRequest("GET", fmt.Sprintf("%s%s", server.URL, ExtensionRoot), nil)
-	response, err := http.DefaultClient.Do(httpReq)
-	if err != nil {
-		t.Fatalf("Error getting response for getAllExtensions: %v\n", err)
-	}
-	responseExtensions := []Extension{}
-	if err := json.NewDecoder(response.Body).Decode(&responseExtensions); err != nil {
-		t.Fatalf("Error decoding getAllExtensions response: %v\n", err)
+		// Test getAllExtensions function
+		httpReq := testutils.DummyHTTPRequest("GET", fmt.Sprintf("%s%s", server.URL, ExtensionRoot), nil)
+		response, err := http.DefaultClient.Do(httpReq)
+		if err != nil {
+			t.Fatalf("Error getting response for getAllExtensions: %v\n", err)
+		}
+		responseExtensions := []Extension{}
+		if err := json.NewDecoder(response.Body).Decode(&responseExtensions); err != nil {
+			t.Fatalf("Error decoding getAllExtensions response: %v\n", err)
+		}
+
+		// Verify the response
+		if len(responseExtensions) != len(extensionServices) {
+			t.Fatalf("Number of extensions: expected: %d, returned: %d", len(extensionServices), len(responseExtensions))
+		}
+
 	}
 
-	// Verify the response
-	if len(responseExtensions) != len(extensionServices) {
-		t.Fatalf("Number of extensions: expected: %d, returned: %d", len(extensionServices), len(responseExtensions))
-	}
+	
 }
