@@ -19,6 +19,7 @@ To install the latest dashboard using this image:
 kubectl apply -f config/release/gcr-tekton-dashboard.yaml
 ```
 
+
 Alternatively, the dashboard can be installed through the same GitHub release asset:
 
 ```bash
