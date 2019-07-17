@@ -15,6 +15,7 @@ import {
   getErrorMessage,
   getStatus,
   selectedTask,
+  sortRunsByStartTime,
   stepsStatus,
   taskRunStep,
   typeToPlural
@@ -121,6 +122,24 @@ it('selectedTask find exists', () => {
   const expectedTask = { metadata: { name: taskName } };
   const foundTask = selectedTask(taskName, [expectedTask]);
   expect(foundTask.metadata.name).toEqual(taskName);
+});
+
+it('sortRunsByStartTime', () => {
+  const a = { name: 'a', status: { startTime: '0' } };
+  const b = { name: 'b', status: {} };
+  const c = { name: 'c', status: { startTime: '2' } };
+  const d = { name: 'd', status: { startTime: '1' } };
+  const e = { name: 'e', status: {} };
+  const f = { name: 'f', status: { startTime: '3' } };
+
+  const runs = [a, b, c, d, e, f];
+  /*
+    sort is stable on all modern browsers so
+    input order is preserved for b and e
+   */
+  const sortedRuns = [b, e, f, c, d, a];
+  sortRunsByStartTime(runs);
+  expect(runs).toEqual(sortedRuns);
 });
 
 it('stepsStatus no steps', () => {
