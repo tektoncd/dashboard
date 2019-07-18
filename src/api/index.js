@@ -113,10 +113,20 @@ export function getPipeline({ name, namespace }) {
   return get(uri);
 }
 
-export function getPipelineRuns({ namespace, pipelineName } = {}) {
+export function getPipelineRuns({
+  namespace,
+  pipelineName,
+  filters = []
+} = {}) {
   let queryParams;
-  if (pipelineName) {
-    queryParams = { labelSelector: `tekton.dev/pipeline=${pipelineName}` };
+  if (filters.length > 0 || pipelineName) {
+    queryParams = { labelSelector: [] };
+    if (pipelineName) {
+      queryParams.labelSelector.push(`tekton.dev/pipeline=${pipelineName}`);
+    }
+    if (filters.length > 0) {
+      queryParams.labelSelector.push(filters);
+    }
   }
   const uri = getTektonAPI('pipelineruns', { namespace }, queryParams);
   return get(uri).then(checkData);

@@ -202,7 +202,7 @@ it('getPipelineRuns', () => {
     items: 'pipelineRuns'
   };
   fetchMock.get(/pipelineruns/, data);
-  return getPipelineRuns().then(pipelineRuns => {
+  return getPipelineRuns({ filters: [] }).then(pipelineRuns => {
     expect(pipelineRuns).toEqual(data.items);
     fetchMock.restore();
   });
@@ -214,7 +214,7 @@ it('getPipelineRuns With Query Params', () => {
     items: 'pipelineRuns'
   };
   fetchMock.get(/pipelineruns/, data);
-  return getPipelineRuns({ pipelineName }).then(pipelineRuns => {
+  return getPipelineRuns({ pipelineName, filters: [] }).then(pipelineRuns => {
     expect(pipelineRuns).toEqual(data.items);
     fetchMock.restore();
   });

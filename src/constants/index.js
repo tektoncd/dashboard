@@ -3,6 +3,14 @@ export const messages = {
     'dashboard.pipelineRuns.transitionTime': 'Last Transition Time',
     'dashboard.pipelineRuns.status': 'Status',
     'dashboard.pipelineRuns.error': 'Error loading PipelineRuns',
+    'dashboard.pipelineRuns.createSuccess': 'Successfully created PipelineRun',
+    'dashboard.pipelineRuns.invalidFilter':
+      'Filters must be of the format labelKey:labelValue and contain accepted label characters',
+    'dashboard.pipelineRuns.duplicateFilter': 'No duplicate filters allowed',
+    'dashboard.pipelineRuns.labelDocs':
+      'https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set',
+    'dashboard.pipelineRuns.searchPlaceholder':
+      'Input a label filter of the format labelKey:labelValue',
     'dashboard.pipelineRun.failed': 'Cannot load PipelineRun',
     'dashboard.pipelineRun.notFound': 'PipelineRun not found',
     'dashboard.pipelineRun.error': 'Error loading PipelineRun',
