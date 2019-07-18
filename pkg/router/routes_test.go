@@ -499,7 +499,7 @@ func TestExtensionRegistration(t *testing.T) {
 		}
 	}
 
-	timeout := time.After(5 * time.Second)
+	timeout := time.After(10 * time.Second)
 	var extensionCreates int
 	var extensionDeletes int
 	subChan := subscriber.SubChan()
