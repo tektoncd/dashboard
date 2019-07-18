@@ -234,7 +234,7 @@ it('getPipelineRuns', () => {
   jest
     .spyOn(pipelineRunsSelectors, 'getPipelineRuns')
     .mockImplementation(() => pipelineRuns);
-  expect(getPipelineRuns(state)).toEqual(pipelineRuns);
+  expect(getPipelineRuns(state, { filters: [] })).toEqual(pipelineRuns);
   expect(pipelineRunsSelectors.getPipelineRuns).toHaveBeenCalledWith(
     state.pipelineRuns,
     namespace
@@ -266,9 +266,9 @@ it('getPipelineRunsByPipelineName', () => {
   jest
     .spyOn(pipelineRunsSelectors, 'getPipelineRuns')
     .mockImplementation(() => pipelineRunsToFilter);
-  expect(getPipelineRunsByPipelineName(pipelineRunsState, { name })).toEqual([
-    pipeline
-  ]);
+  expect(
+    getPipelineRunsByPipelineName(pipelineRunsState, { name, filters: [] })
+  ).toEqual([pipeline]);
   expect(pipelineRunsSelectors.getPipelineRuns).toHaveBeenCalledWith(
     pipelineRunsState.pipelineRuns,
     namespace

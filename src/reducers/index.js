@@ -144,16 +144,30 @@ export function isFetchingPipelineResources(state) {
 
 export function getPipelineRuns(
   state,
-  { namespace = getSelectedNamespace(state) } = {}
+  { filters, namespace = getSelectedNamespace(state) } = {}
 ) {
-  return pipelineRunsSelectors.getPipelineRuns(state.pipelineRuns, namespace);
+  const runs = pipelineRunsSelectors.getPipelineRuns(
+    state.pipelineRuns,
+    namespace
+  );
+  return runs.filter(pipelineRun => {
+    return filters.every(filter => {
+      const [filterKey, filterValue] = filter.split('=');
+      return (
+        pipelineRun.metadata.labels &&
+        filterKey &&
+        filterValue &&
+        pipelineRun.metadata.labels[filterKey] === filterValue
+      );
+    });
+  });
 }
 
 export function getPipelineRunsByPipelineName(
   state,
-  { name, namespace = getSelectedNamespace(state) }
+  { name, namespace = getSelectedNamespace(state), filters }
 ) {
-  const runs = getPipelineRuns(state, { namespace });
+  const runs = getPipelineRuns(state, { namespace, filters });
   return runs.filter(pipelineRun => pipelineRun.spec.pipelineRef.name === name);
 }
 
