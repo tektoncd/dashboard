@@ -18,6 +18,7 @@ import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
 import ImportResourcesContainer from './ImportResources';
 import * as API from '../../api';
+import { urls } from '../../utils';
 import { renderWithRouter } from '../../utils/test';
 import { ALL_NAMESPACES } from '../../constants';
 
@@ -41,9 +42,11 @@ describe('ImportResources component', () => {
   });
 
   it('Valid data submit displays success notification ', async () => {
+    const namespace = 'tekton-pipelines';
+    const pipelineRunName = 'fake-tekton-pipeline-run';
     const headers = {
       get() {
-        return 'fake-tekton-pipeline-run';
+        return pipelineRunName;
       }
     };
 
@@ -54,7 +57,7 @@ describe('ImportResources component', () => {
     jest
       .spyOn(API, 'getInstallProperties')
       .mockImplementation(() =>
-        Promise.resolve({ InstallNamespace: 'tekton-pipelines' })
+        Promise.resolve({ InstallNamespace: namespace })
       );
 
     const { getByLabelText, getByTestId, getByText } = renderWithRouter(
@@ -81,7 +84,11 @@ describe('ImportResources component', () => {
       document.getElementsByClassName('bx--toast-notification__caption')[0]
         .innerHTML
     ).toContain(
-      'a href="/namespaces/tekton-pipelines/pipelines/pipeline0/runs/fake-tekton-pipeline-run"'
+      urls.pipelineRuns.byName({
+        namespace,
+        pipelineName: 'pipeline0',
+        pipelineRunName
+      })
     );
   });
 
@@ -123,7 +130,7 @@ describe('ImportResources component', () => {
     expect(
       document.getElementsByClassName('bx--toast-notification__caption')[0]
         .innerHTML
-    ).toContain('href="/pipelineruns"');
+    ).toContain(urls.pipelineRuns.all());
   });
 
   it('Invalid data submit displays invalidText', async () => {

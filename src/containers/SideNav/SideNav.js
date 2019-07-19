@@ -26,6 +26,7 @@ import { NamespacesDropdown } from '..';
 import { selectNamespace } from '../../actions/namespaces';
 import { getExtensions, getSelectedNamespace } from '../../reducers';
 import { ALL_NAMESPACES } from '../../constants';
+import { urls } from '../../utils';
 
 import './SideNav.scss';
 
@@ -55,12 +56,11 @@ export class SideNav extends Component {
 
   getPath(path) {
     const { match } = this.props;
-    let namespacePrefix = '';
     if (match && match.params.namespace) {
-      namespacePrefix = `/namespaces/${match.params.namespace}`;
+      return urls.byNamespace({ namespace: match.params.namespace, path });
     }
 
-    return `${namespacePrefix}${path}`;
+    return path;
   }
 
   selectNamespace = event => {
@@ -97,42 +97,42 @@ export class SideNav extends Component {
             <SideNavMenuItem
               element={NavLink}
               icon={<span />}
-              to={this.getPath('/pipelines')}
+              to={this.getPath(urls.pipelines.all())}
             >
               Pipelines
             </SideNavMenuItem>
             <SideNavMenuItem
               element={NavLink}
               icon={<span />}
-              to={this.getPath('/pipelineruns')}
+              to={this.getPath(urls.pipelineRuns.all())}
             >
               PipelineRuns
             </SideNavMenuItem>
             <SideNavMenuItem
               element={NavLink}
               icon={<span />}
-              to={this.getPath('/pipelineresources')}
+              to={this.getPath(urls.pipelineResources.all())}
             >
               PipelineResources
             </SideNavMenuItem>
             <SideNavMenuItem
               element={NavLink}
               icon={<span />}
-              to={this.getPath('/tasks')}
+              to={this.getPath(urls.tasks.all())}
             >
               Tasks
             </SideNavMenuItem>
             <SideNavMenuItem
               element={NavLink}
               icon={<span />}
-              to="/clustertasks"
+              to={urls.clusterTasks.all()}
             >
               ClusterTasks
             </SideNavMenuItem>
             <SideNavMenuItem
               element={NavLink}
               icon={<span />}
-              to={this.getPath('/taskruns')}
+              to={this.getPath(urls.taskRuns.all())}
             >
               TaskRuns
             </SideNavMenuItem>
@@ -147,7 +147,7 @@ export class SideNav extends Component {
           <SideNavMenuItem
             element={NavLink}
             icon={<span />}
-            to="/importresources"
+            to={urls.importResources()}
           >
             Import Tekton resources
           </SideNavMenuItem>
@@ -159,7 +159,7 @@ export class SideNav extends Component {
               <SideNavMenuItem
                 element={NavLink}
                 icon={<span />}
-                to={`/extensions/${name}`}
+                to={urls.extensions.byName({ name })}
                 key={name}
                 title={displayName}
               >

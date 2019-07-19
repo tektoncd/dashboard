@@ -15,6 +15,7 @@ import React, { Component } from 'react';
 import { Button } from 'carbon-components-react';
 import Restart from '@carbon/icons-react/lib/restart/32';
 import { rebuildPipelineRun } from '../../api';
+import { urls } from '../../utils';
 import './Rebuild.scss';
 
 export class Rebuild extends Component {
@@ -35,7 +36,11 @@ export class Rebuild extends Component {
         const newPipelineRunName = logsURL.substring(
           logsURL.lastIndexOf('/') + 1
         );
-        const finalURL = `/namespaces/${namespace}/pipelines/${pipelineName}/runs/${newPipelineRunName}`;
+        const finalURL = urls.pipelineRuns.byName({
+          namespace,
+          pipelineName,
+          pipelineRunName: newPipelineRunName
+        });
         this.props.setShowRebuildNotification({
           message: 'Rebuilt run successfully',
           kind: 'success',

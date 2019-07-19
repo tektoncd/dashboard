@@ -77,15 +77,14 @@ export /* istanbul ignore next */ class CustomResourceDefinition extends Compone
   };
 
   render() {
-    const { error } = this.props;
+    const { error, resource } = this.props;
     const { loading } = this.state;
-    const { resource } = this.props;
 
     if (loading) {
       return <CodeSnippetSkeleton type="multi" />;
     }
 
-    if (error) {
+    if (error || !resource) {
       return (
         <InlineNotification
           kind="error"

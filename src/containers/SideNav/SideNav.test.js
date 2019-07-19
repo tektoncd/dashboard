@@ -17,6 +17,7 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { fireEvent } from 'react-testing-library';
 
+import { paths } from '../../utils';
 import { renderWithRouter } from '../../utils/test';
 import { ALL_NAMESPACES } from '../../constants';
 import SideNavContainer, { SideNav } from './SideNav';
@@ -178,7 +179,7 @@ it('SideNav updates namespace in URL', async () => {
         history={{ push }}
         match={{
           params: { namespace },
-          path: '/namespaces/:namespace/pipelines'
+          path: paths.pipelines.byNamespace()
         }}
         namespace={namespace}
         selectNamespace={selectNamespace}

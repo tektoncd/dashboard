@@ -12,6 +12,9 @@ limitations under the License.
 */
 
 import React from 'react';
+import { InlineNotification } from 'carbon-components-react';
+
+import { getErrorMessage } from '../../utils';
 
 class ErrorBoundary extends React.Component {
   state = { error: null };
@@ -25,12 +28,21 @@ class ErrorBoundary extends React.Component {
   }
 
   render() {
-    const { message } = this.props;
-    if (this.state.error) {
-      return <h1>{message}</h1>;
+    const { children, message } = this.props;
+    const { error } = this.state;
+    if (error) {
+      return (
+        <InlineNotification
+          hideCloseButton
+          kind="error"
+          title={message}
+          subtitle={getErrorMessage(error)}
+          lowContrast
+        />
+      );
     }
 
-    return this.props.children;
+    return children;
   }
 }
 

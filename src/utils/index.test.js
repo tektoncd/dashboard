@@ -30,10 +30,16 @@ it('getErrorMessage string', () => {
   expect(getErrorMessage(error)).toEqual(error);
 });
 
-it('getErrorMessage object', () => {
+it('getErrorMessage error object', () => {
   const message = 'this is an error message';
   const error = new Error(message);
-  expect(getErrorMessage(error)).toContain(`"message":"${message}"`);
+  expect(getErrorMessage(error)).toEqual(message);
+});
+
+it('getErrorMessage custom object', () => {
+  const message = 'this is an error message';
+  const error = { custom: message };
+  expect(getErrorMessage(error)).toContain(`"custom":"${message}"`);
 });
 
 it('getStatus', () => {

@@ -25,6 +25,7 @@ import { Link } from 'react-router-dom';
 import { ALL_NAMESPACES } from '../../constants';
 import { createPipelineRun, getInstallProperties } from '../../api';
 import { getSelectedNamespace } from '../../reducers';
+import { urls } from '../../utils';
 import { NamespacesDropdown, ServiceAccountsDropdown } from '..';
 
 import './ImportResources.scss';
@@ -104,9 +105,11 @@ export class ImportResources extends Component {
               logsURL.lastIndexOf('/') + 1
             );
 
-            const finalURL = `/namespaces/${
-              properties.InstallNamespace
-            }/pipelines/pipeline0/runs/${pipelineRunName}`;
+            const finalURL = urls.pipelineRuns.byName({
+              namespace: properties.InstallNamespace,
+              pipelineName: 'pipeline0',
+              pipelineRunName
+            });
             this.setState({
               logsURL: finalURL,
               submitSuccess: true,
@@ -115,7 +118,7 @@ export class ImportResources extends Component {
           })
           .catch(() => {
             this.setState({
-              logsURL: `/pipelineruns`,
+              logsURL: urls.pipelineRuns.all(),
               submitSuccess: true,
               invalidInput: false
             });
