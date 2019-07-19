@@ -29,7 +29,7 @@ import {
   getExtensionsErrorMessage,
   isFetchingExtensions
 } from '../../reducers';
-import { getErrorMessage } from '../../utils';
+import { getErrorMessage, urls } from '../../utils';
 
 import '../../components/Definitions/Definitions.scss';
 
@@ -71,7 +71,7 @@ export const Extensions = /* istanbul ignore next */ ({
           return (
             <StructuredListRow className="definition" key={name}>
               <StructuredListCell>
-                <Link to={`/extensions/${name}`}>{displayName}</Link>
+                <Link to={urls.extensions.byName({ name })}>{displayName}</Link>
               </StructuredListCell>
             </StructuredListRow>
           );

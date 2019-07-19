@@ -33,7 +33,7 @@ import {
   getTasksErrorMessage,
   isFetchingTasks
 } from '../../reducers';
-import { getErrorMessage } from '../../utils';
+import { getErrorMessage, urls } from '../../utils';
 
 import '../../components/Definitions/Definitions.scss';
 
@@ -90,7 +90,13 @@ export /* istanbul ignore next */ class Tasks extends Component {
             return (
               <StructuredListRow className="definition" key={uid}>
                 <StructuredListCell>
-                  <Link to={`/namespaces/${namespace}/tasks/${taskName}/runs`}>
+                  <Link
+                    to={urls.taskRuns.byTask({
+                      namespace,
+                      taskType: 'tasks',
+                      taskName
+                    })}
+                  >
                     {taskName}
                   </Link>
                 </StructuredListCell>
@@ -100,7 +106,11 @@ export /* istanbul ignore next */ class Tasks extends Component {
                 <StructuredListCell>
                   <Link
                     title="Task definition"
-                    to={`/namespaces/${namespace}/tasks/${taskName}`}
+                    to={urls.rawCRD.byNamespace({
+                      namespace,
+                      type: 'tasks',
+                      name: taskName
+                    })}
                   >
                     <Information16 className="resource-info-icon" />
                   </Link>

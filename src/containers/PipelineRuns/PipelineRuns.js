@@ -34,7 +34,8 @@ import {
   getStatus,
   getStatusIcon,
   isRunning,
-  sortRunsByStartTime
+  sortRunsByStartTime,
+  urls
 } from '../../utils';
 import { fetchPipelineRuns } from '../../actions/pipelineRuns';
 
@@ -91,7 +92,11 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
         pipelineRef: { name: pipelineName }
       }
     } = newPipelineRun;
-    const url = `/namespaces/${namespace}/pipelines/${pipelineName}/runs/${name}`;
+    const url = urls.pipelineRuns.byName({
+      namespace,
+      pipelineName,
+      pipelineRunName: name
+    });
     this.toggleModal(false);
     this.setState({ createdPipelineRun: { name, url } });
   }
@@ -207,7 +212,11 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
                 >
                   <StructuredListCell>
                     <Link
-                      to={`/namespaces/${namespace}/pipelines/${pipelineRefName}/runs/${pipelineRunName}`}
+                      to={urls.pipelineRuns.byName({
+                        namespace,
+                        pipelineName: pipelineRefName,
+                        pipelineRunName
+                      })}
                     >
                       {pipelineRunName}
                     </Link>
@@ -215,7 +224,10 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
                   {!pipelineName && (
                     <StructuredListCell>
                       <Link
-                        to={`/namespaces/${namespace}/pipelines/${pipelineRefName}/runs`}
+                        to={urls.pipelineRuns.byPipeline({
+                          namespace,
+                          pipelineName: pipelineRefName
+                        })}
                       >
                         {pipelineRefName}
                       </Link>

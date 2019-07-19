@@ -16,11 +16,13 @@ limitations under the License.
  */
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import jsYaml from 'js-yaml';
 
-import './StepDefinition.scss';
-import { Link } from 'react-router-dom';
 import ResourceTable from '../ResourceTable';
+import { urls } from '../../utils';
+
+import './StepDefinition.scss';
 
 const resourceTable = (title, namespace, resources) => {
   return (
@@ -32,9 +34,10 @@ const resourceTable = (title, namespace, resources) => {
         value:
           resourceRef && resourceRef.name ? (
             <Link
-              to={`/namespaces/${namespace}/pipelineresources/${
-                resourceRef.name
-              }`}
+              to={urls.pipelineResources.byName({
+                namespace,
+                pipelineResourceName: resourceRef.name
+              })}
             >
               {resourceRef.name}
             </Link>

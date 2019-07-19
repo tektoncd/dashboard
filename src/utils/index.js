@@ -18,12 +18,16 @@ import CloseFilled from '@carbon/icons-react/lib/close--filled/16';
 
 import Spinner from '../components/Spinner';
 
+export { paths, urls } from './router';
+
 export function getErrorMessage(error) {
   if (!error || typeof error === 'string') {
     return error;
   }
 
-  return JSON.stringify(error, Object.getOwnPropertyNames(error));
+  return (
+    error.message || JSON.stringify(error, Object.getOwnPropertyNames(error))
+  );
 }
 
 export function getStatus(resource) {

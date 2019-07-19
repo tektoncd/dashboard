@@ -15,13 +15,20 @@ import React from 'react';
 import { storiesOf } from '@storybook/react';
 import StoryRouter from 'storybook-react-router';
 
+import { urls } from '../../utils';
 import Breadcrumbs from './Breadcrumbs';
 
 storiesOf('Breadcrumbs', module)
   .addDecorator(StoryRouter())
-  .add('Pipelines', () => <Breadcrumbs match={{ url: '/pipelines' }} />)
+  .add('Pipelines', () => <Breadcrumbs match={{ url: urls.pipelines.all() }} />)
   .add('PipelineRun', () => (
     <Breadcrumbs
-      match={{ url: '/pipelines/demo-pipeline/runs/demo-pipeline-run-1' }}
+      match={{
+        url: urls.pipelineRuns.byName({
+          namespace: 'default',
+          pipelineName: 'demo-pipeline',
+          pipelineRunName: 'demo-pipeline-run-1'
+        })
+      }}
     />
   ));

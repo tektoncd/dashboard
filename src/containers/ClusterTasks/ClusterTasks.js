@@ -31,7 +31,7 @@ import {
   getClusterTasksErrorMessage,
   isFetchingClusterTasks
 } from '../../reducers';
-import { getErrorMessage } from '../../utils';
+import { getErrorMessage, urls } from '../../utils';
 
 import '../../components/Definitions/Definitions.scss';
 
@@ -77,12 +77,22 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
             return (
               <StructuredListRow className="definition" key={uid}>
                 <StructuredListCell>
-                  <Link to={`/clustertasks/${taskName}/runs`}>{taskName}</Link>
+                  <Link
+                    to={urls.taskRuns.byClusterTask({
+                      taskType: 'clustertasks',
+                      taskName
+                    })}
+                  >
+                    {taskName}
+                  </Link>
                 </StructuredListCell>
                 <StructuredListCell>
                   <Link
                     title="ClusterTask definition"
-                    to={`/clustertasks/${taskName}`}
+                    to={urls.rawCRD.cluster({
+                      type: 'clustertasks',
+                      name: taskName
+                    })}
                   >
                     <Information16 className="resource-info-icon" />
                   </Link>
