@@ -20,12 +20,17 @@ it('SecretsTable renders with no secrets', () => {
     handleDelete() {},
     handleNew() {},
     loading: false,
-    secrets: []
+    secrets: [],
+    selectedNamespace: '*'
   };
-  const { getAllByText, queryByText } = render(<SecretsTable {...props} />);
+  const { queryByText } = render(<SecretsTable {...props} />);
   expect(queryByText(/Secret/i)).toBeTruthy();
   expect(queryByText(/Annotations/i)).toBeTruthy();
-  expect(getAllByText('-').length).toEqual(3);
+  expect(
+    queryByText(
+      "No secrets created under any namespace, click 'Add Secret' button to add a new one."
+    )
+  ).toBeTruthy();
 });
 
 it('SecretsTable renders with one secret', () => {
@@ -39,7 +44,8 @@ it('SecretsTable renders with one secret', () => {
         name: 'dummySecret',
         uid: '0'
       }
-    ]
+    ],
+    selectedNamespace: '*'
   };
   const { queryByText } = render(<SecretsTable {...props} />);
   expect(queryByText(/dummySecret/i)).toBeTruthy();
@@ -53,11 +59,13 @@ it('SecretsTable renders in loading state', () => {
     handleDelete() {},
     handleNew() {},
     loading: true,
-    secrets: []
+    secrets: [],
+    selectedNamespace: '*'
   };
-  const { queryByText } = render(<SecretsTable {...props} />);
-  expect(queryByText(/Secret/i)).toBeFalsy();
+  const { getByTestId, queryByText } = render(<SecretsTable {...props} />);
+  expect(queryByText('Secret')).toBeFalsy();
   expect(queryByText(/Annotations/i)).toBeFalsy();
+  expect(getByTestId('addButton').disabled).toBeTruthy();
 });
 
 it('SecretsTable delete click handler', () => {
@@ -72,9 +80,10 @@ it('SecretsTable delete click handler', () => {
         name: 'dummySecret',
         uid: '0'
       }
-    ]
+    ],
+    selectedNamespace: '*'
   };
   const { getByTestId } = render(<SecretsTable {...props} />);
-  fireEvent.click(getByTestId('deleteIcon'));
+  fireEvent.click(getByTestId('deleteButton'));
   expect(handleDelete).toHaveBeenCalledTimes(1);
 });

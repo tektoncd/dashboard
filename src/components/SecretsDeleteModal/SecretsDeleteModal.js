@@ -16,7 +16,7 @@ import { Modal } from 'carbon-components-react';
 import './SecretsDeleteModal.scss';
 
 const SecretsDeleteModal = props => {
-  const { open, id, handleClick, handleDelete } = props;
+  const { open, toBeDeleted, handleClick, handleDelete } = props;
 
   return (
     <Modal
@@ -29,9 +29,13 @@ const SecretsDeleteModal = props => {
       onRequestSubmit={handleDelete}
       onRequestClose={handleClick}
     >
-      <p>
-        Are you sure you want to delete the secret <strong>{id}</strong>?
-      </p>
+      <p>Are you sure you want to delete these secrets?</p>
+      <ul>
+        {toBeDeleted.map(secret => {
+          const { name, namespace } = secret;
+          return <li key={`${name}:${namespace}`}>{name}</li>;
+        })}
+      </ul>
     </Modal>
   );
 };

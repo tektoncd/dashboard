@@ -22,6 +22,90 @@ import * as API from '../../api';
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 
+const byNamespace = {
+  default: [
+    {
+      uid: '0',
+      name: 'github-repo-access-secret',
+      type: 'userpass',
+      annotations: {
+        'tekton.dev/git-0': 'https://github.ibm.com'
+      }
+    }
+  ]
+};
+
+const namespaces = {
+  byName: {
+    default: {
+      metadata: {
+        name: 'default',
+        selfLink: '/api/v1/namespaces/default',
+        uid: '32b35d3b-6ce1-11e9-af21-025000000001',
+        resourceVersion: '4',
+        creationTimestamp: '2019-05-02T13:50:08Z'
+      },
+      spec: {
+        finalizers: ['kubernetes']
+      },
+      status: {
+        phase: 'Active'
+      }
+    }
+  },
+  errorMessage: null,
+  isFetching: false,
+  selected: 'default'
+};
+
+const serviceAccountsByNamespace = {
+  blue: {
+    'service-account-1': 'id-service-account-1',
+    'service-account-2': 'id-service-account-2'
+  },
+  green: {
+    'service-account-3': 'id-service-account-3'
+  }
+};
+
+const serviceAccountsById = {
+  'id-service-account-1': {
+    metadata: {
+      name: 'service-account-1',
+      namespace: 'blue',
+      uid: 'id-service-account-1'
+    }
+  },
+  'id-service-account-2': {
+    metadata: {
+      name: 'service-account-2',
+      namespace: 'blue',
+      uid: 'id-service-account-2'
+    }
+  },
+  'id-service-account-3': {
+    metadata: {
+      name: 'service-account-3',
+      namespace: 'green',
+      uid: 'id-service-account-3'
+    }
+  }
+};
+
+let store = mockStore({
+  secrets: {
+    byNamespace,
+    isFetching: false,
+    errorMessage: null
+  },
+  namespaces,
+  serviceAccounts: {
+    byId: serviceAccountsById,
+    byNamespace: serviceAccountsByNamespace,
+    isFetching: false
+  }
+});
+
 it('click add new secret & modal appears', () => {
   const props = {
     secrets: [
@@ -36,118 +120,12 @@ it('click add new secret & modal appears', () => {
     error: null
   };
 
-  const byNamespace = {
-    default: [
-      {
-        uid: '0',
-        name: 'github-repo-access-secret',
-        type: 'userpass',
-        annotations: {
-          'tekton.dev/git-0': 'https://github.ibm.com'
-        }
-      }
-    ]
-  };
-
-  const namespaces = {
-    byName: {
-      default: {
-        metadata: {
-          name: 'default',
-          selfLink: '/api/v1/namespaces/default',
-          uid: '32b35d3b-6ce1-11e9-af21-025000000001',
-          resourceVersion: '4',
-          creationTimestamp: '2019-05-02T13:50:08Z'
-        },
-        spec: {
-          finalizers: ['kubernetes']
-        },
-        status: {
-          phase: 'Active'
-        }
-      },
-      docker: {
-        metadata: {
-          name: 'docker',
-          selfLink: '/api/v1/namespaces/docker',
-          uid: '571796bd-6ce1-11e9-af21-025000000001',
-          resourceVersion: '413',
-          creationTimestamp: '2019-05-02T13:51:09Z'
-        },
-        spec: {
-          finalizers: ['kubernetes']
-        },
-        status: {
-          phase: 'Active'
-        }
-      },
-      'kube-public': {
-        metadata: {
-          name: 'kube-public',
-          selfLink: '/api/v1/namespaces/kube-public',
-          uid: '351f8763-6ce1-11e9-af21-025000000001',
-          resourceVersion: '31',
-          creationTimestamp: '2019-05-02T13:50:12Z'
-        },
-        spec: {
-          finalizers: ['kubernetes']
-        },
-        status: {
-          phase: 'Active'
-        }
-      },
-      'kube-system': {
-        metadata: {
-          name: 'kube-system',
-          selfLink: '/api/v1/namespaces/kube-system',
-          uid: '33426195-6ce1-11e9-af21-025000000001',
-          resourceVersion: '12',
-          creationTimestamp: '2019-05-02T13:50:09Z'
-        },
-        spec: {
-          finalizers: ['kubernetes']
-        },
-        status: {
-          phase: 'Active'
-        }
-      },
-      'tekton-pipelines': {
-        metadata: {
-          name: 'tekton-pipelines',
-          selfLink: '/api/v1/namespaces/tekton-pipelines',
-          uid: 'd30b0dbf-6d08-11e9-af21-025000000001',
-          resourceVersion: '12915',
-          creationTimestamp: '2019-05-02T18:33:47Z',
-          annotations: {
-            'kubectl.kubernetes.io/last-applied-configuration':
-              '{"apiVersion":"v1","kind":"Namespace","metadata":{"annotations":{},"name":"tekton-pipelines"}}\n'
-          }
-        },
-        spec: {
-          finalizers: ['kubernetes']
-        },
-        status: {
-          phase: 'Active'
-        }
-      }
-    },
-    errorMessage: null,
-    isFetching: false,
-    selected: 'default'
-  };
-
   jest.spyOn(API, 'getCredentials').mockImplementation(() => []);
 
   jest.spyOn(API, 'getNamespaces').mockImplementation(() => []);
 
-  const store = mockStore({
-    secrets: {
-      byNamespace,
-      isFetching: false,
-      errorMessage: null
-    },
-    namespaces
-  });
+  jest.spyOn(API, 'getServiceAccounts').mockImplementation(() => []);
+
   const { getByTestId, queryByText } = render(
     <Provider store={store}>
       <Secrets {...props} />
@@ -158,7 +136,7 @@ it('click add new secret & modal appears', () => {
   expect(queryByText('Close')).toBeFalsy();
   expect(queryByText('Submit')).toBeFalsy();
 
-  fireEvent.click(getByTestId('addIcon'));
+  fireEvent.click(getByTestId('addButton'));
 
   expect(queryByText('Create Secret')).toBeTruthy();
   expect(queryByText('Close')).toBeTruthy();
@@ -179,31 +157,6 @@ it('click add delete secret & modal appears', () => {
     error: null
   };
 
-  const byNamespace = {
-    default: [
-      {
-        uid: '0',
-        name: 'github-repo-access-secret',
-        type: 'userpass',
-        annotations: {
-          'tekton.dev/git-0': 'https://github.ibm.com'
-        }
-      }
-    ]
-  };
-
-  const namespaces = {
-    selected: 'default'
-  };
-
-  const store = mockStore({
-    secrets: {
-      byNamespace,
-      isFetching: false,
-      errorMessage: null
-    },
-    namespaces
-  });
   const { getByTestId, queryByText } = render(
     <Provider store={store}>
       <Secrets {...props} />
@@ -211,10 +164,8 @@ it('click add delete secret & modal appears', () => {
   );
 
   expect(queryByText('Delete Secret')).toBeFalsy();
-  expect(queryByText('Cancel')).toBeFalsy();
-  expect(queryByText('Delete')).toBeFalsy();
 
-  fireEvent.click(getByTestId('deleteIcon'));
+  fireEvent.click(getByTestId('deleteButton'));
 
   expect(queryByText('Delete Secret')).toBeTruthy();
   expect(queryByText('Cancel')).toBeTruthy();
@@ -228,22 +179,7 @@ it('error notification appears', () => {
     error: 'error'
   };
 
-  const byNamespace = {
-    default: [
-      {
-        name: 'github-repo-access-secret',
-        annotations: {
-          'tekton.dev/git-0': 'https://github.ibm.com'
-        }
-      }
-    ]
-  };
-
-  const namespaces = {
-    selected: 'default'
-  };
-
-  const store = mockStore({
+  store = mockStore({
     secrets: {
       byNamespace,
       isFetching: false,

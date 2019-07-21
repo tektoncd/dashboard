@@ -30,7 +30,10 @@ function byNamespace(state = {}, action) {
       return merge({}, state, namespaces);
     case 'SECRET_DELETE_SUCCESS':
       const newState = state;
-      delete newState[action.namespace][action.name];
+      action.secrets.forEach(secret => {
+        const { name, namespace } = secret;
+        delete newState[namespace][name];
+      });
       return newState;
     default:
       return state;
