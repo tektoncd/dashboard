@@ -38,24 +38,35 @@ export function fetchSecrets({ namespace } = {}) {
         secretsFormatted.push(object);
       });
       dispatch(fetchSecretsSuccess(secretsFormatted));
-    } catch (e) {
-      const error = new Error('Could not fetch secrets');
+    } catch (error) {
       dispatch({ type: 'SECRETS_FETCH_FAILURE', error });
     }
     return secrets;
   };
 }
 
-export function deleteSecret(name, namespace) {
+export function deleteSecret(secrets) {
   return async dispatch => {
     dispatch({ type: 'SECRET_DELETE_REQUEST' });
-    try {
-      await deleteCredential(name, namespace);
-      dispatch({ type: 'SECRET_DELETE_SUCCESS', name, namespace });
-    } catch (e) {
-      const error = new Error(`Could not delete secret "${name}"`);
-      dispatch({ type: 'SECRET_DELETE_FAILURE', error });
-    }
+    const deletePromises = secrets.map(secret => {
+      const { name, namespace } = secret;
+      const response = deleteCredential(name, namespace);
+      const timeout = new Promise((resolve, reject) => {
+        setTimeout(() => {
+          reject(new Error('An error occured deleting the secret(s).'));
+        }, 1000);
+      });
+      const deleteWithinTimePromise = Promise.race([response, timeout]);
+      return deleteWithinTimePromise;
+    });
+
+    Promise.all(deletePromises)
+      .then(() => {
+        dispatch({ type: 'SECRET_DELETE_SUCCESS', secrets });
+      })
+      .catch(error => {
+        dispatch({ type: 'SECRET_DELETE_FAILURE', error });
+      });
   };
 }
 
@@ -66,10 +77,7 @@ export function createSecret(postData, namespace) {
     try {
       await createCredential(postData, namespace);
       dispatch(fetchSecrets());
-    } catch (e) {
-      const error = new Error(
-        `Could not create secret "${postData.name}" in namespace ${namespace}`
-      );
+    } catch (error) {
       dispatch({ type: 'SECRET_CREATE_FAILURE', error });
     }
   };

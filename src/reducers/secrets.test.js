@@ -60,10 +60,9 @@ it('SECRETS_FETCH_FAILURE', () => {
   expect(selectors.getSecretsErrorMessage(state)).toEqual(message);
 });
 
-it('SECRET_DELETE_SUCCESS', () => {
-  const name = 'name';
-  const namespace = 'default';
-  const secrets = {
+it('SECRET_DELETE_SUCCESS for one secret', () => {
+  const secrets = [{ name: 'secret-name', namespace: 'default' }];
+  const secretsState = {
     byNamespace: {
       default: {
         0: {
@@ -76,8 +75,33 @@ it('SECRET_DELETE_SUCCESS', () => {
     }
   };
 
-  const action = { type: 'SECRET_DELETE_SUCCESS', name, namespace };
-  const state = secretsReducer(secrets, action);
+  const action = { type: 'SECRET_DELETE_SUCCESS', secrets };
+  const state = secretsReducer(secretsState, action);
+
+  expect(selectors.isFetchingSecrets(state)).toBe(false);
+});
+
+it('SECRET_DELETE_SUCCESS for multiple secrets', () => {
+  const secrets = [
+    { name: 'secret-name', namespace: 'default' },
+    { name: 'other-secret', namespace: 'default' },
+    { name: 'another-one', namespace: 'default' }
+  ];
+  const secretsState = {
+    byNamespace: {
+      default: {
+        0: {
+          uid: '0',
+          name: 'github-repo-access-secret',
+          namespace: 'default',
+          annotations: {}
+        }
+      }
+    }
+  };
+
+  const action = { type: 'SECRET_DELETE_SUCCESS', secrets };
+  const state = secretsReducer(secretsState, action);
 
   expect(selectors.isFetchingSecrets(state)).toBe(false);
 });

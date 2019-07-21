@@ -151,11 +151,9 @@ export class SideNav extends Component {
           >
             Import Tekton resources
           </SideNavMenuItem>
-          {
-            // <SideNavMenuItem element={NavLink} icon={<span />} to="/secrets">
-            //   Secrets
-            // </SideNavMenuItem>
-          }
+          <SideNavMenuItem element={NavLink} icon={<span />} to="/secrets">
+            Secrets
+          </SideNavMenuItem>
           {extensions.length > 0 &&
             extensions.map(({ displayName, name }) => (
               <SideNavMenuItem

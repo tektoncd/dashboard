@@ -104,7 +104,7 @@ it('fetchSecrets error', async () => {
 });
 
 it('deleteSecret', async () => {
-  const name = 'secret-name';
+  const secrets = [{ name: 'secret-name', namespace: 'default' }];
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const store = mockStore();
@@ -117,31 +117,26 @@ it('deleteSecret', async () => {
 
   const expectedActions = [
     { type: 'SECRET_DELETE_REQUEST' },
-    { type: 'SECRET_DELETE_SUCCESS', name, namespace }
+    { type: 'SECRET_DELETE_SUCCESS', secrets }
   ];
 
-  await store.dispatch(deleteSecret(name, namespace));
+  await store.dispatch(deleteSecret(secrets));
   expect(store.getActions()).toEqual(expectedActions);
 });
 
 it('deleteSecret error', async () => {
-  const secret = 'secret';
+  const secrets = [{ name: 'secret-name', namespace: 'default' }];
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const store = mockStore();
 
-  const error = new Error('Could not delete secret "secret"');
+  jest
+    .spyOn(API, 'deleteCredential')
+    .mockImplementation(() => Promise.reject());
 
-  jest.spyOn(API, 'deleteCredential').mockImplementation(() => {
-    throw error;
-  });
+  const expectedActions = [{ type: 'SECRET_DELETE_REQUEST' }];
 
-  const expectedActions = [
-    { type: 'SECRET_DELETE_REQUEST' },
-    { type: 'SECRET_DELETE_FAILURE', error }
-  ];
-
-  await store.dispatch(deleteSecret(secret, namespace));
+  await store.dispatch(deleteSecret(secrets));
   expect(store.getActions()).toEqual(expectedActions);
 });
 

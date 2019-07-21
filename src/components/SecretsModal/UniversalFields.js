@@ -21,7 +21,9 @@ const itemToString = item => (item ? item.text : '');
 const UniversalFields = props => {
   const {
     name,
-    handleChange,
+    handleChangeTextInput,
+    handleChangeAccessTo,
+    handleChangeNamespace,
     accessTo,
     selectedNamespace,
     invalidFields
@@ -34,15 +36,24 @@ const UniversalFields = props => {
         placeholder="secret-name"
         value={name}
         labelText="Name:"
-        onChange={handleChange}
+        onChange={handleChangeTextInput}
         invalid={invalidFields.indexOf('name') > -1}
         invalidText="Must be less than 563 characters, contain only lowercase alphanumeric character, . or -"
         autoComplete="off"
       />
       <NamespacesDropdown
         id="namespace"
-        selectedItem={{ id: selectedNamespace, text: selectedNamespace }}
-        onChange={handleChange}
+        selectedItem={
+          selectedNamespace
+            ? {
+                id: selectedNamespace,
+                text: selectedNamespace
+              }
+            : ''
+        }
+        onChange={handleChangeNamespace}
+        invalid={invalidFields.indexOf('namespace') > -1}
+        invalidText="Required."
       />
       <Dropdown
         id="accessTo"
@@ -50,15 +61,14 @@ const UniversalFields = props => {
         label=""
         initialSelectedItem={{
           id: accessTo,
-          text: accessTo === 'git' ? 'Git Server' : 'Docker Registry',
-          component: 'accessTo'
+          text: accessTo === 'git' ? 'Git Server' : 'Docker Registry'
         }}
         items={[
-          { id: 'git', text: 'Git Server', component: 'accessTo' },
-          { id: 'docker', text: 'Docker Registry', component: 'accessTo' }
+          { id: 'git', text: 'Git Server' },
+          { id: 'docker', text: 'Docker Registry' }
         ]}
         itemToString={itemToString}
-        onChange={handleChange}
+        onChange={handleChangeAccessTo}
       />
     </>
   );

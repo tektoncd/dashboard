@@ -12,10 +12,21 @@ limitations under the License.
 */
 
 import React from 'react';
-import { DataTable, DataTableSkeleton } from 'carbon-components-react';
-import Add from '@carbon/icons-react/lib/add--alt/24';
-import Close from '@carbon/icons-react/lib/misuse/24';
+import {
+  Button,
+  DataTable,
+  DataTableSkeleton,
+  TableBatchAction,
+  TableBatchActions,
+  TableSelectAll,
+  TableSelectRow,
+  TableToolbar,
+  TableToolbarContent
+} from 'carbon-components-react';
+import Add from '@carbon/icons-react/lib/add/16';
+import Delete from '@carbon/icons-react/lib/delete/16';
 import './Secrets.scss';
+import { ALL_NAMESPACES } from '../../constants';
 
 const {
   TableContainer,
@@ -28,124 +39,156 @@ const {
 } = DataTable;
 
 const SecretsTable = props => {
-  const { handleDelete, handleNew, loading, secrets } = props;
+  const {
+    handleDelete,
+    handleNew,
+    loading,
+    secrets,
+    selectedNamespace
+  } = props;
 
   const initialHeaders = [
     { key: 'secret', header: 'Secret' },
-    { key: 'annotations', header: 'Annotations' },
-    { key: 'add', header: <Add /> }
+    { key: 'annotations', header: 'Annotations' }
   ];
+
+  if (selectedNamespace === ALL_NAMESPACES) {
+    initialHeaders.splice(1, 0, { key: 'namespace', header: 'Namespace' });
+  }
 
   const secretsFormatted = secrets.map(secret => {
     let annotations = '';
     Object.keys(secret.annotations).forEach(function annotationSetup(key) {
       annotations += `${key}: ${secret.annotations[key]}\n`;
     });
-    return {
+    const formattedSecret = {
       id: `${secret.namespace}:${secret.name}`,
       secret: secret.name,
-      annotations,
-      add: <Close />
+      annotations
     };
+
+    if (selectedNamespace === ALL_NAMESPACES) {
+      formattedSecret.namespace = secret.namespace;
+    }
+
+    return formattedSecret;
   });
 
-  return loading ? (
-    <DataTableSkeleton rowCount={1} columnCount={initialHeaders.length} />
-  ) : (
-    <DataTable
-      rows={secretsFormatted}
-      headers={initialHeaders}
-      isSortable
-      useZebraStyles
-      render={({ rows, headers, getHeaderProps }) => (
-        <TableContainer>
-          <Table className="secrets">
-            <TableHead className="header">
-              <TableRow>
-                {headers.map((header, i) => {
-                  const headerCell =
-                    headers.length !== i + 1 ? (
-                      <TableHeader
-                        {...getHeaderProps({ header })}
-                        className="cellText"
-                        key={header.key}
-                      >
-                        {header.header}
-                      </TableHeader>
-                    ) : (
-                      <TableHeader
-                        key={header.key}
-                        data-testid="addIcon"
-                        className="cellIcon"
-                        {...getHeaderProps({
-                          header,
-                          onClick: handleNew
-                        })}
-                      >
-                        {header.header}
-                      </TableHeader>
+  return (
+    <div className="secrets">
+      <DataTable
+        rows={secretsFormatted}
+        headers={initialHeaders}
+        isSortable
+        render={({
+          rows,
+          headers,
+          getHeaderProps,
+          getRowProps,
+          getSelectionProps,
+          getBatchActionProps,
+          selectedRows
+        }) => (
+          <TableContainer>
+            <TableToolbar>
+              <TableBatchActions {...getBatchActionProps()}>
+                <TableBatchAction
+                  id="delete-btn"
+                  data-testid="deleteButton"
+                  renderIcon={Delete}
+                  onClick={() => {
+                    handleDelete(
+                      selectedRows.map(secret => ({
+                        namespace: secret.id.split(':')[0],
+                        name: secret.id.split(':')[1]
+                      }))
                     );
-
-                  return headerCell;
-                })}
-              </TableRow>
-            </TableHead>
-            {secretsFormatted.length !== 0 ? (
-              <TableBody>
-                {rows.map((row, index) => {
-                  const lastCell =
-                    rows[index].cells[rows[index].cells.length - 1];
-                  return (
-                    <TableRow key={row.id} className="row">
-                      {row.cells.splice(0, row.cells.length - 1).map(cell => (
-                        <TableCell
-                          key={cell.id}
-                          id={cell.id}
-                          className="cellText"
-                        >
-                          {cell.value}
-                        </TableCell>
-                      ))}
-                      <TableCell
-                        key={lastCell.id}
-                        id={lastCell.id}
-                        className="cellIcon"
-                        onClick={() => {
-                          handleDelete({
-                            name: secrets[index].name,
-                            namespace: secrets[index].namespace
-                          });
-                        }}
-                        data-testid="deleteIcon"
-                      >
-                        {lastCell.value}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
+                    getBatchActionProps().onCancel();
+                  }}
+                >
+                  Delete
+                </TableBatchAction>
+              </TableBatchActions>
+              <TableToolbarContent>
+                <Button
+                  disabled={loading}
+                  id="add-btn"
+                  data-testid="addButton"
+                  onClick={handleNew}
+                  renderIcon={Add}
+                >
+                  Add Secret
+                </Button>
+              </TableToolbarContent>
+            </TableToolbar>
+            {loading ? (
+              <DataTableSkeleton
+                rowCount={1}
+                columnCount={initialHeaders.length}
+              />
             ) : (
-              <TableBody>
-                <TableRow className="row">
-                  {headers.splice(0, headers.length - 1).map(header => (
-                    <TableCell
-                      key={`${header.key}-empty`}
-                      id={`${header.key}-empty`}
-                      className="cellTextNone"
-                    >
-                      -
-                    </TableCell>
-                  ))}
-                  <TableCell id="icon-empty" className="cellIconNone">
-                    -
-                  </TableCell>
-                </TableRow>
-              </TableBody>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableSelectAll {...getSelectionProps()} />
+                    {headers.map(header => {
+                      return (
+                        <TableHeader
+                          {...getHeaderProps({ header })}
+                          className="cellText"
+                          key={header.key}
+                        >
+                          {header.header}
+                        </TableHeader>
+                      );
+                    })}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {rows.map(row => {
+                    return (
+                      <TableRow
+                        {...getRowProps({ row })}
+                        key={row.id}
+                        className="row"
+                      >
+                        <TableSelectRow {...getSelectionProps({ row })} />
+                        {row.cells.map(cell => (
+                          <TableCell
+                            key={cell.id}
+                            id={cell.id}
+                            className="cellText"
+                          >
+                            {cell.value}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
             )}
-          </Table>
-        </TableContainer>
+          </TableContainer>
+        )}
+      />
+      {secrets.length === 0 && selectedNamespace === ALL_NAMESPACES && (
+        <div className="noSecrets">
+          <p>
+            {
+              "No secrets created under any namespace, click 'Add Secret' button to add a new one."
+            }
+          </p>
+        </div>
       )}
-    />
+      {secrets.length === 0 && selectedNamespace !== ALL_NAMESPACES && (
+        <div className="noSecrets">
+          <p>
+            {`No secrets created under namespace '${selectedNamespace}', click 'Add Secret' button to
+            add a new one.`}
+          </p>
+        </div>
+      )}
+    </div>
   );
 };
 

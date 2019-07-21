@@ -46,7 +46,7 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
     super(props);
     this.state = {
       name: '',
-      namespace: 'default',
+      namespace: '',
       accessTo: 'git',
       username: '',
       password: '',
@@ -75,6 +75,10 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
       serviceAccount,
       username
     } = this.state;
+
+    if (!validateInputs(namespace, 'namespace')) {
+      invalidFields.push('namespace');
+    }
 
     if (validateInputs(name, 'name')) {
       postData.name = name;
@@ -126,21 +130,9 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
     }
   };
 
-  handleChange = e => {
-    let stateVar = '';
-    let stateValue = '';
-    if (Object.prototype.hasOwnProperty.call(e, 'target')) {
-      stateVar = e.target.id;
-      stateValue = e.target.value;
-    } else if (
-      Object.prototype.hasOwnProperty.call(e.selectedItem, 'component')
-    ) {
-      stateVar = 'accessTo';
-      stateValue = e.selectedItem.id;
-    } else {
-      stateVar = 'namespace';
-      stateValue = e.selectedItem.text;
-    }
+  handleChangeTextInput = e => {
+    const stateVar = e.target.id;
+    const stateValue = e.target.value;
     this.setState(prevState => {
       const newInvalidFields = prevState.invalidFields;
       const idIndex = newInvalidFields.indexOf(stateVar);
@@ -151,28 +143,75 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
       } else if (idIndex === -1) {
         newInvalidFields.push(stateVar);
       }
+      return { [stateVar]: stateValue, invalidFields: newInvalidFields };
+    });
+  };
 
-      if (stateVar === 'accessTo') {
-        const annotations = prevState.annotations.map(annotation => {
-          let toSearch;
-          if (stateValue === 'git') {
-            toSearch = 'docker';
-          } else {
-            toSearch = 'git';
-          }
-          return {
-            label: annotation.label.split(toSearch).join(stateValue),
-            value: annotation.value,
-            id: annotation.id
-          };
-        });
-        return {
-          [stateVar]: stateValue,
-          annotations,
-          invalidFields: newInvalidFields
-        };
+  handleChangeServiceAccount = e => {
+    const stateVar = 'serviceAccount';
+    const stateValue = e.selectedItem.text;
+    this.setState(prevState => {
+      const newInvalidFields = prevState.invalidFields;
+      const idIndex = newInvalidFields.indexOf(stateVar);
+      if (validateInputs(stateValue, stateVar)) {
+        if (idIndex !== -1) {
+          newInvalidFields.splice(idIndex, 1);
+        }
+      } else if (idIndex === -1) {
+        newInvalidFields.push(stateVar);
       }
       return { [stateVar]: stateValue, invalidFields: newInvalidFields };
+    });
+  };
+
+  handleChangeNamespace = e => {
+    const stateVar = 'namespace';
+    const stateValue = e.selectedItem.text;
+    this.setState(prevState => {
+      const newInvalidFields = prevState.invalidFields;
+      const idIndex = newInvalidFields.indexOf(stateVar);
+      if (validateInputs(stateValue, stateVar)) {
+        if (idIndex !== -1) {
+          newInvalidFields.splice(idIndex, 1);
+        }
+      } else if (idIndex === -1) {
+        newInvalidFields.push(stateVar);
+      }
+      return { [stateVar]: stateValue, invalidFields: newInvalidFields };
+    });
+  };
+
+  handleChangeAccessTo = e => {
+    const stateVar = 'accessTo';
+    const stateValue = e.selectedItem.id;
+    this.setState(prevState => {
+      const newInvalidFields = prevState.invalidFields;
+      const idIndex = newInvalidFields.indexOf(stateVar);
+      if (validateInputs(stateValue, stateVar)) {
+        if (idIndex !== -1) {
+          newInvalidFields.splice(idIndex, 1);
+        }
+      } else if (idIndex === -1) {
+        newInvalidFields.push(stateVar);
+      }
+      const annotations = prevState.annotations.map(annotation => {
+        let toSearch;
+        if (stateValue === 'git') {
+          toSearch = 'docker';
+        } else {
+          toSearch = 'git';
+        }
+        return {
+          label: annotation.label.split(toSearch).join(stateValue),
+          value: annotation.value,
+          id: annotation.id
+        };
+      });
+      return {
+        [stateVar]: stateValue,
+        annotations,
+        invalidFields: newInvalidFields
+      };
     });
   };
 
@@ -261,14 +300,18 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
             name={name}
             selectedNamespace={namespace}
             accessTo={accessTo}
-            handleChange={this.handleChange}
+            handleChangeTextInput={this.handleChangeTextInput}
+            handleChangeAccessTo={this.handleChangeAccessTo}
+            handleChangeNamespace={this.handleChangeNamespace}
             invalidFields={invalidFields}
           />
           <BasicAuthFields
             username={username}
             password={password}
             serviceAccount={serviceAccount}
-            handleChange={this.handleChange}
+            namespace={namespace}
+            handleChangeTextInput={this.handleChangeTextInput}
+            handleChangeServiceAccount={this.handleChangeServiceAccount}
             invalidFields={invalidFields}
           />
           <Annotations
