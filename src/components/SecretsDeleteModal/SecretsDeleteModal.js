@@ -28,6 +28,7 @@ const SecretsDeleteModal = props => {
       onSecondarySubmit={handleClick}
       onRequestSubmit={handleDelete}
       onRequestClose={handleClick}
+      danger
     >
       <p>Are you sure you want to delete these secrets?</p>
       <ul>
