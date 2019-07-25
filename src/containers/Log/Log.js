@@ -26,19 +26,26 @@ export class LogContainer extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { match, stepName, podName } = this.props;
+    const {
+      match,
+      podName,
+      stepName,
+      stepStatus: { container: containerName }
+    } = this.props;
     const { namespace } = match.params;
     const {
       match: prevMatch,
+      podName: prevPodName,
       stepName: prevStepName,
-      podName: prevPodName
+      stepStatus: { container: prevContainerName }
     } = prevProps;
     const { namespace: prevNamespace } = prevMatch.params;
 
     if (
       podName !== prevPodName ||
       stepName !== prevStepName ||
-      namespace !== prevNamespace
+      namespace !== prevNamespace ||
+      containerName !== prevContainerName
     ) {
       this.loadLog();
     }
@@ -60,10 +67,10 @@ export class LogContainer extends Component {
   };
 
   async loadLog() {
-    const { stepName, podName, namespace } = this.props;
+    const { namespace, podName, stepName, stepStatus } = this.props;
     if (podName) {
       try {
-        const container = `step-${stepName}`;
+        const { container = `step-${stepName}` } = stepStatus;
         const logs = await getPodLog({
           container,
           name: podName,

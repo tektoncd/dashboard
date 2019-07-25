@@ -29,9 +29,10 @@ it('LogContainer renders', async () => {
   const { getByText } = render(
     <LogContainer
       match={{ params: { namespace } }}
-      stepName={stepName}
-      podName={podName}
       namespace={namespace}
+      podName={podName}
+      stepName={stepName}
+      stepStatus={{}}
     />
   );
   await waitForElement(() => getByText(logs));
@@ -47,15 +48,57 @@ it('LogContainer renders', async () => {
   render(
     <LogContainer
       match={{ params: { namespace } }}
-      stepName={stepName}
-      podName={anotherPodName}
       namespace={namespace}
+      podName={anotherPodName}
+      stepName={stepName}
+      stepStatus={{}}
     />
   );
   expect(getPodLog).toHaveBeenCalledTimes(2);
   expect(getPodLog).toHaveBeenCalledWith({
     container: `step-${stepName}`,
     name: anotherPodName,
+    namespace
+  });
+});
+
+it('LogContainer renders with container name from step status', async () => {
+  const container = 'containerName';
+  const namespace = 'namespace';
+  const podName = 'taskRun';
+  const logs = 'loads of logs';
+  const getPodLog = jest.spyOn(API, 'getPodLog').mockImplementation(() => logs);
+
+  const { getByText } = render(
+    <LogContainer
+      match={{ params: { namespace } }}
+      namespace={namespace}
+      podName={podName}
+      stepStatus={{ container }}
+    />
+  );
+  await waitForElement(() => getByText(logs));
+
+  expect(getPodLog).toHaveBeenCalledTimes(1);
+  expect(getPodLog).toHaveBeenCalledWith({
+    container,
+    name: podName,
+    namespace
+  });
+
+  const anotherContainerName = 'anotherContainerName';
+  render(
+    <LogContainer
+      match={{ params: { namespace } }}
+      namespace={namespace}
+      podName={podName}
+      stepStatus={{ container: anotherContainerName }}
+    />
+  );
+  expect(getPodLog).toHaveBeenCalledTimes(2);
+  expect(getPodLog).toHaveBeenCalledWith({
+    container: anotherContainerName,
+    name: podName,
     namespace
   });
 });
@@ -71,9 +114,10 @@ it('LogContainer handles error case', async () => {
   const { getByText } = render(
     <LogContainer
       match={{ params: { namespace } }}
-      stepName={stepName}
-      podName={podName}
       namespace={namespace}
+      podName={podName}
+      stepName={stepName}
+      stepStatus={{}}
     />
   );
   await waitForElement(() => getByText('Unable to fetch log'));
@@ -95,9 +139,10 @@ it('LogContainer handles empty logs', async () => {
   render(
     <LogContainer
       match={{ params: { namespace } }}
-      stepName={stepName}
-      podName={podName}
       namespace={namespace}
+      podName={podName}
+      stepName={stepName}
+      stepStatus={{}}
     />
   );
 
@@ -120,9 +165,10 @@ it('LogContainer handles missing step logs', async () => {
   const { getByText } = render(
     <LogContainer
       match={{ params: { namespace } }}
-      stepName={stepName}
-      podName={podName}
       namespace={namespace}
+      podName={podName}
+      stepName={stepName}
+      stepStatus={{}}
     />
   );
   await waitForElement(() => getByText('No log available'));
