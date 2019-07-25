@@ -8,6 +8,26 @@ metadata:
   name: tekton-dashboard
   namespace: tekton-pipelines
 ---
+# ------------------- Extension Resource Definition ------------------- #
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: extensions.dashboard.tekton.dev
+spec:
+  group: dashboard.tekton.dev
+  names:
+    kind: Extension
+    plural: extensions
+    categories:
+      - all
+      - tekton-pipelines
+  scope: Namespaced
+  # Opt into the status subresource so metadata.generation
+  # starts to increment
+  subresources:
+    status: {}
+  version: v1alpha1
+---
 # ------------------- Dashboard Role & Role Binding ------------------- #
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
@@ -38,6 +58,9 @@ rules:
     verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
   - apiGroups: ["tekton.dev"]
     resources: ["tasks/status", "clustertasks/status", "taskruns/status", "pipelines/status", "pipelineruns/status"]
+    verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
+  - apiGroups: ["dashboard.tekton.dev"]
+    resources: ["extensions"]
     verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
