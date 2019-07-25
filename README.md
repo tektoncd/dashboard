@@ -36,6 +36,48 @@ $ ./install-dev.sh
 
 The `install-dev.sh` script will build and push an image of the Tekton Dashboard to the Docker registry which you are logged into. Any Docker registry will do, but in this case it will push to Dockerhub. It will also apply the Pipeline0 definition and task: this allows you to import Tekton resources from Git repositories. It will also build the static web content using `npm` scripts.
 
+## Install on OpenShift
+
+1. Assuming you want to install the Dashboard into the `tekton-pipelines` namespace:
+
+
+```bash
+curl -L https://github.com/tektoncd/dashboard/releases/download/v0/gcr-tekton-dashboard.yaml | kubectl apply -f -
+```
+
+2. Add a Route:
+
+```
+oc expose service tekton-dashboard \
+  -n tekton-pipelines \
+  --name "tekton-dashboard" \
+  --port="http" \
+  --hostname=tekton-dashboard.${openshift_master_default_subdomain}
+```
+
+`$openshift_master_default_subdomain` in this example is `mycluster.foo.com`. This gives you the following Route:
+
+```
+NAME               HOST/PORT                                PATH      SERVICES           PORT      TERMINATION   WILDCARD
+tekton-dashboard   tekton-dashboard.mycluster.foo.com                 tekton-dashboard   http                    None
+```
+
+3. Access the dashboard at http://tekton-dashboard.mycluster.foo.com
+
+This has been tested with the following OpenShift security settings (from `oc get scc`):
+
+```
+NAME               PRIV      CAPS      SELINUX     RUNASUSER          FSGROUP     SUPGROUP    PRIORITY   READONLYROOTFS   VOLUMES
+anyuid             false     []        MustRunAs   RunAsAny           RunAsAny    RunAsAny    10         false            [configMap downwardAPI emptyDir persistentVolumeClaim projected secret]
+hostaccess         false     []        MustRunAs   MustRunAsRange     MustRunAs   RunAsAny    <none>     false            [configMap downwardAPI emptyDir hostPath persistentVolumeClaim projected secret]
+hostmount-anyuid   false     []        MustRunAs   RunAsAny           RunAsAny    RunAsAny    <none>     false            [configMap downwardAPI emptyDir hostPath nfs persistentVolumeClaim projected secret]
+hostnetwork        false     []        MustRunAs   MustRunAsRange     MustRunAs   MustRunAs   <none>     false            [configMap downwardAPI emptyDir persistentVolumeClaim projected secret]
+node-exporter      false     []        RunAsAny    RunAsAny           RunAsAny    RunAsAny    <none>     false            [*]
+nonroot            false     []        MustRunAs   MustRunAsNonRoot   RunAsAny    RunAsAny    <none>     false            [configMap downwardAPI emptyDir persistentVolumeClaim projected secret]
+privileged         true      [*]       RunAsAny    RunAsAny           RunAsAny    RunAsAny    <none>     false            [*]
+restricted         false     []        MustRunAs   MustRunAsRange     MustRunAs   RunAsAny    <none>     false            [configMap downwardAPI emptyDir persistentVolumeClaim projected secret]
+```
+
 ## Install on Minishift
 
 1. Install [tektoncd-pipeline-operator](https://github.com/openshift/tektoncd-pipeline-operator#deploy-openshift-pipelines-operator-on-minikube-for-testing)

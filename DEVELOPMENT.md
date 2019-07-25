@@ -5,9 +5,6 @@
 Many of the instructions here replicate what's in the [tektoncd/pipeline development guide](https://github.com/tektoncd/pipeline/blob/master/DEVELOPMENT.md), with a couple of caveats currently.
 
 - This project has not yet been tested with GKE
-- The instructions here pertain to building and deploying the backend that lets us interact with Tekton resources, as well as running the frontend locally for development.
-
-We would love to accomplish these tasks and to update this document, contributions welcome!
 
 ### Requirements
 
