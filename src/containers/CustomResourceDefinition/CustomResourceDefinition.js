@@ -33,6 +33,8 @@ import {
   getTasksErrorMessage
 } from '../../reducers';
 
+import { getCustomResource } from '../../api';
+
 export /* istanbul ignore next */ class CustomResourceDefinition extends Component {
   state = {
     loading: true
@@ -40,15 +42,15 @@ export /* istanbul ignore next */ class CustomResourceDefinition extends Compone
 
   componentDidMount() {
     const { match } = this.props;
-    const { name, namespace, type } = match.params;
-    this.fetch({ name, namespace, type }).then(() =>
+    const { group, version, name, namespace, type } = match.params;
+    this.fetch({ group, version, name, namespace, type }).then(() =>
       this.setState({ loading: false })
     );
   }
 
   componentDidUpdate(prevProps) {
     const { match } = this.props;
-    const { name, namespace, type } = match.params;
+    const { group, version, name, namespace, type } = match.params;
     const { match: prevMatch } = prevProps;
     const {
       name: prevName,
@@ -57,13 +59,13 @@ export /* istanbul ignore next */ class CustomResourceDefinition extends Compone
     } = prevMatch.params;
     if (namespace !== prevNamespace || name !== prevName || type !== prevType) {
       this.setState({ loading: true }); // eslint-disable-line
-      this.fetch({ name, namespace, type }).then(() =>
+      this.fetch({ group, version, name, namespace, type }).then(() =>
         this.setState({ loading: false })
       );
     }
   }
 
-  fetch = ({ name, namespace, type }) => {
+  fetch = ({ group, version, name, namespace, type }) => {
     switch (type) {
       case 'tasks':
         return this.props.fetchTask({ name, namespace });
@@ -72,12 +74,21 @@ export /* istanbul ignore next */ class CustomResourceDefinition extends Compone
       case 'clustertasks':
         return this.props.fetchClusterTask(name);
       default:
-        return Promise.resolve();
+        return getCustomResource({
+          group,
+          version,
+          type,
+          namespace,
+          name
+        }).then(resource => {
+          this.setState({ resource });
+        });
     }
   };
 
   render() {
-    const { error, resource } = this.props;
+    const error = this.props.error || this.state.error;
+    const resource = this.props.resource || this.state.resource;
     const { loading } = this.state;
 
     if (loading) {

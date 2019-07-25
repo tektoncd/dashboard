@@ -29,6 +29,7 @@ export { default as PipelineRun } from './PipelineRun';
 export { default as PipelineRuns } from './PipelineRuns';
 export { default as Pipelines } from './Pipelines';
 export { default as PipelinesDropdown } from './PipelinesDropdown';
+export { default as ResourceList } from './ResourceList';
 export { default as Secrets } from './Secrets';
 export { default as ServiceAccountsDropdown } from './ServiceAccountsDropdown';
 export { default as SideNav } from './SideNav';

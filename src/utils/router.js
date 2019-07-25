@@ -106,6 +106,20 @@ export const paths = {
     byNamespace() {
       return byNamespace({ path: '/tasks' });
     }
+  },
+  kubernetesResources: {
+    all() {
+      return '/:group/:version/:type';
+    },
+    byNamespace() {
+      return byNamespace({ path: '/:group/:version/:type' });
+    },
+    cluster() {
+      return '/:group/:version/:type/:name';
+    },
+    byName() {
+      return byNamespace({ path: '/:group/:version/:type/:name' });
+    }
   }
 };
 
