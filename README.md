@@ -36,6 +36,24 @@ $ ./install-dev.sh
 
 The `install-dev.sh` script will build and push an image of the Tekton Dashboard to the Docker registry which you are logged into. Any Docker registry will do, but in this case it will push to Dockerhub. It will also apply the Pipeline0 definition and task: this allows you to import Tekton resources from Git repositories. It will also build the static web content using `npm` scripts.
 
+### Optionally set up the Ingress endpoint
+
+An Ingress definition is provided in the `ingress` directory, and this can optionally be installed and configured. If you wish to access the Tekton Dashboard, for example on your laptop that has a visible IP address, you can use the freely available [`nip.io`](https://nip.io/) service. A worked example follows.
+
+Create the Ingress: 
+
+`kubectl apply ingress/basic-dashboard-ingress.yaml`
+
+Retrieve a publicly available IP address (in this case running on a laptop connected to a public network):
+
+`ip=$(ifconfig | grep netmask | sed -n 2p | cut -d ' ' -f2)`
+
+Now modify the `host` property for our Ingress to use the IP obtained above, with the `tekton-dashboard` prefix and the `.nip.io` suffix:
+
+`kubectl patch ing/tekton-dashboard -n tekton-pipelines --type=json -p='[{"op": "replace", "path": "/spec/rules/0/host", "value": '""tekton-dashboard.${ip}.nip.io""}]`
+
+You can then access the Tekton Dashboard at `tekton-dashboard.${ip}.nip.io`. This endpoint is also returned via the "get Tekton Dashboard Ingress" [API](https://github.com/tektoncd/dashboard/blob/master/DEVELOPMENT.md#api-definitions).
+
 ## Install on OpenShift
 
 1. Assuming you want to install the Dashboard into the `tekton-pipelines` namespace:
