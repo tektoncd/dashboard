@@ -15,6 +15,12 @@ metadata:
   name: tekton-dashboard-minimal
   namespace: tekton-pipelines
 rules:
+  - apiGroups: ["security.openshift.io"]
+    resources: ["securitycontextconstraints"]
+    verbs: ["use"]
+  - apiGroups: ["extensions", "apps"]
+    resources: ["ingresses"]
+    verbs: ["get", "list", "watch"]
   - apiGroups: [""]
     resources: ["serviceaccounts"]
     verbs: ["get", "list", "update", "patch"]
