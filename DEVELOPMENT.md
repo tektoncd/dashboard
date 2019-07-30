@@ -401,10 +401,11 @@ Returns HTTP code 500 if the found credential could not be deleted
 
 ## Extension
 
-__Backend__
+The Dashboard can be extended by registering extensions. There are two types
 
-Backend can be extended by registering backend extensions.
-The backend extension is discovered by adding the label and the annotations in the extension service.
+__Proxied Bundles__
+
+The extension is discovered by adding the label and the annotations in the extension service.
 ```
   annotations:
     tekton-dashboard-endpoints: <path of the extension at the proxy>
@@ -420,3 +421,54 @@ The backend extension is discovered by adding the label and the annotations in t
 1. Multiple context roots can be specified by using the . character to separate them: e.g. if tekton-dashboard-endpoints: foo.bar then /v1/extensions/extension-name/foo is routed to /foo and /v1/extensions/extension-name/bar is routed to /bar at the extension.
 1. "/" is a reserved context root for javascript.  "tekton-dashboard-endpoints" must be always set if the extension has javascript.
 
+__Kubernetes Resources__
+
+These extensions give the dashboard the ability to show a list of resources for a given Kubernetes resource kind. 
+A link to this list is exposed in the nav similar to bundled extensions. 
+Selecting an item from the list provides a more detailed view of the selected resource.
+
+There are 2 steps to exposing a resource type.
+
+1. The `tekton-dashboard` service account must have a cluster role and binding giving it access to the target resources.
+Replace `rules.apiGroups` and `rules.resources` with the target values for the resource.
+
+```
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: tekton-dashboard-extensions
+  namespace: tekton-pipelines
+rules:
+  - apiGroups: ["targetGroup"]
+    resources: ["targetResource"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: tekton-dashboard-extensions
+subjects:
+  - kind: ServiceAccount
+    name: tekton-dashboard
+    namespace: tekton-pipelines
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: tekton-dashboard-extensions
+```
+
+2. Add an extension resource specifying the target resource to be listed. Replace `metadata.name`, 
+`spec.apiVersion`, `spec.name` and `spec.displayName`with required values.
+
+```
+apiVersion: dashboard.tekton.dev/v1alpha1
+kind: Extension
+metadata:
+  name: extensionname
+spec:
+  apiVersion: target resource api version
+  name: targetResource
+  displayname: display name on the dashboard
+```
+
+Extensions in this context are custom resources defined in the dashboard installation. The apiVersion is `dashboard.tekton.dev/v1alpha1`.

@@ -57,3 +57,10 @@ http://localhost:9097/extensions/dashboard-extension/sample
 Hello tekton dashboard!!  Here is /sample
 ```
 
+## Kubernetes Resources Extensions
+
+The sample [Here](https://github.com/tektoncd/dashboard/tree/master/docs/samples/extension/config/tekton-kubernetes-resource-extension-sample.yaml) adds kubernetes 
+deployments as an extension resource. Once applied the dashboard will include `k8s deployments` as an option on the left nav.
+
+Note: This sample does not include RBAC and Service Service Account bindings. This example reuses access to deployment 
+resources which the dashboard service account already has. For different resource types a role binding may need to be applied. 

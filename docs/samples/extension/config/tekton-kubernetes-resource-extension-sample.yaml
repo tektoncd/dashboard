@@ -1,0 +1,9 @@
+apiVersion: dashboard.tekton.dev/v1alpha1
+kind: Extension
+metadata:
+  name: sample-deployment-extension
+  namespace: tekton-pipelines
+spec:
+  apiVersion: extensions/v1beta1
+  name: deployments
+  displayname: k8s deployments
