@@ -20,10 +20,29 @@ limitations under the License.
 }
 
 main {
+
   .bx--structured-list {
-    background-color: white;
+    background-color: $ui-background;
   }
-}
+
+  .bx--structured-list-row:nth-child(odd) {
+      background-color: white;
+  }
+
+  .bx--structured-list-row:nth-child(even) {
+    background-color: $ui-01;
+  }
+
+  .bx--modal-footer {
+    button {
+      font-size: 1.25rem;
+    }
+  }
+
+  .bx--data-table-header {
+    background-color: transparent;
+  }
+} 
 
 .definition .status {
   .status-icon {

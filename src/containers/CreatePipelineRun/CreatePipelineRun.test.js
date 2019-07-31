@@ -191,7 +191,7 @@ const paramsValidationErrorRegExp = /params cannot be empty/i;
 const apiErrorRegExp = /error creating pipelinerun/i;
 
 const submitButton = allByText => {
-  return allByText(/create pipelinerun/i)[1];
+  return allByText(/create/i)[1];
 };
 
 const testPipelineSpec = (pipelineId, queryByText, queryByValue) => {

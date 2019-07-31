@@ -78,6 +78,7 @@ const SecretsTable = props => {
   return (
     <div className="secrets">
       <DataTable
+        useZebraStyles
         rows={secretsFormatted}
         headers={initialHeaders}
         isSortable
@@ -90,7 +91,7 @@ const SecretsTable = props => {
           getBatchActionProps,
           selectedRows
         }) => (
-          <TableContainer>
+          <TableContainer title="Secrets">
             <TableToolbar>
               <TableBatchActions {...getBatchActionProps()}>
                 <TableBatchAction
