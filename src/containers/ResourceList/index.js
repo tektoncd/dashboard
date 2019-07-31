@@ -11,28 +11,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-@import '~carbon-components/scss/globals/scss/vars';
-
-.secrets {
-  .bx--table-toolbar {
-    background: transparent;
-  }
-
-  .bx--batch-actions {
-    #delete-btn {
-      padding: 0.875rem 2.5rem 0.875rem 0.5rem;
-    }
-  }
-
-  .bx--data-table tbody td.cellText {
-    padding-left: 22.5px;
-  }
-
-  .noSecrets {
-    width: 100%;
-    text-align: center;
-    margin-top: 5px;
-    font-style: italic;
-    font-size: 1rem;
-  }
-}
+export { default } from './ResourceList';

@@ -57,10 +57,13 @@ export function getKubeAPI(
   ].join('');
 }
 
-export function getTektonAPI(type, { name = '', namespace } = {}, queryParams) {
+export function getResourcesAPI(
+  { group, version, type, name = '', namespace },
+  queryParams
+) {
   return [
     apiRoot,
-    '/proxy/apis/tekton.dev/v1alpha1/',
+    `/proxy/apis/${group}/${version}/`,
     namespace && namespace !== ALL_NAMESPACES
       ? `namespaces/${encodeURIComponent(namespace)}/`
       : '',
@@ -69,6 +72,13 @@ export function getTektonAPI(type, { name = '', namespace } = {}, queryParams) {
     encodeURIComponent(name),
     queryParams ? `?${new URLSearchParams(queryParams).toString()}` : ''
   ].join('');
+}
+
+export function getTektonAPI(type, { name = '', namespace } = {}, queryParams) {
+  return getResourcesAPI(
+    { group: 'tekton.dev', version: 'v1alpha1', type, name, namespace },
+    queryParams
+  );
 }
 
 export function getExtensionBaseURL(name) {
@@ -265,15 +275,44 @@ export function deleteCredential(id, namespace) {
   return deleteRequest(uri);
 }
 
+export function getCustomResources(...args) {
+  const uri = getResourcesAPI(...args);
+  return get(uri).then(checkData);
+}
+
+export function getCustomResource(...args) {
+  const uri = getResourcesAPI(...args);
+  return get(uri);
+}
+
 export async function getExtensions() {
   const uri = `${apiRoot}/v1/extensions`;
-  const extensions = await get(uri);
-  return (extensions || []).map(
+  const resourceExtensionsUri = getResourcesAPI({
+    group: 'dashboard.tekton.dev',
+    version: 'v1alpha1',
+    type: 'extensions'
+  });
+  let extensions = await get(uri);
+  const resourceExtensions = await get(resourceExtensionsUri);
+  extensions = (extensions || []).map(
     ({ bundlelocation, displayname, name, url }) => ({
       displayName: displayname,
       name,
       source: getExtensionBundleURL(name, bundlelocation),
       url
+    })
+  );
+  return extensions.concat(
+    ((resourceExtensions && resourceExtensions.items) || []).map(({ spec }) => {
+      const { displayname: displayName, name } = spec;
+      const [apiGroup, apiVersion] = spec.apiVersion.split('/');
+      return {
+        displayName,
+        name,
+        apiGroup,
+        apiVersion,
+        extensionType: 'kubernetes-resource'
+      };
     })
   );
 }
@@ -286,4 +325,9 @@ export function getNamespaces() {
 export function getServiceAccounts({ namespace } = {}) {
   const uri = getKubeAPI('serviceaccounts', { namespace });
   return get(uri).then(checkData);
+}
+
+export function getInstallProperties() {
+  const uri = `${apiRoot}/v1/properties`;
+  return get(uri);
 }

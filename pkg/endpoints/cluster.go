@@ -14,24 +14,33 @@ limitations under the License.
 package endpoints
 
 import (
-	"net/http"
-	"net/url"
-
 	restful "github.com/emicklei/go-restful"
 	"github.com/tektoncd/dashboard/pkg/logging"
+	"net/http"
+	"net/url"
+	"os"
 
 	"github.com/tektoncd/dashboard/pkg/utils"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-/* Get all tasks in a given namespace */
+// Properties : properties we want to be able to retrieve via REST
+type Properties struct {
+	InstallNamespace string
+}
+
+const (
+	tektonDashboardIngressName string = "tekton-dashboard"
+)
+
+// ProxyRequest does as the name suggests: proxies requests and logs what's going on
 func (r Resource) ProxyRequest(request *restful.Request, response *restful.Response) {
-	parsedUrl, err := url.Parse(request.Request.URL.String())
+	parsedURL, err := url.Parse(request.Request.URL.String())
 	if err != nil {
 		utils.RespondError(response, err, http.StatusNotFound)
 		return
 	}
-	uri := request.PathParameter("subpath") + "?" + parsedUrl.RawQuery
+	uri := request.PathParameter("subpath") + "?" + parsedURL.RawQuery
 	forwardRequest := r.K8sClient.CoreV1().RESTClient().Verb(request.Request.Method).RequestURI(uri).Body(request.Request.Body)
 	forwardRequest.SetHeader("Content-Type", request.HeaderParameter("Content-Type"))
 	forwardResponse := forwardRequest.Do()
@@ -47,16 +56,39 @@ func (r Resource) ProxyRequest(request *restful.Request, response *restful.Respo
 	response.Write(responseBody)
 }
 
+// GetIngress returns the Ingress endpoint called "tektonDashboardIngressName" in the requested namespace
 func (r Resource) GetIngress(request *restful.Request, response *restful.Response) {
 	requestNamespace := utils.GetNamespace(request)
 
-	ingress, err := r.K8sClient.ExtensionsV1beta1().Ingresses(requestNamespace).Get("tekton-dashboard", metav1.GetOptions{})
+	ingress, err := r.K8sClient.ExtensionsV1beta1().Ingresses(requestNamespace).Get(tektonDashboardIngressName, metav1.GetOptions{})
 
-	ingressHost := ingress.Spec.Rules[0].Host
-
-	if err != nil {
-		utils.RespondError(response, err, http.StatusNotFound)
+	if err != nil || ingress == nil {
+		logging.Log.Errorf("Unable to retrieve any ingresses: %s", err)
+		utils.RespondError(response, err, http.StatusInternalServerError)
 		return
 	}
-	response.WriteEntity(ingressHost)
+
+	noRuleError := "no Ingress rules found labelled " + tektonDashboardIngressName
+
+	// Harden this block to avoid Go panics (array index out of range)
+	if len(ingress.Spec.Rules) > 0 { // Got more than zero entries?
+		if ingress.Spec.Rules[0].Host != "" { // For that rule, is there actually a host?
+			ingressHost := ingress.Spec.Rules[0].Host
+			response.WriteEntity(ingressHost)
+			return
+		}
+		logging.Log.Errorf("found an empty Ingress rule labelled %s", tektonDashboardIngressName)
+	} else {
+		logging.Log.Error(noRuleError)
+	}
+
+	logging.Log.Error("Unable to retrieve any Ingresses")
+	utils.RespondError(response, err, http.StatusInternalServerError)
+	return
+}
+
+// GetProperties is used to get the installed namespace only so far
+func (r Resource) GetProperties(request *restful.Request, response *restful.Response) {
+	properties := Properties{InstallNamespace: os.Getenv("INSTALLED_NAMESPACE")}
+	response.WriteEntity(properties)
 }

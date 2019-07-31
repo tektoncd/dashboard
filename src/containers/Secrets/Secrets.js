@@ -25,6 +25,7 @@ import {
 import {
   getSecrets,
   getSecretsErrorMessage,
+  getSelectedNamespace,
   isFetchingSecrets
 } from '../../reducers';
 import { getErrorMessage } from '../../utils';
@@ -58,21 +59,20 @@ export /* istanbul ignore next */ class Secrets extends Component {
     });
   };
 
-  handleDeleteSecretClick = value => {
+  handleDeleteSecretClick = secrets => {
     this.setState({
       openDeleteSecret: true,
-      toBeDeleted: value
+      toBeDeleted: secrets
     });
   };
 
   delete = () => {
-    const { name, namespace } = this.state.toBeDeleted;
-    this.props.deleteSecret(name, namespace);
+    this.props.deleteSecret(this.state.toBeDeleted);
     this.handleDeleteSecretToggle();
   };
 
   render() {
-    const { secrets, loading, error } = this.props;
+    const { loading, error, secrets, selectedNamespace } = this.props;
     const { openNewSecret, toBeDeleted, openDeleteSecret } = this.state;
 
     return (
@@ -86,6 +86,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
             className="notificationComponent"
             data-testid="errorNotificationComponent"
             onCloseButtonClick={this.props.clearNotification}
+            lowContrast
           />
         )}
         <Table
@@ -93,6 +94,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
           handleDelete={this.handleDeleteSecretClick}
           loading={loading}
           secrets={secrets}
+          selectedNamespace={selectedNamespace}
         />
         {openNewSecret && (
           <Modal open={openNewSecret} handleNew={this.handleNewSecretClick} />
@@ -102,7 +104,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
             open={openDeleteSecret}
             handleClick={this.handleDeleteSecretToggle}
             handleDelete={this.delete}
-            id={toBeDeleted.name}
+            toBeDeleted={toBeDeleted}
           />
         )}
       </>
@@ -118,14 +120,15 @@ function mapStateToProps(state) {
   return {
     error: getSecretsErrorMessage(state),
     loading: isFetchingSecrets(state),
-    secrets: getSecrets(state)
+    secrets: getSecrets(state),
+    selectedNamespace: getSelectedNamespace(state)
   };
 }
 
 const mapDispatchToProps = {
-  fetchSecrets,
+  clearNotification,
   deleteSecret,
-  clearNotification
+  fetchSecrets
 };
 
 export default connect(

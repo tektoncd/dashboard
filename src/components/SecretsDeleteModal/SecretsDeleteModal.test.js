@@ -15,15 +15,35 @@ import React from 'react';
 import { fireEvent, render } from 'react-testing-library';
 import SecretsDeleteModal from './SecretsDeleteModal';
 
-it('SecretsDeleteModal renders with passed secret id', () => {
+it('SecretsDeleteModal renders with one passed secret', () => {
   const props = {
     open: true,
-    id: 'dummySecret',
+    toBeDeleted: [{ name: 'secret-name', namespace: 'default' }],
     handleClick() {},
     handleDelete() {}
   };
   const { queryByText } = render(<SecretsDeleteModal {...props} />);
-  expect(queryByText('dummySecret')).toBeTruthy();
+  expect(queryByText('secret-name')).toBeTruthy();
+  expect(queryByText('Cancel')).toBeTruthy();
+  expect(queryByText('Delete')).toBeTruthy();
+  expect(queryByText('Delete Secret')).toBeTruthy();
+});
+
+it('SecretsDeleteModal renders with multiple passed secrets', () => {
+  const props = {
+    open: true,
+    toBeDeleted: [
+      { name: 'secret-name', namespace: 'default' },
+      { name: 'other-secret', namespace: 'default' },
+      { name: 'another-one', namespace: 'default' }
+    ],
+    handleClick() {},
+    handleDelete() {}
+  };
+  const { queryByText } = render(<SecretsDeleteModal {...props} />);
+  expect(queryByText('secret-name')).toBeTruthy();
+  expect(queryByText('other-secret')).toBeTruthy();
+  expect(queryByText('another-one')).toBeTruthy();
   expect(queryByText('Cancel')).toBeTruthy();
   expect(queryByText('Delete')).toBeTruthy();
   expect(queryByText('Delete Secret')).toBeTruthy();
@@ -34,7 +54,7 @@ it('Test SecretsDeleteModal click events', () => {
   const handleDelete = jest.fn();
   const props = {
     open: true,
-    id: 'dummySecret',
+    toBeDeleted: [{ name: 'secret-name', namespace: 'default' }],
     handleClick,
     handleDelete
   };
@@ -42,7 +62,7 @@ it('Test SecretsDeleteModal click events', () => {
   const { queryByText, rerender } = render(<SecretsDeleteModal {...props} />);
   fireEvent.click(queryByText('Delete'));
   expect(handleDelete).toHaveBeenCalledTimes(1);
-  rerender(<SecretsDeleteModal open={false} />);
+  rerender(<SecretsDeleteModal {...props} open={false} />);
   fireEvent.click(queryByText('Delete'));
   expect(handleClick).toHaveBeenCalledTimes(0);
 });

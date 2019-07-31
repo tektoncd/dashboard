@@ -17,6 +17,7 @@ import ErrorBoundary from '../../components/ErrorBoundary';
 
 import * as actions from './actions';
 import * as selectors from '../../reducers';
+import { paths, urls } from '../../utils';
 import './globals';
 
 /* istanbul ignore next */
@@ -73,7 +74,11 @@ export default /* istanbul ignore next */ class Extension extends Component {
     return (
       <ErrorBoundary message="Error loading extension">
         <Suspense fallback={<div>Loading...</div>}>
-          <ExtensionComponent actions={actions} selectors={selectors} />
+          <ExtensionComponent
+            actions={actions}
+            selectors={selectors}
+            utils={{ paths, urls }}
+          />
         </Suspense>
       </ErrorBoundary>
     );

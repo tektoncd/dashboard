@@ -18,6 +18,7 @@ import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
 import ImportResourcesContainer from './ImportResources';
 import * as API from '../../api';
+import { urls } from '../../utils';
 import { renderWithRouter } from '../../utils/test';
 import { ALL_NAMESPACES } from '../../constants';
 
@@ -41,15 +42,23 @@ describe('ImportResources component', () => {
   });
 
   it('Valid data submit displays success notification ', async () => {
+    const namespace = 'tekton-pipelines';
+    const pipelineRunName = 'fake-tekton-pipeline-run';
     const headers = {
       get() {
-        return 'fake-tekton-pipeline-run';
+        return pipelineRunName;
       }
     };
 
     jest
       .spyOn(API, 'createPipelineRun')
       .mockImplementation(() => Promise.resolve(headers));
+
+    jest
+      .spyOn(API, 'getInstallProperties')
+      .mockImplementation(() =>
+        Promise.resolve({ InstallNamespace: namespace })
+      );
 
     const { getByLabelText, getByTestId, getByText } = renderWithRouter(
       <Provider store={store}>
@@ -70,6 +79,58 @@ describe('ImportResources component', () => {
     await waitForElement(() =>
       getByText(/Triggered PipelineRun to apply Tekton resources/i)
     );
+
+    expect(
+      document.getElementsByClassName('bx--toast-notification__caption')[0]
+        .innerHTML
+    ).toContain(
+      urls.pipelineRuns.byName({
+        namespace,
+        pipelineName: 'pipeline0',
+        pipelineRunName
+      })
+    );
+  });
+
+  it('Error getting pipelinerun log directs to pipelineruns page rather than specific pipelinerun', async () => {
+    const headers = {
+      get() {
+        return 'another-fake-tekton-pipeline-run';
+      }
+    };
+
+    jest
+      .spyOn(API, 'createPipelineRun')
+      .mockImplementation(() => Promise.resolve(headers));
+
+    jest
+      .spyOn(API, 'getInstallProperties')
+      .mockImplementation(() => Promise.reject(new Error('fail')));
+
+    const { getByLabelText, getByTestId, getByText } = renderWithRouter(
+      <Provider store={store}>
+        <ImportResourcesContainer />
+      </Provider>
+    );
+
+    const repoURLField = getByTestId('repository-url-field');
+    fireEvent.change(repoURLField, {
+      target: { value: 'https://example.com/test/testing' }
+    });
+
+    fireEvent.click(getByLabelText(/namespace/i));
+    fireEvent.click(getByText(/select namespace/i));
+    fireEvent.click(getByText('namespace1'));
+
+    fireEvent.click(getByText('Import and Apply'));
+    await waitForElement(() =>
+      getByText(/Triggered PipelineRun to apply Tekton resources/i)
+    );
+
+    expect(
+      document.getElementsByClassName('bx--toast-notification__caption')[0]
+        .innerHTML
+    ).toContain(urls.pipelineRuns.all());
   });
 
   it('Invalid data submit displays invalidText', async () => {

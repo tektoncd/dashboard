@@ -61,6 +61,8 @@ const Annotations = props => {
         <Remove className="removeIcon" onClick={handleRemove} />
         <Add className="addIcon" onClick={handleAdd} />
       </div>
+      {invalidFields.find(field => field.includes('annotation-value')) !==
+        undefined && <p className="invalidAnnotation">Required.</p>}
       {annotationFields}
     </div>
   );

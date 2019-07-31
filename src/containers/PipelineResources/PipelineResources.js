@@ -25,7 +25,7 @@ import {
 } from 'carbon-components-react';
 
 import { ALL_NAMESPACES } from '../../constants';
-import { getErrorMessage } from '../../utils';
+import { getErrorMessage, urls } from '../../utils';
 import { fetchPipelineResources } from '../../actions/pipelineResources';
 
 import {
@@ -112,7 +112,10 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
               >
                 <StructuredListCell>
                   <Link
-                    to={`/namespaces/${namespace}/pipelineresources/${pipelineResourceName}`}
+                    to={urls.pipelineResources.byName({
+                      namespace,
+                      pipelineResourceName
+                    })}
                   >
                     {pipelineResourceName}
                   </Link>

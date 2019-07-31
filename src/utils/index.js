@@ -18,12 +18,16 @@ import CloseFilled from '@carbon/icons-react/lib/close--filled/16';
 
 import Spinner from '../components/Spinner';
 
+export { paths, urls } from './router';
+
 export function getErrorMessage(error) {
   if (!error || typeof error === 'string') {
     return error;
   }
 
-  return JSON.stringify(error, Object.getOwnPropertyNames(error));
+  return (
+    error.message || JSON.stringify(error, Object.getOwnPropertyNames(error))
+  );
 }
 
 export function getStatus(resource) {
@@ -78,6 +82,20 @@ export function selectedTask(selectedTaskName, tasks) {
 
 export function selectedTaskRun(selectedTaskId, taskRuns = []) {
   return taskRuns.find(run => run.id === selectedTaskId);
+}
+
+export function sortRunsByStartTime(runs) {
+  runs.sort((a, b) => {
+    const aTime = a.status.startTime;
+    const bTime = b.status.startTime;
+    if (!aTime) {
+      return -1;
+    }
+    if (!bTime) {
+      return 1;
+    }
+    return -1 * aTime.localeCompare(bTime);
+  });
 }
 
 export function stepsStatus(taskSteps, taskRunStepsStatus = []) {

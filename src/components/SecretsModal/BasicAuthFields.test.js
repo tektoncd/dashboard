@@ -13,7 +13,80 @@ limitations under the License.
 
 import React from 'react';
 import { render } from 'react-testing-library';
+import { Provider } from 'react-redux';
+import configureStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+import * as API from '../../api';
 import BasicAuthFields from './BasicAuthFields';
+
+const middleware = [thunk];
+const mockStore = configureStore(middleware);
+
+const namespaces = {
+  byName: {
+    default: {
+      metadata: {
+        name: 'default',
+        selfLink: '/api/v1/namespaces/default',
+        uid: '32b35d3b-6ce1-11e9-af21-025000000001',
+        resourceVersion: '4',
+        creationTimestamp: '2019-05-02T13:50:08Z'
+      },
+      spec: {
+        finalizers: ['kubernetes']
+      },
+      status: {
+        phase: 'Active'
+      }
+    }
+  },
+  errorMessage: null,
+  isFetching: false,
+  selected: 'default'
+};
+
+const serviceAccountsByNamespace = {
+  blue: {
+    'service-account-1': 'id-service-account-1',
+    'service-account-2': 'id-service-account-2'
+  },
+  green: {
+    'service-account-3': 'id-service-account-3'
+  }
+};
+
+const serviceAccountsById = {
+  'id-service-account-1': {
+    metadata: {
+      name: 'service-account-1',
+      namespace: 'blue',
+      uid: 'id-service-account-1'
+    }
+  },
+  'id-service-account-2': {
+    metadata: {
+      name: 'service-account-2',
+      namespace: 'blue',
+      uid: 'id-service-account-2'
+    }
+  },
+  'id-service-account-3': {
+    metadata: {
+      name: 'service-account-3',
+      namespace: 'green',
+      uid: 'id-service-account-3'
+    }
+  }
+};
+
+const store = mockStore({
+  namespaces,
+  serviceAccounts: {
+    byId: serviceAccountsById,
+    byNamespace: serviceAccountsByNamespace,
+    isFetching: false
+  }
+});
 
 it('BasicAuthFields renders with blank inputs', () => {
   const props = {
@@ -23,13 +96,20 @@ it('BasicAuthFields renders with blank inputs', () => {
     handleChange() {},
     invalidFields: []
   };
+
+  jest
+    .spyOn(API, 'getServiceAccounts')
+    .mockImplementation(() => serviceAccountsById);
+
   const { getByLabelText, getAllByDisplayValue } = render(
-    <BasicAuthFields {...props} />
+    <Provider store={store}>
+      <BasicAuthFields {...props} />
+    </Provider>
   );
   expect(getByLabelText(/Email/i)).toBeTruthy();
   expect(getByLabelText(/Password\/Token/i)).toBeTruthy();
   expect(getByLabelText(/Service Account/i)).toBeTruthy();
-  expect(getAllByDisplayValue('').length).toEqual(3);
+  expect(getAllByDisplayValue('').length).toEqual(2);
 });
 
 it('BasicAuthFields incorrect fields', () => {
@@ -40,7 +120,16 @@ it('BasicAuthFields incorrect fields', () => {
     handleChange() {},
     invalidFields: ['username', 'password']
   };
-  const { getByLabelText } = render(<BasicAuthFields {...props} />);
+
+  jest
+    .spyOn(API, 'getServiceAccounts')
+    .mockImplementation(() => serviceAccountsById);
+
+  const { getByLabelText } = render(
+    <Provider store={store}>
+      <BasicAuthFields {...props} />
+    </Provider>
+  );
 
   const usernameInput = getByLabelText(/Email/i);
   const passwordInput = getByLabelText(/Password\/Token/i);

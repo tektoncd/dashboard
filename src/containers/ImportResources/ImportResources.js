@@ -23,8 +23,9 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { ALL_NAMESPACES } from '../../constants';
-import { createPipelineRun } from '../../api';
+import { createPipelineRun, getInstallProperties } from '../../api';
 import { getSelectedNamespace } from '../../reducers';
+import { urls } from '../../utils';
 import { NamespacesDropdown, ServiceAccountsDropdown } from '..';
 
 import './ImportResources.scss';
@@ -96,14 +97,32 @@ export class ImportResources extends Component {
     const promise = createPipelineRun({ namespace, payload });
     promise
       .then(headers => {
-        const logsURL = headers.get('Content-Location');
-        const pipelineRunName = logsURL.substring(logsURL.lastIndexOf('/') + 1);
-        const finalURL = `/namespaces/${namespace}/pipelines/pipeline0/runs/${pipelineRunName}`;
-        this.setState({
-          logsURL: finalURL,
-          submitSuccess: true,
-          invalidInput: false
-        });
+        const props = getInstallProperties();
+        props
+          .then(properties => {
+            const logsURL = headers.get('Content-Location');
+            const pipelineRunName = logsURL.substring(
+              logsURL.lastIndexOf('/') + 1
+            );
+
+            const finalURL = urls.pipelineRuns.byName({
+              namespace: properties.InstallNamespace,
+              pipelineName: 'pipeline0',
+              pipelineRunName
+            });
+            this.setState({
+              logsURL: finalURL,
+              submitSuccess: true,
+              invalidInput: false
+            });
+          })
+          .catch(() => {
+            this.setState({
+              logsURL: urls.pipelineRuns.all(),
+              submitSuccess: true,
+              invalidInput: false
+            });
+          });
       })
       .catch(error => {
         const statusCode = error.response.status;
@@ -159,7 +178,7 @@ export class ImportResources extends Component {
           />
           <TextInput
             data-testid="directory-field"
-            helperText="The path from which resources will be applied at the specified repository"
+            helperText="The location of the Tekton resources to import from the repository. Leave blank if the resources are at the top-level directory."
             id="import-directory"
             labelText="Repository directory (optional)"
             name="directory"

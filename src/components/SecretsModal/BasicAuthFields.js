@@ -14,12 +14,15 @@ limitations under the License.
 import React from 'react';
 import { TextInput } from 'carbon-components-react';
 import './SecretsModal.scss';
+import ServiceAccountsDropdown from '../../containers/ServiceAccountsDropdown';
 
 const BasicAuthFields = props => {
   const {
     username,
     password,
-    handleChange,
+    namespace,
+    handleChangeTextInput,
+    handleChangeServiceAccount,
     invalidFields,
     serviceAccount
   } = props;
@@ -31,8 +34,9 @@ const BasicAuthFields = props => {
         placeholder="example@domain.com"
         value={username}
         labelText="Email:"
-        onChange={handleChange}
+        onChange={handleChangeTextInput}
         invalid={invalidFields.indexOf('username') > -1}
+        invalidText="Required."
       />
       <TextInput
         id="password"
@@ -41,19 +45,20 @@ const BasicAuthFields = props => {
         value={password}
         placeholder="********"
         labelText="Password/Token:"
-        onChange={handleChange}
+        onChange={handleChangeTextInput}
         invalid={invalidFields.indexOf('password') > -1}
+        invalidText="Required."
       />
-      <TextInput
+      <ServiceAccountsDropdown
         id="serviceAccount"
-        autoComplete="off"
-        type="serviceAccount"
-        value={serviceAccount}
-        placeholder="default"
-        labelText="Service Account:"
-        onChange={handleChange}
+        titleText="Service Account"
+        namespace={namespace}
+        selectedItem={
+          serviceAccount ? { id: serviceAccount, text: serviceAccount } : ''
+        }
+        onChange={handleChangeServiceAccount}
         invalid={invalidFields.indexOf('serviceAccount') > -1}
-        invalidText="Must be less than 563 characters, contain only lowercase alphanumeric characters, . or -"
+        invalidText="Required."
       />
     </>
   );

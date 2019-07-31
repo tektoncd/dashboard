@@ -8,6 +8,26 @@ metadata:
   name: tekton-dashboard
   namespace: tekton-pipelines
 ---
+# ------------------- Extension Resource Definition ------------------- #
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: extensions.dashboard.tekton.dev
+spec:
+  group: dashboard.tekton.dev
+  names:
+    kind: Extension
+    plural: extensions
+    categories:
+      - all
+      - tekton-pipelines
+  scope: Namespaced
+  # Opt into the status subresource so metadata.generation
+  # starts to increment
+  subresources:
+    status: {}
+  version: v1alpha1
+---
 # ------------------- Dashboard Role & Role Binding ------------------- #
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
@@ -15,9 +35,15 @@ metadata:
   name: tekton-dashboard-minimal
   namespace: tekton-pipelines
 rules:
+  - apiGroups: ["security.openshift.io"]
+    resources: ["securitycontextconstraints"]
+    verbs: ["use"]
+  - apiGroups: ["extensions", "apps"]
+    resources: ["ingresses"]
+    verbs: ["get", "list", "watch"]
   - apiGroups: [""]
     resources: ["serviceaccounts"]
-    verbs: ["get", "list", "update"]
+    verbs: ["get", "list", "update", "patch"]
   - apiGroups: [""]
     resources: ["pods", "services"]
     verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
@@ -26,7 +52,7 @@ rules:
     verbs: ["get", "list", "watch"]
   - apiGroups: [""]
     resources: ["secrets", "configmaps"]
-    verbs: ["get", "list", "create", "update", "watch"]
+    verbs: ["get", "list", "create", "update", "watch", "delete"]
   - apiGroups: ["extensions", "apps"]
     resources: ["deployments"]
     verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
@@ -38,6 +64,9 @@ rules:
     verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
   - apiGroups: ["tekton.dev"]
     resources: ["tasks/status", "clustertasks/status", "taskruns/status", "pipelines/status", "pipelineruns/status"]
+    verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
+  - apiGroups: ["dashboard.tekton.dev"]
+    resources: ["extensions"]
     verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -132,7 +161,10 @@ spec:
     default: /workspace/git-source
   - name: apply-directory
     description: The directory from which resources are to be applied
-    default: ""
+    default: "."
+  - name: target-namespace
+    description: The namespace in which to create the resources being imported
+    default: tekton-pipelines
   tasks:
   - name: pipeline0-task
     taskRef:
@@ -142,6 +174,8 @@ spec:
       value: ${params.pathToResourceFiles}
     - name: apply-directory
       value: ${params.apply-directory}
+    - name: target-namespace
+      value: ${params.target-namespace}
     resources:
       inputs:
       - name: git-source
@@ -164,7 +198,10 @@ spec:
       default: /workspace/git-source
     - name: apply-directory
       description: The directory from which resources are to be applied
-      default: ""
+      default: "."
+    - name: target-namespace
+      description: The namespace in which to create the resources being imported
+      default: tekton-pipelines
   steps:
   - name: kubectl-apply
     image: lachlanevenson/k8s-kubectl
@@ -174,3 +211,5 @@ spec:
     - apply
     - -f
     - ${inputs.params.pathToResourceFiles}/${inputs.params.apply-directory} 
+    - -n
+    - ${inputs.params.target-namespace}

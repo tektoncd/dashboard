@@ -16,7 +16,10 @@ spec:
     default: /workspace/git-source
   - name: apply-directory
     description: The directory from which resources are to be applied
-    default: ""
+    default: "."
+  - name: target-namespace
+    description: The namespace in which to create the resources being imported
+    default: tekton-pipelines
   tasks:
   - name: pipeline0-task
     taskRef:
@@ -26,6 +29,8 @@ spec:
       value: ${params.pathToResourceFiles}
     - name: apply-directory
       value: ${params.apply-directory}
+    - name: target-namespace
+      value: ${params.target-namespace}
     resources:
       inputs:
       - name: git-source

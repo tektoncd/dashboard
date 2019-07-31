@@ -29,7 +29,9 @@ import {
   getErrorMessage,
   getStatus,
   getStatusIcon,
-  isRunning
+  isRunning,
+  sortRunsByStartTime,
+  urls
 } from '../../utils';
 import { fetchTaskRuns } from '../../actions/taskRuns';
 
@@ -80,6 +82,8 @@ export /* istanbul ignore next */ class TaskRunList extends Component {
       );
     }
 
+    sortRunsByStartTime(taskRuns);
+
     return (
       <StructuredListWrapper border selection>
         <StructuredListHead>
@@ -129,20 +133,31 @@ export /* istanbul ignore next */ class TaskRunList extends Component {
                 key={taskRun.metadata.uid}
               >
                 <StructuredListCell>
-                  <Link to={`/namespaces/${namespace}/taskruns/${name}`}>
+                  <Link
+                    to={urls.taskRuns.byName({ namespace, taskRunName: name })}
+                  >
                     {name}
                   </Link>
                 </StructuredListCell>
                 <StructuredListCell>
-                  <Link
-                    to={
-                      taskRefKind === 'ClusterTask'
-                        ? `/clustertasks/${taskRefName}/runs`
-                        : `/namespaces/${namespace}/tasks/${taskRefName}/runs`
-                    }
-                  >
-                    {taskRefName}
-                  </Link>
+                  {taskRefName && (
+                    <Link
+                      to={
+                        taskRefKind === 'ClusterTask'
+                          ? urls.taskRuns.byClusterTask({
+                              taskType: 'clustertasks',
+                              taskName: taskRefName
+                            })
+                          : urls.taskRuns.byTask({
+                              namespace,
+                              taskType: 'tasks',
+                              taskName: taskRefName
+                            })
+                      }
+                    >
+                      {taskRefName}
+                    </Link>
+                  )}
                 </StructuredListCell>
                 {selectedNamespace === ALL_NAMESPACES && (
                   <StructuredListCell>{namespace}</StructuredListCell>
