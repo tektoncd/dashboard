@@ -290,7 +290,7 @@ class CreatePipelineRun extends React.Component {
           open={open}
           modalHeading="Create PipelineRun"
           modalLabel={this.getPipelineInfo(PIPELINE_REF)}
-          primaryButtonText="Create PipelineRun"
+          primaryButtonText="Create"
           secondaryButtonText="Cancel"
           onRequestSubmit={this.handleSubmit}
           onRequestClose={this.handleClose}
