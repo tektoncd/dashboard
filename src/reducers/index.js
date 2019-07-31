@@ -61,6 +61,12 @@ export function isFetchingServiceAccounts(state) {
   );
 }
 
+export function getServiceAccountsErrorMessage(state) {
+  return serviceAccountSelectors.getServiceAccountsErrorMessage(
+    state.serviceAccounts
+  );
+}
+
 export function isFetchingNamespaces(state) {
   return namespaceSelectors.isFetchingNamespaces(state.namespaces);
 }
