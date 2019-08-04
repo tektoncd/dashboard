@@ -1,0 +1,4 @@
+version 0.0.1
+# Used by test/publish-images.sh
+# If no tagged image is already found for the above version (the word after "version" is extracted and used), that image is then published
+# To do a new release, e.g. for version 0.0.2, one would edit this file and increment the number

@@ -43,3 +43,26 @@ IMAGE=$(ko publish ./cmd/dashboard 2>&1 | grep "Published ${KO_DOCKER_REPO}/dash
 # Tag it
 gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENTIALS}
 gcloud -q container images add-tag ${IMAGE} ${KO_DOCKER_REPO}/dashboard:latest
+
+# Todo publish webhooks extension corresponding with this dashboard release
+# Todo test!
+
+echo "Checking if RELEASE file exists and has been modified (if so we will push a newly tagged image to gcr.io-tekton-releases/dashboard"
+
+if [[ -f RELEASE ]] ; then
+  echo "Found release file containing: $(cat RELEASE)"
+  EXTRACTED_RELEASE_VERSION=$(awk -F'version ' '{print $2}' RELEASE)
+  if [[ -z "$EXTRACTED_RELEASE_VERSION" ]] ; then
+    echo "RELEASE file was found but couldn't extract the version to tag the release as"
+  else
+    echo "Found release file that specifies version ${EXTRACTED_RELEASE_VERSION}"
+    FOUND_IMAGE_TAGS=$(gcloud -q container-images list-tags)
+    if [[ $FOUND_IMAGE_TAGS == *"dashboard:${EXTRACTED_RELEASE_VERSION}"* ]]; then
+      echo "Found existing release tag on gcr.io so not republishing (manual intervention required if you really want to)"
+    else
+      export KO_DOCKER_REPO=gcr.io/tekton-releases
+      IMAGE=$(ko publish ./cmd/dashboard 2>&1 | grep "Published ${KO_DOCKER_REPO}/dashboard" | sed -n -r '/[0-9]+\/[0-9]+\/[0-9]+ [0-9]+:[0-9]+:[0-9]+.*Published/ { s/.*Published //;p}')
+      gcloud -q container images add-tag ${IMAGE} ${KO_DOCKER_REPO}/dashboard:${EXTRACTED_RELEASE_VERSION}
+    fi
+  fi
+fi
