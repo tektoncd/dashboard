@@ -43,12 +43,14 @@ import {
   Tasks
 } from '..';
 
+import { defineMessages, IntlProvider } from 'react-intl';
 import Header from '../../components/Header';
 import Breadcrumbs from '../../components/Breadcrumbs';
 import { fetchExtensions } from '../../actions/extensions';
 import { fetchNamespaces, selectNamespace } from '../../actions/namespaces';
-import { getExtensions, getSelectedNamespace } from '../../reducers';
+import { getExtensions, getLocale, getSelectedNamespace } from '../../reducers';
 import { paths, urls } from '../../utils';
+import { messages } from '../../constants';
 
 import '../../components/App/App.scss';
 
@@ -64,138 +66,159 @@ export /* istanbul ignore next */ class App extends Component {
 
   render() {
     const { extensions } = this.props;
-
+    const lang = messages[this.props.lang] ? this.props.lang : 'en';
     return (
-      <Router>
-        <>
-          <Header>
-            <Route path="*" component={Breadcrumbs} />
-          </Header>
-          <Route path={paths.byNamespace({ path: '/*' })}>
-            {props => <SideNav {...props} />}
-          </Route>
+      <IntlProvider
+        locale={lang}
+        defaultLocale="en"
+        messages={defineMessages(messages[lang])}
+      >
+        <Router>
+          <>
+            <Header>
+              <Route path="*" component={Breadcrumbs} />
+            </Header>
+            <Route path={paths.byNamespace({ path: '/*' })}>
+              {props => <SideNav {...props} />}
+            </Route>
 
-          <Content>
-            <Switch>
-              <Route path={paths.pipelines.all()} exact component={Pipelines} />
-              <Route
-                path={paths.pipelines.byNamespace()}
-                exact
-                component={Pipelines}
-              />
-              <Route path={paths.secrets.all()} exact component={Secrets} />
-              <Route path={paths.tasks.all()} exact component={Tasks} />
-              <Route path={paths.tasks.byNamespace()} exact component={Tasks} />
-              <Route
-                path={paths.clusterTasks.all()}
-                exact
-                component={ClusterTasks}
-              />
-              <Route path={paths.pipelineRuns.all()} component={PipelineRuns} />
-              <Route
-                path={paths.pipelineRuns.byNamespace()}
-                component={PipelineRuns}
-              />
-              <Route
-                path={paths.taskRuns.byNamespace()}
-                exact
-                component={TaskRunList}
-              />
-              <Route path={paths.taskRuns.byName()} exact component={TaskRun} />
-              <Route
-                path={paths.pipelineRuns.byPipeline()}
-                exact
-                component={PipelineRuns}
-              />
-              <Route path={paths.taskRuns.all()} component={TaskRunList} />
-              <Route
-                path={paths.taskRuns.byTask()}
-                exact
-                component={TaskRuns}
-              />
-              <Route
-                path={paths.taskRuns.byClusterTask()}
-                exact
-                component={TaskRuns}
-              />
-              <Route
-                path={paths.pipelineRuns.byName()}
-                component={PipelineRun}
-              />
-              <Route
-                path={paths.pipelineResources.all()}
-                exact
-                component={PipelineResources}
-              />
-              <Route
-                path={paths.pipelineResources.byNamespace()}
-                exact
-                component={PipelineResources}
-              />
-              <Route
-                path={paths.pipelineResources.byName()}
-                exact
-                component={PipelineResource}
-              />
-              <Route
-                path={paths.importResources()}
-                component={ImportResources}
-              />
-              <Route
-                path={paths.extensions.all()}
-                exact
-                component={Extensions}
-              />
-              {extensions
-                .filter(extension => !extension.type)
-                .map(({ displayName, name, source }) => (
-                  <Route
-                    key={name}
-                    path={paths.extensions.byName({ name })}
-                    render={({ match }) => (
-                      <Extension
-                        displayName={displayName}
-                        match={match}
-                        source={source}
-                      />
-                    )}
-                  />
-                ))}
-              <Route
-                path={paths.kubernetesResources.byNamespace()}
-                exact
-                component={ResourceList}
-              />
-              <Route
-                path={paths.kubernetesResources.byName()}
-                exact
-                component={CustomResourceDefinition}
-              />
-              <Route
-                path={paths.kubernetesResources.cluster()}
-                exact
-                component={CustomResourceDefinition}
-              />
-              <Route
-                path={paths.kubernetesResources.all()}
-                exact
-                component={ResourceList}
-              />
-              <Route
-                path={paths.rawCRD.byNamespace()}
-                exact
-                component={CustomResourceDefinition}
-              />
-              <Route
-                path={paths.rawCRD.cluster()}
-                exact
-                component={CustomResourceDefinition}
-              />
-              <Redirect to={urls.pipelines.all()} />
-            </Switch>
-          </Content>
-        </>
-      </Router>
+            <Content>
+              <Switch>
+                <Route
+                  path={paths.pipelines.all()}
+                  exact
+                  component={Pipelines}
+                />
+                <Route
+                  path={paths.pipelines.byNamespace()}
+                  exact
+                  component={Pipelines}
+                />
+                <Route path={paths.secrets.all()} exact component={Secrets} />
+                <Route path={paths.tasks.all()} exact component={Tasks} />
+                <Route
+                  path={paths.tasks.byNamespace()}
+                  exact
+                  component={Tasks}
+                />
+                <Route
+                  path={paths.clusterTasks.all()}
+                  exact
+                  component={ClusterTasks}
+                />
+                <Route
+                  path={paths.pipelineRuns.all()}
+                  component={PipelineRuns}
+                />
+                <Route
+                  path={paths.pipelineRuns.byNamespace()}
+                  component={PipelineRuns}
+                />
+                <Route
+                  path={paths.taskRuns.byNamespace()}
+                  exact
+                  component={TaskRunList}
+                />
+                <Route
+                  path={paths.taskRuns.byName()}
+                  exact
+                  component={TaskRun}
+                />
+                <Route
+                  path={paths.pipelineRuns.byPipeline()}
+                  exact
+                  component={PipelineRuns}
+                />
+                <Route path={paths.taskRuns.all()} component={TaskRunList} />
+                <Route
+                  path={paths.taskRuns.byTask()}
+                  exact
+                  component={TaskRuns}
+                />
+                <Route
+                  path={paths.taskRuns.byClusterTask()}
+                  exact
+                  component={TaskRuns}
+                />
+                <Route
+                  path={paths.pipelineRuns.byName()}
+                  component={PipelineRun}
+                />
+                <Route
+                  path={paths.pipelineResources.all()}
+                  exact
+                  component={PipelineResources}
+                />
+                <Route
+                  path={paths.pipelineResources.byNamespace()}
+                  exact
+                  component={PipelineResources}
+                />
+                <Route
+                  path={paths.pipelineResources.byName()}
+                  exact
+                  component={PipelineResource}
+                />
+                <Route
+                  path={paths.importResources()}
+                  component={ImportResources}
+                />
+                <Route
+                  path={paths.extensions.all()}
+                  exact
+                  component={Extensions}
+                />
+                {extensions
+                  .filter(extension => !extension.type)
+                  .map(({ displayName, name, source }) => (
+                    <Route
+                      key={name}
+                      path={paths.extensions.byName({ name })}
+                      render={({ match }) => (
+                        <Extension
+                          displayName={displayName}
+                          match={match}
+                          source={source}
+                        />
+                      )}
+                    />
+                  ))}
+                <Route
+                  path={paths.kubernetesResources.byNamespace()}
+                  exact
+                  component={ResourceList}
+                />
+                <Route
+                  path={paths.kubernetesResources.byName()}
+                  exact
+                  component={CustomResourceDefinition}
+                />
+                <Route
+                  path={paths.kubernetesResources.cluster()}
+                  exact
+                  component={CustomResourceDefinition}
+                />
+                <Route
+                  path={paths.kubernetesResources.all()}
+                  exact
+                  component={ResourceList}
+                />
+                <Route
+                  path={paths.rawCRD.byNamespace()}
+                  exact
+                  component={CustomResourceDefinition}
+                />
+                <Route
+                  path={paths.rawCRD.cluster()}
+                  exact
+                  component={CustomResourceDefinition}
+                />
+                <Redirect to={urls.pipelines.all()} />
+              </Switch>
+            </Content>
+          </>
+        </Router>
+      </IntlProvider>
     );
   }
 }
@@ -208,7 +231,8 @@ App.defaultProps = {
 /* istanbul ignore next */
 const mapStateToProps = state => ({
   extensions: getExtensions(state),
-  namespace: getSelectedNamespace(state)
+  namespace: getSelectedNamespace(state),
+  lang: getLocale(state)
 });
 
 const mapDispatchToProps = {

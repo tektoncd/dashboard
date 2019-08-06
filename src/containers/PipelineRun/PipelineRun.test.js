@@ -16,10 +16,18 @@ import { waitForElement } from 'react-testing-library';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
+import { createIntl } from 'react-intl';
 import { PipelineRunContainer } from './PipelineRun';
 import { renderWithRouter } from '../../utils/test';
+import { messages } from '../../constants';
 
 beforeEach(jest.resetAllMocks);
+
+const intl = createIntl({
+  locale: 'en',
+  defaultLocale: 'en',
+  messages: messages.en
+});
 
 it('PipelineRunContainer renders', async () => {
   const pipelineRunName = 'bar';
@@ -99,6 +107,7 @@ it('PipelineRunContainer handles error state', async () => {
   const { getByText } = renderWithRouter(
     <Provider store={testStore}>
       <PipelineRunContainer
+        intl={intl}
         match={match}
         error="Error"
         fetchTaskRuns={() => Promise.resolve()}

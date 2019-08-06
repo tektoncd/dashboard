@@ -14,6 +14,7 @@ limitations under the License.
 import React, { Component } from 'react';
 import { SkeletonText } from 'carbon-components-react';
 import { FixedSizeList as List } from 'react-window';
+import { injectIntl } from 'react-intl';
 import Ansi from 'ansi-to-react';
 
 import './Log.scss';
@@ -26,7 +27,15 @@ const LogLine = ({ data, index, style }) => (
 
 class Log extends Component {
   getLogList() {
-    const { logs, status } = this.props;
+    const { status, intl } = this.props;
+    const {
+      logs = [
+        intl.formatMessage({
+          id: 'dashboard.pipelineRun.logEmpty',
+          defaultMessage: 'No log available'
+        })
+      ]
+    } = this.props;
 
     const itemSize = 15; // This should be kept in sync with the line-height in SCSS
     const defaultHeight = 800;
@@ -48,7 +57,7 @@ class Log extends Component {
   }
 
   logTrailer() {
-    const { status, trailers } = this.props;
+    const { status, trailers, intl } = this.props;
     const trailer = trailers[status];
     if (!trailer) {
       return null;
@@ -56,7 +65,7 @@ class Log extends Component {
 
     return (
       <div className="log-trailer" data-status={status}>
-        {trailer}
+        {intl.formatMessage({ id: trailer })}
       </div>
     );
   }
@@ -80,11 +89,10 @@ class Log extends Component {
 }
 
 Log.defaultProps = {
-  logs: ['No log available'],
   trailers: {
-    Completed: 'Step completed',
-    Error: 'Step failed'
+    Completed: 'dashboard.pipelineRun.stepCompleted',
+    Error: 'dashboard.pipelineRun.stepFailed'
   }
 };
 
-export default Log;
+export default injectIntl(Log);

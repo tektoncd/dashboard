@@ -12,25 +12,25 @@ limitations under the License.
 */
 
 import React from 'react';
-import { render } from 'react-testing-library';
 import Log from './Log';
+import { renderWithIntl } from '../../utils/test';
 
 it('Log renders default content', () => {
-  const { queryByText } = render(<Log />);
+  const { queryByText } = renderWithIntl(<Log />);
   expect(queryByText(/No log available/i)).toBeTruthy();
 });
 
 it('Log renders the provided content', () => {
-  const { queryByText } = render(<Log logs={['testing']} />);
+  const { queryByText } = renderWithIntl(<Log logs={['testing']} />);
   expect(queryByText(/testing/i)).toBeTruthy();
 });
 
 it('Log renders trailer', () => {
-  const { queryByText } = render(<Log status="Completed" />);
+  const { queryByText } = renderWithIntl(<Log status="Completed" />);
   expect(queryByText(/step completed/i)).toBeTruthy();
 });
 
 it('Log renders loading state', () => {
-  const { queryByText } = render(<Log loading logs={['testing']} />);
+  const { queryByText } = renderWithIntl(<Log loading logs={['testing']} />);
   expect(queryByText(/testing/i)).toBeFalsy();
 });

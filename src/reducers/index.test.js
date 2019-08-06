@@ -17,6 +17,7 @@ import {
   getClusterTasksErrorMessage,
   getExtensions,
   getExtensionsErrorMessage,
+  getLocale,
   getNamespaces,
   getPipelineResource,
   getPipelineResources,
@@ -49,6 +50,7 @@ import {
 } from '.';
 import * as clusterTaskSelectors from './clusterTasks';
 import * as extensionSelectors from './extensions';
+import * as localeSelectors from './locale';
 import * as namespaceSelectors from './namespaces';
 import * as pipelineResourcesSelectors from './pipelineResources';
 import * as pipelineSelectors from './pipelines';
@@ -58,6 +60,7 @@ import * as serviceAccountSelectors from './serviceAccounts';
 import * as taskSelectors from './tasks';
 import * as taskRunsSelectors from './taskRuns';
 
+const locale = 'it';
 const namespace = 'default';
 const extension = { displayName: 'extension' };
 const pipelineResources = [{ fake: 'pipelineResource' }];
@@ -87,8 +90,15 @@ const state = {
   secrets,
   serviceAccounts,
   tasks,
-  clusterTasks
+  clusterTasks,
+  locale: { selected: locale }
 };
+
+it('getLocale', () => {
+  jest.spyOn(localeSelectors, 'getLocale').mockImplementation(() => locale);
+  expect(getLocale(state)).toEqual(locale);
+  expect(localeSelectors.getLocale).toHaveBeenCalledWith(state.locale);
+});
 
 it('getSelectedNamespace', () => {
   jest

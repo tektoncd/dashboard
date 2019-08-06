@@ -12,49 +12,52 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, render } from 'react-testing-library';
+import { fireEvent } from 'react-testing-library';
 import Task from './Task';
+import { renderWithIntl } from '../../utils/test';
 
 const props = {
   pipelineTaskName: 'A Task'
 };
 
 it('Task renders default content', () => {
-  const { queryByText } = render(<Task {...props} />);
+  const { queryByText } = renderWithIntl(<Task {...props} />);
   expect(queryByText(/a task/i)).toBeTruthy();
 });
 
 it('Task does not render steps in collapsed state', () => {
   const steps = [{ stepName: 'a step' }];
-  const { queryByText } = render(<Task {...props} steps={steps} />);
+  const { queryByText } = renderWithIntl(<Task {...props} steps={steps} />);
   expect(queryByText(/a step/i)).toBeFalsy();
 });
 
 it('Task renders steps in expanded state', () => {
   const steps = [{ id: 'step', stepName: 'a step' }];
-  const { queryByText } = render(<Task {...props} expanded steps={steps} />);
+  const { queryByText } = renderWithIntl(
+    <Task {...props} expanded steps={steps} />
+  );
   expect(queryByText(/a step/i)).toBeTruthy();
 });
 
 it('Task renders success state', () => {
-  render(<Task {...props} succeeded="True" />);
+  renderWithIntl(<Task {...props} succeeded="True" />);
 });
 
 it('Task renders failure state', () => {
-  render(<Task {...props} succeeded="False" />);
+  renderWithIntl(<Task {...props} succeeded="False" />);
 });
 
 it('Task renders unknown state', () => {
-  render(<Task {...props} succeeded="Unknown" />);
+  renderWithIntl(<Task {...props} succeeded="Unknown" />);
 });
 
 it('Task renders unknown state', () => {
-  render(<Task {...props} succeeded="Unknown" reason="Pending" />);
+  renderWithIntl(<Task {...props} succeeded="Unknown" reason="Pending" />);
 });
 
 it('Task handles click event', () => {
   const onSelect = jest.fn();
-  const { getByText } = render(
+  const { getByText } = renderWithIntl(
     <Task pipelineTaskName="build" onSelect={onSelect} />
   );
   fireEvent.click(getByText(/build/i));
@@ -67,7 +70,7 @@ it('Task handle click event on Step', () => {
     .mockImplementation(event => event.preventDefault());
   const onSelect = jest.fn();
   const steps = [{ id: 'build', stepName: 'build', onSelect: onStepSelect }];
-  const { getByText } = render(
+  const { getByText } = renderWithIntl(
     <Task
       expanded
       onSelect={onSelect}

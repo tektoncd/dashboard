@@ -12,8 +12,9 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, render } from 'react-testing-library';
+import { fireEvent } from 'react-testing-library';
 import TaskTree from './TaskTree';
+import { renderWithIntl } from '../../utils/test';
 
 const props = {
   taskRuns: [
@@ -29,19 +30,21 @@ const props = {
 };
 
 it('TaskTree renders', () => {
-  render(<TaskTree {...props} />);
+  renderWithIntl(<TaskTree {...props} />);
 });
 
 it('TaskTree handles click event on Task', () => {
   const onSelect = jest.fn();
-  const { getByText } = render(<TaskTree {...props} onSelect={onSelect} />);
+  const { getByText } = renderWithIntl(
+    <TaskTree {...props} onSelect={onSelect} />
+  );
   fireEvent.click(getByText(/a task/i));
   expect(onSelect).toHaveBeenCalledTimes(1);
 });
 
 it('TaskTree handles click event on Step', () => {
   const onSelect = jest.fn();
-  const { getByText } = render(
+  const { getByText } = renderWithIntl(
     <TaskTree {...props} selectedTaskId="task" onSelect={onSelect} />
   );
   fireEvent.click(getByText(/build/i));

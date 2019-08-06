@@ -9,6 +9,10 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.mjs$/,
+        type: 'javascript/auto'
+      },
+      {
         test: /\.js$/,
         include: path.resolve(__dirname, 'src'),
         use: [

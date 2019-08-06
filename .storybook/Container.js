@@ -14,20 +14,24 @@ limitations under the License.
 import React from 'react';
 
 import './Container.scss';
+import { IntlProvider } from "react-intl";
+import { messages } from "../src/constants";
 
 export default function Container({ story }) {
   return (
-    <div
-      data-floating-menu-container
-      role="main"
-      style={{
-        padding: '3em',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center'
-      }}
-    >
-      {story()}
-    </div>
+    <IntlProvider locale='en' defaultLocale='en' messages={messages.en}>
+      <div
+        data-floating-menu-container
+        role="main"
+        style={{
+          padding: '3em',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center'
+        }}
+      >
+        {story()}
+      </div>
+    </IntlProvider>
   );
 }

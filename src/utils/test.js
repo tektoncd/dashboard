@@ -15,6 +15,8 @@ import React from 'react';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import { render } from 'react-testing-library'; // eslint-disable-line import/no-extraneous-dependencies
+import { IntlProvider } from 'react-intl';
+import { messages } from '../constants';
 
 export function renderWithRouter(
   ui,
@@ -25,10 +27,29 @@ export function renderWithRouter(
   } = {}
 ) {
   return {
-    ...render(<Router history={history}>{ui}</Router>, { container }),
+    ...render(
+      <Router history={history}>
+        <IntlProvider locale="en" defaultLocale="en" messages={messages.en}>
+          {ui}
+        </IntlProvider>
+      </Router>,
+      {
+        container
+      }
+    ),
     // adding `history` to the returned utilities to allow us
     // to reference it in our tests (just try to avoid using
     // this to test implementation details).
     history
+  };
+}
+
+export function renderWithIntl(ui) {
+  return {
+    ...render(
+      <IntlProvider locale="en" defaultLocale="en" messages={messages.en}>
+        {ui}
+      </IntlProvider>
+    )
   };
 }

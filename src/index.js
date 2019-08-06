@@ -18,6 +18,7 @@ import { Provider } from 'react-redux';
 import './utils/polyfills';
 import { configureStore } from './store';
 import { getWebSocketURL } from './api';
+import { setLocale } from './actions/locale';
 
 import App from './containers/App';
 
@@ -27,6 +28,8 @@ function closeSocket() {
 }
 
 const store = configureStore({ webSocket });
+
+store.dispatch(setLocale(navigator.language));
 
 ReactDOM.render(
   <Provider store={store}>

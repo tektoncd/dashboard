@@ -15,20 +15,28 @@ import React from 'react';
 import jsYaml from 'js-yaml';
 
 import './StepStatus.scss';
+import { injectIntl } from 'react-intl';
 
-const StepStatus = ({ status }) => {
-  const yaml = jsYaml.dump(status);
-
+const StepStatus = ({ intl, status }) => {
+  const yaml = jsYaml.dump(
+    status ||
+      intl.formatMessage({
+        id: 'dashboard.step.statusNotAvailable',
+        defaultMessage: 'No status available'
+      })
+  );
   return (
     <div className="step-status">
-      <div className="title">Container status:</div>
+      <div className="title">
+        {intl.formatMessage({
+          id: 'dashboard.step.containerStatus',
+          defaultMessage: 'Container status'
+        })}
+        :
+      </div>
       <pre>{yaml}</pre>
     </div>
   );
 };
 
-StepStatus.defaultProps = {
-  status: 'No status available'
-};
-
-export default StepStatus;
+export default injectIntl(StepStatus);
