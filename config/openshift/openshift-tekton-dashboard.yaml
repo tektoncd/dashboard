@@ -1,0 +1,256 @@
+# ------------------- Dashboard Service Account ------------------- #
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: tekton-dashboard
+  name: tekton-dashboard
+  namespace: tekton-pipelines
+  annotations:
+    serviceaccounts.openshift.io/oauth-redirectreference.primary: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"tekton-dashboard"}}'
+---
+# ------------------- Extension Resource Definition ------------------- #
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: extensions.dashboard.tekton.dev
+spec:
+  group: dashboard.tekton.dev
+  names:
+    kind: Extension
+    plural: extensions
+    categories:
+      - all
+      - tekton-pipelines
+  scope: Namespaced
+  # Opt into the status subresource so metadata.generation
+  # starts to increment
+  subresources:
+    status: {}
+  version: v1alpha1
+---
+# ------------------- Dashboard Role & Role Binding ------------------- #
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: tekton-dashboard-minimal
+  namespace: tekton-pipelines
+rules:
+  - apiGroups: ["security.openshift.io"]
+    resources: ["securitycontextconstraints"]
+    verbs: ["use"]
+  - apiGroups: ["extensions", "apps"]
+    resources: ["ingresses"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["serviceaccounts"]
+    verbs: ["get", "list", "update", "patch"]
+  - apiGroups: [""]
+    resources: ["pods", "services"]
+    verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
+  - apiGroups: [""]
+    resources: ["pods/log", "namespaces", "events"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["secrets", "configmaps"]
+    verbs: ["get", "list", "create", "update", "watch", "delete"]
+  - apiGroups: ["extensions", "apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
+  - apiGroups: ["tekton.dev"]
+    resources: ["tasks", "clustertasks", "taskruns", "pipelines", "pipelineruns", "pipelineresources"]
+    verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
+  - apiGroups: ["tekton.dev"]
+    resources: ["taskruns/finalizers", "pipelineruns/finalizers"]
+    verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
+  - apiGroups: ["tekton.dev"]
+    resources: ["tasks/status", "clustertasks/status", "taskruns/status", "pipelines/status", "pipelineruns/status"]
+    verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
+  - apiGroups: ["dashboard.tekton.dev"]
+    resources: ["extensions"]
+    verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
+---
+
+# ------------------- Dashboard Role & Role Binding ------------------- #
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: tekton-dashboard-minimal
+subjects:
+  - kind: ServiceAccount
+    name: tekton-dashboard
+    namespace: tekton-pipelines
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: tekton-dashboard-minimal
+---
+# ------------------- Dashboard Deployment ------------------- #
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tekton-dashboard
+  namespace: tekton-pipelines
+  labels:
+    app: tekton-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tekton-dashboard
+  template:
+    metadata:
+      name: tekton-dashboard
+      labels:
+        app: tekton-dashboard
+    spec:
+      containers:
+      - name: oauth-proxy
+        image: openshift/oauth-proxy:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8443
+          name: public
+        args:
+        - --https-address=:8443
+        - --provider=openshift
+        - --openshift-service-account=tekton-dashboard
+        - --upstream=http://localhost:9097
+        - --tls-cert=/etc/tls/private/tls.crt
+        - --tls-key=/etc/tls/private/tls.key
+        - --cookie-secret=SECRET
+        volumeMounts:
+        - mountPath: /etc/tls/private
+          name: proxy-tls
+      - name: tekton-dashboard
+        image: gcr.io/tekton-nightly/dashboard:latest
+        ports:
+        - containerPort: 9097
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 9097
+        readinessProbe:
+          httpGet:
+            path: /readiness
+            port: 9097
+        resources:
+        env:
+        - name: PORT
+          value: "9097"
+        - name: WEB_RESOURCES_DIR
+          value: /var/run/ko/web
+        - name: PIPELINE_RUN_SERVICE_ACCOUNT
+          value: ""
+        - name: INSTALLED_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+      serviceAccountName: tekton-dashboard
+      volumes:
+      - name: proxy-tls
+        secret:
+          secretName: proxy-tls
+---
+# ------------------- Dashboard Route ------------------- #
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: tekton-dashboard
+  namespace: tekton-pipelines
+spec:
+  to:
+    kind: Service
+    name: tekton-dashboard
+  tls:
+    termination: Reencrypt
+    insecureEdgeTerminationPolicy: Redirect
+---
+# ------------------- Dashboard Service ------------------- #
+kind: Service
+apiVersion: v1
+metadata:
+  name: tekton-dashboard
+  namespace: tekton-pipelines
+  labels:
+    app: tekton-dashboard
+  annotations:
+    service.alpha.openshift.io/serving-cert-secret-name: proxy-tls
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 443
+      targetPort: 8443
+  selector:
+    app: tekton-dashboard
+---
+# ------------------- Pipeline0 --------------------------- #
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: pipeline0
+  namespace: tekton-pipelines
+spec:
+  resources:
+  - name: git-source
+    type: git
+  params:
+  - name: pathToResourceFiles
+    description: The path to the resource files to apply
+    default: /workspace/git-source
+  - name: apply-directory
+    description: The directory from which resources are to be applied
+    default: "."
+  - name: target-namespace
+    description: The namespace in which to create the resources being imported
+    default: tekton-pipelines
+  tasks:
+  - name: pipeline0-task
+    taskRef:
+      name: pipeline0-task
+    params:
+    - name: pathToResourceFiles
+      value: ${params.pathToResourceFiles}
+    - name: apply-directory
+      value: ${params.apply-directory}
+    - name: target-namespace
+      value: ${params.target-namespace}
+    resources:
+      inputs:
+      - name: git-source
+        resource: git-source
+---
+# ------------------- Pipeline0 task ---------------------- #
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: pipeline0-task
+  namespace: tekton-pipelines
+spec:
+  inputs:
+    resources:
+    - name: git-source
+      type: git
+    params:
+    - name: pathToResourceFiles
+      description: The path to the resource files to apply
+      default: /workspace/git-source
+    - name: apply-directory
+      description: The directory from which resources are to be applied
+      default: "."
+    - name: target-namespace
+      description: The namespace in which to create the resources being imported
+      default: tekton-pipelines
+  steps:
+  - name: kubectl-apply
+    image: lachlanevenson/k8s-kubectl
+    command:
+    - kubectl
+    args:
+    - apply
+    - -f
+    - ${inputs.params.pathToResourceFiles}/${inputs.params.apply-directory} 
+    - -n
+    - ${inputs.params.target-namespace}
