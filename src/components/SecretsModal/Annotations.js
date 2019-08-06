@@ -45,7 +45,7 @@ const Annotations = props => {
           labelText=""
           aria-label={`Annotation Value#${index}. This is the url for the given Tekton resource.`}
           value={annotation.value}
-          placeholder="https://domain.com"
+          placeholder={annotation.placeholder}
           onChange={handleChange}
           invalid={invalidFields.indexOf(`annotation-value${index}`) > -1}
           autoComplete="off"
