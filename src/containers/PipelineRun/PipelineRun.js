@@ -21,6 +21,7 @@ import {
   ToastNotification
 } from 'carbon-components-react';
 
+import { injectIntl } from 'react-intl';
 import {
   getClusterTasks,
   getPipelineRun,
@@ -168,7 +169,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   }
 
   render() {
-    const { match, error } = this.props;
+    const { match, error, intl } = this.props;
     const { pipelineRunName } = match.params;
 
     const {
@@ -188,7 +189,10 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           kind="error"
           hideCloseButton
           lowContrast
-          title="Error loading PipelineRun"
+          title={intl.formatMessage({
+            id: 'dashboard.pipelineRun.error',
+            defaultMessage: 'Error loading PipelineRun'
+          })}
           subtitle={getErrorMessage(error)}
         />
       );
@@ -352,4 +356,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(PipelineRunContainer);
+)(injectIntl(PipelineRunContainer));

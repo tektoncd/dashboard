@@ -17,6 +17,9 @@ module.exports = async ({ config, mode }) => {
   // `mode` has a value of 'DEVELOPMENT' or 'PRODUCTION'
 
   config.module.rules.push({
+    test: /\.mjs$/,
+    type: 'javascript/auto'
+  },{
     test: /\.scss$/,
     loaders: ['style-loader', 'css-loader', 'sass-loader'],
     include: path.resolve(__dirname, '../'),

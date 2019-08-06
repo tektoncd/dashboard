@@ -12,34 +12,34 @@ limitations under the License.
 */
 
 import React from 'react';
-import { render } from 'react-testing-library';
 import StepDetailsHeader from './StepDetailsHeader';
+import { renderWithIntl } from '../../utils/test';
 
 const props = {
   stepName: 'test name'
 };
 
 it('StepDetailsHeader renders the provided content', () => {
-  const { queryByText } = render(<StepDetailsHeader {...props} />);
+  const { queryByText } = renderWithIntl(<StepDetailsHeader {...props} />);
   expect(queryByText(/test name/i)).toBeTruthy();
 });
 
 it('StepDetailsHeader renders the running state', () => {
-  const { queryByText } = render(
+  const { queryByText } = renderWithIntl(
     <StepDetailsHeader {...props} status="running" />
   );
   expect(queryByText(/running/i)).toBeTruthy();
 });
 
 it('StepDetailsHeader renders the completed state', () => {
-  const { queryByText } = render(
+  const { queryByText } = renderWithIntl(
     <StepDetailsHeader {...props} status="terminated" reason="Completed" />
   );
   expect(queryByText(/completed/i)).toBeTruthy();
 });
 
 it('StepDetailsHeader renders the failed state', () => {
-  const { queryByText } = render(
+  const { queryByText } = renderWithIntl(
     <StepDetailsHeader {...props} status="terminated" />
   );
   expect(queryByText(/failed/i)).toBeTruthy();
@@ -58,7 +58,7 @@ it('StepDetailsHeader renders the pending state', () => {
     }
   };
 
-  const { queryByText } = render(
+  const { queryByText } = renderWithIntl(
     <StepDetailsHeader {...props} taskRun={taskRun} />
   );
   expect(queryByText(/waiting/i)).toBeTruthy();

@@ -12,50 +12,55 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, render } from 'react-testing-library';
+import { fireEvent } from 'react-testing-library';
 import Step from './Step';
+import { renderWithIntl } from '../../utils/test';
 
 it('Step renders default content', () => {
-  const { queryByText } = render(<Step />);
+  const { queryByText } = renderWithIntl(<Step />);
 
   expect(queryByText(/Unknown/i)).toBeTruthy();
 });
 
 it('Step renders the provided content', () => {
   const stepName = 'build';
-  const { queryByText } = render(<Step stepName={stepName} />);
+  const { queryByText } = renderWithIntl(<Step stepName={stepName} />);
   expect(queryByText(/build/i)).toBeTruthy();
 });
 
 it('Step renders selected state', () => {
-  render(<Step selected />);
+  renderWithIntl(<Step selected />);
 });
 
 it('Step renders waiting state', () => {
-  const { queryByText } = render(<Step status="waiting" />);
+  const { queryByText } = renderWithIntl(<Step status="waiting" />);
   expect(queryByText(/waiting/i)).toBeTruthy();
 });
 
 it('Step renders running state', () => {
-  const { queryByText } = render(<Step status="running" />);
+  const { queryByText } = renderWithIntl(<Step status="running" />);
   expect(queryByText(/running/i)).toBeTruthy();
 });
 
 it('Step renders completed state', () => {
-  const { queryByText } = render(
+  const { queryByText } = renderWithIntl(
     <Step status="terminated" reason="Completed" />
   );
-  expect(queryByText(/OK/i)).toBeTruthy();
+  expect(queryByText(/Completed/i)).toBeTruthy();
 });
 
 it('Step renders error state', () => {
-  const { queryByText } = render(<Step status="terminated" reason="Error" />);
+  const { queryByText } = renderWithIntl(
+    <Step status="terminated" reason="Error" />
+  );
   expect(queryByText(/Failed/i)).toBeTruthy();
 });
 
 it('Step handles click event', () => {
   const onSelect = jest.fn();
-  const { getByText } = render(<Step stepName="build" onSelect={onSelect} />);
+  const { getByText } = renderWithIntl(
+    <Step stepName="build" onSelect={onSelect} />
+  );
   fireEvent.click(getByText(/build/i));
   expect(onSelect).toHaveBeenCalledTimes(1);
 });

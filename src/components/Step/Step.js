@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
+import { injectIntl } from 'react-intl';
 import CheckmarkFilled from '@carbon/icons-react/lib/checkmark--filled/16';
 import ChevronRight from '@carbon/icons-react/lib/chevron--right/16';
 import CloseFilled from '@carbon/icons-react/lib/close--filled/16';
@@ -48,24 +49,24 @@ class Step extends Component {
   }
 
   statusLabel() {
-    const { labels, reason, status } = this.props;
+    const { intl, labels, reason, status } = this.props;
     const { running, succeeded, failed, waiting, notRun } = labels;
 
     if (status === 'running') {
-      return running;
+      return intl.formatMessage(running);
     }
 
     if (status === 'terminated') {
       if (reason === 'Completed') {
-        return succeeded;
+        return intl.formatMessage(succeeded);
       }
-      return failed;
+      return intl.formatMessage(failed);
     }
     if (status === 'waiting') {
-      return waiting;
+      return intl.formatMessage(waiting);
     }
     // task is done, step did not run
-    return notRun;
+    return intl.formatMessage(notRun);
   }
 
   render() {
@@ -94,13 +95,25 @@ class Step extends Component {
 
 Step.defaultProps = {
   labels: {
-    failed: 'Failed',
-    notRun: 'Not run',
-    running: 'Running',
-    succeeded: 'OK',
-    waiting: 'Waiting'
+    failed: { id: 'dashboard.taskRun.status.failed', defaultMessage: 'Failed' },
+    notRun: {
+      id: 'dashboard.taskRun.status.notRun',
+      defaultMessage: 'Not run'
+    },
+    running: {
+      id: 'dashboard.taskRun.status.running',
+      defaultMessage: 'Running'
+    },
+    succeeded: {
+      id: 'dashboard.taskRun.status.succeeded',
+      defaultMessage: 'Completed'
+    },
+    waiting: {
+      id: 'dashboard.taskRun.status.waiting',
+      defaultMessage: 'Waiting'
+    }
   },
   stepName: 'unknown'
 };
 
-export default Step;
+export default injectIntl(Step);

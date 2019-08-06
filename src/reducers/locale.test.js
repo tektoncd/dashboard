@@ -11,19 +11,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
-import StepStatus from './StepStatus';
-import { renderWithIntl } from '../../utils/test';
+import localeReducer, * as selectors from './locale';
 
-it('StepStatus renders default content', () => {
-  const { queryByText } = renderWithIntl(<StepStatus />);
-
-  expect(queryByText(/Container status:/i)).toBeTruthy();
-  expect(queryByText(/No status available/i)).toBeTruthy();
+it('handles init or unknown actions', () => {
+  expect(localeReducer(undefined, { type: 'does_not_exist' })).toEqual({
+    selected: 'en'
+  });
 });
 
-it('StepStatus renders the provided content', () => {
-  const { queryByText } = renderWithIntl(<StepStatus status="testing" />);
+it('LOCALE_SET', () => {
+  const selectedLocale = 'it';
+  const action = {
+    type: 'LOCALE_SET',
+    locale: selectedLocale
+  };
 
-  expect(queryByText(/testing/i)).toBeTruthy();
+  const state = localeReducer({}, action);
+  expect(selectors.getLocale(state)).toEqual(selectedLocale);
 });

@@ -19,12 +19,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import jsYaml from 'js-yaml';
 
+import { FormattedMessage, injectIntl } from 'react-intl';
 import ResourceTable from '../ResourceTable';
 import { urls } from '../../utils';
 
 import './StepDefinition.scss';
 
-const resourceTable = (title, namespace, resources) => {
+const resourceTable = (title, namespace, resources, intl) => {
   return (
     <ResourceTable
       title={title}
@@ -46,18 +47,42 @@ const resourceTable = (title, namespace, resources) => {
           )
       }))}
       headers={[
-        { key: 'name', header: 'Name' },
-        { key: 'value', header: 'Value' }
+        {
+          key: 'name',
+          header: intl.formatMessage({
+            id: 'dashboard.tableHeader.name',
+            defaultMessage: 'Name'
+          })
+        },
+        {
+          key: 'value',
+          header: intl.formatMessage({
+            id: 'dashboard.tableHeader.value',
+            defaultMessage: 'Value'
+          })
+        }
       ]}
     />
   );
 };
 
-const StepDefinition = ({ definition, taskRun }) => {
-  const yaml = jsYaml.dump(definition);
+const StepDefinition = ({ definition, intl, taskRun }) => {
+  const yaml = jsYaml.dump(
+    definition ||
+      intl.formatMessage({
+        id: 'dashboard.step.definitionNotAvailable',
+        defaultMessage: 'description: step definition not available'
+      })
+  );
   return (
     <div className="step-definition">
-      <div className="title">Step definition:</div>
+      <div className="title">
+        <FormattedMessage
+          id="dashboard.step.stepDefinition"
+          defaultMessage="Step definition"
+        />
+        :
+      </div>
       <pre>{yaml}</pre>
       {taskRun.params && (
         <ResourceTable
@@ -77,21 +102,22 @@ const StepDefinition = ({ definition, taskRun }) => {
         resourceTable(
           'Input Resources',
           taskRun.namespace,
-          taskRun.inputResources
+          taskRun.inputResources,
+          intl
         )}
       {taskRun.outputResources &&
         resourceTable(
           'Output Resources',
           taskRun.namespace,
-          taskRun.outputResources
+          taskRun.outputResources,
+          intl
         )}
     </div>
   );
 };
 
 StepDefinition.defaultProps = {
-  definition: 'description: step definition not available',
   taskRun: {}
 };
 
-export default StepDefinition;
+export default injectIntl(StepDefinition);

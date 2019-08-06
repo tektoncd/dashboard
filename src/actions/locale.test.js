@@ -11,19 +11,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
-import StepStatus from './StepStatus';
-import { renderWithIntl } from '../../utils/test';
+import { setLocale } from './locale';
 
-it('StepStatus renders default content', () => {
-  const { queryByText } = renderWithIntl(<StepStatus />);
-
-  expect(queryByText(/Container status:/i)).toBeTruthy();
-  expect(queryByText(/No status available/i)).toBeTruthy();
-});
-
-it('StepStatus renders the provided content', () => {
-  const { queryByText } = renderWithIntl(<StepStatus status="testing" />);
-
-  expect(queryByText(/testing/i)).toBeTruthy();
+it('setLocale', () => {
+  const locale = 'it';
+  expect(setLocale(locale)).toMatchObject({
+    locale
+  });
 });

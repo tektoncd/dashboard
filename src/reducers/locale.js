@@ -11,19 +11,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
-import StepStatus from './StepStatus';
-import { renderWithIntl } from '../../utils/test';
+import { combineReducers } from 'redux';
 
-it('StepStatus renders default content', () => {
-  const { queryByText } = renderWithIntl(<StepStatus />);
+function selected(state = 'en', action) {
+  switch (action.type) {
+    case 'LOCALE_SET':
+      return action.locale;
+    default:
+      return state;
+  }
+}
 
-  expect(queryByText(/Container status:/i)).toBeTruthy();
-  expect(queryByText(/No status available/i)).toBeTruthy();
-});
+export function getLocale(state) {
+  return state.selected;
+}
 
-it('StepStatus renders the provided content', () => {
-  const { queryByText } = renderWithIntl(<StepStatus status="testing" />);
-
-  expect(queryByText(/testing/i)).toBeTruthy();
+export default combineReducers({
+  selected
 });

@@ -11,6 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { injectIntl } from 'react-intl';
 import React from 'react';
 import { Tab, Tabs } from 'carbon-components-react';
 
@@ -22,7 +23,15 @@ import StepStatus from '../StepStatus';
 import './StepDetails.scss';
 
 const StepDetails = props => {
-  const { definition, reason, status, stepName, stepStatus, taskRun } = props;
+  const {
+    definition,
+    intl,
+    reason,
+    status,
+    stepName,
+    stepStatus,
+    taskRun
+  } = props;
   const { pod } = taskRun;
   return (
     <div className="step-details">
@@ -33,7 +42,13 @@ const StepDetails = props => {
         taskRun={taskRun}
       />
       <Tabs>
-        <Tab className="details-tab" label="Logs">
+        <Tab
+          className="details-tab"
+          label={intl.formatMessage({
+            id: 'dashboard.taskRun.logs',
+            defaultMessage: 'Logs'
+          })}
+        >
           <Log
             key={stepName}
             stepName={stepName}
@@ -42,10 +57,22 @@ const StepDetails = props => {
             namespace={taskRun.namespace}
           />
         </Tab>
-        <Tab className="details-tab" label="Status">
+        <Tab
+          className="details-tab"
+          label={intl.formatMessage({
+            id: 'dashboard.taskRun.status',
+            defaultMessage: 'Status'
+          })}
+        >
           <StepStatus status={stepStatus} />
         </Tab>
-        <Tab className="details-tab" label="Details">
+        <Tab
+          className="details-tab"
+          label={intl.formatMessage({
+            id: 'dashboard.taskRun.details',
+            defaultMessage: 'Details'
+          })}
+        >
           <StepDefinition definition={definition} taskRun={taskRun} />
         </Tab>
       </Tabs>
@@ -57,4 +84,4 @@ StepDetails.defaultProps = {
   taskRun: {}
 };
 
-export default StepDetails;
+export default injectIntl(StepDetails);

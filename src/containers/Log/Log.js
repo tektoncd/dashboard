@@ -13,11 +13,12 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
+import { injectIntl } from 'react-intl';
 
 import Log from '../../components/Log';
 import { getPodLog } from '../../api';
 
-export class LogContainer extends Component {
+export class LoggingContainer extends Component {
   state = { logs: [] };
 
   componentDidMount() {
@@ -67,7 +68,7 @@ export class LogContainer extends Component {
   };
 
   async loadLog() {
-    const { namespace, podName, stepName, stepStatus } = this.props;
+    const { intl, namespace, podName, stepName, stepStatus } = this.props;
     if (podName) {
       try {
         const { container = `step-${stepName}` } = stepStatus;
@@ -78,7 +79,14 @@ export class LogContainer extends Component {
         });
         this.setState({ logs: logs ? logs.split('\n') : undefined });
       } catch {
-        this.setState({ logs: ['Unable to fetch log'] });
+        this.setState({
+          logs: [
+            intl.formatMessage({
+              id: 'dashboard.pipelineRun.logFailed',
+              defaultMessage: 'Unable to fetch log'
+            })
+          ]
+        });
       }
     }
   }
@@ -91,4 +99,4 @@ export class LogContainer extends Component {
   }
 }
 
-export default withRouter(LogContainer);
+export default withRouter(injectIntl(LoggingContainer));

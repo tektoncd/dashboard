@@ -15,6 +15,7 @@ import { combineReducers } from 'redux';
 
 import clusterTasks, * as clusterTaskSelectors from './clusterTasks';
 import extensions, * as extensionSelectors from './extensions';
+import locale, * as localeSelectors from './locale';
 import namespaces, * as namespaceSelectors from './namespaces';
 import pipelines, * as pipelineSelectors from './pipelines';
 import pipelineResources, * as pipelineResourcesSelectors from './pipelineResources';
@@ -27,6 +28,7 @@ import taskRuns, * as taskRunsSelectors from './taskRuns';
 export default combineReducers({
   clusterTasks,
   extensions,
+  locale,
   namespaces,
   pipelines: pipelines(),
   pipelineResources: pipelineResources(),
@@ -266,4 +268,8 @@ export function getSecretsErrorMessage(state) {
 
 export function isFetchingSecrets(state) {
   return secretSelectors.isFetchingSecrets(state.secrets);
+}
+
+export function getLocale(state) {
+  return localeSelectors.getLocale(state.locale);
 }

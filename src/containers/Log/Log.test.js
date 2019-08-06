@@ -12,10 +12,11 @@ limitations under the License.
 */
 
 import React from 'react';
-import { render, waitForElement } from 'react-testing-library';
+import { waitForElement } from 'react-testing-library';
 
-import { LogContainer } from './Log';
+import LogContainer from './Log';
 import * as API from '../../api';
+import { renderWithRouter } from '../../utils/test';
 
 beforeEach(jest.resetAllMocks);
 
@@ -26,7 +27,7 @@ it('LogContainer renders', async () => {
   const logs = 'loads of logs';
   const getPodLog = jest.spyOn(API, 'getPodLog').mockImplementation(() => logs);
 
-  const { getByText } = render(
+  const { getByText } = renderWithRouter(
     <LogContainer
       match={{ params: { namespace } }}
       namespace={namespace}
@@ -45,7 +46,7 @@ it('LogContainer renders', async () => {
   });
 
   const anotherPodName = 'anotherPod';
-  render(
+  renderWithRouter(
     <LogContainer
       match={{ params: { namespace } }}
       namespace={namespace}
@@ -69,7 +70,7 @@ it('LogContainer renders with container name from step status', async () => {
   const logs = 'loads of logs';
   const getPodLog = jest.spyOn(API, 'getPodLog').mockImplementation(() => logs);
 
-  const { getByText } = render(
+  const { getByText } = renderWithRouter(
     <LogContainer
       match={{ params: { namespace } }}
       namespace={namespace}
@@ -87,7 +88,7 @@ it('LogContainer renders with container name from step status', async () => {
   });
 
   const anotherContainerName = 'anotherContainerName';
-  render(
+  renderWithRouter(
     <LogContainer
       match={{ params: { namespace } }}
       namespace={namespace}
@@ -111,7 +112,7 @@ it('LogContainer handles error case', async () => {
     throw new Error();
   });
 
-  const { getByText } = render(
+  const { getByText } = renderWithRouter(
     <LogContainer
       match={{ params: { namespace } }}
       namespace={namespace}
@@ -136,7 +137,7 @@ it('LogContainer handles empty logs', async () => {
   const podName = 'taskRun';
   const getPodLog = jest.spyOn(API, 'getPodLog').mockImplementation(() => '');
 
-  render(
+  renderWithRouter(
     <LogContainer
       match={{ params: { namespace } }}
       namespace={namespace}
@@ -162,7 +163,7 @@ it('LogContainer handles missing step logs', async () => {
     .spyOn(API, 'getPodLog')
     .mockImplementation(() => undefined);
 
-  const { getByText } = render(
+  const { getByText } = renderWithRouter(
     <LogContainer
       match={{ params: { namespace } }}
       namespace={namespace}
