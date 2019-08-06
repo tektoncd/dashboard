@@ -475,8 +475,4 @@ Extensions in this context are custom resources defined in the dashboard install
 
 ## Publishing dashboard release images
 
-Commit a new version string in the RELEASE file of this repository. 
-
-Assuming all tests pass and the pull request is merged, a newly tagged image will be pushed to `gcr.io/tekton-releases/dashboard:$VERSION`, where `$VERSION` is specified in the `RELEASE` file.
-
-For example, if the RELEASE file contains `version 0.0.2`, a newly tagged `0.0.2` image will be pushed to `gcr.io/tekton-releases/dashboard:0.0.2`.
+Handled by `hack/release.sh` after a manual Prow run. The version to use is extracted from the RELEASE file.
