@@ -12,15 +12,20 @@ limitations under the License.
 */
 
 import React from 'react';
-import { render } from 'react-testing-library';
+import { fireEvent, render, waitForElement } from 'react-testing-library';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import * as API from '../../api';
-import BasicAuthFields from './BasicAuthFields';
+import SecretsModal from '.';
 
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
+
+const secrets = {
+  byNamespace: {},
+  errorMessage: null,
+  isFetching: false
+};
 
 const namespaces = {
   byName: {
@@ -31,12 +36,6 @@ const namespaces = {
         uid: '32b35d3b-6ce1-11e9-af21-025000000001',
         resourceVersion: '4',
         creationTimestamp: '2019-05-02T13:50:08Z'
-      },
-      spec: {
-        finalizers: ['kubernetes']
-      },
-      status: {
-        phase: 'Active'
       }
     }
   },
@@ -80,6 +79,7 @@ const serviceAccountsById = {
 };
 
 const store = mockStore({
+  secrets,
   namespaces,
   serviceAccounts: {
     byId: serviceAccountsById,
@@ -88,54 +88,35 @@ const store = mockStore({
   }
 });
 
-it('BasicAuthFields renders with blank inputs', () => {
+it('Test SecretsModal Server URL examples', async () => {
+  const handleNew = jest.fn();
   const props = {
-    username: '',
-    password: '',
-    serviceAccount: '',
-    handleChange() {},
-    invalidFields: []
+    open: true,
+    handleNew
   };
 
-  jest
-    .spyOn(API, 'getServiceAccounts')
-    .mockImplementation(() => serviceAccountsById);
-
-  const { getByLabelText, getAllByDisplayValue } = render(
+  const { getByLabelText, getByText } = render(
     <Provider store={store}>
-      <BasicAuthFields {...props} />
+      <SecretsModal {...props} />
     </Provider>
   );
-  expect(getByLabelText(/Username/i)).toBeTruthy();
-  expect(getByLabelText(/Password\/Token/i)).toBeTruthy();
-  expect(getByLabelText(/Service Account/i)).toBeTruthy();
-  expect(getAllByDisplayValue('').length).toEqual(2);
-});
+  let annotationValue0 = getByLabelText(/Annotation Value#0/i);
+  expect(annotationValue0.placeholder).toEqual('https://github.com');
+  fireEvent.click(await waitForElement(() => getByText(/Git Server/i)));
+  fireEvent.click(await waitForElement(() => getByText(/Docker Registry/i)));
 
-it('BasicAuthFields incorrect fields', () => {
-  const props = {
-    username: 'text',
-    password: 'text',
-    serviceAccount: '',
-    handleChange() {},
-    invalidFields: ['username', 'password']
-  };
+  annotationValue0 = getByLabelText(/Annotation Value#0/i);
+  expect(annotationValue0.placeholder).toEqual('https://index.docker.io/v1/');
 
-  jest
-    .spyOn(API, 'getServiceAccounts')
-    .mockImplementation(() => serviceAccountsById);
+  fireEvent.click(document.getElementsByClassName('addIcon').item(0));
+  let annotationValue1 = getByLabelText(/Annotation Value#1/i);
+  expect(annotationValue1.placeholder).toEqual('https://index.docker.io/v1/');
 
-  const { getByLabelText } = render(
-    <Provider store={store}>
-      <BasicAuthFields {...props} />
-    </Provider>
-  );
+  fireEvent.click(await waitForElement(() => getByText(/Docker Registry/i)));
+  fireEvent.click(await waitForElement(() => getByText(/Git Server/i)));
 
-  const usernameInput = getByLabelText(/Username/i);
-  const passwordInput = getByLabelText(/Password\/Token/i);
-  const serviceAccountInput = getByLabelText(/Service Account/i);
-
-  expect(usernameInput.getAttribute('data-invalid')).toBeTruthy();
-  expect(passwordInput.getAttribute('data-invalid')).toBeTruthy();
-  expect(serviceAccountInput.getAttribute('data-invalid')).toBeFalsy();
+  annotationValue0 = getByLabelText(/Annotation Value#0/i);
+  expect(annotationValue0.placeholder).toEqual('https://github.com');
+  annotationValue1 = getByLabelText(/Annotation Value#1/i);
+  expect(annotationValue1.placeholder).toEqual('https://github.com');
 });

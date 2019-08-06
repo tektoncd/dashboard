@@ -31,9 +31,9 @@ const BasicAuthFields = props => {
       <TextInput
         id="username"
         autoComplete="off"
-        placeholder="example@domain.com"
+        placeholder=""
         value={username}
-        labelText="Email:"
+        labelText="Username:"
         onChange={handleChangeTextInput}
         invalid={invalidFields.indexOf('username') > -1}
         invalidText="Required."

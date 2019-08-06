@@ -27,7 +27,6 @@ function validateInputs(value, id) {
   if (trimmed === '') {
     return false;
   }
-
   if (id === 'name' || id === 'serviceAccount') {
     if (trimmed.length > 253) {
       return false;
@@ -55,6 +54,7 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
         {
           label: `tekton.dev/git-0`,
           value: '',
+          placeholder: 'https://github.com',
           id: Math.random()
             .toString(36)
             .substr(2, 9)
@@ -196,15 +196,19 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
       }
       const annotations = prevState.annotations.map(annotation => {
         let toSearch;
+        let toExampleText;
         if (stateValue === 'git') {
           toSearch = 'docker';
+          toExampleText = 'https://github.com';
         } else {
           toSearch = 'git';
+          toExampleText = 'https://index.docker.io/v1/';
         }
         return {
           label: annotation.label.split(toSearch).join(stateValue),
           value: annotation.value,
-          id: annotation.id
+          id: annotation.id,
+          placeholder: toExampleText
         };
       });
       return {
@@ -250,9 +254,16 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
   handleAdd = () => {
     this.setState(prevState => {
       const { annotations, accessTo } = prevState;
+      let example;
+      if (accessTo === 'git') {
+        example = 'https://github.com';
+      } else {
+        example = 'https://index.docker.io/v1/';
+      }
       annotations.push({
         label: `tekton.dev/${accessTo}-${annotations.length}`,
         value: '',
+        placeholder: example,
         id: Math.random()
           .toString(36)
           .substr(2, 9)
