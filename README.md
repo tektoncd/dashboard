@@ -54,7 +54,7 @@ Now modify the `host` property for our Ingress to use the IP obtained above, wit
 
 You can then access the Tekton Dashboard at `tekton-dashboard.${ip}.nip.io`. This endpoint is also returned via the "get Tekton Dashboard Ingress" [API](https://github.com/tektoncd/dashboard/blob/master/DEVELOPMENT.md#api-definitions).
 
-## Install on OpenShift
+## Install on OpenShift (without OpenShift login)
 
 1. Assuming you want to install the Dashboard into the `tekton-pipelines` namespace:
 
@@ -95,6 +95,18 @@ nonroot            false     []        MustRunAs   MustRunAsNonRoot   RunAsAny  
 privileged         true      [*]       RunAsAny    RunAsAny           RunAsAny    RunAsAny    <none>     false            [*]
 restricted         false     []        MustRunAs   MustRunAsRange     MustRunAs   RunAsAny    <none>     false            [configMap downwardAPI emptyDir persistentVolumeClaim projected secret]
 ```
+
+## Install on OpenShift (with OpenShift login)
+
+This is tentative way to install on OpenShift.  This will be replaced when the dashboard install becomes available by the operator.
+
+1. Assuming you want to install the Dashboard into the `tekton-pipelines` namespace:
+
+
+```bash
+curl -L https://github.com/tektoncd/dashboard/releases/download/v0/openshift-tekton-dashboard.yaml | oc apply -f -
+```
+2. Access the dashboard at `http://tekton-dashboard-tekton-pipelines.apps.<host IP address>.nip.io`
 
 ## Install on Minishift
 
