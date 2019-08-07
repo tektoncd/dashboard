@@ -169,7 +169,7 @@ export class ImportResources extends Component {
           />
           <NamespacesDropdown
             id="import-namespaces-dropdown"
-            helperText="The namespace that the PipelineRun applying resources will run under"
+            helperText="The namespace in which the resources will be created"
             invalid={this.state.invalidNamespace}
             invalidText="Please select a namespace"
             onChange={this.handleNamespace}
