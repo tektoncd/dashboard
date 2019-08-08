@@ -14,6 +14,7 @@ limitations under the License.
 package main
 
 import (
+	routeclient "github.com/openshift/client-go/route/clientset/versioned"
 	"github.com/tektoncd/dashboard/pkg/controllers"
 	"github.com/tektoncd/dashboard/pkg/endpoints"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
@@ -72,9 +73,15 @@ func main() {
 		logging.Log.Errorf("Error building k8s clientset: %s", err.Error())
 	}
 
+	routeClient, err := routeclient.NewForConfig(cfg)
+	if err != nil {
+		logging.Log.Errorf("Error building route clientset: %s", err.Error())
+	}
+
 	resource := endpoints.Resource{
 		PipelineClient: pipelineClient,
 		K8sClient:      k8sClient,
+		RouteClient:    routeClient,
 	}
 
 	routerHandler := router.Register(resource)

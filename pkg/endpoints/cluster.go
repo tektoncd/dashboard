@@ -19,7 +19,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-
 	"github.com/tektoncd/dashboard/pkg/utils"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -31,6 +30,7 @@ type Properties struct {
 
 const (
 	tektonDashboardIngressName string = "tekton-dashboard"
+	tektonDashboardRouteName string = "tekton-dashboard"
 )
 
 // ProxyRequest does as the name suggests: proxies requests and logs what's going on
@@ -85,6 +85,51 @@ func (r Resource) GetIngress(request *restful.Request, response *restful.Respons
 	logging.Log.Error("Unable to retrieve any Ingresses")
 	utils.RespondError(response, err, http.StatusInternalServerError)
 	return
+}
+
+// GetIngress returns the Ingress endpoint called "tektonDashboardIngressName" in the requested namespace
+func (r Resource) GetEndpoints(request *restful.Request, response *restful.Response) {
+	type element struct {
+		Type string  `json:"type"`
+		Url  string  `json:"url"`
+	}
+	var responses []element
+	requestNamespace := utils.GetNamespace(request)
+
+	route, err := r.RouteClient.RouteV1().Routes(requestNamespace).Get(tektonDashboardIngressName, metav1.GetOptions{})
+	noRuleError := "no Route found labelled " + tektonDashboardRouteName
+	if err != nil || route == nil {
+		logging.Log.Infof("Unable to retrieve any routes: %s", err)
+	} else {
+		if route.Spec.Host != "" { // For that rule, is there actually a host?
+			routeHost := route.Spec.Host
+			responses = append(responses, element{"Route", routeHost}) 
+		} else {
+			logging.Log.Error(noRuleError)
+		}
+	}
+
+	ingress, err := r.K8sClient.ExtensionsV1beta1().Ingresses(requestNamespace).Get(tektonDashboardIngressName, metav1.GetOptions{})
+	noRuleError = "no Ingress rules found labelled " + tektonDashboardIngressName
+	if err != nil || ingress == nil {
+		logging.Log.Infof("Unable to retrieve any ingresses: %s", err)
+	} else {
+		if len(ingress.Spec.Rules) > 0 { // Got more than zero entries?
+			if ingress.Spec.Rules[0].Host != "" { // For that rule, is there actually a host?
+				ingressHost := ingress.Spec.Rules[0].Host
+				responses = append(responses, element{"Ingress", ingressHost}) 
+			}
+		} else {
+			logging.Log.Error(noRuleError)
+		}
+	}
+
+	if len(responses) != 0 {
+		response.WriteEntity(responses)
+	} else {
+		logging.Log.Error("Unable to retrieve any Ingresses or Routes")
+		utils.RespondError(response, err, http.StatusInternalServerError)
+	}
 }
 
 // GetProperties is used to get the installed namespace only so far

@@ -1,6 +1,7 @@
 package endpoints
 
 import (
+	routeclient "github.com/openshift/client-go/route/clientset/versioned"
 	"github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
 	k8sclientset "k8s.io/client-go/kubernetes"
 )
@@ -10,4 +11,5 @@ import (
 type Resource struct {
 	PipelineClient versioned.Interface
 	K8sClient      k8sclientset.Interface
+	RouteClient    routeclient.Interface
 }

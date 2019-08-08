@@ -27,3 +27,7 @@ required = [
 [[prune.project]]
   name = "github.com/tektoncd/plumbing"
   non-go = false
+
+[[constraint]]
+  name = "github.com/openshift/client-go"
+  version = "3.9.0"
