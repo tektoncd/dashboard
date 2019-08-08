@@ -19,6 +19,8 @@ import Annotations from '../../components/SecretsModal/Annotations';
 import BasicAuthFields from '../../components/SecretsModal/BasicAuthFields';
 import '../../components/SecretsModal/SecretsModal.scss';
 import { createSecret } from '../../actions/secrets';
+import { getServiceAccounts } from '../../reducers';
+import { fetchServiceAccounts } from '../../actions/serviceAccounts';
 
 /* istanbul ignore next */
 function validateInputs(value, id) {
@@ -62,6 +64,10 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
       ],
       invalidFields: []
     };
+  }
+
+  componentDidMount() {
+    this.props.fetchServiceAccounts();
   }
 
   handleSubmit = () => {
@@ -149,7 +155,7 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
 
   handleChangeServiceAccount = e => {
     const stateVar = 'serviceAccount';
-    const stateValue = e.selectedItem.text;
+    const stateValue = e.target.value;
     this.setState(prevState => {
       const newInvalidFields = prevState.invalidFields;
       const idIndex = newInvalidFields.indexOf(stateVar);
@@ -283,7 +289,7 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
   };
 
   render() {
-    const { open, handleNew } = this.props;
+    const { open, handleNew, serviceAccounts } = this.props;
     const {
       name,
       namespace,
@@ -320,6 +326,7 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
             username={username}
             password={password}
             serviceAccount={serviceAccount}
+            serviceAccounts={serviceAccounts}
             namespace={namespace}
             handleChangeTextInput={this.handleChangeTextInput}
             handleChangeServiceAccount={this.handleChangeServiceAccount}
@@ -342,12 +349,15 @@ SecretsModal.defaultProps = {
   open: false
 };
 
-function mapStateToProps() {
-  return {};
+function mapStateToProps(state) {
+  return {
+    serviceAccounts: getServiceAccounts(state)
+  };
 }
 
 const mapDispatchToProps = {
-  createSecret
+  createSecret,
+  fetchServiceAccounts
 };
 
 export default connect(

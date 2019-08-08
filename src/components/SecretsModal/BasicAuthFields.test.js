@@ -16,7 +16,6 @@ import { render } from 'react-testing-library';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import * as API from '../../api';
 import BasicAuthFields from './BasicAuthFields';
 
 const middleware = [thunk];
@@ -45,47 +44,32 @@ const namespaces = {
   selected: 'default'
 };
 
-const serviceAccountsByNamespace = {
-  blue: {
-    'service-account-1': 'id-service-account-1',
-    'service-account-2': 'id-service-account-2'
-  },
-  green: {
-    'service-account-3': 'id-service-account-3'
-  }
-};
-
-const serviceAccountsById = {
-  'id-service-account-1': {
+const serviceAccounts = [
+  {
     metadata: {
       name: 'service-account-1',
       namespace: 'blue',
       uid: 'id-service-account-1'
     }
   },
-  'id-service-account-2': {
+  {
     metadata: {
       name: 'service-account-2',
       namespace: 'blue',
       uid: 'id-service-account-2'
     }
   },
-  'id-service-account-3': {
+  {
     metadata: {
       name: 'service-account-3',
       namespace: 'green',
       uid: 'id-service-account-3'
     }
   }
-};
+];
 
 const store = mockStore({
-  namespaces,
-  serviceAccounts: {
-    byId: serviceAccountsById,
-    byNamespace: serviceAccountsByNamespace,
-    isFetching: false
-  }
+  namespaces
 });
 
 it('BasicAuthFields renders with blank inputs', () => {
@@ -94,12 +78,9 @@ it('BasicAuthFields renders with blank inputs', () => {
     password: '',
     serviceAccount: '',
     handleChange() {},
-    invalidFields: []
+    invalidFields: [],
+    serviceAccounts
   };
-
-  jest
-    .spyOn(API, 'getServiceAccounts')
-    .mockImplementation(() => serviceAccountsById);
 
   const { getByLabelText, getAllByDisplayValue } = render(
     <Provider store={store}>
@@ -118,12 +99,9 @@ it('BasicAuthFields incorrect fields', () => {
     password: 'text',
     serviceAccount: '',
     handleChange() {},
-    invalidFields: ['username', 'password']
+    invalidFields: ['username', 'password'],
+    serviceAccounts
   };
-
-  jest
-    .spyOn(API, 'getServiceAccounts')
-    .mockImplementation(() => serviceAccountsById);
 
   const { getByLabelText } = render(
     <Provider store={store}>

@@ -12,9 +12,8 @@ limitations under the License.
 */
 
 import React from 'react';
-import { TextInput } from 'carbon-components-react';
+import { Select, SelectItem, TextInput } from 'carbon-components-react';
 import './SecretsModal.scss';
-import ServiceAccountsDropdown from '../../containers/ServiceAccountsDropdown';
 
 const BasicAuthFields = props => {
   const {
@@ -24,8 +23,19 @@ const BasicAuthFields = props => {
     handleChangeTextInput,
     handleChangeServiceAccount,
     invalidFields,
-    serviceAccount
+    serviceAccounts
   } = props;
+
+  const saItems = serviceAccounts
+    .filter(sa => sa.metadata.namespace === namespace)
+    .map(sa => (
+      <SelectItem
+        value={sa.metadata.name}
+        text={sa.metadata.name}
+        key={`${sa.metadata.namespace}:${sa.metadata.name}`}
+      />
+    ));
+
   return (
     <>
       <TextInput
@@ -49,17 +59,20 @@ const BasicAuthFields = props => {
         invalid={invalidFields.indexOf('password') > -1}
         invalidText="Required."
       />
-      <ServiceAccountsDropdown
+      <Select
         id="serviceAccount"
-        titleText="Service Account"
-        namespace={namespace}
-        selectedItem={
-          serviceAccount ? { id: serviceAccount, text: serviceAccount } : ''
-        }
+        light
+        hidden
+        defaultValue="main"
         onChange={handleChangeServiceAccount}
+        labelText="Service Account"
         invalid={invalidFields.indexOf('serviceAccount') > -1}
         invalidText="Required."
-      />
+        disabled={namespace === ''}
+      >
+        <SelectItem disabled value="main" text="Select Service account" />
+        {saItems}
+      </Select>
     </>
   );
 };
