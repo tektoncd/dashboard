@@ -39,6 +39,7 @@ var excludeRoutes []string = []string{
 	"readiness",      // Returns 204
 	"proxy",          // Kube API server has its own standard
 	"ingress",        // Ingress will not exist
+	"endpoints",      // Route or Ingress will not exist
 }
 
 var methodRouteMap = make(map[string][]string) // k, v := HTTP_METHOD, []route
