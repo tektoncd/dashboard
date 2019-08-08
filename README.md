@@ -8,12 +8,43 @@ Tekton Dashboard is a general purpose, web-based UI for Tekton Pipelines. It all
 
 ## Pre-requisites
 
-[Tekton Pipelines](https://github.com/tektoncd/pipeline) 0.5 or later must be installed in order to use the Tekton Dashboard. Instructions to install Tekton Pipelines can be found [here](https://github.com/tektoncd/pipeline/blob/master/docs/install.md).
+[Tekton Pipelines](https://github.com/tektoncd/pipeline) 0.5.2 or later must be installed in order to use the Tekton Dashboard. Instructions to install Tekton Pipelines can be found [here](https://github.com/tektoncd/pipeline/blob/master/docs/install.md).
 
 ## Install Dashboard
 
-The Tekton Dashboard has a hosted image located at gcr.io/tekton-nightly/dashboard:latest
-To install the latest dashboard using this image:
+### Installing the latest release
+
+1. Run the
+   [`kubectl apply`](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#apply)
+   command to install the [Tekton Dashboard](https://github.com/tektoncd/dashboard)
+   and its dependencies:
+    
+  ```bash
+  kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.1.0/release.yaml
+  ```
+
+   _(Previous versions will be available at `previous/$VERSION_NUMBER`, e.g.
+   https://storage.googleapis.com/tekton-releases/previous/v0.1.0/release.yaml.)_
+
+1. Run the
+   [`kubectl get`](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#get)
+   command to monitor the Tekton Dashboard component until all of the
+   components show a `STATUS` of `Running`:
+
+   ```bash
+   kubectl get pods --namespace tekton-pipelines
+   ```
+
+   Tip: Instead of running the `kubectl get` command multiple times, you can
+   append the `--watch` flag to view the component's status updates in real
+   time. Use CTRL + C to exit watch mode.
+
+You are now ready to use the Tekton Dashboard, optionally with the Tekton Webhooks Extension (see our [Getting Started](https://github.com/tektoncd/experimental/blob/master/webhooks-extension/docs/GettingStarted.md) guide).
+
+### Nightly builds
+
+The Tekton Dashboard has a hosted image of the latest builds located at `gcr.io/tekton-nightly/dashboard:latest`
+To install the Dashboard using this image:
 
 ```bash
 kubectl apply -f config/release/gcr-tekton-dashboard.yaml
@@ -28,7 +59,6 @@ curl -L https://github.com/tektoncd/dashboard/releases/download/v0/gcr-tekton-da
 Development installation of the Dashboard uses `ko`:
 
 ```bash
-sh
 $ docker login
 $ export KO_DOCKER_REPO=docker.io/<mydockername>
 $ ./install-dev.sh
@@ -60,27 +90,10 @@ You can then access the Tekton Dashboard at `tekton-dashboard.${ip}.nip.io`. Thi
 
 
 ```bash
-curl -L https://github.com/tektoncd/dashboard/releases/download/v0/gcr-tekton-dashboard.yaml | kubectl apply -f -
+kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.1.0/openshift-tekton-dashboard.yaml
 ```
 
-2. Add a Route:
-
-```
-oc expose service tekton-dashboard \
-  -n tekton-pipelines \
-  --name "tekton-dashboard" \
-  --port="http" \
-  --hostname=tekton-dashboard.${openshift_master_default_subdomain}
-```
-
-`$openshift_master_default_subdomain` in this example is `mycluster.foo.com`. This gives you the following Route:
-
-```
-NAME               HOST/PORT                                PATH      SERVICES           PORT      TERMINATION   WILDCARD
-tekton-dashboard   tekton-dashboard.mycluster.foo.com                 tekton-dashboard   http                    None
-```
-
-3. Access the dashboard at http://tekton-dashboard.mycluster.foo.com
+3. Access the dashboard by determining its route with `kubectl get route tekton-dashboard -n tekton-pipelines`
 
 This has been tested with the following OpenShift security settings (from `oc get scc`):
 
@@ -98,14 +111,16 @@ restricted         false     []        MustRunAs   MustRunAsRange     MustRunAs 
 
 ## Install on Minishift
 
+Either follow the instructions for OpenShift above or use the operator install as per the instructions below.
+
 1. Install [tektoncd-pipeline-operator](https://github.com/openshift/tektoncd-pipeline-operator#deploy-openshift-pipelines-operator-on-minikube-for-testing)
 2. [Checkout](https://github.com/tektoncd/dashboard/blob/master/DEVELOPMENT.md#checkout-your-fork) the repository
 
-If you want to install the dashboard into the tekton-pipelines namespace:
+If you want to install the Dashboard into the tekton-pipelines namespace:
 
 - Install the Dashboard `./minishift-install-dashboard.sh`
 
-If you want to install the dashboard into any other namespace:
+If you want to install the Dashboard into any other namespace:
 
 - Install the Dashboard `./minishift-install-dashboard.sh -n {NAMESPACE}`
 
@@ -114,7 +129,7 @@ If you want to install the dashboard into any other namespace:
 ## Accessing the Dashboard on Minishift
 
 The Dashboard can be accessed by running `kubectl --namespace tekton-pipelines port-forward svc/tekton-dashboard 9097:9097`
-If installed into a namespace other than tekton-pipelines then the dashboard can be accessed by running `kubectl --namespace $NAMESPACE port-forward svc/tekton-dashboard 9097:9097`
+If installed into a namespace other than tekton-pipelines then the Dashboard can be accessed by running `kubectl --namespace $NAMESPACE port-forward svc/tekton-dashboard 9097:9097`
 You can access the web UI at `http://localhost:9097/`
 
 ## Uninstalling the Dashboard on Minishift
@@ -123,7 +138,9 @@ The Dashboard can be uninstalled on Minishift by running the command `./minishif
 
 ## Accessing the Dashboard
 
-The Dashboard can be accessed through its ClusterIP Service by running `kubectl proxy`. Assuming tekton-pipelines is the install namespace for the dashboard, you can access the web UI at `localhost:8001/api/v1/namespaces/tekton-pipelines/services/tekton-dashboard:http/proxy/`. An alternative way to access the Dashboard is using `kubectl port-forward` e.g. if you installed the Tekton Dashboad into the `tekton-pipelines` namespace (which is the deafult) you can access the Dashboard with `kubectl --namespace tekton-pipelines port-forward svc/tekton-dashboard 9097:9097` and then just open `localhost:9097`.
+The Dashboard can be accessed through its ClusterIP Service by running `kubectl proxy`. Assuming tekton-pipelines is the install namespace for the Dashboard, you can access the web UI at `localhost:8001/api/v1/namespaces/tekton-pipelines/services/tekton-dashboard:http/proxy/`. 
+
+An alternative way to access the Dashboard is using `kubectl port-forward` e.g. if you installed the Tekton Dashboard into the `tekton-pipelines` namespace (which is the default) you can access the Dashboard with `kubectl --namespace tekton-pipelines port-forward svc/tekton-dashboard 9097:9097` and then just open `localhost:9097`.
 
 ## Want to contribute
 
