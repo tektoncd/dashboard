@@ -109,6 +109,18 @@ privileged         true      [*]       RunAsAny    RunAsAny           RunAsAny  
 restricted         false     []        MustRunAs   MustRunAsRange     MustRunAs   RunAsAny    <none>     false            [configMap downwardAPI emptyDir persistentVolumeClaim projected secret]
 ```
 
+### Enable TLS for dashboard access via Ingress
+**Will only work in the cluster node**
+#### Pre-requisites:
+1. Tekton pipelines & dashboard installed
+2. dashboard repo cloned
+
+#### Steps:
+1. Edit `ingress/ingress-https-setup.sh` with all the necessary info
+2. Run the script from within the dashboard repo
+3. Access dashboard via `https://tekton-dashboard.<IP_ADDRESS>.nip.io`
+
+
 ## Install on Minishift
 
 Either follow the instructions for OpenShift above or use the operator install as per the instructions below.
