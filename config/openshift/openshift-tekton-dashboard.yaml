@@ -110,7 +110,7 @@ spec:
     spec:
       containers:
       - name: oauth-proxy
-        image: openshift/oauth-proxy:latest
+        image: openshift/oauth-proxy@sha256:6bc1759a3202b4614739f12441461e344907f6b3f758c34314284debe36d4e15
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8443
@@ -248,7 +248,7 @@ spec:
       default: tekton-pipelines
   steps:
   - name: kubectl-apply
-    image: lachlanevenson/k8s-kubectl
+    image: lachlanevenson/k8s-kubectl@sha256:739109fa0236fc503d66f91063585a972727a30d750509fed5b53cf8120216e3
     command:
     - kubectl
     args:
