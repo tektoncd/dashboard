@@ -12,9 +12,9 @@ limitations under the License.
 */
 
 import React from 'react';
+import { renderWithRouter } from '../../utils/test';
 
 import Breadcrumbs from './Breadcrumbs';
-import { renderWithRouter } from '../../utils/test';
 
 it('Breadcrumbs renders with default content', () => {
   const { queryByText } = renderWithRouter(

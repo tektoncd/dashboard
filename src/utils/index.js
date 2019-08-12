@@ -18,8 +18,6 @@ import CloseFilled from '@carbon/icons-react/lib/close--filled/16';
 
 import Spinner from '../components/Spinner';
 
-export { paths, urls } from './router';
-
 export function getErrorMessage(error) {
   if (!error || typeof error === 'string') {
     return error;

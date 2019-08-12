@@ -12,19 +12,23 @@ limitations under the License.
 */
 
 import React from 'react';
-import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
-import { renderWithRouter } from '../../utils/test';
+import { storiesOf } from '@storybook/react';
+import StoryRouter from 'storybook-react-router';
 
-import StepDetails from './StepDetails';
+import { urls } from '@tektoncd/dashboard-utils';
+import Breadcrumbs from './Breadcrumbs';
 
-it('StepDetails renders', () => {
-  const mockStore = configureStore();
-  const store = mockStore({ namespaces: { selected: 'default' } });
-
-  renderWithRouter(
-    <Provider store={store}>
-      <StepDetails />
-    </Provider>
-  );
-});
+storiesOf('Breadcrumbs', module)
+  .addDecorator(StoryRouter())
+  .add('Pipelines', () => <Breadcrumbs match={{ url: urls.pipelines.all() }} />)
+  .add('PipelineRun', () => (
+    <Breadcrumbs
+      match={{
+        url: urls.pipelineRuns.byName({
+          namespace: 'default',
+          pipelineName: 'demo-pipeline',
+          pipelineRunName: 'demo-pipeline-run-1'
+        })
+      }}
+    />
+  ));

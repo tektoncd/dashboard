@@ -15,7 +15,9 @@ module.exports = {
   collectCoverage: true,
   collectCoverageFrom: [
     '<rootDir>/src/**/*.js',
-    '!<rootDir>/src/**/*.stories.js'
+    '<rootDir>/packages/**/src/**/*.js',
+    '!<rootDir>/src/**/*.stories.js',
+    '!<rootDir>/packages/**/src/**/*.stories.js'
   ],
   coverageReporters: ['html', 'text'],
   coverageThreshold: {
@@ -32,6 +34,9 @@ module.exports = {
     '\\.(css|scss)$': '<rootDir>/config_frontend/__mocks__/styleMock.js'
   },
   setupFilesAfterEnv: ['<rootDir>/config_frontend/setupTests.js'],
-  testMatch: ['<rootDir>/src/**/*.test.js'],
+  testMatch: [
+    '<rootDir>/src/**/*.test.js',
+    '<rootDir>/packages/**/src/**/*.test.js'
+  ],
   testPathIgnorePatterns: ['node_modules']
 };

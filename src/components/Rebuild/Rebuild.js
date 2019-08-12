@@ -13,9 +13,9 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Button } from 'carbon-components-react';
+import { urls } from '@tektoncd/dashboard-utils';
 import Restart from '@carbon/icons-react/lib/restart/32';
 import { rebuildPipelineRun } from '../../api';
-import { urls } from '../../utils';
 import './Rebuild.scss';
 
 export class Rebuild extends Component {

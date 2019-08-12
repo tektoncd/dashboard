@@ -12,12 +12,12 @@ limitations under the License.
 */
 
 import React, { Component, Suspense } from 'react';
+import { paths, urls } from '@tektoncd/dashboard-utils';
 
 import ErrorBoundary from '../../components/ErrorBoundary';
 
 import * as actions from './actions';
 import * as selectors from '../../reducers';
-import { paths, urls } from '../../utils';
 import './globals';
 
 /* istanbul ignore next */

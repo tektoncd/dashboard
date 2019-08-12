@@ -16,10 +16,12 @@ import { fireEvent, render, waitForElement } from 'react-testing-library';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
+import { urls } from '@tektoncd/dashboard-utils';
+
+import { renderWithRouter } from '../../utils/test';
 import ImportResourcesContainer from './ImportResources';
 import * as API from '../../api';
-import { urls } from '../../utils';
-import { renderWithRouter } from '../../utils/test';
+
 import { ALL_NAMESPACES } from '../../constants';
 
 beforeEach(jest.resetAllMocks);

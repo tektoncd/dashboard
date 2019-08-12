@@ -18,10 +18,10 @@ limitations under the License.
 import React from 'react';
 import { Link } from 'react-router-dom';
 import jsYaml from 'js-yaml';
+import { urls } from '@tektoncd/dashboard-utils';
 
 import { FormattedMessage, injectIntl } from 'react-intl';
 import ResourceTable from '../ResourceTable';
-import { urls } from '../../utils';
 
 import './StepDefinition.scss';
 

@@ -21,11 +21,11 @@ import {
 } from 'carbon-components-react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { urls } from '@tektoncd/dashboard-utils';
 
 import { ALL_NAMESPACES } from '../../constants';
 import { createPipelineRun, getInstallProperties } from '../../api';
 import { getSelectedNamespace } from '../../reducers';
-import { urls } from '../../utils';
 import { NamespacesDropdown, ServiceAccountsDropdown } from '..';
 
 import './ImportResources.scss';

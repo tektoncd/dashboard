@@ -23,6 +23,7 @@ import {
   StructuredListSkeleton,
   StructuredListWrapper
 } from 'carbon-components-react';
+import { urls } from '@tektoncd/dashboard-utils';
 
 import { ALL_NAMESPACES } from '../../constants';
 import {
@@ -30,8 +31,7 @@ import {
   getStatus,
   getStatusIcon,
   isRunning,
-  sortRunsByStartTime,
-  urls
+  sortRunsByStartTime
 } from '../../utils';
 import { fetchTaskRuns } from '../../actions/taskRuns';
 
