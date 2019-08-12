@@ -14,6 +14,7 @@ limitations under the License.
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { injectIntl } from 'react-intl';
 import {
   Button,
   InlineNotification,
@@ -24,19 +25,20 @@ import {
   StructuredListSkeleton,
   StructuredListWrapper
 } from 'carbon-components-react';
-import { CreatePipelineRun } from '..';
+
+import { urls } from '@tektoncd/dashboard-utils';
 import Add from '@carbon/icons-react/lib/add/16';
+
+import { CreatePipelineRun } from '..';
 import './PipelineRuns.scss';
 
-import { injectIntl } from 'react-intl';
 import { ALL_NAMESPACES } from '../../constants';
 import {
   getErrorMessage,
   getStatus,
   getStatusIcon,
   isRunning,
-  sortRunsByStartTime,
-  urls
+  sortRunsByStartTime
 } from '../../utils';
 import { fetchPipelineRuns } from '../../actions/pipelineRuns';
 

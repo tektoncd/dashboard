@@ -12,9 +12,9 @@ limitations under the License.
 */
 
 import React from 'react';
-import Header from './Header';
-
 import { renderWithRouter } from '../../utils/test';
+
+import Header from './Header';
 
 it('Header renders with default content', () => {
   renderWithRouter(<Header />);

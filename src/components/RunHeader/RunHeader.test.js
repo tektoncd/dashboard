@@ -12,9 +12,9 @@ limitations under the License.
 */
 
 import React from 'react';
-import RunHeader from './RunHeader';
-
 import { renderWithRouter } from '../../utils/test';
+
+import RunHeader from './RunHeader';
 
 const props = {
   name: 'simple-pipeline',

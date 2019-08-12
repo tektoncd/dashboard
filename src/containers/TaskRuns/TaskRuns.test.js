@@ -15,11 +15,11 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { waitForElement } from 'react-testing-library';
 import configureStore from 'redux-mock-store';
-
 import thunk from 'redux-thunk';
+
+import { renderWithRouter } from '../../utils/test';
 import * as API from '../../api';
 import TaskRuns from './TaskRuns';
-import { renderWithRouter } from '../../utils/test';
 
 beforeEach(jest.resetAllMocks);
 

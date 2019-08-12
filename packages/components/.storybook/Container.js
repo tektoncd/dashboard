@@ -12,23 +12,22 @@ limitations under the License.
 */
 
 import React from 'react';
-import { storiesOf } from '@storybook/react';
-import StoryRouter from 'storybook-react-router';
 
-import { urls } from '../../utils';
-import Breadcrumbs from './Breadcrumbs';
+import './Container.scss';
 
-storiesOf('Breadcrumbs', module)
-  .addDecorator(StoryRouter())
-  .add('Pipelines', () => <Breadcrumbs match={{ url: urls.pipelines.all() }} />)
-  .add('PipelineRun', () => (
-    <Breadcrumbs
-      match={{
-        url: urls.pipelineRuns.byName({
-          namespace: 'default',
-          pipelineName: 'demo-pipeline',
-          pipelineRunName: 'demo-pipeline-run-1'
-        })
+export default function Container({ story }) {
+  return (
+    <div
+      data-floating-menu-container
+      role="main"
+      style={{
+        padding: '3em',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center'
       }}
-    />
-  ));
+    >
+      {story()}
+    </div>
+  );
+}

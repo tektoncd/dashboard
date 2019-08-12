@@ -16,8 +16,8 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { fireEvent } from 'react-testing-library';
+import { paths } from '@tektoncd/dashboard-utils';
 
-import { paths } from '../../utils';
 import { renderWithRouter } from '../../utils/test';
 import { ALL_NAMESPACES } from '../../constants';
 import SideNavContainer, { SideNav } from './SideNav';

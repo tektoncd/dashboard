@@ -21,7 +21,10 @@ import {
   Switch
 } from 'react-router-dom';
 
+import { defineMessages, IntlProvider } from 'react-intl';
 import { Content } from 'carbon-components-react';
+import { Breadcrumbs } from '@tektoncd/dashboard-components';
+import { paths, urls } from '@tektoncd/dashboard-utils';
 
 import {
   ClusterTasks,
@@ -43,13 +46,10 @@ import {
   Tasks
 } from '..';
 
-import { defineMessages, IntlProvider } from 'react-intl';
 import Header from '../../components/Header';
-import Breadcrumbs from '../../components/Breadcrumbs';
 import { fetchExtensions } from '../../actions/extensions';
 import { fetchNamespaces, selectNamespace } from '../../actions/namespaces';
 import { getExtensions, getLocale, getSelectedNamespace } from '../../reducers';
-import { paths, urls } from '../../utils';
 import { messages } from '../../constants';
 
 import '../../components/App/App.scss';
