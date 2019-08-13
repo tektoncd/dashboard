@@ -14,7 +14,7 @@ limitations under the License.
 import React from 'react';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
-import { render } from 'react-testing-library'; // eslint-disable-line import/no-extraneous-dependencies
+import { render } from 'react-testing-library';
 
 export function renderWithRouter(
   ui,

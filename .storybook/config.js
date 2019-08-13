@@ -38,7 +38,10 @@ addParameters({
 });
 
 function loadStories() {
-  const req = require.context('../src', true, /\.stories.js$/);
+  let req = require.context('../src', true, /(?!node_modules).*\.stories.js$/);
+  req.keys().forEach(filename => req(filename));
+
+  req = require.context('../packages', true, /(?!node_modules).*\.stories.js$/);
   req.keys().forEach(filename => req(filename));
 }
 
