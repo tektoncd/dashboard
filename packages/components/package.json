@@ -6,31 +6,13 @@
   "scripts": {
     "build": "rimraf dist && NODE_ENV=production babel src --out-dir dist --root-mode upward --ignore \"src/**/*.test.js,src/**/*.stories.js\"",
     "clean": "rimraf dist",
-    "prepare": "npm run build",
-    "storybook": "start-storybook -p 5000",
-    "storybook:build": "build-storybook",
-    "storybook:deploy": "storybook-to-ghpages"
+    "prepare": "npm run build"
   },
   "dependencies": {
     "@babel/cli": "^7.5.5",
     "@carbon/icons-react": "^10.3.0",
     "@tektoncd/dashboard-utils": "file:../utils",
     "prop-types": "^15.7.2"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.3.4",
-    "@babel/plugin-proposal-class-properties": "^7.3.4",
-    "@babel/plugin-proposal-export-default-from": "^7.2.0",
-    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
-    "@babel/preset-env": "^7.3.4",
-    "@babel/preset-react": "^7.0.0",
-    "@storybook/addon-actions": "^5.0.1",
-    "@storybook/addon-knobs": "^5.0.1",
-    "@storybook/addon-viewport": "^5.0.1",
-    "@storybook/react": "^5.0.1",
-    "@storybook/storybook-deployer": "^2.8.1",
-    "history": "^4.9.0",
-    "storybook-react-router": "^1.0.4"
   },
   "peerDependencies": {
     "react": "^16.8.4",

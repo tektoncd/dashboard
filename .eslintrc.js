@@ -28,6 +28,7 @@ module.exports = {
   "rules": {
     "curly": ["error", "all"],
     "import/prefer-default-export": "off",
+    "import/no-extraneous-dependencies": "off",
     "jsx-a11y/anchor-is-valid": "off",
     "no-case-declarations": "off",
     "no-template-curly-in-string": "off",
@@ -38,13 +39,5 @@ module.exports = {
         "ignoreCase": true,
         "ignoreDeclarationSort": true
     }]
-  },
-  "overrides": [
-    {
-      "files": ["webpack.*.js", "config_frontend/setupTests.js", "*.stories.js", "test.js"],
-      "rules": {
-        "import/no-extraneous-dependencies": ["error", { "devDependencies": true }]
-      }
-    }
-  ]
+  }
 };
