@@ -12,3 +12,11 @@ limitations under the License.
 */
 
 export { default as Breadcrumbs } from './Breadcrumbs';
+export { default as Header } from './Header';
+export { default as Log } from './Log';
+export { default as ResourceTable } from './ResourceTable';
+export { default as Spinner } from './Spinner';
+export { default as Step } from './Step';
+export { default as StepDetailsHeader } from './StepDetailsHeader';
+export { default as StepStatus } from './StepStatus';
+export { default as TaskSkeleton } from './TaskSkeleton';

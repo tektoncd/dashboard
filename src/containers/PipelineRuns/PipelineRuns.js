@@ -26,7 +26,7 @@ import {
   StructuredListWrapper
 } from 'carbon-components-react';
 
-import { urls } from '@tektoncd/dashboard-utils';
+import { getStatus, urls } from '@tektoncd/dashboard-utils';
 import Add from '@carbon/icons-react/lib/add/16';
 
 import { CreatePipelineRun } from '..';
@@ -35,7 +35,6 @@ import './PipelineRuns.scss';
 import { ALL_NAMESPACES } from '../../constants';
 import {
   getErrorMessage,
-  getStatus,
   getStatusIcon,
   isRunning,
   sortRunsByStartTime

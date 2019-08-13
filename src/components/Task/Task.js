@@ -15,9 +15,7 @@ import React, { Component } from 'react';
 import CheckmarkFilled from '@carbon/icons-react/lib/checkmark--filled/16';
 import ChevronRight from '@carbon/icons-react/lib/chevron--right/16';
 import CloseFilled from '@carbon/icons-react/lib/close--filled/16';
-
-import Step from '../Step';
-import Spinner from '../Spinner';
+import { Spinner, Step } from '@tektoncd/dashboard-components';
 
 import './Task.scss';
 

@@ -18,6 +18,7 @@ import {
   InlineNotification,
   StructuredListSkeleton
 } from 'carbon-components-react';
+import { getStatus } from '@tektoncd/dashboard-utils';
 
 import {
   getSelectedNamespace,
@@ -29,12 +30,7 @@ import {
 import RunHeader from '../../components/RunHeader';
 import StepDetails from '../../components/StepDetails';
 import TaskTree from '../../components/TaskTree';
-import {
-  getStatus,
-  selectedTaskRun,
-  stepsStatus,
-  taskRunStep
-} from '../../utils';
+import { selectedTaskRun, stepsStatus, taskRunStep } from '../../utils';
 
 import '../../components/Run/Run.scss';
 import { fetchTaskByType } from '../../actions/tasks';

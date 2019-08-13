@@ -22,6 +22,8 @@ import {
 } from 'carbon-components-react';
 
 import { injectIntl } from 'react-intl';
+import { getStatus } from '@tektoncd/dashboard-utils';
+
 import {
   getClusterTasks,
   getPipelineRun,
@@ -40,7 +42,6 @@ import StepDetails from '../../components/StepDetails';
 import TaskTree from '../../components/TaskTree';
 import {
   getErrorMessage,
-  getStatus,
   selectedTask,
   selectedTaskRun,
   stepsStatus,

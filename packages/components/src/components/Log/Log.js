@@ -65,7 +65,7 @@ class Log extends Component {
 
     return (
       <div className="log-trailer" data-status={status}>
-        {intl.formatMessage({ id: trailer })}
+        {intl.formatMessage(trailer)}
       </div>
     );
   }
@@ -90,8 +90,14 @@ class Log extends Component {
 
 Log.defaultProps = {
   trailers: {
-    Completed: 'dashboard.pipelineRun.stepCompleted',
-    Error: 'dashboard.pipelineRun.stepFailed'
+    Completed: {
+      id: 'dashboard.pipelineRun.stepCompleted',
+      defaultMessage: 'Step completed'
+    },
+    Error: {
+      id: 'dashboard.pipelineRun.stepFailed',
+      defaultMessage: 'Step failed'
+    }
   }
 };
 

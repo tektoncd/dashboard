@@ -14,11 +14,10 @@ limitations under the License.
 import { injectIntl } from 'react-intl';
 import React from 'react';
 import { Tab, Tabs } from 'carbon-components-react';
+import { StepDetailsHeader, StepStatus } from '@tektoncd/dashboard-components';
 
 import Log from '../../containers/Log';
 import StepDefinition from '../StepDefinition';
-import StepDetailsHeader from '../StepDetailsHeader';
-import StepStatus from '../StepStatus';
 
 import './StepDetails.scss';
 
