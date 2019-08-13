@@ -16,9 +16,9 @@ import CheckmarkFilled from '@carbon/icons-react/lib/checkmark--filled/24';
 import ChevronRight from '@carbon/icons-react/lib/chevron--right/24';
 import CloseFilled from '@carbon/icons-react/lib/close--filled/16';
 import { injectIntl } from 'react-intl';
+import { getStatus } from '@tektoncd/dashboard-utils';
 
-import Spinner from '../Spinner';
-import { getStatus } from '../../utils';
+import { Spinner } from '..';
 
 import './StepDetailsHeader.scss';
 

@@ -4,7 +4,7 @@
   "private": false,
   "main": "./dist/components/index.js",
   "scripts": {
-    "build": "rimraf dist && NODE_ENV=production babel src --out-dir dist --root-mode upward --ignore \"src/**/*.test.js,src/**/*.stories.js\"",
+    "build": "rimraf dist && NODE_ENV=production babel src --out-dir dist --copy-files --root-mode upward --ignore \"src/**/*.test.js,src/**/*.stories.js\"",
     "clean": "rimraf dist",
     "prepare": "npm run build"
   },
@@ -12,11 +12,14 @@
     "@babel/cli": "^7.5.5",
     "@carbon/icons-react": "^10.3.0",
     "@tektoncd/dashboard-utils": "file:../utils",
-    "prop-types": "^15.7.2"
+    "ansi-to-react": "^5.0.0",
+    "prop-types": "^15.7.2",
+    "react-window": "^1.8.5"
   },
   "peerDependencies": {
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
+    "react-intl": "^3.1.1",
     "react-router-dom": "^5.0.0",
     "carbon-components": "^10.3.2",
     "carbon-components-react": "^7.3.2"

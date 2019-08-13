@@ -23,12 +23,11 @@ import {
   StructuredListSkeleton,
   StructuredListWrapper
 } from 'carbon-components-react';
-import { urls } from '@tektoncd/dashboard-utils';
+import { getStatus, urls } from '@tektoncd/dashboard-utils';
 
 import { ALL_NAMESPACES } from '../../constants';
 import {
   getErrorMessage,
-  getStatus,
   getStatusIcon,
   isRunning,
   sortRunsByStartTime

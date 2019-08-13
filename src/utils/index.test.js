@@ -13,7 +13,6 @@ limitations under the License.
 
 import {
   getErrorMessage,
-  getStatus,
   selectedTask,
   sortRunsByStartTime,
   stepsStatus,
@@ -40,36 +39,6 @@ it('getErrorMessage custom object', () => {
   const message = 'this is an error message';
   const error = { custom: message };
   expect(getErrorMessage(error)).toContain(`"custom":"${message}"`);
-});
-
-it('getStatus', () => {
-  const taskRun = {
-    status: {
-      conditions: [
-        {
-          type: 'Succeeded',
-          foo: 'bar'
-        }
-      ]
-    }
-  };
-
-  const status = getStatus(taskRun);
-  expect(status).toMatchObject({
-    foo: 'bar'
-  });
-});
-
-it('getStatus with no conditions', () => {
-  const taskRun = { status: {} };
-  const status = getStatus(taskRun);
-  expect(status).toEqual({});
-});
-
-it('getStatus with no status', () => {
-  const taskRun = {};
-  const status = getStatus(taskRun);
-  expect(status).toEqual({});
 });
 
 it('taskRunSteps with no taskRun', () => {

@@ -12,3 +12,8 @@ limitations under the License.
 */
 
 export { paths, urls } from './router';
+
+export function getStatus(resource) {
+  const { conditions = [] } = resource.status || {};
+  return conditions.find(condition => condition.type === 'Succeeded') || {};
+}

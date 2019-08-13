@@ -16,7 +16,7 @@ import snakeCase from 'lodash.snakecase';
 import CheckmarkFilled from '@carbon/icons-react/lib/checkmark--filled/16';
 import CloseFilled from '@carbon/icons-react/lib/close--filled/16';
 
-import Spinner from '../components/Spinner';
+import { Spinner } from '@tektoncd/dashboard-components';
 
 export function getErrorMessage(error) {
   if (!error || typeof error === 'string') {
@@ -26,11 +26,6 @@ export function getErrorMessage(error) {
   return (
     error.message || JSON.stringify(error, Object.getOwnPropertyNames(error))
   );
-}
-
-export function getStatus(resource) {
-  const { conditions = [] } = resource.status || {};
-  return conditions.find(condition => condition.type === 'Succeeded') || {};
 }
 
 export function isRunning(reason, status) {

@@ -11,17 +11,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-/**
- * to rename. Details section of a step
- */
+// TODO: rename. Details section of a step
 
 import React from 'react';
 import { Link } from 'react-router-dom';
 import jsYaml from 'js-yaml';
-import { urls } from '@tektoncd/dashboard-utils';
-
 import { FormattedMessage, injectIntl } from 'react-intl';
-import ResourceTable from '../ResourceTable';
+import { urls } from '@tektoncd/dashboard-utils';
+import { ResourceTable } from '@tektoncd/dashboard-components';
 
 import './StepDefinition.scss';
 

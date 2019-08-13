@@ -15,7 +15,7 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 
-import Log from '../../components/Log';
+import { Log } from '@tektoncd/dashboard-components';
 import { getPodLog } from '../../api';
 
 export class LoggingContainer extends Component {

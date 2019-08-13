@@ -23,7 +23,7 @@ import {
 
 import { defineMessages, IntlProvider } from 'react-intl';
 import { Content } from 'carbon-components-react';
-import { Breadcrumbs } from '@tektoncd/dashboard-components';
+import { Breadcrumbs, Header } from '@tektoncd/dashboard-components';
 import { paths, urls } from '@tektoncd/dashboard-utils';
 
 import {
@@ -46,7 +46,6 @@ import {
   Tasks
 } from '..';
 
-import Header from '../../components/Header';
 import { fetchExtensions } from '../../actions/extensions';
 import { fetchNamespaces, selectNamespace } from '../../actions/namespaces';
 import { getExtensions, getLocale, getSelectedNamespace } from '../../reducers';
