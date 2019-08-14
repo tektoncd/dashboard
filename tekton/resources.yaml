@@ -1,0 +1,35 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: tekton-dashboard-git
+spec:
+  type: git
+  params:
+  - name: url
+    value: https://github.com/tektoncd/dashboard # REPLACE with your own fork
+  - name: revision
+    value:  vX.Y.Z-invalid-tags-boouuhhh # REPLACE with your own commit
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: tekton-bucket
+spec:
+  type: storage
+  params:
+   - name: type
+     value: gcs
+   - name: location
+     value: gs://tekton-releases # REPLACE with your own bucket
+   - name: dir
+     value: "y"
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: dashboard-image
+spec:
+  type: image
+  params:
+   - name: url
+     value: cmd/dashboard # Registry is provided via parameter, this is a hack see #569
