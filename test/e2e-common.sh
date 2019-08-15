@@ -35,7 +35,7 @@ function print_diagnostic_info() {
 
 function install_pipeline_crd() {
   echo ">> Deploying Tekton Pipelines"
-  kubectl apply --filename https://storage.googleapis.com/tekton-releases/v0.5.2/release.yaml || fail_test "Tekton pipeline installation failed"
+  kubectl apply --filename https://storage.googleapis.com/tekton-releases/previous/v0.5.2/release.yaml || fail_test "Tekton pipeline installation failed"
 
   # Make sure thateveything is cleaned up in the current namespace.
   for res in pipelineresources tasks pipelines taskruns pipelineruns; do
