@@ -252,7 +252,7 @@ func (r Resource) createPipelineRunImpl(pipelineRunData ManualPipelineRun, names
 	}
 
 	// PipelineRun yaml defines references to resources
-	newPipelineRunData, err := definePipelineRun(generatedPipelineRunName, namespace, serviceAccount, pipelineRunData.REPOURL, pipeline, v1alpha1.PipelineTriggerTypeManual, resources, params)
+	newPipelineRunData, err := definePipelineRun(generatedPipelineRunName, namespace, serviceAccount, pipelineRunData.REPOURL, pipeline, resources, params)
 	if err != nil {
 		errorMsg := fmt.Sprintf("there was a problem defining the pipeline run: %s", err)
 		logging.Log.Error(errorMsg)
@@ -357,7 +357,6 @@ func definePipelineResource(name, namespace string, params []v1alpha1.Param, res
 each PipelineRun has a 1 hour timeout: */
 func definePipelineRun(pipelineRunName, namespace, saName, repoUrl string,
 	pipeline v1alpha1.Pipeline,
-	triggerType v1alpha1.PipelineTriggerType,
 	resourceBinding []v1alpha1.PipelineResourceBinding,
 	params []v1alpha1.Param) (*v1alpha1.PipelineRun, error) {
 
@@ -385,8 +384,6 @@ func definePipelineRun(pipelineRunName, namespace, saName, repoUrl string,
 
 		Spec: v1alpha1.PipelineRunSpec{
 			PipelineRef: v1alpha1.PipelineRef{Name: pipeline.Name},
-			// E.g. v1alpha1.PipelineTriggerTypeManual
-			Trigger:        v1alpha1.PipelineTrigger{Type: triggerType},
 			ServiceAccount: saName,
 			Timeout:        &metav1.Duration{Duration: 1 * time.Hour},
 			Resources:      resourceBinding,
@@ -558,11 +555,6 @@ func (r Resource) rebuildRun(name, namespace string) (*v1alpha1.PipelineRun, err
 	newPipelineRunData := pipelineRun
 	newPipelineRunData.Name = generateNewNameForRebuild(name)
 	newPipelineRunData.ResourceVersion = ""
-
-	// It's mandatory, so if it's not set already choose manual
-	if newPipelineRunData.Spec.Trigger.Type == "" {
-		newPipelineRunData.Spec.Trigger.Type = v1alpha1.PipelineTriggerTypeManual
-	}
 
 	currentLabels := pipelineRun.GetLabels()
 

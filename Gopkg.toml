@@ -6,8 +6,8 @@ required = [
 
 [[constraint]]
   name = "github.com/tektoncd/pipeline"
-  branch = "master"
-  
+  version = "v0.5.2"
+
 [[override]]
   name = "k8s.io/client-go"
   version = "kubernetes-1.12.6"
