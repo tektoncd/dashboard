@@ -6,6 +6,24 @@ Tekton Dashboard is a general purpose, web-based UI for Tekton Pipelines. It all
 
 ![Dashboard UI workloads page](docs/dashboard-ui.png)
 
+## Compatibility
+The table below shows which versions of tekton pipelines work with what versions of the tekton dashboard. To run the compatibility test follow the instructions in the test/start_compatibility_test.sh
+
+|          | 0.1.0     |
+| ---      | ---       |
+| 0.5.0    |    X      |
+| 0.5.1    |    Y      |
+| 0.5.2    |    Y      |
+
+The table below shows what versions of Istio and knative work with Webhooks Extension
+
+|           |   0.6.0   |   0.7.0   |   0.7.1   |
+|   :---:   |   :---:   |   :---:   |   :---:   |
+| 1.2.0     |    X      |    N      |    N      |
+| 1.2.1     |    Y      |    N      |    N      |
+| 1.2.2     |    Y      |    N      |    N      |
+| 1.2.3     |    Y      |    N      |    N      |
+
 ## Pre-requisites
 
 [Tekton Pipelines](https://github.com/tektoncd/pipeline) 0.5 or later must be installed in order to use the Tekton Dashboard. Instructions to install Tekton Pipelines can be found [here](https://github.com/tektoncd/pipeline/blob/master/docs/install.md).
