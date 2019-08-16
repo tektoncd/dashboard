@@ -24,9 +24,12 @@ import {
 } from 'carbon-components-react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { urls } from '@tektoncd/dashboard-utils';
-import { getErrorMessage } from '../../utils';
-import { ALL_NAMESPACES } from '../../constants';
+import {
+  ALL_NAMESPACES,
+  getErrorMessage,
+  urls
+} from '@tektoncd/dashboard-utils';
+
 import { getCustomResources } from '../../api';
 import { getSelectedNamespace } from '../../reducers';
 

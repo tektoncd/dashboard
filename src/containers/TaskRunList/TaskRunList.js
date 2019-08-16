@@ -23,15 +23,17 @@ import {
   StructuredListSkeleton,
   StructuredListWrapper
 } from 'carbon-components-react';
-import { getStatus, urls } from '@tektoncd/dashboard-utils';
-
-import { ALL_NAMESPACES } from '../../constants';
 import {
+  ALL_NAMESPACES,
   getErrorMessage,
+  getStatus,
   getStatusIcon,
   isRunning,
-  sortRunsByStartTime
-} from '../../utils';
+  urls
+} from '@tektoncd/dashboard-utils';
+import { CancelButton } from '@tektoncd/dashboard-components';
+
+import { sortRunsByStartTime } from '../../utils';
 import { fetchTaskRuns } from '../../actions/taskRuns';
 
 import {
@@ -40,7 +42,6 @@ import {
   getTaskRunsErrorMessage,
   isFetchingTaskRuns
 } from '../../reducers';
-import CancelButton from '../../components/CancelButton/CancelButton';
 import { cancelTaskRun } from '../../api';
 
 export /* istanbul ignore next */ class TaskRunList extends Component {

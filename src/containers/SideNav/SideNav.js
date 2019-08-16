@@ -20,13 +20,12 @@ import {
   SideNavMenu,
   SideNavMenuItem
 } from 'carbon-components-react';
-import { urls } from '@tektoncd/dashboard-utils';
+import { ALL_NAMESPACES, urls } from '@tektoncd/dashboard-utils';
 
 import { NamespacesDropdown } from '..';
 
 import { selectNamespace } from '../../actions/namespaces';
 import { getExtensions, getSelectedNamespace } from '../../reducers';
-import { ALL_NAMESPACES } from '../../constants';
 
 import './SideNav.scss';
 

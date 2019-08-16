@@ -11,8 +11,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
+
 import namespacesReducer, * as selectors from './namespaces';
-import { ALL_NAMESPACES } from '../constants';
 
 const name = 'default';
 const uid = 'some-uid';

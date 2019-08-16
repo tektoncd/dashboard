@@ -11,19 +11,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
-
-export function getCollection(state, namespace) {
-  if (namespace === ALL_NAMESPACES) {
-    return Object.values(state.byId);
-  }
-
-  const resources = state.byNamespace[namespace];
-  return resources ? Object.values(resources).map(id => state.byId[id]) : [];
-}
-
-export function getResource(state, name, namespace) {
-  const resources = state.byNamespace[namespace] || {};
-  const id = resources[name];
-  return id ? state.byId[id] : null;
-}
+export default from './PipelineRuns';

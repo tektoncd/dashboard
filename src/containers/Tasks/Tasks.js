@@ -23,10 +23,13 @@ import {
   StructuredListSkeleton,
   StructuredListWrapper
 } from 'carbon-components-react';
-import { urls } from '@tektoncd/dashboard-utils';
+import {
+  ALL_NAMESPACES,
+  getErrorMessage,
+  urls
+} from '@tektoncd/dashboard-utils';
 
 import Information16 from '@carbon/icons-react/lib/information/16';
-import { ALL_NAMESPACES } from '../../constants';
 import { fetchTasks } from '../../actions/tasks';
 import {
   getSelectedNamespace,
@@ -34,7 +37,6 @@ import {
   getTasksErrorMessage,
   isFetchingTasks
 } from '../../reducers';
-import { getErrorMessage } from '../../utils';
 
 import '../../components/Definitions/Definitions.scss';
 

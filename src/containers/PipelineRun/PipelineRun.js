@@ -20,9 +20,14 @@ import {
   StructuredListSkeleton,
   ToastNotification
 } from 'carbon-components-react';
-
 import { injectIntl } from 'react-intl';
-import { getStatus } from '@tektoncd/dashboard-utils';
+import {
+  Rebuild,
+  RunHeader,
+  StepDetails,
+  TaskTree
+} from '@tektoncd/dashboard-components';
+import { getErrorMessage, getStatus } from '@tektoncd/dashboard-utils';
 
 import {
   getClusterTasks,
@@ -37,11 +42,9 @@ import {
 import { fetchPipelineRun } from '../../actions/pipelineRuns';
 import { fetchClusterTasks, fetchTasks } from '../../actions/tasks';
 import { fetchTaskRuns } from '../../actions/taskRuns';
-import RunHeader from '../../components/RunHeader';
-import StepDetails from '../../components/StepDetails';
-import TaskTree from '../../components/TaskTree';
+import { Log } from '..';
+import { rebuildPipelineRun } from '../../api';
 import {
-  getErrorMessage,
   selectedTask,
   selectedTaskRun,
   stepsStatus,
@@ -254,6 +257,16 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       taskRun
     );
 
+    const logContainer = (
+      <Log
+        key={stepName}
+        stepName={stepName}
+        podName={taskRun.pod}
+        stepStatus={stepStatus}
+        namespace={taskRun.namespace}
+      />
+    );
+
     return (
       <>
         {showRebuildNotification && !showRebuildNotification.logsURL && (
@@ -290,12 +303,17 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
         <RunHeader
           lastTransitionTime={lastTransitionTime}
           loading={loading}
-          pipelineRun={pipelineRun}
           runName={pipelineRunName}
           reason={pipelineRunReason}
           status={pipelineRunStatus}
-          setShowRebuildNotification={this.setShowRebuildNotification}
-        />
+        >
+          <Rebuild
+            pipelineRun={pipelineRun}
+            rebuildPipelineRun={rebuildPipelineRun}
+            runName={pipelineRunName}
+            setShowRebuildNotification={this.setShowRebuildNotification}
+          />
+        </RunHeader>
         <div className="tasks">
           <TaskTree
             onSelect={this.handleTaskSelected}
@@ -305,6 +323,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           {selectedStepId && (
             <StepDetails
               definition={definition}
+              logContainer={logContainer}
               reason={reason}
               status={status}
               stepName={stepName}

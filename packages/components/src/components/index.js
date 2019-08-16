@@ -12,11 +12,20 @@ limitations under the License.
 */
 
 export { default as Breadcrumbs } from './Breadcrumbs';
+export { default as CancelButton } from './CancelButton';
+export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as Header } from './Header';
 export { default as Log } from './Log';
+export { default as PipelineRuns } from './PipelineRuns';
+export { default as Rebuild } from './Rebuild';
 export { default as ResourceTable } from './ResourceTable';
+export { default as RunHeader } from './RunHeader';
 export { default as Spinner } from './Spinner';
 export { default as Step } from './Step';
+export { default as StepDefinition } from './StepDefinition';
+export { default as StepDetails } from './StepDetails';
 export { default as StepDetailsHeader } from './StepDetailsHeader';
 export { default as StepStatus } from './StepStatus';
+export { default as Task } from './Task';
 export { default as TaskSkeleton } from './TaskSkeleton';
+export { default as TaskTree } from './TaskTree';

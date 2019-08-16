@@ -12,9 +12,8 @@ limitations under the License.
 */
 
 import React, { Component, Suspense } from 'react';
+import { ErrorBoundary } from '@tektoncd/dashboard-components';
 import { paths, urls } from '@tektoncd/dashboard-utils';
-
-import ErrorBoundary from '../../components/ErrorBoundary';
 
 import * as actions from './actions';
 import * as selectors from '../../reducers';

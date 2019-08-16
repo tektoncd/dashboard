@@ -11,10 +11,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
+
 import { createNamespacedReducer } from './reducerCreators';
 import * as selectors from './pipelineResources';
-
-import { ALL_NAMESPACES } from '../constants';
 
 const createResource = (name, namespace, uid, other) => {
   return {

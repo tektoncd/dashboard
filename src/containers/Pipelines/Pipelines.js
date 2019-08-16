@@ -25,9 +25,12 @@ import {
   StructuredListSkeleton,
   StructuredListWrapper
 } from 'carbon-components-react';
-import { urls } from '@tektoncd/dashboard-utils';
+import {
+  ALL_NAMESPACES,
+  getErrorMessage,
+  urls
+} from '@tektoncd/dashboard-utils';
 
-import { ALL_NAMESPACES } from '../../constants';
 import { fetchPipelines } from '../../actions/pipelines';
 import {
   getPipelines,
@@ -35,7 +38,6 @@ import {
   getSelectedNamespace,
   isFetchingPipelines
 } from '../../reducers';
-import { getErrorMessage } from '../../utils';
 
 import '../../components/Definitions/Definitions.scss';
 

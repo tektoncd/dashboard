@@ -14,6 +14,8 @@ limitations under the License.
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { InlineNotification } from 'carbon-components-react';
+import { getErrorMessage } from '@tektoncd/dashboard-utils';
+
 import Modal from '../SecretsModal';
 import DeleteModal from '../../components/SecretsDeleteModal';
 import Table from '../../components/SecretsTable';
@@ -28,7 +30,6 @@ import {
   getSelectedNamespace,
   isFetchingSecrets
 } from '../../reducers';
-import { getErrorMessage } from '../../utils';
 
 export /* istanbul ignore next */ class Secrets extends Component {
   constructor(props) {

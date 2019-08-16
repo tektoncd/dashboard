@@ -18,27 +18,16 @@ import { injectIntl } from 'react-intl';
 import {
   Button,
   InlineNotification,
-  StructuredListBody,
-  StructuredListCell,
-  StructuredListHead,
-  StructuredListRow,
-  StructuredListSkeleton,
-  StructuredListWrapper
+  StructuredListSkeleton
 } from 'carbon-components-react';
-
-import { getStatus, urls } from '@tektoncd/dashboard-utils';
+import { PipelineRuns as PipelineRunsList } from '@tektoncd/dashboard-components';
+import { getErrorMessage, urls } from '@tektoncd/dashboard-utils';
 import Add from '@carbon/icons-react/lib/add/16';
 
 import { CreatePipelineRun } from '..';
 import './PipelineRuns.scss';
 
-import { ALL_NAMESPACES } from '../../constants';
-import {
-  getErrorMessage,
-  getStatusIcon,
-  isRunning,
-  sortRunsByStartTime
-} from '../../utils';
+import { sortRunsByStartTime } from '../../utils';
 import { fetchPipelineRuns } from '../../actions/pipelineRuns';
 
 import {
@@ -48,7 +37,6 @@ import {
   getSelectedNamespace,
   isFetchingPipelineRuns
 } from '../../reducers';
-import CancelButton from '../../components/CancelButton/CancelButton';
 import { cancelPipelineRun } from '../../api';
 
 const initialState = {
@@ -176,109 +164,12 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
           pipelineRef={pipelineName}
           namespace={selectedNamespace}
         />
-        <StructuredListWrapper border selection>
-          <StructuredListHead>
-            <StructuredListRow head>
-              <StructuredListCell head>PipelineRun</StructuredListCell>
-              {!pipelineName && (
-                <StructuredListCell head>Pipeline</StructuredListCell>
-              )}
-              {selectedNamespace === ALL_NAMESPACES && (
-                <StructuredListCell head>Namespace</StructuredListCell>
-              )}
-              <StructuredListCell head>
-                {intl.formatMessage({
-                  id: 'dashboard.pipelineRuns.status'
-                })}
-              </StructuredListCell>
-              <StructuredListCell head>
-                {intl.formatMessage({
-                  id: 'dashboard.pipelineRuns.transitionTime'
-                })}
-              </StructuredListCell>
-              <StructuredListCell head />
-            </StructuredListRow>
-          </StructuredListHead>
-          <StructuredListBody>
-            {!pipelineRuns.length && (
-              <StructuredListRow>
-                <StructuredListCell>
-                  {pipelineName ? (
-                    <span>No PipelineRuns for {pipelineName}</span>
-                  ) : (
-                    <span>No PipelineRuns</span>
-                  )}
-                </StructuredListCell>
-              </StructuredListRow>
-            )}
-            {pipelineRuns.map(pipelineRun => {
-              const { name: pipelineRunName, namespace } = pipelineRun.metadata;
-              const pipelineRefName = pipelineRun.spec.pipelineRef.name;
-              const { lastTransitionTime, reason, status } = getStatus(
-                pipelineRun
-              );
-
-              return (
-                <StructuredListRow
-                  className="definition"
-                  key={pipelineRun.metadata.uid}
-                >
-                  <StructuredListCell>
-                    <Link
-                      to={urls.pipelineRuns.byName({
-                        namespace,
-                        pipelineName: pipelineRefName,
-                        pipelineRunName
-                      })}
-                    >
-                      {pipelineRunName}
-                    </Link>
-                  </StructuredListCell>
-                  {!pipelineName && (
-                    <StructuredListCell>
-                      <Link
-                        to={urls.pipelineRuns.byPipeline({
-                          namespace,
-                          pipelineName: pipelineRefName
-                        })}
-                      >
-                        {pipelineRefName}
-                      </Link>
-                    </StructuredListCell>
-                  )}
-                  {selectedNamespace === ALL_NAMESPACES && (
-                    <StructuredListCell>{namespace}</StructuredListCell>
-                  )}
-                  <StructuredListCell
-                    className="status"
-                    data-reason={reason}
-                    data-status={status}
-                  >
-                    {getStatusIcon({ reason, status })}
-                    {pipelineRun.status.conditions
-                      ? pipelineRun.status.conditions[0].message
-                      : ''}
-                  </StructuredListCell>
-                  <StructuredListCell>{lastTransitionTime}</StructuredListCell>
-                  <StructuredListCell>
-                    {isRunning(reason, status) && (
-                      <CancelButton
-                        type="PipelineRun"
-                        name={pipelineRunName}
-                        onCancel={() =>
-                          cancelPipelineRun({
-                            name: pipelineRunName,
-                            namespace
-                          })
-                        }
-                      />
-                    )}
-                  </StructuredListCell>
-                </StructuredListRow>
-              );
-            })}
-          </StructuredListBody>
-        </StructuredListWrapper>
+        <PipelineRunsList
+          pipelineName={pipelineName}
+          selectedNamespace={selectedNamespace}
+          pipelineRuns={pipelineRuns}
+          cancelPipelineRun={cancelPipelineRun}
+        />
       </>
     );
   }

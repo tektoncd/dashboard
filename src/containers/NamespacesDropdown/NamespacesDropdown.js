@@ -13,10 +13,10 @@ limitations under the License.
 
 import React from 'react';
 import { connect } from 'react-redux';
+import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
 import TooltipDropdown from '../../components/TooltipDropdown';
 import { getNamespaces, isFetchingNamespaces } from '../../reducers';
-import { ALL_NAMESPACES } from '../../constants';
 
 const NamespacesDropdown = props => {
   return <TooltipDropdown {...props} />;

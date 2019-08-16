@@ -18,8 +18,8 @@ import { Link } from 'react-router-dom';
 import jsYaml from 'js-yaml';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { urls } from '@tektoncd/dashboard-utils';
-import { ResourceTable } from '@tektoncd/dashboard-components';
 
+import { ResourceTable } from '..';
 import './StepDefinition.scss';
 
 const resourceTable = (title, namespace, resources, intl) => {

@@ -11,8 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 import { deleteRequest, get, post, put } from './comms';
-import { ALL_NAMESPACES } from '../constants';
 
 export function getAPIRoot() {
   const { href, hash } = window.location;

@@ -11,7 +11,28 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { getStatus } from '.';
+import { getErrorMessage, getStatus, getStatusIcon, isRunning } from '.';
+
+it('getErrorMessage falsy', () => {
+  expect(getErrorMessage()).toBeUndefined();
+});
+
+it('getErrorMessage string', () => {
+  const error = 'this is an error message';
+  expect(getErrorMessage(error)).toEqual(error);
+});
+
+it('getErrorMessage error object', () => {
+  const message = 'this is an error message';
+  const error = new Error(message);
+  expect(getErrorMessage(error)).toEqual(message);
+});
+
+it('getErrorMessage custom object', () => {
+  const message = 'this is an error message';
+  const error = { custom: message };
+  expect(getErrorMessage(error)).toContain(`"custom":"${message}"`);
+});
 
 it('getStatus', () => {
   const taskRun = {
@@ -41,4 +62,22 @@ it('getStatus with no status', () => {
   const taskRun = {};
   const status = getStatus(taskRun);
   expect(status).toEqual({});
+});
+
+it('isRunning', () => {
+  expect(isRunning('Running', 'Unknown')).toBe(true);
+  expect(isRunning('Building', 'Unknown')).toBe(true);
+  expect(isRunning('?', 'Unknown')).toBe(false);
+  expect(isRunning('Running', '?')).toBe(false);
+});
+
+it('getStatusIcon', () => {
+  let icon = getStatusIcon({ reason: 'Running', status: 'Unknown' });
+  expect(icon).not.toBeNull();
+  icon = getStatusIcon({ status: 'True' });
+  expect(icon).not.toBeNull();
+  icon = getStatusIcon({ status: 'False' });
+  expect(icon).not.toBeNull();
+  icon = getStatusIcon({});
+  expect(icon).toBeNull();
 });

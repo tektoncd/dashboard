@@ -19,13 +19,13 @@ import {
   DataTableSkeleton,
   InlineNotification
 } from 'carbon-components-react';
+import { getErrorMessage } from '@tektoncd/dashboard-utils';
 
 import {
   getPipelineResource,
   getPipelineResourcesErrorMessage,
   isFetchingPipelineResources
 } from '../../reducers';
-import { getErrorMessage } from '../../utils';
 
 import { fetchPipelineResource } from '../../actions/pipelineResources';
 
