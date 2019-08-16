@@ -126,7 +126,8 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
           hideCloseButton
           lowContrast
           title={intl.formatMessage({
-            id: 'dashboard.pipelineRuns.error'
+            id: 'dashboard.pipelineRuns.error',
+            defaultMessage: 'Error loading PipelineRuns'
           })}
           subtitle={getErrorMessage(error)}
         />
