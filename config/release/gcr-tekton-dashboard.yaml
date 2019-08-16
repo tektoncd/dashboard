@@ -207,7 +207,7 @@ spec:
       default: tekton-pipelines
   steps:
   - name: kubectl-apply
-    image: lachlanevenson/k8s-kubectl
+    image: lachlanevenson/k8s-kubectl:latest
     command:
     - kubectl
     args:
