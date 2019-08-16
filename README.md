@@ -19,14 +19,14 @@ Tekton Dashboard is a general purpose, web-based UI for Tekton Pipelines. It all
    command to install the [Tekton Dashboard](https://github.com/tektoncd/dashboard)
    and its dependencies:
     
-  ```bash
-  kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.1.0/release.yaml
-  ```
+   ```bash
+   kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.1.0/release.yaml
+   ```
 
    _(Previous versions will be available at `previous/$VERSION_NUMBER`, e.g.
    https://storage.googleapis.com/tekton-releases/previous/v0.1.0/release.yaml.)_
 
-1. Run the
+2. Run the
    [`kubectl get`](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#get)
    command to monitor the Tekton Dashboard component until all of the
    components show a `STATUS` of `Running`:
@@ -88,26 +88,24 @@ You can then access the Tekton Dashboard at `tekton-dashboard.${ip}.nip.io`. Thi
 
 1. Assuming you want to install the Dashboard into the `tekton-pipelines` namespace:
 
+   ```bash
+   kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.1.0/openshift-tekton-dashboard.yaml
+   ```
 
-```bash
-kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.1.0/openshift-tekton-dashboard.yaml
-```
+2. Access the dashboard by determining its route with `kubectl get route tekton-dashboard -n tekton-pipelines`
+   This has been tested with the following OpenShift security settings (from `oc get scc`):
 
-3. Access the dashboard by determining its route with `kubectl get route tekton-dashboard -n tekton-pipelines`
-
-This has been tested with the following OpenShift security settings (from `oc get scc`):
-
-```
-NAME               PRIV      CAPS      SELINUX     RUNASUSER          FSGROUP     SUPGROUP    PRIORITY   READONLYROOTFS   VOLUMES
-anyuid             false     []        MustRunAs   RunAsAny           RunAsAny    RunAsAny    10         false            [configMap downwardAPI emptyDir persistentVolumeClaim projected secret]
-hostaccess         false     []        MustRunAs   MustRunAsRange     MustRunAs   RunAsAny    <none>     false            [configMap downwardAPI emptyDir hostPath persistentVolumeClaim projected secret]
-hostmount-anyuid   false     []        MustRunAs   RunAsAny           RunAsAny    RunAsAny    <none>     false            [configMap downwardAPI emptyDir hostPath nfs persistentVolumeClaim projected secret]
-hostnetwork        false     []        MustRunAs   MustRunAsRange     MustRunAs   MustRunAs   <none>     false            [configMap downwardAPI emptyDir persistentVolumeClaim projected secret]
-node-exporter      false     []        RunAsAny    RunAsAny           RunAsAny    RunAsAny    <none>     false            [*]
-nonroot            false     []        MustRunAs   MustRunAsNonRoot   RunAsAny    RunAsAny    <none>     false            [configMap downwardAPI emptyDir persistentVolumeClaim projected secret]
-privileged         true      [*]       RunAsAny    RunAsAny           RunAsAny    RunAsAny    <none>     false            [*]
-restricted         false     []        MustRunAs   MustRunAsRange     MustRunAs   RunAsAny    <none>     false            [configMap downwardAPI emptyDir persistentVolumeClaim projected secret]
-```
+   ```
+   NAME               PRIV      CAPS      SELINUX     RUNASUSER          FSGROUP     SUPGROUP    PRIORITY   READONLYROOTFS   VOLUMES
+   anyuid             false     []        MustRunAs   RunAsAny           RunAsAny    RunAsAny    10         false            [configMap downwardAPI emptyDir persistentVolumeClaim projected secret]
+   hostaccess         false     []        MustRunAs   MustRunAsRange     MustRunAs   RunAsAny    <none>     false            [configMap downwardAPI emptyDir hostPath persistentVolumeClaim projected secret]
+   hostmount-anyuid   false     []        MustRunAs   RunAsAny           RunAsAny    RunAsAny    <none>     false            [configMap downwardAPI emptyDir hostPath nfs persistentVolumeClaim projected secret]
+   hostnetwork        false     []        MustRunAs   MustRunAsRange     MustRunAs   MustRunAs   <none>     false            [configMap downwardAPI emptyDir persistentVolumeClaim projected secret]
+   node-exporter      false     []        RunAsAny    RunAsAny           RunAsAny    RunAsAny    <none>     false            [*]
+   nonroot            false     []        MustRunAs   MustRunAsNonRoot   RunAsAny    RunAsAny    <none>     false            [configMap downwardAPI emptyDir persistentVolumeClaim projected secret]
+   privileged         true      [*]       RunAsAny    RunAsAny           RunAsAny    RunAsAny    <none>     false            [*]
+   restricted         false     []        MustRunAs   MustRunAsRange     MustRunAs   RunAsAny    <none>     false            [configMap downwardAPI emptyDir persistentVolumeClaim projected secret]
+   ```
 
 ### Enable TLS for dashboard access via Ingress
 **Will only work in the cluster node**
