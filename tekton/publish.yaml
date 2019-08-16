@@ -75,6 +75,22 @@ spec:
       mkdir -p /workspace/bucket/dashboard/previous/${inputs.params.versionTag}/
       cp /workspace/bucket/dashboard/latest/release.yaml /workspace/bucket/dashboard/previous/${inputs.params.versionTag}/release.yaml
 
+  - name: tag-external-images
+    image: python
+    workingDir: "/workspace/bucket"
+    command:
+    - /bin/sh
+    args:
+    - -ce
+    - |
+      curl https://raw.githubusercontent.com/tektoncd/dashboard/tekton/scripts/lockdown.py --output lockdown.py
+      chmod +x lockdown.py
+      pip install docker
+      ./lockdown.py --omit dashboard --path /workspace/bucket/dashboard/previous/${inputs.params.versionTag}/release.yaml
+    volumeMounts:
+    - name: docker-socket
+      mountPath: /var/run/docker.sock
+
   - name: tag-images
     image: google/cloud-sdk
     command:
@@ -120,3 +136,7 @@ spec:
     - name: gcp-secret
       secret:
         secretName: release-secret
+    - name: docker-socket
+      hostPath:
+        path: /var/run/docker.sock
+        type: Socket
