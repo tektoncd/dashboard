@@ -19,6 +19,7 @@ export { default as CreatePipelineRun } from './CreatePipelineRun';
 export { default as Extension } from './Extension';
 export { default as Extensions } from './Extensions';
 export { default as ImportResources } from './ImportResources';
+export { default as Log } from './Log';
 export { default as NamespacesDropdown } from './NamespacesDropdown';
 export { default as PipelineResource } from './PipelineResource';
 export { default as PipelineResources } from './PipelineResources';

@@ -1,5 +1,3 @@
-export const ALL_NAMESPACES = '*';
-
 export const messages = {
   en: {
     'dashboard.pipelineRuns.transitionTime': 'Last Transition Time',

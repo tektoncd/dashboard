@@ -14,10 +14,7 @@ limitations under the License.
 import { injectIntl } from 'react-intl';
 import React from 'react';
 import { Tab, Tabs } from 'carbon-components-react';
-import { StepDetailsHeader, StepStatus } from '@tektoncd/dashboard-components';
-
-import Log from '../../containers/Log';
-import StepDefinition from '../StepDefinition';
+import { StepDefinition, StepDetailsHeader, StepStatus } from '..';
 
 import './StepDetails.scss';
 
@@ -25,13 +22,13 @@ const StepDetails = props => {
   const {
     definition,
     intl,
+    logContainer,
     reason,
     status,
     stepName,
     stepStatus,
     taskRun
   } = props;
-  const { pod } = taskRun;
   return (
     <div className="step-details">
       <StepDetailsHeader
@@ -48,13 +45,7 @@ const StepDetails = props => {
             defaultMessage: 'Logs'
           })}
         >
-          <Log
-            key={stepName}
-            stepName={stepName}
-            podName={pod}
-            stepStatus={stepStatus}
-            namespace={taskRun.namespace}
-          />
+          {logContainer}
         </Tab>
         <Tab
           className="details-tab"

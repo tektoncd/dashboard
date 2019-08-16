@@ -23,10 +23,12 @@ import {
   StructuredListSkeleton,
   StructuredListWrapper
 } from 'carbon-components-react';
-import { urls } from '@tektoncd/dashboard-utils';
+import {
+  ALL_NAMESPACES,
+  getErrorMessage,
+  urls
+} from '@tektoncd/dashboard-utils';
 
-import { ALL_NAMESPACES } from '../../constants';
-import { getErrorMessage } from '../../utils';
 import { fetchPipelineResources } from '../../actions/pipelineResources';
 
 import {

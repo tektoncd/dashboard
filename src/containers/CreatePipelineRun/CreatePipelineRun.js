@@ -20,6 +20,7 @@ import {
   Modal,
   TextInput
 } from 'carbon-components-react';
+import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 import {
   NamespacesDropdown,
   PipelineResourcesDropdown,
@@ -31,7 +32,6 @@ import { createPipelineRunAtProxy } from '../../api';
 import { getStore } from '../../store/index';
 
 import './CreatePipelineRun.scss';
-import { ALL_NAMESPACES } from '../../constants';
 
 const NAMESPACE = 'namespace';
 const PIPELINE_REF = 'pipelineRef';

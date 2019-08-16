@@ -13,8 +13,7 @@ limitations under the License.
 
 import { combineReducers } from 'redux';
 import merge from 'lodash.merge';
-
-import { ALL_NAMESPACES } from '../constants';
+import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
 function byNamespace(state = {}, action) {
   switch (action.type) {

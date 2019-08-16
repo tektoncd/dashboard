@@ -92,10 +92,10 @@ export class LoggingContainer extends Component {
   }
 
   render() {
-    const { stepName, stepStatus } = this.props;
+    const { stepStatus } = this.props;
     const { reason } = (stepStatus && stepStatus.terminated) || {};
     const { logs } = this.state;
-    return <Log logs={logs} stepName={stepName} status={reason} />;
+    return <Log logs={logs} status={reason} />;
   }
 }
 

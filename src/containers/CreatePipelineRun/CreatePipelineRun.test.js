@@ -23,11 +23,11 @@ import {
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
+import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 import CreatePipelineRun from './CreatePipelineRun';
 import * as API from '../../api';
 import * as store from '../../store';
 import * as reducers from '../../reducers';
-import { ALL_NAMESPACES } from '../../constants';
 
 const namespacesTestStore = {
   namespaces: {

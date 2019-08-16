@@ -18,6 +18,11 @@ import {
   InlineNotification,
   StructuredListSkeleton
 } from 'carbon-components-react';
+import {
+  RunHeader,
+  StepDetails,
+  TaskTree
+} from '@tektoncd/dashboard-components';
 import { getStatus } from '@tektoncd/dashboard-utils';
 
 import {
@@ -27,9 +32,7 @@ import {
   getTaskRunsErrorMessage
 } from '../../reducers';
 
-import RunHeader from '../../components/RunHeader';
-import StepDetails from '../../components/StepDetails';
-import TaskTree from '../../components/TaskTree';
+import { Log } from '..';
 import { stepsStatus, taskRunStep } from '../../utils';
 
 import '../../components/Run/Run.scss';
@@ -158,6 +161,16 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
       taskRun
     );
 
+    const logContainer = (
+      <Log
+        key={stepName}
+        stepName={stepName}
+        podName={taskRun.pod}
+        stepStatus={stepStatus}
+        namespace={taskRun.namespace}
+      />
+    );
+
     return (
       <>
         <RunHeader
@@ -175,6 +188,7 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
           {selectedStepId && (
             <StepDetails
               definition={definition}
+              logContainer={logContainer}
               reason={reason}
               status={status}
               stepName={stepName}

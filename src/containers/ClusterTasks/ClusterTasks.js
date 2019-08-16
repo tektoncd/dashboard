@@ -23,7 +23,7 @@ import {
   StructuredListSkeleton,
   StructuredListWrapper
 } from 'carbon-components-react';
-import { urls } from '@tektoncd/dashboard-utils';
+import { getErrorMessage, urls } from '@tektoncd/dashboard-utils';
 
 import Information16 from '@carbon/icons-react/lib/information/16';
 import { fetchClusterTasks } from '../../actions/tasks';
@@ -32,7 +32,6 @@ import {
   getClusterTasksErrorMessage,
   isFetchingClusterTasks
 } from '../../reducers';
-import { getErrorMessage } from '../../utils';
 
 import '../../components/Definitions/Definitions.scss';
 

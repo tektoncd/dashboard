@@ -13,6 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import { storiesOf } from '@storybook/react';
+
 import StepDefinition from './StepDefinition';
 
 storiesOf('StepDefinition', module)

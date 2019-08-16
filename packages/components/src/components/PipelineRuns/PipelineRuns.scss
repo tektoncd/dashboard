@@ -11,19 +11,35 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
+@import '../../scss/vars';
 
-export function getCollection(state, namespace) {
-  if (namespace === ALL_NAMESPACES) {
-    return Object.values(state.byId);
+.definition .status {
+  .status-icon {
+    margin-right: 0.5em;
+    vertical-align: sub;
   }
 
-  const resources = state.byNamespace[namespace];
-  return resources ? Object.values(resources).map(id => state.byId[id]) : [];
-}
+  &:not([data-status]) {
+    .status-icon {
+      fill: $unknown;
+    }
+  }
 
-export function getResource(state, name, namespace) {
-  const resources = state.byNamespace[namespace] || {};
-  const id = resources[name];
-  return id ? state.byId[id] : null;
+  &[data-status='True'] {
+    .status-icon {
+      fill: $success;
+    }
+  }
+
+  &[data-status='False'] {
+    .status-icon {
+      fill: $failed;
+    }
+  }
+
+  &[data-status='Unknown'][data-reason='Running'] {
+    .status-icon {
+      fill: $running;
+    }
+  }
 }

@@ -15,7 +15,7 @@ import React from 'react';
 import { render } from 'react-testing-library';
 import ResourceTable from './ResourceTable';
 
-it('ResourcesTable renders with one row', () => {
+it('ResourceTable renders with one row', () => {
   const title = 'testTitle';
   const id = 'id';
   const headerValue = 'header';

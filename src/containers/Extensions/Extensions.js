@@ -23,14 +23,13 @@ import {
   StructuredListSkeleton,
   StructuredListWrapper
 } from 'carbon-components-react';
-import { urls } from '@tektoncd/dashboard-utils';
+import { getErrorMessage, urls } from '@tektoncd/dashboard-utils';
 
 import {
   getExtensions,
   getExtensionsErrorMessage,
   isFetchingExtensions
 } from '../../reducers';
-import { getErrorMessage } from '../../utils';
 
 import '../../components/Definitions/Definitions.scss';
 

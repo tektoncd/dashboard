@@ -13,8 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import { InlineNotification } from 'carbon-components-react';
-
-import { getErrorMessage } from '../../utils';
+import { getErrorMessage } from '@tektoncd/dashboard-utils';
 
 class ErrorBoundary extends React.Component {
   state = { error: null };

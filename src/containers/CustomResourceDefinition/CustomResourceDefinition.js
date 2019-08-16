@@ -17,12 +17,11 @@ import {
   CodeSnippetSkeleton,
   InlineNotification
 } from 'carbon-components-react';
-
 import jsYaml from 'js-yaml';
+import { getErrorMessage } from '@tektoncd/dashboard-utils';
 
 import { fetchClusterTask, fetchTask } from '../../actions/tasks';
 import { fetchPipeline } from '../../actions/pipelines';
-import { getErrorMessage } from '../../utils';
 
 import {
   getClusterTask,

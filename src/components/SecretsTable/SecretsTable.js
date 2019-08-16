@@ -25,8 +25,9 @@ import {
 } from 'carbon-components-react';
 import Add from '@carbon/icons-react/lib/add/16';
 import Delete from '@carbon/icons-react/lib/delete/16';
+import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
+
 import './Secrets.scss';
-import { ALL_NAMESPACES } from '../../constants';
 
 const {
   TableContainer,

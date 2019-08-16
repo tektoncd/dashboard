@@ -13,8 +13,8 @@ limitations under the License.
 
 import { combineReducers } from 'redux';
 import keyBy from 'lodash.keyby';
+import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
-import { ALL_NAMESPACES } from '../constants';
 import {
   createErrorMessageReducer,
   createIsFetchingReducer

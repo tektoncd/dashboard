@@ -11,9 +11,47 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import React from 'react';
+import CheckmarkFilled from '@carbon/icons-react/lib/checkmark--filled/16';
+import CloseFilled from '@carbon/icons-react/lib/close--filled/16';
+import { Spinner } from '@tektoncd/dashboard-components';
+
 export { paths, urls } from './router';
+
+export const ALL_NAMESPACES = '*';
+
+export function getErrorMessage(error) {
+  if (!error || typeof error === 'string') {
+    return error;
+  }
+
+  return (
+    error.message || JSON.stringify(error, Object.getOwnPropertyNames(error))
+  );
+}
 
 export function getStatus(resource) {
   const { conditions = [] } = resource.status || {};
   return conditions.find(condition => condition.type === 'Succeeded') || {};
+}
+
+export function isRunning(reason, status) {
+  return (
+    status === 'Unknown' && (reason === 'Running' || reason === 'Building')
+  );
+}
+
+export function getStatusIcon({ reason, status }) {
+  if (isRunning(reason, status)) {
+    return <Spinner className="status-icon" />;
+  }
+
+  let Icon;
+  if (status === 'True') {
+    Icon = CheckmarkFilled;
+  } else if (status === 'False') {
+    Icon = CloseFilled;
+  }
+
+  return Icon ? <Icon className="status-icon" /> : null;
 }

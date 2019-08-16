@@ -11,8 +11,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
+
 import { getCollection, getResource } from './selectorCreators';
-import { ALL_NAMESPACES } from '../constants';
 
 it('getCollection', () => {
   const id = 'id';

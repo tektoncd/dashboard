@@ -12,34 +12,12 @@ limitations under the License.
 */
 
 import {
-  getErrorMessage,
   selectedTask,
   sortRunsByStartTime,
   stepsStatus,
   taskRunStep,
   typeToPlural
 } from '.';
-
-it('getErrorMessage falsy', () => {
-  expect(getErrorMessage()).toBeUndefined();
-});
-
-it('getErrorMessage string', () => {
-  const error = 'this is an error message';
-  expect(getErrorMessage(error)).toEqual(error);
-});
-
-it('getErrorMessage error object', () => {
-  const message = 'this is an error message';
-  const error = new Error(message);
-  expect(getErrorMessage(error)).toEqual(message);
-});
-
-it('getErrorMessage custom object', () => {
-  const message = 'this is an error message';
-  const error = { custom: message };
-  expect(getErrorMessage(error)).toContain(`"custom":"${message}"`);
-});
 
 it('taskRunSteps with no taskRun', () => {
   const taskRun = null;
