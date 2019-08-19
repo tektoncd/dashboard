@@ -18,19 +18,15 @@
 
 source $(dirname $0)/../vendor/github.com/tektoncd/plumbing/scripts/e2e-tests.sh
 
+# Adam's debugging as hello world is always pending rn!
 function print_diagnostic_info() {
-  # Adam's debugging as hello world is always pending rn!
-  echo "Printing PV information"
-  kubectl get pv -n tekton-pipelines
-  kubectl describe pv -n tekton-pipelines
-
-  echo "Printing PVC information"
-  kubectl get pvc -n tekton-pipelines
-  kubectl describe pvc -n tekton-pipelines
-
-  echo "Printing pod information"
-  kubectl describe pods -n tekton-pipelines
-  kubectl get pods -n tekton-pipelines -o yaml
+  echo "Diagnostics:"
+  resources=("pv" "pvc" "pods")
+  for r in "${resources[@]}";do
+    echo "Printing ${r} information"
+    kubectl get ${r} -n tekton-pipelines
+    kubectl describe ${r} -n tekton-pipelines
+  done
 }
 
 function install_pipeline_crd() {
@@ -79,6 +75,18 @@ function dump_cluster_state() {
   echo "***         E2E TEST FAILED         ***"
   echo "***     End of information dump     ***"
   echo "***************************************"
+}
+
+# $1 = File name
+# $2 = HTTP Method
+# $3 = Endpoint
+# Assuming a yaml k8s resource file, do envsubst replacement as well as conversion into json. This payload is then curled as specified.
+function json_curl_envsubst_resource() {
+  if [ $# -ne 3 ];then
+    echo "File/HTTP-Method/Endpoint not found."
+    exit 1
+  fi
+  cat "$1" | envsubst | yson - | curl -sS -X "$2" --data-binary @- -H "Content-Type: application/json" "$3"
 }
 
 function fail_test() {

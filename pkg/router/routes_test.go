@@ -167,38 +167,6 @@ func fakeStub(t *testing.T, r *endpoints.Resource, httpMethod, resourceType, nam
 	t.Logf("Getting fake resource type: %s\n", resourceType)
 	// Cases based on resource substring in mux routes (lowercase)
 	switch resourceType {
-	case "pipelinerun":
-		// ManualPipelineRun require the referenced pipeline to have the same name as the pipeline being created
-		switch httpMethod {
-		case "POST":
-			// Avoid creation collision when checking GET routes for stub
-			_, err := r.PipelineClient.TektonV1alpha1().Pipelines(namespace).Get(resourceName, metav1.GetOptions{})
-			// If pipeline does not exist
-			if err != nil {
-				// TODO: embed in pipelineRun once pipelineSpec is supported
-				// Create pipeline ref for ManualPipelineRun
-				pipeline := v1alpha1.Pipeline{
-					ObjectMeta: metav1.ObjectMeta{
-						Name:      resourceName,
-						Namespace: namespace,
-					},
-					Spec: v1alpha1.PipelineSpec{},
-				}
-				_, err := r.PipelineClient.TektonV1alpha1().Pipelines(namespace).Create(&pipeline)
-				if err != nil {
-					t.Fatalf("Error creating pipeline for pipelinerun: %v\n", err)
-				}
-			}
-			return endpoints.ManualPipelineRun{
-				PIPELINENAME: resourceName,
-			}
-		case "PUT":
-			return endpoints.PipelineRunUpdateBody{
-				STATUS: v1alpha1.PipelineRunSpecStatusCancelled,
-			}
-		default:
-			return nil
-		}
 	case "credential":
 		credential := endpoints.Credential{
 			Name:        "fakeCredential",
@@ -381,7 +349,6 @@ func TestExtensionRegistration(t *testing.T) {
 	extensionEndpoints := []string{
 		"robots",
 		"secrets",
-		"pipelineruns",
 	}
 	extensionUrlValue := strings.Join(extensionEndpoints, ExtensionEndpointDelimiter)
 	extensionServers := []*httptest.Server{

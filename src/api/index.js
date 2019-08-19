@@ -136,7 +136,7 @@ export function cancelPipelineRun({ name, namespace }) {
 }
 
 export function createPipelineRun({ namespace, payload }) {
-  const uri = getAPI('pipelineruns', { namespace });
+  const uri = getTektonAPI('pipelineruns', { namespace });
   return post(uri, payload);
 }
 

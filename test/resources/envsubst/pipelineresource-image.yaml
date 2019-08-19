@@ -1,0 +1,17 @@
+# KUBECTL:
+#   cat <FILE> | envsubst | kubectl apply -f -
+# YAML curl:
+#   cat <FILE> | envsubst | curl -X POST --data-binary @- -H "Content-type: text/x-yaml" <url>
+# JSON curl:
+#   go get github.com/vtereso/yson
+#   cat <FILE> | envsubst | yson | curl -X POST --data-binary @- -H "Content-Type: application/json" <url>
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: ${IMAGE_RESOURCE_NAME}
+  namespace: tekton-pipelines
+spec:
+  type: image
+  params:
+    - name: url
+      value: ${REGISTRY}

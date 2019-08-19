@@ -29,44 +29,15 @@ header "Setting up environment"
 install_pipeline_crd
 install_dashboard_backend
 
-#Run the integration tests
 header "Running the e2e tests"
 
+# Port forward the dashboard
 kubectl port-forward $(kubectl get pod --namespace tekton-pipelines -l app=tekton-dashboard -o name)  --namespace tekton-pipelines 9097:9097 &
 dashboardForwardPID=$!
 
-#Apply permissions to be able to curl endpoints
-kubectl apply -f $tekton_repo_dir/test/kaniko-build-task.yaml  --namespace tekton-pipelines
-kubectl apply -f $tekton_repo_dir/test/deploy-task-insecure.yaml  --namespace tekton-pipelines
-kubectl apply -f $tekton_repo_dir/test/Pipeline.yaml  --namespace tekton-pipelines
-
-#API configuration
-APP_SERVICE_ACCOUNT="tekton-dashboard"
-PIPELINE_NAME="simple-pipeline-insecure"
-IMAGE_SOURCE_NAME="docker-image"
-GIT_RESOURCE_NAME="git-source"
-GIT_COMMIT="master"
-REPO_NAME="go-hello-world"
-REPO_URL="https://github.com/ncskier/go-hello-world"
-EXPECTED_RETURN_VALUE="Hello World! "
-KSVC_NAME="go-hello-world"
-REGISTRY="gcr.io/${E2E_PROJECT_ID}/${E2E_BASE_NAME}-e2e-img"
-
-post_data='{
-  "pipelinename": "'${PIPELINE_NAME}'",
-  "imageresourcename": "'${IMAGE_SOURCE_NAME}'",
-  "gitresourcename": "'${GIT_RESOURCE_NAME}'",
-  "gitcommit": "'${GIT_COMMIT}'",
-  "reponame": "'${REPO_NAME}'",
-  "repourl": "'${REPO_URL}'",
-  "registrylocation": "'$REGISTRY'",
-  "serviceaccount": "'${APP_SERVICE_ACCOUNT}'"
-}'
-
-#For loop to check 9097 exists
+# Wait until dashboard is found
 dashboardExists=false
-for i in {1..20}
-do
+for i in {1..20};do
   respF=$(curl -k  http://127.0.0.1:9097)
   if [ "$respF" != "" ]; then
     dashboardExists=true
@@ -80,19 +51,34 @@ if [ "$dashboardExists" = "false" ]; then
   fail_test "Test failure, not able to curl the Dashboard"
 fi 
 
-namespaceResponse=$(curl -X GET --header Content-Type:application/json http://localhost:9097/proxy/api/v1/namespaces)
+# API/resource configuration
+export APP_SERVICE_ACCOUNT="tekton-dashboard"
+export PIPELINE_NAME="simple-pipeline-insecure"
+export IMAGE_RESOURCE_NAME="docker-image"
+export GIT_RESOURCE_NAME="git-source"
+export GIT_COMMIT="master"
+export REPO_NAME="go-hello-world"
+export REPO_URL="https://github.com/ncskier/go-hello-world"
+export EXPECTED_RETURN_VALUE="Hello World!"
+export REGISTRY="gcr.io/${E2E_PROJECT_ID}/${E2E_BASE_NAME}-e2e-img"
+export TEKTON_PROXY_URL="http://localhost:9097/proxy/apis/tekton.dev/v1alpha1/namespaces/tekton-pipelines"
 
-echo $namespaceResponse
+# Kubectl static resources
+kubectl apply -f ${tekton_repo_dir}/test/resources/static
 
-if [[ $namespaceResponse != *"NamespaceList"* ]]; then
-  fail_test "Could not get namespaces from dashboard proxy"
-fi
+# Create envsubst resources through dashboard proxy
+pipelineResourceFiles=($(find ${tekton_repo_dir}/test/resources/envsubst -iname "pipelineresource*.y?ml"))
+for file in ${pipelineResourceFiles[@]};do
+  json_curl_envsubst_resource "${file}" "POST" "${TEKTON_PROXY_URL}/pipelineresources" || fail_test "Failed to create pipelineresource: ${file}"
+done
 
-curlNodePort="http://127.0.0.1:9097/v1/namespaces/tekton-pipelines/pipelineruns/"
-curl -X POST --header Content-Type:application/json -d "$post_data" $curlNodePort
+pipelineRunFiles=($(find ${tekton_repo_dir}/test/resources/envsubst -iname "pipelinerun*.y?ml"))
+for file in ${pipelineRunFiles[@]};do
+  json_curl_envsubst_resource "${file}" "POST" "${TEKTON_PROXY_URL}/pipelineruns" || fail_test "Failed to create pipelinerun: ${file}"
+done
 
 print_diagnostic_info
-
+# Wait for deployment
 echo "About to check the deployment..."
 deploymentExist=false
 for i in {1..30}
@@ -124,6 +110,7 @@ if [ "$deploymentExist" = "false" ]; then
   fail_test "Test Failure, go-hello-world deployment is not running, see above for the PV and pod information" 
 fi
 
+# Ping deployment
 kubectl port-forward $(kubectl get pod  --namespace tekton-pipelines -l app=go-hello-world -o name) --namespace tekton-pipelines 8080 &
 podForwardPID=$!
 
@@ -134,7 +121,7 @@ do
   if [ "$resp" != "" ]; then
 		echo "Response from pod is: $resp"
     podCurled=true
-    if [ "$EXPECTED_RETURN_VALUE" = "$resp" ]; then
+    if [ "$resp" = *${EXPECTED_RETURN_VALUE}* ]; then
       echo "PipelineRun successfully executed"
       break
     else
