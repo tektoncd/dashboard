@@ -121,7 +121,7 @@ do
   if [ "$resp" != "" ]; then
 		echo "Response from pod is: $resp"
     podCurled=true
-    if [ "$resp" = *${EXPECTED_RETURN_VALUE}* ]; then
+    if [[ "$resp" = *${EXPECTED_RETURN_VALUE}* ]]; then
       echo "PipelineRun successfully executed"
       break
     else
