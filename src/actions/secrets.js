@@ -29,11 +29,12 @@ export function fetchSecrets({ namespace } = {}) {
       const selectedNamespace = namespace || getSelectedNamespace(getState());
       secrets = await getCredentials(selectedNamespace);
       const secretsFormatted = [];
-      secrets.forEach(secret => {
+      secrets.items.forEach(secret => {
         const object = {
-          name: secret.name,
-          namespace: secret.namespace,
-          annotations: secret.url
+          name: secret.metadata.name,
+          namespace: secret.metadata.namespace,
+          annotations: secret.metadata.annotations,
+          type: secret.type
         };
         secretsFormatted.push(object);
       });

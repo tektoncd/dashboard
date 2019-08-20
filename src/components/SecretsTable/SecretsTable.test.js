@@ -15,7 +15,7 @@ import React from 'react';
 import { fireEvent, render } from 'react-testing-library';
 import SecretsTable from './SecretsTable';
 
-it('SecretsTable renders with no secrets', () => {
+it('SecretsTable renders with no secrets', async () => {
   const props = {
     handleDelete() {},
     handleNew() {},

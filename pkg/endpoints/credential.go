@@ -44,34 +44,6 @@ const (
 	serviceAccountLabelKey string = "service-account"
 )
 
-/* API route for getting all credentials in a given namespace
- * Required path parameters:
- *  - namespace
- */
-func (r Resource) GetAllCredentials(request *restful.Request, response *restful.Response) {
-	// Get path parameter
-	requestNamespace := utils.GetNamespace(request)
-
-	// Get secrets from the resource K8sClient
-	secrets, err := r.K8sClient.CoreV1().Secrets(requestNamespace).List(metav1.ListOptions{FieldSelector: fmt.Sprintf("type=%s", corev1.SecretTypeBasicAuth)})
-	if err != nil {
-		errorMessage := fmt.Sprintf("Error getting secrets from K8sClient: %s.", err.Error())
-		response.WriteErrorString(http.StatusInternalServerError, errorMessage)
-		logging.Log.Error(errorMessage)
-		return
-	}
-
-	// Parse K8s secrets to credentials
-	creds := []Credential{}
-	for _, secret := range secrets.Items {
-		creds = append(creds, SecretToCredential(&secret, true))
-	}
-
-	// Write the response
-	response.AddHeader("Content-Type", "application/json")
-	response.WriteEntity(creds)
-}
-
 /* API route for getting a given credential by name in a given namespace
  * Required path parameters:
  *  - Namespace

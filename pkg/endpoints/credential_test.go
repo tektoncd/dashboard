@@ -132,19 +132,6 @@ func TestGETCredentials(t *testing.T) {
 		}
 	}
 
-	// Test getAllCredentials: no credentials
-	httpReq := testutils.DummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/*/credentials", server.URL), nil)
-	response, err := http.DefaultClient.Do(httpReq)
-	if err != nil {
-		t.Fatalf("getAllCredentials response error: %v\n", err)
-	}
-	responseCredentialsList := []Credential{}
-	if err := json.NewDecoder(response.Body).Decode(&responseCredentialsList); err != nil {
-		t.Fatalf("Error decoding getAllPipelineRuns response: %v\n", err)
-	}
-	if len(responseCredentialsList) != 0 {
-		t.Fatal("No credentials expected")
-	}
 	// Create secrets/credentials
 	for _, namespacedSecrets := range namespaceSecretMap {
 		for _, secret := range namespacedSecrets {
@@ -154,41 +141,12 @@ func TestGETCredentials(t *testing.T) {
 			}
 		}
 	}
-	// Test getAllCredentials: all namespaces
-	httpReq = testutils.DummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/*/credentials", server.URL), nil)
-	response, err = http.DefaultClient.Do(httpReq)
-	if err != nil {
-		t.Fatalf("getAllCredentials response error: %v\n", err)
-	}
-	responseCredentialsList = []Credential{}
-	if err := json.NewDecoder(response.Body).Decode(&responseCredentialsList); err != nil {
-		t.Fatalf("Error decoding getAllPipelineRuns response: %v\n", err)
-	}
-	if err := testutils.ObjectListDeepEqual(allCredentials, responseCredentialsList); err != nil {
-		t.Fatalf(err.Error())
-	}
-
-	// Test getAllCredentials: each namespace
-	for namespace, namespacedSecrets := range namespaceSecretMap {
-		httpReq = testutils.DummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/credentials", server.URL, namespace), nil)
-		response, err = http.DefaultClient.Do(httpReq)
-		if err != nil {
-			t.Fatalf("getAllCredentials response error: %v\n", err)
-		}
-		responseCredentialsList = []Credential{}
-		if err := json.NewDecoder(response.Body).Decode(&responseCredentialsList); err != nil {
-			t.Fatalf("Error decoding getAllPipelineRuns response: %v\n", err)
-		}
-		if len(responseCredentialsList) != len(namespacedSecrets) {
-			t.Fatalf("All %s namespace credentials were not returned: expected %v, actual %v", namespace, len(namespacedSecrets), len(responseCredentialsList))
-		}
-	}
 
 	// Test getCredential
 	for _, namespacedSecrets := range namespaceSecretMap {
 		for _, secret := range namespacedSecrets {
-			httpReq = testutils.DummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/credentials/%s", server.URL, secret.Namespace, secret.Name), nil)
-			response, err = http.DefaultClient.Do(httpReq)
+			httpReq := testutils.DummyHTTPRequest("GET", fmt.Sprintf("%s/v1/namespaces/%s/secrets/%s", server.URL, secret.Namespace, secret.Name), nil)
+			response, err := http.DefaultClient.Do(httpReq)
 			if err != nil {
 				t.Fatalf("Error getting credential '%s': %v\n", secret.Name, err)
 			}

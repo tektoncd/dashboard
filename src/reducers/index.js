@@ -259,7 +259,10 @@ export function getSecrets(
   state,
   { namespace = getSelectedNamespace(state) } = {}
 ) {
-  return secretSelectors.getSecrets(state.secrets, namespace);
+  const secretsList = secretSelectors.getSecrets(state.secrets, namespace);
+  return secretsList.filter(secret => {
+    return secret.type === 'kubernetes.io/basic-auth';
+  });
 }
 
 export function getSecretsErrorMessage(state) {

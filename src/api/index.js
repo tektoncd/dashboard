@@ -251,27 +251,27 @@ export function rebuildPipelineRun(namespace, payload) {
 }
 
 export function getCredentials(namespace) {
-  const uri = getAPI('credentials', { namespace });
+  const uri = getKubeAPI('secrets', { namespace });
   return get(uri);
 }
 
 export function getCredential(id, namespace) {
-  const uri = getAPI('credentials', { name: id, namespace });
+  const uri = getKubeAPI('secrets', { name: id, namespace });
   return get(uri);
 }
 
 export function createCredential({ id, ...rest }, namespace) {
-  const uri = getAPI('credentials', { namespace });
+  const uri = getKubeAPI('secrets', { namespace });
   return post(uri, { id, ...rest });
 }
 
 export function updateCredential({ id, ...rest }, namespace) {
-  const uri = getAPI('credentials', { name: id, namespace });
+  const uri = getKubeAPI('secrets', { name: id, namespace });
   return put(uri, { id, ...rest });
 }
 
 export function deleteCredential(id, namespace) {
-  const uri = getAPI('credentials', { name: id, namespace });
+  const uri = getKubeAPI('secrets', { name: id, namespace });
   return deleteRequest(uri);
 }
 

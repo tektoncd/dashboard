@@ -24,23 +24,28 @@ import {
   fetchSecretsSuccess
 } from './secrets';
 
-const data = [
-  {
-    name: 'secret-name',
-    password: '********',
-    resourceVersion: '####',
-    serviceAccount: 'default',
-    type: 'userpass',
-    url: undefined,
-    username: 'someUser@email.com',
-    namespace: 'default'
-  }
-];
+const data = {
+  items: [
+    {
+      metadata: {
+        name: 'secret-name',
+        namespace: 'default',
+        annotations: undefined
+      },
+      resourceVersion: '####',
+      password: '********',
+      serviceAccount: 'default',
+      username: 'someUser@email.com',
+      type: 'userpass'
+    }
+  ]
+};
 const dataFormatted = [
   {
     name: 'secret-name',
     annotations: undefined,
-    namespace: 'default'
+    namespace: 'default',
+    type: 'userpass'
   }
 ];
 const postData = {
@@ -64,7 +69,7 @@ it('fetchSecretsSuccess', () => {
 
 it('fetchSecrets', async () => {
   const secrets = data;
-  const secretsFromatted = dataFormatted;
+  const secretsFormatted = dataFormatted;
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const store = mockStore();
@@ -76,7 +81,7 @@ it('fetchSecrets', async () => {
 
   const expectedActions = [
     { type: 'SECRETS_FETCH_REQUEST' },
-    fetchSecretsSuccess(secretsFromatted)
+    fetchSecretsSuccess(secretsFormatted)
   ];
 
   await store.dispatch(fetchSecrets({ namespace }));

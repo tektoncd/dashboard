@@ -455,13 +455,13 @@ it('createPipelineRunAtProxy', () => {
   });
 });
 
-it('getCredentials', () => {
+it('getCredentials2', () => {
   const data = {
     items: 'credentials'
   };
-  fetchMock.get(/credentials/, data);
-  return getCredentials().then(credentials => {
-    expect(credentials).toEqual(data);
+  fetchMock.get(/secrets/, data);
+  return getCredentials().then(response => {
+    expect(response).toEqual(data);
     fetchMock.restore();
   });
 });
