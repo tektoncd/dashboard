@@ -17,15 +17,16 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
-	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
 	"strconv"
 	"strings"
 	"testing"
+
+	"github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	. "github.com/tektoncd/dashboard/pkg/endpoints"
 	"github.com/tektoncd/dashboard/pkg/testutils"
@@ -541,7 +542,7 @@ func TestPOSTCreatePipelineRuns(t *testing.T) {
 				},
 				Spec: v1alpha1.PipelineResourceSpec{
 					Type: v1alpha1.PipelineResourceTypeGit,
-					Params: []v1alpha1.Param{
+					Params: []v1alpha1.ResourceParam{
 						{
 							Name:  "revision",
 							Value: manualPipelineRun.GITCOMMIT,
@@ -566,7 +567,7 @@ func TestPOSTCreatePipelineRuns(t *testing.T) {
 				},
 				Spec: v1alpha1.PipelineResourceSpec{
 					Type: v1alpha1.PipelineResourceTypeImage,
-					Params: []v1alpha1.Param{
+					Params: []v1alpha1.ResourceParam{
 						{
 							Name:  "url",
 							Value: fmt.Sprintf("%s/%s:%s", registry, repoName, commit),

@@ -14,11 +14,12 @@ limitations under the License.
 package endpoints
 
 import (
-	restful "github.com/emicklei/go-restful"
-	"github.com/tektoncd/dashboard/pkg/logging"
 	"net/http"
 	"net/url"
 	"os"
+
+	restful "github.com/emicklei/go-restful"
+	"github.com/tektoncd/dashboard/pkg/logging"
 	"github.com/tektoncd/dashboard/pkg/utils"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -30,7 +31,7 @@ type Properties struct {
 
 const (
 	tektonDashboardIngressName string = "tekton-dashboard"
-	tektonDashboardRouteName string = "tekton-dashboard"
+	tektonDashboardRouteName   string = "tekton-dashboard"
 )
 
 // ProxyRequest does as the name suggests: proxies requests and logs what's going on
@@ -90,8 +91,8 @@ func (r Resource) GetIngress(request *restful.Request, response *restful.Respons
 // GetIngress returns the Ingress endpoint called "tektonDashboardIngressName" in the requested namespace
 func (r Resource) GetEndpoints(request *restful.Request, response *restful.Response) {
 	type element struct {
-		Type string  `json:"type"`
-		Url  string  `json:"url"`
+		Type string `json:"type"`
+		Url  string `json:"url"`
 	}
 	var responses []element
 	requestNamespace := utils.GetNamespace(request)
@@ -103,7 +104,7 @@ func (r Resource) GetEndpoints(request *restful.Request, response *restful.Respo
 	} else {
 		if route.Spec.Host != "" { // For that rule, is there actually a host?
 			routeHost := route.Spec.Host
-			responses = append(responses, element{"Route", routeHost}) 
+			responses = append(responses, element{"Route", routeHost})
 		} else {
 			logging.Log.Error(noRuleError)
 		}
@@ -117,7 +118,7 @@ func (r Resource) GetEndpoints(request *restful.Request, response *restful.Respo
 		if len(ingress.Spec.Rules) > 0 { // Got more than zero entries?
 			if ingress.Spec.Rules[0].Host != "" { // For that rule, is there actually a host?
 				ingressHost := ingress.Spec.Rules[0].Host
-				responses = append(responses, element{"Ingress", ingressHost}) 
+				responses = append(responses, element{"Ingress", ingressHost})
 			}
 		} else {
 			logging.Log.Error(noRuleError)
