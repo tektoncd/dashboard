@@ -566,12 +566,12 @@ func (r Resource) rebuildRun(name, namespace string) (*v1alpha1.PipelineRun, err
 
 	currentLabels := pipelineRun.GetLabels()
 
-	if currentLabels != nil {
+	if currentLabels == nil {
 		logging.Log.Debug("Didn't find any existing labels, so creating a new one")
 		withRebuildLabel := map[string]string{"rebuilds": pipelineRun.Name}
 		newPipelineRunData.SetLabels(withRebuildLabel)
 	} else {
-		logging.Log.Debug("Found existing label, adding rebuilds label")
+		logging.Log.Debug("Found existing label(s), adding rebuilds label")
 		currentLabels["rebuilds"] = pipelineRun.Name
 		newPipelineRunData.SetLabels(currentLabels)
 	}
