@@ -14,8 +14,7 @@ limitations under the License.
 import React, { Component } from 'react';
 import {
   InlineNotification,
-  StructuredListSkeleton,
-  ToastNotification
+  StructuredListSkeleton
 } from 'carbon-components-react';
 import { injectIntl } from 'react-intl';
 import {
@@ -166,7 +165,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
         <>
           {showRebuildNotification && !showRebuildNotification.logsURL && (
             // No logs URL? This indicates it hasn't been a successful rebuild
-            <ToastNotification
+            <InlineNotification
               data-testid="rebuildfailurenotification"
               lowContrast
               subtitle=""
@@ -177,13 +176,10 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           )}
 
           {showRebuildNotification && showRebuildNotification.logsURL && (
-            <ToastNotification
+            <InlineNotification
               data-testid="rebuildsuccessnotification"
               lowContrast
-              subtitle=""
-              title={showRebuildNotification.message}
-              kind={showRebuildNotification.kind}
-              caption={
+              subtitle={
                 <Link
                   id="newpipelinerunlink"
                   to={showRebuildNotification.logsURL}
@@ -195,6 +191,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
                   })}
                 </Link>
               }
+              title={showRebuildNotification.message}
+              kind={showRebuildNotification.kind}
             />
           )}
           <RunHeader

@@ -42,7 +42,7 @@ export class Rebuild extends Component {
           pipelineRunName: newPipelineRunName
         });
         this.props.setShowRebuildNotification({
-          message: 'Rebuilt run successfully',
+          message: 'Rebuilt PipelineRun successfully',
           kind: 'success',
           logsURL: finalURL
         });
