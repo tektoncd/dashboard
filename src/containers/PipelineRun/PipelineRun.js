@@ -17,8 +17,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
   InlineNotification,
-  StructuredListSkeleton,
-  ToastNotification
+  StructuredListSkeleton
 } from 'carbon-components-react';
 import { injectIntl } from 'react-intl';
 import {
@@ -56,6 +55,7 @@ import { getStore } from '../../store/index';
 
 import '../../components/Run/Run.scss';
 import { fetchLogs } from '../../utils';
+import './PipelineRun.scss';
 
 export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   constructor(props) {
@@ -284,7 +284,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       <>
         {showRebuildNotification && !showRebuildNotification.logsURL && (
           // No logs URL? This indicates it hasn't been a successful rebuild
-          <ToastNotification
+          <InlineNotification
             data-testid="rebuildfailurenotification"
             lowContrast
             subtitle=""
@@ -295,21 +295,23 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
         )}
 
         {showRebuildNotification && showRebuildNotification.logsURL && (
-          <ToastNotification
+          <InlineNotification
             data-testid="rebuildsuccessnotification"
             lowContrast
-            subtitle=""
-            title={showRebuildNotification.message}
-            kind={showRebuildNotification.kind}
-            caption={
+            subtitle={
               <Link
                 id="newpipelinerunlink"
                 to={showRebuildNotification.logsURL}
                 onClick={() => this.setShowRebuildNotification(false)}
               >
-                View status of this rebuilt run
+                {intl.formatMessage({
+                  id: 'dashboard.pipelineRun.rebuildStatusMessage',
+                  defaultMessage: 'View status of this rebuilt run'
+                })}
               </Link>
             }
+            title={showRebuildNotification.message}
+            kind={showRebuildNotification.kind}
           />
         )}
 
