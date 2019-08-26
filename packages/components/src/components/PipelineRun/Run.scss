@@ -11,22 +11,24 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import snakeCase from 'lodash.snakecase';
-
-export function sortRunsByStartTime(runs) {
-  runs.sort((a, b) => {
-    const aTime = a.status.startTime;
-    const bTime = b.status.startTime;
-    if (!aTime) {
-      return -1;
-    }
-    if (!bTime) {
-      return 1;
-    }
-    return -1 * aTime.localeCompare(bTime);
-  });
+.tasks {
+  display: flex;
+  flex-wrap: nowrap;
+  border: 1px solid #dfe3e6;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.07);
+  min-height: calc(100vh - 16rem);
+  align-items: stretch;
+  background-color: white;
 }
 
-export function typeToPlural(type) {
-  return `${snakeCase(type).toUpperCase()}S`;
+.task-tree {
+  flex-shrink: 0;
+}
+
+.step-details {
+  flex-grow: 1;
+}
+
+.bx--snippet--multi{
+  overflow-x: auto
 }
