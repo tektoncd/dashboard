@@ -3,11 +3,17 @@ export const messages = {
     'dashboard.pipelineRuns.transitionTime': 'Last Transition Time',
     'dashboard.pipelineRuns.status': 'Status',
     'dashboard.pipelineRuns.error': 'Error loading PipelineRuns',
+    'dashboard.pipelineRun.failed': 'Cannot load PipelineRun',
+    'dashboard.pipelineRun.notFound': 'PipelineRun not found',
     'dashboard.pipelineRun.error': 'Error loading PipelineRun',
     'dashboard.pipelineRun.logEmpty': 'No log available',
     'dashboard.pipelineRun.stepCompleted': 'Step completed',
     'dashboard.pipelineRun.stepFailed': 'Step failed',
     'dashboard.pipelineRun.logFailed': 'Unable to fetch log',
+    'dashboard.pipelineRun.failedMessage':
+      'Unable to load PipelineRun details: {message}',
+    'dashboard.pipelineRun.rebuildStatusMessage':
+      'View status of this rebuilt run',
     'dashboard.taskRun.logs': 'Logs',
     'dashboard.taskRun.status': 'Status',
     'dashboard.taskRun.details': 'Details',

@@ -23,7 +23,7 @@ import {
   StepDetails,
   TaskTree
 } from '@tektoncd/dashboard-components';
-import { getStatus } from '@tektoncd/dashboard-utils';
+import { getStatus, stepsStatus, taskRunStep } from '@tektoncd/dashboard-utils';
 
 import {
   getSelectedNamespace,
@@ -33,7 +33,6 @@ import {
 } from '../../reducers';
 
 import { Log } from '..';
-import { stepsStatus, taskRunStep } from '../../utils';
 
 import '../../components/Run/Run.scss';
 import { fetchTask, fetchTaskByType } from '../../actions/tasks';

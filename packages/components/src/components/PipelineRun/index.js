@@ -11,22 +11,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import snakeCase from 'lodash.snakecase';
-
-export function sortRunsByStartTime(runs) {
-  runs.sort((a, b) => {
-    const aTime = a.status.startTime;
-    const bTime = b.status.startTime;
-    if (!aTime) {
-      return -1;
-    }
-    if (!bTime) {
-      return 1;
-    }
-    return -1 * aTime.localeCompare(bTime);
-  });
-}
-
-export function typeToPlural(type) {
-  return `${snakeCase(type).toUpperCase()}S`;
-}
+export { default } from './PipelineRun';
