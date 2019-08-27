@@ -19,6 +19,7 @@ import {
   StructuredListSkeleton
 } from 'carbon-components-react';
 import {
+  Log,
   RunHeader,
   StepDetails,
   TaskTree
@@ -37,11 +38,10 @@ import {
   getTaskRunsErrorMessage
 } from '../../reducers';
 
-import { Log } from '..';
-
 import '../../components/Run/Run.scss';
 import { fetchTaskByType } from '../../actions/tasks';
 import { fetchTaskRuns } from '../../actions/taskRuns';
+import { fetchLogs } from '../../utils';
 
 export /* istanbul ignore next */ class TaskRunsContainer extends Component {
   // once redux store is available errors will be handled properly with dedicated components
@@ -167,11 +167,8 @@ export /* istanbul ignore next */ class TaskRunsContainer extends Component {
 
     const logContainer = (
       <Log
-        key={stepName}
-        stepName={stepName}
-        podName={taskRun.pod}
+        fetchLogs={() => fetchLogs(stepName, stepStatus, taskRun)}
         stepStatus={stepStatus}
-        namespace={taskRun.namespace}
       />
     );
 

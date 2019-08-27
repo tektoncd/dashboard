@@ -229,16 +229,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       taskRun
     );
 
-    const logContainer = (
-      <Log
-        logFetcher={fetchLogs}
-        key={stepName}
-        stepName={stepName}
-        podName={taskRun.pod}
-        stepStatus={stepStatus}
-        namespace={taskRun.namespace}
-      />
-    );
+    const logContainer = <Log fetchLogs={fetchLogs} stepStatus={stepStatus} />;
 
     return (
       <>

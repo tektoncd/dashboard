@@ -22,6 +22,7 @@ import {
 } from 'carbon-components-react';
 import { injectIntl } from 'react-intl';
 import {
+  Log,
   Rebuild,
   RunHeader,
   StepDetails,
@@ -49,12 +50,12 @@ import {
 import { fetchPipelineRun } from '../../actions/pipelineRuns';
 import { fetchClusterTasks, fetchTasks } from '../../actions/tasks';
 import { fetchTaskRuns } from '../../actions/taskRuns';
-import { Log } from '..';
 import { rebuildPipelineRun } from '../../api';
 
 import { getStore } from '../../store/index';
 
 import '../../components/Run/Run.scss';
+import { fetchLogs } from '../../utils';
 
 export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   constructor(props) {
@@ -260,11 +261,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
 
     const logContainer = (
       <Log
-        key={stepName}
-        stepName={stepName}
-        podName={taskRun.pod}
+        fetchLogs={() => fetchLogs(stepName, stepStatus, taskRun)}
         stepStatus={stepStatus}
-        namespace={taskRun.namespace}
       />
     );
 

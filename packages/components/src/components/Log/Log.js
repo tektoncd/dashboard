@@ -25,9 +25,32 @@ const LogLine = ({ data, index, style }) => (
   </div>
 );
 
-class Log extends Component {
-  getLogList() {
-    const { status, intl } = this.props;
+const trailers = {
+  Completed: {
+    id: 'dashboard.pipelineRun.stepCompleted',
+    defaultMessage: 'Step completed'
+  },
+  Error: {
+    id: 'dashboard.pipelineRun.stepFailed',
+    defaultMessage: 'Step failed'
+  }
+};
+
+export class LogContainer extends Component {
+  state = { loading: true };
+
+  componentDidMount() {
+    this.loadLog();
+    this.initPolling();
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer);
+  }
+
+  getLogList = () => {
+    const { stepStatus, intl } = this.props;
+    const { reason } = (stepStatus && stepStatus.terminated) || {};
     const {
       logs = [
         intl.formatMessage({
@@ -35,11 +58,11 @@ class Log extends Component {
           defaultMessage: 'No log available'
         })
       ]
-    } = this.props;
+    } = this.state;
 
     const itemSize = 15; // This should be kept in sync with the line-height in SCSS
     const defaultHeight = 800;
-    const height = status
+    const height = reason
       ? Math.min(defaultHeight, itemSize * logs.length)
       : defaultHeight;
 
@@ -54,25 +77,57 @@ class Log extends Component {
         {LogLine}
       </List>
     );
-  }
+  };
 
-  logTrailer() {
-    const { status, trailers, intl } = this.props;
-    const trailer = trailers[status];
+  initPolling = () => {
+    const { stepStatus } = this.props;
+    if (!this.timer && stepStatus && !stepStatus.terminated) {
+      this.timer = setInterval(() => this.loadLog(), 4000);
+    }
+    if (this.timer && stepStatus && stepStatus.terminated) {
+      clearInterval(this.timer);
+    }
+  };
+
+  loadLog = async () => {
+    const { fetchLogs, intl } = this.props;
+    if (fetchLogs) {
+      try {
+        const logs = await fetchLogs();
+        this.setState({
+          loading: false,
+          logs: logs ? logs.split('\n') : undefined
+        });
+      } catch {
+        this.setState({
+          logs: [
+            intl.formatMessage({
+              id: 'dashboard.pipelineRun.logFailed',
+              defaultMessage: 'Unable to fetch log'
+            })
+          ]
+        });
+      }
+    }
+  };
+
+  logTrailer = () => {
+    const { stepStatus, intl } = this.props;
+    const { reason } = (stepStatus && stepStatus.terminated) || {};
+    const trailer = trailers[reason];
     if (!trailer) {
       return null;
     }
 
     return (
-      <div className="log-trailer" data-status={status}>
+      <div className="log-trailer" data-status={reason}>
         {intl.formatMessage(trailer)}
       </div>
     );
-  }
+  };
 
   render() {
-    const { loading } = this.props;
-
+    const { loading } = this.state;
     return (
       <pre className="log">
         {loading ? (
@@ -88,17 +143,4 @@ class Log extends Component {
   }
 }
 
-Log.defaultProps = {
-  trailers: {
-    Completed: {
-      id: 'dashboard.pipelineRun.stepCompleted',
-      defaultMessage: 'Step completed'
-    },
-    Error: {
-      id: 'dashboard.pipelineRun.stepFailed',
-      defaultMessage: 'Step failed'
-    }
-  }
-};
-
-export default injectIntl(Log);
+export default injectIntl(LogContainer);
