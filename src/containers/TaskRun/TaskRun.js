@@ -19,11 +19,14 @@ import {
   StructuredListSkeleton
 } from 'carbon-components-react';
 import {
+  Log,
   RunHeader,
   StepDetails,
   TaskTree
 } from '@tektoncd/dashboard-components';
 import { getStatus, stepsStatus, taskRunStep } from '@tektoncd/dashboard-utils';
+
+import { fetchLogs } from '../../utils';
 
 import {
   getSelectedNamespace,
@@ -31,8 +34,6 @@ import {
   getTaskRun,
   getTaskRunsErrorMessage
 } from '../../reducers';
-
-import { Log } from '..';
 
 import '../../components/Run/Run.scss';
 import { fetchTask, fetchTaskByType } from '../../actions/tasks';
@@ -162,11 +163,8 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
 
     const logContainer = (
       <Log
-        key={stepName}
-        stepName={stepName}
-        podName={taskRun.pod}
+        fetchLogs={() => fetchLogs(stepName, stepStatus, taskRun)}
         stepStatus={stepStatus}
-        namespace={taskRun.namespace}
       />
     );
 

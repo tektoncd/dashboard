@@ -12,25 +12,40 @@ limitations under the License.
 */
 
 import React from 'react';
+import { waitForElement } from 'react-testing-library';
 import Log from './Log';
 import { renderWithIntl } from '../../utils/test';
 
 it('Log renders default content', () => {
-  const { queryByText } = renderWithIntl(<Log />);
-  expect(queryByText(/No log available/i)).toBeTruthy();
+  const { getByText } = renderWithIntl(<Log fetchLogs={() => undefined} />);
+  waitForElement(() => getByText(/No log available/i));
 });
 
 it('Log renders the provided content', () => {
-  const { queryByText } = renderWithIntl(<Log logs={['testing']} />);
-  expect(queryByText(/testing/i)).toBeTruthy();
+  const { getByText } = renderWithIntl(
+    <Log
+      stepStatus={{ terminated: { reason: 'Completed' } }}
+      fetchLogs={() => 'testing'}
+    />
+  );
+  waitForElement(() => getByText(/testing/i));
 });
 
 it('Log renders trailer', () => {
-  const { queryByText } = renderWithIntl(<Log status="Completed" />);
-  expect(queryByText(/step completed/i)).toBeTruthy();
+  const { getByText } = renderWithIntl(
+    <Log stepStatus={{ terminated: { reason: 'Completed' } }} />
+  );
+  waitForElement(() => getByText(/step completed/i));
 });
 
 it('Log renders loading state', () => {
-  const { queryByText } = renderWithIntl(<Log loading logs={['testing']} />);
+  const { queryByText } = renderWithIntl(
+    <Log
+      stepStatus={{ terminated: { reason: 'Completed' } }}
+      fetchLogs={() => {
+        return 'testing';
+      }}
+    />
+  );
   expect(queryByText(/testing/i)).toBeFalsy();
 });

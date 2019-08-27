@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import snakeCase from 'lodash.snakecase';
+import { getPodLog } from '../api';
 
 export function sortRunsByStartTime(runs) {
   runs.sort((a, b) => {
@@ -29,4 +30,18 @@ export function sortRunsByStartTime(runs) {
 
 export function typeToPlural(type) {
   return `${snakeCase(type).toUpperCase()}S`;
+}
+
+export async function fetchLogs(stepName, stepStatus, taskRun) {
+  const { pod, namespace } = taskRun;
+  let logs;
+  if (pod) {
+    const { container = `step-${stepName}` } = stepStatus;
+    logs = getPodLog({
+      container,
+      name: pod,
+      namespace
+    });
+  }
+  return logs;
 }
