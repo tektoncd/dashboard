@@ -31,6 +31,7 @@ export const messages = {
     'dashboard.taskRun.inputResources': 'Input Resources',
     'dashboard.taskRun.OutputResources': 'Output Resources',
     'dashboard.tableHeader.name': 'Name',
-    'dashboard.tableHeader.value': 'Value'
+    'dashboard.tableHeader.value': 'Value',
+    'dashboard.header.logOut': 'Log out'
   }
 };

@@ -127,7 +127,7 @@ spec:
         - mountPath: /etc/tls/private
           name: proxy-tls
       - name: tekton-dashboard
-        image: gcr.io/tekton-nightly/dashboard:latest
+        image: github.com/tektoncd/dashboard/cmd/dashboard
         ports:
         - containerPort: 9097
         livenessProbe:

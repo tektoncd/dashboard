@@ -331,3 +331,11 @@ export function getInstallProperties() {
   const uri = `${apiRoot}/v1/properties`;
   return get(uri);
 }
+
+export function shouldDisplayLogout() {
+  const routesUri = getResourcesAPI({
+    group: 'route.openshift.io',
+    version: 'v1'
+  });
+  return get(routesUri, { Accept: 'text/plain' });
+}
