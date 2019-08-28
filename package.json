@@ -20,6 +20,7 @@
     "test:ci": "jest"
   },
   "dependencies": {
+    "@babel/runtime": "^7.5.5",
     "@carbon/icons-react": "^10.3.0",
     "@tektoncd/dashboard-components": "file:./packages/components",
     "@tektoncd/dashboard-utils": "file:./packages/utils",

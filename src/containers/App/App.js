@@ -23,7 +23,11 @@ import {
 
 import { defineMessages, IntlProvider } from 'react-intl';
 import { Content } from 'carbon-components-react';
-import { Breadcrumbs, Header } from '@tektoncd/dashboard-components';
+import {
+  Breadcrumbs,
+  Header,
+  LogoutButton
+} from '@tektoncd/dashboard-components';
 import { paths, urls } from '@tektoncd/dashboard-utils';
 
 import {
@@ -46,6 +50,7 @@ import {
   Tasks
 } from '..';
 
+import { shouldDisplayLogout } from '../../api';
 import { fetchExtensions } from '../../actions/extensions';
 import { fetchNamespaces, selectNamespace } from '../../actions/namespaces';
 import { getExtensions, getLocale, getSelectedNamespace } from '../../reducers';
@@ -66,6 +71,11 @@ export /* istanbul ignore next */ class App extends Component {
   render() {
     const { extensions } = this.props;
     const lang = messages[this.props.lang] ? this.props.lang : 'en';
+
+    const logoutButton = (
+      <LogoutButton shouldDisplayLogout={shouldDisplayLogout} />
+    );
+
     return (
       <IntlProvider
         locale={lang}
@@ -74,7 +84,7 @@ export /* istanbul ignore next */ class App extends Component {
       >
         <Router>
           <>
-            <Header>
+            <Header logoutButton={logoutButton}>
               <Route path="*" component={Breadcrumbs} />
             </Header>
             <Route path={paths.byNamespace({ path: '/*' })}>

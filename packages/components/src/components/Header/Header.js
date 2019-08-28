@@ -20,7 +20,7 @@ import './Header.scss';
 
 import tektonBanner from '../../images/tekton-horizontal-color.png';
 
-export default function Header({ children }) {
+export default function Header({ children, logoutButton }) {
   return (
     <CarbonHeader aria-label="Tekton Dashboard" className="header">
       <Link to="/">
@@ -30,6 +30,7 @@ export default function Header({ children }) {
           src={tektonBanner}
         />
       </Link>
+      {logoutButton}
       {children && <div className="header-children">{children}</div>}
     </CarbonHeader>
   );
