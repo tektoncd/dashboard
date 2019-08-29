@@ -17,6 +17,7 @@ export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as Header } from './Header';
 export { default as Log } from './Log';
 export { default as LogoutButton } from './LogoutButton';
+export { default as PipelineRun } from './PipelineRun';
 export { default as PipelineRuns } from './PipelineRuns';
 export { default as Rebuild } from './Rebuild';
 export { default as ResourceTable } from './ResourceTable';
