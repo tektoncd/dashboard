@@ -13,7 +13,6 @@ limitations under the License.
 
 import React from 'react';
 import { storiesOf } from '@storybook/react';
-import StoryRouter from 'storybook-react-router';
 
 import PipelineRun from '.';
 
@@ -134,7 +133,9 @@ const pipelineRun = {
 };
 
 storiesOf('PipelineRun', module)
-  .addDecorator(StoryRouter())
+  .addDecorator(story => (
+    <div style={{ position: 'relative', width: '100%' }}>{story()}</div>
+  ))
   .add('default', () => (
     <PipelineRun
       pipelineRun={pipelineRun}
