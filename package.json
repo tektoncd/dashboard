@@ -8,6 +8,7 @@
     "build_ko": "webpack --config webpack.prod.js --output-path='./cmd/dashboard/kodata/web' ",
     "clean": "lerna clean --yes && lerna run clean && rimraf node_modules",
     "eslint:check": "eslint --print-config . | eslint-config-prettier-check",
+    "lerna:publish": "lerna publish --no-git-tag-version --no-push --preid alpha",
     "lint": "eslint --ignore-path .gitignore .",
     "lint:fix": "npm run lint -- --fix",
     "postinstall": "npm run bootstrap",
