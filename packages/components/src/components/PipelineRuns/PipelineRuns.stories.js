@@ -21,6 +21,14 @@ storiesOf('PipelineRuns', module)
   .addDecorator(StoryRouter())
   .add('default', () => (
     <PipelineRuns
+      createPipelineRunURL={({ namespace, pipelineName, pipelineRunName }) =>
+        `to-pipelineRun-${namespace}/${pipelineName}/${pipelineRunName}`
+      }
+      createPipelineRunsByPipelineURL={({
+        namespace,
+        pipelineName,
+        pipelineRunName
+      }) => `to-pipeline-${namespace}/${pipelineName}/${pipelineRunName}`}
       pipelineName="Pipeline Name"
       selectedNamespace="default"
       pipelineRuns={[

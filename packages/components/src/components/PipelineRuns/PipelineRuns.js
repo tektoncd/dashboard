@@ -35,6 +35,8 @@ import './PipelineRuns.scss';
 
 const PipelineRuns = ({
   cancelPipelineRun,
+  createPipelineRunURL = urls.pipelineRuns.byName,
+  createPipelineRunsByPipelineURL = urls.pipelineRuns.byPipeline,
   intl,
   pipelineName,
   pipelineRuns,
@@ -89,7 +91,7 @@ const PipelineRuns = ({
           >
             <StructuredListCell>
               <Link
-                to={urls.pipelineRuns.byName({
+                to={createPipelineRunURL({
                   namespace,
                   pipelineName: pipelineRefName,
                   pipelineRunName
@@ -101,7 +103,7 @@ const PipelineRuns = ({
             {!pipelineName && (
               <StructuredListCell>
                 <Link
-                  to={urls.pipelineRuns.byPipeline({
+                  to={createPipelineRunsByPipelineURL({
                     namespace,
                     pipelineName: pipelineRefName
                   })}
