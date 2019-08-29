@@ -33,6 +33,7 @@ func (r Resource) EstablishResourcesWebsocket(request *restful.Request, response
 	connection, err := websocket.UpgradeToWebsocket(request, response)
 	if err != nil {
 		logging.Log.Errorf("Could not upgrade to websocket connection: %s", err)
+		return
 	}
 	websocket.WriteOnlyWebsocket(connection, ResourcesBroadcaster)
 }
