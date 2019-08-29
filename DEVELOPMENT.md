@@ -163,6 +163,8 @@ Run `npm start` for a dev server. Navigate to `http://localhost:8000/` in your b
 
 Note: If you've exposed the backend by some other means than port-forwarding port 9097 as described above, update `API_DOMAIN` in `config_frontend/config.json` to provide the correct details.
 
+Note: If modifying any of the sub-packages (e.g. components or utils in https://github.com/tektoncd/dashboard/tree/master/packages), you'll need to run `npm run bootstrap` to ensure those packages are correctly built and linked before starting the dev server or running a build. This is done automatically by `npm ci` or `npm install` so you may not have to run it directly depending on your workflow.
+
 ### Build
 
 Run `npm run build` to build the project. The build artifacts will be stored in the `dist/` directory. This will perform a production build of the static resources. It correctly bundles React in production mode and optimizes the build for the best performance. Filenames include hashes to facilitate long-term caching.
