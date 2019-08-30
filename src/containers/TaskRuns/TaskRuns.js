@@ -96,32 +96,37 @@ export /* istanbul ignore next */ class TaskRunsContainer extends Component {
   loadTaskRuns = () => {
     const { task } = this.props;
     let { taskRuns } = this.props;
-    taskRuns = taskRuns.map(taskRun => {
-      const taskName = taskRun.spec.taskRef.name;
-      const taskRunName = taskRun.metadata.name;
-      const taskRunNamespace = taskRun.metadata.namespace;
-      const { reason, status: succeeded } = getStatus(taskRun);
-      const pipelineTaskName = taskRunName;
-      const runSteps = stepsStatus(task.spec.steps, taskRun.status.steps);
-      const { params, resources: inputResources } = taskRun.spec.inputs;
-      const { resources: outputResources } = taskRun.spec.outputs;
-      const { startTime } = taskRun.status;
-      return {
-        id: taskRun.metadata.uid,
-        pipelineTaskName,
-        pod: taskRun.status.podName,
-        reason,
-        steps: runSteps,
-        succeeded,
-        taskName,
-        taskRunName,
-        startTime,
-        namespace: taskRunNamespace,
-        params,
-        inputResources,
-        outputResources
-      };
-    });
+    taskRuns = taskRuns
+      .map(taskRun => {
+        if (!taskRun) {
+          return null;
+        }
+        const taskName = taskRun.spec.taskRef.name;
+        const taskRunName = taskRun.metadata.name;
+        const taskRunNamespace = taskRun.metadata.namespace;
+        const { reason, status: succeeded } = getStatus(taskRun);
+        const pipelineTaskName = taskRunName;
+        const runSteps = stepsStatus(task.spec.steps, taskRun.status.steps);
+        const { params, resources: inputResources } = taskRun.spec.inputs;
+        const { resources: outputResources } = taskRun.spec.outputs;
+        const { startTime } = taskRun.status;
+        return {
+          id: taskRun.metadata.uid,
+          pipelineTaskName,
+          pod: taskRun.status.podName,
+          reason,
+          steps: runSteps,
+          succeeded,
+          taskName,
+          taskRunName,
+          startTime,
+          namespace: taskRunNamespace,
+          params,
+          inputResources,
+          outputResources
+        };
+      })
+      .filter(Boolean);
     return taskRuns;
   };
 
