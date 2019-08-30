@@ -100,6 +100,7 @@ export class LogContainer extends Component {
         });
       } catch {
         this.setState({
+          loading: false,
           logs: [
             intl.formatMessage({
               id: 'dashboard.pipelineRun.logFailed',

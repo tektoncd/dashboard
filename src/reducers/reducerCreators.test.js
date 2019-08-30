@@ -131,6 +131,16 @@ it('PipelineResource Events', () => {
   ).toBeNull();
 });
 
+it('delete from missing namespace', () => {
+  const deleteAction = {
+    type: 'PipelineResourceDeleted',
+    payload: pipelineResource,
+    namespace
+  };
+
+  expect(() => reducer({}, deleteAction)).not.toThrow();
+});
+
 it('getPipelineResources', () => {
   const selectedNamespace = 'namespace';
   const state = { byNamespace: {} };

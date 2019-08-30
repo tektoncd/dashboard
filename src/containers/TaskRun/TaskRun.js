@@ -89,6 +89,9 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
   loadTaskRun = () => {
     const { task } = this.props;
     let { taskRun } = this.props;
+    if (!taskRun) {
+      return null;
+    }
     let { steps } = taskRun.status;
     if (task) {
       steps = task.spec.steps; // eslint-disable-line

@@ -53,6 +53,9 @@ function createByNamespaceReducer({ type }) {
         return merge({}, state, resource);
       case `${type}Deleted`:
         const newState = { ...state };
+        if (!newState[action.payload.metadata.namespace]) {
+          return newState;
+        }
         delete newState[action.payload.metadata.namespace][
           action.payload.metadata.name
         ];

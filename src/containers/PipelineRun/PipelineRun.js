@@ -116,46 +116,59 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   };
 
   loadTaskRuns = (pipelineRun, taskRunNames) => {
-    let runs = taskRunNames.map(taskRunName =>
-      getTaskRun(getStore().getState(), {
-        name: taskRunName,
-        namespace: pipelineRun.metadata.namespace
-      })
-    );
+    if (!pipelineRun || !taskRunNames) {
+      return [];
+    }
+
+    let runs = taskRunNames
+      .map(taskRunName =>
+        getTaskRun(getStore().getState(), {
+          name: taskRunName,
+          namespace: pipelineRun.metadata.namespace
+        })
+      )
+      .filter(Boolean);
 
     const {
       status: { taskRuns: taskRunDetails }
     } = pipelineRun;
 
-    runs = runs.map(taskRun => {
-      const taskName = taskRun.spec.taskRef.name;
-      const taskKind = taskRun.spec.taskRef.kind;
-      const task = selectedTask(
-        taskName,
-        taskKind === 'ClusterTask' ? this.props.clusterTasks : this.props.tasks
-      );
-      const taskRunName = taskRun.metadata.name;
-      const taskRunNamespace = taskRun.metadata.namespace;
-      const { reason, status: succeeded } = getStatus(taskRun);
-      const { pipelineTaskName } = taskRunDetails[taskRunName];
-      const { params, resources: inputResources } = taskRun.spec.inputs;
-      const { resources: outputResources } = taskRun.spec.outputs;
-      const steps = stepsStatus(task.spec.steps, taskRun.status.steps);
-      return {
-        id: taskRun.metadata.uid,
-        pipelineTaskName,
-        pod: taskRun.status.podName,
-        reason,
-        steps,
-        succeeded,
-        taskName,
-        taskRunName,
-        namespace: taskRunNamespace,
-        inputResources,
-        outputResources,
-        params
-      };
-    });
+    runs = runs
+      .map(taskRun => {
+        const taskName = taskRun.spec.taskRef.name;
+        const taskKind = taskRun.spec.taskRef.kind;
+        const task = selectedTask(
+          taskName,
+          taskKind === 'ClusterTask'
+            ? this.props.clusterTasks
+            : this.props.tasks
+        );
+        if (!task) {
+          return null;
+        }
+        const taskRunName = taskRun.metadata.name;
+        const taskRunNamespace = taskRun.metadata.namespace;
+        const { reason, status: succeeded } = getStatus(taskRun);
+        const { pipelineTaskName } = taskRunDetails[taskRunName];
+        const { params, resources: inputResources } = taskRun.spec.inputs;
+        const { resources: outputResources } = taskRun.spec.outputs;
+        const steps = stepsStatus(task.spec.steps, taskRun.status.steps);
+        return {
+          id: taskRun.metadata.uid,
+          pipelineTaskName,
+          pod: taskRun.status.podName,
+          reason,
+          steps,
+          succeeded,
+          taskName,
+          taskRunName,
+          namespace: taskRunNamespace,
+          inputResources,
+          outputResources,
+          params
+        };
+      })
+      .filter(Boolean);
 
     return runs;
   };
@@ -261,6 +274,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
 
     const logContainer = (
       <Log
+        key={stepName}
         fetchLogs={() => fetchLogs(stepName, stepStatus, taskRun)}
         stepStatus={stepStatus}
       />
