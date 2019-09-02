@@ -25,17 +25,6 @@ const LogLine = ({ data, index, style }) => (
   </div>
 );
 
-const trailers = {
-  Completed: {
-    id: 'dashboard.pipelineRun.stepCompleted',
-    defaultMessage: 'Step completed'
-  },
-  Error: {
-    id: 'dashboard.pipelineRun.stepFailed',
-    defaultMessage: 'Step failed'
-  }
-};
-
 export class LogContainer extends Component {
   state = { loading: true };
 
@@ -79,6 +68,25 @@ export class LogContainer extends Component {
     );
   };
 
+  getTrailerMessage = trailer => {
+    const { intl } = this.props;
+
+    switch (trailer) {
+      case 'Completed':
+        return intl.formatMessage({
+          id: 'dashboard.pipelineRun.stepCompleted',
+          defaultMessage: 'Step completed'
+        });
+      case 'Error':
+        return intl.formatMessage({
+          id: 'dashboard.pipelineRun.stepFailed',
+          defaultMessage: 'Step failed'
+        });
+      default:
+        return null;
+    }
+  };
+
   initPolling = () => {
     const { stepStatus } = this.props;
     if (!this.timer && stepStatus && !stepStatus.terminated) {
@@ -113,16 +121,16 @@ export class LogContainer extends Component {
   };
 
   logTrailer = () => {
-    const { stepStatus, intl } = this.props;
+    const { stepStatus } = this.props;
     const { reason } = (stepStatus && stepStatus.terminated) || {};
-    const trailer = trailers[reason];
+    const trailer = this.getTrailerMessage(reason);
     if (!trailer) {
       return null;
     }
 
     return (
       <div className="log-trailer" data-status={reason}>
-        {intl.formatMessage(trailer)}
+        {trailer}
       </div>
     );
   };

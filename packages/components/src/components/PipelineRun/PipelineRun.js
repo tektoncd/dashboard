@@ -209,13 +209,13 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
             kind="error"
             hideCloseButton
             lowContrast
-            title={intl.formatMessage({
-              id: 'dashboard.pipelineRun.failedMessage',
-              message: pipelineRunError.reason,
-              defaultMessage: `Unable to load PipelineRun details: ${
-                pipelineRunError.reason
-              }`
-            })}
+            title={intl.formatMessage(
+              {
+                id: 'dashboard.pipelineRun.failedMessage',
+                defaultMessage: 'Unable to load PipelineRun details: {reason}'
+              },
+              { reason: pipelineRunError.reason }
+            )}
             subtitle={pipelineRunError.message}
           />
         </>

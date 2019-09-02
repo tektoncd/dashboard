@@ -49,24 +49,38 @@ class Step extends Component {
   }
 
   statusLabel() {
-    const { intl, labels, reason, status } = this.props;
-    const { running, succeeded, failed, waiting, notRun } = labels;
+    const { intl, reason, status } = this.props;
 
     if (status === 'running') {
-      return intl.formatMessage(running);
+      return intl.formatMessage({
+        id: 'dashboard.taskRun.status.running',
+        defaultMessage: 'Running'
+      });
     }
 
     if (status === 'terminated') {
       if (reason === 'Completed') {
-        return intl.formatMessage(succeeded);
+        return intl.formatMessage({
+          id: 'dashboard.taskRun.status.succeeded',
+          defaultMessage: 'Completed'
+        });
       }
-      return intl.formatMessage(failed);
+      return intl.formatMessage({
+        id: 'dashboard.taskRun.status.failed',
+        defaultMessage: 'Failed'
+      });
     }
     if (status === 'waiting') {
-      return intl.formatMessage(waiting);
+      return intl.formatMessage({
+        id: 'dashboard.taskRun.status.waiting',
+        defaultMessage: 'Waiting'
+      });
     }
     // task is done, step did not run
-    return intl.formatMessage(notRun);
+    return intl.formatMessage({
+      id: 'dashboard.taskRun.status.notRun',
+      defaultMessage: 'Not run'
+    });
   }
 
   render() {
@@ -94,25 +108,6 @@ class Step extends Component {
 }
 
 Step.defaultProps = {
-  labels: {
-    failed: { id: 'dashboard.taskRun.status.failed', defaultMessage: 'Failed' },
-    notRun: {
-      id: 'dashboard.taskRun.status.notRun',
-      defaultMessage: 'Not run'
-    },
-    running: {
-      id: 'dashboard.taskRun.status.running',
-      defaultMessage: 'Running'
-    },
-    succeeded: {
-      id: 'dashboard.taskRun.status.succeeded',
-      defaultMessage: 'Completed'
-    },
-    waiting: {
-      id: 'dashboard.taskRun.status.waiting',
-      defaultMessage: 'Waiting'
-    }
-  },
   stepName: 'unknown'
 };
 

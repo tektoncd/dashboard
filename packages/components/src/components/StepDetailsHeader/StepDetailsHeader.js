@@ -43,25 +43,39 @@ class StepDetailsHeader extends Component {
   }
 
   statusLabel() {
-    const { intl, labels, reason, status, taskRun } = this.props;
-    const { running, succeeded, failed, waiting, notRun } = labels;
+    const { intl, reason, status, taskRun } = this.props;
 
     if (status === 'running') {
-      return intl.formatMessage(running);
+      return intl.formatMessage({
+        id: 'dashboard.taskRun.status.running',
+        defaultMessage: 'Running'
+      });
     }
     if (status === 'terminated') {
       if (reason === 'Completed') {
-        return intl.formatMessage(succeeded);
+        return intl.formatMessage({
+          id: 'dashboard.taskRun.status.succeeded',
+          defaultMessage: 'Completed'
+        });
       }
-      return intl.formatMessage(failed);
+      return intl.formatMessage({
+        id: 'dashboard.taskRun.status.failed',
+        defaultMessage: 'Failed'
+      });
     }
     // no status, task still running means waiting
     const { reason: taskReason, status: taskStatus } = getStatus(taskRun);
     if (taskStatus === 'Unknown' && taskReason === 'Pending') {
-      return intl.formatMessage(waiting);
+      return intl.formatMessage({
+        id: 'dashboard.taskRun.status.waiting',
+        defaultMessage: 'Waiting'
+      });
     }
     // task is done, step did not run
-    return intl.formatMessage(notRun);
+    return intl.formatMessage({
+      id: 'dashboard.taskRun.status.notRun',
+      defaultMessage: 'Not run'
+    });
   }
 
   render() {
@@ -86,25 +100,6 @@ class StepDetailsHeader extends Component {
 }
 
 StepDetailsHeader.defaultProps = {
-  labels: {
-    failed: { id: 'dashboard.taskRun.status.failed', defaultMessage: 'Failed' },
-    notRun: {
-      id: 'dashboard.taskRun.status.notRun',
-      defaultMessage: 'Not run'
-    },
-    running: {
-      id: 'dashboard.taskRun.status.running',
-      defaultMessage: 'Running'
-    },
-    succeeded: {
-      id: 'dashboard.taskRun.status.succeeded',
-      defaultMessage: 'Completed'
-    },
-    waiting: {
-      id: 'dashboard.taskRun.status.waiting',
-      defaultMessage: 'Waiting'
-    }
-  },
   taskRun: {}
 };
 

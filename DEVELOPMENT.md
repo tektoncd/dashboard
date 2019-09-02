@@ -169,6 +169,12 @@ Note: If modifying any of the sub-packages (e.g. components or utils in https://
 
 Run `npm run build` to build the project. The build artifacts will be stored in the `dist/` directory. This will perform a production build of the static resources. It correctly bundles React in production mode and optimizes the build for the best performance. Filenames include hashes to facilitate long-term caching.
 
+### i18n
+
+This project uses `react-intl` for internationalization, and provides a script to automatically extract messages to bundles for translation. Run `npm run i18n:extract` from the root of the project to update the message bundles which can be found in `src/nls/`.
+
+Note: `src/nls/messages_en.json` should **NOT** be edited manually, instead edit the defaultMessage in the code and re-run the script.
+
 ### Running unit tests
 
 Run `npm test` to execute the unit tests via [Jest](https://jestjs.io/) in interactive watch mode. This also generates a code coverage report by default.

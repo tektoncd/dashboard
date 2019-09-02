@@ -21,7 +21,7 @@ import {
   Switch
 } from 'react-router-dom';
 
-import { defineMessages, IntlProvider } from 'react-intl';
+import { IntlProvider } from 'react-intl';
 import { Content } from 'carbon-components-react';
 import {
   Breadcrumbs,
@@ -54,7 +54,7 @@ import { shouldDisplayLogout } from '../../api';
 import { fetchExtensions } from '../../actions/extensions';
 import { fetchNamespaces, selectNamespace } from '../../actions/namespaces';
 import { getExtensions, getLocale, getSelectedNamespace } from '../../reducers';
-import { messages } from '../../constants';
+import messages from '../../nls/messages_en.json';
 
 import '../../components/App/App.scss';
 
@@ -77,11 +77,7 @@ export /* istanbul ignore next */ class App extends Component {
     );
 
     return (
-      <IntlProvider
-        locale={lang}
-        defaultLocale="en"
-        messages={defineMessages(messages[lang])}
-      >
+      <IntlProvider locale={lang} defaultLocale="en" messages={messages[lang]}>
         <Router>
           <>
             <Header logoutButton={logoutButton}>
