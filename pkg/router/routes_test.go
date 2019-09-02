@@ -368,7 +368,7 @@ func makeFake(t *testing.T, r *endpoints.Resource, resourceType, namespace, reso
 }
 
 func TestExtensionRegistration(t *testing.T) {
-	t.Log("Checking extension registration")
+	t.Log("In checking extension registration")
 	server, r, installNamespace := testutils.DummyServer()
 	defer server.Close()
 
