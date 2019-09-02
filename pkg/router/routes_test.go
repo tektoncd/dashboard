@@ -368,7 +368,7 @@ func makeFake(t *testing.T, r *endpoints.Resource, resourceType, namespace, reso
 }
 
 func TestExtensionRegistration(t *testing.T) {
-	t.Log("Checking extension registration")
+	t.Log("In TestExtensionRegistration")
 	server, r, installNamespace := testutils.DummyServer()
 	defer server.Close()
 
@@ -395,12 +395,15 @@ func TestExtensionRegistration(t *testing.T) {
 		extensionPorts = append(extensionPorts, int32(port))
 	}
 
+	// It's important the UID's really are unique! Use 123, 456, 789 to make sure
+	// the extension IDs all differ from each other, otherwise this will lead to only
+	// one instead of two being picked up by TestExtensionRegistration
 	extensionServices := []corev1.Service{
 		corev1.Service{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      "extension1",
 				Namespace: installNamespace,
-				UID:       types.UID(strconv.FormatInt(time.Now().UnixNano(), 10)),
+				UID:       types.UID(strconv.FormatInt(123+time.Now().UnixNano(), 10)),
 				Annotations: map[string]string{
 					ExtensionUrlKey:            extensionUrlValue,
 					ExtensionBundleLocationKey: "Location",
@@ -424,7 +427,7 @@ func TestExtensionRegistration(t *testing.T) {
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      "extension2",
 				Namespace: installNamespace,
-				UID:       types.UID(strconv.FormatInt(time.Now().UnixNano(), 10)),
+				UID:       types.UID(strconv.FormatInt(456+time.Now().UnixNano(), 10)),
 				Annotations: map[string]string{
 					ExtensionBundleLocationKey: "Location",
 					ExtensionDisplayNameKey:    "Display Name",
@@ -463,7 +466,7 @@ func TestExtensionRegistration(t *testing.T) {
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      "non-install-namespace-extension",
 				Namespace: otherNamespace,
-				UID:       types.UID(strconv.FormatInt(time.Now().UnixNano(), 10)),
+				UID:       types.UID(strconv.FormatInt(789+time.Now().UnixNano(), 10)),
 				Annotations: map[string]string{
 					ExtensionBundleLocationKey: "Location",
 					ExtensionDisplayNameKey:    "Display Name",
@@ -492,11 +495,11 @@ func TestExtensionRegistration(t *testing.T) {
 		}
 		err = r.K8sClient.CoreV1().Services(svc.Namespace).Delete(svc.Name, &metav1.DeleteOptions{})
 		if err != nil {
-			t.Fatalf("Error creating service '%s': %v\n", svc.Name, err)
+			t.Fatalf("Error deleting service '%s': %v\n", svc.Name, err)
 		}
 		_, err = r.K8sClient.CoreV1().Services(svc.Namespace).Create(&svc)
 		if err != nil {
-			t.Fatalf("Error creating service '%s': %v\n", svc.Name, err)
+			t.Fatalf("Error recreating service '%s': %v\n", svc.Name, err)
 		}
 	}
 
@@ -508,7 +511,7 @@ func TestExtensionRegistration(t *testing.T) {
 	for {
 		select {
 		case <-timeout:
-			t.Fatalf("Timed out waiting for expected services to be registered")
+			t.Fatal("Timed out waiting for expected services to be registered")
 		case event := <-subChan:
 			switch event.MessageType {
 			case broadcaster.ExtensionCreated:
