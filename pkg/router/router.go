@@ -206,6 +206,7 @@ func GetExtensions() []Extension {
 	extensions := []Extension{}
 	extensionMutex.RLock()
 	for _, e := range uidExtensionMap {
+		logging.Log.Debugf("in getExtensions, adding extension %s ", e)
 		extensions = append(extensions, e)
 	}
 	extensionMutex.RUnlock()
@@ -273,7 +274,10 @@ func RegisterExtension(extensionService *corev1.Service) {
 		extensionWebService.Route(extensionWebService.PUT(fullPath + "/{var:*}").To(ext.handleExtension))
 		extensionWebService.Route(extensionWebService.DELETE(fullPath + "/{var:*}").To(ext.handleExtension))
 	}
-	uidExtensionMap[string(extensionService.UID)] = ext
+
+	key := string(extensionService.UID)
+	uidExtensionMap[key] = ext
+	logging.Log.Debugf("Extension [%s] set to be %s", key, ext)
 }
 
 // Should be called PRIOR to registration of extensionService on informer update
