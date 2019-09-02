@@ -23,6 +23,7 @@ module.exports = {
       "sourceType": "module"
   },
   "plugins": [
+      "notice",
       "react"
   ],
   "rules": {
@@ -32,6 +33,9 @@ module.exports = {
     "jsx-a11y/anchor-is-valid": "off",
     "no-case-declarations": "off",
     "no-template-curly-in-string": "off",
+    "notice/notice": [
+      "error", { "templateFile": "config_frontend/copyright.txt", nonMatchingTolerance: 0.95 }
+    ],
     "react/jsx-filename-extension": "off",
     "react/destructuring-assignment": "off",
     "react/prop-types": "off",
