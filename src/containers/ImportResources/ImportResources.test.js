@@ -33,6 +33,7 @@ describe('ImportResources component', () => {
       isFetching: false,
       selected: ALL_NAMESPACES
     },
+    notifications: {},
     serviceAccounts: {
       byId: {},
       byNamespace: {},

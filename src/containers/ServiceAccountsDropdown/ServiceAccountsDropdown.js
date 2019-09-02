@@ -18,7 +18,8 @@ import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 import {
   getSelectedNamespace,
   getServiceAccounts,
-  isFetchingServiceAccounts
+  isFetchingServiceAccounts,
+  isWebSocketConnected
 } from '../../reducers';
 import { fetchServiceAccounts } from '../../actions/serviceAccounts';
 import TooltipDropdown from '../../components/TooltipDropdown';
@@ -30,8 +31,12 @@ class ServiceAccountsDropdown extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { namespace } = this.props;
-    if (namespace !== prevProps.namespace) {
+    const { namespace, webSocketConnected } = this.props;
+    const { webSocketConnected: prevWebSocketConnected } = prevProps;
+    if (
+      namespace !== prevProps.namespace ||
+      (webSocketConnected && prevWebSocketConnected === false)
+    ) {
       this.props.fetchServiceAccounts({ namespace });
     }
   }
@@ -58,7 +63,8 @@ function mapStateToProps(state, ownProps) {
   return {
     items: getServiceAccounts(state, { namespace }).map(sa => sa.metadata.name),
     loading: isFetchingServiceAccounts(state),
-    namespace
+    namespace,
+    webSocketConnected: isWebSocketConnected(state)
   };
 }
 

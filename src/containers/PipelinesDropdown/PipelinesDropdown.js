@@ -18,7 +18,8 @@ import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 import {
   getPipelines,
   getSelectedNamespace,
-  isFetchingPipelines
+  isFetchingPipelines,
+  isWebSocketConnected
 } from '../../reducers';
 import { fetchPipelines } from '../../actions/pipelines';
 import TooltipDropdown from '../../components/TooltipDropdown';
@@ -30,8 +31,12 @@ class PipelinesDropdown extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { namespace } = this.props;
-    if (namespace !== prevProps.namespace) {
+    const { namespace, webSocketConnected } = this.props;
+    const { webSocketConnected: prevWebSocketConnected } = prevProps;
+    if (
+      namespace !== prevProps.namespace ||
+      (webSocketConnected && prevWebSocketConnected === false)
+    ) {
       this.props.fetchPipelines({ namespace });
     }
   }
@@ -60,7 +65,8 @@ function mapStateToProps(state, ownProps) {
       pipeline => pipeline.metadata.name
     ),
     loading: isFetchingPipelines(state),
-    namespace
+    namespace,
+    webSocketConnected: isWebSocketConnected(state)
   };
 }
 

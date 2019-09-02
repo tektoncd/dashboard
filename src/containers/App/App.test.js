@@ -31,6 +31,7 @@ it('App renders successfully', () => {
     secrets: { byNamespace: {} },
     extensions: { byName: {} },
     namespaces: { byName: {} },
+    notifications: {},
     pipelines: { byNamespace: {} },
     pipelineRuns: { byNamespace: {} },
     serviceAccounts: { byNamespace: {} }

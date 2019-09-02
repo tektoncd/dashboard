@@ -39,7 +39,8 @@ import {
   getPipelineRunsByPipelineName,
   getPipelineRunsErrorMessage,
   getSelectedNamespace,
-  isFetchingPipelineRuns
+  isFetchingPipelineRuns,
+  isWebSocketConnected
 } from '../../reducers';
 import { cancelPipelineRun } from '../../api';
 
@@ -76,17 +77,22 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { match, namespace } = this.props;
+    const { match, namespace, webSocketConnected } = this.props;
     const { filters } = this.state;
     const { filters: prevFilters } = prevState;
     const { pipelineName } = match.params;
-    const { match: prevMatch, namespace: prevNamespace } = prevProps;
+    const {
+      match: prevMatch,
+      namespace: prevNamespace,
+      webSocketConnected: prevWebSocketConnected
+    } = prevProps;
     const { pipelineName: prevPipelineName } = prevMatch.params;
 
     if (
       namespace !== prevNamespace ||
       pipelineName !== prevPipelineName ||
-      filters !== prevFilters
+      filters !== prevFilters ||
+      (webSocketConnected && prevWebSocketConnected === false)
     ) {
       this.reset();
       this.fetchPipelineRuns();
@@ -394,7 +400,8 @@ function mapStateToProps(state, props) {
       : getPipelineRuns(state, {
           filters,
           namespace
-        })
+        }),
+    webSocketConnected: isWebSocketConnected(state)
   };
 }
 

@@ -99,6 +99,7 @@ let store = mockStore({
     errorMessage: null
   },
   namespaces,
+  notifications: {},
   serviceAccounts: {
     byId: serviceAccountsById,
     byNamespace: serviceAccountsByNamespace,
@@ -185,7 +186,8 @@ it('error notification appears', () => {
       isFetching: false,
       errorMessage: 'Some error message'
     },
-    namespaces
+    namespaces,
+    notifications: {}
   });
   const { getByTestId } = render(
     <Provider store={store}>

@@ -40,7 +40,8 @@ import {
   getSelectedNamespace,
   getTaskRuns,
   getTaskRunsErrorMessage,
-  isFetchingTaskRuns
+  isFetchingTaskRuns,
+  isWebSocketConnected
 } from '../../reducers';
 import { cancelTaskRun } from '../../api';
 
@@ -50,10 +51,16 @@ export /* istanbul ignore next */ class TaskRunList extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { namespace } = this.props;
-    const { namespace: prevNamespace } = prevProps;
+    const { namespace, webSocketConnected } = this.props;
+    const {
+      namespace: prevNamespace,
+      webSocketConnected: prevWebSocketConnected
+    } = prevProps;
 
-    if (namespace !== prevNamespace) {
+    if (
+      namespace !== prevNamespace ||
+      (webSocketConnected && prevWebSocketConnected === false)
+    ) {
       this.props.fetchTaskRuns();
     }
   }
@@ -203,7 +210,8 @@ function mapStateToProps(state, props) {
     error: getTaskRunsErrorMessage(state),
     loading: isFetchingTaskRuns(state),
     namespace,
-    taskRuns: getTaskRuns(state, { namespace })
+    taskRuns: getTaskRuns(state, { namespace }),
+    webSocketConnected: isWebSocketConnected(state)
   };
 }
 

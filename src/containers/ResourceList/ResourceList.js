@@ -31,7 +31,7 @@ import {
 } from '@tektoncd/dashboard-utils';
 
 import { getCustomResources } from '../../api';
-import { getSelectedNamespace } from '../../reducers';
+import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
 
 export /* istanbul ignore next */ class ResourceListContainer extends Component {
   state = {
@@ -46,9 +46,13 @@ export /* istanbul ignore next */ class ResourceListContainer extends Component 
   }
 
   componentDidUpdate(prevProps) {
-    const { match, namespace } = this.props;
+    const { match, namespace, webSocketConnected } = this.props;
     const { group, version, type } = match.params;
-    const { match: prevMatch, namespace: prevNamespace } = prevProps;
+    const {
+      match: prevMatch,
+      namespace: prevNamespace,
+      webSocketConnected: prevWebSocketConnected
+    } = prevProps;
     const {
       type: prevType,
       group: prevGroup,
@@ -59,7 +63,8 @@ export /* istanbul ignore next */ class ResourceListContainer extends Component 
       namespace !== prevNamespace ||
       type !== prevType ||
       group !== prevGroup ||
-      version !== prevVersion
+      version !== prevVersion ||
+      (webSocketConnected && prevWebSocketConnected === false)
     ) {
       this.fetchResources(group, version, type, namespace);
     }
@@ -166,7 +171,8 @@ function mapStateToProps(state, props) {
   const namespace = namespaceParam || getSelectedNamespace(state);
 
   return {
-    namespace
+    namespace,
+    webSocketConnected: isWebSocketConnected(state)
   };
 }
 

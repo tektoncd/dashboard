@@ -28,7 +28,8 @@ import {
   getSecrets,
   getSecretsErrorMessage,
   getSelectedNamespace,
-  isFetchingSecrets
+  isFetchingSecrets,
+  isWebSocketConnected
 } from '../../reducers';
 
 export /* istanbul ignore next */ class Secrets extends Component {
@@ -43,6 +44,14 @@ export /* istanbul ignore next */ class Secrets extends Component {
 
   componentDidMount() {
     this.props.fetchSecrets();
+  }
+
+  componentDidUpdate(prevProps) {
+    const { webSocketConnected } = this.props;
+    const { webSocketConnected: prevWebSocketConnected } = prevProps;
+    if (webSocketConnected && prevWebSocketConnected === false) {
+      this.props.fetchSecrets();
+    }
   }
 
   handleNewSecretClick = () => {
@@ -122,7 +131,8 @@ function mapStateToProps(state) {
     error: getSecretsErrorMessage(state),
     loading: isFetchingSecrets(state),
     secrets: getSecrets(state),
-    selectedNamespace: getSelectedNamespace(state)
+    selectedNamespace: getSelectedNamespace(state),
+    webSocketConnected: isWebSocketConnected(state)
   };
 }
 

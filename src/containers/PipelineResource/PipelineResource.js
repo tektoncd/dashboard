@@ -24,7 +24,8 @@ import { getErrorMessage } from '@tektoncd/dashboard-utils';
 import {
   getPipelineResource,
   getPipelineResourcesErrorMessage,
-  isFetchingPipelineResources
+  isFetchingPipelineResources,
+  isWebSocketConnected
 } from '../../reducers';
 
 import { fetchPipelineResource } from '../../actions/pipelineResources';
@@ -45,9 +46,12 @@ export /* istanbul ignore next */ class PipelineResourceContainer extends Compon
   }
 
   componentDidUpdate(prevProps) {
-    const { match } = this.props;
+    const { match, webSocketConnected } = this.props;
     const { namespace, pipelineResourceName } = match.params;
-    const { match: prevMatch } = prevProps;
+    const {
+      match: prevMatch,
+      webSocketConnected: prevWebSocketConnected
+    } = prevProps;
     const {
       namespace: prevNamespace,
       pipelineResourceName: prevPipelineResourceName
@@ -55,7 +59,8 @@ export /* istanbul ignore next */ class PipelineResourceContainer extends Compon
 
     if (
       namespace !== prevNamespace ||
-      pipelineResourceName !== prevPipelineResourceName
+      pipelineResourceName !== prevPipelineResourceName ||
+      (webSocketConnected && prevWebSocketConnected === false)
     ) {
       this.fetchData();
     }
@@ -226,7 +231,8 @@ function mapStateToProps(state, ownProps) {
     pipelineResource: getPipelineResource(state, {
       name,
       namespace
-    })
+    }),
+    webSocketConnected: isWebSocketConnected(state)
   };
 }
 

@@ -119,7 +119,8 @@ beforeEach(() => {
 it('PipelinesDropdown renders items based on Redux state', () => {
   const store = mockStore({
     ...pipelinesStoreDefault,
-    ...namespacesStoreBlue
+    ...namespacesStoreBlue,
+    notifications: {}
   });
   const { getByText, getAllByText, queryByText } = render(
     <Provider store={store}>
@@ -138,7 +139,8 @@ it('PipelinesDropdown renders items based on Redux state', () => {
 it('PipelinesDropdown renders items based on Redux state when namespace changes', () => {
   const blueStore = mockStore({
     ...pipelinesStoreDefault,
-    ...namespacesStoreBlue
+    ...namespacesStoreBlue,
+    notifications: {}
   });
   const { container, getByText, getAllByText, queryByText } = render(
     <Provider store={blueStore}>
@@ -157,7 +159,8 @@ it('PipelinesDropdown renders items based on Redux state when namespace changes'
   // Change selected namespace from 'blue' to 'green'
   const greenStore = mockStore({
     ...pipelinesStoreDefault,
-    ...namespacesStoreGreen
+    ...namespacesStoreGreen,
+    notifications: {}
   });
   render(
     <Provider store={greenStore}>
@@ -177,7 +180,8 @@ it('PipelinesDropdown renders items based on Redux state when namespace changes'
 it('PipelinesDropdown renders controlled selection', () => {
   const store = mockStore({
     ...pipelinesStoreDefault,
-    ...namespacesStoreBlue
+    ...namespacesStoreBlue,
+    notifications: {}
   });
   // Select item 'pipeline-1'
   const { container, queryByText } = render(
@@ -207,7 +211,8 @@ it('PipelinesDropdown renders controlled selection', () => {
 it('PipelinesDropdown renders controlled namespace', () => {
   const store = mockStore({
     ...pipelinesStoreDefault,
-    ...namespacesStoreBlue
+    ...namespacesStoreBlue,
+    notifications: {}
   });
   // Select namespace 'green'
   const { queryByText, getByText, getAllByText } = render(
@@ -230,7 +235,8 @@ it('PipelinesDropdown renders empty', () => {
       byNamespace: {},
       isFetching: false
     },
-    ...namespacesStoreBlue
+    ...namespacesStoreBlue,
+    notifications: {}
   });
   const { queryByText } = render(
     <Provider store={store}>
@@ -246,7 +252,8 @@ it('PipelinesDropdown renders empty', () => {
 it('PipelinesDropdown renders loading skeleton based on Redux state', () => {
   const store = mockStore({
     ...pipelinesStoreFetching,
-    ...namespacesStoreBlue
+    ...namespacesStoreBlue,
+    notifications: {}
   });
   const { queryByText } = render(
     <Provider store={store}>
@@ -259,7 +266,8 @@ it('PipelinesDropdown renders loading skeleton based on Redux state', () => {
 it('PipelinesDropdown handles onChange event', () => {
   const store = mockStore({
     ...pipelinesStoreDefault,
-    ...namespacesStoreBlue
+    ...namespacesStoreBlue,
+    notifications: {}
   });
   const onChange = jest.fn();
   const { getByText } = render(

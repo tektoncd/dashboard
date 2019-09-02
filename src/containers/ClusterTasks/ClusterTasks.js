@@ -30,7 +30,8 @@ import { fetchClusterTasks } from '../../actions/tasks';
 import {
   getClusterTasks,
   getClusterTasksErrorMessage,
-  isFetchingClusterTasks
+  isFetchingClusterTasks,
+  isWebSocketConnected
 } from '../../reducers';
 
 import '../../components/Definitions/Definitions.scss';
@@ -38,6 +39,14 @@ import '../../components/Definitions/Definitions.scss';
 export /* istanbul ignore next */ class ClusterTasksContainer extends Component {
   componentDidMount() {
     this.props.fetchClusterTasks();
+  }
+
+  componentDidUpdate(prevProps) {
+    const { webSocketConnected } = this.props;
+    const { webSocketConnected: prevWebSocketConnected } = prevProps;
+    if (webSocketConnected && prevWebSocketConnected === false) {
+      this.props.fetchClusterTasks();
+    }
   }
 
   render() {
@@ -113,9 +122,10 @@ ClusterTasksContainer.defaultProps = {
 /* istanbul ignore next */
 function mapStateToProps(state) {
   return {
+    clusterTasks: getClusterTasks(state),
     error: getClusterTasksErrorMessage(state),
     loading: isFetchingClusterTasks(state),
-    clusterTasks: getClusterTasks(state)
+    webSocketConnected: isWebSocketConnected(state)
   };
 }
 
