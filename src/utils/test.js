@@ -16,7 +16,6 @@ import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import { render } from 'react-testing-library';
 import { IntlProvider } from 'react-intl';
-import { messages } from '../constants';
 
 export function renderWithRouter(
   ui,
@@ -29,7 +28,7 @@ export function renderWithRouter(
   return {
     ...render(
       <Router history={history}>
-        <IntlProvider locale="en" defaultLocale="en" messages={messages.en}>
+        <IntlProvider locale="en" defaultLocale="en">
           {ui}
         </IntlProvider>
       </Router>,
@@ -47,7 +46,7 @@ export function renderWithRouter(
 export function renderWithIntl(ui) {
   return {
     ...render(
-      <IntlProvider locale="en" defaultLocale="en" messages={messages.en}>
+      <IntlProvider locale="en" defaultLocale="en">
         {ui}
       </IntlProvider>
     )

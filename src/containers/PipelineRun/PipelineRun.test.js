@@ -19,14 +19,12 @@ import configureStore from 'redux-mock-store';
 import { createIntl } from 'react-intl';
 import { PipelineRunContainer } from './PipelineRun';
 import { renderWithRouter } from '../../utils/test';
-import { messages } from '../../constants';
 
 beforeEach(jest.resetAllMocks);
 
 const intl = createIntl({
   locale: 'en',
-  defaultLocale: 'en',
-  messages: messages.en
+  defaultLocale: 'en'
 });
 
 it('PipelineRunContainer renders', async () => {

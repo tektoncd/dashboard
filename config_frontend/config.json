@@ -1,4 +1,9 @@
 {
   "API_DOMAIN": "http://localhost:9097",
-  "PORT": "8000"
+  "PORT": "8000",
+  "locales": {
+    "default": "en",
+    "supported": ["en"],
+    "build": ["en"]
+  }
 }

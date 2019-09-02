@@ -48,8 +48,7 @@ const initialState = {
   createdPipelineRun: null,
   validFilter: {
     isValid: true,
-    filterMessageId: '',
-    filterDefaultMessage: '',
+    filterMessage: null,
     url: '',
     urlMessage: ''
   }
@@ -106,6 +105,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
   };
 
   handleAddFilter = event => {
+    const { intl } = this.props;
     event.preventDefault();
     const currentURL = this.props.match.url;
     const { currentFilterValue = '' } = this.state;
@@ -115,9 +115,11 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
       this.setState({
         validFilter: {
           isValid: false,
-          filterMessageId: 'dashboard.pipelineRuns.invalidFilter',
-          filterDefaultMessage:
-            'Filters must be of the format labelKey:labelValue and contain accepted label characters',
+          filterMessage: intl.formatMessage({
+            id: 'dashboard.pipelineRuns.invalidFilter',
+            defaultMessage:
+              'Filters must be of the format labelKey:labelValue and contain accepted label characters'
+          }),
           url:
             'https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set',
           urlMessage: 'See the Kubernetes Label documentation for valid syntax'
@@ -132,8 +134,10 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
       this.setState({
         validFilter: {
           isValid: false,
-          filterMessageId: 'dashboard.pipelineRuns.duplicateFilter',
-          filterDefaultMessage: 'No duplicate filters allowed',
+          filterMessage: intl.formatMessage({
+            id: 'dashboard.pipelineRuns.duplicateFilter',
+            defaultMessage: 'No duplicate filters allowed'
+          }),
           url: '',
           urlMessage: ''
         }
@@ -171,8 +175,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
     this.setState({
       validFilter: {
         isValid: true,
-        filterMessageId: '',
-        filterDefaultMessage: '',
+        filterMessage: null,
         url: '',
         urlMessage: ''
       }
@@ -183,8 +186,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
     this.setState({
       validFilter: {
         isValid: true,
-        filterMessageId: '',
-        filterDefaultMessage: '',
+        filterMessage: null,
         url: '',
         urlMessage: ''
       },
@@ -232,13 +234,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
     } = this.props;
     const { pipelineName } = match.params;
     const { currentFilterValue, validFilter } = this.state;
-    const {
-      filterMessageId,
-      filterDefaultMessage,
-      isValid,
-      url,
-      urlMessage
-    } = validFilter;
+    const { filterMessage, isValid, url, urlMessage } = validFilter;
 
     if (loading) {
       return <StructuredListSkeleton border />;
@@ -282,10 +278,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
           <InlineNotification
             lowContrast
             kind="error"
-            title={intl.formatMessage({
-              id: filterMessageId,
-              defaultMessage: filterDefaultMessage
-            })}
+            title={filterMessage}
             subtitle=""
             role="alert"
             onCloseButtonClick={this.handleCloseFilterError}

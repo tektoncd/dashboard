@@ -15,11 +15,10 @@ import React from 'react';
 
 import './Container.scss';
 import { IntlProvider } from "react-intl";
-import { messages } from "../src/constants";
 
 export default function Container({ story }) {
   return (
-    <IntlProvider locale='en' defaultLocale='en' messages={messages.en}>
+    <IntlProvider locale='en' defaultLocale='en'>
       <div
         data-floating-menu-container
         role="main"
