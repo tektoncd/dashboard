@@ -120,7 +120,8 @@ beforeEach(() => {
 it('ServiceAccountsDropdown renders items based on Redux state', () => {
   const store = mockStore({
     ...serviceAccountsStoreDefault,
-    ...namespacesStoreBlue
+    ...namespacesStoreBlue,
+    notifications: {}
   });
   const { getByText, getAllByText, queryByText } = render(
     <Provider store={store}>
@@ -139,7 +140,8 @@ it('ServiceAccountsDropdown renders items based on Redux state', () => {
 it('ServiceAccountsDropdown renders items based on Redux state when namespace changes', () => {
   const blueStore = mockStore({
     ...serviceAccountsStoreDefault,
-    ...namespacesStoreBlue
+    ...namespacesStoreBlue,
+    notifications: {}
   });
   const { container, getByText, getAllByText, queryByText } = render(
     <Provider store={blueStore}>
@@ -158,7 +160,8 @@ it('ServiceAccountsDropdown renders items based on Redux state when namespace ch
   // Change selected namespace from 'blue' to 'green'
   const greenStore = mockStore({
     ...serviceAccountsStoreDefault,
-    ...namespacesStoreGreen
+    ...namespacesStoreGreen,
+    notifications: {}
   });
   render(
     <Provider store={greenStore}>
@@ -178,7 +181,8 @@ it('ServiceAccountsDropdown renders items based on Redux state when namespace ch
 it('ServiceAccountsDropdown renders controlled selection', () => {
   const store = mockStore({
     ...serviceAccountsStoreDefault,
-    ...namespacesStoreBlue
+    ...namespacesStoreBlue,
+    notifications: {}
   });
   // Select item 'service-account-1'
   const { container, queryByText } = render(
@@ -214,7 +218,8 @@ it('ServiceAccountsDropdown renders controlled selection', () => {
 it('ServiceAccountsDropdown renders controlled namespace', () => {
   const store = mockStore({
     ...serviceAccountsStoreDefault,
-    ...namespacesStoreBlue
+    ...namespacesStoreBlue,
+    notifications: {}
   });
   // Select namespace 'green'
   const { queryByText, getByText, getAllByText } = render(
@@ -237,7 +242,8 @@ it('ServiceAccountsDropdown renders empty', () => {
       byNamespace: {},
       isFetching: false
     },
-    ...namespacesStoreBlue
+    ...namespacesStoreBlue,
+    notifications: {}
   });
   // Select item 'service-account-1'
   const { queryByText } = render(
@@ -254,7 +260,8 @@ it('ServiceAccountsDropdown renders empty', () => {
 it('ServiceAccountsDropdown renders loading skeleton based on Redux state', () => {
   const store = mockStore({
     ...serviceAccountsStoreFetching,
-    ...namespacesStoreBlue
+    ...namespacesStoreBlue,
+    notifications: {}
   });
   const { queryByText } = render(
     <Provider store={store}>
@@ -267,7 +274,8 @@ it('ServiceAccountsDropdown renders loading skeleton based on Redux state', () =
 it('ServiceAccountsDropdown handles onChange event', () => {
   const store = mockStore({
     ...serviceAccountsStoreDefault,
-    ...namespacesStoreBlue
+    ...namespacesStoreBlue,
+    notifications: {}
   });
   const onChange = jest.fn();
   const { getByText } = render(

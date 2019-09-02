@@ -26,7 +26,8 @@ import {
   getTaskRunsByPipelineRunName,
   getTaskRunsErrorMessage,
   getTasks,
-  getTasksErrorMessage
+  getTasksErrorMessage,
+  isWebSocketConnected
 } from '../../reducers';
 
 import { fetchPipelineRun } from '../../actions/pipelineRuns';
@@ -56,9 +57,12 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { match } = this.props;
+    const { match, webSocketConnected } = this.props;
     const { namespace, pipelineRunName } = match.params;
-    const { match: prevMatch } = prevProps;
+    const {
+      match: prevMatch,
+      webSocketConnected: prevWebSocketConnected
+    } = prevProps;
     const {
       namespace: prevNamespace,
       pipelineRunName: prevPipelineRunName
@@ -66,7 +70,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
 
     if (
       namespace !== prevNamespace ||
-      pipelineRunName !== prevPipelineRunName
+      pipelineRunName !== prevPipelineRunName ||
+      (webSocketConnected && prevWebSocketConnected === false)
     ) {
       this.fetchData();
     }
@@ -176,7 +181,8 @@ function mapStateToProps(state, ownProps) {
         namespace
       }
     ),
-    clusterTasks: getClusterTasks(state)
+    clusterTasks: getClusterTasks(state),
+    webSocketConnected: isWebSocketConnected(state)
   };
 }
 

@@ -36,7 +36,8 @@ import {
   getPipelines,
   getPipelinesErrorMessage,
   getSelectedNamespace,
-  isFetchingPipelines
+  isFetchingPipelines,
+  isWebSocketConnected
 } from '../../reducers';
 
 import '../../components/Definitions/Definitions.scss';
@@ -47,8 +48,12 @@ export /* istanbul ignore next */ class Pipelines extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { namespace } = this.props;
-    if (namespace !== prevProps.namespace) {
+    const { namespace, webSocketConnected } = this.props;
+    const { webSocketConnected: prevWebSocketConnected } = prevProps;
+    if (
+      namespace !== prevProps.namespace ||
+      (webSocketConnected && prevWebSocketConnected === false)
+    ) {
       this.props.fetchPipelines();
     }
   }
@@ -145,7 +150,8 @@ function mapStateToProps(state, props) {
     error: getPipelinesErrorMessage(state),
     loading: isFetchingPipelines(state),
     namespace,
-    pipelines: getPipelines(state, { namespace })
+    pipelines: getPipelines(state, { namespace }),
+    webSocketConnected: isWebSocketConnected(state)
   };
 }
 

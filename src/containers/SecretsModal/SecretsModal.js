@@ -19,7 +19,7 @@ import Annotations from '../../components/SecretsModal/Annotations';
 import BasicAuthFields from '../../components/SecretsModal/BasicAuthFields';
 import '../../components/SecretsModal/SecretsModal.scss';
 import { createSecret } from '../../actions/secrets';
-import { getServiceAccounts } from '../../reducers';
+import { getServiceAccounts, isWebSocketConnected } from '../../reducers';
 import { fetchServiceAccounts } from '../../actions/serviceAccounts';
 
 /* istanbul ignore next */
@@ -68,6 +68,14 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
 
   componentDidMount() {
     this.props.fetchServiceAccounts();
+  }
+
+  componentDidUpdate(prevProps) {
+    const { webSocketConnected } = this.props;
+    const { webSocketConnected: prevWebSocketConnected } = prevProps;
+    if (webSocketConnected && prevWebSocketConnected === false) {
+      this.props.fetchServiceAccounts();
+    }
   }
 
   handleSubmit = () => {
@@ -351,7 +359,8 @@ SecretsModal.defaultProps = {
 
 function mapStateToProps(state) {
   return {
-    serviceAccounts: getServiceAccounts(state)
+    serviceAccounts: getServiceAccounts(state),
+    webSocketConnected: isWebSocketConnected(state)
   };
 }
 

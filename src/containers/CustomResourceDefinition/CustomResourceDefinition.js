@@ -29,7 +29,8 @@ import {
   getPipeline,
   getPipelinesErrorMessage,
   getTask,
-  getTasksErrorMessage
+  getTasksErrorMessage,
+  isWebSocketConnected
 } from '../../reducers';
 
 import { getCustomResource } from '../../api';
@@ -40,27 +41,28 @@ export /* istanbul ignore next */ class CustomResourceDefinition extends Compone
   };
 
   componentDidMount() {
-    const { match } = this.props;
-    const { group, version, name, namespace, type } = match.params;
-    this.fetch({ group, version, name, namespace, type }).then(() =>
-      this.setState({ loading: false })
-    );
+    this.fetchData();
   }
 
   componentDidUpdate(prevProps) {
-    const { match } = this.props;
-    const { group, version, name, namespace, type } = match.params;
-    const { match: prevMatch } = prevProps;
+    const { match, webSocketConnected } = this.props;
+    const { name, namespace, type } = match.params;
+    const {
+      match: prevMatch,
+      webSocketConnected: prevWebSocketConnected
+    } = prevProps;
     const {
       name: prevName,
       namespace: prevNamespace,
       type: prevType
     } = prevMatch.params;
-    if (namespace !== prevNamespace || name !== prevName || type !== prevType) {
-      this.setState({ loading: true }); // eslint-disable-line
-      this.fetch({ group, version, name, namespace, type }).then(() =>
-        this.setState({ loading: false })
-      );
+    if (
+      namespace !== prevNamespace ||
+      name !== prevName ||
+      type !== prevType ||
+      (webSocketConnected && prevWebSocketConnected === false)
+    ) {
+      this.fetchData();
     }
   }
 
@@ -84,6 +86,15 @@ export /* istanbul ignore next */ class CustomResourceDefinition extends Compone
         });
     }
   };
+
+  fetchData() {
+    const { match } = this.props;
+    const { group, version, name, namespace, type } = match.params;
+    this.setState({ loading: true }); // eslint-disable-line
+    this.fetch({ group, version, name, namespace, type }).then(() =>
+      this.setState({ loading: false })
+    );
+  }
 
   render() {
     const error = this.props.error || this.state.error;
@@ -137,7 +148,8 @@ function mapStateToProps(state, ownProps) {
   return {
     error: errorMap[type],
     namespace,
-    resource: resourceMap[type]
+    resource: resourceMap[type],
+    webSocketConnected: isWebSocketConnected(state)
   };
 }
 

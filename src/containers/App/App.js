@@ -53,19 +53,36 @@ import {
 import { shouldDisplayLogout } from '../../api';
 import { fetchExtensions } from '../../actions/extensions';
 import { fetchNamespaces, selectNamespace } from '../../actions/namespaces';
-import { getExtensions, getLocale, getSelectedNamespace } from '../../reducers';
+import {
+  getExtensions,
+  getLocale,
+  getSelectedNamespace,
+  isWebSocketConnected
+} from '../../reducers';
 import messages from '../../nls/messages_en.json';
 
 import '../../components/App/App.scss';
 
 export /* istanbul ignore next */ class App extends Component {
   componentDidMount() {
-    this.props.fetchExtensions();
-    this.props.fetchNamespaces();
+    this.fetchData();
+  }
+
+  componentDidUpdate(prevProps) {
+    const { webSocketConnected } = this.props;
+    const { webSocketConnected: prevWebSocketConnected } = prevProps;
+    if (webSocketConnected && prevWebSocketConnected === false) {
+      this.fetchData();
+    }
   }
 
   componentWillUnmount() {
     this.props.onUnload();
+  }
+
+  fetchData() {
+    this.props.fetchExtensions();
+    this.props.fetchNamespaces();
   }
 
   render() {
@@ -237,7 +254,8 @@ App.defaultProps = {
 const mapStateToProps = state => ({
   extensions: getExtensions(state),
   namespace: getSelectedNamespace(state),
-  lang: getLocale(state)
+  lang: getLocale(state),
+  webSocketConnected: isWebSocketConnected(state)
 });
 
 const mapDispatchToProps = {

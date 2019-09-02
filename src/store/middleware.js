@@ -13,6 +13,14 @@ limitations under the License.
 
 export function createWebSocketMiddleware(socket) {
   return ({ dispatch }) => {
+    socket.addEventListener('close', () => {
+      dispatch({ type: 'WEBSOCKET_DISCONNECTED' });
+    });
+
+    socket.addEventListener('open', () => {
+      dispatch({ type: 'WEBSOCKET_CONNECTED' });
+    });
+
     socket.addEventListener('message', event => {
       if (event.type !== 'message') {
         return;

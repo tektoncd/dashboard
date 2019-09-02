@@ -35,7 +35,8 @@ import {
   getSelectedNamespace,
   getTasks,
   getTasksErrorMessage,
-  isFetchingTasks
+  isFetchingTasks,
+  isWebSocketConnected
 } from '../../reducers';
 
 import '../../components/Definitions/Definitions.scss';
@@ -46,8 +47,12 @@ export /* istanbul ignore next */ class Tasks extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { namespace } = this.props;
-    if (namespace !== prevProps.namespace) {
+    const { namespace, webSocketConnected } = this.props;
+    const { webSocketConnected: prevWebSocketConnected } = prevProps;
+    if (
+      namespace !== prevProps.namespace ||
+      (webSocketConnected && prevWebSocketConnected === false)
+    ) {
       this.props.fetchTasks();
     }
   }
@@ -140,7 +145,8 @@ function mapStateToProps(state, props) {
     error: getTasksErrorMessage(state),
     loading: isFetchingTasks(state),
     namespace,
-    tasks: getTasks(state, { namespace })
+    tasks: getTasks(state, { namespace }),
+    webSocketConnected: isWebSocketConnected(state)
   };
 }
 

@@ -130,7 +130,8 @@ beforeEach(() => {
 it('PipelineResourcesDropdown renders items based on Redux state', () => {
   const store = mockStore({
     ...pipelineResourcesStoreDefault,
-    ...namespacesStoreBlue
+    ...namespacesStoreBlue,
+    notifications: {}
   });
   const { getByText, getAllByText, queryByText } = render(
     <Provider store={store}>
@@ -149,7 +150,8 @@ it('PipelineResourcesDropdown renders items based on Redux state', () => {
 it('PipelineResourcesDropdown renders items based on type', () => {
   const store = mockStore({
     ...pipelineResourcesStoreDefault,
-    ...namespacesStoreBlue
+    ...namespacesStoreBlue,
+    notifications: {}
   });
   const { container, getByText, queryByText } = render(
     <Provider store={store}>
@@ -176,7 +178,8 @@ it('PipelineResourcesDropdown renders items based on type', () => {
 it('PipelineResourcesDropdown renders items based on Redux state when namespace changes', () => {
   const blueStore = mockStore({
     ...pipelineResourcesStoreDefault,
-    ...namespacesStoreBlue
+    ...namespacesStoreBlue,
+    notifications: {}
   });
   const { container, getByText, getAllByText, queryByText } = render(
     <Provider store={blueStore}>
@@ -195,7 +198,8 @@ it('PipelineResourcesDropdown renders items based on Redux state when namespace 
   // Change selected namespace from 'blue' to 'green'
   const greenStore = mockStore({
     ...pipelineResourcesStoreDefault,
-    ...namespacesStoreGreen
+    ...namespacesStoreGreen,
+    notifications: {}
   });
   render(
     <Provider store={greenStore}>
@@ -215,7 +219,8 @@ it('PipelineResourcesDropdown renders items based on Redux state when namespace 
 it('PipelineResourcesDropdown renders controlled selection', () => {
   const store = mockStore({
     ...pipelineResourcesStoreDefault,
-    ...namespacesStoreBlue
+    ...namespacesStoreBlue,
+    notifications: {}
   });
   // Select item 'pipeline-resource-1'
   const { container, queryByText } = render(
@@ -251,7 +256,8 @@ it('PipelineResourcesDropdown renders controlled selection', () => {
 it('PipelineResourcesDropdown renders controlled namespace', () => {
   const store = mockStore({
     ...pipelineResourcesStoreDefault,
-    ...namespacesStoreBlue
+    ...namespacesStoreBlue,
+    notifications: {}
   });
   // Select namespace 'green'
   const { queryByText, getByText, getAllByText } = render(
@@ -274,7 +280,8 @@ it('PipelineResourcesDropdown renders empty', () => {
       byNamespace: {},
       isFetching: false
     },
-    ...namespacesStoreBlue
+    ...namespacesStoreBlue,
+    notifications: {}
   });
   const { queryByText } = render(
     <Provider store={store}>
@@ -294,7 +301,8 @@ it('PipelineResourcesDropdown renders empty all namespaces', () => {
       byNamespace: {},
       isFetching: false
     },
-    ...namespacesStoreAll
+    ...namespacesStoreAll,
+    notifications: {}
   });
   const { queryByText } = render(
     <Provider store={store}>
@@ -312,7 +320,8 @@ it('PipelineResourcesDropdown renders empty with type', () => {
       byNamespace: {},
       isFetching: false
     },
-    ...namespacesStoreBlue
+    ...namespacesStoreBlue,
+    notifications: {}
   });
   const { queryByText } = render(
     <Provider store={store}>
@@ -334,7 +343,8 @@ it('PipelineResourcesDropdown renders empty with type and all namespaces', () =>
       byNamespace: {},
       isFetching: false
     },
-    ...namespacesStoreAll
+    ...namespacesStoreAll,
+    notifications: {}
   });
   const { queryByText } = render(
     <Provider store={store}>
@@ -350,7 +360,8 @@ it('PipelineResourcesDropdown renders empty with type and all namespaces', () =>
 it('PipelineResourcesDropdown renders loading skeleton based on Redux state', () => {
   const store = mockStore({
     ...pipelineResourcesStoreFetching,
-    ...namespacesStoreBlue
+    ...namespacesStoreBlue,
+    notifications: {}
   });
   const { queryByText } = render(
     <Provider store={store}>
@@ -363,7 +374,8 @@ it('PipelineResourcesDropdown renders loading skeleton based on Redux state', ()
 it('PipelineResourcesDropdown handles onChange event', () => {
   const store = mockStore({
     ...pipelineResourcesStoreDefault,
-    ...namespacesStoreBlue
+    ...namespacesStoreBlue,
+    notifications: {}
   });
   const onChange = jest.fn();
   const { getByText } = render(

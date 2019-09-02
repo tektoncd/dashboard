@@ -39,6 +39,7 @@ it('TaskRunsContainer renders', async () => {
     namespaces: {
       selected: 'default'
     },
+    notifications: {},
     taskRuns: {
       byId: {},
       byNamespace: { default: {} },
@@ -77,6 +78,7 @@ it('TaskRunsContainer handles info state', async () => {
     namespaces: {
       selected: 'default'
     },
+    notifications: {},
     taskRuns: {
       byId: {},
       byNamespace: { default: {} },
@@ -109,6 +111,7 @@ it('TaskRunsContainer handles error state', async () => {
     namespaces: {
       selected: 'default'
     },
+    notifications: {},
     taskRuns: {
       byId: {},
       byNamespace: { default: {} },

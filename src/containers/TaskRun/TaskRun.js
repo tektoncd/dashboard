@@ -32,7 +32,8 @@ import {
   getSelectedNamespace,
   getTaskByType,
   getTaskRun,
-  getTaskRunsErrorMessage
+  getTaskRunsErrorMessage,
+  isWebSocketConnected
 } from '../../reducers';
 
 import '../../components/Run/Run.scss';
@@ -71,12 +72,20 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { match, namespace } = this.props;
+    const { match, namespace, webSocketConnected } = this.props;
     const { taskRunName } = match.params;
-    const { match: prevMatch, namespace: prevNamespace } = prevProps;
+    const {
+      match: prevMatch,
+      namespace: prevNamespace,
+      webSocketConnected: prevWebSocketConnected
+    } = prevProps;
     const { taskRunName: prevTaskRunName } = prevMatch.params;
 
-    if (taskRunName !== prevTaskRunName || namespace !== prevNamespace) {
+    if (
+      taskRunName !== prevTaskRunName ||
+      namespace !== prevNamespace ||
+      (webSocketConnected && prevWebSocketConnected === false)
+    ) {
       this.setState({ loading: true }); // eslint-disable-line
       this.fetchTaskAndRuns(taskRunName, namespace);
     }
@@ -233,7 +242,8 @@ function mapStateToProps(state, ownProps) {
     error: getTaskRunsErrorMessage(state),
     namespace,
     taskRun,
-    task
+    task,
+    webSocketConnected: isWebSocketConnected(state)
   };
 }
 

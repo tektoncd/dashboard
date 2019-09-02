@@ -17,6 +17,7 @@ import clusterTasks, * as clusterTaskSelectors from './clusterTasks';
 import extensions, * as extensionSelectors from './extensions';
 import locale, * as localeSelectors from './locale';
 import namespaces, * as namespaceSelectors from './namespaces';
+import notifications, * as notificationSelectors from './notifications';
 import pipelines, * as pipelineSelectors from './pipelines';
 import pipelineResources, * as pipelineResourcesSelectors from './pipelineResources';
 import pipelineRuns, * as pipelineRunsSelectors from './pipelineRuns';
@@ -30,6 +31,7 @@ export default combineReducers({
   extensions,
   locale,
   namespaces,
+  notifications,
   pipelines: pipelines(),
   pipelineResources: pipelineResources(),
   pipelineRuns: pipelineRuns(),
@@ -300,4 +302,8 @@ export function isFetchingSecrets(state) {
 
 export function getLocale(state) {
   return localeSelectors.getLocale(state.locale);
+}
+
+export function isWebSocketConnected(state) {
+  return notificationSelectors.isWebSocketConnected(state.notifications);
 }

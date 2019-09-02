@@ -153,10 +153,11 @@ const middleware = [thunk];
 const mockStore = configureStore(middleware);
 const testStore = {
   ...namespacesTestStore,
-  ...pipelinesTestStore,
-  ...serviceAccountsTestStore,
+  notifications: {},
   ...pipelineResourcesTestStore,
-  ...pipelineRunsTestStore
+  ...pipelineRunsTestStore,
+  ...pipelinesTestStore,
+  ...serviceAccountsTestStore
 };
 
 afterEach(cleanup);
