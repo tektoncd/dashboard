@@ -1,6 +1,12 @@
 {
   "en": {
+    "dashboard.cancelButton.body": "Are you sure you would like to stop {type} {name}?",
+    "dashboard.cancelButton.heading": "Stop {type} {name}",
+    "dashboard.cancelButton.primaryText": "Stop {type}",
+    "dashboard.cancelButton.tooltip": "Stop {type}",
+    "dashboard.errorBoundary.defaultError": "Something went wrong",
     "dashboard.header.logOut": "Log out",
+    "dashboard.modal.cancelButton": "Cancel",
     "dashboard.pipelineRun.error": "Error loading PipelineRun",
     "dashboard.pipelineRun.failed": "Cannot load PipelineRun",
     "dashboard.pipelineRun.failedMessage": "Unable to load PipelineRun details: {reason}",
@@ -14,6 +20,8 @@
     "dashboard.pipelineRuns.duplicateFilter": "No duplicate filters allowed",
     "dashboard.pipelineRuns.error": "Error loading PipelineRuns",
     "dashboard.pipelineRuns.invalidFilter": "Filters must be of the format labelKey:labelValue and contain accepted label characters",
+    "dashboard.pipelineRuns.noPipelineRuns": "No PipelineRuns",
+    "dashboard.pipelineRuns.noPipelineRunsForPipeline": "No PipelineRuns for {pipelineName}",
     "dashboard.pipelineRuns.searchPlaceholder": "Input a label filter of the format labelKey:labelValue",
     "dashboard.pipelineRuns.status": "Status",
     "dashboard.pipelineRuns.transitionTime": "Last Transition Time",
