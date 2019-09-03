@@ -12,12 +12,12 @@ limitations under the License.
 */
 
 import React from 'react';
-import { render } from 'react-testing-library';
+import { renderWithIntl } from '../../utils/test';
 
 import ErrorBoundary from './ErrorBoundary';
 
 it('ErrorBoundary renders children', () => {
-  const { queryByText } = render(
+  const { queryByText } = renderWithIntl(
     <ErrorBoundary>
       <span>hello</span>
     </ErrorBoundary>
@@ -30,7 +30,7 @@ it('ErrorBoundary renders the error message', () => {
     throw new Error();
   }
   jest.spyOn(console, 'error').mockImplementation(() => {}); // suppress error log from test output
-  const { queryByText } = render(
+  const { queryByText } = renderWithIntl(
     <ErrorBoundary>
       <Bomb />
     </ErrorBoundary>

@@ -72,9 +72,22 @@ const PipelineRuns = ({
         <StructuredListRow>
           <StructuredListCell>
             {pipelineName ? (
-              <span>No PipelineRuns for {pipelineName}</span>
+              <span>
+                {intl.formatMessage(
+                  {
+                    id: 'dashboard.pipelineRuns.noPipelineRunsForPipeline',
+                    defaultMessage: 'No PipelineRuns for {pipelineName}'
+                  },
+                  { pipelineName }
+                )}
+              </span>
             ) : (
-              <span>No PipelineRuns</span>
+              <span>
+                {intl.formatMessage({
+                  id: 'dashboard.pipelineRuns.noPipelineRuns',
+                  defaultMessage: 'No PipelineRuns'
+                })}
+              </span>
             )}
           </StructuredListCell>
         </StructuredListRow>

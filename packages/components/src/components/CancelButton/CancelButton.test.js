@@ -12,7 +12,8 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, render } from 'react-testing-library';
+import { fireEvent } from 'react-testing-library';
+import { renderWithIntl } from '../../utils/test';
 import CancelButton from './CancelButton';
 
 const type = 'test';
@@ -21,7 +22,7 @@ describe('Test Button component submit', () => {
   it('Test click event', () => {
     const mockCallBack = jest.fn();
 
-    const { getByText, getByTitle } = render(
+    const { getByText, getByTitle } = renderWithIntl(
       <CancelButton type={type} onCancel={mockCallBack}>
         Ok!
       </CancelButton>
@@ -36,7 +37,7 @@ describe('Test Button component', () => {
   it('Test click event', () => {
     const mockCallBack = jest.fn();
 
-    const { getByText, getByTitle } = render(
+    const { getByText, getByTitle } = renderWithIntl(
       <CancelButton type={type} onCancel={mockCallBack}>
         Ok!
       </CancelButton>

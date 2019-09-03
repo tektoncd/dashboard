@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
+import { injectIntl } from 'react-intl';
 
 import { Modal } from 'carbon-components-react';
 import StopFilled16 from '@carbon/icons-react/lib/stop--filled/16';
@@ -39,13 +40,19 @@ class CancelButton extends Component {
 
   render() {
     const { showDialog } = this.state;
-    const { type, name } = this.props;
+    const { intl, type, name } = this.props;
     const closeIcon = <StopFilled16 />;
     return (
       <>
         <button
           type="button"
-          title={`Stop ${type}`}
+          title={intl.formatMessage(
+            {
+              id: 'dashboard.cancelButton.tooltip',
+              defaultMessage: 'Stop {type}'
+            },
+            { type }
+          )}
           className="cancel-button"
           onClick={this.handleShow}
         >
@@ -53,18 +60,40 @@ class CancelButton extends Component {
         </button>
         <Modal
           open={showDialog}
-          modalHeading={`Stop ${type} ${name}`}
-          primaryButtonText={`Stop ${type}`}
-          secondaryButtonText="Cancel"
+          modalHeading={intl.formatMessage(
+            {
+              id: 'dashboard.cancelButton.heading',
+              defaultMessage: 'Stop {type} {name}'
+            },
+            { type, name }
+          )}
+          primaryButtonText={intl.formatMessage(
+            {
+              id: 'dashboard.cancelButton.primaryText',
+              defaultMessage: 'Stop {type}'
+            },
+            { type }
+          )}
+          secondaryButtonText={intl.formatMessage({
+            id: 'dashboard.modal.cancelButton',
+            defaultMessage: 'Cancel'
+          })}
           onRequestClose={this.handleClose}
           onRequestSubmit={this.handleCancel}
           onSecondarySubmit={this.handleClose}
         >
-          Are you sure you would like to stop {type} {name} ?
+          {intl.formatMessage(
+            {
+              id: 'dashboard.cancelButton.body',
+              defaultMessage:
+                'Are you sure you would like to stop {type} {name}?'
+            },
+            { type, name }
+          )}
         </Modal>
       </>
     );
   }
 }
 
-export default CancelButton;
+export default injectIntl(CancelButton);

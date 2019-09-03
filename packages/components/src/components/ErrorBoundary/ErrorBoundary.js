@@ -14,6 +14,7 @@ limitations under the License.
 import React from 'react';
 import { InlineNotification } from 'carbon-components-react';
 import { getErrorMessage } from '@tektoncd/dashboard-utils';
+import { injectIntl } from 'react-intl';
 
 class ErrorBoundary extends React.Component {
   state = { error: null };
@@ -27,7 +28,13 @@ class ErrorBoundary extends React.Component {
   }
 
   render() {
-    const { children, message } = this.props;
+    const { children, intl } = this.props;
+    const {
+      message = intl.formatMessage({
+        id: 'dashboard.errorBoundary.defaultError',
+        defaultMessage: 'Something went wrong'
+      })
+    } = this.props;
     const { error } = this.state;
     if (error) {
       return (
@@ -45,8 +52,4 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-ErrorBoundary.defaultProps = {
-  message: 'Something went wrong'
-};
-
-export default ErrorBoundary;
+export default injectIntl(ErrorBoundary);
