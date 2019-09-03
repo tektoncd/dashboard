@@ -13,18 +13,23 @@ limitations under the License.
 
 const express = require('express');
 
-// Constants
-const PORT = 3000;
 const HOST = '0.0.0.0';
+const PORT = 3000;
 
-// App
 const app = express();
+
 app.get('/', (req, res) => {
-  res.send('Hello tekton dashboard!!\n');
+  res.send(
+    'Hello Tekton Dashboard! Here is the extension sample and / was hit.'
+  );
 });
+
 app.get('/sample', (req, res) => {
-  res.send('Hello tekton dashboard!! Here is /sample\n');
+  res.send(
+    'Hello Tekton Dashboard! Here is the extension sample and /sample was hit.'
+  );
 });
 
 app.listen(PORT, HOST);
+
 console.log(`Listening at http://${HOST}:${PORT}`); // eslint-disable-line no-console

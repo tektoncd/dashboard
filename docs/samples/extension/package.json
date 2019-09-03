@@ -1,8 +1,8 @@
 {
   "name": "extension",
   "version": "1.0.0",
-  "description": "tekton dashboard extension",
-  "author": "tekton dashboard team",
+  "description": "Tekton Dashboard extension sample",
+  "author": "Tekton Dashboard team",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
