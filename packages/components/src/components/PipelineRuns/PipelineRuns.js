@@ -64,7 +64,7 @@ const PipelineRuns = ({
             defaultMessage: 'Last Transition Time'
           })}
         </StructuredListCell>
-        <StructuredListCell head />
+        {cancelPipelineRun && <StructuredListCell head />}
       </StructuredListRow>
     </StructuredListHead>
     <StructuredListBody>
@@ -126,20 +126,22 @@ const PipelineRuns = ({
                 : ''}
             </StructuredListCell>
             <StructuredListCell>{lastTransitionTime}</StructuredListCell>
-            <StructuredListCell>
-              {isRunning(reason, status) && (
-                <CancelButton
-                  type="PipelineRun"
-                  name={pipelineRunName}
-                  onCancel={() =>
-                    cancelPipelineRun({
-                      name: pipelineRunName,
-                      namespace
-                    })
-                  }
-                />
-              )}
-            </StructuredListCell>
+            {cancelPipelineRun && (
+              <StructuredListCell>
+                {isRunning(reason, status) && (
+                  <CancelButton
+                    type="PipelineRun"
+                    name={pipelineRunName}
+                    onCancel={() =>
+                      cancelPipelineRun({
+                        name: pipelineRunName,
+                        namespace
+                      })
+                    }
+                  />
+                )}
+              </StructuredListCell>
+            )}
           </StructuredListRow>
         );
       })}
