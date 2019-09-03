@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: tekton-dashboard-extension
-        image: <image name>:<image tag>
+        image: <dockerhubusername>/sample-extension:latest
         ports:
         - containerPort: 3000
 
