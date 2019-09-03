@@ -189,6 +189,23 @@ spec:
   selector:
     app: tekton-dashboard
 ---
+# ------- Insecure Dashboard Service - Do Not Expose ------ #
+kind: Service
+apiVersion: v1
+metadata:
+  name: tekton-dashboard-internal
+  namespace: tekton-pipelines
+  labels:
+    app: tekton-dashboard-internal
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 9097
+      targetPort: 9097
+  selector:
+    app: tekton-dashboard
+---
 # ------------------- Pipeline0 --------------------------- #
 apiVersion: tekton.dev/v1alpha1
 kind: Pipeline
