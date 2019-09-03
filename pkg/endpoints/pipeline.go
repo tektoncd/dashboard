@@ -268,7 +268,9 @@ func (r Resource) createPipelineRunImpl(pipelineRunData ManualPipelineRun, names
 			{Name: "repository-name", Value: RepositoryName},
 			{Name: "target-namespace", Value: TargetNamespace}}
 	} else {
-		params = []v1alpha1.Param{{Name: "target-namespace", Value: TargetNamespace}}
+		if pipelineName != "pipeline0" {
+			params = []v1alpha1.Param{{Name: "target-namespace", Value: TargetNamespace}}
+		}
 	}
 
 	if pipelineRunData.HELMSECRET != "" {
