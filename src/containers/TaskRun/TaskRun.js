@@ -167,6 +167,7 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
     const logContainer = (
       <Log
         fetchLogs={() => fetchLogs(stepName, stepStatus, taskRun)}
+        key={stepName}
         stepStatus={stepStatus}
       />
     );
