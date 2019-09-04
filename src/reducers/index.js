@@ -197,6 +197,20 @@ export function getTaskRun(
   return taskRunsSelectors.getTaskRun(state.taskRuns, name, namespace);
 }
 
+export function getTaskRunsByPipelineRunName(
+  state,
+  pipelineRunName,
+  { namespace = getSelectedNamespace(state) } = {}
+) {
+  const runs = taskRunsSelectors.getTaskRuns(state.taskRuns, namespace);
+  return runs.filter(
+    taskRun =>
+      taskRun.metadata &&
+      taskRun.metadata.labels &&
+      taskRun.metadata.labels['tekton.dev/pipelineRun'] === pipelineRunName
+  );
+}
+
 export function getTaskRuns(
   state,
   { namespace = getSelectedNamespace(state) } = {}
