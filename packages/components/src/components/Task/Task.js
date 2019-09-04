@@ -22,6 +22,14 @@ import './Task.scss';
 class Task extends Component {
   state = { selectedStepId: null };
 
+  componentDidMount() {
+    this.selectDefaultStep();
+  }
+
+  componentDidUpdate() {
+    this.selectDefaultStep();
+  }
+
   handleClick = event => {
     if (event) {
       event.preventDefault();
@@ -37,6 +45,15 @@ class Task extends Component {
       this.handleClick();
     });
   };
+
+  selectDefaultStep() {
+    const { expanded, steps } = this.props;
+    const { selectedStepId } = this.state;
+    if (expanded && !selectedStepId) {
+      const { id } = steps[0] || {};
+      this.handleStepSelected(id);
+    }
+  }
 
   icon() {
     const { reason, succeeded } = this.props;

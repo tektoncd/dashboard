@@ -17,6 +17,7 @@ import Task from './Task';
 import { renderWithIntl } from '../../utils/test';
 
 const props = {
+  onSelect: () => {},
   pipelineTaskName: 'A Task'
 };
 
@@ -78,6 +79,8 @@ it('Task handle click event on Step', () => {
       steps={steps}
     />
   );
+  expect(onSelect).toHaveBeenCalledTimes(1);
+  onSelect.mockClear();
   fireEvent.click(getByText(/build/i));
   expect(onSelect).toHaveBeenCalledTimes(1);
 });
