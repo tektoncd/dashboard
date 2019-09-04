@@ -17,6 +17,7 @@ import TaskTree from './TaskTree';
 import { renderWithIntl } from '../../utils/test';
 
 const props = {
+  onSelect: () => {},
   taskRuns: [
     {
       id: 'task',
@@ -38,6 +39,8 @@ it('TaskTree handles click event on Task', () => {
   const { getByText } = renderWithIntl(
     <TaskTree {...props} onSelect={onSelect} />
   );
+  expect(onSelect).toHaveBeenCalledTimes(1);
+  onSelect.mockClear();
   fireEvent.click(getByText(/a task/i));
   expect(onSelect).toHaveBeenCalledTimes(1);
 });
@@ -47,6 +50,7 @@ it('TaskTree handles click event on Step', () => {
   const { getByText } = renderWithIntl(
     <TaskTree {...props} selectedTaskId="task" onSelect={onSelect} />
   );
+  onSelect.mockClear();
   fireEvent.click(getByText(/build/i));
   expect(onSelect).toHaveBeenCalledTimes(1);
 });

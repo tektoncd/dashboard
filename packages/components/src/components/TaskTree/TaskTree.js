@@ -25,9 +25,10 @@ class TaskTree extends Component {
     const { selectedTaskId, taskRuns } = this.props;
     return (
       <ol className="task-tree">
-        {taskRuns.map(taskRun => {
+        {taskRuns.map((taskRun, index) => {
           const { id, reason, steps, succeeded, pipelineTaskName } = taskRun;
-          const expanded = selectedTaskId === id;
+          const expanded =
+            selectedTaskId === id || (!selectedTaskId && index === 0);
           return (
             <Task
               id={id}
