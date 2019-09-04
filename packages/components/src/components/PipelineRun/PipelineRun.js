@@ -18,7 +18,6 @@ import {
 } from 'carbon-components-react';
 import { injectIntl } from 'react-intl';
 import {
-  Rebuild,
   RunHeader,
   StepDetails,
   TaskTree
@@ -32,7 +31,6 @@ import {
   stepsStatus,
   taskRunStep
 } from '@tektoncd/dashboard-utils';
-import { Link } from 'react-router-dom';
 import { Log } from '..';
 
 import './Run.scss';
@@ -40,12 +38,8 @@ import './Run.scss';
 export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   state = {
     selectedStepId: null,
-    selectedTaskId: null,
-    showRebuildNotification: false
+    selectedTaskId: null
   };
-
-  setShowRebuildNotification = value =>
-    this.setState({ showRebuildNotification: value });
 
   handleTaskSelected = (selectedTaskId, selectedStepId) => {
     this.setState({ selectedStepId, selectedTaskId });
@@ -102,13 +96,9 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   };
 
   render() {
-    const { error, loading, fetchLogs, intl, rebuildPipelineRun } = this.props;
+    const { error, loading, fetchLogs, intl, rebuild } = this.props;
 
-    const {
-      selectedStepId,
-      selectedTaskId,
-      showRebuildNotification
-    } = this.state;
+    const { selectedStepId, selectedTaskId } = this.state;
 
     if (loading) {
       return <StructuredListSkeleton border />;
@@ -163,38 +153,6 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     if (pipelineRunError) {
       return (
         <>
-          {showRebuildNotification && !showRebuildNotification.logsURL && (
-            // No logs URL? This indicates it hasn't been a successful rebuild
-            <InlineNotification
-              data-testid="rebuildfailurenotification"
-              lowContrast
-              subtitle=""
-              title={showRebuildNotification.message}
-              kind={showRebuildNotification.kind}
-              caption=""
-            />
-          )}
-
-          {showRebuildNotification && showRebuildNotification.logsURL && (
-            <InlineNotification
-              data-testid="rebuildsuccessnotification"
-              lowContrast
-              subtitle={
-                <Link
-                  id="newpipelinerunlink"
-                  to={showRebuildNotification.logsURL}
-                  onClick={() => this.setShowRebuildNotification(false)}
-                >
-                  {intl.formatMessage({
-                    id: 'dashboard.pipelineRun.rebuildStatusMessage',
-                    defaultMessage: 'View status of this rebuilt run'
-                  })}
-                </Link>
-              }
-              title={showRebuildNotification.message}
-              kind={showRebuildNotification.kind}
-            />
-          )}
           <RunHeader
             lastTransitionTime={lastTransitionTime}
             loading={loading}
@@ -229,12 +187,11 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
 
     const logContainer = (
       <Log
-        fetchLogs={fetchLogs}
         key={`${selectedTaskId}:${selectedStepId}`}
+        fetchLogs={() => fetchLogs(stepName, stepStatus, taskRun)}
         stepStatus={stepStatus}
       />
     );
-
     return (
       <>
         <RunHeader
@@ -244,12 +201,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           reason={pipelineRunReason}
           status={pipelineRunStatus}
         >
-          <Rebuild
-            pipelineRun={pipelineRun}
-            rebuildPipelineRun={rebuildPipelineRun}
-            runName={pipelineRunName}
-            setShowRebuildNotification={this.setShowRebuildNotification}
-          />
+          {rebuild}
         </RunHeader>
         <div className="tasks">
           <TaskTree

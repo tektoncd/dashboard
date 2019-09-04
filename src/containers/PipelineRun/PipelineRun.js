@@ -12,35 +12,18 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import {
-  InlineNotification,
-  StructuredListSkeleton
-} from 'carbon-components-react';
-import { injectIntl } from 'react-intl';
-import {
-  Log,
-  Rebuild,
-  RunHeader,
-  StepDetails,
-  TaskTree
-} from '@tektoncd/dashboard-components';
-import {
-  getErrorMessage,
-  getStatus,
-  selectedTask,
-  selectedTaskRun,
-  stepsStatus,
-  taskRunStep
-} from '@tektoncd/dashboard-utils';
+import { PipelineRun, Rebuild } from '@tektoncd/dashboard-components';
 
+import { InlineNotification } from 'carbon-components-react';
+import { Link } from 'react-router-dom';
+import { injectIntl } from 'react-intl';
 import {
   getClusterTasks,
   getPipelineRun,
   getPipelineRunsErrorMessage,
-  getTaskRun,
+  getTaskRunsByPipelineRunName,
   getTaskRunsErrorMessage,
   getTasks,
   getTasksErrorMessage
@@ -50,8 +33,6 @@ import { fetchPipelineRun } from '../../actions/pipelineRuns';
 import { fetchClusterTasks, fetchTasks } from '../../actions/tasks';
 import { fetchTaskRuns } from '../../actions/taskRuns';
 import { rebuildPipelineRun } from '../../api';
-
-import { getStore } from '../../store/index';
 
 import '../../components/Run/Run.scss';
 import { fetchLogs } from '../../utils';
@@ -66,8 +47,6 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   }
 
   state = {
-    selectedStepId: null,
-    selectedTaskId: null,
     loading: true,
     showRebuildNotification: false
   };
@@ -97,82 +76,6 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     this.setState({ showRebuildNotification: value });
   }
 
-  handleTaskSelected = (selectedTaskId, selectedStepId) => {
-    this.setState({ selectedStepId, selectedTaskId });
-  };
-
-  loadPipelineRunData = () => {
-    const { pipelineRun } = this.props;
-    const {
-      status: { taskRuns: taskRunsStatus }
-    } = pipelineRun;
-    const { message, status, reason } = getStatus(pipelineRun);
-
-    return {
-      error: status === 'False' && !taskRunsStatus && { message, reason },
-      pipelineRun,
-      taskRunNames: taskRunsStatus && Object.keys(taskRunsStatus)
-    };
-  };
-
-  loadTaskRuns = (pipelineRun, taskRunNames) => {
-    if (!pipelineRun || !taskRunNames) {
-      return [];
-    }
-
-    let runs = taskRunNames
-      .map(taskRunName =>
-        getTaskRun(getStore().getState(), {
-          name: taskRunName,
-          namespace: pipelineRun.metadata.namespace
-        })
-      )
-      .filter(Boolean);
-
-    const {
-      status: { taskRuns: taskRunDetails }
-    } = pipelineRun;
-
-    runs = runs
-      .map(taskRun => {
-        const taskName = taskRun.spec.taskRef.name;
-        const taskKind = taskRun.spec.taskRef.kind;
-        const task = selectedTask(
-          taskName,
-          taskKind === 'ClusterTask'
-            ? this.props.clusterTasks
-            : this.props.tasks
-        );
-        if (!task) {
-          return null;
-        }
-        const taskRunName = taskRun.metadata.name;
-        const taskRunNamespace = taskRun.metadata.namespace;
-        const { reason, status: succeeded } = getStatus(taskRun);
-        const { pipelineTaskName } = taskRunDetails[taskRunName];
-        const { params, resources: inputResources } = taskRun.spec.inputs;
-        const { resources: outputResources } = taskRun.spec.outputs;
-        const steps = stepsStatus(task.spec.steps, taskRun.status.steps);
-        return {
-          id: taskRun.metadata.uid,
-          pipelineTaskName,
-          pod: taskRun.status.podName,
-          reason,
-          steps,
-          succeeded,
-          taskName,
-          taskRunName,
-          namespace: taskRunNamespace,
-          inputResources,
-          outputResources,
-          params
-        };
-      })
-      .filter(Boolean);
-
-    return runs;
-  };
-
   fetchData() {
     const { match } = this.props;
     const { namespace, pipelineRunName } = match.params;
@@ -188,165 +91,54 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   }
 
   render() {
-    const { match, error, intl } = this.props;
+    const { error, intl, match, pipelineRun, tasks, taskRuns } = this.props;
+    const { loading, showRebuildNotification } = this.state;
     const { pipelineRunName } = match.params;
 
-    const {
-      selectedStepId,
-      selectedTaskId,
-      loading,
-      showRebuildNotification
-    } = this.state;
-
-    if (loading) {
-      return <StructuredListSkeleton border />;
-    }
-
-    if (error) {
-      return (
-        <InlineNotification
-          kind="error"
-          hideCloseButton
-          lowContrast
-          title={intl.formatMessage({
-            id: 'dashboard.pipelineRun.error',
-            defaultMessage: 'Error loading PipelineRun'
-          })}
-          subtitle={getErrorMessage(error)}
-        />
-      );
-    }
-
-    if (!this.props.pipelineRun) {
-      return (
-        <InlineNotification
-          kind="info"
-          hideCloseButton
-          lowContrast
-          title="Cannot load PipelineRun"
-          subtitle={`PipelineRun ${pipelineRunName} not found`}
-        />
-      );
-    }
-
-    const {
-      error: pipelineRunError,
-      pipelineRun,
-      taskRunNames
-    } = this.loadPipelineRunData();
-
-    const {
-      lastTransitionTime,
-      reason: pipelineRunReason,
-      status: pipelineRunStatus
-    } = getStatus(pipelineRun);
-
-    if (pipelineRunError) {
-      return (
-        <>
-          <RunHeader
-            lastTransitionTime={lastTransitionTime}
-            loading={loading}
-            pipelineRun={pipelineRun}
-            runName={pipelineRunName}
-            reason="Error"
-            status={pipelineRunStatus}
-          />
-          <InlineNotification
-            kind="error"
-            hideCloseButton
-            lowContrast
-            title={`Unable to load PipelineRun details: ${
-              pipelineRunError.reason
-            }`}
-            subtitle={pipelineRunError.message}
-          />
-        </>
-      );
-    }
-    const taskRuns = this.loadTaskRuns(pipelineRun, taskRunNames);
-    const taskRun = selectedTaskRun(selectedTaskId, taskRuns) || {};
-
-    const { definition, reason, status, stepName, stepStatus } = taskRunStep(
-      selectedStepId,
-      taskRun
-    );
-
-    const logContainer = (
-      <Log
-        fetchLogs={() => fetchLogs(stepName, stepStatus, taskRun)}
-        key={`${selectedTaskId}:${selectedStepId}`}
-        stepStatus={stepStatus}
+    const rebuild = (
+      <Rebuild
+        pipelineRun={pipelineRun}
+        rebuildPipelineRun={rebuildPipelineRun}
+        runName={pipelineRunName}
+        setShowRebuildNotification={this.setShowRebuildNotification}
       />
     );
 
     return (
       <>
-        {showRebuildNotification && !showRebuildNotification.logsURL && (
-          // No logs URL? This indicates it hasn't been a successful rebuild
+        {showRebuildNotification && (
           <InlineNotification
-            data-testid="rebuildfailurenotification"
             lowContrast
-            subtitle=""
+            subtitle={
+              showRebuildNotification.logsURL ? (
+                <Link
+                  id="newpipelinerunlink"
+                  to={showRebuildNotification.logsURL}
+                  onClick={() => this.setShowRebuildNotification(false)}
+                >
+                  {intl.formatMessage({
+                    id: 'dashboard.pipelineRun.rebuildStatusMessage',
+                    defaultMessage: 'View status of this rebuilt run'
+                  })}
+                </Link>
+              ) : (
+                ''
+              )
+            }
             title={showRebuildNotification.message}
             kind={showRebuildNotification.kind}
             caption=""
           />
         )}
-
-        {showRebuildNotification && showRebuildNotification.logsURL && (
-          <InlineNotification
-            data-testid="rebuildsuccessnotification"
-            lowContrast
-            subtitle={
-              <Link
-                id="newpipelinerunlink"
-                to={showRebuildNotification.logsURL}
-                onClick={() => this.setShowRebuildNotification(false)}
-              >
-                {intl.formatMessage({
-                  id: 'dashboard.pipelineRun.rebuildStatusMessage',
-                  defaultMessage: 'View status of this rebuilt run'
-                })}
-              </Link>
-            }
-            title={showRebuildNotification.message}
-            kind={showRebuildNotification.kind}
-          />
-        )}
-
-        <RunHeader
-          lastTransitionTime={lastTransitionTime}
+        <PipelineRun
+          error={error}
           loading={loading}
-          runName={pipelineRunName}
-          reason={pipelineRunReason}
-          status={pipelineRunStatus}
-        >
-          <Rebuild
-            pipelineRun={pipelineRun}
-            rebuildPipelineRun={rebuildPipelineRun}
-            runName={pipelineRunName}
-            setShowRebuildNotification={this.setShowRebuildNotification}
-          />
-        </RunHeader>
-        <div className="tasks">
-          <TaskTree
-            onSelect={this.handleTaskSelected}
-            selectedTaskId={selectedTaskId}
-            taskRuns={taskRuns}
-          />
-          {selectedStepId && (
-            <StepDetails
-              definition={definition}
-              logContainer={logContainer}
-              reason={reason}
-              status={status}
-              stepName={stepName}
-              stepStatus={stepStatus}
-              taskRun={taskRun}
-            />
-          )}
-        </div>
+          fetchLogs={fetchLogs}
+          pipelineRun={pipelineRun}
+          tasks={tasks}
+          taskRuns={taskRuns}
+          rebuild={rebuild}
+        />
       </>
     );
   }
@@ -377,6 +169,13 @@ function mapStateToProps(state, ownProps) {
       namespace
     }),
     tasks: getTasks(state, { namespace }),
+    taskRuns: getTaskRunsByPipelineRunName(
+      state,
+      ownProps.match.params.pipelineRunName,
+      {
+        namespace
+      }
+    ),
     clusterTasks: getClusterTasks(state)
   };
 }

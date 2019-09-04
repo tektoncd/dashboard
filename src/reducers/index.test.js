@@ -35,6 +35,7 @@ import {
   getTaskByType,
   getTaskRun,
   getTaskRuns,
+  getTaskRunsByPipelineRunName,
   getTaskRunsByTaskName,
   getTaskRunsErrorMessage,
   getTasks,
@@ -62,6 +63,7 @@ import * as taskRunsSelectors from './taskRuns';
 
 const locale = 'it';
 const namespace = 'default';
+const pipelineRunName = 'pipelineRunName';
 const extension = { displayName: 'extension' };
 const pipelineResources = [{ fake: 'pipelineResource' }];
 const pipelines = [{ fake: 'pipeline' }];
@@ -73,7 +75,13 @@ const tasks = [task];
 const clusterTask = { fake: 'clusterTask' };
 const clusterTasks = [clusterTask];
 const taskName = 'myTask';
-const taskRun = { fake: 'taskRun', spec: { taskRef: { name: taskName } } };
+const taskRun = {
+  metadata: {
+    labels: { 'tekton.dev/pipelineRun': pipelineRunName }
+  },
+  fake: 'taskRun',
+  spec: { taskRef: { name: taskName } }
+};
 const inlineTaskRun = { fake: 'taskRun', spec: {} };
 const taskRuns = [taskRun, inlineTaskRun];
 const state = {
@@ -451,6 +459,19 @@ it('getTaskRuns', () => {
     .spyOn(taskRunsSelectors, 'getTaskRuns')
     .mockImplementation(() => taskRuns);
   expect(getTaskRuns(state)).toEqual(taskRuns);
+  expect(taskRunsSelectors.getTaskRuns).toHaveBeenCalledWith(
+    state.taskRuns,
+    namespace
+  );
+});
+
+it('getTaskRunsByPipelineRunName', () => {
+  jest
+    .spyOn(taskRunsSelectors, 'getTaskRuns')
+    .mockImplementation(() => taskRuns);
+  expect(getTaskRunsByPipelineRunName(state, pipelineRunName)).toEqual([
+    taskRun
+  ]);
   expect(taskRunsSelectors.getTaskRuns).toHaveBeenCalledWith(
     state.taskRuns,
     namespace
