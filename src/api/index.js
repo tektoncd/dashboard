@@ -349,3 +349,14 @@ export function shouldDisplayLogout() {
   });
   return get(routesUri, { Accept: 'text/plain' });
 }
+
+export async function determineInstallNamespace() {
+  const response = getInstallProperties()
+    .then(installProps => {
+      return installProps.InstallNamespace;
+    })
+    .catch(error => {
+      throw error;
+    });
+  return response;
+}
