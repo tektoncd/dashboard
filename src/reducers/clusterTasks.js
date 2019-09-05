@@ -17,6 +17,7 @@ import {
   createErrorMessageReducer,
   createIsFetchingReducer
 } from './reducerCreators';
+import { isStale } from '../utils';
 
 const type = 'ClusterTask';
 
@@ -24,13 +25,22 @@ function byName(state = {}, action) {
   switch (action.type) {
     case 'ClusterTaskCreated':
     case 'ClusterTaskUpdated':
+      if (isStale(action.payload, state, 'name')) {
+        return state;
+      }
       return { [action.payload.metadata.name]: action.payload, ...state };
     case 'ClusterTaskDeleted':
       const newState = { ...state };
       delete newState[action.payload.metadata.name];
       return newState;
     case 'CLUSTER_TASKS_FETCH_SUCCESS':
-      return keyBy(action.data, 'metadata.name');
+      const clusterTasks = action.data.map(clusterTask => {
+        if (isStale(clusterTask, state, 'name')) {
+          return state[clusterTask.metadata.name];
+        }
+        return clusterTask;
+      });
+      return keyBy(clusterTasks, 'metadata.name');
     default:
       return state;
   }

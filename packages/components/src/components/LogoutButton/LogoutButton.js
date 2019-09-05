@@ -17,6 +17,7 @@ import { injectIntl } from 'react-intl';
 import React, { Component } from 'react';
 import './LogoutButton.scss';
 
+/* istanbul ignore next */
 function handleLogout() {
   window.location.href = '/oauth/sign_out';
 }

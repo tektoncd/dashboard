@@ -45,3 +45,16 @@ export async function fetchLogs(stepName, stepStatus, taskRun) {
   }
   return logs;
 }
+
+export function isStale(resource, state, resourceIdField = 'uid') {
+  const { [resourceIdField]: identifier } = resource.metadata;
+  if (!state[identifier]) {
+    return false;
+  }
+  const existingVersion = parseInt(
+    state[identifier].metadata.resourceVersion,
+    10
+  );
+  const incomingVersion = parseInt(resource.metadata.resourceVersion, 10);
+  return existingVersion > incomingVersion;
+}

@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { sortRunsByStartTime, typeToPlural } from '.';
+import { isStale, sortRunsByStartTime, typeToPlural } from '.';
 
 it('sortRunsByStartTime', () => {
   const a = { name: 'a', status: { startTime: '0' } };
@@ -33,4 +33,26 @@ it('sortRunsByStartTime', () => {
 
 it('typeToPlural', () => {
   expect(typeToPlural('Extension')).toEqual('EXTENSIONS');
+});
+
+it('isStale', () => {
+  const uid = 'fake_uid';
+  const existingResource = {
+    metadata: {
+      uid,
+      resourceVersion: '123'
+    }
+  };
+  const incomingResource = {
+    metadata: {
+      uid,
+      resourceVersion: '45'
+    }
+  };
+  const state = {
+    [uid]: existingResource
+  };
+  expect(isStale(incomingResource, {})).toBe(false);
+  expect(isStale(incomingResource, state)).toBe(true);
+  expect(isStale(existingResource, state)).toBe(false);
 });

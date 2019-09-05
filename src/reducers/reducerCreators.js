@@ -15,7 +15,7 @@ import { combineReducers } from 'redux';
 import keyBy from 'lodash.keyby';
 import merge from 'lodash.merge';
 
-import { typeToPlural } from '../utils';
+import { isStale, typeToPlural } from '../utils';
 
 function createByIdReducer({ type }) {
   const typePlural = typeToPlural(type);
@@ -23,6 +23,9 @@ function createByIdReducer({ type }) {
     switch (action.type) {
       case `${type}Created`:
       case `${type}Updated`:
+        if (isStale(action.payload, state)) {
+          return state;
+        }
         return {
           ...state,
           [action.payload.metadata.uid]: action.payload
@@ -32,7 +35,13 @@ function createByIdReducer({ type }) {
         delete newState[action.payload.metadata.uid];
         return newState;
       case `${typePlural}_FETCH_SUCCESS`:
-        return { ...state, ...keyBy(action.data, 'metadata.uid') };
+        return {
+          ...state,
+          ...keyBy(
+            action.data.filter(resource => !isStale(resource, state)),
+            'metadata.uid'
+          )
+        };
       default:
         return state;
     }

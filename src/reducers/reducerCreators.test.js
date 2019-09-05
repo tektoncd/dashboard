@@ -16,11 +16,13 @@ import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 import { createNamespacedReducer } from './reducerCreators';
 import * as selectors from './pipelineResources';
 
-const createResource = (name, namespace, uid, other) => {
+const existingResourceVersion = 123;
+const createResource = (name, namespace, resourceVersion, uid, other) => {
   return {
     metadata: {
       name,
       namespace,
+      resourceVersion,
       uid
     },
     ...other
@@ -33,7 +35,12 @@ const reducer = createNamespacedReducer({ type: resourceType });
 const name = 'pipeline name';
 const namespace = 'default';
 const uid = 'some-uid';
-const pipelineResource = createResource(name, namespace, uid);
+const pipelineResource = createResource(
+  name,
+  namespace,
+  existingResourceVersion,
+  uid
+);
 
 it('handles init or unknown actions', () => {
   expect(reducer(undefined, { type: 'does_not_exist' })).toEqual({
@@ -67,6 +74,29 @@ it('PIPELINE_RESOURCES_FETCH_SUCCESS', () => {
   expect(selectors.isFetchingPipelineResources(state)).toBe(false);
 });
 
+it('PIPELINE_RESOURCES_FETCH_SUCCESS with stale content', () => {
+  const action = {
+    type: 'PIPELINE_RESOURCES_FETCH_SUCCESS',
+    data: [pipelineResource],
+    namespace
+  };
+  let state = reducer({}, action);
+
+  const staleResourceVersion = existingResourceVersion - 1;
+  const actionWithStaleResource = {
+    type: 'PIPELINE_RESOURCES_FETCH_SUCCESS',
+    data: [createResource(name, namespace, staleResourceVersion, uid)]
+  };
+  state = reducer(state, actionWithStaleResource);
+
+  expect(selectors.getPipelineResources(state, namespace)).toEqual([
+    pipelineResource
+  ]);
+  expect(selectors.getPipelineResource(state, name, namespace)).toEqual(
+    pipelineResource
+  );
+});
+
 it('PIPELINE_RESOURCES_FETCH_FAILURE', () => {
   const message = 'fake error message';
   const error = { message };
@@ -80,9 +110,15 @@ it('PIPELINE_RESOURCES_FETCH_FAILURE', () => {
 });
 
 it('PipelineResource Events', () => {
-  const createdPipelineResource = createResource(name, namespace, uid, {
-    status: { running: true }
-  });
+  const createdPipelineResource = createResource(
+    name,
+    namespace,
+    existingResourceVersion,
+    uid,
+    {
+      status: { running: true }
+    }
+  );
   const action = {
     type: 'PipelineResourceCreated',
     payload: createdPipelineResource,
@@ -99,9 +135,15 @@ it('PipelineResource Events', () => {
   expect(selectors.isFetchingPipelineResources(state)).toBe(false);
 
   // update pipeline resource
-  const updatedPipelineResource = createResource(name, namespace, uid, {
-    status: { terminated: true }
-  });
+  const updatedPipelineResource = createResource(
+    name,
+    namespace,
+    existingResourceVersion,
+    uid,
+    {
+      status: { terminated: true }
+    }
+  );
   const updateAction = {
     type: 'PipelineResourceUpdated',
     payload: updatedPipelineResource,
@@ -114,6 +156,32 @@ it('PipelineResource Events', () => {
   expect(selectors.getPipelineResource(updatedState, name, namespace)).toEqual(
     updatedPipelineResource
   );
+
+  // attempt update with stale resource, should be ignored
+  const stalePipelineResource = createResource(
+    name,
+    namespace,
+    existingResourceVersion - 1,
+    uid,
+    {
+      status: { terminated: true }
+    }
+  );
+  const updateActionWithStaleResource = {
+    type: 'PipelineResourceUpdated',
+    payload: stalePipelineResource,
+    namespace
+  };
+  const updatedStateAfterStale = reducer(
+    updatedState,
+    updateActionWithStaleResource
+  );
+  expect(
+    selectors.getPipelineResources(updatedStateAfterStale, namespace)
+  ).toEqual([updatedPipelineResource]);
+  expect(
+    selectors.getPipelineResource(updatedStateAfterStale, name, namespace)
+  ).toEqual(updatedPipelineResource);
 
   // delete pipeline resource
   const deleteAction = {
