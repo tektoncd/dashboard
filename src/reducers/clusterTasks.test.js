@@ -15,9 +15,11 @@ import clusterTasksReducer, * as selectors from './clusterTasks';
 
 const name = 'clusterTask';
 const uid = 'some-uid';
+const resourceVersion = 123;
 const clusterTask = {
   metadata: {
     name,
+    resourceVersion,
     uid
   },
   other: 'content'
@@ -49,6 +51,32 @@ it('CLUSTER_TASKS_FETCH_SUCCESS', () => {
   expect(selectors.isFetchingClusterTasks(state)).toBe(false);
 });
 
+it('CLUSTER_TASKS_FETCH_SUCCESS with stale content', () => {
+  const action = {
+    type: 'CLUSTER_TASKS_FETCH_SUCCESS',
+    data: [clusterTask]
+  };
+  let state = clusterTasksReducer({}, action);
+
+  const actionWithStaleResource = {
+    type: 'CLUSTER_TASKS_FETCH_SUCCESS',
+    data: [
+      {
+        metadata: {
+          name,
+          resourceVersion: resourceVersion - 1,
+          uid
+        },
+        other: 'content'
+      }
+    ]
+  };
+  state = clusterTasksReducer(state, actionWithStaleResource);
+
+  expect(selectors.getClusterTasks(state)).toEqual([clusterTask]);
+  expect(selectors.getClusterTask(state, name)).toEqual(clusterTask);
+});
+
 it('ClusterTask Events', () => {
   const action = {
     type: 'ClusterTaskCreated',
@@ -62,6 +90,7 @@ it('ClusterTask Events', () => {
   const updatedClusterTask = {
     metadata: {
       name,
+      resourceVersion,
       uid
     },
     other: 'differentcontent'
@@ -75,6 +104,27 @@ it('ClusterTask Events', () => {
   const updatedState = clusterTasksReducer({}, updateAction);
   expect(selectors.getClusterTasks(updatedState)).toEqual([updatedClusterTask]);
   expect(selectors.isFetchingClusterTasks(updatedState)).toBe(false);
+
+  // stale resource should be ignored
+  const updateActionStale = {
+    type: 'ClusterTaskUpdated',
+    payload: {
+      metadata: {
+        name,
+        resourceVersion: resourceVersion - 1,
+        uid
+      },
+      other: 'differentcontent'
+    }
+  };
+
+  const updatedStateAfterStale = clusterTasksReducer(
+    updatedState,
+    updateActionStale
+  );
+  expect(selectors.getClusterTasks(updatedStateAfterStale)).toEqual([
+    updatedClusterTask
+  ]);
 
   const deleteAction = {
     type: 'ClusterTaskDeleted',

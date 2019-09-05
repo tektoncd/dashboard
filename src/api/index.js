@@ -89,6 +89,7 @@ export function getExtensionBundleURL(name, bundlelocation) {
   return `${getExtensionBaseURL(name)}/${bundlelocation}`;
 }
 
+/* istanbul ignore next */
 export function getWebSocketURL() {
   return `${apiRoot.replace(/^http/, 'ws')}/v1/websockets/resources`;
 }
