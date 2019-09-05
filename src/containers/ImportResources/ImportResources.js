@@ -23,11 +23,15 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { ALL_NAMESPACES, urls } from '@tektoncd/dashboard-utils';
 
-import { createPipelineRun, getInstallProperties } from '../../api';
+import { createPipelineRun, determineInstallNamespace } from '../../api';
 import { getSelectedNamespace } from '../../reducers';
 import { NamespacesDropdown, ServiceAccountsDropdown } from '..';
 
 import './ImportResources.scss';
+
+async function getInstallNamespace() {
+  return determineInstallNamespace();
+}
 
 export class ImportResources extends Component {
   constructor(props) {
@@ -36,12 +40,28 @@ export class ImportResources extends Component {
       directory: '',
       invalidInput: false,
       invalidNamespace: false,
+      installNamespace: '',
+      installNamespaceError: false,
       logsURL: '',
       namespace: props.navNamespace !== ALL_NAMESPACES && props.navNamespace,
       repositoryURL: '',
       serviceAccount: '',
       submitSuccess: false
     };
+  }
+
+  componentDidMount() {
+    getInstallNamespace()
+      .then(foundInstallNamespace => {
+        this.setState({
+          installNamespace: foundInstallNamespace
+        });
+      })
+      .catch(() => {
+        this.setState({
+          installNamespaceError: true
+        });
+      });
   }
 
   handleNamespace = ({ selectedItem }) => {
@@ -63,9 +83,7 @@ export class ImportResources extends Component {
     });
   };
 
-  handleSubmit = event => {
-    event.preventDefault();
-
+  handleSubmit = () => {
     const {
       directory: applydirectory,
       namespace,
@@ -94,34 +112,30 @@ export class ImportResources extends Component {
     }
 
     const promise = createPipelineRun({ namespace, payload });
+
     promise
       .then(headers => {
-        const props = getInstallProperties();
-        props
-          .then(properties => {
-            const logsURL = headers.get('Content-Location');
-            const pipelineRunName = logsURL.substring(
-              logsURL.lastIndexOf('/') + 1
-            );
+        const logsURL = headers.get('Content-Location');
+        const pipelineRunName = logsURL.substring(logsURL.lastIndexOf('/') + 1);
+        const finalURL = urls.pipelineRuns.byName({
+          namespace,
+          pipelineName: 'pipeline0',
+          pipelineRunName
+        });
 
-            const finalURL = urls.pipelineRuns.byName({
-              namespace: properties.InstallNamespace,
-              pipelineName: 'pipeline0',
-              pipelineRunName
-            });
-            this.setState({
-              logsURL: finalURL,
-              submitSuccess: true,
-              invalidInput: false
-            });
-          })
-          .catch(() => {
-            this.setState({
-              logsURL: urls.pipelineRuns.all(),
-              submitSuccess: true,
-              invalidInput: false
-            });
+        if (this.state.installNamespaceError === false) {
+          this.setState({
+            logsURL: finalURL,
+            submitSuccess: true,
+            invalidInput: false
           });
+        } else {
+          this.setState({
+            logsURL: urls.pipelineRuns.all(),
+            submitSuccess: true,
+            invalidInput: false
+          });
+        }
       })
       .catch(error => {
         const statusCode = error.response.status;
@@ -187,9 +201,9 @@ export class ImportResources extends Component {
           />
           <ServiceAccountsDropdown
             className="saDropdown"
-            helperText="The SA that the PipelineRun applying resources will run under"
+            helperText="The service account that the PipelineRun applying resources will run under (must be in the install namespace of the Tekton Dashboard)"
             id="import-service-accounts-dropdown"
-            namespace={namespace}
+            namespace={this.state.installNamespace}
             onChange={this.handleServiceAccount}
             titleText="Service Account (optional)"
           />

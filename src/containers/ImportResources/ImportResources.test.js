@@ -42,7 +42,7 @@ describe('ImportResources component', () => {
   });
 
   it('Valid data submit displays success notification ', async () => {
-    const namespace = 'tekton-pipelines';
+    const namespace = 'namespace1';
     const pipelineRunName = 'fake-tekton-pipeline-run';
     const headers = {
       get() {
@@ -55,10 +55,8 @@ describe('ImportResources component', () => {
       .mockImplementation(() => Promise.resolve(headers));
 
     jest
-      .spyOn(API, 'getInstallProperties')
-      .mockImplementation(() =>
-        Promise.resolve({ InstallNamespace: namespace })
-      );
+      .spyOn(API, 'determineInstallNamespace')
+      .mockImplementation(() => namespace);
 
     const { getByLabelText, getByTestId, getByText } = renderWithRouter(
       <Provider store={store}>
@@ -92,53 +90,17 @@ describe('ImportResources component', () => {
     );
   });
 
-  it('Error getting pipelinerun log directs to pipelineruns page rather than specific pipelinerun', async () => {
-    const headers = {
-      get() {
-        return 'another-fake-tekton-pipeline-run';
-      }
-    };
-
-    jest
-      .spyOn(API, 'createPipelineRun')
-      .mockImplementation(() => Promise.resolve(headers));
-
-    jest
-      .spyOn(API, 'getInstallProperties')
-      .mockImplementation(() => Promise.reject(new Error('fail')));
-
-    const { getByLabelText, getByTestId, getByText } = renderWithRouter(
-      <Provider store={store}>
-        <ImportResourcesContainer />
-      </Provider>
-    );
-
-    const repoURLField = getByTestId('repository-url-field');
-    fireEvent.change(repoURLField, {
-      target: { value: 'https://example.com/test/testing' }
-    });
-
-    fireEvent.click(getByLabelText(/namespace/i));
-    fireEvent.click(getByText(/select namespace/i));
-    fireEvent.click(getByText('namespace1'));
-
-    fireEvent.click(getByText('Import and Apply'));
-    await waitForElement(() =>
-      getByText(/Triggered PipelineRun to apply Tekton resources/i)
-    );
-
-    expect(
-      document.getElementsByClassName('bx--toast-notification__caption')[0]
-        .innerHTML
-    ).toContain(urls.pipelineRuns.all());
-  });
-
   it('Invalid data submit displays invalidText', async () => {
     const createPipelineRunResponseMock = { response: { status: 500 } };
 
     jest
       .spyOn(API, 'createPipelineRun')
       .mockImplementation(() => Promise.reject(createPipelineRunResponseMock));
+
+    jest
+      .spyOn(API, 'determineInstallNamespace')
+      .mockImplementation(() => 'default');
+
     const { getByLabelText, getByTestId, getByText } = render(
       <Provider store={store}>
         <ImportResourcesContainer />
@@ -179,5 +141,54 @@ describe('ImportResources component', () => {
     });
 
     await waitForElement(() => queryByDisplayValue(/Invalid URL here/i));
+  });
+
+  it('Error getting pipelinerun log directs to pipelineruns page rather than specific pipelinerun', async () => {
+    const headers = {
+      get() {
+        return 'another-fake-tekton-pipeline-run';
+      }
+    };
+
+    // Run itself kicked off fine
+    jest
+      .spyOn(API, 'createPipelineRun')
+      .mockImplementation(() => Promise.resolve(headers));
+
+    // Somehow can't get the namespace so getting logs will be useless
+    jest
+      .spyOn(API, 'getInstallProperties')
+      .mockImplementation(() => Promise.reject(new Error('fail')));
+
+    // Error determining the install namespace
+    jest.spyOn(API, 'determineInstallNamespace').mockImplementation(() => {
+      throw new Error();
+    });
+
+    const { getByLabelText, getByTestId, getByText } = renderWithRouter(
+      <Provider store={store}>
+        <ImportResourcesContainer />
+      </Provider>
+    );
+    await waitForElement(() => getByText(/Import and Apply/i));
+
+    const repoURLField = getByTestId('repository-url-field');
+    fireEvent.change(repoURLField, {
+      target: { value: 'https://example.com/test/testing' }
+    });
+
+    fireEvent.click(getByLabelText(/namespace/i));
+    fireEvent.click(getByText(/select namespace/i));
+    fireEvent.click(getByText('namespace1'));
+
+    fireEvent.click(getByText('Import and Apply'));
+    await waitForElement(() =>
+      getByText(/Triggered PipelineRun to apply Tekton resources/i)
+    );
+
+    expect(
+      document.getElementsByClassName('bx--toast-notification__caption')[0]
+        .innerHTML
+    ).toContain(urls.pipelineRuns.all());
   });
 });
