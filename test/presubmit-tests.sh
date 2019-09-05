@@ -48,6 +48,12 @@ source $(dirname $0)/../vendor/github.com/tektoncd/plumbing/scripts/presubmit-te
 #   - post_integration_tests : runs after the integration-test function
 #
 
+function utility_install() {
+  # Install envsubst
+  apt-get install gettext-base
+  # Get yaml-to-json converter
+  go get github.com/mikefarah/yq
+}
 function get_node() {
   echo "Script is running as $(whoami) on $(hostname) and directory structure is $(find .)"
   # It's Stretch and https://github.com/tektoncd/dashboard/blob/master/package.json
@@ -96,6 +102,8 @@ function extra_initialization() {
   npm --version
   echo ">> Node.js version"
   node --version
+  echo "Installing shell utilities"
+  utility_install
 }
 
 function unit_tests() {

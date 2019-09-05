@@ -46,13 +46,12 @@ func (r Resource) ProxyRequest(request *restful.Request, response *restful.Respo
 	forwardRequest.SetHeader("Content-Type", request.HeaderParameter("Content-Type"))
 	forwardResponse := forwardRequest.Do()
 
+	logging.Log.Debugf("Forwarding to url : %s", forwardRequest.URL().String())
 	responseBody, requestError := forwardResponse.Raw()
 	if requestError != nil {
 		utils.RespondError(response, requestError, http.StatusNotFound)
 		return
 	}
-
-	logging.Log.Debugf("Forwarding to url : %s", forwardRequest.URL().String())
 	response.Header().Add("Content-Type", utils.GetContentType(responseBody))
 	response.Write(responseBody)
 }
