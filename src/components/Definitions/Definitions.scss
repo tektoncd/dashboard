@@ -42,7 +42,7 @@ main {
   .bx--data-table-header {
     background-color: transparent;
   }
-} 
+}
 
 .definition .status {
   .status-icon {
@@ -68,7 +68,7 @@ main {
     }
   }
 
-  &[data-status='Unknown'][data-reason='Running'] {
+  &[data-status='Unknown'][data-reason='Running'], &[data-status='Unknown'][data-reason='Building'] {
     .status-icon {
       fill: $running;
     }
