@@ -54,6 +54,34 @@ it('SecretsTable renders with one secret', () => {
   ).toBeTruthy();
 });
 
+it('SecretsTable only renders tekton.dev annotations', () => {
+  const props = {
+    handleDelete() {},
+    handleNew() {},
+    loading: false,
+    secrets: [
+      {
+        annotations: {
+          'tekton.dev/git-0': 'https://github.ibm.com',
+          badannotation: 'badcontent'
+        },
+        name: 'dummySecret',
+        uid: '0'
+      }
+    ],
+    selectedNamespace: '*'
+  };
+  const { queryByText } = render(<SecretsTable {...props} />);
+  expect(queryByText(/dummySecret/i)).toBeTruthy();
+  expect(
+    queryByText(/tekton.dev\/git-0: https:\/\/github.ibm.com/i)
+  ).toBeTruthy();
+
+  expect(queryByText(/badannotation/i)).toBeFalsy();
+
+  expect(queryByText(/badcontent/i)).toBeFalsy();
+});
+
 it('SecretsTable renders in loading state', () => {
   const props = {
     handleDelete() {},
