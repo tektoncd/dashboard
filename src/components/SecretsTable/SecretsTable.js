@@ -60,7 +60,9 @@ const SecretsTable = props => {
   const secretsFormatted = secrets.map(secret => {
     let annotations = '';
     Object.keys(secret.annotations).forEach(function annotationSetup(key) {
-      annotations += `${key}: ${secret.annotations[key]}\n`;
+      if (key.includes('tekton.dev')) {
+        annotations += `${key}: ${secret.annotations[key]}\n`;
+      }
     });
     const formattedSecret = {
       id: `${secret.namespace}:${secret.name}`,
