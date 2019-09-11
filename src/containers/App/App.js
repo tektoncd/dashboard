@@ -218,7 +218,7 @@ export /* istanbul ignore next */ class App extends Component {
                   exact
                   component={CustomResourceDefinition}
                 />
-                <Redirect to={urls.pipelines.all()} />
+                <Redirect to={urls.pipelineRuns.all()} />
               </Switch>
             </Content>
           </>

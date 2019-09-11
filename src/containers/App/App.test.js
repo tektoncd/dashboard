@@ -32,6 +32,7 @@ it('App renders successfully', () => {
     extensions: { byName: {} },
     namespaces: { byName: {} },
     pipelines: { byNamespace: {} },
+    pipelineRuns: { byNamespace: {} },
     serviceAccounts: { byNamespace: {} }
   });
   const { queryByText } = render(
