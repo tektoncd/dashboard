@@ -155,30 +155,38 @@ export class SideNav extends Component {
           <SideNavMenuItem element={NavLink} icon={<span />} to="/secrets">
             Secrets
           </SideNavMenuItem>
-          {extensions.length > 0 &&
-            extensions.map(
-              ({ displayName, name, extensionType, apiGroup, apiVersion }) => (
-                <SideNavMenuItem
-                  element={NavLink}
-                  icon={<span />}
-                  to={
-                    extensionType === 'kubernetes-resource'
-                      ? this.getPath(
-                          urls.kubernetesResources.all({
-                            group: apiGroup,
-                            version: apiVersion,
-                            type: name
-                          })
-                        )
-                      : urls.extensions.byName({ name })
-                  }
-                  key={name}
-                  title={displayName}
-                >
-                  {displayName}
-                </SideNavMenuItem>
-              )
-            )}
+          <>
+            {extensions.length > 0 &&
+              extensions.map(
+                ({
+                  displayName,
+                  name,
+                  extensionType,
+                  apiGroup,
+                  apiVersion
+                }) => (
+                  <SideNavMenuItem
+                    element={NavLink}
+                    icon={<span />}
+                    to={
+                      extensionType === 'kubernetes-resource'
+                        ? this.getPath(
+                            urls.kubernetesResources.all({
+                              group: apiGroup,
+                              version: apiVersion,
+                              type: name
+                            })
+                          )
+                        : urls.extensions.byName({ name })
+                    }
+                    key={name}
+                    title={displayName}
+                  >
+                    {displayName}
+                  </SideNavMenuItem>
+                )
+              )}
+          </>
         </SideNavItems>
       </CarbonSideNav>
     );
