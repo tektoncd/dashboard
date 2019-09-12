@@ -142,7 +142,9 @@ export class SideNav extends Component {
             selectedItem={{ id: namespace, text: namespace }}
             showAllNamespaces
             onChange={this.selectNamespace}
-          />
+          >
+            &nbsp;
+          </SideNavMenuItem>
           <SideNavMenuItem
             element={NavLink}
             icon={<span />}
