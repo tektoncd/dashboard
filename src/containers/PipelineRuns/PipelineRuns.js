@@ -313,7 +313,6 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
               data-testid="filter-search-bar"
               id="filter-search"
               name="filter-search"
-              autocomplete="label"
             />
             <Button
               className="add-filter-button"
