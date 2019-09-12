@@ -162,12 +162,15 @@ spec:
   - name: pathToResourceFiles
     description: The path to the resource files to apply
     default: /workspace/git-source
+    type: string
   - name: apply-directory
     description: The directory from which resources are to be applied
     default: "."
+    type: string
   - name: target-namespace
     description: The namespace in which to create the resources being imported
     default: tekton-pipelines
+    type: string
   tasks:
   - name: pipeline0-task
     taskRef:
@@ -199,12 +202,15 @@ spec:
     - name: pathToResourceFiles
       description: The path to the resource files to apply
       default: /workspace/git-source
+      type: string
     - name: apply-directory
       description: The directory from which resources are to be applied
       default: "."
+      type: string
     - name: target-namespace
       description: The namespace in which to create the resources being imported
       default: tekton-pipelines
+      type: string
   steps:
   - name: kubectl-apply
     image: lachlanevenson/k8s-kubectl:latest
