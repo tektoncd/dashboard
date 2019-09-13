@@ -22,8 +22,13 @@ import {
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { ALL_NAMESPACES, urls } from '@tektoncd/dashboard-utils';
+import { getGitValues } from '../../utils';
 
-import { createPipelineRun, determineInstallNamespace } from '../../api';
+import {
+  createPipelineResource,
+  createPipelineRun,
+  determineInstallNamespace
+} from '../../api';
 import { getSelectedNamespace } from '../../reducers';
 import { NamespacesDropdown, ServiceAccountsDropdown } from '..';
 
@@ -88,20 +93,11 @@ export class ImportResources extends Component {
       directory: applydirectory,
       namespace,
       repositoryURL: repourl,
-      serviceAccount: serviceaccount
+      serviceAccount
     } = this.state;
-    const pipelinename = 'pipeline0';
+    const pipelineName = 'pipeline0';
     const gitresourcename = 'git-source';
     const gitcommit = 'master';
-
-    const payload = {
-      applydirectory,
-      gitcommit,
-      gitresourcename,
-      pipelinename,
-      repourl,
-      serviceaccount
-    };
 
     if (repourl === '' || !namespace) {
       this.setState({
@@ -111,43 +107,79 @@ export class ImportResources extends Component {
       return;
     }
 
-    const promise = createPipelineRun({ namespace, payload });
+    const resource = {
+      apiVersion: 'tekton.dev/v1alpha1',
+      kind: 'PipelineResource',
+      metadata: {
+        generateName: gitresourcename,
+        namespace
+      },
+      spec: {
+        type: 'git',
+        params: [
+          {
+            name: 'url',
+            value: repourl
+          },
+          {
+            name: 'revision',
+            value: gitcommit
+          }
+        ]
+      }
+    };
 
-    promise
-      .then(headers => {
-        const logsURL = headers.get('Content-Location');
-        const pipelineRunName = logsURL.substring(logsURL.lastIndexOf('/') + 1);
-        const finalURL = urls.pipelineRuns.byName({
+    createPipelineResource({ namespace, resource })
+      .then(data => {
+        const labels = getGitValues(repourl);
+        const pipelineRun = {
+          pipelineName,
+          serviceAccount,
+          resources: { 'git-source': data.metadata.name },
+          params: {
+            'apply-directory': applydirectory,
+            'target-namespace': namespace
+          },
           namespace,
-          pipelineName: 'pipeline0',
-          pipelineRunName
-        });
+          labels
+        };
+        const promise = createPipelineRun(pipelineRun);
+        promise
+          .then(headers => {
+            const pipelineRunName = headers.metadata.name;
 
-        if (this.state.installNamespaceError === false) {
-          this.setState({
-            logsURL: finalURL,
-            submitSuccess: true,
-            invalidInput: false
-          });
-        } else {
-          this.setState({
-            logsURL: urls.pipelineRuns.all(),
-            submitSuccess: true,
-            invalidInput: false
-          });
-        }
-      })
-      .catch(error => {
-        const statusCode = error.response.status;
-        switch (statusCode) {
-          case 500:
+            const finalURL = urls.pipelineRuns.byName({
+              namespace,
+              pipelineName: 'pipeline0',
+              pipelineRunName
+            });
+
+            if (this.state.installNamespaceError === false) {
+              this.setState({
+                logsURL: finalURL,
+                submitSuccess: true,
+                invalidInput: false
+              });
+            } else {
+              this.setState({
+                logsURL: urls.pipelineRuns.all(),
+                submitSuccess: true,
+                invalidInput: false
+              });
+            }
+          })
+          .catch(() => {
             this.setState({
               submitSuccess: false,
               invalidInput: true
             });
-            break;
-          default:
-        }
+          });
+      })
+      .catch(() => {
+        this.setState({
+          submitSuccess: false,
+          invalidInput: true
+        });
       });
   };
 

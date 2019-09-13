@@ -46,10 +46,14 @@ describe('ImportResources component', () => {
     const namespace = 'namespace1';
     const pipelineRunName = 'fake-tekton-pipeline-run';
     const headers = {
-      get() {
-        return pipelineRunName;
-      }
+      metadata: { name: pipelineRunName }
     };
+
+    jest
+      .spyOn(API, 'createPipelineResource')
+      .mockImplementation(() =>
+        Promise.resolve({ metadata: { name: 'git-source' } })
+      );
 
     jest
       .spyOn(API, 'createPipelineRun')
@@ -93,6 +97,12 @@ describe('ImportResources component', () => {
 
   it('Invalid data submit displays invalidText', async () => {
     const createPipelineRunResponseMock = { response: { status: 500 } };
+
+    jest
+      .spyOn(API, 'createPipelineResource')
+      .mockImplementation(() =>
+        Promise.resolve({ metadata: { name: 'git-source' } })
+      );
 
     jest
       .spyOn(API, 'createPipelineRun')
@@ -146,20 +156,19 @@ describe('ImportResources component', () => {
 
   it('Error getting pipelinerun log directs to pipelineruns page rather than specific pipelinerun', async () => {
     const headers = {
-      get() {
-        return 'another-fake-tekton-pipeline-run';
-      }
+      metadata: { name: 'another-fake-tekton-pipeline-run' }
     };
+
+    jest
+      .spyOn(API, 'createPipelineResource')
+      .mockImplementation(() =>
+        Promise.resolve({ metadata: { name: 'git-source' } })
+      );
 
     // Run itself kicked off fine
     jest
       .spyOn(API, 'createPipelineRun')
       .mockImplementation(() => Promise.resolve(headers));
-
-    // Somehow can't get the namespace so getting logs will be useless
-    jest
-      .spyOn(API, 'getInstallProperties')
-      .mockImplementation(() => Promise.reject(new Error('fail')));
 
     // Error determining the install namespace
     jest.spyOn(API, 'determineInstallNamespace').mockImplementation(() => {

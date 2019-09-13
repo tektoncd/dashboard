@@ -286,7 +286,7 @@ it('CreatePipelineRun handles api error', async () => {
     response: { status: 400, text: () => Promise.resolve('') }
   };
   const createPipelineRun = jest
-    .spyOn(API, 'createPipelineRunAtProxy')
+    .spyOn(API, 'createPipelineRun')
     .mockImplementation(() => Promise.reject(errorResponseMock));
   fireEvent.click(submitButton(getAllByText));
   await wait(() => expect(createPipelineRun).toHaveBeenCalledTimes(1));
@@ -319,7 +319,7 @@ it('CreatePipelineRun handles api error with text', async () => {
     response: { status: 401, text: () => Promise.resolve('example message') }
   };
   const createPipelineRun = jest
-    .spyOn(API, 'createPipelineRunAtProxy')
+    .spyOn(API, 'createPipelineRun')
     .mockImplementation(() => Promise.reject(errorResponseMock));
   fireEvent.click(submitButton(getAllByText));
   await wait(() => expect(createPipelineRun).toHaveBeenCalledTimes(1));
@@ -476,7 +476,7 @@ it('CreatePipelineRun submits form', () => {
   });
   // Submit
   const createPipelineRun = jest
-    .spyOn(API, 'createPipelineRunAtProxy')
+    .spyOn(API, 'createPipelineRun')
     .mockImplementation(() => Promise.resolve({}));
   fireEvent.click(submitButton(getAllByText));
   expect(createPipelineRun).toHaveBeenCalledTimes(1);

@@ -28,7 +28,7 @@ import {
   ServiceAccountsDropdown
 } from '..';
 import { getPipeline } from '../../reducers';
-import { createPipelineRunAtProxy } from '../../api';
+import { createPipelineRun } from '../../api';
 import { getStore } from '../../store/index';
 
 import './CreatePipelineRun.scss';
@@ -212,7 +212,7 @@ class CreatePipelineRun extends React.Component {
     const pipelineRef = this.getPipelineInfo(PIPELINE_REF);
     const namespace = this.getPipelineInfo(NAMESPACE);
     const { params, resources, serviceAccount, timeout } = this.state;
-    createPipelineRunAtProxy({
+    createPipelineRun({
       namespace,
       pipelineName: pipelineRef,
       resources,
