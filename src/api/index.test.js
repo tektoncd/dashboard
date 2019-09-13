@@ -18,8 +18,8 @@ import {
   cancelTaskRun,
   checkData,
   createCredential,
+  createPipelineResource,
   createPipelineRun,
-  createPipelineRunAtProxy,
   deleteCredential,
   getAPI,
   getAPIRoot,
@@ -399,20 +399,38 @@ it('getPodLog with container name', () => {
   });
 });
 
-it('createPipelineRun', () => {
-  const payload = { fake: 'payload' };
+it('createPipelineResource', () => {
+  const namespace = 'namespace1';
+  const payload = {
+    apiVersion: 'tekton.dev/v1alpha1',
+    kind: 'PipelineResource',
+    metadata: {
+      generateName: 'git-source',
+      namespace
+    },
+    spec: {
+      type: 'git',
+      params: [
+        {
+          name: 'url',
+          value: 'http://someUrl.com'
+        },
+        {
+          name: 'revision',
+          value: 'master'
+        }
+      ]
+    }
+  };
   const data = { fake: 'data' };
   fetchMock.post('*', data);
-  return createPipelineRun({ payload }).then(response => {
+  return createPipelineResource({ namespace, payload }).then(response => {
     expect(response).toEqual(data);
-    expect(fetchMock.lastOptions()).toMatchObject({
-      body: JSON.stringify(payload)
-    });
     fetchMock.restore();
   });
 });
 
-it('createPipelineRunAtProxy', () => {
+it('createPipelineRun', () => {
   const mockDateNow = jest
     .spyOn(Date, 'now')
     .mockImplementation(() => 'fake-timestamp');
@@ -426,7 +444,11 @@ it('createPipelineRunAtProxy', () => {
     apiVersion: 'tekton.dev/v1alpha1',
     kind: 'PipelineRun',
     metadata: {
-      name: `${pipelineName}-run-${Date.now()}`
+      name: `${pipelineName}-run-${Date.now()}`,
+      labels: {
+        'tekton.dev/pipeline': pipelineName,
+        app: 'tekton-app'
+      }
     },
     spec: {
       pipelineRef: {
@@ -445,7 +467,7 @@ it('createPipelineRunAtProxy', () => {
     }
   };
   fetchMock.post('*', data);
-  return createPipelineRunAtProxy(payload).then(response => {
+  return createPipelineRun(payload).then(response => {
     expect(response).toEqual(data);
     expect(fetchMock.lastOptions()).toMatchObject({
       body: JSON.stringify(data)

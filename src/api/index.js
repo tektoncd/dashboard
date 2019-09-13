@@ -146,18 +146,19 @@ export function cancelPipelineRun({ name, namespace }) {
   });
 }
 
-export function createPipelineRun({ namespace, payload }) {
-  const uri = getAPI('pipelineruns', { namespace });
-  return post(uri, payload);
+export function createPipelineResource({ namespace, resource } = {}) {
+  const uri = getTektonAPI('pipelineresources', { namespace });
+  return post(uri, resource);
 }
 
-export function createPipelineRunAtProxy({
+export function createPipelineRun({
   namespace,
   pipelineName,
   resources,
   params,
   serviceAccount,
-  timeout
+  timeout,
+  labels
 }) {
   // Create PipelineRun payload
   // expect params and resources to be objects with keys 'name' and values 'value'
@@ -165,7 +166,12 @@ export function createPipelineRunAtProxy({
     apiVersion: 'tekton.dev/v1alpha1',
     kind: 'PipelineRun',
     metadata: {
-      name: `${pipelineName}-run-${Date.now()}`
+      name: `${pipelineName}-run-${Date.now()}`,
+      labels: {
+        ...labels,
+        'tekton.dev/pipeline': pipelineName,
+        app: 'tekton-app'
+      }
     },
     spec: {
       pipelineRef: {

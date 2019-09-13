@@ -58,3 +58,19 @@ export function isStale(resource, state, resourceIdField = 'uid') {
   const incomingVersion = parseInt(resource.metadata.resourceVersion, 10);
   return existingVersion > incomingVersion;
 }
+
+export function getGitValues(url) {
+  let copyUrl;
+
+  copyUrl = url.toLowerCase().replace(/https?:\/\//, '');
+
+  copyUrl = copyUrl.split('/');
+  const numSlashes = copyUrl.length;
+  if (numSlashes < 2) {
+    return {};
+  }
+
+  const [gitServer, gitOrg, gitRepo] = copyUrl;
+
+  return { gitServer, gitOrg, gitRepo: `${gitRepo}.git` };
+}
