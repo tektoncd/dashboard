@@ -13,6 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import CheckmarkFilled from '@carbon/icons-react/lib/checkmark--filled/16';
+import Time16 from '@carbon/icons-react/lib/time/16';
 import CloseFilled from '@carbon/icons-react/lib/close--filled/16';
 import { Spinner } from '@tektoncd/dashboard-components';
 
@@ -113,11 +114,16 @@ export function getStatus(resource) {
 
 export function isRunning(reason, status) {
   return (
-    status === 'Unknown' && (reason === 'Running' || reason === 'Building')
+    !status ||
+    (status === 'Unknown' && (reason === 'Running' || reason === 'Building'))
   );
 }
 
 export function getStatusIcon({ reason, status }) {
+  if (!status) {
+    return <Time16 className="status-icon" />;
+  }
+
   if (isRunning(reason, status)) {
     return <Spinner className="status-icon" />;
   }

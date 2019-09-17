@@ -36,6 +36,8 @@ import './PipelineRuns.scss';
 const PipelineRuns = ({
   cancelPipelineRun,
   createPipelineRunURL = urls.pipelineRuns.byName,
+  createPipelineRunDisplayName = ({ pipelineRunMetadata }) =>
+    pipelineRunMetadata.name,
   createPipelineRunsByPipelineURL = urls.pipelineRuns.byPipeline,
   intl,
   pipelineName,
@@ -92,26 +94,27 @@ const PipelineRuns = ({
           </StructuredListCell>
         </StructuredListRow>
       )}
-      {pipelineRuns.map(pipelineRun => {
-        const { name: pipelineRunName, namespace } = pipelineRun.metadata;
+      {pipelineRuns.map((pipelineRun, index) => {
+        const { namespace, annotations } = pipelineRun.metadata;
+        const pipelineRunName = createPipelineRunDisplayName({
+          pipelineRunMetadata: pipelineRun.metadata
+        });
         const pipelineRefName = pipelineRun.spec.pipelineRef.name;
         const { lastTransitionTime, reason, status } = getStatus(pipelineRun);
+        const url = createPipelineRunURL({
+          namespace,
+          pipelineName: pipelineRefName,
+          pipelineRunName,
+          annotations
+        });
 
         return (
           <StructuredListRow
             className="definition"
-            key={pipelineRun.metadata.uid}
+            key={pipelineRun.metadata.uid || index}
           >
             <StructuredListCell>
-              <Link
-                to={createPipelineRunURL({
-                  namespace,
-                  pipelineName: pipelineRefName,
-                  pipelineRunName
-                })}
-              >
-                {pipelineRunName}
-              </Link>
+              {url ? <Link to={url}>{pipelineRunName}</Link> : pipelineRunName}
             </StructuredListCell>
             {!pipelineName && (
               <StructuredListCell>
@@ -134,9 +137,12 @@ const PipelineRuns = ({
               data-status={status}
             >
               {getStatusIcon({ reason, status })}
-              {pipelineRun.status.conditions
+              {pipelineRun.status && pipelineRun.status.conditions
                 ? pipelineRun.status.conditions[0].message
-                : ''}
+                : intl.formatMessage({
+                    id: 'dashboard.pipelineRuns.status.pending',
+                    defaultMessage: 'Pending'
+                  })}
             </StructuredListCell>
             <StructuredListCell>{lastTransitionTime}</StructuredListCell>
             {cancelPipelineRun && (
@@ -148,7 +154,8 @@ const PipelineRuns = ({
                     onCancel={() =>
                       cancelPipelineRun({
                         name: pipelineRunName,
-                        namespace
+                        namespace,
+                        annotations
                       })
                     }
                   />

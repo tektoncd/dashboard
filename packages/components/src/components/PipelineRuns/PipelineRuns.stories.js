@@ -22,7 +22,9 @@ storiesOf('PipelineRuns', module)
   .add('default', () => (
     <PipelineRuns
       createPipelineRunURL={({ namespace, pipelineName, pipelineRunName }) =>
-        `to-pipelineRun-${namespace}/${pipelineName}/${pipelineRunName}`
+        namespace
+          ? `to-pipelineRun-${namespace}/${pipelineName}/${pipelineRunName}`
+          : null
       }
       createPipelineRunsByPipelineURL={({
         namespace,
@@ -74,6 +76,27 @@ storiesOf('PipelineRuns', module)
                 reason: 'Running',
                 status: 'Unknown',
                 type: 'Succeeded'
+              }
+            ]
+          }
+        },
+        {
+          apiVersion: 'tekton.dev/v1alpha1',
+          kind: 'PipelineRun',
+          metadata: {
+            name: 'output-pipeline-run'
+          },
+          spec: {
+            pipelineRef: {
+              name: 'output-pipeline'
+            },
+            serviceAccount: 'default',
+            resources: [
+              {
+                name: 'source-repo',
+                resourceRef: {
+                  name: 'skaffold-git'
+                }
               }
             ]
           }
