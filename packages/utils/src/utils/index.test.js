@@ -145,7 +145,7 @@ it('getStatusIcon', () => {
   icon = getStatusIcon({ status: 'False' });
   expect(icon).not.toBeNull();
   icon = getStatusIcon({});
-  expect(icon).toBeNull();
+  expect(icon).not.toBeNull();
 });
 
 it('stepsStatus step is waiting', () => {
