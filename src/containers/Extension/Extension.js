@@ -32,6 +32,7 @@ function dynamicImport(source, name) {
     };
 
     script.type = 'module';
+    script.crossorigin = 'anonymous'; // sets credentials flag to 'same-origin'
     script.onerror = () => {
       reject(new Error(`Failed to import ${source}`));
       cleanup();
