@@ -123,6 +123,7 @@ spec:
         - --tls-cert=/etc/tls/private/tls.crt
         - --tls-key=/etc/tls/private/tls.key
         - --cookie-secret=SECRET
+        - --skip-auth-regex=^/v1/extensions/.*\.js
         volumeMounts:
         - mountPath: /etc/tls/private
           name: proxy-tls
