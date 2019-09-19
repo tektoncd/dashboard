@@ -71,7 +71,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       const task = selectedTask(taskName, tasks);
       const {
         name: taskRunName,
-        namespace: taskRunNamespace
+        namespace: taskRunNamespace,
+        annotations
       } = taskRun.metadata;
       const { reason, status: succeeded } = getStatus(taskRun);
       const { pipelineTaskName } = taskRunDetails[taskRunName];
@@ -90,7 +91,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
         namespace: taskRunNamespace,
         inputResources,
         outputResources,
-        params
+        params,
+        annotations
       };
     });
   };
