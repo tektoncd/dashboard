@@ -117,7 +117,7 @@ it('deleteSecret', async () => {
 
   const expectedActions = [
     { type: 'SECRET_DELETE_REQUEST' },
-    { type: 'SECRET_DELETE_SUCCESS', secrets }
+    { type: 'SECRET_DELETE_SUCCESS' }
   ];
 
   await store.dispatch(deleteSecret(secrets));
@@ -141,8 +141,6 @@ it('deleteSecret error', async () => {
 });
 
 it('createSecret', async () => {
-  const secrets = data;
-  const secretsFormatted = dataFormatted;
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const store = mockStore();
@@ -150,14 +148,12 @@ it('createSecret', async () => {
   jest
     .spyOn(selectors, 'getSelectedNamespace')
     .mockImplementation(() => namespace);
-  jest.spyOn(API, 'getCredentials').mockImplementation(() => secrets);
 
   jest.spyOn(API, 'createCredential').mockImplementation(() => response);
 
   const expectedActions = [
     { type: 'SECRET_CREATE_REQUEST' },
-    { type: 'SECRETS_FETCH_REQUEST' },
-    fetchSecretsSuccess(secretsFormatted)
+    { type: 'SECRET_CREATE_SUCCESS' }
   ];
 
   await store.dispatch(createSecret(postData, namespace));

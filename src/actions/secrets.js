@@ -62,7 +62,7 @@ export function deleteSecret(secrets) {
 
     Promise.all(deletePromises)
       .then(() => {
-        dispatch({ type: 'SECRET_DELETE_SUCCESS', secrets });
+        dispatch({ type: 'SECRET_DELETE_SUCCESS' });
       })
       .catch(error => {
         dispatch({ type: 'SECRET_DELETE_FAILURE', error });
@@ -76,7 +76,7 @@ export function createSecret(postData, namespace) {
     dispatch({ type: 'SECRET_CREATE_REQUEST' });
     try {
       await createCredential(postData, namespace);
-      dispatch(fetchSecrets());
+      dispatch({ type: 'SECRET_CREATE_SUCCESS' });
     } catch (error) {
       dispatch({ type: 'SECRET_CREATE_FAILURE', error });
     }

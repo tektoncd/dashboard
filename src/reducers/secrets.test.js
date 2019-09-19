@@ -106,6 +106,67 @@ it('SECRET_DELETE_SUCCESS for multiple secrets', () => {
   expect(selectors.isFetchingSecrets(state)).toBe(false);
 });
 
+it('SecretCreated', () => {
+  const secret = {
+    metadata: {
+      name: 'github-repo-access-secret',
+      namespace: 'default',
+      annotations: {}
+    },
+    type: 'kubernetes.io/basic-auth'
+  };
+
+  const action = { type: 'SecretCreated', payload: secret };
+  const state = secretsReducer({}, action);
+
+  expect(selectors.getSecrets(state, 'default')[0]).toStrictEqual(
+    secret.metadata
+  );
+});
+
+it('SecretCreated with unsupported type', () => {
+  const secret = {
+    metadata: {
+      name: 'github-repo-access-secret',
+      namespace: 'default',
+      annotations: {}
+    },
+    type: 'Opaque'
+  };
+
+  const action = { type: 'SecretCreated', payload: secret };
+  const state = secretsReducer({}, action);
+
+  expect(selectors.getSecrets(state, 'default')).toEqual([]);
+});
+
+it('SecretDeleted', () => {
+  const secret = {
+    metadata: {
+      name: 'github-repo-access-secret',
+      namespace: 'default',
+      annotations: {}
+    }
+  };
+  const secretsState = {
+    byNamespace: {
+      default: {
+        'github-repo-access-secret': {
+          uid: '0',
+          name: 'github-repo-access-secret',
+          namespace: 'default',
+          annotations: {}
+        }
+      }
+    }
+  };
+
+  const action = { type: 'SecretDeleted', payload: secret };
+  const state = secretsReducer(secretsState, action);
+
+  expect(selectors.getSecrets(state, 'default')).toStrictEqual([]);
+});
+
 it('getSecrets', () => {
   const namespace = 'namespace';
   const state = { byNamespace: {} };
