@@ -14,11 +14,15 @@ limitations under the License.
 import { combineReducers } from 'redux';
 import merge from 'lodash.merge';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
+import { isStale } from '../utils';
 
 function byNamespace(state = {}, action) {
   switch (action.type) {
     case 'SECRETS_FETCH_SUCCESS':
       const namespaces = action.data.reduce((accumulator, secret) => {
+        if (isStale({ metadata: secret }, state, 'name')) {
+          return state;
+        }
         const { namespace, name } = secret;
         return merge(accumulator, {
           [namespace]: {
@@ -27,12 +31,28 @@ function byNamespace(state = {}, action) {
         });
       }, {});
       return merge({}, state, namespaces);
-    case 'SECRET_DELETE_SUCCESS':
-      const newState = state;
-      action.secrets.forEach(secret => {
-        const { name, namespace } = secret;
-        delete newState[namespace][name];
-      });
+    case 'SecretCreated':
+    case 'SecretUpdated':
+      if (
+        isStale(action.payload, state, 'name') ||
+        action.payload.type !== 'kubernetes.io/basic-auth'
+      ) {
+        return state;
+      }
+      const secret = {
+        [action.payload.metadata.namespace]: {
+          [action.payload.metadata.name]: {
+            name: action.payload.metadata.name || '',
+            namespace: action.payload.metadata.namespace || '',
+            annotations: action.payload.metadata.annotations || ''
+          }
+        }
+      };
+      return merge({}, state, secret);
+    case 'SecretDeleted':
+      const newState = { ...state };
+      const { name, namespace } = action.payload.metadata;
+      delete newState[namespace][name];
       return newState;
     default:
       return state;
@@ -46,6 +66,7 @@ function isFetching(state = false, action) {
     case 'SECRET_CREATE_REQUEST':
       return true;
     case 'SECRETS_FETCH_SUCCESS':
+    case 'SECRET_CREATE_SUCCESS':
     case 'SECRET_DELETE_SUCCESS':
     case 'SECRETS_FETCH_FAILURE':
     case 'SECRET_DELETE_FAILURE':
