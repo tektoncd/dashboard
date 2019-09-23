@@ -21,6 +21,7 @@ import { ALL_NAMESPACES, urls } from '@tektoncd/dashboard-utils';
 import { renderWithRouter } from '../../utils/test';
 import ImportResourcesContainer from './ImportResources';
 import * as API from '../../api';
+import 'jest-dom/extend-expect';
 
 beforeEach(jest.resetAllMocks);
 
@@ -29,21 +30,33 @@ describe('ImportResources component', () => {
   const mockStore = configureStore(middleware);
   const store = mockStore({
     namespaces: {
-      byName: { namespace1: true },
+      byName: { namespace1: true, default: true },
       isFetching: false,
       selected: ALL_NAMESPACES
     },
     notifications: {},
     serviceAccounts: {
-      byId: {},
-      byNamespace: {},
-      errorMessage: null,
+      byNamespace: {
+        namespace1: {
+          'service-account-1': 'id-service-account-1'
+        }
+      },
+      byId: {
+        'id-service-account-1': {
+          metadata: {
+            name: 'service-account-1',
+            namespace: 'namespace1',
+            uid: 'id-service-account-1'
+          }
+        }
+      },
       isFetching: false
     }
   });
 
   it('Valid data submit displays success notification ', async () => {
-    const namespace = 'namespace1';
+    const installNamespace = 'namespace1';
+    const namespace = 'default';
     const pipelineRunName = 'fake-tekton-pipeline-run';
     const headers = {
       metadata: { name: pipelineRunName }
@@ -55,15 +68,35 @@ describe('ImportResources component', () => {
         Promise.resolve({ metadata: { name: 'git-source' } })
       );
 
-    jest
-      .spyOn(API, 'createPipelineRun')
-      .mockImplementation(() => Promise.resolve(headers));
+    jest.spyOn(API, 'createPipelineRun').mockImplementation(pipelineRun => {
+      const paramShouldEqual = {
+        pipelineName: 'pipeline0',
+        serviceAccount: '',
+        resources: { 'git-source': 'git-source' },
+        params: { 'apply-directory': '', 'target-namespace': 'default' },
+        namespace: 'namespace1',
+        labels: {
+          gitServer: 'example.com',
+          gitOrg: 'test',
+          gitRepo: 'testing.git'
+        }
+      };
+      // If the test on the line below fails, there is no clear error given.
+      // The test outputs the webpage and you see a "Please submit a valid URl".
+      // This essentially tells you that something has gone wrong in the
+      // creation of the pipelinerun .... which could well be that the
+      // expected parameter values no longer match.  Adding a
+      // console log of pipelineRun here will allow you to check what was given
+      // to createPipelineRun.
+      expect(pipelineRun).toEqual(paramShouldEqual);
+      return Promise.resolve(headers);
+    });
 
     jest
       .spyOn(API, 'determineInstallNamespace')
-      .mockImplementation(() => namespace);
+      .mockImplementation(() => installNamespace);
 
-    const { getByLabelText, getByTestId, getByText } = renderWithRouter(
+    const { getByLabelText, getByTestId, getByText } = await renderWithRouter(
       <Provider store={store}>
         <ImportResourcesContainer />
       </Provider>
@@ -76,7 +109,7 @@ describe('ImportResources component', () => {
 
     fireEvent.click(getByLabelText(/namespace/i));
     fireEvent.click(getByText(/select namespace/i));
-    fireEvent.click(getByText('namespace1'));
+    fireEvent.click(getByText(namespace));
 
     fireEvent.click(getByText('Import and Apply'));
     await waitForElement(() =>
@@ -88,7 +121,7 @@ describe('ImportResources component', () => {
         .innerHTML
     ).toContain(
       urls.pipelineRuns.byName({
-        namespace,
+        namespace: installNamespace,
         pipelineName: 'pipeline0',
         pipelineRunName
       })
@@ -110,9 +143,9 @@ describe('ImportResources component', () => {
 
     jest
       .spyOn(API, 'determineInstallNamespace')
-      .mockImplementation(() => 'default');
+      .mockImplementation(() => 'namespace1');
 
-    const { getByLabelText, getByTestId, getByText } = render(
+    const { getByLabelText, getByTestId, getByText } = await render(
       <Provider store={store}>
         <ImportResourcesContainer />
       </Provider>
@@ -130,7 +163,11 @@ describe('ImportResources component', () => {
   });
 
   it('Failure to populate required field displays error', async () => {
-    const { getByText } = render(
+    jest
+      .spyOn(API, 'determineInstallNamespace')
+      .mockImplementation(() => 'namespace1');
+
+    const { getByText } = await render(
       <Provider store={store}>
         <ImportResourcesContainer />
       </Provider>
@@ -141,7 +178,11 @@ describe('ImportResources component', () => {
   });
 
   it('URL TextInput handles onChange event', async () => {
-    const { getByTestId, queryByDisplayValue } = render(
+    jest
+      .spyOn(API, 'determineInstallNamespace')
+      .mockImplementation(() => 'namespace1');
+
+    const { getByTestId, queryByDisplayValue } = await render(
       <Provider store={store}>
         <ImportResourcesContainer />
       </Provider>
@@ -152,53 +193,5 @@ describe('ImportResources component', () => {
     });
 
     await waitForElement(() => queryByDisplayValue(/Invalid URL here/i));
-  });
-
-  it('Error getting pipelinerun log directs to pipelineruns page rather than specific pipelinerun', async () => {
-    const headers = {
-      metadata: { name: 'another-fake-tekton-pipeline-run' }
-    };
-
-    jest
-      .spyOn(API, 'createPipelineResource')
-      .mockImplementation(() =>
-        Promise.resolve({ metadata: { name: 'git-source' } })
-      );
-
-    // Run itself kicked off fine
-    jest
-      .spyOn(API, 'createPipelineRun')
-      .mockImplementation(() => Promise.resolve(headers));
-
-    // Error determining the install namespace
-    jest.spyOn(API, 'determineInstallNamespace').mockImplementation(() => {
-      throw new Error();
-    });
-
-    const { getByLabelText, getByTestId, getByText } = renderWithRouter(
-      <Provider store={store}>
-        <ImportResourcesContainer />
-      </Provider>
-    );
-    await waitForElement(() => getByText(/Import and Apply/i));
-
-    const repoURLField = getByTestId('repository-url-field');
-    fireEvent.change(repoURLField, {
-      target: { value: 'https://example.com/test/testing' }
-    });
-
-    fireEvent.click(getByLabelText(/namespace/i));
-    fireEvent.click(getByText(/select namespace/i));
-    fireEvent.click(getByText('namespace1'));
-
-    fireEvent.click(getByText('Import and Apply'));
-    await waitForElement(() =>
-      getByText(/Triggered PipelineRun to apply Tekton resources/i)
-    );
-
-    expect(
-      document.getElementsByClassName('bx--toast-notification__caption')[0]
-        .innerHTML
-    ).toContain(urls.pipelineRuns.all());
   });
 });

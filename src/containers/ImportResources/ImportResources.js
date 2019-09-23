@@ -93,7 +93,8 @@ export class ImportResources extends Component {
       directory: applydirectory,
       namespace,
       repositoryURL: repourl,
-      serviceAccount
+      serviceAccount,
+      installNamespace
     } = this.state;
     const pipelineName = 'pipeline0';
     const gitresourcename = 'git-source';
@@ -112,7 +113,7 @@ export class ImportResources extends Component {
       kind: 'PipelineResource',
       metadata: {
         generateName: gitresourcename,
-        namespace
+        namespace: installNamespace
       },
       spec: {
         type: 'git',
@@ -129,7 +130,7 @@ export class ImportResources extends Component {
       }
     };
 
-    createPipelineResource({ namespace, resource })
+    createPipelineResource({ namespace: installNamespace, resource })
       .then(data => {
         const labels = getGitValues(repourl);
         const pipelineRun = {
@@ -140,16 +141,17 @@ export class ImportResources extends Component {
             'apply-directory': applydirectory,
             'target-namespace': namespace
           },
-          namespace,
+          namespace: installNamespace,
           labels
         };
+
         const promise = createPipelineRun(pipelineRun);
         promise
           .then(headers => {
             const pipelineRunName = headers.metadata.name;
 
             const finalURL = urls.pipelineRuns.byName({
-              namespace,
+              namespace: installNamespace,
               pipelineName: 'pipeline0',
               pipelineRunName
             });
