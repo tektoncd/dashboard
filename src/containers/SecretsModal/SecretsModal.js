@@ -95,7 +95,7 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
     }
 
     if (validateInputs(name, 'name')) {
-      postData.name = name;
+      postData.name = name.trim();
     } else {
       invalidFields.push('name');
     }
