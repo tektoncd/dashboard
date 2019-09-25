@@ -21,7 +21,6 @@ import { ALL_NAMESPACES, urls } from '@tektoncd/dashboard-utils';
 import { renderWithRouter } from '../../utils/test';
 import ImportResourcesContainer from './ImportResources';
 import * as API from '../../api';
-import 'jest-dom/extend-expect';
 
 beforeEach(jest.resetAllMocks);
 

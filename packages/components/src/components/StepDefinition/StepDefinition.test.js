@@ -76,11 +76,4 @@ it('StepDefinition renders the provided content with resources and params', () =
 
   expect(queryByText(/--someArg/)).toBeTruthy();
   expect(queryByText(/test name/)).toBeTruthy();
-  expect(queryByText(/Input Resources/)).toBeTruthy();
-  expect(queryByText(/Output Resources/)).toBeTruthy();
-  expect(queryByText(/Parameters/)).toBeTruthy();
-  expect(queryByText(testParamName)).toBeTruthy();
-  expect(queryByText(testParam)).toBeTruthy();
-  expect(queryByText(inputResourceName)).toBeTruthy();
-  expect(queryByText(outputResourceName)).toBeTruthy();
 });

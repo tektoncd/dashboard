@@ -14,56 +14,12 @@ limitations under the License.
 // TODO: rename. Details section of a step
 
 import React from 'react';
-import { Link } from 'react-router-dom';
 import jsYaml from 'js-yaml';
 import { FormattedMessage, injectIntl } from 'react-intl';
-import { urls } from '@tektoncd/dashboard-utils';
 
-import { ResourceTable } from '..';
 import './StepDefinition.scss';
 
-const resourceTable = (title, namespace, resources, intl) => {
-  return (
-    <ResourceTable
-      title={title}
-      rows={resources.map(({ name, resourceRef, resourceSpec }) => ({
-        id: name,
-        name,
-        value:
-          resourceRef && resourceRef.name ? (
-            <Link
-              to={urls.pipelineResources.byName({
-                namespace,
-                pipelineResourceName: resourceRef.name
-              })}
-            >
-              {resourceRef.name}
-            </Link>
-          ) : (
-            <pre>{jsYaml.dump(resourceSpec)}</pre>
-          )
-      }))}
-      headers={[
-        {
-          key: 'name',
-          header: intl.formatMessage({
-            id: 'dashboard.tableHeader.name',
-            defaultMessage: 'Name'
-          })
-        },
-        {
-          key: 'value',
-          header: intl.formatMessage({
-            id: 'dashboard.tableHeader.value',
-            defaultMessage: 'Value'
-          })
-        }
-      ]}
-    />
-  );
-};
-
-const StepDefinition = ({ definition, intl, taskRun }) => {
+const StepDefinition = ({ definition, intl }) => {
   const yaml = jsYaml.dump(
     definition ||
       intl.formatMessage({
@@ -81,34 +37,6 @@ const StepDefinition = ({ definition, intl, taskRun }) => {
         :
       </div>
       <pre>{yaml}</pre>
-      {taskRun.params && (
-        <ResourceTable
-          title="Parameters"
-          rows={taskRun.params.map(({ name, value }) => ({
-            id: name,
-            name,
-            value
-          }))}
-          headers={[
-            { key: 'name', header: 'Name' },
-            { key: 'value', header: 'Value' }
-          ]}
-        />
-      )}
-      {taskRun.inputResources &&
-        resourceTable(
-          'Input Resources',
-          taskRun.namespace,
-          taskRun.inputResources,
-          intl
-        )}
-      {taskRun.outputResources &&
-        resourceTable(
-          'Output Resources',
-          taskRun.namespace,
-          taskRun.outputResources,
-          intl
-        )}
     </div>
   );
 };
