@@ -28,7 +28,6 @@ addParameters({
     showNav: true,
     showPanel: true,
     panelPosition: 'bottom',
-    sortStoriesByKind: false,
     hierarchySeparator: /\/|\./,
     hierarchyRootSeparator: /\|/,
     sidebarAnimations: true,
