@@ -177,11 +177,11 @@ spec:
       name: pipeline0-task
     params:
     - name: pathToResourceFiles
-      value: ${params.pathToResourceFiles}
+      value: $(params.pathToResourceFiles)
     - name: apply-directory
-      value: ${params.apply-directory}
+      value: $(params.apply-directory)
     - name: target-namespace
-      value: ${params.target-namespace}
+      value: $(params.target-namespace)
     resources:
       inputs:
       - name: git-source
@@ -219,6 +219,6 @@ spec:
     args:
     - apply
     - -f
-    - ${inputs.params.pathToResourceFiles}/${inputs.params.apply-directory} 
+    - $(inputs.params.pathToResourceFiles)/$(inputs.params.apply-directory) 
     - -n
-    - ${inputs.params.target-namespace}
+    - $(inputs.params.target-namespace)
