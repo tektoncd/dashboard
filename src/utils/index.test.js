@@ -20,13 +20,14 @@ it('sortRunsByStartTime', () => {
   const d = { name: 'd', status: { startTime: '1' } };
   const e = { name: 'e', status: {} };
   const f = { name: 'f', status: { startTime: '3' } };
+  const g = { name: 'g' };
 
-  const runs = [a, b, c, d, e, f];
+  const runs = [a, b, c, d, e, f, g];
   /*
     sort is stable on all modern browsers so
     input order is preserved for b and e
    */
-  const sortedRuns = [b, e, f, c, d, a];
+  const sortedRuns = [b, e, g, f, c, d, a];
   sortRunsByStartTime(runs);
   expect(runs).toEqual(sortedRuns);
 });
