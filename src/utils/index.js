@@ -16,8 +16,8 @@ import { getPodLog } from '../api';
 
 export function sortRunsByStartTime(runs) {
   runs.sort((a, b) => {
-    const aTime = a.status.startTime;
-    const bTime = b.status.startTime;
+    const aTime = (a.status || {}).startTime;
+    const bTime = (b.status || {}).startTime;
     if (!aTime) {
       return -1;
     }
