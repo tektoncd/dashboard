@@ -59,7 +59,7 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
           placeholder: 'https://github.com',
           id: Math.random()
             .toString(36)
-            .substr(2, 9)
+            .substring(2, 11)
         }
       ],
       invalidFields: []
@@ -252,7 +252,7 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
         .split('-')
         .splice(1, 2)
         .join();
-      const index = id.substr(id.length - 1);
+      const index = id.substring(id.length - 1);
       id = id.slice(0, -1);
 
       const { annotations } = prevState;
@@ -280,7 +280,7 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
         placeholder: example,
         id: Math.random()
           .toString(36)
-          .substr(2, 9)
+          .substring(2, 11)
       });
       return annotations;
     });
