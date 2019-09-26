@@ -352,7 +352,7 @@ it('CreatePipelineRun renders empty, dropdowns disabled when no namespace select
       .getElementById('create-pipelinerun--sa-dropdown')
       .className.includes('disabled')
   ).toBe(true);
-  expect(queryByPlaceholderText(/duration/i)).toBeTruthy();
+  expect(queryByPlaceholderText(/60m/i)).toBeTruthy();
   expect(queryByText(/cancel/i)).toBeTruthy();
   expect(submitButton(queryAllByText)).toBeTruthy();
 
@@ -504,8 +504,8 @@ it('CreatePipelineRun submits form', () => {
   fireEvent.click(getByText(/select service account/i));
   fireEvent.click(getByText(/service-account-1/i));
   // Fill timeout
-  fireEvent.change(getByPlaceholderText(/duration/i), {
-    target: { value: '120' }
+  fireEvent.change(getByPlaceholderText(/60m/i), {
+    target: { value: '120s' }
   });
   // Submit
   const createPipelineRun = jest
@@ -525,7 +525,7 @@ it('CreatePipelineRun submits form', () => {
       'param-2': 'value-2'
     },
     serviceAccount: 'service-account-1',
-    timeout: '120'
+    timeout: '120s'
   };
   expect(createPipelineRun).toHaveBeenCalledWith(payload);
 });
