@@ -61,40 +61,50 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   };
 
   loadTaskRuns = pipelineRun => {
+    if (!pipelineRun) {
+      return [];
+    }
+
     const { tasks, taskRuns } = this.props;
     const {
       status: { taskRuns: taskRunDetails }
     } = pipelineRun;
 
-    return taskRuns.map(taskRun => {
-      const taskName = taskRun.spec.taskRef.name;
-      const task = selectedTask(taskName, tasks);
-      const {
-        name: taskRunName,
-        namespace: taskRunNamespace,
-        annotations
-      } = taskRun.metadata;
-      const { reason, status: succeeded } = getStatus(taskRun);
-      const { pipelineTaskName } = taskRunDetails[taskRunName];
-      const { params, resources: inputResources } = taskRun.spec.inputs;
-      const { resources: outputResources } = taskRun.spec.outputs;
-      const steps = stepsStatus(task.spec.steps, taskRun.status.steps);
-      return {
-        id: taskRun.metadata.uid,
-        pipelineTaskName,
-        pod: taskRun.status.podName,
-        reason,
-        steps,
-        succeeded,
-        taskName,
-        taskRunName,
-        namespace: taskRunNamespace,
-        inputResources,
-        outputResources,
-        params,
-        annotations
-      };
-    });
+    return taskRuns
+      .map(taskRun => {
+        const taskName = taskRun.spec.taskRef.name;
+        const task = selectedTask(taskName, tasks);
+        if (!task) {
+          return null;
+        }
+
+        const {
+          name: taskRunName,
+          namespace: taskRunNamespace,
+          annotations
+        } = taskRun.metadata;
+        const { reason, status: succeeded } = getStatus(taskRun);
+        const { pipelineTaskName } = taskRunDetails[taskRunName] || {};
+        const { params, resources: inputResources } = taskRun.spec.inputs;
+        const { resources: outputResources } = taskRun.spec.outputs;
+        const steps = stepsStatus(task.spec.steps, taskRun.status.steps);
+        return {
+          id: taskRun.metadata.uid,
+          pipelineTaskName,
+          pod: taskRun.status.podName,
+          reason,
+          steps,
+          succeeded,
+          taskName,
+          taskRunName,
+          namespace: taskRunNamespace,
+          inputResources,
+          outputResources,
+          params,
+          annotations
+        };
+      })
+      .filter(Boolean);
   };
 
   render() {
