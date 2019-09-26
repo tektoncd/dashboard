@@ -125,6 +125,13 @@ class CreatePipelineRun extends React.Component {
     return props[PIPELINE_REF] ? props[key] : state[key];
   }
 
+  isDisabled = () => {
+    if (this.state[NAMESPACE] === '') {
+      return true;
+    }
+    return false;
+  };
+
   checkFormValidation() {
     // Namespace, PipelineRef, Resources, and Params must all have values
     const validNamespace = !!this.getPipelineInfo(NAMESPACE);
@@ -337,6 +344,7 @@ class CreatePipelineRun extends React.Component {
                 selectedItem={
                   pipelineRef ? { id: pipelineRef, text: pipelineRef } : ''
                 }
+                disabled={this.isDisabled()}
                 onChange={this.handlePipelineChange}
               />
             </FormGroup>
@@ -397,6 +405,7 @@ class CreatePipelineRun extends React.Component {
                   ? { id: serviceAccount, text: serviceAccount }
                   : ''
               }
+              disabled={this.isDisabled()}
               onChange={({ selectedItem: { text } }) =>
                 this.setState({ serviceAccount: text })
               }

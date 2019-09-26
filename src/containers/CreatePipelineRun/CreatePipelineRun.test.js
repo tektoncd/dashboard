@@ -327,19 +327,52 @@ it('CreatePipelineRun handles api error with text', async () => {
   await waitForElement(() => getByText(/example message \(error code 401\)/i));
 });
 
-it('CreatePipelineRun renders empty', () => {
-  const { queryByText, queryAllByText, queryByPlaceholderText } = render(
+it('CreatePipelineRun renders empty, dropdowns disabled when no namespace selected', async () => {
+  const {
+    queryByText,
+    queryAllByText,
+    queryByPlaceholderText,
+    getByText
+  } = render(
     <Provider store={mockStore(testStore)}>
-      <CreatePipelineRun open />
+      <CreatePipelineRun open namespace="" />
     </Provider>
   );
   expect(queryByText(/create pipelinerun/i)).toBeTruthy();
   expect(queryByText(/select namespace/i)).toBeTruthy();
   expect(queryByText(/select pipeline/i)).toBeTruthy();
+  expect(
+    document
+      .getElementById('create-pipelinerun--pipelines-dropdown')
+      .className.includes('disabled')
+  ).toBe(true);
   expect(queryByText(/select service account/i)).toBeTruthy();
+  expect(
+    document
+      .getElementById('create-pipelinerun--sa-dropdown')
+      .className.includes('disabled')
+  ).toBe(true);
   expect(queryByPlaceholderText(/duration/i)).toBeTruthy();
   expect(queryByText(/cancel/i)).toBeTruthy();
   expect(submitButton(queryAllByText)).toBeTruthy();
+
+  // Check dropdowns enabled when namespace selected
+  fireEvent.click(await waitForElement(() => getByText(/select namespace/i)));
+  fireEvent.click(await waitForElement(() => getByText(/namespace-1/i)));
+  await wait(() =>
+    expect(
+      document
+        .getElementById('create-pipelinerun--pipelines-dropdown')
+        .className.includes('disabled')
+    ).toBe(false)
+  );
+  await wait(() =>
+    expect(
+      document
+        .getElementById('create-pipelinerun--sa-dropdown')
+        .className.includes('disabled')
+    ).toBe(false)
+  );
 });
 
 it('CreatePipelineRun renders pipeline', () => {
