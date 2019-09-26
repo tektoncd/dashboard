@@ -148,6 +148,7 @@ class CreatePipelineRun extends React.Component {
         (acc, name) => acc && !!this.state.params[name],
         true
       );
+
     return validNamespace && validPipelineRef && validResources && validParams;
   }
 
@@ -413,7 +414,8 @@ class CreatePipelineRun extends React.Component {
             <TextInput
               id="create-pipelinerun--timeout"
               labelText="Timeout (optional)"
-              placeholder="duration"
+              helperText="See https://golang.org/pkg/time/#ParseDuration for valid duration format"
+              placeholder="60m"
               value={this.state.timeout}
               onChange={({ target: { value } }) =>
                 this.setState({ timeout: value })
