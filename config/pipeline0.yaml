@@ -29,11 +29,11 @@ spec:
       name: pipeline0-task
     params:
     - name: pathToResourceFiles
-      value: ${params.pathToResourceFiles}
+      value: $(params.pathToResourceFiles)
     - name: apply-directory
-      value: ${params.apply-directory}
+      value: $(params.apply-directory)
     - name: target-namespace
-      value: ${params.target-namespace}
+      value: $(params.target-namespace)
     resources:
       inputs:
       - name: git-source
