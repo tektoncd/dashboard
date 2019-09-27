@@ -23,7 +23,6 @@ export class Rebuild extends Component {
       event.preventDefault();
     }
 
-    const pipelineName = this.props.pipelineRun.spec.pipelineRef.name;
     const { namespace } = this.props.pipelineRun.metadata;
     const payload = {
       pipelinerunname: this.props.runName
@@ -38,7 +37,6 @@ export class Rebuild extends Component {
         );
         const finalURL = urls.pipelineRuns.byName({
           namespace,
-          pipelineName,
           pipelineRunName: newPipelineRunName
         });
         this.props.setShowRebuildNotification({

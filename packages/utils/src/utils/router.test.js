@@ -105,12 +105,9 @@ describe('pipelineRuns', () => {
   });
 
   it('byName', () => {
-    expect(
-      urls.pipelineRuns.byName({ namespace, pipelineName, pipelineRunName })
-    ).toEqual(
+    expect(urls.pipelineRuns.byName({ namespace, pipelineRunName })).toEqual(
       generatePath(paths.pipelineRuns.byName(), {
         namespace,
-        pipelineName,
         pipelineRunName
       })
     );

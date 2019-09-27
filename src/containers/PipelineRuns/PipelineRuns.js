@@ -202,14 +202,10 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
 
   handleCreatePipelineRunSuccess(newPipelineRun) {
     const {
-      metadata: { namespace, name },
-      spec: {
-        pipelineRef: { name: pipelineName }
-      }
+      metadata: { namespace, name }
     } = newPipelineRun;
     const url = urls.pipelineRuns.byName({
       namespace,
-      pipelineName,
       pipelineRunName: name
     });
     this.toggleModal(false);

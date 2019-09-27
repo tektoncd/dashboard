@@ -152,7 +152,6 @@ export class ImportResources extends Component {
 
             const finalURL = urls.pipelineRuns.byName({
               namespace: installNamespace,
-              pipelineName: 'pipeline0',
               pipelineRunName
             });
 

@@ -116,51 +116,19 @@ export /* istanbul ignore next */ class App extends Component {
                   exact
                   component={Pipelines}
                 />
-                <Route path={paths.secrets.all()} exact component={Secrets} />
-                <Route path={paths.tasks.all()} exact component={Tasks} />
-                <Route
-                  path={paths.tasks.byNamespace()}
-                  exact
-                  component={Tasks}
-                />
-                <Route
-                  path={paths.clusterTasks.all()}
-                  exact
-                  component={ClusterTasks}
-                />
                 <Route
                   path={paths.pipelineRuns.all()}
                   component={PipelineRuns}
                 />
                 <Route
                   path={paths.pipelineRuns.byNamespace()}
+                  exact
                   component={PipelineRuns}
-                />
-                <Route
-                  path={paths.taskRuns.byNamespace()}
-                  exact
-                  component={TaskRunList}
-                />
-                <Route
-                  path={paths.taskRuns.byName()}
-                  exact
-                  component={TaskRun}
                 />
                 <Route
                   path={paths.pipelineRuns.byPipeline()}
                   exact
                   component={PipelineRuns}
-                />
-                <Route path={paths.taskRuns.all()} component={TaskRunList} />
-                <Route
-                  path={paths.taskRuns.byTask()}
-                  exact
-                  component={TaskRuns}
-                />
-                <Route
-                  path={paths.taskRuns.byClusterTask()}
-                  exact
-                  component={TaskRuns}
                 />
                 <Route
                   path={paths.pipelineRuns.byName()}
@@ -181,10 +149,45 @@ export /* istanbul ignore next */ class App extends Component {
                   exact
                   component={PipelineResource}
                 />
+                <Route path={paths.tasks.all()} exact component={Tasks} />
+                <Route
+                  path={paths.tasks.byNamespace()}
+                  exact
+                  component={Tasks}
+                />
+                <Route path={paths.taskRuns.all()} component={TaskRunList} />
+                <Route
+                  path={paths.taskRuns.byNamespace()}
+                  exact
+                  component={TaskRunList}
+                />
+                <Route
+                  path={paths.taskRuns.byTask()}
+                  exact
+                  component={TaskRuns}
+                />
+                <Route
+                  path={paths.taskRuns.byName()}
+                  exact
+                  component={TaskRun}
+                />
+                <Route
+                  path={paths.clusterTasks.all()}
+                  exact
+                  component={ClusterTasks}
+                />
+                <Route
+                  path={paths.taskRuns.byClusterTask()}
+                  exact
+                  component={TaskRuns}
+                />
+
                 <Route
                   path={paths.importResources()}
                   component={ImportResources}
                 />
+                <Route path={paths.secrets.all()} exact component={Secrets} />
+
                 <Route
                   path={paths.extensions.all()}
                   exact
@@ -205,6 +208,12 @@ export /* istanbul ignore next */ class App extends Component {
                       )}
                     />
                   ))}
+
+                <Route
+                  path={paths.kubernetesResources.all()}
+                  exact
+                  component={ResourceList}
+                />
                 <Route
                   path={paths.kubernetesResources.byNamespace()}
                   exact
@@ -221,11 +230,6 @@ export /* istanbul ignore next */ class App extends Component {
                   component={CustomResourceDefinition}
                 />
                 <Route
-                  path={paths.kubernetesResources.all()}
-                  exact
-                  component={ResourceList}
-                />
-                <Route
                   path={paths.rawCRD.byNamespace()}
                   exact
                   component={CustomResourceDefinition}
@@ -235,6 +239,7 @@ export /* istanbul ignore next */ class App extends Component {
                   exact
                   component={CustomResourceDefinition}
                 />
+
                 <Redirect to={urls.pipelineRuns.all()} />
               </Switch>
             </Content>
