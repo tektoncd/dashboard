@@ -29,6 +29,7 @@ import {
   getErrorMessage,
   urls
 } from '@tektoncd/dashboard-utils';
+import { FormattedDate } from '@tektoncd/dashboard-components';
 
 import { getCustomResources } from '../../api';
 import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
@@ -155,7 +156,9 @@ export /* istanbul ignore next */ class ResourceListContainer extends Component 
                 {selectedNamespace === ALL_NAMESPACES && (
                   <StructuredListCell>{namespace}</StructuredListCell>
                 )}
-                <StructuredListCell>{creationTimestamp}</StructuredListCell>
+                <StructuredListCell>
+                  <FormattedDate date={creationTimestamp} relative />
+                </StructuredListCell>
               </StructuredListRow>
             );
           })}

@@ -11,11 +11,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import 'core-js/stable';
-import 'regenerator-runtime/runtime';
-import 'isomorphic-fetch';
-import 'es6-promise/auto';
+import React from 'react';
+import { storiesOf } from '@storybook/react';
+import { date } from '@storybook/addon-knobs';
 
-import './object-is';
-import '@formatjs/intl-pluralrules/polyfill';
-import '@formatjs/intl-relativetimeformat/polyfill';
+import FormattedDate from './FormattedDate';
+
+const now = new Date();
+
+storiesOf('FormattedDate', module)
+  .add('relative', () => <FormattedDate date={date('date', now)} relative />)
+  .add('absolute', () => <FormattedDate date={date('date', now)} />);

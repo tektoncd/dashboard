@@ -31,7 +31,7 @@ import {
   isRunning,
   urls
 } from '@tektoncd/dashboard-utils';
-import { CancelButton } from '@tektoncd/dashboard-components';
+import { CancelButton, FormattedDate } from '@tektoncd/dashboard-components';
 
 import { sortRunsByStartTime } from '../../utils';
 import { fetchTaskRuns } from '../../actions/taskRuns';
@@ -177,7 +177,9 @@ export /* istanbul ignore next */ class TaskRunList extends Component {
                   {getStatusIcon({ reason, status })}
                   {message}
                 </StructuredListCell>
-                <StructuredListCell>{lastTransitionTime}</StructuredListCell>
+                <StructuredListCell>
+                  <FormattedDate date={lastTransitionTime} relative />
+                </StructuredListCell>
                 <StructuredListCell>
                   {isRunning(reason, status) && (
                     <CancelButton

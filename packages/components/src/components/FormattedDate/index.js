@@ -11,11 +11,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import 'core-js/stable';
-import 'regenerator-runtime/runtime';
-import 'isomorphic-fetch';
-import 'es6-promise/auto';
-
-import './object-is';
-import '@formatjs/intl-pluralrules/polyfill';
-import '@formatjs/intl-relativetimeformat/polyfill';
+export { default } from './FormattedDate';

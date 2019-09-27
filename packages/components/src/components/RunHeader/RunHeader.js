@@ -14,6 +14,8 @@ limitations under the License.
 import React, { Component } from 'react';
 import { SkeletonPlaceholder, Tab, Tabs } from 'carbon-components-react';
 import { getStatusIcon } from '@tektoncd/dashboard-utils';
+import { FormattedDate } from '..';
+
 import './RunHeader.scss';
 
 class RunHeader extends Component {
@@ -40,7 +42,9 @@ class RunHeader extends Component {
                   {runName}
                 </div>
                 <span className="status-label">{reason}</span>
-                <span className="time">{lastTransitionTime}</span>
+                <span className="time">
+                  <FormattedDate date={lastTransitionTime} relative />
+                </span>
                 {this.props.children}
               </h1>
             )

@@ -11,6 +11,8 @@
   "dependencies": {
     "@babel/cli": "^7.5.5",
     "@carbon/icons-react": "^10.3.0",
+    "@formatjs/intl-pluralrules": "^1.2.1",
+    "@formatjs/intl-relativetimeformat": "^4.1.1",
     "@tektoncd/dashboard-utils": "file:../utils",
     "ansi-to-react": "^5.0.0",
     "carbon-components": "^10.4.1",
