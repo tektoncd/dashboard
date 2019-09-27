@@ -18,6 +18,8 @@ import StoryRouter from 'storybook-react-router';
 
 import RunHeader from './RunHeader';
 
+const now = new Date();
+
 storiesOf('RunHeader', module)
   .addDecorator(StoryRouter())
   .add('default', () => (
@@ -30,6 +32,7 @@ storiesOf('RunHeader', module)
   ))
   .add('running', () => (
     <RunHeader
+      lastTransitionTime={now}
       name={text('Pipeline Name', 'simple-pipeline')}
       runName={text('PipelineRun Name', 'simple-pipeline-run-1')}
       reason="Running"
@@ -40,6 +43,7 @@ storiesOf('RunHeader', module)
   ))
   .add('complete', () => (
     <RunHeader
+      lastTransitionTime={now}
       name={text('Pipeline Name', 'simple-pipeline')}
       runName={text('PipelineRun Name', 'simple-pipeline-run-1')}
       status="True"
@@ -50,6 +54,7 @@ storiesOf('RunHeader', module)
   ))
   .add('failed', () => (
     <RunHeader
+      lastTransitionTime={now}
       name={text('Pipeline Name', 'simple-pipeline')}
       runName={text('PipelineRun Name', 'simple-pipeline-run-1')}
       status="False"

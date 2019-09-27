@@ -14,6 +14,7 @@ limitations under the License.
 export { default as Breadcrumbs } from './Breadcrumbs';
 export { default as CancelButton } from './CancelButton';
 export { default as ErrorBoundary } from './ErrorBoundary';
+export { default as FormattedDate } from './FormattedDate';
 export { default as Header } from './Header';
 export { default as Log } from './Log';
 export { default as LogoutButton } from './LogoutButton';

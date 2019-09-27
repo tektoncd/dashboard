@@ -29,7 +29,7 @@ import {
   urls
 } from '@tektoncd/dashboard-utils';
 
-import { CancelButton } from '..';
+import { CancelButton, FormattedDate } from '..';
 
 import './PipelineRuns.scss';
 
@@ -144,7 +144,9 @@ const PipelineRuns = ({
                     defaultMessage: 'Pending'
                   })}
             </StructuredListCell>
-            <StructuredListCell>{lastTransitionTime}</StructuredListCell>
+            <StructuredListCell>
+              <FormattedDate date={lastTransitionTime} relative />
+            </StructuredListCell>
             {cancelPipelineRun && (
               <StructuredListCell>
                 {isRunning(reason, status) && (
