@@ -103,7 +103,6 @@ const PipelineRuns = ({
         const { lastTransitionTime, reason, status } = getStatus(pipelineRun);
         const url = createPipelineRunURL({
           namespace,
-          pipelineName: pipelineRefName,
           pipelineRunName,
           annotations
         });

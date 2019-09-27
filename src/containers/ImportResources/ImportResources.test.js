@@ -122,7 +122,6 @@ describe('ImportResources component', () => {
     ).toContain(
       urls.pipelineRuns.byName({
         namespace: installNamespace,
-        pipelineName: 'pipeline0',
         pipelineRunName
       })
     );

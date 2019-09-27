@@ -152,7 +152,6 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
 PipelineRunContainer.propTypes = {
   match: PropTypes.shape({
     params: PropTypes.shape({
-      pipelineName: PropTypes.string.isRequired,
       pipelineRunName: PropTypes.string.isRequired
     }).isRequired
   }).isRequired

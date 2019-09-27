@@ -26,7 +26,6 @@ storiesOf('Breadcrumbs', module)
       match={{
         url: urls.pipelineRuns.byName({
           namespace: 'default',
-          pipelineName: 'demo-pipeline',
           pipelineRunName: 'demo-pipeline-run-1'
         })
       }}

@@ -53,11 +53,14 @@ export const paths = {
       return byNamespace({ path: '/pipelineruns' });
     },
     byPipeline() {
-      return byNamespace({ path: '/pipelines/:pipelineName/runs' });
+      return byNamespace({
+        path:
+          '/pipelineruns?labelSelector=tekton.dev%2Fpipeline%3D:pipelineName'
+      });
     },
     byName() {
       return byNamespace({
-        path: '/pipelines/:pipelineName/runs/:pipelineRunName'
+        path: '/pipelineruns/:pipelineRunName'
       });
     }
   },
