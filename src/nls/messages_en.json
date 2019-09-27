@@ -11,7 +11,7 @@
     "dashboard.pipelineRun.failed": "Cannot load PipelineRun",
     "dashboard.pipelineRun.failedMessage": "Unable to load PipelineRun details: {reason}",
     "dashboard.pipelineRun.logEmpty": "No log available",
-    "dashboard.pipelineRun.logFailed": "Unable to fetch log",
+    "dashboard.pipelineRun.logFailed": "Logs unavailable",
     "dashboard.pipelineRun.notFound": "PipelineRun not found",
     "dashboard.pipelineRun.rebuildStatusMessage": "View status of this rebuilt run",
     "dashboard.pipelineRun.stepCompleted": "Step completed",

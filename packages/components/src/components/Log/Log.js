@@ -112,7 +112,7 @@ export class LogContainer extends Component {
           logs: [
             intl.formatMessage({
               id: 'dashboard.pipelineRun.logFailed',
-              defaultMessage: 'Unable to fetch log'
+              defaultMessage: 'Logs unavailable'
             })
           ]
         });
