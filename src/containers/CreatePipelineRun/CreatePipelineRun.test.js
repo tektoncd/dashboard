@@ -190,6 +190,7 @@ const pipelineValidationErrorRegExp = /pipeline cannot be empty/i;
 const pipelineResourceValidationErrorRegExp = /pipelineresources cannot be empty/i;
 const paramsValidationErrorRegExp = /params cannot be empty/i;
 const apiErrorRegExp = /error creating pipelinerun/i;
+const timeoutValidationErrorRegExp = /Timeout must be a valid number less than 525600/i;
 
 const submitButton = allByText => {
   return allByText(/create/i)[1];
@@ -352,7 +353,7 @@ it('CreatePipelineRun renders empty, dropdowns disabled when no namespace select
       .getElementById('create-pipelinerun--sa-dropdown')
       .className.includes('disabled')
   ).toBe(true);
-  expect(queryByPlaceholderText(/60m/i)).toBeTruthy();
+  expect(queryByPlaceholderText(/60/i)).toBeTruthy();
   expect(queryByText(/cancel/i)).toBeTruthy();
   expect(submitButton(queryAllByText)).toBeTruthy();
 
@@ -504,8 +505,8 @@ it('CreatePipelineRun submits form', () => {
   fireEvent.click(getByText(/select service account/i));
   fireEvent.click(getByText(/service-account-1/i));
   // Fill timeout
-  fireEvent.change(getByPlaceholderText(/60m/i), {
-    target: { value: '120s' }
+  fireEvent.change(getByPlaceholderText(/60/i), {
+    target: { value: '120' }
   });
   // Submit
   const createPipelineRun = jest
@@ -525,7 +526,7 @@ it('CreatePipelineRun submits form', () => {
       'param-2': 'value-2'
     },
     serviceAccount: 'service-account-1',
-    timeout: '120s'
+    timeout: '120m'
   };
   expect(createPipelineRun).toHaveBeenCalledWith(payload);
 });
@@ -569,6 +570,17 @@ it('CreatePipelineRun validates inputs', () => {
   expect(queryByText(pipelineResourceValidationErrorRegExp)).toBeFalsy();
   fillPipeline1Params(getByPlaceholderText);
   expect(queryByText(paramsValidationErrorRegExp)).toBeFalsy();
+  // Test invalid timeouts
+  fireEvent.change(getByPlaceholderText(/60/i), {
+    target: { value: '120m' }
+  });
+  fireEvent.click(submitButton(getAllByText));
+  expect(queryByText(timeoutValidationErrorRegExp)).toBeTruthy();
+  fireEvent.change(document.getElementById('create-pipelinerun--timeout'), {
+    target: { value: '525600' }
+  });
+  fireEvent.click(submitButton(getAllByText));
+  expect(queryByText(timeoutValidationErrorRegExp)).toBeTruthy();
 });
 
 it('CreatePipelineRun handles error getting pipeline', () => {

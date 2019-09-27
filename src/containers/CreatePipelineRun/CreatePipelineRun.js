@@ -149,7 +149,22 @@ class CreatePipelineRun extends React.Component {
         true
       );
 
-    return validNamespace && validPipelineRef && validResources && validParams;
+    // Timeout is a number and less than 1 year in minutes
+    const timeoutTest =
+      !Number.isNaN(this.state.timeout) && this.state.timeout < 525600;
+    if (!timeoutTest) {
+      this.setState({ validTimeout: false });
+    } else {
+      this.setState({ validTimeout: true });
+    }
+
+    return (
+      validNamespace &&
+      validPipelineRef &&
+      validResources &&
+      validParams &&
+      timeoutTest
+    );
   }
 
   handleClose() {
@@ -220,13 +235,14 @@ class CreatePipelineRun extends React.Component {
     const pipelineRef = this.getPipelineInfo(PIPELINE_REF);
     const namespace = this.getPipelineInfo(NAMESPACE);
     const { params, resources, serviceAccount, timeout } = this.state;
+    const timeoutInMins = `${timeout}m`;
     createPipelineRun({
       namespace,
       pipelineName: pipelineRef,
       resources,
       params,
       serviceAccount,
-      timeout
+      timeout: timeoutInMins
     })
       .then(response => {
         this.resetForm();
@@ -258,7 +274,8 @@ class CreatePipelineRun extends React.Component {
       serviceAccount: '',
       timeout: '',
       validationError: false,
-      submitError: ''
+      submitError: '',
+      validTimeout: true
     };
   }
 
@@ -285,7 +302,7 @@ class CreatePipelineRun extends React.Component {
 
   render() {
     const { open } = this.props;
-    const { serviceAccount, validationError } = this.state;
+    const { serviceAccount, validationError, validTimeout } = this.state;
     const namespace = this.getPipelineInfo(NAMESPACE);
     const pipelineRef = this.getPipelineInfo(PIPELINE_REF);
     const pipelineInfoDisabled = this.getPipelineInfo(DISABLED);
@@ -414,8 +431,10 @@ class CreatePipelineRun extends React.Component {
             <TextInput
               id="create-pipelinerun--timeout"
               labelText="Timeout (optional)"
-              helperText="See https://golang.org/pkg/time/#ParseDuration for valid duration format"
-              placeholder="60m"
+              helperText="PipelineRun timeout in minutes"
+              invalid={validationError && !validTimeout}
+              invalidText="Timeout must be a valid number less than 525600"
+              placeholder="60"
               value={this.state.timeout}
               onChange={({ target: { value } }) =>
                 this.setState({ timeout: value })
