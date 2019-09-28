@@ -16,6 +16,7 @@ limitations under the License.
 .pipeline-run-header {
   background: white;
   margin-bottom: 2em;
+  padding: .4em 0 .4em 1.5em;
 
   .header-skeleton {
     margin-top: 0.9rem;
@@ -28,23 +29,8 @@ limitations under the License.
     align-items: baseline;
     font-size: 1.6rem;
     font-weight: 400;
-    line-height: 2rem;
-    height: 2rem;
-
-    .block-icon {
-      display: inline-flex;
-      flex-shrink: 0;
-      vertical-align: middle;
-      position: relative;
-      top: -0.13rem;
-      margin-right: 1.5rem;
-      width: 5rem;
-      height: 1.8rem;
-
-      > svg {
-        margin: auto;
-      }
-    }
+    line-height: 3rem;
+    height: 3rem;
 
     .run-name {
       min-width: 5rem;
@@ -66,49 +52,32 @@ limitations under the License.
       font-weight: 300;
       white-space: nowrap;
     }
-  }
 
-  .bx--tabs {
-    margin-top: 0.4rem;
-    min-height: 2.5rem;
+    .rebuild-btn {
+      margin-left: auto;
+    }
   }
 
   // catch all for unknown states
   &:not([data-succeeded]) {
-    .block-icon {
-      background-color: $unknown-strong-bg;
-      fill: $unknown-strong-fg;
-    }
     .status-label {
       color: $unknown;
     }
   }
 
   &[data-succeeded='True'] {
-    .block-icon {
-      background-color: $success-strong-bg;
-      fill: $success-strong-fg;
-    }
     .status-label {
       color: $success;
     }
   }
 
   &[data-succeeded='False'] {
-    .block-icon {
-      background-color: $failed-strong-bg;
-      fill: $failed-strong-fg;
-    }
     .status-label {
       color: $failed;
     }
   }
 
   &[data-succeeded='Unknown'][data-reason='Running'] {
-    .block-icon {
-      background-color: $running-strong-bg;
-      fill: $running-strong-fg;
-    }
     .status-label {
       color: $running;
     }
