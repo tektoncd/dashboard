@@ -18,12 +18,6 @@ import {
 } from 'carbon-components-react';
 import { injectIntl } from 'react-intl';
 import {
-  RunHeader,
-  StepDetails,
-  TaskTree
-} from '@tektoncd/dashboard-components';
-
-import {
   getErrorMessage,
   getStatus,
   selectedTask,
@@ -31,7 +25,8 @@ import {
   stepsStatus,
   taskRunStep
 } from '@tektoncd/dashboard-utils';
-import { Log } from '..';
+
+import { Log, RunHeader, StepDetails, TaskTree } from '..';
 
 import './Run.scss';
 

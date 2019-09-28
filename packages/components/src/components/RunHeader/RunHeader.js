@@ -12,8 +12,8 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
-import { SkeletonPlaceholder, Tab, Tabs } from 'carbon-components-react';
-import { getStatusIcon } from '@tektoncd/dashboard-utils';
+import { SkeletonPlaceholder } from 'carbon-components-react';
+
 import { FormattedDate } from '..';
 
 import './RunHeader.scss';
@@ -35,9 +35,6 @@ class RunHeader extends Component {
           return (
             runName && (
               <h1>
-                <div className="block-icon">
-                  {getStatusIcon({ reason, status })}
-                </div>
                 <div className="run-name" title={runName}>
                   {runName}
                 </div>
@@ -50,13 +47,6 @@ class RunHeader extends Component {
             )
           );
         })()}
-        {/*
-          TODO: move this out to PipelineRun as sibling of the header.
-          Tab should contain TaskTree, StepDetails, etc.
-        */}
-        <Tabs>
-          <Tab label="Tasks" />
-        </Tabs>
       </div>
     );
   }
