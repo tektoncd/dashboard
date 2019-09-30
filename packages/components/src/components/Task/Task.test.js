@@ -56,6 +56,12 @@ it('Task renders unknown state', () => {
   renderWithIntl(<Task {...props} succeeded="Unknown" reason="Pending" />);
 });
 
+it('Task renders cancelled state', () => {
+  renderWithIntl(
+    <Task {...props} succeeded="Unknown" reason="TaskRunCancelled" />
+  );
+});
+
 it('Task handles click event', () => {
   const onSelect = jest.fn();
   const { getByText } = renderWithIntl(

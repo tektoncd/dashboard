@@ -32,6 +32,10 @@ class Step extends Component {
   icon() {
     const { reason, status } = this.props;
 
+    if (status === 'cancelled') {
+      return <CloseFilled className="step-icon" />;
+    }
+
     if (status === 'running') {
       return <Spinner className="step-icon" />;
     }
@@ -50,6 +54,13 @@ class Step extends Component {
 
   statusLabel() {
     const { intl, reason, status } = this.props;
+
+    if (status === 'cancelled') {
+      return intl.formatMessage({
+        id: 'dashboard.taskRun.status.cancelled',
+        defaultMessage: 'Cancelled'
+      });
+    }
 
     if (status === 'running') {
       return intl.formatMessage({

@@ -35,6 +35,7 @@
     "dashboard.taskRun.details": "Details",
     "dashboard.taskRun.logs": "Logs",
     "dashboard.taskRun.status": "Status",
+    "dashboard.taskRun.status.cancelled": "Cancelled",
     "dashboard.taskRun.status.failed": "Failed",
     "dashboard.taskRun.status.notRun": "Not run",
     "dashboard.taskRun.status.running": "Running",

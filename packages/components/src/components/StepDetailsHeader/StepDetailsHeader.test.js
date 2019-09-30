@@ -38,6 +38,13 @@ it('StepDetailsHeader renders the completed state', () => {
   expect(queryByText(/completed/i)).toBeTruthy();
 });
 
+it('StepDetailsHeader renders the cancelled state', () => {
+  const { queryByText } = renderWithIntl(
+    <StepDetailsHeader {...props} status="cancelled" />
+  );
+  expect(queryByText(/Cancelled/i)).toBeTruthy();
+});
+
 it('StepDetailsHeader renders the failed state', () => {
   const { queryByText } = renderWithIntl(
     <StepDetailsHeader {...props} status="terminated" />

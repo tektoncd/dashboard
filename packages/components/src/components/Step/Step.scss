@@ -108,4 +108,14 @@ limitations under the License.
       font-weight: bold;
     }
   }
+  &[data-status='cancelled'] > a {
+    opacity: 1;
+    .step-icon {
+      fill: $failed;
+    }
+    .status-label {
+      color: $failed;
+      font-weight: bold;
+    }
+  }
 }
