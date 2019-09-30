@@ -25,11 +25,15 @@ const StepDetails = props => {
     logContainer,
     reason,
     showIO,
-    status,
     stepName,
     stepStatus,
     taskRun
   } = props;
+  let { status } = props;
+  status =
+    taskRun.reason === 'TaskRunCancelled' && status !== 'terminated'
+      ? 'cancelled'
+      : status;
   return (
     <div className="step-details">
       <StepDetailsHeader

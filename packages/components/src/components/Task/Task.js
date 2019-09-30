@@ -86,6 +86,10 @@ class Task extends Component {
           <ol className="step-list">
             {steps.map(({ id, reason: stepReason, status, stepName }) => {
               const selected = selectedStepId === id;
+              const stepStatus =
+                reason === 'TaskRunCancelled' && status !== 'terminated'
+                  ? 'cancelled'
+                  : status;
               return (
                 <Step
                   id={id}
@@ -93,7 +97,7 @@ class Task extends Component {
                   onSelect={this.handleStepSelected}
                   reason={stepReason}
                   selected={selected}
-                  status={status}
+                  status={stepStatus}
                   stepName={stepName}
                 />
               );

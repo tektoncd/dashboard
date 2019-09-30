@@ -26,6 +26,10 @@ class StepDetailsHeader extends Component {
   icon() {
     const { reason, status } = this.props;
 
+    if (status === 'cancelled') {
+      return <CloseFilled className="status-icon" />;
+    }
+
     if (status === 'running') {
       return <Spinner className="status-icon" />;
     }
@@ -45,6 +49,13 @@ class StepDetailsHeader extends Component {
   statusLabel() {
     const { intl, reason, status, taskRun } = this.props;
 
+    if (status === 'cancelled') {
+      return intl.formatMessage({
+        id: 'dashboard.taskRun.status.cancelled',
+        defaultMessage: 'Cancelled'
+      });
+    }
+
     if (status === 'running') {
       return intl.formatMessage({
         id: 'dashboard.taskRun.status.running',
@@ -63,7 +74,7 @@ class StepDetailsHeader extends Component {
         defaultMessage: 'Failed'
       });
     }
-    // no status, task still running means waiting
+
     const { reason: taskReason, status: taskStatus } = getStatus(taskRun);
     if (taskStatus === 'Unknown' && taskReason === 'Pending') {
       return intl.formatMessage({
@@ -80,9 +91,9 @@ class StepDetailsHeader extends Component {
 
   render() {
     const { reason, status, stepName } = this.props;
+
     const icon = this.icon();
     const statusLabel = this.statusLabel();
-
     return (
       <header
         className="step-details-header"

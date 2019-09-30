@@ -42,6 +42,11 @@ it('Step renders running state', () => {
   expect(queryByText(/running/i)).toBeTruthy();
 });
 
+it('Step renders cancelled state', () => {
+  const { queryByText } = renderWithIntl(<Step status="cancelled" />);
+  expect(queryByText(/Cancelled/i)).toBeTruthy();
+});
+
 it('Step renders completed state', () => {
   const { queryByText } = renderWithIntl(
     <Step status="terminated" reason="Completed" />
