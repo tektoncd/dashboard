@@ -13,7 +13,7 @@ limitations under the License.
 
 // TODO: rename. Details section of a step
 
-import React from 'react';
+import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import jsYaml from 'js-yaml';
 import { FormattedMessage, injectIntl } from 'react-intl';
@@ -63,57 +63,77 @@ const resourceTable = (title, namespace, resources, intl) => {
   );
 };
 
-const StepDefinition = ({ definition, intl, taskRun }) => {
-  const yaml = jsYaml.dump(
-    definition ||
-      intl.formatMessage({
-        id: 'dashboard.step.definitionNotAvailable',
-        defaultMessage: 'description: step definition not available'
-      })
-  );
-  return (
-    <div className="step-definition">
-      <div className="title">
-        <FormattedMessage
-          id="dashboard.step.stepDefinition"
-          defaultMessage="Step definition"
-        />
-        :
+class StepDefinition extends Component {
+  getIOTables() {
+    const { intl, showIO, taskRun } = this.props;
+
+    if (!showIO) {
+      return null;
+    }
+
+    return (
+      <>
+        {taskRun.params && (
+          <ResourceTable
+            title="Parameters"
+            rows={taskRun.params.map(({ name, value }) => ({
+              id: name,
+              name,
+              value
+            }))}
+            headers={[
+              { key: 'name', header: 'Name' },
+              { key: 'value', header: 'Value' }
+            ]}
+          />
+        )}
+        {taskRun.inputResources &&
+          resourceTable(
+            'Input Resources',
+            taskRun.namespace,
+            taskRun.inputResources,
+            intl
+          )}
+        {taskRun.outputResources &&
+          resourceTable(
+            'Output Resources',
+            taskRun.namespace,
+            taskRun.outputResources,
+            intl
+          )}
+      </>
+    );
+  }
+
+  render() {
+    const { definition, intl } = this.props;
+    const yaml = jsYaml.dump(
+      definition ||
+        intl.formatMessage({
+          id: 'dashboard.step.definitionNotAvailable',
+          defaultMessage: 'description: step definition not available'
+        })
+    );
+
+    const paramsResources = this.getIOTables();
+    return (
+      <div className="step-definition">
+        <div className="title">
+          <FormattedMessage
+            id="dashboard.step.stepDefinition"
+            defaultMessage="Step definition"
+          />
+          :
+        </div>
+        <pre>{yaml}</pre>
+        {paramsResources}
       </div>
-      <pre>{yaml}</pre>
-      {taskRun.params && (
-        <ResourceTable
-          title="Parameters"
-          rows={taskRun.params.map(({ name, value }) => ({
-            id: name,
-            name,
-            value
-          }))}
-          headers={[
-            { key: 'name', header: 'Name' },
-            { key: 'value', header: 'Value' }
-          ]}
-        />
-      )}
-      {taskRun.inputResources &&
-        resourceTable(
-          'Input Resources',
-          taskRun.namespace,
-          taskRun.inputResources,
-          intl
-        )}
-      {taskRun.outputResources &&
-        resourceTable(
-          'Output Resources',
-          taskRun.namespace,
-          taskRun.outputResources,
-          intl
-        )}
-    </div>
-  );
-};
+    );
+  }
+}
 
 StepDefinition.defaultProps = {
+  showIO: false,
   taskRun: {}
 };
 

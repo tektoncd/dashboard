@@ -24,6 +24,7 @@ const StepDetails = props => {
     intl,
     logContainer,
     reason,
+    showIO,
     status,
     stepName,
     stepStatus,
@@ -63,7 +64,11 @@ const StepDetails = props => {
             defaultMessage: 'Details'
           })}
         >
-          <StepDefinition definition={definition} taskRun={taskRun} />
+          <StepDefinition
+            definition={definition}
+            showIO={showIO}
+            taskRun={taskRun}
+          />
         </Tab>
       </Tabs>
     </div>
@@ -71,6 +76,7 @@ const StepDetails = props => {
 };
 
 StepDetails.defaultProps = {
+  showIO: false,
   taskRun: {}
 };
 
