@@ -97,6 +97,20 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
 
   render() {
     const { error, intl, match, pipelineRun, tasks, taskRuns } = this.props;
+
+    if (!pipelineRun) {
+      return <PipelineRun error="PipelineRun not found" loading={false} />;
+    }
+
+    if (!pipelineRun.status) {
+      pipelineRun.status = {
+        taskRuns: []
+      };
+    }
+    if (!pipelineRun.status.taskRuns) {
+      pipelineRun.status.taskRuns = [];
+    }
+
     const { loading, showRebuildNotification } = this.state;
     const { pipelineRunName } = match.params;
 
@@ -174,6 +188,7 @@ function mapStateToProps(state, ownProps) {
       namespace
     }),
     tasks: getTasks(state, { namespace }),
+
     taskRuns: getTaskRunsByPipelineRunName(
       state,
       ownProps.match.params.pipelineRunName,

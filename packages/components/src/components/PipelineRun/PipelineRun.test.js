@@ -106,3 +106,54 @@ it('PipelineRunContainer handles error state', async () => {
   );
   await waitForElement(() => getByText('Error loading PipelineRun'));
 });
+
+// A scenario exists (typically with rebuild) where all PipelineRun data
+// is not yet available. Verify that the container still renders OK
+it('PipelineRunContainer handles no TaskRuns found yet', async () => {
+  const match = {
+    params: {
+      pipelineName: 'foo',
+      pipelineRunName: 'bar'
+    }
+  };
+
+  const middleware = [thunk];
+  const mockStore = configureStore(middleware);
+
+  const testStore = mockStore({
+    tasks: {
+      byNamespace: {}
+    },
+    taskRuns: {
+      // Nothing here
+      byId: {},
+      byNamespace: {},
+      errorMessage: null,
+      isFetching: false
+    },
+    namespaces: {
+      selected: 'default'
+    },
+    pipelineRuns: {
+      byId: {},
+      byNamespace: { default: {} },
+      errorMessage: null,
+      isFetching: false
+    }
+  });
+
+  const { getByText } = renderWithIntl(
+    <Provider store={testStore}>
+      <PipelineRun
+        match={match}
+        error={null}
+        fetchTaskRuns={() => Promise.resolve()}
+        fetchPipelineRun={() => Promise.resolve()}
+        fetchTasks={() => Promise.resolve()}
+        fetchClusterTasks={() => Promise.resolve()}
+      />
+    </Provider>
+  );
+  // But it still renders and all is well
+  await waitForElement(() => getByText('PipelineRun not found'));
+});

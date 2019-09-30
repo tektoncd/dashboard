@@ -82,6 +82,10 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
             </StructuredListRow>
           )}
           {clusterTasks.map(task => {
+            if (!task.metadata) {
+              return {};
+            }
+
             const { name: taskName, uid } = task.metadata;
             return (
               <StructuredListRow className="definition" key={uid}>

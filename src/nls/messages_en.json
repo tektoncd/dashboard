@@ -34,6 +34,7 @@
     "dashboard.tableHeader.value": "Value",
     "dashboard.taskRun.details": "Details",
     "dashboard.taskRun.logs": "Logs",
+    "dashboard.taskRun.noTaskRuns": "No TaskRuns found for this PipelineRun yet…",
     "dashboard.taskRun.status": "Status",
     "dashboard.taskRun.status.cancelled": "Cancelled",
     "dashboard.taskRun.status.failed": "Failed",
