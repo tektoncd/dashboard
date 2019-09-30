@@ -16,7 +16,7 @@ import {
   InlineNotification,
   StructuredListSkeleton
 } from 'carbon-components-react';
-import { injectIntl } from 'react-intl';
+import { FormattedMessage, injectIntl } from 'react-intl';
 import {
   getErrorMessage,
   getStatus,
@@ -42,6 +42,11 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
 
   loadPipelineRunData = () => {
     const { pipelineRun } = this.props;
+
+    if (!(pipelineRun.status && pipelineRun.status.taskRuns)) {
+      return { pipelineRun };
+    }
+
     const {
       status: { taskRuns: taskRunsStatus }
     } = pipelineRun;
@@ -56,14 +61,23 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   };
 
   loadTaskRuns = pipelineRun => {
-    if (!pipelineRun) {
+    if (!pipelineRun || !pipelineRun.status || !pipelineRun.status.taskRuns) {
       return [];
     }
 
     const { tasks, taskRuns } = this.props;
+
+    if (!tasks || !taskRuns) {
+      return [];
+    }
+
     const {
       status: { taskRuns: taskRunDetails }
     } = pipelineRun;
+
+    if (!pipelineRun.status || !pipelineRun.status.taskRuns) {
+      return [];
+    }
 
     return taskRuns
       .map(taskRun => {
@@ -78,11 +92,35 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           namespace: taskRunNamespace,
           annotations
         } = taskRun.metadata;
+
         const { reason, status: succeeded } = getStatus(taskRun);
+
         const { pipelineTaskName } = taskRunDetails[taskRunName] || {};
         const { params, resources: inputResources } = taskRun.spec.inputs;
         const { resources: outputResources } = taskRun.spec.outputs;
-        const steps = stepsStatus(task.spec.steps, taskRun.status.steps);
+
+        let steps = '';
+
+        if (!task.spec || !taskRun.status) {
+          steps = {
+            id: 0,
+            reason: 'unknown',
+            status: 'unknown'
+          };
+          let theRun = taskRun;
+          theRun = {
+            metadata: {
+              uid: '0'
+            },
+            status: {
+              podName: 'unknown'
+            }
+          };
+          taskRun = theRun; // eslint-disable-line no-param-reassign
+        } else {
+          steps = stepsStatus(task.spec.steps, taskRun.status.steps);
+        }
+
         return {
           id: taskRun.metadata.uid,
           pipelineTaskName,
@@ -185,6 +223,16 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       );
     }
     const taskRuns = this.loadTaskRuns(pipelineRun, taskRunNames);
+
+    if (taskRuns.length === 0) {
+      return (
+        <FormattedMessage
+          id="dashboard.taskRun.noTaskRuns"
+          defaultMessage="No TaskRuns found for this PipelineRun yet…"
+        />
+      );
+    }
+
     const taskRun = selectedTaskRun(selectedTaskId, taskRuns) || {};
 
     const { definition, reason, status, stepName, stepStatus } = taskRunStep(
@@ -199,6 +247,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
         stepStatus={stepStatus}
       />
     );
+
     return (
       <>
         <RunHeader

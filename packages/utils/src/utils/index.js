@@ -32,7 +32,10 @@ export function getErrorMessage(error) {
 }
 
 export function selectedTask(selectedTaskName, tasks) {
-  return tasks.find(t => t.metadata.name === selectedTaskName);
+  if (tasks) {
+    return tasks.find(t => t.metadata.name === selectedTaskName);
+  }
+  return {};
 }
 
 export function selectedTaskRun(selectedTaskId, taskRuns = []) {

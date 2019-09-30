@@ -19,9 +19,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strconv"
 	"strings"
-	"time"
 
 	restful "github.com/emicklei/go-restful"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
@@ -220,7 +218,9 @@ func (r Resource) rebuildRun(name, namespace string) (*v1alpha1.PipelineRun, err
 	}
 
 	newPipelineRunData := pipelineRun
-	newPipelineRunData.Name = generateNewNameForRebuild(name)
+	newPipelineRunData.Name = ""
+	theName := generateNewNameForRebuild(name)
+	newPipelineRunData.GenerateName = theName
 	newPipelineRunData.ResourceVersion = ""
 
 	currentLabels := pipelineRun.GetLabels()
@@ -235,8 +235,6 @@ func (r Resource) rebuildRun(name, namespace string) (*v1alpha1.PipelineRun, err
 		newPipelineRunData.SetLabels(currentLabels)
 	}
 
-	logging.Log.Debugf("new PipelineRun data is: %v", newPipelineRunData)
-
 	rebuiltRun, err := r.PipelineClient.TektonV1alpha1().PipelineRuns(pipelineRun.Namespace).Create(newPipelineRunData)
 
 	if err != nil {
@@ -246,37 +244,23 @@ func (r Resource) rebuildRun(name, namespace string) (*v1alpha1.PipelineRun, err
 	return rebuiltRun, nil
 }
 
-// If the PipelineRun does not contain -r-*five digits*, add it. The five digits being time in nanoseconds.
-// If it does replace that r-*digits* with a new generated one using the new timestamp.
+// If the PipelineRun does not contain -r-*digits*, add it.
+// If it does replace that r-*digits* with a newly generated one.
 
 func generateNewNameForRebuild(name string) string {
 	newName := name
 
-	endsInDashAndNumbers := false
 	// Has -r- in it already?
 	if strings.Contains(name, "-r-") {
 		lastIndexOfDash := strings.LastIndex(name, "-r-")
-		charsAfterLastIndex := name[lastIndexOfDash+2:]
-		// We found digits: no error when converting from str to int
-		if asANumber, err := strconv.Atoi(charsAfterLastIndex); err == nil {
-			endsInDashAndNumbers = true
-			// Get a timestamp now
-			newTimestamp := time.Now().Nanosecond()
-			previousTimestampAsString := strconv.Itoa(asANumber)
-			// We want it as a string to use in the name
-			newTimestampAsString := strconv.Itoa(newTimestamp)
-			// Get the last five chars
-			newStringTrimmed := fmt.Sprintf("-%s", newTimestampAsString[4:])
-			newName = strings.Replace(name, previousTimestampAsString, newStringTrimmed, 1)
-		}
+		prefixToUse := fmt.Sprintf("%s-r-", name[0:lastIndexOfDash])
+		return prefixToUse
+	} else {
+		logging.Log.Debug("Rebuilding a pipelinerun that's not already been rebuilt")
+		newName = fmt.Sprintf("%s-r-", newName)
 	}
 
-	// It doesn't already, so add this new suffix
-	if !endsInDashAndNumbers {
-		newName = fmt.Sprintf("%s-r-%s", newName, strconv.Itoa(time.Now().Nanosecond())[4:])
-	}
-
-	logging.Log.Debugf("Rebuilt PipelineRun name: %s", newName)
+	logging.Log.Debugf("Rebuilt PipelineRun name is: %s", newName)
 
 	return newName
 }
@@ -286,10 +270,7 @@ func generateNewNameForRebuild(name string) string {
 	 same pipeline just with different inputs */
 
 func (r Resource) rebuildImpl(existingPipelineRun *v1alpha1.PipelineRun, existingPipelineRunName, namespace string) (*v1alpha1.PipelineRun, error) {
-	logging.Log.Debug("in rebuildImpl")
-
 	if existingPipelineRunName != "" {
-		// rebuildRun handles errors and logs them
 		rebuiltRun, err := r.rebuildRun(existingPipelineRunName, namespace)
 		if err != nil {
 			return nil, err
@@ -322,11 +303,8 @@ func (r Resource) RebuildPipelineRun(request *restful.Request, response *restful
 		return
 	}
 
-	logging.Log.Debugf("Request data: %v", requestData)
-
 	if requestData.PIPELINERUNNAME != "" {
 		// It's a rebuild: they've provided a name and want a new one. This is a new PipelineRun.
-		logging.Log.Debug("No name has been provided and a request has been made to rebuild with the name of an existing PipelineRun")
 		logging.Log.Debugf("Rebuilding PipelineRun: %s", requestData.PIPELINERUNNAME)
 		// A lookup will be made for the run, so no need to provide full data
 		// Method handles any error reporting through logs
