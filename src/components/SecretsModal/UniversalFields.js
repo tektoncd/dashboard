@@ -38,7 +38,7 @@ const UniversalFields = props => {
         labelText="Name:"
         onChange={handleChangeTextInput}
         invalid={invalidFields.indexOf('name') > -1}
-        invalidText="Must be less than 253 characters, contain only lowercase alphanumeric characters, . or -"
+        invalidText="Must not start or end with - and be less than 253 characters, contain only lowercase alphanumeric characters or -"
         autoComplete="off"
       />
       <NamespacesDropdown
@@ -53,7 +53,7 @@ const UniversalFields = props => {
         }
         onChange={handleChangeNamespace}
         invalid={invalidFields.indexOf('namespace') > -1}
-        invalidText="Required."
+        invalidText="Namespace required."
       />
       <Dropdown
         id="accessTo"
