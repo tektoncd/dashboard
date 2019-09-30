@@ -140,6 +140,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           loading={loading}
           fetchLogs={fetchLogs}
           pipelineRun={pipelineRun}
+          showIO
           tasks={tasks}
           taskRuns={taskRuns}
           rebuild={rebuild}

@@ -71,7 +71,7 @@ it('StepDefinition renders the provided content with resources and params', () =
     name: 'test name'
   };
   const { queryByText } = renderWithRouter(
-    <StepDefinition definition={definition} taskRun={taskRun} />
+    <StepDefinition definition={definition} showIO taskRun={taskRun} />
   );
 
   expect(queryByText(/--someArg/)).toBeTruthy();

@@ -200,6 +200,7 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
               definition={definition}
               logContainer={logContainer}
               reason={reason}
+              showIO
               status={status}
               stepName={stepName}
               stepStatus={stepStatus}

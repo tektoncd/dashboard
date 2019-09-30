@@ -108,7 +108,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   };
 
   render() {
-    const { error, loading, fetchLogs, intl, rebuild } = this.props;
+    const { error, loading, fetchLogs, intl, rebuild, showIO } = this.props;
 
     const { selectedStepId, selectedTaskId } = this.state;
 
@@ -226,6 +226,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
               definition={definition}
               logContainer={logContainer}
               reason={reason}
+              showIO={showIO}
               status={status}
               stepName={stepName}
               stepStatus={stepStatus}
