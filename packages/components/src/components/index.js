@@ -29,6 +29,8 @@ export { default as StepDefinition } from './StepDefinition';
 export { default as StepDetails } from './StepDetails';
 export { default as StepDetailsHeader } from './StepDetailsHeader';
 export { default as StepStatus } from './StepStatus';
+export { default as Tab } from './Tab';
+export { default as Tabs } from './Tabs';
 export { default as Task } from './Task';
 export { default as TaskSkeleton } from './TaskSkeleton';
 export { default as TaskTree } from './TaskTree';
