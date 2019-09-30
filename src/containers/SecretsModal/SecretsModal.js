@@ -30,11 +30,16 @@ function validateInputs(value, id) {
     return false;
   }
   if (id === 'name' || id === 'serviceAccount') {
-    if (trimmed.length > 253) {
+    if (trimmed.length >= 253) {
       return false;
     }
 
-    if (/[^-.a-z0-9]/.test(trimmed)) {
+    if (/[^-a-z0-9]/.test(trimmed)) {
+      return false;
+    }
+  }
+  if (id === 'name') {
+    if (trimmed.startsWith('-', 0) || trimmed.endsWith('-')) {
       return false;
     }
   }

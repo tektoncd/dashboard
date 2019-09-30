@@ -41,12 +41,12 @@ const BasicAuthFields = props => {
       <TextInput
         id="username"
         autoComplete="off"
-        placeholder=""
+        placeholder="username"
         value={username}
         labelText="Username:"
         onChange={handleChangeTextInput}
         invalid={invalidFields.indexOf('username') > -1}
-        invalidText="Required."
+        invalidText="Username required."
       />
       <TextInput
         id="password"
@@ -57,7 +57,7 @@ const BasicAuthFields = props => {
         labelText="Password/Token:"
         onChange={handleChangeTextInput}
         invalid={invalidFields.indexOf('password') > -1}
-        invalidText="Required."
+        invalidText="Password or Token required."
       />
       <Select
         id="serviceAccount"
@@ -67,7 +67,7 @@ const BasicAuthFields = props => {
         onChange={handleChangeServiceAccount}
         labelText="Service Account"
         invalid={invalidFields.indexOf('serviceAccount') > -1}
-        invalidText="Required."
+        invalidText="Service Account required."
         disabled={namespace === ''}
       >
         <SelectItem disabled value="main" text="Select Service account" />
