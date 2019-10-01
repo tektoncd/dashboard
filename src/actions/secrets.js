@@ -78,7 +78,9 @@ export function createSecret(postData, namespace) {
       await createCredential(postData, namespace);
       dispatch({ type: 'SECRET_CREATE_SUCCESS' });
     } catch (error) {
-      dispatch({ type: 'SECRET_CREATE_FAILURE', error });
+      error.response.text().then(message => {
+        dispatch({ type: 'SECRET_CREATE_FAILURE', error: message });
+      });
     }
   };
 }
