@@ -38,6 +38,13 @@ it('Log renders trailer', () => {
   waitForElement(() => getByText(/step completed/i));
 });
 
+it('Log renders error trailer', () => {
+  const { getByText } = renderWithIntl(
+    <Log stepStatus={{ terminated: { reason: 'Error' } }} />
+  );
+  waitForElement(() => getByText(/step failed/i));
+});
+
 it('Log renders loading state', () => {
   const { queryByText } = renderWithIntl(
     <Log
