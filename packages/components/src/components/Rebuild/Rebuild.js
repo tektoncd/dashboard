@@ -49,6 +49,7 @@ export class Rebuild extends Component {
       })
       .catch(error => {
         const statusCode = error.response.status;
+        /* istanbul ignore next */
         switch (statusCode) {
           case 500:
             this.props.setShowRebuildNotification({

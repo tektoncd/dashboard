@@ -16,6 +16,8 @@ import { fireEvent, getNodeText, render } from 'react-testing-library';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
+
 import PipelinesDropdown from './PipelinesDropdown';
 import * as API from '../../api';
 
@@ -246,6 +248,25 @@ it('PipelinesDropdown renders empty', () => {
   expect(
     queryByText(/no pipelines found in the 'blue' namespace/i)
   ).toBeTruthy();
+  expect(queryByText(initialTextRegExp)).toBeFalsy();
+});
+
+it('PipelinesDropdown for all namespaces renders empty', () => {
+  const store = mockStore({
+    pipelines: {
+      byId: {},
+      byNamespace: {},
+      isFetching: false
+    },
+    ...namespacesStoreBlue,
+    notifications: {}
+  });
+  const { queryByText } = render(
+    <Provider store={store}>
+      <PipelinesDropdown {...props} namespace={ALL_NAMESPACES} />
+    </Provider>
+  );
+  expect(queryByText(/no pipelines found/i)).toBeTruthy();
   expect(queryByText(initialTextRegExp)).toBeFalsy();
 });
 
