@@ -12,7 +12,8 @@ limitations under the License.
 */
 
 const defaultOptions = {
-  method: 'get'
+  method: 'get',
+  credentials: 'same-origin'
 };
 
 export function getHeaders(headers = {}) {
@@ -43,8 +44,9 @@ export function checkStatus(response = {}) {
   throw error;
 }
 
-export function request(uri, options = defaultOptions) {
+export function request(uri, options) {
   return fetch(uri, {
+    ...defaultOptions,
     ...options
   }).then(checkStatus);
 }
