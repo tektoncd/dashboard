@@ -49,15 +49,14 @@ it('SECRETS_FETCH_SUCCESS', () => {
 });
 
 it('SECRETS_FETCH_FAILURE', () => {
-  const message = 'fake error message';
-  const error = { message };
+  const error = 'fake error message';
   const action = {
     type: 'SECRETS_FETCH_FAILURE',
     error
   };
 
   const state = secretsReducer({}, action);
-  expect(selectors.getSecretsErrorMessage(state)).toEqual(message);
+  expect(selectors.getSecretsErrorMessage(state)).toEqual('fake error message');
 });
 
 it('SECRET_DELETE_SUCCESS for one secret', () => {
