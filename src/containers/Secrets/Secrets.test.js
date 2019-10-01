@@ -127,21 +127,17 @@ it('click add new secret & modal appears', () => {
 
   jest.spyOn(API, 'getServiceAccounts').mockImplementation(() => []);
 
-  const { getByTestId, queryByText } = render(
+  const { getByTestId } = render(
     <Provider store={store}>
       <Secrets {...props} />
     </Provider>
   );
 
-  expect(queryByText('Create Secret')).toBeFalsy();
-  expect(queryByText('Close')).toBeFalsy();
-  expect(queryByText('Submit')).toBeFalsy();
+  expect(getByTestId('modal').className.includes('is-visible')).toBeFalsy();
 
   fireEvent.click(getByTestId('addButton'));
 
-  expect(queryByText('Create Secret')).toBeTruthy();
-  expect(queryByText('Close')).toBeTruthy();
-  expect(queryByText('Submit')).toBeTruthy();
+  expect(getByTestId('modal').className.includes('is-visible')).toBeTruthy();
 });
 
 it('click add delete secret & modal appears', () => {
@@ -158,19 +154,21 @@ it('click add delete secret & modal appears', () => {
     error: null
   };
 
-  const { getByTestId, queryByText } = render(
+  const { getByTestId } = render(
     <Provider store={store}>
       <Secrets {...props} />
     </Provider>
   );
 
-  expect(queryByText('Delete Secret')).toBeFalsy();
+  expect(
+    getByTestId('deleteModal').className.includes('is-visible')
+  ).toBeFalsy();
 
   fireEvent.click(getByTestId('deleteButton'));
 
-  expect(queryByText('Delete Secret')).toBeTruthy();
-  expect(queryByText('Cancel')).toBeTruthy();
-  expect(queryByText('Delete')).toBeTruthy();
+  expect(
+    getByTestId('deleteModal').className.includes('is-visible')
+  ).toBeTruthy();
 });
 
 it('error notification appears', () => {
@@ -187,8 +185,16 @@ it('error notification appears', () => {
       errorMessage: 'Some error message'
     },
     namespaces,
-    notifications: {}
+    notifications: {},
+    serviceAccounts: {
+      byId: serviceAccountsById,
+      byNamespace: serviceAccountsByNamespace,
+      isFetching: false
+    }
   });
+
+  jest.spyOn(API, 'getCredentials').mockImplementation(() => []);
+
   const { getByTestId } = render(
     <Provider store={store}>
       <Secrets {...props} />

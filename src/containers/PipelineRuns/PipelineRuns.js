@@ -343,15 +343,13 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
             </Tag>
           ))}
         </div>
-        {this.state.showCreatePipelineRunModal && (
-          <CreatePipelineRun
-            open={this.state.showCreatePipelineRunModal}
-            onClose={() => this.toggleModal(false)}
-            onSuccess={this.handleCreatePipelineRunSuccess}
-            pipelineRef={pipelineName}
-            namespace={selectedNamespace}
-          />
-        )}
+        <CreatePipelineRun
+          open={this.state.showCreatePipelineRunModal}
+          onClose={() => this.toggleModal(false)}
+          onSuccess={this.handleCreatePipelineRunSuccess}
+          pipelineRef={pipelineName}
+          namespace={selectedNamespace}
+        />
         <PipelineRunsList
           pipelineName={pipelineName}
           selectedNamespace={selectedNamespace}
