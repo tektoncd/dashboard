@@ -22,6 +22,7 @@ const SecretsDeleteModal = props => {
     <Modal
       open={open}
       className="deleteModal"
+      data-testid="deleteModal"
       primaryButtonText="Delete"
       secondaryButtonText="Cancel"
       modalHeading="Delete Secret"

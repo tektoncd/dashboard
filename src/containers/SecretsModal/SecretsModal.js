@@ -318,6 +318,7 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
       <Modal
         open={open}
         className="modal"
+        data-testid="modal"
         primaryButtonText="Submit"
         secondaryButtonText="Close"
         modalHeading="Create Secret"

@@ -38,7 +38,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
     this.state = {
       openNewSecret: false,
       openDeleteSecret: false,
-      toBeDeleted: null
+      toBeDeleted: []
     };
   }
 
@@ -65,7 +65,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
   handleDeleteSecretToggle = () => {
     this.setState({
       openDeleteSecret: false,
-      toBeDeleted: null
+      toBeDeleted: []
     });
   };
 
@@ -106,17 +106,13 @@ export /* istanbul ignore next */ class Secrets extends Component {
           secrets={secrets}
           selectedNamespace={selectedNamespace}
         />
-        {openNewSecret && (
-          <Modal open={openNewSecret} handleNew={this.handleNewSecretClick} />
-        )}
-        {openDeleteSecret && (
-          <DeleteModal
-            open={openDeleteSecret}
-            handleClick={this.handleDeleteSecretToggle}
-            handleDelete={this.delete}
-            toBeDeleted={toBeDeleted}
-          />
-        )}
+        <Modal open={openNewSecret} handleNew={this.handleNewSecretClick} />
+        <DeleteModal
+          open={openDeleteSecret}
+          handleClick={this.handleDeleteSecretToggle}
+          handleDelete={this.delete}
+          toBeDeleted={toBeDeleted}
+        />
       </>
     );
   }
