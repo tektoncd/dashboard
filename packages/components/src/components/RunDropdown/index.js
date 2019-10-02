@@ -11,39 +11,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-@import '../../scss/vars';
-
-.definition .status {
-  .status-icon {
-    margin-right: 0.5em;
-    vertical-align: sub;
-  }
-
-  &:not([data-status]) {
-    .status-icon {
-      fill: $unknown;
-    }
-  }
-
-  &[data-status='True'] {
-    .status-icon {
-      fill: $success;
-    }
-  }
-
-  &[data-status='False'] {
-    .status-icon {
-      fill: $failed;
-    }
-  }
-
-  &[data-status='Unknown'][data-reason='Running'] {
-    .status-icon {
-      fill: $running;
-    }
-  }
-}
-
-.bx--overflow-menu--flip.bx--overflow-menu-options::after{
-  display: none;
-}
+export { default } from './RunDropdown';

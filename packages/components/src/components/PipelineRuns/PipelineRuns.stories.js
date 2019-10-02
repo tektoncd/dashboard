@@ -33,6 +33,21 @@ storiesOf('PipelineRuns', module)
       }) => `to-pipeline-${namespace}/${pipelineName}/${pipelineRunName}`}
       pipelineName="Pipeline Name"
       selectedNamespace="default"
+      pipelineRunActions={[
+        {
+          actionText: 'Cancel',
+          action: resource => resource,
+          disable: resource =>
+            resource.status &&
+            resource.status.conditions[0].reason !== 'Running',
+          modalProperties: {
+            heading: 'cancel',
+            primaryButtonText: 'ok',
+            secondaryButtonText: 'no',
+            body: resource => `cancel pipelineRun ${resource.metadata.name}`
+          }
+        }
+      ]}
       pipelineRuns={[
         {
           metadata: {

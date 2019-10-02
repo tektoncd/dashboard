@@ -25,7 +25,12 @@ import {
   Tag
 } from 'carbon-components-react';
 import { PipelineRuns as PipelineRunsList } from '@tektoncd/dashboard-components';
-import { getErrorMessage, urls } from '@tektoncd/dashboard-utils';
+import {
+  getErrorMessage,
+  getStatus,
+  isRunning,
+  urls
+} from '@tektoncd/dashboard-utils';
 import Add from '@carbon/icons-react/lib/add/16';
 
 import { CreatePipelineRun } from '..';
@@ -99,6 +104,11 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
     }
   }
 
+  cancel = pipelineRun => {
+    const { name, namespace } = pipelineRun.metadata;
+    cancelPipelineRun({ name, namespace });
+  };
+
   toggleModal = showCreatePipelineRunModal => {
     this.setState({ showCreatePipelineRunModal });
   };
@@ -108,6 +118,43 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
     this.setState({
       currentFilterValue: inputValue
     });
+  };
+
+  pipelineRunActions = () => {
+    const { intl } = this.props;
+    return [
+      {
+        actionText: 'Cancel',
+        action: this.cancel,
+        disable: resource => {
+          const { reason, status } = getStatus(resource);
+          return !isRunning(reason, status);
+        },
+        modalProperties: {
+          heading: intl.formatMessage({
+            id: 'dashboard.cancelPipelineRun.heading',
+            defaultMessage: 'Stop PipelineRun'
+          }),
+          primaryButtonText: intl.formatMessage({
+            id: 'dashboard.cancelPipelineRun.primaryText',
+            defaultMessage: 'Stop PipelineRun'
+          }),
+          secondaryButtonText: intl.formatMessage({
+            id: 'dashboard.cancelPipelineRun.cancelButton',
+            defaultMessage: 'Cancel'
+          }),
+          body: resource =>
+            intl.formatMessage(
+              {
+                id: 'dashboard.cancelPipelineRun.body',
+                defaultMessage:
+                  'Are you sure you would like to stop PipelineRun {name}?'
+              },
+              { name: resource.metadata.name }
+            )
+        }
+      }
+    ];
   };
 
   handleAddFilter = event => {
@@ -256,9 +303,8 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
         />
       );
     }
-
+    const pipelineRunActions = this.pipelineRunActions();
     sortRunsByStartTime(pipelineRuns);
-
     return (
       <>
         {this.state.createdPipelineRun && (
@@ -354,7 +400,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
           pipelineName={pipelineName}
           selectedNamespace={selectedNamespace}
           pipelineRuns={pipelineRuns}
-          cancelPipelineRun={cancelPipelineRun}
+          pipelineRunActions={pipelineRunActions}
         />
       </>
     );
