@@ -40,6 +40,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
       openDeleteSecret: false,
       toBeDeleted: []
     };
+    this.handleClose = this.handleClose.bind(this);
   }
 
   componentDidMount() {
@@ -81,6 +82,15 @@ export /* istanbul ignore next */ class Secrets extends Component {
     this.handleDeleteSecretToggle();
   };
 
+  handleClose() {
+    this.resetForm();
+    this.props.onClose();
+  }
+
+  resetForm() {
+    this.setState((state, props) => this.initialState(props));
+  }
+
   render() {
     const { loading, error, secrets, selectedNamespace } = this.props;
     const { openNewSecret, toBeDeleted, openDeleteSecret } = this.state;
@@ -106,7 +116,11 @@ export /* istanbul ignore next */ class Secrets extends Component {
           secrets={secrets}
           selectedNamespace={selectedNamespace}
         />
-        <Modal open={openNewSecret} handleNew={this.handleNewSecretClick} />
+        <Modal
+          open={openNewSecret}
+          onRequestClose={this.handleModalClose}
+          handleNew={this.handleNewSecretClick}
+        />
         <DeleteModal
           open={openDeleteSecret}
           handleClick={this.handleDeleteSecretToggle}
