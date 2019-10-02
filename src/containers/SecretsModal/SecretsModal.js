@@ -19,7 +19,7 @@ import Annotations from '../../components/SecretsModal/Annotations';
 import BasicAuthFields from '../../components/SecretsModal/BasicAuthFields';
 import '../../components/SecretsModal/SecretsModal.scss';
 import { createSecret } from '../../actions/secrets';
-import { getServiceAccounts, isWebSocketConnected } from '../../reducers';
+import { isWebSocketConnected } from '../../reducers';
 import { fetchServiceAccounts } from '../../actions/serviceAccounts';
 
 /* istanbul ignore next */
@@ -67,12 +67,9 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
             .substring(2, 11)
         }
       ],
-      invalidFields: []
+      invalidFields: [],
+      serviceAccounts: []
     };
-  }
-
-  componentDidMount() {
-    this.props.fetchServiceAccounts();
   }
 
   componentDidUpdate(prevProps) {
@@ -196,7 +193,13 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
       } else if (idIndex === -1) {
         newInvalidFields.push(stateVar);
       }
-      return { [stateVar]: stateValue, invalidFields: newInvalidFields };
+      this.props.fetchServiceAccounts({ namespace: stateValue }).then(data => {
+        this.setState({ serviceAccounts: data });
+      });
+      return {
+        [stateVar]: stateValue,
+        invalidFields: newInvalidFields
+      };
     });
   };
 
@@ -302,7 +305,8 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
   };
 
   render() {
-    const { open, handleNew, serviceAccounts } = this.props;
+    const { open, handleNew } = this.props;
+    const { serviceAccounts } = this.state;
     const {
       name,
       namespace,
@@ -365,7 +369,6 @@ SecretsModal.defaultProps = {
 
 function mapStateToProps(state) {
   return {
-    serviceAccounts: getServiceAccounts(state),
     webSocketConnected: isWebSocketConnected(state)
   };
 }

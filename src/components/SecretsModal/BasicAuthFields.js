@@ -26,15 +26,13 @@ const BasicAuthFields = props => {
     serviceAccounts
   } = props;
 
-  const saItems = serviceAccounts
-    .filter(sa => sa.metadata.namespace === namespace)
-    .map(sa => (
-      <SelectItem
-        value={sa.metadata.name}
-        text={sa.metadata.name}
-        key={`${sa.metadata.namespace}:${sa.metadata.name}`}
-      />
-    ));
+  const saItems = serviceAccounts.map(sa => (
+    <SelectItem
+      value={sa.metadata.name}
+      text={sa.metadata.name}
+      key={`${sa.metadata.namespace}:${sa.metadata.name}`}
+    />
+  ));
 
   return (
     <>
