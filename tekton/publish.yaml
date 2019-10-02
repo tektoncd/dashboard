@@ -83,7 +83,7 @@ spec:
     args:
     - -ce
     - |
-      curl https://raw.githubusercontent.com/tektoncd/dashboard/tekton/scripts/lockdown.py --output lockdown.py
+      curl https://raw.githubusercontent.com/tektoncd/dashboard/master/tekton/scripts/lockdown.py --output lockdown.py
       chmod +x lockdown.py
       pip install docker
       ./lockdown.py --omit dashboard --path /workspace/bucket/dashboard/previous/${inputs.params.versionTag}/release.yaml
