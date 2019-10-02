@@ -152,6 +152,10 @@ The Dashboard can be accessed through its ClusterIP Service by running `kubectl 
 
 An alternative way to access the Dashboard is using `kubectl port-forward` e.g. if you installed the Tekton Dashboard into the `tekton-pipelines` namespace (which is the default) you can access the Dashboard with `kubectl --namespace tekton-pipelines port-forward svc/tekton-dashboard 9097:9097` and then just open `localhost:9097`.
 
+## Troubleshooting
+
+Keep in mind that When running your Tekton Pipelines, if you see a `fatal: could not read Username for *GitHub repository*: No such device or address` message in your failing Task logs, this indicates there is no `tekton.dev/git` annotated GitHub secret in use by the ServiceAccount that launched this PipelineRun. It is advised to create one through the Tekton Dashboard. The annotation will be added and the specified ServiceAccount will be patched.
+
 ## Want to contribute
 
 We are so excited to have you!
