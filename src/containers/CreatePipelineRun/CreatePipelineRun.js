@@ -272,7 +272,7 @@ class CreatePipelineRun extends React.Component {
       ),
       [NAMESPACE]: namespace !== ALL_NAMESPACES ? namespace : '',
       serviceAccount: '',
-      timeout: '',
+      timeout: '60',
       validationError: false,
       submitError: '',
       validTimeout: true
@@ -430,7 +430,7 @@ class CreatePipelineRun extends React.Component {
             />
             <TextInput
               id="create-pipelinerun--timeout"
-              labelText="Timeout (optional)"
+              labelText="Timeout"
               helperText="PipelineRun timeout in minutes"
               invalid={validationError && !validTimeout}
               invalidText="Timeout must be a valid number less than 525600"
