@@ -48,13 +48,14 @@ export function fetchSecrets({ namespace } = {}) {
 export function deleteSecret(secrets) {
   return async dispatch => {
     dispatch({ type: 'SECRET_DELETE_REQUEST' });
+    const timeoutLength = secrets.length * 1000;
     const deletePromises = secrets.map(secret => {
       const { name, namespace } = secret;
       const response = deleteCredential(name, namespace);
       const timeout = new Promise((resolve, reject) => {
         setTimeout(() => {
           reject(new Error('An error occured deleting the secret(s).'));
-        }, 1000);
+        }, timeoutLength);
       });
       const deleteWithinTimePromise = Promise.race([response, timeout]);
       return deleteWithinTimePromise;
