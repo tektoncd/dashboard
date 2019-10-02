@@ -25,16 +25,14 @@ import {
   ALL_NAMESPACES,
   getStatus,
   getStatusIcon,
-  isRunning,
   urls
 } from '@tektoncd/dashboard-utils';
 
-import { CancelButton, FormattedDate } from '..';
+import { FormattedDate, RunDropdown } from '..';
 
 import './PipelineRuns.scss';
 
 const PipelineRuns = ({
-  cancelPipelineRun,
   createPipelineRunURL = urls.pipelineRuns.byName,
   createPipelineRunDisplayName = ({ pipelineRunMetadata }) =>
     pipelineRunMetadata.name,
@@ -42,7 +40,8 @@ const PipelineRuns = ({
   intl,
   pipelineName,
   pipelineRuns,
-  selectedNamespace
+  selectedNamespace,
+  pipelineRunActions
 }) => (
   <StructuredListWrapper border selection>
     <StructuredListHead>
@@ -66,7 +65,7 @@ const PipelineRuns = ({
             defaultMessage: 'Last Transition Time'
           })}
         </StructuredListCell>
-        {cancelPipelineRun && <StructuredListCell head />}
+        {pipelineRunActions && <StructuredListCell head />}
       </StructuredListRow>
     </StructuredListHead>
     <StructuredListBody>
@@ -146,21 +145,12 @@ const PipelineRuns = ({
             <StructuredListCell>
               <FormattedDate date={lastTransitionTime} relative />
             </StructuredListCell>
-            {cancelPipelineRun && (
+            {pipelineRunActions && (
               <StructuredListCell>
-                {isRunning(reason, status) && (
-                  <CancelButton
-                    type="PipelineRun"
-                    name={pipelineRunName}
-                    onCancel={() =>
-                      cancelPipelineRun({
-                        name: pipelineRunName,
-                        namespace,
-                        annotations
-                      })
-                    }
-                  />
-                )}
+                <RunDropdown
+                  items={pipelineRunActions}
+                  resource={pipelineRun}
+                />
               </StructuredListCell>
             )}
           </StructuredListRow>

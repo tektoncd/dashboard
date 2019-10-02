@@ -22,6 +22,7 @@ export { default as PipelineRun } from './PipelineRun';
 export { default as PipelineRuns } from './PipelineRuns';
 export { default as Rebuild } from './Rebuild';
 export { default as ResourceTable } from './ResourceTable';
+export { default as RunDropdown } from './RunDropdown';
 export { default as RunHeader } from './RunHeader';
 export { default as Spinner } from './Spinner';
 export { default as Step } from './Step';
