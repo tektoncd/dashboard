@@ -86,7 +86,8 @@ storiesOf('ServiceAccountsDropdown', module)
       namespaces: {
         byName: namespacesByName,
         selected: 'default'
-      }
+      },
+      notifications: {}
     });
     return (
       <Provider store={store}>
@@ -104,7 +105,8 @@ storiesOf('ServiceAccountsDropdown', module)
       namespaces: {
         byName: namespacesByName,
         selected: 'default'
-      }
+      },
+      notifications: {}
     });
     return (
       <Provider store={store}>

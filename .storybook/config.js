@@ -32,7 +32,8 @@ addParameters({
     hierarchyRootSeparator: /\|/,
     sidebarAnimations: true,
     enableShortcuts: true,
-    theme: undefined
+    theme: undefined,
+    storySort: (a, b) => a[1].id.localeCompare(b[1].id)
   },
 });
 
