@@ -77,7 +77,8 @@ storiesOf('PipelinesDropdown', module)
       namespaces: {
         byName: namespacesByName,
         selected: 'default'
-      }
+      },
+      notifications: {}
     });
     return (
       <Provider store={store}>
@@ -95,7 +96,8 @@ storiesOf('PipelinesDropdown', module)
       namespaces: {
         byName: namespacesByName,
         selected: 'default'
-      }
+      },
+      notifications: {}
     });
     return (
       <Provider store={store}>

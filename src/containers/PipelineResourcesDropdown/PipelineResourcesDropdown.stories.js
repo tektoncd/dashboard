@@ -87,7 +87,8 @@ storiesOf('PipelineResourcesDropdown', module)
       namespaces: {
         byName: namespacesByName,
         selected: 'default'
-      }
+      },
+      notifications: {}
     });
     return (
       <Provider store={store}>
@@ -105,7 +106,8 @@ storiesOf('PipelineResourcesDropdown', module)
       namespaces: {
         byName: namespacesByName,
         selected: 'default'
-      }
+      },
+      notifications: {}
     });
     return (
       <Provider store={store}>
@@ -123,7 +125,8 @@ storiesOf('PipelineResourcesDropdown', module)
       namespaces: {
         byName: namespacesByName,
         selected: 'default'
-      }
+      },
+      notifications: {}
     });
     return (
       <Provider store={store}>
@@ -141,7 +144,8 @@ storiesOf('PipelineResourcesDropdown', module)
       namespaces: {
         byName: namespacesByName,
         selected: 'default'
-      }
+      },
+      notifications: {}
     });
     return (
       <Provider store={store}>
