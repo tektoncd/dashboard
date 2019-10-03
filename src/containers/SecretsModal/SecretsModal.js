@@ -238,11 +238,10 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
     });
   };
 
-  handleAnnotationChange = e => {
-    e.persist();
+  handleAnnotationChange = annotation => {
     this.setState(prevState => {
-      let { id } = e.target;
-      const { value } = e.target;
+      const { key, index, value } = annotation;
+      const id = `annotation-${key}${index}`;
       const newInvalidFields = prevState.invalidFields;
       const idIndex = newInvalidFields.indexOf(id);
       if (idIndex !== -1) {
@@ -253,15 +252,8 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
         newInvalidFields.push(id);
       }
 
-      id = id
-        .split('-')
-        .splice(1, 2)
-        .join();
-      const index = id.substring(id.length - 1);
-      id = id.slice(0, -1);
-
       const { annotations } = prevState;
-      annotations[index][id] = value;
+      annotations[index][key] = value;
 
       return {
         annotations,
