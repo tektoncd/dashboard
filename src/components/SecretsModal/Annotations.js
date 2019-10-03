@@ -35,7 +35,9 @@ const Annotations = props => {
           aria-label={`Annotation Label#${index}. This is the tag Tekton uses for its resources.`}
           value={annotation.label}
           placeholder="tekton.dev/{source}-0"
-          onChange={handleChange}
+          onChange={e => {
+            handleChange({ key: 'label', index, value: e.target.value });
+          }}
           invalid={invalidFields.indexOf(`annotation-label${index}`) > -1}
           autoComplete="off"
         />
@@ -46,7 +48,9 @@ const Annotations = props => {
           aria-label={`Annotation Value#${index}. This is the url for the given Tekton resource.`}
           value={annotation.value}
           placeholder={annotation.placeholder}
-          onChange={handleChange}
+          onChange={e => {
+            handleChange({ key: 'value', index, value: e.target.value });
+          }}
           invalid={invalidFields.indexOf(`annotation-value${index}`) > -1}
           autoComplete="off"
         />
