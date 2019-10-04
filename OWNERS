@@ -7,6 +7,7 @@ approvers:
 - alangreene
 - mnuttall
 - skaegi
+- steveodonovan
 
 reviewers:
 - akihikokuroda
@@ -16,5 +17,4 @@ reviewers:
 - jessm12
 - megan-wright
 - ncskier
-- steveodonovan
 - vtereso
