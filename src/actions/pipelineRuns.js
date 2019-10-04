@@ -24,10 +24,9 @@ export function fetchPipelineRun({ name, namespace }) {
   });
 }
 
-export function fetchPipelineRuns({ namespace, pipelineName, filters } = {}) {
+export function fetchPipelineRuns({ filters, namespace } = {}) {
   return fetchNamespacedCollection('PipelineRun', getPipelineRuns, {
-    namespace,
-    pipelineName,
-    filters
+    filters,
+    namespace
   });
 }

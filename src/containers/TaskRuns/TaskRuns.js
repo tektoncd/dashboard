@@ -13,242 +13,236 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
+import isEqual from 'lodash.isequal';
 import {
   InlineNotification,
-  StructuredListSkeleton
+  StructuredListBody,
+  StructuredListCell,
+  StructuredListHead,
+  StructuredListRow,
+  StructuredListSkeleton,
+  StructuredListWrapper
 } from 'carbon-components-react';
 import {
-  Log,
-  RunHeader,
-  StepDetails,
-  TaskTree
-} from '@tektoncd/dashboard-components';
-import {
+  ALL_NAMESPACES,
+  getErrorMessage,
   getStatus,
-  selectedTaskRun,
-  stepsStatus,
-  taskRunStep
+  getStatusIcon,
+  isRunning,
+  urls
 } from '@tektoncd/dashboard-utils';
+import { CancelButton, FormattedDate } from '@tektoncd/dashboard-components';
+
+import { sortRunsByStartTime } from '../../utils';
+import { fetchTaskRuns } from '../../actions/taskRuns';
 
 import {
   getSelectedNamespace,
-  getTaskByType,
-  getTaskRunsByTaskName,
+  getTaskRuns,
   getTaskRunsErrorMessage,
+  isFetchingTaskRuns,
   isWebSocketConnected
 } from '../../reducers';
+import { cancelTaskRun } from '../../api';
 
-import '../../components/Run/Run.scss';
-import { fetchTaskByType } from '../../actions/tasks';
-import { fetchTaskRuns } from '../../actions/taskRuns';
-import { fetchLogs } from '../../utils';
-
-export /* istanbul ignore next */ class TaskRunsContainer extends Component {
-  // once redux store is available errors will be handled properly with dedicated components
-  static notification({ kind, message }) {
-    const titles = {
-      info: 'TaskRuns not available',
-      error: 'Error loading TaskRun'
-    };
-    return (
-      <InlineNotification
-        kind={kind}
-        hideCloseButton
-        lowContrast
-        title={titles[kind]}
-        subtitle={message}
-      />
-    );
-  }
-
-  state = {
-    loading: true,
-    selectedStepId: null,
-    selectedTaskId: null
-  };
-
+export /* istanbul ignore next */ class TaskRuns extends Component {
   componentDidMount() {
-    const { match, namespace } = this.props;
-    const { taskName, taskType } = match.params;
-    this.fetchTaskAndRuns(taskName, taskType, namespace);
+    this.fetchTaskRuns();
   }
 
   componentDidUpdate(prevProps) {
-    const { match, namespace, webSocketConnected } = this.props;
-    const { taskName, taskType } = match.params;
+    const { filters, namespace, webSocketConnected } = this.props;
     const {
-      match: prevMatch,
+      filters: prevFilters,
       namespace: prevNamespace,
       webSocketConnected: prevWebSocketConnected
     } = prevProps;
-    const { taskName: prevTaskName, taskType: prevTaskType } = prevMatch.params;
 
     if (
-      taskName !== prevTaskName ||
+      !isEqual(filters, prevFilters) ||
       namespace !== prevNamespace ||
-      taskType !== prevTaskType ||
       (webSocketConnected && prevWebSocketConnected === false)
     ) {
-      this.setState({ loading: true }); // eslint-disable-line
-      this.fetchTaskAndRuns(taskName, taskType, namespace);
+      this.fetchTaskRuns();
     }
   }
 
-  handleTaskSelected = (selectedTaskId, selectedStepId) => {
-    this.setState({ selectedStepId, selectedTaskId });
-  };
-
-  loadTaskRuns = () => {
-    const { task } = this.props;
-    let { taskRuns } = this.props;
-    taskRuns = taskRuns
-      .map(taskRun => {
-        if (!taskRun) {
-          return null;
-        }
-        const taskName = taskRun.spec.taskRef.name;
-        const taskRunName = taskRun.metadata.name;
-        const taskRunNamespace = taskRun.metadata.namespace;
-        const { reason, status: succeeded } = getStatus(taskRun);
-        const pipelineTaskName = taskRunName;
-        const runSteps = stepsStatus(task.spec.steps, taskRun.status.steps);
-        const { params, resources: inputResources } = taskRun.spec.inputs;
-        const { resources: outputResources } = taskRun.spec.outputs;
-        const { startTime } = taskRun.status;
-        return {
-          id: taskRun.metadata.uid,
-          pipelineTaskName,
-          pod: taskRun.status.podName,
-          reason,
-          steps: runSteps,
-          succeeded,
-          taskName,
-          taskRunName,
-          startTime,
-          namespace: taskRunNamespace,
-          params,
-          inputResources,
-          outputResources
-        };
-      })
-      .filter(Boolean);
-    return taskRuns;
-  };
-
-  fetchTaskAndRuns(taskName, taskType, namespace) {
-    Promise.all([
-      this.props.fetchTaskByKind(taskName, taskType, namespace),
-      this.props.fetchTaskRuns({ taskName })
-    ]).then(() => {
-      this.setState({ loading: false });
+  fetchTaskRuns() {
+    const { filters, namespace } = this.props;
+    this.props.fetchTaskRuns({
+      filters,
+      namespace
     });
   }
 
   render() {
-    const { loading, selectedStepId, selectedTaskId } = this.state;
-    const { error } = this.props;
+    const {
+      error,
+      loading,
+      namespace: selectedNamespace,
+      taskRuns
+    } = this.props;
 
     if (loading) {
       return <StructuredListSkeleton border />;
     }
 
     if (error) {
-      return TaskRunsContainer.notification({
-        kind: 'error',
-        message: 'Error loading TaskRuns'
-      });
+      return (
+        <InlineNotification
+          kind="error"
+          hideCloseButton
+          lowContrast
+          title="Error loading TaskRuns"
+          subtitle={getErrorMessage(error)}
+        />
+      );
     }
 
-    const taskRuns = this.loadTaskRuns();
-
-    if (taskRuns.length === 0) {
-      return TaskRunsContainer.notification({
-        kind: 'info',
-        message: 'Task has never run'
-      });
-    }
-
-    const taskRun = selectedTaskRun(selectedTaskId, taskRuns) || {};
-
-    const { definition, reason, status, stepName, stepStatus } = taskRunStep(
-      selectedStepId,
-      taskRun
-    );
-
-    const logContainer = (
-      <Log
-        fetchLogs={() => fetchLogs(stepName, stepStatus, taskRun)}
-        key={`${selectedTaskId}:${selectedStepId}`}
-        stepStatus={stepStatus}
-      />
-    );
+    sortRunsByStartTime(taskRuns);
 
     return (
-      <>
-        <RunHeader
-          lastTransitionTime={taskRun.startTime}
-          loading={loading}
-          runName={taskRun.taskRunName}
-          status={taskRun.succeeded}
-        />
-        <div className="tasks">
-          <TaskTree
-            onSelect={this.handleTaskSelected}
-            selectedTaskId={selectedTaskId}
-            taskRuns={taskRuns}
-          />
-          {selectedStepId && (
-            <StepDetails
-              definition={definition}
-              logContainer={logContainer}
-              reason={reason}
-              showIO
-              status={status}
-              stepName={stepName}
-              stepStatus={stepStatus}
-              taskRun={taskRun}
-            />
+      <StructuredListWrapper border selection>
+        <StructuredListHead>
+          <StructuredListRow head>
+            <StructuredListCell head>TaskRun</StructuredListCell>
+            <StructuredListCell head>Task</StructuredListCell>
+            {selectedNamespace === ALL_NAMESPACES && (
+              <StructuredListCell head>Namespace</StructuredListCell>
+            )}
+            <StructuredListCell head>Status</StructuredListCell>
+            <StructuredListCell head>Last Transition Time</StructuredListCell>
+            <StructuredListCell head />
+          </StructuredListRow>
+        </StructuredListHead>
+        <StructuredListBody>
+          {!taskRuns.length && (
+            <StructuredListRow>
+              <StructuredListCell>
+                <span>No TaskRuns</span>
+              </StructuredListCell>
+            </StructuredListRow>
           )}
-        </div>
-      </>
+          {taskRuns.map(taskRun => {
+            const { name, namespace } = taskRun.metadata;
+            let taskRefName = '';
+            if (taskRun.spec.taskRef) {
+              taskRefName = taskRun.spec.taskRef.name;
+            }
+            const { lastTransitionTime, reason, status } = getStatus(taskRun);
+            let message;
+            if (!taskRun.status.conditions) {
+              message = '';
+            } else if (
+              !taskRun.status.conditions[0].message &&
+              taskRun.status.conditions[0].status
+            ) {
+              message = 'All Steps have completed executing';
+            } else {
+              message = taskRun.status.conditions[0].message; // eslint-disable-line
+            }
+
+            return (
+              <StructuredListRow
+                className="definition"
+                key={taskRun.metadata.uid}
+              >
+                <StructuredListCell>
+                  <Link
+                    to={urls.taskRuns.byName({ namespace, taskRunName: name })}
+                  >
+                    {name}
+                  </Link>
+                </StructuredListCell>
+                <StructuredListCell>
+                  {taskRefName && (
+                    <Link
+                      to={urls.taskRuns.byTask({
+                        namespace,
+                        taskName: taskRefName
+                      })}
+                    >
+                      {taskRefName}
+                    </Link>
+                  )}
+                </StructuredListCell>
+                {selectedNamespace === ALL_NAMESPACES && (
+                  <StructuredListCell>{namespace}</StructuredListCell>
+                )}
+                <StructuredListCell
+                  className="status"
+                  data-reason={reason}
+                  data-status={status}
+                >
+                  {getStatusIcon({ reason, status })}
+                  {message}
+                </StructuredListCell>
+                <StructuredListCell>
+                  <FormattedDate date={lastTransitionTime} relative />
+                </StructuredListCell>
+                <StructuredListCell>
+                  {isRunning(reason, status) && (
+                    <CancelButton
+                      type="TaskRun"
+                      name={name}
+                      onCancel={() =>
+                        cancelTaskRun({
+                          name,
+                          namespace
+                        })
+                      }
+                    />
+                  )}
+                </StructuredListCell>
+              </StructuredListRow>
+            );
+          })}
+        </StructuredListBody>
+      </StructuredListWrapper>
     );
   }
 }
 
-TaskRunsContainer.propTypes = {
-  match: PropTypes.shape({
-    params: PropTypes.shape({
-      taskName: PropTypes.string.isRequired
-    }).isRequired
-  }).isRequired
+TaskRuns.defaultProps = {
+  filters: []
 };
 
-/* istanbul ignore next */
-function mapStateToProps(state, ownProps) {
-  const { match } = ownProps;
-  const { namespace: namespaceParam, taskName, taskType } = match.params;
+export function fetchFilters(searchQuery) {
+  const queryParams = new URLSearchParams(searchQuery);
+  let filters = [];
+  queryParams.forEach(function filterValueSplit(value) {
+    filters = value.split(',');
+  });
+  return filters;
+}
 
+/* istanbul ignore next */
+function mapStateToProps(state, props) {
+  const { namespace: namespaceParam } = props.match.params;
+  const filters = fetchFilters(props.location.search);
   const namespace = namespaceParam || getSelectedNamespace(state);
+
+  const taskFilter =
+    filters.find(filter => filter.indexOf('tekton.dev/task=') !== -1) || '';
+  const taskName = taskFilter.replace('tekton.dev/task=', '');
 
   return {
     error: getTaskRunsErrorMessage(state),
+    filters,
+    loading: isFetchingTaskRuns(state),
     namespace,
-    taskRuns: getTaskRunsByTaskName(state, {
-      name: taskName,
-      namespace
-    }),
-    task: getTaskByType(state, { type: taskType, name: taskName, namespace }),
+    taskName,
+    taskRuns: getTaskRuns(state, { filters, namespace }),
     webSocketConnected: isWebSocketConnected(state)
   };
 }
 
 const mapDispatchToProps = {
-  fetchTaskByKind: fetchTaskByType,
   fetchTaskRuns
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(TaskRunsContainer);
+)(TaskRuns);
