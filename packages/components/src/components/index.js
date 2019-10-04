@@ -16,6 +16,7 @@ export { default as CancelButton } from './CancelButton';
 export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as FormattedDate } from './FormattedDate';
 export { default as Header } from './Header';
+export { default as LabelFilter } from './LabelFilter';
 export { default as Log } from './Log';
 export { default as LogoutButton } from './LogoutButton';
 export { default as PipelineRun } from './PipelineRun';
