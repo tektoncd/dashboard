@@ -162,20 +162,15 @@ describe('taskRuns', () => {
   });
 
   it('byTask', () => {
-    const taskType = 'tasks';
-    expect(urls.taskRuns.byTask({ namespace, taskType, taskName })).toEqual(
-      generatePath(paths.taskRuns.byTask(), { namespace, taskType, taskName })
+    expect(urls.taskRuns.byTask({ namespace, taskName })).toEqual(
+      generatePath(paths.taskRuns.byTask(), { namespace, taskName })
     );
   });
 
   it('byClusterTask', () => {
-    const taskType = 'clustertasks';
-    expect(
-      urls.taskRuns.byClusterTask({ namespace, taskType, taskName })
-    ).toEqual(
+    expect(urls.taskRuns.byClusterTask({ namespace, taskName })).toEqual(
       generatePath(paths.taskRuns.byClusterTask(), {
         namespace,
-        taskType,
         taskName
       })
     );

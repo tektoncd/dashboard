@@ -17,10 +17,10 @@ import {
   fetchNamespacedResource
 } from './actionCreators';
 
-export function fetchTaskRuns({ namespace, taskName } = {}) {
+export function fetchTaskRuns({ filters, namespace } = {}) {
   return fetchNamespacedCollection('TaskRun', getTaskRuns, {
-    namespace,
-    taskName
+    filters,
+    namespace
   });
 }
 

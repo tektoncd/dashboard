@@ -24,7 +24,6 @@ import {
   getPipelineResourcesErrorMessage,
   getPipelineRun,
   getPipelineRuns,
-  getPipelineRunsByPipelineName,
   getPipelineRunsErrorMessage,
   getPipelines,
   getPipelinesErrorMessage,
@@ -36,7 +35,6 @@ import {
   getTaskRun,
   getTaskRuns,
   getTaskRunsByPipelineRunName,
-  getTaskRunsByTaskName,
   getTaskRunsErrorMessage,
   getTasks,
   getTasksErrorMessage,
@@ -249,40 +247,6 @@ it('getPipelineRuns', () => {
   );
 });
 
-it('getPipelineRunsByPipelineName', () => {
-  const id = 'pipelineId';
-  const name = 'pipelineName';
-  const pipeline = {
-    spec: {
-      pipelineRef: {
-        name
-      }
-    }
-  };
-  const pipelineRunsToFilter = [
-    pipeline,
-    { spec: { pipelineRef: { name: 'another pipeline' } } }
-  ];
-
-  const pipelineRunsState = {
-    pipelineRuns: {
-      byId: { [id]: pipeline },
-      byNamespace: { [namespace]: { [name]: id } }
-    }
-  };
-
-  jest
-    .spyOn(pipelineRunsSelectors, 'getPipelineRuns')
-    .mockImplementation(() => pipelineRunsToFilter);
-  expect(
-    getPipelineRunsByPipelineName(pipelineRunsState, { name, filters: [] })
-  ).toEqual([pipeline]);
-  expect(pipelineRunsSelectors.getPipelineRuns).toHaveBeenCalledWith(
-    pipelineRunsState.pipelineRuns,
-    namespace
-  );
-});
-
 it('getPipelineRun', () => {
   const name = 'pipelineRunName';
   const pipelineRun = { fake: 'pipelineRun' };
@@ -458,7 +422,7 @@ it('getTaskRuns', () => {
   jest
     .spyOn(taskRunsSelectors, 'getTaskRuns')
     .mockImplementation(() => taskRuns);
-  expect(getTaskRuns(state)).toEqual(taskRuns);
+  expect(getTaskRuns(state, { filters: [] })).toEqual(taskRuns);
   expect(taskRunsSelectors.getTaskRuns).toHaveBeenCalledWith(
     state.taskRuns,
     namespace
@@ -476,13 +440,6 @@ it('getTaskRunsByPipelineRunName', () => {
     state.taskRuns,
     namespace
   );
-});
-
-it('getTaskRunsByTaskName', () => {
-  jest
-    .spyOn(taskRunsSelectors, 'getTaskRuns')
-    .mockImplementation(() => taskRuns);
-  expect(getTaskRunsByTaskName(state, { name: taskName })).toEqual([taskRun]);
 });
 
 it('getTaskRunsErrorMessage', () => {

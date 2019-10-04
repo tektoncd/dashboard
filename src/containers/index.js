@@ -35,5 +35,4 @@ export { default as ServiceAccountsDropdown } from './ServiceAccountsDropdown';
 export { default as SideNav } from './SideNav';
 export { default as Tasks } from './Tasks';
 export { default as TaskRun } from './TaskRun';
-export { default as TaskRunList } from './TaskRunList';
 export { default as TaskRuns } from './TaskRuns';

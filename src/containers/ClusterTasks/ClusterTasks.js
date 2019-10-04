@@ -92,7 +92,6 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
                 <StructuredListCell>
                   <Link
                     to={urls.taskRuns.byClusterTask({
-                      taskType: 'clustertasks',
                       taskName
                     })}
                   >

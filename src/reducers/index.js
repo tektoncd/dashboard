@@ -165,14 +165,6 @@ export function getPipelineRuns(
   });
 }
 
-export function getPipelineRunsByPipelineName(
-  state,
-  { name, namespace = getSelectedNamespace(state), filters }
-) {
-  const runs = getPipelineRuns(state, { namespace, filters });
-  return runs.filter(pipelineRun => pipelineRun.spec.pipelineRef.name === name);
-}
-
 export function getPipelineRun(
   state,
   { name, namespace = getSelectedNamespace(state) }
@@ -215,9 +207,20 @@ export function getTaskRunsByPipelineRunName(
 
 export function getTaskRuns(
   state,
-  { namespace = getSelectedNamespace(state) } = {}
+  { filters, namespace = getSelectedNamespace(state) } = {}
 ) {
-  return taskRunsSelectors.getTaskRuns(state.taskRuns, namespace);
+  const runs = taskRunsSelectors.getTaskRuns(state.taskRuns, namespace);
+  return runs.filter(taskRun => {
+    return filters.every(filter => {
+      const [filterKey, filterValue] = filter.split('=');
+      return (
+        taskRun.metadata.labels &&
+        filterKey &&
+        filterValue &&
+        taskRun.metadata.labels[filterKey] === filterValue
+      );
+    });
+  });
 }
 
 export function getTaskRunsErrorMessage(state) {
@@ -226,16 +229,6 @@ export function getTaskRunsErrorMessage(state) {
 
 export function isFetchingTaskRuns(state) {
   return taskRunsSelectors.isFetchingTaskRuns(state.taskRuns);
-}
-
-export function getTaskRunsByTaskName(
-  state,
-  { name, namespace = getSelectedNamespace(state) }
-) {
-  const runs = getTaskRuns(state, { namespace });
-  return runs.filter(taskRun => {
-    return taskRun.spec.taskRef && taskRun.spec.taskRef.name === name;
-  });
 }
 
 export function getTasks(

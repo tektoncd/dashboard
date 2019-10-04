@@ -15,6 +15,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
+import isEqual from 'lodash.isequal';
 import {
   Button,
   Form,
@@ -41,7 +42,6 @@ import { fetchPipelineRuns } from '../../actions/pipelineRuns';
 
 import {
   getPipelineRuns,
-  getPipelineRunsByPipelineName,
   getPipelineRunsErrorMessage,
   getSelectedNamespace,
   isFetchingPipelineRuns,
@@ -81,22 +81,17 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
     this.fetchPipelineRuns();
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    const { match, namespace, webSocketConnected } = this.props;
-    const { filters } = this.state;
-    const { filters: prevFilters } = prevState;
-    const { pipelineName } = match.params;
+  componentDidUpdate(prevProps) {
+    const { filters, namespace, webSocketConnected } = this.props;
     const {
-      match: prevMatch,
+      filters: prevFilters,
       namespace: prevNamespace,
       webSocketConnected: prevWebSocketConnected
     } = prevProps;
-    const { pipelineName: prevPipelineName } = prevMatch.params;
 
     if (
       namespace !== prevNamespace ||
-      pipelineName !== prevPipelineName ||
-      filters !== prevFilters ||
+      !isEqual(filters, prevFilters) ||
       (webSocketConnected && prevWebSocketConnected === false)
     ) {
       this.reset();
@@ -203,7 +198,6 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
     const browserURL = currentURL.concat(newQueryParams);
     this.props.history.push(browserURL);
     this.resetCurrentFilterValue();
-    this.fetchPipelineRuns();
   };
 
   handleDeleteFilter = filter => {
@@ -264,24 +258,21 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
   }
 
   fetchPipelineRuns() {
-    const { match, namespace } = this.props;
-    const { pipelineName } = match.params;
+    const { filters, namespace } = this.props;
     this.props.fetchPipelineRuns({
-      pipelineName,
+      filters,
       namespace
     });
   }
 
   render() {
     const {
-      match,
       error,
       loading,
       namespace: selectedNamespace,
       pipelineRuns,
       intl
     } = this.props;
-    const { pipelineName } = match.params;
     const { currentFilterValue, validFilter } = this.state;
     const { filterMessage, isValid, url, urlMessage } = validFilter;
 
@@ -393,11 +384,10 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
           open={this.state.showCreatePipelineRunModal}
           onClose={() => this.toggleModal(false)}
           onSuccess={this.handleCreatePipelineRunSuccess}
-          pipelineRef={pipelineName}
+          pipelineRef={this.props.pipelineName}
           namespace={selectedNamespace}
         />
         <PipelineRunsList
-          pipelineName={pipelineName}
           selectedNamespace={selectedNamespace}
           pipelineRuns={pipelineRuns}
           pipelineRunActions={pipelineRunActions}
@@ -422,24 +412,24 @@ export function fetchFilters(searchQuery) {
 
 /* istanbul ignore next */
 function mapStateToProps(state, props) {
-  const { namespace: namespaceParam, pipelineName } = props.match.params;
+  const { namespace: namespaceParam } = props.match.params;
   const filters = fetchFilters(props.location.search);
   const namespace = namespaceParam || getSelectedNamespace(state);
+
+  const pipelineFilter =
+    filters.find(filter => filter.indexOf('tekton.dev/pipeline=') !== -1) || '';
+  const pipelineName = pipelineFilter.replace('tekton.dev/pipeline=', '');
+
   return {
     error: getPipelineRunsErrorMessage(state),
     loading: isFetchingPipelineRuns(state),
     namespace,
     filters,
-    pipelineRuns: pipelineName
-      ? getPipelineRunsByPipelineName(state, {
-          filters,
-          name: props.match.params.pipelineName,
-          namespace
-        })
-      : getPipelineRuns(state, {
-          filters,
-          namespace
-        }),
+    pipelineName,
+    pipelineRuns: getPipelineRuns(state, {
+      filters,
+      namespace
+    }),
     webSocketConnected: isWebSocketConnected(state)
   };
 }

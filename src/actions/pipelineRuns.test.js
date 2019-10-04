@@ -30,12 +30,12 @@ it('fetchPipelineRun', async () => {
 it('fetchPipelineRuns', async () => {
   jest.spyOn(creators, 'fetchNamespacedCollection');
   const namespace = 'namespace';
-  const pipelineName = 'pipelineName';
-  fetchPipelineRuns({ namespace, pipelineName });
+  const filters = ['someFilter'];
+  fetchPipelineRuns({ filters, namespace });
   expect(creators.fetchNamespacedCollection).toHaveBeenCalledWith(
     'PipelineRun',
     API.getPipelineRuns,
-    { namespace, pipelineName }
+    { namespace, filters }
   );
 });
 
@@ -45,6 +45,6 @@ it('fetchPipelineRuns no params', async () => {
   expect(creators.fetchNamespacedCollection).toHaveBeenCalledWith(
     'PipelineRun',
     API.getPipelineRuns,
-    { namespace: undefined, pipelineName: undefined }
+    { namespace: undefined }
   );
 });

@@ -93,10 +93,12 @@ export const paths = {
       return byNamespace({ path: '/taskruns' });
     },
     byTask() {
-      return byNamespace({ path: '/:taskType(tasks)/:taskName/runs' });
+      return byNamespace({
+        path: '/taskruns?labelSelector=tekton.dev%2Ftask%3D:taskName'
+      });
     },
     byClusterTask() {
-      return '/:taskType(clustertasks)/:taskName/runs';
+      return '/taskruns?labelSelector=tekton.dev%2Ftask%3D:taskName';
     },
     byName() {
       return byNamespace({ path: '/taskruns/:taskRunName' });
