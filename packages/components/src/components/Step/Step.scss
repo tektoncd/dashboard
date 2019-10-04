@@ -17,8 +17,11 @@ limitations under the License.
   list-style-type: none;
 
   &:hover > a.step-link,
-  &[data-selected] > a.step-link {
+  &:hover > a.step-link:hover,
+  &[data-selected] > a.step-link,
+  &[data-selected] > a.step-link:hover {
     background-color: #e5e8eb;
+    text-decoration: none;
   }
 
   &[data-selected] > a.step-link:after {
@@ -37,8 +40,6 @@ limitations under the License.
     align-items: baseline;
     position: relative;
     padding: 0 2.25rem;
-    text-decoration: none;
-    color: inherit;
     margin: 1px;
     line-height: 2.2rem;
     font-size: 0.78rem;
@@ -58,6 +59,7 @@ limitations under the License.
   }
 
   .step-name {
+    color: $text-01;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
