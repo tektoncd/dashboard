@@ -106,7 +106,12 @@ class Step extends Component {
         data-reason={reason}
         data-selected={selected || undefined}
       >
-        <a href="#" tabIndex="0" onClick={this.handleClick}>
+        <a
+          className="step-link"
+          href="#"
+          tabIndex="0"
+          onClick={this.handleClick}
+        >
           {icon}
           <span className="step-name" title={stepName}>
             {stepName}

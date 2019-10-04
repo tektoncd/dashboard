@@ -16,12 +16,12 @@ limitations under the License.
 .step {
   list-style-type: none;
 
-  &:hover > a,
-  &[data-selected] > a {
+  &:hover > a.step-link,
+  &[data-selected] > a.step-link {
     background-color: #e5e8eb;
   }
 
-  &[data-selected] > a:after {
+  &[data-selected] > a.step-link:after {
     content: '';
     position: absolute;
     top: 0;
@@ -32,7 +32,7 @@ limitations under the License.
     border-bottom: 1.1rem solid transparent;
   }
 
-  > a {
+  > a.step-link {
     display: flex;
     align-items: baseline;
     position: relative;
@@ -69,12 +69,12 @@ limitations under the License.
     letter-spacing: 0.01rem;
   }
 
-  &[data-status] > a {
+  &[data-status] > a.step-link {
     // default status
     opacity: 0.75;
   }
 
-  &[data-status='running'] > a {
+  &[data-status='running'] > a.step-link {
     opacity: 1;
     .step-icon {
       fill: $running;
@@ -87,7 +87,7 @@ limitations under the License.
       font-size: 0.69rem;
     }
   }
-  &[data-status='terminated'][data-reason='Completed'] > a {
+  &[data-status='terminated'][data-reason='Completed'] > a.step-link {
     opacity: 1;
     .step-icon {
       fill: $success;
@@ -98,7 +98,7 @@ limitations under the License.
       font-weight: bold;
     }
   }
-  &[data-status='terminated'][data-reason='Error'] > a {
+  &[data-status='terminated'][data-reason='Error'] > a.step-link {
     opacity: 1;
     .step-icon {
       fill: $failed;
@@ -108,7 +108,7 @@ limitations under the License.
       font-weight: bold;
     }
   }
-  &[data-status='cancelled'] > a {
+  &[data-status='cancelled'] > a.step-link {
     opacity: 1;
     .step-icon {
       fill: $failed;
