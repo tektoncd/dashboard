@@ -18,14 +18,13 @@ import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
 import {
   Button,
-  Form,
   InlineNotification,
-  Link as ReactLink,
-  Search,
-  StructuredListSkeleton,
-  Tag
+  StructuredListSkeleton
 } from 'carbon-components-react';
-import { PipelineRuns as PipelineRunsList } from '@tektoncd/dashboard-components';
+import {
+  LabelFilter,
+  PipelineRuns as PipelineRunsList
+} from '@tektoncd/dashboard-components';
 import {
   getErrorMessage,
   getStatus,
@@ -35,7 +34,6 @@ import {
 import Add from '@carbon/icons-react/lib/add/16';
 
 import { CreatePipelineRun } from '..';
-import './PipelineRuns.scss';
 
 import { sortRunsByStartTime } from '../../utils';
 import { fetchPipelineRuns } from '../../actions/pipelineRuns';
@@ -51,20 +49,8 @@ import { cancelPipelineRun } from '../../api';
 
 const initialState = {
   showCreatePipelineRunModal: false,
-  createdPipelineRun: null,
-  validFilter: {
-    isValid: true,
-    filterMessage: null,
-    url: '',
-    urlMessage: ''
-  }
+  createdPipelineRun: null
 };
-
-function arrayUnique(arr) {
-  return arr.filter(function unique(item, index) {
-    return arr.indexOf(item) >= index;
-  });
-}
 
 export /* istanbul ignore next */ class PipelineRuns extends Component {
   constructor(props) {
@@ -108,11 +94,33 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
     this.setState({ showCreatePipelineRunModal });
   };
 
-  handleChange = event => {
-    const inputValue = event.target.value;
-    this.setState({
-      currentFilterValue: inputValue
-    });
+  handleAddFilter = labelFilters => {
+    const queryParams = `?${new URLSearchParams({
+      labelSelector: labelFilters
+    }).toString()}`;
+
+    const currentURL = this.props.match.url;
+    const browserURL = currentURL.concat(queryParams);
+    this.props.history.push(browserURL);
+  };
+
+  handleDeleteFilter = filter => {
+    const currentQueryParams = new URLSearchParams(this.props.location.search);
+    const labelFilters = currentQueryParams.getAll('labelSelector');
+    const labelFiltersArray = labelFilters.toString().split(',');
+    const index = labelFiltersArray.indexOf(filter);
+    labelFiltersArray.splice(index, 1);
+
+    const currentURL = this.props.match.url;
+    if (labelFiltersArray.length === 0) {
+      this.props.history.push(currentURL);
+    } else {
+      const newQueryParams = `?${new URLSearchParams({
+        labelSelector: labelFiltersArray
+      }).toString()}`;
+      const browserURL = currentURL.concat(newQueryParams);
+      this.props.history.push(browserURL);
+    }
   };
 
   pipelineRunActions = () => {
@@ -152,95 +160,6 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
     ];
   };
 
-  handleAddFilter = event => {
-    const { intl } = this.props;
-    event.preventDefault();
-    const currentURL = this.props.match.url;
-    const { currentFilterValue = '' } = this.state;
-    const filterRegex = '([a-z0-9A-Z-_./]:[a-z0-9A-Z-_.],?)+';
-    const filterValue = currentFilterValue.replace(/\s/g, '');
-    if (!filterValue.match(filterRegex)) {
-      this.setState({
-        validFilter: {
-          isValid: false,
-          filterMessage: intl.formatMessage({
-            id: 'dashboard.pipelineRuns.invalidFilter',
-            defaultMessage:
-              'Filters must be of the format labelKey:labelValue and contain accepted label characters'
-          }),
-          url:
-            'https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set',
-          urlMessage: 'See the Kubernetes Label documentation for valid syntax'
-        }
-      });
-      return;
-    }
-    const colonToEqualsFilters = filterValue.replace(/:/g, '=');
-    let currentFiltersArray = colonToEqualsFilters.split(',');
-    currentFiltersArray = arrayUnique(currentFiltersArray);
-    if (this.props.filters.includes(currentFiltersArray[0])) {
-      this.setState({
-        validFilter: {
-          isValid: false,
-          filterMessage: intl.formatMessage({
-            id: 'dashboard.pipelineRuns.duplicateFilter',
-            defaultMessage: 'No duplicate filters allowed'
-          }),
-          url: '',
-          urlMessage: ''
-        }
-      });
-      return;
-    }
-    const newQueryParams = `?${new URLSearchParams({
-      labelSelector: this.props.filters.concat(currentFiltersArray)
-    }).toString()}`;
-    const browserURL = currentURL.concat(newQueryParams);
-    this.props.history.push(browserURL);
-    this.resetCurrentFilterValue();
-  };
-
-  handleDeleteFilter = filter => {
-    const currentQueryParams = new URLSearchParams(this.props.location.search);
-    const labelFilters = currentQueryParams.getAll('labelSelector');
-    const labelFiltersArray = labelFilters.toString().split(',');
-    const index = labelFiltersArray.indexOf(filter);
-    labelFiltersArray.splice(index, 1);
-    const currentURL = this.props.match.url;
-    if (labelFiltersArray.length === 0) {
-      this.props.history.push(currentURL);
-    } else {
-      const newQueryParams = `?${new URLSearchParams({
-        labelSelector: labelFiltersArray
-      }).toString()}`;
-      const browserURL = currentURL.concat(newQueryParams);
-      this.props.history.push(browserURL);
-    }
-  };
-
-  handleCloseFilterError = () => {
-    this.setState({
-      validFilter: {
-        isValid: true,
-        filterMessage: null,
-        url: '',
-        urlMessage: ''
-      }
-    });
-  };
-
-  resetCurrentFilterValue() {
-    this.setState({
-      validFilter: {
-        isValid: true,
-        filterMessage: null,
-        url: '',
-        urlMessage: ''
-      },
-      currentFilterValue: ''
-    });
-  }
-
   handleCreatePipelineRunSuccess(newPipelineRun) {
     const {
       metadata: { namespace, name }
@@ -268,13 +187,12 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
   render() {
     const {
       error,
+      filters,
       loading,
       namespace: selectedNamespace,
       pipelineRuns,
       intl
     } = this.props;
-    const { currentFilterValue, validFilter } = this.state;
-    const { filterMessage, isValid, url, urlMessage } = validFilter;
 
     if (loading) {
       return <StructuredListSkeleton border />;
@@ -296,6 +214,24 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
     }
     const pipelineRunActions = this.pipelineRunActions();
     sortRunsByStartTime(pipelineRuns);
+
+    const createPipelineRunButton = (
+      <Button
+        iconDescription={intl.formatMessage({
+          id: 'dashboard.pipelineRuns.createPipelineRunTitle',
+          defaultMessage: 'Create PipelineRun'
+        })}
+        renderIcon={Add}
+        type="button"
+        onClick={() => this.toggleModal(true)}
+      >
+        {intl.formatMessage({
+          id: 'dashboard.pipelineRuns.createPipelineRunButton',
+          defaultMessage: 'Create PipelineRun'
+        })}
+      </Button>
+    );
+
     return (
       <>
         {this.state.createdPipelineRun && (
@@ -313,73 +249,12 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
             lowContrast
           />
         )}
-        {!isValid && (
-          <InlineNotification
-            lowContrast
-            kind="error"
-            title={filterMessage}
-            subtitle=""
-            role="alert"
-            onCloseButtonClick={this.handleCloseFilterError}
-          >
-            <ReactLink id="labelDocsLink" href={url}>
-              {urlMessage}
-            </ReactLink>
-          </InlineNotification>
-        )}
-        <Form onSubmit={this.handleAddFilter} autoComplete="on">
-          <div className="search-bar">
-            <Search
-              placeHolderText={intl.formatMessage({
-                id: 'dashboard.pipelineRuns.searchPlaceholder',
-                defaultMessage:
-                  'Input a label filter of the format labelKey:labelValue'
-              })}
-              className="search"
-              labelText={intl.formatMessage({
-                id: 'dashboard.pipelineRuns.searchPlaceholder',
-                defaultMessage:
-                  'Input a label filter of the format labelKey:labelValue'
-              })}
-              onChange={this.handleChange}
-              value={currentFilterValue}
-              data-testid="filter-search-bar"
-              id="filter-search"
-              name="filter-search"
-            />
-            <Button
-              className="add-filter-button"
-              iconDescription="Add filter"
-              renderIcon={Add}
-              kind="ghost"
-              type="submit"
-            >
-              Add filter
-            </Button>
-            <Button
-              className="create-pipelinerun-button"
-              iconDescription="Create PipelineRun"
-              renderIcon={Add}
-              type="button"
-              onClick={() => this.toggleModal(true)}
-            >
-              Create PipelineRun
-            </Button>
-          </div>
-        </Form>
-        <div className="filters">
-          <div className="filters-title">Filters:</div>
-          {this.props.filters.map(filter => (
-            <Tag
-              type="blue"
-              filter
-              onClick={() => this.handleDeleteFilter(filter)}
-              key={filter}
-            >
-              {filter.replace(/=/g, ':')}
-            </Tag>
-          ))}
-        </div>
+        <LabelFilter
+          additionalButton={createPipelineRunButton}
+          filters={filters}
+          handleAddFilter={this.handleAddFilter}
+          handleDeleteFilter={this.handleDeleteFilter}
+        />
         <CreatePipelineRun
           open={this.state.showCreatePipelineRunModal}
           onClose={() => this.toggleModal(false)}
