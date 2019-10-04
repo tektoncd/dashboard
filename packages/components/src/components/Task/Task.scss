@@ -16,7 +16,7 @@ limitations under the License.
 .task {
   list-style-type: none;
 
-  &:not([data-succeeded]) > a {
+  &:not([data-succeeded]) > a.task-link {
     text-shadow: 0.2px 0 0 #272d33ab; // increase weight slightly
     background-color: $waiting-bg;
     color: $waiting-fg;
@@ -32,7 +32,7 @@ limitations under the License.
       fill: $waiting-fg;
     }
   }
-  &[data-succeeded='True'] > a {
+  &[data-succeeded='True'] > a.task-link {
     background-color: $success-bg;
     color: $success-fg;
     &:hover {
@@ -42,7 +42,7 @@ limitations under the License.
       fill: $success-fg;
     }
   }
-  &[data-succeeded='False'] > a {
+  &[data-succeeded='False'] > a.task-link {
     background-color: $failed-bg;
     color: $failed-fg;
     &:hover {
@@ -52,7 +52,7 @@ limitations under the License.
       fill: $failed-fg;
     }
   }
-  &[data-succeeded='Unknown'][data-reason='Pending'] > a {
+  &[data-succeeded='Unknown'][data-reason='Pending'] > a.task-link {
     background-color: $running-bg;
     color: $running-fg;
     &:hover {
@@ -63,7 +63,7 @@ limitations under the License.
     }
   }
 
-  > a {
+  > a.task-link {
     display: block;
     position: relative;
     padding: 0 1.25rem;
