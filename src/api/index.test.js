@@ -21,6 +21,7 @@ import {
   createPipelineResource,
   createPipelineRun,
   deleteCredential,
+  deletePipelineRun,
   getAPI,
   getAPIRoot,
   getClusterTask,
@@ -225,6 +226,16 @@ it('getPipelineRun', () => {
   const data = { fake: 'pipelineRun' };
   fetchMock.get(`end:${name}`, data);
   return getPipelineRun({ name }).then(pipelineRun => {
+    expect(pipelineRun).toEqual(data);
+    fetchMock.restore();
+  });
+});
+
+it('deletePipelineRun', () => {
+  const name = 'foo';
+  const data = { fake: 'pipelineRun' };
+  fetchMock.delete(`end:${name}`, data);
+  return deletePipelineRun({ name }).then(pipelineRun => {
     expect(pipelineRun).toEqual(data);
     fetchMock.restore();
   });
