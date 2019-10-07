@@ -136,6 +136,11 @@ export function cancelPipelineRun({ name, namespace }) {
   });
 }
 
+export function deletePipelineRun({ name, namespace }) {
+  const uri = getTektonAPI('pipelineruns', { name, namespace });
+  return deleteRequest(uri);
+}
+
 export function createPipelineResource({ namespace, resource } = {}) {
   const uri = getTektonAPI('pipelineresources', { namespace });
   return post(uri, resource);

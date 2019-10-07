@@ -45,7 +45,7 @@ import {
   isFetchingPipelineRuns,
   isWebSocketConnected
 } from '../../reducers';
-import { cancelPipelineRun } from '../../api';
+import { cancelPipelineRun, deletePipelineRun } from '../../api';
 
 const initialState = {
   showCreatePipelineRunModal: false,
@@ -88,6 +88,11 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
   cancel = pipelineRun => {
     const { name, namespace } = pipelineRun.metadata;
     cancelPipelineRun({ name, namespace });
+  };
+
+  deleteRun = pipelineRun => {
+    const { name, namespace } = pipelineRun.metadata;
+    deletePipelineRun({ name, namespace });
   };
 
   toggleModal = showCreatePipelineRunModal => {
@@ -143,7 +148,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
             defaultMessage: 'Stop PipelineRun'
           }),
           secondaryButtonText: intl.formatMessage({
-            id: 'dashboard.cancelPipelineRun.cancelButton',
+            id: 'dashboard.modal.cancelButton',
             defaultMessage: 'Cancel'
           }),
           body: resource =>
@@ -152,6 +157,37 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
                 id: 'dashboard.cancelPipelineRun.body',
                 defaultMessage:
                   'Are you sure you would like to stop PipelineRun {name}?'
+              },
+              { name: resource.metadata.name }
+            )
+        }
+      },
+      {
+        actionText: 'Delete',
+        action: this.deleteRun,
+        disable: resource => {
+          const { reason, status } = getStatus(resource);
+          return isRunning(reason, status);
+        },
+        modalProperties: {
+          heading: intl.formatMessage({
+            id: 'dashboard.deletePipelineRun.heading',
+            defaultMessage: 'Delete PipelineRun'
+          }),
+          primaryButtonText: intl.formatMessage({
+            id: 'dashboard.deletePipelineRun.primaryText',
+            defaultMessage: 'Delete PipelineRun'
+          }),
+          secondaryButtonText: intl.formatMessage({
+            id: 'dashboard.modal.cancelButton',
+            defaultMessage: 'Cancel'
+          }),
+          body: resource =>
+            intl.formatMessage(
+              {
+                id: 'dashboard.deletePipelineRun.body',
+                defaultMessage:
+                  'Are you sure you would like to delete PipelineRun {name}?'
               },
               { name: resource.metadata.name }
             )
