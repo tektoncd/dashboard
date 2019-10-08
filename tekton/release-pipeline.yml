@@ -36,11 +36,11 @@ spec:
         name: publish-tekton-dashboard
       params:
         - name: pathToProject
-          value: ${params.package}
+          value: $(params.package)
         - name: versionTag
-          value: ${params.versionTag}
+          value: $(params.versionTag)
         - name: imageRegistry
-          value: ${params.imageRegistry}
+          value: $(params.imageRegistry)
       resources:
         inputs:
           - name: source

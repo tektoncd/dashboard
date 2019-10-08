@@ -38,3 +38,12 @@ spec:
       npm run build_ko
       
       dep ensure -v
+  - name: copy-files-to-output-resource
+    image: busybox
+    command: ["/bin/sh", "-ce"]
+    args:
+    - |
+      # Further to https://github.com/tektoncd/pipeline/pull/1122 it is necessary to copy files into $(outputs.resources.source.path)
+      echo "Input source path=$(inputs.resources.source.path)" 
+      echo "Output source path=$(outputs.resources.source.path)"
+      cp -r $(inputs.resources.source.path)/* $(outputs.resources.source.path)
