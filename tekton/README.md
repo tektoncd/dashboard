@@ -18,14 +18,14 @@ GENERIC_SECRET=release-secret
 SERVICE_ACCOUNT=default 
 GCP_ACCOUNT="release-right-meow@tekton-releases.iam.gserviceaccount.com"
 
-# 1. Create a private key for the service account, which you can use
+# 1. Create a GCP private key for the service account. You may want to keep a copy somewhere safe. 
 gcloud iam service-accounts keys create --iam-account $GCP_ACCOUNT $KEY_FILE
 
-# 2. Create kubernetes secret, which we will use via a service account and directly mounting
+# 2. Sore GCP key in a secret
 kubectl create secret generic $GENERIC_SECRET --from-file=./$KEY_FILE
 
-# 3. Add the docker secret to the service account
-kubectl patch serviceaccount $ACCOUNT -p "{\"secrets\": [{\"name\": \"$GENERIC_SECRET\"}]}"
+# 3. Patch the GCP key onto the service account to be used to run the release pipeline. 
+kubectl patch serviceaccount $SERVICE_ACCOUNT -p "{\"secrets\": [{\"name\": \"$GENERIC_SECRET\"}]}"
 ```
 
 Next:
@@ -39,11 +39,11 @@ PIPELINE_NAMESPACE=tekton-pipelines
 kubectl apply -f tekton -n $PIPELINE_NAMESPACE
 ``` 
 
-Now you can kick of the release build:
+Now you can kick off the release build:
 ```bash
 VERSION_TAG=vX.Y.Z
 PIPELINE_NAMESPACE=tekton-pipelines
-tkn pipeline start dashboard-release -p versionTag=$VERSION_TAG -r source-repo=tekton-dashboard-git -r bucket=tekton-bucket -r builtDashboardImage=dashboard-image -n $PIPELINE_NAMESPACE
+tkn pipeline start dashboard-release -p versionTag=$VERSION_TAG -r source-repo=tekton-dashboard-git -r bucket=tekton-bucket -r builtDashboardImage=dashboard-image -n $PIPELINE_NAMESPACE -s $SERVICE_ACCOUNT
 ```
 
 Monitor the build logs to see the image coordinates that the image is pushed to. The `release.yaml` should appear under https://console.cloud.google.com/storage/browser/tekton-releases/dashboard. 
