@@ -19,7 +19,7 @@ const FormattedDateWrapper = ({ date, intl, relative }) => {
     return null;
   }
 
-  if (relative) {
+  if (relative && Intl.RelativeTimeFormat) {
     return (
       <span
         title={intl.formatDate(date, {

@@ -27,6 +27,9 @@ describe('FormattedDate', () => {
   });
 
   it('handles relative date formatting', () => {
+    if (!Intl.RelativeTimeFormat) {
+      Intl.RelativeTimeFormat = {};
+    }
     const { container, queryByText } = renderWithIntl(
       <FormattedDate date="2019/12/01" relative />
     );
