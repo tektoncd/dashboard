@@ -11,7 +11,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { createCredential, deleteCredential, getCredentials } from '../api';
+import {
+  createCredential,
+  deleteCredential,
+  getCredentials,
+  getServiceAccount,
+  patchServiceAccount,
+  unpatchServiceAccount
+} from '../api';
 import { getSelectedNamespace } from '../reducers';
 
 export function fetchSecretsSuccess(data) {
@@ -29,11 +36,12 @@ export function fetchSecrets({ namespace } = {}) {
       const selectedNamespace = namespace || getSelectedNamespace(getState());
       secrets = await getCredentials(selectedNamespace);
       const secretsFormatted = [];
-      secrets.forEach(secret => {
+      secrets.items.forEach(secret => {
         const object = {
-          name: secret.name,
-          namespace: secret.namespace,
-          annotations: secret.url
+          name: secret.metadata.name,
+          namespace: secret.metadata.namespace,
+          annotations: secret.metadata.annotations,
+          type: secret.type
         };
         secretsFormatted.push(object);
       });
@@ -51,6 +59,7 @@ export function deleteSecret(secrets) {
     const timeoutLength = secrets.length * 1000;
     const deletePromises = secrets.map(secret => {
       const { name, namespace } = secret;
+      unpatchServiceAccount(name, namespace);
       const response = deleteCredential(name, namespace);
       const timeout = new Promise((resolve, reject) => {
         setTimeout(() => {
@@ -77,6 +86,15 @@ export function createSecret(postData, namespace) {
     dispatch({ type: 'SECRET_CREATE_REQUEST' });
     try {
       await createCredential(postData, namespace);
+      const serviceAccount = await getServiceAccount({
+        name: postData.metadata.labels.serviceAccount,
+        namespace
+      });
+      await patchServiceAccount({
+        serviceAccountName: serviceAccount.metadata.name,
+        namespace: serviceAccount.metadata.namespace,
+        secretName: postData.metadata.name
+      });
       dispatch({ type: 'SECRET_CREATE_SUCCESS' });
     } catch (error) {
       error.response.text().then(message => {

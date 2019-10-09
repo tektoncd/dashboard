@@ -12,71 +12,205 @@ limitations under the License.
 */
 
 import fetchMock from 'fetch-mock';
-
-import {
-  cancelPipelineRun,
-  cancelTaskRun,
-  checkData,
-  createCredential,
-  createPipelineResource,
-  createPipelineRun,
-  deleteCredential,
-  getAPI,
-  getAPIRoot,
-  getClusterTask,
-  getClusterTasks,
-  getCredential,
-  getCredentials,
-  getCustomResource,
-  getCustomResources,
-  getExtensionBundleURL,
-  getExtensions,
-  getNamespaces,
-  getPipeline,
-  getPipelineResource,
-  getPipelineResources,
-  getPipelineRun,
-  getPipelineRuns,
-  getPipelines,
-  getPodLog,
-  getResourcesAPI,
-  getServiceAccounts,
-  getTask,
-  getTaskRun,
-  getTaskRuns,
-  getTasks,
-  getTektonAPI,
-  updateCredential
-} from '.';
+import * as comms from './comms.js';
+import * as index from '.';
+// import {
+//   cancelPipelineRun,
+//   cancelTaskRun,
+//   checkData,
+//   createCredential,
+//   createPipelineResource,
+//   createPipelineRun,
+//   deleteCredential,
+//   getAPI,
+//   getAPIRoot,
+//   getClusterTask,
+//   getClusterTasks,
+//   getCredential,
+//   getCredentials,
+//   getCustomResource,
+//   getCustomResources,
+//   getExtensionBundleURL,
+//   getExtensions,
+//   getIndexAndRemove,
+//   getIndexOfSecret,
+//   getNamespaces,
+//   getPipeline,
+//   getPipelineResource,
+//   getPipelineResources,
+//   getPipelineRun,
+//   getPipelineRuns,
+//   getPipelines,
+//   getPodLog,
+//   getResourcesAPI,
+//   getServiceAccount,
+//   getSecretServiceAccountList,
+//   getServiceAccounts,
+//   getTask,
+//   getTaskRun,
+//   getTaskRuns,
+//   getTasks,
+//   getTektonAPI,
+//   patchServiceAccount,
+//   updateCredential
+// } from '.';
 
 beforeEach(jest.resetAllMocks);
+
+const serviceAccountPass = {
+  apiVersion: 'v1',
+  kind: 'ServiceAccount',
+  metadata: {
+    creationTimestamp: '2019-08-28T14:50:37Z',
+    name: 'default',
+    namespace: 'tekton-pipelines',
+    resourceVersion: '333247',
+    selfLink: '/api/v1/namespaces/tekton-pipelines/serviceaccounts/default',
+    uid: '3233be5f-c9a3-11e9-a380-025000000001'
+  },
+  secrets: [
+    {
+      name: 'default-token-dcb4b'
+    },
+    {
+      name: 'secret-name'
+    }
+  ]
+};
+
+const serviceAccountPassV2 = {
+  apiVersion: 'v1',
+  kind: 'ServiceAccount',
+  metadata: {
+    creationTimestamp: '2019-08-28T14:50:37Z',
+    name: 'default',
+    namespace: 'tekton-pipelines',
+    resourceVersion: '333247',
+    selfLink: '/api/v1/namespaces/tekton-pipelines/serviceaccounts/default',
+    uid: '3233be5f-c9a3-11e9-a380-025000000001'
+  },
+  secrets: [
+    {
+      name: 'default-token-dcb4b'
+    },
+    {
+      name: 'secret-name'
+    },
+    {
+      name: 'secret-nameV2'
+    }
+  ]
+};
+
+const serviceAccountFail = {
+  apiVersion: 'v1',
+  kind: 'ServiceAccount',
+  metadata: {
+    creationTimestamp: '2019-08-28T14:50:37Z',
+    name: 'default',
+    namespace: 'tekton-pipelines',
+    resourceVersion: '333247',
+    selfLink: '/api/v1/namespaces/tekton-pipelines/serviceaccounts/default',
+    uid: '3233be5f-c9a3-11e9-a380-025000000001'
+  },
+  secrets: [
+    {
+      name: 'default-token-dcb4b'
+    }
+  ]
+};
+const serviceAccount1 = {
+  apiVersion: 'v1',
+  kind: 'ServiceAccount',
+  metadata: {
+    annotations: {
+      'kubectl.kubernetes.io/last-applied-configuration':
+        '{"apiVersion":"v1","kind":"ServiceAccount","metadata":{"annotations":{},"labels":{"app":"tekton-dashboard"},"name":"tekton-dashboard","namespace":"tekton-pipelines"}}\n'
+    },
+    creationTimestamp: '2019-09-11T09:01:24Z',
+    labels: {
+      app: 'tekton-dashboard'
+    },
+    name: 'tekton-dashboard',
+    namespace: 'tekton-pipelines',
+    resourceVersion: '333387',
+    selfLink:
+      '/api/v1/namespaces/tekton-pipelines/serviceaccounts/tekton-dashboard',
+    uid: 'bb5a9a2c-d472-11e9-a380-025000000001'
+  },
+  secrets: [
+    {
+      name: 'tekton-dashboard-token-6xdwf'
+    },
+    {
+      name: 'secret-name'
+    }
+  ]
+};
+
+const serviceAccount2 = {
+  apiVersion: 'v1',
+  kind: 'ServiceAccount',
+  metadata: {
+    annotations: {
+      'kubectl.kubernetes.io/last-applied-configuration':
+        '{"apiVersion":"v1","kind":"ServiceAccount","metadata":{"annotations":{},"labels":{"app":"tekton-dashboard"},"name":"tekton-dashboard","namespace":"tekton-pipelines"}}\n'
+    },
+    creationTimestamp: '2019-09-11T09:01:24Z',
+    labels: {
+      app: 'tekton-dashboard'
+    },
+    name: 'Groot',
+    namespace: 'tekton-pipelines',
+    resourceVersion: '333387',
+    selfLink:
+      '/api/v1/namespaces/tekton-pipelines/serviceaccounts/tekton-dashboard',
+    uid: 'bb5a9a2c-d472-11e9-a380-025000000001'
+  },
+  secrets: [
+    {
+      name: 'tekton-dashboard-token-6xdwf'
+    }
+  ]
+};
+
+const serviceAccountList = { items: serviceAccountFail };
+const serviceAccountListMultipleWithNoSecretName = {
+  items: serviceAccountFail,
+  serviceAccountPass
+};
+const serviceAccountListMultiple = {
+  items: serviceAccountFail,
+  serviceAccountPass,
+  serviceAccountPassV2
+};
 
 describe('getAPIRoot', () => {
   it('handles base URL with trailing slash', () => {
     window.history.pushState({}, 'Title', '/path/#hash');
-    expect(getAPIRoot()).toContain('/path');
+    expect(index.getAPIRoot()).toContain('/path');
   });
 
   it('handles base URL without trailing slash', () => {
     window.history.pushState({}, 'Title', '/path#hash');
-    expect(getAPIRoot()).toContain('/path');
+    expect(index.getAPIRoot()).toContain('/path');
   });
 });
 
 describe('getAPI', () => {
   it('returns a URI containing the given type', () => {
-    const uri = getAPI('pipelines');
+    const uri = index.getAPI('pipelines');
     expect(uri).toContain('pipelines');
   });
 
   it('returns a URI containing the given type and name', () => {
-    const uri = getAPI('pipelines', { name: 'somename' });
+    const uri = index.getAPI('pipelines', { name: 'somename' });
     expect(uri).toContain('pipelines');
     expect(uri).toContain('somename');
   });
 
   it('returns a URI containing the given type, name, and namespace', () => {
-    const uri = getAPI('pipelines', {
+    const uri = index.getAPI('pipelines', {
       name: 'somename',
       namespace: 'customnamespace'
     });
@@ -88,18 +222,18 @@ describe('getAPI', () => {
 
 describe('getTektonAPI', () => {
   it('returns a URI containing the given type', () => {
-    const uri = getTektonAPI('pipelines');
+    const uri = index.getTektonAPI('pipelines');
     expect(uri).toContain('pipelines');
   });
 
   it('returns a URI containing the given type and name', () => {
-    const uri = getTektonAPI('pipelines', { name: 'somename' });
+    const uri = index.getTektonAPI('pipelines', { name: 'somename' });
     expect(uri).toContain('pipelines');
     expect(uri).toContain('somename');
   });
 
   it('returns a URI containing the given type, name, and namespace', () => {
-    const uri = getTektonAPI('pipelines', {
+    const uri = index.getTektonAPI('pipelines', {
       name: 'somename',
       namespace: 'customnamespace'
     });
@@ -110,7 +244,7 @@ describe('getTektonAPI', () => {
   });
 
   it('returns a URI without namespace when omitted', () => {
-    const uri = getTektonAPI('clustertasks', {
+    const uri = index.getTektonAPI('clustertasks', {
       name: 'somename'
     });
     expect(uri).toContain('clustertasks');
@@ -121,7 +255,7 @@ describe('getTektonAPI', () => {
 
 describe('getResourceAPI', () => {
   it('returns a URI containing the given type', () => {
-    const uri = getResourcesAPI({
+    const uri = index.getResourcesAPI({
       group: 'test.dev',
       version: 'testversion',
       type: 'testtype'
@@ -132,7 +266,7 @@ describe('getResourceAPI', () => {
   });
 
   it('returns a URI containing the given type and name without namespace', () => {
-    const uri = getResourcesAPI({
+    const uri = index.getResourcesAPI({
       group: 'test.dev',
       version: 'testversion',
       type: 'testtype',
@@ -146,7 +280,7 @@ describe('getResourceAPI', () => {
   });
 
   it('returns a URI containing the given type, name and namespace', () => {
-    const uri = getResourcesAPI({
+    const uri = index.getResourcesAPI({
       group: 'test.dev',
       version: 'testversion',
       type: 'testtype',
@@ -168,11 +302,11 @@ describe('checkData', () => {
     const data = {
       items
     };
-    expect(checkData(data)).toEqual(items);
+    expect(index.checkData(data)).toEqual(items);
   });
 
   it('throws an error if items is not present', () => {
-    expect(() => checkData({})).toThrow();
+    expect(() => index.checkData({})).toThrow();
   });
 });
 
@@ -181,7 +315,7 @@ it('getPipelines', () => {
     items: 'pipelines'
   };
   fetchMock.get(/pipelines/, data);
-  return getPipelines().then(pipelines => {
+  return index.getPipelines().then(pipelines => {
     expect(pipelines).toEqual(data.items);
     fetchMock.restore();
   });
@@ -191,7 +325,7 @@ it('getPipeline', () => {
   const name = 'foo';
   const data = { fake: 'pipeline' };
   fetchMock.get(`end:${name}`, data);
-  return getPipeline({ name }).then(pipeline => {
+  return index.getPipeline({ name }).then(pipeline => {
     expect(pipeline).toEqual(data);
     fetchMock.restore();
   });
@@ -202,7 +336,7 @@ it('getPipelineRuns', () => {
     items: 'pipelineRuns'
   };
   fetchMock.get(/pipelineruns/, data);
-  return getPipelineRuns({ filters: [] }).then(pipelineRuns => {
+  return index.getPipelineRuns({ filters: [] }).then(pipelineRuns => {
     expect(pipelineRuns).toEqual(data.items);
     fetchMock.restore();
   });
@@ -214,17 +348,19 @@ it('getPipelineRuns With Query Params', () => {
     items: 'pipelineRuns'
   };
   fetchMock.get(/pipelineruns/, data);
-  return getPipelineRuns({ pipelineName, filters: [] }).then(pipelineRuns => {
-    expect(pipelineRuns).toEqual(data.items);
-    fetchMock.restore();
-  });
+  return index
+    .getPipelineRuns({ pipelineName, filters: [] })
+    .then(pipelineRuns => {
+      expect(pipelineRuns).toEqual(data.items);
+      fetchMock.restore();
+    });
 });
 
 it('getPipelineRun', () => {
   const name = 'foo';
   const data = { fake: 'pipelineRun' };
   fetchMock.get(`end:${name}`, data);
-  return getPipelineRun({ name }).then(pipelineRun => {
+  return index.getPipelineRun({ name }).then(pipelineRun => {
     expect(pipelineRun).toEqual(data);
     fetchMock.restore();
   });
@@ -240,7 +376,7 @@ it('cancelPipelineRun', () => {
     spec: { status: 'PipelineRunCancelled' }
   };
   fetchMock.put(`end:${name}`, 204);
-  return cancelPipelineRun({ name, namespace }).then(() => {
+  return index.cancelPipelineRun({ name, namespace }).then(() => {
     expect(fetchMock.lastOptions()).toMatchObject({
       body: JSON.stringify(payload)
     });
@@ -258,7 +394,7 @@ it('cancelTaskRun', () => {
     spec: { status: 'TaskRunCancelled' }
   };
   fetchMock.put(`end:${name}`, 204);
-  return cancelTaskRun({ name, namespace }).then(() => {
+  return index.cancelTaskRun({ name, namespace }).then(() => {
     expect(fetchMock.lastOptions()).toMatchObject({
       body: JSON.stringify(payload)
     });
@@ -271,7 +407,7 @@ it('getClusterTasks', () => {
     items: 'clustertasks'
   };
   fetchMock.get(/clustertasks/, data);
-  return getClusterTasks().then(tasks => {
+  return index.getClusterTasks().then(tasks => {
     expect(tasks).toEqual(data.items);
     fetchMock.restore();
   });
@@ -281,7 +417,7 @@ it('getClusterTask', () => {
   const name = 'foo';
   const data = { fake: 'clustertask' };
   fetchMock.get(`end:${name}`, data);
-  return getClusterTask({ name }).then(task => {
+  return index.getClusterTask({ name }).then(task => {
     expect(task).toEqual(data);
     fetchMock.restore();
   });
@@ -292,7 +428,7 @@ it('getTasks', () => {
     items: 'tasks'
   };
   fetchMock.get(/tasks/, data);
-  return getTasks().then(tasks => {
+  return index.getTasks().then(tasks => {
     expect(tasks).toEqual(data.items);
     fetchMock.restore();
   });
@@ -302,7 +438,7 @@ it('getTask', () => {
   const name = 'foo';
   const data = { fake: 'task' };
   fetchMock.get(`end:${name}`, data);
-  return getTask({ name }).then(task => {
+  return index.getTask({ name }).then(task => {
     expect(task).toEqual(data);
     fetchMock.restore();
   });
@@ -313,7 +449,7 @@ it('getTaskRuns', () => {
     items: 'taskRuns'
   };
   fetchMock.get(/taskruns/, data);
-  return getTaskRuns().then(taskRuns => {
+  return index.getTaskRuns().then(taskRuns => {
     expect(taskRuns).toEqual(data.items);
     fetchMock.restore();
   });
@@ -325,7 +461,7 @@ it('getTaskRuns With Query Params', () => {
     items: 'taskRuns'
   };
   fetchMock.get(/taskruns/, data);
-  return getTaskRuns({ taskName }).then(taskRuns => {
+  return index.getTaskRuns({ taskName }).then(taskRuns => {
     expect(taskRuns).toEqual(data.items);
     fetchMock.restore();
   });
@@ -335,7 +471,7 @@ it('getTaskRun', () => {
   const name = 'foo';
   const data = { fake: 'taskRun' };
   fetchMock.get(`end:${name}`, data);
-  return getTaskRun({ name }).then(taskRun => {
+  return index.getTaskRun({ name }).then(taskRun => {
     expect(taskRun).toEqual(data);
     fetchMock.restore();
   });
@@ -346,7 +482,7 @@ it('getPipelineResources', () => {
     items: 'pipelineResources'
   };
   fetchMock.get(/pipelineresources/, data);
-  return getPipelineResources().then(pipelineResources => {
+  return index.getPipelineResources().then(pipelineResources => {
     expect(pipelineResources).toEqual(data.items);
     fetchMock.restore();
   });
@@ -356,7 +492,7 @@ it('getPipelineResource', () => {
   const name = 'foo';
   const data = { fake: 'pipelineResource' };
   fetchMock.get(`end:${name}`, data);
-  return getPipelineResource({ name }).then(pipelineResource => {
+  return index.getPipelineResource({ name }).then(pipelineResource => {
     expect(pipelineResource).toEqual(data);
     fetchMock.restore();
   });
@@ -374,7 +510,7 @@ it('getPodLog', () => {
   fetchMock.get(`end:${name}/log`, responseConfig, {
     sendAsJson: false
   });
-  return getPodLog({ name, namespace }).then(log => {
+  return index.getPodLog({ name, namespace }).then(log => {
     expect(log).toEqual(data);
     fetchMock.restore();
   });
@@ -393,7 +529,7 @@ it('getPodLog with container name', () => {
   fetchMock.get(`end:${name}/log?container=${container}`, responseConfig, {
     sendAsJson: false
   });
-  return getPodLog({ container, name, namespace }).then(log => {
+  return index.getPodLog({ container, name, namespace }).then(log => {
     expect(log).toEqual(data);
     fetchMock.restore();
   });
@@ -424,7 +560,7 @@ it('createPipelineResource', () => {
   };
   const data = { fake: 'data' };
   fetchMock.post('*', data);
-  return createPipelineResource({ namespace, payload }).then(response => {
+  return index.createPipelineResource({ namespace, payload }).then(response => {
     expect(response).toEqual(data);
     fetchMock.restore();
   });
@@ -467,7 +603,7 @@ it('createPipelineRun', () => {
     }
   };
   fetchMock.post('*', data);
-  return createPipelineRun(payload).then(response => {
+  return index.createPipelineRun(payload).then(response => {
     expect(response).toEqual(data);
     expect(fetchMock.lastOptions()).toMatchObject({
       body: JSON.stringify(data)
@@ -481,9 +617,9 @@ it('getCredentials', () => {
   const data = {
     items: 'credentials'
   };
-  fetchMock.get(/credentials/, data);
-  return getCredentials().then(credentials => {
-    expect(credentials).toEqual(data);
+  fetchMock.get(/secrets/, data);
+  return index.getCredentials().then(response => {
+    expect(response).toEqual(data);
     fetchMock.restore();
   });
 });
@@ -492,7 +628,7 @@ it('getCredential', () => {
   const credentialId = 'foo';
   const data = { fake: 'credential' };
   fetchMock.get(`end:${credentialId}`, data);
-  return getCredential(credentialId).then(credential => {
+  return index.getCredential(credentialId).then(credential => {
     expect(credential).toEqual(data);
     fetchMock.restore();
   });
@@ -506,7 +642,7 @@ it('createCredential', () => {
   const payload = { id, username, password, type };
   const data = { fake: 'data' };
   fetchMock.post('*', data);
-  return createCredential(payload).then(response => {
+  return index.createCredential(payload).then(response => {
     expect(response).toEqual(data);
     expect(fetchMock.lastOptions()).toMatchObject({
       body: JSON.stringify(payload)
@@ -523,7 +659,7 @@ it('updateCredential', () => {
   const payload = { id, username, password, type };
   const data = { fake: 'data' };
   fetchMock.put('*', data);
-  return updateCredential(payload).then(response => {
+  return index.updateCredential(payload).then(response => {
     expect(response).toEqual(data);
     expect(fetchMock.lastOptions()).toMatchObject({
       body: JSON.stringify(payload)
@@ -536,7 +672,7 @@ it('deleteCredential', () => {
   const credentialId = 'fake credential id';
   const data = { fake: 'data' };
   fetchMock.delete('*', data);
-  return deleteCredential(credentialId).then(response => {
+  return index.deleteCredential(credentialId).then(response => {
     expect(response).toEqual(data);
     fetchMock.restore();
   });
@@ -546,12 +682,12 @@ it('getExtensions', () => {
   const displayName = 'displayName';
   const name = 'name';
   const bundlelocation = 'bundlelocation';
-  const source = getExtensionBundleURL(name, bundlelocation);
+  const source = index.getExtensionBundleURL(name, bundlelocation);
   const url = 'url';
   const extensions = [{ displayname: displayName, name, bundlelocation, url }];
   const transformedExtensions = [{ displayName, name, source, url }];
   fetchMock.get(/extensions/, extensions);
-  return getExtensions().then(response => {
+  return index.getExtensions().then(response => {
     expect(response).toEqual(transformedExtensions);
     fetchMock.restore();
   });
@@ -559,7 +695,7 @@ it('getExtensions', () => {
 
 it('getExtensions null', () => {
   fetchMock.get(/extensions/, 'null');
-  return getExtensions().then(response => {
+  return index.getExtensions().then(response => {
     expect(response).toEqual([]);
     fetchMock.restore();
   });
@@ -570,8 +706,17 @@ it('getNamespaces', () => {
     items: 'namespaces'
   };
   fetchMock.get(/namespaces/, data);
-  return getNamespaces().then(response => {
+  return index.getNamespaces().then(response => {
     expect(response).toEqual(data.items);
+    fetchMock.restore();
+  });
+});
+
+it('getServiceAccount', () => {
+  const data = { items: 'serviceaccounts' };
+  fetchMock.get(/serviceaccounts/, data);
+  return index.getServiceAccount('default', 'default').then(response => {
+    expect(response).toEqual(data);
     fetchMock.restore();
   });
 });
@@ -579,10 +724,195 @@ it('getNamespaces', () => {
 it('getServiceAccounts', () => {
   const data = { items: 'serviceaccounts' };
   fetchMock.get(/serviceaccounts/, data);
-  return getServiceAccounts().then(response => {
+  return index.getServiceAccounts().then(response => {
     expect(response).toEqual(data.items);
     fetchMock.restore();
   });
+});
+
+it('getSecretServiceAccountList No Secrets Matched', () => {
+  const dataFail = [];
+
+  return index
+    .getSecretServiceAccountList(dataFail, 'secret-name')
+    .then(response => {
+      expect(response).toEqual([]);
+    });
+});
+
+it('getSecretServiceAccountList No Secrets Matched', () => {
+  const data = serviceAccountFail;
+  return index
+    .getSecretServiceAccountList(data, 'secret-name')
+    .then(response => {
+      expect(response).toEqual([]);
+    });
+});
+
+it('getSecretServiceAccountList 1 Secret Matched', () => {
+  const data = [serviceAccountPass];
+
+  return index
+    .getSecretServiceAccountList(data, 'secret-name')
+    .then(response => {
+      expect(response).toEqual(data);
+    });
+});
+
+it('getSecretServiceAccountList 2 Secret Matched', () => {
+  const data = [serviceAccountPass];
+
+  return index
+    .getSecretServiceAccountList(data, 'secret-name')
+    .then(response => {
+      expect(response).toEqual(data);
+    });
+});
+
+it('getSecretServiceAccountList 2 Secret Matched', () => {
+  const data = [serviceAccountPass, serviceAccount1, serviceAccount2];
+
+  const dataExpected = [serviceAccountPass, serviceAccount1];
+
+  return index
+    .getSecretServiceAccountList(data, 'secret-name')
+    .then(response => {
+      expect(response).toEqual(dataExpected);
+    });
+});
+
+it('getCredential', () => {
+  const credentialId = 'foo';
+  const data = { fake: 'credential' };
+  fetchMock.get(`end:${credentialId}`, data);
+  return index.getCredential(credentialId).then(credential => {
+    expect(credential).toEqual(data);
+    fetchMock.restore();
+  });
+});
+
+it('getIndexOfSecret secret exists', () => {
+  const data = [
+    {
+      name: 'default-token-dcb4b'
+    },
+    {
+      name: 'secret-name'
+    }
+  ];
+  const response = index.getIndexOfSecret(data, 'secret-name');
+  expect(response).toEqual(1);
+});
+
+it('getIndexOfSecret secret does not exist', () => {
+  const data = [
+    {
+      name: 'default-token-dcb4b'
+    }
+  ];
+  const response = index.getIndexOfSecret(data, 'secret-name');
+  expect(response).toEqual(-1);
+});
+
+it('getIndexOfSecret no secrets sent', () => {
+  const data = [];
+  const response = index.getIndexOfSecret(data, 'secret-name');
+  expect(response).toEqual(-1);
+});
+
+it('getIndexOfSecret secret exists and has secrets after', () => {
+  const data = [
+    {
+      name: 'default-token-dcb4b'
+    },
+    {
+      name: 'secret-name'
+    },
+    {
+      name: 'Groot'
+    }
+  ];
+  const response = index.getIndexOfSecret(data, 'secret-name');
+  expect(response).toEqual(1);
+});
+
+describe('getIndexAndRemove', () => {
+  it('secret found', () => {
+    const data = { fake: 'request patch data' };
+
+    jest.spyOn(comms, 'patchRemoveSecret').mockImplementation(() => data);
+    return index
+      .getIndexAndRemove(serviceAccountPass, 'secret-name', 'tekton-pipelines')
+      .then(response => {
+        expect(response).toEqual(data);
+        fetchMock.restore();
+      });
+  });
+});
+
+describe('unpatchServiceAccount', () => {
+  it('not patched to any service accounts', () => {
+    const dataResponse = 'Completed unpatching';
+
+    const data = serviceAccountList;
+    fetchMock.get(/serviceaccounts/, data);
+
+    jest
+      .spyOn(index, 'getServiceAccounts')
+      .mockImplementation(() => serviceAccountList);
+    return index
+      .unpatchServiceAccount('secret-name', 'default')
+      .then(response => {
+        expect(response).toEqual(dataResponse);
+        fetchMock.restore();
+      });
+  });
+
+  it('is patched to a single service accounts with a only one passing', () => {
+    const dataResponse = 'Completed unpatching';
+
+    const data = serviceAccountListMultipleWithNoSecretName;
+    fetchMock.get(/serviceaccounts/, data);
+
+    jest
+      .spyOn(index, 'getServiceAccounts')
+      .mockImplementation(() => serviceAccountList);
+    return index
+      .unpatchServiceAccount('secret-name', 'default')
+      .then(response => {
+        expect(response).toEqual(dataResponse);
+        fetchMock.restore();
+      });
+  });
+
+  it('is patched to a single service accounts with multiple passing', () => {
+    const dataResponse = 'Completed unpatching';
+
+    const data = serviceAccountListMultiple;
+    fetchMock.get(/serviceaccounts/, data);
+
+    jest
+      .spyOn(index, 'getServiceAccounts')
+      .mockImplementation(() => serviceAccountList);
+    return index
+      .unpatchServiceAccount('secret-name', 'default')
+      .then(response => {
+        expect(response).toEqual(dataResponse);
+        fetchMock.restore();
+      });
+  });
+});
+
+it('patchServiceAccount', () => {
+  const data = 'data';
+  jest.spyOn(comms, 'patchAddSecret').mockImplementation(() => data);
+  fetchMock.get(/serviceaccounts/, data);
+  return index
+    .patchServiceAccount('default', 'default', 'secret-name')
+    .then(response => {
+      expect(response).toEqual(data);
+      fetchMock.restore();
+    });
 });
 
 it('getResources', () => {
@@ -592,12 +922,12 @@ it('getResources', () => {
   const namespace = 'testnamespace';
   const data = { items: 'resourcedata' };
   fetchMock.get(`end:${type}/`, data);
-  return getCustomResources({ group, version, type, namespace }).then(
-    resources => {
+  return index
+    .getCustomResources({ group, version, type, namespace })
+    .then(resources => {
       expect(resources).toEqual(data.items);
       fetchMock.restore();
-    }
-  );
+    });
 });
 
 it('getResource', () => {
@@ -608,10 +938,10 @@ it('getResource', () => {
   const namespace = 'testnamespace';
   const data = { fake: 'resourcedata' };
   fetchMock.get(`end:${name}`, data);
-  return getCustomResource({ group, version, type, namespace, name }).then(
-    resource => {
+  return index
+    .getCustomResource({ group, version, type, namespace, name })
+    .then(resource => {
       expect(resource).toEqual(data);
       fetchMock.restore();
-    }
-  );
+    });
 });

@@ -24,34 +24,69 @@ import {
   fetchSecretsSuccess
 } from './secrets';
 
-const data = [
-  {
-    name: 'secret-name',
-    password: '********',
-    resourceVersion: '####',
-    serviceAccount: 'default',
-    type: 'userpass',
-    url: undefined,
-    username: 'someUser@email.com',
-    namespace: 'default'
-  }
-];
+const data = {
+  items: [
+    {
+      metadata: {
+        name: 'secret-name',
+        namespace: 'default',
+        annotations: undefined,
+        labels: {
+          serviceAccount: 'default'
+        }
+      },
+      data: {
+        username: 'someUser@email.com',
+        password: '********'
+      },
+      resourceVersion: '####',
+      type: 'userpass'
+    }
+  ]
+};
+
 const dataFormatted = [
   {
     name: 'secret-name',
     annotations: undefined,
-    namespace: 'default'
+    namespace: 'default',
+    type: 'userpass'
   }
 ];
 const postData = {
-  name: 'secret-name',
-  namespace: 'default',
-  password: '********',
-  serviceAccount: 'default',
-  type: 'userpass',
-  url: { 'tekton.dev/git-0': 'https://github.ibm.com' },
-  username: 'someUser@email.com'
+  metadata: {
+    name: 'secret-name',
+    namespace: 'default',
+    annotations: { 'tekton.dev/git-0': 'https://github.ibm.com' },
+    labels: {
+      serviceAccount: 'default'
+    }
+  },
+  data: {
+    username: 'someUser@email.com',
+    password: '********'
+  },
+  type: 'userpass'
 };
+
+const defaultServiceAccount = {
+  apiVersion: 'v1',
+  kind: 'ServiceAccount',
+  metadata: {
+    creationTimestamp: '2019-08-28T12:46:08Z',
+    name: 'default',
+    namespace: 'default',
+    resourceVersion: '331',
+    selfLink: '/api/v1/namespaces/default/serviceaccounts/default',
+    uid: 'ced1c79d-c991-11e9-a380-025000000001'
+  },
+  secrets: [
+    {
+      name: 'default-token-kbn7j'
+    }
+  ]
+};
+
 const response = { ok: true, status: 204 };
 const namespace = 'default';
 
@@ -64,7 +99,7 @@ it('fetchSecretsSuccess', () => {
 
 it('fetchSecrets', async () => {
   const secrets = data;
-  const secretsFromatted = dataFormatted;
+  const secretsFormatted = dataFormatted;
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const store = mockStore();
@@ -76,7 +111,7 @@ it('fetchSecrets', async () => {
 
   const expectedActions = [
     { type: 'SECRETS_FETCH_REQUEST' },
-    fetchSecretsSuccess(secretsFromatted)
+    fetchSecretsSuccess(secretsFormatted)
   ];
 
   await store.dispatch(fetchSecrets({ namespace }));
@@ -149,7 +184,11 @@ it('createSecret', async () => {
     .spyOn(selectors, 'getSelectedNamespace')
     .mockImplementation(() => namespace);
 
+  jest.spyOn(API, 'getCredentials').mockImplementation(() => data);
   jest.spyOn(API, 'createCredential').mockImplementation(() => response);
+  jest
+    .spyOn(API, 'getServiceAccount')
+    .mockImplementation(() => defaultServiceAccount);
 
   const expectedActions = [
     { type: 'SECRET_CREATE_REQUEST' },

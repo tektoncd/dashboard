@@ -12,7 +12,14 @@ limitations under the License.
 */
 
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
-import { deleteRequest, get, post, put } from './comms';
+import {
+  deleteRequest,
+  get,
+  patchAddSecret,
+  patchRemoveSecret,
+  post,
+  put
+} from './comms';
 
 export function getAPIRoot() {
   const { href, hash } = window.location;
@@ -268,28 +275,106 @@ export function rebuildPipelineRun(namespace, payload) {
 }
 
 export function getCredentials(namespace) {
-  const uri = getAPI('credentials', { namespace });
+  const queryParams = {
+    fieldSelector: 'type=kubernetes.io/basic-auth'
+  };
+  const uri = getKubeAPI('secrets', { namespace }, queryParams);
   return get(uri);
 }
 
 export function getCredential(id, namespace) {
-  const uri = getAPI('credentials', { name: id, namespace });
+  const uri = getKubeAPI('secrets', { name: id, namespace });
   return get(uri);
 }
 
 export function createCredential({ id, ...rest }, namespace) {
-  const uri = getAPI('credentials', { namespace });
+  const uri = getKubeAPI('secrets', { namespace });
   return post(uri, { id, ...rest });
 }
 
 export function updateCredential({ id, ...rest }, namespace) {
-  const uri = getAPI('credentials', { name: id, namespace });
+  const uri = getKubeAPI('secrets', { name: id, namespace });
   return put(uri, { id, ...rest });
 }
 
 export function deleteCredential(id, namespace) {
-  const uri = getAPI('credentials', { name: id, namespace });
+  const uri = getKubeAPI('secrets', { name: id, namespace });
   return deleteRequest(uri);
+}
+
+export function getServiceAccount({ name, namespace }) {
+  const uri = getKubeAPI('serviceaccounts', { name, namespace });
+  return get(uri);
+}
+
+export async function patchServiceAccount({
+  serviceAccountName,
+  namespace,
+  secretName
+}) {
+  const uri = getKubeAPI('serviceaccounts', {
+    name: serviceAccountName,
+    namespace
+  });
+  const patch1 = await patchAddSecret(uri, secretName);
+  return patch1;
+}
+
+// Get list of service accounts where secrets patched to, returns service account in full
+export async function getSecretServiceAccountList(saList, secretName) {
+  const secretServiceAccountList = [];
+
+  if (saList.length > 0) {
+    saList.forEach(element => {
+      const saSecretList = element.secrets;
+      saSecretList.forEach(element1 => {
+        if (element1.name === secretName) {
+          secretServiceAccountList.push(element);
+        }
+      });
+    });
+  }
+
+  return secretServiceAccountList;
+}
+
+export function getIndexOfSecret(secrets, secretName) {
+  return secrets.findIndex(({ name }) => name === secretName);
+}
+
+export async function getIndexAndRemove(sa, secretName, namespace) {
+  const indexOfSecret = getIndexOfSecret(sa.secrets, secretName);
+  // Should never be -1 as means the secret is not found
+  if (indexOfSecret === -1) {
+    const error = new Error('Impossible error with indexOfSecret');
+    error.indexOfSecret = indexOfSecret;
+    error.namespace = namespace;
+    error.secretName = secretName;
+    throw error;
+  }
+
+  const uri = getKubeAPI('serviceaccounts', {
+    name: sa.metadata.name,
+    namespace
+  });
+
+  const unpatchServiceAccount1 = await patchRemoveSecret(uri, indexOfSecret);
+  return unpatchServiceAccount1;
+}
+
+export function getServiceAccounts({ namespace } = {}) {
+  const uri = getKubeAPI('serviceaccounts', { namespace });
+  return get(uri).then(checkData);
+}
+
+export async function unpatchServiceAccount(secretName, namespace) {
+  const saList = await getServiceAccounts({ namespace });
+  const secretSaList = await getSecretServiceAccountList(saList, secretName);
+
+  secretSaList.forEach(async element => {
+    await getIndexAndRemove(element, secretName, namespace);
+  });
+  return 'Completed unpatching';
 }
 
 export function getCustomResources(...args) {
@@ -336,11 +421,6 @@ export async function getExtensions() {
 
 export function getNamespaces() {
   const uri = getKubeAPI('namespaces');
-  return get(uri).then(checkData);
-}
-
-export function getServiceAccounts({ namespace } = {}) {
-  const uri = getKubeAPI('serviceaccounts', { namespace });
   return get(uri).then(checkData);
 }
 

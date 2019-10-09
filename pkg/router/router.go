@@ -74,8 +74,8 @@ func Register(resource endpoints.Resource) *restful.Container {
 
 func registerKubeAPIProxy(r endpoints.Resource, container *restful.Container) {
 	proxy := new(restful.WebService)
-	proxy.Consumes(restful.MIME_JSON, "text/plain").
-		Produces(restful.MIME_JSON, "text/plain").
+	proxy.Consumes(restful.MIME_JSON, "text/plain", "application/json-patch+json").
+		Produces(restful.MIME_JSON, "text/plain", "application/json-patch+json").
 		Path("/proxy")
 
 	logging.Log.Info("Adding Kube API Proxy")
@@ -84,6 +84,7 @@ func registerKubeAPIProxy(r endpoints.Resource, container *restful.Container) {
 	proxy.Route(proxy.POST("/{subpath:*}").To(r.ProxyRequest))
 	proxy.Route(proxy.PUT("/{subpath:*}").To(r.ProxyRequest))
 	proxy.Route(proxy.DELETE("/{subpath:*}").To(r.ProxyRequest))
+	proxy.Route(proxy.PATCH("/{subpath:*}").To(r.ProxyRequest))
 	container.Add(proxy)
 }
 
@@ -109,12 +110,6 @@ func registerEndpoints(r endpoints.Resource, container *restful.Container) {
 
 	wsv1.Route(wsv1.GET("/{namespace}/taskrunlogs/{name}").To(r.GetTaskRunLog))
 	wsv1.Route(wsv1.GET("/{namespace}/pipelinerunlogs/{name}").To(r.GetPipelineRunLog))
-
-	wsv1.Route(wsv1.GET("/{namespace}/credentials").To(r.GetAllCredentials))
-	wsv1.Route(wsv1.GET("/{namespace}/credentials/{name}").To(r.GetCredential))
-	wsv1.Route(wsv1.POST("/{namespace}/credentials").To(r.CreateCredential))
-	wsv1.Route(wsv1.PUT("/{namespace}/credentials/{name}").To(r.UpdateCredential))
-	wsv1.Route(wsv1.DELETE("/{namespace}/credentials/{name}").To(r.DeleteCredential))
 
 	container.Add(wsv1)
 
