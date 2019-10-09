@@ -11,4 +11,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-export { default } from './TaskRunList';
+import React from 'react';
+import { storiesOf } from '@storybook/react';
+import { action } from '@storybook/addon-actions';
+
+import LabelFilter from '.';
+
+storiesOf('LabelFilter', module).add('default', () => (
+  <LabelFilter
+    filters={['tekton.dev/pipeline=output-pipeline']}
+    handleAddFilter={action('handleAddFilter')}
+    handleDeleteFilter={action('handleDeleteFilter')}
+  />
+));

@@ -121,20 +121,10 @@ export function getPipeline({ name, namespace }) {
   return get(uri);
 }
 
-export function getPipelineRuns({
-  namespace,
-  pipelineName,
-  filters = []
-} = {}) {
+export function getPipelineRuns({ filters = [], namespace } = {}) {
   let queryParams;
-  if (filters.length > 0 || pipelineName) {
-    queryParams = { labelSelector: [] };
-    if (pipelineName) {
-      queryParams.labelSelector.push(`tekton.dev/pipeline=${pipelineName}`);
-    }
-    if (filters.length > 0) {
-      queryParams.labelSelector.push(filters);
-    }
+  if (filters.length) {
+    queryParams = { labelSelector: filters };
   }
   const uri = getTektonAPI('pipelineruns', { namespace }, queryParams);
   return get(uri).then(checkData);
@@ -151,6 +141,11 @@ export function cancelPipelineRun({ name, namespace }) {
     const uri = getTektonAPI('pipelineruns', { name, namespace });
     return put(uri, pipelineRun);
   });
+}
+
+export function deletePipelineRun({ name, namespace }) {
+  const uri = getTektonAPI('pipelineruns', { name, namespace });
+  return deleteRequest(uri);
 }
 
 export function createPipelineResource({ namespace, resource } = {}) {
@@ -224,11 +219,12 @@ export function getTask({ name, namespace }) {
   return get(uri);
 }
 
-export function getTaskRuns({ namespace, taskName } = {}) {
+export function getTaskRuns({ filters = [], namespace } = {}) {
   let queryParams;
-  if (taskName) {
-    queryParams = { labelSelector: `tekton.dev/task=${taskName}` };
+  if (filters.length) {
+    queryParams = { labelSelector: filters };
   }
+
   const uri = getTektonAPI('taskruns', { namespace }, queryParams);
   return get(uri).then(checkData);
 }

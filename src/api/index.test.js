@@ -12,48 +12,8 @@ limitations under the License.
 */
 
 import fetchMock from 'fetch-mock';
-import * as comms from './comms.js';
+import * as comms from './comms';
 import * as index from '.';
-// import {
-//   cancelPipelineRun,
-//   cancelTaskRun,
-//   checkData,
-//   createCredential,
-//   createPipelineResource,
-//   createPipelineRun,
-//   deleteCredential,
-//   getAPI,
-//   getAPIRoot,
-//   getClusterTask,
-//   getClusterTasks,
-//   getCredential,
-//   getCredentials,
-//   getCustomResource,
-//   getCustomResources,
-//   getExtensionBundleURL,
-//   getExtensions,
-//   getIndexAndRemove,
-//   getIndexOfSecret,
-//   getNamespaces,
-//   getPipeline,
-//   getPipelineResource,
-//   getPipelineResources,
-//   getPipelineRun,
-//   getPipelineRuns,
-//   getPipelines,
-//   getPodLog,
-//   getResourcesAPI,
-//   getServiceAccount,
-//   getSecretServiceAccountList,
-//   getServiceAccounts,
-//   getTask,
-//   getTaskRun,
-//   getTaskRuns,
-//   getTasks,
-//   getTektonAPI,
-//   patchServiceAccount,
-//   updateCredential
-// } from '.';
 
 beforeEach(jest.resetAllMocks);
 
@@ -361,6 +321,16 @@ it('getPipelineRun', () => {
   const data = { fake: 'pipelineRun' };
   fetchMock.get(`end:${name}`, data);
   return index.getPipelineRun({ name }).then(pipelineRun => {
+    expect(pipelineRun).toEqual(data);
+    fetchMock.restore();
+  });
+});
+
+it('deletePipelineRun', () => {
+  const name = 'foo';
+  const data = { fake: 'pipelineRun' };
+  fetchMock.delete(`end:${name}`, data);
+  return index.deletePipelineRun({ name }).then(pipelineRun => {
     expect(pipelineRun).toEqual(data);
     fetchMock.restore();
   });

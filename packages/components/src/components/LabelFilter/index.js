@@ -11,22 +11,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { getPipelineRun, getPipelineRuns } from '../api';
-import {
-  fetchNamespacedCollection,
-  fetchNamespacedResource
-} from './actionCreators';
-
-export function fetchPipelineRun({ name, namespace }) {
-  return fetchNamespacedResource('PipelineRun', getPipelineRun, {
-    name,
-    namespace
-  });
-}
-
-export function fetchPipelineRuns({ filters, namespace } = {}) {
-  return fetchNamespacedCollection('PipelineRun', getPipelineRuns, {
-    filters,
-    namespace
-  });
-}
+export { default } from './LabelFilter';

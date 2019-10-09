@@ -13,41 +13,34 @@ limitations under the License.
 
 @import '~carbon-components/scss/globals/scss/vars';
 
-.add-filter-button {
-  float: right;
-  height: 3rem;
-}
-
 .search-bar {
-  width: 100%;
   display: flex;
+  width: 100%;
+  margin-bottom: 1rem;
 
-  .bx--search {
-    margin-bottom: 1rem;
+  .bx--btn {
+    height: 100%;
   }
 }
 
 .filters {
+  .filters-title {
+    margin: 0.3rem 0.5rem 1.2rem 0;
+    margin-right: 0.5rem;
+    float: left;
+  }
+
   .bx--tag {
     margin: 0 0.5rem 0.8rem 0;
     background-color: $highlight;
     color: black;
   }
+
   .bx--tag--filter > svg {
     fill: black;
-  }
-  .bx--tag--filter > svg:hover {
-    background-color: white;
-  }
-}
 
-.filters-title {
-  float: left;
-  margin: 0.3rem 0.5rem 1.2rem 0;
-  margin-right: 0.5rem;
-}
-
-.create-pipelinerun-button {
-  float: right;
-  height: 3rem;
+    &:hover {
+      background-color: white;
+    }
+  }
 }

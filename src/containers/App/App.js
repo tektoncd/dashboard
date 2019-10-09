@@ -45,7 +45,6 @@ import {
   Secrets,
   SideNav,
   TaskRun,
-  TaskRunList,
   TaskRuns,
   Tasks
 } from '..';
@@ -155,11 +154,11 @@ export /* istanbul ignore next */ class App extends Component {
                   exact
                   component={Tasks}
                 />
-                <Route path={paths.taskRuns.all()} component={TaskRunList} />
+                <Route path={paths.taskRuns.all()} component={TaskRuns} />
                 <Route
                   path={paths.taskRuns.byNamespace()}
                   exact
-                  component={TaskRunList}
+                  component={TaskRuns}
                 />
                 <Route
                   path={paths.taskRuns.byTask()}
@@ -175,11 +174,6 @@ export /* istanbul ignore next */ class App extends Component {
                   path={paths.clusterTasks.all()}
                   exact
                   component={ClusterTasks}
-                />
-                <Route
-                  path={paths.taskRuns.byClusterTask()}
-                  exact
-                  component={TaskRuns}
                 />
 
                 <Route

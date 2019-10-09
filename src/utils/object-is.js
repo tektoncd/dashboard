@@ -11,6 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+/* istanbul ignore next */
 if (!Object.is) {
   Object.is = function objectIsPolyfill(x, y) {
     if (x === y) {
