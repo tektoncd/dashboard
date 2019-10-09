@@ -82,7 +82,23 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
 
   handleSubmit = () => {
     const invalidFields = [];
-    const postData = { type: 'userpass' };
+    const postData = {
+      apiVersion: 'v1',
+      data: {
+        password: '',
+        username: ''
+      },
+      kind: 'Secret',
+      metadata: {
+        annotations: [],
+        labels: {
+          serviceAccount: ''
+        },
+        name: '',
+        namespace: ''
+      },
+      type: 'kubernetes.io/basic-auth'
+    };
     const {
       annotations,
       name,
@@ -97,25 +113,25 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
     }
 
     if (validateInputs(name, 'name')) {
-      postData.name = name.trim();
+      postData.metadata.name = name.trim();
     } else {
       invalidFields.push('name');
     }
 
     if (validateInputs(username, 'username')) {
-      postData.username = username;
+      postData.metadata.username = username;
     } else {
       invalidFields.push('username');
     }
 
     if (validateInputs(password, 'password')) {
-      postData.password = password;
+      postData.metadata.password = password;
     } else {
       invalidFields.push('password');
     }
 
     if (validateInputs(serviceAccount, 'serviceAccount')) {
-      postData.serviceAccount = serviceAccount;
+      postData.metadata.labels.serviceAccount = serviceAccount;
     } else {
       invalidFields.push('serviceAccount');
     }
@@ -136,7 +152,7 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
         annotationsObject[annotations[i].label] = annotations[i].value;
       }
     }
-    postData.url = annotationsObject;
+    postData.metadata.annotations = annotationsObject;
 
     if (invalidFields.length === 0) {
       this.props.createSecret(postData, namespace);
