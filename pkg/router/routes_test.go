@@ -165,28 +165,7 @@ func validateRoute(t *testing.T, r *endpoints.Resource, httpMethod string, expec
 // Returns stub to be marshalled for dashboard route validation
 func fakeStub(t *testing.T, r *endpoints.Resource, httpMethod, resourceType, namespace, resourceName string) interface{} {
 	t.Logf("Getting fake resource type: %s\n", resourceType)
-	// Cases based on resource substring in mux routes (lowercase)
-	switch resourceType {
-	case "credential":
-		credential := endpoints.Credential{
-			Name:        "fakeCredential",
-			Username:    "thisismyusername",
-			Password:    "password",
-			Description: "cred de jour",
-			URL: map[string]string{
-				"tekton.dev/git-0": "https://github.com",
-			},
-		}
-		if httpMethod == "PUT" {
-			credential.Username = "updated"
-			credential.Password = "updated"
-			credential.Description = "updated"
-		}
-		return credential
-
-	default:
-		return nil
-	}
+	return nil
 }
 
 // Creates resources for GET/{name} routes without corresponding POST to prevent lookup failures

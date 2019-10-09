@@ -24,6 +24,14 @@ export function getHeaders(headers = {}) {
   };
 }
 
+export function getPatchHeaders(headers = {}) {
+  return {
+    Accept: 'application/json-patch+json',
+    'Content-Type': 'application/json-patch+json',
+    ...headers
+  };
+}
+
 export function checkStatus(response = {}) {
   if (response.ok) {
     switch (response.status) {
@@ -44,7 +52,7 @@ export function checkStatus(response = {}) {
   throw error;
 }
 
-export function request(uri, options) {
+export function request(uri, options = defaultOptions) {
   return fetch(uri, {
     ...defaultOptions,
     ...options
@@ -78,5 +86,47 @@ export function deleteRequest(uri) {
   return request(uri, {
     method: 'delete',
     headers: getHeaders()
+  });
+}
+
+export function generateBodyForSecretPatching(secretName) {
+  const patchAddBody = [
+    {
+      op: 'add',
+      path: 'serviceaccount/secrets/-',
+      value: {
+        name: secretName
+      }
+    }
+  ];
+
+  return patchAddBody;
+}
+
+export function patchRemoveSecretBody(indexOfSecret) {
+  const patchRemoveBody = [
+    {
+      op: 'remove',
+      path: `serviceaccount/secrets/${indexOfSecret}`
+    }
+  ];
+  return patchRemoveBody;
+}
+
+export async function patchAddSecret(uri, secretName) {
+  const patchAddBody = await generateBodyForSecretPatching(secretName);
+  return request(uri, {
+    method: 'PATCH',
+    headers: await getPatchHeaders(),
+    body: JSON.stringify(patchAddBody)
+  });
+}
+
+export async function patchRemoveSecret(uri, indexOfSecret) {
+  const patchRemoveBody = await patchRemoveSecretBody(indexOfSecret);
+  return request(uri, {
+    method: 'PATCH',
+    headers: await getPatchHeaders(),
+    body: JSON.stringify(patchRemoveBody)
   });
 }

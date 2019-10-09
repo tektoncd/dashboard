@@ -13,7 +13,18 @@ limitations under the License.
 
 import fetchMock from 'fetch-mock';
 
-import { checkStatus, get, getHeaders, post, request } from './comms';
+import {
+  checkStatus,
+  generateBodyForSecretPatching,
+  get,
+  getHeaders,
+  getPatchHeaders,
+  patchAddSecret,
+  patchRemoveSecret,
+  patchRemoveSecretBody,
+  post,
+  request
+} from './comms';
 
 const uri = 'http://example.com';
 
@@ -29,6 +40,21 @@ describe('getHeaders', () => {
     const result = getHeaders(customHeaders);
     expect(result).toMatchObject(customHeaders);
     expect(result).toMatchObject(getHeaders());
+  });
+});
+
+describe('getPatchHeaders', () => {
+  it('returns default headers when called with no params', () => {
+    expect(getPatchHeaders()).not.toBeNull();
+  });
+
+  it('combines custom headers with the default', () => {
+    const customHeaders = {
+      'X-Foo': 'Bar'
+    };
+    const result = getPatchHeaders(customHeaders);
+    expect(result).toMatchObject(customHeaders);
+    expect(result).toMatchObject(getPatchHeaders());
   });
 });
 
@@ -118,6 +144,65 @@ describe('post', () => {
     return post(uri, data).then(() => {
       const options = fetchMock.lastOptions();
       expect(options.body).toEqual(JSON.stringify(data));
+      fetchMock.restore();
+    });
+  });
+});
+
+describe('generateBodyForSecretPatching', () => {
+  it('should return secretResponse with the name Groot', () => {
+    const secretName = 'Groot';
+    const secretResponse = [
+      {
+        op: 'add',
+        path: 'serviceaccount/secrets/-',
+        value: {
+          name: secretName
+        }
+      }
+    ];
+    const result = generateBodyForSecretPatching(secretName);
+    expect(result).toMatchObject(secretResponse);
+    expect(result).toMatchObject(generateBodyForSecretPatching(secretName));
+  });
+});
+
+describe('patchAddSecret', () => {
+  it('should return correct data from patching', () => {
+    const data = {
+      fake: 'data'
+    };
+    fetchMock.mock(uri, data);
+    return patchAddSecret(uri, data).then(response => {
+      expect(response).toEqual(data);
+      fetchMock.restore();
+    });
+  });
+});
+
+describe('patchRemoveSecretBody', () => {
+  it('returns the correct index for removing a secret', () => {
+    const indexOfSecret = 1;
+    const secretResponse = [
+      {
+        op: 'remove',
+        path: `serviceaccount/secrets/${indexOfSecret}`
+      }
+    ];
+    const result = patchRemoveSecretBody(1);
+    expect(result).toMatchObject(secretResponse);
+    expect(result).toMatchObject(patchRemoveSecretBody(indexOfSecret));
+  });
+});
+
+describe('patchRemoveSecret', () => {
+  it('returns the correct repsonse after unpatching a secret', () => {
+    const data = {
+      fake: 'data'
+    };
+    fetchMock.mock(uri, data);
+    return patchRemoveSecret(uri, data).then(response => {
+      expect(response).toEqual(data);
       fetchMock.restore();
     });
   });
