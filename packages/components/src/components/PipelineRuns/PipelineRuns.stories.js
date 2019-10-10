@@ -15,6 +15,7 @@ import React from 'react';
 import { storiesOf } from '@storybook/react';
 import StoryRouter from 'storybook-react-router';
 
+import { getStatus } from '@tektoncd/dashboard-utils';
 import PipelineRuns from '.';
 
 storiesOf('PipelineRuns', module)
@@ -31,6 +32,10 @@ storiesOf('PipelineRuns', module)
         pipelineName,
         pipelineRunName
       }) => `to-pipeline-${namespace}/${pipelineName}/${pipelineRunName}`}
+      createPipelineRunTimestamp={pipelineRun =>
+        getStatus(pipelineRun).lastTransitionTime ||
+        pipelineRun.metadata.creationTimestamp
+      }
       pipelineName="Pipeline Name"
       selectedNamespace="default"
       pipelineRunActions={[
@@ -99,7 +104,8 @@ storiesOf('PipelineRuns', module)
           apiVersion: 'tekton.dev/v1alpha1',
           kind: 'PipelineRun',
           metadata: {
-            name: 'output-pipeline-run'
+            name: 'output-pipeline-run',
+            creationTimestamp: '2019-10-09T17:10:49Z'
           },
           spec: {
             pipelineRef: {
