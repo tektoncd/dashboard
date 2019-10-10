@@ -36,6 +36,8 @@ const PipelineRuns = ({
   createPipelineRunURL = urls.pipelineRuns.byName,
   createPipelineRunDisplayName = ({ pipelineRunMetadata }) =>
     pipelineRunMetadata.name,
+  createPipelineRunTimestamp = pipelineRun =>
+    getStatus(pipelineRun).lastTransitionTime,
   createPipelineRunsByPipelineURL = urls.pipelineRuns.byPipeline,
   intl,
   pipelineName,
@@ -99,7 +101,7 @@ const PipelineRuns = ({
           pipelineRunMetadata: pipelineRun.metadata
         });
         const pipelineRefName = pipelineRun.spec.pipelineRef.name;
-        const { lastTransitionTime, reason, status } = getStatus(pipelineRun);
+        const { reason, status } = getStatus(pipelineRun);
         const url = createPipelineRunURL({
           namespace,
           pipelineRunName,
@@ -143,7 +145,10 @@ const PipelineRuns = ({
                   })}
             </StructuredListCell>
             <StructuredListCell>
-              <FormattedDate date={lastTransitionTime} relative />
+              <FormattedDate
+                date={createPipelineRunTimestamp(pipelineRun)}
+                relative
+              />
             </StructuredListCell>
             {pipelineRunActions && (
               <StructuredListCell>
