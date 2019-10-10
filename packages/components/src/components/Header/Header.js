@@ -28,6 +28,7 @@ export default function Header({ children, logoutButton }) {
           alt="Tekton logo and title"
           className="banner"
           src={tektonBanner}
+          title="Meow"
         />
       </Link>
       {logoutButton}
