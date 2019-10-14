@@ -6,7 +6,7 @@ spec:
   type: git
   params:
   - name: url
-    value: https://github.com/tektoncd/dashboard # REPLACE with your own fork
+    value: https://github.com/tektoncd/dashboard 
   - name: revision
     value: vX.Y.Z-invalid-tags-boouuhhh # REPLACE with your own commit
 ---
@@ -20,7 +20,7 @@ spec:
    - name: type
      value: gcs
    - name: location
-     value: gs://tekton-releases # REPLACE with your own bucket
+     value: gs://tekton-releases/dashboard # If you're testing add /test.issue.nnn to the end
    - name: dir
      value: "y"
 ---
