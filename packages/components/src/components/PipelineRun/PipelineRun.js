@@ -141,7 +141,15 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   };
 
   render() {
-    const { error, loading, fetchLogs, intl, rebuild, showIO } = this.props;
+    const {
+      error,
+      loading,
+      fetchLogs,
+      intl,
+      rebuild,
+      showIO,
+      pollingInterval
+    } = this.props;
 
     const { selectedStepId, selectedTaskId } = this.state;
 
@@ -245,6 +253,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
         key={`${selectedTaskId}:${selectedStepId}`}
         fetchLogs={() => fetchLogs(stepName, stepStatus, taskRun)}
         stepStatus={stepStatus}
+        pollingInterval={pollingInterval}
       />
     );
 
