@@ -148,7 +148,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       intl,
       rebuild,
       showIO,
-      pollingCycle
+      pollingInterval
     } = this.props;
 
     const { selectedStepId, selectedTaskId } = this.state;
@@ -253,7 +253,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
         key={`${selectedTaskId}:${selectedStepId}`}
         fetchLogs={() => fetchLogs(stepName, stepStatus, taskRun)}
         stepStatus={stepStatus}
-        pollingCycle={pollingCycle}
+        pollingInterval={pollingInterval}
       />
     );
 
