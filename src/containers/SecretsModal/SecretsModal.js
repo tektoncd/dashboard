@@ -118,14 +118,18 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
       invalidFields.push('name');
     }
 
+    // If the data isn't base64 encoded, you'll confusingly get back a 404 from the secrets API
+
     if (validateInputs(username, 'username')) {
-      postData.metadata.username = username;
+      const encodedUsername = Buffer.from(username).toString('base64');
+      postData.data.username = encodedUsername;
     } else {
       invalidFields.push('username');
     }
 
     if (validateInputs(password, 'password')) {
-      postData.metadata.password = password;
+      const encodedPass = Buffer.from(password).toString('base64');
+      postData.data.password = encodedPass;
     } else {
       invalidFields.push('password');
     }
