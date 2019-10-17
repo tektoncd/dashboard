@@ -341,6 +341,8 @@ func TestExtensionRegistration(t *testing.T) {
 		extensionPorts = append(extensionPorts, int32(port))
 	}
 
+	t.Logf(extensionUrlValue)
+
 	// It's important the UID's really are unique! Use 123, 456, 789 to make sure
 	// the extension IDs all differ from each other, otherwise this will lead to only
 	// one instead of two being picked up by TestExtensionRegistration
@@ -375,6 +377,7 @@ func TestExtensionRegistration(t *testing.T) {
 				Namespace: installNamespace,
 				UID:       types.UID(strconv.FormatInt(456+time.Now().UnixNano(), 10)),
 				Annotations: map[string]string{
+					ExtensionUrlKey:            extensionUrlValue,
 					ExtensionBundleLocationKey: "Location",
 					ExtensionDisplayNameKey:    "Display Name",
 				},
@@ -414,6 +417,7 @@ func TestExtensionRegistration(t *testing.T) {
 				Namespace: otherNamespace,
 				UID:       types.UID(strconv.FormatInt(789+time.Now().UnixNano(), 10)),
 				Annotations: map[string]string{
+					ExtensionUrlKey:            extensionUrlValue,
 					ExtensionBundleLocationKey: "Location",
 					ExtensionDisplayNameKey:    "Display Name",
 				},
@@ -454,23 +458,49 @@ func TestExtensionRegistration(t *testing.T) {
 	var extensionDeletes int
 	subChan := subscriber.SubChan()
 	// Wait until all extension creates/deletes are registered by extensionInformer
+	t.Logf("waiting for registration")
+	t.Logf("services:" + string(len(extensionServices)))
+	t.Logf("start time: " + time.Now().String())
+	t.Logf("--- ---")
+	counter := 0
 	for {
+		counter++
 		select {
 		case <-timeout:
 			t.Fatal("Timed out waiting for expected services to be registered")
+			t.Logf("fatal time: " + time.Now().String())
+			t.Logf("fatal counter: " + strconv.Itoa(counter))
+			t.Logf("extensionCreates:")
+			t.Logf(strconv.Itoa(extensionCreates))
+			t.Logf("extensionDeletes:")
+			t.Logf(strconv.Itoa(extensionDeletes))
 		case event := <-subChan:
+			t.Logf("counter: " + strconv.Itoa(counter))
+			t.Logf("time: " + time.Now().String())
 			switch event.MessageType {
 			case broadcaster.ExtensionCreated:
 				extensionCreates++
+				t.Logf("extensionCreates:")
+				t.Logf(strconv.Itoa(extensionCreates))
 			case broadcaster.ExtensionDeleted:
 				extensionDeletes++
+				t.Logf("extensionDeletes:")
+				t.Logf(strconv.Itoa(extensionDeletes))
 			}
+			t.Logf("")
 		}
 		// All events captured from Create->Delete->Create above
 		if extensionCreates == 2*len(extensionServices) && extensionDeletes == len(extensionServices) {
+			t.Logf("--- events captured ---")
 			break
 		}
 	}
+	t.Logf("final time: " + time.Now().String())
+	t.Logf("final counter: " + strconv.Itoa(counter))
+	t.Logf("extensionCreates:")
+	t.Logf(strconv.Itoa(extensionCreates))
+	t.Logf("extensionDeletes:")
+	t.Logf(strconv.Itoa(extensionDeletes))
 
 	// Labels not supported on fake client, manual filter
 	serviceList, err := r.K8sClient.CoreV1().Services(installNamespace).List(metav1.ListOptions{})
