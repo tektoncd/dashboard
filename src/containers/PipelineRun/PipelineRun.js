@@ -195,7 +195,7 @@ function mapStateToProps(state, ownProps) {
       {
         namespace
       }
-    ),
+    ).filter(taskRun => 'taskRef' in taskRun.spec),
     clusterTasks: getClusterTasks(state),
     webSocketConnected: isWebSocketConnected(state)
   };
