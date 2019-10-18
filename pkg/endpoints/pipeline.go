@@ -219,6 +219,7 @@ func (r Resource) rebuildRun(name, namespace string) (*v1alpha1.PipelineRun, err
 
 	newPipelineRunData := pipelineRun
 	newPipelineRunData.Name = ""
+	newPipelineRunData.Spec.Status = ""
 	theName := generateNewNameForRebuild(name)
 	newPipelineRunData.GenerateName = theName
 	newPipelineRunData.ResourceVersion = ""
