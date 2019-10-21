@@ -132,7 +132,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
     const { intl } = this.props;
     return [
       {
-        actionText: 'Cancel',
+        actionText: 'Stop',
         action: this.cancel,
         disable: resource => {
           const { reason, status } = getStatus(resource);
