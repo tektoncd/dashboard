@@ -132,7 +132,10 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
     const { intl } = this.props;
     return [
       {
-        actionText: 'Stop',
+        actionText: intl.formatMessage({
+          id: 'dashboard.cancelPipelineRun.actionText',
+          defaultMessage: 'Stop'
+        }),
         action: this.cancel,
         disable: resource => {
           const { reason, status } = getStatus(resource);
@@ -163,7 +166,10 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
         }
       },
       {
-        actionText: 'Delete',
+        actionText: intl.formatMessage({
+          id: 'dashboard.deletePipelineRun.actionText',
+          defaultMessage: 'Delete'
+        }),
         action: this.deleteRun,
         disable: resource => {
           const { reason, status } = getStatus(resource);
