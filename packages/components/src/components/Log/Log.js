@@ -90,7 +90,7 @@ export class LogContainer extends Component {
   initPolling = () => {
     const { stepStatus, pollingInterval } = this.props;
     if (!this.timer && stepStatus && !stepStatus.terminated) {
-      this.timer = setInterval(() => this.loadLog(), pollingInterval || 4000);
+      this.timer = setInterval(() => this.loadLog(), pollingInterval);
     }
     if (this.timer && stepStatus && stepStatus.terminated) {
       clearInterval(this.timer);
@@ -151,5 +151,9 @@ export class LogContainer extends Component {
     );
   }
 }
+
+LogContainer.defaultProps = {
+  pollingInterval: 4000
+};
 
 export default injectIntl(LogContainer);
