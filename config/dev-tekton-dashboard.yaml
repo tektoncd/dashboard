@@ -60,7 +60,7 @@ rules:
     resources: ["deployments"]
     verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
   - apiGroups: ["tekton.dev"]
-    resources: ["tasks", "clustertasks", "taskruns", "pipelines", "pipelineruns", "pipelineresources"]
+    resources: ["tasks", "clustertasks", "taskruns", "pipelines", "pipelineruns", "pipelineresources", "conditions"]
     verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
   - apiGroups: ["tekton.dev"]
     resources: ["taskruns/finalizers", "pipelineruns/finalizers"]
