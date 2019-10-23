@@ -17,6 +17,8 @@ import ChevronRight from '@carbon/icons-react/lib/chevron--right/16';
 import CloseFilled from '@carbon/icons-react/lib/close--filled/16';
 import { Spinner, Step } from '@tektoncd/dashboard-components';
 
+import { updateUnexecutedSteps } from '@tektoncd/dashboard-utils';
+
 import './Task.scss';
 
 class Task extends Component {
@@ -89,24 +91,26 @@ class Task extends Component {
         </a>
         {expanded && (
           <ol className="step-list">
-            {steps.map(({ id, reason: stepReason, status, stepName }) => {
-              const selected = selectedStepId === id;
-              const stepStatus =
-                reason === 'TaskRunCancelled' && status !== 'terminated'
-                  ? 'cancelled'
-                  : status;
-              return (
-                <Step
-                  id={id}
-                  key={id}
-                  onSelect={this.handleStepSelected}
-                  reason={stepReason}
-                  selected={selected}
-                  status={stepStatus}
-                  stepName={stepName}
-                />
-              );
-            })}
+            {updateUnexecutedSteps(steps).map(
+              ({ id, reason: stepReason, status, stepName }) => {
+                const selected = selectedStepId === id;
+                const stepStatus =
+                  reason === 'TaskRunCancelled' && status !== 'terminated'
+                    ? 'cancelled'
+                    : status;
+                return (
+                  <Step
+                    id={id}
+                    key={id}
+                    onSelect={this.handleStepSelected}
+                    reason={stepReason}
+                    selected={selected}
+                    status={stepStatus}
+                    stepName={stepName}
+                  />
+                );
+              }
+            )}
           </ol>
         )}
       </li>
