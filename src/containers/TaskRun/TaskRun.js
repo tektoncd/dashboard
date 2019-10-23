@@ -24,7 +24,12 @@ import {
   StepDetails,
   TaskTree
 } from '@tektoncd/dashboard-components';
-import { getStatus, stepsStatus, taskRunStep } from '@tektoncd/dashboard-utils';
+import {
+  getStatus,
+  stepsStatus,
+  taskRunStep,
+  updateUnexecutedSteps
+} from '@tektoncd/dashboard-utils';
 
 import { fetchLogs } from '../../utils';
 
@@ -170,7 +175,10 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
 
     const { definition, reason, status, stepName, stepStatus } = taskRunStep(
       selectedStepId,
-      taskRun
+      {
+        ...taskRun,
+        steps: updateUnexecutedSteps(taskRun.steps)
+      }
     );
 
     const logContainer = (
