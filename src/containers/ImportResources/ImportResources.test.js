@@ -54,6 +54,101 @@ describe('ImportResources component', () => {
     }
   });
 
+  it('Displays errors when Repository URL and Namespace is empty', async () => {
+    const { getByText } = await render(
+      <Provider store={store}>
+        <ImportResourcesContainer />
+      </Provider>
+    );
+
+    fireEvent.click(getByText('Import and Apply'));
+    await waitForElement(() => getByText(/Please submit a valid URL/i));
+    await waitForElement(() => getByText(/Please select a namespace/i));
+  });
+
+  it('Displays an error when Repository URL is empty', async () => {
+    const { getByLabelText, getByText } = await render(
+      <Provider store={store}>
+        <ImportResourcesContainer />
+      </Provider>
+    );
+    const namespace = 'default';
+
+    fireEvent.click(getByLabelText(/namespace/i));
+    fireEvent.click(getByText(/select namespace/i));
+    fireEvent.click(getByText(namespace));
+
+    fireEvent.click(getByText('Import and Apply'));
+    await waitForElement(() => getByText(/Please submit a valid URL/i));
+  });
+
+  it('Displays an error when Namepsace is empty', async () => {
+    const { getByTestId, getByText } = await render(
+      <Provider store={store}>
+        <ImportResourcesContainer />
+      </Provider>
+    );
+
+    const repoURLField = getByTestId('repository-url-field');
+    fireEvent.change(repoURLField, {
+      target: { value: 'https://github.com/test/testing' }
+    });
+
+    fireEvent.click(getByText('Import and Apply'));
+    await waitForElement(() => getByText(/Please select a namespace/i));
+  });
+
+  it('Displays an error when Repository URL starts with the incorrect term', async () => {
+    const { getByTestId, getByText } = await render(
+      <Provider store={store}>
+        <ImportResourcesContainer />
+      </Provider>
+    );
+
+    const repoURLField = getByTestId('repository-url-field');
+    fireEvent.change(repoURLField, {
+      target: { value: 'incorrecthttps://github.com/test/testing' }
+    });
+
+    fireEvent.click(getByText('Import and Apply'));
+    await waitForElement(() => getByText(/Please select a namespace/i));
+    await waitForElement(() => getByText(/Please submit a valid URL/i));
+  });
+
+  it('Displays an error when Repository URL doesnt contain github', async () => {
+    const { getByTestId, getByText } = await render(
+      <Provider store={store}>
+        <ImportResourcesContainer />
+      </Provider>
+    );
+
+    const repoURLField = getByTestId('repository-url-field');
+    fireEvent.change(repoURLField, {
+      target: { value: 'https://cat.com/test/testing' }
+    });
+
+    fireEvent.click(getByText('Import and Apply'));
+    await waitForElement(() => getByText(/Please select a namespace/i));
+    await waitForElement(() => getByText(/Please submit a valid URL/i));
+  });
+
+  it('Displays an error when Repository URL doesnt contain a .', async () => {
+    const { getByTestId, getByText } = await render(
+      <Provider store={store}>
+        <ImportResourcesContainer />
+      </Provider>
+    );
+
+    const repoURLField = getByTestId('repository-url-field');
+    fireEvent.change(repoURLField, {
+      target: { value: 'https://cat-com/test/testing' }
+    });
+
+    fireEvent.click(getByText('Import and Apply'));
+    await waitForElement(() => getByText(/Please select a namespace/i));
+    await waitForElement(() => getByText(/Please submit a valid URL/i));
+  });
+
   it('Valid data submit displays success notification ', async () => {
     const installNamespace = 'namespace1';
     const namespace = 'default';
@@ -76,7 +171,7 @@ describe('ImportResources component', () => {
         params: { 'apply-directory': '', 'target-namespace': 'default' },
         namespace: 'namespace1',
         labels: {
-          gitServer: 'example.com',
+          gitServer: 'github.com',
           gitOrg: 'test',
           gitRepo: 'testing.git'
         }
@@ -104,7 +199,7 @@ describe('ImportResources component', () => {
 
     const repoURLField = getByTestId('repository-url-field');
     fireEvent.change(repoURLField, {
-      target: { value: 'https://example.com/test/testing' }
+      target: { value: 'https://github.com/test/testing' }
     });
 
     fireEvent.click(getByLabelText(/namespace/i));

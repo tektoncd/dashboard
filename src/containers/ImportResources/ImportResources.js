@@ -38,6 +38,25 @@ async function getInstallNamespace() {
   return determineInstallNamespace();
 }
 
+function validateURL(url) {
+  if (!url.trim().startsWith('http://') && !url.trim().startsWith('https://')) {
+    return false;
+  }
+
+  if (url.trim() === '') {
+    return false;
+  }
+
+  if (url.includes('github') === false) {
+    return false;
+  }
+  if (url.includes('.') === false) {
+    return false;
+  }
+
+  return true;
+}
+
 export class ImportResources extends Component {
   constructor(props) {
     super(props);
@@ -100,9 +119,21 @@ export class ImportResources extends Component {
     const gitresourcename = 'git-source';
     const gitcommit = 'master';
 
-    if (repourl === '' || !namespace) {
+    // Without the if statement it will not display errors for both the namespace and the url at the same time
+    // The if / else statement inside is because the repourl needs different parameters set for invalidInput
+    // for the error to display when Submit is pressed. If set to the same then the errors dont appear on the page
+    const repourlValid = validateURL(repourl);
+    if (repourlValid === false || !namespace) {
+      if (repourlValid === false && repourl === '') {
+        this.setState({
+          invalidInput: repourl === ''
+        });
+      } else if (repourlValid === false) {
+        this.setState({
+          invalidInput: repourl
+        });
+      }
       this.setState({
-        invalidInput: repourl === '',
         invalidNamespace: !namespace
       });
       return;
@@ -208,7 +239,7 @@ export class ImportResources extends Component {
             labelText="Repository URL"
             name="repositoryURL"
             onChange={this.handleTextInput}
-            placeholder="Enter repository URL"
+            placeholder="https://github.com/my-repository"
             required
             type="URL"
             value={this.state.repositoryURL}
