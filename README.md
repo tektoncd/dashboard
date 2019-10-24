@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/kubernetes/dashboard/blob/master/LICENSE)
 
-Tekton Dashboard is a general purpose, web-based UI for Tekton Pipelines. It allows users to manage and view Tekton PipelineRuns and TaskRuns and the resources involved in their creation, execution, and completion. It also allows filtering of PipelineRuns by label. 
+Tekton Dashboard is a general purpose, web-based UI for Tekton Pipelines. It allows users to manage and view Tekton PipelineRuns and TaskRuns and the resources involved in their creation, execution, and completion. It also allows filtering of PipelineRuns and TaskRuns by label. 
 
 ![Dashboard UI workloads page](docs/dashboard-ui.png)
 
