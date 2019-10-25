@@ -17,6 +17,8 @@ it('handles init or unknown actions', () => {
   expect(secretsReducer(undefined, { type: 'does_not_exist' })).toEqual({
     byNamespace: {},
     errorMessage: null,
+    createSuccessMessage: null,
+    deleteSuccessMessage: null,
     isFetching: false
   });
 });
@@ -74,7 +76,11 @@ it('SECRET_DELETE_SUCCESS for one secret', () => {
     }
   };
 
-  const action = { type: 'SECRET_DELETE_SUCCESS', secrets };
+  const action = {
+    type: 'SECRET_DELETE_SUCCESS',
+    success: 'Secret(s) deleted successfully',
+    secrets
+  };
   const state = secretsReducer(secretsState, action);
 
   expect(selectors.isFetchingSecrets(state)).toBe(false);
@@ -99,7 +105,11 @@ it('SECRET_DELETE_SUCCESS for multiple secrets', () => {
     }
   };
 
-  const action = { type: 'SECRET_DELETE_SUCCESS', secrets };
+  const action = {
+    type: 'SECRET_DELETE_SUCCESS',
+    success: 'Secret(s) deleted successfully',
+    secrets
+  };
   const state = secretsReducer(secretsState, action);
 
   expect(selectors.isFetchingSecrets(state)).toBe(false);

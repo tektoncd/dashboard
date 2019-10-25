@@ -289,6 +289,14 @@ export function getSecretsErrorMessage(state) {
   return secretSelectors.getSecretsErrorMessage(state.secrets);
 }
 
+export function getCreateSecretsSuccessMessage(state) {
+  return secretSelectors.getCreateSecretsSuccessMessage(state.secrets);
+}
+
+export function getDeleteSecretsSuccessMessage(state) {
+  return secretSelectors.getDeleteSecretsSuccessMessage(state.secrets);
+}
+
 export function isFetchingSecrets(state) {
   return secretSelectors.isFetchingSecrets(state.secrets);
 }

@@ -13,6 +13,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { injectIntl } from 'react-intl';
 import { InlineNotification } from 'carbon-components-react';
 import { getErrorMessage } from '@tektoncd/dashboard-utils';
 
@@ -25,6 +26,8 @@ import {
   fetchSecrets
 } from '../../actions/secrets';
 import {
+  getCreateSecretsSuccessMessage,
+  getDeleteSecretsSuccessMessage,
   getSecrets,
   getSecretsErrorMessage,
   getSelectedNamespace,
@@ -32,14 +35,16 @@ import {
   isWebSocketConnected
 } from '../../reducers';
 
+const initialState = {
+  openNewSecret: false,
+  openDeleteSecret: false,
+  toBeDeleted: []
+};
+
 export /* istanbul ignore next */ class Secrets extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      openNewSecret: false,
-      openDeleteSecret: false,
-      toBeDeleted: []
-    };
+    this.state = initialState;
   }
 
   componentDidMount() {
@@ -82,9 +87,17 @@ export /* istanbul ignore next */ class Secrets extends Component {
   };
 
   render() {
-    const { loading, error, secrets, selectedNamespace } = this.props;
-    const { openNewSecret, toBeDeleted, openDeleteSecret } = this.state;
+    const {
+      loading,
+      error,
+      createSuccess,
+      deleteSuccess,
+      secrets,
+      selectedNamespace,
+      intl
+    } = this.props;
 
+    const { openNewSecret, toBeDeleted, openDeleteSecret } = this.state;
     return (
       <>
         {error && (
@@ -95,6 +108,47 @@ export /* istanbul ignore next */ class Secrets extends Component {
             iconDescription="Clear Notification"
             className="notificationComponent"
             data-testid="errorNotificationComponent"
+            onCloseButtonClick={this.props.clearNotification}
+            lowContrast
+          />
+        )}
+        {createSuccess &&
+          (!deleteSuccess && (
+            <InlineNotification
+              kind="success"
+              title={intl.formatMessage({
+                id: 'dashboard.secrets.success',
+                defaultMessage: 'Success:'
+              })}
+              subtitle={intl.formatMessage({
+                id: 'dashboard.secrets.createSuccess',
+                defaultMessage: 'Secret created successfully'
+              })}
+              iconDescription={intl.formatMessage({
+                id: 'dashboard.secrets.clearNotification',
+                defaultMessage: 'Clear Notification'
+              })}
+              className="notificationComponent"
+              onCloseButtonClick={this.props.clearNotification}
+              lowContrast
+            />
+          ))}
+        {deleteSuccess && (
+          <InlineNotification
+            kind="success"
+            title={intl.formatMessage({
+              id: 'dashboard.secrets.success',
+              defaultMessage: 'Success:'
+            })}
+            subtitle={intl.formatMessage({
+              id: 'dashboard.secrets.deleteSuccess',
+              defaultMessage: 'Secret deleted successfully'
+            })}
+            iconDescription={intl.formatMessage({
+              id: 'dashboard.secrets.clearNotification',
+              defaultMessage: 'Clear Notification'
+            })}
+            className="notificationComponent"
             onCloseButtonClick={this.props.clearNotification}
             lowContrast
           />
@@ -129,6 +183,8 @@ Secrets.defaultProps = {
 function mapStateToProps(state) {
   return {
     error: getSecretsErrorMessage(state),
+    createSuccess: getCreateSecretsSuccessMessage(state),
+    deleteSuccess: getDeleteSecretsSuccessMessage(state),
     loading: isFetchingSecrets(state),
     secrets: getSecrets(state),
     selectedNamespace: getSelectedNamespace(state),
@@ -145,4 +201,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Secrets);
+)(injectIntl(Secrets));

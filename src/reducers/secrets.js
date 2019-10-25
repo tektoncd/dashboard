@@ -80,7 +80,6 @@ function isFetching(state = false, action) {
 function errorMessage(state = null, action) {
   switch (action.type) {
     case 'SECRETS_FETCH_FAILURE':
-    case 'SECRET_DELETE_FAILURE':
     case 'SECRET_CREATE_FAILURE':
       return action.error;
     case 'SECRETS_FETCH_REQUEST':
@@ -92,9 +91,41 @@ function errorMessage(state = null, action) {
   }
 }
 
+function createSuccessMessage(state = null, action) {
+  switch (action.type) {
+    case 'SECRET_DELETE_SUCCESS':
+    case 'SECRET_CREATE_SUCCESS':
+      return true;
+    case 'SECRET_CREATE_FAILURE':
+    case 'SECRETS_FETCH_REQUEST':
+    case 'SECRETS_FETCH_SUCCESS':
+    case 'CLEAR_SECRET_ERROR_NOTIFICATION':
+      return false;
+    default:
+      return state;
+  }
+}
+
+function deleteSuccessMessage(state = null, action) {
+  switch (action.type) {
+    case 'SECRET_DELETE_SUCCESS':
+      return true;
+    case 'SECRET_CREATE_SUCCESS':
+    case 'SECRET_CREATE_FAILURE':
+    case 'SECRETS_FETCH_REQUEST':
+    case 'SECRETS_FETCH_SUCCESS':
+    case 'CLEAR_SECRET_ERROR_NOTIFICATION':
+      return false;
+    default:
+      return state;
+  }
+}
+
 export default combineReducers({
   byNamespace,
   errorMessage,
+  createSuccessMessage,
+  deleteSuccessMessage,
   isFetching
 });
 
@@ -112,6 +143,14 @@ export function getSecrets(state, namespace) {
 
 export function getSecretsErrorMessage(state) {
   return state.errorMessage;
+}
+
+export function getCreateSecretsSuccessMessage(state) {
+  return state.createSuccessMessage;
+}
+
+export function getDeleteSecretsSuccessMessage(state) {
+  return state.deleteSuccessMessage;
 }
 
 export function isFetchingSecrets(state) {

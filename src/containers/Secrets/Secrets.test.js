@@ -12,15 +12,22 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, render } from 'react-testing-library';
+import { createIntl } from 'react-intl';
+import { fireEvent } from 'react-testing-library';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import { renderWithIntl } from '../../utils/test';
 import Secrets from '.';
 import * as API from '../../api';
 
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
+
+const intl = createIntl({
+  locale: 'en',
+  defaultLocale: 'en'
+});
 
 const byNamespace = {
   default: [
@@ -127,9 +134,9 @@ it('click add new secret & modal appears', () => {
 
   jest.spyOn(API, 'getServiceAccounts').mockImplementation(() => []);
 
-  const { getByTestId } = render(
+  const { getByTestId } = renderWithIntl(
     <Provider store={store}>
-      <Secrets {...props} />
+      <Secrets {...props} intl={intl} />
     </Provider>
   );
 
@@ -154,9 +161,9 @@ it('click add delete secret & modal appears', () => {
     error: null
   };
 
-  const { getByTestId } = render(
+  const { getByTestId } = renderWithIntl(
     <Provider store={store}>
-      <Secrets {...props} />
+      <Secrets {...props} intl={intl} />
     </Provider>
   );
 
@@ -195,9 +202,9 @@ it('error notification appears', () => {
 
   jest.spyOn(API, 'getCredentials').mockImplementation(() => []);
 
-  const { getByTestId } = render(
+  const { getByTestId } = renderWithIntl(
     <Provider store={store}>
-      <Secrets {...props} />
+      <Secrets {...props} intl={intl} />
     </Provider>
   );
 
