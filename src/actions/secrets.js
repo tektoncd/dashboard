@@ -69,10 +69,11 @@ export function deleteSecret(secrets) {
       const deleteWithinTimePromise = Promise.race([response, timeout]);
       return deleteWithinTimePromise;
     });
-
     Promise.all(deletePromises)
       .then(() => {
-        dispatch({ type: 'SECRET_DELETE_SUCCESS' });
+        dispatch({
+          type: 'SECRET_DELETE_SUCCESS'
+        });
       })
       .catch(error => {
         dispatch({ type: 'SECRET_DELETE_FAILURE', error });
@@ -95,7 +96,9 @@ export function createSecret(postData, namespace) {
         namespace: serviceAccount.metadata.namespace,
         secretName: postData.metadata.name
       });
-      dispatch({ type: 'SECRET_CREATE_SUCCESS' });
+      dispatch({
+        type: 'SECRET_CREATE_SUCCESS'
+      });
     } catch (error) {
       error.response.text().then(message => {
         dispatch({ type: 'SECRET_CREATE_FAILURE', error: message });
