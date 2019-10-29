@@ -20,8 +20,6 @@ import {
   getHeaders,
   getPatchHeaders,
   patchAddSecret,
-  patchRemoveSecret,
-  patchRemoveSecretBody,
   post,
   request
 } from './comms';
@@ -174,34 +172,6 @@ describe('patchAddSecret', () => {
     };
     fetchMock.mock(uri, data);
     return patchAddSecret(uri, data).then(response => {
-      expect(response).toEqual(data);
-      fetchMock.restore();
-    });
-  });
-});
-
-describe('patchRemoveSecretBody', () => {
-  it('returns the correct index for removing a secret', () => {
-    const indexOfSecret = 1;
-    const secretResponse = [
-      {
-        op: 'remove',
-        path: `serviceaccount/secrets/${indexOfSecret}`
-      }
-    ];
-    const result = patchRemoveSecretBody(1);
-    expect(result).toMatchObject(secretResponse);
-    expect(result).toMatchObject(patchRemoveSecretBody(indexOfSecret));
-  });
-});
-
-describe('patchRemoveSecret', () => {
-  it('returns the correct repsonse after unpatching a secret', () => {
-    const data = {
-      fake: 'data'
-    };
-    fetchMock.mock(uri, data);
-    return patchRemoveSecret(uri, data).then(response => {
       expect(response).toEqual(data);
       fetchMock.restore();
     });

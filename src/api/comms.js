@@ -103,6 +103,17 @@ export function generateBodyForSecretPatching(secretName) {
   return patchAddBody;
 }
 
+export function generateBodyForSecretReplacing(remainingSecrets) {
+  const replaceBody = [
+    {
+      op: 'replace',
+      path: 'serviceaccount/secrets',
+      value: remainingSecrets
+    }
+  ];
+  return replaceBody;
+}
+
 export function patchRemoveSecretBody(indexOfSecret) {
   const patchRemoveBody = [
     {
@@ -128,5 +139,14 @@ export async function patchRemoveSecret(uri, indexOfSecret) {
     method: 'PATCH',
     headers: await getPatchHeaders(),
     body: JSON.stringify(patchRemoveBody)
+  });
+}
+
+export async function patchUpdateSecrets(uri, secrets) {
+  const patchReplaceBody = await generateBodyForSecretReplacing(secrets);
+  return request(uri, {
+    method: 'PATCH',
+    headers: await getPatchHeaders(),
+    body: JSON.stringify(patchReplaceBody)
   });
 }

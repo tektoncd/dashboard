@@ -16,9 +16,11 @@ import {
   deleteCredential,
   getCredentials,
   getServiceAccount,
+  getServiceAccounts,
   patchServiceAccount,
-  unpatchServiceAccount
+  updateServiceAccountSecrets
 } from '../api';
+
 import { getSelectedNamespace } from '../reducers';
 
 export function fetchSecretsSuccess(data) {
@@ -56,10 +58,74 @@ export function fetchSecrets({ namespace } = {}) {
 export function deleteSecret(secrets) {
   return async dispatch => {
     dispatch({ type: 'SECRET_DELETE_REQUEST' });
+    // This is where we first handle the unpatching (complicated section), and would benefit
+    // from error handling and additional notifications on success/error
+    const namespacesToSecretsMap = new Map();
+    secrets.forEach(secret => {
+      let foundSecretInfo = namespacesToSecretsMap.get(secret.namespace);
+      if (foundSecretInfo) {
+        foundSecretInfo.push(secret.name);
+      } else {
+        foundSecretInfo = [secret.name];
+      }
+      namespacesToSecretsMap.set(secret.namespace, foundSecretInfo);
+    });
+
+    /* Now we know the secrets for each namespace, iterate and determine which secrets 
+    should be removed from the SA. With the list of known secrets that stay, 
+    we finally do a replace type PATCH on the entire service account at once. 
+    This is used to ensure all data is still correct regardless of things like indexes changing 
+    which is the only way to remove secrets otherwise using the patch API */
+
+    // For each namespace there are secrets in
+    namespacesToSecretsMap.forEach(async function(value, namespace) {
+      // Get all the service accounts in the namespace
+      const serviceAccounts = await getServiceAccounts({
+        namespace
+      });
+
+      // For each service account found
+      serviceAccounts.forEach(async serviceAccount => {
+        let secretRemoved = false;
+        const remainingSecrets = [];
+        const allSecrets = serviceAccount.secrets;
+        // For each secret found
+        for (let x = 0; x < allSecrets.length; x += 1) {
+          const secret = allSecrets[x].name;
+          let found = false;
+          let z = 0;
+          // For each secret we want to delete
+          while (!found && z < value.length) {
+            const item = value[z];
+            // Name matches?
+            if (item === secret) {
+              found = true;
+              secretRemoved = true;
+            }
+            z += 1;
+          }
+          // Didn't find one to delete, so update listing of ones to keep
+          if (!found) {
+            const itemAsJson = { name: secret };
+            remainingSecrets.push(itemAsJson);
+          }
+        }
+        // One's been removed so we'll need to now replace the
+        // ServiceAccount's secrets field with the ones to keep
+        if (secretRemoved) {
+          updateServiceAccountSecrets(
+            serviceAccount,
+            namespace,
+            remainingSecrets
+          );
+        }
+      });
+    });
+
+    // This is where we delete the credentials (kube secrets) themselves
     const timeoutLength = secrets.length * 1000;
     const deletePromises = secrets.map(secret => {
       const { name, namespace } = secret;
-      unpatchServiceAccount(name, namespace);
       const response = deleteCredential(name, namespace);
       const timeout = new Promise((resolve, reject) => {
         setTimeout(() => {
@@ -69,6 +135,7 @@ export function deleteSecret(secrets) {
       const deleteWithinTimePromise = Promise.race([response, timeout]);
       return deleteWithinTimePromise;
     });
+
     Promise.all(deletePromises)
       .then(() => {
         dispatch({
