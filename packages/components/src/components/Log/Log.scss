@@ -16,7 +16,11 @@ limitations under the License.
 .log {
   padding: 1.3rem 1.6rem;
   font-family: ibm-plex-mono, monospace;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
+  @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
+    font-size: 0.6875rem;
+  }
+
   line-height: 0.95rem; // Update the react-window List itemSize if changing this
   overflow: hidden;
   text-shadow: 0.1px 0.1px 0 #272d3340;
@@ -28,7 +32,6 @@ limitations under the License.
 
   .log-trailer {
     font-family: ibm-plex-sans, sans-serif;
-    font-size: 0.73rem;
     font-weight: bold;
 
     &[data-status='Completed'] {
