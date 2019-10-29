@@ -16,7 +16,7 @@ import {
   deleteRequest,
   get,
   patchAddSecret,
-  patchRemoveSecret,
+  patchUpdateSecrets,
   post,
   put
 } from './comms';
@@ -316,61 +316,22 @@ export async function patchServiceAccount({
   return patch1;
 }
 
-// Get list of service accounts where are secrets patched to, returns list of service accounts
-export async function getSecretServiceAccountList(saList, secretName) {
-  const secretServiceAccountList = [];
-
-  if (saList.length > 0) {
-    saList.forEach(element => {
-      const saSecretList = element.secrets;
-      saSecretList.forEach(element1 => {
-        if (element1.name === secretName) {
-          secretServiceAccountList.push(element);
-        }
-      });
-    });
-  }
-
-  return secretServiceAccountList;
-}
-
-export function getIndexOfSecret(secrets, secretName) {
-  return secrets.findIndex(({ name }) => name === secretName);
-}
-
-export async function getIndexAndRemove(sa, secretName, namespace) {
-  const indexOfSecret = getIndexOfSecret(sa.secrets, secretName);
-  // Should never be -1 as means the secret is not found
-  if (indexOfSecret === -1) {
-    const error = new Error('Impossible error with indexOfSecret');
-    error.indexOfSecret = indexOfSecret;
-    error.namespace = namespace;
-    error.secretName = secretName;
-    throw error;
-  }
-
+// Use this for unpatching service accounts
+export async function updateServiceAccountSecrets(
+  sa,
+  namespace,
+  secretsToKeep
+) {
   const uri = getKubeAPI('serviceaccounts', {
     name: sa.metadata.name,
     namespace
   });
-
-  const unpatchServiceAccount1 = await patchRemoveSecret(uri, indexOfSecret);
-  return unpatchServiceAccount1;
+  return patchUpdateSecrets(uri, secretsToKeep);
 }
 
 export function getServiceAccounts({ namespace } = {}) {
   const uri = getKubeAPI('serviceaccounts', { namespace });
   return get(uri).then(checkData);
-}
-
-export async function unpatchServiceAccount(secretName, namespace) {
-  const saList = await getServiceAccounts({ namespace });
-  const secretSaList = await getSecretServiceAccountList(saList, secretName);
-
-  secretSaList.forEach(async element => {
-    await getIndexAndRemove(element, secretName, namespace);
-  });
-  return 'Completed unpatching';
 }
 
 export function getCustomResources(...args) {
