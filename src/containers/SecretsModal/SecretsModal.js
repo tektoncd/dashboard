@@ -60,7 +60,7 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
       annotations: [
         {
           label: `tekton.dev/git-0`,
-          value: '',
+          value: 'https://github.com',
           placeholder: 'https://github.com',
           id: Math.random()
             .toString(36)
@@ -237,18 +237,30 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
         newInvalidFields.push(stateVar);
       }
       const annotations = prevState.annotations.map(annotation => {
+        const gitExampleText = 'https://github.com';
+        const dockerExampleText = 'https://index.docker.io/v1/';
         let toSearch;
         let toExampleText;
+        let annotationValue;
         if (stateValue === 'git') {
           toSearch = 'docker';
-          toExampleText = 'https://github.com';
+          toExampleText = gitExampleText;
         } else {
           toSearch = 'git';
-          toExampleText = 'https://index.docker.io/v1/';
+          toExampleText = dockerExampleText;
+        }
+        if (
+          annotation.value === gitExampleText ||
+          annotation.value === dockerExampleText ||
+          annotation.value.trim() === ''
+        ) {
+          annotationValue = toExampleText;
+        } else {
+          annotationValue = annotation.value;
         }
         return {
           label: annotation.label.split(toSearch).join(stateValue),
-          value: annotation.value,
+          value: annotationValue,
           id: annotation.id,
           placeholder: toExampleText
         };
@@ -256,7 +268,9 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
       return {
         [stateVar]: stateValue,
         annotations,
-        invalidFields: newInvalidFields
+        invalidFields: newInvalidFields.filter(
+          field => field.indexOf('annotation') === -1
+        )
       };
     });
   };
@@ -296,7 +310,7 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
       }
       annotations.push({
         label: `tekton.dev/${accessTo}-${annotations.length}`,
-        value: '',
+        value: example,
         placeholder: example,
         id: Math.random()
           .toString(36)

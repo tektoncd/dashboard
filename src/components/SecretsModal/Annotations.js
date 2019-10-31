@@ -14,7 +14,8 @@ limitations under the License.
 import React from 'react';
 import { TextInput } from 'carbon-components-react';
 import Add from '@carbon/icons-react/lib/add--alt/24';
-import Remove from '@carbon/icons-react/lib/misuse/24';
+import Remove from '@carbon/icons-react/lib/subtract--alt/24';
+import Delete from '@carbon/icons-react/lib/misuse/16';
 import './SecretsModal.scss';
 
 const Annotations = props => {
@@ -54,6 +55,15 @@ const Annotations = props => {
           invalid={invalidFields.indexOf(`annotation-value${index}`) > -1}
           autoComplete="off"
         />
+        {annotation.value && (
+          <Delete
+            className="deleteInputIcon"
+            aria-label={`Delete Button#${index}. Deletes entire entry in current text field.`}
+            onClick={() => {
+              handleChange({ key: 'value', index, value: '' });
+            }}
+          />
+        )}
       </div>
     );
   });
@@ -62,8 +72,18 @@ const Annotations = props => {
     <div className="annotations">
       <div className="labelAndButtons">
         <p className="label">Server URL:</p>
-        <Remove className="removeIcon" onClick={handleRemove} />
-        <Add className="addIcon" onClick={handleAdd} />
+        <Remove
+          className={
+            annotationFields.length === 1 ? 'removeIconDisabled' : 'removeIcon'
+          }
+          onClick={handleRemove}
+          aria-label="Remove Button. Removes a Server URL entry."
+        />
+        <Add
+          className="addIcon"
+          onClick={handleAdd}
+          aria-label="Add Button. Adds another Server URL entry."
+        />
       </div>
       {invalidFields.find(field => field.includes('annotation-value')) !==
         undefined && <p className="invalidAnnotation">Server URL required.</p>}
