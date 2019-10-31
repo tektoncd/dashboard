@@ -52,7 +52,7 @@ function utility_install() {
   # Install envsubst
   apt-get install gettext-base
   # Get yaml-to-json converter
-  apt-get install yq -y
+  go get gopkg.in/mikefarah/yq.v2
 }
 function get_node() {
   echo "Script is running as $(whoami) on $(hostname) and directory structure is $(find .)"

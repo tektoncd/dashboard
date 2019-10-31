@@ -85,7 +85,7 @@ function json_curl_envsubst_resource() {
     echo "File/HTTP-Method/Endpoint not found."
     exit 1
   fi
-  cat "$1" | envsubst | yq r -j - | curl -sS -X "$2" --data-binary @- -H "Content-Type: application/json" "$3"
+  cat "$1" | envsubst | yq.v2 r -j - | curl -sS -X "$2" --data-binary @- -H "Content-Type: application/json" "$3"
 }
 
 function fail_test() {
