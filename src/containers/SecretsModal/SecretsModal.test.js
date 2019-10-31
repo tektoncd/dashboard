@@ -158,7 +158,7 @@ it('Create Secret validates all empty inputs', () => {
   expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(passwordValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(serviceAccountValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serverurlValidationErrorRegExp)).toBeTruthy();
+  expect(queryByText(serverurlValidationErrorRegExp)).toBeFalsy();
 });
 
 it('Create Secret errors when starting with a "-"', () => {
@@ -176,7 +176,7 @@ it('Create Secret errors when starting with a "-"', () => {
   expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(passwordValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(serviceAccountValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serverurlValidationErrorRegExp)).toBeTruthy();
+  expect(queryByText(serverurlValidationErrorRegExp)).toBeFalsy();
 });
 
 it('Create Secret errors when ends with a "-"', () => {
@@ -194,7 +194,7 @@ it('Create Secret errors when ends with a "-"', () => {
   expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(passwordValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(serviceAccountValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serverurlValidationErrorRegExp)).toBeTruthy();
+  expect(queryByText(serverurlValidationErrorRegExp)).toBeFalsy();
 });
 
 it('Create Secret errors when contains "."', () => {
@@ -212,7 +212,7 @@ it('Create Secret errors when contains "."', () => {
   expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(passwordValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(serviceAccountValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serverurlValidationErrorRegExp)).toBeTruthy();
+  expect(queryByText(serverurlValidationErrorRegExp)).toBeFalsy();
 });
 
 it('Create Secret errors when contains spaces', () => {
@@ -230,7 +230,7 @@ it('Create Secret errors when contains spaces', () => {
   expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(passwordValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(serviceAccountValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serverurlValidationErrorRegExp)).toBeTruthy();
+  expect(queryByText(serverurlValidationErrorRegExp)).toBeFalsy();
 });
 
 it('Create Secret errors when contains capital letters', () => {
@@ -248,7 +248,7 @@ it('Create Secret errors when contains capital letters', () => {
   expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(passwordValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(serviceAccountValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serverurlValidationErrorRegExp)).toBeTruthy();
+  expect(queryByText(serverurlValidationErrorRegExp)).toBeFalsy();
 });
 
 it('Create Secret doesn\'t error when contains "-" in the middle of the secret', () => {
@@ -266,7 +266,7 @@ it('Create Secret doesn\'t error when contains "-" in the middle of the secret',
   expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(passwordValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(serviceAccountValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serverurlValidationErrorRegExp)).toBeTruthy();
+  expect(queryByText(serverurlValidationErrorRegExp)).toBeFalsy();
 });
 
 it("Create Secret doesn't error when contains 0", () => {
@@ -284,7 +284,7 @@ it("Create Secret doesn't error when contains 0", () => {
   expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(passwordValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(serviceAccountValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serverurlValidationErrorRegExp)).toBeTruthy();
+  expect(queryByText(serverurlValidationErrorRegExp)).toBeFalsy();
 });
 
 it("Create Secret doesn't error when contains 9", () => {
@@ -302,7 +302,7 @@ it("Create Secret doesn't error when contains 9", () => {
   expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(passwordValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(serviceAccountValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serverurlValidationErrorRegExp)).toBeTruthy();
+  expect(queryByText(serverurlValidationErrorRegExp)).toBeFalsy();
 });
 
 it('Create Secret errors when contains 253 characters', () => {
@@ -323,7 +323,7 @@ it('Create Secret errors when contains 253 characters', () => {
   expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(passwordValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(serviceAccountValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serverurlValidationErrorRegExp)).toBeTruthy();
+  expect(queryByText(serverurlValidationErrorRegExp)).toBeFalsy();
 });
 
 it("Create Secret doesn't error when contains 252 characters", () => {
@@ -344,7 +344,7 @@ it("Create Secret doesn't error when contains 252 characters", () => {
   expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(passwordValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(serviceAccountValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serverurlValidationErrorRegExp)).toBeTruthy();
+  expect(queryByText(serverurlValidationErrorRegExp)).toBeFalsy();
 });
 
 it("Create Secret doesn't error when contains a valid namespace", () => {
@@ -364,7 +364,7 @@ it("Create Secret doesn't error when contains a valid namespace", () => {
   expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(passwordValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(serviceAccountValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serverurlValidationErrorRegExp)).toBeTruthy();
+  expect(queryByText(serverurlValidationErrorRegExp)).toBeFalsy();
 });
 
 it("Create Secret doesn't error when Docker Registry is selected", () => {
@@ -388,7 +388,7 @@ it("Create Secret doesn't error when Docker Registry is selected", () => {
   expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(passwordValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(serviceAccountValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serverurlValidationErrorRegExp)).toBeTruthy();
+  expect(queryByText(serverurlValidationErrorRegExp)).toBeFalsy();
 });
 
 it("Create Secret doesn't error when a username is entered", () => {
@@ -413,7 +413,7 @@ it("Create Secret doesn't error when a username is entered", () => {
   expect(queryByText(usernameValidationErrorRegExp)).toBeFalsy();
   expect(queryByText(passwordValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(serviceAccountValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serverurlValidationErrorRegExp)).toBeTruthy();
+  expect(queryByText(serverurlValidationErrorRegExp)).toBeFalsy();
 });
 
 it("Create Secret doesn't error when a password is entered", () => {
@@ -442,5 +442,5 @@ it("Create Secret doesn't error when a password is entered", () => {
   expect(queryByText(usernameValidationErrorRegExp)).toBeFalsy();
   expect(queryByText(passwordValidationErrorRegExp)).toBeFalsy();
   expect(queryByText(serviceAccountValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serverurlValidationErrorRegExp)).toBeTruthy();
+  expect(queryByText(serverurlValidationErrorRegExp)).toBeFalsy();
 });

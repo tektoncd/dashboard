@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { render } from 'react-testing-library';
+import { fireEvent, render } from 'react-testing-library';
 import Annotations from './Annotations';
 
 it('Annotations shows blank fields', () => {
@@ -72,4 +72,63 @@ it('Annotations incorrect fields', () => {
   expect(annotationValue1.getAttribute('data-invalid')).toBeFalsy();
   expect(annotationValue2.getAttribute('data-invalid')).toBeTruthy();
   expect(annotationValue3.getAttribute('data-invalid')).toBeFalsy();
+});
+
+it('Annotations delete button works', () => {
+  const props = {
+    handleChange: jest.fn(),
+    invalidFields: [],
+    annotations: [
+      { label: `tekton.dev/git-0`, value: 'https://domain.com', id: 'aaaa' },
+      { label: `tekton.dev/git-1`, value: '', id: 'bbbb' },
+      { label: `tekton.dev/git-2`, value: 'https://domain.com', id: 'cccc' },
+      { label: `tekton.dev/git-3`, value: 'https://domain.com', id: 'dddd' }
+    ],
+    handleAdd() {},
+    handleRemove() {}
+  };
+  const { getByLabelText } = render(<Annotations {...props} />);
+
+  const deleteButton0 = getByLabelText(/Delete Button#0/i);
+
+  fireEvent.click(deleteButton0);
+
+  expect(props.handleChange).toHaveBeenCalledTimes(1);
+  expect(props.handleChange).toBeCalledWith({
+    index: 0,
+    key: 'value',
+    value: ''
+  });
+});
+
+it('Annotations add and remove buttons works', () => {
+  const props = {
+    handleChange() {},
+    invalidFields: [],
+    annotations: [
+      { label: `tekton.dev/git-0`, value: 'https://domain.com', id: 'aaaa' },
+      { label: `tekton.dev/git-1`, value: '', id: 'bbbb' },
+      { label: `tekton.dev/git-2`, value: 'https://domain.com', id: 'cccc' },
+      { label: `tekton.dev/git-3`, value: 'https://domain.com', id: 'dddd' }
+    ],
+    handleAdd: jest.fn(),
+    handleRemove: jest.fn()
+  };
+  const { getByLabelText } = render(<Annotations {...props} />);
+
+  const removeButton = getByLabelText(/Remove Button/i);
+  const addButton = getByLabelText(/Add Button/i);
+
+  fireEvent.click(addButton);
+  fireEvent.click(addButton);
+  fireEvent.click(addButton);
+  fireEvent.click(addButton);
+  fireEvent.click(addButton);
+
+  fireEvent.click(removeButton);
+  fireEvent.click(removeButton);
+  fireEvent.click(removeButton);
+
+  expect(props.handleAdd).toHaveBeenCalledTimes(5);
+  expect(props.handleRemove).toHaveBeenCalledTimes(3);
 });
