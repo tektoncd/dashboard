@@ -99,6 +99,12 @@ do
     kubectl get pods --all-namespaces
     echo "Pipelineruns as json, all namespaces"
     kubectl get pipelineruns -o json --all-namespaces
+    echo "TaskRun info"
+    kubectl -n tekton-pipelines get TaskRun -o json
+    echo "PipelineRun info"
+    kubectl -n tekton-pipelines get PipelineRun -o json    
+    echo "PipelineRun container info"
+    kubectl -n tekton-pipelines logs -l app=e2e-pipelinerun --all-containers
     sleep 5
   fi
 done
