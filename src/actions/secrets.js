@@ -78,7 +78,10 @@ export function deleteSecret(secrets) {
     which is the only way to remove secrets otherwise using the patch API */
 
     // For each namespace there are secrets in
-    namespacesToSecretsMap.forEach(async function(value, namespace) {
+    namespacesToSecretsMap.forEach(async function handleSecretUnpatching(
+      value,
+      namespace
+    ) {
       // Get all the service accounts in the namespace
       const serviceAccounts = await getServiceAccounts({
         namespace

@@ -32,6 +32,13 @@ export function getAPIRoot() {
 
 const apiRoot = getAPIRoot();
 
+function getQueryParams(filters) {
+  if (filters.length) {
+    return { labelSelector: filters };
+  }
+  return '';
+}
+
 export function getAPI(type, { name = '', namespace } = {}, queryParams) {
   return [
     apiRoot,
@@ -122,11 +129,11 @@ export function getPipeline({ name, namespace }) {
 }
 
 export function getPipelineRuns({ filters = [], namespace } = {}) {
-  let queryParams;
-  if (filters.length) {
-    queryParams = { labelSelector: filters };
-  }
-  const uri = getTektonAPI('pipelineruns', { namespace }, queryParams);
+  const uri = getTektonAPI(
+    'pipelineruns',
+    { namespace },
+    getQueryParams(filters)
+  );
   return get(uri).then(checkData);
 }
 
@@ -220,12 +227,7 @@ export function getTask({ name, namespace }) {
 }
 
 export function getTaskRuns({ filters = [], namespace } = {}) {
-  let queryParams;
-  if (filters.length) {
-    queryParams = { labelSelector: filters };
-  }
-
-  const uri = getTektonAPI('taskruns', { namespace }, queryParams);
+  const uri = getTektonAPI('taskruns', { namespace }, getQueryParams(filters));
   return get(uri).then(checkData);
 }
 
@@ -403,4 +405,46 @@ export async function determineInstallNamespace() {
       throw error;
     });
   return response;
+}
+
+export function getTriggerTemplates({ filters = [], namespace } = {}) {
+  const uri = getTektonAPI(
+    'triggertemplates',
+    { namespace },
+    getQueryParams(filters)
+  );
+  return get(uri).then(checkData);
+}
+
+export function getTriggerTemplate({ name, namespace }) {
+  const uri = getTektonAPI('triggertemplates', { name, namespace });
+  return get(uri);
+}
+
+export function getTriggerBindings({ filters = [], namespace } = {}) {
+  const uri = getTektonAPI(
+    'triggerbindings',
+    { namespace },
+    getQueryParams(filters)
+  );
+  return get(uri).then(checkData);
+}
+
+export function getTriggerBinding({ name, namespace }) {
+  const uri = getTektonAPI('triggerbindings', { name, namespace });
+  return get(uri);
+}
+
+export function getEventListeners({ filters = [], namespace } = {}) {
+  const uri = getTektonAPI(
+    'eventlisteners',
+    { namespace },
+    getQueryParams(filters)
+  );
+  return get(uri).then(checkData);
+}
+
+export function getEventListener({ name, namespace }) {
+  const uri = getTektonAPI('eventlisteners', { name, namespace });
+  return get(uri);
 }

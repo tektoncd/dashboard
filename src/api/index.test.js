@@ -644,3 +644,66 @@ it('getResource', () => {
       fetchMock.restore();
     });
 });
+
+it('getTriggerTemplate', () => {
+  const name = 'foo';
+  const data = { fake: 'triggerTemplate' };
+  fetchMock.get(`end:${name}`, data);
+  return index.getTriggerTemplate({ name }).then(triggerTemplate => {
+    expect(triggerTemplate).toEqual(data);
+    fetchMock.restore();
+  });
+});
+
+it('getTriggerTemplates', () => {
+  const data = {
+    items: 'triggerTemplates'
+  };
+  fetchMock.get(/triggertemplates/, data);
+  return index.getTriggerTemplates().then(triggerTemplates => {
+    expect(triggerTemplates).toEqual(data.items);
+    fetchMock.restore();
+  });
+});
+
+it('getTriggerBinding', () => {
+  const name = 'foo';
+  const data = { fake: 'triggerBinding' };
+  fetchMock.get(`end:${name}`, data);
+  return index.getTriggerBinding({ name }).then(triggerBinding => {
+    expect(triggerBinding).toEqual(data);
+    fetchMock.restore();
+  });
+});
+
+it('getTriggerBindings', () => {
+  const data = {
+    items: 'triggerBindings'
+  };
+  fetchMock.get(/triggerbindings/, data);
+  return index.getTriggerBindings().then(triggerBindings => {
+    expect(triggerBindings).toEqual(data.items);
+    fetchMock.restore();
+  });
+});
+
+it('getEventListener', () => {
+  const name = 'foo';
+  const data = { fake: 'eventListener' };
+  fetchMock.get(`end:${name}`, data);
+  return index.getEventListener({ name }).then(eventListener => {
+    expect(eventListener).toEqual(data);
+    fetchMock.restore();
+  });
+});
+
+it('getEventListeners', () => {
+  const data = {
+    items: 'eventListeners'
+  };
+  fetchMock.get(/eventlisteners/, data);
+  return index.getEventListeners().then(eventListeners => {
+    expect(eventListeners).toEqual(data.items);
+    fetchMock.restore();
+  });
+});
