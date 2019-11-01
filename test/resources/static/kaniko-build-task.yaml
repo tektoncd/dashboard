@@ -31,6 +31,6 @@ spec:
       value: "/builder/home/.docker"
     image: gcr.io/kaniko-project/executor:latest
     args:
-    - --dockerfile=${inputs.params.pathToDockerFile}
-    - --destination=${outputs.resources.builtImage.url}
-    - --context=${inputs.params.pathToContext}
+    - --dockerfile=$(inputs.params.pathToDockerFile)
+    - --destination=$(outputs.resources.builtImage.url)
+    - --context=$(inputs.params.pathToContext)

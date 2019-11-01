@@ -30,7 +30,7 @@ function print_diagnostic_info() {
 
 function install_pipeline_crd() {
   echo ">> Deploying Tekton Pipelines"
-  kubectl apply --filename https://github.com/tektoncd/pipeline/releases/download/v0.6.0/release.yaml || fail_test "Tekton pipeline installation failed" 
+  kubectl apply --filename https://github.com/tektoncd/pipeline/releases/download/v0.7.0/release.yaml || fail_test "Tekton pipeline installation failed" 
 
   # Make sure thateveything is cleaned up in the current namespace.
   for res in pipelineresources tasks pipelines taskruns pipelineruns; do
@@ -49,6 +49,15 @@ function dump_extra_cluster_state() {
   kubectl -n tekton-pipelines logs $(get_app_pod tekton-pipelines-webhook tekton-pipelines)
   echo ">>> Dashboard backend log:"
   kubectl -n tekton-pipelines logs $(get_app_pod tekton-dashboard tekton-pipelines)
+
+  echo "TaskRun info"
+  kubectl -n tekton-pipelines get TaskRun -o json
+
+  echo "PipelineRun info"
+  kubectl -n tekton-pipelines get PipelineRun -o json
+   
+  echo "PipelineRun container info"
+  kubectl -n tekton-pipelines logs -l app=e2e-pipelinerun --all-containers
 }
 
 function install_dashboard_backend() {
@@ -85,7 +94,8 @@ function json_curl_envsubst_resource() {
     echo "File/HTTP-Method/Endpoint not found."
     exit 1
   fi
-  cat "$1" | envsubst | yq.v2 r -j - | curl -sS -X "$2" --data-binary @- -H "Content-Type: application/json" "$3"
+  yq --version
+  cat "$1" | envsubst | yq r -j - | curl -sS -X "$2" --data-binary @- -H "Content-Type: application/json" "$3"
 }
 
 function fail_test() {

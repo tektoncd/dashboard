@@ -52,10 +52,14 @@ function utility_install() {
   # Install envsubst
   apt-get install gettext-base
   # Get yaml-to-json converter
-  go get gopkg.in/mikefarah/yq.v2
+  echo "Getting yq"
+  wget https://github.com/mikefarah/yq/releases/download/2.4.1/yq_linux_amd64 .
+  chmod +x yq_linux_amd64
+  mv yq_linux_amd64 /bin/yq
+  echo "yq being used from $(which yq), version is: $(yq --version)"
 }
 function get_node() {
-  echo "Script is running as $(whoami) on $(hostname) and directory structure is $(find .)"
+  echo "Script is running as $(whoami) on $(hostname)"
   # It's Stretch and https://github.com/tektoncd/dashboard/blob/master/package.json
   # denotes the Node.js and npm versions
   apt-get update

@@ -10,6 +10,8 @@ kind: PipelineRun
 metadata:
   name: e2e-pipelinerun
   namespace: tekton-pipelines
+  labels:
+    app: e2e-pipelinerun
 spec:
   pipelineRef:
     name: ${PIPELINE_NAME}
