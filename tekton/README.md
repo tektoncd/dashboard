@@ -4,7 +4,7 @@ This directory contains the Tekton `Tasks` and `Pipelines` used to create Dashbo
 
 These tasks run on your local cluster, and then copy the release artifacts - docker images and yaml files - into [the `tekton releases` bucket in Google Cloud Platform](https://console.cloud.google.com/storage/browser/tekton-releases/dashboard). Your cluster must contain keys from a google account with the necessary authorization in order for this to work.
 
-## Release process
+## Setup
 
 First, ensure that your credentials are set up correctly. You will need an account with access to [Google Cloud Platform](https://console.cloud.google.com). Your account must have 'proper authorization to release the images and yamls' in the [`tekton-releases` GCP project](https://github.com/tektoncd/plumbing#prow). Your account must have `Permission iam.serviceAccountKeys.create`. Contact @bobcatfish or @dlorenc if you are going to be creating dashboard releases and require this authorization.
 
@@ -39,6 +39,59 @@ Next:
 PIPELINE_NAMESPACE=tekton-pipelines
 kubectl apply -f tekton -n $PIPELINE_NAMESPACE
 ```
+
+## Building a test release
+
+You may want to run a test release first. To do this:
+
+- Create a directory in the Google Cloud bucket
+- Add that directory to the associated PipelineResource
+- Apply your changes
+- Run a test release
+- Clean up
+
+So for example, we might want to run one or more test releases under the name 'test-release'. 
+
+- Go to https://console.cloud.google.com/storage/browser/tekton-releases/dashboard and click 'Create folder'. Create the folder Buckets/tekton-releases/dashboard/test-release. 
+- Modify the tekton-bucket PipelineResource:
+
+```yaml
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: tekton-bucket
+spec:
+  type: storage
+  params:
+   - name: type
+     value: gcs
+   - name: location
+     value: gs://tekton-releases/dashboard/test-release # If you're testing add /test.issue.nnn to the end
+   - name: dir
+     value: "y"
+```
+
+- Apply your changes
+
+```bash
+PIPELINE_NAMESPACE=tekton-pipelines
+kubectl apply -f tekton -n $PIPELINE_NAMESPACE
+```
+
+Run a test release:
+
+```bash
+VERSION_TAG=test-1
+PIPELINE_NAMESPACE=tekton-pipelines
+tkn pipeline start dashboard-release -p versionTag=$VERSION_TAG -r source-repo=tekton-dashboard-git -r bucket=tekton-bucket -r builtDashboardImage=dashboard-image -n $PIPELINE_NAMESPACE -s $SERVICE_ACCOUNT
+```
+
+This will result in release artifacts appearing in the Google Cloud bucket `gs://tekton-releases/dashboard/test-release/test-1`. If you need to run a second build, incremement $VERSION_TAG. Once you're finished, clean up:
+
+- delete /test-release from the PipelineResource and reapply your changes
+- delete the temporary /test-release bucket in Google Cloud
+
+## Running a release build
 
 Now you can kick off the release build:
 
