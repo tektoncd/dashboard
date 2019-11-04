@@ -20,7 +20,7 @@ Tekton Dashboard is a general purpose, web-based UI for Tekton Pipelines. It all
    and its dependencies:
     
    ```bash
-   kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.2.0/release.yaml
+   kubectl apply --filename https://storage.googleapis.com/tekton-releases/dashboard/latest/release.yaml
    ```
 
    _(Previous versions will be available at `previous/$VERSION_NUMBER`, e.g.
@@ -89,7 +89,7 @@ You can then access the Tekton Dashboard at `tekton-dashboard.${ip}.nip.io`. Thi
 1. Assuming you want to install the Dashboard into the `tekton-pipelines` namespace:
 
    ```bash
-   kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.2.0/openshift-tekton-dashboard.yaml --validate=false
+   kubectl apply --filename https://storage.googleapis.com/tekton-releases/dashboard/latest/openshift-tekton-dashboard-release.yaml --validate=false
    ```
 
 2. Access the dashboard by determining its route with `kubectl get route tekton-dashboard -n tekton-pipelines`
