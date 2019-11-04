@@ -143,13 +143,14 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
 
   render() {
     const {
+      customNotification,
       error,
-      loading,
       fetchLogs,
       intl,
+      loading,
+      pollingInterval,
       rebuild,
-      showIO,
-      pollingInterval
+      showIO
     } = this.props;
 
     const { selectedStepId, selectedTaskId } = this.state;
@@ -160,34 +161,40 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
 
     if (error) {
       return (
-        <InlineNotification
-          kind="error"
-          hideCloseButton
-          lowContrast
-          title={intl.formatMessage({
-            id: 'dashboard.pipelineRun.error',
-            defaultMessage: 'Error loading PipelineRun'
-          })}
-          subtitle={getErrorMessage(error)}
-        />
+        <>
+          {customNotification}
+          <InlineNotification
+            kind="error"
+            hideCloseButton
+            lowContrast
+            title={intl.formatMessage({
+              id: 'dashboard.pipelineRun.error',
+              defaultMessage: 'Error loading PipelineRun'
+            })}
+            subtitle={getErrorMessage(error)}
+          />
+        </>
       );
     }
 
     if (!this.props.pipelineRun) {
       return (
-        <InlineNotification
-          kind="info"
-          hideCloseButton
-          lowContrast
-          title={intl.formatMessage({
-            id: 'dashboard.pipelineRun.failed',
-            defaultMessage: 'Cannot load PipelineRun'
-          })}
-          subtitle={intl.formatMessage({
-            id: 'dashboard.pipelineRun.notFound',
-            defaultMessage: 'PipelineRun not found'
-          })}
-        />
+        <>
+          {customNotification}
+          <InlineNotification
+            kind="info"
+            hideCloseButton
+            lowContrast
+            title={intl.formatMessage({
+              id: 'dashboard.pipelineRun.failed',
+              defaultMessage: 'Cannot load PipelineRun'
+            })}
+            subtitle={intl.formatMessage({
+              id: 'dashboard.pipelineRun.notFound',
+              defaultMessage: 'PipelineRun not found'
+            })}
+          />
+        </>
       );
     }
 
@@ -215,6 +222,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
             reason="Error"
             status={pipelineRunStatus}
           />
+          {customNotification}
           <InlineNotification
             kind="error"
             hideCloseButton
@@ -272,6 +280,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
         >
           {rebuild}
         </RunHeader>
+        {customNotification}
         <div className="tasks">
           <TaskTree
             onSelect={this.handleTaskSelected}
