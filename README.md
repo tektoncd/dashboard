@@ -8,7 +8,7 @@ Tekton Dashboard is a general purpose, web-based UI for Tekton Pipelines. It all
 
 ## Pre-requisites
 
-[Tekton Pipelines](https://github.com/tektoncd/pipeline) must be installed in order to use the Tekton Dashboard. Instructions to install Tekton Pipelines can be found [here](https://github.com/tektoncd/pipeline/blob/master/docs/install.md). For 0.7.0 of Tekton Pipelines, use the 0.2.0 release. To continue using Tekton Pipelines 0.5.2, you should use the published 0.1.1 release [here](https://github.com/tektoncd/dashboard/releases/tag/v0.1.1).
+[Tekton Pipelines](https://github.com/tektoncd/pipeline) must be installed in order to use the Tekton Dashboard. Instructions to install Tekton Pipelines can be found [here](https://github.com/tektoncd/pipeline/blob/master/docs/install.md). For 0.7.0 of Tekton Pipelines, use the 0.2.1 release. To continue using Tekton Pipelines 0.5.2, you should use the published 0.1.1 release [here](https://github.com/tektoncd/dashboard/releases/tag/v0.1.1).
 
 ## Install Dashboard
 
@@ -20,7 +20,7 @@ Tekton Dashboard is a general purpose, web-based UI for Tekton Pipelines. It all
    and its dependencies:
     
    ```bash
-   kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.2.0/release.yaml
+   kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.2.1/release.yaml
    ```
 
    _(Previous versions will be available at `previous/$VERSION_NUMBER`, e.g.
@@ -89,7 +89,7 @@ You can then access the Tekton Dashboard at `tekton-dashboard.${ip}.nip.io`. Thi
 1. Assuming you want to install the Dashboard into the `tekton-pipelines` namespace:
 
    ```bash
-   kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.2.0/openshift-tekton-dashboard.yaml --validate=false
+   kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.2.1/openshift-tekton-dashboard.yaml --validate=false
    ```
 
 2. Access the dashboard by determining its route with `kubectl get route tekton-dashboard -n tekton-pipelines`
