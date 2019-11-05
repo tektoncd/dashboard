@@ -166,9 +166,8 @@ export function createSecret(postData, namespace) {
         namespace: serviceAccount.metadata.namespace,
         secretName: postData.metadata.name
       });
-      dispatch({
-        type: 'SECRET_CREATE_SUCCESS'
-      });
+      dispatch({ type: 'CLEAR_SECRET_ERROR_NOTIFICATION' });
+      dispatch({ type: 'SECRET_CREATE_SUCCESS' });
     } catch (error) {
       error.response.text().then(message => {
         dispatch({ type: 'SECRET_CREATE_FAILURE', error: message });
