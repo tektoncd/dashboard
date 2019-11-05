@@ -28,10 +28,6 @@ class Task extends Component {
     this.selectDefaultStep();
   }
 
-  componentDidUpdate() {
-    this.selectDefaultStep();
-  }
-
   handleClick = event => {
     if (event) {
       event.preventDefault();
