@@ -15,7 +15,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import { InlineNotification } from 'carbon-components-react';
-import { getErrorMessage } from '@tektoncd/dashboard-utils';
 import { Table } from '@tektoncd/dashboard-components';
 import Add from '@carbon/icons-react/lib/add/16';
 import Delete from '@carbon/icons-react/lib/delete/16';
@@ -46,6 +45,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
   constructor(props) {
     super(props);
     this.state = initialState;
+    this.handleCreateSecretClick = this.handleCreateSecretClick.bind(this);
   }
 
   componentDidMount() {
@@ -60,10 +60,12 @@ export /* istanbul ignore next */ class Secrets extends Component {
     }
   }
 
-  handleNewSecretClick = () => {
+  handleDisplayModalClick = () => {
+    this.props.clearNotification();
     this.setState(prevState => {
       return {
-        openNewSecret: !prevState.openNewSecret
+        openNewSecret: !prevState.openNewSecret,
+        errorMessage: ''
       };
     });
   };
@@ -88,20 +90,33 @@ export /* istanbul ignore next */ class Secrets extends Component {
     });
   };
 
+  handleHideModalClick = () => {
+    this.props.clearNotification();
+    this.setState({
+      openNewSecret: false
+    });
+  };
+
   delete = () => {
     this.props.deleteSecret(this.state.toBeDeleted, this.state.cancelMethod);
     this.handleDeleteSecretToggle();
   };
 
+  handleCreateSecretClick(openNewSecret) {
+    this.setState({
+      openNewSecret
+    });
+  }
+
   render() {
     const {
       loading,
-      error,
       createSuccess,
       deleteSuccess,
       secrets,
       selectedNamespace,
-      intl
+      intl,
+      errorMessage
     } = this.props;
 
     const { openNewSecret, toBeDeleted, openDeleteSecret } = this.state;
@@ -151,18 +166,6 @@ export /* istanbul ignore next */ class Secrets extends Component {
 
     return (
       <>
-        {error && (
-          <InlineNotification
-            kind="error"
-            title="Error:"
-            subtitle={getErrorMessage(error)}
-            iconDescription="Clear Notification"
-            className="notificationComponent"
-            data-testid="errorNotificationComponent"
-            onCloseButtonClick={this.props.clearNotification}
-            lowContrast
-          />
-        )}
         {createSuccess &&
           (!deleteSuccess && (
             <InlineNotification
@@ -208,6 +211,8 @@ export /* istanbul ignore next */ class Secrets extends Component {
           title="Secrets"
           headers={initialHeaders}
           rows={secretsFormatted}
+          handleDisplayModal={this.handleDisplayModalClick}
+          handleDelete={this.handleDeleteSecretClick}
           loading={loading}
           selectedNamespace={selectedNamespace}
           emptyTextAllNamespaces={intl.formatMessage(
@@ -236,7 +241,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
           ]}
           toolbarButtons={[
             {
-              onClick: this.handleNewSecretClick,
+              onClick: this.handleDisplayModalClick,
               text: intl.formatMessage({
                 id: 'dashboard.secrets.add',
                 defaultMessage: 'Add Secret'
@@ -246,9 +251,11 @@ export /* istanbul ignore next */ class Secrets extends Component {
           ]}
         />
         <Modal
+          errorMessage={errorMessage}
           open={openNewSecret}
           key={openNewSecret}
-          handleNew={this.handleNewSecretClick}
+          handleCreateSecret={this.handleCreateSecretClick}
+          handleHideModal={this.handleHideModalClick}
         />
         <DeleteModal
           open={openDeleteSecret}
@@ -267,7 +274,7 @@ Secrets.defaultProps = {
 
 function mapStateToProps(state) {
   return {
-    error: getSecretsErrorMessage(state),
+    errorMessage: getSecretsErrorMessage(state),
     createSuccess: getCreateSecretsSuccessMessage(state),
     deleteSuccess: getDeleteSecretsSuccessMessage(state),
     loading: isFetchingSecrets(state),

@@ -11,16 +11,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { generateId, getErrorMessage } from '@tektoncd/dashboard-utils';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Modal } from 'carbon-components-react';
-import { generateId } from '@tektoncd/dashboard-utils';
+
 import { KeyValueList } from '@tektoncd/dashboard-components';
 import { injectIntl } from 'react-intl';
+import { InlineNotification, Modal } from 'carbon-components-react';
 import UniversalFields from '../../components/SecretsModal/UniversalFields';
 import BasicAuthFields from '../../components/SecretsModal/BasicAuthFields';
 import { createSecret } from '../../actions/secrets';
-import { isWebSocketConnected } from '../../reducers';
+import { getSecretsErrorMessage, isWebSocketConnected } from '../../reducers';
 import { fetchServiceAccounts } from '../../actions/serviceAccounts';
 
 import '../../components/SecretsModal/SecretsModal.scss';
@@ -112,7 +113,7 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
     this.annotationsEnd.scrollIntoView({ behavior: 'auto' });
   };
 
-  handleSubmit = () => {
+  handleSubmit = async () => {
     const invalidFields = {};
     const postData = {
       apiVersion: 'v1',
@@ -186,10 +187,9 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
       annotationsObject[key] = value;
     }
     postData.metadata.annotations = annotationsObject;
-
     if (Object.keys(invalidFields).length === 0) {
-      this.props.createSecret(postData, namespace);
-      this.props.handleNew();
+      const result = await this.props.createSecret(postData, namespace);
+      await this.props.handleCreateSecret(result);
     } else {
       this.setState({ invalidFields });
     }
@@ -356,7 +356,7 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
   };
 
   render() {
-    const { open, handleNew, intl } = this.props;
+    const { open, handleHideModal, errorMessage, intl } = this.props;
     const { serviceAccounts } = this.state;
     const {
       name,
@@ -374,12 +374,21 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
         open={open}
         className="modal"
         data-testid="modal"
-        primaryButtonText="Submit"
-        secondaryButtonText="Close"
-        modalHeading="Create Secret"
-        onSecondarySubmit={handleNew}
+        primaryButtonText={intl.formatMessage({
+          id: 'dashboard.secretsModal.primaryBtnText',
+          defaultMessage: 'Submit'
+        })}
+        secondaryButtonText={intl.formatMessage({
+          id: 'dashboard.secretsModal.secondaryBtnText',
+          defaultMessage: 'Close'
+        })}
+        modalHeading={intl.formatMessage({
+          id: 'dashboard.secretsModal.heading',
+          defaultMessage: 'Create Secret'
+        })}
+        onSecondarySubmit={handleHideModal}
         onRequestSubmit={this.handleSubmit}
-        onRequestClose={handleNew}
+        onRequestClose={handleHideModal}
       >
         <form>
           <UniversalFields
@@ -425,6 +434,25 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
             onRemove={this.handleRemove}
             onAdd={this.handleAdd}
           />
+          {errorMessage &&
+            (open && (
+              <InlineNotification
+                kind="error"
+                title={intl.formatMessage({
+                  id: 'dashboard.secretsModal.error.title',
+                  defaultMessage: 'Error:'
+                })}
+                subtitle={getErrorMessage(errorMessage)}
+                iconDescription={intl.formatMessage({
+                  id: 'dashboard.secretsModal.error.iconDescription',
+                  defaultMessage: 'Clear Notification'
+                })}
+                className="notificationComponent"
+                data-testid="errorNotificationComponent"
+                onCloseButtonClick={this.props.clearNotification}
+                lowContrast
+              />
+            ))}
           <div
             ref={el => {
               this.annotationsEnd = el;
@@ -442,6 +470,7 @@ SecretsModal.defaultProps = {
 
 function mapStateToProps(state) {
   return {
+    errorMessage: getSecretsErrorMessage(state),
     webSocketConnected: isWebSocketConnected(state)
   };
 }

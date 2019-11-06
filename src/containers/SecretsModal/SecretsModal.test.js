@@ -21,7 +21,7 @@ import SecretsModal from '.';
 import * as API from '../../api';
 
 // Declares scrollIntoView as a function for testing purposes
-window.HTMLElement.prototype.scrollIntoView = function() {};
+window.HTMLElement.prototype.scrollIntoView = function scrollIntoViewTestStub() {};
 
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
@@ -50,7 +50,7 @@ const namespaces = {
 };
 
 const serviceAccountsByNamespace = {
-  blue: {
+  default: {
     'service-account-1': 'id-service-account-1',
     'service-account-2': 'id-service-account-2'
   },
@@ -63,14 +63,14 @@ const serviceAccountsById = {
   'id-service-account-1': {
     metadata: {
       name: 'service-account-1',
-      namespace: 'blue',
+      namespace: 'default',
       uid: 'id-service-account-1'
     }
   },
   'id-service-account-2': {
     metadata: {
       name: 'service-account-2',
-      namespace: 'blue',
+      namespace: 'default',
       uid: 'id-service-account-2'
     }
   },
@@ -113,11 +113,11 @@ it('SecretsModal renders blank', () => {
 });
 
 it('Test SecretsModal click events', () => {
-  const handleNew = jest.fn();
+  const handleHideModal = jest.fn();
   const handleSubmit = jest.fn();
   const props = {
     open: true,
-    handleNew
+    handleHideModal
   };
 
   jest.spyOn(API, 'getNamespaces').mockImplementation(() => []);
@@ -129,7 +129,8 @@ it('Test SecretsModal click events', () => {
     </Provider>
   );
   fireEvent.click(queryByText('Close'));
-  expect(handleNew).toHaveBeenCalledTimes(1);
+  expect(handleHideModal).toHaveBeenCalledTimes(1);
+
   rerenderWithIntl(
     rerender,
     <Provider store={store}>
