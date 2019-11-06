@@ -167,9 +167,13 @@ export function createSecret(postData, namespace) {
         secretName: postData.metadata.name
       });
       dispatch({
+        type: 'CLEAR_SECRET_ERROR_NOTIFICATION'
+      });
+      dispatch({
         type: 'SECRET_CREATE_SUCCESS'
       });
     } catch (error) {
+      console.log(error);
       error.response.text().then(message => {
         dispatch({ type: 'SECRET_CREATE_FAILURE', error: message });
       });

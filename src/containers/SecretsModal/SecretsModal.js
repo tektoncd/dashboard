@@ -11,15 +11,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { getErrorMessage } from '@tektoncd/dashboard-utils';
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Modal } from 'carbon-components-react';
+import { InlineNotification, Modal } from 'carbon-components-react';
 import UniversalFields from '../../components/SecretsModal/UniversalFields';
 import Annotations from '../../components/SecretsModal/Annotations';
 import BasicAuthFields from '../../components/SecretsModal/BasicAuthFields';
 import '../../components/SecretsModal/SecretsModal.scss';
 import { createSecret } from '../../actions/secrets';
-import { isWebSocketConnected } from '../../reducers';
+import { getSecretsErrorMessage, isWebSocketConnected } from '../../reducers';
 import { fetchServiceAccounts } from '../../actions/serviceAccounts';
 
 /* istanbul ignore next */
@@ -160,7 +162,7 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
 
     if (invalidFields.length === 0) {
       this.props.createSecret(postData, namespace);
-      this.props.handleNew();
+      this.props.handleCreateSecret();
     } else {
       this.setState({ invalidFields });
     }
@@ -331,7 +333,7 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
   };
 
   render() {
-    const { open, handleNew } = this.props;
+    const { open, handleHideModal, error } = this.props;
     const { serviceAccounts } = this.state;
     const {
       name,
@@ -345,46 +347,61 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
     } = this.state;
 
     return (
-      <Modal
-        open={open}
-        className="modal"
-        data-testid="modal"
-        primaryButtonText="Submit"
-        secondaryButtonText="Close"
-        modalHeading="Create Secret"
-        onSecondarySubmit={handleNew}
-        onRequestSubmit={this.handleSubmit}
-        onRequestClose={handleNew}
-      >
-        <form>
-          <UniversalFields
-            name={name}
-            selectedNamespace={namespace}
-            accessTo={accessTo}
-            handleChangeTextInput={this.handleChangeTextInput}
-            handleChangeAccessTo={this.handleChangeAccessTo}
-            handleChangeNamespace={this.handleChangeNamespace}
-            invalidFields={invalidFields}
-          />
-          <BasicAuthFields
-            username={username}
-            password={password}
-            serviceAccount={serviceAccount}
-            serviceAccounts={serviceAccounts}
-            namespace={namespace}
-            handleChangeTextInput={this.handleChangeTextInput}
-            handleChangeServiceAccount={this.handleChangeServiceAccount}
-            invalidFields={invalidFields}
-          />
-          <Annotations
-            annotations={annotations}
-            handleChange={this.handleAnnotationChange}
-            handleRemove={this.handleRemove}
-            handleAdd={this.handleAdd}
-            invalidFields={invalidFields}
-          />
-        </form>
-      </Modal>
+      <>
+        <Modal
+          open={open}
+          className="modal"
+          data-testid="modal"
+          primaryButtonText="Submit"
+          secondaryButtonText="Close"
+          modalHeading="Create Secret"
+          onSecondarySubmit={handleHideModal}
+          onRequestSubmit={this.handleSubmit}
+          onRequestClose={handleHideModal}
+        >
+          <form>
+            <UniversalFields
+              name={name}
+              selectedNamespace={namespace}
+              accessTo={accessTo}
+              handleChangeTextInput={this.handleChangeTextInput}
+              handleChangeAccessTo={this.handleChangeAccessTo}
+              handleChangeNamespace={this.handleChangeNamespace}
+              invalidFields={invalidFields}
+            />
+            <BasicAuthFields
+              username={username}
+              password={password}
+              serviceAccount={serviceAccount}
+              serviceAccounts={serviceAccounts}
+              namespace={namespace}
+              handleChangeTextInput={this.handleChangeTextInput}
+              handleChangeServiceAccount={this.handleChangeServiceAccount}
+              invalidFields={invalidFields}
+            />
+            <Annotations
+              annotations={annotations}
+              handleChange={this.handleAnnotationChange}
+              handleRemove={this.handleRemove}
+              handleAdd={this.handleAdd}
+              invalidFields={invalidFields}
+            />
+            {error &&
+              (open && (
+                <InlineNotification
+                  kind="error"
+                  title="Error:"
+                  subtitle={getErrorMessage(error)}
+                  iconDescription="Clear Notification"
+                  className="notificationComponent"
+                  data-testid="errorNotificationComponent"
+                  onCloseButtonClick={this.props.clearNotification}
+                  lowContrast
+                />
+              ))}
+          </form>
+        </Modal>
+      </>
     );
   }
 }
@@ -395,6 +412,7 @@ SecretsModal.defaultProps = {
 
 function mapStateToProps(state) {
   return {
+    error: getSecretsErrorMessage(state),
     webSocketConnected: isWebSocketConnected(state)
   };
 }

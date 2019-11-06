@@ -15,7 +15,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import { InlineNotification } from 'carbon-components-react';
-import { getErrorMessage } from '@tektoncd/dashboard-utils';
+// import { getErrorMessage } from '@tektoncd/dashboard-utils';
 
 import Modal from '../SecretsModal';
 import DeleteModal from '../../components/SecretsDeleteModal';
@@ -38,7 +38,8 @@ import {
 const initialState = {
   openNewSecret: false,
   openDeleteSecret: false,
-  toBeDeleted: []
+  toBeDeleted: [],
+  error: ''
 };
 
 export /* istanbul ignore next */ class Secrets extends Component {
@@ -59,18 +60,40 @@ export /* istanbul ignore next */ class Secrets extends Component {
     }
   }
 
-  handleNewSecretClick = () => {
+  handleDisplayModalClick = () => {
+    this.props.clearNotification();
     this.setState(prevState => {
       return {
-        openNewSecret: !prevState.openNewSecret
+        openNewSecret: !prevState.openNewSecret,
+        error: ''
       };
     });
+  };
+
+  handleCreateSecretClick = () => {
+    console.log(this.props.error);
+    if (!this.props.error) {
+      this.setState({
+        openNewSecret: false
+      });
+    } else {
+      this.setState({
+        openNewSecret: true
+      });
+    }
   };
 
   handleDeleteSecretToggle = () => {
     this.setState({
       openDeleteSecret: false,
       toBeDeleted: []
+    });
+  };
+
+  handleHideModalClick = () => {
+    this.props.clearNotification();
+    this.setState({
+      openNewSecret: false
     });
   };
 
@@ -89,7 +112,6 @@ export /* istanbul ignore next */ class Secrets extends Component {
   render() {
     const {
       loading,
-      error,
       createSuccess,
       deleteSuccess,
       secrets,
@@ -100,18 +122,6 @@ export /* istanbul ignore next */ class Secrets extends Component {
     const { openNewSecret, toBeDeleted, openDeleteSecret } = this.state;
     return (
       <>
-        {error && (
-          <InlineNotification
-            kind="error"
-            title="Error:"
-            subtitle={getErrorMessage(error)}
-            iconDescription="Clear Notification"
-            className="notificationComponent"
-            data-testid="errorNotificationComponent"
-            onCloseButtonClick={this.props.clearNotification}
-            lowContrast
-          />
-        )}
         {createSuccess &&
           (!deleteSuccess && (
             <InlineNotification
@@ -154,7 +164,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
           />
         )}
         <Table
-          handleNew={this.handleNewSecretClick}
+          handleDisplayModal={this.handleDisplayModalClick}
           handleDelete={this.handleDeleteSecretClick}
           loading={loading}
           secrets={secrets}
@@ -163,7 +173,8 @@ export /* istanbul ignore next */ class Secrets extends Component {
         <Modal
           open={openNewSecret}
           key={openNewSecret}
-          handleNew={this.handleNewSecretClick}
+          handleCreateSecret={this.handleCreateSecretClick}
+          handleHideModal={this.handleHideModalClick}
         />
         <DeleteModal
           open={openDeleteSecret}

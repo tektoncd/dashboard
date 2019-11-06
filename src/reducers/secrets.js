@@ -81,6 +81,7 @@ function errorMessage(state = null, action) {
   switch (action.type) {
     case 'SECRETS_FETCH_FAILURE':
     case 'SECRET_CREATE_FAILURE':
+      console.log(action.error);
       return action.error;
     case 'SECRETS_FETCH_REQUEST':
     case 'SECRETS_FETCH_SUCCESS':

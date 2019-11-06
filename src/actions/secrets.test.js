@@ -193,6 +193,7 @@ it('createSecret', async () => {
 
   const expectedActions = [
     { type: 'SECRET_CREATE_REQUEST' },
+    { type: 'CLEAR_SECRET_ERROR_NOTIFICATION'},
     { type: 'SECRET_CREATE_SUCCESS' }
   ];
 

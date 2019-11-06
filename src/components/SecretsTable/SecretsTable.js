@@ -42,7 +42,7 @@ const {
 const SecretsTable = props => {
   const {
     handleDelete,
-    handleNew,
+    handleDisplayModal,
     loading,
     secrets,
     selectedNamespace
@@ -118,7 +118,7 @@ const SecretsTable = props => {
                   disabled={loading}
                   id="add-btn"
                   data-testid="addButton"
-                  onClick={handleNew}
+                  onClick={handleDisplayModal}
                   renderIcon={Add}
                 >
                   Add Secret
