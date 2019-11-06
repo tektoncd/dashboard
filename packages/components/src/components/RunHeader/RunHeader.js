@@ -20,7 +20,14 @@ import './RunHeader.scss';
 
 class RunHeader extends Component {
   render() {
-    const { lastTransitionTime, loading, runName, reason, status } = this.props;
+    const {
+      lastTransitionTime,
+      loading,
+      runName,
+      reason,
+      status,
+      triggerHeader
+    } = this.props;
 
     return (
       <div
@@ -39,16 +46,19 @@ class RunHeader extends Component {
           }
           return (
             runName && (
-              <h1>
-                <div className="run-name" title={runName}>
-                  {runName}
-                </div>
-                <span className="status-label">{reason}</span>
-                <span className="time">
-                  <FormattedDate date={lastTransitionTime} relative />
-                </span>
-                {this.props.children}
-              </h1>
+              <>
+                <h1>
+                  <div className="run-name" title={runName}>
+                    {runName}
+                  </div>
+                  <span className="status-label">{reason}</span>
+                  <span className="time">
+                    <FormattedDate date={lastTransitionTime} relative />
+                  </span>
+                  {this.props.children}
+                </h1>
+                {triggerHeader}
+              </>
             )
           );
         })()}
