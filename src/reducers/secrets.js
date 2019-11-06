@@ -77,7 +77,7 @@ function isFetching(state = false, action) {
   }
 }
 
-function errorMessage(state = null, action) {
+function errorMessage(state = false, action) {
   switch (action.type) {
     case 'SECRETS_FETCH_FAILURE':
     case 'SECRET_CREATE_FAILURE':

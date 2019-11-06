@@ -16,7 +16,7 @@ import secretsReducer, * as selectors from './secrets';
 it('handles init or unknown actions', () => {
   expect(secretsReducer(undefined, { type: 'does_not_exist' })).toEqual({
     byNamespace: {},
-    errorMessage: null,
+    errorMessage: false,
     createSuccessMessage: null,
     deleteSuccessMessage: null,
     isFetching: false
@@ -51,14 +51,16 @@ it('SECRETS_FETCH_SUCCESS', () => {
 });
 
 it('SECRETS_FETCH_FAILURE', () => {
-  const error = 'fake error message';
+  const error = 'The server reported a conflict';
   const action = {
     type: 'SECRETS_FETCH_FAILURE',
     error
   };
 
   const state = secretsReducer({}, action);
-  expect(selectors.getSecretsErrorMessage(state)).toEqual('fake error message');
+  expect(selectors.getSecretsErrorMessage(state)).toEqual(
+    'The server reported a conflict'
+  );
 });
 
 it('SECRET_DELETE_SUCCESS for one secret', () => {

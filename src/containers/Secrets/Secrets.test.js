@@ -100,7 +100,7 @@ const serviceAccountsById = {
   }
 };
 
-let store = mockStore({
+const store = mockStore({
   secrets: {
     byNamespace,
     isFetching: false,
@@ -177,39 +177,6 @@ it('click delete secret & modal appears', () => {
   expect(
     getByTestId('deleteModal').className.includes('is-visible')
   ).toBeTruthy();
-});
-
-it('error notification appears', () => {
-  const props = {
-    secrets: [],
-    loading: false,
-    error: 'error'
-  };
-
-  store = mockStore({
-    secrets: {
-      byNamespace,
-      isFetching: false,
-      errorMessage: 'Some error message'
-    },
-    namespaces,
-    notifications: {},
-    serviceAccounts: {
-      byId: serviceAccountsById,
-      byNamespace: serviceAccountsByNamespace,
-      isFetching: false
-    }
-  });
-
-  jest.spyOn(API, 'getCredentials').mockImplementation(() => []);
-
-  const { getByTestId } = renderWithIntl(
-    <Provider store={store}>
-      <Secrets {...props} intl={intl} />
-    </Provider>
-  );
-
-  expect(getByTestId('errorNotificationComponent')).toBeTruthy();
 });
 
 it('SecretsTable renders with one secret', () => {
