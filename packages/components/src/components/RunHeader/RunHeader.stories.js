@@ -63,4 +63,20 @@ storiesOf('RunHeader', module)
       typeLabel={text('Run Type Label', 'Pipelines')}
     />
   ))
-  .add('loading', () => <RunHeader loading />);
+  .add('loading', () => <RunHeader loading />)
+  .add('with trigger info', () => (
+    <RunHeader
+      lastTransitionTime={now}
+      name={text('Pipeline Name', 'simple-pipeline')}
+      runName={text('PipelineRun Name', 'simple-pipeline-run-1')}
+      status="True"
+      reason="Completed"
+      triggerHeader={
+        <span>
+          Triggered by <a href="#">Update README.md</a>
+        </span>
+      }
+      type={text('Run Type', 'pipelines')}
+      typeLabel={text('Run Type Label', 'Pipelines')}
+    />
+  ));
