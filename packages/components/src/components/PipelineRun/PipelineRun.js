@@ -150,7 +150,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       loading,
       pollingInterval,
       rebuild,
-      showIO
+      showIO,
+      triggerHeader
     } = this.props;
 
     const { selectedStepId, selectedTaskId } = this.state;
@@ -221,6 +222,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
             runName={pipelineRun.pipelineRunName}
             reason="Error"
             status={pipelineRunStatus}
+            triggerHeader={triggerHeader}
           />
           {customNotification}
           <InlineNotification
@@ -277,6 +279,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           runName={pipelineRunName}
           reason={pipelineRunReason}
           status={pipelineRunStatus}
+          triggerHeader={triggerHeader}
         >
           {rebuild}
         </RunHeader>
