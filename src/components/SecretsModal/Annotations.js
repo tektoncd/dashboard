@@ -15,7 +15,7 @@ import React from 'react';
 import { TextInput } from 'carbon-components-react';
 import Add from '@carbon/icons-react/lib/add--alt/24';
 import Remove from '@carbon/icons-react/lib/subtract--alt/24';
-import Delete from '@carbon/icons-react/lib/misuse/16';
+import Delete from '@carbon/icons-react/lib/delete/16';
 import './SecretsModal.scss';
 
 const Annotations = props => {
