@@ -118,7 +118,7 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
       taskRuns
     } = this.props;
 
-    if (loading) {
+    if ((!taskRuns || !taskRuns.length) && loading) {
       return <StructuredListSkeleton border />;
     }
 
