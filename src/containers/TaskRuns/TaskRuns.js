@@ -25,7 +25,6 @@ import {
   StructuredListWrapper
 } from 'carbon-components-react';
 import {
-  ALL_NAMESPACES,
   getErrorMessage,
   getStatus,
   getStatusIcon,
@@ -110,13 +109,7 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
   }
 
   render() {
-    const {
-      error,
-      filters,
-      loading,
-      namespace: selectedNamespace,
-      taskRuns
-    } = this.props;
+    const { error, filters, loading, taskRuns } = this.props;
 
     if ((!taskRuns || !taskRuns.length) && loading) {
       return <StructuredListSkeleton border />;
@@ -149,9 +142,7 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
             <StructuredListRow head>
               <StructuredListCell head>TaskRun</StructuredListCell>
               <StructuredListCell head>Task</StructuredListCell>
-              {selectedNamespace === ALL_NAMESPACES && (
-                <StructuredListCell head>Namespace</StructuredListCell>
-              )}
+              <StructuredListCell head>Namespace</StructuredListCell>
               <StructuredListCell head>Status</StructuredListCell>
               <StructuredListCell head>Last Transition Time</StructuredListCell>
               <StructuredListCell head />
@@ -211,9 +202,7 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
                       </Link>
                     )}
                   </StructuredListCell>
-                  {selectedNamespace === ALL_NAMESPACES && (
-                    <StructuredListCell>{namespace}</StructuredListCell>
-                  )}
+                  <StructuredListCell>{namespace}</StructuredListCell>
                   <StructuredListCell
                     className="status"
                     data-reason={reason}
@@ -253,6 +242,7 @@ TaskRuns.defaultProps = {
   filters: []
 };
 
+/* istanbul ignore next */
 export function fetchFilters(searchQuery) {
   const queryParams = new URLSearchParams(searchQuery);
   let filters = [];

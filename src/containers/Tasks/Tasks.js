@@ -23,11 +23,7 @@ import {
   StructuredListSkeleton,
   StructuredListWrapper
 } from 'carbon-components-react';
-import {
-  ALL_NAMESPACES,
-  getErrorMessage,
-  urls
-} from '@tektoncd/dashboard-utils';
+import { getErrorMessage, urls } from '@tektoncd/dashboard-utils';
 
 import Information16 from '@carbon/icons-react/lib/information/16';
 import { fetchTasks } from '../../actions/tasks';
@@ -58,7 +54,7 @@ export /* istanbul ignore next */ class Tasks extends Component {
   }
 
   render() {
-    const { error, loading, namespace: selectedNamespace, tasks } = this.props;
+    const { error, loading, tasks } = this.props;
 
     if (loading && !tasks.length) {
       return <StructuredListSkeleton border />;
@@ -81,9 +77,7 @@ export /* istanbul ignore next */ class Tasks extends Component {
         <StructuredListHead>
           <StructuredListRow head>
             <StructuredListCell head>Task</StructuredListCell>
-            {selectedNamespace === ALL_NAMESPACES && (
-              <StructuredListCell head>Namespace</StructuredListCell>
-            )}
+            <StructuredListCell head>Namespace</StructuredListCell>
             <StructuredListCell head />
           </StructuredListRow>
         </StructuredListHead>
@@ -108,9 +102,7 @@ export /* istanbul ignore next */ class Tasks extends Component {
                     {taskName}
                   </Link>
                 </StructuredListCell>
-                {selectedNamespace === ALL_NAMESPACES && (
-                  <StructuredListCell>{namespace}</StructuredListCell>
-                )}
+                <StructuredListCell>{namespace}</StructuredListCell>
                 <StructuredListCell>
                   <Link
                     title="Task definition"

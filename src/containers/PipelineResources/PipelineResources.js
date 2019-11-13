@@ -23,11 +23,7 @@ import {
   StructuredListSkeleton,
   StructuredListWrapper
 } from 'carbon-components-react';
-import {
-  ALL_NAMESPACES,
-  getErrorMessage,
-  urls
-} from '@tektoncd/dashboard-utils';
+import { getErrorMessage, urls } from '@tektoncd/dashboard-utils';
 
 import { fetchPipelineResources } from '../../actions/pipelineResources';
 
@@ -67,12 +63,7 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
   }
 
   render() {
-    const {
-      error,
-      loading,
-      namespace: selectedNamespace,
-      pipelineResources
-    } = this.props;
+    const { error, loading, pipelineResources } = this.props;
 
     if (loading) {
       return <StructuredListSkeleton border />;
@@ -95,9 +86,7 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
         <StructuredListHead>
           <StructuredListRow head>
             <StructuredListCell head>PipelineResource</StructuredListCell>
-            {selectedNamespace === ALL_NAMESPACES && (
-              <StructuredListCell head>Namespace</StructuredListCell>
-            )}
+            <StructuredListCell head>Namespace</StructuredListCell>
             <StructuredListCell head>Type</StructuredListCell>
           </StructuredListRow>
         </StructuredListHead>
@@ -130,9 +119,7 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
                     {pipelineResourceName}
                   </Link>
                 </StructuredListCell>
-                {selectedNamespace === ALL_NAMESPACES && (
-                  <StructuredListCell>{namespace}</StructuredListCell>
-                )}
+                <StructuredListCell>{namespace}</StructuredListCell>
                 <StructuredListCell>
                   {pipelineResource.spec.type}
                 </StructuredListCell>

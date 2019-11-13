@@ -24,11 +24,7 @@ import {
 } from 'carbon-components-react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import {
-  ALL_NAMESPACES,
-  getErrorMessage,
-  urls
-} from '@tektoncd/dashboard-utils';
+import { getErrorMessage, urls } from '@tektoncd/dashboard-utils';
 import { FormattedDate } from '@tektoncd/dashboard-components';
 
 import { getCustomResources } from '../../api';
@@ -83,7 +79,7 @@ export /* istanbul ignore next */ class ResourceListContainer extends Component 
   }
 
   render() {
-    const { match, namespace: selectedNamespace } = this.props;
+    const { match } = this.props;
     const { group, version, type } = match.params;
     const { error, loading, resources } = this.state;
 
@@ -108,9 +104,7 @@ export /* istanbul ignore next */ class ResourceListContainer extends Component 
         <StructuredListHead>
           <StructuredListRow head>
             <StructuredListCell head>Resource</StructuredListCell>
-            {selectedNamespace === ALL_NAMESPACES && (
-              <StructuredListCell head>Namespace</StructuredListCell>
-            )}
+            <StructuredListCell head>Namespace</StructuredListCell>
             <StructuredListCell head>Created</StructuredListCell>
           </StructuredListRow>
         </StructuredListHead>
@@ -153,9 +147,7 @@ export /* istanbul ignore next */ class ResourceListContainer extends Component 
                     {name}
                   </Link>
                 </StructuredListCell>
-                {selectedNamespace === ALL_NAMESPACES && (
-                  <StructuredListCell>{namespace}</StructuredListCell>
-                )}
+                <StructuredListCell>{namespace}</StructuredListCell>
                 <StructuredListCell>
                   <FormattedDate date={creationTimestamp} relative />
                 </StructuredListCell>

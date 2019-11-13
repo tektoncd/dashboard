@@ -21,12 +21,7 @@ import {
   StructuredListRow,
   StructuredListWrapper
 } from 'carbon-components-react';
-import {
-  ALL_NAMESPACES,
-  getStatus,
-  getStatusIcon,
-  urls
-} from '@tektoncd/dashboard-utils';
+import { getStatus, getStatusIcon, urls } from '@tektoncd/dashboard-utils';
 
 import { FormattedDate, RunDropdown } from '..';
 
@@ -39,10 +34,10 @@ const PipelineRuns = ({
   createPipelineRunTimestamp = pipelineRun =>
     getStatus(pipelineRun).lastTransitionTime,
   createPipelineRunsByPipelineURL = urls.pipelineRuns.byPipeline,
+  hideNamespace,
   intl,
   pipelineName,
   pipelineRuns,
-  selectedNamespace,
   pipelineRunActions
 }) => (
   <StructuredListWrapper border selection>
@@ -52,7 +47,7 @@ const PipelineRuns = ({
         {!pipelineName && (
           <StructuredListCell head>Pipeline</StructuredListCell>
         )}
-        {selectedNamespace === ALL_NAMESPACES && (
+        {!hideNamespace && (
           <StructuredListCell head>Namespace</StructuredListCell>
         )}
         <StructuredListCell head>
@@ -128,7 +123,7 @@ const PipelineRuns = ({
                 </Link>
               </StructuredListCell>
             )}
-            {selectedNamespace === ALL_NAMESPACES && (
+            {!hideNamespace && (
               <StructuredListCell>{namespace}</StructuredListCell>
             )}
             <StructuredListCell
