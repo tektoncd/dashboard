@@ -1,0 +1,89 @@
+/*
+Copyright 2019 The Tekton Authors
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+$edge-color: #979797;
+
+.pipeline-graph {
+  #edge-arrow path {
+    fill: $edge-color;
+    stroke: $edge-color;
+  }
+
+  .vx-network-links path {
+    stroke: $edge-color;
+    marker-end: url(#edge-arrow);
+  }
+
+  rect {
+    fill: #F3F3F3;
+    stroke: #F3F3F3;
+  }
+  .Start, .End {
+    rect {
+      rx: 50%;
+      ry: 50%;
+    }
+  }
+  .Step {
+    rect {
+      fill: transparent;
+      stroke: transparent;
+    }
+  }
+  [data-status='error'] {
+    rect {
+      fill: #FFF0F1;
+      stroke: #FFF0F1;
+    }
+    &.Task text {
+      fill: #DA1E28;
+      font-weight: bold;
+    }
+    .chevron, .status-icon {
+      fill: #DA1E28;
+    }
+  }
+  [data-status='running'] {
+    rect {
+      fill: #EDF4FF;
+      stroke: #EDF4FF;
+    }
+    &.Task text {
+      fill: #282828;
+      font-weight: bold;
+    }
+    .status-icon {
+      stroke: #0062FF;
+    }
+    .chevron {
+      fill: #000000;
+    }
+  }
+  [data-status='success'] {
+    rect {
+      fill: #DAFBE4;
+      stroke: #DAFBE4;
+    }
+    &.Task text {
+      fill: #054719;
+      font-weight: bold;
+    }
+    .status-icon {
+      fill: #24A249;
+    }
+    .chevron {
+      fill: #0C5824;
+    }
+  }
+
+}
