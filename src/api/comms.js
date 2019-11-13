@@ -114,31 +114,12 @@ export function generateBodyForSecretReplacing(remainingSecrets) {
   return replaceBody;
 }
 
-export function patchRemoveSecretBody(indexOfSecret) {
-  const patchRemoveBody = [
-    {
-      op: 'remove',
-      path: `serviceaccount/secrets/${indexOfSecret}`
-    }
-  ];
-  return patchRemoveBody;
-}
-
 export async function patchAddSecret(uri, secretName) {
   const patchAddBody = await generateBodyForSecretPatching(secretName);
   return request(uri, {
     method: 'PATCH',
     headers: await getPatchHeaders(),
     body: JSON.stringify(patchAddBody)
-  });
-}
-
-export async function patchRemoveSecret(uri, indexOfSecret) {
-  const patchRemoveBody = await patchRemoveSecretBody(indexOfSecret);
-  return request(uri, {
-    method: 'PATCH',
-    headers: await getPatchHeaders(),
-    body: JSON.stringify(patchRemoveBody)
   });
 }
 
