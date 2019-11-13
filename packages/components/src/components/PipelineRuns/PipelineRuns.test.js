@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
 import { renderWithIntl, renderWithRouter } from '../../utils/test';
 import PipelineRuns from './PipelineRuns';
@@ -20,18 +19,18 @@ import PipelineRuns from './PipelineRuns';
 it('PipelineRuns renders empty state', () => {
   const { queryByText } = renderWithIntl(<PipelineRuns pipelineRuns={[]} />);
   expect(queryByText(/no pipelineruns/i)).toBeTruthy();
-  expect(queryByText(/namespace/i)).toBeFalsy();
+  expect(queryByText(/namespace/i)).toBeTruthy();
 });
 
-it('PipelineRuns renders optional columns', () => {
+it('PipelineRuns hides namespace when hideNamespace set', () => {
   const { queryByText } = renderWithIntl(
     <PipelineRuns
       pipelineName="some-pipeline"
       pipelineRuns={[]}
-      selectedNamespace={ALL_NAMESPACES}
+      hideNamespace
     />
   );
-  expect(queryByText(/namespace/i)).toBeTruthy();
+  expect(queryByText(/namespace/i)).toBeFalsy();
   expect(queryByText(/pipeline/i)).toBeTruthy();
   expect(queryByText(/no pipelineruns for some-pipeline/i)).toBeTruthy();
 });
