@@ -18,6 +18,9 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import SecretsModal from '.';
 
+// Declares scrollIntoView as a function for testing purposes
+window.HTMLElement.prototype.scrollIntoView = function() {};
+
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 

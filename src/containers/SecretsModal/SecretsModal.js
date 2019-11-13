@@ -47,6 +47,29 @@ function validateInputs(value, id) {
   return true;
 }
 
+// Used to determine if an annotation has been added or removed and therefore if the modal should scroll down
+function handleScroll(state, prevState) {
+  let shouldScroll = true;
+  if (state.name !== prevState.name) {
+    shouldScroll = false;
+  } else if (state.namespace !== prevState.namespace) {
+    shouldScroll = false;
+  } else if (state.username !== prevState.username) {
+    shouldScroll = false;
+  } else if (state.password !== prevState.password) {
+    shouldScroll = false;
+  } else if (state.serviceAccount !== prevState.serviceAccount) {
+    shouldScroll = false;
+  } else if (state.serviceAccounts !== prevState.serviceAccounts) {
+    shouldScroll = false;
+  } else if (state.accessTo !== prevState.accessTo) {
+    shouldScroll = false;
+  } else if (state.annotations.label !== prevState.annotations.label) {
+    shouldScroll = false;
+  }
+  return shouldScroll;
+}
+
 export /* istanbul ignore next */ class SecretsModal extends Component {
   constructor(props) {
     super(props);
@@ -72,13 +95,20 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
     };
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
     const { webSocketConnected } = this.props;
     const { webSocketConnected: prevWebSocketConnected } = prevProps;
     if (webSocketConnected && prevWebSocketConnected === false) {
       this.props.fetchServiceAccounts();
     }
+    if (handleScroll(this.state, prevState)) {
+      this.scrollToBottom();
+    }
   }
+
+  scrollToBottom = () => {
+    this.annotationsEnd.scrollIntoView({ behavior: 'auto' });
+  };
 
   handleSubmit = () => {
     const invalidFields = [];
@@ -382,6 +412,11 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
             handleRemove={this.handleRemove}
             handleAdd={this.handleAdd}
             invalidFields={invalidFields}
+          />
+          <div
+            ref={el => {
+              this.annotationsEnd = el;
+            }}
           />
         </form>
       </Modal>
