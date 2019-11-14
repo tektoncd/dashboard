@@ -15,7 +15,7 @@ import React from 'react';
 import { storiesOf } from '@storybook/react';
 
 import Node from './Node';
-import PipelineGraph from './PipelineGraph';
+import Graph from './Graph';
 import graph from './sample.json';
 
 /*
@@ -34,23 +34,48 @@ import graph from './sample.json';
 const taskProps = {
   type: 'Task',
   label: 'build-and-push',
-  width: 150,
+  width: 160,
   height: 26
 };
 
+const expandedProps = {
+  children: [
+    {
+      type: 'Step',
+      id: '__step_build-and-push__build-image',
+      label: 'build-image',
+      width: 110,
+      height: 26
+    },
+    {
+      type: 'Step',
+      id: '__step_build-and-push__push-image',
+      label: 'push-image',
+      width: 110,
+      height: 26
+    }
+  ],
+  edges: [],
+  height: 82
+};
+
 storiesOf('Graph/Node', module)
-  .addDecorator(story => <div className="pipeline-graph">{story()}</div>)
-  .add('start', () => <Node type="Start" />)
-  .add('end', () => <Node type="End" />)
+  .addDecorator(story => <div className="graph">{story()}</div>)
+  .add('start', () => <Node type="Start" width="60" height="60" />)
+  .add('end', () => <Node type="End" width="60" height="60" />)
   .add('step', () => <Node type="Step" label="build" />)
+  .add('step selected', () => <Node type="Step" label="build" isSelected />)
   .add('task', () => <Node {...taskProps} />)
   .add('task error', () => <Node {...taskProps} status="error" />)
   .add('task running', () => <Node {...taskProps} status="running" />)
   .add('task success', () => <Node {...taskProps} status="success" />)
-  .add('task expandable', () => (
-    <Node {...taskProps} status="success" width="160" children={['foo']} /> // eslint-disable-line react/no-children-prop
+  .add('task expanded', () => (
+    <Node {...taskProps} status="success" {...expandedProps} />
+  ))
+  .add('task selected', () => (
+    <Node {...taskProps} status="success" {...expandedProps} isSelected />
   ));
 
-storiesOf('Graph/PipelineGraph', module).add('default', () => (
-  <PipelineGraph graph={graph} width={450} height={500} />
+storiesOf('Graph/Graph', module).add('default', () => (
+  <Graph graph={graph} width={450} height={550} />
 ));

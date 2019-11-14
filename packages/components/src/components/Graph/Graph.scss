@@ -13,7 +13,7 @@ limitations under the License.
 
 $edge-color: #979797;
 
-.pipeline-graph {
+.graph {
   #edge-arrow path {
     fill: $edge-color;
     stroke: $edge-color;
@@ -24,22 +24,61 @@ $edge-color: #979797;
     marker-end: url(#edge-arrow);
   }
 
-  rect {
-    fill: #F3F3F3;
-    stroke: #F3F3F3;
+  .Task {
+    rect {
+      fill: #FFFFFF;
+      stroke: #979797;
+    }
+
+    .label-hitbox {
+      stroke: transparent;
+    }
+
+    text {
+      fill: #6F6F6F;
+    }
+
+    .chevron {
+      fill: #565656;
+    }
   }
+
   .Start, .End {
     rect {
+      fill: #F3F3F3;
+      stroke: #F3F3F3;
       rx: 50%;
       ry: 50%;
     }
+
+    text {
+      fill: #6F6F6F;
+      font-weight: bold;
+    }
   }
+
   .Step {
     rect {
       fill: transparent;
       stroke: transparent;
     }
   }
+
+  .Task g .label, .Step {
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  .Task:not([data-status]) .label:hover {
+    .label-hitbox {
+      fill: #646565;
+    }
+    text, .chevron, .status-icon {
+      fill: #FFFFFF;
+    }
+  }
+
   [data-status='error'] {
     rect {
       fill: #FFF0F1;
@@ -52,7 +91,13 @@ $edge-color: #979797;
     .chevron, .status-icon {
       fill: #DA1E28;
     }
+
+    .label:hover .label-hitbox {
+      fill: #FDC9CD;
+      stroke: #FDC9CD;
+    }
   }
+
   [data-status='running'] {
     rect {
       fill: #EDF4FF;
@@ -68,7 +113,13 @@ $edge-color: #979797;
     .chevron {
       fill: #000000;
     }
+
+    .label:hover .label-hitbox {
+      fill: #C5DBEE;
+      stroke: #C5DBEE;
+    }
   }
+
   [data-status='success'] {
     rect {
       fill: #DAFBE4;
@@ -84,6 +135,18 @@ $edge-color: #979797;
     .chevron {
       fill: #0C5824;
     }
+
+    .label:hover .label-hitbox {
+      fill: #BCDFBB;
+      stroke: #BCDFBB;
+    }
   }
 
+  .Step .label text {
+    font-weight: normal;
+  }
+
+  .selected > g > .label .label-hitbox {
+    stroke: #0062FF;
+  }
 }

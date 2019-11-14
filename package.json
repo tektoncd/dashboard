@@ -29,6 +29,7 @@
     "@vx/network": "0.0.192",
     "carbon-components": "^10.6.1",
     "carbon-components-react": "^7.6.1",
+    "classnames": "^2.2.6",
     "core-js": "^3.0.1",
     "d3-path": "^1.0.8",
     "elkjs": "^0.5.1",
