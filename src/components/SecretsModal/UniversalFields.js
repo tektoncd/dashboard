@@ -35,7 +35,7 @@ const UniversalFields = props => {
         id="name"
         placeholder="secret-name"
         value={name}
-        labelText="Name:"
+        labelText="Name"
         onChange={handleChangeTextInput}
         invalid={invalidFields.indexOf('name') > -1}
         invalidText="Must not start or end with - and be less than 253 characters, contain only lowercase alphanumeric characters or -"
@@ -57,7 +57,7 @@ const UniversalFields = props => {
       />
       <Dropdown
         id="accessTo"
-        titleText="Access To:"
+        titleText="Access To"
         label=""
         initialSelectedItem={{
           id: accessTo,
