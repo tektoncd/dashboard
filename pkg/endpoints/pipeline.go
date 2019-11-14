@@ -88,8 +88,7 @@ type PipelineRunUpdateBody struct {
 	STATUS string `json:"status"`
 }
 
-// PipelineRunRebuild - a name only for now
-type RebuildRequest struct {
+type RerunRequest struct {
 	PIPELINERUNNAME string `json:"pipelinerunname"`
 }
 
@@ -206,21 +205,21 @@ func (r Resource) GetPipelineRunLog(request *restful.Request, response *restful.
 	response.WriteEntity(pipelineRunLogs)
 }
 
-func (r Resource) rebuildRun(name, namespace string) (*v1alpha1.PipelineRun, error) {
+func (r Resource) Rerun(name, namespace string) (*v1alpha1.PipelineRun, error) {
 	pipelineRuns := r.PipelineClient.TektonV1alpha1().PipelineRuns(namespace)
 	pipelineRun, err := pipelineRuns.Get(name, metav1.GetOptions{})
 
 	if err != nil {
-		logging.Log.Errorf("couldn't find the PipelineRun to rebuild, searched for %s in namespace %s", name, namespace)
+		logging.Log.Errorf("couldn't find the PipelineRun to rerun, searched for %s in namespace %s", name, namespace)
 		return nil, err
 	} else {
-		logging.Log.Debugf("Found the PipelineRun to rebuild (%s in namespace %s)", name, namespace)
+		logging.Log.Debugf("Found the PipelineRun to rerun (%s in namespace %s)", name, namespace)
 	}
 
 	newPipelineRunData := pipelineRun
 	newPipelineRunData.Name = ""
 	newPipelineRunData.Spec.Status = ""
-	theName := generateNewNameForRebuild(name)
+	theName := generateNewNameForRerun(name)
 	newPipelineRunData.GenerateName = theName
 	newPipelineRunData.ResourceVersion = ""
 
@@ -228,18 +227,18 @@ func (r Resource) rebuildRun(name, namespace string) (*v1alpha1.PipelineRun, err
 
 	if currentLabels == nil {
 		logging.Log.Debug("Didn't find any existing labels, so creating a new one")
-		withRebuildLabel := map[string]string{"rebuilds": pipelineRun.Name}
-		newPipelineRunData.SetLabels(withRebuildLabel)
+		withRerunLabel := map[string]string{"reruns": pipelineRun.Name}
+		newPipelineRunData.SetLabels(withRerunLabel)
 	} else {
-		logging.Log.Debug("Found existing label(s), adding rebuilds label")
-		currentLabels["rebuilds"] = pipelineRun.Name
+		logging.Log.Debug("Found existing label(s), adding reruns label")
+		currentLabels["reruns"] = pipelineRun.Name
 		newPipelineRunData.SetLabels(currentLabels)
 	}
 
 	rebuiltRun, err := r.PipelineClient.TektonV1alpha1().PipelineRuns(pipelineRun.Namespace).Create(newPipelineRunData)
 
 	if err != nil {
-		logging.Log.Errorf("an error occurred rebuilding the PipelineRun %s in namespace %s: %s", name, namespace, err)
+		logging.Log.Errorf("an error occurred rerunning the PipelineRun %s in namespace %s: %s", name, namespace, err)
 		return nil, err
 	}
 	return rebuiltRun, nil
@@ -248,7 +247,7 @@ func (r Resource) rebuildRun(name, namespace string) (*v1alpha1.PipelineRun, err
 // If the PipelineRun does not contain -r-*digits*, add it.
 // If it does replace that r-*digits* with a newly generated one.
 
-func generateNewNameForRebuild(name string) string {
+func generateNewNameForRerun(name string) string {
 	newName := name
 
 	// Has -r- in it already?
@@ -257,22 +256,22 @@ func generateNewNameForRebuild(name string) string {
 		prefixToUse := fmt.Sprintf("%s-r-", name[0:lastIndexOfDash])
 		return prefixToUse
 	} else {
-		logging.Log.Debug("Rebuilding a pipelinerun that's not already been rebuilt")
+		logging.Log.Debug("Rerunning a pipelinerun that's not already been rerun")
 		newName = fmt.Sprintf("%s-r-", newName)
 	}
 
-	logging.Log.Debugf("Rebuilt PipelineRun name is: %s", newName)
+	logging.Log.Debugf("Rerun PipelineRun name is: %s", newName)
 
 	return newName
 }
 
-/* E.g. POST to http://localhost:9097/v1/namespaces/default/rebuild (provide name in the request body)
+/* E.g. POST to http://localhost:9097/v1/namespaces/default/rerun (provide name in the request body)
    TODO eventually this would be great to take different params too as users may want to run the \
 	 same pipeline just with different inputs */
 
-func (r Resource) rebuildImpl(existingPipelineRun *v1alpha1.PipelineRun, existingPipelineRunName, namespace string) (*v1alpha1.PipelineRun, error) {
+func (r Resource) rerunImpl(existingPipelineRun *v1alpha1.PipelineRun, existingPipelineRunName, namespace string) (*v1alpha1.PipelineRun, error) {
 	if existingPipelineRunName != "" {
-		rebuiltRun, err := r.rebuildRun(existingPipelineRunName, namespace)
+		rebuiltRun, err := r.Rerun(existingPipelineRunName, namespace)
 		if err != nil {
 			return nil, err
 		}
@@ -288,34 +287,34 @@ func (r Resource) rebuildImpl(existingPipelineRun *v1alpha1.PipelineRun, existin
 		return madeRun, nil
 	}
 
-	return nil, errors.New("rebuild was called without a name of a PipelineRun to rebuild or a PipelineRun spec - nothing to do")
+	return nil, errors.New("rerun was called without a name of a PipelineRun to rerun or a PipelineRun spec - nothing to do")
 }
 
-// RebuildPipelineRun rebuilds a given PipelineRun by name in a given namespace
-func (r Resource) RebuildPipelineRun(request *restful.Request, response *restful.Response) {
-	logging.Log.Debugf("in RebuildPipelineRun")
+// RerunPipelineRun reruns a given PipelineRun by name in a given namespace
+func (r Resource) RerunPipelineRun(request *restful.Request, response *restful.Response) {
+	logging.Log.Debugf("in RerunPipelineRun")
 	namespace := request.PathParameter("namespace")
 
-	requestData := RebuildRequest{}
+	requestData := RerunRequest{}
 
 	if err := request.ReadEntity(&requestData); err != nil {
-		logging.Log.Errorf("error parsing request body on call to rebuild %s", err)
+		logging.Log.Errorf("error parsing request body on call to rerun %s", err)
 		utils.RespondError(response, err, http.StatusBadRequest)
 		return
 	}
 
 	if requestData.PIPELINERUNNAME != "" {
-		// It's a rebuild: they've provided a name and want a new one. This is a new PipelineRun.
-		logging.Log.Debugf("Rebuilding PipelineRun: %s", requestData.PIPELINERUNNAME)
+		// It's a rerun: they've provided a name and want a new one. This is a new PipelineRun.
+		logging.Log.Debugf("Rerunning PipelineRun: %s", requestData.PIPELINERUNNAME)
 		// A lookup will be made for the run, so no need to provide full data
 		// Method handles any error reporting through logs
-		rebuiltRun, err := r.rebuildImpl(nil, requestData.PIPELINERUNNAME, namespace)
+		rebuiltRun, err := r.rerunImpl(nil, requestData.PIPELINERUNNAME, namespace)
 		if err != nil {
 			utils.RespondError(response, err, http.StatusInternalServerError)
 			return
 		} else {
 			// All is well, include the name of the new rebuilt run in the response
-			logging.Log.Debugf("Rebuilt ok, name is: %s", rebuiltRun.Name)
+			logging.Log.Debugf("Rerun ok, name is: %s", rebuiltRun.Name)
 			utils.WriteResponseLocation(request, response, rebuiltRun.Name)
 			return
 		}

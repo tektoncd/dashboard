@@ -107,7 +107,7 @@ it('PipelineRunContainer handles error state', async () => {
   await waitForElement(() => getByText('Error loading PipelineRun'));
 });
 
-// A scenario exists (typically with rebuild) where all PipelineRun data
+// A scenario exists (typically with rerun) where all PipelineRun data
 // is not yet available. Verify that the container still renders OK
 it('PipelineRunContainer handles no TaskRuns found yet', async () => {
   const match = {

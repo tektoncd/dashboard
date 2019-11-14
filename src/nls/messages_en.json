@@ -28,7 +28,7 @@
     "dashboard.pipelineRun.logEmpty": "No log available",
     "dashboard.pipelineRun.logFailed": "Unable to fetch log",
     "dashboard.pipelineRun.notFound": "PipelineRun not found",
-    "dashboard.pipelineRun.rebuildStatusMessage": "View status of this rebuilt run",
+    "dashboard.pipelineRun.rerunStatusMessage": "View status of this rerun PipelineRun",
     "dashboard.pipelineRun.stepCompleted": "Step completed",
     "dashboard.pipelineRun.stepFailed": "Step failed",
     "dashboard.pipelineRuns.createPipelineRunButton": "Create PipelineRun",

@@ -267,8 +267,8 @@ export function getPodLog({ container, name, namespace }) {
   return get(uri, { Accept: 'text/plain' });
 }
 
-export function rebuildPipelineRun(namespace, payload) {
-  const uri = getAPI('rebuild', { namespace });
+export function rerunPipelineRun(namespace, payload) {
+  const uri = getAPI('rerun', { namespace });
   return post(uri, payload);
 }
 

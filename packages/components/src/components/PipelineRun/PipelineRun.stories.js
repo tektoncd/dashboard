@@ -142,7 +142,7 @@ storiesOf('PipelineRun', module)
       taskRuns={[taskRun]}
       tasks={[task]}
       fetchLogs={() => 'sample log output'}
-      rebuildPipelineRun={() => {}}
+      rerunPipelineRun={() => {}}
     />
   ))
   .add('empty', () => <PipelineRun />)

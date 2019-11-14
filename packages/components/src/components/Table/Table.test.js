@@ -38,12 +38,12 @@ const headers = [
 
 const toolbarButtons = [
   { onClick: () => {}, text: 'Add', icon: null },
-  { onClick: () => {}, text: 'Rebuild All', icon: null }
+  { onClick: () => {}, text: 'Rerun All', icon: null }
 ];
 
 const batchActionButtons = [
   { onClick: () => {}, text: 'Delete', icon: null },
-  { onClick: () => {}, text: 'Rebuild', icon: null }
+  { onClick: () => {}, text: 'Rerun', icon: null }
 ];
 
 const emptyTextAllNamespaces = 'No rows in any namespace';
@@ -155,7 +155,7 @@ it('Table renders with one row, ALL_NAMESPACES, 1 toolbar button only, no checkb
     queryByText(/Name/i).parentNode.className.includes('sort')
   ).toBeFalsy();
   expect(queryByText(/Delete/i)).toBeNull();
-  expect(queryByText(/Rebuild All/i)).toBeNull();
+  expect(queryByText(/Rerun All/i)).toBeNull();
   expect(queryByText(/Add/i)).toBeTruthy();
   expect(queryByLabelText('Select all rows')).toBeNull();
   expect(queryByLabelText('Select row')).toBeNull();
@@ -176,7 +176,7 @@ it('Table renders with one row, ALL_NAMESPACES, 2 toolbar buttons only, no check
   ).toBeFalsy();
   expect(queryByText(/Delete/i)).toBeNull();
   expect(queryByText(/Add/i)).toBeTruthy();
-  expect(queryByText(/Rebuild All/i)).toBeTruthy();
+  expect(queryByText(/Rerun All/i)).toBeTruthy();
   expect(queryByLabelText('Select all rows')).toBeNull();
   expect(queryByLabelText('Select row')).toBeNull();
 });
@@ -196,7 +196,7 @@ it('Table renders with one row, ALL_NAMESPACES, 1 batch button only with checkbo
   ).toBeFalsy();
   expect(queryByText(/Delete/i)).toBeTruthy();
   expect(queryByText(/Add/i)).toBeNull();
-  expect(queryByText(/Rebuild/i)).toBeNull();
+  expect(queryByText(/Rerun/i)).toBeNull();
   expect(queryByLabelText('Select all rows')).toBeTruthy();
   expect(queryByLabelText('Select row')).toBeTruthy();
 });
@@ -215,8 +215,8 @@ it('Table renders with one row, ALL_NAMESPACES, 2 batch buttons only with checkb
     queryByText(/Name/i).parentNode.className.includes('sort')
   ).toBeFalsy();
   expect(queryByText(/Delete/i)).toBeTruthy();
-  expect(queryByText(/Rebuild/i)).toBeTruthy();
-  expect(queryByText(/Rebuild All/i)).toBeNull();
+  expect(queryByText(/Rerun/i)).toBeTruthy();
+  expect(queryByText(/Rerun All/i)).toBeNull();
   expect(queryByText(/Add/i)).toBeNull();
   expect(queryByLabelText('Select all rows')).toBeTruthy();
   expect(queryByLabelText('Select row')).toBeTruthy();
@@ -239,8 +239,8 @@ it('Table renders with two rows, ALL_NAMESPACES, 2 batch and 2 toolbar buttons, 
   ).toBeTruthy();
   expect(queryByText(/Add/i)).toBeTruthy();
   expect(queryByText(/Delete/i)).toBeTruthy();
-  expect(queryByText('Rebuild')).toBeTruthy();
-  expect(queryByText('Rebuild All')).toBeTruthy();
+  expect(queryByText('Rerun')).toBeTruthy();
+  expect(queryByText('Rerun All')).toBeTruthy();
   expect(queryByLabelText('Select all rows')).toBeTruthy();
   expect(queryByLabelText('Select row')).toBeTruthy();
 });

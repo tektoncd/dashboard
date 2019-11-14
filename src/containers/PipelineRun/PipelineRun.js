@@ -14,7 +14,7 @@ limitations under the License.
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { PipelineRun, Rebuild } from '@tektoncd/dashboard-components';
+import { PipelineRun, Rerun } from '@tektoncd/dashboard-components';
 
 import { InlineNotification } from 'carbon-components-react';
 import { Link } from 'react-router-dom';
@@ -33,7 +33,7 @@ import {
 import { fetchPipelineRun } from '../../actions/pipelineRuns';
 import { fetchClusterTasks, fetchTasks } from '../../actions/tasks';
 import { fetchTaskRuns } from '../../actions/taskRuns';
-import { rebuildPipelineRun } from '../../api';
+import { rerunPipelineRun } from '../../api';
 
 import '../../components/Run/Run.scss';
 import { fetchLogs } from '../../utils';
@@ -42,14 +42,12 @@ import './PipelineRun.scss';
 export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   constructor(props) {
     super(props);
-    this.setShowRebuildNotification = this.setShowRebuildNotification.bind(
-      this
-    );
+    this.setShowRerunNotification = this.setShowRerunNotification.bind(this);
   }
 
   state = {
     loading: true,
-    showRebuildNotification: false
+    showRerunNotification: false
   };
 
   componentDidMount() {
@@ -77,8 +75,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     }
   }
 
-  setShowRebuildNotification(value) {
-    this.setState({ showRebuildNotification: value });
+  setShowRerunNotification(value) {
+    this.setState({ showRerunNotification: value });
   }
 
   fetchData() {
@@ -111,41 +109,41 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       pipelineRun.status.taskRuns = [];
     }
 
-    const { loading, showRebuildNotification } = this.state;
+    const { loading, showRerunNotification } = this.state;
     const { pipelineRunName } = match.params;
 
-    const rebuild = (
-      <Rebuild
+    const rerun = (
+      <Rerun
         pipelineRun={pipelineRun}
-        rebuildPipelineRun={rebuildPipelineRun}
+        rerunPipelineRun={rerunPipelineRun}
         runName={pipelineRunName}
-        setShowRebuildNotification={this.setShowRebuildNotification}
+        setShowRerunNotification={this.setShowRerunNotification}
       />
     );
 
     return (
       <>
-        {showRebuildNotification && (
+        {showRerunNotification && (
           <InlineNotification
             lowContrast
             subtitle={
-              showRebuildNotification.logsURL ? (
+              showRerunNotification.logsURL ? (
                 <Link
                   id="newpipelinerunlink"
-                  to={showRebuildNotification.logsURL}
-                  onClick={() => this.setShowRebuildNotification(false)}
+                  to={showRerunNotification.logsURL}
+                  onClick={() => this.setShowRerunNotification(false)}
                 >
                   {intl.formatMessage({
-                    id: 'dashboard.pipelineRun.rebuildStatusMessage',
-                    defaultMessage: 'View status of this rebuilt run'
+                    id: 'dashboard.pipelineRun.rerunStatusMessage',
+                    defaultMessage: 'View status of this rerun PipelineRun'
                   })}
                 </Link>
               ) : (
                 ''
               )
             }
-            title={showRebuildNotification.message}
-            kind={showRebuildNotification.kind}
+            title={showRerunNotification.message}
+            kind={showRerunNotification.kind}
             caption=""
           />
         )}
@@ -157,7 +155,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           showIO
           tasks={tasks}
           taskRuns={taskRuns}
-          rebuild={rebuild}
+          rerun={rerun}
         />
       </>
     );

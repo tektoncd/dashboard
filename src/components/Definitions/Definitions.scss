@@ -68,7 +68,7 @@ main {
     }
   }
 
-  &[data-status='Unknown'][data-reason='Running'], &[data-status='Unknown'][data-reason='Building'] {
+  &[data-status='Unknown'][data-reason='Running'] {
     .status-icon {
       fill: $running;
     }

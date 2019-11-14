@@ -22,7 +22,7 @@ storiesOf('RunDropdown', module)
   .add('default', () => (
     <RunDropdown
       items={[
-        { actionText: 'Rebuild', action: () => {} },
+        { actionText: 'Rerun', action: () => {} },
         {
           actionText: 'Delete',
           action: () => {},

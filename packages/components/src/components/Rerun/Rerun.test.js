@@ -14,9 +14,9 @@ limitations under the License.
 import React from 'react';
 import { fireEvent, waitForElement } from 'react-testing-library';
 import { renderWithRouter } from '../../utils/test';
-import { Rebuild } from './Rebuild';
+import { Rerun } from './Rerun';
 
-/* Rebuild should sit on the PipelineRun page and display notifications there
+/* Rerun should sit on the PipelineRun page and display notifications there
 It would be useful to have tests at the container level too, but for now just do it at the component level */
 
 const props = {
@@ -38,38 +38,34 @@ const headers = {
   }
 };
 
-it('rebuild button creates API call with correct parameters', () => {
-  const rebuildMock = jest
+it('rerun button creates API call with correct parameters', () => {
+  const rerunMock = jest
     .fn()
     .mockImplementation(() => Promise.resolve(headers));
   const { getByText } = renderWithRouter(
-    <Rebuild
-      {...props}
-      rebuildPipelineRun={rebuildMock}
-      runName="thepipelinerun"
-    />
+    <Rerun {...props} rerunPipelineRun={rerunMock} runName="thepipelinerun" />
   );
-  const theButton = getByText('Rebuild');
+  const theButton = getByText('Rerun');
   fireEvent.click(theButton);
   const expected = { pipelinerunname: 'thepipelinerun' };
   // No namespace provided here, payload as above
-  expect(rebuildMock).toHaveBeenCalledWith('default', expected);
+  expect(rerunMock).toHaveBeenCalledWith('default', expected);
 });
 
-it('rebuild button is ghost styled', async () => {
-  const rebuildMock = jest
+it('rerun button is ghost styled', async () => {
+  const rerunMock = jest
     .fn()
     .mockImplementation(() => Promise.resolve(headers));
   const { getByTestId } = renderWithRouter(
-    <Rebuild
+    <Rerun
       {...props}
-      rebuildPipelineRun={rebuildMock}
+      rerunPipelineRun={rerunMock}
       runName="fake-pipeline-run"
     />
   );
-  const rebuildButton = getByTestId('rebuild-btn');
-  const rebuildButtonIsGhost = rebuildButton.getElementsByClassName(
-    'rebuild-btn bx--btn bx--btn--ghost'
+  const rerunButton = getByTestId('rerun-btn');
+  const rerunButtonIsGhost = rerunButton.getElementsByClassName(
+    'rerun-btn bx--btn bx--btn--ghost'
   );
-  await waitForElement(() => rebuildButtonIsGhost);
+  await waitForElement(() => rerunButtonIsGhost);
 });
