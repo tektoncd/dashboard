@@ -7,56 +7,49 @@
       "source": "skaffold-unit-tests",
       "sourcePort": "skaffold-unit-tests-p0",
       "target": "build-skaffold-web",
-      "targetPort": "build-skaffold-web-p0",
-      "visited": false
+      "targetPort": "build-skaffold-web-p0"
     },
     {
       "id": "skaffold-unit-tests-build-skaffold-app",
       "source": "skaffold-unit-tests",
       "sourcePort": "skaffold-unit-tests-p1",
       "target": "build-skaffold-app",
-      "targetPort": "build-skaffold-app-p0",
-      "visited": false
+      "targetPort": "build-skaffold-app-p0"
     },
     {
       "id": "build-skaffold-app-deploy-app",
       "source": "build-skaffold-app",
       "sourcePort": "build-skaffold-app-p1",
       "target": "deploy-app",
-      "targetPort": "deploy-app-p0",
-      "visited": false
+      "targetPort": "deploy-app-p0"
     },
     {
       "id": "build-skaffold-web-deploy-web",
       "source": "build-skaffold-web",
       "sourcePort": "build-skaffold-web-p1",
       "target": "deploy-web",
-      "targetPort": "deploy-web-p0",
-      "visited": false
+      "targetPort": "deploy-web-p0"
     },
     {
       "id": "Start-skaffold-unit-tests",
       "source": "Start",
       "sourcePort": "Start-pSourceSingleton",
       "target": "skaffold-unit-tests",
-      "targetPort": "skaffold-unit-tests-p2",
-      "visited": true
+      "targetPort": "skaffold-unit-tests-p2"
     },
     {
       "id": "deploy-app-End",
       "source": "deploy-app",
       "sourcePort": "deploy-app-p1",
       "target": "End",
-      "targetPort": "End-pTargetSingleton",
-      "visited": false
+      "targetPort": "End-pTargetSingleton"
     },
     {
       "id": "deploy-web-End",
       "source": "deploy-web",
       "sourcePort": "deploy-web-p1",
       "target": "End",
-      "targetPort": "End-pTargetSingleton",
-      "visited": false
+      "targetPort": "End-pTargetSingleton"
     }
   ],
   "children": [
@@ -67,7 +60,7 @@
         {
           "id": "__step__skaffold-unit-tests__run-tests",
           "label": "run-tests",
-          "width": 161,
+          "width": 181,
           "height": 26,
           "nChildren": 2,
           "nParents": 1,
@@ -104,7 +97,7 @@
         {
           "id": "__step__build-skaffold-web__build-and-push",
           "label": "build-and-push",
-          "width": 166,
+          "width": 186,
           "height": 26,
           "nChildren": 1,
           "nParents": 1,
@@ -132,7 +125,7 @@
         {
           "id": "__step__build-skaffold-app__build-and-push",
           "label": "build-and-push",
-          "width": 166,
+          "width": 186,
           "height": 26,
           "nChildren": 1,
           "nParents": 1,
@@ -160,7 +153,7 @@
         {
           "id": "__step__deploy-app__replace-image",
           "label": "replace-image",
-          "width": 148,
+          "width": 168,
           "height": 26,
           "nChildren": 1,
           "nParents": 1,
@@ -169,7 +162,7 @@
         {
           "id": "__step__deploy-app__run-kubectl",
           "label": "run-kubectl",
-          "width": 130,
+          "width": 150,
           "height": 26,
           "nChildren": 1,
           "nParents": 1,
@@ -182,8 +175,7 @@
           "source": "__step__deploy-app__replace-image",
           "sourcePort": "__step__deploy-app__replace-image-p0",
           "target": "__step__deploy-app__run-kubectl",
-          "targetPort": "__step__deploy-app__run-kubectl-p0",
-          "visited": false
+          "targetPort": "__step__deploy-app__run-kubectl-p0"
         }
       ],
       "nParents": 1,
@@ -197,7 +189,6 @@
           "id": "deploy-app-p1"
         }
       ]
-
     },
     {
       "id": "deploy-web",
@@ -206,7 +197,7 @@
         {
           "id": "__step__deploy-web__replace-image",
           "label": "replace-image",
-          "width": 148,
+          "width": 168,
           "height": 26,
           "nChildren": 1,
           "nParents": 1,
@@ -215,7 +206,7 @@
         {
           "id": "__step__deploy-web__run-kubectl",
           "label": "run-kubectl",
-          "width": 130,
+          "width": 150,
           "height": 26,
           "nChildren": 1,
           "nParents": 1,
@@ -228,8 +219,7 @@
           "source": "__step__deploy-web__replace-image",
           "sourcePort": "__step__deploy-web__replace-image-p0",
           "target": "__step__deploy-web__run-kubectl",
-          "targetPort": "__step__deploy-web__run-kubectl-p0",
-          "visited": false
+          "targetPort": "__step__deploy-web__run-kubectl-p0"
         }
       ],
       "nParents": 1,

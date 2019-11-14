@@ -12,37 +12,43 @@ limitations under the License.
 */
 /* istanbul ignore file */
 import React, { PureComponent } from 'react';
-import { Graph } from '@vx/network';
+import { Graph as VXGraph } from '@vx/network';
 import ELK from 'elkjs/lib/elk.bundled';
 
-import Node from './Node';
+import Node from './Node'; // eslint-disable-line import/no-cycle
 import NodeLink from './NodeLink';
 
-export default class PipelineGraph extends PureComponent {
+export default class Graph extends PureComponent {
   state = {};
 
   componentDidMount() {
-    this.computeDag();
+    this.layout();
   }
 
-  computeDag = () => {
+  layout = () => {
+    const { graph, isSubGraph } = this.props;
+
     const elk = new ELK({
       defaultLayoutOptions: {
-        'elk.algorithm': 'org.eclipse.elk.layered',
+        'org.eclipse.elk.algorithm': isSubGraph
+          ? 'org.eclipse.elk.box'
+          : 'org.eclipse.elk.layered',
         'org.eclipse.elk.direction': 'DOWN',
         'org.eclipse.elk.edgeRouting': 'ORTHOGONAL',
+        // 'org.eclipse.elk.interactive': true,
         'org.eclipse.elk.layered.nodePlacement.bk.fixedAlignment': 'BALANCED',
-        'org.eclipse.elk.layered.spacing.nodeNodeBetweenLayers': 30,
-        'org.eclipse.elk.insideSelfLoops.activate': true,
-        'elk.separateConnectedComponents': false,
-        'elk.spacing.nodeNode': 40,
-        'elk.padding': '[top=15,left=10,bottom=15,right=10]',
-        hierarchyHandling: 'INCLUDE_CHILDREN'
+        'org.eclipse.elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF',
+        'org.eclipse.elk.layered.spacing.nodeNodeBetweenLayers': isSubGraph
+          ? 0
+          : 40,
+        'org.eclipse.elk.padding': '[top=26,left=0,bottom=1,right=0]',
+        'org.eclipse.elk.separateConnectedComponents': false,
+        'org.eclipse.elk.spacing.nodeNode': isSubGraph ? 0 : 40
       }
     });
 
     elk
-      .layout(this.props.graph)
+      .layout(graph)
       .then(g => {
         this.setState({
           links: g.edges,
@@ -53,7 +59,7 @@ export default class PipelineGraph extends PureComponent {
   };
 
   render() {
-    const { height, width } = this.props;
+    const { height, isSubGraph, width, y } = this.props;
     const { links, margin, nodes } = this.state;
 
     if (!nodes) {
@@ -62,12 +68,13 @@ export default class PipelineGraph extends PureComponent {
 
     return (
       <svg
-        className="pipeline-graph"
+        className="graph"
         height={height}
         style={{ margin }}
         width={width}
         viewBox={`0 0 ${width} ${height}`}
         preserveAspectRatio="xMidYMin meet"
+        y={y}
       >
         <defs>
           <marker
@@ -83,14 +90,18 @@ export default class PipelineGraph extends PureComponent {
             <path d="M0,-5L10,0L0,5" />
           </marker>
         </defs>
-        <Graph
+        <VXGraph
           graph={{ links, nodes }}
           nodeComponent={c => (
-            <Node onClick={n => this.expandCallback(n)} {...c.node} />
+            <Node onClick={n => console.log('onClick', n)} {...c.node} />
           )}
-          linkComponent={NodeLink}
+          linkComponent={isSubGraph ? () => null : NodeLink}
         />
       </svg>
     );
   }
 }
+
+Graph.defaultProps = {
+  isSubGraph: false
+};

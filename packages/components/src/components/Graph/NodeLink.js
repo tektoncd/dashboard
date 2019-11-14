@@ -14,22 +14,20 @@ limitations under the License.
 import React, { PureComponent } from 'react';
 import { path as d3Path } from 'd3-path';
 
-// TODO: try to replace this component using vx LinkVerticalStep with stepPercent 0.5
 export default class NodeLink extends PureComponent {
   render() {
     const { link } = this.props;
     const sections = link.sections[0];
     const path = d3Path();
 
-    path.moveTo(sections.startPoint.x, sections.startPoint.y);
+    const { x: startX, y: startY } = sections.startPoint;
+    const { x: targetX, y: targetY } = sections.endPoint;
 
-    if (sections.bendPoints) {
-      sections.bendPoints.forEach(({ x, y }) => {
-        path.lineTo(x, y);
-      });
-    }
-
-    path.lineTo(sections.endPoint.x, sections.endPoint.y);
+    const percent = 0.5;
+    path.moveTo(startX, startY);
+    path.lineTo(startX, startY + (targetY - startY) * percent);
+    path.lineTo(targetX, startY + (targetY - startY) * percent);
+    path.lineTo(targetX, targetY);
 
     return (
       <path strokeWidth={1} fill="none" strokeOpacity={1} d={path.toString()} />
