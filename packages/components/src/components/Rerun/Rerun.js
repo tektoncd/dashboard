@@ -15,10 +15,10 @@ import React, { Component } from 'react';
 import { Button } from 'carbon-components-react';
 import { urls } from '@tektoncd/dashboard-utils';
 import Restart from '@carbon/icons-react/lib/restart/32';
-import './Rebuild.scss';
+import './Rerun.scss';
 
-export class Rebuild extends Component {
-  handleRebuild = event => {
+export class Rerun extends Component {
+  handleRerun = event => {
     if (event) {
       event.preventDefault();
     }
@@ -29,7 +29,7 @@ export class Rebuild extends Component {
     };
 
     this.props
-      .rebuildPipelineRun(namespace, payload)
+      .rerunPipelineRun(namespace, payload)
       .then(headers => {
         const logsURL = headers.get('Content-Location');
         const newPipelineRunName = logsURL.substring(
@@ -39,8 +39,8 @@ export class Rebuild extends Component {
           namespace,
           pipelineRunName: newPipelineRunName
         });
-        this.props.setShowRebuildNotification({
-          message: 'Rebuilt PipelineRun successfully',
+        this.props.setShowRerunNotification({
+          message: 'Rerun PipelineRun successfully',
           kind: 'success',
           logsURL: finalURL
         });
@@ -50,15 +50,15 @@ export class Rebuild extends Component {
         /* istanbul ignore next */
         switch (statusCode) {
           case 500:
-            this.props.setShowRebuildNotification({
-              message: `An internal server error occurred when rebuilding this PipelineRun: check the dashboard and
+            this.props.setShowRerunNotification({
+              message: `An internal server error occurred when rerunning this PipelineRun: check the dashboard and
                 extension pod logs for details`,
               kind: 'error'
             });
             break;
           default:
-            this.props.setShowRebuildNotification({
-              message: `An error occurred when rebuilding this PipelineRun: check the dashboard and
+            this.props.setShowRerunNotification({
+              message: `An error occurred when rerunning this PipelineRun: check the dashboard and
                 extension pod logs for details. Status code: ${statusCode}`,
               kind: 'error'
             });
@@ -69,16 +69,16 @@ export class Rebuild extends Component {
   render() {
     return (
       <Button
-        data-testid="rebuild-btn"
+        data-testid="rerun-btn"
         kind="ghost"
-        className="rebuild-btn"
+        className="rerun-btn"
         renderIcon={Restart}
-        onClick={this.handleRebuild}
+        onClick={this.handleRerun}
       >
-        Rebuild
+        Rerun
       </Button>
     );
   }
 }
 
-export default Rebuild;
+export default Rerun;

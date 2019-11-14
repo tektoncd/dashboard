@@ -149,7 +149,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       intl,
       loading,
       pollingInterval,
-      rebuild,
+      rerun,
       showIO,
       triggerHeader
     } = this.props;
@@ -281,7 +281,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           status={pipelineRunStatus}
           triggerHeader={triggerHeader}
         >
-          {rebuild}
+          {rerun}
         </RunHeader>
         {customNotification}
         <div className="tasks">

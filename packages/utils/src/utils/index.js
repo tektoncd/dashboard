@@ -116,9 +116,7 @@ export function getStatus(resource) {
 }
 
 export function isRunning(reason, status) {
-  return (
-    status === 'Unknown' && (reason === 'Running' || reason === 'Building')
-  );
+  return status === 'Unknown' && reason === 'Running';
 }
 
 export function getStatusIcon({ reason, status }) {

@@ -17,8 +17,8 @@ import { action } from '@storybook/addon-actions';
 import { boolean, text } from '@storybook/addon-knobs';
 import Add from '@carbon/icons-react/lib/add/16';
 import Delete from '@carbon/icons-react/lib/delete/16';
-import Rebuild from '@carbon/icons-react/lib/restart/16';
-import RebuildAll from '@carbon/icons-react/lib/renew/16';
+import Rerun from '@carbon/icons-react/lib/restart/16';
+import RerunAll from '@carbon/icons-react/lib/renew/16';
 
 import Table from './Table';
 
@@ -141,14 +141,14 @@ storiesOf('Table', module)
           isSortable={boolean('isSortable', true)}
           batchActionButtons={[
             { onClick: action('handleDelete'), text: 'Delete', icon: Delete },
-            { onClick: action('handleRebuild'), text: 'Rebuild', icon: Rebuild }
+            { onClick: action('handleRerun'), text: 'Rerun', icon: Rerun }
           ]}
           toolbarButtons={[
             { onClick: action('handleNew'), text: 'Add', icon: Add },
             {
-              onClick: action('handleRebuildAll'),
-              text: 'RebuildAll',
-              icon: RebuildAll
+              onClick: action('handleRerunAll'),
+              text: 'RerunAll',
+              icon: RerunAll
             }
           ]}
           loading={false}
@@ -216,7 +216,7 @@ storiesOf('Table', module)
             },
             {
               **onClick: ()=>{},
-              text: Rebuild,
+              text: Rerun,
               *icon: null
             }
           ]
@@ -238,7 +238,7 @@ storiesOf('Table', module)
             },
             {
               **onClick: ()=>{},
-              text: Rebuild All,
+              text: Rerun All,
               *icon: CarbonDesingIcon
             }
           ]
