@@ -41,7 +41,7 @@ const BasicAuthFields = props => {
         autoComplete="off"
         placeholder="username"
         value={username}
-        labelText="Username:"
+        labelText="Username"
         onChange={handleChangeTextInput}
         invalid={invalidFields.indexOf('username') > -1}
         invalidText="Username required."
@@ -52,7 +52,7 @@ const BasicAuthFields = props => {
         type="password"
         value={password}
         placeholder="********"
-        labelText="Password/Token:"
+        labelText="Password/Token"
         onChange={handleChangeTextInput}
         invalid={invalidFields.indexOf('password') > -1}
         invalidText="Password or Token required."

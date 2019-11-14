@@ -71,7 +71,7 @@ const Annotations = props => {
   return (
     <div className="annotations">
       <div className="labelAndButtons">
-        <p className="label">Server URL:</p>
+        <p className="label">Server URL</p>
         <Remove
           className={
             annotationFields.length === 1 ? 'removeIconDisabled' : 'removeIcon'
