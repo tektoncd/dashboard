@@ -294,18 +294,18 @@ Get the logs for a PipelineRun by name
 Returns HTTP code 200 and the logs from a PipelineRun (unformatted)
 ```
 
-__Credentials__
+__Secrets__
 ```
-GET /v1/namespaces/<namespace>/credentials
-Get all credentials by name in the given namespace
-Returns HTTP code 500 if an error occurred getting the credentials
-Returns HTTP code 200 and the given credential as a Kubernetes secret in the given namespace with a blanked out password if found, otherwise an empty list is returned
+GET /v1/namespaces/<namespace>/secrets
+Get all secrets by name in the given namespace
+Returns HTTP code 500 if an error occurred getting the secrets
+Returns HTTP code 200 and the given secrets as a Kubernetes secret in the given namespace if found, otherwise an empty list is returned
 
-GET /v1/namespaces/<namespace>/credentials/<id>
-Get a credential by ID
-Returns HTTP code 400 if the credential does not exist by name or an invalid namespace was provided
+GET /v1/namespaces/<namespace>/secrets/<secret-name>
+Get a secret by secret name
+Returns HTTP code 404 if the secret does not exist by name or an invalid namespace was provided
 Returns HTTP code 500 if an error occurred getting the credential
-Returns HTTP code 200 and the given credential as a Kubernetes secret in the given namespace with a blanked out password, otherwise an empty list is returned
+Returns HTTP code 200 and the given secret as a Kubernetes secret in the given namespace
 ```
 
 __Knative__
@@ -367,16 +367,32 @@ Example POST - for a Pipeline that clones a repository from GitHub and pushes to
 }
 ```
 
-__PUT endpoints__
+__Secrets__
+```
+POST /v1/namespaces/<namespace>/secrets
+Create a secret
+Request body must contain name, username, password, type ('accesstoken' or 'userpass'), description and the URL that the credential will be used for (e.g. the Git server)
 
-__Credentials__
+Example POST to create a secret for github:
+{ 
+   "metadata":{ 
+      "name":"test",
+      "annotations":{ 
+         "tekton.dev/git-0":"www.github.com"
+      }
+   },
+   "data":{ 
+      "password":"password",
+      "username":"username"
+   },
+   "type":"kubernetes.io/basic-auth"
+}
+
+Returns HTTP code 204 if the secret was created OK 
+Returns HTTP code 404 if a bad request was provided or if an error occurs creating the secret
 ```
-PUT /v1/namespaces/<namespace>/credentials/<id>
-Update credential by ID
-Request body must contain id, username, password, type ('accesstoken' or 'userpass'), description and the URL that the credential will be used for (e.g. the Git server)
-Returns HTTP code 204 if the credential was updated OK (no contents are provided in the response)
-Returns HTTP code 400 if a bad request was provided or if an error occurs updating the credential
-```
+
+__PUT endpoints__
 
 __PipelineRuns__
 ```
@@ -393,16 +409,38 @@ Returns HTTP code 500 if the PipelineRun could not be stopped (an error has occu
 
 __DELETE endpoints__
 
-__Credentials__
+__Secrets__
 ```
-DELETE /v1/namespaces/<namespace>/credentials/<id>
-Delete a credential by ID
+DELETE /v1/namespaces/<namespace>/secrets/<secret-name>
+Delete a secret by secret name
 
-Returns HTTP code 200 if the credential was deleted
-Returns HTTP code 400 if a bad request was used or if the secret was not found
-Returns HTTP code 500 if the found credential could not be deleted
+Returns HTTP code 200 if the secret was deleted
+Returns HTTP code 404 if a bad request was used or if the secret was not found
+Returns HTTP code 500 if the found secret could not be deleted
 ```
 
+__PATCH endpoints__
+
+__Service Accounts__
+```
+PATCH /v1/namespaces/<namespace>/serviceaccounts/<service-account-name>
+Patch a secret to a service account
+The header Content-Type must be set to application/json-patch+json
+
+Example PATCH to patch a secret to a service account 
+[
+   {
+     "op": "add",
+     "path": "serviceaccount/secrets/-",
+     "value": {
+       "name": "secret-name"
+     }
+   }
+]
+
+Returns HTTP code 200 if the secret was patched
+Returns HTTP code 404 if a bad request was used, if the service account was not found or  if the namespace was not found
+```
 
 ## Extension
 
