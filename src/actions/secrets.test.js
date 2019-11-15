@@ -28,7 +28,23 @@ const data = {
   items: [
     {
       metadata: {
-        name: 'secret-name',
+        name: 'default-token-kbn7j',
+        namespace: 'default',
+        annotations: undefined,
+        labels: {
+          serviceAccount: 'default'
+        }
+      },
+      data: {
+        username: 'someUser@email.com',
+        password: '********'
+      },
+      resourceVersion: '####',
+      type: 'userpass'
+    },
+    {
+      metadata: {
+        name: 'another-token-kbn7j',
         namespace: 'default',
         annotations: undefined,
         labels: {
@@ -47,7 +63,13 @@ const data = {
 
 const dataFormatted = [
   {
-    name: 'secret-name',
+    name: 'default-token-kbn7j',
+    annotations: undefined,
+    namespace: 'default',
+    type: 'userpass'
+  },
+  {
+    name: 'another-token-kbn7j',
     annotations: undefined,
     namespace: 'default',
     type: 'userpass'
@@ -55,7 +77,7 @@ const dataFormatted = [
 ];
 const postData = {
   metadata: {
-    name: 'secret-name',
+    name: 'default-token-kbn7j',
     namespace: 'default',
     annotations: { 'tekton.dev/git-0': 'https://github.ibm.com' },
     labels: {
@@ -83,6 +105,9 @@ const defaultServiceAccount = {
   secrets: [
     {
       name: 'default-token-kbn7j'
+    },
+    {
+      name: 'another-token-kbn7j'
     }
   ]
 };
@@ -139,7 +164,10 @@ it('fetchSecrets error', async () => {
 });
 
 it('deleteSecret', async () => {
-  const secrets = [{ name: 'secret-name', namespace: 'default' }];
+  const secrets = [
+    { name: 'default-token-kbn7j', namespace: 'default' },
+    { name: 'another-token-kbn7j', namespace: 'default' }
+  ];
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const store = mockStore();
@@ -148,6 +176,10 @@ it('deleteSecret', async () => {
     .spyOn(selectors, 'getSelectedNamespace')
     .mockImplementation(() => namespace);
 
+  jest
+    .spyOn(API, 'getServiceAccounts')
+    .mockImplementation(() => [defaultServiceAccount]);
+  jest.spyOn(API, 'updateServiceAccountSecrets').mockImplementation(() => {});
   jest.spyOn(API, 'deleteCredential').mockImplementation(() => {});
 
   const expectedActions = [
@@ -160,11 +192,15 @@ it('deleteSecret', async () => {
 });
 
 it('deleteSecret error', async () => {
-  const secrets = [{ name: 'secret-name', namespace: 'default' }];
+  const secrets = [{ name: 'default-token-kbn7j', namespace: 'default' }];
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const store = mockStore();
 
+  jest
+    .spyOn(API, 'getServiceAccounts')
+    .mockImplementation(() => [defaultServiceAccount]);
+  jest.spyOn(API, 'updateServiceAccountSecrets').mockImplementation(() => {});
   jest
     .spyOn(API, 'deleteCredential')
     .mockImplementation(() => Promise.reject());
