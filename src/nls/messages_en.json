@@ -59,6 +59,13 @@
     "dashboard.taskRun.status.notRun": "Not run",
     "dashboard.taskRun.status.running": "Running",
     "dashboard.taskRun.status.succeeded": "Completed",
-    "dashboard.taskRun.status.waiting": "Waiting"
+    "dashboard.taskRun.status.waiting": "Waiting",
+    "dashboard.triggerTemplate.clearNotification": "Clear Notification",
+    "dashboard.triggerTemplate.date": "Date Modified",
+    "dashboard.triggerTemplate.emptyTableAllNamespaces": "No TriggerTemplates under any namespace.",
+    "dashboard.triggerTemplate.emptyTableSelectedNamespace": "No TriggerTemplates under namespace {selectedNamespace}",
+    "dashboard.triggerTemplate.error": "Error:",
+    "dashboard.triggerTemplate.name": "Name",
+    "dashboard.triggerTemplate.namespace": "Namespace"
   }
 }

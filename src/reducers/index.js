@@ -22,6 +22,7 @@ import pipelines, * as pipelineSelectors from './pipelines';
 import pipelineResources, * as pipelineResourcesSelectors from './pipelineResources';
 import pipelineRuns, * as pipelineRunsSelectors from './pipelineRuns';
 import secrets, * as secretSelectors from './secrets';
+import triggerTemplates, * as triggerTemplatesSelectors from './triggerTemplates';
 import serviceAccounts, * as serviceAccountSelectors from './serviceAccounts';
 import tasks, * as taskSelectors from './tasks';
 import taskRuns, * as taskRunsSelectors from './taskRuns';
@@ -38,7 +39,8 @@ export default combineReducers({
   secrets,
   serviceAccounts: serviceAccounts(),
   tasks: tasks(),
-  taskRuns: taskRuns()
+  taskRuns: taskRuns(),
+  triggerTemplates: triggerTemplates()
 });
 
 export function getSelectedNamespace(state) {
@@ -307,4 +309,48 @@ export function getLocale(state) {
 
 export function isWebSocketConnected(state) {
   return notificationSelectors.isWebSocketConnected(state.notifications);
+}
+
+export function getTriggerTemplates(
+  state,
+  { filters, namespace = getSelectedNamespace(state) } = {}
+) {
+  const templates = triggerTemplatesSelectors.getTriggerTemplates(
+    state.triggerTemplates,
+    namespace
+  );
+  return templates.filter(trigger => {
+    return filters.every(filter => {
+      const [filterKey, filterValue] = filter.split('=');
+      return (
+        trigger.metadata.labels &&
+        filterKey &&
+        filterValue &&
+        trigger.metadata.labels[filterKey] === filterValue
+      );
+    });
+  });
+}
+
+export function getTriggerTemplate(
+  state,
+  { name, namespace = getSelectedNamespace(state) }
+) {
+  return triggerTemplatesSelectors.getTriggerTemplate(
+    state.triggerTemplates,
+    name,
+    namespace
+  );
+}
+
+export function getTriggerTemplatesErrorMessage(state) {
+  return triggerTemplatesSelectors.getTriggerTemplatesErrorMessage(
+    state.triggerTemplates
+  );
+}
+
+export function isFetchingTriggerTemplates(state) {
+  return triggerTemplatesSelectors.isFetchingTriggerTemplates(
+    state.triggerTemplates
+  );
 }

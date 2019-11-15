@@ -112,6 +112,11 @@ export const paths = {
       return byNamespace({ path: '/tasks' });
     }
   },
+  triggerTemplates: {
+    all() {
+      return '/triggertemplates';
+    }
+  },
   kubernetesResources: {
     all() {
       return '/:group/:version/:type';
