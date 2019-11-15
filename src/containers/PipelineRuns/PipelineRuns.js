@@ -75,12 +75,10 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
       webSocketConnected: prevWebSocketConnected
     } = prevProps;
 
-    if (
-      namespace !== prevNamespace ||
-      !isEqual(filters, prevFilters) ||
-      (webSocketConnected && prevWebSocketConnected === false)
-    ) {
+    if (namespace !== prevNamespace || !isEqual(filters, prevFilters)) {
       this.reset();
+      this.fetchPipelineRuns();
+    } else if (webSocketConnected && prevWebSocketConnected === false) {
       this.fetchPipelineRuns();
     }
   }
@@ -236,7 +234,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
       intl
     } = this.props;
 
-    if (loading) {
+    if ((!pipelineRuns || !pipelineRuns.length) && loading) {
       return <StructuredListSkeleton border />;
     }
 

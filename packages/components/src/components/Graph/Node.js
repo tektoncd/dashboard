@@ -12,20 +12,39 @@ limitations under the License.
 */
 /* istanbul ignore file */
 import React, { PureComponent } from 'react';
+import classNames from 'classnames';
 
 import CheckmarkFilled from '@carbon/icons-react/lib/checkmark--filled/16';
 import ChevronDown from '@carbon/icons-react/lib/chevron--down/16';
+import ChevronUp from '@carbon/icons-react/lib/chevron--up/16';
 import CloseFilled from '@carbon/icons-react/lib/close--filled/16';
 import Undefined from '@carbon/icons-react/lib/undefined/16';
 
+import Graph from './Graph'; // eslint-disable-line import/no-cycle
 import InlineLoading from './InlineLoading';
 import './Graph.scss';
 
 export default class Node extends PureComponent {
+  handleClick = () => {
+    this.props.onClick(this.props.id);
+  };
+
   render() {
-    const { children, height, status, type, width, label = type } = this.props;
+    const {
+      children,
+      edges,
+      height,
+      id,
+      isSelected,
+      status,
+      type,
+      width,
+      label = type
+    } = this.props;
 
     let StatusIcon;
+    // Steps should only display status icon on error
+    // Tasks will always show an icon
     if (type === 'Task' || status === 'error') {
       switch (status) {
         case 'error':
@@ -64,24 +83,51 @@ export default class Node extends PureComponent {
       };
     }
 
+    const labelHitboxProps = {
+      x: isSelected ? 0 : 1,
+      y: isSelected ? 0 : 1,
+      width: isSelected ? width : width - 2,
+      height: isSelected ? 26 : 24
+    };
+
+    const Chevron = children ? ChevronUp : ChevronDown;
+
+    const nodeClassNames = classNames(type, {
+      expanded: children,
+      collapsed: !children,
+      selected: isSelected
+    });
+
     return (
       <svg
         height={height}
         width={width}
         viewBox={`0 0 ${width} ${height}`}
         data-status={status}
-        className={type}
+        className={nodeClassNames}
       >
         <g>
           <rect width={width} height={height} />
-          <g className="label">
+          <g className="label" onClick={this.handleClick}>
             <title>{label}</title>
+            {type !== 'Start' && type !== 'End' && (
+              <rect className="label-hitbox" {...labelHitboxProps} />
+            )}
             {StatusIcon}
             <text {...labelPosition}>{labelText}</text>
-            {children && children.length && (
-              <ChevronDown className="chevron" x={width - 22} y="5" />
+            {type === 'Task' && (
+              <Chevron className="chevron" x={width - 22} y="5" />
             )}
           </g>
+          {children && (
+            <Graph
+              graph={{ id: `${id}_subgraph`, children, edges }}
+              isSubGraph
+              width={width}
+              height={height}
+              y={1}
+            />
+          )}
         </g>
       </svg>
     );
@@ -89,6 +135,7 @@ export default class Node extends PureComponent {
 }
 
 Node.defaultProps = {
-  width: 100,
-  height: 100
+  height: 100,
+  onClick: () => {},
+  width: 100
 };

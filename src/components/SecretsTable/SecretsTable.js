@@ -50,12 +50,9 @@ const SecretsTable = props => {
 
   const initialHeaders = [
     { key: 'secret', header: 'Secret' },
+    { key: 'namespace', header: 'Namespace' },
     { key: 'annotations', header: 'Annotations' }
   ];
-
-  if (selectedNamespace === ALL_NAMESPACES) {
-    initialHeaders.splice(1, 0, { key: 'namespace', header: 'Namespace' });
-  }
 
   const secretsFormatted = secrets.map(secret => {
     let annotations = '';
@@ -65,14 +62,11 @@ const SecretsTable = props => {
       }
     });
     const formattedSecret = {
+      annotations,
       id: `${secret.namespace}:${secret.name}`,
-      secret: secret.name,
-      annotations
+      namespace: secret.namespace,
+      secret: secret.name
     };
-
-    if (selectedNamespace === ALL_NAMESPACES) {
-      formattedSecret.namespace = secret.namespace;
-    }
 
     return formattedSecret;
   });
