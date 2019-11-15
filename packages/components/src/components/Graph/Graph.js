@@ -11,18 +11,26 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 /* istanbul ignore file */
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import { Graph as VXGraph } from '@vx/network';
 import ELK from 'elkjs/lib/elk.bundled';
 
 import Node from './Node'; // eslint-disable-line import/no-cycle
 import NodeLink from './NodeLink';
 
-export default class Graph extends PureComponent {
+export default class Graph extends Component {
   state = {};
 
   componentDidMount() {
     this.layout();
+  }
+
+  componentDidUpdate(prevProps) {
+    const { graph } = this.props;
+    const { graph: prevGraph } = prevProps;
+    if (graph !== prevGraph) {
+      this.layout();
+    }
   }
 
   layout = () => {
@@ -59,7 +67,7 @@ export default class Graph extends PureComponent {
   };
 
   render() {
-    const { height, isSubGraph, width, y } = this.props;
+    const { height, isSubGraph, onClickStep, onClickTask, width } = this.props;
     const { links, margin, nodes } = this.state;
 
     if (!nodes) {
@@ -74,7 +82,6 @@ export default class Graph extends PureComponent {
         width={width}
         viewBox={`0 0 ${width} ${height}`}
         preserveAspectRatio="xMidYMin meet"
-        y={y}
       >
         <defs>
           <marker
@@ -93,7 +100,11 @@ export default class Graph extends PureComponent {
         <VXGraph
           graph={{ links, nodes }}
           nodeComponent={c => (
-            <Node onClick={n => console.log('onClick', n)} {...c.node} />
+            <Node
+              onClick={isSubGraph ? onClickStep : onClickTask}
+              onClickStep={isSubGraph ? undefined : onClickStep}
+              {...c.node}
+            />
           )}
           linkComponent={isSubGraph ? () => null : NodeLink}
         />
@@ -103,5 +114,7 @@ export default class Graph extends PureComponent {
 }
 
 Graph.defaultProps = {
-  isSubGraph: false
+  isSubGraph: false,
+  onClickStep: () => {},
+  onClickTask: () => {}
 };

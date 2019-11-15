@@ -1,0 +1,184 @@
+{
+  "apiVersion": "tekton.dev/v1alpha1",
+  "kind": "Pipeline",
+  "metadata": {
+    "annotations": {
+      "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"tekton.dev/v1alpha1\",\"kind\":\"Pipeline\",\"metadata\":{\"annotations\":{},\"name\":\"demo-pipeline\",\"namespace\":\"default\"},\"spec\":{\"resources\":[{\"name\":\"source-repo\",\"type\":\"git\"},{\"name\":\"web-image\",\"type\":\"image\"},{\"name\":\"app-image\",\"type\":\"image\"}],\"tasks\":[{\"name\":\"skaffold-unit-tests\",\"resources\":{\"inputs\":[{\"name\":\"workspace\",\"resource\":\"source-repo\"}]},\"taskRef\":{\"name\":\"unit-tests\"}},{\"name\":\"build-skaffold-web\",\"params\":[{\"name\":\"pathToDockerFile\",\"value\":\"Dockerfile\"},{\"name\":\"pathToContext\",\"value\":\"/workspace/workspace/examples/microservices/leeroy-web\"}],\"resources\":{\"inputs\":[{\"name\":\"workspace\",\"resource\":\"source-repo\"}],\"outputs\":[{\"name\":\"builtImage\",\"resource\":\"web-image\"}]},\"runAfter\":[\"skaffold-unit-tests\"],\"taskRef\":{\"name\":\"build-push\"}},{\"name\":\"build-skaffold-app\",\"params\":[{\"name\":\"pathToDockerFile\",\"value\":\"Dockerfile\"},{\"name\":\"pathToContext\",\"value\":\"/workspace/workspace/examples/microservices/leeroy-app\"}],\"resources\":{\"inputs\":[{\"name\":\"workspace\",\"resource\":\"source-repo\"}],\"outputs\":[{\"name\":\"builtImage\",\"resource\":\"app-image\"}]},\"runAfter\":[\"skaffold-unit-tests\"],\"taskRef\":{\"name\":\"build-push\"}},{\"name\":\"deploy-app\",\"params\":[{\"name\":\"path\",\"value\":\"/workspace/workspace/examples/microservices/leeroy-app/kubernetes/deployment.yaml\"},{\"name\":\"yqArg\",\"value\":\"-d1\"},{\"name\":\"yamlPathToImage\",\"value\":\"spec.template.spec.containers[0].image\"}],\"resources\":{\"inputs\":[{\"name\":\"workspace\",\"resource\":\"source-repo\"},{\"from\":[\"build-skaffold-app\"],\"name\":\"image\",\"resource\":\"app-image\"}]},\"taskRef\":{\"name\":\"demo-deploy-kubectl\"}},{\"name\":\"deploy-web\",\"params\":[{\"name\":\"path\",\"value\":\"/workspace/workspace/examples/microservices/leeroy-web/kubernetes/deployment.yaml\"},{\"name\":\"yqArg\",\"value\":\"-d1\"},{\"name\":\"yamlPathToImage\",\"value\":\"spec.template.spec.containers[0].image\"}],\"resources\":{\"inputs\":[{\"name\":\"workspace\",\"resource\":\"source-repo\"},{\"from\":[\"build-skaffold-web\"],\"name\":\"image\",\"resource\":\"web-image\"}]},\"taskRef\":{\"name\":\"demo-deploy-kubectl\"}}]}}\n"
+    },
+    "creationTimestamp": "2019-09-06T13:50:58Z",
+    "generation": 1,
+    "name": "demo-pipeline",
+    "namespace": "default",
+    "resourceVersion": "8757",
+    "selfLink": "/apis/tekton.dev/v1alpha1/namespaces/default/pipelines/demo-pipeline",
+    "uid": "5ad77b29-d0ad-11e9-b992-025000000001"
+  },
+  "spec": {
+    "resources": [
+      {
+        "name": "source-repo",
+        "type": "git"
+      },
+      {
+        "name": "web-image",
+        "type": "image"
+      },
+      {
+        "name": "app-image",
+        "type": "image"
+      }
+    ],
+    "tasks": [
+      {
+        "name": "skaffold-unit-tests",
+        "resources": {
+          "inputs": [
+            {
+              "name": "workspace",
+              "resource": "source-repo"
+            }
+          ]
+        },
+        "taskRef": {
+          "name": "unit-tests"
+        }
+      },
+      {
+        "name": "build-skaffold-web",
+        "params": [
+          {
+            "name": "pathToDockerFile",
+            "value": "Dockerfile"
+          },
+          {
+            "name": "pathToContext",
+            "value": "/workspace/workspace/examples/microservices/leeroy-web"
+          }
+        ],
+        "resources": {
+          "inputs": [
+            {
+              "name": "workspace",
+              "resource": "source-repo"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "builtImage",
+              "resource": "web-image"
+            }
+          ]
+        },
+        "runAfter": [
+          "skaffold-unit-tests"
+        ],
+        "taskRef": {
+          "name": "build-push"
+        }
+      },
+      {
+        "name": "build-skaffold-app",
+        "params": [
+          {
+            "name": "pathToDockerFile",
+            "value": "Dockerfile"
+          },
+          {
+            "name": "pathToContext",
+            "value": "/workspace/workspace/examples/microservices/leeroy-app"
+          }
+        ],
+        "resources": {
+          "inputs": [
+            {
+              "name": "workspace",
+              "resource": "source-repo"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "builtImage",
+              "resource": "app-image"
+            }
+          ]
+        },
+        "runAfter": [
+          "skaffold-unit-tests"
+        ],
+        "taskRef": {
+          "name": "build-push"
+        }
+      },
+      {
+        "name": "deploy-app",
+        "params": [
+          {
+            "name": "path",
+            "value": "/workspace/workspace/examples/microservices/leeroy-app/kubernetes/deployment.yaml"
+          },
+          {
+            "name": "yqArg",
+            "value": "-d1"
+          },
+          {
+            "name": "yamlPathToImage",
+            "value": "spec.template.spec.containers[0].image"
+          }
+        ],
+        "resources": {
+          "inputs": [
+            {
+              "name": "workspace",
+              "resource": "source-repo"
+            },
+            {
+              "from": [
+                "build-skaffold-app"
+              ],
+              "name": "image",
+              "resource": "app-image"
+            }
+          ]
+        },
+        "taskRef": {
+          "name": "demo-deploy-kubectl"
+        }
+      },
+      {
+        "name": "deploy-web",
+        "params": [
+          {
+            "name": "path",
+            "value": "/workspace/workspace/examples/microservices/leeroy-web/kubernetes/deployment.yaml"
+          },
+          {
+            "name": "yqArg",
+            "value": "-d1"
+          },
+          {
+            "name": "yamlPathToImage",
+            "value": "spec.template.spec.containers[0].image"
+          }
+        ],
+        "resources": {
+          "inputs": [
+            {
+              "name": "workspace",
+              "resource": "source-repo"
+            },
+            {
+              "from": [
+                "build-skaffold-web"
+              ],
+              "name": "image",
+              "resource": "web-image"
+            }
+          ]
+        },
+        "taskRef": {
+          "name": "demo-deploy-kubectl"
+        }
+      }
+    ]
+  }
+}
