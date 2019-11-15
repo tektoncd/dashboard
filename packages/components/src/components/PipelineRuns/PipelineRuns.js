@@ -34,6 +34,17 @@ const PipelineRuns = ({
   createPipelineRunTimestamp = pipelineRun =>
     getStatus(pipelineRun).lastTransitionTime,
   createPipelineRunsByPipelineURL = urls.pipelineRuns.byPipeline,
+  getPipelineRunStatus = (pipelineRun, intl) =>
+    pipelineRun.status && pipelineRun.status.conditions
+      ? pipelineRun.status.conditions[0].message
+      : intl.formatMessage({
+          id: 'dashboard.pipelineRuns.status.pending',
+          defaultMessage: 'Pending'
+        }),
+  getPipelineRunStatusIcon = pipelineRun => {
+    const { reason, status } = getStatus(pipelineRun);
+    return getStatusIcon({ reason, status });
+  },
   hideNamespace,
   intl,
   pipelineName,
@@ -97,6 +108,8 @@ const PipelineRuns = ({
         });
         const pipelineRefName = pipelineRun.spec.pipelineRef.name;
         const { reason, status } = getStatus(pipelineRun);
+        const statusIcon = getPipelineRunStatusIcon(pipelineRun);
+        const pipelineRunStatus = getPipelineRunStatus(pipelineRun, intl);
         const url = createPipelineRunURL({
           namespace,
           pipelineRunName,
@@ -131,13 +144,8 @@ const PipelineRuns = ({
               data-reason={reason}
               data-status={status}
             >
-              {getStatusIcon({ reason, status })}
-              {pipelineRun.status && pipelineRun.status.conditions
-                ? pipelineRun.status.conditions[0].message
-                : intl.formatMessage({
-                    id: 'dashboard.pipelineRuns.status.pending',
-                    defaultMessage: 'Pending'
-                  })}
+              {statusIcon}
+              {pipelineRunStatus}
             </StructuredListCell>
             <StructuredListCell>
               <FormattedDate
