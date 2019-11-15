@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 /* istanbul ignore file */
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import classNames from 'classnames';
 
 import CheckmarkFilled from '@carbon/icons-react/lib/checkmark--filled/16';
@@ -24,9 +24,13 @@ import Graph from './Graph'; // eslint-disable-line import/no-cycle
 import InlineLoading from './InlineLoading';
 import './Graph.scss';
 
-export default class Node extends PureComponent {
+export default class Node extends Component {
   handleClick = () => {
-    this.props.onClick(this.props.id);
+    this.props.onClick(this.props.label);
+  };
+
+  handleClickStep = stepName => {
+    this.props.onClickStep(this.props.label, stepName);
   };
 
   render() {
@@ -123,9 +127,9 @@ export default class Node extends PureComponent {
             <Graph
               graph={{ id: `${id}_subgraph`, children, edges }}
               isSubGraph
+              onClickStep={this.handleClickStep}
               width={width}
               height={height}
-              y={1}
             />
           )}
         </g>
@@ -137,5 +141,6 @@ export default class Node extends PureComponent {
 Node.defaultProps = {
   height: 100,
   onClick: () => {},
+  onClickStep: () => {},
   width: 100
 };

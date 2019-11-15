@@ -1,0 +1,205 @@
+[
+  {
+    "apiVersion": "tekton.dev/v1alpha1",
+    "kind": "Task",
+    "metadata": {
+      "annotations": {
+        "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"tekton.dev/v1alpha1\",\"kind\":\"Task\",\"metadata\":{\"annotations\":{},\"name\":\"build-push\",\"namespace\":\"default\"},\"spec\":{\"inputs\":{\"params\":[{\"default\":\"/workspace/workspace/Dockerfile\",\"description\":\"The path to the dockerfile to build\",\"name\":\"pathToDockerFile\"},{\"default\":\"/workspace/workspace\",\"description\":\"The build context used by Kaniko (https://github.com/GoogleContainerTools/kaniko#kaniko-build-contexts)\",\"name\":\"pathToContext\"}],\"resources\":[{\"name\":\"workspace\",\"type\":\"git\"}]},\"outputs\":{\"resources\":[{\"name\":\"builtImage\",\"type\":\"image\"}]},\"steps\":[{\"args\":[\"--dockerfile=$(inputs.params.pathToDockerFile)\",\"--destination=$(outputs.resources.builtImage.url)\",\"--context=$(inputs.params.pathToContext)\"],\"command\":[\"/kaniko/executor\"],\"env\":[{\"name\":\"DOCKER_CONFIG\",\"value\":\"/builder/home/.docker/\"}],\"image\":\"gcr.io/kaniko-project/executor:v0.9.0\",\"name\":\"build-and-push\"}]}}\n"
+      },
+      "creationTimestamp": "2019-09-06T13:50:58Z",
+      "generation": 1,
+      "name": "build-push",
+      "namespace": "default",
+      "resourceVersion": "8755",
+      "selfLink": "/apis/tekton.dev/v1alpha1/namespaces/default/tasks/build-push",
+      "uid": "5ad324b5-d0ad-11e9-b992-025000000001"
+    },
+    "spec": {
+      "inputs": {
+        "params": [
+          {
+            "default": "/workspace/workspace/Dockerfile",
+            "description": "The path to the dockerfile to build",
+            "name": "pathToDockerFile",
+            "type": "string"
+          },
+          {
+            "default": "/workspace/workspace",
+            "description": "The build context used by Kaniko (https://github.com/GoogleContainerTools/kaniko#kaniko-build-contexts)",
+            "name": "pathToContext",
+            "type": "string"
+          }
+        ],
+        "resources": [
+          {
+            "name": "workspace",
+            "outputImageDir": "",
+            "targetPath": "",
+            "type": "git"
+          }
+        ]
+      },
+      "outputs": {
+        "resources": [
+          {
+            "name": "builtImage",
+            "outputImageDir": "/builder/home/image-outputs/builtImage",
+            "targetPath": "",
+            "type": "image"
+          }
+        ]
+      },
+      "steps": [
+        {
+          "args": [
+            "--dockerfile=$(inputs.params.pathToDockerFile)",
+            "--destination=$(outputs.resources.builtImage.url)",
+            "--context=$(inputs.params.pathToContext)"
+          ],
+          "command": [
+            "/kaniko/executor"
+          ],
+          "env": [
+            {
+              "name": "DOCKER_CONFIG",
+              "value": "/builder/home/.docker/"
+            }
+          ],
+          "image": "gcr.io/kaniko-project/executor:v0.9.0",
+          "name": "build-and-push",
+          "resources": {}
+        }
+      ]
+    }
+  },
+  {
+    "apiVersion": "tekton.dev/v1alpha1",
+    "kind": "Task",
+    "metadata": {
+      "annotations": {
+        "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"tekton.dev/v1alpha1\",\"kind\":\"Task\",\"metadata\":{\"annotations\":{},\"name\":\"unit-tests\",\"namespace\":\"default\"},\"spec\":{\"inputs\":{\"resources\":[{\"name\":\"workspace\",\"targetPath\":\"go/src/github.com/GoogleContainerTools/skaffold\",\"type\":\"git\"}]},\"steps\":[{\"args\":[\"pass\"],\"command\":[\"echo\"],\"env\":[{\"name\":\"GOPATH\",\"value\":\"/workspace/go\"}],\"image\":\"golang\",\"name\":\"run-tests\",\"workingDir\":\"/workspace/go/src/github.com/GoogleContainerTools/skaffold\"}]}}\n"
+      },
+      "creationTimestamp": "2019-09-06T13:50:58Z",
+      "generation": 1,
+      "name": "unit-tests",
+      "namespace": "default",
+      "resourceVersion": "8754",
+      "selfLink": "/apis/tekton.dev/v1alpha1/namespaces/default/tasks/unit-tests",
+      "uid": "5ad1375e-d0ad-11e9-b992-025000000001"
+    },
+    "spec": {
+      "inputs": {
+        "resources": [
+          {
+            "name": "workspace",
+            "outputImageDir": "",
+            "targetPath": "go/src/github.com/GoogleContainerTools/skaffold",
+            "type": "git"
+          }
+        ]
+      },
+      "steps": [
+        {
+          "args": [
+            "pass"
+          ],
+          "command": [
+            "echo"
+          ],
+          "env": [
+            {
+              "name": "GOPATH",
+              "value": "/workspace/go"
+            }
+          ],
+          "image": "golang",
+          "name": "run-tests",
+          "resources": {},
+          "workingDir": "/workspace/go/src/github.com/GoogleContainerTools/skaffold"
+        }
+      ]
+    }
+  },
+  {
+    "apiVersion": "tekton.dev/v1alpha1",
+    "kind": "Task",
+    "metadata": {
+      "annotations": {
+        "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"tekton.dev/v1alpha1\",\"kind\":\"Task\",\"metadata\":{\"annotations\":{},\"name\":\"demo-deploy-kubectl\",\"namespace\":\"default\"},\"spec\":{\"inputs\":{\"params\":[{\"description\":\"Path to the manifest to apply\",\"name\":\"path\"},{\"description\":\"Okay this is a hack, but I didn't feel right hard-codeing `-d1` down below\",\"name\":\"yqArg\"},{\"description\":\"The path to the image to replace in the yaml manifest (arg to yq)\",\"name\":\"yamlPathToImage\"}],\"resources\":[{\"name\":\"workspace\",\"type\":\"git\"},{\"name\":\"image\",\"type\":\"image\"}]},\"steps\":[{\"args\":[\"w\",\"-i\",\"$(inputs.params.yqArg)\",\"$(inputs.params.path)\",\"$(inputs.params.yamlPathToImage)\",\"$(inputs.resources.image.url)\"],\"command\":[\"yq\"],\"image\":\"mikefarah/yq\",\"name\":\"replace-image\"},{\"args\":[\"apply\",\"-f\",\"$(inputs.params.path)\"],\"command\":[\"kubectl\"],\"image\":\"lachlanevenson/k8s-kubectl\",\"name\":\"run-kubectl\"}]}}\n"
+      },
+      "creationTimestamp": "2019-09-06T13:50:58Z",
+      "generation": 1,
+      "name": "demo-deploy-kubectl",
+      "namespace": "default",
+      "resourceVersion": "8756",
+      "selfLink": "/apis/tekton.dev/v1alpha1/namespaces/default/tasks/demo-deploy-kubectl",
+      "uid": "5ad53893-d0ad-11e9-b992-025000000001"
+    },
+    "spec": {
+      "inputs": {
+        "params": [
+          {
+            "description": "Path to the manifest to apply",
+            "name": "path",
+            "type": "string"
+          },
+          {
+            "description": "Okay this is a hack, but I didn't feel right hard-codeing `-d1` down below",
+            "name": "yqArg",
+            "type": "string"
+          },
+          {
+            "description": "The path to the image to replace in the yaml manifest (arg to yq)",
+            "name": "yamlPathToImage",
+            "type": "string"
+          }
+        ],
+        "resources": [
+          {
+            "name": "workspace",
+            "outputImageDir": "",
+            "targetPath": "",
+            "type": "git"
+          },
+          {
+            "name": "image",
+            "outputImageDir": "",
+            "targetPath": "",
+            "type": "image"
+          }
+        ]
+      },
+      "steps": [
+        {
+          "args": [
+            "w",
+            "-i",
+            "$(inputs.params.yqArg)",
+            "$(inputs.params.path)",
+            "$(inputs.params.yamlPathToImage)",
+            "$(inputs.resources.image.url)"
+          ],
+          "command": [
+            "yq"
+          ],
+          "image": "mikefarah/yq",
+          "name": "replace-image",
+          "resources": {}
+        },
+        {
+          "args": [
+            "apply",
+            "-f",
+            "$(inputs.params.path)"
+          ],
+          "command": [
+            "kubectl"
+          ],
+          "image": "lachlanevenson/k8s-kubectl",
+          "name": "run-kubectl",
+          "resources": {}
+        }
+      ]
+    }
+  }
+]

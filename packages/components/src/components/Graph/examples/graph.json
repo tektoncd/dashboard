@@ -64,14 +64,8 @@
           "height": 26,
           "nChildren": 2,
           "nParents": 1,
-          "visited": [
-            3
-          ],
           "type": "Step"
         }
-      ],
-      "visited": [
-        2
       ],
       "edges": [],
       "nParents": 1,
@@ -242,9 +236,6 @@
       "height": 60,
       "nChildren": 1,
       "nParents": 0,
-      "visited": [
-        0
-      ],
       "ports": [
         {
           "id": "Start-pSourceSingleton"
@@ -259,9 +250,6 @@
       "height": 60,
       "nChildren": 0,
       "nParents": 2,
-      "visited": [
-        1
-      ],
       "ports": [
         {
           "id": "End-pTargetSingleton"

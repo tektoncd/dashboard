@@ -13,10 +13,16 @@ limitations under the License.
 
 import React from 'react';
 import { storiesOf } from '@storybook/react';
+import { action } from '@storybook/addon-actions';
 
 import Node from './Node';
 import Graph from './Graph';
-import graph from './sample.json';
+import PipelineGraph from './PipelineGraph';
+
+import graph from './examples/graph.json';
+import pipeline from './examples/pipeline.json';
+import pipelineRun from './examples/pipelineRun.json';
+import tasks from './examples/tasks.json';
 
 /*
   TODO:
@@ -44,19 +50,19 @@ const expandedProps = {
       type: 'Step',
       id: '__step_build-and-push__build-image',
       label: 'build-image',
-      width: 110,
+      width: 160,
       height: 26
     },
     {
       type: 'Step',
       id: '__step_build-and-push__push-image',
       label: 'push-image',
-      width: 110,
+      width: 160,
       height: 26
     }
   ],
   edges: [],
-  height: 82
+  height: 79
 };
 
 storiesOf('Graph/Node', module)
@@ -78,4 +84,14 @@ storiesOf('Graph/Node', module)
 
 storiesOf('Graph/Graph', module).add('default', () => (
   <Graph graph={graph} width={450} height={550} />
+));
+
+storiesOf('Graph/PipelineGraph', module).add('default', () => (
+  <PipelineGraph
+    onClickStep={action('onClickStep')}
+    onClickTask={action('onClickTask')}
+    pipeline={pipeline}
+    pipelineRun={pipelineRun}
+    tasks={tasks}
+  />
 ));
