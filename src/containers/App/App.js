@@ -46,7 +46,8 @@ import {
   SideNav,
   TaskRun,
   TaskRuns,
-  Tasks
+  Tasks,
+  TriggerTemplates
 } from '..';
 
 import { shouldDisplayLogout } from '../../api';
@@ -181,6 +182,12 @@ export /* istanbul ignore next */ class App extends Component {
                   component={ImportResources}
                 />
                 <Route path={paths.secrets.all()} exact component={Secrets} />
+
+                <Route
+                  path={paths.triggerTemplates.all()}
+                  exact
+                  component={TriggerTemplates}
+                />
 
                 <Route
                   path={paths.extensions.all()}

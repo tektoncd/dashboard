@@ -36,3 +36,4 @@ export { default as SideNav } from './SideNav';
 export { default as Tasks } from './Tasks';
 export { default as TaskRun } from './TaskRun';
 export { default as TaskRuns } from './TaskRuns';
+export { default as TriggerTemplates } from './TriggerTemplates';
