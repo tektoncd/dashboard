@@ -232,14 +232,6 @@ Returns HTTP code 200 and the registered dashboard ingress host value
 Returns HTTP code 404 if an error occurred getting the ingress
 ```
 
-__PipelineRuns__
-```
-GET /v1/namespaces/<namespace>/pipelineruns/<pipelinerun-name>
-Get a Tekton PipelineRun by name
-Returns HTTP code 200 and the given PipelineRun in the given namespace
-Returns HTTP code 404 if an error occurred getting the PipelineRun
-```
-
 __Logs__
 ```
 GET /v1/namespaces/<namespace>/taskrunlogs/<taskrun-name>
@@ -294,152 +286,12 @@ Get the logs for a PipelineRun by name
 Returns HTTP code 200 and the logs from a PipelineRun (unformatted)
 ```
 
-__Secrets__
-```
-GET /v1/namespaces/<namespace>/secrets
-Get all secrets by name in the given namespace
-Returns HTTP code 500 if an error occurred getting the secrets
-Returns HTTP code 200 and the given secrets as a Kubernetes secret in the given namespace if found, otherwise an empty list is returned
-
-GET /v1/namespaces/<namespace>/secrets/<secret-name>
-Get a secret by secret name
-Returns HTTP code 404 if the secret does not exist by name or an invalid namespace was provided
-Returns HTTP code 500 if an error occurred getting the credential
-Returns HTTP code 200 and the given secret as a Kubernetes secret in the given namespace
-```
-
-__Knative__
-```
-GET /v1/namespaces/<namespace>/knative/installstatus
-Get the install status of a Knative resource group.
-The request body should contain the resource group to check for. Shorthand values are accepted for Knative serving and eventing-sources: use ("component": "serving" or "eventing-sources"). Any Kubernetes group can be used too, for example: `extensions/v1beta1`
-
-Returns HTTP code 204 if the component is installed (any Kubernetes resource can be provided)
-Returns HTTP code 400 if a bad request is sent
-Returns HTTP code 417 (expectation failed) if the resource is not registered
-
-Note that a check of the resource definition being registered is performed: not that pods are running and healthy
-```
-
 __Extensions__
 ```
 GET /v1/extensions
 Get all extensions in the given namespace
 Returns HTTP code 500 if an error occurred getting the extensions
 Returns HTTP code 200 and the given extensions in the given namespace if found, otherwise an empty list is returned
-```
-
-__POST endpoints__
-
-__PipelineRuns__
-```
-POST /v1/namespaces/<namespace>/pipelineruns
-Creates a new manual PipelineRun based on a specified Pipeline
-Request body must contain pipelinename for the Pipeline to run
-
-Optional parameters listed below may be provided in the request body depending on requirements of the Pipeline:
-
-  - pipelineruntype can be specifed as helm if your Pipeline is deploying with Helm
-
-  - gitresourcename, gitcommit, and repourl can be provided in the request body if your Pipeline requires a PipelineResource of type `git`
-  - imageresourcename, gitcommit and reponame can be provided in the request body if your Pipeline requires a PipelineResource of type `image`
-
-  - helmsecret is optional depending on whether the Pipeline requires a secret for using Helm
-
-  - serviceaccount can be provided to specify the serviceaccount to use for the PipelineRun
-
-  - registrylocation can be provided to specify where you wish to push built images
-
-Returns HTTP code 201 if the PipelineRun was created successfully
-Returns HTTP code 400 if a bad request was provided
-Returns HTTP code 412 if the Pipeline to create the PipelineRun could not be found
-
-Example POST - for a Pipeline that clones a repository from GitHub and pushes to Dockerhub using a configured secret
-{
-    "pipelinename": "mypipeline",
-    "serviceaccount": "tekton-pipelines",
-    "registrylocation": "dockerhubusername",
-    "gitresourcename": "mygitresourcename",
-    "imageresourcename": "myimageresourcename",
-    "gitcommit": "branchorcommit",
-    "repourl": "https://github.com/myorg/myrepo",
-    "reponame": "myrepo"
-}
-```
-
-__Secrets__
-```
-POST /v1/namespaces/<namespace>/secrets
-Create a secret
-Request body must contain name, username, password, type ('accesstoken' or 'userpass'), description and the URL that the credential will be used for (e.g. the Git server)
-
-Example POST to create a secret for github:
-{ 
-   "metadata":{ 
-      "name":"test",
-      "annotations":{ 
-         "tekton.dev/git-0":"www.github.com"
-      }
-   },
-   "data":{ 
-      "password":"password",
-      "username":"username"
-   },
-   "type":"kubernetes.io/basic-auth"
-}
-
-Returns HTTP code 204 if the secret was created OK 
-Returns HTTP code 404 if a bad request was provided or if an error occurs creating the secret
-```
-
-__PUT endpoints__
-
-__PipelineRuns__
-```
-PUT /v1/namespaces/<namespace>/pipelineruns/<pipelinerun-name>
-Update pipelinerun status
-Request body must contain desired status ("status": "PipelineRunCancelled" to cancel a running one).
-
-Returns HTTP code 204 if the PipelineRun was cancelled successfully (no contents are provided in the response)
-Returns HTTP code 400 if a bad request was used
-Returns HTTP code 404 if the requested PipelineRun could not be found
-Returns HTTP code 412 if the status was already set to that
-Returns HTTP code 500 if the PipelineRun could not be stopped (an error has occurred when updating the PipelineRun)
-```
-
-__DELETE endpoints__
-
-__Secrets__
-```
-DELETE /v1/namespaces/<namespace>/secrets/<secret-name>
-Delete a secret by secret name
-
-Returns HTTP code 200 if the secret was deleted
-Returns HTTP code 404 if a bad request was used or if the secret was not found
-Returns HTTP code 500 if the found secret could not be deleted
-```
-
-__PATCH endpoints__
-
-__Service Accounts__
-```
-PATCH /v1/namespaces/<namespace>/serviceaccounts/<service-account-name>
-Patch a secret to a service account
-The header Content-Type must be set to application/json-patch+json
-
-Example PATCH to patch a secret to a service account 
-[
-   {
-     "op": "add",
-     "path": "serviceaccount/secrets/-",
-     "value": {
-       "name": "secret-name"
-     }
-   }
-]
-
-Returns HTTP code 200 if the secret was patched
-Returns HTTP code 404 if a bad request was used, if the service account was not found or  if the namespace was not found
 ```
 
 ## Extension
