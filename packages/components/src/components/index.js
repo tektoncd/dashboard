@@ -19,6 +19,7 @@ export { default as Header } from './Header';
 export { default as LabelFilter } from './LabelFilter';
 export { default as Log } from './Log';
 export { default as LogoutButton } from './LogoutButton';
+export { default as PageErrorBoundary } from './PageErrorBoundary';
 export { default as PipelineRun } from './PipelineRun';
 export { default as PipelineRuns } from './PipelineRuns';
 export { default as Rebuild } from './Rebuild';

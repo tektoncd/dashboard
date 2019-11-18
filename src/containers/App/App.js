@@ -26,7 +26,8 @@ import { Content } from 'carbon-components-react';
 import {
   Breadcrumbs,
   Header,
-  LogoutButton
+  LogoutButton,
+  PageErrorBoundary
 } from '@tektoncd/dashboard-components';
 import { paths, urls } from '@tektoncd/dashboard-utils';
 
@@ -105,144 +106,146 @@ export /* istanbul ignore next */ class App extends Component {
             </Route>
 
             <Content>
-              <Switch>
-                <Route
-                  path={paths.pipelines.all()}
-                  exact
-                  component={Pipelines}
-                />
-                <Route
-                  path={paths.pipelines.byNamespace()}
-                  exact
-                  component={Pipelines}
-                />
-                <Route
-                  path={paths.pipelineRuns.all()}
-                  component={PipelineRuns}
-                />
-                <Route
-                  path={paths.pipelineRuns.byNamespace()}
-                  exact
-                  component={PipelineRuns}
-                />
-                <Route
-                  path={paths.pipelineRuns.byPipeline()}
-                  exact
-                  component={PipelineRuns}
-                />
-                <Route
-                  path={paths.pipelineRuns.byName()}
-                  component={PipelineRun}
-                />
-                <Route
-                  path={paths.pipelineResources.all()}
-                  exact
-                  component={PipelineResources}
-                />
-                <Route
-                  path={paths.pipelineResources.byNamespace()}
-                  exact
-                  component={PipelineResources}
-                />
-                <Route
-                  path={paths.pipelineResources.byName()}
-                  exact
-                  component={PipelineResource}
-                />
-                <Route path={paths.tasks.all()} exact component={Tasks} />
-                <Route
-                  path={paths.tasks.byNamespace()}
-                  exact
-                  component={Tasks}
-                />
-                <Route path={paths.taskRuns.all()} component={TaskRuns} />
-                <Route
-                  path={paths.taskRuns.byNamespace()}
-                  exact
-                  component={TaskRuns}
-                />
-                <Route
-                  path={paths.taskRuns.byTask()}
-                  exact
-                  component={TaskRuns}
-                />
-                <Route
-                  path={paths.taskRuns.byName()}
-                  exact
-                  component={TaskRun}
-                />
-                <Route
-                  path={paths.clusterTasks.all()}
-                  exact
-                  component={ClusterTasks}
-                />
+              <PageErrorBoundary>
+                <Switch>
+                  <Route
+                    path={paths.pipelines.all()}
+                    exact
+                    component={Pipelines}
+                  />
+                  <Route
+                    path={paths.pipelines.byNamespace()}
+                    exact
+                    component={Pipelines}
+                  />
+                  <Route
+                    path={paths.pipelineRuns.all()}
+                    component={PipelineRuns}
+                  />
+                  <Route
+                    path={paths.pipelineRuns.byNamespace()}
+                    exact
+                    component={PipelineRuns}
+                  />
+                  <Route
+                    path={paths.pipelineRuns.byPipeline()}
+                    exact
+                    component={PipelineRuns}
+                  />
+                  <Route
+                    path={paths.pipelineRuns.byName()}
+                    component={PipelineRun}
+                  />
+                  <Route
+                    path={paths.pipelineResources.all()}
+                    exact
+                    component={PipelineResources}
+                  />
+                  <Route
+                    path={paths.pipelineResources.byNamespace()}
+                    exact
+                    component={PipelineResources}
+                  />
+                  <Route
+                    path={paths.pipelineResources.byName()}
+                    exact
+                    component={PipelineResource}
+                  />
+                  <Route path={paths.tasks.all()} exact component={Tasks} />
+                  <Route
+                    path={paths.tasks.byNamespace()}
+                    exact
+                    component={Tasks}
+                  />
+                  <Route path={paths.taskRuns.all()} component={TaskRuns} />
+                  <Route
+                    path={paths.taskRuns.byNamespace()}
+                    exact
+                    component={TaskRuns}
+                  />
+                  <Route
+                    path={paths.taskRuns.byTask()}
+                    exact
+                    component={TaskRuns}
+                  />
+                  <Route
+                    path={paths.taskRuns.byName()}
+                    exact
+                    component={TaskRun}
+                  />
+                  <Route
+                    path={paths.clusterTasks.all()}
+                    exact
+                    component={ClusterTasks}
+                  />
 
-                <Route
-                  path={paths.importResources()}
-                  component={ImportResources}
-                />
-                <Route path={paths.secrets.all()} exact component={Secrets} />
+                  <Route
+                    path={paths.importResources()}
+                    component={ImportResources}
+                  />
+                  <Route path={paths.secrets.all()} exact component={Secrets} />
 
-                <Route
-                  path={paths.triggerTemplates.all()}
-                  exact
-                  component={TriggerTemplates}
-                />
+                  <Route
+                    path={paths.triggerTemplates.all()}
+                    exact
+                    component={TriggerTemplates}
+                  />
 
-                <Route
-                  path={paths.extensions.all()}
-                  exact
-                  component={Extensions}
-                />
-                {extensions
-                  .filter(extension => !extension.type)
-                  .map(({ displayName, name, source }) => (
-                    <Route
-                      key={name}
-                      path={paths.extensions.byName({ name })}
-                      render={({ match }) => (
-                        <Extension
-                          displayName={displayName}
-                          match={match}
-                          source={source}
-                        />
-                      )}
-                    />
-                  ))}
+                  <Route
+                    path={paths.extensions.all()}
+                    exact
+                    component={Extensions}
+                  />
+                  {extensions
+                    .filter(extension => !extension.type)
+                    .map(({ displayName, name, source }) => (
+                      <Route
+                        key={name}
+                        path={paths.extensions.byName({ name })}
+                        render={({ match }) => (
+                          <Extension
+                            displayName={displayName}
+                            match={match}
+                            source={source}
+                          />
+                        )}
+                      />
+                    ))}
 
-                <Route
-                  path={paths.kubernetesResources.all()}
-                  exact
-                  component={ResourceList}
-                />
-                <Route
-                  path={paths.kubernetesResources.byNamespace()}
-                  exact
-                  component={ResourceList}
-                />
-                <Route
-                  path={paths.kubernetesResources.byName()}
-                  exact
-                  component={CustomResourceDefinition}
-                />
-                <Route
-                  path={paths.kubernetesResources.cluster()}
-                  exact
-                  component={CustomResourceDefinition}
-                />
-                <Route
-                  path={paths.rawCRD.byNamespace()}
-                  exact
-                  component={CustomResourceDefinition}
-                />
-                <Route
-                  path={paths.rawCRD.cluster()}
-                  exact
-                  component={CustomResourceDefinition}
-                />
+                  <Route
+                    path={paths.kubernetesResources.all()}
+                    exact
+                    component={ResourceList}
+                  />
+                  <Route
+                    path={paths.kubernetesResources.byNamespace()}
+                    exact
+                    component={ResourceList}
+                  />
+                  <Route
+                    path={paths.kubernetesResources.byName()}
+                    exact
+                    component={CustomResourceDefinition}
+                  />
+                  <Route
+                    path={paths.kubernetesResources.cluster()}
+                    exact
+                    component={CustomResourceDefinition}
+                  />
+                  <Route
+                    path={paths.rawCRD.byNamespace()}
+                    exact
+                    component={CustomResourceDefinition}
+                  />
+                  <Route
+                    path={paths.rawCRD.cluster()}
+                    exact
+                    component={CustomResourceDefinition}
+                  />
 
-                <Redirect to={urls.pipelineRuns.all()} />
-              </Switch>
+                  <Redirect to={urls.pipelineRuns.all()} />
+                </Switch>
+              </PageErrorBoundary>
             </Content>
           </>
         </Router>
