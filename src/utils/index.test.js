@@ -11,7 +11,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { isStale, sortRunsByStartTime, typeToPlural } from '.';
+import * as API from '../api';
+
+import {
+  fetchLogs,
+  getGitValues,
+  isStale,
+  sortRunsByStartTime,
+  typeToPlural
+} from '.';
 
 it('sortRunsByStartTime', () => {
   const a = { name: 'a', status: { startTime: '0' } };
@@ -56,4 +64,37 @@ it('isStale', () => {
   expect(isStale(incomingResource, {})).toBe(false);
   expect(isStale(incomingResource, state)).toBe(true);
   expect(isStale(existingResource, state)).toBe(false);
+});
+
+it('fetchLogs', () => {
+  const stepName = 'kubectl-apply';
+  const stepStatus = { container: 'step-kubectl-apply' };
+  const taskRun = { pod: 'pipeline-run-123456', namespace: 'default' };
+
+  const logs = 'fake logs';
+  jest.spyOn(API, 'getPodLog').mockImplementation(() => logs);
+
+  const returnedLogs = fetchLogs(stepName, stepStatus, taskRun);
+  expect(API.getPodLog).toHaveBeenCalledWith(
+    expect.objectContaining({
+      container: stepStatus.container,
+      name: taskRun.pod,
+      namespace: taskRun.namespace
+    })
+  );
+  returnedLogs.then(data => {
+    expect(data).toBe(logs);
+  });
+});
+
+it('getGitValues', () => {
+  const url = 'https://github.com/user/repo';
+
+  const returnedValue = getGitValues(url);
+
+  expect(returnedValue).toStrictEqual({
+    gitOrg: 'user',
+    gitRepo: 'repo.git',
+    gitServer: 'github.com'
+  });
 });
