@@ -22,21 +22,18 @@ storiesOf('PipelineRuns', module)
   .addDecorator(StoryRouter())
   .add('default', () => (
     <PipelineRuns
-      createPipelineRunURL={({ namespace, pipelineName, pipelineRunName }) =>
-        namespace
-          ? `to-pipelineRun-${namespace}/${pipelineName}/${pipelineRunName}`
-          : null
+      createPipelineRunURL={({ namespace, pipelineRunName }) =>
+        namespace ? `to-pipelineRun-${namespace}/${pipelineRunName}` : null
       }
-      createPipelineRunsByPipelineURL={({
-        namespace,
-        pipelineName,
-        pipelineRunName
-      }) => `to-pipeline-${namespace}/${pipelineName}/${pipelineRunName}`}
+      createPipelineRunsByPipelineURL={({ namespace, pipelineName }) =>
+        namespace
+          ? `to-pipeline-${namespace}/${pipelineName}`
+          : `to-pipeline/${pipelineName}`
+      }
       createPipelineRunTimestamp={pipelineRun =>
         getStatus(pipelineRun).lastTransitionTime ||
         pipelineRun.metadata.creationTimestamp
       }
-      pipelineName="Pipeline Name"
       selectedNamespace="default"
       pipelineRunActions={[
         {
@@ -128,7 +125,6 @@ storiesOf('PipelineRuns', module)
   ))
   .add('empty', () => (
     <PipelineRuns
-      pipelineName="Pipeline Name"
       selectedNamespace="default"
       pipelineRuns={[]}
       cancelPipelineRun={() => {}}

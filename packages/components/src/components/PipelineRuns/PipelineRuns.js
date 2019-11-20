@@ -47,7 +47,6 @@ const PipelineRuns = ({
   },
   hideNamespace,
   intl,
-  pipelineName,
   pipelineRuns,
   pipelineRunActions
 }) => (
@@ -55,9 +54,7 @@ const PipelineRuns = ({
     <StructuredListHead>
       <StructuredListRow head>
         <StructuredListCell head>PipelineRun</StructuredListCell>
-        {!pipelineName && (
-          <StructuredListCell head>Pipeline</StructuredListCell>
-        )}
+        <StructuredListCell head>Pipeline</StructuredListCell>
         {!hideNamespace && (
           <StructuredListCell head>Namespace</StructuredListCell>
         )}
@@ -80,24 +77,12 @@ const PipelineRuns = ({
       {!pipelineRuns.length && (
         <StructuredListRow>
           <StructuredListCell>
-            {pipelineName ? (
-              <span>
-                {intl.formatMessage(
-                  {
-                    id: 'dashboard.pipelineRuns.noPipelineRunsForPipeline',
-                    defaultMessage: 'No PipelineRuns for {pipelineName}'
-                  },
-                  { pipelineName }
-                )}
-              </span>
-            ) : (
-              <span>
-                {intl.formatMessage({
-                  id: 'dashboard.pipelineRuns.noPipelineRuns',
-                  defaultMessage: 'No PipelineRuns'
-                })}
-              </span>
-            )}
+            <span>
+              {intl.formatMessage({
+                id: 'dashboard.pipelineRuns.noPipelineRuns',
+                defaultMessage: 'No PipelineRuns'
+              })}
+            </span>
           </StructuredListCell>
         </StructuredListRow>
       )}
@@ -124,18 +109,16 @@ const PipelineRuns = ({
             <StructuredListCell>
               {url ? <Link to={url}>{pipelineRunName}</Link> : pipelineRunName}
             </StructuredListCell>
-            {!pipelineName && (
-              <StructuredListCell>
-                <Link
-                  to={createPipelineRunsByPipelineURL({
-                    namespace,
-                    pipelineName: pipelineRefName
-                  })}
-                >
-                  {pipelineRefName}
-                </Link>
-              </StructuredListCell>
-            )}
+            <StructuredListCell>
+              <Link
+                to={createPipelineRunsByPipelineURL({
+                  namespace,
+                  pipelineName: pipelineRefName
+                })}
+              >
+                {pipelineRefName}
+              </Link>
+            </StructuredListCell>
             {!hideNamespace && (
               <StructuredListCell>{namespace}</StructuredListCell>
             )}

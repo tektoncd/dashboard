@@ -24,15 +24,11 @@ it('PipelineRuns renders empty state', () => {
 
 it('PipelineRuns hides namespace when hideNamespace set', () => {
   const { queryByText } = renderWithIntl(
-    <PipelineRuns
-      pipelineName="some-pipeline"
-      pipelineRuns={[]}
-      hideNamespace
-    />
+    <PipelineRuns pipelineRuns={[]} hideNamespace />
   );
   expect(queryByText(/namespace/i)).toBeFalsy();
   expect(queryByText(/pipeline/i)).toBeTruthy();
-  expect(queryByText(/no pipelineruns for some-pipeline/i)).toBeTruthy();
+  expect(queryByText(/no pipelineruns/i)).toBeTruthy();
 });
 
 it('PipelineRuns renders data', () => {
