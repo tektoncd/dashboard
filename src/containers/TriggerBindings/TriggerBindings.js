@@ -22,20 +22,20 @@ import {
   LabelFilter,
   Table
 } from '@tektoncd/dashboard-components';
-import { fetchTriggerTemplates } from '../../actions/triggerTemplates';
+import { fetchTriggerBindings } from '../../actions/triggerBindings';
 import {
   getSelectedNamespace,
-  getTriggerTemplates,
-  getTriggerTemplatesErrorMessage,
-  isFetchingTriggerTemplates,
+  getTriggerBindings,
+  getTriggerBindingsErrorMessage,
+  isFetchingTriggerBindings,
   isWebSocketConnected
 } from '../../reducers';
 
-import './TriggerTemplates.scss';
+import '../TriggerTemplates/TriggerTemplates.scss';
 
-export /* istanbul ignore next */ class TriggerTemplates extends Component {
+export /* istanbul ignore next */ class TriggerBindings extends Component {
   componentDidMount() {
-    this.fetchTriggerTemplates();
+    this.fetchTriggerBindings();
   }
 
   componentDidUpdate(prevProps) {
@@ -51,7 +51,7 @@ export /* istanbul ignore next */ class TriggerTemplates extends Component {
       namespace !== prevNamespace ||
       (webSocketConnected && prevWebSocketConnected === false)
     ) {
-      this.fetchTriggerTemplates();
+      this.fetchTriggerBindings();
     }
   }
 
@@ -84,9 +84,9 @@ export /* istanbul ignore next */ class TriggerTemplates extends Component {
     }
   };
 
-  fetchTriggerTemplates() {
+  fetchTriggerBindings() {
     const { filters, namespace } = this.props;
-    this.props.fetchTriggerTemplates({
+    this.props.fetchTriggerBindings({
       filters,
       namespace
     });
@@ -99,7 +99,7 @@ export /* istanbul ignore next */ class TriggerTemplates extends Component {
       intl,
       loading,
       selectedNamespace,
-      triggerTemplates
+      triggerBindings
     } = this.props;
 
     const initialHeaders = [
@@ -126,13 +126,11 @@ export /* istanbul ignore next */ class TriggerTemplates extends Component {
       }
     ];
 
-    const triggerTemplatesFormatted = triggerTemplates.map(template => ({
-      id: `${template.metadata.namespace}:${template.metadata.name}`,
-      name: template.metadata.name,
-      namespace: template.metadata.namespace,
-      date: (
-        <FormattedDate date={template.metadata.creationTimestamp} relative />
-      )
+    const triggerBindingsFormatted = triggerBindings.map(binding => ({
+      id: `${binding.metadata.namespace}:${binding.metadata.name}`,
+      name: binding.metadata.name,
+      namespace: binding.metadata.namespace,
+      date: <FormattedDate date={binding.metadata.creationTimestamp} relative />
     }));
 
     return (
@@ -141,7 +139,7 @@ export /* istanbul ignore next */ class TriggerTemplates extends Component {
           <InlineNotification
             kind="error"
             title={intl.formatMessage({
-              id: 'dashboard.triggerTemplate.error',
+              id: 'dashboard.triggerBindings.error',
               defaultMessage: 'Error:'
             })}
             subtitle={getErrorMessage(error)}
@@ -154,7 +152,7 @@ export /* istanbul ignore next */ class TriggerTemplates extends Component {
             lowContrast
           />
         )}
-        <h1>TriggerTemplates</h1>
+        <h1>TriggerBindings</h1>
         <LabelFilter
           filters={filters}
           handleAddFilter={this.handleAddFilter}
@@ -162,7 +160,7 @@ export /* istanbul ignore next */ class TriggerTemplates extends Component {
         />
         <Table
           headers={initialHeaders}
-          rows={triggerTemplatesFormatted}
+          rows={triggerBindingsFormatted}
           loading={loading}
           selectedNamespace={selectedNamespace}
           emptyTextAllNamespaces={intl.formatMessage(
@@ -170,14 +168,14 @@ export /* istanbul ignore next */ class TriggerTemplates extends Component {
               id: 'dashboard.emptyState.allNamespaces',
               defaultMessage: 'No {kind} under any namespace.'
             },
-            { kind: 'TriggerTemplates' }
+            { kind: 'TriggerBindings' }
           )}
           emptyTextSelectedNamespace={intl.formatMessage(
             {
               id: 'dashboard.emptyState.selectedNamespace',
               defaultMessage: 'No {kind} under namespace {selectedNamespace}'
             },
-            { kind: 'TriggerTemplates', selectedNamespace }
+            { kind: 'TriggerBindings', selectedNamespace }
           )}
           isSortable
         />
@@ -201,20 +199,20 @@ function mapStateToProps(state, props) {
   const namespace = namespaceParam || getSelectedNamespace(state);
 
   return {
-    error: getTriggerTemplatesErrorMessage(state),
+    error: getTriggerBindingsErrorMessage(state),
     filters,
-    loading: isFetchingTriggerTemplates(state),
-    triggerTemplates: getTriggerTemplates(state, { filters, namespace }),
+    loading: isFetchingTriggerBindings(state),
+    triggerBindings: getTriggerBindings(state, { filters, namespace }),
     selectedNamespace: namespace,
     webSocketConnected: isWebSocketConnected(state)
   };
 }
 
 const mapDispatchToProps = {
-  fetchTriggerTemplates
+  fetchTriggerBindings
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(injectIntl(TriggerTemplates));
+)(injectIntl(TriggerBindings));

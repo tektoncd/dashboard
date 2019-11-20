@@ -23,6 +23,7 @@ import pipelineResources, * as pipelineResourcesSelectors from './pipelineResour
 import pipelineRuns, * as pipelineRunsSelectors from './pipelineRuns';
 import secrets, * as secretSelectors from './secrets';
 import triggerTemplates, * as triggerTemplatesSelectors from './triggerTemplates';
+import triggerBindings, * as triggerBindingsSelectors from './triggerBindings';
 import serviceAccounts, * as serviceAccountSelectors from './serviceAccounts';
 import tasks, * as taskSelectors from './tasks';
 import taskRuns, * as taskRunsSelectors from './taskRuns';
@@ -40,6 +41,7 @@ export default combineReducers({
   serviceAccounts: serviceAccounts(),
   tasks: tasks(),
   taskRuns: taskRuns(),
+  triggerBindings: triggerBindings(),
   triggerTemplates: triggerTemplates()
 });
 
@@ -352,5 +354,49 @@ export function getTriggerTemplatesErrorMessage(state) {
 export function isFetchingTriggerTemplates(state) {
   return triggerTemplatesSelectors.isFetchingTriggerTemplates(
     state.triggerTemplates
+  );
+}
+
+export function getTriggerBindings(
+  state,
+  { filters, namespace = getSelectedNamespace(state) } = {}
+) {
+  const bindings = triggerBindingsSelectors.getTriggerBindings(
+    state.triggerBindings,
+    namespace
+  );
+  return bindings.filter(binding => {
+    return filters.every(filter => {
+      const [filterKey, filterValue] = filter.split('=');
+      return (
+        binding.metadata.labels &&
+        filterKey &&
+        filterValue &&
+        binding.metadata.labels[filterKey] === filterValue
+      );
+    });
+  });
+}
+
+export function getTriggerBinding(
+  state,
+  { name, namespace = getSelectedNamespace(state) }
+) {
+  return triggerBindingsSelectors.getTriggerTemplate(
+    state.triggerBindings,
+    name,
+    namespace
+  );
+}
+
+export function getTriggerBindingsErrorMessage(state) {
+  return triggerBindingsSelectors.getTriggerBindingsErrorMessage(
+    state.triggerBindings
+  );
+}
+
+export function isFetchingTriggerBindings(state) {
+  return triggerBindingsSelectors.isFetchingTriggerBindings(
+    state.triggerBindings
   );
 }

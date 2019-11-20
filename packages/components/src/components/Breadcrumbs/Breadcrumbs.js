@@ -54,7 +54,9 @@ const breadcrumbLabels = {
   '/pipelines': 'Pipelines',
   '/secrets': 'Secrets',
   '/taskruns': 'TaskRuns',
-  '/tasks': 'Tasks'
+  '/tasks': 'Tasks',
+  '/triggertemplates': 'TriggerTemplates',
+  '/triggerbindings': 'TriggerBindings'
 };
 
 Breadcrumbs.defaultProps = {
