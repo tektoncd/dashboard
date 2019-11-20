@@ -11,8 +11,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-.triggers{
-  h1 {
-    margin-bottom: 15px;
-  }
-}
+export { default } from './TriggerBindings';

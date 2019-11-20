@@ -117,6 +117,11 @@ export const paths = {
       return '/triggertemplates';
     }
   },
+  triggerBindings: {
+    all() {
+      return '/triggerbindings';
+    }
+  },
   kubernetesResources: {
     all() {
       return '/:group/:version/:type';

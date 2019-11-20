@@ -71,6 +71,9 @@ rules:
   - apiGroups: ["dashboard.tekton.dev"]
     resources: ["extensions"]
     verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
+  - apiGroups: ["tekton.dev"]
+    resources: ["eventlisteners", "triggerbindings", "triggertemplates"]
+    verbs: ["get", "list", "create", "update", "delete", "patch", "watch", "add"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding

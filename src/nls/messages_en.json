@@ -12,6 +12,8 @@
     "dashboard.deletePipelineRun.body": "Are you sure you would like to delete PipelineRun {name}?",
     "dashboard.deletePipelineRun.heading": "Delete PipelineRun",
     "dashboard.deletePipelineRun.primaryText": "Delete PipelineRun",
+    "dashboard.emptyState.allNamespaces": "No {kind} under any namespace.",
+    "dashboard.emptyState.selectedNamespace": "No {kind} under namespace {selectedNamespace}",
     "dashboard.errorBoundary.defaultError": "Something went wrong",
     "dashboard.header.logOut": "Log out",
     "dashboard.labelFilter.addButton": "Add filter",
@@ -22,6 +24,7 @@
     "dashboard.labelFilter.syntaxMessage": "See the Kubernetes Label documentation for valid syntax",
     "dashboard.list.menu.tooltip": "Actions",
     "dashboard.modal.cancelButton": "Cancel",
+    "dashboard.notification.clear": "Clear Notification",
     "dashboard.pipelineRun.error": "Error loading PipelineRun",
     "dashboard.pipelineRun.failed": "Cannot load PipelineRun",
     "dashboard.pipelineRun.failedMessage": "Unable to load PipelineRun details: {reason}",
@@ -48,7 +51,9 @@
     "dashboard.step.definitionNotAvailable": "description: step definition not available",
     "dashboard.step.statusNotAvailable": "No status available",
     "dashboard.step.stepDefinition": "Step definition",
+    "dashboard.tableHeader.date": "Date Modified",
     "dashboard.tableHeader.name": "Name",
+    "dashboard.tableHeader.namespace": "Namespace",
     "dashboard.tableHeader.value": "Value",
     "dashboard.taskRun.details": "Details",
     "dashboard.taskRun.logs": "Logs",
@@ -60,12 +65,7 @@
     "dashboard.taskRun.status.running": "Running",
     "dashboard.taskRun.status.succeeded": "Completed",
     "dashboard.taskRun.status.waiting": "Waiting",
-    "dashboard.triggerTemplate.clearNotification": "Clear Notification",
-    "dashboard.triggerTemplate.date": "Date Modified",
-    "dashboard.triggerTemplate.emptyTableAllNamespaces": "No TriggerTemplates under any namespace.",
-    "dashboard.triggerTemplate.emptyTableSelectedNamespace": "No TriggerTemplates under namespace {selectedNamespace}",
-    "dashboard.triggerTemplate.error": "Error:",
-    "dashboard.triggerTemplate.name": "Name",
-    "dashboard.triggerTemplate.namespace": "Namespace"
+    "dashboard.triggerBindings.error": "Error:",
+    "dashboard.triggerTemplate.error": "Error:"
   }
 }

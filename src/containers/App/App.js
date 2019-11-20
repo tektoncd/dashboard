@@ -48,6 +48,7 @@ import {
   TaskRun,
   TaskRuns,
   Tasks,
+  TriggerBindings,
   TriggerTemplates
 } from '..';
 
@@ -185,6 +186,11 @@ export /* istanbul ignore next */ class App extends Component {
                   />
                   <Route path={paths.secrets.all()} exact component={Secrets} />
 
+                  <Route
+                    path={paths.triggerBindings.all()}
+                    exact
+                    component={TriggerBindings}
+                  />
                   <Route
                     path={paths.triggerTemplates.all()}
                     exact
