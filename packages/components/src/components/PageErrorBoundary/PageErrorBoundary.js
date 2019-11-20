@@ -13,16 +13,21 @@ limitations under the License.
 
 import React from 'react';
 import { injectIntl } from 'react-intl';
+import { withRouter } from 'react-router';
 
 import { ErrorBoundary } from '..';
 
-const PageErrorBoundary = ({ children, intl }) => {
+const PageErrorBoundary = ({ children, intl, location }) => {
   const message = intl.formatMessage({
     id: 'dashboard.errorBoundary.pageError',
     defaultMessage: 'Error loading page'
   });
 
-  return <ErrorBoundary message={message}>{children}</ErrorBoundary>;
+  return (
+    <ErrorBoundary key={location.pathname} message={message}>
+      {children}
+    </ErrorBoundary>
+  );
 };
 
-export default injectIntl(PageErrorBoundary);
+export default withRouter(injectIntl(PageErrorBoundary));

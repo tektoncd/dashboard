@@ -12,12 +12,12 @@ limitations under the License.
 */
 
 import React from 'react';
-import { renderWithIntl } from '../../utils/test';
+import { renderWithRouter } from '../../utils/test';
 
 import PageErrorBoundary from './PageErrorBoundary';
 
 it('PageErrorBoundary renders children', () => {
-  const { queryByText } = renderWithIntl(
+  const { queryByText } = renderWithRouter(
     <PageErrorBoundary>
       <span>hello</span>
     </PageErrorBoundary>
@@ -30,7 +30,7 @@ it('PageErrorBoundary renders the error message', () => {
     throw new Error();
   }
   jest.spyOn(console, 'error').mockImplementation(() => {}); // suppress error log from test output
-  const { queryByText } = renderWithIntl(
+  const { queryByText } = renderWithRouter(
     <PageErrorBoundary>
       <Bomb />
     </PageErrorBoundary>
