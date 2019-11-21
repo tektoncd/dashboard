@@ -73,6 +73,19 @@ export class SideNav extends Component {
 
     if (namespace === ALL_NAMESPACES) {
       this.props.selectNamespace(namespace);
+      const currentURL = this.props.match.url;
+      if (currentURL.includes(urls.taskRuns.all())) {
+        history.push(urls.taskRuns.all());
+        return;
+      }
+      if (currentURL.includes(urls.pipelineResources.all())) {
+        history.push(urls.pipelineResources.all());
+        return;
+      }
+      if (currentURL.includes(urls.pipelines.all())) {
+        history.push(urls.pipelines.all());
+        return;
+      }
       history.push('/');
       return;
     }
