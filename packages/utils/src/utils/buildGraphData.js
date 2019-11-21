@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 /* istanbul ignore file */
-import { getStatus } from '@tektoncd/dashboard-utils';
+import { getStatus } from './status';
 
 const defaultHeight = 26;
 const defaultCharWidth = 9;

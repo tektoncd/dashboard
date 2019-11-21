@@ -63,7 +63,7 @@ export default class Graph extends Component {
           nodes: g.children
         });
       })
-      .catch(console.error);
+      .catch(console.error); // eslint-disable-line no-console
   };
 
   render() {
