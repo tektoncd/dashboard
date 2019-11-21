@@ -110,14 +110,18 @@ const PipelineRuns = ({
               {url ? <Link to={url}>{pipelineRunName}</Link> : pipelineRunName}
             </StructuredListCell>
             <StructuredListCell>
-              <Link
-                to={createPipelineRunsByPipelineURL({
-                  namespace,
-                  pipelineName: pipelineRefName
-                })}
-              >
-                {pipelineRefName}
-              </Link>
+              {pipelineRefName ? (
+                <Link
+                  to={createPipelineRunsByPipelineURL({
+                    namespace,
+                    pipelineName: pipelineRefName
+                  })}
+                >
+                  {pipelineRefName}
+                </Link>
+              ) : (
+                ''
+              )}
             </StructuredListCell>
             {!hideNamespace && (
               <StructuredListCell>{namespace}</StructuredListCell>
