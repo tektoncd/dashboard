@@ -51,6 +51,7 @@ import {
   Tasks,
   TriggerBinding,
   TriggerBindings,
+  TriggerTemplate,
   TriggerTemplates
 } from '..';
 
@@ -202,6 +203,13 @@ export /* istanbul ignore next */ class App extends Component {
                     exact
                     component={TriggerBindings}
                   />
+
+                  <Route
+                    path={paths.triggerTemplates.byName()}
+                    exact
+                    component={TriggerTemplate}
+                  />
+
                   <Route
                     path={paths.triggerTemplates.all()}
                     exact

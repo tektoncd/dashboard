@@ -133,6 +133,17 @@ const Table = props => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
+                  {!loading && dataRows.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={headers.length}>
+                        <div className="noRows">
+                          {selectedNamespace === ALL_NAMESPACES
+                            ? emptyTextAllNamespaces
+                            : emptyTextSelectedNamespace}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
                   {rows.map(row => {
                     return (
                       <TableRow {...getRowProps({ row })} key={row.id}>
@@ -153,13 +164,6 @@ const Table = props => {
           </TableContainer>
         )}
       />
-      {!loading && dataRows.length === 0 && (
-        <div className="noRows">
-          {selectedNamespace === ALL_NAMESPACES
-            ? emptyTextAllNamespaces
-            : emptyTextSelectedNamespace}
-        </div>
-      )}
     </div>
   );
 };
