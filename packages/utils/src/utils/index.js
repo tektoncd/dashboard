@@ -17,7 +17,9 @@ import Time16 from '@carbon/icons-react/lib/time/16';
 import CloseFilled from '@carbon/icons-react/lib/close--filled/16';
 import { Spinner } from '@tektoncd/dashboard-components';
 
+export { default as buildGraphData } from './buildGraphData';
 export { paths, urls } from './router';
+export { getStatus } from './status';
 
 export const ALL_NAMESPACES = '*';
 
@@ -108,11 +110,6 @@ export function stepsStatus(taskSteps, taskRunStepsStatus = []) {
   });
 
   return steps;
-}
-
-export function getStatus(resource) {
-  const { conditions = [] } = resource.status || {};
-  return conditions.find(condition => condition.type === 'Succeeded') || {};
 }
 
 export function isRunning(reason, status) {

@@ -12,9 +12,9 @@ limitations under the License.
 */
 /* istanbul ignore file */
 import React, { Component } from 'react';
+import { buildGraphData } from '@tektoncd/dashboard-utils';
 
 import Graph from './Graph';
-import buildGraphData from './buildGraphData';
 
 export default class PipelineGraph extends Component {
   state = {
