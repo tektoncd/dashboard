@@ -29,6 +29,10 @@ h2 {
   @include type-style('heading-01');
 }
 
+.bx--btn.link-btn.bx--btn--ghost {
+  text-decoration: none;
+}
+
 .bx--header ~ {
   .bx--content {
     background-color: transparent;

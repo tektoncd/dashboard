@@ -22,11 +22,6 @@ export const paths = {
       return '/clustertasks';
     }
   },
-  eventListeners: {
-    all() {
-      return '/eventlisteners';
-    }
-  },
   extensions: {
     all() {
       return '/extensions';
@@ -115,6 +110,17 @@ export const paths = {
     },
     byNamespace() {
       return byNamespace({ path: '/tasks' });
+    }
+  },
+  eventListeners: {
+    all() {
+      return '/eventlisteners';
+    },
+    byNamespace() {
+      return byNamespace({ path: '/eventlisteners' });
+    },
+    byName() {
+      return byNamespace({ path: '/eventlisteners/:eventListenerName' });
     }
   },
   triggerTemplates: {

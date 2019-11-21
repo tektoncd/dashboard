@@ -14,8 +14,9 @@ limitations under the License.
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
+import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
-import { getErrorMessage } from '@tektoncd/dashboard-utils';
+import { getErrorMessage, urls } from '@tektoncd/dashboard-utils';
 import { InlineNotification } from 'carbon-components-react';
 import {
   FormattedDate,
@@ -126,7 +127,16 @@ export /* istanbul ignore next */ class EventListeners extends Component {
 
     const eventListenersFormatted = eventListeners.map(listener => ({
       id: `${listener.metadata.namespace}:${listener.metadata.name}`,
-      name: listener.metadata.name,
+      name: (
+        <Link
+          to={urls.eventListeners.byName({
+            namespace: listener.metadata.namespace,
+            eventListenerName: listener.metadata.name
+          })}
+        >
+          {listener.metadata.name}
+        </Link>
+      ),
       namespace: listener.metadata.namespace,
       date: (
         <FormattedDate date={listener.metadata.creationTimestamp} relative />

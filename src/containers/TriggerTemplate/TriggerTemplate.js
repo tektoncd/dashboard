@@ -229,99 +229,95 @@ export /* istanbul ignore next */ class TriggerTemplateContainer extends Compone
                 {triggerTemplate.metadata.namespace}
               </p>
 
-              <div className="tableComponent">
-                <DashboardTable
-                  title={intl.formatMessage({
-                    id: 'dashboard.triggerTemplate.paramaters',
-                    defaultMessage: 'Parameters'
-                  })}
-                  headers={headersForParameters}
-                  rows={rowsForParameters}
-                  selectedNamespace={selectedNamespace}
-                  emptyTextAllNamespaces={emptyTextMessage}
-                  emptyTextSelectedNamespace={emptyTextMessage}
-                />
+              <DashboardTable
+                title={intl.formatMessage({
+                  id: 'dashboard.triggerTemplate.paramaters',
+                  defaultMessage: 'Parameters'
+                })}
+                headers={headersForParameters}
+                rows={rowsForParameters}
+                selectedNamespace={selectedNamespace}
+                emptyTextAllNamespaces={emptyTextMessage}
+                emptyTextSelectedNamespace={emptyTextMessage}
+              />
 
-                {resourcetemplates && (
-                  // This is a very customised expandable table so intentionally not the one used elsewhere
-                  // although it should look the same
-                  <DataTable
-                    useZebraStyles
-                    rows={resourcetemplates.map((item, index) => ({
-                      id: `${index}|${item.metadata.name ||
-                        item.metadata.generateName}`
-                    }))}
-                    headers={[
-                      {
-                        header: intl.formatMessage({
-                          id: 'dashboard.triggerTemplate.resourceNameHeader',
-                          defaultMessage: 'Resource name to create'
-                        }),
-                        key: 'header'
-                      }
-                    ]}
-                    render={({
-                      rows,
-                      headers,
-                      getHeaderProps,
-                      getRowProps,
-                      getTableProps
-                    }) => (
-                      <TableContainer
-                        data-testid="resourcetemplatestable"
-                        title={intl.formatMessage({
-                          id: 'dashboard.triggerTemplate.resourceTemplates',
-                          defaultMessage: 'Resource Templates'
-                        })}
-                      >
-                        <Table {...getTableProps()}>
-                          <TableHead>
-                            <TableRow>
-                              <TableExpandHeader />
-                              {headers.map(header => (
-                                <TableHeader {...getHeaderProps({ header })}>
-                                  {header.header}
-                                </TableHeader>
-                              ))}
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
-                            {rows.map((row, index) => (
-                              <React.Fragment key={row.id}>
-                                <TableExpandRow {...getRowProps({ row })}>
-                                  {row.cells.map(cell => (
-                                    <TableCell key={cell.id}>
-                                      {triggerTemplate.spec.resourcetemplates[
-                                        index
-                                      ].metadata.name ||
-                                        triggerTemplate.spec.resourcetemplates[
-                                          index
-                                        ].metadata.generateName}
-                                    </TableCell>
-                                  ))}
-                                </TableExpandRow>
-                                {row.isExpanded && (
-                                  <TableExpandedRow
-                                    colSpan={headers.length + 1}
-                                  >
-                                    <ViewYaml
-                                      resource={
-                                        triggerTemplate.spec.resourcetemplates[
-                                          index
-                                        ]
-                                      }
-                                    />
-                                  </TableExpandedRow>
-                                )}
-                              </React.Fragment>
+              {resourcetemplates && (
+                // This is a very customised expandable table so intentionally not the one used elsewhere
+                // although it should look the same
+                <DataTable
+                  useZebraStyles
+                  rows={resourcetemplates.map((item, index) => ({
+                    id: `${index}|${item.metadata.name ||
+                      item.metadata.generateName}`
+                  }))}
+                  headers={[
+                    {
+                      header: intl.formatMessage({
+                        id: 'dashboard.triggerTemplate.resourceNameHeader',
+                        defaultMessage: 'Resource name to create'
+                      }),
+                      key: 'header'
+                    }
+                  ]}
+                  render={({
+                    rows,
+                    headers,
+                    getHeaderProps,
+                    getRowProps,
+                    getTableProps
+                  }) => (
+                    <TableContainer
+                      data-testid="resourcetemplatestable"
+                      title={intl.formatMessage({
+                        id: 'dashboard.triggerTemplate.resourceTemplates',
+                        defaultMessage: 'Resource Templates'
+                      })}
+                    >
+                      <Table {...getTableProps()}>
+                        <TableHead>
+                          <TableRow>
+                            <TableExpandHeader />
+                            {headers.map(header => (
+                              <TableHeader {...getHeaderProps({ header })}>
+                                {header.header}
+                              </TableHeader>
                             ))}
-                          </TableBody>
-                        </Table>
-                      </TableContainer>
-                    )}
-                  />
-                )}
-              </div>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {rows.map((row, index) => (
+                            <React.Fragment key={row.id}>
+                              <TableExpandRow {...getRowProps({ row })}>
+                                {row.cells.map(cell => (
+                                  <TableCell key={cell.id}>
+                                    {triggerTemplate.spec.resourcetemplates[
+                                      index
+                                    ].metadata.name ||
+                                      triggerTemplate.spec.resourcetemplates[
+                                        index
+                                      ].metadata.generateName}
+                                  </TableCell>
+                                ))}
+                              </TableExpandRow>
+                              {row.isExpanded && (
+                                <TableExpandedRow colSpan={headers.length + 1}>
+                                  <ViewYaml
+                                    resource={
+                                      triggerTemplate.spec.resourcetemplates[
+                                        index
+                                      ]
+                                    }
+                                  />
+                                </TableExpandedRow>
+                              )}
+                            </React.Fragment>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  )}
+                />
+              )}
             </div>
           </Tab>
           <Tab label="YAML">
