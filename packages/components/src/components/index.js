@@ -45,3 +45,4 @@ export { default as TaskSkeleton } from './TaskSkeleton';
 export { default as TaskTree } from './TaskTree';
 export { default as KeyValueList } from './KeyValueList';
 export { default as ViewYaml } from './ViewYAML';
+export { default as Trigger } from './Trigger';
