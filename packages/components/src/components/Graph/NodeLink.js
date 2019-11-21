@@ -11,26 +11,25 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 /* istanbul ignore file */
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { path as d3Path } from 'd3-path';
 
-export default class NodeLink extends PureComponent {
-  render() {
-    const { link } = this.props;
-    const sections = link.sections[0];
-    const path = d3Path();
+const NodeLink = ({ link }) => {
+  const sections = link.sections[0];
+  const path = d3Path();
 
-    const { x: startX, y: startY } = sections.startPoint;
-    const { x: targetX, y: targetY } = sections.endPoint;
+  const { x: startX, y: startY } = sections.startPoint;
+  const { x: targetX, y: targetY } = sections.endPoint;
 
-    const percent = 0.5;
-    path.moveTo(startX, startY);
-    path.lineTo(startX, startY + (targetY - startY) * percent);
-    path.lineTo(targetX, startY + (targetY - startY) * percent);
-    path.lineTo(targetX, targetY);
+  const percent = 0.5;
+  path.moveTo(startX, startY);
+  path.lineTo(startX, startY + (targetY - startY) * percent);
+  path.lineTo(targetX, startY + (targetY - startY) * percent);
+  path.lineTo(targetX, targetY);
 
-    return (
-      <path strokeWidth={1} fill="none" strokeOpacity={1} d={path.toString()} />
-    );
-  }
-}
+  return (
+    <path strokeWidth={1} fill="none" strokeOpacity={1} d={path.toString()} />
+  );
+};
+
+export default NodeLink;
