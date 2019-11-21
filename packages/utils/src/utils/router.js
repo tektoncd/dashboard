@@ -120,6 +120,12 @@ export const paths = {
   triggerTemplates: {
     all() {
       return '/triggertemplates';
+    },
+    byNamespace() {
+      return byNamespace({ path: '/triggertemplates' });
+    },
+    byName() {
+      return byNamespace({ path: '/triggertemplates/:triggerTemplateName' });
     }
   },
   triggerBindings: {

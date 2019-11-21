@@ -14,8 +14,9 @@ limitations under the License.
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
+import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
-import { getErrorMessage } from '@tektoncd/dashboard-utils';
+import { getErrorMessage, urls } from '@tektoncd/dashboard-utils';
 import { InlineNotification } from 'carbon-components-react';
 import {
   FormattedDate,
@@ -126,7 +127,16 @@ export /* istanbul ignore next */ class TriggerTemplates extends Component {
 
     const triggerTemplatesFormatted = triggerTemplates.map(template => ({
       id: `${template.metadata.namespace}:${template.metadata.name}`,
-      name: template.metadata.name,
+      name: (
+        <Link
+          to={urls.triggerTemplates.byName({
+            namespace: template.metadata.namespace,
+            triggerTemplateName: template.metadata.name
+          })}
+        >
+          {template.metadata.name}
+        </Link>
+      ),
       namespace: template.metadata.namespace,
       date: (
         <FormattedDate date={template.metadata.creationTimestamp} relative />

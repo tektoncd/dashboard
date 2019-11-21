@@ -104,6 +104,14 @@
     "dashboard.triggerBinding.parametersTableTitle": "Parameters",
     "dashboard.triggerBinding.unavailable": "TriggerBinding not available",
     "dashboard.triggerBindings.error": "Error:",
-    "dashboard.triggerTemplate.error": "Error:"
+    "dashboard.triggerTemplate.default": "Default",
+    "dashboard.triggerTemplate.description": "Description",
+    "dashboard.triggerTemplate.error": "Error:",
+    "dashboard.triggerTemplate.errorloading": "Error loading TriggerTemplate",
+    "dashboard.triggerTemplate.noParams": "No parameters found for this template.",
+    "dashboard.triggerTemplate.paramaters": "Parameters",
+    "dashboard.triggerTemplate.resourceNameHeader": "Resource name to create",
+    "dashboard.triggerTemplate.resourceTemplates": "Resource Templates",
+    "dashboard.triggerTemplate.unavailable": "TriggerTemplate not available"
   }
 }
