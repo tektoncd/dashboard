@@ -16,6 +16,7 @@
     "dashboard.emptyState.selectedNamespace": "No {kind} under namespace {selectedNamespace}",
     "dashboard.errorBoundary.defaultError": "Something went wrong",
     "dashboard.errorBoundary.pageError": "Error loading page",
+    "dashboard.eventListeners.error": "Error:",
     "dashboard.header.logOut": "Log out",
     "dashboard.labelFilter.addButton": "Add filter",
     "dashboard.labelFilter.duplicate": "No duplicate filters allowed",

@@ -22,6 +22,11 @@ export const paths = {
       return '/clustertasks';
     }
   },
+  eventListeners: {
+    all() {
+      return '/eventlisteners';
+    }
+  },
   extensions: {
     all() {
       return '/extensions';

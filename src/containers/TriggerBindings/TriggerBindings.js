@@ -31,7 +31,7 @@ import {
   isWebSocketConnected
 } from '../../reducers';
 
-import '../TriggerTemplates/TriggerTemplates.scss';
+import '../../scss/triggers.scss';
 
 export /* istanbul ignore next */ class TriggerBindings extends Component {
   componentDidMount() {
