@@ -22,20 +22,20 @@ import {
   LabelFilter,
   Table
 } from '@tektoncd/dashboard-components';
-import { fetchTriggerTemplates } from '../../actions/triggerTemplates';
+import { fetchEventListeners } from '../../actions/eventListeners';
 import {
+  getEventListeners,
+  getEventListenersErrorMessage,
   getSelectedNamespace,
-  getTriggerTemplates,
-  getTriggerTemplatesErrorMessage,
-  isFetchingTriggerTemplates,
+  isFetchingEventListeners,
   isWebSocketConnected
 } from '../../reducers';
 
 import '../../scss/triggers.scss';
 
-export /* istanbul ignore next */ class TriggerTemplates extends Component {
+export /* istanbul ignore next */ class EventListeners extends Component {
   componentDidMount() {
-    this.fetchTriggerTemplates();
+    this.fetchEventListeners();
   }
 
   componentDidUpdate(prevProps) {
@@ -51,7 +51,7 @@ export /* istanbul ignore next */ class TriggerTemplates extends Component {
       namespace !== prevNamespace ||
       (webSocketConnected && prevWebSocketConnected === false)
     ) {
-      this.fetchTriggerTemplates();
+      this.fetchEventListeners();
     }
   }
 
@@ -84,9 +84,9 @@ export /* istanbul ignore next */ class TriggerTemplates extends Component {
     }
   };
 
-  fetchTriggerTemplates() {
+  fetchEventListeners() {
     const { filters, namespace } = this.props;
-    this.props.fetchTriggerTemplates({
+    this.props.fetchEventListeners({
       filters,
       namespace
     });
@@ -99,7 +99,7 @@ export /* istanbul ignore next */ class TriggerTemplates extends Component {
       intl,
       loading,
       selectedNamespace,
-      triggerTemplates
+      eventListeners
     } = this.props;
 
     const initialHeaders = [
@@ -126,12 +126,12 @@ export /* istanbul ignore next */ class TriggerTemplates extends Component {
       }
     ];
 
-    const triggerTemplatesFormatted = triggerTemplates.map(template => ({
-      id: `${template.metadata.namespace}:${template.metadata.name}`,
-      name: template.metadata.name,
-      namespace: template.metadata.namespace,
+    const eventListenersFormatted = eventListeners.map(listener => ({
+      id: `${listener.metadata.namespace}:${listener.metadata.name}`,
+      name: listener.metadata.name,
+      namespace: listener.metadata.namespace,
       date: (
-        <FormattedDate date={template.metadata.creationTimestamp} relative />
+        <FormattedDate date={listener.metadata.creationTimestamp} relative />
       )
     }));
 
@@ -141,7 +141,7 @@ export /* istanbul ignore next */ class TriggerTemplates extends Component {
           <InlineNotification
             kind="error"
             title={intl.formatMessage({
-              id: 'dashboard.triggerTemplate.error',
+              id: 'dashboard.eventListeners.error',
               defaultMessage: 'Error:'
             })}
             subtitle={getErrorMessage(error)}
@@ -154,7 +154,7 @@ export /* istanbul ignore next */ class TriggerTemplates extends Component {
             lowContrast
           />
         )}
-        <h1>TriggerTemplates</h1>
+        <h1>EventListeners</h1>
         <LabelFilter
           filters={filters}
           handleAddFilter={this.handleAddFilter}
@@ -162,7 +162,7 @@ export /* istanbul ignore next */ class TriggerTemplates extends Component {
         />
         <Table
           headers={initialHeaders}
-          rows={triggerTemplatesFormatted}
+          rows={eventListenersFormatted}
           loading={loading}
           selectedNamespace={selectedNamespace}
           emptyTextAllNamespaces={intl.formatMessage(
@@ -170,14 +170,14 @@ export /* istanbul ignore next */ class TriggerTemplates extends Component {
               id: 'dashboard.emptyState.allNamespaces',
               defaultMessage: 'No {kind} under any namespace.'
             },
-            { kind: 'TriggerTemplates' }
+            { kind: 'EventListeners' }
           )}
           emptyTextSelectedNamespace={intl.formatMessage(
             {
               id: 'dashboard.emptyState.selectedNamespace',
               defaultMessage: 'No {kind} under namespace {selectedNamespace}'
             },
-            { kind: 'TriggerTemplates', selectedNamespace }
+            { kind: 'EventListeners', selectedNamespace }
           )}
           isSortable
         />
@@ -201,20 +201,20 @@ function mapStateToProps(state, props) {
   const namespace = namespaceParam || getSelectedNamespace(state);
 
   return {
-    error: getTriggerTemplatesErrorMessage(state),
+    error: getEventListenersErrorMessage(state),
     filters,
-    loading: isFetchingTriggerTemplates(state),
-    triggerTemplates: getTriggerTemplates(state, { filters, namespace }),
+    loading: isFetchingEventListeners(state),
+    eventListeners: getEventListeners(state, { filters, namespace }),
     selectedNamespace: namespace,
     webSocketConnected: isWebSocketConnected(state)
   };
 }
 
 const mapDispatchToProps = {
-  fetchTriggerTemplates
+  fetchEventListeners
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(injectIntl(TriggerTemplates));
+)(injectIntl(EventListeners));

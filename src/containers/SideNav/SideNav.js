@@ -138,6 +138,13 @@ export class SideNav extends Component {
             <SideNavMenuItem
               element={NavLink}
               icon={<span />}
+              to={urls.eventListeners.all()}
+            >
+              EventListeners
+            </SideNavMenuItem>
+            <SideNavMenuItem
+              element={NavLink}
+              icon={<span />}
               to={urls.triggerBindings.all()}
             >
               TriggerBindings

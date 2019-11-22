@@ -14,6 +14,7 @@ limitations under the License.
 import { combineReducers } from 'redux';
 
 import clusterTasks, * as clusterTaskSelectors from './clusterTasks';
+import eventListeners, * as eventListenersSelectors from './eventListeners';
 import extensions, * as extensionSelectors from './extensions';
 import locale, * as localeSelectors from './locale';
 import namespaces, * as namespaceSelectors from './namespaces';
@@ -30,6 +31,7 @@ import taskRuns, * as taskRunsSelectors from './taskRuns';
 
 export default combineReducers({
   clusterTasks,
+  eventListeners: eventListeners(),
   extensions,
   locale,
   namespaces,
@@ -382,7 +384,7 @@ export function getTriggerBinding(
   state,
   { name, namespace = getSelectedNamespace(state) }
 ) {
-  return triggerBindingsSelectors.getTriggerTemplate(
+  return triggerBindingsSelectors.getTriggerBinding(
     state.triggerBindings,
     name,
     namespace
@@ -399,4 +401,46 @@ export function isFetchingTriggerBindings(state) {
   return triggerBindingsSelectors.isFetchingTriggerBindings(
     state.triggerBindings
   );
+}
+
+export function getEventListeners(
+  state,
+  { filters, namespace = getSelectedNamespace(state) } = {}
+) {
+  const listeners = eventListenersSelectors.getEventListeners(
+    state.eventListeners,
+    namespace
+  );
+  return listeners.filter(listener => {
+    return filters.every(filter => {
+      const [filterKey, filterValue] = filter.split('=');
+      return (
+        listener.metadata.labels &&
+        filterKey &&
+        filterValue &&
+        listener.metadata.labels[filterKey] === filterValue
+      );
+    });
+  });
+}
+
+export function getEventListener(
+  state,
+  { name, namespace = getSelectedNamespace(state) }
+) {
+  return eventListenersSelectors.getEventListener(
+    state.eventListeners,
+    name,
+    namespace
+  );
+}
+
+export function getEventListenersErrorMessage(state) {
+  return eventListenersSelectors.getEventListenersErrorMessage(
+    state.eventListeners
+  );
+}
+
+export function isFetchingEventListeners(state) {
+  return eventListenersSelectors.isFetchingEventListeners(state.eventListeners);
 }

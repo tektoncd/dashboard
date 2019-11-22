@@ -16,6 +16,7 @@ export {
   default as CustomResourceDefinition
 } from './CustomResourceDefinition';
 export { default as CreatePipelineRun } from './CreatePipelineRun';
+export { default as EventListeners } from './EventListeners';
 export { default as Extension } from './Extension';
 export { default as Extensions } from './Extensions';
 export { default as ImportResources } from './ImportResources';
