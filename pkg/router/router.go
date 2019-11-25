@@ -74,8 +74,8 @@ func Register(resource endpoints.Resource) *restful.Container {
 
 func registerKubeAPIProxy(r endpoints.Resource, container *restful.Container) {
 	proxy := new(restful.WebService)
-	proxy.Consumes(restful.MIME_JSON, "text/plain", "application/json-patch+json").
-		Produces(restful.MIME_JSON, "text/plain", "application/json-patch+json").
+	proxy.Consumes(restful.MIME_JSON, "text/plain", "application/json-patch+json", "application/yaml").
+		Produces(restful.MIME_JSON, "text/plain", "application/json-patch+json", "application/yaml").
 		Path("/proxy")
 
 	logging.Log.Info("Adding Kube API Proxy")
