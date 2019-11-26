@@ -33,7 +33,7 @@ const rows = [
 const headers = [
   { key: 'name', header: 'Name' },
   { key: 'namespace', header: 'Namespace' },
-  { key: 'date', header: 'Date Modified' }
+  { key: 'date', header: 'Date Created' }
 ];
 
 const toolbarButtons = [
@@ -67,7 +67,7 @@ it('Table renders plain with ALL_NAMESPACES no rows', () => {
   ).toBeFalsy();
   expect(queryByText(/Name/i)).toBeTruthy();
   expect(queryByText(/Namespace/i)).toBeTruthy();
-  expect(queryByText(/Date Modified/i)).toBeTruthy();
+  expect(queryByText(/Date Created/i)).toBeTruthy();
   expect(queryByText(/Delete/i)).toBeFalsy();
   expect(queryByText(/Add/i)).toBeFalsy();
   expect(queryByText(emptyTextAllNamespaces)).toBeTruthy();
@@ -270,7 +270,7 @@ it('Table loading plain with one row and ALL_NAMESPACES', () => {
   expect(queryByText(/Resources/i)).toBeNull();
   expect(queryByText(/Name/i)).toBeNull();
   expect(queryByText(/Namespace/i)).toBeNull();
-  expect(queryByText(/Date Modified/i)).toBeNull();
+  expect(queryByText(/Date Created/i)).toBeNull();
   expect(queryByText(/Delete/i)).toBeNull();
   expect(queryByText(/Add/i)).toBeNull();
   expect(queryByLabelText('Select all rows')).toBeNull();

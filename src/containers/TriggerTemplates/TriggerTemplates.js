@@ -113,8 +113,8 @@ export /* istanbul ignore next */ class TriggerTemplates extends Component {
       {
         key: 'date',
         header: intl.formatMessage({
-          id: 'dashboard.tableHeader.date',
-          defaultMessage: 'Date Modified'
+          id: 'dashboard.tableHeader.dateCreated',
+          defaultMessage: 'Date Created'
         })
       },
       {

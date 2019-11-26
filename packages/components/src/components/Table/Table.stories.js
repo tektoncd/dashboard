@@ -27,7 +27,7 @@ storiesOf('Table', module)
     const headers = [
       { key: 'name', header: text('header1', 'Name') },
       { key: 'namespace', header: text('header2', 'Namespace') },
-      { key: 'date', header: text('header3', 'Date Modified') }
+      { key: 'date', header: text('header3', 'Date Created') }
     ];
 
     return (
@@ -65,7 +65,7 @@ storiesOf('Table', module)
         headers={[
           { key: 'name', header: 'Name' },
           { key: 'namespace', header: 'Namespace' },
-          { key: 'date', header: 'Date Modified' }
+          { key: 'date', header: 'Date Created' }
         ]}
         selectedNamespace="*"
         loading={boolean('loading', false)}
@@ -94,7 +94,7 @@ storiesOf('Table', module)
         headers={[
           { key: 'name', header: 'Name' },
           { key: 'namespace', header: 'Namespace' },
-          { key: 'date', header: 'Date Modified' }
+          { key: 'date', header: 'Created' }
         ]}
         selectedNamespace="*"
         loading={boolean('loading', false)}
@@ -135,7 +135,7 @@ storiesOf('Table', module)
           headers={[
             { key: 'name', header: 'Name' },
             { key: 'namespace', header: 'Namespace' },
-            { key: 'date', header: 'Date Modified' }
+            { key: 'date', header: 'Date Created' }
           ]}
           selectedNamespace="*"
           isSortable={boolean('isSortable', true)}

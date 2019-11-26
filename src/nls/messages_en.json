@@ -52,7 +52,7 @@
     "dashboard.step.definitionNotAvailable": "description: step definition not available",
     "dashboard.step.statusNotAvailable": "No status available",
     "dashboard.step.stepDefinition": "Step definition",
-    "dashboard.tableHeader.date": "Date Modified",
+    "dashboard.tableHeader.dateCreated": "Date Created",
     "dashboard.tableHeader.name": "Name",
     "dashboard.tableHeader.namespace": "Namespace",
     "dashboard.tableHeader.value": "Value",
