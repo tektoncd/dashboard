@@ -46,6 +46,7 @@ const PipelineRuns = ({
     return getStatusIcon({ reason, status });
   },
   hideNamespace,
+  hidePipeline,
   intl,
   pipelineRuns,
   pipelineRunActions
@@ -54,7 +55,9 @@ const PipelineRuns = ({
     <StructuredListHead>
       <StructuredListRow head>
         <StructuredListCell head>PipelineRun</StructuredListCell>
-        <StructuredListCell head>Pipeline</StructuredListCell>
+        {!hidePipeline && (
+          <StructuredListCell head>Pipeline</StructuredListCell>
+        )}
         {!hideNamespace && (
           <StructuredListCell head>Namespace</StructuredListCell>
         )}
@@ -109,20 +112,22 @@ const PipelineRuns = ({
             <StructuredListCell>
               {url ? <Link to={url}>{pipelineRunName}</Link> : pipelineRunName}
             </StructuredListCell>
-            <StructuredListCell>
-              {pipelineRefName ? (
-                <Link
-                  to={createPipelineRunsByPipelineURL({
-                    namespace,
-                    pipelineName: pipelineRefName
-                  })}
-                >
-                  {pipelineRefName}
-                </Link>
-              ) : (
-                ''
-              )}
-            </StructuredListCell>
+            {!hidePipeline && (
+              <StructuredListCell>
+                {pipelineRefName ? (
+                  <Link
+                    to={createPipelineRunsByPipelineURL({
+                      namespace,
+                      pipelineName: pipelineRefName
+                    })}
+                  >
+                    {pipelineRefName}
+                  </Link>
+                ) : (
+                  ''
+                )}
+              </StructuredListCell>
+            )}
             {!hideNamespace && (
               <StructuredListCell>{namespace}</StructuredListCell>
             )}
