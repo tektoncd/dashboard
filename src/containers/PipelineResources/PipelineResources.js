@@ -13,19 +13,16 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { injectIntl } from 'react-intl';
 import {
   InlineNotification,
-  StructuredListBody,
-  StructuredListCell,
-  StructuredListHead,
-  StructuredListRow,
-  StructuredListSkeleton,
-  StructuredListWrapper
+  StructuredListSkeleton
 } from 'carbon-components-react';
-import { getErrorMessage, urls } from '@tektoncd/dashboard-utils';
+import { getErrorMessage } from '@tektoncd/dashboard-utils';
 
+import { PipelineResources as PipelineResourcesList } from '@tektoncd/dashboard-components';
 import { fetchPipelineResources } from '../../actions/pipelineResources';
+import { deletePipelineResource } from '../../api';
 
 import {
   getPipelineResources,
@@ -55,6 +52,47 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
     }
   }
 
+  deleteResource = pipelineResource => {
+    const { name, namespace } = pipelineResource.metadata;
+    deletePipelineResource({ name, namespace });
+  };
+
+  pipelineResourceActions = () => {
+    const { intl } = this.props;
+    return [
+      {
+        actionText: intl.formatMessage({
+          id: 'dashboard.deletePipelineResource.actionText',
+          defaultMessage: 'Delete'
+        }),
+        action: this.deleteResource,
+        modalProperties: {
+          heading: intl.formatMessage({
+            id: 'dashboard.deletePipelineResource.heading',
+            defaultMessage: 'Delete PipelineResource'
+          }),
+          primaryButtonText: intl.formatMessage({
+            id: 'dashboard.deletePipelineResource.primaryText',
+            defaultMessage: 'Delete PipelineResource'
+          }),
+          secondaryButtonText: intl.formatMessage({
+            id: 'dashboard.modal.cancelButton',
+            defaultMessage: 'Cancel'
+          }),
+          body: resource =>
+            intl.formatMessage(
+              {
+                id: 'dashboard.deletePipelineResource.body',
+                defaultMessage:
+                  'Are you sure you would like to delete PipelineResource {name}?'
+              },
+              { name: resource.metadata.name }
+            )
+        }
+      }
+    ];
+  };
+
   fetchPipelineResources() {
     const { namespace } = this.props;
     this.props.fetchPipelineResources({
@@ -63,7 +101,12 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
   }
 
   render() {
-    const { error, loading, pipelineResources } = this.props;
+    const {
+      error,
+      loading,
+      namespace: selectedNamespace,
+      pipelineResources
+    } = this.props;
 
     if (loading) {
       return <StructuredListSkeleton border />;
@@ -80,54 +123,14 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
         />
       );
     }
+    const pipelineResourceActions = this.pipelineResourceActions();
 
     return (
-      <StructuredListWrapper border selection>
-        <StructuredListHead>
-          <StructuredListRow head>
-            <StructuredListCell head>PipelineResource</StructuredListCell>
-            <StructuredListCell head>Namespace</StructuredListCell>
-            <StructuredListCell head>Type</StructuredListCell>
-          </StructuredListRow>
-        </StructuredListHead>
-        <StructuredListBody>
-          {!pipelineResources.length && (
-            <StructuredListRow>
-              <StructuredListCell>
-                <span>No PipelineResources</span>
-              </StructuredListCell>
-            </StructuredListRow>
-          )}
-          {pipelineResources.map(pipelineResource => {
-            const {
-              name: pipelineResourceName,
-              namespace
-            } = pipelineResource.metadata;
-
-            return (
-              <StructuredListRow
-                className="definition"
-                key={pipelineResource.metadata.uid}
-              >
-                <StructuredListCell>
-                  <Link
-                    to={urls.pipelineResources.byName({
-                      namespace,
-                      pipelineResourceName
-                    })}
-                  >
-                    {pipelineResourceName}
-                  </Link>
-                </StructuredListCell>
-                <StructuredListCell>{namespace}</StructuredListCell>
-                <StructuredListCell>
-                  {pipelineResource.spec.type}
-                </StructuredListCell>
-              </StructuredListRow>
-            );
-          })}
-        </StructuredListBody>
-      </StructuredListWrapper>
+      <PipelineResourcesList
+        selectedNamespace={selectedNamespace}
+        pipelineResources={pipelineResources}
+        pipelineResourceActions={pipelineResourceActions}
+      />
     );
   }
 }
@@ -153,4 +156,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(PipelineResources);
+)(injectIntl(PipelineResources));

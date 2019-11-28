@@ -707,3 +707,13 @@ it('getEventListeners', () => {
     fetchMock.restore();
   });
 });
+
+it('deletePipelineResource', () => {
+  const name = 'foo';
+  const data = { fake: 'pipelineResource' };
+  fetchMock.delete(`end:${name}`, data);
+  return index.deletePipelineResource({ name }).then(pipelineResource => {
+    expect(pipelineResource).toEqual(data);
+    fetchMock.restore();
+  });
+});
