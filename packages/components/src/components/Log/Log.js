@@ -33,7 +33,17 @@ export class LogContainer extends Component {
     this.initPolling();
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
+    const { stepStatus } = this.props;
+    const { prevStepStatus } = prevProps;
+    if (
+      stepStatus &&
+      prevStepStatus &&
+      stepStatus.terminated &&
+      !prevStepStatus.terminated
+    ) {
+      this.loadLog();
+    }
     this.initPolling();
   }
 
