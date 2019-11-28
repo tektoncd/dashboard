@@ -160,6 +160,11 @@ export function createPipelineResource({ namespace, resource } = {}) {
   return post(uri, resource);
 }
 
+export function deletePipelineResource({ name, namespace } = {}) {
+  const uri = getTektonAPI('pipelineresources', { name, namespace });
+  return deleteRequest(uri, name);
+}
+
 export function createPipelineRun({
   namespace,
   pipelineName,

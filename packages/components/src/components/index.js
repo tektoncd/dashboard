@@ -22,6 +22,7 @@ export { default as Log } from './Log';
 export { default as LogoutButton } from './LogoutButton';
 export { default as PageErrorBoundary } from './PageErrorBoundary';
 export { default as PipelineGraph } from './Graph/PipelineGraph';
+export { default as PipelineResources } from './PipelineResources';
 export { default as PipelineRun } from './PipelineRun';
 export { default as PipelineRuns } from './PipelineRuns';
 export { default as Rerun } from './Rerun';
