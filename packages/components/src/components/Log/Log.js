@@ -33,10 +33,6 @@ export class LogContainer extends Component {
     this.initPolling();
   }
 
-  componentDidUpdate() {
-    this.initPolling();
-  }
-
   componentWillUnmount() {
     clearInterval(this.timer);
   }
