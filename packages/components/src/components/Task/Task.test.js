@@ -40,20 +40,6 @@ it('Task renders steps in expanded state', () => {
   expect(queryByText(/a step/i)).toBeTruthy();
 });
 
-it('Task renders completed steps in expanded state', () => {
-  const steps = [
-    { id: 'step1', stepName: 'step 1', reason: 'Completed' },
-    { id: 'step2', stepName: 'step 2', reason: 'Error' },
-    { id: 'step3', stepName: 'step 3', reason: 'Completed' }
-  ];
-  const { queryByText } = renderWithIntl(
-    <Task {...props} expanded steps={steps} />
-  );
-  expect(queryByText(/step 1/i)).toBeTruthy();
-  expect(queryByText(/step 2/i)).toBeTruthy();
-  expect(queryByText(/step 3/i)).toBeTruthy();
-});
-
 it('Task renders success state', () => {
   renderWithIntl(<Task {...props} succeeded="True" />);
 });
