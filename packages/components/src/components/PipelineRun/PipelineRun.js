@@ -23,8 +23,7 @@ import {
   selectedTask,
   selectedTaskRun,
   stepsStatus,
-  taskRunStep,
-  updateUnexecutedSteps
+  taskRunStep
 } from '@tektoncd/dashboard-utils';
 
 import { Log, RunHeader, StepDetails, TaskTree } from '..';
@@ -256,10 +255,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
 
     const { definition, reason, status, stepName, stepStatus } = taskRunStep(
       selectedStepId,
-      {
-        ...taskRun,
-        steps: updateUnexecutedSteps(taskRun.steps)
-      }
+      taskRun
     );
 
     const logContainer = (

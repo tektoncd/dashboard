@@ -23,8 +23,8 @@ const props = {
 };
 
 const steps = [
-  { id: 'build', stepName: 'build', reason: 'Completed' },
-  { id: 'test', stepName: 'test', reason: 'Completed' }
+  { id: 'build', stepName: 'build' },
+  { id: 'test', stepName: 'test' }
 ];
 
 storiesOf('Task', module)
