@@ -14,18 +14,11 @@ limitations under the License.
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import {
-  InlineNotification,
-  StructuredListBody,
-  StructuredListCell,
-  StructuredListHead,
-  StructuredListRow,
-  StructuredListSkeleton,
-  StructuredListWrapper
-} from 'carbon-components-react';
+import { injectIntl } from 'react-intl';
+import { Table } from '@tektoncd/dashboard-components';
+import { InlineNotification } from 'carbon-components-react';
 import { getErrorMessage, urls } from '@tektoncd/dashboard-utils';
 
-import Information16 from '@carbon/icons-react/lib/information/16';
 import { fetchClusterTasks } from '../../actions/tasks';
 import {
   getClusterTasks,
@@ -50,11 +43,35 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
   }
 
   render() {
-    const { error, loading, clusterTasks } = this.props;
+    const {
+      error,
+      loading,
+      clusterTasks,
+      intl,
+      namespace: selectedNamespace
+    } = this.props;
+    const initialHeaders = [
+      {
+        key: 'name',
+        header: intl.formatMessage({
+          id: 'dashboard.tableHeader.name',
+          defaultMessage: 'Name'
+        })
+      }
+    ];
 
-    if (loading && !clusterTasks.length) {
-      return <StructuredListSkeleton border />;
-    }
+    const clusterTasksFormatted = clusterTasks.map(clusterTask => ({
+      id: `${clusterTask.metadata.namespace}:${clusterTask.metadata.name}`,
+      name: (
+        <Link
+          to={urls.taskRuns.byClusterTask({
+            taskName: clusterTask.metadata.name
+          })}
+        >
+          {clusterTask.metadata.name}
+        </Link>
+      )
+    }));
 
     if (error) {
       return (
@@ -68,52 +85,29 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
       );
     }
     return (
-      <StructuredListWrapper border selection>
-        <StructuredListHead>
-          <StructuredListRow head>
-            <StructuredListCell head>ClusterTask</StructuredListCell>
-            <StructuredListCell head />
-          </StructuredListRow>
-        </StructuredListHead>
-        <StructuredListBody>
-          {!clusterTasks.length && (
-            <StructuredListRow>
-              <StructuredListCell>No ClusterTasks</StructuredListCell>
-            </StructuredListRow>
+      <>
+        <h1>ClusterTasks</h1>
+        <Table
+          headers={initialHeaders}
+          rows={clusterTasksFormatted}
+          loading={loading}
+          selectedNamespace={selectedNamespace}
+          emptyTextAllNamespaces={intl.formatMessage(
+            {
+              id: 'dashboard.emptyState.clusterTasks',
+              defaultMessage: 'No {kind}'
+            },
+            { kind: 'ClusterTasks' }
           )}
-          {clusterTasks.map(task => {
-            if (!task.metadata) {
-              return {};
-            }
-
-            const { name: taskName, uid } = task.metadata;
-            return (
-              <StructuredListRow className="definition" key={uid}>
-                <StructuredListCell>
-                  <Link
-                    to={urls.taskRuns.byClusterTask({
-                      taskName
-                    })}
-                  >
-                    {taskName}
-                  </Link>
-                </StructuredListCell>
-                <StructuredListCell>
-                  <Link
-                    title="ClusterTask definition"
-                    to={urls.rawCRD.cluster({
-                      type: 'clustertasks',
-                      name: taskName
-                    })}
-                  >
-                    <Information16 className="resource-info-icon" />
-                  </Link>
-                </StructuredListCell>
-              </StructuredListRow>
-            );
-          })}
-        </StructuredListBody>
-      </StructuredListWrapper>
+          emptyTextSelectedNamespace={intl.formatMessage(
+            {
+              id: 'dashboard.emptyState.clusterTasks',
+              defaultMessage: 'No {kind}'
+            },
+            { kind: 'ClusterTasks' }
+          )}
+        />
+      </>
     );
   }
 }
@@ -139,4 +133,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(ClusterTasksContainer);
+)(injectIntl(ClusterTasksContainer));

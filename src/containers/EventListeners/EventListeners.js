@@ -31,8 +31,6 @@ import {
   isWebSocketConnected
 } from '../../reducers';
 
-import '../../scss/triggers.scss';
-
 export /* istanbul ignore next */ class EventListeners extends Component {
   componentDidMount() {
     this.fetchEventListeners();
@@ -136,7 +134,7 @@ export /* istanbul ignore next */ class EventListeners extends Component {
     }));
 
     return (
-      <div className="triggers">
+      <>
         {error && (
           <InlineNotification
             kind="error"
@@ -179,9 +177,8 @@ export /* istanbul ignore next */ class EventListeners extends Component {
             },
             { kind: 'EventListeners', selectedNamespace }
           )}
-          isSortable
         />
-      </div>
+      </>
     );
   }
 }

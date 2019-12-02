@@ -11,16 +11,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { Link } from 'react-router-dom';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
-import {
-  InlineNotification,
-  StructuredListSkeleton
-} from 'carbon-components-react';
-import { getErrorMessage } from '@tektoncd/dashboard-utils';
+import { InlineNotification } from 'carbon-components-react';
+import { getErrorMessage, urls } from '@tektoncd/dashboard-utils';
+import { RunDropdown, Table } from '@tektoncd/dashboard-components';
 
-import { PipelineResources as PipelineResourcesList } from '@tektoncd/dashboard-components';
 import { fetchPipelineResources } from '../../actions/pipelineResources';
 import { deletePipelineResource } from '../../api';
 
@@ -105,12 +103,64 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
       error,
       loading,
       namespace: selectedNamespace,
-      pipelineResources
+      pipelineResources,
+      intl
     } = this.props;
 
-    if (loading) {
-      return <StructuredListSkeleton border />;
-    }
+    const pipelineResourceActions = this.pipelineResourceActions();
+
+    const initialHeaders = [
+      {
+        key: 'name',
+        header: intl.formatMessage({
+          id: 'dashboard.tableHeader.name',
+          defaultMessage: 'Name'
+        })
+      },
+      {
+        key: 'namespace',
+        header: intl.formatMessage({
+          id: 'dashboard.tableHeader.namespace',
+          defaultMessage: 'Namespace'
+        })
+      },
+      {
+        key: 'type',
+        header: intl.formatMessage({
+          id: 'dashboard.tableHeader.type',
+          defaultMessage: 'Type'
+        })
+      },
+      {
+        key: 'dropdown'
+      }
+    ];
+
+    const pipelineResourcesFormatted = pipelineResources.map(
+      pipelineResource => ({
+        id: `${pipelineResource.metadata.namespace}:${
+          pipelineResource.metadata.name
+        }`,
+        name: (
+          <Link
+            to={urls.pipelineResources.byName({
+              namespace: pipelineResource.metadata.namespace,
+              pipelineResourceName: pipelineResource.metadata.name
+            })}
+          >
+            {pipelineResource.metadata.name}
+          </Link>
+        ),
+        namespace: pipelineResource.metadata.namespace,
+        type: pipelineResource.spec.type,
+        dropdown: (
+          <RunDropdown
+            items={pipelineResourceActions}
+            resource={pipelineResource}
+          />
+        )
+      })
+    );
 
     if (error) {
       return (
@@ -123,14 +173,31 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
         />
       );
     }
-    const pipelineResourceActions = this.pipelineResourceActions();
 
     return (
-      <PipelineResourcesList
-        selectedNamespace={selectedNamespace}
-        pipelineResources={pipelineResources}
-        pipelineResourceActions={pipelineResourceActions}
-      />
+      <>
+        <h1>PipelineResources</h1>
+        <Table
+          headers={initialHeaders}
+          rows={pipelineResourcesFormatted}
+          loading={loading}
+          selectedNamespace={selectedNamespace}
+          emptyTextAllNamespaces={intl.formatMessage(
+            {
+              id: 'dashboard.emptyState.allNamespaces',
+              defaultMessage: 'No {kind} under any namespace.'
+            },
+            { kind: 'PipelineResources' }
+          )}
+          emptyTextSelectedNamespace={intl.formatMessage(
+            {
+              id: 'dashboard.emptyState.selectedNamespace',
+              defaultMessage: 'No {kind} under namespace {selectedNamespace}'
+            },
+            { kind: 'PipelineResources', selectedNamespace }
+          )}
+        />
+      </>
     );
   }
 }
