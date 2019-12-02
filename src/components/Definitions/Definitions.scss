@@ -21,16 +21,8 @@ limitations under the License.
 
 main {
 
-  .bx--structured-list {
-    background-color: $ui-background;
-  }
-
-  .bx--structured-list-row:nth-child(odd) {
-      background-color: white;
-  }
-
-  .bx--structured-list-row:nth-child(even) {
-    background-color: $ui-01;
+  h1 {
+    margin-bottom: 15px;
   }
 
   .bx--modal-footer {

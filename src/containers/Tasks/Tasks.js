@@ -14,17 +14,10 @@ limitations under the License.
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import {
-  InlineNotification,
-  StructuredListBody,
-  StructuredListCell,
-  StructuredListHead,
-  StructuredListRow,
-  StructuredListSkeleton,
-  StructuredListWrapper
-} from 'carbon-components-react';
+import { injectIntl } from 'react-intl';
+import { InlineNotification } from 'carbon-components-react';
 import { getErrorMessage, urls } from '@tektoncd/dashboard-utils';
-
+import { Table } from '@tektoncd/dashboard-components';
 import Information16 from '@carbon/icons-react/lib/information/16';
 import { fetchTasks } from '../../actions/tasks';
 import {
@@ -54,11 +47,60 @@ export /* istanbul ignore next */ class Tasks extends Component {
   }
 
   render() {
-    const { error, loading, tasks } = this.props;
+    const {
+      error,
+      loading,
+      tasks,
+      intl,
+      namespace: selectedNamespace
+    } = this.props;
 
-    if (loading && !tasks.length) {
-      return <StructuredListSkeleton border />;
-    }
+    const initialHeaders = [
+      {
+        key: 'name',
+        header: intl.formatMessage({
+          id: 'dashboard.tableHeader.name',
+          defaultMessage: 'Name'
+        })
+      },
+      {
+        key: 'namespace',
+        header: intl.formatMessage({
+          id: 'dashboard.tableHeader.namespace',
+          defaultMessage: 'Namespace'
+        })
+      },
+      {
+        key: 'link',
+        header: ''
+      }
+    ];
+
+    const tasksFormatted = tasks.map(task => ({
+      id: `${task.metadata.namespace}:${task.metadata.name}`,
+      name: (
+        <Link
+          to={urls.taskRuns.byTask({
+            namespace: task.metadata.namespace,
+            taskName: task.metadata.name
+          })}
+        >
+          {task.metadata.name}
+        </Link>
+      ),
+      namespace: task.metadata.namespace,
+      link: (
+        <Link
+          to={urls.rawCRD.byNamespace({
+            namespace: task.metadata.namespace,
+            type: 'tasks',
+            name: task.metadata.name
+          })}
+        >
+          <Information16 className="resource-info-icon" />
+        </Link>
+      )
+    }));
 
     if (error) {
       return (
@@ -73,53 +115,29 @@ export /* istanbul ignore next */ class Tasks extends Component {
     }
 
     return (
-      <StructuredListWrapper border selection>
-        <StructuredListHead>
-          <StructuredListRow head>
-            <StructuredListCell head>Task</StructuredListCell>
-            <StructuredListCell head>Namespace</StructuredListCell>
-            <StructuredListCell head />
-          </StructuredListRow>
-        </StructuredListHead>
-        <StructuredListBody>
-          {!tasks.length && (
-            <StructuredListRow>
-              <StructuredListCell>No Tasks</StructuredListCell>
-            </StructuredListRow>
+      <>
+        <h1>Tasks</h1>
+        <Table
+          headers={initialHeaders}
+          rows={tasksFormatted}
+          loading={loading}
+          selectedNamespace={selectedNamespace}
+          emptyTextAllNamespaces={intl.formatMessage(
+            {
+              id: 'dashboard.emptyState.allNamespaces',
+              defaultMessage: 'No {kind} under any namespace.'
+            },
+            { kind: 'Tasks' }
           )}
-          {tasks.map(task => {
-            const { name: taskName, namespace, uid } = task.metadata;
-            return (
-              <StructuredListRow className="definition" key={uid}>
-                <StructuredListCell>
-                  <Link
-                    to={urls.taskRuns.byTask({
-                      namespace,
-                      taskType: 'tasks',
-                      taskName
-                    })}
-                  >
-                    {taskName}
-                  </Link>
-                </StructuredListCell>
-                <StructuredListCell>{namespace}</StructuredListCell>
-                <StructuredListCell>
-                  <Link
-                    title="Task definition"
-                    to={urls.rawCRD.byNamespace({
-                      namespace,
-                      type: 'tasks',
-                      name: taskName
-                    })}
-                  >
-                    <Information16 className="resource-info-icon" />
-                  </Link>
-                </StructuredListCell>
-              </StructuredListRow>
-            );
-          })}
-        </StructuredListBody>
-      </StructuredListWrapper>
+          emptyTextSelectedNamespace={intl.formatMessage(
+            {
+              id: 'dashboard.emptyState.selectedNamespace',
+              defaultMessage: 'No {kind} under namespace {selectedNamespace}'
+            },
+            { kind: 'Tasks', selectedNamespace }
+          )}
+        />
+      </>
     );
   }
 }
@@ -149,4 +167,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Tasks);
+)(injectIntl(Tasks));

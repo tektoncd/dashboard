@@ -14,13 +14,8 @@ limitations under the License.
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
-import {
-  StructuredListBody,
-  StructuredListCell,
-  StructuredListHead,
-  StructuredListRow,
-  StructuredListWrapper
-} from 'carbon-components-react';
+import { Table } from '@tektoncd/dashboard-components';
+import 'carbon-components-react';
 import { getStatus, getStatusIcon, urls } from '@tektoncd/dashboard-utils';
 
 import { FormattedDate, RunDropdown } from '..';
@@ -48,116 +43,127 @@ const PipelineRuns = ({
   hideNamespace,
   hidePipeline,
   intl,
+  loading,
+  selectedNamespace,
   pipelineRuns,
   pipelineRunActions
-}) => (
-  <StructuredListWrapper border selection>
-    <StructuredListHead>
-      <StructuredListRow head>
-        <StructuredListCell head>PipelineRun</StructuredListCell>
-        {!hidePipeline && (
-          <StructuredListCell head>Pipeline</StructuredListCell>
-        )}
-        {!hideNamespace && (
-          <StructuredListCell head>Namespace</StructuredListCell>
-        )}
-        <StructuredListCell head>
-          {intl.formatMessage({
-            id: 'dashboard.pipelineRuns.status',
-            defaultMessage: 'Status'
-          })}
-        </StructuredListCell>
-        <StructuredListCell head>
-          {intl.formatMessage({
-            id: 'dashboard.pipelineRuns.transitionTime',
-            defaultMessage: 'Last Transition Time'
-          })}
-        </StructuredListCell>
-        {pipelineRunActions && <StructuredListCell head />}
-      </StructuredListRow>
-    </StructuredListHead>
-    <StructuredListBody>
-      {!pipelineRuns.length && (
-        <StructuredListRow>
-          <StructuredListCell>
-            <span>
-              {intl.formatMessage({
-                id: 'dashboard.pipelineRuns.noPipelineRuns',
-                defaultMessage: 'No PipelineRuns'
-              })}
-            </span>
-          </StructuredListCell>
-        </StructuredListRow>
-      )}
-      {pipelineRuns.map((pipelineRun, index) => {
-        const { namespace, annotations } = pipelineRun.metadata;
-        const pipelineRunName = createPipelineRunDisplayName({
-          pipelineRunMetadata: pipelineRun.metadata
-        });
-        const pipelineRefName = pipelineRun.spec.pipelineRef.name;
-        const { reason, status } = getStatus(pipelineRun);
-        const statusIcon = getPipelineRunStatusIcon(pipelineRun);
-        const pipelineRunStatus = getPipelineRunStatus(pipelineRun, intl);
-        const url = createPipelineRunURL({
-          namespace,
-          pipelineRunName,
-          annotations
-        });
+}) => {
+  const initialHeaders = [
+    {
+      key: 'name',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.name',
+        defaultMessage: 'Name'
+      })
+    },
+    !hidePipeline && {
+      key: 'pipeline',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.pipeline',
+        defaultMessage: 'Pipeline'
+      })
+    },
+    !hideNamespace && {
+      key: 'namespace',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.namespace',
+        defaultMessage: 'Namespace'
+      })
+    },
+    {
+      key: 'status',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.status',
+        defaultMessage: 'Status'
+      })
+    },
+    {
+      key: 'transitionTime',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.transitionTime',
+        defaultMessage: 'Last Transition Time'
+      })
+    },
+    {
+      key: 'dropdown'
+    }
+  ];
 
-        return (
-          <StructuredListRow
-            className="definition"
-            key={pipelineRun.metadata.uid || index}
-          >
-            <StructuredListCell>
-              {url ? <Link to={url}>{pipelineRunName}</Link> : pipelineRunName}
-            </StructuredListCell>
-            {!hidePipeline && (
-              <StructuredListCell>
-                {pipelineRefName ? (
-                  <Link
-                    to={createPipelineRunsByPipelineURL({
-                      namespace,
-                      pipelineName: pipelineRefName
-                    })}
-                  >
-                    {pipelineRefName}
-                  </Link>
-                ) : (
-                  ''
-                )}
-              </StructuredListCell>
-            )}
-            {!hideNamespace && (
-              <StructuredListCell>{namespace}</StructuredListCell>
-            )}
-            <StructuredListCell
-              className="status"
-              data-reason={reason}
-              data-status={status}
-            >
-              {statusIcon}
-              {pipelineRunStatus}
-            </StructuredListCell>
-            <StructuredListCell>
-              <FormattedDate
-                date={createPipelineRunTimestamp(pipelineRun)}
-                relative
-              />
-            </StructuredListCell>
-            {pipelineRunActions && (
-              <StructuredListCell>
-                <RunDropdown
-                  items={pipelineRunActions}
-                  resource={pipelineRun}
-                />
-              </StructuredListCell>
-            )}
-          </StructuredListRow>
-        );
-      })}
-    </StructuredListBody>
-  </StructuredListWrapper>
-);
+  const headers = [];
+  initialHeaders.forEach(header => {
+    if (header.key !== undefined) {
+      headers.push(header);
+    }
+  });
+
+  const pipelineRunsFormatted = pipelineRuns.map(pipelineRun => ({
+    id: `${pipelineRun.metadata.namespace}:${pipelineRun.metadata.name}`,
+    name: (
+      <Link
+        to={createPipelineRunURL({
+          namespace: pipelineRun.metadata.namespace,
+          pipelineRunName: createPipelineRunDisplayName({
+            pipelineRunMetadata: pipelineRun.metadata
+          })
+        })}
+      >
+        {pipelineRun.metadata.name}
+      </Link>
+    ),
+    pipeline: !hidePipeline && (
+      <Link
+        to={createPipelineRunsByPipelineURL({
+          namespace: pipelineRun.metadata.namespace,
+          pipelineName: pipelineRun.spec.pipelineRef.name
+        })}
+      >
+        {pipelineRun.spec.pipelineRef.name}
+      </Link>
+    ),
+    namespace: !hideNamespace && pipelineRun.metadata.namespace,
+    status: (
+      <div className="definition">
+        <div
+          className="status"
+          data-status={getStatus(pipelineRun).status}
+          data-reason={getStatus(pipelineRun).reason}
+        >
+          <div className="status-icon">
+            {getPipelineRunStatusIcon(pipelineRun)}
+          </div>
+          {getPipelineRunStatus(pipelineRun, intl)}
+        </div>
+      </div>
+    ),
+    transitionTime: (
+      <FormattedDate date={createPipelineRunTimestamp(pipelineRun)} relative />
+    ),
+    type: pipelineRun.spec.type,
+    dropdown: <RunDropdown items={pipelineRunActions} resource={pipelineRun} />
+  }));
+
+  return (
+    <Table
+      headers={headers}
+      rows={pipelineRunsFormatted}
+      loading={loading}
+      selectedNamespace={selectedNamespace}
+      emptyTextAllNamespaces={intl.formatMessage(
+        {
+          id: 'dashboard.emptyState.allNamespaces',
+          defaultMessage: 'No {kind} under any namespace.'
+        },
+        { kind: 'PipelineRuns' }
+      )}
+      emptyTextSelectedNamespace={intl.formatMessage(
+        {
+          id: 'dashboard.emptyState.selectedNamespace',
+          defaultMessage: 'No {kind} under namespace {selectedNamespace}'
+        },
+        { kind: 'PipelineRuns', selectedNamespace }
+      )}
+    />
+  );
+};
 
 export default injectIntl(PipelineRuns);

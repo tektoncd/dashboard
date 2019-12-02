@@ -31,8 +31,6 @@ import {
   isWebSocketConnected
 } from '../../reducers';
 
-import '../../scss/triggers.scss';
-
 export /* istanbul ignore next */ class TriggerBindings extends Component {
   componentDidMount() {
     this.fetchTriggerBindings();
@@ -134,7 +132,7 @@ export /* istanbul ignore next */ class TriggerBindings extends Component {
     }));
 
     return (
-      <div className="triggers">
+      <>
         {error && (
           <InlineNotification
             kind="error"
@@ -177,9 +175,8 @@ export /* istanbul ignore next */ class TriggerBindings extends Component {
             },
             { kind: 'TriggerBindings', selectedNamespace }
           )}
-          isSortable
         />
-      </div>
+      </>
     );
   }
 }

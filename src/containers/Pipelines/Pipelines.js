@@ -15,17 +15,11 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Information16 from '@carbon/icons-react/lib/information/16';
+import { injectIntl } from 'react-intl';
 
-import {
-  InlineNotification,
-  StructuredListBody,
-  StructuredListCell,
-  StructuredListHead,
-  StructuredListRow,
-  StructuredListSkeleton,
-  StructuredListWrapper
-} from 'carbon-components-react';
+import { InlineNotification } from 'carbon-components-react';
 import { getErrorMessage, urls } from '@tektoncd/dashboard-utils';
+import { Table } from '@tektoncd/dashboard-components';
 
 import { fetchPipelines } from '../../actions/pipelines';
 import {
@@ -55,11 +49,60 @@ export /* istanbul ignore next */ class Pipelines extends Component {
   }
 
   render() {
-    const { error, loading, pipelines } = this.props;
+    const {
+      error,
+      loading,
+      pipelines,
+      intl,
+      namespace: selectedNamespace
+    } = this.props;
 
-    if (loading && !pipelines.length) {
-      return <StructuredListSkeleton border />;
-    }
+    const initialHeaders = [
+      {
+        key: 'name',
+        header: intl.formatMessage({
+          id: 'dashboard.tableHeader.name',
+          defaultMessage: 'Name'
+        })
+      },
+      {
+        key: 'namespace',
+        header: intl.formatMessage({
+          id: 'dashboard.tableHeader.namespace',
+          defaultMessage: 'Namespace'
+        })
+      },
+      {
+        key: 'link',
+        header: ''
+      }
+    ];
+
+    const pipelinesFormatted = pipelines.map(pipeline => ({
+      id: `${pipeline.metadata.namespace}:${pipeline.metadata.name}`,
+      name: (
+        <Link
+          to={urls.pipelineRuns.byPipeline({
+            namespace: pipeline.metadata.namespace,
+            pipelineName: pipeline.metadata.name
+          })}
+        >
+          {pipeline.metadata.name}
+        </Link>
+      ),
+      namespace: pipeline.metadata.namespace,
+      link: (
+        <Link
+          to={urls.rawCRD.byNamespace({
+            namespace: pipeline.metadata.namespace,
+            type: 'pipelines',
+            name: pipeline.metadata.name
+          })}
+        >
+          <Information16 className="resource-info-icon" />
+        </Link>
+      )
+    }));
 
     if (error) {
       return (
@@ -74,52 +117,29 @@ export /* istanbul ignore next */ class Pipelines extends Component {
     }
 
     return (
-      <StructuredListWrapper border selection>
-        <StructuredListHead>
-          <StructuredListRow head>
-            <StructuredListCell head>Pipeline</StructuredListCell>
-            <StructuredListCell head>Namespace</StructuredListCell>
-            <StructuredListCell head />
-          </StructuredListRow>
-        </StructuredListHead>
-        <StructuredListBody>
-          {!pipelines.length && (
-            <StructuredListRow>
-              <StructuredListCell>No Pipelines</StructuredListCell>
-            </StructuredListRow>
+      <>
+        <h1>Pipelines</h1>
+        <Table
+          headers={initialHeaders}
+          rows={pipelinesFormatted}
+          loading={loading}
+          selectedNamespace={selectedNamespace}
+          emptyTextAllNamespaces={intl.formatMessage(
+            {
+              id: 'dashboard.emptyState.allNamespaces',
+              defaultMessage: 'No {kind} under any namespace.'
+            },
+            { kind: 'Pipelines' }
           )}
-          {pipelines.map(pipeline => {
-            const { name, namespace, uid } = pipeline.metadata;
-            return (
-              <StructuredListRow className="definition" key={uid}>
-                <StructuredListCell>
-                  <Link
-                    to={urls.pipelineRuns.byPipeline({
-                      namespace,
-                      pipelineName: name
-                    })}
-                  >
-                    {name}
-                  </Link>
-                </StructuredListCell>
-                <StructuredListCell>{namespace}</StructuredListCell>
-                <StructuredListCell>
-                  <Link
-                    title="Pipeline definition"
-                    to={urls.rawCRD.byNamespace({
-                      namespace,
-                      type: 'pipelines',
-                      name
-                    })}
-                  >
-                    <Information16 className="resource-info-icon" />
-                  </Link>
-                </StructuredListCell>
-              </StructuredListRow>
-            );
-          })}
-        </StructuredListBody>
-      </StructuredListWrapper>
+          emptyTextSelectedNamespace={intl.formatMessage(
+            {
+              id: 'dashboard.emptyState.selectedNamespace',
+              defaultMessage: 'No {kind} under namespace {selectedNamespace}'
+            },
+            { kind: 'Pipelines', selectedNamespace }
+          )}
+        />
+      </>
     );
   }
 }
@@ -149,4 +169,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Pipelines);
+)(injectIntl(Pipelines));

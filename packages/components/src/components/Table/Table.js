@@ -24,6 +24,7 @@ import {
   TableToolbar,
   TableToolbarContent
 } from 'carbon-components-react';
+
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
 import './Table.scss';
@@ -64,41 +65,45 @@ const Table = props => {
           headers,
           getHeaderProps,
           getRowProps,
+          getTableProps,
           getSelectionProps,
           getBatchActionProps,
           selectedRows
         }) => (
           <TableContainer title={title}>
-            <TableToolbar>
-              <TableBatchActions {...getBatchActionProps()}>
-                {batchActionButtons.map(button => (
-                  <TableBatchAction
-                    renderIcon={button.icon}
-                    key={`${button.text}Button`}
-                    onClick={() => {
-                      button.onClick(
-                        selectedRows,
-                        getBatchActionProps().onCancel
-                      );
-                    }}
-                  >
-                    {button.text}
-                  </TableBatchAction>
-                ))}
-              </TableBatchActions>
-              <TableToolbarContent>
-                {toolbarButtons.map(button => (
-                  <Button
-                    disabled={loading}
-                    onClick={button.onClick}
-                    renderIcon={button.icon}
-                    key={`${button.text}Button`}
-                  >
-                    {button.text}
-                  </Button>
-                ))}
-              </TableToolbarContent>
-            </TableToolbar>
+            {(toolbarButtons.length !== 0 ||
+              batchActionButtons.length !== 0) && (
+              <TableToolbar>
+                <TableBatchActions {...getBatchActionProps()}>
+                  {batchActionButtons.map(button => (
+                    <TableBatchAction
+                      renderIcon={button.icon}
+                      key={`${button.text}Button`}
+                      onClick={() => {
+                        button.onClick(
+                          selectedRows,
+                          getBatchActionProps().onCancel
+                        );
+                      }}
+                    >
+                      {button.text}
+                    </TableBatchAction>
+                  ))}
+                </TableBatchActions>
+                <TableToolbarContent>
+                  {toolbarButtons.map(button => (
+                    <Button
+                      disabled={loading}
+                      onClick={button.onClick}
+                      renderIcon={button.icon}
+                      key={`${button.text}Button`}
+                    >
+                      {button.text}
+                    </Button>
+                  ))}
+                </TableToolbarContent>
+              </TableToolbar>
+            )}
             {loading ? (
               <DataTableSkeleton
                 useZebraStyles
@@ -106,14 +111,14 @@ const Table = props => {
                 columnCount={headers.length}
               />
             ) : (
-              <CarbonTable>
+              <CarbonTable {...getTableProps()}>
                 <TableHead>
                   <TableRow>
                     {batchActionButtons.length > 0 && (
                       <TableSelectAll {...getSelectionProps()} />
                     )}
                     {headers.map(header => {
-                      return (
+                      return header.header ? (
                         <TableHeader
                           {...getHeaderProps({ header })}
                           className="cellText"
@@ -121,6 +126,8 @@ const Table = props => {
                         >
                           {header.header}
                         </TableHeader>
+                      ) : (
+                        <TableHeader />
                       );
                     })}
                   </TableRow>

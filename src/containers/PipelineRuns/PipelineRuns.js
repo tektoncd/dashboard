@@ -16,11 +16,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
-import {
-  Button,
-  InlineNotification,
-  StructuredListSkeleton
-} from 'carbon-components-react';
+import { Button, InlineNotification } from 'carbon-components-react';
 import {
   LabelFilter,
   PipelineRuns as PipelineRunsList
@@ -228,15 +224,10 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
     const {
       error,
       filters,
-      loading,
       namespace: selectedNamespace,
       pipelineRuns,
       intl
     } = this.props;
-
-    if ((!pipelineRuns || !pipelineRuns.length) && loading) {
-      return <StructuredListSkeleton border />;
-    }
 
     if (error) {
       return (
@@ -289,6 +280,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
             lowContrast
           />
         )}
+        <h1>PipelineRuns</h1>
         <LabelFilter
           additionalButton={createPipelineRunButton}
           filters={filters}

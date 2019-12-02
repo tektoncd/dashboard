@@ -11,14 +11,35 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+@import '~@tektoncd/dashboard-components/dist/scss/vars';
+
 .tableComponent {
+  
   .bx--table-toolbar {
     background: transparent;
   }
 
-  .bx--data-table thead th button.cellText.bx--table-sort {
-    padding: 0;
+  .bx--data-table-header{
+    padding-left: 0;
+    padding-bottom: 0;
   }
+
+  .bx--data-table-container{
+    margin-top: 0;
+    width: 100%;
+  }
+
+  .bx--data-table thead th.cellText {
+    padding: 15;
+    border-bottom-width: 1px;
+    border-color:$ui-03;
+    border-style: solid;
+  }
+
+  .bx--data-table thead *{
+    background-color: white; 
+  }
+
   .noRows {
     width: 100%;
     text-align: center;

@@ -13,8 +13,14 @@ limitations under the License.
 
 import React from 'react';
 
+import { createIntl } from 'react-intl';
 import { renderWithIntl, renderWithRouter } from '../../utils/test';
 import PipelineRuns from './PipelineRuns';
+
+const intl = createIntl({
+  locale: 'en',
+  defaultLocale: 'en'
+});
 
 it('PipelineRuns renders empty state', () => {
   const { queryByText } = renderWithIntl(<PipelineRuns pipelineRuns={[]} />);
@@ -26,7 +32,8 @@ it('PipelineRuns hides namespace when hideNamespace set', () => {
   const { queryByText } = renderWithIntl(
     <PipelineRuns pipelineRuns={[]} hideNamespace />
   );
-  expect(queryByText(/namespace/i)).toBeFalsy();
+
+  expect(queryByText(/Namespace/)).toBeFalsy();
   expect(queryByText(/pipeline/i)).toBeTruthy();
   expect(queryByText(/no pipelineruns/i)).toBeTruthy();
 });
@@ -35,6 +42,7 @@ it('PipelineRuns renders data', () => {
   const pipelineRunName = 'pipeline-run-20190816124708';
   const { queryByText } = renderWithRouter(
     <PipelineRuns
+      intl={intl}
       pipelineRuns={[
         {
           metadata: {
@@ -58,6 +66,14 @@ it('PipelineRuns renders data', () => {
               }
             ]
           }
+        }
+      ]}
+      pipelineRunActions={[
+        {
+          actionText: intl.formatMessage({
+            id: 'test.actionText',
+            defaultMessage: 'TestAction'
+          })
         }
       ]}
     />

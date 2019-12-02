@@ -31,8 +31,6 @@ import {
   isWebSocketConnected
 } from '../../reducers';
 
-import '../../scss/triggers.scss';
-
 export /* istanbul ignore next */ class TriggerTemplates extends Component {
   componentDidMount() {
     this.fetchTriggerTemplates();
@@ -136,7 +134,7 @@ export /* istanbul ignore next */ class TriggerTemplates extends Component {
     }));
 
     return (
-      <div className="triggers">
+      <>
         {error && (
           <InlineNotification
             kind="error"
@@ -179,9 +177,8 @@ export /* istanbul ignore next */ class TriggerTemplates extends Component {
             },
             { kind: 'TriggerTemplates', selectedNamespace }
           )}
-          isSortable
         />
-      </div>
+      </>
     );
   }
 }
