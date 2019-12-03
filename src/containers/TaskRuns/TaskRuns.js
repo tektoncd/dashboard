@@ -13,28 +13,20 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
 import {
   InlineNotification,
-  StructuredListBody,
-  StructuredListCell,
-  StructuredListHead,
-  StructuredListRow,
-  StructuredListSkeleton,
-  StructuredListWrapper
+  StructuredListSkeleton
 } from 'carbon-components-react';
 import {
   getErrorMessage,
   getStatus,
-  getStatusIcon,
-  isRunning,
-  urls
+  isRunning
 } from '@tektoncd/dashboard-utils';
 import {
-  CancelButton,
-  FormattedDate,
-  LabelFilter
+  LabelFilter,
+  TaskRuns as TaskRunsList
 } from '@tektoncd/dashboard-components';
 
 import { sortRunsByStartTime } from '../../utils';
@@ -47,7 +39,7 @@ import {
   isFetchingTaskRuns,
   isWebSocketConnected
 } from '../../reducers';
-import { cancelTaskRun } from '../../api';
+import { cancelTaskRun, deleteTaskRun } from '../../api';
 
 export /* istanbul ignore next */ class TaskRuns extends Component {
   componentDidMount() {
@@ -70,6 +62,16 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
       this.fetchTaskRuns();
     }
   }
+
+  cancel = taskRun => {
+    const { name, namespace } = taskRun.metadata;
+    cancelTaskRun({ name, namespace });
+  };
+
+  deleteTask = taskRun => {
+    const { name, namespace } = taskRun.metadata;
+    deleteTaskRun({ name, namespace });
+  };
 
   handleAddFilter = labelFilters => {
     const queryParams = `?${new URLSearchParams({
@@ -100,6 +102,80 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
     }
   };
 
+  taskRunActions = () => {
+    const { intl } = this.props;
+    return [
+      {
+        actionText: intl.formatMessage({
+          id: 'dashboard.cancelTaskRun.actionText',
+          defaultMessage: 'Stop'
+        }),
+        action: this.cancel,
+        disable: resource => {
+          const { reason, status } = getStatus(resource);
+          return !isRunning(reason, status);
+        },
+        modalProperties: {
+          heading: intl.formatMessage({
+            id: 'dashboard.cancelTaskRun.heading',
+            defaultMessage: 'Stop TaskRun'
+          }),
+          primaryButtonText: intl.formatMessage({
+            id: 'dashboard.cancelTaskRun.primaryText',
+            defaultMessage: 'Stop TaskRun'
+          }),
+          secondaryButtonText: intl.formatMessage({
+            id: 'dashboard.modal.cancelButton',
+            defaultMessage: 'Cancel'
+          }),
+          body: resource =>
+            intl.formatMessage(
+              {
+                id: 'dashboard.cancelTaskRun.body',
+                defaultMessage:
+                  'Are you sure you would like to stop TaskRun {name}?'
+              },
+              { name: resource.metadata.name }
+            )
+        }
+      },
+      {
+        actionText: intl.formatMessage({
+          id: 'dashboard.deleteTaskRun.actionText',
+          defaultMessage: 'Delete'
+        }),
+        action: this.deleteTask,
+        disable: resource => {
+          const { reason, status } = getStatus(resource);
+          return isRunning(reason, status);
+        },
+        modalProperties: {
+          heading: intl.formatMessage({
+            id: 'dashboard.deleteTaskRun.heading',
+            defaultMessage: 'Delete TaskRun'
+          }),
+          primaryButtonText: intl.formatMessage({
+            id: 'dashboard.deleteTaskRun.primaryText',
+            defaultMessage: 'Delete TaskRun'
+          }),
+          secondaryButtonText: intl.formatMessage({
+            id: 'dashboard.modal.cancelButton',
+            defaultMessage: 'Cancel'
+          }),
+          body: resource =>
+            intl.formatMessage(
+              {
+                id: 'dashboard.deleteTaskRun.body',
+                defaultMessage:
+                  'Are you sure you would like to delete TaskRun {name}?'
+              },
+              { name: resource.metadata.name }
+            )
+        }
+      }
+    ];
+  };
+
   fetchTaskRuns() {
     const { filters, namespace } = this.props;
     this.props.fetchTaskRuns({
@@ -109,7 +185,13 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
   }
 
   render() {
-    const { error, filters, loading, taskRuns } = this.props;
+    const {
+      error,
+      filters,
+      loading,
+      taskRuns,
+      namespace: selectedNamespace
+    } = this.props;
 
     if ((!taskRuns || !taskRuns.length) && loading) {
       return <StructuredListSkeleton border />;
@@ -127,6 +209,7 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
       );
     }
 
+    const taskRunActions = this.taskRunActions();
     sortRunsByStartTime(taskRuns);
 
     return (
@@ -137,102 +220,11 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
           handleDeleteFilter={this.handleDeleteFilter}
         />
 
-        <StructuredListWrapper border selection>
-          <StructuredListHead>
-            <StructuredListRow head>
-              <StructuredListCell head>TaskRun</StructuredListCell>
-              <StructuredListCell head>Task</StructuredListCell>
-              <StructuredListCell head>Namespace</StructuredListCell>
-              <StructuredListCell head>Status</StructuredListCell>
-              <StructuredListCell head>Last Transition Time</StructuredListCell>
-              <StructuredListCell head />
-            </StructuredListRow>
-          </StructuredListHead>
-          <StructuredListBody>
-            {!taskRuns.length && (
-              <StructuredListRow>
-                <StructuredListCell>
-                  <span>No TaskRuns</span>
-                </StructuredListCell>
-              </StructuredListRow>
-            )}
-            {taskRuns.map(taskRun => {
-              const { name, namespace } = taskRun.metadata;
-              let taskRefName = '';
-              if (taskRun.spec.taskRef) {
-                taskRefName = taskRun.spec.taskRef.name;
-              }
-              const { lastTransitionTime, reason, status } = getStatus(taskRun);
-              let message;
-              if (!taskRun.status.conditions) {
-                message = '';
-              } else if (
-                !taskRun.status.conditions[0].message &&
-                taskRun.status.conditions[0].status
-              ) {
-                message = 'All Steps have completed executing';
-              } else {
-                message = taskRun.status.conditions[0].message; // eslint-disable-line
-              }
-
-              return (
-                <StructuredListRow
-                  className="definition"
-                  key={taskRun.metadata.uid}
-                >
-                  <StructuredListCell>
-                    <Link
-                      to={urls.taskRuns.byName({
-                        namespace,
-                        taskRunName: name
-                      })}
-                    >
-                      {name}
-                    </Link>
-                  </StructuredListCell>
-                  <StructuredListCell>
-                    {taskRefName && (
-                      <Link
-                        to={urls.taskRuns.byTask({
-                          namespace,
-                          taskName: taskRefName
-                        })}
-                      >
-                        {taskRefName}
-                      </Link>
-                    )}
-                  </StructuredListCell>
-                  <StructuredListCell>{namespace}</StructuredListCell>
-                  <StructuredListCell
-                    className="status"
-                    data-reason={reason}
-                    data-status={status}
-                  >
-                    {getStatusIcon({ reason, status })}
-                    {message}
-                  </StructuredListCell>
-                  <StructuredListCell>
-                    <FormattedDate date={lastTransitionTime} relative />
-                  </StructuredListCell>
-                  <StructuredListCell>
-                    {isRunning(reason, status) && (
-                      <CancelButton
-                        type="TaskRun"
-                        name={name}
-                        onCancel={() =>
-                          cancelTaskRun({
-                            name,
-                            namespace
-                          })
-                        }
-                      />
-                    )}
-                  </StructuredListCell>
-                </StructuredListRow>
-              );
-            })}
-          </StructuredListBody>
-        </StructuredListWrapper>
+        <TaskRunsList
+          selectedNamespace={selectedNamespace}
+          taskRuns={taskRuns}
+          taskRunActions={taskRunActions}
+        />
       </>
     );
   }
@@ -280,4 +272,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(TaskRuns);
+)(injectIntl(TaskRuns));

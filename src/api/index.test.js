@@ -717,3 +717,13 @@ it('deletePipelineResource', () => {
     fetchMock.restore();
   });
 });
+
+it('deleteTaskRun', () => {
+  const name = 'foo';
+  const data = { fake: 'taskRun' };
+  fetchMock.delete(`end:${name}`, data);
+  return index.deleteTaskRun({ name }).then(taskRun => {
+    expect(taskRun).toEqual(data);
+    fetchMock.restore();
+  });
+});
