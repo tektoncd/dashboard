@@ -22,6 +22,7 @@
     "dashboard.labelFilter.duplicate": "No duplicate filters allowed",
     "dashboard.labelFilter.heading": "Filters:",
     "dashboard.labelFilter.invalid": "Filters must be of the format labelKey:labelValue and contain accepted label characters",
+    "dashboard.labelFilter.invalidLength": "Filters must be of the format labelKey:labelValue and contain less than 64 characters",
     "dashboard.labelFilter.searchPlaceholder": "Input a label filter of the format labelKey:labelValue",
     "dashboard.labelFilter.syntaxMessage": "See the Kubernetes Label documentation for valid syntax",
     "dashboard.list.menu.tooltip": "Actions",

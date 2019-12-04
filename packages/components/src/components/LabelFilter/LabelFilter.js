@@ -66,6 +66,18 @@ class LabelFilter extends Component {
       });
       return;
     }
+    const currentFilterRequest = filterValue.split(':');
+    if (currentFilterRequest[1].length > 63) {
+      this.setState({
+        isValid: false,
+        filterMessage: intl.formatMessage({
+          id: 'dashboard.labelFilter.invalidLength',
+          defaultMessage:
+            'Filters must be of the format labelKey:labelValue and contain less than 64 characters'
+        })
+      });
+      return;
+    }
     const colonToEqualsFilters = filterValue.replace(/:/g, '=');
     let currentFiltersArray = colonToEqualsFilters.split(',');
     currentFiltersArray = arrayUnique(currentFiltersArray);

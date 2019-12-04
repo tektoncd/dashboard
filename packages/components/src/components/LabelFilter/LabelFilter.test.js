@@ -43,6 +43,34 @@ it('LabelFilter handles adding a filter', () => {
   expect(handleAddFilter).toHaveBeenCalledWith([filter.replace(':', '=')]);
 });
 
+it('LabelFilter displays notification if character length is over 63 characters for labelValue', async () => {
+  const filter =
+    'app:1234567890123456789012345678901234567890123456789012345678901234';
+  const handleAddFilter = jest.fn();
+  const {
+    getByPlaceholderText,
+    getByText,
+    getAllByTitle,
+    queryByText
+  } = renderWithIntl(<LabelFilter handleAddFilter={handleAddFilter} />);
+  fireEvent.change(getByPlaceholderText(/input a label filter/i), {
+    target: { value: filter }
+  });
+  fireEvent.click(getByText(/add filter/i));
+  expect(handleAddFilter).not.toHaveBeenCalled();
+  await waitForElement(() =>
+    getByText(
+      /Filters must be of the format labelKey:labelValue and contain less than 64 characters/i
+    )
+  );
+  fireEvent.click(getAllByTitle(/closes notification/i)[1]);
+  expect(
+    queryByText(
+      /Filters must be of the format labelKey:labelValue and contain less than 64 characters/i
+    )
+  ).toBeNull();
+});
+
 it('LabelFilter handles adding a duplicate filter', async () => {
   const filter = 'app=test';
   const filterDisplayValue = 'app:test';
