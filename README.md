@@ -2,13 +2,13 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/kubernetes/dashboard/blob/master/LICENSE)
 
-Tekton Dashboard is a general purpose, web-based UI for Tekton Pipelines. It allows users to manage and view Tekton PipelineRuns and TaskRuns and the resources involved in their creation, execution, and completion. It also allows filtering of PipelineRuns and TaskRuns by label. 
+Tekton Dashboard is a general purpose, web-based UI for Tekton Pipelines. It allows users to manage and view Tekton PipelineRuns and TaskRuns and the resources involved in their creation, execution, and completion. It also allows filtering of PipelineRuns and TaskRuns by label.
 
 ![Dashboard UI workloads page](docs/dashboard-ui.png)
 
 ## Pre-requisites
 
-[Tekton Pipelines](https://github.com/tektoncd/pipeline) must be installed in order to use the Tekton Dashboard. Instructions to install Tekton Pipelines can be found [here](https://github.com/tektoncd/pipeline/blob/master/docs/install.md). For 0.7.0 of Tekton Pipelines, use the 0.2.1 release. To continue using Tekton Pipelines 0.5.2, you should use the published 0.1.1 release [here](https://github.com/tektoncd/dashboard/releases/tag/v0.1.1).
+[Tekton Pipelines](https://github.com/tektoncd/pipeline) must be installed in order to use the Tekton Dashboard. Instructions to install Tekton Pipelines can be found [here](https://github.com/tektoncd/pipeline/blob/master/docs/install.md). For v0.9.0 and v0.8.0 of Tekton Pipelines, use the Tekton Dashboard master branch. For v0.7.0 of Tekton Pipelines, use the Tekton Dashboard v0.2.1 release. To continue using Tekton Pipelines v0.5.2, use the Tekton Dashboard v0.1.1 release published [here](https://github.com/tektoncd/dashboard/releases/tag/v0.1.1).
 
 ## Install Dashboard
 
@@ -18,7 +18,7 @@ Tekton Dashboard is a general purpose, web-based UI for Tekton Pipelines. It all
    [`kubectl apply`](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#apply)
    command to install the [Tekton Dashboard](https://github.com/tektoncd/dashboard)
    and its dependencies:
-    
+
    ```bash
    kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.2.1/dashboard-latest-release.yaml
    ```
@@ -70,7 +70,7 @@ The `install-dev.sh` script will build and push an image of the Tekton Dashboard
 
 An Ingress definition is provided in the `ingress` directory, and this can optionally be installed and configured. If you wish to access the Tekton Dashboard, for example on your laptop that has a visible IP address, you can use the freely available [`nip.io`](https://nip.io/) service. A worked example follows.
 
-Create the Ingress: 
+Create the Ingress:
 
 `kubectl apply ingress/basic-dashboard-ingress.yaml`
 
@@ -148,7 +148,7 @@ The Dashboard can be uninstalled on Minishift by running the command `./minishif
 
 ## Accessing the Dashboard
 
-The Dashboard can be accessed through its ClusterIP Service by running `kubectl proxy`. Assuming tekton-pipelines is the install namespace for the Dashboard, you can access the web UI at `localhost:8001/api/v1/namespaces/tekton-pipelines/services/tekton-dashboard:http/proxy/`. 
+The Dashboard can be accessed through its ClusterIP Service by running `kubectl proxy`. Assuming tekton-pipelines is the install namespace for the Dashboard, you can access the web UI at `localhost:8001/api/v1/namespaces/tekton-pipelines/services/tekton-dashboard:http/proxy/`.
 
 An alternative way to access the Dashboard is using `kubectl port-forward` e.g. if you installed the Tekton Dashboard into the `tekton-pipelines` namespace (which is the default) you can access the Dashboard with `kubectl --namespace tekton-pipelines port-forward svc/tekton-dashboard 9097:9097` and then just open `localhost:9097`.
 

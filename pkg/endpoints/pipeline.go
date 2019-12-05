@@ -67,21 +67,6 @@ type ResourceBinding struct {
 	RESOURCEREFNAME string `json:"resourcerefname"`
 }
 
-//ManualPipelineRun - represents the data required to create a new PipelineRun
-type ManualPipelineRun struct {
-	PIPELINENAME      string `json:"pipelinename"`
-	REGISTRYLOCATION  string `json:"registrylocation,omitempty"`
-	SERVICEACCOUNT    string `json:"serviceaccount,omitempty"`
-	PIPELINERUNTYPE   string `json:"pipelineruntype,omitempty"`
-	GITRESOURCENAME   string `json:"gitresourcename,omitempty"`
-	IMAGERESOURCENAME string `json:"imageresourcename,omitempty"`
-	GITCOMMIT         string `json:"gitcommit,omitempty"`
-	REPONAME          string `json:"reponame,omitempty"`
-	REPOURL           string `json:"repourl,omitempty"`
-	HELMSECRET        string `json:"helmsecret,omitempty"`
-	APPLYDIRECTORY    string `json:"applydirectory,omitempty"`
-}
-
 // PipelineRunUpdateBody - represents a request that a user may provide for updating a PipelineRun
 // Currently only modifying the status is supported but this gives us scope for adding additional fields
 type PipelineRunUpdateBody struct {

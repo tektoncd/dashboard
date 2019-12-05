@@ -207,7 +207,7 @@ export function createPipelineRun({
     }
   };
   if (serviceAccount) {
-    payload.spec.serviceAccount = serviceAccount;
+    payload.spec.serviceAccountName = serviceAccount;
   }
   if (timeout) {
     payload.spec.timeout = timeout;
