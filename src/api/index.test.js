@@ -437,7 +437,13 @@ it('createPipelineRun', () => {
   const params = { 'fake-param-name': 'fake-param-value' };
   const serviceAccount = 'fake-serviceAccount';
   const timeout = 'fake-timeout';
-  const payload = { pipelineName, resources, params, serviceAccount, timeout };
+  const payload = {
+    pipelineName,
+    resources,
+    params,
+    serviceAccount,
+    timeout
+  };
   const data = {
     apiVersion: 'tekton.dev/v1alpha1',
     kind: 'PipelineRun',
@@ -460,7 +466,7 @@ it('createPipelineRun', () => {
         name,
         value: params[name]
       })),
-      serviceAccount,
+      serviceAccountName: serviceAccount,
       timeout
     }
   };

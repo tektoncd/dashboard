@@ -108,7 +108,7 @@ storiesOf('PipelineRuns', module)
             pipelineRef: {
               name: 'output-pipeline'
             },
-            serviceAccount: 'default',
+            serviceAccountName: 'default',
             resources: [
               {
                 name: 'source-repo',

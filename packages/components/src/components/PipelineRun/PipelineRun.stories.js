@@ -42,7 +42,7 @@ const taskRun = {
   spec: {
     inputs: {},
     outputs: {},
-    serviceAccount: 'default',
+    serviceAccountName: 'default',
     taskRef: { kind: 'Task', name: 'task1' },
     timeout: '24h0m0s'
   },
