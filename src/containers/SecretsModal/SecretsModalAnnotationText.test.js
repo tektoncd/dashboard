@@ -12,10 +12,11 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, render, waitForElement } from 'react-testing-library';
+import { fireEvent, waitForElement } from 'react-testing-library';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import { renderWithIntl } from '../../utils/test';
 import SecretsModal from '.';
 
 // Declares scrollIntoView as a function for testing purposes
@@ -92,6 +93,12 @@ const store = mockStore({
   }
 });
 
+const gitServerPlaceholder = new RegExp('https://github.com', 'i');
+const dockerRegistryPlaceholder = new RegExp(
+  'https://index.docker.io/v1/',
+  'i'
+);
+
 it('Test SecretsModal Server URL examples', async () => {
   const handleNew = jest.fn();
   const props = {
@@ -99,28 +106,37 @@ it('Test SecretsModal Server URL examples', async () => {
     handleNew
   };
 
-  const { getByLabelText, getByText } = render(
+  const {
+    queryByDisplayValue,
+    queryByPlaceholderText,
+    queryAllByDisplayValue,
+    queryAllByPlaceholderText,
+    getByText
+  } = renderWithIntl(
     <Provider store={store}>
       <SecretsModal {...props} />
     </Provider>
   );
-  let annotationValue0 = getByLabelText(/Annotation Value#0/i);
-  expect(annotationValue0.placeholder).toEqual('https://github.com');
+  // Default value and placeholder should be for github
+  expect(queryByDisplayValue(gitServerPlaceholder)).toBeTruthy();
+  expect(queryByPlaceholderText(gitServerPlaceholder)).toBeTruthy();
+
+  // Change value and placeholder to dockerhub
   fireEvent.click(await waitForElement(() => getByText(/Git Server/i)));
   fireEvent.click(await waitForElement(() => getByText(/Docker Registry/i)));
+  expect(queryByDisplayValue(dockerRegistryPlaceholder)).toBeTruthy();
+  expect(queryByPlaceholderText(dockerRegistryPlaceholder)).toBeTruthy();
 
-  annotationValue0 = getByLabelText(/Annotation Value#0/i);
-  expect(annotationValue0.placeholder).toEqual('https://index.docker.io/v1/');
+  // Add a second annotation to the list
+  fireEvent.click(await waitForElement(() => getByText(/add/i)));
+  expect(queryAllByDisplayValue(dockerRegistryPlaceholder).length).toEqual(2);
+  expect(queryAllByPlaceholderText(dockerRegistryPlaceholder).length).toEqual(
+    2
+  );
 
-  fireEvent.click(document.getElementsByClassName('addIcon').item(0));
-  let annotationValue1 = getByLabelText(/Annotation Value#1/i);
-  expect(annotationValue1.placeholder).toEqual('https://index.docker.io/v1/');
-
+  // Change value and placeholder back to github (both annotations should update)
   fireEvent.click(await waitForElement(() => getByText(/Docker Registry/i)));
   fireEvent.click(await waitForElement(() => getByText(/Git Server/i)));
-
-  annotationValue0 = getByLabelText(/Annotation Value#0/i);
-  expect(annotationValue0.placeholder).toEqual('https://github.com');
-  annotationValue1 = getByLabelText(/Annotation Value#1/i);
-  expect(annotationValue1.placeholder).toEqual('https://github.com');
+  expect(queryAllByDisplayValue(gitServerPlaceholder).length).toEqual(2);
+  expect(queryAllByPlaceholderText(gitServerPlaceholder).length).toEqual(2);
 });

@@ -13,7 +13,6 @@ limitations under the License.
 
 import React from 'react';
 import { Select, SelectItem, TextInput } from 'carbon-components-react';
-import './SecretsModal.scss';
 
 const BasicAuthFields = props => {
   const {
@@ -43,7 +42,7 @@ const BasicAuthFields = props => {
         value={username}
         labelText="Username"
         onChange={handleChangeTextInput}
-        invalid={invalidFields.indexOf('username') > -1}
+        invalid={'username' in invalidFields}
         invalidText="Username required."
       />
       <TextInput
@@ -54,7 +53,7 @@ const BasicAuthFields = props => {
         placeholder="********"
         labelText="Password/Token"
         onChange={handleChangeTextInput}
-        invalid={invalidFields.indexOf('password') > -1}
+        invalid={'password' in invalidFields}
         invalidText="Password or Token required."
       />
       <Select
@@ -64,7 +63,7 @@ const BasicAuthFields = props => {
         defaultValue="main"
         onChange={handleChangeServiceAccount}
         labelText="Service Account"
-        invalid={invalidFields.indexOf('serviceAccount') > -1}
+        invalid={'serviceAccount' in invalidFields}
         invalidText="Service Account required."
         disabled={namespace === ''}
       >

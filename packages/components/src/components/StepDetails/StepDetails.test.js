@@ -28,3 +28,14 @@ it('StepDetails renders', () => {
     </Provider>
   );
 });
+
+it('StepDetails renders terminated state', () => {
+  const mockStore = configureStore();
+  const store = mockStore({ namespaces: { selected: 'default' } });
+
+  renderWithRouter(
+    <Provider store={store} status="terminated">
+      <StepDetails />
+    </Provider>
+  );
+});

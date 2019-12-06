@@ -11,31 +11,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-@import '~carbon-components/scss/globals/scss/vars';
-
-.modal.bx--modal.is-visible {
-  .bx--modal-content > form > .bx--form-item,
-  .bx--dropdown__wrapper {
-    margin-bottom: $spacing-03;
-  }
-
-  .bx--text-input__field-wrapper,
-  .bx--form__helper-text,
-  .bx--select,
-  .bx--select-input {
-    min-width: 100%;
-  }
-
-  .bx--select svg {
-    display: none;
-  }
-
-  .bx--dropdown {
-    background-color: $ui-background;
-  }
-
-  .bx--modal-content {
-    margin: 0;
-    padding: 0 $spacing-05;
-  }
-}
+export { default } from './KeyValueList';

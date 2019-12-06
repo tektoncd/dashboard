@@ -14,13 +14,16 @@ limitations under the License.
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Modal } from 'carbon-components-react';
+import { generateId } from '@tektoncd/dashboard-utils';
+import { KeyValueList } from '@tektoncd/dashboard-components';
+import { injectIntl } from 'react-intl';
 import UniversalFields from '../../components/SecretsModal/UniversalFields';
-import Annotations from '../../components/SecretsModal/Annotations';
 import BasicAuthFields from '../../components/SecretsModal/BasicAuthFields';
-import '../../components/SecretsModal/SecretsModal.scss';
 import { createSecret } from '../../actions/secrets';
 import { isWebSocketConnected } from '../../reducers';
 import { fetchServiceAccounts } from '../../actions/serviceAccounts';
+
+import '../../components/SecretsModal/SecretsModal.scss';
 
 /* istanbul ignore next */
 function validateInputs(value, id) {
@@ -82,15 +85,14 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
       serviceAccount: '',
       annotations: [
         {
-          label: `tekton.dev/git-0`,
+          key: 'tekton.dev/git-0',
+          keyPlaceholder: 'tekton.dev/git-0',
           value: 'https://github.com',
-          placeholder: 'https://github.com',
-          id: Math.random()
-            .toString(36)
-            .substring(2, 11)
+          valuePlaceholder: 'https://github.com',
+          id: generateId(`annotation0-`)
         }
       ],
-      invalidFields: [],
+      invalidFields: {},
       serviceAccounts: []
     };
   }
@@ -111,7 +113,7 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
   };
 
   handleSubmit = () => {
-    const invalidFields = [];
+    const invalidFields = {};
     const postData = {
       apiVersion: 'v1',
       data: {
@@ -139,13 +141,13 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
     } = this.state;
 
     if (!validateInputs(namespace, 'namespace')) {
-      invalidFields.push('namespace');
+      invalidFields.namespace = true;
     }
 
     if (validateInputs(name, 'name')) {
       postData.metadata.name = name.trim();
     } else {
-      invalidFields.push('name');
+      invalidFields.name = true;
     }
 
     // If the data isn't base64 encoded, you'll confusingly get back a 404 from the secrets API
@@ -154,41 +156,38 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
       const encodedUsername = Buffer.from(username).toString('base64');
       postData.data.username = encodedUsername;
     } else {
-      invalidFields.push('username');
+      invalidFields.username = true;
     }
 
     if (validateInputs(password, 'password')) {
       const encodedPass = Buffer.from(password).toString('base64');
       postData.data.password = encodedPass;
     } else {
-      invalidFields.push('password');
+      invalidFields.password = true;
     }
 
     if (validateInputs(serviceAccount, 'serviceAccount')) {
       postData.metadata.labels.serviceAccount = serviceAccount;
     } else {
-      invalidFields.push('serviceAccount');
+      invalidFields.serviceAccount = true;
     }
 
     const annotationsObject = {};
     for (let i = 0; i < annotations.length; i += 1) {
-      if (
-        !validateInputs(annotations[i].label, `annotation-label${i}`) ||
-        !validateInputs(annotations[i].value, `annotation-value${i}`)
-      ) {
-        if (!validateInputs(annotations[i].label, `annotation-label${i}`)) {
-          invalidFields.push(`annotation-label${i}`);
-        }
-        if (!validateInputs(annotations[i].value, `annotation-value${i}`)) {
-          invalidFields.push(`annotation-value${i}`);
-        }
-      } else {
-        annotationsObject[annotations[i].label] = annotations[i].value;
+      const { key, value, id } = annotations[i];
+      const keyId = `${id}-key`;
+      const valueId = `${id}-value`;
+      if (!validateInputs(key, keyId)) {
+        invalidFields[keyId] = true;
       }
+      if (!validateInputs(value, valueId)) {
+        invalidFields[valueId] = true;
+      }
+      annotationsObject[key] = value;
     }
     postData.metadata.annotations = annotationsObject;
 
-    if (invalidFields.length === 0) {
+    if (Object.keys(invalidFields).length === 0) {
       this.props.createSecret(postData, namespace);
       this.props.handleNew();
     } else {
@@ -201,13 +200,10 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
     const stateValue = e.target.value;
     this.setState(prevState => {
       const newInvalidFields = prevState.invalidFields;
-      const idIndex = newInvalidFields.indexOf(stateVar);
       if (validateInputs(stateValue, stateVar)) {
-        if (idIndex !== -1) {
-          newInvalidFields.splice(idIndex, 1);
-        }
-      } else if (idIndex === -1) {
-        newInvalidFields.push(stateVar);
+        delete newInvalidFields[stateVar];
+      } else {
+        newInvalidFields[stateVar] = true;
       }
       return { [stateVar]: stateValue, invalidFields: newInvalidFields };
     });
@@ -218,13 +214,10 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
     const stateValue = e.target.value;
     this.setState(prevState => {
       const newInvalidFields = prevState.invalidFields;
-      const idIndex = newInvalidFields.indexOf(stateVar);
       if (validateInputs(stateValue, stateVar)) {
-        if (idIndex !== -1) {
-          newInvalidFields.splice(idIndex, 1);
-        }
-      } else if (idIndex === -1) {
-        newInvalidFields.push(stateVar);
+        delete newInvalidFields[stateVar];
+      } else {
+        newInvalidFields[stateVar] = true;
       }
       return { [stateVar]: stateValue, invalidFields: newInvalidFields };
     });
@@ -235,21 +228,15 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
     const stateValue = e.selectedItem.text;
     this.setState(prevState => {
       const newInvalidFields = prevState.invalidFields;
-      const idIndex = newInvalidFields.indexOf(stateVar);
       if (validateInputs(stateValue, stateVar)) {
-        if (idIndex !== -1) {
-          newInvalidFields.splice(idIndex, 1);
-        }
-      } else if (idIndex === -1) {
-        newInvalidFields.push(stateVar);
+        delete newInvalidFields[stateVar];
+      } else {
+        newInvalidFields[stateVar] = true;
       }
       this.props.fetchServiceAccounts({ namespace: stateValue }).then(data => {
         this.setState({ serviceAccounts: data });
       });
-      return {
-        [stateVar]: stateValue,
-        invalidFields: newInvalidFields
-      };
+      return { [stateVar]: stateValue, invalidFields: newInvalidFields };
     });
   };
 
@@ -258,26 +245,29 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
     const stateValue = e.selectedItem.id;
     this.setState(prevState => {
       const newInvalidFields = prevState.invalidFields;
-      const idIndex = newInvalidFields.indexOf(stateVar);
       if (validateInputs(stateValue, stateVar)) {
-        if (idIndex !== -1) {
-          newInvalidFields.splice(idIndex, 1);
-        }
-      } else if (idIndex === -1) {
-        newInvalidFields.push(stateVar);
+        delete newInvalidFields[stateVar];
+      } else {
+        newInvalidFields[stateVar] = true;
       }
-      const annotations = prevState.annotations.map(annotation => {
+      const annotations = prevState.annotations.map((annotation, index) => {
         const gitExampleText = 'https://github.com';
+        const gitKeyPlaceholder = 'tekton.dev/git-';
         const dockerExampleText = 'https://index.docker.io/v1/';
+        const dockerKeyPlaceholder = 'tekton.dev/docker-';
         let toSearch;
         let toExampleText;
+        let toKeyPlaceholder;
         let annotationValue;
+        delete newInvalidFields[`${annotation.id}-value`];
         if (stateValue === 'git') {
           toSearch = 'docker';
           toExampleText = gitExampleText;
+          toKeyPlaceholder = gitKeyPlaceholder.concat(index);
         } else {
           toSearch = 'git';
           toExampleText = dockerExampleText;
+          toKeyPlaceholder = dockerKeyPlaceholder.concat(index);
         }
         if (
           annotation.value === gitExampleText ||
@@ -289,38 +279,33 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
           annotationValue = annotation.value;
         }
         return {
-          label: annotation.label.split(toSearch).join(stateValue),
-          value: annotationValue,
           id: annotation.id,
-          placeholder: toExampleText
+          key: annotation.key.split(toSearch).join(stateValue),
+          value: annotationValue,
+          keyPlaceholder: toKeyPlaceholder,
+          valuePlaceholder: toExampleText
         };
       });
       return {
         [stateVar]: stateValue,
         annotations,
-        invalidFields: newInvalidFields.filter(
-          field => field.indexOf('annotation') === -1
-        )
+        invalidFields: newInvalidFields
       };
     });
   };
 
-  handleAnnotationChange = annotation => {
+  handleAnnotationChange = ({ type, index, value }) => {
     this.setState(prevState => {
-      const { key, index, value } = annotation;
-      const id = `annotation-${key}${index}`;
-      const newInvalidFields = prevState.invalidFields;
-      const idIndex = newInvalidFields.indexOf(id);
-      if (idIndex !== -1) {
-        newInvalidFields.splice(idIndex, 1);
-      }
+      const annotations = [...prevState.annotations];
+      annotations[index][type] = value;
 
+      const newInvalidFields = { ...prevState.invalidFields };
+      const { id } = annotations[index];
       if (!validateInputs(value, id)) {
-        newInvalidFields.push(id);
+        newInvalidFields[`${id}-${type}`] = true;
+      } else {
+        delete newInvalidFields[`${id}-${type}`];
       }
-
-      const { annotations } = prevState;
-      annotations[index][key] = value;
 
       return {
         annotations,
@@ -331,37 +316,47 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
 
   handleAdd = () => {
     this.setState(prevState => {
-      const { annotations, accessTo } = prevState;
+      const { accessTo, annotations } = prevState;
       let example;
       if (accessTo === 'git') {
         example = 'https://github.com';
       } else {
         example = 'https://index.docker.io/v1/';
       }
-      annotations.push({
-        label: `tekton.dev/${accessTo}-${annotations.length}`,
-        value: example,
-        placeholder: example,
-        id: Math.random()
-          .toString(36)
-          .substring(2, 11)
-      });
-      return annotations;
+      const key = `tekton.dev/${accessTo}-${annotations.length}`;
+      return {
+        annotations: [
+          ...annotations,
+          {
+            key,
+            keyPlaceholder: key,
+            value: example,
+            valuePlaceholder: example,
+            id: generateId(`annotation${annotations.length}-`)
+          }
+        ]
+      };
     });
   };
 
   handleRemove = () => {
     this.setState(prevState => {
-      const { annotations } = prevState;
+      const annotations = [...prevState.annotations];
+      const invalidFields = { ...prevState.invalidFields };
+      let removedAnnotation;
       if (annotations.length - 1 !== 0) {
-        annotations.pop();
+        removedAnnotation = annotations.pop();
+        if (removedAnnotation) {
+          delete invalidFields[`${removedAnnotation.id}-key`];
+          delete invalidFields[`${removedAnnotation.id}-value`];
+        }
       }
-      return annotations;
+      return { annotations, invalidFields };
     });
   };
 
   render() {
-    const { open, handleNew } = this.props;
+    const { open, handleNew, intl } = this.props;
     const { serviceAccounts } = this.state;
     const {
       name,
@@ -406,12 +401,29 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
             handleChangeServiceAccount={this.handleChangeServiceAccount}
             invalidFields={invalidFields}
           />
-          <Annotations
-            annotations={annotations}
-            handleChange={this.handleAnnotationChange}
-            handleRemove={this.handleRemove}
-            handleAdd={this.handleAdd}
+          <KeyValueList
+            legendText={intl.formatMessage({
+              id: 'dashboard.secretsModal.annotations.legendText',
+              defaultMessage: 'Server URL'
+            })}
+            invalidText={intl.formatMessage({
+              id: 'dashboard.secretsModal.annotations.invalidText',
+              defaultMessage: 'Server URL required.'
+            })}
+            ariaLabelKey={intl.formatMessage({
+              id: 'dashboard.secretsModal.annotations.ariaLabelKey',
+              defaultMessage: 'This is the tag Tekton uses for its resources.'
+            })}
+            ariaLabelValue={intl.formatMessage({
+              id: 'dashboard.secretsModal.annotations.ariaLabelValue',
+              defaultMessage: 'This is the URL for the given Tekton resource.'
+            })}
+            keyValues={annotations}
+            minKeyValues={1}
             invalidFields={invalidFields}
+            onChange={this.handleAnnotationChange}
+            onRemove={this.handleRemove}
+            onAdd={this.handleAdd}
           />
           <div
             ref={el => {
@@ -442,4 +454,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(SecretsModal);
+)(injectIntl(SecretsModal));

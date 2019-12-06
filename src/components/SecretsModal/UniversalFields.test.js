@@ -88,7 +88,7 @@ it('UniversalFields renders with blank inputs', () => {
     handleChange() {},
     accessTo: 'git',
     selectedNamespace: 'default',
-    invalidFields: []
+    invalidFields: {}
   };
   const { getByLabelText, getAllByDisplayValue, getByText } = render(
     <Provider store={store}>
@@ -109,7 +109,7 @@ it('UniversalFields incorrect fields', () => {
     handleChange() {},
     accessTo: 'git',
     selectedNamespace: 'default',
-    invalidFields: ['name']
+    invalidFields: { name: true }
   };
   const { getByLabelText } = render(
     <Provider store={store}>

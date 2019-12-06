@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import {
+  generateId,
   getErrorMessage,
   getStatus,
   getStatusIcon,
@@ -237,4 +238,10 @@ it('stepsStatus step is terminated with error', () => {
   expect(returnedStep.status).toEqual('terminated');
   expect(returnedStep.stepName).toEqual(stepName);
   expect(returnedStep.reason).toEqual(reason);
+});
+
+it('generateId', () => {
+  const prefix = 'prefix';
+  const id = generateId(prefix);
+  expect(id).toContain(prefix);
 });

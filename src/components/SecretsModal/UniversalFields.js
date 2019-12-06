@@ -13,7 +13,6 @@ limitations under the License.
 
 import React from 'react';
 import { Dropdown, TextInput } from 'carbon-components-react';
-import './SecretsModal.scss';
 import NamespacesDropdown from '../../containers/NamespacesDropdown';
 
 const itemToString = item => (item ? item.text : '');
@@ -37,7 +36,7 @@ const UniversalFields = props => {
         value={name}
         labelText="Name"
         onChange={handleChangeTextInput}
-        invalid={invalidFields.indexOf('name') > -1}
+        invalid={'name' in invalidFields}
         invalidText="Must not start or end with - and be less than 253 characters, contain only lowercase alphanumeric characters or -"
         autoComplete="off"
       />
@@ -52,7 +51,7 @@ const UniversalFields = props => {
             : ''
         }
         onChange={handleChangeNamespace}
-        invalid={invalidFields.indexOf('namespace') > -1}
+        invalid={'namespace' in invalidFields}
         invalidText="Namespace required."
       />
       <Dropdown
