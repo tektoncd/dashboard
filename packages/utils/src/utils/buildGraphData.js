@@ -13,8 +13,8 @@ limitations under the License.
 /* istanbul ignore file */
 import { getStatus } from './status';
 
-const defaultHeight = 26;
-const defaultCharWidth = 9;
+const defaultHeight = 30;
+const defaultWidth = 200;
 
 function getBaseNodes() {
   const graph = {
@@ -149,20 +149,14 @@ function addNodes({ expanded, graph, pipeline, pipelineRun, tasks }) {
       task.spec.steps &&
       task.spec.steps.length > 0
     ) {
-      const parentWidth = taskRef.name.length * defaultCharWidth + 40;
       const subgraph = {
         id: taskRef.name,
         label: taskRef.name,
         children: task.spec.steps.map(step => {
-          let stepWidth = step.name.length * defaultCharWidth + 40;
-          if (stepWidth < parentWidth) {
-            stepWidth = parentWidth;
-          }
-
           const stepNode = {
             id: `__step__${taskRef.name}__${step.name}`,
             label: step.name,
-            width: stepWidth,
+            width: defaultWidth,
             height: defaultHeight,
             nChildren: 0,
             nParents: 0,
@@ -190,7 +184,7 @@ function addNodes({ expanded, graph, pipeline, pipelineRun, tasks }) {
       node = {
         id: taskRef.name,
         label: taskRef.name,
-        width: taskRef.name.length * defaultCharWidth + 40,
+        width: defaultWidth,
         height: defaultHeight,
         nChildren: 0,
         nParents: 0,

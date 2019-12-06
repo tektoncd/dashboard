@@ -25,7 +25,7 @@ const NodeLink = ({ link }) => {
   path.moveTo(startX, startY);
   path.lineTo(startX, startY + (targetY - startY) * percent);
   path.lineTo(targetX, startY + (targetY - startY) * percent);
-  path.lineTo(targetX, targetY);
+  path.lineTo(targetX, targetY - 1); // stop short to prevent it showing around the arrow tip
 
   return (
     <path strokeWidth={1} fill="none" strokeOpacity={1} d={path.toString()} />

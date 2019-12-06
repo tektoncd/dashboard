@@ -49,7 +49,7 @@ export default class Graph extends Component {
         'org.eclipse.elk.layered.spacing.nodeNodeBetweenLayers': isSubGraph
           ? 0
           : 40,
-        'org.eclipse.elk.padding': '[top=26,left=0,bottom=1,right=0]',
+        'org.eclipse.elk.padding': '[top=30,left=0,bottom=1,right=0]',
         'org.eclipse.elk.separateConnectedComponents': false,
         'org.eclipse.elk.spacing.nodeNode': isSubGraph ? 0 : 40
       }
@@ -83,20 +83,22 @@ export default class Graph extends Component {
         viewBox={`0 0 ${width} ${height}`}
         preserveAspectRatio="xMidYMin meet"
       >
-        <defs>
-          <marker
-            id="edge-arrow"
-            viewBox="0 -5 10 10"
-            markerUnits="strokeWidth"
-            markerWidth="8.4"
-            markerHeight="14"
-            orient="auto"
-            refY="0"
-            refX="10"
-          >
-            <path d="M0,-5L10,0L0,5" />
-          </marker>
-        </defs>
+        {!isSubGraph && (
+          <defs>
+            <marker
+              id="edge-arrow"
+              viewBox="0 0 100 100"
+              markerUnits="strokeWidth"
+              markerWidth="10"
+              markerHeight="14"
+              orient="auto"
+              refY="50"
+              refX="86"
+            >
+              <path d="M 0 0 L100 50 L 0 100" />
+            </marker>
+          </defs>
+        )}
         <VXGraph
           graph={{ links, nodes }}
           nodeComponent={c => (

@@ -14,11 +14,11 @@ limitations under the License.
 import React, { Component } from 'react';
 import classNames from 'classnames';
 
-import CheckmarkFilled from '@carbon/icons-react/lib/checkmark--filled/16';
-import ChevronDown from '@carbon/icons-react/lib/chevron--down/16';
-import ChevronUp from '@carbon/icons-react/lib/chevron--up/16';
-import CloseFilled from '@carbon/icons-react/lib/close--filled/16';
-import Undefined from '@carbon/icons-react/lib/undefined/16';
+import CheckmarkFilled from '@carbon/icons-react/lib/checkmark--filled/20';
+import ChevronDown from '@carbon/icons-react/lib/chevron--down/20';
+import ChevronUp from '@carbon/icons-react/lib/chevron--up/20';
+import CloseFilled from '@carbon/icons-react/lib/close--filled/20';
+import Undefined from '@carbon/icons-react/lib/undefined/20';
 
 import Graph from './Graph'; // eslint-disable-line import/no-cycle
 import InlineLoading from './InlineLoading';
@@ -66,16 +66,21 @@ export default class Node extends Component {
       StatusIcon = <StatusIcon className="status-icon" x="8" y="5" />;
     }
 
-    const maxLabelLength = 24;
+    const maxLabelLength = 19;
     let labelText = label;
     if (label.length > maxLabelLength) {
-      labelText = `${label.substring(0, maxLabelLength)}\u2026`;
+      const charDisplay = maxLabelLength - 1;
+      const labelStart = label.substring(0, Math.ceil(charDisplay / 2));
+      const labelEnd = label.substring(
+        label.length - Math.floor(charDisplay / 2)
+      );
+      labelText = `${labelStart}\u2026${labelEnd}`;
     }
 
     let labelPosition = {
       textAnchor: 'start',
-      x: 30,
-      y: 18
+      x: 36,
+      y: 20
     };
 
     if (type === 'Start' || type === 'End') {
@@ -91,7 +96,7 @@ export default class Node extends Component {
       x: isSelected ? 0 : 1,
       y: isSelected ? 0 : 1,
       width: isSelected ? width : width - 2,
-      height: isSelected ? 26 : 24
+      height: isSelected ? 30 : 28
     };
 
     const Chevron = children ? ChevronUp : ChevronDown;
@@ -120,7 +125,7 @@ export default class Node extends Component {
             {StatusIcon}
             <text {...labelPosition}>{labelText}</text>
             {type === 'Task' && (
-              <Chevron className="chevron" x={width - 22} y="5" />
+              <Chevron className="chevron" x={width - 28} y="5" />
             )}
           </g>
           {children && (

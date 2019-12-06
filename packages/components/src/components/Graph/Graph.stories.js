@@ -41,7 +41,7 @@ const taskProps = {
   type: 'Task',
   label: 'build-and-push',
   width: 160,
-  height: 26
+  height: 30
 };
 
 const expandedProps = {
@@ -51,14 +51,14 @@ const expandedProps = {
       id: '__step_build-and-push__build-image',
       label: 'build-image',
       width: 160,
-      height: 26
+      height: 30
     },
     {
       type: 'Step',
       id: '__step_build-and-push__push-image',
       label: 'push-image',
       width: 160,
-      height: 26
+      height: 30
     }
   ],
   edges: [],

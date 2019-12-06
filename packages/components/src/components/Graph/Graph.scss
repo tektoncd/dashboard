@@ -11,23 +11,23 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-$edge-color: #979797;
+@import '~carbon-components/scss/globals/scss/vars';
 
 .graph {
   #edge-arrow path {
-    fill: $edge-color;
-    stroke: $edge-color;
+    fill: $ui-04;
+    stroke: $ui-04;
   }
 
   .vx-network-links path {
-    stroke: $edge-color;
+    stroke: $ui-04;
     marker-end: url(#edge-arrow);
   }
 
   .Task {
     rect {
       fill: #FFFFFF;
-      stroke: #979797;
+      stroke: $ui-04;
     }
 
     .label-hitbox {
@@ -35,11 +35,11 @@ $edge-color: #979797;
     }
 
     text {
-      fill: #6F6F6F;
+      fill: $ui-04;
     }
 
-    .chevron {
-      fill: #565656;
+    .chevron, .status-icon {
+      fill: $ui-04;
     }
   }
 
