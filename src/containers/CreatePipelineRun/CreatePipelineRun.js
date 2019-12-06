@@ -20,7 +20,9 @@ import {
   Modal,
   TextInput
 } from 'carbon-components-react';
-import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
+import { ALL_NAMESPACES, generateId } from '@tektoncd/dashboard-utils';
+import { KeyValueList } from '@tektoncd/dashboard-components';
+import { injectIntl } from 'react-intl';
 import {
   NamespacesDropdown,
   PipelineResourcesDropdown,
@@ -90,14 +92,22 @@ const initialResourcesState = resourceSpecs => {
   return resourceSpecs.reduce(resourcesReducer, {});
 };
 
+// K8s label documentation comes from here:
+// https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set
+const labelKeyRegex = new RegExp(
+  '^(([a-z0-9A-Z]([a-z0-9A-Z-.]*[a-z0-9A-Z])?){0,253}/)?([a-z0-9A-Z]([a-z0-9A-Z-_.]*[a-z0-9A-Z])?){1,63}$'
+);
+const labelValueRegex = new RegExp(
+  '^([a-z0-9A-Z]([a-z0-9A-Z-_.]*[a-z0-9A-Z])?){0,63}$'
+);
+const isValidLabel = (type, value) => {
+  const regex = type === 'key' ? labelKeyRegex : labelValueRegex;
+  return regex.test(value);
+};
+
 class CreatePipelineRun extends React.Component {
   constructor(props) {
     super(props);
-
-    this.handleClose = this.handleClose.bind(this);
-    this.handleNamespaceChange = this.handleNamespaceChange.bind(this);
-    this.handlePipelineChange = this.handlePipelineChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
 
     this.state = this.initialState(props);
   }
@@ -116,14 +126,14 @@ class CreatePipelineRun extends React.Component {
     }
   }
 
-  getPipelineInfo(key, { state = this.state, props = this.props } = {}) {
+  getPipelineInfo = (key, { state = this.state, props = this.props } = {}) => {
     if (key === DISABLED) {
       // Disable pipeline info selection when pipelineRef is supplied
       return !!props[PIPELINE_REF];
     }
     // Use props when pipelineRef is supplied
     return props[PIPELINE_REF] ? props[key] : state[key];
-  }
+  };
 
   isDisabled = () => {
     if (this.state[NAMESPACE] === '') {
@@ -132,7 +142,7 @@ class CreatePipelineRun extends React.Component {
     return false;
   };
 
-  checkFormValidation() {
+  checkFormValidation = () => {
     // Namespace, PipelineRef, Resources, and Params must all have values
     const validNamespace = !!this.getPipelineInfo(NAMESPACE);
     const validPipelineRef = !!this.getPipelineInfo(PIPELINE_REF);
@@ -158,21 +168,86 @@ class CreatePipelineRun extends React.Component {
       this.setState({ validTimeout: true });
     }
 
+    // Labels
+    let validLabels = true;
+    this.state.labels.forEach(label => {
+      ['key', 'value'].forEach(type => {
+        if (!isValidLabel(type, label[type])) {
+          validLabels = false;
+          this.setState(prevState => ({
+            invalidLabels: {
+              ...prevState.invalidLabels,
+              [`${label.id}-${type}`]: true
+            }
+          }));
+        }
+      });
+    });
+
     return (
       validNamespace &&
       validPipelineRef &&
       validResources &&
       validParams &&
-      timeoutTest
+      timeoutTest &&
+      validLabels
     );
-  }
+  };
 
-  handleClose() {
+  handleClose = () => {
     this.resetForm();
     this.props.onClose();
-  }
+  };
 
-  handleNamespaceChange({ selectedItem: { text } }) {
+  handleAddLabel = () => {
+    this.setState(prevState => ({
+      labels: [
+        ...prevState.labels,
+        {
+          id: generateId(`label${prevState.labels.length}-`),
+          key: '',
+          keyPlaceholder: 'key',
+          value: '',
+          valuePlaceholder: 'value'
+        }
+      ]
+    }));
+  };
+
+  handleRemoveLabel = () => {
+    this.setState(prevState => {
+      // Update labels
+      const labels = [...prevState.labels];
+      const removedLabel = labels.pop();
+      // Update invalidLabels
+      const invalidLabels = { ...prevState.invalidLabels };
+      if (removedLabel) {
+        delete invalidLabels[`${removedLabel.id}-key`];
+        delete invalidLabels[`${removedLabel.id}-value`];
+      }
+      // Return new state
+      return { labels, invalidLabels };
+    });
+  };
+
+  handleChangeLabel = ({ type, index, value }) => {
+    this.setState(prevState => {
+      // Update labels
+      const labels = [...prevState.labels];
+      labels[index][type] = value;
+      // Update invalidLabels
+      const invalidLabels = { ...prevState.invalidLabels };
+      if (!isValidLabel(type, value)) {
+        invalidLabels[`${labels[index].id}-${type}`] = true;
+      } else {
+        delete invalidLabels[`${labels[index].id}-${type}`];
+      }
+      // Return new state
+      return { labels, invalidLabels };
+    });
+  };
+
+  handleNamespaceChange = ({ selectedItem: { text } }) => {
     // Reset pipeline and service account when namespace changes
     if (text !== this.state[NAMESPACE]) {
       this.setState({
@@ -181,18 +256,18 @@ class CreatePipelineRun extends React.Component {
         serviceAccount: ''
       });
     }
-  }
+  };
 
-  handleParamChange(key, value) {
+  handleParamChange = (key, value) => {
     this.setState(state => ({
       params: {
         ...state.params,
         [key]: value
       }
     }));
-  }
+  };
 
-  handlePipelineChange({ selectedItem: { text } }) {
+  handlePipelineChange = ({ selectedItem: { text } }) => {
     if (text !== this.state[PIPELINE_REF]) {
       this.setState((state, props) => {
         const pipelineInfo = parsePipelineInfo(
@@ -208,18 +283,18 @@ class CreatePipelineRun extends React.Component {
         };
       });
     }
-  }
+  };
 
-  handleResourceChange(key, value) {
+  handleResourceChange = (key, value) => {
     this.setState(state => ({
       resources: {
         ...state.resources,
         [key]: value
       }
     }));
-  }
+  };
 
-  handleSubmit(event) {
+  handleSubmit = event => {
     event.preventDefault();
 
     // Check form validation
@@ -234,7 +309,7 @@ class CreatePipelineRun extends React.Component {
     // Send API request to create PipelineRun
     const pipelineRef = this.getPipelineInfo(PIPELINE_REF);
     const namespace = this.getPipelineInfo(NAMESPACE);
-    const { params, resources, serviceAccount, timeout } = this.state;
+    const { params, resources, serviceAccount, timeout, labels } = this.state;
     const timeoutInMins = `${timeout}m`;
     createPipelineRun({
       namespace,
@@ -242,7 +317,11 @@ class CreatePipelineRun extends React.Component {
       resources,
       params,
       serviceAccount,
-      timeout: timeoutInMins
+      timeout: timeoutInMins,
+      labels: labels.reduce((acc, { key, value }) => {
+        acc[key] = value;
+        return acc;
+      }, {})
     })
       .then(response => {
         this.resetForm();
@@ -258,9 +337,9 @@ class CreatePipelineRun extends React.Component {
           this.setState({ submitError: errorMessage });
         });
       });
-  }
+  };
 
-  initialState(props) {
+  initialState = props => {
     const namespace = props[NAMESPACE];
     return {
       ...initialPipelineInfoState(),
@@ -275,34 +354,42 @@ class CreatePipelineRun extends React.Component {
       timeout: '60',
       validationError: false,
       submitError: '',
-      validTimeout: true
+      validTimeout: true,
+      labels: [],
+      invalidLabels: {}
     };
-  }
+  };
 
-  resetForm() {
+  resetForm = () => {
     this.setState((state, props) => this.initialState(props));
-  }
+  };
 
-  resetParamsState() {
+  resetParamsState = () => {
     this.setState((state, props) => ({
       params: initialParamsState(
         this.getPipelineInfo(PARAM_SPECS, { state, props })
       )
     }));
-  }
+  };
 
-  resetResourcesState() {
+  resetResourcesState = () => {
     this.setState((state, props) => ({
       resources: initialResourcesState(this.getPipelineInfo(RESOURCE_SPECS), {
         state,
         props
       })
     }));
-  }
+  };
 
   render() {
-    const { open } = this.props;
-    const { serviceAccount, validationError, validTimeout } = this.state;
+    const { open, intl } = this.props;
+    const {
+      serviceAccount,
+      validationError,
+      validTimeout,
+      labels,
+      invalidLabels
+    } = this.state;
     const namespace = this.getPipelineInfo(NAMESPACE);
     const pipelineRef = this.getPipelineInfo(PIPELINE_REF);
     const pipelineInfoDisabled = this.getPipelineInfo(DISABLED);
@@ -367,6 +454,49 @@ class CreatePipelineRun extends React.Component {
               />
             </FormGroup>
           )}
+          <FormGroup legendText="">
+            <KeyValueList
+              legendText={intl.formatMessage({
+                id: 'dashboard.createPipelineRun.labels.legendText',
+                defaultMessage: 'Labels'
+              })}
+              invalidText={
+                <span
+                  dangerouslySetInnerHTML /* eslint-disable-line react/no-danger */={{
+                    __html: intl.formatMessage(
+                      {
+                        id: 'dashboard.createPipelineRun.labels.invalidText',
+                        defaultMessage:
+                          'Labels must follow the {0}kubernetes labels syntax{1}.'
+                      },
+                      [
+                        `<a
+                            href="https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >`,
+                        '</a>'
+                      ]
+                    )
+                  }}
+                />
+              }
+              keyValues={labels}
+              minKeyValues={0}
+              invalidFields={invalidLabels}
+              ariaLabelKey={intl.formatMessage({
+                id: 'dashboard.createPipelineRun.labels.ariaLabelKey',
+                defaultMessage: 'This is the label key for the PipelineRun.'
+              })}
+              ariaLabelValue={intl.formatMessage({
+                id: 'dashboard.createPipelineRun.labels.ariaLabelValue',
+                defaultMessage: 'This is the label value for the PipelineRun.'
+              })}
+              onChange={this.handleChangeLabel}
+              onRemove={this.handleRemoveLabel}
+              onAdd={this.handleAddLabel}
+            />
+          </FormGroup>
           {resourceSpecs && resourceSpecs.length !== 0 && (
             <FormGroup legendText="PipelineResources">
               {resourceSpecs.map(resourceSpec => (
@@ -458,4 +588,4 @@ const mapStateToProps = (state, ownProps) => {
   return parsePipelineInfo(state, pipelineRef, namespace);
 };
 
-export default connect(mapStateToProps)(CreatePipelineRun);
+export default connect(mapStateToProps)(injectIntl(CreatePipelineRun));

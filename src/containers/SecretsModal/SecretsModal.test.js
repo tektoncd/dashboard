@@ -12,10 +12,11 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, render } from 'react-testing-library';
+import { fireEvent } from 'react-testing-library';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import { renderWithIntl, rerenderWithIntl } from '../../utils/test';
 import SecretsModal from '.';
 import * as API from '../../api';
 
@@ -101,7 +102,7 @@ it('SecretsModal renders blank', () => {
   jest.spyOn(API, 'getNamespaces').mockImplementation(() => []);
   jest.spyOn(API, 'getServiceAccounts').mockImplementation(() => []);
 
-  const { queryByText } = render(
+  const { queryByText } = renderWithIntl(
     <Provider store={store}>
       <SecretsModal {...props} />
     </Provider>
@@ -122,14 +123,15 @@ it('Test SecretsModal click events', () => {
   jest.spyOn(API, 'getNamespaces').mockImplementation(() => []);
   jest.spyOn(API, 'getServiceAccounts').mockImplementation(() => []);
 
-  const { queryByText, rerender } = render(
+  const { queryByText, rerender } = renderWithIntl(
     <Provider store={store}>
       <SecretsModal {...props} />
     </Provider>
   );
   fireEvent.click(queryByText('Close'));
   expect(handleNew).toHaveBeenCalledTimes(1);
-  rerender(
+  rerenderWithIntl(
+    rerender,
     <Provider store={store}>
       <SecretsModal open={false} />
     </Provider>
@@ -150,7 +152,7 @@ const props = {
 };
 
 it('Create Secret validates all empty inputs', () => {
-  const { queryByText } = render(
+  const { queryByText } = renderWithIntl(
     <Provider store={store}>
       <SecretsModal {...props} />
     </Provider>
@@ -165,7 +167,7 @@ it('Create Secret validates all empty inputs', () => {
 });
 
 it('Create Secret errors when starting with a "-"', () => {
-  const { queryByText, getByPlaceholderText } = render(
+  const { queryByText, getByPlaceholderText } = renderWithIntl(
     <Provider store={store}>
       <SecretsModal {...props} />
     </Provider>
@@ -183,7 +185,7 @@ it('Create Secret errors when starting with a "-"', () => {
 });
 
 it('Create Secret errors when ends with a "-"', () => {
-  const { queryByText, getByPlaceholderText } = render(
+  const { queryByText, getByPlaceholderText } = renderWithIntl(
     <Provider store={store}>
       <SecretsModal {...props} />
     </Provider>
@@ -201,7 +203,7 @@ it('Create Secret errors when ends with a "-"', () => {
 });
 
 it('Create Secret errors when contains "."', () => {
-  const { queryByText, getByPlaceholderText } = render(
+  const { queryByText, getByPlaceholderText } = renderWithIntl(
     <Provider store={store}>
       <SecretsModal {...props} />
     </Provider>
@@ -219,7 +221,7 @@ it('Create Secret errors when contains "."', () => {
 });
 
 it('Create Secret errors when contains spaces', () => {
-  const { queryByText, getByPlaceholderText } = render(
+  const { queryByText, getByPlaceholderText } = renderWithIntl(
     <Provider store={store}>
       <SecretsModal {...props} />
     </Provider>
@@ -237,7 +239,7 @@ it('Create Secret errors when contains spaces', () => {
 });
 
 it('Create Secret errors when contains capital letters', () => {
-  const { queryByText, getByPlaceholderText } = render(
+  const { queryByText, getByPlaceholderText } = renderWithIntl(
     <Provider store={store}>
       <SecretsModal {...props} />
     </Provider>
@@ -255,7 +257,7 @@ it('Create Secret errors when contains capital letters', () => {
 });
 
 it('Create Secret doesn\'t error when contains "-" in the middle of the secret', () => {
-  const { queryByText, getByPlaceholderText } = render(
+  const { queryByText, getByPlaceholderText } = renderWithIntl(
     <Provider store={store}>
       <SecretsModal {...props} />
     </Provider>
@@ -273,7 +275,7 @@ it('Create Secret doesn\'t error when contains "-" in the middle of the secret',
 });
 
 it("Create Secret doesn't error when contains 0", () => {
-  const { queryByText, getByPlaceholderText } = render(
+  const { queryByText, getByPlaceholderText } = renderWithIntl(
     <Provider store={store}>
       <SecretsModal {...props} />
     </Provider>
@@ -291,7 +293,7 @@ it("Create Secret doesn't error when contains 0", () => {
 });
 
 it("Create Secret doesn't error when contains 9", () => {
-  const { queryByText, getByPlaceholderText } = render(
+  const { queryByText, getByPlaceholderText } = renderWithIntl(
     <Provider store={store}>
       <SecretsModal {...props} />
     </Provider>
@@ -309,7 +311,7 @@ it("Create Secret doesn't error when contains 9", () => {
 });
 
 it('Create Secret errors when contains 253 characters', () => {
-  const { queryByText, getByPlaceholderText } = render(
+  const { queryByText, getByPlaceholderText } = renderWithIntl(
     <Provider store={store}>
       <SecretsModal {...props} />
     </Provider>
@@ -330,7 +332,7 @@ it('Create Secret errors when contains 253 characters', () => {
 });
 
 it("Create Secret doesn't error when contains 252 characters", () => {
-  const { queryByText, getByPlaceholderText } = render(
+  const { queryByText, getByPlaceholderText } = renderWithIntl(
     <Provider store={store}>
       <SecretsModal {...props} />
     </Provider>
@@ -351,7 +353,7 @@ it("Create Secret doesn't error when contains 252 characters", () => {
 });
 
 it("Create Secret doesn't error when contains a valid namespace", () => {
-  const { queryByText, getByPlaceholderText, getByText } = render(
+  const { queryByText, getByPlaceholderText, getByText } = renderWithIntl(
     <Provider store={store}>
       <SecretsModal {...props} />
     </Provider>
@@ -371,7 +373,7 @@ it("Create Secret doesn't error when contains a valid namespace", () => {
 });
 
 it("Create Secret doesn't error when Docker Registry is selected", () => {
-  const { queryByText, getByPlaceholderText, getByText } = render(
+  const { queryByText, getByPlaceholderText, getByText } = renderWithIntl(
     <Provider store={store}>
       <SecretsModal {...props} />
     </Provider>
@@ -395,7 +397,7 @@ it("Create Secret doesn't error when Docker Registry is selected", () => {
 });
 
 it("Create Secret doesn't error when a username is entered", () => {
-  const { queryByText, getByPlaceholderText, getByText } = render(
+  const { queryByText, getByPlaceholderText, getByText } = renderWithIntl(
     <Provider store={store}>
       <SecretsModal {...props} />
     </Provider>
@@ -420,7 +422,7 @@ it("Create Secret doesn't error when a username is entered", () => {
 });
 
 it("Create Secret doesn't error when a password is entered", () => {
-  const { queryByText, getByPlaceholderText, getByText } = render(
+  const { queryByText, getByPlaceholderText, getByText } = renderWithIntl(
     <Provider store={store}>
       <SecretsModal {...props} />
     </Provider>

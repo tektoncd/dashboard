@@ -78,7 +78,7 @@ it('BasicAuthFields renders with blank inputs', () => {
     password: '',
     serviceAccount: '',
     handleChange() {},
-    invalidFields: [],
+    invalidFields: {},
     serviceAccounts
   };
 
@@ -99,7 +99,7 @@ it('BasicAuthFields incorrect fields', () => {
     password: 'text',
     serviceAccount: '',
     handleChange() {},
-    invalidFields: ['username', 'password'],
+    invalidFields: { username: true, password: true },
     serviceAccounts
   };
 

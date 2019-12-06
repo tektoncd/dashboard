@@ -134,3 +134,10 @@ export function getStatusIcon({ reason, status }) {
 
   return Icon ? <Icon className="status-icon" /> : null;
 }
+
+// Generates a unique id
+export function generateId(prefix) {
+  return `${prefix}${Math.random()
+    .toString(36)
+    .substr(2, 9)}`;
+}

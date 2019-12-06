@@ -43,12 +43,22 @@ export function renderWithRouter(
   };
 }
 
+export function wrapWithIntl(ui) {
+  return (
+    <IntlProvider locale="en" defaultLocale="en">
+      {ui}
+    </IntlProvider>
+  );
+}
+
 export function renderWithIntl(ui) {
   return {
-    ...render(
-      <IntlProvider locale="en" defaultLocale="en">
-        {ui}
-      </IntlProvider>
-    )
+    ...render(wrapWithIntl(ui))
+  };
+}
+
+export function rerenderWithIntl(rerender, ui) {
+  return {
+    ...rerender(wrapWithIntl(ui))
   };
 }
