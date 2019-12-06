@@ -15,6 +15,7 @@ import * as API from '../api';
 
 import {
   fetchLogs,
+  formatLabels,
   getGitValues,
   isStale,
   sortRunsByStartTime,
@@ -97,4 +98,24 @@ it('getGitValues', () => {
     gitRepo: 'repo.git',
     gitServer: 'github.com'
   });
+});
+
+it('formatLabels', () => {
+  const labels = {
+    app: 'tekton-app',
+    gitOrg: 'foo',
+    gitRepo: 'bar.git',
+    gitServer: 'github.com',
+    'tekton.dev/pipeline': 'pipeline0'
+  };
+
+  const returnedLabels = formatLabels(labels);
+
+  expect(returnedLabels).toStrictEqual([
+    'app: tekton-app',
+    'gitOrg: foo',
+    'gitRepo: bar.git',
+    'gitServer: github.com',
+    'tekton.dev/pipeline: pipeline0'
+  ]);
 });
