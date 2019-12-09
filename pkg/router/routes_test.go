@@ -7,20 +7,16 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
-	"strconv"
 	"strings"
 	"testing"
-	"time"
 
 	restful "github.com/emicklei/go-restful"
-	broadcaster "github.com/tektoncd/dashboard/pkg/broadcaster"
 	"github.com/tektoncd/dashboard/pkg/endpoints"
 	. "github.com/tektoncd/dashboard/pkg/router"
 	"github.com/tektoncd/dashboard/pkg/testutils"
 	v1alpha1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/types"
 )
 
 // Router successful response contract
@@ -314,6 +310,8 @@ func makeFake(t *testing.T, r *endpoints.Resource, resourceType, namespace, reso
 	}
 }
 
+/*
+This is a flaky test, tracked at https://github.com/tektoncd/dashboard/issues/682 - so don't run it until that's fixed
 func TestExtensionRegistration(t *testing.T) {
 	t.Log("In TestExtensionRegistration")
 	server, r, installNamespace := testutils.DummyServer()
@@ -555,3 +553,4 @@ func TestExtensionRegistration(t *testing.T) {
 		t.Fatalf("Number of extensions: expected: %d, returned: %d", len(extensionServices), len(responseExtensions))
 	}
 }
+*/
