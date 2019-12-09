@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import {
+  formatLabels,
   generateId,
   getErrorMessage,
   getStatus,
@@ -244,4 +245,24 @@ it('generateId', () => {
   const prefix = 'prefix';
   const id = generateId(prefix);
   expect(id).toContain(prefix);
+});
+
+it('formatLabels', () => {
+  const labels = {
+    app: 'tekton-app',
+    gitOrg: 'foo',
+    gitRepo: 'bar.git',
+    gitServer: 'github.com',
+    'tekton.dev/pipeline': 'pipeline0'
+  };
+
+  const returnedLabels = formatLabels(labels);
+
+  expect(returnedLabels).toStrictEqual([
+    'app: tekton-app',
+    'gitOrg: foo',
+    'gitRepo: bar.git',
+    'gitServer: github.com',
+    'tekton.dev/pipeline: pipeline0'
+  ]);
 });

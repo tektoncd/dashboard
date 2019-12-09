@@ -74,20 +74,3 @@ export function getGitValues(url) {
 
   return { gitServer, gitOrg, gitRepo: `${gitRepo}.git` };
 }
-
-export function formatLabels(labelsRaw) {
-  const labels = JSON.stringify(labelsRaw)
-    .replace('{', '')
-    .replace('}', '')
-    .replace(/['"]+/g, '')
-    .replace('$', '');
-
-  const formattedLabelsToRender = [];
-  const labelsSplitOnComma = labels.split(',');
-  labelsSplitOnComma.forEach(label => {
-    const [key, value] = label.split(':');
-    formattedLabelsToRender.push(`${key}: ${value}`);
-  });
-
-  return formattedLabelsToRender;
-}
