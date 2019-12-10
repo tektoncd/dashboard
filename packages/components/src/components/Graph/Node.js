@@ -133,8 +133,6 @@ export default class Node extends Component {
               graph={{ id: `${id}_subgraph`, children, edges }}
               isSubGraph
               onClickStep={this.handleClickStep}
-              width={width}
-              height={height}
             />
           )}
         </g>

@@ -60,15 +60,17 @@ export default class Graph extends Component {
       .then(g => {
         this.setState({
           links: g.edges,
-          nodes: g.children
+          nodes: g.children,
+          width: g.width,
+          height: g.height
         });
       })
       .catch(console.error); // eslint-disable-line no-console
   };
 
   render() {
-    const { height, isSubGraph, onClickStep, onClickTask, width } = this.props;
-    const { links, margin, nodes } = this.state;
+    const { isSubGraph, onClickStep, onClickTask } = this.props;
+    const { height, links, margin, nodes, width } = this.state;
 
     if (!nodes) {
       return null;
