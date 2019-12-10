@@ -13,22 +13,17 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
 import { InlineNotification } from 'carbon-components-react';
 import {
   getErrorMessage,
   getStatus,
-  getStatusIcon,
-  isRunning,
-  urls
+  isRunning
 } from '@tektoncd/dashboard-utils';
 import {
-  FormattedDate,
   LabelFilter,
-  RunDropdown,
-  Table
+  TaskRuns as TaskRunsList
 } from '@tektoncd/dashboard-components';
 
 import { sortRunsByStartTime } from '../../utils';
@@ -192,97 +187,12 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
       filters,
       loading,
       taskRuns,
-      intl,
       namespace: selectedNamespace
     } = this.props;
 
-    const initialHeaders = [
-      {
-        key: 'name',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.name',
-          defaultMessage: 'Name'
-        })
-      },
-      {
-        key: 'task',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.task',
-          defaultMessage: 'Task'
-        })
-      },
-      {
-        key: 'namespace',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.namespace',
-          defaultMessage: 'Namespace'
-        })
-      },
-      {
-        key: 'status',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.status',
-          defaultMessage: 'Status'
-        })
-      },
-      {
-        key: 'transitionTime',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.transitionTime',
-          defaultMessage: 'Last Transition Time'
-        })
-      },
-      {
-        key: 'dropdown'
-      }
-    ];
     const taskRunActions = this.taskRunActions();
 
     sortRunsByStartTime(taskRuns);
-
-    const taskRunsFormatted = taskRuns.map(taskRun => ({
-      id: `${taskRun.metadata.namespace}:${taskRun.metadata.name}`,
-      name: (
-        <Link
-          to={urls.taskRuns.byName({
-            namespace: taskRun.metadata.namespace,
-            taskRunName: taskRun.metadata.name
-          })}
-        >
-          {taskRun.metadata.name}
-        </Link>
-      ),
-      task: (
-        <Link
-          to={urls.taskRuns.byTask({
-            namespace: taskRun.metadata.namespace,
-            taskName: taskRun.spec.taskRef.name
-          })}
-        >
-          {taskRun.spec.taskRef.name}
-        </Link>
-      ),
-      namespace: taskRun.metadata.namespace,
-      status: (
-        <div className="definition">
-          <div
-            className="status"
-            data-status={getStatus(taskRun).status}
-            data-reason={getStatus(taskRun).reason}
-          >
-            <div className="status-icon">
-              {getStatusIcon(getStatus(taskRun))}
-            </div>
-            {getStatus(taskRun).message}
-          </div>
-        </div>
-      ),
-      transitionTime: (
-        <FormattedDate date={getStatus(taskRun).lastTransitionTime} relative />
-      ),
-      type: taskRun.spec.type,
-      dropdown: <RunDropdown items={taskRunActions} resource={taskRun} />
-    }));
 
     if (error) {
       return (
@@ -304,25 +214,11 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
           handleAddFilter={this.handleAddFilter}
           handleDeleteFilter={this.handleDeleteFilter}
         />
-        <Table
-          headers={initialHeaders}
-          rows={taskRunsFormatted}
+        <TaskRunsList
           loading={loading}
           selectedNamespace={selectedNamespace}
-          emptyTextAllNamespaces={intl.formatMessage(
-            {
-              id: 'dashboard.emptyState.allNamespaces',
-              defaultMessage: 'No {kind} under any namespace.'
-            },
-            { kind: 'TaskRuns' }
-          )}
-          emptyTextSelectedNamespace={intl.formatMessage(
-            {
-              id: 'dashboard.emptyState.selectedNamespace',
-              defaultMessage: 'No {kind} under namespace {selectedNamespace}'
-            },
-            { kind: 'TaskRuns', selectedNamespace }
-          )}
+          taskRuns={taskRuns}
+          taskRunActions={taskRunActions}
         />
       </>
     );

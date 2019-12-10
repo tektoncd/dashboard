@@ -85,7 +85,8 @@ const PipelineRuns = ({
       })
     },
     {
-      key: 'dropdown'
+      key: 'dropdown',
+      header: ''
     }
   ];
 
