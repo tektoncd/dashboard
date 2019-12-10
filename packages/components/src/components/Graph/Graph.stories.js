@@ -18,6 +18,7 @@ import { action } from '@storybook/addon-actions';
 import Node from './Node';
 import Graph from './Graph';
 import PipelineGraph from './PipelineGraph';
+import ZoomablePipelineGraph from './ZoomablePipelineGraph';
 
 import graph from './examples/graph.json';
 import pipeline from './examples/pipeline.json';
@@ -40,7 +41,7 @@ import tasks from './examples/tasks.json';
 const taskProps = {
   type: 'Task',
   label: 'build-and-push',
-  width: 160,
+  width: 200,
   height: 30
 };
 
@@ -50,19 +51,19 @@ const expandedProps = {
       type: 'Step',
       id: '__step_build-and-push__build-image',
       label: 'build-image',
-      width: 160,
+      width: 200,
       height: 30
     },
     {
       type: 'Step',
       id: '__step_build-and-push__push-image',
       label: 'push-image',
-      width: 160,
+      width: 200,
       height: 30
     }
   ],
   edges: [],
-  height: 79
+  height: 90
 };
 
 storiesOf('Graph/Node', module)
@@ -82,12 +83,20 @@ storiesOf('Graph/Node', module)
     <Node {...taskProps} status="success" {...expandedProps} isSelected />
   ));
 
-storiesOf('Graph/Graph', module).add('default', () => (
-  <Graph graph={graph} width={450} height={550} />
-));
+storiesOf('Graph/Graph', module).add('default', () => <Graph graph={graph} />);
 
 storiesOf('Graph/PipelineGraph', module).add('default', () => (
   <PipelineGraph
+    onClickStep={action('onClickStep')}
+    onClickTask={action('onClickTask')}
+    pipeline={pipeline}
+    pipelineRun={pipelineRun}
+    tasks={tasks}
+  />
+));
+
+storiesOf('Graph/ZoomablePipelineGraph', module).add('default', () => (
+  <ZoomablePipelineGraph
     onClickStep={action('onClickStep')}
     onClickTask={action('onClickTask')}
     pipeline={pipeline}

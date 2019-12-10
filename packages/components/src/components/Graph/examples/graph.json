@@ -60,8 +60,8 @@
         {
           "id": "__step__skaffold-unit-tests__run-tests",
           "label": "run-tests",
-          "width": 181,
-          "height": 26,
+          "width": 200,
+          "height": 30,
           "nChildren": 2,
           "nParents": 1,
           "type": "Step"
@@ -91,8 +91,8 @@
         {
           "id": "__step__build-skaffold-web__build-and-push",
           "label": "build-and-push",
-          "width": 186,
-          "height": 26,
+          "width": 200,
+          "height": 30,
           "nChildren": 1,
           "nParents": 1,
           "type": "Step"
@@ -119,8 +119,8 @@
         {
           "id": "__step__build-skaffold-app__build-and-push",
           "label": "build-and-push",
-          "width": 186,
-          "height": 26,
+          "width": 200,
+          "height": 30,
           "nChildren": 1,
           "nParents": 1,
           "type": "Step"
@@ -147,8 +147,8 @@
         {
           "id": "__step__deploy-app__replace-image",
           "label": "replace-image",
-          "width": 168,
-          "height": 26,
+          "width": 200,
+          "height": 30,
           "nChildren": 1,
           "nParents": 1,
           "type": "Step"
@@ -156,8 +156,8 @@
         {
           "id": "__step__deploy-app__run-kubectl",
           "label": "run-kubectl",
-          "width": 150,
-          "height": 26,
+          "width": 200,
+          "height": 30,
           "nChildren": 1,
           "nParents": 1,
           "type": "Step"
@@ -191,8 +191,8 @@
         {
           "id": "__step__deploy-web__replace-image",
           "label": "replace-image",
-          "width": 168,
-          "height": 26,
+          "width": 200,
+          "height": 30,
           "nChildren": 1,
           "nParents": 1,
           "type": "Step"
@@ -200,8 +200,8 @@
         {
           "id": "__step__deploy-web__run-kubectl",
           "label": "run-kubectl",
-          "width": 150,
-          "height": 26,
+          "width": 200,
+          "height": 30,
           "nChildren": 1,
           "nParents": 1,
           "type": "Step"

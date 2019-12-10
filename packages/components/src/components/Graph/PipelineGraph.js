@@ -57,8 +57,6 @@ export default class PipelineGraph extends Component {
     return graph ? (
       <Graph
         graph={graph}
-        width={500}
-        height={600}
         onClickStep={this.props.onClickStep}
         onClickTask={this.onClickTask}
       />
