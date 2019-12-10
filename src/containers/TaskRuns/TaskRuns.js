@@ -43,6 +43,22 @@ import {
 } from '../../reducers';
 import { cancelTaskRun, deleteTaskRun } from '../../api';
 
+function getTaskLink(taskRun) {
+  if (taskRun.spec.taskRef) {
+    return (
+      <Link
+        to={urls.taskRuns.byTask({
+          namespace: taskRun.metadata.namespace,
+          taskName: taskRun.spec.taskRef.name
+        })}
+      >
+        {taskRun.spec.taskRef.name}
+      </Link>
+    );
+  }
+  return 'Embedded TaskSpec';
+}
+
 export /* istanbul ignore next */ class TaskRuns extends Component {
   componentDidMount() {
     this.fetchTaskRuns();
@@ -252,16 +268,7 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
           {taskRun.metadata.name}
         </Link>
       ),
-      task: (
-        <Link
-          to={urls.taskRuns.byTask({
-            namespace: taskRun.metadata.namespace,
-            taskName: taskRun.spec.taskRef.name
-          })}
-        >
-          {taskRun.spec.taskRef.name}
-        </Link>
-      ),
+      task: getTaskLink(taskRun),
       namespace: taskRun.metadata.namespace,
       status: (
         <div className="definition">
