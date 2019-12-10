@@ -26,16 +26,23 @@ import { NamespacesDropdown } from '..';
 
 import { selectNamespace } from '../../actions/namespaces';
 import { getExtensions, getSelectedNamespace } from '../../reducers';
+import { getCustomResource } from '../../api';
 
 import './SideNav.scss';
 
 export class SideNav extends Component {
+  state = {
+    isTriggersInstalled: false
+  };
+
   componentDidMount() {
     const { match } = this.props;
 
     if (match && match.params.namespace) {
       this.props.selectNamespace(match.params.namespace);
     }
+
+    this.checkTriggersInstalled();
   }
 
   componentDidUpdate(prevProps) {
@@ -94,8 +101,22 @@ export class SideNav extends Component {
     history.push(newURL);
   };
 
+  checkTriggersInstalled() {
+    getCustomResource({
+      group: 'apiextensions.k8s.io',
+      version: 'v1beta1',
+      type: 'customresourcedefinitions',
+      name: 'eventlisteners.tekton.dev'
+    })
+      .then(() => {
+        this.setState({ isTriggersInstalled: true });
+      })
+      .catch(() => {});
+  }
+
   render() {
     const { extensions, namespace } = this.props;
+    const { isTriggersInstalled } = this.state;
 
     return (
       <CarbonSideNav
@@ -148,27 +169,31 @@ export class SideNav extends Component {
             >
               TaskRuns
             </SideNavMenuItem>
-            <SideNavMenuItem
-              element={NavLink}
-              icon={<span />}
-              to={urls.eventListeners.all()}
-            >
-              EventListeners
-            </SideNavMenuItem>
-            <SideNavMenuItem
-              element={NavLink}
-              icon={<span />}
-              to={urls.triggerBindings.all()}
-            >
-              TriggerBindings
-            </SideNavMenuItem>
-            <SideNavMenuItem
-              element={NavLink}
-              icon={<span />}
-              to={urls.triggerTemplates.all()}
-            >
-              TriggerTemplates
-            </SideNavMenuItem>
+            {isTriggersInstalled && (
+              <>
+                <SideNavMenuItem
+                  element={NavLink}
+                  icon={<span />}
+                  to={urls.eventListeners.all()}
+                >
+                  EventListeners
+                </SideNavMenuItem>
+                <SideNavMenuItem
+                  element={NavLink}
+                  icon={<span />}
+                  to={urls.triggerBindings.all()}
+                >
+                  TriggerBindings
+                </SideNavMenuItem>
+                <SideNavMenuItem
+                  element={NavLink}
+                  icon={<span />}
+                  to={urls.triggerTemplates.all()}
+                >
+                  TriggerTemplates
+                </SideNavMenuItem>
+              </>
+            )}
           </SideNavMenu>
           <SideNavMenuItem
             element={NamespacesDropdown}
