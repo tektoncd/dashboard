@@ -14,16 +14,9 @@ limitations under the License.
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
-import {
-  StructuredListBody,
-  StructuredListCell,
-  StructuredListHead,
-  StructuredListRow,
-  StructuredListWrapper
-} from 'carbon-components-react';
 import { getStatus, getStatusIcon, urls } from '@tektoncd/dashboard-utils';
 
-import { FormattedDate, RunDropdown } from '..';
+import { FormattedDate, RunDropdown, Table } from '..';
 
 const TaskRuns = ({
   createTaskRunURL = urls.taskRuns.byName,
@@ -42,96 +35,119 @@ const TaskRuns = ({
     return getStatusIcon({ reason, status });
   },
   intl,
+  loading,
+  selectedNamespace,
   taskRuns,
   taskRunActions
-}) => (
-  <StructuredListWrapper border selection>
-    <StructuredListHead>
-      <StructuredListRow head>
-        <StructuredListCell head>TaskRun</StructuredListCell>
-        <StructuredListCell head>Task</StructuredListCell>
-        <StructuredListCell head>Namespace</StructuredListCell>
-        <StructuredListCell head>
-          {intl.formatMessage({
-            id: 'dashboard.taskRuns.status',
-            defaultMessage: 'Status'
-          })}
-        </StructuredListCell>
-        <StructuredListCell head>
-          {intl.formatMessage({
-            id: 'dashboard.taskRuns.transitionTime',
-            defaultMessage: 'Last Transition Time'
-          })}
-        </StructuredListCell>
-        {taskRunActions && <StructuredListCell head />}
-      </StructuredListRow>
-    </StructuredListHead>
-    <StructuredListBody>
-      {!taskRuns.length && (
-        <StructuredListRow>
-          <StructuredListCell>
-            <span>No TaskRuns</span>
-          </StructuredListCell>
-        </StructuredListRow>
-      )}
-      {taskRuns.map((taskRun, index) => {
-        const { namespace } = taskRun.metadata;
-        const taskRunName = createTaskRunsDisplayName({
-          taskRunMetadata: taskRun.metadata
-        });
-        const taskRefName = taskRun.spec.taskRef.name;
-        const { reason, status } = getStatus(taskRun);
-        const statusIcon = getTaskRunStatusIcon(taskRun);
-        const taskRunStatus = getTaskRunStatus(taskRun, intl);
-        const url = createTaskRunURL({
-          namespace,
-          taskRunName
-        });
+}) => {
+  const headers = [
+    {
+      key: 'name',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.name',
+        defaultMessage: 'Name'
+      })
+    },
+    {
+      key: 'task',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.task',
+        defaultMessage: 'Task'
+      })
+    },
+    {
+      key: 'namespace',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.namespace',
+        defaultMessage: 'Namespace'
+      })
+    },
+    {
+      key: 'status',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.status',
+        defaultMessage: 'Status'
+      })
+    },
+    {
+      key: 'transitionTime',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.transitionTime',
+        defaultMessage: 'Last Transition Time'
+      })
+    },
+    {
+      key: 'dropdown',
+      header: ''
+    }
+  ];
 
-        return (
-          <StructuredListRow
-            className="definition"
-            key={taskRun.metadata.uid || index}
-          >
-            <StructuredListCell>
-              {url ? <Link to={url}>{taskRunName}</Link> : taskRunName}
-            </StructuredListCell>
-            <StructuredListCell>
-              {taskRefName ? (
-                <Link
-                  to={createTaskRunsByTaskURL({
-                    namespace,
-                    taskName: taskRefName
-                  })}
-                >
-                  {taskRefName}
-                </Link>
-              ) : (
-                ''
-              )}
-            </StructuredListCell>
-            <StructuredListCell>{namespace}</StructuredListCell>
-            <StructuredListCell
-              className="status"
-              data-reason={reason}
-              data-status={status}
-            >
-              {statusIcon}
-              {taskRunStatus}
-            </StructuredListCell>
-            <StructuredListCell>
-              <FormattedDate date={createTaskRunTimestamp(taskRun)} relative />
-            </StructuredListCell>
-            {taskRunActions && (
-              <StructuredListCell>
-                <RunDropdown items={taskRunActions} resource={taskRun} />
-              </StructuredListCell>
-            )}
-          </StructuredListRow>
-        );
-      })}
-    </StructuredListBody>
-  </StructuredListWrapper>
-);
+  const taskRunsFormatted = taskRuns.map(taskRun => {
+    const { namespace } = taskRun.metadata;
+    const taskRunName = createTaskRunsDisplayName({
+      taskRunMetadata: taskRun.metadata
+    });
+    const taskRefName = taskRun.spec.taskRef && taskRun.spec.taskRef.name;
+    const { reason, status } = getStatus(taskRun);
+    const statusIcon = getTaskRunStatusIcon(taskRun);
+    const taskRunStatus = getTaskRunStatus(taskRun, intl);
+    const url = createTaskRunURL({
+      namespace,
+      taskRunName
+    });
+
+    return {
+      id: taskRun.metadata.uid,
+      name: url ? <Link to={url}>{taskRunName}</Link> : taskRunName,
+      task: taskRefName ? (
+        <Link
+          to={createTaskRunsByTaskURL({
+            namespace,
+            taskName: taskRefName
+          })}
+        >
+          {taskRefName}
+        </Link>
+      ) : (
+        ''
+      ),
+      namespace: taskRun.metadata.namespace,
+      status: (
+        <div className="definition">
+          <div className="status" data-reason={reason} data-status={status}>
+            {statusIcon}
+            {taskRunStatus}
+          </div>
+        </div>
+      ),
+      transitionTime: (
+        <FormattedDate date={createTaskRunTimestamp(taskRun)} relative />
+      ),
+      dropdown: <RunDropdown items={taskRunActions} resource={taskRun} />
+    };
+  });
+
+  return (
+    <Table
+      headers={headers}
+      rows={taskRunsFormatted}
+      loading={loading}
+      emptyTextAllNamespaces={intl.formatMessage(
+        {
+          id: 'dashboard.emptyState.allNamespaces',
+          defaultMessage: 'No {kind} under any namespace.'
+        },
+        { kind: 'TaskRuns' }
+      )}
+      emptyTextSelectedNamespace={intl.formatMessage(
+        {
+          id: 'dashboard.emptyState.selectedNamespace',
+          defaultMessage: 'No {kind} under namespace {selectedNamespace}'
+        },
+        { kind: 'TaskRuns', selectedNamespace }
+      )}
+    />
+  );
+};
 
 export default injectIntl(TaskRuns);

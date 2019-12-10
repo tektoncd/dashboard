@@ -224,6 +224,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
     const {
       error,
       filters,
+      loading,
       namespace: selectedNamespace,
       pipelineRuns,
       intl
@@ -295,9 +296,10 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
           namespace={selectedNamespace}
         />
         <PipelineRunsList
-          selectedNamespace={selectedNamespace}
+          loading={loading}
           pipelineRuns={pipelineRuns}
           pipelineRunActions={pipelineRunActions}
+          selectedNamespace={selectedNamespace}
         />
       </>
     );

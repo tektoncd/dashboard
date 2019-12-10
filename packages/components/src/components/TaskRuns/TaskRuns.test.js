@@ -70,6 +70,12 @@ it('TaskRun renders correct data', async () => {
           }
         }
       ]}
+      taskRunActions={[
+        {
+          actionText: 'My Action',
+          action: () => {}
+        }
+      ]}
     />
   );
   expect(queryByText(taskRunName)).toBeTruthy();
