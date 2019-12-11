@@ -40,7 +40,7 @@ spec:
     - "/workspace/output/bucket/previous/"
   - name: dashboard-run-ko
     # TODO(#639) we should be able to use the image built by an upstream Task here instead of hardcoding
-    image: gcr.io/tekton-releases/ko-ci
+    image: gcr.io/tekton-nightly/ko-ci
     env:
     - name: KO_DOCKER_REPO
       value: $(inputs.params.imageRegistry)
