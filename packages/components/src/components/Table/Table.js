@@ -127,7 +127,7 @@ const Table = props => {
                           {header.header}
                         </TableHeader>
                       ) : (
-                        <TableHeader />
+                        <TableHeader key={header.key} />
                       );
                     })}
                   </TableRow>

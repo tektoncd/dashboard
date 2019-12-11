@@ -14,80 +14,98 @@ limitations under the License.
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
-import {
-  StructuredListBody,
-  StructuredListCell,
-  StructuredListHead,
-  StructuredListRow,
-  StructuredListWrapper
-} from 'carbon-components-react';
 import { urls } from '@tektoncd/dashboard-utils';
 
-import { RunDropdown } from '..';
+import { RunDropdown, Table } from '..';
 
 const PipelineResources = ({
   createPipelineResourcesURL = urls.pipelineResources.byName,
   createPipelineResourceDisplayName = ({ pipelineResourceMetadata }) =>
     pipelineResourceMetadata.name,
+  intl,
+  loading,
   pipelineResourceActions,
-  pipelineResources
-}) => (
-  <StructuredListWrapper border selection>
-    <StructuredListHead>
-      <StructuredListRow head>
-        <StructuredListCell head>PipelineResource</StructuredListCell>
-        <StructuredListCell head>Namespace</StructuredListCell>
-        <StructuredListCell head>Type</StructuredListCell>
-        {pipelineResourceActions && <StructuredListCell head />}
-      </StructuredListRow>
-    </StructuredListHead>
-    <StructuredListBody>
-      {!pipelineResources.length && (
-        <StructuredListRow>
-          <StructuredListCell>
-            <span>No PipelineResources</span>
-          </StructuredListCell>
-        </StructuredListRow>
-      )}
-      {pipelineResources.map((pipelineResource, index) => {
-        const { namespace } = pipelineResource.metadata;
-        const pipelineResourceName = createPipelineResourceDisplayName({
-          pipelineResourceMetadata: pipelineResource.metadata
-        });
-        const url = createPipelineResourcesURL({
-          namespace,
-          pipelineResourceName
-        });
+  pipelineResources,
+  selectedNamespace
+}) => {
+  const headers = [
+    {
+      key: 'name',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.name',
+        defaultMessage: 'Name'
+      })
+    },
+    {
+      key: 'namespace',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.namespace',
+        defaultMessage: 'Namespace'
+      })
+    },
+    {
+      key: 'type',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.type',
+        defaultMessage: 'Type'
+      })
+    },
+    {
+      key: 'dropdown',
+      header: ''
+    }
+  ];
 
-        return (
-          <StructuredListRow
-            className="definition"
-            key={pipelineResource.metadata.uid || index}
-          >
-            <StructuredListCell>
-              {url ? (
-                <Link to={url}>{pipelineResourceName}</Link>
-              ) : (
-                pipelineResourceName
-              )}
-            </StructuredListCell>
-            <StructuredListCell>{namespace}</StructuredListCell>
-            <StructuredListCell>
-              {pipelineResource.spec.type}
-            </StructuredListCell>
-            {pipelineResourceActions && (
-              <StructuredListCell>
-                <RunDropdown
-                  items={pipelineResourceActions}
-                  resource={pipelineResource}
-                />
-              </StructuredListCell>
-            )}
-          </StructuredListRow>
-        );
-      })}
-    </StructuredListBody>
-  </StructuredListWrapper>
-);
+  const pipelineResourcesFormatted = pipelineResources.map(pipelineResource => {
+    const { namespace } = pipelineResource.metadata;
+    const pipelineResourceName = createPipelineResourceDisplayName({
+      pipelineResourceMetadata: pipelineResource.metadata
+    });
+    const url = createPipelineResourcesURL({
+      namespace,
+      pipelineResourceName
+    });
+
+    return {
+      id: pipelineResource.metadata.uid,
+      name: url ? (
+        <Link to={url}>{pipelineResourceName}</Link>
+      ) : (
+        pipelineResourceName
+      ),
+      namespace,
+      type: pipelineResource.spec.type,
+      dropdown: (
+        <RunDropdown
+          items={pipelineResourceActions}
+          resource={pipelineResource}
+        />
+      )
+    };
+  });
+
+  return (
+    <Table
+      headers={headers}
+      rows={pipelineResourcesFormatted}
+      loading={loading}
+      selectedNamespace={selectedNamespace}
+      emptyTextAllNamespaces={intl.formatMessage(
+        {
+          id: 'dashboard.emptyState.allNamespaces',
+          defaultMessage: 'No {kind} under any namespace.'
+        },
+        { kind: 'PipelineResources' }
+      )}
+      emptyTextSelectedNamespace={intl.formatMessage(
+        {
+          id: 'dashboard.emptyState.selectedNamespace',
+          defaultMessage: 'No {kind} under namespace {selectedNamespace}'
+        },
+        { kind: 'PipelineResources', selectedNamespace }
+      )}
+    />
+  );
+};
 
 export default injectIntl(PipelineResources);
