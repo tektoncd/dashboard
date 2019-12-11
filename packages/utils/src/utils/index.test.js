@@ -10,7 +10,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { FormattedDate } from '@tektoncd/dashboard-components';
 import {
   formatLabels,
   generateId,
@@ -18,6 +20,7 @@ import {
   getStatus,
   getStatusIcon,
   isRunning,
+  rowSorter,
   selectedTask,
   stepsStatus,
   taskRunStep
@@ -265,4 +268,38 @@ it('formatLabels', () => {
     'gitServer: github.com',
     'tekton.dev/pipeline: pipeline0'
   ]);
+});
+
+describe('rowSorter', () => {
+  const sortStates = { NONE: 'NONE', DESC: 'DESC', ASC: 'ASC' };
+
+  it('with strings', () => {
+    const a = 'apple';
+    const b = 'blueberry';
+    const sortDirection = 'DESC';
+
+    const returnedValue = rowSorter(a, b, { sortDirection, sortStates });
+
+    expect(returnedValue).toStrictEqual(1);
+  });
+
+  it('with Links', () => {
+    const a = <Link>apple</Link>;
+    const b = <Link>blueberry</Link>;
+    const sortDirection = 'ASC';
+
+    const returnedValue = rowSorter(a, b, { sortDirection, sortStates });
+
+    expect(returnedValue).toStrictEqual(-1);
+  });
+
+  it('with FormattedDate', () => {
+    const a = <FormattedDate>apple</FormattedDate>;
+    const b = <FormattedDate>apple</FormattedDate>;
+    const sortDirection = 'ASC';
+
+    const returnedValue = rowSorter(a, b, { sortDirection, sortStates });
+
+    expect(returnedValue).toStrictEqual(0);
+  });
 });

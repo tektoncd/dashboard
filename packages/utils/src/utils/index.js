@@ -158,3 +158,31 @@ export function formatLabels(labelsRaw) {
 
   return formattedLabelsToRender;
 }
+
+function comparer(a, b) {
+  if (a < b) {
+    return -1;
+  }
+  if (a > b) {
+    return 1;
+  }
+  return 0;
+}
+
+export function rowSorter(cellA, cellB, { sortDirection, sortStates }) {
+  let valueA = cellA;
+  let valueB = cellB;
+
+  if (typeof cellA === 'object') {
+    valueA = cellA.props.children || new Date(cellA.props.date);
+  }
+  if (typeof cellB === 'object') {
+    valueB = cellB.props.children || new Date(cellB.props.date);
+  }
+
+  if (sortDirection === sortStates.DESC) {
+    return comparer(valueB, valueA);
+  }
+
+  return comparer(valueA, valueB);
+}

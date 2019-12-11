@@ -25,7 +25,7 @@ import {
   TableToolbarContent
 } from 'carbon-components-react';
 
-import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
+import { ALL_NAMESPACES, rowSorter } from '@tektoncd/dashboard-utils';
 
 import './Table.scss';
 
@@ -60,6 +60,7 @@ const Table = props => {
         rows={dataRows}
         headers={dataHeaders}
         isSortable={isSortable}
+        sortRow={rowSorter}
         render={({
           rows,
           headers,
