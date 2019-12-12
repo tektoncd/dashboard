@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -33,6 +33,7 @@ storiesOf('RunHeader', module)
   .add('running', () => (
     <RunHeader
       lastTransitionTime={now}
+      message={text('Status Message', 'Not all Tasks have completed executing')}
       name={text('Pipeline Name', 'simple-pipeline')}
       runName={text('PipelineRun Name', 'simple-pipeline-run-1')}
       reason="Running"
@@ -44,6 +45,7 @@ storiesOf('RunHeader', module)
   .add('complete', () => (
     <RunHeader
       lastTransitionTime={now}
+      message={text('Status Message', 'All Tasks have completed executing')}
       name={text('Pipeline Name', 'simple-pipeline')}
       runName={text('PipelineRun Name', 'simple-pipeline-run-1')}
       status="True"
@@ -55,6 +57,10 @@ storiesOf('RunHeader', module)
   .add('failed', () => (
     <RunHeader
       lastTransitionTime={now}
+      message={text(
+        'Status Message',
+        'TaskRun demo-pipeline-run-1-build-skaffold-web-4dzrn has failed'
+      )}
       name={text('Pipeline Name', 'simple-pipeline')}
       runName={text('PipelineRun Name', 'simple-pipeline-run-1')}
       status="False"
@@ -67,6 +73,7 @@ storiesOf('RunHeader', module)
   .add('with trigger info', () => (
     <RunHeader
       lastTransitionTime={now}
+      message={text('Status Message', 'All Tasks have completed executing')}
       name={text('Pipeline Name', 'simple-pipeline')}
       runName={text('PipelineRun Name', 'simple-pipeline-run-1')}
       status="True"

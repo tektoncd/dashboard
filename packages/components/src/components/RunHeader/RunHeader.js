@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,17 +12,26 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
-import { SkeletonPlaceholder } from 'carbon-components-react';
+import { injectIntl } from 'react-intl';
+import { CopyButton, SkeletonPlaceholder } from 'carbon-components-react';
+import { copyToClipboard } from '@tektoncd/dashboard-utils';
 
 import { FormattedDate } from '..';
 
 import './RunHeader.scss';
 
 class RunHeader extends Component {
+  /* istanbul ignore next */
+  copyStatusMessage = () => {
+    copyToClipboard(this.props.message);
+  };
+
   render() {
     const {
+      intl,
       lastTransitionTime,
       loading,
+      message,
       runName,
       reason,
       status,
@@ -51,12 +60,32 @@ class RunHeader extends Component {
                   <div className="run-name" title={runName}>
                     {runName}
                   </div>
-                  <span className="status-label">{reason}</span>
                   <span className="time">
                     <FormattedDate date={lastTransitionTime} relative />
                   </span>
                   {this.props.children}
                 </h1>
+                <div className="status">
+                  <span className="status-label">{reason}</span>
+                  {message && (
+                    <>
+                      <span className="status-message" title={message}>
+                        {message}
+                      </span>
+                      <CopyButton
+                        feedback={intl.formatMessage({
+                          id: 'dashboard.clipboard.copied',
+                          defaultMessage: 'Copied!'
+                        })}
+                        iconDescription={intl.formatMessage({
+                          id: 'dashboard.clipboard.copyStatusMessage',
+                          defaultMessage: 'Copy status message to clipboard'
+                        })}
+                        onClick={this.copyStatusMessage}
+                      />
+                    </>
+                  )}
+                </div>
                 {triggerHeader}
               </>
             )
@@ -67,4 +96,4 @@ class RunHeader extends Component {
   }
 }
 
-export default RunHeader;
+export default injectIntl(RunHeader);

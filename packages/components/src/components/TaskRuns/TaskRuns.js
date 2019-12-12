@@ -22,16 +22,27 @@ const TaskRuns = ({
   createTaskRunURL = urls.taskRuns.byName,
   createTaskRunsDisplayName = ({ taskRunMetadata }) => taskRunMetadata.name,
   createTaskRunsByTaskURL = urls.taskRuns.byTask,
-  getTaskRunStatus = (taskRun, intl) =>
-    taskRun.status && taskRun.status.conditions
-      ? taskRun.status.conditions[0].message
-      : intl.formatMessage({
-          id: 'dashboard.taskRuns.status.pending',
-          defaultMessage: 'Pending'
-        }),
+  getTaskRunStatus = (taskRun, intl) => {
+    const { reason } = getStatus(taskRun);
+    return (
+      reason ||
+      intl.formatMessage({
+        id: 'dashboard.taskRuns.status.pending',
+        defaultMessage: 'Pending'
+      })
+    );
+  },
   getTaskRunStatusIcon = taskRun => {
     const { reason, status } = getStatus(taskRun);
     return getStatusIcon({ reason, status });
+  },
+  getTaskRunStatusTooltip = (taskRun, intl) => {
+    const { message } = getStatus(taskRun);
+    const reason = getTaskRunStatus(taskRun, intl);
+    if (!message) {
+      return reason;
+    }
+    return `${reason}: ${message}`;
   },
   intl,
   loading,
@@ -40,6 +51,13 @@ const TaskRuns = ({
   taskRunActions
 }) => {
   const headers = [
+    {
+      key: 'status',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.status',
+        defaultMessage: 'Status'
+      })
+    },
     {
       key: 'name',
       header: intl.formatMessage({
@@ -59,13 +77,6 @@ const TaskRuns = ({
       header: intl.formatMessage({
         id: 'dashboard.tableHeader.namespace',
         defaultMessage: 'Namespace'
-      })
-    },
-    {
-      key: 'status',
-      header: intl.formatMessage({
-        id: 'dashboard.tableHeader.status',
-        defaultMessage: 'Status'
       })
     },
     {
@@ -96,7 +107,6 @@ const TaskRuns = ({
     const taskRefName = taskRun.spec.taskRef && taskRun.spec.taskRef.name;
     const { lastTransitionTime, reason, status } = getStatus(taskRun);
     const statusIcon = getTaskRunStatusIcon(taskRun);
-    const taskRunStatus = getTaskRunStatus(taskRun, intl);
     const url = createTaskRunURL({
       namespace,
       taskRunName
@@ -138,9 +148,13 @@ const TaskRuns = ({
       namespace: taskRun.metadata.namespace,
       status: (
         <div className="definition">
-          <div className="status" data-reason={reason} data-status={status}>
+          <div
+            className="status"
+            data-reason={reason}
+            data-status={status}
+            title={getTaskRunStatusTooltip(taskRun, intl)}
+          >
             {statusIcon}
-            {taskRunStatus}
           </div>
         </div>
       ),

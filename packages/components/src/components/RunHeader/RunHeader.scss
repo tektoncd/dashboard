@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -31,19 +31,13 @@ limitations under the License.
     font-weight: 400;
     line-height: 3rem;
     height: 3rem;
+    margin-bottom: 0;
 
     .run-name {
       min-width: 5rem;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-    }
-
-    .status-label {
-      margin-left: 1.15rem;
-      font-size: 0.95rem;
-      font-weight: 400;
-      letter-spacing: 0.02em;
     }
 
     .time {
@@ -55,6 +49,33 @@ limitations under the License.
 
     .rerun-btn {
       margin-left: auto;
+    }
+  }
+
+  .status {
+    display: flex;
+    align-items: baseline;
+
+    .status-label {
+      margin-right: 1.15rem;
+      font-size: 0.95rem;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+    }
+
+    .status-message {
+      line-height: 1rem;
+      vertical-align: bottom;
+      max-width: 500px;
+      display: inline-block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    button {
+      position: relative;
+      background-color: inherit;
     }
   }
 

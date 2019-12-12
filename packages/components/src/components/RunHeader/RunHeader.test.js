@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -17,13 +17,18 @@ import { renderWithRouter } from '../../utils/test';
 import RunHeader from './RunHeader';
 
 const props = {
+  message: 'sample status message content',
   name: 'simple-pipeline',
   runName: 'simple-pipeline-run-1'
 };
 
 it('RunHeader renders the provided content', () => {
-  const { queryByText } = renderWithRouter(<RunHeader {...props} />);
+  const { queryByText, queryByTitle } = renderWithRouter(
+    <RunHeader {...props} />
+  );
   expect(queryByText(/simple-pipeline/i)).toBeTruthy();
+  expect(queryByText(props.message)).toBeTruthy();
+  expect(queryByTitle(props.message)).toBeTruthy();
 });
 
 it('RunHeader renders the running state', () => {

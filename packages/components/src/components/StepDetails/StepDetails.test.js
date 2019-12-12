@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -34,8 +34,19 @@ it('StepDetails renders terminated state', () => {
   const store = mockStore({ namespaces: { selected: 'default' } });
 
   renderWithRouter(
-    <Provider store={store} status="terminated">
-      <StepDetails />
+    <Provider store={store}>
+      <StepDetails status="terminated" />
+    </Provider>
+  );
+});
+
+it('StepDetails renders cancelled state', () => {
+  const mockStore = configureStore();
+  const store = mockStore({ namespaces: { selected: 'default' } });
+
+  renderWithRouter(
+    <Provider store={store}>
+      <StepDetails status="False" taskRun={{ reason: 'TaskRunCancelled' }} />
     </Provider>
   );
 });
