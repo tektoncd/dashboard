@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -173,6 +173,11 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
       taskRun
     );
 
+    const {
+      reason: taskRunStatusReason,
+      message: taskRunStatusMessage
+    } = getStatus(this.props.taskRun);
+
     const logContainer = (
       <Log
         fetchLogs={() => fetchLogs(stepName, stepStatus, taskRun)}
@@ -186,6 +191,8 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
         <RunHeader
           lastTransitionTime={taskRun.startTime}
           loading={loading}
+          message={taskRunStatusMessage}
+          reason={taskRunStatusReason}
           runName={taskRun.taskRunName}
           status={taskRun.succeeded}
         />

@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -40,7 +40,7 @@ it('PipelineRuns hides namespace when hideNamespace set', () => {
 
 it('PipelineRuns renders data', () => {
   const pipelineRunName = 'pipeline-run-20190816124708';
-  const { queryByText } = renderWithRouter(
+  const { queryByText, queryByTitle } = renderWithRouter(
     <PipelineRuns
       intl={intl}
       pipelineRuns={[
@@ -59,8 +59,8 @@ it('PipelineRuns renders data', () => {
             conditions: [
               {
                 lastTransitionTime: '2019-08-16T12:49:28Z',
-                message: 'All Tasks have completed executing',
-                reason: 'Succeeded',
+                message: 'FAKE_MESSAGE',
+                reason: 'FAKE_REASON',
                 status: 'True',
                 type: 'Succeeded'
               }
@@ -79,5 +79,6 @@ it('PipelineRuns renders data', () => {
     />
   );
   expect(queryByText(pipelineRunName)).toBeTruthy();
-  expect(queryByText(/all tasks have completed executing/i)).toBeTruthy();
+  expect(queryByTitle(/FAKE_REASON/i)).toBeTruthy();
+  expect(queryByTitle(/FAKE_MESSAGE/i)).toBeTruthy();
 });

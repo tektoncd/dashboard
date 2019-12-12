@@ -39,7 +39,7 @@ it('TaskRuns renders headers state', () => {
 
 it('TaskRun renders correct data', async () => {
   const taskRunName = 'pipeline0-run-123';
-  const { queryByText } = renderWithRouter(
+  const { queryByText, queryByTitle } = renderWithRouter(
     <TaskRuns
       intl={intl}
       taskRuns={[
@@ -63,7 +63,7 @@ it('TaskRun renders correct data', async () => {
               {
                 lastTransitionTime: '2019-11-28T15:11:07Z',
                 message: 'All Steps have completed executing',
-                reason: 'Succeeded',
+                reason: 'FAKE_REASON',
                 status: 'True',
                 type: 'Succeeded'
               }
@@ -82,12 +82,12 @@ it('TaskRun renders correct data', async () => {
   expect(queryByText(taskRunName)).toBeTruthy();
   expect(queryByText(/pipeline0-task/i)).toBeTruthy();
   expect(queryByText(/default-namespace/i)).toBeTruthy();
-  expect(queryByText(/All Steps have completed executing/i)).toBeTruthy();
+  expect(queryByTitle(/FAKE_REASON/i)).toBeTruthy();
 });
 
 it('TaskRun renders pending', async () => {
   const taskRunName = 'task-run-of-doom';
-  const { queryByText } = renderWithRouter(
+  const { queryByText, queryByTitle } = renderWithRouter(
     <TaskRuns
       intl={intl}
       taskRuns={[
@@ -148,5 +148,5 @@ it('TaskRun renders pending', async () => {
   expect(queryByText(taskRunName)).toBeTruthy();
   expect(queryByText(/task-of-doom/i)).toBeTruthy();
   expect(queryByText(/namespace-of-doom/i)).toBeTruthy();
-  expect(queryByText(/Pending/i)).toBeTruthy();
+  expect(queryByTitle(/Pending/i)).toBeTruthy();
 });

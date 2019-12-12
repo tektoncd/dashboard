@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,9 +12,9 @@ limitations under the License.
 */
 
 import React from 'react';
-import CheckmarkFilled from '@carbon/icons-react/lib/checkmark--filled/16';
-import Time16 from '@carbon/icons-react/lib/time/16';
-import CloseFilled from '@carbon/icons-react/lib/close--filled/16';
+import CheckmarkFilled from '@carbon/icons-react/lib/checkmark--filled/20';
+import Time from '@carbon/icons-react/lib/time/20';
+import CloseFilled from '@carbon/icons-react/lib/close--filled/20';
 import { Spinner } from '@tektoncd/dashboard-components';
 
 export { default as buildGraphData } from './buildGraphData';
@@ -22,6 +22,19 @@ export { paths, urls } from './router';
 export { getStatus } from './status';
 
 export const ALL_NAMESPACES = '*';
+
+/* istanbul ignore next */
+export const copyToClipboard = text => {
+  const input = document.createElement('textarea');
+  input.value = text;
+  input.setAttribute('readonly', '');
+  input.style.position = 'absolute';
+  input.style.top = '-9999px';
+  document.body.appendChild(input);
+  input.select();
+  document.execCommand('copy');
+  document.body.removeChild(input);
+};
 
 export function getErrorMessage(error) {
   if (!error || typeof error === 'string') {
@@ -118,7 +131,7 @@ export function isRunning(reason, status) {
 
 export function getStatusIcon({ reason, status }) {
   if (!status) {
-    return <Time16 className="status-icon" />;
+    return <Time className="status-icon" />;
   }
 
   if (isRunning(reason, status)) {

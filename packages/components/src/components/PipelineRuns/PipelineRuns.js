@@ -27,16 +27,27 @@ const PipelineRuns = ({
   createPipelineRunDisplayName = ({ pipelineRunMetadata }) =>
     pipelineRunMetadata.name,
   createPipelineRunsByPipelineURL = urls.pipelineRuns.byPipeline,
-  getPipelineRunStatus = (pipelineRun, intl) =>
-    pipelineRun.status && pipelineRun.status.conditions
-      ? pipelineRun.status.conditions[0].message
-      : intl.formatMessage({
-          id: 'dashboard.pipelineRuns.status.pending',
-          defaultMessage: 'Pending'
-        }),
+  getPipelineRunStatus = (pipelineRun, intl) => {
+    const { reason } = getStatus(pipelineRun);
+    return (
+      reason ||
+      intl.formatMessage({
+        id: 'dashboard.pipelineRuns.status.pending',
+        defaultMessage: 'Pending'
+      })
+    );
+  },
   getPipelineRunStatusIcon = pipelineRun => {
     const { reason, status } = getStatus(pipelineRun);
     return getStatusIcon({ reason, status });
+  },
+  getPipelineRunStatusTooltip = (pipelineRun, intl) => {
+    const { message } = getStatus(pipelineRun);
+    const reason = getPipelineRunStatus(pipelineRun, intl);
+    if (!message) {
+      return reason;
+    }
+    return `${reason}: ${message}`;
   },
   hideNamespace,
   hidePipeline,
@@ -47,6 +58,13 @@ const PipelineRuns = ({
   pipelineRunActions
 }) => {
   const initialHeaders = [
+    {
+      key: 'status',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.status',
+        defaultMessage: 'Status'
+      })
+    },
     {
       key: 'name',
       header: intl.formatMessage({
@@ -66,13 +84,6 @@ const PipelineRuns = ({
       header: intl.formatMessage({
         id: 'dashboard.tableHeader.namespace',
         defaultMessage: 'Namespace'
-      })
-    },
-    {
-      key: 'status',
-      header: intl.formatMessage({
-        id: 'dashboard.tableHeader.status',
-        defaultMessage: 'Status'
       })
     },
     {
@@ -111,7 +122,6 @@ const PipelineRuns = ({
     const pipelineRunType = pipelineRun.spec.type;
     const { lastTransitionTime, reason, status } = getStatus(pipelineRun);
     const statusIcon = getPipelineRunStatusIcon(pipelineRun);
-    const pipelineRunStatus = getPipelineRunStatus(pipelineRun, intl);
     const url = createPipelineRunURL({
       namespace,
       pipelineRunName,
@@ -156,9 +166,13 @@ const PipelineRuns = ({
       namespace: !hideNamespace && namespace,
       status: (
         <div className="definition">
-          <div className="status" data-status={status} data-reason={reason}>
+          <div
+            className="status"
+            data-status={status}
+            data-reason={reason}
+            title={getPipelineRunStatusTooltip(pipelineRun, intl)}
+          >
             {statusIcon}
-            {pipelineRunStatus}
           </div>
         </div>
       ),
