@@ -37,5 +37,6 @@ export { default as SideNav } from './SideNav';
 export { default as Tasks } from './Tasks';
 export { default as TaskRun } from './TaskRun';
 export { default as TaskRuns } from './TaskRuns';
+export { default as TriggerBinding } from './TriggerBinding';
 export { default as TriggerBindings } from './TriggerBindings';
 export { default as TriggerTemplates } from './TriggerTemplates';

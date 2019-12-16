@@ -49,6 +49,7 @@ import {
   TaskRun,
   TaskRuns,
   Tasks,
+  TriggerBinding,
   TriggerBindings,
   TriggerTemplates
 } from '..';
@@ -190,6 +191,11 @@ export /* istanbul ignore next */ class App extends Component {
                     path={paths.eventListeners.all()}
                     exact
                     component={EventListeners}
+                  />
+                  <Route
+                    path={paths.triggerBindings.byName()}
+                    exact
+                    component={TriggerBinding}
                   />
                   <Route
                     path={paths.triggerBindings.all()}

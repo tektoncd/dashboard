@@ -14,8 +14,9 @@ limitations under the License.
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
+import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
-import { getErrorMessage } from '@tektoncd/dashboard-utils';
+import { getErrorMessage, urls } from '@tektoncd/dashboard-utils';
 import { InlineNotification } from 'carbon-components-react';
 import {
   FormattedDate,
@@ -126,7 +127,16 @@ export /* istanbul ignore next */ class TriggerBindings extends Component {
 
     const triggerBindingsFormatted = triggerBindings.map(binding => ({
       id: `${binding.metadata.namespace}:${binding.metadata.name}`,
-      name: binding.metadata.name,
+      name: (
+        <Link
+          to={urls.triggerBindings.byName({
+            namespace: binding.metadata.namespace,
+            triggerBindingName: binding.metadata.name
+          })}
+        >
+          {binding.metadata.name}
+        </Link>
+      ),
       namespace: binding.metadata.namespace,
       date: <FormattedDate date={binding.metadata.creationTimestamp} relative />
     }));
