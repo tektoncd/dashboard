@@ -16,10 +16,11 @@ import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import { InlineNotification } from 'carbon-components-react';
 import { getErrorMessage } from '@tektoncd/dashboard-utils';
-
+import { Table } from '@tektoncd/dashboard-components';
+import Add from '@carbon/icons-react/lib/add/16';
+import Delete from '@carbon/icons-react/lib/delete/16';
 import Modal from '../SecretsModal';
 import DeleteModal from '../../components/SecretsDeleteModal';
-import Table from '../../components/SecretsTable';
 import {
   clearNotification,
   deleteSecret,
@@ -70,19 +71,25 @@ export /* istanbul ignore next */ class Secrets extends Component {
   handleDeleteSecretToggle = () => {
     this.setState({
       openDeleteSecret: false,
+      cancelMethod: null,
       toBeDeleted: []
     });
   };
 
-  handleDeleteSecretClick = secrets => {
+  handleDeleteSecretClick = (secrets, cancelMethod) => {
+    const toBeDeleted = secrets.map(secret => ({
+      namespace: secret.id.split(':')[0],
+      name: secret.id.split(':')[1]
+    }));
     this.setState({
       openDeleteSecret: true,
-      toBeDeleted: secrets
+      cancelMethod,
+      toBeDeleted
     });
   };
 
   delete = () => {
-    this.props.deleteSecret(this.state.toBeDeleted);
+    this.props.deleteSecret(this.state.toBeDeleted, this.state.cancelMethod);
     this.handleDeleteSecretToggle();
   };
 
@@ -98,6 +105,50 @@ export /* istanbul ignore next */ class Secrets extends Component {
     } = this.props;
 
     const { openNewSecret, toBeDeleted, openDeleteSecret } = this.state;
+
+    const initialHeaders = [
+      {
+        key: 'name',
+        header: intl.formatMessage({
+          id: 'dashboard.tableHeader.name',
+          defaultMessage: 'Name'
+        })
+      },
+      {
+        key: 'namespace',
+        header: intl.formatMessage({
+          id: 'dashboard.tableHeader.namespace',
+          defaultMessage: 'Namespace'
+        })
+      },
+      {
+        key: 'annotations',
+        header: intl.formatMessage({
+          id: 'dashboard.tableHeader.annotations',
+          defaultMessage: 'Annotations'
+        })
+      }
+    ];
+
+    const secretsFormatted = secrets.map(secret => {
+      let annotations = '';
+      if (secret.annotations !== undefined) {
+        Object.keys(secret.annotations).forEach(function annotationSetup(key) {
+          if (key.includes('tekton.dev')) {
+            annotations += `${key}: ${secret.annotations[key]}\n`;
+          }
+        });
+      }
+      const formattedSecret = {
+        annotations,
+        id: `${secret.namespace}:${secret.name}`,
+        namespace: secret.namespace,
+        name: secret.name
+      };
+
+      return formattedSecret;
+    });
+
     return (
       <>
         {error && (
@@ -154,11 +205,45 @@ export /* istanbul ignore next */ class Secrets extends Component {
           />
         )}
         <Table
-          handleNew={this.handleNewSecretClick}
-          handleDelete={this.handleDeleteSecretClick}
+          title="Secrets"
+          headers={initialHeaders}
+          rows={secretsFormatted}
           loading={loading}
-          secrets={secrets}
           selectedNamespace={selectedNamespace}
+          emptyTextAllNamespaces={intl.formatMessage(
+            {
+              id: 'dashboard.emptyState.allNamespaces',
+              defaultMessage: 'No {kind} under any namespace.'
+            },
+            { kind: 'Secrets' }
+          )}
+          emptyTextSelectedNamespace={intl.formatMessage(
+            {
+              id: 'dashboard.emptyState.selectedNamespace',
+              defaultMessage: 'No {kind} under namespace {selectedNamespace}'
+            },
+            { kind: 'Secrets', selectedNamespace }
+          )}
+          batchActionButtons={[
+            {
+              onClick: this.handleDeleteSecretClick,
+              text: intl.formatMessage({
+                id: 'dashboard.secrets.delete',
+                defaultMessage: 'Delete'
+              }),
+              icon: Delete
+            }
+          ]}
+          toolbarButtons={[
+            {
+              onClick: this.handleNewSecretClick,
+              text: intl.formatMessage({
+                id: 'dashboard.secrets.add',
+                defaultMessage: 'Add Secret'
+              }),
+              icon: Add
+            }
+          ]}
         />
         <Modal
           open={openNewSecret}

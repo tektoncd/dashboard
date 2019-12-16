@@ -55,7 +55,7 @@ export function fetchSecrets({ namespace } = {}) {
   };
 }
 
-export function deleteSecret(secrets) {
+export function deleteSecret(secrets, cancelMethod) {
   return async dispatch => {
     dispatch({ type: 'SECRET_DELETE_REQUEST' });
     // This is where we first handle the unpatching (complicated section), and would benefit
@@ -144,6 +144,7 @@ export function deleteSecret(secrets) {
         dispatch({
           type: 'SECRET_DELETE_SUCCESS'
         });
+        cancelMethod();
       })
       .catch(error => {
         dispatch({ type: 'SECRET_DELETE_FAILURE', error });
