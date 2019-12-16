@@ -14,7 +14,7 @@ limitations under the License.
 @import '~@tektoncd/dashboard-components/dist/scss/vars';
 
 .tableComponent {
-  
+
   .bx--table-toolbar {
     background: transparent;
   }
@@ -31,13 +31,11 @@ limitations under the License.
 
   .bx--data-table thead th {
     padding: 15;
-    border-bottom-width: 1px;
-    border-color:$ui-03;
-    border-style: solid;
   }
 
-  .bx--data-table thead *{
-    background-color: white; 
+  .bx--data-table thead th{
+    background: $ui-background;
+    border-bottom: 1px solid $ui-03;
   }
 
   .noRows {

@@ -36,7 +36,8 @@ const byNamespace = {
       name: 'github-repo-access-secret',
       type: 'userpass',
       annotations: {
-        'tekton.dev/git-0': 'https://github.ibm.com'
+        'tekton.dev/git-0': 'https://github.ibm.com',
+        badannotation: 'badcontent'
       }
     }
   ]
@@ -134,7 +135,7 @@ it('click add new secret & modal appears', () => {
 
   jest.spyOn(API, 'getServiceAccounts').mockImplementation(() => []);
 
-  const { getByTestId } = renderWithIntl(
+  const { getByTestId, getByText } = renderWithIntl(
     <Provider store={store}>
       <Secrets {...props} intl={intl} />
     </Provider>
@@ -142,12 +143,12 @@ it('click add new secret & modal appears', () => {
 
   expect(getByTestId('modal').className.includes('is-visible')).toBeFalsy();
 
-  fireEvent.click(getByTestId('addButton'));
+  fireEvent.click(getByText('Add Secret'));
 
   expect(getByTestId('modal').className.includes('is-visible')).toBeTruthy();
 });
 
-it('click add delete secret & modal appears', () => {
+it('click delete secret & modal appears', () => {
   const props = {
     secrets: [
       {
@@ -161,7 +162,7 @@ it('click add delete secret & modal appears', () => {
     error: null
   };
 
-  const { getByTestId } = renderWithIntl(
+  const { getByTestId, getByText } = renderWithIntl(
     <Provider store={store}>
       <Secrets {...props} intl={intl} />
     </Provider>
@@ -171,7 +172,7 @@ it('click add delete secret & modal appears', () => {
     getByTestId('deleteModal').className.includes('is-visible')
   ).toBeFalsy();
 
-  fireEvent.click(getByTestId('deleteButton'));
+  fireEvent.click(getByText('Delete'));
 
   expect(
     getByTestId('deleteModal').className.includes('is-visible')
@@ -209,4 +210,55 @@ it('error notification appears', () => {
   );
 
   expect(getByTestId('errorNotificationComponent')).toBeTruthy();
+});
+
+it('SecretsTable renders with one secret', () => {
+  const props = {
+    secrets: [
+      {
+        name: 'github-repo-access-secret',
+        annotations: {
+          'tekton.dev/git-0': 'https://github.ibm.com'
+        }
+      }
+    ],
+    loading: false,
+    error: null
+  };
+  const { queryByText } = renderWithIntl(
+    <Provider store={store}>
+      <Secrets {...props} intl={intl} />
+    </Provider>
+  );
+  expect(queryByText(/github-repo-access-secret/i)).toBeTruthy();
+  expect(
+    queryByText(/tekton.dev\/git-0: https:\/\/github.ibm.com/i)
+  ).toBeTruthy();
+});
+
+it('SecretsTable only renders tekton.dev annotations', () => {
+  const props = {
+    secrets: [
+      {
+        name: 'github-repo-access-secret',
+        annotations: {
+          'tekton.dev/git-0': 'https://github.ibm.com'
+        }
+      }
+    ],
+    loading: false,
+    error: null
+  };
+  const { queryByText } = renderWithIntl(
+    <Provider store={store}>
+      <Secrets {...props} intl={intl} />
+    </Provider>
+  );
+  expect(
+    queryByText(/tekton.dev\/git-0: https:\/\/github.ibm.com/i)
+  ).toBeTruthy();
+
+  expect(queryByText(/badannotation/i)).toBeFalsy();
+
+  expect(queryByText(/badcontent/i)).toBeFalsy();
 });
