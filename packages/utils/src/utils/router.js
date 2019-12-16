@@ -125,6 +125,12 @@ export const paths = {
   triggerBindings: {
     all() {
       return '/triggerbindings';
+    },
+    byNamespace() {
+      return byNamespace({ path: '/triggerbindings' });
+    },
+    byName() {
+      return byNamespace({ path: '/triggerbindings/:triggerBindingName' });
     }
   },
   kubernetesResources: {
