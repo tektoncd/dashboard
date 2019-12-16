@@ -97,51 +97,59 @@ const PipelineRuns = ({
     }
   });
 
-  const pipelineRunsFormatted = pipelineRuns.map(pipelineRun => ({
-    id: `${pipelineRun.metadata.namespace}:${pipelineRun.metadata.name}`,
-    name: (
-      <Link
-        to={createPipelineRunURL({
-          namespace: pipelineRun.metadata.namespace,
-          pipelineRunName: createPipelineRunDisplayName({
-            pipelineRunMetadata: pipelineRun.metadata
-          })
-        })}
-      >
-        {pipelineRun.metadata.name}
-      </Link>
-    ),
-    pipeline: !hidePipeline && (
-      <Link
-        to={createPipelineRunsByPipelineURL({
-          namespace: pipelineRun.metadata.namespace,
-          pipelineName: pipelineRun.spec.pipelineRef.name
-        })}
-      >
-        {pipelineRun.spec.pipelineRef.name}
-      </Link>
-    ),
-    namespace: !hideNamespace && pipelineRun.metadata.namespace,
-    status: (
-      <div className="definition">
-        <div
-          className="status"
-          data-status={getStatus(pipelineRun).status}
-          data-reason={getStatus(pipelineRun).reason}
-        >
-          <div className="status-icon">
-            {getPipelineRunStatusIcon(pipelineRun)}
+  const pipelineRunsFormatted = pipelineRuns.map(pipelineRun => {
+    const { namespace, annotations } = pipelineRun.metadata;
+    const pipelineRunName = createPipelineRunDisplayName({
+      pipelineRunMetadata: pipelineRun.metadata
+    });
+    const pipelineRefName = pipelineRun.spec.pipelineRef.name;
+    const pipelineRunType = pipelineRun.spec.type;
+    const { reason, status } = getStatus(pipelineRun);
+    const statusIcon = getPipelineRunStatusIcon(pipelineRun);
+    const pipelineRunStatus = getPipelineRunStatus(pipelineRun, intl);
+    const url = createPipelineRunURL({
+      namespace,
+      pipelineRunName,
+      annotations
+    });
+    return {
+      id: `${namespace}:${pipelineRunName}`,
+      name: url ? <Link to={url}>{pipelineRunName}</Link> : pipelineRunName,
+      pipeline:
+        !hidePipeline &&
+        (pipelineRefName ? (
+          <Link
+            to={createPipelineRunsByPipelineURL({
+              namespace,
+              pipelineName: pipelineRefName
+            })}
+          >
+            {pipelineRefName}
+          </Link>
+        ) : (
+          ''
+        )),
+      namespace: !hideNamespace && namespace,
+      status: (
+        <div className="definition">
+          <div className="status" data-status={status} data-reason={reason}>
+            {statusIcon}
+            {pipelineRunStatus}
           </div>
-          {getPipelineRunStatus(pipelineRun, intl)}
         </div>
-      </div>
-    ),
-    transitionTime: (
-      <FormattedDate date={createPipelineRunTimestamp(pipelineRun)} relative />
-    ),
-    type: pipelineRun.spec.type,
-    dropdown: <RunDropdown items={pipelineRunActions} resource={pipelineRun} />
-  }));
+      ),
+      transitionTime: (
+        <FormattedDate
+          date={createPipelineRunTimestamp(pipelineRun)}
+          relative
+        />
+      ),
+      type: pipelineRunType,
+      dropdown: (
+        <RunDropdown items={pipelineRunActions} resource={pipelineRun} />
+      )
+    };
+  });
 
   return (
     <Table
