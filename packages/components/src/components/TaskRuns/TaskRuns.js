@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -98,13 +98,20 @@ const TaskRuns = ({
 
     return {
       id: taskRun.metadata.uid,
-      name: url ? <Link to={url}>{taskRunName}</Link> : taskRunName,
+      name: url ? (
+        <Link to={url} title={taskRunName}>
+          {taskRunName}
+        </Link>
+      ) : (
+        taskRunName
+      ),
       task: taskRefName ? (
         <Link
           to={createTaskRunsByTaskURL({
             namespace,
             taskName: taskRefName
           })}
+          title={taskRefName}
         >
           {taskRefName}
         </Link>
