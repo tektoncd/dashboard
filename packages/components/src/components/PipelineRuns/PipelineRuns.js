@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -114,7 +114,13 @@ const PipelineRuns = ({
     });
     return {
       id: `${namespace}:${pipelineRunName}`,
-      name: url ? <Link to={url}>{pipelineRunName}</Link> : pipelineRunName,
+      name: url ? (
+        <Link to={url} title={pipelineRunName}>
+          {pipelineRunName}
+        </Link>
+      ) : (
+        pipelineRunName
+      ),
       pipeline:
         !hidePipeline &&
         (pipelineRefName ? (
@@ -123,6 +129,7 @@ const PipelineRuns = ({
               namespace,
               pipelineName: pipelineRefName
             })}
+            title={pipelineRefName}
           >
             {pipelineRefName}
           </Link>
