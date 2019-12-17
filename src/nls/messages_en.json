@@ -84,13 +84,13 @@
     "dashboard.step.statusNotAvailable": "No status available",
     "dashboard.step.stepDefinition": "Step definition",
     "dashboard.tableHeader.annotations": "Annotations",
-    "dashboard.tableHeader.dateCreated": "Date Created",
+    "dashboard.tableHeader.createdTime": "Created",
+    "dashboard.tableHeader.duration": "Duration",
     "dashboard.tableHeader.name": "Name",
     "dashboard.tableHeader.namespace": "Namespace",
     "dashboard.tableHeader.pipeline": "Pipeline",
     "dashboard.tableHeader.status": "Status",
     "dashboard.tableHeader.task": "Task",
-    "dashboard.tableHeader.transitionTime": "Last Transition Time",
     "dashboard.tableHeader.type": "Type",
     "dashboard.tableHeader.value": "Value",
     "dashboard.taskRun.details": "Details",
@@ -117,6 +117,11 @@
     "dashboard.triggerTemplate.paramaters": "Parameters",
     "dashboard.triggerTemplate.resourceNameHeader": "Resource name to create",
     "dashboard.triggerTemplate.resourceTemplates": "Resource Templates",
-    "dashboard.triggerTemplate.unavailable": "TriggerTemplate not available"
+    "dashboard.triggerTemplate.unavailable": "TriggerTemplate not available",
+    "react-intl-formatted-duration.daysUnit": "{value, plural, one {day} other {days}}",
+    "react-intl-formatted-duration.duration": "{value} {unit}",
+    "react-intl-formatted-duration.hoursUnit": "{value, plural, one {hour} other {hours}}",
+    "react-intl-formatted-duration.minutesUnit": "{value, plural, one {minute} other {minutes}}",
+    "react-intl-formatted-duration.secondsUnit": "{value, plural, one {second} other {seconds}}"
   }
 }

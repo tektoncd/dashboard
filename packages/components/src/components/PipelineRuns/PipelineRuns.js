@@ -18,7 +18,7 @@ import { Table } from '@tektoncd/dashboard-components';
 import 'carbon-components-react';
 import { getStatus, getStatusIcon, urls } from '@tektoncd/dashboard-utils';
 
-import { FormattedDate, RunDropdown } from '..';
+import { FormattedDate, FormattedDuration, RunDropdown } from '..';
 
 import './PipelineRuns.scss';
 
@@ -26,8 +26,6 @@ const PipelineRuns = ({
   createPipelineRunURL = urls.pipelineRuns.byName,
   createPipelineRunDisplayName = ({ pipelineRunMetadata }) =>
     pipelineRunMetadata.name,
-  createPipelineRunTimestamp = pipelineRun =>
-    getStatus(pipelineRun).lastTransitionTime,
   createPipelineRunsByPipelineURL = urls.pipelineRuns.byPipeline,
   getPipelineRunStatus = (pipelineRun, intl) =>
     pipelineRun.status && pipelineRun.status.conditions
@@ -78,10 +76,17 @@ const PipelineRuns = ({
       })
     },
     {
-      key: 'transitionTime',
+      key: 'createdTime',
       header: intl.formatMessage({
-        id: 'dashboard.tableHeader.transitionTime',
-        defaultMessage: 'Last Transition Time'
+        id: 'dashboard.tableHeader.createdTime',
+        defaultMessage: 'Created'
+      })
+    },
+    {
+      key: 'duration',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.duration',
+        defaultMessage: 'Duration'
       })
     },
     {
@@ -98,13 +103,13 @@ const PipelineRuns = ({
   });
 
   const pipelineRunsFormatted = pipelineRuns.map(pipelineRun => {
-    const { namespace, annotations } = pipelineRun.metadata;
+    const { annotations, creationTimestamp, namespace } = pipelineRun.metadata;
     const pipelineRunName = createPipelineRunDisplayName({
       pipelineRunMetadata: pipelineRun.metadata
     });
     const pipelineRefName = pipelineRun.spec.pipelineRef.name;
     const pipelineRunType = pipelineRun.spec.type;
-    const { reason, status } = getStatus(pipelineRun);
+    const { lastTransitionTime, reason, status } = getStatus(pipelineRun);
     const statusIcon = getPipelineRunStatusIcon(pipelineRun);
     const pipelineRunStatus = getPipelineRunStatus(pipelineRun, intl);
     const url = createPipelineRunURL({
@@ -112,6 +117,18 @@ const PipelineRuns = ({
       pipelineRunName,
       annotations
     });
+
+    let endTime = Date.now();
+    if (status === 'False' || status === 'True') {
+      endTime = new Date(lastTransitionTime).getTime();
+    }
+
+    const duration = (
+      <FormattedDuration
+        milliseconds={endTime - new Date(creationTimestamp).getTime()}
+      />
+    );
+
     return {
       id: `${namespace}:${pipelineRunName}`,
       name: url ? (
@@ -145,12 +162,8 @@ const PipelineRuns = ({
           </div>
         </div>
       ),
-      transitionTime: (
-        <FormattedDate
-          date={createPipelineRunTimestamp(pipelineRun)}
-          relative
-        />
-      ),
+      createdTime: <FormattedDate date={creationTimestamp} relative />,
+      duration,
       type: pipelineRunType,
       dropdown: (
         <RunDropdown items={pipelineRunActions} resource={pipelineRun} />

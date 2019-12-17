@@ -19,7 +19,7 @@ import { injectIntl } from 'react-intl';
 
 import { InlineNotification } from 'carbon-components-react';
 import { getErrorMessage, urls } from '@tektoncd/dashboard-utils';
-import { Table } from '@tektoncd/dashboard-components';
+import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 
 import { fetchPipelines } from '../../actions/pipelines';
 import {
@@ -73,6 +73,13 @@ export /* istanbul ignore next */ class Pipelines extends Component {
         })
       },
       {
+        key: 'createdTime',
+        header: intl.formatMessage({
+          id: 'dashboard.tableHeader.createdTime',
+          defaultMessage: 'Created'
+        })
+      },
+      {
         key: 'link',
         header: ''
       }
@@ -92,6 +99,9 @@ export /* istanbul ignore next */ class Pipelines extends Component {
         </Link>
       ),
       namespace: pipeline.metadata.namespace,
+      createdTime: (
+        <FormattedDate date={pipeline.metadata.creationTimestamp} relative />
+      ),
       link: (
         <Link
           to={urls.rawCRD.byNamespace({

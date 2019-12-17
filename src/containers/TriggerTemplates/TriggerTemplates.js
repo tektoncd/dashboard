@@ -110,17 +110,17 @@ export /* istanbul ignore next */ class TriggerTemplates extends Component {
         })
       },
       {
-        key: 'date',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.dateCreated',
-          defaultMessage: 'Date Created'
-        })
-      },
-      {
         key: 'namespace',
         header: intl.formatMessage({
           id: 'dashboard.tableHeader.namespace',
           defaultMessage: 'Namespace'
+        })
+      },
+      {
+        key: 'date',
+        header: intl.formatMessage({
+          id: 'dashboard.tableHeader.createdTime',
+          defaultMessage: 'Created'
         })
       }
     ];

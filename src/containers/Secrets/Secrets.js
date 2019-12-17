@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -15,7 +15,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import { InlineNotification } from 'carbon-components-react';
-import { Table } from '@tektoncd/dashboard-components';
+import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 import Add from '@carbon/icons-react/lib/add/16';
 import Delete from '@carbon/icons-react/lib/delete/16';
 import Modal from '../SecretsModal';
@@ -142,6 +142,13 @@ export /* istanbul ignore next */ class Secrets extends Component {
           id: 'dashboard.tableHeader.annotations',
           defaultMessage: 'Annotations'
         })
+      },
+      {
+        key: 'created',
+        header: intl.formatMessage({
+          id: 'dashboard.tableHeader.createdTime',
+          defaultMessage: 'Created'
+        })
       }
     ];
 
@@ -157,8 +164,9 @@ export /* istanbul ignore next */ class Secrets extends Component {
       const formattedSecret = {
         annotations,
         id: `${secret.namespace}:${secret.name}`,
+        name: secret.name,
         namespace: secret.namespace,
-        name: secret.name
+        created: <FormattedDate date={secret.creationTimestamp} relative />
       };
 
       return formattedSecret;

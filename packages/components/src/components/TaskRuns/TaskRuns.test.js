@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -32,7 +32,8 @@ it('TaskRuns renders headers state', () => {
   expect(queryByText(/task/i)).toBeTruthy();
   expect(queryByText(/namespace/i)).toBeTruthy();
   expect(queryByText(/status/i)).toBeTruthy();
-  expect(queryByText(/last transition time/i)).toBeTruthy();
+  expect(queryByText(/created/i)).toBeTruthy();
+  expect(queryByText(/duration/i)).toBeTruthy();
   expect(document.getElementsByClassName('bx--overflow-menu')).toBeTruthy();
 });
 

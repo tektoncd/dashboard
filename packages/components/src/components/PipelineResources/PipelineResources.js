@@ -16,7 +16,7 @@ import { injectIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { urls } from '@tektoncd/dashboard-utils';
 
-import { RunDropdown, Table } from '..';
+import { FormattedDate, RunDropdown, Table } from '..';
 
 const PipelineResources = ({
   createPipelineResourcesURL = urls.pipelineResources.byName,
@@ -51,6 +51,13 @@ const PipelineResources = ({
       })
     },
     {
+      key: 'createdTime',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.createdTime',
+        defaultMessage: 'Created'
+      })
+    },
+    {
       key: 'dropdown',
       header: ''
     }
@@ -77,6 +84,12 @@ const PipelineResources = ({
       ),
       namespace,
       type: pipelineResource.spec.type,
+      createdTime: (
+        <FormattedDate
+          date={pipelineResource.metadata.creationTimestamp}
+          relative
+        />
+      ),
       dropdown: (
         <RunDropdown
           items={pipelineResourceActions}

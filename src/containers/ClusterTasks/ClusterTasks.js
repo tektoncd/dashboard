@@ -15,7 +15,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
-import { Table } from '@tektoncd/dashboard-components';
+import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 import { InlineNotification } from 'carbon-components-react';
 import { getErrorMessage, urls } from '@tektoncd/dashboard-utils';
 
@@ -57,6 +57,13 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
           id: 'dashboard.tableHeader.name',
           defaultMessage: 'Name'
         })
+      },
+      {
+        key: 'createdTime',
+        header: intl.formatMessage({
+          id: 'dashboard.tableHeader.createdTime',
+          defaultMessage: 'Created'
+        })
       }
     ];
 
@@ -71,6 +78,9 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
         >
           {clusterTask.metadata.name}
         </Link>
+      ),
+      createdTime: (
+        <FormattedDate date={clusterTask.metadata.creationTimestamp} relative />
       )
     }));
 

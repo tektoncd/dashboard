@@ -17,7 +17,7 @@ import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import { InlineNotification } from 'carbon-components-react';
 import { getErrorMessage, urls } from '@tektoncd/dashboard-utils';
-import { Table } from '@tektoncd/dashboard-components';
+import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 import Information16 from '@carbon/icons-react/lib/information/16';
 import { fetchTasks } from '../../actions/tasks';
 import {
@@ -71,6 +71,13 @@ export /* istanbul ignore next */ class Tasks extends Component {
         })
       },
       {
+        key: 'createdTime',
+        header: intl.formatMessage({
+          id: 'dashboard.tableHeader.createdTime',
+          defaultMessage: 'Created'
+        })
+      },
+      {
         key: 'link',
         header: ''
       }
@@ -90,6 +97,9 @@ export /* istanbul ignore next */ class Tasks extends Component {
         </Link>
       ),
       namespace: task.metadata.namespace,
+      createdTime: (
+        <FormattedDate date={task.metadata.creationTimestamp} relative />
+      ),
       link: (
         <Link
           to={urls.rawCRD.byNamespace({

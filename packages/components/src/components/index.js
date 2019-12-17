@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -15,6 +15,7 @@ export { default as Breadcrumbs } from './Breadcrumbs';
 export { default as CancelButton } from './CancelButton';
 export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as FormattedDate } from './FormattedDate';
+export { default as FormattedDuration } from './FormattedDuration';
 export { default as Graph } from './Graph/Graph';
 export { default as Header } from './Header';
 export { default as LabelFilter } from './LabelFilter';
