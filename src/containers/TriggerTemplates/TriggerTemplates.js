@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -110,17 +110,17 @@ export /* istanbul ignore next */ class TriggerTemplates extends Component {
         })
       },
       {
-        key: 'date',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.dateCreated',
-          defaultMessage: 'Date Created'
-        })
-      },
-      {
         key: 'namespace',
         header: intl.formatMessage({
           id: 'dashboard.tableHeader.namespace',
           defaultMessage: 'Namespace'
+        })
+      },
+      {
+        key: 'date',
+        header: intl.formatMessage({
+          id: 'dashboard.tableHeader.createdTime',
+          defaultMessage: 'Created'
         })
       }
     ];

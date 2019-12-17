@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -23,6 +23,7 @@ function byNamespace(state = {}, action) {
         if (isStale({ metadata: secret }, state, 'name')) {
           return state;
         }
+
         const { namespace, name } = secret;
         return merge(accumulator, {
           [namespace]: {
@@ -42,6 +43,7 @@ function byNamespace(state = {}, action) {
       const secret = {
         [action.payload.metadata.namespace]: {
           [action.payload.metadata.name]: {
+            creationTimestamp: action.payload.metadata.creationTimestamp || '',
             name: action.payload.metadata.name || '',
             namespace: action.payload.metadata.namespace || '',
             annotations: action.payload.metadata.annotations || ''

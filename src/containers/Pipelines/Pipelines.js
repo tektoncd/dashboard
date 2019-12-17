@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -19,7 +19,7 @@ import { injectIntl } from 'react-intl';
 
 import { InlineNotification } from 'carbon-components-react';
 import { getErrorMessage, urls } from '@tektoncd/dashboard-utils';
-import { Table } from '@tektoncd/dashboard-components';
+import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 
 import { fetchPipelines } from '../../actions/pipelines';
 import {
@@ -73,6 +73,13 @@ export /* istanbul ignore next */ class Pipelines extends Component {
         })
       },
       {
+        key: 'createdTime',
+        header: intl.formatMessage({
+          id: 'dashboard.tableHeader.createdTime',
+          defaultMessage: 'Created'
+        })
+      },
+      {
         key: 'link',
         header: ''
       }
@@ -91,6 +98,9 @@ export /* istanbul ignore next */ class Pipelines extends Component {
         </Link>
       ),
       namespace: pipeline.metadata.namespace,
+      createdTime: (
+        <FormattedDate date={pipeline.metadata.creationTimestamp} relative />
+      ),
       link: (
         <Link
           to={urls.rawCRD.byNamespace({

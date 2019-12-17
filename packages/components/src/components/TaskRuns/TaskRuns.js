@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,12 +16,11 @@ import { injectIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { getStatus, getStatusIcon, urls } from '@tektoncd/dashboard-utils';
 
-import { FormattedDate, RunDropdown, Table } from '..';
+import { FormattedDate, FormattedDuration, RunDropdown, Table } from '..';
 
 const TaskRuns = ({
   createTaskRunURL = urls.taskRuns.byName,
   createTaskRunsDisplayName = ({ taskRunMetadata }) => taskRunMetadata.name,
-  createTaskRunTimestamp = taskRun => getStatus(taskRun).lastTransitionTime,
   createTaskRunsByTaskURL = urls.taskRuns.byTask,
   getTaskRunStatus = (taskRun, intl) =>
     taskRun.status && taskRun.status.conditions
@@ -70,10 +69,17 @@ const TaskRuns = ({
       })
     },
     {
-      key: 'transitionTime',
+      key: 'createdTime',
       header: intl.formatMessage({
-        id: 'dashboard.tableHeader.transitionTime',
-        defaultMessage: 'Last Transition Time'
+        id: 'dashboard.tableHeader.createdTime',
+        defaultMessage: 'Created'
+      })
+    },
+    {
+      key: 'duration',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.duration',
+        defaultMessage: 'Duration'
       })
     },
     {
@@ -83,18 +89,29 @@ const TaskRuns = ({
   ];
 
   const taskRunsFormatted = taskRuns.map(taskRun => {
-    const { namespace } = taskRun.metadata;
+    const { creationTimestamp, namespace } = taskRun.metadata;
     const taskRunName = createTaskRunsDisplayName({
       taskRunMetadata: taskRun.metadata
     });
     const taskRefName = taskRun.spec.taskRef && taskRun.spec.taskRef.name;
-    const { reason, status } = getStatus(taskRun);
+    const { lastTransitionTime, reason, status } = getStatus(taskRun);
     const statusIcon = getTaskRunStatusIcon(taskRun);
     const taskRunStatus = getTaskRunStatus(taskRun, intl);
     const url = createTaskRunURL({
       namespace,
       taskRunName
     });
+
+    let endTime = Date.now();
+    if (status === 'False' || status === 'True') {
+      endTime = new Date(lastTransitionTime).getTime();
+    }
+
+    const duration = (
+      <FormattedDuration
+        milliseconds={endTime - new Date(creationTimestamp).getTime()}
+      />
+    );
 
     return {
       id: taskRun.metadata.uid,
@@ -120,9 +137,10 @@ const TaskRuns = ({
           </div>
         </div>
       ),
-      transitionTime: (
-        <FormattedDate date={createTaskRunTimestamp(taskRun)} relative />
+      createdTime: (
+        <FormattedDate date={taskRun.metadata.creationTimestamp} relative />
       ),
+      duration,
       dropdown: <RunDropdown items={taskRunActions} resource={taskRun} />
     };
   });

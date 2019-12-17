@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -40,6 +40,7 @@ export function fetchSecrets({ namespace } = {}) {
       const secretsFormatted = [];
       secrets.items.forEach(secret => {
         const object = {
+          creationTimestamp: secret.metadata.creationTimestamp,
           name: secret.metadata.name,
           namespace: secret.metadata.namespace,
           annotations: secret.metadata.annotations,
@@ -71,10 +72,10 @@ export function deleteSecret(secrets, cancelMethod) {
       namespacesToSecretsMap.set(secret.namespace, foundSecretInfo);
     });
 
-    /* Now we know the secrets for each namespace, iterate and determine which secrets 
-    should be removed from the SA. With the list of known secrets that stay, 
-    we finally do a replace type PATCH on the entire service account at once. 
-    This is used to ensure all data is still correct regardless of things like indexes changing 
+    /* Now we know the secrets for each namespace, iterate and determine which secrets
+    should be removed from the SA. With the list of known secrets that stay,
+    we finally do a replace type PATCH on the entire service account at once.
+    This is used to ensure all data is still correct regardless of things like indexes changing
     which is the only way to remove secrets otherwise using the patch API */
 
     // For each namespace there are secrets in

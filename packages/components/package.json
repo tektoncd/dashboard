@@ -23,6 +23,7 @@
     "elkjs": "^0.5.1",
     "js-yaml": "^3.13.0",
     "prop-types": "^15.7.2",
+    "react-intl-formatted-duration": "^3.1.0",
     "react-window": "^1.8.5"
   },
   "peerDependencies": {

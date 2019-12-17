@@ -11,28 +11,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
-import { IntlProvider } from "react-intl";
-
-import messages from '../src/nls/messages_en.json';
-
-import './Container.scss';
-
-export default function Container({ story }) {
-  return (
-    <IntlProvider locale="en" defaultLocale="en" messages={messages['en']}>
-      <div
-        data-floating-menu-container
-        role="main"
-        style={{
-          padding: '3em',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center'
-        }}
-      >
-        {story()}
-      </div>
-    </IntlProvider>
-  );
-}
+export { default } from './FormattedDuration';

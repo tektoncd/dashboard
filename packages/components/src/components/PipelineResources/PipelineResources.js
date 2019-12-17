@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,7 +16,7 @@ import { injectIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { urls } from '@tektoncd/dashboard-utils';
 
-import { RunDropdown, Table } from '..';
+import { FormattedDate, RunDropdown, Table } from '..';
 
 const PipelineResources = ({
   createPipelineResourcesURL = urls.pipelineResources.byName,
@@ -51,6 +51,13 @@ const PipelineResources = ({
       })
     },
     {
+      key: 'createdTime',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.createdTime',
+        defaultMessage: 'Created'
+      })
+    },
+    {
       key: 'dropdown',
       header: ''
     }
@@ -75,6 +82,12 @@ const PipelineResources = ({
       ),
       namespace,
       type: pipelineResource.spec.type,
+      createdTime: (
+        <FormattedDate
+          date={pipelineResource.metadata.creationTimestamp}
+          relative
+        />
+      ),
       dropdown: (
         <RunDropdown
           items={pipelineResourceActions}

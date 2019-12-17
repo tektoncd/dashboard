@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -15,7 +15,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
-import { Table } from '@tektoncd/dashboard-components';
+import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 import { InlineNotification } from 'carbon-components-react';
 import { getErrorMessage, urls } from '@tektoncd/dashboard-utils';
 
@@ -57,6 +57,13 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
           id: 'dashboard.tableHeader.name',
           defaultMessage: 'Name'
         })
+      },
+      {
+        key: 'createdTime',
+        header: intl.formatMessage({
+          id: 'dashboard.tableHeader.createdTime',
+          defaultMessage: 'Created'
+        })
       }
     ];
 
@@ -70,6 +77,9 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
         >
           {clusterTask.metadata.name}
         </Link>
+      ),
+      createdTime: (
+        <FormattedDate date={clusterTask.metadata.creationTimestamp} relative />
       )
     }));
 
