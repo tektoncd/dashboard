@@ -161,7 +161,9 @@ class CreatePipelineRun extends React.Component {
 
     // Timeout is a number and less than 1 year in minutes
     const timeoutTest =
-      !Number.isNaN(this.state.timeout) && this.state.timeout < 525600;
+      !Number.isNaN(this.state.timeout) &&
+      this.state.timeout < 525600 &&
+      this.state.timeout.trim() !== '';
     if (!timeoutTest) {
       this.setState({ validTimeout: false });
     } else {
