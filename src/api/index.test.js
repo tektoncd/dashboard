@@ -208,26 +208,6 @@ it('deletePipelineRun', () => {
   });
 });
 
-it('deletePipelineRun', () => {
-  const name = 'foo';
-  const data = { fake: 'pipelineRun' };
-  fetchMock.delete(`end:${name}`, data);
-  return index.deletePipelineRun({ name }).then(pipelineRun => {
-    expect(pipelineRun).toEqual(data);
-    fetchMock.restore();
-  });
-});
-
-it('deletePipelineRun', () => {
-  const name = 'foo';
-  const data = { fake: 'pipelineRun' };
-  fetchMock.delete(`end:${name}`, data);
-  return index.deletePipelineRun({ name }).then(pipelineRun => {
-    expect(pipelineRun).toEqual(data);
-    fetchMock.restore();
-  });
-});
-
 it('cancelPipelineRun', () => {
   const name = 'foo';
   const namespace = 'foospace';
