@@ -631,6 +631,12 @@ it('CreatePipelineRun validates inputs', () => {
   });
   fireEvent.click(submitButton(getAllByText));
   expect(queryByText(timeoutValidationErrorRegExp)).toBeTruthy();
+  // Test invalid timeouts for empty Timeout
+  fireEvent.change(document.getElementById('create-pipelinerun--timeout'), {
+    target: { value: ' ' }
+  });
+  fireEvent.click(submitButton(getAllByText));
+  expect(queryByText(timeoutValidationErrorRegExp)).toBeTruthy();
   fireEvent.change(document.getElementById('create-pipelinerun--timeout'), {
     target: { value: '525600' }
   });
