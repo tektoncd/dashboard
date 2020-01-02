@@ -17,6 +17,7 @@ import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
 import { Route } from 'react-router-dom';
+import { urls } from '@tektoncd/dashboard-utils';
 import { renderWithRouter } from '../../utils/test';
 import * as API from '../../api';
 import PipelineRunsContainer from './PipelineRuns';
@@ -361,4 +362,31 @@ it('An invalid filter value is disallowed and reported', async () => {
       /Filters must be of the format labelKey:labelValue and contain accepted label characters/i
     )
   ).toBeTruthy();
+});
+
+it('TaskTree handles rerun event in PipelineRuns page', async () => {
+  const mockTestStore = mockStore(testStore);
+  jest.spyOn(API, 'rerunPipelineRun').mockImplementation(() => []);
+  const { getByTestId, getByText } = renderWithRouter(
+    <Provider store={mockTestStore}>
+      <Route
+        path={urls.pipelineRuns.all()}
+        render={props => (
+          <PipelineRunsContainer
+            {...props}
+            fetchPipelineRuns={() => Promise.resolve()}
+            pipelineRuns={pipelineRunsTestStore.pipelineRuns.byId}
+          />
+        )}
+      />
+    </Provider>,
+    { route: urls.pipelineRuns.all() }
+  );
+
+  fireEvent.click(await waitForElement(() => getByTestId('overflowmenu')));
+  await waitForElement(() => getByText(/Rerun/i));
+  fireEvent.click(getByText('Rerun'));
+  expect(API.rerunPipelineRun).toHaveBeenCalledTimes(1);
+  const expected = { pipelinerunname: 'pipelineRunWithSingleLabel' };
+  expect(API.rerunPipelineRun).toHaveBeenCalledWith('namespace-1', expected);
 });

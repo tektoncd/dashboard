@@ -41,7 +41,11 @@ import {
   isFetchingPipelineRuns,
   isWebSocketConnected
 } from '../../reducers';
-import { cancelPipelineRun, deletePipelineRun } from '../../api';
+import {
+  cancelPipelineRun,
+  deletePipelineRun,
+  rerunPipelineRun
+} from '../../api';
 
 const initialState = {
   showCreatePipelineRunModal: false,
@@ -87,6 +91,11 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
   deleteRun = pipelineRun => {
     const { name, namespace } = pipelineRun.metadata;
     deletePipelineRun({ name, namespace });
+  };
+
+  rerun = pipelineRun => {
+    const { name, namespace } = pipelineRun.metadata;
+    rerunPipelineRun(namespace, { pipelinerunname: name });
   };
 
   toggleModal = showCreatePipelineRunModal => {
@@ -192,6 +201,13 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
               { name: resource.metadata.name }
             )
         }
+      },
+      {
+        actionText: intl.formatMessage({
+          id: 'dashboard.rerunPipelineRun.actionText',
+          defaultMessage: 'Rerun'
+        }),
+        action: this.rerun
       }
     ];
   };
