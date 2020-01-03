@@ -135,7 +135,11 @@ const Table = props => {
                 <TableBody>
                   {!loading && dataRows.length === 0 && (
                     <TableRow>
-                      <TableCell colSpan={headers.length}>
+                      <TableCell
+                        colSpan={
+                          headers.length + (batchActionButtons.length ? 1 : 0)
+                        }
+                      >
                         <div className="noRows">
                           {selectedNamespace === ALL_NAMESPACES
                             ? emptyTextAllNamespaces
