@@ -20,6 +20,7 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -59,6 +60,8 @@ const ExtensionDisplayNameKey = "tekton-dashboard-display-name"
 const ExtensionRoot = "/v1/extensions"
 
 var webResourcesDir = os.Getenv("WEB_RESOURCES_DIR")
+var webResourcesStaticPattern = regexp.MustCompile("^/([[:alnum:]]+\\.)?[[:alnum:]]+\\.(js)|(css)|(png)$")
+var webResourcesStaticExcludePattern = regexp.MustCompile("^/favicon.png$")
 
 // Register returns an HTTP handler that has the Dashboard REST API registered
 func Register(resource endpoints.Resource) *Handler {
@@ -192,7 +195,14 @@ func registerKubeAPIProxy(r endpoints.Resource, container *restful.Container) {
 func registerWeb(container *restful.Container) {
 	logging.Log.Info("Adding Web API")
 
-	container.Handle("/", http.FileServer(http.Dir(webResourcesDir)))
+	fs := http.FileServer(http.Dir(webResourcesDir))
+	container.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if webResourcesStaticPattern.Match([]byte(r.URL.Path)) && !webResourcesStaticExcludePattern.Match([]byte(r.URL.Path)) {
+			// Static resources are immutable and have a content hash in their URL
+			w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
+		}
+		fs.ServeHTTP(w, r)
+	}))
 }
 
 // registerEndpoints registers the APIs to interface with core Tekton/K8s pieces
