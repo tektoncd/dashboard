@@ -67,11 +67,9 @@ const namespaces = {
 };
 
 const serviceAccountsByNamespace = {
-  blue: {
+  default: {
     'service-account-1': 'id-service-account-1',
-    'service-account-2': 'id-service-account-2'
-  },
-  green: {
+    'service-account-2': 'id-service-account-2',
     'service-account-3': 'id-service-account-3'
   }
 };
@@ -80,23 +78,26 @@ const serviceAccountsById = {
   'id-service-account-1': {
     metadata: {
       name: 'service-account-1',
-      namespace: 'blue',
+      namespace: 'default',
       uid: 'id-service-account-1'
-    }
+    },
+    secrets: [{ name: 'github-repo-access-secret' }]
   },
   'id-service-account-2': {
     metadata: {
       name: 'service-account-2',
-      namespace: 'blue',
+      namespace: 'default',
       uid: 'id-service-account-2'
-    }
+    },
+    secrets: []
   },
   'id-service-account-3': {
     metadata: {
       name: 'service-account-3',
-      namespace: 'green',
+      namespace: 'default',
       uid: 'id-service-account-3'
-    }
+    },
+    secrets: []
   }
 };
 
@@ -180,24 +181,14 @@ it('click delete secret & modal appears', () => {
 });
 
 it('SecretsTable renders with one secret', () => {
-  const props = {
-    secrets: [
-      {
-        name: 'github-repo-access-secret',
-        annotations: {
-          'tekton.dev/git-0': 'https://github.ibm.com'
-        }
-      }
-    ],
-    loading: false,
-    error: null
-  };
   const { queryByText } = renderWithIntl(
     <Provider store={store}>
-      <Secrets {...props} intl={intl} />
+      <Secrets intl={intl} />
     </Provider>
   );
+
   expect(queryByText(/github-repo-access-secret/i)).toBeTruthy();
+  expect(queryByText(/service-account-1/i)).toBeTruthy();
   expect(
     queryByText(/tekton.dev\/git-0: https:\/\/github.ibm.com/i)
   ).toBeTruthy();

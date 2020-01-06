@@ -91,6 +91,7 @@
     "dashboard.tableHeader.name": "Name",
     "dashboard.tableHeader.namespace": "Namespace",
     "dashboard.tableHeader.pipeline": "Pipeline",
+    "dashboard.tableHeader.serviceAccounts": "Service Accounts",
     "dashboard.tableHeader.status": "Status",
     "dashboard.tableHeader.task": "Task",
     "dashboard.tableHeader.type": "Type",
