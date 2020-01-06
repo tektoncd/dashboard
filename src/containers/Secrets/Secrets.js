@@ -25,13 +25,16 @@ import {
   deleteSecret,
   fetchSecrets
 } from '../../actions/secrets';
+import { fetchServiceAccounts } from '../../actions/serviceAccounts';
 import {
   getCreateSecretsSuccessMessage,
   getDeleteSecretsSuccessMessage,
   getSecrets,
   getSecretsErrorMessage,
   getSelectedNamespace,
+  getServiceAccounts,
   isFetchingSecrets,
+  isFetchingServiceAccounts,
   isWebSocketConnected
 } from '../../reducers';
 
@@ -45,11 +48,11 @@ export /* istanbul ignore next */ class Secrets extends Component {
   constructor(props) {
     super(props);
     this.state = initialState;
-    this.handleCreateSecretClick = this.handleCreateSecretClick.bind(this);
   }
 
   componentDidMount() {
     this.props.fetchSecrets();
+    this.props.fetchServiceAccounts();
   }
 
   componentDidUpdate(prevProps) {
@@ -57,6 +60,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
     const { webSocketConnected: prevWebSocketConnected } = prevProps;
     if (webSocketConnected && prevWebSocketConnected === false) {
       this.props.fetchSecrets();
+      this.props.fetchServiceAccounts();
     }
   }
 
@@ -102,11 +106,14 @@ export /* istanbul ignore next */ class Secrets extends Component {
     this.handleDeleteSecretToggle();
   };
 
-  handleCreateSecretClick(openNewSecret) {
+  handleCreateSecretClick = openNewSecret => {
+    if (!openNewSecret) {
+      this.props.fetchServiceAccounts();
+    }
     this.setState({
       openNewSecret
     });
-  }
+  };
 
   render() {
     const {
@@ -115,6 +122,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
       deleteSuccess,
       secrets,
       selectedNamespace,
+      serviceAccounts,
       intl,
       errorMessage
     } = this.props;
@@ -134,6 +142,13 @@ export /* istanbul ignore next */ class Secrets extends Component {
         header: intl.formatMessage({
           id: 'dashboard.tableHeader.namespace',
           defaultMessage: 'Namespace'
+        })
+      },
+      {
+        key: 'serviceAccounts',
+        header: intl.formatMessage({
+          id: 'dashboard.tableHeader.serviceAccounts',
+          defaultMessage: 'Service Accounts'
         })
       },
       {
@@ -161,12 +176,21 @@ export /* istanbul ignore next */ class Secrets extends Component {
           }
         });
       }
+      const serviceAccountsWithSecret = [];
+      serviceAccounts.forEach(serviceAccount => {
+        serviceAccount.secrets.forEach(secretInServiceAccount => {
+          if (secretInServiceAccount.name === secret.name) {
+            serviceAccountsWithSecret.push(serviceAccount.metadata.name);
+          }
+        });
+      });
       const formattedSecret = {
         annotations,
         id: `${secret.namespace}:${secret.name}`,
         name: secret.name,
         namespace: secret.namespace,
-        created: <FormattedDate date={secret.creationTimestamp} relative />
+        created: <FormattedDate date={secret.creationTimestamp} relative />,
+        serviceAccounts: serviceAccountsWithSecret.join(', ')
       };
 
       return formattedSecret;
@@ -285,8 +309,9 @@ function mapStateToProps(state) {
     errorMessage: getSecretsErrorMessage(state),
     createSuccess: getCreateSecretsSuccessMessage(state),
     deleteSuccess: getDeleteSecretsSuccessMessage(state),
-    loading: isFetchingSecrets(state),
+    loading: isFetchingSecrets(state) || isFetchingServiceAccounts(state),
     secrets: getSecrets(state),
+    serviceAccounts: getServiceAccounts(state),
     selectedNamespace: getSelectedNamespace(state),
     webSocketConnected: isWebSocketConnected(state)
   };
@@ -295,7 +320,8 @@ function mapStateToProps(state) {
 const mapDispatchToProps = {
   clearNotification,
   deleteSecret,
-  fetchSecrets
+  fetchSecrets,
+  fetchServiceAccounts
 };
 
 export default connect(
