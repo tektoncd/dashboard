@@ -21,7 +21,7 @@ import './Log.scss';
 
 const LogLine = ({ data, index, style }) => (
   <div style={style}>
-    <Ansi>{data[index]}</Ansi>
+    <Ansi linkify>{data[index]}</Ansi>
   </div>
 );
 
