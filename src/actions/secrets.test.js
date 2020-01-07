@@ -246,7 +246,7 @@ it('createSecret error', async () => {
     response: {
       text: () => {
         return Promise.resolve(
-          'Could not create secret "secret-name" in namespace default'
+          'A secret already exists in namespace default with name default-token-kbn7j'
         );
       }
     }
@@ -256,11 +256,14 @@ it('createSecret error', async () => {
     throw error;
   });
 
+  jest.spyOn(API, 'getAllCredentials').mockImplementation(() => data);
+
   const expectedActions = [
     { type: 'SECRET_CREATE_REQUEST' },
     {
       type: 'SECRET_CREATE_FAILURE',
-      error: 'Could not create secret "secret-name" in namespace default'
+      error:
+        'A secret already exists in namespace default with name default-token-kbn7j'
     }
   ];
 
