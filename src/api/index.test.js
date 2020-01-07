@@ -472,6 +472,17 @@ it('getCredentials', () => {
   });
 });
 
+it('getAllCredentials', () => {
+  const data = {
+    items: 'credentials'
+  };
+  fetchMock.get(/secrets/, data);
+  return index.getAllCredentials().then(response => {
+    expect(response).toEqual(data);
+    fetchMock.restore();
+  });
+});
+
 it('getCredential', () => {
   const credentialId = 'foo';
   const data = { fake: 'credential' };
