@@ -133,6 +133,7 @@ export /* istanbul ignore next */ class EventListeners extends Component {
             namespace: listener.metadata.namespace,
             eventListenerName: listener.metadata.name
           })}
+          title={listener.metadata.name}
         >
           {listener.metadata.name}
         </Link>

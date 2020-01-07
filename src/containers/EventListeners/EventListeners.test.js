@@ -98,7 +98,7 @@ it('EventListeners renders with one binding', () => {
     notifications: {}
   });
 
-  const { queryByText } = renderWithRouter(
+  const { queryByText, queryByTitle } = renderWithRouter(
     <Provider store={store}>
       <Route
         path="/eventlisteners"
@@ -111,6 +111,7 @@ it('EventListeners renders with one binding', () => {
   expect(queryByText('EventListeners')).toBeTruthy();
   expect(queryByText('No EventListeners under any namespace.')).toBeFalsy();
   expect(queryByText('event-listener')).toBeTruthy();
+  expect(queryByTitle('event-listener')).toBeTruthy();
 });
 
 it('EventListeners can be filtered on a single label filter', async () => {
