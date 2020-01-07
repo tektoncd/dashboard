@@ -15,7 +15,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import '../../scss/Triggers.scss';
-import './TriggerTemplateTable.scss';
 import { injectIntl } from 'react-intl';
 import {
   DataTable,
