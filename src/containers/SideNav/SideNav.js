@@ -214,6 +214,13 @@ export class SideNav extends Component {
           <SideNavMenuItem element={NavLink} icon={<span />} to="/secrets">
             Secrets
           </SideNavMenuItem>
+          <SideNavMenuItem
+            element={NavLink}
+            icon={<span />}
+            to={urls.serviceAccounts.all()}
+          >
+            ServiceAccounts
+          </SideNavMenuItem>
           <>
             {extensions.length > 0 &&
               extensions.map(

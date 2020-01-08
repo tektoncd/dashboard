@@ -46,6 +46,7 @@ import {
   Pipelines,
   ResourceList,
   Secrets,
+  ServiceAccounts,
   SideNav,
   TaskRun,
   TaskRuns,
@@ -189,6 +190,11 @@ export /* istanbul ignore next */ class App extends Component {
                     component={ImportResources}
                   />
                   <Route path={paths.secrets.all()} exact component={Secrets} />
+                  <Route
+                    path={paths.serviceAccounts.all()}
+                    exact
+                    component={ServiceAccounts}
+                  />
                   <Route
                     path={paths.eventListeners.all()}
                     exact
