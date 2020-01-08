@@ -439,7 +439,7 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
               <InlineNotification
                 kind="error"
                 title={intl.formatMessage({
-                  id: 'dashboard.secretsModal.error.title',
+                  id: 'dashboard.error.title',
                   defaultMessage: 'Error:'
                 })}
                 subtitle={getErrorMessage(errorMessage)}

@@ -148,7 +148,7 @@ export /* istanbul ignore next */ class TriggerBindings extends Component {
           <InlineNotification
             kind="error"
             title={intl.formatMessage({
-              id: 'dashboard.triggerBindings.error',
+              id: 'dashboard.error.title',
               defaultMessage: 'Error:'
             })}
             subtitle={getErrorMessage(error)}
