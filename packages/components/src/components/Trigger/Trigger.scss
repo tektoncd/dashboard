@@ -14,37 +14,35 @@ limitations under the License.
 @import '~carbon-components/scss/globals/scss/vars';
 
 .triggermain {
-  padding: 25px;
+  padding: 15px;
   padding-left: 0px;
   margin-bottom: 20px;
   border-bottom: 0.5px dotted grey;
 }
 
-.interceptor h3 {
-  margin: 5px;
-  padding: 10px;
+h3 {
+  text-decoration: underline;
 }
 
-.triggerinfo h3 {
-  margin: 5px;
-  padding: 10px;
+.interceptor h3 {
+  margin-top: 10px;
 }
 
 .triggerresourcelinks {
-  margin: 10px;
-  padding: 10px;
+  margin: 5px 0;
+  padding: 5px 0;
   display: grid;
   grid-template-columns: 100px 500px 100px;
   grid-gap: 30px;
 
   .linkicon {
-    margin-right: 1rem;
+    margin-left: 1rem;
   }
 
   .resourcekind {
     font-weight: bold;
   }
-  
+
   a {
     display: flex;
     overflow: hidden;

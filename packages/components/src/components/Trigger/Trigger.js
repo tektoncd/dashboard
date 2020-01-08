@@ -64,23 +64,23 @@ const Trigger = ({ intl, eventListenerNamespace, trigger }) => {
       <div className="triggermain">
         <h3>Trigger: {trigger.name}</h3>
         <div className="triggerresourcelinks">
-          <span className="resourcekind">TriggerBinding</span>
+          <span className="resourcekind">TriggerBinding:</span>
           <Link
             to={urls.triggerBindings.byName({
               namespace: eventListenerNamespace,
               triggerBindingName: trigger.binding.name
             })}
           >
-            <span className="linkicon">
-              <LinkIcon />
-            </span>
             <span className="truncate-text-end" title={trigger.binding.name}>
               {trigger.binding.name}
+            </span>
+            <span className="linkicon">
+              <LinkIcon />
             </span>
           </Link>
         </div>
         <div className="triggerresourcelinks">
-          <span className="resourcekind">TriggerTemplate</span>
+          <span className="resourcekind">TriggerTemplate:</span>
 
           <Link
             to={urls.triggerTemplates.byName({
@@ -88,25 +88,22 @@ const Trigger = ({ intl, eventListenerNamespace, trigger }) => {
               triggerTemplateName: trigger.template.name
             })}
           >
-            <span className="linkicon">
-              <LinkIcon />
-            </span>
             <span className="truncate-text-end" title={trigger.template.name}>
               {trigger.template.name}
+            </span>
+            <span className="linkicon">
+              <LinkIcon />
             </span>
           </Link>
         </div>
 
         <div className="triggerinfo">
-          <h3>
-            {intl.formatMessage({
+          <Table
+            className="parameterstable"
+            title={intl.formatMessage({
               id: 'dashboard.triggerDetails.triggerParameters',
               defaultMessage: 'Parameters'
             })}
-          </h3>
-
-          <Table
-            className="parameterstable"
             headers={tableHeaders}
             rows={triggerParams}
             emptyTextAllNamespaces={intl.formatMessage({
@@ -128,14 +125,12 @@ const Trigger = ({ intl, eventListenerNamespace, trigger }) => {
                   })}
                   {trigger.interceptor.objectRef.name}
                 </h3>
-                <h3>
-                  {intl.formatMessage({
-                    id: 'dashboard.triggerDetails.interceptorHeaders',
-                    defaultMessage: 'Headers'
-                  })}
-                </h3>
               </div>
               <Table
+                title={intl.formatMessage({
+                  id: 'dashboard.triggerDetails.interceptorHeaders',
+                  defaultMessage: 'Headers'
+                })}
                 headers={tableHeaders}
                 rows={interceptorValues}
                 emptyTextAllNamespaces={intl.formatMessage({
