@@ -150,7 +150,7 @@ export /* istanbul ignore next */ class TriggerTemplates extends Component {
           <InlineNotification
             kind="error"
             title={intl.formatMessage({
-              id: 'dashboard.triggerTemplate.error',
+              id: 'dashboard.error.title',
               defaultMessage: 'Error:'
             })}
             subtitle={getErrorMessage(error)}

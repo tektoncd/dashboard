@@ -149,7 +149,7 @@ export /* istanbul ignore next */ class EventListeners extends Component {
           <InlineNotification
             kind="error"
             title={intl.formatMessage({
-              id: 'dashboard.eventListeners.error',
+              id: 'dashboard.error.title',
               defaultMessage: 'Error:'
             })}
             subtitle={getErrorMessage(error)}
