@@ -57,12 +57,23 @@ export function getNamespaces(state) {
 
 export function getServiceAccounts(
   state,
-  { namespace = getSelectedNamespace(state) } = {}
+  { filters = [], namespace = getSelectedNamespace(state) } = {}
 ) {
-  return serviceAccountSelectors.getServiceAccounts(
+  const currentServiceAccounts = serviceAccountSelectors.getServiceAccounts(
     state.serviceAccounts,
     namespace
   );
+  return currentServiceAccounts.filter(serviceAccount => {
+    return filters.every(filter => {
+      const [filterKey, filterValue] = filter.split('=');
+      return (
+        serviceAccount.metadata.labels &&
+        filterKey &&
+        filterValue &&
+        serviceAccount.metadata.labels[filterKey] === filterValue
+      );
+    });
+  });
 }
 
 export function isFetchingServiceAccounts(state) {

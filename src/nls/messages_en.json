@@ -31,6 +31,7 @@
     "dashboard.emptyState.allNamespaces": "No {kind} under any namespace.",
     "dashboard.emptyState.clusterTasks": "No {kind}",
     "dashboard.emptyState.selectedNamespace": "No {kind} under namespace {selectedNamespace}",
+    "dashboard.error.title": "Error:",
     "dashboard.errorBoundary.defaultError": "Something went wrong",
     "dashboard.errorBoundary.pageError": "Error loading page",
     "dashboard.eventListeners.error": "Error:",

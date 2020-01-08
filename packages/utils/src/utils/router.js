@@ -90,6 +90,11 @@ export const paths = {
       return '/secrets';
     }
   },
+  serviceAccounts: {
+    all() {
+      return '/serviceaccounts';
+    }
+  },
   taskRuns: {
     all() {
       return '/taskruns';
