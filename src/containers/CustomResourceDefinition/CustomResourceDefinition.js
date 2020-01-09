@@ -17,8 +17,8 @@ import {
   CodeSnippetSkeleton,
   InlineNotification
 } from 'carbon-components-react';
-import jsYaml from 'js-yaml';
 import { getErrorMessage } from '@tektoncd/dashboard-utils';
+import { ViewYAML } from '@tektoncd/dashboard-components';
 
 import { fetchClusterTask, fetchTask } from '../../actions/tasks';
 import { fetchPipeline } from '../../actions/pipelines';
@@ -116,13 +116,8 @@ export /* istanbul ignore next */ class CustomResourceDefinition extends Compone
         />
       );
     }
-    return (
-      <div className="bx--snippet--multi">
-        <code>
-          <pre>{jsYaml.dump(resource)}</pre>
-        </code>
-      </div>
-    );
+
+    return <ViewYAML resource={resource} />;
   }
 }
 

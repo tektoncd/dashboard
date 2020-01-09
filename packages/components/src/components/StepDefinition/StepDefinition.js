@@ -15,11 +15,10 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import jsYaml from 'js-yaml';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { urls } from '@tektoncd/dashboard-utils';
 
-import { ResourceTable } from '..';
+import { ResourceTable, ViewYAML } from '..';
 import './StepDefinition.scss';
 
 const resourceTable = (title, namespace, resources, intl) => {
@@ -40,7 +39,7 @@ const resourceTable = (title, namespace, resources, intl) => {
               {resourceRef.name}
             </Link>
           ) : (
-            <pre>{jsYaml.dump(resourceSpec)}</pre>
+            <ViewYAML resource={resourceSpec} />
           )
       }))}
       headers={[
@@ -107,13 +106,6 @@ class StepDefinition extends Component {
 
   render() {
     const { definition, intl } = this.props;
-    const yaml = jsYaml.dump(
-      definition ||
-        intl.formatMessage({
-          id: 'dashboard.step.definitionNotAvailable',
-          defaultMessage: 'description: step definition not available'
-        })
-    );
 
     const paramsResources = this.getIOTables();
     return (
@@ -125,7 +117,15 @@ class StepDefinition extends Component {
           />
           :
         </div>
-        <pre>{yaml}</pre>
+        <ViewYAML
+          resource={
+            definition ||
+            intl.formatMessage({
+              id: 'dashboard.step.definitionNotAvailable',
+              defaultMessage: 'description: step definition not available'
+            })
+          }
+        />
         {paramsResources}
       </div>
     );

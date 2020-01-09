@@ -139,7 +139,7 @@ it('TriggerBindingContainer toggles between tabs correctly', async () => {
   await waitForElement(() => getByText('trigger-binding-simple'));
 
   await waitForElement(() => getByText('Date Created:'));
-  let yamlTab = getByText(/Yaml/i);
+  let yamlTab = getByText('YAML');
   expect(yamlTab.getAttribute('aria-selected')).toBe('false');
 
   fireEvent.click(yamlTab);
@@ -148,7 +148,7 @@ it('TriggerBindingContainer toggles between tabs correctly', async () => {
   expect(detailsTab.getAttribute('aria-selected')).toBe('false');
 
   fireEvent.click(detailsTab);
-  yamlTab = getByText(/Yaml/i);
+  yamlTab = getByText('YAML');
   expect(yamlTab.getAttribute('aria-selected')).toBe('false');
 });
 
@@ -265,7 +265,7 @@ it('TriggerBindingContainer renders YAML', async () => {
   );
 
   await waitForElement(() => getByText('trigger-binding-simple'));
-  const yamlTab = getByText(/yaml/i);
+  const yamlTab = getByText('YAML');
   fireEvent.click(yamlTab);
   await waitForElement(() => getByText(/creationTimestamp/i));
   await waitForElement(() => getByText(/spec/i));

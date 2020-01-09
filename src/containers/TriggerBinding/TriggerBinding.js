@@ -17,7 +17,7 @@ import PropTypes from 'prop-types';
 import '../../scss/Triggers.scss';
 import { injectIntl } from 'react-intl';
 import { InlineNotification, Tab, Tabs, Tag } from 'carbon-components-react';
-import { FormattedDate, Table, ViewYaml } from '@tektoncd/dashboard-components';
+import { FormattedDate, Table, ViewYAML } from '@tektoncd/dashboard-components';
 import { formatLabels } from '@tektoncd/dashboard-utils';
 import {
   getSelectedNamespace,
@@ -204,7 +204,7 @@ export /* istanbul ignore next */ class TriggerBindingContainer extends Componen
             </div>
           </Tab>
           <Tab label="YAML">
-            <ViewYaml resource={triggerBinding} />
+            <ViewYAML resource={triggerBinding} />
           </Tab>
         </Tabs>
       </div>
