@@ -504,7 +504,7 @@ it('TriggerTemplateContainer contains YAML tab with accurate information', async
   );
 
   await waitForElement(() => getByText('pipeline-template'));
-  const yamlTab = getByText(/yaml/i);
+  const yamlTab = getByText('YAML');
   fireEvent.click(yamlTab);
   await waitForElement(() => getByText(/creationtimestamp/i));
   await waitForElement(() => getByText(/selflink/i));

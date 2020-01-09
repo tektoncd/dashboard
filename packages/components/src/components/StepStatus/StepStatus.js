@@ -12,19 +12,13 @@ limitations under the License.
 */
 
 import React from 'react';
-import jsYaml from 'js-yaml';
-
-import './StepStatus.scss';
 import { injectIntl } from 'react-intl';
 
+import { ViewYAML } from '..';
+
+import './StepStatus.scss';
+
 const StepStatus = ({ intl, status }) => {
-  const yaml = jsYaml.dump(
-    status ||
-      intl.formatMessage({
-        id: 'dashboard.step.statusNotAvailable',
-        defaultMessage: 'No status available'
-      })
-  );
   return (
     <div className="step-status">
       <div className="title">
@@ -34,7 +28,15 @@ const StepStatus = ({ intl, status }) => {
         })}
         :
       </div>
-      <pre>{yaml}</pre>
+      <ViewYAML
+        resource={
+          status ||
+          intl.formatMessage({
+            id: 'dashboard.step.statusNotAvailable',
+            defaultMessage: 'No status available'
+          })
+        }
+      />
     </div>
   );
 };

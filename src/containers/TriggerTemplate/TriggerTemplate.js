@@ -26,7 +26,7 @@ import {
 import {
   Table as DashboardTable,
   FormattedDate,
-  ViewYaml
+  ViewYAML
 } from '@tektoncd/dashboard-components';
 import { formatLabels } from '@tektoncd/dashboard-utils';
 import {
@@ -300,7 +300,7 @@ export /* istanbul ignore next */ class TriggerTemplateContainer extends Compone
                               </TableExpandRow>
                               {row.isExpanded && (
                                 <TableExpandedRow colSpan={headers.length + 1}>
-                                  <ViewYaml
+                                  <ViewYAML
                                     resource={
                                       triggerTemplate.spec.resourcetemplates[
                                         index
@@ -320,7 +320,7 @@ export /* istanbul ignore next */ class TriggerTemplateContainer extends Compone
             </div>
           </Tab>
           <Tab label="YAML">
-            <ViewYaml resource={triggerTemplate} />
+            <ViewYAML resource={triggerTemplate} />
           </Tab>
         </Tabs>
       </div>

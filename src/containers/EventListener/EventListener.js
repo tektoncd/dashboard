@@ -22,7 +22,7 @@ import { formatLabels } from '@tektoncd/dashboard-utils';
 import {
   FormattedDate,
   Trigger,
-  ViewYaml
+  ViewYAML
 } from '@tektoncd/dashboard-components';
 import {
   getEventListener,
@@ -175,7 +175,7 @@ export /* istanbul ignore next */ class EventListenerContainer extends Component
             </div>
           </Tab>
           <Tab label="YAML">
-            <ViewYaml resource={eventListener} />
+            <ViewYAML resource={eventListener} />
           </Tab>
         </Tabs>
       </div>
