@@ -19,7 +19,11 @@ import { injectIntl } from 'react-intl';
 // import { getErrorMessage, urls } from '@tektoncd/dashboard-utils';
 import { getErrorMessage } from '@tektoncd/dashboard-utils';
 import { InlineNotification } from 'carbon-components-react';
-import { LabelFilter, Table } from '@tektoncd/dashboard-components';
+import {
+  FormattedDate,
+  LabelFilter,
+  Table
+} from '@tektoncd/dashboard-components';
 import { fetchServiceAccounts } from '../../actions/serviceAccounts';
 import {
   getSelectedNamespace,
@@ -112,6 +116,13 @@ export /* istanbul ignore next */ class ServiceAccounts extends Component {
           id: 'dashboard.tableHeader.namespace',
           defaultMessage: 'Namespace'
         })
+      },
+      {
+        key: 'created',
+        header: intl.formatMessage({
+          id: 'dashboard.tableHeader.createdTime',
+          defaultMessage: 'Created'
+        })
       }
     ];
 
@@ -120,7 +131,13 @@ export /* istanbul ignore next */ class ServiceAccounts extends Component {
         serviceAccount.metadata.name
       }`,
       name: serviceAccount.metadata.name,
-      namespace: serviceAccount.metadata.namespace
+      namespace: serviceAccount.metadata.namespace,
+      created: (
+        <FormattedDate
+          date={serviceAccount.metadata.creationTimestamp}
+          relative
+        />
+      )
     }));
 
     return (
