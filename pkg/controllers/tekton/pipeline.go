@@ -9,7 +9,8 @@ import (
 	"k8s.io/client-go/tools/cache"
 )
 
-// Registers a Tekton controller/informer for pipelines on sharedTektonInformerFactory
+// NewPipelineController registers a Tekton controller/informer for pipelines on
+// the sharedTektonInformerFactory
 func NewPipelineController(sharedTektonInformerFactory tektoninformer.SharedInformerFactory) {
 	logging.Log.Debug("In NewPipelineController")
 	pipelineInformer := sharedTektonInformerFactory.Tekton().V1alpha1().Pipelines().Informer()
@@ -20,7 +21,7 @@ func NewPipelineController(sharedTektonInformerFactory tektoninformer.SharedInfo
 	})
 }
 
-//pipeline events
+// pipeline events
 func pipelineCreated(obj interface{}) {
 	logging.Log.Debugf("Pipeline Controller detected pipeline '%s' created", obj.(*v1alpha1.Pipeline).Name)
 	data := broadcaster.SocketData{

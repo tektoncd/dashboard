@@ -9,7 +9,8 @@ import (
 	"k8s.io/client-go/tools/cache"
 )
 
-// Registers a Tekton controller/informer for pipelineResources on sharedTektonInformerFactory
+// NewPipelineResourceController registers a Tekton controller/informer for
+// pipelineResources on the sharedTektonInformerFactory
 func NewPipelineResourceController(sharedTektonInformerFactory tektoninformer.SharedInformerFactory) {
 	logging.Log.Debug("In NewPipelineResourceController")
 	pipelineResourceInformer := sharedTektonInformerFactory.Tekton().V1alpha1().PipelineResources().Informer()

@@ -14,6 +14,10 @@ limitations under the License.
 package main
 
 import (
+	"net/http"
+	"os"
+	"time"
+
 	routeclient "github.com/openshift/client-go/route/clientset/versioned"
 	"github.com/tektoncd/dashboard/pkg/controllers"
 	"github.com/tektoncd/dashboard/pkg/endpoints"
@@ -24,9 +28,6 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/sample-controller/pkg/signals"
-	"net/http"
-	"os"
-	"time"
 )
 
 // Stores config env
@@ -89,7 +90,7 @@ func main() {
 	stopCh := signals.SetupSignalHandler()
 	resyncDur := time.Second * 30
 	controllers.StartTektonControllers(resource.PipelineClient, resyncDur, stopCh)
-	controllers.StartKubeControllers(resource.K8sClient, resyncDur, dashboardConfig.installNamespace, stopCh)
+	controllers.StartKubeControllers(resource.K8sClient, resyncDur, dashboardConfig.installNamespace, routerHandler, stopCh)
 
 	logging.Log.Infof("Creating server and entering wait loop")
 	server := &http.Server{Addr: dashboardConfig.port, Handler: routerHandler}

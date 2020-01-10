@@ -22,7 +22,8 @@ import (
 	"k8s.io/client-go/tools/cache"
 )
 
-// Registers a Tekton controller/informer for cluster tasks on sharedTektonInformerFactory
+// NewClusterTaskController registers a Tekton controller/informer for cluster
+// tasks on the sharedTektonInformerFactory
 func NewClusterTaskController(sharedTektonInformerFactory tektoninformer.SharedInformerFactory) {
 	logging.Log.Debug("In NewClusterTaskController")
 	taskInformer := sharedTektonInformerFactory.Tekton().V1alpha1().ClusterTasks().Informer()
