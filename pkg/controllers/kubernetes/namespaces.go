@@ -9,6 +9,8 @@ import (
 	"k8s.io/client-go/tools/cache"
 )
 
+// NewNamespaceController registers the K8s shared informer that reacts to
+// create and delete events for namespaces
 func NewNamespaceController(sharedK8sInformerFactory k8sinformer.SharedInformerFactory) {
 	logging.Log.Debug("In NewNamespaceController")
 	k8sInformer := sharedK8sInformerFactory.Core().V1().Namespaces()

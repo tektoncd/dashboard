@@ -11,38 +11,41 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// This package provides utilities to simplify other `_test` packages
+// Package testutils provides utilities to simplify other `_test` packages
 package testutils
 
 import (
 	"fmt"
-	restful "github.com/emicklei/go-restful"
+	"io"
+	"net/http"
+	"net/http/httptest"
+	"reflect"
+	"time"
+
 	broadcaster "github.com/tektoncd/dashboard/pkg/broadcaster"
 	"github.com/tektoncd/dashboard/pkg/controllers"
 	"github.com/tektoncd/dashboard/pkg/endpoints"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
 	"github.com/tektoncd/dashboard/pkg/router"
 	fakeclientset "github.com/tektoncd/pipeline/pkg/client/clientset/versioned/fake"
-	"io"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	fakek8sclientset "k8s.io/client-go/kubernetes/fake"
-	"net/http"
-	"net/http/httptest"
-	"reflect"
-	"time"
 )
 
+// DummyK8sClientset returns a fake K8s clientset
 func DummyK8sClientset() *fakek8sclientset.Clientset {
 	result := fakek8sclientset.NewSimpleClientset()
 	return result
 }
 
+// DummyClientset returns a fake Tekton Pipelines clientset
 func DummyClientset() *fakeclientset.Clientset {
 	result := fakeclientset.NewSimpleClientset()
 	return result
 }
 
+// DummyResource returns a Resource populated by fake clientsets
 func DummyResource() *endpoints.Resource {
 	resource := endpoints.Resource{
 		PipelineClient: DummyClientset(),
@@ -51,24 +54,26 @@ func DummyResource() *endpoints.Resource {
 	return &resource
 }
 
+// DummyHTTPRequest returns a HTTP request with a JSON content type header as
+// well as the configured with the parameters
 func DummyHTTPRequest(method string, url string, body io.Reader) *http.Request {
 	httpReq, _ := http.NewRequest(method, url, body)
 	httpReq.Header.Set("Content-Type", "application/json")
 	return httpReq
 }
 
-// Use alongside DummyHTTPRequest
+// DummyServer returns a httptest server of the Tekton Dashboard
 func DummyServer() (*httptest.Server, *endpoints.Resource, string) {
 	resource := DummyResource()
+	// Create subscriber to wait for controller to detect created namespace
+	subscriber, _ := endpoints.ResourcesBroadcaster.Subscribe()
+
 	// Create namespace that is referenced by extensionController
 	dashboardNamespace := "tekton-pipelines"
 	_, err := resource.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: dashboardNamespace}})
 	if err != nil {
 		logging.Log.Fatalf("Error creating namespace '%s': %v", dashboardNamespace, err)
 	}
-
-	// Create subscriber to wait for controller to detect created namespace
-	subscriber, _ := endpoints.ResourcesBroadcaster.Subscribe()
 
 	// K8s signals only allows for a single channel, which will panic when executed twice
 	// There should be no os signals for testing purposes
@@ -77,7 +82,7 @@ func DummyServer() (*httptest.Server, *endpoints.Resource, string) {
 	stopCh := make(<-chan struct{})
 	resyncDur := time.Second * 30
 	controllers.StartTektonControllers(resource.PipelineClient, resyncDur, stopCh)
-	controllers.StartKubeControllers(resource.K8sClient, resyncDur, dashboardNamespace, stopCh)
+	controllers.StartKubeControllers(resource.K8sClient, resyncDur, dashboardNamespace, routerHandler, stopCh)
 	// Wait until namespace is detected by informer and functionally "dropped" since the informer will be eventually consistent
 	timeout := time.After(5 * time.Second)
 	for {
@@ -97,36 +102,7 @@ NamespaceDetected:
 	return server, resource, dashboardNamespace
 }
 
-// Takes list of endpoints and returns test server that serves each
-func DummyExtension(endpoints ...string) *httptest.Server {
-	if len(endpoints) == 0 {
-		endpoints = []string{""}
-	}
-	wsContainer := restful.NewContainer()
-	ws := new(restful.WebService)
-	ws.
-		Consumes(restful.MIME_JSON).
-		Produces(restful.MIME_JSON)
-
-	// Stub function to validate extension route active
-	routeFunction := func(request *restful.Request, response *restful.Response) {
-		response.WriteHeader(http.StatusOK)
-	}
-
-	for _, endpoint := range endpoints {
-		ws.Route(ws.GET(endpoint).To(routeFunction))
-		ws.Route(ws.POST(endpoint).To(routeFunction))
-		ws.Route(ws.PUT(endpoint).To(routeFunction))
-		ws.Route(ws.DELETE(endpoint).To(routeFunction))
-		ws.Route(ws.GET(endpoint + "/{var:*}").To(routeFunction))
-		ws.Route(ws.POST(endpoint + "/{var:*}").To(routeFunction))
-		ws.Route(ws.PUT(endpoint + "/{var:*}").To(routeFunction))
-		ws.Route(ws.DELETE(endpoint + "/{var:*}").To(routeFunction))
-	}
-	wsContainer.Add(ws)
-	return httptest.NewServer(wsContainer)
-}
-
+// ObjectListDeepEqual errors if the two object lists are not equal
 func ObjectListDeepEqual(expectedListPointer interface{}, actualListPointer interface{}) error {
 	createNamespaceToNameObjectMap := func(slicePointer interface{}) (map[string]map[string]interface{}, error) {
 		// slicePointer should refer to a slice of struct (likely a CRD)
@@ -175,7 +151,7 @@ func ObjectListDeepEqual(expectedListPointer interface{}, actualListPointer inte
 				return fmt.Errorf("Did not find object in %s namespace with name %s in expectedList", namespace, name)
 			}
 			if !reflect.DeepEqual(expectedObject, actualObject) {
-				return fmt.Errorf("Actual object %v did not equal expected %v\n", actualObject, expectedObject)
+				return fmt.Errorf("Actual object %v did not equal expected %v", actualObject, expectedObject)
 			}
 		}
 	}

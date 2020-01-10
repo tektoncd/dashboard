@@ -9,6 +9,8 @@ import (
 	"k8s.io/client-go/tools/cache"
 )
 
+// NewSecretController registers the K8s shared informer that reacts to
+// create, update and delete events for secrets
 func NewSecretController(sharedK8sInformerFactory k8sinformer.SharedInformerFactory) {
 	logging.Log.Debug("In NewSecretController")
 	k8sInformer := sharedK8sInformerFactory.Core().V1().Secrets()
