@@ -22,10 +22,18 @@ storiesOf('TaskTree', module).add('default', () => {
     taskRuns: [
       {
         id: 'task',
-        pipelineTaskName: text('Task name', 'default task name'),
+        pipelineTaskName: text('Task 1 name', 'Task 1'),
         steps: [
           { id: 'build', stepName: 'build' },
           { id: 'test', stepName: 'test' }
+        ]
+      },
+      {
+        id: 'task2',
+        pipelineTaskName: text('Task 2 name', 'Task 2'),
+        steps: [
+          { id: 'step 1', stepName: 'step 1' },
+          { id: 'step 2', stepName: 'step 2' }
         ]
       }
     ]

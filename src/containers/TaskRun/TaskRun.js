@@ -24,7 +24,12 @@ import {
   StepDetails,
   TaskTree
 } from '@tektoncd/dashboard-components';
-import { getStatus, stepsStatus, taskRunStep } from '@tektoncd/dashboard-utils';
+import {
+  getStatus,
+  reorderSteps,
+  stepsStatus,
+  taskRunStep
+} from '@tektoncd/dashboard-utils';
 
 import { fetchLogs } from '../../utils';
 
@@ -101,14 +106,16 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
     if (!taskRun) {
       return null;
     }
-    let { steps } = taskRun.status;
-    if (task) {
-      steps = task.spec.steps; // eslint-disable-line
-    }
+
+    const { steps } = taskRun.status;
+    const stepDefinitions = taskRun.spec.taskSpec
+      ? taskRun.spec.taskSpec.steps
+      : task.spec.steps;
+    const reorderedSteps = reorderSteps(steps, stepDefinitions);
     const taskRunName = taskRun.metadata.name;
     const taskRunNamespace = taskRun.metadata.namespace;
     const { reason, status: succeeded } = getStatus(taskRun);
-    const runSteps = stepsStatus(steps, taskRun.status.steps);
+    const runSteps = stepsStatus(reorderedSteps, reorderedSteps);
     const { params, resources: inputResources } = taskRun.spec.inputs;
     const { resources: outputResources } = taskRun.spec.outputs;
     const { startTime } = taskRun.status;

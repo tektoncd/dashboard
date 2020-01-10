@@ -18,6 +18,7 @@ import {
   getStatus,
   getStatusIcon,
   isRunning,
+  reorderSteps,
   selectedTask,
   stepsStatus,
   taskRunStep
@@ -239,6 +240,83 @@ it('stepsStatus step is terminated with error', () => {
   expect(returnedStep.status).toEqual('terminated');
   expect(returnedStep.stepName).toEqual(stepName);
   expect(returnedStep.reason).toEqual(reason);
+});
+
+it('reorderSteps returns empty array for undefined unorderedSteps', () => {
+  const unorderedSteps = undefined;
+  const orderedSteps = [{ name: 'a' }];
+  const want = [];
+  const got = reorderSteps(unorderedSteps, orderedSteps);
+  expect(got).toEqual(want);
+});
+
+it('reorderSteps returns empty array for undefined ordered', () => {
+  const unorderedSteps = [{ name: 'a' }];
+  const orderedSteps = undefined;
+  const want = [];
+  const got = reorderSteps(unorderedSteps, orderedSteps);
+  expect(got).toEqual(want);
+});
+
+it('reorderSteps works on empty steps', () => {
+  const unorderedSteps = [];
+  const orderedSteps = [];
+  const want = [];
+  const got = reorderSteps(unorderedSteps, orderedSteps);
+  expect(got).toEqual(want);
+});
+
+it('reorderSteps works on ordered steps', () => {
+  const unorderedSteps = [{ name: 'a' }, { name: 'b' }, { name: 'c' }];
+  const orderedSteps = [{ name: 'a' }, { name: 'b' }, { name: 'c' }];
+  const want = [...unorderedSteps];
+  const got = reorderSteps(unorderedSteps, orderedSteps);
+  expect(got).toEqual(want);
+});
+
+it('reorderSteps properly reorders unnamed steps', () => {
+  const unorderedSteps = [
+    { name: 'unnamed-2' },
+    { name: 'unnamed-3' },
+    { name: 'unnamed-1' }
+  ];
+  const orderedSteps = [{ name: '' }, { name: '' }, { name: '' }];
+  const want = [
+    { name: 'unnamed-1' },
+    { name: 'unnamed-2' },
+    { name: 'unnamed-3' }
+  ];
+  const got = reorderSteps(unorderedSteps, orderedSteps);
+  expect(got).toEqual(want);
+});
+
+it('reorderSteps properly reorders unnamed and named steps', () => {
+  const unorderedSteps = [
+    { name: 'c' },
+    { name: 'unnamed-5' },
+    { name: 'a' },
+    { name: 'unnamed-1' },
+    { name: 'b' },
+    { name: 'unnamed-6' }
+  ];
+  const orderedSteps = [
+    { name: '' },
+    { name: 'a' },
+    { name: 'b' },
+    { name: 'c' },
+    { name: '' },
+    { name: '' }
+  ];
+  const want = [
+    { name: 'unnamed-1' },
+    { name: 'a' },
+    { name: 'b' },
+    { name: 'c' },
+    { name: 'unnamed-5' },
+    { name: 'unnamed-6' }
+  ];
+  const got = reorderSteps(unorderedSteps, orderedSteps);
+  expect(got).toEqual(want);
 });
 
 it('generateId', () => {

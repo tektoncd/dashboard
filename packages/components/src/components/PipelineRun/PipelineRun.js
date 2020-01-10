@@ -20,6 +20,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import {
   getErrorMessage,
   getStatus,
+  reorderSteps,
   selectedTask,
   selectedTaskRun,
   stepsStatus,
@@ -118,7 +119,11 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           };
           taskRun = theRun; // eslint-disable-line no-param-reassign
         } else {
-          steps = stepsStatus(task.spec.steps, taskRun.status.steps);
+          const reorderedSteps = reorderSteps(
+            taskRun.status.steps,
+            task.spec.steps
+          );
+          steps = stepsStatus(reorderedSteps, reorderedSteps);
         }
 
         return {
