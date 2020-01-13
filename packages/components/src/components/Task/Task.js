@@ -26,6 +26,12 @@ class Task extends Component {
     this.selectDefaultStep();
   }
 
+  componentDidUpdate(prevState) {
+    if (!prevState.selectedStepId) {
+      this.selectDefaultStep();
+    }
+  }
+
   handleClick = event => {
     if (event) {
       event.preventDefault();
@@ -46,7 +52,10 @@ class Task extends Component {
     const { expanded, steps } = this.props;
     const { selectedStepId } = this.state;
     if (expanded && !selectedStepId) {
-      const { id } = steps[0] || {};
+      const erroredStep = steps.find(
+        step => step.reason === 'Error' || step.reason === undefined
+      );
+      const { id } = erroredStep || steps[0] || {};
       this.handleStepSelected(id);
     }
   }

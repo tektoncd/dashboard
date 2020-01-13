@@ -22,6 +22,25 @@ const props = {
     {
       id: 'task',
       pipelineTaskName: 'A Task',
+      succeeded: 'True',
+      steps: [
+        { id: 'build', stepName: 'build' },
+        { id: 'test', stepName: 'test' }
+      ]
+    },
+    {
+      id: 'task2',
+      succeeded: 'True',
+      pipelineTaskName: 'A Second Task',
+      steps: [
+        { id: 'build', stepName: 'build' },
+        { id: 'test', stepName: 'test' }
+      ]
+    },
+    {
+      id: 'task3',
+      succeeded: 'True',
+      pipelineTaskName: 'A Third Task',
       steps: [
         { id: 'build', stepName: 'build' },
         { id: 'test', stepName: 'test' }
@@ -40,6 +59,38 @@ it('TaskTree renders when taskRuns is falsy', () => {
 
 it('TaskTree renders when taskRuns contains a falsy run', () => {
   renderWithIntl(<TaskTree {...props} taskRuns={[null]} />);
+});
+
+it('TaskTree renders and expands first Task in TaskRun with no error', () => {
+  const { queryByText } = renderWithIntl(<TaskTree {...props} />);
+  // Selected Task should have two child elements. The anchor and ordered list
+  // of steps in expanded task
+  expect(queryByText('A Task').parentNode.childNodes).toHaveLength(2);
+  expect(queryByText('A Second Task').parentNode.childNodes).toHaveLength(1);
+  expect(queryByText('A Third Task').parentNode.childNodes).toHaveLength(1);
+});
+
+it('TaskTree renders and expands error Task in TaskRun', () => {
+  props.taskRuns[1].succeeded = 'False';
+
+  const { queryByText } = renderWithIntl(<TaskTree {...props} />);
+  // Selected Task should have two child elements. The anchor and ordered list
+  // of steps in expanded task
+  expect(queryByText('A Task').parentNode.childNodes).toHaveLength(1);
+  expect(queryByText('A Second Task').parentNode.childNodes).toHaveLength(2);
+  expect(queryByText('A Third Task').parentNode.childNodes).toHaveLength(1);
+});
+
+it('TaskTree renders and expands first error Task in TaskRun', () => {
+  props.taskRuns[1].succeeded = 'False';
+  props.taskRuns[2].succeeded = 'False';
+
+  const { queryByText } = renderWithIntl(<TaskTree {...props} />);
+  // Selected Task should have two child elements. The anchor and ordered list
+  // of steps in expanded task
+  expect(queryByText('A Task').parentNode.childNodes).toHaveLength(1);
+  expect(queryByText('A Second Task').parentNode.childNodes).toHaveLength(2);
+  expect(queryByText('A Third Task').parentNode.childNodes).toHaveLength(1);
 });
 
 it('TaskTree handles click event on Task', () => {
