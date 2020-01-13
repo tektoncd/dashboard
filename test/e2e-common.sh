@@ -63,6 +63,16 @@ function dump_extra_cluster_state() {
 function install_dashboard_backend() {
   echo ">> Deploying the Dashboard backend"
   ko apply -f config/ || fail_test "Dashboard backend installation failed"
+  # Wait until deployment is running before checking pods, stops timing error
+  for i in {1..30}
+  do
+    wait=$(kubectl wait --namespace tekton-pipelines --for=condition=available deployments/tekton-dashboard --timeout=30s)
+    if [ "$wait" = "deployment.extensions/tekton-dashboard condition met" ]; then
+      break
+    else
+      sleep 5
+    fi
+  done
   # Wait for pods to be running in the namespaces we are deploying to
   wait_until_pods_running tekton-pipelines || fail_test "Dashboard backend did not come up"
 }
