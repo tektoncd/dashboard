@@ -174,21 +174,21 @@ export class SideNav extends Component {
                 <SideNavMenuItem
                   element={NavLink}
                   icon={<span />}
-                  to={urls.eventListeners.all()}
+                  to={this.getPath(urls.eventListeners.all())}
                 >
                   EventListeners
                 </SideNavMenuItem>
                 <SideNavMenuItem
                   element={NavLink}
                   icon={<span />}
-                  to={urls.triggerBindings.all()}
+                  to={this.getPath(urls.triggerBindings.all())}
                 >
                   TriggerBindings
                 </SideNavMenuItem>
                 <SideNavMenuItem
                   element={NavLink}
                   icon={<span />}
-                  to={urls.triggerTemplates.all()}
+                  to={this.getPath(urls.triggerTemplates.all())}
                 >
                   TriggerTemplates
                 </SideNavMenuItem>
