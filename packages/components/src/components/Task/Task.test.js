@@ -40,6 +40,49 @@ it('Task renders steps in expanded state', () => {
   expect(queryByText(/a step/i)).toBeTruthy();
 });
 
+it('Task renders first step in expanded Task with no error', () => {
+  const steps = [
+    { id: 'step', stepName: 'a step', reason: 'Completed' },
+    { id: 'step-two', stepName: 'a step two', reason: 'Completed' }
+  ];
+  const { queryByText } = renderWithIntl(
+    <Task {...props} expanded steps={steps} />
+  );
+  expect(
+    queryByText('a step').parentNode.parentNode.getAttribute('data-selected')
+  ).toBeTruthy();
+});
+
+it('Task renders error step in expanded Task', () => {
+  const steps = [
+    { id: 'step', stepName: 'a step', reason: 'Completed' },
+    { id: 'step-two', stepName: 'a step two', reason: 'Error' }
+  ];
+  const { queryByText } = renderWithIntl(
+    <Task {...props} expanded steps={steps} />
+  );
+  expect(
+    queryByText('a step two').parentNode.parentNode.getAttribute(
+      'data-selected'
+    )
+  ).toBeTruthy();
+});
+
+it('Task renders cancelled step in expanded Task', () => {
+  const steps = [
+    { id: 'step', stepName: 'a step', reason: 'Completed' },
+    { id: 'step-two', stepName: 'a step two', reason: undefined }
+  ];
+  const { queryByText } = renderWithIntl(
+    <Task {...props} expanded steps={steps} />
+  );
+  expect(
+    queryByText('a step two').parentNode.parentNode.getAttribute(
+      'data-selected'
+    )
+  ).toBeTruthy();
+});
+
 it('Task renders success state', () => {
   renderWithIntl(<Task {...props} succeeded="True" />);
 });

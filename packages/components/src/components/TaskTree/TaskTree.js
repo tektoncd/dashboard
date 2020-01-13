@@ -35,8 +35,11 @@ class TaskTree extends Component {
             return null;
           }
           const { id, reason, steps, succeeded, pipelineTaskName } = taskRun;
+          const erroredTask = taskRuns.find(task => task.succeeded === 'False');
           const expanded =
-            selectedTaskId === id || (!selectedTaskId && index === 0);
+            (!selectedTaskId && erroredTask && erroredTask.id === id) ||
+            selectedTaskId === id ||
+            (!erroredTask && !selectedTaskId && index === 0);
           return (
             <Task
               id={id}
