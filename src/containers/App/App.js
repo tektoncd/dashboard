@@ -200,13 +200,16 @@ export /* istanbul ignore next */ class App extends Component {
                     exact
                     component={EventListeners}
                   />
-
+                  <Route
+                    path={paths.eventListeners.byNamespace()}
+                    exact
+                    component={EventListeners}
+                  />
                   <Route
                     path={paths.eventListeners.byName()}
                     exact
                     component={EventListener}
                   />
-
                   <Route
                     path={paths.triggerBindings.byName()}
                     exact
@@ -217,7 +220,11 @@ export /* istanbul ignore next */ class App extends Component {
                     exact
                     component={TriggerBindings}
                   />
-
+                  <Route
+                    path={paths.triggerBindings.byNamespace()}
+                    exact
+                    component={TriggerBindings}
+                  />
                   <Route
                     path={paths.triggerTemplates.byName()}
                     exact
@@ -229,7 +236,11 @@ export /* istanbul ignore next */ class App extends Component {
                     exact
                     component={TriggerTemplates}
                   />
-
+                  <Route
+                    path={paths.triggerTemplates.byNamespace()}
+                    exact
+                    component={TriggerTemplates}
+                  />
                   <Route
                     path={paths.extensions.all()}
                     exact
