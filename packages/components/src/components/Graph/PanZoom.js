@@ -40,28 +40,29 @@ export default class PanZoom extends React.Component {
   };
 
   zoomIn = () => {
-    this.setState(prevState => ({
-      scale: prevState.scale * 1.25
-    }));
+    const { scale } = this.state;
+    this.setZoom(scale * 1.25);
   };
 
   zoomOut = () => {
-    this.setState(prevState => ({
-      scale: prevState.scale * 0.8
-    }));
+    const { scale } = this.state;
+    this.setZoom(scale * 0.8);
   };
 
   zoomScroll = event => {
     event.preventDefault();
-    const scaleBy = event.deltaY > 0 ? 1.25 : 0.8;
-    this.setState(prevState => ({
-      scale: prevState.scale * scaleBy
-    }));
+    if (event.deltaY > 0) {
+      this.zoomIn();
+    } else {
+      this.zoomOut();
+    }
   };
 
   setZoom = scale => {
+    const { maxZoom, minZoom } = this.props;
+    const newScale = Math.min(Math.max(minZoom, scale), maxZoom);
     this.setState({
-      scale
+      scale: newScale
     });
   };
 

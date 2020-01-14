@@ -12,6 +12,15 @@ limitations under the License.
 */
 /* istanbul ignore file */
 import React from 'react';
+import { injectIntl } from 'react-intl';
+
+import { Button } from 'carbon-components-react';
+import {
+  Cursor_120 as Cursor20,
+  Move20,
+  ZoomIn20,
+  ZoomOut20
+} from '@carbon/icons-react';
 
 import PanZoom from './PanZoom';
 import PipelineGraph from './PipelineGraph';
@@ -21,10 +30,32 @@ import './ZoomablePipelineGraph.scss';
 const width = 300;
 const height = 600;
 
-export default class ZoomablePipelineGraph extends React.Component {
+const minZoom = 0.1;
+const maxZoom = 10;
+
+class ZoomablePipelineGraph extends React.Component {
+  state = {
+    isPanningEnabled: false
+  };
+
+  togglePanning = () => {
+    const { isPanningEnabled } = this.state;
+    this.setState({
+      isPanningEnabled: !isPanningEnabled
+    });
+  };
+
   render() {
+    const { intl } = this.props;
+    const { isPanningEnabled } = this.state;
     return (
-      <PanZoom svg={() => this.svg} width={width} height={height}>
+      <PanZoom
+        svg={() => this.svg}
+        minZoom={minZoom}
+        maxZoom={maxZoom}
+        width={width}
+        height={height}
+      >
         {({
           translate,
           scale,
@@ -46,9 +77,13 @@ export default class ZoomablePipelineGraph extends React.Component {
                 this.svg = ref;
               }}
               onWheel={zoomScroll}
-              onMouseDown={dragStart}
-              onMouseUp={dragEnd}
-              onMouseMove={dragMove}
+              {...(isPanningEnabled
+                ? {
+                    onMouseDown: dragStart,
+                    onMouseUp: dragEnd,
+                    onMouseMove: dragMove
+                  }
+                : null)}
               onDoubleClick={zoomIn}
             >
               <g
@@ -62,29 +97,69 @@ export default class ZoomablePipelineGraph extends React.Component {
             </svg>
 
             <div className="toolbar">
-              {/* pan */}
+              <Button
+                disabled={!isPanningEnabled}
+                iconDescription={intl.formatMessage({
+                  id: 'dashboard.graph.select',
+                  defaultMessage: 'Select'
+                })}
+                kind="ghost"
+                onClick={this.togglePanning}
+                renderIcon={Cursor20}
+              />
+              <Button
+                disabled={isPanningEnabled}
+                iconDescription={intl.formatMessage({
+                  id: 'dashboard.graph.pan',
+                  defaultMessage: 'Pan'
+                })}
+                kind="ghost"
+                onClick={this.togglePanning}
+                renderIcon={Move20}
+              />
               {/* expand / collapse all */}
               {/* fit to window */}
-              <button type="button" onClick={reset}>
+              {/* <Button kind="ghost" renderIcon={Minimize20} /> */}
+              <Button kind="ghost" onClick={reset}>
                 Reset
-              </button>
-              <button type="button" onClick={center}>
+              </Button>
+              <Button kind="ghost" onClick={center}>
                 Center
-              </button>
-              <button type="button" onClick={zoomOut}>
-                -
-              </button>
+              </Button>
+              <Button
+                disabled={false}
+                hasIconOnly
+                iconDescription={intl.formatMessage({
+                  id: 'dashboard.graph.zoomOut',
+                  defaultMessage: 'Zoom Out'
+                })}
+                kind="ghost"
+                onClick={zoomOut}
+                renderIcon={ZoomOut20}
+                tooltipPosition="top"
+                tooltipAlignment="end"
+              />
               <input
                 type="range"
-                min=".1"
-                max="10"
+                min={minZoom}
+                max={maxZoom}
                 value={scale}
                 step=".1"
                 onChange={e => setZoom(e.target.value)}
               />
-              <button type="button" onClick={zoomIn}>
-                +
-              </button>
+              <Button
+                disabled={false}
+                hasIconOnly
+                iconDescription={intl.formatMessage({
+                  id: 'dashboard.graph.zoomIn',
+                  defaultMessage: 'Zoom In'
+                })}
+                kind="ghost"
+                onClick={zoomIn}
+                renderIcon={ZoomIn20}
+                tooltipPosition="top"
+                tooltipAlignment="end"
+              />
             </div>
           </div>
         )}
@@ -92,3 +167,5 @@ export default class ZoomablePipelineGraph extends React.Component {
     );
   }
 }
+
+export default injectIntl(ZoomablePipelineGraph);
