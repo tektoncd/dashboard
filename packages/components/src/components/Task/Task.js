@@ -26,8 +26,8 @@ class Task extends Component {
     this.selectDefaultStep();
   }
 
-  componentDidUpdate(prevState) {
-    if (!prevState.selectedStepId) {
+  componentDidUpdate() {
+    if (!this.state.selectedStepId && this.props.steps.length > 0) {
       this.selectDefaultStep();
     }
   }
