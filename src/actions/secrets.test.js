@@ -66,13 +66,15 @@ const dataFormatted = [
     name: 'default-token-kbn7j',
     annotations: undefined,
     namespace: 'default',
-    type: 'userpass'
+    type: 'userpass',
+    username: 'someUser@email.com'
   },
   {
     name: 'another-token-kbn7j',
     annotations: undefined,
     namespace: 'default',
-    type: 'userpass'
+    type: 'userpass',
+    username: 'someUser@email.com'
   }
 ];
 const postData = {

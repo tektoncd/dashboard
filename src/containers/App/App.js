@@ -46,6 +46,7 @@ import {
   Pipelines,
   ResourceList,
   Secrets,
+  ServiceAccount,
   ServiceAccounts,
   SideNav,
   TaskRun,
@@ -191,7 +192,17 @@ export /* istanbul ignore next */ class App extends Component {
                   />
                   <Route path={paths.secrets.all()} exact component={Secrets} />
                   <Route
+                    path={paths.serviceAccounts.byName()}
+                    exact
+                    component={ServiceAccount}
+                  />
+                  <Route
                     path={paths.serviceAccounts.all()}
+                    exact
+                    component={ServiceAccounts}
+                  />
+                  <Route
+                    path={paths.serviceAccounts.byNamespace()}
                     exact
                     component={ServiceAccounts}
                   />

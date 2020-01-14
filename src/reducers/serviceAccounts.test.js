@@ -24,6 +24,14 @@ it('creates a namespaced reducer for the correct type', () => {
   });
 });
 
+it('getServiceAccount', () => {
+  const name = 'service-account1';
+  const namespace = 'default';
+  const state = { fake: 'state' };
+  jest.spyOn(selectorCreators, 'getResource').mockImplementation(() => name);
+  expect(selectors.getServiceAccount(state, name, namespace)).toEqual(name);
+});
+
 it('getServiceAccounts', () => {
   const collection = { fake: 'collection' };
   const namespace = 'default';

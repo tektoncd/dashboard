@@ -14,10 +14,9 @@ limitations under the License.
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
-// import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
-// import { getErrorMessage, urls } from '@tektoncd/dashboard-utils';
-import { getErrorMessage } from '@tektoncd/dashboard-utils';
+import { getErrorMessage, urls } from '@tektoncd/dashboard-utils';
 import { InlineNotification } from 'carbon-components-react';
 import {
   FormattedDate,
@@ -130,14 +129,24 @@ export /* istanbul ignore next */ class ServiceAccounts extends Component {
       id: `${serviceAccount.metadata.namespace}:${
         serviceAccount.metadata.name
       }`,
-      name: serviceAccount.metadata.name,
-      namespace: serviceAccount.metadata.namespace,
       created: (
         <FormattedDate
           date={serviceAccount.metadata.creationTimestamp}
           relative
         />
-      )
+      ),
+      name: (
+        <Link
+          title={serviceAccount.metadata.name}
+          to={urls.serviceAccounts.byName({
+            namespace: serviceAccount.metadata.namespace,
+            serviceAccountName: serviceAccount.metadata.name
+          })}
+        >
+          {serviceAccount.metadata.name}
+        </Link>
+      ),
+      namespace: serviceAccount.metadata.namespace
     }));
 
     return (

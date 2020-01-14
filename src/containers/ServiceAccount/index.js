@@ -11,21 +11,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { getServiceAccount, getServiceAccounts } from '../api';
-import {
-  fetchNamespacedCollection,
-  fetchNamespacedResource
-} from './actionCreators';
-
-export function fetchServiceAccount({ name, namespace }) {
-  return fetchNamespacedResource('ServiceAccount', getServiceAccount, {
-    name,
-    namespace
-  });
-}
-
-export function fetchServiceAccounts({ namespace } = {}) {
-  return fetchNamespacedCollection('ServiceAccount', getServiceAccounts, {
-    namespace
-  });
-}
+export { default } from './ServiceAccount';

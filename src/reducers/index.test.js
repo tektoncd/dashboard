@@ -30,6 +30,7 @@ import {
   getSecrets,
   getSecretsErrorMessage,
   getSelectedNamespace,
+  getServiceAccount,
   getServiceAccountsErrorMessage,
   getTaskByType,
   getTaskRun,
@@ -308,6 +309,15 @@ it('isFetchingSecrets', () => {
     .mockImplementation(() => true);
   expect(isFetchingSecrets(state)).toBe(true);
   expect(secretSelectors.isFetchingSecrets).toHaveBeenCalledWith(state.secrets);
+});
+
+it('getServiceAccount', () => {
+  jest
+    .spyOn(serviceAccountSelectors, 'getServiceAccount')
+    .mockImplementation(() => serviceAccounts);
+  expect(getServiceAccount(state, 'account', namespace)).toEqual(
+    serviceAccounts
+  );
 });
 
 it('getServiceAccountsErrorMessage', () => {

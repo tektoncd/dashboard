@@ -55,6 +55,17 @@ export function getNamespaces(state) {
   return namespaceSelectors.getNamespaces(state.namespaces);
 }
 
+export function getServiceAccount(
+  state,
+  { name, namespace = getSelectedNamespace(state) }
+) {
+  return serviceAccountSelectors.getServiceAccount(
+    state.serviceAccounts,
+    name,
+    namespace
+  );
+}
+
 export function getServiceAccounts(
   state,
   { filters = [], namespace = getSelectedNamespace(state) } = {}

@@ -217,7 +217,7 @@ export class SideNav extends Component {
           <SideNavMenuItem
             element={NavLink}
             icon={<span />}
-            to={urls.serviceAccounts.all()}
+            to={this.getPath(urls.serviceAccounts.all())}
           >
             ServiceAccounts
           </SideNavMenuItem>
