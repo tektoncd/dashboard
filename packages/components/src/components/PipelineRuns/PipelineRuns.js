@@ -50,7 +50,6 @@ const PipelineRuns = ({
     return `${reason}: ${message}`;
   },
   hideNamespace,
-  hidePipeline,
   intl,
   loading,
   selectedNamespace,
@@ -72,7 +71,7 @@ const PipelineRuns = ({
         defaultMessage: 'Name'
       })
     },
-    !hidePipeline && {
+    {
       key: 'pipeline',
       header: intl.formatMessage({
         id: 'dashboard.tableHeader.pipeline',
@@ -118,15 +117,22 @@ const PipelineRuns = ({
     const pipelineRunName = createPipelineRunDisplayName({
       pipelineRunMetadata: pipelineRun.metadata
     });
-    const pipelineRefName = pipelineRun.spec.pipelineRef.name;
+    const pipelineRefName =
+      pipelineRun.spec.pipelineRef && pipelineRun.spec.pipelineRef.name;
     const pipelineRunType = pipelineRun.spec.type;
     const { lastTransitionTime, reason, status } = getStatus(pipelineRun);
     const statusIcon = getPipelineRunStatusIcon(pipelineRun);
-    const url = createPipelineRunURL({
+    const pipelineRunURL = createPipelineRunURL({
       namespace,
       pipelineRunName,
       annotations
     });
+    const pipelineRunsByPipelineURL =
+      pipelineRefName &&
+      createPipelineRunsByPipelineURL({
+        namespace,
+        pipelineName: pipelineRefName
+      });
 
     let endTime = Date.now();
     if (status === 'False' || status === 'True') {
@@ -141,27 +147,21 @@ const PipelineRuns = ({
 
     return {
       id: `${namespace}:${pipelineRunName}`,
-      name: url ? (
-        <Link to={url} title={pipelineRunName}>
+      name: pipelineRunURL ? (
+        <Link to={pipelineRunURL} title={pipelineRunName}>
           {pipelineRunName}
         </Link>
       ) : (
         pipelineRunName
       ),
       pipeline:
-        !hidePipeline &&
-        (pipelineRefName ? (
-          <Link
-            to={createPipelineRunsByPipelineURL({
-              namespace,
-              pipelineName: pipelineRefName
-            })}
-            title={pipelineRefName}
-          >
+        pipelineRefName &&
+        (pipelineRunsByPipelineURL ? (
+          <Link to={pipelineRunsByPipelineURL} title={pipelineRefName}>
             {pipelineRefName}
           </Link>
         ) : (
-          ''
+          pipelineRefName
         )),
       namespace: !hideNamespace && namespace,
       status: (
