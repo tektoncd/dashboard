@@ -13,7 +13,7 @@ limitations under the License.
 
 import * as API from '../api';
 import * as creators from './actionCreators';
-import { fetchServiceAccounts } from './serviceAccounts';
+import { fetchServiceAccount, fetchServiceAccounts } from './serviceAccounts';
 
 it('fetchServiceAccounts', async () => {
   jest.spyOn(creators, 'fetchNamespacedCollection');
@@ -23,6 +23,18 @@ it('fetchServiceAccounts', async () => {
     'ServiceAccount',
     API.getServiceAccounts,
     { namespace }
+  );
+});
+
+it('fetchServiceAccount', async () => {
+  jest.spyOn(creators, 'fetchNamespacedResource');
+  const name = 'service-account1';
+  const namespace = 'namespace';
+  fetchServiceAccount({ name, namespace });
+  expect(creators.fetchNamespacedResource).toHaveBeenCalledWith(
+    'ServiceAccount',
+    API.getServiceAccount,
+    { name, namespace }
   );
 });
 

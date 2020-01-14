@@ -88,6 +88,12 @@ export const paths = {
   serviceAccounts: {
     all() {
       return '/serviceaccounts';
+    },
+    byNamespace() {
+      return byNamespace({ path: '/serviceaccounts' });
+    },
+    byName() {
+      return byNamespace({ path: '/serviceaccounts/:serviceAccountName' });
     }
   },
   taskRuns: {

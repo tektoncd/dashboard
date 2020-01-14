@@ -33,6 +33,7 @@ export { default as Pipelines } from './Pipelines';
 export { default as PipelinesDropdown } from './PipelinesDropdown';
 export { default as ResourceList } from './ResourceList';
 export { default as Secrets } from './Secrets';
+export { default as ServiceAccount } from './ServiceAccount';
 export { default as ServiceAccounts } from './ServiceAccounts';
 export { default as ServiceAccountsDropdown } from './ServiceAccountsDropdown';
 export { default as SideNav } from './SideNav';

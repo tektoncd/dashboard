@@ -12,9 +12,13 @@ limitations under the License.
 */
 
 import { createNamespacedReducer } from './reducerCreators';
-import { getCollection } from './selectorCreators';
+import { getCollection, getResource } from './selectorCreators';
 
 export default () => createNamespacedReducer({ type: 'ServiceAccount' });
+
+export function getServiceAccount(state, name, namespace) {
+  return getResource(state, name, namespace);
+}
 
 export function getServiceAccounts(state, namespace) {
   return getCollection(state, namespace);

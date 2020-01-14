@@ -17,6 +17,7 @@ const namespace = 'fake_namespace';
 const pipelineName = 'fake_pipelineName';
 const pipelineResourceName = 'fake_pipelineResourceName';
 const pipelineRunName = 'fake_pipelineRunName';
+const serviceAccountName = 'fake_serviceAccountName';
 const taskName = 'fake_taskName';
 const taskRunName = 'fake_taskRunName';
 
@@ -149,7 +150,28 @@ describe('secrets', () => {
     expect(urls.secrets.all()).toEqual(generatePath(paths.secrets.all()));
   });
 });
-
+describe('serviceAccounts', () => {
+  it('all', () => {
+    expect(urls.serviceAccounts.all()).toEqual(
+      generatePath(paths.serviceAccounts.all())
+    );
+  });
+  it('byNamespace', () => {
+    expect(urls.serviceAccounts.byNamespace({ namespace })).toEqual(
+      generatePath(paths.serviceAccounts.byNamespace(), { namespace })
+    );
+  });
+  it('byName', () => {
+    expect(
+      urls.serviceAccounts.byName({ namespace, serviceAccountName })
+    ).toEqual(
+      generatePath(paths.serviceAccounts.byName(), {
+        namespace,
+        serviceAccountName
+      })
+    );
+  });
+});
 describe('taskRuns', () => {
   it('all', () => {
     expect(urls.taskRuns.all()).toEqual(generatePath(paths.taskRuns.all()));
