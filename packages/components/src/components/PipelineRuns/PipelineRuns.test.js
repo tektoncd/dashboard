@@ -70,10 +70,7 @@ it('PipelineRuns renders data', () => {
       ]}
       pipelineRunActions={[
         {
-          actionText: intl.formatMessage({
-            id: 'test.actionText',
-            defaultMessage: 'TestAction'
-          })
+          actionText: 'TestAction'
         }
       ]}
     />
@@ -81,4 +78,48 @@ it('PipelineRuns renders data', () => {
   expect(queryByText(pipelineRunName)).toBeTruthy();
   expect(queryByTitle(/FAKE_REASON/i)).toBeTruthy();
   expect(queryByTitle(/FAKE_MESSAGE/i)).toBeTruthy();
+});
+
+it('PipelineRuns renders with custom link creators', () => {
+  const pipelineName = 'pipeline-12345';
+  const pipelineRunName = 'pipeline-run-20190816124708';
+  const { queryByText } = renderWithRouter(
+    <PipelineRuns
+      intl={intl}
+      pipelineRuns={[
+        {
+          metadata: {
+            name: pipelineRunName,
+            namespace: 'cb4552a6-b2d7-45e2-9773-3d4ca33909ff',
+            uid: '7c266264-4d4d-45e3-ace0-041be8f7d06e'
+          },
+          spec: {
+            pipelineRef: {
+              name: pipelineName
+            }
+          },
+          status: {
+            conditions: [
+              {
+                lastTransitionTime: '2019-08-16T12:49:28Z',
+                message: 'FAKE_MESSAGE',
+                reason: 'FAKE_REASON',
+                status: 'True',
+                type: 'Succeeded'
+              }
+            ]
+          }
+        }
+      ]}
+      pipelineRunActions={[
+        {
+          actionText: 'TestAction'
+        }
+      ]}
+      createPipelineRunURL={() => null}
+      createPipelineRunsByPipelineURL={() => null}
+    />
+  );
+  expect(queryByText(pipelineRunName)).toBeTruthy();
+  expect(queryByText(pipelineName)).toBeTruthy();
 });
