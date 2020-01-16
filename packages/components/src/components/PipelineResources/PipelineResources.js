@@ -58,7 +58,7 @@ const PipelineResources = ({
       })
     },
     {
-      key: 'dropdown',
+      key: 'actions',
       header: ''
     }
   ];
@@ -80,17 +80,21 @@ const PipelineResources = ({
           {pipelineResourceName}
         </Link>
       ) : (
-        pipelineResourceName
+        <span title={pipelineResourceName}>{pipelineResourceName}</span>
       ),
-      namespace,
-      type: pipelineResource.spec.type,
+      namespace: <span title={namespace}>{namespace}</span>,
+      type: (
+        <span title={pipelineResource.spec.type}>
+          {pipelineResource.spec.type}
+        </span>
+      ),
       createdTime: (
         <FormattedDate
           date={pipelineResource.metadata.creationTimestamp}
           relative
         />
       ),
-      dropdown: (
+      actions: (
         <RunDropdown
           items={pipelineResourceActions}
           resource={pipelineResource}

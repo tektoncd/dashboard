@@ -18,14 +18,6 @@ limitations under the License.
   @import '~carbon-components/scss/components/data-table/data-table-core';
   @import '~carbon-components/scss/components/overflow-menu/overflow-menu';
 
-  a {
-    display: inline-block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 250px;
-  }
-
   .bx--table-toolbar {
     background: transparent;
   }
@@ -40,8 +32,22 @@ limitations under the License.
     width: 100%;
   }
 
-  .bx--data-table thead th {
-    padding: 15;
+  .bx--data-table td {
+    &:not(.cell-actions):not(.cell-status) {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 10vw;
+      vertical-align: middle;
+    }
+
+    &.cell-status {
+      vertical-align: middle;
+    }
+
+    &.cell-status, &.cell-actions {
+      width: 40px;
+    }
   }
 
   .bx--data-table thead th {

@@ -138,7 +138,11 @@ export /* istanbul ignore next */ class TriggerBindings extends Component {
           {binding.metadata.name}
         </Link>
       ),
-      namespace: binding.metadata.namespace,
+      namespace: (
+        <span title={binding.metadata.namespace}>
+          {binding.metadata.namespace}
+        </span>
+      ),
       date: <FormattedDate date={binding.metadata.creationTimestamp} relative />
     }));
 

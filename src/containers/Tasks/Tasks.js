@@ -78,7 +78,7 @@ export /* istanbul ignore next */ class Tasks extends Component {
         })
       },
       {
-        key: 'link',
+        key: 'actions',
         header: ''
       }
     ];
@@ -96,11 +96,13 @@ export /* istanbul ignore next */ class Tasks extends Component {
           {task.metadata.name}
         </Link>
       ),
-      namespace: task.metadata.namespace,
+      namespace: (
+        <span title={task.metadata.namespace}>{task.metadata.namespace}</span>
+      ),
       createdTime: (
         <FormattedDate date={task.metadata.creationTimestamp} relative />
       ),
-      link: (
+      actions: (
         <Link
           to={urls.rawCRD.byNamespace({
             namespace: task.metadata.namespace,

@@ -94,7 +94,7 @@ const TaskRuns = ({
       })
     },
     {
-      key: 'dropdown',
+      key: 'actions',
       header: ''
     }
   ];
@@ -130,7 +130,7 @@ const TaskRuns = ({
           {taskRunName}
         </Link>
       ) : (
-        taskRunName
+        <span title={taskRunName}>{taskRunName}</span>
       ),
       task: taskRefName ? (
         <Link
@@ -145,7 +145,11 @@ const TaskRuns = ({
       ) : (
         ''
       ),
-      namespace: taskRun.metadata.namespace,
+      namespace: (
+        <span title={taskRun.metadata.namespace}>
+          {taskRun.metadata.namespace}
+        </span>
+      ),
       status: (
         <div className="definition">
           <div
@@ -162,7 +166,7 @@ const TaskRuns = ({
         <FormattedDate date={taskRun.metadata.creationTimestamp} relative />
       ),
       duration,
-      dropdown: <RunDropdown items={taskRunActions} resource={taskRun} />
+      actions: <RunDropdown items={taskRunActions} resource={taskRun} />
     };
   });
 

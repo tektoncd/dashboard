@@ -57,7 +57,7 @@ const PipelineRuns = ({
   pipelineRuns,
   pipelineRunActions
 }) => {
-  const initialHeaders = [
+  const headers = [
     {
       key: 'status',
       header: intl.formatMessage({
@@ -101,17 +101,10 @@ const PipelineRuns = ({
       })
     },
     {
-      key: 'dropdown',
+      key: 'actions',
       header: ''
     }
-  ];
-
-  const headers = [];
-  initialHeaders.forEach(header => {
-    if (header.key !== undefined) {
-      headers.push(header);
-    }
-  });
+  ].filter(Boolean);
 
   const pipelineRunsFormatted = pipelineRuns.map(pipelineRun => {
     const { annotations, creationTimestamp, namespace } = pipelineRun.metadata;
@@ -146,7 +139,7 @@ const PipelineRuns = ({
           {pipelineRunName}
         </Link>
       ) : (
-        pipelineRunName
+        <span title={pipelineRunName}>{pipelineRunName}</span>
       ),
       pipeline:
         !hidePipeline &&
@@ -163,7 +156,7 @@ const PipelineRuns = ({
         ) : (
           ''
         )),
-      namespace: !hideNamespace && namespace,
+      namespace: !hideNamespace && <span title={namespace}>{namespace}</span>,
       status: (
         <div className="definition">
           <div
@@ -179,9 +172,7 @@ const PipelineRuns = ({
       createdTime: <FormattedDate date={creationTimestamp} relative />,
       duration,
       type: pipelineRunType,
-      dropdown: (
-        <RunDropdown items={pipelineRunActions} resource={pipelineRun} />
-      )
+      actions: <RunDropdown items={pipelineRunActions} resource={pipelineRun} />
     };
   });
 
