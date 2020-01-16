@@ -184,13 +184,16 @@ export /* istanbul ignore next */ class Secrets extends Component {
           }
         });
       });
+      const serviceAccountsString = serviceAccountsWithSecret.join(', ');
       const formattedSecret = {
-        annotations,
+        annotations: <span title={annotations}>{annotations}</span>,
         id: `${secret.namespace}:${secret.name}`,
-        name: secret.name,
-        namespace: secret.namespace,
+        name: <span title={secret.name}>{secret.name}</span>,
+        namespace: <span title={secret.namespace}>{secret.namespace}</span>,
         created: <FormattedDate date={secret.creationTimestamp} relative />,
-        serviceAccounts: serviceAccountsWithSecret.join(', ')
+        serviceAccounts: (
+          <span title={serviceAccountsString}>{serviceAccountsString}</span>
+        )
       };
 
       return formattedSecret;

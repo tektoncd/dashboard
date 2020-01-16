@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -121,7 +121,6 @@ const Table = props => {
                       return header.header ? (
                         <TableHeader
                           {...getHeaderProps({ header })}
-                          className="cellText"
                           key={header.key}
                         >
                           {header.header}
@@ -155,7 +154,11 @@ const Table = props => {
                           <TableSelectRow {...getSelectionProps({ row })} />
                         )}
                         {row.cells.map(cell => (
-                          <TableCell key={cell.id} id={cell.id}>
+                          <TableCell
+                            key={cell.id}
+                            id={cell.id}
+                            className={`cell-${cell.info.header}`}
+                          >
                             {cell.value}
                           </TableCell>
                         ))}

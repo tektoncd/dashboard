@@ -138,7 +138,11 @@ export /* istanbul ignore next */ class TriggerTemplates extends Component {
           {template.metadata.name}
         </Link>
       ),
-      namespace: template.metadata.namespace,
+      namespace: (
+        <span title={template.metadata.namespace}>
+          {template.metadata.namespace}
+        </span>
+      ),
       date: (
         <FormattedDate date={template.metadata.creationTimestamp} relative />
       )

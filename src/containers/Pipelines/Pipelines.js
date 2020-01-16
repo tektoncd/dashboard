@@ -80,7 +80,7 @@ export /* istanbul ignore next */ class Pipelines extends Component {
         })
       },
       {
-        key: 'link',
+        key: 'actions',
         header: ''
       }
     ];
@@ -98,11 +98,15 @@ export /* istanbul ignore next */ class Pipelines extends Component {
           {pipeline.metadata.name}
         </Link>
       ),
-      namespace: pipeline.metadata.namespace,
+      namespace: (
+        <span title={pipeline.metadata.namespace}>
+          {pipeline.metadata.namespace}
+        </span>
+      ),
       createdTime: (
         <FormattedDate date={pipeline.metadata.creationTimestamp} relative />
       ),
-      link: (
+      actions: (
         <Link
           to={urls.rawCRD.byNamespace({
             namespace: pipeline.metadata.namespace,

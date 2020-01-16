@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
+import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
 import FormattedDuration from 'react-intl-formatted-duration';
 
@@ -38,13 +38,38 @@ defineMessages({
   }
 });
 
-const FormattedDurationWrapper = ({ milliseconds }) => {
-  return (
-    <FormattedDuration
-      seconds={milliseconds / 1000}
-      format="{days} {hours} {minutes} {seconds}"
-    />
-  );
-};
+export default class FormattedDurationWrapper extends Component {
+  state = { tooltip: '' };
 
-export default FormattedDurationWrapper;
+  componentDidMount() {
+    this.setState({
+      tooltip: this.durationNode && this.durationNode.textContent
+    });
+  }
+
+  componentDidUpdate() {
+    const duration = this.durationNode.textContent;
+    if (this.state.tooltip !== duration) {
+      this.setState({ // eslint-disable-line
+        tooltip: duration
+      });
+    }
+  }
+
+  render() {
+    const { milliseconds } = this.props;
+    return (
+      <span
+        ref={ref => {
+          this.durationNode = ref;
+        }}
+        title={this.state.tooltip}
+      >
+        <FormattedDuration
+          seconds={milliseconds / 1000}
+          format="{days} {hours} {minutes} {seconds}"
+        />
+      </span>
+    );
+  }
+}
