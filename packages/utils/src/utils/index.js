@@ -192,3 +192,33 @@ export function formatLabels(labelsRaw) {
 
   return formattedLabelsToRender;
 }
+
+// Update the status of steps that follow a step with an error
+export function updateUnexecutedSteps(steps) {
+  if (!steps) {
+    return steps;
+  }
+  let errorIndex = steps.length - 1;
+  return steps.map((step, index) => {
+    // Update errorIndex
+    if (step.reason !== 'Completed') {
+      errorIndex = Math.min(index, errorIndex);
+    }
+    // Update step
+    if (index > errorIndex) {
+      const s = {
+        ...step,
+        reason: '',
+        status: ''
+      };
+      if (step.stepStatus && step.stepStatus.terminated) {
+        s.stepStatus = {
+          ...step.stepStatus,
+          terminated: { ...step.stepStatus.terminated, reason: '' }
+        };
+      }
+      return s;
+    }
+    return step;
+  });
+}

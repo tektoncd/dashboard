@@ -21,7 +21,8 @@ import {
   reorderSteps,
   selectedTask,
   stepsStatus,
-  taskRunStep
+  taskRunStep,
+  updateUnexecutedSteps
 } from '.';
 
 it('taskRunSteps with no taskRun', () => {
@@ -343,4 +344,72 @@ it('formatLabels', () => {
     'gitServer: github.com',
     'tekton.dev/pipeline: pipeline0'
   ]);
+});
+
+it('updateUnexecutedSteps no steps', () => {
+  const steps = [];
+  const wantUpdatedSteps = [];
+  const gotUpdatedSteps = updateUnexecutedSteps(steps);
+  expect(gotUpdatedSteps).toEqual(wantUpdatedSteps);
+});
+
+it('updateUnexecutedSteps undefined steps', () => {
+  let steps;
+  let wantUpdatedSteps;
+  const gotUpdatedSteps = updateUnexecutedSteps(steps);
+  expect(gotUpdatedSteps).toEqual(wantUpdatedSteps);
+});
+
+it('updateUnexecutedSteps no error steps', () => {
+  const steps = [
+    { reason: 'Completed', status: 'Terminated' },
+    {
+      reason: 'Running',
+      status: 'Unknown',
+      stepStatus: {}
+    }
+  ];
+  const wantUpdatedSteps = [...steps];
+  const gotUpdatedSteps = updateUnexecutedSteps(steps);
+  expect(gotUpdatedSteps).toEqual(wantUpdatedSteps);
+});
+
+it('updateUnexecutedSteps error step', () => {
+  const steps = [
+    {
+      reason: 'Completed',
+      status: 'Terminated',
+      stepStatus: { terminated: { reason: 'Completed' } }
+    },
+    {
+      reason: 'Error',
+      status: 'Error',
+      stepStatus: { terminated: { reason: 'Error' } }
+    },
+    {
+      reason: 'Completed',
+      status: 'Terminated',
+      stepStatus: { terminated: { reason: 'Completed' } }
+    }
+  ];
+  const wantUpdatedSteps = [
+    {
+      reason: 'Completed',
+      status: 'Terminated',
+      stepStatus: { terminated: { reason: 'Completed' } }
+    },
+    {
+      reason: 'Error',
+      status: 'Error',
+      stepStatus: { terminated: { reason: 'Error' } }
+    },
+    {
+      reason: '',
+      status: '',
+      stepStatus: { terminated: { reason: '' } }
+    }
+  ];
+
+  const gotUpdatedSteps = updateUnexecutedSteps(steps);
+  expect(gotUpdatedSteps).toEqual(wantUpdatedSteps);
 });
