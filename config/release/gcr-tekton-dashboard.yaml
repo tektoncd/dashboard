@@ -19,8 +19,8 @@ spec:
     kind: Extension
     plural: extensions
     categories:
-      - all
-      - tekton-pipelines
+      - tekton
+      - tekton-dashboard
   scope: Namespaced
   # Opt into the status subresource so metadata.generation
   # starts to increment
