@@ -277,15 +277,15 @@ it('reorderSteps works on ordered steps', () => {
 
 it('reorderSteps properly reorders unnamed steps', () => {
   const unorderedSteps = [
+    { name: 'unnamed-1' },
     { name: 'unnamed-2' },
-    { name: 'unnamed-3' },
-    { name: 'unnamed-1' }
+    { name: 'unnamed-0' }
   ];
   const orderedSteps = [{ name: '' }, { name: '' }, { name: '' }];
   const want = [
+    { name: 'unnamed-0' },
     { name: 'unnamed-1' },
-    { name: 'unnamed-2' },
-    { name: 'unnamed-3' }
+    { name: 'unnamed-2' }
   ];
   const got = reorderSteps(unorderedSteps, orderedSteps);
   expect(got).toEqual(want);
@@ -294,11 +294,11 @@ it('reorderSteps properly reorders unnamed steps', () => {
 it('reorderSteps properly reorders unnamed and named steps', () => {
   const unorderedSteps = [
     { name: 'c' },
-    { name: 'unnamed-5' },
+    { name: 'unnamed-4' },
     { name: 'a' },
-    { name: 'unnamed-1' },
+    { name: 'unnamed-0' },
     { name: 'b' },
-    { name: 'unnamed-6' }
+    { name: 'unnamed-5' }
   ];
   const orderedSteps = [
     { name: '' },
@@ -309,12 +309,12 @@ it('reorderSteps properly reorders unnamed and named steps', () => {
     { name: '' }
   ];
   const want = [
-    { name: 'unnamed-1' },
+    { name: 'unnamed-0' },
     { name: 'a' },
     { name: 'b' },
     { name: 'c' },
-    { name: 'unnamed-5' },
-    { name: 'unnamed-6' }
+    { name: 'unnamed-4' },
+    { name: 'unnamed-5' }
   ];
   const got = reorderSteps(unorderedSteps, orderedSteps);
   expect(got).toEqual(want);
