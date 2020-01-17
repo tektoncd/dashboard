@@ -35,7 +35,6 @@ import { fetchClusterTasks, fetchTasks } from '../../actions/tasks';
 import { fetchTaskRuns } from '../../actions/taskRuns';
 import { rerunPipelineRun } from '../../api';
 
-import '../../components/Run/Run.scss';
 import { fetchLogs } from '../../utils';
 import './PipelineRun.scss';
 

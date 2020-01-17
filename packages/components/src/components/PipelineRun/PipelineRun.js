@@ -29,7 +29,7 @@ import {
 
 import { Log, RunHeader, StepDetails, TaskTree } from '..';
 
-import './Run.scss';
+import '../../scss/Run.scss';
 
 export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   state = {
