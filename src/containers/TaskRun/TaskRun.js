@@ -42,7 +42,7 @@ import {
   isWebSocketConnected
 } from '../../reducers';
 
-import '../../components/Run/Run.scss';
+import '@tektoncd/dashboard-components/dist/scss/Run.scss';
 import { fetchTask, fetchTaskByType } from '../../actions/tasks';
 import { fetchTaskRun } from '../../actions/taskRuns';
 
