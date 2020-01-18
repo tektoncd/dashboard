@@ -20,7 +20,7 @@ Tekton Dashboard is a general purpose, web-based UI for Tekton Pipelines. It all
    and its dependencies:
 
    ```bash
-   kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.4.0/dashboard-latest-release.yaml
+   kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.4.0/dashboard_latest_release.yaml
    ```
 
    Previous versions will be available at `previous/$VERSION_NUMBER`, e.g.
