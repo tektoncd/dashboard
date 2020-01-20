@@ -1,5 +1,5 @@
 # ------------------- Dashboard Service Account ------------------- #
-
+---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -35,6 +35,9 @@ metadata:
   name: tekton-dashboard-minimal
   namespace: tekton-pipelines
 rules:
+  - apiGroups: ["apiextensions.k8s.io"]
+    resources: ["customresourcedefinitions"]
+    verbs: ["get", "list"]
   - apiGroups: ["security.openshift.io"]
     resources: ["securitycontextconstraints"]
     verbs: ["use"]
@@ -60,20 +63,24 @@ rules:
     resources: ["deployments"]
     verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
   - apiGroups: ["tekton.dev"]
-    resources: ["tasks", "clustertasks", "taskruns", "pipelines", "pipelineruns", "pipelineresources", "conditions"]
+    resources: ["tasks", "clustertasks", "taskruns", "pipelines",
+                "pipelineruns", "pipelineresources", "conditions"]
     verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
   - apiGroups: ["tekton.dev"]
     resources: ["taskruns/finalizers", "pipelineruns/finalizers"]
     verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
   - apiGroups: ["tekton.dev"]
-    resources: ["tasks/status", "clustertasks/status", "taskruns/status", "pipelines/status", "pipelineruns/status"]
+    resources: ["tasks/status", "clustertasks/status", "taskruns/status",
+                "pipelines/status", "pipelineruns/status"]
     verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
   - apiGroups: ["dashboard.tekton.dev"]
     resources: ["extensions"]
     verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
   - apiGroups: ["tekton.dev"]
-    resources: ["eventlisteners", "triggerbindings", "triggertemplates"]
-    verbs: ["get", "list", "create", "update", "delete", "patch", "watch", "add"]
+    resources: ["eventlisteners", "triggerbindings",
+                "triggertemplates"]
+    verbs: ["get", "list", "create", "update", "delete", "patch", "watch",
+            "add"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -108,30 +115,29 @@ spec:
         app: tekton-dashboard
     spec:
       containers:
-      - name: tekton-dashboard
-        image: gcr.io/tekton-nightly/dashboard:latest
-        ports:
-        - containerPort: 9097
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 9097
-        readinessProbe:
-          httpGet:
-            path: /readiness
-            port: 9097
-        resources:
-        env:
-        - name: PORT
-          value: "9097"
-        - name: WEB_RESOURCES_DIR
-          value: /var/run/ko/web
-        - name: PIPELINE_RUN_SERVICE_ACCOUNT
-          value: ""
-        - name: INSTALLED_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
+        - name: tekton-dashboard
+          image: gcr.io/tekton-nightly/dashboard:latest
+          ports:
+            - containerPort: 9097
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 9097
+          readinessProbe:
+            httpGet:
+              path: /readiness
+              port: 9097
+          env:
+            - name: PORT
+              value: "9097"
+            - name: WEB_RESOURCES_DIR
+              value: /var/run/ko/web
+            - name: PIPELINE_RUN_SERVICE_ACCOUNT
+              value: ""
+            - name: INSTALLED_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
       serviceAccountName: tekton-dashboard
 ---
 # ------------------- Dashboard Service ------------------- #
@@ -159,36 +165,36 @@ metadata:
   namespace: tekton-pipelines
 spec:
   resources:
-  - name: git-source
-    type: git
+    - name: git-source
+      type: git
   params:
-  - name: pathToResourceFiles
-    description: The path to the resource files to apply
-    default: /workspace/git-source
-    type: string
-  - name: apply-directory
-    description: The directory from which resources are to be applied
-    default: "."
-    type: string
-  - name: target-namespace
-    description: The namespace in which to create the resources being imported
-    default: tekton-pipelines
-    type: string
-  tasks:
-  - name: pipeline0-task
-    taskRef:
-      name: pipeline0-task
-    params:
     - name: pathToResourceFiles
-      value: $(params.pathToResourceFiles)
+      description: The path to the resource files to apply
+      default: /workspace/git-source
+      type: string
     - name: apply-directory
-      value: $(params.apply-directory)
+      description: The directory from which resources are to be applied
+      default: "."
+      type: string
     - name: target-namespace
-      value: $(params.target-namespace)
-    resources:
-      inputs:
-      - name: git-source
-        resource: git-source
+      description: The namespace where created resources will go
+      default: tekton-pipelines
+      type: string
+  tasks:
+    - name: pipeline0-task
+      taskRef:
+        name: pipeline0-task
+      params:
+        - name: pathToResourceFiles
+          value: $(params.pathToResourceFiles)
+        - name: apply-directory
+          value: $(params.apply-directory)
+        - name: target-namespace
+          value: $(params.target-namespace)
+      resources:
+        inputs:
+          - name: git-source
+            resource: git-source
 ---
 # ------------------- Pipeline0 task ---------------------- #
 apiVersion: tekton.dev/v1alpha1
@@ -199,29 +205,29 @@ metadata:
 spec:
   inputs:
     resources:
-    - name: git-source
-      type: git
+      - name: git-source
+        type: git
     params:
-    - name: pathToResourceFiles
-      description: The path to the resource files to apply
-      default: /workspace/git-source
-      type: string
-    - name: apply-directory
-      description: The directory from which resources are to be applied
-      default: "."
-      type: string
-    - name: target-namespace
-      description: The namespace in which to create the resources being imported
-      default: tekton-pipelines
-      type: string
+      - name: pathToResourceFiles
+        description: The path to the resource files to apply
+        default: /workspace/git-source
+        type: string
+      - name: apply-directory
+        description: The directory from which resources are to be applied
+        default: "."
+        type: string
+      - name: target-namespace
+        description: The namespace where created resources will go
+        default: tekton-pipelines
+        type: string
   steps:
-  - name: kubectl-apply
-    image: lachlanevenson/k8s-kubectl:latest
-    command:
-    - kubectl
-    args:
-    - apply
-    - -f
-    - $(inputs.params.pathToResourceFiles)/$(inputs.params.apply-directory)
-    - -n
-    - $(inputs.params.target-namespace)
+    - name: kubectl-apply
+      image: lachlanevenson/k8s-kubectl:latest
+      command:
+        - kubectl
+      args:
+        - apply
+        - -f
+        - $(inputs.params.pathToResourceFiles)/$(inputs.params.apply-directory)
+        - -n
+        - $(inputs.params.target-namespace)

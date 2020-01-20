@@ -1,6 +1,6 @@
-# The contents of this file should be included in both the Tekton dashboard config directory
-# and config/release/gcr-tekton-dashboard.yaml
-
+# The contents of this file should be included in both the Tekton dashboard
+# config directory and config/release/gcr-tekton-dashboard.yaml
+---
 apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
@@ -9,29 +9,29 @@ metadata:
 spec:
   inputs:
     resources:
-    - name: git-source
-      type: git
+      - name: git-source
+        type: git
     params:
-    - name: pathToResourceFiles
-      description: The path to the resource files to apply
-      default: /workspace/git-source
-      type: string
-    - name: apply-directory
-      description: The directory from which resources are to be applied
-      default: "."
-      type: string
-    - name: target-namespace
-      description: The namespace in which to create the resources being imported
-      default: tekton-pipelines
-      type: string
+      - name: pathToResourceFiles
+        description: The path to the resource files to apply
+        default: /workspace/git-source
+        type: string
+      - name: apply-directory
+        description: The directory from which resources are to be applied
+        default: "."
+        type: string
+      - name: target-namespace
+        description: The namespace where created resources will go
+        default: tekton-pipelines
+        type: string
   steps:
-  - name: kubectl-apply
-    image: lachlanevenson/k8s-kubectl:latest
-    command:
-    - kubectl
-    args:
-    - apply
-    - -f
-    - $(inputs.params.pathToResourceFiles)/$(inputs.params.apply-directory)
-    - -n
-    - $(inputs.params.target-namespace)
+    - name: kubectl-apply
+      image: lachlanevenson/k8s-kubectl:latest
+      command:
+        - kubectl
+      args:
+        - apply
+        - -f
+        - $(inputs.params.pathToResourceFiles)/$(inputs.params.apply-directory)
+        - -n
+        - $(inputs.params.target-namespace)
