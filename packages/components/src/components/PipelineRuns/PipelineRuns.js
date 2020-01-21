@@ -154,7 +154,7 @@ const PipelineRuns = ({
             {pipelineRefName}
           </Link>
         ) : (
-          pipelineRefName
+          <span title={pipelineRefName}>{pipelineRefName}</span>
         )),
       namespace: !hideNamespace && <span title={namespace}>{namespace}</span>,
       status: (
