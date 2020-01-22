@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 module.exports = {
+  clearMocks: true,
   collectCoverage: true,
   collectCoverageFrom: [
     '<rootDir>/src/**/*.js',
@@ -33,6 +34,7 @@ module.exports = {
       '<rootDir>/config_frontend/__mocks__/fileMock.js',
     '\\.(css|scss)$': '<rootDir>/config_frontend/__mocks__/styleMock.js'
   },
+  restoreMocks: true,
   setupFilesAfterEnv: ['<rootDir>/config_frontend/setupTests.js'],
   testMatch: [
     '<rootDir>/src/**/*.test.js',

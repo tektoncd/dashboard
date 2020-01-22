@@ -21,8 +21,6 @@ import { createIntl } from 'react-intl';
 import { ServiceAccountContainer } from './ServiceAccount';
 import { renderWithRouter } from '../../utils/test';
 
-beforeEach(jest.resetAllMocks);
-
 const intl = createIntl({
   locale: 'en',
   defaultLocale: 'en'

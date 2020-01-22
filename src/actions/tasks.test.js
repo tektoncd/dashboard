@@ -21,7 +21,7 @@ import {
   fetchTasks
 } from './tasks';
 
-it('fetchTask', async () => {
+it('fetchTask', () => {
   jest.spyOn(creators, 'fetchNamespacedResource');
   const name = 'taskName';
   const namespace = 'namespace';
@@ -33,7 +33,7 @@ it('fetchTask', async () => {
   );
 });
 
-it('fetchTasks', async () => {
+it('fetchTasks', () => {
   jest.spyOn(creators, 'fetchNamespacedCollection');
   const namespace = 'namespace';
   fetchTasks({ namespace });
@@ -44,7 +44,7 @@ it('fetchTasks', async () => {
   );
 });
 
-it('fetchTasks no params', async () => {
+it('fetchTasks no params', () => {
   jest.spyOn(creators, 'fetchNamespacedCollection');
   fetchTasks();
   expect(creators.fetchNamespacedCollection).toHaveBeenCalledWith(
@@ -54,7 +54,7 @@ it('fetchTasks no params', async () => {
   );
 });
 
-it('fetchClusterTask', async () => {
+it('fetchClusterTask', () => {
   jest.spyOn(creators, 'fetchResource');
   const name = 'clusterTaskName';
   fetchClusterTask(name);
@@ -65,7 +65,7 @@ it('fetchClusterTask', async () => {
   );
 });
 
-it('fetchClusterTasks', async () => {
+it('fetchClusterTasks', () => {
   jest.spyOn(creators, 'fetchCollection');
   fetchClusterTasks();
   expect(creators.fetchCollection).toHaveBeenCalledWith(
@@ -74,7 +74,7 @@ it('fetchClusterTasks', async () => {
   );
 });
 
-it('fetchClusterTaskByType', async () => {
+it('fetchClusterTaskByType', () => {
   jest.spyOn(creators, 'fetchResource');
   const name = 'clusterTaskName';
   fetchTaskByType(name, 'clustertasks');
@@ -85,11 +85,11 @@ it('fetchClusterTaskByType', async () => {
   );
 });
 
-it('fetchTaskByType', async () => {
+it('fetchTaskByType', () => {
   jest.spyOn(creators, 'fetchResource');
   const name = 'clusterTaskName';
 
-  jest.spyOn(creators, 'fetchNamespacedCollection');
+  jest.spyOn(creators, 'fetchNamespacedResource');
   const namespace = 'namespace';
   fetchTaskByType(name, 'tasks', namespace);
   expect(creators.fetchNamespacedResource).toHaveBeenCalledWith(

@@ -89,7 +89,6 @@ const testStore = {
 };
 
 beforeEach(() => {
-  jest.resetAllMocks();
   jest.spyOn(API, 'getTaskRuns').mockImplementation(() => []);
 });
 

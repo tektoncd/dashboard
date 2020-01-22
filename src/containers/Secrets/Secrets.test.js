@@ -23,8 +23,6 @@ import { renderWithRouter } from '../../utils/test';
 import Secrets from '.';
 import * as API from '../../api';
 
-beforeEach(jest.resetAllMocks);
-
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 

@@ -23,8 +23,6 @@ import ImportResourcesContainer from './ImportResources';
 import * as API from '../../api';
 import 'jest-dom/extend-expect';
 
-beforeEach(jest.resetAllMocks);
-
 describe('ImportResources component', () => {
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
