@@ -46,7 +46,8 @@ export function fetchSecrets({ namespace } = {}) {
           namespace: secret.metadata.namespace,
           annotations: secret.metadata.annotations,
           type: secret.type,
-          username: secret.data.username
+          username: secret.data.username,
+          labels: secret.metadata.labels
         };
         secretsFormatted.push(object);
       });
