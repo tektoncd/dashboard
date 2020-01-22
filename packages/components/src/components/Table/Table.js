@@ -56,7 +56,6 @@ const Table = props => {
   return (
     <div className="tableComponent">
       <DataTable
-        useZebraStyles
         rows={dataRows}
         headers={dataHeaders}
         isSortable={isSortable}
@@ -105,11 +104,7 @@ const Table = props => {
               </TableToolbar>
             )}
             {loading ? (
-              <DataTableSkeleton
-                useZebraStyles
-                rowCount={1}
-                columnCount={headers.length}
-              />
+              <DataTableSkeleton rowCount={1} columnCount={headers.length} />
             ) : (
               <CarbonTable {...getTableProps()}>
                 <TableHead>

@@ -240,7 +240,6 @@ export /* istanbul ignore next */ class TriggerTemplateContainer extends Compone
                 // This is a very customised expandable table so intentionally not the one used elsewhere
                 // although it should look the same
                 <DataTable
-                  useZebraStyles
                   rows={resourcetemplates.map((item, index) => ({
                     id: `${index}|${item.metadata.name ||
                       item.metadata.generateName}`
