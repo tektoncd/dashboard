@@ -13,8 +13,7 @@ limitations under the License.
 
 import { injectIntl } from 'react-intl';
 import React from 'react';
-import { Tab, Tabs } from 'carbon-components-react';
-import { StepDefinition, StepDetailsHeader, StepStatus } from '..';
+import { StepDefinition, StepDetailsHeader, StepStatus, Tab, Tabs } from '..';
 
 import './StepDetails.scss';
 

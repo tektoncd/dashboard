@@ -16,8 +16,14 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import '../../scss/Triggers.scss';
 import { injectIntl } from 'react-intl';
-import { InlineNotification, Tab, Tabs, Tag } from 'carbon-components-react';
-import { FormattedDate, Table, ViewYAML } from '@tektoncd/dashboard-components';
+import { InlineNotification, Tag } from 'carbon-components-react';
+import {
+  FormattedDate,
+  Tab,
+  Table,
+  Tabs,
+  ViewYAML
+} from '@tektoncd/dashboard-components';
 import { formatLabels } from '@tektoncd/dashboard-utils';
 import {
   getSelectedNamespace,

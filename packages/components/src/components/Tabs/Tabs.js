@@ -10,5 +10,26 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+/* istanbul ignore file */
 
-export { default } from './Tabs';
+import React from 'react';
+import {
+  TabContent as CarbonTabContent,
+  Tabs as CarbonTabs
+} from 'carbon-components-react';
+
+const TabContent = ({ selected, ...other }) => {
+  return selected && <CarbonTabContent selected={selected} {...other} />;
+};
+
+const Tabs = ({ children, ...other }) => (
+  <CarbonTabs {...other}>
+    {React.Children.map(children, tab => {
+      return React.cloneElement(tab, {
+        renderContent: TabContent
+      });
+    })}
+  </CarbonTabs>
+);
+
+export default Tabs;

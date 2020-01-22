@@ -417,16 +417,12 @@ it('TriggerTemplateContainer renders full resource template information', async 
   const compareToName = resourceTemplate1Details.metadata.name;
   await waitForElement(() => getByText(compareToName));
   await waitForElement(() => getByText(/revision/i));
-  await waitForElement(() => getByText(/params.gitrevision/i));
   await waitForElement(() => getByText(/url/i));
-  await waitForElement(() => getByText(/params.gitrepositoryurl/i));
   await waitForElement(() => getByText(/gitrevision/i));
   await waitForElement(() => getByText(/gitrepositoryurl/i));
   await waitForElement(() => getByText(/simple-pipeline-run/i));
   await waitForElement(() => getByText(/message/i));
-  await waitForElement(() => getByText(/params.message/i));
   await waitForElement(() => getByText(/contenttype/i));
-  await waitForElement(() => getByText(/params.contenttype/i));
 });
 
 it('TriggerTemplateContainer contains details tab with accurate information', async () => {
@@ -466,7 +462,7 @@ it('TriggerTemplateContainer contains details tab with accurate information', as
   const detailsTab = getByText(/details/i);
   fireEvent.click(detailsTab);
   await waitForElement(() => getByText(/Date created/i));
-  await waitForElement(() => getByText(/namespace: tekton-pipelines/i));
+  await waitForElement(() => getByText(/tekton-pipelines/i));
 });
 
 it('TriggerTemplateContainer contains YAML tab with accurate information', async () => {

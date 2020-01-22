@@ -16,16 +16,12 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import '../../scss/Triggers.scss';
 import { injectIntl } from 'react-intl';
-import {
-  DataTable,
-  InlineNotification,
-  Tab,
-  Tabs,
-  Tag
-} from 'carbon-components-react';
+import { DataTable, InlineNotification, Tag } from 'carbon-components-react';
 import {
   Table as DashboardTable,
   FormattedDate,
+  Tab,
+  Tabs,
   ViewYAML
 } from '@tektoncd/dashboard-components';
 import { formatLabels } from '@tektoncd/dashboard-utils';
