@@ -15,7 +15,7 @@ import React from 'react';
 import { storiesOf } from '@storybook/react';
 
 import Tabs from '.';
-import Tab from '../Tab';
+import { Tab } from '..';
 
 storiesOf('Tabs', module).add('default', () => (
   <div>
