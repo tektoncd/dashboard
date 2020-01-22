@@ -158,7 +158,6 @@ const testStore = {
 };
 
 beforeEach(() => {
-  jest.resetAllMocks();
   jest.spyOn(API, 'getServiceAccounts').mockImplementation(() => []);
   jest.spyOn(API, 'getPipelines').mockImplementation(() => []);
   jest.spyOn(API, 'getPipelineResources').mockImplementation(() => []);

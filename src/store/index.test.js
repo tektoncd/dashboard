@@ -14,8 +14,6 @@ limitations under the License.
 import * as store from '.';
 import * as middleware from './middleware';
 
-beforeEach(jest.resetAllMocks);
-
 it('store with websocket', () => {
   const webSocket = { fake: 'webSocket', addEventListener: () => {} };
   jest.spyOn(middleware, 'createWebSocketMiddleware');

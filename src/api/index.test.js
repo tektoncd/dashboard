@@ -15,8 +15,6 @@ import fetchMock from 'fetch-mock';
 import * as comms from './comms';
 import * as index from '.';
 
-beforeEach(jest.resetAllMocks);
-
 describe('getAPIRoot', () => {
   it('handles base URL with trailing slash', () => {
     window.history.pushState({}, 'Title', '/path/#hash');

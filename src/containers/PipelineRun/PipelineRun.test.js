@@ -20,8 +20,6 @@ import { createIntl } from 'react-intl';
 import { PipelineRunContainer } from './PipelineRun';
 import { renderWithRouter } from '../../utils/test';
 
-beforeEach(jest.resetAllMocks);
-
 const intl = createIntl({
   locale: 'en',
   defaultLocale: 'en'

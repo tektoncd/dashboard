@@ -158,6 +158,9 @@ it('fetchSecrets error', async () => {
 
   const error = new Error('Could not fetch secrets');
 
+  jest
+    .spyOn(selectors, 'getSelectedNamespace')
+    .mockImplementation(() => namespace);
   jest.spyOn(API, 'getCredentials').mockImplementation(() => {
     throw error;
   });
