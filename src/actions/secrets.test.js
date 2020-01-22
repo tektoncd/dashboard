@@ -67,14 +67,20 @@ const dataFormatted = [
     annotations: undefined,
     namespace: 'default',
     type: 'userpass',
-    username: 'someUser@email.com'
+    username: 'someUser@email.com',
+    labels: {
+      serviceAccount: 'default'
+    }
   },
   {
     name: 'another-token-kbn7j',
     annotations: undefined,
     namespace: 'default',
     type: 'userpass',
-    username: 'someUser@email.com'
+    username: 'someUser@email.com',
+    labels: {
+      serviceAccount: 'default'
+    }
   }
 ];
 const postData = {

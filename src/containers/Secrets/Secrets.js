@@ -14,8 +14,13 @@ limitations under the License.
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
+import isEqual from 'lodash.isequal';
 import { InlineNotification } from 'carbon-components-react';
-import { FormattedDate, Table } from '@tektoncd/dashboard-components';
+import {
+  FormattedDate,
+  LabelFilter,
+  Table
+} from '@tektoncd/dashboard-components';
 import Add from '@carbon/icons-react/lib/add/16';
 import Delete from '@carbon/icons-react/lib/delete/16';
 import Modal from '../SecretsModal';
@@ -51,18 +56,63 @@ export /* istanbul ignore next */ class Secrets extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchSecrets();
-    this.props.fetchServiceAccounts();
+    this.fetchData();
   }
 
   componentDidUpdate(prevProps) {
-    const { webSocketConnected } = this.props;
-    const { webSocketConnected: prevWebSocketConnected } = prevProps;
-    if (webSocketConnected && prevWebSocketConnected === false) {
-      this.props.fetchSecrets();
-      this.props.fetchServiceAccounts();
+    const { filters, namespace, webSocketConnected } = this.props;
+    const {
+      filters: prevFilters,
+      namespace: prevNamespace,
+      webSocketConnected: prevWebSocketConnected
+    } = prevProps;
+
+    if (
+      !isEqual(filters, prevFilters) ||
+      namespace !== prevNamespace ||
+      (webSocketConnected && prevWebSocketConnected === false)
+    ) {
+      this.fetchData();
     }
   }
+
+  fetchData = () => {
+    const { filters, namespace } = this.props;
+    this.props.fetchSecrets({
+      filters,
+      namespace
+    });
+    this.props.fetchServiceAccounts();
+  };
+
+  handleAddFilter = labelFilters => {
+    const queryParams = `?${new URLSearchParams({
+      labelSelector: labelFilters
+    }).toString()}`;
+
+    const currentURL = this.props.match.url;
+    const browserURL = currentURL.concat(queryParams);
+    this.props.history.push(browserURL);
+  };
+
+  handleDeleteFilter = filter => {
+    const currentQueryParams = new URLSearchParams(this.props.location.search);
+    const labelFilters = currentQueryParams.getAll('labelSelector');
+    const labelFiltersArray = labelFilters.toString().split(',');
+    const index = labelFiltersArray.indexOf(filter);
+    labelFiltersArray.splice(index, 1);
+
+    const currentURL = this.props.match.url;
+    if (labelFiltersArray.length === 0) {
+      this.props.history.push(currentURL);
+    } else {
+      const newQueryParams = `?${new URLSearchParams({
+        labelSelector: labelFiltersArray
+      }).toString()}`;
+      const browserURL = currentURL.concat(newQueryParams);
+      this.props.history.push(browserURL);
+    }
+  };
 
   handleDisplayModalClick = () => {
     this.props.clearNotification();
@@ -120,6 +170,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
       loading,
       createSuccess,
       deleteSuccess,
+      filters,
       secrets,
       selectedNamespace,
       serviceAccounts,
@@ -149,6 +200,20 @@ export /* istanbul ignore next */ class Secrets extends Component {
         header: intl.formatMessage({
           id: 'dashboard.tableHeader.serviceAccounts',
           defaultMessage: 'Service Accounts'
+        })
+      },
+      {
+        key: 'type',
+        header: intl.formatMessage({
+          id: 'dashboard.tableHeader.type',
+          defaultMessage: 'Type'
+        })
+      },
+      {
+        key: 'username',
+        header: intl.formatMessage({
+          id: 'dashboard.tableHeader.username',
+          defaultMessage: 'Username'
         })
       },
       {
@@ -193,7 +258,9 @@ export /* istanbul ignore next */ class Secrets extends Component {
         created: <FormattedDate date={secret.creationTimestamp} relative />,
         serviceAccounts: (
           <span title={serviceAccountsString}>{serviceAccountsString}</span>
-        )
+        ),
+        type: <span title={secret.type}>{secret.type}</span>,
+        username: <span title={secret.username}>{secret.username}</span>
       };
 
       return formattedSecret;
@@ -242,8 +309,13 @@ export /* istanbul ignore next */ class Secrets extends Component {
             lowContrast
           />
         )}
+        <h1>Secrets</h1>
+        <LabelFilter
+          filters={filters}
+          handleAddFilter={this.handleAddFilter}
+          handleDeleteFilter={this.handleDeleteFilter}
+        />
         <Table
-          title="Secrets"
           headers={initialHeaders}
           rows={secretsFormatted}
           handleDisplayModal={this.handleDisplayModalClick}
@@ -278,8 +350,8 @@ export /* istanbul ignore next */ class Secrets extends Component {
             {
               onClick: this.handleDisplayModalClick,
               text: intl.formatMessage({
-                id: 'dashboard.secrets.add',
-                defaultMessage: 'Add Secret'
+                id: 'dashboard.secrets.create',
+                defaultMessage: 'Create'
               }),
               icon: Add
             }
@@ -307,15 +379,29 @@ Secrets.defaultProps = {
   secrets: []
 };
 
-function mapStateToProps(state) {
+function fetchFilters(searchQuery) {
+  const queryParams = new URLSearchParams(searchQuery);
+  let filters = [];
+  queryParams.forEach(function filterValueSplit(value) {
+    filters = value.split(',');
+  });
+  return filters;
+}
+
+function mapStateToProps(state, props) {
+  const { namespace: namespaceParam } = props.match.params;
+  const filters = fetchFilters(props.location.search);
+  const namespace = namespaceParam || getSelectedNamespace(state);
+
   return {
     errorMessage: getSecretsErrorMessage(state),
     createSuccess: getCreateSecretsSuccessMessage(state),
     deleteSuccess: getDeleteSecretsSuccessMessage(state),
+    filters,
     loading: isFetchingSecrets(state) || isFetchingServiceAccounts(state),
-    secrets: getSecrets(state),
+    secrets: getSecrets(state, { filters, namespace }),
     serviceAccounts: getServiceAccounts(state),
-    selectedNamespace: getSelectedNamespace(state),
+    selectedNamespace: namespace,
     webSocketConnected: isWebSocketConnected(state)
   };
 }

@@ -15,11 +15,15 @@ import React from 'react';
 import { createIntl } from 'react-intl';
 import { fireEvent } from 'react-testing-library';
 import { Provider } from 'react-redux';
+import { Route } from 'react-router-dom';
+import { urls } from '@tektoncd/dashboard-utils';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { renderWithIntl } from '../../utils/test';
+import { renderWithRouter } from '../../utils/test';
 import Secrets from '.';
 import * as API from '../../api';
+
+beforeEach(jest.resetAllMocks);
 
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
@@ -38,6 +42,17 @@ const byNamespace = {
       annotations: {
         'tekton.dev/git-0': 'https://github.ibm.com',
         badannotation: 'badcontent'
+      }
+    },
+    {
+      uid: '0',
+      type: 'userpass',
+      name: 'another-secret-with-label',
+      annotations: {
+        'tekton.dev/git-0': 'https://github.com'
+      },
+      labels: {
+        baz: 'bam'
       }
     }
   ]
@@ -117,7 +132,7 @@ const store = mockStore({
 });
 
 it('click add new secret & modal appears', () => {
-  const props = {
+  const currentProps = {
     secrets: [
       {
         name: 'github-repo-access-secret',
@@ -136,21 +151,25 @@ it('click add new secret & modal appears', () => {
 
   jest.spyOn(API, 'getServiceAccounts').mockImplementation(() => []);
 
-  const { getByTestId, getByText } = renderWithIntl(
+  const { getByTestId, getByText } = renderWithRouter(
     <Provider store={store}>
-      <Secrets {...props} intl={intl} />
-    </Provider>
+      <Route
+        path={urls.secrets.all()}
+        render={props => <Secrets {...props} {...currentProps} />}
+      />
+    </Provider>,
+    { route: urls.secrets.all() }
   );
 
   expect(getByTestId('modal').className.includes('is-visible')).toBeFalsy();
 
-  fireEvent.click(getByText('Add Secret'));
+  fireEvent.click(getByText('Create'));
 
   expect(getByTestId('modal').className.includes('is-visible')).toBeTruthy();
 });
 
 it('click delete secret & modal appears', () => {
-  const props = {
+  const currentProps = {
     secrets: [
       {
         name: 'github-repo-access-secret',
@@ -163,10 +182,14 @@ it('click delete secret & modal appears', () => {
     error: null
   };
 
-  const { getByTestId, getByText } = renderWithIntl(
+  const { getByTestId, getByText } = renderWithRouter(
     <Provider store={store}>
-      <Secrets {...props} intl={intl} />
-    </Provider>
+      <Route
+        path={urls.secrets.all()}
+        render={props => <Secrets {...props} {...currentProps} />}
+      />
+    </Provider>,
+    { route: urls.secrets.all() }
   );
 
   expect(
@@ -181,10 +204,14 @@ it('click delete secret & modal appears', () => {
 });
 
 it('SecretsTable renders with one secret', () => {
-  const { queryByText } = renderWithIntl(
+  const { queryByText } = renderWithRouter(
     <Provider store={store}>
-      <Secrets intl={intl} />
-    </Provider>
+      <Route
+        path={urls.secrets.all()}
+        render={props => <Secrets {...props} />}
+      />
+    </Provider>,
+    { route: urls.secrets.all() }
   );
 
   expect(queryByText(/github-repo-access-secret/i)).toBeTruthy();
@@ -195,7 +222,7 @@ it('SecretsTable renders with one secret', () => {
 });
 
 it('SecretsTable only renders tekton.dev annotations', () => {
-  const props = {
+  const currentProps = {
     secrets: [
       {
         name: 'github-repo-access-secret',
@@ -207,11 +234,17 @@ it('SecretsTable only renders tekton.dev annotations', () => {
     loading: false,
     error: null
   };
-  const { queryByText } = renderWithIntl(
+
+  const { queryByText } = renderWithRouter(
     <Provider store={store}>
-      <Secrets {...props} intl={intl} />
-    </Provider>
+      <Route
+        path={urls.secrets.all()}
+        render={props => <Secrets {...props} {...currentProps} />}
+      />
+    </Provider>,
+    { route: urls.secrets.all() }
   );
+
   expect(
     queryByText(/tekton.dev\/git-0: https:\/\/github.ibm.com/i)
   ).toBeTruthy();
@@ -219,4 +252,31 @@ it('SecretsTable only renders tekton.dev annotations', () => {
   expect(queryByText(/badannotation/i)).toBeFalsy();
 
   expect(queryByText(/badcontent/i)).toBeFalsy();
+});
+
+it('Secrets can be filtered on a single label filter', async () => {
+  const currentProps = {
+    loading: false,
+    error: null,
+    intl
+  };
+
+  const { getByTestId, getByText, queryByText } = renderWithRouter(
+    <Provider store={store}>
+      <Route
+        path={urls.secrets.all()}
+        render={props => <Secrets {...props} {...currentProps} />}
+      />
+    </Provider>,
+    { route: urls.secrets.all() }
+  );
+
+  const filterValue = 'baz:bam';
+  const filterInputField = getByTestId('filter-search-bar');
+  fireEvent.change(filterInputField, { target: { value: filterValue } });
+  fireEvent.click(getByText('Add filter'));
+
+  expect(queryByText(filterValue)).toBeTruthy();
+  expect(queryByText('github-repo-access-secret')).toBeFalsy();
+  expect(queryByText('another-secret-with-label')).toBeTruthy();
 });

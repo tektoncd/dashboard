@@ -308,9 +308,21 @@ export function getTaskByType(
 
 export function getSecrets(
   state,
-  { namespace = getSelectedNamespace(state) } = {}
+  { filters = [], namespace = getSelectedNamespace(state) } = {}
 ) {
-  return secretSelectors.getSecrets(state.secrets, namespace);
+  const allSecrets = secretSelectors.getSecrets(state.secrets, namespace);
+
+  return allSecrets.filter(secret => {
+    return filters.every(filter => {
+      const [filterKey, filterValue] = filter.split('=');
+      return (
+        secret.labels &&
+        filterKey &&
+        filterValue &&
+        secret.labels[filterKey] === filterValue
+      );
+    });
+  });
 }
 
 export function getSecretsErrorMessage(state) {
