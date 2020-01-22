@@ -5,24 +5,29 @@ metadata:
   name: dashboard-release
 spec:
   params:
-  - name: package
-    description: package to release
-    default: github.com/tektoncd/dashboard
-  - name: imageRegistry
-    default: gcr.io/tekton-releases # REPLACE with your own registry
-  - name: versionTag
-    description: The X.Y.Z version that the artifacts should be tagged with
+    - name: package
+      description: package to release
+      default: github.com/tektoncd/dashboard
+    - name: imageRegistry
+      default: gcr.io/tekton-releases # REPLACE with your own registry
+    - name: versionTag
+      description: The X.Y.Z version that the artifacts should be tagged with
   resources:
-  - name: source-repo
-    type: git
-  - name: bucket
-    type: storage
-  - name: builtDashboardImage
-    type: image
+    - name: source-repo
+      type: git
+    - name: bucket
+      type: storage
+    - name: builtDashboardImage
+      type: image
   tasks:
     - name: build
       taskRef:
         name: build-tekton-dashboard
+      params:
+        - name: package
+          value: $(params.package)
+        - name: flags
+          value: -ldflags "-X github.com/tektoncd/dashboard/pkg/version.DashboardVersion=$(params.versionTag)" # yamllint disable-line
       resources:
         inputs:
           - name: source
@@ -53,4 +58,3 @@ spec:
             resource: bucket
           - name: builtDashboardImage
             resource: builtDashboardImage
-

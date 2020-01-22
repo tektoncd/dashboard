@@ -17,11 +17,14 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 
 	restful "github.com/emicklei/go-restful"
 	"github.com/tektoncd/dashboard/pkg/logging"
 	"github.com/tektoncd/dashboard/pkg/utils"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 )
 
 // Properties : properties we want to be able to retrieve via REST
@@ -135,4 +138,84 @@ func (r Resource) GetEndpoints(request *restful.Request, response *restful.Respo
 func (r Resource) GetProperties(request *restful.Request, response *restful.Response) {
 	properties := Properties{InstallNamespace: os.Getenv("INSTALLED_NAMESPACE")}
 	response.WriteEntity(properties)
+}
+
+// Get dashboard version
+func (r Resource) GetDashboardVersion(request *restful.Request, response *restful.Response) {
+	config, err := rest.InClusterConfig()
+	clientset, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	properties := Properties{InstallNamespace: os.Getenv("INSTALLED_NAMESPACE")}
+	api := clientset.CoreV1()
+	pods, err := api.Pods(properties.InstallNamespace).List(metav1.ListOptions{})
+	controllerImage := ""
+
+	for _, pod := range pods.Items {
+		podImage := pod.Spec.Containers[0].Image
+		if strings.Contains(pod.Name, "tekton-dashboard") {
+			controllerImage = podImage
+		}
+	}
+
+	version := ""
+
+	if strings.Contains(controllerImage, "gcr") {
+		if strings.Contains(controllerImage, "tekton-nightly") {
+			version = controllerImage
+		} else {
+			s := strings.SplitAfter(controllerImage, ":")
+			t := strings.Split(s[1], "@")
+			version = t[0]
+		}
+	}
+
+	if strings.HasPrefix(controllerImage, "docker.io/") {
+		response.WriteEntity("dev")
+		return
+	}
+
+	if version == "" {
+		response.WriteEntity("Unknown")
+		return
+	}
+	response.WriteEntity(version)
+	return
+}
+
+// Get pipelines version
+func (r Resource) GetPipelineVersion(request *restful.Request, response *restful.Response) {
+	config, err := rest.InClusterConfig()
+	clientset, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	api := clientset.CoreV1()
+
+	pods, err := api.Pods("tekton-pipelines").List(metav1.ListOptions{})
+	controllerImage := ""
+
+	for _, pod := range pods.Items {
+		quant := pod.Spec.Containers[0].Image
+		if strings.Contains(pod.Name, "tekton-pipelines-controller") {
+			controllerImage = quant
+		}
+	}
+
+	version := ""
+	if strings.Contains(controllerImage, "pipeline/cmd/controller") {
+		s := strings.SplitAfter(controllerImage, ":")
+		t := strings.Split(s[1], "@")
+		version = t[0]
+	}
+
+	if version == "" {
+		response.WriteEntity("Unknown")
+		return
+	}
+	response.WriteEntity(version)
+	return
 }

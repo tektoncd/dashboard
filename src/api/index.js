@@ -463,3 +463,15 @@ export function getEventListener({ name, namespace }) {
   const uri = getTektonAPI('eventlisteners', { name, namespace });
   return get(uri);
 }
+
+export async function getDashboardVersion(namespace) {
+  const uri = getAPI('dashboardversion', { namespace });
+  const dashboardVersion = await get(uri);
+  return dashboardVersion;
+}
+
+export async function getPipelineVersion(namespace) {
+  const uri = getAPI('pipelineversion', { namespace });
+  const pipelineVersion = await get(uri);
+  return pipelineVersion;
+}

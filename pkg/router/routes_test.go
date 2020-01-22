@@ -35,14 +35,16 @@ import (
 
 // Exclude testing of routes that contain any of these substring values
 var excludeRoutes []string = []string{
-	"/v1/websockets", // No response code
-	"rerun",          // Returns 201
-	ExtensionRoot,    // Response codes dictated by extension logic
-	"health",         // Returns 204
-	"readiness",      // Returns 204
-	"proxy",          // Kube API server has its own standard
-	"ingress",        // Ingress will not exist
-	"endpoints",      // Route or Ingress will not exist
+	"/v1/websockets",   // No response code
+	"rerun",            // Returns 201
+	ExtensionRoot,      // Response codes dictated by extension logic
+	"health",           // Returns 204
+	"readiness",        // Returns 204
+	"proxy",            // Kube API server has its own standard
+	"ingress",          // Ingress will not exist
+	"endpoints",        // Route or Ingress will not exist
+	"dashboardversion", // Returns version of dashboard running
+	"pipelineversion",  // Returns version of the pipelines running
 }
 
 var methodRouteMap = make(map[string][]string) // k, v := HTTP_METHOD, []route
