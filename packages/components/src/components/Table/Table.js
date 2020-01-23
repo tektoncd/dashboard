@@ -180,6 +180,7 @@ Table.defaultProps = {
   toolbarButtons: [],
   loading: false,
   isSortable: false,
+  selectedNamespace: null,
   title: null
 };
 
@@ -190,7 +191,7 @@ Table.propTypes = {
   loading: PropTypes.bool,
   isSortable: PropTypes.bool,
   rows: PropTypes.arrayOf(PropTypes.object).isRequired,
-  selectedNamespace: PropTypes.string.isRequired,
+  selectedNamespace: PropTypes.string,
   title: PropTypes.string,
   batchActionButtons: PropTypes.arrayOf(PropTypes.object),
   toolbarButtons: PropTypes.arrayOf(PropTypes.object)

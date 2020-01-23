@@ -43,13 +43,7 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
   }
 
   render() {
-    const {
-      error,
-      loading,
-      clusterTasks,
-      intl,
-      namespace: selectedNamespace
-    } = this.props;
+    const { error, loading, clusterTasks, intl } = this.props;
     const initialHeaders = [
       {
         key: 'name',
@@ -102,7 +96,6 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
           headers={initialHeaders}
           rows={clusterTasksFormatted}
           loading={loading}
-          selectedNamespace={selectedNamespace}
           emptyTextAllNamespaces={intl.formatMessage(
             {
               id: 'dashboard.emptyState.clusterTasks',
