@@ -75,7 +75,9 @@ func TestGETTaskRunLogs(t *testing.T) {
 			},
 			Spec: v1alpha1.TaskRunSpec{},
 			Status: v1alpha1.TaskRunStatus{
-				PodName: podName,
+				TaskRunStatusFields: v1alpha1.TaskRunStatusFields{
+					PodName: podName,
+				},
 			},
 		},
 	}
@@ -188,7 +190,9 @@ func TestGETPipelineRunLogs(t *testing.T) {
 			},
 			Spec: v1alpha1.TaskRunSpec{},
 			Status: v1alpha1.TaskRunStatus{
-				PodName: pods[0].Name,
+				TaskRunStatusFields: v1alpha1.TaskRunStatusFields{
+					PodName: pods[0].Name,
+				},
 			},
 		},
 		v1alpha1.TaskRun{
@@ -197,7 +201,9 @@ func TestGETPipelineRunLogs(t *testing.T) {
 			},
 			Spec: v1alpha1.TaskRunSpec{},
 			Status: v1alpha1.TaskRunStatus{
-				PodName: pods[1].Name,
+				TaskRunStatusFields: v1alpha1.TaskRunStatusFields{
+					PodName: pods[1].Name,
+				},
 			},
 		},
 	}
@@ -227,7 +233,9 @@ func TestGETPipelineRunLogs(t *testing.T) {
 			},
 			Spec: v1alpha1.PipelineRunSpec{},
 			Status: v1alpha1.PipelineRunStatus{
-				TaskRuns: pipelineRunTaskRunStatus,
+				PipelineRunStatusFields: v1alpha1.PipelineRunStatusFields{
+					TaskRuns: pipelineRunTaskRunStatus,
+				},
 			},
 		},
 	}

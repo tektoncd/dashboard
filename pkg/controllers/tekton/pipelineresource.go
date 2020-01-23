@@ -5,13 +5,13 @@ import (
 	"github.com/tektoncd/dashboard/pkg/endpoints"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
 	v1alpha1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
-	tektoninformer "github.com/tektoncd/pipeline/pkg/client/informers/externalversions"
+	tektonresourceinformer "github.com/tektoncd/pipeline/pkg/client/resource/informers/externalversions"
 	"k8s.io/client-go/tools/cache"
 )
 
 // NewPipelineResourceController registers a Tekton controller/informer for
 // pipelineResources on the sharedTektonInformerFactory
-func NewPipelineResourceController(sharedTektonInformerFactory tektoninformer.SharedInformerFactory) {
+func NewPipelineResourceController(sharedTektonInformerFactory tektonresourceinformer.SharedInformerFactory) {
 	logging.Log.Debug("In NewPipelineResourceController")
 	pipelineResourceInformer := sharedTektonInformerFactory.Tekton().V1alpha1().PipelineResources().Informer()
 	pipelineResourceInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
