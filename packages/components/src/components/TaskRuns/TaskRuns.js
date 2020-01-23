@@ -189,6 +189,7 @@ const TaskRuns = ({
         },
         { kind: 'TaskRuns', selectedNamespace }
       )}
+      selectedNamespace={selectedNamespace}
     />
   );
 };
