@@ -147,6 +147,7 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
           return isRunning(reason, status);
         },
         modalProperties: {
+          danger: true,
           heading: intl.formatMessage({
             id: 'dashboard.deleteTaskRun.heading',
             defaultMessage: 'Delete TaskRun'

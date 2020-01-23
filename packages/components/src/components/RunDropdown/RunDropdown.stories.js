@@ -27,6 +27,7 @@ storiesOf('RunDropdown', module)
           actionText: 'Delete',
           action: () => {},
           modalProperties: {
+            danger: true,
             heading: 'Modal Heading',
             primaryButtonText: 'primary text',
             secondaryButtonText: 'secondary text',
@@ -35,7 +36,7 @@ storiesOf('RunDropdown', module)
         },
         {
           actionText: 'disabled option',
-          disabled: true,
+          disable: () => true,
           action: () => {},
           modalProperties: {
             heading: 'Modal Heading',

@@ -179,6 +179,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
           return isRunning(reason, status);
         },
         modalProperties: {
+          danger: true,
           heading: intl.formatMessage({
             id: 'dashboard.deletePipelineRun.heading',
             defaultMessage: 'Delete PipelineRun'

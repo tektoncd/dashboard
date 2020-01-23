@@ -64,6 +64,7 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
         }),
         action: this.deleteResource,
         modalProperties: {
+          danger: true,
           heading: intl.formatMessage({
             id: 'dashboard.deletePipelineResource.heading',
             defaultMessage: 'Delete PipelineResource'
