@@ -13,26 +13,26 @@ limitations under the License.
 
 import React from 'react';
 
-import { Link } from 'react-router-dom';
-import { Header as CarbonHeader } from 'carbon-components-react';
+import {
+  Header as CarbonHeader,
+  HeaderGlobalBar,
+  HeaderName
+} from 'carbon-components-react';
 
 import './Header.scss';
 
-import tektonBanner from '../../images/tekton-horizontal-color.png';
+import tektonLogo from '../../images/tekton-logo-20x20.svg';
 
-export default function Header({ children, logoutButton }) {
+export default function Header({ logoutButton }) {
   return (
     <CarbonHeader aria-label="Tekton Dashboard" className="header">
-      <Link to="/">
-        <img
-          alt="Tekton logo and title"
-          className="banner"
-          src={tektonBanner}
-          title="Meow"
-        />
-      </Link>
-      {logoutButton}
-      {children && <div className="header-children">{children}</div>}
+      <span className="logo">
+        <img alt="Tekton logo" src={tektonLogo} title="Meow" />
+      </span>
+      <HeaderName href="/" prefix="">
+        Tekton
+      </HeaderName>
+      <HeaderGlobalBar>{logoutButton}</HeaderGlobalBar>
     </CarbonHeader>
   );
 }

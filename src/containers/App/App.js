@@ -24,7 +24,6 @@ import {
 import { IntlProvider } from 'react-intl';
 import { Content } from 'carbon-components-react';
 import {
-  Breadcrumbs,
   Header,
   LogoutButton,
   PageErrorBoundary
@@ -105,9 +104,7 @@ export /* istanbul ignore next */ class App extends Component {
       <IntlProvider locale={lang} defaultLocale="en" messages={messages[lang]}>
         <Router>
           <>
-            <Header logoutButton={logoutButton}>
-              <Route path="*" component={Breadcrumbs} />
-            </Header>
+            <Header logoutButton={logoutButton} />
             <Route path={paths.byNamespace({ path: '/*' })}>
               {props => <SideNav {...props} />}
             </Route>

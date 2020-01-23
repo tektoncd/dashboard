@@ -19,7 +19,7 @@ import { fireEvent } from 'react-testing-library';
 import { ALL_NAMESPACES, paths, urls } from '@tektoncd/dashboard-utils';
 
 import { renderWithRouter } from '../../utils/test';
-import SideNavContainer, { SideNav } from './SideNav';
+import SideNavContainer, { SideNavWithIntl as SideNav } from './SideNav';
 
 it('SideNav renders with extensions', () => {
   const middleware = [thunk];

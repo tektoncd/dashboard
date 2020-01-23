@@ -12,15 +12,19 @@ limitations under the License.
 */
 
 header.bx--header {
-  flex-direction: column;
-  align-items: flex-start;
-  background-color: white;
-  border-bottom: 0;
-  height: 7rem;
-  padding: 1.5em;
+  .logo {
+    display: flex;
+    align-items: center;
+    width: 3rem;
+    height: 3rem;
 
-  .banner {
-    height: 2.5em;
-    margin-bottom: 1em;
+    img {
+      width: 20px;
+      margin: 0 1rem;
+    }
+  }
+
+  .logout-btn {
+    padding-right: 2px;
   }
 }

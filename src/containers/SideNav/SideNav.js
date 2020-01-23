@@ -14,6 +14,7 @@ limitations under the License.
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { generatePath, NavLink } from 'react-router-dom';
+import { injectIntl } from 'react-intl';
 import {
   SideNav as CarbonSideNav,
   SideNavItems,
@@ -30,7 +31,7 @@ import { getCustomResource } from '../../api';
 
 import './SideNav.scss';
 
-export class SideNav extends Component {
+class SideNav extends Component {
   state = {
     isTriggersInstalled: false
   };
@@ -115,7 +116,7 @@ export class SideNav extends Component {
   }
 
   render() {
-    const { extensions, namespace } = this.props;
+    const { extensions, intl, namespace } = this.props;
     const { isTriggersInstalled } = this.state;
 
     return (
@@ -126,7 +127,13 @@ export class SideNav extends Component {
         aria-label="Side navigation"
       >
         <SideNavItems>
-          <SideNavMenu defaultExpanded title="Tekton">
+          <SideNavMenu
+            defaultExpanded
+            title={intl.formatMessage({
+              id: 'dashboard.sideNav.tektonResources',
+              defaultMessage: 'Tekton resources'
+            })}
+          >
             <SideNavMenuItem
               element={NavLink}
               icon={<span />}
@@ -269,7 +276,8 @@ const mapDispatchToProps = {
   selectNamespace
 };
 
+export const SideNavWithIntl = injectIntl(SideNav);
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(SideNav);
+)(SideNavWithIntl);
