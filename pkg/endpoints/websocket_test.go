@@ -23,6 +23,8 @@ import (
 	"testing"
 	"time"
 
+	"strconv"
+
 	gorillaSocket "github.com/gorilla/websocket"
 	"github.com/tektoncd/dashboard/pkg/broadcaster"
 	. "github.com/tektoncd/dashboard/pkg/endpoints"
@@ -33,7 +35,6 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
-	"strconv"
 )
 
 type informerRecord struct {
@@ -259,7 +260,7 @@ func CUDPipelineResources(r *Resource, t *testing.T, namespace string) {
 	}
 
 	t.Log("Creating pipelineresource")
-	_, err := r.PipelineClient.TektonV1alpha1().PipelineResources(namespace).Create(&pipelineResource)
+	_, err := r.PipelineResourceClient.TektonV1alpha1().PipelineResources(namespace).Create(&pipelineResource)
 	if err != nil {
 		t.Fatalf("Error creating pipelineresource: %s: %s\n", pipelineResource.Name, err.Error())
 	}
@@ -267,13 +268,13 @@ func CUDPipelineResources(r *Resource, t *testing.T, namespace string) {
 	newVersion := "2"
 	pipelineResource.ResourceVersion = newVersion
 	t.Log("Updating pipelineresource")
-	_, err = r.PipelineClient.TektonV1alpha1().PipelineResources(namespace).Update(&pipelineResource)
+	_, err = r.PipelineResourceClient.TektonV1alpha1().PipelineResources(namespace).Update(&pipelineResource)
 	if err != nil {
 		t.Fatalf("Error updating pipelineresource: %s: %s\n", pipelineResource.Name, err.Error())
 	}
 
 	t.Log("Deleting pipelineresource")
-	err = r.PipelineClient.TektonV1alpha1().PipelineResources(namespace).Delete(pipelineResource.Name, &metav1.DeleteOptions{})
+	err = r.PipelineResourceClient.TektonV1alpha1().PipelineResources(namespace).Delete(pipelineResource.Name, &metav1.DeleteOptions{})
 	if err != nil {
 		t.Fatalf("Error deleting pipelineresource: %s: %s\n", pipelineResource.Name, err.Error())
 	}

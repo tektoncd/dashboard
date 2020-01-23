@@ -28,6 +28,7 @@ import (
 	logging "github.com/tektoncd/dashboard/pkg/logging"
 	"github.com/tektoncd/dashboard/pkg/router"
 	fakeclientset "github.com/tektoncd/pipeline/pkg/client/clientset/versioned/fake"
+	fakeresourceclientset "github.com/tektoncd/pipeline/pkg/client/resource/clientset/versioned/fake"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	fakek8sclientset "k8s.io/client-go/kubernetes/fake"
@@ -45,11 +46,18 @@ func DummyClientset() *fakeclientset.Clientset {
 	return result
 }
 
+// DummyResourceClientset returns a fake Tekton Pipelines clientset
+func DummyResourceClientset() *fakeresourceclientset.Clientset {
+	result := fakeresourceclientset.NewSimpleClientset()
+	return result
+}
+
 // DummyResource returns a Resource populated by fake clientsets
 func DummyResource() *endpoints.Resource {
 	resource := endpoints.Resource{
-		PipelineClient: DummyClientset(),
-		K8sClient:      DummyK8sClientset(),
+		PipelineClient:         DummyClientset(),
+		PipelineResourceClient: DummyResourceClientset(),
+		K8sClient:              DummyK8sClientset(),
 	}
 	return &resource
 }
@@ -81,7 +89,7 @@ func DummyServer() (*httptest.Server, *endpoints.Resource, string) {
 	logging.Log.Info("Creating controllers")
 	stopCh := make(<-chan struct{})
 	resyncDur := time.Second * 30
-	controllers.StartTektonControllers(resource.PipelineClient, resyncDur, stopCh)
+	controllers.StartTektonControllers(resource.PipelineClient, resource.PipelineResourceClient, resyncDur, stopCh)
 	controllers.StartKubeControllers(resource.K8sClient, resyncDur, dashboardNamespace, routerHandler, stopCh)
 	// Wait until namespace is detected by informer and functionally "dropped" since the informer will be eventually consistent
 	timeout := time.After(5 * time.Second)

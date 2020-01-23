@@ -6,19 +6,19 @@ required = [
 
 [[constraint]]
   name = "github.com/tektoncd/pipeline"
-  version = "v0.8.0"
-  
+  version = "v0.10.0"
+
 [[override]]
   name = "k8s.io/client-go"
-  version = "kubernetes-1.12.6"
+  version = "kubernetes-1.13.4"
 
 [[override]]
   name = "k8s.io/apimachinery"
-  version = "kubernetes-1.12.6"
+  version = "kubernetes-1.13.4"
 
 [[override]]
   name = "k8s.io/api"
-  version = "kubernetes-1.12.6"
+  version = "kubernetes-1.13.4"
 
 [prune]
   go-tests = true

@@ -244,7 +244,9 @@ func makeFake(t *testing.T, r *endpoints.Resource, resourceType, namespace, reso
 			},
 			Spec: v1alpha1.TaskRunSpec{},
 			Status: v1alpha1.TaskRunStatus{
-				PodName: resourceName,
+				TaskRunStatusFields: v1alpha1.TaskRunStatusFields{
+					PodName: resourceName,
+				},
 			},
 		}
 		_, err = r.PipelineClient.TektonV1alpha1().TaskRuns(namespace).Create(&taskRun)
@@ -276,7 +278,9 @@ func makeFake(t *testing.T, r *endpoints.Resource, resourceType, namespace, reso
 			},
 			Spec: v1alpha1.TaskRunSpec{},
 			Status: v1alpha1.TaskRunStatus{
-				PodName: resourceName,
+				TaskRunStatusFields: v1alpha1.TaskRunStatusFields{
+					PodName: resourceName,
+				},
 			},
 		}
 		_, err = r.PipelineClient.TektonV1alpha1().TaskRuns(namespace).Create(&taskRun)
@@ -290,10 +294,14 @@ func makeFake(t *testing.T, r *endpoints.Resource, resourceType, namespace, reso
 			},
 			Spec: v1alpha1.PipelineRunSpec{},
 			Status: v1alpha1.PipelineRunStatus{
-				TaskRuns: map[string]*v1alpha1.PipelineRunTaskRunStatus{
-					resourceName: &v1alpha1.PipelineRunTaskRunStatus{
-						Status: &v1alpha1.TaskRunStatus{
-							PodName: resourceName,
+				PipelineRunStatusFields: v1alpha1.PipelineRunStatusFields{
+					TaskRuns: map[string]*v1alpha1.PipelineRunTaskRunStatus{
+						resourceName: &v1alpha1.PipelineRunTaskRunStatus{
+							Status: &v1alpha1.TaskRunStatus{
+								TaskRunStatusFields: v1alpha1.TaskRunStatusFields{
+									PodName: resourceName,
+								},
+							},
 						},
 					},
 				},
@@ -310,7 +318,7 @@ func makeFake(t *testing.T, r *endpoints.Resource, resourceType, namespace, reso
 				Namespace: namespace,
 			},
 		}
-		_, err := r.PipelineClient.TektonV1alpha1().PipelineResources(namespace).Create(&pipelineResource)
+		_, err := r.PipelineResourceClient.TektonV1alpha1().PipelineResources(namespace).Create(&pipelineResource)
 		if err != nil {
 			t.Fatalf("Error creating pipelineResource: %v\n", err)
 		}
