@@ -16,6 +16,7 @@ You must install these tools:
 1. [`ko`](https://github.com/google/ko): For development. `ko` version v0.1 or higher is required for `dashboard` to work correctly.
 1. [Node.js & npm](https://nodejs.org/): For building and running the frontend locally. See `engines` in [package.json](./package.json) for versions used. _Node.js 10.x is recommended_
 1. [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/): For interacting with your kube cluster.
+1. [`kustomize`](https://github.com/kubernetes-sigs/kustomize/blob/master/docs/INSTALL.md): For building the Dashboard kube config. You need a recent version - v3.5.4 is recommended. See [here](https://github.com/kubernetes-sigs/kustomize/blob/master/docs/INSTALL.md#try-go) - `GO111MODULE=on go install sigs.k8s.io/kustomize/kustomize/v3` works correctly. 
 
 Your [`$GOPATH`] setting is critical for `ko apply` to function properly: a
 successful run will typically involve building pushing images instead of only
@@ -121,8 +122,20 @@ npm run build_ko
 
 This will build the static resources and add them to the `kodata` directory.
 
+Development dashboard builds come in four flavours: (plain kube or Openshift) * (read-only or read-write):
 ```shell
-ko apply -f config/
+# Plain Kube
+kustomize build overlays/dev | ko apply -f -
+kustomize build overlays/dev-locked-down | ko apply -f -
+
+# OpenShift
+kustomize build overlays/dev-openshift --load_restrictor=LoadRestrictionsNone | ko apply -f - | kubectl apply -f - --validate=false
+kustomize build overlays/dev-openshift-locked-down --load_restrictor=LoadRestrictionsNone | ko apply -f - | kubectl apply -f - --validate=false
+```
+
+We also provide a version for working with OpenShift image streams:
+```shell
+kustomize build overlays/dev-openshift-imagestream --load_restrictor=LoadRestrictionsNone | ko apply -f -
 ```
 
 ## Access the dashboard

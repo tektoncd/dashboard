@@ -1,5 +1,3 @@
-# The contents of this file should be included in both the Tekton dashboard
-# config directory and config/release/gcr-tekton-dashboard.yaml
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: Task

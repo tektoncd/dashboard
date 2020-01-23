@@ -1,0 +1,123 @@
+---
+- op: add
+  path: /rules/0
+  value:
+    apiGroups:
+      - ""
+    resources:
+      - serviceaccounts
+    verbs:
+      - update
+      - patch
+- op: add
+  path: /rules/1
+  value:
+    apiGroups:
+      - ""
+    resources:
+      - pods
+      - services
+    verbs:
+      - create
+      - update
+      - delete
+      - patch
+- op: add
+  path: /rules/2
+  value:
+    apiGroups:
+      - ""
+    resources:
+      - secrets
+      - configmaps
+    verbs:
+      - create
+      - update
+      - delete
+- op: add
+  path: /rules/3
+  value:
+    apiGroups:
+      - extensions
+      - apps
+    resources:
+      - deployments
+    verbs:
+      - create
+      - update
+      - delete
+      - patch
+- op: add
+  path: /rules/4
+  value:
+    apiGroups:
+      - tekton.dev
+    resources:
+      - tasks
+      - clustertasks
+      - taskruns
+      - pipelines
+      - pipelineruns
+      - pipelineresources
+      - conditions
+    verbs:
+      - create
+      - update
+      - delete
+      - patch
+- op: add
+  path: /rules/5
+  value:
+    apiGroups:
+      - tekton.dev
+    resources:
+      - taskruns/finalizers
+      - pipelineruns/finalizers
+    verbs:
+      - create
+      - update
+      - delete
+      - patch
+- op: add
+  path: /rules/6
+  value:
+    apiGroups:
+      - tekton.dev
+    resources:
+      - tasks/status
+      - clustertasks/status
+      - taskruns/status
+      - pipelines/status
+      - pipelineruns/status
+    verbs:
+      - create
+      - update
+      - delete
+      - patch
+- op: add
+  path: /rules/7
+  value:
+    apiGroups:
+      - dashboard.tekton.dev
+    resources:
+      - extensions
+    verbs:
+      - create
+      - update
+      - delete
+      - patch
+- op: add
+  path: /rules/8
+  value:
+    apiGroups:
+      - tekton.dev
+    resources:
+      - eventlisteners
+      - triggerbindings
+      - triggertemplates
+    verbs:
+      - create
+      - update
+      - delete
+      - patch
+      - add
