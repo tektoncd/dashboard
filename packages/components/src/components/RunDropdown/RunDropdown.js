@@ -72,6 +72,7 @@ class RunDropdown extends Component {
           onRequestClose={this.handleClose}
           onRequestSubmit={this.handleModalAction}
           onSecondarySubmit={this.handleClose}
+          danger={modal.danger}
         >
           {modal.body && modal.body(resource)}
         </Modal>
