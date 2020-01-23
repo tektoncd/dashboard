@@ -29,8 +29,8 @@ it('Header renders logout button if on OpenShift', async () => {
   const logoutButton = (
     <Logout shouldDisplayLogout={shouldDisplayLogoutTrueMock} />
   );
-  const { queryByText } = renderWithRouter(logoutButton);
-  await waitForElement(() => queryByText(/log out/i));
+  const { queryByTitle } = renderWithRouter(logoutButton);
+  await waitForElement(() => queryByTitle(/log out/i));
 });
 
 it('Header does not render logout button if not on OpenShift', async () => {

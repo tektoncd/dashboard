@@ -14,22 +14,17 @@ limitations under the License.
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 import StoryRouter from 'storybook-react-router';
-import { Breadcrumb, BreadcrumbItem } from 'carbon-components-react';
 
-import Header from './Header';
+import Header from '.';
+import { LogoutButton } from '..';
 
 storiesOf('Header', module)
   .addDecorator(StoryRouter())
   .add('default', () => <Header />)
-  .add('with children', () => (
-    <Header>
-      <Breadcrumb>
-        <BreadcrumbItem>
-          <span>Pipelines</span>
-        </BreadcrumbItem>
-        <BreadcrumbItem>
-          <span>demo-pipeline</span>
-        </BreadcrumbItem>
-      </Breadcrumb>
-    </Header>
+  .add('with logout', () => (
+    <Header
+      logoutButton={
+        <LogoutButton shouldDisplayLogout={() => Promise.resolve(true)} />
+      }
+    />
   ));

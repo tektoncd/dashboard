@@ -20,7 +20,10 @@ it('Header renders with default content', () => {
   renderWithRouter(<Header />);
 });
 
-it('Header renders the provided children', () => {
-  const { queryByText } = renderWithRouter(<Header>testing</Header>);
-  expect(queryByText(/testing/i)).toBeTruthy();
+it('Header renders the logout button', () => {
+  const logoutButton = 'log out';
+  const { queryByText } = renderWithRouter(
+    <Header logoutButton={logoutButton} />
+  );
+  expect(queryByText(/log out/i)).toBeTruthy();
 });

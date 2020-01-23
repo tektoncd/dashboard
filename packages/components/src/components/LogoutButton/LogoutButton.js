@@ -11,8 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import LogoutIcon from '@carbon/icons-react/lib/logout/20';
-import { Button } from 'carbon-components-react';
+import { Logout20 as LogoutIcon } from '@carbon/icons-react';
+import { HeaderGlobalAction } from 'carbon-components-react';
 import { injectIntl } from 'react-intl';
 import React, { Component } from 'react';
 import './LogoutButton.scss';
@@ -43,18 +43,17 @@ export class LogoutButton extends Component {
       return null;
     }
     return (
-      <Button
+      <HeaderGlobalAction
         data-testid="logout-btn"
-        kind="ghost"
         className="logout-btn"
-        renderIcon={LogoutIcon}
         onClick={handleLogout}
-      >
-        {this.props.intl.formatMessage({
+        title={this.props.intl.formatMessage({
           id: 'dashboard.header.logOut',
           defaultMessage: 'Log out'
         })}
-      </Button>
+      >
+        <LogoutIcon />
+      </HeaderGlobalAction>
     );
   }
 }
