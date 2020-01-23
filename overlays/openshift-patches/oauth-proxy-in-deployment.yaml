@@ -1,0 +1,43 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tekton-dashboard
+  namespace: tekton-pipelines
+  labels:
+    app: tekton-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tekton-dashboard
+  template:
+    metadata:
+      name: tekton-dashboard
+      labels:
+        app: tekton-dashboard
+    spec:
+      containers:
+        - name: oauth-proxy
+          image: openshift/oauth-proxy:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: public
+              containerPort: 8443
+          args:
+            - --https-address=:8443
+            - --provider=openshift
+            - --openshift-service-account=tekton-dashboard
+            - --upstream=http://localhost:9097
+            - --tls-cert=/etc/tls/private/tls.crt
+            - --tls-key=/etc/tls/private/tls.key
+            - --cookie-secret=SECRET
+            - --skip-auth-regex=^/v1/extensions/.*\.js
+          volumeMounts:
+            - name: proxy-tls
+              mountPath: /etc/tls/private
+      serviceAccountName: tekton-dashboard
+      volumes:
+        - name: proxy-tls
+          secret:
+            secretName: proxy-tls

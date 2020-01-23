@@ -1,0 +1,16 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: tekton-dashboard
+  namespace: tekton-pipelines
+  labels:
+    app: tekton-dashboard
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 9097
+      targetPort: 9097
+  selector:
+    app: tekton-dashboard

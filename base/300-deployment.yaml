@@ -1,0 +1,44 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tekton-dashboard
+  namespace: tekton-pipelines
+  labels:
+    app: tekton-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tekton-dashboard
+  template:
+    metadata:
+      name: tekton-dashboard
+      labels:
+        app: tekton-dashboard
+    spec:
+      serviceAccountName: tekton-dashboard
+      containers:
+        - name: tekton-dashboard
+          image: dashboardImage
+          ports:
+            - containerPort: 9097
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 9097
+          readinessProbe:
+            httpGet:
+              path: /readiness
+              port: 9097
+          env:
+            - name: PORT
+              value: "9097"
+            - name: WEB_RESOURCES_DIR
+              value: /var/run/ko/web
+            - name: PIPELINE_RUN_SERVICE_ACCOUNT
+              value: ""
+            - name: INSTALLED_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
