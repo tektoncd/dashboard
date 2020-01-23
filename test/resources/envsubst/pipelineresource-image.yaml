@@ -1,10 +1,4 @@
-# KUBECTL:
-#   cat <FILE> | envsubst | kubectl apply -f -
-# YAML curl:
-#   cat <FILE> | envsubst | curl -X POST --data-binary @- -H "Content-type: text/x-yaml" <url>
-# JSON curl:
-#   go get gopkg.in/mikefarah/yq.v2
-#   cat <FILE> | envsubst | yq r -j - | curl -X POST --data-binary @- -H "Content-Type: application/json" <url>
+---
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
 metadata:

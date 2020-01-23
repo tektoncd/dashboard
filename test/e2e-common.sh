@@ -30,7 +30,7 @@ function print_diagnostic_info() {
 
 function install_pipeline_crd() {
   echo ">> Deploying Tekton Pipelines"
-  kubectl apply --filename https://github.com/tektoncd/pipeline/releases/download/v0.8.0/release.yaml || fail_test "Tekton pipeline installation failed"
+  kubectl apply --filename https://github.com/tektoncd/pipeline/releases/download/v0.10.0/release.yaml || fail_test "Tekton pipeline installation failed"
 
   # Make sure thateveything is cleaned up in the current namespace.
   for res in pipelineresources tasks pipelines taskruns pipelineruns; do
@@ -106,7 +106,9 @@ function json_curl_envsubst_resource() {
     exit 1
   fi
   yq --version
+  set -x
   cat "$1" | envsubst | yq r -j - | curl -sS -X "$2" --data-binary @- -H "Content-Type: application/json" "$3"
+  set +x
 }
 
 function fail_test() {
