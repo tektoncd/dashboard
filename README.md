@@ -51,8 +51,10 @@ kustomize build overlays/latest | ko apply -f -
 kustomize build overlays/latest-locked-down | ko apply -f -
 
 # OpenShift
-kustomize build overlays/latest-openshift --load_restrictor=LoadRestrictionsNone | ko apply -f - | kubectl apply -f - --validate=false
-kustomize build overlays/latest-openshift-locked-down --load_restrictor=LoadRestrictionsNone | ko apply -f - | kubectl apply -f - --validate=false
+kustomize build overlays/latest-openshift --load_restrictor=LoadRestrictionsNone \
+ | ko resolve -f - | kubectl apply -f - --validate=false
+kustomize build overlays/latest-openshift-locked-down --load_restrictor=LoadRestrictionsNone \
+ | ko resolve -f - | kubectl apply -f - --validate=false
 ```
 Development installation of the Dashboard uses `ko`:
 

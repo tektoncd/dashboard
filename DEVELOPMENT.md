@@ -129,13 +129,15 @@ kustomize build overlays/dev | ko apply -f -
 kustomize build overlays/dev-locked-down | ko apply -f -
 
 # OpenShift
-kustomize build overlays/dev-openshift --load_restrictor=LoadRestrictionsNone | ko apply -f - | kubectl apply -f - --validate=false
-kustomize build overlays/dev-openshift-locked-down --load_restrictor=LoadRestrictionsNone | ko apply -f - | kubectl apply -f - --validate=false
+kustomize build overlays/dev-openshift --load_restrictor=LoadRestrictionsNone \
+ | ko resolve -f - | kubectl apply -f - --validate=false
+kustomize build overlays/dev-openshift-locked-down --load_restrictor=LoadRestrictionsNone \
+ | ko resolve -f - | kubectl apply -f - --validate=false
 ```
 
 We also provide a version for working with OpenShift image streams:
 ```shell
-kustomize build overlays/dev-openshift-imagestream --load_restrictor=LoadRestrictionsNone | ko apply -f -
+kustomize build overlays/dev-openshift-imagestream --load_restrictor=LoadRestrictionsNone | ko resolve -f - | kubectl apply -f - --validate=false
 ```
 
 ## Access the dashboard
