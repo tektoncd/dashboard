@@ -1,3 +1,5 @@
+---
+# yamllint disable rule:line-length
 apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
@@ -5,144 +7,163 @@ metadata:
 spec:
   inputs:
     resources:
-    - name: source
-      type: git
-      targetPath: go/src/github.com/tektoncd/dashboard
-    - name: bucket
-      type: storage
+      - name: source
+        type: git
+        targetPath: go/src/github.com/tektoncd/dashboard
+      - name: bucket
+        type: storage
     params:
-    - name: versionTag
-      description: The vX.Y.Z version that the artifacts should be tagged with (including `v`)
-    - name: imageRegistry
-      description: TODO(#569) This is a hack to make it easy for folks to switch the registry being used by the many many image outputs
-    - name: pathToProject
-      description: The path to the folder in the go/src dir that contains the project, which is used by `ko` to name the resulting images
+      - name: versionTag
+        description: The vX.Y.Z version that the artifacts should be tagged with (including `v`)
+      - name: imageRegistry
+        description: TODO(#569) This is a hack to make it easy for folks to switch the registry being used by the many many image outputs
+      - name: pathToProject
+        description: The path to the folder in the go/src dir that contains the project, which is used by `ko` to name the resulting images
+      - name: bucketName
+        description: Use latest if it's a real release, otherwise the name of a test bucket you've made on GCS
+        # For example, you may have made Buckets/tekton-releases/dashboard/mytestbucket for testing and then you'll get
+        # lockdown.py, a folder called previous, and a folder called test-release if you run with
+        # tkn pipeline start dashboard-release -p versionTag=$VERSION_TAG -r source-repo=tekton-dashboard-git -r bucket=tekton-bucket -r builtDashboardImage=dashboard-image -n $PIPELINE_NAMESPACE -s $SERVICE_ACCOUNT -p bucketName=test-release
+        # mytestbucket is specified in resources.yaml as the location value for the storage bucket
+
   outputs:
     resources:
-    - name: bucket
-      type: storage
-    - name: builtDashboardImage
-      type: image
+      - name: bucket
+        type: storage
+      - name: builtDashboardImage
+        type: image
   steps:
-  - name: link-input-bucket-to-output
-    image: busybox
-    command: ["cp"]
-    args:
-    - -r
-    - "/workspace/bucket"
-    - "/workspace/output/"
-  - name: ensure-release-dirs-exist
-    image: busybox
-    command: ["mkdir"]
-    args:
-    - "-p"
-    - "/workspace/output/bucket/latest/"
-    - "/workspace/output/bucket/previous/"
-  - name: dashboard-run-ko
-    # TODO(#639) we should be able to use the image built by an upstream Task here instead of hardcoding
-    image: gcr.io/tekton-nightly/ko-ci
-    env:
-    - name: KO_DOCKER_REPO
-      value: $(inputs.params.imageRegistry)
-    - name: GOPATH
-      value: /workspace/go
-    - name: CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE
-      value: /secret/release.json
-    command:
-    - /bin/sh
-    args:
-    - -ce
-    - |
-      set -e
-      set -x
+    - name: link-input-bucket-to-output
+      image: busybox
+      command: ["cp"]
+      args:
+        - -r
+        - "/workspace/bucket"
+        - "/workspace/output/"
+    - name: ensure-release-dirs-exist
+      image: busybox
+      command: ["mkdir"]
+      args:
+        - "-p"
+        - "/workspace/output/bucket/$(inputs.params.bucketName)/"
+        - "/workspace/output/bucket/previous/"
+    - name: dashboard-run-ko
+      # TODO(#639) we should be able to use the image built by an upstream Task here instead of hardcoding
+      # Want to use your own plumbing image? Change this
+      image: gcr.io/tekton-releases/dogfooding/ko:gcloud-latest
+      imagePullPolicy: Always
+      env:
+        - name: KO_DOCKER_REPO
+          value: $(inputs.params.imageRegistry)
+        - name: GOPATH
+          value: /workspace/go
+        - name: CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE
+          value: /secret/release.json
+        - name: GO111MODULE
+          value:
+      command:
+        - /bin/sh
+      args:
+        - -ce
+        - |
+          set -e
+          set -x
 
-      # Auth with CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE
-      gcloud auth configure-docker
+          # Auth with CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE
+          gcloud auth configure-docker
 
-      # ko requires this variable to be set in order to set image creation timestamps correctly https://github.com/google/go-containerregistry/pull/146
-      export SOURCE_DATE_EPOCH=`date +%s`
+          # ko requires this variable to be set in order to set image creation timestamps correctly https://github.com/google/go-containerregistry/pull/146
+          export SOURCE_DATE_EPOCH=`date +%s`
 
-      # Change to directory with our .ko.yaml
-      cd /workspace/go/src/github.com/tektoncd/dashboard
+          # Change to directory with our .ko.yaml
+          cd /workspace/go/src/github.com/tektoncd/dashboard
 
-      # Publish images and create release.yamls
-      ko resolve --preserve-import-paths -f /workspace/go/src/github.com/tektoncd/dashboard/config/openshift > /workspace/output/bucket/latest/openshift-tekton-dashboard-release.yaml
-      ko resolve --preserve-import-paths -f /workspace/go/src/github.com/tektoncd/dashboard/config/ > /workspace/output/bucket/latest/release.yaml
+          # Publish images and create release.yamls
+          which ko # Tested with 0.2.0
+          ko version
+          kustomize version # Tested with 3.5.4
 
-    volumeMounts:
-      - name: gcp-secret
-        mountPath: /secret
+          kustomize build overlays/dev | ko resolve --preserve-import-paths -f - > /workspace/output/bucket/$(inputs.params.bucketName)/tekton-dashboard-release.yaml
+          kustomize build overlays/dev-locked-down | ko resolve --preserve-import-paths -f - > /workspace/output/bucket/$(inputs.params.bucketName)/tekton-dashboard-release-readonly.yaml
+          kustomize build overlays/dev-openshift --load_restrictor=LoadRestrictionsNone | ko resolve --preserve-import-paths -f - > /workspace/output/bucket/$(inputs.params.bucketName)/openshift-tekton-dashboard-release.yaml
+          kustomize build overlays/dev-openshift-locked-down --load_restrictor=LoadRestrictionsNone | ko resolve --preserve-import-paths -f - > /workspace/output/bucket/$(inputs.params.bucketName)/openshift-tekton-dashboard-release-readonly.yaml
+      volumeMounts:
+        - name: gcp-secret
+          mountPath: /secret
 
-  - name: copy-to-tagged-bucket
-    image: busybox
-    workingDir: "/workspace/output/bucket"
-    command:
-    - /bin/sh
-    args:
-    - -ce
-    - |
-      mkdir -p /workspace/output/bucket/previous/$(inputs.params.versionTag)/
-      cp /workspace/output/bucket/latest/release.yaml /workspace/output/bucket/previous/$(inputs.params.versionTag)/
-      cp /workspace/output/bucket/latest/openshift-tekton-dashboard-release.yaml /workspace/output/bucket/previous/$(inputs.params.versionTag)/
+    - name: copy-to-tagged-bucket
+      image: busybox
+      workingDir: "/workspace/output/bucket"
+      command:
+        - /bin/sh
+      args:
+        - -ce
+        - |
+          mkdir -p /workspace/output/bucket/previous/$(inputs.params.versionTag)/
+          cp /workspace/output/bucket/$(inputs.params.bucketName)/tekton-dashboard-release.yaml /workspace/output/bucket/previous/$(inputs.params.versionTag)/
+          cp /workspace/output/bucket/$(inputs.params.bucketName)/tekton-dashboard-release-readonly.yaml /workspace/output/bucket/previous/$(inputs.params.versionTag)/
+          cp /workspace/output/bucket/$(inputs.params.bucketName)/openshift-tekton-dashboard-release.yaml /workspace/output/bucket/previous/$(inputs.params.versionTag)/
+          cp /workspace/output/bucket/$(inputs.params.bucketName)/openshift-tekton-dashboard-release-readonly.yaml /workspace/output/bucket/previous/$(inputs.params.versionTag)/
 
-  - name: tag-external-images
-    image: python
-    workingDir: "/workspace/output/bucket"
-    command:
-    - /bin/sh
-    args:
-    - -ce
-    - |
-      curl https://raw.githubusercontent.com/tektoncd/dashboard/master/tekton/scripts/lockdown.py --output lockdown.py
-      chmod +x lockdown.py
-      pip install docker
-      ./lockdown.py --omit dashboard --path /workspace/output/bucket/previous/$(inputs.params.versionTag)/release.yaml
-      ./lockdown.py --omit dashboard --path /workspace/output/bucket/previous/$(inputs.params.versionTag)/openshift-tekton-dashboard-release.yaml
-    volumeMounts:
-    - name: docker-socket
-      mountPath: /var/run/docker.sock
+    - name: tag-external-images
+      image: python
+      workingDir: "/workspace/output/bucket"
+      command:
+        - /bin/sh
+      args:
+        - -ce
+        - |
+          curl https://raw.githubusercontent.com/tektoncd/dashboard/master/tekton/scripts/lockdown.py --output lockdown.py
+          chmod +x lockdown.py
+          pip install docker
+          ./lockdown.py --omit dashboard --path /workspace/output/bucket/previous/$(inputs.params.versionTag)/tekton-dashboard-release.yaml
+          ./lockdown.py --omit dashboard --path /workspace/output/bucket/previous/$(inputs.params.versionTag)/tekton-dashboard-release-readonly.yaml
+          ./lockdown.py --omit dashboard --path /workspace/output/bucket/previous/$(inputs.params.versionTag)/openshift-tekton-dashboard-release.yaml
+          ./lockdown.py --omit dashboard --path /workspace/output/bucket/previous/$(inputs.params.versionTag)/openshift-tekton-dashboard-release-readonly.yaml
+      volumeMounts:
+        - name: docker-socket
+          mountPath: /var/run/docker.sock
 
-  - name: tag-images
-    image: google/cloud-sdk
-    command:
-    - /bin/bash
-    args:
-    - -ce
-    - |
-      set -e
-      set -x
+    - name: tag-images
+      image: google/cloud-sdk
+      command:
+        - /bin/bash
+      volumeMounts:
+        - name: gcp-secret
+          mountPath: /secret
+      args:
+        - -ce
+        - |
+          set -e
+          set -x
 
-      curl https://raw.githubusercontent.com/tektoncd/pipeline/master/tekton/koparse/koparse.py --output /usr/bin/koparse.py
-      chmod +x /usr/bin/koparse.py
+          curl https://raw.githubusercontent.com/tektoncd/pipeline/master/tekton/koparse/koparse.py --output /usr/bin/koparse.py
+          chmod +x /usr/bin/koparse.py
 
-      REGIONS=(us eu asia)
-      IMAGES=(
-        $(inputs.params.imageRegistry)/$(inputs.params.pathToProject)/$(outputs.resources.builtDashboardImage.url)
-      )
-      # Parse the built images from the release.yaml generated by ko
-      BUILT_IMAGES=( $(/usr/bin/koparse.py --path /workspace/output/bucket/latest/release.yaml --base $(inputs.params.imageRegistry)/$(inputs.params.pathToProject) --images ${IMAGES[@]}) )
+          REGIONS=(us eu asia)
+          IMAGES=(
+            $(inputs.params.imageRegistry)/$(inputs.params.pathToProject)/$(outputs.resources.builtDashboardImage.url)
+          )
+          # Parse the built images from the release.yaml generated by ko
+          BUILT_IMAGES=( $(/usr/bin/koparse.py --path /workspace/output/bucket/$(inputs.params.bucketName)/tekton-dashboard-release.yaml --base $(inputs.params.imageRegistry)/$(inputs.params.pathToProject) --images ${IMAGES[@]}) )
 
-      # Auth with account credentials
-      gcloud auth activate-service-account --key-file=/secret/release.json
+          # Auth with account credentials
+          gcloud auth activate-service-account --key-file=/secret/release.json
 
-      # Tag the images and put them in all the regions
-      for IMAGE in "${BUILT_IMAGES[@]}"
-      do
-        IMAGE_WITHOUT_SHA=${IMAGE%%@*}
-        gcloud -q container images add-tag ${IMAGE} ${IMAGE_WITHOUT_SHA}:latest
-        gcloud -q container images add-tag ${IMAGE} ${IMAGE_WITHOUT_SHA}:$(inputs.params.versionTag)
-        for REGION in "${REGIONS[@]}"
-        do
-          for TAG in "latest" $(inputs.params.versionTag)
+          # Tag the images and put them in all the regions
+          for IMAGE in "${BUILT_IMAGES[@]}"
           do
-            gcloud -q container images add-tag ${IMAGE} ${REGION}.${IMAGE_WITHOUT_SHA}:$TAG
+            IMAGE_WITHOUT_SHA=${IMAGE%%@*}
+            gcloud -q container images add-tag ${IMAGE} ${IMAGE_WITHOUT_SHA}:$(inputs.params.bucketName)
+            gcloud -q container images add-tag ${IMAGE} ${IMAGE_WITHOUT_SHA}:$(inputs.params.versionTag)
+            for REGION in "${REGIONS[@]}"
+            do
+              for TAG in "$(inputs.params.bucketName)" $(inputs.params.versionTag)
+              do
+                gcloud -q container images add-tag ${IMAGE} ${REGION}.${IMAGE_WITHOUT_SHA}:$TAG
+              done
+            done
           done
-        done
-      done
-    volumeMounts:
-      - name: gcp-secret
-        mountPath: /secret
-
   volumes:
     - name: gcp-secret
       secret:

@@ -5,20 +5,22 @@ metadata:
   name: dashboard-release
 spec:
   params:
-  - name: package
-    description: package to release
-    default: github.com/tektoncd/dashboard
-  - name: imageRegistry
-    default: gcr.io/tekton-releases # REPLACE with your own registry
-  - name: versionTag
-    description: The X.Y.Z version that the artifacts should be tagged with
+    - name: package
+      description: package to release
+      default: github.com/tektoncd/dashboard
+    - name: imageRegistry
+      default: gcr.io/tekton-releases
+    - name: versionTag
+      description: The X.Y.Z version that the artifacts should be tagged with
+    - name: bucketName
+      description: The name of the bucket to use
   resources:
-  - name: source-repo
-    type: git
-  - name: bucket
-    type: storage
-  - name: builtDashboardImage
-    type: image
+    - name: source-repo
+      type: git
+    - name: bucket
+      type: storage
+    - name: builtDashboardImage
+      type: image
   tasks:
     - name: build
       taskRef:
@@ -41,6 +43,8 @@ spec:
           value: $(params.versionTag)
         - name: imageRegistry
           value: $(params.imageRegistry)
+        - name: bucketName
+          value: $(params.bucketName)
       resources:
         inputs:
           - name: source
@@ -53,4 +57,3 @@ spec:
             resource: bucket
           - name: builtDashboardImage
             resource: builtDashboardImage
-

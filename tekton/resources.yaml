@@ -1,3 +1,4 @@
+---
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
 metadata:
@@ -5,10 +6,10 @@ metadata:
 spec:
   type: git
   params:
-  - name: url
-    value: https://github.com/tektoncd/dashboard 
-  - name: revision
-    value: vX.Y.Z-invalid-tags-boouuhhh # REPLACE with your own commit
+    - name: url
+      value: https://github.com/tektoncd/dashboard
+    - name: revision
+      value: v0.5.0
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
@@ -17,12 +18,15 @@ metadata:
 spec:
   type: storage
   params:
-   - name: type
-     value: gcs
-   - name: location
-     value: gs://tekton-releases/dashboard # If you're testing add /test.issue.nnn to the end
-   - name: dir
-     value: "y"
+    - name: type
+      value: gcs
+    - name: location
+      # This value is where our folder sits, so for example
+      # https://console.cloud.google.com/storage/browser/tekton-releases/dashboard/mytestbucket
+      value: gs://tekton-releases/dashboard/mytestbucket
+      # If you're ready to publish you would omit the mytestbucket part
+    - name: dir
+      value: "y"
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
@@ -31,5 +35,6 @@ metadata:
 spec:
   type: image
   params:
-   - name: url
-     value: cmd/dashboard # Registry is provided via parameter, this is a hack see #569
+    - name: url
+      # Registry is provided via parameter, this is a hack see #569
+      value: cmd/dashboard
