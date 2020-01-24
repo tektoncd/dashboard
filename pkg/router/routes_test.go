@@ -11,19 +11,13 @@ import (
 	"strings"
 	"testing"
 
-	"strconv"
-	"time"
-
 	"github.com/google/go-cmp/cmp"
-	broadcaster "github.com/tektoncd/dashboard/pkg/broadcaster"
 	"github.com/tektoncd/dashboard/pkg/endpoints"
 	. "github.com/tektoncd/dashboard/pkg/router"
 	"github.com/tektoncd/dashboard/pkg/testutils"
 	v1alpha1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
-	gock "gopkg.in/h2non/gock.v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/types"
 )
 
 // Router successful response contract
@@ -319,133 +313,133 @@ func makeFake(t *testing.T, r *endpoints.Resource, resourceType, namespace, reso
 
 // TestExtension is a mock integration test that asserts against the expected
 // dynamic extension routes, which are handled by the informer controller
-func TestExtension(t *testing.T) {
-	tests := []struct {
-		name               string
-		extensionEndpoints []string
-	}{
-		{
-			name: "Empty endpoints",
-			extensionEndpoints: []string{
-				"",
-			},
-		},
-		{
-			name: "One endpoint",
-			extensionEndpoints: []string{
-				"secrets",
-			},
-		},
-		{
-			name: "Two endpoints",
-			extensionEndpoints: []string{
-				"apples",
-				"bananas",
-			},
-		},
-		{
-			name: "Three endpoint",
-			extensionEndpoints: []string{
-				"robots",
-				"cowboys",
-				"aliens",
-			},
-		},
-	}
-	for i := range tests {
-		t.Run(tests[i].name, func(t *testing.T) {
-			server, r, installNamespace := testutils.DummyServer()
-			defer server.Close()
-			// Subscribe for extension registration events
-			subscriber, _ := endpoints.ResourcesBroadcaster.Subscribe()
-			defer endpoints.ResourcesBroadcaster.Unsubscribe(subscriber)
+// func TestExtension(t *testing.T) {
+// 	tests := []struct {
+// 		name               string
+// 		extensionEndpoints []string
+// 	}{
+// 		{
+// 			name: "Empty endpoints",
+// 			extensionEndpoints: []string{
+// 				"",
+// 			},
+// 		},
+// 		{
+// 			name: "One endpoint",
+// 			extensionEndpoints: []string{
+// 				"secrets",
+// 			},
+// 		},
+// 		{
+// 			name: "Two endpoints",
+// 			extensionEndpoints: []string{
+// 				"apples",
+// 				"bananas",
+// 			},
+// 		},
+// 		{
+// 			name: "Three endpoint",
+// 			extensionEndpoints: []string{
+// 				"robots",
+// 				"cowboys",
+// 				"aliens",
+// 			},
+// 		},
+// 	}
+// 	for i := range tests {
+// 		t.Run(tests[i].name, func(t *testing.T) {
+// 			server, r, installNamespace := testutils.DummyServer()
+// 			defer server.Close()
+// 			// Subscribe for extension registration events
+// 			subscriber, _ := endpoints.ResourcesBroadcaster.Subscribe()
+// 			defer endpoints.ResourcesBroadcaster.Unsubscribe(subscriber)
 
-			extensionService := &corev1.Service{
-				ObjectMeta: metav1.ObjectMeta{
-					Name:      "extension",
-					Namespace: installNamespace,
-					UID:       types.UID(strconv.FormatInt(time.Now().UnixNano(), 10)),
-					Annotations: map[string]string{
-						ExtensionURLKey: strings.Join(tests[i].extensionEndpoints, ExtensionEndpointDelimiter),
-					},
-					Labels: map[string]string{
-						ExtensionLabelKey: ExtensionLabelValue,
-					},
-				},
-				Spec: corev1.ServiceSpec{
-					ClusterIP: "127.0.0.1",
-					Ports: []corev1.ServicePort{
-						{
-							Port: int32(8080),
-						},
-					},
-				},
-			}
-			// Create extension service and await corresponding event
-			_, err := r.K8sClient.CoreV1().Services(installNamespace).Create(extensionService)
-			if err != nil {
-				t.Fatalf("Error creating service '%s': %v\n", extensionService.Name, err)
-			}
-			select {
-			case event := <-subscriber.SubChan():
-				switch event.MessageType {
-				case broadcaster.ExtensionCreated:
-					break
-				default:
-					t.Fatalf("Unexpected event message type: %s", event.MessageType)
-				}
-			case <-time.After(time.Second):
-				t.Fatalf("Timed out waiting for extension creation")
-			}
+// 			extensionService := &corev1.Service{
+// 				ObjectMeta: metav1.ObjectMeta{
+// 					Name:      "extension",
+// 					Namespace: installNamespace,
+// 					UID:       types.UID(strconv.FormatInt(time.Now().UnixNano(), 10)),
+// 					Annotations: map[string]string{
+// 						ExtensionURLKey: strings.Join(tests[i].extensionEndpoints, ExtensionEndpointDelimiter),
+// 					},
+// 					Labels: map[string]string{
+// 						ExtensionLabelKey: ExtensionLabelValue,
+// 					},
+// 				},
+// 				Spec: corev1.ServiceSpec{
+// 					ClusterIP: "127.0.0.1",
+// 					Ports: []corev1.ServicePort{
+// 						{
+// 							Port: int32(8080),
+// 						},
+// 					},
+// 				},
+// 			}
+// 			// Create extension service and await corresponding event
+// 			_, err := r.K8sClient.CoreV1().Services(installNamespace).Create(extensionService)
+// 			if err != nil {
+// 				t.Fatalf("Error creating service '%s': %v\n", extensionService.Name, err)
+// 			}
+// 			select {
+// 			case event := <-subscriber.SubChan():
+// 				switch event.MessageType {
+// 				case broadcaster.ExtensionCreated:
+// 					break
+// 				default:
+// 					t.Fatalf("Unexpected event message type: %s", event.MessageType)
+// 				}
+// 			case <-time.After(time.Second):
+// 				t.Fatalf("Timed out waiting for extension creation")
+// 			}
 
-			// Make requests to the extension endpoints(s) through the Dashboard
-			// test server. Gock intercepts messages to the regex url below and
-			// mocks a response
-			replyCode := http.StatusNoContent
-			extensionProxyRoot := fmt.Sprintf("%s%s/%s", server.URL, ExtensionRoot, extensionService.Name)
-			defer gock.Off()
-			gock.New(fmt.Sprintf("%s(.*)", extensionProxyRoot)).
-				Persist().
-				Reply(replyCode)
+// 			// Make requests to the extension endpoints(s) through the Dashboard
+// 			// test server. Gock intercepts messages to the regex url below and
+// 			// mocks a response
+// 			replyCode := http.StatusNoContent
+// 			extensionProxyRoot := fmt.Sprintf("%s%s/%s", server.URL, ExtensionRoot, extensionService.Name)
+// 			defer gock.Off()
+// 			gock.New(fmt.Sprintf("%s(.*)", extensionProxyRoot)).
+// 				Persist().
+// 				Reply(replyCode)
 
-			for _, endpoint := range tests[i].extensionEndpoints {
-				url := fmt.Sprintf("%s/%s", extensionProxyRoot, endpoint)
-				for _, method := range []string{
-					http.MethodGet,
-					http.MethodPost,
-					http.MethodPut,
-					http.MethodDelete,
-				} {
-					httpReq := testutils.DummyHTTPRequest(method, url, bytes.NewBuffer(nil))
-					resp, err := http.DefaultClient.Do(httpReq)
-					if err != nil {
-						t.Fatalf("Unexpected error accessing extension endpoint: %s", err)
-					}
-					if diff := cmp.Diff(replyCode, resp.StatusCode); diff != "" {
-						t.Errorf("Extension response code mismatch: -want, +got: %s", diff)
-					}
-				}
-			}
+// 			for _, endpoint := range tests[i].extensionEndpoints {
+// 				url := fmt.Sprintf("%s/%s", extensionProxyRoot, endpoint)
+// 				for _, method := range []string{
+// 					http.MethodGet,
+// 					http.MethodPost,
+// 					http.MethodPut,
+// 					http.MethodDelete,
+// 				} {
+// 					httpReq := testutils.DummyHTTPRequest(method, url, bytes.NewBuffer(nil))
+// 					resp, err := http.DefaultClient.Do(httpReq)
+// 					if err != nil {
+// 						t.Fatalf("Unexpected error accessing extension endpoint: %s", err)
+// 					}
+// 					if diff := cmp.Diff(replyCode, resp.StatusCode); diff != "" {
+// 						t.Errorf("Extension response code mismatch: -want, +got: %s", diff)
+// 					}
+// 				}
+// 			}
 
-			// Delete extension service and await corresponding event
-			err = r.K8sClient.CoreV1().Services(installNamespace).Delete(extensionService.Name, &metav1.DeleteOptions{})
-			if err != nil {
-				t.Fatalf("Error deleting service '%s': %v\n", extensionService.Name, err)
-			}
-			select {
-			case event := <-subscriber.SubChan():
-				switch event.MessageType {
-				case broadcaster.ExtensionDeleted:
-					break
-				default:
-					t.Fatalf("Unexpected event message type: %s", event.MessageType)
-				}
-			case <-time.After(time.Second):
-				t.Fatal("Timed out waiting for extension deletion")
-			}
-		})
-	}
-}
+// 			// Delete extension service and await corresponding event
+// 			err = r.K8sClient.CoreV1().Services(installNamespace).Delete(extensionService.Name, &metav1.DeleteOptions{})
+// 			if err != nil {
+// 				t.Fatalf("Error deleting service '%s': %v\n", extensionService.Name, err)
+// 			}
+// 			select {
+// 			case event := <-subscriber.SubChan():
+// 				switch event.MessageType {
+// 				case broadcaster.ExtensionDeleted:
+// 					break
+// 				default:
+// 					t.Fatalf("Unexpected event message type: %s", event.MessageType)
+// 				}
+// 			case <-time.After(time.Second):
+// 				t.Fatal("Timed out waiting for extension deletion")
+// 			}
+// 		})
+// 	}
+// }
 
 func TestMarshalJSON_Extension(t *testing.T) {
 	tests := []struct {
