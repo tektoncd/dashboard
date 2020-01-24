@@ -13,6 +13,7 @@ limitations under the License.
 import { generatePath } from 'react-router-dom';
 import { paths, urls } from './router';
 
+const eventListenerName = 'fake_eventListenerName';
 const namespace = 'fake_namespace';
 const pipelineName = 'fake_pipelineName';
 const pipelineResourceName = 'fake_pipelineResourceName';
@@ -20,6 +21,8 @@ const pipelineRunName = 'fake_pipelineRunName';
 const serviceAccountName = 'fake_serviceAccountName';
 const taskName = 'fake_taskName';
 const taskRunName = 'fake_taskRunName';
+const triggerBindingName = 'fake_triggerBindingName';
+const triggerTemplateName = 'fake_triggerTemplateName';
 
 describe('clusterTasks', () => {
   it('all', () => {
@@ -213,6 +216,125 @@ describe('tasks', () => {
   it('byNamespace', () => {
     expect(urls.tasks.byNamespace({ namespace })).toEqual(
       generatePath(paths.tasks.byNamespace(), { namespace })
+    );
+  });
+});
+
+describe('eventListeners', () => {
+  it('all', () => {
+    expect(urls.eventListeners.all()).toEqual(
+      generatePath(paths.eventListeners.all())
+    );
+  });
+  it('byNamespace', () => {
+    expect(urls.eventListeners.byNamespace({ namespace })).toEqual(
+      generatePath(paths.eventListeners.byNamespace(), { namespace })
+    );
+  });
+  it('byName', () => {
+    expect(
+      urls.eventListeners.byName({ namespace, eventListenerName })
+    ).toEqual(
+      generatePath(paths.eventListeners.byName(), {
+        namespace,
+        eventListenerName
+      })
+    );
+  });
+});
+
+describe('triggerTemplates', () => {
+  it('all', () => {
+    expect(urls.triggerTemplates.all()).toEqual(
+      generatePath(paths.triggerTemplates.all())
+    );
+  });
+  it('byNamespace', () => {
+    expect(urls.triggerTemplates.byNamespace({ namespace })).toEqual(
+      generatePath(paths.triggerTemplates.byNamespace(), { namespace })
+    );
+  });
+  it('byName', () => {
+    expect(
+      urls.triggerTemplates.byName({ namespace, triggerTemplateName })
+    ).toEqual(
+      generatePath(paths.triggerTemplates.byName(), {
+        namespace,
+        triggerTemplateName
+      })
+    );
+  });
+});
+
+describe('triggerBindings', () => {
+  it('all', () => {
+    expect(urls.triggerBindings.all()).toEqual(
+      generatePath(paths.triggerBindings.all())
+    );
+  });
+  it('byNamespace', () => {
+    expect(urls.triggerBindings.byNamespace({ namespace })).toEqual(
+      generatePath(paths.triggerBindings.byNamespace(), { namespace })
+    );
+  });
+  it('byName', () => {
+    expect(
+      urls.triggerBindings.byName({ namespace, triggerBindingName })
+    ).toEqual(
+      generatePath(paths.triggerBindings.byName(), {
+        namespace,
+        triggerBindingName
+      })
+    );
+  });
+});
+
+describe('kubernetesResources', () => {
+  const group = 'fake_group';
+  const name = 'fake_name';
+  const type = 'fake_type';
+  const version = 'fake_version';
+
+  it('all', () => {
+    expect(urls.kubernetesResources.all({ group, type, version })).toEqual(
+      generatePath(paths.kubernetesResources.all(), { group, type, version })
+    );
+  });
+  it('byNamespace', () => {
+    expect(
+      urls.kubernetesResources.byNamespace({ group, namespace, type, version })
+    ).toEqual(
+      generatePath(paths.kubernetesResources.byNamespace(), {
+        group,
+        namespace,
+        type,
+        version
+      })
+    );
+  });
+  it('cluster', () => {
+    expect(
+      urls.kubernetesResources.cluster({ group, name, type, version })
+    ).toEqual(
+      generatePath(paths.kubernetesResources.cluster(), {
+        group,
+        name,
+        type,
+        version
+      })
+    );
+  });
+  it('byName', () => {
+    expect(
+      urls.kubernetesResources.byName({ group, name, namespace, type, version })
+    ).toEqual(
+      generatePath(paths.kubernetesResources.byName(), {
+        group,
+        name,
+        namespace,
+        type,
+        version
+      })
     );
   });
 });
