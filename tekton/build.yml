@@ -1,3 +1,4 @@
+---
 apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
@@ -5,45 +6,46 @@ metadata:
 spec:
   inputs:
     resources:
-    - name: source
-      type: git
-      targetPath: go/src/github.com/tektoncd/dashboard
+      - name: source
+        type: git
+        targetPath: go/src/github.com/tektoncd/dashboard
   outputs:
     resources:
-    - name: source
-      type: git
+      - name: source
+        type: git
   steps:
-  - name: build-static
-    image: gcr.io/tekton-releases/tests/test-runner@sha256:a4a64b2b70f85a618bbbcc6c0b713b313b2e410504dee24c9f90ec6fe3ebf63f
-    workingDir: /workspace/go/src/github.com/tektoncd/dashboard
-    env:
-    - name: GOPATH
-      value: /workspace/go
-    command: ["/bin/sh", "-ce"]
-    args:
-    - |
-      set -e
-      set -x
+    - name: build-static
+      # yamllint disable rule:line-length
+      # Because of long image coordinates and later in the Task when we get Node.js
+      image: gcr.io/tekton-releases/tests/test-runner@sha256:a4a64b2b70f85a618bbbcc6c0b713b313b2e410504dee24c9f90ec6fe3ebf63f
+      workingDir: /workspace/go/src/github.com/tektoncd/dashboard
+      env:
+        - name: GOPATH
+          value: /workspace/go
+      command: ["/bin/sh", "-ce"]
+      args:
+        - |
+          set -e
+          set -x
 
-      apt-get update
-      apt-get install -y curl
-      curl -O https://nodejs.org/dist/v10.15.3/node-v10.15.3-linux-x64.tar.xz
-      tar xf node-v10.15.3-linux-x64.tar.xz
-      export PATH=$PATH:$(pwd)/node-v10.15.3-linux-x64/bin
-      mkdir ~/.npm-global
-      npm config set prefix '~/.npm-global'
-      export PATH=$PATH:$HOME/.npm-global/bin
-      npm ci
-      npm run bootstrap
-      npm run build_ko
-      
-      dep ensure -v
-  - name: copy-files-to-output-resource
-    image: busybox
-    command: ["/bin/sh", "-ce"]
-    args:
-    - |
-      # Further to https://github.com/tektoncd/pipeline/pull/1122 it is necessary to copy files into $(outputs.resources.source.path)
-      echo "Input source path=$(inputs.resources.source.path)" 
-      echo "Output source path=$(outputs.resources.source.path)"
-      cp -r $(inputs.resources.source.path)/* $(outputs.resources.source.path)
+          apt-get update
+          apt-get install -y curl
+          curl -O https://nodejs.org/dist/v10.15.3/node-v10.15.3-linux-x64.tar.xz
+          tar xf node-v10.15.3-linux-x64.tar.xz
+          export PATH=$PATH:$(pwd)/node-v10.15.3-linux-x64/bin
+          mkdir ~/.npm-global
+          npm config set prefix '~/.npm-global'
+          export PATH=$PATH:$HOME/.npm-global/bin
+          npm ci
+          npm run bootstrap
+          npm run build_ko
+          dep ensure -v
+    - name: copy-files-to-output-resource
+      image: busybox
+      command: ["/bin/sh", "-ce"]
+      args:
+        - |
+          # Further to https://github.com/tektoncd/pipeline/pull/1122 it is necessary to copy files into $(outputs.resources.source.path)
+          echo "Input source path=$(inputs.resources.source.path)"
+          echo "Output source path=$(outputs.resources.source.path)"
+          cp -r $(inputs.resources.source.path)/* $(outputs.resources.source.path)

@@ -52,7 +52,8 @@ You may want to run a test release first. To do this:
 
 So for example, we might want to run one or more test releases under the name 'test-release'. 
 
-- Go to https://console.cloud.google.com/storage/browser/tekton-releases/dashboard and click 'Create folder'. Create the folder Buckets/tekton-releases/dashboard/test-release. 
+- Go to https://console.cloud.google.com/storage/browser/tekton-releases/dashboard and click 'Create folder'. Create the folder Buckets/tekton-releases/dashboard/test-release.
+- Modify every reference of `latest` in `publish.yaml` so we don't write to that area.
 - Modify the tekton-bucket PipelineResource:
 
 ```yaml
@@ -66,7 +67,7 @@ spec:
    - name: type
      value: gcs
    - name: location
-     value: gs://tekton-releases/dashboard/test-release # If you're testing add /test.issue.nnn to the end
+     value: gs://tekton-releases/dashboard/test-release # If you're testing use your bucket name here instead of test-release
    - name: dir
      value: "y"
 ```
@@ -83,7 +84,7 @@ Run a test release:
 ```bash
 VERSION_TAG=test-1
 PIPELINE_NAMESPACE=tekton-pipelines
-tkn pipeline start dashboard-release -p versionTag=$VERSION_TAG -r source-repo=tekton-dashboard-git -r bucket=tekton-bucket -r builtDashboardImage=dashboard-image -n $PIPELINE_NAMESPACE -s $SERVICE_ACCOUNT
+tkn pipeline start dashboard-release -p versionTag=$VERSION_TAG -r source-repo=tekton-dashboard-git -r bucket=tekton-bucket -r builtDashboardImage=dashboard-image -n $PIPELINE_NAMESPACE -s $SERVICE_ACCOUNT -p bucketName=test-release
 ```
 
 This will result in release artifacts appearing in the Google Cloud bucket `gs://tekton-releases/dashboard/test-release/test-1`. If you need to run a second build, incremement $VERSION_TAG. Once you're finished, clean up:
@@ -98,7 +99,7 @@ Now you can kick off the release build:
 ```bash
 VERSION_TAG=vX.Y.Z
 PIPELINE_NAMESPACE=tekton-pipelines
-tkn pipeline start dashboard-release -p versionTag=$VERSION_TAG -r source-repo=tekton-dashboard-git -r bucket=tekton-bucket -r builtDashboardImage=dashboard-image -n $PIPELINE_NAMESPACE -s $SERVICE_ACCOUNT
+tkn pipeline start dashboard-release -p versionTag=$VERSION_TAG -r source-repo=tekton-dashboard-git -r bucket=tekton-bucket -r builtDashboardImage=dashboard-image -n $PIPELINE_NAMESPACE -s $SERVICE_ACCOUNT -p bucketName=latest
 ```
 
 Monitor the build logs to see the image coordinates that the image is pushed to. The `release.yaml` should appear under https://console.cloud.google.com/storage/browser/tekton-releases/dashboard.
