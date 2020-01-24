@@ -21,6 +21,11 @@ import {
   LabelFilter,
   Table
 } from '@tektoncd/dashboard-components';
+import {
+  getAddFilterHandler,
+  getDeleteFilterHandler,
+  getFilters
+} from '@tektoncd/dashboard-utils';
 import Add from '@carbon/icons-react/lib/add/16';
 import Delete from '@carbon/icons-react/lib/delete/16';
 import Modal from '../SecretsModal';
@@ -83,35 +88,6 @@ export /* istanbul ignore next */ class Secrets extends Component {
       namespace
     });
     this.props.fetchServiceAccounts();
-  };
-
-  handleAddFilter = labelFilters => {
-    const queryParams = `?${new URLSearchParams({
-      labelSelector: labelFilters
-    }).toString()}`;
-
-    const currentURL = this.props.match.url;
-    const browserURL = currentURL.concat(queryParams);
-    this.props.history.push(browserURL);
-  };
-
-  handleDeleteFilter = filter => {
-    const currentQueryParams = new URLSearchParams(this.props.location.search);
-    const labelFilters = currentQueryParams.getAll('labelSelector');
-    const labelFiltersArray = labelFilters.toString().split(',');
-    const index = labelFiltersArray.indexOf(filter);
-    labelFiltersArray.splice(index, 1);
-
-    const currentURL = this.props.match.url;
-    if (labelFiltersArray.length === 0) {
-      this.props.history.push(currentURL);
-    } else {
-      const newQueryParams = `?${new URLSearchParams({
-        labelSelector: labelFiltersArray
-      }).toString()}`;
-      const browserURL = currentURL.concat(newQueryParams);
-      this.props.history.push(browserURL);
-    }
   };
 
   handleDisplayModalClick = () => {
@@ -312,8 +288,8 @@ export /* istanbul ignore next */ class Secrets extends Component {
         <h1>Secrets</h1>
         <LabelFilter
           filters={filters}
-          handleAddFilter={this.handleAddFilter}
-          handleDeleteFilter={this.handleDeleteFilter}
+          handleAddFilter={getAddFilterHandler(this.props)}
+          handleDeleteFilter={getDeleteFilterHandler(this.props)}
         />
         <Table
           headers={initialHeaders}
@@ -379,18 +355,9 @@ Secrets.defaultProps = {
   secrets: []
 };
 
-function fetchFilters(searchQuery) {
-  const queryParams = new URLSearchParams(searchQuery);
-  let filters = [];
-  queryParams.forEach(function filterValueSplit(value) {
-    filters = value.split(',');
-  });
-  return filters;
-}
-
 function mapStateToProps(state, props) {
   const { namespace: namespaceParam } = props.match.params;
-  const filters = fetchFilters(props.location.search);
+  const filters = getFilters(props.location);
   const namespace = namespaceParam || getSelectedNamespace(state);
 
   return {

@@ -14,7 +14,10 @@ limitations under the License.
 import {
   formatLabels,
   generateId,
+  getAddFilterHandler,
+  getDeleteFilterHandler,
   getErrorMessage,
+  getFilters,
   getStatus,
   getStatusIcon,
   isRunning,
@@ -412,4 +415,59 @@ it('updateUnexecutedSteps error step', () => {
 
   const gotUpdatedSteps = updateUnexecutedSteps(steps);
   expect(gotUpdatedSteps).toEqual(wantUpdatedSteps);
+});
+
+it('getFilters', () => {
+  const search = 'labelSelector=tekton.dev%2Fpipeline%3Ddemo-pipeline';
+  const filters = getFilters({ search });
+  expect(filters.length).toEqual(1);
+  expect(filters[0]).toEqual('tekton.dev/pipeline=demo-pipeline');
+});
+
+it('getAddFilterHandler', () => {
+  const url = 'someURL';
+  const history = { push: jest.fn() };
+  const match = { url };
+  const handleAddFilter = getAddFilterHandler({ history, match });
+  const labelFilters = ['foo1=bar1', 'foo2=bar2'];
+  handleAddFilter(labelFilters);
+  expect(history.push).toHaveBeenCalledWith(
+    `${url}?labelSelector=${encodeURIComponent('foo1=bar1,foo2=bar2')}`
+  );
+});
+
+describe('getDeleteFilterHandler', () => {
+  it('should redirect to unfiltered URL if no filters remain', () => {
+    const search = `?labelSelector=${encodeURIComponent('foo=bar')}`;
+    const url = 'someURL';
+    const history = { push: jest.fn() };
+    const location = { search };
+    const match = { url };
+    const handleDeleteFilter = getDeleteFilterHandler({
+      history,
+      location,
+      match
+    });
+    handleDeleteFilter('foo=bar');
+    expect(history.push).toHaveBeenCalledWith(url);
+  });
+
+  it('should correctly remove a filter from the URL', () => {
+    const search = `?labelSelector=${encodeURIComponent(
+      'foo1=bar1,foo2=bar2'
+    )}`;
+    const url = 'someURL';
+    const history = { push: jest.fn() };
+    const location = { search };
+    const match = { url };
+    const handleDeleteFilter = getDeleteFilterHandler({
+      history,
+      location,
+      match
+    });
+    handleDeleteFilter('foo1=bar1');
+    expect(history.push).toHaveBeenCalledWith(
+      `${url}?labelSelector=${encodeURIComponent('foo2=bar2')}`
+    );
+  });
 });
