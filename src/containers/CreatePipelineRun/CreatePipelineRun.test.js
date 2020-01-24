@@ -24,7 +24,7 @@ import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 import { renderWithIntl, rerenderWithIntl } from '../../utils/test';
-import CreatePipelineRun from './CreatePipelineRun';
+import { CreatePipelineRunWithIntl as CreatePipelineRun } from './CreatePipelineRun';
 import * as API from '../../api';
 import * as store from '../../store';
 import * as reducers from '../../reducers';
@@ -414,14 +414,24 @@ describe('CreatePipelineRun', () => {
     testPipelineSpec('id-pipeline-2', queryByText, queryByValue);
   });
 
-  it('renders pipeline controlled', () => {
+  it('renders pipeline controlled', async () => {
     // Display with pipeline-1 selected
     const mockTestStore = mockStore(testStore);
-    const { rerender, queryByText, queryByValue } = renderWithIntl(
+
+    const { resources, params } = pipelinesTestStore.pipelines.byId[
+      'id-pipeline-1'
+    ].spec;
+    const { getByText, queryByText, queryByValue, rerender } = renderWithIntl(
       <Provider store={mockTestStore}>
-        <CreatePipelineRun {...props} pipelineRef="pipeline-1" />
+        <CreatePipelineRun
+          {...props}
+          resourceSpecs={resources}
+          paramSpecs={params}
+          pipelineRef="pipeline-1"
+        />
       </Provider>
     );
+    await waitForElement(() => getByText(/pipeline-1/i));
     expect(queryByText(/namespace-1/i)).toBeFalsy();
     expect(queryByText(/pipeline-1/i)).toBeTruthy();
     // Verify spec details are displayed
@@ -660,12 +670,12 @@ describe('CreatePipelineRun', () => {
   });
 
   it('handles error getting pipeline controlled', () => {
-    jest.spyOn(reducers, 'getPipeline').mockImplementation(() => null);
     const { queryByText } = renderWithIntl(
       <Provider store={mockStore(testStore)}>
-        <CreatePipelineRun {...props} pipelineRef="pipeline-1" />
+        <CreatePipelineRun {...props} pipelineError pipelineRef="pipeline-1" />
       </Provider>
     );
+
     expect(queryByText(/error retrieving pipeline information/i)).toBeTruthy();
   });
 });
