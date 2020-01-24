@@ -585,9 +585,11 @@ CreatePipelineRun.defaultProps = {
   onSuccess: () => {}
 };
 
-const mapStateToProps = (state, ownProps) => {
+/* istanbul ignore next */
+function mapStateToProps(state, ownProps) {
   const { pipelineRef, namespace } = ownProps;
   return parsePipelineInfo(state, pipelineRef, namespace);
-};
+}
 
-export default connect(mapStateToProps)(injectIntl(CreatePipelineRun));
+export const CreatePipelineRunWithIntl = injectIntl(CreatePipelineRun);
+export default connect(mapStateToProps)(CreatePipelineRunWithIntl);
