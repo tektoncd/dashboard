@@ -47,6 +47,18 @@ export default combineReducers({
   triggerTemplates: triggerTemplates()
 });
 
+function filterResources({ filters, resources }) {
+  return resources.filter(resource => {
+    return filters.every(filter => {
+      const [filterKey, filterValue] = filter.split('=');
+      const { labels } = resource.metadata || resource;
+      return (
+        labels && filterKey && filterValue && labels[filterKey] === filterValue
+      );
+    });
+  });
+}
+
 export function getSelectedNamespace(state) {
   return namespaceSelectors.getSelectedNamespace(state.namespaces);
 }
@@ -70,21 +82,11 @@ export function getServiceAccounts(
   state,
   { filters = [], namespace = getSelectedNamespace(state) } = {}
 ) {
-  const currentServiceAccounts = serviceAccountSelectors.getServiceAccounts(
+  const resources = serviceAccountSelectors.getServiceAccounts(
     state.serviceAccounts,
     namespace
   );
-  return currentServiceAccounts.filter(serviceAccount => {
-    return filters.every(filter => {
-      const [filterKey, filterValue] = filter.split('=');
-      return (
-        serviceAccount.metadata.labels &&
-        filterKey &&
-        filterValue &&
-        serviceAccount.metadata.labels[filterKey] === filterValue
-      );
-    });
-  });
+  return filterResources({ filters, resources });
 }
 
 export function isFetchingServiceAccounts(state) {
@@ -176,21 +178,11 @@ export function getPipelineRuns(
   state,
   { filters, namespace = getSelectedNamespace(state) } = {}
 ) {
-  const runs = pipelineRunsSelectors.getPipelineRuns(
+  const resources = pipelineRunsSelectors.getPipelineRuns(
     state.pipelineRuns,
     namespace
   );
-  return runs.filter(pipelineRun => {
-    return filters.every(filter => {
-      const [filterKey, filterValue] = filter.split('=');
-      return (
-        pipelineRun.metadata.labels &&
-        filterKey &&
-        filterValue &&
-        pipelineRun.metadata.labels[filterKey] === filterValue
-      );
-    });
-  });
+  return filterResources({ filters, resources });
 }
 
 export function getPipelineRun(
@@ -224,31 +216,19 @@ export function getTaskRunsByPipelineRunName(
   pipelineRunName,
   { namespace = getSelectedNamespace(state) } = {}
 ) {
-  const runs = taskRunsSelectors.getTaskRuns(state.taskRuns, namespace);
-  return runs.filter(
-    taskRun =>
-      taskRun.metadata &&
-      taskRun.metadata.labels &&
-      taskRun.metadata.labels['tekton.dev/pipelineRun'] === pipelineRunName
-  );
+  const resources = taskRunsSelectors.getTaskRuns(state.taskRuns, namespace);
+  return filterResources({
+    filters: [`tekton.dev/pipelineRun=${pipelineRunName}`],
+    resources
+  });
 }
 
 export function getTaskRuns(
   state,
   { filters, namespace = getSelectedNamespace(state) } = {}
 ) {
-  const runs = taskRunsSelectors.getTaskRuns(state.taskRuns, namespace);
-  return runs.filter(taskRun => {
-    return filters.every(filter => {
-      const [filterKey, filterValue] = filter.split('=');
-      return (
-        taskRun.metadata.labels &&
-        filterKey &&
-        filterValue &&
-        taskRun.metadata.labels[filterKey] === filterValue
-      );
-    });
-  });
+  const resources = taskRunsSelectors.getTaskRuns(state.taskRuns, namespace);
+  return filterResources({ filters, resources });
 }
 
 export function getTaskRunsErrorMessage(state) {
@@ -353,21 +333,11 @@ export function getTriggerTemplates(
   state,
   { filters, namespace = getSelectedNamespace(state) } = {}
 ) {
-  const templates = triggerTemplatesSelectors.getTriggerTemplates(
+  const resources = triggerTemplatesSelectors.getTriggerTemplates(
     state.triggerTemplates,
     namespace
   );
-  return templates.filter(trigger => {
-    return filters.every(filter => {
-      const [filterKey, filterValue] = filter.split('=');
-      return (
-        trigger.metadata.labels &&
-        filterKey &&
-        filterValue &&
-        trigger.metadata.labels[filterKey] === filterValue
-      );
-    });
-  });
+  return filterResources({ filters, resources });
 }
 
 export function getTriggerTemplate(
@@ -397,21 +367,11 @@ export function getTriggerBindings(
   state,
   { filters, namespace = getSelectedNamespace(state) } = {}
 ) {
-  const bindings = triggerBindingsSelectors.getTriggerBindings(
+  const resources = triggerBindingsSelectors.getTriggerBindings(
     state.triggerBindings,
     namespace
   );
-  return bindings.filter(binding => {
-    return filters.every(filter => {
-      const [filterKey, filterValue] = filter.split('=');
-      return (
-        binding.metadata.labels &&
-        filterKey &&
-        filterValue &&
-        binding.metadata.labels[filterKey] === filterValue
-      );
-    });
-  });
+  return filterResources({ filters, resources });
 }
 
 export function getTriggerBinding(
@@ -441,21 +401,11 @@ export function getEventListeners(
   state,
   { filters, namespace = getSelectedNamespace(state) } = {}
 ) {
-  const listeners = eventListenersSelectors.getEventListeners(
+  const resources = eventListenersSelectors.getEventListeners(
     state.eventListeners,
     namespace
   );
-  return listeners.filter(listener => {
-    return filters.every(filter => {
-      const [filterKey, filterValue] = filter.split('=');
-      return (
-        listener.metadata.labels &&
-        filterKey &&
-        filterValue &&
-        listener.metadata.labels[filterKey] === filterValue
-      );
-    });
-  });
+  return filterResources({ filters, resources });
 }
 
 export function getEventListener(

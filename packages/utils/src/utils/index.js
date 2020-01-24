@@ -227,3 +227,44 @@ export function updateUnexecutedSteps(steps) {
     return step;
   });
 }
+
+export function getFilters({ search }) {
+  const queryParams = new URLSearchParams(search);
+  let filters = [];
+  queryParams.forEach(function filterValueSplit(value) {
+    filters = value.split(',');
+  });
+  return filters;
+}
+
+export function getAddFilterHandler({ history, match }) {
+  return function handleAddFilter(labelFilters) {
+    const queryParams = `?${new URLSearchParams({
+      labelSelector: labelFilters
+    }).toString()}`;
+
+    const browserURL = match.url.concat(queryParams);
+    history.push(browserURL);
+  };
+}
+
+export function getDeleteFilterHandler({ history, location, match }) {
+  return function handleDeleteFilter(filter) {
+    const currentQueryParams = new URLSearchParams(location.search);
+    const labelFilters = currentQueryParams.getAll('labelSelector');
+    const labelFiltersArray = labelFilters.toString().split(',');
+    const index = labelFiltersArray.indexOf(filter);
+    labelFiltersArray.splice(index, 1);
+
+    const currentURL = match.url;
+    if (labelFiltersArray.length === 0) {
+      history.push(currentURL);
+    } else {
+      const newQueryParams = `?${new URLSearchParams({
+        labelSelector: labelFiltersArray
+      }).toString()}`;
+      const browserURL = currentURL.concat(newQueryParams);
+      history.push(browserURL);
+    }
+  };
+}

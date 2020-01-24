@@ -17,7 +17,10 @@ import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
 import { InlineNotification } from 'carbon-components-react';
 import {
+  getAddFilterHandler,
+  getDeleteFilterHandler,
   getErrorMessage,
+  getFilters,
   getStatus,
   isRunning
 } from '@tektoncd/dashboard-utils';
@@ -68,35 +71,6 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
   deleteTask = taskRun => {
     const { name, namespace } = taskRun.metadata;
     deleteTaskRun({ name, namespace });
-  };
-
-  handleAddFilter = labelFilters => {
-    const queryParams = `?${new URLSearchParams({
-      labelSelector: labelFilters
-    }).toString()}`;
-
-    const currentURL = this.props.match.url;
-    const browserURL = currentURL.concat(queryParams);
-    this.props.history.push(browserURL);
-  };
-
-  handleDeleteFilter = filter => {
-    const currentQueryParams = new URLSearchParams(this.props.location.search);
-    const labelFilters = currentQueryParams.getAll('labelSelector');
-    const labelFiltersArray = labelFilters.toString().split(',');
-    const index = labelFiltersArray.indexOf(filter);
-    labelFiltersArray.splice(index, 1);
-
-    const currentURL = this.props.match.url;
-    if (labelFiltersArray.length === 0) {
-      this.props.history.push(currentURL);
-    } else {
-      const newQueryParams = `?${new URLSearchParams({
-        labelSelector: labelFiltersArray
-      }).toString()}`;
-      const browserURL = currentURL.concat(newQueryParams);
-      this.props.history.push(browserURL);
-    }
   };
 
   taskRunActions = () => {
@@ -212,8 +186,8 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
         <h1>TaskRuns</h1>
         <LabelFilter
           filters={filters}
-          handleAddFilter={this.handleAddFilter}
-          handleDeleteFilter={this.handleDeleteFilter}
+          handleAddFilter={getAddFilterHandler(this.props)}
+          handleDeleteFilter={getDeleteFilterHandler(this.props)}
         />
         <TaskRunsList
           loading={loading}
@@ -231,19 +205,9 @@ TaskRuns.defaultProps = {
 };
 
 /* istanbul ignore next */
-export function fetchFilters(searchQuery) {
-  const queryParams = new URLSearchParams(searchQuery);
-  let filters = [];
-  queryParams.forEach(function filterValueSplit(value) {
-    filters = value.split(',');
-  });
-  return filters;
-}
-
-/* istanbul ignore next */
 function mapStateToProps(state, props) {
   const { namespace: namespaceParam } = props.match.params;
-  const filters = fetchFilters(props.location.search);
+  const filters = getFilters(props.location);
   const namespace = namespaceParam || getSelectedNamespace(state);
 
   const taskFilter =
