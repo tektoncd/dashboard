@@ -27,12 +27,12 @@ export function fetchClusterTask(name) {
   return fetchResource('ClusterTask', getClusterTask, { name });
 }
 
-export function fetchTasks({ namespace } = {}) {
-  return fetchNamespacedCollection('Task', getTasks, { namespace });
+export function fetchTasks({ filters, namespace } = {}) {
+  return fetchNamespacedCollection('Task', getTasks, { filters, namespace });
 }
 
-export function fetchClusterTasks() {
-  return fetchCollection('ClusterTask', getClusterTasks);
+export function fetchClusterTasks({ filters } = {}) {
+  return fetchCollection('ClusterTask', getClusterTasks, { filters });
 }
 
 export function fetchTaskByType(name, type, namespace) {

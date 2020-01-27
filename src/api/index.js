@@ -118,8 +118,8 @@ export function checkData(data) {
   throw error;
 }
 
-export function getPipelines({ namespace } = {}) {
-  const uri = getTektonAPI('pipelines', { namespace });
+export function getPipelines({ filters = [], namespace } = {}) {
+  const uri = getTektonAPI('pipelines', { namespace }, getQueryParams(filters));
   return get(uri).then(checkData);
 }
 
@@ -216,8 +216,8 @@ export function createPipelineRun({
   return post(uri, payload);
 }
 
-export function getClusterTasks() {
-  const uri = getTektonAPI('clustertasks');
+export function getClusterTasks({ filters = [] } = {}) {
+  const uri = getTektonAPI('clustertasks', undefined, getQueryParams(filters));
   return get(uri).then(checkData);
 }
 
@@ -226,8 +226,8 @@ export function getClusterTask({ name }) {
   return get(uri);
 }
 
-export function getTasks({ namespace } = {}) {
-  const uri = getTektonAPI('tasks', { namespace });
+export function getTasks({ filters = [], namespace } = {}) {
+  const uri = getTektonAPI('tasks', { namespace }, getQueryParams(filters));
   return get(uri).then(checkData);
 }
 
@@ -254,8 +254,12 @@ export function cancelTaskRun({ name, namespace }) {
   });
 }
 
-export function getPipelineResources({ namespace } = {}) {
-  const uri = getTektonAPI('pipelineresources', { namespace });
+export function getPipelineResources({ filters = [], namespace } = {}) {
+  const uri = getTektonAPI(
+    'pipelineresources',
+    { namespace },
+    getQueryParams(filters)
+  );
   return get(uri).then(checkData);
 }
 

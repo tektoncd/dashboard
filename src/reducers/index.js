@@ -128,9 +128,10 @@ export function getPipeline(
 
 export function getPipelines(
   state,
-  { namespace = getSelectedNamespace(state) } = {}
+  { filters = [], namespace = getSelectedNamespace(state) } = {}
 ) {
-  return pipelineSelectors.getPipelines(state.pipelines, namespace);
+  const resources = pipelineSelectors.getPipelines(state.pipelines, namespace);
+  return filterResources({ filters, resources });
 }
 
 export function getPipelinesErrorMessage(state) {
@@ -143,12 +144,13 @@ export function isFetchingPipelines(state) {
 
 export function getPipelineResources(
   state,
-  { namespace = getSelectedNamespace(state) } = {}
+  { filters = [], namespace = getSelectedNamespace(state) } = {}
 ) {
-  return pipelineResourcesSelectors.getPipelineResources(
+  const resources = pipelineResourcesSelectors.getPipelineResources(
     state.pipelineResources,
     namespace
   );
+  return filterResources({ filters, resources });
 }
 
 export function getPipelineResource(
@@ -241,9 +243,10 @@ export function isFetchingTaskRuns(state) {
 
 export function getTasks(
   state,
-  { namespace = getSelectedNamespace(state) } = {}
+  { filters = [], namespace = getSelectedNamespace(state) } = {}
 ) {
-  return taskSelectors.getTasks(state.tasks, namespace);
+  const resources = taskSelectors.getTasks(state.tasks, namespace);
+  return filterResources({ filters, resources });
 }
 
 export function getTask(
@@ -261,8 +264,9 @@ export function isFetchingTasks(state) {
   return taskSelectors.isFetchingTasks(state.tasks);
 }
 
-export function getClusterTasks(state) {
-  return clusterTaskSelectors.getClusterTasks(state.clusterTasks);
+export function getClusterTasks(state, { filters = [] } = {}) {
+  const resources = clusterTaskSelectors.getClusterTasks(state.clusterTasks);
+  return filterResources({ filters, resources });
 }
 
 export function getClusterTask(state, name) {

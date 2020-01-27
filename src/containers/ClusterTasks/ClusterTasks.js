@@ -15,9 +15,20 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
-import { FormattedDate, Table } from '@tektoncd/dashboard-components';
+import isEqual from 'lodash.isequal';
+import {
+  FormattedDate,
+  LabelFilter,
+  Table
+} from '@tektoncd/dashboard-components';
 import { InlineNotification } from 'carbon-components-react';
-import { getErrorMessage, urls } from '@tektoncd/dashboard-utils';
+import {
+  getAddFilterHandler,
+  getDeleteFilterHandler,
+  getErrorMessage,
+  getFilters,
+  urls
+} from '@tektoncd/dashboard-utils';
 
 import { fetchClusterTasks } from '../../actions/tasks';
 import {
@@ -31,19 +42,30 @@ import '../../components/Definitions/Definitions.scss';
 
 export /* istanbul ignore next */ class ClusterTasksContainer extends Component {
   componentDidMount() {
-    this.props.fetchClusterTasks();
+    this.fetchData();
   }
 
   componentDidUpdate(prevProps) {
-    const { webSocketConnected } = this.props;
-    const { webSocketConnected: prevWebSocketConnected } = prevProps;
-    if (webSocketConnected && prevWebSocketConnected === false) {
-      this.props.fetchClusterTasks();
+    const { filters, webSocketConnected } = this.props;
+    const {
+      filters: prevFilters,
+      webSocketConnected: prevWebSocketConnected
+    } = prevProps;
+    if (
+      (webSocketConnected && prevWebSocketConnected === false) ||
+      !isEqual(filters, prevFilters)
+    ) {
+      this.fetchData();
     }
   }
 
+  fetchData() {
+    const { filters } = this.props;
+    this.props.fetchClusterTasks({ filters });
+  }
+
   render() {
-    const { error, loading, clusterTasks, intl } = this.props;
+    const { error, filters, loading, clusterTasks, intl } = this.props;
     const initialHeaders = [
       {
         key: 'name',
@@ -92,6 +114,11 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
     return (
       <>
         <h1>ClusterTasks</h1>
+        <LabelFilter
+          filters={filters}
+          handleAddFilter={getAddFilterHandler(this.props)}
+          handleDeleteFilter={getDeleteFilterHandler(this.props)}
+        />
         <Table
           headers={initialHeaders}
           rows={clusterTasksFormatted}
@@ -117,14 +144,17 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
 }
 
 ClusterTasksContainer.defaultProps = {
-  clusterTasks: []
+  clusterTasks: [],
+  filters: []
 };
 
 /* istanbul ignore next */
-function mapStateToProps(state) {
+function mapStateToProps(state, props) {
+  const filters = getFilters(props.location);
   return {
-    clusterTasks: getClusterTasks(state),
+    clusterTasks: getClusterTasks(state, { filters }),
     error: getClusterTasksErrorMessage(state),
+    filters,
     loading: isFetchingClusterTasks(state),
     webSocketConnected: isWebSocketConnected(state)
   };

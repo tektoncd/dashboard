@@ -14,9 +14,18 @@ limitations under the License.
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
+import isEqual from 'lodash.isequal';
 import { InlineNotification } from 'carbon-components-react';
-import { getErrorMessage } from '@tektoncd/dashboard-utils';
-import { PipelineResources as PipelineResourcesList } from '@tektoncd/dashboard-components';
+import {
+  getAddFilterHandler,
+  getDeleteFilterHandler,
+  getErrorMessage,
+  getFilters
+} from '@tektoncd/dashboard-utils';
+import {
+  LabelFilter,
+  PipelineResources as PipelineResourcesList
+} from '@tektoncd/dashboard-components';
 
 import { fetchPipelineResources } from '../../actions/pipelineResources';
 import { deletePipelineResource } from '../../api';
@@ -31,21 +40,23 @@ import {
 
 export /* istanbul ignore next */ class PipelineResources extends Component {
   componentDidMount() {
-    this.fetchPipelineResources();
+    this.fetchData();
   }
 
   componentDidUpdate(prevProps) {
-    const { namespace, webSocketConnected } = this.props;
+    const { filters, namespace, webSocketConnected } = this.props;
     const {
+      filters: prevFilters,
       namespace: prevNamespace,
       webSocketConnected: prevWebSocketConnected
     } = prevProps;
 
     if (
       namespace !== prevNamespace ||
-      (webSocketConnected && prevWebSocketConnected === false)
+      (webSocketConnected && prevWebSocketConnected === false) ||
+      !isEqual(filters, prevFilters)
     ) {
-      this.fetchPipelineResources();
+      this.fetchData();
     }
   }
 
@@ -91,9 +102,10 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
     ];
   };
 
-  fetchPipelineResources() {
-    const { namespace } = this.props;
+  fetchData() {
+    const { filters, namespace } = this.props;
     this.props.fetchPipelineResources({
+      filters,
       namespace
     });
   }
@@ -101,6 +113,7 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
   render() {
     const {
       error,
+      filters,
       loading,
       namespace: selectedNamespace,
       pipelineResources
@@ -123,6 +136,11 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
     return (
       <>
         <h1>PipelineResources</h1>
+        <LabelFilter
+          filters={filters}
+          handleAddFilter={getAddFilterHandler(this.props)}
+          handleDeleteFilter={getDeleteFilterHandler(this.props)}
+        />
         <PipelineResourcesList
           loading={loading}
           pipelineResources={pipelineResources}
@@ -138,12 +156,14 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
 function mapStateToProps(state, props) {
   const { namespace: namespaceParam } = props.match.params;
   const namespace = namespaceParam || getSelectedNamespace(state);
+  const filters = getFilters(props.location);
 
   return {
     error: getPipelineResourcesErrorMessage(state),
+    filters,
     loading: isFetchingPipelineResources(state),
     namespace,
-    pipelineResources: getPipelineResources(state, { namespace }),
+    pipelineResources: getPipelineResources(state, { filters, namespace }),
     webSocketConnected: isWebSocketConnected(state)
   };
 }
