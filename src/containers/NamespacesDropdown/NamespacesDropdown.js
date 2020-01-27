@@ -18,8 +18,8 @@ import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 import TooltipDropdown from '../../components/TooltipDropdown';
 import { getNamespaces, isFetchingNamespaces } from '../../reducers';
 
-const NamespacesDropdown = props => {
-  return <TooltipDropdown {...props} />;
+const NamespacesDropdown = ({ showAllNamespaces, ...rest }) => {
+  return <TooltipDropdown {...rest} />;
 };
 
 const allNamespacesLabel = 'All Namespaces';

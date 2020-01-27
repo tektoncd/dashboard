@@ -165,12 +165,12 @@ export /* istanbul ignore next */ class EventListenerContainer extends Component
                 </span>
                 {eventListener.metadata.namespace}
               </p>
-              {triggers.map(theTrigger => {
+              {triggers.map(trigger => {
                 return (
                   <Trigger
-                    key={theTrigger.name}
+                    key={trigger}
                     eventListenerNamespace={eventListenerNamespace}
-                    trigger={theTrigger}
+                    trigger={trigger}
                   />
                 );
               })}

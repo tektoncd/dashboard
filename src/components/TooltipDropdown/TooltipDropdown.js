@@ -33,6 +33,9 @@ const itemToObject = item => {
 };
 
 const TooltipDropdown = ({
+  className,
+  id,
+  inline,
   items,
   loading,
   label,
@@ -40,12 +43,15 @@ const TooltipDropdown = ({
   ...dropdownProps
 }) => {
   if (loading) {
-    return <DropdownSkeleton {...dropdownProps} />;
+    return <DropdownSkeleton className={className} id={id} inline={inline} />;
   }
   const options = items.map(itemToObject);
   return (
     <Dropdown
       {...dropdownProps}
+      className={className}
+      id={id}
+      inline={inline}
       itemToElement={itemToElement}
       items={options}
       itemToString={itemToString}
