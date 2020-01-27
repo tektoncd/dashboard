@@ -18,6 +18,7 @@ import { injectIntl } from 'react-intl';
 import {
   SideNav as CarbonSideNav,
   SideNavItems,
+  SideNavLink,
   SideNavMenu,
   SideNavMenuItem
 } from 'carbon-components-react';
@@ -211,23 +212,27 @@ class SideNav extends Component {
           >
             &nbsp;
           </SideNavMenuItem>
-          <SideNavMenuItem
+          <SideNavLink
             element={NavLink}
             icon={<span />}
             to={urls.importResources()}
           >
             Import Tekton resources
-          </SideNavMenuItem>
-          <SideNavMenuItem element={NavLink} icon={<span />} to="/secrets">
+          </SideNavLink>
+          <SideNavLink
+            element={NavLink}
+            icon={<span />}
+            to={urls.secrets.all()}
+          >
             Secrets
-          </SideNavMenuItem>
-          <SideNavMenuItem
+          </SideNavLink>
+          <SideNavLink
             element={NavLink}
             icon={<span />}
             to={this.getPath(urls.serviceAccounts.all())}
           >
             ServiceAccounts
-          </SideNavMenuItem>
+          </SideNavLink>
           <>
             {extensions.length > 0 &&
               extensions.map(
