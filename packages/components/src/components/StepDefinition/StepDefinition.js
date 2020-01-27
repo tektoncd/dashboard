@@ -106,6 +106,15 @@ class StepDefinition extends Component {
 
   render() {
     const { definition, intl } = this.props;
+    const { container, imageID, terminated, ...stepDefinition } =
+      definition || {};
+
+    const resource = definition
+      ? stepDefinition
+      : intl.formatMessage({
+          id: 'dashboard.step.definitionNotAvailable',
+          defaultMessage: 'description: step definition not available'
+        });
 
     const paramsResources = this.getIOTables();
     return (
@@ -117,15 +126,7 @@ class StepDefinition extends Component {
           />
           :
         </div>
-        <ViewYAML
-          resource={
-            definition ||
-            intl.formatMessage({
-              id: 'dashboard.step.definitionNotAvailable',
-              defaultMessage: 'description: step definition not available'
-            })
-          }
-        />
+        <ViewYAML resource={resource} />
         {paramsResources}
       </div>
     );

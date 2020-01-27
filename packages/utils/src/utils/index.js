@@ -137,12 +137,17 @@ export function reorderSteps(unorderedSteps, orderedSteps) {
   if (!unorderedSteps || !orderedSteps) {
     return [];
   }
-  return orderedSteps.map(({ name }, idx) => {
+  return orderedSteps.map(({ name, ...rest }, idx) => {
     let findName = name;
     if (name === '') {
       findName = `unnamed-${idx}`;
     }
-    return unorderedSteps.find(step => step.name === findName);
+    const orderedStep = unorderedSteps.find(step => step.name === findName);
+    return {
+      name,
+      ...rest,
+      ...orderedStep
+    };
   });
 }
 

@@ -106,7 +106,7 @@ class Task extends Component {
                 return (
                   <Step
                     id={id}
-                    key={id}
+                    key={stepName}
                     onSelect={this.handleStepSelected}
                     reason={stepReason}
                     selected={selected}
