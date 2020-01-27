@@ -14,9 +14,12 @@ limitations under the License.
 package endpoints
 
 import (
+	"errors"
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
+	"strings"
 
 	restful "github.com/emicklei/go-restful"
 	"github.com/tektoncd/dashboard/pkg/logging"
@@ -41,6 +44,7 @@ func (r Resource) ProxyRequest(request *restful.Request, response *restful.Respo
 		utils.RespondError(response, err, http.StatusNotFound)
 		return
 	}
+
 	uri := request.PathParameter("subpath") + "?" + parsedURL.RawQuery
 	forwardRequest := r.K8sClient.CoreV1().RESTClient().Verb(request.Request.Method).RequestURI(uri).Body(request.Request.Body)
 	forwardRequest.SetHeader("Content-Type", request.HeaderParameter("Content-Type"))
@@ -48,7 +52,29 @@ func (r Resource) ProxyRequest(request *restful.Request, response *restful.Respo
 
 	responseBody, requestError := forwardResponse.Raw()
 	if requestError != nil {
-		utils.RespondError(response, requestError, http.StatusNotFound)
+		errorInfo := string(responseBody)
+		errorInfo = strings.Replace(errorInfo, "\"", "", -1)
+		errorInfo = strings.Replace(errorInfo, "\\", "", -1)
+		errorInfo = strings.Replace(errorInfo, "\n", "", -1)
+		// Checks if an error code can be found in the response
+		if strings.LastIndex(errorInfo, "code:") != -1 {
+			errorCodeString := strings.LastIndex(errorInfo, "code:")
+			// Checks if the code is 3-digits long
+			if len(errorInfo[errorCodeString+5:errorCodeString+8]) == 3 {
+				errorCode := errorInfo[errorCodeString+5 : errorCodeString+8]
+				errorCodeFormatted, err := strconv.Atoi(errorCode)
+				// Checks if the code can be converted to an integer without error
+				if err != nil {
+					utils.RespondError(response, requestError, http.StatusInternalServerError)
+					return
+				}
+				utils.RespondError(response, errors.New(errorInfo), errorCodeFormatted)
+				return
+			}
+			utils.RespondError(response, requestError, http.StatusInternalServerError)
+			return
+		}
+		utils.RespondError(response, requestError, http.StatusInternalServerError)
 		return
 	}
 	response.Header().Add("Content-Type", utils.GetContentType(responseBody))
