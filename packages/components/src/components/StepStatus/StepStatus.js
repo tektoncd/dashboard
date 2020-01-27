@@ -19,6 +19,14 @@ import { ViewYAML } from '..';
 import './StepStatus.scss';
 
 const StepStatus = ({ intl, status }) => {
+  const { container, imageID, name, terminated } = status || {};
+  const resource = status
+    ? { container, imageID, name, terminated }
+    : intl.formatMessage({
+        id: 'dashboard.step.statusNotAvailable',
+        defaultMessage: 'No status available'
+      });
+
   return (
     <div className="step-status">
       <div className="title">
@@ -28,15 +36,7 @@ const StepStatus = ({ intl, status }) => {
         })}
         :
       </div>
-      <ViewYAML
-        resource={
-          status ||
-          intl.formatMessage({
-            id: 'dashboard.step.statusNotAvailable',
-            defaultMessage: 'No status available'
-          })
-        }
-      />
+      <ViewYAML resource={resource} />
     </div>
   );
 };

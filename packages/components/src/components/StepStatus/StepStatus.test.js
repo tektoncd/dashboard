@@ -23,7 +23,15 @@ it('StepStatus renders default content', () => {
 });
 
 it('StepStatus renders the provided content', () => {
-  const { queryByText } = renderWithIntl(<StepStatus status="testing" />);
+  const container = 'fake_container';
+  const imageID = 'fake_imageID';
+  const name = 'fake_name';
+  const terminated = 'fake_terminated';
+  const status = { container, imageID, name, terminated };
+  const { queryByText } = renderWithIntl(<StepStatus status={status} />);
 
-  expect(queryByText(/testing/i)).toBeTruthy();
+  expect(queryByText(new RegExp(container, 'i'))).toBeTruthy();
+  expect(queryByText(new RegExp(imageID, 'i'))).toBeTruthy();
+  expect(queryByText(new RegExp(name, 'i'))).toBeTruthy();
+  expect(queryByText(new RegExp(terminated, 'i'))).toBeTruthy();
 });
