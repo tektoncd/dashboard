@@ -15,9 +15,20 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
+import isEqual from 'lodash.isequal';
 import { InlineNotification } from 'carbon-components-react';
-import { getErrorMessage, urls } from '@tektoncd/dashboard-utils';
-import { FormattedDate, Table } from '@tektoncd/dashboard-components';
+import {
+  getAddFilterHandler,
+  getDeleteFilterHandler,
+  getErrorMessage,
+  getFilters,
+  urls
+} from '@tektoncd/dashboard-utils';
+import {
+  FormattedDate,
+  LabelFilter,
+  Table
+} from '@tektoncd/dashboard-components';
 import Information16 from '@carbon/icons-react/lib/information/16';
 import { fetchTasks } from '../../actions/tasks';
 import {
@@ -32,23 +43,33 @@ import '../../components/Definitions/Definitions.scss';
 
 export /* istanbul ignore next */ class Tasks extends Component {
   componentDidMount() {
-    this.props.fetchTasks();
+    this.fetchData();
   }
 
   componentDidUpdate(prevProps) {
-    const { namespace, webSocketConnected } = this.props;
-    const { webSocketConnected: prevWebSocketConnected } = prevProps;
+    const { filters, namespace, webSocketConnected } = this.props;
+    const {
+      filters: prevFilters,
+      webSocketConnected: prevWebSocketConnected
+    } = prevProps;
     if (
       namespace !== prevProps.namespace ||
-      (webSocketConnected && prevWebSocketConnected === false)
+      (webSocketConnected && prevWebSocketConnected === false) ||
+      !isEqual(filters, prevFilters)
     ) {
-      this.props.fetchTasks();
+      this.fetchData();
     }
+  }
+
+  fetchData() {
+    const { filters, namespace } = this.props;
+    this.props.fetchTasks({ filters, namespace });
   }
 
   render() {
     const {
       error,
+      filters,
       loading,
       tasks,
       intl,
@@ -130,6 +151,11 @@ export /* istanbul ignore next */ class Tasks extends Component {
     return (
       <>
         <h1>Tasks</h1>
+        <LabelFilter
+          filters={filters}
+          handleAddFilter={getAddFilterHandler(this.props)}
+          handleDeleteFilter={getDeleteFilterHandler(this.props)}
+        />
         <Table
           headers={initialHeaders}
           rows={tasksFormatted}
@@ -156,6 +182,7 @@ export /* istanbul ignore next */ class Tasks extends Component {
 }
 
 Tasks.defaultProps = {
+  filters: [],
   tasks: []
 };
 
@@ -163,12 +190,14 @@ Tasks.defaultProps = {
 function mapStateToProps(state, props) {
   const { namespace: namespaceParam } = props.match.params;
   const namespace = namespaceParam || getSelectedNamespace(state);
+  const filters = getFilters(props.location);
 
   return {
     error: getTasksErrorMessage(state),
+    filters,
     loading: isFetchingTasks(state),
     namespace,
-    tasks: getTasks(state, { namespace }),
+    tasks: getTasks(state, { filters, namespace }),
     webSocketConnected: isWebSocketConnected(state)
   };
 }

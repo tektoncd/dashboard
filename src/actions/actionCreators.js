@@ -22,13 +22,13 @@ export function fetchSuccess(resourceType, data) {
   };
 }
 
-export function fetchCollection(resourceType, api) {
+export function fetchCollection(resourceType, api, params) {
   const pluralType = typeToPlural(resourceType);
   return async dispatch => {
     dispatch({ type: `${pluralType}_FETCH_REQUEST` });
     let data;
     try {
-      data = await api();
+      data = await api({ ...params });
       dispatch(fetchSuccess(resourceType, data));
     } catch (error) {
       dispatch({ type: `${pluralType}_FETCH_FAILURE`, error });

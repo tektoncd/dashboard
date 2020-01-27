@@ -21,6 +21,9 @@ export function fetchPipeline({ name, namespace }) {
   return fetchNamespacedResource('Pipeline', getPipeline, { name, namespace });
 }
 
-export function fetchPipelines({ namespace } = {}) {
-  return fetchNamespacedCollection('Pipeline', getPipelines, { namespace });
+export function fetchPipelines({ filters, namespace } = {}) {
+  return fetchNamespacedCollection('Pipeline', getPipelines, {
+    filters,
+    namespace
+  });
 }

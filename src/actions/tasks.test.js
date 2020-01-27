@@ -50,7 +50,7 @@ it('fetchTasks no params', () => {
   expect(creators.fetchNamespacedCollection).toHaveBeenCalledWith(
     'Task',
     API.getTasks,
-    { namespace: undefined }
+    { filters: undefined, namespace: undefined }
   );
 });
 
@@ -70,7 +70,8 @@ it('fetchClusterTasks', () => {
   fetchClusterTasks();
   expect(creators.fetchCollection).toHaveBeenCalledWith(
     'ClusterTask',
-    API.getClusterTasks
+    API.getClusterTasks,
+    { filters: undefined }
   );
 });
 

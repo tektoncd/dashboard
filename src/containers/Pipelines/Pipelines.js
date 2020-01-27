@@ -16,10 +16,20 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Information16 from '@carbon/icons-react/lib/information/16';
 import { injectIntl } from 'react-intl';
-
+import isEqual from 'lodash.isequal';
 import { InlineNotification } from 'carbon-components-react';
-import { getErrorMessage, urls } from '@tektoncd/dashboard-utils';
-import { FormattedDate, Table } from '@tektoncd/dashboard-components';
+import {
+  getAddFilterHandler,
+  getDeleteFilterHandler,
+  getErrorMessage,
+  getFilters,
+  urls
+} from '@tektoncd/dashboard-utils';
+import {
+  FormattedDate,
+  LabelFilter,
+  Table
+} from '@tektoncd/dashboard-components';
 
 import { fetchPipelines } from '../../actions/pipelines';
 import {
@@ -34,23 +44,33 @@ import '../../components/Definitions/Definitions.scss';
 
 export /* istanbul ignore next */ class Pipelines extends Component {
   componentDidMount() {
-    this.props.fetchPipelines();
+    this.fetchData();
   }
 
   componentDidUpdate(prevProps) {
-    const { namespace, webSocketConnected } = this.props;
-    const { webSocketConnected: prevWebSocketConnected } = prevProps;
+    const { filters, namespace, webSocketConnected } = this.props;
+    const {
+      filters: prevFilters,
+      webSocketConnected: prevWebSocketConnected
+    } = prevProps;
     if (
       namespace !== prevProps.namespace ||
-      (webSocketConnected && prevWebSocketConnected === false)
+      (webSocketConnected && prevWebSocketConnected === false) ||
+      !isEqual(filters, prevFilters)
     ) {
-      this.props.fetchPipelines();
+      this.fetchData();
     }
+  }
+
+  fetchData() {
+    const { filters, namespace } = this.props;
+    this.props.fetchPipelines({ filters, namespace });
   }
 
   render() {
     const {
       error,
+      filters,
       loading,
       pipelines,
       intl,
@@ -134,6 +154,11 @@ export /* istanbul ignore next */ class Pipelines extends Component {
     return (
       <>
         <h1>Pipelines</h1>
+        <LabelFilter
+          filters={filters}
+          handleAddFilter={getAddFilterHandler(this.props)}
+          handleDeleteFilter={getDeleteFilterHandler(this.props)}
+        />
         <Table
           headers={initialHeaders}
           rows={pipelinesFormatted}
@@ -160,6 +185,7 @@ export /* istanbul ignore next */ class Pipelines extends Component {
 }
 
 Pipelines.defaultProps = {
+  filters: [],
   pipelines: []
 };
 
@@ -167,12 +193,14 @@ Pipelines.defaultProps = {
 function mapStateToProps(state, props) {
   const { namespace: namespaceParam } = props.match.params;
   const namespace = namespaceParam || getSelectedNamespace(state);
+  const filters = getFilters(props.location);
 
   return {
     error: getPipelinesErrorMessage(state),
+    filters,
     loading: isFetchingPipelines(state),
     namespace,
-    pipelines: getPipelines(state, { namespace }),
+    pipelines: getPipelines(state, { filters, namespace }),
     webSocketConnected: isWebSocketConnected(state)
   };
 }
