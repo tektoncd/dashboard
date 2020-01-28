@@ -92,7 +92,7 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
     return [
       {
         actionText: intl.formatMessage({
-          id: 'dashboard.deletePipelineResource.actionText',
+          id: 'dashboard.actions.deleteButton',
           defaultMessage: 'Delete'
         }),
         action: this.deleteResource,
@@ -175,8 +175,8 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
         onClick={() => this.toggleModal(true)}
       >
         {intl.formatMessage({
-          id: 'dashboard.pipelineResource.createPipelineResourceButton',
-          defaultMessage: 'Create PipelineResource'
+          id: 'dashboard.actions.createButton',
+          defaultMessage: 'Create'
         })}
       </Button>
     );

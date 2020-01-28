@@ -12,10 +12,11 @@ limitations under the License.
 */
 
 import React from 'react';
-import { render } from 'react-testing-library';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+
+import { renderWithIntl } from '../../utils/test';
 import BasicAuthFields from './BasicAuthFields';
 
 const middleware = [thunk];
@@ -82,7 +83,7 @@ it('BasicAuthFields renders with blank inputs', () => {
     serviceAccounts
   };
 
-  const { getByLabelText, getAllByDisplayValue } = render(
+  const { getByLabelText, getAllByDisplayValue } = renderWithIntl(
     <Provider store={store}>
       <BasicAuthFields {...props} />
     </Provider>
@@ -103,7 +104,7 @@ it('BasicAuthFields incorrect fields', () => {
     serviceAccounts
   };
 
-  const { getByLabelText } = render(
+  const { getByLabelText } = renderWithIntl(
     <Provider store={store}>
       <BasicAuthFields {...props} />
     </Provider>

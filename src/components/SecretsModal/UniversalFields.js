@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
+import { injectIntl } from 'react-intl';
 import { Dropdown, TextInput } from 'carbon-components-react';
 import NamespacesDropdown from '../../containers/NamespacesDropdown';
 
@@ -19,13 +20,14 @@ const itemToString = item => (item ? item.text : '');
 
 const UniversalFields = props => {
   const {
-    name,
-    handleChangeTextInput,
+    accessTo,
     handleChangeAccessTo,
     handleChangeNamespace,
-    accessTo,
-    selectedNamespace,
-    invalidFields
+    handleChangeTextInput,
+    intl,
+    invalidFields,
+    name,
+    selectedNamespace
   } = props;
 
   return (
@@ -34,10 +36,17 @@ const UniversalFields = props => {
         id="name"
         placeholder="secret-name"
         value={name}
-        labelText="Name"
+        labelText={intl.formatMessage({
+          id: 'dashboard.universalFields.name',
+          defaultMessage: 'Name'
+        })}
         onChange={handleChangeTextInput}
         invalid={'name' in invalidFields}
-        invalidText="Must not start or end with - and be less than 253 characters, contain only lowercase alphanumeric characters or -"
+        invalidText={intl.formatMessage({
+          id: 'dashboard.universalFields.nameInvalid',
+          defaultMessage:
+            'Must not start or end with - and be less than 253 characters, contain only lowercase alphanumeric characters or -'
+        })}
         autoComplete="off"
       />
       <NamespacesDropdown
@@ -52,11 +61,17 @@ const UniversalFields = props => {
         }
         onChange={handleChangeNamespace}
         invalid={'namespace' in invalidFields}
-        invalidText="Namespace required."
+        invalidText={intl.formatMessage({
+          id: 'dashboard.universalFields.namespaceInvalid',
+          defaultMessage: 'Namespace required.'
+        })}
       />
       <Dropdown
         id="accessTo"
-        titleText="Access To"
+        titleText={intl.formatMessage({
+          id: 'dashboard.universalFields.accessTo',
+          defaultMessage: 'Access To'
+        })}
         label=""
         initialSelectedItem={{
           id: accessTo,
@@ -73,4 +88,4 @@ const UniversalFields = props => {
   );
 };
 
-export default UniversalFields;
+export default injectIntl(UniversalFields);

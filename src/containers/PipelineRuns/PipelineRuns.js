@@ -144,7 +144,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
       },
       {
         actionText: intl.formatMessage({
-          id: 'dashboard.deletePipelineRun.actionText',
+          id: 'dashboard.actions.deleteButton',
           defaultMessage: 'Delete'
         }),
         action: this.deleteRun,
@@ -159,8 +159,8 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
             defaultMessage: 'Delete PipelineRun'
           }),
           primaryButtonText: intl.formatMessage({
-            id: 'dashboard.deletePipelineRun.primaryText',
-            defaultMessage: 'Delete PipelineRun'
+            id: 'dashboard.actions.deleteButton',
+            defaultMessage: 'Delete'
           }),
           secondaryButtonText: intl.formatMessage({
             id: 'dashboard.modal.cancelButton',
@@ -249,8 +249,8 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
         onClick={() => this.toggleModal(true)}
       >
         {intl.formatMessage({
-          id: 'dashboard.pipelineRuns.createPipelineRunButton',
-          defaultMessage: 'Create PipelineRun'
+          id: 'dashboard.actions.createButton',
+          defaultMessage: 'Create'
         })}
       </Button>
     );

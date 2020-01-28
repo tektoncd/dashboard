@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
+import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import {
   CodeSnippetSkeleton,
@@ -100,6 +101,7 @@ export /* istanbul ignore next */ class CustomResourceDefinition extends Compone
     const error = this.props.error || this.state.error;
     const resource = this.props.resource || this.state.resource;
     const { loading } = this.state;
+    const { intl } = this.props;
 
     if (loading) {
       return <CodeSnippetSkeleton type="multi" />;
@@ -111,7 +113,10 @@ export /* istanbul ignore next */ class CustomResourceDefinition extends Compone
           kind="error"
           hideCloseButton
           lowContrast
-          title="Error loading resource"
+          title={intl.formatMessage({
+            id: 'dashboard.customResourceDefinition.errorLoading',
+            defaultMessage: 'Error loading resource'
+          })}
           subtitle={getErrorMessage(error)}
         />
       );
@@ -157,4 +162,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(CustomResourceDefinition);
+)(injectIntl(CustomResourceDefinition));

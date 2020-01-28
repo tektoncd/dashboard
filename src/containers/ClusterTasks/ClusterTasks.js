@@ -105,7 +105,10 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
         <InlineNotification
           hideCloseButton
           kind="error"
-          title="Error loading ClusterTasks"
+          title={intl.formatMessage({
+            id: 'dashboard.clusterTasks.errorLoading',
+            defaultMessage: 'Error loading ClusterTasks'
+          })}
           subtitle={getErrorMessage(error)}
           lowContrast
         />

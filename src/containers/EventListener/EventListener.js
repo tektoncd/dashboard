@@ -101,7 +101,10 @@ export /* istanbul ignore next */ class EventListenerContainer extends Component
     if (!eventListener) {
       return EventListenerContainer.notification({
         kind: 'error',
-        message: 'EventListener not available',
+        message: intl.formatMessage({
+          id: 'dashboard.eventListener.unavailable',
+          defaultMessage: 'EventListener not available'
+        }),
         intl
       });
     }

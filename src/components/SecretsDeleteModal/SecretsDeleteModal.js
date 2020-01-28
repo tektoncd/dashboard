@@ -12,26 +12,42 @@ limitations under the License.
 */
 
 import React from 'react';
+import { injectIntl } from 'react-intl';
 import { Modal } from 'carbon-components-react';
+
 import './SecretsDeleteModal.scss';
 
 const SecretsDeleteModal = props => {
-  const { open, toBeDeleted, handleClick, handleDelete } = props;
+  const { intl, open, toBeDeleted, handleClick, handleDelete } = props;
 
   return (
     <Modal
       open={open}
       className="deleteModal"
       data-testid="deleteModal"
-      primaryButtonText="Delete"
-      secondaryButtonText="Cancel"
-      modalHeading="Delete Secret"
+      primaryButtonText={intl.formatMessage({
+        id: 'dashboard.actions.deleteButton',
+        defaultMessage: 'Delete'
+      })}
+      secondaryButtonText={intl.formatMessage({
+        id: 'dashboard.modal.cancelButton',
+        defaultMessage: 'Cancel'
+      })}
+      modalHeading={intl.formatMessage({
+        id: 'dashboard.secrets.deleteHeading',
+        defaultMessage: 'Delete Secret'
+      })}
       onSecondarySubmit={handleClick}
       onRequestSubmit={handleDelete}
       onRequestClose={handleClick}
       danger
     >
-      <p>Are you sure you want to delete these secrets?</p>
+      <p>
+        {intl.formatMessage({
+          id: 'dashboard.secrets.deleteConfirm',
+          defaultMessage: 'Are you sure you want to delete these secrets?'
+        })}
+      </p>
       <ul>
         {toBeDeleted.map(secret => {
           const { name, namespace } = secret;
@@ -42,4 +58,4 @@ const SecretsDeleteModal = props => {
   );
 };
 
-export default SecretsDeleteModal;
+export default injectIntl(SecretsDeleteModal);
