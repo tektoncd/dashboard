@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
+import { injectIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import {
@@ -35,6 +36,7 @@ import '../../components/Definitions/Definitions.scss';
 
 export const Extensions = /* istanbul ignore next */ ({
   error,
+  intl,
   loading,
   extensions
 }) => {
@@ -48,7 +50,10 @@ export const Extensions = /* istanbul ignore next */ ({
         kind="error"
         hideCloseButton
         lowContrast
-        title="Error loading extensions"
+        title={intl.formatMessage({
+          id: 'dashboard.extensions.errorLoading',
+          defaultMessage: 'Error loading extensions'
+        })}
         subtitle={getErrorMessage(error)}
       />
     );
@@ -94,4 +99,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(Extensions);
+export default connect(mapStateToProps)(injectIntl(Extensions));

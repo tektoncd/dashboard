@@ -251,12 +251,12 @@ export /* istanbul ignore next */ class PipelineResourcesModal extends Component
         className="modal"
         data-testid="modal"
         primaryButtonText={intl.formatMessage({
-          id: 'dashboard.pipelineResourcesModal.primaryBtnText',
-          defaultMessage: 'Submit'
+          id: 'dashboard.actions.createButton',
+          defaultMessage: 'Create'
         })}
         secondaryButtonText={intl.formatMessage({
-          id: 'dashboard.pipelineResourcesModal.secondaryBtnText',
-          defaultMessage: 'Close'
+          id: 'dashboard.modal.cancelButton',
+          defaultMessage: 'Cancel'
         })}
         modalHeading={intl.formatMessage({
           id: 'dashboard.pipelineResourcesModal.heading',
@@ -277,7 +277,7 @@ export /* istanbul ignore next */ class PipelineResourcesModal extends Component
                 })}
                 subtitle={getErrorMessage(this.state.submitError)}
                 iconDescription={intl.formatMessage({
-                  id: 'dashboard.pipelineResourcesModal.error.iconDescription',
+                  id: 'dashboard.notification.clear',
                   defaultMessage: 'Clear Notification'
                 })}
                 className="notificationComponent"

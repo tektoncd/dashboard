@@ -12,17 +12,19 @@ limitations under the License.
 */
 
 import React from 'react';
+import { injectIntl } from 'react-intl';
 import { Select, SelectItem, TextInput } from 'carbon-components-react';
 
 const BasicAuthFields = props => {
   const {
-    username,
-    password,
-    namespace,
-    handleChangeTextInput,
     handleChangeServiceAccount,
+    handleChangeTextInput,
+    intl,
     invalidFields,
-    serviceAccounts
+    namespace,
+    password,
+    serviceAccounts,
+    username
   } = props;
 
   const saItems = serviceAccounts.map(sa => (
@@ -40,10 +42,16 @@ const BasicAuthFields = props => {
         autoComplete="off"
         placeholder="username"
         value={username}
-        labelText="Username"
+        labelText={intl.formatMessage({
+          id: 'dashboard.basicAuthFields.username',
+          defaultMessage: 'Username'
+        })}
         onChange={handleChangeTextInput}
         invalid={'username' in invalidFields}
-        invalidText="Username required."
+        invalidText={intl.formatMessage({
+          id: 'dashboard.basicAuthFields.usernameRequired',
+          defaultMessage: 'Username required.'
+        })}
       />
       <TextInput
         id="password"
@@ -51,10 +59,16 @@ const BasicAuthFields = props => {
         type="password"
         value={password}
         placeholder="********"
-        labelText="Password/Token"
+        labelText={intl.formatMessage({
+          id: 'dashboard.basicAuthFields.passwordToken',
+          defaultMessage: 'Password/Token'
+        })}
         onChange={handleChangeTextInput}
         invalid={'password' in invalidFields}
-        invalidText="Password or Token required."
+        invalidText={intl.formatMessage({
+          id: 'dashboard.basicAuthFields.passwordTokenRequired',
+          defaultMessage: 'Password or Token required.'
+        })}
       />
       <Select
         id="serviceAccount"
@@ -62,16 +76,29 @@ const BasicAuthFields = props => {
         hidden
         defaultValue="main"
         onChange={handleChangeServiceAccount}
-        labelText="Service Account"
+        labelText={intl.formatMessage({
+          id: 'dashboard.basicAuthFields.serviceAccount',
+          defaultMessage: 'Service Account'
+        })}
         invalid={'serviceAccount' in invalidFields}
-        invalidText="Service Account required."
+        invalidText={intl.formatMessage({
+          id: 'dashboard.basicAuthFields.serviceAccountRequired',
+          defaultMessage: 'Service Account required.'
+        })}
         disabled={namespace === ''}
       >
-        <SelectItem disabled value="main" text="Select Service account" />
+        <SelectItem
+          disabled
+          value="main"
+          text={intl.formatMessage({
+            id: 'dashboard.basicAuthFields.selectServiceAccount',
+            defaultMessage: 'Select Service Account'
+          })}
+        />
         {saItems}
       </Select>
     </>
   );
 };
 
-export default BasicAuthFields;
+export default injectIntl(BasicAuthFields);

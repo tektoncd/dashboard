@@ -105,8 +105,8 @@ it('SecretsModal renders blank', () => {
     </Provider>
   );
   expect(queryByText('Create Secret')).toBeTruthy();
-  expect(queryByText('Close')).toBeTruthy();
-  expect(queryByText('Submit')).toBeTruthy();
+  expect(queryByText('Cancel')).toBeTruthy();
+  expect(queryByText('Create')).toBeTruthy();
 });
 
 it('Test SecretsModal click events', () => {
@@ -125,7 +125,7 @@ it('Test SecretsModal click events', () => {
       <SecretsModal {...props} />
     </Provider>
   );
-  fireEvent.click(queryByText('Close'));
+  fireEvent.click(queryByText('Cancel'));
   expect(handleHideModal).toHaveBeenCalledTimes(1);
 
   rerenderWithIntl(
@@ -134,7 +134,7 @@ it('Test SecretsModal click events', () => {
       <SecretsModal open={false} />
     </Provider>
   );
-  fireEvent.click(queryByText('Submit'));
+  fireEvent.click(queryByText('Create'));
   expect(handleSubmit).toHaveBeenCalledTimes(0);
 });
 
@@ -155,7 +155,7 @@ it('Create Secret validates all empty inputs', () => {
       <SecretsModal {...props} />
     </Provider>
   );
-  fireEvent.click(queryByText('Submit'));
+  fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeTruthy();
   expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
@@ -173,7 +173,7 @@ it('Create Secret errors when starting with a "-"', () => {
   fireEvent.change(getByPlaceholderText(/secret-name/i), {
     target: { value: '-meow' }
   });
-  fireEvent.click(queryByText('Submit'));
+  fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeTruthy();
   expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
@@ -191,7 +191,7 @@ it('Create Secret errors when ends with a "-"', () => {
   fireEvent.change(getByPlaceholderText(/secret-name/i), {
     target: { value: 'meow-' }
   });
-  fireEvent.click(queryByText('Submit'));
+  fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeTruthy();
   expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
@@ -209,7 +209,7 @@ it('Create Secret errors when contains "."', () => {
   fireEvent.change(getByPlaceholderText(/secret-name/i), {
     target: { value: 'meow.meow' }
   });
-  fireEvent.click(queryByText('Submit'));
+  fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeTruthy();
   expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
@@ -227,7 +227,7 @@ it('Create Secret errors when contains spaces', () => {
   fireEvent.change(getByPlaceholderText(/secret-name/i), {
     target: { value: 'the cat goes meow' }
   });
-  fireEvent.click(queryByText('Submit'));
+  fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeTruthy();
   expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
@@ -245,7 +245,7 @@ it('Create Secret errors when contains capital letters', () => {
   fireEvent.change(getByPlaceholderText(/secret-name/i), {
     target: { value: 'MEOW' }
   });
-  fireEvent.click(queryByText('Submit'));
+  fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeTruthy();
   expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
@@ -263,7 +263,7 @@ it('Create Secret doesn\'t error when contains "-" in the middle of the secret',
   fireEvent.change(getByPlaceholderText(/secret-name/i), {
     target: { value: 'the-cat-goes-meow' }
   });
-  fireEvent.click(queryByText('Submit'));
+  fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeFalsy();
   expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
@@ -281,7 +281,7 @@ it("Create Secret doesn't error when contains 0", () => {
   fireEvent.change(getByPlaceholderText(/secret-name/i), {
     target: { value: 'the-cat-likes-0' }
   });
-  fireEvent.click(queryByText('Submit'));
+  fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeFalsy();
   expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
@@ -299,7 +299,7 @@ it("Create Secret doesn't error when contains 9", () => {
   fireEvent.change(getByPlaceholderText(/secret-name/i), {
     target: { value: 'the-cat-likes-9' }
   });
-  fireEvent.click(queryByText('Submit'));
+  fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeFalsy();
   expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
@@ -320,7 +320,7 @@ it('Create Secret errors when contains 253 characters', () => {
         '1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111121212121212121212121212121212121212111111113333333333'
     }
   });
-  fireEvent.click(queryByText('Submit'));
+  fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeTruthy();
   expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
@@ -341,7 +341,7 @@ it("Create Secret doesn't error when contains 252 characters", () => {
         '111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111121212121212121212121212121212121212111111113333333333'
     }
   });
-  fireEvent.click(queryByText('Submit'));
+  fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeFalsy();
   expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
@@ -361,7 +361,7 @@ it("Create Secret doesn't error when contains a valid namespace", () => {
   });
   fireEvent.click(getByText(/select namespace/i));
   fireEvent.click(getByText(/default/i));
-  fireEvent.click(queryByText('Submit'));
+  fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeFalsy();
   expect(queryByText(namespaceValidationErrorRegExp)).toBeFalsy();
   expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
@@ -385,7 +385,7 @@ it("Create Secret doesn't error when Docker Registry is selected", () => {
   fireEvent.click(getByText(/git server/i));
   fireEvent.click(getByText(/docker registry/i));
 
-  fireEvent.click(queryByText('Submit'));
+  fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeFalsy();
   expect(queryByText(namespaceValidationErrorRegExp)).toBeFalsy();
   expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
@@ -410,7 +410,7 @@ it("Create Secret doesn't error when a username is entered", () => {
     target: { value: 'the-cat-goes-meow' }
   });
 
-  fireEvent.click(queryByText('Submit'));
+  fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeFalsy();
   expect(queryByText(namespaceValidationErrorRegExp)).toBeFalsy();
   expect(queryByText(usernameValidationErrorRegExp)).toBeFalsy();
@@ -439,7 +439,7 @@ it("Create Secret doesn't error when a password is entered", () => {
     target: { value: 'password' }
   });
 
-  fireEvent.click(queryByText('Submit'));
+  fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeFalsy();
   expect(queryByText(namespaceValidationErrorRegExp)).toBeFalsy();
   expect(queryByText(usernameValidationErrorRegExp)).toBeFalsy();

@@ -65,8 +65,8 @@ it('PipelineResourcesModal renders blank', () => {
     </Provider>
   );
   expect(queryByText('Create PipelineResource')).toBeTruthy();
-  expect(queryByText('Close')).toBeTruthy();
-  expect(queryByText('Submit')).toBeTruthy();
+  expect(queryByText('Cancel')).toBeTruthy();
+  expect(queryByText('Create')).toBeTruthy();
 });
 
 it('Test PipelineResourcesModal click events', () => {
@@ -85,7 +85,7 @@ it('Test PipelineResourcesModal click events', () => {
       <PipelineResourcesModal {...props} />
     </Provider>
   );
-  fireEvent.click(queryByText('Close'));
+  fireEvent.click(queryByText('Cancel'));
   expect(onClose).toHaveBeenCalledTimes(1);
 
   rerenderWithIntl(
@@ -113,7 +113,7 @@ it('Create PipelineResource validates all empty inputs', () => {
       <PipelineResourcesModal {...props} />
     </Provider>
   );
-  fireEvent.click(queryByText('Submit'));
+  fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeTruthy();
   expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(urlValidationErrorRegExp)).toBeTruthy();
@@ -129,7 +129,7 @@ it('Create PipelineResource errors when starting with a "-"', () => {
   fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
     target: { value: '-meow' }
   });
-  fireEvent.click(queryByText('Submit'));
+  fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeTruthy();
   expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(urlValidationErrorRegExp)).toBeTruthy();
@@ -145,7 +145,7 @@ it('Create PipelineResource errors when ends with a "-"', () => {
   fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
     target: { value: 'meow-' }
   });
-  fireEvent.click(queryByText('Submit'));
+  fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeTruthy();
   expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(urlValidationErrorRegExp)).toBeTruthy();
@@ -161,7 +161,7 @@ it('Create PipelineResource errors when contains "."', () => {
   fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
     target: { value: 'meow.meow' }
   });
-  fireEvent.click(queryByText('Submit'));
+  fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeTruthy();
   expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(urlValidationErrorRegExp)).toBeTruthy();
@@ -177,7 +177,7 @@ it('Create PipelineResource errors when contains spaces', () => {
   fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
     target: { value: 'the cat goes meow' }
   });
-  fireEvent.click(queryByText('Submit'));
+  fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeTruthy();
   expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(urlValidationErrorRegExp)).toBeTruthy();
@@ -193,7 +193,7 @@ it('Create PipelineResource errors when contains capital letters', () => {
   fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
     target: { value: 'MEOW' }
   });
-  fireEvent.click(queryByText('Submit'));
+  fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeTruthy();
   expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(urlValidationErrorRegExp)).toBeTruthy();
@@ -209,7 +209,7 @@ it('Create PipelineResource doesn\'t error when contains "-" in the middle of th
   fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
     target: { value: 'the-cat-goes-meow' }
   });
-  fireEvent.click(queryByText('Submit'));
+  fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeFalsy();
   expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(urlValidationErrorRegExp)).toBeTruthy();
@@ -225,7 +225,7 @@ it("Create PipelineResource doesn't error when contains 0", () => {
   fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
     target: { value: 'the-cat-likes-0' }
   });
-  fireEvent.click(queryByText('Submit'));
+  fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeFalsy();
   expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(urlValidationErrorRegExp)).toBeTruthy();
@@ -241,7 +241,7 @@ it("Create PipelineResource doesn't error when contains 9", () => {
   fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
     target: { value: 'the-cat-likes-9' }
   });
-  fireEvent.click(queryByText('Submit'));
+  fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeFalsy();
   expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(urlValidationErrorRegExp)).toBeTruthy();
@@ -259,7 +259,7 @@ it('Create PipelineResource errors when contains 64 characters', () => {
       value: '1111111111111111111111111111111111111111111111111111111111111111'
     }
   });
-  fireEvent.click(queryByText('Submit'));
+  fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeTruthy();
   expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(urlValidationErrorRegExp)).toBeTruthy();
@@ -277,7 +277,7 @@ it("Create PipelineResource doesn't error when contains 63 characters", () => {
       value: '111111111111111111111111111111111111111111111111111111111111111'
     }
   });
-  fireEvent.click(queryByText('Submit'));
+  fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeFalsy();
   expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(urlValidationErrorRegExp)).toBeTruthy();
@@ -295,7 +295,7 @@ it("Create PipelineResource doesn't error when contains a valid namespace", () =
   });
   fireEvent.click(getByText(/select namespace/i));
   fireEvent.click(getByText(/default/i));
-  fireEvent.click(queryByText('Submit'));
+  fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeFalsy();
   expect(queryByText(namespaceValidationErrorRegExp)).toBeFalsy();
   expect(queryByText(urlValidationErrorRegExp)).toBeTruthy();
@@ -318,7 +318,7 @@ it("Create PipelineResource doesn't error when a url is entered", () => {
     target: { value: 'the-cat-goes-meow' }
   });
 
-  fireEvent.click(queryByText('Submit'));
+  fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeFalsy();
   expect(queryByText(namespaceValidationErrorRegExp)).toBeFalsy();
   expect(queryByText(urlValidationErrorRegExp)).toBeFalsy();
@@ -341,7 +341,7 @@ it("Create PipelineResource doesn't error when a revision is entered", () => {
     target: { value: 'the-cat-goes-meow' }
   });
 
-  fireEvent.click(queryByText('Submit'));
+  fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeFalsy();
   expect(queryByText(namespaceValidationErrorRegExp)).toBeFalsy();
   expect(queryByText(urlValidationErrorRegExp)).toBeTruthy();

@@ -112,7 +112,7 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
       },
       {
         actionText: intl.formatMessage({
-          id: 'dashboard.deleteTaskRun.actionText',
+          id: 'dashboard.actions.deleteButton',
           defaultMessage: 'Delete'
         }),
         action: this.deleteTask,
@@ -127,8 +127,8 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
             defaultMessage: 'Delete TaskRun'
           }),
           primaryButtonText: intl.formatMessage({
-            id: 'dashboard.deleteTaskRun.primaryText',
-            defaultMessage: 'Delete TaskRun'
+            id: 'dashboard.actions.deleteButton',
+            defaultMessage: 'Delete'
           }),
           secondaryButtonText: intl.formatMessage({
             id: 'dashboard.modal.cancelButton',

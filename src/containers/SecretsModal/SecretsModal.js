@@ -375,12 +375,12 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
         className="modal"
         data-testid="modal"
         primaryButtonText={intl.formatMessage({
-          id: 'dashboard.secretsModal.primaryBtnText',
-          defaultMessage: 'Submit'
+          id: 'dashboard.actions.createButton',
+          defaultMessage: 'Create'
         })}
         secondaryButtonText={intl.formatMessage({
-          id: 'dashboard.secretsModal.secondaryBtnText',
-          defaultMessage: 'Close'
+          id: 'dashboard.modal.cancelButton',
+          defaultMessage: 'Cancel'
         })}
         modalHeading={intl.formatMessage({
           id: 'dashboard.secretsModal.heading',
@@ -444,7 +444,7 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
                 })}
                 subtitle={getErrorMessage(errorMessage)}
                 iconDescription={intl.formatMessage({
-                  id: 'dashboard.secretsModal.error.iconDescription',
+                  id: 'dashboard.notification.clear',
                   defaultMessage: 'Clear Notification'
                 })}
                 className="notificationComponent"

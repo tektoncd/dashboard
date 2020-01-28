@@ -93,7 +93,7 @@ it('error notification appears', async () => {
   fireEvent.change(getByPlaceholderText(/pipeline-resource-revision/i), {
     target: { value: 'test-revision' }
   });
-  fireEvent.click(queryByText(/submit/i));
+  fireEvent.click(queryByText('Create'));
 
   await waitForElement(() => getByText(/Error/i));
   expect(getByText('Error:')).toBeTruthy();

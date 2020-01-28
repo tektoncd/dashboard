@@ -402,10 +402,19 @@ class CreatePipelineRun extends React.Component {
         <Modal
           className="create-pipelinerun"
           open={open}
-          modalHeading="Create PipelineRun"
+          modalHeading={intl.formatMessage({
+            id: 'dashboard.createPipelineRun.heading',
+            defaultMessage: 'Create PipelineRun'
+          })}
           modalLabel={this.getPipelineInfo(PIPELINE_REF)}
-          primaryButtonText="Create"
-          secondaryButtonText="Cancel"
+          primaryButtonText={intl.formatMessage({
+            id: 'dashboard.actions.createButton',
+            defaultMessage: 'Create'
+          })}
+          secondaryButtonText={intl.formatMessage({
+            id: 'dashboard.modal.cancelButton',
+            defaultMessage: 'Cancel'
+          })}
           onRequestSubmit={this.handleSubmit}
           onRequestClose={this.handleClose}
           onSecondarySubmit={this.handleClose}
@@ -413,21 +422,31 @@ class CreatePipelineRun extends React.Component {
           {this.getPipelineInfo(PIPELINE_ERROR) && (
             <InlineNotification
               kind="error"
-              title="Error retrieving Pipeline information"
+              title={intl.formatMessage({
+                id: 'dashboard.createPipelineRun.errorLoading',
+                defaultMessage: 'Error retrieving Pipeline information'
+              })}
               lowContrast
             />
           )}
           {validationError && (
             <InlineNotification
               kind="error"
-              title="Please fix the fields with errors, then resubmit"
+              title={intl.formatMessage({
+                id: 'dashboard.createPipelineRun.validationError',
+                defaultMessage:
+                  'Please fix the fields with errors, then resubmit'
+              })}
               lowContrast
             />
           )}
           {this.state.submitError !== '' && (
             <InlineNotification
               kind="error"
-              title="Error creating PipelineRun"
+              title={intl.formatMessage({
+                id: 'dashboard.createPipelineRun.createError',
+                defaultMessage: 'Error creating PipelineRun'
+              })}
               subtitle={this.state.submitError}
               lowContrast
             />
@@ -437,7 +456,10 @@ class CreatePipelineRun extends React.Component {
               <NamespacesDropdown
                 id="create-pipelinerun--namespaces-dropdown"
                 invalid={validationError && !namespace}
-                invalidText="Namespace cannot be empty"
+                invalidText={intl.formatMessage({
+                  id: 'dashboard.createPipelineRun.invalidNamespace',
+                  defaultMessage: 'Namespace cannot be empty'
+                })}
                 selectedItem={
                   namespace ? { id: namespace, text: namespace } : ''
                 }
@@ -447,7 +469,10 @@ class CreatePipelineRun extends React.Component {
                 id="create-pipelinerun--pipelines-dropdown"
                 namespace={namespace}
                 invalid={validationError && !pipelineRef}
-                invalidText="Pipeline cannot be empty"
+                invalidText={intl.formatMessage({
+                  id: 'dashboard.createPipelineRun.invalidPipeline',
+                  defaultMessage: 'Pipeline cannot be empty'
+                })}
                 selectedItem={
                   pipelineRef ? { id: pipelineRef, text: pipelineRef } : ''
                 }
@@ -512,7 +537,10 @@ class CreatePipelineRun extends React.Component {
                   invalid={
                     validationError && !this.state.resources[resourceSpec.name]
                   }
-                  invalidText="PipelineResources cannot be empty"
+                  invalidText={intl.formatMessage({
+                    id: 'dashboard.createPipelineRun.invalidPipelineResources',
+                    defaultMessage: 'PipelineResources cannot be empty'
+                  })}
                   selectedItem={(() => {
                     const value = this.state.resources[resourceSpec.name];
                     return value ? { id: value, text: value } : '';
@@ -536,7 +564,10 @@ class CreatePipelineRun extends React.Component {
                   invalid={
                     validationError && !this.state.params[paramSpec.name]
                   }
-                  invalidText="Params cannot be empty"
+                  invalidText={intl.formatMessage({
+                    id: 'dashboard.createPipelineRun.invalidParams',
+                    defaultMessage: 'Params cannot be empty'
+                  })}
                   value={this.state.params[paramSpec.name] || ''}
                   onChange={({ target: { value } }) =>
                     this.handleParamChange(paramSpec.name, value)
@@ -545,10 +576,18 @@ class CreatePipelineRun extends React.Component {
               ))}
             </FormGroup>
           )}
-          <FormGroup legendText="Optional values">
+          <FormGroup
+            legendText={intl.formatMessage({
+              id: 'dashboard.createPipelineRun.optional.legendText',
+              defaultMessage: 'Optional values'
+            })}
+          >
             <ServiceAccountsDropdown
               id="create-pipelinerun--sa-dropdown"
-              titleText="Service Account (optional)"
+              titleText={intl.formatMessage({
+                id: 'dashboard.createPipelineRun.serviceAccountLabel',
+                defaultMessage: 'Service Account (optional)'
+              })}
               namespace={namespace}
               selectedItem={
                 serviceAccount
@@ -562,10 +601,20 @@ class CreatePipelineRun extends React.Component {
             />
             <TextInput
               id="create-pipelinerun--timeout"
-              labelText="Timeout"
-              helperText="PipelineRun timeout in minutes"
+              labelText={intl.formatMessage({
+                id: 'dashboard.createPipelineRun.timeoutLabel',
+                defaultMessage: 'Timeout'
+              })}
+              helperText={intl.formatMessage({
+                id: 'dashboard.createPipelineRun.timeoutHelperText',
+                defaultMessage: 'PipelineRun timeout in minutes'
+              })}
               invalid={validationError && !validTimeout}
-              invalidText="Timeout must be a valid number less than 525600"
+              invalidText={intl.formatMessage({
+                id: 'dashboard.createPipelineRun.invalidTimeout',
+                defaultMessage:
+                  'Timeout must be a valid number less than 525600'
+              })}
               placeholder="60"
               value={this.state.timeout}
               onChange={({ target: { value } }) =>

@@ -139,7 +139,7 @@ it('error notification appears', async () => {
   fireEvent.click(getByText(/select service account/i));
   await waitForElement(() => getByText(/service-account-1/i));
   fireEvent.click(getByText(/service-account-1/i));
-  fireEvent.click(queryByText(/submit/i));
+  fireEvent.click(queryByText('Create'));
 
   expect(getByTestId('errorNotificationComponent')).toBeTruthy();
 });

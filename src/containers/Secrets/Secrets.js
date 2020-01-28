@@ -257,7 +257,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
                 defaultMessage: 'Secret created successfully'
               })}
               iconDescription={intl.formatMessage({
-                id: 'dashboard.secrets.clearNotification',
+                id: 'dashboard.notification.clear',
                 defaultMessage: 'Clear Notification'
               })}
               className="notificationComponent"
@@ -277,7 +277,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
               defaultMessage: 'Secret deleted successfully'
             })}
             iconDescription={intl.formatMessage({
-              id: 'dashboard.secrets.clearNotification',
+              id: 'dashboard.notification.clear',
               defaultMessage: 'Clear Notification'
             })}
             className="notificationComponent"
@@ -316,7 +316,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
             {
               onClick: this.handleDeleteSecretClick,
               text: intl.formatMessage({
-                id: 'dashboard.secrets.delete',
+                id: 'dashboard.actions.deleteButton',
                 defaultMessage: 'Delete'
               }),
               icon: Delete
@@ -326,7 +326,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
             {
               onClick: this.handleDisplayModalClick,
               text: intl.formatMessage({
-                id: 'dashboard.secrets.create',
+                id: 'dashboard.actions.createButton',
                 defaultMessage: 'Create'
               }),
               icon: Add

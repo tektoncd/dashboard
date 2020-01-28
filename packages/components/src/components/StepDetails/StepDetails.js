@@ -63,7 +63,7 @@ const StepDetails = props => {
         <Tab
           className="details-tab"
           label={intl.formatMessage({
-            id: 'dashboard.taskRun.details',
+            id: 'dashboard.resource.detailsTab',
             defaultMessage: 'Details'
           })}
         >

@@ -12,10 +12,11 @@ limitations under the License.
 */
 
 import React from 'react';
-import { render } from 'react-testing-library';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+
+import { renderWithIntl } from '../../utils/test';
 import UniversalFields from './UniversalFields';
 
 const middleware = [thunk];
@@ -90,7 +91,7 @@ it('UniversalFields renders with blank inputs', () => {
     selectedNamespace: 'default',
     invalidFields: {}
   };
-  const { getByLabelText, getAllByDisplayValue, getByText } = render(
+  const { getByLabelText, getAllByDisplayValue, getByText } = renderWithIntl(
     <Provider store={store}>
       <UniversalFields {...props} />
     </Provider>
@@ -111,7 +112,7 @@ it('UniversalFields incorrect fields', () => {
     selectedNamespace: 'default',
     invalidFields: { name: true }
   };
-  const { getByLabelText } = render(
+  const { getByLabelText } = renderWithIntl(
     <Provider store={store}>
       <UniversalFields {...props} />
     </Provider>
