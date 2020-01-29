@@ -24,6 +24,13 @@ limitations under the License.
 }
 
 .filters {
+  &:after {
+    /* clearfix */
+    content: "";
+    display: table;
+    clear: both;
+  }
+
   .filters-title {
     margin: 0.3rem 0.5rem 1.2rem 0;
     margin-right: 0.5rem;
