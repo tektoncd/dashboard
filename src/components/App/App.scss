@@ -22,7 +22,8 @@ main {
 }
 
 h1 {
-  @include type-style('heading-02');
+  @include type-style('productive-heading-04');
+  margin-bottom: $layout-02;
 }
 
 h2 {
@@ -37,6 +38,7 @@ h2 {
   .bx--content {
     background-color: transparent;
     transform: none;
+    padding-top: $layout-02;
   }
 }
 
