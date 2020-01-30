@@ -15,9 +15,9 @@ spec:
     - name: bucketName
       description: The name of the bucket to use
   resources:
-    - name: source-repo
+    - name: dashboard-source-repo
       type: git
-    - name: bucket
+    - name: bucket-for-dashboard
       type: storage
     - name: builtDashboardImage
       type: image
@@ -27,11 +27,11 @@ spec:
         name: build-tekton-dashboard
       resources:
         inputs:
-          - name: source
-            resource: source-repo
+          - name: dashboard-source-repo
+            resource: dashboard-source-repo
         outputs:
-          - name: source
-            resource: source-repo
+          - name: dashboard-source-repo
+            resource: dashboard-source-repo
     - name: publish-images
       runAfter: [build]
       taskRef:
@@ -47,13 +47,13 @@ spec:
           value: $(params.bucketName)
       resources:
         inputs:
-          - name: source
-            resource: source-repo
+          - name: dashboard-source-repo
+            resource: dashboard-source-repo
             from: [build]
-          - name: bucket
-            resource: bucket
+          - name: bucket-for-dashboard
+            resource: bucket-for-dashboard
         outputs:
-          - name: bucket
-            resource: bucket
+          - name: bucket-for-dashboard
+            resource: bucket-for-dashboard
           - name: builtDashboardImage
             resource: builtDashboardImage
