@@ -42,6 +42,13 @@ import {
 import { cancelTaskRun, deleteTaskRun } from '../../api';
 
 export /* istanbul ignore next */ class TaskRuns extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      submitError: ''
+    };
+  }
+
   componentDidMount() {
     this.fetchTaskRuns();
   }
@@ -70,7 +77,16 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
 
   deleteTask = taskRun => {
     const { name, namespace } = taskRun.metadata;
-    deleteTaskRun({ name, namespace });
+    deleteTaskRun({ name, namespace }).catch(error => {
+      error.response.text().then(text => {
+        const statusCode = error.response.status;
+        let errorMessage = `error code ${statusCode}`;
+        if (text) {
+          errorMessage = `${text} (error code ${statusCode})`;
+        }
+        this.setState({ submitError: errorMessage });
+      });
+    });
   };
 
   taskRunActions = () => {
@@ -162,7 +178,8 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
       filters,
       loading,
       taskRuns,
-      namespace: selectedNamespace
+      namespace: selectedNamespace,
+      intl
     } = this.props;
 
     const taskRunActions = this.taskRunActions();
@@ -183,6 +200,23 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
 
     return (
       <>
+        {this.state.submitError && (
+          <InlineNotification
+            kind="error"
+            title={intl.formatMessage({
+              id: 'dashboard.error.title',
+              defaultMessage: 'Error:'
+            })}
+            subtitle={getErrorMessage(this.state.submitError)}
+            iconDescription={intl.formatMessage({
+              id: 'dashboard.notification.clear',
+              defaultMessage: 'Clear Notification'
+            })}
+            data-testid="errorNotificationComponent"
+            onCloseButtonClick={this.props.clearNotification}
+            lowContrast
+          />
+        )}
         <h1>TaskRuns</h1>
         <LabelFilter
           filters={filters}

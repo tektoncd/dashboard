@@ -43,7 +43,8 @@ import {
 
 const initialState = {
   showCreatePipelineResourceModal: false,
-  createdPipelineResource: null
+  createdPipelineResource: null,
+  submitError: ''
 };
 
 export /* istanbul ignore next */ class PipelineResources extends Component {
@@ -84,7 +85,16 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
 
   deleteResource = pipelineResource => {
     const { name, namespace } = pipelineResource.metadata;
-    deletePipelineResource({ name, namespace });
+    deletePipelineResource({ name, namespace }).catch(error => {
+      error.response.text().then(text => {
+        const statusCode = error.response.status;
+        let errorMessage = `error code ${statusCode}`;
+        if (text) {
+          errorMessage = `${text} (error code ${statusCode})`;
+        }
+        this.setState({ submitError: errorMessage });
+      });
+    });
   };
 
   pipelineResourceActions = () => {
@@ -210,6 +220,23 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
                 {this.state.createdPipelineResource.name}
               </Link>
             }
+            lowContrast
+          />
+        )}
+        {this.state.submitError && (
+          <InlineNotification
+            kind="error"
+            title={intl.formatMessage({
+              id: 'dashboard.error.title',
+              defaultMessage: 'Error:'
+            })}
+            subtitle={getErrorMessage(this.state.submitError)}
+            iconDescription={intl.formatMessage({
+              id: 'dashboard.notification.clear',
+              defaultMessage: 'Clear Notification'
+            })}
+            data-testid="errorNotificationComponent"
+            onCloseButtonClick={this.props.clearNotification}
             lowContrast
           />
         )}

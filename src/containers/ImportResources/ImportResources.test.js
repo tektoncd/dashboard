@@ -12,13 +12,13 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, render, waitForElement } from 'react-testing-library';
+import { fireEvent, waitForElement } from 'react-testing-library';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
 import { ALL_NAMESPACES, urls } from '@tektoncd/dashboard-utils';
 
-import { renderWithRouter } from '../../utils/test';
+import { renderWithIntl, renderWithRouter } from '../../utils/test';
 import ImportResourcesContainer from './ImportResources';
 import * as API from '../../api';
 import 'jest-dom/extend-expect';
@@ -53,7 +53,7 @@ describe('ImportResources component', () => {
   });
 
   it('Displays errors when Repository URL and Namespace is empty', async () => {
-    const { getByText } = await render(
+    const { getByText } = await renderWithIntl(
       <Provider store={store}>
         <ImportResourcesContainer />
       </Provider>
@@ -65,7 +65,7 @@ describe('ImportResources component', () => {
   });
 
   it('Displays an error when Repository URL is empty', async () => {
-    const { getByLabelText, getByText } = await render(
+    const { getByLabelText, getByText } = await renderWithIntl(
       <Provider store={store}>
         <ImportResourcesContainer />
       </Provider>
@@ -81,7 +81,7 @@ describe('ImportResources component', () => {
   });
 
   it('Displays an error when Namepsace is empty', async () => {
-    const { getByTestId, getByText } = await render(
+    const { getByTestId, getByText } = await renderWithIntl(
       <Provider store={store}>
         <ImportResourcesContainer />
       </Provider>
@@ -97,7 +97,7 @@ describe('ImportResources component', () => {
   });
 
   it('Displays an error when Repository URL starts with the incorrect term', async () => {
-    const { getByTestId, getByText } = await render(
+    const { getByTestId, getByText } = await renderWithIntl(
       <Provider store={store}>
         <ImportResourcesContainer />
       </Provider>
@@ -114,7 +114,7 @@ describe('ImportResources component', () => {
   });
 
   it('Displays an error when Repository URL doesnt contain github', async () => {
-    const { getByTestId, getByText } = await render(
+    const { getByTestId, getByText } = await renderWithIntl(
       <Provider store={store}>
         <ImportResourcesContainer />
       </Provider>
@@ -131,7 +131,7 @@ describe('ImportResources component', () => {
   });
 
   it('Displays an error when Repository URL doesnt contain a .', async () => {
-    const { getByTestId, getByText } = await render(
+    const { getByTestId, getByText } = await renderWithIntl(
       <Provider store={store}>
         <ImportResourcesContainer />
       </Provider>
@@ -237,7 +237,7 @@ describe('ImportResources component', () => {
       .spyOn(API, 'determineInstallNamespace')
       .mockImplementation(() => 'namespace1');
 
-    const { getByLabelText, getByTestId, getByText } = await render(
+    const { getByLabelText, getByTestId, getByText } = await renderWithIntl(
       <Provider store={store}>
         <ImportResourcesContainer />
       </Provider>
@@ -259,7 +259,7 @@ describe('ImportResources component', () => {
       .spyOn(API, 'determineInstallNamespace')
       .mockImplementation(() => 'namespace1');
 
-    const { getByText } = await render(
+    const { getByText } = await renderWithIntl(
       <Provider store={store}>
         <ImportResourcesContainer />
       </Provider>
@@ -274,7 +274,7 @@ describe('ImportResources component', () => {
       .spyOn(API, 'determineInstallNamespace')
       .mockImplementation(() => 'namespace1');
 
-    const { getByTestId, queryByDisplayValue } = await render(
+    const { getByTestId, queryByDisplayValue } = await renderWithIntl(
       <Provider store={store}>
         <ImportResourcesContainer />
       </Provider>
