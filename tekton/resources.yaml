@@ -14,7 +14,7 @@ spec:
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
 metadata:
-  name: tekton-bucket
+  name: tekton-bucket-dashboard
 spec:
   type: storage
   params:
@@ -22,9 +22,8 @@ spec:
       value: gcs
     - name: location
       # This value is where our folder sits, so for example
-      # https://console.cloud.google.com/storage/browser/tekton-releases/dashboard/mytestbucket
-      value: gs://tekton-releases/dashboard/mytestbucket
-      # If you're ready to publish you would omit the mytestbucket part
+      # https://console.cloud.google.com/storage/browser/tekton-releases/dashboard
+      value: gs://tekton-releases/dashboard
     - name: dir
       value: "y"
 ---

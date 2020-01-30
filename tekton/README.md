@@ -14,7 +14,7 @@ First, ensure that your credentials are set up correctly. You will need an accou
 ```bash
 KEY_FILE=release.json
 GENERIC_SECRET=release-secret
-# The kubernetes ServiceAccount that will be used by your Tekton tasks. 'default' is the default. It should all ready exist.
+# The kubernetes ServiceAccount that will be used by your Tekton tasks. 'default' is the default. It should already exist.
 SERVICE_ACCOUNT=default
 GCP_ACCOUNT="release-right-meow@tekton-releases.iam.gserviceaccount.com"
 
@@ -53,14 +53,13 @@ You may want to run a test release first. To do this:
 So for example, we might want to run one or more test releases under the name 'test-release'. 
 
 - Go to https://console.cloud.google.com/storage/browser/tekton-releases/dashboard and click 'Create folder'. Create the folder Buckets/tekton-releases/dashboard/test-release.
-- Modify every reference of `latest` in `publish.yaml` so we don't write to that area.
-- Modify the tekton-bucket PipelineResource:
+- Modify the tekton-bucket-dashboard PipelineResource:
 
 ```yaml
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
 metadata:
-  name: tekton-bucket
+  name: tekton-bucket-dashboard
 spec:
   type: storage
   params:
@@ -84,13 +83,13 @@ Run a test release:
 ```bash
 VERSION_TAG=test-1
 PIPELINE_NAMESPACE=tekton-pipelines
-tkn pipeline start dashboard-release -p versionTag=$VERSION_TAG -r source-repo=tekton-dashboard-git -r bucket=tekton-bucket -r builtDashboardImage=dashboard-image -n $PIPELINE_NAMESPACE -s $SERVICE_ACCOUNT -p bucketName=test-release
+tkn pipeline start dashboard-release -p versionTag=$VERSION_TAG -r dashboard-source-repo=tekton-dashboard-git -r bucket-for-dashboard=tekton-bucket-dashboard -r builtDashboardImage=dashboard-image -n $PIPELINE_NAMESPACE -s $SERVICE_ACCOUNT -p bucketName=mytestbucket
 ```
 
-This will result in release artifacts appearing in the Google Cloud bucket `gs://tekton-releases/dashboard/test-release/test-1`. If you need to run a second build, incremement $VERSION_TAG. Once you're finished, clean up:
+This will result in release artifacts appearing in the Google Cloud bucket `gs://tekton-releases/dashboard/mytestbucket/test-1`. If you need to run a second build, incremement $VERSION_TAG. Once you're finished, clean up:
 
-- delete /test-release from the PipelineResource and reapply your changes
-- delete the temporary /test-release bucket in Google Cloud
+- delete /mytestbucket from the PipelineResource and reapply your changes
+- delete the temporary /mytestbucket bucket in Google Cloud
 
 ## Running a release build
 
@@ -99,17 +98,17 @@ Now you can kick off the release build:
 ```bash
 VERSION_TAG=vX.Y.Z
 PIPELINE_NAMESPACE=tekton-pipelines
-tkn pipeline start dashboard-release -p versionTag=$VERSION_TAG -r source-repo=tekton-dashboard-git -r bucket=tekton-bucket -r builtDashboardImage=dashboard-image -n $PIPELINE_NAMESPACE -s $SERVICE_ACCOUNT -p bucketName=latest
+tkn pipeline start dashboard-release -p versionTag=$VERSION_TAG -r dashboard-source-repo=tekton-dashboard-git -r bucket-for-dashboard=tekton-bucket-dashboard -r builtDashboardImage=dashboard-image -n $PIPELINE_NAMESPACE -s $SERVICE_ACCOUNT -p bucketName=latest
 ```
 
-Monitor the build logs to see the image coordinates that the image is pushed to. The `release.yaml` should appear under https://console.cloud.google.com/storage/browser/tekton-releases/dashboard.
+Monitor the build logs to see the image coordinates that the image is pushed to. The release yaml files should appear under https://console.cloud.google.com/storage/browser/tekton-releases/dashboard.
 
 ## Manually complete the release work
 
 We have a number of tasks that are yet to be automated:
 
 - Write the release notes
-- Attach `release.yaml` and `openshift-tekton-dashboard.yaml` files from https://console.cloud.google.com/storage/browser/tekton-releases/dashboard
+- Attach `.yaml` files from https://console.cloud.google.com/storage/browser/tekton-releases/dashboard - be sure you copy the locked down image ones (look under `previous`): any containers such as `kubectl` and `oauth-proxy` should reference an image sha and not a tag such as `latest`
 - Optionally repeat for the Webhooks Extension (automation in progress)
 - Fix up image coordinates in `/README.md` for the normal and Openshift installs
 - Publish the GitHub release

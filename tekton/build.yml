@@ -6,12 +6,12 @@ metadata:
 spec:
   inputs:
     resources:
-      - name: source
+      - name: dashboard-source-repo
         type: git
         targetPath: go/src/github.com/tektoncd/dashboard
   outputs:
     resources:
-      - name: source
+      - name: dashboard-source-repo
         type: git
   steps:
     - name: build-static
@@ -45,7 +45,7 @@ spec:
       command: ["/bin/sh", "-ce"]
       args:
         - |
-          # Further to https://github.com/tektoncd/pipeline/pull/1122 it is necessary to copy files into $(outputs.resources.source.path)
-          echo "Input source path=$(inputs.resources.source.path)"
-          echo "Output source path=$(outputs.resources.source.path)"
-          cp -r $(inputs.resources.source.path)/* $(outputs.resources.source.path)
+          # Further to https://github.com/tektoncd/pipeline/pull/1122 it is necessary to copy files into $(outputs.resources.dashboard-source-repo.path)
+          echo "Input source path=$(inputs.resources.dashboard-source-repo.path)"
+          echo "Output source path=$(outputs.resources.dashboard-source-repo.path)"
+          cp -r $(inputs.resources.dashboard-source-repo.path)/* $(outputs.resources.dashboard-source-repo.path)
