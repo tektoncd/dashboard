@@ -12,16 +12,22 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
-
+import { injectIntl } from 'react-intl';
 import {
   Button,
   Form,
+  InlineNotification,
   TextInput,
   ToastNotification
 } from 'carbon-components-react';
+
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { ALL_NAMESPACES, urls } from '@tektoncd/dashboard-utils';
+import {
+  ALL_NAMESPACES,
+  getErrorMessage,
+  urls
+} from '@tektoncd/dashboard-utils';
 import { getGitValues } from '../../utils';
 
 import {
@@ -70,7 +76,8 @@ export class ImportResources extends Component {
       namespace: props.navNamespace !== ALL_NAMESPACES && props.navNamespace,
       repositoryURL: '',
       serviceAccount: '',
-      submitSuccess: false
+      submitSuccess: false,
+      submitError: ''
     };
   }
 
@@ -160,7 +167,6 @@ export class ImportResources extends Component {
         ]
       }
     };
-
     createPipelineResource({ namespace: installNamespace, resource })
       .then(data => {
         const labels = getGitValues(repourl);
@@ -175,7 +181,6 @@ export class ImportResources extends Component {
           namespace: installNamespace,
           labels
         };
-
         const promise = createPipelineRun(pipelineRun);
         promise
           .then(headers => {
@@ -200,22 +205,31 @@ export class ImportResources extends Component {
               });
             }
           })
-          .catch(() => {
-            this.setState({
-              submitSuccess: false,
-              invalidInput: true
+          .catch(error => {
+            error.response.text().then(text => {
+              const statusCode = error.response.status;
+              let errorMessage = `error code ${statusCode}`;
+              if (text) {
+                errorMessage = `${text} (error code ${statusCode})`;
+              }
+              this.setState({ submitError: errorMessage });
             });
           });
       })
-      .catch(() => {
-        this.setState({
-          submitSuccess: false,
-          invalidInput: true
+      .catch(error => {
+        error.response.text().then(text => {
+          const statusCode = error.response.status;
+          let errorMessage = `error code ${statusCode}`;
+          if (text) {
+            errorMessage = `${text} (error code ${statusCode})`;
+          }
+          this.setState({ submitError: errorMessage });
         });
       });
   };
 
   render() {
+    const { intl } = this.props;
     const { namespace } = this.state;
     const selectedNamespace = namespace
       ? {
@@ -226,6 +240,23 @@ export class ImportResources extends Component {
 
     return (
       <div className="outer">
+        {this.state.submitError && (
+          <InlineNotification
+            kind="error"
+            title={intl.formatMessage({
+              id: 'dashboard.error.title',
+              defaultMessage: 'Error:'
+            })}
+            subtitle={getErrorMessage(this.state.submitError)}
+            iconDescription={intl.formatMessage({
+              id: 'dashboard.notification.clear',
+              defaultMessage: 'Clear Notification'
+            })}
+            data-testid="errorNotificationComponent"
+            onCloseButtonClick={this.props.clearNotification}
+            lowContrast
+          />
+        )}
         <h1 className="ImportHeader">
           Import Tekton resources from repository
         </h1>
@@ -298,4 +329,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(ImportResources);
+export default connect(mapStateToProps)(injectIntl(ImportResources));

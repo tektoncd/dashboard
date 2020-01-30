@@ -14,7 +14,6 @@ limitations under the License.
 import {
   createCredential,
   deleteCredential,
-  getAllCredentials,
   getCredentials,
   getServiceAccount,
   getServiceAccounts,
@@ -179,20 +178,9 @@ export function createSecret(postData, namespace) {
       });
       return false;
     } catch (error) {
-      const secrets = await getAllCredentials(namespace);
-      secrets.items.forEach(secret => {
-        if (secret.metadata.name === postData.metadata.name) {
-          const message = `A secret already exists in namespace ${namespace} with name ${
-            secret.metadata.name
-          }`;
-          dispatch({ type: 'SECRET_CREATE_FAILURE', error: message });
-        }
+      error.response.text().then(message => {
+        dispatch({ type: 'SECRET_CREATE_FAILURE', error: message });
       });
-      if (!error.response) {
-        error.response.text().then(message => {
-          dispatch({ type: 'SECRET_CREATE_FAILURE', error: message });
-        });
-      }
       return true;
     }
   };

@@ -24,6 +24,7 @@ import {
 import {
   getAddFilterHandler,
   getDeleteFilterHandler,
+  getErrorMessage,
   getFilters
 } from '@tektoncd/dashboard-utils';
 import Add from '@carbon/icons-react/lib/add/16';
@@ -283,6 +284,23 @@ export /* istanbul ignore next */ class Secrets extends Component {
               defaultMessage: 'Clear Notification'
             })}
             className="notificationComponent"
+            onCloseButtonClick={this.props.clearNotification}
+            lowContrast
+          />
+        )}
+        {errorMessage && (
+          <InlineNotification
+            kind="error"
+            title={intl.formatMessage({
+              id: 'dashboard.error.title',
+              defaultMessage: 'Error:'
+            })}
+            subtitle={getErrorMessage(errorMessage)}
+            iconDescription={intl.formatMessage({
+              id: 'dashboard.notification.clear',
+              defaultMessage: 'Clear Notification'
+            })}
+            data-testid="errorNotificationComponent"
             onCloseButtonClick={this.props.clearNotification}
             lowContrast
           />

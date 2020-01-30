@@ -52,7 +52,8 @@ import {
 
 const initialState = {
   showCreatePipelineRunModal: false,
-  createdPipelineRun: null
+  createdPipelineRun: null,
+  submitError: ''
 };
 
 export /* istanbul ignore next */ class PipelineRuns extends Component {
@@ -93,7 +94,16 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
 
   deleteRun = pipelineRun => {
     const { name, namespace } = pipelineRun.metadata;
-    deletePipelineRun({ name, namespace });
+    deletePipelineRun({ name, namespace }).catch(error => {
+      error.response.text().then(text => {
+        const statusCode = error.response.status;
+        let errorMessage = `error code ${statusCode}`;
+        if (text) {
+          errorMessage = `${text} (error code ${statusCode})`;
+        }
+        this.setState({ submitError: errorMessage });
+      });
+    });
   };
 
   rerun = pipelineRun => {
@@ -269,6 +279,23 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
                 {this.state.createdPipelineRun.name}
               </Link>
             }
+            lowContrast
+          />
+        )}
+        {this.state.submitError && (
+          <InlineNotification
+            kind="error"
+            title={intl.formatMessage({
+              id: 'dashboard.error.title',
+              defaultMessage: 'Error:'
+            })}
+            subtitle={getErrorMessage(this.state.submitError)}
+            iconDescription={intl.formatMessage({
+              id: 'dashboard.notification.clear',
+              defaultMessage: 'Clear Notification'
+            })}
+            data-testid="errorNotificationComponent"
+            onCloseButtonClick={this.props.clearNotification}
             lowContrast
           />
         )}

@@ -84,6 +84,8 @@ function errorMessage(state = false, action) {
     case 'SECRETS_FETCH_FAILURE':
     case 'SECRET_CREATE_FAILURE':
       return action.error;
+    case 'SECRET_DELETE_FAILURE':
+      return action.error;
     case 'SECRETS_FETCH_REQUEST':
     case 'SECRETS_FETCH_SUCCESS':
     case 'CLEAR_SECRET_ERROR_NOTIFICATION':

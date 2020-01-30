@@ -389,6 +389,25 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
         onRequestClose={handleHideModal}
       >
         <form>
+          {errorMessage &&
+            (open && (
+              <InlineNotification
+                kind="error"
+                title={intl.formatMessage({
+                  id: 'dashboard.error.title',
+                  defaultMessage: 'Error:'
+                })}
+                subtitle={getErrorMessage(errorMessage)}
+                iconDescription={intl.formatMessage({
+                  id: 'dashboard.notification.clear',
+                  defaultMessage: 'Clear Notification'
+                })}
+                className="notificationComponent"
+                data-testid="errorNotificationComponent"
+                onCloseButtonClick={this.props.clearNotification}
+                lowContrast
+              />
+            ))}
           <UniversalFields
             name={name}
             selectedNamespace={namespace}
@@ -432,25 +451,6 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
             onRemove={this.handleRemove}
             onAdd={this.handleAdd}
           />
-          {errorMessage &&
-            (open && (
-              <InlineNotification
-                kind="error"
-                title={intl.formatMessage({
-                  id: 'dashboard.error.title',
-                  defaultMessage: 'Error:'
-                })}
-                subtitle={getErrorMessage(errorMessage)}
-                iconDescription={intl.formatMessage({
-                  id: 'dashboard.notification.clear',
-                  defaultMessage: 'Clear Notification'
-                })}
-                className="notificationComponent"
-                data-testid="errorNotificationComponent"
-                onCloseButtonClick={this.props.clearNotification}
-                lowContrast
-              />
-            ))}
           <div
             ref={el => {
               this.annotationsEnd = el;
