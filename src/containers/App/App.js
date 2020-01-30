@@ -31,6 +31,7 @@ import {
 import { paths, urls } from '@tektoncd/dashboard-utils';
 
 import {
+  About,
   ClusterTasks,
   CustomResourceDefinition,
   EventListener,
@@ -182,7 +183,7 @@ export /* istanbul ignore next */ class App extends Component {
                     exact
                     component={ClusterTasks}
                   />
-
+                  <Route path={paths.about()} component={About} />
                   <Route
                     path={paths.importResources()}
                     component={ImportResources}

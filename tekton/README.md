@@ -32,6 +32,7 @@ Next:
 
 1. Install [Tekton pipelines](https://github.com/tektoncd/pipeline) into your local cluster.
 1. Create a GitHub release by pushing a tag to the [dashboard](https://github.com/tektoncd/dashboard) repository. This should be of the form, `vX.Y.Z' e.g.' 'v0.2.5'.
+1. Change the `version` label in `base/300-deployment.yaml` to the same as the tag in the previous step.
 1. Edit the `tekton-dashboard-git` PipelineResource in `resources.yaml` and set `spec.params.revision.value` to 'vX.Y.Z' e.g., `v0.2.5`. This can also be a git commit if you have not created a release yet.
 1. From the root directory of the dashboard repository, create the Tekton Dashboard release pipeline:
 

@@ -228,6 +228,12 @@ class SideNav extends Component {
           >
             &nbsp;
           </SideNavMenuItem>
+          <SideNavLink element={NavLink} icon={<span />} to={urls.about()}>
+            {intl.formatMessage({
+              id: 'dashboard.sideNav.about',
+              defaultMessage: 'About'
+            })}
+          </SideNavLink>
           <SideNavLink
             element={NavLink}
             icon={<span />}

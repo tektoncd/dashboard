@@ -30,6 +30,8 @@ import (
 // Properties : properties we want to be able to retrieve via REST
 type Properties struct {
 	InstallNamespace string
+	DashboardVersion string
+	PipelineVersion  string
 }
 
 const (
@@ -157,8 +159,12 @@ func (r Resource) GetEndpoints(request *restful.Request, response *restful.Respo
 	}
 }
 
-// GetProperties is used to get the installed namespace only so far
+// GetProperties is used to get the installed namespace, version of tekton dashboard and version of tekton pipelines
 func (r Resource) GetProperties(request *restful.Request, response *restful.Response) {
-	properties := Properties{InstallNamespace: os.Getenv("INSTALLED_NAMESPACE")}
+	dashboardVersion := GetDashboardVersion(r)
+	pipelineVersion := GetPipelineVersion(r)
+
+	properties := Properties{InstallNamespace: os.Getenv("INSTALLED_NAMESPACE"), DashboardVersion: dashboardVersion, PipelineVersion: pipelineVersion}
+
 	response.WriteEntity(properties)
 }

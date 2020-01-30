@@ -30,6 +30,9 @@ export const paths = {
       return `/extensions/${name}`;
     }
   },
+  about() {
+    return '/about';
+  },
   importResources() {
     return '/importresources';
   },

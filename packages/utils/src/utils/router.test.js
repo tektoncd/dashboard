@@ -45,6 +45,10 @@ describe('extensions', () => {
   });
 });
 
+it('about', () => {
+  expect(urls.about()).toEqual(generatePath(paths.about()));
+});
+
 it('importResources', () => {
   expect(urls.importResources()).toEqual(generatePath(paths.importResources()));
 });
