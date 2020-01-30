@@ -37,6 +37,7 @@ var excludeRoutes []string = []string{
 	"proxy",          // Kube API server has its own standard
 	"ingress",        // Ingress will not exist
 	"endpoints",      // Route or Ingress will not exist
+	"properties",     // Pods and namespace will not exist
 }
 
 var methodRouteMap = make(map[string][]string) // k, v := HTTP_METHOD, []route
