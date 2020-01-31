@@ -74,28 +74,49 @@ class StepDefinition extends Component {
       <>
         {taskRun.params && (
           <ResourceTable
-            title="Parameters"
+            title={intl.formatMessage({
+              id: 'dashboard.parameters.title',
+              defaultMessage: 'Parameters'
+            })}
             rows={taskRun.params.map(({ name, value }) => ({
               id: name,
               name,
               value
             }))}
             headers={[
-              { key: 'name', header: 'Name' },
-              { key: 'value', header: 'Value' }
+              {
+                key: 'name',
+                header: intl.formatMessage({
+                  id: 'dashboard.tableHeader.name',
+                  defaultMessage: 'Name'
+                })
+              },
+              {
+                key: 'value',
+                header: intl.formatMessage({
+                  id: 'dashboard.tableHeader.value',
+                  defaultMessage: 'Value'
+                })
+              }
             ]}
           />
         )}
         {taskRun.inputResources &&
           resourceTable(
-            'Input Resources',
+            intl.formatMessage({
+              id: 'dashboard.stepDefinition.inputResources',
+              defaultMessage: 'Input Resources'
+            }),
             taskRun.namespace,
             taskRun.inputResources,
             intl
           )}
         {taskRun.outputResources &&
           resourceTable(
-            'Output Resources',
+            intl.formatMessage({
+              id: 'dashboard.stepDefinition.outputResources',
+              defaultMessage: 'Output Resources'
+            }),
             taskRun.namespace,
             taskRun.outputResources,
             intl

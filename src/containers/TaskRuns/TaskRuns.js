@@ -176,10 +176,10 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
     const {
       error,
       filters,
+      intl,
       loading,
       taskRuns,
-      namespace: selectedNamespace,
-      intl
+      namespace: selectedNamespace
     } = this.props;
 
     const taskRunActions = this.taskRunActions();
@@ -192,7 +192,10 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
           kind="error"
           hideCloseButton
           lowContrast
-          title="Error loading TaskRuns"
+          title={intl.formatMessage({
+            id: 'dashboard.taskRuns.errorLoading',
+            defaultMessage: 'Error loading TaskRuns'
+          })}
           subtitle={getErrorMessage(error)}
         />
       );

@@ -145,7 +145,10 @@ export /* istanbul ignore next */ class Pipelines extends Component {
           kind="error"
           hideCloseButton
           lowContrast
-          title="Error loading Pipelines"
+          title={intl.formatMessage({
+            id: 'dashboard.pipelines.errorLoading',
+            defaultMessage: 'Error loading Pipelines'
+          })}
           subtitle={getErrorMessage(error)}
         />
       );

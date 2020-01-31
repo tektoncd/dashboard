@@ -53,6 +53,7 @@ it('PipelineRunContainer renders', async () => {
   const { getByText } = renderWithRouter(
     <Provider store={testStore}>
       <PipelineRunContainer
+        intl={intl}
         match={match}
         fetchTaskRuns={() => Promise.resolve()}
         fetchPipelineRun={() => Promise.resolve()}

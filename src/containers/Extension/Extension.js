@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import React, { Component, Suspense } from 'react';
+import { injectIntl } from 'react-intl';
 import { ErrorBoundary } from '@tektoncd/dashboard-components';
 import { paths, urls } from '@tektoncd/dashboard-utils';
 
@@ -51,7 +52,7 @@ function dynamicImport(source, name) {
   });
 }
 
-export default /* istanbul ignore next */ class Extension extends Component {
+/* istanbul ignore next */ class Extension extends Component {
   constructor(props) {
     super(props);
 
@@ -69,10 +70,16 @@ export default /* istanbul ignore next */ class Extension extends Component {
   }
 
   render() {
+    const { intl } = this.props;
     const { ExtensionComponent } = this.state;
 
     return (
-      <ErrorBoundary message="Error loading extension">
+      <ErrorBoundary
+        message={intl.formatMessage({
+          id: 'dashboard.extension.error',
+          defaultMessage: 'Error loading extension'
+        })}
+      >
         <Suspense fallback={<div>Loading...</div>}>
           <ExtensionComponent
             actions={actions}
@@ -84,3 +91,5 @@ export default /* istanbul ignore next */ class Extension extends Component {
     );
   }
 }
+
+export default injectIntl(Extension);

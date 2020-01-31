@@ -217,7 +217,10 @@ class SideNav extends Component {
             icon={<span />}
             to={urls.importResources()}
           >
-            Import Tekton resources
+            {intl.formatMessage({
+              id: 'dashboard.sideNav.importResources',
+              defaultMessage: 'Import Tekton resources'
+            })}
           </SideNavLink>
           <SideNavLink
             element={NavLink}
