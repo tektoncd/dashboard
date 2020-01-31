@@ -15,11 +15,12 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { fireEvent } from 'react-testing-library';
+import { fireEvent, waitForElement } from 'react-testing-library';
 import { ALL_NAMESPACES, paths, urls } from '@tektoncd/dashboard-utils';
 
 import { renderWithRouter } from '../../utils/test';
 import SideNavContainer, { SideNavWithIntl as SideNav } from './SideNav';
+import * as API from '../../api';
 
 it('SideNav renders with extensions', () => {
   const middleware = [thunk];
@@ -31,6 +32,14 @@ it('SideNav renders with extensions', () => {
           displayName: 'tekton_dashboard_extension',
           name: 'dashboard-extension',
           url: 'sample'
+        },
+        'crd-extension': {
+          apiGroup: 'mygroup',
+          apiVersion: 'v1alpha1',
+          displayName: 'dashboard_crd_extension',
+          extensionType: 'kubernetes-resource',
+          name: 'crd-extension',
+          url: 'crd-sample'
         }
       }
     },
@@ -44,6 +53,29 @@ it('SideNav renders with extensions', () => {
   expect(queryByText(/pipelines/i)).toBeTruthy();
   expect(queryByText(/tasks/i)).toBeTruthy();
   expect(queryByText(/tekton_dashboard_extension/i)).toBeTruthy();
+  expect(queryByText(/dashboard_crd_extension/i)).toBeTruthy();
+});
+
+it('SideNav renders with triggers', async () => {
+  const middleware = [thunk];
+  const mockStore = configureStore(middleware);
+  const store = mockStore({
+    extensions: { byName: {} },
+    namespaces: { byName: {} }
+  });
+  jest
+    .spyOn(API, 'getCustomResource')
+    .mockImplementation(() => Promise.resolve());
+  const { queryByText } = renderWithRouter(
+    <Provider store={store}>
+      <SideNavContainer />
+    </Provider>
+  );
+  expect(queryByText(/pipelines/i)).toBeTruthy();
+  expect(queryByText(/tasks/i)).toBeTruthy();
+  await waitForElement(() => queryByText(/eventlisteners/i));
+  expect(queryByText(/triggertemplates/i)).toBeTruthy();
+  expect(queryByText(/triggerbindings/i)).toBeTruthy();
 });
 
 it('SideNav selects namespace based on URL', () => {

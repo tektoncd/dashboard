@@ -722,3 +722,15 @@ it('deleteTaskRun', () => {
     fetchMock.restore();
   });
 });
+
+it('rerunPipelineRun', () => {
+  const namespace = 'namespace';
+  const data = { fake: 'pipelineRun' };
+  fetchMock.post(`end:/rerun/`, data);
+  return index
+    .rerunPipelineRun(namespace, { fake: 'existingPipelineRun' })
+    .then(pipelineRun => {
+      expect(pipelineRun).toEqual(data);
+      fetchMock.restore();
+    });
+});
