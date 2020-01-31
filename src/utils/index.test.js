@@ -21,23 +21,34 @@ import {
   typeToPlural
 } from '.';
 
-it('sortRunsByStartTime', () => {
-  const a = { name: 'a', status: { startTime: '0' } };
-  const b = { name: 'b', status: {} };
-  const c = { name: 'c', status: { startTime: '2' } };
-  const d = { name: 'd', status: { startTime: '1' } };
-  const e = { name: 'e', status: {} };
-  const f = { name: 'f', status: { startTime: '3' } };
-  const g = { name: 'g' };
+describe('sortRunsByStartTime', () => {
+  it('should handle missing start time or status', () => {
+    const a = { name: 'a', status: { startTime: '0' } };
+    const b = { name: 'b', status: {} };
+    const c = { name: 'c', status: { startTime: '2' } };
+    const d = { name: 'd', status: { startTime: '1' } };
+    const e = { name: 'e', status: {} };
+    const f = { name: 'f', status: { startTime: '3' } };
+    const g = { name: 'g' };
 
-  const runs = [a, b, c, d, e, f, g];
-  /*
-    sort is stable on all modern browsers so
-    input order is preserved for b and e
-   */
-  const sortedRuns = [b, e, g, f, c, d, a];
-  sortRunsByStartTime(runs);
-  expect(runs).toEqual(sortedRuns);
+    const runs = [a, b, c, d, e, f, g];
+    /*
+      sort is stable on all modern browsers so
+      input order is preserved for b and e
+     */
+    const sortedRuns = [b, e, g, f, c, d, a];
+    sortRunsByStartTime(runs);
+    expect(runs).toEqual(sortedRuns);
+  });
+
+  it('should leave the order unchanged if no startTimes specified', () => {
+    const a = { name: 'a' };
+    const b = { name: 'b' };
+    const runs = [a, b];
+    const sortedRuns = [a, b];
+    sortRunsByStartTime(runs);
+    expect(runs).toEqual(sortedRuns);
+  });
 });
 
 it('typeToPlural', () => {
@@ -66,35 +77,57 @@ it('isStale', () => {
   expect(isStale(existingResource, state)).toBe(false);
 });
 
-it('fetchLogs', () => {
-  const stepName = 'kubectl-apply';
-  const stepStatus = { container: 'step-kubectl-apply' };
-  const taskRun = { pod: 'pipeline-run-123456', namespace: 'default' };
+describe('fetchLogs', () => {
+  it('should return the pod logs', () => {
+    const stepName = 'kubectl-apply';
+    const stepStatus = { container: 'step-kubectl-apply' };
+    const taskRun = { pod: 'pipeline-run-123456', namespace: 'default' };
 
-  const logs = 'fake logs';
-  jest.spyOn(API, 'getPodLog').mockImplementation(() => logs);
+    const logs = 'fake logs';
+    jest.spyOn(API, 'getPodLog').mockImplementation(() => logs);
 
-  const returnedLogs = fetchLogs(stepName, stepStatus, taskRun);
-  expect(API.getPodLog).toHaveBeenCalledWith(
-    expect.objectContaining({
-      container: stepStatus.container,
-      name: taskRun.pod,
-      namespace: taskRun.namespace
-    })
-  );
-  returnedLogs.then(data => {
-    expect(data).toBe(logs);
+    const returnedLogs = fetchLogs(stepName, stepStatus, taskRun);
+    expect(API.getPodLog).toHaveBeenCalledWith(
+      expect.objectContaining({
+        container: stepStatus.container,
+        name: taskRun.pod,
+        namespace: taskRun.namespace
+      })
+    );
+    returnedLogs.then(data => {
+      expect(data).toBe(logs);
+    });
+  });
+
+  it('should not call the API when the pod is not specified', () => {
+    const stepName = 'kubectl-apply';
+    const stepStatus = { container: 'step-kubectl-apply' };
+    const taskRun = { namespace: 'default' };
+    jest.spyOn(API, 'getPodLog');
+
+    fetchLogs(stepName, stepStatus, taskRun);
+    expect(API.getPodLog).not.toHaveBeenCalled();
   });
 });
 
-it('getGitValues', () => {
-  const url = 'https://github.com/user/repo';
+describe('getGitValues', () => {
+  it('should return an object describing the parts of the git URL', () => {
+    const url = 'https://github.com/user/repo';
 
-  const returnedValue = getGitValues(url);
+    const returnedValue = getGitValues(url);
 
-  expect(returnedValue).toStrictEqual({
-    gitOrg: 'user',
-    gitRepo: 'repo.git',
-    gitServer: 'github.com'
+    expect(returnedValue).toStrictEqual({
+      gitOrg: 'user',
+      gitRepo: 'repo.git',
+      gitServer: 'github.com'
+    });
+  });
+
+  it('should return an empty object if the URL is not a valid git URL', () => {
+    const url = 'foo';
+
+    const returnedValue = getGitValues(url);
+
+    expect(returnedValue).toEqual({});
   });
 });

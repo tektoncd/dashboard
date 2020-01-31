@@ -23,6 +23,7 @@ import {
   isRunning,
   reorderSteps,
   selectedTask,
+  selectedTaskRun,
   stepsStatus,
   taskRunStep,
   updateUnexecutedSteps
@@ -73,17 +74,41 @@ it('taskRunStep with step finds step', () => {
   expect(step.stepName).toEqual(stepName);
 });
 
-it('selectedTask find not exists', () => {
-  const taskName = 'testName';
-  const foundTask = selectedTask(taskName, []);
-  expect(foundTask).toEqual(undefined);
+describe('selectedTask', () => {
+  it('should return undefined if the task is not found', () => {
+    const taskName = 'testName';
+    const foundTask = selectedTask(taskName, []);
+    expect(foundTask).toEqual(undefined);
+  });
+
+  it('should return the selected task if found', () => {
+    const taskName = 'testName';
+    const expectedTask = { metadata: { name: taskName } };
+    const foundTask = selectedTask(taskName, [expectedTask]);
+    expect(foundTask.metadata.name).toEqual(taskName);
+  });
+
+  it('should return an empty object if tasks is falsy', () => {
+    const taskName = 'testName';
+    const tasks = null;
+    const foundTask = selectedTask(taskName, tasks);
+    expect(foundTask).toEqual({});
+  });
 });
 
-it('selectedTask find exists', () => {
-  const taskName = 'testName';
-  const expectedTask = { metadata: { name: taskName } };
-  const foundTask = selectedTask(taskName, [expectedTask]);
-  expect(foundTask.metadata.name).toEqual(taskName);
+describe('selectedTaskRun', () => {
+  it('should return undefined if the taskRun is not found', () => {
+    const taskRunName = 'testName';
+    const foundTaskRun = selectedTaskRun(taskRunName, undefined);
+    expect(foundTaskRun).toEqual(undefined);
+  });
+
+  it('should return the selected taskRun if found', () => {
+    const taskRunName = 'testName';
+    const expectedTaskRun = { metadata: { name: taskRunName } };
+    const foundTaskRun = selectedTask(taskRunName, [expectedTaskRun]);
+    expect(foundTaskRun.metadata.name).toEqual(taskRunName);
+  });
 });
 
 it('getErrorMessage falsy', () => {

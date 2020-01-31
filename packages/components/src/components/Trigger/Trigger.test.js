@@ -83,34 +83,64 @@ const fakeTrigger = {
   }
 };
 
-it('Trigger component renders all details', () => {
-  const props = {
-    eventListenerNamespace: 'tekton-pipelines',
-    trigger: fakeTrigger
-  };
-  const { queryByText } = renderWithRouter(<Trigger {...props} />);
-  expect(queryByText(/Name/i)).toBeTruthy();
-  expect(queryByText(/TriggerBinding/i)).toBeTruthy();
-  expect(queryByText(/TriggerTemplate/i)).toBeTruthy();
-  expect(queryByText(/Interceptor/i)).toBeTruthy();
-  expect(queryByText(/Headers/i)).toBeTruthy();
-  expect(queryByText(/Parameters/i)).toBeTruthy();
-  expect(queryByText(/webhooks-tekton-release-name/i)).toBeTruthy();
-  expect(queryByText(/webhooks-tekton-target-namespace/i)).toBeTruthy();
-  expect(queryByText(/webhooks-tekton-service-account/i)).toBeTruthy();
-  expect(queryByText(/webhooks-tekton-git-server/i)).toBeTruthy();
-  expect(queryByText(/webhooks-tekton-git-org/i)).toBeTruthy();
-  expect(queryByText(/webhooks-tekton-git-repo/i)).toBeTruthy();
-  expect(queryByText(/mytrigger-tekton-pipelines-push-event/i)).toBeTruthy();
-  expect(queryByText(/myreleasename/i)).toBeTruthy();
-  expect(queryByText(/tekton-pipelines/i)).toBeTruthy();
-  expect(queryByText(/myregistry/i)).toBeTruthy();
-  expect(queryByText(/myrepo/i)).toBeTruthy();
-  expect(queryByText(/myorg/i)).toBeTruthy();
-  expect(queryByText(/github.com/i)).toBeTruthy();
-  expect(queryByText(/simple-pipeline-template/i)).toBeTruthy();
-  expect(queryByText(/Wext-Trigger-Name/i)).toBeTruthy();
-  expect(queryByText(/Wext-Repository-Url/i)).toBeTruthy();
-  expect(queryByText(/Wext-Incoming-Event/i)).toBeTruthy();
-  expect(queryByText(/Wext-Secret-Name/i)).toBeTruthy();
+describe('Trigger', () => {
+  it('should render all details', () => {
+    const props = {
+      eventListenerNamespace: 'tekton-pipelines',
+      trigger: fakeTrigger
+    };
+    const { queryByText } = renderWithRouter(<Trigger {...props} />);
+    expect(queryByText(/Name/i)).toBeTruthy();
+    expect(queryByText(/TriggerBinding/i)).toBeTruthy();
+    expect(queryByText(/TriggerTemplate/i)).toBeTruthy();
+    expect(queryByText(/Interceptor/i)).toBeTruthy();
+    expect(queryByText(/Headers/i)).toBeTruthy();
+    expect(queryByText(/Parameters/i)).toBeTruthy();
+    expect(queryByText(/webhooks-tekton-release-name/i)).toBeTruthy();
+    expect(queryByText(/webhooks-tekton-target-namespace/i)).toBeTruthy();
+    expect(queryByText(/webhooks-tekton-service-account/i)).toBeTruthy();
+    expect(queryByText(/webhooks-tekton-git-server/i)).toBeTruthy();
+    expect(queryByText(/webhooks-tekton-git-org/i)).toBeTruthy();
+    expect(queryByText(/webhooks-tekton-git-repo/i)).toBeTruthy();
+    expect(queryByText(/mytrigger-tekton-pipelines-push-event/i)).toBeTruthy();
+    expect(queryByText(/myreleasename/i)).toBeTruthy();
+    expect(queryByText(/tekton-pipelines/i)).toBeTruthy();
+    expect(queryByText(/myregistry/i)).toBeTruthy();
+    expect(queryByText(/myrepo/i)).toBeTruthy();
+    expect(queryByText(/myorg/i)).toBeTruthy();
+    expect(queryByText(/github.com/i)).toBeTruthy();
+    expect(queryByText(/simple-pipeline-template/i)).toBeTruthy();
+    expect(queryByText(/Wext-Trigger-Name/i)).toBeTruthy();
+    expect(queryByText(/Wext-Repository-Url/i)).toBeTruthy();
+    expect(queryByText(/Wext-Incoming-Event/i)).toBeTruthy();
+    expect(queryByText(/Wext-Secret-Name/i)).toBeTruthy();
+  });
+
+  it('should handle missing params and interceptor', () => {
+    const props = {
+      eventListenerNamespace: 'tekton-pipelines',
+      trigger: {
+        ...fakeTrigger,
+        params: undefined,
+        interceptor: undefined
+      }
+    };
+    const { queryByText } = renderWithRouter(<Trigger {...props} />);
+    expect(queryByText(/Name/i)).toBeTruthy();
+  });
+
+  it('should handle missing interceptor headers', () => {
+    const props = {
+      eventListenerNamespace: 'tekton-pipelines',
+      trigger: {
+        ...fakeTrigger,
+        interceptor: {
+          ...fakeTrigger.interceptor,
+          header: undefined
+        }
+      }
+    };
+    const { queryByText } = renderWithRouter(<Trigger {...props} />);
+    expect(queryByText(/Interceptor/i)).toBeTruthy();
+  });
 });

@@ -53,8 +53,16 @@ it('StepDefinition renders the provided content with resources and params', () =
     ],
     outputResources: [
       {
+        name: 'referencedOutputResource',
         resourceRef: {
           name: outputResourceName
+        }
+      },
+      {
+        name: 'inlineOutputResource',
+        resourceSpec: {
+          name: 'testing',
+          params: 'inlineResourceParams'
         }
       }
     ],
@@ -83,4 +91,5 @@ it('StepDefinition renders the provided content with resources and params', () =
   expect(queryByText(testParam)).toBeTruthy();
   expect(queryByText(inputResourceName)).toBeTruthy();
   expect(queryByText(outputResourceName)).toBeTruthy();
+  expect(queryByText(/inlineResourceParams/)).toBeTruthy();
 });

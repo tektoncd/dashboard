@@ -36,7 +36,7 @@ export async function fetchLogs(stepName, stepStatus, taskRun) {
   const { pod, namespace } = taskRun;
   let logs;
   if (pod) {
-    const { container = `step-${stepName}` } = stepStatus;
+    const { container } = stepStatus;
     logs = getPodLog({
       container,
       name: pod,
