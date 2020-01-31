@@ -16,6 +16,7 @@ import { fireEvent, getNodeText, render } from 'react-testing-library';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+
 import PipelineResourcesDropdown from './PipelineResourcesDropdown';
 import * as API from '../../api';
 

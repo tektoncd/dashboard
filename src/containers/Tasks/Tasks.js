@@ -142,7 +142,10 @@ export /* istanbul ignore next */ class Tasks extends Component {
           kind="error"
           hideCloseButton
           lowContrast
-          title="Error loading Tasks"
+          title={intl.formatMessage({
+            id: 'dashboard.tasks.errorLoading',
+            defaultMessage: 'Error loading Tasks'
+          })}
           subtitle={getErrorMessage(error)}
         />
       );

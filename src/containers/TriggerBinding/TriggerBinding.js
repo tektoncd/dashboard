@@ -198,7 +198,7 @@ export /* istanbul ignore next */ class TriggerBindingContainer extends Componen
               </p>
               <Table
                 title={intl.formatMessage({
-                  id: 'dashboard.triggerBinding.parametersTableTitle',
+                  id: 'dashboard.parameters.title',
                   defaultMessage: 'Parameters'
                 })}
                 headers={headersForParameters}

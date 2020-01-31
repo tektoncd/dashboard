@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
+import { injectIntl } from 'react-intl';
 import { Button } from 'carbon-components-react';
 import { urls } from '@tektoncd/dashboard-utils';
 import { Restart32 as Restart } from '@carbon/icons-react';
@@ -20,6 +21,7 @@ import './Rerun.scss';
 export class Rerun extends Component {
   handleRerun = event => {
     event.preventDefault();
+    const { intl } = this.props;
 
     const { namespace } = this.props.pipelineRun.metadata;
     const payload = {
@@ -38,7 +40,10 @@ export class Rerun extends Component {
           pipelineRunName: newPipelineRunName
         });
         this.props.setShowRerunNotification({
-          message: 'Rerun PipelineRun successfully',
+          message: intl.formatMessage({
+            id: 'dashboard.rerun.success',
+            defaultMessage: 'Rerun successful'
+          }),
           kind: 'success',
           logsURL: finalURL
         });
@@ -49,15 +54,24 @@ export class Rerun extends Component {
         switch (statusCode) {
           case 500:
             this.props.setShowRerunNotification({
-              message: `An internal server error occurred when rerunning this PipelineRun: check the dashboard and
-                extension pod logs for details`,
+              message: intl.formatMessage({
+                id: 'dashboard.rerun.internalServerError',
+                defaultMessage:
+                  'An internal server error occurred when rerunning this PipelineRun: check the dashboard and extension pod logs for details'
+              }),
               kind: 'error'
             });
             break;
           default:
             this.props.setShowRerunNotification({
-              message: `An error occurred when rerunning this PipelineRun: check the dashboard and
-                extension pod logs for details. Status code: ${statusCode}`,
+              message: intl.formatMessage(
+                {
+                  id: 'dashboard.rerun.error',
+                  defaultMessage:
+                    'An error occurred when rerunning this PipelineRun: check the dashboard and extension pod logs for details. Status code: ${statusCode}'
+                },
+                { statusCode }
+              ),
               kind: 'error'
             });
         }
@@ -79,4 +93,4 @@ export class Rerun extends Component {
   }
 }
 
-export default Rerun;
+export default injectIntl(Rerun);

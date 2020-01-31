@@ -120,7 +120,10 @@ export /* istanbul ignore next */ class TriggerTemplateContainer extends Compone
     if (!triggerTemplate) {
       return TriggerTemplateContainer.notification({
         kind: 'error',
-        message: 'TriggerTemplate not available',
+        message: intl.formatMessage({
+          id: 'dashboard.triggerTemplate.unavailable',
+          defaultMessage: 'TriggerTemplate not available'
+        }),
         intl
       });
     }
@@ -226,7 +229,7 @@ export /* istanbul ignore next */ class TriggerTemplateContainer extends Compone
 
               <DashboardTable
                 title={intl.formatMessage({
-                  id: 'dashboard.triggerTemplate.paramaters',
+                  id: 'dashboard.paramaters.title',
                   defaultMessage: 'Parameters'
                 })}
                 headers={headersForParameters}

@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
+import { injectIntl } from 'react-intl';
 
 import {
   Header as CarbonHeader,
@@ -23,11 +24,21 @@ import './Header.scss';
 
 import tektonLogo from '../../images/tekton-logo-20x20.svg';
 
-export default function Header({ logoutButton }) {
+function Header({ intl, logoutButton }) {
   return (
     <CarbonHeader aria-label="Tekton Dashboard" className="header">
       <span className="logo">
-        <img alt="Tekton logo" src={tektonLogo} title="Meow" />
+        <img
+          alt={intl.formatMessage({
+            id: 'dashboard.logo.alt',
+            defaultMessage: 'Tekton logo'
+          })}
+          src={tektonLogo}
+          title={intl.formatMessage({
+            id: 'dashboard.logo.tooltip',
+            defaultMessage: 'Meow'
+          })}
+        />
       </span>
       <HeaderName href="/" prefix="">
         Tekton
@@ -36,3 +47,5 @@ export default function Header({ logoutButton }) {
     </CarbonHeader>
   );
 }
+
+export default injectIntl(Header);

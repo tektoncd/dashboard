@@ -100,7 +100,7 @@ const Trigger = ({ intl, eventListenerNamespace, trigger }) => {
         <div className="triggerinfo">
           <h3>
             {intl.formatMessage({
-              id: 'dashboard.triggerDetails.triggerParameters',
+              id: 'dashboard.parameters.title',
               defaultMessage: 'Parameters'
             })}
           </h3>

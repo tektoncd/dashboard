@@ -12,38 +12,37 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent } from 'react-testing-library';
+import { fireEvent, waitForElement } from 'react-testing-library';
 import { renderWithIntl } from '../../utils/test';
 import CancelButton from './CancelButton';
 
 const type = 'test';
+const name = 'name';
 
 describe('Test Button component submit', () => {
-  it('Test click event', () => {
-    const mockCallBack = jest.fn();
+  it('Test click event', async () => {
+    const onCancelSpy = jest.fn();
 
     const { getByText, getByTitle } = renderWithIntl(
-      <CancelButton type={type} onCancel={mockCallBack}>
-        Ok!
-      </CancelButton>
+      <CancelButton type={type} name={name} onCancel={onCancelSpy} />
     );
     fireEvent.click(getByTitle(`Stop ${type}`));
+    await waitForElement(() => getByText(`Stop ${type} ${name}`));
     fireEvent.click(getByText(`Stop ${type}`));
-    expect(mockCallBack.mock.calls.length).toEqual(1);
+    expect(onCancelSpy).toHaveBeenCalledWith(name);
   });
 });
 
 describe('Test Button component', () => {
-  it('Test click event', () => {
-    const mockCallBack = jest.fn();
+  it('Test click event', async () => {
+    const onCancelSpy = jest.fn();
 
     const { getByText, getByTitle } = renderWithIntl(
-      <CancelButton type={type} onCancel={mockCallBack}>
-        Ok!
-      </CancelButton>
+      <CancelButton type={type} name={name} onCancel={onCancelSpy} />
     );
     fireEvent.click(getByTitle(`Stop ${type}`));
+    await waitForElement(() => getByText(`Stop ${type} ${name}`));
     fireEvent.click(getByText('Cancel'));
-    expect(mockCallBack.mock.calls.length).toEqual(0);
+    expect(onCancelSpy).not.toHaveBeenCalled();
   });
 });

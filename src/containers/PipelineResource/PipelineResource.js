@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
+import { injectIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
@@ -73,15 +74,27 @@ export /* istanbul ignore next */ class PipelineResourceContainer extends Compon
   }
 
   render() {
-    const { error, loading, match, pipelineResource } = this.props;
+    const { error, intl, loading, match, pipelineResource } = this.props;
     const { pipelineResourceName } = match.params;
 
     if (loading) {
       return (
         <DataTableSkeleton
           headers={[
-            { key: 'name', header: 'Param Name' },
-            { key: 'value', header: 'Value' }
+            {
+              key: 'name',
+              header: intl.formatMessage({
+                id: 'dashboard.tableHeader.paramName',
+                defaultMessage: 'Param Name'
+              })
+            },
+            {
+              key: 'value',
+              header: intl.formatMessage({
+                id: 'dashboard.tableHeader.value',
+                defaultMessage: 'Value'
+              })
+            }
           ]}
         />
       );
@@ -93,7 +106,10 @@ export /* istanbul ignore next */ class PipelineResourceContainer extends Compon
           kind="error"
           hideCloseButton
           lowContrast
-          title="Error loading PipelineResource"
+          title={intl.formatMessage({
+            id: 'dashboard.pipelineResource.errorLoading',
+            defaultMessage: 'Error loading PipelineResource'
+          })}
           subtitle={getErrorMessage(error)}
         />
       );
@@ -105,8 +121,18 @@ export /* istanbul ignore next */ class PipelineResourceContainer extends Compon
           kind="info"
           hideCloseButton
           lowContrast
-          title="Cannot load PipelineResource"
-          subtitle={`PipelineResource ${pipelineResourceName} not found`}
+          title={intl.formatMessage({
+            id: 'dashboard.pipelineResource.failed',
+            defaultMessage: 'Cannot load PipelineResource'
+          })}
+          subtitle={intl.formatMessage(
+            {
+              id: 'dashboard.pipelineResource.failedSubtitle',
+              defaultMessage:
+                'PipelineResource {pipelineResourceName} not found'
+            },
+            { pipelineResourceName }
+          )}
         />
       );
     }
@@ -125,8 +151,20 @@ export /* istanbul ignore next */ class PipelineResourceContainer extends Compon
             value
           }))}
           headers={[
-            { key: 'name', header: 'Name' },
-            { key: 'value', header: 'Value' }
+            {
+              key: 'name',
+              header: intl.formatMessage({
+                id: 'dashboard.tableHeader.name',
+                defaultMessage: 'Name'
+              })
+            },
+            {
+              key: 'value',
+              header: intl.formatMessage({
+                id: 'dashboard.tableHeader.value',
+                defaultMessage: 'Value'
+              })
+            }
           ]}
           render={({
             rows,
@@ -169,9 +207,27 @@ export /* istanbul ignore next */ class PipelineResourceContainer extends Compon
               secretName
             }))}
             headers={[
-              { key: 'fieldName', header: 'Field Name' },
-              { key: 'secretKey', header: 'Secret Key' },
-              { key: 'secretName', header: 'Secret Name' }
+              {
+                key: 'fieldName',
+                header: intl.formatMessage({
+                  id: 'dashboard.pipelineResource.fieldName',
+                  defaultMessage: 'Field Name'
+                })
+              },
+              {
+                key: 'secretKey',
+                header: intl.formatMessage({
+                  id: 'dashboard.pipelineResource.secretKey',
+                  defaultMessage: 'Secret Key'
+                })
+              },
+              {
+                key: 'secretName',
+                header: intl.formatMessage({
+                  id: 'dashboard.pipelineResource.secretName',
+                  defaultMessage: 'Secret Name'
+                })
+              }
             ]}
             render={({
               rows,
@@ -243,4 +299,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(PipelineResourceContainer);
+)(injectIntl(PipelineResourceContainer));

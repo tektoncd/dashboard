@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
+import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
@@ -50,10 +51,16 @@ const taskTypeKeys = { ClusterTask: 'clustertasks', Task: 'tasks' };
 
 export /* istanbul ignore next */ class TaskRunContainer extends Component {
   // once redux store is available errors will be handled properly with dedicated components
-  static notification({ kind, message }) {
+  static notification({ intl, kind, message }) {
     const titles = {
-      info: 'TaskRun not available',
-      error: 'Error loading TaskRun'
+      info: intl.formatMessage({
+        id: 'dashboard.taskRun.unavailable',
+        defaultMessage: 'TaskRun not available'
+      }),
+      error: intl.formatMessage({
+        id: 'dashboard.taskRun.errorLoading',
+        defaultMessage: 'Error loading TaskRun'
+      })
     };
     return (
       <InlineNotification
@@ -154,7 +161,7 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
 
   render() {
     const { loading, selectedStepId } = this.state;
-    const { error } = this.props;
+    const { error, intl } = this.props;
 
     if (loading) {
       return <StructuredListSkeleton border />;
@@ -162,8 +169,12 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
 
     if (error) {
       return TaskRunContainer.notification({
+        intl,
         kind: 'error',
-        message: 'Error loading TaskRun'
+        message: intl.formatMessage({
+          id: 'dashboard.taskRun.errorLoading',
+          defaultMessage: 'Error loading TaskRun'
+        })
       });
     }
 
@@ -171,8 +182,12 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
 
     if (!taskRun) {
       return TaskRunContainer.notification({
+        intl,
         kind: 'info',
-        message: 'TaskRun not available'
+        message: intl.formatMessage({
+          id: 'dashboard.taskRun.unavailable',
+          defaultMessage: 'TaskRun not available'
+        })
       });
     }
 
@@ -275,4 +290,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(TaskRunContainer);
+)(injectIntl(TaskRunContainer));
