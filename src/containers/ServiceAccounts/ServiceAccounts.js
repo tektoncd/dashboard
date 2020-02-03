@@ -144,7 +144,6 @@ export /* istanbul ignore next */ class ServiceAccounts extends Component {
               id: 'dashboard.notification.clear',
               defaultMessage: 'Clear Notification'
             })}
-            className="notificationComponent"
             data-testid="errorNotificationComponent"
             lowContrast
           />

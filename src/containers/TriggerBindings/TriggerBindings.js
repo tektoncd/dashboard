@@ -137,7 +137,6 @@ export /* istanbul ignore next */ class TriggerBindings extends Component {
               id: 'dashboard.notification.clear',
               defaultMessage: 'Clear Notification'
             })}
-            className="notificationComponent"
             data-testid="errorNotificationComponent"
             lowContrast
           />
