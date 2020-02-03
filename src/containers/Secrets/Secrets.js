@@ -226,6 +226,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
         });
       });
       const serviceAccountsString = serviceAccountsWithSecret.join(', ');
+      const secretUsernameToDisplay = atob(secret.username);
       const formattedSecret = {
         annotations: <span title={annotations}>{annotations}</span>,
         id: `${secret.namespace}:${secret.name}`,
@@ -236,9 +237,10 @@ export /* istanbul ignore next */ class Secrets extends Component {
           <span title={serviceAccountsString}>{serviceAccountsString}</span>
         ),
         type: <span title={secret.type}>{secret.type}</span>,
-        username: <span title={secret.username}>{secret.username}</span>
+        username: (
+          <span title={secretUsernameToDisplay}>{secretUsernameToDisplay}</span>
+        )
       };
-
       return formattedSecret;
     });
 

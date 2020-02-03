@@ -151,8 +151,6 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
       invalidFields.name = true;
     }
 
-    // If the data isn't base64 encoded, you'll confusingly get back a 404 from the secrets API
-
     if (validateInputs(username, 'username')) {
       const encodedUsername = Buffer.from(username).toString('base64');
       postData.data.username = encodedUsername;
