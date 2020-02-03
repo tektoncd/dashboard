@@ -28,14 +28,10 @@ const intl = createIntl({
 
 const secrets = [
   {
-    name: 'secret1',
-    type: 'type1',
-    annotations: '',
-    username: 'usernameBob'
+    name: 'secret1'
   },
   {
-    name: 'imagePull1',
-    type: 'type2'
+    name: 'imagePull1'
   }
 ];
 
@@ -349,8 +345,8 @@ it('ServiceAccountContainer renders details with no secret nor imagePullSecrets 
   );
 
   await waitForElement(() => getByText('service-account-simple'));
-  await waitForElement(() => getByText('tekton-pipelines'));
-  await waitForElement(() => getByText('None'));
+  await waitForElement(() => getByText('tekton-pipelines')); // Namespace
+  await waitForElement(() => getByText('None')); // Label
   await waitForElement(() =>
     getByText('No Secrets found for this ServiceAccount.')
   );
@@ -401,8 +397,6 @@ it('ServiceAccountContainer renders secrets', async () => {
   await waitForElement(() => getByText('tekton-pipelines'));
   await waitForElement(() => getByText('None'));
   await waitForElement(() => getByText('secret1'));
-  await waitForElement(() => getByText('type1'));
-  await waitForElement(() => getByText('usernameBob'));
   await waitForElement(() =>
     getByText('No imagePullSecrets found for this ServiceAccount.')
   );
@@ -449,7 +443,6 @@ it('ServiceAccountContainer renders imagePullSecrets', async () => {
   await waitForElement(() => getByText('service-account-simple'));
   await waitForElement(() => getByText('tekton-pipelines'));
   await waitForElement(() => getByText('imagePull1'));
-  await waitForElement(() => getByText('type2'));
   await waitForElement(() =>
     getByText('No Secrets found for this ServiceAccount.')
   );
