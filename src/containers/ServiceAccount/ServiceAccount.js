@@ -209,7 +209,9 @@ export /* istanbul ignore next */ class ServiceAccountContainer extends Componen
     let rowsForImgPull = [];
     if (serviceAccount.imagePullSecrets && !loading) {
       rowsForImgPull = serviceAccount.imagePullSecrets.map(({ name }) => {
-        const { type } = secrets.find(secret => secret.name === name);
+        const { type } = secrets.find(secret => secret.name === name) || {
+          type: 'unknown-type'
+        };
         return {
           id: name,
           name,
