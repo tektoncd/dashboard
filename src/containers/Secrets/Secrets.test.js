@@ -37,6 +37,7 @@ const byNamespace = {
       uid: '0',
       name: 'github-repo-access-secret',
       type: 'userpass',
+      username: 'bXl1c2VybmFtZQ==', // This is "myusername"
       annotations: {
         'tekton.dev/git-0': 'https://github.ibm.com',
         badannotation: 'badcontent'
@@ -49,6 +50,7 @@ const byNamespace = {
       annotations: {
         'tekton.dev/git-0': 'https://github.com'
       },
+      username: 'bXl1c2VybmFtZQ==', // This is "myusername"
       labels: {
         baz: 'bam'
       }
@@ -250,6 +252,20 @@ it('SecretsTable only renders tekton.dev annotations', () => {
   expect(queryByText(/badannotation/i)).toBeFalsy();
 
   expect(queryByText(/badcontent/i)).toBeFalsy();
+});
+
+it('SecretsTable renders username in regular form (not encoded)', () => {
+  const { queryByText, getByText } = renderWithRouter(
+    <Provider store={store}>
+      <Route
+        path={urls.secrets.all()}
+        render={props => <Secrets {...props} />}
+      />
+    </Provider>,
+    { route: urls.secrets.all() }
+  );
+  expect(queryByText(/github-repo-access-secret/i)).toBeTruthy();
+  expect(getByText(/myusername/i)).toBeTruthy();
 });
 
 it('Secrets can be filtered on a single label filter', async () => {
