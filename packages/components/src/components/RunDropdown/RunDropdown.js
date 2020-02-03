@@ -52,14 +52,16 @@ class RunDropdown extends Component {
         >
           {items.map(item => {
             const { actionText, action, disable, modalProperties } = item;
+            const disabled = disable && disable(resource);
             return (
               <OverflowMenuItem
                 key={actionText}
                 itemText={actionText}
-                disabled={disable && disable(resource)}
+                disabled={disabled}
                 onClick={() =>
                   this.handleShow(() => action(resource), modalProperties)
                 }
+                primaryFocus={!disabled}
               />
             );
           })}
