@@ -263,7 +263,6 @@ export /* istanbul ignore next */ class Secrets extends Component {
                 id: 'dashboard.notification.clear',
                 defaultMessage: 'Clear Notification'
               })}
-              className="notificationComponent"
               onCloseButtonClick={this.props.clearNotification}
               lowContrast
             />
@@ -283,7 +282,6 @@ export /* istanbul ignore next */ class Secrets extends Component {
               id: 'dashboard.notification.clear',
               defaultMessage: 'Clear Notification'
             })}
-            className="notificationComponent"
             onCloseButtonClick={this.props.clearNotification}
             lowContrast
           />

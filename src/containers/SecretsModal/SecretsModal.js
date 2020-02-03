@@ -402,7 +402,6 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
                   id: 'dashboard.notification.clear',
                   defaultMessage: 'Clear Notification'
                 })}
-                className="notificationComponent"
                 data-testid="errorNotificationComponent"
                 onCloseButtonClick={this.props.clearNotification}
                 lowContrast

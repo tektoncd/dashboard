@@ -139,7 +139,6 @@ export /* istanbul ignore next */ class EventListeners extends Component {
               id: 'dashboard.notification.clear',
               defaultMessage: 'Clear Notification'
             })}
-            className="notificationComponent"
             data-testid="errorNotificationComponent"
             lowContrast
           />
