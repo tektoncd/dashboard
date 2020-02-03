@@ -130,14 +130,6 @@
   revision = "901d90724c7919163f472a9812253fb26761123d"
 
 [[projects]]
-  digest = "1:574f4e0c57e045c9d109d23c60c586b2198eaead53daa97ed5f65c616e22a9b0"
-  name = "github.com/h2non/parth"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "b4df798d65426f8c8ab5ca5f9987aec5575d26c9"
-  version = "v2.0.1"
-
-[[projects]]
   digest = "1:c77361e611524ec8f2ad37c408c3c916111a70b6acf806a1200855696bf8fa4d"
   name = "github.com/hashicorp/golang-lru"
   packages = [
@@ -416,14 +408,6 @@
   pruneopts = "UT"
   revision = "b2f4a3cf3c67576a2ee09e1fe62656a5086ce880"
   version = "v1.6.1"
-
-[[projects]]
-  digest = "1:80d8747c77f6b6c8e77232cd04aa93cbf4489836d47e487566d94e6ecbe23082"
-  name = "gopkg.in/h2non/gock.v1"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "3ffff9b1aa8200275a5eb219c5f9c62bd27acb31"
-  version = "v1.0.15"
 
 [[projects]]
   digest = "1:2d1fbdc6777e5408cabeb02bf336305e724b925ff4546ded0fa8715a7267922a"
@@ -779,7 +763,6 @@
     "github.com/tektoncd/pipeline/pkg/client/resource/informers/externalversions",
     "github.com/tektoncd/plumbing/scripts",
     "go.uber.org/zap",
-    "gopkg.in/h2non/gock.v1",
     "k8s.io/api/core/v1",
     "k8s.io/api/extensions/v1beta1",
     "k8s.io/apimachinery/pkg/apis/meta/v1",

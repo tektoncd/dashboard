@@ -100,7 +100,6 @@ export /* istanbul ignore next */ class ServiceAccountContainer extends Componen
       loading,
       match,
       selectedNamespace,
-      secrets,
       serviceAccount
     } = this.props;
     const { serviceAccountName } = match.params;
@@ -130,56 +129,15 @@ export /* istanbul ignore next */ class ServiceAccountContainer extends Componen
           id: 'dashboard.tableHeader.name',
           defaultMessage: 'Name'
         })
-      },
-      {
-        key: 'type',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.type',
-          defaultMessage: 'Type'
-        })
-      },
-      {
-        key: 'username',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.username',
-          defaultMessage: 'Username'
-        })
-      },
-      {
-        key: 'annotations',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.annotations',
-          defaultMessage: 'Annotations'
-        })
-      },
-      {
-        key: 'created',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.createdTime',
-          defaultMessage: 'Created'
-        })
       }
     ];
 
     let rowsForSecrets = [];
     if (serviceAccount.secrets && !loading) {
       rowsForSecrets = serviceAccount.secrets.map(({ name }) => {
-        const current = secrets.find(secret => secret.name === name) || {};
-        let annotations = '';
-        if (current.annotations) {
-          Object.keys(current.annotations).forEach(key => {
-            if (key.includes('tekton.dev')) {
-              annotations += `${key}: ${current.annotations[key]}\n`;
-            }
-          });
-        }
         return {
           id: name,
-          name,
-          type: current.type || '',
-          annotations,
-          username: current.username || '',
-          created: <FormattedDate date={current.creationTimestamp} relative />
+          name
         };
       });
     }
@@ -196,24 +154,15 @@ export /* istanbul ignore next */ class ServiceAccountContainer extends Componen
           id: 'dashboard.tableHeader.name',
           defaultMessage: 'Name'
         })
-      },
-      {
-        key: 'type',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.type',
-          defaultMessage: 'Type'
-        })
       }
     ];
 
     let rowsForImgPull = [];
     if (serviceAccount.imagePullSecrets && !loading) {
       rowsForImgPull = serviceAccount.imagePullSecrets.map(({ name }) => {
-        const { type } = secrets.find(secret => secret.name === name);
         return {
           id: name,
-          name,
-          type
+          name
         };
       });
     }
