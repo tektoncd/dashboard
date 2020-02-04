@@ -13,8 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import { Button, TextInput } from 'carbon-components-react';
-import Add from '@carbon/icons-react/lib/add--alt/24';
-import Remove from '@carbon/icons-react/lib/subtract--alt/24';
+import { AddAlt24 as Add, SubtractAlt24 as Remove } from '@carbon/icons-react';
 import './KeyValueList.scss';
 
 const KeyValueList = props => {

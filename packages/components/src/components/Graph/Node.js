@@ -14,11 +14,13 @@ limitations under the License.
 import React, { Component } from 'react';
 import classNames from 'classnames';
 
-import CheckmarkFilled from '@carbon/icons-react/lib/checkmark--filled/20';
-import ChevronDown from '@carbon/icons-react/lib/chevron--down/20';
-import ChevronUp from '@carbon/icons-react/lib/chevron--up/20';
-import CloseFilled from '@carbon/icons-react/lib/close--filled/20';
-import Undefined from '@carbon/icons-react/lib/undefined/20';
+import {
+  CheckmarkFilled20 as CheckmarkFilled,
+  ChevronDown20 as ChevronDown,
+  ChevronUp20 as ChevronUp,
+  CloseFilled20 as CloseFilled,
+  Undefined20 as Undefined
+} from '@carbon/icons-react';
 
 import Graph from './Graph'; // eslint-disable-line import/no-cycle
 import InlineLoading from './InlineLoading';

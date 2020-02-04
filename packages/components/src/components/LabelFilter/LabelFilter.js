@@ -22,7 +22,7 @@ import {
   Tag
 } from 'carbon-components-react';
 
-import Add from '@carbon/icons-react/lib/add/16';
+import { Add16 as Add } from '@carbon/icons-react';
 
 import './LabelFilter.scss';
 

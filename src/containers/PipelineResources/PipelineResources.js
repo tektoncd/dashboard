@@ -28,7 +28,7 @@ import {
   PipelineResources as PipelineResourcesList
 } from '@tektoncd/dashboard-components';
 import { Button, InlineNotification } from 'carbon-components-react';
-import Add from '@carbon/icons-react/lib/add/16';
+import { Add16 as Add } from '@carbon/icons-react';
 import { fetchPipelineResources } from '../../actions/pipelineResources';
 import { deletePipelineResource } from '../../api';
 import PipelineResourcesModal from '../PipelineResourcesModal';

@@ -15,7 +15,6 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { Table } from '@tektoncd/dashboard-components';
-import 'carbon-components-react';
 import { getStatus, getStatusIcon, urls } from '@tektoncd/dashboard-utils';
 
 import { FormattedDate, FormattedDuration, RunDropdown } from '..';

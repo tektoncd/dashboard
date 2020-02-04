@@ -29,7 +29,7 @@ import {
   LabelFilter,
   Table
 } from '@tektoncd/dashboard-components';
-import Information16 from '@carbon/icons-react/lib/information/16';
+import { Information16 } from '@carbon/icons-react';
 import { fetchTasks } from '../../actions/tasks';
 import {
   getSelectedNamespace,

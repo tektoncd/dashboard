@@ -15,10 +15,12 @@ import React from 'react';
 import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 import { boolean, text } from '@storybook/addon-knobs';
-import Add from '@carbon/icons-react/lib/add/16';
-import Delete from '@carbon/icons-react/lib/delete/16';
-import Rerun from '@carbon/icons-react/lib/restart/16';
-import RerunAll from '@carbon/icons-react/lib/renew/16';
+import {
+  Add16 as Add,
+  Delete16 as Delete,
+  Restart16 as Rerun,
+  Renew16 as RerunAll
+} from '@carbon/icons-react';
 
 import Table from './Table';
 

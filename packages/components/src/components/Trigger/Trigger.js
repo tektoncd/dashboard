@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import LinkIcon from '@carbon/icons-react/lib/launch/16';
+import { Launch16 as LinkIcon } from '@carbon/icons-react';
 import { injectIntl } from 'react-intl';
 import React from 'react';
 import { urls } from '@tektoncd/dashboard-utils';
