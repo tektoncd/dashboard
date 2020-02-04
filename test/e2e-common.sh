@@ -50,11 +50,14 @@ function dump_extra_cluster_state() {
   echo ">>> Dashboard backend log:"
   kubectl -n tekton-pipelines logs $(get_app_pod tekton-dashboard tekton-pipelines)
 
+  echo "Task info"
+  kubectl -n tekton-pipelines get Task -o yaml
+
   echo "TaskRun info"
-  kubectl -n tekton-pipelines get TaskRun -o json
+  kubectl -n tekton-pipelines get TaskRun -o yaml
 
   echo "PipelineRun info"
-  kubectl -n tekton-pipelines get PipelineRun -o json
+  kubectl -n tekton-pipelines get PipelineRun -o yaml
 
   echo "PipelineRun container info"
   kubectl -n tekton-pipelines logs -l app=e2e-pipelinerun --all-containers
