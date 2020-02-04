@@ -1,3 +1,4 @@
+---
 apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
@@ -6,31 +7,33 @@ metadata:
 spec:
   inputs:
     params:
-    - name: pathToDockerFile
-      description: The path to the dockerfile to build
-      default: /workspace/git-source/Dockerfile
-    - name: pathToContext
-      description: The build context used by Kaniko (https://github.com/GoogleContainerTools/kaniko#kaniko-build-contexts)
-      default: /workspace/git-source
+      - name: pathToDockerFile
+        description: The path to the dockerfile to build
+        default: /workspace/git-source/Dockerfile
+      - name: pathToContext
+        description: The build context used by Kaniko
+        default: /workspace/git-source
 
     resources:
-    - name: git-source
-      type: git
+      - name: git-source
+        type: git
 
   outputs:
     resources:
-    - name: builtImage
-      type: image
+      - name: builtImage
+        type: image
 
   steps:
-  - name: build-and-push
-    securityContext:
-      runAsUser: 0
-    env:
-    - name: "DOCKER_CONFIG"
-      value: "/builder/home/.docker"
-    image: gcr.io/kaniko-project/executor:latest
-    args:
-    - --dockerfile=$(inputs.params.pathToDockerFile)
-    - --destination=$(outputs.resources.builtImage.url)
-    - --context=$(inputs.params.pathToContext)
+    - name: build-and-push
+      workingdir: /workspace/git-source
+      image: gcr.io/kaniko-project/executor:v0.16.0
+      securityContext:
+        runAsUser: 0
+      env:
+        - name: "DOCKER_CONFIG"
+          value: "/tekton/home/.docker"
+      command:
+        - /kaniko/executor
+        - --dockerfile=$(inputs.params.pathToDockerFile)
+        - --destination=$(outputs.resources.builtImage.url)
+        - --context=$(inputs.params.pathToContext)
