@@ -49,6 +49,8 @@ const PipelineRuns = ({
     }
     return `${reason}: ${message}`;
   },
+  getPipelineRunCreatedTime = pipelineRun =>
+    pipelineRun.metadata.creationTimestamp,
   hideNamespace,
   intl,
   loading,
@@ -106,7 +108,8 @@ const PipelineRuns = ({
   ].filter(Boolean);
 
   const pipelineRunsFormatted = pipelineRuns.map(pipelineRun => {
-    const { annotations, creationTimestamp, namespace } = pipelineRun.metadata;
+    const { annotations, namespace } = pipelineRun.metadata;
+    const creationTimestamp = getPipelineRunCreatedTime(pipelineRun);
     const pipelineRunName = createPipelineRunDisplayName({
       pipelineRunMetadata: pipelineRun.metadata
     });
