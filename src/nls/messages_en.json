@@ -110,6 +110,7 @@
     "dashboard.secrets.deleteConfirm": "Are you sure you want to delete these secrets?",
     "dashboard.secrets.deleteHeading": "Delete Secret",
     "dashboard.secrets.deleteSuccess": "Secret deleted successfully",
+    "dashboard.secrets.reload": "Reload this page to view",
     "dashboard.secrets.success": "Success:",
     "dashboard.secretsModal.annotations.ariaLabelKey": "This is the tag Tekton uses for its resources.",
     "dashboard.secretsModal.annotations.ariaLabelValue": "This is the URL for the given Tekton resource.",

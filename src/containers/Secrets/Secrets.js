@@ -227,7 +227,26 @@ export /* istanbul ignore next */ class Secrets extends Component {
         });
       });
       const serviceAccountsString = serviceAccountsWithSecret.join(', ');
-      const secretUsernameToDisplay = atob(secret.username);
+
+      const translatedReload = [
+        intl.formatMessage({
+          id: 'dashboard.secrets.reload',
+          defaultMessage: 'Reload this page to view'
+        })
+      ];
+
+      // Defaults - todo ensure all data is fetched and displayed so we don't need this
+      let secretUsernameToDisplay = translatedReload;
+      let secretTypeToDisplay = translatedReload;
+
+      if (secret.username) {
+        secretUsernameToDisplay = atob(secret.username);
+      }
+
+      if (secret.type) {
+        secretTypeToDisplay = secret.type;
+      }
+
       const formattedSecret = {
         annotations: <span title={annotations}>{annotations}</span>,
         id: `${secret.namespace}:${secret.name}`,
@@ -237,7 +256,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
         serviceAccounts: (
           <span title={serviceAccountsString}>{serviceAccountsString}</span>
         ),
-        type: <span title={secret.type}>{secret.type}</span>,
+        type: <span title={secretTypeToDisplay}>{secretTypeToDisplay}</span>,
         username: (
           <span title={secretUsernameToDisplay}>{secretUsernameToDisplay}</span>
         )
