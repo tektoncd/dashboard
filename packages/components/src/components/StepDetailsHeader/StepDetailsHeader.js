@@ -12,9 +12,11 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
-import CheckmarkFilled from '@carbon/icons-react/lib/checkmark--filled/24';
-import ChevronRight from '@carbon/icons-react/lib/chevron--right/24';
-import CloseFilled from '@carbon/icons-react/lib/close--filled/16';
+import {
+  CheckmarkFilled24 as CheckmarkFilled,
+  ChevronRight24 as ChevronRight,
+  CloseFilled16 as CloseFilled
+} from '@carbon/icons-react';
 import { injectIntl } from 'react-intl';
 import { getStatus } from '@tektoncd/dashboard-utils';
 

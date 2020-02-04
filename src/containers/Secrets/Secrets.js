@@ -27,8 +27,7 @@ import {
   getErrorMessage,
   getFilters
 } from '@tektoncd/dashboard-utils';
-import Add from '@carbon/icons-react/lib/add/16';
-import Delete from '@carbon/icons-react/lib/delete/16';
+import { Add16 as Add, Delete16 as Delete } from '@carbon/icons-react';
 import Modal from '../SecretsModal';
 import DeleteModal from '../../components/SecretsDeleteModal';
 import {

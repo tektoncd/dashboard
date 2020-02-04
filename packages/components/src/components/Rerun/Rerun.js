@@ -14,7 +14,7 @@ limitations under the License.
 import React, { Component } from 'react';
 import { Button } from 'carbon-components-react';
 import { urls } from '@tektoncd/dashboard-utils';
-import Restart from '@carbon/icons-react/lib/restart/32';
+import { Restart32 as Restart } from '@carbon/icons-react';
 import './Rerun.scss';
 
 export class Rerun extends Component {

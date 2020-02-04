@@ -14,7 +14,7 @@ limitations under the License.
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import Information16 from '@carbon/icons-react/lib/information/16';
+import { Information16 } from '@carbon/icons-react';
 import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
 import { InlineNotification } from 'carbon-components-react';

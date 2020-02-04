@@ -15,7 +15,7 @@ import React, { Component } from 'react';
 import { injectIntl } from 'react-intl';
 
 import { Modal } from 'carbon-components-react';
-import StopFilled16 from '@carbon/icons-react/lib/stop--filled/16';
+import { StopFilled16 } from '@carbon/icons-react';
 
 import './CancelButton.scss';
 

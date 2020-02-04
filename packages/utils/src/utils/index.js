@@ -12,9 +12,11 @@ limitations under the License.
 */
 
 import React from 'react';
-import CheckmarkFilled from '@carbon/icons-react/lib/checkmark--filled/20';
-import Time from '@carbon/icons-react/lib/time/20';
-import CloseFilled from '@carbon/icons-react/lib/close--filled/20';
+import {
+  CheckmarkFilled20 as CheckmarkFilled,
+  CloseFilled20 as CloseFilled,
+  Time20 as Time
+} from '@carbon/icons-react';
 import { Spinner } from '@tektoncd/dashboard-components';
 
 export { default as buildGraphData } from './buildGraphData';

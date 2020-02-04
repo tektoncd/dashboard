@@ -30,7 +30,7 @@ import {
   isRunning,
   urls
 } from '@tektoncd/dashboard-utils';
-import Add from '@carbon/icons-react/lib/add/16';
+import { Add16 as Add } from '@carbon/icons-react';
 
 import { CreatePipelineRun } from '..';
 
