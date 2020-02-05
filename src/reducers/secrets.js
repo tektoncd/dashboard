@@ -20,11 +20,12 @@ function byNamespace(state = {}, action) {
   switch (action.type) {
     case 'SECRETS_FETCH_SUCCESS':
       const namespaces = action.data.reduce((accumulator, secret) => {
-        if (isStale({ metadata: secret }, state, 'name')) {
+        const { metadata } = secret;
+        if (isStale({ metadata }, state, 'name')) {
           return state;
         }
 
-        const { namespace, name } = secret;
+        const { name, namespace } = metadata;
         return merge(accumulator, {
           [namespace]: {
             [name]: { ...secret }
@@ -42,12 +43,7 @@ function byNamespace(state = {}, action) {
       }
       const secret = {
         [action.payload.metadata.namespace]: {
-          [action.payload.metadata.name]: {
-            creationTimestamp: action.payload.metadata.creationTimestamp || '',
-            name: action.payload.metadata.name || '',
-            namespace: action.payload.metadata.namespace || '',
-            annotations: action.payload.metadata.annotations || ''
-          }
+          [action.payload.metadata.name]: { ...action.payload }
         }
       };
       return merge({}, state, secret);
