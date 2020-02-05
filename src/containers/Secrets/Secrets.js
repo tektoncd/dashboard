@@ -66,16 +66,18 @@ export /* istanbul ignore next */ class Secrets extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { filters, namespace, webSocketConnected } = this.props;
+    const { filters, namespace, webSocketConnected, secrets } = this.props;
     const {
       filters: prevFilters,
       namespace: prevNamespace,
-      webSocketConnected: prevWebSocketConnected
+      webSocketConnected: prevWebSocketConnected,
+      secrets: prevSecrets
     } = prevProps;
 
     if (
       !isEqual(filters, prevFilters) ||
       namespace !== prevNamespace ||
+      !isEqual(secrets, prevSecrets) ||
       (webSocketConnected && prevWebSocketConnected === false)
     ) {
       this.fetchData();
@@ -227,41 +229,33 @@ export /* istanbul ignore next */ class Secrets extends Component {
         });
       });
       const serviceAccountsString = serviceAccountsWithSecret.join(', ');
-
-      const translatedReload = [
-        intl.formatMessage({
-          id: 'dashboard.secrets.reload',
-          defaultMessage: 'Reload this page to view'
-        })
-      ];
-
-      // Defaults - todo ensure all data is fetched and displayed so we don't need this
-      let secretUsernameToDisplay = translatedReload;
-      let secretTypeToDisplay = translatedReload;
-
+      let formattedSecret = null;
       if (secret.username) {
-        secretUsernameToDisplay = atob(secret.username);
+        const secretUsernameToDisplay = atob(secret.username);
+        formattedSecret = {
+          annotations: <span title={annotations}>{annotations}</span>,
+          id: `${secret.namespace}:${secret.name}`,
+          name: <span title={secret.name}>{secret.name}</span>,
+          namespace: <span title={secret.namespace}>{secret.namespace}</span>,
+          created: <FormattedDate date={secret.creationTimestamp} relative />,
+          serviceAccounts: (
+            <span title={serviceAccountsString}>{serviceAccountsString}</span>
+          ),
+          type: <span title={secret.type}>{secret.type}</span>,
+          username: (
+            <span title={secretUsernameToDisplay}>
+              {secretUsernameToDisplay}
+            </span>
+          )
+        };
       }
-
-      if (secret.type) {
-        secretTypeToDisplay = secret.type;
-      }
-
-      const formattedSecret = {
-        annotations: <span title={annotations}>{annotations}</span>,
-        id: `${secret.namespace}:${secret.name}`,
-        name: <span title={secret.name}>{secret.name}</span>,
-        namespace: <span title={secret.namespace}>{secret.namespace}</span>,
-        created: <FormattedDate date={secret.creationTimestamp} relative />,
-        serviceAccounts: (
-          <span title={serviceAccountsString}>{serviceAccountsString}</span>
-        ),
-        type: <span title={secretTypeToDisplay}>{secretTypeToDisplay}</span>,
-        username: (
-          <span title={secretUsernameToDisplay}>{secretUsernameToDisplay}</span>
-        )
-      };
       return formattedSecret;
+    });
+    const secretsFinal = [];
+    secretsFormatted.forEach(secret => {
+      if (secret != null) {
+        secretsFinal.push(secret);
+      }
     });
 
     return (
@@ -330,7 +324,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
         />
         <Table
           headers={initialHeaders}
-          rows={secretsFormatted}
+          rows={secretsFinal}
           handleDisplayModal={this.handleDisplayModalClick}
           handleDelete={this.handleDeleteSecretClick}
           loading={loading}
