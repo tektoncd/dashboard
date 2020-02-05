@@ -36,10 +36,12 @@ it('SECRETS_FETCH_SUCCESS', () => {
   const uid = '0';
   const annotations = { 'tekton.dev/git-0': 'https://github.ibm.com' };
   const secret = {
-    name,
-    uid,
-    annotations,
-    namespace
+    metadata: {
+      name,
+      uid,
+      annotations,
+      namespace
+    }
   };
   const action = {
     type: 'SECRETS_FETCH_SUCCESS',
@@ -132,9 +134,7 @@ it('SecretCreated', () => {
   const action = { type: 'SecretCreated', payload: secret };
   const state = secretsReducer({}, action);
 
-  expect(selectors.getSecrets(state, 'default')[0]).toStrictEqual(
-    secret.metadata
-  );
+  expect(selectors.getSecrets(state, 'default')[0]).toStrictEqual(secret);
 });
 
 it('SecretCreated with unsupported type', () => {

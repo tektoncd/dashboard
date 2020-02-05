@@ -300,10 +300,10 @@ export function getSecrets(
     return filters.every(filter => {
       const [filterKey, filterValue] = filter.split('=');
       return (
-        secret.labels &&
+        secret.metadata.labels &&
         filterKey &&
         filterValue &&
-        secret.labels[filterKey] === filterValue
+        secret.metadata.labels[filterKey] === filterValue
       );
     });
   });

@@ -465,7 +465,7 @@ it('getCredentials', () => {
   };
   fetchMock.get(/secrets/, data);
   return index.getCredentials().then(response => {
-    expect(response).toEqual(data);
+    expect(response).toEqual(data.items);
     fetchMock.restore();
   });
 });

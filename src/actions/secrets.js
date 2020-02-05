@@ -21,7 +21,7 @@ import {
   updateServiceAccountSecrets
 } from '../api';
 
-import { getSelectedNamespace } from '../reducers';
+import { fetchNamespacedCollection } from './actionCreators';
 
 export function fetchSecretsSuccess(data) {
   return {
@@ -31,31 +31,9 @@ export function fetchSecretsSuccess(data) {
 }
 
 export function fetchSecrets({ namespace } = {}) {
-  return async (dispatch, getState) => {
-    dispatch({ type: 'SECRETS_FETCH_REQUEST' });
-    let secrets;
-    try {
-      const selectedNamespace = namespace || getSelectedNamespace(getState());
-      secrets = await getCredentials(selectedNamespace);
-      const secretsFormatted = [];
-      secrets.items.forEach(secret => {
-        const object = {
-          creationTimestamp: secret.metadata.creationTimestamp,
-          name: secret.metadata.name,
-          namespace: secret.metadata.namespace,
-          annotations: secret.metadata.annotations,
-          type: secret.type,
-          username: secret.data.username,
-          labels: secret.metadata.labels
-        };
-        secretsFormatted.push(object);
-      });
-      dispatch(fetchSecretsSuccess(secretsFormatted));
-    } catch (error) {
-      dispatch({ type: 'SECRETS_FETCH_FAILURE', error });
-    }
-    return secrets;
-  };
+  return fetchNamespacedCollection('Secret', getCredentials, {
+    namespace
+  });
 }
 
 export function deleteSecret(secrets, cancelMethod) {

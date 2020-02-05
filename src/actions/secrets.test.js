@@ -61,28 +61,6 @@ const data = {
   ]
 };
 
-const dataFormatted = [
-  {
-    name: 'default-token-kbn7j',
-    annotations: undefined,
-    namespace: 'default',
-    type: 'userpass',
-    username: 'someUser@email.com',
-    labels: {
-      serviceAccount: 'default'
-    }
-  },
-  {
-    name: 'another-token-kbn7j',
-    annotations: undefined,
-    namespace: 'default',
-    type: 'userpass',
-    username: 'someUser@email.com',
-    labels: {
-      serviceAccount: 'default'
-    }
-  }
-];
 const postData = {
   metadata: {
     name: 'default-token-kbn7j',
@@ -131,8 +109,6 @@ it('fetchSecretsSuccess', () => {
 });
 
 it('fetchSecrets', async () => {
-  const secrets = data;
-  const secretsFormatted = dataFormatted;
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const store = mockStore();
@@ -140,11 +116,11 @@ it('fetchSecrets', async () => {
   jest
     .spyOn(selectors, 'getSelectedNamespace')
     .mockImplementation(() => namespace);
-  jest.spyOn(API, 'getCredentials').mockImplementation(() => secrets);
+  jest.spyOn(API, 'getCredentials').mockImplementation(() => data);
 
   const expectedActions = [
     { type: 'SECRETS_FETCH_REQUEST' },
-    fetchSecretsSuccess(secretsFormatted)
+    fetchSecretsSuccess(data)
   ];
 
   await store.dispatch(fetchSecrets({ namespace }));

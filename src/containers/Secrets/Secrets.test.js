@@ -34,25 +34,33 @@ const intl = createIntl({
 const byNamespace = {
   default: [
     {
-      uid: '0',
-      name: 'github-repo-access-secret',
+      metadata: {
+        uid: '0',
+        name: 'github-repo-access-secret',
+        annotations: {
+          'tekton.dev/git-0': 'https://github.ibm.com',
+          badannotation: 'badcontent'
+        }
+      },
       type: 'userpass',
-      username: 'bXl1c2VybmFtZQ==', // This is "myusername"
-      annotations: {
-        'tekton.dev/git-0': 'https://github.ibm.com',
-        badannotation: 'badcontent'
+      data: {
+        username: 'bXl1c2VybmFtZQ==' // This is "myusername"
       }
     },
     {
-      uid: '0',
-      type: 'userpass',
-      name: 'another-secret-with-label',
-      annotations: {
-        'tekton.dev/git-0': 'https://github.com'
+      metadata: {
+        uid: '0',
+        name: 'another-secret-with-label',
+        annotations: {
+          'tekton.dev/git-0': 'https://github.com'
+        },
+        labels: {
+          baz: 'bam'
+        }
       },
-      username: 'bXl1c2VybmFtZQ==', // This is "myusername"
-      labels: {
-        baz: 'bam'
+      type: 'userpass',
+      data: {
+        username: 'bXl1c2VybmFtZQ==' // This is "myusername"
       }
     }
   ]
@@ -135,9 +143,11 @@ it('click add new secret & modal appears', () => {
   const currentProps = {
     secrets: [
       {
-        name: 'github-repo-access-secret',
-        annotations: {
-          'tekton.dev/git-0': 'https://github.ibm.com'
+        metadata: {
+          name: 'github-repo-access-secret',
+          annotations: {
+            'tekton.dev/git-0': 'https://github.ibm.com'
+          }
         }
       }
     ],

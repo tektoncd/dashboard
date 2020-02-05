@@ -210,17 +210,19 @@ export /* istanbul ignore next */ class Secrets extends Component {
 
     const secretsFormatted = secrets.map(secret => {
       let annotations = '';
-      if (secret.annotations !== undefined) {
-        Object.keys(secret.annotations).forEach(function annotationSetup(key) {
-          if (key.includes('tekton.dev')) {
-            annotations += `${key}: ${secret.annotations[key]}\n`;
+      if (secret.metadata.annotations !== undefined) {
+        Object.keys(secret.metadata.annotations).forEach(
+          function annotationSetup(key) {
+            if (key.includes('tekton.dev')) {
+              annotations += `${key}: ${secret.metadata.annotations[key]}\n`;
+            }
           }
-        });
+        );
       }
       const serviceAccountsWithSecret = [];
       serviceAccounts.forEach(serviceAccount => {
         serviceAccount.secrets.forEach(secretInServiceAccount => {
-          if (secretInServiceAccount.name === secret.name) {
+          if (secretInServiceAccount.name === secret.metadata.name) {
             serviceAccountsWithSecret.push(serviceAccount.metadata.name);
           }
         });
@@ -238,8 +240,8 @@ export /* istanbul ignore next */ class Secrets extends Component {
       let secretUsernameToDisplay = translatedReload;
       let secretTypeToDisplay = translatedReload;
 
-      if (secret.username) {
-        secretUsernameToDisplay = atob(secret.username);
+      if (secret.data.username) {
+        secretUsernameToDisplay = atob(secret.data.username);
       }
 
       if (secret.type) {
@@ -248,10 +250,16 @@ export /* istanbul ignore next */ class Secrets extends Component {
 
       const formattedSecret = {
         annotations: <span title={annotations}>{annotations}</span>,
-        id: `${secret.namespace}:${secret.name}`,
-        name: <span title={secret.name}>{secret.name}</span>,
-        namespace: <span title={secret.namespace}>{secret.namespace}</span>,
-        created: <FormattedDate date={secret.creationTimestamp} relative />,
+        id: `${secret.metadata.namespace}:${secret.metadata.name}`,
+        name: <span title={secret.metadata.name}>{secret.metadata.name}</span>,
+        namespace: (
+          <span title={secret.metadata.namespace}>
+            {secret.metadata.namespace}
+          </span>
+        ),
+        created: (
+          <FormattedDate date={secret.metadata.creationTimestamp} relative />
+        ),
         serviceAccounts: (
           <span title={serviceAccountsString}>{serviceAccountsString}</span>
         ),
