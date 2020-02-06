@@ -14,15 +14,12 @@ limitations under the License.
 import React, { Component } from 'react';
 import { injectIntl } from 'react-intl';
 import {
-  Button,
   Form,
   InlineNotification,
   Link,
   Search,
   Tag
 } from 'carbon-components-react';
-
-import { Add16 as Add } from '@carbon/icons-react';
 
 import './LabelFilter.scss';
 
@@ -124,7 +121,7 @@ class LabelFilter extends Component {
   }
 
   render() {
-    const { additionalButton, filters, intl } = this.props;
+    const { filters, intl } = this.props;
 
     const {
       currentFilterValue,
@@ -154,37 +151,17 @@ class LabelFilter extends Component {
           </InlineNotification>
         )}
         <Form onSubmit={this.handleAddFilter} autoComplete="on">
-          <div className="search-bar">
-            <Search
-              placeHolderText={searchDescription}
-              className="search"
-              labelText={searchDescription}
-              onChange={this.handleChange}
-              value={currentFilterValue}
-              data-testid="filter-search-bar"
-              name="filter-search"
-            />
-            <Button
-              iconDescription={intl.formatMessage({
-                id: 'dashboard.labelFilter.addButton',
-                defaultMessage: 'Add filter'
-              })}
-              renderIcon={Add}
-              kind="ghost"
-              type="submit"
-            >
-              Add filter
-            </Button>
-            {additionalButton}
-          </div>
+          <Search
+            placeHolderText={searchDescription}
+            className="search"
+            labelText={searchDescription}
+            onChange={this.handleChange}
+            value={currentFilterValue}
+            data-testid="filter-search-bar"
+            name="filter-search"
+          />
         </Form>
         <div className="filters">
-          <div className="filters-title">
-            {intl.formatMessage({
-              id: 'dashboard.labelFilter.heading',
-              defaultMessage: 'Filters:'
-            })}
-          </div>
           {filters.map(filter => (
             <Tag
               type="blue"

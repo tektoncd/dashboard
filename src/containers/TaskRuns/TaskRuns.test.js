@@ -122,7 +122,7 @@ it('taskRuns can be filtered on a single label filter', async () => {
   const filterValue = 'baz:bam';
   const filterInputField = getByTestId('filter-search-bar');
   fireEvent.change(filterInputField, { target: { value: filterValue } });
-  fireEvent.click(getByText('Add filter'));
+  fireEvent.submit(getByText(/Input a label filter/i));
 
   expect(queryByText(filterValue)).toBeTruthy();
   expect(queryByText('taskRunWithSingleLabel')).toBeFalsy();
@@ -160,9 +160,9 @@ it('taskRuns can be filtered on multiple label filters', async () => {
   const secondFilterValue = 'baz:bam';
   const filterInputField = getByTestId('filter-search-bar');
   fireEvent.change(filterInputField, { target: { value: firstFilterValue } });
-  fireEvent.click(getByText('Add filter'));
+  fireEvent.submit(getByText(/Input a label filter/i));
   fireEvent.change(filterInputField, { target: { value: secondFilterValue } });
-  fireEvent.click(getByText('Add filter'));
+  fireEvent.submit(getByText(/Input a label filter/i));
 
   expect(queryByText(firstFilterValue)).toBeTruthy();
   expect(queryByText(secondFilterValue)).toBeTruthy();
@@ -200,7 +200,7 @@ it('taskRuns label filter can be deleted, rendering the correct taskRuns', async
   const filterValue = 'baz:bam';
   const filterInputField = getByTestId('filter-search-bar');
   fireEvent.change(filterInputField, { target: { value: filterValue } });
-  fireEvent.click(getByText('Add filter'));
+  fireEvent.submit(getByText(/Input a label filter/i));
 
   expect(queryByText(filterValue)).toBeTruthy();
   expect(queryByText('taskRunWithSingleLabel')).toBeFalsy();
@@ -244,12 +244,12 @@ it('Duplicate label filters are prevented', async () => {
   const filterValue = 'baz:bam';
   const filterInputField = getByTestId('filter-search-bar');
   fireEvent.change(filterInputField, { target: { value: filterValue } });
-  fireEvent.click(getByText('Add filter'));
+  fireEvent.submit(getByText(/Input a label filter/i));
 
   expect(queryByText(filterValue)).toBeTruthy();
 
   fireEvent.change(filterInputField, { target: { value: filterValue } });
-  fireEvent.click(getByText('Add filter'));
+  fireEvent.submit(getByText(/Input a label filter/i));
   expect(queryByText(/No duplicate filters allowed/i)).toBeTruthy();
 });
 
@@ -283,7 +283,7 @@ it('An invalid filter value is disallowed and reported', async () => {
   const filterValue = 'baz=bam';
   const filterInputField = getByTestId('filter-search-bar');
   fireEvent.change(filterInputField, { target: { value: filterValue } });
-  fireEvent.click(getByText('Add filter'));
+  fireEvent.submit(getByText(/Input a label filter/i));
 
   expect(
     queryByText(

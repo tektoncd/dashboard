@@ -16,7 +16,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
-import { Button, InlineNotification } from 'carbon-components-react';
+import { InlineNotification } from 'carbon-components-react';
 import {
   LabelFilter,
   PipelineRuns as PipelineRunsList
@@ -252,23 +252,6 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
     const pipelineRunActions = this.pipelineRunActions();
     sortRunsByStartTime(pipelineRuns);
 
-    const createPipelineRunButton = (
-      <Button
-        iconDescription={intl.formatMessage({
-          id: 'dashboard.pipelineRuns.createPipelineRunTitle',
-          defaultMessage: 'Create PipelineRun'
-        })}
-        renderIcon={Add}
-        type="button"
-        onClick={() => this.toggleModal(true)}
-      >
-        {intl.formatMessage({
-          id: 'dashboard.actions.createButton',
-          defaultMessage: 'Create'
-        })}
-      </Button>
-    );
-
     return (
       <>
         {this.state.createdPipelineRun && (
@@ -306,7 +289,6 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
         )}
         <h1>PipelineRuns</h1>
         <LabelFilter
-          additionalButton={createPipelineRunButton}
           filters={filters}
           handleAddFilter={getAddFilterHandler(this.props)}
           handleDeleteFilter={getDeleteFilterHandler(this.props)}
@@ -323,6 +305,16 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
           pipelineRuns={pipelineRuns}
           pipelineRunActions={pipelineRunActions}
           selectedNamespace={selectedNamespace}
+          toolbarButtons={[
+            {
+              onClick: () => this.toggleModal(true),
+              text: intl.formatMessage({
+                id: 'dashboard.actions.createButton',
+                defaultMessage: 'Create'
+              }),
+              icon: Add
+            }
+          ]}
         />
       </>
     );
