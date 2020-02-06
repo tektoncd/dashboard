@@ -33,7 +33,7 @@ limitations under the License.
   }
 
   .bx--data-table td {
-    &:not(.cell-actions):not(.cell-status) {
+    &:not(.cell-actions):not(.cell-status):not(.bx--table-column-checkbox) {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
