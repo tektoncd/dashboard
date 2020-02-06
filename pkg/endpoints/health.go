@@ -21,5 +21,5 @@ import (
 
 func (r Resource) CheckHealth(request *restful.Request, response *restful.Response) {
 	// A method here so there's scope for doing anything fancy e.g. checking anything else
-	response.WriteHeader(http.StatusNoContent)
+	response.WriteHeader(http.StatusOK)
 }

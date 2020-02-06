@@ -25,7 +25,7 @@ func TestGETHealthEndpoint(t *testing.T) {
 	defer server.Close()
 	httpReq := testutils.DummyHTTPRequest("GET", fmt.Sprintf("%s/health", server.URL), nil)
 	response, _ := http.DefaultClient.Do(httpReq)
-	expectedStatus := http.StatusNoContent
+	expectedStatus := http.StatusOK
 	if response.StatusCode != expectedStatus {
 		t.Fatalf("Health check failed: expected statusCode %d, actual %d", expectedStatus, response.StatusCode)
 	}
