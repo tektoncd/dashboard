@@ -354,7 +354,13 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
   };
 
   render() {
-    const { open, handleHideModal, errorMessage, intl } = this.props;
+    const {
+      open,
+      handleHideModal,
+      errorMessage,
+      intl,
+      clearNotification
+    } = this.props;
     const { serviceAccounts } = this.state;
     const {
       name,
@@ -403,7 +409,7 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
                   defaultMessage: 'Clear Notification'
                 })}
                 data-testid="errorNotificationComponent"
-                onCloseButtonClick={this.props.clearNotification}
+                onCloseButtonClick={clearNotification}
                 lowContrast
               />
             ))}

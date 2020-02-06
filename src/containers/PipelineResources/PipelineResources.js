@@ -83,6 +83,10 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
     this.setState({ showCreatePipelineResourceModal });
   };
 
+  resetSuccess = () => {
+    this.setState({ createdPipelineResource: false });
+  };
+
   deleteResource = pipelineResource => {
     const { name, namespace } = pipelineResource.metadata;
     deletePipelineResource({ name, namespace }).catch(error => {
@@ -220,6 +224,7 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
                 {this.state.createdPipelineResource.name}
               </Link>
             }
+            onCloseButtonClick={this.resetSuccess}
             lowContrast
           />
         )}

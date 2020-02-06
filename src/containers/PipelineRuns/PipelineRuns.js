@@ -106,6 +106,10 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
     });
   };
 
+  resetSuccess = () => {
+    this.setState({ createdPipelineRun: false });
+  };
+
   rerun = pipelineRun => {
     const { name, namespace } = pipelineRun.metadata;
     rerunPipelineRun(namespace, { pipelinerunname: name });
@@ -279,6 +283,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
                 {this.state.createdPipelineRun.name}
               </Link>
             }
+            onCloseButtonClick={this.resetSuccess}
             lowContrast
           />
         )}
