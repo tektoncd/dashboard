@@ -11,14 +11,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
-import {
-  CheckmarkFilled20 as CheckmarkFilled,
-  CloseFilled20 as CloseFilled,
-  Time20 as Time
-} from '@carbon/icons-react';
-import { Spinner } from '@tektoncd/dashboard-components';
-
 export { default as buildGraphData } from './buildGraphData';
 export { paths, urls } from './router';
 export { getStatus } from './status';
@@ -155,25 +147,6 @@ export function reorderSteps(unorderedSteps, orderedSteps) {
 
 export function isRunning(reason, status) {
   return status === 'Unknown' && reason === 'Running';
-}
-
-export function getStatusIcon({ reason, status }) {
-  if (!status) {
-    return <Time className="status-icon" />;
-  }
-
-  if (isRunning(reason, status)) {
-    return <Spinner className="status-icon" />;
-  }
-
-  let Icon;
-  if (status === 'True') {
-    Icon = CheckmarkFilled;
-  } else if (status === 'False') {
-    Icon = CloseFilled;
-  }
-
-  return Icon ? <Icon className="status-icon" /> : null;
 }
 
 // Generates a unique id

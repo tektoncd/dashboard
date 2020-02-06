@@ -31,6 +31,7 @@ export { default as ResourceTable } from './ResourceTable';
 export { default as RunDropdown } from './RunDropdown';
 export { default as RunHeader } from './RunHeader';
 export { default as Spinner } from './Spinner';
+export { default as StatusIcon } from './StatusIcon';
 export { default as Step } from './Step';
 export { default as StepDefinition } from './StepDefinition';
 export { default as StepDetails } from './StepDetails';

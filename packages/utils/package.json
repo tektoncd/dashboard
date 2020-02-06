@@ -9,8 +9,7 @@
     "prepare": "npm run build"
   },
   "dependencies": {
-    "@babel/cli": "^7.5.5",
-    "@carbon/icons-react": "^10.6.0"
+    "@babel/cli": "^7.5.5"
   },
   "peerDependencies": {
     "history": "^4.9.0",
