@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -19,7 +19,6 @@ import {
   getErrorMessage,
   getFilters,
   getStatus,
-  getStatusIcon,
   isRunning,
   reorderSteps,
   selectedTask,
@@ -166,17 +165,6 @@ it('isRunning', () => {
   expect(isRunning('Running', 'Unknown')).toBe(true);
   expect(isRunning('?', 'Unknown')).toBe(false);
   expect(isRunning('Running', '?')).toBe(false);
-});
-
-it('getStatusIcon', () => {
-  let icon = getStatusIcon({ reason: 'Running', status: 'Unknown' });
-  expect(icon).not.toBeNull();
-  icon = getStatusIcon({ status: 'True' });
-  expect(icon).not.toBeNull();
-  icon = getStatusIcon({ status: 'False' });
-  expect(icon).not.toBeNull();
-  icon = getStatusIcon({});
-  expect(icon).not.toBeNull();
 });
 
 it('stepsStatus step is waiting', () => {

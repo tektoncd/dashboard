@@ -14,8 +14,8 @@ limitations under the License.
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
-import { Table } from '@tektoncd/dashboard-components';
-import { getStatus, getStatusIcon, urls } from '@tektoncd/dashboard-utils';
+import { StatusIcon, Table } from '@tektoncd/dashboard-components';
+import { getStatus, urls } from '@tektoncd/dashboard-utils';
 
 import { FormattedDate, FormattedDuration, RunDropdown } from '..';
 
@@ -38,7 +38,7 @@ const PipelineRuns = ({
   },
   getPipelineRunStatusIcon = pipelineRun => {
     const { reason, status } = getStatus(pipelineRun);
-    return getStatusIcon({ reason, status });
+    return <StatusIcon reason={reason} status={status} />;
   },
   getPipelineRunStatusTooltip = (pipelineRun, intl) => {
     const { message } = getStatus(pipelineRun);

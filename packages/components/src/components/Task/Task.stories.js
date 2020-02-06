@@ -28,11 +28,13 @@ const steps = [
 ];
 
 storiesOf('Task', module)
-  .add('default', () => <Task {...props} />)
   .add('succeeded', () => <Task {...props} succeeded="True" />)
   .add('failed', () => <Task {...props} succeeded="False" />)
   .add('unknown', () => <Task {...props} succeeded="Unknown" />)
   .add('pending', () => (
     <Task {...props} succeeded="Unknown" reason="Pending" />
+  ))
+  .add('running', () => (
+    <Task {...props} succeeded="Unknown" reason="Running" />
   ))
   .add('expanded', () => <Task {...props} expanded steps={steps} />);

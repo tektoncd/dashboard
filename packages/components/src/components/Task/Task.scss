@@ -64,7 +64,7 @@ limitations under the License.
       fill: $failed-fg;
     }
   }
-  &[data-succeeded='Unknown'][data-reason='Pending'] > a.task-link {
+  &[data-succeeded='Unknown'][data-reason='Running'] > a.task-link {
     background-color: $running-bg;
     color: $running-fg;
     &:focus, &:hover {

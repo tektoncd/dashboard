@@ -67,7 +67,7 @@ class Task extends Component {
   icon() {
     const { reason, succeeded } = this.props;
 
-    if (succeeded === 'Unknown' && reason === 'Pending') {
+    if (succeeded === 'Unknown' && reason === 'Running') {
       return <Spinner className="task-icon" />;
     }
 
