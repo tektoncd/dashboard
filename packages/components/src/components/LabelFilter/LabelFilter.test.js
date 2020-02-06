@@ -26,7 +26,7 @@ it('LabelFilter renders', () => {
 
 it('LabelFilter renders error on empty filter', () => {
   const { getByText, queryByText } = renderWithIntl(<LabelFilter />);
-  fireEvent.click(getByText(/add filter/i));
+  fireEvent.submit(getByText(/Input a label filter/i));
   expect(queryByText(/filters must be/i)).not.toBeNull();
 });
 
@@ -39,7 +39,7 @@ it('LabelFilter handles adding a filter', () => {
   fireEvent.change(getByPlaceholderText(/input a label filter/i), {
     target: { value: filter }
   });
-  fireEvent.click(getByText(/add filter/i));
+  fireEvent.submit(getByText(/Input a label filter/i));
   expect(handleAddFilter).toHaveBeenCalledWith([filter.replace(':', '=')]);
 });
 
@@ -56,7 +56,7 @@ it('LabelFilter displays notification if character length is over 63 characters 
   fireEvent.change(getByPlaceholderText(/input a label filter/i), {
     target: { value: filter }
   });
-  fireEvent.click(getByText(/add filter/i));
+  fireEvent.submit(getByText(/Input a label filter/i));
   expect(handleAddFilter).not.toHaveBeenCalled();
   await waitForElement(() =>
     getByText(
@@ -86,7 +86,7 @@ it('LabelFilter handles adding a duplicate filter', async () => {
   fireEvent.change(getByPlaceholderText(/input a label filter/i), {
     target: { value: filterDisplayValue }
   });
-  fireEvent.click(getByText(/add filter/i));
+  fireEvent.submit(getByText(/Input a label filter/i));
   expect(handleAddFilter).not.toHaveBeenCalled();
   await waitForElement(() => getByText(/no duplicate filters allowed/i));
   fireEvent.click(getAllByTitle(/closes notification/i)[1]);

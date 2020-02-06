@@ -140,7 +140,7 @@ it('TriggerTemplates can be filtered on a single label filter', async () => {
   const filterValue = 'baz:bam';
   const filterInputField = getByTestId('filter-search-bar');
   fireEvent.change(filterInputField, { target: { value: filterValue } });
-  fireEvent.click(getByText('Add filter'));
+  fireEvent.submit(getByText(/Input a label filter/i));
 
   expect(queryByText(filterValue)).toBeTruthy();
   expect(queryByText('trigger-template')).toBeFalsy();

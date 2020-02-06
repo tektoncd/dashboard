@@ -27,7 +27,7 @@ import {
   LabelFilter,
   PipelineResources as PipelineResourcesList
 } from '@tektoncd/dashboard-components';
-import { Button, InlineNotification } from 'carbon-components-react';
+import { InlineNotification } from 'carbon-components-react';
 import { Add16 as Add } from '@carbon/icons-react';
 import { fetchPipelineResources } from '../../actions/pipelineResources';
 import { deletePipelineResource } from '../../api';
@@ -178,23 +178,6 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
 
     const pipelineResourceActions = this.pipelineResourceActions();
 
-    const createPipelineResourceButton = (
-      <Button
-        iconDescription={intl.formatMessage({
-          id: 'dashboard.pipelineResource.createPipelineResourceTitle',
-          defaultMessage: 'Create PipelineResource'
-        })}
-        renderIcon={Add}
-        type="button"
-        onClick={() => this.toggleModal(true)}
-      >
-        {intl.formatMessage({
-          id: 'dashboard.actions.createButton',
-          defaultMessage: 'Create'
-        })}
-      </Button>
-    );
-
     if (error) {
       return (
         <InlineNotification
@@ -247,7 +230,6 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
         )}
         <h1>PipelineResources</h1>
         <LabelFilter
-          additionalButton={createPipelineResourceButton}
           filters={filters}
           handleAddFilter={getAddFilterHandler(this.props)}
           handleDeleteFilter={getDeleteFilterHandler(this.props)}
@@ -265,6 +247,16 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
           pipelineResources={pipelineResources}
           pipelineResourceActions={pipelineResourceActions}
           selectedNamespace={selectedNamespace}
+          toolbarButtons={[
+            {
+              onClick: () => this.toggleModal(true),
+              text: intl.formatMessage({
+                id: 'dashboard.actions.createButton',
+                defaultMessage: 'Create'
+              }),
+              icon: Add
+            }
+          ]}
         />
       </>
     );

@@ -55,7 +55,8 @@ const PipelineRuns = ({
   loading,
   selectedNamespace,
   pipelineRuns,
-  pipelineRunActions
+  pipelineRunActions,
+  toolbarButtons
 }) => {
   const headers = [
     {
@@ -198,6 +199,7 @@ const PipelineRuns = ({
         },
         { kind: 'PipelineRuns', selectedNamespace }
       )}
+      toolbarButtons={toolbarButtons}
     />
   );
 };

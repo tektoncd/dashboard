@@ -26,7 +26,8 @@ const PipelineResources = ({
   loading,
   pipelineResourceActions,
   pipelineResources,
-  selectedNamespace
+  selectedNamespace,
+  toolbarButtons
 }) => {
   const headers = [
     {
@@ -123,6 +124,7 @@ const PipelineResources = ({
         },
         { kind: 'PipelineResources', selectedNamespace }
       )}
+      toolbarButtons={toolbarButtons}
     />
   );
 };
