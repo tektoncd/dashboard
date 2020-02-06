@@ -375,6 +375,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
           key={openNewSecret}
           handleCreateSecret={this.handleCreateSecretClick}
           handleHideModal={this.handleHideModalClick}
+          clearNotification={this.props.clearNotification}
         />
         <DeleteModal
           open={openDeleteSecret}

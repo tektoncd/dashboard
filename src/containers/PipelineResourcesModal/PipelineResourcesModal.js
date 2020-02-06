@@ -73,6 +73,10 @@ export /* istanbul ignore next */ class PipelineResourcesModal extends Component
     this.props.onClose();
   };
 
+  resetError = () => {
+    this.setState({ submitError: '' });
+  };
+
   resetForm = () => {
     this.setState({
       name: '',
@@ -281,7 +285,7 @@ export /* istanbul ignore next */ class PipelineResourcesModal extends Component
                   defaultMessage: 'Clear Notification'
                 })}
                 data-testid="errorNotificationComponent"
-                onCloseButtonClick={this.props.clearNotification}
+                onCloseButtonClick={this.resetError}
                 lowContrast
               />
             ))}

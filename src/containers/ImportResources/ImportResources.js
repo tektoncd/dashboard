@@ -95,6 +95,14 @@ export class ImportResources extends Component {
       });
   }
 
+  resetError = () => {
+    this.setState({ submitError: '' });
+  };
+
+  resetSuccess = () => {
+    this.setState({ submitSuccess: false });
+  };
+
   handleNamespace = ({ selectedItem }) => {
     this.setState({ invalidNamespace: false, namespace: selectedItem.id });
   };
@@ -253,7 +261,7 @@ export class ImportResources extends Component {
               defaultMessage: 'Clear Notification'
             })}
             data-testid="errorNotificationComponent"
-            onCloseButtonClick={this.props.clearNotification}
+            onCloseButtonClick={this.resetError}
             lowContrast
           />
         )}
@@ -314,6 +322,7 @@ export class ImportResources extends Component {
               lowContrast
               title="Triggered PipelineRun to apply Tekton resources"
               subtitle=""
+              onCloseButtonClick={this.resetSuccess}
             />
           )}
         </Form>

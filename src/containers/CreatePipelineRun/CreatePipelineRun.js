@@ -126,6 +126,10 @@ class CreatePipelineRun extends React.Component {
     }
   }
 
+  resetError = () => {
+    this.setState({ submitError: '' });
+  };
+
   getPipelineInfo = (key, { state = this.state, props = this.props } = {}) => {
     if (key === DISABLED) {
       // Disable pipeline info selection when pipelineRef is supplied
@@ -448,6 +452,7 @@ class CreatePipelineRun extends React.Component {
                 defaultMessage: 'Error creating PipelineRun'
               })}
               subtitle={this.state.submitError}
+              onCloseButtonClick={this.resetError}
               lowContrast
             />
           )}
