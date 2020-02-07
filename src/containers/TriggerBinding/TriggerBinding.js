@@ -157,45 +157,47 @@ export /* istanbul ignore next */ class TriggerBindingContainer extends Componen
             })}
           >
             <div className="details">
-              <p>
-                <span>
-                  {intl.formatMessage({
-                    id: 'dashboard.metadata.dateCreated',
-                    defaultMessage: 'Date Created:'
-                  })}
-                </span>
-                <FormattedDate
-                  date={triggerBinding.metadata.creationTimestamp}
-                  relative
-                />
-              </p>
-              <p>
-                <span>
-                  {intl.formatMessage({
-                    id: 'dashboard.metadata.labels',
-                    defaultMessage: 'Labels:'
-                  })}
-                </span>
-                {formattedLabelsToRender.length === 0
-                  ? intl.formatMessage({
-                      id: 'dashboard.metadata.none',
-                      defaultMessage: 'None'
-                    })
-                  : formattedLabelsToRender.map(label => (
-                      <Tag type="blue" key={label}>
-                        {label}
-                      </Tag>
-                    ))}
-              </p>
-              <p>
-                <span>
-                  {intl.formatMessage({
-                    id: 'dashboard.metadata.namespace',
-                    defaultMessage: 'Namespace:'
-                  })}
-                </span>
-                {triggerBinding.metadata.namespace}
-              </p>
+              <div className="triggers--detail-block">
+                <p>
+                  <span>
+                    {intl.formatMessage({
+                      id: 'dashboard.metadata.dateCreated',
+                      defaultMessage: 'Date Created:'
+                    })}
+                  </span>
+                  <FormattedDate
+                    date={triggerBinding.metadata.creationTimestamp}
+                    relative
+                  />
+                </p>
+                <p>
+                  <span>
+                    {intl.formatMessage({
+                      id: 'dashboard.metadata.labels',
+                      defaultMessage: 'Labels:'
+                    })}
+                  </span>
+                  {formattedLabelsToRender.length === 0
+                    ? intl.formatMessage({
+                        id: 'dashboard.metadata.none',
+                        defaultMessage: 'None'
+                      })
+                    : formattedLabelsToRender.map(label => (
+                        <Tag type="blue" key={label}>
+                          {label}
+                        </Tag>
+                      ))}
+                </p>
+                <p>
+                  <span>
+                    {intl.formatMessage({
+                      id: 'dashboard.metadata.namespace',
+                      defaultMessage: 'Namespace:'
+                    })}
+                  </span>
+                  {triggerBinding.metadata.namespace}
+                </p>
+              </div>
               <Table
                 title={intl.formatMessage({
                   id: 'dashboard.parameters.title',

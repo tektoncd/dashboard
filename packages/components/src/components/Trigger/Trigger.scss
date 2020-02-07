@@ -13,48 +13,43 @@ limitations under the License.
 
 @import '~carbon-components/scss/globals/scss/vars';
 
-.triggermain {
-  padding: 25px;
-  padding-left: 0px;
-  margin-bottom: 20px;
-  border-bottom: 0.5px dotted grey;
+.trigger--interceptors {
+  margin-top: $spacing-05;
+
+  .trigger--interceptors-accordian {
+    margin-top: $spacing-03;
+  }
 }
 
-.interceptor h3 {
-  margin: 5px;
-  padding: 10px;
-}
-
-.triggerinfo h3 {
-  margin: 5px;
-  padding: 10px;
+.triggerdetails {
+  margin-top: $spacing-05;
 }
 
 .triggerresourcelinks {
-  margin: 10px;
-  padding: 10px;
   display: grid;
-  grid-template-columns: 100px 500px 100px;
+  margin-top: $spacing-03;
+  grid-template-columns: 100px 500px;
   grid-gap: 30px;
-
-  .linkicon {
-    margin-right: 1rem;
-  }
+  line-height: 1.5rem;
 
   .resourcekind {
-    font-weight: bold;
+    font-weight: auto;
   }
-  
-  a {
-    display: flex;
-    overflow: hidden;
-    white-space: nowrap;
+
+  .triggerresourcelink {
+    display: inline-block;
+    overflow: visible;
   }
 }
 
-.truncate-text-end {
+.interceptor--cel-filter {
   display: inline-block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+}
+
+.interceptor--secret-details {
+  margin-left: $spacing-04;
+}
+
+.interceptor--service-details {
+  margin-left: $spacing-04;
 }
