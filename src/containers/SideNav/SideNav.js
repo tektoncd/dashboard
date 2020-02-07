@@ -95,6 +95,22 @@ class SideNav extends Component {
         history.push(urls.pipelines.all());
         return;
       }
+      if (currentURL.includes(urls.serviceAccounts.all())) {
+        history.push(urls.serviceAccounts.all());
+        return;
+      }
+      if (currentURL.includes(urls.eventListeners.all())) {
+        history.push(urls.eventListeners.all());
+        return;
+      }
+      if (currentURL.includes(urls.triggerBindings.all())) {
+        history.push(urls.triggerBindings.all());
+        return;
+      }
+      if (currentURL.includes(urls.triggerTemplates.all())) {
+        history.push(urls.triggerTemplates.all());
+        return;
+      }
       history.push('/');
       return;
     }
