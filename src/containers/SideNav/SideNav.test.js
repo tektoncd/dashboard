@@ -288,6 +288,146 @@ it('SideNav redirects to Pipelines page when all namespaces selected on namespac
   expect(push).toHaveBeenCalledWith(urls.pipelines.all());
 });
 
+it('SideNav redirects to ServiceAccounts page when all namespaces selected on namespaced URL on ServiceAccounts', async () => {
+  const middleware = [thunk];
+  const mockStore = configureStore(middleware);
+  const namespace = 'default';
+  const store = mockStore({
+    namespaces: {
+      byName: {
+        [namespace]: true
+      },
+      isFetching: false,
+      selected: namespace
+    }
+  });
+  const selectNamespace = jest.fn();
+  const push = jest.fn();
+  const { getByText } = renderWithRouter(
+    <Provider store={store}>
+      <SideNav
+        extensions={[]}
+        history={{ push }}
+        match={{
+          params: { namespace },
+          url: urls.serviceAccounts.all()
+        }}
+        namespace={namespace}
+        selectNamespace={selectNamespace}
+      />
+    </Provider>
+  );
+  fireEvent.click(getByText(namespace));
+  fireEvent.click(getByText(/all namespaces/i));
+  expect(selectNamespace).toHaveBeenCalledWith(ALL_NAMESPACES);
+  expect(push).toHaveBeenCalledWith(urls.serviceAccounts.all());
+});
+
+it('SideNav redirects to EventListeners page when all namespaces selected on namespaced URL on EventListeners', async () => {
+  const middleware = [thunk];
+  const mockStore = configureStore(middleware);
+  const namespace = 'default';
+  const store = mockStore({
+    namespaces: {
+      byName: {
+        [namespace]: true
+      },
+      isFetching: false,
+      selected: namespace
+    }
+  });
+  const selectNamespace = jest.fn();
+  const push = jest.fn();
+  const { getByText } = renderWithRouter(
+    <Provider store={store}>
+      <SideNav
+        extensions={[]}
+        history={{ push }}
+        match={{
+          params: { namespace },
+          url: urls.eventListeners.all()
+        }}
+        namespace={namespace}
+        selectNamespace={selectNamespace}
+      />
+    </Provider>
+  );
+  fireEvent.click(getByText(namespace));
+  fireEvent.click(getByText(/all namespaces/i));
+  expect(selectNamespace).toHaveBeenCalledWith(ALL_NAMESPACES);
+  expect(push).toHaveBeenCalledWith(urls.eventListeners.all());
+});
+
+it('SideNav redirects to TriggerBindings page when all namespaces selected on namespaced URL on TriggerBindings', async () => {
+  const middleware = [thunk];
+  const mockStore = configureStore(middleware);
+  const namespace = 'default';
+  const store = mockStore({
+    namespaces: {
+      byName: {
+        [namespace]: true
+      },
+      isFetching: false,
+      selected: namespace
+    }
+  });
+  const selectNamespace = jest.fn();
+  const push = jest.fn();
+  const { getByText } = renderWithRouter(
+    <Provider store={store}>
+      <SideNav
+        extensions={[]}
+        history={{ push }}
+        match={{
+          params: { namespace },
+          url: urls.triggerBindings.all()
+        }}
+        namespace={namespace}
+        selectNamespace={selectNamespace}
+      />
+    </Provider>
+  );
+  fireEvent.click(getByText(namespace));
+  fireEvent.click(getByText(/all namespaces/i));
+  expect(selectNamespace).toHaveBeenCalledWith(ALL_NAMESPACES);
+  expect(push).toHaveBeenCalledWith(urls.triggerBindings.all());
+});
+
+it('SideNav redirects to TriggerTemplates page when all namespaces selected on namespaced URL on TriggerTemplates', async () => {
+  const middleware = [thunk];
+  const mockStore = configureStore(middleware);
+  const namespace = 'default';
+  const store = mockStore({
+    namespaces: {
+      byName: {
+        [namespace]: true
+      },
+      isFetching: false,
+      selected: namespace
+    }
+  });
+  const selectNamespace = jest.fn();
+  const push = jest.fn();
+  const { getByText } = renderWithRouter(
+    <Provider store={store}>
+      <SideNav
+        extensions={[]}
+        history={{ push }}
+        match={{
+          params: { namespace },
+          url: urls.triggerTemplates.all()
+        }}
+        namespace={namespace}
+        selectNamespace={selectNamespace}
+      />
+    </Provider>
+  );
+  fireEvent.click(getByText(namespace));
+  fireEvent.click(getByText(/all namespaces/i));
+  expect(selectNamespace).toHaveBeenCalledWith(ALL_NAMESPACES);
+  expect(push).toHaveBeenCalledWith(urls.triggerTemplates.all());
+});
+
 it('SideNav updates namespace in URL', async () => {
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
