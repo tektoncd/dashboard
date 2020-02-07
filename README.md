@@ -41,10 +41,23 @@ Tekton Dashboard is a general purpose, web-based UI for Tekton Pipelines. It all
 
 You are now ready to use the Tekton Dashboard, optionally with the Tekton Webhooks Extension (see our [Getting Started](https://github.com/tektoncd/experimental/blob/master/webhooks-extension/docs/GettingStarted.md) guide).
 
-### Nightly builds
+### Installing a nightly build
 
-The Tekton Dashboard has a hosted image of the latest builds located at `gcr.io/tekton-nightly/dashboard:latest`. Nightly builds come in four flavours: 
-(plain kube or Openshift) * (read-only or read-write):
+Four nightly builds are available: (plain kube or Openshift) * (read-only or read-write):
+
+To install your preferred flavour use one of these four commands:
+
+```bash
+kubectl apply -f https://storage.googleapis.com/tekton-releases-nightly/dashboard/latest/tekton-dashboard-release.yaml
+kubectl apply -f https://storage.googleapis.com/tekton-releases-nightly/dashboard/latest/tekton-dashboard-release-readonly.yaml
+kubectl apply -f https://storage.googleapis.com/tekton-releases-nightly/dashboard/latest/openshift-tekton-dashboard-release.yaml
+kubectl apply -f https://storage.googleapis.com/tekton-releases-nightly/dashboard/latest/openshift-tekton-dashboard-release-readonly.yaml
+```
+
+### Installing from a development environment
+
+As a developer you can install nightly builds, or a local build. Nightly builds come in the usual four flavours.
+
 ```shell
 # Plain Kube
 kustomize build overlays/latest | ko apply -f -
