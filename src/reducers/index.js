@@ -313,6 +313,10 @@ export function getSecretsErrorMessage(state) {
   return secretSelectors.getSecretsErrorMessage(state.secrets);
 }
 
+export function getDeleteSecretsErrorMessage(state) {
+  return secretSelectors.getDeleteSecretsErrorMessage(state.secrets);
+}
+
 export function getCreateSecretsSuccessMessage(state) {
   return secretSelectors.getCreateSecretsSuccessMessage(state.secrets);
 }

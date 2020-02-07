@@ -38,9 +38,9 @@ import {
 import { fetchServiceAccounts } from '../../actions/serviceAccounts';
 import {
   getCreateSecretsSuccessMessage,
+  getDeleteSecretsErrorMessage,
   getDeleteSecretsSuccessMessage,
   getSecrets,
-  getSecretsErrorMessage,
   getSelectedNamespace,
   getServiceAccounts,
   isFetchingSecrets,
@@ -370,7 +370,6 @@ export /* istanbul ignore next */ class Secrets extends Component {
           ]}
         />
         <Modal
-          errorMessage={errorMessage}
           open={openNewSecret}
           key={openNewSecret}
           handleCreateSecret={this.handleCreateSecretClick}
@@ -398,7 +397,7 @@ function mapStateToProps(state, props) {
   const namespace = namespaceParam || getSelectedNamespace(state);
 
   return {
-    errorMessage: getSecretsErrorMessage(state),
+    errorMessage: getDeleteSecretsErrorMessage(state),
     createSuccess: getCreateSecretsSuccessMessage(state),
     deleteSuccess: getDeleteSecretsSuccessMessage(state),
     filters,

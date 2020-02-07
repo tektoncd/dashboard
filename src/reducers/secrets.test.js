@@ -17,6 +17,7 @@ it('handles init or unknown actions', () => {
   expect(secretsReducer(undefined, { type: 'does_not_exist' })).toEqual({
     byNamespace: {},
     errorMessage: false,
+    deleteErrorMessage: false,
     createSuccessMessage: null,
     deleteSuccessMessage: null,
     isFetching: false
