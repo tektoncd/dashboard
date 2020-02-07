@@ -85,7 +85,21 @@ function errorMessage(state = false, action) {
     case 'SECRET_CREATE_FAILURE':
       return action.error;
     case 'SECRET_DELETE_FAILURE':
+    case 'SECRETS_FETCH_REQUEST':
+    case 'SECRETS_FETCH_SUCCESS':
+    case 'CLEAR_SECRET_ERROR_NOTIFICATION':
+      return null;
+    default:
+      return state;
+  }
+}
+
+function deleteErrorMessage(state = false, action) {
+  switch (action.type) {
+    case 'SECRETS_FETCH_FAILURE':
+    case 'SECRET_DELETE_FAILURE':
       return action.error;
+    case 'SECRET_CREATE_FAILURE':
     case 'SECRETS_FETCH_REQUEST':
     case 'SECRETS_FETCH_SUCCESS':
     case 'CLEAR_SECRET_ERROR_NOTIFICATION':
@@ -128,6 +142,7 @@ function deleteSuccessMessage(state = null, action) {
 export default combineReducers({
   byNamespace,
   errorMessage,
+  deleteErrorMessage,
   createSuccessMessage,
   deleteSuccessMessage,
   isFetching
@@ -147,6 +162,10 @@ export function getSecrets(state, namespace) {
 
 export function getSecretsErrorMessage(state) {
   return state.errorMessage;
+}
+
+export function getDeleteSecretsErrorMessage(state) {
+  return state.deleteErrorMessage;
 }
 
 export function getCreateSecretsSuccessMessage(state) {

@@ -15,6 +15,7 @@ import {
   getClusterTask,
   getClusterTasks,
   getClusterTasksErrorMessage,
+  getDeleteSecretsErrorMessage,
   getExtensions,
   getExtensionsErrorMessage,
   getLocale,
@@ -299,6 +300,17 @@ it('getSecretsErrorMessage', () => {
     .mockImplementation(() => errorMessage);
   expect(getSecretsErrorMessage(state)).toEqual(errorMessage);
   expect(secretSelectors.getSecretsErrorMessage).toHaveBeenCalledWith(
+    state.secrets
+  );
+});
+
+it('getDeleteSecretsErrorMessage', () => {
+  const errorMessage = 'fake error message';
+  jest
+    .spyOn(secretSelectors, 'getDeleteSecretsErrorMessage')
+    .mockImplementation(() => errorMessage);
+  expect(getDeleteSecretsErrorMessage(state)).toEqual(errorMessage);
+  expect(secretSelectors.getDeleteSecretsErrorMessage).toHaveBeenCalledWith(
     state.secrets
   );
 });
