@@ -16,131 +16,234 @@ import Trigger from './Trigger';
 import { renderWithRouter } from '../../utils/test';
 
 const fakeTrigger = {
-  binding: {
-    apiversion: 'v1alpha1',
-    name: 'simple-pipeline-push-binding'
-  },
-  interceptor: {
-    header: [
-      {
-        name: 'Wext-Trigger-Name',
-        value: 'mytrigger-tekton-pipelines-push-event'
-      },
-      {
-        name: 'Wext-Repository-Url',
-        value: 'https://github.com/myorg/myrepo'
-      },
-      {
-        name: 'Wext-Incoming-Event',
-        value: 'push'
-      },
-      {
-        name: 'Wext-Secret-Name',
-        value: 'mytoken'
-      }
-    ],
-    objectRef: {
-      apiVersion: 'v1',
-      kind: 'Service',
-      name: 'tekton-webhooks-extension-validator',
-      namespace: 'tekton-pipelines'
-    }
-  },
-  name: 'mytrigger-tekton-pipelines-push-event',
-  params: [
+  name: 'my-fake-trigger',
+  bindings: [
     {
-      name: 'webhooks-tekton-release-name',
-      value: 'myreleasename'
+      apiversion: 'v1alpha1',
+      name: 'triggerbinding-0'
     },
     {
-      name: 'webhooks-tekton-target-namespace',
-      value: 'tekton-pipelines'
+      apiversion: 'v1alpha1',
+      name: 'triggerbinding-1'
     },
     {
-      name: 'webhooks-tekton-service-account',
-      value: 'tekton-dashboard'
-    },
-    {
-      name: 'webhooks-tekton-git-server',
-      value: 'github.com'
-    },
-    {
-      name: 'webhooks-tekton-git-org',
-      value: 'myorg'
-    },
-    {
-      name: 'webhooks-tekton-git-repo',
-      value: 'myrepo'
-    },
-    {
-      name: 'webhooks-tekton-docker-registry',
-      value: 'myregistry'
+      apiversion: 'v1alpha1',
+      name: 'triggerbinding-2'
     }
   ],
   template: {
     apiversion: 'v1alpha1',
     name: 'simple-pipeline-template'
-  }
+  },
+  interceptors: [
+    {
+      webhook: {
+        header: [
+          {
+            name: 'Wext-Repository-Url',
+            value: 'https://github.com/myorg/myrepo'
+          },
+          {
+            name: 'Wext-Incoming-Event',
+            value: 'wext-incoming-event-value'
+          },
+          {
+            name: 'Wext-Secret-Name',
+            value: 'wext-secret-name-value'
+          },
+          {
+            name: 'Array-Header-Name',
+            value: [
+              'array-header-value-0',
+              'array-header-value-1',
+              'array-header-value-2'
+            ]
+          }
+        ],
+        objectRef: {
+          apiVersion: 'v1',
+          kind: 'Service',
+          name: 'webhook-service-name',
+          namespace: 'webhook-service-namespace'
+        }
+      }
+    },
+    {
+      github: {
+        secretRef: {
+          secretName: 'my-github-secret',
+          secretKey: 'github-secret-key',
+          namespace: 'github-secret-namespace'
+        },
+        eventTypes: ['github-event-0', 'github-event-1', 'github-event-2']
+      }
+    },
+    {
+      gitlab: {
+        secretRef: {
+          secretName: 'my-gitlab-secret',
+          secretKey: 'gitlab-secret-key',
+          namespace: 'gitlab-secret-namespace'
+        },
+        eventTypes: ['gitlab-event-0', 'gitlab-event-1', 'gitlab-event-2']
+      }
+    },
+    {
+      cel: {
+        filter: 'cel-filter'
+      }
+    }
+  ]
 };
 
 describe('Trigger', () => {
-  it('should render all details', () => {
+  it('renders all details', () => {
     const props = {
       eventListenerNamespace: 'tekton-pipelines',
       trigger: fakeTrigger
     };
     const { queryByText } = renderWithRouter(<Trigger {...props} />);
     expect(queryByText(/Name/i)).toBeTruthy();
+    expect(queryByText(/my-fake-trigger/i)).toBeTruthy();
     expect(queryByText(/TriggerBinding/i)).toBeTruthy();
+    expect(queryByText(/triggerbinding-0/i)).toBeTruthy();
+    expect(queryByText(/triggerbinding-1/i)).toBeTruthy();
+    expect(queryByText(/triggerbinding-2/i)).toBeTruthy();
     expect(queryByText(/TriggerTemplate/i)).toBeTruthy();
-    expect(queryByText(/Interceptor/i)).toBeTruthy();
-    expect(queryByText(/Headers/i)).toBeTruthy();
-    expect(queryByText(/Parameters/i)).toBeTruthy();
-    expect(queryByText(/webhooks-tekton-release-name/i)).toBeTruthy();
-    expect(queryByText(/webhooks-tekton-target-namespace/i)).toBeTruthy();
-    expect(queryByText(/webhooks-tekton-service-account/i)).toBeTruthy();
-    expect(queryByText(/webhooks-tekton-git-server/i)).toBeTruthy();
-    expect(queryByText(/webhooks-tekton-git-org/i)).toBeTruthy();
-    expect(queryByText(/webhooks-tekton-git-repo/i)).toBeTruthy();
-    expect(queryByText(/mytrigger-tekton-pipelines-push-event/i)).toBeTruthy();
-    expect(queryByText(/myreleasename/i)).toBeTruthy();
-    expect(queryByText(/tekton-pipelines/i)).toBeTruthy();
-    expect(queryByText(/myregistry/i)).toBeTruthy();
-    expect(queryByText(/myrepo/i)).toBeTruthy();
-    expect(queryByText(/myorg/i)).toBeTruthy();
-    expect(queryByText(/github.com/i)).toBeTruthy();
     expect(queryByText(/simple-pipeline-template/i)).toBeTruthy();
-    expect(queryByText(/Wext-Trigger-Name/i)).toBeTruthy();
-    expect(queryByText(/Wext-Repository-Url/i)).toBeTruthy();
-    expect(queryByText(/Wext-Incoming-Event/i)).toBeTruthy();
-    expect(queryByText(/Wext-Secret-Name/i)).toBeTruthy();
+    expect(queryByText(/Interceptors/i)).toBeTruthy();
+    // Check Webhook Interceptor
+    expect(queryByText(/(webhook)/i)).toBeTruthy();
+    expect(queryByText(/webhook-service-name/i)).toBeTruthy();
+    expect(queryByText(/webhook-service-namespace/i)).toBeTruthy();
+    expect(queryByText(/Header/i)).toBeTruthy();
+    fakeTrigger.interceptors[0].webhook.header.forEach(({ name, value }) => {
+      expect(queryByText(new RegExp(name, 'i'))).toBeTruthy();
+      if (Array.isArray(value)) {
+        value.forEach(element => {
+          expect(queryByText(new RegExp(element, 'i'))).toBeTruthy();
+        });
+      } else {
+        expect(queryByText(new RegExp(value, 'i'))).toBeTruthy();
+      }
+    });
+    // Check GitHub Interceptor
+    expect(queryByText(/(github)/i)).toBeTruthy();
+    expect(queryByText(/my-github-secret/i)).toBeTruthy();
+    expect(queryByText(/github-secret-key/i)).toBeTruthy();
+    expect(queryByText(/github-secret-namespace/i)).toBeTruthy();
+    expect(queryByText(/github-event-0/i)).toBeTruthy();
+    expect(queryByText(/github-event-1/i)).toBeTruthy();
+    expect(queryByText(/github-event-2/i)).toBeTruthy();
+    // Check GitLab Interceptor
+    expect(queryByText(/(gitlab)/i)).toBeTruthy();
+    expect(queryByText(/my-gitlab-secret/i)).toBeTruthy();
+    expect(queryByText(/gitlab-secret-key/i)).toBeTruthy();
+    expect(queryByText(/gitlab-secret-namespace/i)).toBeTruthy();
+    expect(queryByText(/gitlab-event-0/i)).toBeTruthy();
+    expect(queryByText(/gitlab-event-1/i)).toBeTruthy();
+    expect(queryByText(/gitlab-event-2/i)).toBeTruthy();
+    // Check CEL Interceptor
+    expect(queryByText(/(cel)/i)).toBeTruthy();
+    expect(queryByText(/cel-filter/i)).toBeTruthy();
   });
 
-  it('should handle missing params and interceptor', () => {
+  it('handles no objectRef in webhook Interceptor', () => {
     const props = {
       eventListenerNamespace: 'tekton-pipelines',
       trigger: {
         ...fakeTrigger,
-        params: undefined,
-        interceptor: undefined
+        interceptors: [
+          {
+            webhook: {}
+          }
+        ]
       }
     };
     const { queryByText } = renderWithRouter(<Trigger {...props} />);
-    expect(queryByText(/Name/i)).toBeTruthy();
+    expect(queryByText(/1./i)).toBeFalsy();
   });
 
-  it('should handle missing interceptor headers', () => {
+  it('handles empty Interceptor', () => {
     const props = {
       eventListenerNamespace: 'tekton-pipelines',
       trigger: {
         ...fakeTrigger,
-        interceptor: {
-          ...fakeTrigger.interceptor,
-          header: undefined
-        }
+        interceptors: [{}]
       }
     };
     const { queryByText } = renderWithRouter(<Trigger {...props} />);
-    expect(queryByText(/Interceptor/i)).toBeTruthy();
+    expect(queryByText(/Interceptors/i)).toBeTruthy();
+  });
+
+  it('handles no Interceptors', () => {
+    const props = {
+      eventListenerNamespace: 'tekton-pipelines',
+      trigger: {
+        ...fakeTrigger,
+        interceptors: []
+      }
+    };
+    const { queryByText } = renderWithRouter(<Trigger {...props} />);
+    expect(queryByText(/Interceptors/i)).toBeFalsy();
+  });
+
+  it('handles missing Interceptors', () => {
+    const props = {
+      eventListenerNamespace: 'tekton-pipelines',
+      trigger: {
+        ...fakeTrigger,
+        interceptors: undefined
+      }
+    };
+    const { queryByText } = renderWithRouter(<Trigger {...props} />);
+    expect(queryByText(/Interceptors/i)).toBeFalsy();
+  });
+
+  it('handles webhook Interceptor without Header', () => {
+    const props = {
+      eventListenerNamespace: 'tekton-pipelines',
+      trigger: {
+        ...fakeTrigger,
+        interceptors: [
+          {
+            webhook: {
+              objectRef: {
+                apiVersion: 'v1',
+                kind: 'Service',
+                name: 'webhook-service-name',
+                namespace: 'webhook-service-namespace'
+              }
+            }
+          }
+        ]
+      }
+    };
+    const { queryByText } = renderWithRouter(<Trigger {...props} />);
+    expect(queryByText(/Header/i)).toBeFalsy();
+  });
+
+  it('handles no name', () => {
+    const props = {
+      eventListenerNamespace: 'tekton-pipelines',
+      trigger: {
+        ...fakeTrigger,
+        name: undefined
+      }
+    };
+    const { queryByText } = renderWithRouter(<Trigger {...props} />);
+    expect(queryByText(/Trigger/i)).toBeTruthy();
+  });
+
+  it('handles no bindings', () => {
+    const props = {
+      eventListenerNamespace: 'tekton-pipelines',
+      trigger: {
+        ...fakeTrigger,
+        bindings: undefined
+      }
+    };
+    const { queryByText } = renderWithRouter(<Trigger {...props} />);
+    expect(queryByText(/TriggerBindings/i)).toBeFalsy();
   });
 });

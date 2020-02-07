@@ -40,70 +40,90 @@ const fakeEventListenerWithLabels = {
     }
   },
   spec: {
+    serviceType: 'NodePort',
+    serviceAccountName: 'my-serviceaccount',
     triggers: [
       {
-        binding: {
-          apiversion: 'v1alpha1',
-          name: 'simple-pipeline-push-binding'
-        },
+        name: 'my-trigger-0',
+        bindings: [
+          {
+            apiversion: 'v1alpha1',
+            name: 'my-triggerbinding-0'
+          }
+        ],
         template: {
           apiversion: 'v1alpha1',
-          name: 'simple-pipeline-template'
+          name: 'my-triggertemplate-0'
         },
-        interceptor: {
-          header: [
-            {
-              name: 'Wext-Trigger-Name',
-              value: 'mywebhook1-tekton-pipelines-push-event'
-            },
-            {
-              name: 'Wext-Repository-Url',
-              value: 'https://github.com/myorg/myrepo'
-            },
-            {
-              name: 'Wext-Incoming-Event',
-              value: 'push'
-            },
-            {
-              name: 'Wext-Secret-Name',
-              value: 'mytoken'
-            }
-          ],
-          objectRef: {
-            apiVersion: 'v1',
-            kind: 'Service',
-            name: 'tekton-webhooks-extension-validator',
-            namespace: 'tekton-pipelines'
+        interceptors: [
+          {
+            cel: { filter: 'cel-filter-0' }
           }
-        }
+        ]
+      },
+      {
+        name: 'my-trigger-1',
+        bindings: [
+          {
+            apiversion: 'v1alpha1',
+            name: 'my-triggerbinding-1'
+          }
+        ],
+        template: {
+          apiversion: 'v1alpha1',
+          name: 'my-triggertemplate-1'
+        },
+        interceptors: [
+          {
+            cel: { filter: 'cel-filter-1' }
+          }
+        ]
+      },
+      {
+        name: 'my-trigger-2',
+        bindings: [
+          {
+            apiversion: 'v1alpha1',
+            name: 'my-triggerbinding-2'
+          }
+        ],
+        template: {
+          apiversion: 'v1alpha1',
+          name: 'my-triggertemplate-2'
+        },
+        interceptors: [
+          {
+            cel: { filter: 'cel-filter-2' }
+          }
+        ]
       }
     ]
   }
 };
 
+const match = {
+  params: {
+    eventListenerName: 'event-listener-with-labels'
+  }
+};
+
+const middleware = [thunk];
+const mockStore = configureStore(middleware);
+
+const testStore = mockStore({
+  namespaces: {
+    selected: 'tekton-pipelines'
+  },
+  eventListeners: {
+    byId: 'event-listener-with-labels',
+    byNamespace: { default: 'tekton-pipelines' },
+    errorMessage: null,
+    isFetching: false
+  }
+});
+
 it('EventListener displays with formatted labels', async () => {
-  const match = {
-    params: {
-      eventListenerName: 'event-listener-with-labels'
-    }
-  };
-
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-
-  const testStore = mockStore({
-    namespaces: {
-      selected: 'tekton-pipelines'
-    },
-    eventListeners: {
-      byId: 'event-listener-with-labels',
-      byNamespace: { default: 'tekton-pipelines' },
-      errorMessage: null,
-      isFetching: false
-    }
-  });
-
-  const { getByText } = renderWithRouter(
+  const { queryByText, getByText } = renderWithRouter(
     <Provider store={testStore}>
       <EventListenerContainer
         intl={intl}
@@ -116,4 +136,100 @@ it('EventListener displays with formatted labels', async () => {
   );
 
   await waitForElement(() => getByText('event-listener-with-labels'));
+  expect(queryByText(/Namespace/i)).toBeTruthy();
+  expect(queryByText(/tekton-pipelines/i)).toBeTruthy();
+  expect(queryByText(/Labels/i)).toBeTruthy();
+  expect(queryByText(/foo: bar/i)).toBeTruthy();
+  expect(queryByText(/bar: baz/i)).toBeTruthy();
+  expect(queryByText(/Service Account/i)).toBeTruthy();
+  expect(queryByText(/my-serviceaccount/i)).toBeTruthy();
+  expect(queryByText(/Service Type/i)).toBeTruthy();
+  expect(queryByText(/NodePort/i)).toBeTruthy();
+  // Check Trigger 0
+  expect(queryByText(/my-trigger-0/i)).toBeTruthy();
+  expect(queryByText(/my-triggerbinding-0/i)).toBeTruthy();
+  expect(queryByText(/my-triggertemplate-0/i)).toBeTruthy();
+  expect(queryByText(/cel-filter-0/i)).toBeTruthy();
+  // Check Trigger 1
+  expect(queryByText(/my-trigger-1/i)).toBeTruthy();
+  expect(queryByText(/my-triggerbinding-1/i)).toBeTruthy();
+  expect(queryByText(/my-triggertemplate-1/i)).toBeTruthy();
+  expect(queryByText(/cel-filter-1/i)).toBeTruthy();
+  // Check Trigger 2
+  expect(queryByText(/my-trigger-2/i)).toBeTruthy();
+  expect(queryByText(/my-triggerbinding-2/i)).toBeTruthy();
+  expect(queryByText(/my-triggertemplate-2/i)).toBeTruthy();
+  expect(queryByText(/cel-filter-2/i)).toBeTruthy();
+});
+
+it('EventListener handles no serviceAccountName', async () => {
+  const eventListener = {
+    ...fakeEventListenerWithLabels,
+    spec: {
+      ...fakeEventListenerWithLabels.spec,
+      serviceAccountName: undefined
+    }
+  };
+  const { queryByText, getByText } = renderWithRouter(
+    <Provider store={testStore}>
+      <EventListenerContainer
+        intl={intl}
+        match={match}
+        error={null}
+        fetchEventListener={() => Promise.resolve(eventListener)}
+        eventListener={eventListener}
+      />
+    </Provider>
+  );
+
+  await waitForElement(() => getByText('event-listener-with-labels'));
+  expect(queryByText(/Service Account/i)).toBeFalsy();
+});
+
+it('EventListener handles no service type', async () => {
+  const eventListener = {
+    ...fakeEventListenerWithLabels,
+    spec: {
+      ...fakeEventListenerWithLabels.spec,
+      serviceType: undefined
+    }
+  };
+  const { queryByText, getByText } = renderWithRouter(
+    <Provider store={testStore}>
+      <EventListenerContainer
+        intl={intl}
+        match={match}
+        error={null}
+        fetchEventListener={() => Promise.resolve(eventListener)}
+        eventListener={eventListener}
+      />
+    </Provider>
+  );
+
+  await waitForElement(() => getByText('event-listener-with-labels'));
+  expect(queryByText(/Service Type/i)).toBeFalsy();
+});
+
+it('EventListener handles no triggers', async () => {
+  const eventListener = {
+    ...fakeEventListenerWithLabels,
+    spec: {
+      ...fakeEventListenerWithLabels.spec,
+      triggers: []
+    }
+  };
+  const { queryByText, getByText } = renderWithRouter(
+    <Provider store={testStore}>
+      <EventListenerContainer
+        intl={intl}
+        match={match}
+        error={null}
+        fetchEventListener={() => Promise.resolve(eventListener)}
+        eventListener={eventListener}
+      />
+    </Provider>
+  );
+
+  await waitForElement(() => getByText('event-listener-with-labels'));
+  expect(queryByText(/Trigger/i)).toBeFalsy();
 });

@@ -14,10 +14,8 @@ limitations under the License.
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import '../../scss/Triggers.scss';
 import { injectIntl } from 'react-intl';
 import { InlineNotification, Tag } from 'carbon-components-react';
-
 import { formatLabels } from '@tektoncd/dashboard-utils';
 import {
   FormattedDate,
@@ -32,8 +30,9 @@ import {
   getSelectedNamespace,
   isWebSocketConnected
 } from '../../reducers';
-
 import { fetchEventListener } from '../../actions/eventListeners';
+
+import './EventListener.scss';
 
 export /* istanbul ignore next */ class EventListenerContainer extends Component {
   static notification({ kind, message, intl }) {
@@ -129,54 +128,82 @@ export /* istanbul ignore next */ class EventListenerContainer extends Component
             })}
           >
             <div className="details">
-              <p>
-                <span>
-                  {intl.formatMessage({
-                    id: 'dashboard.metadata.dateCreated',
-                    defaultMessage: 'Date Created:'
-                  })}
-                </span>
-                <FormattedDate
-                  date={eventListener.metadata.creationTimestamp}
-                  relative
-                />
-              </p>
-              <p>
-                <span>
-                  {intl.formatMessage({
-                    id: 'dashboard.metadata.labels',
-                    defaultMessage: 'Labels:'
-                  })}
-                </span>
-                {formattedLabelsToRender.length === 0
-                  ? intl.formatMessage({
-                      id: 'dashboard.metadata.none',
-                      defaultMessage: 'None'
-                    })
-                  : formattedLabelsToRender.map(label => (
-                      <Tag type="blue" key={label}>
-                        {label}
-                      </Tag>
-                    ))}
-              </p>
-              <p>
-                <span>
-                  {intl.formatMessage({
-                    id: 'dashboard.metadata.namespace',
-                    defaultMessage: 'Namespace:'
-                  })}
-                </span>
-                {eventListener.metadata.namespace}
-              </p>
-              {triggers.map(trigger => {
-                return (
-                  <Trigger
-                    key={trigger}
-                    eventListenerNamespace={eventListenerNamespace}
-                    trigger={trigger}
+              <div className="triggers--detail-block">
+                <p>
+                  <span>
+                    {intl.formatMessage({
+                      id: 'dashboard.metadata.dateCreated',
+                      defaultMessage: 'Date Created:'
+                    })}{' '}
+                  </span>
+                  <FormattedDate
+                    date={eventListener.metadata.creationTimestamp}
+                    relative
                   />
-                );
-              })}
+                </p>
+                <p>
+                  <span>
+                    {intl.formatMessage({
+                      id: 'dashboard.metadata.labels',
+                      defaultMessage: 'Labels:'
+                    })}{' '}
+                  </span>
+                  {formattedLabelsToRender.length === 0
+                    ? intl.formatMessage({
+                        id: 'dashboard.metadata.none',
+                        defaultMessage: 'None'
+                      })
+                    : formattedLabelsToRender.map(label => (
+                        <Tag type="blue" key={label}>
+                          {label}
+                        </Tag>
+                      ))}
+                </p>
+                <p>
+                  <span>
+                    {intl.formatMessage({
+                      id: 'dashboard.metadata.namespace',
+                      defaultMessage: 'Namespace:'
+                    })}{' '}
+                  </span>
+                  {eventListener.metadata.namespace}
+                </p>
+                {eventListener.spec.serviceAccountName && (
+                  <p>
+                    <span>
+                      {intl.formatMessage({
+                        id: 'dashboard.eventListener.serviceAccount',
+                        defaultMessage: 'Service Account:'
+                      })}{' '}
+                    </span>
+                    {eventListener.spec.serviceAccountName}
+                  </p>
+                )}
+                {eventListener.spec.serviceType && (
+                  <p>
+                    <span>
+                      {intl.formatMessage({
+                        id: 'dashboard.eventListener.serviceType',
+                        defaultMessage: 'Service Type:'
+                      })}{' '}
+                    </span>
+                    {eventListener.spec.serviceType}
+                  </p>
+                )}
+              </div>
+              <div className="eventlistener--triggers">
+                {triggers.map((trigger, idx) => (
+                  <div
+                    className="triggers--detail-block"
+                    key={trigger.name ? trigger.name : idx}
+                  >
+                    <Trigger
+                      eventListenerNamespace={eventListenerNamespace}
+                      trigger={trigger}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           </Tab>
           <Tab label="YAML">

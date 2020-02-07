@@ -11,13 +11,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Launch16 as LinkIcon } from '@carbon/icons-react';
 import { injectIntl } from 'react-intl';
 import React from 'react';
 import { urls } from '@tektoncd/dashboard-utils';
 import { Link } from 'react-router-dom';
-import './Trigger.scss';
+import { Accordion, AccordionItem } from 'carbon-components-react';
 import { Table } from '@tektoncd/dashboard-components';
+
+import './Trigger.scss';
 
 const Trigger = ({ intl, eventListenerNamespace, trigger }) => {
   const tableHeaders = [
@@ -37,122 +38,229 @@ const Trigger = ({ intl, eventListenerNamespace, trigger }) => {
     }
   ];
 
-  let triggerParams = [];
-
-  if (trigger.params) {
-    triggerParams = trigger.params.map(param => ({
-      id: param.name,
-      name: param.name,
-      value: param.value
-    }));
-  }
-
-  let interceptorValues = [];
-
-  if (trigger.interceptor) {
-    if (trigger.interceptor.header) {
-      interceptorValues = trigger.interceptor.header.map(header => ({
-        id: header.name,
-        name: header.name,
-        value: header.value
-      }));
-    }
-  }
-
   return (
-    <>
-      <div className="triggermain">
-        <h3>Trigger: {trigger.name}</h3>
+    <div>
+      <h3>Trigger: {trigger.name}</h3>
+      <div className="triggerdetails">
+        {trigger.bindings && trigger.bindings.length !== 0 && (
+          <div className="triggerresourcelinks">
+            <span className="resourcekind">
+              {intl.formatMessage({
+                id: 'dashboard.triggerDetails.triggerBindings',
+                defaultMessage: 'TriggerBindings:'
+              })}
+            </span>
+            <div>
+              {trigger.bindings.map((binding, index) => (
+                <span key={binding.name}>
+                  <Link
+                    className="triggerresourcelink"
+                    to={urls.triggerBindings.byName({
+                      namespace: eventListenerNamespace,
+                      triggerBindingName: binding.name
+                    })}
+                  >
+                    <span title={binding.name}>{binding.name}</span>
+                  </Link>
+                  {index !== trigger.bindings.length - 1 && <span>, </span>}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
         <div className="triggerresourcelinks">
-          <span className="resourcekind">TriggerBinding</span>
-          <Link
-            to={urls.triggerBindings.byName({
-              namespace: eventListenerNamespace,
-              triggerBindingName: trigger.binding.name
+          <span className="resourcekind">
+            {intl.formatMessage({
+              id: 'dashboard.triggerDetails.triggerTemplate',
+              defaultMessage: 'TriggerTemplate:'
             })}
-          >
-            <span className="linkicon">
-              <LinkIcon />
-            </span>
-            <span className="truncate-text-end" title={trigger.binding.name}>
-              {trigger.binding.name}
-            </span>
-          </Link>
-        </div>
-        <div className="triggerresourcelinks">
-          <span className="resourcekind">TriggerTemplate</span>
+          </span>
 
           <Link
+            className="triggerresourcelink"
             to={urls.triggerTemplates.byName({
               namespace: eventListenerNamespace,
               triggerTemplateName: trigger.template.name
             })}
           >
-            <span className="linkicon">
-              <LinkIcon />
-            </span>
-            <span className="truncate-text-end" title={trigger.template.name}>
-              {trigger.template.name}
-            </span>
+            <span title={trigger.template.name}>{trigger.template.name}</span>
           </Link>
         </div>
-
-        <div className="triggerinfo">
-          <h3>
-            {intl.formatMessage({
-              id: 'dashboard.parameters.title',
-              defaultMessage: 'Parameters'
-            })}
-          </h3>
-
-          <Table
-            className="parameterstable"
-            headers={tableHeaders}
-            rows={triggerParams}
-            emptyTextAllNamespaces={intl.formatMessage({
-              id: 'dashboard.trigger.noParams',
-              defaultMessage: 'No parameters found for this Trigger.'
-            })}
-            emptyTextSelectedNamespace={intl.formatMessage({
-              id: 'dashboard.trigger.noParams',
-              defaultMessage: 'No parameters found for this Trigger.'
-            })}
-          />
-          {trigger.interceptor && (
-            <>
-              <div className="interceptor">
-                <h3>
-                  {intl.formatMessage({
-                    id: 'dashboard.triggerDetails.interceptorName',
-                    defaultMessage: 'Interceptor: '
-                  })}
-                  {trigger.interceptor.objectRef.name}
-                </h3>
-                <h3>
-                  {intl.formatMessage({
-                    id: 'dashboard.triggerDetails.interceptorHeaders',
-                    defaultMessage: 'Headers'
-                  })}
-                </h3>
-              </div>
-              <Table
-                headers={tableHeaders}
-                rows={interceptorValues}
-                emptyTextAllNamespaces={intl.formatMessage({
-                  id: 'dashboard.trigger.noHeaders',
-                  defaultMessage: 'No headers found for this interceptor.'
-                })}
-                emptyTextSelectedNamespace={intl.formatMessage({
-                  id: 'dashboard.trigger.noHeaders',
-                  defaultMessage: 'No headers found for this interceptor.'
-                })}
-                isSortable={false}
-              />
-            </>
-          )}
-        </div>
       </div>
-    </>
+
+      {trigger.interceptors && trigger.interceptors.length !== 0 && (
+        <div className="trigger--interceptors">
+          <span className="resourcekind">
+            {intl.formatMessage({
+              id: 'dashboard.triggerDetails.interceptors',
+              defaultMessage: 'Interceptors:'
+            })}
+          </span>
+          <Accordion
+            className="trigger--interceptors-accordian"
+            title="Interceptors"
+          >
+            {trigger.interceptors.map((interceptor, index) => {
+              let interceptorName;
+              let interceptorType;
+              let content;
+              const namespaceText = intl.formatMessage({
+                id: 'dashboard.triggerDetails.interceptorNamespace',
+                defaultMessage: 'Namespace:'
+              });
+              const nameText = intl.formatMessage({
+                id: 'dashboard.triggerDetails.interceptorName',
+                defaultMessage: 'Name:'
+              });
+              if (interceptor.webhook) {
+                // Webhook Interceptor
+                if (!interceptor.webhook.objectRef) {
+                  return null;
+                }
+                interceptorType = 'Webhook';
+                interceptorName = interceptor.webhook.objectRef.name;
+                let headerValues = [];
+                if (interceptor.webhook.header) {
+                  headerValues = interceptor.webhook.header.map(header => {
+                    const headerValue = {
+                      id: header.name,
+                      name: header.name,
+                      value: header.value
+                    };
+                    // Concatenate values with a comma if value is an array
+                    if (Array.isArray(header.value)) {
+                      headerValue.value = header.value.join(', ');
+                    }
+                    return headerValue;
+                  });
+                }
+                const serviceText = intl.formatMessage({
+                  id: 'dashboard.triggerDetails.webhookInterceptorService',
+                  defaultMessage: 'Service:'
+                });
+                content = (
+                  <>
+                    <p>{serviceText}</p>
+                    <div className="interceptor--service-details">
+                      <p>
+                        {nameText} {interceptor.webhook.objectRef.name}
+                      </p>
+                      {interceptor.webhook.objectRef.namespace && (
+                        <p>
+                          {namespaceText}{' '}
+                          {interceptor.webhook.objectRef.namespace}
+                        </p>
+                      )}
+                    </div>
+                    {headerValues.length !== 0 && (
+                      <>
+                        <p>
+                          {intl.formatMessage({
+                            id: 'dashboard.triggerDetails.interceptorHeader',
+                            defaultMessage: 'Header:'
+                          })}
+                        </p>
+                        <Table
+                          headers={tableHeaders}
+                          rows={headerValues}
+                          emptyTextAllNamespaces={intl.formatMessage({
+                            id: 'dashboard.trigger.noHeaders',
+                            defaultMessage:
+                              'No headers found for this interceptor.'
+                          })}
+                          emptyTextSelectedNamespace={intl.formatMessage({
+                            id: 'dashboard.trigger.noHeaders',
+                            defaultMessage:
+                              'No headers found for this interceptor.'
+                          })}
+                          isSortable={false}
+                        />
+                      </>
+                    )}
+                  </>
+                );
+              } else if (interceptor.github || interceptor.gitlab) {
+                let data;
+                if (interceptor.github) {
+                  // GitHub Interceptor
+                  interceptorType = 'GitHub';
+                  data = interceptor.github;
+                } else {
+                  // GitLab Interceptor
+                  interceptorType = 'GitLab';
+                  data = interceptor.gitlab;
+                }
+                const eventTypes = data.eventTypes.join(', ');
+                interceptorName = eventTypes;
+                const secretText = intl.formatMessage({
+                  id: 'dashboard.triggerDetails.webhookInterceptorSecret',
+                  defaultMessage: 'Secret:'
+                });
+                const secretKeyText = intl.formatMessage({
+                  id: 'dashboard.triggerDetails.webhookInterceptorSecretKey',
+                  defaultMessage: 'Key:'
+                });
+                content = (
+                  <>
+                    <p>{secretText}</p>
+                    <div className="interceptor--secret-details">
+                      <p>
+                        {nameText} {data.secretRef.secretName}
+                      </p>
+                      <p>
+                        {secretKeyText} {data.secretRef.secretKey}
+                      </p>
+                      {data.secretRef.namespace && (
+                        <p>
+                          {namespaceText} {data.secretRef.namespace}
+                        </p>
+                      )}
+                    </div>
+                    <p>Event Types: {eventTypes}</p>
+                  </>
+                );
+              } else if (interceptor.cel) {
+                // CEL Interceptor
+                interceptorType = 'CEL';
+                interceptorName = interceptor.cel.filter;
+                content = (
+                  <>
+                    <p>
+                      {intl.formatMessage({
+                        id: 'dashboard.triggerDetails.celInterceptorFilter',
+                        defaultMessage: 'Filter:'
+                      })}
+                    </p>
+                    <code className="bx--snippet--multi interceptor--cel-filter">
+                      {interceptor.cel.filter}
+                    </code>
+                  </>
+                );
+              } else {
+                return null;
+              }
+              const title = intl.formatMessage(
+                {
+                  id: 'dashboard.triggerDetails.interceptorTitle',
+                  defaultMessage:
+                    '{interceptorNumber}. ({interceptorType}) {interceptorName}'
+                },
+                {
+                  interceptorNumber: index + 1,
+                  interceptorType,
+                  interceptorName
+                }
+              );
+              return (
+                <AccordionItem key={title} title={title}>
+                  {content}
+                </AccordionItem>
+              );
+            })}
+          </Accordion>
+        </div>
+      )}
+    </div>
   );
 };
 

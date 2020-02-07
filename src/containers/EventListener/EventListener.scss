@@ -11,29 +11,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+@import '../../scss/Triggers.scss';
 @import '~carbon-components/scss/globals/scss/vars';
 
-.trigger {
-  .details {
-    p {
-      margin-top: $spacing-03;
-      span:first-child {
-        font-weight: bold;
-      }
-    }
-
-    .bx--data-table-container {
-      width: 50%;
-    }
-  }
-
-  .bx--snippet--multi {
-    margin-top: $spacing-03
-  }
-}
-
-.triggers--detail-block {
-  margin-bottom: $layout-01;
-  padding: $layout-01;
-  background-color: $ui-02;
+.eventlistener--triggers {
+  margin-top: $layout-02;
 }
