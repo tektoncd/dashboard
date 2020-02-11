@@ -10,15 +10,12 @@
   },
   "dependencies": {
     "@babel/cli": "^7.5.5",
-    "@carbon/icons-react": "^10.3.0",
     "@formatjs/intl-pluralrules": "^1.2.1",
     "@formatjs/intl-relativetimeformat": "^4.1.1",
     "@tektoncd/dashboard-utils": "file:../utils",
     "@vx/event": "0.0.192",
     "@vx/network": "0.0.192",
     "ansi-to-react": "^5.0.0",
-    "carbon-components": "^10.9.2",
-    "carbon-components-react": "^7.9.2",
     "d3-path": "^1.0.8",
     "elkjs": "^0.5.1",
     "js-yaml": "^3.13.0",
@@ -27,6 +24,9 @@
     "react-window": "^1.8.5"
   },
   "peerDependencies": {
+    "@carbon/icons-react": "^10.8.2",
+    "carbon-components": "^10.9.3",
+    "carbon-components-react": "^7.9.3",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
     "react-intl": "^3.1.1",
