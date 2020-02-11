@@ -32,7 +32,7 @@ type Properties struct {
 	InstallNamespace string
 	DashboardVersion string
 	PipelineVersion  string
-	IsOpenshift      bool
+	IsOpenShift      bool
 }
 
 const (
@@ -164,10 +164,10 @@ func (r Resource) GetEndpoints(request *restful.Request, response *restful.Respo
 func (r Resource) GetProperties(request *restful.Request, response *restful.Response) {
 	installedNamespace := os.Getenv("INSTALLED_NAMESPACE")
 	dashboardVersion := GetDashboardVersion(r, installedNamespace)
-	isOpenshift := IsOpenshift(r, installedNamespace)
-	pipelineVersion := GetPipelineVersion(r, isOpenshift)
+	isOpenShift := IsOpenShift(r, installedNamespace)
+	pipelineVersion := GetPipelineVersion(r, isOpenShift)
 
-	properties := Properties{InstallNamespace: installedNamespace, DashboardVersion: dashboardVersion, PipelineVersion: pipelineVersion, IsOpenshift: isOpenshift}
+	properties := Properties{InstallNamespace: installedNamespace, DashboardVersion: dashboardVersion, PipelineVersion: pipelineVersion, IsOpenShift: isOpenShift}
 
 	response.WriteEntity(properties)
 }
