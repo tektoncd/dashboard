@@ -54,11 +54,11 @@ func GetDashboardVersion(r Resource, installedNamespace string) string {
 }
 
 // Get pipelines version
-func GetPipelineVersion(r Resource, isOpenshift bool) string {
+func GetPipelineVersion(r Resource, isOpenShift bool) string {
 	version := ""
 	namespacesToCheck := []string{"tekton-pipelines"}
 
-	if isOpenshift {
+	if isOpenShift {
 		namespacesToCheck = append(namespacesToCheck, "openshift-pipelines")
 	}
 
@@ -78,7 +78,7 @@ func GetPipelineVersion(r Resource, isOpenshift bool) string {
 }
 
 // Get whether running on openshift or not
-func IsOpenshift(r Resource, installedNamespace string) bool {
+func IsOpenShift(r Resource, installedNamespace string) bool {
 	namespaces, err := r.K8sClient.CoreV1().Namespaces().List(v1.ListOptions{})
 	if err != nil {
 		logging.Log.Errorf("Error getting the list of namespaces: %s", err.Error())

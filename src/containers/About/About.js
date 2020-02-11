@@ -12,77 +12,92 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
-import { Table } from '@tektoncd/dashboard-components';
 import { InlineNotification } from 'carbon-components-react';
+import { Table } from '@tektoncd/dashboard-components';
+import { getErrorMessage } from '@tektoncd/dashboard-utils';
+
 import { getInstallProperties } from '../../api';
-import { isWebSocketConnected } from '../../reducers';
 
 const initialState = {
-  dashboardInfo: {},
-  isLoaded: false,
-  isNotFinished: true,
-  error: ''
+  dashboardInfo: null,
+  error: null,
+  loading: true
 };
 
+const propertiesToCheck = [
+  'InstallNamespace',
+  'DashboardVersion',
+  'PipelineVersion',
+  'IsOpenShift'
+];
+
 export /* istanbul ignore next */ class About extends Component {
-  constructor(props) {
-    super(props);
-    this.state = initialState;
-  }
+  state = initialState;
 
   componentDidMount() {
     this.fetchDashboardInfo();
   }
 
-  setErrorState(errorsFound, intl) {
-    const errorsFoundList = intl.formatMessage(
+  checkMissingProperties = () => {
+    const { intl } = this.props;
+    const { dashboardInfo } = this.state;
+    const errorsFound = propertiesToCheck
+      .map(property =>
+        dashboardInfo[property] || dashboardInfo[property] === false
+          ? null
+          : property
+      )
+      .filter(Boolean);
+
+    if (!errorsFound.length) {
+      return;
+    }
+
+    const error = intl.formatMessage(
       {
-        id: 'dashboard.error.error',
-        defaultMessage: `{errorsFound} cannot be found`
+        id: 'dashboard.about.missingProperties',
+        defaultMessage: `Could not find: {errorsFound}`
       },
-      { errorsFound }
+      { errorsFound: errorsFound.join(', ') }
     );
 
-    if (this.state.isNotFinished) {
-      this.setState({
-        error: errorsFoundList,
-        isNotFinished: false
-      });
+    this.setState({ error });
+  };
+
+  getDisplayValue = value => {
+    const { intl } = this.props;
+
+    switch (value) {
+      case true:
+        return intl.formatMessage({
+          id: 'dashboard.about.true',
+          defaultMessage: 'True'
+        });
+      default:
+        return value;
     }
-  }
+  };
 
   async fetchDashboardInfo() {
-    const dash = await getInstallProperties();
-    this.setState({
-      dashboardInfo: dash,
-      isLoaded: true
-    });
-  }
-
-  makeLines(property) {
-    let data = '';
-    let value = this.state.dashboardInfo[property];
-    if (this.state.dashboardInfo[property] !== undefined) {
-      if (value === false) {
-        value = 'False';
-      }
-      if (value === true) {
-        value = 'True';
-      }
-      data = {
-        id: property,
-        property,
-        value
-      };
+    try {
+      const dashboardInfo = await getInstallProperties();
+      this.setState(
+        {
+          dashboardInfo,
+          loading: false
+        },
+        this.checkMissingProperties
+      );
+    } catch (error) {
+      this.setState({ error, loading: false });
     }
-    return data;
   }
 
   render() {
-    const { intl, loading } = this.props;
-    const initialHeaders = [
+    const { intl } = this.props;
+    const { dashboardInfo, error, loading } = this.state;
+    const headers = [
       {
         key: 'property',
         header: intl.formatMessage({
@@ -98,74 +113,44 @@ export /* istanbul ignore next */ class About extends Component {
         })
       }
     ];
-    const initialRows = [];
-    if (this.state.dashboardInfo !== '' && this.state.isLoaded === true) {
-      const errorsToDisplay = [];
-      const propertiesToCheck = [
-        'InstallNamespace',
-        'DashboardVersion',
-        'PipelineVersion',
-        'IsOpenshift'
-      ];
-      propertiesToCheck.forEach(element => {
-        const line = this.makeLines(element);
-        if (line.value !== undefined && line.value !== '') {
-          initialRows.push(line);
-        } else {
-          errorsToDisplay.push(element);
+
+    const rows = [];
+    if (dashboardInfo && !loading) {
+      propertiesToCheck.forEach(property => {
+        const value = this.getDisplayValue(dashboardInfo[property]);
+        if (value) {
+          rows.push({
+            id: property,
+            property,
+            value
+          });
         }
       });
-
-      if (errorsToDisplay.length !== 0) {
-        this.setErrorState(errorsToDisplay, intl);
-      }
-
-      return (
-        <>
-          {this.state.error !== '' && (
-            <InlineNotification
-              kind="error"
-              title={intl.formatMessage({
-                id: 'dashboard.displayVersion.error',
-                defaultMessage: 'Error getting data'
-              })}
-              subtitle={this.state.error}
-              lowContrast
-            />
-          )}
-          <h1>
-            {intl.formatMessage({
-              id: 'dashboard.about.title',
-              defaultMessage: 'About'
-            })}
-          </h1>
-          <Table
-            headers={initialHeaders}
-            rows={initialRows}
-            loading={loading}
-          />
-        </>
-      );
     }
 
     return (
       <>
+        {error && (
+          <InlineNotification
+            kind="error"
+            title={intl.formatMessage({
+              id: 'dashboard.about.error',
+              defaultMessage: 'Error getting data'
+            })}
+            subtitle={getErrorMessage(error)}
+            lowContrast
+          />
+        )}
         <h1>
           {intl.formatMessage({
             id: 'dashboard.about.title',
             defaultMessage: 'About'
           })}
         </h1>
-        <Table headers={initialHeaders} rows={initialRows} loading={loading} />
+        <Table headers={headers} rows={rows} loading={loading} />
       </>
     );
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    webSocketConnected: isWebSocketConnected(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(About));
+export default injectIntl(About);
