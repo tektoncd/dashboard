@@ -123,8 +123,8 @@ export function stepsStatus(taskSteps, taskRunStepsStatus = []) {
   When steps are retreived from a TaskRun's status, their order is not guaranteed.
   This function reorders the given unorderedSteps to match the order specified by the given orderedSteps.
   Each step in unorderedSteps must have the same name as a step in the orderedSteps.
-  Unnamed steps are automatically given the name 'unnamed-NUM' where NUM is the step number starting from 1.
-    ex: 'unnamed-3' is the 3rd step
+  Unnamed steps are automatically given the name 'unnamed-NUM' where NUM is the step number starting from 0.
+    ex: 'unnamed-2' is the 3rd step
   None of the unorderedSteps will have an empty name, but some of the orderedSteps may have empty names.
 */
 export function reorderSteps(unorderedSteps, orderedSteps) {
