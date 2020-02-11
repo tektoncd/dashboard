@@ -35,7 +35,6 @@ const eventListener = {
     serviceAccountName: 'my-serviceaccount',
     triggers: [
       {
-        eventListenerNamespace: 'default',
         name: 'my-trigger',
         bindings: [
           { name: 'triggerbinding0' },
@@ -50,11 +49,11 @@ const eventListener = {
             webhook: {
               header: [
                 {
-                  name: 'header0',
+                  name: 'Header0',
                   value: 'value0'
                 },
                 {
-                  name: 'header1',
+                  name: 'Header1',
                   value: ['value1-0', 'value1-1', 'value1-2']
                 }
               ],
@@ -69,7 +68,6 @@ const eventListener = {
         ]
       },
       {
-        eventListenerNamespace: 'foo',
         name: 'my-trigger-1',
         bindings: [{ name: 'triggerbinding1' }],
         template: {
@@ -94,7 +92,6 @@ const eventListener = {
         ]
       },
       {
-        eventListenerNamespace: 'foo',
         name: 'my-trigger-2',
         bindings: [{ name: 'triggerbinding2' }],
         template: {
@@ -113,7 +110,6 @@ const eventListener = {
         ]
       },
       {
-        eventListenerNamespace: 'foo',
         name: 'my-trigger-3',
         bindings: [{ name: 'triggerbinding3' }],
         template: {
