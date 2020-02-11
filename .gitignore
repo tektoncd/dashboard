@@ -17,6 +17,7 @@ node_modules/
 # misc
 npm-debug.log
 yarn-error.log
+stats.json
 
 # System Files
 .DS_Store
