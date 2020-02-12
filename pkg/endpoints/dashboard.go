@@ -14,23 +14,22 @@ limitations under the License.
 package endpoints
 
 import (
-	"os"
 	"strings"
 
 	"github.com/tektoncd/dashboard/pkg/logging"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // Get dashboard version
-func GetDashboardVersion(r Resource) string {
-	properties := Properties{InstallNamespace: os.Getenv("INSTALLED_NAMESPACE")}
+func GetDashboardVersion(r Resource, installedNamespace string) string {
 	version := ""
 
 	listOptions := metav1.ListOptions{
 		LabelSelector: "app=tekton-dashboard",
 	}
 
-	deployments, err := r.K8sClient.AppsV1().Deployments(properties.InstallNamespace).List(listOptions)
+	deployments, err := r.K8sClient.AppsV1().Deployments(installedNamespace).List(listOptions)
 	if err != nil {
 		logging.Log.Errorf("Error getting dashboard deployment: %s", err.Error())
 		return ""
@@ -55,24 +54,117 @@ func GetDashboardVersion(r Resource) string {
 }
 
 // Get pipelines version
-func GetPipelineVersion(r Resource) string {
+func GetPipelineVersion(r Resource, isOpenshift bool) string {
+	version := ""
+	namespacesToCheck := []string{"tekton-pipelines"}
+
+	if isOpenshift {
+		namespacesToCheck = append(namespacesToCheck, "openshift-pipelines")
+	}
+
+	// Go through possible namespaces Tekton Pipelines is installed in
+	// For each namespace if the version is empty then it goes through to get the deployments within that namespace to try and locate the Tekton Pipelines deployment to get the version
+	for _, versionAttempt := range namespacesToCheck {
+		if version == "" {
+			version = getPipelineDeployments(r, versionAttempt)
+		}
+	}
+
+	if version == "" {
+		logging.Log.Error("Error getting the Tekton Pipelines deployment version. Version is unknown")
+		return ""
+	}
+	return version
+}
+
+// Get whether running on openshift or not
+func IsOpenshift(r Resource, installedNamespace string) bool {
+	namespaces, err := r.K8sClient.CoreV1().Namespaces().List(v1.ListOptions{})
+	if err != nil {
+		logging.Log.Errorf("Error getting the list of namespaces: %s", err.Error())
+		return false
+	}
+
+	openshiftPipelineFound := false
+	tektonPipelinesFound := false
+	routeFound := false
+	for _, namespace := range namespaces.Items {
+		namespaceName := namespace.GetName()
+
+		if namespaceName == "openshift-pipelines" {
+			openshiftPipelineFound = SearchForPipelineDeployments(r, "openshift-pipelines")
+		}
+		if namespaceName == "tekton-pipelines" {
+			tektonPipelinesFound = SearchForPipelineDeployments(r, "tekton-pipelines")
+		}
+	}
+
+	routes, err := r.RouteClient.Route().Routes(installedNamespace).List(v1.ListOptions{})
+	if err != nil {
+		logging.Log.Errorf("Error getting the list of routes: %s", err.Error())
+	}
+
+	for _, route := range routes.Items {
+		routeA := route.GetName()
+		if routeA == "tekton-dashboard" {
+			routeFound = true
+		}
+	}
+
+	if (openshiftPipelineFound == true || tektonPipelinesFound == true) && routeFound == true {
+		return true
+	}
+	return false
+}
+
+// Get Deployments in namespace  and search for tekton-pipelines-controller
+func SearchForPipelineDeployments(r Resource, namespace string) bool {
+	deployments, err := r.K8sClient.AppsV1().Deployments(namespace).List(v1.ListOptions{})
+	if err != nil {
+		logging.Log.Errorf("Error getting the %s deployment: %s", namespace, err.Error())
+		return false
+	}
+
+	for _, deployment := range deployments.Items {
+		deploymentName := deployment.ObjectMeta.GetName()
+		if deploymentName == "tekton-pipelines-controller" {
+			return true
+		}
+	}
+	return false
+}
+
+// Go through pipeline deployments and find what version it is
+func getPipelineDeployments(r Resource, namespace string) string {
 	version := ""
 
 	listOptions := metav1.ListOptions{
 		LabelSelector: "app.kubernetes.io/component=controller,app.kubernetes.io/name=tekton-pipelines",
 	}
 
-	deployments, err := r.K8sClient.AppsV1().Deployments("tekton-pipelines").List(listOptions)
+	deployments, err := r.K8sClient.AppsV1().Deployments(namespace).List(listOptions)
 	if err != nil {
-		logging.Log.Errorf("Error getting the tekton pipelines deployment: %s", err.Error())
+		logging.Log.Errorf("Error getting the Tekton Pipelines deployment: %s", err.Error())
 		return ""
 	}
 
 	for _, deployment := range deployments.Items {
 		deploymentAnnotations := deployment.Spec.Template.GetAnnotations()
 
+		if namespace == "openshift-pipelines" {
+			deploymentImage := deployment.Spec.Template.Spec.Containers[0].Image
+			if strings.Contains(deploymentImage, "openshift-pipeline/tektoncd-pipeline-controller") && strings.Contains(deploymentImage, ":") {
+				s := strings.SplitAfter(deploymentImage, ":")
+				if s[1] != "" {
+					version = s[1]
+				}
+			}
+		}
+
 		// For master of Tekton Pipelines
-		version = deploymentAnnotations["pipeline.tekton.dev/release"]
+		if version == "" {
+			version = deploymentAnnotations["pipeline.tekton.dev/release"]
+		}
 
 		// For Tekton Pipelines 0.10.0 + 0.10.1
 		if version == "" {
@@ -92,9 +184,5 @@ func GetPipelineVersion(r Resource) string {
 		}
 	}
 
-	if version == "" {
-		logging.Log.Error("Error getting the tekton pipelines deployment version. Version is unknown")
-		return ""
-	}
 	return version
 }
