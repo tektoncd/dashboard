@@ -63,8 +63,14 @@ export /* istanbul ignore next */ class About extends Component {
 
   makeLines(property) {
     let data = '';
-    const value = this.state.dashboardInfo[property];
+    let value = this.state.dashboardInfo[property];
     if (this.state.dashboardInfo[property] !== undefined) {
+      if (value === false) {
+        value = 'False';
+      }
+      if (value === true) {
+        value = 'True';
+      }
       data = {
         id: property,
         property,
@@ -98,7 +104,8 @@ export /* istanbul ignore next */ class About extends Component {
       const propertiesToCheck = [
         'InstallNamespace',
         'DashboardVersion',
-        'PipelineVersion'
+        'PipelineVersion',
+        'IsOpenshift'
       ];
       propertiesToCheck.forEach(element => {
         const line = this.makeLines(element);
@@ -120,7 +127,7 @@ export /* istanbul ignore next */ class About extends Component {
               kind="error"
               title={intl.formatMessage({
                 id: 'dashboard.displayVersion.error',
-                defaultMessage: 'Error getting version'
+                defaultMessage: 'Error getting data'
               })}
               subtitle={this.state.error}
               lowContrast

@@ -35,7 +35,8 @@ it('About renders errors when undefined field', async () => {
   jest.spyOn(API, 'getInstallProperties').mockImplementation(() => ({
     InstallNamespace: 'tekton-pipelines',
     DashboardVersion: '',
-    PipelineVersion: 'v0.10.0'
+    PipelineVersion: 'v0.10.0',
+    IsOpenshift: 'True'
   }));
 
   const store = mockStore({
@@ -55,9 +56,11 @@ it('About renders errors when undefined field', async () => {
   expect(getByText('Value')).toBeTruthy();
   expect(getByText('InstallNamespace')).toBeTruthy();
   expect(getByText('PipelineVersion')).toBeTruthy();
+  expect(getByText('IsOpenshift')).toBeTruthy();
   expect(getByText('tekton-pipelines')).toBeTruthy();
   expect(getByText('v0.10.0')).toBeTruthy();
-  expect(getByText('Error getting version')).toBeTruthy();
+  expect(getByText('True')).toBeTruthy();
+  expect(getByText('Error getting data')).toBeTruthy();
   expect(getByText('DashboardVersion cannot be found')).toBeTruthy();
 });
 
@@ -65,7 +68,8 @@ it('About renders correctly', async () => {
   jest.spyOn(API, 'getInstallProperties').mockImplementation(() => ({
     InstallNamespace: 'tekton-pipelines',
     DashboardVersion: 'v0.100.0',
-    PipelineVersion: 'v0.10.0'
+    PipelineVersion: 'v0.10.0',
+    IsOpenshift: 'False'
   }));
 
   const store = mockStore({
@@ -86,9 +90,11 @@ it('About renders correctly', async () => {
   expect(getByText('InstallNamespace')).toBeTruthy();
   expect(getByText('DashboardVersion')).toBeTruthy();
   expect(getByText('PipelineVersion')).toBeTruthy();
+  expect(getByText('IsOpenshift')).toBeTruthy();
   expect(getByText('tekton-pipelines')).toBeTruthy();
   expect(getByText('v0.100.0')).toBeTruthy();
   expect(getByText('v0.10.0')).toBeTruthy();
+  expect(getByText('False')).toBeTruthy();
 });
 
 it('About renders correctly when not loaded', async () => {
@@ -117,7 +123,8 @@ it('About renders errors when there are multiple undefined fields', async () => 
   jest.spyOn(API, 'getInstallProperties').mockImplementation(() => ({
     InstallNamespace: 'tekton-pipelines',
     DashboardVersion: '',
-    PipelineVersion: ''
+    PipelineVersion: '',
+    IsOpenshift: 'True'
   }));
 
   const store = mockStore({
@@ -137,7 +144,9 @@ it('About renders errors when there are multiple undefined fields', async () => 
   expect(getByText('Value')).toBeTruthy();
   expect(getByText('InstallNamespace')).toBeTruthy();
   expect(getByText('tekton-pipelines')).toBeTruthy();
-  expect(getByText('Error getting version')).toBeTruthy();
+  expect(getByText('IsOpenshift')).toBeTruthy();
+  expect(getByText('True')).toBeTruthy();
+  expect(getByText('Error getting data')).toBeTruthy();
   expect(
     getByText('DashboardVersionPipelineVersion cannot be found')
   ).toBeTruthy();
