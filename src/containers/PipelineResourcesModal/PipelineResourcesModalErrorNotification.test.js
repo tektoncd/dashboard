@@ -83,7 +83,7 @@ it('error notification appears', async () => {
   fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
     target: { value: 'test-pipeline-resource' }
   });
-  fireEvent.click(getByText(/select namespace/i));
+  fireEvent.click(getByPlaceholderText(/select namespace/i));
   await waitForElement(() => getByText(/default/i));
   fireEvent.click(getByText(/default/i));
 

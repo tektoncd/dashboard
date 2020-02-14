@@ -140,7 +140,7 @@ it('SideNav selects namespace when no namespace in URL', async () => {
     }
   });
   const selectNamespace = jest.fn();
-  const { getByText } = renderWithRouter(
+  const { getByText, getByValue } = renderWithRouter(
     <Provider store={store}>
       <SideNav
         extensions={[]}
@@ -149,7 +149,7 @@ it('SideNav selects namespace when no namespace in URL', async () => {
       />
     </Provider>
   );
-  fireEvent.click(getByText(namespace));
+  fireEvent.click(getByValue(namespace));
   fireEvent.click(getByText(otherNamespace));
   expect(selectNamespace).toHaveBeenCalledWith(otherNamespace);
 });
@@ -169,7 +169,7 @@ it('SideNav redirects to root when all namespaces selected on namespaced URL', a
   });
   const selectNamespace = jest.fn();
   const push = jest.fn();
-  const { getByText } = renderWithRouter(
+  const { getByText, getByValue } = renderWithRouter(
     <Provider store={store}>
       <SideNav
         extensions={[]}
@@ -180,7 +180,7 @@ it('SideNav redirects to root when all namespaces selected on namespaced URL', a
       />
     </Provider>
   );
-  fireEvent.click(getByText(namespace));
+  fireEvent.click(getByValue(namespace));
   fireEvent.click(getByText(/all namespaces/i));
   expect(selectNamespace).toHaveBeenCalledWith(ALL_NAMESPACES);
   expect(push).toHaveBeenCalledWith('/');
@@ -201,7 +201,7 @@ it('SideNav redirects to TaskRuns page when all namespaces selected on namespace
   });
   const selectNamespace = jest.fn();
   const push = jest.fn();
-  const { getByText } = renderWithRouter(
+  const { getByText, getByValue } = renderWithRouter(
     <Provider store={store}>
       <SideNav
         extensions={[]}
@@ -212,7 +212,7 @@ it('SideNav redirects to TaskRuns page when all namespaces selected on namespace
       />
     </Provider>
   );
-  fireEvent.click(getByText(namespace));
+  fireEvent.click(getByValue(namespace));
   fireEvent.click(getByText(/all namespaces/i));
   expect(selectNamespace).toHaveBeenCalledWith(ALL_NAMESPACES);
   expect(push).toHaveBeenCalledWith(urls.taskRuns.all());
@@ -233,7 +233,7 @@ it('SideNav redirects to PipelineResources page when all namespaces selected on 
   });
   const selectNamespace = jest.fn();
   const push = jest.fn();
-  const { getByText } = renderWithRouter(
+  const { getByText, getByValue } = renderWithRouter(
     <Provider store={store}>
       <SideNav
         extensions={[]}
@@ -247,7 +247,7 @@ it('SideNav redirects to PipelineResources page when all namespaces selected on 
       />
     </Provider>
   );
-  fireEvent.click(getByText(namespace));
+  fireEvent.click(getByValue(namespace));
   fireEvent.click(getByText(/all namespaces/i));
   expect(selectNamespace).toHaveBeenCalledWith(ALL_NAMESPACES);
   expect(push).toHaveBeenCalledWith(urls.pipelineResources.all());
@@ -268,7 +268,7 @@ it('SideNav redirects to Pipelines page when all namespaces selected on namespac
   });
   const selectNamespace = jest.fn();
   const push = jest.fn();
-  const { getByText } = renderWithRouter(
+  const { getByText, getByValue } = renderWithRouter(
     <Provider store={store}>
       <SideNav
         extensions={[]}
@@ -282,7 +282,7 @@ it('SideNav redirects to Pipelines page when all namespaces selected on namespac
       />
     </Provider>
   );
-  fireEvent.click(getByText(namespace));
+  fireEvent.click(getByValue(namespace));
   fireEvent.click(getByText(/all namespaces/i));
   expect(selectNamespace).toHaveBeenCalledWith(ALL_NAMESPACES);
   expect(push).toHaveBeenCalledWith(urls.pipelines.all());
@@ -303,7 +303,7 @@ it('SideNav redirects to ServiceAccounts page when all namespaces selected on na
   });
   const selectNamespace = jest.fn();
   const push = jest.fn();
-  const { getByText } = renderWithRouter(
+  const { getByText, getByValue } = renderWithRouter(
     <Provider store={store}>
       <SideNav
         extensions={[]}
@@ -317,7 +317,7 @@ it('SideNav redirects to ServiceAccounts page when all namespaces selected on na
       />
     </Provider>
   );
-  fireEvent.click(getByText(namespace));
+  fireEvent.click(getByValue(namespace));
   fireEvent.click(getByText(/all namespaces/i));
   expect(selectNamespace).toHaveBeenCalledWith(ALL_NAMESPACES);
   expect(push).toHaveBeenCalledWith(urls.serviceAccounts.all());
@@ -338,7 +338,7 @@ it('SideNav redirects to EventListeners page when all namespaces selected on nam
   });
   const selectNamespace = jest.fn();
   const push = jest.fn();
-  const { getByText } = renderWithRouter(
+  const { getByText, getByValue } = renderWithRouter(
     <Provider store={store}>
       <SideNav
         extensions={[]}
@@ -352,7 +352,7 @@ it('SideNav redirects to EventListeners page when all namespaces selected on nam
       />
     </Provider>
   );
-  fireEvent.click(getByText(namespace));
+  fireEvent.click(getByValue(namespace));
   fireEvent.click(getByText(/all namespaces/i));
   expect(selectNamespace).toHaveBeenCalledWith(ALL_NAMESPACES);
   expect(push).toHaveBeenCalledWith(urls.eventListeners.all());
@@ -373,7 +373,7 @@ it('SideNav redirects to TriggerBindings page when all namespaces selected on na
   });
   const selectNamespace = jest.fn();
   const push = jest.fn();
-  const { getByText } = renderWithRouter(
+  const { getByText, getByValue } = renderWithRouter(
     <Provider store={store}>
       <SideNav
         extensions={[]}
@@ -387,7 +387,7 @@ it('SideNav redirects to TriggerBindings page when all namespaces selected on na
       />
     </Provider>
   );
-  fireEvent.click(getByText(namespace));
+  fireEvent.click(getByValue(namespace));
   fireEvent.click(getByText(/all namespaces/i));
   expect(selectNamespace).toHaveBeenCalledWith(ALL_NAMESPACES);
   expect(push).toHaveBeenCalledWith(urls.triggerBindings.all());
@@ -408,7 +408,7 @@ it('SideNav redirects to TriggerTemplates page when all namespaces selected on n
   });
   const selectNamespace = jest.fn();
   const push = jest.fn();
-  const { getByText } = renderWithRouter(
+  const { getByText, getByValue } = renderWithRouter(
     <Provider store={store}>
       <SideNav
         extensions={[]}
@@ -422,7 +422,7 @@ it('SideNav redirects to TriggerTemplates page when all namespaces selected on n
       />
     </Provider>
   );
-  fireEvent.click(getByText(namespace));
+  fireEvent.click(getByValue(namespace));
   fireEvent.click(getByText(/all namespaces/i));
   expect(selectNamespace).toHaveBeenCalledWith(ALL_NAMESPACES);
   expect(push).toHaveBeenCalledWith(urls.triggerTemplates.all());
@@ -445,7 +445,7 @@ it('SideNav updates namespace in URL', async () => {
   });
   const selectNamespace = jest.fn();
   const push = jest.fn();
-  const { getByText } = renderWithRouter(
+  const { getByText, getByValue } = renderWithRouter(
     <Provider store={store}>
       <SideNav
         extensions={[]}
@@ -460,7 +460,7 @@ it('SideNav updates namespace in URL', async () => {
     </Provider>
   );
   selectNamespace.mockClear();
-  fireEvent.click(getByText(namespace));
+  fireEvent.click(getByValue(namespace));
   fireEvent.click(getByText(otherNamespace));
   expect(selectNamespace).not.toHaveBeenCalled();
   expect(push).toHaveBeenCalledWith(expect.stringContaining(otherNamespace));

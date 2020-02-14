@@ -23,17 +23,15 @@ limitations under the License.
   background-color: white;
   min-height: 46rem;
 
-  .bx--dropdown.bx--list-box {
-    margin: 0rem;
+  .bx--combo-box.bx--list-box {
     width: 30%;
-    border-bottom: 1px solid $ui-04;
   }
 
   .bx--toast-notification {
     margin: 2.8rem;
   }
 
-  .bx--dropdown__wrapper {
+  .bx--list-box__wrapper {
     margin-left: 2.8rem;
   }
 

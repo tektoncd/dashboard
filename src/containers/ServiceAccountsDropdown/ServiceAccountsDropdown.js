@@ -42,7 +42,12 @@ class ServiceAccountsDropdown extends React.Component {
   }
 
   render() {
-    const { namespace, ...rest } = this.props;
+    const {
+      fetchServiceAccounts: _fetchServiceAccounts, // extract props that are not valid for the dropdown
+      namespace,
+      webSocketConnected,
+      ...rest
+    } = this.props;
     const emptyText =
       namespace === ALL_NAMESPACES
         ? `No Service Accounts found`

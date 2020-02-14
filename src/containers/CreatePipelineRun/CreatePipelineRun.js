@@ -253,7 +253,8 @@ class CreatePipelineRun extends React.Component {
     });
   };
 
-  handleNamespaceChange = ({ selectedItem: { text } }) => {
+  handleNamespaceChange = ({ selectedItem }) => {
+    const { text = '' } = selectedItem || {};
     // Reset pipeline and service account when namespace changes
     if (text !== this.state[NAMESPACE]) {
       this.setState({
@@ -273,7 +274,8 @@ class CreatePipelineRun extends React.Component {
     }));
   };
 
-  handlePipelineChange = ({ selectedItem: { text } }) => {
+  handlePipelineChange = ({ selectedItem }) => {
+    const { text } = selectedItem || {};
     if (text !== this.state[PIPELINE_REF]) {
       this.setState((state, props) => {
         const pipelineInfo = parsePipelineInfo(
@@ -550,9 +552,10 @@ class CreatePipelineRun extends React.Component {
                     const value = this.state.resources[resourceSpec.name];
                     return value ? { id: value, text: value } : '';
                   })()}
-                  onChange={({ selectedItem: { text } }) =>
-                    this.handleResourceChange(resourceSpec.name, text)
-                  }
+                  onChange={({ selectedItem }) => {
+                    const { text } = selectedItem || {};
+                    this.handleResourceChange(resourceSpec.name, text);
+                  }}
                 />
               ))}
             </FormGroup>
@@ -600,9 +603,10 @@ class CreatePipelineRun extends React.Component {
                   : ''
               }
               disabled={this.isDisabled()}
-              onChange={({ selectedItem: { text } }) =>
-                this.setState({ serviceAccount: text })
-              }
+              onChange={({ selectedItem }) => {
+                const { text } = selectedItem || {};
+                this.setState({ serviceAccount: text });
+              }}
             />
             <TextInput
               id="create-pipelinerun--timeout"

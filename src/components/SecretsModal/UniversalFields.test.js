@@ -91,7 +91,12 @@ it('UniversalFields renders with blank inputs', () => {
     selectedNamespace: 'default',
     invalidFields: {}
   };
-  const { getByLabelText, getAllByDisplayValue, getByText } = renderWithIntl(
+  const {
+    getByLabelText,
+    getAllByDisplayValue,
+    getByText,
+    getByDisplayValue
+  } = renderWithIntl(
     <Provider store={store}>
       <UniversalFields {...props} />
     </Provider>
@@ -100,7 +105,7 @@ it('UniversalFields renders with blank inputs', () => {
   expect(getByLabelText(/Namespace/i)).toBeTruthy();
   expect(getByLabelText(/Access To/i)).toBeTruthy();
   expect(getByText(/Git Server/i)).toBeTruthy();
-  expect(getByText(/default/i)).toBeTruthy();
+  expect(getByDisplayValue(/default/i)).toBeTruthy();
   expect(getAllByDisplayValue('').length).toEqual(1);
 });
 

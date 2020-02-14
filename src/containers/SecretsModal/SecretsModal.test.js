@@ -359,7 +359,7 @@ it("Create Secret doesn't error when contains a valid namespace", () => {
   fireEvent.change(getByPlaceholderText(/secret-name/i), {
     target: { value: 'the-cat-goes-meow' }
   });
-  fireEvent.click(getByText(/select namespace/i));
+  fireEvent.click(getByPlaceholderText(/select namespace/i));
   fireEvent.click(getByText(/default/i));
   fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeFalsy();
@@ -379,7 +379,7 @@ it("Create Secret doesn't error when Docker Registry is selected", () => {
   fireEvent.change(getByPlaceholderText(/secret-name/i), {
     target: { value: 'the-cat-goes-meow' }
   });
-  fireEvent.click(getByText(/select namespace/i));
+  fireEvent.click(getByPlaceholderText(/select namespace/i));
   fireEvent.click(getByText(/default/i));
 
   fireEvent.click(getByText(/git server/i));
@@ -403,7 +403,7 @@ it("Create Secret doesn't error when a username is entered", () => {
   fireEvent.change(getByPlaceholderText(/secret-name/i), {
     target: { value: 'the-cat-goes-meow' }
   });
-  fireEvent.click(getByText(/select namespace/i));
+  fireEvent.click(getByPlaceholderText(/select namespace/i));
   fireEvent.click(getByText(/default/i));
 
   fireEvent.change(getByPlaceholderText(/username/i), {
@@ -428,7 +428,7 @@ it("Create Secret doesn't error when a password is entered", () => {
   fireEvent.change(getByPlaceholderText(/secret-name/i), {
     target: { value: 'the-cat-goes-meow' }
   });
-  fireEvent.click(getByText(/select namespace/i));
+  fireEvent.click(getByPlaceholderText(/select namespace/i));
   fireEvent.click(getByText(/default/i));
 
   fireEvent.change(getByPlaceholderText(/username/i), {

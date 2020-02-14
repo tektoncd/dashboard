@@ -293,7 +293,7 @@ it("Create PipelineResource doesn't error when contains a valid namespace", () =
   fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
     target: { value: 'the-cat-goes-meow' }
   });
-  fireEvent.click(getByText(/select namespace/i));
+  fireEvent.click(getByPlaceholderText(/select namespace/i));
   fireEvent.click(getByText(/default/i));
   fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeFalsy();
@@ -311,7 +311,7 @@ it("Create PipelineResource doesn't error when a url is entered", () => {
   fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
     target: { value: 'the-cat-goes-meow' }
   });
-  fireEvent.click(getByText(/select namespace/i));
+  fireEvent.click(getByPlaceholderText(/select namespace/i));
   fireEvent.click(getByText(/default/i));
 
   fireEvent.change(getByPlaceholderText(/pipeline-resource-url/i), {
@@ -334,7 +334,7 @@ it("Create PipelineResource doesn't error when a revision is entered", () => {
   fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
     target: { value: 'the-cat-goes-meow' }
   });
-  fireEvent.click(getByText(/select namespace/i));
+  fireEvent.click(getByPlaceholderText(/select namespace/i));
   fireEvent.click(getByText(/default/i));
 
   fireEvent.change(getByPlaceholderText(/pipeline-resource-revision/i), {

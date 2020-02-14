@@ -208,16 +208,17 @@ const testPipelineSpec = (pipelineId, queryByText, queryByValue) => {
   }
 };
 
-const selectPipeline1 = async getByText => {
-  fireEvent.click(getByText(/select pipeline/i));
+const selectPipeline1 = async ({ getByPlaceholderText, getByText }) => {
+  fireEvent.click(getByPlaceholderText(/select pipeline/i));
   const pipeline1 = await waitForElement(() => getByText(/pipeline-1/i));
   fireEvent.click(pipeline1);
 };
 
-const fillPipeline1Resources = getByText => {
-  fireEvent.click(getByText(/select pipelineresource/i));
+const fillPipeline1Resources = ({ getAllByPlaceholderText, getByText }) => {
+  const resourceDropdowns = getAllByPlaceholderText(/select pipelineresource/i);
+  fireEvent.click(resourceDropdowns[0]);
   fireEvent.click(getByText(/pipeline-resource-1/i));
-  fireEvent.click(getByText(/select pipelineresource/i));
+  fireEvent.click(resourceDropdowns[1]);
   fireEvent.click(getByText(/pipeline-resource-2/i));
 };
 
@@ -230,17 +231,18 @@ const fillPipeline1Params = getByPlaceholderText => {
   });
 };
 
-const selectPipeline1AndFillSpec = async (
-  getByText,
+const selectPipeline1AndFillSpec = async ({
+  getAllByPlaceholderText,
   getByPlaceholderText,
+  getByText,
   queryByText,
   queryByValue
-) => {
+}) => {
   // Select pipeline-1 and verify spec details are displayed
-  await selectPipeline1(getByText);
+  await selectPipeline1({ getByPlaceholderText, getByText });
   testPipelineSpec('id-pipeline-1', queryByText, queryByValue);
   // Fill pipeline spec
-  fillPipeline1Resources(getByText);
+  fillPipeline1Resources({ getAllByPlaceholderText, getByText });
   fillPipeline1Params(getByPlaceholderText);
 };
 
@@ -267,9 +269,10 @@ describe('CreatePipelineRun', () => {
     const mockTestStore = mockStore(testStore);
     jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
     const {
-      getByText,
+      getAllByPlaceholderText,
       getAllByText,
       getByPlaceholderText,
+      getByText,
       queryByText,
       queryByValue
     } = renderWithIntl(
@@ -277,12 +280,13 @@ describe('CreatePipelineRun', () => {
         <CreatePipelineRun {...props} />
       </Provider>
     );
-    await selectPipeline1AndFillSpec(
-      getByText,
+    await selectPipeline1AndFillSpec({
+      getAllByPlaceholderText,
       getByPlaceholderText,
+      getByText,
       queryByText,
       queryByValue
-    );
+    });
     // Submit
     const errorResponseMock = {
       response: { status: 400, text: () => Promise.resolve('') }
@@ -300,9 +304,10 @@ describe('CreatePipelineRun', () => {
     const mockTestStore = mockStore(testStore);
     jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
     const {
-      getByText,
+      getAllByPlaceholderText,
       getAllByText,
       getByPlaceholderText,
+      getByText,
       queryByText,
       queryByValue
     } = renderWithIntl(
@@ -310,12 +315,13 @@ describe('CreatePipelineRun', () => {
         <CreatePipelineRun {...props} />
       </Provider>
     );
-    await selectPipeline1AndFillSpec(
-      getByText,
+    await selectPipeline1AndFillSpec({
+      getAllByPlaceholderText,
       getByPlaceholderText,
+      getByText,
       queryByText,
       queryByValue
-    );
+    });
     // Submit
     const errorResponseMock = {
       response: { status: 401, text: () => Promise.resolve('example message') }
@@ -333,48 +339,44 @@ describe('CreatePipelineRun', () => {
 
   it('renders empty, dropdowns disabled when no namespace selected', async () => {
     const {
+      getByPlaceholderText,
+      getByText,
       queryByText,
       queryAllByText,
-      queryByPlaceholderText,
-      getByText
+      queryByPlaceholderText
     } = renderWithIntl(
       <Provider store={mockStore(testStore)}>
         <CreatePipelineRun open namespace="" />
       </Provider>
     );
     expect(queryByText(/create pipelinerun/i)).toBeTruthy();
-    expect(queryByText(/select namespace/i)).toBeTruthy();
-    expect(queryByText(/select pipeline/i)).toBeTruthy();
+    expect(queryByPlaceholderText(/select namespace/i)).toBeTruthy();
+    expect(queryByPlaceholderText(/select pipeline/i)).toBeTruthy();
     expect(
-      document
-        .getElementById('create-pipelinerun--pipelines-dropdown')
-        .className.includes('disabled')
+      document.getElementById('create-pipelinerun--pipelines-dropdown').disabled
     ).toBe(true);
-    expect(queryByText(/select service account/i)).toBeTruthy();
+    expect(queryByPlaceholderText(/select service account/i)).toBeTruthy();
     expect(
-      document
-        .getElementById('create-pipelinerun--sa-dropdown')
-        .className.includes('disabled')
+      document.getElementById('create-pipelinerun--sa-dropdown').disabled
     ).toBe(true);
     expect(queryByPlaceholderText(/60/i)).toBeTruthy();
     expect(queryByText(/cancel/i)).toBeTruthy();
     expect(submitButton(queryAllByText)).toBeTruthy();
 
     // Check dropdowns enabled when namespace selected
-    fireEvent.click(await waitForElement(() => getByText(/select namespace/i)));
+    fireEvent.click(
+      await waitForElement(() => getByPlaceholderText(/select namespace/i))
+    );
     fireEvent.click(await waitForElement(() => getByText(/namespace-1/i)));
     await wait(() =>
       expect(
-        document
-          .getElementById('create-pipelinerun--pipelines-dropdown')
-          .className.includes('disabled')
+        document.getElementById('create-pipelinerun--pipelines-dropdown')
+          .disabled
       ).toBe(false)
     );
     await wait(() =>
       expect(
-        document
-          .getElementById('create-pipelinerun--sa-dropdown')
-          .className.includes('disabled')
+        document.getElementById('create-pipelinerun--sa-dropdown').disabled
       ).toBe(false)
     );
   });
@@ -384,8 +386,9 @@ describe('CreatePipelineRun', () => {
     jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
     const {
       getByText,
-      getAllByText,
+      getAllByPlaceholderText,
       getByPlaceholderText,
+      queryByDisplayValue,
       queryByText,
       queryByValue
     } = renderWithIntl(
@@ -393,23 +396,23 @@ describe('CreatePipelineRun', () => {
         <CreatePipelineRun {...props} />
       </Provider>
     );
-    expect(queryByText(/namespace-1/i)).toBeTruthy();
+    expect(queryByDisplayValue(/namespace-1/i)).toBeTruthy();
     // Select pipeline-1 and verify spec details are displayed
-    await selectPipeline1(getByText);
+    await selectPipeline1({ getByText, getByPlaceholderText });
     testPipelineSpec('id-pipeline-1', queryByText, queryByValue);
     // Fill pipeline spec
-    fillPipeline1Resources(getByText);
+    fillPipeline1Resources({
+      getAllByPlaceholderText,
+      getByText
+    });
     fillPipeline1Params(getByPlaceholderText);
-    expect(queryByText(/pipeline-resource-1/i)).toBeTruthy();
-    expect(queryByText(/pipeline-resource-2/i)).toBeTruthy();
+    expect(queryByDisplayValue(/pipeline-resource-1/i)).toBeTruthy();
+    expect(queryByDisplayValue(/pipeline-resource-2/i)).toBeTruthy();
     expect(queryByValue(/value-1/i)).toBeTruthy();
     expect(queryByValue(/value-2/i)).toBeTruthy();
-    // Select pipeline-1 and verify spec details do not change
-    fireEvent.click(getAllByText(/pipeline-1/i)[1]);
-    fireEvent.click(getAllByText(/pipeline-1/i)[2]);
 
     // Select pipeline-2 and verify spec details are displayed
-    fireEvent.click(getAllByText(/pipeline-1/i)[1]);
+    fireEvent.click(queryByValue(/pipeline-1/i));
     fireEvent.click(getByText(/pipeline-2/i));
     testPipelineSpec('id-pipeline-2', queryByText, queryByValue);
   });
@@ -469,39 +472,39 @@ describe('CreatePipelineRun', () => {
   it('resets pipeline and service account when namespace changes', () => {
     const mockTestStore = mockStore(testStore);
     jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
-    const { getByText, getAllByText, queryByText } = renderWithIntl(
+    const { getByPlaceholderText, getByText, getByValue } = renderWithIntl(
       <Provider store={mockTestStore}>
         <CreatePipelineRun {...props} />
       </Provider>
     );
-    fireEvent.click(getByText(/select pipeline/i));
+    fireEvent.click(getByPlaceholderText(/select pipeline/i));
     fireEvent.click(getByText(/pipeline-1/i));
-    fireEvent.click(getByText(/select service account/i));
+    fireEvent.click(getByPlaceholderText(/select service account/i));
     fireEvent.click(getByText(/service-account-1/i));
     // Change selected namespace to the same namespace (expect no change)
+    fireEvent.click(getByValue(/namespace-1/i));
     fireEvent.click(getByText(/namespace-1/i));
-    fireEvent.click(getAllByText(/namespace-1/i)[1]);
-    expect(queryByText(/pipeline-1/i)).toBeTruthy();
-    expect(queryByText(/service-account-1/i)).toBeTruthy();
+    expect(getByValue(/pipeline-1/i)).toBeTruthy();
+    expect(getByValue(/service-account-1/i)).toBeTruthy();
     // Change selected namespace
-    fireEvent.click(getByText(/namespace-1/i));
+    fireEvent.click(getByValue(/namespace-1/i));
     fireEvent.click(getByText(/namespace-2/i));
     // Verify that pipeline and service account value have reset
-    expect(queryByText(/select pipeline/i)).toBeTruthy();
-    expect(queryByText(/select service account/i)).toBeTruthy();
+    expect(getByPlaceholderText(/select pipeline/i)).toBeTruthy();
+    expect(getByPlaceholderText(/select service account/i)).toBeTruthy();
   });
 
   it('resets pipeline and service account when namespace changes controlled', () => {
     const mockTestStore = mockStore(testStore);
     jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
-    const { rerender, getByText, queryByText } = renderWithIntl(
+    const { rerender, getByPlaceholderText, getByText } = renderWithIntl(
       <Provider store={mockTestStore}>
         <CreatePipelineRun {...props} />
       </Provider>
     );
-    fireEvent.click(getByText(/select pipeline/i));
+    fireEvent.click(getByPlaceholderText(/select pipeline/i));
     fireEvent.click(getByText(/pipeline-1/i));
-    fireEvent.click(getByText(/select service account/i));
+    fireEvent.click(getByPlaceholderText(/select service account/i));
     fireEvent.click(getByText(/service-account-1/i));
     // Change selected namespace
     rerenderWithIntl(
@@ -511,17 +514,18 @@ describe('CreatePipelineRun', () => {
       </Provider>
     );
     // Verify that pipeline and service account value have reset
-    expect(queryByText(/select pipeline/i)).toBeTruthy();
-    expect(queryByText(/select service account/i)).toBeTruthy();
+    expect(getByPlaceholderText(/select pipeline/i)).toBeTruthy();
+    expect(getByPlaceholderText(/select service account/i)).toBeTruthy();
   });
 
   it('submits form', async () => {
     const mockTestStore = mockStore(testStore);
     jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
     const {
-      getByText,
+      getAllByPlaceholderText,
       getAllByText,
       getByPlaceholderText,
+      getByText,
       queryByText,
       queryByValue
     } = renderWithIntl(
@@ -529,15 +533,15 @@ describe('CreatePipelineRun', () => {
         <CreatePipelineRun {...props} />
       </Provider>
     );
-    expect(queryByText(/namespace-1/i)).toBeTruthy();
+    expect(queryByValue(/namespace-1/i)).toBeTruthy();
     // Select pipeline-1 and verify spec details are displayed
-    await selectPipeline1(getByText);
+    await selectPipeline1({ getByPlaceholderText, getByText });
     testPipelineSpec('id-pipeline-1', queryByText, queryByValue);
     // Fill pipeline spec
-    fillPipeline1Resources(getByText);
+    fillPipeline1Resources({ getAllByPlaceholderText, getByText });
     fillPipeline1Params(getByPlaceholderText);
     // Fill service account
-    fireEvent.click(getByText(/select service account/i));
+    fireEvent.click(getByPlaceholderText(/select service account/i));
     fireEvent.click(getByText(/service-account-1/i));
     // Fill timeout
     fireEvent.change(getByPlaceholderText(/60/i), {
@@ -592,9 +596,10 @@ describe('CreatePipelineRun', () => {
     const mockTestStore = mockStore(testStore);
     jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
     const {
-      getByText,
+      getAllByPlaceholderText,
       getAllByText,
       getByPlaceholderText,
+      getByText,
       queryByText
     } = renderWithIntl(
       <Provider store={mockTestStore}>
@@ -607,9 +612,9 @@ describe('CreatePipelineRun', () => {
     expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
     expect(queryByText(pipelineValidationErrorRegExp)).toBeTruthy();
     // Fix validation error
-    fireEvent.click(getByText(/select namespace/i));
+    fireEvent.click(getByPlaceholderText(/select namespace/i));
     fireEvent.click(getByText(/namespace-1/i));
-    await selectPipeline1(getByText);
+    await selectPipeline1({ getByPlaceholderText, getByText });
     expect(queryByText(pipelineValidationErrorRegExp)).toBeFalsy();
     expect(queryByText(namespaceValidationErrorRegExp)).toBeFalsy();
     // Test validation on pipeline1 spec
@@ -617,7 +622,7 @@ describe('CreatePipelineRun', () => {
     expect(queryByText(pipelineResourceValidationErrorRegExp)).toBeTruthy();
     expect(queryByText(paramsValidationErrorRegExp)).toBeTruthy();
     // Fix validation error
-    fillPipeline1Resources(getByText);
+    fillPipeline1Resources({ getAllByPlaceholderText, getByText });
     expect(queryByText(pipelineResourceValidationErrorRegExp)).toBeFalsy();
     fillPipeline1Params(getByPlaceholderText);
     expect(queryByText(paramsValidationErrorRegExp)).toBeFalsy();
@@ -660,12 +665,12 @@ describe('CreatePipelineRun', () => {
     const mockTestStore = mockStore(testStore);
     jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
     jest.spyOn(reducers, 'getPipeline').mockImplementation(() => null);
-    const { getByText, queryByText } = renderWithIntl(
+    const { getByPlaceholderText, getByText, queryByText } = renderWithIntl(
       <Provider store={mockTestStore}>
         <CreatePipelineRun {...props} />
       </Provider>
     );
-    await selectPipeline1(getByText);
+    await selectPipeline1({ getByPlaceholderText, getByText });
     expect(queryByText(/error retrieving pipeline information/i)).toBeTruthy();
   });
 

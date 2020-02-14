@@ -15,7 +15,7 @@ limitations under the License.
 
 .bx--header ~ {
   nav.bx--side-nav {
-    .bx--dropdown__wrapper {
+    .bx--list-box__wrapper {
       margin-top: 1rem;
       padding: 0 1rem;
 
@@ -26,10 +26,14 @@ limitations under the License.
         letter-spacing: 0.16px;
       }
 
-      .bx--dropdown.bx--list-box {
+      .bx--combo-box.bx--list-box {
         border: none;
         margin-bottom: 1.5em;
         width: auto;
+      }
+
+      .bx--text-input {
+        border: none;
       }
     }
   }

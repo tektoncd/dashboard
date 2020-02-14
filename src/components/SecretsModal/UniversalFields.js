@@ -51,6 +51,7 @@ const UniversalFields = props => {
       />
       <NamespacesDropdown
         id="namespace"
+        light
         selectedItem={
           selectedNamespace
             ? {

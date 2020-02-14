@@ -25,41 +25,45 @@ const props = {
 const initialTextRegExp = new RegExp('select an item', 'i');
 
 it('TooltipDropdown renders', () => {
-  const { getByText, queryByText } = render(<TooltipDropdown {...props} />);
-  expect(queryByText(initialTextRegExp)).toBeTruthy();
-  fireEvent.click(getByText(initialTextRegExp));
+  const { getByText, getByPlaceholderText, queryByText, queryByValue } = render(
+    <TooltipDropdown {...props} />
+  );
+  fireEvent.click(getByPlaceholderText(initialTextRegExp));
   props.items.forEach(item => {
     expect(queryByText(new RegExp(item, 'i'))).toBeTruthy();
   });
   fireEvent.click(getByText(/item 1/i));
-  expect(queryByText(/item 1/i)).toBeTruthy();
-  expect(queryByText(initialTextRegExp)).toBeFalsy();
+  expect(queryByValue(/item 1/i)).toBeTruthy();
 });
 
 it('TooltipDropdown renders selected item', () => {
-  const { queryByText } = render(
+  const { queryByValue } = render(
     <TooltipDropdown {...props} selectedItem={{ text: 'item 1' }} />
   );
-  expect(queryByText(/item 1/i)).toBeTruthy();
+  expect(queryByValue(/item 1/i)).toBeTruthy();
 });
 
 it('TooltipDropdown renders empty', () => {
-  const { queryByText } = render(<TooltipDropdown {...props} items={[]} />);
-  expect(queryByText(/no items found/i)).toBeTruthy();
-  expect(queryByText(initialTextRegExp)).toBeFalsy();
+  const { queryByPlaceholderText } = render(
+    <TooltipDropdown {...props} items={[]} />
+  );
+  expect(queryByPlaceholderText(/no items found/i)).toBeTruthy();
+  expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
 });
 
 it('TooltipDropdown renders loading skeleton', () => {
-  const { queryByText } = render(<TooltipDropdown {...props} loading />);
-  expect(queryByText(initialTextRegExp)).toBeFalsy();
+  const { queryByPlaceholderText } = render(
+    <TooltipDropdown {...props} loading />
+  );
+  expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
 });
 
 it('TooltipDropdown handles onChange event', () => {
   const onChange = jest.fn();
-  const { getByText } = render(
+  const { getByPlaceholderText, getByText } = render(
     <TooltipDropdown {...props} onChange={onChange} />
   );
-  fireEvent.click(getByText(initialTextRegExp));
+  fireEvent.click(getByPlaceholderText(initialTextRegExp));
   fireEvent.click(getByText(/item 1/i));
   expect(onChange).toHaveBeenCalledTimes(1);
 });

@@ -221,9 +221,9 @@ export /* istanbul ignore next */ class SecretsModal extends Component {
     });
   };
 
-  handleChangeNamespace = e => {
+  handleChangeNamespace = ({ selectedItem }) => {
     const stateVar = 'namespace';
-    const stateValue = e.selectedItem.text;
+    const { text: stateValue = '' } = selectedItem || {};
     this.setState(prevState => {
       const newInvalidFields = prevState.invalidFields;
       if (validateInputs(stateValue, stateVar)) {
