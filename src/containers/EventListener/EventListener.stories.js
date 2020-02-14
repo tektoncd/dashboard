@@ -136,7 +136,7 @@ const props = {
   intl
 };
 
-storiesOf('EventListenerContainer', module)
+storiesOf('Containers/EventListenerContainer', module)
   .addDecorator(StoryRouter())
   .add('default', () => <EventListenerContainer {...props} />)
   .add('no triggers', () => (

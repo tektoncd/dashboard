@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,19 +11,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-const path = require('path');
+import { addons } from '@storybook/addons';
+// import { themes } from '@storybook/theming';
 
-module.exports = async ({ config, mode }) => {
-  // `mode` has a value of 'DEVELOPMENT' or 'PRODUCTION'
+import theme from './theme';
 
-  config.module.rules.push({
-    test: /\.mjs$/,
-    type: 'javascript/auto'
-  },{
-    test: /\.scss$/,
-    loaders: ['style-loader', 'css-loader', 'sass-loader'],
-    include: path.resolve(__dirname, '../'),
-  });
-
-  return config;
-};
+addons.setConfig({
+  enableShortcuts: true,
+  isFullScreen: false,
+  panelPosition: 'bottom',
+  showNav: true,
+  showPanel: true,
+  sidebarAnimations: true,
+  theme,
+  // theme: themes.dark
+});

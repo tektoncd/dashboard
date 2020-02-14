@@ -28,7 +28,7 @@ const rows = [
 ];
 const headers = [{ key: 'name', header: headerValue }];
 
-storiesOf('ResourceTable', module)
+storiesOf('Components/ResourceTable', module)
   .add('default', () => <ResourceTable />)
   .add('with content', () => (
     <ResourceTable title={title} headers={headers} rows={rows} />

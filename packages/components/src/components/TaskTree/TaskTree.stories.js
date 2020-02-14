@@ -17,7 +17,7 @@ import { text } from '@storybook/addon-knobs';
 
 import TaskTree from './TaskTree';
 
-storiesOf('TaskTree', module).add('default', () => {
+storiesOf('Components/TaskTree', module).add('default', () => {
   const props = {
     taskRuns: [
       {

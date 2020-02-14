@@ -24,7 +24,7 @@ import {
 
 import Table from './Table';
 
-storiesOf('Table', module)
+storiesOf('Components/Table', module)
   .add('simple table with title no rows, no buttons, no checkboxes', () => {
     const headers = [
       { key: 'name', header: text('header1', 'Name') },

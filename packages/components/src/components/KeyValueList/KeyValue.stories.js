@@ -18,7 +18,7 @@ import { text } from '@storybook/addon-knobs';
 
 import KeyValueList from './KeyValueList';
 
-storiesOf('KeyValueList', module)
+storiesOf('Components/KeyValueList', module)
   .add('default', () => {
     return (
       <KeyValueList

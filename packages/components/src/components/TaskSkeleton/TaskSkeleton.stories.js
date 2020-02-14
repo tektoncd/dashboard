@@ -16,4 +16,6 @@ import { storiesOf } from '@storybook/react';
 
 import TaskSkeleton from './TaskSkeleton';
 
-storiesOf('TaskSkeleton', module).add('default', () => <TaskSkeleton />);
+storiesOf('Components/TaskSkeleton', module).add('default', () => (
+  <TaskSkeleton />
+));

@@ -16,7 +16,7 @@ import { storiesOf } from '@storybook/react';
 
 import ViewYAML from './ViewYAML';
 
-storiesOf('ViewYAML', module).add('default', () => {
+storiesOf('Components/ViewYAML', module).add('default', () => {
   const resource = {
     apiVersion: 'tekton.dev/v1alpha1',
     kind: 'Resource',

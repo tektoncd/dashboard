@@ -78,7 +78,7 @@ const props = {
   }
 };
 
-storiesOf('Trigger', module)
+storiesOf('Components/Trigger', module)
   .addDecorator(StoryRouter())
   .add('default', () => <Trigger {...props} />)
   .add('no name', () => (

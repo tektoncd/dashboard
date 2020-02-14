@@ -20,7 +20,7 @@ import { action } from '@storybook/addon-actions';
 import { Delete16 as Delete } from '@carbon/icons-react';
 import PipelineRuns from '.';
 
-storiesOf('PipelineRuns', module)
+storiesOf('Components/PipelineRuns', module)
   .addDecorator(StoryRouter())
   .add('default', () => (
     <PipelineRuns

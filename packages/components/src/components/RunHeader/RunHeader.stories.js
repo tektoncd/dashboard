@@ -20,7 +20,7 @@ import RunHeader from './RunHeader';
 
 const now = new Date();
 
-storiesOf('RunHeader', module)
+storiesOf('Components/RunHeader', module)
   .addDecorator(StoryRouter())
   .add('default', () => (
     <RunHeader

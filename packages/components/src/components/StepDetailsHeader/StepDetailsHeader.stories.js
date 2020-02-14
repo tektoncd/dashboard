@@ -30,7 +30,7 @@ const taskRun = {
   }
 };
 
-storiesOf('StepDetailsHeader', module)
+storiesOf('Components/StepDetailsHeader', module)
   .add('running', () => (
     <StepDetailsHeader status="running" stepName="build" taskRun={taskRun} />
   ))

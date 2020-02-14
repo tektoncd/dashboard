@@ -22,7 +22,7 @@ const props = {
   stepName: 'build'
 };
 
-storiesOf('Step', module)
+storiesOf('Components/Step', module)
   .add('default', () => <Step {...props} />)
   .add('selected', () => <Step {...props} selected />)
   .add('waiting', () => <Step {...props} status="waiting" />)

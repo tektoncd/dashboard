@@ -16,7 +16,7 @@ import { storiesOf } from '@storybook/react';
 
 import StepDefinition from './StepDefinition';
 
-storiesOf('StepDefinition', module)
+storiesOf('Components/StepDefinition', module)
   .add('default', () => <StepDefinition />)
   .add('with content', () => (
     <StepDefinition

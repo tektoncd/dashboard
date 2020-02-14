@@ -17,7 +17,7 @@ import { number } from '@storybook/addon-knobs';
 
 import FormattedDuration from './FormattedDuration';
 
-storiesOf('FormattedDuration', module)
+storiesOf('Components/FormattedDuration', module)
   .add('1 second', () => <FormattedDuration milliseconds={1000} />)
   .add('1 minute 1 second', () => <FormattedDuration milliseconds={61000} />)
   .add('other', () => (

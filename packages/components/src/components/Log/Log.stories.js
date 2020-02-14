@@ -20,7 +20,7 @@ const ansiLog =
 
 const long = Array.from({ length: 2000 }, (v, i) => `Line ${i + 1}\n`).join('');
 
-storiesOf('Log', module)
+storiesOf('Components/Log', module)
   .addDecorator(story => <div style={{ width: '500px' }}>{story()}</div>)
   .add('default', () => <Log />)
   .add('loading', () => <Log loading />)
