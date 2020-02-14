@@ -33,7 +33,7 @@ mkdir ~/.npm-global
 npm config set prefix '~/.npm-global'
 export PATH=$PATH:$HOME/.npm-global/bin
 npm ci
-npm run bootstrap
+npm run bootstrap:ci
 npm run build_ko
 
 export KO_DOCKER_REPO=gcr.io/tekton-nightly
