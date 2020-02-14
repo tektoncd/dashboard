@@ -157,7 +157,7 @@ export /* istanbul ignore next */ class TriggerBindingContainer extends Componen
             })}
           >
             <div className="details">
-              <div className="triggers--detail-block">
+              <div className="resource--detail-block">
                 <p>
                   <span>
                     {intl.formatMessage({

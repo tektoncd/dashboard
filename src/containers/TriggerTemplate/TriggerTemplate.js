@@ -187,7 +187,7 @@ export /* istanbul ignore next */ class TriggerTemplateContainer extends Compone
             })}
           >
             <div className="details">
-              <div className="triggers--detail-block">
+              <div className="resource--detail-block">
                 <p>
                   <span>
                     {intl.formatMessage({
