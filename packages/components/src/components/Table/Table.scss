@@ -14,10 +14,6 @@ limitations under the License.
 @import '~@tektoncd/dashboard-components/dist/scss/vars';
 
 .tableComponent {
-  $css--reset: false;
-  @import '~carbon-components/scss/components/data-table/data-table-core';
-  @import '~carbon-components/scss/components/overflow-menu/overflow-menu';
-
   .bx--table-toolbar {
     background: transparent;
   }
