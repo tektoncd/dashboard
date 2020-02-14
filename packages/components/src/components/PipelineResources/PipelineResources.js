@@ -16,15 +16,15 @@ import { injectIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { urls } from '@tektoncd/dashboard-utils';
 
-import { FormattedDate, RunDropdown, Table } from '..';
+import { FormattedDate, Table } from '..';
 
 const PipelineResources = ({
+  batchActionButtons,
   createPipelineResourcesURL = urls.pipelineResources.byName,
   createPipelineResourceDisplayName = ({ pipelineResourceMetadata }) =>
     pipelineResourceMetadata.name,
   intl,
   loading,
-  pipelineResourceActions,
   pipelineResources,
   selectedNamespace,
   toolbarButtons
@@ -57,10 +57,6 @@ const PipelineResources = ({
         id: 'dashboard.tableHeader.createdTime',
         defaultMessage: 'Created'
       })
-    },
-    {
-      key: 'actions',
-      header: ''
     }
   ];
 
@@ -94,18 +90,13 @@ const PipelineResources = ({
           date={pipelineResource.metadata.creationTimestamp}
           relative
         />
-      ),
-      actions: (
-        <RunDropdown
-          items={pipelineResourceActions}
-          resource={pipelineResource}
-        />
       )
     };
   });
 
   return (
     <Table
+      batchActionButtons={batchActionButtons}
       headers={headers}
       rows={pipelineResourcesFormatted}
       loading={loading}
