@@ -18,9 +18,13 @@ import { connect } from 'react-redux';
 import {
   DataTable,
   DataTableSkeleton,
-  InlineNotification
+  InlineNotification,
+  Tab,
+  Tabs,
+  Tag
 } from 'carbon-components-react';
-import { getErrorMessage } from '@tektoncd/dashboard-utils';
+import { FormattedDate, ViewYAML } from '@tektoncd/dashboard-components';
+import { formatLabels, getErrorMessage } from '@tektoncd/dashboard-utils';
 
 import {
   getPipelineResource,
@@ -138,129 +142,199 @@ export /* istanbul ignore next */ class PipelineResourceContainer extends Compon
     }
 
     const { params, secrets, type } = pipelineResource.spec;
+    let formattedLabelsToRender = [];
+    if (pipelineResource.metadata.labels) {
+      formattedLabelsToRender = formatLabels(pipelineResource.metadata.labels);
+    }
 
     return (
       <>
         <h1>{pipelineResourceName}</h1>
-        <h2>{`Type: ${type}`}</h2>
 
-        <DataTable
-          rows={params.map(({ name, value }) => ({
-            id: name,
-            name,
-            value
-          }))}
-          headers={[
-            {
-              key: 'name',
-              header: intl.formatMessage({
-                id: 'dashboard.tableHeader.name',
-                defaultMessage: 'Name'
-              })
-            },
-            {
-              key: 'value',
-              header: intl.formatMessage({
-                id: 'dashboard.tableHeader.value',
-                defaultMessage: 'Value'
-              })
-            }
-          ]}
-          render={({
-            rows,
-            headers,
-            getHeaderProps,
-            getRowProps,
-            getTableProps
-          }) => (
-            <TableContainer title="Params">
-              <Table {...getTableProps()}>
-                <TableHead>
-                  <TableRow>
-                    {headers.map(header => (
-                      <TableHeader {...getHeaderProps({ header })}>
-                        {header.header}
-                      </TableHeader>
-                    ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {rows.map(row => (
-                    <TableRow {...getRowProps({ row })}>
-                      {row.cells.map(cell => (
-                        <TableCell key={cell.id}>{cell.value}</TableCell>
-                      ))}
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          )}
-        />
+        <Tabs selected={0}>
+          <Tab
+            label={intl.formatMessage({
+              id: 'dashboard.resource.detailsTab',
+              defaultMessage: 'Details'
+            })}
+          >
+            <div className="details">
+              <div className="resource--detail-block">
+                <p>
+                  <span>
+                    {intl.formatMessage({
+                      id: 'dashboard.metadata.dateCreated',
+                      defaultMessage: 'Date Created:'
+                    })}
+                  </span>
+                  <FormattedDate
+                    date={pipelineResource.metadata.creationTimestamp}
+                    relative
+                  />
+                </p>
+                <p>
+                  <span>
+                    {intl.formatMessage({
+                      id: 'dashboard.metadata.labels',
+                      defaultMessage: 'Labels:'
+                    })}
+                  </span>
+                  {formattedLabelsToRender.length
+                    ? formattedLabelsToRender.map(label => (
+                        <Tag type="blue" key={label}>
+                          {label}
+                        </Tag>
+                      ))
+                    : intl.formatMessage({
+                        id: 'dashboard.metadata.none',
+                        defaultMessage: 'None'
+                      })}
+                </p>
+                <p>
+                  <span>
+                    {intl.formatMessage({
+                      id: 'dashboard.metadata.namespace',
+                      defaultMessage: 'Namespace:'
+                    })}
+                  </span>
+                  {pipelineResource.metadata.namespace}
+                </p>
+                <p>
+                  <span>
+                    {intl.formatMessage({
+                      id: 'dashboard.pipelineResource.type',
+                      defaultMessage: 'Type:'
+                    })}
+                  </span>
+                  {type}
+                </p>
+              </div>
 
-        {secrets && (
-          <DataTable
-            rows={secrets.map(({ fieldName, secretKey, secretName }) => ({
-              id: fieldName,
-              fieldName,
-              secretKey,
-              secretName
-            }))}
-            headers={[
-              {
-                key: 'fieldName',
-                header: intl.formatMessage({
-                  id: 'dashboard.pipelineResource.fieldName',
-                  defaultMessage: 'Field Name'
-                })
-              },
-              {
-                key: 'secretKey',
-                header: intl.formatMessage({
-                  id: 'dashboard.pipelineResource.secretKey',
-                  defaultMessage: 'Secret Key'
-                })
-              },
-              {
-                key: 'secretName',
-                header: intl.formatMessage({
-                  id: 'dashboard.pipelineResource.secretName',
-                  defaultMessage: 'Secret Name'
-                })
-              }
-            ]}
-            render={({
-              rows,
-              headers,
-              getHeaderProps,
-              getRowProps,
-              getTableProps
-            }) => (
-              <TableContainer title="Secrets">
-                <Table {...getTableProps()}>
-                  <TableHead>
-                    <TableRow>
-                      {headers.map(header => (
-                        <TableHeader {...getHeaderProps({ header })}>
-                          {header.header}
-                        </TableHeader>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {rows.map(row => (
-                      <TableRow {...getRowProps({ row })}>
-                        {row.cells.map(cell => (
-                          <TableCell key={cell.id}>{cell.value}</TableCell>
+              <DataTable
+                rows={params.map(({ name, value }) => ({
+                  id: name,
+                  name,
+                  value
+                }))}
+                headers={[
+                  {
+                    key: 'name',
+                    header: intl.formatMessage({
+                      id: 'dashboard.tableHeader.name',
+                      defaultMessage: 'Name'
+                    })
+                  },
+                  {
+                    key: 'value',
+                    header: intl.formatMessage({
+                      id: 'dashboard.tableHeader.value',
+                      defaultMessage: 'Value'
+                    })
+                  }
+                ]}
+                render={({
+                  rows,
+                  headers,
+                  getHeaderProps,
+                  getRowProps,
+                  getTableProps
+                }) => (
+                  <TableContainer title="Params">
+                    <Table {...getTableProps()}>
+                      <TableHead>
+                        <TableRow>
+                          {headers.map(header => (
+                            <TableHeader {...getHeaderProps({ header })}>
+                              {header.header}
+                            </TableHeader>
+                          ))}
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {rows.map(row => (
+                          <TableRow {...getRowProps({ row })}>
+                            {row.cells.map(cell => (
+                              <TableCell key={cell.id}>{cell.value}</TableCell>
+                            ))}
+                          </TableRow>
                         ))}
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            )}
-          />
-        )}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                )}
+              />
+
+              {secrets && (
+                <DataTable
+                  rows={secrets.map(({ fieldName, secretKey, secretName }) => ({
+                    id: fieldName,
+                    fieldName,
+                    secretKey,
+                    secretName
+                  }))}
+                  headers={[
+                    {
+                      key: 'fieldName',
+                      header: intl.formatMessage({
+                        id: 'dashboard.pipelineResource.fieldName',
+                        defaultMessage: 'Field Name'
+                      })
+                    },
+                    {
+                      key: 'secretKey',
+                      header: intl.formatMessage({
+                        id: 'dashboard.pipelineResource.secretKey',
+                        defaultMessage: 'Secret Key'
+                      })
+                    },
+                    {
+                      key: 'secretName',
+                      header: intl.formatMessage({
+                        id: 'dashboard.pipelineResource.secretName',
+                        defaultMessage: 'Secret Name'
+                      })
+                    }
+                  ]}
+                  render={({
+                    rows,
+                    headers,
+                    getHeaderProps,
+                    getRowProps,
+                    getTableProps
+                  }) => (
+                    <TableContainer title="Secrets">
+                      <Table {...getTableProps()}>
+                        <TableHead>
+                          <TableRow>
+                            {headers.map(header => (
+                              <TableHeader {...getHeaderProps({ header })}>
+                                {header.header}
+                              </TableHeader>
+                            ))}
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {rows.map(row => (
+                            <TableRow {...getRowProps({ row })}>
+                              {row.cells.map(cell => (
+                                <TableCell key={cell.id}>
+                                  {cell.value}
+                                </TableCell>
+                              ))}
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  )}
+                />
+              )}
+            </div>
+          </Tab>
+          <Tab label="YAML">
+            <ViewYAML resource={pipelineResource} />
+          </Tab>
+        </Tabs>
       </>
     );
   }

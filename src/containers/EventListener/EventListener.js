@@ -128,7 +128,7 @@ export /* istanbul ignore next */ class EventListenerContainer extends Component
             })}
           >
             <div className="details">
-              <div className="triggers--detail-block">
+              <div className="resource--detail-block">
                 <p>
                   <span>
                     {intl.formatMessage({
@@ -194,7 +194,7 @@ export /* istanbul ignore next */ class EventListenerContainer extends Component
               <div className="eventlistener--triggers">
                 {triggers.map((trigger, idx) => (
                   <div
-                    className="triggers--detail-block"
+                    className="resource--detail-block"
                     key={trigger.name ? trigger.name : idx}
                   >
                     <Trigger
