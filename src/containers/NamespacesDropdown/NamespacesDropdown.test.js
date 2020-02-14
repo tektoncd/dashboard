@@ -40,12 +40,12 @@ it('NamespacesDropdown renders items based on Redux state', () => {
       isFetching: false
     }
   });
-  const { getByText, getAllByText, queryByText } = render(
+  const { getAllByText, getByPlaceholderText, queryByText } = render(
     <Provider store={store}>
       <NamespacesDropdown {...props} />
     </Provider>
   );
-  fireEvent.click(getByText(initialTextRegExp));
+  fireEvent.click(getByPlaceholderText(initialTextRegExp));
   Object.keys(byName).forEach(item => {
     expect(queryByText(new RegExp(item, 'i'))).toBeTruthy();
   });
@@ -62,12 +62,12 @@ it('NamespacesDropdown renders controlled selection', () => {
     }
   });
   // Select item 'namespace-1'
-  const { container, queryByText } = render(
+  const { container, queryByPlaceholderText, queryByValue } = render(
     <Provider store={store}>
       <NamespacesDropdown {...props} selectedItem={{ text: 'namespace-1' }} />
     </Provider>
   );
-  expect(queryByText(/namespace-1/i)).toBeTruthy();
+  expect(queryByValue(/namespace-1/i)).toBeTruthy();
   // Select item 'namespace-2'
   render(
     <Provider store={store}>
@@ -75,7 +75,7 @@ it('NamespacesDropdown renders controlled selection', () => {
     </Provider>,
     { container }
   );
-  expect(queryByText(/namespace-2/i)).toBeTruthy();
+  expect(queryByValue(/namespace-2/i)).toBeTruthy();
   // No selected item (select item '')
   render(
     <Provider store={store}>
@@ -83,7 +83,7 @@ it('NamespacesDropdown renders controlled selection', () => {
     </Provider>,
     { container }
   );
-  expect(queryByText(initialTextRegExp)).toBeTruthy();
+  expect(queryByPlaceholderText(initialTextRegExp)).toBeTruthy();
 });
 
 it('NamespacesDropdown renders empty', () => {
@@ -94,12 +94,12 @@ it('NamespacesDropdown renders empty', () => {
     }
   });
 
-  const { queryByText } = render(
+  const { queryByPlaceholderText } = render(
     <Provider store={store}>
       <NamespacesDropdown {...props} />
     </Provider>
   );
-  expect(queryByText(/no namespaces found/i)).toBeTruthy();
+  expect(queryByPlaceholderText(/no namespaces found/i)).toBeTruthy();
 });
 
 it('NamespacesDropdown renders loading skeleton based on Redux state', () => {
@@ -110,12 +110,12 @@ it('NamespacesDropdown renders loading skeleton based on Redux state', () => {
     }
   });
 
-  const { queryByText } = render(
+  const { queryByPlaceholderText } = render(
     <Provider store={store}>
       <NamespacesDropdown {...props} />
     </Provider>
   );
-  expect(queryByText(initialTextRegExp)).toBeFalsy();
+  expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
 });
 
 it('NamespacesDropdown handles onChange event', () => {
@@ -126,12 +126,12 @@ it('NamespacesDropdown handles onChange event', () => {
     }
   });
   const onChange = jest.fn();
-  const { getByText } = render(
+  const { getByPlaceholderText, getByText } = render(
     <Provider store={store}>
       <NamespacesDropdown {...props} onChange={onChange} />
     </Provider>
   );
-  fireEvent.click(getByText(initialTextRegExp));
+  fireEvent.click(getByPlaceholderText(initialTextRegExp));
   fireEvent.click(getByText(/namespace-1/i));
   expect(onChange).toHaveBeenCalledTimes(1);
 });

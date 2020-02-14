@@ -72,7 +72,9 @@ class SideNav extends Component {
   }
 
   selectNamespace = event => {
-    const namespace = event.selectedItem.id;
+    const namespace = event.selectedItem
+      ? event.selectedItem.id
+      : ALL_NAMESPACES;
     const { history, match } = this.props;
 
     if (!match) {

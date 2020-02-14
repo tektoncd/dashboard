@@ -42,7 +42,12 @@ class PipelinesDropdown extends React.Component {
   }
 
   render() {
-    const { namespace, ...rest } = this.props;
+    const {
+      fetchPipelines: _fetchPipelines, // extract props that are not valid for the dropdown
+      namespace,
+      webSocketConnected,
+      ...rest
+    } = this.props;
     const emptyText =
       namespace === ALL_NAMESPACES
         ? `No Pipelines found`

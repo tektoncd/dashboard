@@ -42,7 +42,13 @@ class PipelineResourcesDropdown extends React.Component {
   }
 
   render() {
-    const { namespace, type, ...rest } = this.props;
+    const {
+      fetchPipelineResources: _fetchPipelineResources, // extract props that are not valid for the dropdown
+      namespace,
+      type,
+      webSocketConnected,
+      ...rest
+    } = this.props;
     let emptyText = 'No PipelineResources found';
     if (type && namespace !== ALL_NAMESPACES) {
       emptyText = `No PipelineResources found of type '${type}' in the '${namespace}' namespace`;

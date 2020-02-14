@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { Dropdown, DropdownSkeleton } from 'carbon-components-react';
+import { ComboBox, DropdownSkeleton } from 'carbon-components-react';
 
 const itemToElement = ({ id, text }) => {
   return (
@@ -34,28 +34,40 @@ const itemToObject = item => {
 
 const TooltipDropdown = ({
   className,
+  disabled,
+  emptyText,
   id,
   inline,
   items,
-  loading,
   label,
-  emptyText,
-  ...dropdownProps
+  light,
+  loading,
+  onChange,
+  selectedItem,
+  titleText,
+  ...rest
 }) => {
   if (loading) {
     return <DropdownSkeleton className={className} id={id} inline={inline} />;
   }
   const options = items.map(itemToObject);
+
   return (
-    <Dropdown
-      {...dropdownProps}
+    <ComboBox
       className={className}
+      disabled={disabled}
       id={id}
       inline={inline}
-      itemToElement={itemToElement}
       items={options}
+      itemToElement={itemToElement}
       itemToString={itemToString}
       label={options.length === 0 ? emptyText : label}
+      light={light}
+      onChange={onChange}
+      placeholder={options.length === 0 ? emptyText : label}
+      selectedItem={selectedItem}
+      titleText={titleText}
+      {...rest}
     />
   );
 };

@@ -18,7 +18,14 @@ import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 import TooltipDropdown from '../../components/TooltipDropdown';
 import { getNamespaces, isFetchingNamespaces } from '../../reducers';
 
-const NamespacesDropdown = ({ showAllNamespaces, ...rest }) => {
+const NamespacesDropdown = ({
+  allNamespacesLabel, // extract props that are not valid for the dropdown
+  children,
+  isSideNavExpanded,
+  dispatch,
+  showAllNamespaces,
+  ...rest
+}) => {
   return <TooltipDropdown {...rest} />;
 };
 

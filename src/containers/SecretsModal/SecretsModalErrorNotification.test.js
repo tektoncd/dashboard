@@ -126,7 +126,7 @@ it('error notification appears', async () => {
   fireEvent.change(getByPlaceholderText(/secret-name/i), {
     target: { value: 'test-secret' }
   });
-  fireEvent.click(getByText(/select namespace/i));
+  fireEvent.click(getByPlaceholderText(/select namespace/i));
   await waitForElement(() => getByText(/default/i));
   fireEvent.click(getByText(/default/i));
 

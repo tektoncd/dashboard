@@ -104,12 +104,16 @@ export class ImportResources extends Component {
   };
 
   handleNamespace = ({ selectedItem }) => {
-    this.setState({ invalidNamespace: false, namespace: selectedItem.id });
+    if (selectedItem) {
+      this.setState({ invalidNamespace: false, namespace: selectedItem.id });
+    } else {
+      this.setState({ invalidNamespace: true });
+    }
   };
 
-  handleServiceAccount = data => {
+  handleServiceAccount = ({ selectedItem }) => {
     this.setState({
-      serviceAccount: data.selectedItem.text
+      serviceAccount: selectedItem ? selectedItem.text : null
     });
   };
 

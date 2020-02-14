@@ -65,15 +65,14 @@ describe('ImportResources component', () => {
   });
 
   it('Displays an error when Repository URL is empty', async () => {
-    const { getByLabelText, getByText } = await renderWithIntl(
+    const { getByPlaceholderText, getByText } = await renderWithIntl(
       <Provider store={store}>
         <ImportResourcesContainer />
       </Provider>
     );
     const namespace = 'default';
 
-    fireEvent.click(getByLabelText(/namespace/i));
-    fireEvent.click(getByText(/select namespace/i));
+    fireEvent.click(getByPlaceholderText(/select namespace/i));
     fireEvent.click(getByText(namespace));
 
     fireEvent.click(getByText('Import and Apply'));
@@ -189,7 +188,11 @@ describe('ImportResources component', () => {
       .spyOn(API, 'determineInstallNamespace')
       .mockImplementation(() => installNamespace);
 
-    const { getByLabelText, getByTestId, getByText } = await renderWithRouter(
+    const {
+      getByPlaceholderText,
+      getByTestId,
+      getByText
+    } = await renderWithRouter(
       <Provider store={store}>
         <ImportResourcesContainer />
       </Provider>
@@ -200,8 +203,7 @@ describe('ImportResources component', () => {
       target: { value: 'https://github.com/test/testing' }
     });
 
-    fireEvent.click(getByLabelText(/namespace/i));
-    fireEvent.click(getByText(/select namespace/i));
+    fireEvent.click(getByPlaceholderText(/select namespace/i));
     fireEvent.click(getByText(namespace));
 
     fireEvent.click(getByText('Import and Apply'));
@@ -237,7 +239,11 @@ describe('ImportResources component', () => {
       .spyOn(API, 'determineInstallNamespace')
       .mockImplementation(() => 'namespace1');
 
-    const { getByLabelText, getByTestId, getByText } = await renderWithIntl(
+    const {
+      getByPlaceholderText,
+      getByTestId,
+      getByText
+    } = await renderWithIntl(
       <Provider store={store}>
         <ImportResourcesContainer />
       </Provider>
@@ -246,8 +252,7 @@ describe('ImportResources component', () => {
     const repoURLField = getByTestId('repository-url-field');
     fireEvent.change(repoURLField, { target: { value: 'URL' } });
 
-    fireEvent.click(getByLabelText(/namespace/i));
-    fireEvent.click(getByText(/select namespace/i));
+    fireEvent.click(getByPlaceholderText(/select namespace/i));
     fireEvent.click(getByText('namespace1'));
 
     fireEvent.click(getByText('Import and Apply'));
