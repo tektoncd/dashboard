@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,6 +14,7 @@ limitations under the License.
 import React, { Component } from 'react';
 import { injectIntl } from 'react-intl';
 import {
+  Button,
   Form,
   InlineNotification,
   Link,
@@ -172,6 +173,18 @@ class LabelFilter extends Component {
               {filter.replace(/=/g, ':')}
             </Tag>
           ))}
+          {filters.length > 0 && (
+            <Button
+              kind="ghost"
+              size="small"
+              onClick={this.props.handleClearFilters}
+            >
+              {intl.formatMessage({
+                id: 'dashboard.labelFilter.clearAll',
+                defaultMessage: 'Clear all'
+              })}
+            </Button>
+          )}
         </div>
       </div>
     );

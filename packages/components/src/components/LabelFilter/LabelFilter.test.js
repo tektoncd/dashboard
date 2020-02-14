@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -101,4 +101,14 @@ it('LabelFilter handles deleting a filter', () => {
   );
   fireEvent.click(getByText(filter.replace('=', ':')));
   expect(handleDeleteFilter).toHaveBeenCalledWith(filter);
+});
+
+it('LabelFilter handles clearing all filters', () => {
+  const filter = 'tekton.dev/pipeline=demo-pipeline';
+  const handleClearFilters = jest.fn();
+  const { getByText } = renderWithIntl(
+    <LabelFilter filters={[filter]} handleClearFilters={handleClearFilters} />
+  );
+  fireEvent.click(getByText(/clear all/i));
+  expect(handleClearFilters).toHaveBeenCalled();
 });

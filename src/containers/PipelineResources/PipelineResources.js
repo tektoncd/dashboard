@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,19 +16,12 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
-import {
-  getAddFilterHandler,
-  getDeleteFilterHandler,
-  getErrorMessage,
-  getFilters,
-  urls
-} from '@tektoncd/dashboard-utils';
-import {
-  LabelFilter,
-  PipelineResources as PipelineResourcesList
-} from '@tektoncd/dashboard-components';
+import { getErrorMessage, getFilters, urls } from '@tektoncd/dashboard-utils';
+import { PipelineResources as PipelineResourcesList } from '@tektoncd/dashboard-components';
 import { InlineNotification } from 'carbon-components-react';
 import { Add16 as Add } from '@carbon/icons-react';
+
+import { LabelFilter } from '..';
 import { fetchPipelineResources } from '../../actions/pipelineResources';
 import { deletePipelineResource } from '../../api';
 import PipelineResourcesModal from '../PipelineResourcesModal';
@@ -169,7 +162,6 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
   render() {
     const {
       error,
-      filters,
       loading,
       namespace: selectedNamespace,
       pipelineResources,
@@ -229,11 +221,7 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
           />
         )}
         <h1>PipelineResources</h1>
-        <LabelFilter
-          filters={filters}
-          handleAddFilter={getAddFilterHandler(this.props)}
-          handleDeleteFilter={getDeleteFilterHandler(this.props)}
-        />
+        <LabelFilter {...this.props} />
         <PipelineResourcesModal
           open={this.state.showCreatePipelineResourceModal}
           handleCreatePipelineResource={this.handleCreatePipelineResourceClick}

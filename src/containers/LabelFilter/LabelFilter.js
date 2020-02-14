@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,16 +12,18 @@ limitations under the License.
 */
 
 import React from 'react';
-import { storiesOf } from '@storybook/react';
-import { action } from '@storybook/addon-actions';
+import { LabelFilter } from '@tektoncd/dashboard-components';
+import {
+  getAddFilterHandler,
+  getClearFiltersHandler,
+  getDeleteFilterHandler
+} from '@tektoncd/dashboard-utils';
 
-import LabelFilter from '.';
-
-storiesOf('LabelFilter', module).add('default', () => (
+export default props => (
   <LabelFilter
-    filters={['tekton.dev/pipeline=output-pipeline']}
-    handleAddFilter={action('handleAddFilter')}
-    handleClearFilters={action('handleClearFilters')}
-    handleDeleteFilter={action('handleDeleteFilter')}
+    {...props}
+    handleAddFilter={getAddFilterHandler(props)}
+    handleClearFilters={getClearFiltersHandler(props)}
+    handleDeleteFilter={getDeleteFilterHandler(props)}
   />
-));
+);

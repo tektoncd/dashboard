@@ -243,3 +243,10 @@ export function getDeleteFilterHandler({ history, location, match }) {
     }
   };
 }
+
+export function getClearFiltersHandler({ history, match }) {
+  return function handleClearFilters() {
+    const currentURL = match.url;
+    history.push(currentURL);
+  };
+}

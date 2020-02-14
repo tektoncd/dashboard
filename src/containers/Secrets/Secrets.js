@@ -16,18 +16,11 @@ import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
 import { InlineNotification } from 'carbon-components-react';
-import {
-  FormattedDate,
-  LabelFilter,
-  Table
-} from '@tektoncd/dashboard-components';
-import {
-  getAddFilterHandler,
-  getDeleteFilterHandler,
-  getErrorMessage,
-  getFilters
-} from '@tektoncd/dashboard-utils';
+import { FormattedDate, Table } from '@tektoncd/dashboard-components';
+import { getErrorMessage, getFilters } from '@tektoncd/dashboard-utils';
 import { Add16 as Add, Delete16 as Delete } from '@carbon/icons-react';
+
+import { LabelFilter } from '..';
 import Modal from '../SecretsModal';
 import DeleteModal from '../../components/SecretsDeleteModal';
 import {
@@ -146,7 +139,6 @@ export /* istanbul ignore next */ class Secrets extends Component {
       loading,
       createSuccess,
       deleteSuccess,
-      filters,
       secrets,
       selectedNamespace,
       serviceAccounts,
@@ -330,11 +322,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
           />
         )}
         <h1>Secrets</h1>
-        <LabelFilter
-          filters={filters}
-          handleAddFilter={getAddFilterHandler(this.props)}
-          handleDeleteFilter={getDeleteFilterHandler(this.props)}
-        />
+        <LabelFilter {...this.props} />
         <Table
           headers={initialHeaders}
           rows={secretsFormatted}

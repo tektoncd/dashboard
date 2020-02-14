@@ -80,6 +80,7 @@
     "dashboard.graph.zoomIn": "Zoom In",
     "dashboard.graph.zoomOut": "Zoom Out",
     "dashboard.header.logOut": "Log out",
+    "dashboard.labelFilter.clearAll": "Clear all",
     "dashboard.labelFilter.duplicate": "No duplicate filters allowed",
     "dashboard.labelFilter.invalid": "Filters must be of the format labelKey:labelValue and contain accepted label characters",
     "dashboard.labelFilter.invalidLength": "Filters must be of the format labelKey:labelValue and contain less than 64 characters",

@@ -16,20 +16,11 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
-import {
-  FormattedDate,
-  LabelFilter,
-  Table
-} from '@tektoncd/dashboard-components';
+import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 import { InlineNotification } from 'carbon-components-react';
-import {
-  getAddFilterHandler,
-  getDeleteFilterHandler,
-  getErrorMessage,
-  getFilters,
-  urls
-} from '@tektoncd/dashboard-utils';
+import { getErrorMessage, getFilters, urls } from '@tektoncd/dashboard-utils';
 
+import { LabelFilter } from '..';
 import { fetchClusterTasks } from '../../actions/tasks';
 import {
   getClusterTasks,
@@ -65,7 +56,7 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
   }
 
   render() {
-    const { error, filters, loading, clusterTasks, intl } = this.props;
+    const { error, loading, clusterTasks, intl } = this.props;
     const initialHeaders = [
       {
         key: 'name',
@@ -117,11 +108,7 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
     return (
       <>
         <h1>ClusterTasks</h1>
-        <LabelFilter
-          filters={filters}
-          handleAddFilter={getAddFilterHandler(this.props)}
-          handleDeleteFilter={getDeleteFilterHandler(this.props)}
-        />
+        <LabelFilter {...this.props} />
         <Table
           headers={initialHeaders}
           rows={clusterTasksFormatted}

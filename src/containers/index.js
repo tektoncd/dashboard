@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -22,6 +22,7 @@ export { default as EventListeners } from './EventListeners';
 export { default as Extension } from './Extension';
 export { default as Extensions } from './Extensions';
 export { default as ImportResources } from './ImportResources';
+export { default as LabelFilter } from './LabelFilter';
 export { default as LogDownloadButton } from './LogDownloadButton';
 export { default as NamespacesDropdown } from './NamespacesDropdown';
 export { default as PipelineResource } from './PipelineResource';
