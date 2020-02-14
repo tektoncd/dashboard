@@ -88,6 +88,7 @@
     "dashboard.list.menu.tooltip": "Actions",
     "dashboard.logo.alt": "Tekton logo",
     "dashboard.logo.tooltip": "Meow",
+    "dashboard.logs.downloadButtonTooltip": "Download logs for {stepName}",
     "dashboard.metadata.dateCreated": "Date Created:",
     "dashboard.metadata.labels": "Labels:",
     "dashboard.metadata.namespace": "Namespace:",

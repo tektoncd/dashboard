@@ -15,10 +15,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { PipelineRun, Rerun } from '@tektoncd/dashboard-components';
-
 import { InlineNotification } from 'carbon-components-react';
 import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
+
 import {
   getClusterTasks,
   getPipelineRun,
@@ -29,7 +29,7 @@ import {
   getTasksErrorMessage,
   isWebSocketConnected
 } from '../../reducers';
-
+import { LogDownloadButton } from '..';
 import { fetchPipelineRun } from '../../actions/pipelineRuns';
 import { fetchClusterTasks, fetchTasks } from '../../actions/tasks';
 import { fetchTaskRuns } from '../../actions/taskRuns';
@@ -158,6 +158,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           error={error}
           loading={loading}
           fetchLogs={fetchLogs}
+          logDownloadButton={LogDownloadButton}
           pipelineRun={pipelineRun}
           showIO
           tasks={tasks}
