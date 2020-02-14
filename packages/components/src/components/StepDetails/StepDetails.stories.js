@@ -24,7 +24,7 @@ const ansiLog = '\n=== demo-pipeline-run-1-build-skaffold-app-2mrdg-pod-59e217: 
 
 const logContainer = <Log logs={ansiLog} status="Completed" />;
 
-storiesOf('StepDetails', module)
+storiesOf('Components/StepDetails', module)
   .addDecorator(StoryRouter())
   .add('default', () => (
     <div style={{ alignSelf: 'stretch' }}>

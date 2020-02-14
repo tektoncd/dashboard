@@ -17,7 +17,7 @@ import StoryRouter from 'storybook-react-router';
 
 import RunDropdown from './RunDropdown';
 
-storiesOf('RunDropdown', module)
+storiesOf('Components/RunDropdown', module)
   .addDecorator(StoryRouter())
   .add('default', () => (
     <RunDropdown

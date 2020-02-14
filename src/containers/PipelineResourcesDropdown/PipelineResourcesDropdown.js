@@ -14,6 +14,7 @@ limitations under the License.
 import React from 'react';
 import { connect } from 'react-redux';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
+import { TooltipDropdown } from '@tektoncd/dashboard-components';
 
 import {
   getPipelineResources,
@@ -22,7 +23,6 @@ import {
   isWebSocketConnected
 } from '../../reducers';
 import { fetchPipelineResources } from '../../actions/pipelineResources';
-import TooltipDropdown from '../../components/TooltipDropdown';
 
 class PipelineResourcesDropdown extends React.Component {
   componentDidMount() {

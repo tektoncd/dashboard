@@ -36,7 +36,7 @@ const byName = {
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 
-storiesOf('NamespacesDropdown', module)
+storiesOf('Containers/Dropdowns/NamespacesDropdown', module)
   .add('default', () => {
     const store = mockStore({
       namespaces: {

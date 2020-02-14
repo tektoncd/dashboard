@@ -14,6 +14,7 @@ limitations under the License.
 import React from 'react';
 import { connect } from 'react-redux';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
+import { TooltipDropdown } from '@tektoncd/dashboard-components';
 
 import {
   getSelectedNamespace,
@@ -22,7 +23,6 @@ import {
   isWebSocketConnected
 } from '../../reducers';
 import { fetchServiceAccounts } from '../../actions/serviceAccounts';
-import TooltipDropdown from '../../components/TooltipDropdown';
 
 class ServiceAccountsDropdown extends React.Component {
   componentDidMount() {

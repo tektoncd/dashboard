@@ -17,7 +17,7 @@ import { action } from '@storybook/addon-actions';
 
 import LabelFilter from '.';
 
-storiesOf('LabelFilter', module).add('default', () => (
+storiesOf('Components/LabelFilter', module).add('default', () => (
   <LabelFilter
     filters={['tekton.dev/pipeline=output-pipeline']}
     handleAddFilter={action('handleAddFilter')}

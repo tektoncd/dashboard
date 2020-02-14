@@ -132,7 +132,7 @@ const pipelineRun = {
   }
 };
 
-storiesOf('PipelineRun', module)
+storiesOf('Components/PipelineRun', module)
   .addDecorator(story => (
     <div style={{ position: 'relative', width: '100%' }}>{story()}</div>
   ))

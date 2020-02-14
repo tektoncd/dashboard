@@ -75,7 +75,7 @@ const namespacesByName = {
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 
-storiesOf('ServiceAccountsDropdown', module)
+storiesOf('Containers/Dropdowns/ServiceAccountsDropdown', module)
   .add('default', () => {
     const store = mockStore({
       serviceAccounts: {

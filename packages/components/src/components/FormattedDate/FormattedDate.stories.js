@@ -19,6 +19,6 @@ import FormattedDate from './FormattedDate';
 
 const now = new Date();
 
-storiesOf('FormattedDate', module)
+storiesOf('Components/FormattedDate', module)
   .add('relative', () => <FormattedDate date={date('date', now)} relative />)
   .add('absolute', () => <FormattedDate date={date('date', now)} />);

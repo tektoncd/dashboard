@@ -18,7 +18,7 @@ import StoryRouter from 'storybook-react-router';
 import Header from '.';
 import { LogoutButton } from '..';
 
-storiesOf('Header', module)
+storiesOf('Components/Header', module)
   .addDecorator(StoryRouter())
   .add('default', () => <Header />)
   .add('with logout', () => (

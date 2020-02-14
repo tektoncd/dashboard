@@ -27,7 +27,7 @@ const steps = [
   { id: 'test', stepName: 'test', reason: 'Completed' }
 ];
 
-storiesOf('Task', module)
+storiesOf('Components/Task', module)
   .add('succeeded', () => <Task {...props} succeeded="True" />)
   .add('failed', () => <Task {...props} succeeded="False" />)
   .add('unknown', () => <Task {...props} succeeded="Unknown" />)

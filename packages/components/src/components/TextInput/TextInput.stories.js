@@ -13,23 +13,27 @@ limitations under the License.
 
 import React from 'react';
 import { storiesOf } from '@storybook/react';
+import { action } from '@storybook/addon-actions';
 
-import TooltipDropdown from './TooltipDropdown';
+import TextInput from './TextInput';
 
 const props = {
-  id: 'tooltip-dropdown-id',
-  label: 'Select an item',
-  items: ['item 1', 'item 2', 'item 3'],
-  loading: false
+  id: 'text-input-id',
+  onChange: action('onChange'),
+  onClick: action('onClick')
 };
 
-storiesOf('TooltipDropdown', module)
+storiesOf('Components/TextInput', module)
   .add('default', () => {
-    return <TooltipDropdown {...props} />;
+    return (
+      <TextInput
+        {...props}
+        labelText="foo"
+        helperText="this is a description of input foo"
+        placeholder="bar"
+      />
+    );
   })
   .add('loading', () => {
-    return <TooltipDropdown {...props} loading />;
-  })
-  .add('empty', () => {
-    return <TooltipDropdown {...props} items={[]} />;
+    return <TextInput {...props} loading />;
   });

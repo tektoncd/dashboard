@@ -18,7 +18,7 @@ import StoryRouter from 'storybook-react-router';
 
 import CancelButton from './CancelButton';
 
-storiesOf('CancelButton', module)
+storiesOf('Components/CancelButton', module)
   .addDecorator(StoryRouter())
   .add('default', () => (
     <CancelButton

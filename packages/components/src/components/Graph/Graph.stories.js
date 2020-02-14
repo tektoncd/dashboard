@@ -66,7 +66,7 @@ const expandedProps = {
   height: 90
 };
 
-storiesOf('Graph/Node', module)
+storiesOf('Experimental/Graph/Node', module)
   .addDecorator(story => <div className="graph">{story()}</div>)
   .add('start', () => <Node type="Start" width="60" height="60" />)
   .add('end', () => <Node type="End" width="60" height="60" />)
@@ -83,9 +83,11 @@ storiesOf('Graph/Node', module)
     <Node {...taskProps} status="success" {...expandedProps} isSelected />
   ));
 
-storiesOf('Graph/Graph', module).add('default', () => <Graph graph={graph} />);
+storiesOf('Experimental/Graph/Graph', module).add('default', () => (
+  <Graph graph={graph} />
+));
 
-storiesOf('Graph/PipelineGraph', module).add('default', () => (
+storiesOf('Experimental/Graph/PipelineGraph', module).add('default', () => (
   <PipelineGraph
     onClickStep={action('onClickStep')}
     onClickTask={action('onClickTask')}
@@ -95,12 +97,15 @@ storiesOf('Graph/PipelineGraph', module).add('default', () => (
   />
 ));
 
-storiesOf('Graph/ZoomablePipelineGraph', module).add('default', () => (
-  <ZoomablePipelineGraph
-    onClickStep={action('onClickStep')}
-    onClickTask={action('onClickTask')}
-    pipeline={pipeline}
-    pipelineRun={pipelineRun}
-    tasks={tasks}
-  />
-));
+storiesOf('Experimental/Graph/ZoomablePipelineGraph', module).add(
+  'default',
+  () => (
+    <ZoomablePipelineGraph
+      onClickStep={action('onClickStep')}
+      onClickTask={action('onClickTask')}
+      pipeline={pipeline}
+      pipelineRun={pipelineRun}
+      tasks={tasks}
+    />
+  )
+);

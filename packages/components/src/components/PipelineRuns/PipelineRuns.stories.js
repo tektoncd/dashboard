@@ -18,7 +18,7 @@ import StoryRouter from 'storybook-react-router';
 import { getStatus } from '@tektoncd/dashboard-utils';
 import PipelineRuns from '.';
 
-storiesOf('PipelineRuns', module)
+storiesOf('Components/PipelineRuns', module)
   .addDecorator(StoryRouter())
   .add('default', () => (
     <PipelineRuns

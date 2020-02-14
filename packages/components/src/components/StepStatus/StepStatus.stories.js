@@ -26,6 +26,6 @@ const status = {
   }
 };
 
-storiesOf('StepStatus', module)
+storiesOf('Components/StepStatus', module)
   .add('default', () => <StepStatus />)
   .add('with content', () => <StepStatus status={status} />);

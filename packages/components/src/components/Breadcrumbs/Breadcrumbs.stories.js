@@ -18,7 +18,7 @@ import StoryRouter from 'storybook-react-router';
 import { urls } from '@tektoncd/dashboard-utils';
 import Breadcrumbs from './Breadcrumbs';
 
-storiesOf('Breadcrumbs', module)
+storiesOf('Deprecated/Breadcrumbs', module)
   .addDecorator(StoryRouter())
   .add('Pipelines', () => <Breadcrumbs match={{ url: urls.pipelines.all() }} />)
   .add('PipelineRun', () => (

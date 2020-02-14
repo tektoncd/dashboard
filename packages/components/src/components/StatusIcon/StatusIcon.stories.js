@@ -16,7 +16,7 @@ import { storiesOf } from '@storybook/react';
 
 import StatusIcon from './StatusIcon';
 
-storiesOf('StatusIcon', module)
+storiesOf('Components/StatusIcon', module)
   .add('queued', () => <StatusIcon />)
   .add('pending', () => <StatusIcon reason="Pending" status="Unknown" />)
   .add('running', () => <StatusIcon reason="Running" status="Unknown" />)
