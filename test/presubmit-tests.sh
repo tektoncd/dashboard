@@ -75,7 +75,7 @@ function node_npm_install() {
   npm config set prefix '~/.npm-global'
   export PATH=$PATH:$HOME/.npm-global/bin
   npm ci || failed=1 # similar to `npm install` but ensures all versions from lock file
-  npm run bootstrap || failed=1
+  npm run bootstrap:ci || failed=1
   return ${failed}
 }
 

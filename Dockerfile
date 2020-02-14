@@ -14,7 +14,7 @@ USER root
 WORKDIR /go/src/github.com/tektoncd/dashboard
 COPY . .
 RUN npm install
-RUN npm run bootstrap
+RUN npm run bootstrap:ci
 RUN npm run build
 
 FROM golang:1.12-alpine as goBuilder
