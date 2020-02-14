@@ -18,19 +18,10 @@ import { Information16 } from '@carbon/icons-react';
 import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
 import { InlineNotification } from 'carbon-components-react';
-import {
-  getAddFilterHandler,
-  getDeleteFilterHandler,
-  getErrorMessage,
-  getFilters,
-  urls
-} from '@tektoncd/dashboard-utils';
-import {
-  FormattedDate,
-  LabelFilter,
-  Table
-} from '@tektoncd/dashboard-components';
+import { getErrorMessage, getFilters, urls } from '@tektoncd/dashboard-utils';
+import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 
+import { LabelFilter } from '..';
 import { fetchPipelines } from '../../actions/pipelines';
 import {
   getPipelines,
@@ -70,7 +61,6 @@ export /* istanbul ignore next */ class Pipelines extends Component {
   render() {
     const {
       error,
-      filters,
       loading,
       pipelines,
       intl,
@@ -157,11 +147,7 @@ export /* istanbul ignore next */ class Pipelines extends Component {
     return (
       <>
         <h1>Pipelines</h1>
-        <LabelFilter
-          filters={filters}
-          handleAddFilter={getAddFilterHandler(this.props)}
-          handleDeleteFilter={getDeleteFilterHandler(this.props)}
-        />
+        <LabelFilter {...this.props} />
         <Table
           headers={initialHeaders}
           rows={pipelinesFormatted}

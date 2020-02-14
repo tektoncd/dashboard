@@ -16,19 +16,11 @@ import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
-import {
-  getAddFilterHandler,
-  getDeleteFilterHandler,
-  getErrorMessage,
-  getFilters,
-  urls
-} from '@tektoncd/dashboard-utils';
+import { getErrorMessage, getFilters, urls } from '@tektoncd/dashboard-utils';
 import { InlineNotification } from 'carbon-components-react';
-import {
-  FormattedDate,
-  LabelFilter,
-  Table
-} from '@tektoncd/dashboard-components';
+import { FormattedDate, Table } from '@tektoncd/dashboard-components';
+
+import { LabelFilter } from '..';
 import { fetchEventListeners } from '../../actions/eventListeners';
 import {
   getEventListeners,
@@ -71,7 +63,6 @@ export /* istanbul ignore next */ class EventListeners extends Component {
   render() {
     const {
       error,
-      filters,
       intl,
       loading,
       selectedNamespace,
@@ -144,11 +135,7 @@ export /* istanbul ignore next */ class EventListeners extends Component {
           />
         )}
         <h1>EventListeners</h1>
-        <LabelFilter
-          filters={filters}
-          handleAddFilter={getAddFilterHandler(this.props)}
-          handleDeleteFilter={getDeleteFilterHandler(this.props)}
-        />
+        <LabelFilter {...this.props} />
         <Table
           headers={initialHeaders}
           rows={eventListenersFormatted}

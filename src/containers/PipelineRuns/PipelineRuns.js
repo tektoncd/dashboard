@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -17,13 +17,8 @@ import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
 import { InlineNotification } from 'carbon-components-react';
+import { PipelineRuns as PipelineRunsList } from '@tektoncd/dashboard-components';
 import {
-  LabelFilter,
-  PipelineRuns as PipelineRunsList
-} from '@tektoncd/dashboard-components';
-import {
-  getAddFilterHandler,
-  getDeleteFilterHandler,
   getErrorMessage,
   getFilters,
   getStatus,
@@ -32,8 +27,7 @@ import {
 } from '@tektoncd/dashboard-utils';
 import { Add16 as Add } from '@carbon/icons-react';
 
-import { CreatePipelineRun } from '..';
-
+import { CreatePipelineRun, LabelFilter } from '..';
 import { sortRunsByStartTime } from '../../utils';
 import { fetchPipelineRuns } from '../../actions/pipelineRuns';
 
@@ -228,7 +222,6 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
   render() {
     const {
       error,
-      filters,
       loading,
       namespace: selectedNamespace,
       pipelineRuns,
@@ -288,11 +281,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
           />
         )}
         <h1>PipelineRuns</h1>
-        <LabelFilter
-          filters={filters}
-          handleAddFilter={getAddFilterHandler(this.props)}
-          handleDeleteFilter={getDeleteFilterHandler(this.props)}
-        />
+        <LabelFilter {...this.props} />
         <CreatePipelineRun
           open={this.state.showCreatePipelineRunModal}
           onClose={() => this.toggleModal(false)}

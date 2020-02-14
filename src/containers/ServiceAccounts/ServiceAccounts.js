@@ -16,19 +16,11 @@ import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
-import {
-  getAddFilterHandler,
-  getDeleteFilterHandler,
-  getErrorMessage,
-  getFilters,
-  urls
-} from '@tektoncd/dashboard-utils';
+import { getErrorMessage, getFilters, urls } from '@tektoncd/dashboard-utils';
 import { InlineNotification } from 'carbon-components-react';
-import {
-  FormattedDate,
-  LabelFilter,
-  Table
-} from '@tektoncd/dashboard-components';
+import { FormattedDate, Table } from '@tektoncd/dashboard-components';
+
+import { LabelFilter } from '..';
 import { fetchServiceAccounts } from '../../actions/serviceAccounts';
 import {
   getSelectedNamespace,
@@ -71,7 +63,6 @@ export /* istanbul ignore next */ class ServiceAccounts extends Component {
   render() {
     const {
       error,
-      filters,
       intl,
       loading,
       selectedNamespace,
@@ -149,11 +140,7 @@ export /* istanbul ignore next */ class ServiceAccounts extends Component {
           />
         )}
         <h1>ServiceAccounts</h1>
-        <LabelFilter
-          filters={filters}
-          handleAddFilter={getAddFilterHandler(this.props)}
-          handleDeleteFilter={getDeleteFilterHandler(this.props)}
-        />
+        <LabelFilter {...this.props} />
         <Table
           headers={initialHeaders}
           rows={serviceAccountsFormatted}

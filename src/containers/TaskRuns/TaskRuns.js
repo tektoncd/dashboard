@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -17,18 +17,14 @@ import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
 import { InlineNotification } from 'carbon-components-react';
 import {
-  getAddFilterHandler,
-  getDeleteFilterHandler,
   getErrorMessage,
   getFilters,
   getStatus,
   isRunning
 } from '@tektoncd/dashboard-utils';
-import {
-  LabelFilter,
-  TaskRuns as TaskRunsList
-} from '@tektoncd/dashboard-components';
+import { TaskRuns as TaskRunsList } from '@tektoncd/dashboard-components';
 
+import { LabelFilter } from '..';
 import { sortRunsByStartTime } from '../../utils';
 import { fetchTaskRuns } from '../../actions/taskRuns';
 
@@ -175,7 +171,6 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
   render() {
     const {
       error,
-      filters,
       intl,
       loading,
       taskRuns,
@@ -221,11 +216,7 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
           />
         )}
         <h1>TaskRuns</h1>
-        <LabelFilter
-          filters={filters}
-          handleAddFilter={getAddFilterHandler(this.props)}
-          handleDeleteFilter={getDeleteFilterHandler(this.props)}
-        />
+        <LabelFilter {...this.props} />
         <TaskRunsList
           loading={loading}
           selectedNamespace={selectedNamespace}
