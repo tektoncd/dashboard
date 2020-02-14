@@ -268,7 +268,7 @@ export function getPipelineResource({ name, namespace }) {
   return get(uri);
 }
 
-export function getPodLog({ container, name, namespace }) {
+export function getPodLogURL({ container, name, namespace }) {
   let queryParams;
   if (container) {
     queryParams = { container };
@@ -278,6 +278,11 @@ export function getPodLog({ container, name, namespace }) {
     { name, namespace, subResource: 'log' },
     queryParams
   )}`;
+  return uri;
+}
+
+export function getPodLog({ container, name, namespace }) {
+  const uri = getPodLogURL({ container, name, namespace });
   return get(uri, { Accept: 'text/plain' });
 }
 

@@ -22,6 +22,7 @@ export { default as EventListeners } from './EventListeners';
 export { default as Extension } from './Extension';
 export { default as Extensions } from './Extensions';
 export { default as ImportResources } from './ImportResources';
+export { default as LogDownloadButton } from './LogDownloadButton';
 export { default as NamespacesDropdown } from './NamespacesDropdown';
 export { default as PipelineResource } from './PipelineResource';
 export { default as PipelineResources } from './PipelineResources';

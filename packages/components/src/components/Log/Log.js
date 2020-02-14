@@ -136,6 +136,7 @@ export class LogContainer extends Component {
   };
 
   render() {
+    const { downloadButton } = this.props;
     const { loading } = this.state;
     return (
       <pre className="log">
@@ -143,6 +144,7 @@ export class LogContainer extends Component {
           <SkeletonText paragraph width="60%" />
         ) : (
           <>
+            {downloadButton}
             <div className="log-container">{this.getLogList()}</div>
             {this.logTrailer()}
           </>

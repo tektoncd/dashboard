@@ -14,7 +14,8 @@ limitations under the License.
 @import '~@tektoncd/dashboard-components/dist/scss/vars';
 
 .log {
-  padding: 1.3rem 1.6rem;
+  position: relative;
+  padding: 2rem 1.6rem 1.3rem 1.6rem;
   font-family: ibm-plex-mono, monospace;
   font-size: 0.75rem;
   @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
@@ -29,6 +30,12 @@ limitations under the License.
   code {
     white-space: pre;
     overflow-wrap: normal;
+  }
+
+  .bx--copy-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
   }
 
   .log-trailer {

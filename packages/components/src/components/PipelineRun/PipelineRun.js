@@ -151,6 +151,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       customNotification,
       error,
       fetchLogs,
+      logDownloadButton: LogDownloadButton,
       intl,
       loading,
       pollingInterval,
@@ -270,10 +271,19 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
 
     const logContainer = (
       <Log
-        key={`${selectedTaskId}:${selectedStepId}`}
+        downloadButton={
+          LogDownloadButton && (
+            <LogDownloadButton
+              stepName={stepName}
+              stepStatus={stepStatus}
+              taskRun={taskRun}
+            />
+          )
+        }
         fetchLogs={() => fetchLogs(stepName, stepStatus, taskRun)}
-        stepStatus={stepStatus}
+        key={`${selectedTaskId}:${selectedStepId}`}
         pollingInterval={pollingInterval}
+        stepStatus={stepStatus}
       />
     );
 

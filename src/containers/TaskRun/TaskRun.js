@@ -34,7 +34,7 @@ import {
 } from '@tektoncd/dashboard-utils';
 
 import { fetchLogs } from '../../utils';
-
+import { LogDownloadButton } from '..';
 import {
   getSelectedNamespace,
   getTaskByType,
@@ -206,6 +206,13 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
 
     const logContainer = (
       <Log
+        downloadButton={
+          <LogDownloadButton
+            stepName={stepName}
+            stepStatus={stepStatus}
+            taskRun={taskRun}
+          />
+        }
         fetchLogs={() => fetchLogs(stepName, stepStatus, taskRun)}
         key={stepName}
         stepStatus={stepStatus}
