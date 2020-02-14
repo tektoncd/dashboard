@@ -16,16 +16,21 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
+import keyBy from 'lodash.keyby';
 import { getErrorMessage, getFilters, urls } from '@tektoncd/dashboard-utils';
 import { PipelineResources as PipelineResourcesList } from '@tektoncd/dashboard-components';
-import { InlineNotification } from 'carbon-components-react';
-import { Add16 as Add } from '@carbon/icons-react';
+import {
+  InlineNotification,
+  ListItem,
+  Modal,
+  UnorderedList
+} from 'carbon-components-react';
+import { Add16 as Add, Delete16 as Delete } from '@carbon/icons-react';
 
 import { LabelFilter } from '..';
 import { fetchPipelineResources } from '../../actions/pipelineResources';
 import { deletePipelineResource } from '../../api';
 import PipelineResourcesModal from '../PipelineResourcesModal';
-
 import {
   getPipelineResources,
   getPipelineResourcesErrorMessage,
@@ -37,7 +42,9 @@ import {
 const initialState = {
   showCreatePipelineResourceModal: false,
   createdPipelineResource: null,
-  submitError: ''
+  submitError: '',
+  isDeleteModalOpen: false,
+  toBeDeleted: []
 };
 
 export /* istanbul ignore next */ class PipelineResources extends Component {
@@ -80,9 +87,36 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
     this.setState({ createdPipelineResource: false });
   };
 
+  openDeleteModal = (selectedRows, cancelSelection) => {
+    const pipelineResourcesById = keyBy(
+      this.props.pipelineResources,
+      'metadata.uid'
+    );
+    const toBeDeleted = selectedRows.map(({ id }) => pipelineResourcesById[id]);
+
+    this.setState({ isDeleteModalOpen: true, toBeDeleted, cancelSelection });
+  };
+
+  closeDeleteModal = () => {
+    this.setState({
+      isDeleteModalOpen: false,
+      toBeDeleted: []
+    });
+  };
+
+  handleDelete = async () => {
+    const { cancelSelection, toBeDeleted } = this.state;
+    const deletions = toBeDeleted.map(resource =>
+      this.deleteResource(resource)
+    );
+    this.closeDeleteModal();
+    await Promise.all(deletions);
+    cancelSelection();
+  };
+
   deleteResource = pipelineResource => {
     const { name, namespace } = pipelineResource.metadata;
-    deletePipelineResource({ name, namespace }).catch(error => {
+    return deletePipelineResource({ name, namespace }).catch(error => {
       error.response.text().then(text => {
         const statusCode = error.response.status;
         let errorMessage = `error code ${statusCode}`;
@@ -92,43 +126,6 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
         this.setState({ submitError: errorMessage });
       });
     });
-  };
-
-  pipelineResourceActions = () => {
-    const { intl } = this.props;
-    return [
-      {
-        actionText: intl.formatMessage({
-          id: 'dashboard.actions.deleteButton',
-          defaultMessage: 'Delete'
-        }),
-        action: this.deleteResource,
-        modalProperties: {
-          danger: true,
-          heading: intl.formatMessage({
-            id: 'dashboard.deletePipelineResource.heading',
-            defaultMessage: 'Delete PipelineResource'
-          }),
-          primaryButtonText: intl.formatMessage({
-            id: 'dashboard.deletePipelineResource.primaryText',
-            defaultMessage: 'Delete PipelineResource'
-          }),
-          secondaryButtonText: intl.formatMessage({
-            id: 'dashboard.modal.cancelButton',
-            defaultMessage: 'Cancel'
-          }),
-          body: resource =>
-            intl.formatMessage(
-              {
-                id: 'dashboard.deletePipelineResource.body',
-                defaultMessage:
-                  'Are you sure you would like to delete PipelineResource {name}?'
-              },
-              { name: resource.metadata.name }
-            )
-        }
-      }
-    ];
   };
 
   handleCreatePipelineResourceClick = showCreatePipelineResourceModal => {
@@ -168,7 +165,7 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
       intl
     } = this.props;
 
-    const pipelineResourceActions = this.pipelineResourceActions();
+    const { isDeleteModalOpen, toBeDeleted } = this.state;
 
     if (error) {
       return (
@@ -231,9 +228,18 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
           namespace={selectedNamespace}
         />
         <PipelineResourcesList
+          batchActionButtons={[
+            {
+              onClick: this.openDeleteModal,
+              text: intl.formatMessage({
+                id: 'dashboard.actions.deleteButton',
+                defaultMessage: 'Delete'
+              }),
+              icon: Delete
+            }
+          ]}
           loading={loading}
           pipelineResources={pipelineResources}
-          pipelineResourceActions={pipelineResourceActions}
           selectedNamespace={selectedNamespace}
           toolbarButtons={[
             {
@@ -246,6 +252,39 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
             }
           ]}
         />
+        <Modal
+          open={isDeleteModalOpen}
+          primaryButtonText={intl.formatMessage({
+            id: 'dashboard.actions.deleteButton',
+            defaultMessage: 'Delete'
+          })}
+          secondaryButtonText={intl.formatMessage({
+            id: 'dashboard.modal.cancelButton',
+            defaultMessage: 'Cancel'
+          })}
+          modalHeading={intl.formatMessage({
+            id: 'dashboard.pipelineResources.deleteHeading',
+            defaultMessage: 'Delete PipelineResources'
+          })}
+          onSecondarySubmit={this.closeDeleteModal}
+          onRequestSubmit={this.handleDelete}
+          onRequestClose={this.closeDeleteModal}
+          danger
+        >
+          <p>
+            {intl.formatMessage({
+              id: 'dashboard.pipelineResources.deleteConfirm',
+              defaultMessage:
+                'Are you sure you want to delete these PipelineResources?'
+            })}
+          </p>
+          <UnorderedList nested>
+            {toBeDeleted.map(pipelineResource => {
+              const { name, namespace } = pipelineResource.metadata;
+              return <ListItem key={`${name}:${namespace}`}>{name}</ListItem>;
+            })}
+          </UnorderedList>
+        </Modal>
       </>
     );
   }

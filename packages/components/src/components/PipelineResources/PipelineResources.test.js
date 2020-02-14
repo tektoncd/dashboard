@@ -14,6 +14,7 @@ limitations under the License.
 import React from 'react';
 import { fireEvent, waitForElement } from 'react-testing-library';
 import { createIntl } from 'react-intl';
+import { Delete16 } from '@carbon/icons-react';
 import { renderWithIntl, renderWithRouter } from '../../utils/test';
 import PipelineResources from './PipelineResources';
 
@@ -42,7 +43,8 @@ it('PipelineResources renders headers state', () => {
 
 it('PipelineResources renders correct data', async () => {
   const pipelineResourceName = 'pipeline-resource-20190816124708';
-  const { queryByText, getByTestId, getByText } = renderWithRouter(
+  const batchDeleteSpy = jest.fn();
+  const { queryByText, getByLabelText, getByText } = renderWithRouter(
     <PipelineResources
       intl={intl}
       pipelineResources={[
@@ -50,7 +52,8 @@ it('PipelineResources renders correct data', async () => {
           metadata: {
             name: pipelineResourceName,
             namespace: 'default-namespace',
-            type: 'git'
+            type: 'git',
+            uid: '15269df7-0b1e-4a04-a9ea-f47f7da20fa4'
           },
           spec: {
             params: [
@@ -67,12 +70,11 @@ it('PipelineResources renders correct data', async () => {
           }
         }
       ]}
-      pipelineResourceActions={[
+      batchActionButtons={[
         {
-          actionText: intl.formatMessage({
-            id: 'test.actionText',
-            defaultMessage: 'TestAction'
-          })
+          onClick: batchDeleteSpy,
+          text: 'Delete',
+          icon: Delete16
         }
       ]}
     />
@@ -80,6 +82,7 @@ it('PipelineResources renders correct data', async () => {
   expect(queryByText(pipelineResourceName)).toBeTruthy();
   expect(queryByText(/default-namespace/i)).toBeTruthy();
   expect(queryByText(/git/i)).toBeTruthy();
-  fireEvent.click(await waitForElement(() => getByTestId('overflowmenu')));
-  await waitForElement(() => getByText(/TestAction/i));
+  fireEvent.click(await waitForElement(() => getByLabelText(/select row/i)));
+  await waitForElement(() => getByText(/Delete/i));
+  expect(getByText(/1 item selected/i)).toBeTruthy();
 });
