@@ -21,7 +21,9 @@ import {
   createSecret,
   deleteSecret,
   fetchSecrets,
-  fetchSecretsSuccess
+  fetchSecretsSuccess,
+  patchSecret,
+  resetCreate
 } from './secrets';
 
 const data = {
@@ -170,6 +172,7 @@ it('deleteSecret', async () => {
   jest.spyOn(API, 'deleteCredential').mockImplementation(() => {});
 
   const expectedActions = [
+    { type: 'CLEAR_SECRET_ERROR_NOTIFICATION' },
     { type: 'SECRET_DELETE_REQUEST' },
     { type: 'SECRET_DELETE_SUCCESS' }
   ];
@@ -192,7 +195,10 @@ it('deleteSecret error', async () => {
     .spyOn(API, 'deleteCredential')
     .mockImplementation(() => Promise.reject());
 
-  const expectedActions = [{ type: 'SECRET_DELETE_REQUEST' }];
+  const expectedActions = [
+    { type: 'CLEAR_SECRET_ERROR_NOTIFICATION' },
+    { type: 'SECRET_DELETE_REQUEST' }
+  ];
 
   await store.dispatch(deleteSecret(secrets));
   expect(store.getActions()).toEqual(expectedActions);
@@ -209,14 +215,10 @@ it('createSecret', async () => {
 
   jest.spyOn(API, 'getCredentials').mockImplementation(() => data);
   jest.spyOn(API, 'createCredential').mockImplementation(() => response);
-  jest
-    .spyOn(API, 'getServiceAccount')
-    .mockImplementation(() => defaultServiceAccount);
-  jest.spyOn(API, 'patchServiceAccount').mockImplementation(() => response);
 
   const expectedActions = [
-    { type: 'SECRET_CREATE_REQUEST' },
     { type: 'CLEAR_SECRET_ERROR_NOTIFICATION' },
+    { type: 'SECRET_CREATE_REQUEST' },
     { type: 'SECRET_CREATE_SUCCESS' }
   ];
 
@@ -246,6 +248,7 @@ it('createSecret error', async () => {
   jest.spyOn(API, 'getAllCredentials').mockImplementation(() => data);
 
   const expectedActions = [
+    { type: 'CLEAR_SECRET_ERROR_NOTIFICATION' },
     { type: 'SECRET_CREATE_REQUEST' },
     {
       type: 'SECRET_CREATE_FAILURE',
@@ -255,6 +258,98 @@ it('createSecret error', async () => {
   ];
 
   await store.dispatch(createSecret(postData, namespace));
+  expect(store.getActions()).toEqual(expectedActions);
+});
+
+it('patchSecret', async () => {
+  const middleware = [thunk];
+  const mockStore = configureStore(middleware);
+  const store = mockStore();
+
+  const serviceAccounts = [
+    {
+      name: 'default',
+      namespace: 'default'
+    },
+    {
+      name: 'tekton-dashboard',
+      namespace: 'tekton-pipelines'
+    }
+  ];
+
+  const secret = data.items[0].metadata.name;
+
+  jest
+    .spyOn(API, 'patchServiceAccount')
+    .mockImplementation(() => Promise.resolve(response));
+
+  const expectedActions = [
+    { type: 'CLEAR_SECRET_ERROR_NOTIFICATION' },
+    { type: 'SECRET_PATCH_REQUEST' },
+    { type: 'SECRET_PATCH_SUCCESS' }
+  ];
+
+  await store
+    .dispatch(patchSecret(serviceAccounts, secret, () => {}))
+    .then(() => {
+      expect(store.getActions()).toEqual(expectedActions);
+    });
+});
+
+it('patchSecret error', async () => {
+  const middleware = [thunk];
+  const mockStore = configureStore(middleware);
+  const store = mockStore();
+
+  const errorResponseMock = {
+    response: {
+      status: 400,
+      text: () =>
+        Promise.resolve('Something went wrong when patching the secret.')
+    }
+  };
+
+  jest
+    .spyOn(API, 'patchServiceAccount')
+    .mockImplementation(() => Promise.reject(errorResponseMock));
+
+  const expectedActions = [
+    { type: 'CLEAR_SECRET_ERROR_NOTIFICATION' },
+    { type: 'SECRET_PATCH_REQUEST' },
+    {
+      type: 'SECRET_PATCH_FAILURE',
+      error: 'Something went wrong when patching the secret.'
+    }
+  ];
+
+  const serviceAccounts = [
+    {
+      name: 'default',
+      namespace: 'default'
+    },
+    {
+      name: 'tekton-dashboard',
+      namespace: 'tekton-pipelines'
+    }
+  ];
+
+  const secret = data.items[0].metadata.name;
+
+  await store
+    .dispatch(patchSecret(serviceAccounts, secret, () => {}))
+    .then(() => {
+      expect(store.getActions()).toEqual(expectedActions);
+    });
+});
+
+it('resetCreate', async () => {
+  const middleware = [thunk];
+  const mockStore = configureStore(middleware);
+  const store = mockStore();
+
+  const expectedActions = [{ type: 'RESET_CREATE' }];
+
+  await store.dispatch(resetCreate());
   expect(store.getActions()).toEqual(expectedActions);
 });
 

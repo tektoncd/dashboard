@@ -15,7 +15,6 @@ import {
   createCredential,
   deleteCredential,
   getCredentials,
-  getServiceAccount,
   getServiceAccounts,
   patchServiceAccount,
   updateServiceAccountSecrets
@@ -38,6 +37,9 @@ export function fetchSecrets({ namespace } = {}) {
 
 export function deleteSecret(secrets, cancelMethod) {
   return async dispatch => {
+    dispatch({
+      type: 'CLEAR_SECRET_ERROR_NOTIFICATION'
+    });
     dispatch({ type: 'SECRET_DELETE_REQUEST' });
     // This is where we first handle the unpatching (complicated section), and would benefit
     // from error handling and additional notifications on success/error
@@ -136,34 +138,61 @@ export function deleteSecret(secrets, cancelMethod) {
 /* istanbul ignore next */
 export function createSecret(postData, namespace) {
   return async dispatch => {
+    dispatch({
+      type: 'CLEAR_SECRET_ERROR_NOTIFICATION'
+    });
     dispatch({ type: 'SECRET_CREATE_REQUEST' });
     try {
       await createCredential(postData, namespace);
-      const serviceAccount = await getServiceAccount({
-        name: postData.metadata.labels.serviceAccount,
-        namespace
-      });
-      await patchServiceAccount({
-        serviceAccountName: serviceAccount.metadata.name,
-        namespace: serviceAccount.metadata.namespace,
-        secretName: postData.metadata.name
-      });
-      dispatch({
-        type: 'CLEAR_SECRET_ERROR_NOTIFICATION'
-      });
       dispatch({
         type: 'SECRET_CREATE_SUCCESS'
       });
-      return false;
     } catch (error) {
       error.response.text().then(message => {
         dispatch({ type: 'SECRET_CREATE_FAILURE', error: message });
       });
-      return true;
     }
+  };
+}
+
+export function patchSecret(serviceAccounts, secret, handleClose) {
+  return async dispatch => {
+    dispatch({
+      type: 'CLEAR_SECRET_ERROR_NOTIFICATION'
+    });
+    dispatch({ type: 'SECRET_PATCH_REQUEST' });
+    return Promise.all(
+      serviceAccounts.map(serviceAccount => {
+        return new Promise(async (resolve, reject) => {
+          await patchServiceAccount({
+            serviceAccountName: serviceAccount.name,
+            namespace: serviceAccount.namespace,
+            secretName: secret
+          }).catch(error => {
+            reject(error);
+          });
+          resolve();
+        });
+      })
+    )
+      .then(() => {
+        dispatch({
+          type: 'SECRET_PATCH_SUCCESS'
+        });
+        handleClose();
+      })
+      .catch(error => {
+        error.response.text().then(message => {
+          dispatch({ type: 'SECRET_PATCH_FAILURE', error: message });
+        });
+      });
   };
 }
 
 export function clearNotification() {
   return { type: 'CLEAR_SECRET_ERROR_NOTIFICATION' };
+}
+
+export function resetCreate() {
+  return { type: 'RESET_CREATE' };
 }

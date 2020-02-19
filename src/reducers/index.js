@@ -317,12 +317,20 @@ export function getDeleteSecretsErrorMessage(state) {
   return secretSelectors.getDeleteSecretsErrorMessage(state.secrets);
 }
 
+export function getPatchSecretsErrorMessage(state) {
+  return secretSelectors.getPatchSecretsErrorMessage(state.secrets);
+}
+
 export function getCreateSecretsSuccessMessage(state) {
   return secretSelectors.getCreateSecretsSuccessMessage(state.secrets);
 }
 
 export function getDeleteSecretsSuccessMessage(state) {
   return secretSelectors.getDeleteSecretsSuccessMessage(state.secrets);
+}
+
+export function getPatchSecretsSuccessMessage(state) {
+  return secretSelectors.getPatchSecretsSuccessMessage(state.secrets);
 }
 
 export function isFetchingSecrets(state) {
