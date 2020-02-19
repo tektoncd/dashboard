@@ -13,37 +13,48 @@ limitations under the License.
 
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import { Download16 } from '@carbon/icons-react';
+import { Download16, Launch16 } from '@carbon/icons-react';
 
 import { getPodLogURL } from '../../api';
 
-const LogDownloadButton = ({ intl, stepName, stepStatus, taskRun }) => {
+const LogDownloadButton = ({ intl, stepStatus, taskRun }) => {
   const { container } = stepStatus;
   const { namespace, pod } = taskRun;
+
+  const logURL = getPodLogURL({
+    container,
+    name: pod,
+    namespace
+  });
+
   return (
-    <button
-      type="button"
-      className="bx--copy-btn"
-      title={intl.formatMessage(
-        {
-          id: 'dashboard.logs.downloadButtonTooltip',
-          defaultMessage: 'Download logs for {stepName}'
-        },
-        { stepName }
-      )}
-      onClick={() => {
-        const dl = document.createElement('a');
-        dl.download = `${pod}__${container}__log.txt`;
-        dl.href = getPodLogURL({
-          container,
-          name: pod,
-          namespace
-        });
-        dl.click();
-      }}
-    >
-      <Download16 />
-    </button>
+    <>
+      <div className="bx--btn-set">
+        <a
+          className="bx--copy-btn"
+          title={intl.formatMessage({
+            id: 'dashboard.logs.launchButtonTooltip',
+            defaultMessage: 'Open logs in a new window'
+          })}
+          href={logURL}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Launch16 />
+        </a>
+        <a
+          className="bx--copy-btn"
+          title={intl.formatMessage({
+            id: 'dashboard.logs.downloadButtonTooltip',
+            defaultMessage: 'Download logs'
+          })}
+          download={`${pod}__${container}__log.txt`}
+          href={logURL}
+        >
+          <Download16 />
+        </a>
+      </div>
+    </>
   );
 };
 
