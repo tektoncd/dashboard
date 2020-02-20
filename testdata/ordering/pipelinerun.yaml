@@ -1,0 +1,9 @@
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  name: test-pipelinerun
+  namespace: tekton-pipelines
+spec:
+  pipelineRef:
+    name: test-pipeline
