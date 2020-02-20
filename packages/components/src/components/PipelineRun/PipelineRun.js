@@ -62,6 +62,34 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     };
   };
 
+  sortTaskRuns = taskRuns => {
+    const toReturn = taskRuns.sort((taskRunA, taskRunB) => {
+      if (!taskRunA || !taskRunB) {
+        return 0;
+      }
+
+      const firstStepA = taskRunA.steps[0];
+      const firstStepB = taskRunB.steps[0];
+
+      if (!firstStepA || !firstStepB) {
+        // shouldn't be able to reach this state (both tasks requiring at least one step)
+        return 0;
+      }
+
+      const { startedAt: startedAtA } =
+        firstStepA.terminated || firstStepA.running || {};
+      const { startedAt: startedAtB } =
+        firstStepB.terminated || firstStepB.running || {};
+
+      if (!startedAtA || !startedAtB) {
+        return 0;
+      }
+
+      return new Date(startedAtA).getTime() - new Date(startedAtB).getTime();
+    });
+    return toReturn;
+  };
+
   loadTaskRuns = pipelineRun => {
     if (!pipelineRun || !pipelineRun.status || !pipelineRun.status.taskRuns) {
       return [];
@@ -249,6 +277,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       );
     }
     const taskRuns = this.loadTaskRuns(pipelineRun, taskRunNames);
+
+    this.sortTaskRuns(taskRuns);
 
     if (taskRuns.length === 0) {
       return (
