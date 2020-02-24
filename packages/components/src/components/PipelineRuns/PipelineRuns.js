@@ -22,6 +22,7 @@ import { FormattedDate, FormattedDuration, RunDropdown } from '..';
 import './PipelineRuns.scss';
 
 const PipelineRuns = ({
+  batchActionButtons = [],
   createPipelineRunURL = urls.pipelineRuns.byName,
   createPipelineRunDisplayName = ({ pipelineRunMetadata }) =>
     pipelineRunMetadata.name,
@@ -50,6 +51,8 @@ const PipelineRuns = ({
   },
   getPipelineRunCreatedTime = pipelineRun =>
     pipelineRun.metadata.creationTimestamp,
+  getPipelineRunId = pipelineRun =>
+    `${pipelineRun.metadata.namespace}:${pipelineRun.metadata.name}`,
   hideNamespace,
   intl,
   loading,
@@ -142,7 +145,7 @@ const PipelineRuns = ({
     );
 
     return {
-      id: `${namespace}:${pipelineRunName}`,
+      id: getPipelineRunId(pipelineRun),
       name: pipelineRunURL ? (
         <Link to={pipelineRunURL} title={pipelineRunName}>
           {pipelineRunName}
@@ -181,6 +184,7 @@ const PipelineRuns = ({
 
   return (
     <Table
+      batchActionButtons={batchActionButtons}
       headers={headers}
       rows={pipelineRunsFormatted}
       loading={loading}
