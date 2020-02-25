@@ -21,6 +21,11 @@ import { ALL_NAMESPACES, paths, urls } from '@tektoncd/dashboard-utils';
 import { renderWithRouter } from '../../utils/test';
 import SideNavContainer, { SideNavWithIntl as SideNav } from './SideNav';
 import * as API from '../../api';
+import * as Reducers from '../../reducers';
+
+beforeEach(() => {
+  jest.spyOn(Reducers, 'getReadOnly').mockImplementation(() => true);
+});
 
 it('SideNav renders with extensions', () => {
   const middleware = [thunk];
@@ -57,6 +62,8 @@ it('SideNav renders with extensions', () => {
 });
 
 it('SideNav renders with triggers', async () => {
+  jest.spyOn(Reducers, 'getReadOnly').mockImplementation(() => false);
+
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const store = mockStore({
@@ -71,6 +78,7 @@ it('SideNav renders with triggers', async () => {
       <SideNavContainer />
     </Provider>
   );
+  await waitForElement(() => queryByText(/about/i));
   expect(queryByText(/pipelines/i)).toBeTruthy();
   expect(queryByText(/tasks/i)).toBeTruthy();
   await waitForElement(() => queryByText(/eventlisteners/i));
@@ -464,4 +472,43 @@ it('SideNav updates namespace in URL', async () => {
   fireEvent.click(getByText(otherNamespace));
   expect(selectNamespace).not.toHaveBeenCalled();
   expect(push).toHaveBeenCalledWith(expect.stringContaining(otherNamespace));
+});
+
+it('SideNav renders import in not read-only mode', async () => {
+  jest.spyOn(Reducers, 'getReadOnly').mockImplementation(() => false);
+
+  const middleware = [thunk];
+  const mockStore = configureStore(middleware);
+  const store = mockStore({
+    extensions: { byName: {} },
+    namespaces: { byName: {} }
+  });
+  jest
+    .spyOn(API, 'getCustomResource')
+    .mockImplementation(() => Promise.resolve());
+  const { queryByText } = renderWithRouter(
+    <Provider store={store}>
+      <SideNavContainer />
+    </Provider>
+  );
+  await waitForElement(() => queryByText(/Import/i));
+});
+
+it('SideNav does not render import in read-only mode', async () => {
+  const middleware = [thunk];
+  const mockStore = configureStore(middleware);
+  const store = mockStore({
+    extensions: { byName: {} },
+    namespaces: { byName: {} }
+  });
+  jest
+    .spyOn(API, 'getCustomResource')
+    .mockImplementation(() => Promise.resolve());
+  const { queryByText } = renderWithRouter(
+    <Provider store={store}>
+      <SideNavContainer isReadOnly />
+    </Provider>
+  );
+  await waitForElement(() => queryByText(/about/i));
+  expect(queryByText(/import/i)).toBeFalsy();
 });

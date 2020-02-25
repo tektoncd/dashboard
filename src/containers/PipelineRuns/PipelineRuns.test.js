@@ -20,6 +20,7 @@ import { Route } from 'react-router-dom';
 import { urls } from '@tektoncd/dashboard-utils';
 import { renderWithRouter } from '../../utils/test';
 import * as API from '../../api';
+import * as Reducers from '../../reducers';
 import PipelineRunsContainer from './PipelineRuns';
 
 const namespacesTestStore = {
@@ -96,6 +97,7 @@ const pipelineResourcesTestStore = {
     isFetching: false
   }
 };
+
 const pipelineRunsTestStore = {
   pipelineRuns: {
     isFetching: false,
@@ -161,6 +163,7 @@ beforeEach(() => {
   jest.spyOn(API, 'getServiceAccounts').mockImplementation(() => []);
   jest.spyOn(API, 'getPipelines').mockImplementation(() => []);
   jest.spyOn(API, 'getPipelineResources').mockImplementation(() => []);
+  jest.spyOn(Reducers, 'getReadOnly').mockImplementation(() => true);
 });
 
 it('PipelineRuns can be filtered on a single label filter', async () => {
@@ -363,8 +366,88 @@ it('An invalid filter value is disallowed and reported', async () => {
   ).toBeTruthy();
 });
 
+it('Creation, deletion and stop events are possible when not in read-only mode', async () => {
+  jest.spyOn(Reducers, 'getReadOnly').mockImplementation(() => false);
+
+  const mockTestStore = mockStore(testStore);
+  const match = {
+    params: {},
+    url: '/pipelineruns'
+  };
+
+  const { getByText, queryByText } = renderWithRouter(
+    <Provider store={mockTestStore}>
+      <Route
+        path="/pipelineruns"
+        render={props => (
+          <PipelineRunsContainer
+            {...props}
+            match={match}
+            error={null}
+            loading={false}
+            namespace="namespace-1"
+            fetchPipelineRuns={() => Promise.resolve()}
+            pipelineRuns={pipelineRunsTestStore.pipelineRuns.byId}
+          />
+        )}
+      />
+    </Provider>,
+    { route: '/pipelineruns' }
+  );
+
+  // Let the page finish rendering so we know if we're in read-only mode or not
+  await waitForElement(() => getByText('pipelineRunWithTwoLabels'));
+  expect(queryByText('Create')).toBeTruthy(); // So we don't match on "Created" which is a table header
+  expect(queryByText(/pipelineRunWithTwoLabels/i)).toBeTruthy();
+  expect(
+    document
+      .getElementById('namespace-1:pipelineRunWithTwoLabels:actions')
+      .getElementsByClassName('bx--overflow-menu')
+      .item(0)
+  ).toBeTruthy(); // No actions for it
+});
+
+it('Creation, deletion and stop events are not possible when in read-only mode', async () => {
+  jest.spyOn(Reducers, 'getReadOnly').mockImplementation(() => true);
+
+  const mockTestStore = mockStore(testStore);
+  const match = {
+    params: {},
+    url: '/pipelineruns'
+  };
+
+  const { getByText, queryByText } = renderWithRouter(
+    <Provider store={mockTestStore}>
+      <Route
+        path="/pipelineruns"
+        render={props => (
+          <PipelineRunsContainer
+            {...props}
+            match={match}
+            error={null}
+            isReadOnly
+            loading={false}
+            namespace="namespace-1"
+            fetchPipelineRuns={() => Promise.resolve()}
+            pipelineRuns={pipelineRunsTestStore.pipelineRuns.byId}
+          />
+        )}
+      />
+    </Provider>,
+    { route: '/pipelineruns' }
+  );
+  // Let the page finish rendering so we know if we're in read-only mode or not
+  await waitForElement(() => getByText('pipelineRunWithTwoLabels'));
+  expect(queryByText('Create')).toBeFalsy(); // So we don't match on "Created" which is a table header
+  expect(queryByText(/pipelineRunWithTwoLabels/i)).toBeTruthy(); // It's in the table
+  expect(
+    document.getElementById('namespace-1:pipelineRunWithTwoLabels:actions')
+  ).toBeFalsy();
+});
+
 it('TaskTree handles rerun event in PipelineRuns page', async () => {
   const mockTestStore = mockStore(testStore);
+  jest.spyOn(Reducers, 'getReadOnly').mockImplementation(() => false);
   jest.spyOn(API, 'rerunPipelineRun').mockImplementation(() => []);
   const { getByTestId, getByText } = renderWithRouter(
     <Provider store={mockTestStore}>
@@ -381,7 +464,7 @@ it('TaskTree handles rerun event in PipelineRuns page', async () => {
     </Provider>,
     { route: urls.pipelineRuns.all() }
   );
-
+  await waitForElement(() => getByText(/pipelineRunWithTwoLabels/i));
   fireEvent.click(await waitForElement(() => getByTestId('overflowmenu')));
   await waitForElement(() => getByText(/Rerun/i));
   fireEvent.click(getByText('Rerun'));

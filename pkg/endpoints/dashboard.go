@@ -14,6 +14,8 @@ limitations under the License.
 package endpoints
 
 import (
+	"os"
+	"strconv"
 	"strings"
 
 	"github.com/tektoncd/dashboard/pkg/logging"
@@ -77,7 +79,18 @@ func GetPipelineVersion(r Resource, isOpenShift bool) string {
 	return version
 }
 
-// Get whether running on openshift or not
+// IsReadOnly determines whether the Dashboard is running in read-only mode or not
+func IsReadOnly() bool {
+	asBool, err := strconv.ParseBool(os.Getenv("READ_ONLY"))
+	if err == nil {
+		logging.Log.Infof("Dashboard is in read-only mode: %s", asBool)
+		return asBool
+	}
+	logging.Log.Warnf("Couldn't determine if the Dashboard is in read-only mode or not, assuming not")
+	return false
+}
+
+// IsOpenShift determines whether the Dashboard is running on OpenShift or not
 func IsOpenShift(r Resource, installedNamespace string) bool {
 	namespaces, err := r.K8sClient.CoreV1().Namespaces().List(v1.ListOptions{})
 	if err != nil {

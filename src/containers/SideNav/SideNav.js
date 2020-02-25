@@ -27,7 +27,11 @@ import { ALL_NAMESPACES, urls } from '@tektoncd/dashboard-utils';
 import { NamespacesDropdown } from '..';
 
 import { selectNamespace } from '../../actions/namespaces';
-import { getExtensions, getSelectedNamespace } from '../../reducers';
+import {
+  getExtensions,
+  getReadOnly,
+  getSelectedNamespace
+} from '../../reducers';
 import { getCustomResource } from '../../api';
 
 import './SideNav.scss';
@@ -139,7 +143,7 @@ class SideNav extends Component {
   }
 
   render() {
-    const { extensions, intl, namespace } = this.props;
+    const { extensions, intl, isReadOnly, namespace } = this.props;
     const { isTriggersInstalled } = this.state;
 
     return (
@@ -247,16 +251,20 @@ class SideNav extends Component {
               defaultMessage: 'About'
             })}
           </SideNavLink>
-          <SideNavLink
-            element={NavLink}
-            icon={<span />}
-            to={urls.importResources()}
-          >
-            {intl.formatMessage({
-              id: 'dashboard.sideNav.importResources',
-              defaultMessage: 'Import Tekton resources'
-            })}
-          </SideNavLink>
+
+          {!isReadOnly && (
+            <SideNavLink
+              element={NavLink}
+              icon={<span />}
+              to={urls.importResources()}
+            >
+              {intl.formatMessage({
+                id: 'dashboard.sideNav.importResources',
+                defaultMessage: 'Import Tekton resources'
+              })}
+            </SideNavLink>
+          )}
+
           <SideNavLink
             element={NavLink}
             icon={<span />}
@@ -312,6 +320,7 @@ class SideNav extends Component {
 /* istanbul ignore next */
 const mapStateToProps = state => ({
   extensions: getExtensions(state),
+  isReadOnly: getReadOnly(state),
   namespace: getSelectedNamespace(state)
 });
 

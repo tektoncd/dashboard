@@ -33,6 +33,7 @@ type Properties struct {
 	DashboardVersion string
 	PipelineVersion  string
 	IsOpenShift      bool
+	ReadOnly         bool
 }
 
 const (
@@ -160,14 +161,23 @@ func (r Resource) GetEndpoints(request *restful.Request, response *restful.Respo
 	}
 }
 
-// GetProperties is used to get the installed namespace, version of tekton dashboard and version of tekton pipelines
+// GetProperties is used to get the installed namespace for the Dashboard,
+// the version of the Tekton Dashboard, the version of Tekton Pipelines, whether or not one's
+// running on OpenShift and when one's in read-only mode
 func (r Resource) GetProperties(request *restful.Request, response *restful.Response) {
 	installedNamespace := os.Getenv("INSTALLED_NAMESPACE")
 	dashboardVersion := GetDashboardVersion(r, installedNamespace)
 	isOpenShift := IsOpenShift(r, installedNamespace)
+	isReadOnly := IsReadOnly()
 	pipelineVersion := GetPipelineVersion(r, isOpenShift)
 
-	properties := Properties{InstallNamespace: installedNamespace, DashboardVersion: dashboardVersion, PipelineVersion: pipelineVersion, IsOpenShift: isOpenShift}
-
+	properties := Properties{
+		InstallNamespace: os.Getenv("INSTALLED_NAMESPACE"),
+		DashboardVersion: dashboardVersion,
+		PipelineVersion:  pipelineVersion,
+		IsOpenShift:      isOpenShift,
+		ReadOnly:         isReadOnly,
+	}
+	logging.Log.Debugf("Writing install properties: %s", properties)
 	response.WriteEntity(properties)
 }

@@ -82,6 +82,9 @@ kustomize build overlays/latest-openshift --load_restrictor=LoadRestrictionsNone
 kustomize build overlays/latest-openshift-locked-down --load_restrictor=LoadRestrictionsNone \
  | ko resolve -f - | kubectl apply -f - --validate=false
 ```
+
+In read-only mode, buttons and sections of the Dashboard will not be displayed (for example, you won't have the ability to create, stop, and delete PipelineRuns).
+
 Development installation of the Dashboard uses `ko`:
 
 ```bash

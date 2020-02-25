@@ -37,6 +37,7 @@ import {
   getDeleteSecretsErrorMessage,
   getDeleteSecretsSuccessMessage,
   getPatchSecretsSuccessMessage,
+  getReadOnly,
   getSecrets,
   getSecretsErrorMessage,
   getSelectedNamespace,
@@ -142,6 +143,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
     const {
       loading,
       deleteSuccess,
+      isReadOnly,
       secrets,
       selectedNamespace,
       serviceAccounts,
@@ -156,6 +158,19 @@ export /* istanbul ignore next */ class Secrets extends Component {
       openDeleteSecret,
       selectedType
     } = this.state;
+
+    const toolbarButtons = isReadOnly
+      ? []
+      : [
+          {
+            onClick: this.handleNewSecretClick,
+            text: intl.formatMessage({
+              id: 'dashboard.actions.createButton',
+              defaultMessage: 'Create'
+            }),
+            icon: Add
+          }
+        ];
 
     const initialHeaders = [
       {
@@ -227,6 +242,20 @@ export /* istanbul ignore next */ class Secrets extends Component {
       })
     });
 
+    const batchActionButtons =
+      !isReadOnly && secretsToUse.length > 0
+        ? [
+            {
+              onClick: this.handleDeleteSecretClick,
+              text: intl.formatMessage({
+                id: 'dashboard.actions.deleteButton',
+                defaultMessage: 'Delete'
+              }),
+              icon: Delete
+            }
+          ]
+        : [];
+
     const secretsFormatted = secretsToUse.map(secret => {
       let annotations = '';
       if (secret.metadata.annotations !== undefined) {
@@ -289,20 +318,6 @@ export /* istanbul ignore next */ class Secrets extends Component {
       };
       return formattedSecret;
     });
-
-    const batchActionButtons =
-      secretsToUse.length === 0
-        ? []
-        : [
-            {
-              onClick: this.handleDeleteSecretClick,
-              text: intl.formatMessage({
-                id: 'dashboard.actions.deleteButton',
-                defaultMessage: 'Delete'
-              }),
-              icon: Delete
-            }
-          ];
 
     return (
       <>
@@ -416,23 +431,23 @@ export /* istanbul ignore next */ class Secrets extends Component {
                 { kind: 'Secrets', selectedNamespace }
               )}
               batchActionButtons={batchActionButtons}
-              toolbarButtons={[
-                {
-                  onClick: this.handleNewSecretClick,
-                  text: intl.formatMessage({
-                    id: 'dashboard.actions.createButton',
-                    defaultMessage: 'Create'
-                  }),
-                  icon: Add
-                }
-              ]}
+              toolbarButtons={toolbarButtons}
             />
             <DeleteModal
               open={openDeleteSecret}
               handleClick={this.handleHideDeleteSecret}
               handleDelete={this.delete}
               toBeDeleted={toBeDeleted}
+              toolbarButtons={toolbarButtons}
             />
+            {!isReadOnly && (
+              <DeleteModal
+                open={openDeleteSecret}
+                handleClick={this.handleHideDeleteSecret}
+                handleDelete={this.delete}
+                toBeDeleted={toBeDeleted}
+              />
+            )}
           </>
         )}
         {openNewSecret && (
@@ -459,6 +474,7 @@ function mapStateToProps(state, props) {
     errorMessage:
       getDeleteSecretsErrorMessage(state) || getSecretsErrorMessage(state),
     deleteSuccess: getDeleteSecretsSuccessMessage(state),
+    isReadOnly: getReadOnly(state),
     patchSuccess: getPatchSecretsSuccessMessage(state),
     filters,
     loading: isFetchingSecrets(state) || isFetchingServiceAccounts(state),

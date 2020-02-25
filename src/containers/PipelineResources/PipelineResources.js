@@ -34,6 +34,7 @@ import PipelineResourcesModal from '../PipelineResourcesModal';
 import {
   getPipelineResources,
   getPipelineResourcesErrorMessage,
+  getReadOnly,
   getSelectedNamespace,
   isFetchingPipelineResources,
   isWebSocketConnected
@@ -136,6 +137,55 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
     }
   };
 
+  pipelineResourceActions = () => {
+    const { intl, isReadOnly } = this.props;
+    if (isReadOnly) {
+      return [];
+    }
+
+    return [
+      {
+        actionText: intl.formatMessage({
+          id: 'dashboard.actions.deleteButton',
+          defaultMessage: 'Delete'
+        }),
+        action: this.deleteResource,
+        modalProperties: {
+          danger: true,
+          heading: intl.formatMessage({
+            id: 'dashboard.deletePipelineResource.heading',
+            defaultMessage: 'Delete PipelineResource'
+          }),
+          primaryButtonText: intl.formatMessage({
+            id: 'dashboard.deletePipelineResource.primaryText',
+            defaultMessage: 'Delete PipelineResource'
+          }),
+          secondaryButtonText: intl.formatMessage({
+            id: 'dashboard.modal.cancelButton',
+            defaultMessage: 'Cancel'
+          }),
+          body: resource =>
+            intl.formatMessage(
+              {
+                id: 'dashboard.deletePipelineResource.body',
+                defaultMessage:
+                  'Are you sure you would like to delete PipelineResource {name}?'
+              },
+              { name: resource.metadata.name }
+            )
+        }
+      }
+    ];
+  };
+
+  fetchData() {
+    const { filters, namespace } = this.props;
+    this.props.fetchPipelineResources({
+      filters,
+      namespace
+    });
+  }
+
   handleCreatePipelineResourceSuccess(newPipelineResource) {
     const {
       metadata: { namespace, name }
@@ -148,19 +198,12 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
     this.setState({ createdPipelineResource: { name, url } });
   }
 
-  fetchData() {
-    const { filters, namespace } = this.props;
-    this.props.fetchPipelineResources({
-      filters,
-      namespace
-    });
-  }
-
   render() {
     const {
       error,
       loading,
       namespace: selectedNamespace,
+      isReadOnly,
       pipelineResources,
       intl
     } = this.props;
@@ -181,6 +224,32 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
         />
       );
     }
+
+    const toolbarButtons = isReadOnly
+      ? []
+      : [
+          {
+            onClick: () => this.toggleModal(true),
+            text: intl.formatMessage({
+              id: 'dashboard.actions.createButton',
+              defaultMessage: 'Create'
+            }),
+            icon: Add
+          }
+        ];
+
+    const batchActionButtons = isReadOnly
+      ? []
+      : [
+          {
+            onClick: this.openDeleteModal,
+            text: intl.formatMessage({
+              id: 'dashboard.actions.deleteButton',
+              defaultMessage: 'Delete'
+            }),
+            icon: Delete
+          }
+        ];
 
     return (
       <>
@@ -219,38 +288,24 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
         )}
         <h1>PipelineResources</h1>
         <LabelFilter {...this.props} />
-        <PipelineResourcesModal
-          open={this.state.showCreatePipelineResourceModal}
-          handleCreatePipelineResource={this.handleCreatePipelineResourceClick}
-          onClose={() => this.toggleModal(false)}
-          onSuccess={this.handleCreatePipelineResourceSuccess}
-          pipelineRef={this.props.pipelineName}
-          namespace={selectedNamespace}
-        />
-        <PipelineResourcesList
-          batchActionButtons={[
-            {
-              onClick: this.openDeleteModal,
-              text: intl.formatMessage({
-                id: 'dashboard.actions.deleteButton',
-                defaultMessage: 'Delete'
-              }),
-              icon: Delete
+        {!isReadOnly && (
+          <PipelineResourcesModal
+            open={this.state.showCreatePipelineResourceModal}
+            handleCreatePipelineResource={
+              this.handleCreatePipelineResourceClick
             }
-          ]}
+            onClose={() => this.toggleModal(false)}
+            onSuccess={this.handleCreatePipelineResourceSuccess}
+            pipelineRef={this.props.pipelineName}
+            namespace={selectedNamespace}
+          />
+        )}
+        <PipelineResourcesList
+          batchActionButtons={batchActionButtons}
           loading={loading}
           pipelineResources={pipelineResources}
           selectedNamespace={selectedNamespace}
-          toolbarButtons={[
-            {
-              onClick: () => this.toggleModal(true),
-              text: intl.formatMessage({
-                id: 'dashboard.actions.createButton',
-                defaultMessage: 'Create'
-              }),
-              icon: Add
-            }
-          ]}
+          toolbarButtons={toolbarButtons}
         />
         <Modal
           open={isDeleteModalOpen}
@@ -298,6 +353,7 @@ function mapStateToProps(state, props) {
 
   return {
     error: getPipelineResourcesErrorMessage(state),
+    isReadOnly: getReadOnly(state),
     filters,
     loading: isFetchingPipelineResources(state),
     namespace,
