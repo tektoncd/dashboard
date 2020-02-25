@@ -35,6 +35,8 @@ spec:
           env:
             - name: PORT
               value: "9097"
+            - name: READ_ONLY
+              value: "false"
             - name: WEB_RESOURCES_DIR
               value: /var/run/ko/web
             - name: PIPELINE_RUN_SERVICE_ACCOUNT

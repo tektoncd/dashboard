@@ -13,7 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import { createIntl } from 'react-intl';
-import { fireEvent } from 'react-testing-library';
+import { fireEvent, waitForElement } from 'react-testing-library';
 import { Provider } from 'react-redux';
 import { Route } from 'react-router-dom';
 import { urls } from '@tektoncd/dashboard-utils';
@@ -22,6 +22,7 @@ import thunk from 'redux-thunk';
 import { renderWithRouter } from '../../utils/test';
 import Secrets from '.';
 import * as API from '../../api';
+import * as Reducers from '../../reducers';
 
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
@@ -29,6 +30,11 @@ const mockStore = configureStore(middleware);
 const intl = createIntl({
   locale: 'en',
   defaultLocale: 'en'
+});
+
+beforeEach(() => {
+  jest.spyOn(API, 'getPipelines').mockImplementation(() => {});
+  jest.spyOn(Reducers, 'getReadOnly').mockImplementation(() => false);
 });
 
 const byNamespace = {
@@ -303,4 +309,48 @@ it('Secrets can be filtered on a single label filter', async () => {
   expect(queryByText(filterValue)).toBeTruthy();
   expect(queryByText('github-repo-access-secret')).toBeFalsy();
   expect(queryByText('another-secret-with-label')).toBeTruthy();
+});
+
+it('Secrets can not be created when in read-only mode', async () => {
+  jest.spyOn(Reducers, 'getReadOnly').mockImplementation(() => true);
+
+  const currentProps = {
+    loading: false,
+    error: null,
+    intl
+  };
+
+  const { queryByText } = renderWithRouter(
+    <Provider store={store}>
+      <Route
+        path={urls.secrets.all()}
+        render={props => <Secrets {...props} {...currentProps} />}
+      />
+    </Provider>,
+    { route: urls.secrets.all() }
+  );
+  await waitForElement(() => queryByText(/github-repo-access-secret/i));
+  expect(queryByText('Create')).toBeFalsy();
+});
+
+it('Secrets can be created when not in read-only mode', async () => {
+  jest.spyOn(Reducers, 'getReadOnly').mockImplementation(() => false);
+
+  const currentProps = {
+    loading: false,
+    error: null,
+    intl
+  };
+
+  const { queryByText } = renderWithRouter(
+    <Provider store={store}>
+      <Route
+        path={urls.secrets.all()}
+        render={props => <Secrets {...props} {...currentProps} />}
+      />
+    </Provider>,
+    { route: urls.secrets.all() }
+  );
+  await waitForElement(() => queryByText(/github-repo-access-secret/i));
+  expect(queryByText(/create/i)).toBeTruthy();
 });

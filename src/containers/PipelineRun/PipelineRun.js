@@ -23,6 +23,7 @@ import {
   getClusterTasks,
   getPipelineRun,
   getPipelineRunsErrorMessage,
+  getReadOnly,
   getTaskRunsByPipelineRunName,
   getTaskRunsErrorMessage,
   getTasks,
@@ -93,7 +94,15 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   }
 
   render() {
-    const { error, intl, match, pipelineRun, tasks, taskRuns } = this.props;
+    const {
+      error,
+      intl,
+      isReadOnly,
+      match,
+      pipelineRun,
+      tasks,
+      taskRuns
+    } = this.props;
 
     if (!pipelineRun) {
       return (
@@ -119,7 +128,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     const { loading, showRerunNotification } = this.state;
     const { pipelineRunName } = match.params;
 
-    const rerun = (
+    const rerun = !isReadOnly && (
       <Rerun
         pipelineRun={pipelineRun}
         rerunPipelineRun={rerunPipelineRun}
@@ -184,6 +193,7 @@ function mapStateToProps(state, ownProps) {
   const { namespace } = match.params;
 
   return {
+    isReadOnly: getReadOnly(state),
     error:
       getPipelineRunsErrorMessage(state) ||
       getTasksErrorMessage(state) ||

@@ -7,6 +7,7 @@ patches:
   - ../openshift-patches/dashboard-service.yaml
   - ../openshift-patches/serviceaccount.yaml
   - ../openshift-patches/oauth-proxy-in-deployment.yaml
+  - ../readonly/readonly-deployment-patch.yaml
 images:
   - name: dashboardImage
     newName: gcr.io/tekton-nightly/dashboard

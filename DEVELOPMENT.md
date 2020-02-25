@@ -126,7 +126,7 @@ Development dashboard builds come in four flavours: (plain kube or Openshift) * 
 ```shell
 # Plain Kube
 kustomize build overlays/dev | ko apply -f -
-kustomize build overlays/dev-locked-down | ko apply -f -
+kustomize build --load_restrictor=LoadRestrictionsNone overlays/dev-locked-down | ko apply -f -
 
 # OpenShift
 kustomize build overlays/dev-openshift --load_restrictor=LoadRestrictionsNone \
@@ -267,8 +267,10 @@ Example payload response is formatted as so:
 
 {
  "InstallNamespace": "tekton-pipelines",
- "DashboardVersion": "v0.5.0",
- "PipelineVersion": "v0.10.0"
+ "DashboardVersion": "development",
+ "PipelineVersion": "v0.10.0",
+ "IsOpenShift": false,
+ "ReadOnly": true
 }
 ```
 

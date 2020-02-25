@@ -84,7 +84,7 @@ spec:
           kustomize version # Tested with 3.5.4
 
           kustomize build overlays/dev | ko resolve --preserve-import-paths -f - > /workspace/output/bucket-for-dashboard/$(inputs.params.bucketName)/tekton-dashboard-release.yaml
-          kustomize build overlays/dev-locked-down | ko resolve --preserve-import-paths -f - > /workspace/output/bucket-for-dashboard/$(inputs.params.bucketName)/tekton-dashboard-release-readonly.yaml
+          kustomize build overlays/dev-locked-down --load_restrictor=LoadRestrictionsNone | ko resolve --preserve-import-paths -f - > /workspace/output/bucket-for-dashboard/$(inputs.params.bucketName)/tekton-dashboard-release-readonly.yaml
           kustomize build overlays/dev-openshift --load_restrictor=LoadRestrictionsNone | ko resolve --preserve-import-paths -f - > /workspace/output/bucket-for-dashboard/$(inputs.params.bucketName)/openshift-tekton-dashboard-release.yaml
           kustomize build overlays/dev-openshift-locked-down --load_restrictor=LoadRestrictionsNone | ko resolve --preserve-import-paths -f - > /workspace/output/bucket-for-dashboard/$(inputs.params.bucketName)/openshift-tekton-dashboard-release-readonly.yaml
       volumeMounts:

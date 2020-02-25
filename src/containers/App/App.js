@@ -23,6 +23,7 @@ import {
 
 import { IntlProvider } from 'react-intl';
 import { Content } from 'carbon-components-react';
+
 import {
   Header,
   LogoutButton,
@@ -63,9 +64,12 @@ import {
 import { shouldDisplayLogout } from '../../api';
 import { fetchExtensions } from '../../actions/extensions';
 import { fetchNamespaces, selectNamespace } from '../../actions/namespaces';
+import { fetchInstallProperties } from '../../actions/properties';
+
 import {
   getExtensions,
   getLocale,
+  getReadOnly,
   getSelectedNamespace,
   isWebSocketConnected
 } from '../../reducers';
@@ -92,11 +96,13 @@ export /* istanbul ignore next */ class App extends Component {
 
   fetchData() {
     this.props.fetchExtensions();
+    this.props.fetchInstallProperties();
     this.props.fetchNamespaces();
   }
 
   render() {
     const { extensions } = this.props;
+
     const lang = messages[this.props.lang] ? this.props.lang : 'en';
 
     const logoutButton = (
@@ -190,6 +196,14 @@ export /* istanbul ignore next */ class App extends Component {
                     path={paths.importResources()}
                     component={ImportResources}
                   />
+
+                  {!this.props.isReadOnly && (
+                    <Route
+                      path={paths.importResources()}
+                      component={ImportResources}
+                    />
+                  )}
+
                   <Route path={paths.secrets.all()} exact component={Secrets} />
                   <Route
                     path={paths.serviceAccounts.byName()}
@@ -334,12 +348,14 @@ const mapStateToProps = state => ({
   extensions: getExtensions(state),
   namespace: getSelectedNamespace(state),
   lang: getLocale(state),
+  isReadOnly: getReadOnly(state),
   webSocketConnected: isWebSocketConnected(state)
 });
 
 const mapDispatchToProps = {
   fetchExtensions,
   fetchNamespaces,
+  fetchInstallProperties,
   selectNamespace
 };
 

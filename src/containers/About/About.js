@@ -29,7 +29,8 @@ const propertiesToCheck = [
   'InstallNamespace',
   'DashboardVersion',
   'PipelineVersion',
-  'IsOpenShift'
+  'IsOpenShift',
+  'ReadOnly'
 ];
 
 export /* istanbul ignore next */ class About extends Component {

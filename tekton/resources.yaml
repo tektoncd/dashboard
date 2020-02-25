@@ -9,7 +9,7 @@ spec:
     - name: url
       value: https://github.com/tektoncd/dashboard
     - name: revision
-      value: v0.5.0
+      value: v0.5.2
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource

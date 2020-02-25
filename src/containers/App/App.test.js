@@ -19,9 +19,11 @@ import thunk from 'redux-thunk';
 
 import { App } from './App';
 import * as API from '../../api';
+import * as Reducers from '../../reducers';
 
 beforeEach(() => {
   jest.spyOn(API, 'getPipelines').mockImplementation(() => {});
+  jest.spyOn(Reducers, 'getReadOnly').mockImplementation(() => true);
 });
 
 it('App renders successfully', () => {
@@ -42,6 +44,7 @@ it('App renders successfully', () => {
         extensions={[]}
         fetchExtensions={() => {}}
         fetchNamespaces={() => {}}
+        fetchInstallProperties={() => {}}
       />
     </Provider>
   );

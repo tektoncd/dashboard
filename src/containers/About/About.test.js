@@ -24,7 +24,8 @@ describe('About', () => {
       InstallNamespace: 'tekton-pipelines',
       DashboardVersion: 'v0.100.0',
       PipelineVersion: 'v0.10.0',
-      IsOpenShift: true
+      IsOpenShift: true,
+      ReadOnly: true
     }));
 
     const { queryByText } = renderWithIntl(<About />);
@@ -39,39 +40,38 @@ describe('About', () => {
     expect(queryByText('PipelineVersion')).toBeTruthy();
     expect(queryByText('v0.10.0')).toBeTruthy();
     expect(queryByText('IsOpenShift')).toBeTruthy();
+    expect(queryByText('ReadOnly')).toBeTruthy();
     expect(queryByText('True')).toBeTruthy();
   });
 
   it('should render error when an expected property is missing', async () => {
     const installProperties = Promise.resolve({
       InstallNamespace: 'tekton-pipelines',
-      DashboardVersion: '',
+      // DashboardVersion: '', this is intentionally missing
       PipelineVersion: 'v0.10.0',
-      IsOpenShift: false
+      IsOpenShift: false,
+      ReadOnly: false
     });
     jest
       .spyOn(API, 'getInstallProperties')
       .mockImplementation(() => installProperties);
 
-    const { queryByText } = renderWithIntl(<About />);
+    const { getByText, queryByText } = renderWithIntl(<About />);
 
     await waitForElement(() => queryByText('Property'));
     expect(API.getInstallProperties).toHaveBeenCalledTimes(1);
-    expect(queryByText('Value')).toBeTruthy();
-    expect(queryByText('InstallNamespace')).toBeTruthy();
-    expect(queryByText('PipelineVersion')).toBeTruthy();
-    expect(queryByText('tekton-pipelines')).toBeTruthy();
-    expect(queryByText('v0.10.0')).toBeTruthy();
-    expect(queryByText('Error getting data')).toBeTruthy();
-    expect(queryByText('Could not find: DashboardVersion')).toBeTruthy();
-    expect(queryByText('IsOpenShift')).toBeFalsy();
+    expect(getByText('Value')).toBeTruthy();
+    expect(getByText('InstallNamespace')).toBeTruthy();
+    expect(getByText('PipelineVersion')).toBeTruthy();
+    expect(getByText('tekton-pipelines')).toBeTruthy();
+    expect(getByText('v0.10.0')).toBeTruthy();
+    expect(getByText('Error getting data')).toBeTruthy();
+    expect(getByText('Could not find: DashboardVersion')).toBeTruthy();
   });
 
   it('should render error when multiple expected properties are missing', async () => {
     jest.spyOn(API, 'getInstallProperties').mockImplementation(() => ({
-      InstallNamespace: 'tekton-pipelines',
-      DashboardVersion: '',
-      PipelineVersion: ''
+      InstallNamespace: 'tekton-pipelines'
     }));
 
     const { queryByText } = renderWithIntl(<About />);
@@ -85,7 +85,7 @@ describe('About', () => {
     expect(queryByText('Error getting data')).toBeTruthy();
     expect(
       queryByText(
-        'Could not find: DashboardVersion, PipelineVersion, IsOpenShift'
+        'Could not find: DashboardVersion, PipelineVersion, IsOpenShift, ReadOnly'
       )
     ).toBeTruthy();
   });

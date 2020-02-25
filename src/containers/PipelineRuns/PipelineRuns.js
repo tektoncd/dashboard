@@ -34,6 +34,7 @@ import { fetchPipelineRuns } from '../../actions/pipelineRuns';
 import {
   getPipelineRuns,
   getPipelineRunsErrorMessage,
+  getReadOnly,
   getSelectedNamespace,
   isFetchingPipelineRuns,
   isWebSocketConnected
@@ -114,7 +115,11 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
   };
 
   pipelineRunActions = () => {
-    const { intl } = this.props;
+    const { intl, isReadOnly } = this.props;
+
+    if (isReadOnly) {
+      return [];
+    }
     return [
       {
         actionText: intl.formatMessage({
@@ -226,7 +231,8 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
       loading,
       namespace: selectedNamespace,
       pipelineRuns,
-      intl
+      intl,
+      isReadOnly
     } = this.props;
 
     if (error) {
@@ -245,6 +251,19 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
     }
     const pipelineRunActions = this.pipelineRunActions();
     sortRunsByStartTime(pipelineRuns);
+
+    const toolbarButtons = isReadOnly
+      ? []
+      : [
+          {
+            onClick: () => this.toggleModal(true),
+            text: intl.formatMessage({
+              id: 'dashboard.actions.createButton',
+              defaultMessage: 'Create'
+            }),
+            icon: Add
+          }
+        ];
 
     return (
       <>
@@ -283,28 +302,21 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
         )}
         <h1>PipelineRuns</h1>
         <LabelFilter {...this.props} />
-        <CreatePipelineRun
-          open={this.state.showCreatePipelineRunModal}
-          onClose={() => this.toggleModal(false)}
-          onSuccess={this.handleCreatePipelineRunSuccess}
-          pipelineRef={this.props.pipelineName}
-          namespace={selectedNamespace}
-        />
+        {!isReadOnly && (
+          <CreatePipelineRun
+            open={this.state.showCreatePipelineRunModal}
+            onClose={() => this.toggleModal(false)}
+            onSuccess={this.handleCreatePipelineRunSuccess}
+            pipelineRef={this.props.pipelineName}
+            namespace={selectedNamespace}
+          />
+        )}
         <PipelineRunsList
           loading={loading}
           pipelineRuns={pipelineRuns}
           pipelineRunActions={pipelineRunActions}
           selectedNamespace={selectedNamespace}
-          toolbarButtons={[
-            {
-              onClick: () => this.toggleModal(true),
-              text: intl.formatMessage({
-                id: 'dashboard.actions.createButton',
-                defaultMessage: 'Create'
-              }),
-              icon: Add
-            }
-          ]}
+          toolbarButtons={toolbarButtons}
         />
       </>
     );
@@ -326,6 +338,7 @@ function mapStateToProps(state, props) {
   const pipelineName = pipelineFilter.replace('tekton.dev/pipeline=', '');
 
   return {
+    isReadOnly: getReadOnly(state),
     error: getPipelineRunsErrorMessage(state),
     loading: isFetchingPipelineRuns(state),
     namespace,

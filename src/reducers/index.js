@@ -22,6 +22,7 @@ import notifications, * as notificationSelectors from './notifications';
 import pipelines, * as pipelineSelectors from './pipelines';
 import pipelineResources, * as pipelineResourcesSelectors from './pipelineResources';
 import pipelineRuns, * as pipelineRunsSelectors from './pipelineRuns';
+import properties, * as propertiesSelectors from './properties';
 import secrets, * as secretSelectors from './secrets';
 import triggerTemplates, * as triggerTemplatesSelectors from './triggerTemplates';
 import triggerBindings, * as triggerBindingsSelectors from './triggerBindings';
@@ -40,6 +41,7 @@ export default combineReducers({
   pipelines: pipelines(),
   pipelineResources: pipelineResources(),
   pipelineRuns: pipelineRuns(),
+  properties,
   secrets,
   serviceAccounts: serviceAccounts(),
   tasks: tasks(),
@@ -471,4 +473,8 @@ export function getEventListenersErrorMessage(state) {
 
 export function isFetchingEventListeners(state) {
   return eventListenersSelectors.isFetchingEventListeners(state.eventListeners);
+}
+
+export function getReadOnly(state) {
+  return propertiesSelectors.getReadOnly(state.properties);
 }
