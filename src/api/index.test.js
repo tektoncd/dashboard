@@ -423,7 +423,7 @@ it('createPipelineRun', () => {
     timeout
   };
   const data = {
-    apiVersion: 'tekton.dev/v1alpha1',
+    apiVersion: 'tekton.dev/v1beta1',
     kind: 'PipelineRun',
     metadata: {
       name: `${pipelineName}-run-${Date.now()}`,
