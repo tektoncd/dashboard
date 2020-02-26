@@ -53,62 +53,71 @@ const PipelineRuns = ({
     pipelineRun.metadata.creationTimestamp,
   getPipelineRunId = pipelineRun =>
     `${pipelineRun.metadata.namespace}:${pipelineRun.metadata.name}`,
-  hideNamespace,
+  columns = [
+    'status',
+    'name',
+    'pipeline',
+    'namespace',
+    'createdTime',
+    'duration'
+  ],
+  customColumns = {},
   intl,
   loading,
   selectedNamespace,
   pipelineRuns,
-  pipelineRunActions,
+  pipelineRunActions = [],
   toolbarButtons
 }) => {
-  const headers = [
-    {
-      key: 'status',
-      header: intl.formatMessage({
-        id: 'dashboard.tableHeader.status',
-        defaultMessage: 'Status'
-      })
-    },
-    {
-      key: 'name',
-      header: intl.formatMessage({
-        id: 'dashboard.tableHeader.name',
-        defaultMessage: 'Name'
-      })
-    },
-    {
-      key: 'pipeline',
-      header: intl.formatMessage({
-        id: 'dashboard.tableHeader.pipeline',
-        defaultMessage: 'Pipeline'
-      })
-    },
-    !hideNamespace && {
-      key: 'namespace',
-      header: intl.formatMessage({
-        id: 'dashboard.tableHeader.namespace',
-        defaultMessage: 'Namespace'
-      })
-    },
-    {
-      key: 'createdTime',
-      header: intl.formatMessage({
-        id: 'dashboard.tableHeader.createdTime',
-        defaultMessage: 'Created'
-      })
-    },
-    {
-      key: 'duration',
-      header: intl.formatMessage({
-        id: 'dashboard.tableHeader.duration',
-        defaultMessage: 'Duration'
-      })
-    },
-    {
-      key: 'actions',
-      header: ''
-    }
-  ].filter(Boolean);
+  const defaultHeaders = {
+    status: intl.formatMessage({
+      id: 'dashboard.tableHeader.status',
+      defaultMessage: 'Status'
+    }),
+    name: intl.formatMessage({
+      id: 'dashboard.tableHeader.name',
+      defaultMessage: 'Name'
+    }),
+    pipeline: intl.formatMessage({
+      id: 'dashboard.tableHeader.pipeline',
+      defaultMessage: 'Pipeline'
+    }),
+    namespace: intl.formatMessage({
+      id: 'dashboard.tableHeader.namespace',
+      defaultMessage: 'Namespace'
+    }),
+    createdTime: intl.formatMessage({
+      id: 'dashboard.tableHeader.createdTime',
+      defaultMessage: 'Created'
+    }),
+    duration: intl.formatMessage({
+      id: 'dashboard.tableHeader.duration',
+      defaultMessage: 'Duration'
+    })
+  };
+
+  const headers = columns.map(column => {
+    const header =
+      (customColumns[column] && customColumns[column].header) ||
+      defaultHeaders[column];
+    return {
+      key: column,
+      header
+    };
+  });
+
+  if (pipelineRunActions.length) {
+    headers.push({ key: 'actions', header: '' });
+  }
+
+  function getCustomColumnValues(pipelineRun) {
+    return Object.keys(customColumns).reduce((acc, column) => {
+      if (customColumns[column].getValue) {
+        acc[column] = customColumns[column].getValue({ pipelineRun });
+      }
+      return acc;
+    }, {});
+  }
 
   const pipelineRunsFormatted = pipelineRuns.map(pipelineRun => {
     const { annotations, namespace } = pipelineRun.metadata;
@@ -162,7 +171,7 @@ const PipelineRuns = ({
         ) : (
           <span title={pipelineRefName}>{pipelineRefName}</span>
         )),
-      namespace: !hideNamespace && <span title={namespace}>{namespace}</span>,
+      namespace: <span title={namespace}>{namespace}</span>,
       status: (
         <div className="definition">
           <div
@@ -178,7 +187,10 @@ const PipelineRuns = ({
       createdTime: <FormattedDate date={creationTimestamp} relative />,
       duration,
       type: pipelineRunType,
-      actions: <RunDropdown items={pipelineRunActions} resource={pipelineRun} />
+      actions: pipelineRunActions.length && (
+        <RunDropdown items={pipelineRunActions} resource={pipelineRun} />
+      ),
+      ...getCustomColumnValues(pipelineRun)
     };
   });
 

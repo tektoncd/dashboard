@@ -14,10 +14,11 @@ limitations under the License.
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 import StoryRouter from 'storybook-react-router';
-
 import { getStatus } from '@tektoncd/dashboard-utils';
 import { action } from '@storybook/addon-actions';
 import { Delete16 as Delete } from '@carbon/icons-react';
+
+import { StatusIcon } from '..';
 import PipelineRuns from '.';
 
 storiesOf('Components/PipelineRuns', module)
@@ -201,32 +202,21 @@ storiesOf('Components/PipelineRuns', module)
       cancelPipelineRun={() => {}}
     />
   ))
-  .add('Batch Actions', () => (
+  .add('batch actions', () => (
     <PipelineRuns
       batchActionButtons={[
         { onClick: action('handleDelete'), text: 'Delete', icon: Delete }
       ]}
-      createPipelineRunURL={({ namespace, pipelineRunName }) =>
-        namespace ? `to-pipelineRun-${namespace}/${pipelineRunName}` : null
-      }
-      createPipelineRunsByPipelineURL={() => null}
-      createPipelineRunTimestamp={pipelineRun =>
-        getStatus(pipelineRun).lastTransitionTime ||
-        pipelineRun.metadata.creationTimestamp
-      }
       selectedNamespace="default"
       pipelineRunActions={[
         {
-          actionText: 'Cancel',
+          actionText: 'An Action',
           action: resource => resource,
-          disable: resource =>
-            resource.status &&
-            resource.status.conditions[0].reason !== 'Running',
           modalProperties: {
-            heading: 'cancel',
-            primaryButtonText: 'ok',
-            secondaryButtonText: 'no',
-            body: resource => `cancel pipelineRun ${resource.metadata.name}`
+            heading: 'An Action',
+            primaryButtonText: 'OK',
+            secondaryButtonText: 'Cancel',
+            body: () => 'Do something interesting'
           }
         }
       ]}
@@ -235,24 +225,12 @@ storiesOf('Components/PipelineRuns', module)
           metadata: {
             name: 'pipeline-run-20190816124708',
             namespace: 'cb4552a6-b2d7-45e2-9773-3d4ca33909ff',
-            uid: '7c266264-4d4d-45e3-ace0-041be8f7d06e',
             creationTimestamp: '2019-08-16T12:48:00Z'
           },
           spec: {
             pipelineRef: {
               name: 'pipeline'
             }
-          },
-          status: {
-            conditions: [
-              {
-                lastTransitionTime: '2019-08-16T12:49:28Z',
-                message: 'All Tasks have completed executing',
-                reason: 'Succeeded',
-                status: 'True',
-                type: 'Succeeded'
-              }
-            ]
           }
         },
         {
@@ -260,6 +238,7 @@ storiesOf('Components/PipelineRuns', module)
           kind: 'PipelineRun',
           metadata: {
             name: 'output-pipeline-run',
+            namespace: 'default',
             creationTimestamp: '2019-10-09T17:10:49Z'
           },
           spec: {
@@ -275,7 +254,67 @@ storiesOf('Components/PipelineRuns', module)
           }
         }
       ]}
-      cancelPipelineRun={() => {}}
+    />
+  ))
+  .add('custom columns', () => (
+    <PipelineRuns
+      columns={[
+        'status',
+        'name',
+        'pipeline',
+        'trigger',
+        'createdTime',
+        'duration'
+      ]}
+      customColumns={{
+        status: {
+          getValue() {
+            return (
+              <div className="definition">
+                <div className="status">
+                  <StatusIcon /> Pending
+                </div>
+              </div>
+            );
+          }
+        },
+        trigger: {
+          header: 'Trigger',
+          getValue({ pipelineRun }) {
+            const trigger = pipelineRun.metadata.labels['tekton.dev/trigger'];
+            return <span title={trigger}>{trigger}</span>;
+          }
+        }
+      }}
+      pipelineRunActions={[
+        {
+          actionText: 'An Action',
+          action: resource => resource,
+          modalProperties: {
+            heading: 'An Action',
+            primaryButtonText: 'OK',
+            secondaryButtonText: 'Cancel',
+            body: () => 'Do something interesting'
+          }
+        }
+      ]}
+      pipelineRuns={[
+        {
+          metadata: {
+            name: 'pipeline-run-20190816124708',
+            namespace: 'cb4552a6-b2d7-45e2-9773-3d4ca33909ff',
+            creationTimestamp: '2019-08-16T12:48:00Z',
+            labels: {
+              'tekton.dev/trigger': 'my-trigger'
+            }
+          },
+          spec: {
+            pipelineRef: {
+              name: 'pipeline'
+            }
+          }
+        }
+      ]}
     />
   ))
   .add('empty', () => (
