@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -19,12 +19,20 @@ import { ViewYAML } from '..';
 import './StepStatus.scss';
 
 const StepStatus = ({ intl, status }) => {
-  const { container, imageID, name, terminated } = status || {};
+  const { container, imageID, name, running, terminated, waiting } =
+    status || {};
   const resource = status
-    ? { container, imageID, name, terminated }
+    ? {
+        ...(name && { name }),
+        ...(container && { container }),
+        ...(imageID && { imageID }),
+        ...(running && { running }),
+        ...(terminated && { terminated }),
+        ...(waiting && { waiting })
+      }
     : intl.formatMessage({
         id: 'dashboard.step.statusNotAvailable',
-        defaultMessage: 'No status available'
+        defaultMessage: 'Status not available'
       });
 
   return (

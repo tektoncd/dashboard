@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -15,23 +15,43 @@ import React from 'react';
 import StepStatus from './StepStatus';
 import { renderWithIntl } from '../../utils/test';
 
-it('StepStatus renders default content', () => {
-  const { queryByText } = renderWithIntl(<StepStatus />);
+describe('StepStatus', () => {
+  it('renders default content', () => {
+    const { queryByText } = renderWithIntl(<StepStatus />);
 
-  expect(queryByText(/Container status:/i)).toBeTruthy();
-  expect(queryByText(/No status available/i)).toBeTruthy();
-});
+    expect(queryByText(/Container status:/i)).toBeTruthy();
+    expect(queryByText(/Status not available/i)).toBeTruthy();
+  });
 
-it('StepStatus renders the provided content', () => {
-  const container = 'fake_container';
-  const imageID = 'fake_imageID';
-  const name = 'fake_name';
-  const terminated = 'fake_terminated';
-  const status = { container, imageID, name, terminated };
-  const { queryByText } = renderWithIntl(<StepStatus status={status} />);
+  it('renders the provided content', () => {
+    const container = 'fake_container';
+    const imageID = 'fake_imageID';
+    const name = 'fake_name';
+    const terminated = 'fake_terminated';
+    const status = { container, imageID, name, terminated };
+    const { queryByText } = renderWithIntl(<StepStatus status={status} />);
 
-  expect(queryByText(new RegExp(container, 'i'))).toBeTruthy();
-  expect(queryByText(new RegExp(imageID, 'i'))).toBeTruthy();
-  expect(queryByText(new RegExp(name, 'i'))).toBeTruthy();
-  expect(queryByText(new RegExp(terminated, 'i'))).toBeTruthy();
+    expect(queryByText(new RegExp(container, 'i'))).toBeTruthy();
+    expect(queryByText(new RegExp(imageID, 'i'))).toBeTruthy();
+    expect(queryByText(new RegExp(name, 'i'))).toBeTruthy();
+    expect(queryByText(/terminated/i)).toBeTruthy();
+    expect(queryByText(new RegExp(terminated, 'i'))).toBeTruthy();
+  });
+
+  it('renders running and waiting when provided', () => {
+    const container = 'fake_container';
+    const imageID = 'fake_imageID';
+    const name = 'fake_name';
+    const running = 'fake_running';
+    const waiting = 'fake_waiting';
+    const status = { container, imageID, name, running, waiting };
+    const { queryByText } = renderWithIntl(<StepStatus status={status} />);
+
+    expect(queryByText(new RegExp(container, 'i'))).toBeTruthy();
+    expect(queryByText(new RegExp(imageID, 'i'))).toBeTruthy();
+    expect(queryByText(new RegExp(name, 'i'))).toBeTruthy();
+    expect(queryByText(/terminated/i)).toBeFalsy();
+    expect(queryByText(new RegExp(running, 'i'))).toBeTruthy();
+    expect(queryByText(new RegExp(waiting, 'i'))).toBeTruthy();
+  });
 });
