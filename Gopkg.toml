@@ -6,19 +6,35 @@ required = [
 
 [[constraint]]
   name = "github.com/tektoncd/pipeline"
-  version = "v0.10.0"
+  revision = "558b37edfffa1d8a33428fb9bd50a8ab425e3e83"
+
+[[override]]
+  name = "github.com/knative/pkg"
+  branch = "release-0.12"
 
 [[override]]
   name = "k8s.io/client-go"
-  version = "kubernetes-1.13.4"
+  version = "v0.16.5"
 
 [[override]]
   name = "k8s.io/apimachinery"
-  version = "kubernetes-1.13.4"
+  version = "v0.16.5"
 
 [[override]]
   name = "k8s.io/api"
-  version = "kubernetes-1.13.4"
+    version = "v0.16.5"
+
+[[override]]
+  name = "k8s.io/code-generator"
+  version = "v0.16.5"
+
+[[override]]
+  name = "github.com/openshift/client-go"
+  branch = "release-4.3"
+
+[[override]]
+  name = "github.com/openshift/api"
+  branch = "release-4.3"
 
 [prune]
   go-tests = true
@@ -27,7 +43,3 @@ required = [
 [[prune.project]]
   name = "github.com/tektoncd/plumbing"
   non-go = false
-
-[[override]]
-  name = "github.com/openshift/api"
-  revision = "0d921e363e951d89f583292c60d013c318df64dc"

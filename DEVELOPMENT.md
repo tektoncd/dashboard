@@ -22,7 +22,7 @@ Your [`$GOPATH`] setting is critical for `ko apply` to function properly: a
 successful run will typically involve building pushing images instead of only
 configuring Kubernetes resources.
 
-Note that there exists a bug in certain versions of `kubectl` whereby the `auth` field is missing from created secrets. Known good versions we've tested are __1.11.3__ and __1.13.2__.
+Note that there exists a bug in certain versions of `kubectl` whereby the `auth` field is missing from created secrets. Known good versions we've tested are __1.15.0__ and __1.16.2__.
 
 ### Checkout your fork
 
