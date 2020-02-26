@@ -27,6 +27,7 @@ spec:
           args:
             - --https-address=:8443
             - --provider=openshift
+            - --skip-provider-button=true
             - --openshift-service-account=tekton-dashboard
             - --upstream=http://localhost:9097
             - --tls-cert=/etc/tls/private/tls.crt
