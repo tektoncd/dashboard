@@ -99,7 +99,7 @@ func IsOpenShift(r Resource, installedNamespace string) bool {
 		}
 	}
 
-	routes, err := r.RouteClient.Route().Routes(installedNamespace).List(v1.ListOptions{})
+	routes, err := r.RouteClient.RouteV1().Routes(installedNamespace).List(v1.ListOptions{})
 	if err != nil {
 		logging.Log.Errorf("Error getting the list of routes: %s", err.Error())
 	}

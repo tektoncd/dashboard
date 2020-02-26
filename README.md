@@ -8,11 +8,13 @@ Tekton Dashboard is a general purpose, web-based UI for Tekton Pipelines. It all
 
 ## Pre-requisites
 
+[Kubernetes](https://github.com/kubernetes/kubernetes) must be installed with version 1.15.0 or later if you want to use a version of Tekton Pipelines newer than v0.10.1.
+
 [Tekton Pipelines](https://github.com/tektoncd/pipeline) must be installed in order to use the Tekton Dashboard. Instructions to install Tekton Pipelines can be found [here](https://github.com/tektoncd/pipeline/blob/master/docs/install.md). 
 
 ### Which version should I use?
 
-- Use the v0.5.1 release for Tekton Pipelines v0.10.1 (can display components from Tekton Triggers 0.2.1 and has a read-only install mode)
+- Use the v0.5.2 release for Tekton Pipelines v0.10.1 (can display components from Tekton Triggers 0.2.1 and has a read-only install mode)
 - Use the v0.5.0 release for Tekton Pipelines v0.10.1 (can display components from Tekton Triggers 0.1 and has a read-only install mode)
 - Use the v0.4.1 release for Tekton Pipelines v0.8.0 (can display components from Tekton Triggers 0.1)
 - Use the v0.2.1 release for Tekton Pipelines v0.7.0
