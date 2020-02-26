@@ -17,7 +17,7 @@ import StepDefinition from './StepDefinition';
 
 it('StepDefinition renders default content', () => {
   const { queryByText } = renderWithIntl(<StepDefinition taskRun={{}} />);
-  expect(queryByText(/step definition not available/i)).toBeTruthy();
+  expect(queryByText(/Definition not available/i)).toBeTruthy();
 });
 
 it('StepDefinition renders the provided content', () => {

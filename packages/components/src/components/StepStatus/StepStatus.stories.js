@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -17,6 +17,7 @@ import { storiesOf } from '@storybook/react';
 import StepStatus from './index';
 
 const status = {
+  name: 'build-and-push',
   terminated: {
     containerID: 'containerd://f7a7a2d1c678703885f43d37528206018efb0f931fbeefb',
     exitCode: 0,
