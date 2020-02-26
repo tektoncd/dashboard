@@ -93,13 +93,14 @@ export function getResourcesAPI(
 
 export function getTektonAPI(
   type,
-  { group = tektonAPIGroup, name = '', namespace, version = 'v1alpha1' } = {},
+  { name = '', namespace, version = 'v1beta1' } = {},
   queryParams
 ) {
-  return getResourcesAPI(
-    { group, version, type, name, namespace },
+  const resourceAPI = getResourcesAPI(
+    { group: 'tekton.dev', type, version, name, namespace },
     queryParams
   );
+  return resourceAPI;
 }
 
 export function getExtensionBaseURL(name) {
@@ -189,7 +190,7 @@ export function createPipelineRun({
   // Create PipelineRun payload
   // expect params and resources to be objects with keys 'name' and values 'value'
   const payload = {
-    apiVersion: 'tekton.dev/v1alpha1',
+    apiVersion: 'tekton.dev/v1beta1',
     kind: 'PipelineRun',
     metadata: {
       name: `${pipelineName}-run-${Date.now()}`,
@@ -264,14 +265,22 @@ export function cancelTaskRun({ name, namespace }) {
 export function getPipelineResources({ filters = [], namespace } = {}) {
   const uri = getTektonAPI(
     'pipelineresources',
-    { namespace },
+    { namespace, version: 'v1alpha1' },
     getQueryParams(filters)
   );
   return get(uri).then(checkData);
 }
 
 export function getPipelineResource({ name, namespace }) {
-  const uri = getTektonAPI('pipelineresources', { name, namespace });
+  const uri = getTektonAPI(
+    'pipelineresources',
+    {
+      name,
+      namespace,
+      version: 'v1alpha1'
+    },
+    undefined
+  );
   return get(uri);
 }
 
@@ -437,25 +446,25 @@ export async function determineInstallNamespace() {
 export function getTriggerTemplates({ filters = [], namespace } = {}) {
   const uri = getTektonAPI(
     'triggertemplates',
-    { group: triggersAPIGroup, namespace },
+    { namespace, version: 'v1alpha1' },
     getQueryParams(filters)
   );
   return get(uri).then(checkData);
 }
 
 export function getTriggerTemplate({ name, namespace }) {
-  const uri = getTektonAPI('triggertemplates', {
-    group: triggersAPIGroup,
-    name,
-    namespace
-  });
+  const uri = getTektonAPI(
+    'triggertemplates',
+    { name, namespace, version: 'v1alpha1' },
+    undefined
+  );
   return get(uri);
 }
 
 export function getTriggerBindings({ filters = [], namespace } = {}) {
   const uri = getTektonAPI(
     'triggerbindings',
-    { group: triggersAPIGroup, namespace },
+    { namespace, version: 'v1alpha1' },
     getQueryParams(filters)
   );
   return get(uri).then(checkData);
@@ -464,25 +473,26 @@ export function getTriggerBindings({ filters = [], namespace } = {}) {
 export function getClusterTriggerBindings({ filters = [] } = {}) {
   const uri = getTektonAPI(
     'clustertriggerbindings',
-    { group: triggersAPIGroup },
+    { version: 'v1alpha1' },
+    undefined,
     getQueryParams(filters)
   );
   return get(uri).then(checkData);
 }
 
 export function getTriggerBinding({ name, namespace }) {
-  const uri = getTektonAPI('triggerbindings', {
-    group: triggersAPIGroup,
-    name,
-    namespace
-  });
+  const uri = getTektonAPI(
+    'triggerbindings',
+    { name, namespace, version: 'v1alpha1' },
+    undefined
+  );
   return get(uri);
 }
 
 export function getClusterTriggerBinding({ name }) {
   const uri = getTektonAPI('clustertriggerbindings', {
-    group: triggersAPIGroup,
-    name
+    name,
+    version: 'v1alpha1'
   });
   return get(uri);
 }
@@ -490,17 +500,17 @@ export function getClusterTriggerBinding({ name }) {
 export function getEventListeners({ filters = [], namespace } = {}) {
   const uri = getTektonAPI(
     'eventlisteners',
-    { group: triggersAPIGroup, namespace },
+    { namespace, version: 'v1alpha1' },
     getQueryParams(filters)
   );
   return get(uri).then(checkData);
 }
 
 export function getEventListener({ name, namespace }) {
-  const uri = getTektonAPI('eventlisteners', {
-    group: triggersAPIGroup,
-    name,
-    namespace
-  });
+  const uri = getTektonAPI(
+    'eventlisteners',
+    { name, namespace, version: 'v1alpha1' },
+    undefined
+  );
   return get(uri);
 }

@@ -131,6 +131,7 @@ export /* istanbul ignore next */ class About extends Component {
 
     return (
       <>
+        <h1>Tekton Dashboard for Tekton Pipelines Beta</h1>
         {error && (
           <InlineNotification
             kind="error"
