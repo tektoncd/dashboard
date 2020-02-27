@@ -156,6 +156,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
           defaultMessage: 'Delete'
         }),
         action: this.deleteRun,
+        danger: true,
         disable: resource => {
           const { reason, status } = getStatus(resource);
           return isRunning(reason, status);
