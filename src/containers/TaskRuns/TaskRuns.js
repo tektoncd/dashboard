@@ -128,6 +128,7 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
           defaultMessage: 'Delete'
         }),
         action: this.deleteTask,
+        danger: true,
         disable: resource => {
           const { reason, status } = getStatus(resource);
           return isRunning(reason, status);

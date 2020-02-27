@@ -51,12 +51,19 @@ class RunDropdown extends Component {
           flipped
         >
           {items.map(item => {
-            const { actionText, action, disable, modalProperties } = item;
+            const {
+              actionText,
+              action,
+              danger,
+              disable,
+              modalProperties
+            } = item;
             const disabled = disable && disable(resource);
             return (
               <OverflowMenuItem
                 key={actionText}
                 itemText={actionText}
+                isDelete={danger}
                 disabled={disabled}
                 onClick={() =>
                   this.handleShow(() => action(resource), modalProperties)

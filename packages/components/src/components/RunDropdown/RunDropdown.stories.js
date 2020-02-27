@@ -26,6 +26,7 @@ storiesOf('Components/RunDropdown', module)
         {
           actionText: 'Delete',
           action: () => {},
+          danger: true,
           modalProperties: {
             danger: true,
             heading: 'Modal Heading',
