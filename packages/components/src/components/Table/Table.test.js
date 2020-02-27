@@ -268,9 +268,9 @@ it('Table loading plain with one row and ALL_NAMESPACES', () => {
   const { queryByText, queryByLabelText } = render(<Table {...props} />);
 
   expect(queryByText(/Resources/i)).toBeNull();
-  expect(queryByText(/Name/i)).toBeNull();
-  expect(queryByText(/Namespace/i)).toBeNull();
-  expect(queryByText(/Date Created/i)).toBeNull();
+  expect(queryByText(/Name/i)).toBeTruthy();
+  expect(queryByText(/Namespace/i)).toBeTruthy();
+  expect(queryByText(/Date Created/i)).toBeTruthy();
   expect(queryByText(/Delete/i)).toBeNull();
   expect(queryByText(/Add/i)).toBeNull();
   expect(queryByLabelText('Select all rows')).toBeNull();

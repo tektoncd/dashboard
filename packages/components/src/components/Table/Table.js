@@ -104,7 +104,10 @@ const Table = props => {
               </TableToolbar>
             )}
             {loading ? (
-              <DataTableSkeleton rowCount={1} columnCount={headers.length} />
+              <DataTableSkeleton
+                headers={headers}
+                columnCount={headers.length}
+              />
             ) : (
               <CarbonTable {...getTableProps()}>
                 <TableHead>
