@@ -62,57 +62,75 @@ function isFetching(state = false, action) {
     case 'SECRETS_FETCH_REQUEST':
     case 'SECRET_DELETE_REQUEST':
     case 'SECRET_CREATE_REQUEST':
+    case 'SECRET_PATCH_REQUEST':
       return true;
     case 'SECRETS_FETCH_SUCCESS':
     case 'SECRET_CREATE_SUCCESS':
     case 'SECRET_DELETE_SUCCESS':
+    case 'SECRET_PATCH_SUCCESS':
     case 'SECRETS_FETCH_FAILURE':
     case 'SECRET_DELETE_FAILURE':
     case 'SECRET_CREATE_FAILURE':
+    case 'SECRET_PATCH_FAILURE':
       return false;
     default:
       return state;
   }
 }
 
-function errorMessage(state = false, action) {
+function errorMessage(state = null, action) {
   switch (action.type) {
     case 'SECRETS_FETCH_FAILURE':
     case 'SECRET_CREATE_FAILURE':
       return action.error;
-    case 'SECRET_DELETE_FAILURE':
-    case 'SECRETS_FETCH_REQUEST':
-    case 'SECRETS_FETCH_SUCCESS':
     case 'CLEAR_SECRET_ERROR_NOTIFICATION':
-      return null;
+    case 'SECRETS_FETCH_SUCCESS':
+    case 'SECRET_CREATE_SUCCESS':
+      return false;
     default:
       return state;
   }
 }
 
-function deleteErrorMessage(state = false, action) {
+function deleteErrorMessage(state = null, action) {
   switch (action.type) {
-    case 'SECRETS_FETCH_FAILURE':
     case 'SECRET_DELETE_FAILURE':
       return action.error;
-    case 'SECRET_CREATE_FAILURE':
-    case 'SECRETS_FETCH_REQUEST':
-    case 'SECRETS_FETCH_SUCCESS':
     case 'CLEAR_SECRET_ERROR_NOTIFICATION':
-      return null;
-    default:
-      return state;
-  }
-}
-
-function createSuccessMessage(state = null, action) {
-  switch (action.type) {
     case 'SECRET_DELETE_SUCCESS':
+      return false;
+    default:
+      return state;
+  }
+}
+
+function patchErrorMessage(state = null, action) {
+  switch (action.type) {
+    case 'SECRET_PATCH_FAILURE':
+      return action.error;
+    case 'CLEAR_SECRET_ERROR_NOTIFICATION':
+    case 'SECRET_PATCH_SUCCESS':
+      return false;
+    default:
+      return state;
+  }
+}
+
+function createSuccessMessage(state = false, action) {
+  switch (action.type) {
     case 'SECRET_CREATE_SUCCESS':
       return true;
-    case 'SECRET_CREATE_FAILURE':
-    case 'SECRETS_FETCH_REQUEST':
-    case 'SECRETS_FETCH_SUCCESS':
+    case 'RESET_CREATE_SECRET':
+      return false;
+    default:
+      return state;
+  }
+}
+
+function patchSuccessMessage(state = false, action) {
+  switch (action.type) {
+    case 'SECRET_PATCH_SUCCESS':
+      return true;
     case 'CLEAR_SECRET_ERROR_NOTIFICATION':
       return false;
     default:
@@ -120,15 +138,12 @@ function createSuccessMessage(state = null, action) {
   }
 }
 
-function deleteSuccessMessage(state = null, action) {
+function deleteSuccessMessage(state = false, action) {
   switch (action.type) {
     case 'SECRET_DELETE_SUCCESS':
       return true;
-    case 'SECRET_CREATE_SUCCESS':
-    case 'SECRET_CREATE_FAILURE':
-    case 'SECRETS_FETCH_REQUEST':
-    case 'SECRETS_FETCH_SUCCESS':
     case 'CLEAR_SECRET_ERROR_NOTIFICATION':
+    case 'SECRET_DELETE_FAILURE':
       return false;
     default:
       return state;
@@ -141,7 +156,9 @@ export default combineReducers({
   deleteErrorMessage,
   createSuccessMessage,
   deleteSuccessMessage,
-  isFetching
+  isFetching,
+  patchErrorMessage,
+  patchSuccessMessage
 });
 
 export function getSecrets(state, namespace) {
@@ -156,6 +173,10 @@ export function getSecrets(state, namespace) {
   return Object.values(state.byNamespace[namespace] || []);
 }
 
+export function getPatchSecretsErrorMessage(state) {
+  return state.patchErrorMessage;
+}
+
 export function getSecretsErrorMessage(state) {
   return state.errorMessage;
 }
@@ -166,6 +187,10 @@ export function getDeleteSecretsErrorMessage(state) {
 
 export function getCreateSecretsSuccessMessage(state) {
   return state.createSuccessMessage;
+}
+
+export function getPatchSecretsSuccessMessage(state) {
+  return state.patchSuccessMessage;
 }
 
 export function getDeleteSecretsSuccessMessage(state) {

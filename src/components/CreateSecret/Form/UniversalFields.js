@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,21 +13,25 @@ limitations under the License.
 
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import { Dropdown, TextInput } from 'carbon-components-react';
-import NamespacesDropdown from '../../containers/NamespacesDropdown';
-
-const itemToString = item => (item ? item.text : '');
+import {
+  FormGroup,
+  RadioButton,
+  RadioButtonGroup,
+  TextInput
+} from 'carbon-components-react';
+import NamespacesDropdown from '../../../containers/NamespacesDropdown';
 
 const UniversalFields = props => {
   const {
-    accessTo,
-    handleChangeAccessTo,
     handleChangeNamespace,
     handleChangeTextInput,
+    handleSecretType,
     intl,
     invalidFields,
     name,
-    selectedNamespace
+    secretType,
+    selectedNamespace,
+    loading
   } = props;
 
   return (
@@ -48,6 +52,7 @@ const UniversalFields = props => {
             'Must not start or end with - and be less than 253 characters, contain only lowercase alphanumeric characters or -'
         })}
         autoComplete="off"
+        disabled={loading}
       />
       <NamespacesDropdown
         id="namespace"
@@ -66,25 +71,44 @@ const UniversalFields = props => {
           id: 'dashboard.universalFields.namespaceInvalid',
           defaultMessage: 'Namespace required.'
         })}
+        disabled={loading}
       />
-      <Dropdown
-        id="accessTo"
-        titleText={intl.formatMessage({
-          id: 'dashboard.universalFields.accessTo',
-          defaultMessage: 'Access To'
+      <FormGroup
+        legendText={intl.formatMessage({
+          id: 'dashboard.universalFields.secretType',
+          defaultMessage: 'Type'
         })}
-        label=""
-        initialSelectedItem={{
-          id: accessTo,
-          text: accessTo === 'git' ? 'Git Server' : 'Docker Registry'
-        }}
-        items={[
-          { id: 'git', text: 'Git Server' },
-          { id: 'docker', text: 'Docker Registry' }
-        ]}
-        itemToString={itemToString}
-        onChange={handleChangeAccessTo}
-      />
+        disabled={loading}
+      >
+        <RadioButtonGroup
+          legend={intl.formatMessage({
+            id: 'dashboard.universalFields.secretType',
+            defaultMessage: 'Type'
+          })}
+          name="secret-type"
+          orientation="vertical"
+          labelPosition="right"
+          valueSelected={secretType}
+          onChange={handleSecretType}
+        >
+          <RadioButton
+            value="password"
+            id="password-radio"
+            labelText={intl.formatMessage({
+              id: 'dashboard.universalFields.passwordRadioButton',
+              defaultMessage: 'Password'
+            })}
+          />
+          <RadioButton
+            value="accessToken"
+            id="access-radio"
+            labelText={intl.formatMessage({
+              id: 'dashboard.universalFields.accessTokenRadioButton',
+              defaultMessage: 'Access Token'
+            })}
+          />
+        </RadioButtonGroup>
+      </FormGroup>
     </>
   );
 };

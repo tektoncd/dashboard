@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -20,6 +20,7 @@ import {
   getExtensionsErrorMessage,
   getLocale,
   getNamespaces,
+  getPatchSecretsErrorMessage,
   getPipelineResource,
   getPipelineResources,
   getPipelineResourcesErrorMessage,
@@ -311,6 +312,17 @@ it('getDeleteSecretsErrorMessage', () => {
     .mockImplementation(() => errorMessage);
   expect(getDeleteSecretsErrorMessage(state)).toEqual(errorMessage);
   expect(secretSelectors.getDeleteSecretsErrorMessage).toHaveBeenCalledWith(
+    state.secrets
+  );
+});
+
+it('getPatchSecretsErrorMessage', () => {
+  const errorMessage = 'fake error message';
+  jest
+    .spyOn(secretSelectors, 'getPatchSecretsErrorMessage')
+    .mockImplementation(() => errorMessage);
+  expect(getPatchSecretsErrorMessage(state)).toEqual(errorMessage);
+  expect(secretSelectors.getPatchSecretsErrorMessage).toHaveBeenCalledWith(
     state.secrets
   );
 });

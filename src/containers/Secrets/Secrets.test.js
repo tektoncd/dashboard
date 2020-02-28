@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -161,7 +161,7 @@ it('click add new secret & modal appears', () => {
 
   jest.spyOn(API, 'getServiceAccounts').mockImplementation(() => []);
 
-  const { getByTestId, getByText } = renderWithRouter(
+  const { queryByTestId, getByText } = renderWithRouter(
     <Provider store={store}>
       <Route
         path={urls.secrets.all()}
@@ -171,11 +171,11 @@ it('click add new secret & modal appears', () => {
     { route: urls.secrets.all() }
   );
 
-  expect(getByTestId('modal').className.includes('is-visible')).toBeFalsy();
+  expect(queryByTestId('createSecret')).toBeFalsy();
 
   fireEvent.click(getByText('Create'));
 
-  expect(getByTestId('modal').className.includes('is-visible')).toBeTruthy();
+  expect(queryByTestId('createSecret')).toBeTruthy();
 });
 
 it('click delete secret & modal appears', () => {
