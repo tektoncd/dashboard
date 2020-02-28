@@ -17,6 +17,8 @@ export {
   default as CustomResourceDefinition
 } from './CustomResourceDefinition';
 export { default as CreatePipelineRun } from './CreatePipelineRun';
+export { default as ClusterTriggerBinding } from './ClusterTriggerBinding';
+export { default as ClusterTriggerBindings } from './ClusterTriggerBindings';
 export { default as EventListener } from './EventListener';
 export { default as EventListeners } from './EventListeners';
 export { default as Extension } from './Extension';

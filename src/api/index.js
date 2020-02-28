@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -454,8 +454,22 @@ export function getTriggerBindings({ filters = [], namespace } = {}) {
   return get(uri).then(checkData);
 }
 
+export function getClusterTriggerBindings({ filters = [] } = {}) {
+  const uri = getTektonAPI(
+    'clustertriggerbindings',
+    undefined,
+    getQueryParams(filters)
+  );
+  return get(uri).then(checkData);
+}
+
 export function getTriggerBinding({ name, namespace }) {
   const uri = getTektonAPI('triggerbindings', { name, namespace });
+  return get(uri);
+}
+
+export function getClusterTriggerBinding({ name }) {
+  const uri = getTektonAPI('clustertriggerbindings', { name });
   return get(uri);
 }
 

@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -22,6 +22,7 @@ const serviceAccountName = 'fake_serviceAccountName';
 const taskName = 'fake_taskName';
 const taskRunName = 'fake_taskRunName';
 const triggerBindingName = 'fake_triggerBindingName';
+const clusterTriggerBindingName = 'fake_clusterTriggerBindingName';
 const triggerTemplateName = 'fake_triggerTemplateName';
 
 describe('clusterTasks', () => {
@@ -288,6 +289,23 @@ describe('triggerBindings', () => {
       generatePath(paths.triggerBindings.byName(), {
         namespace,
         triggerBindingName
+      })
+    );
+  });
+});
+
+describe('clusterTriggerBindings', () => {
+  it('all', () => {
+    expect(urls.clusterTriggerBindings.all()).toEqual(
+      generatePath(paths.clusterTriggerBindings.all())
+    );
+  });
+  it('byName', () => {
+    expect(
+      urls.clusterTriggerBindings.byName({ clusterTriggerBindingName })
+    ).toEqual(
+      generatePath(paths.clusterTriggerBindings.byName(), {
+        clusterTriggerBindingName
       })
     );
   });
