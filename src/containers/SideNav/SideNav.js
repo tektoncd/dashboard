@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -109,6 +109,10 @@ class SideNav extends Component {
         history.push(urls.triggerBindings.all());
         return;
       }
+      if (currentURL.includes(urls.clusterTriggerBindings.all())) {
+        history.push(urls.clusterTriggerBindings.all());
+        return;
+      }
       if (currentURL.includes(urls.triggerTemplates.all())) {
         history.push(urls.triggerTemplates.all());
         return;
@@ -210,6 +214,13 @@ class SideNav extends Component {
                   to={this.getPath(urls.triggerBindings.all())}
                 >
                   TriggerBindings
+                </SideNavMenuItem>
+                <SideNavMenuItem
+                  element={NavLink}
+                  icon={<span />}
+                  to={urls.clusterTriggerBindings.all()}
+                >
+                  ClusterTriggerBindings
                 </SideNavMenuItem>
                 <SideNavMenuItem
                   element={NavLink}

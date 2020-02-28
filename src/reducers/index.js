@@ -25,6 +25,7 @@ import pipelineRuns, * as pipelineRunsSelectors from './pipelineRuns';
 import secrets, * as secretSelectors from './secrets';
 import triggerTemplates, * as triggerTemplatesSelectors from './triggerTemplates';
 import triggerBindings, * as triggerBindingsSelectors from './triggerBindings';
+import clusterTriggerBindings, * as clusterTriggerBindingsSelectors from './clusterTriggerBindings';
 import serviceAccounts, * as serviceAccountSelectors from './serviceAccounts';
 import tasks, * as taskSelectors from './tasks';
 import taskRuns, * as taskRunsSelectors from './taskRuns';
@@ -44,6 +45,7 @@ export default combineReducers({
   tasks: tasks(),
   taskRuns: taskRuns(),
   triggerBindings: triggerBindings(),
+  clusterTriggerBindings: clusterTriggerBindings(),
   triggerTemplates: triggerTemplates()
 });
 
@@ -390,6 +392,13 @@ export function getTriggerBindings(
   return filterResources({ filters, resources });
 }
 
+export function getClusterTriggerBindings(state, { filters } = {}) {
+  const resources = clusterTriggerBindingsSelectors.getClusterTriggerBindings(
+    state.clusterTriggerBindings
+  );
+  return filterResources({ filters, resources });
+}
+
 export function getTriggerBinding(
   state,
   { name, namespace = getSelectedNamespace(state) }
@@ -401,15 +410,34 @@ export function getTriggerBinding(
   );
 }
 
+export function getClusterTriggerBinding(state, { name }) {
+  return clusterTriggerBindingsSelectors.getClusterTriggerBinding(
+    state.clusterTriggerBindings,
+    name
+  );
+}
+
 export function getTriggerBindingsErrorMessage(state) {
   return triggerBindingsSelectors.getTriggerBindingsErrorMessage(
     state.triggerBindings
   );
 }
 
+export function getClusterTriggerBindingsErrorMessage(state) {
+  return clusterTriggerBindingsSelectors.getClusterTriggerBindingsErrorMessage(
+    state.clusterTriggerBindings
+  );
+}
+
 export function isFetchingTriggerBindings(state) {
   return triggerBindingsSelectors.isFetchingTriggerBindings(
     state.triggerBindings
+  );
+}
+
+export function isFetchingClusterTriggerBindings(state) {
+  return clusterTriggerBindingsSelectors.isFetchingClusterTriggerBindings(
+    state.clusterTriggerBindings
   );
 }
 

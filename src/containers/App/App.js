@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -33,6 +33,8 @@ import { paths, urls } from '@tektoncd/dashboard-utils';
 import {
   About,
   ClusterTasks,
+  ClusterTriggerBinding,
+  ClusterTriggerBindings,
   CustomResourceDefinition,
   EventListener,
   EventListeners,
@@ -235,11 +237,20 @@ export /* istanbul ignore next */ class App extends Component {
                     component={TriggerBindings}
                   />
                   <Route
+                    path={paths.clusterTriggerBindings.byName()}
+                    exact
+                    component={ClusterTriggerBinding}
+                  />
+                  <Route
+                    path={paths.clusterTriggerBindings.all()}
+                    exact
+                    component={ClusterTriggerBindings}
+                  />
+                  <Route
                     path={paths.triggerTemplates.byName()}
                     exact
                     component={TriggerTemplate}
                   />
-
                   <Route
                     path={paths.triggerTemplates.all()}
                     exact

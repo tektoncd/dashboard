@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -671,6 +671,18 @@ it('getTriggerBinding', () => {
   });
 });
 
+it('getClusterTriggerBinding', () => {
+  const name = 'foo';
+  const data = { fake: 'clusterTriggerBinding' };
+  fetchMock.get(`end:${name}`, data);
+  return index
+    .getClusterTriggerBinding({ name })
+    .then(clusterTriggerBinding => {
+      expect(clusterTriggerBinding).toEqual(data);
+      fetchMock.restore();
+    });
+});
+
 it('getTriggerBindings', () => {
   const data = {
     items: 'triggerBindings'
@@ -678,6 +690,17 @@ it('getTriggerBindings', () => {
   fetchMock.get(/triggerbindings/, data);
   return index.getTriggerBindings().then(triggerBindings => {
     expect(triggerBindings).toEqual(data.items);
+    fetchMock.restore();
+  });
+});
+
+it('getClusterTriggerBindings', () => {
+  const data = {
+    items: 'clusterTriggerBindings'
+  };
+  fetchMock.get(/clustertriggerbindings/, data);
+  return index.getClusterTriggerBindings().then(clusterTriggerBindings => {
+    expect(clusterTriggerBindings).toEqual(data.items);
     fetchMock.restore();
   });
 });
