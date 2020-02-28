@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,7 +16,7 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 
-import { renderWithIntl } from '../../utils/test';
+import { renderWithIntl } from '../../../utils/test';
 import UniversalFields from './UniversalFields';
 
 const middleware = [thunk];
@@ -86,16 +86,18 @@ const store = mockStore({
 it('UniversalFields renders with blank inputs', () => {
   const props = {
     name: '',
-    handleChange() {},
-    accessTo: 'git',
-    selectedNamespace: 'default',
-    invalidFields: {}
+    handleChangeNamespace() {},
+    handleChangeTextInput() {},
+    selectedNamespace: '',
+    invalidFields: {},
+    handleSecretType() {},
+    secretType: '',
+    loading: false
   };
   const {
     getByLabelText,
     getAllByDisplayValue,
-    getByText,
-    getByDisplayValue
+    getByPlaceholderText
   } = renderWithIntl(
     <Provider store={store}>
       <UniversalFields {...props} />
@@ -103,21 +105,22 @@ it('UniversalFields renders with blank inputs', () => {
   );
   expect(getByLabelText(/Name/i)).toBeTruthy();
   expect(getByLabelText(/Namespace/i)).toBeTruthy();
-  expect(getByLabelText(/Access To/i)).toBeTruthy();
-  expect(getByText(/Git Server/i)).toBeTruthy();
-  expect(getByDisplayValue(/default/i)).toBeTruthy();
-  expect(getAllByDisplayValue('').length).toEqual(1);
+  expect(getByPlaceholderText(/Select Namespace/i)).toBeTruthy();
+  expect(getAllByDisplayValue('').length).toEqual(2);
 });
 
 it('UniversalFields incorrect fields', () => {
   const props = {
+    invalidFields: { name: true, namespace: true },
     name: '',
-    handleChange() {},
-    accessTo: 'git',
-    selectedNamespace: 'default',
-    invalidFields: { name: true }
+    handleChangeNamespace() {},
+    handleChangeTextInput() {},
+    selectedNamespace: '',
+    handleSecretType() {},
+    secretType: '',
+    loading: false
   };
-  const { getByLabelText } = renderWithIntl(
+  const { getByLabelText, getByText } = renderWithIntl(
     <Provider store={store}>
       <UniversalFields {...props} />
     </Provider>
@@ -126,4 +129,29 @@ it('UniversalFields incorrect fields', () => {
   const nameInput = getByLabelText(/Name/i);
 
   expect(nameInput.getAttribute('data-invalid')).toBeTruthy();
+  expect(getByText(/Namespace required./i)).toBeTruthy();
+});
+
+it('UniversalFields disabled when loading', () => {
+  const props = {
+    invalidFields: {},
+    name: '',
+    handleChangeNamespace() {},
+    handleChangeTextInput() {},
+    selectedNamespace: 'default',
+    handleSecretType() {},
+    secretType: '',
+    loading: true
+  };
+  const { getByLabelText } = renderWithIntl(
+    <Provider store={store}>
+      <UniversalFields {...props} />
+    </Provider>
+  );
+
+  const nameInput = getByLabelText(/Name/i);
+  const namespaceDropdown = getByLabelText(/Namespace/i);
+
+  expect(nameInput.disabled).toBeTruthy();
+  expect(namespaceDropdown.disabled).toBeTruthy();
 });

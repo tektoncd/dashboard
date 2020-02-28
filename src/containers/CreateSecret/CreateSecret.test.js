@@ -17,7 +17,7 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { renderWithIntl, rerenderWithIntl } from '../../utils/test';
-import SecretsModal from '.';
+import CreateSecret from '.';
 import * as API from '../../api';
 
 const middleware = [thunk];
@@ -91,7 +91,7 @@ const store = mockStore({
   }
 });
 
-it('SecretsModal renders blank', () => {
+it('SecretsCreate renders blank', () => {
   const props = {
     open: true
   };
@@ -101,20 +101,20 @@ it('SecretsModal renders blank', () => {
 
   const { queryByText } = renderWithIntl(
     <Provider store={store}>
-      <SecretsModal {...props} />
+      <CreateSecret {...props} />
     </Provider>
   );
-  expect(queryByText('Create Secret')).toBeTruthy();
+  expect(queryByText('Create new Secret')).toBeTruthy();
   expect(queryByText('Cancel')).toBeTruthy();
   expect(queryByText('Create')).toBeTruthy();
 });
 
-it('Test SecretsModal click events', () => {
-  const handleHideModal = jest.fn();
+it('Test CreateSecret click events', () => {
+  const handleClose = jest.fn();
   const handleSubmit = jest.fn();
   const props = {
-    open: true,
-    handleHideModal
+    secrets,
+    handleClose
   };
 
   jest.spyOn(API, 'getNamespaces').mockImplementation(() => []);
@@ -122,16 +122,16 @@ it('Test SecretsModal click events', () => {
 
   const { queryByText, rerender } = renderWithIntl(
     <Provider store={store}>
-      <SecretsModal {...props} />
+      <CreateSecret {...props} />
     </Provider>
   );
   fireEvent.click(queryByText('Cancel'));
-  expect(handleHideModal).toHaveBeenCalledTimes(1);
+  expect(handleClose).toHaveBeenCalledTimes(1);
 
   rerenderWithIntl(
     rerender,
     <Provider store={store}>
-      <SecretsModal open={false} />
+      <CreateSecret open={false} />
     </Provider>
   );
   fireEvent.click(queryByText('Create'));
@@ -141,33 +141,54 @@ it('Test SecretsModal click events', () => {
 const nameValidationErrorMsgRegExp = /Must not start or end with - and be less than 253 characters, contain only lowercase alphanumeric characters or -/i;
 const namespaceValidationErrorRegExp = /Namespace required./i;
 const usernameValidationErrorRegExp = /Username required./i;
-const passwordValidationErrorRegExp = /Password or Token required./i;
-const serviceAccountValidationErrorRegExp = /Service Account required./i;
+const passwordValidationErrorRegExp = /Password required./i;
+const accessTokenValidationErrorRegExp = /Access Token required./i;
 const serverurlValidationErrorRegExp = /Server URL required./i;
 
 const props = {
-  open: true
+  secrets: [],
+  handleClose: () => {}
 };
 
-it('Create Secret validates all empty inputs', () => {
+it('Create Secret validates universal inputs', () => {
   const { queryByText } = renderWithIntl(
     <Provider store={store}>
-      <SecretsModal {...props} />
+      <CreateSecret {...props} />
     </Provider>
   );
   fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeTruthy();
   expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
+});
+
+it('Create Secret validates access token inputs', () => {
+  const { queryByText, queryByLabelText } = renderWithIntl(
+    <Provider store={store}>
+      <CreateSecret {...props} />
+    </Provider>
+  );
+  fireEvent.click(queryByLabelText('Access Token'));
+  fireEvent.click(queryByText('Create'));
+  expect(queryByText(accessTokenValidationErrorRegExp)).toBeTruthy();
+});
+
+it('Create Secret validates password inputs', () => {
+  const { queryByText, queryByLabelText } = renderWithIntl(
+    <Provider store={store}>
+      <CreateSecret {...props} />
+    </Provider>
+  );
+  fireEvent.click(queryByLabelText('Password'));
+  fireEvent.click(queryByText('Create'));
   expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(passwordValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serviceAccountValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(serverurlValidationErrorRegExp)).toBeFalsy();
 });
 
 it('Create Secret errors when starting with a "-"', () => {
   const { queryByText, getByPlaceholderText } = renderWithIntl(
     <Provider store={store}>
-      <SecretsModal {...props} />
+      <CreateSecret {...props} />
     </Provider>
   );
   fireEvent.change(getByPlaceholderText(/secret-name/i), {
@@ -175,17 +196,12 @@ it('Create Secret errors when starting with a "-"', () => {
   });
   fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeTruthy();
-  expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(passwordValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serviceAccountValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serverurlValidationErrorRegExp)).toBeFalsy();
 });
 
 it('Create Secret errors when ends with a "-"', () => {
   const { queryByText, getByPlaceholderText } = renderWithIntl(
     <Provider store={store}>
-      <SecretsModal {...props} />
+      <CreateSecret {...props} />
     </Provider>
   );
   fireEvent.change(getByPlaceholderText(/secret-name/i), {
@@ -193,17 +209,12 @@ it('Create Secret errors when ends with a "-"', () => {
   });
   fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeTruthy();
-  expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(passwordValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serviceAccountValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serverurlValidationErrorRegExp)).toBeFalsy();
 });
 
 it('Create Secret errors when contains "."', () => {
   const { queryByText, getByPlaceholderText } = renderWithIntl(
     <Provider store={store}>
-      <SecretsModal {...props} />
+      <CreateSecret {...props} />
     </Provider>
   );
   fireEvent.change(getByPlaceholderText(/secret-name/i), {
@@ -211,17 +222,12 @@ it('Create Secret errors when contains "."', () => {
   });
   fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeTruthy();
-  expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(passwordValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serviceAccountValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serverurlValidationErrorRegExp)).toBeFalsy();
 });
 
 it('Create Secret errors when contains spaces', () => {
   const { queryByText, getByPlaceholderText } = renderWithIntl(
     <Provider store={store}>
-      <SecretsModal {...props} />
+      <CreateSecret {...props} />
     </Provider>
   );
   fireEvent.change(getByPlaceholderText(/secret-name/i), {
@@ -229,17 +235,12 @@ it('Create Secret errors when contains spaces', () => {
   });
   fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeTruthy();
-  expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(passwordValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serviceAccountValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serverurlValidationErrorRegExp)).toBeFalsy();
 });
 
 it('Create Secret errors when contains capital letters', () => {
   const { queryByText, getByPlaceholderText } = renderWithIntl(
     <Provider store={store}>
-      <SecretsModal {...props} />
+      <CreateSecret {...props} />
     </Provider>
   );
   fireEvent.change(getByPlaceholderText(/secret-name/i), {
@@ -247,17 +248,12 @@ it('Create Secret errors when contains capital letters', () => {
   });
   fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeTruthy();
-  expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(passwordValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serviceAccountValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serverurlValidationErrorRegExp)).toBeFalsy();
 });
 
 it('Create Secret doesn\'t error when contains "-" in the middle of the secret', () => {
   const { queryByText, getByPlaceholderText } = renderWithIntl(
     <Provider store={store}>
-      <SecretsModal {...props} />
+      <CreateSecret {...props} />
     </Provider>
   );
   fireEvent.change(getByPlaceholderText(/secret-name/i), {
@@ -265,17 +261,12 @@ it('Create Secret doesn\'t error when contains "-" in the middle of the secret',
   });
   fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeFalsy();
-  expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(passwordValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serviceAccountValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serverurlValidationErrorRegExp)).toBeFalsy();
 });
 
 it("Create Secret doesn't error when contains 0", () => {
   const { queryByText, getByPlaceholderText } = renderWithIntl(
     <Provider store={store}>
-      <SecretsModal {...props} />
+      <CreateSecret {...props} />
     </Provider>
   );
   fireEvent.change(getByPlaceholderText(/secret-name/i), {
@@ -283,17 +274,12 @@ it("Create Secret doesn't error when contains 0", () => {
   });
   fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeFalsy();
-  expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(passwordValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serviceAccountValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serverurlValidationErrorRegExp)).toBeFalsy();
 });
 
 it("Create Secret doesn't error when contains 9", () => {
   const { queryByText, getByPlaceholderText } = renderWithIntl(
     <Provider store={store}>
-      <SecretsModal {...props} />
+      <CreateSecret {...props} />
     </Provider>
   );
   fireEvent.change(getByPlaceholderText(/secret-name/i), {
@@ -301,17 +287,12 @@ it("Create Secret doesn't error when contains 9", () => {
   });
   fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeFalsy();
-  expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(passwordValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serviceAccountValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serverurlValidationErrorRegExp)).toBeFalsy();
 });
 
 it('Create Secret errors when contains 253 characters', () => {
   const { queryByText, getByPlaceholderText } = renderWithIntl(
     <Provider store={store}>
-      <SecretsModal {...props} />
+      <CreateSecret {...props} />
     </Provider>
   );
   fireEvent.change(getByPlaceholderText(/secret-name/i), {
@@ -322,17 +303,12 @@ it('Create Secret errors when contains 253 characters', () => {
   });
   fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeTruthy();
-  expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(passwordValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serviceAccountValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serverurlValidationErrorRegExp)).toBeFalsy();
 });
 
 it("Create Secret doesn't error when contains 252 characters", () => {
   const { queryByText, getByPlaceholderText } = renderWithIntl(
     <Provider store={store}>
-      <SecretsModal {...props} />
+      <CreateSecret {...props} />
     </Provider>
   );
   fireEvent.change(getByPlaceholderText(/secret-name/i), {
@@ -343,37 +319,29 @@ it("Create Secret doesn't error when contains 252 characters", () => {
   });
   fireEvent.click(queryByText('Create'));
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeFalsy();
-  expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(passwordValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serviceAccountValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serverurlValidationErrorRegExp)).toBeFalsy();
 });
 
 it("Create Secret doesn't error when contains a valid namespace", () => {
-  const { queryByText, getByPlaceholderText, getByText } = renderWithIntl(
+  const { queryByText, getByText, getByPlaceholderText } = renderWithIntl(
     <Provider store={store}>
-      <SecretsModal {...props} />
+      <CreateSecret {...props} />
     </Provider>
   );
-  fireEvent.change(getByPlaceholderText(/secret-name/i), {
-    target: { value: 'the-cat-goes-meow' }
-  });
   fireEvent.click(getByPlaceholderText(/select namespace/i));
   fireEvent.click(getByText(/default/i));
   fireEvent.click(queryByText('Create'));
-  expect(queryByText(nameValidationErrorMsgRegExp)).toBeFalsy();
   expect(queryByText(namespaceValidationErrorRegExp)).toBeFalsy();
-  expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(passwordValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serviceAccountValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serverurlValidationErrorRegExp)).toBeFalsy();
 });
 
 it("Create Secret doesn't error when Docker Registry is selected", () => {
-  const { queryByText, getByPlaceholderText, getByText } = renderWithIntl(
+  const {
+    queryByText,
+    getByPlaceholderText,
+    getByText,
+    queryByLabelText
+  } = renderWithIntl(
     <Provider store={store}>
-      <SecretsModal {...props} />
+      <CreateSecret {...props} />
     </Provider>
   );
   fireEvent.change(getByPlaceholderText(/secret-name/i), {
@@ -381,6 +349,8 @@ it("Create Secret doesn't error when Docker Registry is selected", () => {
   });
   fireEvent.click(getByPlaceholderText(/select namespace/i));
   fireEvent.click(getByText(/default/i));
+
+  fireEvent.click(queryByLabelText('Password'));
 
   fireEvent.click(getByText(/git server/i));
   fireEvent.click(getByText(/docker registry/i));
@@ -390,14 +360,18 @@ it("Create Secret doesn't error when Docker Registry is selected", () => {
   expect(queryByText(namespaceValidationErrorRegExp)).toBeFalsy();
   expect(queryByText(usernameValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(passwordValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serviceAccountValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(serverurlValidationErrorRegExp)).toBeFalsy();
 });
 
 it("Create Secret doesn't error when a username is entered", () => {
-  const { queryByText, getByPlaceholderText, getByText } = renderWithIntl(
+  const {
+    queryByText,
+    getByPlaceholderText,
+    getByText,
+    queryByLabelText
+  } = renderWithIntl(
     <Provider store={store}>
-      <SecretsModal {...props} />
+      <CreateSecret {...props} />
     </Provider>
   );
   fireEvent.change(getByPlaceholderText(/secret-name/i), {
@@ -405,6 +379,7 @@ it("Create Secret doesn't error when a username is entered", () => {
   });
   fireEvent.click(getByPlaceholderText(/select namespace/i));
   fireEvent.click(getByText(/default/i));
+  fireEvent.click(queryByLabelText('Password'));
 
   fireEvent.change(getByPlaceholderText(/username/i), {
     target: { value: 'the-cat-goes-meow' }
@@ -415,14 +390,18 @@ it("Create Secret doesn't error when a username is entered", () => {
   expect(queryByText(namespaceValidationErrorRegExp)).toBeFalsy();
   expect(queryByText(usernameValidationErrorRegExp)).toBeFalsy();
   expect(queryByText(passwordValidationErrorRegExp)).toBeTruthy();
-  expect(queryByText(serviceAccountValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(serverurlValidationErrorRegExp)).toBeFalsy();
 });
 
 it("Create Secret doesn't error when a password is entered", () => {
-  const { queryByText, getByPlaceholderText, getByText } = renderWithIntl(
+  const {
+    queryByText,
+    getByPlaceholderText,
+    getByText,
+    queryByLabelText
+  } = renderWithIntl(
     <Provider store={store}>
-      <SecretsModal {...props} />
+      <CreateSecret {...props} />
     </Provider>
   );
   fireEvent.change(getByPlaceholderText(/secret-name/i), {
@@ -430,6 +409,7 @@ it("Create Secret doesn't error when a password is entered", () => {
   });
   fireEvent.click(getByPlaceholderText(/select namespace/i));
   fireEvent.click(getByText(/default/i));
+  fireEvent.click(queryByLabelText('Password'));
 
   fireEvent.change(getByPlaceholderText(/username/i), {
     target: { value: 'the-cat-goes-meow' }
@@ -444,6 +424,5 @@ it("Create Secret doesn't error when a password is entered", () => {
   expect(queryByText(namespaceValidationErrorRegExp)).toBeFalsy();
   expect(queryByText(usernameValidationErrorRegExp)).toBeFalsy();
   expect(queryByText(passwordValidationErrorRegExp)).toBeFalsy();
-  expect(queryByText(serviceAccountValidationErrorRegExp)).toBeTruthy();
   expect(queryByText(serverurlValidationErrorRegExp)).toBeFalsy();
 });

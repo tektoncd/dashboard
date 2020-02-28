@@ -19,21 +19,22 @@ import { InlineNotification } from 'carbon-components-react';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 import { getErrorMessage, getFilters } from '@tektoncd/dashboard-utils';
 import { Add16 as Add, Delete16 as Delete } from '@carbon/icons-react';
-
 import { LabelFilter } from '..';
-import Modal from '../SecretsModal';
+import CreateSecret from '../CreateSecret';
 import DeleteModal from '../../components/SecretsDeleteModal';
 import {
   clearNotification,
   deleteSecret,
-  fetchSecrets
+  fetchSecrets,
+  resetCreateSecret
 } from '../../actions/secrets';
 import { fetchServiceAccounts } from '../../actions/serviceAccounts';
 import {
-  getCreateSecretsSuccessMessage,
   getDeleteSecretsErrorMessage,
   getDeleteSecretsSuccessMessage,
+  getPatchSecretsSuccessMessage,
   getSecrets,
+  getSecretsErrorMessage,
   getSelectedNamespace,
   getServiceAccounts,
   isFetchingSecrets,
@@ -83,17 +84,17 @@ export /* istanbul ignore next */ class Secrets extends Component {
     this.props.fetchServiceAccounts();
   };
 
-  handleDisplayModalClick = () => {
+  handleNewSecretClick = () => {
     this.props.clearNotification();
+    this.props.resetCreateSecret();
     this.setState(prevState => {
       return {
-        openNewSecret: !prevState.openNewSecret,
-        errorMessage: ''
+        openNewSecret: !prevState.openNewSecret
       };
     });
   };
 
-  handleDeleteSecretToggle = () => {
+  handleHideDeleteSecret = () => {
     this.setState({
       openDeleteSecret: false,
       cancelMethod: null,
@@ -113,37 +114,29 @@ export /* istanbul ignore next */ class Secrets extends Component {
     });
   };
 
-  handleHideModalClick = () => {
-    this.props.clearNotification();
+  handleCloseNewSecret = () => {
+    this.props.resetCreateSecret();
     this.setState({
       openNewSecret: false
     });
+    this.fetchData();
   };
 
   delete = () => {
     this.props.deleteSecret(this.state.toBeDeleted, this.state.cancelMethod);
-    this.handleDeleteSecretToggle();
-  };
-
-  handleCreateSecretClick = openNewSecret => {
-    if (!openNewSecret) {
-      this.props.fetchServiceAccounts();
-    }
-    this.setState({
-      openNewSecret
-    });
+    this.handleHideDeleteSecret();
   };
 
   render() {
     const {
       loading,
-      createSuccess,
       deleteSuccess,
       secrets,
       selectedNamespace,
       serviceAccounts,
       intl,
-      errorMessage
+      errorMessage,
+      patchSuccess
     } = this.props;
 
     const { openNewSecret, toBeDeleted, openDeleteSecret } = this.state;
@@ -265,26 +258,25 @@ export /* istanbul ignore next */ class Secrets extends Component {
 
     return (
       <>
-        {createSuccess &&
-          (!deleteSuccess && (
-            <InlineNotification
-              kind="success"
-              title={intl.formatMessage({
-                id: 'dashboard.secrets.success',
-                defaultMessage: 'Success:'
-              })}
-              subtitle={intl.formatMessage({
-                id: 'dashboard.secrets.createSuccess',
-                defaultMessage: 'Secret created successfully'
-              })}
-              iconDescription={intl.formatMessage({
-                id: 'dashboard.notification.clear',
-                defaultMessage: 'Clear Notification'
-              })}
-              onCloseButtonClick={this.props.clearNotification}
-              lowContrast
-            />
-          ))}
+        {patchSuccess && (
+          <InlineNotification
+            kind="success"
+            title={intl.formatMessage({
+              id: 'dashboard.secrets.success',
+              defaultMessage: 'Success:'
+            })}
+            subtitle={intl.formatMessage({
+              id: 'dashboard.secrets.patchedSuccess',
+              defaultMessage: 'Secret patched successfully'
+            })}
+            iconDescription={intl.formatMessage({
+              id: 'dashboard.notification.clear',
+              defaultMessage: 'Clear Notification'
+            })}
+            onCloseButtonClick={this.props.clearNotification}
+            lowContrast
+          />
+        )}
         {deleteSuccess && (
           <InlineNotification
             kind="success"
@@ -321,62 +313,67 @@ export /* istanbul ignore next */ class Secrets extends Component {
             lowContrast
           />
         )}
-        <h1>Secrets</h1>
-        <LabelFilter {...this.props} />
-        <Table
-          headers={initialHeaders}
-          rows={secretsFormatted}
-          handleDisplayModal={this.handleDisplayModalClick}
-          loading={loading}
-          selectedNamespace={selectedNamespace}
-          emptyTextAllNamespaces={intl.formatMessage(
-            {
-              id: 'dashboard.emptyState.allNamespaces',
-              defaultMessage: 'No {kind} under any namespace.'
-            },
-            { kind: 'Secrets' }
-          )}
-          emptyTextSelectedNamespace={intl.formatMessage(
-            {
-              id: 'dashboard.emptyState.selectedNamespace',
-              defaultMessage: 'No {kind} under namespace {selectedNamespace}'
-            },
-            { kind: 'Secrets', selectedNamespace }
-          )}
-          batchActionButtons={[
-            {
-              onClick: this.handleDeleteSecretClick,
-              text: intl.formatMessage({
-                id: 'dashboard.actions.deleteButton',
-                defaultMessage: 'Delete'
-              }),
-              icon: Delete
-            }
-          ]}
-          toolbarButtons={[
-            {
-              onClick: this.handleDisplayModalClick,
-              text: intl.formatMessage({
-                id: 'dashboard.actions.createButton',
-                defaultMessage: 'Create'
-              }),
-              icon: Add
-            }
-          ]}
-        />
-        <Modal
-          open={openNewSecret}
-          key={openNewSecret}
-          handleCreateSecret={this.handleCreateSecretClick}
-          handleHideModal={this.handleHideModalClick}
-          clearNotification={this.props.clearNotification}
-        />
-        <DeleteModal
-          open={openDeleteSecret}
-          handleClick={this.handleDeleteSecretToggle}
-          handleDelete={this.delete}
-          toBeDeleted={toBeDeleted}
-        />
+        {!openNewSecret && (
+          <>
+            <h1>Secrets</h1>
+            <LabelFilter {...this.props} />
+            <Table
+              headers={initialHeaders}
+              rows={secretsFormatted}
+              handleDisplayModal={this.handleDisplayModalClick}
+              handleDelete={this.handleDeleteSecretClick}
+              loading={loading}
+              selectedNamespace={selectedNamespace}
+              emptyTextAllNamespaces={intl.formatMessage(
+                {
+                  id: 'dashboard.emptyState.allNamespaces',
+                  defaultMessage: 'No {kind} under any namespace.'
+                },
+                { kind: 'Secrets' }
+              )}
+              emptyTextSelectedNamespace={intl.formatMessage(
+                {
+                  id: 'dashboard.emptyState.selectedNamespace',
+                  defaultMessage:
+                    'No {kind} under namespace {selectedNamespace}'
+                },
+                { kind: 'Secrets', selectedNamespace }
+              )}
+              batchActionButtons={[
+                {
+                  onClick: this.handleDeleteSecretClick,
+                  text: intl.formatMessage({
+                    id: 'dashboard.actions.deleteButton',
+                    defaultMessage: 'Delete'
+                  }),
+                  icon: Delete
+                }
+              ]}
+              toolbarButtons={[
+                {
+                  onClick: this.handleNewSecretClick,
+                  text: intl.formatMessage({
+                    id: 'dashboard.actions.createButton',
+                    defaultMessage: 'Create'
+                  }),
+                  icon: Add
+                }
+              ]}
+            />
+            <DeleteModal
+              open={openDeleteSecret}
+              handleClick={this.handleHideDeleteSecret}
+              handleDelete={this.delete}
+              toBeDeleted={toBeDeleted}
+            />
+          </>
+        )}
+        {openNewSecret && (
+          <CreateSecret
+            handleClose={this.handleCloseNewSecret}
+            secrets={secrets}
+          />
+        )}
       </>
     );
   }
@@ -392,9 +389,10 @@ function mapStateToProps(state, props) {
   const namespace = namespaceParam || getSelectedNamespace(state);
 
   return {
-    errorMessage: getDeleteSecretsErrorMessage(state),
-    createSuccess: getCreateSecretsSuccessMessage(state),
+    errorMessage:
+      getDeleteSecretsErrorMessage(state) || getSecretsErrorMessage(state),
     deleteSuccess: getDeleteSecretsSuccessMessage(state),
+    patchSuccess: getPatchSecretsSuccessMessage(state),
     filters,
     loading: isFetchingSecrets(state) || isFetchingServiceAccounts(state),
     secrets: getSecrets(state, { filters, namespace }),
@@ -408,7 +406,8 @@ const mapDispatchToProps = {
   clearNotification,
   deleteSecret,
   fetchSecrets,
-  fetchServiceAccounts
+  fetchServiceAccounts,
+  resetCreateSecret
 };
 
 export default connect(

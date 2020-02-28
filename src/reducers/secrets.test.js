@@ -16,11 +16,13 @@ import secretsReducer, * as selectors from './secrets';
 it('handles init or unknown actions', () => {
   expect(secretsReducer(undefined, { type: 'does_not_exist' })).toEqual({
     byNamespace: {},
-    errorMessage: false,
-    deleteErrorMessage: false,
-    createSuccessMessage: null,
-    deleteSuccessMessage: null,
-    isFetching: false
+    errorMessage: null,
+    deleteErrorMessage: null,
+    createSuccessMessage: false,
+    deleteSuccessMessage: false,
+    isFetching: false,
+    patchErrorMessage: null,
+    patchSuccessMessage: false
   });
 });
 
@@ -62,6 +64,28 @@ it('SECRETS_FETCH_FAILURE', () => {
 
   const state = secretsReducer({}, action);
   expect(selectors.getSecretsErrorMessage(state)).toEqual(
+    'The server reported a conflict'
+  );
+});
+
+it('SECRET_PATCH_SUCCESS', () => {
+  const action = {
+    type: 'SECRET_PATCH_SUCCESS'
+  };
+
+  const state = secretsReducer({}, action);
+  expect(selectors.getPatchSecretsSuccessMessage(state)).toEqual(true);
+});
+
+it('SECRET_PATCH_FAILURE', () => {
+  const error = 'The server reported a conflict';
+  const action = {
+    type: 'SECRET_PATCH_FAILURE',
+    error
+  };
+
+  const state = secretsReducer({}, action);
+  expect(selectors.getPatchSecretsErrorMessage(state)).toEqual(
     'The server reported a conflict'
   );
 });
