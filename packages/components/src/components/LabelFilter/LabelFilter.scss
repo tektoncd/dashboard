@@ -14,20 +14,15 @@ limitations under the License.
 @import '~carbon-components/scss/globals/scss/vars';
 
 .filters {
-  min-height: $layout-04;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
 
-  &:after {
-    /* clearfix */
-    content: "";
-    display: table;
-    clear: both;
-  }
+  min-height: calc(#{$spacing-08} + #{$button-border-width});
+  margin-bottom: calc(#{$spacing-05} - #{$button-border-width});
 
   .bx--tag {
+    flex-shrink: 0;
     margin: $spacing-05 $spacing-03 0 0;
-  }
-
-  .bx--btn {
-    margin-top: $spacing-04;
   }
 }
