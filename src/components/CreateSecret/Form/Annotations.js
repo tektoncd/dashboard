@@ -62,7 +62,7 @@ const Annotations = props => {
                   text: gitIntlText
                 },
                 {
-                  id: 'git',
+                  id: 'docker',
                   text: dockerIntlText
                 }
               ]}
