@@ -540,9 +540,8 @@ it('getExtensions', () => {
   const name = 'name';
   const bundlelocation = 'bundlelocation';
   const source = index.getExtensionBundleURL(name, bundlelocation);
-  const url = 'url';
-  const extensions = [{ displayname: displayName, name, bundlelocation, url }];
-  const transformedExtensions = [{ displayName, name, source, url }];
+  const extensions = [{ displayname: displayName, name, bundlelocation }];
+  const transformedExtensions = [{ displayName, name, source }];
   fetchMock.get(/extensions/, extensions);
   return index.getExtensions().then(response => {
     expect(response).toEqual(transformedExtensions);

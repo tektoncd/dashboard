@@ -380,11 +380,10 @@ export async function getExtensions() {
   let extensions = await get(uri);
   const resourceExtensions = await get(resourceExtensionsUri);
   extensions = (extensions || []).map(
-    ({ bundlelocation, displayname, name, url }) => ({
+    ({ bundlelocation, displayname, name }) => ({
       displayName: displayname,
       name,
-      source: getExtensionBundleURL(name, bundlelocation),
-      url
+      source: getExtensionBundleURL(name, bundlelocation)
     })
   );
   return extensions.concat(
