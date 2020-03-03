@@ -157,13 +157,27 @@ func (h *Handler) registerExtensions() {
 	h.extensionWebService = extensionWebService
 }
 
+type RedactedExtension struct {
+	Name           string `json:"name"`
+	DisplayName    string `json:"displayname"`
+	BundleLocation string `json:"bundlelocation"`
+	endpoints      []string
+}
+
 // getExtensions gets all of the registered extensions on the handler
-func (h *Handler) getExtensions() []Extension {
+func (h *Handler) getExtensions() []RedactedExtension {
 	h.RLock()
 	defer h.RUnlock()
-	extensions := []Extension{}
+
+	extensions := []RedactedExtension{}
 	for _, e := range h.uidExtensionMap {
-		extensions = append(extensions, *e)
+		redactedExtension := RedactedExtension{
+			Name:           e.Name,
+			DisplayName:    e.DisplayName,
+			BundleLocation: e.BundleLocation,
+			endpoints:      e.endpoints,
+		}
+		extensions = append(extensions, redactedExtension)
 	}
 	return extensions
 }

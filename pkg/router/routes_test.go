@@ -8,16 +8,19 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"reflect"
 	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/tektoncd/dashboard/pkg/endpoints"
+	"github.com/tektoncd/dashboard/pkg/router"
 	. "github.com/tektoncd/dashboard/pkg/router"
 	"github.com/tektoncd/dashboard/pkg/testutils"
 	v1alpha1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
 // Router successful response contract
@@ -353,4 +356,70 @@ func TestMarshalJSON_Extension(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestGetAllExtensions(t *testing.T) {
+	server, r, _ := testutils.DummyServer()
+	defer server.Close()
+
+	annotations := make(map[string]string)
+	annotations["tekton-dashboard-bundle-location"] = "web/extension.86386c2c.js"
+	annotations["tekton-dashboard-display-name"] = "Webhooks"
+	annotations["tekton-dashboard-endpoints"] = "webhooks.web"
+
+	labels := make(map[string]string)
+	labels["app"] = "webhooks-extension"
+	labels["tekton-dashboard-extension"] = "true"
+
+	servicePort := corev1.ServicePort{
+		NodePort: 30810, Port: 8080, TargetPort: intstr.FromInt(8080),
+	}
+	servicePorts := []corev1.ServicePort{servicePort}
+
+	service := corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:        "testExtension",
+			Namespace:   "tekton-pipelines",
+			Annotations: annotations,
+			Labels:      labels,
+			UID:         "65e6ab11-939b-486a-b2f1-323675676c84",
+		},
+		Spec: corev1.ServiceSpec{
+			ClusterIP: "172.30.155.248",
+			Ports:     servicePorts,
+		},
+	}
+	h := router.Register(*r)
+	h.RegisterExtension(&service)
+	server.Config.Handler = h
+
+	httpReq := testutils.DummyHTTPRequest("GET", fmt.Sprintf("%s/v1/extensions", server.URL), nil)
+	response, err := http.DefaultClient.Do(httpReq)
+	if err != nil {
+		t.Fatalf("Error getting extensions: %s", err.Error())
+	}
+
+	var extensions []RedactedExtension
+	if err := json.NewDecoder(response.Body).Decode(&extensions); err != nil {
+		t.Fatalf("Error decoding getAllExtensions response: %v\n", err)
+	}
+
+	url, _ := url.ParseRequestURI(fmt.Sprintf("http://%s:%d", service.Spec.ClusterIP, servicePort.TargetPort.IntVal))
+
+	structValue := reflect.ValueOf((extensions[0]))
+	structType := structValue.Type()
+
+	// This test is roughly to check that the Extension struct is not returned
+	// as it contains a URL element that exposes the IP address.
+	for i := 0; i < structValue.NumField(); i++ {
+		if structType.Field(i).Name == "URL" {
+			t.Error("URL was returned and would expose sensitive data")
+		}
+		if structValue.Field(i).CanInterface() {
+			if structValue.Field(i).Interface() == url {
+				t.Error("URL was found exposing sensitive data")
+			}
+		}
+	}
+
 }
