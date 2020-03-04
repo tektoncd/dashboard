@@ -121,7 +121,7 @@ export /* istanbul ignore next */ class ClusterTriggerBindings extends Component
           emptyTextAllNamespaces={intl.formatMessage(
             {
               id: 'dashboard.emptyState.clusterTriggerBindings',
-              defaultMessage: 'No {kind}.'
+              defaultMessage: 'No {kind}'
             },
             { kind: 'ClusterTriggerBindings' }
           )}
