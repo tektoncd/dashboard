@@ -223,6 +223,30 @@ const Trigger = ({ intl, eventListenerNamespace, trigger }) => {
                 // CEL Interceptor
                 interceptorType = 'CEL';
                 interceptorName = interceptor.cel.filter;
+
+                const headers = [
+                  {
+                    key: 'key',
+                    header: intl.formatMessage({
+                      id: 'dashboard.tableHeader.key',
+                      defaultMessage: 'Key'
+                    })
+                  },
+                  {
+                    key: 'expression',
+                    header: intl.formatMessage({
+                      id: 'dashboard.tableHeader.expression',
+                      defaultMessage: 'Expression'
+                    })
+                  }
+                ];
+
+                const rows = interceptor.cel.overlays.map(overlay => ({
+                  id: overlay.key, // assuming key is unique
+                  key: overlay.key,
+                  expression: overlay.expression
+                }));
+
                 content = (
                   <>
                     <p>
@@ -234,6 +258,27 @@ const Trigger = ({ intl, eventListenerNamespace, trigger }) => {
                     <code className="bx--snippet--multi interceptor--cel-filter">
                       {interceptor.cel.filter}
                     </code>
+                    <p>
+                      {intl.formatMessage({
+                        id: 'dashboard.triggerDetails.celInterceptorOverlays',
+                        defaultMessage: 'Overlays:'
+                      })}
+                    </p>
+                    <Table
+                      headers={headers}
+                      rows={rows}
+                      isSortable={false}
+                      emptyTextAllNamespaces={intl.formatMessage({
+                        id: 'dashboard.trigger.noOverlays',
+                        defaultMessage:
+                          'No overlays found for this interceptor.'
+                      })}
+                      emptyTextSelectedNamespace={intl.formatMessage({
+                        id: 'dashboard.trigger.noOverlays',
+                        defaultMessage:
+                          'No overlays found for this interceptor.'
+                      })}
+                    />
                   </>
                 );
               } else {

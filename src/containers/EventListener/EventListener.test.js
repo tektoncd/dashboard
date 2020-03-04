@@ -57,7 +57,15 @@ const fakeEventListenerWithLabels = {
         },
         interceptors: [
           {
-            cel: { filter: 'cel-filter-0' }
+            cel: {
+              filter: 'cel-filter-0',
+              overlays: [
+                {
+                  expression: 'expression',
+                  key: 'key'
+                }
+              ]
+            }
           }
         ]
       },
@@ -75,7 +83,15 @@ const fakeEventListenerWithLabels = {
         },
         interceptors: [
           {
-            cel: { filter: 'cel-filter-1' }
+            cel: {
+              filter: 'cel-filter-1',
+              overlays: [
+                {
+                  expression: 'expression',
+                  key: 'key'
+                }
+              ]
+            }
           }
         ]
       },
@@ -93,7 +109,15 @@ const fakeEventListenerWithLabels = {
         },
         interceptors: [
           {
-            cel: { filter: 'cel-filter-2' }
+            cel: {
+              filter: 'cel-filter-2',
+              overlays: [
+                {
+                  expression: 'expression',
+                  key: 'key'
+                }
+              ]
+            }
           }
         ]
       }
@@ -150,16 +174,22 @@ it('EventListener displays with formatted labels', async () => {
   expect(queryByText(/my-triggerbinding-0/i)).toBeTruthy();
   expect(queryByText(/my-triggertemplate-0/i)).toBeTruthy();
   expect(queryByText(/cel-filter-0/i)).toBeTruthy();
+  expect(queryByText(/key/i)).toBeTruthy();
+  expect(queryByText(/expression/i)).toBeTruthy();
   // Check Trigger 1
   expect(queryByText(/my-trigger-1/i)).toBeTruthy();
   expect(queryByText(/my-triggerbinding-1/i)).toBeTruthy();
   expect(queryByText(/my-triggertemplate-1/i)).toBeTruthy();
   expect(queryByText(/cel-filter-1/i)).toBeTruthy();
+  expect(queryByText(/key/i)).toBeTruthy();
+  expect(queryByText(/expression/i)).toBeTruthy();
   // Check Trigger 2
   expect(queryByText(/my-trigger-2/i)).toBeTruthy();
   expect(queryByText(/my-triggerbinding-2/i)).toBeTruthy();
   expect(queryByText(/my-triggertemplate-2/i)).toBeTruthy();
   expect(queryByText(/cel-filter-2/i)).toBeTruthy();
+  expect(queryByText(/key/i)).toBeTruthy();
+  expect(queryByText(/expression/i)).toBeTruthy();
 });
 
 it('EventListener handles no serviceAccountName', async () => {
