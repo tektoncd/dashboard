@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
+import { injectIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import {
   Button,
@@ -39,12 +40,88 @@ const {
   TableHeader
 } = DataTable;
 
+function getTranslateWithId(intl) {
+  return function translateWithId(id, state) {
+    switch (id) {
+      case 'carbon.table.all.collapse':
+        return intl.formatMessage({
+          id: 'carbon.table.all.collapse',
+          defaultMessage: 'Collapse all rows'
+        });
+      case 'carbon.table.all.expand':
+        return intl.formatMessage({
+          id: 'carbon.table.all.expand',
+          defaultMessage: 'Expand all rows'
+        });
+      case 'carbon.table.all.select':
+        return intl.formatMessage({
+          id: 'carbon.table.all.select',
+          defaultMessage: 'Select all rows'
+        });
+      case 'carbon.table.all.unselect':
+        return intl.formatMessage({
+          id: 'carbon.table.all.unselect',
+          defaultMessage: 'Unselect all rows'
+        });
+      case 'carbon.table.batch.cancel':
+        return intl.formatMessage({
+          id: 'carbon.table.batch.cancel',
+          defaultMessage: 'Cancel'
+        });
+      case 'carbon.table.batch.item.selected':
+        return intl.formatMessage(
+          {
+            id: 'carbon.table.batch.item.selected',
+            defaultMessage:
+              '{totalSelected, plural, =0 {0 items} one {1 item}} selected'
+          },
+          {
+            totalSelected: state.totalSelected
+          }
+        );
+      case 'carbon.table.batch.items.selected':
+        return intl.formatMessage(
+          {
+            id: 'carbon.table.batch.items.selected',
+            defaultMessage: '{totalSelected, plural, other {# items}} selected'
+          },
+          {
+            totalSelected: state.totalSelected
+          }
+        );
+      case 'carbon.table.row.collapse':
+        return intl.formatMessage({
+          id: 'carbon.table.row.collapse',
+          defaultMessage: 'Collapse current row'
+        });
+      case 'carbon.table.row.expand':
+        return intl.formatMessage({
+          id: 'carbon.table.row.expand',
+          defaultMessage: 'Expand current row'
+        });
+      case 'carbon.table.row.select':
+        return intl.formatMessage({
+          id: 'carbon.table.row.select',
+          defaultMessage: 'Select row'
+        });
+      case 'carbon.table.row.unselect':
+        return intl.formatMessage({
+          id: 'carbon.table.row.unselect',
+          defaultMessage: 'Unselect row'
+        });
+      default:
+        return '';
+    }
+  };
+}
+
 const Table = props => {
   const {
     batchActionButtons,
     emptyTextAllNamespaces,
     emptyTextSelectedNamespace,
     headers: dataHeaders,
+    intl,
     isSortable,
     loading,
     rows: dataRows,
@@ -53,12 +130,15 @@ const Table = props => {
     toolbarButtons
   } = props;
 
+  const translateWithId = getTranslateWithId(intl);
+
   return (
     <div className="tableComponent">
       <DataTable
         rows={dataRows}
         headers={dataHeaders}
         isSortable={isSortable}
+        translateWithId={translateWithId}
         render={({
           rows,
           headers,
@@ -73,7 +153,10 @@ const Table = props => {
             {(toolbarButtons.length !== 0 ||
               batchActionButtons.length !== 0) && (
               <TableToolbar>
-                <TableBatchActions {...getBatchActionProps()}>
+                <TableBatchActions
+                  {...getBatchActionProps()}
+                  translateWithId={translateWithId}
+                >
                   {batchActionButtons.map(button => (
                     <TableBatchAction
                       renderIcon={button.icon}
@@ -195,4 +278,4 @@ Table.propTypes = {
   toolbarButtons: PropTypes.arrayOf(PropTypes.object)
 };
 
-export default Table;
+export default injectIntl(Table);
