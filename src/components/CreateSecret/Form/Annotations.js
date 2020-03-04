@@ -68,7 +68,7 @@ const Annotations = props => {
               ]}
               itemToString={itemToString}
               onChange={e =>
-                handleAnnotationChange('access', index, e.selectedItem.id)
+                handleAnnotationChange('access', index, e.selectedItem)
               }
               disabled={loading}
             />

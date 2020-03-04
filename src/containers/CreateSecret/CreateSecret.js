@@ -32,6 +32,9 @@ import { fetchServiceAccounts } from '../../actions/serviceAccounts';
 
 import '../../components/CreateSecret/CreateSecret.scss';
 
+const defaultGithubServerURL = 'https://github.com';
+const defaultDockerServerURL = 'https://index.docker.io/v1/';
+
 function validateInputs(value, id) {
   const trimmed = value.trim();
 
@@ -121,10 +124,33 @@ export /* istanbul ignore next */ class CreateSecret extends Component {
   };
 
   handleAnnotationChange = (type, index, value) => {
+    // if the two types differ then they'e changed from git<->docker
+    // and thus set the value to be the default
+    const currentAccess = value.text;
     this.setState(prevState => {
       const annotations = [...prevState.annotations];
-      annotations[index][type] = value;
-
+      const previousAccessType = annotations[index].access;
+      // We enter this when it's the same access type, so a user is
+      // simply changing the value for server URL - set it to that
+      if (currentAccess === undefined) {
+        annotations[index][type] = value;
+      }
+      // Gotcha: it'd be useful to switch on access type (Git vs Docker) but
+      // actually that's passed in inconsistently, the strings to check on
+      // are translated ones so this assumes Docker and Git don't become something
+      // other than Docker and Git
+      if (previousAccessType !== currentAccess) {
+        // Harden this because doing an includes on something undefined is bad
+        if (currentAccess !== undefined) {
+          if (currentAccess.includes('Docker')) {
+            annotations[index].value = defaultDockerServerURL;
+            annotations[index].access = 'docker';
+          } else if (currentAccess.includes('Git')) {
+            annotations[index].value = defaultGithubServerURL;
+            annotations[index].access = 'git';
+          }
+        }
+      }
       const newInvalidFields = { ...prevState.invalidFields };
       if (type === 'value') {
         const { id } = annotations[index];
