@@ -12,7 +12,9 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, render } from 'react-testing-library';
+import { fireEvent } from 'react-testing-library';
+
+import { renderWithIntl } from '../../utils/test';
 import Table from './Table';
 
 const rows = [
@@ -59,7 +61,9 @@ it('Table renders plain with ALL_NAMESPACES no rows', () => {
     emptyTextAllNamespaces,
     emptyTextSelectedNamespace
   };
-  const { queryByLabelText, queryByText } = render(<Table {...props} />);
+  const { queryByLabelText, queryByText } = renderWithIntl(
+    <Table {...props} />
+  );
 
   expect(queryByText(title)).toBeFalsy();
   expect(
@@ -88,7 +92,9 @@ it('Table renders title with no rows, selected namespace, 1 batch and 1 toolbar 
     emptyTextAllNamespaces,
     emptyTextSelectedNamespace
   };
-  const { queryByText, queryByLabelText } = render(<Table {...props} />);
+  const { queryByText, queryByLabelText } = renderWithIntl(
+    <Table {...props} />
+  );
 
   expect(queryByText('Resource')).toBeTruthy();
   expect(
@@ -109,7 +115,9 @@ it('Table renders plain with one row, ALL_NAMESPACES', () => {
     headers,
     selectedNamespace: '*'
   };
-  const { queryByText, queryByLabelText } = render(<Table {...props} />);
+  const { queryByText, queryByLabelText } = renderWithIntl(
+    <Table {...props} />
+  );
 
   expect(queryByText(title)).toBeNull();
   expect(
@@ -134,7 +142,7 @@ it('Table renders plain with one row, ALL_NAMESPACES and sortable', () => {
     selectedNamespace: '*',
     isSortable: true
   };
-  const { queryByText } = render(<Table {...props} />);
+  const { queryByText } = renderWithIntl(<Table {...props} />);
 
   expect(
     queryByText(/Name/i).parentNode.className.includes('sort')
@@ -149,7 +157,9 @@ it('Table renders with one row, ALL_NAMESPACES, 1 toolbar button only, no checkb
     selectedNamespace: '*',
     toolbarButtons: toolbarButtons.slice(0, 1)
   };
-  const { queryByText, queryByLabelText } = render(<Table {...props} />);
+  const { queryByText, queryByLabelText } = renderWithIntl(
+    <Table {...props} />
+  );
 
   expect(
     queryByText(/Name/i).parentNode.className.includes('sort')
@@ -169,7 +179,9 @@ it('Table renders with one row, ALL_NAMESPACES, 2 toolbar buttons only, no check
     selectedNamespace: '*',
     toolbarButtons
   };
-  const { queryByText, queryByLabelText } = render(<Table {...props} />);
+  const { queryByText, queryByLabelText } = renderWithIntl(
+    <Table {...props} />
+  );
 
   expect(
     queryByText(/Name/i).parentNode.className.includes('sort')
@@ -189,7 +201,9 @@ it('Table renders with one row, ALL_NAMESPACES, 1 batch button only with checkbo
     headers,
     selectedNamespace: '*'
   };
-  const { queryByText, queryByLabelText } = render(<Table {...props} />);
+  const { queryByText, queryByLabelText } = renderWithIntl(
+    <Table {...props} />
+  );
 
   expect(
     queryByText(/Name/i).parentNode.className.includes('sort')
@@ -209,7 +223,9 @@ it('Table renders with one row, ALL_NAMESPACES, 2 batch buttons only with checkb
     headers,
     selectedNamespace: '*'
   };
-  const { queryByText, queryByLabelText } = render(<Table {...props} />);
+  const { queryByText, queryByLabelText } = renderWithIntl(
+    <Table {...props} />
+  );
 
   expect(
     queryByText(/Name/i).parentNode.className.includes('sort')
@@ -232,7 +248,9 @@ it('Table renders with two rows, ALL_NAMESPACES, 2 batch and 2 toolbar buttons, 
     toolbarButtons,
     isSortable: true
   };
-  const { queryByText, queryByLabelText } = render(<Table {...props} />);
+  const { queryByText, queryByLabelText } = renderWithIntl(
+    <Table {...props} />
+  );
 
   expect(
     queryByText(/Name/i).parentNode.className.includes('sort')
@@ -253,7 +271,7 @@ it('Table loading with no rows, ALL_NAMESPACES, 1 toolbar button, no checkboxes 
     selectedNamespace: '*',
     toolbarButtons: toolbarButtons.slice(0, 1)
   };
-  const { queryByText } = render(<Table {...props} />);
+  const { queryByText } = renderWithIntl(<Table {...props} />);
 
   expect(queryByText(/Add/i).disabled).toBeTruthy();
 });
@@ -265,7 +283,9 @@ it('Table loading plain with one row and ALL_NAMESPACES', () => {
     headers,
     selectedNamespace: '*'
   };
-  const { queryByText, queryByLabelText } = render(<Table {...props} />);
+  const { queryByText, queryByLabelText } = renderWithIntl(
+    <Table {...props} />
+  );
 
   expect(queryByText(/Resources/i)).toBeNull();
   expect(queryByText(/Name/i)).toBeTruthy();
@@ -292,7 +312,9 @@ it("Table's batch action button specifies correct arguments for callback with on
     selectedNamespace: '*'
   };
   props.batchActionButtons[0].onClick = handleDelete;
-  const { queryByText, queryByLabelText } = render(<Table {...props} />);
+  const { queryByText, queryByLabelText } = renderWithIntl(
+    <Table {...props} />
+  );
 
   expect(queryByText(/Delete/i)).toBeTruthy();
   expect(queryByText(/Add/i)).toBeNull();
@@ -326,7 +348,9 @@ it("Table's batch action button specifies correct arguments for callback with tw
     selectedNamespace: '*'
   };
   props.batchActionButtons[0].onClick = handleDelete;
-  const { queryByText, queryByLabelText } = render(<Table {...props} />);
+  const { queryByText, queryByLabelText } = renderWithIntl(
+    <Table {...props} />
+  );
 
   expect(queryByText(/Delete/i)).toBeTruthy();
   expect(queryByText(/Add/i)).toBeNull();
@@ -360,7 +384,7 @@ it("Table's toolbar button responds correctly", () => {
     toolbarButtons: toolbarButtons.slice(0, 1)
   };
   props.toolbarButtons[0].onClick = handleAdd;
-  const { queryByText } = render(<Table {...props} />);
+  const { queryByText } = renderWithIntl(<Table {...props} />);
 
   expect(queryByText(/Delete/i)).toBeNull();
   expect(queryByText(/Add/i)).toBeTruthy();
