@@ -65,7 +65,7 @@ export /* istanbul ignore next */ class CreateSecret extends Component {
       username: '',
       password: '',
       accessToken: '',
-      secretType: '',
+      secretType: 'password',
       annotations: [
         {
           access: 'git',
