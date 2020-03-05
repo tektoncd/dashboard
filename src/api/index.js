@@ -292,10 +292,7 @@ export function rerunPipelineRun(namespace, payload) {
 }
 
 export function getCredentials({ namespace } = {}) {
-  const queryParams = {
-    fieldSelector: 'type=kubernetes.io/basic-auth'
-  };
-  const uri = getKubeAPI('secrets', { namespace }, queryParams);
+  const uri = getKubeAPI('secrets', { namespace });
   return get(uri).then(checkData);
 }
 

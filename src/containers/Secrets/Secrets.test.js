@@ -42,7 +42,7 @@ const byNamespace = {
           badannotation: 'badcontent'
         }
       },
-      type: 'userpass',
+      type: 'kubernetes.io/basic-auth',
       data: {
         username: 'bXl1c2VybmFtZQ==' // This is "myusername"
       }
@@ -58,7 +58,7 @@ const byNamespace = {
           baz: 'bam'
         }
       },
-      type: 'userpass',
+      type: 'kubernetes.io/basic-auth',
       data: {
         username: 'bXl1c2VybmFtZQ==' // This is "myusername"
       }
