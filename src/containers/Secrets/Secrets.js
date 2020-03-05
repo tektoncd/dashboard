@@ -15,7 +15,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
-import { InlineNotification } from 'carbon-components-react';
+import {
+  InlineNotification,
+  RadioButton,
+  RadioButtonGroup
+} from 'carbon-components-react';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 import { getErrorMessage, getFilters } from '@tektoncd/dashboard-utils';
 import { Add16 as Add, Delete16 as Delete } from '@carbon/icons-react';
@@ -45,7 +49,8 @@ import {
 const initialState = {
   openNewSecret: false,
   openDeleteSecret: false,
-  toBeDeleted: []
+  toBeDeleted: [],
+  selectedType: 'password'
 };
 
 export /* istanbul ignore next */ class Secrets extends Component {
@@ -94,6 +99,12 @@ export /* istanbul ignore next */ class Secrets extends Component {
     });
   };
 
+  handleSelectedType = type => {
+    this.setState({
+      selectedType: type
+    });
+  };
+
   handleHideDeleteSecret = () => {
     this.setState({
       openDeleteSecret: false,
@@ -139,7 +150,12 @@ export /* istanbul ignore next */ class Secrets extends Component {
       patchSuccess
     } = this.props;
 
-    const { openNewSecret, toBeDeleted, openDeleteSecret } = this.state;
+    const {
+      openNewSecret,
+      toBeDeleted,
+      openDeleteSecret,
+      selectedType
+    } = this.state;
 
     const initialHeaders = [
       {
@@ -169,31 +185,49 @@ export /* istanbul ignore next */ class Secrets extends Component {
           id: 'dashboard.tableHeader.type',
           defaultMessage: 'Type'
         })
-      },
-      {
-        key: 'username',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.username',
-          defaultMessage: 'Username'
-        })
-      },
-      {
-        key: 'annotations',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.annotations',
-          defaultMessage: 'Annotations'
-        })
-      },
-      {
-        key: 'created',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.createdTime',
-          defaultMessage: 'Created'
-        })
       }
     ];
 
-    const secretsFormatted = secrets.map(secret => {
+    const secretsToUse = [];
+    if (selectedType === 'password') {
+      initialHeaders.push(
+        {
+          key: 'username',
+          header: intl.formatMessage({
+            id: 'dashboard.tableHeader.username',
+            defaultMessage: 'Username'
+          })
+        },
+        {
+          key: 'annotations',
+          header: intl.formatMessage({
+            id: 'dashboard.tableHeader.annotations',
+            defaultMessage: 'Annotations'
+          })
+        }
+      );
+      secrets.forEach(secret => {
+        if (secret.type === 'kubernetes.io/basic-auth') {
+          secretsToUse.push(secret);
+        }
+      });
+    } else {
+      secrets.forEach(secret => {
+        if (secret.data.accessToken) {
+          secretsToUse.push(secret);
+        }
+      });
+    }
+
+    initialHeaders.push({
+      key: 'created',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.createdTime',
+        defaultMessage: 'Created'
+      })
+    });
+
+    const secretsFormatted = secretsToUse.map(secret => {
       let annotations = '';
       if (secret.metadata.annotations !== undefined) {
         Object.keys(secret.metadata.annotations).forEach(
@@ -317,6 +351,34 @@ export /* istanbul ignore next */ class Secrets extends Component {
           <>
             <h1>Secrets</h1>
             <LabelFilter {...this.props} />
+            <RadioButtonGroup
+              legend={intl.formatMessage({
+                id: 'dashboard.universalFields.secretType',
+                defaultMessage: 'Type'
+              })}
+              name="secret-type"
+              orientation="vertical"
+              labelPosition="right"
+              valueSelected={selectedType}
+              onChange={this.handleSelectedType}
+            >
+              <RadioButton
+                value="password"
+                id="password-radio"
+                labelText={intl.formatMessage({
+                  id: 'dashboard.universalFields.passwordRadioButton',
+                  defaultMessage: 'Password'
+                })}
+              />
+              <RadioButton
+                value="accessToken"
+                id="access-radio"
+                labelText={intl.formatMessage({
+                  id: 'dashboard.universalFields.accessTokenRadioButton',
+                  defaultMessage: 'Access Token'
+                })}
+              />
+            </RadioButtonGroup>
             <Table
               headers={initialHeaders}
               rows={secretsFormatted}
