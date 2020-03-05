@@ -290,6 +290,20 @@ export /* istanbul ignore next */ class Secrets extends Component {
       return formattedSecret;
     });
 
+    const batchActionButtons =
+      secretsToUse.length === 0
+        ? []
+        : [
+            {
+              onClick: this.handleDeleteSecretClick,
+              text: intl.formatMessage({
+                id: 'dashboard.actions.deleteButton',
+                defaultMessage: 'Delete'
+              }),
+              icon: Delete
+            }
+          ];
+
     return (
       <>
         {patchSuccess && (
@@ -401,16 +415,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
                 },
                 { kind: 'Secrets', selectedNamespace }
               )}
-              batchActionButtons={[
-                {
-                  onClick: this.handleDeleteSecretClick,
-                  text: intl.formatMessage({
-                    id: 'dashboard.actions.deleteButton',
-                    defaultMessage: 'Delete'
-                  }),
-                  icon: Delete
-                }
-              ]}
+              batchActionButtons={batchActionButtons}
               toolbarButtons={[
                 {
                   onClick: this.handleNewSecretClick,
