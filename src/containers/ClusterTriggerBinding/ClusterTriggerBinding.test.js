@@ -130,16 +130,16 @@ it('ClusterTriggerBindingContainer toggles between tabs correctly', async () => 
 
   await waitForElement(() => getByText('Date Created:'));
   let yamlTab = getByText('YAML');
-  expect(yamlTab.getAttribute('aria-selected')).toBe('false');
+  expect(yamlTab.parentNode.getAttribute('aria-selected')).toBe('false');
 
   fireEvent.click(yamlTab);
   await waitForElement(() => getByText(/creationTimestamp/i));
   const detailsTab = getByText(/Details/i);
-  expect(detailsTab.getAttribute('aria-selected')).toBe('false');
+  expect(detailsTab.parentNode.getAttribute('aria-selected')).toBe('false');
 
   fireEvent.click(detailsTab);
   yamlTab = getByText('YAML');
-  expect(yamlTab.getAttribute('aria-selected')).toBe('false');
+  expect(yamlTab.parentNode.getAttribute('aria-selected')).toBe('false');
 });
 
 it('ClusterTriggerBindingContainer handles error state', async () => {

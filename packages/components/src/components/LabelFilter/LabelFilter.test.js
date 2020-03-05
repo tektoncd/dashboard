@@ -50,7 +50,7 @@ it('LabelFilter displays notification if character length is over 63 characters 
   const {
     getByPlaceholderText,
     getByText,
-    getAllByTitle,
+    getByTitle,
     queryByText
   } = renderWithIntl(<LabelFilter handleAddFilter={handleAddFilter} />);
   fireEvent.change(getByPlaceholderText(/input a label filter/i), {
@@ -63,7 +63,7 @@ it('LabelFilter displays notification if character length is over 63 characters 
       /Filters must be of the format labelKey:labelValue and contain less than 64 characters/i
     )
   );
-  fireEvent.click(getAllByTitle(/closes notification/i)[1]);
+  fireEvent.click(getByTitle(/closes notification/i));
   expect(
     queryByText(
       /Filters must be of the format labelKey:labelValue and contain less than 64 characters/i
@@ -76,9 +76,9 @@ it('LabelFilter handles adding a duplicate filter', async () => {
   const filterDisplayValue = 'app:test';
   const handleAddFilter = jest.fn();
   const {
-    getAllByTitle,
     getByPlaceholderText,
     getByText,
+    getByTitle,
     queryByText
   } = renderWithIntl(
     <LabelFilter filters={[filter]} handleAddFilter={handleAddFilter} />
@@ -89,7 +89,7 @@ it('LabelFilter handles adding a duplicate filter', async () => {
   fireEvent.submit(getByText(/Input a label filter/i));
   expect(handleAddFilter).not.toHaveBeenCalled();
   await waitForElement(() => getByText(/no duplicate filters allowed/i));
-  fireEvent.click(getAllByTitle(/closes notification/i)[1]);
+  fireEvent.click(getByTitle(/closes notification/i));
   expect(queryByText(/no duplicate filters allowed/i)).toBeNull();
 });
 
