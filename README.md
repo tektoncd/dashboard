@@ -174,6 +174,17 @@ You can access the web UI at `http://localhost:9097/`
 
 The Dashboard can be uninstalled on Minishift by running the command `./minishift-delete-dashboard.sh` Use `-n {NAMESPACE}` on the end of the command if installed into a namespace other than `tekton-pipelines`
 
+## Browser support
+
+The Dashboard has been tested on modern evergreen browsers, and generally supports the current and previous stable versions of:
+
+- Google Chrome (Windows, macOS, Linux)
+- Mozilla Firefox (Windows, macOS, Linux)
+- Apple Safari (macOS)
+- Microsoft Edge (Windows)
+
+Older versions or other browsers may work, but some features may be missing or not function as expected.
+
 ## Troubleshooting
 
 Keep in mind that When running your Tekton Pipelines, if you see a `fatal: could not read Username for *GitHub repository*: No such device or address` message in your failing Task logs, this indicates there is no `tekton.dev/git` annotated GitHub secret in use by the ServiceAccount that launched this PipelineRun. It is advised to create one through the Tekton Dashboard. The annotation will be added and the specified ServiceAccount will be patched.
