@@ -13,9 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import { Modal } from 'carbon-components-react';
-
-import './SecretsDeleteModal.scss';
+import { ListItem, Modal, UnorderedList } from 'carbon-components-react';
 
 const SecretsDeleteModal = props => {
   const { intl, open, toBeDeleted, handleClick, handleDelete } = props;
@@ -48,12 +46,12 @@ const SecretsDeleteModal = props => {
           defaultMessage: 'Are you sure you want to delete these secrets?'
         })}
       </p>
-      <ul>
+      <UnorderedList nested>
         {toBeDeleted.map(secret => {
           const { name, namespace } = secret;
-          return <li key={`${name}:${namespace}`}>{name}</li>;
+          return <ListItem key={`${name}:${namespace}`}>{name}</ListItem>;
         })}
-      </ul>
+      </UnorderedList>
     </Modal>
   );
 };
