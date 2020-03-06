@@ -371,7 +371,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
                 defaultMessage: 'Type'
               })}
               name="secret-type"
-              orientation="vertical"
+              orientation="horizontal"
               labelPosition="right"
               valueSelected={selectedType}
               onChange={this.handleSelectedType}
