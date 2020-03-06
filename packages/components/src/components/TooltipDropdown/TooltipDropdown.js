@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
+import { injectIntl } from 'react-intl';
 import { ComboBox, DropdownSkeleton } from 'carbon-components-react';
 
 const itemToElement = ({ id, text }) => {
@@ -38,6 +39,7 @@ const TooltipDropdown = ({
   emptyText,
   id,
   inline,
+  intl,
   items,
   label,
   light,
@@ -50,7 +52,14 @@ const TooltipDropdown = ({
   if (loading) {
     return <DropdownSkeleton className={className} id={id} inline={inline} />;
   }
+
   const options = items.map(itemToObject);
+  const emptyString =
+    emptyText ||
+    intl.formatMessage({
+      id: 'dashboard.tooltipDropdown.empty',
+      defaultMessage: 'No items found'
+    });
 
   return (
     <ComboBox
@@ -61,10 +70,10 @@ const TooltipDropdown = ({
       items={options}
       itemToElement={itemToElement}
       itemToString={itemToString}
-      label={options.length === 0 ? emptyText : label}
+      label={options.length === 0 ? emptyString : label}
       light={light}
       onChange={onChange}
-      placeholder={options.length === 0 ? emptyText : label}
+      placeholder={options.length === 0 ? emptyString : label}
       selectedItem={selectedItem}
       titleText={titleText}
       {...rest}
@@ -74,8 +83,7 @@ const TooltipDropdown = ({
 
 TooltipDropdown.defaultProps = {
   items: [],
-  loading: false,
-  emptyText: 'No items found'
+  loading: false
 };
 
-export default TooltipDropdown;
+export default injectIntl(TooltipDropdown);

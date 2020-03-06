@@ -192,7 +192,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
         key: 'serviceAccounts',
         header: intl.formatMessage({
           id: 'dashboard.tableHeader.serviceAccounts',
-          defaultMessage: 'Service Accounts'
+          defaultMessage: 'ServiceAccounts'
         })
       },
       {

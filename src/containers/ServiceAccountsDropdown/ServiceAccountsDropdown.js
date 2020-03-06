@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
+import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 import { TooltipDropdown } from '@tektoncd/dashboard-components';
@@ -43,24 +44,44 @@ class ServiceAccountsDropdown extends React.Component {
 
   render() {
     const {
-      fetchServiceAccounts: _fetchServiceAccounts, // extract props that are not valid for the dropdown
+      fetchServiceAccounts: _fetchServiceAccounts,
+      intl,
+      label,
       namespace,
       webSocketConnected,
       ...rest
     } = this.props;
     const emptyText =
       namespace === ALL_NAMESPACES
-        ? `No Service Accounts found`
-        : `No Service Accounts found in the '${namespace}' namespace`;
-    return <TooltipDropdown {...rest} emptyText={emptyText} />;
+        ? intl.formatMessage({
+            id: 'dashboard.serviceAccountsDropdown.empty.allNamespaces',
+            defaultMessage: 'No ServiceAccounts found'
+          })
+        : intl.formatMessage(
+            {
+              id: 'dashboard.serviceAccountsDropdown.empty.selectedNamespace',
+              defaultMessage:
+                "No ServiceAccounts found in the ''{namespace}'' namespace"
+            },
+            { namespace }
+          );
+
+    const labelString =
+      label ||
+      intl.formatMessage({
+        id: 'dashboard.serviceAccountsDropdown.label',
+        defaultMessage: 'Select ServiceAccount'
+      });
+    return (
+      <TooltipDropdown {...rest} emptyText={emptyText} label={labelString} />
+    );
   }
 }
 
 ServiceAccountsDropdown.defaultProps = {
   items: [],
   loading: false,
-  label: 'Select Service Account',
-  titleText: 'Service Account'
+  titleText: 'ServiceAccount'
 };
 
 function mapStateToProps(state, ownProps) {
@@ -80,4 +101,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(ServiceAccountsDropdown);
+)(injectIntl(ServiceAccountsDropdown));

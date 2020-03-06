@@ -58,7 +58,7 @@ export /* istanbul ignore next */ class About extends Component {
     const error = intl.formatMessage(
       {
         id: 'dashboard.about.missingProperties',
-        defaultMessage: `Could not find: {errorsFound}`
+        defaultMessage: 'Could not find: {errorsFound}'
       },
       { errorsFound: errorsFound.join(', ') }
     );

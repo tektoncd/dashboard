@@ -12,12 +12,13 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, getNodeText, render } from 'react-testing-library';
+import { fireEvent, getNodeText } from 'react-testing-library';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import ServiceAccountsDropdown from './ServiceAccountsDropdown';
 import * as API from '../../api';
+import { renderWithIntl, rerenderWithIntl } from '../../utils/test';
 
 const props = {
   id: 'service-accounts-dropdown'
@@ -92,7 +93,7 @@ const namespacesStoreGreen = {
   }
 };
 
-const initialTextRegExp = new RegExp('select service account', 'i');
+const initialTextRegExp = new RegExp('select serviceaccount', 'i');
 
 const checkDropdownItems = ({
   queryByText,
@@ -123,7 +124,7 @@ it('ServiceAccountsDropdown renders items based on Redux state', () => {
     ...namespacesStoreBlue,
     notifications: {}
   });
-  const { getByPlaceholderText, getAllByText, queryByText } = render(
+  const { getByPlaceholderText, getAllByText, queryByText } = renderWithIntl(
     <Provider store={store}>
       <ServiceAccountsDropdown {...props} />
     </Provider>
@@ -143,7 +144,12 @@ it('ServiceAccountsDropdown renders items based on Redux state when namespace ch
     ...namespacesStoreBlue,
     notifications: {}
   });
-  const { container, getByPlaceholderText, getAllByText, queryByText } = render(
+  const {
+    getByPlaceholderText,
+    getAllByText,
+    queryByText,
+    rerender
+  } = renderWithIntl(
     <Provider store={blueStore}>
       <ServiceAccountsDropdown {...props} />
     </Provider>
@@ -163,11 +169,11 @@ it('ServiceAccountsDropdown renders items based on Redux state when namespace ch
     ...namespacesStoreGreen,
     notifications: {}
   });
-  render(
+  rerenderWithIntl(
+    rerender,
     <Provider store={greenStore}>
       <ServiceAccountsDropdown {...props} />
-    </Provider>,
-    { container }
+    </Provider>
   );
   // View items
   fireEvent.click(getByPlaceholderText(initialTextRegExp));
@@ -185,7 +191,7 @@ it('ServiceAccountsDropdown renders controlled selection', () => {
     notifications: {}
   });
   // Select item 'service-account-1'
-  const { container, queryByPlaceholderText, queryByValue } = render(
+  const { queryByPlaceholderText, queryByValue, rerender } = renderWithIntl(
     <Provider store={store}>
       <ServiceAccountsDropdown
         {...props}
@@ -195,22 +201,22 @@ it('ServiceAccountsDropdown renders controlled selection', () => {
   );
   expect(queryByValue(/service-account-1/i)).toBeTruthy();
   // Select item 'service-account-2'
-  render(
+  rerenderWithIntl(
+    rerender,
     <Provider store={store}>
       <ServiceAccountsDropdown
         {...props}
         selectedItem={{ text: 'service-account-2' }}
       />
-    </Provider>,
-    { container }
+    </Provider>
   );
   expect(queryByValue(/service-account-2/i)).toBeTruthy();
   // No selected item (select item '')
-  render(
+  rerenderWithIntl(
+    rerender,
     <Provider store={store}>
       <ServiceAccountsDropdown {...props} selectedItem="" />
-    </Provider>,
-    { container }
+    </Provider>
   );
   expect(queryByPlaceholderText(initialTextRegExp)).toBeTruthy();
 });
@@ -222,7 +228,7 @@ it('ServiceAccountsDropdown renders controlled namespace', () => {
     notifications: {}
   });
   // Select namespace 'green'
-  const { queryByText, getByPlaceholderText, getAllByText } = render(
+  const { queryByText, getByPlaceholderText, getAllByText } = renderWithIntl(
     <Provider store={store}>
       <ServiceAccountsDropdown {...props} namespace="green" />
     </Provider>
@@ -246,13 +252,13 @@ it('ServiceAccountsDropdown renders empty', () => {
     notifications: {}
   });
   // Select item 'service-account-1'
-  const { queryByPlaceholderText } = render(
+  const { queryByPlaceholderText } = renderWithIntl(
     <Provider store={store}>
       <ServiceAccountsDropdown {...props} />
     </Provider>
   );
   expect(
-    queryByPlaceholderText(/no service accounts found in the 'blue' namespace/i)
+    queryByPlaceholderText(/no serviceaccounts found in the 'blue' namespace/i)
   ).toBeTruthy();
   expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
 });
@@ -263,7 +269,7 @@ it('ServiceAccountsDropdown renders loading skeleton based on Redux state', () =
     ...namespacesStoreBlue,
     notifications: {}
   });
-  const { queryByText } = render(
+  const { queryByText } = renderWithIntl(
     <Provider store={store}>
       <ServiceAccountsDropdown {...props} />
     </Provider>
@@ -278,7 +284,7 @@ it('ServiceAccountsDropdown handles onChange event', () => {
     notifications: {}
   });
   const onChange = jest.fn();
-  const { getByPlaceholderText, getByText } = render(
+  const { getByPlaceholderText, getByText } = renderWithIntl(
     <Provider store={store}>
       <ServiceAccountsDropdown {...props} onChange={onChange} />
     </Provider>

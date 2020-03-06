@@ -12,7 +12,9 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, render } from 'react-testing-library';
+import { fireEvent } from 'react-testing-library';
+
+import { renderWithIntl } from '../../utils/test';
 import TooltipDropdown from './TooltipDropdown';
 
 const props = {
@@ -25,9 +27,12 @@ const props = {
 const initialTextRegExp = new RegExp('select an item', 'i');
 
 it('TooltipDropdown renders', () => {
-  const { getByText, getByPlaceholderText, queryByText, queryByValue } = render(
-    <TooltipDropdown {...props} />
-  );
+  const {
+    getByText,
+    getByPlaceholderText,
+    queryByText,
+    queryByValue
+  } = renderWithIntl(<TooltipDropdown {...props} />);
   fireEvent.click(getByPlaceholderText(initialTextRegExp));
   props.items.forEach(item => {
     expect(queryByText(new RegExp(item, 'i'))).toBeTruthy();
@@ -37,14 +42,14 @@ it('TooltipDropdown renders', () => {
 });
 
 it('TooltipDropdown renders selected item', () => {
-  const { queryByValue } = render(
+  const { queryByValue } = renderWithIntl(
     <TooltipDropdown {...props} selectedItem={{ text: 'item 1' }} />
   );
   expect(queryByValue(/item 1/i)).toBeTruthy();
 });
 
 it('TooltipDropdown renders empty', () => {
-  const { queryByPlaceholderText } = render(
+  const { queryByPlaceholderText } = renderWithIntl(
     <TooltipDropdown {...props} items={[]} />
   );
   expect(queryByPlaceholderText(/no items found/i)).toBeTruthy();
@@ -52,7 +57,7 @@ it('TooltipDropdown renders empty', () => {
 });
 
 it('TooltipDropdown renders loading skeleton', () => {
-  const { queryByPlaceholderText } = render(
+  const { queryByPlaceholderText } = renderWithIntl(
     <TooltipDropdown {...props} loading />
   );
   expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
@@ -60,7 +65,7 @@ it('TooltipDropdown renders loading skeleton', () => {
 
 it('TooltipDropdown handles onChange event', () => {
   const onChange = jest.fn();
-  const { getByPlaceholderText, getByText } = render(
+  const { getByPlaceholderText, getByText } = renderWithIntl(
     <TooltipDropdown {...props} onChange={onChange} />
   );
   fireEvent.click(getByPlaceholderText(initialTextRegExp));

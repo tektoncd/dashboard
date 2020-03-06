@@ -21,7 +21,7 @@ import thunk from 'redux-thunk';
 import ServiceAccountsDropdown from './ServiceAccountsDropdown';
 
 const props = {
-  id: 'service accounts dropdown',
+  id: 'ServiceAccounts dropdown',
   onChange: action('onChange')
 };
 

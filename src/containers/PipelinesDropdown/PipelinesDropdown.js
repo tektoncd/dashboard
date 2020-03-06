@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
+import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 import { TooltipDropdown } from '@tektoncd/dashboard-components';
@@ -43,23 +44,43 @@ class PipelinesDropdown extends React.Component {
 
   render() {
     const {
-      fetchPipelines: _fetchPipelines, // extract props that are not valid for the dropdown
+      fetchPipelines: _fetchPipelines,
+      intl,
+      label,
       namespace,
       webSocketConnected,
       ...rest
     } = this.props;
     const emptyText =
       namespace === ALL_NAMESPACES
-        ? `No Pipelines found`
-        : `No Pipelines found in the '${namespace}' namespace`;
-    return <TooltipDropdown {...rest} emptyText={emptyText} />;
+        ? intl.formatMessage({
+            id: 'dashboard.pipelinesDropdown.empty.allNamespaces',
+            defaultMessage: 'No Pipelines found'
+          })
+        : intl.formatMessage(
+            {
+              id: 'dashboard.pipelinesDropdown.empty.selectedNamespace',
+              defaultMessage:
+                "No Pipelines found in the ''{namespace}'' namespace"
+            },
+            { namespace }
+          );
+
+    const labelString =
+      label ||
+      intl.formatMessage({
+        id: 'dashboard.pipelinesDropdown.label',
+        defaultMessage: 'Select Pipeline'
+      });
+    return (
+      <TooltipDropdown {...rest} emptyText={emptyText} label={labelString} />
+    );
   }
 }
 
 PipelinesDropdown.defaultProps = {
   items: [],
   loading: false,
-  label: 'Select Pipeline',
   titleText: 'Pipeline'
 };
 
@@ -82,4 +103,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(PipelinesDropdown);
+)(injectIntl(PipelinesDropdown));
