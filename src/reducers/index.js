@@ -475,6 +475,6 @@ export function isFetchingEventListeners(state) {
   return eventListenersSelectors.isFetchingEventListeners(state.eventListeners);
 }
 
-export function getReadOnly(state) {
-  return propertiesSelectors.getReadOnly(state.properties);
+export function isReadOnly(state) {
+  return propertiesSelectors.isReadOnly(state.properties);
 }

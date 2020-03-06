@@ -34,9 +34,9 @@ import { fetchPipelineRuns } from '../../actions/pipelineRuns';
 import {
   getPipelineRuns,
   getPipelineRunsErrorMessage,
-  getReadOnly,
   getSelectedNamespace,
   isFetchingPipelineRuns,
+  isReadOnly,
   isWebSocketConnected
 } from '../../reducers';
 import {
@@ -115,9 +115,9 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
   };
 
   pipelineRunActions = () => {
-    const { intl, isReadOnly } = this.props;
+    const { intl } = this.props;
 
-    if (isReadOnly) {
+    if (this.props.isReadOnly) {
       return [];
     }
     return [
@@ -231,8 +231,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
       loading,
       namespace: selectedNamespace,
       pipelineRuns,
-      intl,
-      isReadOnly
+      intl
     } = this.props;
 
     if (error) {
@@ -252,7 +251,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
     const pipelineRunActions = this.pipelineRunActions();
     sortRunsByStartTime(pipelineRuns);
 
-    const toolbarButtons = isReadOnly
+    const toolbarButtons = this.props.isReadOnly
       ? []
       : [
           {
@@ -302,7 +301,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
         )}
         <h1>PipelineRuns</h1>
         <LabelFilter {...this.props} />
-        {!isReadOnly && (
+        {!this.props.isReadOnly && (
           <CreatePipelineRun
             open={this.state.showCreatePipelineRunModal}
             onClose={() => this.toggleModal(false)}
@@ -338,7 +337,7 @@ function mapStateToProps(state, props) {
   const pipelineName = pipelineFilter.replace('tekton.dev/pipeline=', '');
 
   return {
-    isReadOnly: getReadOnly(state),
+    isReadOnly: isReadOnly(state),
     error: getPipelineRunsErrorMessage(state),
     loading: isFetchingPipelineRuns(state),
     namespace,

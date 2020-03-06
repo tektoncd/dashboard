@@ -37,13 +37,13 @@ import {
   getDeleteSecretsErrorMessage,
   getDeleteSecretsSuccessMessage,
   getPatchSecretsSuccessMessage,
-  getReadOnly,
   getSecrets,
   getSecretsErrorMessage,
   getSelectedNamespace,
   getServiceAccounts,
   isFetchingSecrets,
   isFetchingServiceAccounts,
+  isReadOnly,
   isWebSocketConnected
 } from '../../reducers';
 
@@ -143,7 +143,6 @@ export /* istanbul ignore next */ class Secrets extends Component {
     const {
       loading,
       deleteSuccess,
-      isReadOnly,
       secrets,
       selectedNamespace,
       serviceAccounts,
@@ -159,7 +158,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
       selectedType
     } = this.state;
 
-    const toolbarButtons = isReadOnly
+    const toolbarButtons = this.props.isReadOnly
       ? []
       : [
           {
@@ -242,19 +241,18 @@ export /* istanbul ignore next */ class Secrets extends Component {
       })
     });
 
-    const batchActionButtons =
-      !isReadOnly && secretsToUse.length > 0
-        ? [
-            {
-              onClick: this.handleDeleteSecretClick,
-              text: intl.formatMessage({
-                id: 'dashboard.actions.deleteButton',
-                defaultMessage: 'Delete'
-              }),
-              icon: Delete
-            }
-          ]
-        : [];
+    const batchActionButtons = this.props.isReadOnly
+      ? []
+      : [
+          {
+            onClick: this.handleDeleteSecretClick,
+            text: intl.formatMessage({
+              id: 'dashboard.actions.deleteButton',
+              defaultMessage: 'Delete'
+            }),
+            icon: Delete
+          }
+        ];
 
     const secretsFormatted = secretsToUse.map(secret => {
       let annotations = '';
@@ -433,14 +431,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
               batchActionButtons={batchActionButtons}
               toolbarButtons={toolbarButtons}
             />
-            <DeleteModal
-              open={openDeleteSecret}
-              handleClick={this.handleHideDeleteSecret}
-              handleDelete={this.delete}
-              toBeDeleted={toBeDeleted}
-              toolbarButtons={toolbarButtons}
-            />
-            {!isReadOnly && (
+            {!this.props.isReadOnly && (
               <DeleteModal
                 open={openDeleteSecret}
                 handleClick={this.handleHideDeleteSecret}
@@ -474,7 +465,7 @@ function mapStateToProps(state, props) {
     errorMessage:
       getDeleteSecretsErrorMessage(state) || getSecretsErrorMessage(state),
     deleteSuccess: getDeleteSecretsSuccessMessage(state),
-    isReadOnly: getReadOnly(state),
+    isReadOnly: isReadOnly(state),
     patchSuccess: getPatchSecretsSuccessMessage(state),
     filters,
     loading: isFetchingSecrets(state) || isFetchingServiceAccounts(state),

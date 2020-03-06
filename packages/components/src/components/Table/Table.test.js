@@ -100,12 +100,12 @@ it('Table renders title with no rows, selected namespace, 1 batch and 1 toolbar 
   expect(
     queryByText(/Name/i).parentNode.className.includes('sort')
   ).toBeFalsy();
-  expect(queryByText(/Delete/i)).toBeTruthy();
+  expect(queryByText(/Delete/i)).toBeFalsy();
   expect(queryByText(/Add/i)).toBeTruthy();
-  expect(queryByLabelText('Select all rows')).toBeTruthy();
-  expect(queryByLabelText('Select row')).toBeNull();
+  expect(queryByLabelText('Select all rows')).toBeFalsy();
+  expect(queryByLabelText('Select row')).toBeFalsy();
   expect(queryByText(emptyTextSelectedNamespace)).toBeTruthy();
-  expect(queryByText(emptyTextAllNamespaces)).toBeNull();
+  expect(queryByText(emptyTextAllNamespaces)).toBeFalsy();
 });
 
 it('Table renders plain with one row, ALL_NAMESPACES', () => {

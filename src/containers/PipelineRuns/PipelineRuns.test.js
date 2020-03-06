@@ -20,7 +20,7 @@ import { Route } from 'react-router-dom';
 import { urls } from '@tektoncd/dashboard-utils';
 import { renderWithRouter } from '../../utils/test';
 import * as API from '../../api';
-import * as Reducers from '../../reducers';
+import * as selectors from '../../reducers';
 import PipelineRunsContainer from './PipelineRuns';
 
 const namespacesTestStore = {
@@ -163,7 +163,7 @@ beforeEach(() => {
   jest.spyOn(API, 'getServiceAccounts').mockImplementation(() => []);
   jest.spyOn(API, 'getPipelines').mockImplementation(() => []);
   jest.spyOn(API, 'getPipelineResources').mockImplementation(() => []);
-  jest.spyOn(Reducers, 'getReadOnly').mockImplementation(() => true);
+  jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => true);
 });
 
 it('PipelineRuns can be filtered on a single label filter', async () => {
@@ -367,7 +367,7 @@ it('An invalid filter value is disallowed and reported', async () => {
 });
 
 it('Creation, deletion and stop events are possible when not in read-only mode', async () => {
-  jest.spyOn(Reducers, 'getReadOnly').mockImplementation(() => false);
+  jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => false);
 
   const mockTestStore = mockStore(testStore);
   const match = {
@@ -408,7 +408,7 @@ it('Creation, deletion and stop events are possible when not in read-only mode',
 });
 
 it('Creation, deletion and stop events are not possible when in read-only mode', async () => {
-  jest.spyOn(Reducers, 'getReadOnly').mockImplementation(() => true);
+  jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => true);
 
   const mockTestStore = mockStore(testStore);
   const match = {
@@ -447,7 +447,7 @@ it('Creation, deletion and stop events are not possible when in read-only mode',
 
 it('TaskTree handles rerun event in PipelineRuns page', async () => {
   const mockTestStore = mockStore(testStore);
-  jest.spyOn(Reducers, 'getReadOnly').mockImplementation(() => false);
+  jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => false);
   jest.spyOn(API, 'rerunPipelineRun').mockImplementation(() => []);
   const { getByTestId, getByText } = renderWithRouter(
     <Provider store={mockTestStore}>

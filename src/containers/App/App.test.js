@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -19,11 +19,11 @@ import thunk from 'redux-thunk';
 
 import { App } from './App';
 import * as API from '../../api';
-import * as Reducers from '../../reducers';
+import * as selectors from '../../reducers';
 
 beforeEach(() => {
   jest.spyOn(API, 'getPipelines').mockImplementation(() => {});
-  jest.spyOn(Reducers, 'getReadOnly').mockImplementation(() => true);
+  jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => true);
 });
 
 it('App renders successfully', () => {
