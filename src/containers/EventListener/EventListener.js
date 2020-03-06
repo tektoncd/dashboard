@@ -173,7 +173,7 @@ export /* istanbul ignore next */ class EventListenerContainer extends Component
                     <span>
                       {intl.formatMessage({
                         id: 'dashboard.eventListener.serviceAccount',
-                        defaultMessage: 'Service Account:'
+                        defaultMessage: 'ServiceAccount:'
                       })}{' '}
                     </span>
                     {eventListener.spec.serviceAccountName}

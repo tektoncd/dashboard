@@ -339,7 +339,7 @@ export async function patchServiceAccount({
   return patch1;
 }
 
-// Use this for unpatching service accounts
+// Use this for unpatching ServiceAccounts
 export async function updateServiceAccountSecrets(
   sa,
   namespace,

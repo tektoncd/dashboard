@@ -36,7 +36,7 @@ const ServiceAccountSelector = props => {
       key: 'serviceAccount',
       header: intl.formatMessage({
         id: 'dashboard.tableHeader.serviceAccount',
-        defaultMessage: 'Service Account'
+        defaultMessage: 'ServiceAccount'
       })
     }
   ];
@@ -95,7 +95,7 @@ const ServiceAccountSelector = props => {
           {intl.formatMessage({
             id: 'dashboard.createSecret.serviceAccountSelectorSubHeading',
             defaultMessage:
-              'Select Service Account(s) to add this Secret to. (Optional)'
+              'Select ServiceAccount(s) to add this Secret to. (Optional)'
           })}
         </p>
       </div>

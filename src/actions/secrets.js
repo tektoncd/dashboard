@@ -56,7 +56,7 @@ export function deleteSecret(secrets, cancelMethod) {
 
     /* Now we know the secrets for each namespace, iterate and determine which secrets
     should be removed from the SA. With the list of known secrets that stay,
-    we finally do a replace type PATCH on the entire service account at once.
+    we finally do a replace type PATCH on the entire ServiceAccount at once.
     This is used to ensure all data is still correct regardless of things like indexes changing
     which is the only way to remove secrets otherwise using the patch API */
 
@@ -65,12 +65,12 @@ export function deleteSecret(secrets, cancelMethod) {
       value,
       namespace
     ) {
-      // Get all the service accounts in the namespace
+      // Get all the ServiceAccounts in the namespace
       const serviceAccounts = await getServiceAccounts({
         namespace
       });
 
-      // For each service account found
+      // For each ServiceAccount found
       serviceAccounts.forEach(async serviceAccount => {
         let secretRemoved = false;
         const remainingSecrets = [];

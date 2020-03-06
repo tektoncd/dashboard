@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
+import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 import { TooltipDropdown } from '@tektoncd/dashboard-components';
@@ -43,28 +44,66 @@ class PipelineResourcesDropdown extends React.Component {
 
   render() {
     const {
-      fetchPipelineResources: _fetchPipelineResources, // extract props that are not valid for the dropdown
+      fetchPipelineResources: _fetchPipelineResources,
+      intl,
+      label,
       namespace,
       type,
       webSocketConnected,
       ...rest
     } = this.props;
-    let emptyText = 'No PipelineResources found';
+    let emptyText = intl.formatMessage({
+      id: 'dashboard.pipelineResourcesDropdown.empty.allNamespaces',
+      defaultMessage: 'No PipelineResources found'
+    });
     if (type && namespace !== ALL_NAMESPACES) {
-      emptyText = `No PipelineResources found of type '${type}' in the '${namespace}' namespace`;
+      emptyText = intl.formatMessage(
+        {
+          id:
+            'dashboard.pipelineResourcesDropdown.empty.selectedNamespace.type',
+          defaultMessage:
+            "No PipelineResources found of type ''{type}'' in the ''{namespace}'' namespace"
+        },
+        {
+          namespace,
+          type
+        }
+      );
     } else if (type) {
-      emptyText = `No PipelineResources found of type '${type}'`;
+      emptyText = intl.formatMessage(
+        {
+          id: 'dashboard.pipelineResourcesDropdown.empty.allNamespaces.type',
+          defaultMessage: "No PipelineResources found of type ''{type}''"
+        },
+        { type }
+      );
     } else if (namespace !== ALL_NAMESPACES) {
-      emptyText = `No PipelineResources found in the '${namespace}' namespace`;
+      emptyText = intl.formatMessage(
+        {
+          id: 'dashboard.pipelineResourcesDropdown.empty.selectedNamespace',
+          defaultMessage:
+            "No PipelineResources found in the ''{namespace}'' namespace"
+        },
+        { namespace }
+      );
     }
-    return <TooltipDropdown {...rest} emptyText={emptyText} />;
+
+    const labelString =
+      label ||
+      intl.formatMessage({
+        id: 'dashboard.pipelineResourcesDropdown.label',
+        defaultMessage: 'Select PipelineResource'
+      });
+
+    return (
+      <TooltipDropdown {...rest} emptyText={emptyText} label={labelString} />
+    );
   }
 }
 
 PipelineResourcesDropdown.defaultProps = {
   items: [],
   loading: false,
-  label: 'Select PipelineResource',
   titleText: 'PipelineResource'
 };
 
@@ -88,4 +127,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(PipelineResourcesDropdown);
+)(injectIntl(PipelineResourcesDropdown));

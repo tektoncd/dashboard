@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
+import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 import { TooltipDropdown } from '@tektoncd/dashboard-components';
@@ -19,46 +20,71 @@ import { TooltipDropdown } from '@tektoncd/dashboard-components';
 import { getNamespaces, isFetchingNamespaces } from '../../reducers';
 
 const NamespacesDropdown = ({
-  allNamespacesLabel, // extract props that are not valid for the dropdown
+  allNamespacesLabel,
   children,
-  isSideNavExpanded,
   dispatch,
+  emptyText,
+  intl,
+  isSideNavExpanded,
+  label,
+  namespaces,
+  selectedItem: originalSelectedItem,
   showAllNamespaces,
   ...rest
 }) => {
-  return <TooltipDropdown {...rest} />;
+  const labelString =
+    label ||
+    intl.formatMessage({
+      id: 'dashboard.namespacesDropdown.label',
+      defaultMessage: 'Select Namespace'
+    });
+  const emptyString =
+    emptyText ||
+    intl.formatMessage({
+      id: 'dashboard.namespacesDropdown.empty',
+      defaultMessage: 'No Namespaces found'
+    });
+
+  const allNamespacesString =
+    allNamespacesLabel ||
+    intl.formatMessage({
+      id: 'dashboard.namespacesDropdown.allNamespaces',
+      defaultMessage: 'All Namespaces'
+    });
+
+  const selectedItem = { ...originalSelectedItem };
+  if (selectedItem && selectedItem.id === ALL_NAMESPACES) {
+    selectedItem.text = allNamespacesString;
+  }
+
+  const items = [...namespaces];
+  if (showAllNamespaces) {
+    items.unshift({ id: ALL_NAMESPACES, text: allNamespacesString });
+  }
+
+  return (
+    <TooltipDropdown
+      {...rest}
+      label={labelString}
+      emptyText={emptyString}
+      selectedItem={selectedItem}
+      items={items}
+    />
+  );
 };
 
-const allNamespacesLabel = 'All Namespaces';
-
 NamespacesDropdown.defaultProps = {
-  allNamespacesLabel,
-  items: [],
   loading: false,
-  label: 'Select Namespace',
-  titleText: 'Namespace',
-  emptyText: 'No Namespaces found',
-  showAllNamespaces: false
+  showAllNamespaces: false,
+  titleText: 'Namespace'
 };
 
 /* istanbul ignore next */
-function mapStateToProps(state, ownProps) {
-  const { selectedItem, showAllNamespaces } = ownProps;
-
-  if (selectedItem && selectedItem.id === ALL_NAMESPACES) {
-    selectedItem.text = allNamespacesLabel;
-  }
-
-  const items = getNamespaces(state);
-  if (showAllNamespaces) {
-    items.unshift({ id: ALL_NAMESPACES, text: allNamespacesLabel });
-  }
-
+function mapStateToProps(state) {
   return {
-    items,
     loading: isFetchingNamespaces(state),
-    selectedItem
+    namespaces: getNamespaces(state)
   };
 }
 
-export default connect(mapStateToProps)(NamespacesDropdown);
+export default connect(mapStateToProps)(injectIntl(NamespacesDropdown));

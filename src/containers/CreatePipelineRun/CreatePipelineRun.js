@@ -255,7 +255,7 @@ class CreatePipelineRun extends React.Component {
 
   handleNamespaceChange = ({ selectedItem }) => {
     const { text = '' } = selectedItem || {};
-    // Reset pipeline and service account when namespace changes
+    // Reset pipeline and ServiceAccount when namespace changes
     if (text !== this.state[NAMESPACE]) {
       this.setState({
         ...initialPipelineInfoState(),
@@ -594,7 +594,7 @@ class CreatePipelineRun extends React.Component {
               id="create-pipelinerun--sa-dropdown"
               titleText={intl.formatMessage({
                 id: 'dashboard.createPipelineRun.serviceAccountLabel',
-                defaultMessage: 'Service Account (optional)'
+                defaultMessage: 'ServiceAccount (optional)'
               })}
               namespace={namespace}
               selectedItem={

@@ -355,7 +355,7 @@ describe('CreatePipelineRun', () => {
     expect(
       document.getElementById('create-pipelinerun--pipelines-dropdown').disabled
     ).toBe(true);
-    expect(queryByPlaceholderText(/select service account/i)).toBeTruthy();
+    expect(queryByPlaceholderText(/select serviceaccount/i)).toBeTruthy();
     expect(
       document.getElementById('create-pipelinerun--sa-dropdown').disabled
     ).toBe(true);
@@ -469,7 +469,7 @@ describe('CreatePipelineRun', () => {
     expect(queryByValue(/bar/i)).toBeFalsy();
   });
 
-  it('resets pipeline and service account when namespace changes', () => {
+  it('resets Pipeline and ServiceAccount when namespace changes', () => {
     const mockTestStore = mockStore(testStore);
     jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
     const { getByPlaceholderText, getByText, getByValue } = renderWithIntl(
@@ -479,7 +479,7 @@ describe('CreatePipelineRun', () => {
     );
     fireEvent.click(getByPlaceholderText(/select pipeline/i));
     fireEvent.click(getByText(/pipeline-1/i));
-    fireEvent.click(getByPlaceholderText(/select service account/i));
+    fireEvent.click(getByPlaceholderText(/select serviceaccount/i));
     fireEvent.click(getByText(/service-account-1/i));
     // Change selected namespace to the same namespace (expect no change)
     fireEvent.click(getByValue(/namespace-1/i));
@@ -489,12 +489,12 @@ describe('CreatePipelineRun', () => {
     // Change selected namespace
     fireEvent.click(getByValue(/namespace-1/i));
     fireEvent.click(getByText(/namespace-2/i));
-    // Verify that pipeline and service account value have reset
+    // Verify that Pipeline and ServiceAccount value have reset
     expect(getByPlaceholderText(/select pipeline/i)).toBeTruthy();
-    expect(getByPlaceholderText(/select service account/i)).toBeTruthy();
+    expect(getByPlaceholderText(/select serviceaccount/i)).toBeTruthy();
   });
 
-  it('resets pipeline and service account when namespace changes controlled', () => {
+  it('resets Pipeline and ServiceAccount when namespace changes controlled', () => {
     const mockTestStore = mockStore(testStore);
     jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
     const { rerender, getByPlaceholderText, getByText } = renderWithIntl(
@@ -504,7 +504,7 @@ describe('CreatePipelineRun', () => {
     );
     fireEvent.click(getByPlaceholderText(/select pipeline/i));
     fireEvent.click(getByText(/pipeline-1/i));
-    fireEvent.click(getByPlaceholderText(/select service account/i));
+    fireEvent.click(getByPlaceholderText(/select serviceaccount/i));
     fireEvent.click(getByText(/service-account-1/i));
     // Change selected namespace
     rerenderWithIntl(
@@ -513,9 +513,9 @@ describe('CreatePipelineRun', () => {
         <CreatePipelineRun {...props} namespace="namespace-2" />
       </Provider>
     );
-    // Verify that pipeline and service account value have reset
+    // Verify that Pipeline and ServiceAccount value have reset
     expect(getByPlaceholderText(/select pipeline/i)).toBeTruthy();
-    expect(getByPlaceholderText(/select service account/i)).toBeTruthy();
+    expect(getByPlaceholderText(/select serviceaccount/i)).toBeTruthy();
   });
 
   it('submits form', async () => {
@@ -540,8 +540,8 @@ describe('CreatePipelineRun', () => {
     // Fill pipeline spec
     fillPipeline1Resources({ getAllByPlaceholderText, getByText });
     fillPipeline1Params(getByPlaceholderText);
-    // Fill service account
-    fireEvent.click(getByPlaceholderText(/select service account/i));
+    // Fill ServiceAccount
+    fireEvent.click(getByPlaceholderText(/select serviceaccount/i));
     fireEvent.click(getByText(/service-account-1/i));
     // Fill timeout
     fireEvent.change(getByPlaceholderText(/60/i), {

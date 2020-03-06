@@ -12,11 +12,12 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, getNodeText, render } from 'react-testing-library';
+import { fireEvent, getNodeText } from 'react-testing-library';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import NamespacesDropdown from './NamespacesDropdown';
+import { renderWithIntl } from '../../utils/test';
 
 const props = {
   id: 'namespaces-dropdown'
@@ -40,7 +41,7 @@ it('NamespacesDropdown renders items based on Redux state', () => {
       isFetching: false
     }
   });
-  const { getAllByText, getByPlaceholderText, queryByText } = render(
+  const { getAllByText, getByPlaceholderText, queryByText } = renderWithIntl(
     <Provider store={store}>
       <NamespacesDropdown {...props} />
     </Provider>
@@ -62,14 +63,14 @@ it('NamespacesDropdown renders controlled selection', () => {
     }
   });
   // Select item 'namespace-1'
-  const { container, queryByPlaceholderText, queryByValue } = render(
+  const { container, queryByPlaceholderText, queryByValue } = renderWithIntl(
     <Provider store={store}>
       <NamespacesDropdown {...props} selectedItem={{ text: 'namespace-1' }} />
     </Provider>
   );
   expect(queryByValue(/namespace-1/i)).toBeTruthy();
   // Select item 'namespace-2'
-  render(
+  renderWithIntl(
     <Provider store={store}>
       <NamespacesDropdown {...props} selectedItem={{ text: 'namespace-2' }} />
     </Provider>,
@@ -77,7 +78,7 @@ it('NamespacesDropdown renders controlled selection', () => {
   );
   expect(queryByValue(/namespace-2/i)).toBeTruthy();
   // No selected item (select item '')
-  render(
+  renderWithIntl(
     <Provider store={store}>
       <NamespacesDropdown {...props} selectedItem="" />
     </Provider>,
@@ -94,7 +95,7 @@ it('NamespacesDropdown renders empty', () => {
     }
   });
 
-  const { queryByPlaceholderText } = render(
+  const { queryByPlaceholderText } = renderWithIntl(
     <Provider store={store}>
       <NamespacesDropdown {...props} />
     </Provider>
@@ -110,7 +111,7 @@ it('NamespacesDropdown renders loading skeleton based on Redux state', () => {
     }
   });
 
-  const { queryByPlaceholderText } = render(
+  const { queryByPlaceholderText } = renderWithIntl(
     <Provider store={store}>
       <NamespacesDropdown {...props} />
     </Provider>
@@ -126,7 +127,7 @@ it('NamespacesDropdown handles onChange event', () => {
     }
   });
   const onChange = jest.fn();
-  const { getByPlaceholderText, getByText } = render(
+  const { getByPlaceholderText, getByText } = renderWithIntl(
     <Provider store={store}>
       <NamespacesDropdown {...props} onChange={onChange} />
     </Provider>

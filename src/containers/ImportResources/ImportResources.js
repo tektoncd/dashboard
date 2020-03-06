@@ -308,11 +308,11 @@ export class ImportResources extends Component {
           />
           <ServiceAccountsDropdown
             className="saDropdown"
-            helperText="The service account that the PipelineRun applying resources will run under (must be in the install namespace of the Tekton Dashboard)"
+            helperText="The ServiceAccount that the PipelineRun applying resources will run under (must be in the install namespace of the Tekton Dashboard)"
             id="import-service-accounts-dropdown"
             namespace={this.state.installNamespace}
             onChange={this.handleServiceAccount}
-            titleText="Service Account (optional)"
+            titleText="ServiceAccount (optional)"
           />
           <Button kind="primary" onClick={this.handleSubmit}>
             Import and Apply
