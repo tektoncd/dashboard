@@ -29,8 +29,8 @@ import { NamespacesDropdown } from '..';
 import { selectNamespace } from '../../actions/namespaces';
 import {
   getExtensions,
-  getReadOnly,
-  getSelectedNamespace
+  getSelectedNamespace,
+  isReadOnly
 } from '../../reducers';
 import { getCustomResource } from '../../api';
 
@@ -143,7 +143,7 @@ class SideNav extends Component {
   }
 
   render() {
-    const { extensions, intl, isReadOnly, namespace } = this.props;
+    const { extensions, intl, namespace } = this.props;
     const { isTriggersInstalled } = this.state;
 
     return (
@@ -252,7 +252,7 @@ class SideNav extends Component {
             })}
           </SideNavLink>
 
-          {!isReadOnly && (
+          {!this.props.isReadOnly && (
             <SideNavLink
               element={NavLink}
               icon={<span />}
@@ -320,7 +320,7 @@ class SideNav extends Component {
 /* istanbul ignore next */
 const mapStateToProps = state => ({
   extensions: getExtensions(state),
-  isReadOnly: getReadOnly(state),
+  isReadOnly: isReadOnly(state),
   namespace: getSelectedNamespace(state)
 });
 

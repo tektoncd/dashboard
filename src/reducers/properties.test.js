@@ -11,18 +11,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-const defaultState = { ReadOnly: true };
-function properties(state = defaultState, action) {
-  switch (action.type) {
-    case 'INSTALL_PROPERTIES_SUCCESS':
-      return action.data;
-    default:
-      return state;
-  }
-}
+import propertiesReducer, * as selectors from './properties';
 
-export function isReadOnly(state) {
-  return state.ReadOnly;
-}
+it('handles init or unknown actions', () => {
+  expect(propertiesReducer(undefined, { type: 'does_not_exist' })).toEqual({
+    ReadOnly: true
+  });
+});
 
-export default properties;
+it('INSTALL_PROPERTIES_SUCCESS', () => {
+  const installProperties = { fake: 'installProperties', ReadOnly: false };
+  const action = {
+    type: 'INSTALL_PROPERTIES_SUCCESS',
+    data: installProperties
+  };
+
+  const state = propertiesReducer({}, action);
+  expect(selectors.isReadOnly(state)).toBe(false);
+});

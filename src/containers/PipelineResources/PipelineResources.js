@@ -34,9 +34,9 @@ import PipelineResourcesModal from '../PipelineResourcesModal';
 import {
   getPipelineResources,
   getPipelineResourcesErrorMessage,
-  getReadOnly,
   getSelectedNamespace,
   isFetchingPipelineResources,
+  isReadOnly,
   isWebSocketConnected
 } from '../../reducers';
 
@@ -138,8 +138,8 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
   };
 
   pipelineResourceActions = () => {
-    const { intl, isReadOnly } = this.props;
-    if (isReadOnly) {
+    const { intl } = this.props;
+    if (this.props.isReadOnly) {
       return [];
     }
 
@@ -203,7 +203,6 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
       error,
       loading,
       namespace: selectedNamespace,
-      isReadOnly,
       pipelineResources,
       intl
     } = this.props;
@@ -225,7 +224,7 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
       );
     }
 
-    const toolbarButtons = isReadOnly
+    const toolbarButtons = this.props.isReadOnly
       ? []
       : [
           {
@@ -238,7 +237,7 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
           }
         ];
 
-    const batchActionButtons = isReadOnly
+    const batchActionButtons = this.props.isReadOnly
       ? []
       : [
           {
@@ -288,7 +287,7 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
         )}
         <h1>PipelineResources</h1>
         <LabelFilter {...this.props} />
-        {!isReadOnly && (
+        {!this.props.isReadOnly && (
           <PipelineResourcesModal
             open={this.state.showCreatePipelineResourceModal}
             handleCreatePipelineResource={
@@ -353,7 +352,7 @@ function mapStateToProps(state, props) {
 
   return {
     error: getPipelineResourcesErrorMessage(state),
-    isReadOnly: getReadOnly(state),
+    isReadOnly: isReadOnly(state),
     filters,
     loading: isFetchingPipelineResources(state),
     namespace,

@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -21,10 +21,10 @@ import { ALL_NAMESPACES, paths, urls } from '@tektoncd/dashboard-utils';
 import { renderWithRouter } from '../../utils/test';
 import SideNavContainer, { SideNavWithIntl as SideNav } from './SideNav';
 import * as API from '../../api';
-import * as Reducers from '../../reducers';
+import * as selectors from '../../reducers';
 
 beforeEach(() => {
-  jest.spyOn(Reducers, 'getReadOnly').mockImplementation(() => true);
+  jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => true);
 });
 
 it('SideNav renders with extensions', () => {
@@ -62,7 +62,7 @@ it('SideNav renders with extensions', () => {
 });
 
 it('SideNav renders with triggers', async () => {
-  jest.spyOn(Reducers, 'getReadOnly').mockImplementation(() => false);
+  jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => false);
 
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
@@ -475,7 +475,7 @@ it('SideNav updates namespace in URL', async () => {
 });
 
 it('SideNav renders import in not read-only mode', async () => {
-  jest.spyOn(Reducers, 'getReadOnly').mockImplementation(() => false);
+  jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => false);
 
   const middleware = [thunk];
   const mockStore = configureStore(middleware);

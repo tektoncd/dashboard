@@ -130,6 +130,9 @@ const Table = props => {
     toolbarButtons
   } = props;
 
+  const shouldRenderBatchActions = !!(
+    dataRows.length && batchActionButtons.length
+  );
   const translateWithId = getTranslateWithId(intl);
 
   return (
@@ -150,28 +153,29 @@ const Table = props => {
           selectedRows
         }) => (
           <TableContainer title={title}>
-            {(toolbarButtons.length !== 0 ||
-              batchActionButtons.length !== 0) && (
+            {(toolbarButtons.length || shouldRenderBatchActions) && (
               <TableToolbar>
-                <TableBatchActions
-                  {...getBatchActionProps()}
-                  translateWithId={translateWithId}
-                >
-                  {batchActionButtons.map(button => (
-                    <TableBatchAction
-                      renderIcon={button.icon}
-                      key={`${button.text}Button`}
-                      onClick={() => {
-                        button.onClick(
-                          selectedRows,
-                          getBatchActionProps().onCancel
-                        );
-                      }}
-                    >
-                      {button.text}
-                    </TableBatchAction>
-                  ))}
-                </TableBatchActions>
+                {shouldRenderBatchActions && (
+                  <TableBatchActions
+                    {...getBatchActionProps()}
+                    translateWithId={translateWithId}
+                  >
+                    {batchActionButtons.map(button => (
+                      <TableBatchAction
+                        renderIcon={button.icon}
+                        key={`${button.text}Button`}
+                        onClick={() => {
+                          button.onClick(
+                            selectedRows,
+                            getBatchActionProps().onCancel
+                          );
+                        }}
+                      >
+                        {button.text}
+                      </TableBatchAction>
+                    ))}
+                  </TableBatchActions>
+                )}
                 <TableToolbarContent>
                   {toolbarButtons.map(button => (
                     <Button
@@ -195,7 +199,7 @@ const Table = props => {
               <CarbonTable {...getTableProps()}>
                 <TableHead>
                   <TableRow>
-                    {batchActionButtons.length > 0 && (
+                    {shouldRenderBatchActions && (
                       <TableSelectAll {...getSelectionProps()} />
                     )}
                     {headers.map(header => {
@@ -217,7 +221,7 @@ const Table = props => {
                     <TableRow>
                       <TableCell
                         colSpan={
-                          headers.length + (batchActionButtons.length ? 1 : 0)
+                          headers.length + (shouldRenderBatchActions ? 1 : 0)
                         }
                       >
                         <div className="noRows">
@@ -231,7 +235,7 @@ const Table = props => {
                   {rows.map(row => {
                     return (
                       <TableRow {...getRowProps({ row })} key={row.id}>
-                        {batchActionButtons.length > 0 && (
+                        {shouldRenderBatchActions && (
                           <TableSelectRow {...getSelectionProps({ row })} />
                         )}
                         {row.cells.map(cell => (
@@ -258,23 +262,23 @@ const Table = props => {
 
 Table.defaultProps = {
   batchActionButtons: [],
-  toolbarButtons: [],
-  loading: false,
   isSortable: false,
+  loading: false,
   selectedNamespace: null,
-  title: null
+  title: null,
+  toolbarButtons: []
 };
 
 Table.propTypes = {
+  batchActionButtons: PropTypes.arrayOf(PropTypes.object),
   emptyTextAllNamespaces: PropTypes.string.isRequired,
   emptyTextSelectedNamespace: PropTypes.string.isRequired,
   headers: PropTypes.arrayOf(PropTypes.object).isRequired,
-  loading: PropTypes.bool,
   isSortable: PropTypes.bool,
+  loading: PropTypes.bool,
   rows: PropTypes.arrayOf(PropTypes.object).isRequired,
   selectedNamespace: PropTypes.string,
   title: PropTypes.string,
-  batchActionButtons: PropTypes.arrayOf(PropTypes.object),
   toolbarButtons: PropTypes.arrayOf(PropTypes.object)
 };
 

@@ -69,8 +69,8 @@ import { fetchInstallProperties } from '../../actions/properties';
 import {
   getExtensions,
   getLocale,
-  getReadOnly,
   getSelectedNamespace,
+  isReadOnly,
   isWebSocketConnected
 } from '../../reducers';
 import messages from '../../nls/messages_en.json';
@@ -348,7 +348,7 @@ const mapStateToProps = state => ({
   extensions: getExtensions(state),
   namespace: getSelectedNamespace(state),
   lang: getLocale(state),
-  isReadOnly: getReadOnly(state),
+  isReadOnly: isReadOnly(state),
   webSocketConnected: isWebSocketConnected(state)
 });
 

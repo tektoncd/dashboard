@@ -48,7 +48,8 @@ import {
   isFetchingPipelines,
   isFetchingSecrets,
   isFetchingTaskRuns,
-  isFetchingTasks
+  isFetchingTasks,
+  isReadOnly
 } from '.';
 import * as clusterTaskSelectors from './clusterTasks';
 import * as extensionSelectors from './extensions';
@@ -57,6 +58,7 @@ import * as namespaceSelectors from './namespaces';
 import * as pipelineResourcesSelectors from './pipelineResources';
 import * as pipelineSelectors from './pipelines';
 import * as pipelineRunsSelectors from './pipelineRuns';
+import * as propertiesSelectors from './properties';
 import * as secretSelectors from './secrets';
 import * as serviceAccountSelectors from './serviceAccounts';
 import * as taskSelectors from './tasks';
@@ -495,4 +497,10 @@ it('isFetchingTaskRuns', () => {
   expect(taskRunsSelectors.isFetchingTaskRuns).toHaveBeenCalledWith(
     state.taskRuns
   );
+});
+
+it('isReadOnly', () => {
+  jest.spyOn(propertiesSelectors, 'isReadOnly').mockImplementation(() => true);
+  expect(isReadOnly(state)).toBe(true);
+  expect(propertiesSelectors.isReadOnly).toHaveBeenCalledWith(state.properties);
 });

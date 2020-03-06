@@ -22,7 +22,7 @@ import thunk from 'redux-thunk';
 import { renderWithRouter } from '../../utils/test';
 import Secrets from '.';
 import * as API from '../../api';
-import * as Reducers from '../../reducers';
+import * as selectors from '../../reducers';
 
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
@@ -34,7 +34,7 @@ const intl = createIntl({
 
 beforeEach(() => {
   jest.spyOn(API, 'getPipelines').mockImplementation(() => {});
-  jest.spyOn(Reducers, 'getReadOnly').mockImplementation(() => false);
+  jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => false);
 });
 
 const byNamespace = {
@@ -312,7 +312,7 @@ it('Secrets can be filtered on a single label filter', async () => {
 });
 
 it('Secrets can not be created when in read-only mode', async () => {
-  jest.spyOn(Reducers, 'getReadOnly').mockImplementation(() => true);
+  jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => true);
 
   const currentProps = {
     loading: false,
@@ -334,7 +334,7 @@ it('Secrets can not be created when in read-only mode', async () => {
 });
 
 it('Secrets can be created when not in read-only mode', async () => {
-  jest.spyOn(Reducers, 'getReadOnly').mockImplementation(() => false);
+  jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => false);
 
   const currentProps = {
     loading: false,

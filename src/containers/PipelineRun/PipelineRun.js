@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -23,11 +23,11 @@ import {
   getClusterTasks,
   getPipelineRun,
   getPipelineRunsErrorMessage,
-  getReadOnly,
   getTaskRunsByPipelineRunName,
   getTaskRunsErrorMessage,
   getTasks,
   getTasksErrorMessage,
+  isReadOnly,
   isWebSocketConnected
 } from '../../reducers';
 import { LogDownloadButton } from '..';
@@ -94,15 +94,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   }
 
   render() {
-    const {
-      error,
-      intl,
-      isReadOnly,
-      match,
-      pipelineRun,
-      tasks,
-      taskRuns
-    } = this.props;
+    const { error, intl, match, pipelineRun, tasks, taskRuns } = this.props;
 
     if (!pipelineRun) {
       return (
@@ -128,7 +120,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     const { loading, showRerunNotification } = this.state;
     const { pipelineRunName } = match.params;
 
-    const rerun = !isReadOnly && (
+    const rerun = !this.props.isReadOnly && (
       <Rerun
         pipelineRun={pipelineRun}
         rerunPipelineRun={rerunPipelineRun}
@@ -193,7 +185,7 @@ function mapStateToProps(state, ownProps) {
   const { namespace } = match.params;
 
   return {
-    isReadOnly: getReadOnly(state),
+    isReadOnly: isReadOnly(state),
     error:
       getPipelineRunsErrorMessage(state) ||
       getTasksErrorMessage(state) ||
