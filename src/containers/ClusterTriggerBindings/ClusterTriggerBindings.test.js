@@ -172,7 +172,7 @@ it('ClusterTriggerBindings renders in loading state', () => {
 
   expect(queryByText(/ClusterTriggerBindings/i)).toBeTruthy();
   expect(
-    queryByText('No ClusterTriggerBindings under any namespace.')
+    queryByText('No ClusterTriggerBindings in any namespace.')
   ).toBeFalsy();
   expect(queryByText('cluster-trigger-bindings')).toBeFalsy();
 });

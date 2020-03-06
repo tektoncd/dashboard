@@ -81,7 +81,7 @@ it('TriggerBindings renders with no bindings', () => {
   );
 
   expect(getByText('TriggerBindings')).toBeTruthy();
-  expect(getByText('No TriggerBindings under any namespace.')).toBeTruthy();
+  expect(getByText('No TriggerBindings in any namespace.')).toBeTruthy();
 });
 
 it('TriggerBindings renders with one binding', () => {
@@ -109,7 +109,7 @@ it('TriggerBindings renders with one binding', () => {
   );
 
   expect(queryByText('TriggerBindings')).toBeTruthy();
-  expect(queryByText('No TriggerBindings under any namespace.')).toBeFalsy();
+  expect(queryByText('No TriggerBindings in any namespace.')).toBeFalsy();
   expect(queryByText('trigger-binding')).toBeTruthy();
 });
 
@@ -171,6 +171,6 @@ it('TriggerBindings renders in loading state', () => {
   );
 
   expect(queryByText(/TriggerBindings/i)).toBeTruthy();
-  expect(queryByText('No TriggerBindings under any namespace.')).toBeFalsy();
+  expect(queryByText('No TriggerBindings in any namespace.')).toBeFalsy();
   expect(queryByText('trigger-bindings')).toBeFalsy();
 });

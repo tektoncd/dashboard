@@ -296,9 +296,9 @@ it('Table loading plain with one row and ALL_NAMESPACES', () => {
   expect(queryByLabelText('Select all rows')).toBeNull();
   expect(queryByLabelText('Select row')).toBeNull();
   expect(
-    queryByText("No Resources created under namespace 'default'.")
+    queryByText("No Resources created in namespace 'default'.")
   ).toBeNull();
-  expect(queryByText('No Resources created under any namespace.')).toBeNull();
+  expect(queryByText('No Resources created in any namespace.')).toBeNull();
 });
 
 it("Table's batch action button specifies correct arguments for callback with one row selected", () => {
