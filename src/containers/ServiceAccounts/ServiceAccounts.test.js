@@ -79,7 +79,7 @@ it('ServiceAccounts renders with no bindings', () => {
   );
 
   expect(getByText('ServiceAccounts')).toBeTruthy();
-  expect(getByText('No ServiceAccounts under any namespace.')).toBeTruthy();
+  expect(getByText('No ServiceAccounts in any namespace.')).toBeTruthy();
 });
 
 it('ServiceAccounts renders with one binding', () => {
@@ -107,7 +107,7 @@ it('ServiceAccounts renders with one binding', () => {
   );
 
   expect(queryByText('ServiceAccounts')).toBeTruthy();
-  expect(queryByText('No ServiceAccounts under any namespace.')).toBeFalsy();
+  expect(queryByText('No ServiceAccounts in any namespace.')).toBeFalsy();
   expect(queryByText('foo-service-account')).toBeTruthy();
 });
 
@@ -169,6 +169,6 @@ it('ServiceAccounts renders in loading state', () => {
   );
 
   expect(queryByText(/ServiceAccounts/i)).toBeTruthy();
-  expect(queryByText('No ServiceAccounts under any namespace.')).toBeFalsy();
+  expect(queryByText('No ServiceAccounts in any namespace.')).toBeFalsy();
   expect(queryByText('foo-service-account')).toBeFalsy();
 });

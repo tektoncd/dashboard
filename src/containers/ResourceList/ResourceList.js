@@ -12,20 +12,12 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
-
-import {
-  InlineNotification,
-  StructuredListBody,
-  StructuredListCell,
-  StructuredListHead,
-  StructuredListRow,
-  StructuredListSkeleton,
-  StructuredListWrapper
-} from 'carbon-components-react';
+import { injectIntl } from 'react-intl';
+import { InlineNotification } from 'carbon-components-react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { getErrorMessage, urls } from '@tektoncd/dashboard-utils';
-import { FormattedDate } from '@tektoncd/dashboard-components';
+import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 
 import { getCustomResources } from '../../api';
 import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
@@ -68,24 +60,22 @@ export /* istanbul ignore next */ class ResourceListContainer extends Component 
   }
 
   fetchResources(group, version, type, namespace) {
-    return getCustomResources({ group, version, type, namespace }).then(
-      resources => {
+    return getCustomResources({ group, version, type, namespace })
+      .then(resources => {
         this.setState({
           loading: false,
           resources
         });
-      }
-    );
+      })
+      .catch(error => {
+        this.setState({ error });
+      });
   }
 
   render() {
-    const { match } = this.props;
+    const { intl, match } = this.props;
     const { group, version, type } = match.params;
     const { error, loading, resources } = this.state;
-
-    if (loading) {
-      return <StructuredListSkeleton border />;
-    }
 
     if (error) {
       return (
@@ -93,69 +83,87 @@ export /* istanbul ignore next */ class ResourceListContainer extends Component 
           kind="error"
           hideCloseButton
           lowContrast
-          title={`Error loading ${type}`}
+          title={intl.formatMessage(
+            {
+              id: 'dashboard.resourceList.errorLoading',
+              defaultMessage: 'Error loading {type}'
+            },
+            { type }
+          )}
           subtitle={getErrorMessage(error)}
         />
       );
     }
 
+    const emptyText = intl.formatMessage(
+      {
+        id: 'dashboard.resourceList.emptyState',
+        defaultMessage: 'No resources for type {type}.'
+      },
+      { type }
+    );
+
     return (
-      <StructuredListWrapper border selection>
-        <StructuredListHead>
-          <StructuredListRow head>
-            <StructuredListCell head>Resource</StructuredListCell>
-            <StructuredListCell head>Namespace</StructuredListCell>
-            <StructuredListCell head>Created</StructuredListCell>
-          </StructuredListRow>
-        </StructuredListHead>
-        <StructuredListBody>
-          {!resources.length && (
-            <StructuredListRow>
-              <StructuredListCell>
-                <span>No Resources for type {type}</span>
-              </StructuredListCell>
-            </StructuredListRow>
-          )}
-          {resources.map(resource => {
-            const {
-              name,
-              namespace,
-              creationTimestamp,
-              uid
-            } = resource.metadata;
-            return (
-              <StructuredListRow className="definition" key={uid}>
-                <StructuredListCell>
-                  <Link
-                    to={
-                      namespace
-                        ? urls.kubernetesResources.byName({
-                            namespace,
-                            group,
-                            version,
-                            type,
-                            name
-                          })
-                        : urls.kubernetesResources.cluster({
-                            group,
-                            version,
-                            type,
-                            name
-                          })
-                    }
-                  >
-                    {name}
-                  </Link>
-                </StructuredListCell>
-                <StructuredListCell>{namespace}</StructuredListCell>
-                <StructuredListCell>
-                  <FormattedDate date={creationTimestamp} relative />
-                </StructuredListCell>
-              </StructuredListRow>
-            );
-          })}
-        </StructuredListBody>
-      </StructuredListWrapper>
+      <Table
+        headers={[
+          {
+            key: 'name',
+            header: intl.formatMessage({
+              id: 'dashboard.tableHeader.name',
+              defaultMessage: 'Name'
+            })
+          },
+          {
+            key: 'namespace',
+            header: intl.formatMessage({
+              id: 'dashboard.tableHeader.namespace',
+              defaultMessage: 'Namespace'
+            })
+          },
+          {
+            key: 'createdTime',
+            header: intl.formatMessage({
+              id: 'dashboard.tableHeader.createdTime',
+              defaultMessage: 'Created'
+            })
+          }
+        ]}
+        rows={resources.map(resource => {
+          const { creationTimestamp, name, namespace, uid } = resource.metadata;
+
+          return {
+            id: uid,
+            name: (
+              <Link
+                to={
+                  namespace
+                    ? urls.kubernetesResources.byName({
+                        namespace,
+                        group,
+                        version,
+                        type,
+                        name
+                      })
+                    : urls.kubernetesResources.cluster({
+                        group,
+                        version,
+                        type,
+                        name
+                      })
+                }
+                title={name}
+              >
+                {name}
+              </Link>
+            ),
+            namespace: <span title={namespace}>{namespace}</span>,
+            createdTime: <FormattedDate date={creationTimestamp} relative />
+          };
+        })}
+        loading={loading}
+        emptyTextAllNamespaces={emptyText}
+        emptyTextSelectedNamespace={emptyText}
+      />
     );
   }
 }
@@ -171,4 +179,4 @@ function mapStateToProps(state, props) {
   };
 }
 
-export default connect(mapStateToProps)(ResourceListContainer);
+export default connect(mapStateToProps)(injectIntl(ResourceListContainer));

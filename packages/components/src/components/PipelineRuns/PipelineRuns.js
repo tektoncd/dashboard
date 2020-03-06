@@ -204,14 +204,14 @@ const PipelineRuns = ({
       emptyTextAllNamespaces={intl.formatMessage(
         {
           id: 'dashboard.emptyState.allNamespaces',
-          defaultMessage: 'No {kind} under any namespace.'
+          defaultMessage: 'No {kind} in any namespace.'
         },
         { kind: 'PipelineRuns' }
       )}
       emptyTextSelectedNamespace={intl.formatMessage(
         {
           id: 'dashboard.emptyState.selectedNamespace',
-          defaultMessage: 'No {kind} under namespace {selectedNamespace}'
+          defaultMessage: 'No {kind} in namespace {selectedNamespace}'
         },
         { kind: 'PipelineRuns', selectedNamespace }
       )}

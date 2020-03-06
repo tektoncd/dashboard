@@ -144,14 +144,14 @@ export /* istanbul ignore next */ class TriggerTemplates extends Component {
           emptyTextAllNamespaces={intl.formatMessage(
             {
               id: 'dashboard.emptyState.allNamespaces',
-              defaultMessage: 'No {kind} under any namespace.'
+              defaultMessage: 'No {kind} in any namespace.'
             },
             { kind: 'TriggerTemplates' }
           )}
           emptyTextSelectedNamespace={intl.formatMessage(
             {
               id: 'dashboard.emptyState.selectedNamespace',
-              defaultMessage: 'No {kind} under namespace {selectedNamespace}'
+              defaultMessage: 'No {kind} in namespace {selectedNamespace}'
             },
             { kind: 'TriggerTemplates', selectedNamespace }
           )}

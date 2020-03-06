@@ -15,16 +15,9 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import {
-  InlineNotification,
-  StructuredListBody,
-  StructuredListCell,
-  StructuredListHead,
-  StructuredListRow,
-  StructuredListSkeleton,
-  StructuredListWrapper
-} from 'carbon-components-react';
+import { InlineNotification } from 'carbon-components-react';
 import { getErrorMessage, urls } from '@tektoncd/dashboard-utils';
+import { Table } from '@tektoncd/dashboard-components';
 
 import {
   getExtensions,
@@ -40,10 +33,6 @@ export const Extensions = /* istanbul ignore next */ ({
   loading,
   extensions
 }) => {
-  if (loading && !extensions.length) {
-    return <StructuredListSkeleton border />;
-  }
-
   if (error) {
     return (
       <InlineNotification
@@ -59,30 +48,57 @@ export const Extensions = /* istanbul ignore next */ ({
     );
   }
 
+  const emptyText = intl.formatMessage({
+    id: 'dashboard.extensions.emptyState',
+    defaultMessage: 'No extensions'
+  });
+
   return (
-    <StructuredListWrapper border selection>
-      <StructuredListHead>
-        <StructuredListRow head>
-          <StructuredListCell head>Extension</StructuredListCell>
-        </StructuredListRow>
-      </StructuredListHead>
-      <StructuredListBody>
-        {!extensions.length && (
-          <StructuredListRow>
-            <StructuredListCell>No extensions</StructuredListCell>
-          </StructuredListRow>
-        )}
-        {extensions.map(({ displayName, name }) => {
-          return (
-            <StructuredListRow className="definition" key={name}>
-              <StructuredListCell>
-                <Link to={urls.extensions.byName({ name })}>{displayName}</Link>
-              </StructuredListCell>
-            </StructuredListRow>
-          );
+    <>
+      <h1>
+        {intl.formatMessage({
+          id: 'dashboard.extensions.heading',
+          defaultMessage: 'Extensions'
         })}
-      </StructuredListBody>
-    </StructuredListWrapper>
+      </h1>
+
+      <Table
+        headers={[
+          {
+            key: 'name',
+            header: intl.formatMessage({
+              id: 'dashboard.tableHeader.name',
+              defaultMessage: 'Name'
+            })
+          }
+        ]}
+        rows={extensions.map(
+          ({ apiGroup, apiVersion, displayName, extensionType, name }) => {
+            return {
+              id: name,
+              name: (
+                <Link
+                  to={
+                    extensionType === 'kubernetes-resource'
+                      ? urls.kubernetesResources.all({
+                          group: apiGroup,
+                          version: apiVersion,
+                          type: name
+                        })
+                      : urls.extensions.byName({ name })
+                  }
+                >
+                  {displayName}
+                </Link>
+              )
+            };
+          }
+        )}
+        loading={loading}
+        emptyTextAllNamespaces={emptyText}
+        emptyTextSelectedNamespace={emptyText}
+      />
+    </>
   );
 };
 
