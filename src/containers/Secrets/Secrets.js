@@ -32,6 +32,7 @@ import {
   fetchSecrets,
   resetCreateSecret
 } from '../../actions/secrets';
+import { selectNamespace } from '../../actions/namespaces';
 import { fetchServiceAccounts } from '../../actions/serviceAccounts';
 import {
   getDeleteSecretsErrorMessage,
@@ -126,11 +127,12 @@ export /* istanbul ignore next */ class Secrets extends Component {
     });
   };
 
-  handleCloseNewSecret = () => {
+  handleCloseNewSecret = namespace => {
     this.props.resetCreateSecret();
     this.setState({
       openNewSecret: false
     });
+    this.props.selectNamespace(namespace);
     this.fetchData();
   };
 
@@ -481,7 +483,8 @@ const mapDispatchToProps = {
   deleteSecret,
   fetchSecrets,
   fetchServiceAccounts,
-  resetCreateSecret
+  resetCreateSecret,
+  selectNamespace
 };
 
 export default connect(

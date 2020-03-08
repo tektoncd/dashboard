@@ -342,7 +342,7 @@ export /* istanbul ignore next */ class CreateSecret extends Component {
           <Form
             {...this.state}
             loading={loading}
-            handleClose={handleClose}
+            handleClose={() => handleClose(namespace)}
             submit={this.handleSubmit}
             handleChangeTextInput={this.handleChangeTextInput}
             handleChangeNamespace={this.handleChangeNamespace}
@@ -362,7 +362,7 @@ export /* istanbul ignore next */ class CreateSecret extends Component {
             loading={loading}
             patchSecret={this.props.patchSecret}
             errorMessagePatched={errorMessagePatched}
-            handleClose={handleClose}
+            handleClose={() => handleClose(namespace)}
           />
         )}
       </div>
