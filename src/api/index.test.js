@@ -483,9 +483,10 @@ it('getAllCredentials', () => {
 
 it('getCredential', () => {
   const credentialId = 'foo';
+  const namespace = 'default';
   const data = { fake: 'credential' };
-  fetchMock.get(`end:${credentialId}`, data);
-  return index.getCredential(credentialId).then(credential => {
+  fetchMock.get(/secrets/, data);
+  return index.getCredential(credentialId, namespace).then(credential => {
     expect(credential).toEqual(data);
     fetchMock.restore();
   });
@@ -582,16 +583,6 @@ it('getServiceAccounts returns the correct data', () => {
   fetchMock.get(/serviceaccounts/, data);
   return index.getServiceAccounts().then(response => {
     expect(response).toEqual(data.items);
-    fetchMock.restore();
-  });
-});
-
-it('getCredential', () => {
-  const credentialId = 'foo';
-  const data = { fake: 'credential' };
-  fetchMock.get(`end:${credentialId}`, data);
-  return index.getCredential(credentialId).then(credential => {
-    expect(credential).toEqual(data);
     fetchMock.restore();
   });
 });

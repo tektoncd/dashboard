@@ -313,6 +313,10 @@ export function getSecrets(
   });
 }
 
+export function getSecret(state, { name, namespace }) {
+  return secretSelectors.getSecret(state.secrets, name, namespace);
+}
+
 export function getSecretsErrorMessage(state) {
   return secretSelectors.getSecretsErrorMessage(state.secrets);
 }

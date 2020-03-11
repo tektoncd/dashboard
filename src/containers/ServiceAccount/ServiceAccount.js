@@ -14,6 +14,7 @@ limitations under the License.
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import '../../scss/Triggers.scss';
 import { injectIntl } from 'react-intl';
 import { InlineNotification, Tag } from 'carbon-components-react';
@@ -24,7 +25,7 @@ import {
   Tabs,
   ViewYAML
 } from '@tektoncd/dashboard-components';
-import { formatLabels } from '@tektoncd/dashboard-utils';
+import { formatLabels, urls } from '@tektoncd/dashboard-utils';
 import {
   getSecrets,
   getSelectedNamespace,
@@ -102,7 +103,7 @@ export /* istanbul ignore next */ class ServiceAccountContainer extends Componen
       selectedNamespace,
       serviceAccount
     } = this.props;
-    const { serviceAccountName } = match.params;
+    const { serviceAccountName, namespace } = match.params;
 
     if (error) {
       return ServiceAccountContainer.notification({
@@ -137,7 +138,18 @@ export /* istanbul ignore next */ class ServiceAccountContainer extends Componen
       rowsForSecrets = serviceAccount.secrets.map(({ name }) => {
         return {
           id: name,
-          name
+          name: (
+            <Link
+              to={urls.secrets.byName({
+                namespace,
+                secretName: name
+              })}
+              title={name}
+            >
+              {' '}
+              {name}
+            </Link>
+          )
         };
       });
     }

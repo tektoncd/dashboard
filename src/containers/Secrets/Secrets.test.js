@@ -58,6 +58,7 @@ const byNamespace = {
       metadata: {
         uid: '0',
         name: 'another-secret-with-label',
+        namespace: 'default',
         annotations: {
           'tekton.dev/git-0': 'https://github.com'
         },

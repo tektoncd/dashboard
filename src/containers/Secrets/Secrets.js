@@ -15,6 +15,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
+import { Link } from 'react-router-dom';
 import {
   InlineNotification,
   RadioButton,
@@ -22,7 +23,7 @@ import {
   Tooltip
 } from 'carbon-components-react';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
-import { getErrorMessage, getFilters } from '@tektoncd/dashboard-utils';
+import { getErrorMessage, getFilters, urls } from '@tektoncd/dashboard-utils';
 import { Add16 as Add, Delete16 as Delete } from '@carbon/icons-react';
 import { LabelFilter } from '..';
 import CreateSecret from '../CreateSecret';
@@ -307,7 +308,17 @@ export /* istanbul ignore next */ class Secrets extends Component {
       const formattedSecret = {
         annotations: <span title={annotations}>{annotations}</span>,
         id: `${secret.metadata.namespace}:${secret.metadata.name}`,
-        name: <span title={secret.metadata.name}>{secret.metadata.name}</span>,
+        name: (
+          <Link
+            to={urls.secrets.byName({
+              namespace: secret.metadata.namespace,
+              secretName: secret.metadata.name
+            })}
+            title={secret.metadata.name}
+          >
+            {secret.metadata.name}
+          </Link>
+        ),
         namespace: (
           <span title={secret.metadata.namespace}>
             {secret.metadata.namespace}

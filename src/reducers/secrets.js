@@ -173,6 +173,11 @@ export function getSecrets(state, namespace) {
   return Object.values(state.byNamespace[namespace] || []);
 }
 
+export function getSecret(state, name, namespace) {
+  const resources = state.byNamespace[namespace] || {};
+  return resources[name];
+}
+
 export function getPatchSecretsErrorMessage(state) {
   return state.patchErrorMessage;
 }
