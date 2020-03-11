@@ -14,13 +14,17 @@ limitations under the License.
 import {
   createCredential,
   deleteCredential,
+  getCredential,
   getCredentials,
   getServiceAccounts,
   patchServiceAccount,
   updateServiceAccountSecrets
 } from '../api';
 
-import { fetchNamespacedCollection } from './actionCreators';
+import {
+  fetchNamespacedCollection,
+  fetchNamespacedResource
+} from './actionCreators';
 
 export function fetchSecretsSuccess(data) {
   return {
@@ -33,6 +37,14 @@ export function fetchSecrets({ namespace } = {}) {
   return fetchNamespacedCollection('Secret', getCredentials, {
     namespace
   });
+}
+
+export function fetchSecret({ name, namespace } = {}) {
+  const secret = fetchNamespacedResource('Secret', getCredential, {
+    namespace,
+    name
+  });
+  return secret;
 }
 
 export function deleteSecret(secrets, cancelMethod) {

@@ -268,7 +268,7 @@ class SideNav extends Component {
           <SideNavLink
             element={NavLink}
             icon={<span />}
-            to={urls.secrets.all()}
+            to={this.getPath(urls.secrets.all())}
           >
             Secrets
           </SideNavLink>

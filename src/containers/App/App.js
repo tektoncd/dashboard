@@ -48,6 +48,7 @@ import {
   PipelineRuns,
   Pipelines,
   ResourceList,
+  Secret,
   Secrets,
   ServiceAccount,
   ServiceAccounts,
@@ -205,6 +206,16 @@ export /* istanbul ignore next */ class App extends Component {
                   )}
 
                   <Route path={paths.secrets.all()} exact component={Secrets} />
+                  <Route
+                    path={paths.secrets.byName()}
+                    exact
+                    component={Secret}
+                  />
+                  <Route
+                    path={paths.secrets.byNamespace()}
+                    exact
+                    component={Secrets}
+                  />
                   <Route
                     path={paths.serviceAccounts.byName()}
                     exact

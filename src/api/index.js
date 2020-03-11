@@ -301,8 +301,8 @@ export function getAllCredentials(namespace) {
   return get(uri);
 }
 
-export function getCredential(id, namespace) {
-  const uri = getKubeAPI('secrets', { name: id, namespace });
+export function getCredential(name, namespace) {
+  const uri = getKubeAPI('secrets', name, namespace);
   return get(uri);
 }
 

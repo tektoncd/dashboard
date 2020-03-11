@@ -28,10 +28,12 @@ const intl = createIntl({
 
 const secrets = [
   {
-    name: 'secret1'
+    name: 'secret1',
+    namespace: 'tekton-pipelines'
   },
   {
-    name: 'imagePull1'
+    name: 'imagePull1',
+    namespace: 'tekton-pipelines'
   }
 ];
 
@@ -358,7 +360,8 @@ it('ServiceAccountContainer renders details with no secret nor imagePullSecrets 
 it('ServiceAccountContainer renders secrets', async () => {
   const match = {
     params: {
-      serviceAccountName: 'service-account-simple'
+      serviceAccountName: 'service-account-simple',
+      namespace: 'tekton-pipelines'
     }
   };
 

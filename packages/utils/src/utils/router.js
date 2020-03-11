@@ -86,6 +86,12 @@ export const paths = {
   secrets: {
     all() {
       return '/secrets';
+    },
+    byName() {
+      return byNamespace({ path: '/secrets/:secretName' });
+    },
+    byNamespace() {
+      return byNamespace({ path: '/secrets' });
     }
   },
   serviceAccounts: {
