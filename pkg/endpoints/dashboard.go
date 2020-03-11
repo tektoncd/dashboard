@@ -162,7 +162,14 @@ func getPipelineDeployments(r Resource, namespace string) string {
 	}
 
 	for _, deployment := range deployments.Items {
-		deploymentAnnotations := deployment.Spec.Template.GetAnnotations()
+		deploymentLabels := deployment.GetLabels()
+		labelsToCheck := []string{"pipeline.tekton.dev/release", "version"} // To handle both beta and pre-beta versions
+		for _, label := range labelsToCheck {
+			potentialVersion := deploymentLabels[label]
+			if potentialVersion != "" {
+				version = potentialVersion
+			}
+		}
 
 		if namespace == "openshift-pipelines" {
 			deploymentImage := deployment.Spec.Template.Spec.Containers[0].Image
@@ -174,14 +181,13 @@ func getPipelineDeployments(r Resource, namespace string) string {
 			}
 		}
 
-		// For master of Tekton Pipelines
-		if version == "" {
-			version = deploymentAnnotations["pipeline.tekton.dev/release"]
-		}
-
-		// For Tekton Pipelines 0.10.0 + 0.10.1
-		if version == "" {
-			version = deploymentAnnotations["tekton.dev/release"]
+		deploymentAnnotations := deployment.Spec.Template.GetAnnotations()
+		annotationsToCheck := []string{"pipeline.tekton.dev/release", "tekton.dev/release"} // To handle 0.10.0 and 0.10.1
+		for _, label := range annotationsToCheck {
+			potentialVersion := deploymentAnnotations[label]
+			if potentialVersion != "" {
+				version = potentialVersion
+			}
 		}
 
 		// For Tekton Pipelines 0.9.0 - 0.9.2
