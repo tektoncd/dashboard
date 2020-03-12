@@ -91,7 +91,7 @@ export /* istanbul ignore next */ class CreateSecret extends Component {
 
   handleChangeNamespace = e => {
     const stateVar = 'namespace';
-    const stateValue = e.selectedItem.text;
+    const stateValue = e.selectedItem ? e.selectedItem.text : '';
     this.setState(prevState => {
       const newInvalidFields = prevState.invalidFields;
       if (validateInputs(stateValue, stateVar)) {

@@ -426,3 +426,20 @@ it("Create Secret doesn't error when a password is entered", () => {
   expect(queryByText(passwordValidationErrorRegExp)).toBeFalsy();
   expect(queryByText(serverurlValidationErrorRegExp)).toBeFalsy();
 });
+
+it('Can clear the selected namespace', () => {
+  const {
+    queryByText,
+    getByTitle,
+    getByText,
+    getByPlaceholderText
+  } = renderWithIntl(
+    <Provider store={store}>
+      <CreateSecret {...props} />
+    </Provider>
+  );
+  fireEvent.click(getByPlaceholderText(/select namespace/i));
+  fireEvent.click(getByText(/default/i));
+  fireEvent.click(getByTitle(/Clear selected item/i));
+  expect(queryByText('default')).toBeFalsy();
+});
