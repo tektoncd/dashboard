@@ -82,6 +82,10 @@ export /* istanbul ignore next */ class Secrets extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this.props.clearNotification();
+  }
+
   fetchData = () => {
     const { filters, namespace } = this.props;
     this.props.fetchSecrets({
