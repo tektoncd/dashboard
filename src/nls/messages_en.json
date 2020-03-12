@@ -170,6 +170,7 @@
     "dashboard.resource.detailsTab": "Details",
     "dashboard.resourceList.emptyState": "No resources for type {type}.",
     "dashboard.resourceList.errorLoading": "Error loading {type}",
+    "dashboard.secretType.helper": "Use Password if you plan to\n                have a PipelineRun that clones from a Git\n                repository or image registry that requires authentication. \n\n                Use Access Token when interacting with webhooks or PullRequest resources. \n                \n                Check the official Tekton Pipelines documentation for more details.",
     "dashboard.secrets.deleteConfirm": "Are you sure you want to delete these secrets?",
     "dashboard.secrets.deleteHeading": "Delete Secret",
     "dashboard.secrets.deleteSuccess": "Secret deleted successfully",
