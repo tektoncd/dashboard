@@ -17,7 +17,8 @@ import {
   FormGroup,
   RadioButton,
   RadioButtonGroup,
-  TextInput
+  TextInput,
+  Tooltip
 } from 'carbon-components-react';
 import NamespacesDropdown from '../../../containers/NamespacesDropdown';
 
@@ -74,11 +75,26 @@ const UniversalFields = props => {
         disabled={loading}
       />
       <FormGroup
-        legendText={intl.formatMessage({
-          id: 'dashboard.universalFields.secretType',
-          defaultMessage: 'Type'
-        })}
         disabled={loading}
+        legendText={
+          <Tooltip
+            direction="right"
+            tabIndex={0}
+            tooltipBodyId="secret-type-helper"
+            triggerText={intl.formatMessage({
+              id: 'dashboard.secretType.type',
+              defaultMessage: 'Secret type'
+            })}
+          >
+            <div className="secretHelper">
+              {intl.formatMessage({
+                id: 'dashboard.secretType.helper',
+                defaultMessage:
+                  'Use Password with git or image PipelineResources that require authentication. Use Access Token with webhooks or with pullRequest PipelineResources. Check the Tekton Pipelines documentation for more details on authentication.'
+              })}
+            </div>
+          </Tooltip>
+        }
       >
         <RadioButtonGroup
           legend={intl.formatMessage({
