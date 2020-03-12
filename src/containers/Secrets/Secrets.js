@@ -11,6 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import './Secrets.scss';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
@@ -18,7 +19,8 @@ import isEqual from 'lodash.isequal';
 import {
   InlineNotification,
   RadioButton,
-  RadioButtonGroup
+  RadioButtonGroup,
+  Tooltip
 } from 'carbon-components-react';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 import { getErrorMessage, getFilters } from '@tektoncd/dashboard-utils';
@@ -384,6 +386,26 @@ export /* istanbul ignore next */ class Secrets extends Component {
           <>
             <h1>Secrets</h1>
             <LabelFilter {...this.props} />
+            <Tooltip
+              className="secretHelperTooltip"
+              direction="bottom"
+              tabIndex={0}
+              tooltipBodyId="secret-type-helper"
+              triggerText="Secret type"
+            >
+              <div className="secretHelper">
+                {intl.formatMessage({
+                  id: 'dashboard.secretType.helper',
+                  defaultMessage: `Use Password if you plan to
+                have a PipelineRun that clones from a Git
+                repository or image registry that requires authentication. 
+
+                Use Access Token when interacting with webhooks or PullRequest resources. 
+                
+                Check the official Tekton Pipelines documentation for more details.`
+                })}
+              </div>
+            </Tooltip>
             <RadioButtonGroup
               legend={intl.formatMessage({
                 id: 'dashboard.universalFields.secretType',
