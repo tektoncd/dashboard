@@ -107,7 +107,7 @@ export class ImportResources extends Component {
     if (selectedItem) {
       this.setState({ invalidNamespace: false, namespace: selectedItem.id });
     } else {
-      this.setState({ invalidNamespace: true });
+      this.setState({ invalidNamespace: true, namespace: '' });
     }
   };
 
