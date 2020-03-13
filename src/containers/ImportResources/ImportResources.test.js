@@ -291,4 +291,21 @@ describe('ImportResources component', () => {
 
     await waitForElement(() => queryByDisplayValue(/Invalid URL here/i));
   });
+
+  it('Can clear the selected namespace', async () => {
+    const {
+      getByPlaceholderText,
+      getByText,
+      getByTitle,
+      queryByText
+    } = await renderWithIntl(
+      <Provider store={store}>
+        <ImportResourcesContainer />
+      </Provider>
+    );
+    fireEvent.click(getByPlaceholderText(/select namespace/i));
+    fireEvent.click(getByText(/default/i));
+    fireEvent.click(getByTitle(/Clear selected item/i));
+    expect(queryByText('default')).toBeFalsy();
+  });
 });
