@@ -274,7 +274,10 @@ export /* istanbul ignore next */ class Secrets extends Component {
       const serviceAccountsWithSecret = [];
       serviceAccounts.forEach(serviceAccount => {
         serviceAccount.secrets.forEach(secretInServiceAccount => {
-          if (secretInServiceAccount.name === secret.metadata.name) {
+          if (
+            secretInServiceAccount.name === secret.metadata.name &&
+            serviceAccount.metadata.namespace === secret.metadata.namespace
+          ) {
             serviceAccountsWithSecret.push(serviceAccount.metadata.name);
           }
         });

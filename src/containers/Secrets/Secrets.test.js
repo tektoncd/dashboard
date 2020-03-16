@@ -43,6 +43,7 @@ const byNamespace = {
       metadata: {
         uid: '0',
         name: 'github-repo-access-secret',
+        namespace: 'default',
         annotations: {
           'tekton.dev/git-0': 'https://github.ibm.com',
           badannotation: 'badcontent'
