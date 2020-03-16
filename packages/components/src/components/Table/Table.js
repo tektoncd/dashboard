@@ -138,6 +138,7 @@ const Table = props => {
   return (
     <div className="tableComponent">
       <DataTable
+        key={selectedNamespace}
         rows={dataRows}
         headers={dataHeaders}
         isSortable={isSortable}
