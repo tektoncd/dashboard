@@ -29,7 +29,7 @@ import {
   isWebSocketConnected
 } from '../../reducers';
 import { fetchServiceAccounts } from '../../actions/serviceAccounts';
-
+import { selectNamespace } from '../../actions/namespaces';
 import '../../components/CreateSecret/CreateSecret.scss';
 
 const defaultGithubServerURL = 'https://github.com';
@@ -197,14 +197,14 @@ export /* istanbul ignore next */ class CreateSecret extends Component {
     });
   };
 
-  handleSubmit = () => {
+  handleSubmit = namespace => {
+    this.props.selectNamespace(namespace);
     const invalidFields = {};
     let postData;
 
     const {
       annotations,
       name,
-      namespace,
       accessToken,
       username,
       password,
@@ -343,7 +343,7 @@ export /* istanbul ignore next */ class CreateSecret extends Component {
             {...this.state}
             loading={loading}
             handleClose={() => handleClose(namespace)}
-            submit={this.handleSubmit}
+            submit={() => this.handleSubmit(namespace)}
             handleChangeTextInput={this.handleChangeTextInput}
             handleChangeNamespace={this.handleChangeNamespace}
             handleSecretType={this.handleSecretType}
@@ -388,7 +388,8 @@ function mapStateToProps(state) {
 const mapDispatchToProps = {
   createSecret,
   fetchServiceAccounts,
-  patchSecret
+  patchSecret,
+  selectNamespace
 };
 
 export default connect(
