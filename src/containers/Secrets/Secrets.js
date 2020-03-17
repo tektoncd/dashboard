@@ -41,7 +41,6 @@ import {
   getDeleteSecretsSuccessMessage,
   getPatchSecretsSuccessMessage,
   getSecrets,
-  getSecretsErrorMessage,
   getSelectedNamespace,
   getServiceAccounts,
   isFetchingSecrets,
@@ -499,8 +498,7 @@ function mapStateToProps(state, props) {
   const namespace = namespaceParam || getSelectedNamespace(state);
 
   return {
-    errorMessage:
-      getDeleteSecretsErrorMessage(state) || getSecretsErrorMessage(state),
+    errorMessage: getDeleteSecretsErrorMessage(state),
     deleteSuccess: getDeleteSecretsSuccessMessage(state),
     isReadOnly: isReadOnly(state),
     patchSuccess: getPatchSecretsSuccessMessage(state),
