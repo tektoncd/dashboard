@@ -169,7 +169,10 @@ export function deleteTaskRun({ name, namespace }) {
 }
 
 export function createPipelineResource({ namespace, resource } = {}) {
-  const uri = getTektonAPI('pipelineresources', { namespace });
+  const uri = getTektonAPI('pipelineresources', {
+    namespace,
+    version: 'v1alpha1'
+  });
   return post(uri, resource);
 }
 
