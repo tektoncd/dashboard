@@ -151,9 +151,7 @@ describe('Trigger', () => {
     expect(queryByText(/gitlab-event-2/i)).toBeTruthy();
     // Check CEL Interceptor
     expect(queryByText(/(cel)/i)).toBeTruthy();
-    expect(queryByText(/cel-filter/i)).toBeTruthy();
     expect(queryByText(/key/i)).toBeTruthy();
-    expect(queryByText(/expression/i)).toBeTruthy();
   });
 
   it('handles no objectRef in webhook Interceptor', () => {
