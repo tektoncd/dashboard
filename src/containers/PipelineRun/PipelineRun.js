@@ -162,6 +162,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           logDownloadButton={LogDownloadButton}
           pipelineRun={pipelineRun}
           showIO
+          sortTaskRuns
           tasks={tasks}
           taskRuns={taskRuns}
           rerun={rerun}
