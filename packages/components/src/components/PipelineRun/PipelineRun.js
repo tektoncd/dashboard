@@ -185,6 +185,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       pollingInterval,
       rerun,
       showIO,
+      sortTaskRuns,
       triggerHeader
     } = this.props;
 
@@ -278,7 +279,9 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     }
     const taskRuns = this.loadTaskRuns(pipelineRun, taskRunNames);
 
-    this.sortTaskRuns(taskRuns);
+    if (sortTaskRuns) {
+      this.sortTaskRuns(taskRuns);
+    }
 
     if (taskRuns.length === 0) {
       return (
@@ -354,5 +357,9 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     );
   }
 }
+
+PipelineRunContainer.defaultProps = {
+  sortTaskRuns: false
+};
 
 export default injectIntl(PipelineRunContainer);
