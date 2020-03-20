@@ -53,7 +53,9 @@ Tekton Dashboard is a general purpose, web-based UI for Tekton Pipelines. It all
    append the `--watch` flag to view the component's status updates in real
    time. Use CTRL + C to exit watch mode.
 
-You are now ready to use the Tekton Dashboard, optionally with the Tekton Webhooks Extension (see our [Getting Started](https://github.com/tektoncd/experimental/blob/master/webhooks-extension/docs/GettingStarted.md) guide).
+Once the dashboard `STATUS` is `Running`, the dashboard can be accessed by following instructions in the [Accessing the Dashboard](#accessing-the-dashboard) section. 
+
+Optionally, the dashboard can be used with the Tekton Webhooks Extension (see our [Getting Started](https://github.com/tektoncd/experimental/blob/master/webhooks-extension/docs/GettingStarted.md) guide).
 
 ### Installing a nightly build
 
@@ -153,6 +155,12 @@ If you want to install the Dashboard into any other namespace:
 
 3. Wait until the pod `tekton-dashboard-1` is running in the namespace the Dashboard is installed into
 
+## Accessing the Dashboard
+
+The Dashboard can be accessed through its ClusterIP Service by running `kubectl proxy`. Assuming tekton-pipelines is the install namespace for the Dashboard, you can access the web UI at `localhost:8001/api/v1/namespaces/tekton-pipelines/services/tekton-dashboard:http/proxy/`.
+
+An alternative way to access the Dashboard is using `kubectl port-forward` e.g. if you installed the Tekton Dashboard into the `tekton-pipelines` namespace (which is the default) you can access the Dashboard with `kubectl --namespace tekton-pipelines port-forward svc/tekton-dashboard 9097:9097` and then just open `localhost:9097`.
+
 ## Accessing the Dashboard on Minishift
 
 The Dashboard can be accessed by running `kubectl --namespace tekton-pipelines port-forward svc/tekton-dashboard 9097:9097`
@@ -162,12 +170,6 @@ You can access the web UI at `http://localhost:9097/`
 ## Uninstalling the Dashboard on Minishift
 
 The Dashboard can be uninstalled on Minishift by running the command `./minishift-delete-dashboard.sh` Use `-n {NAMESPACE}` on the end of the command if installed into a namespace other than `tekton-pipelines`
-
-## Accessing the Dashboard
-
-The Dashboard can be accessed through its ClusterIP Service by running `kubectl proxy`. Assuming tekton-pipelines is the install namespace for the Dashboard, you can access the web UI at `localhost:8001/api/v1/namespaces/tekton-pipelines/services/tekton-dashboard:http/proxy/`.
-
-An alternative way to access the Dashboard is using `kubectl port-forward` e.g. if you installed the Tekton Dashboard into the `tekton-pipelines` namespace (which is the default) you can access the Dashboard with `kubectl --namespace tekton-pipelines port-forward svc/tekton-dashboard 9097:9097` and then just open `localhost:9097`.
 
 ## Troubleshooting
 
