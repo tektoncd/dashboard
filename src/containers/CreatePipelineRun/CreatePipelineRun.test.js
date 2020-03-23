@@ -16,7 +16,8 @@ import {
   cleanup,
   fireEvent,
   wait,
-  waitForElement
+  waitForElement,
+  waitForElementToBeRemoved
 } from 'react-testing-library';
 
 import { Provider } from 'react-redux';
@@ -435,6 +436,9 @@ describe('CreatePipelineRun', () => {
       </Provider>
     );
     await waitForElement(() => getByText(/pipeline-1/i));
+    if (queryByText(/namespace-1/i)) {
+      await waitForElementToBeRemoved(() => queryByText(/namespace-1/i));
+    }
     expect(queryByText(/namespace-1/i)).toBeFalsy();
     expect(queryByText(/pipeline-1/i)).toBeTruthy();
     // Verify spec details are displayed
