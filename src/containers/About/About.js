@@ -29,6 +29,7 @@ const propertiesToCheck = [
   'InstallNamespace',
   'DashboardVersion',
   'PipelineVersion',
+  'TriggersVersion',
   'IsOpenShift',
   'ReadOnly'
 ];
@@ -119,7 +120,7 @@ export /* istanbul ignore next */ class About extends Component {
     if (dashboardInfo && !loading) {
       propertiesToCheck.forEach(property => {
         const value = this.getDisplayValue(dashboardInfo[property]);
-        if (value) {
+        if (value && value !== 'Not Installed') {
           rows.push({
             id: property,
             property,

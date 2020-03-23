@@ -32,6 +32,7 @@ type Properties struct {
 	InstallNamespace string
 	DashboardVersion string
 	PipelineVersion  string
+	TriggersVersion  string
 	IsOpenShift      bool
 	ReadOnly         bool
 }
@@ -170,6 +171,13 @@ func (r Resource) GetProperties(request *restful.Request, response *restful.Resp
 	isOpenShift := IsOpenShift(r, installedNamespace)
 	isReadOnly := IsReadOnly()
 	pipelineVersion := GetPipelineVersion(r, isOpenShift)
+	isTriggersInstalled := IsTriggersInstalled(r, isOpenShift)
+	triggersVersion := ""
+	if isTriggersInstalled == false {
+		triggersVersion = "Not Installed"
+	} else {
+		triggersVersion = GetTriggersVersion(r, isOpenShift)
+	}
 
 	properties := Properties{
 		InstallNamespace: os.Getenv("INSTALLED_NAMESPACE"),
@@ -177,6 +185,7 @@ func (r Resource) GetProperties(request *restful.Request, response *restful.Resp
 		PipelineVersion:  pipelineVersion,
 		IsOpenShift:      isOpenShift,
 		ReadOnly:         isReadOnly,
+		TriggersVersion:  triggersVersion,
 	}
 	logging.Log.Debugf("Writing install properties: %s", properties)
 	response.WriteEntity(properties)
