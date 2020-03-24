@@ -484,6 +484,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
         {openNewSecret && (
           <CreateSecret
             handleClose={this.handleCloseNewSecret}
+            handleSelectedType={this.handleSelectedType}
             secrets={secrets}
           />
         )}
