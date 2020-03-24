@@ -105,10 +105,6 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       status: { taskRuns: taskRunDetails }
     } = pipelineRun;
 
-    if (!pipelineRun.status || !pipelineRun.status.taskRuns) {
-      return [];
-    }
-
     return taskRuns
       .map(taskRun => {
         let taskSpec;
@@ -166,7 +162,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
             taskRun.status.steps,
             taskSpec.steps
           );
-          steps = stepsStatus(reorderedSteps, reorderedSteps);
+          steps = stepsStatus(reorderedSteps, taskRun.status.steps);
         }
 
         return {
