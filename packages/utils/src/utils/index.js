@@ -102,11 +102,12 @@ export function stepsStatus(taskSteps, taskRunStepsStatus = []) {
     include that step in the displayed list so we can surface status
     and logs to aid the user in debugging.
    */
+  const failedInitSteps = [];
   taskRunStepsStatus.forEach(stepStatus => {
     const { name: stepName, terminated } = stepStatus;
     const step = taskSteps.find(taskStep => taskStep.name === stepName);
     if (!step && terminated && terminated.exitCode !== 0) {
-      steps.push({
+      failedInitSteps.push({
         reason: terminated.reason,
         status: 'terminated',
         stepStatus,
@@ -116,7 +117,7 @@ export function stepsStatus(taskSteps, taskRunStepsStatus = []) {
     }
   });
 
-  return steps;
+  return failedInitSteps.concat(steps);
 }
 
 /*
