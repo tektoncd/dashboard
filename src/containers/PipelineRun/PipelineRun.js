@@ -94,7 +94,15 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   }
 
   render() {
-    const { error, intl, match, pipelineRun, tasks, taskRuns } = this.props;
+    const {
+      clusterTasks,
+      error,
+      intl,
+      match,
+      pipelineRun,
+      tasks,
+      taskRuns
+    } = this.props;
 
     if (!pipelineRun) {
       return (
@@ -163,7 +171,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           pipelineRun={pipelineRun}
           showIO
           sortTaskRuns
-          tasks={tasks}
+          tasks={tasks.concat(clusterTasks)}
           taskRuns={taskRuns}
           rerun={rerun}
         />
