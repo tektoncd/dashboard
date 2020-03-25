@@ -21,11 +21,12 @@ function byNamespace(state = {}, action) {
     case 'SECRETS_FETCH_SUCCESS':
       const namespaces = action.data.reduce((accumulator, secret) => {
         const { metadata } = secret;
-        if (isStale({ metadata }, state, 'name')) {
+        const { name, namespace } = metadata;
+        const secretsState = state[namespace] || {};
+        if (isStale({ metadata }, secretsState, 'name')) {
           return state;
         }
 
-        const { name, namespace } = metadata;
         return merge(accumulator, {
           [namespace]: {
             [name]: { ...secret }
@@ -35,8 +36,9 @@ function byNamespace(state = {}, action) {
       return merge({}, state, namespaces);
     case 'SecretCreated':
     case 'SecretUpdated':
+      const secretsState = state[action.payload.metadata.namespace] || {};
       if (
-        isStale(action.payload, state, 'name') ||
+        isStale(action.payload, secretsState, 'name') ||
         action.payload.type !== 'kubernetes.io/basic-auth'
       ) {
         return state;
