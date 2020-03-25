@@ -24,6 +24,7 @@ describe('About', () => {
       InstallNamespace: 'tekton-pipelines',
       DashboardVersion: 'v0.100.0',
       PipelineVersion: 'v0.10.0',
+      TriggersVersion: 'v0.3.1',
       IsOpenShift: true,
       ReadOnly: true
     }));
@@ -39,6 +40,8 @@ describe('About', () => {
     expect(queryByText('v0.100.0')).toBeTruthy();
     expect(queryByText('PipelineVersion')).toBeTruthy();
     expect(queryByText('v0.10.0')).toBeTruthy();
+    expect(queryByText('TriggersVersion')).toBeTruthy();
+    expect(queryByText('v0.3.1')).toBeTruthy();
     expect(queryByText('IsOpenShift')).toBeTruthy();
     expect(queryByText('ReadOnly')).toBeTruthy();
     expect(queryByText('True')).toBeTruthy();
@@ -84,9 +87,25 @@ describe('About', () => {
     expect(queryByText('tekton-pipelines')).toBeTruthy();
     expect(queryByText('Error getting data')).toBeTruthy();
     expect(
-      queryByText(
-        'Could not find: DashboardVersion, PipelineVersion, IsOpenShift, ReadOnly'
-      )
+      queryByText('Could not find: DashboardVersion, PipelineVersion')
     ).toBeTruthy();
+  });
+
+  it('should not display TiggersVersion when value is not returned in the API', async () => {
+    jest.spyOn(API, 'getInstallProperties').mockImplementation(() => ({
+      InstallNamespace: 'tekton-pipelines',
+      DashboardVersion: 'v0.100.0',
+      PipelineVersion: 'v0.10.0'
+    }));
+
+    const { queryByText } = renderWithIntl(<About />);
+
+    await waitForElement(() => queryByText('Property'));
+    expect(API.getInstallProperties).toHaveBeenCalledTimes(1);
+    expect(queryByText('Property')).toBeTruthy();
+    expect(queryByText('Value')).toBeTruthy();
+    expect(queryByText('InstallNamespace')).toBeTruthy();
+    expect(queryByText('tekton-pipelines')).toBeTruthy();
+    expect(queryByText('TriggersVersion')).toBeFalsy();
   });
 });

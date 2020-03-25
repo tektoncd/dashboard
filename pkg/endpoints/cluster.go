@@ -29,11 +29,12 @@ import (
 
 // Properties : properties we want to be able to retrieve via REST
 type Properties struct {
-	InstallNamespace string
-	DashboardVersion string
-	PipelineVersion  string
-	IsOpenShift      bool
-	ReadOnly         bool
+	InstallNamespace string `json:"InstallNamespace"`
+	DashboardVersion string `json:"DashboardVersion"`
+	PipelineVersion  string `json:"PipelineVersion"`
+	TriggersVersion  string `json:"TriggersVersion,omitempty"`
+	IsOpenShift      bool   `json:"IsOpenShift"`
+	ReadOnly         bool   `json:"ReadOnly"`
 }
 
 const (
@@ -163,21 +164,22 @@ func (r Resource) GetEndpoints(request *restful.Request, response *restful.Respo
 
 // GetProperties is used to get the installed namespace for the Dashboard,
 // the version of the Tekton Dashboard, the version of Tekton Pipelines, whether or not one's
-// running on OpenShift and when one's in read-only mode
+// running on OpenShift, when one's in read-only mode and Tekton Triggers version (if Installed)
 func (r Resource) GetProperties(request *restful.Request, response *restful.Response) {
+	properties := Properties{}
 	installedNamespace := os.Getenv("INSTALLED_NAMESPACE")
 	dashboardVersion := GetDashboardVersion(r, installedNamespace)
 	isOpenShift := IsOpenShift(r, installedNamespace)
 	isReadOnly := IsReadOnly()
 	pipelineVersion := GetPipelineVersion(r, isOpenShift)
 
-	properties := Properties{
-		InstallNamespace: os.Getenv("INSTALLED_NAMESPACE"),
-		DashboardVersion: dashboardVersion,
-		PipelineVersion:  pipelineVersion,
-		IsOpenShift:      isOpenShift,
-		ReadOnly:         isReadOnly,
+	isTriggersInstalled := IsTriggersInstalled(r, isOpenShift)
+	if isTriggersInstalled == false {
+		properties = Properties{InstallNamespace: installedNamespace, DashboardVersion: dashboardVersion, PipelineVersion: pipelineVersion, IsOpenShift: isOpenShift, ReadOnly: isReadOnly}
+	} else {
+		triggersVersion := GetTriggersVersion(r, isOpenShift)
+		properties = Properties{InstallNamespace: installedNamespace, DashboardVersion: dashboardVersion, PipelineVersion: pipelineVersion, TriggersVersion: triggersVersion, IsOpenShift: isOpenShift, ReadOnly: isReadOnly}
 	}
-	logging.Log.Debugf("Writing install properties: %s", properties)
+
 	response.WriteEntity(properties)
 }
