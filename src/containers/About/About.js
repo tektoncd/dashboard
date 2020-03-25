@@ -26,11 +26,12 @@ const initialState = {
 };
 
 const propertiesToCheck = [
-  'InstallNamespace',
-  'DashboardVersion',
-  'PipelineVersion',
-  'IsOpenShift',
-  'ReadOnly'
+  { property: 'InstallNamespace', required: true },
+  { property: 'DashboardVersion', required: true },
+  { property: 'PipelineVersion', required: true },
+  { property: 'TriggersVersion' },
+  { property: 'IsOpenShift' },
+  { property: 'ReadOnly' }
 ];
 
 export /* istanbul ignore next */ class About extends Component {
@@ -44,10 +45,8 @@ export /* istanbul ignore next */ class About extends Component {
     const { intl } = this.props;
     const { dashboardInfo } = this.state;
     const errorsFound = propertiesToCheck
-      .map(property =>
-        dashboardInfo[property] || dashboardInfo[property] === false
-          ? null
-          : property
+      .map(({ property, required }) =>
+        dashboardInfo[property] || !required ? null : property
       )
       .filter(Boolean);
 
@@ -117,7 +116,7 @@ export /* istanbul ignore next */ class About extends Component {
 
     const rows = [];
     if (dashboardInfo && !loading) {
-      propertiesToCheck.forEach(property => {
+      propertiesToCheck.forEach(({ property }) => {
         const value = this.getDisplayValue(dashboardInfo[property]);
         if (value) {
           rows.push({
