@@ -43,6 +43,7 @@ export { default as Table } from './Table';
 export { default as Tabs } from './Tabs';
 export { default as Task } from './Task';
 export { default as TaskRuns } from './TaskRuns';
+export { default as TaskRunStatus } from './TaskRunStatus';
 export { default as TaskSkeleton } from './TaskSkeleton';
 export { default as TaskTree } from './TaskTree';
 export { default as TooltipDropdown } from './TooltipDropdown';
