@@ -150,9 +150,8 @@ it('KeyValueList add and remove buttons work', () => {
     onAdd: jest.fn(),
     onRemove: jest.fn()
   };
-  const { getByText } = renderWithIntl(<KeyValueList {...props} />);
+  const { getByText, getByTitle } = renderWithIntl(<KeyValueList {...props} />);
 
-  const removeButton = getByText(/Remove/i);
   const addButton = getByText(/Add/i);
 
   fireEvent.click(addButton);
@@ -161,9 +160,9 @@ it('KeyValueList add and remove buttons work', () => {
   fireEvent.click(addButton);
   fireEvent.click(addButton);
 
-  fireEvent.click(removeButton);
-  fireEvent.click(removeButton);
-  fireEvent.click(removeButton);
+  fireEvent.click(getByTitle(/Remove/i));
+  fireEvent.click(getByTitle(/Remove/i));
+  fireEvent.click(getByTitle(/Remove/i));
 
   expect(props.onAdd).toHaveBeenCalledTimes(5);
   expect(props.onRemove).toHaveBeenCalledTimes(3);

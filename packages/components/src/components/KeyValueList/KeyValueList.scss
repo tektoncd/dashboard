@@ -15,49 +15,43 @@ limitations under the License.
 
 .keyvalues {
   margin-bottom: $spacing-06;
+
   .invalidKeyvalue {
     color: #da1e28;
     font-weight: 400;
     font-size: 0.75rem;
     letter-spacing: 0.32px;
   }
-  .labelAndButtons {
-    display: flex;
-    align-items: space-between;
-    .label {
-      color: $text-02;
-      font-size: 12px;
-      height: 29px;
-      flex: 1;
-      text-align: left;
-      margin: auto;
-    }
-    .bx--btn--ghost:disabled {
-      outline: transparent;
-    }
+
+  .label {
+    color: $text-02;
+    font-size: 12px;
+    height: 29px;
+    flex: 1;
+    text-align: left;
+    margin: auto;
   }
+
   .keyvalueRow {
     position: relative;
     display: flex;
     align-items: center;
     margin-bottom: 5px;
+
     .bx--form-item.bx--text-input-wrapper {
       width: 48%;
       display: inline-flex;
       margin-bottom: 0;
+      margin-right: $spacing-05;
     }
-    .colon {
-      display: inline-block;
-      width: 4%;
-      text-align: center;
+
+    .bx--text-input-wrapper:first-child {
+      margin-right: $spacing-07;
     }
-    .deleteInputIcon {
-      position: absolute;
-      right: 1rem;
-      &:hover {
-        fill: $hover-secondary;
-        cursor: pointer;
-      }
+
+    .removeIcon {
+      fill: $interactive-01;
+      cursor: pointer;
     }
   }
 }
