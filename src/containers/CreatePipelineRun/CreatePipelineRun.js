@@ -220,35 +220,30 @@ class CreatePipelineRun extends React.Component {
     }));
   };
 
-  handleRemoveLabel = () => {
+  handleRemoveLabel = index => {
     this.setState(prevState => {
-      // Update labels
       const labels = [...prevState.labels];
-      const removedLabel = labels.pop();
-      // Update invalidLabels
       const invalidLabels = { ...prevState.invalidLabels };
-      if (removedLabel) {
+      const removedLabel = labels[index];
+      labels.splice(index, 1);
+      if (removedLabel.id in invalidLabels) {
         delete invalidLabels[`${removedLabel.id}-key`];
         delete invalidLabels[`${removedLabel.id}-value`];
       }
-      // Return new state
       return { labels, invalidLabels };
     });
   };
 
   handleChangeLabel = ({ type, index, value }) => {
     this.setState(prevState => {
-      // Update labels
       const labels = [...prevState.labels];
       labels[index][type] = value;
-      // Update invalidLabels
       const invalidLabels = { ...prevState.invalidLabels };
       if (!isValidLabel(type, value)) {
         invalidLabels[`${labels[index].id}-${type}`] = true;
       } else {
         delete invalidLabels[`${labels[index].id}-${type}`];
       }
-      // Return new state
       return { labels, invalidLabels };
     });
   };
