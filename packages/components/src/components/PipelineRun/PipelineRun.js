@@ -28,7 +28,7 @@ import {
   updateUnexecutedSteps
 } from '@tektoncd/dashboard-utils';
 
-import { Log, RunHeader, StepDetails, TaskTree } from '..';
+import { Log, RunHeader, StepDetails, TaskRunStatus, TaskTree } from '..';
 
 import '../../scss/Run.scss';
 
@@ -178,7 +178,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           inputResources,
           outputResources,
           params,
-          annotations
+          annotations,
+          status: taskRun.status
         };
       })
       .filter(Boolean);
@@ -350,7 +351,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
             selectedTaskId={selectedTaskId}
             taskRuns={taskRuns}
           />
-          {selectedStepId && (
+          {(selectedStepId && (
             <StepDetails
               definition={definition}
               logContainer={logContainer}
@@ -361,7 +362,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
               stepStatus={stepStatus}
               taskRun={taskRun}
             />
-          )}
+          )) ||
+            (selectedTaskId && <TaskRunStatus taskRun={taskRun} />)}
         </div>
       </>
     );
