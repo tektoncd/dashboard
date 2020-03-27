@@ -40,8 +40,11 @@ const task = {
 const taskRun = {
   metadata: { name: 'sampleTaskRunName', namespace: 'default' },
   spec: {
-    inputs: {},
-    outputs: {},
+    params: {},
+    resources: {
+      inputs: {},
+      outputs: {}
+    },
     serviceAccountName: 'default',
     taskRef: { kind: 'Task', name: 'task1' },
     timeout: '24h0m0s'
