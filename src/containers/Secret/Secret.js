@@ -72,7 +72,7 @@ export /* istanbul ignore next */ class SecretContainer extends Component {
 
     if (serviceAccounts) {
       serviceAccounts.forEach(serviceAccount => {
-        serviceAccount.secrets.forEach(secretInServiceAccount => {
+        (serviceAccount.secrets || []).forEach(secretInServiceAccount => {
           if (secretInServiceAccount.name === secret.metadata.name) {
             serviceAccountsWithSecret.push(serviceAccount.metadata.name);
           }
