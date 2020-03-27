@@ -237,7 +237,8 @@ const Trigger = ({ intl, eventListenerNamespace, trigger }) => {
                   }
                 ];
 
-                const rows = interceptor.cel.overlays.map(overlay => ({
+                const overlays = interceptor.cel.overlays || [];
+                const rows = overlays.map(overlay => ({
                   id: overlay.key, // assuming key is unique
                   key: overlay.key,
                   expression: overlay.expression
