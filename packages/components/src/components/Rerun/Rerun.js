@@ -41,8 +41,8 @@ export class Rerun extends Component {
         });
         this.props.setShowRerunNotification({
           message: intl.formatMessage({
-            id: 'dashboard.rerun.success',
-            defaultMessage: 'Rerun successful'
+            id: 'dashboard.rerun.triggered',
+            defaultMessage: 'Triggered rerun'
           }),
           kind: 'success',
           logsURL: finalURL
