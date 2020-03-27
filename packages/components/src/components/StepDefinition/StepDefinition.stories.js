@@ -24,10 +24,10 @@ storiesOf('Components/StepDefinition', module)
         args: [
           'build',
           '-f',
-          '${inputs.params.pathToDockerFile}',
+          '${params.pathToDockerFile}',
           '-t',
-          '${outputs.resources.builtImage.url}',
-          '${inputs.params.pathToContext}'
+          '${resources.outputs.builtImage.url}',
+          '${params.pathToContext}'
         ],
         command: ['docker'],
         image: 'docker',

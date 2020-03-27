@@ -39,8 +39,11 @@ it('PipelineRunContainer handles init step failures', async () => {
       labels: {}
     },
     spec: {
-      inputs: {},
-      outputs: {},
+      params: {},
+      resources: {
+        inputs: {},
+        outputs: {}
+      },
       taskSpec: {}
     },
     status: {
