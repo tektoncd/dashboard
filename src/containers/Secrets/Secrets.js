@@ -411,13 +411,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
               <div className="secretHelper">
                 {intl.formatMessage({
                   id: 'dashboard.secretType.helper',
-                  defaultMessage: `Use Password if you plan to
-                have a PipelineRun that clones from a Git
-                repository or image registry that requires authentication.
-
-                Use Access Token when interacting with webhooks or PullRequest resources.
-
-                Check the official Tekton Pipelines documentation for more details.`
+                  defaultMessage: `Use Password with git or image PipelineResources that require authentication. Use Access Token with webhooks or with pullRequest PipelineResources. Check the Tekton Pipelines documentation for more details on authentication.`
                 })}
               </div>
             </Tooltip>

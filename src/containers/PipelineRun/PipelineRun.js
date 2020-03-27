@@ -142,16 +142,15 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
         {showRerunNotification && (
           <InlineNotification
             lowContrast
-            subtitle={
+            actions={
               showRerunNotification.logsURL ? (
                 <Link
-                  id="newpipelinerunlink"
+                  className="bx--inline-notification__text-wrapper"
                   to={showRerunNotification.logsURL}
-                  onClick={() => this.setShowRerunNotification(false)}
                 >
                   {intl.formatMessage({
                     id: 'dashboard.pipelineRun.rerunStatusMessage',
-                    defaultMessage: 'View status of this rerun PipelineRun'
+                    defaultMessage: 'View status'
                   })}
                 </Link>
               ) : (
