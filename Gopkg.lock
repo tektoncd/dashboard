@@ -21,12 +21,12 @@
   version = "v2.12.0"
 
 [[projects]]
-  digest = "1:2b5f431fa18891a2ac0e02353c83fb3bf458fced6ccecd664b429054e0c4ce3b"
+  digest = "1:207708195e9b773fd01735192777cfa24891e350e87f36a1d2ad3472a9be775f"
   name = "github.com/evanphx/json-patch"
   packages = ["."]
   pruneopts = "UT"
-  revision = "bf22ed9311622d93e213ba31e4ae7a5771e5d379"
-  version = "v4.6.0"
+  revision = "78cf029964937ffcb67feaeac1fe23d9cef0d26a"
+  version = "v5.0.0"
 
 [[projects]]
   digest = "1:2cd7915ab26ede7d95b8749e6b1f933f1c6d5398030684e6505940a10f31cfda"
@@ -96,12 +96,12 @@
   version = "v0.4.0"
 
 [[projects]]
-  digest = "1:e62657cca9badaa308d86e7716083e4c5933bb78e30a17743fc67f50be26f6f4"
+  digest = "1:6d29f02f0f01c627c2be40fb7347669a9ff2aa215cb97747294c1d13ffa74bdd"
   name = "github.com/gorilla/websocket"
   packages = ["."]
   pruneopts = "UT"
-  revision = "c3e18be99d19e6b3e8f1559eea2c161a665c4b6b"
-  version = "v1.4.1"
+  revision = "b65e62901fc1c0d968042419e74789f6af455eb9"
+  version = "v1.4.2"
 
 [[projects]]
   digest = "1:e631368e174090a276fc00b48283f92ac4ccfbbb1945bcfcee083f5f9210dc00"
@@ -115,12 +115,12 @@
   version = "v0.5.4"
 
 [[projects]]
-  digest = "1:78d28d5b84a26159c67ea51996a230da4bc07cac648adaae1dfb5fc0ec8e40d3"
+  digest = "1:1a7059d684f8972987e4b6f0703083f207d63f63da0ea19610ef2e6bb73db059"
   name = "github.com/imdario/mergo"
   packages = ["."]
   pruneopts = "UT"
-  revision = "1afb36080aec31e0d1528973ebe6721b191b0369"
-  version = "v0.3.8"
+  revision = "66f88b4ae75f5edcc556623b96ff32c06360fbb7"
+  version = "v0.3.9"
 
 [[projects]]
   digest = "1:7cd2924a44ecf80a319cfa2378529fabd348d011b739fb4eccc565f65e3296c4"
@@ -191,7 +191,7 @@
   version = "v1.0.5"
 
 [[projects]]
-  digest = "1:016d219fa23c60ef9dd0f8fa0b74fcc5ba174e91da54e38c3cd1f0272ad9fa59"
+  digest = "1:938df639807a7e22d5aaf8d48de68a8ec264d94cb290fccdcfffa16110ba864f"
   name = "github.com/tektoncd/pipeline"
   packages = [
     "pkg/apis/config",
@@ -231,15 +231,15 @@
     "pkg/substitution",
   ]
   pruneopts = "UT"
-  revision = "v0.11.0-rc2"
+  revision = "v0.11.0-rc3"
 
 [[projects]]
   branch = "master"
-  digest = "1:40dc3fd4a0eb0d24e5f7891af3ab232cb2f34945aecbd731b26b7c0dde936d31"
+  digest = "1:94a99d1f28a1f6adbd0a86af11db2ca57a6ff339c1a1a09b68edc83495bba90e"
   name = "github.com/tektoncd/plumbing"
   packages = ["scripts"]
   pruneopts = "UT"
-  revision = "45b8b6f9f0bf10bf1cf462ee37597d1b44524fd8"
+  revision = "201e654ee563df7c0fcaa4586c60b40cca942f50"
 
 [[projects]]
   digest = "1:19525e48b45af69339bd7c2812137dbd1e650a78fc09c7c75482e307d51aa28d"
@@ -278,11 +278,11 @@
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
   pruneopts = "UT"
-  revision = "f7b00557c8c46a1ea4b035cae84f52028c2c0564"
+  revision = "0ec3e9974c59449edd84298612e9f16fa13368e8"
 
 [[projects]]
   branch = "master"
-  digest = "1:dbcb1d07f64dab3790deae7567a9f45b9a93e1266ba8f4f0e011683180d0fa24"
+  digest = "1:1d07884b4c6e30ca158be7bb0190ebf35b9650f39b02848e66de3b40b46e7680"
   name = "golang.org/x/net"
   packages = [
     "context",
@@ -293,7 +293,7 @@
     "idna",
   ]
   pruneopts = "UT"
-  revision = "244492dfa37ae2ce87222fd06250a03160745faa"
+  revision = "d3edc9973b7eb1fb302b0ff2c62357091cea9a30"
 
 [[projects]]
   branch = "master"
@@ -308,14 +308,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:70ad9a7394ce9ae89ca0ded5c02ddb0135ccfc636d41a4d3b7c3a5c8cf39fd53"
+  digest = "1:444c6b6bf2d8aa38e4810ef1d5ac556f2c5038cd328ee5c0f5c348e77804864b"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "UT"
-  revision = "5766fd39f98ddd8d769ad4aedcee557dd28de90f"
+  revision = "9dae0f8f577553e0f21298e18926efc9644c281d"
 
 [[projects]]
   digest = "1:8d8faad6b12a3a4c819a3f9618cb6ee1fa1cfc33253abeeea8b55336721e3405"
@@ -707,8 +707,8 @@
   name = "k8s.io/sample-controller"
   packages = ["pkg/signals"]
   pruneopts = "UT"
-  revision = "d43a2c4069e9c558629e5de6e341b4e3ed8749da"
-  version = "v0.17.4"
+  revision = "992aa503db6c707ce558a18ed155390e181f7edc"
+  version = "v0.18.0"
 
 [[projects]]
   branch = "master"
@@ -720,7 +720,7 @@
     "trace",
   ]
   pruneopts = "UT"
-  revision = "0a110f9eb7ab662220ed640640f50c4be9b6b485"
+  revision = "6496210b90e852b26b227eaedea39b286063fae6"
 
 [[projects]]
   branch = "release-0.12"

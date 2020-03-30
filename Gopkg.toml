@@ -6,7 +6,7 @@ required = [
 
 [[constraint]]
   name = "github.com/tektoncd/pipeline"
-  revision = "v0.11.0-rc2"
+  revision = "v0.11.0-rc3"
 
 [[override]]
   name = "knative.dev/pkg"
