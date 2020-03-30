@@ -96,11 +96,10 @@ export function getTektonAPI(
   { group = tektonAPIGroup, name = '', namespace, version = 'v1beta1' } = {},
   queryParams
 ) {
-  const resourceAPI = getResourcesAPI(
-    { group, type, version, name, namespace },
+  return getResourcesAPI(
+    { group, version, type, name, namespace },
     queryParams
   );
-  return resourceAPI;
 }
 
 export function getExtensionBaseURL(name) {
