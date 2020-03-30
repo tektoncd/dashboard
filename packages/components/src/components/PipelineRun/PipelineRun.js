@@ -105,15 +105,23 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       status: { taskRuns: taskRunDetails }
     } = pipelineRun;
 
-    if (!pipelineRun.status || !pipelineRun.status.taskRuns) {
-      return [];
-    }
-
     return taskRuns
       .map(taskRun => {
-        const taskName = taskRun.spec.taskRef.name;
-        const task = selectedTask(taskName, tasks);
-        if (!task) {
+        let taskSpec;
+
+        if (taskRun.spec.taskRef) {
+          const task = selectedTask(taskRun.spec.taskRef.name, tasks);
+
+          if (!task) {
+            return null;
+          }
+
+          taskSpec = task.spec;
+        } else {
+          ({ taskSpec } = taskRun.spec);
+        }
+
+        if (!taskSpec) {
           return null;
         }
 
@@ -125,13 +133,15 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
 
         const { reason, status: succeeded } = getStatus(taskRun);
 
-        const { pipelineTaskName } = taskRunDetails[taskRunName] || {};
+        const { pipelineTaskName } = taskRunDetails[taskRunName] || {
+          pipelineTaskName: taskRun.metadata.labels['tekton.dev/conditionCheck']
+        };
         const { params, resources: inputResources } = taskRun.spec.inputs;
         const { resources: outputResources } = taskRun.spec.outputs;
 
         let steps = '';
 
-        if (!task.spec || !taskRun.status) {
+        if (!taskSpec || !taskRun.status) {
           steps = {
             id: 0,
             reason: 'unknown',
@@ -150,9 +160,9 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
         } else {
           const reorderedSteps = reorderSteps(
             taskRun.status.steps,
-            task.spec.steps
+            taskSpec.steps
           );
-          steps = stepsStatus(reorderedSteps, reorderedSteps);
+          steps = stepsStatus(reorderedSteps, taskRun.status.steps);
         }
 
         return {
@@ -162,7 +172,6 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           reason,
           steps,
           succeeded,
-          taskName,
           taskRunName,
           namespace: taskRunNamespace,
           inputResources,
@@ -185,6 +194,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       pollingInterval,
       rerun,
       showIO,
+      sortTaskRuns,
       triggerHeader
     } = this.props;
 
@@ -278,7 +288,9 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     }
     const taskRuns = this.loadTaskRuns(pipelineRun, taskRunNames);
 
-    this.sortTaskRuns(taskRuns);
+    if (sortTaskRuns) {
+      this.sortTaskRuns(taskRuns);
+    }
 
     if (taskRuns.length === 0) {
       return (
@@ -354,5 +366,9 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     );
   }
 }
+
+PipelineRunContainer.defaultProps = {
+  sortTaskRuns: false
+};
 
 export default injectIntl(PipelineRunContainer);

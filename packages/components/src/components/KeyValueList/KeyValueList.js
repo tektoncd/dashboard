@@ -12,21 +12,34 @@ limitations under the License.
 */
 
 import React from 'react';
+import { injectIntl } from 'react-intl';
 import { Button, TextInput } from 'carbon-components-react';
-import { AddAlt24 as Add, SubtractAlt24 as Remove } from '@carbon/icons-react';
+import { AddAlt24 as Add, CloseOutline20 as Remove } from '@carbon/icons-react';
+
 import './KeyValueList.scss';
 
 const KeyValueList = props => {
   const {
-    keyValues,
-    minKeyValues,
+    intl,
     invalidFields,
-    legendText,
     invalidText,
-    onChange,
+    keyValues,
+    legendText,
+    minKeyValues,
     onAdd,
+    onChange,
     onRemove
   } = props;
+
+  const addText = intl.formatMessage({
+    id: 'dashboard.keyValueList.add',
+    defaultMessage: 'Add'
+  });
+
+  const removeTitle = intl.formatMessage({
+    id: 'dashboard.keyValueList.remove',
+    defaultMessage: 'Remove'
+  });
 
   let invalid = false;
   const keyValueFields = keyValues.map(
@@ -49,7 +62,6 @@ const KeyValueList = props => {
             invalid={invalidKey}
             autoComplete="off"
           />
-          <div className="colon">:</div>
           <TextInput
             id={valueId}
             labelText=""
@@ -61,6 +73,13 @@ const KeyValueList = props => {
             invalid={invalidValue}
             autoComplete="off"
           />
+          {keyValues.length > minKeyValues && (
+            <Remove
+              className="removeIcon"
+              onClick={() => onRemove(index)}
+              title={removeTitle}
+            />
+          )}
         </div>
       );
     }
@@ -68,24 +87,23 @@ const KeyValueList = props => {
 
   return (
     <div className="keyvalues">
-      <div className="labelAndButtons">
-        <p className="label">{legendText}</p>
-        <Button
-          kind="ghost"
-          renderIcon={Remove}
-          onClick={onRemove}
-          disabled={keyValueFields.length <= minKeyValues}
-        >
-          Remove
-        </Button>
-        <Button kind="ghost" renderIcon={Add} onClick={onAdd}>
-          Add
-        </Button>
-      </div>
+      <p className="label">{legendText}</p>
       {invalid && <p className="invalidKeyvalue">{invalidText}</p>}
       {keyValueFields}
+      <Button
+        iconDescription={addText}
+        kind="ghost"
+        onClick={onAdd}
+        renderIcon={Add}
+      >
+        {addText}
+      </Button>
     </div>
   );
 };
 
-export default KeyValueList;
+KeyValueList.defaultProps = {
+  minKeyValues: 0
+};
+
+export default injectIntl(KeyValueList);

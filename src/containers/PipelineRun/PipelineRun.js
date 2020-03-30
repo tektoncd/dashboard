@@ -94,7 +94,15 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   }
 
   render() {
-    const { error, intl, match, pipelineRun, tasks, taskRuns } = this.props;
+    const {
+      clusterTasks,
+      error,
+      intl,
+      match,
+      pipelineRun,
+      tasks,
+      taskRuns
+    } = this.props;
 
     if (!pipelineRun) {
       return (
@@ -162,7 +170,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           logDownloadButton={LogDownloadButton}
           pipelineRun={pipelineRun}
           showIO
-          tasks={tasks}
+          sortTaskRuns
+          tasks={tasks.concat(clusterTasks)}
           taskRuns={taskRuns}
           rerun={rerun}
         />
@@ -203,7 +212,7 @@ function mapStateToProps(state, ownProps) {
       {
         namespace
       }
-    ).filter(taskRun => 'taskRef' in taskRun.spec),
+    ),
     clusterTasks: getClusterTasks(state),
     webSocketConnected: isWebSocketConnected(state)
   };

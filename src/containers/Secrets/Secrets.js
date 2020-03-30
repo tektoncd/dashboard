@@ -138,8 +138,10 @@ export /* istanbul ignore next */ class Secrets extends Component {
     this.setState({
       openNewSecret: false
     });
-    this.props.selectNamespace(namespace);
-    this.fetchData();
+    if (namespace) {
+      this.props.selectNamespace(namespace);
+      this.fetchData();
+    }
   };
 
   delete = () => {
@@ -411,10 +413,10 @@ export /* istanbul ignore next */ class Secrets extends Component {
                   id: 'dashboard.secretType.helper',
                   defaultMessage: `Use Password if you plan to
                 have a PipelineRun that clones from a Git
-                repository or image registry that requires authentication. 
+                repository or image registry that requires authentication.
 
-                Use Access Token when interacting with webhooks or PullRequest resources. 
-                
+                Use Access Token when interacting with webhooks or PullRequest resources.
+
                 Check the official Tekton Pipelines documentation for more details.`
                 })}
               </div>
@@ -484,6 +486,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
         {openNewSecret && (
           <CreateSecret
             handleClose={this.handleCloseNewSecret}
+            handleSelectedType={this.handleSelectedType}
             secrets={secrets}
           />
         )}

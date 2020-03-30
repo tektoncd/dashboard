@@ -14,8 +14,7 @@ limitations under the License.
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { Button, Dropdown, TextInput } from 'carbon-components-react';
-import Remove from '@carbon/icons-react/lib/close--outline/20';
-import Add from '@carbon/icons-react/lib/add--alt/24';
+import { AddAlt24 as Add, CloseOutline20 as Remove } from '@carbon/icons-react';
 
 const itemToString = item => (item ? item.text : '');
 

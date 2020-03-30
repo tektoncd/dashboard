@@ -197,7 +197,7 @@ export /* istanbul ignore next */ class CreateSecret extends Component {
     });
   };
 
-  handleSubmit = namespace => {
+  handleSubmit = async namespace => {
     this.props.selectNamespace(namespace);
     const invalidFields = {};
     let postData;
@@ -311,7 +311,8 @@ export /* istanbul ignore next */ class CreateSecret extends Component {
         this.setState({
           errorMessageDuplicate: null
         });
-        this.props.createSecret(postData, namespace);
+        await this.props.createSecret(postData, namespace);
+        this.props.handleSelectedType(secretType);
       }
     } else {
       this.setState({ invalidFields });

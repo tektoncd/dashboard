@@ -121,6 +121,14 @@ class SideNav extends Component {
         history.push(urls.triggerTemplates.all());
         return;
       }
+      if (currentURL.includes(urls.secrets.all())) {
+        history.push(urls.secrets.all());
+        return;
+      }
+      if (currentURL.includes(urls.tasks.all())) {
+        history.push(urls.tasks.all());
+        return;
+      }
       history.push('/');
       return;
     }

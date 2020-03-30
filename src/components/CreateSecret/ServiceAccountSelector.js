@@ -17,7 +17,7 @@ import { injectIntl } from 'react-intl';
 import { Table } from '@tektoncd/dashboard-components';
 import { getErrorMessage } from '@tektoncd/dashboard-utils';
 import { Button, InlineNotification } from 'carbon-components-react';
-import Patch from '@carbon/icons-react/lib/data--connected/24';
+import { DataConnected24 as Patch } from '@carbon/icons-react';
 
 const ServiceAccountSelector = props => {
   const {

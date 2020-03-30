@@ -139,7 +139,7 @@ export class LogContainer extends Component {
     const { downloadButton } = this.props;
     const { loading } = this.state;
     return (
-      <pre className="log">
+      <pre className="tkn-log">
         {loading ? (
           <SkeletonText paragraph width="60%" />
         ) : (
