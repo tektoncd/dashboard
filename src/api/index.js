@@ -93,11 +93,11 @@ export function getResourcesAPI(
 
 export function getTektonAPI(
   type,
-  { name = '', namespace, version = 'v1beta1' } = {},
+  { group = tektonAPIGroup, name = '', namespace, version = 'v1beta1' } = {},
   queryParams
 ) {
   const resourceAPI = getResourcesAPI(
-    { group: 'tekton.dev', type, version, name, namespace },
+    { group, type, version, name, namespace },
     queryParams
   );
   return resourceAPI;
@@ -449,7 +449,7 @@ export async function determineInstallNamespace() {
 export function getTriggerTemplates({ filters = [], namespace } = {}) {
   const uri = getTektonAPI(
     'triggertemplates',
-    { namespace, version: 'v1alpha1' },
+    { group: triggersAPIGroup, namespace, version: 'v1alpha1' },
     getQueryParams(filters)
   );
   return get(uri).then(checkData);
@@ -458,7 +458,7 @@ export function getTriggerTemplates({ filters = [], namespace } = {}) {
 export function getTriggerTemplate({ name, namespace }) {
   const uri = getTektonAPI(
     'triggertemplates',
-    { name, namespace, version: 'v1alpha1' },
+    { group: triggersAPIGroup, name, namespace, version: 'v1alpha1' },
     undefined
   );
   return get(uri);
@@ -467,7 +467,7 @@ export function getTriggerTemplate({ name, namespace }) {
 export function getTriggerBindings({ filters = [], namespace } = {}) {
   const uri = getTektonAPI(
     'triggerbindings',
-    { namespace, version: 'v1alpha1' },
+    { group: triggersAPIGroup, namespace, version: 'v1alpha1' },
     getQueryParams(filters)
   );
   return get(uri).then(checkData);
@@ -476,7 +476,7 @@ export function getTriggerBindings({ filters = [], namespace } = {}) {
 export function getClusterTriggerBindings({ filters = [] } = {}) {
   const uri = getTektonAPI(
     'clustertriggerbindings',
-    { version: 'v1alpha1' },
+    { group: triggersAPIGroup, version: 'v1alpha1' },
     undefined,
     getQueryParams(filters)
   );
@@ -486,7 +486,7 @@ export function getClusterTriggerBindings({ filters = [] } = {}) {
 export function getTriggerBinding({ name, namespace }) {
   const uri = getTektonAPI(
     'triggerbindings',
-    { name, namespace, version: 'v1alpha1' },
+    { group: triggersAPIGroup, name, namespace, version: 'v1alpha1' },
     undefined
   );
   return get(uri);
@@ -494,6 +494,7 @@ export function getTriggerBinding({ name, namespace }) {
 
 export function getClusterTriggerBinding({ name }) {
   const uri = getTektonAPI('clustertriggerbindings', {
+    group: triggersAPIGroup,
     name,
     version: 'v1alpha1'
   });
@@ -503,7 +504,7 @@ export function getClusterTriggerBinding({ name }) {
 export function getEventListeners({ filters = [], namespace } = {}) {
   const uri = getTektonAPI(
     'eventlisteners',
-    { namespace, version: 'v1alpha1' },
+    { group: triggersAPIGroup, namespace, version: 'v1alpha1' },
     getQueryParams(filters)
   );
   return get(uri).then(checkData);
@@ -512,7 +513,7 @@ export function getEventListeners({ filters = [], namespace } = {}) {
 export function getEventListener({ name, namespace }) {
   const uri = getTektonAPI(
     'eventlisteners',
-    { name, namespace, version: 'v1alpha1' },
+    { group: triggersAPIGroup, name, namespace, version: 'v1alpha1' },
     undefined
   );
   return get(uri);
