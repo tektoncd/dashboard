@@ -93,7 +93,7 @@ export function getResourcesAPI(
 
 export function getTektonAPI(
   type,
-  { group = tektonAPIGroup, name = '', namespace, version = 'v1alpha1' } = {},
+  { group = tektonAPIGroup, name = '', namespace, version = 'v1beta1' } = {},
   queryParams
 ) {
   return getResourcesAPI(
@@ -168,7 +168,10 @@ export function deleteTaskRun({ name, namespace }) {
 }
 
 export function createPipelineResource({ namespace, resource } = {}) {
-  const uri = getTektonAPI('pipelineresources', { namespace });
+  const uri = getTektonAPI('pipelineresources', {
+    namespace,
+    version: 'v1alpha1'
+  });
   return post(uri, resource);
 }
 
@@ -189,7 +192,7 @@ export function createPipelineRun({
   // Create PipelineRun payload
   // expect params and resources to be objects with keys 'name' and values 'value'
   const payload = {
-    apiVersion: 'tekton.dev/v1alpha1',
+    apiVersion: 'tekton.dev/v1beta1',
     kind: 'PipelineRun',
     metadata: {
       name: `${pipelineName}-run-${Date.now()}`,
@@ -264,14 +267,22 @@ export function cancelTaskRun({ name, namespace }) {
 export function getPipelineResources({ filters = [], namespace } = {}) {
   const uri = getTektonAPI(
     'pipelineresources',
-    { namespace },
+    { namespace, version: 'v1alpha1' },
     getQueryParams(filters)
   );
   return get(uri).then(checkData);
 }
 
 export function getPipelineResource({ name, namespace }) {
-  const uri = getTektonAPI('pipelineresources', { name, namespace });
+  const uri = getTektonAPI(
+    'pipelineresources',
+    {
+      name,
+      namespace,
+      version: 'v1alpha1'
+    },
+    undefined
+  );
   return get(uri);
 }
 
@@ -437,7 +448,7 @@ export async function determineInstallNamespace() {
 export function getTriggerTemplates({ filters = [], namespace } = {}) {
   const uri = getTektonAPI(
     'triggertemplates',
-    { group: triggersAPIGroup, namespace },
+    { group: triggersAPIGroup, namespace, version: 'v1alpha1' },
     getQueryParams(filters)
   );
   return get(uri).then(checkData);
@@ -447,7 +458,8 @@ export function getTriggerTemplate({ name, namespace }) {
   const uri = getTektonAPI('triggertemplates', {
     group: triggersAPIGroup,
     name,
-    namespace
+    namespace,
+    version: 'v1alpha1'
   });
   return get(uri);
 }
@@ -455,7 +467,7 @@ export function getTriggerTemplate({ name, namespace }) {
 export function getTriggerBindings({ filters = [], namespace } = {}) {
   const uri = getTektonAPI(
     'triggerbindings',
-    { group: triggersAPIGroup, namespace },
+    { group: triggersAPIGroup, namespace, version: 'v1alpha1' },
     getQueryParams(filters)
   );
   return get(uri).then(checkData);
@@ -464,7 +476,7 @@ export function getTriggerBindings({ filters = [], namespace } = {}) {
 export function getClusterTriggerBindings({ filters = [] } = {}) {
   const uri = getTektonAPI(
     'clustertriggerbindings',
-    { group: triggersAPIGroup },
+    { group: triggersAPIGroup, version: 'v1alpha1' },
     getQueryParams(filters)
   );
   return get(uri).then(checkData);
@@ -474,7 +486,8 @@ export function getTriggerBinding({ name, namespace }) {
   const uri = getTektonAPI('triggerbindings', {
     group: triggersAPIGroup,
     name,
-    namespace
+    namespace,
+    version: 'v1alpha1'
   });
   return get(uri);
 }
@@ -482,7 +495,8 @@ export function getTriggerBinding({ name, namespace }) {
 export function getClusterTriggerBinding({ name }) {
   const uri = getTektonAPI('clustertriggerbindings', {
     group: triggersAPIGroup,
-    name
+    name,
+    version: 'v1alpha1'
   });
   return get(uri);
 }
@@ -490,7 +504,7 @@ export function getClusterTriggerBinding({ name }) {
 export function getEventListeners({ filters = [], namespace } = {}) {
   const uri = getTektonAPI(
     'eventlisteners',
-    { group: triggersAPIGroup, namespace },
+    { group: triggersAPIGroup, namespace, version: 'v1alpha1' },
     getQueryParams(filters)
   );
   return get(uri).then(checkData);
@@ -500,7 +514,8 @@ export function getEventListener({ name, namespace }) {
   const uri = getTektonAPI('eventlisteners', {
     group: triggersAPIGroup,
     name,
-    namespace
+    namespace,
+    version: 'v1alpha1'
   });
   return get(uri);
 }
