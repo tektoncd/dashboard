@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -10,7 +10,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
+/* istanbul ignore file */
 import React, { Component } from 'react';
 import { injectIntl } from 'react-intl';
 import { InlineNotification } from 'carbon-components-react';
@@ -22,7 +22,7 @@ import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 import { getCustomResources } from '../../api';
 import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
 
-export /* istanbul ignore next */ class ResourceListContainer extends Component {
+export class ResourceListContainer extends Component {
   state = {
     loading: true,
     resources: []
@@ -168,7 +168,6 @@ export /* istanbul ignore next */ class ResourceListContainer extends Component 
   }
 }
 
-/* istanbul ignore next */
 function mapStateToProps(state, props) {
   const { namespace: namespaceParam } = props.match.params;
   const namespace = namespaceParam || getSelectedNamespace(state);
