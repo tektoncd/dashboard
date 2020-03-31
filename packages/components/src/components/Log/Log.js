@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -25,6 +25,9 @@ const LogLine = ({ data, index, style }) => (
   </div>
 );
 
+const itemSize = 15; // This should be kept in sync with the line-height in SCSS
+const defaultHeight = itemSize * 100 + itemSize / 2;
+
 export class LogContainer extends Component {
   state = { loading: true };
 
@@ -49,8 +52,10 @@ export class LogContainer extends Component {
       ]
     } = this.state;
 
-    const itemSize = 15; // This should be kept in sync with the line-height in SCSS
-    const defaultHeight = 800;
+    if (logs.length < 20000) {
+      return <Ansi>{logs.join('\n')}</Ansi>;
+    }
+
     const height = reason
       ? Math.min(defaultHeight, itemSize * logs.length)
       : defaultHeight;
@@ -87,6 +92,7 @@ export class LogContainer extends Component {
     }
   };
 
+  /* istanbul ignore next */
   initPolling = () => {
     const { stepStatus, pollingInterval } = this.props;
     if (!this.timer && stepStatus && !stepStatus.terminated) {
