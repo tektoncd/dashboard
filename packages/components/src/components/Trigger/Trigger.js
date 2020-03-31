@@ -97,7 +97,7 @@ const Trigger = ({ intl, eventListenerNamespace, trigger }) => {
             })}
           </span>
           <Accordion
-            className="trigger--interceptors-accordian"
+            className="trigger--interceptors-accordion"
             title="Interceptors"
           >
             {trigger.interceptors.map((interceptor, index) => {
