@@ -134,10 +134,10 @@ it('ClusterTriggerBindingContainer toggles between tabs correctly', async () => 
 
   fireEvent.click(yamlTab);
   await waitForElement(() => getByText(/creationTimestamp/i));
-  const detailsTab = getByText(/Details/i);
-  expect(detailsTab.parentNode.getAttribute('aria-selected')).toBe('false');
+  const overviewTab = getByText(/Overview/i);
+  expect(overviewTab.parentNode.getAttribute('aria-selected')).toBe('false');
 
-  fireEvent.click(detailsTab);
+  fireEvent.click(overviewTab);
   yamlTab = getByText('YAML');
   expect(yamlTab.parentNode.getAttribute('aria-selected')).toBe('false');
 });
@@ -176,7 +176,7 @@ it('ClusterTriggerBindingContainer handles error state', async () => {
   await waitForElement(() => getByText('Error loading ClusterTriggerBinding'));
 });
 
-it('ClusterTriggerBindingContainer renders details', async () => {
+it('ClusterTriggerBindingContainer renders overview', async () => {
   const match = {
     params: {
       clusterTriggerBindingName: 'cluster-trigger-binding-simple'

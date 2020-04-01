@@ -279,7 +279,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
             title={intl.formatMessage(
               {
                 id: 'dashboard.pipelineRun.failedMessage',
-                defaultMessage: 'Unable to load PipelineRun details: {reason}'
+                defaultMessage: 'Unable to load PipelineRun: {reason}'
               },
               { reason: pipelineRunError.reason }
             )}

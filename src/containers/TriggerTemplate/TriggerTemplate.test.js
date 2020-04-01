@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -423,7 +423,7 @@ it('TriggerTemplateContainer renders full resource template information', async 
   await waitForElement(() => getByText(/contenttype/i));
 });
 
-it('TriggerTemplateContainer contains details tab with accurate information', async () => {
+it('TriggerTemplateContainer contains overview tab with accurate information', async () => {
   const match = {
     params: {
       triggerTemplateName: 'pipeline-template'
@@ -457,8 +457,8 @@ it('TriggerTemplateContainer contains details tab with accurate information', as
     </Provider>
   );
   await waitForElement(() => getByText('pipeline-template'));
-  const detailsTab = getByText(/details/i);
-  fireEvent.click(detailsTab);
+  const overviewTab = getByText(/overview/i);
+  fireEvent.click(overviewTab);
   await waitForElement(() => getByText(/Date created/i));
   await waitForElement(() => getByText(/tekton-pipelines/i));
 });
@@ -587,8 +587,8 @@ it('TriggerTemplateContainer renders labels section if they are present', async 
   );
 
   await waitForElement(() => getByText('pipeline-template-with-labels'));
-  const detailsTab = getByText(/details/i);
-  fireEvent.click(detailsTab);
+  const overviewTab = getByText(/overview/i);
+  fireEvent.click(overviewTab);
   await waitForElement(() => getByText(/labels/i));
   await waitForElement(() => getByText(/mylabel/i));
   await waitForElement(() => getByText(/foo/i));
@@ -633,8 +633,8 @@ it('TriggerTemplateContainer contains formatted labels', async () => {
   );
 
   await waitForElement(() => getByText('pipeline-template-with-labels'));
-  const detailsTab = getByText(/details/i);
-  fireEvent.click(detailsTab);
+  const overviewTab = getByText(/overview/i);
+  fireEvent.click(overviewTab);
   await waitForElement(() => getByText('Labels:'));
   await waitForElement(() => getByText(/mylabel: foo/i));
   await waitForElement(() => getByText(/myotherlabel: bar/i));

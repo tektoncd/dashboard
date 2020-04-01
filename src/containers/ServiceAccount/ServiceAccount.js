@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -190,8 +190,8 @@ export /* istanbul ignore next */ class ServiceAccountContainer extends Componen
         <Tabs selected={0}>
           <Tab
             label={intl.formatMessage({
-              id: 'dashboard.resource.detailsTab',
-              defaultMessage: 'Details'
+              id: 'dashboard.resource.overviewTab',
+              defaultMessage: 'Overview'
             })}
           >
             <div className="details">
