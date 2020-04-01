@@ -14,6 +14,8 @@ limitations under the License.
 package main
 
 import (
+	"context"
+	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -28,7 +30,7 @@ import (
 	k8sclientset "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
-	"k8s.io/sample-controller/pkg/signals"
+	"knative.dev/pkg/signals"
 )
 
 // Stores config env
@@ -91,14 +93,32 @@ func main() {
 		RouteClient:            routeClient,
 	}
 
+	ctx := signals.NewContext()
+
 	routerHandler := router.Register(resource)
 	logging.Log.Info("Creating controllers")
-	stopCh := signals.SetupSignalHandler()
 	resyncDur := time.Second * 30
-	controllers.StartTektonControllers(resource.PipelineClient, resource.PipelineResourceClient, resyncDur, stopCh)
-	controllers.StartKubeControllers(resource.K8sClient, resyncDur, dashboardConfig.installNamespace, routerHandler, stopCh)
+	controllers.StartTektonControllers(resource.PipelineClient, resource.PipelineResourceClient, resyncDur, ctx.Done())
+	controllers.StartKubeControllers(resource.K8sClient, resyncDur, dashboardConfig.installNamespace, routerHandler, ctx.Done())
 
 	logging.Log.Infof("Creating server and entering wait loop")
 	server := &http.Server{Addr: dashboardConfig.port, Handler: routerHandler}
-	logging.Log.Fatal(server.ListenAndServe())
+
+	errCh := make(chan error, 1)
+	defer close(errCh)
+	go func() {
+		// Don't forward ErrServerClosed as that indicates we're already shutting down.
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			errCh <- fmt.Errorf("dashboard server failed: %w", err)
+		}
+	}()
+
+	select {
+	case err := <-errCh:
+		logging.Log.Fatal(err)
+	case <-ctx.Done():
+		if err := server.Shutdown(context.Background()); err != nil {
+			logging.Log.Fatal(err)
+		}
+	}
 }

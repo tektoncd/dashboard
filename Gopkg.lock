@@ -703,14 +703,6 @@
   revision = "f442ecb314a3679150c272e2b9713d8deed5955d"
 
 [[projects]]
-  digest = "1:e1fc4a624e8497252148125a50cec64b416d69ef69afc2244498e0c9b73060d5"
-  name = "k8s.io/sample-controller"
-  packages = ["pkg/signals"]
-  pruneopts = "UT"
-  revision = "992aa503db6c707ce558a18ed155390e181f7edc"
-  version = "v0.18.0"
-
-[[projects]]
   branch = "master"
   digest = "1:2d3f59daa4b479ff4e100a2e1d8fea6780040fdadc177869531fe4cc29407f55"
   name = "k8s.io/utils"
@@ -724,7 +716,7 @@
 
 [[projects]]
   branch = "release-0.12"
-  digest = "1:3919a849c8a32297dd8fdf5af3444f21d55eb40c2a8bf3cbeafa9d93e3700438"
+  digest = "1:b79d84990796313264379377212d8fb9a3eba12651246742a38af8ce2cfad147"
   name = "knative.dev/pkg"
   packages = [
     "apis",
@@ -734,6 +726,7 @@
     "configmap",
     "kmeta",
     "kmp",
+    "signals",
     "tracker",
   ]
   pruneopts = "UT"
@@ -775,7 +768,7 @@
     "k8s.io/client-go/rest",
     "k8s.io/client-go/tools/cache",
     "k8s.io/client-go/tools/clientcmd",
-    "k8s.io/sample-controller/pkg/signals",
+    "knative.dev/pkg/signals",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
