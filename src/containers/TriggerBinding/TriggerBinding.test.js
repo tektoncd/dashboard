@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -142,10 +142,10 @@ it('TriggerBindingContainer toggles between tabs correctly', async () => {
 
   fireEvent.click(yamlTab);
   await waitForElement(() => getByText(/creationTimestamp/i));
-  const detailsTab = getByText(/Details/i);
-  expect(detailsTab.parentNode.getAttribute('aria-selected')).toBe('false');
+  const overviewTab = getByText(/Overview/i);
+  expect(overviewTab.parentNode.getAttribute('aria-selected')).toBe('false');
 
-  fireEvent.click(detailsTab);
+  fireEvent.click(overviewTab);
   yamlTab = getByText('YAML');
   expect(yamlTab.parentNode.getAttribute('aria-selected')).toBe('false');
 });

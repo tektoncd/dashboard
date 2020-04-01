@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -143,10 +143,10 @@ it('ServiceAccountContainer toggles between tabs correctly', async () => {
 
   fireEvent.click(yamlTab);
   await waitForElement(() => getByText(/creationTimestamp/i));
-  const detailsTab = getByText(/Details/i);
-  expect(detailsTab.parentNode.getAttribute('aria-selected')).toBe('false');
+  const overviewTab = getByText(/Overview/i);
+  expect(overviewTab.parentNode.getAttribute('aria-selected')).toBe('false');
 
-  fireEvent.click(detailsTab);
+  fireEvent.click(overviewTab);
   yamlTab = getByText(/Yaml/i);
   expect(yamlTab.parentNode.getAttribute('aria-selected')).toBe('false');
 });
@@ -311,7 +311,7 @@ it('ServiceAccountContainer renders labels section if they are present', async (
   await waitForElement(() => getByText(/myotherlabel: bar/i));
 });
 
-it('ServiceAccountContainer renders details with no secret nor imagePullSecrets ', async () => {
+it('ServiceAccountContainer renders overview with no secret nor imagePullSecrets ', async () => {
   const match = {
     params: {
       serviceAccountName: 'service-account-simple'

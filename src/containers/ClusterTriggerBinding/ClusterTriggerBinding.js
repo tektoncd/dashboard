@@ -153,8 +153,8 @@ export /* istanbul ignore next */ class ClusterTriggerBindingContainer extends C
         <Tabs selected={0}>
           <Tab
             label={intl.formatMessage({
-              id: 'dashboard.resource.detailsTab',
-              defaultMessage: 'Details'
+              id: 'dashboard.resource.overviewTab',
+              defaultMessage: 'Overview'
             })}
           >
             <div className="details">
