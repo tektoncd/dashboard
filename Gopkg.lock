@@ -191,7 +191,7 @@
   version = "v1.0.5"
 
 [[projects]]
-  digest = "1:938df639807a7e22d5aaf8d48de68a8ec264d94cb290fccdcfffa16110ba864f"
+  digest = "1:abd2cb8b017407f6dd24b2b2a829d85e5a36787fcbd92afe8168267827496737"
   name = "github.com/tektoncd/pipeline"
   packages = [
     "pkg/apis/config",
@@ -231,7 +231,7 @@
     "pkg/substitution",
   ]
   pruneopts = "UT"
-  revision = "v0.11.0-rc3"
+  revision = "v0.11.0"
 
 [[projects]]
   branch = "master"
@@ -239,7 +239,7 @@
   name = "github.com/tektoncd/plumbing"
   packages = ["scripts"]
   pruneopts = "UT"
-  revision = "e3903e8762c17217d0edab571f096a6d83231448"
+  revision = "81c7fc06a47a2e7fc130a325a8095ae28f9af34d"
 
 [[projects]]
   digest = "1:19525e48b45af69339bd7c2812137dbd1e650a78fc09c7c75482e307d51aa28d"
@@ -308,14 +308,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:444c6b6bf2d8aa38e4810ef1d5ac556f2c5038cd328ee5c0f5c348e77804864b"
+  digest = "1:c38d090dae506b7a154a926150ad9234d2b57ee4cb2df4b0dfee04466fddbf2b"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "UT"
-  revision = "9dae0f8f577553e0f21298e18926efc9644c281d"
+  revision = "c3d80250170dec19bf61949c81233cede5ddaf61"
 
 [[projects]]
   digest = "1:8d8faad6b12a3a4c819a3f9618cb6ee1fa1cfc33253abeeea8b55336721e3405"
@@ -695,12 +695,12 @@
   version = "v1.0.0"
 
 [[projects]]
-  branch = "master"
-  digest = "1:22abb5d4204ab1a0dcc9cda64906a31c43965ff5159e8b9f766c9d2a162dbed5"
+  branch = "feature-serverside-apply"
+  digest = "1:e0d6dcb28c42a53c7243bb6380badd17f92fbd8488a075a07e984f91a07c0d23"
   name = "k8s.io/kube-openapi"
   packages = ["pkg/util/proto"]
   pruneopts = "UT"
-  revision = "addea2498afe5a6d58f8bdcd9ae51363d12f12ef"
+  revision = "f442ecb314a3679150c272e2b9713d8deed5955d"
 
 [[projects]]
   digest = "1:e1fc4a624e8497252148125a50cec64b416d69ef69afc2244498e0c9b73060d5"
