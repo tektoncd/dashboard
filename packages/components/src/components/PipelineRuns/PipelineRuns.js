@@ -161,7 +161,7 @@ const PipelineRuns = ({
           {pipelineRunName}
         </Link>
       ) : (
-        <span title={pipelineRunName}>{pipelineRunName}</span>
+        pipelineRunName
       ),
       pipeline:
         pipelineRefName &&
@@ -170,9 +170,9 @@ const PipelineRuns = ({
             {pipelineRefName}
           </Link>
         ) : (
-          <span title={pipelineRefName}>{pipelineRefName}</span>
+          pipelineRefName
         )),
-      namespace: <span title={namespace}>{namespace}</span>,
+      namespace,
       status: (
         <div className="definition">
           <div

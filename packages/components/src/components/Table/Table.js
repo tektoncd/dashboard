@@ -246,6 +246,9 @@ const Table = props => {
                             key={cell.id}
                             id={cell.id}
                             className={`cell-${cell.info.header}`}
+                            {...typeof cell.value === 'string' && {
+                              title: cell.value
+                            }}
                           >
                             {cell.value}
                           </TableCell>

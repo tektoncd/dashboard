@@ -131,7 +131,7 @@ const TaskRuns = ({
           {taskRunName}
         </Link>
       ) : (
-        <span title={taskRunName}>{taskRunName}</span>
+        taskRunName
       ),
       task: taskRefName ? (
         <Link
@@ -146,11 +146,7 @@ const TaskRuns = ({
       ) : (
         ''
       ),
-      namespace: (
-        <span title={taskRun.metadata.namespace}>
-          {taskRun.metadata.namespace}
-        </span>
-      ),
+      namespace: taskRun.metadata.namespace,
       status: (
         <div className="definition">
           <div

@@ -108,9 +108,7 @@ export /* istanbul ignore next */ class Tasks extends Component {
           {task.metadata.name}
         </Link>
       ),
-      namespace: (
-        <span title={task.metadata.namespace}>{task.metadata.namespace}</span>
-      ),
+      namespace: task.metadata.namespace,
       createdTime: (
         <FormattedDate date={task.metadata.creationTimestamp} relative />
       ),

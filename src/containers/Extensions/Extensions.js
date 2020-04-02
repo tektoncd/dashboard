@@ -87,6 +87,7 @@ export const Extensions = /* istanbul ignore next */ ({
                         })
                       : urls.extensions.byName({ name })
                   }
+                  title={displayName}
                 >
                   {displayName}
                 </Link>
