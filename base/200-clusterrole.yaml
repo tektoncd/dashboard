@@ -46,7 +46,7 @@ rules:
   - apiGroups: ["dashboard.tekton.dev"]
     resources: ["extensions"]
     verbs: ["get", "list", "watch"]
-  - apiGroups: ["tekton.dev"]
-    resources: ["eventlisteners", "triggerbindings",
-                "triggertemplates"]
+  - apiGroups: ["triggers.tekton.dev"]
+    resources: ["clustertriggerbindings", "eventlisteners",
+                "triggerbindings", "triggertemplates"]
     verbs: ["get", "list", "watch"]

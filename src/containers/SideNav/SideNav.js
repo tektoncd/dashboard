@@ -142,7 +142,7 @@ class SideNav extends Component {
       group: 'apiextensions.k8s.io',
       version: 'v1beta1',
       type: 'customresourcedefinitions',
-      name: 'eventlisteners.tekton.dev'
+      name: 'eventlisteners.triggers.tekton.dev'
     })
       .then(() => {
         this.setState({ isTriggersInstalled: true });

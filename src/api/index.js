@@ -22,7 +22,7 @@ import {
 } from './comms';
 
 const tektonAPIGroup = 'tekton.dev';
-const triggersAPIGroup = 'tekton.dev'; // TODO: update to 'triggers.tekton.dev' for Triggers 0.4
+const triggersAPIGroup = 'triggers.tekton.dev';
 
 export function getAPIRoot() {
   const { href, hash } = window.location;

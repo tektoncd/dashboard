@@ -19,7 +19,7 @@ import { createIntl } from 'react-intl';
 import { EventListenerContainer } from './EventListener';
 
 const eventListener = {
-  apiVersion: 'tekton.dev/v1alpha1',
+  apiVersion: 'triggers.tekton.dev/v1alpha1',
   kind: 'EventListener',
   metadata: {
     name: 'my-eventlistener',

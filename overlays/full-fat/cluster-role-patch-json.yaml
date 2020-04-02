@@ -110,8 +110,9 @@
   path: /rules/8
   value:
     apiGroups:
-      - tekton.dev
+      - triggers.tekton.dev
     resources:
+      - clustertriggerbindings
       - eventlisteners
       - triggerbindings
       - triggertemplates

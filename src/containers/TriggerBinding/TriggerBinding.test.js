@@ -27,7 +27,7 @@ const intl = createIntl({
 });
 
 const triggerBindingSimple = {
-  apiVersion: 'tekton.dev/v1alpha1',
+  apiVersion: 'triggers.tekton.dev/v1alpha1',
   kind: 'TriggerBinding',
   metadata: {
     creationTimestamp: '2019-11-19T19:44:43Z',
@@ -44,7 +44,7 @@ const triggerBindingSimple = {
 };
 
 const triggerBindingWithLabels = {
-  apiVersion: 'tekton.dev/v1alpha1',
+  apiVersion: 'triggers.tekton.dev/v1alpha1',
   kind: 'TriggerBinding',
   metadata: {
     labels: {
