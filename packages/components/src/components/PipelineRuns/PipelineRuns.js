@@ -67,6 +67,7 @@ const PipelineRuns = ({
   selectedNamespace,
   pipelineRuns,
   pipelineRunActions = [],
+  skeletonRowCount,
   toolbarButtons
 }) => {
   const defaultHeaders = {
@@ -215,6 +216,7 @@ const PipelineRuns = ({
         },
         { kind: 'PipelineRuns', selectedNamespace }
       )}
+      skeletonRowCount={skeletonRowCount}
       toolbarButtons={toolbarButtons}
     />
   );

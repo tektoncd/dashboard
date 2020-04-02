@@ -126,6 +126,7 @@ const Table = props => {
     loading,
     rows: dataRows,
     selectedNamespace,
+    skeletonRowCount,
     title,
     toolbarButtons
   } = props;
@@ -195,6 +196,7 @@ const Table = props => {
               <DataTableSkeleton
                 headers={headers}
                 columnCount={headers.length}
+                rowCount={skeletonRowCount}
               />
             ) : (
               <CarbonTable {...getTableProps()}>

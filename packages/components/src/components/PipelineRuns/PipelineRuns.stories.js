@@ -317,6 +317,14 @@ storiesOf('Components/PipelineRuns', module)
       ]}
     />
   ))
+  .add('loading', () => (
+    <PipelineRuns
+      selectedNamespace="default"
+      loading
+      pipelineRuns={[]}
+      cancelPipelineRun={() => {}}
+    />
+  ))
   .add('empty', () => (
     <PipelineRuns
       selectedNamespace="default"
