@@ -121,7 +121,7 @@ export /* istanbul ignore next */ class EventListenerContainer extends Component
                 {intl.formatMessage({
                   id: 'dashboard.metadata.dateCreated',
                   defaultMessage: 'Date Created:'
-                })}{' '}
+                })}
               </span>
               <FormattedDate
                 date={eventListener.metadata.creationTimestamp}
@@ -133,7 +133,7 @@ export /* istanbul ignore next */ class EventListenerContainer extends Component
                 {intl.formatMessage({
                   id: 'dashboard.metadata.labels',
                   defaultMessage: 'Labels:'
-                })}{' '}
+                })}
               </span>
               {formattedLabelsToRender.length === 0
                 ? intl.formatMessage({
@@ -151,7 +151,7 @@ export /* istanbul ignore next */ class EventListenerContainer extends Component
                 {intl.formatMessage({
                   id: 'dashboard.metadata.namespace',
                   defaultMessage: 'Namespace:'
-                })}{' '}
+                })}
               </span>
               {eventListener.metadata.namespace}
             </p>
@@ -161,7 +161,7 @@ export /* istanbul ignore next */ class EventListenerContainer extends Component
                   {intl.formatMessage({
                     id: 'dashboard.eventListener.serviceAccount',
                     defaultMessage: 'ServiceAccount:'
-                  })}{' '}
+                  })}
                 </span>
                 {eventListener.spec.serviceAccountName}
               </p>
@@ -172,7 +172,7 @@ export /* istanbul ignore next */ class EventListenerContainer extends Component
                   {intl.formatMessage({
                     id: 'dashboard.eventListener.serviceType',
                     defaultMessage: 'Service Type:'
-                  })}{' '}
+                  })}
                 </span>
                 {eventListener.spec.serviceType}
               </p>

@@ -14,7 +14,6 @@ limitations under the License.
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import '../../scss/Triggers.scss';
 import { injectIntl } from 'react-intl';
 import { DataTable, InlineNotification, Tag } from 'carbon-components-react';
 import {
@@ -33,6 +32,8 @@ import {
 } from '../../reducers';
 
 import { fetchTriggerTemplate } from '../../actions/triggerTemplates';
+
+import '../../scss/Triggers.scss';
 
 const {
   Table,
