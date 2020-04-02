@@ -156,7 +156,7 @@ export class ResourceListContainer extends Component {
                 {name}
               </Link>
             ),
-            namespace: <span title={namespace}>{namespace}</span>,
+            namespace,
             createdTime: <FormattedDate date={creationTimestamp} relative />
           };
         })}

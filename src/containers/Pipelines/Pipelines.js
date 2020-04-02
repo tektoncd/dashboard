@@ -108,11 +108,7 @@ export /* istanbul ignore next */ class Pipelines extends Component {
           {pipeline.metadata.name}
         </Link>
       ),
-      namespace: (
-        <span title={pipeline.metadata.namespace}>
-          {pipeline.metadata.namespace}
-        </span>
-      ),
+      namespace: pipeline.metadata.namespace,
       createdTime: (
         <FormattedDate date={pipeline.metadata.creationTimestamp} relative />
       ),

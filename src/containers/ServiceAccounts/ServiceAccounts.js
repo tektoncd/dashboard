@@ -114,11 +114,7 @@ export /* istanbul ignore next */ class ServiceAccounts extends Component {
           {serviceAccount.metadata.name}
         </Link>
       ),
-      namespace: (
-        <span title={serviceAccount.metadata.namespace}>
-          {serviceAccount.metadata.namespace}
-        </span>
-      )
+      namespace: serviceAccount.metadata.namespace
     }));
 
     return (

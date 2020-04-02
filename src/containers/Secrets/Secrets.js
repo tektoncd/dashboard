@@ -307,7 +307,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
       }
 
       const formattedSecret = {
-        annotations: <span title={annotations}>{annotations}</span>,
+        annotations,
         id: `${secret.metadata.namespace}:${secret.metadata.name}`,
         name: (
           <Link
@@ -320,21 +320,13 @@ export /* istanbul ignore next */ class Secrets extends Component {
             {secret.metadata.name}
           </Link>
         ),
-        namespace: (
-          <span title={secret.metadata.namespace}>
-            {secret.metadata.namespace}
-          </span>
-        ),
+        namespace: secret.metadata.namespace,
         created: (
           <FormattedDate date={secret.metadata.creationTimestamp} relative />
         ),
-        serviceAccounts: (
-          <span title={serviceAccountsString}>{serviceAccountsString}</span>
-        ),
-        type: <span title={secretTypeToDisplay}>{secretTypeToDisplay}</span>,
-        username: (
-          <span title={secretUsernameToDisplay}>{secretUsernameToDisplay}</span>
-        )
+        serviceAccounts: serviceAccountsString,
+        type: secretTypeToDisplay,
+        username: secretUsernameToDisplay
       };
       return formattedSecret;
     });

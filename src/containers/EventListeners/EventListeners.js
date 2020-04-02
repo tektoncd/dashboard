@@ -106,11 +106,7 @@ export /* istanbul ignore next */ class EventListeners extends Component {
           {listener.metadata.name}
         </Link>
       ),
-      namespace: (
-        <span title={listener.metadata.namespace}>
-          {listener.metadata.namespace}
-        </span>
-      ),
+      namespace: listener.metadata.namespace,
       date: (
         <FormattedDate date={listener.metadata.creationTimestamp} relative />
       )

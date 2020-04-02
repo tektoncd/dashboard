@@ -77,14 +77,10 @@ const PipelineResources = ({
           {pipelineResourceName}
         </Link>
       ) : (
-        <span title={pipelineResourceName}>{pipelineResourceName}</span>
+        pipelineResourceName
       ),
-      namespace: <span title={namespace}>{namespace}</span>,
-      type: (
-        <span title={pipelineResource.spec.type}>
-          {pipelineResource.spec.type}
-        </span>
-      ),
+      namespace,
+      type: pipelineResource.spec.type,
       createdTime: (
         <FormattedDate
           date={pipelineResource.metadata.creationTimestamp}
