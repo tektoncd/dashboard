@@ -52,4 +52,10 @@ limitations under the License.
 
 .interceptor--service-details {
   margin-left: $spacing-04;
+
+  .trigger .details & {
+    p span:first-child {
+      font-weight: normal;
+    }
+  }
 }

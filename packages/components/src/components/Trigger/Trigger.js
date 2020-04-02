@@ -141,11 +141,12 @@ const Trigger = ({ intl, eventListenerNamespace, trigger }) => {
                     <p>{serviceText}</p>
                     <div className="interceptor--service-details">
                       <p>
-                        {nameText} {interceptor.webhook.objectRef.name}
+                        <span>{nameText}</span>
+                        {interceptor.webhook.objectRef.name}
                       </p>
                       {interceptor.webhook.objectRef.namespace && (
                         <p>
-                          {namespaceText}{' '}
+                          <span>{namespaceText}</span>
                           {interceptor.webhook.objectRef.namespace}
                         </p>
                       )}

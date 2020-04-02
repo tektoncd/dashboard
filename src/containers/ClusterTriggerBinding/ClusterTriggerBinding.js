@@ -14,7 +14,6 @@ limitations under the License.
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import '../../scss/Triggers.scss';
 import { injectIntl } from 'react-intl';
 import { InlineNotification, Tag } from 'carbon-components-react';
 import {
@@ -32,6 +31,8 @@ import {
 } from '../../reducers';
 
 import { fetchClusterTriggerBinding } from '../../actions/clusterTriggerBindings';
+
+import '../../scss/Triggers.scss';
 
 export /* istanbul ignore next */ class ClusterTriggerBindingContainer extends Component {
   static notification({ kind, message, intl }) {

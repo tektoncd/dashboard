@@ -146,7 +146,6 @@ export /* istanbul ignore next */ class ServiceAccountContainer extends Componen
               })}
               title={name}
             >
-              {' '}
               {name}
             </Link>
           )
