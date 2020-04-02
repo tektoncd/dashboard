@@ -11,3 +11,4 @@ images:
   - name: dashboardImage
     newName: gcr.io/tekton-nightly/dashboard
     newTag: latest
+namespace: openshift-pipelines

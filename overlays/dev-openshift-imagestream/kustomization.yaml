@@ -12,3 +12,4 @@ images:
   - name: dashboardImage
     newName: tekton-pipelines/tekton-dashboard
     newTag:
+namespace: openshift-pipelines
