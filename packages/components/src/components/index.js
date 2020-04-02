@@ -12,7 +12,6 @@ limitations under the License.
 */
 /* istanbul ignore file */
 
-export { default as Breadcrumbs } from './Breadcrumbs';
 export { default as CancelButton } from './CancelButton';
 export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as FormattedDate } from './FormattedDate';
