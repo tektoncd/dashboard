@@ -32,7 +32,7 @@ const byNamespace = {
 
 const byId = {
   'c930f02e-0582-11ea-8c1f-025765432111': {
-    apiVersion: 'tekton.dev/v1alpha1',
+    apiVersion: 'triggers.tekton.dev/v1alpha1',
     kind: 'triggerBinding',
     metadata: {
       creationTimestamp: '2019-11-12T19:29:46Z',

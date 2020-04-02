@@ -29,7 +29,7 @@ const intl = createIntl({
 /* Displaying of Trigger info is tested in the component test */
 
 const fakeEventListenerWithLabels = {
-  apiVersion: 'tekton.dev/v1alpha1',
+  apiVersion: 'triggers.tekton.dev/v1alpha1',
   kind: 'EventListener',
   metadata: {
     name: 'tekton-webhooks-eventlistener',

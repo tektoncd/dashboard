@@ -32,8 +32,8 @@ const byNamespace = {
 
 const byId = {
   'c930f02e-0582-11ea-8c1f-025765432111': {
-    apiVersion: 'tekton.dev/v1alpha1',
-    kind: 'eventListener',
+    apiVersion: 'triggers.tekton.dev/v1alpha1',
+    kind: 'EventListener',
     metadata: {
       creationTimestamp: '2019-11-12T19:29:46Z',
       name: 'event-listener',

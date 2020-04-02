@@ -27,7 +27,7 @@ const intl = createIntl({
 });
 
 const clusterTriggerBindingSimple = {
-  apiVersion: 'tekton.dev/v1alpha1',
+  apiVersion: 'triggers.tekton.dev/v1alpha1',
   kind: 'ClusterTriggerBinding',
   metadata: {
     creationTimestamp: '2019-11-19T19:44:43Z',
@@ -43,7 +43,7 @@ const clusterTriggerBindingSimple = {
 };
 
 const clusterTriggerBindingWithLabels = {
-  apiVersion: 'tekton.dev/v1alpha1',
+  apiVersion: 'triggers.tekton.dev/v1alpha1',
   kind: 'ClusterTriggerBinding',
   metadata: {
     labels: {

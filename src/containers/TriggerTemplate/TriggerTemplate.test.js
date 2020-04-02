@@ -50,7 +50,7 @@ const resourceTemplate1Details = {
   }
 };
 const fakeTriggerTemplate = {
-  apiVersion: 'tekton.dev/v1alpha1',
+  apiVersion: 'triggers.tekton.dev/v1alpha1',
   kind: 'TriggerTemplate',
   metadata: {
     annotations: {
@@ -114,7 +114,7 @@ const fakeTriggerTemplate = {
 };
 
 const fakeTriggerTemplateWithLabels = {
-  apiVersion: 'tekton.dev/v1alpha1',
+  apiVersion: 'triggers.tekton.dev/v1alpha1',
   kind: 'TriggerTemplate',
   metadata: {
     annotations: {
