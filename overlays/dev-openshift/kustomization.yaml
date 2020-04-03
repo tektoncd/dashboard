@@ -11,3 +11,4 @@ images:
   - name: dashboardImage
     newName: github.com/tektoncd/dashboard/cmd/dashboard
     newTag:
+namespace: openshift-pipelines
