@@ -6,7 +6,8 @@ metadata:
   namespace: tekton-pipelines
   labels:
     app: tekton-dashboard
-    version: development
+    version: "devel"
+    dashboard.tekton.dev/release: "devel"
 spec:
   replicas: 1
   selector:
