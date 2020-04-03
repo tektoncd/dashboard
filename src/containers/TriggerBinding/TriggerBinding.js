@@ -150,8 +150,9 @@ export /* istanbul ignore next */ class TriggerBindingContainer extends Componen
     return (
       <div className="trigger">
         <h1>{triggerBindingName}</h1>
-        <Tabs selected={0}>
+        <Tabs selected={0} aria-label="TriggerBinding details">
           <Tab
+            id={`${triggerBindingName}-overview`}
             label={intl.formatMessage({
               id: 'dashboard.resource.overviewTab',
               defaultMessage: 'Overview'
@@ -212,7 +213,7 @@ export /* istanbul ignore next */ class TriggerBindingContainer extends Componen
               />
             </div>
           </Tab>
-          <Tab label="YAML">
+          <Tab id={`${triggerBindingName}-yaml`} label="YAML">
             <ViewYAML resource={triggerBinding} />
           </Tab>
         </Tabs>

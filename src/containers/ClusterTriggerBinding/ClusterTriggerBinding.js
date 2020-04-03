@@ -151,8 +151,9 @@ export /* istanbul ignore next */ class ClusterTriggerBindingContainer extends C
     return (
       <div className="trigger">
         <h1>{clusterTriggerBindingName}</h1>
-        <Tabs selected={0}>
+        <Tabs selected={0} aria-label="ClusterTriggerBinding details">
           <Tab
+            id={`${clusterTriggerBindingName}-overview`}
             label={intl.formatMessage({
               id: 'dashboard.resource.overviewTab',
               defaultMessage: 'Overview'
@@ -204,7 +205,7 @@ export /* istanbul ignore next */ class ClusterTriggerBindingContainer extends C
               />
             </div>
           </Tab>
-          <Tab label="YAML">
+          <Tab id={`${clusterTriggerBindingName}-yaml`} label="YAML">
             <ViewYAML resource={clusterTriggerBinding} />
           </Tab>
         </Tabs>

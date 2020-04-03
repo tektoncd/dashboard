@@ -13,16 +13,33 @@ limitations under the License.
 
 @import '~carbon-components/scss/globals/scss/vars';
 
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-
-  min-height: calc(#{$spacing-08} + #{$button-border-width});
-  margin-bottom: calc(#{$spacing-05} - #{$button-border-width});
-
-  .bx--tag {
-    flex-shrink: 0;
-    margin: $spacing-05 $spacing-03 0 0;
+.dashboard-label-filter {
+  form {
+    display: flex;
   }
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+
+    min-height: calc(#{$spacing-08} + #{$button-border-width});
+    margin-bottom: calc(#{$spacing-05} - #{$button-border-width});
+
+    .bx--tag {
+      flex-shrink: 0;
+      margin: $spacing-05 $spacing-03 0 0;
+    }
+  }
+}
+
+.tkn--visually-hidden:not(:focus):not(:active) {
+  position: absolute;
+  height: 1px;
+  width: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
 }

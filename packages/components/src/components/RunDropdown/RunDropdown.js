@@ -40,13 +40,17 @@ class RunDropdown extends Component {
     const { modal = {}, showDialog } = this.state;
     const { intl, items, resource } = this.props;
 
+    const title = intl.formatMessage({
+      id: 'dashboard.list.menu.tooltip',
+      defaultMessage: 'Actions'
+    });
+
     return (
       <>
         <OverflowMenu
-          title={intl.formatMessage({
-            id: 'dashboard.list.menu.tooltip',
-            defaultMessage: 'Actions'
-          })}
+          title={title}
+          ariaLabel={title}
+          iconDescription={title}
           data-testid="overflowmenu"
           flipped
         >
@@ -69,6 +73,7 @@ class RunDropdown extends Component {
                   this.handleShow(() => action(resource), modalProperties)
                 }
                 primaryFocus={!disabled}
+                requireTitle
               />
             );
           })}

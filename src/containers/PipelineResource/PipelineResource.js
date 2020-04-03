@@ -151,8 +151,9 @@ export /* istanbul ignore next */ class PipelineResourceContainer extends Compon
       <>
         <h1>{pipelineResourceName}</h1>
 
-        <Tabs selected={0}>
+        <Tabs selected={0} aria-label="PipelineResource details">
           <Tab
+            id={`${pipelineResourceName}-overview`}
             label={intl.formatMessage({
               id: 'dashboard.resource.overviewTab',
               defaultMessage: 'Overview'
@@ -331,7 +332,7 @@ export /* istanbul ignore next */ class PipelineResourceContainer extends Compon
               )}
             </div>
           </Tab>
-          <Tab label="YAML">
+          <Tab id={`${pipelineResourceName}-yaml`} label="YAML">
             <ViewYAML resource={pipelineResource} />
           </Tab>
         </Tabs>

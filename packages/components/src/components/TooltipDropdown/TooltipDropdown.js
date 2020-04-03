@@ -15,14 +15,6 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import { ComboBox, DropdownSkeleton } from 'carbon-components-react';
 
-const itemToElement = ({ id, text }) => {
-  return (
-    <div key={id} title={text}>
-      {text}
-    </div>
-  );
-};
-
 const itemToString = item => (item ? item.text : '');
 
 const itemToObject = item => {
@@ -68,7 +60,6 @@ const TooltipDropdown = ({
       id={id}
       inline={inline}
       items={options}
-      itemToElement={itemToElement}
       itemToString={itemToString}
       label={options.length === 0 ? emptyString : label}
       light={light}

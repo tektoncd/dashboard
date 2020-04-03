@@ -17,6 +17,7 @@ import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
 import { Link } from 'react-router-dom';
 import {
+  FormGroup,
   InlineNotification,
   RadioButton,
   RadioButtonGroup,
@@ -392,48 +393,56 @@ export /* istanbul ignore next */ class Secrets extends Component {
           <>
             <h1>Secrets</h1>
             <LabelFilter {...this.props} />
-            <Tooltip
-              className="secretHelperTooltip"
-              direction="bottom"
-              tabIndex={0}
-              tooltipBodyId="secret-type-helper"
-              triggerText="Secret type"
+            <FormGroup
+              legendText={
+                <Tooltip
+                  direction="bottom"
+                  tabIndex={0}
+                  tooltipBodyId="secret-type-helper"
+                  triggerText={intl.formatMessage({
+                    id: 'dashboard.secretType.type',
+                    defaultMessage: 'Secret type'
+                  })}
+                >
+                  <div className="secretHelper">
+                    {intl.formatMessage({
+                      id: 'dashboard.secretType.helper',
+                      defaultMessage: `Use Password with git or image PipelineResources that require authentication. Use Access Token with webhooks or with pullRequest PipelineResources. Check the Tekton Pipelines documentation for more details on authentication.`
+                    })}
+                  </div>
+                </Tooltip>
+              }
             >
-              <div className="secretHelper">
-                {intl.formatMessage({
-                  id: 'dashboard.secretType.helper',
-                  defaultMessage: `Use Password with git or image PipelineResources that require authentication. Use Access Token with webhooks or with pullRequest PipelineResources. Check the Tekton Pipelines documentation for more details on authentication.`
+              <RadioButtonGroup
+                legend={intl.formatMessage({
+                  id: 'dashboard.universalFields.secretType',
+                  defaultMessage: 'Type'
                 })}
-              </div>
-            </Tooltip>
-            <RadioButtonGroup
-              legend={intl.formatMessage({
-                id: 'dashboard.universalFields.secretType',
-                defaultMessage: 'Type'
-              })}
-              name="secret-type"
-              orientation="horizontal"
-              labelPosition="right"
-              valueSelected={selectedType}
-              onChange={this.handleSelectedType}
-            >
-              <RadioButton
-                value="password"
-                id="password-radio"
-                labelText={intl.formatMessage({
-                  id: 'dashboard.universalFields.passwordRadioButton',
-                  defaultMessage: 'Password'
-                })}
-              />
-              <RadioButton
-                value="accessToken"
-                id="access-radio"
-                labelText={intl.formatMessage({
-                  id: 'dashboard.universalFields.accessTokenRadioButton',
-                  defaultMessage: 'Access Token'
-                })}
-              />
-            </RadioButtonGroup>
+                name="secret-type"
+                orientation="horizontal"
+                labelPosition="right"
+                valueSelected={selectedType}
+                onChange={this.handleSelectedType}
+                role="radiogroup"
+              >
+                <RadioButton
+                  value="password"
+                  id="password-radio"
+                  labelText={intl.formatMessage({
+                    id: 'dashboard.universalFields.passwordRadioButton',
+                    defaultMessage: 'Password'
+                  })}
+                />
+                <RadioButton
+                  value="accessToken"
+                  id="access-radio"
+                  labelText={intl.formatMessage({
+                    id: 'dashboard.universalFields.accessTokenRadioButton',
+                    defaultMessage: 'Access Token'
+                  })}
+                />
+              </RadioButtonGroup>
+            </FormGroup>
             <Table
               headers={initialHeaders}
               rows={secretsFormatted}
