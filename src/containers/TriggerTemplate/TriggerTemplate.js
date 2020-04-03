@@ -180,8 +180,9 @@ export /* istanbul ignore next */ class TriggerTemplateContainer extends Compone
     return (
       <div className="trigger">
         <h1>{triggerTemplateName}</h1>
-        <Tabs selected={0}>
+        <Tabs selected={0} aria-label="TriggerTemplate details">
           <Tab
+            id={`${triggerTemplateName}-overview`}
             label={intl.formatMessage({
               id: 'dashboard.resource.overviewTab',
               defaultMessage: 'Overview'
@@ -320,7 +321,7 @@ export /* istanbul ignore next */ class TriggerTemplateContainer extends Compone
               )}
             </div>
           </Tab>
-          <Tab label="YAML">
+          <Tab id={`${triggerTemplateName}-yaml`} label="YAML">
             <ViewYAML resource={triggerTemplate} />
           </Tab>
         </Tabs>

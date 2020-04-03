@@ -159,7 +159,7 @@ class SideNav extends Component {
         isFixedNav
         expanded
         isChildOfHeader={false}
-        aria-label="Side navigation"
+        aria-label="Main navigation"
       >
         <SideNavItems>
           <SideNavMenu

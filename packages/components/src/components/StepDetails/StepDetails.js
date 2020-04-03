@@ -41,9 +41,9 @@ const StepDetails = props => {
         stepName={stepName}
         taskRun={taskRun}
       />
-      <Tabs>
+      <Tabs aria-label="Step details">
         <Tab
-          className="details-tab"
+          id={`${stepName}-logs`}
           label={intl.formatMessage({
             id: 'dashboard.taskRun.logs',
             defaultMessage: 'Logs'
@@ -52,7 +52,7 @@ const StepDetails = props => {
           {logContainer}
         </Tab>
         <Tab
-          className="details-tab"
+          id={`${stepName}-status`}
           label={intl.formatMessage({
             id: 'dashboard.taskRun.status',
             defaultMessage: 'Status'
@@ -61,7 +61,7 @@ const StepDetails = props => {
           <StepStatus status={stepStatus} />
         </Tab>
         <Tab
-          className="details-tab"
+          id={`${stepName}-details`}
           label={intl.formatMessage({
             id: 'dashboard.resource.detailsTab',
             defaultMessage: 'Details'

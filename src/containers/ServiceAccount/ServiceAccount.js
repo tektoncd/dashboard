@@ -186,8 +186,9 @@ export /* istanbul ignore next */ class ServiceAccountContainer extends Componen
     return (
       <div className="serviceAccount">
         <h1>{serviceAccountName}</h1>
-        <Tabs selected={0}>
+        <Tabs selected={0} aria-label="ServiceAccount details">
           <Tab
+            id={`${serviceAccountName}-overview`}
             label={intl.formatMessage({
               id: 'dashboard.resource.overviewTab',
               defaultMessage: 'Overview'
@@ -256,7 +257,7 @@ export /* istanbul ignore next */ class ServiceAccountContainer extends Componen
               />
             </div>
           </Tab>
-          <Tab label="YAML">
+          <Tab id={`${serviceAccountName}-yaml`} label="YAML">
             <ViewYAML resource={serviceAccount} />
           </Tab>
         </Tabs>

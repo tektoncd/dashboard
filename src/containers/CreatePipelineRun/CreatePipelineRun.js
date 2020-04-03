@@ -513,14 +513,6 @@ class CreatePipelineRun extends React.Component {
               keyValues={labels}
               minKeyValues={0}
               invalidFields={invalidLabels}
-              ariaLabelKey={intl.formatMessage({
-                id: 'dashboard.createPipelineRun.labels.ariaLabelKey',
-                defaultMessage: 'This is the label key for the PipelineRun.'
-              })}
-              ariaLabelValue={intl.formatMessage({
-                id: 'dashboard.createPipelineRun.labels.ariaLabelValue',
-                defaultMessage: 'This is the label value for the PipelineRun.'
-              })}
               onChange={this.handleChangeLabel}
               onRemove={this.handleRemoveLabel}
               onAdd={this.handleAddLabel}

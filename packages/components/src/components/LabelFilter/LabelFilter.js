@@ -138,7 +138,7 @@ class LabelFilter extends Component {
     });
 
     return (
-      <div>
+      <div className="dashboard-label-filter">
         {!isValid && (
           <InlineNotification
             lowContrast
@@ -161,6 +161,12 @@ class LabelFilter extends Component {
             data-testid="filter-search-bar"
             name="filter-search"
           />
+          <Button type="submit" className="tkn--visually-hidden">
+            {intl.formatMessage({
+              id: 'dashboard.labelFilter.addFilterButton',
+              defaultMessage: 'Add Filter'
+            })}
+          </Button>
         </Form>
         <div className="filters">
           {filters.map(filter => (

@@ -269,7 +269,7 @@ export class ImportResources extends Component {
             lowContrast
           />
         )}
-        <h1 className="ImportHeader">
+        <h1 className="importHeader">
           Import Tekton resources from repository
         </h1>
         <Form>

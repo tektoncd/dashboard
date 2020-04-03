@@ -21,12 +21,14 @@ import './TaskRunStatus.scss';
 const TaskRunStatus = props => {
   const { intl, taskRun } = props;
 
+  const displayName = taskRun.pipelineTaskName || taskRun.taskRunName;
+
   return (
     <div className="step-details">
       <header className="step-details-header">
         <h2>
           <ChevronRight className="status-icon" />
-          {taskRun.pipelineTaskName || taskRun.taskRunName}
+          {displayName}
           <span className="status-label">
             {intl.formatMessage({
               id: 'dashboard.taskRun.status.notRun',
@@ -35,9 +37,9 @@ const TaskRunStatus = props => {
           </span>
         </h2>
       </header>
-      <Tabs>
+      <Tabs aria-label="TaskRun details">
         <Tab
-          className="details-tab"
+          id={`${displayName}-details`}
           label={intl.formatMessage({
             id: 'dashboard.taskRun.status',
             defaultMessage: 'Status'
