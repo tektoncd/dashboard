@@ -267,7 +267,7 @@ Example payload response is formatted as so:
 
 {
  "InstallNamespace": "tekton-pipelines",
- "DashboardVersion": "development",
+ "DashboardVersion": "devel",
  "PipelineVersion": "v0.10.0",
  "TriggersVersion": "v0.3.1",
  "IsOpenShift": false,

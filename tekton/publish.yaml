@@ -78,6 +78,9 @@ spec:
           # Change to directory with our .ko.yaml
           cd /workspace/go/src/github.com/tektoncd/dashboard
 
+          # Rewrite "devel" to inputs.params.versionTag
+          sed -i 's/devel/$(inputs.params.versionTag)/g' /workspace/go/src/github.com/tektoncd/dashboard/base/300-deployment.yaml
+
           # Publish images and create release.yamls
           which ko # Tested with 0.2.0
           ko version
