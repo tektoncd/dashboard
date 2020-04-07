@@ -19,6 +19,8 @@ import {
 import { FormattedMessage, injectIntl } from 'react-intl';
 import {
   getErrorMessage,
+  getParams,
+  getResources,
   getStatus,
   reorderSteps,
   selectedTask,
@@ -136,9 +138,9 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
         const { pipelineTaskName } = taskRunDetails[taskRunName] || {
           pipelineTaskName: taskRun.metadata.labels['tekton.dev/conditionCheck']
         };
-        const { params, resources } = taskRun.spec;
-        const { inputs: inputResources, outputs: outputResources } =
-          resources || {};
+
+        const params = getParams(taskRun.spec);
+        const { inputResources, outputResources } = getResources(taskRun.spec);
 
         let steps = '';
 

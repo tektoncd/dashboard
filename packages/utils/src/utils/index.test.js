@@ -18,6 +18,8 @@ import {
   getDeleteFilterHandler,
   getErrorMessage,
   getFilters,
+  getParams,
+  getResources,
   getStatus,
   isRunning,
   reorderSteps,
@@ -482,5 +484,42 @@ describe('getDeleteFilterHandler', () => {
     expect(history.push).toHaveBeenCalledWith(
       `${url}?labelSelector=${encodeURIComponent('foo2=bar2')}`
     );
+  });
+});
+
+describe('getParams', () => {
+  it('supports v1alpha1 structure', () => {
+    const fakeParams = { fake: 'params' };
+    const params = getParams({ inputs: { params: fakeParams } });
+    expect(params).toEqual(fakeParams);
+  });
+
+  it('supports v1beta1 structure', () => {
+    const fakeParams = { fake: 'params' };
+    const params = getParams({ params: fakeParams });
+    expect(params).toEqual(fakeParams);
+  });
+});
+
+describe('getResources', () => {
+  it('supports v1alpha1 structure', () => {
+    const fakeInputResources = { fake: 'inputResources' };
+    const fakeOutputResources = { fake: 'outputResources' };
+    const { inputResources, outputResources } = getResources({
+      inputs: { resources: fakeInputResources },
+      outputs: { resources: fakeOutputResources }
+    });
+    expect(inputResources).toEqual(fakeInputResources);
+    expect(outputResources).toEqual(fakeOutputResources);
+  });
+
+  it('supports v1beta1 structure', () => {
+    const fakeInputResources = { fake: 'inputResources' };
+    const fakeOutputResources = { fake: 'outputResources' };
+    const { inputResources, outputResources } = getResources({
+      resources: { inputs: fakeInputResources, outputs: fakeOutputResources }
+    });
+    expect(inputResources).toEqual(fakeInputResources);
+    expect(outputResources).toEqual(fakeOutputResources);
   });
 });
