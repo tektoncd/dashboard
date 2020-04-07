@@ -80,6 +80,9 @@ spec:
 
           # Rewrite "devel" to inputs.params.versionTag
           sed -i 's/devel/$(inputs.params.versionTag)/g' /workspace/go/src/github.com/tektoncd/dashboard/base/300-deployment.yaml
+          sed -i 's/devel/$(inputs.params.versionTag)/g' /workspace/go/src/github.com/tektoncd/dashboard/base/300-service.yaml
+          sed -i 's/devel/$(inputs.params.versionTag)/g' /workspace/go/src/github.com/tektoncd/dashboard/overlays/openshift-patches/dashboard-service.yaml
+          sed -i 's/devel/$(inputs.params.versionTag)/g' /workspace/go/src/github.com/tektoncd/dashboard/overlays/openshift-patches/internal-dashboard-service.yaml
 
           # Publish images and create release.yamls
           which ko # Tested with 0.2.0

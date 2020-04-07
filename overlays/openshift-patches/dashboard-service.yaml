@@ -6,6 +6,8 @@ metadata:
   namespace: tekton-pipelines
   labels:
     app: tekton-dashboard
+    version: "devel"
+    dashboard.tekton.dev/release: "devel"
   annotations:
     service.alpha.openshift.io/serving-cert-secret-name: proxy-tls
 spec:
