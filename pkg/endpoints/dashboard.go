@@ -59,7 +59,7 @@ func GetDashboardVersion(r Resource, installedNamespace string) string {
 func IsReadOnly() bool {
 	asBool, err := strconv.ParseBool(os.Getenv("READ_ONLY"))
 	if err == nil {
-		logging.Log.Infof("Dashboard is in read-only mode: %s", asBool)
+		logging.Log.Infof("Dashboard is in read-only mode: %t", asBool)
 		return asBool
 	}
 	logging.Log.Warnf("Couldn't determine if the Dashboard is in read-only mode or not, assuming not")
