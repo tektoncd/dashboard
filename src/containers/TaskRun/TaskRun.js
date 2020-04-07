@@ -26,6 +26,8 @@ import {
   TaskTree
 } from '@tektoncd/dashboard-components';
 import {
+  getParams,
+  getResources,
   getStatus,
   reorderSteps,
   stepsStatus,
@@ -124,9 +126,8 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
     const taskRunNamespace = taskRun.metadata.namespace;
     const { reason, status: succeeded } = getStatus(taskRun);
     const runSteps = stepsStatus(reorderedSteps, reorderedSteps);
-    const { params, resources } = taskRun.spec;
-    const { inputs: inputResources, outputs: outputResources } =
-      resources || {};
+    const params = getParams(taskRun.spec);
+    const { inputResources, outputResources } = getResources(taskRun.spec);
     const { startTime } = taskRun.status;
     taskRun = {
       id: taskRun.metadata.uid,

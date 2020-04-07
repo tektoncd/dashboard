@@ -251,3 +251,45 @@ export function getClearFiltersHandler({ history, match }) {
     history.push(currentURL);
   };
 }
+
+/*
+    getParams and getResources below required to support 3rd-party consumers
+    of certain dashboard components (e.g. PipelineRun) while they migrate to
+    the Tekton beta.
+
+    Support both the Pipelines beta (0.11+) structure
+      {
+        params: ...,
+        resources: {
+          inputs: ...,
+          outputs: ...
+        }
+      }
+    and the older alpha (<0.11) structure
+      {
+        inputs: {
+          params: ...,
+          resources: ...
+        },
+        outputs: {
+          resources: ...
+        }
+      }
+ */
+export function getParams({ params, inputs }) {
+  return params || (inputs && inputs.params);
+}
+
+export function getResources({ resources, inputs, outputs }) {
+  if (resources) {
+    return {
+      inputResources: resources.inputs,
+      outputResources: resources.outputs
+    };
+  }
+
+  return {
+    inputResources: inputs && inputs.resources,
+    outputResources: outputs && outputs.resources
+  };
+}
