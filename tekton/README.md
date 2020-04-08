@@ -2,9 +2,13 @@
 
 This directory contains the Tekton `Tasks` and `Pipelines` used to create Dashboard releases.
 
-These tasks run on your local cluster, and then copy the release artifacts - docker images and yaml files - into [the `tekton releases` bucket in Google Cloud Platform](https://console.cloud.google.com/storage/browser/tekton-releases/dashboard). Your cluster must contain keys from a google account with the necessary authorization in order for this to work.
+These tasks run on your local cluster, and then copy the release artifacts - docker images and yaml files - into [the `tekton releases` bucket in Google Cloud Platform](https://console.cloud.google.com/storage/browser/tekton-releases/dashboard). Your cluster must contain keys from a Google account with the necessary authorization in order for this to work.
 
 ## Setup
+
+> **Note:** 
+> Depending on your cluster you may need to increase the memory allocated. 6GB is known to work on Docker Desktop.
+> See https://github.com/tektoncd/pipeline/issues/2417 for details.
 
 First, ensure that your credentials are set up correctly. You will need an account with access to [Google Cloud Platform](https://console.cloud.google.com). Your account must have 'proper authorization to release the images and yamls' in the [`tekton-releases` GCP project](https://github.com/tektoncd/plumbing#prow). Your account must have `Permission iam.serviceAccountKeys.create`. Contact @bobcatfish or @dlorenc if you are going to be creating dashboard releases and require this authorization.
 
