@@ -1,16 +1,15 @@
 ---
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: build-tekton-dashboard
 spec:
-  inputs:
-    resources:
+  resources:
+    inputs:
       - name: dashboard-source-repo
         type: git
         targetPath: go/src/github.com/tektoncd/dashboard
-  outputs:
-    resources:
+    outputs:
       - name: dashboard-source-repo
         type: git
   steps:
@@ -45,7 +44,7 @@ spec:
       command: ["/bin/sh", "-ce"]
       args:
         - |
-          # Further to https://github.com/tektoncd/pipeline/pull/1122 it is necessary to copy files into $(outputs.resources.dashboard-source-repo.path)
-          echo "Input source path=$(inputs.resources.dashboard-source-repo.path)"
-          echo "Output source path=$(outputs.resources.dashboard-source-repo.path)"
-          cp -r $(inputs.resources.dashboard-source-repo.path)/* $(outputs.resources.dashboard-source-repo.path)
+          # Further to https://github.com/tektoncd/pipeline/pull/1122 it is necessary to copy files into $(resources.outputs.dashboard-source-repo.path)
+          echo "Input source path=$(resources.inputs.dashboard-source-repo.path)"
+          echo "Output source path=$(resources.outputs.dashboard-source-repo.path)"
+          cp -r $(resources.inputs.dashboard-source-repo.path)/* $(resources.outputs.dashboard-source-repo.path)
