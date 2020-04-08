@@ -249,15 +249,21 @@ export /* istanbul ignore next */ class TriggerTemplateContainer extends Compone
                 <DataTable
                   rows={resourcetemplates.map((item, index) => ({
                     id: `${index}|${item.metadata.name ||
-                      item.metadata.generateName}`
+                      item.metadata.generateName}`,
+                    name: item.metadata.name || item.metadata.generateName,
+                    kind: item.kind
                   }))}
                   headers={[
                     {
+                      key: 'name',
                       header: intl.formatMessage({
-                        id: 'dashboard.triggerTemplate.resourceNameHeader',
-                        defaultMessage: 'Resource name to create'
-                      }),
-                      key: 'header'
+                        id: 'dashboard.tableHeader.name',
+                        defaultMessage: 'Name'
+                      })
+                    },
+                    {
+                      key: 'kind',
+                      header: 'Kind'
                     }
                   ]}
                   render={({
@@ -291,12 +297,7 @@ export /* istanbul ignore next */ class TriggerTemplateContainer extends Compone
                               <TableExpandRow {...getRowProps({ row })}>
                                 {row.cells.map(cell => (
                                   <TableCell key={cell.id}>
-                                    {triggerTemplate.spec.resourcetemplates[
-                                      index
-                                    ].metadata.name ||
-                                      triggerTemplate.spec.resourcetemplates[
-                                        index
-                                      ].metadata.generateName}
+                                    {cell.value}
                                   </TableCell>
                                 ))}
                               </TableExpandRow>
