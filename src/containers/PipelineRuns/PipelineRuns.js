@@ -311,7 +311,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
           />
         )}
         <PipelineRunsList
-          loading={loading}
+          loading={loading && !pipelineRuns.length}
           pipelineRuns={pipelineRuns}
           pipelineRunActions={pipelineRunActions}
           selectedNamespace={selectedNamespace}

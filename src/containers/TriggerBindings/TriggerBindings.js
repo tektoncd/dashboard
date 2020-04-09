@@ -133,7 +133,7 @@ export /* istanbul ignore next */ class TriggerBindings extends Component {
         <Table
           headers={initialHeaders}
           rows={triggerBindingsFormatted}
-          loading={loading}
+          loading={loading && !triggerBindingsFormatted.length}
           selectedNamespace={selectedNamespace}
           emptyTextAllNamespaces={intl.formatMessage(
             {

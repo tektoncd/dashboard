@@ -96,12 +96,15 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
     } = prevProps;
     const { taskRunName: prevTaskRunName } = prevMatch.params;
 
+    const websocketReconnected =
+      webSocketConnected && prevWebSocketConnected === false;
+
     if (
       taskRunName !== prevTaskRunName ||
       namespace !== prevNamespace ||
-      (webSocketConnected && prevWebSocketConnected === false)
+      websocketReconnected
     ) {
-      this.setState({ loading: true }); // eslint-disable-line
+      this.setState({ loading: !websocketReconnected }); // eslint-disable-line
       this.fetchTaskAndRuns(taskRunName, namespace);
     }
   }

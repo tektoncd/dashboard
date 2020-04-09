@@ -149,8 +149,8 @@ it('ServiceAccounts renders in loading state', () => {
 
   const store = mockStore({
     serviceAccounts: {
-      byId,
-      byNamespace,
+      byId: {},
+      byNamespace: {},
       isFetching: true,
       errorMessage: null
     },
@@ -170,5 +170,4 @@ it('ServiceAccounts renders in loading state', () => {
 
   expect(queryByText(/ServiceAccounts/i)).toBeTruthy();
   expect(queryByText('No ServiceAccounts in any namespace.')).toBeFalsy();
-  expect(queryByText('foo-service-account')).toBeFalsy();
 });

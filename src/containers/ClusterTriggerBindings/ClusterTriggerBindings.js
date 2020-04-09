@@ -117,7 +117,7 @@ export /* istanbul ignore next */ class ClusterTriggerBindings extends Component
         <Table
           headers={initialHeaders}
           rows={clusterTriggerBindingsFormatted}
-          loading={loading}
+          loading={loading && !clusterTriggerBindingsFormatted.length}
           emptyTextAllNamespaces={intl.formatMessage(
             {
               id: 'dashboard.emptyState.clusterTriggerBindings',

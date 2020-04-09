@@ -301,7 +301,7 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
         )}
         <PipelineResourcesList
           batchActionButtons={batchActionButtons}
-          loading={loading}
+          loading={loading && !pipelineResources.length}
           pipelineResources={pipelineResources}
           selectedNamespace={selectedNamespace}
           toolbarButtons={toolbarButtons}

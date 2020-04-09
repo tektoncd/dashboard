@@ -81,27 +81,8 @@ export /* istanbul ignore next */ class PipelineResourceContainer extends Compon
     const { error, intl, loading, match, pipelineResource } = this.props;
     const { pipelineResourceName } = match.params;
 
-    if (loading) {
-      return (
-        <DataTableSkeleton
-          headers={[
-            {
-              key: 'name',
-              header: intl.formatMessage({
-                id: 'dashboard.tableHeader.paramName',
-                defaultMessage: 'Param Name'
-              })
-            },
-            {
-              key: 'value',
-              header: intl.formatMessage({
-                id: 'dashboard.tableHeader.value',
-                defaultMessage: 'Value'
-              })
-            }
-          ]}
-        />
-      );
+    if (loading && !pipelineResource) {
+      return <DataTableSkeleton />;
     }
 
     if (error) {

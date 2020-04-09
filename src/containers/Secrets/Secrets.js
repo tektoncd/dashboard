@@ -448,7 +448,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
               rows={secretsFormatted}
               handleDisplayModal={this.handleDisplayModalClick}
               handleDelete={this.handleDeleteSecretClick}
-              loading={loading}
+              loading={loading && !secretsFormatted.length}
               selectedNamespace={selectedNamespace}
               emptyTextAllNamespaces={intl.formatMessage(
                 {

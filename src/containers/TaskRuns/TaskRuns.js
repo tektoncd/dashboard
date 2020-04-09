@@ -225,7 +225,7 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
         <h1>TaskRuns</h1>
         <LabelFilter {...this.props} />
         <TaskRunsList
-          loading={loading}
+          loading={loading && !taskRuns.length}
           selectedNamespace={selectedNamespace}
           taskRuns={taskRuns}
           taskRunActions={taskRunActions}

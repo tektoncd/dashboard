@@ -147,7 +147,7 @@ export /* istanbul ignore next */ class Pipelines extends Component {
         <Table
           headers={initialHeaders}
           rows={pipelinesFormatted}
-          loading={loading}
+          loading={loading && !pipelinesFormatted.length}
           selectedNamespace={selectedNamespace}
           emptyTextAllNamespaces={intl.formatMessage(
             {

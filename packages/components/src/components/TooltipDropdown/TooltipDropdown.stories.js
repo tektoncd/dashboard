@@ -13,6 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import { storiesOf } from '@storybook/react';
+import { text } from '@storybook/addon-knobs';
 
 import TooltipDropdown from './TooltipDropdown';
 
@@ -24,12 +25,21 @@ const props = {
 };
 
 storiesOf('Components/TooltipDropdown', module)
+  .addDecorator(storyFn => <div style={{ width: '200px' }}>{storyFn()}</div>)
   .add('default', () => {
-    return <TooltipDropdown {...props} />;
+    return <TooltipDropdown {...props} titleText={text('titleText', '')} />;
   })
   .add('loading', () => {
-    return <TooltipDropdown {...props} loading />;
+    return (
+      <TooltipDropdown {...props} loading titleText={text('titleText', '')} />
+    );
   })
   .add('empty', () => {
-    return <TooltipDropdown {...props} items={[]} />;
+    return (
+      <TooltipDropdown
+        {...props}
+        items={[]}
+        titleText={text('titleText', '')}
+      />
+    );
   });

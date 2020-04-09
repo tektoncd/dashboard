@@ -66,12 +66,14 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       pipelineRunName: prevPipelineRunName
     } = prevMatch.params;
 
+    const websocketReconnected =
+      webSocketConnected && prevWebSocketConnected === false;
     if (
       namespace !== prevNamespace ||
       pipelineRunName !== prevPipelineRunName ||
-      (webSocketConnected && prevWebSocketConnected === false)
+      websocketReconnected
     ) {
-      this.fetchData();
+      this.fetchData({ skipLoading: websocketReconnected });
     }
   }
 
@@ -79,10 +81,10 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     this.setState({ showRerunNotification: value });
   }
 
-  fetchData() {
+  fetchData({ skipLoading } = {}) {
     const { match } = this.props;
     const { namespace, pipelineRunName } = match.params;
-    this.setState({ loading: true }, async () => {
+    this.setState({ loading: !skipLoading }, async () => {
       await Promise.all([
         this.props.fetchPipelineRun({ name: pipelineRunName, namespace }),
         this.props.fetchTasks(),

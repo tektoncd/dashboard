@@ -147,7 +147,7 @@ export /* istanbul ignore next */ class Tasks extends Component {
         <Table
           headers={initialHeaders}
           rows={tasksFormatted}
-          loading={loading}
+          loading={loading && !tasksFormatted.length}
           selectedNamespace={selectedNamespace}
           emptyTextAllNamespaces={intl.formatMessage(
             {

@@ -135,7 +135,7 @@ export /* istanbul ignore next */ class TriggerTemplates extends Component {
         <Table
           headers={initialHeaders}
           rows={triggerTemplatesFormatted}
-          loading={loading}
+          loading={loading && !triggerTemplatesFormatted.length}
           selectedNamespace={selectedNamespace}
           emptyTextAllNamespaces={intl.formatMessage(
             {
