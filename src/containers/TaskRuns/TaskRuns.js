@@ -33,6 +33,7 @@ import {
   getTaskRuns,
   getTaskRunsErrorMessage,
   isFetchingTaskRuns,
+  isReadOnly,
   isWebSocketConnected
 } from '../../reducers';
 import { cancelTaskRun, deleteTaskRun } from '../../api';
@@ -86,7 +87,12 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
   };
 
   taskRunActions = () => {
+    if (this.props.isReadOnly) {
+      return [];
+    }
+
     const { intl } = this.props;
+
     return [
       {
         actionText: intl.formatMessage({
@@ -245,6 +251,7 @@ function mapStateToProps(state, props) {
 
   return {
     error: getTaskRunsErrorMessage(state),
+    isReadOnly: isReadOnly(state),
     filters,
     loading: isFetchingTaskRuns(state),
     namespace,

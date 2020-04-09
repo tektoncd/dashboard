@@ -159,316 +159,311 @@ const testStore = {
   ...serviceAccountsTestStore
 };
 
-beforeEach(() => {
-  jest.spyOn(API, 'getServiceAccounts').mockImplementation(() => []);
-  jest.spyOn(API, 'getPipelines').mockImplementation(() => []);
-  jest.spyOn(API, 'getPipelineResources').mockImplementation(() => []);
-  jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => true);
-});
+describe('PipelineRuns container', () => {
+  beforeEach(() => {
+    jest.spyOn(API, 'getServiceAccounts').mockImplementation(() => []);
+    jest.spyOn(API, 'getPipelines').mockImplementation(() => []);
+    jest.spyOn(API, 'getPipelineResources').mockImplementation(() => []);
+    jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => true);
+  });
 
-it('PipelineRuns can be filtered on a single label filter', async () => {
-  const mockTestStore = mockStore(testStore);
-  const match = {
-    params: {},
-    url: '/pipelineruns'
-  };
+  it('PipelineRuns can be filtered on a single label filter', async () => {
+    const mockTestStore = mockStore(testStore);
+    const match = {
+      params: {},
+      url: '/pipelineruns'
+    };
 
-  const { queryByText, getByTestId, getByText } = renderWithRouter(
-    <Provider store={mockTestStore}>
-      <Route
-        path="/pipelineruns"
-        render={props => (
-          <PipelineRunsContainer
-            {...props}
-            match={match}
-            error={null}
-            loading={false}
-            namespace="namespace-1"
-            fetchPipelineRuns={() => Promise.resolve()}
-            pipelineRuns={pipelineRunsTestStore.pipelineRuns.byId}
-          />
-        )}
-      />
-    </Provider>,
-    { route: '/pipelineruns' }
-  );
+    const { queryByText, getByTestId, getByText } = renderWithRouter(
+      <Provider store={mockTestStore}>
+        <Route
+          path="/pipelineruns"
+          render={props => (
+            <PipelineRunsContainer
+              {...props}
+              match={match}
+              error={null}
+              loading={false}
+              namespace="namespace-1"
+              fetchPipelineRuns={() => Promise.resolve()}
+              pipelineRuns={pipelineRunsTestStore.pipelineRuns.byId}
+            />
+          )}
+        />
+      </Provider>,
+      { route: '/pipelineruns' }
+    );
 
-  const filterValue = 'baz:bam';
-  const filterInputField = getByTestId('filter-search-bar');
-  fireEvent.change(filterInputField, { target: { value: filterValue } });
-  fireEvent.submit(getByText(/Input a label filter/i));
+    const filterValue = 'baz:bam';
+    const filterInputField = getByTestId('filter-search-bar');
+    fireEvent.change(filterInputField, { target: { value: filterValue } });
+    fireEvent.submit(getByText(/Input a label filter/i));
 
-  expect(queryByText(filterValue)).toBeTruthy();
-  expect(queryByText('pipelineRunWithSingleLabel')).toBeFalsy();
-  expect(queryByText('pipelineRunWithTwoLabels')).toBeTruthy();
-});
+    expect(queryByText(filterValue)).toBeTruthy();
+    expect(queryByText('pipelineRunWithSingleLabel')).toBeFalsy();
+    expect(queryByText('pipelineRunWithTwoLabels')).toBeTruthy();
+  });
 
-it('PipelineRuns can be filtered on multiple label filters', async () => {
-  const mockTestStore = mockStore(testStore);
-  const match = {
-    params: {},
-    url: ''
-  };
+  it('PipelineRuns can be filtered on multiple label filters', async () => {
+    const mockTestStore = mockStore(testStore);
+    const match = {
+      params: {},
+      url: ''
+    };
 
-  const { queryByText, getByTestId, getByText } = renderWithRouter(
-    <Provider store={mockTestStore}>
-      <Route
-        path="/pipelineruns"
-        render={props => (
-          <PipelineRunsContainer
-            {...props}
-            match={match}
-            error={null}
-            loading={false}
-            namespace="namespace-1"
-            fetchPipelineRuns={() => Promise.resolve()}
-            pipelineRuns={pipelineRunsTestStore.pipelineRuns.byId}
-          />
-        )}
-      />
-    </Provider>,
-    { route: '/pipelineruns' }
-  );
+    const { queryByText, getByTestId, getByText } = renderWithRouter(
+      <Provider store={mockTestStore}>
+        <Route
+          path="/pipelineruns"
+          render={props => (
+            <PipelineRunsContainer
+              {...props}
+              match={match}
+              error={null}
+              loading={false}
+              namespace="namespace-1"
+              fetchPipelineRuns={() => Promise.resolve()}
+              pipelineRuns={pipelineRunsTestStore.pipelineRuns.byId}
+            />
+          )}
+        />
+      </Provider>,
+      { route: '/pipelineruns' }
+    );
 
-  const firstFilterValue = 'foo:bar';
-  const secondFilterValue = 'baz:bam';
-  const filterInputField = getByTestId('filter-search-bar');
-  fireEvent.change(filterInputField, { target: { value: firstFilterValue } });
-  fireEvent.submit(getByText(/Input a label filter/i));
-  fireEvent.change(filterInputField, { target: { value: secondFilterValue } });
-  fireEvent.submit(getByText(/Input a label filter/i));
+    const firstFilterValue = 'foo:bar';
+    const secondFilterValue = 'baz:bam';
+    const filterInputField = getByTestId('filter-search-bar');
+    fireEvent.change(filterInputField, { target: { value: firstFilterValue } });
+    fireEvent.submit(getByText(/Input a label filter/i));
+    fireEvent.change(filterInputField, {
+      target: { value: secondFilterValue }
+    });
+    fireEvent.submit(getByText(/Input a label filter/i));
 
-  expect(queryByText(firstFilterValue)).toBeTruthy();
-  expect(queryByText(secondFilterValue)).toBeTruthy();
-  expect(queryByText('pipelineRunWithSingleLabel')).toBeFalsy();
-  expect(queryByText('pipelineRunWithTwoLabels')).toBeTruthy();
-});
+    expect(queryByText(firstFilterValue)).toBeTruthy();
+    expect(queryByText(secondFilterValue)).toBeTruthy();
+    expect(queryByText('pipelineRunWithSingleLabel')).toBeFalsy();
+    expect(queryByText('pipelineRunWithTwoLabels')).toBeTruthy();
+  });
 
-it('PipelineRuns label filter can be deleted, rendering the correct PipelineRuns', async () => {
-  const mockTestStore = mockStore(testStore);
-  const match = {
-    params: {},
-    url: '/pipelineruns'
-  };
+  it('PipelineRuns label filter can be deleted, rendering the correct PipelineRuns', async () => {
+    const mockTestStore = mockStore(testStore);
+    const match = {
+      params: {},
+      url: '/pipelineruns'
+    };
 
-  const { queryByText, getByTestId, getByText } = renderWithRouter(
-    <Provider store={mockTestStore}>
-      <Route
-        path="/pipelineruns"
-        render={props => (
-          <PipelineRunsContainer
-            {...props}
-            match={match}
-            error={null}
-            loading={false}
-            namespace="namespace-1"
-            fetchPipelineRuns={() => Promise.resolve()}
-            pipelineRuns={pipelineRunsTestStore.pipelineRuns.byId}
-          />
-        )}
-      />
-    </Provider>,
-    { route: '/pipelineruns' }
-  );
+    const { queryByText, getByTestId, getByText } = renderWithRouter(
+      <Provider store={mockTestStore}>
+        <Route
+          path="/pipelineruns"
+          render={props => (
+            <PipelineRunsContainer
+              {...props}
+              match={match}
+              error={null}
+              loading={false}
+              namespace="namespace-1"
+              fetchPipelineRuns={() => Promise.resolve()}
+              pipelineRuns={pipelineRunsTestStore.pipelineRuns.byId}
+            />
+          )}
+        />
+      </Provider>,
+      { route: '/pipelineruns' }
+    );
 
-  const filterValue = 'baz:bam';
-  const filterInputField = getByTestId('filter-search-bar');
-  fireEvent.change(filterInputField, { target: { value: filterValue } });
-  fireEvent.submit(getByText(/Input a label filter/i));
+    const filterValue = 'baz:bam';
+    const filterInputField = getByTestId('filter-search-bar');
+    fireEvent.change(filterInputField, { target: { value: filterValue } });
+    fireEvent.submit(getByText(/Input a label filter/i));
 
-  expect(queryByText(filterValue)).toBeTruthy();
-  expect(queryByText('pipelineRunWithSingleLabel')).toBeFalsy();
-  expect(queryByText('pipelineRunWithTwoLabels')).toBeTruthy();
+    expect(queryByText(filterValue)).toBeTruthy();
+    expect(queryByText('pipelineRunWithSingleLabel')).toBeFalsy();
+    expect(queryByText('pipelineRunWithTwoLabels')).toBeTruthy();
 
-  fireEvent.click(getByText(filterValue));
-  await waitForElement(() => getByText('pipelineRunWithSingleLabel'));
-  expect(queryByText(filterValue)).toBeFalsy();
+    fireEvent.click(getByText(filterValue));
+    await waitForElement(() => getByText('pipelineRunWithSingleLabel'));
+    expect(queryByText(filterValue)).toBeFalsy();
 
-  expect(queryByText('pipelineRunWithSingleLabel')).toBeTruthy();
-  expect(queryByText('pipelineRunWithTwoLabels')).toBeTruthy();
-});
+    expect(queryByText('pipelineRunWithSingleLabel')).toBeTruthy();
+    expect(queryByText('pipelineRunWithTwoLabels')).toBeTruthy();
+  });
 
-it('Duplicate label filters are prevented', async () => {
-  const mockTestStore = mockStore(testStore);
-  const match = {
-    params: {},
-    url: '/pipelineruns'
-  };
+  it('Duplicate label filters are prevented', async () => {
+    const mockTestStore = mockStore(testStore);
+    const match = {
+      params: {},
+      url: '/pipelineruns'
+    };
 
-  const { queryByText, getByTestId, getByText } = renderWithRouter(
-    <Provider store={mockTestStore}>
-      <Route
-        path="/pipelineruns"
-        render={props => (
-          <PipelineRunsContainer
-            {...props}
-            match={match}
-            error={null}
-            loading={false}
-            namespace="namespace-1"
-            fetchPipelineRuns={() => Promise.resolve()}
-            pipelineRuns={pipelineRunsTestStore.pipelineRuns.byId}
-          />
-        )}
-      />
-    </Provider>,
-    { route: '/pipelineruns' }
-  );
+    const { queryByText, getByTestId, getByText } = renderWithRouter(
+      <Provider store={mockTestStore}>
+        <Route
+          path="/pipelineruns"
+          render={props => (
+            <PipelineRunsContainer
+              {...props}
+              match={match}
+              error={null}
+              loading={false}
+              namespace="namespace-1"
+              fetchPipelineRuns={() => Promise.resolve()}
+              pipelineRuns={pipelineRunsTestStore.pipelineRuns.byId}
+            />
+          )}
+        />
+      </Provider>,
+      { route: '/pipelineruns' }
+    );
 
-  const filterValue = 'baz:bam';
-  const filterInputField = getByTestId('filter-search-bar');
-  fireEvent.change(filterInputField, { target: { value: filterValue } });
-  fireEvent.submit(getByText(/Input a label filter/i));
+    const filterValue = 'baz:bam';
+    const filterInputField = getByTestId('filter-search-bar');
+    fireEvent.change(filterInputField, { target: { value: filterValue } });
+    fireEvent.submit(getByText(/Input a label filter/i));
 
-  expect(queryByText(filterValue)).toBeTruthy();
+    expect(queryByText(filterValue)).toBeTruthy();
 
-  fireEvent.change(filterInputField, { target: { value: filterValue } });
-  fireEvent.submit(getByText(/Input a label filter/i));
-  expect(queryByText(/No duplicate filters allowed/i)).toBeTruthy();
-});
+    fireEvent.change(filterInputField, { target: { value: filterValue } });
+    fireEvent.submit(getByText(/Input a label filter/i));
+    expect(queryByText(/No duplicate filters allowed/i)).toBeTruthy();
+  });
 
-it('An invalid filter value is disallowed and reported', async () => {
-  const mockTestStore = mockStore(testStore);
-  const match = {
-    params: {},
-    url: '/pipelineruns'
-  };
+  it('An invalid filter value is disallowed and reported', async () => {
+    const mockTestStore = mockStore(testStore);
+    const match = {
+      params: {},
+      url: '/pipelineruns'
+    };
 
-  const { queryByText, getByTestId, getByText } = renderWithRouter(
-    <Provider store={mockTestStore}>
-      <Route
-        path="/pipelineruns"
-        render={props => (
-          <PipelineRunsContainer
-            {...props}
-            match={match}
-            error={null}
-            loading={false}
-            namespace="namespace-1"
-            fetchPipelineRuns={() => Promise.resolve()}
-            pipelineRuns={pipelineRunsTestStore.pipelineRuns.byId}
-          />
-        )}
-      />
-    </Provider>,
-    { route: '/pipelineruns' }
-  );
+    const { queryByText, getByTestId, getByText } = renderWithRouter(
+      <Provider store={mockTestStore}>
+        <Route
+          path="/pipelineruns"
+          render={props => (
+            <PipelineRunsContainer
+              {...props}
+              match={match}
+              error={null}
+              loading={false}
+              namespace="namespace-1"
+              fetchPipelineRuns={() => Promise.resolve()}
+              pipelineRuns={pipelineRunsTestStore.pipelineRuns.byId}
+            />
+          )}
+        />
+      </Provider>,
+      { route: '/pipelineruns' }
+    );
 
-  const filterValue = 'baz=bam';
-  const filterInputField = getByTestId('filter-search-bar');
-  fireEvent.change(filterInputField, { target: { value: filterValue } });
-  fireEvent.submit(getByText(/Input a label filter/i));
+    const filterValue = 'baz=bam';
+    const filterInputField = getByTestId('filter-search-bar');
+    fireEvent.change(filterInputField, { target: { value: filterValue } });
+    fireEvent.submit(getByText(/Input a label filter/i));
 
-  expect(
-    queryByText(
-      /Filters must be of the format labelKey:labelValue and contain accepted label characters/i
-    )
-  ).toBeTruthy();
-});
+    expect(
+      queryByText(
+        /Filters must be of the format labelKey:labelValue and contain accepted label characters/i
+      )
+    ).toBeTruthy();
+  });
 
-it('Creation, deletion and stop events are possible when not in read-only mode', async () => {
-  jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => false);
+  it('Creation, deletion and stop events are possible when not in read-only mode', async () => {
+    jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => false);
 
-  const mockTestStore = mockStore(testStore);
-  const match = {
-    params: {},
-    url: '/pipelineruns'
-  };
+    const mockTestStore = mockStore(testStore);
+    const match = {
+      params: {},
+      url: '/pipelineruns'
+    };
 
-  const { getByText, queryByText } = renderWithRouter(
-    <Provider store={mockTestStore}>
-      <Route
-        path="/pipelineruns"
-        render={props => (
-          <PipelineRunsContainer
-            {...props}
-            match={match}
-            error={null}
-            loading={false}
-            namespace="namespace-1"
-            fetchPipelineRuns={() => Promise.resolve()}
-            pipelineRuns={pipelineRunsTestStore.pipelineRuns.byId}
-          />
-        )}
-      />
-    </Provider>,
-    { route: '/pipelineruns' }
-  );
+    const { getByText, getByTitle, queryByText } = renderWithRouter(
+      <Provider store={mockTestStore}>
+        <Route
+          path="/pipelineruns"
+          render={props => (
+            <PipelineRunsContainer
+              {...props}
+              match={match}
+              error={null}
+              loading={false}
+              namespace="namespace-1"
+              fetchPipelineRuns={() => Promise.resolve()}
+              pipelineRuns={pipelineRunsTestStore.pipelineRuns.byId}
+            />
+          )}
+        />
+      </Provider>,
+      { route: '/pipelineruns' }
+    );
 
-  // Let the page finish rendering so we know if we're in read-only mode or not
-  await waitForElement(() => getByText('pipelineRunWithTwoLabels'));
-  expect(queryByText('Create')).toBeTruthy(); // So we don't match on "Created" which is a table header
-  expect(queryByText(/pipelineRunWithTwoLabels/i)).toBeTruthy();
-  expect(
-    document
-      .getElementById('namespace-1:pipelineRunWithTwoLabels:actions')
-      .getElementsByClassName('bx--overflow-menu')
-      .item(0)
-  ).toBeTruthy(); // No actions for it
-});
+    // Let the page finish rendering so we know if we're in read-only mode or not
+    await waitForElement(() => getByText('pipelineRunWithTwoLabels'));
+    expect(queryByText('Create')).toBeTruthy(); // So we don't match on "Created" which is a table header
+    expect(getByTitle(/actions/i)).toBeTruthy();
+  });
 
-it('Creation, deletion and stop events are not possible when in read-only mode', async () => {
-  jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => true);
+  it('Creation, deletion and stop events are not possible when in read-only mode', async () => {
+    jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => true);
 
-  const mockTestStore = mockStore(testStore);
-  const match = {
-    params: {},
-    url: '/pipelineruns'
-  };
+    const mockTestStore = mockStore(testStore);
+    const match = {
+      params: {},
+      url: '/pipelineruns'
+    };
 
-  const { getByText, queryByText } = renderWithRouter(
-    <Provider store={mockTestStore}>
-      <Route
-        path="/pipelineruns"
-        render={props => (
-          <PipelineRunsContainer
-            {...props}
-            match={match}
-            error={null}
-            isReadOnly
-            loading={false}
-            namespace="namespace-1"
-            fetchPipelineRuns={() => Promise.resolve()}
-            pipelineRuns={pipelineRunsTestStore.pipelineRuns.byId}
-          />
-        )}
-      />
-    </Provider>,
-    { route: '/pipelineruns' }
-  );
-  // Let the page finish rendering so we know if we're in read-only mode or not
-  await waitForElement(() => getByText('pipelineRunWithTwoLabels'));
-  expect(queryByText('Create')).toBeFalsy(); // So we don't match on "Created" which is a table header
-  expect(queryByText(/pipelineRunWithTwoLabels/i)).toBeTruthy(); // It's in the table
-  expect(
-    document.getElementById('namespace-1:pipelineRunWithTwoLabels:actions')
-  ).toBeFalsy();
-});
+    const { getByText, queryByText, queryByTitle } = renderWithRouter(
+      <Provider store={mockTestStore}>
+        <Route
+          path="/pipelineruns"
+          render={props => (
+            <PipelineRunsContainer
+              {...props}
+              match={match}
+              error={null}
+              isReadOnly
+              loading={false}
+              namespace="namespace-1"
+              fetchPipelineRuns={() => Promise.resolve()}
+              pipelineRuns={pipelineRunsTestStore.pipelineRuns.byId}
+            />
+          )}
+        />
+      </Provider>,
+      { route: '/pipelineruns' }
+    );
+    // Let the page finish rendering so we know if we're in read-only mode or not
+    await waitForElement(() => getByText('pipelineRunWithTwoLabels'));
+    expect(queryByText('Create')).toBeFalsy(); // So we don't match on "Created" which is a table header
+    expect(queryByTitle(/actions/i)).toBeFalsy();
+  });
 
-it('TaskTree handles rerun event in PipelineRuns page', async () => {
-  const mockTestStore = mockStore(testStore);
-  jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => false);
-  jest.spyOn(API, 'rerunPipelineRun').mockImplementation(() => []);
-  const { getByTestId, getByText } = renderWithRouter(
-    <Provider store={mockTestStore}>
-      <Route
-        path={urls.pipelineRuns.all()}
-        render={props => (
-          <PipelineRunsContainer
-            {...props}
-            fetchPipelineRuns={() => Promise.resolve()}
-            pipelineRuns={pipelineRunsTestStore.pipelineRuns.byId}
-          />
-        )}
-      />
-    </Provider>,
-    { route: urls.pipelineRuns.all() }
-  );
-  await waitForElement(() => getByText(/pipelineRunWithTwoLabels/i));
-  fireEvent.click(await waitForElement(() => getByTestId('overflowmenu')));
-  await waitForElement(() => getByText(/Rerun/i));
-  fireEvent.click(getByText('Rerun'));
-  expect(API.rerunPipelineRun).toHaveBeenCalledTimes(1);
-  const expected = { pipelinerunname: 'pipelineRunWithSingleLabel' };
-  expect(API.rerunPipelineRun).toHaveBeenCalledWith('namespace-1', expected);
+  it('TaskTree handles rerun event in PipelineRuns page', async () => {
+    const mockTestStore = mockStore(testStore);
+    jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => false);
+    jest.spyOn(API, 'rerunPipelineRun').mockImplementation(() => []);
+    const { getByTestId, getByText } = renderWithRouter(
+      <Provider store={mockTestStore}>
+        <Route
+          path={urls.pipelineRuns.all()}
+          render={props => (
+            <PipelineRunsContainer
+              {...props}
+              fetchPipelineRuns={() => Promise.resolve()}
+              pipelineRuns={pipelineRunsTestStore.pipelineRuns.byId}
+            />
+          )}
+        />
+      </Provider>,
+      { route: urls.pipelineRuns.all() }
+    );
+    await waitForElement(() => getByText(/pipelineRunWithTwoLabels/i));
+    fireEvent.click(await waitForElement(() => getByTestId('overflowmenu')));
+    await waitForElement(() => getByText(/Rerun/i));
+    fireEvent.click(getByText('Rerun'));
+    expect(API.rerunPipelineRun).toHaveBeenCalledTimes(1);
+    const expected = { pipelinerunname: 'pipelineRunWithSingleLabel' };
+    expect(API.rerunPipelineRun).toHaveBeenCalledWith('namespace-1', expected);
+  });
 });
