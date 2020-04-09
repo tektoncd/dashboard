@@ -49,7 +49,7 @@ const TaskRuns = ({
   loading,
   selectedNamespace,
   taskRuns,
-  taskRunActions
+  taskRunActions = []
 }) => {
   const headers = [
     {
@@ -93,12 +93,12 @@ const TaskRuns = ({
         id: 'dashboard.tableHeader.duration',
         defaultMessage: 'Duration'
       })
-    },
-    {
-      key: 'actions',
-      header: ''
     }
   ];
+
+  if (taskRunActions.length) {
+    headers.push({ key: 'actions', header: '' });
+  }
 
   const taskRunsFormatted = taskRuns.map(taskRun => {
     const { creationTimestamp, namespace } = taskRun.metadata;
