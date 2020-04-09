@@ -22,6 +22,8 @@ Tekton Dashboard is a general purpose, web-based UI for Tekton Pipelines. It all
 - Use the v0.2.1 release for Tekton Pipelines v0.7.0
 - Use the v0.1.1 release for Tekton Pipelines v0.5.2
 
+Empty PR
+
 ## Install Dashboard
 
 ### Installing the latest release
