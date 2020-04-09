@@ -237,7 +237,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
       });
     } else {
       secrets.forEach(secret => {
-        if (secret.data.accessToken) {
+        if (secret.data && secret.data.accessToken) {
           secretsToUse.push(secret);
         }
       });
