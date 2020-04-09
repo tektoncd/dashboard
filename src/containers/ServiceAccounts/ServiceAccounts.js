@@ -140,7 +140,7 @@ export /* istanbul ignore next */ class ServiceAccounts extends Component {
         <Table
           headers={initialHeaders}
           rows={serviceAccountsFormatted}
-          loading={loading}
+          loading={loading && !serviceAccountsFormatted.length}
           selectedNamespace={selectedNamespace}
           emptyTextAllNamespaces={intl.formatMessage(
             {

@@ -112,7 +112,7 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
         <Table
           headers={initialHeaders}
           rows={clusterTasksFormatted}
-          loading={loading}
+          loading={loading && !clusterTasksFormatted.length}
           emptyTextAllNamespaces={intl.formatMessage(
             {
               id: 'dashboard.emptyState.clusterTasks',

@@ -135,7 +135,7 @@ export /* istanbul ignore next */ class EventListeners extends Component {
         <Table
           headers={initialHeaders}
           rows={eventListenersFormatted}
-          loading={loading}
+          loading={loading && !eventListenersFormatted.length}
           selectedNamespace={selectedNamespace}
           emptyTextAllNamespaces={intl.formatMessage(
             {

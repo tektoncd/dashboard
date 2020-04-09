@@ -151,8 +151,8 @@ it('TriggerTemplates renders in loading state', () => {
 
   const store = mockStore({
     triggerTemplates: {
-      byId,
-      byNamespace,
+      byId: {},
+      byNamespace: {},
       isFetching: true,
       errorMessage: null
     },
@@ -172,5 +172,4 @@ it('TriggerTemplates renders in loading state', () => {
 
   expect(queryByText(/TriggerTemplates/i)).toBeTruthy();
   expect(queryByText('No TriggerTemplates in any namespace.')).toBeFalsy();
-  expect(queryByText('trigger-template')).toBeFalsy();
 });

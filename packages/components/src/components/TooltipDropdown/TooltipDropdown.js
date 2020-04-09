@@ -42,7 +42,16 @@ const TooltipDropdown = ({
   ...rest
 }) => {
   if (loading) {
-    return <DropdownSkeleton className={className} id={id} inline={inline} />;
+    return (
+      <div className="bx--list-box__wrapper">
+        {titleText && <span className="bx--label">{titleText}</span>}
+        <DropdownSkeleton
+          className={`bx--combo-box ${className || ''}`}
+          id={id}
+          inline={inline}
+        />
+      </div>
+    );
   }
 
   const options = items.map(itemToObject);
