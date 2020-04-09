@@ -176,7 +176,11 @@ export function createPipelineResource({ namespace, resource } = {}) {
 }
 
 export function deletePipelineResource({ name, namespace } = {}) {
-  const uri = getTektonAPI('pipelineresources', { name, namespace });
+  const uri = getTektonAPI('pipelineresources', {
+    name,
+    namespace,
+    version: 'v1alpha1'
+  });
   return deleteRequest(uri, name);
 }
 
