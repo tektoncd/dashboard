@@ -199,6 +199,7 @@ func (h *Handler) getAllExtensions(request *restful.Request, response *restful.R
 
 func registerKubeAPIProxy(r endpoints.Resource, container *restful.Container) {
 	proxy := new(restful.WebService)
+	proxy.Filter(restful.NoBrowserCacheFilter)
 	proxy.Consumes(restful.MIME_JSON, "text/plain", "application/json-patch+json").
 		Produces(restful.MIME_JSON, "text/plain", "application/json-patch+json").
 		Path("/proxy")
@@ -230,6 +231,7 @@ func registerWeb(container *restful.Container) {
 // registerEndpoints registers the APIs to interface with core Tekton/K8s pieces
 func registerEndpoints(r endpoints.Resource, container *restful.Container) {
 	wsv1 := new(restful.WebService)
+	wsv1.Filter(restful.NoBrowserCacheFilter)
 	wsv1.
 		Path("/v1/namespaces").
 		Consumes(restful.MIME_JSON, "text/plain").
@@ -290,6 +292,7 @@ func registerReadinessProbe(r endpoints.Resource, container *restful.Container) 
 func registerPropertiesEndpoint(r endpoints.Resource, container *restful.Container) {
 	logging.Log.Info("Adding API for properties")
 	wsDefaults := new(restful.WebService)
+	wsDefaults.Filter(restful.NoBrowserCacheFilter)
 	wsDefaults.
 		Path("/v1/properties").
 		Consumes(restful.MIME_JSON, "text/plain").
