@@ -18,8 +18,10 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const common = require('./webpack.common.js');
 
-module.exports = merge(common, {
-  mode: 'production',
+const mode = 'production';
+
+module.exports = merge(common({ mode }), {
+  mode,
   output: {
     filename: '[name].[contenthash].js',
     path: path.resolve(__dirname, 'dist'),

@@ -13,7 +13,14 @@ limitations under the License.
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-module.exports = {
+const contentSecurityPolicy = {
+  development:
+    "default-src 'none'; img-src 'self'; script-src 'self' 'unsafe-eval'; style-src blob:; connect-src 'self'; font-src 'self' https://fonts.gstatic.com;",
+  production:
+    "default-src 'none'; img-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; font-src 'self' https://fonts.gstatic.com;"
+};
+
+module.exports = ({ mode }) => ({
   entry: ['./src/index.js'],
   output: {
     publicPath: '/'
@@ -48,7 +55,10 @@ module.exports = {
       favicon: path.resolve(__dirname, 'src/images', 'favicon.png'),
       template: path.resolve(__dirname, 'src', 'index.template.html'),
       meta: {
-        viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no'
+        'Content-Security-Policy': {
+          'http-equiv': 'Content-Security-Policy',
+          content: contentSecurityPolicy[mode]
+        }
       }
     })
   ],
@@ -57,4 +67,4 @@ module.exports = {
       'react-router-dom': path.resolve('./node_modules/react-router-dom')
     }
   }
-};
+});

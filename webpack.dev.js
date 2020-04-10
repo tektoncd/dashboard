@@ -26,8 +26,10 @@ const extensionConfig = {
   }
 };
 
-module.exports = merge(common, {
-  mode: 'development',
+const mode = 'development';
+
+module.exports = merge(common({ mode }), {
+  mode,
   devtool: 'eval-source-map',
   devServer: {
     historyApiFallback: true,
