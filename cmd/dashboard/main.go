@@ -122,7 +122,7 @@ func main() {
 
 	ctx := signals.NewContext()
 
-	routerHandler := router.Register(resource)
+	routerHandler := router.Register(resource, cfg)
 	logging.Log.Info("Creating controllers")
 	resyncDur := time.Second * 30
 	controllers.StartTektonControllers(resource.PipelineClient, resource.PipelineResourceClient, resyncDur, ctx.Done())

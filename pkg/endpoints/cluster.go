@@ -14,7 +14,10 @@ limitations under the License.
 package endpoints
 
 import (
+	"crypto/tls"
 	"errors"
+	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -23,6 +26,7 @@ import (
 
 	restful "github.com/emicklei/go-restful"
 	"github.com/gorilla/csrf"
+	"github.com/gorilla/websocket"
 	"github.com/tektoncd/dashboard/pkg/logging"
 	"github.com/tektoncd/dashboard/pkg/utils"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -222,4 +226,114 @@ func (r Resource) GetProperties(request *restful.Request, response *restful.Resp
 func (r Resource) GetToken(request *restful.Request, response *restful.Response) {
 	response.Header().Add("X-CSRF-Token", csrf.Token(request.Request))
 	response.Write([]byte("OK"))
+}
+
+func (r Resource) ProxyWebsocketRequest(bearerToken string) func(*restful.Request, *restful.Response) {
+	return func(requestFromClient *restful.Request, responseToClient *restful.Response) {
+		parsedURL, err := url.Parse(requestFromClient.Request.URL.String())
+		if err != nil {
+			http.Error(responseToClient, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+			return
+		}
+
+		uri := requestFromClient.PathParameter("subpath") + "?" + parsedURL.RawQuery
+		proxiedURI := r.K8sClient.CoreV1().RESTClient().Verb(requestFromClient.Request.Method).RequestURI(uri).URL().String()
+		proxiedURI = strings.Replace(proxiedURI, "http", "ws", 1)
+
+		dialer := websocket.Dialer{TLSClientConfig: &tls.Config{RootCAs: nil, InsecureSkipVerify: true}}
+		requestHeader := http.Header{}
+		requestHeader.Set("Authorization", "Bearer "+bearerToken)
+
+		origin := requestFromClient.HeaderParameter("Origin")
+		if origin != "" {
+			requestHeader.Add("Origin", origin)
+		}
+
+		backendConnection, responseFromBackend, err := dialer.Dial(proxiedURI, requestHeader)
+		if err != nil {
+			logging.Log.Error("ProxyWebsocketRequest: failed dialling backend %s", err)
+			if responseFromBackend != nil {
+				if err := copyResponse(responseToClient, responseFromBackend); err != nil {
+					logging.Log.Error("ProxyWebsocketRequest: failed writing response after bad backend handshake: %s", err)
+				}
+			} else {
+				http.Error(responseToClient, http.StatusText(http.StatusServiceUnavailable), http.StatusServiceUnavailable)
+			}
+			return
+		}
+		defer backendConnection.Close()
+
+		upgrader := &websocket.Upgrader{
+			ReadBufferSize:  1024,
+			WriteBufferSize: 4096,
+		}
+
+		clientConnection, err := upgrader.Upgrade(responseToClient, requestFromClient.Request, nil)
+		if err != nil {
+			logging.Log.Error("ProxyWebsocketRequest: failed upgrade %s", err)
+			return
+		}
+		defer clientConnection.Close()
+
+		errClient := make(chan error, 1)
+		errBackend := make(chan error, 1)
+		proxyWebsocketConnection := func(destination, source *websocket.Conn, errorChannel chan error) {
+			for {
+				messageType, message, err := source.ReadMessage()
+				if err != nil {
+					closeMessage := websocket.FormatCloseMessage(websocket.CloseNormalClosure, fmt.Sprintf("%v", err))
+					if e, ok := err.(*websocket.CloseError); ok {
+						if e.Code != websocket.CloseNoStatusReceived {
+							closeMessage = nil
+							if e.Code != websocket.CloseAbnormalClosure && e.Code != websocket.CloseTLSHandshake {
+								closeMessage = websocket.FormatCloseMessage(e.Code, e.Text)
+							}
+						}
+					}
+					errorChannel <- err
+					if closeMessage != nil {
+						destination.WriteMessage(websocket.CloseMessage, closeMessage)
+					}
+					break
+				}
+				err = destination.WriteMessage(messageType, message)
+				if err != nil {
+					errorChannel <- err
+					break
+				}
+			}
+		}
+
+		go proxyWebsocketConnection(clientConnection, backendConnection, errClient)
+		go proxyWebsocketConnection(backendConnection, clientConnection, errBackend)
+
+		var message string
+		select {
+		case err = <-errClient:
+			message = "ProxyWebsocketRequest: failed copying backend -> client: %v"
+		case err = <-errBackend:
+			message = "ProxyWebsocketRequest: failed copying client -> backend: %v"
+		}
+		e, ok := err.(*websocket.CloseError)
+		if !ok || e.Code == websocket.CloseAbnormalClosure {
+			logging.Log.Error(message, err)
+		}
+	}
+}
+
+func copyHeaders(destination http.Header, source http.Header) {
+	for k, vv := range source {
+		for _, v := range vv {
+			destination.Add(k, v)
+		}
+	}
+}
+
+func copyResponse(responseToClient *restful.Response, responseFromBackend *http.Response) error {
+	copyHeaders(responseToClient.Header(), responseFromBackend.Header)
+	responseToClient.WriteHeader(responseFromBackend.StatusCode)
+	defer responseFromBackend.Body.Close()
+
+	_, err := io.Copy(responseToClient, responseFromBackend.Body)
+	return err
 }

@@ -30,6 +30,7 @@ import (
 	logging "github.com/tektoncd/dashboard/pkg/logging"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/rest"
 )
 
 // ExtensionLabelKey is the label key required by services to be registered as a
@@ -65,7 +66,7 @@ var webResourcesStaticPattern = regexp.MustCompile("^/([[:alnum:]]+\\.)?[[:alnum
 var webResourcesStaticExcludePattern = regexp.MustCompile("^/favicon.png$")
 
 // Register returns an HTTP handler that has the Dashboard REST API registered
-func Register(resource endpoints.Resource) *Handler {
+func Register(resource endpoints.Resource, config *rest.Config) *Handler {
 	logging.Log.Info("Registering all endpoints")
 	h := &Handler{
 		Container:       restful.NewContainer(),
@@ -78,7 +79,7 @@ func Register(resource endpoints.Resource) *Handler {
 	registerWebsocket(resource, h.Container)
 	registerHealthProbe(resource, h.Container)
 	registerReadinessProbe(resource, h.Container)
-	registerKubeAPIProxy(resource, h.Container)
+	registerKubeAPIProxy(resource, h.Container, config)
 	registerCSRFTokenEndpoint(resource, h.Container)
 	h.registerExtensions()
 	return h
@@ -198,7 +199,7 @@ func (h *Handler) getAllExtensions(request *restful.Request, response *restful.R
 	response.WriteEntity(extensions)
 }
 
-func registerKubeAPIProxy(r endpoints.Resource, container *restful.Container) {
+func registerKubeAPIProxy(r endpoints.Resource, container *restful.Container, config *rest.Config) {
 	proxy := new(restful.WebService)
 	proxy.Filter(restful.NoBrowserCacheFilter)
 	proxy.Consumes(restful.MIME_JSON, "text/plain", "application/json-patch+json").
@@ -206,6 +207,8 @@ func registerKubeAPIProxy(r endpoints.Resource, container *restful.Container) {
 		Path("/proxy")
 
 	logging.Log.Info("Adding Kube API Proxy")
+
+	proxy.Route(proxy.GET("/ws/{subpath:*}").To(r.ProxyWebsocketRequest(config.BearerToken)))
 
 	proxy.Route(proxy.GET("/{subpath:*}").To(r.ProxyRequest))
 	proxy.Route(proxy.POST("/{subpath:*}").To(r.ProxyRequest))

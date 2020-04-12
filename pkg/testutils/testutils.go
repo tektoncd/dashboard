@@ -32,6 +32,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	fakek8sclientset "k8s.io/client-go/kubernetes/fake"
+	"k8s.io/client-go/rest"
 )
 
 // DummyK8sClientset returns a fake K8s clientset
@@ -83,9 +84,11 @@ func DummyServer() (*httptest.Server, *endpoints.Resource, string) {
 		logging.Log.Fatalf("Error creating namespace '%s': %v", dashboardNamespace, err)
 	}
 
+	config, _ := rest.InClusterConfig()
+
 	// K8s signals only allows for a single channel, which will panic when executed twice
 	// There should be no os signals for testing purposes
-	routerHandler := router.Register(*resource)
+	routerHandler := router.Register(*resource, config)
 	logging.Log.Info("Creating controllers")
 	stopCh := make(<-chan struct{})
 	resyncDur := time.Second * 30

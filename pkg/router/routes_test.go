@@ -21,6 +21,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
+	"k8s.io/client-go/rest"
 )
 
 // Router successful response contract
@@ -389,7 +390,8 @@ func TestGetAllExtensions(t *testing.T) {
 			Ports:     servicePorts,
 		},
 	}
-	h := router.Register(*r)
+	config, _ := rest.InClusterConfig()
+	h := router.Register(*r, config)
 	h.RegisterExtension(&service)
 	server.Config.Handler = h
 
