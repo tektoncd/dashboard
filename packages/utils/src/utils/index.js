@@ -132,16 +132,19 @@ export function reorderSteps(unorderedSteps, orderedSteps) {
   if (!unorderedSteps || !orderedSteps) {
     return [];
   }
-  return orderedSteps.map(({ name, ...rest }, idx) => {
-    let findName = name;
-    if (name === '') {
-      findName = `unnamed-${idx}`;
-    }
-    const orderedStep = unorderedSteps.find(step => step.name === findName);
+
+  const unnamedSteps = unorderedSteps
+    .filter(({ name }) => name.startsWith('unnamed-'))
+    .sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+
+  return orderedSteps.map(({ name, ...rest }) => {
+    const stepStatus = name
+      ? unorderedSteps.find(step => step.name === name)
+      : unnamedSteps.shift();
     return {
       name,
       ...rest,
-      ...orderedStep
+      ...stepStatus
     };
   });
 }
