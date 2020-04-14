@@ -747,3 +747,116 @@ it('rerunPipelineRun', () => {
       fetchMock.restore();
     });
 });
+
+it('createTaskRun uses correct kubernetes information', () => {
+  const data = { fake: 'createtaskrun' };
+  fetchMock.post(/taskruns/, data);
+  return index.createTaskRun({}).then(response => {
+    expect(response).toEqual(data);
+    const sentBody = JSON.parse(fetchMock.lastOptions().body);
+    expect(sentBody).toHaveProperty('apiVersion', 'tekton.dev/v1beta1');
+    expect(sentBody).toHaveProperty('kind', 'TaskRun');
+    expect(sentBody).toHaveProperty('metadata');
+    expect(sentBody).toHaveProperty('spec');
+    fetchMock.restore();
+  });
+});
+
+it('createTaskRun has correct metadata', () => {
+  const mockDateNow = jest
+    .spyOn(Date, 'now')
+    .mockImplementation(() => 'fake-timestamp');
+  const namespace = 'fake-namespace';
+  const taskName = 'fake-task';
+  const labels = { app: 'fake-app' };
+  fetchMock.post(/taskruns/, {});
+  return index.createTaskRun({ namespace, taskName, labels }).then(() => {
+    const sentMetadata = JSON.parse(fetchMock.lastOptions().body).metadata;
+    expect(sentMetadata.name).toMatch(taskName); // include name
+    expect(sentMetadata.name).toMatch('fake-timestamp'); // include timestamp
+    expect(sentMetadata).toHaveProperty('namespace', namespace);
+    expect(sentMetadata.labels).toHaveProperty('app', 'fake-app');
+    expect(sentMetadata.labels).toHaveProperty(['tekton.dev/task'], taskName);
+    fetchMock.restore();
+    mockDateNow.mockRestore();
+  });
+});
+
+it('createTaskRun handles taskRef', () => {
+  const taskName = 'fake-task';
+  fetchMock.post(/taskruns/, {});
+  return index.createTaskRun({ taskName }).then(() => {
+    const sentSpec = JSON.parse(fetchMock.lastOptions().body).spec;
+    expect(sentSpec.taskRef).toHaveProperty('name', taskName);
+    expect(sentSpec.taskRef).toHaveProperty('kind', 'Task');
+    fetchMock.restore();
+  });
+});
+
+it('createTaskRun handles ClusterTask in taskRef', () => {
+  const taskName = 'fake-task';
+  fetchMock.post(/taskruns/, {});
+  return index.createTaskRun({ taskName, kind: 'ClusterTask' }).then(() => {
+    const sentSpec = JSON.parse(fetchMock.lastOptions().body).spec;
+    expect(sentSpec.taskRef).toHaveProperty('kind', 'ClusterTask');
+    fetchMock.restore();
+  });
+});
+
+it('createTaskRun handles parameters', () => {
+  const taskName = 'fake-task';
+  const params = { 'fake-param-name': 'fake-param-value' };
+  fetchMock.post(/taskruns/, {});
+  return index.createTaskRun({ taskName, params }).then(() => {
+    const sentSpec = JSON.parse(fetchMock.lastOptions().body).spec;
+    expect(sentSpec.params).toContainEqual({
+      name: 'fake-param-name',
+      value: 'fake-param-value'
+    });
+    fetchMock.restore();
+  });
+});
+
+it('createTaskRun handles resources', () => {
+  const taskName = 'fake-task';
+  const resources = {
+    inputs: { 'fake-task-input': 'fake-input-resource' },
+    outputs: { 'fake-task-output': 'fake-output-resource' }
+  };
+  fetchMock.post(/taskruns/, {});
+  return index.createTaskRun({ taskName, resources }).then(() => {
+    const sentResources = JSON.parse(fetchMock.lastOptions().body).spec
+      .resources;
+    expect(sentResources.inputs).toContainEqual({
+      name: 'fake-task-input',
+      resourceRef: { name: 'fake-input-resource' }
+    });
+    expect(sentResources.outputs).toContainEqual({
+      name: 'fake-task-output',
+      resourceRef: { name: 'fake-output-resource' }
+    });
+    fetchMock.restore();
+  });
+});
+
+it('createTaskRun handles serviceAccount', () => {
+  const taskName = 'fake-task';
+  const serviceAccount = 'fake-service-account';
+  fetchMock.post(/taskruns/, {});
+  return index.createTaskRun({ taskName, serviceAccount }).then(() => {
+    const sentSpec = JSON.parse(fetchMock.lastOptions().body).spec;
+    expect(sentSpec).toHaveProperty('serviceAccountName', serviceAccount);
+    fetchMock.restore();
+  });
+});
+
+it('createTaskRun handles timeout', () => {
+  const taskName = 'fake-task';
+  const timeout = 'fake-timeout';
+  fetchMock.post(/taskruns/, {});
+  return index.createTaskRun({ taskName, timeout }).then(() => {
+    const sentSpec = JSON.parse(fetchMock.lastOptions().body).spec;
+    expect(sentSpec).toHaveProperty('timeout', timeout);
+    fetchMock.restore();
+  });
+});
