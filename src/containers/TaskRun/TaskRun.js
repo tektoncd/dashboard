@@ -125,7 +125,7 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
     const taskRunName = taskRun.metadata.name;
     const taskRunNamespace = taskRun.metadata.namespace;
     const { reason, status: succeeded } = getStatus(taskRun);
-    const runSteps = stepsStatus(reorderedSteps, reorderedSteps);
+    const runSteps = stepsStatus(reorderedSteps, taskRun.status.steps);
     const params = getParams(taskRun.spec);
     const { inputResources, outputResources } = getResources(taskRun.spec);
     const { startTime } = taskRun.status;
