@@ -523,3 +523,68 @@ export function getEventListener({ name, namespace }) {
   });
   return get(uri);
 }
+
+export function createTaskRun({
+  namespace,
+  taskName,
+  kind,
+  labels,
+  params,
+  resources,
+  serviceAccount,
+  timeout
+}) {
+  const payload = {
+    apiVersion: 'tekton.dev/v1beta1',
+    kind: 'TaskRun',
+    metadata: {
+      name: `${taskName}-run-${Date.now()}`,
+      namespace,
+      labels: {
+        'tekton.dev/task': taskName,
+        ...labels
+      }
+    },
+    spec: {
+      params: [],
+      resources: {
+        inputs: [],
+        outputs: []
+      },
+      taskRef: {
+        name: taskName,
+        kind: kind || 'Task'
+      }
+    }
+  };
+  if (params) {
+    payload.spec.params = Object.keys(params).map(name => ({
+      name,
+      value: params[name]
+    }));
+  }
+  if (resources && resources.inputs) {
+    payload.spec.resources.inputs = Object.keys(resources.inputs).map(
+      inputName => ({
+        name: inputName,
+        resourceRef: { name: resources.inputs[inputName] }
+      })
+    );
+  }
+  if (resources && resources.outputs) {
+    payload.spec.resources.outputs = Object.keys(resources.outputs).map(
+      outputName => ({
+        name: outputName,
+        resourceRef: { name: resources.outputs[outputName] }
+      })
+    );
+  }
+  if (serviceAccount) {
+    payload.spec.serviceAccountName = serviceAccount;
+  }
+  if (timeout) {
+    payload.spec.timeout = timeout;
+  }
+  const uri = getTektonAPI('taskruns', { namespace });
+  return post(uri, payload);
+}
