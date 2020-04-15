@@ -40,6 +40,7 @@ const {
   TableHeader
 } = DataTable;
 
+/* istanbul ignore next */
 function getTranslateWithId(intl) {
   return function translateWithId(id, state) {
     switch (id) {
@@ -120,6 +121,7 @@ const Table = props => {
     batchActionButtons,
     emptyTextAllNamespaces,
     emptyTextSelectedNamespace,
+    filters,
     headers: dataHeaders,
     intl,
     isSortable,
@@ -134,10 +136,13 @@ const Table = props => {
   const shouldRenderBatchActions = !!(
     dataRows.length && batchActionButtons.length
   );
+  const filterFields = !!dataRows.length && filters;
   const translateWithId = getTranslateWithId(intl);
 
   return (
-    <div className="tableComponent">
+    <div
+      className={`tableComponent ${filters ? 'tkn--table-with-filters' : ''}`}
+    >
       <DataTable
         key={selectedNamespace}
         rows={dataRows}
@@ -155,8 +160,11 @@ const Table = props => {
           selectedRows
         }) => (
           <TableContainer title={title}>
-            {(toolbarButtons.length || shouldRenderBatchActions) && (
+            {(filterFields ||
+              toolbarButtons.length ||
+              shouldRenderBatchActions) && (
               <TableToolbar>
+                {filterFields}
                 {shouldRenderBatchActions && (
                   <TableBatchActions
                     {...getBatchActionProps()}
@@ -222,11 +230,7 @@ const Table = props => {
                 <TableBody>
                   {!loading && dataRows.length === 0 && (
                     <TableRow>
-                      <TableCell
-                        colSpan={
-                          headers.length + (shouldRenderBatchActions ? 1 : 0)
-                        }
-                      >
+                      <TableCell colSpan={headers.length}>
                         <div className="noRows">
                           {selectedNamespace === ALL_NAMESPACES
                             ? emptyTextAllNamespaces
