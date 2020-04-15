@@ -11,6 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+@import '~carbon-components/scss/globals/scss/vars';
+
 .tableComponent {
   .bx--table-toolbar {
     background: transparent;
@@ -68,6 +70,84 @@ limitations under the License.
 
     .bx--batch-summary {
       margin-left: 1rem;
+    }
+  }
+
+  &.tkn--table-with-filters {
+    .bx--data-table-container {
+      overflow: visible;
+    }
+
+    .bx--table-toolbar {
+      overflow: visible;
+      flex-direction: row;
+      background-color: $ui-01;
+      border-bottom: 1px solid $ui-03;
+
+      .bx--multi-select__wrapper {
+        .bx--combo-box {
+          border: none;
+        }
+
+        .bx--text-input {
+          background-color: $ui-01;
+          border: none;
+        }
+      }
+
+      .bx--multi-select__wrapper,
+      .bx--dropdown__wrapper {
+        display: flex;
+        align-items: center;
+        border-right: 1px solid $ui-03;
+        margin-right: 0;
+        padding-right: $spacing-03;
+        white-space: nowrap;
+
+        .bx--label {
+          padding-left: $spacing-05;
+        }
+
+        .bx--text-input {
+          padding: 0 $spacing-07 0 $spacing-03;
+        }
+
+        .bx--list-box__menu-icon {
+          right: $spacing-03;
+        }
+
+        .bx--dropdown,
+        .bx--multi-select {
+          width: 10rem;
+        }
+
+        .bx--multi-select--inline,
+        .bx--list-box--inline {
+          background-color: $ui-01;
+          height: 100%;
+          max-height: 3rem;
+        }
+
+        .bx--list-box__field {
+          height: 100%;
+
+          input.bx--text-input {
+            &:placeholder-shown {
+              text-overflow: ellipsis;
+            }
+          }
+        }
+
+        &.bx--dropdown__wrapper--inline .bx--label {
+          padding-left: 1rem;
+        }
+
+        @media (max-width: 672px) {
+          &.bx--list-box__wrapper--inline .bx--label {
+            display: none;
+          }
+        }
+      }
     }
   }
 }

@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,6 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import { fireEvent } from 'react-testing-library';
+import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
 import { renderWithIntl } from '../../utils/test';
 import Table from './Table';
@@ -52,346 +53,365 @@ const emptyTextAllNamespaces = 'No rows in any namespace';
 const emptyTextSelectedNamespace = 'No rows in selected namespace';
 const title = 'Resource';
 
-it('Table renders plain with ALL_NAMESPACES no rows', () => {
-  const props = {
-    loading: false,
-    rows: [],
-    headers,
-    selectedNamespace: '*',
-    emptyTextAllNamespaces,
-    emptyTextSelectedNamespace
-  };
-  const { queryByLabelText, queryByText } = renderWithIntl(
-    <Table {...props} />
-  );
+describe('Table', () => {
+  it('renders plain with ALL_NAMESPACES no rows', () => {
+    const props = {
+      loading: false,
+      rows: [],
+      headers,
+      selectedNamespace: ALL_NAMESPACES,
+      emptyTextAllNamespaces,
+      emptyTextSelectedNamespace
+    };
+    const { queryByLabelText, queryByText } = renderWithIntl(
+      <Table {...props} />
+    );
 
-  expect(queryByText(title)).toBeFalsy();
-  expect(
-    queryByText(/Name/i).parentNode.className.includes('sort')
-  ).toBeFalsy();
-  expect(queryByText(/Name/i)).toBeTruthy();
-  expect(queryByText(/Namespace/i)).toBeTruthy();
-  expect(queryByText(/Date Created/i)).toBeTruthy();
-  expect(queryByText(/Delete/i)).toBeFalsy();
-  expect(queryByText(/Add/i)).toBeFalsy();
-  expect(queryByText(emptyTextAllNamespaces)).toBeTruthy();
-  expect(queryByText(emptyTextSelectedNamespace)).toBeNull();
-  expect(queryByLabelText('Select all rows')).toBeFalsy();
-  expect(queryByLabelText('Select row')).toBeFalsy();
-});
+    expect(queryByText(title)).toBeFalsy();
+    expect(
+      queryByText(/Name/i).parentNode.className.includes('sort')
+    ).toBeFalsy();
+    expect(queryByText(/Name/i)).toBeTruthy();
+    expect(queryByText(/Namespace/i)).toBeTruthy();
+    expect(queryByText(/Date Created/i)).toBeTruthy();
+    expect(queryByText(/Delete/i)).toBeFalsy();
+    expect(queryByText(/Add/i)).toBeFalsy();
+    expect(queryByText(emptyTextAllNamespaces)).toBeTruthy();
+    expect(queryByText(emptyTextSelectedNamespace)).toBeNull();
+    expect(queryByLabelText('Select all rows')).toBeFalsy();
+    expect(queryByLabelText('Select row')).toBeFalsy();
+  });
 
-it('Table renders title with no rows, selected namespace, 1 batch and 1 toolbar button, checkboxes and non-sortable', () => {
-  const props = {
-    batchActionButtons: batchActionButtons.slice(0, 1),
-    loading: false,
-    rows: [],
-    headers,
-    selectedNamespace: 'default',
-    title,
-    toolbarButtons: toolbarButtons.slice(0, 1),
-    emptyTextAllNamespaces,
-    emptyTextSelectedNamespace
-  };
-  const { queryByText, queryByLabelText } = renderWithIntl(
-    <Table {...props} />
-  );
+  it('renders title with no rows, selected namespace, 1 filter, 1 batch, and 1 toolbar button, checkboxes and non-sortable', () => {
+    const filters = 'FAKE_FILTERS';
+    const props = {
+      batchActionButtons: batchActionButtons.slice(0, 1),
+      emptyTextAllNamespaces,
+      emptyTextSelectedNamespace,
+      filters,
+      headers,
+      loading: false,
+      rows: [],
+      selectedNamespace: 'default',
+      title,
+      toolbarButtons: toolbarButtons.slice(0, 1)
+    };
+    const { queryByText, queryByLabelText } = renderWithIntl(
+      <Table {...props} />
+    );
 
-  expect(queryByText('Resource')).toBeTruthy();
-  expect(
-    queryByText(/Name/i).parentNode.className.includes('sort')
-  ).toBeFalsy();
-  expect(queryByText(/Delete/i)).toBeFalsy();
-  expect(queryByText(/Add/i)).toBeTruthy();
-  expect(queryByLabelText('Select all rows')).toBeFalsy();
-  expect(queryByLabelText('Select row')).toBeFalsy();
-  expect(queryByText(emptyTextSelectedNamespace)).toBeTruthy();
-  expect(queryByText(emptyTextAllNamespaces)).toBeFalsy();
-});
+    expect(queryByText('Resource')).toBeTruthy();
+    expect(
+      queryByText(/Name/i).parentNode.className.includes('sort')
+    ).toBeFalsy();
+    expect(queryByText(/Delete/i)).toBeFalsy();
+    expect(queryByText(/Add/i)).toBeTruthy();
+    expect(queryByLabelText('Select all rows')).toBeFalsy();
+    expect(queryByLabelText('Select row')).toBeFalsy();
+    expect(queryByText(filters)).toBeFalsy();
+    expect(queryByText(emptyTextSelectedNamespace)).toBeTruthy();
+    expect(queryByText(emptyTextAllNamespaces)).toBeFalsy();
+  });
 
-it('Table renders plain with one row, ALL_NAMESPACES', () => {
-  const props = {
-    loading: false,
-    rows: rows.slice(0, 1),
-    headers,
-    selectedNamespace: '*'
-  };
-  const { queryByText, queryByLabelText } = renderWithIntl(
-    <Table {...props} />
-  );
+  it('renders plain with one row, ALL_NAMESPACES', () => {
+    const props = {
+      loading: false,
+      rows: rows.slice(0, 1),
+      headers,
+      selectedNamespace: ALL_NAMESPACES
+    };
+    const { queryByText, queryByLabelText } = renderWithIntl(
+      <Table {...props} />
+    );
 
-  expect(queryByText(title)).toBeNull();
-  expect(
-    queryByText(/Name/i).parentNode.className.includes('sort')
-  ).toBeFalsy();
-  expect(queryByText(/resource-one/i)).toBeTruthy();
-  expect(queryByText(/namespace1/i)).toBeTruthy();
-  expect(queryByText(/16 minutes ago/i)).toBeTruthy();
-  expect(queryByText(/Delete/i)).toBeNull();
-  expect(queryByText(/Add/i)).toBeNull();
-  expect(queryByLabelText('Select all rows')).toBeNull();
-  expect(queryByLabelText('Select row')).toBeNull();
-  expect(queryByText(emptyTextSelectedNamespace)).toBeNull();
-  expect(queryByText(emptyTextSelectedNamespace)).toBeNull();
-});
+    expect(queryByText(title)).toBeNull();
+    expect(
+      queryByText(/Name/i).parentNode.className.includes('sort')
+    ).toBeFalsy();
+    expect(queryByText(/resource-one/i)).toBeTruthy();
+    expect(queryByText(/namespace1/i)).toBeTruthy();
+    expect(queryByText(/16 minutes ago/i)).toBeTruthy();
+    expect(queryByText(/Delete/i)).toBeNull();
+    expect(queryByText(/Add/i)).toBeNull();
+    expect(queryByLabelText('Select all rows')).toBeNull();
+    expect(queryByLabelText('Select row')).toBeNull();
+    expect(queryByText(emptyTextSelectedNamespace)).toBeNull();
+    expect(queryByText(emptyTextSelectedNamespace)).toBeNull();
+  });
 
-it('Table renders plain with one row, ALL_NAMESPACES and sortable', () => {
-  const props = {
-    loading: false,
-    rows: rows.slice(0, 1),
-    headers,
-    selectedNamespace: '*',
-    isSortable: true
-  };
-  const { queryByText } = renderWithIntl(<Table {...props} />);
+  it('renders plain with one row, ALL_NAMESPACES and sortable', () => {
+    const props = {
+      loading: false,
+      rows: rows.slice(0, 1),
+      headers,
+      selectedNamespace: ALL_NAMESPACES,
+      isSortable: true
+    };
+    const { queryByText } = renderWithIntl(<Table {...props} />);
 
-  expect(
-    queryByText(/Name/i).parentNode.className.includes('sort')
-  ).toBeTruthy();
-});
+    expect(
+      queryByText(/Name/i).parentNode.className.includes('sort')
+    ).toBeTruthy();
+  });
 
-it('Table renders with one row, ALL_NAMESPACES, 1 toolbar button only, no checkboxes and non-sortable', () => {
-  const props = {
-    loading: false,
-    rows: rows.slice(0, 1),
-    headers,
-    selectedNamespace: '*',
-    toolbarButtons: toolbarButtons.slice(0, 1)
-  };
-  const { queryByText, queryByLabelText } = renderWithIntl(
-    <Table {...props} />
-  );
+  it('renders filters', () => {
+    const filters = 'FAKE_FILTERS';
+    const props = {
+      filters,
+      loading: false,
+      headers,
+      rows: rows.slice(0, 1),
+      selectedNamespace: ALL_NAMESPACES
+    };
+    const { queryByText } = renderWithIntl(<Table {...props} />);
 
-  expect(
-    queryByText(/Name/i).parentNode.className.includes('sort')
-  ).toBeFalsy();
-  expect(queryByText(/Delete/i)).toBeNull();
-  expect(queryByText(/Rerun All/i)).toBeNull();
-  expect(queryByText(/Add/i)).toBeTruthy();
-  expect(queryByLabelText('Select all rows')).toBeNull();
-  expect(queryByLabelText('Select row')).toBeNull();
-});
+    expect(queryByText(filters)).toBeTruthy();
+  });
 
-it('Table renders with one row, ALL_NAMESPACES, 2 toolbar buttons only, no checkboxes and non-sortable', () => {
-  const props = {
-    loading: false,
-    rows: rows.slice(0, 1),
-    headers,
-    selectedNamespace: '*',
-    toolbarButtons
-  };
-  const { queryByText, queryByLabelText } = renderWithIntl(
-    <Table {...props} />
-  );
+  it('renders with one row, ALL_NAMESPACES, 1 toolbar button only, no checkboxes and non-sortable', () => {
+    const props = {
+      loading: false,
+      rows: rows.slice(0, 1),
+      headers,
+      selectedNamespace: ALL_NAMESPACES,
+      toolbarButtons: toolbarButtons.slice(0, 1)
+    };
+    const { queryByText, queryByLabelText } = renderWithIntl(
+      <Table {...props} />
+    );
 
-  expect(
-    queryByText(/Name/i).parentNode.className.includes('sort')
-  ).toBeFalsy();
-  expect(queryByText(/Delete/i)).toBeNull();
-  expect(queryByText(/Add/i)).toBeTruthy();
-  expect(queryByText(/Rerun All/i)).toBeTruthy();
-  expect(queryByLabelText('Select all rows')).toBeNull();
-  expect(queryByLabelText('Select row')).toBeNull();
-});
+    expect(
+      queryByText(/Name/i).parentNode.className.includes('sort')
+    ).toBeFalsy();
+    expect(queryByText(/Delete/i)).toBeNull();
+    expect(queryByText(/Rerun All/i)).toBeNull();
+    expect(queryByText(/Add/i)).toBeTruthy();
+    expect(queryByLabelText('Select all rows')).toBeNull();
+    expect(queryByLabelText('Select row')).toBeNull();
+  });
 
-it('Table renders with one row, ALL_NAMESPACES, 1 batch button only with checkboxes and non-sortable', () => {
-  const props = {
-    batchActionButtons: batchActionButtons.slice(0, 1),
-    loading: false,
-    rows: rows.slice(0, 1),
-    headers,
-    selectedNamespace: '*'
-  };
-  const { queryByText, queryByLabelText } = renderWithIntl(
-    <Table {...props} />
-  );
+  it('renders with one row, ALL_NAMESPACES, 2 toolbar buttons only, no checkboxes and non-sortable', () => {
+    const props = {
+      loading: false,
+      rows: rows.slice(0, 1),
+      headers,
+      selectedNamespace: ALL_NAMESPACES,
+      toolbarButtons
+    };
+    const { queryByText, queryByLabelText } = renderWithIntl(
+      <Table {...props} />
+    );
 
-  expect(
-    queryByText(/Name/i).parentNode.className.includes('sort')
-  ).toBeFalsy();
-  expect(queryByText(/Delete/i)).toBeTruthy();
-  expect(queryByText(/Add/i)).toBeNull();
-  expect(queryByText(/Rerun/i)).toBeNull();
-  expect(queryByLabelText('Select all rows')).toBeTruthy();
-  expect(queryByLabelText('Select row')).toBeTruthy();
-});
+    expect(
+      queryByText(/Name/i).parentNode.className.includes('sort')
+    ).toBeFalsy();
+    expect(queryByText(/Delete/i)).toBeNull();
+    expect(queryByText(/Add/i)).toBeTruthy();
+    expect(queryByText(/Rerun All/i)).toBeTruthy();
+    expect(queryByLabelText('Select all rows')).toBeNull();
+    expect(queryByLabelText('Select row')).toBeNull();
+  });
 
-it('Table renders with one row, ALL_NAMESPACES, 2 batch buttons only with checkboxes and non-sortable', () => {
-  const props = {
-    batchActionButtons,
-    loading: false,
-    rows: rows.slice(0, 1),
-    headers,
-    selectedNamespace: '*'
-  };
-  const { queryByText, queryByLabelText } = renderWithIntl(
-    <Table {...props} />
-  );
+  it('renders with one row, ALL_NAMESPACES, 1 batch button only with checkboxes and non-sortable', () => {
+    const props = {
+      batchActionButtons: batchActionButtons.slice(0, 1),
+      loading: false,
+      rows: rows.slice(0, 1),
+      headers,
+      selectedNamespace: ALL_NAMESPACES
+    };
+    const { queryByText, queryByLabelText } = renderWithIntl(
+      <Table {...props} />
+    );
 
-  expect(
-    queryByText(/Name/i).parentNode.className.includes('sort')
-  ).toBeFalsy();
-  expect(queryByText(/Delete/i)).toBeTruthy();
-  expect(queryByText(/Rerun/i)).toBeTruthy();
-  expect(queryByText(/Rerun All/i)).toBeNull();
-  expect(queryByText(/Add/i)).toBeNull();
-  expect(queryByLabelText('Select all rows')).toBeTruthy();
-  expect(queryByLabelText('Select row')).toBeTruthy();
-});
+    expect(
+      queryByText(/Name/i).parentNode.className.includes('sort')
+    ).toBeFalsy();
+    expect(queryByText(/Delete/i)).toBeTruthy();
+    expect(queryByText(/Add/i)).toBeNull();
+    expect(queryByText(/Rerun/i)).toBeNull();
+    expect(queryByLabelText('Select all rows')).toBeTruthy();
+    expect(queryByLabelText('Select row')).toBeTruthy();
+  });
 
-it('Table renders with two rows, ALL_NAMESPACES, 2 batch and 2 toolbar buttons, checkboxes and sortable', () => {
-  const props = {
-    batchActionButtons,
-    loading: false,
-    rows,
-    headers,
-    selectedNamespace: '*',
-    toolbarButtons,
-    isSortable: true
-  };
-  const { queryByText, queryByLabelText } = renderWithIntl(
-    <Table {...props} />
-  );
+  it('renders with one row, ALL_NAMESPACES, 2 batch buttons only with checkboxes and non-sortable', () => {
+    const props = {
+      batchActionButtons,
+      loading: false,
+      rows: rows.slice(0, 1),
+      headers,
+      selectedNamespace: ALL_NAMESPACES
+    };
+    const { queryByText, queryByLabelText } = renderWithIntl(
+      <Table {...props} />
+    );
 
-  expect(
-    queryByText(/Name/i).parentNode.className.includes('sort')
-  ).toBeTruthy();
-  expect(queryByText(/Add/i)).toBeTruthy();
-  expect(queryByText(/Delete/i)).toBeTruthy();
-  expect(queryByText('Rerun')).toBeTruthy();
-  expect(queryByText('Rerun All')).toBeTruthy();
-  expect(queryByLabelText('Select all rows')).toBeTruthy();
-  expect(queryByLabelText('Select row')).toBeTruthy();
-});
+    expect(
+      queryByText(/Name/i).parentNode.className.includes('sort')
+    ).toBeFalsy();
+    expect(queryByText(/Delete/i)).toBeTruthy();
+    expect(queryByText(/Rerun/i)).toBeTruthy();
+    expect(queryByText(/Rerun All/i)).toBeNull();
+    expect(queryByText(/Add/i)).toBeNull();
+    expect(queryByLabelText('Select all rows')).toBeTruthy();
+    expect(queryByLabelText('Select row')).toBeTruthy();
+  });
 
-it('Table loading with no rows, ALL_NAMESPACES, 1 toolbar button, no checkboxes and non-sortable', () => {
-  const props = {
-    loading: true,
-    rows: [],
-    headers,
-    selectedNamespace: '*',
-    toolbarButtons: toolbarButtons.slice(0, 1)
-  };
-  const { queryByText } = renderWithIntl(<Table {...props} />);
+  it('renders with two rows, ALL_NAMESPACES, 2 batch and 2 toolbar buttons, checkboxes and sortable', () => {
+    const props = {
+      batchActionButtons,
+      loading: false,
+      rows,
+      headers,
+      selectedNamespace: ALL_NAMESPACES,
+      toolbarButtons,
+      isSortable: true
+    };
+    const { queryByText, queryByLabelText } = renderWithIntl(
+      <Table {...props} />
+    );
 
-  expect(queryByText(/Add/i).disabled).toBeTruthy();
-});
+    expect(
+      queryByText(/Name/i).parentNode.className.includes('sort')
+    ).toBeTruthy();
+    expect(queryByText(/Add/i)).toBeTruthy();
+    expect(queryByText(/Delete/i)).toBeTruthy();
+    expect(queryByText('Rerun')).toBeTruthy();
+    expect(queryByText('Rerun All')).toBeTruthy();
+    expect(queryByLabelText('Select all rows')).toBeTruthy();
+    expect(queryByLabelText('Select row')).toBeTruthy();
+  });
 
-it('Table loading plain with one row and ALL_NAMESPACES', () => {
-  const props = {
-    loading: true,
-    rows: rows.slice(0, 1),
-    headers,
-    selectedNamespace: '*'
-  };
-  const { queryByText, queryByLabelText } = renderWithIntl(
-    <Table {...props} />
-  );
+  it('loading with no rows, ALL_NAMESPACES, 1 toolbar button, no checkboxes and non-sortable', () => {
+    const props = {
+      loading: true,
+      rows: [],
+      headers,
+      selectedNamespace: ALL_NAMESPACES,
+      toolbarButtons: toolbarButtons.slice(0, 1)
+    };
+    const { queryByText } = renderWithIntl(<Table {...props} />);
 
-  expect(queryByText(/Resources/i)).toBeNull();
-  expect(queryByText(/Name/i)).toBeTruthy();
-  expect(queryByText(/Namespace/i)).toBeTruthy();
-  expect(queryByText(/Date Created/i)).toBeTruthy();
-  expect(queryByText(/Delete/i)).toBeNull();
-  expect(queryByText(/Add/i)).toBeNull();
-  expect(queryByLabelText('Select all rows')).toBeNull();
-  expect(queryByLabelText('Select row')).toBeNull();
-  expect(
-    queryByText("No Resources created in namespace 'default'.")
-  ).toBeNull();
-  expect(queryByText('No Resources created in any namespace.')).toBeNull();
-});
+    expect(queryByText(/Add/i).disabled).toBeTruthy();
+  });
 
-it("Table's batch action button specifies correct arguments for callback with one row selected", () => {
-  const handleDelete = jest.fn();
+  it('loading plain with one row and ALL_NAMESPACES', () => {
+    const props = {
+      loading: true,
+      rows: rows.slice(0, 1),
+      headers,
+      selectedNamespace: ALL_NAMESPACES
+    };
+    const { queryByText, queryByLabelText } = renderWithIntl(
+      <Table {...props} />
+    );
 
-  const props = {
-    batchActionButtons: batchActionButtons.slice(0, 1),
-    loading: false,
-    rows: rows.slice(0, 1),
-    headers,
-    selectedNamespace: '*'
-  };
-  props.batchActionButtons[0].onClick = handleDelete;
-  const { queryByText, queryByLabelText } = renderWithIntl(
-    <Table {...props} />
-  );
+    expect(queryByText(/Resources/i)).toBeNull();
+    expect(queryByText(/Name/i)).toBeTruthy();
+    expect(queryByText(/Namespace/i)).toBeTruthy();
+    expect(queryByText(/Date Created/i)).toBeTruthy();
+    expect(queryByText(/Delete/i)).toBeNull();
+    expect(queryByText(/Add/i)).toBeNull();
+    expect(queryByLabelText('Select all rows')).toBeNull();
+    expect(queryByLabelText('Select row')).toBeNull();
+    expect(
+      queryByText("No Resources created in namespace 'default'.")
+    ).toBeNull();
+    expect(queryByText('No Resources created in any namespace.')).toBeNull();
+  });
 
-  expect(queryByText(/Delete/i)).toBeTruthy();
-  expect(queryByText(/Add/i)).toBeNull();
+  it('batch action button specifies correct arguments for callback with one row selected', () => {
+    const handleDelete = jest.fn();
 
-  fireEvent.click(queryByLabelText('Select row'));
-  fireEvent.click(queryByText(/Delete/i));
+    const props = {
+      batchActionButtons: batchActionButtons.slice(0, 1),
+      loading: false,
+      rows: rows.slice(0, 1),
+      headers,
+      selectedNamespace: ALL_NAMESPACES
+    };
+    props.batchActionButtons[0].onClick = handleDelete;
+    const { queryByText, queryByLabelText } = renderWithIntl(
+      <Table {...props} />
+    );
 
-  expect(handleDelete).toHaveBeenCalledTimes(1);
+    expect(queryByText(/Delete/i)).toBeTruthy();
+    expect(queryByText(/Add/i)).toBeNull();
 
-  expect(
-    handleDelete.mock.calls[0][0].map(row => {
-      return row.id;
-    })
-  ).toEqual(
-    props.rows.map(row => {
-      return row.id;
-    })
-  );
+    fireEvent.click(queryByLabelText('Select row'));
+    fireEvent.click(queryByText(/Delete/i));
 
-  expect(typeof handleDelete.mock.calls[0][1]).toEqual('function');
-});
+    expect(handleDelete).toHaveBeenCalledTimes(1);
 
-it("Table's batch action button specifies correct arguments for callback with two rows selected", () => {
-  const handleDelete = jest.fn();
+    expect(
+      handleDelete.mock.calls[0][0].map(row => {
+        return row.id;
+      })
+    ).toEqual(
+      props.rows.map(row => {
+        return row.id;
+      })
+    );
 
-  const props = {
-    batchActionButtons: batchActionButtons.slice(0, 1),
-    loading: false,
-    rows,
-    headers,
-    selectedNamespace: '*'
-  };
-  props.batchActionButtons[0].onClick = handleDelete;
-  const { queryByText, queryByLabelText } = renderWithIntl(
-    <Table {...props} />
-  );
+    expect(typeof handleDelete.mock.calls[0][1]).toEqual('function');
+  });
 
-  expect(queryByText(/Delete/i)).toBeTruthy();
-  expect(queryByText(/Add/i)).toBeNull();
+  it('batch action button specifies correct arguments for callback with two rows selected', () => {
+    const handleDelete = jest.fn();
 
-  fireEvent.click(queryByLabelText('Select all rows'));
-  fireEvent.click(queryByText(/Delete/i));
+    const props = {
+      batchActionButtons: batchActionButtons.slice(0, 1),
+      loading: false,
+      rows,
+      headers,
+      selectedNamespace: ALL_NAMESPACES
+    };
+    props.batchActionButtons[0].onClick = handleDelete;
+    const { queryByText, queryByLabelText } = renderWithIntl(
+      <Table {...props} />
+    );
 
-  expect(handleDelete).toHaveBeenCalledTimes(1);
+    expect(queryByText(/Delete/i)).toBeTruthy();
+    expect(queryByText(/Add/i)).toBeNull();
 
-  expect(
-    handleDelete.mock.calls[0][0].map(row => {
-      return row.id;
-    })
-  ).toEqual(
-    props.rows.map(row => {
-      return row.id;
-    })
-  );
+    fireEvent.click(queryByLabelText('Select all rows'));
+    fireEvent.click(queryByText(/Delete/i));
 
-  expect(typeof handleDelete.mock.calls[0][1]).toEqual('function');
-});
+    expect(handleDelete).toHaveBeenCalledTimes(1);
 
-it("Table's toolbar button responds correctly", () => {
-  const handleAdd = jest.fn();
+    expect(
+      handleDelete.mock.calls[0][0].map(row => {
+        return row.id;
+      })
+    ).toEqual(
+      props.rows.map(row => {
+        return row.id;
+      })
+    );
 
-  const props = {
-    loading: false,
-    rows,
-    headers,
-    selectedNamespace: '*',
-    toolbarButtons: toolbarButtons.slice(0, 1)
-  };
-  props.toolbarButtons[0].onClick = handleAdd;
-  const { queryByText } = renderWithIntl(<Table {...props} />);
+    expect(typeof handleDelete.mock.calls[0][1]).toEqual('function');
+  });
 
-  expect(queryByText(/Delete/i)).toBeNull();
-  expect(queryByText(/Add/i)).toBeTruthy();
+  it('toolbar button responds correctly', () => {
+    const handleAdd = jest.fn();
 
-  fireEvent.click(queryByText(/Add/i));
-  fireEvent.click(queryByText(/Add/i));
-  fireEvent.click(queryByText(/Add/i));
+    const props = {
+      loading: false,
+      rows,
+      headers,
+      selectedNamespace: ALL_NAMESPACES,
+      toolbarButtons: toolbarButtons.slice(0, 1)
+    };
+    props.toolbarButtons[0].onClick = handleAdd;
+    const { queryByText } = renderWithIntl(<Table {...props} />);
 
-  expect(handleAdd).toHaveBeenCalledTimes(3);
+    expect(queryByText(/Delete/i)).toBeNull();
+    expect(queryByText(/Add/i)).toBeTruthy();
+
+    fireEvent.click(queryByText(/Add/i));
+    fireEvent.click(queryByText(/Add/i));
+    fireEvent.click(queryByText(/Add/i));
+
+    expect(handleAdd).toHaveBeenCalledTimes(3);
+  });
 });
