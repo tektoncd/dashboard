@@ -15,6 +15,7 @@ package tekton
 
 import (
 	"github.com/tektoncd/dashboard/pkg/broadcaster"
+	"github.com/tektoncd/dashboard/pkg/controllers/utils"
 	"github.com/tektoncd/dashboard/pkg/endpoints"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
 	v1alpha1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
@@ -55,7 +56,7 @@ func clusterTaskUpdated(oldObj, newObj interface{}) {
 }
 
 func clusterTaskDeleted(obj interface{}) {
-	logging.Log.Debugf("Cluster Task Controller detected clusterTask '%s' deleted", obj.(*v1alpha1.ClusterTask).Name)
+	logging.Log.Debugf("Cluster Task Controller detected clusterTask '%s' deleted", utils.GetDeletedObjectMeta(obj).GetName())
 	data := broadcaster.SocketData{
 		MessageType: broadcaster.ClusterTaskDeleted,
 		Payload:     obj,

@@ -2,6 +2,7 @@ package kubernetes
 
 import (
 	"github.com/tektoncd/dashboard/pkg/broadcaster"
+	"github.com/tektoncd/dashboard/pkg/controllers/utils"
 	"github.com/tektoncd/dashboard/pkg/endpoints"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
 	v1 "k8s.io/api/core/v1"
@@ -45,7 +46,7 @@ func secretUpdated(oldObj, newObj interface{}) {
 }
 
 func secretDeleted(obj interface{}) {
-	logging.Log.Debugf("Secret Controller detected secret '%s' deleted", obj.(*v1.Secret).Name)
+	logging.Log.Debugf("Secret Controller detected secret '%s' deleted", utils.GetDeletedObjectMeta(obj).GetName())
 	data := broadcaster.SocketData{
 		MessageType: broadcaster.SecretDeleted,
 		Payload:     obj,

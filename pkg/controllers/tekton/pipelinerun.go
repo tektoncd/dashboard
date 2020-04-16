@@ -2,6 +2,7 @@ package tekton
 
 import (
 	"github.com/tektoncd/dashboard/pkg/broadcaster"
+	"github.com/tektoncd/dashboard/pkg/controllers/utils"
 	"github.com/tektoncd/dashboard/pkg/endpoints"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
 	v1alpha1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
@@ -43,7 +44,7 @@ func pipelineRunUpdated(oldObj, newObj interface{}) {
 }
 
 func pipelineRunDeleted(obj interface{}) {
-	logging.Log.Debugf("PipelineRun Controller detected pipelineRun '%s' deleted", obj.(*v1alpha1.PipelineRun).Name)
+	logging.Log.Debugf("PipelineRun Controller detected pipelineRun '%s' deleted", utils.GetDeletedObjectMeta(obj).GetName())
 	data := broadcaster.SocketData{
 		MessageType: broadcaster.PipelineRunDeleted,
 		Payload:     obj,

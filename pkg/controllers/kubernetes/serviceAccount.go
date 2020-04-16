@@ -15,6 +15,7 @@ package kubernetes
 
 import (
 	"github.com/tektoncd/dashboard/pkg/broadcaster"
+	"github.com/tektoncd/dashboard/pkg/controllers/utils"
 	"github.com/tektoncd/dashboard/pkg/endpoints"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
 	v1 "k8s.io/api/core/v1"
@@ -58,7 +59,7 @@ func serviceAccountUpdated(oldObj, newObj interface{}) {
 }
 
 func serviceAccountDeleted(obj interface{}) {
-	logging.Log.Debugf("ServiceAccount Controller detected ServiceAccount '%s' deleted", obj.(*v1.ServiceAccount).Name)
+	logging.Log.Debugf("ServiceAccount Controller detected ServiceAccount '%s' deleted", utils.GetDeletedObjectMeta(obj).GetName())
 	data := broadcaster.SocketData{
 		MessageType: broadcaster.ServiceAccountDeleted,
 		Payload:     obj,
