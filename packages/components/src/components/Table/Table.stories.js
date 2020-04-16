@@ -54,7 +54,9 @@ storiesOf('Components/Table', module)
         headers={headers}
         selectedNamespace={text('selectedNamespace', '*')}
         loading={boolean('loading', false)}
-        filters={getFilters(boolean('showFilters', false))}
+        filters={getFilters(
+          boolean('showFilters (for testing purposes only)', false)
+        )}
         emptyTextAllNamespaces={text(
           'emptyTextAllNamespaces',
           'No rows in any namespace'
@@ -87,7 +89,9 @@ storiesOf('Components/Table', module)
         ]}
         selectedNamespace="*"
         loading={boolean('loading', false)}
-        filters={getFilters(boolean('showFilters', false))}
+        filters={getFilters(
+          boolean('showFilters (for testing purposes only)', false)
+        )}
         toolbarButtons={[
           { onClick: action('handleNew'), text: 'Add', icon: Add }
         ]}
@@ -117,7 +121,9 @@ storiesOf('Components/Table', module)
         ]}
         selectedNamespace="*"
         loading={boolean('loading', false)}
-        filters={getFilters(boolean('showFilters', false))}
+        filters={getFilters(
+          boolean('showFilters (for testing purposes only)', false)
+        )}
         batchActionButtons={[
           { onClick: action('handleDelete'), text: 'Delete', icon: Delete }
         ]}
@@ -159,7 +165,9 @@ storiesOf('Components/Table', module)
           ]}
           selectedNamespace="*"
           isSortable={boolean('isSortable', true)}
-          filters={getFilters(boolean('showFilters', false))}
+          filters={getFilters(
+            boolean('showFilters (for testing purposes only)', false)
+          )}
           batchActionButtons={[
             { onClick: action('handleDelete'), text: 'Delete', icon: Delete },
             { onClick: action('handleRerun'), text: 'Rerun', icon: Rerun }

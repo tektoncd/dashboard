@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,10 +16,26 @@ import { storiesOf } from '@storybook/react';
 import StoryRouter from 'storybook-react-router';
 import { getStatus } from '@tektoncd/dashboard-utils';
 import { action } from '@storybook/addon-actions';
+import { boolean } from '@storybook/addon-knobs';
 import { Delete16 as Delete } from '@carbon/icons-react';
+import { Dropdown } from 'carbon-components-react';
 
 import { StatusIcon } from '..';
 import PipelineRuns from '.';
+
+function getFilters(showFilters) {
+  return showFilters ? (
+    <Dropdown
+      id="status-filter"
+      initialSelectedItem="All"
+      items={['All', 'Succeeded', 'Failed']}
+      light
+      label="Status"
+      titleText="Status:"
+      type="inline"
+    />
+  ) : null;
+}
 
 storiesOf('Components/PipelineRuns', module)
   .addDecorator(StoryRouter())
@@ -286,6 +302,9 @@ storiesOf('Components/PipelineRuns', module)
           }
         }
       }}
+      filters={getFilters(
+        boolean('showFilters (for testing purposes only)', false)
+      )}
       pipelineRunActions={[
         {
           actionText: 'An Action',
