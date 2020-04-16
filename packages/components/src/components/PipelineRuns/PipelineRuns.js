@@ -27,6 +27,7 @@ const PipelineRuns = ({
   createPipelineRunDisplayName = ({ pipelineRunMetadata }) =>
     pipelineRunMetadata.name,
   createPipelineRunsByPipelineURL = urls.pipelineRuns.byPipeline,
+  filters,
   getPipelineRunStatus = (pipelineRun, intl) => {
     const { reason } = getStatus(pipelineRun);
     return (
@@ -198,6 +199,7 @@ const PipelineRuns = ({
   return (
     <Table
       batchActionButtons={batchActionButtons}
+      filters={filters}
       headers={headers}
       rows={pipelineRunsFormatted}
       loading={loading}
