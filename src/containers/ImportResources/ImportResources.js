@@ -135,7 +135,7 @@ export class ImportResources extends Component {
       installNamespace
     } = this.state;
     const pipelineName = 'pipeline0';
-    const gitresourcename = 'git-source';
+    const gitresourcename = 'git-source-';
     const gitcommit = 'master';
 
     // Without the if statement it will not display errors for both the namespace and the url at the same time
