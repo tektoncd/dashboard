@@ -2,6 +2,7 @@ package kubernetes
 
 import (
 	"github.com/tektoncd/dashboard/pkg/broadcaster"
+	"github.com/tektoncd/dashboard/pkg/controllers/utils"
 	"github.com/tektoncd/dashboard/pkg/endpoints"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
 	"github.com/tektoncd/dashboard/pkg/router"
@@ -95,11 +96,13 @@ func (e extensionHandler) serviceUpdated(oldObj, newObj interface{}) {
 }
 
 func (e extensionHandler) serviceDeleted(obj interface{}) {
-	service := obj.(*v1.Service)
-	if service.Namespace == e.installNamespace {
-		if value := service.Labels[router.ExtensionLabelKey]; value == router.ExtensionLabelValue {
-			logging.Log.Debugf("Extension Controller detected extension '%s' deleted", service.Name)
-			e.UnregisterExtension(service)
+	serviceMeta := utils.GetDeletedObjectMeta(obj)
+	if serviceMeta.GetNamespace() == e.installNamespace {
+		if value := serviceMeta.GetLabels()[router.ExtensionLabelKey]; value == router.ExtensionLabelValue {
+			logging.Log.Debugf("Extension Controller detected extension '%s' deleted", serviceMeta.GetName())
+			if serviceMeta.GetUID() != "" {
+				e.UnregisterExtensionByMeta(serviceMeta)
+			}
 			data := broadcaster.SocketData{
 				MessageType: broadcaster.ExtensionDeleted,
 				Payload:     obj,

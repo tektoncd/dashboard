@@ -29,6 +29,7 @@ import (
 	"github.com/tektoncd/dashboard/pkg/endpoints"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
 	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // ExtensionLabelKey is the label key required by services to be registered as a
@@ -120,12 +121,18 @@ func (h *Handler) RegisterExtension(extensionService *corev1.Service) {
 // UnregisterExtension unregisters an extension. This should be called BEFORE
 // registration of extensionService on informer update
 func (h *Handler) UnregisterExtension(extensionService *corev1.Service) {
-	logging.Log.Infof("Removing extension %s", extensionService.Name)
+	h.UnregisterExtensionByMeta(&extensionService.ObjectMeta)
+}
+
+// UnregisterExtensionByMeta unregisters an extension by its metadata. This
+// should be called BEFORE registration of extensionService on informer update
+func (h *Handler) UnregisterExtensionByMeta(extensionService metav1.Object) {
+	logging.Log.Infof("Removing extension %s", extensionService.GetName())
 	h.Lock()
 	defer h.Unlock()
 
 	// Grab endpoints to remove from service
-	ext := h.uidExtensionMap[string(extensionService.UID)]
+	ext := h.uidExtensionMap[string(extensionService.GetUID())]
 	for _, path := range ext.endpoints {
 		extensionPath := extensionPath(ext.Name, path)
 		fullPath := fmt.Sprintf("%s/%s", h.extensionWebService.RootPath(), extensionPath)
@@ -139,7 +146,7 @@ func (h *Handler) UnregisterExtension(extensionService *corev1.Service) {
 		h.extensionWebService.RemoveRoute(fullPath+"/{var:*}", "PUT")
 		h.extensionWebService.RemoveRoute(fullPath+"/{var:*}", "DELETE")
 	}
-	delete(h.uidExtensionMap, string(extensionService.UID))
+	delete(h.uidExtensionMap, string(extensionService.GetUID()))
 }
 
 // registerExtensions registers the WebService responsible for
