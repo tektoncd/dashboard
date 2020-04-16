@@ -25,8 +25,7 @@ func GetDeletedObjectMeta(obj interface{}) metav1.Object {
 	// Deal with tombstone events by pulling the object out.  Tombstone events wrap the object in a
 	// DeleteFinalStateUnknown struct, so the object needs to be pulled out.
 	// Copied from sample-controller
-	// This should never happen if we aren't missing events, which we have concluded that we are not
-	// and made decisions off of this belief.  Maybe this shouldn't be here?
+	// This should only happen when we're missing events.
 	if _, ok := obj.(metav1.Object); !ok {
 		// If the object doesn't have Metadata, assume it is a tombstone object of type DeletedFinalStateUnknown
 		if tombstone, ok := obj.(cache.DeletedFinalStateUnknown); !ok {
