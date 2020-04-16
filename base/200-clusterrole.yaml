@@ -19,7 +19,7 @@ rules:
     verbs: ["get", "list", "watch"]
   - apiGroups: [""]
     resources: ["serviceaccounts"]
-    verbs: ["get", "list"]
+    verbs: ["get", "list", "watch"]
   - apiGroups: [""]
     resources: ["pods", "services"]
     verbs: ["get", "list", "watch"]
