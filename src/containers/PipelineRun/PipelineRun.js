@@ -89,7 +89,9 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
         this.props.fetchPipelineRun({ name: pipelineRunName, namespace }),
         this.props.fetchTasks(),
         this.props.fetchClusterTasks(),
-        this.props.fetchTaskRuns()
+        this.props.fetchTaskRuns({
+          filters: [`tekton.dev/pipelineRun=${pipelineRunName}`]
+        })
       ]);
       this.setState({ loading: false });
     });
