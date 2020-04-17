@@ -13,6 +13,7 @@ limitations under the License.
 /* istanbul ignore file */
 export { default as About } from './About';
 export { default as ClusterTasks } from './ClusterTasks';
+export { default as ClusterTasksDropdown } from './ClusterTasksDropdown';
 export {
   default as CustomResourceDefinition
 } from './CustomResourceDefinition';
@@ -44,6 +45,7 @@ export { default as ServiceAccounts } from './ServiceAccounts';
 export { default as ServiceAccountsDropdown } from './ServiceAccountsDropdown';
 export { default as SideNav } from './SideNav';
 export { default as Tasks } from './Tasks';
+export { default as TasksDropdown } from './TasksDropdown';
 export { default as TaskRun } from './TaskRun';
 export { default as TaskRuns } from './TaskRuns';
 export { default as TriggerBinding } from './TriggerBinding';
