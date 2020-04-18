@@ -40,6 +40,10 @@ type Properties struct {
 const (
 	tektonDashboardIngressName string = "tekton-dashboard"
 	tektonDashboardRouteName   string = "tekton-dashboard"
+	defaultTriggersNamespace   string = "tekton-pipelines"
+	defaultPipelineNamespace   string = "tekton-pipelines"
+	triggersNamespaceEnvVar    string = "TRIGGERS_NAMESPACE"
+	pipelineNamespaceEnvVar    string = "PIPELINE_NAMESPACE"
 )
 
 // ProxyRequest does as the name suggests: proxies requests and logs what's going on
@@ -162,22 +166,41 @@ func (r Resource) GetEndpoints(request *restful.Request, response *restful.Respo
 	}
 }
 
+// getTriggersNamespace returns the namespace where Tekton Tiggers is installed.
+func getTriggersNamespace() string {
+	if e := os.Getenv(triggersNamespaceEnvVar); e != "" {
+		return e
+	}
+	return defaultTriggersNamespace
+}
+
+// getPipelineNamespace returns the namespace where Tekton Pipelines is installed.
+func getPipelineNamespace() string {
+	if e := os.Getenv(pipelineNamespaceEnvVar); e != "" {
+		return e
+	}
+	return defaultPipelineNamespace
+}
+
 // GetProperties is used to get the installed namespace for the Dashboard,
 // the version of the Tekton Dashboard, the version of Tekton Pipelines, whether or not one's
 // running on OpenShift, when one's in read-only mode and Tekton Triggers version (if Installed)
 func (r Resource) GetProperties(request *restful.Request, response *restful.Response) {
 	properties := Properties{}
 	installedNamespace := os.Getenv("INSTALLED_NAMESPACE")
+	triggersNamespace := getTriggersNamespace()
+	pipelineNamespace := getPipelineNamespace()
+
 	dashboardVersion := GetDashboardVersion(r, installedNamespace)
 	isOpenShift := IsOpenShift(r, installedNamespace)
 	isReadOnly := IsReadOnly()
-	pipelineVersion := GetPipelineVersion(r, isOpenShift)
+	pipelineVersion := GetPipelineVersion(r, pipelineNamespace, isOpenShift)
 
-	isTriggersInstalled := IsTriggersInstalled(r, isOpenShift)
+	isTriggersInstalled := IsTriggersInstalled(r, triggersNamespace, isOpenShift)
 	if isTriggersInstalled == false {
 		properties = Properties{InstallNamespace: installedNamespace, DashboardVersion: dashboardVersion, PipelineVersion: pipelineVersion, IsOpenShift: isOpenShift, ReadOnly: isReadOnly}
 	} else {
-		triggersVersion := GetTriggersVersion(r, isOpenShift)
+		triggersVersion := GetTriggersVersion(r, triggersNamespace, isOpenShift)
 		properties = Properties{InstallNamespace: installedNamespace, DashboardVersion: dashboardVersion, PipelineVersion: pipelineVersion, TriggersVersion: triggersVersion, IsOpenShift: isOpenShift, ReadOnly: isReadOnly}
 	}
 

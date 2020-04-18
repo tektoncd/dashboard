@@ -83,8 +83,8 @@ func IsOpenShift(r Resource, installedNamespace string) bool {
 		if namespaceName == "openshift-pipelines" {
 			openshiftPipelineFound = SearchForDeployment(r, "pipelines", "openshift-pipelines")
 		}
-		if namespaceName == "tekton-pipelines" {
-			tektonPipelinesFound = SearchForDeployment(r, "pipelines", "tekton-pipelines")
+		if namespaceName == installedNamespace {
+			tektonPipelinesFound = SearchForDeployment(r, "pipelines", installedNamespace)
 		}
 	}
 
@@ -107,9 +107,9 @@ func IsOpenShift(r Resource, installedNamespace string) bool {
 }
 
 // Get pipelines version
-func GetPipelineVersion(r Resource, isOpenShift bool) string {
+func GetPipelineVersion(r Resource, pipelineNamespace string, isOpenShift bool) string {
 	version := ""
-	namespacesToCheck := []string{"tekton-pipelines"}
+	namespacesToCheck := []string{pipelineNamespace}
 
 	if isOpenShift {
 		namespacesToCheck = append(namespacesToCheck, "openshift-pipelines")
@@ -217,9 +217,9 @@ func getDeployments(r Resource, thingSearchingFor string, namespace string) stri
 }
 
 // Get triggers version
-func GetTriggersVersion(r Resource, isOpenShift bool) string {
+func GetTriggersVersion(r Resource, triggersNamespace string, isOpenShift bool) string {
 	version := ""
-	namespacesToCheck := []string{"tekton-pipelines"}
+	namespacesToCheck := []string{triggersNamespace}
 
 	if isOpenShift {
 		namespacesToCheck = append(namespacesToCheck, "openshift-pipelines")
@@ -241,9 +241,9 @@ func GetTriggersVersion(r Resource, isOpenShift bool) string {
 }
 
 // Check whether Tekton Triggers is installed
-func IsTriggersInstalled(r Resource, isOpenShift bool) bool {
+func IsTriggersInstalled(r Resource, triggersNamespace string, isOpenShift bool) bool {
 	isTriggersInstalled := false
-	namespacesToCheck := []string{"tekton-pipelines"}
+	namespacesToCheck := []string{triggersNamespace}
 
 	if isOpenShift {
 		namespacesToCheck = append(namespacesToCheck, "openshift-pipelines")

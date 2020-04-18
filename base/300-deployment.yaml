@@ -42,6 +42,10 @@ spec:
               value: /var/run/ko/web
             - name: PIPELINE_RUN_SERVICE_ACCOUNT
               value: ""
+            - name: TRIGGERS_NAMESPACE
+              value: tekton-pipelines
+            - name: PIPELINE_NAMESPACE
+              value: tekton-pipelines
             - name: INSTALLED_NAMESPACE
               valueFrom:
                 fieldRef:
