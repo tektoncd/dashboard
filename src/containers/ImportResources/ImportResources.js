@@ -30,11 +30,7 @@ import {
 } from '@tektoncd/dashboard-utils';
 import { getGitValues } from '../../utils';
 
-import {
-  createPipelineResource,
-  createPipelineRun,
-  determineInstallNamespace
-} from '../../api';
+import { determineInstallNamespace, importResources } from '../../api';
 import { getSelectedNamespace } from '../../reducers';
 import { NamespacesDropdown, ServiceAccountsDropdown } from '..';
 
@@ -128,28 +124,25 @@ export class ImportResources extends Component {
 
   handleSubmit = () => {
     const {
-      directory: applydirectory,
+      directory: applyDirectory,
       namespace,
-      repositoryURL: repourl,
+      repositoryURL,
       serviceAccount,
       installNamespace
     } = this.state;
-    const pipelineName = 'pipeline0';
-    const gitresourcename = 'git-source-';
-    const gitcommit = 'master';
 
     // Without the if statement it will not display errors for both the namespace and the url at the same time
-    // The if / else statement inside is because the repourl needs different parameters set for invalidInput
+    // The if / else statement inside is because the repositoryURL needs different parameters set for invalidInput
     // for the error to display when Submit is pressed. If set to the same then the errors dont appear on the page
-    const repourlValid = validateURL(repourl);
+    const repourlValid = validateURL(repositoryURL);
     if (repourlValid === false || !namespace) {
-      if (repourlValid === false && repourl === '') {
+      if (repourlValid === false && repositoryURL === '') {
         this.setState({
-          invalidInput: repourl === ''
+          invalidInput: repositoryURL === ''
         });
       } else if (repourlValid === false) {
         this.setState({
-          invalidInput: repourl
+          invalidInput: repositoryURL
         });
       }
       this.setState({
@@ -158,75 +151,34 @@ export class ImportResources extends Component {
       return;
     }
 
-    const resource = {
-      apiVersion: 'tekton.dev/v1alpha1',
-      kind: 'PipelineResource',
-      metadata: {
-        generateName: gitresourcename,
-        namespace: installNamespace
-      },
-      spec: {
-        type: 'git',
-        params: [
-          {
-            name: 'url',
-            value: repourl
-          },
-          {
-            name: 'revision',
-            value: gitcommit
-          }
-        ]
-      }
-    };
-    createPipelineResource({ namespace: installNamespace, resource })
-      .then(data => {
-        const labels = getGitValues(repourl);
-        const pipelineRun = {
-          pipelineName,
-          serviceAccount,
-          resources: { 'git-source': data.metadata.name },
-          params: {
-            'apply-directory': applydirectory,
-            'target-namespace': namespace
-          },
+    const labels = getGitValues(repositoryURL);
+
+    importResources({
+      repositoryURL,
+      applyDirectory,
+      namespace,
+      labels,
+      serviceAccount,
+      installNamespace
+    })
+      .then(headers => {
+        const pipelineRunName = headers.metadata.name;
+
+        const finalURL = urls.pipelineRuns.byName({
           namespace: installNamespace,
-          labels
-        };
-        const promise = createPipelineRun(pipelineRun);
-        promise
-          .then(headers => {
-            const pipelineRunName = headers.metadata.name;
+          pipelineRunName
+        });
 
-            const finalURL = urls.pipelineRuns.byName({
-              namespace: installNamespace,
-              pipelineRunName
-            });
-
-            if (this.state.installNamespaceError === false) {
-              this.setState({
-                logsURL: finalURL,
-                submitSuccess: true,
-                invalidInput: false
-              });
-            } else {
-              this.setState({
-                logsURL: urls.pipelineRuns.all(),
-                submitSuccess: true,
-                invalidInput: false
-              });
-            }
-          })
-          .catch(error => {
-            error.response.text().then(text => {
-              const statusCode = error.response.status;
-              let errorMessage = `error code ${statusCode}`;
-              if (text) {
-                errorMessage = `${text} (error code ${statusCode})`;
-              }
-              this.setState({ submitError: errorMessage });
-            });
-          });
+        this.setState(prevState => {
+          return {
+            logsURL:
+              prevState.installNamespaceError === false
+                ? finalURL
+                : urls.pipelineRuns.all(),
+            submitSuccess: true,
+            invalidInput: false
+          };
+        });
       })
       .catch(error => {
         error.response.text().then(text => {

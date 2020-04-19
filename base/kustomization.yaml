@@ -6,5 +6,3 @@ resources:
   - 203-serviceaccount.yaml
   - 300-deployment.yaml
   - 300-service.yaml
-  - 400-pipeline0-task.yaml
-  - 401-pipeline0.yaml

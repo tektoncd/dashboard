@@ -860,3 +860,173 @@ it('createTaskRun handles timeout', () => {
     fetchMock.restore();
   });
 });
+
+it('importResources', () => {
+  const mockDateNow = jest
+    .spyOn(Date, 'now')
+    .mockImplementation(() => 'fake-timestamp');
+  const repositoryURL = 'https://github.com/test/testing';
+  const applyDirectory = 'fake-directory';
+  const namespace = 'fake-namespace';
+  const serviceAccount = 'fake-serviceAccount';
+  const installNamespace = 'fake-install-namespace';
+
+  const payload = {
+    repositoryURL,
+    applyDirectory,
+    namespace,
+    serviceAccount,
+    installNamespace
+  };
+  const data = {
+    apiVersion: 'tekton.dev/v1beta1',
+    kind: 'PipelineRun',
+    metadata: {
+      name: `import-resources-${Date.now()}`,
+      labels: {
+        app: 'tekton-app',
+        'dashboard.tekton.dev/import': 'true'
+      }
+    },
+    spec: {
+      params: [
+        {
+          name: 'apply-directory',
+          value: 'fake-directory'
+        },
+        {
+          name: 'target-namespace',
+          value: 'fake-namespace'
+        }
+      ],
+      pipelineSpec: {
+        params: [
+          {
+            default: '/workspace/git-source',
+            description: 'The path to the resource files to apply',
+            name: 'pathToResourceFiles',
+            type: 'string'
+          },
+          {
+            default: '.',
+            description: 'The directory from which resources are to be applied',
+            name: 'apply-directory',
+            type: 'string'
+          },
+          {
+            default: 'tekton-pipelines',
+            description:
+              'The namespace in which to create the resources being imported',
+            name: 'target-namespace',
+            type: 'string'
+          }
+        ],
+        resources: [
+          {
+            name: 'git-source',
+            type: 'git'
+          }
+        ],
+        tasks: [
+          {
+            name: 'import-resources',
+            params: [
+              {
+                name: 'pathToResourceFiles',
+                value: '$(params.pathToResourceFiles)'
+              },
+              {
+                name: 'apply-directory',
+                value: '$(params.apply-directory)'
+              },
+              {
+                name: 'target-namespace',
+                value: '$(params.target-namespace)'
+              }
+            ],
+            resources: {
+              inputs: [
+                {
+                  name: 'git-source',
+                  resource: 'git-source'
+                }
+              ]
+            },
+            taskSpec: {
+              params: [
+                {
+                  default: '/workspace/git-source',
+                  description: 'The path to the resource files to apply',
+                  name: 'pathToResourceFiles',
+                  type: 'string'
+                },
+                {
+                  default: '.',
+                  description:
+                    'The directory from which resources are to be applied',
+                  name: 'apply-directory',
+                  type: 'string'
+                },
+                {
+                  default: 'tekton-pipelines',
+                  description:
+                    'The namespace in which to create the resources being imported',
+                  name: 'target-namespace',
+                  type: 'string'
+                }
+              ],
+              resources: {
+                inputs: [
+                  {
+                    name: 'git-source',
+                    type: 'git'
+                  }
+                ]
+              },
+              steps: [
+                {
+                  args: [
+                    'apply',
+                    '-f',
+                    '$(params.pathToResourceFiles)/$(params.apply-directory)',
+                    '-n',
+                    '$(params.target-namespace)'
+                  ],
+                  command: ['kubectl'],
+                  image: 'lachlanevenson/k8s-kubectl:latest',
+                  name: 'kubectl-apply'
+                }
+              ]
+            }
+          }
+        ]
+      },
+      resources: [
+        {
+          name: 'git-source',
+          resourceSpec: {
+            params: [
+              {
+                name: 'url',
+                value: 'https://github.com/test/testing'
+              },
+              {
+                name: 'revision',
+                value: 'master'
+              }
+            ],
+            type: 'git'
+          }
+        }
+      ]
+    }
+  };
+
+  fetchMock.post('*', data);
+  return index.importResources(payload).then(response => {
+    expect(response).toEqual(data);
+    expect(JSON.parse(fetchMock.lastOptions().body)).toMatchObject(data);
+    fetchMock.restore();
+    mockDateNow.mockRestore();
+  });
+});
