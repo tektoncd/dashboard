@@ -147,46 +147,46 @@ describe('ImportResources component', () => {
   });
 
   it('Valid data submit displays success notification ', async () => {
-    const installNamespace = 'namespace1';
-    const namespace = 'default';
     const pipelineRunName = 'fake-tekton-pipeline-run';
     const headers = {
       metadata: { name: pipelineRunName }
     };
 
     jest
-      .spyOn(API, 'createPipelineResource')
-      .mockImplementation(() =>
-        Promise.resolve({ metadata: { name: 'git-source' } })
+      .spyOn(API, 'importResources')
+      .mockImplementation(
+        ({
+          repositoryURL,
+          applyDirectory,
+          namespace,
+          labels,
+          serviceAccount,
+          installNamespace
+        }) => {
+          const labelsShouldEqual = {
+            gitOrg: 'test',
+            gitRepo: 'testing.git',
+            gitServer: 'github.com'
+          };
+
+          expect(repositoryURL).toEqual('https://github.com/test/testing');
+          expect(applyDirectory).toEqual('');
+          expect(namespace).toEqual('default');
+          expect(labels).toEqual(labelsShouldEqual);
+          expect(serviceAccount).toEqual('');
+          expect(installNamespace).toEqual('namespace1');
+
+          return Promise.resolve(headers);
+        }
       );
 
-    jest.spyOn(API, 'createPipelineRun').mockImplementation(pipelineRun => {
-      const paramShouldEqual = {
-        pipelineName: 'pipeline0',
-        serviceAccount: '',
-        resources: { 'git-source': 'git-source' },
-        params: { 'apply-directory': '', 'target-namespace': 'default' },
-        namespace: 'namespace1',
-        labels: {
-          gitServer: 'github.com',
-          gitOrg: 'test',
-          gitRepo: 'testing.git'
-        }
-      };
-      // If the test on the line below fails, there is no clear error given.
-      // The test outputs the webpage and you see a "Please submit a valid URl".
-      // This essentially tells you that something has gone wrong in the
-      // creation of the pipelinerun .... which could well be that the
-      // expected parameter values no longer match.  Adding a
-      // console log of pipelineRun here will allow you to check what was given
-      // to createPipelineRun.
-      expect(pipelineRun).toEqual(paramShouldEqual);
-      return Promise.resolve(headers);
-    });
+    const installNamespace = 'namespace1';
 
     jest
       .spyOn(API, 'determineInstallNamespace')
       .mockImplementation(() => installNamespace);
+
+    const namespace = 'default';
 
     const {
       getByPlaceholderText,
@@ -223,17 +223,11 @@ describe('ImportResources component', () => {
   });
 
   it('Invalid data submit displays invalidText', async () => {
-    const createPipelineRunResponseMock = { response: { status: 500 } };
+    const importResourcesResponseMock = { response: { status: 500 } };
 
     jest
-      .spyOn(API, 'createPipelineResource')
-      .mockImplementation(() =>
-        Promise.resolve({ metadata: { name: 'git-source' } })
-      );
-
-    jest
-      .spyOn(API, 'createPipelineRun')
-      .mockImplementation(() => Promise.reject(createPipelineRunResponseMock));
+      .spyOn(API, 'importResources')
+      .mockImplementation(() => Promise.reject(importResourcesResponseMock));
 
     jest
       .spyOn(API, 'determineInstallNamespace')

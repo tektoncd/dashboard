@@ -97,7 +97,7 @@ $ export KO_DOCKER_REPO=docker.io/<mydockername>
 $ ./install-dev.sh
 ```
 
-The `install-dev.sh` script will build and push an image of the Tekton Dashboard to the Docker registry which you are logged into. Any Docker registry will do, but in this case it will push to Dockerhub. It will also apply the Pipeline0 definition and task: this allows you to import Tekton resources from Git repositories. It will also build the static web content using `npm` scripts.
+The `install-dev.sh` script will build and push an image of the Tekton Dashboard to the Docker registry which you are logged into. Any Docker registry will do, but in this case it will push to Dockerhub. It will also build the static web content using `npm` scripts.
 
 ### Optionally set up the Ingress endpoint
 

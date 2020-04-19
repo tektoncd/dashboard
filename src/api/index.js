@@ -588,3 +588,171 @@ export function createTaskRun({
   const uri = getTektonAPI('taskruns', { namespace });
   return post(uri, payload);
 }
+
+export function importResources({
+  repositoryURL,
+  applyDirectory,
+  namespace,
+  labels,
+  serviceAccount,
+  installNamespace
+}) {
+  const taskSpec = {
+    resources: {
+      inputs: [
+        {
+          name: 'git-source',
+          type: 'git'
+        }
+      ]
+    },
+    params: [
+      {
+        name: 'pathToResourceFiles',
+        description: 'The path to the resource files to apply',
+        default: '/workspace/git-source',
+        type: 'string'
+      },
+      {
+        name: 'apply-directory',
+        description: 'The directory from which resources are to be applied',
+        default: '.',
+        type: 'string'
+      },
+      {
+        name: 'target-namespace',
+        description:
+          'The namespace in which to create the resources being imported',
+        default: 'tekton-pipelines',
+        type: 'string'
+      }
+    ],
+    steps: [
+      {
+        name: 'kubectl-apply',
+        image: 'lachlanevenson/k8s-kubectl:latest',
+        command: ['kubectl'],
+        args: [
+          'apply',
+          '-f',
+          '$(params.pathToResourceFiles)/$(params.apply-directory)',
+          '-n',
+          '$(params.target-namespace)'
+        ]
+      }
+    ]
+  };
+
+  const pipelineSpec = {
+    resources: [
+      {
+        name: 'git-source',
+        type: 'git'
+      }
+    ],
+    params: [
+      {
+        name: 'pathToResourceFiles',
+        description: 'The path to the resource files to apply',
+        default: '/workspace/git-source',
+        type: 'string'
+      },
+      {
+        name: 'apply-directory',
+        description: 'The directory from which resources are to be applied',
+        default: '.',
+        type: 'string'
+      },
+      {
+        name: 'target-namespace',
+        description:
+          'The namespace in which to create the resources being imported',
+        default: 'tekton-pipelines',
+        type: 'string'
+      }
+    ],
+    tasks: [
+      {
+        name: 'import-resources',
+        taskSpec,
+        params: [
+          {
+            name: 'pathToResourceFiles',
+            value: '$(params.pathToResourceFiles)'
+          },
+          {
+            name: 'apply-directory',
+            value: '$(params.apply-directory)'
+          },
+          {
+            name: 'target-namespace',
+            value: '$(params.target-namespace)'
+          }
+        ],
+        resources: {
+          inputs: [
+            {
+              name: 'git-source',
+              resource: 'git-source'
+            }
+          ]
+        }
+      }
+    ]
+  };
+
+  const resourceSpec = {
+    type: 'git',
+    params: [
+      {
+        name: 'url',
+        value: repositoryURL
+      },
+      {
+        name: 'revision',
+        value: 'master'
+      }
+    ]
+  };
+
+  const pipelineRunSpec = {
+    pipelineSpec,
+    resources: [
+      {
+        name: 'git-source',
+        resourceSpec
+      }
+    ],
+    params: [
+      {
+        name: 'apply-directory',
+        value: applyDirectory
+      },
+      {
+        name: 'target-namespace',
+        value: namespace
+      }
+    ]
+  };
+
+  const payload = {
+    apiVersion: 'tekton.dev/v1beta1',
+    kind: 'PipelineRun',
+    metadata: {
+      name: `import-resources-${Date.now()}`,
+      labels: {
+        ...labels,
+        app: 'tekton-app',
+        'dashboard.tekton.dev/import': 'true'
+      }
+    },
+    spec: pipelineRunSpec
+  };
+
+  if (serviceAccount) {
+    payload.spec.serviceAccountName = serviceAccount;
+  }
+
+  const uri = getTektonAPI('pipelineruns', { namespace: installNamespace });
+  return post(uri, payload);
+}
