@@ -11,7 +11,7 @@
   "dependencies": {
     "@babel/cli": "^7.5.5",
     "@formatjs/intl-pluralrules": "^1.2.1",
-    "@formatjs/intl-relativetimeformat": "^4.1.1",
+    "@formatjs/intl-relativetimeformat": "^4.5.12",
     "@tektoncd/dashboard-utils": "file:../utils",
     "@vx/event": "0.0.192",
     "@vx/network": "0.0.192",
@@ -29,7 +29,7 @@
     "carbon-components-react": "^7.10.1",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
-    "react-intl": "^3.1.1",
+    "react-intl": "^3.12.1",
     "react-router-dom": "^5.0.0"
   },
   "engines": {
