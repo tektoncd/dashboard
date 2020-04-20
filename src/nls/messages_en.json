@@ -212,7 +212,6 @@
     "dashboard.tableHeader.key": "Key",
     "dashboard.tableHeader.name": "Name",
     "dashboard.tableHeader.namespace": "Namespace",
-    "dashboard.tableHeader.paramName": "Param Name",
     "dashboard.tableHeader.pipeline": "Pipeline",
     "dashboard.tableHeader.property": "Property",
     "dashboard.tableHeader.serviceAccount": "ServiceAccount",
