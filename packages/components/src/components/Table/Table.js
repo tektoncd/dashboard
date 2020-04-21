@@ -140,9 +140,7 @@ const Table = props => {
   const translateWithId = getTranslateWithId(intl);
 
   return (
-    <div
-      className={`tableComponent ${filters ? 'tkn--table-with-filters' : ''}`}
-    >
+    <div className={`tkn--table ${filters ? 'tkn--table-with-filters' : ''}`}>
       <DataTable
         key={selectedNamespace}
         rows={dataRows}

@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -26,8 +26,8 @@ import tektonLogo from '../../images/tekton-logo-20x20.svg';
 
 function Header({ intl, logoutButton }) {
   return (
-    <CarbonHeader aria-label="Tekton Dashboard" className="header">
-      <span className="logo">
+    <CarbonHeader aria-label="Tekton Dashboard" className="tkn--header">
+      <span className="tkn--logo">
         <img
           alt={intl.formatMessage({
             id: 'dashboard.logo.alt',

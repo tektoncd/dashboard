@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -18,8 +18,8 @@ import './TaskSkeleton.scss';
 
 export default function TaskSkeleton() {
   return (
-    <li className="task-skeleton">
-      <SkeletonPlaceholder className="task-placeholder" />
+    <li className="tkn--task-skeleton">
+      <SkeletonPlaceholder className="tkn--task-placeholder" />
     </li>
   );
 }

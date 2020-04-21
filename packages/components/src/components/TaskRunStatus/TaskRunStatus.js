@@ -24,8 +24,8 @@ const TaskRunStatus = props => {
   const displayName = taskRun.pipelineTaskName || taskRun.taskRunName;
 
   return (
-    <div className="step-details">
-      <header className="step-details-header">
+    <div className="tkn--step-details">
+      <header className="tkn--step-details-header">
         <h2>
           <ChevronRight className="status-icon" />
           {displayName}
@@ -45,7 +45,7 @@ const TaskRunStatus = props => {
             defaultMessage: 'Status'
           })}
         >
-          <div className="step-status">
+          <div className="tkn--step-status">
             <ViewYAML resource={taskRun.status} />
           </div>
         </Tab>

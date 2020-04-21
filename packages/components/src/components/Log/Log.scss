@@ -13,7 +13,7 @@ limitations under the License.
 
 @import '~@tektoncd/dashboard-components/dist/scss/vars';
 
-pre.tkn-log {
+pre.tkn--log {
   position: relative;
   padding: 2rem 1.6rem 1.3rem 1.6rem;
   font-family: ibm-plex-mono, monospace;
@@ -41,7 +41,7 @@ pre.tkn-log {
     right: 0;
   }
 
-  .log-trailer {
+  .tkn--log-trailer {
     font-family: ibm-plex-sans, sans-serif;
     font-weight: bold;
 
@@ -53,11 +53,11 @@ pre.tkn-log {
     }
   }
 
-  .log-container {
+  .tkn--log-container {
     overflow-x: auto;
   }
 
-  .log-container:not(:empty) + .log-trailer {
+  .tkn--log-container:not(:empty) + .tkn--log-trailer {
     margin-top: 1rem;
   }
 }

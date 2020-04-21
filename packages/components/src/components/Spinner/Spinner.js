@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -19,7 +19,7 @@ export default function Spinner({ className }) {
   return (
     <svg
       aria-label="running"
-      className={`spinner ${className}`}
+      className={`tkn--spinner ${className}`}
       viewBox="0 0 16 16"
       xmlns="http://www.w3.org/2000/svg"
     >

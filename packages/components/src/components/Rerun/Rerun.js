@@ -83,7 +83,7 @@ export class Rerun extends Component {
       <Button
         data-testid="rerun-btn"
         kind="ghost"
-        className="rerun-btn"
+        className="tkn--rerun-btn"
         renderIcon={Restart}
         onClick={this.handleRerun}
       >
