@@ -234,7 +234,7 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
           runName={taskRun.taskRunName}
           status={taskRun.succeeded}
         />
-        <div className="tasks">
+        <div className="tkn--tasks">
           <TaskTree
             onSelect={this.handleTaskSelected}
             selectedTaskId={taskRun.id}

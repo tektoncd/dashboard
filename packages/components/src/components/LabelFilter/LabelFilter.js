@@ -138,7 +138,7 @@ class LabelFilter extends Component {
     });
 
     return (
-      <div className="dashboard-label-filter">
+      <div className="tkn--label-filter">
         {!isValid && (
           <InlineNotification
             lowContrast
@@ -154,7 +154,6 @@ class LabelFilter extends Component {
         <Form onSubmit={this.handleAddFilter} autoComplete="on">
           <Search
             placeHolderText={searchDescription}
-            className="search"
             labelText={searchDescription}
             onChange={this.handleChange}
             value={currentFilterValue}
@@ -168,7 +167,7 @@ class LabelFilter extends Component {
             })}
           </Button>
         </Form>
-        <div className="filters">
+        <div className="tkn--filters">
           {filters.map(filter => (
             <Tag
               type="blue"

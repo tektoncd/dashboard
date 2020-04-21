@@ -13,12 +13,12 @@ limitations under the License.
 
 @import '~carbon-components/scss/globals/scss/vars';
 
-.dashboard-label-filter {
+.tkn--label-filter {
   form {
     display: flex;
   }
 
-  .filters {
+  .tkn--filters {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;

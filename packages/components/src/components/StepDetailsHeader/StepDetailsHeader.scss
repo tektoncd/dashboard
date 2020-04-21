@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,7 +13,7 @@ limitations under the License.
 
 @import '~@tektoncd/dashboard-components/dist/scss/vars';
 
-.step-details-header {
+.tkn--step-details-header {
   padding: 1.3rem 1.6rem 0;
 
   > h2 {
@@ -32,7 +32,7 @@ limitations under the License.
       width: 24px;
       height: 24px;
 
-      &.spinner {
+      &.tkn--spinner {
         position: relative;
         top: -0.1rem;
         left: -0.1rem;

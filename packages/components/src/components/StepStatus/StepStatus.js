@@ -36,7 +36,7 @@ const StepStatus = ({ intl, status }) => {
       });
 
   return (
-    <div className="step-status">
+    <div className="tkn--step-status">
       <div className="title">
         {intl.formatMessage({
           id: 'dashboard.step.containerStatus',

@@ -145,7 +145,7 @@ class StepDefinition extends Component {
 
     const paramsResources = this.getIOTables();
     return (
-      <div className="step-definition">
+      <div className="tkn--step-definition">
         <div className="title">
           <FormattedMessage
             id="dashboard.step.stepDefinition"

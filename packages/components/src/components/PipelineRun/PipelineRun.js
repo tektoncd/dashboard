@@ -347,7 +347,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           {rerun}
         </RunHeader>
         {customNotification}
-        <div className="tasks">
+        <div className="tkn--tasks">
           <TaskTree
             onSelect={this.handleTaskSelected}
             selectedTaskId={selectedTaskId}
