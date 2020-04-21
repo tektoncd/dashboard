@@ -108,6 +108,26 @@ tkn pipeline start dashboard-release -p versionTag=$VERSION_TAG -r dashboard-sou
 
 Monitor the build logs to see the image coordinates that the image is pushed to. The release yaml files should appear under https://console.cloud.google.com/storage/browser/tekton-releases/dashboard.
 
+## Running the release pipeline on OpenShift
+
+Run the following commands first
+
+```
+
+oc adm policy add-scc-to-user privileged -z default -n tekton-pipelines
+oc adm policy add-scc-to-user anyuid -z default -n tekton-pipelines
+```
+
+to get around permission denied problems (as the build step uses `sudo`).
+
+- Use a namespace other than default, e.g. the `tekton-pipelines` namespace
+- Create your release secret and all Tekton resources in this namespace too
+- Specify the namespace with the `tkn` command:
+
+```
+tkn pipeline start dashboard-release -p versionTag=v0.6.1 -r dashboard-source-repo=tekton-dashboard-git -r bucket-for-dashboard=tekton-bucket-dashboard -r builtDashboardImage=dashboard-image -n tekton-pipelines -s default -p bucketName=mytestbucket
+```
+
 ## Manually complete the release work
 
 We have a number of tasks that are yet to be automated:
