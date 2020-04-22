@@ -14,10 +14,11 @@ Tekton Dashboard is a general purpose, web-based UI for Tekton Pipelines. It all
 
 ### Which version should I use?
 
-- Use the v0.6.0 release for Tekton Pipelines v0.11.0 (can display components from Tekton Triggers 0.3.1 and has a read-only install mode)
-- Use the v0.5.3 release for Tekton Pipelines v0.10.1 (can display components from Tekton Triggers 0.3.1 and has a read-only install mode)
-- Use the v0.5.2 release for Tekton Pipelines v0.10.1 (can display components from Tekton Triggers 0.2.1 and has a read-only install mode)
-- Use the v0.5.0 release for Tekton Pipelines v0.10.1 (can display components from Tekton Triggers 0.1 and has a read-only install mode)
+- Use the v0.6.1 release for Tekton Pipelines v0.11.x (can display components from Tekton Triggers 0.4.x)
+- Use the v0.6.0 release for Tekton Pipelines v0.11.x (can display components from Tekton Triggers 0.3.x)
+- Use the v0.5.3 release for Tekton Pipelines v0.10.x (can display components from Tekton Triggers 0.3.x)
+- Use the v0.5.2 release for Tekton Pipelines v0.10.x (can display components from Tekton Triggers 0.2.x)
+- Use the v0.5.0 release for Tekton Pipelines v0.10.x (can display components from Tekton Triggers 0.1 and all versions from now on have read-only install modes)
 - Use the v0.4.1 release for Tekton Pipelines v0.8.0 (can display components from Tekton Triggers 0.1)
 - Use the v0.2.1 release for Tekton Pipelines v0.7.0
 - Use the v0.1.1 release for Tekton Pipelines v0.5.2
@@ -32,14 +33,14 @@ Tekton Dashboard is a general purpose, web-based UI for Tekton Pipelines. It all
    and its dependencies:
 
    ```bash
-   kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.6.0/tekton-dashboard-release.yaml
+   kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.6.1/tekton-dashboard-release.yaml
    ```
 
    Previous versions (up to 0.5.0) are available at `previous/$VERSION_NUMBER/release.yaml`, e.g.
    https://storage.googleapis.com/tekton-releases/dashboard/previous/v0.4.1/release.yaml
 
    As of version 0.5.0, the file name pattern is more descriptive, e.g.
-   https://storage.googleapis.com/tekton-releases/dashboard/previous/v0.5.3/tekton-dashboard-release.yaml
+   https://storage.googleapis.com/tekton-releases/dashboard/previous/v0.6.0/tekton-dashboard-release.yaml
 
 2. Run the
    [`kubectl get`](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#get)
