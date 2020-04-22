@@ -65,8 +65,7 @@ function dump_extra_cluster_state() {
 
 function install_dashboard_backend() {
   echo ">> Deploying the Dashboard backend"
-  GO111MODULE=on go install sigs.k8s.io/kustomize/kustomize/v3
-  kustomize build overlays/dev | ko apply -f - || fail_test "Dashboard backend installation failed"
+  GO111MODULE=on go get sigs.k8s.io/kustomize/kustomize/v3@v3.5.4  kustomize build overlays/dev | ko apply -f - || fail_test "Dashboard backend installation failed"
   # Wait until deployment is running before checking pods, stops timing error
   for i in {1..30}
   do

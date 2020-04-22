@@ -16,7 +16,7 @@ import { injectIntl } from 'react-intl';
 
 import { Table } from '@tektoncd/dashboard-components';
 import { getErrorMessage } from '@tektoncd/dashboard-utils';
-import { Button, InlineNotification } from 'carbon-components-react';
+import { InlineNotification } from 'carbon-components-react';
 import Patch from '@carbon/icons-react/lib/data--connected/24';
 
 const ServiceAccountSelector = props => {
@@ -80,15 +80,6 @@ const ServiceAccountSelector = props => {
             { name }
           )}
         </h1>
-        <Button
-          iconDescription={intl.formatMessage({
-            id: 'dashboard.createSecret.finishButton',
-            defaultMessage: 'Finish'
-          })}
-          onClick={handleClose}
-        >
-          Finish
-        </Button>
       </div>
       <div>
         <p>
@@ -118,6 +109,15 @@ const ServiceAccountSelector = props => {
           },
           { kind: 'Secrets', selectedNamespace: namespace }
         )}
+        toolbarButtons={[
+          {
+            onClick: handleClose,
+            text: intl.formatMessage({
+              id: 'dashboard.createSecret.finishButton',
+              defaultMessage: 'Finish'
+            })
+          }
+        ]}
         batchActionButtons={[
           {
             onClick: serviceAccountsSelected => {
