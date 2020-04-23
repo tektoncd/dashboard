@@ -127,7 +127,7 @@ export function deleteSecret(secrets, cancelMethod) {
       const response = deleteCredential(name, namespace);
       const timeout = new Promise((resolve, reject) => {
         setTimeout(() => {
-          reject(new Error('An error occured deleting the secret(s).'));
+          reject(new Error('An error occurred deleting the secret(s).'));
         }, timeoutLength);
       });
       const deleteWithinTimePromise = Promise.race([response, timeout]);

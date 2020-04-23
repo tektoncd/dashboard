@@ -64,7 +64,7 @@ it('ServiceAccountSelector shows correct SA from selected namespace', () => {
     </Provider>
   );
 
-  expect(queryByText('Succesfully created some-secret')).toBeTruthy();
+  expect(queryByText('Successfully created some-secret')).toBeTruthy();
   expect(queryByText('service-account-1')).toBeTruthy();
   expect(queryByText('service-account-2')).toBeFalsy();
   expect(queryByText('service-account-3')).toBeTruthy();

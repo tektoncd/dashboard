@@ -75,7 +75,7 @@ const ServiceAccountSelector = props => {
           {intl.formatMessage(
             {
               id: 'dashboard.createSecret.successMessage',
-              defaultMessage: 'Succesfully created {name}'
+              defaultMessage: 'Successfully created {name}'
             },
             { name }
           )}

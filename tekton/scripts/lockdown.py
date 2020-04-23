@@ -55,7 +55,7 @@ def lockdown_image(images: List[str]) -> List[str]:
     return taggedimages
 
 def replace_images(org: List[str], new: List[str], path: str):
-    """Replace original images wiht new images in the release.yaml at path
+    """Replace original images with new images in the release.yaml at path
     Args:
         org: The list of original images that are replaced by the new images
         new: The list of new images 
