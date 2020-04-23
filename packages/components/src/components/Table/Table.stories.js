@@ -49,14 +49,6 @@ storiesOf('Components/Table', module)
 
     return (
       <Table
-        title={text('title', 'Resource Name')}
-        rows={[]}
-        headers={headers}
-        selectedNamespace={text('selectedNamespace', '*')}
-        loading={boolean('loading', false)}
-        filters={getFilters(
-          boolean('showFilters (for testing purposes only)', false)
-        )}
         emptyTextAllNamespaces={text(
           'emptyTextAllNamespaces',
           'No rows in any namespace'
@@ -65,6 +57,14 @@ storiesOf('Components/Table', module)
           'emptyTextSelectedNamespace',
           'No rows in selected namespace'
         )}
+        filters={getFilters(
+          boolean('showFilters (for testing purposes only)', false)
+        )}
+        headers={headers}
+        loading={boolean('loading', false)}
+        rows={[]}
+        selectedNamespace={text('selectedNamespace', '*')}
+        title={text('title', 'Resource Name')}
       />
     );
   })
@@ -80,23 +80,23 @@ storiesOf('Components/Table', module)
 
     return (
       <Table
-        title={text('title', 'Resource Name')}
-        rows={rows}
+        emptyTextAllNamespaces="No rows in any namespace"
+        emptyTextSelectedNamespace="No rows in selected namespace"
+        filters={getFilters(
+          boolean('showFilters (for testing purposes only)', false)
+        )}
         headers={[
           { key: 'name', header: 'Name' },
           { key: 'namespace', header: 'Namespace' },
           { key: 'date', header: 'Date Created' }
         ]}
-        selectedNamespace="*"
         loading={boolean('loading', false)}
-        filters={getFilters(
-          boolean('showFilters (for testing purposes only)', false)
-        )}
+        rows={rows}
+        selectedNamespace="*"
+        title={text('title', 'Resource Name')}
         toolbarButtons={[
           { onClick: action('handleNew'), text: 'Add', icon: Add }
         ]}
-        emptyTextAllNamespaces="No rows in any namespace"
-        emptyTextSelectedNamespace="No rows in selected namespace"
       />
     );
   })
@@ -112,21 +112,21 @@ storiesOf('Components/Table', module)
 
     return (
       <Table
-        title={text('title', 'Resource Name')}
-        rows={rows}
+        batchActionButtons={[
+          { onClick: action('handleDelete'), text: 'Delete', icon: Delete }
+        ]}
+        filters={getFilters(
+          boolean('showFilters (for testing purposes only)', false)
+        )}
         headers={[
           { key: 'name', header: 'Name' },
           { key: 'namespace', header: 'Namespace' },
           { key: 'date', header: 'Created' }
         ]}
-        selectedNamespace="*"
         loading={boolean('loading', false)}
-        filters={getFilters(
-          boolean('showFilters (for testing purposes only)', false)
-        )}
-        batchActionButtons={[
-          { onClick: action('handleDelete'), text: 'Delete', icon: Delete }
-        ]}
+        rows={rows}
+        selectedNamespace="*"
+        title={text('title', 'Resource Name')}
       />
     );
   })
@@ -156,22 +156,25 @@ storiesOf('Components/Table', module)
 
       return (
         <Table
-          title={text('title', 'Resource Name')}
-          rows={rows}
+          batchActionButtons={[
+            { onClick: action('handleDelete'), text: 'Delete', icon: Delete },
+            { onClick: action('handleRerun'), text: 'Rerun', icon: Rerun }
+          ]}
+          emptyTextAllNamespaces="No rows in any namespace"
+          emptyTextSelectedNamespace="No rows in selected namespace"
+          filters={getFilters(
+            boolean('showFilters (for testing purposes only)', false)
+          )}
           headers={[
             { key: 'name', header: 'Name' },
             { key: 'namespace', header: 'Namespace' },
             { key: 'date', header: 'Date Created' }
           ]}
-          selectedNamespace="*"
           isSortable={boolean('isSortable', true)}
-          filters={getFilters(
-            boolean('showFilters (for testing purposes only)', false)
-          )}
-          batchActionButtons={[
-            { onClick: action('handleDelete'), text: 'Delete', icon: Delete },
-            { onClick: action('handleRerun'), text: 'Rerun', icon: Rerun }
-          ]}
+          loading={boolean('loading', false)}
+          rows={rows}
+          selectedNamespace="*"
+          title={text('title', 'Resource Name')}
           toolbarButtons={[
             { onClick: action('handleNew'), text: 'Add', icon: Add },
             {
@@ -180,9 +183,6 @@ storiesOf('Components/Table', module)
               icon: RerunAll
             }
           ]}
-          loading={false}
-          emptyTextAllNamespaces="No rows in any namespace"
-          emptyTextSelectedNamespace="No rows in selected namespace"
         />
       );
     }
