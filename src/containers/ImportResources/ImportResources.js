@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-20 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -68,6 +68,7 @@ export class ImportResources extends Component {
       invalidNamespace: false,
       installNamespace: '',
       installNamespaceError: false,
+      invalidServiceAccount: false,
       logsURL: '',
       namespace: props.navNamespace !== ALL_NAMESPACES && props.navNamespace,
       repositoryURL: '',
@@ -147,6 +148,13 @@ export class ImportResources extends Component {
       }
       this.setState({
         invalidNamespace: !namespace
+      });
+      return;
+    }
+    // Intentionally do this after the namespace/URL checks (bottom of form, more intuitive)
+    if (!serviceAccount) {
+      this.setState({
+        invalidServiceAccount: true
       });
       return;
     }
@@ -264,7 +272,12 @@ export class ImportResources extends Component {
             id="import-service-accounts-dropdown"
             namespace={this.state.installNamespace}
             onChange={this.handleServiceAccount}
-            titleText="ServiceAccount (optional)"
+            invalid={this.state.invalidServiceAccount}
+            invalidText={intl.formatMessage({
+              id: 'dashboard.mandatory.invalidServiceAccount',
+              defaultMessage: 'Please select a ServiceAccount'
+            })}
+            titleText="ServiceAccount"
           />
           <Button kind="primary" onClick={this.handleSubmit}>
             Import and Apply

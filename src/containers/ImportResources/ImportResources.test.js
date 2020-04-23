@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-20 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -52,7 +52,27 @@ describe('ImportResources component', () => {
     }
   });
 
-  it('Displays errors when Repository URL and Namespace is empty', async () => {
+
+
+  it('Can clear the selected namespace', async () => {
+    const {
+      getByPlaceholderText,
+      getByText,
+      getByTitle,
+      queryByText
+    } = await renderWithIntl(
+      <Provider store={store}>
+        <ImportResourcesContainer />
+      </Provider> 
+    );
+    fireEvent.click(getByPlaceholderText(/select namespace/i));
+    fireEvent.click(getByText(/default/i));;
+    await waitForElement(() => getByTitle(/Clear selected item/i));
+    fireEvent.click(getByTitle(/Clear selected item/i));
+    expect(queryByText('default')).toBeFalsy();
+  });
+
+  it('Displays errors when Repository URL, Namespace are empty', async () => {
     const { getByText } = await renderWithIntl(
       <Provider store={store}>
         <ImportResourcesContainer />
@@ -79,7 +99,7 @@ describe('ImportResources component', () => {
     await waitForElement(() => getByText(/Please submit a valid URL/i));
   });
 
-  it('Displays an error when Namepsace is empty', async () => {
+  it('Displays an error when Namespace is empty', async () => {
     const { getByTestId, getByText } = await renderWithIntl(
       <Provider store={store}>
         <ImportResourcesContainer />
@@ -112,7 +132,23 @@ describe('ImportResources component', () => {
     await waitForElement(() => getByText(/Please submit a valid URL/i));
   });
 
-  it('Displays an error when Repository URL doesnt contain github', async () => {
+  it('Displays an error when ServiceAccount is empty', async () => {
+    const { getByPlaceholderText, getByText, getByTestId } = await renderWithIntl(
+      <Provider store={store}>
+        <ImportResourcesContainer />
+      </Provider>
+    );
+    const repoURLField = getByTestId('repository-url-field');
+    fireEvent.change(repoURLField, {
+      target: { value: 'https://github.com/test/testing' }
+    });
+    fireEvent.click(getByPlaceholderText(/select namespace/i));
+    fireEvent.click(getByText('default'));
+    fireEvent.click(getByText('Import and Apply'));
+    await waitForElement(() => getByText(/please select a serviceAccount/i));
+  });
+
+  it('Displays an error when Repository URL does not contain github', async () => {
     const { getByTestId, getByText } = await renderWithIntl(
       <Provider store={store}>
         <ImportResourcesContainer />
@@ -171,9 +207,9 @@ describe('ImportResources component', () => {
 
           expect(repositoryURL).toEqual('https://github.com/test/testing');
           expect(applyDirectory).toEqual('');
-          expect(namespace).toEqual('default');
+          expect(namespace).toEqual('namespace1');
           expect(labels).toEqual(labelsShouldEqual);
-          expect(serviceAccount).toEqual('');
+          expect(serviceAccount).toEqual('service-account-1');
           expect(installNamespace).toEqual('namespace1');
 
           return Promise.resolve(headers);
@@ -185,8 +221,6 @@ describe('ImportResources component', () => {
     jest
       .spyOn(API, 'determineInstallNamespace')
       .mockImplementation(() => installNamespace);
-
-    const namespace = 'default';
 
     const {
       getByPlaceholderText,
@@ -204,8 +238,10 @@ describe('ImportResources component', () => {
     });
 
     fireEvent.click(getByPlaceholderText(/select namespace/i));
-    fireEvent.click(getByText(namespace));
-
+    fireEvent.click(getByText(/namespace1/i));
+    fireEvent.click(getByPlaceholderText(/select serviceaccount/i));
+    fireEvent.click(getByText(/service-account-1/i));
+    
     fireEvent.click(getByText('Import and Apply'));
     await waitForElement(() =>
       getByText(/Triggered PipelineRun to apply Tekton resources/i)
@@ -284,22 +320,5 @@ describe('ImportResources component', () => {
     });
 
     await waitForElement(() => queryByDisplayValue(/Invalid URL here/i));
-  });
-
-  it('Can clear the selected namespace', async () => {
-    const {
-      getByPlaceholderText,
-      getByText,
-      getByTitle,
-      queryByText
-    } = await renderWithIntl(
-      <Provider store={store}>
-        <ImportResourcesContainer />
-      </Provider>
-    );
-    fireEvent.click(getByPlaceholderText(/select namespace/i));
-    fireEvent.click(getByText(/default/i));
-    fireEvent.click(getByTitle(/Clear selected item/i));
-    expect(queryByText('default')).toBeFalsy();
   });
 });

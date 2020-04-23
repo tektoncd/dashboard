@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-20 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -160,6 +160,7 @@ const namespaceValidationErrorRegExp = /namespace cannot be empty/i;
 const pipelineValidationErrorRegExp = /pipeline cannot be empty/i;
 const pipelineResourceValidationErrorRegExp = /pipelineresources cannot be empty/i;
 const paramsValidationErrorRegExp = /params cannot be empty/i;
+const serviceAccountValidationErrorRegexp = /serviceAccount cannot be empty/i;
 const apiErrorRegExp = /error creating pipelinerun/i;
 const timeoutValidationErrorRegExp = /Timeout must be a valid number less than 525600/i;
 const labelsValidationErrorRegExp = /Labels must follow the/i;
@@ -225,12 +226,20 @@ const selectPipeline1AndFillSpec = async ({
   getAllByPlaceholderText,
   getByPlaceholderText,
   getByTitle,
+  getByText,
   queryByText,
   queryByValue
 }) => {
   // Select pipeline-1 and verify spec details are displayed
   await selectPipeline1({ getByPlaceholderText, getByTitle });
   testPipelineSpec('id-pipeline-1', queryByText, queryByValue);
+  // Select namespace and serviceaccount too
+
+  fireEvent.click(getByPlaceholderText(/select namespace/i));
+  fireEvent.click(getByText('namespace-1'));
+
+  fireEvent.click(getByPlaceholderText(/select serviceaccount/i));
+  fireEvent.click(getByText('service-account-1'));
   // Fill pipeline spec
   fillPipeline1Resources({ getAllByPlaceholderText, getByTitle });
   fillPipeline1Params(getByPlaceholderText);
@@ -271,6 +280,7 @@ describe('CreatePipelineRun', () => {
       getAllByPlaceholderText,
       getByPlaceholderText,
       getByTitle,
+      getByText,
       queryByText,
       queryByValue
     });
@@ -306,6 +316,7 @@ describe('CreatePipelineRun', () => {
     await selectPipeline1AndFillSpec({
       getAllByPlaceholderText,
       getByPlaceholderText,
+      getByText,
       getByTitle,
       queryByText,
       queryByValue
@@ -611,9 +622,15 @@ describe('CreatePipelineRun', () => {
     expect(queryByText(validationErrorMsgRegExp)).toBeTruthy();
     expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
     expect(queryByText(pipelineValidationErrorRegExp)).toBeTruthy();
-    // Fix validation error
+    expect(queryByText(serviceAccountValidationErrorRegexp)).toBeTruthy();
+
+    // Fix validation error for namespace
     fireEvent.click(getByPlaceholderText(/select namespace/i));
     fireEvent.click(await waitForElement(() => getByTitle(/namespace-1/i)));
+
+    // Fix validation error for ServiceAccount
+    fireEvent.click(getByPlaceholderText(/select serviceaccount/i));
+    fireEvent.click(await waitForElement(() => getByTitle(/service-account-1/i)));
 
     await selectPipeline1({ getByPlaceholderText, getByTitle });
     expect(queryByText(pipelineValidationErrorRegExp)).toBeFalsy();

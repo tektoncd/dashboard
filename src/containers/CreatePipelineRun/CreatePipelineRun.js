@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-20 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -147,9 +147,10 @@ class CreatePipelineRun extends React.Component {
   };
 
   checkFormValidation = () => {
-    // Namespace, PipelineRef, Resources, and Params must all have values
+    // Namespace, PipelineRef, Resources, ServiceAccount and Params must all have values
     const validNamespace = !!this.getPipelineInfo(NAMESPACE);
     const validPipelineRef = !!this.getPipelineInfo(PIPELINE_REF);
+    const validServiceAccount = !!this.state.serviceAccount;
     const validResources =
       !this.state.resources ||
       Object.keys(this.state.resources).reduce(
@@ -195,6 +196,7 @@ class CreatePipelineRun extends React.Component {
       validPipelineRef &&
       validResources &&
       validParams &&
+      validServiceAccount &&
       timeoutTest &&
       validLabels
     );
@@ -481,6 +483,29 @@ class CreatePipelineRun extends React.Component {
                 disabled={this.isDisabled()}
                 onChange={this.handlePipelineChange}
               />
+              <ServiceAccountsDropdown
+                id="create-pipelinerun--sa-dropdown"
+                titleText={intl.formatMessage({
+                  id: 'dashboard.createPipelineRun.serviceAccountLabel',
+                  defaultMessage: 'ServiceAccount'
+                })}
+                namespace={namespace}
+                selectedItem={
+                  serviceAccount
+                    ? { id: serviceAccount, text: serviceAccount }
+                    : ''
+                }
+                invalid={validationError && !serviceAccount}
+                invalidText={intl.formatMessage({
+                  id: 'dashboard.mandatory.invalidServiceAccount',
+                  defaultMessage: 'ServiceAccount cannot be empty'
+                })}
+                disabled={this.isDisabled()}
+                onChange={({ selectedItem }) => {
+                  const { text } = selectedItem || {};
+                  this.setState({ serviceAccount: text });
+                }}
+              />
             </FormGroup>
           )}
           <FormGroup legendText="">
@@ -577,24 +602,6 @@ class CreatePipelineRun extends React.Component {
               defaultMessage: 'Optional values'
             })}
           >
-            <ServiceAccountsDropdown
-              id="create-pipelinerun--sa-dropdown"
-              titleText={intl.formatMessage({
-                id: 'dashboard.createPipelineRun.serviceAccountLabel',
-                defaultMessage: 'ServiceAccount (optional)'
-              })}
-              namespace={namespace}
-              selectedItem={
-                serviceAccount
-                  ? { id: serviceAccount, text: serviceAccount }
-                  : ''
-              }
-              disabled={this.isDisabled()}
-              onChange={({ selectedItem }) => {
-                const { text } = selectedItem || {};
-                this.setState({ serviceAccount: text });
-              }}
-            />
             <TextInput
               id="create-pipelinerun--timeout"
               labelText={intl.formatMessage({
