@@ -17,7 +17,6 @@ import PropTypes from 'prop-types';
 import {
   Button,
   DataTable,
-  DataTableSkeleton,
   TableBatchAction,
   TableBatchActions,
   TableSelectAll,
@@ -27,6 +26,8 @@ import {
 } from 'carbon-components-react';
 
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
+
+import { DataTableSkeleton } from '..';
 
 import './Table.scss';
 
@@ -139,6 +140,9 @@ const Table = props => {
   const filterFields = !!dataRows.length && filters;
   const translateWithId = getTranslateWithId(intl);
 
+  const hasToolbar =
+    filterFields || toolbarButtons.length || shouldRenderBatchActions;
+
   return (
     <div
       className={`tableComponent ${filters ? 'tkn--table-with-filters' : ''}`}
@@ -160,9 +164,7 @@ const Table = props => {
           selectedRows
         }) => (
           <TableContainer title={title}>
-            {(filterFields ||
-              toolbarButtons.length ||
-              shouldRenderBatchActions) && (
+            {hasToolbar && (
               <TableToolbar>
                 {filterFields}
                 {shouldRenderBatchActions && (

@@ -17,13 +17,16 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
   DataTable,
-  DataTableSkeleton,
   InlineNotification,
   Tab,
   Tabs,
   Tag
 } from 'carbon-components-react';
-import { FormattedDate, ViewYAML } from '@tektoncd/dashboard-components';
+import {
+  DataTableSkeleton,
+  FormattedDate,
+  ViewYAML
+} from '@tektoncd/dashboard-components';
 import { formatLabels, getErrorMessage } from '@tektoncd/dashboard-utils';
 
 import {
