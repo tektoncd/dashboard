@@ -75,7 +75,7 @@
     "dashboard.createSecret.patchButton": "Patch",
     "dashboard.createSecret.serverURLInvalid": "Server URL required.",
     "dashboard.createSecret.serviceAccountSelectorSubHeading": "Select ServiceAccount(s) to add this Secret to. (Optional)",
-    "dashboard.createSecret.successMessage": "Succesfully created {name}",
+    "dashboard.createSecret.successMessage": "Successfully created {name}",
     "dashboard.customResourceDefinition.errorLoading": "Error loading resource",
     "dashboard.deletePipelineResource.body": "Are you sure you would like to delete PipelineResource {name}?",
     "dashboard.deletePipelineResource.heading": "Delete PipelineResource",
