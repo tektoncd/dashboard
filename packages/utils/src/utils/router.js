@@ -17,9 +17,32 @@ function byNamespace({ path = '' } = {}) {
 }
 
 export const paths = {
+  about() {
+    return '/about';
+  },
+  byNamespace,
   clusterTasks: {
     all() {
       return '/clustertasks';
+    }
+  },
+  clusterTriggerBindings: {
+    all() {
+      return '/clustertriggerbindings';
+    },
+    byName: function byName() {
+      return '/clustertriggerbindings/:clusterTriggerBindingName';
+    }
+  },
+  eventListeners: {
+    all() {
+      return '/eventlisteners';
+    },
+    byName() {
+      return byNamespace({ path: '/eventlisteners/:eventListenerName' });
+    },
+    byNamespace() {
+      return byNamespace({ path: '/eventlisteners' });
     }
   },
   extensions: {
@@ -30,27 +53,45 @@ export const paths = {
       return `/extensions/${name}`;
     }
   },
-  about() {
-    return '/about';
-  },
   importResources() {
     return '/importresources';
   },
-  byNamespace,
+  kubernetesResources: {
+    all() {
+      return '/:group/:version/:type';
+    },
+    byName() {
+      return byNamespace({ path: '/:group/:version/:type/:name' });
+    },
+    byNamespace() {
+      return byNamespace({ path: '/:group/:version/:type' });
+    },
+    cluster() {
+      return '/:group/:version/:type/:name';
+    }
+  },
   pipelineResources: {
     all() {
       return '/pipelineresources';
     },
+    byName() {
+      return byNamespace({ path: '/pipelineresources/:pipelineResourceName' });
+    },
     byNamespace() {
       return byNamespace({ path: '/pipelineresources' });
     },
-    byName() {
-      return byNamespace({ path: '/pipelineresources/:pipelineResourceName' });
+    create() {
+      return '/pipelineresources/create';
     }
   },
   pipelineRuns: {
     all() {
       return '/pipelineruns';
+    },
+    byName() {
+      return byNamespace({
+        path: '/pipelineruns/:pipelineRunName'
+      });
     },
     byNamespace() {
       return byNamespace({ path: '/pipelineruns' });
@@ -61,10 +102,8 @@ export const paths = {
           '/pipelineruns?labelSelector=tekton.dev%2Fpipeline%3D:pipelineName'
       });
     },
-    byName() {
-      return byNamespace({
-        path: '/pipelineruns/:pipelineRunName'
-      });
+    create() {
+      return '/pipelineruns/create';
     }
   },
   pipelines: {
@@ -76,11 +115,11 @@ export const paths = {
     }
   },
   rawCRD: {
-    cluster() {
-      return '/:type/:name';
-    },
     byNamespace() {
       return byNamespace({ path: '/:type/:name' });
+    },
+    cluster() {
+      return '/:type/:name';
     }
   },
   secrets: {
@@ -92,36 +131,42 @@ export const paths = {
     },
     byNamespace() {
       return byNamespace({ path: '/secrets' });
+    },
+    create() {
+      return '/secrets/create';
     }
   },
   serviceAccounts: {
     all() {
       return '/serviceaccounts';
     },
-    byNamespace() {
-      return byNamespace({ path: '/serviceaccounts' });
-    },
     byName() {
       return byNamespace({ path: '/serviceaccounts/:serviceAccountName' });
+    },
+    byNamespace() {
+      return byNamespace({ path: '/serviceaccounts' });
     }
   },
   taskRuns: {
     all() {
       return '/taskruns';
     },
+    byName() {
+      return byNamespace({ path: '/taskruns/:taskRunName' });
+    },
     byNamespace() {
       return byNamespace({ path: '/taskruns' });
+    },
+    byClusterTask() {
+      return '/taskruns?labelSelector=tekton.dev%2Ftask%3D:taskName';
     },
     byTask() {
       return byNamespace({
         path: '/taskruns?labelSelector=tekton.dev%2Ftask%3D:taskName'
       });
     },
-    byClusterTask() {
-      return '/taskruns?labelSelector=tekton.dev%2Ftask%3D:taskName';
-    },
-    byName() {
-      return byNamespace({ path: '/taskruns/:taskRunName' });
+    create() {
+      return '/taskruns/create';
     }
   },
   tasks: {
@@ -132,59 +177,26 @@ export const paths = {
       return byNamespace({ path: '/tasks' });
     }
   },
-  eventListeners: {
+  triggerBindings: {
     all() {
-      return '/eventlisteners';
-    },
-    byNamespace() {
-      return byNamespace({ path: '/eventlisteners' });
+      return '/triggerbindings';
     },
     byName() {
-      return byNamespace({ path: '/eventlisteners/:eventListenerName' });
+      return byNamespace({ path: '/triggerbindings/:triggerBindingName' });
+    },
+    byNamespace() {
+      return byNamespace({ path: '/triggerbindings' });
     }
   },
   triggerTemplates: {
     all() {
       return '/triggertemplates';
     },
-    byNamespace() {
-      return byNamespace({ path: '/triggertemplates' });
-    },
     byName() {
       return byNamespace({ path: '/triggertemplates/:triggerTemplateName' });
-    }
-  },
-  triggerBindings: {
-    all() {
-      return '/triggerbindings';
     },
     byNamespace() {
-      return byNamespace({ path: '/triggerbindings' });
-    },
-    byName() {
-      return byNamespace({ path: '/triggerbindings/:triggerBindingName' });
-    }
-  },
-  clusterTriggerBindings: {
-    all() {
-      return '/clustertriggerbindings';
-    },
-    byName: function byName() {
-      return '/clustertriggerbindings/:clusterTriggerBindingName';
-    }
-  },
-  kubernetesResources: {
-    all() {
-      return '/:group/:version/:type';
-    },
-    byNamespace() {
-      return byNamespace({ path: '/:group/:version/:type' });
-    },
-    cluster() {
-      return '/:group/:version/:type/:name';
-    },
-    byName() {
-      return byNamespace({ path: '/:group/:version/:type/:name' });
+      return byNamespace({ path: '/triggertemplates' });
     }
   }
 };
