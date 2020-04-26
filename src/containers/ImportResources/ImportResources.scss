@@ -21,8 +21,23 @@ limitations under the License.
 
 .outer {
   background-color: white;
-  min-height: 46rem;
+  min-height: 30rem;
 
+  legend.bx--label {
+    margin-left: 2.5rem;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+
+  .bx--tooltip__label {
+    font-size: 1rem;
+  }
+  
+  legend.bx--label.bx--tooltip__label {
+    margin-left: 0;
+    font-size: 1rem;
+  }
+  
   .bx--combo-box.bx--list-box {
     width: 30%;
   }
@@ -32,19 +47,38 @@ limitations under the License.
   }
 
   .bx--list-box__wrapper {
-    margin-left: 2.8rem;
+    margin-left: 2.5rem;
+    margin-bottom: 2rem;
   }
 
   .bx--btn {
-    margin-left: 2.8rem;
-    margin-top: 2.8rem;
+    margin-left: 2.5rem;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .bx--fieldset {
+    margin-bottom: 0;
   }
 
   .bx--form-item {
-    margin: 2.8rem;
+    margin-left: 2.5rem;
+    margin-bottom: 2rem;
   }
 
   .bx--text-input__field-wrapper {
     width: 50%;
+  }
+
+  .bx--accordion {
+    margin-bottom: 1rem;
+  }
+
+  .bx--accordion__title {
+    padding-left: 1.5rem;
+  }
+
+  .bx--accordion__content, .bx--accordion__item--active .bx--accordion__content {
+    padding: .5rem 0;
   }
 }

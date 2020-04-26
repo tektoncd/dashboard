@@ -595,7 +595,7 @@ export function importResources({
   namespace,
   labels,
   serviceAccount,
-  installNamespace
+  importerNamespace
 }) {
   const taskSpec = {
     resources: {
@@ -753,6 +753,6 @@ export function importResources({
     payload.spec.serviceAccountName = serviceAccount;
   }
 
-  const uri = getTektonAPI('pipelineruns', { namespace: installNamespace });
+  const uri = getTektonAPI('pipelineruns', { namespace: importerNamespace });
   return post(uri, payload);
 }

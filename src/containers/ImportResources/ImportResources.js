@@ -14,11 +14,15 @@ limitations under the License.
 import React, { Component } from 'react';
 import { injectIntl } from 'react-intl';
 import {
+  Accordion,
+  AccordionItem,
   Button,
   Form,
+  FormGroup,
   InlineNotification,
   TextInput,
-  ToastNotification
+  ToastNotification,
+  Tooltip
 } from 'carbon-components-react';
 
 import { connect } from 'react-redux';
@@ -66,8 +70,9 @@ export class ImportResources extends Component {
       directory: '',
       invalidInput: false,
       invalidNamespace: false,
-      installNamespace: '',
-      installNamespaceError: false,
+      invalidImporterNamespace: false,
+      importerNamespace: '',
+      importerNamespaceError: false,
       logsURL: '',
       namespace: props.navNamespace !== ALL_NAMESPACES && props.navNamespace,
       repositoryURL: '',
@@ -79,14 +84,14 @@ export class ImportResources extends Component {
 
   componentDidMount() {
     getInstallNamespace()
-      .then(foundInstallNamespace => {
+      .then(foundImporterNamespace => {
         this.setState({
-          installNamespace: foundInstallNamespace
+          importerNamespace: foundImporterNamespace
         });
       })
       .catch(() => {
         this.setState({
-          installNamespaceError: true
+          importerNamespaceError: true
         });
       });
   }
@@ -104,6 +109,17 @@ export class ImportResources extends Component {
       this.setState({ invalidNamespace: false, namespace: selectedItem.id });
     } else {
       this.setState({ invalidNamespace: true, namespace: '' });
+    }
+  };
+
+  handleImporterNamespace = ({ selectedItem }) => {
+    if (selectedItem) {
+      this.setState({
+        invalidImporterNamespace: false,
+        importerNamespace: selectedItem.id
+      });
+    } else {
+      this.setState({ invalidImporterNamespace: true, importerNamespace: '' });
     }
   };
 
@@ -128,7 +144,7 @@ export class ImportResources extends Component {
       namespace,
       repositoryURL,
       serviceAccount,
-      installNamespace
+      importerNamespace
     } = this.state;
 
     // Without the if statement it will not display errors for both the namespace and the url at the same time
@@ -159,20 +175,20 @@ export class ImportResources extends Component {
       namespace,
       labels,
       serviceAccount,
-      installNamespace
+      importerNamespace
     })
       .then(headers => {
         const pipelineRunName = headers.metadata.name;
 
         const finalURL = urls.pipelineRuns.byName({
-          namespace: installNamespace,
+          namespace: importerNamespace,
           pipelineRunName
         });
 
         this.setState(prevState => {
           return {
             logsURL:
-              prevState.installNamespaceError === false
+              prevState.importerNamespaceError === false
                 ? finalURL
                 : urls.pipelineRuns.all(),
             submitSuccess: true,
@@ -194,11 +210,18 @@ export class ImportResources extends Component {
 
   render() {
     const { intl } = this.props;
-    const { namespace } = this.state;
+    const { namespace, importerNamespace } = this.state;
     const selectedNamespace = namespace
       ? {
           id: namespace,
           text: namespace
+        }
+      : undefined;
+
+    const selectedImporterNamespace = importerNamespace
+      ? {
+          id: importerNamespace,
+          text: importerNamespace
         }
       : undefined;
 
@@ -225,47 +248,80 @@ export class ImportResources extends Component {
           Import Tekton resources from repository
         </h1>
         <Form>
-          <TextInput
-            data-testid="repository-url-field"
-            helperText="The location of the YAML definitions to be applied (Git URL's supported)"
-            id="import-repository-url"
-            invalid={this.state.invalidInput}
-            invalidText="Please submit a valid URL"
-            labelText="Repository URL"
-            name="repositoryURL"
-            onChange={this.handleTextInput}
-            placeholder="https://github.com/my-repository"
-            required
-            type="URL"
-            value={this.state.repositoryURL}
-          />
-          <NamespacesDropdown
-            id="import-namespaces-dropdown"
-            helperText="The namespace in which the resources will be created"
-            invalid={this.state.invalidNamespace}
-            invalidText="Please select a namespace"
-            onChange={this.handleNamespace}
-            required
-            selectedItem={selectedNamespace}
-          />
-          <TextInput
-            data-testid="directory-field"
-            helperText="The location of the Tekton resources to import from the repository. Leave blank if the resources are at the top-level directory."
-            id="import-directory"
-            labelText="Repository directory (optional)"
-            name="directory"
-            onChange={this.handleTextInput}
-            placeholder="Enter repository directory"
-            value={this.state.directory}
-          />
-          <ServiceAccountsDropdown
-            className="saDropdown"
-            helperText="The ServiceAccount that the PipelineRun applying resources will run under (must be in the install namespace of the Tekton Dashboard)"
-            id="import-service-accounts-dropdown"
-            namespace={this.state.installNamespace}
-            onChange={this.handleServiceAccount}
-            titleText="ServiceAccount (optional)"
-          />
+          <FormGroup legendText="Source repository and target namespace">
+            <TextInput
+              data-testid="repository-url-field"
+              helperText="The location of the YAML definitions to be applied (Git URLs supported)"
+              id="import-repository-url"
+              invalid={this.state.invalidInput}
+              invalidText="Please submit a valid URL"
+              labelText="Repository URL"
+              name="repositoryURL"
+              onChange={this.handleTextInput}
+              placeholder="https://github.com/my-repository"
+              required
+              type="URL"
+              value={this.state.repositoryURL}
+            />
+            <TextInput
+              data-testid="directory-field"
+              helperText="The location of the Tekton resources to import from the repository. Leave blank if the resources are at the top-level directory."
+              id="import-directory"
+              labelText="Repository directory (optional)"
+              name="directory"
+              onChange={this.handleTextInput}
+              placeholder="Enter repository directory"
+              value={this.state.directory}
+            />
+            <NamespacesDropdown
+              id="import-namespaces-dropdown"
+              helperText="The namespace in which the resources will be created"
+              titleText="Target namespace"
+              invalid={this.state.invalidNamespace}
+              invalidText="Please select a namespace"
+              onChange={this.handleNamespace}
+              required
+              selectedItem={selectedNamespace}
+            />
+          </FormGroup>
+          <Accordion>
+            <AccordionItem
+              title={
+                <Tooltip
+                  direction="right"
+                  triggerText="Advanced configuration for the Import PipelineRun"
+                >
+                  <div>
+                    Change these parameters if you want the PipelineRun that
+                    will do the importing, to run in a different namespace from
+                    the Dashboard&apos;s.
+                    <br />
+                    <br />
+                    You can optionally provide a different ServiceAccount too.
+                  </div>
+                </Tooltip>
+              }
+            >
+              <NamespacesDropdown
+                id="import-install-namespaces-dropdown"
+                helperText="The namespace in which the PipelineRun fetching the repository and creating the resources will run"
+                titleText="Namespace"
+                invalid={this.state.invalidImporterNamespace}
+                invalidText="Please select a namespace"
+                onChange={this.handleImporterNamespace}
+                required
+                selectedItem={selectedImporterNamespace}
+              />
+              <ServiceAccountsDropdown
+                className="saDropdown"
+                helperText="The ServiceAccount that the PipelineRun will run under (from the namespace above)"
+                id="import-service-accounts-dropdown"
+                namespace={this.state.importerNamespace}
+                onChange={this.handleServiceAccount}
+                titleText="ServiceAccount (optional)"
+              />
+            </AccordionItem>
+          </Accordion>
           <Button kind="primary" onClick={this.handleSubmit}>
             Import and Apply
           </Button>

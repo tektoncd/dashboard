@@ -161,7 +161,7 @@ describe('ImportResources component', () => {
           namespace,
           labels,
           serviceAccount,
-          installNamespace
+          importerNamespace
         }) => {
           const labelsShouldEqual = {
             gitOrg: 'test',
@@ -174,7 +174,7 @@ describe('ImportResources component', () => {
           expect(namespace).toEqual('default');
           expect(labels).toEqual(labelsShouldEqual);
           expect(serviceAccount).toEqual('');
-          expect(installNamespace).toEqual('namespace1');
+          expect(importerNamespace).toEqual('namespace1');
 
           return Promise.resolve(headers);
         }

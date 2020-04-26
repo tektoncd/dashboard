@@ -869,14 +869,14 @@ it('importResources', () => {
   const applyDirectory = 'fake-directory';
   const namespace = 'fake-namespace';
   const serviceAccount = 'fake-serviceAccount';
-  const installNamespace = 'fake-install-namespace';
+  const importerNamespace = 'fake-importer-namespace';
 
   const payload = {
     repositoryURL,
     applyDirectory,
     namespace,
     serviceAccount,
-    installNamespace
+    importerNamespace
   };
   const data = {
     apiVersion: 'tekton.dev/v1beta1',
