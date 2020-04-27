@@ -617,6 +617,11 @@ class CreatePipelineRun extends React.Component {
                 id: 'dashboard.serviceAccountLabel.optional',
                 defaultMessage: 'ServiceAccount (optional)'
               })}
+              helperText={intl.formatMessage({
+                id: 'dashboard.createPipelineRun.serviceAccountHelperText',
+                defaultMessage:
+                  'Ensure the selected ServiceAccount (or the default if none selected) has permissions for creating PipelineRuns and for anything else your PipelineRun interacts with.'
+              })}
               namespace={namespace}
               selectedItem={
                 serviceAccount

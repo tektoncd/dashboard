@@ -20,6 +20,15 @@ limitations under the License.
 }
 
 .tkn--importresources-outer {
+  
+  .bx--form__helper-text {
+    color: $text-05; // Since by default the contrast/colour choice is barely readable.
+  } 
+
+  .bx--label--disabled {
+    color: $text-05;
+  }
+  
   background-color: white;
   min-height: 30rem;
 

@@ -18,6 +18,15 @@ limitations under the License.
     margin-bottom: 0;
   }
 
+  .bx--form__helper-text {
+    color: $text-05; // Since by default the contrast/colour choice is barely readable.
+    max-width: 100%;
+  } 
+  
+  .bx--label--disabled {
+    color: $text-05;
+  }
+
   .bx--text-input__field-wrapper {
     width: 100%;
   }
