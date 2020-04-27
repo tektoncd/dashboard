@@ -368,7 +368,7 @@ export class ImportResources extends Component {
                 helperText={intl.formatMessage({
                   id: 'dashboard.importResources.serviceAccount.helperText',
                   defaultMessage:
-                    'The ServiceAccount that the PipelineRun will run under (from the namespace above)'
+                    'The ServiceAccount that the PipelineRun applying resources will run under (from the namespace above). Ensure the selected ServiceAccount (or the default if none selected) has permissions for creating PipelineRuns and for anything else your PipelineRun interacts with, including any Tekton resources in the Git repository.'
                 })}
                 id="import-service-accounts-dropdown"
                 namespace={this.state.importerNamespace}

@@ -699,6 +699,11 @@ class CreateTaskRun extends React.Component {
                 id: 'dashboard.serviceAccountLabel.optional',
                 defaultMessage: 'ServiceAccount (optional)'
               })}
+              helperText={intl.formatMessage({
+                id: 'dashboard.createTaskRun.serviceAccountHelperText',
+                defaultMessage:
+                  'Ensure the selected ServiceAccount (or the default if none selected) has permissions for creating TaskRuns and for anything else your TaskRun interacts with.'
+              })}
               namespace={namespace}
               selectedItem={
                 serviceAccount
