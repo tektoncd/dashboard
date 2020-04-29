@@ -108,7 +108,7 @@ describe('Table', () => {
     expect(queryByText(/Add/i)).toBeTruthy();
     expect(queryByLabelText('Select all rows')).toBeFalsy();
     expect(queryByLabelText('Select row')).toBeFalsy();
-    expect(queryByText(filters)).toBeFalsy();
+    expect(queryByText(filters)).toBeTruthy();
     expect(queryByText(emptyTextSelectedNamespace)).toBeTruthy();
     expect(queryByText(emptyTextAllNamespaces)).toBeFalsy();
   });
