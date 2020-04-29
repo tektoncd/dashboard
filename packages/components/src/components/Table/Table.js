@@ -137,11 +137,10 @@ const Table = props => {
   const shouldRenderBatchActions = !!(
     dataRows.length && batchActionButtons.length
   );
-  const filterFields = !!dataRows.length && filters;
   const translateWithId = getTranslateWithId(intl);
 
   const hasToolbar =
-    filterFields || toolbarButtons.length || shouldRenderBatchActions;
+    filters || toolbarButtons.length || shouldRenderBatchActions;
 
   return (
     <div className={`tkn--table ${filters ? 'tkn--table-with-filters' : ''}`}>
@@ -164,7 +163,7 @@ const Table = props => {
           <TableContainer title={title}>
             {hasToolbar && (
               <TableToolbar>
-                {filterFields}
+                {filters}
                 {shouldRenderBatchActions && (
                   <TableBatchActions
                     {...getBatchActionProps()}
