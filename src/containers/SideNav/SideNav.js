@@ -244,6 +244,7 @@ class SideNav extends Component {
               </>
             )}
           </SideNavMenu>
+
           <SideNavMenuItem
             element={NamespacesDropdown}
             id="sidenav-namespace-dropdown"
@@ -253,43 +254,39 @@ class SideNav extends Component {
           >
             &nbsp;
           </SideNavMenuItem>
-          <SideNavLink element={NavLink} icon={<span />} to={urls.about()}>
-            {intl.formatMessage({
-              id: 'dashboard.sideNav.about',
-              defaultMessage: 'About'
-            })}
-          </SideNavLink>
 
-          {!this.props.isReadOnly && (
-            <SideNavLink
+          <SideNavMenu
+            defaultExpanded
+            title={intl.formatMessage({
+              id: 'dashboard.sideNav.kubernetesResources',
+              defaultMessage: 'Kubernetes resources'
+            })}
+          >
+            <SideNavMenuItem
               element={NavLink}
               icon={<span />}
-              to={urls.importResources()}
+              to={this.getPath(urls.secrets.all())}
             >
-              {intl.formatMessage({
-                id: 'dashboard.sideNav.importResources',
-                defaultMessage: 'Import Tekton resources'
-              })}
-            </SideNavLink>
-          )}
+              Secrets
+            </SideNavMenuItem>
+            <SideNavMenuItem
+              element={NavLink}
+              icon={<span />}
+              to={this.getPath(urls.serviceAccounts.all())}
+            >
+              ServiceAccounts
+            </SideNavMenuItem>
+          </SideNavMenu>
 
-          <SideNavLink
-            element={NavLink}
-            icon={<span />}
-            to={this.getPath(urls.secrets.all())}
-          >
-            Secrets
-          </SideNavLink>
-          <SideNavLink
-            element={NavLink}
-            icon={<span />}
-            to={this.getPath(urls.serviceAccounts.all())}
-          >
-            ServiceAccounts
-          </SideNavLink>
-          <>
-            {extensions.length > 0 &&
-              extensions.map(
+          {extensions.length > 0 && (
+            <SideNavMenu
+              defaultExpanded
+              title={intl.formatMessage({
+                id: 'dashboard.sideNav.extensions',
+                defaultMessage: 'Extensions'
+              })}
+            >
+              {extensions.map(
                 ({
                   displayName,
                   name,
@@ -318,7 +315,28 @@ class SideNav extends Component {
                   </SideNavMenuItem>
                 )
               )}
-          </>
+            </SideNavMenu>
+          )}
+
+          {!this.props.isReadOnly && (
+            <SideNavLink
+              element={NavLink}
+              icon={<span />}
+              to={urls.importResources()}
+            >
+              {intl.formatMessage({
+                id: 'dashboard.sideNav.importResources',
+                defaultMessage: 'Import Tekton resources'
+              })}
+            </SideNavLink>
+          )}
+
+          <SideNavLink element={NavLink} icon={<span />} to={urls.about()}>
+            {intl.formatMessage({
+              id: 'dashboard.sideNav.about',
+              defaultMessage: 'About'
+            })}
+          </SideNavLink>
         </SideNavItems>
       </CarbonSideNav>
     );
