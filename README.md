@@ -125,7 +125,7 @@ You can then access the Tekton Dashboard at `tekton-dashboard.${ip}.nip.io`. Thi
 2. Assuming you want to install the Dashboard into the `openshift-pipelines` namespace, which is the default one:
 
    ```bash
-   kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.6.0/openshift-tekton-dashboard-release.yaml --validate=false
+   kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.6.1/openshift-tekton-dashboard-release.yaml --validate=false
    ```
 
 3. Access the dashboard by determining its route with `kubectl get route tekton-dashboard -n openshift-pipelines`
