@@ -36,6 +36,7 @@ import {
   ClusterTasks,
   ClusterTriggerBinding,
   ClusterTriggerBindings,
+  CreateSecret,
   CustomResourceDefinition,
   EventListener,
   EventListeners,
@@ -215,6 +216,11 @@ export /* istanbul ignore next */ class App extends Component {
                     path={paths.secrets.byNamespace()}
                     exact
                     component={Secrets}
+                  />
+                  <Route
+                    path={paths.secrets.create()}
+                    exact
+                    component={CreateSecret}
                   />
                   <Route
                     path={paths.serviceAccounts.byName()}

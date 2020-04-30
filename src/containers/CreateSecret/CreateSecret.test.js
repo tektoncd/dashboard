@@ -91,17 +91,20 @@ const store = mockStore({
   }
 });
 
-it('SecretsCreate renders blank', () => {
-  const props = {
-    open: true
-  };
+const nameValidationErrorMsgRegExp = /Must not start or end with - and be less than 253 characters, contain only lowercase alphanumeric characters or -/i;
+const namespaceValidationErrorRegExp = /Namespace required./i;
+const usernameValidationErrorRegExp = /Username required./i;
+const passwordValidationErrorRegExp = /Password required./i;
+const accessTokenValidationErrorRegExp = /Access Token required./i;
+const serverurlValidationErrorRegExp = /Server URL required./i;
 
+it('SecretsCreate renders blank', () => {
   jest.spyOn(API, 'getNamespaces').mockImplementation(() => []);
   jest.spyOn(API, 'getServiceAccounts').mockImplementation(() => []);
 
   const { queryByText } = renderWithIntl(
     <Provider store={store}>
-      <CreateSecret {...props} />
+      <CreateSecret location={{ search: '' }} />
     </Provider>
   );
   expect(queryByText('Create new Secret')).toBeTruthy();
@@ -110,13 +113,14 @@ it('SecretsCreate renders blank', () => {
 });
 
 it('Test CreateSecret click events', () => {
-  const handleClose = jest.fn();
-  const handleSubmit = jest.fn();
-  const props = {
-    secrets,
-    handleClose
+  const history = {
+    push: jest.fn()
   };
-
+  const props = {
+    history,
+    location: { search: '' },
+    secrets
+  };
   jest.spyOn(API, 'getNamespaces').mockImplementation(() => []);
   jest.spyOn(API, 'getServiceAccounts').mockImplementation(() => []);
 
@@ -126,28 +130,21 @@ it('Test CreateSecret click events', () => {
     </Provider>
   );
   fireEvent.click(queryByText('Cancel'));
-  expect(handleClose).toHaveBeenCalledTimes(1);
+  expect(history.push).toHaveBeenCalled();
 
   rerenderWithIntl(
     rerender,
     <Provider store={store}>
-      <CreateSecret open={false} />
+      <CreateSecret {...props} />
     </Provider>
   );
+  expect(queryByText(nameValidationErrorMsgRegExp)).toBeFalsy();
   fireEvent.click(queryByText('Create'));
-  expect(handleSubmit).toHaveBeenCalledTimes(0);
+  expect(queryByText(nameValidationErrorMsgRegExp)).toBeTruthy();
 });
 
-const nameValidationErrorMsgRegExp = /Must not start or end with - and be less than 253 characters, contain only lowercase alphanumeric characters or -/i;
-const namespaceValidationErrorRegExp = /Namespace required./i;
-const usernameValidationErrorRegExp = /Username required./i;
-const passwordValidationErrorRegExp = /Password required./i;
-const accessTokenValidationErrorRegExp = /Access Token required./i;
-const serverurlValidationErrorRegExp = /Server URL required./i;
-
 const props = {
-  secrets: [],
-  handleClose: () => {}
+  location: { search: '' }
 };
 
 it('Create Secret validates universal inputs', () => {
@@ -164,7 +161,7 @@ it('Create Secret validates universal inputs', () => {
 it('Create Secret validates access token inputs', () => {
   const { queryByText, queryByLabelText } = renderWithIntl(
     <Provider store={store}>
-      <CreateSecret {...props} />
+      <CreateSecret location={{ search: '?secretType=accessToken' }} />
     </Provider>
   );
   fireEvent.click(queryByLabelText('Access Token'));

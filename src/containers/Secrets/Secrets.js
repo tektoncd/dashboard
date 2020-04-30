@@ -27,7 +27,6 @@ import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 import { getErrorMessage, getFilters, urls } from '@tektoncd/dashboard-utils';
 import { Add16 as Add, Delete16 as Delete } from '@carbon/icons-react';
 import { LabelFilter } from '..';
-import CreateSecret from '../CreateSecret';
 import DeleteModal from '../../components/SecretsDeleteModal';
 import {
   clearNotification,
@@ -51,10 +50,8 @@ import {
 } from '../../reducers';
 
 const initialState = {
-  openNewSecret: false,
   openDeleteSecret: false,
-  toBeDeleted: [],
-  selectedType: 'password'
+  toBeDeleted: []
 };
 
 export /* istanbul ignore next */ class Secrets extends Component {
@@ -64,6 +61,8 @@ export /* istanbul ignore next */ class Secrets extends Component {
   }
 
   componentDidMount() {
+    const secretType = this.getSecretType();
+    this.handleSecretType(secretType);
     this.fetchData();
   }
 
@@ -88,6 +87,13 @@ export /* istanbul ignore next */ class Secrets extends Component {
     this.props.clearNotification();
   }
 
+  getSecretType() {
+    const { location } = this.props;
+    const urlSearchParams = new URLSearchParams(location.search);
+    const secretType = urlSearchParams.get('secretType') || 'password';
+    return secretType;
+  }
+
   fetchData = () => {
     const { filters, namespace } = this.props;
     this.props.fetchSecrets({
@@ -97,20 +103,11 @@ export /* istanbul ignore next */ class Secrets extends Component {
     this.props.fetchServiceAccounts();
   };
 
-  handleNewSecretClick = () => {
-    this.props.clearNotification();
-    this.props.resetCreateSecret();
-    this.setState(prevState => {
-      return {
-        openNewSecret: !prevState.openNewSecret
-      };
-    });
-  };
-
-  handleSelectedType = type => {
-    this.setState({
-      selectedType: type
-    });
+  handleSecretType = secretType => {
+    const { history, location, match } = this.props;
+    const urlSearchParams = new URLSearchParams(location.search);
+    urlSearchParams.set('secretType', secretType);
+    history.push(`${match.url}?${urlSearchParams.toString()}`);
   };
 
   handleHideDeleteSecret = () => {
@@ -133,17 +130,6 @@ export /* istanbul ignore next */ class Secrets extends Component {
     });
   };
 
-  handleCloseNewSecret = namespace => {
-    this.props.resetCreateSecret();
-    this.setState({
-      openNewSecret: false
-    });
-    if (namespace) {
-      this.props.selectNamespace(namespace);
-      this.fetchData();
-    }
-  };
-
   delete = () => {
     this.props.deleteSecret(this.state.toBeDeleted, this.state.cancelMethod);
     this.handleHideDeleteSecret();
@@ -161,18 +147,17 @@ export /* istanbul ignore next */ class Secrets extends Component {
       patchSuccess
     } = this.props;
 
-    const {
-      openNewSecret,
-      toBeDeleted,
-      openDeleteSecret,
-      selectedType
-    } = this.state;
+    const { toBeDeleted, openDeleteSecret } = this.state;
+    const secretType = this.getSecretType();
 
     const toolbarButtons = this.props.isReadOnly
       ? []
       : [
           {
-            onClick: this.handleNewSecretClick,
+            onClick: () =>
+              this.props.history.push(
+                `${urls.secrets.create()}?secretType=${secretType}`
+              ),
             text: intl.formatMessage({
               id: 'dashboard.actions.createButton',
               defaultMessage: 'Create'
@@ -213,7 +198,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
     ];
 
     const secretsToUse = [];
-    if (selectedType === 'password') {
+    if (secretType === 'password') {
       initialHeaders.push(
         {
           key: 'username',
@@ -389,99 +374,88 @@ export /* istanbul ignore next */ class Secrets extends Component {
             lowContrast
           />
         )}
-        {!openNewSecret && (
-          <>
-            <h1>Secrets</h1>
-            <LabelFilter {...this.props} />
-            <FormGroup
-              legendText={
-                <Tooltip
-                  direction="bottom"
-                  tabIndex={0}
-                  tooltipBodyId="secret-type-helper"
-                  triggerText={intl.formatMessage({
-                    id: 'dashboard.secretType.type',
-                    defaultMessage: 'Secret type'
-                  })}
-                >
-                  <div className="secretHelper">
-                    {intl.formatMessage({
-                      id: 'dashboard.secretType.helper',
-                      defaultMessage: `Use Password with git or image PipelineResources that require authentication. Use Access Token with webhooks or with pullRequest PipelineResources. Check the Tekton Pipelines documentation for more details on authentication.`
-                    })}
-                  </div>
-                </Tooltip>
-              }
+        <h1>Secrets</h1>
+        <LabelFilter {...this.props} />
+        <FormGroup
+          legendText={
+            <Tooltip
+              direction="bottom"
+              tabIndex={0}
+              tooltipBodyId="secret-type-helper"
+              triggerText={intl.formatMessage({
+                id: 'dashboard.secretType.type',
+                defaultMessage: 'Secret type'
+              })}
             >
-              <RadioButtonGroup
-                legend={intl.formatMessage({
-                  id: 'dashboard.universalFields.secretType',
-                  defaultMessage: 'Type'
+              <div className="secretHelper">
+                {intl.formatMessage({
+                  id: 'dashboard.secretType.helper',
+                  defaultMessage: `Use Password with git or image PipelineResources that require authentication. Use Access Token with webhooks or with pullRequest PipelineResources. Check the Tekton Pipelines documentation for more details on authentication.`
                 })}
-                name="secret-type"
-                orientation="horizontal"
-                labelPosition="right"
-                valueSelected={selectedType}
-                onChange={this.handleSelectedType}
-                role="radiogroup"
-              >
-                <RadioButton
-                  value="password"
-                  id="password-radio"
-                  labelText={intl.formatMessage({
-                    id: 'dashboard.universalFields.passwordRadioButton',
-                    defaultMessage: 'Password'
-                  })}
-                />
-                <RadioButton
-                  value="accessToken"
-                  id="access-radio"
-                  labelText={intl.formatMessage({
-                    id: 'dashboard.universalFields.accessTokenRadioButton',
-                    defaultMessage: 'Access Token'
-                  })}
-                />
-              </RadioButtonGroup>
-            </FormGroup>
-            <Table
-              headers={initialHeaders}
-              rows={secretsFormatted}
-              handleDisplayModal={this.handleDisplayModalClick}
-              handleDelete={this.handleDeleteSecretClick}
-              loading={loading && !secretsFormatted.length}
-              selectedNamespace={selectedNamespace}
-              emptyTextAllNamespaces={intl.formatMessage(
-                {
-                  id: 'dashboard.emptyState.allNamespaces',
-                  defaultMessage: 'No {kind} in any namespace.'
-                },
-                { kind: 'Secrets' }
-              )}
-              emptyTextSelectedNamespace={intl.formatMessage(
-                {
-                  id: 'dashboard.emptyState.selectedNamespace',
-                  defaultMessage: 'No {kind} in namespace {selectedNamespace}'
-                },
-                { kind: 'Secrets', selectedNamespace }
-              )}
-              batchActionButtons={batchActionButtons}
-              toolbarButtons={toolbarButtons}
+              </div>
+            </Tooltip>
+          }
+        >
+          <RadioButtonGroup
+            legend={intl.formatMessage({
+              id: 'dashboard.universalFields.secretType',
+              defaultMessage: 'Type'
+            })}
+            name="secret-type"
+            orientation="horizontal"
+            labelPosition="right"
+            valueSelected={secretType}
+            onChange={this.handleSecretType}
+            role="radiogroup"
+          >
+            <RadioButton
+              value="password"
+              id="password-radio"
+              labelText={intl.formatMessage({
+                id: 'dashboard.universalFields.passwordRadioButton',
+                defaultMessage: 'Password'
+              })}
             />
-            {!this.props.isReadOnly && (
-              <DeleteModal
-                open={openDeleteSecret}
-                handleClick={this.handleHideDeleteSecret}
-                handleDelete={this.delete}
-                toBeDeleted={toBeDeleted}
-              />
-            )}
-          </>
-        )}
-        {openNewSecret && (
-          <CreateSecret
-            handleClose={this.handleCloseNewSecret}
-            handleSelectedType={this.handleSelectedType}
-            secrets={secrets}
+            <RadioButton
+              value="accessToken"
+              id="access-radio"
+              labelText={intl.formatMessage({
+                id: 'dashboard.universalFields.accessTokenRadioButton',
+                defaultMessage: 'Access Token'
+              })}
+            />
+          </RadioButtonGroup>
+        </FormGroup>
+        <Table
+          headers={initialHeaders}
+          rows={secretsFormatted}
+          handleDisplayModal={this.handleDisplayModalClick}
+          handleDelete={this.handleDeleteSecretClick}
+          loading={loading && !secretsFormatted.length}
+          selectedNamespace={selectedNamespace}
+          emptyTextAllNamespaces={intl.formatMessage(
+            {
+              id: 'dashboard.emptyState.allNamespaces',
+              defaultMessage: 'No {kind} in any namespace.'
+            },
+            { kind: 'Secrets' }
+          )}
+          emptyTextSelectedNamespace={intl.formatMessage(
+            {
+              id: 'dashboard.emptyState.selectedNamespace',
+              defaultMessage: 'No {kind} in namespace {selectedNamespace}'
+            },
+            { kind: 'Secrets', selectedNamespace }
+          )}
+          batchActionButtons={batchActionButtons}
+          toolbarButtons={toolbarButtons}
+        />
+        {!this.props.isReadOnly && (
+          <DeleteModal
+            open={openDeleteSecret}
+            handleClick={this.handleHideDeleteSecret}
+            handleDelete={this.delete}
+            toBeDeleted={toBeDeleted}
           />
         )}
       </>
