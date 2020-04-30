@@ -452,12 +452,15 @@ it('getFilters', () => {
 it('getAddFilterHandler', () => {
   const url = 'someURL';
   const history = { push: jest.fn() };
+  const location = { search: '?nonFilterQueryParam=someValue' };
   const match = { url };
-  const handleAddFilter = getAddFilterHandler({ history, match });
+  const handleAddFilter = getAddFilterHandler({ history, location, match });
   const labelFilters = ['foo1=bar1', 'foo2=bar2'];
   handleAddFilter(labelFilters);
   expect(history.push).toHaveBeenCalledWith(
-    `${url}?labelSelector=${encodeURIComponent('foo1=bar1,foo2=bar2')}`
+    `${url}?nonFilterQueryParam=someValue&labelSelector=${encodeURIComponent(
+      'foo1=bar1,foo2=bar2'
+    )}`
   );
 });
 

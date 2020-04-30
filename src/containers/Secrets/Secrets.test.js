@@ -147,8 +147,13 @@ const store = mockStore({
   }
 });
 
-it('click add new secret & modal appears', () => {
+it('click add new secret and create secret UI appears', () => {
   const currentProps = {
+    error: null,
+    history: {
+      push: jest.fn()
+    },
+    loading: false,
     secrets: [
       {
         metadata: {
@@ -158,18 +163,14 @@ it('click add new secret & modal appears', () => {
           }
         }
       }
-    ],
-    loading: false,
-    error: null
+    ]
   };
 
   jest.spyOn(API, 'getCredentials').mockImplementation(() => []);
-
   jest.spyOn(API, 'getNamespaces').mockImplementation(() => []);
-
   jest.spyOn(API, 'getServiceAccounts').mockImplementation(() => []);
 
-  const { queryByTestId, getByText } = renderWithRouter(
+  const { getByText } = renderWithRouter(
     <Provider store={store}>
       <Route
         path={urls.secrets.all()}
@@ -179,11 +180,10 @@ it('click add new secret & modal appears', () => {
     { route: urls.secrets.all() }
   );
 
-  expect(queryByTestId('createSecret')).toBeFalsy();
-
   fireEvent.click(getByText('Create'));
-
-  expect(queryByTestId('createSecret')).toBeTruthy();
+  expect(currentProps.history.push).toHaveBeenCalledWith(
+    `${urls.secrets.create()}?secretType=password`
+  );
 });
 
 it('click delete secret & modal appears', () => {

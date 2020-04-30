@@ -11,23 +11,29 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { generateId } from '@tektoncd/dashboard-utils';
+import { generateId, urls } from '@tektoncd/dashboard-utils';
 import React, { Component } from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 
 import Form from '../../components/CreateSecret/Form';
 import ServiceAccountSelector from '../../components/CreateSecret/ServiceAccountSelector';
-import { createSecret, patchSecret } from '../../actions/secrets';
 import {
   getCreateSecretsSuccessMessage,
   getPatchSecretsErrorMessage,
+  getSecrets,
   getSecretsErrorMessage,
   getServiceAccounts,
   isFetchingSecrets,
   isFetchingServiceAccounts,
   isWebSocketConnected
 } from '../../reducers';
+import {
+  createSecret,
+  fetchSecrets,
+  patchSecret,
+  resetCreateSecret
+} from '../../actions/secrets';
 import { fetchServiceAccounts } from '../../actions/serviceAccounts';
 import { selectNamespace } from '../../actions/namespaces';
 import '../../components/CreateSecret/CreateSecret.scss';
@@ -68,7 +74,6 @@ export /* istanbul ignore next */ class CreateSecret extends Component {
       username: '',
       password: '',
       accessToken: '',
-      secretType: 'password',
       annotations: [
         {
           access: 'git',
@@ -81,12 +86,24 @@ export /* istanbul ignore next */ class CreateSecret extends Component {
     };
   }
 
+  componentDidMount() {
+    this.fetchData();
+    this.props.resetCreateSecret();
+  }
+
   componentDidUpdate(prevProps) {
     const { succesfullyCreated } = this.props;
     const { succesfullyCreated: prevSuccesfullyCreated } = prevProps;
     if (succesfullyCreated && prevSuccesfullyCreated === false) {
       this.props.fetchServiceAccounts();
     }
+  }
+
+  getSecretType() {
+    const { location } = this.props;
+    const urlSearchParams = new URLSearchParams(location.search);
+    const secretType = urlSearchParams.get('secretType') || 'password';
+    return secretType;
   }
 
   handleChangeNamespace = e => {
@@ -117,10 +134,11 @@ export /* istanbul ignore next */ class CreateSecret extends Component {
     });
   };
 
-  handleSecretType = type => {
-    this.setState({
-      secretType: type
-    });
+  handleSecretType = secretType => {
+    const { history, location, match } = this.props;
+    const urlSearchParams = new URLSearchParams(location.search);
+    urlSearchParams.set('secretType', secretType);
+    history.push(`${match.url}?${urlSearchParams.toString()}`);
   };
 
   handleAnnotationChange = (type, index, value) => {
@@ -202,16 +220,10 @@ export /* istanbul ignore next */ class CreateSecret extends Component {
     const invalidFields = {};
     let postData;
 
-    const {
-      annotations,
-      name,
-      accessToken,
-      username,
-      password,
-      secretType
-    } = this.state;
+    const { annotations, name, accessToken, username, password } = this.state;
 
-    const { secrets } = this.props;
+    const { intl, secrets } = this.props;
+    const secretType = this.getSecretType();
 
     if (secretType === 'password') {
       postData = {
@@ -298,7 +310,7 @@ export /* istanbul ignore next */ class CreateSecret extends Component {
         )
       ) {
         this.setState({
-          errorMessageDuplicate: this.props.intl.formatMessage(
+          errorMessageDuplicate: intl.formatMessage(
             {
               id: 'dashboard.createSecret.duplicateErrorMessage',
               defaultMessage:
@@ -312,7 +324,6 @@ export /* istanbul ignore next */ class CreateSecret extends Component {
           errorMessageDuplicate: null
         });
         await this.props.createSecret(postData, namespace);
-        this.props.handleSelectedType(secretType);
       }
     } else {
       this.setState({ invalidFields });
@@ -325,9 +336,27 @@ export /* istanbul ignore next */ class CreateSecret extends Component {
     });
   };
 
+  fetchData() {
+    this.props.fetchSecrets();
+  }
+
+  handleCancel() {
+    const { history } = this.props;
+    const secretType = this.getSecretType();
+    history.push(`${urls.secrets.all()}?secretType=${secretType}`);
+  }
+
+  handleFinish() {
+    const { history } = this.props;
+    const { namespace } = this.state;
+    const secretType = this.getSecretType();
+    history.push(
+      `${urls.secrets.byNamespace({ namespace })}?secretType=${secretType}`
+    );
+  }
+
   render() {
     const {
-      handleClose,
       loading,
       succesfullyCreated,
       errorMessageCreated,
@@ -336,23 +365,25 @@ export /* istanbul ignore next */ class CreateSecret extends Component {
     } = this.props;
 
     const { name, namespace } = this.state;
+    const secretType = this.getSecretType();
 
     return (
       <div data-testid="createSecret">
         {!succesfullyCreated && (
           <Form
             {...this.state}
-            loading={loading}
-            handleClose={() => handleClose(namespace)}
-            submit={() => this.handleSubmit(namespace)}
-            handleChangeTextInput={this.handleChangeTextInput}
-            handleChangeNamespace={this.handleChangeNamespace}
-            handleSecretType={this.handleSecretType}
-            handleAnnotationChange={this.handleAnnotationChange}
-            handleAdd={this.handleAddAnnotation}
-            handleRemove={this.handleRemoveAnnotation}
             errorMessageCreated={errorMessageCreated}
+            loading={loading}
+            handleAdd={this.handleAddAnnotation}
+            handleAnnotationChange={this.handleAnnotationChange}
+            handleChangeNamespace={this.handleChangeNamespace}
+            handleChangeTextInput={this.handleChangeTextInput}
+            handleClose={() => this.handleCancel()}
+            handleRemove={this.handleRemoveAnnotation}
+            handleSecretType={this.handleSecretType}
             removeDuplicateErrorMessage={this.removeDuplicateErrorMessage}
+            secretType={secretType}
+            submit={() => this.handleSubmit(namespace)}
           />
         )}
         {succesfullyCreated && (
@@ -363,17 +394,13 @@ export /* istanbul ignore next */ class CreateSecret extends Component {
             loading={loading}
             patchSecret={this.props.patchSecret}
             errorMessagePatched={errorMessagePatched}
-            handleClose={() => handleClose(namespace)}
+            handleClose={() => this.handleFinish()}
           />
         )}
       </div>
     );
   }
 }
-
-CreateSecret.defaultProps = {
-  open: false
-};
 
 function mapStateToProps(state) {
   return {
@@ -382,14 +409,17 @@ function mapStateToProps(state) {
     webSocketConnected: isWebSocketConnected(state),
     succesfullyCreated: getCreateSecretsSuccessMessage(state),
     loading: isFetchingSecrets(state) || isFetchingServiceAccounts(state),
+    secrets: getSecrets(state),
     serviceAccounts: getServiceAccounts(state)
   };
 }
 
 const mapDispatchToProps = {
   createSecret,
+  fetchSecrets,
   fetchServiceAccounts,
   patchSecret,
+  resetCreateSecret,
   selectNamespace
 };
 

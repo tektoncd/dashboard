@@ -66,6 +66,11 @@ class SideNav extends Component {
     }
   }
 
+  setPath(path) {
+    const { history, location } = this.props;
+    history.push(path + location.search);
+  }
+
   getPath(path) {
     const { match } = this.props;
     if (match && match.params.namespace) {
@@ -86,55 +91,63 @@ class SideNav extends Component {
       return;
     }
 
-    if (namespace === ALL_NAMESPACES) {
-      this.props.selectNamespace(namespace);
-      const currentURL = this.props.match.url;
-      if (currentURL.includes(urls.taskRuns.all())) {
-        history.push(urls.taskRuns.all());
-        return;
-      }
-      if (currentURL.includes(urls.pipelineResources.all())) {
-        history.push(urls.pipelineResources.all());
-        return;
-      }
-      if (currentURL.includes(urls.pipelines.all())) {
-        history.push(urls.pipelines.all());
-        return;
-      }
-      if (currentURL.includes(urls.serviceAccounts.all())) {
-        history.push(urls.serviceAccounts.all());
-        return;
-      }
-      if (currentURL.includes(urls.eventListeners.all())) {
-        history.push(urls.eventListeners.all());
-        return;
-      }
-      if (currentURL.includes(urls.triggerBindings.all())) {
-        history.push(urls.triggerBindings.all());
-        return;
-      }
-      if (currentURL.includes(urls.clusterTriggerBindings.all())) {
-        history.push(urls.clusterTriggerBindings.all());
-        return;
-      }
-      if (currentURL.includes(urls.triggerTemplates.all())) {
-        history.push(urls.triggerTemplates.all());
-        return;
-      }
-      if (currentURL.includes(urls.secrets.all())) {
-        history.push(urls.secrets.all());
-        return;
-      }
-      if (currentURL.includes(urls.tasks.all())) {
-        history.push(urls.tasks.all());
-        return;
-      }
-      history.push('/');
+    if (namespace !== ALL_NAMESPACES) {
+      const newURL = generatePath(match.path, {
+        namespace,
+        0: match.params[0]
+      });
+      this.setPath(newURL);
       return;
     }
 
-    const newURL = generatePath(match.path, { namespace, 0: match.params[0] });
-    history.push(newURL);
+    this.props.selectNamespace(namespace);
+    const currentURL = this.props.match.url;
+    if (currentURL.includes(urls.taskRuns.all())) {
+      this.setPath(urls.taskRuns.all());
+      return;
+    }
+    if (currentURL.includes(urls.pipelineResources.all())) {
+      this.setPath(urls.pipelineResources.all());
+      return;
+    }
+    if (currentURL.includes(urls.pipelines.all())) {
+      this.setPath(urls.pipelines.all());
+      return;
+    }
+    if (currentURL.includes(urls.pipelineRuns.all())) {
+      this.setPath(urls.pipelineRuns.all());
+      return;
+    }
+    if (currentURL.includes(urls.serviceAccounts.all())) {
+      this.setPath(urls.serviceAccounts.all());
+      return;
+    }
+    if (currentURL.includes(urls.eventListeners.all())) {
+      this.setPath(urls.eventListeners.all());
+      return;
+    }
+    if (currentURL.includes(urls.triggerBindings.all())) {
+      this.setPath(urls.triggerBindings.all());
+      return;
+    }
+    if (currentURL.includes(urls.clusterTriggerBindings.all())) {
+      this.setPath(urls.clusterTriggerBindings.all());
+      return;
+    }
+    if (currentURL.includes(urls.triggerTemplates.all())) {
+      this.setPath(urls.triggerTemplates.all());
+      return;
+    }
+    if (currentURL.includes(urls.secrets.all())) {
+      this.setPath(urls.secrets.all());
+      return;
+    }
+    if (currentURL.includes(urls.tasks.all())) {
+      this.setPath(urls.tasks.all());
+      return;
+    }
+
+    history.push('/');
   };
 
   checkTriggersInstalled() {
