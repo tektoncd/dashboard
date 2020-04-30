@@ -29,8 +29,8 @@ const DataTableSkeleton = ({
     Array.from({ length: columnCount }, (_, index) => ({ key: index }));
   const rows = Array.from({ length: rowRepeat }, (_, index) => (
     <tr key={index}>
-      {columns.map(column => (
-        <td key={column} />
+      {columns.map(({ key }) => (
+        <td key={key} />
       ))}
     </tr>
   ));
