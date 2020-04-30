@@ -235,11 +235,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:94a99d1f28a1f6adbd0a86af11db2ca57a6ff339c1a1a09b68edc83495bba90e"
+  digest = "1:e5785e1826f4cdb5c4a1615f1f98a1336133df190893e62d1dd394fffd749143"
   name = "github.com/tektoncd/plumbing"
   packages = ["scripts"]
   pruneopts = "UT"
-  revision = "81c7fc06a47a2e7fc130a325a8095ae28f9af34d"
+  revision = "e53521e1d887a0312fc8468916e14275b9e07984"
 
 [[projects]]
   digest = "1:19525e48b45af69339bd7c2812137dbd1e650a78fc09c7c75482e307d51aa28d"
@@ -759,6 +759,7 @@
     "go.uber.org/zap",
     "k8s.io/api/core/v1",
     "k8s.io/api/extensions/v1beta1",
+    "k8s.io/apimachinery/pkg/api/meta",
     "k8s.io/apimachinery/pkg/apis/meta/v1",
     "k8s.io/apimachinery/pkg/types",
     "k8s.io/apimachinery/pkg/util/intstr",
