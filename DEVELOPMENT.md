@@ -306,7 +306,8 @@ Selecting an item from the list provides a more detailed view of the selected re
 
 There are 2 steps to exposing a resource type.
 
-1. The `tekton-dashboard` service account must have a cluster role and binding giving it access to the target resources.
+1. The `tekton-dashboard` service account must have access to the target resources. To allow such access you can extend the `tekton-dashboard` `ClusterRole` by creating a `ClusterRole` containing the necessary permissions and attach the `rbac.dashboard.tekton.dev/aggregate-to-dashboard: "true"` label to it.
+
 Replace `rules.apiGroups` and `rules.resources` with the target values for the resource.
 
 ```
@@ -314,24 +315,12 @@ kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: tekton-dashboard-extensions
-  namespace: tekton-pipelines
+  labels:
+    rbac.dashboard.tekton.dev/aggregate-to-dashboard: "true"
 rules:
   - apiGroups: ["targetGroup"]
     resources: ["targetResource"]
     verbs: ["get", "list", "watch"]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: tekton-dashboard-extensions
-subjects:
-  - kind: ServiceAccount
-    name: tekton-dashboard
-    namespace: tekton-pipelines
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: tekton-dashboard-extensions
 ```
 
 2. Add an extension resource specifying the target resource to be listed. Replace `metadata.name`, 

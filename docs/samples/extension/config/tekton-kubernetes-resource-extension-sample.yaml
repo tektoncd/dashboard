@@ -1,3 +1,15 @@
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: tekton-dashboard-deployment-extension
+  labels:
+    rbac.dashboard.tekton.dev/aggregate-to-dashboard: "true"
+rules:
+  - apiGroups: ["extensions"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "watch"]
+---
 apiVersion: dashboard.tekton.dev/v1alpha1
 kind: Extension
 metadata:

@@ -66,7 +66,4 @@ The sample [here](https://github.com/tektoncd/dashboard/tree/master/docs/samples
 
 Once applied the Tekton Dashboard will include `k8s deployments` as an option on the left nav.
 
-Note: This sample does not include RBAC and Service Service Account bindings. 
-
-This example reuses access to deployment 
-resources which the Tekton Dashboard service account already has - for different resource types a role binding may need to be applied. 
+**RBAC**: Tekton Dashboard cluster role is extended using [ClusterRole aggregation](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#aggregated-clusterroles). The extension adds the necessary permissions by creating its own `ClusterRole` and setting the `rbac.dashboard.tekton.dev/aggregate-to-dashboard: "true"` label.
