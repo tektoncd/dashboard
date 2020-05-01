@@ -25,6 +25,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/gorilla/mux"
+
 	restful "github.com/emicklei/go-restful"
 	"github.com/tektoncd/dashboard/pkg/endpoints"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
@@ -207,10 +209,6 @@ func registerKubeAPIProxy(r endpoints.Resource, container *restful.Container) {
 	logging.Log.Info("Adding Kube API Proxy")
 
 	proxy.Route(proxy.GET("/{subpath:*}").To(r.ProxyRequest))
-	proxy.Route(proxy.POST("/{subpath:*}").To(r.ProxyRequest))
-	proxy.Route(proxy.PUT("/{subpath:*}").To(r.ProxyRequest))
-	proxy.Route(proxy.DELETE("/{subpath:*}").To(r.ProxyRequest))
-	proxy.Route(proxy.PATCH("/{subpath:*}").To(r.ProxyRequest))
 	container.Add(proxy)
 }
 
@@ -239,7 +237,7 @@ func registerEndpoints(r endpoints.Resource, container *restful.Container) {
 
 	logging.Log.Info("Adding v1, and API for k8s resources and pipelines")
 
-	wsv1.Route(wsv1.POST("/{namespace}/rerun").To(r.RerunPipelineRun))
+	// Don't put POSTs, DELETEs, or PUTs here, instead define them in the InitRouter function for CSRF protection
 	wsv1.Route(wsv1.GET("/{namespace}/ingress").To(r.GetIngress))
 	wsv1.Route(wsv1.GET("/{namespace}/endpoints").To(r.GetEndpoints))
 
@@ -383,4 +381,17 @@ func getServicePort(svc *corev1.Service) string {
 		return svc.Spec.Ports[0].TargetPort.String()
 	}
 	return strconv.Itoa(int(svc.Spec.Ports[0].Port))
+}
+
+// InitRouter sets up the endpoints (with CSRF protection using gorilla/csrf)
+// Use this for routes that can modify the system, e.g. POSTs, PUTs, DELETEs
+func InitRouter(r endpoints.Resource) *mux.Router {
+	router := mux.NewRouter()
+	// Todo add the CSRF protection once I test everything works
+	router.HandleFunc("/{namespace}/rerun", r.RerunPipelineRun).Methods("POST")
+	router.HandleFunc("/proxy/{subpath:*}", r.CSRFProxyRequest).Methods("POST")
+	router.HandleFunc("/proxy/{subpath:*}", r.CSRFProxyRequest).Methods("PUT")
+	router.HandleFunc("/proxy/{subpath:*}", r.CSRFProxyRequest).Methods("DELETE")
+	router.HandleFunc("/proxy/{subpath:*}", r.CSRFProxyRequest).Methods("PATCH")
+	return router
 }

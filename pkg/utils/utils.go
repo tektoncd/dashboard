@@ -29,6 +29,13 @@ func RespondError(response *restful.Response, err error, statusCode int) {
 	response.WriteError(statusCode, err)
 }
 
+// RespondErrorCSRF - logs and writes an error response with a desired status code, for use with CSRF protected routing
+func RespondErrorCSRF(response http.ResponseWriter, err error, statusCode int) {
+	logging.Log.Error("Error: ", strings.Replace(err.Error(), "/", "", -1))
+	response.WriteHeader(statusCode)
+	response.Write([]byte(err.Error()))
+}
+
 // RespondErrorMessage - logs and writes an error message with a desired status code
 func RespondErrorMessage(response *restful.Response, message string, statusCode int) {
 	logging.Log.Debugf("Error message: %s", message)

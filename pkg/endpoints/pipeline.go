@@ -276,7 +276,7 @@ func (r Resource) rerunImpl(existingPipelineRun *v1alpha1.PipelineRun, existingP
 }
 
 // RerunPipelineRun reruns a given PipelineRun by name in a given namespace
-func (r Resource) RerunPipelineRun(request *restful.Request, response *restful.Response) {
+func (r Resource) RerunPipelineRun(response http.ResponseWriter, request *http.Request) {
 	logging.Log.Debugf("in RerunPipelineRun")
 	namespace := request.PathParameter("namespace")
 

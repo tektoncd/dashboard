@@ -90,6 +90,50 @@ func (r Resource) ProxyRequest(request *restful.Request, response *restful.Respo
 	response.Write(responseBody)
 }
 
+// CSRFProxyRequest is the same as proxy request but using gorilla/csrf and gorilla/mux
+// Used for operations that can modify the system and thus needs to be secure
+func (r Resource) CSRFProxyRequest(response http.ResponseWriter, request *http.Request) {
+	parsedURL, err := url.Parse(request.URL.String())
+	if err != nil {
+		utils.RespondErrorCSRF(response, err, http.StatusNotFound)
+		return
+	}
+	uri := strings.TrimPrefix(request.URL.Path, "subpath") + "?" + parsedURL.RawQuery
+	forwardRequest := r.K8sClient.CoreV1().RESTClient().Verb(request.Method).RequestURI(uri).Body(request.Body)
+	forwardRequest.SetHeader("Content-Type", request.Header.Get("Content-Type"))
+	forwardResponse := forwardRequest.Do()
+
+	responseBody, requestError := forwardResponse.Raw()
+	if requestError != nil {
+		errorInfo := string(responseBody)
+		errorInfo = strings.Replace(errorInfo, "\"", "", -1)
+		errorInfo = strings.Replace(errorInfo, "\\", "", -1)
+		errorInfo = strings.Replace(errorInfo, "\n", "", -1)
+		// Checks if an error code can be found in the response
+		if strings.LastIndex(errorInfo, "code:") != -1 {
+			errorCodeString := strings.LastIndex(errorInfo, "code:")
+			// Checks if the code is 3-digits long
+			if len(errorInfo[errorCodeString+5:errorCodeString+8]) == 3 {
+				errorCode := errorInfo[errorCodeString+5 : errorCodeString+8]
+				errorCodeFormatted, err := strconv.Atoi(errorCode)
+				// Checks if the code can be converted to an integer without error
+				if err != nil {
+					utils.RespondErrorCSRF(response, requestError, http.StatusInternalServerError)
+					return
+				}
+				utils.RespondErrorCSRF(response, errors.New(errorInfo), errorCodeFormatted)
+				return
+			}
+			utils.RespondErrorCSRF(response, requestError, http.StatusInternalServerError)
+			return
+		}
+		utils.RespondErrorCSRF(response, requestError, http.StatusInternalServerError)
+		return
+	}
+	response.Header().Add("Content-Type", utils.GetContentType(responseBody))
+	response.Write(responseBody)
+}
+
 // GetIngress returns the Ingress endpoint called "tektonDashboardIngressName" in the requested namespace
 func (r Resource) GetIngress(request *restful.Request, response *restful.Response) {
 	requestNamespace := utils.GetNamespace(request)

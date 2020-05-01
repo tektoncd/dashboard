@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-20 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -102,12 +102,23 @@ func main() {
 	controllers.StartKubeControllers(resource.K8sClient, resyncDur, dashboardConfig.installNamespace, routerHandler, ctx.Done())
 
 	logging.Log.Infof("Creating server and entering wait loop")
-	server := &http.Server{Addr: dashboardConfig.port, Handler: routerHandler}
 
+	sm := http.NewServeMux()
+	muxRouter := router.InitRouter(resource)
+
+	sm.Handle("/csrf", muxRouter)
+	sm.Handle("/", routerHandler)
+
+	// Register the ServeMux as the sole Handler. It will delegate to the subhandlers.
+	server := &http.Server{
+		Addr:    dashboardConfig.port,
+		Handler: sm,
+	}
 	errCh := make(chan error, 1)
 	defer close(errCh)
 	go func() {
 		// Don't forward ErrServerClosed as that indicates we're already shutting down.
+
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			errCh <- fmt.Errorf("dashboard server failed: %w", err)
 		}
