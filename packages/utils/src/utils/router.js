@@ -158,7 +158,7 @@ export const paths = {
       return byNamespace({ path: '/taskruns' });
     },
     byClusterTask() {
-      return '/taskruns?labelSelector=tekton.dev%2Ftask%3D:taskName';
+      return '/taskruns?labelSelector=tekton.dev%2FclusterTask%3D:taskName';
     },
     byTask() {
       return byNamespace({

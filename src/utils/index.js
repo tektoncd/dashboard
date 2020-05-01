@@ -74,3 +74,16 @@ export function getGitValues(url) {
 
   return { gitServer, gitOrg, gitRepo: `${gitRepo}.git` };
 }
+
+// K8s label documentation comes from here:
+// https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set
+const labelKeyRegex = new RegExp(
+  '^(([a-z0-9A-Z]([a-z0-9A-Z-.]*[a-z0-9A-Z])?){0,253}/)?([a-z0-9A-Z]([a-z0-9A-Z-_.]*[a-z0-9A-Z])?){1,63}$'
+);
+const labelValueRegex = new RegExp(
+  '^([a-z0-9A-Z]([a-z0-9A-Z-_.]*[a-z0-9A-Z])?){0,63}$'
+);
+export function isValidLabel(type, value) {
+  const regex = type === 'key' ? labelKeyRegex : labelValueRegex;
+  return regex.test(value);
+}
