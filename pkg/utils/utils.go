@@ -62,6 +62,17 @@ func WriteResponseLocation(request *restful.Request, response *restful.Response,
 	response.WriteHeader(201)
 }
 
+// Write Content-Location header within POST methods and set StatusCode to 201 for CSRF methods
+// Headers MUST be set before writing to body (if any) to succeed
+func WriteResponseLocationCSRF(request *http.Request, response http.ResponseWriter, identifier string) {
+	location := request.URL.Path
+	if request.Method == http.MethodPost {
+		location = location + "/" + identifier
+	}
+	response.Header().Add("Content-Location", location)
+	response.WriteHeader(201)
+}
+
 func GetNamespace(request *restful.Request) string {
 	namespace := request.PathParameter("namespace")
 	if namespace == "*" {

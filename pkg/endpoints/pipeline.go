@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-20 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -15,9 +15,11 @@ package endpoints
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"strings"
 
@@ -278,13 +280,22 @@ func (r Resource) rerunImpl(existingPipelineRun *v1alpha1.PipelineRun, existingP
 // RerunPipelineRun reruns a given PipelineRun by name in a given namespace
 func (r Resource) RerunPipelineRun(response http.ResponseWriter, request *http.Request) {
 	logging.Log.Debugf("in RerunPipelineRun")
-	namespace := request.PathParameter("namespace")
-
+	namespace := strings.TrimPrefix(request.URL.Path, "namespace")
 	requestData := RerunRequest{}
 
-	if err := request.ReadEntity(&requestData); err != nil {
+	body, err := ioutil.ReadAll(request.Body)
+
+	if err != nil {
+		logging.Log.Errorf("error reading request body on call to rerun %s", err)
+		utils.RespondErrorCSRF(response, err, http.StatusBadRequest)
+		return
+	}
+
+	err = json.Unmarshal(body, &requestData)
+
+	if err != nil {
 		logging.Log.Errorf("error parsing request body on call to rerun %s", err)
-		utils.RespondError(response, err, http.StatusBadRequest)
+		utils.RespondErrorCSRF(response, err, http.StatusBadRequest)
 		return
 	}
 
@@ -295,12 +306,12 @@ func (r Resource) RerunPipelineRun(response http.ResponseWriter, request *http.R
 		// Method handles any error reporting through logs
 		rebuiltRun, err := r.rerunImpl(nil, requestData.PIPELINERUNNAME, namespace)
 		if err != nil {
-			utils.RespondError(response, err, http.StatusInternalServerError)
+			utils.RespondErrorCSRF(response, err, http.StatusInternalServerError)
 			return
 		} else {
 			// All is well, include the name of the new rebuilt run in the response
 			logging.Log.Debugf("Rerun ok, name is: %s", rebuiltRun.Name)
-			utils.WriteResponseLocation(request, response, rebuiltRun.Name)
+			utils.WriteResponseLocationCSRF(request, response, rebuiltRun.Name)
 			return
 		}
 	}
