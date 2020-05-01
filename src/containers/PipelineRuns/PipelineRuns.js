@@ -22,6 +22,7 @@ import {
   getErrorMessage,
   getFilters,
   getStatus,
+  getTitle,
   isRunning,
   urls
 } from '@tektoncd/dashboard-utils';
@@ -63,6 +64,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
   }
 
   componentDidMount() {
+    document.title = getTitle({ page: 'PipelineRuns' });
     this.fetchPipelineRuns();
   }
 

@@ -27,7 +27,11 @@ import {
   FormattedDate,
   ViewYAML
 } from '@tektoncd/dashboard-components';
-import { formatLabels, getErrorMessage } from '@tektoncd/dashboard-utils';
+import {
+  formatLabels,
+  getErrorMessage,
+  getTitle
+} from '@tektoncd/dashboard-utils';
 
 import {
   getPipelineResource,
@@ -50,6 +54,12 @@ const {
 
 export /* istanbul ignore next */ class PipelineResourceContainer extends Component {
   componentDidMount() {
+    const { match } = this.props;
+    const { pipelineResourceName: resourceName } = match.params;
+    document.title = getTitle({
+      page: 'PipelineResource',
+      resourceName
+    });
     this.fetchData();
   }
 

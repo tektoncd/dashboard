@@ -15,7 +15,7 @@ import React, { Component } from 'react';
 import { injectIntl } from 'react-intl';
 import { InlineNotification } from 'carbon-components-react';
 import { Table } from '@tektoncd/dashboard-components';
-import { getErrorMessage } from '@tektoncd/dashboard-utils';
+import { getErrorMessage, getTitle } from '@tektoncd/dashboard-utils';
 
 import { getInstallProperties } from '../../api';
 
@@ -38,6 +38,13 @@ export /* istanbul ignore next */ class About extends Component {
   state = initialState;
 
   componentDidMount() {
+    const { intl } = this.props;
+    document.title = getTitle({
+      page: intl.formatMessage({
+        id: 'dashboard.about.title',
+        defaultMessage: 'About'
+      })
+    });
     this.fetchDashboardInfo();
   }
 

@@ -40,6 +40,11 @@ export function getErrorMessage(error) {
   );
 }
 
+export function getTitle({ page, resourceName }) {
+  const pageTitle = page + (resourceName ? ` - ${resourceName}` : '');
+  return `Tekton Dashboard | ${pageTitle}`;
+}
+
 export function selectedTask(selectedTaskName, tasks) {
   if (tasks) {
     return tasks.find(t => t.metadata.name === selectedTaskName);

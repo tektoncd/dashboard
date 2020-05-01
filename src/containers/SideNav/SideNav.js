@@ -295,7 +295,7 @@ class SideNav extends Component {
             <SideNavMenu
               defaultExpanded
               title={intl.formatMessage({
-                id: 'dashboard.sideNav.extensions',
+                id: 'dashboard.extensions.title',
                 defaultMessage: 'Extensions'
               })}
             >
@@ -338,15 +338,15 @@ class SideNav extends Component {
               to={urls.importResources()}
             >
               {intl.formatMessage({
-                id: 'dashboard.sideNav.importResources',
-                defaultMessage: 'Import Tekton resources'
+                id: 'dashboard.importResources.title',
+                defaultMessage: 'Import resources'
               })}
             </SideNavLink>
           )}
 
           <SideNavLink element={NavLink} icon={<span />} to={urls.about()}>
             {intl.formatMessage({
-              id: 'dashboard.sideNav.about',
+              id: 'dashboard.about.title',
               defaultMessage: 'About'
             })}
           </SideNavLink>

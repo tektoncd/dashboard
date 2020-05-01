@@ -29,6 +29,7 @@ import {
   getParams,
   getResources,
   getStatus,
+  getTitle,
   reorderSteps,
   stepsStatus,
   taskRunStep,
@@ -83,6 +84,10 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
   componentDidMount() {
     const { match, namespace } = this.props;
     const { taskRunName } = match.params;
+    document.title = getTitle({
+      page: 'TaskRun',
+      resourceName: taskRunName
+    });
     this.fetchTaskAndRuns(taskRunName, namespace);
   }
 

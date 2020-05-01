@@ -24,7 +24,12 @@ import {
   Tooltip
 } from 'carbon-components-react';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
-import { getErrorMessage, getFilters, urls } from '@tektoncd/dashboard-utils';
+import {
+  getErrorMessage,
+  getFilters,
+  getTitle,
+  urls
+} from '@tektoncd/dashboard-utils';
 import { Add16 as Add, Delete16 as Delete } from '@carbon/icons-react';
 import { LabelFilter } from '..';
 import DeleteModal from '../../components/SecretsDeleteModal';
@@ -61,6 +66,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
   }
 
   componentDidMount() {
+    document.title = getTitle({ page: 'Secrets' });
     const secretType = this.getSecretType();
     this.handleSecretType(secretType);
     this.fetchData();

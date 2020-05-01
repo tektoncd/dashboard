@@ -23,7 +23,7 @@ import {
   Tabs,
   ViewYAML
 } from '@tektoncd/dashboard-components';
-import { formatLabels } from '@tektoncd/dashboard-utils';
+import { formatLabels, getTitle } from '@tektoncd/dashboard-utils';
 import {
   getSelectedNamespace,
   getTriggerTemplate,
@@ -72,6 +72,12 @@ export /* istanbul ignore next */ class TriggerTemplateContainer extends Compone
   }
 
   componentDidMount() {
+    const { match } = this.props;
+    const { triggerTemplateName: resourceName } = match.params;
+    document.title = getTitle({
+      page: 'TriggerTemplate',
+      resourceName
+    });
     this.fetchData();
   }
 

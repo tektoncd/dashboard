@@ -25,7 +25,7 @@ import {
   Tabs,
   ViewYAML
 } from '@tektoncd/dashboard-components';
-import { formatLabels, urls } from '@tektoncd/dashboard-utils';
+import { formatLabels, getTitle, urls } from '@tektoncd/dashboard-utils';
 import {
   getSecrets,
   getSelectedNamespace,
@@ -63,6 +63,12 @@ export /* istanbul ignore next */ class ServiceAccountContainer extends Componen
   }
 
   componentDidMount() {
+    const { match } = this.props;
+    const { serviceAccountName: resourceName } = match.params;
+    document.title = getTitle({
+      page: 'ServiceAccount',
+      resourceName
+    });
     this.fetchData();
   }
 
