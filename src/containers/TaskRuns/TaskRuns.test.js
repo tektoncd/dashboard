@@ -82,13 +82,65 @@ const taskRunsTestStore = {
     }
   }
 };
+const serviceAccountsTestStore = {
+  serviceAccounts: {
+    byNamespace: {
+      'namespace-1': {
+        'service-account-1': 'id-service-account-1'
+      }
+    },
+    byId: {
+      'id-service-account-1': {
+        metadata: {
+          name: 'service-account-1',
+          namespace: 'namespace-1',
+          uid: 'id-service-account-1'
+        }
+      }
+    },
+    isFetching: false
+  }
+};
+const tasksTestStore = {
+  tasks: {
+    byNamespace: {
+      'namespace-1': {
+        'task-1': 'id-task-1'
+      }
+    },
+    byId: {
+      'id-task-1': {
+        metadata: {
+          name: 'task-1',
+          namespace: 'namespace-1',
+          uid: 'id-task-1'
+        },
+        spec: {
+          resources: [{ name: 'resource-1', type: 'type-1' }],
+          params: [
+            {
+              name: 'param-1',
+              description: 'description-1',
+              default: 'default-1'
+            },
+            { name: 'param-2' }
+          ]
+        }
+      }
+    },
+    isFetching: false
+  }
+};
+
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 const testStore = {
   ...namespacesTestStore,
   notifications: {},
   properties: {},
-  ...taskRunsTestStore
+  ...taskRunsTestStore,
+  ...tasksTestStore,
+  ...serviceAccountsTestStore
 };
 
 describe('TaskRuns container', () => {

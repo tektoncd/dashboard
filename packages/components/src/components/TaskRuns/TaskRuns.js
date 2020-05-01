@@ -49,7 +49,8 @@ const TaskRuns = ({
   loading,
   selectedNamespace,
   taskRuns,
-  taskRunActions = []
+  taskRunActions = [],
+  toolbarButtons
 }) => {
   const headers = [
     {
@@ -187,6 +188,7 @@ const TaskRuns = ({
         { kind: 'TaskRuns', selectedNamespace }
       )}
       selectedNamespace={selectedNamespace}
+      toolbarButtons={toolbarButtons}
     />
   );
 };

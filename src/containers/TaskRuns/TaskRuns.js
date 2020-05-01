@@ -13,19 +13,22 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
 import { InlineNotification } from 'carbon-components-react';
+import { TaskRuns as TaskRunsList } from '@tektoncd/dashboard-components';
 import {
   getErrorMessage,
   getFilters,
   getStatus,
   getTitle,
-  isRunning
+  isRunning,
+  urls
 } from '@tektoncd/dashboard-utils';
-import { TaskRuns as TaskRunsList } from '@tektoncd/dashboard-components';
+import { Add16 as Add } from '@carbon/icons-react';
 
-import { LabelFilter } from '..';
+import { CreateTaskRun, LabelFilter } from '..';
 import { sortRunsByStartTime } from '../../utils';
 import { fetchTaskRuns } from '../../actions/taskRuns';
 
@@ -39,12 +42,21 @@ import {
 } from '../../reducers';
 import { cancelTaskRun, deleteTaskRun } from '../../api';
 
+const initialState = {
+  showCreateTaskRunModal: false,
+  createdTaskRun: null,
+  submitError: ''
+};
+
 export /* istanbul ignore next */ class TaskRuns extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      submitError: ''
-    };
+
+    this.handleCreateTaskRunSuccess = this.handleCreateTaskRunSuccess.bind(
+      this
+    );
+
+    this.state = initialState;
   }
 
   componentDidMount() {
@@ -60,11 +72,10 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
       webSocketConnected: prevWebSocketConnected
     } = prevProps;
 
-    if (
-      !isEqual(filters, prevFilters) ||
-      namespace !== prevNamespace ||
-      (webSocketConnected && prevWebSocketConnected === false)
-    ) {
+    if (namespace !== prevNamespace || !isEqual(filters, prevFilters)) {
+      this.reset();
+      this.fetchTaskRuns();
+    } else if (webSocketConnected && prevWebSocketConnected === false) {
       this.fetchTaskRuns();
     }
   }
@@ -88,13 +99,20 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
     });
   };
 
+  resetSuccess = () => {
+    this.setState({ createdTaskRun: false });
+  };
+
+  toggleModal = showCreateTaskRunModal => {
+    this.setState({ showCreateTaskRunModal });
+  };
+
   taskRunActions = () => {
+    const { intl } = this.props;
+
     if (this.props.isReadOnly) {
       return [];
     }
-
-    const { intl } = this.props;
-
     return [
       {
         actionText: intl.formatMessage({
@@ -169,8 +187,33 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
     ];
   };
 
+  handleCreateTaskRunSuccess(newTaskRun) {
+    const {
+      metadata: { namespace, name }
+    } = newTaskRun;
+    const url = urls.taskRuns.byName({
+      namespace,
+      taskRunName: name
+    });
+    this.toggleModal(false);
+    this.setState({ createdTaskRun: { name, url } });
+  }
+
+  reset() {
+    this.setState(initialState);
+  }
+
   fetchTaskRuns() {
-    const { filters, namespace } = this.props;
+    const { namespace, taskName, filters, kind } = this.props;
+
+    if (kind === 'ClusterTask') {
+      // TaskRuns from ClusterTask should have label 'tekton.dev/clusterTask=',
+      // (and that is the filter on the page), but some taskruns might still
+      // only have the old label 'tekton.dev/task='
+      // So, for ClusterTasks, also fetch with the old filter:
+      this.props.fetchTaskRuns({ filters: [`tekton.dev/task=${taskName}`] });
+    }
+
     this.props.fetchTaskRuns({
       filters,
       namespace
@@ -180,15 +223,11 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
   render() {
     const {
       error,
-      intl,
       loading,
+      namespace: selectedNamespace,
       taskRuns,
-      namespace: selectedNamespace
+      intl
     } = this.props;
-
-    const taskRunActions = this.taskRunActions();
-
-    sortRunsByStartTime(taskRuns);
 
     if (error) {
       return (
@@ -204,9 +243,40 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
         />
       );
     }
+    const taskRunActions = this.taskRunActions();
+    sortRunsByStartTime(taskRuns);
+
+    const toolbarButtons = this.props.isReadOnly
+      ? []
+      : [
+          {
+            onClick: () => this.toggleModal(true),
+            text: intl.formatMessage({
+              id: 'dashboard.actions.createButton',
+              defaultMessage: 'Create'
+            }),
+            icon: Add
+          }
+        ];
 
     return (
       <>
+        {this.state.createdTaskRun && (
+          <InlineNotification
+            kind="success"
+            title={intl.formatMessage({
+              id: 'dashboard.taskRuns.createSuccess',
+              defaultMessage: 'Successfully created TaskRun'
+            })}
+            subtitle={
+              <Link to={this.state.createdTaskRun.url}>
+                {this.state.createdTaskRun.name}
+              </Link>
+            }
+            onCloseButtonClick={this.resetSuccess}
+            lowContrast
+          />
+        )}
         {this.state.submitError && (
           <InlineNotification
             kind="error"
@@ -226,11 +296,22 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
         )}
         <h1>TaskRuns</h1>
         <LabelFilter {...this.props} />
+        {!this.props.isReadOnly && (
+          <CreateTaskRun
+            open={this.state.showCreateTaskRunModal}
+            onClose={() => this.toggleModal(false)}
+            onSuccess={this.handleCreateTaskRunSuccess}
+            taskRef={this.props.taskName}
+            namespace={selectedNamespace}
+            kind={this.props.kind}
+          />
+        )}
         <TaskRunsList
           loading={loading && !taskRuns.length}
           selectedNamespace={selectedNamespace}
           taskRuns={taskRuns}
           taskRunActions={taskRunActions}
+          toolbarButtons={toolbarButtons}
         />
       </>
     );
@@ -248,17 +329,39 @@ function mapStateToProps(state, props) {
   const namespace = namespaceParam || getSelectedNamespace(state);
 
   const taskFilter =
-    filters.find(filter => filter.indexOf('tekton.dev/task=') !== -1) || '';
-  const taskName = taskFilter.replace('tekton.dev/task=', '');
+    filters.find(f => f.indexOf('tekton.dev/task=') !== -1) || '';
+  const clusterTaskFilter =
+    filters.find(f => f.indexOf('tekton.dev/clusterTask=') !== -1) || '';
+  const kind = clusterTaskFilter ? 'ClusterTask' : 'Task';
+
+  const taskName =
+    kind === 'ClusterTask'
+      ? clusterTaskFilter.replace('tekton.dev/clusterTask=', '')
+      : taskFilter.replace('tekton.dev/task=', '');
+
+  let taskRuns = getTaskRuns(state, { filters, namespace });
+  if (kind === 'ClusterTask') {
+    // TaskRuns from ClusterTask should have label 'tekton.dev/clusterTask=',
+    // (and that is the filter on the page), but some taskruns might still
+    // only have the old label 'tekton.dev/task='
+    // So, for ClusterTasks, also fetch with the old filter:
+    const clusterTaskRuns = getTaskRuns(state, {
+      filters: [`tekton.dev/task=${taskName}`]
+    });
+
+    // Then merge the arrays, using a Set to prevent duplicates
+    taskRuns = [...new Set([...taskRuns, ...clusterTaskRuns])];
+  }
 
   return {
-    error: getTaskRunsErrorMessage(state),
     isReadOnly: isReadOnly(state),
-    filters,
+    error: getTaskRunsErrorMessage(state),
     loading: isFetchingTaskRuns(state),
     namespace,
+    filters,
     taskName,
-    taskRuns: getTaskRuns(state, { filters, namespace }),
+    kind,
+    taskRuns,
     webSocketConnected: isWebSocketConnected(state)
   };
 }
