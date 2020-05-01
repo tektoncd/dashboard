@@ -20,6 +20,7 @@ import {
   getErrorMessage,
   getFilters,
   getStatus,
+  getTitle,
   isRunning
 } from '@tektoncd/dashboard-utils';
 import { TaskRuns as TaskRunsList } from '@tektoncd/dashboard-components';
@@ -47,6 +48,7 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
   }
 
   componentDidMount() {
+    document.title = getTitle({ page: 'TaskRuns' });
     this.fetchTaskRuns();
   }
 

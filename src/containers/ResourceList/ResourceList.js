@@ -16,7 +16,7 @@ import { injectIntl } from 'react-intl';
 import { InlineNotification } from 'carbon-components-react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { getErrorMessage, urls } from '@tektoncd/dashboard-utils';
+import { getErrorMessage, getTitle, urls } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 
 import { getCustomResources } from '../../api';
@@ -30,6 +30,9 @@ export class ResourceListContainer extends Component {
 
   componentDidMount() {
     const { group, version, type } = this.props.match.params;
+    document.title = getTitle({
+      page: `${group}/${version}/${type}`
+    });
     const { namespace } = this.props;
     this.fetchResources(group, version, type, namespace);
   }
@@ -104,66 +107,74 @@ export class ResourceListContainer extends Component {
     );
 
     return (
-      <Table
-        headers={[
-          {
-            key: 'name',
-            header: intl.formatMessage({
-              id: 'dashboard.tableHeader.name',
-              defaultMessage: 'Name'
-            })
-          },
-          {
-            key: 'namespace',
-            header: intl.formatMessage({
-              id: 'dashboard.tableHeader.namespace',
-              defaultMessage: 'Namespace'
-            })
-          },
-          {
-            key: 'createdTime',
-            header: intl.formatMessage({
-              id: 'dashboard.tableHeader.createdTime',
-              defaultMessage: 'Created'
-            })
-          }
-        ]}
-        rows={resources.map(resource => {
-          const { creationTimestamp, name, namespace, uid } = resource.metadata;
+      <>
+        <h1>{`${group}/${version}/${type}`}</h1>
+        <Table
+          headers={[
+            {
+              key: 'name',
+              header: intl.formatMessage({
+                id: 'dashboard.tableHeader.name',
+                defaultMessage: 'Name'
+              })
+            },
+            {
+              key: 'namespace',
+              header: intl.formatMessage({
+                id: 'dashboard.tableHeader.namespace',
+                defaultMessage: 'Namespace'
+              })
+            },
+            {
+              key: 'createdTime',
+              header: intl.formatMessage({
+                id: 'dashboard.tableHeader.createdTime',
+                defaultMessage: 'Created'
+              })
+            }
+          ]}
+          rows={resources.map(resource => {
+            const {
+              creationTimestamp,
+              name,
+              namespace,
+              uid
+            } = resource.metadata;
 
-          return {
-            id: uid,
-            name: (
-              <Link
-                to={
-                  namespace
-                    ? urls.kubernetesResources.byName({
-                        namespace,
-                        group,
-                        version,
-                        type,
-                        name
-                      })
-                    : urls.kubernetesResources.cluster({
-                        group,
-                        version,
-                        type,
-                        name
-                      })
-                }
-                title={name}
-              >
-                {name}
-              </Link>
-            ),
-            namespace,
-            createdTime: <FormattedDate date={creationTimestamp} relative />
-          };
-        })}
-        loading={loading}
-        emptyTextAllNamespaces={emptyText}
-        emptyTextSelectedNamespace={emptyText}
-      />
+            return {
+              id: uid,
+              name: (
+                <Link
+                  to={
+                    namespace
+                      ? urls.kubernetesResources.byName({
+                          namespace,
+                          group,
+                          version,
+                          type,
+                          name
+                        })
+                      : urls.kubernetesResources.cluster({
+                          group,
+                          version,
+                          type,
+                          name
+                        })
+                  }
+                  title={name}
+                >
+                  {name}
+                </Link>
+              ),
+              namespace,
+              createdTime: <FormattedDate date={creationTimestamp} relative />
+            };
+          })}
+          loading={loading}
+          emptyTextAllNamespaces={emptyText}
+          emptyTextSelectedNamespace={emptyText}
+        />
+      </>
     );
   }
 }

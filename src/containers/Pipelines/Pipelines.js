@@ -18,7 +18,12 @@ import { Information16 } from '@carbon/icons-react';
 import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
 import { InlineNotification } from 'carbon-components-react';
-import { getErrorMessage, getFilters, urls } from '@tektoncd/dashboard-utils';
+import {
+  getErrorMessage,
+  getFilters,
+  getTitle,
+  urls
+} from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 
 import { LabelFilter } from '..';
@@ -35,6 +40,7 @@ import '../../components/Definitions/Definitions.scss';
 
 export /* istanbul ignore next */ class Pipelines extends Component {
   componentDidMount() {
+    document.title = getTitle({ page: 'Pipelines' });
     this.fetchData();
   }
 

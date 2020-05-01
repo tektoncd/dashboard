@@ -16,7 +16,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { injectIntl } from 'react-intl';
 import { InlineNotification, Tag } from 'carbon-components-react';
-import { formatLabels } from '@tektoncd/dashboard-utils';
+import { formatLabels, getTitle } from '@tektoncd/dashboard-utils';
 import {
   FormattedDate,
   Tab,
@@ -58,6 +58,12 @@ export /* istanbul ignore next */ class EventListenerContainer extends Component
   }
 
   componentDidMount() {
+    const { match } = this.props;
+    const { eventListenerName: resourceName } = match.params;
+    document.title = getTitle({
+      page: 'EventListener',
+      resourceName
+    });
     this.fetchData();
   }
 

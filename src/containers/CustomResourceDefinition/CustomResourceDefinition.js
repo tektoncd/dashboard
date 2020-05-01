@@ -18,7 +18,7 @@ import {
   CodeSnippetSkeleton,
   InlineNotification
 } from 'carbon-components-react';
-import { getErrorMessage } from '@tektoncd/dashboard-utils';
+import { getErrorMessage, getTitle } from '@tektoncd/dashboard-utils';
 import { ViewYAML } from '@tektoncd/dashboard-components';
 
 import { fetchClusterTask, fetchTask } from '../../actions/tasks';
@@ -42,6 +42,12 @@ export /* istanbul ignore next */ class CustomResourceDefinition extends Compone
   };
 
   componentDidMount() {
+    const { match } = this.props;
+    const { name, type } = match.params;
+    document.title = getTitle({
+      page: type,
+      resourceName: name
+    });
     this.fetchData();
   }
 

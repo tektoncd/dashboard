@@ -21,6 +21,7 @@ import {
   getParams,
   getResources,
   getStatus,
+  getTitle,
   isRunning,
   reorderSteps,
   selectedTask,
@@ -535,4 +536,12 @@ describe('getResources', () => {
     expect(inputResources).toEqual(fakeInputResources);
     expect(outputResources).toEqual(fakeOutputResources);
   });
+});
+
+it('getTitle', () => {
+  let title = getTitle({ page: 'SomePage' });
+  expect(title).toEqual('Tekton Dashboard | SomePage');
+
+  title = getTitle({ page: 'SomePage', resourceName: 'someResource' });
+  expect(title).toEqual('Tekton Dashboard | SomePage - someResource');
 });

@@ -14,7 +14,7 @@ limitations under the License.
 import React, { Component, Suspense } from 'react';
 import { injectIntl } from 'react-intl';
 import { ErrorBoundary } from '@tektoncd/dashboard-components';
-import { paths, urls } from '@tektoncd/dashboard-utils';
+import { getTitle, paths, urls } from '@tektoncd/dashboard-utils';
 
 import * as actions from './actions';
 import * as selectors from '../../reducers';
@@ -30,6 +30,14 @@ import './globals';
     });
 
     this.state = { ExtensionComponent };
+  }
+
+  componentDidMount() {
+    const { displayName: resourceName } = this.props;
+    document.title = getTitle({
+      page: 'Extension',
+      resourceName
+    });
   }
 
   render() {

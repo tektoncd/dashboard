@@ -23,7 +23,7 @@ import {
   Tabs,
   ViewYAML
 } from '@tektoncd/dashboard-components';
-import { formatLabels } from '@tektoncd/dashboard-utils';
+import { formatLabels, getTitle } from '@tektoncd/dashboard-utils';
 import {
   getClusterTriggerBinding,
   getClusterTriggerBindingsErrorMessage,
@@ -58,6 +58,12 @@ export /* istanbul ignore next */ class ClusterTriggerBindingContainer extends C
   }
 
   componentDidMount() {
+    const { match } = this.props;
+    const { clusterTriggerBindingName: resourceName } = match.params;
+    document.title = getTitle({
+      page: 'ClusterTriggerBinding',
+      resourceName
+    });
     this.fetchData();
   }
 

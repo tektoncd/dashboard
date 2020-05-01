@@ -17,7 +17,12 @@ import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
 import keyBy from 'lodash.keyby';
-import { getErrorMessage, getFilters, urls } from '@tektoncd/dashboard-utils';
+import {
+  getErrorMessage,
+  getFilters,
+  getTitle,
+  urls
+} from '@tektoncd/dashboard-utils';
 import { PipelineResources as PipelineResourcesList } from '@tektoncd/dashboard-components';
 import {
   InlineNotification,
@@ -60,6 +65,7 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
   }
 
   componentDidMount() {
+    document.title = getTitle({ page: 'PipelineResources' });
     this.fetchData();
   }
 

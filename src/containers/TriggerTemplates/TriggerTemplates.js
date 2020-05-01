@@ -16,7 +16,12 @@ import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
-import { getErrorMessage, getFilters, urls } from '@tektoncd/dashboard-utils';
+import {
+  getErrorMessage,
+  getFilters,
+  getTitle,
+  urls
+} from '@tektoncd/dashboard-utils';
 import { InlineNotification } from 'carbon-components-react';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 
@@ -32,6 +37,7 @@ import {
 
 export /* istanbul ignore next */ class TriggerTemplates extends Component {
   componentDidMount() {
+    document.title = getTitle({ page: 'TriggerTemplates' });
     this.fetchTriggerTemplates();
   }
 

@@ -15,6 +15,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { PipelineRun, Rerun } from '@tektoncd/dashboard-components';
+import { getTitle } from '@tektoncd/dashboard-utils';
 import { InlineNotification } from 'carbon-components-react';
 import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
@@ -51,6 +52,12 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   };
 
   componentDidMount() {
+    const { match } = this.props;
+    const { pipelineRunName: resourceName } = match.params;
+    document.title = getTitle({
+      page: 'PipelineRun',
+      resourceName
+    });
     this.fetchData();
   }
 

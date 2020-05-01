@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { generateId, urls } from '@tektoncd/dashboard-utils';
+import { generateId, getTitle, urls } from '@tektoncd/dashboard-utils';
 import React, { Component } from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
@@ -87,6 +87,13 @@ export /* istanbul ignore next */ class CreateSecret extends Component {
   }
 
   componentDidMount() {
+    const { intl } = this.props;
+    document.title = getTitle({
+      page: intl.formatMessage({
+        id: 'dashboard.createSecret.title',
+        defaultMessage: 'Create Secret'
+      })
+    });
     this.fetchData();
     this.props.resetCreateSecret();
   }

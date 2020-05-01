@@ -18,7 +18,12 @@ import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 import { InlineNotification } from 'carbon-components-react';
-import { getErrorMessage, getFilters, urls } from '@tektoncd/dashboard-utils';
+import {
+  getErrorMessage,
+  getFilters,
+  getTitle,
+  urls
+} from '@tektoncd/dashboard-utils';
 
 import { LabelFilter } from '..';
 import { fetchClusterTasks } from '../../actions/tasks';
@@ -33,6 +38,7 @@ import '../../components/Definitions/Definitions.scss';
 
 export /* istanbul ignore next */ class ClusterTasksContainer extends Component {
   componentDidMount() {
+    document.title = getTitle({ page: 'ClusterTasks' });
     this.fetchData();
   }
 

@@ -30,6 +30,7 @@ import { Link } from 'react-router-dom';
 import {
   ALL_NAMESPACES,
   getErrorMessage,
+  getTitle,
   urls
 } from '@tektoncd/dashboard-utils';
 import { getGitValues } from '../../utils';
@@ -83,6 +84,13 @@ export class ImportResources extends Component {
   }
 
   componentDidMount() {
+    const { intl } = this.props;
+    document.title = getTitle({
+      page: intl.formatMessage({
+        id: 'dashboard.importResources.title',
+        defaultMessage: 'Import resources'
+      })
+    });
     getInstallNamespace()
       .then(foundImporterNamespace => {
         this.setState({
@@ -245,7 +253,10 @@ export class ImportResources extends Component {
           />
         )}
         <h1 className="importHeader">
-          Import Tekton resources from repository
+          {intl.formatMessage({
+            id: 'dashboard.importResources.heading',
+            defaultMessage: 'Import resources from repository'
+          })}
         </h1>
         <Form>
           <FormGroup legendText="Source repository and target namespace">

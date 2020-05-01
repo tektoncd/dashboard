@@ -19,7 +19,12 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { InlineNotification, Tag } from 'carbon-components-react';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
-import { formatLabels, getErrorMessage, urls } from '@tektoncd/dashboard-utils';
+import {
+  formatLabels,
+  getErrorMessage,
+  getTitle,
+  urls
+} from '@tektoncd/dashboard-utils';
 import { fetchServiceAccounts } from '../../actions/serviceAccounts';
 
 import {
@@ -34,6 +39,12 @@ import { fetchSecret } from '../../actions/secrets';
 
 export /* istanbul ignore next */ class SecretContainer extends Component {
   componentDidMount() {
+    const { match } = this.props;
+    const { secretName: resourceName } = match.params;
+    document.title = getTitle({
+      page: 'Secret',
+      resourceName
+    });
     this.fetchData();
   }
 
