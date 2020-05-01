@@ -6,6 +6,5 @@ patchesJson6902:
       group: rbac.authorization.k8s.io
       version: v1
       kind: ClusterRole
-      name: tekton-dashboard-minimal
-      namespace: tekton-pipelines
+      name: tekton-dashboard-core
     path: cluster-role-patch-json.yaml
