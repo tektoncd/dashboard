@@ -431,11 +431,7 @@ export function getInstallProperties() {
 }
 
 export function shouldDisplayLogout() {
-  const routesUri = getResourcesAPI({
-    group: 'route.openshift.io',
-    version: 'v1'
-  });
-  return get(routesUri, { Accept: 'text/plain' });
+  return getInstallProperties().then(data => data.IsOpenShift);
 }
 
 export async function determineInstallNamespace() {
