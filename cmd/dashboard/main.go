@@ -105,8 +105,9 @@ func main() {
 
 	sm := http.NewServeMux()
 	muxRouter := router.InitRouter(resource)
+	logging.Log.Debug(muxRouter)
 
-	sm.Handle("/csrf", muxRouter)
+	//sm.Handle("/csrf", muxRouter)
 	sm.Handle("/", routerHandler)
 
 	// Register the ServeMux as the sole Handler. It will delegate to the subhandlers.

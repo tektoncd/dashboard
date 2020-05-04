@@ -48,6 +48,7 @@ const (
 
 // ProxyRequest does as the name suggests: proxies requests and logs what's going on
 func (r Resource) ProxyRequest(request *restful.Request, response *restful.Response) {
+	logging.Log.Debug("in proxy request")
 	parsedURL, err := url.Parse(request.Request.URL.String())
 	if err != nil {
 		utils.RespondError(response, err, http.StatusNotFound)
@@ -93,6 +94,7 @@ func (r Resource) ProxyRequest(request *restful.Request, response *restful.Respo
 // CSRFProxyRequest is the same as proxy request but using gorilla/csrf and gorilla/mux
 // Used for operations that can modify the system and thus needs to be secure
 func (r Resource) CSRFProxyRequest(response http.ResponseWriter, request *http.Request) {
+	logging.Log.Debug("in CSRF protection enabled proxy request")
 	parsedURL, err := url.Parse(request.URL.String())
 	if err != nil {
 		utils.RespondErrorCSRF(response, err, http.StatusNotFound)
