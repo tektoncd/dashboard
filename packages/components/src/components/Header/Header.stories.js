@@ -24,7 +24,7 @@ storiesOf('Components/Header', module)
   .add('with logout', () => (
     <Header
       logoutButton={
-        <LogoutButton shouldDisplayLogout={() => Promise.resolve(true)} />
+        <LogoutButton getLogoutURL={() => Promise.resolve('/something')} />
       }
     />
   ));

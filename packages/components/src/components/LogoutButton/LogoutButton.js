@@ -17,36 +17,37 @@ import { injectIntl } from 'react-intl';
 import React, { Component } from 'react';
 import './LogoutButton.scss';
 
-/* istanbul ignore next */
-function handleLogout() {
-  window.location.href = '/oauth/sign_out';
-}
-
 export class LogoutButton extends Component {
   state = {
-    showLogout: false
+    logoutURL: null
   };
 
   componentDidMount() {
-    this.determineOpenShift();
+    this.determineLogoutURL();
   }
 
-  async determineOpenShift() {
+  handleLogout = () => {
+    const { logoutURL } = this.state;
+    window.location.href = logoutURL;
+  };
+
+  async determineLogoutURL() {
     try {
-      const showLogout = await this.props.shouldDisplayLogout();
-      this.setState({ showLogout });
+      const logoutURL = await this.props.getLogoutURL();
+      this.setState({ logoutURL });
     } catch (error) {} // eslint-disable-line
   }
 
   render() {
-    if (!this.state.showLogout) {
+    const { logoutURL } = this.state;
+    if (!logoutURL) {
       return null;
     }
     return (
       <HeaderGlobalAction
         data-testid="logout-btn"
         className="tkn--logout-btn"
-        onClick={handleLogout}
+        onClick={this.handleLogout}
         title={this.props.intl.formatMessage({
           id: 'dashboard.header.logOut',
           defaultMessage: 'Log out'

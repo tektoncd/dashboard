@@ -63,7 +63,7 @@ import {
   TriggerTemplates
 } from '..';
 
-import { shouldDisplayLogout } from '../../api';
+import { getLogoutURL } from '../../api';
 import { fetchExtensions } from '../../actions/extensions';
 import { fetchNamespaces, selectNamespace } from '../../actions/namespaces';
 import { fetchInstallProperties } from '../../actions/properties';
@@ -107,9 +107,7 @@ export /* istanbul ignore next */ class App extends Component {
 
     const lang = messages[this.props.lang] ? this.props.lang : 'en';
 
-    const logoutButton = (
-      <LogoutButton shouldDisplayLogout={shouldDisplayLogout} />
-    );
+    const logoutButton = <LogoutButton getLogoutURL={getLogoutURL} />;
 
     return (
       <IntlProvider locale={lang} defaultLocale="en" messages={messages[lang]}>

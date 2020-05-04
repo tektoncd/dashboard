@@ -16,29 +16,29 @@ import { waitForElement } from 'react-testing-library';
 import { renderWithRouter } from '../../utils/test';
 import Logout from './LogoutButton';
 
-it('Header renders logout button if on OpenShift', async () => {
-  const mockedResponse = {
-    headers: { get: () => 'text/plain' },
-    ok: true,
-    status: 200,
-    text: () => Promise.resolve('')
-  };
-  const shouldDisplayLogoutTrueMock = jest
-    .fn()
-    .mockImplementation(() => mockedResponse);
-  const logoutButton = (
-    <Logout shouldDisplayLogout={shouldDisplayLogoutTrueMock} />
-  );
+it('Header renders logout button when logout url is set', async () => {
+  const mockedResponse = Promise.resolve('/blabla');
+
+  const getLogoutURLMock = jest.fn().mockImplementation(() => mockedResponse);
+  const logoutButton = <Logout getLogoutURL={getLogoutURLMock} />;
   const { queryByTitle } = renderWithRouter(logoutButton);
   await waitForElement(() => queryByTitle(/log out/i));
 });
 
-it('Header does not render logout button if not on OpenShift', async () => {
-  const shouldDisplayLogoutFalseMock = jest
-    .fn()
-    .mockImplementation(() => Promise.reject());
+it('Header renders logout button when logout url is not set', async () => {
+  const mockedResponse = Promise.resolve(null);
+
+  const getLogoutURLMock = jest.fn().mockImplementation(() => mockedResponse);
   const { queryByText } = renderWithRouter(
-    <Logout shouldDisplayLogout={shouldDisplayLogoutFalseMock} />
+    <Logout getLogoutURL={getLogoutURLMock} />
+  );
+  expect(queryByText(/log out/i)).toBeFalsy();
+});
+
+it('Header does not render logout button when promise for getting properties is rejected', async () => {
+  const getLogoutURLMock = jest.fn().mockImplementation(() => Promise.reject());
+  const { queryByText } = renderWithRouter(
+    <Logout getLogoutURL={getLogoutURLMock} />
   );
   expect(queryByText(/log out/i)).toBeFalsy();
 });
