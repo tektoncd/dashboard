@@ -35,6 +35,7 @@ type Properties struct {
 	TriggersVersion  string `json:"TriggersVersion,omitempty"`
 	IsOpenShift      bool   `json:"IsOpenShift"`
 	ReadOnly         bool   `json:"ReadOnly"`
+	LogoutURL        string `json:"LogoutURL,omitempty"`
 }
 
 const (
@@ -186,7 +187,6 @@ func getPipelineNamespace() string {
 // the version of the Tekton Dashboard, the version of Tekton Pipelines, whether or not one's
 // running on OpenShift, when one's in read-only mode and Tekton Triggers version (if Installed)
 func (r Resource) GetProperties(request *restful.Request, response *restful.Response) {
-	properties := Properties{}
 	installedNamespace := os.Getenv("INSTALLED_NAMESPACE")
 	triggersNamespace := getTriggersNamespace()
 	pipelineNamespace := getPipelineNamespace()
@@ -195,13 +195,24 @@ func (r Resource) GetProperties(request *restful.Request, response *restful.Resp
 	isOpenShift := IsOpenShift(r, installedNamespace)
 	isReadOnly := IsReadOnly()
 	pipelineVersion := GetPipelineVersion(r, pipelineNamespace, isOpenShift)
-
 	isTriggersInstalled := IsTriggersInstalled(r, triggersNamespace, isOpenShift)
-	if isTriggersInstalled == false {
-		properties = Properties{InstallNamespace: installedNamespace, DashboardVersion: dashboardVersion, PipelineVersion: pipelineVersion, IsOpenShift: isOpenShift, ReadOnly: isReadOnly}
-	} else {
+
+	properties := Properties{
+		InstallNamespace: installedNamespace,
+		DashboardVersion: dashboardVersion,
+		PipelineVersion:  pipelineVersion,
+		IsOpenShift:      isOpenShift,
+		ReadOnly:         isReadOnly,
+	}
+
+	// If running on OpenShift, set the logout url
+	if isOpenShift {
+		properties.LogoutURL = "/oauth/sign_out"
+	}
+
+	if isTriggersInstalled {
 		triggersVersion := GetTriggersVersion(r, triggersNamespace, isOpenShift)
-		properties = Properties{InstallNamespace: installedNamespace, DashboardVersion: dashboardVersion, PipelineVersion: pipelineVersion, TriggersVersion: triggersVersion, IsOpenShift: isOpenShift, ReadOnly: isReadOnly}
+		properties.TriggersVersion = triggersVersion
 	}
 
 	response.WriteEntity(properties)

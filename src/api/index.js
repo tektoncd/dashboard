@@ -430,8 +430,8 @@ export function getInstallProperties() {
   return get(uri);
 }
 
-export function shouldDisplayLogout() {
-  return getInstallProperties().then(data => data.IsOpenShift);
+export function getLogoutURL() {
+  return getInstallProperties().then(data => data.LogoutURL);
 }
 
 export async function determineInstallNamespace() {
