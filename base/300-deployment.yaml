@@ -5,18 +5,31 @@ metadata:
   name: tekton-dashboard
   namespace: tekton-pipelines
   labels:
+    app.kubernetes.io/name: dashboard
+    app.kubernetes.io/component: dashboard
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/version: devel
+    app.kubernetes.io/part-of: tekton-dashboard
+    dashboard.tekton.dev/release: "devel"
     app: tekton-dashboard
     version: "devel"
-    dashboard.tekton.dev/release: "devel"
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: tekton-dashboard
+      app.kubernetes.io/name: dashboard
+      app.kubernetes.io/component: dashboard
+      app.kubernetes.io/instance: default
+      app.kubernetes.io/part-of: tekton-dashboard
   template:
     metadata:
       name: tekton-dashboard
       labels:
+        app.kubernetes.io/name: dashboard
+        app.kubernetes.io/component: dashboard
+        app.kubernetes.io/instance: default
+        app.kubernetes.io/version: devel
+        app.kubernetes.io/part-of: tekton-dashboard
         app: tekton-dashboard
     spec:
       serviceAccountName: tekton-dashboard

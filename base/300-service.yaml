@@ -5,9 +5,14 @@ metadata:
   name: tekton-dashboard
   namespace: tekton-pipelines
   labels:
+    app.kubernetes.io/name: dashboard
+    app.kubernetes.io/component: dashboard
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/version: devel
+    app.kubernetes.io/part-of: tekton-dashboard
+    dashboard.tekton.dev/release: "devel"
     app: tekton-dashboard
     version: "devel"
-    dashboard.tekton.dev/release: "devel"
 spec:
   ports:
     - name: http
@@ -15,4 +20,7 @@ spec:
       port: 9097
       targetPort: 9097
   selector:
-    app: tekton-dashboard
+    app.kubernetes.io/name: dashboard
+    app.kubernetes.io/component: dashboard
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/part-of: tekton-dashboard
