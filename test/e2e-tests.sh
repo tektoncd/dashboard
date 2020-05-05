@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2018 The Tekton Authors
+# Copyright 2018-2020 The Tekton Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ for i in {1..20};do
   if [ "$respF" != "" ]; then
     dashboardExists=true
     break
-	else
+  else
     sleep 5
   fi
 done
@@ -62,9 +62,14 @@ export REPO_URL="https://github.com/ncskier/go-hello-world"
 export EXPECTED_RETURN_VALUE="Hello World!"
 export REGISTRY="gcr.io/${E2E_PROJECT_ID}/${E2E_BASE_NAME}-e2e-img"
 export TEKTON_PROXY_URL="http://localhost:9097/proxy/apis/tekton.dev/v1alpha1/namespaces/tekton-pipelines"
+export CSRF_HEADERS_STORE="csrf_headers.txt"
 
 # Kubectl static resources
 kubectl apply -f ${tekton_repo_dir}/test/resources/static
+
+curl -D $CSRF_HEADERS_STORE http://localhost:9097/v1/token
+export CSRF_TOKEN=`grep -i 'X-CSRF-Token' $CSRF_HEADERS_STORE | sed -e 's/^X-CSRF-Token: //i;s/\r//'`
+export CSRF_COOKIE=`grep -i 'Set-Cookie' $CSRF_HEADERS_STORE | sed -e 's/Set-Cookie: //i;s/; .*//;s/\r//'`
 
 # Create envsubst resources through dashboard proxy
 pipelineResourceFiles=($(find ${tekton_repo_dir}/test/resources/envsubst -iname "pipelineresource*.y?ml"))
@@ -102,7 +107,7 @@ do
     echo "TaskRun info"
     kubectl -n tekton-pipelines get TaskRun -o json
     echo "PipelineRun info"
-    kubectl -n tekton-pipelines get PipelineRun -o json    
+    kubectl -n tekton-pipelines get PipelineRun -o json
     echo "PipelineRun container info"
     kubectl -n tekton-pipelines logs -l app=e2e-pipelinerun --all-containers
     sleep 5

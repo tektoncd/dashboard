@@ -43,3 +43,6 @@ required = [
 [[prune.project]]
   name = "github.com/tektoncd/plumbing"
   non-go = false
+[[constraint]]
+  name = "github.com/gorilla/csrf"
+  version = "1.7.0"

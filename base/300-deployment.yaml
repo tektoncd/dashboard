@@ -53,8 +53,8 @@ spec:
               value: "false"
             - name: WEB_RESOURCES_DIR
               value: /var/run/ko/web
-            - name: PIPELINE_RUN_SERVICE_ACCOUNT
-              value: ""
+            - name: CSRF_SECURE_COOKIE
+              value: "true"
             - name: TRIGGERS_NAMESPACE
               value: tekton-pipelines
             - name: PIPELINE_NAMESPACE
