@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -15,11 +15,14 @@ package main
 
 import (
 	"context"
+	"crypto/rand"
 	"fmt"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
+	"github.com/gorilla/csrf"
 	routeclient "github.com/openshift/client-go/route/clientset/versioned"
 	"github.com/tektoncd/dashboard/pkg/controllers"
 	"github.com/tektoncd/dashboard/pkg/endpoints"
@@ -33,12 +36,36 @@ import (
 	"knative.dev/pkg/signals"
 )
 
+const csrfTokenLength = 32
+
 // Stores config env
 type config struct {
 	kubeConfigPath string
 	// Should conform with http.Server.Addr field
 	port             string
 	installNamespace string
+}
+
+func isCSRFSecureCookieEnabled() bool {
+	asBool, err := strconv.ParseBool(os.Getenv("CSRF_SECURE_COOKIE"))
+	if err == nil {
+		logging.Log.Infof("Is CSRF_SECURE_COOKIE enabled: %t", asBool)
+		return asBool
+	}
+	logging.Log.Warnf("Couldn't get CSRF_SECURE_COOKIE, defaulting to true: %s", err.Error())
+	return true
+}
+
+func getCSRFAuthKey() []byte {
+	logging.Log.Info("Generating CSRF auth key")
+	authKey := make([]byte, csrfTokenLength)
+	_, err := rand.Read(authKey)
+	if err == nil {
+		return authKey
+	}
+
+	logging.Log.Errorf("Couldn't generate random value for CSRF auth key: %s", err.Error())
+	return nil
 }
 
 func main() {
@@ -102,7 +129,14 @@ func main() {
 	controllers.StartKubeControllers(resource.K8sClient, resyncDur, dashboardConfig.installNamespace, routerHandler, ctx.Done())
 
 	logging.Log.Infof("Creating server and entering wait loop")
-	server := &http.Server{Addr: dashboardConfig.port, Handler: routerHandler}
+	CSRF := csrf.Protect(
+		getCSRFAuthKey(),
+		csrf.CookieName("token"),
+		csrf.Path("/"),
+		csrf.SameSite(csrf.SameSiteLaxMode),
+		csrf.Secure(isCSRFSecureCookieEnabled()),
+	)
+	server := &http.Server{Addr: dashboardConfig.port, Handler: CSRF(routerHandler)}
 
 	errCh := make(chan error, 1)
 	defer close(errCh)

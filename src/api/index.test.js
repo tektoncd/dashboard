@@ -14,6 +14,7 @@ limitations under the License.
 import fetchMock from 'fetch-mock';
 import * as comms from './comms';
 import * as index from '.';
+import { mockCSRFToken } from '../utils/test';
 
 describe('getAPIRoot', () => {
   it('handles base URL with trailing slash', () => {
@@ -199,6 +200,7 @@ it('getPipelineRun', () => {
 it('deletePipelineRun', () => {
   const name = 'foo';
   const data = { fake: 'pipelineRun' };
+  mockCSRFToken();
   fetchMock.delete(`end:${name}`, data);
   return index.deletePipelineRun({ name }).then(pipelineRun => {
     expect(pipelineRun).toEqual(data);
@@ -210,6 +212,7 @@ it('cancelPipelineRun', () => {
   const name = 'foo';
   const namespace = 'foospace';
   const data = { fake: 'pipelineRun', spec: { status: 'running' } };
+  mockCSRFToken();
   fetchMock.get(/pipelineruns/, Promise.resolve(data));
   const payload = {
     fake: 'pipelineRun',
@@ -228,6 +231,7 @@ it('cancelTaskRun', () => {
   const name = 'foo';
   const namespace = 'foospace';
   const data = { fake: 'taskRun', spec: { status: 'running' } };
+  mockCSRFToken();
   fetchMock.get(/taskruns/, Promise.resolve(data));
   const payload = {
     fake: 'taskRun',
@@ -399,6 +403,7 @@ it('createPipelineResource', () => {
     }
   };
   const data = { fake: 'data' };
+  mockCSRFToken();
   fetchMock.post('*', data);
   return index.createPipelineResource({ namespace, payload }).then(response => {
     expect(response).toEqual(data);
@@ -448,6 +453,7 @@ it('createPipelineRun', () => {
       timeout
     }
   };
+  mockCSRFToken();
   fetchMock.post('*', data);
   return index.createPipelineRun(payload).then(response => {
     expect(response).toEqual(data);
@@ -499,6 +505,7 @@ it('createCredential', () => {
   const type = 'type';
   const payload = { id, username, password, type };
   const data = { fake: 'data' };
+  mockCSRFToken();
   fetchMock.post('*', data);
   return index.createCredential(payload).then(response => {
     expect(response).toEqual(data);
@@ -516,6 +523,7 @@ it('updateCredential', () => {
   const type = 'type';
   const payload = { id, username, password, type };
   const data = { fake: 'data' };
+  mockCSRFToken();
   fetchMock.put('*', data);
   return index.updateCredential(payload).then(response => {
     expect(response).toEqual(data);
@@ -529,6 +537,7 @@ it('updateCredential', () => {
 it('deleteCredential', () => {
   const credentialId = 'fake credential id';
   const data = { fake: 'data' };
+  mockCSRFToken();
   fetchMock.delete('*', data);
   return index.deleteCredential(credentialId).then(response => {
     expect(response).toEqual(data);
@@ -590,6 +599,7 @@ it('getServiceAccounts returns the correct data', () => {
 it('patchServiceAccount', () => {
   const data = 'data';
   jest.spyOn(comms, 'patchAddSecret').mockImplementation(() => data);
+  mockCSRFToken();
   fetchMock.get(/serviceaccounts/, data);
   return index
     .patchServiceAccount('default', 'default', 'secret-name')
@@ -719,6 +729,7 @@ it('getEventListeners', () => {
 it('deletePipelineResource', () => {
   const name = 'foo';
   const data = { fake: 'pipelineResource' };
+  mockCSRFToken();
   fetchMock.delete(`end:${name}`, data);
   return index.deletePipelineResource({ name }).then(pipelineResource => {
     expect(pipelineResource).toEqual(data);
@@ -729,6 +740,7 @@ it('deletePipelineResource', () => {
 it('deleteTaskRun', () => {
   const name = 'foo';
   const data = { fake: 'taskRun' };
+  mockCSRFToken();
   fetchMock.delete(`end:${name}`, data);
   return index.deleteTaskRun({ name }).then(taskRun => {
     expect(taskRun).toEqual(data);
@@ -739,6 +751,7 @@ it('deleteTaskRun', () => {
 it('rerunPipelineRun', () => {
   const namespace = 'namespace';
   const data = { fake: 'pipelineRun' };
+  mockCSRFToken();
   fetchMock.post(`end:/rerun/`, data);
   return index
     .rerunPipelineRun(namespace, { fake: 'existingPipelineRun' })
@@ -750,6 +763,7 @@ it('rerunPipelineRun', () => {
 
 it('createTaskRun uses correct kubernetes information', () => {
   const data = { fake: 'createtaskrun' };
+  mockCSRFToken();
   fetchMock.post(/taskruns/, data);
   return index.createTaskRun({}).then(response => {
     expect(response).toEqual(data);
@@ -769,6 +783,7 @@ it('createTaskRun has correct metadata', () => {
   const namespace = 'fake-namespace';
   const taskName = 'fake-task';
   const labels = { app: 'fake-app' };
+  mockCSRFToken();
   fetchMock.post(/taskruns/, {});
   return index.createTaskRun({ namespace, taskName, labels }).then(() => {
     const sentMetadata = JSON.parse(fetchMock.lastOptions().body).metadata;
@@ -784,6 +799,7 @@ it('createTaskRun has correct metadata', () => {
 
 it('createTaskRun handles taskRef', () => {
   const taskName = 'fake-task';
+  mockCSRFToken();
   fetchMock.post(/taskruns/, {});
   return index.createTaskRun({ taskName }).then(() => {
     const sentSpec = JSON.parse(fetchMock.lastOptions().body).spec;
@@ -795,6 +811,7 @@ it('createTaskRun handles taskRef', () => {
 
 it('createTaskRun handles ClusterTask in taskRef', () => {
   const taskName = 'fake-task';
+  mockCSRFToken();
   fetchMock.post(/taskruns/, {});
   return index.createTaskRun({ taskName, kind: 'ClusterTask' }).then(() => {
     const sentSpec = JSON.parse(fetchMock.lastOptions().body).spec;
@@ -806,6 +823,7 @@ it('createTaskRun handles ClusterTask in taskRef', () => {
 it('createTaskRun handles parameters', () => {
   const taskName = 'fake-task';
   const params = { 'fake-param-name': 'fake-param-value' };
+  mockCSRFToken();
   fetchMock.post(/taskruns/, {});
   return index.createTaskRun({ taskName, params }).then(() => {
     const sentSpec = JSON.parse(fetchMock.lastOptions().body).spec;
@@ -823,6 +841,7 @@ it('createTaskRun handles resources', () => {
     inputs: { 'fake-task-input': 'fake-input-resource' },
     outputs: { 'fake-task-output': 'fake-output-resource' }
   };
+  mockCSRFToken();
   fetchMock.post(/taskruns/, {});
   return index.createTaskRun({ taskName, resources }).then(() => {
     const sentResources = JSON.parse(fetchMock.lastOptions().body).spec
@@ -842,6 +861,7 @@ it('createTaskRun handles resources', () => {
 it('createTaskRun handles serviceAccount', () => {
   const taskName = 'fake-task';
   const serviceAccount = 'fake-service-account';
+  mockCSRFToken();
   fetchMock.post(/taskruns/, {});
   return index.createTaskRun({ taskName, serviceAccount }).then(() => {
     const sentSpec = JSON.parse(fetchMock.lastOptions().body).spec;
@@ -853,6 +873,7 @@ it('createTaskRun handles serviceAccount', () => {
 it('createTaskRun handles timeout', () => {
   const taskName = 'fake-task';
   const timeout = 'fake-timeout';
+  mockCSRFToken();
   fetchMock.post(/taskruns/, {});
   return index.createTaskRun({ taskName, timeout }).then(() => {
     const sentSpec = JSON.parse(fetchMock.lastOptions().body).spec;
@@ -1022,6 +1043,7 @@ it('importResources', () => {
     }
   };
 
+  mockCSRFToken();
   fetchMock.post('*', data);
   return index.importResources(payload).then(response => {
     expect(response).toEqual(data);
