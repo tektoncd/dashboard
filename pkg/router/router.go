@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -79,6 +79,7 @@ func Register(resource endpoints.Resource) *Handler {
 	registerHealthProbe(resource, h.Container)
 	registerReadinessProbe(resource, h.Container)
 	registerKubeAPIProxy(resource, h.Container)
+	registerCSRFTokenEndpoint(resource, h.Container)
 	h.registerExtensions()
 	return h
 }
@@ -300,6 +301,14 @@ func registerPropertiesEndpoint(r endpoints.Resource, container *restful.Contain
 
 	wsDefaults.Route(wsDefaults.GET("/").To(r.GetProperties))
 	container.Add(wsDefaults)
+}
+
+func registerCSRFTokenEndpoint(r endpoints.Resource, container *restful.Container) {
+	ws := new(restful.WebService)
+	ws.Filter(restful.NoBrowserCacheFilter)
+	ws.Path("/v1/token").Produces("text/plain")
+	ws.Route(ws.GET("/").To(r.GetToken))
+	container.Add(ws)
 }
 
 // Extension is the back-end representation of an extension. A service is an

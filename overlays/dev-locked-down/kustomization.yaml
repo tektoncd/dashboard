@@ -9,3 +9,4 @@ images:
     newTag:
 patches:
   - ../readonly/readonly-deployment-patch.yaml
+  - ../dev/csrf-secure-cookie-patch.yaml

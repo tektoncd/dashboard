@@ -96,20 +96,12 @@
   version = "v0.4.0"
 
 [[projects]]
-  digest = "1:c79fb010be38a59d657c48c6ba1d003a8aa651fa56b579d959d74573b7dff8e1"
-  name = "github.com/gorilla/context"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "08b5f424b9271eedf6f9f0ce86cb9396ed337a42"
-  version = "v1.1.1"
-
-[[projects]]
-  digest = "1:75e22306b50b29e73503049cd4b1c24efa442fa2f67c58fae2ac3e98807356a5"
+  digest = "1:95f69b444fef3831474cae7338a63f62c58de90bc73e6b1542aa9a911e35de56"
   name = "github.com/gorilla/csrf"
   packages = ["."]
   pruneopts = "UT"
-  revision = "69581736821c33d85bbf378f42f6ad864dbd85de"
-  version = "v1.5"
+  revision = "79c60d0e4fcf1fbc9653c1cb13d28e82248cf43c"
+  version = "v1.7.0"
 
 [[projects]]
   digest = "1:e72d1ebb8d395cf9f346fd9cbc652e5ae222dd85e0ac842dc57f175abed6d195"
@@ -199,12 +191,12 @@
   revision = "f6563a70e19a12b2f240eaf4e716ef75baf7003e"
 
 [[projects]]
-  digest = "1:9e1d37b58d17113ec3cb5608ac0382313c5b59470b94ed97d0976e69c7022314"
+  digest = "1:cf31692c14422fa27c83a05292eb5cbe0fb2775972e8f1f8446a71549bd8980b"
   name = "github.com/pkg/errors"
   packages = ["."]
   pruneopts = "UT"
-  revision = "614d223910a179a466c1767a985424175c39b465"
-  version = "v0.9.1"
+  revision = "ba968bfe8b2f7e042a574c888954fccecfa385b4"
+  version = "v0.8.1"
 
 [[projects]]
   digest = "1:524b71991fc7d9246cc7dc2d9e0886ccb97648091c63e30eef619e6862c955dd"
