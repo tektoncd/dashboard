@@ -55,6 +55,10 @@ export function getAPI(type, { name = '', namespace } = {}, queryParams) {
   ].join('');
 }
 
+export function rerunCSRFAPI(name, namespace) {
+  return `${apiRoot}/c/v1/namespaces/${namespace}/${name}`;
+}
+
 export function getKubeAPI(
   type,
   { name = '', namespace, subResource } = {},
@@ -309,7 +313,9 @@ export function getPodLog({ container, name, namespace }) {
 }
 
 export function rerunPipelineRun(namespace, payload) {
-  const uri = getAPI('rerun', { namespace });
+  console.log(`namespace in rerun: ${namespace}`);
+  const uri = rerunCSRFAPI('rerun', namespace);
+  console.log(`using this uri for rerunning a pipelinerun: ${uri}`);
   return post(uri, payload);
 }
 

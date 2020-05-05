@@ -68,6 +68,7 @@ export function get(uri, headers) {
 }
 
 export function post(uri, body) {
+  console.log(`posting to ${uri}`);
   return request(uri, {
     method: 'post',
     headers: getHeaders(),

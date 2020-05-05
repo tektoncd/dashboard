@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-20 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -383,15 +383,59 @@ func getServicePort(svc *corev1.Service) string {
 	return strconv.Itoa(int(svc.Spec.Ports[0].Port))
 }
 
+func testRoute(response http.ResponseWriter, request *http.Request) {
+	response.WriteHeader(200)
+}
+
+func testPostRoute(response http.ResponseWriter, request *http.Request) {
+	response.WriteHeader(200)
+}
+
 // InitRouter sets up the endpoints (with CSRF protection using gorilla/csrf)
 // Use this for routes that can modify the system, e.g. POSTs, PUTs, DELETEs
 func InitRouter(r endpoints.Resource) *mux.Router {
 	router := mux.NewRouter()
 	// Todo add the CSRF protection once I test everything works
-	router.HandleFunc("/{namespace}/rerun", r.RerunPipelineRun).Methods("POST")
-	router.HandleFunc("/proxy/{subpath:*}", r.CSRFProxyRequest).Methods("POST")
-	router.HandleFunc("/proxy/{subpath:*}", r.CSRFProxyRequest).Methods("PUT")
-	router.HandleFunc("/proxy/{subpath:*}", r.CSRFProxyRequest).Methods("DELETE")
-	router.HandleFunc("/proxy/{subpath:*}", r.CSRFProxyRequest).Methods("PATCH")
+	// Todo rerunPipelineRun not testPostRoute
+	// With this we can POST to localhost:9097/c/v1/namespaces/bar/rerun fine with Postman
+	// But we still get 404s in the UI
+	router.HandleFunc("/c/v1/namespaces/{namespace}/rerun", testPostRoute).Methods("POST")
+
+	logging.Log.Debug("PRINTING ROUTES")
+	err := router.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
+		pathTemplate, err := route.GetPathTemplate()
+		if err == nil {
+			fmt.Println("ROUTE:", pathTemplate)
+		}
+		pathRegexp, err := route.GetPathRegexp()
+		if err == nil {
+			fmt.Println("Path regexp:", pathRegexp)
+		}
+		queriesTemplates, err := route.GetQueriesTemplates()
+		if err == nil {
+			fmt.Println("Queries templates:", strings.Join(queriesTemplates, ","))
+		}
+		queriesRegexps, err := route.GetQueriesRegexp()
+		if err == nil {
+			fmt.Println("Queries regexps:", strings.Join(queriesRegexps, ","))
+		}
+		methods, err := route.GetMethods()
+		if err == nil {
+			fmt.Println("Methods:", strings.Join(methods, ","))
+		}
+		fmt.Println()
+		return nil
+	})
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	/*
+		router.HandleFunc("/v1/namespaces/{namespace}/proxy/{subpath:*}", r.CSRFProxyRequest).Methods("POST")
+		router.HandleFunc("/v1/namespaces/{namespace}/proxy/{subpath:*}", r.CSRFProxyRequest).Methods("PUT")
+		router.HandleFunc("/v1/namespaces/{namespace}/proxy/{subpath:*}", r.CSRFProxyRequest).Methods("DELETE")
+		router.HandleFunc("/v1/namespaces/{namespace}/proxy/{subpath:*}", r.CSRFProxyRequest).Methods("PATCH")
+	*/
 	return router
 }

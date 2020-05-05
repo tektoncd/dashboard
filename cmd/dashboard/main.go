@@ -105,17 +105,14 @@ func main() {
 
 	sm := http.NewServeMux()
 	muxRouter := router.InitRouter(resource)
-	logging.Log.Debug(muxRouter)
-
 	// TODO fix errors on loading pages
 	// TODO route requests to correct router
 	// TODO implement gorilla/csrf on top of gorilla/mux routes
 	// TODO uncomment
 	// TODO add tests
 	// TODO rejoice
-	//sm.Handle("/csrf", muxRouter)
 	sm.Handle("/", routerHandler)
-
+	sm.Handle("/c/", muxRouter)
 	server := &http.Server{
 		Addr:    dashboardConfig.port,
 		Handler: sm,
