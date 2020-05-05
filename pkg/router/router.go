@@ -224,6 +224,7 @@ func registerWeb(container *restful.Container) {
 			w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
 		}
 		w.Header().Set("X-Frame-Options", "deny")
+		w.Header().Set("X-Content-Type-Options", "nosniff")
 		fs.ServeHTTP(w, r)
 	}))
 }
