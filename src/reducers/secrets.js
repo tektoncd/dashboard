@@ -52,7 +52,9 @@ function byNamespace(state = {}, action) {
     case 'SecretDeleted':
       const newState = { ...state };
       const { name, namespace } = action.payload.metadata;
-      delete newState[namespace][name];
+      if (newState[namespace]) {
+        delete newState[namespace][name];
+      }
       return newState;
     default:
       return state;
