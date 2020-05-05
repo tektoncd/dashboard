@@ -1,5 +1,6 @@
 {
   "API_DOMAIN": "http://localhost:9097",
+  "CSRF_DOMAIN": "http://localhost:9097/c/",
   "PORT": "8000",
   "locales": {
     "default": "en",

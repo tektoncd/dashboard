@@ -13,7 +13,7 @@ limitations under the License.
 const merge = require('webpack-merge');
 
 const common = require('./webpack.common.js');
-const { API_DOMAIN, PORT } = require('./config_frontend/config.json');
+const { API_DOMAIN, CSRF_DOMAIN, PORT } = require('./config_frontend/config.json');
 
 const extensionConfig = {
   '/v1/extensions': {
@@ -38,12 +38,16 @@ module.exports = merge(common({ mode }), {
     port: process.env.PORT || PORT,
     proxy: {
       ...(process.env.EXTENSIONS_LOCAL_DEV ? extensionConfig : {}),
+      '/c/v1': {
+        target: process.env.API_DOMAIN || API_DOMAIN,
+        ws: true
+      },
       '/v1': {
         target: process.env.API_DOMAIN || API_DOMAIN,
         ws: true
       },
       '/proxy': {
-        target: process.env.API_DOMAIN || API_DOMAIN,
+        target: process.env.API_DOMAIN || API_DOMAIN || CSRF_DOMAIN,
         ws: true
       }
     },
