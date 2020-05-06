@@ -16,50 +16,20 @@ package tekton
 import (
 	"github.com/tektoncd/dashboard/pkg/broadcaster"
 	"github.com/tektoncd/dashboard/pkg/controllers/utils"
-	"github.com/tektoncd/dashboard/pkg/endpoints"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
-	v1alpha1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
 	tektoninformer "github.com/tektoncd/pipeline/pkg/client/informers/externalversions"
-	"k8s.io/client-go/tools/cache"
 )
 
 // NewClusterTaskController registers a Tekton controller/informer for cluster
 // tasks on the sharedTektonInformerFactory
 func NewClusterTaskController(sharedTektonInformerFactory tektoninformer.SharedInformerFactory) {
 	logging.Log.Debug("In NewClusterTaskController")
-	taskInformer := sharedTektonInformerFactory.Tekton().V1alpha1().ClusterTasks().Informer()
-	taskInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc:    clusterTaskCreated,
-		UpdateFunc: clusterTaskUpdated,
-		DeleteFunc: clusterTaskDeleted,
-	})
-}
 
-func clusterTaskCreated(obj interface{}) {
-	logging.Log.Debugf("Cluster Task Controller detected clusterTask '%s' created", obj.(*v1alpha1.ClusterTask).Name)
-	data := broadcaster.SocketData{
-		MessageType: broadcaster.ClusterTaskCreated,
-		Payload:     obj,
-	}
-	endpoints.ResourcesChannel <- data
-}
-
-func clusterTaskUpdated(oldObj, newObj interface{}) {
-	if newObj.(*v1alpha1.ClusterTask).GetResourceVersion() != oldObj.(*v1alpha1.ClusterTask).GetResourceVersion() {
-		logging.Log.Debugf("Cluster Task Controller detected clusterTask '%s' updated", oldObj.(*v1alpha1.ClusterTask).Name)
-		data := broadcaster.SocketData{
-			MessageType: broadcaster.ClusterTaskUpdated,
-			Payload:     newObj,
-		}
-		endpoints.ResourcesChannel <- data
-	}
-}
-
-func clusterTaskDeleted(obj interface{}) {
-	logging.Log.Debugf("Cluster Task Controller detected clusterTask '%s' deleted", utils.GetDeletedObjectMeta(obj).GetName())
-	data := broadcaster.SocketData{
-		MessageType: broadcaster.ClusterTaskDeleted,
-		Payload:     obj,
-	}
-	endpoints.ResourcesChannel <- data
+	utils.NewController(
+		"cluster task",
+		sharedTektonInformerFactory.Tekton().V1alpha1().ClusterTasks().Informer(),
+		broadcaster.ClusterTaskCreated,
+		broadcaster.ClusterTaskUpdated,
+		broadcaster.ClusterTaskDeleted,
+	)
 }
