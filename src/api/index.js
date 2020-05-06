@@ -434,10 +434,10 @@ export function getLogoutURL() {
   return getInstallProperties().then(data => data.LogoutURL);
 }
 
-export async function determineInstallNamespace() {
+export async function determineDashboardNamespace() {
   const response = getInstallProperties()
     .then(installProps => {
-      return installProps.InstallNamespace;
+      return installProps.DashboardNamespace;
     })
     .catch(error => {
       throw error;

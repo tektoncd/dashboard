@@ -259,16 +259,21 @@ __Dashboard Properties__
 ```
 GET /v1/properties
 Get the properties of the tekton-dashboard which includes the:
-- Installation namespace
+- Tekton Dashboard namespace
 - Tekton Dashboard version
+- Tekton Pipelines namespace
 - Tekton Pipelines version
+- Tekton Triggers namespace
+- Tekton Triggers version
 
 Example payload response is formatted as so:
 
 {
- "InstallNamespace": "tekton-pipelines",
+ "DashboardNamespace": "tekton-pipelines",
  "DashboardVersion": "devel",
+ "PipelineNamespace": "tekton-pipelines",
  "PipelineVersion": "v0.10.0",
+ "TriggersNamespace": "tekton-pipelines",
  "TriggersVersion": "v0.3.1",
  "IsOpenShift": false,
  "ReadOnly": true

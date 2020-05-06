@@ -30,22 +30,20 @@ import (
 
 // Properties : properties we want to be able to retrieve via REST
 type Properties struct {
-	InstallNamespace string `json:"InstallNamespace"`
-	DashboardVersion string `json:"DashboardVersion"`
-	PipelineVersion  string `json:"PipelineVersion"`
-	TriggersVersion  string `json:"TriggersVersion,omitempty"`
-	IsOpenShift      bool   `json:"IsOpenShift"`
-	ReadOnly         bool   `json:"ReadOnly"`
-	LogoutURL        string `json:"LogoutURL,omitempty"`
+	DashboardNamespace string `json:"DashboardNamespace"`
+	DashboardVersion   string `json:"DashboardVersion"`
+	PipelineNamespace  string `json:"PipelineNamespace"`
+	PipelineVersion    string `json:"PipelineVersion"`
+	TriggersNamespace  string `json:"TriggersNamespace,omitempty"`
+	TriggersVersion    string `json:"TriggersVersion,omitempty"`
+	IsOpenShift        bool   `json:"IsOpenShift"`
+	ReadOnly           bool   `json:"ReadOnly"`
+	LogoutURL          string `json:"LogoutURL,omitempty"`
 }
 
 const (
 	tektonDashboardIngressName string = "tekton-dashboard"
 	tektonDashboardRouteName   string = "tekton-dashboard"
-	defaultTriggersNamespace   string = "tekton-pipelines"
-	defaultPipelineNamespace   string = "tekton-pipelines"
-	triggersNamespaceEnvVar    string = "TRIGGERS_NAMESPACE"
-	pipelineNamespaceEnvVar    string = "PIPELINE_NAMESPACE"
 )
 
 // ProxyRequest does as the name suggests: proxies requests and logs what's going on
@@ -168,42 +166,23 @@ func (r Resource) GetEndpoints(request *restful.Request, response *restful.Respo
 	}
 }
 
-// getTriggersNamespace returns the namespace where Tekton Tiggers is installed.
-func getTriggersNamespace() string {
-	if e := os.Getenv(triggersNamespaceEnvVar); e != "" {
-		return e
-	}
-	return defaultTriggersNamespace
-}
-
-// getPipelineNamespace returns the namespace where Tekton Pipelines is installed.
-func getPipelineNamespace() string {
-	if e := os.Getenv(pipelineNamespaceEnvVar); e != "" {
-		return e
-	}
-	return defaultPipelineNamespace
-}
-
 // GetProperties is used to get the installed namespace for the Dashboard,
 // the version of the Tekton Dashboard, the version of Tekton Pipelines, whether or not one's
 // running on OpenShift, when one's in read-only mode and Tekton Triggers version (if Installed)
 func (r Resource) GetProperties(request *restful.Request, response *restful.Response) {
 	installedNamespace := os.Getenv("INSTALLED_NAMESPACE")
-	triggersNamespace := getTriggersNamespace()
-	pipelineNamespace := getPipelineNamespace()
-
 	dashboardVersion := GetDashboardVersion(r, installedNamespace)
 	isOpenShift := IsOpenShift(r, installedNamespace)
 	isReadOnly := IsReadOnly()
-	pipelineVersion := GetPipelineVersion(r, pipelineNamespace, isOpenShift)
-	isTriggersInstalled := IsTriggersInstalled(r, triggersNamespace, isOpenShift)
+	pipelineNamespace, pipelineVersion := GetPipelineNamespaceAndVersion(r, isOpenShift)
 
 	properties := Properties{
-		InstallNamespace: installedNamespace,
-		DashboardVersion: dashboardVersion,
-		PipelineVersion:  pipelineVersion,
-		IsOpenShift:      isOpenShift,
-		ReadOnly:         isReadOnly,
+		DashboardNamespace: installedNamespace,
+		DashboardVersion:   dashboardVersion,
+		PipelineNamespace:  pipelineNamespace,
+		PipelineVersion:    pipelineVersion,
+		IsOpenShift:        isOpenShift,
+		ReadOnly:           isReadOnly,
 	}
 
 	// If running on OpenShift, set the logout url
@@ -211,8 +190,11 @@ func (r Resource) GetProperties(request *restful.Request, response *restful.Resp
 		properties.LogoutURL = "/oauth/sign_out"
 	}
 
+	isTriggersInstalled := IsTriggersInstalled(r, isOpenShift)
+
 	if isTriggersInstalled {
-		triggersVersion := GetTriggersVersion(r, triggersNamespace, isOpenShift)
+		triggersNamespace, triggersVersion := GetTriggersVersion(r, isOpenShift)
+		properties.TriggersNamespace = triggersNamespace
 		properties.TriggersVersion = triggersVersion
 	}
 

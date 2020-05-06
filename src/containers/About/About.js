@@ -25,14 +25,26 @@ const initialState = {
   loading: true
 };
 
-const propertiesToCheck = [
-  { property: 'InstallNamespace', required: true },
-  { property: 'DashboardVersion', required: true },
-  { property: 'PipelineVersion', required: true },
-  { property: 'TriggersVersion' },
+const dashboardPropertiesToCheck = [
+  { property: 'DashboardNamespace', required: true, display: 'Namespace' },
+  { property: 'DashboardVersion', required: true, display: 'Version' },
   { property: 'IsOpenShift' },
   { property: 'ReadOnly' }
 ];
+
+const pipelinesPropertiesToCheck = [
+  { property: 'PipelineNamespace', required: true, display: 'Namespace' },
+  { property: 'PipelineVersion', required: true, display: 'Version' }
+];
+
+const triggersPropertiesToCheck = [
+  { property: 'TriggersNamespace', display: 'Namespace' },
+  { property: 'TriggersVersion', display: 'Version' }
+];
+
+const propertiesToCheck = dashboardPropertiesToCheck
+  .concat(pipelinesPropertiesToCheck)
+  .concat(triggersPropertiesToCheck);
 
 export /* istanbul ignore next */ class About extends Component {
   state = initialState;
@@ -104,6 +116,7 @@ export /* istanbul ignore next */ class About extends Component {
   render() {
     const { intl } = this.props;
     const { dashboardInfo, error, loading } = this.state;
+
     const headers = [
       {
         key: 'property',
@@ -121,19 +134,22 @@ export /* istanbul ignore next */ class About extends Component {
       }
     ];
 
-    const rows = [];
-    if (dashboardInfo && !loading) {
-      propertiesToCheck.forEach(({ property }) => {
-        const value = this.getDisplayValue(dashboardInfo[property]);
-        if (value) {
-          rows.push({
-            id: property,
-            property,
-            value
-          });
-        }
-      });
-    }
+    const filteredRows = propsToCheck => {
+      const rows = [];
+      if (dashboardInfo && !loading) {
+        propsToCheck.forEach(({ property, display }) => {
+          const value = this.getDisplayValue(dashboardInfo[property]);
+          if (value) {
+            rows.push({
+              id: property,
+              property: display || property,
+              value
+            });
+          }
+        });
+      }
+      return rows;
+    };
 
     return (
       <>
@@ -154,7 +170,34 @@ export /* istanbul ignore next */ class About extends Component {
             defaultMessage: 'About'
           })}
         </h1>
-        <Table headers={headers} rows={rows} loading={loading} />
+        <div data-testid="dashboard-table">
+          <Table
+            title="Dashboard"
+            headers={headers}
+            rows={filteredRows(dashboardPropertiesToCheck)}
+            loading={loading}
+          />
+        </div>
+        <div data-testid="pipelines-table">
+          <Table
+            title="Pipelines"
+            headers={headers}
+            rows={filteredRows(pipelinesPropertiesToCheck)}
+            loading={loading}
+          />
+        </div>
+        {dashboardInfo &&
+          dashboardInfo.TriggersNamespace &&
+          dashboardInfo.TriggersVersion && (
+            <div data-testid="triggers-table">
+              <Table
+                title="Triggers"
+                headers={headers}
+                rows={filteredRows(triggersPropertiesToCheck)}
+                loading={loading}
+              />
+            </div>
+          )}
       </>
     );
   }

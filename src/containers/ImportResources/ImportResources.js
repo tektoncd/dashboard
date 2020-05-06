@@ -35,14 +35,14 @@ import {
 } from '@tektoncd/dashboard-utils';
 import { getGitValues } from '../../utils';
 
-import { determineInstallNamespace, importResources } from '../../api';
+import { determineDashboardNamespace, importResources } from '../../api';
 import { getSelectedNamespace } from '../../reducers';
 import { NamespacesDropdown, ServiceAccountsDropdown } from '..';
 
 import './ImportResources.scss';
 
-async function getInstallNamespace() {
-  return determineInstallNamespace();
+async function getDashboardNamespace() {
+  return determineDashboardNamespace();
 }
 
 function validateURL(url) {
@@ -91,7 +91,7 @@ export class ImportResources extends Component {
         defaultMessage: 'Import resources'
       })
     });
-    getInstallNamespace()
+    getDashboardNamespace()
       .then(foundImporterNamespace => {
         this.setState({
           importerNamespace: foundImporterNamespace
