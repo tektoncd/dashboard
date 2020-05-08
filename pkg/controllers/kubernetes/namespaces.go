@@ -18,5 +18,6 @@ func NewNamespaceController(sharedK8sInformerFactory k8sinformer.SharedInformerF
 		broadcaster.NamespaceCreated,
 		broadcaster.NamespaceUpdated,
 		broadcaster.NamespaceDeleted,
+		nil,
 	)
 }

@@ -31,5 +31,6 @@ func NewServiceAccountController(sharedK8sInformerFactory k8sinformer.SharedInfo
 		broadcaster.ServiceAccountCreated,
 		broadcaster.ServiceAccountUpdated,
 		broadcaster.ServiceAccountDeleted,
+		nil,
 	)
 }
