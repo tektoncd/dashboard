@@ -18,5 +18,6 @@ func NewTaskRunController(sharedTektonInformerFactory tektoninformer.SharedInfor
 		broadcaster.TaskRunCreated,
 		broadcaster.TaskRunUpdated,
 		broadcaster.TaskRunDeleted,
+		nil,
 	)
 }

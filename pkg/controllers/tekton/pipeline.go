@@ -18,5 +18,6 @@ func NewPipelineController(sharedTektonInformerFactory tektoninformer.SharedInfo
 		broadcaster.PipelineCreated,
 		broadcaster.PipelineUpdated,
 		broadcaster.PipelineDeleted,
+		nil,
 	)
 }

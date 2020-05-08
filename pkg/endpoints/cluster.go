@@ -18,6 +18,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -25,7 +26,9 @@ import (
 	"github.com/gorilla/csrf"
 	"github.com/tektoncd/dashboard/pkg/logging"
 	"github.com/tektoncd/dashboard/pkg/utils"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/rest"
 )
 
 // Properties : properties we want to be able to retrieve via REST
@@ -47,6 +50,8 @@ const (
 	pipelineNamespaceEnvVar    string = "PIPELINE_NAMESPACE"
 )
 
+var secretsURIPattern *regexp.Regexp = regexp.MustCompile("/secrets[?/]")
+
 // ProxyRequest does as the name suggests: proxies requests and logs what's going on
 func (r Resource) ProxyRequest(request *restful.Request, response *restful.Response) {
 	parsedURL, err := url.Parse(request.Request.URL.String())
@@ -60,31 +65,14 @@ func (r Resource) ProxyRequest(request *restful.Request, response *restful.Respo
 	forwardRequest.SetHeader("Content-Type", request.HeaderParameter("Content-Type"))
 	forwardResponse := forwardRequest.Do()
 
+	if secretsURIPattern.Match([]byte(uri)) {
+		handleSecretsResponse(response, forwardResponse)
+		return
+	}
+
 	responseBody, requestError := forwardResponse.Raw()
 	if requestError != nil {
-		errorInfo := string(responseBody)
-		errorInfo = strings.Replace(errorInfo, "\"", "", -1)
-		errorInfo = strings.Replace(errorInfo, "\\", "", -1)
-		errorInfo = strings.Replace(errorInfo, "\n", "", -1)
-		// Checks if an error code can be found in the response
-		if strings.LastIndex(errorInfo, "code:") != -1 {
-			errorCodeString := strings.LastIndex(errorInfo, "code:")
-			// Checks if the code is 3-digits long
-			if len(errorInfo[errorCodeString+5:errorCodeString+8]) == 3 {
-				errorCode := errorInfo[errorCodeString+5 : errorCodeString+8]
-				errorCodeFormatted, err := strconv.Atoi(errorCode)
-				// Checks if the code can be converted to an integer without error
-				if err != nil {
-					utils.RespondError(response, requestError, http.StatusInternalServerError)
-					return
-				}
-				utils.RespondError(response, errors.New(errorInfo), errorCodeFormatted)
-				return
-			}
-			utils.RespondError(response, requestError, http.StatusInternalServerError)
-			return
-		}
-		utils.RespondError(response, requestError, http.StatusInternalServerError)
+		handleRequestError(response, responseBody, requestError)
 		return
 	}
 	response.Header().Add("Content-Type", utils.GetContentType(responseBody))
@@ -211,4 +199,65 @@ func (r Resource) GetProperties(request *restful.Request, response *restful.Resp
 func (r Resource) GetToken(request *restful.Request, response *restful.Response) {
 	response.Header().Add("X-CSRF-Token", csrf.Token(request.Request))
 	response.Write([]byte("OK"))
+}
+
+func handleRequestError(response *restful.Response, responseBody []byte, requestError error) {
+	errorInfo := string(responseBody)
+	errorInfo = strings.Replace(errorInfo, "\"", "", -1)
+	errorInfo = strings.Replace(errorInfo, "\\", "", -1)
+	errorInfo = strings.Replace(errorInfo, "\n", "", -1)
+	// Checks if an error code can be found in the response
+	if strings.LastIndex(errorInfo, "code:") != -1 {
+		errorCodeString := strings.LastIndex(errorInfo, "code:")
+		// Checks if the code is 3-digits long
+		if len(errorInfo[errorCodeString+5:errorCodeString+8]) == 3 {
+			errorCode := errorInfo[errorCodeString+5 : errorCodeString+8]
+			errorCodeFormatted, err := strconv.Atoi(errorCode)
+			// Checks if the code can be converted to an integer without error
+			if err != nil {
+				utils.RespondError(response, requestError, http.StatusInternalServerError)
+				return
+			}
+			utils.RespondError(response, errors.New(errorInfo), errorCodeFormatted)
+			return
+		}
+		utils.RespondError(response, requestError, http.StatusInternalServerError)
+		return
+	}
+	utils.RespondError(response, requestError, http.StatusInternalServerError)
+}
+
+func handleSecretsResponse(response *restful.Response, forwardResponse rest.Result) {
+	responseBody, requestError := forwardResponse.Get()
+	if requestError != nil {
+		responseBodyRaw, requestError := forwardResponse.Raw()
+		handleRequestError(response, responseBodyRaw, requestError)
+		return
+	}
+
+	var responseObject interface{}
+
+	list, _ := responseBody.(*corev1.SecretList)
+	if list != nil {
+		logging.Log.Debug("Processing SecretList response")
+		secrets := make([]corev1.Secret, 0, len(list.Items))
+		for _, secret := range list.Items {
+			secrets = append(secrets, utils.SanitizeSecret(&secret, true).(corev1.Secret))
+		}
+		list.Items = secrets
+		responseObject = list
+	} else {
+		secret, _ := responseBody.(*corev1.Secret)
+		if secret != nil {
+			logging.Log.Debug("Processing Secret response")
+			responseObject = utils.SanitizeSecret(secret, true).(corev1.Secret)
+		} else {
+			responseObject = responseBody.(*metav1.Status)
+		}
+	}
+
+	var statusCode *int = new(int)
+	forwardResponse.StatusCode(statusCode)
+	response.Header().Add("Content-Type", restful.MIME_JSON)
+	response.WriteHeaderAndEntity(*statusCode, responseObject)
 }

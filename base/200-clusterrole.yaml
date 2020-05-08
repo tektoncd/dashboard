@@ -27,7 +27,7 @@ rules:
     resources: ["pods/log", "namespaces", "events"]
     verbs: ["get", "list", "watch"]
   - apiGroups: [""]
-    resources: ["secrets", "configmaps"]
+    resources: ["configmaps"]
     verbs: ["get", "list", "watch"]
   - apiGroups: ["extensions", "apps"]
     resources: ["deployments"]

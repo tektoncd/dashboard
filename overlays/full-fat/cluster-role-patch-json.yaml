@@ -28,7 +28,6 @@
     apiGroups:
       - ""
     resources:
-      - secrets
       - configmaps
     verbs:
       - create
@@ -122,3 +121,17 @@
       - delete
       - patch
       - add
+- op: add
+  path: /rules/9
+  value:
+    apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - delete
