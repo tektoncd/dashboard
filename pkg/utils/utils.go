@@ -20,6 +20,11 @@ import (
 
 	restful "github.com/emicklei/go-restful"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
+
+	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/meta"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/tools/cache"
 )
 
 // RespondError - logs and writes an error response with a desired status code
@@ -68,4 +73,57 @@ func GetContentType(content []byte) string {
 		return "application/json"
 	}
 	return "text/plain"
+}
+
+// Adapted from https://github.com/kubernetes-sigs/controller-runtime/blob/v0.5.2/pkg/source/internal/eventsource.go#L131-L149
+func GetDeletedObjectMeta(obj interface{}) metav1.Object {
+	// Deal with tombstone events by pulling the object out.  Tombstone events wrap the object in a
+	// DeleteFinalStateUnknown struct, so the object needs to be pulled out.
+	// Copied from sample-controller
+	// This should only happen when we're missing events.
+	if _, ok := obj.(metav1.Object); !ok {
+		// If the object doesn't have Metadata, assume it is a tombstone object of type DeletedFinalStateUnknown
+		if tombstone, ok := obj.(cache.DeletedFinalStateUnknown); !ok {
+			logging.Log.Errorf("Error decoding object: Expected cache.DeletedFinalStateUnknown, got %T", obj)
+			return &metav1.ObjectMeta{}
+		} else {
+			// Set obj to the tombstone obj
+			obj = tombstone.Obj
+		}
+	}
+
+	// Pull metav1.Object out of the object
+	if o, err := meta.Accessor(obj); err != nil {
+		logging.Log.Errorf("Missing meta for object %T: %v", obj, err)
+		return &metav1.ObjectMeta{}
+	} else {
+		return o
+	}
+}
+
+func SanitizeSecret(obj interface{}, skipDeletedCheck bool) interface{} {
+	if !skipDeletedCheck {
+		obj = GetDeletedObjectMeta(obj)
+	}
+
+	secret, ok := obj.(*corev1.Secret)
+	if !ok {
+		return obj
+	}
+
+	logging.Log.Debug("Sanitizing Secret")
+	data := make(map[string][]byte)
+	if secret.Data["username"] != nil {
+		data["username"] = secret.Data["username"]
+	}
+	if secret.Data["accessToken"] != nil {
+		data["accessToken"] = []byte("--- REDACTED ---")
+	}
+	return corev1.Secret{
+		secret.TypeMeta,
+		secret.ObjectMeta,
+		data,
+		nil, // StringData, never returned over API
+		secret.Type,
+	}
 }
