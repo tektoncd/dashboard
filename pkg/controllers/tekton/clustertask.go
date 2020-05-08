@@ -31,5 +31,6 @@ func NewClusterTaskController(sharedTektonInformerFactory tektoninformer.SharedI
 		broadcaster.ClusterTaskCreated,
 		broadcaster.ClusterTaskUpdated,
 		broadcaster.ClusterTaskDeleted,
+		nil,
 	)
 }

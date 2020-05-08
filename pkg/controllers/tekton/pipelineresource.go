@@ -18,5 +18,6 @@ func NewPipelineResourceController(sharedTektonInformerFactory tektonresourceinf
 		broadcaster.PipelineResourceCreated,
 		broadcaster.PipelineResourceUpdated,
 		broadcaster.PipelineResourceDeleted,
+		nil,
 	)
 }

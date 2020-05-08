@@ -18,5 +18,6 @@ func NewPipelineRunController(sharedTektonInformerFactory tektoninformer.SharedI
 		broadcaster.PipelineRunCreated,
 		broadcaster.PipelineRunUpdated,
 		broadcaster.PipelineRunDeleted,
+		nil,
 	)
 }
