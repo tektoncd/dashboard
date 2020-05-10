@@ -6,9 +6,28 @@ resources:
 patches:
   - ../openshift-patches/dashboard-service.yaml
   - ../openshift-patches/serviceaccount.yaml
-  - ../openshift-patches/oauth-proxy-in-deployment.yaml
-  - ../readonly/readonly-deployment-patch.yaml
-  - ../dev/csrf-secure-cookie-patch.yaml
+patchesJson6902:
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: tekton-dashboard
+      namespace: tekton-pipelines
+    path: ../readonly/readonly-deployment-patch.yaml
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: tekton-dashboard
+      namespace: tekton-pipelines
+    path: ../dev/csrf-secure-cookie-patch.yaml
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: tekton-dashboard
+      namespace: tekton-pipelines
+    path: ../openshift-patches/oauth-proxy-in-deployment.yaml
 images:
   - name: dashboardImage
     newName: github.com/tektoncd/dashboard/cmd/dashboard

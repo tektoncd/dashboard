@@ -14,8 +14,6 @@ limitations under the License.
 package endpoints
 
 import (
-	"os"
-	"strconv"
 	"strings"
 
 	"github.com/tektoncd/dashboard/pkg/logging"
@@ -53,17 +51,6 @@ func GetDashboardVersion(r Resource, installedNamespace string) string {
 		return ""
 	}
 	return version
-}
-
-// IsReadOnly determines whether the Dashboard is running in read-only mode or not
-func IsReadOnly() bool {
-	asBool, err := strconv.ParseBool(os.Getenv("READ_ONLY"))
-	if err == nil {
-		logging.Log.Infof("Dashboard is in read-only mode: %t", asBool)
-		return asBool
-	}
-	logging.Log.Warnf("Couldn't determine if the Dashboard is in read-only mode or not, assuming not")
-	return false
 }
 
 // IsOpenShift determines whether the Dashboard is running on OpenShift or not
@@ -203,7 +190,7 @@ func getDeployments(r Resource, thingSearchingFor string) (string, string) {
 }
 
 // Get triggers version
-func GetTriggersVersion(r Resource, isOpenShift bool) (string, string) {
+func GetTriggersNamespaceAndVersion(r Resource, isOpenShift bool) (string, string) {
 	namespace, version := getDeployments(r, "triggers")
 
 	if version == "" {

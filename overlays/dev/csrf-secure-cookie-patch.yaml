@@ -1,14 +1,5 @@
 ---
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: tekton-dashboard
-  namespace: tekton-pipelines
-spec:
-  template:
-    spec:
-      containers:
-        - name: tekton-dashboard
-          env:
-            - name: CSRF_SECURE_COOKIE
-              value: "false"
+- op: add
+  path: /spec/template/spec/containers/0/args/-
+  value:
+    --csrf-secure-cookie=false
