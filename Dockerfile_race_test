@@ -19,7 +19,6 @@ RUN curl -fsSL -o /usr/local/bin/dep https://github.com/golang/dep/releases/down
 WORKDIR /go/src/github.com/tektoncd/dashboard
 COPY . .
 RUN dep ensure -vendor-only
-ENV WEB_RESOURCES_DIR=/go/src/github.com/tektoncd/dashboard/testdata/web/
 
 # CGO_ENABLED=1 is needed for -race on go test
 RUN CGO_ENABLED=1 NAMESPACE=default GOOS=linux go test -race -v ./...

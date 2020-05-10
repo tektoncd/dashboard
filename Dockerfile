@@ -32,7 +32,7 @@ RUN addgroup -g 1000 kgroup && \
 USER 1000
 
 WORKDIR /go/src/github.com/tektoncd/dashboard
-ENV WEB_RESOURCES_DIR=./web
+
 COPY --from=nodeBuilder /go/src/github.com/tektoncd/dashboard/dist ./web
 COPY --from=goBuilder /go/src/github.com/tektoncd/dashboard/tekton_dashboard_backend .
 

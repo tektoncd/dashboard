@@ -16,10 +16,10 @@ package main
 import (
 	"context"
 	"crypto/rand"
+	"flag"
 	"fmt"
 	"net/http"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/gorilla/csrf"
@@ -38,22 +38,21 @@ import (
 
 const csrfTokenLength = 32
 
+var (
+	help             = flag.Bool("help", false, "Prints defaults")
+	kubeConfigPath   = flag.String("kube-config", "", "Path to kube config file")
+	portNumber       = flag.Int("port", 8080, "Dashboard port number")
+	readOnly         = flag.Bool("read-only", false, "Enable or disable read only mode")
+	webDir           = flag.String("web-dir", "", "Dashboard web resources dir")
+	csrfSecureCookie = flag.Bool("csrf-secure-cookie", true, "Enable or disable Secure attribute on the CSRF cookie")
+)
+
 // Stores config env
 type config struct {
 	kubeConfigPath string
 	// Should conform with http.Server.Addr field
 	port             string
 	installNamespace string
-}
-
-func isCSRFSecureCookieEnabled() bool {
-	asBool, err := strconv.ParseBool(os.Getenv("CSRF_SECURE_COOKIE"))
-	if err == nil {
-		logging.Log.Infof("Is CSRF_SECURE_COOKIE enabled: %t", asBool)
-		return asBool
-	}
-	logging.Log.Warnf("Couldn't get CSRF_SECURE_COOKIE, defaulting to true: %s", err.Error())
-	return true
 }
 
 func getCSRFAuthKey() []byte {
@@ -69,16 +68,20 @@ func getCSRFAuthKey() []byte {
 }
 
 func main() {
+	flag.Parse()
+
+	installNamespace := os.Getenv("INSTALLED_NAMESPACE")
+
+	if *help {
+		flag.PrintDefaults()
+		return
+	}
+
 	// Initialize config
 	dashboardConfig := config{
-		kubeConfigPath:   os.Getenv("KUBECONFIG"),
-		port:             ":8080",
-		installNamespace: os.Getenv("INSTALLED_NAMESPACE"),
-	}
-	portNumber := os.Getenv("PORT")
-	if portNumber != "" {
-		dashboardConfig.port = ":" + portNumber
-		logging.Log.Infof("Port number from config: %s", portNumber)
+		kubeConfigPath:   *kubeConfigPath,
+		port:             fmt.Sprintf(":%d", *portNumber),
+		installNamespace: installNamespace,
 	}
 
 	var cfg *rest.Config
@@ -113,11 +116,18 @@ func main() {
 		logging.Log.Errorf("Error building route clientset: %s", err.Error())
 	}
 
+	options := endpoints.Options{
+		InstallNamespace: installNamespace,
+		ReadOnly:         *readOnly,
+		WebDir:           *webDir,
+	}
+
 	resource := endpoints.Resource{
 		PipelineClient:         pipelineClient,
 		PipelineResourceClient: pipelineResourceClient,
 		K8sClient:              k8sClient,
 		RouteClient:            routeClient,
+		Options:                options,
 	}
 
 	ctx := signals.NewContext()
@@ -134,7 +144,7 @@ func main() {
 		csrf.CookieName("token"),
 		csrf.Path("/"),
 		csrf.SameSite(csrf.SameSiteLaxMode),
-		csrf.Secure(isCSRFSecureCookieEnabled()),
+		csrf.Secure(*csrfSecureCookie),
 	)
 	server := &http.Server{Addr: dashboardConfig.port, Handler: CSRF(routerHandler)}
 
