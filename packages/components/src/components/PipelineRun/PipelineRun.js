@@ -189,6 +189,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
 
   render() {
     const {
+      customLogContainer,
       customNotification,
       error,
       fetchLogs,
@@ -315,7 +316,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       }
     );
 
-    const logContainer = (
+    const logContainer = customLogContainer || (
       <Log
         downloadButton={
           LogDownloadButton && (
