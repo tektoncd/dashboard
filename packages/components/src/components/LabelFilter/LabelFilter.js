@@ -170,10 +170,11 @@ class LabelFilter extends Component {
         <div className="tkn--filters">
           {filters.map(filter => (
             <Tag
-              type="blue"
               filter
-              onClick={() => this.props.handleDeleteFilter(filter)}
               key={filter}
+              onClick={() => this.props.handleDeleteFilter(filter)}
+              onClose={() => this.props.handleDeleteFilter(filter)}
+              type="high-contrast"
             >
               {filter.replace(/=/g, ':')}
             </Tag>

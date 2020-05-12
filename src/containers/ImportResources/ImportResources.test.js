@@ -291,7 +291,8 @@ describe('ImportResources component', () => {
       getByPlaceholderText,
       getByText,
       getByTitle,
-      queryByText
+      queryByText,
+      queryByValue
     } = await renderWithIntl(
       <Provider store={store}>
         <ImportResourcesContainer />
@@ -300,6 +301,7 @@ describe('ImportResources component', () => {
     fireEvent.click(getByPlaceholderText(/select namespace/i));
     fireEvent.click(getByText(/default/i));
     fireEvent.click(getByTitle(/Clear selected item/i));
-    expect(queryByText('default')).toBeFalsy();
+    await waitForElement(() => queryByText(/please select a namespace/i));
+    expect(queryByValue('default')).toBeFalsy();
   });
 });
