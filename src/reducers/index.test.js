@@ -49,7 +49,8 @@ import {
   isFetchingSecrets,
   isFetchingTaskRuns,
   isFetchingTasks,
-  isReadOnly
+  isReadOnly,
+  isTriggersInstalled
 } from '.';
 import * as clusterTaskSelectors from './clusterTasks';
 import * as extensionSelectors from './extensions';
@@ -503,4 +504,14 @@ it('isReadOnly', () => {
   jest.spyOn(propertiesSelectors, 'isReadOnly').mockImplementation(() => true);
   expect(isReadOnly(state)).toBe(true);
   expect(propertiesSelectors.isReadOnly).toHaveBeenCalledWith(state.properties);
+});
+
+it('isTriggersInstalled', () => {
+  jest
+    .spyOn(propertiesSelectors, 'isTriggersInstalled')
+    .mockImplementation(() => true);
+  expect(isTriggersInstalled(state)).toBe(true);
+  expect(propertiesSelectors.isTriggersInstalled).toHaveBeenCalledWith(
+    state.properties
+  );
 });

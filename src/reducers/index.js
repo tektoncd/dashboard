@@ -482,3 +482,7 @@ export function isFetchingEventListeners(state) {
 export function isReadOnly(state) {
   return propertiesSelectors.isReadOnly(state.properties);
 }
+
+export function isTriggersInstalled(state) {
+  return propertiesSelectors.isTriggersInstalled(state.properties);
+}

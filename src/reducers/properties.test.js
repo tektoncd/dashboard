@@ -28,4 +28,5 @@ it('INSTALL_PROPERTIES_SUCCESS', () => {
 
   const state = propertiesReducer({}, action);
   expect(selectors.isReadOnly(state)).toBe(false);
+  expect(selectors.isTriggersInstalled(state)).toBe(false);
 });

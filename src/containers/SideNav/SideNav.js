@@ -30,25 +30,19 @@ import { selectNamespace } from '../../actions/namespaces';
 import {
   getExtensions,
   getSelectedNamespace,
-  isReadOnly
+  isReadOnly,
+  isTriggersInstalled
 } from '../../reducers';
-import { getCustomResource } from '../../api';
 
 import './SideNav.scss';
 
 class SideNav extends Component {
-  state = {
-    isTriggersInstalled: false
-  };
-
   componentDidMount() {
     const { match } = this.props;
 
     if (match && match.params.namespace) {
       this.props.selectNamespace(match.params.namespace);
     }
-
-    this.checkTriggersInstalled();
   }
 
   componentDidUpdate(prevProps) {
@@ -150,22 +144,8 @@ class SideNav extends Component {
     history.push('/');
   };
 
-  checkTriggersInstalled() {
-    getCustomResource({
-      group: 'apiextensions.k8s.io',
-      version: 'v1beta1',
-      type: 'customresourcedefinitions',
-      name: 'eventlisteners.triggers.tekton.dev'
-    })
-      .then(() => {
-        this.setState({ isTriggersInstalled: true });
-      })
-      .catch(() => {});
-  }
-
   render() {
     const { extensions, intl, namespace } = this.props;
-    const { isTriggersInstalled } = this.state;
 
     return (
       <CarbonSideNav
@@ -224,7 +204,7 @@ class SideNav extends Component {
             >
               TaskRuns
             </SideNavMenuItem>
-            {isTriggersInstalled && (
+            {this.props.isTriggersInstalled && (
               <>
                 <SideNavMenuItem
                   element={NavLink}
@@ -358,10 +338,15 @@ class SideNav extends Component {
   }
 }
 
+SideNav.defaultProps = {
+  isTriggersInstalled: false
+};
+
 /* istanbul ignore next */
 const mapStateToProps = state => ({
   extensions: getExtensions(state),
   isReadOnly: isReadOnly(state),
+  isTriggersInstalled: isTriggersInstalled(state),
   namespace: getSelectedNamespace(state)
 });
 

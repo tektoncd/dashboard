@@ -20,11 +20,11 @@ import { ALL_NAMESPACES, paths, urls } from '@tektoncd/dashboard-utils';
 
 import { renderWithRouter } from '../../utils/test';
 import SideNavContainer, { SideNavWithIntl as SideNav } from './SideNav';
-import * as API from '../../api';
 import * as selectors from '../../reducers';
 
 beforeEach(() => {
   jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => true);
+  jest.spyOn(selectors, 'isTriggersInstalled').mockImplementation(() => false);
 });
 
 it('SideNav renders with extensions', () => {
@@ -62,7 +62,8 @@ it('SideNav renders with extensions', () => {
 });
 
 it('SideNav renders with triggers', async () => {
-  jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => false);
+  selectors.isReadOnly.mockImplementation(() => false);
+  selectors.isTriggersInstalled.mockImplementation(() => true);
 
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
@@ -70,9 +71,6 @@ it('SideNav renders with triggers', async () => {
     extensions: { byName: {} },
     namespaces: { byName: {} }
   });
-  jest
-    .spyOn(API, 'getCustomResource')
-    .mockImplementation(() => Promise.resolve());
   const { queryByText } = renderWithRouter(
     <Provider store={store}>
       <SideNavContainer />
@@ -589,7 +587,7 @@ it('SideNav updates namespace in URL', async () => {
 });
 
 it('SideNav renders import in not read-only mode', async () => {
-  jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => false);
+  selectors.isReadOnly.mockImplementation(() => false);
 
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
@@ -597,9 +595,6 @@ it('SideNav renders import in not read-only mode', async () => {
     extensions: { byName: {} },
     namespaces: { byName: {} }
   });
-  jest
-    .spyOn(API, 'getCustomResource')
-    .mockImplementation(() => Promise.resolve());
   const { queryByText } = renderWithRouter(
     <Provider store={store}>
       <SideNavContainer />
@@ -615,9 +610,6 @@ it('SideNav does not render import in read-only mode', async () => {
     extensions: { byName: {} },
     namespaces: { byName: {} }
   });
-  jest
-    .spyOn(API, 'getCustomResource')
-    .mockImplementation(() => Promise.resolve());
   const { queryByText } = renderWithRouter(
     <Provider store={store}>
       <SideNavContainer isReadOnly />
