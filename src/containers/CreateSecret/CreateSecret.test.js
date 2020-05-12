@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent } from 'react-testing-library';
+import { fireEvent, waitForElement } from 'react-testing-library';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
@@ -424,19 +424,21 @@ it("Create Secret doesn't error when a password is entered", () => {
   expect(queryByText(serverurlValidationErrorRegExp)).toBeFalsy();
 });
 
-it('Can clear the selected namespace', () => {
+it('Can clear the selected namespace', async () => {
   const {
-    queryByText,
-    getByTitle,
+    getByPlaceholderText,
     getByText,
-    getByPlaceholderText
+    getByTitle,
+    queryByText,
+    queryByValue
   } = renderWithIntl(
     <Provider store={store}>
       <CreateSecret {...props} />
     </Provider>
   );
   fireEvent.click(getByPlaceholderText(/select namespace/i));
-  fireEvent.click(getByText(/default/i));
+  fireEvent.click(getByText('default'));
   fireEvent.click(getByTitle(/Clear selected item/i));
-  expect(queryByText('default')).toBeFalsy();
+  await waitForElement(() => queryByText(/namespace required/i));
+  expect(queryByValue('default')).toBeFalsy();
 });

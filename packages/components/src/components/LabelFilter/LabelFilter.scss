@@ -30,6 +30,22 @@ limitations under the License.
       flex-shrink: 0;
       margin: $spacing-05 $spacing-03 0 0;
     }
+
+    // TODO: delete this once <Tag type="high-contrast"> is supported
+    .bx--tag--filter {
+      background-color: $inverse-02;
+      color: $inverse-01;
+
+      .bx--tag__close-icon {
+        &:hover {
+          background-color: $inverse-hover-ui;
+        }
+
+        svg {
+          fill: $inverse-01;
+        }
+      }
+    }
   }
 }
 
