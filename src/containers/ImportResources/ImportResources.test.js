@@ -22,6 +22,13 @@ import { renderWithIntl, renderWithRouter } from '../../utils/test';
 import ImportResourcesContainer from './ImportResources';
 import * as API from '../../api';
 import 'jest-dom/extend-expect';
+import * as reducers from '../../reducers';
+
+beforeEach(() => {
+  jest
+    .spyOn(reducers, 'getTenantNamespace')
+    .mockImplementation(() => undefined);
+});
 
 describe('ImportResources component', () => {
   const middleware = [thunk];

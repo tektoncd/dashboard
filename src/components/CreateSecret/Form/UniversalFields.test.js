@@ -18,6 +18,13 @@ import thunk from 'redux-thunk';
 
 import { renderWithIntl } from '../../../utils/test';
 import UniversalFields from './UniversalFields';
+import * as selectors from '../../../reducers';
+
+beforeEach(() => {
+  jest
+    .spyOn(selectors, 'getTenantNamespace')
+    .mockImplementation(() => undefined);
+});
 
 const middleware = [thunk];
 const mockStore = configureStore(middleware);

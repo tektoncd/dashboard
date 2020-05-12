@@ -63,10 +63,15 @@ function dump_extra_cluster_state() {
   kubectl -n tekton-pipelines logs -l app=e2e-pipelinerun --all-containers
 }
 
-function install_dashboard_backend() {
-  echo ">> Deploying the Dashboard backend"
+function install_kustomize() {
+  echo ">> Installing kustomize"
   GO111MODULE=on go get sigs.k8s.io/kustomize/kustomize/v3@v3.5.4
-  kustomize build overlays/dev | ko apply -f - || fail_test "Dashboard backend installation failed"
+}
+
+function install_dashboard_backend() {
+  overlay=$1
+  echo ">> Deploying the Dashboard backend ($overlay)"
+  kustomize build --load_restrictor none overlays/$overlay | ko apply -f - || fail_test "Dashboard backend installation failed"
   # Wait until deployment is running before checking pods, stops timing error
   for i in {1..30}
   do
@@ -79,6 +84,12 @@ function install_dashboard_backend() {
   done
   # Wait for pods to be running in the namespaces we are deploying to
   wait_until_pods_running tekton-pipelines || fail_test "Dashboard backend did not come up"
+}
+
+function uninstall_dashboard_backend() {
+  overlay=$1
+  echo ">> Removing the Dashboard backend ($overlay)"
+  kustomize build --load_restrictor none overlays/$overlay | ko delete -f - || fail_test "Dashboard backend installation failed"
 }
 
 function dump_cluster_state() {

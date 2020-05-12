@@ -42,6 +42,7 @@ type Properties struct {
 	IsOpenShift        bool   `json:"IsOpenShift"`
 	ReadOnly           bool   `json:"ReadOnly"`
 	LogoutURL          string `json:"LogoutURL,omitempty"`
+	TenantNamespace    string `json:"TenantNamespace,omitempty"`
 }
 
 const (
@@ -162,7 +163,8 @@ func (r Resource) GetProperties(request *restful.Request, response *restful.Resp
 	dashboardVersion := GetDashboardVersion(r, installedNamespace)
 	isOpenShift := IsOpenShift(r, installedNamespace)
 	isReadOnly := IsReadOnly()
-	pipelineNamespace, pipelineVersion := GetPipelineNamespaceAndVersion(r, isOpenShift)
+	// TODO: namespace
+	pipelineNamespace, pipelineVersion := GetPipelineNamespaceAndVersion(r, isOpenShift, "tekton-pipelines")
 
 	properties := Properties{
 		DashboardNamespace: installedNamespace,
@@ -171,6 +173,7 @@ func (r Resource) GetProperties(request *restful.Request, response *restful.Resp
 		PipelineVersion:    pipelineVersion,
 		IsOpenShift:        isOpenShift,
 		ReadOnly:           isReadOnly,
+		TenantNamespace:    r.Options.TenantNamespace,
 	}
 
 	// If running on OpenShift, set the logout url
@@ -181,7 +184,8 @@ func (r Resource) GetProperties(request *restful.Request, response *restful.Resp
 	isTriggersInstalled := IsTriggersInstalled(r, isOpenShift)
 
 	if isTriggersInstalled {
-		triggersNamespace, triggersVersion := GetTriggersVersion(r, isOpenShift)
+		// TODO: namespace
+		triggersNamespace, triggersVersion := GetTriggersVersion(r, isOpenShift, "tekton-pipelines")
 		properties.TriggersNamespace = triggersNamespace
 		properties.TriggersVersion = triggersVersion
 	}

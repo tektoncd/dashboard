@@ -125,8 +125,9 @@ This will build the static resources and add them to the `kodata` directory.
 Development dashboard builds come in four flavours: (plain kube or Openshift) * (read-only or read-write):
 ```shell
 # Plain Kube
-kustomize build overlays/dev | ko apply -f -
+kustomize build --load_restrictor none overlays/dev | ko apply -f -
 kustomize build --load_restrictor=LoadRestrictionsNone overlays/dev-locked-down | ko apply -f -
+kustomize build --load_restrictor none overlays/dev-single-namespace | ko apply -f -
 
 # OpenShift
 kustomize build overlays/dev-openshift --load_restrictor=LoadRestrictionsNone \

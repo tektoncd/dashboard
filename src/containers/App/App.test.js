@@ -25,6 +25,9 @@ beforeEach(() => {
   jest.spyOn(API, 'getPipelines').mockImplementation(() => {});
   jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => true);
   jest.spyOn(selectors, 'isTriggersInstalled').mockImplementation(() => false);
+  jest
+    .spyOn(selectors, 'getTenantNamespace')
+    .mockImplementation(() => undefined);
 });
 
 it('App renders successfully', () => {

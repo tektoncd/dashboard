@@ -29,6 +29,12 @@ import * as API from '../../api';
 import * as store from '../../store';
 import * as reducers from '../../reducers';
 
+beforeEach(() => {
+  jest
+    .spyOn(reducers, 'getTenantNamespace')
+    .mockImplementation(() => undefined);
+});
+
 const namespaces = {
   selected: 'namespace-1',
   byName: {

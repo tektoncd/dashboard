@@ -23,11 +23,12 @@ source $(dirname $0)/e2e-common.sh
 # Script entry point.
 
 initialize $@
+install_kustomize
 
 header "Setting up environment"
 
 install_pipeline_crd
-install_dashboard_backend
+install_dashboard_backend dev/k8s/full-cluster/read-write
 
 header "Running the e2e tests"
 
@@ -52,7 +53,7 @@ if [ "$dashboardExists" = "false" ]; then
 fi
 
 # API/resource configuration
-export APP_SERVICE_ACCOUNT="tekton-dashboard"
+export APP_SERVICE_ACCOUNT="e2e-tests"
 export PIPELINE_NAME="simple-pipeline-insecure"
 export IMAGE_RESOURCE_NAME="docker-image"
 export GIT_RESOURCE_NAME="git-source"
@@ -149,5 +150,7 @@ fi
 
 kill -9 $dashboardForwardPID
 kill -9 $podForwardPID
+
+uninstall_dashboard_backend dev/k8s/full-cluster/read-write
 
 success

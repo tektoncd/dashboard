@@ -18,6 +18,13 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import NamespacesDropdown from './NamespacesDropdown';
 import { renderWithIntl } from '../../utils/test';
+import * as selectors from '../../reducers';
+
+beforeEach(() => {
+  jest
+    .spyOn(selectors, 'getTenantNamespace')
+    .mockImplementation(() => undefined);
+});
 
 const props = {
   id: 'namespaces-dropdown'

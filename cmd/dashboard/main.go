@@ -16,6 +16,7 @@ package main
 import (
 	"context"
 	"crypto/rand"
+	"flag"
 	"fmt"
 	"net/http"
 	"os"
@@ -37,6 +38,10 @@ import (
 )
 
 const csrfTokenLength = 32
+
+var (
+	tenantNamespace = flag.String("tenant-namespace", "", "Single namespace visibility")
+)
 
 // Stores config env
 type config struct {
@@ -69,6 +74,8 @@ func getCSRFAuthKey() []byte {
 }
 
 func main() {
+	flag.Parse()
+
 	// Initialize config
 	dashboardConfig := config{
 		kubeConfigPath:   os.Getenv("KUBECONFIG"),
@@ -113,11 +120,16 @@ func main() {
 		logging.Log.Errorf("Error building route clientset: %s", err.Error())
 	}
 
+	options := endpoints.Options{
+		TenantNamespace: *tenantNamespace,
+	}
+
 	resource := endpoints.Resource{
 		PipelineClient:         pipelineClient,
 		PipelineResourceClient: pipelineResourceClient,
 		K8sClient:              k8sClient,
 		RouteClient:            routeClient,
+		Options:                options,
 	}
 
 	ctx := signals.NewContext()
@@ -125,8 +137,8 @@ func main() {
 	routerHandler := router.Register(resource)
 	logging.Log.Info("Creating controllers")
 	resyncDur := time.Second * 30
-	controllers.StartTektonControllers(resource.PipelineClient, resource.PipelineResourceClient, resyncDur, ctx.Done())
-	controllers.StartKubeControllers(resource.K8sClient, resyncDur, dashboardConfig.installNamespace, routerHandler, ctx.Done())
+	controllers.StartTektonControllers(resource.PipelineClient, resource.PipelineResourceClient, resyncDur, *tenantNamespace, ctx.Done())
+	controllers.StartKubeControllers(resource.K8sClient, resyncDur, dashboardConfig.installNamespace, *tenantNamespace, routerHandler, ctx.Done())
 
 	logging.Log.Infof("Creating server and entering wait loop")
 	CSRF := csrf.Protect(

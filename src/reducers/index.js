@@ -486,3 +486,7 @@ export function isReadOnly(state) {
 export function isTriggersInstalled(state) {
   return propertiesSelectors.isTriggersInstalled(state.properties);
 }
+
+export function getTenantNamespace(state) {
+  return propertiesSelectors.getTenantNamespace(state.properties);
+}

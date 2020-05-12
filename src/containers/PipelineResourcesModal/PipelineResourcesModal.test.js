@@ -19,6 +19,13 @@ import thunk from 'redux-thunk';
 import { renderWithIntl, rerenderWithIntl } from '../../utils/test';
 import PipelineResourcesModal from '.';
 import * as API from '../../api';
+import * as selectors from '../../reducers';
+
+beforeEach(() => {
+  jest
+    .spyOn(selectors, 'getTenantNamespace')
+    .mockImplementation(() => undefined);
+});
 
 const middleware = [thunk];
 const mockStore = configureStore(middleware);

@@ -72,6 +72,7 @@ import {
   getExtensions,
   getLocale,
   getSelectedNamespace,
+  getTenantNamespace,
   isReadOnly,
   isWebSocketConnected
 } from '../../reducers';
@@ -82,6 +83,9 @@ import '../../components/App/App.scss';
 export /* istanbul ignore next */ class App extends Component {
   componentDidMount() {
     this.fetchData();
+    if (this.props.tenantNamespace) {
+      this.props.selectNamespace(this.props.tenantNamespace);
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -89,6 +93,9 @@ export /* istanbul ignore next */ class App extends Component {
     const { webSocketConnected: prevWebSocketConnected } = prevProps;
     if (webSocketConnected && prevWebSocketConnected === false) {
       this.fetchData();
+    }
+    if (this.props.tenantNamespace) {
+      this.props.selectNamespace(this.props.tenantNamespace);
     }
   }
 
@@ -371,6 +378,7 @@ const mapStateToProps = state => ({
   namespace: getSelectedNamespace(state),
   lang: getLocale(state),
   isReadOnly: isReadOnly(state),
+  tenantNamespace: getTenantNamespace(state),
   webSocketConnected: isWebSocketConnected(state)
 });
 

@@ -1,0 +1,10 @@
+---
+resources:
+  - ../../base/rbac-cluster
+patchesJson6902:
+  - target:
+      group: rbac.authorization.k8s.io
+      version: v1
+      kind: ClusterRole
+      name: tekton-dashboard-tenant
+    path: cluster-role-patch-json.yaml

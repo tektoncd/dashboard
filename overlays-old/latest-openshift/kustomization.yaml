@@ -1,0 +1,16 @@
+---
+resources:
+  - ../full-fat
+  - ../openshift-patches/clusterrole.yaml
+  - ../openshift-patches/clusterrolebinding.yaml
+  - ../openshift-patches/route.yaml
+  - ../openshift-patches/internal-dashboard-service.yaml
+patches:
+  - ../openshift-patches/dashboard-service.yaml
+  - ../openshift-patches/serviceaccount.yaml
+  - ../openshift-patches/oauth-proxy-in-deployment.yaml
+images:
+  - name: dashboardImage
+    newName: gcr.io/tekton-nightly/dashboard
+    newTag: latest
+namespace: openshift-pipelines

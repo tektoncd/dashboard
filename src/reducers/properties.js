@@ -29,4 +29,8 @@ export function isTriggersInstalled(state) {
   return (state.TriggersNamespace && state.TriggersVersion) || false;
 }
 
+export function getTenantNamespace(state) {
+  return state.TenantNamespace;
+}
+
 export default properties;

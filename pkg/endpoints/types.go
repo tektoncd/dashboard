@@ -7,6 +7,11 @@ import (
 	k8sclientset "k8s.io/client-go/kubernetes"
 )
 
+// Options for enpoints
+type Options struct {
+	TenantNamespace string
+}
+
 // Store all types here that are reused throughout files
 // Wrapper around all necessary clients used for endpoints
 type Resource struct {
@@ -14,4 +19,5 @@ type Resource struct {
 	PipelineResourceClient resourceversioned.Interface
 	K8sClient              k8sclientset.Interface
 	RouteClient            routeclient.Interface
+	Options                Options
 }

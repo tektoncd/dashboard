@@ -23,6 +23,12 @@ import * as API from '../../api';
 import * as selectors from '../../reducers';
 import PipelineRunsContainer from './PipelineRuns';
 
+beforeEach(() => {
+  jest
+    .spyOn(selectors, 'getTenantNamespace')
+    .mockImplementation(() => undefined);
+});
+
 const namespacesTestStore = {
   namespaces: {
     selected: 'namespace-1',

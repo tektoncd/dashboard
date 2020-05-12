@@ -25,6 +25,9 @@ import * as selectors from '../../reducers';
 beforeEach(() => {
   jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => true);
   jest.spyOn(selectors, 'isTriggersInstalled').mockImplementation(() => false);
+  jest
+    .spyOn(selectors, 'getTenantNamespace')
+    .mockImplementation(() => undefined);
 });
 
 it('SideNav renders with extensions', () => {
