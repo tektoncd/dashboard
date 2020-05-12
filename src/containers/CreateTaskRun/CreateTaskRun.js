@@ -258,7 +258,7 @@ class CreateTaskRun extends React.Component {
 
   handleTaskChange = ({ selectedItem }) => {
     const { text } = selectedItem || {};
-    if (text !== this.state.taskRef) {
+    if (text !== this.state.taskRef && text !== undefined) {
       this.setState(state => {
         const taskInfo = parseTaskInfo(
           getStore().getState(),
@@ -272,6 +272,14 @@ class CreateTaskRun extends React.Component {
           resources: initialResourcesState(taskInfo.resourceSpecs),
           params: initialParamsState(taskInfo.paramSpecs)
         };
+      });
+    } else {
+      // Reset pipelineresources and params when no Task is selected
+      this.setState({
+        ...initialTaskInfoState(),
+        namespace: this.getTaskInfo('namespace'),
+        paramSpecs: [],
+        resourceSpecs: []
       });
     }
   };
@@ -550,7 +558,10 @@ class CreateTaskRun extends React.Component {
                     defaultMessage: 'PipelineResources cannot be empty'
                   })}
                   selectedItem={(() => {
-                    const value = this.state.resources.inputs[spec.name];
+                    let value = '';
+                    if (this.state.resources.inputs !== undefined) {
+                      value = this.state.resources.inputs[spec.name];
+                    }
                     return value ? { id: value, text: value } : '';
                   })()}
                   onChange={({ selectedItem }) => {
@@ -579,7 +590,10 @@ class CreateTaskRun extends React.Component {
                     defaultMessage: 'PipelineResources cannot be empty'
                   })}
                   selectedItem={(() => {
-                    const value = this.state.resources.outputs[spec.name];
+                    let value = '';
+                    if (this.state.resources.outputs !== undefined) {
+                      value = this.state.resources.outputs[spec.name];
+                    }
                     return value ? { id: value, text: value } : '';
                   })()}
                   onChange={({ selectedItem }) => {
