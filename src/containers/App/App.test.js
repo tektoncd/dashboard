@@ -24,6 +24,7 @@ import * as selectors from '../../reducers';
 beforeEach(() => {
   jest.spyOn(API, 'getPipelines').mockImplementation(() => {});
   jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => true);
+  jest.spyOn(selectors, 'isTriggersInstalled').mockImplementation(() => false);
 });
 
 it('App renders successfully', () => {

@@ -25,4 +25,8 @@ export function isReadOnly(state) {
   return state.ReadOnly;
 }
 
+export function isTriggersInstalled(state) {
+  return (state.TriggersNamespace && state.TriggersVersion) || false;
+}
+
 export default properties;
