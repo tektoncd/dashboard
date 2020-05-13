@@ -15,6 +15,7 @@ import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 import {
   deleteRequest,
   get,
+  getAPIRoot,
   patchAddSecret,
   patchUpdateSecrets,
   post,
@@ -23,15 +24,6 @@ import {
 
 const tektonAPIGroup = 'tekton.dev';
 const triggersAPIGroup = 'triggers.tekton.dev';
-
-export function getAPIRoot() {
-  const { href, hash } = window.location;
-  let baseURL = href.replace(hash, '');
-  if (baseURL.endsWith('/')) {
-    baseURL = baseURL.slice(0, -1);
-  }
-  return baseURL;
-}
 
 const apiRoot = getAPIRoot();
 

@@ -17,6 +17,7 @@ import {
   checkStatus,
   generateBodyForSecretPatching,
   get,
+  getAPIRoot,
   getHeaders,
   getPatchHeaders,
   patchAddSecret,
@@ -26,6 +27,18 @@ import {
 import { mockCSRFToken } from '../utils/test';
 
 const uri = 'http://example.com';
+
+describe('getAPIRoot', () => {
+  it('handles base URL with trailing slash', () => {
+    window.history.pushState({}, 'Title', '/path/#hash');
+    expect(getAPIRoot()).toContain('/path');
+  });
+
+  it('handles base URL without trailing slash', () => {
+    window.history.pushState({}, 'Title', '/path#hash');
+    expect(getAPIRoot()).toContain('/path');
+  });
+});
 
 describe('getHeaders', () => {
   it('returns default headers when called with no params', () => {

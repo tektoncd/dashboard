@@ -16,18 +16,6 @@ import * as comms from './comms';
 import * as index from '.';
 import { mockCSRFToken } from '../utils/test';
 
-describe('getAPIRoot', () => {
-  it('handles base URL with trailing slash', () => {
-    window.history.pushState({}, 'Title', '/path/#hash');
-    expect(index.getAPIRoot()).toContain('/path');
-  });
-
-  it('handles base URL without trailing slash', () => {
-    window.history.pushState({}, 'Title', '/path#hash');
-    expect(index.getAPIRoot()).toContain('/path');
-  });
-});
-
 describe('getAPI', () => {
   it('returns a URI containing the given type', () => {
     const uri = index.getAPI('pipelines');
