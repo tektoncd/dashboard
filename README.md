@@ -14,7 +14,7 @@ Tekton Dashboard is a general purpose, web-based UI for Tekton Pipelines. It all
 
 ### Which version should I use?
 
-It is strongly recommended to use the v0.6.1.2 release for Tekton Pipelines v0.11.x (can display components from Tekton Triggers 0.4.x). This is an important security release.
+It is strongly recommended to use the *v0.6.1.2* release for Tekton Pipelines v0.11.x (can display components from Tekton Triggers 0.4.x). This is an important security release.
 
 The following versions should be considered for development or isolated usage only!
 
@@ -37,7 +37,7 @@ The following versions should be considered for development or isolated usage on
    and its dependencies:
 
    ```bash
-   kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.6.1/tekton-dashboard-release.yaml
+   kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.6.1.2/tekton-dashboard-release.yaml
    ```
 
    Previous versions (up to 0.5.0) are available at `previous/$VERSION_NUMBER/release.yaml`, e.g.
