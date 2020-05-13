@@ -198,43 +198,50 @@ export /* istanbul ignore next */ class App extends Component {
                   />
 
                   {!this.props.isReadOnly && (
-                    <Route
-                      path={paths.importResources()}
-                      component={ImportResources}
-                    />
-                  )}
+                    <>
+                      <Route
+                        path={paths.importResources()}
+                        component={ImportResources}
+                      />
 
-                  <Route path={paths.secrets.all()} exact component={Secrets} />
-                  <Route
-                    path={paths.secrets.byName()}
-                    exact
-                    component={Secret}
-                  />
-                  <Route
-                    path={paths.secrets.byNamespace()}
-                    exact
-                    component={Secrets}
-                  />
-                  <Route
-                    path={paths.secrets.create()}
-                    exact
-                    component={CreateSecret}
-                  />
-                  <Route
-                    path={paths.serviceAccounts.byName()}
-                    exact
-                    component={ServiceAccount}
-                  />
-                  <Route
-                    path={paths.serviceAccounts.all()}
-                    exact
-                    component={ServiceAccounts}
-                  />
-                  <Route
-                    path={paths.serviceAccounts.byNamespace()}
-                    exact
-                    component={ServiceAccounts}
-                  />
+                      <Route
+                        path={paths.secrets.all()}
+                        exact
+                        component={Secrets}
+                      />
+                      <Route
+                        path={paths.secrets.byName()}
+                        exact
+                        component={Secret}
+                      />
+                      <Route
+                        path={paths.secrets.byNamespace()}
+                        exact
+                        component={Secrets}
+                      />
+                      <Route
+                        path={paths.secrets.create()}
+                        exact
+                        component={CreateSecret}
+                      />
+
+                      <Route
+                        path={paths.serviceAccounts.byName()}
+                        exact
+                        component={ServiceAccount}
+                      />
+                      <Route
+                        path={paths.serviceAccounts.all()}
+                        exact
+                        component={ServiceAccounts}
+                      />
+                      <Route
+                        path={paths.serviceAccounts.byNamespace()}
+                        exact
+                        component={ServiceAccounts}
+                      />
+                    </>
+                  )}
                   <Route
                     path={paths.eventListeners.all()}
                     exact
