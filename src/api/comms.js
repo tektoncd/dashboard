@@ -19,6 +19,17 @@ const defaultOptions = {
   credentials: 'same-origin'
 };
 
+export function getAPIRoot() {
+  const { href, hash } = window.location;
+  let baseURL = href.replace(hash, '');
+  if (baseURL.endsWith('/')) {
+    baseURL = baseURL.slice(0, -1);
+  }
+  return baseURL;
+}
+
+const apiRoot = getAPIRoot();
+
 export function getHeaders(headers = {}) {
   return {
     Accept: 'application/json',
@@ -57,7 +68,7 @@ export function checkStatus(response = {}) {
 }
 
 function getToken() {
-  return fetch('/v1/token', {
+  return fetch(`${apiRoot}/v1/token`, {
     ...defaultOptions,
     headers: {
       Accept: 'text/plain'

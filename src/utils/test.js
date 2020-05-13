@@ -18,6 +18,10 @@ import { createMemoryHistory } from 'history';
 import { render } from 'react-testing-library';
 import { IntlProvider } from 'react-intl';
 
+import { getAPIRoot } from '../api/comms';
+
+const apiRoot = getAPIRoot();
+
 export function renderWithRouter(
   ui,
   {
@@ -65,7 +69,7 @@ export function rerenderWithIntl(rerender, ui) {
 }
 
 export function mockCSRFToken() {
-  fetchMock.get('/v1/token', () => ({
+  fetchMock.get(`${apiRoot}/v1/token`, () => ({
     headers: {
       'X-CSRF-Token': 'fake_token'
     }
