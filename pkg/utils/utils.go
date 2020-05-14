@@ -111,7 +111,23 @@ func SanitizeSecret(obj interface{}, skipDeletedCheck bool) interface{} {
 		return obj
 	}
 
-	logging.Log.Debug("Sanitizing Secret")
+	originalMeta := secret.ObjectMeta
+	originalAnnotations := originalMeta.Annotations
+	annotations := make(map[string]string)
+
+	for key, value := range originalAnnotations {
+		if strings.HasPrefix(key, "tekton.dev/") {
+			annotations[key] = value
+		}
+	}
+	meta := metav1.ObjectMeta{
+		Name:              originalMeta.Name,
+		Namespace:         originalMeta.Namespace,
+		UID:               originalMeta.UID,
+		ResourceVersion:   originalMeta.ResourceVersion,
+		CreationTimestamp: originalMeta.CreationTimestamp,
+		Annotations:       annotations,
+	}
 	data := make(map[string][]byte)
 	if secret.Data["username"] != nil {
 		data["username"] = secret.Data["username"]
@@ -119,11 +135,12 @@ func SanitizeSecret(obj interface{}, skipDeletedCheck bool) interface{} {
 	if secret.Data["accessToken"] != nil {
 		data["accessToken"] = []byte("--- REDACTED ---")
 	}
-	return corev1.Secret{
-		secret.TypeMeta,
-		secret.ObjectMeta,
-		data,
-		nil, // StringData, never returned over API
-		secret.Type,
+	theObject := corev1.Secret{
+		TypeMeta:   secret.TypeMeta, // Kind, APIVersion
+		ObjectMeta: meta,
+		Data:       data,
+		StringData: nil, // never returned over API
+		Type:       secret.Type,
 	}
+	return theObject
 }

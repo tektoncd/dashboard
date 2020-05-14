@@ -96,6 +96,30 @@
   version = "v0.4.0"
 
 [[projects]]
+  digest = "1:c79fb010be38a59d657c48c6ba1d003a8aa651fa56b579d959d74573b7dff8e1"
+  name = "github.com/gorilla/context"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "08b5f424b9271eedf6f9f0ce86cb9396ed337a42"
+  version = "v1.1.1"
+
+[[projects]]
+  digest = "1:75e22306b50b29e73503049cd4b1c24efa442fa2f67c58fae2ac3e98807356a5"
+  name = "github.com/gorilla/csrf"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "69581736821c33d85bbf378f42f6ad864dbd85de"
+  version = "v1.5"
+
+[[projects]]
+  digest = "1:e72d1ebb8d395cf9f346fd9cbc652e5ae222dd85e0ac842dc57f175abed6d195"
+  name = "github.com/gorilla/securecookie"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "e59506cc896acb7f7bf732d4fdf5e25f7ccd8983"
+  version = "v1.1.1"
+
+[[projects]]
   digest = "1:6d29f02f0f01c627c2be40fb7347669a9ff2aa215cb97747294c1d13ffa74bdd"
   name = "github.com/gorilla/websocket"
   packages = ["."]
@@ -746,6 +770,7 @@
   input-imports = [
     "github.com/emicklei/go-restful",
     "github.com/google/go-cmp/cmp",
+    "github.com/gorilla/csrf",
     "github.com/gorilla/websocket",
     "github.com/openshift/client-go/route/clientset/versioned",
     "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1",
@@ -759,6 +784,7 @@
     "go.uber.org/zap",
     "k8s.io/api/core/v1",
     "k8s.io/api/extensions/v1beta1",
+    "k8s.io/apimachinery/pkg/api/meta",
     "k8s.io/apimachinery/pkg/apis/meta/v1",
     "k8s.io/apimachinery/pkg/types",
     "k8s.io/apimachinery/pkg/util/intstr",
