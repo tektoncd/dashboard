@@ -262,8 +262,3 @@ func handleSecretsResponse(response *restful.Response, forwardResponse rest.Resu
 	response.Header().Add("Content-Type", restful.MIME_JSON)
 	response.WriteHeaderAndEntity(*statusCode, responseObject)
 }
-
-func (r Resource) GetToken(request *restful.Request, response *restful.Response) {
-	response.Header().Add("X-CSRF-Token", csrf.Token(request.Request))
-	response.Write([]byte("OK"))
-}
