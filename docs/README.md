@@ -4,6 +4,8 @@ linkTitle: "Dashboard"
 weight: 6
 description: >
   General-Purpose, Web-Based UI
+cascade:
+  github_project_repo: https://github.com/tektoncd/dashboard
 ---
 
 {{% pageinfo %}}
