@@ -48,6 +48,7 @@ import {
   PipelineRun,
   PipelineRuns,
   Pipelines,
+  ReadWriteRoute,
   ResourceList,
   Secret,
   Secrets,
@@ -192,56 +193,57 @@ export /* istanbul ignore next */ class App extends Component {
                     component={ClusterTasks}
                   />
                   <Route path={paths.about()} component={About} />
-                  <Route
+
+                  <ReadWriteRoute
+                    isReadOnly={this.props.isReadOnly}
                     path={paths.importResources()}
                     component={ImportResources}
                   />
 
-                  {!this.props.isReadOnly && (
-                    <>
-                      <Route
-                        path={paths.importResources()}
-                        component={ImportResources}
-                      />
+                  <ReadWriteRoute
+                    isReadOnly={this.props.isReadOnly}
+                    path={paths.secrets.all()}
+                    exact
+                    component={Secrets}
+                  />
+                  <ReadWriteRoute
+                    isReadOnly={this.props.isReadOnly}
+                    path={paths.secrets.byName()}
+                    exact
+                    component={Secret}
+                  />
+                  <ReadWriteRoute
+                    isReadOnly={this.props.isReadOnly}
+                    path={paths.secrets.byNamespace()}
+                    exact
+                    component={Secrets}
+                  />
+                  <ReadWriteRoute
+                    isReadOnly={this.props.isReadOnly}
+                    path={paths.secrets.create()}
+                    exact
+                    component={CreateSecret}
+                  />
 
-                      <Route
-                        path={paths.secrets.all()}
-                        exact
-                        component={Secrets}
-                      />
-                      <Route
-                        path={paths.secrets.byName()}
-                        exact
-                        component={Secret}
-                      />
-                      <Route
-                        path={paths.secrets.byNamespace()}
-                        exact
-                        component={Secrets}
-                      />
-                      <Route
-                        path={paths.secrets.create()}
-                        exact
-                        component={CreateSecret}
-                      />
+                  <ReadWriteRoute
+                    isReadOnly={this.props.isReadOnly}
+                    path={paths.serviceAccounts.byName()}
+                    exact
+                    component={ServiceAccount}
+                  />
+                  <ReadWriteRoute
+                    isReadOnly={this.props.isReadOnly}
+                    path={paths.serviceAccounts.all()}
+                    exact
+                    component={ServiceAccounts}
+                  />
+                  <ReadWriteRoute
+                    isReadOnly={this.props.isReadOnly}
+                    path={paths.serviceAccounts.byNamespace()}
+                    exact
+                    component={ServiceAccounts}
+                  />
 
-                      <Route
-                        path={paths.serviceAccounts.byName()}
-                        exact
-                        component={ServiceAccount}
-                      />
-                      <Route
-                        path={paths.serviceAccounts.all()}
-                        exact
-                        component={ServiceAccounts}
-                      />
-                      <Route
-                        path={paths.serviceAccounts.byNamespace()}
-                        exact
-                        component={ServiceAccounts}
-                      />
-                    </>
-                  )}
                   <Route
                     path={paths.eventListeners.all()}
                     exact
