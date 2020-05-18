@@ -76,9 +76,22 @@ import {
   isReadOnly,
   isWebSocketConnected
 } from '../../reducers';
-import messages from '../../nls/messages_en.json';
+import messageBundle from '../../nls/messages_en.json';
 
 import '../../components/App/App.scss';
+
+const messages = messageBundle;
+
+/* istanbul ignore next */
+if (process.env.I18N_PSEUDO) {
+  // Make it easier to identify untranslated strings in the UI
+  Object.keys(messages).forEach(lang => {
+    const messagesToDisplay = messages[lang];
+    Object.keys(messagesToDisplay).forEach(messageId => {
+      messagesToDisplay[messageId] = `%%_${messagesToDisplay[messageId]}_%%`;
+    });
+  });
+}
 
 export /* istanbul ignore next */ class App extends Component {
   componentDidMount() {
@@ -107,7 +120,6 @@ export /* istanbul ignore next */ class App extends Component {
     const { extensions } = this.props;
 
     const lang = messages[this.props.lang] ? this.props.lang : 'en';
-
     const logoutButton = <LogoutButton getLogoutURL={getLogoutURL} />;
 
     return (

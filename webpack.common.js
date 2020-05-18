@@ -11,6 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 const path = require('path');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const contentSecurityPolicy = {
@@ -50,6 +51,10 @@ module.exports = ({ mode }) => ({
     ]
   },
   plugins: [
+    new webpack.EnvironmentPlugin({
+      NODE_ENV: mode,
+      I18N_PSEUDO: false
+    }),
     new HtmlWebpackPlugin({
       title: 'Tekton Dashboard',
       favicon: path.resolve(__dirname, 'src/images', 'favicon.png'),
