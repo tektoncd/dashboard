@@ -73,7 +73,10 @@ const UniversalFields = props => {
       />
       <Dropdown
         id="type"
-        titleText="Type"
+        titleText={intl.formatMessage({
+          id: 'dashboard.createPipelineResource.type',
+          defaultMessage: 'Type'
+        })}
         label=""
         initialSelectedItem={{
           id: type,

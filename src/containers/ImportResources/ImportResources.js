@@ -259,14 +259,29 @@ export class ImportResources extends Component {
           })}
         </h1>
         <Form>
-          <FormGroup legendText="Source repository and target namespace">
+          <FormGroup
+            legendText={intl.formatMessage({
+              id: 'dashboard.importResources.legendText',
+              defaultMessage: 'Source repository and target namespace'
+            })}
+          >
             <TextInput
               data-testid="repository-url-field"
-              helperText="The location of the YAML definitions to be applied (Git URLs supported)"
+              helperText={intl.formatMessage({
+                id: 'dashboard.importResources.repo.helperText',
+                defaultMessage:
+                  'The location of the YAML definitions to be applied (Git URLs supported)'
+              })}
               id="import-repository-url"
               invalid={this.state.invalidInput}
-              invalidText="Please submit a valid URL"
-              labelText="Repository URL"
+              invalidText={intl.formatMessage({
+                id: 'dashboard.importResources.repo.invalidText',
+                defaultMessage: 'Please submit a valid URL'
+              })}
+              labelText={intl.formatMessage({
+                id: 'dashboard.importResources.repo.labelText',
+                defaultMessage: 'Repository URL'
+              })}
               name="repositoryURL"
               onChange={this.handleTextInput}
               placeholder="https://github.com/my-repository"
@@ -276,20 +291,40 @@ export class ImportResources extends Component {
             />
             <TextInput
               data-testid="directory-field"
-              helperText="The location of the Tekton resources to import from the repository. Leave blank if the resources are at the top-level directory."
+              helperText={intl.formatMessage({
+                id: 'dashboard.importResources.directory.helperText',
+                defaultMessage:
+                  'The location of the Tekton resources to import from the repository. Leave blank if the resources are at the top-level directory.'
+              })}
               id="import-directory"
-              labelText="Repository directory (optional)"
+              labelText={intl.formatMessage({
+                id: 'dashboard.importResources.directory.labelText',
+                defaultMessage: 'Repository directory (optional)'
+              })}
               name="directory"
               onChange={this.handleTextInput}
-              placeholder="Enter repository directory"
+              placeholder={intl.formatMessage({
+                id: 'dashboard.importResources.directory.placeholder',
+                defaultMessage: 'Enter repository directory'
+              })}
               value={this.state.directory}
             />
             <NamespacesDropdown
               id="import-namespaces-dropdown"
-              helperText="The namespace in which the resources will be created"
-              titleText="Target namespace"
+              helperText={intl.formatMessage({
+                id: 'dashboard.importResources.targetNamespace.helperText',
+                defaultMessage:
+                  'The namespace in which the resources will be created'
+              })}
+              titleText={intl.formatMessage({
+                id: 'dashboard.importResources.targetNamespace.titleText',
+                defaultMessage: 'Target namespace'
+              })}
               invalid={this.state.invalidNamespace}
-              invalidText="Please select a namespace"
+              invalidText={intl.formatMessage({
+                id: 'dashboard.importResources.targetNamespace.invalidText',
+                defaultMessage: 'Please select a namespace'
+              })}
               onChange={this.handleNamespace}
               required
               selectedItem={selectedNamespace}
@@ -300,36 +335,63 @@ export class ImportResources extends Component {
               title={
                 <Tooltip
                   direction="right"
-                  triggerText="Advanced configuration for the Import PipelineRun"
+                  triggerText={intl.formatMessage({
+                    id: 'dashboard.importResources.advanced.accordionText',
+                    defaultMessage:
+                      'Advanced configuration for the Import PipelineRun'
+                  })}
                 >
                   <div>
-                    Change these parameters if you want the PipelineRun that
-                    will do the importing, to run in a different namespace from
-                    the Dashboard&apos;s.
-                    <br />
-                    <br />
-                    You can optionally provide a different ServiceAccount too.
+                    {intl.formatMessage(
+                      {
+                        id: 'dashboard.importResources.advanced.tooltip',
+                        defaultMessage:
+                          'Change these parameters if you want the PipelineRun that will do the importing to run in a different namespace from the Dashboard&apos;s.{break}You can optionally provide a different ServiceAccount too.'
+                      },
+                      {
+                        break: (
+                          <>
+                            <br />
+                            <br />
+                          </>
+                        )
+                      }
+                    )}
                   </div>
                 </Tooltip>
               }
             >
               <NamespacesDropdown
                 id="import-install-namespaces-dropdown"
-                helperText="The namespace in which the PipelineRun fetching the repository and creating the resources will run"
+                helperText={intl.formatMessage({
+                  id: 'dashboard.importResources.importerNamespace.helperText',
+                  defaultMessage:
+                    'The namespace in which the PipelineRun fetching the repository and creating the resources will run'
+                })}
                 titleText="Namespace"
                 invalid={this.state.invalidImporterNamespace}
-                invalidText="Please select a namespace"
+                invalidText={intl.formatMessage({
+                  id: 'dashboard.importResources.importerNamespace.invalidText',
+                  defaultMessage: 'Please select a namespace'
+                })}
                 onChange={this.handleImporterNamespace}
                 required
                 selectedItem={selectedImporterNamespace}
               />
               <ServiceAccountsDropdown
                 className="saDropdown"
-                helperText="The ServiceAccount that the PipelineRun will run under (from the namespace above)"
+                helperText={intl.formatMessage({
+                  id: 'dashboard.importResources.serviceAccount.helperText',
+                  defaultMessage:
+                    'The ServiceAccount that the PipelineRun will run under (from the namespace above)'
+                })}
                 id="import-service-accounts-dropdown"
                 namespace={this.state.importerNamespace}
                 onChange={this.handleServiceAccount}
-                titleText="ServiceAccount (optional)"
+                titleText={intl.formatMessage({
+                  id: 'dashboard.importResources.serviceAccount.titleText',
+                  defaultMessage: 'ServiceAccount (optional)'
+                })}
               />
             </AccordionItem>
           </Accordion>
@@ -343,7 +405,11 @@ export class ImportResources extends Component {
               }
               kind="success"
               lowContrast
-              title="Triggered PipelineRun to apply Tekton resources"
+              title={intl.formatMessage({
+                id: 'dashboard.importResources.triggeredNotification',
+                defaultMessage:
+                  'Triggered PipelineRun to apply Tekton resources'
+              })}
               subtitle=""
               onCloseButtonClick={this.resetSuccess}
             />
