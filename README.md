@@ -14,7 +14,7 @@ Tekton Dashboard is a general purpose, web-based UI for Tekton Pipelines. It all
 
 ### Which version should I use?
 
-It is strongly recommended to use the *v0.6.1.3* release for Tekton Pipelines v0.11.x and v0.12.x. This is a critically important security release and can display components from Triggers 0.4.
+It is strongly recommended to use the *v0.6.1.4* release for Tekton Pipelines v0.11.x and v0.12.x. This is a critically important security release and can display components from Triggers 0.4.
 
 The following versions should be for development or isolated usage only and are *deprecated*. It is strongly advised to pick up the latest releases as soon as possible.
 
@@ -36,7 +36,7 @@ The following versions should be for development or isolated usage only and are 
    and its dependencies:
 
    ```bash
-   kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.6.1.3/tekton-dashboard-release.yaml
+   kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.6.1.4/tekton-dashboard-release.yaml
    ```
 
    Previous versions (up to 0.5.0) are available at `previous/$VERSION_NUMBER/release.yaml`, e.g.
@@ -128,7 +128,7 @@ You can then access the Tekton Dashboard at `tekton-dashboard.${ip}.nip.io`. Thi
 2. Assuming you want to install the Dashboard into the `openshift-pipelines` namespace, which is the default one:
 
    ```bash
-   kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.6.1.3/openshift-tekton-dashboard-release.yaml --validate=false
+   kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.6.1.4/openshift-tekton-dashboard-release.yaml --validate=false
    ```
 
 3. Access the dashboard by determining its route with `kubectl get route tekton-dashboard -n openshift-pipelines`

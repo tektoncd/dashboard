@@ -144,6 +144,8 @@ kustomize build overlays/dev-openshift-imagestream --load_restrictor=LoadRestric
 
 The dashboard can be accessed by running `kubectl proxy`, which proxies requests through the API Server. You can access the web UI at `localhost:8001/api/v1/namespaces/tekton-pipelines/services/tekton-dashboard:http/proxy/`
 
+Important note: the setting for a CSRF secure cookie must be *false* if you intend to access the Dashboard pod through port-forward. Otherwise, it should be true (for example, when using a Route, or Ingress, which is secured with TLS).
+
 ### Redeploy dashboard
 
 As you make changes to the code, you can redeploy your dashboard by simply using `ko apply` against the `config` directory again.
