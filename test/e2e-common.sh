@@ -18,6 +18,8 @@
 
 source $(dirname $0)/../vendor/github.com/tektoncd/plumbing/scripts/e2e-tests.sh
 
+pipeline_release=https://github.com/tektoncd/pipeline/releases/download/v0.11.0/release.yaml
+
 function print_diagnostic_info() {
   echo "Diagnostics:"
   resources=("pv" "pvc" "pods")
@@ -35,7 +37,7 @@ function install_kustomize() {
 
 function install_pipeline_crd() {
   echo ">> Deploying Tekton Pipelines"
-  kubectl apply --filename https://github.com/tektoncd/pipeline/releases/download/v0.11.0/release.yaml || fail_test "Tekton pipeline installation failed"
+  kubectl apply --filename $pipeline_release  || fail_test "Tekton pipeline installation failed"
 
   # Make sure thateveything is cleaned up in the current namespace.
   for res in pipelineresources tasks pipelines taskruns pipelineruns; do
@@ -44,6 +46,11 @@ function install_pipeline_crd() {
 
   # Wait for pods to be running in the namespaces we are deploying to
   wait_until_pods_running tekton-pipelines || fail_test "Tekton Pipeline did not come up"
+}
+
+function delete_pipeline_crd() {
+  echo ">> Deleting Tekton Pipelines"
+  kubectl delete --filename $pipeline_release || fail_test "Tekton pipeline deletion failed"
 }
 
 # Called by `fail_test` (provided by `e2e-tests.sh`) to dump info on test failure
@@ -69,8 +76,9 @@ function dump_extra_cluster_state() {
 }
 
 function install_dashboard_backend() {
-  echo ">> Deploying the Dashboard backend"
-  kustomize build overlays/dev | ko apply -f - || fail_test "Dashboard backend installation failed"	
+  overlay=$1
+  echo ">> Deploying the Dashboard backend ($overlay)"
+  kustomize build --load_restrictor none overlays/$overlay | ko apply -f - || fail_test "Dashboard backend installation failed"	
   # Wait until deployment is running before checking pods, stops timing error
   for i in {1..30}
   do
@@ -86,6 +94,12 @@ function install_dashboard_backend() {
   done
   # Wait for pods to be running in the namespaces we are deploying to
   wait_until_pods_running tekton-pipelines || fail_test "Dashboard backend did not come up"
+}
+
+function uninstall_dashboard_backend() {
+  overlay=$1
+  echo ">> Removing the Dashboard backend ($overlay)"
+  kustomize build --load_restrictor none overlays/$overlay | ko delete -f - || fail_test "Dashboard backend removal failed"	
 }
 
 function dump_cluster_state() {
