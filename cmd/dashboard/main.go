@@ -49,14 +49,6 @@ var (
 	csrfSecureCookie   = flag.Bool("csrf-secure-cookie", true, "Enable or disable Secure attribute on the CSRF cookie")
 )
 
-// Stores config env
-type config struct {
-	kubeConfigPath string
-	// Should conform with http.Server.Addr field
-	port             string
-	installNamespace string
-}
-
 func getCSRFAuthKey() []byte {
 	logging.Log.Info("Generating CSRF auth key")
 	authKey := make([]byte, csrfTokenLength)
@@ -85,19 +77,12 @@ func main() {
 		return
 	}
 
-	// Initialize config
-	dashboardConfig := config{
-		kubeConfigPath:   *kubeConfigPath,
-		port:             fmt.Sprintf(":%d", *portNumber),
-		installNamespace: installNamespace,
-	}
-
 	var cfg *rest.Config
 	var err error
-	if len(dashboardConfig.kubeConfigPath) != 0 {
-		cfg, err = clientcmd.BuildConfigFromFlags("", dashboardConfig.kubeConfigPath)
+	if *kubeConfigPath != "" {
+		cfg, err = clientcmd.BuildConfigFromFlags("", *kubeConfigPath)
 		if err != nil {
-			logging.Log.Errorf("Error building kubeconfig from %s: %s", dashboardConfig.kubeConfigPath, err.Error())
+			logging.Log.Errorf("Error building kubeconfig from %s: %s", *kubeConfigPath, err.Error())
 		}
 	} else {
 		if cfg, err = rest.InClusterConfig(); err != nil {
@@ -146,7 +131,7 @@ func main() {
 	logging.Log.Info("Creating controllers")
 	resyncDur := time.Second * 30
 	controllers.StartTektonControllers(resource.PipelineClient, resource.PipelineResourceClient, resyncDur, ctx.Done())
-	controllers.StartKubeControllers(resource.K8sClient, resyncDur, dashboardConfig.installNamespace, *readOnly, routerHandler, ctx.Done())
+	controllers.StartKubeControllers(resource.K8sClient, resyncDur, installNamespace, *readOnly, routerHandler, ctx.Done())
 
 	logging.Log.Infof("Creating server and entering wait loop")
 	CSRF := csrf.Protect(
@@ -156,7 +141,7 @@ func main() {
 		csrf.SameSite(csrf.SameSiteLaxMode),
 		csrf.Secure(*csrfSecureCookie),
 	)
-	server := &http.Server{Addr: dashboardConfig.port, Handler: CSRF(routerHandler)}
+	server := &http.Server{Addr: fmt.Sprintf(":%d", *portNumber), Handler: CSRF(routerHandler)}
 
 	errCh := make(chan error, 1)
 	defer close(errCh)
