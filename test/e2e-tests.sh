@@ -27,6 +27,7 @@ initialize $@
 header "Setting up environment"
 
 install_pipeline_crd
+install_kustomize
 install_dashboard_backend
 
 header "Running the e2e tests"
@@ -52,7 +53,7 @@ if [ "$dashboardExists" = "false" ]; then
 fi
 
 # API/resource configuration
-export APP_SERVICE_ACCOUNT="tekton-dashboard"
+export APP_SERVICE_ACCOUNT="e2e-tests"
 export PIPELINE_NAME="simple-pipeline-insecure"
 export IMAGE_RESOURCE_NAME="docker-image"
 export GIT_RESOURCE_NAME="git-source"
