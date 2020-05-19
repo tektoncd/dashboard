@@ -22,7 +22,7 @@ import (
 )
 
 // Get dashboard version
-func GetDashboardVersion(r Resource, installedNamespace string) string {
+func getDashboardVersion(r Resource, installedNamespace string) string {
 	version := ""
 
 	listOptions := metav1.ListOptions{
@@ -53,24 +53,23 @@ func GetDashboardVersion(r Resource, installedNamespace string) string {
 	return version
 }
 
-// IsOpenShift determines whether the Dashboard is running on OpenShift or not
-func IsOpenShift(r Resource, installedNamespace string) bool {
+// isOpenShift determines whether the Dashboard is running on OpenShift or not
+func isOpenShift(r Resource, namespace string) bool {
 	openshiftPipelineFound := false
 	tektonPipelinesFound := false
 	routeFound := false
 
-	found, namespace := SearchForDeployment(r, "pipelines")
+	found := searchForDeployment(r, "pipelines", namespace)
 
 	if found {
 		if namespace == "openshift-pipelines" {
 			openshiftPipelineFound = true
-		}
-		if namespace == installedNamespace {
+		} else {
 			tektonPipelinesFound = true
 		}
 	}
 
-	routes, err := r.RouteClient.RouteV1().Routes(installedNamespace).List(v1.ListOptions{})
+	routes, err := r.RouteClient.RouteV1().Routes(namespace).List(v1.ListOptions{})
 	if err != nil {
 		logging.Log.Errorf("Error getting the list of routes: %s", err.Error())
 	}
@@ -89,35 +88,35 @@ func IsOpenShift(r Resource, installedNamespace string) bool {
 }
 
 // Get pipelines version
-func GetPipelineNamespaceAndVersion(r Resource, isOpenShift bool) (string, string) {
-	namespace, version := getDeployments(r, "pipelines")
+func getPipelineVersion(r Resource, namespace string) string {
+	version := getDeployments(r, "pipelines", namespace)
 
 	if version == "" {
 		logging.Log.Error("Error getting the Tekton Pipelines deployment version. Version is unknown")
 	}
 
-	return namespace, version
+	return version
 }
 
 // Get Deployments for either Tekton Triggers or Tekton Pipelines and gets the version
-func getDeployments(r Resource, thingSearchingFor string) (string, string) {
-	version, namespace := "", ""
+func getDeployments(r Resource, thingSearchingFor string, namespace string) string {
+	version := ""
 
 	oldListOptions := metav1.ListOptions{
 		LabelSelector: "app.kubernetes.io/component=controller,app.kubernetes.io/name=tekton-" + thingSearchingFor,
 	}
-	oldDeployments, err := r.K8sClient.AppsV1().Deployments("").List(oldListOptions)
+	oldDeployments, err := r.K8sClient.AppsV1().Deployments(namespace).List(oldListOptions)
 	if err != nil {
 		logging.Log.Errorf("Error getting the Tekton %s deployment: %s", thingSearchingFor, err.Error())
-		return "", ""
+		return ""
 	}
 	newListOptions := metav1.ListOptions{
 		LabelSelector: "app.kubernetes.io/component=controller,app.kubernetes.io/name=controller,app.kubernetes.io/part-of=tekton-" + thingSearchingFor,
 	}
-	newDeployments, err := r.K8sClient.AppsV1().Deployments("").List(newListOptions)
+	newDeployments, err := r.K8sClient.AppsV1().Deployments(namespace).List(newListOptions)
 	if err != nil {
 		logging.Log.Errorf("Error getting the Tekton %s deployment: %s", thingSearchingFor, err.Error())
-		return "", ""
+		return ""
 	}
 
 	deployments := append(oldDeployments.Items, newDeployments.Items...)
@@ -127,12 +126,10 @@ func getDeployments(r Resource, thingSearchingFor string) (string, string) {
 
 		if version == "" {
 			version = deploymentLabels[thingSearchingFor+".tekton.dev/release"]
-			namespace = deployment.Namespace
 		}
 
 		if version == "" {
 			version = deploymentLabels["version"]
-			namespace = deployment.Namespace
 		}
 
 		// Installs through the OpenShift Operator displays version differently
@@ -143,7 +140,6 @@ func getDeployments(r Resource, thingSearchingFor string) (string, string) {
 				s := strings.SplitAfter(deploymentImage, ":")
 				if s[1] != "" {
 					version = s[1]
-					namespace = deployment.Namespace
 				}
 			}
 		}
@@ -157,7 +153,6 @@ func getDeployments(r Resource, thingSearchingFor string) (string, string) {
 				potentialVersion := deploymentLabels[label]
 				if potentialVersion != "" {
 					version = potentialVersion
-					namespace = deployment.Namespace
 				}
 			}
 
@@ -166,7 +161,6 @@ func getDeployments(r Resource, thingSearchingFor string) (string, string) {
 				s := strings.SplitAfter(deploymentImage, ":")
 				if s[1] != "" {
 					version = s[1]
-					namespace = deployment.Namespace
 				}
 			}
 
@@ -176,7 +170,6 @@ func getDeployments(r Resource, thingSearchingFor string) (string, string) {
 				potentialVersion := deploymentAnnotations[label]
 				if potentialVersion != "" {
 					version = potentialVersion
-					namespace = deployment.Namespace
 				}
 			}
 
@@ -188,62 +181,58 @@ func getDeployments(r Resource, thingSearchingFor string) (string, string) {
 					if strings.Contains(s[1], "@") {
 						t := strings.Split(s[1], "@")
 						version = t[0]
-						namespace = deployment.Namespace
 					}
 				}
 			}
 		}
 	}
 
-	return namespace, version
+	return version
 }
 
 // Get triggers version
-func GetTriggersNamespaceAndVersion(r Resource, isOpenShift bool) (string, string) {
-	namespace, version := getDeployments(r, "triggers")
+func getTriggersVersion(r Resource, namespace string) string {
+	version := getDeployments(r, "triggers", namespace)
 
 	if version == "" {
 		logging.Log.Error("Error getting the Tekton Triggers deployment version. Version is unknown")
 		version = "UNKNOWN"
-		namespace = "UNKNOWN"
 	}
 
-	return namespace, version
+	return version
 }
 
 // Check whether Tekton Triggers is installed
-func IsTriggersInstalled(r Resource, isOpenShift bool) bool {
-	found, _ := SearchForDeployment(r, "triggers")
-
-	return found
+func isTriggersInstalled(r Resource, namespace string) bool {
+	return searchForDeployment(r, "triggers", namespace)
 }
 
 // Go through Triggers deployments and find if it is installed
-func SearchForDeployment(r Resource, thingSearchingFor string) (bool, string) {
+func searchForDeployment(r Resource, thingSearchingFor string, namespace string) bool {
 	oldListOptions := metav1.ListOptions{
 		LabelSelector: "app.kubernetes.io/component=controller,app.kubernetes.io/name=tekton-" + thingSearchingFor,
 	}
-	oldDeployments, err := r.K8sClient.AppsV1().Deployments("").List(oldListOptions)
+	oldDeployments, err := r.K8sClient.AppsV1().Deployments(namespace).List(oldListOptions)
 	if err != nil {
 		logging.Log.Errorf("Error getting the Tekton %s deployment: %s", thingSearchingFor, err.Error())
-		return false, ""
+		return false
 	}
 	newListOptions := metav1.ListOptions{
 		LabelSelector: "app.kubernetes.io/component=controller,app.kubernetes.io/name=controller,app.kubernetes.io/part-of=tekton-" + thingSearchingFor,
 	}
-	newDeployments, err := r.K8sClient.AppsV1().Deployments("").List(newListOptions)
+	newDeployments, err := r.K8sClient.AppsV1().Deployments(namespace).List(newListOptions)
 	if err != nil {
 		logging.Log.Errorf("Error getting the Tekton %s deployment: %s", thingSearchingFor, err.Error())
-		return false, ""
+		return false
 	}
 
 	deployments := append(oldDeployments.Items, newDeployments.Items...)
 
 	for _, deployment := range deployments {
 		if deployment.GetName() == "tekton-"+thingSearchingFor+"-controller" {
-			return true, deployment.Namespace
+			return true
 		}
 	}
 
-	return false, ""
+	return false
 }
