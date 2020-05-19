@@ -28,6 +28,11 @@ function print_diagnostic_info() {
   done
 }
 
+function install_kustomize() {
+  echo ">> Installing kustomize"
+  GO111MODULE=on go get sigs.k8s.io/kustomize/kustomize/v3@v3.5.4
+}
+
 function install_pipeline_crd() {
   echo ">> Deploying Tekton Pipelines"
   kubectl apply --filename https://github.com/tektoncd/pipeline/releases/download/v0.11.0/release.yaml || fail_test "Tekton pipeline installation failed"
@@ -65,8 +70,7 @@ function dump_extra_cluster_state() {
 
 function install_dashboard_backend() {
   echo ">> Deploying the Dashboard backend"
-  GO111MODULE=on go get sigs.k8s.io/kustomize/kustomize/v3@v3.5.4
-  kustomize build overlays/dev | ko apply -f - || fail_test "Dashboard backend installation failed"
+  kustomize build overlays/dev | ko apply -f - || fail_test "Dashboard backend installation failed"	
   # Wait until deployment is running before checking pods, stops timing error
   for i in {1..30}
   do

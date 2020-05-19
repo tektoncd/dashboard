@@ -1,53 +1,16 @@
 ---
 - op: add
-  path: /rules/0
+  path: /rules/-
   value:
     apiGroups:
-      - ""
+      - ''
     resources:
       - serviceaccounts
     verbs:
       - update
       - patch
 - op: add
-  path: /rules/1
-  value:
-    apiGroups:
-      - ""
-    resources:
-      - pods
-      - services
-    verbs:
-      - create
-      - update
-      - delete
-      - patch
-- op: add
-  path: /rules/2
-  value:
-    apiGroups:
-      - ""
-    resources:
-      - configmaps
-    verbs:
-      - create
-      - update
-      - delete
-- op: add
-  path: /rules/3
-  value:
-    apiGroups:
-      - extensions
-      - apps
-    resources:
-      - deployments
-    verbs:
-      - create
-      - update
-      - delete
-      - patch
-- op: add
-  path: /rules/4
+  path: /rules/-
   value:
     apiGroups:
       - tekton.dev
@@ -65,7 +28,7 @@
       - delete
       - patch
 - op: add
-  path: /rules/5
+  path: /rules/-
   value:
     apiGroups:
       - tekton.dev
@@ -78,7 +41,7 @@
       - delete
       - patch
 - op: add
-  path: /rules/6
+  path: /rules/-
   value:
     apiGroups:
       - tekton.dev
@@ -94,7 +57,7 @@
       - delete
       - patch
 - op: add
-  path: /rules/7
+  path: /rules/-
   value:
     apiGroups:
       - dashboard.tekton.dev
@@ -106,7 +69,7 @@
       - delete
       - patch
 - op: add
-  path: /rules/8
+  path: /rules/-
   value:
     apiGroups:
       - triggers.tekton.dev
@@ -122,10 +85,10 @@
       - patch
       - add
 - op: add
-  path: /rules/9
+  path: /rules/-
   value:
     apiGroups:
-      - ""
+      - ''
     resources:
       - secrets
     verbs:
