@@ -116,17 +116,26 @@ func GetPipelineNamespaceAndVersion(r Resource, isOpenShift bool) (string, strin
 func getDeployments(r Resource, thingSearchingFor string) (string, string) {
 	version, namespace := "", ""
 
-	listOptions := metav1.ListOptions{
+	oldListOptions := metav1.ListOptions{
 		LabelSelector: "app.kubernetes.io/component=controller,app.kubernetes.io/name=tekton-" + thingSearchingFor,
 	}
-
-	deployments, err := r.K8sClient.AppsV1().Deployments("").List(listOptions)
+	oldDeployments, err := r.K8sClient.AppsV1().Deployments("").List(oldListOptions)
+	if err != nil {
+		logging.Log.Errorf("Error getting the Tekton %s deployment: %s", thingSearchingFor, err.Error())
+		return "", ""
+	}
+	newListOptions := metav1.ListOptions{
+		LabelSelector: "app.kubernetes.io/component=controller,app.kubernetes.io/name=controller,app.kubernetes.io/part-of=tekton-" + thingSearchingFor,
+	}
+	newDeployments, err := r.K8sClient.AppsV1().Deployments("").List(newListOptions)
 	if err != nil {
 		logging.Log.Errorf("Error getting the Tekton %s deployment: %s", thingSearchingFor, err.Error())
 		return "", ""
 	}
 
-	for _, deployment := range deployments.Items {
+	deployments := append(oldDeployments.Items, newDeployments.Items...)
+
+	for _, deployment := range deployments {
 		deploymentLabels := deployment.GetLabels()
 
 		if version == "" {
@@ -154,7 +163,7 @@ func getDeployments(r Resource, thingSearchingFor string) (string, string) {
 	}
 
 	if version == "" && thingSearchingFor == "pipelines" {
-		for _, deployment := range deployments.Items {
+		for _, deployment := range deployments {
 			deploymentLabels := deployment.GetLabels()
 			labelsToCheck := []string{"pipeline.tekton.dev/release", "version"} // To handle both beta and pre-beta versions
 			for _, label := range labelsToCheck {
@@ -224,17 +233,26 @@ func IsTriggersInstalled(r Resource, isOpenShift bool) bool {
 
 // Go through Triggers deployments and find if it is installed
 func SearchForDeployment(r Resource, thingSearchingFor string) (bool, string) {
-	listOptions := metav1.ListOptions{
+	oldListOptions := metav1.ListOptions{
 		LabelSelector: "app.kubernetes.io/component=controller,app.kubernetes.io/name=tekton-" + thingSearchingFor,
 	}
-
-	deployments, err := r.K8sClient.AppsV1().Deployments("").List(listOptions)
+	oldDeployments, err := r.K8sClient.AppsV1().Deployments("").List(oldListOptions)
+	if err != nil {
+		logging.Log.Errorf("Error getting the Tekton %s deployment: %s", thingSearchingFor, err.Error())
+		return false, ""
+	}
+	newListOptions := metav1.ListOptions{
+		LabelSelector: "app.kubernetes.io/component=controller,app.kubernetes.io/name=controller,app.kubernetes.io/part-of=tekton-" + thingSearchingFor,
+	}
+	newDeployments, err := r.K8sClient.AppsV1().Deployments("").List(newListOptions)
 	if err != nil {
 		logging.Log.Errorf("Error getting the Tekton %s deployment: %s", thingSearchingFor, err.Error())
 		return false, ""
 	}
 
-	for _, deployment := range deployments.Items {
+	deployments := append(oldDeployments.Items, newDeployments.Items...)
+
+	for _, deployment := range deployments {
 		if deployment.GetName() == "tekton-"+thingSearchingFor+"-controller" {
 			return true, deployment.Namespace
 		}
