@@ -157,9 +157,11 @@ func (r Resource) GetEndpoints(request *restful.Request, response *restful.Respo
 // the version of the Tekton Dashboard, the version of Tekton Pipelines, whether or not one's
 // running on OpenShift, when one's in read-only mode and Tekton Triggers version (if Installed)
 func (r Resource) GetProperties(request *restful.Request, response *restful.Response) {
-	dashboardVersion := GetDashboardVersion(r, r.Options.InstallNamespace)
-	isOpenShift := IsOpenShift(r, r.Options.InstallNamespace)
-	pipelineNamespace, pipelineVersion := GetPipelineNamespaceAndVersion(r, isOpenShift)
+	pipelineNamespace := r.Options.GetPipelinesNamespace()
+	triggersNamespace := r.Options.GetTriggersNamespace()
+	dashboardVersion := getDashboardVersion(r, r.Options.InstallNamespace)
+	isOpenShift := isOpenShift(r, r.Options.InstallNamespace)
+	pipelineVersion := getPipelineVersion(r, pipelineNamespace)
 
 	properties := Properties{
 		DashboardNamespace: r.Options.InstallNamespace,
@@ -175,10 +177,10 @@ func (r Resource) GetProperties(request *restful.Request, response *restful.Resp
 		properties.LogoutURL = "/oauth/sign_out"
 	}
 
-	isTriggersInstalled := IsTriggersInstalled(r, isOpenShift)
+	isTriggersInstalled := isTriggersInstalled(r, triggersNamespace)
 
 	if isTriggersInstalled {
-		triggersNamespace, triggersVersion := GetTriggersNamespaceAndVersion(r, isOpenShift)
+		triggersVersion := getTriggersVersion(r, triggersNamespace)
 		properties.TriggersNamespace = triggersNamespace
 		properties.TriggersVersion = triggersVersion
 	}

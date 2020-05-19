@@ -39,12 +39,14 @@ import (
 const csrfTokenLength = 32
 
 var (
-	help             = flag.Bool("help", false, "Prints defaults")
-	kubeConfigPath   = flag.String("kube-config", "", "Path to kube config file")
-	portNumber       = flag.Int("port", 8080, "Dashboard port number")
-	readOnly         = flag.Bool("read-only", false, "Enable or disable read only mode")
-	webDir           = flag.String("web-dir", "", "Dashboard web resources dir")
-	csrfSecureCookie = flag.Bool("csrf-secure-cookie", true, "Enable or disable Secure attribute on the CSRF cookie")
+	help               = flag.Bool("help", false, "Prints defaults")
+	pipelinesNamespace = flag.String("pipelines-namespace", "", "Namespace where Tekton pipelines is installed (assumes same namespace as dashboard if not specified)")
+	triggersNamespace  = flag.String("triggers-namespace", "", "Namespace where Tekton triggers is installed (assumes same namespace as dashboard if not specified)")
+	kubeConfigPath     = flag.String("kube-config", "", "Path to kube config file")
+	portNumber         = flag.Int("port", 8080, "Dashboard port number")
+	readOnly           = flag.Bool("read-only", false, "Enable or disable read only mode")
+	webDir             = flag.String("web-dir", "", "Dashboard web resources dir")
+	csrfSecureCookie   = flag.Bool("csrf-secure-cookie", true, "Enable or disable Secure attribute on the CSRF cookie")
 )
 
 // Stores config env
@@ -117,9 +119,11 @@ func main() {
 	}
 
 	options := endpoints.Options{
-		InstallNamespace: installNamespace,
-		ReadOnly:         *readOnly,
-		WebDir:           *webDir,
+		InstallNamespace:   installNamespace,
+		PipelinesNamespace: *pipelinesNamespace,
+		TriggersNamespace:  *triggersNamespace,
+		ReadOnly:           *readOnly,
+		WebDir:             *webDir,
 	}
 
 	resource := endpoints.Resource{
