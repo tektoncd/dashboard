@@ -684,4 +684,30 @@ describe('CreatePipelineRun', () => {
 
     expect(queryByText(/error retrieving pipeline information/i)).toBeTruthy();
   });
+
+  it('checks that pressing x on Pipeline doesnt cause errors', async () => {
+    const mockTestStore = mockStore(testStore);
+    jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
+    const {
+      getByPlaceholderText,
+      getByText,
+      getByTitle,
+      getByValue,
+      queryAllByTitle,
+      queryByText,
+      queryByValue
+    } = renderWithIntl(
+      <Provider store={mockTestStore}>
+        <CreatePipelineRun {...props} />
+      </Provider>
+    );
+    // Select task-1 and verify spec details are displayed
+    await selectPipeline1({ getByPlaceholderText, getByTitle });
+    testPipelineSpec('id-pipeline-1', queryByText, queryByValue);
+    expect(getByText('pipeline-1')).toBeTruthy();
+
+    fireEvent.click(queryAllByTitle(/clear selected item/i)[1]);
+    expect(getByValue(/namespace-1/i)).toBeTruthy();
+    expect(queryByText('Select PipelineResource')).toBeFalsy();
+  });
 });

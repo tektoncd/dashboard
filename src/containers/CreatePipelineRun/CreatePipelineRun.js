@@ -259,7 +259,7 @@ class CreatePipelineRun extends React.Component {
 
   handlePipelineChange = ({ selectedItem }) => {
     const { text } = selectedItem || {};
-    if (text !== this.state[PIPELINE_REF]) {
+    if (text !== this.state[PIPELINE_REF] && text !== undefined) {
       this.setState((state, props) => {
         const pipelineInfo = parsePipelineInfo(
           getStore().getState(),
@@ -272,6 +272,12 @@ class CreatePipelineRun extends React.Component {
           resources: initialResourcesState(pipelineInfo[RESOURCE_SPECS]),
           params: initialParamsState(pipelineInfo[PARAM_SPECS])
         };
+      });
+    } else {
+      // Reset pipelineresources and params when no Pipeline is selected
+      this.setState({
+        ...initialPipelineInfoState(),
+        [NAMESPACE]: this.getPipelineInfo('namespace')
       });
     }
   };
