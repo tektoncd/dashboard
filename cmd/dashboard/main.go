@@ -75,6 +75,12 @@ func main() {
 	installNamespace := os.Getenv("INSTALLED_NAMESPACE")
 
 	if *help {
+		fmt.Println("dashboard starts Tekton dashboard backend.")
+		fmt.Println()
+		fmt.Println("find more information at: https://github.com/tektoncd/dashboard")
+		fmt.Println()
+		fmt.Println("options:")
+		fmt.Println()
 		flag.PrintDefaults()
 		return
 	}

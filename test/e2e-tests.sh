@@ -90,7 +90,11 @@ deploymentExist=false
 for i in {1..30}
 do
   wait=$(kubectl wait --namespace tekton-pipelines --for=condition=available deployments/go-hello-world --timeout=30s)
-  if [ "$wait" = "deployment.extensions/go-hello-world condition met" ]; then
+  echo "WAIT RESULT: $wait"
+  if [ "$wait" = "deployment.apps/go-hello-world condition met" ]; then
+    deploymentExist=true
+    break
+  elif [ "$wait" = "deployment.extensions/go-hello-world condition met" ]; then
     deploymentExist=true
     break
   else

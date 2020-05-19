@@ -75,7 +75,10 @@ function install_dashboard_backend() {
   for i in {1..30}
   do
     wait=$(kubectl wait --namespace tekton-pipelines --for=condition=available deployments/tekton-dashboard --timeout=30s)
-    if [ "$wait" = "deployment.extensions/tekton-dashboard condition met" ]; then
+    echo "WAIT RESULT: $wait"
+    if [ "$wait" = "deployment.apps/tekton-dashboard condition met" ]; then
+      break
+    elif [ "$wait" = "deployment.extensions/tekton-dashboard condition met" ]; then
       break
     else
       sleep 5
