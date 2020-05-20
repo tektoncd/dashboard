@@ -80,6 +80,10 @@ kubectl apply -f https://storage.googleapis.com/tekton-releases-nightly/dashboar
 As a developer you can install nightly builds, or a local build. Nightly builds come in the usual four flavours.
 
 ```shell
+# Docker Desktop
+kustomize build overlays/dev | ko apply -f -
+kustomize build overlays/latest-locked-down | ko apply -f -
+
 # Plain Kube
 kustomize build overlays/latest | ko apply -f -
 kustomize build overlays/latest-locked-down | ko apply -f -
