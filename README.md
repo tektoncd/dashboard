@@ -103,6 +103,25 @@ $ ./install-dev.sh
 
 The `install-dev.sh` script will build and push an image of the Tekton Dashboard to the Docker registry which you are logged into. Any Docker registry will do, but in this case it will push to Dockerhub. It will also build the static web content using `npm` scripts.
 
+### Supported backend options
+
+The dashboard backend supports a number of options through command line arguments.
+
+These options are documented below:
+
+| Argument | Description | Type | Default value |
+|---|---|---|---|
+| `--csrf-secure-cookie` | Enable or disable Secure attribute on the CSRF cookie | `bool` | `true` |
+| `--help` | Print help message and exit | `bool` | `false` |
+| `--kube-config` | Path to kube config file, uses in cluster config if empty | `string` | `""` |
+| `--pipelines-namespace` | Namespace where Tekton pipelines is installed (assumes same namespace as dashboard if not set) | `string` | `""` |
+| `--triggers-namespace` | Namespace where Tekton triggers is installed (assumes same namespace as dashboard if not set) | `string` | `""` |
+| `--port` | Dashboard port number | `int` | `8080` |
+| `--read-only` | Enable or disable read only mode | `bool` | `false` |
+| `--web-dir` | Dashboard web resources directory | `string` | `""` |
+        
+Run `dashboard --help` to show the supported command line arguments and their default value directly from the `dashboard` binary.
+
 ### Optionally set up the Ingress endpoint
 
 An Ingress definition is provided in the `ingress` directory, and this can optionally be installed and configured. If you wish to access the Tekton Dashboard, for example on your laptop that has a visible IP address, you can use the freely available [`nip.io`](https://nip.io/) service. A worked example follows.
