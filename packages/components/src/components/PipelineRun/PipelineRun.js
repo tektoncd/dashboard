@@ -30,7 +30,7 @@ import {
   updateUnexecutedSteps
 } from '@tektoncd/dashboard-utils';
 
-import { Log, RunHeader, StepDetails, TaskRunStatus, TaskTree } from '..';
+import { Log, RunHeader, StepDetails, TaskRunDetails, TaskTree } from '..';
 
 import '../../scss/Run.scss';
 
@@ -365,7 +365,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
               taskRun={taskRun}
             />
           )) ||
-            (selectedTaskId && <TaskRunStatus taskRun={taskRun} />)}
+            (selectedTaskId && <TaskRunDetails taskRun={taskRun} />)}
         </div>
       </>
     );

@@ -30,12 +30,6 @@ class Task extends Component {
     this.selectDefaultStep();
   }
 
-  componentDidUpdate() {
-    if (!this.state.selectedStepId && this.props.steps.length > 0) {
-      this.selectDefaultStep();
-    }
-  }
-
   handleClick = event => {
     if (event) {
       event.preventDefault();
@@ -48,6 +42,15 @@ class Task extends Component {
 
   handleStepSelected = selectedStepId => {
     this.setState({ selectedStepId }, () => {
+      this.handleClick();
+    });
+  };
+
+  handleTaskSelected = event => {
+    if (event) {
+      event.preventDefault();
+    }
+    this.setState({ selectedStepId: null }, () => {
       this.handleClick();
     });
   };
@@ -86,12 +89,17 @@ class Task extends Component {
     const { selectedStepId } = this.state;
     const icon = this.icon();
     return (
-      <li className="task" data-succeeded={succeeded} data-reason={reason}>
+      <li
+        className="task"
+        data-succeeded={succeeded}
+        data-reason={reason}
+        data-selected={(expanded && !selectedStepId) || undefined}
+      >
         <a
           className="task-link"
           href="#"
           title={pipelineTaskName}
-          onClick={this.handleClick}
+          onClick={this.handleTaskSelected}
         >
           {icon}
           {pipelineTaskName}

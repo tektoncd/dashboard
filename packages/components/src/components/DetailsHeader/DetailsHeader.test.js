@@ -12,47 +12,47 @@ limitations under the License.
 */
 
 import React from 'react';
-import StepDetailsHeader from './StepDetailsHeader';
+import DetailsHeader from './DetailsHeader';
 import { renderWithIntl } from '../../utils/test';
 
 const props = {
   stepName: 'test name'
 };
 
-it('StepDetailsHeader renders the provided content', () => {
-  const { queryByText } = renderWithIntl(<StepDetailsHeader {...props} />);
+it('DetailsHeader renders the provided content', () => {
+  const { queryByText } = renderWithIntl(<DetailsHeader {...props} />);
   expect(queryByText(/test name/i)).toBeTruthy();
 });
 
-it('StepDetailsHeader renders the running state', () => {
+it('DetailsHeader renders the running state', () => {
   const { queryByText } = renderWithIntl(
-    <StepDetailsHeader {...props} status="running" />
+    <DetailsHeader {...props} status="running" />
   );
   expect(queryByText(/running/i)).toBeTruthy();
 });
 
-it('StepDetailsHeader renders the completed state', () => {
+it('DetailsHeader renders the completed state', () => {
   const { queryByText } = renderWithIntl(
-    <StepDetailsHeader {...props} status="terminated" reason="Completed" />
+    <DetailsHeader {...props} status="terminated" reason="Completed" />
   );
   expect(queryByText(/completed/i)).toBeTruthy();
 });
 
-it('StepDetailsHeader renders the cancelled state', () => {
+it('DetailsHeader renders the cancelled state', () => {
   const { queryByText } = renderWithIntl(
-    <StepDetailsHeader {...props} status="cancelled" />
+    <DetailsHeader {...props} status="cancelled" />
   );
   expect(queryByText(/Cancelled/i)).toBeTruthy();
 });
 
-it('StepDetailsHeader renders the failed state', () => {
+it('DetailsHeader renders the failed state', () => {
   const { queryByText } = renderWithIntl(
-    <StepDetailsHeader {...props} status="terminated" />
+    <DetailsHeader {...props} status="terminated" />
   );
   expect(queryByText(/failed/i)).toBeTruthy();
 });
 
-it('StepDetailsHeader renders the pending state', () => {
+it('DetailsHeader renders the pending state', () => {
   const taskRun = {
     status: {
       conditions: [
@@ -66,7 +66,26 @@ it('StepDetailsHeader renders the pending state', () => {
   };
 
   const { queryByText } = renderWithIntl(
-    <StepDetailsHeader {...props} taskRun={taskRun} />
+    <DetailsHeader {...props} taskRun={taskRun} />
   );
   expect(queryByText(/waiting/i)).toBeTruthy();
+});
+
+it('DetailsHeader renders the pending state', () => {
+  const taskRun = {
+    status: {
+      conditions: [
+        {
+          type: 'Succeeded',
+          status: 'Unknown',
+          reason: 'Pending'
+        }
+      ]
+    }
+  };
+
+  const { queryByText } = renderWithIntl(
+    <DetailsHeader {...props} taskRun={taskRun} type="taskRun" />
+  );
+  expect(queryByText(/pending/i)).toBeTruthy();
 });

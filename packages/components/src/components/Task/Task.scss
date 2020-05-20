@@ -25,6 +25,17 @@ limitations under the License.
     }
   }
 
+  &[data-selected] > a.task-link:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    border-top: 1.1rem solid transparent;
+    border-right: 0.8rem solid white;
+    border-bottom: 1.1rem solid transparent;
+  }
+
   &:not([data-succeeded]) > a.task-link {
     text-shadow: 0.2px 0 0 #272d33ab; // increase weight slightly
     background-color: $waiting-bg;
@@ -76,6 +87,11 @@ limitations under the License.
     }
   }
 
+  &[data-selected]:not([data-succeeded]) > a.task-link,
+    &[data-selected][data-succeeded='Unknown'] > a.task-link {
+    background-color: #e5e8eb;
+  }
+
   > a.task-link {
     display: block;
     position: relative;
@@ -90,16 +106,7 @@ limitations under the License.
     overflow: hidden;
     text-overflow: ellipsis;
 
-    &:after {
-      content: '';
-      position: absolute;
-      height: 2px;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background-color: black;
-      opacity: 0.15;
-    }
+
   }
 
   .task-icon {

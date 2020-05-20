@@ -20,11 +20,11 @@ import {
 import { injectIntl } from 'react-intl';
 import { getStatus } from '@tektoncd/dashboard-utils';
 
-import { Spinner } from '..';
+import { Spinner, StatusIcon } from '..';
 
-import './StepDetailsHeader.scss';
+import './DetailsHeader.scss';
 
-class StepDetailsHeader extends Component {
+class DetailsHeader extends Component {
   icon() {
     const { reason, status } = this.props;
 
@@ -50,6 +50,7 @@ class StepDetailsHeader extends Component {
 
   statusLabel() {
     const { intl, reason, status, taskRun } = this.props;
+    const { reason: taskReason, status: taskStatus } = getStatus(taskRun);
 
     if (status === 'cancelled') {
       return intl.formatMessage({
@@ -77,7 +78,6 @@ class StepDetailsHeader extends Component {
       });
     }
 
-    const { reason: taskReason, status: taskStatus } = getStatus(taskRun);
     if (taskStatus === 'Unknown' && taskReason === 'Pending') {
       return intl.formatMessage({
         id: 'dashboard.taskRun.status.waiting',
@@ -92,10 +92,24 @@ class StepDetailsHeader extends Component {
   }
 
   render() {
-    const { reason, status, stepName } = this.props;
+    const { stepName, taskRun, type = 'step', intl } = this.props;
+    let { reason, status } = this.props;
+    let icon;
+    let statusLabel;
 
-    const icon = this.icon();
-    const statusLabel = this.statusLabel();
+    if (type === 'taskRun') {
+      ({ reason, succeeded: status } = taskRun);
+      icon = <StatusIcon reason={reason} status={status} />;
+      statusLabel =
+        reason ||
+        intl.formatMessage({
+          id: 'dashboard.taskRuns.status.pending',
+          defaultMessage: 'Pending'
+        });
+    } else {
+      icon = this.icon();
+      statusLabel = this.statusLabel();
+    }
     return (
       <header
         className="tkn--step-details-header"
@@ -104,7 +118,7 @@ class StepDetailsHeader extends Component {
       >
         <h2>
           {icon}
-          {stepName}
+          <span className="tkn--run-details-name ">{stepName}</span>
           <span className="status-label">{statusLabel}</span>
         </h2>
       </header>
@@ -112,8 +126,8 @@ class StepDetailsHeader extends Component {
   }
 }
 
-StepDetailsHeader.defaultProps = {
+DetailsHeader.defaultProps = {
   taskRun: {}
 };
 
-export default injectIntl(StepDetailsHeader);
+export default injectIntl(DetailsHeader);
