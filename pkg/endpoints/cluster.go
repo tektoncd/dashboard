@@ -61,6 +61,12 @@ func (r Resource) ProxyRequest(request *restful.Request, response *restful.Respo
 	uri := request.PathParameter("subpath") + "?" + parsedURL.RawQuery
 	forwardRequest := r.K8sClient.CoreV1().RESTClient().Verb(request.Request.Method).RequestURI(uri).Body(request.Request.Body)
 	forwardRequest.SetHeader("Content-Type", request.HeaderParameter("Content-Type"))
+	// Copy authorization (for serviceaccount clients) and impersonation headers (for user clients) from the client request to the forwarded request.
+	for k, vs := range request.Request.Header {
+		if k == "Impersonate-User" || k == "Impersonate-Group" || k == "Authorization" {
+			forwardRequest.SetHeader(k, vs...)
+		}
+	}
 	forwardResponse := forwardRequest.Do()
 
 	if secretsURIPattern.Match([]byte(uri)) {
