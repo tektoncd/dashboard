@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -179,7 +179,7 @@ const testStore = {
 };
 
 const props = {
-  open: true,
+  open: false,
   namespace: 'namespace-1',
   kind: 'Task'
 };
@@ -299,10 +299,17 @@ describe('CreateTaskRun', () => {
       getByText,
       getByTitle,
       queryByText,
-      queryByValue
+      queryByValue,
+      rerender
     } = renderWithIntl(
       <Provider store={mockTestStore}>
         <CreateTaskRun {...props} />
+      </Provider>
+    );
+    rerenderWithIntl(
+      rerender,
+      <Provider store={mockTestStore}>
+        <CreateTaskRun {...props} open />
       </Provider>
     );
     await selectTask1AndFillSpec({
@@ -323,6 +330,7 @@ describe('CreateTaskRun', () => {
     await wait(() => expect(createTaskRun).toHaveBeenCalledTimes(1));
     await waitForElement(() => getByText(apiErrorRegExp));
     await waitForElement(() => getByText(/error code 400/i));
+    fireEvent.click(getByTitle(/closes notification/i));
   });
 
   it('handles api error with text', async () => {
@@ -335,10 +343,17 @@ describe('CreateTaskRun', () => {
       getByText,
       getByTitle,
       queryByText,
-      queryByValue
+      queryByValue,
+      rerender
     } = renderWithIntl(
       <Provider store={mockTestStore}>
         <CreateTaskRun {...props} />
+      </Provider>
+    );
+    rerenderWithIntl(
+      rerender,
+      <Provider store={mockTestStore}>
+        <CreateTaskRun {...props} open />
       </Provider>
     );
     await selectTask1AndFillSpec({
@@ -415,10 +430,17 @@ describe('CreateTaskRun', () => {
       getByPlaceholderText,
       queryByDisplayValue,
       queryByText,
-      queryByValue
+      queryByValue,
+      rerender
     } = renderWithIntl(
       <Provider store={mockTestStore}>
         <CreateTaskRun {...props} />
+      </Provider>
+    );
+    rerenderWithIntl(
+      rerender,
+      <Provider store={mockTestStore}>
+        <CreateTaskRun {...props} open />
       </Provider>
     );
     expect(queryByDisplayValue(/namespace-1/i)).toBeTruthy();
@@ -445,6 +467,7 @@ describe('CreateTaskRun', () => {
   it('renders task controlled', async () => {
     // Display with task-1 selected
     const mockTestStore = mockStore(testStore);
+    jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
 
     const {
       getByText,
@@ -457,18 +480,16 @@ describe('CreateTaskRun', () => {
         <CreateTaskRun {...props} taskRef="task-1" />
       </Provider>
     );
-    await waitForElement(() => getByText(/task-1/i));
-    expect(queryByLabelText(/namespace/i)).toBeFalsy();
-    // Verify spec details are displayed
-    testTaskSpec('id-task-1', queryByText, queryByValue);
-    // Change selection to task-2
     rerenderWithIntl(
       rerender,
       <Provider store={mockTestStore}>
-        <CreateTaskRun {...props} taskRef="task-2" />
+        <CreateTaskRun {...props} open taskRef="task-1" />
       </Provider>
     );
-    testTaskSpec('id-task-2', queryByText, queryByValue);
+    await waitForElement(() => getByText(/task-1/i));
+    expect(queryByLabelText(/namespace/i)).toBeTruthy();
+    // Verify spec details are displayed
+    testTaskSpec('id-task-1', queryByText, queryByValue);
   });
 
   it('renders labels', () => {
@@ -499,9 +520,20 @@ describe('CreateTaskRun', () => {
   it('resets Task and ServiceAccount when namespace changes', async () => {
     const mockTestStore = mockStore(testStore);
     jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
-    const { getByPlaceholderText, getByTitle, getByValue } = renderWithIntl(
+    const {
+      getByPlaceholderText,
+      getByTitle,
+      getByValue,
+      rerender
+    } = renderWithIntl(
       <Provider store={mockTestStore}>
         <CreateTaskRun {...props} />
+      </Provider>
+    );
+    rerenderWithIntl(
+      rerender,
+      <Provider store={mockTestStore}>
+        <CreateTaskRun {...props} open />
       </Provider>
     );
     fireEvent.click(getByPlaceholderText(/select task/i));
@@ -525,32 +557,6 @@ describe('CreateTaskRun', () => {
     expect(getByPlaceholderText(/select serviceaccount/i)).toBeTruthy();
   });
 
-  it('resets Task and ServiceAccount when namespace changes controlled', async () => {
-    const mockTestStore = mockStore(testStore);
-    jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
-    const { rerender, getByPlaceholderText, getByTitle } = renderWithIntl(
-      <Provider store={mockTestStore}>
-        <CreateTaskRun {...props} />
-      </Provider>
-    );
-    fireEvent.click(getByPlaceholderText(/select task/i));
-    fireEvent.click(await waitForElement(() => getByTitle(/task-1/i)));
-    fireEvent.click(getByPlaceholderText(/select serviceaccount/i));
-    fireEvent.click(
-      await waitForElement(() => getByTitle(/service-account-1/i))
-    );
-    // Change selected namespace
-    rerenderWithIntl(
-      rerender,
-      <Provider store={mockTestStore}>
-        <CreateTaskRun {...props} namespace="namespace-2" />
-      </Provider>
-    );
-    // Verify that Task and ServiceAccount value have reset
-    expect(getByPlaceholderText(/select task/i)).toBeTruthy();
-    expect(getByPlaceholderText(/select serviceaccount/i)).toBeTruthy();
-  });
-
   it('submits form', async () => {
     const mockTestStore = mockStore(testStore);
     jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
@@ -561,10 +567,17 @@ describe('CreateTaskRun', () => {
       getByText,
       getByTitle,
       queryByText,
-      queryByValue
+      queryByValue,
+      rerender
     } = renderWithIntl(
       <Provider store={mockTestStore}>
         <CreateTaskRun {...props} />
+      </Provider>
+    );
+    rerenderWithIntl(
+      rerender,
+      <Provider store={mockTestStore}>
+        <CreateTaskRun {...props} open />
       </Provider>
     );
     expect(queryByValue(/namespace-1/i)).toBeTruthy();
@@ -719,12 +732,20 @@ describe('CreateTaskRun', () => {
   });
 
   it('handles error getting task controlled', () => {
-    const { queryByText } = renderWithIntl(
-      <Provider store={mockStore(testStore)}>
-        <CreateTaskRun {...props} taskRef="task-thisDoesNotExist" />
+    const mockTestStore = mockStore(testStore);
+    jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
+    const badTaskRef = 'task-thisDoesNotExist';
+    const { queryByText, rerender } = renderWithIntl(
+      <Provider store={mockTestStore}>
+        <CreateTaskRun {...props} taskRef={badTaskRef} />
       </Provider>
     );
-
+    rerenderWithIntl(
+      rerender,
+      <Provider store={mockTestStore}>
+        <CreateTaskRun {...props} open taskRef={badTaskRef} />
+      </Provider>
+    );
     expect(queryByText(/error retrieving task information/i)).toBeTruthy();
   });
 
@@ -738,10 +759,17 @@ describe('CreateTaskRun', () => {
       getByValue,
       queryAllByTitle,
       queryByText,
-      queryByValue
+      queryByValue,
+      rerender
     } = renderWithIntl(
       <Provider store={mockTestStore}>
         <CreateTaskRun {...props} />
+      </Provider>
+    );
+    rerenderWithIntl(
+      rerender,
+      <Provider store={mockTestStore}>
+        <CreateTaskRun {...props} open />
       </Provider>
     );
     // Select task-1 and verify spec details are displayed
@@ -752,5 +780,16 @@ describe('CreateTaskRun', () => {
     fireEvent.click(queryAllByTitle(/clear selected item/i)[1]);
     expect(getByValue(/namespace-1/i)).toBeTruthy();
     expect(queryByText('Select PipelineResource')).toBeFalsy();
+  });
+
+  it('handles close', () => {
+    const mockTestStore = mockStore(testStore);
+    const { getByText } = renderWithIntl(
+      <Provider store={mockTestStore}>
+        <CreateTaskRun {...props} open />
+      </Provider>
+    );
+
+    fireEvent.click(getByText(/cancel/i));
   });
 });

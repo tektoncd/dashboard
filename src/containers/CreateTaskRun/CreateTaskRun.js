@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import { connect } from 'react-redux';
 import {
   Dropdown,
   Form,
@@ -38,7 +37,8 @@ import { isValidLabel } from '../../utils';
 
 import '../../scss/CreateRun.scss';
 
-const parseTaskInfo = (state, taskRef, kind, namespace) => {
+const parseTaskInfo = (taskRef, kind, namespace) => {
+  const state = getStore().getState();
   if (taskRef) {
     const task =
       kind === 'ClusterTask'
@@ -47,19 +47,25 @@ const parseTaskInfo = (state, taskRef, kind, namespace) => {
     const paramSpecs = task?.spec?.params;
     const resourceSpecs = task?.spec?.resources;
     const taskError = !task;
-    return { resourceSpecs, paramSpecs, taskError };
+    return { paramSpecs, resourceSpecs, taskError };
   }
   return {};
 };
 
-const initialTaskInfoState = () => {
-  return {
-    namespace: '',
-    paramSpecs: [],
-    resourceSpecs: [],
-    taskError: false,
-    taskRef: ''
-  };
+const initialState = {
+  invalidLabels: {},
+  kind: 'Task',
+  labels: [],
+  namespace: '',
+  paramSpecs: [],
+  resourceSpecs: [],
+  serviceAccount: '',
+  submitError: '',
+  taskError: false,
+  taskRef: '',
+  timeout: '60',
+  validationError: false,
+  validTimeout: true
 };
 
 const initialParamsState = paramSpecs => {
@@ -98,61 +104,47 @@ const initialResourcesState = resourceSpecs => {
 const itemToString = item => (item ? item.text : '');
 
 class CreateTaskRun extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = this.initialState(props);
-  }
+  state = initialState;
 
   componentDidUpdate(prevProps) {
-    // Catch instances when the Task is loaded after the constructor is called
-    if (this.props.resourceSpecs !== prevProps.resourceSpecs) {
-      this.resetResourcesState();
-    }
-    if (this.props.paramSpecs !== prevProps.paramSpecs) {
-      this.resetParamsState();
-    }
-    // Reset the form if the namespace changes
-    if (this.props.namespace !== prevProps.namespace) {
+    const { namespace, open } = this.props;
+    const { namespace: prevNamespace, open: prevOpen } = prevProps;
+
+    if ((open && !prevOpen) || namespace !== prevNamespace) {
       this.resetForm();
     }
   }
 
-  getTaskInfo = (key, { state = this.state, props = this.props } = {}) => {
-    if (key === 'disabled') {
-      // Disable task info selection when taskRef is supplied
-      return !!props.taskRef;
-    }
-    // Use props when taskRef is supplied
-    return props.taskRef ? props[key] : state[key];
-  };
-
   checkFormValidation = () => {
+    const {
+      labels,
+      namespace,
+      params,
+      resources,
+      taskRef,
+      timeout
+    } = this.state;
     // Namespace, PipelineRef, Resources, and Params must all have values
-    const validNamespace = !!this.getTaskInfo('namespace');
-    const validTaskRef = !!this.getTaskInfo('taskRef');
+    const validNamespace = !!namespace;
+    const validTaskRef = !!taskRef;
     const validResources =
-      !this.state.resources ||
-      Object.keys(this.state.resources).reduce(
-        (acc, name) => acc && !!this.state.resources[name],
+      !resources ||
+      Object.keys(resources).reduce(
+        (acc, name) => acc && !!resources[name],
         true
       );
     const validParams =
-      !this.state.params ||
-      Object.keys(this.state.params).reduce(
-        (acc, name) => acc && !!this.state.params[name],
-        true
-      );
+      !params ||
+      Object.keys(params).reduce((acc, name) => acc && !!params[name], true);
 
     // Timeout is a number and less than 1 year in minutes
     const validTimeout =
-      !Number.isNaN(this.state.timeout) &&
-      this.state.timeout < 525600 &&
-      this.state.timeout.trim() !== '';
+      !Number.isNaN(timeout) && timeout < 525600 && timeout.trim() !== '';
     this.setState(() => ({ validTimeout }));
 
     // Labels
     let validLabels = true;
-    this.state.labels.forEach(label => {
+    labels.forEach(label => {
       ['key', 'value'].forEach(type => {
         if (!isValidLabel(type, label[type])) {
           validLabels = false;
@@ -177,7 +169,6 @@ class CreateTaskRun extends React.Component {
   };
 
   handleClose = () => {
-    this.resetForm();
     this.props.onClose();
   };
 
@@ -226,13 +217,12 @@ class CreateTaskRun extends React.Component {
 
   handleNamespaceChange = ({ selectedItem }) => {
     const { text = '' } = selectedItem || {};
-    // Reset task and ServiceAccount when namespace changes
     if (text !== this.state.namespace) {
-      this.setState({
-        ...initialTaskInfoState(),
-        namespace: text,
-        serviceAccount: ''
-      });
+      this.setState(state => ({
+        ...initialState,
+        kind: state.kind,
+        namespace: text
+      }));
     }
   };
 
@@ -240,9 +230,8 @@ class CreateTaskRun extends React.Component {
     const { text = '' } = selectedItem || {};
     if (text !== this.state.kind) {
       this.setState({
-        ...initialTaskInfoState(),
-        kind: text,
-        serviceAccount: ''
+        ...initialState,
+        kind: text
       });
     }
   };
@@ -258,30 +247,23 @@ class CreateTaskRun extends React.Component {
 
   handleTaskChange = ({ selectedItem }) => {
     const { text } = selectedItem || {};
-    if (text !== this.state.taskRef && text !== undefined) {
+    if (text && text !== this.state.taskRef) {
       this.setState(state => {
-        const taskInfo = parseTaskInfo(
-          getStore().getState(),
-          text,
-          state.kind,
-          this.getTaskInfo('namespace')
-        );
+        const taskInfo = parseTaskInfo(text, state.kind, state.namespace);
         return {
-          taskRef: text,
           ...taskInfo,
+          taskRef: text,
           resources: initialResourcesState(taskInfo.resourceSpecs),
           params: initialParamsState(taskInfo.paramSpecs)
         };
       });
-    } else {
-      // Reset pipelineresources and params when no Task is selected
-      this.setState({
-        ...initialTaskInfoState(),
-        namespace: this.getTaskInfo('namespace'),
-        paramSpecs: [],
-        resourceSpecs: []
-      });
+      return;
     }
+    // Reset pipelineresources and params when no Task is selected
+    this.setState(state => ({
+      ...initialState,
+      namespace: state.namespace
+    }));
   };
 
   handleResourceChange = (kind, key, value) => {
@@ -302,13 +284,12 @@ class CreateTaskRun extends React.Component {
       return;
     }
 
-    // Send API request to create TaskRun
-    const taskRef = this.getTaskInfo('taskRef');
-    const namespace = this.getTaskInfo('namespace');
     const {
+      namespace,
       params,
       resources,
       serviceAccount,
+      taskRef,
       timeout,
       labels,
       kind
@@ -328,7 +309,6 @@ class CreateTaskRun extends React.Component {
       }, {})
     })
       .then(response => {
-        this.resetForm();
         this.props.onSuccess(response);
       })
       .catch(error => {
@@ -343,58 +323,44 @@ class CreateTaskRun extends React.Component {
       });
   };
 
-  initialState = props => {
-    const { namespace, kind } = props;
+  initialState = () => {
+    const { kind, namespace, taskRef } = this.props;
+    const taskInfo = parseTaskInfo(taskRef, kind, namespace);
     return {
-      ...initialTaskInfoState(),
-      params: initialParamsState(
-        this.getTaskInfo('paramSpecs', { state: {}, props })
-      ),
-      resources: initialResourcesState(
-        this.getTaskInfo('resourceSpecs', { state: {}, props })
-      ),
+      ...initialState,
+      ...taskInfo,
+      kind,
       namespace: namespace !== ALL_NAMESPACES ? namespace : '',
-      serviceAccount: '',
-      timeout: '60',
-      validationError: false,
-      submitError: '',
-      validTimeout: true,
-      labels: [],
-      invalidLabels: {},
-      kind
+      taskRef: taskRef || '',
+      params: initialParamsState(taskInfo.paramSpecs),
+      resources: initialResourcesState(taskInfo.resourceSpecs)
     };
   };
 
   resetForm = () => {
-    this.setState((state, props) => this.initialState(props));
-  };
-
-  resetParamsState = () => {
-    this.setState(() => ({
-      params: initialParamsState(this.getTaskInfo('paramSpecs'))
-    }));
-  };
-
-  resetResourcesState = () => {
-    this.setState(() => ({
-      resources: initialResourcesState(this.getTaskInfo('resourceSpecs'))
-    }));
+    this.setState(this.initialState());
   };
 
   render() {
     const { open, intl } = this.props;
     const {
-      serviceAccount,
-      validationError,
-      validTimeout,
+      invalidLabels,
+      kind,
       labels,
-      invalidLabels
+      namespace,
+      params,
+      paramSpecs,
+      resources,
+      resourceSpecs,
+      serviceAccount,
+      submitError,
+      taskError,
+      taskRef,
+      timeout,
+      validationError,
+      validTimeout
     } = this.state;
-    const namespace = this.getTaskInfo('namespace');
-    const taskRef = this.getTaskInfo('taskRef');
-    const taskInfoDisabled = this.getTaskInfo('disabled');
-    const resourceSpecs = this.getTaskInfo('resourceSpecs');
-    const paramSpecs = this.getTaskInfo('paramSpecs');
+
     return (
       <Form>
         <Modal
@@ -404,7 +370,6 @@ class CreateTaskRun extends React.Component {
             id: 'dashboard.createTaskRun.heading',
             defaultMessage: 'Create TaskRun'
           })}
-          modalLabel={this.getTaskInfo('taskRef')}
           primaryButtonText={intl.formatMessage({
             id: 'dashboard.actions.createButton',
             defaultMessage: 'Create'
@@ -417,7 +382,7 @@ class CreateTaskRun extends React.Component {
           onRequestClose={this.handleClose}
           onSecondarySubmit={this.handleClose}
         >
-          {this.getTaskInfo('taskError') && (
+          {taskError && (
             <InlineNotification
               kind="error"
               title={intl.formatMessage({
@@ -438,73 +403,69 @@ class CreateTaskRun extends React.Component {
               lowContrast
             />
           )}
-          {this.state.submitError !== '' && (
+          {submitError !== '' && (
             <InlineNotification
               kind="error"
               title={intl.formatMessage({
                 id: 'dashboard.createTaskRun.createError',
                 defaultMessage: 'Error creating TaskRun'
               })}
-              subtitle={this.state.submitError}
+              subtitle={submitError}
               onCloseButtonClick={() => this.setState({ submitError: '' })}
               lowContrast
             />
           )}
-          {!taskInfoDisabled && (
-            <FormGroup legendText="">
-              <Dropdown
-                id="create-taskrun--kind-dropdown"
-                titleText="Kind"
-                label=""
-                initialSelectedItem={{ id: 'task', text: 'Task' }}
-                items={[
-                  { id: 'task', text: 'Task' },
-                  { id: 'clustertask', text: 'ClusterTask' }
-                ]}
-                itemToString={itemToString}
-                onChange={this.handleKindChange}
-              />
-              <NamespacesDropdown
-                id="create-taskrun--namespaces-dropdown"
-                invalid={validationError && !namespace}
+          <FormGroup legendText="">
+            <Dropdown
+              id="create-taskrun--kind-dropdown"
+              titleText="Kind"
+              label=""
+              initialSelectedItem={{ id: 'task', text: 'Task' }}
+              items={[
+                { id: 'task', text: 'Task' },
+                { id: 'clustertask', text: 'ClusterTask' }
+              ]}
+              itemToString={itemToString}
+              onChange={this.handleKindChange}
+            />
+            <NamespacesDropdown
+              id="create-taskrun--namespaces-dropdown"
+              invalid={validationError && !namespace}
+              invalidText={intl.formatMessage({
+                id: 'dashboard.createTaskRun.invalidNamespace',
+                defaultMessage: 'Namespace cannot be empty'
+              })}
+              selectedItem={namespace ? { id: namespace, text: namespace } : ''}
+              onChange={this.handleNamespaceChange}
+            />
+            {kind === 'Task' && (
+              <TasksDropdown
+                id="create-taskrun--tasks-dropdown"
+                namespace={namespace}
+                invalid={validationError && !taskRef}
                 invalidText={intl.formatMessage({
-                  id: 'dashboard.createTaskRun.invalidNamespace',
-                  defaultMessage: 'Namespace cannot be empty'
+                  id: 'dashboard.createTaskRun.invalidTask',
+                  defaultMessage: 'Task cannot be empty'
                 })}
-                selectedItem={
-                  namespace ? { id: namespace, text: namespace } : ''
-                }
-                onChange={this.handleNamespaceChange}
+                selectedItem={taskRef ? { id: taskRef, text: taskRef } : ''}
+                disabled={namespace === ''}
+                onChange={this.handleTaskChange}
               />
-              {this.state.kind === 'Task' && (
-                <TasksDropdown
-                  id="create-taskrun--tasks-dropdown"
-                  namespace={namespace}
-                  invalid={validationError && !taskRef}
-                  invalidText={intl.formatMessage({
-                    id: 'dashboard.createTaskRun.invalidTask',
-                    defaultMessage: 'Task cannot be empty'
-                  })}
-                  selectedItem={taskRef ? { id: taskRef, text: taskRef } : ''}
-                  disabled={this.state.namespace === ''}
-                  onChange={this.handleTaskChange}
-                />
-              )}
-              {this.state.kind === 'ClusterTask' && (
-                <ClusterTasksDropdown
-                  id="create-taskrun--clustertasks-dropdown"
-                  namespace={namespace}
-                  invalid={validationError && !taskRef}
-                  invalidText={intl.formatMessage({
-                    id: 'dashboard.createTaskRun.invalidTask',
-                    defaultMessage: 'Task cannot be empty'
-                  })}
-                  selectedItem={taskRef ? { id: taskRef, text: taskRef } : ''}
-                  onChange={this.handleTaskChange}
-                />
-              )}
-            </FormGroup>
-          )}
+            )}
+            {kind === 'ClusterTask' && (
+              <ClusterTasksDropdown
+                id="create-taskrun--clustertasks-dropdown"
+                namespace={namespace}
+                invalid={validationError && !taskRef}
+                invalidText={intl.formatMessage({
+                  id: 'dashboard.createTaskRun.invalidTask',
+                  defaultMessage: 'Task cannot be empty'
+                })}
+                selectedItem={taskRef ? { id: taskRef, text: taskRef } : ''}
+                onChange={this.handleTaskChange}
+              />
+            )}
+          </FormGroup>
           <FormGroup legendText="">
             <KeyValueList
               legendText={intl.formatMessage({
@@ -550,17 +511,15 @@ class CreateTaskRun extends React.Component {
                   helperText={spec.type}
                   type={spec.type}
                   namespace={namespace}
-                  invalid={
-                    validationError && !this.state.resources.inputs[spec.name]
-                  }
+                  invalid={validationError && !resources.inputs[spec.name]}
                   invalidText={intl.formatMessage({
                     id: 'dashboard.createTaskRun.invalidPipelineResources',
                     defaultMessage: 'PipelineResources cannot be empty'
                   })}
                   selectedItem={(() => {
                     let value = '';
-                    if (this.state.resources.inputs !== undefined) {
-                      value = this.state.resources.inputs[spec.name];
+                    if (resources.inputs !== undefined) {
+                      value = resources.inputs[spec.name];
                     }
                     return value ? { id: value, text: value } : '';
                   })()}
@@ -582,17 +541,15 @@ class CreateTaskRun extends React.Component {
                   helperText={spec.type}
                   type={spec.type}
                   namespace={namespace}
-                  invalid={
-                    validationError && !this.state.resources.outputs[spec.name]
-                  }
+                  invalid={validationError && !resources.outputs[spec.name]}
                   invalidText={intl.formatMessage({
                     id: 'dashboard.createTaskRun.invalidPipelineResources',
                     defaultMessage: 'PipelineResources cannot be empty'
                   })}
                   selectedItem={(() => {
                     let value = '';
-                    if (this.state.resources.outputs !== undefined) {
-                      value = this.state.resources.outputs[spec.name];
+                    if (resources.outputs !== undefined) {
+                      value = resources.outputs[spec.name];
                     }
                     return value ? { id: value, text: value } : '';
                   })()}
@@ -613,14 +570,12 @@ class CreateTaskRun extends React.Component {
                   labelText={paramSpec.name}
                   helperText={paramSpec.description}
                   placeholder={paramSpec.default || paramSpec.name}
-                  invalid={
-                    validationError && !this.state.params[paramSpec.name]
-                  }
+                  invalid={validationError && !params[paramSpec.name]}
                   invalidText={intl.formatMessage({
                     id: 'dashboard.createTaskRun.invalidParams',
                     defaultMessage: 'Params cannot be empty'
                   })}
-                  value={this.state.params[paramSpec.name] || ''}
+                  value={params[paramSpec.name] || ''}
                   onChange={({ target: { value } }) =>
                     this.handleParamChange(paramSpec.name, value)
                   }
@@ -646,7 +601,7 @@ class CreateTaskRun extends React.Component {
                   ? { id: serviceAccount, text: serviceAccount }
                   : ''
               }
-              disabled={this.state.namespace === ''}
+              disabled={namespace === ''}
               onChange={({ selectedItem }) => {
                 const { text } = selectedItem || {};
                 this.setState({ serviceAccount: text });
@@ -669,7 +624,7 @@ class CreateTaskRun extends React.Component {
                   'Timeout must be a valid number less than 525600'
               })}
               placeholder="60"
-              value={this.state.timeout}
+              value={timeout}
               onChange={({ target: { value } }) =>
                 this.setState({ timeout: value })
               }
@@ -687,11 +642,4 @@ CreateTaskRun.defaultProps = {
   onSuccess: () => {}
 };
 
-/* istanbul ignore next */
-function mapStateToProps(state, ownProps) {
-  const { taskRef, namespace, kind } = ownProps;
-  return parseTaskInfo(state, taskRef, kind, namespace);
-}
-
-export const CreateTaskRunWithIntl = injectIntl(CreateTaskRun);
-export default connect(mapStateToProps)(CreateTaskRunWithIntl);
+export default injectIntl(CreateTaskRun);
