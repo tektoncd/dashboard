@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import { connect } from 'react-redux';
 import {
   Form,
   FormGroup,
@@ -36,38 +35,39 @@ import { isValidLabel } from '../../utils';
 
 import '../../scss/CreateRun.scss';
 
-const NAMESPACE = 'namespace';
-const PIPELINE_REF = 'pipelineRef';
-const RESOURCE_SPECS = 'resourceSpecs';
-const PARAM_SPECS = 'paramSpecs';
-const PIPELINE_ERROR = 'pipelineError';
-const DISABLED = 'disabled';
-
-const parsePipelineInfo = (state, pipelineRef, namespace) => {
-  if (pipelineRef) {
-    let resourceSpecs;
-    let paramSpecs;
-    const pipeline = getPipeline(state, { name: pipelineRef, namespace });
-    if (pipeline) {
-      ({ resources: resourceSpecs, params: paramSpecs } = pipeline.spec);
-    }
-    const pipelineError = !pipeline;
-    return {
-      [RESOURCE_SPECS]: resourceSpecs,
-      [PARAM_SPECS]: paramSpecs,
-      [PIPELINE_ERROR]: pipelineError
-    };
-  }
-  return {};
+const initialState = {
+  invalidLabels: {},
+  labels: [],
+  namespace: '',
+  paramSpecs: [],
+  pipelineError: false,
+  pipelineRef: '',
+  resourceSpecs: [],
+  serviceAccount: '',
+  submitError: '',
+  timeout: '60',
+  validationError: false,
+  validTimeout: true
 };
 
-const initialPipelineInfoState = () => {
+const parsePipelineInfo = (pipelineRef, namespace) => {
+  if (!pipelineRef) {
+    return {};
+  }
+
+  let resourceSpecs;
+  let paramSpecs;
+  const pipeline = getPipeline(getStore().getState(), {
+    name: pipelineRef,
+    namespace
+  });
+  if (pipeline) {
+    ({ resources: resourceSpecs, params: paramSpecs } = pipeline.spec);
+  }
   return {
-    [NAMESPACE]: '',
-    [PIPELINE_REF]: '',
-    [RESOURCE_SPECS]: [],
-    [PARAM_SPECS]: [],
-    [PIPELINE_ERROR]: false
+    resourceSpecs,
+    paramSpecs,
+    pipelineError: !pipeline
   };
 };
 
@@ -94,22 +94,13 @@ const initialResourcesState = resourceSpecs => {
 };
 
 class CreatePipelineRun extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = this.initialState(props);
-  }
+  state = initialState;
 
   componentDidUpdate(prevProps) {
-    // Catch instances when the Pipeline is loaded after the constructor is called
-    if (this.props[RESOURCE_SPECS] !== prevProps[RESOURCE_SPECS]) {
-      this.resetResourcesState();
-    }
-    if (this.props[PARAM_SPECS] !== prevProps[PARAM_SPECS]) {
-      this.resetParamsState();
-    }
-    // Reset the form if the namespace changes
-    if (this.props[NAMESPACE] !== prevProps[NAMESPACE]) {
+    const { open, namespace } = this.props;
+    const { open: prevOpen, namespace: prevNamespace } = prevProps;
+
+    if ((open && !prevOpen) || namespace !== prevNamespace) {
       this.resetForm();
     }
   }
@@ -118,17 +109,8 @@ class CreatePipelineRun extends React.Component {
     this.setState({ submitError: '' });
   };
 
-  getPipelineInfo = (key, { state = this.state, props = this.props } = {}) => {
-    if (key === DISABLED) {
-      // Disable pipeline info selection when pipelineRef is supplied
-      return !!props[PIPELINE_REF];
-    }
-    // Use props when pipelineRef is supplied
-    return props[PIPELINE_REF] ? props[key] : state[key];
-  };
-
   isDisabled = () => {
-    if (this.state[NAMESPACE] === '') {
+    if (this.state.namespace === '') {
       return true;
     }
     return false;
@@ -136,8 +118,8 @@ class CreatePipelineRun extends React.Component {
 
   checkFormValidation = () => {
     // Namespace, PipelineRef, Resources, and Params must all have values
-    const validNamespace = !!this.getPipelineInfo(NAMESPACE);
-    const validPipelineRef = !!this.getPipelineInfo(PIPELINE_REF);
+    const validNamespace = !!this.state.namespace;
+    const validPipelineRef = !!this.state.pipelineRef;
     const validResources =
       !this.state.resources ||
       Object.keys(this.state.resources).reduce(
@@ -189,7 +171,6 @@ class CreatePipelineRun extends React.Component {
   };
 
   handleClose = () => {
-    this.resetForm();
     this.props.onClose();
   };
 
@@ -239,11 +220,10 @@ class CreatePipelineRun extends React.Component {
   handleNamespaceChange = ({ selectedItem }) => {
     const { text = '' } = selectedItem || {};
     // Reset pipeline and ServiceAccount when namespace changes
-    if (text !== this.state[NAMESPACE]) {
+    if (text !== this.state.namespace) {
       this.setState({
-        ...initialPipelineInfoState(),
-        [NAMESPACE]: text,
-        serviceAccount: ''
+        ...initialState,
+        namespace: text
       });
     }
   };
@@ -259,27 +239,23 @@ class CreatePipelineRun extends React.Component {
 
   handlePipelineChange = ({ selectedItem }) => {
     const { text } = selectedItem || {};
-    if (text !== this.state[PIPELINE_REF] && text !== undefined) {
-      this.setState((state, props) => {
-        const pipelineInfo = parsePipelineInfo(
-          getStore().getState(),
-          text,
-          this.getPipelineInfo(NAMESPACE, { state, props })
-        );
+    if (text && text !== this.state.pipelineRef) {
+      this.setState(state => {
+        const pipelineInfo = parsePipelineInfo(text, state.namespace);
         return {
-          [PIPELINE_REF]: text,
           ...pipelineInfo,
-          resources: initialResourcesState(pipelineInfo[RESOURCE_SPECS]),
-          params: initialParamsState(pipelineInfo[PARAM_SPECS])
+          pipelineRef: text,
+          resources: initialResourcesState(pipelineInfo.resourceSpecs),
+          params: initialParamsState(pipelineInfo.paramSpecs)
         };
       });
-    } else {
-      // Reset pipelineresources and params when no Pipeline is selected
-      this.setState({
-        ...initialPipelineInfoState(),
-        [NAMESPACE]: this.getPipelineInfo('namespace')
-      });
+      return;
     }
+    // Reset pipelineresources and params when no Pipeline is selected
+    this.setState(state => ({
+      ...initialState,
+      namespace: state.namespace
+    }));
   };
 
   handleResourceChange = (key, value) => {
@@ -304,9 +280,15 @@ class CreatePipelineRun extends React.Component {
     }
 
     // Send API request to create PipelineRun
-    const pipelineRef = this.getPipelineInfo(PIPELINE_REF);
-    const namespace = this.getPipelineInfo(NAMESPACE);
-    const { params, resources, serviceAccount, timeout, labels } = this.state;
+    const {
+      labels,
+      namespace,
+      params,
+      pipelineRef,
+      resources,
+      serviceAccount,
+      timeout
+    } = this.state;
     const timeoutInMins = `${timeout}m`;
     createPipelineRun({
       namespace,
@@ -321,7 +303,6 @@ class CreatePipelineRun extends React.Component {
       }, {})
     })
       .then(response => {
-        this.resetForm();
         this.props.onSuccess(response);
       })
       .catch(error => {
@@ -336,62 +317,37 @@ class CreatePipelineRun extends React.Component {
       });
   };
 
-  initialState = props => {
-    const namespace = props[NAMESPACE];
+  initialState = () => {
+    const { namespace, pipelineRef } = this.props;
+    const pipelineInfo = parsePipelineInfo(pipelineRef, namespace);
     return {
-      ...initialPipelineInfoState(),
-      params: initialParamsState(
-        this.getPipelineInfo(PARAM_SPECS, { state: {}, props })
-      ),
-      resources: initialResourcesState(
-        this.getPipelineInfo(RESOURCE_SPECS, { state: {}, props })
-      ),
-      [NAMESPACE]: namespace !== ALL_NAMESPACES ? namespace : '',
-      serviceAccount: '',
-      timeout: '60',
-      validationError: false,
-      submitError: '',
-      validTimeout: true,
-      labels: [],
-      invalidLabels: {}
+      ...initialState,
+      ...pipelineInfo,
+      namespace: namespace !== ALL_NAMESPACES ? namespace : '',
+      pipelineRef: pipelineRef || '',
+      params: initialParamsState(pipelineInfo.paramSpecs),
+      resources: initialResourcesState(pipelineInfo.resourceSpecs)
     };
   };
 
   resetForm = () => {
-    this.setState((state, props) => this.initialState(props));
-  };
-
-  resetParamsState = () => {
-    this.setState((state, props) => ({
-      params: initialParamsState(
-        this.getPipelineInfo(PARAM_SPECS, { state, props })
-      )
-    }));
-  };
-
-  resetResourcesState = () => {
-    this.setState((state, props) => ({
-      resources: initialResourcesState(this.getPipelineInfo(RESOURCE_SPECS), {
-        state,
-        props
-      })
-    }));
+    this.setState(this.initialState());
   };
 
   render() {
     const { open, intl } = this.props;
     const {
+      invalidLabels,
+      labels,
+      namespace,
+      paramSpecs,
+      pipelineRef,
+      resourceSpecs,
       serviceAccount,
       validationError,
-      validTimeout,
-      labels,
-      invalidLabels
+      validTimeout
     } = this.state;
-    const namespace = this.getPipelineInfo(NAMESPACE);
-    const pipelineRef = this.getPipelineInfo(PIPELINE_REF);
-    const pipelineInfoDisabled = this.getPipelineInfo(DISABLED);
-    const resourceSpecs = this.getPipelineInfo(RESOURCE_SPECS);
-    const paramSpecs = this.getPipelineInfo(PARAM_SPECS);
+
     return (
       <Form>
         <Modal
@@ -401,7 +357,6 @@ class CreatePipelineRun extends React.Component {
             id: 'dashboard.createPipelineRun.heading',
             defaultMessage: 'Create PipelineRun'
           })}
-          modalLabel={this.getPipelineInfo(PIPELINE_REF)}
           primaryButtonText={intl.formatMessage({
             id: 'dashboard.actions.createButton',
             defaultMessage: 'Create'
@@ -414,7 +369,7 @@ class CreatePipelineRun extends React.Component {
           onRequestClose={this.handleClose}
           onSecondarySubmit={this.handleClose}
         >
-          {this.getPipelineInfo(PIPELINE_ERROR) && (
+          {this.state.pipelineError && (
             <InlineNotification
               kind="error"
               title={intl.formatMessage({
@@ -447,36 +402,32 @@ class CreatePipelineRun extends React.Component {
               lowContrast
             />
           )}
-          {!pipelineInfoDisabled && (
-            <FormGroup legendText="">
-              <NamespacesDropdown
-                id="create-pipelinerun--namespaces-dropdown"
-                invalid={validationError && !namespace}
-                invalidText={intl.formatMessage({
-                  id: 'dashboard.createPipelineRun.invalidNamespace',
-                  defaultMessage: 'Namespace cannot be empty'
-                })}
-                selectedItem={
-                  namespace ? { id: namespace, text: namespace } : ''
-                }
-                onChange={this.handleNamespaceChange}
-              />
-              <PipelinesDropdown
-                id="create-pipelinerun--pipelines-dropdown"
-                namespace={namespace}
-                invalid={validationError && !pipelineRef}
-                invalidText={intl.formatMessage({
-                  id: 'dashboard.createPipelineRun.invalidPipeline',
-                  defaultMessage: 'Pipeline cannot be empty'
-                })}
-                selectedItem={
-                  pipelineRef ? { id: pipelineRef, text: pipelineRef } : ''
-                }
-                disabled={this.isDisabled()}
-                onChange={this.handlePipelineChange}
-              />
-            </FormGroup>
-          )}
+          <FormGroup legendText="">
+            <NamespacesDropdown
+              id="create-pipelinerun--namespaces-dropdown"
+              invalid={validationError && !namespace}
+              invalidText={intl.formatMessage({
+                id: 'dashboard.createPipelineRun.invalidNamespace',
+                defaultMessage: 'Namespace cannot be empty'
+              })}
+              selectedItem={namespace ? { id: namespace, text: namespace } : ''}
+              onChange={this.handleNamespaceChange}
+            />
+            <PipelinesDropdown
+              id="create-pipelinerun--pipelines-dropdown"
+              namespace={namespace}
+              invalid={validationError && !pipelineRef}
+              invalidText={intl.formatMessage({
+                id: 'dashboard.createPipelineRun.invalidPipeline',
+                defaultMessage: 'Pipeline cannot be empty'
+              })}
+              selectedItem={
+                pipelineRef ? { id: pipelineRef, text: pipelineRef } : ''
+              }
+              disabled={this.isDisabled()}
+              onChange={this.handlePipelineChange}
+            />
+          </FormGroup>
           <FormGroup legendText="">
             <KeyValueList
               legendText={intl.formatMessage({
@@ -624,11 +575,4 @@ CreatePipelineRun.defaultProps = {
   onSuccess: () => {}
 };
 
-/* istanbul ignore next */
-function mapStateToProps(state, ownProps) {
-  const { pipelineRef, namespace } = ownProps;
-  return parsePipelineInfo(state, pipelineRef, namespace);
-}
-
-export const CreatePipelineRunWithIntl = injectIntl(CreatePipelineRun);
-export default connect(mapStateToProps)(CreatePipelineRunWithIntl);
+export default injectIntl(CreatePipelineRun);

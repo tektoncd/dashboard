@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -151,7 +151,7 @@ const testStore = {
 };
 
 const props = {
-  open: true,
+  open: false,
   namespace: 'namespace-1'
 };
 
@@ -261,12 +261,21 @@ describe('CreatePipelineRun', () => {
       getByText,
       getByTitle,
       queryByText,
-      queryByValue
+      queryByValue,
+      rerender
     } = renderWithIntl(
       <Provider store={mockTestStore}>
         <CreatePipelineRun {...props} />
       </Provider>
     );
+
+    rerenderWithIntl(
+      rerender,
+      <Provider store={mockTestStore}>
+        <CreatePipelineRun {...props} open />
+      </Provider>
+    );
+
     await selectPipeline1AndFillSpec({
       getAllByPlaceholderText,
       getByPlaceholderText,
@@ -285,6 +294,7 @@ describe('CreatePipelineRun', () => {
     await wait(() => expect(createPipelineRun).toHaveBeenCalledTimes(1));
     await waitForElement(() => getByText(apiErrorRegExp));
     await waitForElement(() => getByText(/error code 400/i));
+    fireEvent.click(getByTitle(/closes notification/i));
   });
 
   it('handles api error with text', async () => {
@@ -297,12 +307,21 @@ describe('CreatePipelineRun', () => {
       getByText,
       getByTitle,
       queryByText,
-      queryByValue
+      queryByValue,
+      rerender
     } = renderWithIntl(
       <Provider store={mockTestStore}>
         <CreatePipelineRun {...props} />
       </Provider>
     );
+
+    rerenderWithIntl(
+      rerender,
+      <Provider store={mockTestStore}>
+        <CreatePipelineRun {...props} open />
+      </Provider>
+    );
+
     await selectPipeline1AndFillSpec({
       getAllByPlaceholderText,
       getByPlaceholderText,
@@ -378,12 +397,21 @@ describe('CreatePipelineRun', () => {
       getByPlaceholderText,
       queryByDisplayValue,
       queryByText,
-      queryByValue
+      queryByValue,
+      rerender
     } = renderWithIntl(
       <Provider store={mockTestStore}>
         <CreatePipelineRun {...props} />
       </Provider>
     );
+
+    rerenderWithIntl(
+      rerender,
+      <Provider store={mockTestStore}>
+        <CreatePipelineRun {...props} open />
+      </Provider>
+    );
+
     expect(queryByDisplayValue(/namespace-1/i)).toBeTruthy();
     // Select pipeline-1 and verify spec details are displayed
     await selectPipeline1({ getByTitle, getByPlaceholderText });
@@ -408,6 +436,7 @@ describe('CreatePipelineRun', () => {
   it('renders pipeline controlled', async () => {
     // Display with pipeline-1 selected
     const mockTestStore = mockStore(testStore);
+    jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
 
     const {
       getByText,
@@ -417,21 +446,21 @@ describe('CreatePipelineRun', () => {
       rerender
     } = renderWithIntl(
       <Provider store={mockTestStore}>
-        <CreatePipelineRun {...props} pipelineRef="pipeline-1" />
+        <CreatePipelineRun {...props} />
       </Provider>
     );
-    await waitForElement(() => getByText(/pipeline-1/i));
-    expect(queryByLabelText(/namespace/i)).toBeFalsy();
-    // Verify spec details are displayed
-    testPipelineSpec('id-pipeline-1', queryByText, queryByValue);
-    // Change selection to pipeline-2
+
     rerenderWithIntl(
       rerender,
       <Provider store={mockTestStore}>
-        <CreatePipelineRun {...props} pipelineRef="pipeline-2" />
+        <CreatePipelineRun {...props} open pipelineRef="pipeline-1" />
       </Provider>
     );
-    testPipelineSpec('id-pipeline-2', queryByText, queryByValue);
+
+    await waitForElement(() => getByText(/pipeline-1/i));
+    expect(queryByLabelText(/namespace/i)).toBeTruthy();
+    // Verify spec details are displayed
+    testPipelineSpec('id-pipeline-1', queryByText, queryByValue);
   });
 
   it('renders labels', () => {
@@ -462,9 +491,20 @@ describe('CreatePipelineRun', () => {
   it('resets Pipeline and ServiceAccount when namespace changes', async () => {
     const mockTestStore = mockStore(testStore);
     jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
-    const { getByPlaceholderText, getByTitle, getByValue } = renderWithIntl(
+    const {
+      getByPlaceholderText,
+      getByTitle,
+      getByValue,
+      rerender
+    } = renderWithIntl(
       <Provider store={mockTestStore}>
         <CreatePipelineRun {...props} />
+      </Provider>
+    );
+    rerenderWithIntl(
+      rerender,
+      <Provider store={mockTestStore}>
+        <CreatePipelineRun {...props} open />
       </Provider>
     );
     fireEvent.click(getByPlaceholderText(/select pipeline/i));
@@ -488,32 +528,6 @@ describe('CreatePipelineRun', () => {
     expect(getByPlaceholderText(/select serviceaccount/i)).toBeTruthy();
   });
 
-  it('resets Pipeline and ServiceAccount when namespace changes controlled', async () => {
-    const mockTestStore = mockStore(testStore);
-    jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
-    const { rerender, getByPlaceholderText, getByTitle } = renderWithIntl(
-      <Provider store={mockTestStore}>
-        <CreatePipelineRun {...props} />
-      </Provider>
-    );
-    fireEvent.click(getByPlaceholderText(/select pipeline/i));
-    fireEvent.click(await waitForElement(() => getByTitle(/pipeline-1/i)));
-    fireEvent.click(getByPlaceholderText(/select serviceaccount/i));
-    fireEvent.click(
-      await waitForElement(() => getByTitle(/service-account-1/i))
-    );
-    // Change selected namespace
-    rerenderWithIntl(
-      rerender,
-      <Provider store={mockTestStore}>
-        <CreatePipelineRun {...props} namespace="namespace-2" />
-      </Provider>
-    );
-    // Verify that Pipeline and ServiceAccount value have reset
-    expect(getByPlaceholderText(/select pipeline/i)).toBeTruthy();
-    expect(getByPlaceholderText(/select serviceaccount/i)).toBeTruthy();
-  });
-
   it('submits form', async () => {
     const mockTestStore = mockStore(testStore);
     jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
@@ -524,10 +538,17 @@ describe('CreatePipelineRun', () => {
       getByText,
       getByTitle,
       queryByText,
-      queryByValue
+      queryByValue,
+      rerender
     } = renderWithIntl(
       <Provider store={mockTestStore}>
         <CreatePipelineRun {...props} />
+      </Provider>
+    );
+    rerenderWithIntl(
+      rerender,
+      <Provider store={mockTestStore}>
+        <CreatePipelineRun {...props} open />
       </Provider>
     );
     expect(queryByValue(/namespace-1/i)).toBeTruthy();
@@ -676,12 +697,20 @@ describe('CreatePipelineRun', () => {
   });
 
   it('handles error getting pipeline controlled', () => {
-    const { queryByText } = renderWithIntl(
-      <Provider store={mockStore(testStore)}>
-        <CreatePipelineRun {...props} pipelineRef="pipeline-thisDoesNotExist" />
+    const mockTestStore = mockStore(testStore);
+    jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
+    const badPipelineRef = 'pipeline-thisDoesNotExist';
+    const { queryByText, rerender } = renderWithIntl(
+      <Provider store={mockTestStore}>
+        <CreatePipelineRun {...props} pipelineRef={badPipelineRef} />
       </Provider>
     );
-
+    rerenderWithIntl(
+      rerender,
+      <Provider store={mockStore(testStore)}>
+        <CreatePipelineRun {...props} open pipelineRef={badPipelineRef} />
+      </Provider>
+    );
     expect(queryByText(/error retrieving pipeline information/i)).toBeTruthy();
   });
 
@@ -695,10 +724,17 @@ describe('CreatePipelineRun', () => {
       getByValue,
       queryAllByTitle,
       queryByText,
-      queryByValue
+      queryByValue,
+      rerender
     } = renderWithIntl(
       <Provider store={mockTestStore}>
         <CreatePipelineRun {...props} />
+      </Provider>
+    );
+    rerenderWithIntl(
+      rerender,
+      <Provider store={mockTestStore}>
+        <CreatePipelineRun {...props} open />
       </Provider>
     );
     // Select task-1 and verify spec details are displayed
@@ -709,5 +745,16 @@ describe('CreatePipelineRun', () => {
     fireEvent.click(queryAllByTitle(/clear selected item/i)[1]);
     expect(getByValue(/namespace-1/i)).toBeTruthy();
     expect(queryByText('Select PipelineResource')).toBeFalsy();
+  });
+
+  it('handles close', () => {
+    const mockTestStore = mockStore(testStore);
+    const { getByText } = renderWithIntl(
+      <Provider store={mockTestStore}>
+        <CreatePipelineRun {...props} open />
+      </Provider>
+    );
+
+    fireEvent.click(getByText(/cancel/i));
   });
 });
