@@ -47,14 +47,16 @@ func StartTektonControllers(clientset tektonclientset.Interface, clientresources
 }
 
 // StartKubeControllers creates and starts Kube controllers
-func StartKubeControllers(clientset k8sclientset.Interface, resyncDur time.Duration, installNamespace string, handler *router.Handler, stopCh <-chan struct{}) {
+func StartKubeControllers(clientset k8sclientset.Interface, resyncDur time.Duration, installNamespace string, readOnly bool, handler *router.Handler, stopCh <-chan struct{}) {
 	logging.Log.Info("Creating Kube controllers")
 	kubeInformerFactory := k8sinformers.NewSharedInformerFactory(clientset, resyncDur)
 	// Add all kube controllers
 	kubecontroller.NewExtensionController(kubeInformerFactory, installNamespace, handler)
 	kubecontroller.NewNamespaceController(kubeInformerFactory)
-	kubecontroller.NewSecretController(kubeInformerFactory)
-	kubecontroller.NewServiceAccountController(kubeInformerFactory)
+	if !readOnly {
+		kubecontroller.NewSecretController(kubeInformerFactory)
+		kubecontroller.NewServiceAccountController(kubeInformerFactory)
+	}
 	// Started once all controllers have been registered
 	logging.Log.Info("Starting Kube controllers")
 	kubeInformerFactory.Start(stopCh)
