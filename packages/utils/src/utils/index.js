@@ -177,13 +177,34 @@ export function formatLabels(labelsRaw) {
   return formattedLabelsToRender;
 }
 
+// Sorts the steps by finishedAt and startedAt timestamps
+export function sortStepsByTimestamp(steps) {
+  return steps.sort((i, j) => {
+    const iFinishAt = new Date(i.stepStatus?.terminated?.finishedAt).getTime();
+    const jFinishAt = new Date(j.stepStatus?.terminated?.finishedAt).getTime();
+    const iStartedAt = new Date(i.stepStatus?.terminated?.startedAt).getTime();
+    const jStartedAt = new Date(j.stepStatus?.terminated?.startedAt).getTime();
+
+    if (!iFinishAt || !jFinishAt) {
+      return 0;
+    }
+    if (iFinishAt !== jFinishAt) {
+      return iFinishAt - jFinishAt;
+    }
+    if (!iStartedAt || !jStartedAt) {
+      return 0;
+    }
+    return iStartedAt - jStartedAt;
+  });
+}
+
 // Update the status of steps that follow a step with an error
 export function updateUnexecutedSteps(steps) {
   if (!steps) {
     return steps;
   }
   let errorIndex = steps.length - 1;
-  return steps.map((step, index) => {
+  return sortStepsByTimestamp(steps).map((step, index) => {
     // Update errorIndex
     if (step.reason !== 'Completed') {
       errorIndex = Math.min(index, errorIndex);

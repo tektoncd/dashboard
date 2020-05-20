@@ -25,6 +25,7 @@ import {
   reorderSteps,
   selectedTask,
   selectedTaskRun,
+  sortStepsByTimestamp,
   stepsStatus,
   taskRunStep,
   updateUnexecutedSteps
@@ -372,6 +373,128 @@ it('formatLabels', () => {
     'gitServer: github.com',
     'tekton.dev/pipeline: pipeline0'
   ]);
+});
+
+it('sortStepsByTimestamp preserves order if no timestamps present', () => {
+  const steps = ['t', 'e', 's', 't'];
+  const want = ['t', 'e', 's', 't'];
+  const got = sortStepsByTimestamp(steps);
+  expect(got).toEqual(want);
+});
+
+it('sortStepsByTimestamp sorts by finishedAt', () => {
+  const step1 = {
+    id: 'step1',
+    stepStatus: {
+      terminated: {
+        finishedAt: '2020-01-01T15:30:00Z'
+      }
+    }
+  };
+  const step2 = {
+    id: 'step2',
+    stepStatus: {
+      terminated: {
+        finishedAt: '2020-01-01T15:25:00Z'
+      }
+    }
+  };
+  const step3 = {
+    id: 'step3',
+    stepStatus: {
+      terminated: {
+        finishedAt: '2020-01-01T15:35:00Z'
+      }
+    }
+  };
+  const steps = [step1, step2, step3];
+  const want = [step2, step1, step3];
+  const got = sortStepsByTimestamp(steps);
+  expect(got).toEqual(want);
+});
+
+it('sortStepsByTimestamp sorts by startedAt in a tie', () => {
+  const step1 = {
+    id: 'step1',
+    stepStatus: {
+      terminated: {
+        finishedAt: '2020-01-01T15:30:00Z',
+        startedAt: '2020-01-01T15:25:00Z'
+      }
+    }
+  };
+  const step2 = {
+    id: 'step2',
+    stepStatus: {
+      terminated: {
+        finishedAt: '2020-01-01T15:25:00Z',
+        startedAt: '2020-01-01T15:20:00Z'
+      }
+    }
+  };
+  const step3 = {
+    id: 'step3',
+    stepStatus: {
+      terminated: {
+        finishedAt: '2020-01-01T15:30:00Z',
+        startedAt: '2020-01-01T15:30:00Z'
+      }
+    }
+  };
+  const steps = [step1, step2, step3];
+  const want = [step2, step1, step3];
+  const got = sortStepsByTimestamp(steps);
+  expect(got).toEqual(want);
+});
+
+it('sortStepsByTimestamp preserves order if invalid startedAt timestamp present', () => {
+  const step1 = {
+    id: 'step1',
+    stepStatus: {
+      terminated: {
+        finishedAt: '2020-01-01T15:30:00Z',
+        startedAt: '2020-01-01T15:25:00Z'
+      }
+    }
+  };
+  const step2 = {
+    id: 'step2',
+    stepStatus: {
+      terminated: {
+        finishedAt: '2020-01-01T15:30:00Z',
+        startedAt: 'NOTATIMESTAMP'
+      }
+    }
+  };
+  const steps = [step1, step2];
+  const want = [step1, step2];
+  const got = sortStepsByTimestamp(steps);
+  expect(got).toEqual(want);
+});
+
+it('sortStepsByTimestamp preserves order if startedAt timestamps equal', () => {
+  const step1 = {
+    id: 'step-b',
+    stepStatus: {
+      terminated: {
+        finishedAt: '2020-01-01T15:30:00Z',
+        startedAt: '2020-01-01T15:25:00Z'
+      }
+    }
+  };
+  const step2 = {
+    id: 'step-a',
+    stepStatus: {
+      terminated: {
+        finishedAt: '2020-01-01T15:30:00Z',
+        startedAt: '2020-01-01T15:25:00Z'
+      }
+    }
+  };
+  const steps = [step1, step2];
+  const want = [step1, step2];
+  const got = sortStepsByTimestamp(steps);
+  expect(got).toEqual(want);
 });
 
 it('updateUnexecutedSteps no steps', () => {
