@@ -146,7 +146,7 @@ func main() {
 	logging.Log.Info("Creating controllers")
 	resyncDur := time.Second * 30
 	controllers.StartTektonControllers(resource.PipelineClient, resource.PipelineResourceClient, resyncDur, ctx.Done())
-	controllers.StartKubeControllers(resource.K8sClient, resyncDur, dashboardConfig.installNamespace, routerHandler, ctx.Done())
+	controllers.StartKubeControllers(resource.K8sClient, resyncDur, dashboardConfig.installNamespace, *readOnly, routerHandler, ctx.Done())
 
 	logging.Log.Infof("Creating server and entering wait loop")
 	CSRF := csrf.Protect(

@@ -90,7 +90,7 @@ func DummyServer() (*httptest.Server, *endpoints.Resource, string) {
 	stopCh := make(<-chan struct{})
 	resyncDur := time.Second * 30
 	controllers.StartTektonControllers(resource.PipelineClient, resource.PipelineResourceClient, resyncDur, stopCh)
-	controllers.StartKubeControllers(resource.K8sClient, resyncDur, dashboardNamespace, routerHandler, stopCh)
+	controllers.StartKubeControllers(resource.K8sClient, resyncDur, dashboardNamespace, false, routerHandler, stopCh)
 	// Wait until namespace is detected by informer and functionally "dropped" since the informer will be eventually consistent
 	timeout := time.After(5 * time.Second)
 	for {
