@@ -129,6 +129,7 @@ const Table = props => {
     loading,
     rows: dataRows,
     selectedNamespace,
+    size,
     skeletonRowCount,
     title,
     toolbarButtons
@@ -149,6 +150,7 @@ const Table = props => {
         rows={dataRows}
         headers={dataHeaders}
         isSortable={isSortable}
+        size={size}
         translateWithId={translateWithId}
         render={({
           rows,

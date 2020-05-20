@@ -13,7 +13,7 @@ limitations under the License.
 
 import { injectIntl } from 'react-intl';
 import React from 'react';
-import { StepDefinition, StepDetailsHeader, StepStatus, Tab, Tabs } from '..';
+import { DetailsHeader, StepDefinition, StepStatus, Tab, Tabs } from '..';
 
 import './StepDetails.scss';
 
@@ -35,7 +35,7 @@ const StepDetails = props => {
       : status;
   return (
     <div className="tkn--step-details">
-      <StepDetailsHeader
+      <DetailsHeader
         reason={reason}
         status={status}
         stepName={stepName}

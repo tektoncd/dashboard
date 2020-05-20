@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2019 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,18 +11,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
-import { storiesOf } from '@storybook/react';
-import StoryRouter from 'storybook-react-router';
-
-import TaskRunStatus from './TaskRunStatus';
-
-storiesOf('Components/TaskRunStatus', module)
-  .addDecorator(StoryRouter())
-  .add('default', () => (
-    <div style={{ alignSelf: 'stretch' }}>
-      <TaskRunStatus
-        taskRun={{ pipelineTaskName: 'my-task', status: 'status message' }}
-      />
-    </div>
-  ));
+export { default } from './DetailsHeader';

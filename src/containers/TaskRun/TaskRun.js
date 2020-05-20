@@ -23,6 +23,7 @@ import {
   Log,
   RunHeader,
   StepDetails,
+  TaskRunDetails,
   TaskTree
 } from '@tektoncd/dashboard-components';
 import {
@@ -149,7 +150,8 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
       namespace: taskRunNamespace,
       params,
       inputResources,
-      outputResources
+      outputResources,
+      status: taskRun.status
     };
     return taskRun;
   };
@@ -245,7 +247,7 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
             selectedTaskId={taskRun.id}
             taskRuns={[taskRun]}
           />
-          {selectedStepId && (
+          {(selectedStepId && (
             <StepDetails
               definition={definition}
               logContainer={logContainer}
@@ -256,7 +258,7 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
               stepStatus={stepStatus}
               taskRun={taskRun}
             />
-          )}
+          )) || <TaskRunDetails taskRun={taskRun} />}
         </div>
       </>
     );

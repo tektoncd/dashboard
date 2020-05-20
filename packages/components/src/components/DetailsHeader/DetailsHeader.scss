@@ -16,10 +16,24 @@ limitations under the License.
 .tkn--step-details-header {
   padding: 1.3rem 1.6rem 0;
 
-  > h2 {
+  h2 {
     height: 1.7rem;
     font-size: 1.3rem;
     font-weight: 400;
+    display: flex;
+    line-height: 1.5rem;
+    align-items: baseline;
+
+    svg {
+      flex-shrink: 0;
+      align-self: normal;
+    }
+
+    .tkn--run-details-name {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
     > .skeleton-placeholder {
       height: 100%;
@@ -64,7 +78,8 @@ limitations under the License.
       color: $running;
     }
   }
-  &[data-status='terminated'][data-reason='Completed'] {
+  &[data-status='terminated'][data-reason='Completed'],
+  &[data-status='True'] {
     .status-icon {
       fill: $success;
     }
@@ -72,7 +87,8 @@ limitations under the License.
       color: $success;
     }
   }
-  &[data-status='terminated'][data-reason='Error'] {
+  &[data-status='terminated'][data-reason='Error'],
+  &[data-status='False'] {
     .status-icon {
       fill: $failed;
     }
@@ -80,7 +96,9 @@ limitations under the License.
       color: $failed;
     }
   }
-  &[data-status='cancelled'] {
+  &[data-status='cancelled'],
+  &[data-reason='PipelineRunCancelled'],
+  &[data-reason='TaskRunCancelled'] {
     .status-icon {
       fill: $failed;
     }

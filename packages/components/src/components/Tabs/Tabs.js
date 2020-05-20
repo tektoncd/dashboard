@@ -25,10 +25,13 @@ const TabContent = ({ selected, ...other }) => {
 const Tabs = ({ children, ...other }) => (
   <CarbonTabs {...other}>
     {React.Children.map(children, tab => {
+      if (!tab) {
+        return null;
+      }
       return React.cloneElement(tab, {
         renderContent: TabContent
       });
-    })}
+    }).filter(Boolean)}
   </CarbonTabs>
 );
 

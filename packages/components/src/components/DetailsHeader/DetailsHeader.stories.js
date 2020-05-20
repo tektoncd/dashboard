@@ -14,7 +14,7 @@ limitations under the License.
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 
-import StepDetailsHeader from './StepDetailsHeader';
+import DetailsHeader from './DetailsHeader';
 
 const taskRun = {
   id: 'task',
@@ -30,12 +30,12 @@ const taskRun = {
   }
 };
 
-storiesOf('Components/StepDetailsHeader', module)
+storiesOf('Components/DetailsHeader', module)
   .add('running', () => (
-    <StepDetailsHeader status="running" stepName="build" taskRun={taskRun} />
+    <DetailsHeader status="running" stepName="build" taskRun={taskRun} />
   ))
   .add('completed', () => (
-    <StepDetailsHeader
+    <DetailsHeader
       reason="Completed"
       status="terminated"
       stepName="build"
@@ -43,10 +43,11 @@ storiesOf('Components/StepDetailsHeader', module)
     />
   ))
   .add('failed', () => (
-    <StepDetailsHeader
+    <DetailsHeader
       reason="Error"
       status="terminated"
       stepName="build"
       taskRun={taskRun}
     />
-  ));
+  ))
+  .add('pending', () => <DetailsHeader taskRun={taskRun} />);

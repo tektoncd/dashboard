@@ -13,31 +13,58 @@ limitations under the License.
 
 import { injectIntl } from 'react-intl';
 import React from 'react';
-import { ChevronRight24 as ChevronRight } from '@carbon/icons-react';
-import { Tab, Tabs, ViewYAML } from '..';
 
-import './TaskRunStatus.scss';
+import { DetailsHeader, Tab, Table, Tabs, ViewYAML } from '..';
 
-const TaskRunStatus = props => {
+import './TaskRunDetails.scss';
+
+const TaskRunDetails = props => {
   const { intl, taskRun } = props;
 
   const displayName = taskRun.pipelineTaskName || taskRun.taskRunName;
 
+  const headers = [
+    {
+      key: 'name',
+      header: intl.formatMessage({
+        id: 'dashboard.taskRunParams.name',
+        defaultMessage: 'Name'
+      })
+    },
+    {
+      key: 'value',
+      header: intl.formatMessage({
+        id: 'dashboard.taskRunParams.value',
+        defaultMessage: 'Value'
+      })
+    }
+  ];
+
+  const params = taskRun.params && taskRun.params.length && (
+    <Table
+      size="short"
+      headers={headers}
+      rows={taskRun.params.map(({ name, value }) => {
+        return { id: name, name, value };
+      })}
+    />
+  );
+
   return (
     <div className="tkn--step-details">
-      <header className="tkn--step-details-header">
-        <h2>
-          <ChevronRight className="status-icon" />
-          {displayName}
-          <span className="status-label">
-            {intl.formatMessage({
-              id: 'dashboard.taskRun.status.notRun',
-              defaultMessage: 'Not run'
-            })}
-          </span>
-        </h2>
-      </header>
+      <DetailsHeader stepName={displayName} taskRun={taskRun} type="taskRun" />
       <Tabs aria-label="TaskRun details">
+        {params && (
+          <Tab
+            id={`${displayName}-details`}
+            label={intl.formatMessage({
+              id: 'dashboard.taskRun.params',
+              defaultMessage: 'Parameters'
+            })}
+          >
+            <div className="tkn--step-status">{params}</div>
+          </Tab>
+        )}
         <Tab
           id={`${displayName}-details`}
           label={intl.formatMessage({
@@ -54,8 +81,8 @@ const TaskRunStatus = props => {
   );
 };
 
-TaskRunStatus.defaultProps = {
+TaskRunDetails.defaultProps = {
   taskRun: {}
 };
 
-export default injectIntl(TaskRunStatus);
+export default injectIntl(TaskRunDetails);
