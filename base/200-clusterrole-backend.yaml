@@ -43,9 +43,6 @@ rules:
   - apiGroups: [""]
     resources: ["pods/log", "namespaces"]
     verbs: ["get", "list", "watch"]
-  - apiGroups: ["extensions", "apps"]
-    resources: ["deployments"]
-    verbs: ["get", "list", "watch"]
   - apiGroups: ["tekton.dev"]
     resources: ["tasks", "clustertasks", "taskruns", "pipelines",
                 "pipelineruns", "pipelineresources", "conditions"]

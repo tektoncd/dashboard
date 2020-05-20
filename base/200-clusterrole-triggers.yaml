@@ -1,4 +1,4 @@
-# Copyright 2019 The Tekton Authors
+# Copyright 2020 The Tekton Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,16 +13,20 @@
 # limitations under the License.
 
 ---
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources:
-  - 200-clusterrole-backend.yaml
-  - 200-clusterrole-pipelines.yaml
-  - 200-clusterrole-triggers.yaml
-  - 201-clusterrolebinding.yaml
-  - 201-rolebinding-pipelines.yaml
-  - 201-rolebinding-triggers.yaml
-  - 202-extension-crd.yaml
-  - 203-serviceaccount.yaml
-  - 300-deployment.yaml
-  - 300-service.yaml
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: tekton-dashboard-triggers
+  labels:
+    app.kubernetes.io/component: dashboard
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/part-of: tekton-dashboard
+rules:
+  # this is needed to lookup triggers version
+  - apiGroups:
+      - extensions
+      - apps
+    resources:
+      - deployments
+    verbs:
+      - list
