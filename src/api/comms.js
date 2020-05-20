@@ -20,8 +20,8 @@ const defaultOptions = {
 };
 
 export function getAPIRoot() {
-  const { href, hash } = window.location;
-  let baseURL = href.replace(hash, '');
+  const { host, pathname, protocol } = window.location;
+  let baseURL = `${protocol}//${host}${pathname}`;
   if (baseURL.endsWith('/')) {
     baseURL = baseURL.slice(0, -1);
   }
