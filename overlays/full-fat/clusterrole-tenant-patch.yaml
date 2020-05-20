@@ -13,41 +13,31 @@
   path: /rules/-
   value:
     apiGroups:
+      - ''
+    resources:
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - delete
+- op: add
+  path: /rules/-
+  value:
+    apiGroups:
       - tekton.dev
     resources:
       - tasks
-      - clustertasks
       - taskruns
       - pipelines
       - pipelineruns
       - pipelineresources
       - conditions
-    verbs:
-      - create
-      - update
-      - delete
-      - patch
-- op: add
-  path: /rules/-
-  value:
-    apiGroups:
-      - tekton.dev
-    resources:
       - taskruns/finalizers
       - pipelineruns/finalizers
-    verbs:
-      - create
-      - update
-      - delete
-      - patch
-- op: add
-  path: /rules/-
-  value:
-    apiGroups:
-      - tekton.dev
-    resources:
       - tasks/status
-      - clustertasks/status
       - taskruns/status
       - pipelines/status
       - pipelineruns/status
@@ -60,21 +50,8 @@
   path: /rules/-
   value:
     apiGroups:
-      - dashboard.tekton.dev
-    resources:
-      - extensions
-    verbs:
-      - create
-      - update
-      - delete
-      - patch
-- op: add
-  path: /rules/-
-  value:
-    apiGroups:
       - triggers.tekton.dev
     resources:
-      - clustertriggerbindings
       - eventlisteners
       - triggerbindings
       - triggertemplates
@@ -84,17 +61,3 @@
       - delete
       - patch
       - add
-- op: add
-  path: /rules/-
-  value:
-    apiGroups:
-      - ''
-    resources:
-      - secrets
-    verbs:
-      - get
-      - list
-      - watch
-      - create
-      - update
-      - delete

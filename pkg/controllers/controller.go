@@ -29,35 +29,41 @@ import (
 )
 
 // StartTektonControllers creates and starts Tekton controllers
-func StartTektonControllers(clientset tektonclientset.Interface, clientresourceset tektonresourceclientset.Interface, resyncDur time.Duration, stopCh <-chan struct{}) {
+func StartTektonControllers(clientset tektonclientset.Interface, clientresourceset tektonresourceclientset.Interface, tenantNamespace string, resyncDur time.Duration, stopCh <-chan struct{}) {
 	logging.Log.Info("Creating Tekton controllers")
-	tektonInformerFactory := tektoninformers.NewSharedInformerFactory(clientset, resyncDur)
-	tektonresourceInformerFactory := tektonresourceinformers.NewSharedInformerFactory(clientresourceset, resyncDur)
+	clusterInformerFactory := tektoninformers.NewSharedInformerFactory(clientset, resyncDur)
+	tenantInformerFactory := tektoninformers.NewSharedInformerFactoryWithOptions(clientset, resyncDur, tektoninformers.WithNamespace(tenantNamespace))
+	tenantResourceInformerFactory := tektonresourceinformers.NewSharedInformerFactoryWithOptions(clientresourceset, resyncDur, tektonresourceinformers.WithNamespace(tenantNamespace))
 	// Add all tekton controllers
-	tektoncontroller.NewClusterTaskController(tektonInformerFactory)
-	tektoncontroller.NewTaskController(tektonInformerFactory)
-	tektoncontroller.NewTaskRunController(tektonInformerFactory)
-	tektoncontroller.NewPipelineController(tektonInformerFactory)
-	tektoncontroller.NewPipelineRunController(tektonInformerFactory)
-	tektoncontroller.NewPipelineResourceController(tektonresourceInformerFactory)
+	tektoncontroller.NewClusterTaskController(clusterInformerFactory)
+	tektoncontroller.NewTaskController(tenantInformerFactory)
+	tektoncontroller.NewTaskRunController(tenantInformerFactory)
+	tektoncontroller.NewPipelineController(tenantInformerFactory)
+	tektoncontroller.NewPipelineRunController(tenantInformerFactory)
+	tektoncontroller.NewPipelineResourceController(tenantResourceInformerFactory)
 	// Started once all controllers have been registered
 	logging.Log.Info("Starting Tekton controllers")
-	tektonInformerFactory.Start(stopCh)
-	tektonresourceInformerFactory.Start(stopCh)
+	clusterInformerFactory.Start(stopCh)
+	tenantInformerFactory.Start(stopCh)
+	tenantResourceInformerFactory.Start(stopCh)
 }
 
 // StartKubeControllers creates and starts Kube controllers
-func StartKubeControllers(clientset k8sclientset.Interface, resyncDur time.Duration, installNamespace string, readOnly bool, handler *router.Handler, stopCh <-chan struct{}) {
+func StartKubeControllers(clientset k8sclientset.Interface, resyncDur time.Duration, installNamespace, tenantNamespace string, readOnly bool, handler *router.Handler, stopCh <-chan struct{}) {
 	logging.Log.Info("Creating Kube controllers")
-	kubeInformerFactory := k8sinformers.NewSharedInformerFactory(clientset, resyncDur)
+	clusterInformerFactory := k8sinformers.NewSharedInformerFactory(clientset, resyncDur)
+	tenantInformerFactory := k8sinformers.NewSharedInformerFactoryWithOptions(clientset, resyncDur, k8sinformers.WithNamespace(tenantNamespace))
 	// Add all kube controllers
-	kubecontroller.NewExtensionController(kubeInformerFactory, installNamespace, handler)
-	kubecontroller.NewNamespaceController(kubeInformerFactory)
+	kubecontroller.NewExtensionController(clusterInformerFactory, installNamespace, handler)
+	if tenantNamespace == "" {
+		kubecontroller.NewNamespaceController(clusterInformerFactory)
+	}
 	if !readOnly {
-		kubecontroller.NewSecretController(kubeInformerFactory)
-		kubecontroller.NewServiceAccountController(kubeInformerFactory)
+		kubecontroller.NewSecretController(tenantInformerFactory)
+		kubecontroller.NewServiceAccountController(tenantInformerFactory)
 	}
 	// Started once all controllers have been registered
 	logging.Log.Info("Starting Kube controllers")
-	kubeInformerFactory.Start(stopCh)
+	clusterInformerFactory.Start(stopCh)
+	tenantInformerFactory.Start(stopCh)
 }

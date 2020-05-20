@@ -1,0 +1,39 @@
+---
+- op: add
+  path: /rules/-
+  value:
+    apiGroups:
+      - dashboard.tekton.dev
+    resources:
+      - extensions
+    verbs:
+      - create
+      - update
+      - delete
+      - patch
+- op: add
+  path: /rules/-
+  value:
+    apiGroups:
+      - tekton.dev
+    resources:
+      - clustertasks
+      - clustertasks/status
+    verbs:
+      - create
+      - update
+      - delete
+      - patch
+- op: add
+  path: /rules/-
+  value:
+    apiGroups:
+      - triggers.tekton.dev
+    resources:
+      - clustertriggerbindings
+    verbs:
+      - create
+      - update
+      - delete
+      - patch
+      - add

@@ -6,5 +6,11 @@ patchesJson6902:
       group: rbac.authorization.k8s.io
       version: v1
       kind: ClusterRole
-      name: tekton-dashboard-core
-    path: cluster-role-patch-json.yaml
+      name: tekton-dashboard-backend
+    path: clusterrole-backend-patch.yaml
+  - target:
+      group: rbac.authorization.k8s.io
+      version: v1
+      kind: ClusterRole
+      name: tekton-dashboard-tenant
+    path: clusterrole-tenant-patch.yaml

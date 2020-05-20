@@ -48,6 +48,7 @@ var (
 	webDir             = flag.String("web-dir", "", "Dashboard web resources dir")
 	logoutUrl          = flag.String("logout-url", "", "If set, enables logout on the frontend and binds the logout button to this url")
 	csrfSecureCookie   = flag.Bool("csrf-secure-cookie", true, "Enable or disable Secure attribute on the CSRF cookie")
+	tenantNamespace    = flag.String("namespace", "", "If set, limits the scope of resources watched to this namespace only")
 )
 
 func getCSRFAuthKey() []byte {
@@ -114,6 +115,7 @@ func main() {
 		InstallNamespace:   installNamespace,
 		PipelinesNamespace: *pipelinesNamespace,
 		TriggersNamespace:  *triggersNamespace,
+		TenantNamespace:    *tenantNamespace,
 		ReadOnly:           *readOnly,
 		WebDir:             *webDir,
 		LogoutURL:          *logoutUrl,
@@ -132,8 +134,8 @@ func main() {
 	routerHandler := router.Register(resource)
 	logging.Log.Info("Creating controllers")
 	resyncDur := time.Second * 30
-	controllers.StartTektonControllers(resource.PipelineClient, resource.PipelineResourceClient, resyncDur, ctx.Done())
-	controllers.StartKubeControllers(resource.K8sClient, resyncDur, installNamespace, *readOnly, routerHandler, ctx.Done())
+	controllers.StartTektonControllers(resource.PipelineClient, resource.PipelineResourceClient, *tenantNamespace, resyncDur, ctx.Done())
+	controllers.StartKubeControllers(resource.K8sClient, resyncDur, installNamespace, *tenantNamespace, *readOnly, routerHandler, ctx.Done())
 
 	logging.Log.Infof("Creating server and entering wait loop")
 	CSRF := csrf.Protect(

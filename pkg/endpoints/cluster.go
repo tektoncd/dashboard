@@ -41,6 +41,7 @@ type Properties struct {
 	IsOpenShift        bool   `json:"IsOpenShift"`
 	ReadOnly           bool   `json:"ReadOnly"`
 	LogoutURL          string `json:"LogoutURL,omitempty"`
+	TenantNamespace    string `json:"TenantNamespace,omitempty"`
 }
 
 const (
@@ -171,6 +172,7 @@ func (r Resource) GetProperties(request *restful.Request, response *restful.Resp
 		IsOpenShift:        isOpenShift,
 		ReadOnly:           r.Options.ReadOnly,
 		LogoutURL:          r.Options.LogoutURL,
+		TenantNamespace:    r.Options.TenantNamespace,
 	}
 
 	isTriggersInstalled := isTriggersInstalled(r, triggersNamespace)

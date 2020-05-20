@@ -12,6 +12,7 @@ type Options struct {
 	InstallNamespace   string
 	PipelinesNamespace string
 	TriggersNamespace  string
+	TenantNamespace    string
 	ReadOnly           bool
 	WebDir             string
 	LogoutURL          string
