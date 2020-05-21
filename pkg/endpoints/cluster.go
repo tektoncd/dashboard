@@ -170,11 +170,7 @@ func (r Resource) GetProperties(request *restful.Request, response *restful.Resp
 		PipelineVersion:    pipelineVersion,
 		IsOpenShift:        isOpenShift,
 		ReadOnly:           r.Options.ReadOnly,
-	}
-
-	// If running on OpenShift, set the logout url
-	if isOpenShift {
-		properties.LogoutURL = "/oauth/sign_out"
+		LogoutURL:          r.Options.LogoutURL,
 	}
 
 	isTriggersInstalled := isTriggersInstalled(r, triggersNamespace)

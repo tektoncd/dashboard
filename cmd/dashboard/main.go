@@ -46,6 +46,7 @@ var (
 	portNumber         = flag.Int("port", 8080, "Dashboard port number")
 	readOnly           = flag.Bool("read-only", false, "Enable or disable read only mode")
 	webDir             = flag.String("web-dir", "", "Dashboard web resources dir")
+	logoutUrl          = flag.String("logout-url", "", "If set, enables logout on the frontend and binds the logout button to this url")
 	csrfSecureCookie   = flag.Bool("csrf-secure-cookie", true, "Enable or disable Secure attribute on the CSRF cookie")
 )
 
@@ -115,6 +116,7 @@ func main() {
 		TriggersNamespace:  *triggersNamespace,
 		ReadOnly:           *readOnly,
 		WebDir:             *webDir,
+		LogoutURL:          *logoutUrl,
 	}
 
 	resource := endpoints.Resource{

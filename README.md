@@ -119,7 +119,8 @@ These options are documented below:
 | `--port` | Dashboard port number | `int` | `8080` |
 | `--read-only` | Enable or disable read only mode | `bool` | `false` |
 | `--web-dir` | Dashboard web resources directory | `string` | `""` |
-        
+| `--logout-url` | If set, enables logout on the frontend and binds the logout button to this url | `string` | `""` |
+
 Run `dashboard --help` to show the supported command line arguments and their default value directly from the `dashboard` binary.
 
 ### Optionally set up the Ingress endpoint

@@ -21,6 +21,13 @@ patchesJson6902:
       name: tekton-dashboard
       namespace: tekton-pipelines
     path: ../openshift-patches/oauth-proxy-in-deployment.yaml
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: tekton-dashboard
+      namespace: tekton-pipelines
+    path: ../logout/deployment-patch.yaml
 images:
   - name: dashboardImage
     newName: github.com/tektoncd/dashboard/cmd/dashboard
