@@ -14,6 +14,7 @@ type Options struct {
 	TriggersNamespace  string
 	ReadOnly           bool
 	WebDir             string
+	LogoutURL          string
 }
 
 // GetPipelinesNamespace returns the PipelinesNamespace property if set
