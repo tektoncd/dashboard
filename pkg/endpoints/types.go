@@ -15,6 +15,10 @@ type Options struct {
 	ReadOnly           bool
 	WebDir             string
 	LogoutURL          string
+	// Expect and forward Impersonate-* and Authorization headers
+	// so requests are performed using the client's privileges instead
+	// of the dashboard's privileges.
+	Impersonate        bool
 }
 
 // GetPipelinesNamespace returns the PipelinesNamespace property if set

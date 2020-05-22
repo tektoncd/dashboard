@@ -48,6 +48,7 @@ var (
 	webDir             = flag.String("web-dir", "", "Dashboard web resources dir")
 	logoutUrl          = flag.String("logout-url", "", "If set, enables logout on the frontend and binds the logout button to this url")
 	csrfSecureCookie   = flag.Bool("csrf-secure-cookie", true, "Enable or disable Secure attribute on the CSRF cookie")
+	impersonate        = flag.Bool("imporsonate", false, "Enable user impersonation")
 )
 
 func getCSRFAuthKey() []byte {
@@ -117,6 +118,7 @@ func main() {
 		ReadOnly:           *readOnly,
 		WebDir:             *webDir,
 		LogoutURL:          *logoutUrl,
+		Impersonate:        *impersonate,
 	}
 
 	resource := endpoints.Resource{
