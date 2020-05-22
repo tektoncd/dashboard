@@ -61,11 +61,35 @@ func (r Resource) ProxyRequest(request *restful.Request, response *restful.Respo
 	uri := request.PathParameter("subpath") + "?" + parsedURL.RawQuery
 	forwardRequest := r.K8sClient.CoreV1().RESTClient().Verb(request.Request.Method).RequestURI(uri).Body(request.Request.Body)
 	forwardRequest.SetHeader("Content-Type", request.HeaderParameter("Content-Type"))
-	// Copy authorization (for serviceaccount clients) and impersonation headers (for user clients) from the client request to the forwarded request.
-	for k, vs := range request.Request.Header {
-		if k == "Impersonate-User" || k == "Impersonate-Group" || k == "Authorization" {
-			forwardRequest.SetHeader(k, vs...)
+	if r.Options.Impersonate {
+		// If the dashboard is running with Impersonate enabled, then proxy requests using the
+		// incoming requests Impersonate-* and Authorization headers. The Authorization header must
+		// correspond to a serviceaccount that has `impersonate` privileges, otherwise the apiserver
+		// will reject the request.
+		//
+		// In this mode, the intention is for the dashboard to be behind an authenticating reverse proxy
+		// that authenticates the user using an OIDC flow. The reverse proxy then attaches an
+		// Authorization header to the request containing its own authentication proof.
+		// It also adds Impersonate-* headers that list the identity claim (e.g., `sub`, `email`, etc.)
+		// and/or user group (i.e., `groups` claim) of the end-user.
+		//
+		// The apiserver receives the forwarded request, determines that the serviceaccount corresponding
+		// to the Authorization token has `impersonate` privileges (the reverse proxy must have
+		// `impersonate` privileges) and responds to the request as though it was performed by the
+		// account given by the Impersonate-User header and/or Impersonate-Group header.
+		//
+		// In this mode, the Authorization header must be set, it is important that the
+		// dashboard not perform this request using its own serviceaccount (the default behaviour), as
+		// that leads to a privilege escalation whereby a less-privileged user can access resources
+		// that the dashboard can access, but the user may not.
+		authz := request.Request.Header.Get("Authorization")
+		if authz == "" {
+			utils.RespondError(response, err, http.StatusForbidden)
+			return
 		}
+		forwardRequest.SetHeader("Authorization", authz)
+		forwardRequest.SetHeader("Impersonate-User", request.Request.Header.Get("Impersonate-User"))
+		forwardRequest.SetHeader("Impersonate-Group", request.Request.Header.Get("Impersonate-Group"))
 	}
 	forwardResponse := forwardRequest.Do()
 
