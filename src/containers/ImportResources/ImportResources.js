@@ -35,15 +35,11 @@ import {
 } from '@tektoncd/dashboard-utils';
 import { getGitValues } from '../../utils';
 
-import { determineDashboardNamespace, importResources } from '../../api';
-import { getSelectedNamespace } from '../../reducers';
+import { importResources } from '../../api';
+import { getDashboardNamespace, getSelectedNamespace } from '../../reducers';
 import { NamespacesDropdown, ServiceAccountsDropdown } from '..';
 
 import './ImportResources.scss';
-
-async function getDashboardNamespace() {
-  return determineDashboardNamespace();
-}
 
 function validateURL(url) {
   if (!url.trim().startsWith('http://') && !url.trim().startsWith('https://')) {
@@ -73,7 +69,6 @@ export class ImportResources extends Component {
       invalidNamespace: false,
       invalidImporterNamespace: false,
       importerNamespace: '',
-      importerNamespaceError: false,
       logsURL: '',
       namespace: props.navNamespace !== ALL_NAMESPACES && props.navNamespace,
       repositoryURL: '',
@@ -84,24 +79,16 @@ export class ImportResources extends Component {
   }
 
   componentDidMount() {
-    const { intl } = this.props;
+    const { intl, dashboardNamespace } = this.props;
     document.title = getTitle({
       page: intl.formatMessage({
         id: 'dashboard.importResources.title',
         defaultMessage: 'Import resources'
       })
     });
-    getDashboardNamespace()
-      .then(foundImporterNamespace => {
-        this.setState({
-          importerNamespace: foundImporterNamespace
-        });
-      })
-      .catch(() => {
-        this.setState({
-          importerNamespaceError: true
-        });
-      });
+    this.setState({
+      importerNamespace: dashboardNamespace
+    });
   }
 
   resetError = () => {
@@ -193,15 +180,10 @@ export class ImportResources extends Component {
           pipelineRunName
         });
 
-        this.setState(prevState => {
-          return {
-            logsURL:
-              prevState.importerNamespaceError === false
-                ? finalURL
-                : urls.pipelineRuns.all(),
-            submitSuccess: true,
-            invalidInput: false
-          };
+        this.setState({
+          logsURL: finalURL,
+          submitSuccess: true,
+          invalidInput: false
         });
       })
       .catch(error => {
@@ -423,7 +405,8 @@ export class ImportResources extends Component {
 /* istanbul ignore next */
 function mapStateToProps(state) {
   return {
-    navNamespace: getSelectedNamespace(state)
+    navNamespace: getSelectedNamespace(state),
+    dashboardNamespace: getDashboardNamespace(state)
   };
 }
 

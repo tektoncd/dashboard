@@ -422,21 +422,6 @@ export function getInstallProperties() {
   return get(uri);
 }
 
-export function getLogoutURL() {
-  return getInstallProperties().then(data => data.LogoutURL);
-}
-
-export async function determineDashboardNamespace() {
-  const response = getInstallProperties()
-    .then(installProps => {
-      return installProps.DashboardNamespace;
-    })
-    .catch(error => {
-      throw error;
-    });
-  return response;
-}
-
 export function getTriggerTemplates({ filters = [], namespace } = {}) {
   const uri = getTektonAPI(
     'triggertemplates',

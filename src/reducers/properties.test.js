@@ -20,7 +20,15 @@ it('handles init or unknown actions', () => {
 });
 
 it('INSTALL_PROPERTIES_SUCCESS', () => {
-  const installProperties = { fake: 'installProperties', ReadOnly: false };
+  const installProperties = {
+    fake: 'installProperties',
+    ReadOnly: false,
+    LogoutURL: '/logout',
+    DashboardNamespace: 'ns',
+    TriggersNamespace: 'ns',
+    TriggersVersion: 'x'
+  };
+
   const action = {
     type: 'INSTALL_PROPERTIES_SUCCESS',
     data: installProperties
@@ -28,5 +36,7 @@ it('INSTALL_PROPERTIES_SUCCESS', () => {
 
   const state = propertiesReducer({}, action);
   expect(selectors.isReadOnly(state)).toBe(false);
-  expect(selectors.isTriggersInstalled(state)).toBe(false);
+  expect(selectors.isTriggersInstalled(state)).toBe(true);
+  expect(selectors.getLogoutURL(state)).toBe('/logout');
+  expect(selectors.getDashboardNamespace(state)).toBe('ns');
 });

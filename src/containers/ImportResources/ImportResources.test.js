@@ -33,6 +33,9 @@ describe('ImportResources component', () => {
       selected: ALL_NAMESPACES
     },
     notifications: {},
+    properties: {
+      DashboardNamespace: 'namespace1'
+    },
     serviceAccounts: {
       byNamespace: {
         namespace1: {
@@ -180,12 +183,6 @@ describe('ImportResources component', () => {
         }
       );
 
-    const installNamespace = 'namespace1';
-
-    jest
-      .spyOn(API, 'determineDashboardNamespace')
-      .mockImplementation(() => installNamespace);
-
     const namespace = 'default';
 
     const {
@@ -216,7 +213,7 @@ describe('ImportResources component', () => {
         .innerHTML
     ).toContain(
       urls.pipelineRuns.byName({
-        namespace: installNamespace,
+        namespace: 'namespace1',
         pipelineRunName
       })
     );
@@ -228,10 +225,6 @@ describe('ImportResources component', () => {
     jest
       .spyOn(API, 'importResources')
       .mockImplementation(() => Promise.reject(importResourcesResponseMock));
-
-    jest
-      .spyOn(API, 'determineDashboardNamespace')
-      .mockImplementation(() => 'namespace1');
 
     const {
       getByPlaceholderText,
@@ -254,10 +247,6 @@ describe('ImportResources component', () => {
   });
 
   it('Failure to populate required field displays error', async () => {
-    jest
-      .spyOn(API, 'determineDashboardNamespace')
-      .mockImplementation(() => 'namespace1');
-
     const { getByText } = await renderWithIntl(
       <Provider store={store}>
         <ImportResourcesContainer />
@@ -269,10 +258,6 @@ describe('ImportResources component', () => {
   });
 
   it('URL TextInput handles onChange event', async () => {
-    jest
-      .spyOn(API, 'determineDashboardNamespace')
-      .mockImplementation(() => 'namespace1');
-
     const { getByTestId, queryByDisplayValue } = await renderWithIntl(
       <Provider store={store}>
         <ImportResourcesContainer />

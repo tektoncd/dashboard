@@ -15,10 +15,12 @@ import {
   getClusterTask,
   getClusterTasks,
   getClusterTasksErrorMessage,
+  getDashboardNamespace,
   getDeleteSecretsErrorMessage,
   getExtensions,
   getExtensionsErrorMessage,
   getLocale,
+  getLogoutURL,
   getNamespaces,
   getPatchSecretsErrorMessage,
   getPipelineResource,
@@ -512,6 +514,26 @@ it('isTriggersInstalled', () => {
     .mockImplementation(() => true);
   expect(isTriggersInstalled(state)).toBe(true);
   expect(propertiesSelectors.isTriggersInstalled).toHaveBeenCalledWith(
+    state.properties
+  );
+});
+
+it('getLogoutURL', () => {
+  jest
+    .spyOn(propertiesSelectors, 'getLogoutURL')
+    .mockImplementation(() => '/logout');
+  expect(getLogoutURL(state)).toBe('/logout');
+  expect(propertiesSelectors.getLogoutURL).toHaveBeenCalledWith(
+    state.properties
+  );
+});
+
+it('getDashboardNamespace', () => {
+  jest
+    .spyOn(propertiesSelectors, 'getDashboardNamespace')
+    .mockImplementation(() => 'ns');
+  expect(getDashboardNamespace(state)).toBe('ns');
+  expect(propertiesSelectors.getDashboardNamespace).toHaveBeenCalledWith(
     state.properties
   );
 });
