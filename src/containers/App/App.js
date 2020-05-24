@@ -64,7 +64,6 @@ import {
   TriggerTemplates
 } from '..';
 
-import { getLogoutURL } from '../../api';
 import { fetchExtensions } from '../../actions/extensions';
 import { fetchNamespaces, selectNamespace } from '../../actions/namespaces';
 import { fetchInstallProperties } from '../../actions/properties';
@@ -72,6 +71,7 @@ import { fetchInstallProperties } from '../../actions/properties';
 import {
   getExtensions,
   getLocale,
+  getLogoutURL,
   getSelectedNamespace,
   isReadOnly,
   isWebSocketConnected
@@ -120,7 +120,9 @@ export /* istanbul ignore next */ class App extends Component {
     const { extensions } = this.props;
 
     const lang = messages[this.props.lang] ? this.props.lang : 'en';
-    const logoutButton = <LogoutButton getLogoutURL={getLogoutURL} />;
+    const logoutButton = (
+      <LogoutButton getLogoutURL={() => this.props.logoutURL} />
+    );
 
     return (
       <IntlProvider locale={lang} defaultLocale="en" messages={messages[lang]}>
@@ -384,6 +386,7 @@ const mapStateToProps = state => ({
   extensions: getExtensions(state),
   namespace: getSelectedNamespace(state),
   lang: getLocale(state),
+  logoutURL: getLogoutURL(state),
   isReadOnly: isReadOnly(state),
   webSocketConnected: isWebSocketConnected(state)
 });

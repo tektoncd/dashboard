@@ -486,3 +486,11 @@ export function isReadOnly(state) {
 export function isTriggersInstalled(state) {
   return propertiesSelectors.isTriggersInstalled(state.properties);
 }
+
+export function getLogoutURL(state) {
+  return propertiesSelectors.getLogoutURL(state.properties);
+}
+
+export function getDashboardNamespace(state) {
+  return propertiesSelectors.getDashboardNamespace(state.properties);
+}

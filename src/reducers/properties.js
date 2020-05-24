@@ -26,7 +26,15 @@ export function isReadOnly(state) {
 }
 
 export function isTriggersInstalled(state) {
-  return (state.TriggersNamespace && state.TriggersVersion) || false;
+  return !!(state.TriggersNamespace && state.TriggersVersion);
+}
+
+export function getLogoutURL(state) {
+  return state.LogoutURL;
+}
+
+export function getDashboardNamespace(state) {
+  return state.DashboardNamespace;
 }
 
 export default properties;
