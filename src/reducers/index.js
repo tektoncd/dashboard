@@ -483,6 +483,10 @@ export function isReadOnly(state) {
   return propertiesSelectors.isReadOnly(state.properties);
 }
 
+export function isOpenShift(state) {
+  return propertiesSelectors.isOpenShift(state.properties);
+}
+
 export function isTriggersInstalled(state) {
   return propertiesSelectors.isTriggersInstalled(state.properties);
 }
@@ -493,4 +497,24 @@ export function getLogoutURL(state) {
 
 export function getDashboardNamespace(state) {
   return propertiesSelectors.getDashboardNamespace(state.properties);
+}
+
+export function getDashboardVersion(state) {
+  return propertiesSelectors.getDashboardVersion(state.properties);
+}
+
+export function getPipelineNamespace(state) {
+  return propertiesSelectors.getPipelineNamespace(state.properties);
+}
+
+export function getPipelineVersion(state) {
+  return propertiesSelectors.getPipelineVersion(state.properties);
+}
+
+export function getTriggersNamespace(state) {
+  return propertiesSelectors.getTriggersNamespace(state.properties);
+}
+
+export function getTriggersVersion(state) {
+  return propertiesSelectors.getTriggersVersion(state.properties);
 }

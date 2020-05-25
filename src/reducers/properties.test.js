@@ -23,10 +23,14 @@ it('INSTALL_PROPERTIES_SUCCESS', () => {
   const installProperties = {
     fake: 'installProperties',
     ReadOnly: false,
+    IsOpenShift: false,
     LogoutURL: '/logout',
-    DashboardNamespace: 'ns',
-    TriggersNamespace: 'ns',
-    TriggersVersion: 'x'
+    DashboardNamespace: 'ns-dashboard',
+    DashboardVersion: 'version-dashboard',
+    PipelineNamespace: 'ns-pipeline',
+    PipelineVersion: 'version-pipeline',
+    TriggersNamespace: 'ns-triggers',
+    TriggersVersion: 'version-triggers'
   };
 
   const action = {
@@ -36,7 +40,13 @@ it('INSTALL_PROPERTIES_SUCCESS', () => {
 
   const state = propertiesReducer({}, action);
   expect(selectors.isReadOnly(state)).toBe(false);
+  expect(selectors.isOpenShift(state)).toBe(false);
   expect(selectors.isTriggersInstalled(state)).toBe(true);
   expect(selectors.getLogoutURL(state)).toBe('/logout');
-  expect(selectors.getDashboardNamespace(state)).toBe('ns');
+  expect(selectors.getDashboardNamespace(state)).toBe('ns-dashboard');
+  expect(selectors.getDashboardVersion(state)).toBe('version-dashboard');
+  expect(selectors.getPipelineNamespace(state)).toBe('ns-pipeline');
+  expect(selectors.getPipelineVersion(state)).toBe('version-pipeline');
+  expect(selectors.getTriggersNamespace(state)).toBe('ns-triggers');
+  expect(selectors.getTriggersVersion(state)).toBe('version-triggers');
 });

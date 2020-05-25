@@ -12,36 +12,39 @@ limitations under the License.
 */
 
 import React from 'react';
-import { waitForElement } from 'react-testing-library';
+import { Provider } from 'react-redux';
+import configureStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
 
 import { renderWithIntl } from '../../utils/test';
-import * as API from '../../api';
 import About from '.';
 
 const dashboardSelector = { selector: '[data-testid="dashboard-table"] *' };
 const pipelinesSelector = { selector: '[data-testid="pipelines-table"] *' };
 const triggersSelector = { selector: '[data-testid="triggers-table"] *' };
+const middleware = [thunk];
+const mockStore = configureStore(middleware);
 
 describe('About', () => {
   it('should render correctly', async () => {
-    jest.spyOn(API, 'getInstallProperties').mockImplementation(() => ({
-      DashboardNamespace: 'tekton-dashboard',
-      DashboardVersion: 'v0.100.0',
-      PipelineNamespace: 'tekton-pipelines',
-      PipelineVersion: 'v0.10.0',
-      TriggersNamespace: 'tekton-triggers',
-      TriggersVersion: 'v0.3.1',
-      IsOpenShift: true,
-      ReadOnly: true
-    }));
+    const store = mockStore({
+      properties: {
+        DashboardNamespace: 'tekton-dashboard',
+        DashboardVersion: 'v0.100.0',
+        PipelineNamespace: 'tekton-pipelines',
+        PipelineVersion: 'v0.10.0',
+        TriggersNamespace: 'tekton-triggers',
+        TriggersVersion: 'v0.3.1',
+        IsOpenShift: true,
+        ReadOnly: true
+      }
+    });
 
-    const { queryByText, getByTestId } = renderWithIntl(<About />);
-
-    await waitForElement(() => getByTestId('dashboard-table'));
-    await waitForElement(() => getByTestId('pipelines-table'));
-    await waitForElement(() => getByTestId('triggers-table'));
-
-    expect(API.getInstallProperties).toHaveBeenCalledTimes(1);
+    const { queryByText } = renderWithIntl(
+      <Provider store={store}>
+        <About />)
+      </Provider>
+    );
 
     expect(queryByText('Property', dashboardSelector)).toBeTruthy();
     expect(queryByText('Value', dashboardSelector)).toBeTruthy();
@@ -69,24 +72,22 @@ describe('About', () => {
   });
 
   it('should render error when an expected property is missing', async () => {
-    const installProperties = Promise.resolve({
-      DashboardNamespace: 'tekton-dashboard',
-      // DashboardVersion: '', this is intentionally missing
-      PipelineNamespace: 'tekton-pipelines',
-      PipelineVersion: 'v0.10.0',
-      IsOpenShift: false,
-      ReadOnly: false
+    const store = mockStore({
+      properties: {
+        DashboardNamespace: 'tekton-dashboard',
+        // DashboardVersion: '', this is intentionally missing
+        PipelineNamespace: 'tekton-pipelines',
+        PipelineVersion: 'v0.10.0',
+        IsOpenShift: false,
+        ReadOnly: false
+      }
     });
-    jest
-      .spyOn(API, 'getInstallProperties')
-      .mockImplementation(() => installProperties);
 
-    const { queryByText, queryByTestId } = renderWithIntl(<About />);
-
-    await waitForElement(() => queryByTestId('dashboard-table'));
-    await waitForElement(() => queryByTestId('pipelines-table'));
-
-    expect(API.getInstallProperties).toHaveBeenCalledTimes(1);
+    const { queryByText, queryByTestId } = renderWithIntl(
+      <Provider store={store}>
+        <About />)
+      </Provider>
+    );
 
     expect(queryByText('Property', dashboardSelector)).toBeTruthy();
     expect(queryByText('Value', dashboardSelector)).toBeTruthy();
@@ -110,16 +111,17 @@ describe('About', () => {
   });
 
   it('should render error when multiple expected properties are missing', async () => {
-    jest.spyOn(API, 'getInstallProperties').mockImplementation(() => ({
-      DashboardNamespace: 'tekton-dashboard'
-    }));
+    const store = mockStore({
+      properties: {
+        DashboardNamespace: 'tekton-dashboard'
+      }
+    });
 
-    const { queryByText, queryByTestId } = renderWithIntl(<About />);
-
-    await waitForElement(() => queryByTestId('dashboard-table'));
-    await waitForElement(() => queryByTestId('pipelines-table'));
-
-    expect(API.getInstallProperties).toHaveBeenCalledTimes(1);
+    const { queryByText, queryByTestId } = renderWithIntl(
+      <Provider store={store}>
+        <About />)
+      </Provider>
+    );
 
     expect(queryByText('Property', dashboardSelector)).toBeTruthy();
     expect(queryByText('Value', dashboardSelector)).toBeTruthy();
@@ -144,19 +146,20 @@ describe('About', () => {
   });
 
   it('should not display TiggersVersion when value is not returned in the API', async () => {
-    jest.spyOn(API, 'getInstallProperties').mockImplementation(() => ({
-      DashboardNamespace: 'tekton-dashboard',
-      DashboardVersion: 'v0.100.0',
-      PipelineNamespace: 'tekton-pipelines',
-      PipelineVersion: 'v0.10.0'
-    }));
+    const store = mockStore({
+      properties: {
+        DashboardNamespace: 'tekton-dashboard',
+        DashboardVersion: 'v0.100.0',
+        PipelineNamespace: 'tekton-pipelines',
+        PipelineVersion: 'v0.10.0'
+      }
+    });
 
-    const { queryByText, queryByTestId } = renderWithIntl(<About />);
-
-    await waitForElement(() => queryByTestId('dashboard-table'));
-    await waitForElement(() => queryByTestId('pipelines-table'));
-
-    expect(API.getInstallProperties).toHaveBeenCalledTimes(1);
+    const { queryByText, queryByTestId } = renderWithIntl(
+      <Provider store={store}>
+        <About />)
+      </Provider>
+    );
 
     expect(queryByText('Property', dashboardSelector)).toBeTruthy();
     expect(queryByText('Value', dashboardSelector)).toBeTruthy();

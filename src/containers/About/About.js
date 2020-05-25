@@ -12,43 +12,26 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import { InlineNotification } from 'carbon-components-react';
 import { Table } from '@tektoncd/dashboard-components';
 import { getErrorMessage, getTitle } from '@tektoncd/dashboard-utils';
 
-import { getInstallProperties } from '../../api';
-
-const initialState = {
-  dashboardInfo: null,
-  error: null,
-  loading: true
-};
-
-const dashboardPropertiesToCheck = [
-  { property: 'DashboardNamespace', required: true, display: 'Namespace' },
-  { property: 'DashboardVersion', required: true, display: 'Version' },
-  { property: 'IsOpenShift' },
-  { property: 'ReadOnly' }
-];
-
-const pipelinesPropertiesToCheck = [
-  { property: 'PipelineNamespace', required: true, display: 'Namespace' },
-  { property: 'PipelineVersion', required: true, display: 'Version' }
-];
-
-const triggersPropertiesToCheck = [
-  { property: 'TriggersNamespace', display: 'Namespace' },
-  { property: 'TriggersVersion', display: 'Version' }
-];
-
-const propertiesToCheck = dashboardPropertiesToCheck
-  .concat(pipelinesPropertiesToCheck)
-  .concat(triggersPropertiesToCheck);
+import {
+  getDashboardNamespace,
+  getDashboardVersion,
+  getLogoutURL,
+  getPipelineNamespace,
+  getPipelineVersion,
+  getTriggersNamespace,
+  getTriggersVersion,
+  isOpenShift,
+  isReadOnly,
+  isTriggersInstalled
+} from '../../reducers';
 
 export /* istanbul ignore next */ class About extends Component {
-  state = initialState;
-
   componentDidMount() {
     const { intl } = this.props;
     document.title = getTitle({
@@ -57,32 +40,7 @@ export /* istanbul ignore next */ class About extends Component {
         defaultMessage: 'About'
       })
     });
-    this.fetchDashboardInfo();
   }
-
-  checkMissingProperties = () => {
-    const { intl } = this.props;
-    const { dashboardInfo } = this.state;
-    const errorsFound = propertiesToCheck
-      .map(({ property, required }) =>
-        dashboardInfo[property] || !required ? null : property
-      )
-      .filter(Boolean);
-
-    if (!errorsFound.length) {
-      return;
-    }
-
-    const error = intl.formatMessage(
-      {
-        id: 'dashboard.about.missingProperties',
-        defaultMessage: 'Could not find: {errorsFound}'
-      },
-      { errorsFound: errorsFound.join(', ') }
-    );
-
-    this.setState({ error });
-  };
 
   getDisplayValue = value => {
     const { intl } = this.props;
@@ -98,24 +56,32 @@ export /* istanbul ignore next */ class About extends Component {
     }
   };
 
-  async fetchDashboardInfo() {
-    try {
-      const dashboardInfo = await getInstallProperties();
-      this.setState(
-        {
-          dashboardInfo,
-          loading: false
-        },
-        this.checkMissingProperties
-      );
-    } catch (error) {
-      this.setState({ error, loading: false });
-    }
-  }
+  checkMissingProperties = () => {
+    const { intl } = this.props;
+    const propertiesToCheck = {
+      DashboardNamespace: this.props.dashboardNamespace,
+      DashboardVersion: this.props.dashboardVersion,
+      PipelineNamespace: this.props.pipelinesNamespace,
+      PipelineVersion: this.props.pipelinesVersion
+    };
+
+    const errorsFound = Object.keys(propertiesToCheck)
+      .map(key => (propertiesToCheck[key] ? null : key))
+      .filter(Boolean);
+
+    return errorsFound.length
+      ? intl.formatMessage(
+          {
+            id: 'dashboard.about.missingProperties',
+            defaultMessage: 'Could not find: {errorsFound}'
+          },
+          { errorsFound: errorsFound.join(', ') }
+        )
+      : null;
+  };
 
   render() {
     const { intl } = this.props;
-    const { dashboardInfo, error, loading } = this.state;
 
     const headers = [
       {
@@ -134,22 +100,18 @@ export /* istanbul ignore next */ class About extends Component {
       }
     ];
 
-    const filteredRows = propsToCheck => {
-      const rows = [];
-      if (dashboardInfo && !loading) {
-        propsToCheck.forEach(({ property, display }) => {
-          const value = this.getDisplayValue(dashboardInfo[property]);
-          if (value) {
-            rows.push({
-              id: property,
-              property: display || property,
-              value
-            });
+    const getRow = (property, value) => {
+      const displayValue = this.getDisplayValue(value);
+      return displayValue
+        ? {
+            id: property,
+            property,
+            value: displayValue
           }
-        });
-      }
-      return rows;
+        : undefined;
     };
+
+    const error = this.checkMissingProperties();
 
     return (
       <>
@@ -174,33 +136,58 @@ export /* istanbul ignore next */ class About extends Component {
           <Table
             title="Dashboard"
             headers={headers}
-            rows={filteredRows(dashboardPropertiesToCheck)}
-            loading={loading}
+            rows={[
+              getRow('Namespace', this.props.dashboardNamespace),
+              getRow('Version', this.props.dashboardVersion),
+              getRow('IsOpenShift', this.props.isOpenShift),
+              getRow('ReadOnly', this.props.isReadOnly),
+              getRow('LogoutURL', this.props.logoutURL)
+            ].filter(Boolean)}
           />
         </div>
         <div data-testid="pipelines-table">
           <Table
             title="Pipelines"
             headers={headers}
-            rows={filteredRows(pipelinesPropertiesToCheck)}
-            loading={loading}
+            rows={[
+              getRow('Namespace', this.props.pipelinesNamespace),
+              getRow('Version', this.props.pipelinesVersion)
+            ].filter(Boolean)}
           />
         </div>
-        {dashboardInfo &&
-          dashboardInfo.TriggersNamespace &&
-          dashboardInfo.TriggersVersion && (
-            <div data-testid="triggers-table">
-              <Table
-                title="Triggers"
-                headers={headers}
-                rows={filteredRows(triggersPropertiesToCheck)}
-                loading={loading}
-              />
-            </div>
-          )}
+        {this.props.isTriggersInstalled && (
+          <div data-testid="triggers-table">
+            <Table
+              title="Triggers"
+              headers={headers}
+              rows={[
+                getRow('Namespace', this.props.triggersNamespace),
+                getRow('Version', this.props.triggersVersion)
+              ].filter(Boolean)}
+            />
+          </div>
+        )}
       </>
     );
   }
 }
 
-export default injectIntl(About);
+/* istanbul ignore next */
+const mapStateToProps = state => ({
+  dashboardNamespace: getDashboardNamespace(state),
+  dashboardVersion: getDashboardVersion(state),
+  isReadOnly: isReadOnly(state),
+  isOpenShift: isOpenShift(state),
+  logoutURL: getLogoutURL(state),
+  pipelinesNamespace: getPipelineNamespace(state),
+  pipelinesVersion: getPipelineVersion(state),
+  isTriggersInstalled: isTriggersInstalled(state),
+  triggersNamespace: getTriggersNamespace(state),
+  triggersVersion: getTriggersVersion(state)
+});
+
+export const AboutWithIntl = injectIntl(About);
+export default connect(
+  mapStateToProps,
+  null
+)(AboutWithIntl);
