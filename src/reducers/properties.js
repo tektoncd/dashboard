@@ -25,6 +25,10 @@ export function isReadOnly(state) {
   return state.ReadOnly;
 }
 
+export function isOpenShift(state) {
+  return state.IsOpenShift;
+}
+
 export function isTriggersInstalled(state) {
   return !!(state.TriggersNamespace && state.TriggersVersion);
 }
@@ -35,6 +39,26 @@ export function getLogoutURL(state) {
 
 export function getDashboardNamespace(state) {
   return state.DashboardNamespace;
+}
+
+export function getDashboardVersion(state) {
+  return state.DashboardVersion;
+}
+
+export function getPipelineNamespace(state) {
+  return state.PipelineNamespace;
+}
+
+export function getPipelineVersion(state) {
+  return state.PipelineVersion;
+}
+
+export function getTriggersNamespace(state) {
+  return state.TriggersNamespace;
+}
+
+export function getTriggersVersion(state) {
+  return state.TriggersVersion;
 }
 
 export default properties;
