@@ -22,7 +22,11 @@ import { FormattedDate, FormattedDuration, RunDropdown, Table } from '..';
 const TaskRuns = ({
   createTaskRunURL = urls.taskRuns.byName,
   createTaskRunsDisplayName = ({ taskRunMetadata }) => taskRunMetadata.name,
-  createTaskRunsByTaskURL = urls.taskRuns.byTask,
+  createTaskRunsURL = ({ kind, namespace, taskName }) => {
+    return kind === 'ClusterTask'
+      ? urls.taskRuns.byClusterTask({ taskName })
+      : urls.taskRuns.byTask({ namespace, taskName });
+  },
   getTaskRunStatus = (taskRun, intl) => {
     const { reason } = getStatus(taskRun);
     return (
@@ -106,13 +110,22 @@ const TaskRuns = ({
     const taskRunName = createTaskRunsDisplayName({
       taskRunMetadata: taskRun.metadata
     });
-    const taskRefName = taskRun.spec.taskRef && taskRun.spec.taskRef.name;
+    const taskRefName = taskRun.spec.taskRef?.name;
+    const taskRefKind = taskRun.spec.taskRef?.kind;
     const { lastTransitionTime, reason, status } = getStatus(taskRun);
     const statusIcon = getTaskRunStatusIcon(taskRun);
-    const url = createTaskRunURL({
+    const taskRunURL = createTaskRunURL({
       namespace,
       taskRunName
     });
+
+    const taskRunsURL =
+      taskRefName &&
+      createTaskRunsURL({
+        kind: taskRefKind,
+        namespace,
+        taskName: taskRefName
+      });
 
     let endTime = Date.now();
     if (status === 'False' || status === 'True') {
@@ -127,21 +140,15 @@ const TaskRuns = ({
 
     return {
       id: taskRun.metadata.uid,
-      name: url ? (
-        <Link to={url} title={taskRunName}>
+      name: taskRunURL ? (
+        <Link to={taskRunURL} title={taskRunName}>
           {taskRunName}
         </Link>
       ) : (
         taskRunName
       ),
       task: taskRefName ? (
-        <Link
-          to={createTaskRunsByTaskURL({
-            namespace,
-            taskName: taskRefName
-          })}
-          title={taskRefName}
-        >
+        <Link to={taskRunsURL} title={taskRefName}>
           {taskRefName}
         </Link>
       ) : (
