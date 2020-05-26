@@ -39,7 +39,7 @@ export function fetchSecrets({ namespace } = {}) {
   });
 }
 
-export function fetchSecret({ name, namespace } = {}) {
+export function fetchSecret({ name, namespace }) {
   const secret = fetchNamespacedResource('Secret', getCredential, {
     namespace,
     name
