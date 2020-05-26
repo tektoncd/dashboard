@@ -39,10 +39,7 @@ const PipelineResources = ({
     },
     {
       key: 'namespace',
-      header: intl.formatMessage({
-        id: 'dashboard.tableHeader.namespace',
-        defaultMessage: 'Namespace'
-      })
+      header: 'Namespace'
     },
     {
       key: 'type',
