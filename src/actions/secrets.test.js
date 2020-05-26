@@ -14,12 +14,14 @@ limitations under the License.
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 
+import * as creators from './actionCreators';
 import * as API from '../api';
 import * as selectors from '../reducers';
 import {
   clearNotification,
   createSecret,
   deleteSecret,
+  fetchSecret,
   fetchSecrets,
   fetchSecretsSuccess,
   patchSecret,
@@ -150,6 +152,21 @@ it('fetchSecrets error', async () => {
 
   await store.dispatch(fetchSecrets());
   expect(store.getActions()).toEqual(expectedActions);
+});
+
+it('fetchSecret', () => {
+  const name = 'fake-secret-name';
+  const secret = { fake: 'secret' };
+  jest
+    .spyOn(creators, 'fetchNamespacedResource')
+    .mockImplementation(() => secret);
+
+  fetchSecret({ name, namespace });
+  expect(creators.fetchNamespacedResource).toHaveBeenCalledWith(
+    'Secret',
+    API.getCredential,
+    { name, namespace }
+  );
 });
 
 it('deleteSecret', async () => {
