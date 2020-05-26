@@ -318,15 +318,20 @@ class CreatePipelineRun extends React.Component {
   };
 
   initialState = () => {
-    const { namespace, pipelineRef } = this.props;
+    const { namespace } = this.props;
+    let { pipelineRef } = this.props;
     const pipelineInfo = parsePipelineInfo(pipelineRef, namespace);
+    if (pipelineInfo.pipelineError) {
+      pipelineRef = '';
+    }
     return {
       ...initialState,
       ...pipelineInfo,
       namespace: namespace !== ALL_NAMESPACES ? namespace : '',
       pipelineRef: pipelineRef || '',
       params: initialParamsState(pipelineInfo.paramSpecs),
-      resources: initialResourcesState(pipelineInfo.resourceSpecs)
+      resources: initialResourcesState(pipelineInfo.resourceSpecs),
+      pipelineError: ''
     };
   };
 

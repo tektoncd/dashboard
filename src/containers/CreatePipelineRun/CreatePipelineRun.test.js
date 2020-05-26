@@ -700,7 +700,7 @@ describe('CreatePipelineRun', () => {
     const mockTestStore = mockStore(testStore);
     jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
     const badPipelineRef = 'pipeline-thisDoesNotExist';
-    const { queryByText, rerender } = renderWithIntl(
+    const { getByPlaceholderText, queryByText, rerender } = renderWithIntl(
       <Provider store={mockTestStore}>
         <CreatePipelineRun {...props} pipelineRef={badPipelineRef} />
       </Provider>
@@ -711,7 +711,8 @@ describe('CreatePipelineRun', () => {
         <CreatePipelineRun {...props} open pipelineRef={badPipelineRef} />
       </Provider>
     );
-    expect(queryByText(/error retrieving pipeline information/i)).toBeTruthy();
+    expect(queryByText('pipeline-thisDoesNotExist')).toBeFalsy();
+    expect(getByPlaceholderText(/select pipeline/i)).toBeTruthy();
   });
 
   it('checks that pressing x on Pipeline doesnt cause errors', async () => {
