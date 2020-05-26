@@ -26,6 +26,7 @@ export class LogoutButton extends Component {
     this.determineLogoutURL();
   }
 
+  /* istanbul ignore next */
   handleLogout = () => {
     const { logoutURL } = this.state;
     window.location.href = logoutURL;
@@ -36,7 +37,7 @@ export class LogoutButton extends Component {
       const logoutURL = await this.props.getLogoutURL();
       this.setState({ logoutURL });
     } catch (error) {
-      console.log(error);
+      console.log(error); // eslint-disable-line
     }
   }
 

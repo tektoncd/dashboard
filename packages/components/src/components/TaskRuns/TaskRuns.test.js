@@ -48,7 +48,8 @@ it('TaskRun renders correct data', async () => {
           metadata: {
             creationTimestamp: '2019-11-28T15:10:52Z',
             name: taskRunName,
-            namespace: 'default-namespace'
+            namespace: 'default-namespace',
+            uid: 'fake-taskrun-uid'
           },
           spec: {
             taskRef: {
@@ -69,6 +70,23 @@ it('TaskRun renders correct data', async () => {
               }
             ]
           }
+        },
+        {
+          kind: 'TaskRun',
+          metadata: {
+            creationTimestamp: '2019-11-28T15:10:52Z',
+            name: `cluster-taskrun`,
+            namespace: 'default-namespace',
+            uid: 'fake-clustertaskrun-uid'
+          },
+          spec: {
+            taskRef: {
+              kind: 'ClusterTask',
+              name: 'cluster-task'
+            },
+            timeout: '1h0m0s'
+          },
+          status: {}
         }
       ]}
       taskRunActions={[
@@ -83,6 +101,8 @@ it('TaskRun renders correct data', async () => {
   expect(queryByText(/pipeline0-task/i)).toBeTruthy();
   expect(queryByText(/default-namespace/i)).toBeTruthy();
   expect(queryByTitle(/FAKE_REASON/i)).toBeTruthy();
+  expect(queryByText(/cluster-task/i)).toBeTruthy();
+  expect(queryByText(/cluster-taskrun/i)).toBeTruthy();
 });
 
 it('TaskRun renders pending', async () => {
@@ -96,7 +116,8 @@ it('TaskRun renders pending', async () => {
           metadata: {
             creationTimestamp: '2019-11-28T15:10:52Z',
             name: taskRunName,
-            namespace: 'namespace-of-doom'
+            namespace: 'namespace-of-doom',
+            uid: 'fake-taskrun-uid'
           },
           spec: {
             taskRef: {
