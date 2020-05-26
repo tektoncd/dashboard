@@ -84,10 +84,7 @@ const PipelineRuns = ({
       id: 'dashboard.tableHeader.pipeline',
       defaultMessage: 'Pipeline'
     }),
-    namespace: intl.formatMessage({
-      id: 'dashboard.tableHeader.namespace',
-      defaultMessage: 'Namespace'
-    }),
+    namespace: 'Namespace',
     createdTime: intl.formatMessage({
       id: 'dashboard.tableHeader.createdTime',
       defaultMessage: 'Created'
