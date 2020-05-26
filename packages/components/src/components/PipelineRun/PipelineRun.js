@@ -97,7 +97,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       return [];
     }
 
-    const { tasks, taskRuns } = this.props;
+    const { tasks, taskRuns, intl } = this.props;
 
     if (!tasks || !taskRuns) {
       return [];
@@ -107,10 +107,22 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       status: { taskRuns: taskRunDetails }
     } = pipelineRun;
 
+    const retryPodIndex = {};
+    const retriedTaskRuns = taskRuns
+      .filter(taskRun => taskRun.status.retriesStatus)
+      .reduce((acc, taskRun) => {
+        taskRun.status.retriesStatus.forEach((retryStatus, index) => {
+          const retryRun = { ...taskRun };
+          retryRun.status = retryStatus;
+          retryPodIndex[retryStatus.podName] = index;
+          acc.push(retryRun);
+        });
+        return acc;
+      }, []);
     return taskRuns
+      .concat(retriedTaskRuns)
       .map(taskRun => {
         let taskSpec;
-
         if (taskRun.spec.taskRef) {
           const task = selectedTask(taskRun.spec.taskRef.name, tasks);
 
@@ -135,7 +147,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
 
         const { reason, status: succeeded } = getStatus(taskRun);
 
-        const { pipelineTaskName } = taskRunDetails[taskRunName] || {
+        let { pipelineTaskName } = taskRunDetails[taskRunName] || {
           pipelineTaskName: taskRun.metadata.labels['tekton.dev/conditionCheck']
         };
 
@@ -167,11 +179,24 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           );
           steps = stepsStatus(reorderedSteps, taskRun.status.steps);
         }
+        const { podName } = taskRun.status;
+
+        if (retryPodIndex[podName] || taskRun.status.retriesStatus) {
+          const retryNumber =
+            retryPodIndex[podName] || taskRun.status.retriesStatus.length;
+          pipelineTaskName = intl.formatMessage(
+            {
+              id: 'dashboard.pipelineRun.pipelineTaskName.retry',
+              defaultMessage: '{pipelineTaskName} (retry {retryNumber, number})'
+            },
+            { pipelineTaskName, retryNumber }
+          );
+        }
 
         return {
-          id: taskRun.metadata.uid,
+          id: `${taskRun.metadata.uid}${podName}`,
           pipelineTaskName,
-          pod: taskRun.status.podName,
+          pod: podName,
           reason,
           steps,
           succeeded,

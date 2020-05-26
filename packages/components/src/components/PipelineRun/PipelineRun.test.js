@@ -70,3 +70,60 @@ it('PipelineRunContainer handles init step failures', async () => {
   );
   await waitForElement(() => getByText(initStepName));
 });
+
+it('PipelineRunContainer handles init step failures for retry', async () => {
+  const initStepName = 'my-failed-init-step';
+  const pipelineRunName = 'fake_pipelineRunName';
+  const taskRunName = 'fake_taskRunName';
+  const retryText = '(retry 1)';
+
+  const taskRun = {
+    metadata: {
+      name: taskRunName,
+      labels: {}
+    },
+    spec: {
+      params: {},
+      resources: {
+        inputs: {},
+        outputs: {}
+      },
+      taskSpec: {}
+    },
+    status: {
+      steps: [
+        {
+          terminated: {},
+          name: initStepName
+        }
+      ],
+      retriesStatus: [
+        {
+          status: {
+            steps: [
+              {
+                terminated: {},
+                name: initStepName
+              }
+            ]
+          }
+        }
+      ]
+    }
+  };
+
+  const pipelineRun = {
+    metadata: {
+      name: pipelineRunName
+    },
+    status: {
+      taskRuns: []
+    }
+  };
+
+  const { getByText } = renderWithIntl(
+    <PipelineRun pipelineRun={pipelineRun} taskRuns={[taskRun]} tasks={[]} />
+  );
+  await waitForElement(() => getByText(initStepName));
+  await waitForElement(() => getByText(retryText));
+});
