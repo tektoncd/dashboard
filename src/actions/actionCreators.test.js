@@ -17,6 +17,7 @@ import thunk from 'redux-thunk';
 import {
   fetchCollection,
   fetchNamespacedResource,
+  fetchResource,
   fetchSuccess
 } from './actionCreators';
 
@@ -28,78 +29,123 @@ it('fetchSuccess', () => {
   });
 });
 
-it('fetchCollection', async () => {
-  const data = { fake: 'data' };
-  const fakeAPI = jest.fn().mockImplementation(() => data);
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const store = mockStore();
+describe('fetchCollection', () => {
+  it('success', async () => {
+    const data = { fake: 'data' };
+    const fakeAPI = jest.fn().mockImplementation(() => data);
+    const middleware = [thunk];
+    const mockStore = configureStore(middleware);
+    const store = mockStore();
 
-  const expectedActions = [
-    { type: 'EXTENSIONS_FETCH_REQUEST' },
-    { type: 'EXTENSIONS_FETCH_SUCCESS', data }
-  ];
+    const expectedActions = [
+      { type: 'EXTENSIONS_FETCH_REQUEST' },
+      { type: 'EXTENSIONS_FETCH_SUCCESS', data }
+    ];
 
-  await store.dispatch(fetchCollection('Extension', fakeAPI));
-  expect(store.getActions()).toEqual(expectedActions);
-});
-
-it('fetchCollection error', async () => {
-  const error = new Error();
-  const fakeAPI = jest.fn().mockImplementation(() => {
-    throw error;
+    await store.dispatch(fetchCollection('Extension', fakeAPI));
+    expect(store.getActions()).toEqual(expectedActions);
   });
 
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const store = mockStore();
+  it('error', async () => {
+    const error = new Error();
+    const fakeAPI = jest.fn().mockImplementation(() => {
+      throw error;
+    });
 
-  const expectedActions = [
-    { type: 'EXTENSIONS_FETCH_REQUEST' },
-    { type: 'EXTENSIONS_FETCH_FAILURE', error }
-  ];
+    const middleware = [thunk];
+    const mockStore = configureStore(middleware);
+    const store = mockStore();
 
-  await store.dispatch(fetchCollection('Extension', fakeAPI));
-  expect(store.getActions()).toEqual(expectedActions);
+    const expectedActions = [
+      { type: 'EXTENSIONS_FETCH_REQUEST' },
+      { type: 'EXTENSIONS_FETCH_FAILURE', error }
+    ];
+
+    await store.dispatch(fetchCollection('Extension', fakeAPI));
+    expect(store.getActions()).toEqual(expectedActions);
+  });
 });
 
-it('fetchNamespacedResource', async () => {
-  const data = { fake: 'data' };
-  const namespace = 'default';
-  const params = { name: 'name' };
-  const fakeAPI = jest.fn().mockImplementation(() => data);
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const store = mockStore({ namespaces: { selected: namespace } });
+describe('fetchNamespacedResource', () => {
+  it('success', async () => {
+    const data = { fake: 'data' };
+    const namespace = 'default';
+    const params = { name: 'name' };
+    const fakeAPI = jest.fn().mockImplementation(() => data);
+    const middleware = [thunk];
+    const mockStore = configureStore(middleware);
+    const store = mockStore({ namespaces: { selected: namespace } });
 
-  const expectedActions = [
-    { type: 'EXTENSIONS_FETCH_REQUEST' },
-    { type: 'EXTENSIONS_FETCH_SUCCESS', data: [data] }
-  ];
+    const expectedActions = [
+      { type: 'EXTENSIONS_FETCH_REQUEST' },
+      { type: 'EXTENSIONS_FETCH_SUCCESS', data: [data] }
+    ];
 
-  await store.dispatch(fetchNamespacedResource('Extension', fakeAPI, params));
-  expect(store.getActions()).toEqual(expectedActions);
-  expect(fakeAPI).toHaveBeenCalledWith({ ...params, namespace });
-});
-
-it('fetchNamespacedResource error', async () => {
-  const namespace = 'default';
-  const params = { name: 'name' };
-  const error = new Error();
-  const fakeAPI = jest.fn().mockImplementation(() => {
-    throw error;
+    await store.dispatch(fetchNamespacedResource('Extension', fakeAPI, params));
+    expect(store.getActions()).toEqual(expectedActions);
+    expect(fakeAPI).toHaveBeenCalledWith({ ...params, namespace });
   });
 
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const store = mockStore({ namespaces: { selected: namespace } });
+  it('error', async () => {
+    const namespace = 'default';
+    const params = { name: 'name' };
+    const error = new Error();
+    const fakeAPI = jest.fn().mockImplementation(() => {
+      throw error;
+    });
 
-  const expectedActions = [
-    { type: 'EXTENSIONS_FETCH_REQUEST' },
-    { type: 'EXTENSIONS_FETCH_FAILURE', error }
-  ];
+    const middleware = [thunk];
+    const mockStore = configureStore(middleware);
+    const store = mockStore({ namespaces: { selected: namespace } });
 
-  await store.dispatch(fetchNamespacedResource('Extension', fakeAPI, params));
-  expect(store.getActions()).toEqual(expectedActions);
-  expect(fakeAPI).toHaveBeenCalledWith({ ...params, namespace });
+    const expectedActions = [
+      { type: 'EXTENSIONS_FETCH_REQUEST' },
+      { type: 'EXTENSIONS_FETCH_FAILURE', error }
+    ];
+
+    await store.dispatch(fetchNamespacedResource('Extension', fakeAPI, params));
+    expect(store.getActions()).toEqual(expectedActions);
+    expect(fakeAPI).toHaveBeenCalledWith({ ...params, namespace });
+  });
+});
+
+describe('fetchResource', () => {
+  it('success', async () => {
+    const data = { fake: 'data' };
+    const params = { name: 'name' };
+    const fakeAPI = jest.fn().mockImplementation(() => data);
+    const middleware = [thunk];
+    const mockStore = configureStore(middleware);
+    const store = mockStore({});
+
+    const expectedActions = [
+      { type: 'EXTENSIONS_FETCH_REQUEST' },
+      { type: 'EXTENSIONS_FETCH_SUCCESS', data: [data] }
+    ];
+
+    await store.dispatch(fetchResource('Extension', fakeAPI, params));
+    expect(store.getActions()).toEqual(expectedActions);
+    expect(fakeAPI).toHaveBeenCalledWith({ ...params });
+  });
+
+  it('error', async () => {
+    const params = { name: 'name' };
+    const error = new Error();
+    const fakeAPI = jest.fn().mockImplementation(() => {
+      throw error;
+    });
+
+    const middleware = [thunk];
+    const mockStore = configureStore(middleware);
+    const store = mockStore();
+
+    const expectedActions = [
+      { type: 'EXTENSIONS_FETCH_REQUEST' },
+      { type: 'EXTENSIONS_FETCH_FAILURE', error }
+    ];
+
+    await store.dispatch(fetchResource('Extension', fakeAPI, params));
+    expect(store.getActions()).toEqual(expectedActions);
+    expect(fakeAPI).toHaveBeenCalledWith({ ...params });
+  });
 });
