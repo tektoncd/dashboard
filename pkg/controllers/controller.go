@@ -49,14 +49,16 @@ func StartTektonControllers(clientset tektonclientset.Interface, clientresources
 }
 
 // StartKubeControllers creates and starts Kube controllers
-func StartKubeControllers(clientset k8sclientset.Interface, resyncDur time.Duration, installNamespace, tenantNamespace string, readOnly bool, handler *router.Handler, stopCh <-chan struct{}) {
+func StartKubeControllers(clientset k8sclientset.Interface, resyncDur time.Duration, tenantNamespace string, readOnly bool, handler *router.Handler, stopCh <-chan struct{}) {
 	logging.Log.Info("Creating Kube controllers")
 	clusterInformerFactory := k8sinformers.NewSharedInformerFactory(clientset, resyncDur)
 	tenantInformerFactory := k8sinformers.NewSharedInformerFactoryWithOptions(clientset, resyncDur, k8sinformers.WithNamespace(tenantNamespace))
 	// Add all kube controllers
-	kubecontroller.NewExtensionController(clusterInformerFactory, installNamespace, handler)
 	if tenantNamespace == "" {
+		kubecontroller.NewExtensionController(clusterInformerFactory, handler)
 		kubecontroller.NewNamespaceController(clusterInformerFactory)
+	} else {
+		kubecontroller.NewExtensionController(tenantInformerFactory, handler)
 	}
 	if !readOnly {
 		kubecontroller.NewSecretController(tenantInformerFactory)

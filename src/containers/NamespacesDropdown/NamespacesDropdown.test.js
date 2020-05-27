@@ -39,7 +39,8 @@ it('NamespacesDropdown renders items based on Redux state', () => {
     namespaces: {
       byName,
       isFetching: false
-    }
+    },
+    properties: {}
   });
   const { getAllByText, getByPlaceholderText, queryByText } = renderWithIntl(
     <Provider store={store}>
@@ -60,7 +61,8 @@ it('NamespacesDropdown renders controlled selection', () => {
     namespaces: {
       byName,
       isFetching: false
-    }
+    },
+    properties: {}
   });
   // Select item 'namespace-1'
   const { container, queryByPlaceholderText, queryByValue } = renderWithIntl(
@@ -92,7 +94,8 @@ it('NamespacesDropdown renders empty', () => {
     namespaces: {
       byName: {},
       isFetching: false
-    }
+    },
+    properties: {}
   });
 
   const { queryByPlaceholderText } = renderWithIntl(
@@ -108,7 +111,8 @@ it('NamespacesDropdown renders loading skeleton based on Redux state', () => {
     namespaces: {
       byName,
       isFetching: true
-    }
+    },
+    properties: {}
   });
 
   const { queryByPlaceholderText } = renderWithIntl(
@@ -124,7 +128,8 @@ it('NamespacesDropdown handles onChange event', () => {
     namespaces: {
       byName,
       isFetching: false
-    }
+    },
+    properties: {}
   });
   const onChange = jest.fn();
   const { getByPlaceholderText, getByText } = renderWithIntl(
@@ -135,4 +140,21 @@ it('NamespacesDropdown handles onChange event', () => {
   fireEvent.click(getByPlaceholderText(initialTextRegExp));
   fireEvent.click(getByText(/namespace-1/i));
   expect(onChange).toHaveBeenCalledTimes(1);
+});
+
+it('NamespacesDropdown renders tenant namespace in single namespace mode', () => {
+  const store = mockStore({
+    namespaces: {
+      byName: {}
+    },
+    properties: {
+      TenantNamespace: 'fake'
+    }
+  });
+  const { queryByText } = renderWithIntl(
+    <Provider store={store}>
+      <NamespacesDropdown {...props} />
+    </Provider>
+  );
+  expect(queryByText(/fake/i)).toBeTruthy();
 });

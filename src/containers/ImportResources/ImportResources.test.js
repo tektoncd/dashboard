@@ -82,7 +82,7 @@ describe('ImportResources component', () => {
     await waitForElement(() => getByText(/Please submit a valid URL/i));
   });
 
-  it('Displays an error when Namepsace is empty', async () => {
+  it('Displays an error when Namespace is empty', async () => {
     const { getByTestId, getByText } = await renderWithIntl(
       <Provider store={store}>
         <ImportResourcesContainer />

@@ -546,3 +546,7 @@ export function getTriggersNamespace(state) {
 export function getTriggersVersion(state) {
   return propertiesSelectors.getTriggersVersion(state.properties);
 }
+
+export function getTenantNamespace(state) {
+  return propertiesSelectors.getTenantNamespace(state.properties);
+}

@@ -172,6 +172,7 @@ const testStore = {
   namespaces,
   notifications: {},
   pipelineResources,
+  properties: {},
   taskRuns,
   tasks,
   clusterTasks,

@@ -49,6 +49,7 @@ import {
   getTaskRunsErrorMessage,
   getTasks,
   getTasksErrorMessage,
+  getTenantNamespace,
   getTriggersNamespace,
   getTriggersVersion,
   isFetchingClusterTasks,
@@ -651,6 +652,16 @@ it('getTriggersVersion', () => {
     .mockImplementation(() => 'x');
   expect(getTriggersVersion(state)).toBe('x');
   expect(propertiesSelectors.getTriggersVersion).toHaveBeenCalledWith(
+    state.properties
+  );
+});
+
+it('getTenantNamespace', () => {
+  jest
+    .spyOn(propertiesSelectors, 'getTenantNamespace')
+    .mockImplementation(() => 'x');
+  expect(getTenantNamespace(state)).toBe('x');
+  expect(propertiesSelectors.getTenantNamespace).toHaveBeenCalledWith(
     state.properties
   );
 });

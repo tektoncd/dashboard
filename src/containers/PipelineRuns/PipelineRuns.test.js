@@ -156,6 +156,7 @@ const testStore = {
   ...pipelineResourcesTestStore,
   ...pipelineRunsTestStore,
   ...pipelinesTestStore,
+  properties: {},
   ...serviceAccountsTestStore
 };
 

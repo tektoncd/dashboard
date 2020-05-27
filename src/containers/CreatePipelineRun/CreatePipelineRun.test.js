@@ -147,6 +147,7 @@ const testStore = {
   pipelineResources,
   pipelineRuns,
   pipelines,
+  properties: {},
   serviceAccounts
 };
 

@@ -120,8 +120,12 @@ These options are documented below:
 | `--read-only` | Enable or disable read only mode | `bool` | `false` |
 | `--web-dir` | Dashboard web resources directory | `string` | `""` |
 | `--logout-url` | If set, enables logout on the frontend and binds the logout button to this url | `string` | `""` |
+| `--namespace` | If set, limits the scope of resources watched to this namespace only | `string` | `""` |
 
 Run `dashboard --help` to show the supported command line arguments and their default value directly from the `dashboard` binary.
+
+**Important note:** using `--namespace` ensures that the dashboard is watching resources in the namespace specified (and drives the frontend).
+It doesn't limit actions that can be performed to this namespace only though. It's important that this flag is used AND that rbac rules are setup accordingly.
 
 ### Optionally set up the Ingress endpoint
 

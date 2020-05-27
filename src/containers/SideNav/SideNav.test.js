@@ -20,12 +20,6 @@ import { ALL_NAMESPACES, paths, urls } from '@tektoncd/dashboard-utils';
 
 import { renderWithRouter } from '../../utils/test';
 import SideNavContainer, { SideNavWithIntl as SideNav } from './SideNav';
-import * as selectors from '../../reducers';
-
-beforeEach(() => {
-  jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => true);
-  jest.spyOn(selectors, 'isTriggersInstalled').mockImplementation(() => false);
-});
 
 it('SideNav renders with extensions', () => {
   const middleware = [thunk];
@@ -48,7 +42,8 @@ it('SideNav renders with extensions', () => {
         }
       }
     },
-    namespaces: { byName: {} }
+    namespaces: { byName: {} },
+    properties: {}
   });
   const { queryByText } = renderWithRouter(
     <Provider store={store}>
@@ -62,14 +57,15 @@ it('SideNav renders with extensions', () => {
 });
 
 it('SideNav renders with triggers', async () => {
-  selectors.isReadOnly.mockImplementation(() => false);
-  selectors.isTriggersInstalled.mockImplementation(() => true);
-
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const store = mockStore({
     extensions: { byName: {} },
-    namespaces: { byName: {} }
+    namespaces: { byName: {} },
+    properties: {
+      TriggersNamespace: 'fake-triggers',
+      TriggersVersion: 'fake-triggers'
+    }
   });
   const { queryByText } = renderWithRouter(
     <Provider store={store}>
@@ -88,7 +84,8 @@ it('SideNav selects namespace based on URL', () => {
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const store = mockStore({
-    namespaces: { byName: {} }
+    namespaces: { byName: {} },
+    properties: {}
   });
   const namespace = 'default';
   const selectNamespace = jest.fn();
@@ -143,7 +140,8 @@ it('SideNav selects namespace when no namespace in URL', async () => {
       },
       isFetching: false,
       selected: namespace
-    }
+    },
+    properties: {}
   });
   const selectNamespace = jest.fn();
   const { getByText, getByValue } = renderWithRouter(
@@ -171,7 +169,8 @@ it('SideNav redirects to root when all namespaces selected on namespaced URL', a
       },
       isFetching: false,
       selected: namespace
-    }
+    },
+    properties: {}
   });
   const selectNamespace = jest.fn();
   const push = jest.fn();
@@ -204,7 +203,8 @@ it('SideNav redirects to PipelineRuns page when all namespaces selected on names
       },
       isFetching: false,
       selected: namespace
-    }
+    },
+    properties: {}
   });
   const selectNamespace = jest.fn();
   const push = jest.fn();
@@ -237,7 +237,8 @@ it('SideNav redirects to TaskRuns page when all namespaces selected on namespace
       },
       isFetching: false,
       selected: namespace
-    }
+    },
+    properties: {}
   });
   const selectNamespace = jest.fn();
   const push = jest.fn();
@@ -270,7 +271,8 @@ it('SideNav redirects to PipelineResources page when all namespaces selected on 
       },
       isFetching: false,
       selected: namespace
-    }
+    },
+    properties: {}
   });
   const selectNamespace = jest.fn();
   const push = jest.fn();
@@ -306,7 +308,8 @@ it('SideNav redirects to Pipelines page when all namespaces selected on namespac
       },
       isFetching: false,
       selected: namespace
-    }
+    },
+    properties: {}
   });
   const selectNamespace = jest.fn();
   const push = jest.fn();
@@ -342,7 +345,8 @@ it('SideNav redirects to ServiceAccounts page when all namespaces selected on na
       },
       isFetching: false,
       selected: namespace
-    }
+    },
+    properties: {}
   });
   const selectNamespace = jest.fn();
   const push = jest.fn();
@@ -378,7 +382,8 @@ it('SideNav redirects to EventListeners page when all namespaces selected on nam
       },
       isFetching: false,
       selected: namespace
-    }
+    },
+    properties: {}
   });
   const selectNamespace = jest.fn();
   const push = jest.fn();
@@ -414,7 +419,8 @@ it('SideNav redirects to TriggerBindings page when all namespaces selected on na
       },
       isFetching: false,
       selected: namespace
-    }
+    },
+    properties: {}
   });
   const selectNamespace = jest.fn();
   const push = jest.fn();
@@ -450,7 +456,8 @@ it('SideNav redirects to TriggerTemplates page when all namespaces selected on n
       },
       isFetching: false,
       selected: namespace
-    }
+    },
+    properties: {}
   });
   const selectNamespace = jest.fn();
   const push = jest.fn();
@@ -486,7 +493,8 @@ it('SideNav redirects to Tasks page when all namespaces selected on namespaced U
       },
       isFetching: false,
       selected: namespace
-    }
+    },
+    properties: {}
   });
   const selectNamespace = jest.fn();
   const push = jest.fn();
@@ -522,7 +530,8 @@ it('SideNav redirects to secrets page when all namespaces selected on namespaced
       },
       isFetching: false,
       selected: namespace
-    }
+    },
+    properties: {}
   });
   const selectNamespace = jest.fn();
   const push = jest.fn();
@@ -558,7 +567,8 @@ it('SideNav redirects to Conditions page when all namespaces selected on namespa
       },
       isFetching: false,
       selected: namespace
-    }
+    },
+    properties: {}
   });
   const selectNamespace = jest.fn();
   const push = jest.fn();
@@ -596,7 +606,8 @@ it('SideNav updates namespace in URL', async () => {
       },
       isFetching: false,
       selected: namespace
-    }
+    },
+    properties: {}
   });
   const selectNamespace = jest.fn();
   const push = jest.fn();
@@ -623,13 +634,12 @@ it('SideNav updates namespace in URL', async () => {
 });
 
 it('SideNav renders import in not read-only mode', async () => {
-  selectors.isReadOnly.mockImplementation(() => false);
-
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const store = mockStore({
     extensions: { byName: {} },
-    namespaces: { byName: {} }
+    namespaces: { byName: {} },
+    properties: {}
   });
   const { queryByText } = renderWithRouter(
     <Provider store={store}>
@@ -644,7 +654,10 @@ it('SideNav does not render import in read-only mode', async () => {
   const mockStore = configureStore(middleware);
   const store = mockStore({
     extensions: { byName: {} },
-    namespaces: { byName: {} }
+    namespaces: { byName: {} },
+    properties: {
+      ReadOnly: true
+    }
   });
   const { queryByText } = renderWithRouter(
     <Provider store={store}>
@@ -653,4 +666,40 @@ it('SideNav does not render import in read-only mode', async () => {
   );
   await waitForElement(() => queryByText(/about/i));
   expect(queryByText(/import/i)).toBeFalsy();
+});
+
+it('Namespace dropdown does not render in single namespace visibility mode', async () => {
+  const middleware = [thunk];
+  const mockStore = configureStore(middleware);
+  const store = mockStore({
+    extensions: { byName: {} },
+    namespaces: { byName: {} },
+    properties: {
+      TenantNamespace: 'fake'
+    }
+  });
+  const { queryByText } = renderWithRouter(
+    <Provider store={store}>
+      <SideNavContainer isReadOnly />
+    </Provider>
+  );
+  await waitForElement(() => queryByText(/about/i));
+  expect(queryByText(/namespaces/i)).toBeFalsy();
+});
+
+it('Namespace dropdown renders in full cluster visibility mode', async () => {
+  const middleware = [thunk];
+  const mockStore = configureStore(middleware);
+  const store = mockStore({
+    extensions: { byName: {} },
+    namespaces: { byName: {} },
+    properties: {}
+  });
+  const { queryByText } = renderWithRouter(
+    <Provider store={store}>
+      <SideNavContainer isReadOnly />
+    </Provider>
+  );
+  await waitForElement(() => queryByText(/about/i));
+  expect(queryByText(/namespaces/i)).toBeTruthy();
 });

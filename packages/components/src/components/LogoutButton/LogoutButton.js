@@ -37,7 +37,7 @@ export class LogoutButton extends Component {
       const logoutURL = await this.props.getLogoutURL();
       this.setState({ logoutURL });
     } catch (error) {
-      console.log(error); // eslint-disable-line
+      console.log(error); // eslint-disable-line no-console
     }
   }
 

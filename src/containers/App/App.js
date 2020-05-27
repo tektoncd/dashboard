@@ -21,15 +21,16 @@ import {
   Switch
 } from 'react-router-dom';
 
-import { IntlProvider } from 'react-intl';
-import { Content } from 'carbon-components-react';
+import { injectIntl, IntlProvider } from 'react-intl';
+import { Content, InlineNotification } from 'carbon-components-react';
 
 import {
   Header,
+  LoadingShell,
   LogoutButton,
   PageErrorBoundary
 } from '@tektoncd/dashboard-components';
-import { paths, urls } from '@tektoncd/dashboard-utils';
+import { getErrorMessage, paths, urls } from '@tektoncd/dashboard-utils';
 
 import {
   About,
@@ -75,6 +76,7 @@ import {
   getLocale,
   getLogoutURL,
   getSelectedNamespace,
+  getTenantNamespace,
   isReadOnly,
   isWebSocketConnected
 } from '../../reducers';
@@ -104,16 +106,61 @@ if (process.env.I18N_PSEUDO) {
   });
 }
 
-export /* istanbul ignore next */ class App extends Component {
-  componentDidMount() {
-    this.fetchData();
+const ConfigErrorComponent = ({ intl, loadingConfigError }) => {
+  if (!loadingConfigError) {
+    return null;
   }
 
-  componentDidUpdate(prevProps) {
+  return (
+    <InlineNotification
+      kind="error"
+      title={intl.formatMessage({
+        id: 'dashboard.app.loadingConfigError',
+        defaultMessage: 'Error loading configuration'
+      })}
+      subtitle={getErrorMessage(loadingConfigError)}
+      lowContrast
+    />
+  );
+};
+
+const ConfigError = injectIntl(ConfigErrorComponent);
+
+const initialState = {
+  loadingConfigError: null,
+  loadingConfig: true
+};
+
+export /* istanbul ignore next */ class App extends Component {
+  state = initialState;
+
+  componentDidMount() {
+    this.fetchConfig();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
     const { webSocketConnected } = this.props;
     const { webSocketConnected: prevWebSocketConnected } = prevProps;
+
     if (webSocketConnected && prevWebSocketConnected === false) {
-      this.fetchData();
+      this.fetchConfig();
+    }
+
+    const { loadingConfig } = this.state;
+    const { loadingConfig: prevLoadingConfig } = prevState;
+
+    if (prevLoadingConfig && loadingConfig === false) {
+      if (this.props.tenantNamespace) {
+        this.props.selectNamespace(this.props.tenantNamespace);
+      }
+
+      if (!this.props.tenantNamespace) {
+        this.props.fetchNamespaces();
+      }
+
+      this.props.fetchExtensions({
+        namespace: this.props.tenantNamespace
+      });
     }
   }
 
@@ -121,14 +168,20 @@ export /* istanbul ignore next */ class App extends Component {
     this.props.onUnload();
   }
 
-  fetchData() {
-    this.props.fetchExtensions();
-    this.props.fetchInstallProperties();
-    this.props.fetchNamespaces();
+  async fetchConfig() {
+    this.setState({ loadingConfig: true });
+    try {
+      await this.props.fetchInstallProperties();
+      this.setState({ loadingConfig: false });
+    } catch (error) {
+      console.error(error); // eslint-disable-line no-console
+      this.setState({ loadingConfigError: error, loadingConfig: false });
+    }
   }
 
   render() {
     const { extensions } = this.props;
+    const { loadingConfigError, loadingConfig } = this.state;
 
     const lang = messages[this.props.lang] ? this.props.lang : 'en';
     const logoutButton = (
@@ -137,262 +190,270 @@ export /* istanbul ignore next */ class App extends Component {
 
     return (
       <IntlProvider locale={lang} defaultLocale="en" messages={messages[lang]}>
-        <Router>
-          <>
-            <Header logoutButton={logoutButton} />
-            <Route path={paths.byNamespace({ path: '/*' })}>
-              {props => <SideNav {...props} />}
-            </Route>
+        <ConfigError loadingConfigError={loadingConfigError} />
 
-            <Content>
-              <PageErrorBoundary>
-                <Switch>
-                  <Route
-                    path={paths.pipelines.all()}
-                    exact
-                    component={Pipelines}
-                  />
-                  <Route
-                    path={paths.pipelines.byNamespace()}
-                    exact
-                    component={Pipelines}
-                  />
-                  <Route
-                    path={paths.pipelineRuns.all()}
-                    component={PipelineRuns}
-                  />
-                  <Route
-                    path={paths.pipelineRuns.byNamespace()}
-                    exact
-                    component={PipelineRuns}
-                  />
-                  <Route
-                    path={paths.pipelineRuns.byPipeline()}
-                    exact
-                    component={PipelineRuns}
-                  />
-                  <Route
-                    path={paths.pipelineRuns.byName()}
-                    component={PipelineRun}
-                  />
-                  <Route
-                    path={paths.pipelineResources.all()}
-                    exact
-                    component={PipelineResources}
-                  />
-                  <Route
-                    path={paths.pipelineResources.byNamespace()}
-                    exact
-                    component={PipelineResources}
-                  />
-                  <Route
-                    path={paths.pipelineResources.byName()}
-                    exact
-                    component={PipelineResource}
-                  />
-                  <Route path={paths.tasks.all()} exact component={Tasks} />
-                  <Route
-                    path={paths.tasks.byNamespace()}
-                    exact
-                    component={Tasks}
-                  />
-                  <Route path={paths.taskRuns.all()} component={TaskRuns} />
-                  <Route
-                    path={paths.taskRuns.byNamespace()}
-                    exact
-                    component={TaskRuns}
-                  />
-                  <Route
-                    path={paths.taskRuns.byTask()}
-                    exact
-                    component={TaskRuns}
-                  />
-                  <Route
-                    path={paths.taskRuns.byName()}
-                    exact
-                    component={TaskRun}
-                  />
-                  <Route
-                    path={paths.clusterTasks.all()}
-                    exact
-                    component={ClusterTasks}
-                  />
-                  <Route path={paths.conditions.all()} component={Conditions} />
-                  <Route
-                    path={paths.conditions.byNamespace()}
-                    exact
-                    component={Conditions}
-                  />
-                  <Route
-                    path={paths.conditions.byName()}
-                    component={Condition}
-                  />
+        {loadingConfig && <LoadingShell />}
+        {!loadingConfig && (
+          <Router>
+            <>
+              <Header logoutButton={logoutButton} />
+              <Route path={paths.byNamespace({ path: '/*' })}>
+                {props => <SideNav {...props} />}
+              </Route>
 
-                  <Route path={paths.about()} component={About} />
+              <Content>
+                <PageErrorBoundary>
+                  <Switch>
+                    <Route
+                      path={paths.pipelines.all()}
+                      exact
+                      component={Pipelines}
+                    />
+                    <Route
+                      path={paths.pipelines.byNamespace()}
+                      exact
+                      component={Pipelines}
+                    />
+                    <Route
+                      path={paths.pipelineRuns.all()}
+                      component={PipelineRuns}
+                    />
+                    <Route
+                      path={paths.pipelineRuns.byNamespace()}
+                      exact
+                      component={PipelineRuns}
+                    />
+                    <Route
+                      path={paths.pipelineRuns.byPipeline()}
+                      exact
+                      component={PipelineRuns}
+                    />
+                    <Route
+                      path={paths.pipelineRuns.byName()}
+                      component={PipelineRun}
+                    />
+                    <Route
+                      path={paths.pipelineResources.all()}
+                      exact
+                      component={PipelineResources}
+                    />
+                    <Route
+                      path={paths.pipelineResources.byNamespace()}
+                      exact
+                      component={PipelineResources}
+                    />
+                    <Route
+                      path={paths.pipelineResources.byName()}
+                      exact
+                      component={PipelineResource}
+                    />
+                    <Route path={paths.tasks.all()} exact component={Tasks} />
+                    <Route
+                      path={paths.tasks.byNamespace()}
+                      exact
+                      component={Tasks}
+                    />
+                    <Route path={paths.taskRuns.all()} component={TaskRuns} />
+                    <Route
+                      path={paths.taskRuns.byNamespace()}
+                      exact
+                      component={TaskRuns}
+                    />
+                    <Route
+                      path={paths.taskRuns.byTask()}
+                      exact
+                      component={TaskRuns}
+                    />
+                    <Route
+                      path={paths.taskRuns.byName()}
+                      exact
+                      component={TaskRun}
+                    />
+                    <Route
+                      path={paths.clusterTasks.all()}
+                      exact
+                      component={ClusterTasks}
+                    />
+                    <Route
+                      path={paths.conditions.all()}
+                      component={Conditions}
+                    />
+                    <Route
+                      path={paths.conditions.byNamespace()}
+                      exact
+                      component={Conditions}
+                    />
+                    <Route
+                      path={paths.conditions.byName()}
+                      component={Condition}
+                    />
 
-                  <ReadWriteRoute
-                    isReadOnly={this.props.isReadOnly}
-                    path={paths.importResources()}
-                    component={ImportResources}
-                  />
+                    <Route path={paths.about()} component={About} />
 
-                  <ReadWriteRoute
-                    isReadOnly={this.props.isReadOnly}
-                    path={paths.secrets.all()}
-                    exact
-                    component={Secrets}
-                  />
-                  <ReadWriteRoute
-                    isReadOnly={this.props.isReadOnly}
-                    path={paths.secrets.byName()}
-                    exact
-                    component={Secret}
-                  />
-                  <ReadWriteRoute
-                    isReadOnly={this.props.isReadOnly}
-                    path={paths.secrets.byNamespace()}
-                    exact
-                    component={Secrets}
-                  />
-                  <ReadWriteRoute
-                    isReadOnly={this.props.isReadOnly}
-                    path={paths.secrets.create()}
-                    exact
-                    component={CreateSecret}
-                  />
+                    <ReadWriteRoute
+                      isReadOnly={this.props.isReadOnly}
+                      path={paths.importResources()}
+                      component={ImportResources}
+                    />
 
-                  <ReadWriteRoute
-                    isReadOnly={this.props.isReadOnly}
-                    path={paths.serviceAccounts.byName()}
-                    exact
-                    component={ServiceAccount}
-                  />
-                  <ReadWriteRoute
-                    isReadOnly={this.props.isReadOnly}
-                    path={paths.serviceAccounts.all()}
-                    exact
-                    component={ServiceAccounts}
-                  />
-                  <ReadWriteRoute
-                    isReadOnly={this.props.isReadOnly}
-                    path={paths.serviceAccounts.byNamespace()}
-                    exact
-                    component={ServiceAccounts}
-                  />
+                    <ReadWriteRoute
+                      isReadOnly={this.props.isReadOnly}
+                      path={paths.secrets.all()}
+                      exact
+                      component={Secrets}
+                    />
+                    <ReadWriteRoute
+                      isReadOnly={this.props.isReadOnly}
+                      path={paths.secrets.byName()}
+                      exact
+                      component={Secret}
+                    />
+                    <ReadWriteRoute
+                      isReadOnly={this.props.isReadOnly}
+                      path={paths.secrets.byNamespace()}
+                      exact
+                      component={Secrets}
+                    />
+                    <ReadWriteRoute
+                      isReadOnly={this.props.isReadOnly}
+                      path={paths.secrets.create()}
+                      exact
+                      component={CreateSecret}
+                    />
 
-                  <Route
-                    path={paths.eventListeners.all()}
-                    exact
-                    component={EventListeners}
-                  />
-                  <Route
-                    path={paths.eventListeners.byNamespace()}
-                    exact
-                    component={EventListeners}
-                  />
-                  <Route
-                    path={paths.eventListeners.byName()}
-                    exact
-                    component={EventListener}
-                  />
-                  <Route
-                    path={paths.triggerBindings.byName()}
-                    exact
-                    component={TriggerBinding}
-                  />
-                  <Route
-                    path={paths.triggerBindings.all()}
-                    exact
-                    component={TriggerBindings}
-                  />
-                  <Route
-                    path={paths.triggerBindings.byNamespace()}
-                    exact
-                    component={TriggerBindings}
-                  />
-                  <Route
-                    path={paths.clusterTriggerBindings.byName()}
-                    exact
-                    component={ClusterTriggerBinding}
-                  />
-                  <Route
-                    path={paths.clusterTriggerBindings.all()}
-                    exact
-                    component={ClusterTriggerBindings}
-                  />
-                  <Route
-                    path={paths.triggerTemplates.byName()}
-                    exact
-                    component={TriggerTemplate}
-                  />
-                  <Route
-                    path={paths.triggerTemplates.all()}
-                    exact
-                    component={TriggerTemplates}
-                  />
-                  <Route
-                    path={paths.triggerTemplates.byNamespace()}
-                    exact
-                    component={TriggerTemplates}
-                  />
-                  <Route
-                    path={paths.extensions.all()}
-                    exact
-                    component={Extensions}
-                  />
-                  {extensions
-                    .filter(extension => !extension.type)
-                    .map(({ displayName, name, source }) => (
-                      <Route
-                        key={name}
-                        path={paths.extensions.byName({ name })}
-                        render={({ match }) => (
-                          <Extension
-                            displayName={displayName}
-                            match={match}
-                            source={source}
-                          />
-                        )}
-                      />
-                    ))}
+                    <ReadWriteRoute
+                      isReadOnly={this.props.isReadOnly}
+                      path={paths.serviceAccounts.byName()}
+                      exact
+                      component={ServiceAccount}
+                    />
+                    <ReadWriteRoute
+                      isReadOnly={this.props.isReadOnly}
+                      path={paths.serviceAccounts.all()}
+                      exact
+                      component={ServiceAccounts}
+                    />
+                    <ReadWriteRoute
+                      isReadOnly={this.props.isReadOnly}
+                      path={paths.serviceAccounts.byNamespace()}
+                      exact
+                      component={ServiceAccounts}
+                    />
 
-                  <Route
-                    path={paths.kubernetesResources.all()}
-                    exact
-                    component={ResourceList}
-                  />
-                  <Route
-                    path={paths.kubernetesResources.byNamespace()}
-                    exact
-                    component={ResourceList}
-                  />
-                  <Route
-                    path={paths.kubernetesResources.byName()}
-                    exact
-                    component={CustomResourceDefinition}
-                  />
-                  <Route
-                    path={paths.kubernetesResources.cluster()}
-                    exact
-                    component={CustomResourceDefinition}
-                  />
-                  <Route
-                    path={paths.rawCRD.byNamespace()}
-                    exact
-                    component={CustomResourceDefinition}
-                  />
-                  <Route
-                    path={paths.rawCRD.cluster()}
-                    exact
-                    component={CustomResourceDefinition}
-                  />
+                    <Route
+                      path={paths.eventListeners.all()}
+                      exact
+                      component={EventListeners}
+                    />
+                    <Route
+                      path={paths.eventListeners.byNamespace()}
+                      exact
+                      component={EventListeners}
+                    />
+                    <Route
+                      path={paths.eventListeners.byName()}
+                      exact
+                      component={EventListener}
+                    />
+                    <Route
+                      path={paths.triggerBindings.byName()}
+                      exact
+                      component={TriggerBinding}
+                    />
+                    <Route
+                      path={paths.triggerBindings.all()}
+                      exact
+                      component={TriggerBindings}
+                    />
+                    <Route
+                      path={paths.triggerBindings.byNamespace()}
+                      exact
+                      component={TriggerBindings}
+                    />
+                    <Route
+                      path={paths.clusterTriggerBindings.byName()}
+                      exact
+                      component={ClusterTriggerBinding}
+                    />
+                    <Route
+                      path={paths.clusterTriggerBindings.all()}
+                      exact
+                      component={ClusterTriggerBindings}
+                    />
+                    <Route
+                      path={paths.triggerTemplates.byName()}
+                      exact
+                      component={TriggerTemplate}
+                    />
+                    <Route
+                      path={paths.triggerTemplates.all()}
+                      exact
+                      component={TriggerTemplates}
+                    />
+                    <Route
+                      path={paths.triggerTemplates.byNamespace()}
+                      exact
+                      component={TriggerTemplates}
+                    />
+                    <Route
+                      path={paths.extensions.all()}
+                      exact
+                      component={Extensions}
+                    />
+                    {extensions
+                      .filter(extension => !extension.type)
+                      .map(({ displayName, name, source }) => (
+                        <Route
+                          key={name}
+                          path={paths.extensions.byName({ name })}
+                          render={({ match }) => (
+                            <Extension
+                              displayName={displayName}
+                              match={match}
+                              source={source}
+                            />
+                          )}
+                        />
+                      ))}
 
-                  <Redirect to={urls.pipelineRuns.all()} />
-                </Switch>
-              </PageErrorBoundary>
-            </Content>
-          </>
-        </Router>
+                    <Route
+                      path={paths.kubernetesResources.all()}
+                      exact
+                      component={ResourceList}
+                    />
+                    <Route
+                      path={paths.kubernetesResources.byNamespace()}
+                      exact
+                      component={ResourceList}
+                    />
+                    <Route
+                      path={paths.kubernetesResources.byName()}
+                      exact
+                      component={CustomResourceDefinition}
+                    />
+                    <Route
+                      path={paths.kubernetesResources.cluster()}
+                      exact
+                      component={CustomResourceDefinition}
+                    />
+                    <Route
+                      path={paths.rawCRD.byNamespace()}
+                      exact
+                      component={CustomResourceDefinition}
+                    />
+                    <Route
+                      path={paths.rawCRD.cluster()}
+                      exact
+                      component={CustomResourceDefinition}
+                    />
+
+                    <Redirect to={urls.pipelineRuns.all()} />
+                  </Switch>
+                </PageErrorBoundary>
+              </Content>
+            </>
+          </Router>
+        )}
       </IntlProvider>
     );
   }
@@ -410,6 +471,7 @@ const mapStateToProps = state => ({
   lang: getLocale(state),
   logoutURL: getLogoutURL(state),
   isReadOnly: isReadOnly(state),
+  tenantNamespace: getTenantNamespace(state),
   webSocketConnected: isWebSocketConnected(state)
 });
 

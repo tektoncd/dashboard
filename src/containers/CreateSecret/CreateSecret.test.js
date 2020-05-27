@@ -84,6 +84,7 @@ const store = mockStore({
   secrets,
   namespaces,
   notifications: {},
+  properties: {},
   serviceAccounts: {
     byId: serviceAccountsById,
     byNamespace: serviceAccountsByNamespace,

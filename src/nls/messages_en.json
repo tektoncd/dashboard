@@ -29,6 +29,7 @@
     "dashboard.accessTokenField.showPasswordLabel": "Show access token",
     "dashboard.actions.createButton": "Create",
     "dashboard.actions.deleteButton": "Delete",
+    "dashboard.app.loadingConfigError": "Error loading configuration",
     "dashboard.cancelButton.body": "Are you sure you would like to stop {type} {name}?",
     "dashboard.cancelButton.heading": "Stop {type} {name}",
     "dashboard.cancelButton.primaryText": "Stop {type}",
