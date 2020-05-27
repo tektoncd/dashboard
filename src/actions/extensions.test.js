@@ -16,10 +16,11 @@ import { fetchExtensions } from './extensions';
 import * as creators from './actionCreators';
 
 it('fetchExtensions', async () => {
-  jest.spyOn(creators, 'fetchCollection');
+  jest.spyOn(creators, 'fetchNamespacedCollection');
   fetchExtensions();
-  expect(creators.fetchCollection).toHaveBeenCalledWith(
+  expect(creators.fetchNamespacedCollection).toHaveBeenCalledWith(
     'Extension',
-    API.getExtensions
+    API.getExtensions,
+    {}
   );
 });

@@ -48,6 +48,7 @@ const namespaces = {
 
 const store = mockStore({
   pipelineResources,
+  properties: {},
   namespaces,
   notifications: {}
 });

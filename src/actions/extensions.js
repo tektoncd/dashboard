@@ -12,8 +12,10 @@ limitations under the License.
 */
 
 import { getExtensions } from '../api';
-import { fetchCollection } from './actionCreators';
+import { fetchNamespacedCollection } from './actionCreators';
 
-export function fetchExtensions() {
-  return fetchCollection('Extension', getExtensions);
+export function fetchExtensions({ namespace } = {}) {
+  return fetchNamespacedCollection('Extension', getExtensions, {
+    namespace
+  });
 }

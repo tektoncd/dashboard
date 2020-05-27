@@ -30,6 +30,7 @@ import { selectNamespace } from '../../actions/namespaces';
 import {
   getExtensions,
   getSelectedNamespace,
+  getTenantNamespace,
   isReadOnly,
   isTriggersInstalled
 } from '../../reducers';
@@ -249,15 +250,21 @@ class SideNav extends Component {
             )}
           </SideNavMenu>
 
-          <SideNavMenuItem
-            element={NamespacesDropdown}
-            id="sidenav-namespace-dropdown"
-            selectedItem={{ id: namespace, text: namespace }}
-            showAllNamespaces
-            onChange={this.selectNamespace}
-          >
-            &nbsp;
-          </SideNavMenuItem>
+          {this.props.tenantNamespace ? (
+            <SideNavMenu defaultExpanded title="Namespace">
+              <SideNavMenuItem>{this.props.tenantNamespace}</SideNavMenuItem>
+            </SideNavMenu>
+          ) : (
+            <SideNavMenuItem
+              element={NamespacesDropdown}
+              id="sidenav-namespace-dropdown"
+              selectedItem={{ id: namespace, text: namespace }}
+              showAllNamespaces={!this.props.tenantNamespace}
+              onChange={this.selectNamespace}
+            >
+              &nbsp;
+            </SideNavMenuItem>
+          )}
 
           {!this.props.isReadOnly && (
             <SideNavMenu
@@ -358,7 +365,8 @@ const mapStateToProps = state => ({
   extensions: getExtensions(state),
   isReadOnly: isReadOnly(state),
   isTriggersInstalled: isTriggersInstalled(state),
-  namespace: getSelectedNamespace(state)
+  namespace: getSelectedNamespace(state),
+  tenantNamespace: getTenantNamespace(state)
 });
 
 const mapDispatchToProps = {

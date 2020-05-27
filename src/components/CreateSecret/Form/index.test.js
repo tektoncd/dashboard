@@ -41,7 +41,8 @@ const namespaces = {
 };
 
 const store = mockStore({
-  namespaces
+  namespaces,
+  properties: {}
 });
 
 const props = {

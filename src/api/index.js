@@ -399,12 +399,13 @@ export function getCustomResource(...args) {
   return get(uri);
 }
 
-export async function getExtensions() {
+export async function getExtensions({ namespace } = {}) {
   const uri = `${apiRoot}/v1/extensions`;
   const resourceExtensionsUri = getResourcesAPI({
     group: 'dashboard.tekton.dev',
     version: 'v1alpha1',
-    type: 'extensions'
+    type: 'extensions',
+    namespace
   });
   let extensions = await get(uri);
   const resourceExtensions = await get(resourceExtensionsUri);

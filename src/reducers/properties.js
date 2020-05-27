@@ -61,4 +61,8 @@ export function getTriggersVersion(state) {
   return state.TriggersVersion;
 }
 
+export function getTenantNamespace(state) {
+  return state.TenantNamespace;
+}
+
 export default properties;

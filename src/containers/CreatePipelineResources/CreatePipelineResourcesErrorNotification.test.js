@@ -70,6 +70,7 @@ it('error notification appears', async () => {
       isFetching: false,
       submitError: 'Some error message'
     },
+    properties: {},
     namespaces,
     notifications: {}
   });

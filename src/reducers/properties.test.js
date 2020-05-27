@@ -30,7 +30,8 @@ it('INSTALL_PROPERTIES_SUCCESS', () => {
     PipelineNamespace: 'ns-pipeline',
     PipelineVersion: 'version-pipeline',
     TriggersNamespace: 'ns-triggers',
-    TriggersVersion: 'version-triggers'
+    TriggersVersion: 'version-triggers',
+    TenantNamespace: 'ns-tenant'
   };
 
   const action = {
@@ -49,4 +50,5 @@ it('INSTALL_PROPERTIES_SUCCESS', () => {
   expect(selectors.getPipelineVersion(state)).toBe('version-pipeline');
   expect(selectors.getTriggersNamespace(state)).toBe('ns-triggers');
   expect(selectors.getTriggersVersion(state)).toBe('version-triggers');
+  expect(selectors.getTenantNamespace(state)).toBe('ns-tenant');
 });
