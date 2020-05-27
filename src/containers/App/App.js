@@ -96,6 +96,10 @@ if (process.env.I18N_PSEUDO) {
 export /* istanbul ignore next */ class App extends Component {
   componentDidMount() {
     this.fetchData();
+    this.interval = setInterval(
+      () => this.props.fetchInstallProperties(),
+      60000
+    );
   }
 
   componentDidUpdate(prevProps) {
@@ -107,6 +111,7 @@ export /* istanbul ignore next */ class App extends Component {
   }
 
   componentWillUnmount() {
+    clearInterval(this.interval);
     this.props.onUnload();
   }
 
