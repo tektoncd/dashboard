@@ -735,7 +735,7 @@ describe('CreateTaskRun', () => {
     const mockTestStore = mockStore(testStore);
     jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
     const badTaskRef = 'task-thisDoesNotExist';
-    const { queryByText, rerender } = renderWithIntl(
+    const { getByPlaceholderText, queryByText, rerender } = renderWithIntl(
       <Provider store={mockTestStore}>
         <CreateTaskRun {...props} taskRef={badTaskRef} />
       </Provider>
@@ -746,7 +746,8 @@ describe('CreateTaskRun', () => {
         <CreateTaskRun {...props} open taskRef={badTaskRef} />
       </Provider>
     );
-    expect(queryByText(/error retrieving task information/i)).toBeTruthy();
+    expect(queryByText('task-thisDoesNotExist')).toBeFalsy();
+    expect(getByPlaceholderText(/select task/i)).toBeTruthy();
   });
 
   it('checks that pressing x on Task doesnt cause errors', async () => {

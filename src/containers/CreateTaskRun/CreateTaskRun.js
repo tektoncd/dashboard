@@ -324,8 +324,12 @@ class CreateTaskRun extends React.Component {
   };
 
   initialState = () => {
-    const { kind, namespace, taskRef } = this.props;
+    const { kind, namespace } = this.props;
+    let { taskRef } = this.props;
     const taskInfo = parseTaskInfo(taskRef, kind, namespace);
+    if (taskInfo.taskError) {
+      taskRef = '';
+    }
     return {
       ...initialState,
       ...taskInfo,
@@ -333,7 +337,8 @@ class CreateTaskRun extends React.Component {
       namespace: namespace !== ALL_NAMESPACES ? namespace : '',
       taskRef: taskRef || '',
       params: initialParamsState(taskInfo.paramSpecs),
-      resources: initialResourcesState(taskInfo.resourceSpecs)
+      resources: initialResourcesState(taskInfo.resourceSpecs),
+      taskError: ''
     };
   };
 
