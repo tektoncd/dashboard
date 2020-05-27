@@ -20,7 +20,11 @@ import {
   Modal,
   TextInput
 } from 'carbon-components-react';
-import { ALL_NAMESPACES, generateId } from '@tektoncd/dashboard-utils';
+import {
+  ALL_NAMESPACES,
+  generateId,
+  getTranslateWithId
+} from '@tektoncd/dashboard-utils';
 import { KeyValueList } from '@tektoncd/dashboard-components';
 import { injectIntl } from 'react-intl';
 import {
@@ -432,6 +436,7 @@ class CreateTaskRun extends React.Component {
               ]}
               itemToString={itemToString}
               onChange={this.handleKindChange}
+              translateWithId={getTranslateWithId(intl)}
             />
             <NamespacesDropdown
               id="create-taskrun--namespaces-dropdown"
