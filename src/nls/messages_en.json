@@ -1,5 +1,9 @@
 {
   "en": {
+    "carbon.listBoxMenuIcon.close.menu": "Close menu",
+    "carbon.listBoxMenuIcon.open.menu": "Open menu",
+    "carbon.listBoxSelection.clear.all": "Clear all selected items",
+    "carbon.listBoxSelection.clear.selection": "Clear selected item",
     "carbon.table.all.collapse": "Collapse all rows",
     "carbon.table.all.expand": "Expand all rows",
     "carbon.table.all.select": "Select all rows",

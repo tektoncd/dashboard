@@ -321,3 +321,33 @@ export function getResources({ resources, inputs, outputs }) {
     outputResources: outputs && outputs.resources
   };
 }
+
+/* istanbul ignore next */
+export function getTranslateWithId(intl) {
+  return function translateWithId(id) {
+    switch (id) {
+      case 'close.menu':
+        return intl.formatMessage({
+          id: 'carbon.listBoxMenuIcon.close.menu',
+          defaultMessage: 'Close menu'
+        });
+      case 'open.menu':
+        return intl.formatMessage({
+          id: 'carbon.listBoxMenuIcon.open.menu',
+          defaultMessage: 'Open menu'
+        });
+      case 'clear.all':
+        return intl.formatMessage({
+          id: 'carbon.listBoxSelection.clear.all',
+          defaultMessage: 'Clear all selected items'
+        });
+      case 'clear.selection':
+        return intl.formatMessage({
+          id: 'carbon.listBoxSelection.clear.selection',
+          defaultMessage: 'Clear selected item'
+        });
+      default:
+        return '';
+    }
+  };
+}

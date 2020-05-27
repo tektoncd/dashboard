@@ -15,6 +15,7 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import { Button, Dropdown, TextInput } from 'carbon-components-react';
 import { AddAlt24 as Add, CloseOutline20 as Remove } from '@carbon/icons-react';
+import { getTranslateWithId } from '@tektoncd/dashboard-utils';
 
 const itemToString = item => (item ? item.text : '');
 
@@ -70,6 +71,7 @@ const Annotations = props => {
                 handleAnnotationChange('access', index, e.selectedItem)
               }
               disabled={loading}
+              translateWithId={getTranslateWithId(intl)}
             />
             <TextInput
               id="serverURL"
