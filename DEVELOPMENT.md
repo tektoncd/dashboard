@@ -167,6 +167,23 @@ To look at the dashboard logs, run:
 kubectl logs -l app=tekton-dashboard
 ```
 
+## Changing the target ARCH
+
+You can build for another ARCH by overriding GOARCH (`amd64` by default).
+
+With `Dockerfile`:
+
+```shell
+docker build --build-arg GOARCH=ppc64le .
+```
+
+With `ko`:
+
+```shell
+export GOARCH=ppc64le
+kustomize build overlays/dev | ko apply -f -
+```
+
 ## Frontend
 
 ### Install dependencies
