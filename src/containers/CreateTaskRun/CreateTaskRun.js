@@ -17,7 +17,6 @@ import {
   Form,
   FormGroup,
   InlineNotification,
-  Modal,
   TextInput
 } from 'carbon-components-react';
 import {
@@ -25,7 +24,7 @@ import {
   generateId,
   getTranslateWithId
 } from '@tektoncd/dashboard-utils';
-import { KeyValueList } from '@tektoncd/dashboard-components';
+import { KeyValueList, Modal } from '@tektoncd/dashboard-components';
 import { injectIntl } from 'react-intl';
 import {
   ClusterTasksDropdown,

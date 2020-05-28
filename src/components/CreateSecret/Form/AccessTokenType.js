@@ -41,6 +41,14 @@ const AccessTokenType = props => {
         defaultMessage: 'Access Token required.'
       })}
       disabled={loading}
+      showPasswordLabel={intl.formatMessage({
+        id: 'dashboard.accessTokenField.showPasswordLabel',
+        defaultMessage: 'Show access token'
+      })}
+      hidePasswordLabel={intl.formatMessage({
+        id: 'dashboard.accessTokenField.hidePasswordLabel',
+        defaultMessage: 'Hide access token'
+      })}
     />
   );
 };

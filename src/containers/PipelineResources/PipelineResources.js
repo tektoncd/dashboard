@@ -23,11 +23,13 @@ import {
   getTitle,
   urls
 } from '@tektoncd/dashboard-utils';
-import { PipelineResources as PipelineResourcesList } from '@tektoncd/dashboard-components';
+import {
+  Modal,
+  PipelineResources as PipelineResourcesList
+} from '@tektoncd/dashboard-components';
 import {
   InlineNotification,
   ListItem,
-  Modal,
   UnorderedList
 } from 'carbon-components-react';
 import { Add16 as Add, Delete16 as Delete } from '@carbon/icons-react';

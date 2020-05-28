@@ -14,7 +14,7 @@ limitations under the License.
 import React, { Component } from 'react';
 import { injectIntl } from 'react-intl';
 
-import { Modal } from 'carbon-components-react';
+import { Modal } from '@tektoncd/dashboard-components';
 import { StopFilled16 } from '@carbon/icons-react';
 
 import './CancelButton.scss';

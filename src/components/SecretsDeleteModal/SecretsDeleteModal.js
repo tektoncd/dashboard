@@ -13,7 +13,8 @@ limitations under the License.
 
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import { ListItem, Modal, UnorderedList } from 'carbon-components-react';
+import { ListItem, UnorderedList } from 'carbon-components-react';
+import { Modal } from '@tektoncd/dashboard-components';
 
 const SecretsDeleteModal = props => {
   const { intl, open, toBeDeleted, handleClick, handleDelete } = props;

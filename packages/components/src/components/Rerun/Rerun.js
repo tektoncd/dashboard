@@ -18,7 +18,7 @@ import { urls } from '@tektoncd/dashboard-utils';
 import { Restart32 as Restart } from '@carbon/icons-react';
 import './Rerun.scss';
 
-export class Rerun extends Component {
+class Rerun extends Component {
   handleRerun = event => {
     event.preventDefault();
     const { intl } = this.props;
@@ -79,6 +79,7 @@ export class Rerun extends Component {
   };
 
   render() {
+    const { intl } = this.props;
     return (
       <Button
         data-testid="rerun-btn"
@@ -87,7 +88,10 @@ export class Rerun extends Component {
         renderIcon={Restart}
         onClick={this.handleRerun}
       >
-        Rerun
+        {intl.formatMessage({
+          id: 'dashboard.rerun.button',
+          defaultMessage: 'Rerun'
+        })}
       </Button>
     );
   }
