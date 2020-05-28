@@ -18,13 +18,17 @@ RUN npm run bootstrap:ci
 RUN npm run build
 
 FROM golang:1.12-alpine as goBuilder
+
+# Pass --build-arg GOARCH=ppc64le when building with docker build to build for another arch
+ARG GOARCH=amd64
+
 USER root
 RUN apk add curl git
 RUN curl -fsSL -o /usr/local/bin/dep https://github.com/golang/dep/releases/download/v0.5.0/dep-linux-amd64 && chmod +x /usr/local/bin/dep
 WORKDIR /go/src/github.com/tektoncd/dashboard
 COPY . .
 RUN dep ensure -vendor-only
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o tekton_dashboard_backend ./cmd/dashboard
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=$GOARCH go build -a -installsuffix cgo -o tekton_dashboard_backend ./cmd/dashboard
 
 FROM alpine@sha256:7df6db5aa61ae9480f52f0b3a06a140ab98d427f86d8d5de0bedab9b8df6b1c0
 RUN addgroup -g 1000 kgroup && \
