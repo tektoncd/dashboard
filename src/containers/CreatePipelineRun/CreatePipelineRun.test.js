@@ -587,6 +587,7 @@ describe('CreatePipelineRun', () => {
       labels: {
         foo: 'bar'
       },
+      nodeSelector: null,
       resources: {
         'resource-1': 'pipeline-resource-1',
         'resource-2': 'pipeline-resource-2'

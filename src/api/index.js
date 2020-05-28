@@ -183,7 +183,8 @@ export function createPipelineRun({
   params,
   serviceAccount,
   timeout,
-  labels
+  labels,
+  nodeSelector
 }) {
   // Create PipelineRun payload
   // expect params and resources to be objects with keys 'name' and values 'value'
@@ -212,6 +213,9 @@ export function createPipelineRun({
       }))
     }
   };
+  if (nodeSelector) {
+    payload.spec.podTemplate = { nodeSelector };
+  }
   if (serviceAccount) {
     payload.spec.serviceAccountName = serviceAccount;
   }
@@ -523,7 +527,8 @@ export function createTaskRun({
   params,
   resources,
   serviceAccount,
-  timeout
+  timeout,
+  nodeSelector
 }) {
   const payload = {
     apiVersion: 'tekton.dev/v1beta1',
@@ -548,6 +553,9 @@ export function createTaskRun({
       }
     }
   };
+  if (nodeSelector) {
+    payload.spec.podTemplate = { nodeSelector };
+  }
   if (params) {
     payload.spec.params = Object.keys(params).map(name => ({
       name,
