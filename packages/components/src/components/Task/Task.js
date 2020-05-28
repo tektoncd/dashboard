@@ -71,7 +71,7 @@ class Task extends Component {
     const { reason, succeeded } = this.props;
 
     if (succeeded === 'Unknown' && reason === 'Running') {
-      return <Spinner className="task-icon" />;
+      return <Spinner className="tkn--task-icon" />;
     }
 
     let Icon = ChevronRight;
@@ -81,7 +81,7 @@ class Task extends Component {
       Icon = CloseFilled;
     }
 
-    return <Icon className="task-icon" />;
+    return <Icon className="tkn--task-icon" />;
   }
 
   render() {
@@ -90,13 +90,13 @@ class Task extends Component {
     const icon = this.icon();
     return (
       <li
-        className="task"
+        className="tkn--task"
         data-succeeded={succeeded}
         data-reason={reason}
         data-selected={(expanded && !selectedStepId) || undefined}
       >
         <a
-          className="task-link"
+          className="tkn--task-link"
           href="#"
           title={pipelineTaskName}
           onClick={this.handleTaskSelected}
@@ -105,7 +105,7 @@ class Task extends Component {
           {pipelineTaskName}
         </a>
         {expanded && (
-          <ol className="step-list">
+          <ol className="tkn--step-list">
             {updateUnexecutedSteps(steps).map(
               ({ id, reason: stepReason, status, stepName }) => {
                 const selected = selectedStepId === id;

@@ -124,17 +124,17 @@ export /* istanbul ignore next */ class EventListenerContainer extends Component
     }
 
     return (
-      <div className="trigger">
+      <div className="tkn--trigger">
         <h1>{eventListenerName}</h1>
         <Tabs selected={0}>
           <Tab
             label={intl.formatMessage({
-              id: 'dashboard.resource.detailsTab',
-              defaultMessage: 'Details'
+              id: 'dashboard.resource.overviewTab',
+              defaultMessage: 'Overview'
             })}
           >
-            <div className="details">
-              <div className="resource--detail-block">
+            <div className="tkn--details">
+              <div className="tkn--resource--detail-block">
                 <p>
                   <span>
                     {intl.formatMessage({
@@ -197,10 +197,10 @@ export /* istanbul ignore next */ class EventListenerContainer extends Component
                   </p>
                 )}
               </div>
-              <div className="eventlistener--triggers">
+              <div className="tkn--eventlistener--triggers">
                 {triggers.map((trigger, idx) => (
                   <div
-                    className="resource--detail-block"
+                    className="tkn--resource--detail-block"
                     key={trigger.name ? trigger.name : idx}
                   >
                     <Trigger

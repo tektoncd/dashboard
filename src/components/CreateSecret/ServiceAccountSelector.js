@@ -51,7 +51,7 @@ const ServiceAccountSelector = props => {
     }));
 
   return (
-    <div className="selectServiceAccount">
+    <div className="tkn--selectServiceAccount">
       {errorMessagePatched && (
         <InlineNotification
           kind="error"
@@ -64,13 +64,12 @@ const ServiceAccountSelector = props => {
             id: 'dashboard.notification.clear',
             defaultMessage: 'Clear Notification'
           })}
-          className="notificationComponent"
           data-testid="errorNotificationComponent"
           lowContrast
         />
       )}
 
-      <div className="serviceAccountHeader">
+      <div className="tkn--serviceAccountHeader">
         <h1>
           {intl.formatMessage(
             {

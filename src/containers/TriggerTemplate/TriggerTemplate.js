@@ -184,7 +184,7 @@ export /* istanbul ignore next */ class TriggerTemplateContainer extends Compone
     });
 
     return (
-      <div className="trigger">
+      <div className="tkn--trigger">
         <h1>{triggerTemplateName}</h1>
         <Tabs selected={0} aria-label="TriggerTemplate details">
           <Tab
@@ -194,8 +194,8 @@ export /* istanbul ignore next */ class TriggerTemplateContainer extends Compone
               defaultMessage: 'Overview'
             })}
           >
-            <div className="details">
-              <div className="resource--detail-block">
+            <div className="tkn--details">
+              <div className="tkn--resource--detail-block">
                 <p>
                   <span>
                     {intl.formatMessage({

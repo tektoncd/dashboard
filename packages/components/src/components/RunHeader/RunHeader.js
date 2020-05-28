@@ -40,7 +40,7 @@ class RunHeader extends Component {
 
     return (
       <div
-        className="pipeline-run-header"
+        className="tkn--pipeline-run-header"
         data-succeeded={status}
         data-reason={reason}
       >
@@ -48,7 +48,7 @@ class RunHeader extends Component {
           if (loading) {
             return (
               <SkeletonPlaceholder
-                className="header-skeleton"
+                className="tkn--header-skeleton"
                 data-testid="loading"
               />
             );
@@ -57,19 +57,19 @@ class RunHeader extends Component {
             runName && (
               <>
                 <h1>
-                  <div className="run-name" title={runName}>
+                  <div className="tkn--run-name" title={runName}>
                     {runName}
                   </div>
-                  <span className="time">
+                  <span className="tkn--time">
                     <FormattedDate date={lastTransitionTime} relative />
                   </span>
                   {this.props.children}
                 </h1>
-                <div className="status">
-                  <span className="status-label">{reason}</span>
+                <div className="tkn--status">
+                  <span className="tkn--status-label">{reason}</span>
                   {message && (
                     <>
-                      <span className="status-message" title={message}>
+                      <span className="tkn--status-message" title={message}>
                         {message}
                       </span>
                       <CopyButton

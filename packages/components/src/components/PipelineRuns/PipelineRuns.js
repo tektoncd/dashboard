@@ -172,9 +172,9 @@ const PipelineRuns = ({
         )),
       namespace,
       status: (
-        <div className="definition">
+        <div className="tkn--definition">
           <div
-            className="status"
+            className="tkn--status"
             data-status={status}
             data-reason={reason}
             title={getPipelineRunStatusTooltip(pipelineRun, intl)}

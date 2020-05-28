@@ -50,7 +50,7 @@ const KeyValueList = props => {
       const invalidValue = valueId in invalidFields;
       invalid = invalid || invalidKey || invalidValue;
       return (
-        <div className="keyvalueRow" key={`keyvalueRow${id}`}>
+        <div className="tkn--keyvalue-row" key={`keyvalueRow${id}`}>
           <TextInput
             id={keyId}
             labelText=""
@@ -75,7 +75,7 @@ const KeyValueList = props => {
           />
           {keyValues.length > minKeyValues && (
             <Remove
-              className="removeIcon"
+              className="tkn--keyvalue-remove"
               onClick={() => onRemove(index)}
               title={removeTitle}
             />
@@ -86,9 +86,9 @@ const KeyValueList = props => {
   );
 
   return (
-    <div className="keyvalues">
-      <p className="label">{legendText}</p>
-      {invalid && <p className="invalidKeyvalue">{invalidText}</p>}
+    <div className="tkn--keyvalues">
+      <p className="tkn--keyvalue-label">{legendText}</p>
+      {invalid && <p className="tkn--keyvalue-invalid">{invalidText}</p>}
       {keyValueFields}
       <Button
         iconDescription={addText}

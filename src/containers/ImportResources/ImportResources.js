@@ -216,7 +216,7 @@ export class ImportResources extends Component {
       : undefined;
 
     return (
-      <div className="outer">
+      <div className="tkn--importresources-outer">
         {this.state.submitError && (
           <InlineNotification
             kind="error"
@@ -234,7 +234,7 @@ export class ImportResources extends Component {
             lowContrast
           />
         )}
-        <h1 className="importHeader">
+        <h1 className="tkn--importresources-header">
           {intl.formatMessage({
             id: 'dashboard.importResources.heading',
             defaultMessage: 'Import resources from repository'
@@ -365,7 +365,6 @@ export class ImportResources extends Component {
                 selectedItem={selectedImporterNamespace}
               />
               <ServiceAccountsDropdown
-                className="saDropdown"
                 helperText={intl.formatMessage({
                   id: 'dashboard.importResources.serviceAccount.helperText',
                   defaultMessage:

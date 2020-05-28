@@ -35,11 +35,11 @@ class Step extends Component {
     const { reason, status } = this.props;
 
     if (status === 'cancelled') {
-      return <CloseFilled className="step-icon" />;
+      return <CloseFilled className="tkn--step-icon" />;
     }
 
     if (status === 'running') {
-      return <Spinner className="step-icon" />;
+      return <Spinner className="tkn--step-icon" />;
     }
 
     let Icon = ChevronRight;
@@ -51,7 +51,7 @@ class Step extends Component {
       }
     }
 
-    return <Icon className="step-icon" />;
+    return <Icon className="tkn--step-icon" />;
   }
 
   statusLabel() {
@@ -103,22 +103,22 @@ class Step extends Component {
 
     return (
       <li
-        className="step"
+        className="tkn--step"
         data-status={status}
         data-reason={reason}
         data-selected={selected || undefined}
       >
         <a
-          className="step-link"
+          className="tkn--step-link"
           href="#"
           tabIndex="0"
           onClick={this.handleClick}
         >
           {icon}
-          <span className="step-name" title={stepName}>
+          <span className="tkn--step-name" title={stepName}>
             {stepName}
           </span>
-          <span className="status-label">{statusLabel}</span>
+          <span className="tkn--status-label">{statusLabel}</span>
         </a>
       </li>
     );

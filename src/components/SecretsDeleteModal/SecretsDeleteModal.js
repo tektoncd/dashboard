@@ -22,7 +22,6 @@ const SecretsDeleteModal = props => {
   return (
     <Modal
       open={open}
-      className="deleteModal"
       data-testid="deleteModal"
       primaryButtonText={intl.formatMessage({
         id: 'dashboard.actions.deleteButton',

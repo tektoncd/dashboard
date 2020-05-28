@@ -372,7 +372,7 @@ class CreateTaskRun extends React.Component {
     return (
       <Form>
         <Modal
-          className="create-taskrun"
+          className="tkn--create-run"
           open={open}
           modalHeading={intl.formatMessage({
             id: 'dashboard.createTaskRun.heading',

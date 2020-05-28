@@ -153,9 +153,9 @@ const TaskRuns = ({
       ),
       namespace: taskRun.metadata.namespace,
       status: (
-        <div className="definition">
+        <div className="tkn--definition">
           <div
-            className="status"
+            className="tkn--status"
             data-reason={reason}
             data-status={status}
             title={getTaskRunStatusTooltip(taskRun, intl)}

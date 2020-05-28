@@ -40,7 +40,7 @@ limitations under the License.
       width: 12rem;
     }
 
-    > .status-icon {
+    > .tkn--status-icon {
       vertical-align: top;
       margin-right: 0.85rem;
       width: 24px;
@@ -56,53 +56,53 @@ limitations under the License.
       }
     }
 
-    > .status-label {
+    > .tkn--status-label {
       font-size: 0.9rem;
       margin-left: 0.8rem;
     }
   }
 
   &[data-status] {
-    .status-icon {
+    .tkn--status-icon {
       fill: $not-run;
     }
-    .status-label {
+    .tkn--status-label {
       color: $not-run;
     }
   }
   &[data-status='running'] {
-    .status-icon {
+    .tkn--status-icon {
       fill: $running;
     }
-    .status-label {
+    .tkn--status-label {
       color: $running;
     }
   }
   &[data-status='terminated'][data-reason='Completed'],
   &[data-status='True'] {
-    .status-icon {
+    .tkn--status-icon {
       fill: $success;
     }
-    .status-label {
+    .tkn--status-label {
       color: $success;
     }
   }
   &[data-status='terminated'][data-reason='Error'],
   &[data-status='False'] {
-    .status-icon {
+    .tkn--status-icon {
       fill: $failed;
     }
-    .status-label {
+    .tkn--status-label {
       color: $failed;
     }
   }
   &[data-status='cancelled'],
   &[data-reason='PipelineRunCancelled'],
   &[data-reason='TaskRunCancelled'] {
-    .status-icon {
+    .tkn--status-icon {
       fill: $failed;
     }
-    .status-label {
+    .tkn--status-label {
       color: $failed;
     }
   }

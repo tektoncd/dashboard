@@ -41,10 +41,10 @@ const Trigger = ({ intl, eventListenerNamespace, trigger }) => {
   return (
     <div>
       <h3>Trigger: {trigger.name}</h3>
-      <div className="triggerdetails">
+      <div className="tkn--trigger-details">
         {trigger.bindings && trigger.bindings.length !== 0 && (
-          <div className="triggerresourcelinks">
-            <span className="resourcekind">
+          <div className="tkn--trigger-resourcelinks">
+            <span className="tkn--trigger-resourcekind">
               {intl.formatMessage({
                 id: 'dashboard.triggerDetails.triggerBindings',
                 defaultMessage: 'TriggerBindings:'
@@ -54,7 +54,7 @@ const Trigger = ({ intl, eventListenerNamespace, trigger }) => {
               {trigger.bindings.map((binding, index) => (
                 <span key={binding.name}>
                   <Link
-                    className="triggerresourcelink"
+                    className="tkn--trigger-resourcelink"
                     to={urls.triggerBindings.byName({
                       namespace: eventListenerNamespace,
                       triggerBindingName: binding.name
@@ -68,8 +68,8 @@ const Trigger = ({ intl, eventListenerNamespace, trigger }) => {
             </div>
           </div>
         )}
-        <div className="triggerresourcelinks">
-          <span className="resourcekind">
+        <div className="tkn--trigger-resourcelinks">
+          <span className="tkn--trigger-resourcekind">
             {intl.formatMessage({
               id: 'dashboard.triggerDetails.triggerTemplate',
               defaultMessage: 'TriggerTemplate:'
@@ -77,7 +77,7 @@ const Trigger = ({ intl, eventListenerNamespace, trigger }) => {
           </span>
 
           <Link
-            className="triggerresourcelink"
+            className="tkn--trigger-resourcelink"
             to={urls.triggerTemplates.byName({
               namespace: eventListenerNamespace,
               triggerTemplateName: trigger.template.name
@@ -89,15 +89,15 @@ const Trigger = ({ intl, eventListenerNamespace, trigger }) => {
       </div>
 
       {trigger.interceptors && trigger.interceptors.length !== 0 && (
-        <div className="trigger--interceptors">
-          <span className="resourcekind">
+        <div className="tkn--trigger-interceptors">
+          <span className="tkn--trigger-resourcekind">
             {intl.formatMessage({
               id: 'dashboard.triggerDetails.interceptors',
               defaultMessage: 'Interceptors:'
             })}
           </span>
           <Accordion
-            className="trigger--interceptors-accordion"
+            className="tkn--trigger-interceptors-accordion"
             title="Interceptors"
           >
             {trigger.interceptors.map((interceptor, index) => {
@@ -139,7 +139,7 @@ const Trigger = ({ intl, eventListenerNamespace, trigger }) => {
                 content = (
                   <>
                     <p>{serviceText}</p>
-                    <div className="interceptor--service-details">
+                    <div className="tkn--trigger-interceptor-service-details">
                       <p>
                         <span>{nameText}</span>
                         {interceptor.webhook.objectRef.name}
@@ -201,7 +201,7 @@ const Trigger = ({ intl, eventListenerNamespace, trigger }) => {
                 content = (
                   <>
                     <p>{secretText}</p>
-                    <div className="interceptor--secret-details">
+                    <div className="tkn--trigger-interceptor-secret-details">
                       <p>
                         {nameText} {data.secretRef.secretName}
                       </p>
@@ -255,7 +255,7 @@ const Trigger = ({ intl, eventListenerNamespace, trigger }) => {
                             defaultMessage: 'Filter:'
                           })}
                         </p>
-                        <code className="bx--snippet--multi interceptor--cel-filter">
+                        <code className="bx--snippet--multi tkn--trigger-interceptor-cel-filter">
                           {interceptor.cel.filter}
                         </code>
                       </>

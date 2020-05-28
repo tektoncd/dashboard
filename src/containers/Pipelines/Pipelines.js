@@ -123,7 +123,7 @@ export /* istanbul ignore next */ class Pipelines extends Component {
             name: pipeline.metadata.name
           })}
         >
-          <Information16 className="resource-info-icon" />
+          <Information16 className="tkn--resource-info-icon" />
         </Link>
       )
     }));

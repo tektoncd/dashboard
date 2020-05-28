@@ -190,7 +190,7 @@ export /* istanbul ignore next */ class ServiceAccountContainer extends Componen
     });
 
     return (
-      <div className="serviceAccount">
+      <div className="tkn--trigger">
         <h1>{serviceAccountName}</h1>
         <Tabs selected={0} aria-label="ServiceAccount details">
           <Tab
@@ -200,46 +200,48 @@ export /* istanbul ignore next */ class ServiceAccountContainer extends Componen
               defaultMessage: 'Overview'
             })}
           >
-            <div className="details">
-              <p>
-                <span>
-                  {intl.formatMessage({
-                    id: 'dashboard.metadata.dateCreated',
-                    defaultMessage: 'Date Created:'
-                  })}
-                </span>
-                <FormattedDate
-                  date={serviceAccount.metadata.creationTimestamp}
-                  relative
-                />
-              </p>
-              <p>
-                <span>
-                  {intl.formatMessage({
-                    id: 'dashboard.metadata.labels',
-                    defaultMessage: 'Labels:'
-                  })}
-                </span>
-                {formattedLabelsToRender.length === 0
-                  ? intl.formatMessage({
-                      id: 'dashboard.metadata.none',
-                      defaultMessage: 'None'
-                    })
-                  : formattedLabelsToRender.map(label => (
-                      <Tag type="blue" key={label}>
-                        {label}
-                      </Tag>
-                    ))}
-              </p>
-              <p>
-                <span>
-                  {intl.formatMessage({
-                    id: 'dashboard.metadata.namespace',
-                    defaultMessage: 'Namespace:'
-                  })}
-                </span>
-                {serviceAccount.metadata.namespace}
-              </p>
+            <div className="tkn--details">
+              <div className="tkn--resource--detail-block">
+                <p>
+                  <span>
+                    {intl.formatMessage({
+                      id: 'dashboard.metadata.dateCreated',
+                      defaultMessage: 'Date Created:'
+                    })}
+                  </span>
+                  <FormattedDate
+                    date={serviceAccount.metadata.creationTimestamp}
+                    relative
+                  />
+                </p>
+                <p>
+                  <span>
+                    {intl.formatMessage({
+                      id: 'dashboard.metadata.labels',
+                      defaultMessage: 'Labels:'
+                    })}
+                  </span>
+                  {formattedLabelsToRender.length === 0
+                    ? intl.formatMessage({
+                        id: 'dashboard.metadata.none',
+                        defaultMessage: 'None'
+                      })
+                    : formattedLabelsToRender.map(label => (
+                        <Tag type="blue" key={label}>
+                          {label}
+                        </Tag>
+                      ))}
+                </p>
+                <p>
+                  <span>
+                    {intl.formatMessage({
+                      id: 'dashboard.metadata.namespace',
+                      defaultMessage: 'Namespace:'
+                    })}
+                  </span>
+                  {serviceAccount.metadata.namespace}
+                </p>
+              </div>
               <Table
                 title={intl.formatMessage({
                   id: 'dashboard.serviceAccount.secretsTableTitle',
