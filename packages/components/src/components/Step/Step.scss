@@ -13,18 +13,18 @@ limitations under the License.
 
 @import '../../scss/vars';
 
-.step {
+.tkn--step {
   list-style-type: none;
 
-  &:hover > a.step-link,
-  &:hover > a.step-link:hover,
-  &[data-selected] > a.step-link,
-  &[data-selected] > a.step-link:hover {
+  &:hover > a.tkn--step-link,
+  &:hover > a.tkn--step-link:hover,
+  &[data-selected] > a.tkn--step-link,
+  &[data-selected] > a.tkn--step-link:hover {
     background-color: #e5e8eb;
     text-decoration: none;
   }
 
-  &[data-selected] > a.step-link:after {
+  &[data-selected] > a.tkn--step-link:after {
     content: '';
     position: absolute;
     top: 0;
@@ -35,7 +35,7 @@ limitations under the License.
     border-bottom: 1.1rem solid transparent;
   }
 
-  > a.step-link {
+  > a.tkn--step-link {
     display: flex;
     align-items: baseline;
     position: relative;
@@ -47,7 +47,7 @@ limitations under the License.
     text-decoration: none;
   }
 
-  .step-icon {
+  .tkn--step-icon {
     flex-shrink: 0;
     align-self: center;
     margin-right: 0.55rem;
@@ -59,65 +59,65 @@ limitations under the License.
     }
   }
 
-  .step-name {
+  .tkn--step-name {
     color: $text-01;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  .status-label {
+  .tkn--status-label {
     flex-shrink: 0;
     margin-left: 0.5rem;
     font-size: 0.7rem;
     letter-spacing: 0.01rem;
   }
 
-  &[data-status] > a.step-link {
+  &[data-status] > a.tkn--step-link {
     // default status
     opacity: 0.75;
   }
 
-  &[data-status='running'] > a.step-link {
+  &[data-status='running'] > a.tkn--step-link {
     opacity: 1;
-    .step-icon {
+    .tkn--step-icon {
       fill: $running;
       width: 20px;
       height: 20px;
     }
-    .status-label {
+    .tkn--status-label {
       color: $running;
       font-weight: bold;
       font-size: 0.69rem;
     }
   }
-  &[data-status='terminated'][data-reason='Completed'] > a.step-link {
+  &[data-status='terminated'][data-reason='Completed'] > a.tkn--step-link {
     opacity: 1;
-    .step-icon {
+    .tkn--step-icon {
       fill: $success;
     }
-    .status-label {
+    .tkn--status-label {
       color: $success;
       font-size: 0.66rem;
       font-weight: bold;
     }
   }
-  &[data-status='terminated'][data-reason='Error'] > a.step-link {
+  &[data-status='terminated'][data-reason='Error'] > a.tkn--step-link {
     opacity: 1;
-    .step-icon {
+    .tkn--step-icon {
       fill: $failed;
     }
-    .status-label {
+    .tkn--status-label {
       color: $failed;
       font-weight: bold;
     }
   }
-  &[data-status='cancelled'] > a.step-link {
+  &[data-status='cancelled'] > a.tkn--step-link {
     opacity: 1;
-    .step-icon {
+    .tkn--step-icon {
       fill: $failed;
     }
-    .status-label {
+    .tkn--status-label {
       color: $failed;
       font-weight: bold;
     }

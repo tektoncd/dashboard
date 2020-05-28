@@ -24,11 +24,11 @@ import { Spinner } from '..';
 
 export default function StatusIcon({ reason, status }) {
   if (!status || (status === 'Unknown' && reason === 'Pending')) {
-    return <Time className="status-icon" />;
+    return <Time className="tkn--status-icon" />;
   }
 
   if (isRunning(reason, status)) {
-    return <Spinner className="status-icon" />;
+    return <Spinner className="tkn--status-icon" />;
   }
 
   let Icon;
@@ -38,5 +38,5 @@ export default function StatusIcon({ reason, status }) {
     Icon = CloseFilled;
   }
 
-  return Icon ? <Icon className="status-icon" /> : null;
+  return Icon ? <Icon className="tkn--status-icon" /> : null;
 }

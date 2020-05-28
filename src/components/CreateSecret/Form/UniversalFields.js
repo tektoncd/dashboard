@@ -86,7 +86,7 @@ const UniversalFields = props => {
               defaultMessage: 'Secret type'
             })}
           >
-            <div className="secretHelper">
+            <div>
               {intl.formatMessage({
                 id: 'dashboard.secretType.helper',
                 defaultMessage:

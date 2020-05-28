@@ -170,9 +170,9 @@ export /* istanbul ignore next */ class SecretContainer extends Component {
     return (
       <>
         <h1>{secretName}</h1>
-        <div className="trigger">
-          <div className="details">
-            <div className="resource--detail-block">
+        <div className="tkn--trigger">
+          <div className="tkn--details">
+            <div className="tkn--resource--detail-block">
               <p>
                 <span>
                   {intl.formatMessage({

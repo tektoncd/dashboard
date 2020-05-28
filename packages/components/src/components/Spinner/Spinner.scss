@@ -14,13 +14,13 @@ limitations under the License.
 .tkn--spinner {
   width: 20px;
   height: 20px;
-  animation-name: rotateThis;
+  animation-name: tkn--rotateThis;
   animation-duration: 1.9s;
   animation-iteration-count: infinite;
   animation-timing-function: linear;
 }
 
-@keyframes rotateThis {
+@keyframes tkn--rotateThis {
   0% {
     transform: rotate(0deg);
     -webkit-transform: rotate(0deg);

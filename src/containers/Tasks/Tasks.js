@@ -123,7 +123,7 @@ export /* istanbul ignore next */ class Tasks extends Component {
             name: task.metadata.name
           })}
         >
-          <Information16 className="resource-info-icon" />
+          <Information16 className="tkn--resource-info-icon" />
         </Link>
       )
     }));

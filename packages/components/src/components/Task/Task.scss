@@ -13,10 +13,10 @@ limitations under the License.
 
 @import '~@tektoncd/dashboard-components/dist/scss/vars';
 
-.task {
+.tkn--task {
   list-style-type: none;
 
-  > a.task-link {
+  > a.tkn--task-link {
     color: $text-01;
     text-decoration: none;
 
@@ -25,7 +25,7 @@ limitations under the License.
     }
   }
 
-  &[data-selected] > a.task-link:after {
+  &[data-selected] > a.tkn--task-link:after {
     content: '';
     position: absolute;
     top: 0;
@@ -36,7 +36,7 @@ limitations under the License.
     border-bottom: 1.1rem solid transparent;
   }
 
-  &:not([data-succeeded]) > a.task-link {
+  &:not([data-succeeded]) > a.tkn--task-link {
     text-shadow: 0.2px 0 0 #272d33ab; // increase weight slightly
     background-color: $waiting-bg;
     color: $waiting-fg;
@@ -49,50 +49,50 @@ limitations under the License.
       left: -1px;
       right: -1px;
     }
-    .task-icon {
+    .tkn--task-icon {
       fill: $waiting-fg;
     }
   }
-  &[data-succeeded='True'] > a.task-link {
+  &[data-succeeded='True'] > a.tkn--task-link {
     background-color: $success-bg;
     color: $success-fg;
     &:focus, &:hover {
       color: $success-fg;
       background-color: $success-bg-hover;
     }
-    .task-icon {
+    .tkn--task-icon {
       fill: $success-fg;
     }
   }
-  &[data-succeeded='False'] > a.task-link {
+  &[data-succeeded='False'] > a.tkn--task-link {
     background-color: $failed-bg;
     color: $failed-fg;
     &:focus, &:hover {
       color: $failed-fg;
       background-color: $failed-bg-hover;
     }
-    .task-icon {
+    .tkn--task-icon {
       fill: $failed-fg;
     }
   }
-  &[data-succeeded='Unknown'][data-reason='Running'] > a.task-link {
+  &[data-succeeded='Unknown'][data-reason='Running'] > a.tkn--task-link {
     background-color: $running-bg;
     color: $running-fg;
     &:focus, &:hover {
       color: $running-fg;
       background-color: $running-bg-hover;
     }
-    .task-icon {
+    .tkn--task-icon {
       fill: $running-fg;
     }
   }
 
-  &[data-selected]:not([data-succeeded]) > a.task-link,
-    &[data-selected][data-succeeded='Unknown'] > a.task-link {
+  &[data-selected]:not([data-succeeded]) > a.tkn--task-link,
+    &[data-selected][data-succeeded='Unknown'] > a.tkn--task-link {
     background-color: #e5e8eb;
   }
 
-  > a.task-link {
+  > a.tkn--task-link {
     display: block;
     position: relative;
     padding: 0 1.25rem;
@@ -109,7 +109,7 @@ limitations under the License.
 
   }
 
-  .task-icon {
+  .tkn--task-icon {
     vertical-align: text-top;
     margin-right: 0.7rem;
 

@@ -253,7 +253,6 @@ export /* istanbul ignore next */ class PipelineResourcesModal extends Component
     return (
       <Modal
         open={open}
-        className="modal"
         data-testid="modal"
         primaryButtonText={intl.formatMessage({
           id: 'dashboard.actions.createButton',

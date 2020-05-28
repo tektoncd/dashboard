@@ -13,8 +13,8 @@ limitations under the License.
 
 @import '~carbon-components/scss/globals/scss/vars';
 
-.trigger {
-  .details {
+.tkn--trigger {
+  .tkn--details {
     p {
       margin-top: $spacing-03;
       span:first-child {
@@ -33,7 +33,7 @@ limitations under the License.
   }
 }
 
-.resource--detail-block {
+.tkn--resource--detail-block {
   margin-bottom: $layout-01;
   padding: $layout-01;
   background-color: $ui-02;

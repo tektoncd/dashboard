@@ -38,7 +38,6 @@ import { fetchTaskRuns } from '../../actions/taskRuns';
 import { rerunPipelineRun } from '../../api';
 
 import { fetchLogs } from '../../utils';
-import './PipelineRun.scss';
 
 export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   constructor(props) {

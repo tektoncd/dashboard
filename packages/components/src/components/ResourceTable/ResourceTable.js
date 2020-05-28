@@ -37,7 +37,7 @@ const ResourceTable = props => {
         getRowProps,
         getTableProps
       }) => (
-        <TableContainer title={title}>
+        <TableContainer title={title} className="tkn--table">
           <Table {...getTableProps()}>
             <TableHead>
               <TableRow>

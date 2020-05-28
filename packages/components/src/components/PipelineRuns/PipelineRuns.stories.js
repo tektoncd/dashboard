@@ -286,8 +286,8 @@ storiesOf('Components/PipelineRuns', module)
         status: {
           getValue() {
             return (
-              <div className="definition">
-                <div className="status">
+              <div className="tkn--definition">
+                <div className="tkn--status">
                   <StatusIcon /> Pending
                 </div>
               </div>

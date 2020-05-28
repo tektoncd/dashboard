@@ -34,7 +34,6 @@ function getNotification(message, intl, callback) {
         id: 'dashboard.notification.clear',
         defaultMessage: 'Clear Notification'
       })}
-      className="notificationComponent"
       data-testid="errorNotificationComponent"
       lowContrast
       onCloseButtonClick={callback}
@@ -69,7 +68,7 @@ const Form = props => {
   } = props;
 
   return (
-    <div className="createSecret">
+    <div className="tkn--createSecret">
       {errorMessageDuplicate &&
         getNotification(
           errorMessageDuplicate,
@@ -78,7 +77,7 @@ const Form = props => {
         )}
       {errorMessageCreated &&
         getNotification(getErrorMessage(errorMessageCreated), intl, null)}
-      <div className="heading">
+      <div className="tkn--createsecret-heading">
         <h1>
           {intl.formatMessage({
             id: 'dashboard.createSecret.heading',

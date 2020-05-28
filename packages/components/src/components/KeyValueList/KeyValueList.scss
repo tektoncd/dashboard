@@ -13,17 +13,17 @@ limitations under the License.
 
 @import '~carbon-components/scss/globals/scss/vars';
 
-.keyvalues {
+.tkn--keyvalues {
   margin-bottom: $spacing-06;
 
-  .invalidKeyvalue {
+  .tkn--keyvalue-invalid {
     color: #da1e28;
     font-weight: 400;
     font-size: 0.75rem;
     letter-spacing: 0.32px;
   }
 
-  .label {
+  .tkn--keyvalue-label {
     color: $text-02;
     font-size: 12px;
     height: 29px;
@@ -32,7 +32,7 @@ limitations under the License.
     margin: auto;
   }
 
-  .keyvalueRow {
+  .tkn--keyvalue-row {
     position: relative;
     display: flex;
     align-items: center;
@@ -49,7 +49,7 @@ limitations under the License.
       margin-right: $spacing-07;
     }
 
-    .removeIcon {
+    .tkn--keyvalue-remove {
       fill: $interactive-01;
       cursor: pointer;
     }

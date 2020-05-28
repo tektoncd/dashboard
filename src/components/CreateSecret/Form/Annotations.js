@@ -44,7 +44,7 @@ const Annotations = props => {
     <>
       {annotations.map((annotation, index) => {
         return (
-          <div className="annotationDiv" key={annotation.id}>
+          <div className="tkn--annotationDiv" key={annotation.id}>
             <Dropdown
               id="accessTo"
               titleText={intl.formatMessage({
@@ -94,7 +94,7 @@ const Annotations = props => {
             />
             {annotations.length !== 1 && (
               <Remove
-                className="removeIcon"
+                className="tkn--createsecret-removeIcon"
                 data-testid="removeIcon"
                 onClick={() => handleRemove(index)}
                 disabled={loading}

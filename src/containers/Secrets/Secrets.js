@@ -390,7 +390,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
                 defaultMessage: 'Secret type'
               })}
             >
-              <div className="secretHelper">
+              <div>
                 {intl.formatMessage({
                   id: 'dashboard.secretType.helper',
                   defaultMessage: `Use Password with git or image PipelineResources that require authentication. Use Access Token with webhooks or with pullRequest PipelineResources. Check the Tekton Pipelines documentation for more details on authentication.`

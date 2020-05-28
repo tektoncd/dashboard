@@ -13,47 +13,47 @@ limitations under the License.
 
 @import '~carbon-components/scss/globals/scss/vars';
 
-.trigger--interceptors {
+.tkn--trigger-interceptors {
   margin-top: $spacing-05;
 
-  .trigger--interceptors-accordion {
+  .tkn--trigger-interceptors-accordion {
     margin-top: $spacing-03;
   }
 }
 
-.triggerdetails {
+.tkn--trigger-details {
   margin-top: $spacing-05;
 }
 
-.triggerresourcelinks {
+.tkn--trigger-resourcelinks {
   display: grid;
   margin-top: $spacing-03;
   grid-template-columns: 100px 500px;
   grid-gap: 30px;
   line-height: 1.5rem;
 
-  .resourcekind {
+  .tkn--trigger-resourcekind {
     font-weight: auto;
   }
 
-  .triggerresourcelink {
+  .tkn--trigger-resourcelink {
     display: inline-block;
     overflow: visible;
   }
 }
 
-.interceptor--cel-filter {
+.tkn--trigger-interceptor-cel-filter {
   display: inline-block;
 }
 
-.interceptor--secret-details {
+.tkn--trigger-interceptor-secret-details {
   margin-left: $spacing-04;
 }
 
-.interceptor--service-details {
+.tkn--trigger-interceptor-service-details {
   margin-left: $spacing-04;
 
-  .trigger .details & {
+  .tkn--trigger .tkn--details & {
     p span:first-child {
       font-weight: normal;
     }

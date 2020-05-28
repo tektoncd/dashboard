@@ -142,7 +142,7 @@ export /* istanbul ignore next */ class PipelineResourceContainer extends Compon
     }
 
     return (
-      <>
+      <div className="tkn--trigger">
         <h1>{pipelineResourceName}</h1>
 
         <Tabs selected={0} aria-label="PipelineResource details">
@@ -153,8 +153,8 @@ export /* istanbul ignore next */ class PipelineResourceContainer extends Compon
               defaultMessage: 'Overview'
             })}
           >
-            <div className="details">
-              <div className="resource--detail-block">
+            <div className="tkn--details">
+              <div className="tkn--resource--detail-block">
                 <p>
                   <span>
                     {intl.formatMessage({
@@ -234,7 +234,7 @@ export /* istanbul ignore next */ class PipelineResourceContainer extends Compon
                   getRowProps,
                   getTableProps
                 }) => (
-                  <TableContainer title="Params">
+                  <TableContainer title="Params" className="tkn--table">
                     <Table {...getTableProps()}>
                       <TableHead>
                         <TableRow>
@@ -297,7 +297,7 @@ export /* istanbul ignore next */ class PipelineResourceContainer extends Compon
                     getRowProps,
                     getTableProps
                   }) => (
-                    <TableContainer title="Secrets">
+                    <TableContainer title="Secrets" className="tkn--table">
                       <Table {...getTableProps()}>
                         <TableHead>
                           <TableRow>
@@ -330,7 +330,7 @@ export /* istanbul ignore next */ class PipelineResourceContainer extends Compon
             <ViewYAML resource={pipelineResource} />
           </Tab>
         </Tabs>
-      </>
+      </div>
     );
   }
 }

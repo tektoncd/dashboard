@@ -13,13 +13,13 @@ limitations under the License.
 
 @import '~carbon-components/scss/globals/scss/vars';
 
-.importHeader {
+.tkn--importresources-header {
   margin-left: 2.5rem;
   padding-top: 2rem;
   font-size: 1.5rem;
 }
 
-.outer {
+.tkn--importresources-outer {
   background-color: white;
   min-height: 30rem;
 
@@ -32,12 +32,12 @@ limitations under the License.
   .bx--tooltip__label {
     font-size: 1rem;
   }
-  
+
   legend.bx--label.bx--tooltip__label {
     margin-left: 0;
     font-size: 1rem;
   }
-  
+
   .bx--combo-box.bx--list-box {
     width: 30%;
   }

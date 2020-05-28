@@ -355,7 +355,7 @@ class CreatePipelineRun extends React.Component {
     return (
       <Form>
         <Modal
-          className="create-pipelinerun"
+          className="tkn--create-run"
           open={open}
           modalHeading={intl.formatMessage({
             id: 'dashboard.createPipelineRun.heading',
