@@ -474,6 +474,68 @@ it('createPipelineRun', () => {
   });
 });
 
+it('createPipelineRun with nodeSelector', () => {
+  const mockDateNow = jest
+    .spyOn(Date, 'now')
+    .mockImplementation(() => 'fake-timestamp');
+  const pipelineName = 'fake-pipelineName';
+  const resources = { 'fake-resource-name': 'fake-resource-value' };
+  const params = { 'fake-param-name': 'fake-param-value' };
+  const serviceAccount = 'fake-serviceAccount';
+  const timeout = 'fake-timeout';
+  const payload = {
+    pipelineName,
+    resources,
+    params,
+    serviceAccount,
+    timeout,
+    nodeSelector: {
+      disk: 'ssd'
+    }
+  };
+  const data = {
+    apiVersion: 'tekton.dev/v1beta1',
+    kind: 'PipelineRun',
+    metadata: {
+      name: `${pipelineName}-run-${Date.now()}`,
+      labels: {
+        'tekton.dev/pipeline': pipelineName,
+        app: 'tekton-app'
+      }
+    },
+    spec: {
+      pipelineRef: {
+        name: pipelineName
+      },
+      resources: Object.keys(resources).map(name => ({
+        name,
+        resourceRef: { name: resources[name] }
+      })),
+      params: Object.keys(params).map(name => ({
+        name,
+        value: params[name]
+      })),
+      podTemplate: {
+        nodeSelector: {
+          disk: 'ssd'
+        }
+      },
+      serviceAccountName: serviceAccount,
+      timeout
+    }
+  };
+  mockCSRFToken();
+  fetchMock.post('*', data);
+  return index.createPipelineRun(payload).then(response => {
+    expect(response).toEqual(data);
+    expect(fetchMock.lastOptions()).toMatchObject({
+      body: JSON.stringify(data)
+    });
+    fetchMock.restore();
+    mockDateNow.mockRestore();
+  });
+});
+
 it('getCredentials', () => {
   const data = {
     items: 'credentials'
@@ -875,6 +937,18 @@ it('createTaskRun handles serviceAccount', () => {
   return index.createTaskRun({ taskName, serviceAccount }).then(() => {
     const sentSpec = JSON.parse(fetchMock.lastOptions().body).spec;
     expect(sentSpec).toHaveProperty('serviceAccountName', serviceAccount);
+    fetchMock.restore();
+  });
+});
+
+it('createTaskRun handles nodeSelector', () => {
+  const taskName = 'fake-task';
+  const nodeSelector = { disk: 'ssd' };
+  mockCSRFToken();
+  fetchMock.post(/taskruns/, {});
+  return index.createTaskRun({ taskName, nodeSelector }).then(() => {
+    const sentSpec = JSON.parse(fetchMock.lastOptions().body).spec;
+    expect(sentSpec).toHaveProperty('podTemplate', { nodeSelector });
     fetchMock.restore();
   });
 });

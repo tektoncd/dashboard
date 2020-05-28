@@ -617,6 +617,7 @@ describe('CreateTaskRun', () => {
       labels: {
         foo: 'bar'
       },
+      nodeSelector: null,
       resources: {
         inputs: {
           'resource-1': 'pipeline-resource-1',
