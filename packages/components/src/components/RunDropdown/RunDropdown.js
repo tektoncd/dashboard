@@ -13,7 +13,8 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { injectIntl } from 'react-intl';
-import { Modal, OverflowMenu, OverflowMenuItem } from 'carbon-components-react';
+import { OverflowMenu, OverflowMenuItem } from 'carbon-components-react';
+import { Modal } from '@tektoncd/dashboard-components';
 
 class RunDropdown extends Component {
   state = { showDialog: false };

@@ -11,12 +11,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { getErrorMessage } from '@tektoncd/dashboard-utils';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
 import { injectIntl } from 'react-intl';
-import { InlineNotification, Modal } from 'carbon-components-react';
+import { InlineNotification } from 'carbon-components-react';
+import { getErrorMessage } from '@tektoncd/dashboard-utils';
+import { Modal } from '@tektoncd/dashboard-components';
+
 import GitResourceFields from '../../components/PipelineResourcesModal/GitResourceFields';
 import UniversalFields from '../../components/PipelineResourcesModal/UniversalFields';
 import { isWebSocketConnected } from '../../reducers';

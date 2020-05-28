@@ -314,6 +314,10 @@ export class ImportResources extends Component {
           </FormGroup>
           <Accordion>
             <AccordionItem
+              iconDescription={intl.formatMessage({
+                id: 'dashboard.importResources.expandCollapse',
+                defaultMessage: 'Expand/Collapse'
+              })}
               title={
                 <Tooltip
                   direction="right"
@@ -378,7 +382,10 @@ export class ImportResources extends Component {
             </AccordionItem>
           </Accordion>
           <Button kind="primary" onClick={this.handleSubmit}>
-            Import and Apply
+            {intl.formatMessage({
+              id: 'dashboard.importResources.importApplyButton',
+              defaultMessage: 'Import and Apply'
+            })}
           </Button>
           {this.state.submitSuccess && (
             <ToastNotification

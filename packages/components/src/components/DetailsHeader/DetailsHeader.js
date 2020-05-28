@@ -118,7 +118,9 @@ class DetailsHeader extends Component {
       >
         <h2>
           {icon}
-          <span className="tkn--run-details-name ">{stepName}</span>
+          <span className="tkn--run-details-name" title={stepName}>
+            {stepName}
+          </span>
           <span className="status-label">{statusLabel}</span>
         </h2>
       </header>

@@ -60,6 +60,14 @@ const PasswordType = props => {
           defaultMessage: 'Password required.'
         })}
         disabled={loading}
+        showPasswordLabel={intl.formatMessage({
+          id: 'dashboard.passwordTypeFields.showPasswordLabel',
+          defaultMessage: 'Show password'
+        })}
+        hidePasswordLabel={intl.formatMessage({
+          id: 'dashboard.passwordTypeFields.hidePasswordLabel',
+          defaultMessage: 'Hide password'
+        })}
       />
     </>
   );

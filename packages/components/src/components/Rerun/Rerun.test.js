@@ -14,7 +14,7 @@ limitations under the License.
 import React from 'react';
 import { fireEvent, waitForElement } from 'react-testing-library';
 import { renderWithRouter } from '../../utils/test';
-import { Rerun } from './Rerun';
+import Rerun from './Rerun';
 
 /* Rerun should sit on the PipelineRun page and display notifications there
 It would be useful to have tests at the container level too, but for now just do it at the component level */

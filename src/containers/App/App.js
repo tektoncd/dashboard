@@ -84,11 +84,20 @@ const messages = messageBundle;
 
 /* istanbul ignore next */
 if (process.env.I18N_PSEUDO) {
+  const startBoundary = '[[%';
+  const endBoundary = '%]]';
   // Make it easier to identify untranslated strings in the UI
   Object.keys(messages).forEach(lang => {
     const messagesToDisplay = messages[lang];
     Object.keys(messagesToDisplay).forEach(messageId => {
-      messagesToDisplay[messageId] = `%%_${messagesToDisplay[messageId]}_%%`;
+      if (messagesToDisplay[messageId].startsWith(startBoundary)) {
+        // avoid repeating the boundaries when
+        // hot reloading in dev mode
+        return;
+      }
+      messagesToDisplay[messageId] = `${startBoundary}${
+        messagesToDisplay[messageId]
+      }${endBoundary}`;
     });
   });
 }

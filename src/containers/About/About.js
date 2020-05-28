@@ -113,6 +113,23 @@ export /* istanbul ignore next */ class About extends Component {
 
     const error = this.checkMissingProperties();
 
+    const versionLabel = intl.formatMessage({
+      id: 'dashboard.about.version',
+      defaultMessage: 'Version'
+    });
+    const isOpenShiftLabel = intl.formatMessage({
+      id: 'dashboard.about.isOpenShift',
+      defaultMessage: 'IsOpenShift'
+    });
+    const isReadOnlyLabel = intl.formatMessage({
+      id: 'dashboard.about.isReadOnly',
+      defaultMessage: 'ReadOnly'
+    });
+    const logoutURLLabel = intl.formatMessage({
+      id: 'dashboard.about.logoutURL',
+      defaultMessage: 'LogoutURL'
+    });
+
     return (
       <>
         {error && (
@@ -138,10 +155,10 @@ export /* istanbul ignore next */ class About extends Component {
             headers={headers}
             rows={[
               getRow('Namespace', this.props.dashboardNamespace),
-              getRow('Version', this.props.dashboardVersion),
-              getRow('IsOpenShift', this.props.isOpenShift),
-              getRow('ReadOnly', this.props.isReadOnly),
-              getRow('LogoutURL', this.props.logoutURL)
+              getRow(versionLabel, this.props.dashboardVersion),
+              getRow(isOpenShiftLabel, this.props.isOpenShift),
+              getRow(isReadOnlyLabel, this.props.isReadOnly),
+              getRow(logoutURLLabel, this.props.logoutURL)
             ].filter(Boolean)}
           />
         </div>
@@ -151,7 +168,7 @@ export /* istanbul ignore next */ class About extends Component {
             headers={headers}
             rows={[
               getRow('Namespace', this.props.pipelinesNamespace),
-              getRow('Version', this.props.pipelinesVersion)
+              getRow(versionLabel, this.props.pipelinesVersion)
             ].filter(Boolean)}
           />
         </div>
@@ -162,7 +179,7 @@ export /* istanbul ignore next */ class About extends Component {
               headers={headers}
               rows={[
                 getRow('Namespace', this.props.triggersNamespace),
-                getRow('Version', this.props.triggersVersion)
+                getRow(versionLabel, this.props.triggersVersion)
               ].filter(Boolean)}
             />
           </div>
