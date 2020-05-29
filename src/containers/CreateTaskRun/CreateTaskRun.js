@@ -130,10 +130,18 @@ class CreateTaskRun extends React.Component {
     // Namespace, PipelineRef, Resources, and Params must all have values
     const validNamespace = !!namespace;
     const validTaskRef = !!taskRef;
-    const validResources =
+    const validInputResources =
       !resources ||
-      Object.keys(resources).reduce(
-        (acc, name) => acc && !!resources[name],
+      !resources.inputs ||
+      Object.keys(resources.inputs).reduce(
+        (acc, name) => acc && !!resources.inputs[name],
+        true
+      );
+    const validOutputResources =
+      !resources ||
+      !resources.outputs ||
+      Object.keys(resources.outputs).reduce(
+        (acc, name) => acc && !!resources.outputs[name],
         true
       );
     const validParams =
@@ -164,7 +172,8 @@ class CreateTaskRun extends React.Component {
     return (
       validNamespace &&
       validTaskRef &&
-      validResources &&
+      validInputResources &&
+      validOutputResources &&
       validParams &&
       validTimeout &&
       validLabels
