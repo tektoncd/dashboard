@@ -12,7 +12,6 @@ You must install these tools:
 
 1. [`go`](https://golang.org/doc/install): The language Tekton Dashboard is built in
 1. [`git`](https://help.github.com/articles/set-up-git/): For source control
-1. [`dep`](https://github.com/golang/dep): For managing external Go dependencies. - Please Install dep v0.5.0 or greater.
 1. [`ko`](https://github.com/google/ko): For development. `ko` version v0.1 or higher is required for `dashboard` to work correctly.
 1. [Node.js & npm](https://nodejs.org/): For building and running the frontend locally. See `engines` in [package.json](./package.json) for versions used. _Node.js 10.x is recommended_
 1. [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/): For interacting with your kube cluster.
@@ -95,7 +94,6 @@ kubectl create clusterrolebinding cluster-admin-binding \
 
 While iterating on the project, you may need to:
 
-1. Run `dep ensure -v` to retrieve dependencies required to build
 1. Run the Alpine based Go tests in Docker with: `docker build -f Dockerfile_test .`
 1. Run the Stretch based Go tests with race condition checking in Docker with: `docker build -f Dockerfile_race_test .`
 1. Install the dashboard

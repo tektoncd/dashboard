@@ -9,15 +9,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM golang:1.12-alpine
+FROM golang:1.13
 USER root
-
-RUN apk add curl git
-
-RUN curl -fsSL -o /usr/local/bin/dep https://github.com/golang/dep/releases/download/v0.5.0/dep-linux-amd64 && chmod +x /usr/local/bin/dep
-WORKDIR /go/src/github.com/tektoncd/dashboard/
+WORKDIR /work
 COPY . .
-RUN dep ensure -vendor-only
-WORKDIR /go/src/github.com/tektoncd/dashboard
-
-RUN CGO_ENABLED=0 NAMESPACE=default GOOS=linux go test -v ./...
+RUN GO111MODULE=on CGO_ENABLED=0 NAMESPACE=default GOOS=linux go test -v ./...

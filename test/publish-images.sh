@@ -19,8 +19,6 @@
 
 set -e
 
-dep ensure
-
 # It's Stretch and https://github.com/tektoncd/dashboard/blob/master/package.json
 # denotes the Node.js and npm versions
 apt-get update

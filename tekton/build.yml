@@ -38,7 +38,6 @@ spec:
           npm ci
           npm run bootstrap:ci
           npm run build_ko
-          dep ensure -v
     - name: copy-files-to-output-resource
       image: busybox
       command: ["/bin/sh", "-ce"]
