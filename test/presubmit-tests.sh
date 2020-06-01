@@ -26,7 +26,7 @@
 export DISABLE_MD_LINTING=1
 
 # FIXME(vdemeester) we need to come with something better (like baking common scripts in our image, when we got one)
-dep ensure || exit 1
+go mod vendor || exit 1
 
 source $(dirname $0)/../vendor/github.com/tektoncd/plumbing/scripts/presubmit-tests.sh
 

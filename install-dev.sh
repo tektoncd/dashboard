@@ -1,8 +1,5 @@
 #!/bin/bash
 
-echo "dep ensuring"
-dep ensure -v
-
 echo "npm installing"
 npm install
 

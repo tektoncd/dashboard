@@ -32,7 +32,11 @@ function print_diagnostic_info() {
 
 function install_kustomize() {
   echo ">> Installing kustomize"
-  GO111MODULE=on go get sigs.k8s.io/kustomize/kustomize/v3@v3.5.4
+  tar=kustomize_v3.6.1_linux_amd64.tar.gz
+  curl -s -O -L https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v3.6.1/$tar
+  tar xzf ./$tar
+
+  cp ./kustomize /usr/local/bin
 }
 
 function install_pipeline_crd() {
