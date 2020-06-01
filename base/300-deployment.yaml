@@ -48,6 +48,8 @@ spec:
     spec:
       serviceAccountName: tekton-dashboard
       volumes: []
+      securityContext:
+        runAsNonRoot: true
       containers:
         - name: tekton-dashboard
           image: dashboardImage

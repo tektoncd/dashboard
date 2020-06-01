@@ -5,6 +5,8 @@
     name: oauth-proxy
     image: openshift/oauth-proxy:latest
     imagePullPolicy: IfNotPresent
+    securityContext:
+      runAsUser: 1000
     ports:
       - name: public
         containerPort: 8443
