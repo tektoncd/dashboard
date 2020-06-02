@@ -24,9 +24,9 @@
     "react-window": "^1.8.5"
   },
   "peerDependencies": {
-    "@carbon/icons-react": "^10.9.1",
-    "carbon-components": "^10.10.1",
-    "carbon-components-react": "^7.10.1",
+    "@carbon/icons-react": "^10.11.0",
+    "carbon-components": "^10.12.0",
+    "carbon-components-react": "^7.12.0",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
     "react-intl": "^3.12.1",
