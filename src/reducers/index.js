@@ -14,6 +14,7 @@ limitations under the License.
 import { combineReducers } from 'redux';
 
 import clusterTasks, * as clusterTaskSelectors from './clusterTasks';
+import conditions, * as conditionSelectors from './conditions';
 import eventListeners, * as eventListenersSelectors from './eventListeners';
 import extensions, * as extensionSelectors from './extensions';
 import locale, * as localeSelectors from './locale';
@@ -33,6 +34,7 @@ import taskRuns, * as taskRunsSelectors from './taskRuns';
 
 export default combineReducers({
   clusterTasks,
+  conditions: conditions(),
   eventListeners: eventListeners(),
   extensions,
   locale,
@@ -292,6 +294,32 @@ export function getTaskByType(
   return type === 'clustertasks'
     ? getClusterTask(state, name)
     : getTask(state, { name, namespace });
+}
+
+export function getCondition(
+  state,
+  { name, namespace = getSelectedNamespace(state) }
+) {
+  return conditionSelectors.getCondition(state.conditions, name, namespace);
+}
+
+export function getConditions(
+  state,
+  { filters = [], namespace = getSelectedNamespace(state) } = {}
+) {
+  const resources = conditionSelectors.getConditions(
+    state.conditions,
+    namespace
+  );
+  return filterResources({ filters, resources });
+}
+
+export function getConditionsErrorMessage(state) {
+  return conditionSelectors.getConditionsErrorMessage(state.conditions);
+}
+
+export function isFetchingConditions(state) {
+  return conditionSelectors.isFetchingConditions(state.conditions);
 }
 
 export function getSecrets(

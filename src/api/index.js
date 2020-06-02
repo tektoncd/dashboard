@@ -282,6 +282,24 @@ export function getPipelineResource({ name, namespace }) {
   return get(uri);
 }
 
+export function getConditions({ filters = [], namespace } = {}) {
+  const uri = getTektonAPI(
+    'conditions',
+    { namespace, version: 'v1alpha1' },
+    getQueryParams(filters)
+  );
+  return get(uri).then(checkData);
+}
+
+export function getCondition({ name, namespace }) {
+  const uri = getTektonAPI('conditions', {
+    name,
+    namespace,
+    version: 'v1alpha1'
+  });
+  return get(uri);
+}
+
 export function getPodLogURL({ container, name, namespace }) {
   let queryParams;
   if (container) {

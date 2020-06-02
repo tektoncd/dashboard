@@ -13,6 +13,8 @@ limitations under the License.
 import { generatePath } from 'react-router-dom';
 import { paths, urls } from './router';
 
+const clusterTriggerBindingName = 'fake_clusterTriggerBindingName';
+const conditionName = 'fake_conditionName';
 const eventListenerName = 'fake_eventListenerName';
 const namespace = 'fake_namespace';
 const pipelineName = 'fake_pipelineName';
@@ -23,7 +25,6 @@ const serviceAccountName = 'fake_serviceAccountName';
 const taskName = 'fake_taskName';
 const taskRunName = 'fake_taskRunName';
 const triggerBindingName = 'fake_triggerBindingName';
-const clusterTriggerBindingName = 'fake_clusterTriggerBindingName';
 const triggerTemplateName = 'fake_triggerTemplateName';
 
 it('about', () => {
@@ -66,6 +67,27 @@ describe('clusterTriggerBindings', () => {
       generatePath(paths.clusterTriggerBindings.byName(), {
         clusterTriggerBindingName
       })
+    );
+  });
+});
+
+describe('conditions', () => {
+  it('all', () => {
+    expect(urls.conditions.all()).toEqual(generatePath(paths.conditions.all()));
+  });
+
+  it('byName', () => {
+    expect(urls.conditions.byName({ namespace, conditionName })).toEqual(
+      generatePath(paths.conditions.byName(), {
+        namespace,
+        conditionName
+      })
+    );
+  });
+
+  it('byNamespace', () => {
+    expect(urls.conditions.byNamespace({ namespace })).toEqual(
+      generatePath(paths.conditions.byNamespace(), { namespace })
     );
   });
 });
