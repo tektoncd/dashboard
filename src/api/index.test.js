@@ -330,6 +330,27 @@ it('getPipelineResource', () => {
   });
 });
 
+it('getConditions', () => {
+  const data = {
+    items: 'conditions'
+  };
+  fetchMock.get(/conditions/, data);
+  return index.getConditions().then(conditions => {
+    expect(conditions).toEqual(data.items);
+    fetchMock.restore();
+  });
+});
+
+it('getCondition', () => {
+  const name = 'foo';
+  const data = { fake: 'condition' };
+  fetchMock.get(`end:${name}`, data);
+  return index.getCondition({ name }).then(condition => {
+    expect(condition).toEqual(data);
+    fetchMock.restore();
+  });
+});
+
 it('getPodLog', () => {
   const namespace = 'default';
   const name = 'foo';

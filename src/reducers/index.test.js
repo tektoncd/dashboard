@@ -15,6 +15,9 @@ import {
   getClusterTask,
   getClusterTasks,
   getClusterTasksErrorMessage,
+  getCondition,
+  getConditions,
+  getConditionsErrorMessage,
   getDashboardNamespace,
   getDashboardVersion,
   getDeleteSecretsErrorMessage,
@@ -49,6 +52,7 @@ import {
   getTriggersNamespace,
   getTriggersVersion,
   isFetchingClusterTasks,
+  isFetchingConditions,
   isFetchingExtensions,
   isFetchingPipelineResources,
   isFetchingPipelineRuns,
@@ -61,6 +65,7 @@ import {
   isTriggersInstalled
 } from '.';
 import * as clusterTaskSelectors from './clusterTasks';
+import * as conditionSelectors from './conditions';
 import * as extensionSelectors from './extensions';
 import * as localeSelectors from './locale';
 import * as namespaceSelectors from './namespaces';
@@ -76,6 +81,7 @@ import * as taskRunsSelectors from './taskRuns';
 const locale = 'it';
 const namespace = 'default';
 const pipelineRunName = 'pipelineRunName';
+const conditions = [{ fake: 'condition' }];
 const extension = { displayName: 'extension' };
 const pipelineResources = [{ fake: 'pipelineResource' }];
 const pipelines = [{ fake: 'pipeline' }];
@@ -97,6 +103,7 @@ const taskRun = {
 const inlineTaskRun = { fake: 'taskRun', spec: {} };
 const taskRuns = [taskRun, inlineTaskRun];
 const state = {
+  conditions,
   extensions: {
     byName: {
       foo: extension
@@ -293,6 +300,52 @@ it('isFetchingPipelineRuns', () => {
   expect(isFetchingPipelineRuns(state)).toBe(true);
   expect(pipelineRunsSelectors.isFetchingPipelineRuns).toHaveBeenCalledWith(
     state.pipelineRuns
+  );
+});
+
+it('getConditions', () => {
+  jest
+    .spyOn(conditionSelectors, 'getConditions')
+    .mockImplementation(() => conditions);
+  expect(getConditions(state, { filters: [] })).toEqual(conditions);
+  expect(conditionSelectors.getConditions).toHaveBeenCalledWith(
+    state.conditions,
+    namespace
+  );
+});
+
+it('getPipelineRun', () => {
+  const name = 'conditionName';
+  const condition = { fake: 'condition' };
+  jest
+    .spyOn(conditionSelectors, 'getCondition')
+    .mockImplementation(() => condition);
+  expect(getCondition(state, { name })).toEqual(condition);
+  expect(conditionSelectors.getCondition).toHaveBeenCalledWith(
+    state.conditions,
+    name,
+    namespace
+  );
+});
+
+it('getConditionsErrorMessage', () => {
+  const errorMessage = 'fake error message';
+  jest
+    .spyOn(conditionSelectors, 'getConditionsErrorMessage')
+    .mockImplementation(() => errorMessage);
+  expect(getConditionsErrorMessage(state)).toEqual(errorMessage);
+  expect(conditionSelectors.getConditionsErrorMessage).toHaveBeenCalledWith(
+    state.conditions
+  );
+});
+
+it('isFetchingConditions', () => {
+  jest
+    .spyOn(conditionSelectors, 'isFetchingConditions')
+    .mockImplementation(() => true);
+  expect(isFetchingConditions(state)).toBe(true);
+  expect(conditionSelectors.isFetchingConditions).toHaveBeenCalledWith(
+    state.conditions
   );
 });
 

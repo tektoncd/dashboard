@@ -34,6 +34,19 @@ export const paths = {
       return '/clustertriggerbindings/:clusterTriggerBindingName';
     }
   },
+  conditions: {
+    all() {
+      return '/conditions';
+    },
+    byName() {
+      return byNamespace({
+        path: '/conditions/:conditionName'
+      });
+    },
+    byNamespace() {
+      return byNamespace({ path: '/conditions' });
+    }
+  },
   eventListeners: {
     all() {
       return '/eventlisteners';
