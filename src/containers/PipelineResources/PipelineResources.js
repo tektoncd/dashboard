@@ -37,7 +37,7 @@ import { Add16 as Add, Delete16 as Delete } from '@carbon/icons-react';
 import { LabelFilter } from '..';
 import { fetchPipelineResources } from '../../actions/pipelineResources';
 import { deletePipelineResource } from '../../api';
-import PipelineResourcesModal from '../PipelineResourcesModal';
+import PipelineResourcesModal from '../CreatePipelineResources';
 import {
   getPipelineResources,
   getPipelineResourcesErrorMessage,
