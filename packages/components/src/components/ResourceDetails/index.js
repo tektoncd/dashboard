@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,30 +11,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-@import '~carbon-components/scss/globals/scss/vars';
-
-.tkn--resourcedetails {
-  .tkn--details {
-    p {
-      margin-top: $spacing-03;
-      span:first-child {
-        font-weight: bold;
-        margin-right: $spacing-02;
-      }
-    }
-
-    .bx--data-table-container {
-      width: 50%;
-    }
-  }
-
-  .bx--snippet--multi {
-    margin-top: $spacing-03
-  }
-}
-
-.tkn--resourcedetails-metadata {
-  margin-bottom: $layout-01;
-  padding: $layout-01;
-  background-color: $ui-02;
-}
+export { default } from './ResourceDetails';

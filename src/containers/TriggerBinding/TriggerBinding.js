@@ -154,7 +154,7 @@ export /* istanbul ignore next */ class TriggerBindingContainer extends Componen
     });
 
     return (
-      <div className="tkn--trigger">
+      <div className="tkn--resourcedetails">
         <h1>{triggerBindingName}</h1>
         <Tabs selected={0} aria-label="TriggerBinding details">
           <Tab
@@ -165,7 +165,7 @@ export /* istanbul ignore next */ class TriggerBindingContainer extends Componen
             })}
           >
             <div className="tkn--details">
-              <div className="tkn--resource--detail-block">
+              <div className="tkn--resourcedetails-metadata">
                 <p>
                   <span>
                     {intl.formatMessage({
