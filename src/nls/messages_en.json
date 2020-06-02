@@ -226,6 +226,7 @@
     "dashboard.rerunPipelineRun.actionText": "Rerun",
     "dashboard.resource.detailsTab": "Details",
     "dashboard.resource.overviewTab": "Overview",
+    "dashboard.resourceDetails.errorloading": "Error loading {kind}",
     "dashboard.resourceList.emptyState": "No resources for type {type}.",
     "dashboard.resourceList.errorLoading": "Error loading {type}",
     "dashboard.secret.errorLoading": "Error loading Secret",

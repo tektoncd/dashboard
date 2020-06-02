@@ -155,7 +155,7 @@ export /* istanbul ignore next */ class ClusterTriggerBindingContainer extends C
     });
 
     return (
-      <div className="tkn--trigger">
+      <div className="tkn--resourcedetails">
         <h1>{clusterTriggerBindingName}</h1>
         <Tabs selected={0} aria-label="ClusterTriggerBinding details">
           <Tab
@@ -166,7 +166,7 @@ export /* istanbul ignore next */ class ClusterTriggerBindingContainer extends C
             })}
           >
             <div className="tkn--details">
-              <div className="tkn--resource--detail-block">
+              <div className="tkn--resourcedetails-metadata">
                 <p>
                   <span>
                     {intl.formatMessage({

@@ -142,7 +142,7 @@ export /* istanbul ignore next */ class PipelineResourceContainer extends Compon
     }
 
     return (
-      <div className="tkn--trigger">
+      <div className="tkn--resourcedetails">
         <h1>{pipelineResourceName}</h1>
 
         <Tabs selected={0} aria-label="PipelineResource details">
@@ -154,7 +154,7 @@ export /* istanbul ignore next */ class PipelineResourceContainer extends Compon
             })}
           >
             <div className="tkn--details">
-              <div className="tkn--resource--detail-block">
+              <div className="tkn--resourcedetails-metadata">
                 <p>
                   <span>
                     {intl.formatMessage({
