@@ -59,6 +59,25 @@ const initialState = {
   toBeDeleted: []
 };
 
+function base64Decode(input) {
+  return decodeURIComponent(
+    atob(input)
+      .split('')
+      .map(
+        character =>
+          '%' + // eslint-disable-line prefer-template
+          (
+            '00' + // eslint-disable-line prefer-template
+            character
+              .charCodeAt(0) // returns UTF-16 code unit for this character
+              .toString(16)
+          ) // set radix 16 to ensure we get a UTF-16 encoded string
+            .slice(-2) // account for the '00' padding
+      )
+      .join('')
+  );
+}
+
 export /* istanbul ignore next */ class Secrets extends Component {
   constructor(props) {
     super(props);
@@ -288,7 +307,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
       let secretTypeToDisplay = translatedReload;
 
       if (secret.data.username) {
-        secretUsernameToDisplay = atob(secret.data.username);
+        secretUsernameToDisplay = base64Decode(secret.data.username);
       }
 
       if (secret.type) {
