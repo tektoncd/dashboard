@@ -140,6 +140,10 @@ class SideNav extends Component {
       this.setPath(urls.tasks.all());
       return;
     }
+    if (currentURL.includes(urls.conditions.all())) {
+      this.setPath(urls.conditions.all());
+      return;
+    }
 
     history.push('/');
   };
@@ -203,6 +207,13 @@ class SideNav extends Component {
               to={this.getPath(urls.taskRuns.all())}
             >
               TaskRuns
+            </SideNavMenuItem>
+            <SideNavMenuItem
+              element={NavLink}
+              icon={<span />}
+              to={this.getPath(urls.conditions.all())}
+            >
+              Conditions
             </SideNavMenuItem>
             {this.props.isTriggersInstalled && (
               <>

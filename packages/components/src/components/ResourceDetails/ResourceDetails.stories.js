@@ -32,6 +32,7 @@ const resource = {
       image: 'alpine',
       script: 'test -f $(resources.workspace.path)/$(params.path)'
     },
+    description: 'Checks if a file exists at the specified path',
     params: [{ name: 'path' }],
     resources: [{ name: 'workspace', type: 'git' }]
   }
