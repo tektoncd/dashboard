@@ -97,7 +97,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       return [];
     }
 
-    const { tasks, taskRuns, intl } = this.props;
+    const { tasks, intl } = this.props;
+    let { taskRuns } = this.props;
 
     if (!tasks || !taskRuns) {
       return [];
@@ -108,19 +109,19 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     } = pipelineRun;
 
     const retryPodIndex = {};
-    const retriedTaskRuns = taskRuns
-      .filter(taskRun => taskRun.status.retriesStatus)
-      .reduce((acc, taskRun) => {
+    taskRuns = taskRuns.reduce((acc, taskRun) => {
+      if (taskRun.status.retriesStatus) {
         taskRun.status.retriesStatus.forEach((retryStatus, index) => {
           const retryRun = { ...taskRun };
           retryRun.status = retryStatus;
           retryPodIndex[retryStatus.podName] = index;
           acc.push(retryRun);
         });
-        return acc;
-      }, []);
+      }
+      acc.push(taskRun);
+      return acc;
+    }, []);
     return taskRuns
-      .concat(retriedTaskRuns)
       .map(taskRun => {
         let taskSpec;
         if (taskRun.spec.taskRef) {
