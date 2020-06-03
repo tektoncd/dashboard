@@ -273,6 +273,8 @@ const Table = props => {
 
 Table.defaultProps = {
   batchActionButtons: [],
+  emptyTextAllNamespaces: null,
+  emptyTextSelectedNamespace: null,
   isSortable: false,
   loading: false,
   selectedNamespace: null,
@@ -282,8 +284,8 @@ Table.defaultProps = {
 
 Table.propTypes = {
   batchActionButtons: PropTypes.arrayOf(PropTypes.object),
-  emptyTextAllNamespaces: PropTypes.string.isRequired,
-  emptyTextSelectedNamespace: PropTypes.string.isRequired,
+  emptyTextAllNamespaces: PropTypes.string,
+  emptyTextSelectedNamespace: PropTypes.string,
   headers: PropTypes.arrayOf(PropTypes.object).isRequired,
   isSortable: PropTypes.bool,
   loading: PropTypes.bool,

@@ -36,6 +36,8 @@ import {
   ClusterTasks,
   ClusterTriggerBinding,
   ClusterTriggerBindings,
+  Condition,
+  Conditions,
   CreateSecret,
   CustomResourceDefinition,
   EventListener,
@@ -215,6 +217,17 @@ export /* istanbul ignore next */ class App extends Component {
                     exact
                     component={ClusterTasks}
                   />
+                  <Route path={paths.conditions.all()} component={Conditions} />
+                  <Route
+                    path={paths.conditions.byNamespace()}
+                    exact
+                    component={Conditions}
+                  />
+                  <Route
+                    path={paths.conditions.byName()}
+                    component={Condition}
+                  />
+
                   <Route path={paths.about()} component={About} />
 
                   <ReadWriteRoute

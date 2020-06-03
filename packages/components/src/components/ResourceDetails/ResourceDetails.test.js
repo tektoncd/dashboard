@@ -32,6 +32,9 @@ describe('ResourceDetails', () => {
       metadata: {
         name,
         namespace
+      },
+      spec: {
+        description: 'fake_description'
       }
     };
 
@@ -39,6 +42,7 @@ describe('ResourceDetails', () => {
       <ResourceDetails resource={resource} />
     );
     expect(queryByText(/labels/i)).toBeTruthy();
+    expect(queryByText(/description/i)).toBeTruthy();
     expect(queryByText(name)).toBeTruthy();
     expect(queryByText(namespace)).toBeTruthy();
   });

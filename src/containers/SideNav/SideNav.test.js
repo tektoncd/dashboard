@@ -547,6 +547,42 @@ it('SideNav redirects to secrets page when all namespaces selected on namespaced
   expect(push).toHaveBeenCalledWith(urls.secrets.all());
 });
 
+it('SideNav redirects to Conditions page when all namespaces selected on namespaced URL on Conditions', async () => {
+  const middleware = [thunk];
+  const mockStore = configureStore(middleware);
+  const namespace = 'default';
+  const store = mockStore({
+    namespaces: {
+      byName: {
+        [namespace]: true
+      },
+      isFetching: false,
+      selected: namespace
+    }
+  });
+  const selectNamespace = jest.fn();
+  const push = jest.fn();
+  const { getByText, getByValue } = renderWithRouter(
+    <Provider store={store}>
+      <SideNav
+        extensions={[]}
+        history={{ push }}
+        location={{ search: '' }}
+        match={{
+          params: { namespace },
+          url: urls.conditions.all()
+        }}
+        namespace={namespace}
+        selectNamespace={selectNamespace}
+      />
+    </Provider>
+  );
+  fireEvent.click(getByValue(namespace));
+  fireEvent.click(getByText(/all namespaces/i));
+  expect(selectNamespace).toHaveBeenCalledWith(ALL_NAMESPACES);
+  expect(push).toHaveBeenCalledWith(urls.conditions.all());
+});
+
 it('SideNav updates namespace in URL', async () => {
   const middleware = [thunk];
   const mockStore = configureStore(middleware);

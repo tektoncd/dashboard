@@ -108,6 +108,17 @@ const ResourceDetails = ({
                   {resource.metadata.namespace}
                 </p>
               )}
+              {resource.spec?.description && (
+                <p>
+                  <span>
+                    {intl.formatMessage({
+                      id: 'dashboard.resourceDetails.description',
+                      defaultMessage: 'Description'
+                    })}
+                  </span>
+                  {resource.spec.description}
+                </p>
+              )}
               {additionalMetadata}
             </div>
             {children}
