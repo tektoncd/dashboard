@@ -162,6 +162,7 @@
     "dashboard.labelFilter.searchPlaceholder": "Input a label filter of the format labelKey:labelValue",
     "dashboard.labelFilter.syntaxMessage": "See the Kubernetes Label documentation for valid syntax",
     "dashboard.list.menu.tooltip": "Actions",
+    "dashboard.loading.config": "Loading configuration…",
     "dashboard.logo.alt": "Tekton logo",
     "dashboard.logo.tooltip": "Meow",
     "dashboard.logs.downloadButtonTooltip": "Download logs",

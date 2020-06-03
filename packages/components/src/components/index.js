@@ -21,6 +21,7 @@ export { default as Graph } from './Graph/Graph';
 export { default as Header } from './Header';
 export { default as KeyValueList } from './KeyValueList';
 export { default as LabelFilter } from './LabelFilter';
+export { default as LoadingShell } from './LoadingShell';
 export { default as Log } from './Log';
 export { default as LogoutButton } from './LogoutButton';
 export { default as Modal } from './Modal';
