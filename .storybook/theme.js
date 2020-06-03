@@ -12,11 +12,12 @@ limitations under the License.
 */
 
 import { create } from '@storybook/theming/create';
+import brandImage from './tekton-horizontal-color.svg';
 
 export default create({
   base: 'light',
 
   brandTitle: 'Tekton Components',
   brandUrl: 'https://github.com/tektoncd/dashboard',
-  brandImage: 'https://tekton.dev/favicon.png'
+  brandImage
 });
