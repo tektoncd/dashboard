@@ -68,7 +68,7 @@ const byNamespace = {
       },
       type: 'kubernetes.io/basic-auth',
       data: {
-        username: 'bXl1c2VybmFtZQ==' // This is "myusername"
+        username: '5rWL6K+V' // This is "测试"
       }
     }
   ]
@@ -283,7 +283,8 @@ it('SecretsTable renders username in regular form (not encoded)', () => {
     { route: urls.secrets.all() }
   );
   expect(queryByText(/github-repo-access-secret/i)).toBeTruthy();
-  expect(getByText(/myusername/i)).toBeTruthy();
+  expect(getByText('myusername')).toBeTruthy();
+  expect(getByText('测试')).toBeTruthy();
 });
 
 it('Secrets can be filtered on a single label filter', async () => {
