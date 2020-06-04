@@ -14,7 +14,7 @@ limitations under the License.
 import React from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl } from 'react-intl';
-import { InlineNotification, Tag } from 'carbon-components-react';
+import { InlineNotification, SkeletonText, Tag } from 'carbon-components-react';
 import { formatLabels, getErrorMessage } from '@tektoncd/dashboard-utils';
 import {
   FormattedDate,
@@ -28,22 +28,23 @@ const ResourceDetails = ({
   children,
   error,
   intl,
-  kind,
+  loading,
   resource
 }) => {
+  if (loading) {
+    return <SkeletonText heading width="60%" />;
+  }
+
   if (error || !resource) {
     return (
       <InlineNotification
         kind="error"
         hideCloseButton
         lowContrast
-        title={intl.formatMessage(
-          {
-            id: 'dashboard.resourceDetails.errorloading',
-            defaultMessage: 'Error loading {kind}'
-          },
-          { kind }
-        )}
+        title={intl.formatMessage({
+          id: 'dashboard.resourceDetails.errorloading',
+          defaultMessage: 'Error loading resource'
+        })}
         subtitle={getErrorMessage(error)}
       />
     );
@@ -131,7 +132,6 @@ ResourceDetails.propTypes = {
   additionalMetadata: PropTypes.node,
   children: PropTypes.node,
   error: PropTypes.oneOfType([PropTypes.string, PropTypes.shape({})]),
-  kind: PropTypes.string.isRequired,
   resource: PropTypes.shape({})
 };
 

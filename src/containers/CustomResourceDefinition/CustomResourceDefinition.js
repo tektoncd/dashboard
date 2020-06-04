@@ -14,12 +14,8 @@ limitations under the License.
 import React, { Component } from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import {
-  CodeSnippetSkeleton,
-  InlineNotification
-} from 'carbon-components-react';
-import { getErrorMessage, getTitle } from '@tektoncd/dashboard-utils';
-import { ViewYAML } from '@tektoncd/dashboard-components';
+import { getTitle } from '@tektoncd/dashboard-utils';
+import { ResourceDetails } from '@tektoncd/dashboard-components';
 
 import { fetchClusterTask, fetchTask } from '../../actions/tasks';
 import { fetchPipeline } from '../../actions/pipelines';
@@ -107,28 +103,10 @@ export /* istanbul ignore next */ class CustomResourceDefinition extends Compone
     const error = this.props.error || this.state.error;
     const resource = this.props.resource || this.state.resource;
     const { loading } = this.state;
-    const { intl } = this.props;
 
-    if (loading) {
-      return <CodeSnippetSkeleton type="multi" />;
-    }
-
-    if (error || !resource) {
-      return (
-        <InlineNotification
-          kind="error"
-          hideCloseButton
-          lowContrast
-          title={intl.formatMessage({
-            id: 'dashboard.customResourceDefinition.errorLoading',
-            defaultMessage: 'Error loading resource'
-          })}
-          subtitle={getErrorMessage(error)}
-        />
-      );
-    }
-
-    return <ViewYAML resource={resource} />;
+    return (
+      <ResourceDetails error={error} loading={loading} resource={resource} />
+    );
   }
 }
 
