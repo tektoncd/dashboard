@@ -15,19 +15,18 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { injectIntl } from 'react-intl';
-import { DataTable, InlineNotification, Tag } from 'carbon-components-react';
+import { DataTable } from 'carbon-components-react';
 import {
   Table as DashboardTable,
-  FormattedDate,
-  Tab,
-  Tabs,
+  ResourceDetails,
   ViewYAML
 } from '@tektoncd/dashboard-components';
-import { formatLabels, getTitle } from '@tektoncd/dashboard-utils';
+import { getTitle } from '@tektoncd/dashboard-utils';
 import {
   getSelectedNamespace,
   getTriggerTemplate,
   getTriggerTemplatesErrorMessage,
+  isFetchingTriggerTemplates,
   isWebSocketConnected
 } from '../../reducers';
 
@@ -49,28 +48,6 @@ const {
 } = DataTable;
 
 export /* istanbul ignore next */ class TriggerTemplateContainer extends Component {
-  static notification({ kind, message, intl }) {
-    const titles = {
-      info: intl.formatMessage({
-        id: 'dashboard.triggerTemplate.unavailable',
-        defaultMessage: 'TriggerTemplate not available'
-      }),
-      error: intl.formatMessage({
-        id: 'dashboard.triggerTemplate.errorloading',
-        defaultMessage: 'Error loading TriggerTemplate'
-      })
-    };
-    return (
-      <InlineNotification
-        kind={kind}
-        hideCloseButton
-        lowContrast
-        title={titles[kind]}
-        subtitle={message}
-      />
-    );
-  }
-
   componentDidMount() {
     const { match } = this.props;
     const { triggerTemplateName: resourceName } = match.params;
@@ -102,45 +79,15 @@ export /* istanbul ignore next */ class TriggerTemplateContainer extends Compone
     }
   }
 
-  fetchData() {
-    const { match } = this.props;
-    const { namespace, triggerTemplateName } = match.params;
-    this.props.fetchTriggerTemplate({ name: triggerTemplateName, namespace });
-  }
+  getContent() {
+    const { intl, selectedNamespace, triggerTemplate } = this.props;
 
-  render() {
-    const {
-      intl,
-      error,
-      match,
-      selectedNamespace,
-      triggerTemplate
-    } = this.props;
-    const { triggerTemplateName } = match.params;
-
-    if (error) {
-      return TriggerTemplateContainer.notification({
-        kind: 'error',
-        intl
-      });
-    }
     if (!triggerTemplate) {
-      return TriggerTemplateContainer.notification({
-        kind: 'error',
-        message: intl.formatMessage({
-          id: 'dashboard.triggerTemplate.unavailable',
-          defaultMessage: 'TriggerTemplate not available'
-        }),
-        intl
-      });
+      return null;
     }
 
     const { params, resourcetemplates } = triggerTemplate.spec;
 
-    let formattedLabelsToRender = [];
-    if (triggerTemplate.metadata.labels) {
-      formattedLabelsToRender = formatLabels(triggerTemplate.metadata.labels);
-    }
     const headersForParameters = [
       {
         key: 'name',
@@ -166,7 +113,6 @@ export /* istanbul ignore next */ class TriggerTemplateContainer extends Compone
     ];
 
     let rowsForParameters = [];
-
     if (params) {
       rowsForParameters = params.map(
         ({ name, default: defaultValue, description }) => ({
@@ -184,155 +130,113 @@ export /* istanbul ignore next */ class TriggerTemplateContainer extends Compone
     });
 
     return (
-      <div className="tkn--resourcedetails">
-        <h1>{triggerTemplateName}</h1>
-        <Tabs selected={0} aria-label="TriggerTemplate details">
-          <Tab
-            id={`${triggerTemplateName}-overview`}
-            label={intl.formatMessage({
-              id: 'dashboard.resource.overviewTab',
-              defaultMessage: 'Overview'
-            })}
-          >
-            <div className="tkn--details">
-              <div className="tkn--resourcedetails-metadata">
-                <p>
-                  <span>
-                    {intl.formatMessage({
-                      id: 'dashboard.metadata.dateCreated',
-                      defaultMessage: 'Date Created:'
-                    })}
-                  </span>
-                  <FormattedDate
-                    date={triggerTemplate.metadata.creationTimestamp}
-                    relative
-                  />
-                </p>
-                <p>
-                  <span>
-                    {intl.formatMessage({
-                      id: 'dashboard.metadata.labels',
-                      defaultMessage: 'Labels:'
-                    })}
-                  </span>
-                  {formattedLabelsToRender.length === 0
-                    ? intl.formatMessage({
-                        id: 'dashboard.metadata.none',
-                        defaultMessage: 'None'
-                      })
-                    : formattedLabelsToRender.map(label => (
-                        <Tag type="blue" key={label}>
-                          {label}
-                        </Tag>
-                      ))}
-                </p>
-                <p>
-                  <span>
-                    {intl.formatMessage({
-                      id: 'dashboard.metadata.namespace',
-                      defaultMessage: 'Namespace:'
-                    })}
-                  </span>
-                  {triggerTemplate.metadata.namespace}
-                </p>
-              </div>
+      <>
+        <DashboardTable
+          title={intl.formatMessage({
+            id: 'dashboard.paramaters.title',
+            defaultMessage: 'Parameters'
+          })}
+          headers={headersForParameters}
+          rows={rowsForParameters}
+          selectedNamespace={selectedNamespace}
+          emptyTextAllNamespaces={emptyTextMessage}
+          emptyTextSelectedNamespace={emptyTextMessage}
+        />
 
-              <DashboardTable
+        {resourcetemplates && (
+          // This is a very customised expandable table so intentionally not the one used elsewhere
+          // although it should look the same
+          <DataTable
+            rows={resourcetemplates.map((item, index) => ({
+              id: `${index}|${item.metadata.name ||
+                item.metadata.generateName}`,
+              name: item.metadata.name || item.metadata.generateName,
+              kind: item.kind
+            }))}
+            headers={[
+              {
+                key: 'name',
+                header: intl.formatMessage({
+                  id: 'dashboard.tableHeader.name',
+                  defaultMessage: 'Name'
+                })
+              },
+              {
+                key: 'kind',
+                header: 'Kind'
+              }
+            ]}
+            render={({
+              rows,
+              headers,
+              getHeaderProps,
+              getRowProps,
+              getTableProps
+            }) => (
+              <TableContainer
+                data-testid="resourcetemplatestable"
                 title={intl.formatMessage({
-                  id: 'dashboard.paramaters.title',
-                  defaultMessage: 'Parameters'
+                  id: 'dashboard.triggerTemplate.resourceTemplates',
+                  defaultMessage: 'Resource Templates'
                 })}
-                headers={headersForParameters}
-                rows={rowsForParameters}
-                selectedNamespace={selectedNamespace}
-                emptyTextAllNamespaces={emptyTextMessage}
-                emptyTextSelectedNamespace={emptyTextMessage}
-              />
-
-              {resourcetemplates && (
-                // This is a very customised expandable table so intentionally not the one used elsewhere
-                // although it should look the same
-                <DataTable
-                  rows={resourcetemplates.map((item, index) => ({
-                    id: `${index}|${item.metadata.name ||
-                      item.metadata.generateName}`,
-                    name: item.metadata.name || item.metadata.generateName,
-                    kind: item.kind
-                  }))}
-                  headers={[
-                    {
-                      key: 'name',
-                      header: intl.formatMessage({
-                        id: 'dashboard.tableHeader.name',
-                        defaultMessage: 'Name'
-                      })
-                    },
-                    {
-                      key: 'kind',
-                      header: 'Kind'
-                    }
-                  ]}
-                  render={({
-                    rows,
-                    headers,
-                    getHeaderProps,
-                    getRowProps,
-                    getTableProps
-                  }) => (
-                    <TableContainer
-                      data-testid="resourcetemplatestable"
-                      title={intl.formatMessage({
-                        id: 'dashboard.triggerTemplate.resourceTemplates',
-                        defaultMessage: 'Resource Templates'
-                      })}
-                    >
-                      <Table {...getTableProps()}>
-                        <TableHead>
-                          <TableRow>
-                            <TableExpandHeader />
-                            {headers.map(header => (
-                              <TableHeader {...getHeaderProps({ header })}>
-                                {header.header}
-                              </TableHeader>
-                            ))}
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {rows.map((row, index) => (
-                            <React.Fragment key={row.id}>
-                              <TableExpandRow {...getRowProps({ row })}>
-                                {row.cells.map(cell => (
-                                  <TableCell key={cell.id}>
-                                    {cell.value}
-                                  </TableCell>
-                                ))}
-                              </TableExpandRow>
-                              {row.isExpanded && (
-                                <TableExpandedRow colSpan={headers.length + 1}>
-                                  <ViewYAML
-                                    resource={
-                                      triggerTemplate.spec.resourcetemplates[
-                                        index
-                                      ]
-                                    }
-                                  />
-                                </TableExpandedRow>
-                              )}
-                            </React.Fragment>
+              >
+                <Table {...getTableProps()}>
+                  <TableHead>
+                    <TableRow>
+                      <TableExpandHeader />
+                      {headers.map(header => (
+                        <TableHeader {...getHeaderProps({ header })}>
+                          {header.header}
+                        </TableHeader>
+                      ))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {rows.map((row, index) => (
+                      <React.Fragment key={row.id}>
+                        <TableExpandRow {...getRowProps({ row })}>
+                          {row.cells.map(cell => (
+                            <TableCell key={cell.id}>{cell.value}</TableCell>
                           ))}
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
-                  )}
-                />
-              )}
-            </div>
-          </Tab>
-          <Tab id={`${triggerTemplateName}-yaml`} label="YAML">
-            <ViewYAML resource={triggerTemplate} />
-          </Tab>
-        </Tabs>
-      </div>
+                        </TableExpandRow>
+                        {row.isExpanded && (
+                          <TableExpandedRow colSpan={headers.length + 1}>
+                            <ViewYAML
+                              resource={
+                                triggerTemplate.spec.resourcetemplates[index]
+                              }
+                            />
+                          </TableExpandedRow>
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
+          />
+        )}
+      </>
+    );
+  }
+
+  fetchData() {
+    const { match } = this.props;
+    const { namespace, triggerTemplateName } = match.params;
+    this.props.fetchTriggerTemplate({ name: triggerTemplateName, namespace });
+  }
+
+  render() {
+    const { error, loading, triggerTemplate } = this.props;
+
+    return (
+      <ResourceDetails
+        error={error}
+        loading={loading}
+        resource={triggerTemplate}
+      >
+        {this.getContent()}
+      </ResourceDetails>
     );
   }
 }
@@ -357,6 +261,7 @@ function mapStateToProps(state, ownProps) {
   });
   return {
     error: getTriggerTemplatesErrorMessage(state),
+    loading: isFetchingTriggerTemplates(state),
     selectedNamespace: namespace,
     triggerTemplate,
     webSocketConnected: isWebSocketConnected(state)

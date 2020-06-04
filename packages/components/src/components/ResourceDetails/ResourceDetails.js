@@ -58,7 +58,13 @@ const ResourceDetails = ({
   return (
     <div className="tkn--resourcedetails">
       <h1>{resource.metadata.name}</h1>
-      <Tabs selected={0}>
+      <Tabs
+        selected={0}
+        aria-label={intl.formatMessage({
+          id: 'dashboard.resourceDetails.ariaLabel',
+          defaultMessage: 'Resource details'
+        })}
+      >
         <Tab
           label={intl.formatMessage({
             id: 'dashboard.resource.overviewTab',
