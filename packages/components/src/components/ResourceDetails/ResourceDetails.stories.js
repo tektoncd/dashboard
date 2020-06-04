@@ -38,15 +38,11 @@ const resource = {
 };
 
 storiesOf('Components/ResourceDetails', module)
-  .add('error', () => (
-    <ResourceDetails error="A helpful error message" kind="Condition" />
-  ))
-  .add('default', () => (
-    <ResourceDetails kind="Condition" resource={resource} />
-  ))
+  .add('error', () => <ResourceDetails error="A helpful error message" />)
+  .add('loading', () => <ResourceDetails loading />)
+  .add('default', () => <ResourceDetails resource={resource} />)
   .add('with additional content', () => (
     <ResourceDetails
-      kind="Condition"
       resource={resource}
       additionalMetadata={
         <p>
