@@ -17,15 +17,8 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import '../../scss/Triggers.scss';
 import { injectIntl } from 'react-intl';
-import { InlineNotification, Tag } from 'carbon-components-react';
-import {
-  FormattedDate,
-  Tab,
-  Table,
-  Tabs,
-  ViewYAML
-} from '@tektoncd/dashboard-components';
-import { formatLabels, getTitle, urls } from '@tektoncd/dashboard-utils';
+import { ResourceDetails, Table } from '@tektoncd/dashboard-components';
+import { getTitle, urls } from '@tektoncd/dashboard-utils';
 import {
   getSecrets,
   getSelectedNamespace,
@@ -40,28 +33,6 @@ import { fetchServiceAccount } from '../../actions/serviceAccounts';
 import { fetchSecrets } from '../../actions/secrets';
 
 export /* istanbul ignore next */ class ServiceAccountContainer extends Component {
-  static notification({ kind, message, intl }) {
-    const titles = {
-      info: intl.formatMessage({
-        id: 'dashboard.serviceAccount.unavailable',
-        defaultMessage: 'ServiceAccount not available'
-      }),
-      error: intl.formatMessage({
-        id: 'dashboard.serviceAccount.errorloading',
-        defaultMessage: 'Error loading ServiceAccount'
-      })
-    };
-    return (
-      <InlineNotification
-        kind={kind}
-        hideCloseButton
-        lowContrast
-        title={titles[kind]}
-        subtitle={message}
-      />
-    );
-  }
-
   componentDidMount() {
     const { match } = this.props;
     const { serviceAccountName: resourceName } = match.params;
@@ -109,26 +80,8 @@ export /* istanbul ignore next */ class ServiceAccountContainer extends Componen
       selectedNamespace,
       serviceAccount
     } = this.props;
-    const { serviceAccountName, namespace } = match.params;
 
-    if (error) {
-      return ServiceAccountContainer.notification({
-        kind: 'error',
-        intl
-      });
-    }
-    if (!serviceAccount) {
-      return ServiceAccountContainer.notification({
-        kind: 'info',
-        intl
-      });
-    }
-
-    let formattedLabelsToRender = [];
-    if (serviceAccount.metadata.labels) {
-      formattedLabelsToRender = formatLabels(serviceAccount.metadata.labels);
-    }
-
+    const { namespace } = match.params;
     const headersForSecrets = [
       {
         key: 'name',
@@ -140,7 +93,7 @@ export /* istanbul ignore next */ class ServiceAccountContainer extends Componen
     ];
 
     let rowsForSecrets = [];
-    if (serviceAccount.secrets && !loading) {
+    if (serviceAccount?.secrets && !loading) {
       rowsForSecrets = serviceAccount.secrets.map(({ name }) => {
         return {
           id: name,
@@ -175,7 +128,7 @@ export /* istanbul ignore next */ class ServiceAccountContainer extends Componen
     ];
 
     let rowsForImgPull = [];
-    if (serviceAccount.imagePullSecrets && !loading) {
+    if (serviceAccount?.imagePullSecrets && !loading) {
       rowsForImgPull = serviceAccount.imagePullSecrets.map(({ name }) => {
         return {
           id: name,
@@ -190,86 +143,33 @@ export /* istanbul ignore next */ class ServiceAccountContainer extends Componen
     });
 
     return (
-      <div className="tkn--resourcedetails">
-        <h1>{serviceAccountName}</h1>
-        <Tabs selected={0} aria-label="ServiceAccount details">
-          <Tab
-            id={`${serviceAccountName}-overview`}
-            label={intl.formatMessage({
-              id: 'dashboard.resource.overviewTab',
-              defaultMessage: 'Overview'
-            })}
-          >
-            <div className="tkn--details">
-              <div className="tkn--resourcedetails-metadata">
-                <p>
-                  <span>
-                    {intl.formatMessage({
-                      id: 'dashboard.metadata.dateCreated',
-                      defaultMessage: 'Date Created:'
-                    })}
-                  </span>
-                  <FormattedDate
-                    date={serviceAccount.metadata.creationTimestamp}
-                    relative
-                  />
-                </p>
-                <p>
-                  <span>
-                    {intl.formatMessage({
-                      id: 'dashboard.metadata.labels',
-                      defaultMessage: 'Labels:'
-                    })}
-                  </span>
-                  {formattedLabelsToRender.length === 0
-                    ? intl.formatMessage({
-                        id: 'dashboard.metadata.none',
-                        defaultMessage: 'None'
-                      })
-                    : formattedLabelsToRender.map(label => (
-                        <Tag type="blue" key={label}>
-                          {label}
-                        </Tag>
-                      ))}
-                </p>
-                <p>
-                  <span>
-                    {intl.formatMessage({
-                      id: 'dashboard.metadata.namespace',
-                      defaultMessage: 'Namespace:'
-                    })}
-                  </span>
-                  {serviceAccount.metadata.namespace}
-                </p>
-              </div>
-              <Table
-                title={intl.formatMessage({
-                  id: 'dashboard.serviceAccount.secretsTableTitle',
-                  defaultMessage: 'Secrets'
-                })}
-                headers={headersForSecrets}
-                rows={rowsForSecrets}
-                loading={loading}
-                selectedNamespace={selectedNamespace}
-                emptyTextAllNamespaces={emptyTextMessageSecrets}
-                emptyTextSelectedNamespace={emptyTextMessageSecrets}
-              />
-              <Table
-                title="imagePullSecrets"
-                headers={headersForImgPull}
-                rows={rowsForImgPull}
-                loading={loading}
-                selectedNamespace={selectedNamespace}
-                emptyTextAllNamespaces={emptyTextMessageImgPull}
-                emptyTextSelectedNamespace={emptyTextMessageImgPull}
-              />
-            </div>
-          </Tab>
-          <Tab id={`${serviceAccountName}-yaml`} label="YAML">
-            <ViewYAML resource={serviceAccount} />
-          </Tab>
-        </Tabs>
-      </div>
+      <ResourceDetails
+        error={error}
+        loading={loading}
+        resource={serviceAccount}
+      >
+        <Table
+          title={intl.formatMessage({
+            id: 'dashboard.serviceAccount.secretsTableTitle',
+            defaultMessage: 'Secrets'
+          })}
+          headers={headersForSecrets}
+          rows={rowsForSecrets}
+          loading={loading}
+          selectedNamespace={selectedNamespace}
+          emptyTextAllNamespaces={emptyTextMessageSecrets}
+          emptyTextSelectedNamespace={emptyTextMessageSecrets}
+        />
+        <Table
+          title="imagePullSecrets"
+          headers={headersForImgPull}
+          rows={rowsForImgPull}
+          loading={loading}
+          selectedNamespace={selectedNamespace}
+          emptyTextAllNamespaces={emptyTextMessageImgPull}
+          emptyTextSelectedNamespace={emptyTextMessageImgPull}
+        />
+      </ResourceDetails>
     );
   }
 }

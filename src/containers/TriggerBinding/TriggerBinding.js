@@ -15,19 +15,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { injectIntl } from 'react-intl';
-import { InlineNotification, Tag } from 'carbon-components-react';
-import {
-  FormattedDate,
-  Tab,
-  Table,
-  Tabs,
-  ViewYAML
-} from '@tektoncd/dashboard-components';
-import { formatLabels, getTitle } from '@tektoncd/dashboard-utils';
+import { ResourceDetails, Table } from '@tektoncd/dashboard-components';
+import { getTitle } from '@tektoncd/dashboard-utils';
 import {
   getSelectedNamespace,
   getTriggerBinding,
   getTriggerBindingsErrorMessage,
+  isFetchingTriggerBindings,
   isWebSocketConnected
 } from '../../reducers';
 
@@ -36,28 +30,6 @@ import { fetchTriggerBinding } from '../../actions/triggerBindings';
 import '../../scss/Triggers.scss';
 
 export /* istanbul ignore next */ class TriggerBindingContainer extends Component {
-  static notification({ kind, message, intl }) {
-    const titles = {
-      info: intl.formatMessage({
-        id: 'dashboard.triggerBinding.unavailable',
-        defaultMessage: 'TriggerBinding not available'
-      }),
-      error: intl.formatMessage({
-        id: 'dashboard.triggerBinding.errorloading',
-        defaultMessage: 'Error loading TriggerBinding'
-      })
-    };
-    return (
-      <InlineNotification
-        kind={kind}
-        hideCloseButton
-        lowContrast
-        title={titles[kind]}
-        subtitle={message}
-      />
-    );
-  }
-
   componentDidMount() {
     const { match } = this.props;
     const { triggerBindingName: resourceName } = match.params;
@@ -99,29 +71,10 @@ export /* istanbul ignore next */ class TriggerBindingContainer extends Componen
     const {
       intl,
       error,
-      match,
+      loading,
       selectedNamespace,
       triggerBinding
     } = this.props;
-    const { triggerBindingName } = match.params;
-
-    if (error) {
-      return TriggerBindingContainer.notification({
-        kind: 'error',
-        intl
-      });
-    }
-    if (!triggerBinding) {
-      return TriggerBindingContainer.notification({
-        kind: 'info',
-        intl
-      });
-    }
-
-    let formattedLabelsToRender = [];
-    if (triggerBinding.metadata.labels) {
-      formattedLabelsToRender = formatLabels(triggerBinding.metadata.labels);
-    }
 
     const headersForParameters = [
       {
@@ -140,13 +93,12 @@ export /* istanbul ignore next */ class TriggerBindingContainer extends Componen
       }
     ];
 
-    const rowsForParameters = triggerBinding.spec.params.map(
-      ({ name, value }) => ({
+    const rowsForParameters =
+      triggerBinding?.spec.params.map(({ name, value }) => ({
         id: name,
         name,
         value
-      })
-    );
+      })) || [];
 
     const emptyTextMessage = intl.formatMessage({
       id: 'dashboard.triggerBinding.noParams',
@@ -154,76 +106,23 @@ export /* istanbul ignore next */ class TriggerBindingContainer extends Componen
     });
 
     return (
-      <div className="tkn--resourcedetails">
-        <h1>{triggerBindingName}</h1>
-        <Tabs selected={0} aria-label="TriggerBinding details">
-          <Tab
-            id={`${triggerBindingName}-overview`}
-            label={intl.formatMessage({
-              id: 'dashboard.resource.overviewTab',
-              defaultMessage: 'Overview'
-            })}
-          >
-            <div className="tkn--details">
-              <div className="tkn--resourcedetails-metadata">
-                <p>
-                  <span>
-                    {intl.formatMessage({
-                      id: 'dashboard.metadata.dateCreated',
-                      defaultMessage: 'Date Created:'
-                    })}
-                  </span>
-                  <FormattedDate
-                    date={triggerBinding.metadata.creationTimestamp}
-                    relative
-                  />
-                </p>
-                <p>
-                  <span>
-                    {intl.formatMessage({
-                      id: 'dashboard.metadata.labels',
-                      defaultMessage: 'Labels:'
-                    })}
-                  </span>
-                  {formattedLabelsToRender.length === 0
-                    ? intl.formatMessage({
-                        id: 'dashboard.metadata.none',
-                        defaultMessage: 'None'
-                      })
-                    : formattedLabelsToRender.map(label => (
-                        <Tag type="blue" key={label}>
-                          {label}
-                        </Tag>
-                      ))}
-                </p>
-                <p>
-                  <span>
-                    {intl.formatMessage({
-                      id: 'dashboard.metadata.namespace',
-                      defaultMessage: 'Namespace:'
-                    })}
-                  </span>
-                  {triggerBinding.metadata.namespace}
-                </p>
-              </div>
-              <Table
-                title={intl.formatMessage({
-                  id: 'dashboard.parameters.title',
-                  defaultMessage: 'Parameters'
-                })}
-                headers={headersForParameters}
-                rows={rowsForParameters}
-                selectedNamespace={selectedNamespace}
-                emptyTextAllNamespaces={emptyTextMessage}
-                emptyTextSelectedNamespace={emptyTextMessage}
-              />
-            </div>
-          </Tab>
-          <Tab id={`${triggerBindingName}-yaml`} label="YAML">
-            <ViewYAML resource={triggerBinding} />
-          </Tab>
-        </Tabs>
-      </div>
+      <ResourceDetails
+        error={error}
+        loading={loading}
+        resource={triggerBinding}
+      >
+        <Table
+          title={intl.formatMessage({
+            id: 'dashboard.parameters.title',
+            defaultMessage: 'Parameters'
+          })}
+          headers={headersForParameters}
+          rows={rowsForParameters}
+          selectedNamespace={selectedNamespace}
+          emptyTextAllNamespaces={emptyTextMessage}
+          emptyTextSelectedNamespace={emptyTextMessage}
+        />
+      </ResourceDetails>
     );
   }
 }
@@ -248,6 +147,7 @@ function mapStateToProps(state, ownProps) {
   });
   return {
     error: getTriggerBindingsErrorMessage(state),
+    loading: isFetchingTriggerBindings(state),
     selectedNamespace: namespace,
     triggerBinding,
     webSocketConnected: isWebSocketConnected(state)

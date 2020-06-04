@@ -14,9 +14,6 @@ limitations under the License.
 import React from 'react';
 import { waitForElement } from 'react-testing-library';
 import 'jest-dom/extend-expect';
-import { Provider } from 'react-redux';
-import thunk from 'redux-thunk';
-import configureStore from 'redux-mock-store';
 import { createIntl } from 'react-intl';
 import { EventListenerContainer } from './EventListener';
 import { renderWithRouter } from '../../utils/test';
@@ -28,11 +25,12 @@ const intl = createIntl({
 
 /* Displaying of Trigger info is tested in the component test */
 
+const eventListenerName = 'tekton-webhooks-eventlistener';
 const fakeEventListenerWithLabels = {
   apiVersion: 'triggers.tekton.dev/v1alpha1',
   kind: 'EventListener',
   metadata: {
-    name: 'tekton-webhooks-eventlistener',
+    name: eventListenerName,
     namespace: 'tekton-pipelines',
     labels: {
       foo: 'bar',
@@ -126,40 +124,21 @@ const fakeEventListenerWithLabels = {
 };
 
 const match = {
-  params: {
-    eventListenerName: 'event-listener-with-labels'
-  }
+  params: { eventListenerName }
 };
-
-const middleware = [thunk];
-const mockStore = configureStore(middleware);
-
-const testStore = mockStore({
-  namespaces: {
-    selected: 'tekton-pipelines'
-  },
-  eventListeners: {
-    byId: 'event-listener-with-labels',
-    byNamespace: { default: 'tekton-pipelines' },
-    errorMessage: null,
-    isFetching: false
-  }
-});
 
 it('EventListener displays with formatted labels', async () => {
   const { queryByText, getByText } = renderWithRouter(
-    <Provider store={testStore}>
-      <EventListenerContainer
-        intl={intl}
-        match={match}
-        error={null}
-        fetchEventListener={() => Promise.resolve(fakeEventListenerWithLabels)}
-        eventListener={fakeEventListenerWithLabels}
-      />
-    </Provider>
+    <EventListenerContainer
+      intl={intl}
+      match={match}
+      error={null}
+      fetchEventListener={() => Promise.resolve(fakeEventListenerWithLabels)}
+      eventListener={fakeEventListenerWithLabels}
+    />
   );
 
-  await waitForElement(() => getByText('event-listener-with-labels'));
+  await waitForElement(() => getByText(eventListenerName));
   expect(queryByText(/Namespace/i)).toBeTruthy();
   expect(queryByText(/tekton-pipelines/i)).toBeTruthy();
   expect(queryByText(/Labels/i)).toBeTruthy();
@@ -192,18 +171,16 @@ it('EventListener handles no serviceAccountName', async () => {
     }
   };
   const { queryByText, getByText } = renderWithRouter(
-    <Provider store={testStore}>
-      <EventListenerContainer
-        intl={intl}
-        match={match}
-        error={null}
-        fetchEventListener={() => Promise.resolve(eventListener)}
-        eventListener={eventListener}
-      />
-    </Provider>
+    <EventListenerContainer
+      intl={intl}
+      match={match}
+      error={null}
+      fetchEventListener={() => Promise.resolve(eventListener)}
+      eventListener={eventListener}
+    />
   );
 
-  await waitForElement(() => getByText('event-listener-with-labels'));
+  await waitForElement(() => getByText(eventListenerName));
   expect(queryByText(/ServiceAccount/i)).toBeFalsy();
 });
 
@@ -216,18 +193,16 @@ it('EventListener handles no service type', async () => {
     }
   };
   const { queryByText, getByText } = renderWithRouter(
-    <Provider store={testStore}>
-      <EventListenerContainer
-        intl={intl}
-        match={match}
-        error={null}
-        fetchEventListener={() => Promise.resolve(eventListener)}
-        eventListener={eventListener}
-      />
-    </Provider>
+    <EventListenerContainer
+      intl={intl}
+      match={match}
+      error={null}
+      fetchEventListener={() => Promise.resolve(eventListener)}
+      eventListener={eventListener}
+    />
   );
 
-  await waitForElement(() => getByText('event-listener-with-labels'));
+  await waitForElement(() => getByText(eventListenerName));
   expect(queryByText(/Service Type/i)).toBeFalsy();
 });
 
@@ -240,17 +215,15 @@ it('EventListener handles no triggers', async () => {
     }
   };
   const { queryByText, getByText } = renderWithRouter(
-    <Provider store={testStore}>
-      <EventListenerContainer
-        intl={intl}
-        match={match}
-        error={null}
-        fetchEventListener={() => Promise.resolve(eventListener)}
-        eventListener={eventListener}
-      />
-    </Provider>
+    <EventListenerContainer
+      intl={intl}
+      match={match}
+      error={null}
+      fetchEventListener={() => Promise.resolve(eventListener)}
+      eventListener={eventListener}
+    />
   );
 
-  await waitForElement(() => getByText('event-listener-with-labels'));
+  await waitForElement(() => getByText(eventListenerName));
   expect(queryByText(/Trigger/i)).toBeFalsy();
 });

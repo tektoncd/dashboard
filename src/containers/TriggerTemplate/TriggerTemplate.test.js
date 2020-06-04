@@ -14,9 +14,6 @@ limitations under the License.
 import React from 'react';
 import { fireEvent, waitForElement } from 'react-testing-library';
 import 'jest-dom/extend-expect';
-import { Provider } from 'react-redux';
-import thunk from 'redux-thunk';
-import configureStore from 'redux-mock-store';
 import { createIntl } from 'react-intl';
 import { TriggerTemplateContainer } from './TriggerTemplate';
 import { renderWithRouter } from '../../utils/test';
@@ -29,6 +26,7 @@ const intl = createIntl({
 const resourceTemplate1NameInfo = 'git-source';
 const resourceTemplate2NameInfo = 'simple-pipeline-run';
 
+const triggerTemplateName = 'pipeline-template';
 const resourceTemplate1Details = {
   apiVersion: 'tekton.dev/v1alpha1',
   kind: 'PipelineResource',
@@ -59,7 +57,7 @@ const fakeTriggerTemplate = {
     },
     creationTimestamp: '2019-11-21T15:19:18Z',
     generation: 1,
-    name: 'pipeline-template',
+    name: triggerTemplateName,
     namespace: 'tekton-pipelines',
     resourceVersion: '598668',
     selfLink:
@@ -127,7 +125,7 @@ const fakeTriggerTemplateWithLabels = {
     },
     creationTimestamp: '2019-11-21T15:19:18Z',
     generation: 1,
-    name: 'pipeline-template',
+    name: triggerTemplateName,
     namespace: 'tekton-pipelines',
     resourceVersion: '598668',
     selfLink:
@@ -182,38 +180,22 @@ const fakeTriggerTemplateWithLabels = {
 };
 
 it('TriggerTemplateContainer renders', async () => {
-  const triggerTemplateName = 'bar';
   const match = {
     params: {
-      triggerTemplateName
+      triggerTemplateName: 'bar'
     }
   };
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const testStore = mockStore({
-    namespaces: {
-      selected: 'default'
-    },
-    triggerTemplates: {
-      byId: {},
-      byNamespace: { default: {} },
-      errorMessage: null,
-      isFetching: false
-    }
-  });
 
   const { getByText } = renderWithRouter(
-    <Provider store={testStore}>
-      <TriggerTemplateContainer
-        intl={intl}
-        match={match}
-        fetchTriggerTemplate={() => Promise.resolve()}
-        error={null}
-        loading={false}
-      />
-    </Provider>
+    <TriggerTemplateContainer
+      intl={intl}
+      match={match}
+      fetchTriggerTemplate={() => Promise.resolve()}
+      error={null}
+      loading={false}
+    />
   );
-  await waitForElement(() => getByText(`TriggerTemplate not available`));
+  await waitForElement(() => getByText('Error loading resource'));
 });
 
 it('TriggerTemplateContainer handles error state', async () => {
@@ -223,32 +205,15 @@ it('TriggerTemplateContainer handles error state', async () => {
     }
   };
 
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-
-  const testStore = mockStore({
-    namespaces: {
-      selected: 'default'
-    },
-    triggerTemplates: {
-      byId: {},
-      byNamespace: { default: {} },
-      errorMessage: 'Error',
-      isFetching: false
-    }
-  });
-
   const { getByText } = renderWithRouter(
-    <Provider store={testStore}>
-      <TriggerTemplateContainer
-        intl={intl}
-        match={match}
-        error="Error"
-        fetchTriggerTemplate={() => Promise.resolve()}
-      />
-    </Provider>
+    <TriggerTemplateContainer
+      intl={intl}
+      match={match}
+      error="Error"
+      fetchTriggerTemplate={() => Promise.resolve()}
+    />
   );
-  await waitForElement(() => getByText('Error loading TriggerTemplate'));
+  await waitForElement(() => getByText('Error loading resource'));
 });
 
 it('TriggerTemplateContainer renders basic information', async () => {
@@ -258,31 +223,14 @@ it('TriggerTemplateContainer renders basic information', async () => {
     }
   };
 
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-
-  const testStore = mockStore({
-    namespaces: {
-      selected: 'tekton-pipelines'
-    },
-    triggerTemplates: {
-      byId: 'pipeline-template',
-      byNamespace: { default: 'tekton-pipelines' },
-      errorMessage: null,
-      isFetching: false
-    }
-  });
-
   const { getByText } = renderWithRouter(
-    <Provider store={testStore}>
-      <TriggerTemplateContainer
-        intl={intl}
-        match={match}
-        error={null}
-        fetchTriggerTemplate={() => Promise.resolve(fakeTriggerTemplate)}
-        triggerTemplate={fakeTriggerTemplate}
-      />
-    </Provider>
+    <TriggerTemplateContainer
+      intl={intl}
+      match={match}
+      error={null}
+      fetchTriggerTemplate={() => Promise.resolve(fakeTriggerTemplate)}
+      triggerTemplate={fakeTriggerTemplate}
+    />
   );
   await waitForElement(() => getByText('pipeline-template'));
 });
@@ -294,31 +242,14 @@ it('TriggerTemplateContainer renders parameters', async () => {
     }
   };
 
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-
-  const testStore = mockStore({
-    namespaces: {
-      selected: 'tekton-pipelines'
-    },
-    triggerTemplates: {
-      byId: 'pipeline-template',
-      byNamespace: { default: 'tekton-pipelines' },
-      errorMessage: null,
-      isFetching: false
-    }
-  });
-
   const { getByText } = renderWithRouter(
-    <Provider store={testStore}>
-      <TriggerTemplateContainer
-        intl={intl}
-        match={match}
-        error={null}
-        fetchTriggerTemplate={() => Promise.resolve(fakeTriggerTemplate)}
-        triggerTemplate={fakeTriggerTemplate}
-      />
-    </Provider>
+    <TriggerTemplateContainer
+      intl={intl}
+      match={match}
+      error={null}
+      fetchTriggerTemplate={() => Promise.resolve(fakeTriggerTemplate)}
+      triggerTemplate={fakeTriggerTemplate}
+    />
   );
 
   await waitForElement(() => getByText(/pipeline-template/i));
@@ -341,31 +272,14 @@ it('TriggerTemplateContainer renders resource templates', async () => {
     }
   };
 
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-
-  const testStore = mockStore({
-    namespaces: {
-      selected: 'tekton-pipelines'
-    },
-    triggerTemplates: {
-      byId: 'pipeline-template',
-      byNamespace: { default: 'tekton-pipelines' },
-      errorMessage: null,
-      isFetching: false
-    }
-  });
-
   const { getByText, getByTestId } = renderWithRouter(
-    <Provider store={testStore}>
-      <TriggerTemplateContainer
-        intl={intl}
-        match={match}
-        error={null}
-        fetchTriggerTemplate={() => Promise.resolve(fakeTriggerTemplate)}
-        triggerTemplate={fakeTriggerTemplate}
-      />
-    </Provider>
+    <TriggerTemplateContainer
+      intl={intl}
+      match={match}
+      error={null}
+      fetchTriggerTemplate={() => Promise.resolve(fakeTriggerTemplate)}
+      triggerTemplate={fakeTriggerTemplate}
+    />
   );
 
   await waitForElement(() => getByText('pipeline-template'));
@@ -385,31 +299,14 @@ it('TriggerTemplateContainer renders full resource template information', async 
     }
   };
 
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-
-  const testStore = mockStore({
-    namespaces: {
-      selected: 'tekton-pipelines'
-    },
-    triggerTemplates: {
-      byId: 'pipeline-template',
-      byNamespace: { default: 'tekton-pipelines' },
-      errorMessage: null,
-      isFetching: false
-    }
-  });
-
   const { getByText } = renderWithRouter(
-    <Provider store={testStore}>
-      <TriggerTemplateContainer
-        intl={intl}
-        match={match}
-        error={null}
-        fetchTriggerTemplate={() => Promise.resolve(fakeTriggerTemplate)}
-        triggerTemplate={fakeTriggerTemplate}
-      />
-    </Provider>
+    <TriggerTemplateContainer
+      intl={intl}
+      match={match}
+      error={null}
+      fetchTriggerTemplate={() => Promise.resolve(fakeTriggerTemplate)}
+      triggerTemplate={fakeTriggerTemplate}
+    />
   );
 
   const compareToName = resourceTemplate1Details.metadata.name;
@@ -430,31 +327,14 @@ it('TriggerTemplateContainer contains overview tab with accurate information', a
     }
   };
 
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-
-  const testStore = mockStore({
-    namespaces: {
-      selected: 'tekton-pipelines'
-    },
-    triggerTemplates: {
-      byId: 'pipeline-template',
-      byNamespace: { default: 'tekton-pipelines' },
-      errorMessage: null,
-      isFetching: false
-    }
-  });
-
   const { getByText } = renderWithRouter(
-    <Provider store={testStore}>
-      <TriggerTemplateContainer
-        intl={intl}
-        match={match}
-        error={null}
-        fetchTriggerTemplate={() => Promise.resolve(fakeTriggerTemplate)}
-        triggerTemplate={fakeTriggerTemplate}
-      />
-    </Provider>
+    <TriggerTemplateContainer
+      intl={intl}
+      match={match}
+      error={null}
+      fetchTriggerTemplate={() => Promise.resolve(fakeTriggerTemplate)}
+      triggerTemplate={fakeTriggerTemplate}
+    />
   );
   await waitForElement(() => getByText('pipeline-template'));
   const overviewTab = getByText(/overview/i);
@@ -470,31 +350,14 @@ it('TriggerTemplateContainer contains YAML tab with accurate information', async
     }
   };
 
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-
-  const testStore = mockStore({
-    namespaces: {
-      selected: 'tekton-pipelines'
-    },
-    triggerTemplates: {
-      byId: 'pipeline-template',
-      byNamespace: { default: 'tekton-pipelines' },
-      errorMessage: null,
-      isFetching: false
-    }
-  });
-
   const { getByText } = renderWithRouter(
-    <Provider store={testStore}>
-      <TriggerTemplateContainer
-        intl={intl}
-        match={match}
-        error={null}
-        fetchTriggerTemplate={() => Promise.resolve(fakeTriggerTemplate)}
-        triggerTemplate={fakeTriggerTemplate}
-      />
-    </Provider>
+    <TriggerTemplateContainer
+      intl={intl}
+      match={match}
+      error={null}
+      fetchTriggerTemplate={() => Promise.resolve(fakeTriggerTemplate)}
+      triggerTemplate={fakeTriggerTemplate}
+    />
   );
 
   await waitForElement(() => getByText('pipeline-template'));
@@ -519,31 +382,14 @@ it('TriggerTemplateContainer does not render label section if they are not prese
     }
   };
 
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-
-  const testStore = mockStore({
-    namespaces: {
-      selected: 'tekton-pipelines'
-    },
-    triggerTemplates: {
-      byId: 'pipeline-template',
-      byNamespace: { default: 'tekton-pipelines' },
-      errorMessage: null,
-      isFetching: false
-    }
-  });
-
   const { getByText, queryByText } = renderWithRouter(
-    <Provider store={testStore}>
-      <TriggerTemplateContainer
-        intl={intl}
-        match={match}
-        error={null}
-        fetchTriggerTemplate={() => Promise.resolve(fakeTriggerTemplate)}
-        triggerTemplate={fakeTriggerTemplate}
-      />
-    </Provider>
+    <TriggerTemplateContainer
+      intl={intl}
+      match={match}
+      error={null}
+      fetchTriggerTemplate={() => Promise.resolve(fakeTriggerTemplate)}
+      triggerTemplate={fakeTriggerTemplate}
+    />
   );
 
   await waitForElement(() => getByText('pipeline-template'));
@@ -553,40 +399,23 @@ it('TriggerTemplateContainer does not render label section if they are not prese
 it('TriggerTemplateContainer renders labels section if they are present', async () => {
   const match = {
     params: {
-      triggerTemplateName: 'pipeline-template-with-labels'
+      triggerTemplateName
     }
   };
 
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-
-  const testStore = mockStore({
-    namespaces: {
-      selected: 'tekton-pipelines'
-    },
-    triggerTemplates: {
-      byId: 'pipeline-template-with-labels',
-      byNamespace: { default: 'tekton-pipelines' },
-      errorMessage: null,
-      isFetching: false
-    }
-  });
-
   const { getByText } = renderWithRouter(
-    <Provider store={testStore}>
-      <TriggerTemplateContainer
-        intl={intl}
-        match={match}
-        error={null}
-        fetchTriggerTemplate={() =>
-          Promise.resolve(fakeTriggerTemplateWithLabels)
-        }
-        triggerTemplate={fakeTriggerTemplateWithLabels}
-      />
-    </Provider>
+    <TriggerTemplateContainer
+      intl={intl}
+      match={match}
+      error={null}
+      fetchTriggerTemplate={() =>
+        Promise.resolve(fakeTriggerTemplateWithLabels)
+      }
+      triggerTemplate={fakeTriggerTemplateWithLabels}
+    />
   );
 
-  await waitForElement(() => getByText('pipeline-template-with-labels'));
+  await waitForElement(() => getByText(triggerTemplateName));
   const overviewTab = getByText(/overview/i);
   fireEvent.click(overviewTab);
   await waitForElement(() => getByText(/labels/i));
@@ -599,40 +428,23 @@ it('TriggerTemplateContainer renders labels section if they are present', async 
 it('TriggerTemplateContainer contains formatted labels', async () => {
   const match = {
     params: {
-      triggerTemplateName: 'pipeline-template-with-labels'
+      triggerTemplateName
     }
   };
 
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-
-  const testStore = mockStore({
-    namespaces: {
-      selected: 'tekton-pipelines'
-    },
-    triggerTemplates: {
-      byId: 'pipeline-template-with-labels',
-      byNamespace: { default: 'tekton-pipelines' },
-      errorMessage: null,
-      isFetching: false
-    }
-  });
-
   const { getByText } = renderWithRouter(
-    <Provider store={testStore}>
-      <TriggerTemplateContainer
-        intl={intl}
-        match={match}
-        error={null}
-        fetchTriggerTemplate={() =>
-          Promise.resolve(fakeTriggerTemplateWithLabels)
-        }
-        triggerTemplate={fakeTriggerTemplateWithLabels}
-      />
-    </Provider>
+    <TriggerTemplateContainer
+      intl={intl}
+      match={match}
+      error={null}
+      fetchTriggerTemplate={() =>
+        Promise.resolve(fakeTriggerTemplateWithLabels)
+      }
+      triggerTemplate={fakeTriggerTemplateWithLabels}
+    />
   );
 
-  await waitForElement(() => getByText('pipeline-template-with-labels'));
+  await waitForElement(() => getByText(triggerTemplateName));
   const overviewTab = getByText(/overview/i);
   fireEvent.click(overviewTab);
   await waitForElement(() => getByText('Labels:'));

@@ -25,6 +25,11 @@ limitations under the License.
 
     .bx--data-table-container {
       width: 50%;
+
+      .bx--data-table-header {
+        padding-left: 0;
+        padding-bottom: 0;
+      }
     }
   }
 
