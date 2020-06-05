@@ -121,6 +121,8 @@ These options are documented below:
 | `--web-dir` | Dashboard web resources directory | `string` | `""` |
 | `--logout-url` | If set, enables logout on the frontend and binds the logout button to this url | `string` | `""` |
 | `--namespace` | If set, limits the scope of resources watched to this namespace only | `string` | `""` |
+| `--log-level` | Minimum log level output by the logger | `string` | `"info"` |
+| `--log-format` | Format for log output (json or console) | `string` | `"json"` |
 
 Run `dashboard --help` to show the supported command line arguments and their default value directly from the `dashboard` binary.
 

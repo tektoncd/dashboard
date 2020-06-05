@@ -14,19 +14,36 @@ limitations under the License.
 package logging
 
 import (
-	"fmt"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 // Log is our logger for use elsewhere
-var Log = loggerInit()
+var Log = zap.NewNop().Sugar()
 
-func loggerInit() *zap.SugaredLogger {
-	Logger := zap.NewExample().Sugar()
-	defer Logger.Sync()
-	if Logger == nil {
-		fmt.Print("expected a non-nil logger")
+func InitLogger(level, format string) {
+	logger := createLogger(level, format)
+	defer logger.Sync()
+	Log = logger
+}
+
+func createLogger(level, format string) *zap.SugaredLogger {
+	var config zap.Config
+
+	if format == "json" {
+		config = zap.NewProductionConfig()
+	} else {
+		config = zap.NewDevelopmentConfig()
 	}
-	Logger.Info("constructed a logger")
-	return Logger
+
+	coreLevel := zapcore.InfoLevel
+	coreLevel.Set(level)
+
+	config.Level.SetLevel(coreLevel)
+
+	if logger, err := config.Build(); err == nil {
+		return logger.Sugar()
+	}
+
+	return zap.NewExample().Sugar()
 }
