@@ -49,6 +49,8 @@ var (
 	logoutUrl          = flag.String("logout-url", "", "If set, enables logout on the frontend and binds the logout button to this url")
 	csrfSecureCookie   = flag.Bool("csrf-secure-cookie", true, "Enable or disable Secure attribute on the CSRF cookie")
 	tenantNamespace    = flag.String("namespace", "", "If set, limits the scope of resources watched to this namespace only")
+	logLevel           = flag.String("log-level", "info", "Minimum log level output by the logger")
+	logFormat          = flag.String("log-format", "json", "Format for log output (json or console)")
 )
 
 func getCSRFAuthKey() []byte {
@@ -78,6 +80,8 @@ func main() {
 		flag.PrintDefaults()
 		return
 	}
+
+	logging.InitLogger(*logLevel, *logFormat)
 
 	var cfg *rest.Config
 	var err error
