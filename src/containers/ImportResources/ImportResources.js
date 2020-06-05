@@ -304,7 +304,7 @@ export class ImportResources extends Component {
               })}
               invalid={this.state.invalidNamespace}
               invalidText={intl.formatMessage({
-                id: 'dashboard.importResources.targetNamespace.invalidText',
+                id: 'dashboard.namespacesDropdown.invalidText',
                 defaultMessage: 'Please select a namespace'
               })}
               onChange={this.handleNamespace}
@@ -357,7 +357,7 @@ export class ImportResources extends Component {
                 titleText="Namespace"
                 invalid={this.state.invalidImporterNamespace}
                 invalidText={intl.formatMessage({
-                  id: 'dashboard.importResources.importerNamespace.invalidText',
+                  id: 'dashboard.namespacesDropdown.invalidText',
                   defaultMessage: 'Please select a namespace'
                 })}
                 onChange={this.handleImporterNamespace}
@@ -374,7 +374,7 @@ export class ImportResources extends Component {
                 namespace={this.state.importerNamespace}
                 onChange={this.handleServiceAccount}
                 titleText={intl.formatMessage({
-                  id: 'dashboard.importResources.serviceAccount.titleText',
+                  id: 'dashboard.serviceAccountLabel.optional',
                   defaultMessage: 'ServiceAccount (optional)'
                 })}
               />

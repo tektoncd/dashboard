@@ -152,14 +152,14 @@ export /* istanbul ignore next */ class TriggerTemplateContainer extends Compone
       {
         key: 'default',
         header: intl.formatMessage({
-          id: 'dashboard.triggerTemplate.default',
+          id: 'dashboard.tableHeader.default',
           defaultMessage: 'Default'
         })
       },
       {
         key: 'description',
         header: intl.formatMessage({
-          id: 'dashboard.triggerTemplate.description',
+          id: 'dashboard.resourceDetails.description',
           defaultMessage: 'Description'
         })
       }

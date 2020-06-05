@@ -109,7 +109,7 @@ const Annotations = props => {
         onClick={handleAdd}
         disabled={loading}
         iconDescription={intl.formatMessage({
-          id: 'dashboard.createSecret.addAnnotationsIcon',
+          id: 'dashboard.keyValueList.add',
           defaultMessage: 'Add'
         })}
       >

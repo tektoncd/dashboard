@@ -43,7 +43,7 @@ const SecretsDeleteModal = props => {
       <p>
         {intl.formatMessage({
           id: 'dashboard.secrets.deleteConfirm',
-          defaultMessage: 'Are you sure you want to delete these secrets?'
+          defaultMessage: 'Are you sure you want to delete these Secrets?'
         })}
       </p>
       <UnorderedList nested>
