@@ -448,7 +448,7 @@ class CreateTaskRun extends React.Component {
             <InlineNotification
               kind="error"
               title={intl.formatMessage({
-                id: 'dashboard.createTaskRun.validationError',
+                id: 'dashboard.createRun.validationError',
                 defaultMessage:
                   'Please fix the fields with errors, then resubmit'
               })}
@@ -485,7 +485,7 @@ class CreateTaskRun extends React.Component {
               id="create-taskrun--namespaces-dropdown"
               invalid={validationError && !namespace}
               invalidText={intl.formatMessage({
-                id: 'dashboard.createTaskRun.invalidNamespace',
+                id: 'dashboard.createRun.invalidNamespace',
                 defaultMessage: 'Namespace cannot be empty'
               })}
               selectedItem={namespace ? { id: namespace, text: namespace } : ''}
@@ -522,7 +522,7 @@ class CreateTaskRun extends React.Component {
           <FormGroup legendText="">
             <KeyValueList
               legendText={intl.formatMessage({
-                id: 'dashboard.createTaskRun.labels.legendText',
+                id: 'dashboard.createRun.labels.legendText',
                 defaultMessage: 'Labels'
               })}
               invalidText={
@@ -530,7 +530,7 @@ class CreateTaskRun extends React.Component {
                   dangerouslySetInnerHTML /* eslint-disable-line react/no-danger */={{
                     __html: intl.formatMessage(
                       {
-                        id: 'dashboard.createTaskRun.labels.invalidText',
+                        id: 'dashboard.createRun.label.invalidText',
                         defaultMessage:
                           'Labels must follow the {0}kubernetes labels syntax{1}.'
                       },
@@ -561,7 +561,7 @@ class CreateTaskRun extends React.Component {
           <FormGroup legendText="">
             <KeyValueList
               legendText={intl.formatMessage({
-                id: 'dashboard.createTaskRun.nodeSelector.legendText',
+                id: 'dashboard.createRun.nodeSelector.legendText',
                 defaultMessage: 'Node Selector'
               })}
               invalidText={
@@ -569,7 +569,7 @@ class CreateTaskRun extends React.Component {
                   dangerouslySetInnerHTML /* eslint-disable-line react/no-danger */={{
                     __html: intl.formatMessage(
                       {
-                        id: 'dashboard.createTaskRun.nodeSelector.invalidText',
+                        id: 'dashboard.createRun.label.invalidText',
                         defaultMessage:
                           'Labels must follow the {0}kubernetes labels syntax{1}.'
                       },
@@ -617,7 +617,7 @@ class CreateTaskRun extends React.Component {
                   namespace={namespace}
                   invalid={validationError && !resources.inputs[spec.name]}
                   invalidText={intl.formatMessage({
-                    id: 'dashboard.createTaskRun.invalidPipelineResources',
+                    id: 'dashboard.createRun.invalidPipelineResources',
                     defaultMessage: 'PipelineResources cannot be empty'
                   })}
                   selectedItem={(() => {
@@ -647,7 +647,7 @@ class CreateTaskRun extends React.Component {
                   namespace={namespace}
                   invalid={validationError && !resources.outputs[spec.name]}
                   invalidText={intl.formatMessage({
-                    id: 'dashboard.createTaskRun.invalidPipelineResources',
+                    id: 'dashboard.createRun.invalidPipelineResources',
                     defaultMessage: 'PipelineResources cannot be empty'
                   })}
                   selectedItem={(() => {
@@ -676,7 +676,7 @@ class CreateTaskRun extends React.Component {
                   placeholder={paramSpec.default || paramSpec.name}
                   invalid={validationError && !params[paramSpec.name]}
                   invalidText={intl.formatMessage({
-                    id: 'dashboard.createTaskRun.invalidParams',
+                    id: 'dashboard.createRun.invalidParams',
                     defaultMessage: 'Params cannot be empty'
                   })}
                   value={params[paramSpec.name] || ''}
@@ -689,14 +689,14 @@ class CreateTaskRun extends React.Component {
           )}
           <FormGroup
             legendText={intl.formatMessage({
-              id: 'dashboard.createTaskRun.optional.legendText',
+              id: 'dashboard.createRun.optional.legendText',
               defaultMessage: 'Optional values'
             })}
           >
             <ServiceAccountsDropdown
               id="create-taskrun--sa-dropdown"
               titleText={intl.formatMessage({
-                id: 'dashboard.createTaskRun.serviceAccountLabel',
+                id: 'dashboard.serviceAccountLabel.optional',
                 defaultMessage: 'ServiceAccount (optional)'
               })}
               namespace={namespace}
@@ -714,7 +714,7 @@ class CreateTaskRun extends React.Component {
             <TextInput
               id="create-taskrun--timeout"
               labelText={intl.formatMessage({
-                id: 'dashboard.createTaskRun.timeoutLabel',
+                id: 'dashboard.createRun.timeoutLabel',
                 defaultMessage: 'Timeout'
               })}
               helperText={intl.formatMessage({
@@ -723,7 +723,7 @@ class CreateTaskRun extends React.Component {
               })}
               invalid={validationError && !validTimeout}
               invalidText={intl.formatMessage({
-                id: 'dashboard.createTaskRun.invalidTimeout',
+                id: 'dashboard.createRun.invalidTimeout',
                 defaultMessage:
                   'Timeout must be a valid number less than 525600'
               })}

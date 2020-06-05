@@ -121,14 +121,14 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
           loading={loading && !clusterTasksFormatted.length}
           emptyTextAllNamespaces={intl.formatMessage(
             {
-              id: 'dashboard.emptyState.clusterTasks',
+              id: 'dashboard.emptyState.clusterResource',
               defaultMessage: 'No {kind}'
             },
             { kind: 'ClusterTasks' }
           )}
           emptyTextSelectedNamespace={intl.formatMessage(
             {
-              id: 'dashboard.emptyState.clusterTasks',
+              id: 'dashboard.emptyState.clusterResource',
               defaultMessage: 'No {kind}'
             },
             { kind: 'ClusterTasks' }

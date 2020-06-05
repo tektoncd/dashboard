@@ -442,7 +442,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
               value="accessToken"
               id="access-radio"
               labelText={intl.formatMessage({
-                id: 'dashboard.universalFields.accessTokenRadioButton',
+                id: 'dashboard.accessTokenField.accessToken',
                 defaultMessage: 'Access Token'
               })}
             />
