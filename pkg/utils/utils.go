@@ -130,7 +130,6 @@ func SanitizeSecret(obj interface{}, skipDeletedCheck bool) interface{} {
 		Annotations:       annotations,
 	}
 
-	logging.Log.Debug("Sanitizing Secret")
 	data := make(map[string][]byte)
 	if secret.Data["username"] != nil {
 		data["username"] = secret.Data["username"]
