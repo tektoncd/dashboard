@@ -332,7 +332,7 @@ export class ImportResources extends Component {
                       {
                         id: 'dashboard.importResources.advanced.tooltip',
                         defaultMessage:
-                          'Change these parameters if you want the PipelineRun that will do the importing to run in a different namespace from the Dashboard&apos;s.{break}You can optionally provide a different ServiceAccount too.'
+                          'Change these parameters if you want the PipelineRun that will do the importing to run in a different namespace from the Dashboard.{break}You can optionally provide a different ServiceAccount too.'
                       },
                       {
                         break: (
