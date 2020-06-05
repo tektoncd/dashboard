@@ -24,7 +24,6 @@ metadata:
 rules:
   # this is needed to lookup triggers version
   - apiGroups:
-      - extensions
       - apps
     resources:
       - deployments
