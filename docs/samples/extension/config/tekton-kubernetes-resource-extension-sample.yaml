@@ -6,7 +6,7 @@ metadata:
   labels:
     rbac.dashboard.tekton.dev/aggregate-to-dashboard: "true"
 rules:
-  - apiGroups: ["extensions"]
+  - apiGroups: ["apps"]
     resources: ["deployments"]
     verbs: ["get", "list", "watch"]
 ---
@@ -16,6 +16,6 @@ metadata:
   name: sample-deployment-extension
   namespace: tekton-pipelines
 spec:
-  apiVersion: extensions/v1beta1
+  apiVersion: apps/v1
   name: deployments
   displayname: k8s deployments
