@@ -1,3 +1,4 @@
+<!--
 ---
 title: "Dashboard"
 linkTitle: "Dashboard"
@@ -7,6 +8,7 @@ description: >
 cascade:
   github_project_repo: https://github.com/tektoncd/dashboard
 ---
+-->
 
 {{% pageinfo %}}
 This document is a work in progress.
