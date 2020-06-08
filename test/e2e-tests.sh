@@ -45,7 +45,7 @@ fi
 initOS
 install_kustomize
 
-function test_dashboard() {
+test_dashboard() {
   local pipelineVersion=$1
   # overlay or installer
   local installMode=$2
@@ -201,19 +201,24 @@ function test_dashboard() {
   delete_pipeline_crd $pipelineVersion
 }
 
+test_overlay() {
+  local overlay=$1
+  kustomize build  --load_restrictor none "overlays/$overlay" || fail_test "Failed to run kustomize on $overlay"
+}
+
 # validate overlays
-kustomize build overlays/dev || fail_test "Failed to run kustomize on overlays/dev"
-kustomize build overlays/dev-locked-down --load_restrictor=LoadRestrictionsNone || fail_test "Failed to run kustomize on overlays/dev-locked-down"
-kustomize build overlays/dev-openshift --load_restrictor=LoadRestrictionsNone || fail_test "Failed to run kustomize on overlays/dev-openshift"
-kustomize build overlays/dev-openshift-locked-down --load_restrictor=LoadRestrictionsNone || fail_test "Failed to run kustomize on overlays/dev-openshift-locked-down"
+test_overlay k8s/full-cluster/read-write
+test_overlay k8s/full-cluster/read-only
+test_overlay openshift/full-cluster/read-write
+test_overlay openshift/full-cluster/read-only
 
 if [ -z "$PIPELINES_VERSION" ]; then
   PIPELINES_VERSION=v0.13.2
 fi
 
 # test overlays
-test_dashboard $PIPELINES_VERSION overlay proxy dev
-test_dashboard $PIPELINES_VERSION overlay kubectl dev-locked-down
+test_dashboard $PIPELINES_VERSION overlay proxy k8s/full-cluster/read-write
+test_dashboard $PIPELINES_VERSION overlay kubectl k8s/full-cluster/read-only
 
 # test installer
 test_dashboard $PIPELINES_VERSION installer proxy

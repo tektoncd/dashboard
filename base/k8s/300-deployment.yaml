@@ -1,0 +1,73 @@
+# Copyright 2019 The Tekton Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tekton-dashboard
+  namespace: tekton-pipelines
+  labels:
+    app.kubernetes.io/name: dashboard
+    app.kubernetes.io/component: dashboard
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/version: devel
+    app.kubernetes.io/part-of: tekton-dashboard
+    dashboard.tekton.dev/release: devel
+    app: tekton-dashboard
+    version: devel
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: dashboard
+      app.kubernetes.io/component: dashboard
+      app.kubernetes.io/instance: default
+      app.kubernetes.io/part-of: tekton-dashboard
+  template:
+    metadata:
+      name: tekton-dashboard
+      labels:
+        app.kubernetes.io/name: dashboard
+        app.kubernetes.io/component: dashboard
+        app.kubernetes.io/instance: default
+        app.kubernetes.io/version: devel
+        app.kubernetes.io/part-of: tekton-dashboard
+        app: tekton-dashboard
+    spec:
+      serviceAccountName: tekton-dashboard
+      volumes: []
+      securityContext:
+        runAsNonRoot: true
+      containers:
+        - name: tekton-dashboard
+          image: dashboardImage
+          ports:
+            - containerPort: 9097
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 9097
+          readinessProbe:
+            httpGet:
+              path: /readiness
+              port: 9097
+          args:
+            - --port=9097
+            - --web-dir=/var/run/ko
+          env:
+            - name: INSTALLED_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
