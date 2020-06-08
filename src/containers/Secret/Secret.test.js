@@ -13,9 +13,6 @@ limitations under the License.
 
 import React from 'react';
 import { waitForElement } from 'react-testing-library';
-import { Provider } from 'react-redux';
-import thunk from 'redux-thunk';
-import configureStore from 'redux-mock-store';
 import { createIntl } from 'react-intl';
 import { SecretContainer } from './Secret';
 import { renderWithRouter } from '../../utils/test';
@@ -56,31 +53,16 @@ it('SecretContainer renders', async () => {
       secretName
     }
   };
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const testStore = mockStore({
-    namespaces: {
-      selected: 'default'
-    },
-    Secrets: {
-      byId: {},
-      byNamespace: { default: {} },
-      errorMessage: null,
-      isFetching: false
-    }
-  });
 
   const { getByText } = renderWithRouter(
-    <Provider store={testStore}>
-      <SecretContainer
-        intl={intl}
-        match={match}
-        fetchSecret={() => Promise.resolve()}
-        fetchServiceAccounts={() => Promise.resolve()}
-        error={null}
-        loading={false}
-      />
-    </Provider>
+    <SecretContainer
+      intl={intl}
+      match={match}
+      fetchSecret={() => Promise.resolve()}
+      fetchServiceAccounts={() => Promise.resolve()}
+      error={null}
+      loading={false}
+    />
   );
   await waitForElement(() => getByText(`Secret bar not found`));
 });
@@ -93,33 +75,16 @@ it('SecretContainer renders service accounts', async () => {
     }
   };
 
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-
-  const testStore = mockStore({
-    namespaces: {
-      selected: 'tekton-pipelines'
-    },
-    Secrets: {
-      byId: 'secret-simple',
-      byNamespace: { default: 'tekton-pipelines' },
-      errorMessage: null,
-      isFetching: false
-    }
-  });
-
   const { getByText } = renderWithRouter(
-    <Provider store={testStore}>
-      <SecretContainer
-        intl={intl}
-        match={match}
-        error={null}
-        fetchSecret={() => Promise.resolve(secret)}
-        fetchServiceAccounts={() => Promise.resolve(serviceAccounts)}
-        serviceAccounts={serviceAccounts}
-        secret={secret}
-      />
-    </Provider>
+    <SecretContainer
+      intl={intl}
+      match={match}
+      error={null}
+      fetchSecret={() => Promise.resolve(secret)}
+      fetchServiceAccounts={() => Promise.resolve(serviceAccounts)}
+      serviceAccounts={serviceAccounts}
+      secret={secret}
+    />
   );
 
   await waitForElement(() => getByText('secret-simple'));
