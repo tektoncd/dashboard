@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import 'react-testing-library/cleanup-after-each';
+import 'jest-dom/extend-expect';
 import fetchMock from 'fetch-mock';
 
 fetchMock.catch();
