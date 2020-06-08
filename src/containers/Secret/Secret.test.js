@@ -13,7 +13,6 @@ limitations under the License.
 
 import React from 'react';
 import { waitForElement } from 'react-testing-library';
-import 'jest-dom/extend-expect';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';

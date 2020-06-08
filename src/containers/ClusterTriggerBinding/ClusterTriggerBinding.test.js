@@ -13,7 +13,6 @@ limitations under the License.
 
 import React from 'react';
 import { fireEvent, waitForElement } from 'react-testing-library';
-import 'jest-dom/extend-expect';
 import { createIntl } from 'react-intl';
 import { ClusterTriggerBindingContainer } from './ClusterTriggerBinding';
 import { renderWithRouter } from '../../utils/test';
