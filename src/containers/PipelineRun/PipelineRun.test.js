@@ -13,9 +13,6 @@ limitations under the License.
 
 import React from 'react';
 import { waitForElement } from 'react-testing-library';
-import { Provider } from 'react-redux';
-import thunk from 'redux-thunk';
-import configureStore from 'redux-mock-store';
 import { createIntl } from 'react-intl';
 import { PipelineRunContainer } from './PipelineRun';
 import { renderWithRouter } from '../../utils/test';
@@ -33,36 +30,18 @@ it('PipelineRunContainer renders', async () => {
       pipelineRunName
     }
   };
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const testStore = mockStore({
-    tasks: {
-      byNamespace: { default: {} }
-    },
-    namespaces: {
-      selected: 'default'
-    },
-    pipelineRuns: {
-      byId: {},
-      byNamespace: { default: {} },
-      errorMessage: null,
-      isFetching: false
-    }
-  });
 
   const { getByText } = renderWithRouter(
-    <Provider store={testStore}>
-      <PipelineRunContainer
-        intl={intl}
-        match={match}
-        fetchTaskRuns={() => Promise.resolve()}
-        fetchPipelineRun={() => Promise.resolve()}
-        fetchTasks={() => Promise.resolve()}
-        fetchClusterTasks={() => Promise.resolve()}
-        error={null}
-        loading={false}
-      />
-    </Provider>
+    <PipelineRunContainer
+      intl={intl}
+      match={match}
+      fetchTaskRuns={() => Promise.resolve()}
+      fetchPipelineRun={() => Promise.resolve()}
+      fetchTasks={() => Promise.resolve()}
+      fetchClusterTasks={() => Promise.resolve()}
+      error={null}
+      loading={false}
+    />
   );
   await waitForElement(() => getByText(`PipelineRun not found`));
 });
@@ -75,42 +54,16 @@ it('PipelineRunContainer handles error state', async () => {
     }
   };
 
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-
-  const testStore = mockStore({
-    tasks: {
-      byNamespace: { default: {} }
-    },
-    taskRuns: {
-      byId: {},
-      byNamespace: { default: {} },
-      errorMessage: null,
-      isFetching: false
-    },
-    namespaces: {
-      selected: 'default'
-    },
-    pipelineRuns: {
-      byId: {},
-      byNamespace: { default: {} },
-      errorMessage: 'Error',
-      isFetching: false
-    }
-  });
-
   const { getByText } = renderWithRouter(
-    <Provider store={testStore}>
-      <PipelineRunContainer
-        intl={intl}
-        match={match}
-        error="Error"
-        fetchTaskRuns={() => Promise.resolve()}
-        fetchPipelineRun={() => Promise.resolve()}
-        fetchTasks={() => Promise.resolve()}
-        fetchClusterTasks={() => Promise.resolve()}
-      />
-    </Provider>
+    <PipelineRunContainer
+      intl={intl}
+      match={match}
+      error="Error"
+      fetchTaskRuns={() => Promise.resolve()}
+      fetchPipelineRun={() => Promise.resolve()}
+      fetchTasks={() => Promise.resolve()}
+      fetchClusterTasks={() => Promise.resolve()}
+    />
   );
   await waitForElement(() => getByText('Error loading PipelineRun'));
 });
