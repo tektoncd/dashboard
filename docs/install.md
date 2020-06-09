@@ -86,6 +86,10 @@ To install Tekton Dashboard on an OpenShift cluster:
 
 Congratulations! You have successfully installed Tekton Dashboard on your OpenShift cluster.
 
+**Note for users installing Tekton Pipelines and Triggers outside the OpenShift Pipelines operator:**
+
+Tekton Dashboard on OpenShift works out of the box with the OpenShift Pipelines operator. If you installed Tekton Pipelines and Triggers without using the OpenShift Pipelines operator, you will need to change the following args `--pipelines-namespace=openshift-pipelines` and `--triggers-namespace=openshift-pipelines` and set their values to the namespace where Pipelines and Triggers were respectively deployed.
+
 ## Accessing the Dashboard on Kubernetes
 
 By default, the Dashboard is not exposed outside the cluster.

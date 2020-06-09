@@ -21,6 +21,13 @@ patchesJson6902:
       name: tekton-dashboard
       namespace: tekton-pipelines
     path: ../logout/deployment-patch.yaml
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: tekton-dashboard
+      namespace: tekton-pipelines
+    path: ../openshift-patches/flags-deployment.yaml
 images:
   - name: dashboardImage
     newName: gcr.io/tekton-nightly/dashboard

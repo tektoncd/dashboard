@@ -1,0 +1,11 @@
+---
+# Openshift Pipelines operator will install Triggers and Pipelines
+# in the openshift-pipelines namespace
+- op: add
+  path: /spec/template/spec/containers/0/args/-
+  value:
+    --pipelines-namespace=openshift-pipelines
+- op: add
+  path: /spec/template/spec/containers/0/args/-
+  value:
+    --triggers-namespace=openshift-pipelines
