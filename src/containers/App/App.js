@@ -128,7 +128,8 @@ const ConfigError = injectIntl(ConfigErrorComponent);
 
 const initialState = {
   loadingConfigError: null,
-  loadingConfig: true
+  loadingConfig: true,
+  showLoadingState: true
 };
 
 export /* istanbul ignore next */ class App extends Component {
@@ -172,16 +173,20 @@ export /* istanbul ignore next */ class App extends Component {
     this.setState({ loadingConfig: true });
     try {
       await this.props.fetchInstallProperties();
-      this.setState({ loadingConfig: false });
+      this.setState({ loadingConfig: false, showLoadingState: false });
     } catch (error) {
       console.error(error); // eslint-disable-line no-console
-      this.setState({ loadingConfigError: error, loadingConfig: false });
+      this.setState({
+        loadingConfigError: error,
+        loadingConfig: false,
+        showLoadingState: false
+      });
     }
   }
 
   render() {
     const { extensions } = this.props;
-    const { loadingConfigError, loadingConfig } = this.state;
+    const { loadingConfigError, showLoadingState } = this.state;
 
     const lang = messages[this.props.lang] ? this.props.lang : 'en';
     const logoutButton = (
@@ -192,8 +197,8 @@ export /* istanbul ignore next */ class App extends Component {
       <IntlProvider locale={lang} defaultLocale="en" messages={messages[lang]}>
         <ConfigError loadingConfigError={loadingConfigError} />
 
-        {loadingConfig && <LoadingShell />}
-        {!loadingConfig && (
+        {showLoadingState && <LoadingShell />}
+        {!showLoadingState && (
           <Router>
             <>
               <Header logoutButton={logoutButton} />
