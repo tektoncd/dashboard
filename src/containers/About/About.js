@@ -31,6 +31,8 @@ import {
   isTriggersInstalled
 } from '../../reducers';
 
+import './About.scss';
+
 export /* istanbul ignore next */ class About extends Component {
   componentDidMount() {
     const { intl } = this.props;
@@ -131,7 +133,7 @@ export /* istanbul ignore next */ class About extends Component {
     });
 
     return (
-      <>
+      <div className="tkn--about">
         {error && (
           <InlineNotification
             kind="error"
@@ -184,7 +186,7 @@ export /* istanbul ignore next */ class About extends Component {
             />
           </div>
         )}
-      </>
+      </div>
     );
   }
 }
