@@ -14,10 +14,9 @@
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
+kind: ClusterRoleBinding
 metadata:
-  name: tekton-dashboard-pipelines
-  namespace: tekton-pipelines
+  name: tekton-dashboard-triggers
   labels:
     app.kubernetes.io/component: dashboard
     app.kubernetes.io/instance: default
@@ -29,4 +28,4 @@ subjects:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: tekton-dashboard-pipelines
+  name: tekton-dashboard-triggers
