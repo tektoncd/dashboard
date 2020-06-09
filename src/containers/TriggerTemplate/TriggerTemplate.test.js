@@ -271,7 +271,7 @@ it('TriggerTemplateContainer renders resource templates', async () => {
     }
   };
 
-  const { getByText, getByTestId } = renderWithRouter(
+  const { getByText } = renderWithRouter(
     <TriggerTemplateContainer
       intl={intl}
       match={match}
@@ -282,13 +282,8 @@ it('TriggerTemplateContainer renders resource templates', async () => {
   );
 
   await waitForElement(() => getByText('pipeline-template'));
-
-  await waitForElement(() => getByText(resourceTemplate1NameInfo));
-  await waitForElement(() => getByText(resourceTemplate2NameInfo));
-
-  const resourceTemplatesTable = getByTestId('resourcetemplatestable');
-  expect(resourceTemplatesTable).toHaveTextContent(resourceTemplate1NameInfo);
-  expect(resourceTemplatesTable).toHaveTextContent(resourceTemplate2NameInfo);
+  expect(getByText(resourceTemplate1NameInfo)).toBeTruthy();
+  expect(getByText(resourceTemplate2NameInfo)).toBeTruthy();
 });
 
 it('TriggerTemplateContainer renders full resource template information', async () => {
