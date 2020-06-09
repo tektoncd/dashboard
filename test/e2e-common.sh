@@ -84,7 +84,11 @@ function dump_extra_cluster_state() {
 function install_dashboard_backend() {
   overlay=$1
   echo ">> Deploying the Dashboard backend ($overlay)"
-  kustomize build --load_restrictor none overlays/$overlay | ko apply -f - || fail_test "Dashboard backend installation failed"	
+  kustomize build --load_restrictor none overlays/$overlay | ko apply -f - || fail_test "Dashboard backend installation failed"
+  wait_dashboard_backend
+}
+
+function wait_dashboard_backend() {
   # Wait until deployment is running before checking pods, stops timing error
   for i in {1..30}
   do

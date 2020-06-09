@@ -1,0 +1,378 @@
+#!/usr/bin/env bash
+
+# Copyright 2020 The Tekton Authors
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#     http://www.apache.org/licenses/LICENSE-2.0
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# dashboard flavour
+OPENSHIFT="false"
+READONLY="false"
+
+# configuration default values
+DEBUG="false"
+INSTALL_NAMESPACE="tekton-pipelines"
+PIPELINES_NAMESPACE="tekton-pipelines"
+TRIGGERS_NAMESPACE="tekton-pipelines"
+LOGOUT_URL=""
+CSRF_SECURE_COOKIE="false"
+LOG_LEVEL="info"
+LOG_FORMAT="json"
+
+initOS() {
+  OS=$(echo `uname`|tr '[:upper:]' '[:lower:]')
+
+  case "$OS" in
+    # Minimalist GNU for Windows
+    mingw*) OS='windows';;
+  esac
+
+  debug "Detected OS: $OS"
+}
+
+verifySupported() {
+  if ! type "kubectl" > /dev/null; then
+    echo "kubectl is required"
+    exit 1
+  fi
+
+  if ! type "kustomize" > /dev/null; then
+    echo "kustomize is required"
+    exit 1
+  fi
+
+  if ! type "ko" > /dev/null; then
+    echo "ko is required"
+    exit 1
+  fi
+
+  if ! type "sed" > /dev/null; then
+    echo "sed is required"
+    exit 1
+  fi
+}
+
+debug() {
+  local messsage=$1
+
+  if [ "$DEBUG" == "true" ]; then
+    echo "$message"
+  fi
+}
+
+build() {
+  local overlay="overlays/installer"
+
+  if [ "$OPENSHIFT" == "true" ]; then
+    overlay="$overlay/openshift"
+  else
+    overlay="$overlay/k8s"
+  fi
+
+  if [ "$READONLY" == "true" ]; then
+    overlay="$overlay/read-only"
+  else
+    overlay="$overlay/read-write"
+  fi
+
+  debug "Building overlay $overlay ..."
+
+  kustomize build --load_restrictor none "$overlay" | ko resolve -f - > "$TMP_FILE"
+}
+
+setup() {
+  if [ ! -z "$OVERRIDE_NAMESPACE" ]; then
+    INSTALL_NAMESPACE="$OVERRIDE_NAMESPACE"
+  elif [ "$OPENSHIFT" == "true" ]; then
+    INSTALL_NAMESPACE="openshift-pipelines"
+  fi
+
+  if [ ! -z "$OVERRIDE_PIPELINES_NAMESPACE" ]; then
+    PIPELINES_NAMESPACE="$OVERRIDE_PIPELINES_NAMESPACE"
+  elif [ "$OPENSHIFT" == "true" ]; then
+    PIPELINES_NAMESPACE="openshift-pipelines"
+  fi
+
+  if [ ! -z "$OVERRIDE_TRIGGERS_NAMESPACE" ]; then
+    TRIGGERS_NAMESPACE="$OVERRIDE_TRIGGERS_NAMESPACE"
+  elif [ "$OPENSHIFT" == "true" ]; then
+    TRIGGERS_NAMESPACE="openshift-pipelines"
+  fi
+
+  if [ -z "$LOGOUT_URL" ] && [ "$OPENSHIFT" == "true" ]; then
+    LOGOUT_URL="/oauth/sign_out"
+  fi
+}
+
+replace() {
+  local src=$1
+  local dest=$2
+  
+  debug "REPLACE $src -> $dest"
+
+  if [ "$OS" == "darwin" ]; then
+    sed -i "" "s~$src~$dest~g" $TMP_FILE
+  else
+    sed -i "s~$src~$dest~g" $TMP_FILE
+  fi
+}
+
+patch() {
+  replace "--pipelines-namespace=--pipelines-namespace" "--pipelines-namespace=$PIPELINES_NAMESPACE"
+  replace "--triggers-namespace=--triggers-namespace" "--triggers-namespace=$TRIGGERS_NAMESPACE"
+  replace "--csrf-secure-cookie=--csrf-secure-cookie" "--csrf-secure-cookie=$CSRF_SECURE_COOKIE"
+  replace "--log-level=--log-level" "--log-level=$LOG_LEVEL"
+  replace "--log-format=--log-format" "--log-format=$LOG_FORMAT"
+  replace "--logout-url=--logout-url" "--logout-url=$LOGOUT_URL"
+  replace "--read-only=--read-only" "--read-only=$READONLY"
+  replace "namespace: tekton-dashboard" "namespace: $INSTALL_NAMESPACE"
+}
+
+ingress() {
+if [ ! -z "$INGRESS_URL" ] && [ ! -z "$INGRESS_SECRET" ]; then
+cat <<EOF >> $TMP_FILE
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: tekton-dashboard
+  namespace: $INSTALL_NAMESPACE
+spec:
+  tls:
+  - hosts:
+    - $INGRESS_URL
+    secretName: $INGRESS_SECRET
+  rules:
+  - host: $INGRESS_URL
+    http:
+      paths:
+      - backend:
+          serviceName: tekton-dashboard
+          servicePort: 9097
+EOF
+elif [ ! -z "$INGRESS_URL" ]; then
+cat <<EOF >> $TMP_FILE
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: tekton-dashboard
+  namespace: $INSTALL_NAMESPACE
+spec:
+  rules:
+  - host: $INGRESS_URL
+    http:
+      paths:
+      - backend:
+          serviceName: tekton-dashboard
+          servicePort: 9097
+EOF
+fi
+}
+
+rbac() {
+cat <<EOF >> $TMP_FILE
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tekton-dashboard-pipelines
+  namespace: $PIPELINES_NAMESPACE
+  labels:
+    app.kubernetes.io/component: dashboard
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/part-of: tekton-dashboard
+subjects:
+  - kind: ServiceAccount
+    name: tekton-dashboard
+    namespace: $INSTALL_NAMESPACE
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: tekton-dashboard-pipelines
+EOF
+
+cat <<EOF >> $TMP_FILE
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tekton-dashboard-triggers
+  namespace: $TRIGGERS_NAMESPACE
+  labels:
+    app.kubernetes.io/component: dashboard
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/part-of: tekton-dashboard
+subjects:
+  - kind: ServiceAccount
+    name: tekton-dashboard
+    namespace: $INSTALL_NAMESPACE
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: tekton-dashboard-triggers
+EOF
+}
+
+# install invokes kubectl apply with the downloaded manifest.
+install() {
+  kubectl create ns $INSTALL_NAMESPACE || true
+  kubectl apply -f $TMP_FILE
+}
+
+# uninstall invokes kubectl delete with the downloaded manifest.
+uninstall() {
+  kubectl delete -f $TMP_FILE
+}
+
+# uninstall invokes kubectl delete with the downloaded manifest.
+resolve() {
+  cat $TMP_FILE
+}
+
+# fail_trap is executed if an error occurs.
+fail_trap() {
+  result=$?
+  cleanup
+  exit $result
+}
+
+# help provides possible cli installation arguments
+help () {
+  echo -e "Global command syntax:"
+  echo -e "\tinstaller COMMAND [OPTIONS]"
+  echo -e ""
+  echo -e "Accepted commands:"
+  echo -e "\thelp|h\t\t\t\t\tPrints this help"
+  echo -e "\tinstall|i\t\t\t\tInstalls the dashboard"
+  echo -e "\tuninstall|u\t\t\t\tUninstalls the dashboard"
+  echo -e "\tbuild|b\t\t\t\t\tBuilds the manifests and docker image and outputs manfiests in the console"
+  echo -e ""
+  echo -e "Accepted options:"
+  echo -e "\t[--debug]\t\t\t\tPrints additional messages in the console"
+  echo -e "\t[--csrf-secure-cookie]\t\t\tEnable secure CSRF cookie"
+  echo -e "\t[--openshift]\t\t\t\tWill build manifests for openshift"
+  echo -e "\t[--read-only]\t\t\t\tWill build manifests for a readonly deployment"
+  echo -e "\t[--namespace <namespace>]\t\tWill override install namespace"
+  echo -e "\t[--pipelines-namespace <namespace>]\tOverride the namespace where Tekton Pipelines is installed (defaults to tekton-pipelines)"
+  echo -e "\t[--triggers-namespace <namespace>]\tOverride the namespace where Tekton Triggers is installed (defaults to tekton-pipelines)"
+  echo -e "\t[--ingress-url <url>]\t\t\tWill create an additional ingress with the specified url"
+  echo -e "\t[--ingress-secret <secret>]\t\tWill add ssl support to the ingress"
+}
+
+# cleanup temporary files
+cleanup() {
+  if [[ -d "${TMP_ROOT:-}" ]]; then
+    rm -rf "$TMP_ROOT"
+  fi
+}
+
+# Execution
+
+#Stop execution on any error
+trap "fail_trap" EXIT
+
+set -e
+
+# Parsing command
+case $1 in
+  'help'|h)
+    help
+    exit 0
+    ;;
+  'install'|i)
+    ACTION="install"
+    shift
+    ;;
+  'uninstall'|u)
+    ACTION="uninstall"
+    shift
+    ;;
+  'build'|b)
+    ACTION="build"
+    shift
+    ;;
+  *)
+    ACTION="build"
+    ;;
+esac
+
+set -u
+
+# Parsing options (if any)
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    '--openshift')
+      OPENSHIFT="true"
+      ;;
+    '--read-only')
+      READONLY="true"
+      ;;
+    '--csrf-secure-cookie')
+      CSRF_SECURE_COOKIE="true"
+      ;;
+    '--namespace')
+      shift
+      export OVERRIDE_NAMESPACE="${1}"
+      ;;
+    '--pipelines-namespace')
+      shift
+      export OVERRIDE_PIPELINES_NAMESPACE="${1}"
+      ;;
+    '--triggers-namespace')
+      shift
+      export OVERRIDE_TRIGGERS_NAMESPACE="${1}"
+      ;;
+    '--ingress-url')
+      shift
+      export INGRESS_URL="${1}"
+      ;;
+    '--ingress-secret')
+      shift
+      export INGRESS_SECRET="${1}"
+      ;;
+    '--debug')
+      DEBUG="true"
+      ;;
+    *)
+      echo "ERROR: Unknown option $1"
+      help
+      exit 1
+      ;;
+  esac
+  shift
+done
+
+set +u
+
+TMP_ROOT="$(mktemp -dt tekton-dashboard-installer.XXXXXX)"
+TMP_FILE="$TMP_ROOT/manifest.yaml"
+
+initOS
+verifySupported
+build
+setup
+patch
+rbac
+ingress
+
+case $ACTION in
+  'install')
+    install
+    ;;
+  'uninstall')
+    uninstall
+    ;;
+  'build')
+    resolve
+    ;;
+esac
+
+cleanup
