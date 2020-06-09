@@ -110,7 +110,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
 
     const retryPodIndex = {};
     taskRuns = taskRuns.reduce((acc, taskRun) => {
-      if (taskRun.status.retriesStatus) {
+      if (taskRun.status?.retriesStatus) {
         taskRun.status.retriesStatus.forEach((retryStatus, index) => {
           const retryRun = { ...taskRun };
           retryRun.status = retryStatus;
@@ -182,7 +182,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
         }
         const { podName } = taskRun.status;
 
-        if (retryPodIndex[podName] || taskRun.status.retriesStatus) {
+        if (retryPodIndex[podName] || taskRun.status?.retriesStatus) {
           const retryNumber =
             retryPodIndex[podName] || taskRun.status.retriesStatus.length;
           pipelineTaskName = intl.formatMessage(
