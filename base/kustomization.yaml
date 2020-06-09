@@ -23,15 +23,15 @@ resources:
   - 200-clusterrole-triggers.yaml
   - 201-clusterrolebinding-backend.yaml
   - 201-clusterrolebinding-extensions.yaml
+  - 201-clusterrolebinding-pipelines.yaml
   - 201-clusterrolebinding-tenant.yaml
+  - 201-clusterrolebinding-triggers.yaml
   # this one should be used instead of 201-clusterrolebinding-extensions.yaml
   # to enable single namespace visibility
   # - 201-rolebinding-extensions.yaml
-  - 201-rolebinding-pipelines.yaml
   # this one should be used instead of 201-clusterrolebinding-tenant.yaml
   # to enable single namespace visibility
   # - 201-rolebinding-tenant.yaml
-  - 201-rolebinding-triggers.yaml
   - 202-extension-crd.yaml
   - 203-serviceaccount.yaml
   - 300-deployment.yaml
