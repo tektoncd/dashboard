@@ -15,8 +15,7 @@
     "history": "^4.9.0",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
-    "react-router-dom": "^5.0.0",
-    "react-testing-library": "^6.0.0"
+    "react-router-dom": "^5.0.0"
   },
   "engines": {
     "node": "^10.15.1",
