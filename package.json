@@ -89,7 +89,6 @@
     "glob": "^7.1.4",
     "html-webpack-plugin": "^3.2.0",
     "jest": "^25.3.0",
-    "jest-dom": "^3.4.0",
     "lerna": "^3.16.4",
     "lodash.difference": "^4.5.0",
     "lodash.omit": "^4.5.0",
