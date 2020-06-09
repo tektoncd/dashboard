@@ -45,16 +45,27 @@ fi
 initOS
 install_kustomize
 
-function test_overlay() {
-  overlay=$1
+function test_dashboard() {
+  # overlay or installer
+  installMode=$1
+  # kubectl or proxy (to create the necessary resources)
   creationMethod=$2
 
-  header "Setting up environment ($overlay)"
+  header "Installing pipelines"
 
   install_pipeline_crd
-  install_dashboard_backend $overlay
 
-  header "Running the e2e tests ($overlay)"
+  if [ "$installMode" == "overlay" ]; then
+    overlay=$3
+    header "Setting up environment ($overlay)"
+    install_dashboard_backend $overlay
+    header "Running the e2e tests - overlay ($overlay)"
+  else
+    header "Setting up environment (${@:3})"
+    $tekton_repo_dir/scripts/installer install ${@:3}
+    wait_dashboard_backend
+    header "Running the e2e tests - installer (${@:3})"
+  fi
 
   # Port forward the dashboard
   kubectl port-forward $(kubectl get pod --namespace tekton-pipelines -l app=tekton-dashboard -o name)  --namespace tekton-pipelines 9097:9097 &
@@ -179,7 +190,12 @@ function test_overlay() {
   kill -9 $dashboardForwardPID
   kill -9 $podForwardPID
 
-  uninstall_dashboard_backend $overlay
+  if [ "$installMode" == "overlay" ]; then
+    overlay=$3
+    uninstall_dashboard_backend $overlay
+  else
+    $tekton_repo_dir/scripts/installer uninstall ${@:3}
+  fi
   delete_pipeline_crd
 }
 
@@ -189,7 +205,12 @@ kustomize build overlays/dev-locked-down --load_restrictor=LoadRestrictionsNone 
 kustomize build overlays/dev-openshift --load_restrictor=LoadRestrictionsNone || fail_test "Failed to run kustomize on overlays/dev-openshift"
 kustomize build overlays/dev-openshift-locked-down --load_restrictor=LoadRestrictionsNone || fail_test "Failed to run kustomize on overlays/dev-openshift-locked-down"
 
-test_overlay dev "proxy"
-test_overlay dev-locked-down "kubectl"
+# test overlays
+test_dashboard overlay proxy dev
+test_dashboard overlay kubectl dev-locked-down
+
+# test installer
+test_dashboard installer proxy
+test_dashboard installer kubectl --read-only
 
 success
