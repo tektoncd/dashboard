@@ -83,7 +83,13 @@ function node_test() {
   local failed=0
   echo "Running node tests from $(pwd)"
   node_npm_install || failed=1
+  echo "Linting"
   npm run lint || failed=1
+  echo "Checking message bundles"
+  npm run i18n:extract || failed=1
+  git status
+  git diff-index --patch --exit-code --no-color HEAD ./src/nls/ || failed=1
+  echo "Running unit tests"
   npm run test:ci || failed=1
   echo ""
   return ${failed}
