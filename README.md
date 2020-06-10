@@ -20,7 +20,7 @@ Among other things, the Tekton Dashboard supports:
 ## Start using Tekton Dashboard
 
 - Tekton Dashboard [install](./docs/install.md)
-- Tekton Dashboard [extensions](./docs/samples/extension/README.md)
+- Tekton Dashboard [extensions overview](./docs/extensions.md)
 - Try out the [katacoda tutorial](https://katacoda.com/ncskier/scenarios/tekton-dashboard)
 - Take a look at our [roadmap](./roadmap.md)
 - Feature requests and bug reports welcome, please [open an issue](https://github.com/tektoncd/dashboard/issues/new/choose)
