@@ -1,4 +1,4 @@
-# Contributing to Tekton Pipelines
+# Contributing to Tekton Dashboard
 
 Welcome to the Tekton Dashboard project! Thanks for considering contributing to
 our project and we hope you'll enjoy it :D
@@ -28,3 +28,8 @@ on:
 You can find details on our automation infrastructure in
 [the plumbing repo](https://github.com/tektoncd/plumbing).
 
+---
+
+Except as otherwise noted, the content of this page is licensed under the [Creative Commons Attribution 4.0 License](https://creativecommons.org/licenses/by/4.0/).
+
+Code samples are licensed under the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0).

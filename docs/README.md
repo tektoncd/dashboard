@@ -55,7 +55,7 @@ kubectl apply --filename https://github.com/tektoncd/dashboard/releases/latest/d
 The latest release **may not be compatible** with your Tekton Pipelines
 installation, should you have an earlier release of Tekton Pipelines
 installed. For more compatibility information, see the
-[Tekton Dashboard's "Which version should I use?"](https://github.com/tektoncd/dashboard#which-version-should-i-use)
+[Tekton Dashboard's "Read the docs"](https://github.com/tektoncd/dashboard#read-the-docs)
 section.
 
 If you would like to install an earlier release of Tekton Dashboard
