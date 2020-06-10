@@ -1,212 +1,57 @@
 # Tekton Dashboard
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/kubernetes/dashboard/blob/master/LICENSE)
+[![Go Report Card](https://goreportcard.com/badge/tektoncd/dashboard)](https://goreportcard.com/report/tektoncd/dashboard)
 
-Tekton Dashboard is a general purpose, web-based UI for Tekton Pipelines. It allows users to manage and view Tekton PipelineRuns and TaskRuns and the resources involved in their creation, execution, and completion. It also allows filtering of PipelineRuns and TaskRuns by label.
+Tekton Dashboard is a general purpose, web-based UI for [Tekton Pipelines](https://github.com/tektoncd/pipeline) and [Tekton triggers](https://github.com/tektoncd/triggers) resources.
+
+It allows users to manage and view Tekton resource creation, execution, and completion.
+
+Among other things, the Tekton Dashboard supports:
+- Filtering resources by label
+- Realtime view of PipelineRun and TaskRun logs
+- View resource details and YAML
+- Show resources for the whole cluster or limit visibility to a particular namespace
+- Import resources directly from a git repository
+- Adding functionality through extensions, like automatically triggering pipelines on git events (GitHub and GitLab supported)
 
 ![Dashboard UI workloads page](docs/dashboard-ui.png)
 
-## Pre-requisites
-
-[Kubernetes](https://github.com/kubernetes/kubernetes) must be installed with version 1.15.0 or later if you want to use a version of Tekton Pipelines newer than v0.10.1.
-
-[Tekton Pipelines](https://github.com/tektoncd/pipeline) must be installed in order to use the Tekton Dashboard. Instructions to install Tekton Pipelines can be found [here](https://github.com/tektoncd/pipeline/blob/master/docs/install.md). 
-
-### Which version should I use?
-
-It is strongly recommended to use the *v0.6.1.4* release for Tekton Pipelines v0.11.x and v0.12.x. This is a critically important security release and can display components from Triggers 0.4.
-
-The following versions should be for development or isolated usage only and are *deprecated*. It is strongly advised to pick up the latest releases as soon as possible.
-
-- Use the v0.6.0 release for Tekton Pipelines v0.11.x (can display components from Tekton Triggers 0.3.x)
-- Use the v0.5.3 release for Tekton Pipelines v0.10.x (can display components from Tekton Triggers 0.3.x)
-- Use the v0.5.2 release for Tekton Pipelines v0.10.x (can display components from Tekton Triggers 0.2.x)
-- Use the v0.5.0 release for Tekton Pipelines v0.10.x (can display components from Tekton Triggers 0.1 and all versions from now on have read-only install modes)
-- Use the v0.4.1 release for Tekton Pipelines v0.8.0 (can display components from Tekton Triggers 0.1)
-- Use the v0.2.1 release for Tekton Pipelines v0.7.0
-- Use the v0.1.1 release for Tekton Pipelines v0.5.2
-
-## Install Dashboard
-
-### Installing the latest release
-
-1. Run the
-   [`kubectl apply`](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#apply)
-   command to install the [Tekton Dashboard](https://github.com/tektoncd/dashboard)
-   and its dependencies:
-
-   ```bash
-   kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.6.1.4/tekton-dashboard-release.yaml
-   ```
-
-   Previous versions (up to 0.5.0) are available at `previous/$VERSION_NUMBER/release.yaml`, e.g.
-   https://storage.googleapis.com/tekton-releases/dashboard/previous/v0.4.1/release.yaml
-
-   As of version 0.5.0, the file name pattern is more descriptive, e.g.
-   https://storage.googleapis.com/tekton-releases/dashboard/previous/v0.6.0/tekton-dashboard-release.yaml
-
-2. Run the
-   [`kubectl get`](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#get)
-   command to monitor the Tekton Dashboard component until all of the
-   components show a `STATUS` of `Running`:
-
-   ```bash
-   kubectl get pods --namespace tekton-pipelines
-   ```
-
-   Tip: Instead of running the `kubectl get` command multiple times, you can
-   append the `--watch` flag to view the component's status updates in real
-   time. Use CTRL + C to exit watch mode.
-
-Once the dashboard `STATUS` is `Running`, the dashboard can be accessed by following instructions in the [Accessing the Dashboard](#accessing-the-dashboard) section. 
-
-Optionally, the dashboard can be used with the Tekton Webhooks Extension (see our [Getting Started](https://github.com/tektoncd/experimental/blob/master/webhooks-extension/docs/GettingStarted.md) guide).
-
-### Installing a nightly build
-
-Four nightly builds are available: (plain kube or Openshift) * (read-only or read-write):
-
-To install your preferred flavour use one of these four commands:
-
-```bash
-kubectl apply -f https://storage.googleapis.com/tekton-releases-nightly/dashboard/latest/tekton-dashboard-release.yaml
-kubectl apply -f https://storage.googleapis.com/tekton-releases-nightly/dashboard/latest/tekton-dashboard-release-readonly.yaml
-kubectl apply -f https://storage.googleapis.com/tekton-releases-nightly/dashboard/latest/openshift-tekton-dashboard-release.yaml
-kubectl apply -f https://storage.googleapis.com/tekton-releases-nightly/dashboard/latest/openshift-tekton-dashboard-release-readonly.yaml
-```
-
-### Installing from a development environment
-
-As a developer you can install nightly builds, or a local build. Nightly builds come in the usual four flavours.
-
-```shell
-# Plain Kube
-kustomize build overlays/latest | ko apply -f -
-kustomize build overlays/latest-locked-down | ko apply -f -
-
-# OpenShift
-kustomize build overlays/latest-openshift --load_restrictor=LoadRestrictionsNone \
- | ko resolve -f - | kubectl apply -f - --validate=false
-kustomize build overlays/latest-openshift-locked-down --load_restrictor=LoadRestrictionsNone \
- | ko resolve -f - | kubectl apply -f - --validate=false
-```
-
-In read-only mode, buttons and sections of the Dashboard will not be displayed (for example, you won't have the ability to create, stop, and delete PipelineRuns).
-
-Development installation of the Dashboard uses `ko`:
-
-```bash
-$ docker login
-$ export KO_DOCKER_REPO=docker.io/<mydockername>
-$ ./install-dev.sh
-```
-
-The `install-dev.sh` script will build and push an image of the Tekton Dashboard to the Docker registry which you are logged into. Any Docker registry will do, but in this case it will push to Dockerhub. It will also build the static web content using `npm` scripts.
-
-### Supported backend options
-
-The dashboard backend supports a number of options through command line arguments.
-
-These options are documented below:
-
-| Argument | Description | Type | Default value |
-|---|---|---|---|
-| `--csrf-secure-cookie` | Enable or disable Secure attribute on the CSRF cookie | `bool` | `true` |
-| `--help` | Print help message and exit | `bool` | `false` |
-| `--kube-config` | Path to kube config file, uses in cluster config if empty | `string` | `""` |
-| `--pipelines-namespace` | Namespace where Tekton pipelines is installed (assumes same namespace as dashboard if not set) | `string` | `""` |
-| `--triggers-namespace` | Namespace where Tekton triggers is installed (assumes same namespace as dashboard if not set) | `string` | `""` |
-| `--port` | Dashboard port number | `int` | `8080` |
-| `--read-only` | Enable or disable read only mode | `bool` | `false` |
-| `--web-dir` | Dashboard web resources directory | `string` | `""` |
-| `--logout-url` | If set, enables logout on the frontend and binds the logout button to this url | `string` | `""` |
-| `--namespace` | If set, limits the scope of resources watched to this namespace only | `string` | `""` |
-| `--log-level` | Minimum log level output by the logger | `string` | `"info"` |
-| `--log-format` | Format for log output (json or console) | `string` | `"json"` |
-
-Run `dashboard --help` to show the supported command line arguments and their default value directly from the `dashboard` binary.
-
-**Important note:** using `--namespace` ensures that the dashboard is watching resources in the namespace specified (and drives the frontend).
-It doesn't limit actions that can be performed to this namespace only though. It's important that this flag is used AND that rbac rules are setup accordingly.
-
-### Optionally set up the Ingress endpoint
-
-An Ingress definition is provided in the `ingress` directory, and this can optionally be installed and configured. If you wish to access the Tekton Dashboard, for example on your laptop that has a visible IP address, you can use the freely available [`nip.io`](https://nip.io/) service. A worked example follows.
-
-Create the Ingress:
-
-`kubectl apply ingress/basic-dashboard-ingress.yaml`
-
-Retrieve a publicly available IP address (in this case running on a laptop connected to a public network):
-
-`ip=$(ifconfig | grep netmask | sed -n 2p | cut -d ' ' -f2)`
-
-Now modify the `host` property for our Ingress to use the IP obtained above, with the `tekton-dashboard` prefix and the `.nip.io` suffix:
-
-`kubectl patch ing/tekton-dashboard -n tekton-pipelines --type=json -p='[{"op": "replace", "path": "/spec/rules/0/host", "value": '""tekton-dashboard.${ip}.nip.io""}]`
-
-You can then access the Tekton Dashboard at `tekton-dashboard.${ip}.nip.io`. This endpoint is also returned via the "get Tekton Dashboard Ingress" [API](https://github.com/tektoncd/dashboard/blob/master/DEVELOPMENT.md#api-definitions).
-
-## Install on OpenShift
-
-1. Install the Openshift Pipeline Operator from the operator hub.
-
-2. Assuming you want to install the Dashboard into the `openshift-pipelines` namespace, which is the default one:
-
-   ```bash
-   kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.6.1.4/openshift-tekton-dashboard-release.yaml --validate=false
-   ```
-
-3. Access the dashboard by determining its route with `kubectl get route tekton-dashboard -n openshift-pipelines`
-
-### Enable TLS for dashboard access via Ingress
-**Will only work in the cluster node**
-#### Pre-requisites:
-1. Tekton pipelines & dashboard installed
-2. dashboard repo cloned
-
-#### Steps:
-1. Edit `ingress/ingress-https-setup.sh` with all the necessary info
-2. Run the script from within the dashboard repo
-3. Access dashboard via `https://tekton-dashboard.<IP_ADDRESS>.nip.io`
-
-
-## Install on Minishift
-
-Either follow the instructions for OpenShift above or use the operator install as per the instructions below.
-
-1. Install [tektoncd-pipeline-operator](https://github.com/openshift/tektoncd-pipeline-operator#deploy-openshift-pipelines-operator-on-minikube-for-testing)
-2. [Checkout](https://github.com/tektoncd/dashboard/blob/master/DEVELOPMENT.md#checkout-your-fork) the repository
-
-If you want to install the Dashboard into the tekton-pipelines namespace:
-
-- Install the Dashboard `./minishift-install-dashboard.sh`
-
-If you want to install the Dashboard into any other namespace:
-
-- Install the Dashboard `./minishift-install-dashboard.sh -n {NAMESPACE}`
-
-3. Wait until the pod `tekton-dashboard-1` is running in the namespace the Dashboard is installed into
-
-## Accessing the Dashboard
-
-The Dashboard can be accessed through its ClusterIP Service by running `kubectl proxy`. Assuming tekton-pipelines is the install namespace for the Dashboard, you can access the web UI at `localhost:8001/api/v1/namespaces/tekton-pipelines/services/tekton-dashboard:http/proxy/`.
-
-An alternative way to access the Dashboard is using `kubectl port-forward` e.g. if you installed the Tekton Dashboard into the `tekton-pipelines` namespace (which is the default) you can access the Dashboard with `kubectl --namespace tekton-pipelines port-forward svc/tekton-dashboard 9097:9097` and then just open `localhost:9097`.
-
-## Accessing the Dashboard on Minishift
-
-The Dashboard can be accessed by running `kubectl --namespace tekton-pipelines port-forward svc/tekton-dashboard 9097:9097`
-If installed into a namespace other than tekton-pipelines then the Dashboard can be accessed by running `kubectl --namespace $NAMESPACE port-forward svc/tekton-dashboard 9097:9097`
-You can access the web UI at `http://localhost:9097/`
-
-## Uninstalling the Dashboard on Minishift
-
-The Dashboard can be uninstalled on Minishift by running the command `./minishift-delete-dashboard.sh` Use `-n {NAMESPACE}` on the end of the command if installed into a namespace other than `tekton-pipelines`
+## Start using Tekton Dashboard
+
+- Tekton Dashboard [install](./docs/install.md)
+- Tekton Dashboard [extensions](./docs/samples/extension/README.md)
+- Try out the [katacoda tutorial](https://katacoda.com/ncskier/scenarios/tekton-dashboard)
+- Take a look at our [roadmap](./roadmap.md)
+- Feature requests and bug reports welcome, please [open an issue](https://github.com/tektoncd/dashboard/issues/new/choose)
+
+## Read the docs
+
+It is **strongly recommended** to use the **v0.6.1.4** release or newer for Tekton Pipelines v0.11.x and v0.12.x and Tekton Triggers v0.4
+- This is a **critically important security release**
+- Earlier versions are deprecated and should be used for **development or isolated usage only**
+
+| Version | Docs | Pipelines | Triggers |
+| ------- | ---- | --------- | -------- |
+| [HEAD](./DEVELOPMENT.md) | [Docs @ HEAD](./docs/README.md) | v0.11.x - v0.13.x | v0.5.x |
+| [v0.6.1.5](https://github.com/tektoncd/dashboard/releases/tag/v0.6.1.5) | [Docs @ v0.6.1.5](https://github.com/tektoncd/dashboard/tree/v0.6.1.5/docs) | v0.11.x - v0.12.x | v0.4.x |
+| [v0.6.1.4](https://github.com/tektoncd/dashboard/releases/tag/v0.6.1.4) | [Docs @ v0.6.1.4](https://github.com/tektoncd/dashboard/tree/v0.6.1.4/docs) | v0.11.x | v0.4.x |
+| [v0.6.0](https://github.com/tektoncd/dashboard/releases/tag/v0.6.0) | | v0.11.x | v0.3.x |
+| [v0.5.3](https://github.com/tektoncd/dashboard/releases/tag/v0.5.3) | | v0.10.x | v0.3.x |
+| [v0.5.2](https://github.com/tektoncd/dashboard/releases/tag/v0.5.2) | | v0.10.x | v0.2.x |
+| [v0.5.0](https://github.com/tektoncd/dashboard/releases/tag/v0.5.0) | | v0.10.x | v0.1 |
+| [v0.4.1](https://github.com/tektoncd/dashboard/releases/tag/v0.4.1) | | v0.8.0 | v0.1 |
+| [v0.3.0](https://github.com/tektoncd/dashboard/releases/tag/v0.3.0) | | v0.8.0 | v0.1 |
+| [v0.2.1](https://github.com/tektoncd/dashboard/releases/tag/v0.2.1) | | v0.7.0 | |
+| [v0.1.1](https://github.com/tektoncd/dashboard/releases/tag/v0.1.1) | | v0.5.2 | |
+
+**NOTE:** All versions from v0.5.0 support a read-only mode.
 
 ## Browser support
 
-The Dashboard has been tested on modern evergreen browsers, and generally supports the current and previous stable versions of:
+The Tekton Dashboard has been tested on modern evergreen browsers.
+
+It generally supports the current and previous stable versions of:
 
 - Google Chrome (Windows, macOS, Linux)
 - Mozilla Firefox (Windows, macOS, Linux)
@@ -215,13 +60,19 @@ The Dashboard has been tested on modern evergreen browsers, and generally suppor
 
 Older versions or other browsers may work, but some features may be missing or not function as expected.
 
-## Troubleshooting
-
-Keep in mind that When running your Tekton Pipelines, if you see a `fatal: could not read Username for *GitHub repository*: No such device or address` message in your failing Task logs, this indicates there is no `tekton.dev/git` annotated GitHub secret in use by the ServiceAccount that launched this PipelineRun. It is advised to create one through the Tekton Dashboard. The annotation will be added and the specified ServiceAccount will be patched.
-
 ## Want to contribute
 
-We are so excited to have you!
+We are so excited to have you !
 
-- See [CONTRIBUTING.md](https://github.com/tektoncd/pipeline/blob/master/CONTRIBUTING.md) for an overview of our processes
-- See [DEVELOPMENT.md](https://github.com/tektoncd/dashboard/blob/master/DEVELOPMENT.md) for how to get started
+- See [CONTRIBUTING.md](./CONTRIBUTING.md) for an overview of our processes
+- See [DEVELOPMENT.md](./DEVELOPMENT.md) for how to get started
+- Look at our
+  [good first issues](https://github.com/tektoncd/dashboard/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
+  and our
+  [help wanted issues](https://github.com/tektoncd/dashboard/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
+
+---
+
+Except as otherwise noted, the content of this page is licensed under the [Creative Commons Attribution 4.0 License](https://creativecommons.org/licenses/by/4.0/).
+
+Code samples are licensed under the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0).
