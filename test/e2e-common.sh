@@ -31,12 +31,14 @@ function print_diagnostic_info() {
 }
 
 function install_kustomize() {
-  echo ">> Installing kustomize"
-  tar=kustomize_v3.6.1_linux_amd64.tar.gz
-  curl -s -O -L https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v3.6.1/$tar
-  tar xzf ./$tar
+  if ! type "kustomize" > /dev/null; then
+    echo ">> Installing kustomize"
+    tar=kustomize_v3.6.1_linux_amd64.tar.gz
+    curl -s -O -L https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v3.6.1/$tar
+    tar xzf ./$tar
 
-  cp ./kustomize /usr/local/bin
+    cp ./kustomize /usr/local/bin
+  fi
 }
 
 function install_pipeline_crd() {

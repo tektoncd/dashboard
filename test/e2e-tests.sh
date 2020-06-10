@@ -22,7 +22,27 @@ source $(dirname $0)/e2e-common.sh
 
 # Script entry point.
 
-initialize $@
+SED="sed"
+START=1
+END=30
+
+initOS() {
+  local OS=$(echo `uname`|tr '[:upper:]' '[:lower:]')
+
+  case "$OS" in
+    darwin*) SED='gsed';;
+  esac
+}
+
+if [ -z "$LOCAL_RUN" ]; then
+  initialize $@
+  export REGISTRY="gcr.io/${E2E_PROJECT_ID}/${E2E_BASE_NAME}-e2e-img"
+else
+  export REGISTRY="registry.default.svc.cluster.local:5000/e2e-img"
+  END=50
+fi
+
+initOS
 install_kustomize
 
 function test_overlay() {
@@ -42,7 +62,8 @@ function test_overlay() {
 
   # Wait until dashboard is found
   dashboardExists=false
-  for i in {1..20};do
+  for i in $(eval echo "{$START..$END}")
+  do
     respF=$(curl -k  http://127.0.0.1:9097)
     if [ "$respF" != "" ]; then
       dashboardExists=true
@@ -65,7 +86,6 @@ function test_overlay() {
   export REPO_NAME="go-hello-world"
   export REPO_URL="https://github.com/a-roberts/go-hello-world"
   export EXPECTED_RETURN_VALUE="Hello World!"
-  export REGISTRY="gcr.io/${E2E_PROJECT_ID}/${E2E_BASE_NAME}-e2e-img"
   export TEKTON_PROXY_URL="http://localhost:9097/proxy/apis/tekton.dev/v1alpha1/namespaces/tekton-pipelines"
   export CSRF_HEADERS_STORE="csrf_headers.txt"
 
@@ -73,8 +93,8 @@ function test_overlay() {
   kubectl apply -f ${tekton_repo_dir}/test/resources/static
 
   curl -D $CSRF_HEADERS_STORE http://localhost:9097/v1/token
-  export CSRF_TOKEN=`grep -i 'X-CSRF-Token' $CSRF_HEADERS_STORE | sed -e 's/^X-CSRF-Token: //i;s/\r//'`
-  export CSRF_COOKIE=`grep -i 'Set-Cookie' $CSRF_HEADERS_STORE | sed -e 's/Set-Cookie: //i;s/; .*//;s/\r//'`
+  export CSRF_TOKEN=`grep -i 'X-CSRF-Token' $CSRF_HEADERS_STORE | $SED -e 's/^X-CSRF-Token: //i;s/\r//'`
+  export CSRF_COOKIE=`grep -i 'Set-Cookie' $CSRF_HEADERS_STORE | $SED -e 's/Set-Cookie: //i;s/; .*//;s/\r//'`
 
   if [ "$creationMethod" = "kubectl" ]; then
     # Kubectl envsubst resources
@@ -108,7 +128,7 @@ function test_overlay() {
   # Wait for deployment
   echo "About to check the deployment..."
   deploymentExist=false
-  for i in {1..30}
+  for i in $(eval echo "{$START..$END}")
   do
     wait=$(kubectl wait --namespace tekton-pipelines --for=condition=available deployments/go-hello-world --timeout=30s)
     if [ "$wait" = "deployment.apps/go-hello-world condition met" ]; then
