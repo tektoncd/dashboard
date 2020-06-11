@@ -163,6 +163,12 @@ function test_overlay() {
   delete_pipeline_crd
 }
 
+# validate overlays
+kustomize build overlays/dev || fail_test "Failed to run kustomize on overlays/dev"
+kustomize build overlays/dev-locked-down --load_restrictor=LoadRestrictionsNone || fail_test "Failed to run kustomize on overlays/dev-locked-down"
+kustomize build overlays/dev-openshift --load_restrictor=LoadRestrictionsNone || fail_test "Failed to run kustomize on overlays/dev-openshift"
+kustomize build overlays/dev-openshift-locked-down --load_restrictor=LoadRestrictionsNone || fail_test "Failed to run kustomize on overlays/dev-openshift-locked-down"
+
 test_overlay dev "proxy"
 test_overlay dev-locked-down "kubectl"
 
