@@ -23,12 +23,13 @@ import (
 	"time"
 
 	"github.com/gorilla/csrf"
-	routeclient "github.com/openshift/client-go/route/clientset/versioned"
+	routeclientset "github.com/openshift/client-go/route/clientset/versioned"
+	dashboardclientset "github.com/tektoncd/dashboard/pkg/client/clientset/versioned"
 	"github.com/tektoncd/dashboard/pkg/controllers"
 	"github.com/tektoncd/dashboard/pkg/endpoints"
-	logging "github.com/tektoncd/dashboard/pkg/logging"
+	"github.com/tektoncd/dashboard/pkg/logging"
 	"github.com/tektoncd/dashboard/pkg/router"
-	clientset "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
+	pipelineclientset "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
 	resourceclientset "github.com/tektoncd/pipeline/pkg/client/resource/clientset/versioned"
 	k8sclientset "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
@@ -96,10 +97,16 @@ func main() {
 		}
 	}
 
-	pipelineClient, err := clientset.NewForConfig(cfg)
+	pipelineClient, err := pipelineclientset.NewForConfig(cfg)
 	if err != nil {
 		logging.Log.Errorf("Error building pipeline clientset: %s", err.Error())
 	}
+
+	dashboardClient, err := dashboardclientset.NewForConfig(cfg)
+	if err != nil {
+		logging.Log.Errorf("Error building dashboard clientset: %s", err.Error())
+	}
+
 	pipelineResourceClient, err := resourceclientset.NewForConfig(cfg)
 	if err != nil {
 		logging.Log.Errorf("Error building pipelineresource clientset: %s", err.Error())
@@ -110,7 +117,7 @@ func main() {
 		logging.Log.Errorf("Error building k8s clientset: %s", err.Error())
 	}
 
-	routeClient, err := routeclient.NewForConfig(cfg)
+	routeClient, err := routeclientset.NewForConfig(cfg)
 	if err != nil {
 		logging.Log.Errorf("Error building route clientset: %s", err.Error())
 	}
@@ -126,6 +133,7 @@ func main() {
 	}
 
 	resource := endpoints.Resource{
+		DashboardClient:        dashboardClient,
 		PipelineClient:         pipelineClient,
 		PipelineResourceClient: pipelineResourceClient,
 		K8sClient:              k8sClient,
@@ -141,6 +149,7 @@ func main() {
 	resyncDur := time.Second * 30
 	controllers.StartTektonControllers(resource.PipelineClient, resource.PipelineResourceClient, *tenantNamespace, resyncDur, ctx.Done())
 	controllers.StartKubeControllers(resource.K8sClient, resyncDur, *tenantNamespace, *readOnly, routerHandler, ctx.Done())
+	controllers.StartDashboardControllers(resource.DashboardClient, resyncDur, *tenantNamespace, ctx.Done())
 
 	logging.Log.Infof("Creating server and entering wait loop")
 	CSRF := csrf.Protect(
