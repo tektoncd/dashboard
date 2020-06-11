@@ -46,4 +46,4 @@ spec:
           # Further to https://github.com/tektoncd/pipeline/pull/1122 it is necessary to copy files into $(resources.outputs.dashboard-source-repo.path)
           echo "Input source path=$(resources.inputs.dashboard-source-repo.path)"
           echo "Output source path=$(resources.outputs.dashboard-source-repo.path)"
-          cp -r $(resources.inputs.dashboard-source-repo.path)/* $(resources.outputs.dashboard-source-repo.path)
+          cp -a $(resources.inputs.dashboard-source-repo.path)/. $(resources.outputs.dashboard-source-repo.path)
