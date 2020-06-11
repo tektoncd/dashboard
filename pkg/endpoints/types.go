@@ -1,9 +1,10 @@
 package endpoints
 
 import (
-	routeclient "github.com/openshift/client-go/route/clientset/versioned"
-	"github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
-	resourceversioned "github.com/tektoncd/pipeline/pkg/client/resource/clientset/versioned"
+	routeclientset "github.com/openshift/client-go/route/clientset/versioned"
+	dashboardclientset "github.com/tektoncd/dashboard/pkg/client/clientset/versioned"
+	pipelineclientset "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
+	resourceclientset "github.com/tektoncd/pipeline/pkg/client/resource/clientset/versioned"
 	k8sclientset "k8s.io/client-go/kubernetes"
 )
 
@@ -41,9 +42,10 @@ func (o Options) GetTriggersNamespace() string {
 // Store all types here that are reused throughout files
 // Wrapper around all necessary clients used for endpoints
 type Resource struct {
-	PipelineClient         versioned.Interface
-	PipelineResourceClient resourceversioned.Interface
+	DashboardClient        dashboardclientset.Interface
+	PipelineClient         pipelineclientset.Interface
+	PipelineResourceClient resourceclientset.Interface
 	K8sClient              k8sclientset.Interface
-	RouteClient            routeclient.Interface
+	RouteClient            routeclientset.Interface
 	Options                Options
 }
