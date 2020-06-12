@@ -271,24 +271,23 @@ export /* istanbul ignore next */ class PipelineResourcesModal extends Component
         onRequestClose={this.handleClose}
       >
         <form>
-          {this.state.submitError &&
-            (open && (
-              <InlineNotification
-                kind="error"
-                title={intl.formatMessage({
-                  id: 'dashboard.error.title',
-                  defaultMessage: 'Error:'
-                })}
-                subtitle={getErrorMessage(this.state.submitError)}
-                iconDescription={intl.formatMessage({
-                  id: 'dashboard.notification.clear',
-                  defaultMessage: 'Clear Notification'
-                })}
-                data-testid="errorNotificationComponent"
-                onCloseButtonClick={this.resetError}
-                lowContrast
-              />
-            ))}
+          {this.state.submitError && open && (
+            <InlineNotification
+              kind="error"
+              title={intl.formatMessage({
+                id: 'dashboard.error.title',
+                defaultMessage: 'Error:'
+              })}
+              subtitle={getErrorMessage(this.state.submitError)}
+              iconDescription={intl.formatMessage({
+                id: 'dashboard.notification.clear',
+                defaultMessage: 'Clear Notification'
+              })}
+              data-testid="errorNotificationComponent"
+              onCloseButtonClick={this.resetError}
+              lowContrast
+            />
+          )}
           <UniversalFields
             name={name}
             selectedNamespace={namespace}

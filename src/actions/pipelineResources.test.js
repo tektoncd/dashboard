@@ -26,7 +26,10 @@ it('fetchPipelineResource', async () => {
   expect(creators.fetchNamespacedResource).toHaveBeenCalledWith(
     'PipelineResource',
     API.getPipelineResource,
-    { name, namespace }
+    {
+      name,
+      namespace
+    }
   );
 });
 
@@ -37,7 +40,9 @@ it('fetchPipelineResources', async () => {
   expect(creators.fetchNamespacedCollection).toHaveBeenCalledWith(
     'PipelineResource',
     API.getPipelineResources,
-    { namespace }
+    {
+      namespace
+    }
   );
 });
 
@@ -47,6 +52,8 @@ it('fetchPipelineResources no namespace', async () => {
   expect(creators.fetchNamespacedCollection).toHaveBeenCalledWith(
     'PipelineResource',
     API.getPipelineResources,
-    { namespace: undefined }
+    {
+      namespace: undefined
+    }
   );
 });

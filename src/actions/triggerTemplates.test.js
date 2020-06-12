@@ -26,7 +26,10 @@ it('fetchTriggerTemplate', async () => {
   expect(creators.fetchNamespacedResource).toHaveBeenCalledWith(
     'TriggerTemplate',
     API.getTriggerTemplate,
-    { name, namespace }
+    {
+      name,
+      namespace
+    }
   );
 });
 
@@ -38,7 +41,10 @@ it('fetchTriggerTemplates', async () => {
   expect(creators.fetchNamespacedCollection).toHaveBeenCalledWith(
     'TriggerTemplate',
     API.getTriggerTemplates,
-    { namespace, filters }
+    {
+      namespace,
+      filters
+    }
   );
 });
 
@@ -48,6 +54,8 @@ it('fetchTriggerTemplates no namespace', async () => {
   expect(creators.fetchNamespacedCollection).toHaveBeenCalledWith(
     'TriggerTemplate',
     API.getTriggerTemplates,
-    { namespace: undefined }
+    {
+      namespace: undefined
+    }
   );
 });

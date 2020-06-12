@@ -88,9 +88,7 @@ class ZoomablePipelineGraph extends React.Component {
             >
               <g
                 draggable
-                transform={`translate(${translate.x},${
-                  translate.y
-                }) scale(${scale},${scale})`}
+                transform={`translate(${translate.x},${translate.y}) scale(${scale},${scale})`}
               >
                 <PipelineGraph {...this.props} />
               </g>

@@ -16,9 +16,7 @@ export { default as ClusterTasks } from './ClusterTasks';
 export { default as ClusterTasksDropdown } from './ClusterTasksDropdown';
 export { default as Condition } from './Condition';
 export { default as Conditions } from './Conditions';
-export {
-  default as CustomResourceDefinition
-} from './CustomResourceDefinition';
+export { default as CustomResourceDefinition } from './CustomResourceDefinition';
 export { default as CreatePipelineRun } from './CreatePipelineRun';
 export { default as CreateSecret } from './CreateSecret';
 export { default as CreateTaskRun } from './CreateTaskRun';
@@ -34,9 +32,7 @@ export { default as LogDownloadButton } from './LogDownloadButton';
 export { default as NamespacesDropdown } from './NamespacesDropdown';
 export { default as PipelineResource } from './PipelineResource';
 export { default as PipelineResources } from './PipelineResources';
-export {
-  default as PipelineResourcesDropdown
-} from './PipelineResourcesDropdown';
+export { default as PipelineResourcesDropdown } from './PipelineResourcesDropdown';
 export { default as PipelineRun } from './PipelineRun';
 export { default as PipelineRuns } from './PipelineRuns';
 export { default as Pipelines } from './Pipelines';

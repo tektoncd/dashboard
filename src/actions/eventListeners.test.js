@@ -35,7 +35,10 @@ it('fetchEventListeners', async () => {
   expect(creators.fetchNamespacedCollection).toHaveBeenCalledWith(
     'EventListener',
     API.getEventListeners,
-    { namespace, filters }
+    {
+      namespace,
+      filters
+    }
   );
 });
 
@@ -45,6 +48,8 @@ it('fetchEventListeners no namespace', async () => {
   expect(creators.fetchNamespacedCollection).toHaveBeenCalledWith(
     'EventListener',
     API.getEventListeners,
-    { namespace: undefined }
+    {
+      namespace: undefined
+    }
   );
 });
