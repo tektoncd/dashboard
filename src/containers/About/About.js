@@ -206,7 +206,4 @@ const mapStateToProps = state => ({
 });
 
 export const AboutWithIntl = injectIntl(About);
-export default connect(
-  mapStateToProps,
-  null
-)(AboutWithIntl);
+export default connect(mapStateToProps)(AboutWithIntl);

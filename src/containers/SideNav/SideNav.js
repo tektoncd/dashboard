@@ -374,7 +374,4 @@ const mapDispatchToProps = {
 };
 
 export const SideNavWithIntl = injectIntl(SideNav);
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(SideNavWithIntl);
+export default connect(mapStateToProps, mapDispatchToProps)(SideNavWithIntl);

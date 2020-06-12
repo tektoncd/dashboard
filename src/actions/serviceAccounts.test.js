@@ -22,7 +22,9 @@ it('fetchServiceAccounts', async () => {
   expect(creators.fetchNamespacedCollection).toHaveBeenCalledWith(
     'ServiceAccount',
     API.getServiceAccounts,
-    { namespace }
+    {
+      namespace
+    }
   );
 });
 
@@ -34,7 +36,10 @@ it('fetchServiceAccount', async () => {
   expect(creators.fetchNamespacedResource).toHaveBeenCalledWith(
     'ServiceAccount',
     API.getServiceAccount,
-    { name, namespace }
+    {
+      name,
+      namespace
+    }
   );
 });
 
@@ -44,6 +49,8 @@ it('fetchServiceAccounts no namespace', async () => {
   expect(creators.fetchNamespacedCollection).toHaveBeenCalledWith(
     'ServiceAccount',
     API.getServiceAccounts,
-    { namespace: undefined }
+    {
+      namespace: undefined
+    }
   );
 });

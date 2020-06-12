@@ -23,7 +23,10 @@ it('fetchTriggerBinding', async () => {
   expect(creators.fetchNamespacedResource).toHaveBeenCalledWith(
     'TriggerBinding',
     API.getTriggerBinding,
-    { name, namespace }
+    {
+      name,
+      namespace
+    }
   );
 });
 
@@ -35,7 +38,10 @@ it('fetchTriggerBindings', async () => {
   expect(creators.fetchNamespacedCollection).toHaveBeenCalledWith(
     'TriggerBinding',
     API.getTriggerBindings,
-    { namespace, filters }
+    {
+      namespace,
+      filters
+    }
   );
 });
 
@@ -45,6 +51,8 @@ it('fetchTriggerBindings no namespace', async () => {
   expect(creators.fetchNamespacedCollection).toHaveBeenCalledWith(
     'TriggerBinding',
     API.getTriggerBindings,
-    { namespace: undefined }
+    {
+      namespace: undefined
+    }
   );
 });
