@@ -23,12 +23,18 @@ limitations under the License.
       }
     }
 
-    .bx--data-table-container {
-      width: 50%;
+    .tkn--table {
+      .bx--data-table-container {
+        .bx--data-table-header {
+          padding-left: 0;
+          padding-bottom: 0;
+        }
 
-      .bx--data-table-header {
-        padding-left: 0;
-        padding-bottom: 0;
+        .bx--data-table {
+          .cell-description {
+            max-width: 30vw;
+          }
+        }
       }
     }
   }
