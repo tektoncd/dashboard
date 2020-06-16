@@ -134,7 +134,7 @@ export function deleteSecret(secrets, cancelMethod) {
       return deleteWithinTimePromise;
     });
 
-    Promise.all(deletePromises)
+    return Promise.all(deletePromises)
       .then(() => {
         dispatch({
           type: 'SECRET_DELETE_SUCCESS'

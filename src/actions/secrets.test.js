@@ -194,8 +194,10 @@ it('deleteSecret', async () => {
     { type: 'SECRET_DELETE_SUCCESS' }
   ];
 
-  await store.dispatch(deleteSecret(secrets));
+  const cancelMethod = jest.fn();
+  await store.dispatch(deleteSecret(secrets, cancelMethod));
   expect(store.getActions()).toEqual(expectedActions);
+  expect(cancelMethod).toHaveBeenCalled();
 });
 
 it('deleteSecret error', async () => {
@@ -214,11 +216,14 @@ it('deleteSecret error', async () => {
 
   const expectedActions = [
     { type: 'CLEAR_SECRET_ERROR_NOTIFICATION' },
-    { type: 'SECRET_DELETE_REQUEST' }
+    { type: 'SECRET_DELETE_REQUEST' },
+    { type: 'SECRET_DELETE_FAILURE' }
   ];
 
-  await store.dispatch(deleteSecret(secrets));
+  const cancelMethod = jest.fn();
+  await store.dispatch(deleteSecret(secrets, cancelMethod));
   expect(store.getActions()).toEqual(expectedActions);
+  expect(cancelMethod).not.toHaveBeenCalled();
 });
 
 it('createSecret', async () => {
