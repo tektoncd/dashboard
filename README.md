@@ -28,13 +28,14 @@ Among other things, the Tekton Dashboard supports:
 
 ## Read the docs
 
-It is **strongly recommended** to use the **v0.6.1.4** release or newer for Tekton Pipelines v0.11.x and v0.12.x and Tekton Triggers v0.4
+It is **strongly recommended** to use the **v0.6.1.4** release or newer for Tekton Pipelines v0.11.x and v0.12.x and Tekton Triggers v0.4.
 - This is a **critically important security release**
 - Earlier versions are deprecated and should be used for **development or isolated usage only**
 
 | Version | Docs | Pipelines | Triggers |
 | ------- | ---- | --------- | -------- |
 | [HEAD](./DEVELOPMENT.md) | [Docs @ HEAD](./docs/README.md) | v0.11.x - v0.13.x | v0.5.x |
+| [v0.7.0](https://github.com/tektoncd/dashboard/releases/tag/v0.7.0) | [Docs @ v0.7.0](https://github.com/tektoncd/dashboard/tree/v0.7.0/docs) | v0.11.x - v0.13.x | v0.4.x - 0.5.x |
 | [v0.6.1.5](https://github.com/tektoncd/dashboard/releases/tag/v0.6.1.5) | [Docs @ v0.6.1.5](https://github.com/tektoncd/dashboard/tree/v0.6.1.5/docs) | v0.11.x - v0.12.x | v0.4.x |
 | [v0.6.1.4](https://github.com/tektoncd/dashboard/releases/tag/v0.6.1.4) | [Docs @ v0.6.1.4](https://github.com/tektoncd/dashboard/tree/v0.6.1.4/docs) | v0.11.x | v0.4.x |
 | [v0.6.0](https://github.com/tektoncd/dashboard/releases/tag/v0.6.0) | | v0.11.x | v0.3.x |
