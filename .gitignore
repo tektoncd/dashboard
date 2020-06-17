@@ -24,4 +24,4 @@ stats.json
 Thumbs.db
 
 csrf_headers.txt
-./dashboard
+/dashboard
