@@ -65,7 +65,7 @@ spec:
               port: 9097
           args:
             - --port=9097
-            - --web-dir=/var/run/ko/web
+            - --web-dir=/var/run/ko
           env:
             - name: INSTALLED_NAMESPACE
               valueFrom:

@@ -7,7 +7,7 @@
     "bootstrap:ci": "lerna bootstrap && lerna run prepare",
     "build": "webpack --config webpack.prod.js",
     "build:analyze": "webpack --config webpack.prod.js --profile --json > stats.json && npx webpack-bundle-analyzer stats.json",
-    "build_ko": "webpack --config webpack.prod.js --output-path='./cmd/dashboard/kodata/web' ",
+    "build_ko": "webpack --config webpack.prod.js --output-path='./cmd/dashboard/kodata' ",
     "clean": "lerna clean --yes && lerna run clean && rimraf node_modules",
     "eslint:check": "eslint --print-config . | eslint-config-prettier-check",
     "i18n:extract": "node scripts/i18n/extractMessages.js",
