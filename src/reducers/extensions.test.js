@@ -55,3 +55,97 @@ it('EXTENSIONS_FETCH_FAILURE', () => {
   const state = extensionsReducer({}, action);
   expect(selectors.getExtensionsErrorMessage(state)).toEqual(message);
 });
+
+it('ResourceExtension Events', () => {
+  const extension = {
+    spec: {
+      apiVersion: 'batch/v1beta1',
+      displayname: 'before',
+      name: 'cronjobs'
+    }
+  };
+
+  const action = {
+    type: 'ResourceExtensionCreated',
+    payload: extension
+  };
+
+  const state = extensionsReducer({}, action);
+  expect(selectors.getExtensions(state)).toEqual([
+    selectors.mapResourceExtension(extension)
+  ]);
+  expect(selectors.isFetchingExtensions(state)).toBe(false);
+
+  const updatedExtension = {
+    spec: {
+      apiVersion: 'batch/v1beta1',
+      displayname: 'after',
+      name: 'cronjobs'
+    }
+  };
+
+  const updateAction = {
+    type: 'ResourceExtensionUpdated',
+    payload: updatedExtension
+  };
+
+  const updatedState = extensionsReducer({}, updateAction);
+  expect(selectors.getExtensions(updatedState)).toEqual([
+    selectors.mapResourceExtension(updatedExtension)
+  ]);
+  expect(selectors.isFetchingExtensions(updatedState)).toBe(false);
+
+  const deleteAction = {
+    type: 'ResourceExtensionDeleted',
+    payload: updatedExtension
+  };
+
+  const deletedState = extensionsReducer(state, deleteAction);
+  expect(selectors.getExtensions(deletedState)).toEqual([]);
+  expect(selectors.isFetchingExtensions(deletedState)).toBe(false);
+});
+
+it('ServiceExtension Events', () => {
+  const extension = {
+    bundlelocation: 'bundle',
+    displayname: 'before',
+    name: 'sample-extension'
+  };
+
+  const action = {
+    type: 'ServiceExtensionCreated',
+    payload: extension
+  };
+
+  const state = extensionsReducer({}, action);
+  expect(selectors.getExtensions(state)).toEqual([
+    selectors.mapServiceExtension(extension)
+  ]);
+  expect(selectors.isFetchingExtensions(state)).toBe(false);
+
+  const updatedExtension = {
+    bundlelocation: 'bundle',
+    displayname: 'after',
+    name: 'sample-extension'
+  };
+
+  const updateAction = {
+    type: 'ServiceExtensionUpdated',
+    payload: updatedExtension
+  };
+
+  const updatedState = extensionsReducer({}, updateAction);
+  expect(selectors.getExtensions(updatedState)).toEqual([
+    selectors.mapServiceExtension(updatedExtension)
+  ]);
+  expect(selectors.isFetchingExtensions(updatedState)).toBe(false);
+
+  const deleteAction = {
+    type: 'ServiceExtensionDeleted',
+    payload: updatedExtension
+  };
+
+  const deletedState = extensionsReducer(state, deleteAction);
+  expect(selectors.getExtensions(deletedState)).toEqual([]);
+  expect(selectors.isFetchingExtensions(deletedState)).toBe(false);
+});

@@ -94,7 +94,7 @@ type Handler struct {
 
 // RegisterExtension registers a discovered extension service as a webservice
 // to the container/mux. The extension should have a unique name
-func (h *Handler) RegisterExtension(extensionService *corev1.Service) {
+func (h *Handler) RegisterExtension(extensionService *corev1.Service) *Extension {
 	logging.Log.Infof("Adding Extension %s", extensionService.Name)
 
 	ext := newExtension(extensionService)
@@ -115,23 +115,26 @@ func (h *Handler) RegisterExtension(extensionService *corev1.Service) {
 		h.extensionWebService.Route(h.extensionWebService.DELETE(extensionPath + "/{var:*}").To(ext.handleExtension))
 	}
 	h.uidExtensionMap[string(extensionService.UID)] = ext
+	return ext
 }
 
 // UnregisterExtension unregisters an extension. This should be called BEFORE
 // registration of extensionService on informer update
-func (h *Handler) UnregisterExtension(extensionService *corev1.Service) {
-	h.UnregisterExtensionByMeta(&extensionService.ObjectMeta)
+func (h *Handler) UnregisterExtension(extensionService *corev1.Service) *Extension {
+	return h.UnregisterExtensionByMeta(&extensionService.ObjectMeta)
 }
 
 // UnregisterExtensionByMeta unregisters an extension by its metadata. This
 // should be called BEFORE registration of extensionService on informer update
-func (h *Handler) UnregisterExtensionByMeta(extensionService metav1.Object) {
+func (h *Handler) UnregisterExtensionByMeta(extensionService metav1.Object) *Extension {
 	logging.Log.Infof("Removing extension %s", extensionService.GetName())
 	h.Lock()
 	defer h.Unlock()
 
 	// Grab endpoints to remove from service
-	ext := h.uidExtensionMap[string(extensionService.GetUID())]
+	uid := extensionService.GetUID()
+	ext := h.uidExtensionMap[string(uid)]
+	defer delete(h.uidExtensionMap, string(uid))
 	for _, path := range ext.endpoints {
 		extensionPath := extensionPath(ext.Name, path)
 		fullPath := fmt.Sprintf("%s/%s", h.extensionWebService.RootPath(), extensionPath)
@@ -145,7 +148,7 @@ func (h *Handler) UnregisterExtensionByMeta(extensionService metav1.Object) {
 		h.extensionWebService.RemoveRoute(fullPath+"/{var:*}", "PUT")
 		h.extensionWebService.RemoveRoute(fullPath+"/{var:*}", "DELETE")
 	}
-	delete(h.uidExtensionMap, string(extensionService.GetUID()))
+	return ext
 }
 
 // registerExtensions registers the WebService responsible for
