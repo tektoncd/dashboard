@@ -28,9 +28,9 @@ func NewExtensionController(sharedDashboardInformerFactory dashboardinformer.Sha
 	utils.NewController(
 		"extension",
 		sharedDashboardInformerFactory.Dashboard().V1alpha1().Extensions().Informer(),
-		broadcaster.ExtensionCreated,
-		broadcaster.ExtensionUpdated,
-		broadcaster.ExtensionDeleted,
+		broadcaster.ResourceExtensionCreated,
+		broadcaster.ResourceExtensionUpdated,
+		broadcaster.ResourceExtensionDeleted,
 		nil,
 	)
 }
