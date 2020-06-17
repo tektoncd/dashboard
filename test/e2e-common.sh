@@ -18,8 +18,6 @@
 
 source $(dirname $0)/../vendor/github.com/tektoncd/plumbing/scripts/e2e-tests.sh
 
-pipeline_release=https://github.com/tektoncd/pipeline/releases/download/v0.11.0/release.yaml
-
 function print_diagnostic_info() {
   echo "Diagnostics:"
   resources=("pv" "pvc" "pods")
@@ -42,8 +40,10 @@ function install_kustomize() {
 }
 
 function install_pipeline_crd() {
-  echo ">> Deploying Tekton Pipelines"
-  kubectl apply --filename $pipeline_release  || fail_test "Tekton pipeline installation failed"
+  local version=$1
+
+  echo ">> Deploying Tekton Pipelines ($version)"
+  kubectl apply --filename "https://github.com/tektoncd/pipeline/releases/download/$version/release.yaml" || fail_test "Tekton pipeline installation failed"
 
   # Make sure thateveything is cleaned up in the current namespace.
   for res in pipelineresources tasks pipelines taskruns pipelineruns; do
@@ -55,8 +55,10 @@ function install_pipeline_crd() {
 }
 
 function delete_pipeline_crd() {
-  echo ">> Deleting Tekton Pipelines"
-  kubectl delete --filename $pipeline_release || fail_test "Tekton pipeline deletion failed"
+  local version=$1
+  
+  echo ">> Deleting Tekton Pipelines ($version)"
+  kubectl delete --filename "https://github.com/tektoncd/pipeline/releases/download/$version/release.yaml" || fail_test "Tekton pipeline deletion failed"
 }
 
 # Called by `fail_test` (provided by `e2e-tests.sh`) to dump info on test failure
