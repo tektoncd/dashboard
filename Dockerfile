@@ -9,7 +9,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM node:10-alpine as nodeBuilder
+FROM node:12-alpine as nodeBuilder
 USER root
 WORKDIR /go/src/github.com/tektoncd/dashboard
 COPY . .
