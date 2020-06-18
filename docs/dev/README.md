@@ -8,6 +8,7 @@ This guide explains how to build, deploy and test the Tekton Dashboard. It cover
 - [Build the frontend](#build-the-frontend)
 - [Build the backend](#build-the-backend)
   - [Command line arguments](#command-line-arguments)
+- [Build and deploy with the installer script](#build-and-deploy-with-the-installer-script)
 - [Build YAML manifests](#build-yaml-manifests)
 - [Build and deploy with kustomize and ko](#build-and-deploy-with-kustomize-and-ko)
   - [Build docker image for another GOARCH](#build-docker-image-for-another-goarch)
@@ -113,6 +114,12 @@ Run `dashboard --help` to show the supported command line arguments and their de
 
 **Important note:** using `--namespace` ensures that the dashboard is watching resources in the namespace specified (and drives the frontend).
 It doesn't limit actions that can be performed to this namespace only though. It's important that this flag is used **and** that RBAC rules are setup accordingly.
+
+## Build and deploy with the installer script
+
+To build and deploy the Dashboard backend easily, you can use the [installer script](./installer.md).
+
+The installer script supports both Kubernetes and OpenShift, and it can adapt the YAML manifests for OpenShift Pipelines Operator or raw manifests install modes.
 
 ## Build YAML manifests
 
