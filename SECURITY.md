@@ -7,7 +7,13 @@ When you are using Istio there is a way of introducing an envoy filter which con
 a way of introducing basic authentication for a certain domain and path.
 
 This assumes you have the dashboard exposed through the istio ingress on "example.com/build".
-The following sample was made for Istio 1.5 (assumes the default profile). You can apply it like any other k8s files like this:
+The following sample was made for and tested on the following bits. This could need some tweaking
+in other cases.
+
+- Istio 1.5.2 (default profile).
+- Kubernetes 1.18.2 with calico.
+
+You can apply it like any other k8s files like this:
 
 ```kubectl apply -f ./envoyfilter.yml```
 
