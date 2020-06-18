@@ -82,18 +82,28 @@ spec:
           # Rewrite "devel" to params.versionTag
           sed -i 's/devel/$(params.versionTag)/g' /workspace/go/src/github.com/tektoncd/dashboard/base/300-deployment.yaml
           sed -i 's/devel/$(params.versionTag)/g' /workspace/go/src/github.com/tektoncd/dashboard/base/300-service.yaml
-          sed -i 's/devel/$(params.versionTag)/g' /workspace/go/src/github.com/tektoncd/dashboard/overlays/openshift-patches/dashboard-service.yaml
-          sed -i 's/devel/$(params.versionTag)/g' /workspace/go/src/github.com/tektoncd/dashboard/overlays/openshift-patches/internal-dashboard-service.yaml
+          # sed -i 's/devel/$(params.versionTag)/g' /workspace/go/src/github.com/tektoncd/dashboard/overlays/patches/dashboard-service.yaml
+          sed -i 's/devel/$(params.versionTag)/g' /workspace/go/src/github.com/tektoncd/dashboard/overlays/resources/openshift/internal-service.yaml
 
           # Publish images and create release.yamls
           which ko # Tested with 0.2.0
           ko version
           kustomize version # Tested with 3.5.4
 
-          kustomize build overlays/dev | ko resolve --preserve-import-paths -f - > /workspace/output/bucket-for-dashboard/$(params.bucketName)/tekton-dashboard-release.yaml
-          kustomize build overlays/dev-locked-down --load_restrictor=LoadRestrictionsNone | ko resolve --preserve-import-paths -f - > /workspace/output/bucket-for-dashboard/$(params.bucketName)/tekton-dashboard-release-readonly.yaml
-          kustomize build overlays/dev-openshift --load_restrictor=LoadRestrictionsNone | ko resolve --preserve-import-paths -f - > /workspace/output/bucket-for-dashboard/$(params.bucketName)/openshift-tekton-dashboard-release.yaml
-          kustomize build overlays/dev-openshift-locked-down --load_restrictor=LoadRestrictionsNone | ko resolve --preserve-import-paths -f - > /workspace/output/bucket-for-dashboard/$(params.bucketName)/openshift-tekton-dashboard-release-readonly.yaml
+          # add installer script in the release
+          cp /workspace/go/src/github.com/tektoncd/dashboard/scripts/installer /workspace/output/bucket-for-dashboard/$(params.bucketName)/installer
+
+          # build manifests for installer
+          kustomize build overlays/installer/k8s/read-write --load_restrictor none        | ko resolve --preserve-import-paths -f - > /workspace/output/bucket-for-dashboard/$(params.bucketName)/installer-tekton-dashboard-release.yaml
+          kustomize build overlays/installer/k8s/read-only  --load_restrictor none        | ko resolve --preserve-import-paths -f - > /workspace/output/bucket-for-dashboard/$(params.bucketName)/installer-tekton-dashboard-release-readonly.yaml
+          kustomize build overlays/installer/openshift/read-write --load_restrictor none  | ko resolve --preserve-import-paths -f - > /workspace/output/bucket-for-dashboard/$(params.bucketName)/installer-openshift-tekton-dashboard-release.yaml
+          kustomize build overlays/installer/openshift/read-only  --load_restrictor none  | ko resolve --preserve-import-paths -f - > /workspace/output/bucket-for-dashboard/$(params.bucketName)/installer-openshift-tekton-dashboard-release-readonly.yaml
+
+          # build pre configured manifests
+          ./scripts/installer release --debug                         --output /workspace/output/bucket-for-dashboard/$(params.bucketName)/tekton-dashboard-release.yaml
+          ./scripts/installer release --debug --read-only             --output /workspace/output/bucket-for-dashboard/$(params.bucketName)/tekton-dashboard-release-readonly.yaml
+          ./scripts/installer release --debug --openshift             --output /workspace/output/bucket-for-dashboard/$(params.bucketName)/openshift-tekton-dashboard-release.yaml
+          ./scripts/installer release --debug --openshift --read-only --output /workspace/output/bucket-for-dashboard/$(params.bucketName)/openshift-tekton-dashboard-release-readonly.yaml
       volumeMounts:
         - name: gcp-secret
           mountPath: /secret
