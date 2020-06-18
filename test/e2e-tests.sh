@@ -44,6 +44,7 @@ fi
 
 initOS
 install_kustomize
+npm install -g newman@5
 
 function test_dashboard() {
   # overlay or installer
@@ -187,6 +188,32 @@ function test_dashboard() {
   if [ "$podCurled" = "false" ]; then
     fail_test "Test Failure, Not able to curl the pod"
   fi
+
+  echo "Running postman collections..."
+
+  local readonly=false
+
+  if [ "$creationMethod" = "kubectl" ]; then
+    readonly=true
+  fi
+
+  newman run ${tekton_repo_dir}/test/postman/Dashboard.postman_collection.json \
+    -g ${tekton_repo_dir}/test/postman/globals.json \
+    --global-var pipelines_version=$PIPELINES_VERSION \
+    --global-var triggers_version=$TRIGGERS_VERSION \
+    --global-var readonly=$readonly || fail_test "Postman Dashboard collection tests failed"
+
+  newman run ${tekton_repo_dir}/test/postman/Pipelines.postman_collection.json \
+    -g ${tekton_repo_dir}/test/postman/globals.json \
+    --global-var pipelines_version=$PIPELINES_VERSION \
+    --global-var triggers_version=$TRIGGERS_VERSION \
+    --global-var readonly=$readonly || fail_test "Postman Pipelines collection tests failed"
+
+  newman run ${tekton_repo_dir}/test/postman/Triggers.postman_collection.json \
+    -g ${tekton_repo_dir}/test/postman/globals.json \
+    --global-var pipelines_version=$PIPELINES_VERSION \
+    --global-var triggers_version=$TRIGGERS_VERSION \
+    --global-var readonly=$readonly || fail_test "Postman Triggers collection tests failed"
 
   kill -9 $dashboardForwardPID
   kill -9 $podForwardPID
