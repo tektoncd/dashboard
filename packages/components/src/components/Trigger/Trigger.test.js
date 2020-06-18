@@ -20,15 +20,15 @@ const fakeTrigger = {
   bindings: [
     {
       apiversion: 'v1alpha1',
-      name: 'triggerbinding-0'
+      ref: 'triggerbinding-0'
     },
     {
       apiversion: 'v1alpha1',
-      name: 'triggerbinding-1'
+      ref: 'triggerbinding-1'
     },
     {
       apiversion: 'v1alpha1',
-      name: 'triggerbinding-2'
+      ref: 'triggerbinding-2'
     }
   ],
   template: {

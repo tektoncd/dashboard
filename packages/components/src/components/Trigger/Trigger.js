@@ -52,15 +52,15 @@ const Trigger = ({ intl, eventListenerNamespace, trigger }) => {
             </span>
             <div>
               {trigger.bindings.map((binding, index) => (
-                <span key={binding.name}>
+                <span key={binding.ref}>
                   <Link
                     className="tkn--trigger-resourcelink"
                     to={urls.triggerBindings.byName({
                       namespace: eventListenerNamespace,
-                      triggerBindingName: binding.name
+                      triggerBindingName: binding.ref
                     })}
                   >
-                    <span title={binding.name}>{binding.name}</span>
+                    <span title={binding.ref}>{binding.ref}</span>
                   </Link>
                   {index !== trigger.bindings.length - 1 && <span>, </span>}
                 </span>
