@@ -3,7 +3,7 @@ apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
 metadata:
   name: ${GIT_RESOURCE_NAME}
-  namespace: tekton-pipelines
+  namespace: ${TEST_NAMESPACE}
 spec:
   type: git
   params:

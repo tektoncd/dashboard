@@ -1,32 +1,33 @@
+---
 apiVersion: tekton.dev/v1alpha1
 kind: Pipeline
 metadata:
   name: simple-pipeline-insecure
-  namespace: tekton-pipelines
+  namespace: ${TEST_NAMESPACE}
 spec:
-  resources: 
-  - name: git-source
-    type: git
-  - name: docker-image
-    type: image
+  resources:
+    - name: git-source
+      type: git
+    - name: docker-image
+      type: image
   tasks:
-  - name: build-simple
-    taskRef:
-      name: kaniko-build-push
-    resources:
-      inputs:
-      - name: git-source
-        resource: git-source
-      outputs:
-      - name: builtImage
-        resource: docker-image
-  - name: deploy-simple
-    runAfter: [build-simple]
-    taskRef: 
-      name: deploy-simple-kubectl-task-insecure
-    resources: 
-      inputs:
-      - name: git-source
-        resource: git-source 
-      - name: image-out
-        resource: docker-image
+    - name: build-simple
+      taskRef:
+        name: kaniko-build-push
+      resources:
+        inputs:
+          - name: git-source
+            resource: git-source
+        outputs:
+          - name: builtImage
+            resource: docker-image
+    - name: deploy-simple
+      runAfter: [build-simple]
+      taskRef:
+        name: deploy-simple-kubectl-task-insecure
+      resources:
+        inputs:
+          - name: git-source
+            resource: git-source
+          - name: image-out
+            resource: docker-image

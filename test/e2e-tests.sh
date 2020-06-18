@@ -46,31 +46,22 @@ initOS
 install_kustomize
 npm install -g newman@5
 
-function test_dashboard() {
-  # overlay or installer
-  local installMode=$1
+test_dashboard() {
   # kubectl or proxy (to create the necessary resources)
-  local creationMethod=$2
+  local creationMethod=$1
 
   header "Installing pipelines"
 
   install_pipelines $PIPELINES_VERSION
   install_triggers $TRIGGERS_VERSION
 
-  if [ "$installMode" == "overlay" ]; then
-    overlay=$3
-    header "Setting up environment ($overlay)"
-    install_dashboard_backend $overlay
-    header "Running the e2e tests - overlay ($overlay)"
-  else
-    header "Setting up environment (${@:3})"
-    $tekton_repo_dir/scripts/installer install ${@:3}
-    wait_dashboard_backend
-    header "Running the e2e tests - installer (${@:3})"
-  fi
+  header "Setting up environment (${@:2})"
+  $tekton_repo_dir/scripts/installer install ${@:2}
+  wait_dashboard_backend
+  header "Running the e2e tests (${@:2})"
 
   # Port forward the dashboard
-  kubectl port-forward $(kubectl get pod --namespace tekton-pipelines -l app=tekton-dashboard -o name)  --namespace tekton-pipelines 9097:9097 &
+  kubectl port-forward $(kubectl get pod --namespace $DASHBOARD_NAMESPACE -l app=tekton-dashboard -o name)  --namespace $DASHBOARD_NAMESPACE 9097:9097 &
   dashboardForwardPID=$!
 
   # Wait until dashboard is found
@@ -99,11 +90,15 @@ function test_dashboard() {
   export REPO_NAME="go-hello-world"
   export REPO_URL="https://github.com/a-roberts/go-hello-world"
   export EXPECTED_RETURN_VALUE="Hello World!"
-  export TEKTON_PROXY_URL="http://localhost:9097/proxy/apis/tekton.dev/v1alpha1/namespaces/tekton-pipelines"
+  export TEKTON_PROXY_URL="http://localhost:9097/proxy/apis/tekton.dev/v1alpha1/namespaces/$TEST_NAMESPACE"
   export CSRF_HEADERS_STORE="csrf_headers.txt"
 
   # Kubectl static resources
-  kubectl apply -f ${tekton_repo_dir}/test/resources/static
+  echo "Creating static resources using kubectl..."
+  staticFiles=($(find ${tekton_repo_dir}/test/resources/static -iname "*.y?ml"))
+  for file in ${staticFiles[@]};do
+    cat "${file}" | envsubst | kubectl apply -f - || fail_test "Failed to create static resource: ${file}"
+  done
 
   curl -D $CSRF_HEADERS_STORE http://localhost:9097/v1/token
   export CSRF_TOKEN=`grep -i 'X-CSRF-Token' $CSRF_HEADERS_STORE | $SED -e 's/^X-CSRF-Token: //i;s/\r//'`
@@ -143,7 +138,7 @@ function test_dashboard() {
   deploymentExist=false
   for i in $(eval echo "{$START..$END}")
   do
-    wait=$(kubectl wait --namespace tekton-pipelines --for=condition=available deployments/go-hello-world --timeout=30s)
+    wait=$(kubectl wait --namespace $TEST_NAMESPACE --for=condition=available deployments/go-hello-world --timeout=30s)
     if [ "$wait" = "deployment.apps/go-hello-world condition met" ]; then
       deploymentExist=true
       break
@@ -158,13 +153,13 @@ function test_dashboard() {
 
   if [ "$deploymentExist" = "false" ]; then
     echo "Here's the failed pod info"
-    kubectl get pod --namespace tekton-pipelines -l app=go-hello-world -o name --namespace tekton-pipelines -o yaml
-    kubectl describe pod --namespace tekton-pipelines -l app=go-hello-world --namespace tekton-pipelines
+    kubectl get pod --namespace $TEST_NAMESPACE -l app=go-hello-world -o name -o yaml
+    kubectl describe pod --namespace $TEST_NAMESPACE -l app=go-hello-world
     fail_test "Test Failure, go-hello-world deployment is not running, see above for the PV and pod information"
   fi
 
   # Ping deployment
-  kubectl port-forward $(kubectl get pod  --namespace tekton-pipelines -l app=go-hello-world -o name) --namespace tekton-pipelines 8080 &
+  kubectl port-forward $(kubectl get pod  --namespace $TEST_NAMESPACE -l app=go-hello-world -o name) --namespace $TEST_NAMESPACE 8080 &
   podForwardPID=$!
 
   podCurled=false
@@ -199,18 +194,24 @@ function test_dashboard() {
 
   newman run ${tekton_repo_dir}/test/postman/Dashboard.postman_collection.json \
     -g ${tekton_repo_dir}/test/postman/globals.json \
+    --global-var dashboard_namespace=$DASHBOARD_NAMESPACE \
+    --global-var tenant_namespace=$TENANT_NAMESPACE \
     --global-var pipelines_version=$PIPELINES_VERSION \
     --global-var triggers_version=$TRIGGERS_VERSION \
     --global-var readonly=$readonly || fail_test "Postman Dashboard collection tests failed"
 
   newman run ${tekton_repo_dir}/test/postman/Pipelines.postman_collection.json \
     -g ${tekton_repo_dir}/test/postman/globals.json \
+    --global-var dashboard_namespace=$DASHBOARD_NAMESPACE \
+    --global-var tenant_namespace=$TENANT_NAMESPACE \
     --global-var pipelines_version=$PIPELINES_VERSION \
     --global-var triggers_version=$TRIGGERS_VERSION \
     --global-var readonly=$readonly || fail_test "Postman Pipelines collection tests failed"
 
   newman run ${tekton_repo_dir}/test/postman/Triggers.postman_collection.json \
     -g ${tekton_repo_dir}/test/postman/globals.json \
+    --global-var dashboard_namespace=$DASHBOARD_NAMESPACE \
+    --global-var tenant_namespace=$TENANT_NAMESPACE \
     --global-var pipelines_version=$PIPELINES_VERSION \
     --global-var triggers_version=$TRIGGERS_VERSION \
     --global-var readonly=$readonly || fail_test "Postman Triggers collection tests failed"
@@ -218,22 +219,17 @@ function test_dashboard() {
   kill -9 $dashboardForwardPID
   kill -9 $podForwardPID
 
-  if [ "$installMode" == "overlay" ]; then
-    overlay=$3
-    uninstall_dashboard_backend $overlay
-  else
-    $tekton_repo_dir/scripts/installer uninstall ${@:3}
-  fi
+  $tekton_repo_dir/scripts/installer uninstall ${@:2}
 
   uninstall_triggers $TRIGGERS_VERSION
   uninstall_pipelines $PIPELINES_VERSION
 }
 
-# validate overlays
-kustomize build overlays/dev || fail_test "Failed to run kustomize on overlays/dev"
-kustomize build overlays/dev-locked-down --load_restrictor=LoadRestrictionsNone || fail_test "Failed to run kustomize on overlays/dev-locked-down"
-kustomize build overlays/dev-openshift --load_restrictor=LoadRestrictionsNone || fail_test "Failed to run kustomize on overlays/dev-openshift"
-kustomize build overlays/dev-openshift-locked-down --load_restrictor=LoadRestrictionsNone || fail_test "Failed to run kustomize on overlays/dev-openshift-locked-down"
+# validates that we can build the manifests we release
+$tekton_repo_dir/scripts/installer build                          || fail_test "Failed to build manifests for k8s"
+$tekton_repo_dir/scripts/installer build --read-only              || fail_test "Failed to build manifests for k8s --read-only"
+$tekton_repo_dir/scripts/installer build --openshift              || fail_test "Failed to build manifests for openshift"
+$tekton_repo_dir/scripts/installer build --openshift --read-only  || fail_test "Failed to build manifests for openshift --read-only"
 
 if [ -z "$PIPELINES_VERSION" ]; then
   export PIPELINES_VERSION=v0.13.2
@@ -243,12 +239,28 @@ if [ -z "$TRIGGERS_VERSION" ]; then
   export TRIGGERS_VERSION=v0.5.0
 fi
 
-# test overlays
-test_dashboard overlay proxy dev
-test_dashboard overlay kubectl dev-locked-down
+# test in default namespace
+export DASHBOARD_NAMESPACE=tekton-pipelines
+export TEST_NAMESPACE=tekton-pipelines
+export TENANT_NAMESPACE=""
 
-# test installer
-test_dashboard installer proxy
-test_dashboard installer kubectl --read-only
+test_dashboard proxy
+test_dashboard kubectl --read-only
+
+# test in custom namespace
+export DASHBOARD_NAMESPACE=tekton-dashboard
+export TEST_NAMESPACE=tekton-pipelines
+export TENANT_NAMESPACE=""
+
+test_dashboard proxy --namespace $DASHBOARD_NAMESPACE
+test_dashboard kubectl --read-only --namespace $DASHBOARD_NAMESPACE
+
+# test single namespace visibility
+export DASHBOARD_NAMESPACE=tekton-dashboard
+export TEST_NAMESPACE=tekton-tenant
+export TENANT_NAMESPACE=tekton-tenant
+
+test_dashboard proxy --namespace $DASHBOARD_NAMESPACE --tenant-namespace $TENANT_NAMESPACE
+test_dashboard kubectl --read-only --namespace $DASHBOARD_NAMESPACE --tenant-namespace $TENANT_NAMESPACE
 
 success

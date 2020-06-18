@@ -85,7 +85,7 @@ function dump_extra_cluster_state() {
   echo ">>> Pipeline webhook log:"
   kubectl -n tekton-pipelines logs $(get_app_pod tekton-pipelines-webhook tekton-pipelines)
   echo ">>> Dashboard backend log:"
-  kubectl -n tekton-pipelines logs $(get_app_pod tekton-dashboard tekton-pipelines)
+  kubectl -n $DASHBOARD_NAMESPACE logs $(get_app_pod tekton-dashboard $DASHBOARD_NAMESPACE)
 
   echo "Task info"
   kubectl -n tekton-pipelines get Task -o yaml
@@ -100,18 +100,11 @@ function dump_extra_cluster_state() {
   kubectl -n tekton-pipelines logs -l app=e2e-pipelinerun --all-containers
 }
 
-function install_dashboard_backend() {
-  overlay=$1
-  echo ">> Deploying the Dashboard backend ($overlay)"
-  kustomize build --load_restrictor none overlays/$overlay | ko apply -f - || fail_test "Dashboard backend installation failed"
-  wait_dashboard_backend
-}
-
 function wait_dashboard_backend() {
   # Wait until deployment is running before checking pods, stops timing error
   for i in {1..30}
   do
-    wait=$(kubectl wait --namespace tekton-pipelines --for=condition=available deployments/tekton-dashboard --timeout=30s)
+    wait=$(kubectl wait --namespace $DASHBOARD_NAMESPACE --for=condition=available deployments/tekton-dashboard --timeout=30s)
     echo "WAIT RESULT: $wait"
     if [ "$wait" = "deployment.apps/tekton-dashboard condition met" ]; then
       break
@@ -122,13 +115,7 @@ function wait_dashboard_backend() {
     fi
   done
   # Wait for pods to be running in the namespaces we are deploying to
-  wait_until_pods_running tekton-pipelines || fail_test "Dashboard backend did not come up"
-}
-
-function uninstall_dashboard_backend() {
-  overlay=$1
-  echo ">> Removing the Dashboard backend ($overlay)"
-  kustomize build --load_restrictor none overlays/$overlay | ko delete -f - || fail_test "Dashboard backend removal failed"	
+  wait_until_pods_running $DASHBOARD_NAMESPACE || fail_test "Dashboard backend did not come up"
 }
 
 function dump_cluster_state() {
@@ -167,6 +154,6 @@ function json_curl_envsubst_resource() {
 
 function fail_test() {
   [[ -n $1 ]] && echo "ERROR: $1"
-  dump_cluster_state
+  # dump_cluster_state
   exit 1
 }

@@ -3,7 +3,7 @@ apiVersion: tekton.dev/v1alpha1
 kind: PipelineRun
 metadata:
   name: e2e-pipelinerun
-  namespace: tekton-pipelines
+  namespace: ${TEST_NAMESPACE}
   labels:
     app: e2e-pipelinerun
 spec:
