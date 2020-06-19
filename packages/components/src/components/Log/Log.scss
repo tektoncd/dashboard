@@ -24,8 +24,7 @@ pre.tkn--log {
 
   line-height: 0.95rem; // Update the react-window List itemSize if changing this
   overflow: hidden;
-  text-shadow: 0.1px 0.1px 0 #272d3340;
-  background-color: #f1f2f4;
+  background-color: $ui-01;
 
   word-break: normal;
   word-wrap: normal;
