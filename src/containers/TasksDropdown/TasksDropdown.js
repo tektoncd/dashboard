@@ -71,6 +71,7 @@ class TasksDropdown extends React.Component {
         id: 'dashboard.tasksDropdown.label',
         defaultMessage: 'Select Task'
       });
+
     return (
       <TooltipDropdown {...rest} emptyText={emptyText} label={labelString} />
     );

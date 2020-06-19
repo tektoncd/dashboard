@@ -95,7 +95,10 @@ const initialResourcesState = resourceSpecs => {
 };
 
 class CreatePipelineRun extends React.Component {
-  state = initialState;
+  constructor(props) {
+    super(props);
+    this.state = this.initialState();
+  }
 
   componentDidUpdate(prevProps) {
     const { open, namespace } = this.props;

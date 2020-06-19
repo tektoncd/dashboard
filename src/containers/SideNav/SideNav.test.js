@@ -701,5 +701,5 @@ it('Namespace dropdown renders in full cluster visibility mode', async () => {
     </Provider>
   );
   await waitForElement(() => queryByText(/about/i));
-  expect(queryByText(/namespaces/i)).toBeTruthy();
+  expect(queryByText(/namespace/i)).toBeTruthy();
 });

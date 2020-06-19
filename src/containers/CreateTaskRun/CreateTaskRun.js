@@ -109,7 +109,10 @@ const initialResourcesState = resourceSpecs => {
 const itemToString = item => (item ? item.text : '');
 
 class CreateTaskRun extends React.Component {
-  state = initialState;
+  constructor(props) {
+    super(props);
+    this.state = this.initialState();
+  }
 
   componentDidUpdate(prevProps) {
     const { namespace, open } = this.props;
