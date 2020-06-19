@@ -230,6 +230,7 @@ export /* istanbul ignore next */ class SecretContainer extends Component {
               headers={headersForServiceAccounts}
               rows={rowsForServiceAccounts}
               loading={loading}
+              size="short"
               selectedNamespace={namespace}
               emptyTextAllNamespaces={emptyTextMessageSAs}
               emptyTextSelectedNamespace={emptyTextMessageSAs}

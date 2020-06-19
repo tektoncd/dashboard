@@ -14,13 +14,22 @@ limitations under the License.
 @import '~carbon-components/scss/globals/scss/vars';
 
 .tkn--table {
+  // add space between adjacent tables
+  ~ .tkn--table {
+    margin-top: $spacing-05;
+  }
+
   .bx--table-toolbar {
     background: transparent;
   }
 
+  .bx--data-table.bx--data-table--short td.bx--table-expand {
+    height: 2rem;
+  }
+
   .bx--data-table-header {
     padding-left: 0;
-    padding-bottom: 0;
+    padding-bottom: $spacing-03;
   }
 
   .bx--data-table-container {
@@ -58,6 +67,10 @@ limitations under the License.
     margin-top: 5px;
     font-style: italic;
     font-size: 1rem;
+  }
+
+  .bx--data-table--short .noRows {
+    margin-top: 0;
   }
 
   .bx--batch-actions--active {

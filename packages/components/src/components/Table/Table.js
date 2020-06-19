@@ -14,6 +14,7 @@ limitations under the License.
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import {
   Button,
   DataTable,
@@ -120,6 +121,7 @@ function getTranslateWithId(intl) {
 const Table = props => {
   const {
     batchActionButtons,
+    className,
     emptyTextAllNamespaces,
     emptyTextSelectedNamespace,
     filters,
@@ -143,8 +145,12 @@ const Table = props => {
   const hasToolbar =
     filters || toolbarButtons.length || shouldRenderBatchActions;
 
+  const tableClassNames = classNames('tkn--table', className, {
+    'tkn--table-with-filters': filters
+  });
+
   return (
-    <div className={`tkn--table ${filters ? 'tkn--table-with-filters' : ''}`}>
+    <div className={tableClassNames}>
       <DataTable
         key={selectedNamespace}
         rows={dataRows}

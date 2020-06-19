@@ -117,6 +117,7 @@ export /* istanbul ignore next */ class ClusterTriggerBindingContainer extends C
           })}
           headers={headersForParameters}
           rows={rowsForParameters}
+          size="short"
           selectedNamespace={selectedNamespace}
           emptyTextAllNamespaces={emptyTextMessage}
           emptyTextSelectedNamespace={emptyTextMessage}
