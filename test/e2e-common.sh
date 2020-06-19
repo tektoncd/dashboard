@@ -39,11 +39,11 @@ function install_kustomize() {
   fi
 }
 
-function install_pipeline_crd() {
+function install_pipelines() {
   local version=$1
 
   echo ">> Deploying Tekton Pipelines ($version)"
-  kubectl apply --filename "https://github.com/tektoncd/pipeline/releases/download/$version/release.yaml" || fail_test "Tekton pipeline installation failed"
+  kubectl apply --filename "https://github.com/tektoncd/pipeline/releases/download/$version/release.yaml" || fail_test "Tekton Pipelines installation failed"
 
   # Make sure thateveything is cleaned up in the current namespace.
   for res in pipelineresources tasks pipelines taskruns pipelineruns; do
@@ -51,14 +51,31 @@ function install_pipeline_crd() {
   done
 
   # Wait for pods to be running in the namespaces we are deploying to
-  wait_until_pods_running tekton-pipelines || fail_test "Tekton Pipeline did not come up"
+  wait_until_pods_running tekton-pipelines || fail_test "Tekton Pipelines did not come up"
 }
 
-function delete_pipeline_crd() {
+function install_triggers() {
+  local version=$1
+
+  echo ">> Deploying Tekton Triggers ($version)"
+  kubectl apply --filename "https://github.com/tektoncd/triggers/releases/download/$version/release.yaml" || fail_test "Tekton Triggers installation failed"
+
+  # Wait for pods to be running in the namespaces we are deploying to
+  wait_until_pods_running tekton-pipelines || fail_test "Tekton Triggers did not come up"
+}
+
+function uninstall_pipelines() {
   local version=$1
   
   echo ">> Deleting Tekton Pipelines ($version)"
-  kubectl delete --filename "https://github.com/tektoncd/pipeline/releases/download/$version/release.yaml" || fail_test "Tekton pipeline deletion failed"
+  kubectl delete --filename "https://github.com/tektoncd/pipeline/releases/download/$version/release.yaml" || fail_test "Tekton Pipelines deletion failed"
+}
+
+function uninstall_triggers() {
+  local version=$1
+  
+  echo ">> Deleting Tekton Triggers ($version)"
+  kubectl delete --filename "https://github.com/tektoncd/triggers/releases/download/$version/release.yaml" || fail_test "Tekton Triggers deletion failed"
 }
 
 # Called by `fail_test` (provided by `e2e-tests.sh`) to dump info on test failure

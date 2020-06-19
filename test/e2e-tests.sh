@@ -46,26 +46,26 @@ initOS
 install_kustomize
 
 function test_dashboard() {
-  local pipelineVersion=$1
   # overlay or installer
-  local installMode=$2
+  local installMode=$1
   # kubectl or proxy (to create the necessary resources)
-  local creationMethod=$3
+  local creationMethod=$2
 
   header "Installing pipelines"
 
-  install_pipeline_crd $pipelineVersion
+  install_pipelines $PIPELINES_VERSION
+  install_triggers $TRIGGERS_VERSION
 
   if [ "$installMode" == "overlay" ]; then
-    overlay=$4
+    overlay=$3
     header "Setting up environment ($overlay)"
     install_dashboard_backend $overlay
     header "Running the e2e tests - overlay ($overlay)"
   else
-    header "Setting up environment (${@:4})"
-    $tekton_repo_dir/scripts/installer install ${@:4}
+    header "Setting up environment (${@:3})"
+    $tekton_repo_dir/scripts/installer install ${@:3}
     wait_dashboard_backend
-    header "Running the e2e tests - installer (${@:4})"
+    header "Running the e2e tests - installer (${@:3})"
   fi
 
   # Port forward the dashboard
@@ -192,13 +192,14 @@ function test_dashboard() {
   kill -9 $podForwardPID
 
   if [ "$installMode" == "overlay" ]; then
-    overlay=$4
+    overlay=$3
     uninstall_dashboard_backend $overlay
   else
-    $tekton_repo_dir/scripts/installer uninstall ${@:4}
+    $tekton_repo_dir/scripts/installer uninstall ${@:3}
   fi
 
-  delete_pipeline_crd $pipelineVersion
+  uninstall_triggers $TRIGGERS_VERSION
+  uninstall_pipelines $PIPELINES_VERSION
 }
 
 # validate overlays
@@ -208,15 +209,19 @@ kustomize build overlays/dev-openshift --load_restrictor=LoadRestrictionsNone ||
 kustomize build overlays/dev-openshift-locked-down --load_restrictor=LoadRestrictionsNone || fail_test "Failed to run kustomize on overlays/dev-openshift-locked-down"
 
 if [ -z "$PIPELINES_VERSION" ]; then
-  PIPELINES_VERSION=v0.13.2
+  export PIPELINES_VERSION=v0.13.2
+fi
+
+if [ -z "$TRIGGERS_VERSION" ]; then
+  export TRIGGERS_VERSION=v0.5.0
 fi
 
 # test overlays
-test_dashboard $PIPELINES_VERSION overlay proxy dev
-test_dashboard $PIPELINES_VERSION overlay kubectl dev-locked-down
+test_dashboard overlay proxy dev
+test_dashboard overlay kubectl dev-locked-down
 
 # test installer
-test_dashboard $PIPELINES_VERSION installer proxy
-test_dashboard $PIPELINES_VERSION installer kubectl --read-only
+test_dashboard installer proxy
+test_dashboard installer kubectl --read-only
 
 success
