@@ -18,6 +18,8 @@ import { InlineNotification } from 'carbon-components-react';
 import { Table } from '@tektoncd/dashboard-components';
 import { getErrorMessage, getTitle } from '@tektoncd/dashboard-utils';
 
+import tektonLogo from '../../images/tekton-stacked-color.svg';
+
 import {
   getDashboardNamespace,
   getDashboardVersion,
@@ -151,41 +153,55 @@ export /* istanbul ignore next */ class About extends Component {
             defaultMessage: 'About'
           })}
         </h1>
-        <Table
-          title="Dashboard"
-          headers={headers}
-          rows={[
-            getRow('Namespace', this.props.dashboardNamespace),
-            getRow(versionLabel, this.props.dashboardVersion),
-            getRow(isOpenShiftLabel, this.props.isOpenShift),
-            getRow(isReadOnlyLabel, this.props.isReadOnly),
-            getRow(logoutURLLabel, this.props.logoutURL)
-          ].filter(Boolean)}
-          size="short"
-          className="tkn--about--dashboard-table"
-        />
-        <Table
-          title="Pipelines"
-          headers={headers}
-          rows={[
-            getRow('Namespace', this.props.pipelinesNamespace),
-            getRow(versionLabel, this.props.pipelinesVersion)
-          ].filter(Boolean)}
-          size="short"
-          className="tkn--about--pipelines-table"
-        />
-        {this.props.isTriggersInstalled && (
-          <Table
-            title="Triggers"
-            headers={headers}
-            rows={[
-              getRow('Namespace', this.props.triggersNamespace),
-              getRow(versionLabel, this.props.triggersVersion)
-            ].filter(Boolean)}
-            size="short"
-            className="tkn--about--triggers-table"
-          />
-        )}
+        <div className="tkn--about--content">
+          <div className="tkn--about--tables">
+            <Table
+              title="Dashboard"
+              headers={headers}
+              rows={[
+                getRow('Namespace', this.props.dashboardNamespace),
+                getRow(versionLabel, this.props.dashboardVersion),
+                getRow(isOpenShiftLabel, this.props.isOpenShift),
+                getRow(isReadOnlyLabel, this.props.isReadOnly),
+                getRow(logoutURLLabel, this.props.logoutURL)
+              ].filter(Boolean)}
+              size="short"
+              className="tkn--about--dashboard-table"
+            />
+            <Table
+              title="Pipelines"
+              headers={headers}
+              rows={[
+                getRow('Namespace', this.props.pipelinesNamespace),
+                getRow(versionLabel, this.props.pipelinesVersion)
+              ].filter(Boolean)}
+              size="short"
+              className="tkn--about--pipelines-table"
+            />
+            {this.props.isTriggersInstalled && (
+              <Table
+                title="Triggers"
+                headers={headers}
+                rows={[
+                  getRow('Namespace', this.props.triggersNamespace),
+                  getRow(versionLabel, this.props.triggersVersion)
+                ].filter(Boolean)}
+                size="short"
+                className="tkn--about--triggers-table"
+              />
+            )}
+          </div>
+          <div className="tkn--about--image-wrapper">
+            <img
+              alt={intl.formatMessage({
+                id: 'dashboard.logo.alt',
+                defaultMessage: 'Tekton logo'
+              })}
+              src={tektonLogo}
+              role="presentation"
+            />
+          </div>
+        </div>
       </div>
     );
   }
