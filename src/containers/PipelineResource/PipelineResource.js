@@ -78,7 +78,7 @@ export /* istanbul ignore next */ class PipelineResourceContainer extends Compon
 
   render() {
     const { error, intl, loading, pipelineResource } = this.props;
-    const { params, secrets, type } = pipelineResource.spec;
+    const { params = [], secrets, type } = pipelineResource?.spec || {};
 
     return (
       <ResourceDetails
