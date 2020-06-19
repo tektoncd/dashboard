@@ -119,7 +119,6 @@
     "dashboard.graph.zoomOut": "Zoom Out",
     "dashboard.header.logOut": "Log out",
     "dashboard.importResources.advanced.accordionText": "Advanced configuration for the Import PipelineRun",
-    "dashboard.importResources.advanced.tooltip": "Change these parameters if you want the PipelineRun that will do the importing to run in a different namespace from the Dashboard.{break}You can optionally provide a different ServiceAccount too.",
     "dashboard.importResources.directory.helperText": "The location of the Tekton resources to import from the repository. Leave blank if the resources are at the top-level directory.",
     "dashboard.importResources.directory.labelText": "Repository directory (optional)",
     "dashboard.importResources.directory.placeholder": "Enter repository directory",
