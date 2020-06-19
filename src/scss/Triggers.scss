@@ -15,7 +15,7 @@ limitations under the License.
 
 .tkn--resourcedetails {
   .tkn--details {
-    p {
+    p:not(:empty) {
       margin-top: $spacing-03;
       span:first-child {
         font-weight: bold;
@@ -25,11 +25,6 @@ limitations under the License.
 
     .tkn--table {
       .bx--data-table-container {
-        .bx--data-table-header {
-          padding-left: 0;
-          padding-bottom: 0;
-        }
-
         .bx--data-table {
           .cell-description {
             max-width: 30vw;

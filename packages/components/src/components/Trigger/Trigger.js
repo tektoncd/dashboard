@@ -162,6 +162,7 @@ const Trigger = ({ intl, eventListenerNamespace, trigger }) => {
                         <Table
                           headers={tableHeaders}
                           rows={headerValues}
+                          size="short"
                           emptyTextAllNamespaces={intl.formatMessage({
                             id: 'dashboard.trigger.noHeaders',
                             defaultMessage:
@@ -269,6 +270,7 @@ const Trigger = ({ intl, eventListenerNamespace, trigger }) => {
                     <Table
                       headers={headers}
                       rows={rows}
+                      size="short"
                       isSortable={false}
                       emptyTextAllNamespaces={intl.formatMessage({
                         id: 'dashboard.trigger.noOverlays',

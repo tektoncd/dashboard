@@ -151,40 +151,40 @@ export /* istanbul ignore next */ class About extends Component {
             defaultMessage: 'About'
           })}
         </h1>
-        <div data-testid="dashboard-table">
-          <Table
-            title="Dashboard"
-            headers={headers}
-            rows={[
-              getRow('Namespace', this.props.dashboardNamespace),
-              getRow(versionLabel, this.props.dashboardVersion),
-              getRow(isOpenShiftLabel, this.props.isOpenShift),
-              getRow(isReadOnlyLabel, this.props.isReadOnly),
-              getRow(logoutURLLabel, this.props.logoutURL)
-            ].filter(Boolean)}
-          />
-        </div>
-        <div data-testid="pipelines-table">
-          <Table
-            title="Pipelines"
-            headers={headers}
-            rows={[
-              getRow('Namespace', this.props.pipelinesNamespace),
-              getRow(versionLabel, this.props.pipelinesVersion)
-            ].filter(Boolean)}
-          />
-        </div>
+        <Table
+          title="Dashboard"
+          headers={headers}
+          rows={[
+            getRow('Namespace', this.props.dashboardNamespace),
+            getRow(versionLabel, this.props.dashboardVersion),
+            getRow(isOpenShiftLabel, this.props.isOpenShift),
+            getRow(isReadOnlyLabel, this.props.isReadOnly),
+            getRow(logoutURLLabel, this.props.logoutURL)
+          ].filter(Boolean)}
+          size="short"
+          className="tkn--about--dashboard-table"
+        />
+        <Table
+          title="Pipelines"
+          headers={headers}
+          rows={[
+            getRow('Namespace', this.props.pipelinesNamespace),
+            getRow(versionLabel, this.props.pipelinesVersion)
+          ].filter(Boolean)}
+          size="short"
+          className="tkn--about--pipelines-table"
+        />
         {this.props.isTriggersInstalled && (
-          <div data-testid="triggers-table">
-            <Table
-              title="Triggers"
-              headers={headers}
-              rows={[
-                getRow('Namespace', this.props.triggersNamespace),
-                getRow(versionLabel, this.props.triggersVersion)
-              ].filter(Boolean)}
-            />
-          </div>
+          <Table
+            title="Triggers"
+            headers={headers}
+            rows={[
+              getRow('Namespace', this.props.triggersNamespace),
+              getRow(versionLabel, this.props.triggersVersion)
+            ].filter(Boolean)}
+            size="short"
+            className="tkn--about--triggers-table"
+          />
         )}
       </div>
     );

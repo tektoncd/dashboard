@@ -118,6 +118,7 @@ export /* istanbul ignore next */ class TriggerBindingContainer extends Componen
           })}
           headers={headersForParameters}
           rows={rowsForParameters}
+          size="short"
           selectedNamespace={selectedNamespace}
           emptyTextAllNamespaces={emptyTextMessage}
           emptyTextSelectedNamespace={emptyTextMessage}
