@@ -14,8 +14,10 @@ This guide explains how to build, deploy and test the Tekton Dashboard. It cover
   - [Build docker image for another GOARCH](#build-docker-image-for-another-goarch)
 - [Development server](#development-server)
 - [Run backend tests](#run-backend-tests)
-- [Run frontend tests](#run-backend-tests)
-  - [Unit tests](#unit-tests)
+  - [Backend unit tests](#backend-unit-tests)
+  - [Integration tests](#integration-tests)
+- [Run frontend tests](#run-frontend-tests)
+  - [Frontend unit tests](#frontend-unit-tests)
   - [Linter](#linter)
 - [i18n](#i18n)
 - [Storybook](#storybook)
@@ -160,6 +162,7 @@ export KO_DOCKER_REPO='ko.local'
 ```
 
 Depending on the dashboard flavour you want to deploy, use one of the following commands:
+
 ```bash
 # Plain Kube
 kustomize build overlays/dev | ko apply -f -
@@ -211,6 +214,8 @@ Make sure that the backend service running in the cluster is proxied using `kube
 
 ## Run backend tests
 
+### Backend unit tests
+
 To run unit tests:
 
 ```bash
@@ -224,9 +229,29 @@ To run unit tests with `-race`:
 CGO_ENABLED=1 NAMESPACE=default go test -race -v ./...
 ```
 
+### Integration tests
+
+To run integration tests you will need additonal tools:
+1. [`kind`](https://kind.sigs.k8s.io/): For creating a local cluster running on top of docker.
+1. [`helm`](https://helm.sh/docs/intro/install/): For installing helm charts in your kubernetes cluster.
+
+Integration tests are located in the [/test/e2e-tests.sh](../../test/e2e-tests.sh) script.
+
+To run the integration tests locally, you can use the [/test/local-e2e-tests.sh](../../test/local-e2e-tests.sh) script. It will create a fresh `kind` cluster, deploy a docker registry in it, run the integration tests script, and drop the test cluster automatically.
+
+```bash
+export KO_DOCKER_REPO='ko.local'
+# or use an external repository
+# export KO_DOCKER_REPO='docker.io/myusername'
+
+./test/local-e2e-tests.sh
+```
+
+**Note:** You can override the Tekton Pipelines and/or Triggers versions deployed in the test cluster by providing `PIPELINES_VERSION` and/or `TRIGGERS_VERSION` environment variables.
+
 ## Run frontend tests
 
-### Unit tests
+### Frontend unit tests
 
 Run `npm test` to execute the unit tests via [Jest](https://jestjs.io/) in interactive watch mode. This also generates a code coverage report by default.
 
