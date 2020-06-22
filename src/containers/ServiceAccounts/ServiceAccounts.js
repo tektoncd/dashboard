@@ -97,7 +97,9 @@ export /* istanbul ignore next */ class ServiceAccounts extends Component {
     ];
 
     const serviceAccountsFormatted = serviceAccounts.map(serviceAccount => ({
-      id: `${serviceAccount.metadata.namespace}:${serviceAccount.metadata.name}`,
+      id: `${serviceAccount.metadata.namespace}:${
+        serviceAccount.metadata.name
+      }`,
       created: (
         <FormattedDate
           date={serviceAccount.metadata.creationTimestamp}

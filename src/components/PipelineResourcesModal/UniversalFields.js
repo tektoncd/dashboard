@@ -84,10 +84,7 @@ const UniversalFields = props => {
           id: type,
           text: type === 'Git' ? 'Git' : 'Image'
         }}
-        items={[
-          { id: 'git', text: 'Git' },
-          { id: 'image', text: 'Image' }
-        ]}
+        items={[{ id: 'git', text: 'Git' }, { id: 'image', text: 'Image' }]}
         itemToString={itemToString}
         onChange={handleChangeType}
         translateWithId={getTranslateWithId(intl)}

@@ -35,10 +35,20 @@ function createByIdReducer({ type }) {
         delete newState[action.payload.metadata.uid];
         return newState;
       case `${typePlural}_FETCH_SUCCESS`:
+        const data = action.data.items
+          ? action.data.items.map(resource => {
+              const withToken = Object.assign({}, resource);
+              withToken.metadata.continue = action.data.metadata.continue
+                ? action.data.metadata.continue
+                : 'DONE';
+              return withToken;
+            })
+          : action.data;
+
         return {
           ...state,
           ...keyBy(
-            action.data.filter(resource => !isStale(resource, state)),
+            data.filter(resource => !isStale(resource, state)),
             'metadata.uid'
           )
         };
@@ -70,17 +80,16 @@ function createByNamespaceReducer({ type }) {
         ];
         return newState;
       case `${typePlural}_FETCH_SUCCESS`:
-        const namespaces = action.data.reduce(
-          (accumulator, pipelineResource) => {
-            const { name, namespace, uid } = pipelineResource.metadata;
-            return merge(accumulator, {
-              [namespace]: {
-                [name]: uid
-              }
-            });
-          },
-          {}
-        );
+        const data = action.data.items ? action.data.items : action.data;
+
+        const namespaces = data.reduce((accumulator, pipelineResource) => {
+          const { name, namespace, uid } = pipelineResource.metadata;
+          return merge(accumulator, {
+            [namespace]: {
+              [name]: uid
+            }
+          });
+        }, {});
 
         return merge({}, state, namespaces);
       default:
@@ -98,6 +107,25 @@ export function createIsFetchingReducer({ type }) {
       case `${typePlural}_FETCH_SUCCESS`:
       case `${typePlural}_FETCH_FAILURE`:
         return false;
+      default:
+        return state;
+    }
+  };
+}
+
+export function createFetchContinueTokenReducer({ type }) {
+  const typePlural = typeToPlural(type);
+  return function fetchedContinueToken(state = null, action) {
+    switch (action.type) {
+      case `${typePlural}_FETCH_SUCCESS`:
+        if (state === 'DONE' || action.data.metadata === undefined) {
+          return state;
+        }
+        return action.data.metadata.continue === ''
+          ? 'DONE'
+          : action.data.metadata.continue;
+      case `${typePlural}_FETCH_REQUEST`:
+      case `${typePlural}_FETCH_FAILURE`:
       default:
         return state;
     }
@@ -124,6 +152,7 @@ export function createNamespacedReducer({ type }) {
     byId: createByIdReducer({ type }),
     byNamespace: createByNamespaceReducer({ type }),
     errorMessage: createErrorMessageReducer({ type }),
-    isFetching: createIsFetchingReducer({ type })
+    isFetching: createIsFetchingReducer({ type }),
+    fetchedContinueToken: createFetchContinueTokenReducer({ type })
   });
 }

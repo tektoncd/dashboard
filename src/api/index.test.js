@@ -116,12 +116,12 @@ describe('getResourceAPI', () => {
 });
 
 describe('checkData', () => {
-  it('returns items if present', () => {
-    const items = 'foo';
+  it('returns items and metadata if items are present', () => {
     const data = {
-      items
+      items: ['foo'],
+      metadata: {}
     };
-    expect(index.checkData(data)).toEqual(items);
+    expect(index.checkData(data)).toEqual(data);
   });
 
   it('throws an error if items is not present', () => {
@@ -135,7 +135,7 @@ it('getPipelines', () => {
   };
   fetchMock.get(/pipelines/, data);
   return index.getPipelines().then(pipelines => {
-    expect(pipelines).toEqual(data.items);
+    expect(pipelines.items).toEqual(data.items);
     fetchMock.restore();
   });
 });
@@ -156,7 +156,7 @@ it('getPipelineRuns', () => {
   };
   fetchMock.get(/pipelineruns/, data);
   return index.getPipelineRuns({ filters: [] }).then(pipelineRuns => {
-    expect(pipelineRuns).toEqual(data.items);
+    expect(pipelineRuns.items).toEqual(data.items);
     fetchMock.restore();
   });
 });
@@ -170,7 +170,7 @@ it('getPipelineRuns With Query Params', () => {
   return index
     .getPipelineRuns({ pipelineName, filters: [] })
     .then(pipelineRuns => {
-      expect(pipelineRuns).toEqual(data.items);
+      expect(pipelineRuns.items).toEqual(data.items);
       fetchMock.restore();
     });
 });
@@ -240,7 +240,7 @@ it('getClusterTasks', () => {
   };
   fetchMock.get(/clustertasks/, data);
   return index.getClusterTasks().then(tasks => {
-    expect(tasks).toEqual(data.items);
+    expect(tasks.items).toEqual(data.items);
     fetchMock.restore();
   });
 });
@@ -261,7 +261,7 @@ it('getTasks', () => {
   };
   fetchMock.get(/tasks/, data);
   return index.getTasks().then(tasks => {
-    expect(tasks).toEqual(data.items);
+    expect(tasks.items).toEqual(data.items);
     fetchMock.restore();
   });
 });
@@ -282,7 +282,7 @@ it('getTaskRuns', () => {
   };
   fetchMock.get(/taskruns/, data);
   return index.getTaskRuns().then(taskRuns => {
-    expect(taskRuns).toEqual(data.items);
+    expect(taskRuns.items).toEqual(data.items);
     fetchMock.restore();
   });
 });
@@ -294,7 +294,7 @@ it('getTaskRuns With Query Params', () => {
   };
   fetchMock.get(/taskruns/, data);
   return index.getTaskRuns({ taskName }).then(taskRuns => {
-    expect(taskRuns).toEqual(data.items);
+    expect(taskRuns.items).toEqual(data.items);
     fetchMock.restore();
   });
 });
@@ -315,7 +315,7 @@ it('getPipelineResources', () => {
   };
   fetchMock.get(/pipelineresources/, data);
   return index.getPipelineResources().then(pipelineResources => {
-    expect(pipelineResources).toEqual(data.items);
+    expect(pipelineResources.items).toEqual(data.items);
     fetchMock.restore();
   });
 });
@@ -336,7 +336,7 @@ it('getConditions', () => {
   };
   fetchMock.get(/conditions/, data);
   return index.getConditions().then(conditions => {
-    expect(conditions).toEqual(data.items);
+    expect(conditions.items).toEqual(data.items);
     fetchMock.restore();
   });
 });
@@ -542,7 +542,7 @@ it('getCredentials', () => {
   };
   fetchMock.get(/secrets/, data);
   return index.getCredentials().then(response => {
-    expect(response).toEqual(data.items);
+    expect(response.items).toEqual(data.items);
     fetchMock.restore();
   });
 });
@@ -644,7 +644,7 @@ it('getNamespaces returns the correct data', () => {
   };
   fetchMock.get(/namespaces/, data);
   return index.getNamespaces().then(response => {
-    expect(response).toEqual(data.items);
+    expect(response.items).toEqual(data.items);
     fetchMock.restore();
   });
 });
@@ -662,7 +662,7 @@ it('getServiceAccounts returns the correct data', () => {
   const data = { items: 'serviceaccounts' };
   fetchMock.get(/serviceaccounts/, data);
   return index.getServiceAccounts().then(response => {
-    expect(response).toEqual(data.items);
+    expect(response.items).toEqual(data.items);
     fetchMock.restore();
   });
 });
@@ -690,7 +690,7 @@ it('getResources', () => {
   return index
     .getCustomResources({ group, version, type, namespace })
     .then(resources => {
-      expect(resources).toEqual(data.items);
+      expect(resources.items).toEqual(data.items);
       fetchMock.restore();
     });
 });
@@ -727,7 +727,7 @@ it('getTriggerTemplates', () => {
   };
   fetchMock.get(/triggertemplates/, data);
   return index.getTriggerTemplates().then(triggerTemplates => {
-    expect(triggerTemplates).toEqual(data.items);
+    expect(triggerTemplates.items).toEqual(data.items);
     fetchMock.restore();
   });
 });
@@ -760,7 +760,7 @@ it('getTriggerBindings', () => {
   };
   fetchMock.get(/triggerbindings/, data);
   return index.getTriggerBindings().then(triggerBindings => {
-    expect(triggerBindings).toEqual(data.items);
+    expect(triggerBindings.items).toEqual(data.items);
     fetchMock.restore();
   });
 });
@@ -771,7 +771,7 @@ it('getClusterTriggerBindings', () => {
   };
   fetchMock.get(/clustertriggerbindings/, data);
   return index.getClusterTriggerBindings().then(clusterTriggerBindings => {
-    expect(clusterTriggerBindings).toEqual(data.items);
+    expect(clusterTriggerBindings.items).toEqual(data.items);
     fetchMock.restore();
   });
 });
@@ -792,7 +792,7 @@ it('getEventListeners', () => {
   };
   fetchMock.get(/eventlisteners/, data);
   return index.getEventListeners().then(eventListeners => {
-    expect(eventListeners).toEqual(data.items);
+    expect(eventListeners.items).toEqual(data.items);
     fetchMock.restore();
   });
 });

@@ -42,7 +42,9 @@ it('CLUSTER_TASKS_FETCH_REQUEST', () => {
 it('CLUSTER_TASKS_FETCH_SUCCESS', () => {
   const action = {
     type: 'CLUSTER_TASKS_FETCH_SUCCESS',
-    data: [clusterTask]
+    data: {
+      items: [clusterTask]
+    }
   };
 
   const state = clusterTasksReducer({}, action);
@@ -54,7 +56,9 @@ it('CLUSTER_TASKS_FETCH_SUCCESS', () => {
 it('CLUSTER_TASKS_FETCH_SUCCESS with stale content', () => {
   const action = {
     type: 'CLUSTER_TASKS_FETCH_SUCCESS',
-    data: [clusterTask]
+    data: {
+      items: [clusterTask]
+    }
   };
   let state = clusterTasksReducer({}, action);
 

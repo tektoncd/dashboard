@@ -197,4 +197,7 @@ const mapDispatchToProps = {
   fetchTasks
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(injectIntl(Tasks));
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(injectIntl(Tasks));

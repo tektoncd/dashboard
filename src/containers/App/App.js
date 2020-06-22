@@ -99,9 +99,9 @@ if (process.env.I18N_PSEUDO) {
         // hot reloading in dev mode
         return;
       }
-      messagesToDisplay[
-        messageId
-      ] = `${startBoundary}${messagesToDisplay[messageId]}${endBoundary}`;
+      messagesToDisplay[messageId] = `${startBoundary}${
+        messagesToDisplay[messageId]
+      }${endBoundary}`;
     });
   });
 }
@@ -487,4 +487,9 @@ const mapDispatchToProps = {
   selectNamespace
 };
 
-export default hot(connect(mapStateToProps, mapDispatchToProps)(App));
+export default hot(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(App)
+);

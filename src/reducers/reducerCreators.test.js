@@ -47,7 +47,8 @@ it('handles init or unknown actions', () => {
     byId: {},
     byNamespace: {},
     errorMessage: null,
-    isFetching: false
+    isFetching: false,
+    fetchedContinueToken: null
   });
 });
 

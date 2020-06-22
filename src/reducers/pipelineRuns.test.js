@@ -55,3 +55,10 @@ it('isFetchingPipelineRuns', () => {
   const isFetching = 'isFetching';
   expect(selectors.isFetchingPipelineRuns({ isFetching })).toEqual(isFetching);
 });
+
+it('fetchedPipelineRunsContinueToken', () => {
+  const fetchedContinueToken = 'fetchedContinueToken';
+  expect(
+    selectors.fetchedPipelineRunsContinueToken({ fetchedContinueToken })
+  ).toEqual(fetchedContinueToken);
+});

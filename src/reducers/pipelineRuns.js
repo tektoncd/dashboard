@@ -31,3 +31,7 @@ export function getPipelineRunsErrorMessage(state) {
 export function isFetchingPipelineRuns(state) {
   return state.isFetching;
 }
+
+export function fetchedPipelineRunsContinueToken(state) {
+  return state.fetchedContinueToken;
+}

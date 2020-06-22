@@ -44,7 +44,9 @@ const ServiceAccountSelector = props => {
   const serviceAccountsFormatted = serviceAccounts
     .filter(serviceAccount => serviceAccount.metadata.namespace === namespace)
     .map(serviceAccount => ({
-      id: `${serviceAccount.metadata.namespace}:${serviceAccount.metadata.name}`,
+      id: `${serviceAccount.metadata.namespace}:${
+        serviceAccount.metadata.name
+      }`,
       serviceAccount: serviceAccount.metadata.name
     }));
 
