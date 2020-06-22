@@ -42,7 +42,8 @@ storiesOf('Containers/Dropdowns/NamespacesDropdown', module)
       namespaces: {
         byName,
         isFetching: false
-      }
+      },
+      properties: {}
     });
 
     return (
@@ -59,7 +60,8 @@ storiesOf('Containers/Dropdowns/NamespacesDropdown', module)
       namespaces: {
         byName: {},
         isFetching: false
-      }
+      },
+      properties: {}
     });
     return (
       <Provider store={store}>

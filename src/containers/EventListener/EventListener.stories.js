@@ -37,9 +37,9 @@ const eventListener = {
       {
         name: 'my-trigger',
         bindings: [
-          { name: 'triggerbinding0' },
-          { name: 'triggerbinding1' },
-          { name: 'triggerbinding2' }
+          { ref: 'triggerbinding0' },
+          { ref: 'triggerbinding1' },
+          { ref: 'triggerbinding2' }
         ],
         template: {
           name: 'triggertemplate'
@@ -69,7 +69,7 @@ const eventListener = {
       },
       {
         name: 'my-trigger-1',
-        bindings: [{ name: 'triggerbinding1' }],
+        bindings: [{ ref: 'triggerbinding1' }],
         template: {
           name: 'triggertemplate1'
         },
@@ -93,7 +93,7 @@ const eventListener = {
       },
       {
         name: 'my-trigger-2',
-        bindings: [{ name: 'triggerbinding2' }],
+        bindings: [{ ref: 'triggerbinding2' }],
         template: {
           name: 'triggertemplate2'
         },
@@ -111,7 +111,7 @@ const eventListener = {
       },
       {
         name: 'my-trigger-3',
-        bindings: [{ name: 'triggerbinding3' }],
+        bindings: [{ ref: 'triggerbinding3' }],
         template: {
           name: 'triggertemplate3'
         },
