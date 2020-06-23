@@ -313,10 +313,6 @@ export class ImportResources extends Component {
           </FormGroup>
           <Accordion>
             <AccordionItem
-              iconDescription={intl.formatMessage({
-                id: 'dashboard.importResources.expandCollapse',
-                defaultMessage: 'Expand/Collapse'
-              })}
               title={intl.formatMessage({
                 id: 'dashboard.importResources.advanced.accordionText',
                 defaultMessage:
