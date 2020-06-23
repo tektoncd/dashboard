@@ -137,7 +137,16 @@ const pipelineRun = {
 
 storiesOf('Components/PipelineRun', module)
   .addDecorator(story => (
-    <div style={{ position: 'relative', width: '100%' }}>{story()}</div>
+    <div
+      style={{
+        backgroundColor: '#f4f4f4',
+        padding: '2rem',
+        position: 'relative',
+        width: '100%'
+      }}
+    >
+      {story()}
+    </div>
   ))
   .add('default', () => (
     <PipelineRun
