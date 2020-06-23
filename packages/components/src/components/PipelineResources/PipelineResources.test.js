@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,15 +13,9 @@ limitations under the License.
 
 import React from 'react';
 import { fireEvent, waitForElement } from 'react-testing-library';
-import { createIntl } from 'react-intl';
 import { TrashCan32 as Delete } from '@carbon/icons-react';
 import { renderWithIntl, renderWithRouter } from '../../utils/test';
 import PipelineResources from './PipelineResources';
-
-const intl = createIntl({
-  locale: 'en',
-  defaultLocale: 'en'
-});
 
 it('PipelineResources renders empty state', () => {
   const { queryByText } = renderWithIntl(
@@ -46,7 +40,6 @@ it('PipelineResources renders correct data', async () => {
   const batchDeleteSpy = jest.fn();
   const { queryByText, getByLabelText, getByText } = renderWithRouter(
     <PipelineResources
-      intl={intl}
       pipelineResources={[
         {
           metadata: {
