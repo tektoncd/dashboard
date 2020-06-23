@@ -376,6 +376,10 @@ it('formatLabels', () => {
   ]);
 });
 
+it('sortStepsByTimestamp handles falsy steps', () => {
+  expect(sortStepsByTimestamp(null)).toEqual([]);
+});
+
 it('sortStepsByTimestamp preserves order if no timestamps present', () => {
   const steps = ['t', 'e', 's', 't'];
   const want = ['t', 'e', 's', 't'];

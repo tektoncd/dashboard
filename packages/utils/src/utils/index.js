@@ -182,6 +182,9 @@ export function formatLabels(labelsRaw) {
 
 // Sorts the steps by finishedAt and startedAt timestamps
 export function sortStepsByTimestamp(steps) {
+  if (!steps) {
+    return [];
+  }
   return steps.sort((i, j) => {
     const iFinishAt = new Date(i.stepStatus?.terminated?.finishedAt).getTime();
     const jFinishAt = new Date(j.stepStatus?.terminated?.finishedAt).getTime();
