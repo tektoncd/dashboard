@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import { createIntl } from 'react-intl';
 import { fireEvent, waitForElement } from 'react-testing-library';
 import { Provider } from 'react-redux';
 import { Route } from 'react-router-dom';
@@ -26,11 +25,6 @@ import * as selectors from '../../reducers';
 
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
-
-const intl = createIntl({
-  locale: 'en',
-  defaultLocale: 'en'
-});
 
 beforeEach(() => {
   jest.spyOn(API, 'getPipelines').mockImplementation(() => {});
@@ -149,11 +143,9 @@ const store = mockStore({
 
 it('click add new secret and create secret UI appears', () => {
   const currentProps = {
-    error: null,
     history: {
       push: jest.fn()
     },
-    loading: false,
     secrets: [
       {
         metadata: {
@@ -195,9 +187,7 @@ it('click delete secret & modal appears', () => {
           'tekton.dev/git-0': 'https://github.ibm.com'
         }
       }
-    ],
-    loading: false,
-    error: null
+    ]
   };
 
   const { getByTestId, getByText } = renderWithRouter(
@@ -248,9 +238,7 @@ it('SecretsTable only renders tekton.dev annotations', () => {
           'tekton.dev/git-0': 'https://github.ibm.com'
         }
       }
-    ],
-    loading: false,
-    error: null
+    ]
   };
 
   const { queryByText } = renderWithRouter(
@@ -288,17 +276,11 @@ it('SecretsTable renders username in regular form (not encoded)', () => {
 });
 
 it('Secrets can be filtered on a single label filter', async () => {
-  const currentProps = {
-    loading: false,
-    error: null,
-    intl
-  };
-
   const { getByTestId, getByText, queryByText } = renderWithRouter(
     <Provider store={store}>
       <Route
         path={urls.secrets.all()}
-        render={props => <Secrets {...props} {...currentProps} />}
+        render={props => <Secrets {...props} />}
       />
     </Provider>,
     { route: urls.secrets.all() }
@@ -317,17 +299,11 @@ it('Secrets can be filtered on a single label filter', async () => {
 it('Secrets can not be created when in read-only mode', async () => {
   jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => true);
 
-  const currentProps = {
-    loading: false,
-    error: null,
-    intl
-  };
-
   const { queryByText } = renderWithRouter(
     <Provider store={store}>
       <Route
         path={urls.secrets.all()}
-        render={props => <Secrets {...props} {...currentProps} />}
+        render={props => <Secrets {...props} />}
       />
     </Provider>,
     { route: urls.secrets.all() }
@@ -339,17 +315,11 @@ it('Secrets can not be created when in read-only mode', async () => {
 it('Secrets can be created when not in read-only mode', async () => {
   jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => false);
 
-  const currentProps = {
-    loading: false,
-    error: null,
-    intl
-  };
-
   const { queryByText } = renderWithRouter(
     <Provider store={store}>
       <Route
         path={urls.secrets.all()}
-        render={props => <Secrets {...props} {...currentProps} />}
+        render={props => <Secrets {...props} />}
       />
     </Provider>,
     { route: urls.secrets.all() }
