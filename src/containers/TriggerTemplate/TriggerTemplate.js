@@ -150,8 +150,9 @@ export /* istanbul ignore next */ class TriggerTemplateContainer extends Compone
           <div className="tkn--table">
             <DataTable
               rows={resourcetemplates.map((item, index) => ({
-                id: `${index}|${item.metadata.name ||
-                  item.metadata.generateName}`,
+                id: `${index}|${
+                  item.metadata.name || item.metadata.generateName
+                }`,
                 name: item.metadata.name || item.metadata.generateName,
                 kind: item.kind
               }))}

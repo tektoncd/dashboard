@@ -160,9 +160,7 @@ export function isRunning(reason, status) {
 
 // Generates a unique id
 export function generateId(prefix) {
-  return `${prefix}${Math.random()
-    .toString(36)
-    .substr(2, 9)}`;
+  return `${prefix}${Math.random().toString(36).substr(2, 9)}`;
 }
 
 export function formatLabels(labelsRaw) {
