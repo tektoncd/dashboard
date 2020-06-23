@@ -118,7 +118,6 @@
     "dashboard.importResources.directory.helperText": "The location of the Tekton resources to import from the repository. Leave blank if the resources are at the top-level directory.",
     "dashboard.importResources.directory.labelText": "Repository directory (optional)",
     "dashboard.importResources.directory.placeholder": "Enter repository directory",
-    "dashboard.importResources.expandCollapse": "Expand/Collapse",
     "dashboard.importResources.heading": "Import resources from repository",
     "dashboard.importResources.importApplyButton": "Import and Apply",
     "dashboard.importResources.importerNamespace.helperText": "The namespace in which the PipelineRun fetching the repository and creating the resources will run",
