@@ -30,7 +30,7 @@ import {
   getTitle,
   urls
 } from '@tektoncd/dashboard-utils';
-import { Add16 as Add, Delete16 as Delete } from '@carbon/icons-react';
+import { Add16 as Add, TrashCan32 as Delete } from '@carbon/icons-react';
 import { LabelFilter } from '..';
 import DeleteModal from '../../components/SecretsDeleteModal';
 import {

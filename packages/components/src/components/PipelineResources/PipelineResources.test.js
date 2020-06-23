@@ -14,7 +14,7 @@ limitations under the License.
 import React from 'react';
 import { fireEvent, waitForElement } from 'react-testing-library';
 import { createIntl } from 'react-intl';
-import { Delete16 } from '@carbon/icons-react';
+import { TrashCan32 as Delete } from '@carbon/icons-react';
 import { renderWithIntl, renderWithRouter } from '../../utils/test';
 import PipelineResources from './PipelineResources';
 
@@ -74,7 +74,7 @@ it('PipelineResources renders correct data', async () => {
         {
           onClick: batchDeleteSpy,
           text: 'Delete',
-          icon: Delete16
+          icon: Delete
         }
       ]}
     />
