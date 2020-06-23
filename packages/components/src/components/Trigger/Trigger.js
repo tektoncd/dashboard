@@ -55,10 +55,16 @@ const Trigger = ({ intl, eventListenerNamespace, trigger }) => {
                 <span key={binding.ref}>
                   <Link
                     className="tkn--trigger-resourcelink"
-                    to={urls.triggerBindings.byName({
-                      namespace: eventListenerNamespace,
-                      triggerBindingName: binding.ref
-                    })}
+                    to={
+                      binding.kind === 'ClusterTriggerBinding'
+                        ? urls.clusterTriggerBindings.byName({
+                            clusterTriggerBindingName: binding.ref
+                          })
+                        : urls.triggerBindings.byName({
+                            namespace: eventListenerNamespace,
+                            triggerBindingName: binding.ref
+                          })
+                    }
                   >
                     <span title={binding.ref}>{binding.ref}</span>
                   </Link>

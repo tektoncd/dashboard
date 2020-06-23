@@ -28,6 +28,7 @@ const fakeTrigger = {
     },
     {
       apiversion: 'v1alpha1',
+      kind: 'ClusterTriggerBinding',
       ref: 'triggerbinding-2'
     }
   ],
