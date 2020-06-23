@@ -52,3 +52,4 @@ export { default as TaskTree } from './TaskTree';
 export { default as TooltipDropdown } from './TooltipDropdown';
 export { default as Trigger } from './Trigger';
 export { default as ViewYAML } from './ViewYAML';
+export { default as WithLineBreaks } from './WithLineBreaks';
