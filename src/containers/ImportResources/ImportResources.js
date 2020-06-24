@@ -21,8 +21,7 @@ import {
   FormGroup,
   InlineNotification,
   TextInput,
-  ToastNotification,
-  Tooltip
+  ToastNotification
 } from 'carbon-components-react';
 
 import { connect } from 'react-redux';
@@ -314,38 +313,11 @@ export class ImportResources extends Component {
           </FormGroup>
           <Accordion>
             <AccordionItem
-              iconDescription={intl.formatMessage({
-                id: 'dashboard.importResources.expandCollapse',
-                defaultMessage: 'Expand/Collapse'
+              title={intl.formatMessage({
+                id: 'dashboard.importResources.advanced.accordionText',
+                defaultMessage:
+                  'Advanced configuration for the Import PipelineRun'
               })}
-              title={
-                <Tooltip
-                  direction="right"
-                  triggerText={intl.formatMessage({
-                    id: 'dashboard.importResources.advanced.accordionText',
-                    defaultMessage:
-                      'Advanced configuration for the Import PipelineRun'
-                  })}
-                >
-                  <div>
-                    {intl.formatMessage(
-                      {
-                        id: 'dashboard.importResources.advanced.tooltip',
-                        defaultMessage:
-                          'Change these parameters if you want the PipelineRun that will do the importing to run in a different namespace from the Dashboard.{break}You can optionally provide a different ServiceAccount too.'
-                      },
-                      {
-                        break: (
-                          <>
-                            <br />
-                            <br />
-                          </>
-                        )
-                      }
-                    )}
-                  </div>
-                </Tooltip>
-              }
             >
               <NamespacesDropdown
                 id="import-install-namespaces-dropdown"

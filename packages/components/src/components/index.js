@@ -12,7 +12,6 @@ limitations under the License.
 */
 /* istanbul ignore file */
 
-export { default as CancelButton } from './CancelButton';
 export { default as DataTableSkeleton } from './DataTableSkeleton';
 export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as FormattedDate } from './FormattedDate';
@@ -53,3 +52,4 @@ export { default as TaskTree } from './TaskTree';
 export { default as TooltipDropdown } from './TooltipDropdown';
 export { default as Trigger } from './Trigger';
 export { default as ViewYAML } from './ViewYAML';
+export { default as WithLineBreaks } from './WithLineBreaks';

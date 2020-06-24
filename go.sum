@@ -1405,6 +1405,7 @@ k8s.io/cli-runtime v0.17.3/go.mod h1:X7idckYphH4SZflgNpOOViSxetiMj6xI0viMAjM81TA
 k8s.io/client-go v0.16.5 h1:gp+ALoobYbhrm1CHo//8rAvyDuZqM6SDqnMT9nSSx1I=
 k8s.io/client-go v0.16.5/go.mod h1:0Y5GaECkDkadoJg7lBQLiQQGFl67O4Gia/dHZboA7xg=
 k8s.io/cloud-provider v0.17.0/go.mod h1:Ze4c3w2C0bRsjkBUoHpFi+qWe3ob1wI2/7cUn+YQIDE=
+k8s.io/code-generator v0.16.5 h1:DQDucFIbyQChnbz5KY0SECZd2VH72qKVAd8+vA4h8kI=
 k8s.io/code-generator v0.16.5/go.mod h1:2aiDuxDU7RQK2PVypXAXHo6+YwOlF33iezHQbSmKSA4=
 k8s.io/component-base v0.0.0-20190918200425-ed2f0867c778/go.mod h1:DFWQCXgXVLiWtzFaS17KxHdlUeUymP7FLxZSkmL9/jU=
 k8s.io/component-base v0.16.4/go.mod h1:GYQ+4hlkEwdlpAp59Ztc4gYuFhdoZqiAJD1unYDJ3FM=
@@ -1414,6 +1415,7 @@ k8s.io/component-base v0.17.3/go.mod h1:GeQf4BrgelWm64PXkIXiPh/XS0hnO42d9gx9BtbZ
 k8s.io/component-base v0.17.6 h1:4S4FTX7/5VvO325vHm9/4pdql91OhrZpDYVzmyLSqNU=
 k8s.io/component-base v0.17.6/go.mod h1:jgRLWl0B0rOzFNtxQ9E4BphPmDqoMafujdau6AdG2Xo=
 k8s.io/csi-translation-lib v0.17.0/go.mod h1:HEF7MEz7pOLJCnxabi45IPkhSsE/KmxPQksuCrHKWls=
+k8s.io/gengo v0.0.0-20190327210449-e17681d19d3a h1:QoHVuRquf80YZ+/bovwxoMO3Q/A3nt3yTgS0/0nejuk=
 k8s.io/gengo v0.0.0-20190327210449-e17681d19d3a/go.mod h1:ezvh/TsK7cY6rbqRK0oQQ8IAqLxYwwyPxAX1Pzy0ii0=
 k8s.io/klog v0.0.0-20181102134211-b9b56d5dfc92/go.mod h1:Gq+BEi5rUBO/HRz0bTSXDUcqjScdoY3a9IHpCEIOOfk=
 k8s.io/klog v0.3.0/go.mod h1:Gq+BEi5rUBO/HRz0bTSXDUcqjScdoY3a9IHpCEIOOfk=

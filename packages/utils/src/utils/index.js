@@ -160,9 +160,7 @@ export function isRunning(reason, status) {
 
 // Generates a unique id
 export function generateId(prefix) {
-  return `${prefix}${Math.random()
-    .toString(36)
-    .substr(2, 9)}`;
+  return `${prefix}${Math.random().toString(36).substr(2, 9)}`;
 }
 
 export function formatLabels(labelsRaw) {
@@ -184,6 +182,9 @@ export function formatLabels(labelsRaw) {
 
 // Sorts the steps by finishedAt and startedAt timestamps
 export function sortStepsByTimestamp(steps) {
+  if (!steps) {
+    return [];
+  }
   return steps.sort((i, j) => {
     const iFinishAt = new Date(i.stepStatus?.terminated?.finishedAt).getTime();
     const jFinishAt = new Date(j.stepStatus?.terminated?.finishedAt).getTime();

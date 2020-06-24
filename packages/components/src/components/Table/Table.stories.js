@@ -18,7 +18,7 @@ import { boolean, text } from '@storybook/addon-knobs';
 import { Dropdown } from 'carbon-components-react';
 import {
   Add16 as Add,
-  Delete16 as Delete,
+  TrashCan32 as Delete,
   Restart16 as Rerun,
   Renew16 as RerunAll
 } from '@carbon/icons-react';

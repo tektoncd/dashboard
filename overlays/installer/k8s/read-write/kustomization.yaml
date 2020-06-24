@@ -1,0 +1,16 @@
+---
+resources:
+  - ../base
+patchesJson6902:
+  - target:
+      group: rbac.authorization.k8s.io
+      version: v1
+      kind: ClusterRole
+      name: tekton-dashboard-backend
+    path: ../../../full-fat/clusterrole-backend-patch.yaml
+  - target:
+      group: rbac.authorization.k8s.io
+      version: v1
+      kind: ClusterRole
+      name: tekton-dashboard-tenant
+    path: ../../../full-fat/clusterrole-tenant-patch.yaml

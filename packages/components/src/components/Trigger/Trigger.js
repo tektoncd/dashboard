@@ -52,15 +52,21 @@ const Trigger = ({ intl, eventListenerNamespace, trigger }) => {
             </span>
             <div>
               {trigger.bindings.map((binding, index) => (
-                <span key={binding.name}>
+                <span key={binding.ref}>
                   <Link
                     className="tkn--trigger-resourcelink"
-                    to={urls.triggerBindings.byName({
-                      namespace: eventListenerNamespace,
-                      triggerBindingName: binding.name
-                    })}
+                    to={
+                      binding.kind === 'ClusterTriggerBinding'
+                        ? urls.clusterTriggerBindings.byName({
+                            clusterTriggerBindingName: binding.ref
+                          })
+                        : urls.triggerBindings.byName({
+                            namespace: eventListenerNamespace,
+                            triggerBindingName: binding.ref
+                          })
+                    }
                   >
-                    <span title={binding.name}>{binding.name}</span>
+                    <span title={binding.ref}>{binding.ref}</span>
                   </Link>
                   {index !== trigger.bindings.length - 1 && <span>, </span>}
                 </span>
@@ -162,6 +168,7 @@ const Trigger = ({ intl, eventListenerNamespace, trigger }) => {
                         <Table
                           headers={tableHeaders}
                           rows={headerValues}
+                          size="short"
                           emptyTextAllNamespaces={intl.formatMessage({
                             id: 'dashboard.trigger.noHeaders',
                             defaultMessage:
@@ -269,6 +276,7 @@ const Trigger = ({ intl, eventListenerNamespace, trigger }) => {
                     <Table
                       headers={headers}
                       rows={rows}
+                      size="short"
                       isSortable={false}
                       emptyTextAllNamespaces={intl.formatMessage({
                         id: 'dashboard.trigger.noOverlays',

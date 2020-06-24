@@ -1,0 +1,13 @@
+---
+resources:
+  - ../../base
+  - ../../../openshift-patches/route.yaml
+  - ../../../openshift-patches/internal-dashboard-service.yaml
+patchesJson6902:
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: tekton-dashboard
+      namespace: tekton-pipelines
+    path: ../../../openshift-patches/oauth-proxy-in-deployment.yaml

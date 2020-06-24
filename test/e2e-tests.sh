@@ -44,17 +44,30 @@ fi
 
 initOS
 install_kustomize
+npm install -g newman@5
 
-function test_overlay() {
-  overlay=$1
-  creationMethod=$2
+function test_dashboard() {
+  # overlay or installer
+  local installMode=$1
+  # kubectl or proxy (to create the necessary resources)
+  local creationMethod=$2
 
-  header "Setting up environment ($overlay)"
+  header "Installing pipelines"
 
-  install_pipeline_crd
-  install_dashboard_backend $overlay
+  install_pipelines $PIPELINES_VERSION
+  install_triggers $TRIGGERS_VERSION
 
-  header "Running the e2e tests ($overlay)"
+  if [ "$installMode" == "overlay" ]; then
+    overlay=$3
+    header "Setting up environment ($overlay)"
+    install_dashboard_backend $overlay
+    header "Running the e2e tests - overlay ($overlay)"
+  else
+    header "Setting up environment (${@:3})"
+    $tekton_repo_dir/scripts/installer install ${@:3}
+    wait_dashboard_backend
+    header "Running the e2e tests - installer (${@:3})"
+  fi
 
   # Port forward the dashboard
   kubectl port-forward $(kubectl get pod --namespace tekton-pipelines -l app=tekton-dashboard -o name)  --namespace tekton-pipelines 9097:9097 &
@@ -176,11 +189,44 @@ function test_overlay() {
     fail_test "Test Failure, Not able to curl the pod"
   fi
 
+  echo "Running postman collections..."
+
+  local readonly=false
+
+  if [ "$creationMethod" = "kubectl" ]; then
+    readonly=true
+  fi
+
+  newman run ${tekton_repo_dir}/test/postman/Dashboard.postman_collection.json \
+    -g ${tekton_repo_dir}/test/postman/globals.json \
+    --global-var pipelines_version=$PIPELINES_VERSION \
+    --global-var triggers_version=$TRIGGERS_VERSION \
+    --global-var readonly=$readonly || fail_test "Postman Dashboard collection tests failed"
+
+  newman run ${tekton_repo_dir}/test/postman/Pipelines.postman_collection.json \
+    -g ${tekton_repo_dir}/test/postman/globals.json \
+    --global-var pipelines_version=$PIPELINES_VERSION \
+    --global-var triggers_version=$TRIGGERS_VERSION \
+    --global-var readonly=$readonly || fail_test "Postman Pipelines collection tests failed"
+
+  newman run ${tekton_repo_dir}/test/postman/Triggers.postman_collection.json \
+    -g ${tekton_repo_dir}/test/postman/globals.json \
+    --global-var pipelines_version=$PIPELINES_VERSION \
+    --global-var triggers_version=$TRIGGERS_VERSION \
+    --global-var readonly=$readonly || fail_test "Postman Triggers collection tests failed"
+
   kill -9 $dashboardForwardPID
   kill -9 $podForwardPID
 
-  uninstall_dashboard_backend $overlay
-  delete_pipeline_crd
+  if [ "$installMode" == "overlay" ]; then
+    overlay=$3
+    uninstall_dashboard_backend $overlay
+  else
+    $tekton_repo_dir/scripts/installer uninstall ${@:3}
+  fi
+
+  uninstall_triggers $TRIGGERS_VERSION
+  uninstall_pipelines $PIPELINES_VERSION
 }
 
 # validate overlays
@@ -189,7 +235,20 @@ kustomize build overlays/dev-locked-down --load_restrictor=LoadRestrictionsNone 
 kustomize build overlays/dev-openshift --load_restrictor=LoadRestrictionsNone || fail_test "Failed to run kustomize on overlays/dev-openshift"
 kustomize build overlays/dev-openshift-locked-down --load_restrictor=LoadRestrictionsNone || fail_test "Failed to run kustomize on overlays/dev-openshift-locked-down"
 
-test_overlay dev "proxy"
-test_overlay dev-locked-down "kubectl"
+if [ -z "$PIPELINES_VERSION" ]; then
+  export PIPELINES_VERSION=v0.13.2
+fi
+
+if [ -z "$TRIGGERS_VERSION" ]; then
+  export TRIGGERS_VERSION=v0.5.0
+fi
+
+# test overlays
+test_dashboard overlay proxy dev
+test_dashboard overlay kubectl dev-locked-down
+
+# test installer
+test_dashboard installer proxy
+test_dashboard installer kubectl --read-only
 
 success

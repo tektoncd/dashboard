@@ -108,7 +108,7 @@ func TestWebsocketResources(t *testing.T) {
 	taskRecord := NewInformerRecord(getKind(string(broadcaster.TaskCreated)), true)
 	clusterTaskRecord := NewInformerRecord(getKind(string(broadcaster.ClusterTaskCreated)), true)
 	taskRunRecord := NewInformerRecord(getKind(string(broadcaster.TaskRunCreated)), true)
-	extensionRecord := NewInformerRecord(getKind(string(broadcaster.ExtensionCreated)), true)
+	extensionRecord := NewInformerRecord(getKind(string(broadcaster.ServiceExtensionCreated)), true)
 	secretRecord := NewInformerRecord(getKind(string(broadcaster.SecretCreated)), true)
 	// CD records
 	namespaceRecord := NewInformerRecord(getKind(string(broadcaster.NamespaceCreated)), false)

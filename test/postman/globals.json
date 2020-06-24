@@ -1,0 +1,44 @@
+{
+    "globals": [
+        {
+            "key": "url",
+            "value": "localhost",
+            "enabled": true
+        },
+        {
+            "key": "port",
+            "value": "9097",
+            "enabled": true
+        },
+        {
+            "key": "dashboard_namespace",
+            "value": "tekton-pipelines",
+            "enabled": true
+        },
+        {
+            "key": "dashboard_version",
+            "value": "devel",
+            "enabled": true
+        },
+        {
+            "key": "pipelines_namespace",
+            "value": "tekton-pipelines",
+            "enabled": true
+        },
+        {
+            "key": "triggers_namespace",
+            "value": "tekton-pipelines",
+            "enabled": true
+        },
+        {
+            "key": "triggers_version",
+            "value": "v0.5.0",
+            "enabled": true
+        },
+        {
+            "key": "is_openshift",
+            "value": "false",
+            "enabled": true
+        }
+    ]
+}

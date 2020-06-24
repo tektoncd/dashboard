@@ -12,14 +12,9 @@ limitations under the License.
 */
 
 import React from 'react';
-import { createIntl } from 'react-intl';
+
 import { renderWithIntl, renderWithRouter } from '../../utils/test';
 import TaskRuns from './TaskRuns';
-
-const intl = createIntl({
-  locale: 'en',
-  defaultLocale: 'en'
-});
 
 it('TaskRuns renders empty state', () => {
   const { queryByText } = renderWithIntl(<TaskRuns taskRuns={[]} />);
@@ -37,11 +32,10 @@ it('TaskRuns renders headers state', () => {
   expect(document.getElementsByClassName('bx--overflow-menu')).toBeTruthy();
 });
 
-it('TaskRun renders correct data', async () => {
+it('TaskRuns renders correct data', async () => {
   const taskRunName = 'pipeline0-run-123';
   const { queryByText, queryByTitle } = renderWithRouter(
     <TaskRuns
-      intl={intl}
       taskRuns={[
         {
           kind: 'TaskRun',
@@ -105,11 +99,10 @@ it('TaskRun renders correct data', async () => {
   expect(queryByText(/cluster-taskrun/i)).toBeTruthy();
 });
 
-it('TaskRun renders pending', async () => {
+it('TaskRuns renders pending', async () => {
   const taskRunName = 'task-run-of-doom';
   const { queryByText, queryByTitle } = renderWithRouter(
     <TaskRuns
-      intl={intl}
       taskRuns={[
         {
           kind: 'TaskRun',
@@ -150,20 +143,7 @@ it('TaskRun renders pending', async () => {
           }
         }
       ]}
-      taskRunActions={[
-        {
-          actionText: intl.formatMessage({
-            id: 'test.actionText',
-            defaultMessage: 'Delete'
-          })
-        },
-        {
-          actionText: intl.formatMessage({
-            id: 'test.actionText',
-            defaultMessage: 'Stop'
-          })
-        }
-      ]}
+      taskRunActions={[{ actionText: 'Delete' }, { actionText: 'Stop' }]}
     />
   );
   expect(queryByText(taskRunName)).toBeTruthy();

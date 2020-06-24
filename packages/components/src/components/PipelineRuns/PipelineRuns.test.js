@@ -13,14 +13,8 @@ limitations under the License.
 
 import React from 'react';
 
-import { createIntl } from 'react-intl';
 import { renderWithIntl, renderWithRouter } from '../../utils/test';
 import PipelineRuns from './PipelineRuns';
-
-const intl = createIntl({
-  locale: 'en',
-  defaultLocale: 'en'
-});
 
 describe('PipelineRuns', () => {
   it('renders empty state', () => {
@@ -127,7 +121,6 @@ describe('PipelineRuns', () => {
     const pipelineRunName = 'pipeline-run-20190816124708';
     const { queryByText, queryByTitle } = renderWithRouter(
       <PipelineRuns
-        intl={intl}
         pipelineRuns={[
           {
             metadata: {
@@ -170,7 +163,6 @@ describe('PipelineRuns', () => {
     const pipelineRunName = 'pipeline-run-20190816124708';
     const { queryByText } = renderWithRouter(
       <PipelineRuns
-        intl={intl}
         pipelineRuns={[
           {
             metadata: {

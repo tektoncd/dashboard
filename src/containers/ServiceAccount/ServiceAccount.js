@@ -156,6 +156,7 @@ export /* istanbul ignore next */ class ServiceAccountContainer extends Componen
           headers={headersForSecrets}
           rows={rowsForSecrets}
           loading={loading}
+          size="short"
           selectedNamespace={selectedNamespace}
           emptyTextAllNamespaces={emptyTextMessageSecrets}
           emptyTextSelectedNamespace={emptyTextMessageSecrets}
@@ -165,6 +166,7 @@ export /* istanbul ignore next */ class ServiceAccountContainer extends Componen
           headers={headersForImgPull}
           rows={rowsForImgPull}
           loading={loading}
+          size="short"
           selectedNamespace={selectedNamespace}
           emptyTextAllNamespaces={emptyTextMessageImgPull}
           emptyTextSelectedNamespace={emptyTextMessageImgPull}

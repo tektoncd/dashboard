@@ -22,9 +22,9 @@ const props = {
   trigger: {
     name: 'my-trigger',
     bindings: [
-      { name: 'triggerbinding0' },
-      { name: 'triggerbinding1' },
-      { name: 'triggerbinding2' }
+      { ref: 'triggerbinding0' },
+      { ref: 'triggerbinding1' },
+      { ref: 'triggerbinding2' }
     ],
     template: {
       name: 'triggertemplate'

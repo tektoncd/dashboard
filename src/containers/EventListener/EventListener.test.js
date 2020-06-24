@@ -45,7 +45,7 @@ const fakeEventListenerWithLabels = {
         bindings: [
           {
             apiversion: 'v1alpha1',
-            name: 'my-triggerbinding-0'
+            ref: 'my-triggerbinding-0'
           }
         ],
         template: {
@@ -71,7 +71,7 @@ const fakeEventListenerWithLabels = {
         bindings: [
           {
             apiversion: 'v1alpha1',
-            name: 'my-triggerbinding-1'
+            ref: 'my-triggerbinding-1'
           }
         ],
         template: {
@@ -97,7 +97,7 @@ const fakeEventListenerWithLabels = {
         bindings: [
           {
             apiversion: 'v1alpha1',
-            name: 'my-triggerbinding-2'
+            ref: 'my-triggerbinding-2'
           }
         ],
         template: {

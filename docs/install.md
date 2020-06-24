@@ -49,6 +49,8 @@ To install Tekton Dashboard on a Kubernetes cluster:
    Previous versions (up to 0.5.0) are available at `previous/$VERSION_NUMBER/release.yaml`, e.g.
    https://storage.googleapis.com/tekton-releases/dashboard/previous/v0.4.1/release.yaml
 
+   Note that versions earlier than **v0.6.1.4** should not be used owing to security problems we have addressed in that release and later.
+
    ```bash
     kubectl apply --filename https://storage.googleapis.com/tekton-releases/dashboard/previous/v0.4.1/release.yaml
    ```
