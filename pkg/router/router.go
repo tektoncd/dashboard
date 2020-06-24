@@ -39,10 +39,6 @@ const ExtensionLabelKey = "tekton-dashboard-extension"
 // as a dashboard extension
 const ExtensionLabelValue = "true"
 
-// ExtensionLabel is the full label required by services to be registered as a
-// dashboard extension
-const ExtensionLabel = ExtensionLabelKey + "=" + ExtensionLabelValue
-
 // ExtensionURLKey specifies the valid extension paths, defaults to "/"
 const ExtensionURLKey = "tekton-dashboard-endpoints"
 
