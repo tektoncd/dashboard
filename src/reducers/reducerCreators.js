@@ -121,7 +121,12 @@ export function createFetchContinueTokenReducer({ type }) {
         if (state === 'DONE' || action.data.metadata === undefined) {
           return state;
         }
-        return action.data.metadata.continue === ''
+
+        if (action.data.metadata.continue === 'RESET') {
+          return null;
+        }
+
+        return action.data.metadata.continue === '' && action.data.items.length
           ? 'DONE'
           : action.data.metadata.continue;
       case `${typePlural}_FETCH_REQUEST`:

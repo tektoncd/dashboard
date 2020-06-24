@@ -78,6 +78,10 @@ export function getResourcesAPI(
   },
   queryParams
 ) {
+  if (continueToken === 'RESET') {
+    // eslint-disable-next-line no-param-reassign
+    continueToken = '';
+  }
   return [
     apiRoot,
     `/proxy/apis/${group}/${version}/`,
@@ -87,9 +91,9 @@ export function getResourcesAPI(
     type,
     '/',
     encodeURIComponent(name),
-    limit ? `?limit=${limit}` : '',
+    limit ? `?limit=${limit}` : '?',
     continueToken ? `&continue=${continueToken}` : '',
-    queryParams ? `?${new URLSearchParams(queryParams).toString()}` : ''
+    queryParams ? `&${new URLSearchParams(queryParams).toString()}` : ''
   ].join('');
 }
 

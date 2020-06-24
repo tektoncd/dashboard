@@ -229,13 +229,13 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
   }
 
   fetchPipelineRuns(filterApplied = false) {
-    const { filters, namespace, limit } = this.props;
+    const { limit, filters, namespace } = this.props;
     let { continueToken } = this.props;
-    if (filterApplied || continueToken !== 'DONE') {
-      // reset token
-      continueToken =
-        filterApplied && continueToken === 'DONE' ? '' : continueToken;
+    if (filterApplied) {
+      continueToken = 'RESET';
+    }
 
+    if (filterApplied || continueToken !== 'DONE') {
       this.setState({ loadingPipelineRuns: true });
       this.props
         .fetchPipelineRuns({
@@ -291,6 +291,10 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
           }
         ];
 
+    const renderLoadMore =
+      // eslint-disable-next-line no-unneeded-ternary
+      continueToken !== 'DONE' && pipelineRuns.length ? true : false;
+
     return (
       <>
         {this.state.createdPipelineRun && (
@@ -345,7 +349,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
           toolbarButtons={toolbarButtons}
         />
 
-        {continueToken !== 'DONE' && (
+        {renderLoadMore && (
           <div style={{ float: 'right' }}>
             {this.state.loadingPipelineRuns ? (
               <InlineLoading
