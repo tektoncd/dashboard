@@ -16,11 +16,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
-import {
-  Button,
-  InlineLoading,
-  InlineNotification
-} from 'carbon-components-react';
+import { InlineNotification } from 'carbon-components-react';
 import { PipelineRuns as PipelineRunsList } from '@tektoncd/dashboard-components';
 import {
   getErrorMessage,
@@ -37,7 +33,6 @@ import { sortRunsByStartTime } from '../../utils';
 import { fetchPipelineRuns } from '../../actions/pipelineRuns';
 
 import {
-  fetchedPipelineRunsContinueToken,
   getPipelineRuns,
   getPipelineRunsErrorMessage,
   getSelectedNamespace,
@@ -54,8 +49,7 @@ import {
 const initialState = {
   showCreatePipelineRunModal: false,
   createdPipelineRun: null,
-  submitError: '',
-  loadingPipelineRuns: false
+  submitError: ''
 };
 
 export /* istanbul ignore next */ class PipelineRuns extends Component {
@@ -70,11 +64,8 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
   }
 
   componentDidMount() {
-    const { continueToken } = this.props;
     document.title = getTitle({ page: 'PipelineRuns' });
-    if (!continueToken) {
-      this.fetchPipelineRuns();
-    }
+    this.fetchPipelineRuns();
   }
 
   componentDidUpdate(prevProps) {
@@ -87,9 +78,9 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
 
     if (namespace !== prevNamespace || !isEqual(filters, prevFilters)) {
       this.reset();
-      this.fetchPipelineRuns(true);
+      this.fetchPipelineRuns();
     } else if (webSocketConnected && prevWebSocketConnected === false) {
-      this.fetchPipelineRuns(true);
+      this.fetchPipelineRuns();
     }
   }
 
@@ -228,28 +219,12 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
     this.setState(initialState);
   }
 
-  fetchPipelineRuns(filterApplied = false) {
-    const { filters, namespace, limit } = this.props;
-    let { continueToken } = this.props;
-    if (filterApplied || continueToken !== 'DONE') {
-      // reset token
-      continueToken =
-        filterApplied && continueToken === 'DONE' ? '' : continueToken;
-
-      this.setState({ loadingPipelineRuns: true });
-      this.props
-        .fetchPipelineRuns({
-          filters,
-          namespace,
-          limit,
-          continueToken
-        })
-        .then(morePipelineRuns => {
-          if (morePipelineRuns) {
-            this.setState({ loadingPipelineRuns: false });
-          }
-        });
-    }
+  fetchPipelineRuns() {
+    const { filters, namespace } = this.props;
+    this.props.fetchPipelineRuns({
+      filters,
+      namespace
+    });
   }
 
   render() {
@@ -258,9 +233,9 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
       loading,
       namespace: selectedNamespace,
       pipelineRuns,
-      continueToken,
       intl
     } = this.props;
+
     if (error) {
       return (
         <InlineNotification
@@ -344,30 +319,6 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
           selectedNamespace={selectedNamespace}
           toolbarButtons={toolbarButtons}
         />
-
-        {continueToken !== 'DONE' && (
-          <div style={{ float: 'right' }}>
-            {this.state.loadingPipelineRuns ? (
-              <InlineLoading
-                status="active"
-                iconDescription="Active loading indicator"
-                description="Loading PipelineRuns..."
-              />
-            ) : (
-              <Button
-                as="p"
-                href="#"
-                iconDescription="Load More Button"
-                kind="ghost"
-                onClick={() => this.fetchPipelineRuns()}
-                size="default"
-                type="button"
-              >
-                Load More
-              </Button>
-            )}
-          </div>
-        )}
       </>
     );
   }
@@ -398,8 +349,7 @@ function mapStateToProps(state, props) {
       filters,
       namespace
     }),
-    webSocketConnected: isWebSocketConnected(state),
-    continueToken: fetchedPipelineRunsContinueToken(state)
+    webSocketConnected: isWebSocketConnected(state)
   };
 }
 

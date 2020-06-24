@@ -101,7 +101,6 @@ const pipelineResourcesTestStore = {
 const pipelineRunsTestStore = {
   pipelineRuns: {
     isFetching: false,
-    continueToken: '',
     byId: {
       'pipelineRunWithTwoLabels-id': {
         status: {
