@@ -18,7 +18,6 @@ import (
 
 	"github.com/tektoncd/dashboard/pkg/logging"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // Get dashboard version
@@ -51,40 +50,6 @@ func getDashboardVersion(r Resource, installedNamespace string) string {
 		return ""
 	}
 	return version
-}
-
-// isOpenShift determines whether the Dashboard is running on OpenShift or not
-func isOpenShift(r Resource, namespace string) bool {
-	openshiftPipelineFound := false
-	tektonPipelinesFound := false
-	routeFound := false
-
-	found := searchForDeployment(r, "pipelines", namespace)
-
-	if found {
-		if namespace == "openshift-pipelines" {
-			openshiftPipelineFound = true
-		} else {
-			tektonPipelinesFound = true
-		}
-	}
-
-	routes, err := r.RouteClient.RouteV1().Routes(namespace).List(v1.ListOptions{})
-	if err != nil {
-		logging.Log.Errorf("Error getting the list of routes: %s", err.Error())
-	}
-
-	for _, route := range routes.Items {
-		routeA := route.GetName()
-		if routeA == "tekton-dashboard" {
-			routeFound = true
-		}
-	}
-
-	if (openshiftPipelineFound == true || tektonPipelinesFound == true) && routeFound == true {
-		return true
-	}
-	return false
 }
 
 // Get pipelines version
