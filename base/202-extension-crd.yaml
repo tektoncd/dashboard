@@ -49,6 +49,19 @@ spec:
       - ext
       - exts
   scope: Namespaced
+  additionalPrinterColumns:
+    - name: API version
+      type: string
+      JSONPath: .spec.apiVersion
+    - name: Kind
+      type: string
+      JSONPath: .spec.name
+    - name: Display name
+      type: string
+      JSONPath: .spec.displayname
+    - name: Age
+      type: date
+      JSONPath: .metadata.creationTimestamp
   # Opt into the status subresource so metadata.generation
   # starts to increment
   subresources:
