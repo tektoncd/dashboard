@@ -18,6 +18,7 @@ type Options struct {
 	TriggersNamespace  string
 	TenantNamespace    string
 	ReadOnly           bool
+	IsOpenShift        bool
 	WebDir             string
 	LogoutURL          string
 }

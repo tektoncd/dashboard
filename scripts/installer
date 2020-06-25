@@ -171,6 +171,7 @@ patch() {
   replace "--logout-url=--logout-url" "--logout-url=$LOGOUT_URL"
   replace "--read-only=--read-only" "--read-only=$READONLY"
   replace "--namespace=--tenant-namespace" "--namespace=$TENANT_NAMESPACE"
+  replace "--openshift=--openshift" "--openshift=$OPENSHIFT"
   replace "namespace: tekton-dashboard" "namespace: $INSTALL_NAMESPACE"
 
   if [ "$OPENSHIFT" == "true" ] && [ "$IMAGE_STREAM" == "true" ]; then

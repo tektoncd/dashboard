@@ -45,3 +45,7 @@
   path: /spec/template/spec/containers/0/args/-
   value:
     --namespace=--tenant-namespace
+- op: add
+  path: /spec/template/spec/containers/0/args/-
+  value:
+    --openshift=--openshift
