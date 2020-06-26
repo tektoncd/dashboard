@@ -47,6 +47,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
 
   state = {
     loading: true,
+    selectedStepId: null,
+    selectedTaskId: null,
     showRerunNotification: false
   };
 
@@ -86,6 +88,10 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   setShowRerunNotification(value) {
     this.setState({ showRerunNotification: value });
   }
+
+  handleTaskSelected = (selectedTaskId, selectedStepId) => {
+    this.setState({ selectedStepId, selectedTaskId });
+  };
 
   fetchData({ skipLoading } = {}) {
     const { match } = this.props;
@@ -135,7 +141,12 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       pipelineRun.status.taskRuns = [];
     }
 
-    const { loading, showRerunNotification } = this.state;
+    const {
+      loading,
+      selectedStepId,
+      selectedTaskId,
+      showRerunNotification
+    } = this.state;
     const { pipelineRunName } = match.params;
 
     const rerun = !this.props.isReadOnly && (
@@ -174,15 +185,18 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
         )}
         <PipelineRun
           error={error}
-          loading={loading}
           fetchLogs={fetchLogs}
+          handleTaskSelected={this.handleTaskSelected}
+          loading={loading}
           logDownloadButton={LogDownloadButton}
           pipelineRun={pipelineRun}
+          rerun={rerun}
+          selectedStepId={selectedStepId}
+          selectedTaskId={selectedTaskId}
           showIO
           sortTaskRuns
-          tasks={tasks.concat(clusterTasks)}
           taskRuns={taskRuns}
-          rerun={rerun}
+          tasks={tasks.concat(clusterTasks)}
         />
       </>
     );
