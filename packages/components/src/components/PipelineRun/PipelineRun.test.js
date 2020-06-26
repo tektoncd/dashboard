@@ -66,7 +66,12 @@ it('PipelineRunContainer handles init step failures', async () => {
   };
 
   const { getByText } = renderWithIntl(
-    <PipelineRun pipelineRun={pipelineRun} taskRuns={[taskRun]} tasks={[]} />
+    <PipelineRun
+      handleTaskSelected={() => {}}
+      pipelineRun={pipelineRun}
+      taskRuns={[taskRun]}
+      tasks={[]}
+    />
   );
   await waitForElement(() => getByText(initStepName));
 });
@@ -75,12 +80,11 @@ it('PipelineRunContainer handles init step failures for retry', async () => {
   const initStepName = 'my-failed-init-step';
   const pipelineRunName = 'fake_pipelineRunName';
   const taskRunName = 'fake_taskRunName';
-  const retryText = '(retry 1)';
 
   const taskRun = {
     metadata: {
-      name: taskRunName,
-      labels: {}
+      labels: {},
+      name: taskRunName
     },
     spec: {
       params: {},
@@ -93,8 +97,8 @@ it('PipelineRunContainer handles init step failures for retry', async () => {
     status: {
       steps: [
         {
-          terminated: {},
-          name: initStepName
+          name: initStepName,
+          terminated: {}
         }
       ],
       retriesStatus: [
@@ -102,8 +106,8 @@ it('PipelineRunContainer handles init step failures for retry', async () => {
           status: {
             steps: [
               {
-                terminated: {},
-                name: initStepName
+                name: initStepName,
+                terminated: {}
               }
             ]
           }
@@ -121,9 +125,43 @@ it('PipelineRunContainer handles init step failures for retry', async () => {
     }
   };
 
+  class TestWrapper extends React.Component {
+    state = {
+      selectedStepId: null,
+      selectedTaskId: null
+    };
+
+    handleTaskSelected = (selectedTaskId, selectedStepId) => {
+      this.setState({ selectedStepId, selectedTaskId });
+    };
+
+    render() {
+      const { children: Component } = this.props;
+      const { selectedStepId, selectedTaskId } = this.state;
+      return (
+        <Component
+          handleTaskSelected={this.handleTaskSelected}
+          selectedStepId={selectedStepId}
+          selectedTaskId={selectedTaskId}
+        />
+      );
+    }
+  }
+
   const { getByText } = renderWithIntl(
-    <PipelineRun pipelineRun={pipelineRun} taskRuns={[taskRun]} tasks={[]} />
+    <TestWrapper>
+      {({ handleTaskSelected, selectedStepId, selectedTaskId }) => (
+        <PipelineRun
+          handleTaskSelected={handleTaskSelected}
+          pipelineRun={pipelineRun}
+          selectedStepId={selectedStepId}
+          selectedTaskId={selectedTaskId}
+          taskRuns={[taskRun]}
+          tasks={[]}
+        />
+      )}
+    </TestWrapper>
   );
+  await waitForElement(() => getByText(/(retry 1)/));
   await waitForElement(() => getByText(initStepName));
-  await waitForElement(() => getByText(retryText));
 });

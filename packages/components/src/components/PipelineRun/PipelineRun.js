@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   InlineNotification,
   StructuredListSkeleton
@@ -35,15 +36,6 @@ import { Log, RunHeader, StepDetails, TaskRunDetails, TaskTree } from '..';
 import '../../scss/Run.scss';
 
 export /* istanbul ignore next */ class PipelineRunContainer extends Component {
-  state = {
-    selectedStepId: null,
-    selectedTaskId: null
-  };
-
-  handleTaskSelected = (selectedTaskId, selectedStepId) => {
-    this.setState({ selectedStepId, selectedTaskId });
-  };
-
   loadPipelineRunData = () => {
     const { pipelineRun } = this.props;
 
@@ -218,17 +210,18 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       customNotification,
       error,
       fetchLogs,
-      logDownloadButton: LogDownloadButton,
+      handleTaskSelected,
       intl,
       loading,
+      logDownloadButton: LogDownloadButton,
       pollingInterval,
       rerun,
+      selectedStepId,
+      selectedTaskId,
       showIO,
       sortTaskRuns,
       triggerHeader
     } = this.props;
-
-    const { selectedStepId, selectedTaskId } = this.state;
 
     if (loading) {
       return <StructuredListSkeleton border />;
@@ -375,7 +368,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
         {customNotification}
         <div className="tkn--tasks">
           <TaskTree
-            onSelect={this.handleTaskSelected}
+            onSelect={handleTaskSelected}
             selectedTaskId={selectedTaskId}
             taskRuns={taskRuns}
           />
@@ -398,7 +391,16 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   }
 }
 
+PipelineRunContainer.propTypes = {
+  handleTaskSelected: PropTypes.func.isRequired,
+  selectedStepId: PropTypes.string,
+  selectedTaskId: PropTypes.string,
+  sortTaskRuns: PropTypes.bool
+};
+
 PipelineRunContainer.defaultProps = {
+  selectedStepId: null,
+  selectedTaskId: null,
   sortTaskRuns: false
 };
 
