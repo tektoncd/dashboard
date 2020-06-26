@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -19,7 +19,7 @@ import {
 } from '@carbon/icons-react';
 import { Spinner, Step } from '@tektoncd/dashboard-components';
 
-import { updateUnexecutedSteps } from '@tektoncd/dashboard-utils';
+import { NO_STEP, updateUnexecutedSteps } from '@tektoncd/dashboard-utils';
 
 import './Task.scss';
 
@@ -30,11 +30,7 @@ class Task extends Component {
     this.selectDefaultStep();
   }
 
-  handleClick = event => {
-    if (event) {
-      event.preventDefault();
-    }
-
+  handleClick = () => {
     const { id } = this.props;
     const { selectedStepId } = this.state;
     this.props.onSelect(id, selectedStepId);
@@ -47,17 +43,14 @@ class Task extends Component {
   };
 
   handleTaskSelected = event => {
-    if (event) {
-      event.preventDefault();
-    }
-    this.setState({ selectedStepId: null }, () => {
+    event?.preventDefault(); // eslint-disable-line no-unused-expressions
+    this.setState({ selectedStepId: NO_STEP }, () => {
       this.handleClick();
     });
   };
 
   selectDefaultStep() {
-    const { expanded, steps } = this.props;
-    const { selectedStepId } = this.state;
+    const { expanded, selectedStepId, steps } = this.props;
     if (expanded && !selectedStepId) {
       const erroredStep = steps.find(
         step => step.reason === 'Error' || step.reason === undefined
@@ -85,15 +78,25 @@ class Task extends Component {
   }
 
   render() {
-    const { expanded, reason, succeeded, steps, pipelineTaskName } = this.props;
-    const { selectedStepId } = this.state;
+    const {
+      expanded,
+      pipelineTaskName,
+      reason,
+      selectedStepId,
+      steps,
+      succeeded
+    } = this.props;
     const icon = this.icon();
+
     return (
       <li
         className="tkn--task"
         data-succeeded={succeeded}
         data-reason={reason}
-        data-selected={(expanded && !selectedStepId) || undefined}
+        data-selected={
+          (expanded && (!selectedStepId || selectedStepId === NO_STEP)) ||
+          undefined
+        }
       >
         <a
           className="tkn--task-link"

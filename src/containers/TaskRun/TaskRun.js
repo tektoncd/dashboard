@@ -31,6 +31,7 @@ import {
   getResources,
   getStatus,
   getTitle,
+  NO_STEP,
   reorderSteps,
   stepsStatus,
   taskRunStep,
@@ -78,8 +79,7 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
   }
 
   state = {
-    loading: true,
-    selectedStepId: null
+    loading: true
   };
 
   componentDidMount() {
@@ -116,7 +116,32 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
   }
 
   handleTaskSelected = (_, selectedStepId) => {
-    this.setState({ selectedStepId });
+    const { history, location, match } = this.props;
+    const queryParams = new URLSearchParams(location.search);
+
+    if (selectedStepId) {
+      queryParams.set('step', selectedStepId);
+    } else {
+      queryParams.delete('step');
+    }
+
+    const currentStepId = this.props.selectedStepId;
+    if (selectedStepId !== currentStepId) {
+      queryParams.delete('view');
+    }
+
+    const browserURL = match.url.concat(`?${queryParams.toString()}`);
+    history.push(browserURL);
+  };
+
+  handleViewChange = view => {
+    const { history, location, match } = this.props;
+    const queryParams = new URLSearchParams(location.search);
+
+    queryParams.set('view', view);
+
+    const browserURL = match.url.concat(`?${queryParams.toString()}`);
+    history.push(browserURL);
   };
 
   loadTaskRun = () => {
@@ -172,8 +197,8 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
   }
 
   render() {
-    const { loading, selectedStepId } = this.state;
-    const { error, intl } = this.props;
+    const { loading } = this.state;
+    const { error, intl, selectedStepId, view } = this.props;
 
     if (loading) {
       return <StructuredListSkeleton border />;
@@ -216,7 +241,7 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
       message: taskRunStatusMessage
     } = getStatus(this.props.taskRun);
 
-    const logContainer = (
+    const logContainer = selectedStepId && selectedStepId !== NO_STEP && (
       <Log
         downloadButton={
           <LogDownloadButton
@@ -245,20 +270,29 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
           <TaskTree
             onSelect={this.handleTaskSelected}
             selectedTaskId={taskRun.id}
+            selectedStepId={selectedStepId}
             taskRuns={[taskRun]}
           />
-          {(selectedStepId && (
+          {(selectedStepId && selectedStepId !== NO_STEP && (
             <StepDetails
               definition={definition}
               logContainer={logContainer}
+              onViewChange={this.handleViewChange}
               reason={reason}
               showIO
               status={status}
               stepName={stepName}
               stepStatus={stepStatus}
               taskRun={taskRun}
+              view={view}
             />
-          )) || <TaskRunDetails taskRun={taskRun} />}
+          )) || (
+            <TaskRunDetails
+              onViewChange={this.handleViewChange}
+              taskRun={taskRun}
+              view={view}
+            />
+          )}
         </div>
       </>
     );
@@ -275,8 +309,12 @@ TaskRunContainer.propTypes = {
 
 /* istanbul ignore next */
 function mapStateToProps(state, ownProps) {
-  const { match } = ownProps;
+  const { location, match } = ownProps;
   const { namespace: namespaceParam, taskRunName } = match.params;
+
+  const queryParams = new URLSearchParams(location.search);
+  const selectedStepId = queryParams.get('step');
+  const view = queryParams.get('view');
 
   const namespace = namespaceParam || getSelectedNamespace(state);
   const taskRun = getTaskRun(state, {
@@ -294,8 +332,10 @@ function mapStateToProps(state, ownProps) {
   return {
     error: getTaskRunsErrorMessage(state),
     namespace,
+    selectedStepId,
     taskRun,
     task,
+    view,
     webSocketConnected: isWebSocketConnected(state)
   };
 }

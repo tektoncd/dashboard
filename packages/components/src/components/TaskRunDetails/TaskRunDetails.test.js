@@ -12,48 +12,64 @@ limitations under the License.
 */
 
 import React from 'react';
-import { renderWithIntl } from '../../utils/test';
+import { fireEvent } from 'react-testing-library';
 
+import { renderWithIntl } from '../../utils/test';
 import TaskRunDetails from './TaskRunDetails';
 
-it('TaskRunStatus renders task name and error state', () => {
-  const taskRunName = 'task-run-name';
-  const status = 'error';
-  const { queryByText } = renderWithIntl(
-    <TaskRunDetails taskRun={{ status, taskRunName }} />
-  );
+describe('TaskRunDetails', () => {
+  it('renders task name and error state', () => {
+    const taskRunName = 'task-run-name';
+    const status = 'error';
+    const { queryByText } = renderWithIntl(
+      <TaskRunDetails taskRun={{ status, taskRunName }} />
+    );
 
-  expect(queryByText(taskRunName)).toBeTruthy();
-  expect(queryByText(status)).toBeTruthy();
-});
+    expect(queryByText(taskRunName)).toBeTruthy();
+    expect(queryByText(status)).toBeTruthy();
+  });
 
-it('TaskRunDetails renders pipeline task name and inputs', () => {
-  const pipelineTaskName = 'my-pipeline-task';
-  const paramKey = 'k';
-  const paramValue = 'v';
-  const params = [{ name: paramKey, value: paramValue }];
-  const { queryByText } = renderWithIntl(
-    <TaskRunDetails
-      taskRun={{ pipelineTaskName, params, taskName: 'taskName' }}
-    />
-  );
+  it('renders pipeline task name and inputs', () => {
+    const pipelineTaskName = 'my-pipeline-task';
+    const paramKey = 'k';
+    const paramValue = 'v';
+    const params = [{ name: paramKey, value: paramValue }];
+    const { queryByText } = renderWithIntl(
+      <TaskRunDetails
+        taskRun={{ pipelineTaskName, params, taskName: 'taskName' }}
+      />
+    );
 
-  expect(queryByText(pipelineTaskName)).toBeTruthy();
-  expect(queryByText(paramKey)).toBeTruthy();
-  expect(queryByText(paramValue)).toBeTruthy();
-});
+    expect(queryByText(pipelineTaskName)).toBeTruthy();
+    expect(queryByText(paramKey)).toBeTruthy();
+    expect(queryByText(paramValue)).toBeTruthy();
+  });
 
-it('TaskRunDetails renders task name and inputs', () => {
-  const taskRunName = 'task-run-name';
-  const status = 'error';
-  const paramKey = 'k';
-  const paramValue = 'v';
-  const params = [{ name: paramKey, value: paramValue }];
-  const { queryByText } = renderWithIntl(
-    <TaskRunDetails taskRun={{ status, params, taskRunName }} />
-  );
+  it('renders task name and inputs', () => {
+    const taskRunName = 'task-run-name';
+    const status = 'error';
+    const paramKey = 'k';
+    const paramValue = 'v';
+    const params = [{ name: paramKey, value: paramValue }];
+    const { queryByText } = renderWithIntl(
+      <TaskRunDetails taskRun={{ status, params, taskRunName }} />
+    );
 
-  expect(queryByText(taskRunName)).toBeTruthy();
-  expect(queryByText(paramKey)).toBeTruthy();
-  expect(queryByText(paramValue)).toBeTruthy();
+    expect(queryByText(taskRunName)).toBeTruthy();
+    expect(queryByText(paramKey)).toBeTruthy();
+    expect(queryByText(paramValue)).toBeTruthy();
+  });
+
+  it('renders selected view', () => {
+    const taskRun = {
+      params: [{ name: 'fake_name', value: 'fake_value' }]
+    };
+    const { queryByText } = renderWithIntl(
+      <TaskRunDetails taskRun={taskRun} view="status" />
+    );
+    expect(queryByText(/status/i)).toBeTruthy();
+    expect(queryByText('fake_name')).toBeFalsy();
+    fireEvent.click(queryByText(/parameters/i));
+    expect(queryByText('fake_name')).toBeTruthy();
+  });
 });

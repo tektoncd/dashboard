@@ -11,15 +11,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { injectIntl } from 'react-intl';
 import React from 'react';
+import PropTypes from 'prop-types';
+import { injectIntl } from 'react-intl';
 
 import { DetailsHeader, Param, Tab, Table, Tabs, ViewYAML } from '..';
 
 import './TaskRunDetails.scss';
 
+const tabs = ['params', 'status'];
+
 const TaskRunDetails = props => {
-  const { intl, taskRun } = props;
+  const { intl, onViewChange, taskRun, view } = props;
 
   const displayName = taskRun.pipelineTaskName || taskRun.taskRunName;
 
@@ -58,10 +61,19 @@ const TaskRunDetails = props => {
     />
   );
 
+  let selectedTabIndex = tabs.indexOf(view);
+  if (selectedTabIndex === -1) {
+    selectedTabIndex = 0;
+  }
+
   return (
     <div className="tkn--step-details">
       <DetailsHeader stepName={displayName} taskRun={taskRun} type="taskRun" />
-      <Tabs aria-label="TaskRun details">
+      <Tabs
+        aria-label="TaskRun details"
+        onSelectionChange={index => onViewChange(tabs[index])}
+        selected={selectedTabIndex}
+      >
         {params && (
           <Tab
             id={`${displayName}-details`}
@@ -89,7 +101,13 @@ const TaskRunDetails = props => {
   );
 };
 
+TaskRunDetails.propTypes = {
+  onViewChange: PropTypes.func,
+  taskRun: PropTypes.shape({})
+};
+
 TaskRunDetails.defaultProps = {
+  onViewChange: /* istanbul ignore next */ () => {},
   taskRun: {}
 };
 
