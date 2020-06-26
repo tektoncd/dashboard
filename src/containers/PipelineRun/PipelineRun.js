@@ -47,8 +47,6 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
 
   state = {
     loading: true,
-    selectedStepId: null,
-    selectedTaskId: null,
     showRerunNotification: false
   };
 
@@ -90,7 +88,34 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   }
 
   handleTaskSelected = (selectedTaskId, selectedStepId) => {
-    this.setState({ selectedStepId, selectedTaskId });
+    const { history, location, match } = this.props;
+    const queryParams = new URLSearchParams(location.search);
+
+    queryParams.set('taskRun', selectedTaskId);
+    if (selectedStepId) {
+      queryParams.set('step', selectedStepId);
+    } else {
+      queryParams.delete('step');
+    }
+
+    const currentStepId = this.props.selectedStepId;
+    const currentTaskId = this.props.selectedTaskId;
+    if (selectedStepId !== currentStepId || selectedTaskId !== currentTaskId) {
+      queryParams.delete('view');
+    }
+
+    const browserURL = match.url.concat(`?${queryParams.toString()}`);
+    history.push(browserURL);
+  };
+
+  handleViewChange = view => {
+    const { history, location, match } = this.props;
+    const queryParams = new URLSearchParams(location.search);
+
+    queryParams.set('view', view);
+
+    const browserURL = match.url.concat(`?${queryParams.toString()}`);
+    history.push(browserURL);
   };
 
   fetchData({ skipLoading } = {}) {
@@ -116,8 +141,11 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       intl,
       match,
       pipelineRun,
+      selectedStepId,
+      selectedTaskId,
       tasks,
-      taskRuns
+      taskRuns,
+      view
     } = this.props;
 
     if (!pipelineRun) {
@@ -141,12 +169,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       pipelineRun.status.taskRuns = [];
     }
 
-    const {
-      loading,
-      selectedStepId,
-      selectedTaskId,
-      showRerunNotification
-    } = this.state;
+    const { loading, showRerunNotification } = this.state;
     const { pipelineRunName } = match.params;
 
     const rerun = !this.props.isReadOnly && (
@@ -189,6 +212,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           handleTaskSelected={this.handleTaskSelected}
           loading={loading}
           logDownloadButton={LogDownloadButton}
+          onViewChange={this.handleViewChange}
           pipelineRun={pipelineRun}
           rerun={rerun}
           selectedStepId={selectedStepId}
@@ -197,6 +221,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           sortTaskRuns
           taskRuns={taskRuns}
           tasks={tasks.concat(clusterTasks)}
+          view={view}
         />
       </>
     );
@@ -213,20 +238,28 @@ PipelineRunContainer.propTypes = {
 
 /* istanbul ignore next */
 function mapStateToProps(state, ownProps) {
-  const { match } = ownProps;
+  const { location, match } = ownProps;
   const { namespace } = match.params;
 
+  const queryParams = new URLSearchParams(location.search);
+  const selectedTaskId = queryParams.get('taskRun');
+  const selectedStepId = queryParams.get('step');
+  const view = queryParams.get('view');
+
   return {
-    isReadOnly: isReadOnly(state),
+    clusterTasks: getClusterTasks(state),
     error:
       getPipelineRunsErrorMessage(state) ||
       getTasksErrorMessage(state) ||
       getTaskRunsErrorMessage(state),
+    isReadOnly: isReadOnly(state),
     namespace,
     pipelineRun: getPipelineRun(state, {
       name: ownProps.match.params.pipelineRunName,
       namespace
     }),
+    selectedStepId,
+    selectedTaskId,
     tasks: getTasks(state, { namespace }),
 
     taskRuns: getTaskRunsByPipelineRunName(
@@ -236,7 +269,7 @@ function mapStateToProps(state, ownProps) {
         namespace
       }
     ),
-    clusterTasks: getClusterTasks(state),
+    view,
     webSocketConnected: isWebSocketConnected(state)
   };
 }

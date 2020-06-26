@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -41,16 +41,17 @@ storiesOf('Components/TaskTree', module).add('default', () => {
   class TaskTreeWrapper extends Component {
     state = { selectedTaskId: null };
 
-    onSelect = selectedTaskId => {
-      this.setState({ selectedTaskId });
+    onSelect = (selectedTaskId, selectedStepId) => {
+      this.setState({ selectedStepId, selectedTaskId });
     };
 
     render() {
-      const { selectedTaskId } = this.state;
+      const { selectedStepId, selectedTaskId } = this.state;
       return (
         <TaskTree
           {...props}
           onSelect={this.onSelect}
+          selectedStepId={selectedStepId}
           selectedTaskId={selectedTaskId}
         />
       );

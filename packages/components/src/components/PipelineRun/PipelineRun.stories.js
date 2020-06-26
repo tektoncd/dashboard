@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { storiesOf } from '@storybook/react';
 
 import PipelineRun from '.';
@@ -148,14 +148,24 @@ storiesOf('Components/PipelineRun', module)
       {story()}
     </div>
   ))
-  .add('default', () => (
-    <PipelineRun
-      pipelineRun={pipelineRun}
-      taskRuns={[taskRun]}
-      tasks={[task]}
-      fetchLogs={() => 'sample log output'}
-      rerunPipelineRun={() => {}}
-    />
-  ))
+  .add('default', () => {
+    const [selectedStepId, setSelectedStepId] = useState();
+    const [selectedTaskId, setSelectedTaskId] = useState();
+    return (
+      <PipelineRun
+        fetchLogs={() => 'sample log output'}
+        handleTaskSelected={(taskId, stepId) => {
+          setSelectedStepId(stepId);
+          setSelectedTaskId(taskId);
+        }}
+        pipelineRun={pipelineRun}
+        rerunPipelineRun={() => {}}
+        selectedStepId={selectedStepId}
+        selectedTaskId={selectedTaskId}
+        taskRuns={[taskRun]}
+        tasks={[task]}
+      />
+    );
+  })
   .add('empty', () => <PipelineRun />)
   .add('error', () => <PipelineRun error="Internal server error" />);

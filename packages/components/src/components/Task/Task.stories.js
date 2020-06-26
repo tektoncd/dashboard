@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
@@ -37,4 +37,15 @@ storiesOf('Components/Task', module)
   .add('running', () => (
     <Task {...props} succeeded="Unknown" reason="Running" />
   ))
-  .add('expanded', () => <Task {...props} expanded steps={steps} />);
+  .add('expanded', () => {
+    const [selectedStepId, setSelectedStepId] = useState();
+    return (
+      <Task
+        {...props}
+        onSelect={(_, stepId) => setSelectedStepId(stepId)}
+        selectedStepId={selectedStepId}
+        expanded
+        steps={steps}
+      />
+    );
+  });

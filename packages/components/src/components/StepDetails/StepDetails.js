@@ -11,28 +11,39 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { injectIntl } from 'react-intl';
 import React from 'react';
+import PropTypes from 'prop-types';
+import { injectIntl } from 'react-intl';
 import { DetailsHeader, StepDefinition, StepStatus, Tab, Tabs } from '..';
 
 import './StepDetails.scss';
+
+const tabs = ['logs', 'status', 'details'];
 
 const StepDetails = props => {
   const {
     definition,
     intl,
     logContainer,
+    onViewChange,
     reason,
     showIO,
     stepName,
     stepStatus,
-    taskRun
+    taskRun,
+    view
   } = props;
   let { status } = props;
   status =
     taskRun.reason === 'TaskRunCancelled' && status !== 'terminated'
       ? 'cancelled'
       : status;
+
+  let selectedTabIndex = tabs.indexOf(view);
+  if (selectedTabIndex === -1) {
+    selectedTabIndex = 0;
+  }
+
   return (
     <div className="tkn--step-details">
       <DetailsHeader
@@ -41,7 +52,11 @@ const StepDetails = props => {
         stepName={stepName}
         taskRun={taskRun}
       />
-      <Tabs aria-label="Step details">
+      <Tabs
+        aria-label="Step details"
+        onSelectionChange={index => onViewChange(tabs[index])}
+        selected={selectedTabIndex}
+      >
         <Tab
           id={`${stepName}-logs`}
           label={intl.formatMessage({
@@ -78,7 +93,14 @@ const StepDetails = props => {
   );
 };
 
+StepDetails.propTypes = {
+  onViewChange: PropTypes.func,
+  showIO: PropTypes.bool,
+  taskRun: PropTypes.shape({})
+};
+
 StepDetails.defaultProps = {
+  onViewChange: /* istanbul ignore next */ () => {},
   showIO: false,
   taskRun: {}
 };

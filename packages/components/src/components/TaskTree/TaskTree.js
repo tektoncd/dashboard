@@ -23,7 +23,7 @@ class TaskTree extends Component {
   };
 
   render() {
-    const { selectedTaskId, taskRuns } = this.props;
+    const { selectedStepId, selectedTaskId, taskRuns } = this.props;
 
     if (!taskRuns) {
       return <div />;
@@ -48,6 +48,7 @@ class TaskTree extends Component {
               expanded={expanded}
               onSelect={this.handleSelect}
               reason={reason}
+              selectedStepId={selectedStepId}
               steps={sortStepsByTimestamp(steps)}
               succeeded={succeeded}
               pipelineTaskName={pipelineTaskName}
