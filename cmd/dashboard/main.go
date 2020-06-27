@@ -122,6 +122,11 @@ func main() {
 		logging.Log.Errorf("Error building route clientset: %s", err.Error())
 	}
 
+	transport, err := rest.TransportFor(cfg)
+	if err != nil {
+		logging.Log.Errorf("Error building rest transport: %s", err.Error())
+	}
+
 	options := endpoints.Options{
 		InstallNamespace:   installNamespace,
 		PipelinesNamespace: *pipelinesNamespace,
@@ -133,6 +138,8 @@ func main() {
 	}
 
 	resource := endpoints.Resource{
+		Config:                 cfg,
+		HttpClient:             &http.Client{Transport: transport},
 		DashboardClient:        dashboardClient,
 		PipelineClient:         pipelineClient,
 		PipelineResourceClient: pipelineResourceClient,
