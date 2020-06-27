@@ -15,6 +15,7 @@ package endpoints
 
 import (
 	"errors"
+	"io"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -60,22 +61,51 @@ func (r Resource) ProxyRequest(request *restful.Request, response *restful.Respo
 	}
 
 	uri := request.PathParameter("subpath") + "?" + parsedURL.RawQuery
-	forwardRequest := r.K8sClient.CoreV1().RESTClient().Verb(request.Request.Method).RequestURI(uri).Body(request.Request.Body)
-	forwardRequest.SetHeader("Content-Type", request.HeaderParameter("Content-Type"))
-	forwardResponse := forwardRequest.Do()
 
 	if secretsURIPattern.Match([]byte(uri)) {
+		forwardRequest := r.K8sClient.CoreV1().RESTClient().Verb(request.Request.Method).RequestURI(uri).Body(request.Request.Body)
+		forwardRequest.SetHeader("Content-Type", request.HeaderParameter("Content-Type"))
+		forwardResponse := forwardRequest.Do()
 		handleSecretsResponse(response, forwardResponse)
 		return
 	}
 
-	responseBody, requestError := forwardResponse.Raw()
-	if requestError != nil {
-		handleRequestError(response, responseBody, requestError)
-		return
+	req, err := http.NewRequest(request.Request.Method, r.Config.Host+"/"+uri, request.Request.Body)
+
+	req = req.WithContext(request.Request.Context())
+
+	if err != nil {
+		logging.Log.Errorf("Failed to create request: %s", err)
+		utils.RespondError(response, err, http.StatusInternalServerError)
+	} else {
+		req.Header.Set("Content-Type", request.HeaderParameter("Content-Type"))
+
+		resp, err := r.HttpClient.Do(req)
+		defer func() {
+			if resp != nil && resp.Body != nil {
+				resp.Body.Close()
+			}
+		}()
+
+		if err != nil {
+			logging.Log.Errorf("Failed to execute request: %s", err)
+			utils.RespondError(response, err, resp.StatusCode)
+		} else {
+			for name, values := range resp.Header {
+				for _, value := range values {
+					response.Header().Add(name, value)
+				}
+			}
+			response.WriteHeader(resp.StatusCode)
+			contentLength := resp.Header.Get("Content-Length")
+			if contentLength == "" {
+				io.Copy(utils.MakeFlushWriter(response), resp.Body)
+			} else {
+				io.Copy(response, resp.Body)
+			}
+			logging.Log.Debugf("END OF REQUEST: %s", uri)
+		}
 	}
-	response.Header().Add("Content-Type", utils.GetContentType(responseBody))
-	response.Write(responseBody)
 }
 
 // GetIngress returns the Ingress endpoint called "tektonDashboardIngressName" in the requested namespace
