@@ -26,4 +26,10 @@ limitations under the License.
   .bx--data-table-container th{
     width: 50%;
   }
+
+  .bx--tab-content .tkn--table .bx--data-table.bx--data-table--short {
+    td.cell-value {
+      max-width: unset;
+    }
+  }
 }

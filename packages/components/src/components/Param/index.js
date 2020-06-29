@@ -13,21 +13,14 @@ limitations under the License.
 /* istanbul ignore file */
 import React from 'react';
 
-import './WithLineBreaks.scss';
+import ViewYAML from '../ViewYAML';
 
-export default function WithLineBreaks({ children }) {
+import './Param.scss';
+
+export default function Param({ children }) {
   if (!children) {
     return null;
   }
 
-  const lines = children.split('\n');
-  return lines.map((line, index) => (
-    <span
-      // using index as key is safe here as the content does not change, we're just breaking it up
-      key={index} // eslint-disable-line react/no-array-index-key
-      className="tkn--text-line"
-    >
-      {line}
-    </span>
-  ));
+  return <ViewYAML className="tkn--param" resource={children} />;
 }

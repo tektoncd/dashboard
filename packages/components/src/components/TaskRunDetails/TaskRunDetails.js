@@ -14,7 +14,7 @@ limitations under the License.
 import { injectIntl } from 'react-intl';
 import React from 'react';
 
-import { DetailsHeader, Tab, Table, Tabs, ViewYAML, WithLineBreaks } from '..';
+import { DetailsHeader, Param, Tab, Table, Tabs, ViewYAML } from '..';
 
 import './TaskRunDetails.scss';
 
@@ -50,7 +50,7 @@ const TaskRunDetails = props => {
           name,
           value: (
             <span title={value}>
-              <WithLineBreaks>{value}</WithLineBreaks>
+              <Param>{value}</Param>
             </span>
           )
         };
