@@ -13,6 +13,7 @@ limitations under the License.
 /* istanbul ignore file */
 
 export { default as DataTableSkeleton } from './DataTableSkeleton';
+export { default as DetailsHeader } from './DetailsHeader';
 export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as FormattedDate } from './FormattedDate';
 export { default as FormattedDuration } from './FormattedDuration';
@@ -25,6 +26,7 @@ export { default as Log } from './Log';
 export { default as LogoutButton } from './LogoutButton';
 export { default as Modal } from './Modal';
 export { default as PageErrorBoundary } from './PageErrorBoundary';
+export { default as Param } from './Param';
 export { default as PipelineGraph } from './Graph/PipelineGraph';
 export { default as PipelineResources } from './PipelineResources';
 export { default as PipelineRun } from './PipelineRun';
@@ -39,7 +41,6 @@ export { default as StatusIcon } from './StatusIcon';
 export { default as Step } from './Step';
 export { default as StepDefinition } from './StepDefinition';
 export { default as StepDetails } from './StepDetails';
-export { default as DetailsHeader } from './DetailsHeader';
 export { default as StepStatus } from './StepStatus';
 export { default as Tab } from './Tab';
 export { default as Table } from './Table';
@@ -52,4 +53,3 @@ export { default as TaskTree } from './TaskTree';
 export { default as TooltipDropdown } from './TooltipDropdown';
 export { default as Trigger } from './Trigger';
 export { default as ViewYAML } from './ViewYAML';
-export { default as WithLineBreaks } from './WithLineBreaks';
