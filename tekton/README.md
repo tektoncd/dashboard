@@ -18,6 +18,7 @@ First, ensure that your credentials are set up correctly. You will need an accou
 ```bash
 KEY_FILE=release.json
 GENERIC_SECRET=release-secret
+PIPELINE_NAMESPACE=tekton-pipelines
 # The kubernetes ServiceAccount that will be used by your Tekton tasks. 'default' is the default. It should already exist.
 SERVICE_ACCOUNT=default
 GCP_ACCOUNT="release-right-meow@tekton-releases.iam.gserviceaccount.com"
@@ -26,24 +27,23 @@ GCP_ACCOUNT="release-right-meow@tekton-releases.iam.gserviceaccount.com"
 gcloud iam service-accounts keys create --iam-account $GCP_ACCOUNT $KEY_FILE
 
 # 2. Sore GCP key in a secret
-kubectl create secret generic $GENERIC_SECRET --from-file=./$KEY_FILE
+kubectl create secret generic $GENERIC_SECRET -n $PIPELINE_NAMESPACE --from-file=./$KEY_FILE
 
 # 3. Patch the GCP key onto the service account to be used to run the release pipeline.
-kubectl patch serviceaccount $SERVICE_ACCOUNT -p "{\"secrets\": [{\"name\": \"$GENERIC_SECRET\"}]}"
+kubectl patch serviceaccount $SERVICE_ACCOUNT -n $PIPELINE_NAMESPACE -p "{\"secrets\": [{\"name\": \"$GENERIC_SECRET\"}]}"
 ```
 
 Next:
 
 1. Install [Tekton pipelines](https://github.com/tektoncd/pipeline) into your local cluster.
 1. Create a GitHub release by pushing a tag to the [dashboard](https://github.com/tektoncd/dashboard) repository. This should be of the form, `vX.Y.Z' e.g.' 'v0.2.5'.
-1. Change the `version` label in `base/300-deployment.yaml` to the same as the tag in the previous step.
 1. Edit the `tekton-dashboard-git` PipelineResource in `resources.yaml` and set `spec.params.revision.value` to 'vX.Y.Z' e.g., `v0.2.5`. This can also be a git commit if you have not created a release yet.
 1. From the root directory of the dashboard repository, create the Tekton Dashboard release pipeline:
 
-```bash
-PIPELINE_NAMESPACE=tekton-pipelines
-kubectl apply -f tekton -n $PIPELINE_NAMESPACE
-```
+   ```bash
+   PIPELINE_NAMESPACE=tekton-pipelines
+   kubectl apply -f tekton -n $PIPELINE_NAMESPACE
+   ```
 
 ## Building a test release
 
@@ -60,28 +60,28 @@ So for example, we might want to run one or more test releases under the name 't
 - Go to https://console.cloud.google.com/storage/browser/tekton-releases/dashboard and click 'Create folder'. Create the folder Buckets/tekton-releases/dashboard/test-release.
 - Modify the tekton-bucket-dashboard PipelineResource:
 
-```yaml
-apiVersion: tekton.dev/v1alpha1
-kind: PipelineResource
-metadata:
-  name: tekton-bucket-dashboard
-spec:
-  type: storage
-  params:
-   - name: type
-     value: gcs
-   - name: location
-     value: gs://tekton-releases/dashboard/test-release # If you're testing use your bucket name here instead of test-release
-   - name: dir
-     value: "y"
-```
+  ```yaml
+  apiVersion: tekton.dev/v1alpha1
+  kind: PipelineResource
+  metadata:
+    name: tekton-bucket-dashboard
+  spec:
+    type: storage
+    params:
+     - name: type
+       value: gcs
+     - name: location
+       value: gs://tekton-releases/dashboard/test-release # If you're testing use your bucket name here instead of test-release
+     - name: dir
+       value: "y"
+  ```
 
 - Apply your changes
 
-```bash
-PIPELINE_NAMESPACE=tekton-pipelines
-kubectl apply -f tekton -n $PIPELINE_NAMESPACE
-```
+  ```bash
+  PIPELINE_NAMESPACE=tekton-pipelines
+  kubectl apply -f tekton -n $PIPELINE_NAMESPACE
+  ```
 
 Run a test release:
 
@@ -139,18 +139,18 @@ Then, install the Tekton resources from the `openshift` folder:
 
 - Create your release secret and all Tekton resources in the namespace you've chosen earlier, e.g. `dashboard-release-pipeline`:
 
-```
-KEY_FILE=$HOME/googlekey/release.json
-GENERIC_SECRET=release-secret
-kubectl create secret generic $GENERIC_SECRET --from-file=$KEY_FILE -n dashboard-release-pipeline
-kubectl patch serviceaccount release-pipeline-sa -n dashboard-release-pipeline -p "{\"secrets\": [{\"name\": \"$GENERIC_SECRET\"}]}"
-```
+  ```
+  KEY_FILE=$HOME/googlekey/release.json
+  GENERIC_SECRET=release-secret
+  kubectl create secret generic $GENERIC_SECRET --from-file=$KEY_FILE -n dashboard-release-pipeline
+  kubectl patch serviceaccount release-pipeline-sa -n dashboard-release-pipeline -p "{\"secrets\": [{\"name\": \"$GENERIC_SECRET\"}]}"
+  ```
 
 - When you're ready (secret created and patched to the ServiceAccount), specify the namespace with the `tkn` command:
 
-```
-tkn pipeline start dashboard-release -p versionTag=v0.6.1 -r dashboard-source-repo=tekton-dashboard-git -r bucket-for-dashboard=tekton-bucket-dashboard -r builtDashboardImage=dashboard-image -n dashboard-release-pipeline -s release-pipeline-sa -p bucketName=mytestbucket
-```
+  ```
+  tkn pipeline start dashboard-release -p versionTag=v0.6.1 -r dashboard-source-repo=tekton-dashboard-git -r bucket-for-dashboard=tekton-bucket-dashboard -r builtDashboardImage=dashboard-image -n dashboard-release-pipeline -s release-pipeline-sa -p bucketName=mytestbucket
+  ```
 
 ## Manually complete the release work
 
@@ -160,5 +160,5 @@ We have a number of tasks that are yet to be automated:
 - Attach `.yaml` files from https://console.cloud.google.com/storage/browser/tekton-releases/dashboard - be sure you copy the locked down image ones (look under `previous`): any containers such as `kubectl` and `oauth-proxy` should reference an image sha and not a tag such as `latest`
 - Note that the image pinning, if doing the release on OpenShift, has not yet been implemented - so you'll have to do this manually until then. That work should be done under https://github.com/tektoncd/dashboard/issues/1384
 - Optionally repeat for the Webhooks Extension
-- Fix up release coordinates in `/README.md` for the normal and Openshift installs
+- Update `/README.md` to add an entry in the table for the new release
 - Publish the GitHub release
