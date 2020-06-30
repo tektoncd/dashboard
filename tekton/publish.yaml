@@ -55,7 +55,7 @@ spec:
           value: $(params.imageRegistry)
         - name: GOPATH
           value: /workspace/go
-        - name: CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE
+        - name: GOOGLE_APPLICATION_CREDENTIALS
           value: /secret/release.json
         - name: GO111MODULE
           value:
@@ -67,7 +67,10 @@ spec:
           set -e
           set -x
 
-          # Auth with CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE
+          # Activate service account
+          gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENTIALS}
+
+          # Setup docker auth
           gcloud auth configure-docker
 
           # ko requires this variable to be set in order to set image creation timestamps correctly https://github.com/google/go-containerregistry/pull/146
