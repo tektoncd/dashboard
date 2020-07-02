@@ -36,8 +36,7 @@ import DeleteModal from '../../components/SecretsDeleteModal';
 import {
   clearNotification,
   deleteSecret,
-  fetchSecrets,
-  resetCreateSecret
+  fetchSecrets
 } from '../../actions/secrets';
 import { selectNamespace } from '../../actions/namespaces';
 import { fetchServiceAccounts } from '../../actions/serviceAccounts';
@@ -513,7 +512,6 @@ const mapDispatchToProps = {
   deleteSecret,
   fetchSecrets,
   fetchServiceAccounts,
-  resetCreateSecret,
   selectNamespace
 };
 

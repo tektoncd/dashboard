@@ -14,6 +14,22 @@ limitations under the License.
 @import '~carbon-components/scss/globals/scss/vars';
 
 .tkn--create {
+  .tkn--create--heading {
+    display: flex;
+
+    h1 {
+      flex-grow: 1;
+    }
+
+    .bx--btn {
+      height: 100%;
+
+      &.bx--btn--secondary {
+        margin-right: $spacing-03;
+      }
+    }
+  }
+
   .bx--fieldset {
     margin-bottom: 0;
   }
@@ -34,6 +50,7 @@ limitations under the License.
   .bx--list-box__wrapper,
   .bx--form-item {
     margin-bottom: $carbon--spacing-06;
+    max-width: 40rem;
   }
 
   .bx--list-box__menu,
