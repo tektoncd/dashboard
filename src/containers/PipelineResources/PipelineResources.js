@@ -37,7 +37,7 @@ import { Add16 as Add, TrashCan32 as Delete } from '@carbon/icons-react';
 import { LabelFilter } from '..';
 import { fetchPipelineResources } from '../../actions/pipelineResources';
 import { deletePipelineResource } from '../../api';
-import PipelineResourcesModal from '../CreatePipelineResources';
+import CreatePipelineResourceModal from '../CreatePipelineResource';
 import {
   getPipelineResources,
   getPipelineResourcesErrorMessage,
@@ -296,7 +296,7 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
         <h1>PipelineResources</h1>
         <LabelFilter {...this.props} />
         {!this.props.isReadOnly && (
-          <PipelineResourcesModal
+          <CreatePipelineResourceModal
             open={this.state.showCreatePipelineResourceModal}
             handleCreatePipelineResource={
               this.handleCreatePipelineResourceClick

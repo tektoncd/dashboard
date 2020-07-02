@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -23,6 +23,8 @@ import UniversalFields from '../../components/PipelineResourcesModal/UniversalFi
 import { isWebSocketConnected } from '../../reducers';
 import { fetchServiceAccounts } from '../../actions/serviceAccounts';
 import { createPipelineResource } from '../../api';
+
+import '../../scss/Create.scss';
 
 /* istanbul ignore next */
 function validateInputs(value, id) {
@@ -252,8 +254,8 @@ export /* istanbul ignore next */ class PipelineResourcesModal extends Component
 
     return (
       <Modal
+        className="tkn--create"
         open={open}
-        data-testid="modal"
         primaryButtonText={intl.formatMessage({
           id: 'dashboard.actions.createButton',
           defaultMessage: 'Create'
@@ -283,7 +285,6 @@ export /* istanbul ignore next */ class PipelineResourcesModal extends Component
                 id: 'dashboard.notification.clear',
                 defaultMessage: 'Clear Notification'
               })}
-              data-testid="errorNotificationComponent"
               onCloseButtonClick={this.resetError}
               lowContrast
             />
