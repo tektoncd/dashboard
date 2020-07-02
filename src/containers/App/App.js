@@ -39,6 +39,7 @@ import {
   ClusterTriggerBindings,
   Condition,
   Conditions,
+  CreatePipelineResource,
   CreateSecret,
   CustomResourceDefinition,
   EventListener,
@@ -252,6 +253,13 @@ export /* istanbul ignore next */ class App extends Component {
                       exact
                       component={PipelineResource}
                     />
+                    <ReadWriteRoute
+                      isReadOnly={this.props.isReadOnly}
+                      path={paths.pipelineResources.create()}
+                      exact
+                      component={CreatePipelineResource}
+                    />
+
                     <Route path={paths.tasks.all()} exact component={Tasks} />
                     <Route
                       path={paths.tasks.byNamespace()}
