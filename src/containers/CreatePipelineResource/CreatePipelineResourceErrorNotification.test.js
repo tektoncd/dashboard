@@ -16,7 +16,7 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { renderWithIntl } from '../../utils/test';
-import PipelineResourcesModal from '.';
+import CreatePipelineResource from '.';
 import * as API from '../../api';
 
 const middleware = [thunk];
@@ -51,11 +51,7 @@ const byNamespace = {
   ]
 };
 
-const props = {
-  open: true
-};
-
-it('error notification appears', async () => {
+it('CreatePipelineResource error notification appears', async () => {
   const errorResponseMock = {
     response: { status: 404, text: () => Promise.resolve('') }
   };
@@ -77,7 +73,7 @@ it('error notification appears', async () => {
 
   const { getByPlaceholderText, getByText, queryByText } = renderWithIntl(
     <Provider store={store}>
-      <PipelineResourcesModal {...props} />
+      <CreatePipelineResource />
     </Provider>
   );
 

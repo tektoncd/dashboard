@@ -14,14 +14,11 @@ limitations under the License.
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
-import { InlineNotification } from 'carbon-components-react';
-import { getErrorMessage } from '@tektoncd/dashboard-utils';
-import { Modal } from '@tektoncd/dashboard-components';
+import { Button, InlineNotification } from 'carbon-components-react';
+import { getErrorMessage, getTitle, urls } from '@tektoncd/dashboard-utils';
 
-import GitResourceFields from '../../components/PipelineResourcesModal/GitResourceFields';
-import UniversalFields from '../../components/PipelineResourcesModal/UniversalFields';
-import { isWebSocketConnected } from '../../reducers';
-import { fetchServiceAccounts } from '../../actions/serviceAccounts';
+import GitResourceFields from '../../components/CreatePipelineResource/GitResourceFields';
+import UniversalFields from '../../components/CreatePipelineResource/UniversalFields';
 import { createPipelineResource } from '../../api';
 
 import '../../scss/Create.scss';
@@ -50,10 +47,11 @@ function validateInputs(value, id) {
   return true;
 }
 
-export /* istanbul ignore next */ class PipelineResourcesModal extends Component {
+export /* istanbul ignore next */ class CreatePipelineResource extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      creating: false,
       name: '',
       namespace: '',
       type: 'Git',
@@ -64,38 +62,32 @@ export /* istanbul ignore next */ class PipelineResourcesModal extends Component
     };
   }
 
-  componentDidUpdate(prevProps) {
-    const { webSocketConnected } = this.props;
-    const { webSocketConnected: prevWebSocketConnected } = prevProps;
-    if (webSocketConnected && prevWebSocketConnected === false) {
-      this.props.fetchServiceAccounts();
-    }
+  componentDidMount() {
+    const { intl } = this.props;
+    document.title = getTitle({
+      page: intl.formatMessage({
+        id: 'dashboard.createPipelineResource.title',
+        defaultMessage: 'Create PipelineResource'
+      })
+    });
   }
 
   handleClose = () => {
-    this.props.onClose();
+    const { history } = this.props;
+    history.push(urls.pipelineResources.all());
   };
 
   resetError = () => {
     this.setState({ submitError: '' });
   };
 
-  resetForm = () => {
-    this.setState({
-      name: '',
-      namespace: '',
-      type: 'Git',
-      url: '',
-      revision: '',
-      invalidFields: {},
-      submitError: ''
-    });
-  };
-
-  handleSubmit = async () => {
+  handleSubmit = () => {
     const { name, namespace, type, url, revision } = this.state;
     const invalidFields = {};
     let resource;
+
+    this.setState({ creating: true });
+
     if (this.state.type === 'Git') {
       resource = {
         apiVersion: 'tekton.dev/v1alpha1',
@@ -166,26 +158,26 @@ export /* istanbul ignore next */ class PipelineResourcesModal extends Component
       }
     }
 
-    if (Object.keys(invalidFields).length === 0) {
-      const result = await createPipelineResource({ namespace, resource })
-        .then(response => {
-          this.resetForm();
-          this.props.onSuccess(response);
-          this.props.handleCreatePipelineResource(result);
-        })
-        .catch(error => {
-          error.response.text().then(text => {
-            const statusCode = error.response.status;
-            let errorMessage = `error code ${statusCode}`;
-            if (text) {
-              errorMessage = `${text} (error code ${statusCode})`;
-            }
-            this.setState({ submitError: errorMessage });
-          });
-        });
-    } else {
-      this.setState({ invalidFields });
+    if (Object.keys(invalidFields).length) {
+      this.setState({ creating: false, invalidFields });
+      return;
     }
+
+    createPipelineResource({ namespace, resource })
+      .then(() => {
+        const { history } = this.props;
+        history.push(urls.pipelineResources.byNamespace({ namespace }));
+      })
+      .catch(error => {
+        error.response.text().then(text => {
+          const statusCode = error.response.status;
+          let errorMessage = `error code ${statusCode}`;
+          if (text) {
+            errorMessage = `${text} (error code ${statusCode})`;
+          }
+          this.setState({ creating: false, submitError: errorMessage });
+        });
+      });
   };
 
   handleChangeTextInput = e => {
@@ -217,15 +209,10 @@ export /* istanbul ignore next */ class PipelineResourcesModal extends Component
   };
 
   handleChangeType = e => {
-    let gitSource;
     const stateVar = 'type';
     const stateValue = e.selectedItem.text;
     this.setState(prevState => {
-      if (stateValue === 'Git') {
-        gitSource = true;
-      } else {
-        gitSource = false;
-      }
+      const gitSource = stateValue === 'Git';
       const newInvalidFields = prevState.invalidFields;
       if (validateInputs(stateValue, stateVar)) {
         delete newInvalidFields[stateVar];
@@ -241,39 +228,58 @@ export /* istanbul ignore next */ class PipelineResourcesModal extends Component
   };
 
   render() {
-    const { open, intl } = this.props;
+    const { intl } = this.props;
     const {
+      creating,
+      gitSource = true,
+      invalidFields,
       name,
       namespace,
-      type,
-      url,
       revision,
-      invalidFields,
-      gitSource = true
+      type,
+      url
     } = this.state;
 
     return (
-      <Modal
-        className="tkn--create"
-        open={open}
-        primaryButtonText={intl.formatMessage({
-          id: 'dashboard.actions.createButton',
-          defaultMessage: 'Create'
-        })}
-        secondaryButtonText={intl.formatMessage({
-          id: 'dashboard.modal.cancelButton',
-          defaultMessage: 'Cancel'
-        })}
-        modalHeading={intl.formatMessage({
-          id: 'dashboard.pipelineResourcesModal.heading',
-          defaultMessage: 'Create PipelineResource'
-        })}
-        onSecondarySubmit={this.handleClose}
-        onRequestSubmit={this.handleSubmit}
-        onRequestClose={this.handleClose}
-      >
+      <div className="tkn--create">
+        <div className="tkn--create--heading">
+          <h1>
+            {intl.formatMessage({
+              id: 'dashboard.createPipelineResource.heading',
+              defaultMessage: 'Create PipelineResource'
+            })}
+          </h1>
+          <Button
+            iconDescription={intl.formatMessage({
+              id: 'dashboard.modal.cancelButton',
+              defaultMessage: 'Cancel'
+            })}
+            kind="secondary"
+            onClick={this.handleClose}
+            disabled={creating}
+          >
+            {intl.formatMessage({
+              id: 'dashboard.modal.cancelButton',
+              defaultMessage: 'Cancel'
+            })}
+          </Button>
+          <Button
+            iconDescription={intl.formatMessage({
+              id: 'dashboard.actions.createButton',
+              defaultMessage: 'Create'
+            })}
+            onClick={this.handleSubmit}
+            disabled={creating}
+          >
+            {intl.formatMessage({
+              id: 'dashboard.actions.createButton',
+              defaultMessage: 'Create'
+            })}
+          </Button>
+        </div>
+
         <form>
-          {this.state.submitError && open && (
+          {this.state.submitError && (
             <InlineNotification
               kind="error"
               title={intl.formatMessage({
@@ -307,28 +313,16 @@ export /* istanbul ignore next */ class PipelineResourcesModal extends Component
             />
           )}
         </form>
-      </Modal>
+      </div>
     );
   }
 }
 
-PipelineResourcesModal.defaultProps = {
-  open: false,
-  onClose: () => {}
-};
-
-function mapStateToProps(state) {
-  return {
-    webSocketConnected: isWebSocketConnected(state)
-  };
-}
-
 const mapDispatchToProps = {
-  createPipelineResource,
-  fetchServiceAccounts
+  createPipelineResource
 };
 
 export default connect(
-  mapStateToProps,
+  null,
   mapDispatchToProps
-)(injectIntl(PipelineResourcesModal));
+)(injectIntl(CreatePipelineResource));
