@@ -38,7 +38,7 @@ import {
   updateUnexecutedSteps
 } from '@tektoncd/dashboard-utils';
 
-import { fetchLogs } from '../../utils';
+import { fetchLogs, getViewChangeHandler } from '../../utils';
 import { LogDownloadButton } from '..';
 import {
   getSelectedNamespace,
@@ -78,9 +78,7 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
     );
   }
 
-  state = {
-    loading: true
-  };
+  state = { loading: true };
 
   componentDidMount() {
     const { match, namespace } = this.props;
@@ -129,16 +127,6 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
     if (selectedStepId !== currentStepId) {
       queryParams.delete('view');
     }
-
-    const browserURL = match.url.concat(`?${queryParams.toString()}`);
-    history.push(browserURL);
-  };
-
-  handleViewChange = view => {
-    const { history, location, match } = this.props;
-    const queryParams = new URLSearchParams(location.search);
-
-    queryParams.set('view', view);
 
     const browserURL = match.url.concat(`?${queryParams.toString()}`);
     history.push(browserURL);
@@ -256,6 +244,8 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
       />
     );
 
+    const onViewChange = getViewChangeHandler(this.props);
+
     return (
       <>
         <RunHeader
@@ -277,7 +267,7 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
             <StepDetails
               definition={definition}
               logContainer={logContainer}
-              onViewChange={this.handleViewChange}
+              onViewChange={onViewChange}
               reason={reason}
               showIO
               status={status}
@@ -288,7 +278,7 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
             />
           )) || (
             <TaskRunDetails
-              onViewChange={this.handleViewChange}
+              onViewChange={onViewChange}
               taskRun={taskRun}
               view={view}
             />

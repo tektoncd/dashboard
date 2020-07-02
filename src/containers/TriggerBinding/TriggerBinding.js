@@ -24,6 +24,7 @@ import {
   isFetchingTriggerBindings,
   isWebSocketConnected
 } from '../../reducers';
+import { getViewChangeHandler } from '../../utils';
 
 import { fetchTriggerBinding } from '../../actions/triggerBindings';
 
@@ -73,7 +74,8 @@ export /* istanbul ignore next */ class TriggerBindingContainer extends Componen
       error,
       loading,
       selectedNamespace,
-      triggerBinding
+      triggerBinding,
+      view
     } = this.props;
 
     const headersForParameters = [
@@ -109,7 +111,9 @@ export /* istanbul ignore next */ class TriggerBindingContainer extends Componen
       <ResourceDetails
         error={error}
         loading={loading}
+        onViewChange={getViewChangeHandler(this.props)}
         resource={triggerBinding}
+        view={view}
       >
         <Table
           title={intl.formatMessage({
@@ -138,8 +142,11 @@ TriggerBindingContainer.propTypes = {
 
 /* istanbul ignore next */
 function mapStateToProps(state, ownProps) {
-  const { match } = ownProps;
+  const { location, match } = ownProps;
   const { namespace: namespaceParam, triggerBindingName } = match.params;
+
+  const queryParams = new URLSearchParams(location.search);
+  const view = queryParams.get('view');
 
   const namespace = namespaceParam || getSelectedNamespace(state);
   const triggerBinding = getTriggerBinding(state, {
@@ -151,6 +158,7 @@ function mapStateToProps(state, ownProps) {
     loading: isFetchingTriggerBindings(state),
     selectedNamespace: namespace,
     triggerBinding,
+    view,
     webSocketConnected: isWebSocketConnected(state)
   };
 }

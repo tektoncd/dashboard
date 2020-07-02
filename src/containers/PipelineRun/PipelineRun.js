@@ -37,18 +37,18 @@ import { fetchClusterTasks, fetchTasks } from '../../actions/tasks';
 import { fetchTaskRuns } from '../../actions/taskRuns';
 import { rerunPipelineRun } from '../../api';
 
-import { fetchLogs } from '../../utils';
+import { fetchLogs, getViewChangeHandler } from '../../utils';
 
 export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   constructor(props) {
     super(props);
     this.setShowRerunNotification = this.setShowRerunNotification.bind(this);
-  }
 
-  state = {
-    loading: true,
-    showRerunNotification: false
-  };
+    this.state = {
+      loading: true,
+      showRerunNotification: false
+    };
+  }
 
   componentDidMount() {
     const { match } = this.props;
@@ -103,16 +103,6 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     if (selectedStepId !== currentStepId || selectedTaskId !== currentTaskId) {
       queryParams.delete('view');
     }
-
-    const browserURL = match.url.concat(`?${queryParams.toString()}`);
-    history.push(browserURL);
-  };
-
-  handleViewChange = view => {
-    const { history, location, match } = this.props;
-    const queryParams = new URLSearchParams(location.search);
-
-    queryParams.set('view', view);
 
     const browserURL = match.url.concat(`?${queryParams.toString()}`);
     history.push(browserURL);
@@ -212,7 +202,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           handleTaskSelected={this.handleTaskSelected}
           loading={loading}
           logDownloadButton={LogDownloadButton}
-          onViewChange={this.handleViewChange}
+          onViewChange={getViewChangeHandler(this.props)}
           pipelineRun={pipelineRun}
           rerun={rerun}
           selectedStepId={selectedStepId}

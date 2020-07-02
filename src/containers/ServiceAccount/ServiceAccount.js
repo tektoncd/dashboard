@@ -28,6 +28,7 @@ import {
   isFetchingServiceAccounts,
   isWebSocketConnected
 } from '../../reducers';
+import { getViewChangeHandler } from '../../utils';
 
 import { fetchServiceAccount } from '../../actions/serviceAccounts';
 import { fetchSecrets } from '../../actions/secrets';
@@ -78,7 +79,8 @@ export /* istanbul ignore next */ class ServiceAccountContainer extends Componen
       loading,
       match,
       selectedNamespace,
-      serviceAccount
+      serviceAccount,
+      view
     } = this.props;
 
     const { namespace } = match.params;
@@ -146,7 +148,9 @@ export /* istanbul ignore next */ class ServiceAccountContainer extends Componen
       <ResourceDetails
         error={error}
         loading={loading}
+        onViewChange={getViewChangeHandler(this.props)}
         resource={serviceAccount}
+        view={view}
       >
         <Table
           title={intl.formatMessage({
@@ -186,8 +190,11 @@ ServiceAccountContainer.propTypes = {
 
 /* istanbul ignore next */
 function mapStateToProps(state, ownProps) {
-  const { match } = ownProps;
+  const { location, match } = ownProps;
   const { namespace: namespaceParam, serviceAccountName } = match.params;
+
+  const queryParams = new URLSearchParams(location.search);
+  const view = queryParams.get('view');
 
   const namespace = namespaceParam || getSelectedNamespace(state);
   const serviceAccount = getServiceAccount(state, {
@@ -200,6 +207,7 @@ function mapStateToProps(state, ownProps) {
     selectedNamespace: namespace,
     serviceAccount,
     secrets: getSecrets(state, { namespace }),
+    view,
     webSocketConnected: isWebSocketConnected(state)
   };
 }

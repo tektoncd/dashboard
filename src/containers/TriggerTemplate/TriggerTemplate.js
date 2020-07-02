@@ -29,6 +29,7 @@ import {
   isFetchingTriggerTemplates,
   isWebSocketConnected
 } from '../../reducers';
+import { getViewChangeHandler } from '../../utils';
 
 import { fetchTriggerTemplate } from '../../actions/triggerTemplates';
 
@@ -232,13 +233,15 @@ export /* istanbul ignore next */ class TriggerTemplateContainer extends Compone
   }
 
   render() {
-    const { error, loading, triggerTemplate } = this.props;
+    const { error, loading, triggerTemplate, view } = this.props;
 
     return (
       <ResourceDetails
         error={error}
         loading={loading}
+        onViewChange={getViewChangeHandler(this.props)}
         resource={triggerTemplate}
+        view={view}
       >
         {this.getContent()}
       </ResourceDetails>
@@ -256,8 +259,11 @@ TriggerTemplateContainer.propTypes = {
 
 /* istanbul ignore next */
 function mapStateToProps(state, ownProps) {
-  const { match } = ownProps;
+  const { location, match } = ownProps;
   const { namespace: namespaceParam, triggerTemplateName } = match.params;
+
+  const queryParams = new URLSearchParams(location.search);
+  const view = queryParams.get('view');
 
   const namespace = namespaceParam || getSelectedNamespace(state);
   const triggerTemplate = getTriggerTemplate(state, {
@@ -269,6 +275,7 @@ function mapStateToProps(state, ownProps) {
     loading: isFetchingTriggerTemplates(state),
     selectedNamespace: namespace,
     triggerTemplate,
+    view,
     webSocketConnected: isWebSocketConnected(state)
   };
 }

@@ -24,6 +24,7 @@ import {
   isWebSocketConnected
 } from '../../reducers';
 import { fetchCondition } from '../../actions/conditions';
+import { getViewChangeHandler } from '../../utils';
 
 export class ConditionContainer extends Component {
   componentDidMount() {
@@ -115,11 +116,17 @@ export class ConditionContainer extends Component {
   }
 
   render() {
-    const { error, condition } = this.props;
+    const { condition, error, view } = this.props;
     const additionalContent = this.getAdditionalContent();
 
     return (
-      <ResourceDetails error={error} kind="Condition" resource={condition}>
+      <ResourceDetails
+        error={error}
+        kind="Condition"
+        onViewChange={getViewChangeHandler(this.props)}
+        resource={condition}
+        view={view}
+      >
         {additionalContent}
       </ResourceDetails>
     );
@@ -136,8 +143,11 @@ ConditionContainer.propTypes = {
 
 /* istanbul ignore next */
 function mapStateToProps(state, ownProps) {
-  const { match } = ownProps;
+  const { location, match } = ownProps;
   const { namespace: namespaceParam, conditionName } = match.params;
+
+  const queryParams = new URLSearchParams(location.search);
+  const view = queryParams.get('view');
 
   const namespace = namespaceParam || getSelectedNamespace(state);
   const condition = getCondition(state, {
@@ -147,6 +157,7 @@ function mapStateToProps(state, ownProps) {
   return {
     error: getConditionsErrorMessage(state),
     condition,
+    view,
     webSocketConnected: isWebSocketConnected(state)
   };
 }

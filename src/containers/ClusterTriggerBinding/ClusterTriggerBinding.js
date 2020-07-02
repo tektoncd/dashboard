@@ -23,7 +23,7 @@ import {
   isFetchingClusterTriggerBindings,
   isWebSocketConnected
 } from '../../reducers';
-
+import { getViewChangeHandler } from '../../utils';
 import { fetchClusterTriggerBinding } from '../../actions/clusterTriggerBindings';
 
 import '../../scss/Triggers.scss';
@@ -68,11 +68,12 @@ export /* istanbul ignore next */ class ClusterTriggerBindingContainer extends C
 
   render() {
     const {
+      clusterTriggerBinding,
       intl,
       error,
       loading,
       selectedNamespace,
-      clusterTriggerBinding
+      view
     } = this.props;
 
     const headersForParameters = [
@@ -108,7 +109,9 @@ export /* istanbul ignore next */ class ClusterTriggerBindingContainer extends C
       <ResourceDetails
         error={error}
         loading={loading}
+        onViewChange={getViewChangeHandler(this.props)}
         resource={clusterTriggerBinding}
+        view={view}
       >
         <Table
           title={intl.formatMessage({
@@ -137,16 +140,20 @@ ClusterTriggerBindingContainer.propTypes = {
 
 /* istanbul ignore next */
 function mapStateToProps(state, ownProps) {
-  const { match } = ownProps;
+  const { location, match } = ownProps;
   const { clusterTriggerBindingName } = match.params;
+
+  const queryParams = new URLSearchParams(location.search);
+  const view = queryParams.get('view');
 
   const clusterTriggerBinding = getClusterTriggerBinding(state, {
     name: clusterTriggerBindingName
   });
   return {
+    clusterTriggerBinding,
     error: getClusterTriggerBindingsErrorMessage(state),
     loading: isFetchingClusterTriggerBindings(state),
-    clusterTriggerBinding,
+    view,
     webSocketConnected: isWebSocketConnected(state)
   };
 }

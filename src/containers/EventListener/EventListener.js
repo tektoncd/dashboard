@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -25,6 +25,7 @@ import {
   isWebSocketConnected
 } from '../../reducers';
 import { fetchEventListener } from '../../actions/eventListeners';
+import { getViewChangeHandler } from '../../utils';
 
 import './EventListener.scss';
 
@@ -127,14 +128,16 @@ export /* istanbul ignore next */ class EventListenerContainer extends Component
   }
 
   render() {
-    const { error, eventListener, loading } = this.props;
+    const { error, eventListener, loading, view } = this.props;
 
     return (
       <ResourceDetails
         additionalMetadata={this.getAdditionalMetadata()}
         error={error}
         loading={loading}
+        onViewChange={getViewChangeHandler(this.props)}
         resource={eventListener}
+        view={view}
       >
         {this.getTriggersContent()}
       </ResourceDetails>
@@ -152,8 +155,11 @@ EventListenerContainer.propTypes = {
 
 /* istanbul ignore next */
 function mapStateToProps(state, ownProps) {
-  const { match } = ownProps;
+  const { location, match } = ownProps;
   const { namespace: namespaceParam, eventListenerName } = match.params;
+
+  const queryParams = new URLSearchParams(location.search);
+  const view = queryParams.get('view');
 
   const namespace = namespaceParam || getSelectedNamespace(state);
   const eventListener = getEventListener(state, {
@@ -164,6 +170,7 @@ function mapStateToProps(state, ownProps) {
     error: getEventListenersErrorMessage(state),
     eventListener,
     loading: isFetchingEventListeners(state),
+    view,
     webSocketConnected: isWebSocketConnected(state)
   };
 }
