@@ -32,7 +32,7 @@ import { createPipelineRun } from '../../api';
 import { getStore } from '../../store/index';
 import { isValidLabel } from '../../utils';
 
-import '../../scss/CreateRun.scss';
+import '../../scss/Create.scss';
 
 const initialState = {
   invalidLabels: {},
@@ -389,7 +389,7 @@ class CreatePipelineRun extends React.Component {
     return (
       <Form>
         <Modal
-          className="tkn--create-run"
+          className="tkn--create"
           open={open}
           modalHeading={intl.formatMessage({
             id: 'dashboard.createPipelineRun.heading',
