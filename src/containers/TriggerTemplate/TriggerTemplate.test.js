@@ -12,8 +12,10 @@ limitations under the License.
 */
 
 import React from 'react';
+import { Route } from 'react-router-dom';
 import { fireEvent, waitForElement } from 'react-testing-library';
 import { createIntl } from 'react-intl';
+import { paths, urls } from '@tektoncd/dashboard-utils';
 import { TriggerTemplateContainer } from './TriggerTemplate';
 import { renderWithRouter } from '../../utils/test';
 
@@ -24,7 +26,7 @@ const intl = createIntl({
 
 const resourceTemplate1NameInfo = 'git-source';
 const resourceTemplate2NameInfo = 'simple-pipeline-run';
-
+const namespace = 'tekton-pipelines';
 const triggerTemplateName = 'pipeline-template';
 const resourceTemplate1Details = {
   apiVersion: 'tekton.dev/v1alpha1',
@@ -338,20 +340,25 @@ it('TriggerTemplateContainer contains overview tab with accurate information', a
 });
 
 it('TriggerTemplateContainer contains YAML tab with accurate information', async () => {
-  const match = {
-    params: {
-      triggerTemplateName: 'pipeline-template'
-    }
-  };
-
   const { getByText } = renderWithRouter(
-    <TriggerTemplateContainer
-      intl={intl}
-      match={match}
-      error={null}
-      fetchTriggerTemplate={() => Promise.resolve(fakeTriggerTemplate)}
-      triggerTemplate={fakeTriggerTemplate}
-    />
+    <Route
+      path={paths.triggerTemplates.byName()}
+      render={props => (
+        <TriggerTemplateContainer
+          {...props}
+          intl={intl}
+          error={null}
+          fetchTriggerTemplate={() => Promise.resolve(fakeTriggerTemplate)}
+          triggerTemplate={fakeTriggerTemplate}
+        />
+      )}
+    />,
+    {
+      route: urls.triggerTemplates.byName({
+        namespace,
+        triggerTemplateName: 'pipeline-template'
+      })
+    }
   );
 
   await waitForElement(() => getByText('pipeline-template'));

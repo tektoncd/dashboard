@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,6 +16,7 @@ import * as API from '../api';
 import {
   fetchLogs,
   getGitValues,
+  getViewChangeHandler,
   isStale,
   sortRunsByStartTime,
   typeToPlural
@@ -130,4 +131,17 @@ describe('getGitValues', () => {
 
     expect(returnedValue).toEqual({});
   });
+});
+
+it('getViewChangeHandler', () => {
+  const url = 'someURL';
+  const history = { push: jest.fn() };
+  const location = { search: '?nonViewQueryParam=someValue' };
+  const match = { url };
+  const handleViewChange = getViewChangeHandler({ history, location, match });
+  const view = 'someView';
+  handleViewChange(view);
+  expect(history.push).toHaveBeenCalledWith(
+    `${url}?nonViewQueryParam=someValue&view=${view}`
+  );
 });

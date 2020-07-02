@@ -12,8 +12,10 @@ limitations under the License.
 */
 
 import React from 'react';
+import { Route } from 'react-router-dom';
 import { fireEvent, waitForElement } from 'react-testing-library';
 import { createIntl } from 'react-intl';
+import { paths, urls } from '@tektoncd/dashboard-utils';
 import { TriggerBindingContainer } from './TriggerBinding';
 import { renderWithRouter } from '../../utils/test';
 
@@ -22,13 +24,15 @@ const intl = createIntl({
   defaultLocale: 'en'
 });
 
+const namespace = 'tekton-pipelines';
+
 const triggerBindingSimple = {
   apiVersion: 'triggers.tekton.dev/v1alpha1',
   kind: 'TriggerBinding',
   metadata: {
     creationTimestamp: '2019-11-19T19:44:43Z',
     name: 'trigger-binding-simple',
-    namespace: 'tekton-pipelines',
+    namespace,
     uid: '49243595-0c72-11ea-ae12-025000000001'
   },
   spec: {
@@ -50,7 +54,7 @@ const triggerBindingWithLabels = {
     creationTimestamp: '2019-11-21T15:19:18Z',
     generation: 1,
     name: 'trigger-binding-labels',
-    namespace: 'tekton-pipelines',
+    namespace,
     uid: '49243595-0c72-11ea-ae12-025000002221'
   },
   spec: {
@@ -121,28 +125,35 @@ it('TriggerBindingContainer renders details', async () => {
   await waitForElement(() => getByText(/param2/i));
   await waitForElement(() => getByText('$(body.head_commit.id)'));
   await waitForElement(() => getByText('$(body.repository.clone_url)'));
-  await waitForElement(() => getByText('tekton-pipelines'));
+  await waitForElement(() => getByText(namespace));
   await waitForElement(() => getByText('None'));
 });
 
 it('TriggerBindingContainer renders YAML', async () => {
-  const match = {
-    params: {
-      triggerBindingName: 'trigger-binding-simple'
-    }
-  };
+  const triggerBindingName = 'trigger-binding-simple';
 
   const { getByText } = renderWithRouter(
-    <TriggerBindingContainer
-      intl={intl}
-      match={match}
-      error={null}
-      fetchTriggerBinding={() => Promise.resolve(triggerBindingSimple)}
-      triggerBinding={triggerBindingSimple}
-    />
+    <Route
+      path={paths.triggerBindings.byName()}
+      render={props => (
+        <TriggerBindingContainer
+          {...props}
+          intl={intl}
+          error={null}
+          fetchTriggerBinding={() => Promise.resolve(triggerBindingSimple)}
+          triggerBinding={triggerBindingSimple}
+        />
+      )}
+    />,
+    {
+      route: urls.triggerBindings.byName({
+        namespace,
+        triggerBindingName
+      })
+    }
   );
 
-  await waitForElement(() => getByText('trigger-binding-simple'));
+  await waitForElement(() => getByText(triggerBindingName));
   const yamlTab = getByText('YAML');
   fireEvent.click(yamlTab);
   await waitForElement(() => getByText(/creationTimestamp/i));

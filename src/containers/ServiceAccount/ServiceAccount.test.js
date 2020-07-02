@@ -12,8 +12,11 @@ limitations under the License.
 */
 
 import React from 'react';
+import { Route } from 'react-router-dom';
 import { fireEvent, waitForElement } from 'react-testing-library';
 import { createIntl } from 'react-intl';
+import { paths, urls } from '@tektoncd/dashboard-utils';
+
 import { ServiceAccountContainer } from './ServiceAccount';
 import { renderWithRouter } from '../../utils/test';
 
@@ -22,14 +25,16 @@ const intl = createIntl({
   defaultLocale: 'en'
 });
 
+const namespace = 'tekton-pipelines';
+
 const secrets = [
   {
     name: 'secret1',
-    namespace: 'tekton-pipelines'
+    namespace
   },
   {
     name: 'imagePull1',
-    namespace: 'tekton-pipelines'
+    namespace
   }
 ];
 
@@ -40,7 +45,7 @@ const serviceAccountSimple = {
   metadata: {
     creationTimestamp: '2019-11-19T19:44:43Z',
     name: serviceAccountName,
-    namespace: 'tekton-pipelines',
+    namespace,
     uid: '49243595-0c72-11ea-ae12-025000000001'
   }
 };
@@ -56,7 +61,7 @@ const serviceAccountWithLabels = {
     creationTimestamp: '2019-11-21T15:19:18Z',
     generation: 1,
     name: 'service-account-labels',
-    namespace: 'tekton-pipelines',
+    namespace,
     uid: '49243595-0c72-11ea-ae12-025000002221'
   }
 };
@@ -101,21 +106,26 @@ it('ServiceAccountContainer handles error state', async () => {
 });
 
 it('ServiceAccountContainer renders YAML', async () => {
-  const match = {
-    params: {
-      serviceAccountName
-    }
-  };
-
   const { getByText } = renderWithRouter(
-    <ServiceAccountContainer
-      intl={intl}
-      match={match}
-      error={null}
-      fetchServiceAccount={() => Promise.resolve(serviceAccountSimple)}
-      fetchSecrets={() => Promise.resolve()}
-      serviceAccount={serviceAccountSimple}
-    />
+    <Route
+      path={paths.serviceAccounts.byName()}
+      render={props => (
+        <ServiceAccountContainer
+          {...props}
+          intl={intl}
+          error={null}
+          fetchServiceAccount={() => Promise.resolve(serviceAccountSimple)}
+          fetchSecrets={() => Promise.resolve()}
+          serviceAccount={serviceAccountSimple}
+        />
+      )}
+    />,
+    {
+      route: urls.serviceAccounts.byName({
+        namespace,
+        serviceAccountName
+      })
+    }
   );
 
   await waitForElement(() => getByText(serviceAccountName));
@@ -192,7 +202,7 @@ it('ServiceAccountContainer renders overview with no secret nor imagePullSecrets
   );
 
   await waitForElement(() => getByText(serviceAccountName));
-  await waitForElement(() => getByText('tekton-pipelines')); // Namespace
+  await waitForElement(() => getByText(namespace));
   await waitForElement(() => getByText('None')); // Label
   await waitForElement(() =>
     getByText('No Secrets found for this ServiceAccount.')
@@ -206,7 +216,7 @@ it('ServiceAccountContainer renders secrets', async () => {
   const match = {
     params: {
       serviceAccountName,
-      namespace: 'tekton-pipelines'
+      namespace
     }
   };
 
@@ -225,7 +235,7 @@ it('ServiceAccountContainer renders secrets', async () => {
   );
 
   await waitForElement(() => getByText(serviceAccountName));
-  await waitForElement(() => getByText('tekton-pipelines'));
+  await waitForElement(() => getByText(namespace));
   await waitForElement(() => getByText('None'));
   await waitForElement(() => getByText('secret1'));
   await waitForElement(() =>
@@ -255,7 +265,7 @@ it('ServiceAccountContainer renders imagePullSecrets', async () => {
   );
 
   await waitForElement(() => getByText('service-account-labels'));
-  await waitForElement(() => getByText('tekton-pipelines'));
+  await waitForElement(() => getByText(namespace));
   await waitForElement(() => getByText('imagePull1'));
   await waitForElement(() =>
     getByText('No Secrets found for this ServiceAccount.')
