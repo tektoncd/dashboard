@@ -33,7 +33,11 @@ export class LogContainer extends Component {
 
   componentDidMount() {
     this.loadLog();
-    this.initPolling();
+    this.updatePolling();
+  }
+
+  componentDidUpdate() {
+    this.updatePolling();
   }
 
   componentWillUnmount() {
@@ -93,13 +97,15 @@ export class LogContainer extends Component {
   };
 
   /* istanbul ignore next */
-  initPolling = () => {
+  updatePolling = () => {
     const { stepStatus, pollingInterval } = this.props;
     if (!this.timer && stepStatus && !stepStatus.terminated) {
       this.timer = setInterval(() => this.loadLog(), pollingInterval);
     }
     if (this.timer && stepStatus && stepStatus.terminated) {
       clearInterval(this.timer);
+      delete this.timer;
+      this.loadLog();
     }
   };
 
