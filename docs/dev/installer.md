@@ -49,6 +49,8 @@ Accepted commands:
 
 Accepted options:
         [--debug]                               Prints additional messages in the console
+        [--log-format]                          JSON or console
+        [--log-level]                           Change log level
         [--version]                             Will download manifests for specified version or build everything using kustomize/ko
         [--csrf-secure-cookie]                  Enable secure CSRF cookie
         [--openshift]                           Will build manifests for openshift

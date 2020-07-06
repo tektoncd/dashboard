@@ -468,6 +468,8 @@ help () {
   echo -e ""
   echo -e "Accepted options:"
   echo -e "\t[--debug]\t\t\t\tPrints additional messages in the console"
+  echo -e "\t[--log-format]\t\t\t\tJSON or console"
+  echo -e "\t[--log-level]\t\t\t\tChange log level"
   echo -e "\t[--version]\t\t\t\tWill download manifests for specified version or build everything using kustomize/ko"
   echo -e "\t[--csrf-secure-cookie]\t\t\tEnable secure CSRF cookie"
   echo -e "\t[--openshift]\t\t\t\tWill build manifests for openshift"
@@ -549,6 +551,14 @@ while [[ $# -gt 0 ]]; do
     '--namespace')
       shift
       export OVERRIDE_NAMESPACE="${1}"
+      ;;
+    '--log-format')
+      shift
+      LOG_FORMAT="${1}"
+      ;;
+    '--log-level')
+      shift
+      LOG_LEVEL="${1}"
       ;;
     '--pipelines-namespace')
       shift
