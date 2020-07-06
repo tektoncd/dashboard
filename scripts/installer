@@ -43,27 +43,27 @@ initOS() {
 }
 
 verifySupported() {
-  if ! type "kubectl" > /dev/null; then
+  if ( [ "$ACTION" == "install" ] || [ "$ACTION" == "uninstall" ] ) && ! type "kubectl" > /dev/null 2>&1; then
     echo "kubectl is required"
     exit 1
   fi
 
-  if ! type "kustomize" > /dev/null; then
+  if ! type "kustomize" > /dev/null 2>&1; then
     echo "kustomize is required"
     exit 1
   fi
 
-  if ! type "ko" > /dev/null; then
+  if ! type "ko" > /dev/null 2>&1; then
     echo "ko is required"
     exit 1
   fi
 
-  if ! type "sed" > /dev/null; then
+  if ! type "sed" > /dev/null 2>&1; then
     echo "sed is required"
     exit 1
   fi
 
-  if ! type "curl" > /dev/null && ! type "wget" > /dev/null; then
+  if ! type "curl" > /dev/null 2>&1 && ! type "wget" > /dev/null 2>&1; then
     echo "Either curl or wget is required"
     exit 1
   fi
@@ -118,9 +118,9 @@ download() {
 
   debug "Downloading $url -> $TMP_FILE ..."
 
-  if type "curl" > /dev/null; then
+  if type "curl" > /dev/null 2>&1; then
     curl -s "$url" -o "$TMP_FILE"
-  elif type "wget" > /dev/null; then
+  elif type "wget" > /dev/null 2>&1; then
     wget -q -O "$TMP_FILE" "$url"
   fi
 }
