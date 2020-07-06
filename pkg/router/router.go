@@ -55,6 +55,8 @@ const ExtensionDisplayNameKey = "tekton-dashboard-display-name"
 // ExtensionRoot is the URL root when accessing extensions
 const ExtensionRoot = "/v1/extensions"
 
+const webResourcesDir = "/var/run/ko"
+
 var webResourcesStaticPattern = regexp.MustCompile("^/([[:alnum:]]+\\.)?[[:alnum:]]+\\.(js)|(css)|(png)$")
 var webResourcesStaticExcludePattern = regexp.MustCompile("^/favicon.png$")
 
@@ -66,7 +68,7 @@ func Register(resource endpoints.Resource) *Handler {
 		uidExtensionMap: make(map[string]*Extension),
 	}
 
-	registerWeb(h.Container, resource.Options.WebDir)
+	registerWeb(h.Container)
 	registerEndpoints(resource, h.Container)
 	registerPropertiesEndpoint(resource, h.Container)
 	registerWebsocket(resource, h.Container)
@@ -212,7 +214,7 @@ func registerKubeAPIProxy(r endpoints.Resource, container *restful.Container) {
 	container.Add(proxy)
 }
 
-func registerWeb(container *restful.Container, webResourcesDir string) {
+func registerWeb(container *restful.Container) {
 	logging.Log.Info("Adding Web API")
 
 	fs := http.FileServer(http.Dir(webResourcesDir))

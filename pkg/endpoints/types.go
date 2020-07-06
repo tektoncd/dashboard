@@ -19,7 +19,6 @@ type Options struct {
 	TenantNamespace    string
 	ReadOnly           bool
 	IsOpenShift        bool
-	WebDir             string
 	LogoutURL          string
 }
 
