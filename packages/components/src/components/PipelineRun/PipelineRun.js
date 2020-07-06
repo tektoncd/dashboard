@@ -52,8 +52,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     return {
       error: status === 'False' && !taskRunsStatus && { message, reason },
       pipelineRun,
-      pipelineRunName: pipelineRun.metadata.name,
-      taskRunNames: taskRunsStatus && Object.keys(taskRunsStatus)
+      pipelineRunName: pipelineRun.metadata.name
     };
   };
 
@@ -272,8 +271,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     const {
       pipelineRunName,
       error: pipelineRunError,
-      pipelineRun,
-      taskRunNames
+      pipelineRun
     } = this.loadPipelineRunData();
 
     const {
@@ -312,7 +310,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
         </>
       );
     }
-    const taskRuns = this.loadTaskRuns(pipelineRun, taskRunNames);
+    const taskRuns = this.loadTaskRuns(pipelineRun);
 
     if (sortTaskRuns) {
       this.sortTaskRuns(taskRuns);
