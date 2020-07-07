@@ -35,6 +35,21 @@ export function typeToPlural(type) {
   return `${snakeCase(type).toUpperCase()}S`;
 }
 
+export async function followLogs(stepName, stepStatus, taskRun) {
+  const { pod, namespace } = taskRun;
+  let logs;
+  if (pod) {
+    const { container } = stepStatus;
+    logs = getPodLog({
+      container,
+      name: pod,
+      namespace,
+      stream: true
+    });
+  }
+  return logs;
+}
+
 export async function fetchLogs(stepName, stepStatus, taskRun) {
   const { pod, namespace } = taskRun;
   let logs;

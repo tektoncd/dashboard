@@ -550,3 +550,7 @@ export function getTriggersVersion(state) {
 export function getTenantNamespace(state) {
   return propertiesSelectors.getTenantNamespace(state.properties);
 }
+
+export function isLogStreamingEnabled(state) {
+  return propertiesSelectors.isLogStreamingEnabled(state.properties);
+}

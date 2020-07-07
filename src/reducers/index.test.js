@@ -61,6 +61,7 @@ import {
   isFetchingSecrets,
   isFetchingTaskRuns,
   isFetchingTasks,
+  isLogStreamingEnabled,
   isOpenShift,
   isReadOnly,
   isTriggersInstalled
@@ -662,6 +663,16 @@ it('getTenantNamespace', () => {
     .mockImplementation(() => 'x');
   expect(getTenantNamespace(state)).toBe('x');
   expect(propertiesSelectors.getTenantNamespace).toHaveBeenCalledWith(
+    state.properties
+  );
+});
+
+it('isLogStreamingEnabled', () => {
+  jest
+    .spyOn(propertiesSelectors, 'isLogStreamingEnabled')
+    .mockImplementation(() => true);
+  expect(isLogStreamingEnabled(state)).toBe(true);
+  expect(propertiesSelectors.isLogStreamingEnabled).toHaveBeenCalledWith(
     state.properties
   );
 });

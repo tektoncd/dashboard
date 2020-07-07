@@ -52,6 +52,7 @@ var (
 	tenantNamespace    = flag.String("namespace", "", "If set, limits the scope of resources watched to this namespace only")
 	logLevel           = flag.String("log-level", "info", "Minimum log level output by the logger")
 	logFormat          = flag.String("log-format", "json", "Format for log output (json or console)")
+	streamLogs         = flag.Bool("stream-logs", false, "Enable log streaming instead of polling")
 )
 
 func getCSRFAuthKey() []byte {
@@ -139,6 +140,7 @@ func main() {
 		ReadOnly:           *readOnly,
 		IsOpenShift:        *isOpenshift,
 		LogoutURL:          *logoutUrl,
+		StreamLogs:         *streamLogs,
 	}
 
 	resource := endpoints.Resource{
