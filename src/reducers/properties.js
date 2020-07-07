@@ -65,4 +65,8 @@ export function getTenantNamespace(state) {
   return state.TenantNamespace;
 }
 
+export function isLogStreamingEnabled(state) {
+  return state.StreamLogs;
+}
+
 export default properties;

@@ -66,4 +66,58 @@ describe('Log', () => {
 
     await waitForElement(() => getByText(/Line 1/i));
   });
+
+  it('renders the provided content when streaming logs', async () => {
+    const { getByText } = renderWithIntl(
+      <Log
+        stepStatus={{ terminated: { reason: 'Completed' } }}
+        fetchLogs={() =>
+          Promise.resolve(
+            new ReadableStream({
+              start(controller) {
+                controller.enqueue(new TextEncoder().encode('testing'));
+              }
+            })
+          )
+        }
+      />
+    );
+    await waitForElement(() => getByText(/testing/i));
+  });
+
+  it('renders trailer when streaming logs', async () => {
+    const { getByText } = renderWithIntl(
+      <Log
+        stepStatus={{ terminated: { reason: 'Completed' } }}
+        fetchLogs={() =>
+          Promise.resolve(
+            new ReadableStream({
+              start(controller) {
+                controller.enqueue(new TextEncoder().encode('testing'));
+              }
+            })
+          )
+        }
+      />
+    );
+    await waitForElement(() => getByText(/step completed/i));
+  });
+
+  it('renders error trailer when streaming logs', async () => {
+    const { getByText } = renderWithIntl(
+      <Log
+        stepStatus={{ terminated: { reason: 'Error' } }}
+        fetchLogs={() =>
+          Promise.resolve(
+            new ReadableStream({
+              start(controller) {
+                controller.enqueue(new TextEncoder().encode('testing'));
+              }
+            })
+          )
+        }
+      />
+    );
+    await waitForElement(() => getByText(/step failed/i));
+  });
 });

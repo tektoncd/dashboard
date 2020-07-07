@@ -15,6 +15,7 @@ import * as API from '../api';
 
 import {
   fetchLogs,
+  followLogs,
   getGitValues,
   getViewChangeHandler,
   isStale,
@@ -107,6 +108,44 @@ describe('fetchLogs', () => {
     jest.spyOn(API, 'getPodLog');
 
     fetchLogs(stepName, stepStatus, taskRun);
+    expect(API.getPodLog).not.toHaveBeenCalled();
+  });
+});
+
+describe('followLogs', () => {
+  it('should return the pod logs', () => {
+    const stepName = 'kubectl-apply';
+    const stepStatus = { container: 'step-kubectl-apply' };
+    const taskRun = { pod: 'pipeline-run-123456', namespace: 'default' };
+
+    const logs = new ReadableStream({
+      start(controller) {
+        controller.enqueue(new TextEncoder().encode('fake logs'));
+      }
+    });
+    jest.spyOn(API, 'getPodLog').mockImplementation(() => logs);
+
+    const returnedLogs = followLogs(stepName, stepStatus, taskRun);
+    expect(API.getPodLog).toHaveBeenCalledWith(
+      expect.objectContaining({
+        container: stepStatus.container,
+        name: taskRun.pod,
+        namespace: taskRun.namespace,
+        stream: true
+      })
+    );
+    returnedLogs.then(data => {
+      expect(data).toBe(logs);
+    });
+  });
+
+  it('should not call the API when the pod is not specified', () => {
+    const stepName = 'kubectl-apply';
+    const stepStatus = { container: 'step-kubectl-apply' };
+    const taskRun = { namespace: 'default' };
+    jest.spyOn(API, 'getPodLog');
+
+    followLogs(stepName, stepStatus, taskRun);
     expect(API.getPodLog).not.toHaveBeenCalled();
   });
 });

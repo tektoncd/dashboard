@@ -46,7 +46,10 @@ export function getPatchHeaders(headers = {}) {
   };
 }
 
-function parseBody(response) {
+function parseBody(response, stream = false) {
+  if (stream) {
+    return response.body;
+  }
   const contentLength = response.headers.get('content-length');
   if (contentLength === '0') {
     return null;
@@ -59,18 +62,18 @@ function parseBody(response) {
   return response.json();
 }
 
-export function checkStatus(response = {}) {
+export function checkStatus(response = {}, stream = false) {
   if (response.ok) {
     switch (response.status) {
       case 201:
         return {
           headers: response.headers,
-          body: parseBody(response)
+          body: parseBody(response, stream)
         };
       case 204:
         return {};
       default:
-        return parseBody(response);
+        return parseBody(response, stream);
     }
   }
 
@@ -88,7 +91,7 @@ function getToken() {
   }).then(response => response.headers.get(CSRF_HEADER));
 }
 
-export async function request(uri, options = defaultOptions) {
+export async function request(uri, options = defaultOptions, stream) {
   let token;
   if (!CSRF_SAFE_METHODS.includes(options.method)) {
     token = await getToken();
@@ -103,14 +106,18 @@ export async function request(uri, options = defaultOptions) {
     ...defaultOptions,
     ...options,
     headers
-  }).then(checkStatus);
+  }).then(response => checkStatus(response, stream));
 }
 
-export function get(uri, headers) {
-  return request(uri, {
-    method: 'GET',
-    headers: getHeaders(headers)
-  });
+export function get(uri, headers, options = {}) {
+  return request(
+    uri,
+    {
+      method: 'GET',
+      headers: getHeaders(headers)
+    },
+    options.stream
+  );
 }
 
 export function post(uri, body) {

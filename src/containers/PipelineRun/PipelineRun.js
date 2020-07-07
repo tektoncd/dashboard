@@ -28,6 +28,7 @@ import {
   getTaskRunsErrorMessage,
   getTasks,
   getTasksErrorMessage,
+  isLogStreamingEnabled,
   isReadOnly,
   isWebSocketConnected
 } from '../../reducers';
@@ -37,7 +38,7 @@ import { fetchClusterTasks, fetchTasks } from '../../actions/tasks';
 import { fetchTaskRuns } from '../../actions/taskRuns';
 import { rerunPipelineRun } from '../../api';
 
-import { fetchLogs, getViewChangeHandler } from '../../utils';
+import { fetchLogs, followLogs, getViewChangeHandler } from '../../utils';
 
 export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   constructor(props) {
@@ -171,6 +172,10 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       />
     );
 
+    const logsRetriever = this.props.isLogStreamingEnabled
+      ? followLogs
+      : fetchLogs;
+
     return (
       <>
         {showRerunNotification && (
@@ -198,7 +203,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
         )}
         <PipelineRun
           error={error}
-          fetchLogs={fetchLogs}
+          fetchLogs={logsRetriever}
           handleTaskSelected={this.handleTaskSelected}
           loading={loading}
           logDownloadButton={LogDownloadButton}
@@ -250,6 +255,7 @@ function mapStateToProps(state, ownProps) {
     }),
     selectedStepId,
     selectedTaskId,
+    isLogStreamingEnabled: isLogStreamingEnabled(state),
     tasks: getTasks(state, { namespace }),
 
     taskRuns: getTaskRunsByPipelineRunName(

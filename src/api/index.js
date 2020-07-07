@@ -63,7 +63,9 @@ export function getKubeAPI(
     '/',
     encodeURIComponent(name),
     subResource ? `/${subResource}` : '',
-    queryParams ? `?${new URLSearchParams(queryParams).toString()}` : ''
+    queryParams && Object.keys(queryParams).length > 0
+      ? `?${new URLSearchParams(queryParams).toString()}`
+      : ''
   ].join('');
 }
 
@@ -305,11 +307,11 @@ export function getCondition({ name, namespace }) {
   return get(uri);
 }
 
-export function getPodLogURL({ container, name, namespace }) {
-  let queryParams;
-  if (container) {
-    queryParams = { container };
-  }
+export function getPodLogURL({ container, name, namespace, follow }) {
+  const queryParams = {
+    ...(container && { container }),
+    ...(follow && { follow })
+  };
   const uri = `${getKubeAPI(
     'pods',
     { name, namespace, subResource: 'log' },
@@ -318,9 +320,9 @@ export function getPodLogURL({ container, name, namespace }) {
   return uri;
 }
 
-export function getPodLog({ container, name, namespace }) {
-  const uri = getPodLogURL({ container, name, namespace });
-  return get(uri, { Accept: 'text/plain' });
+export function getPodLog({ container, name, namespace, stream }) {
+  const uri = getPodLogURL({ container, name, namespace, follow: stream });
+  return get(uri, { Accept: 'text/plain' }, { stream });
 }
 
 export function rerunPipelineRun(namespace, payload) {

@@ -49,3 +49,7 @@
   path: /spec/template/spec/containers/0/args/-
   value:
     --openshift=--openshift
+- op: add
+  path: /spec/template/spec/containers/0/args/-
+  value:
+    --stream-logs=--stream-logs

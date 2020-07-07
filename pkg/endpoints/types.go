@@ -20,6 +20,7 @@ type Options struct {
 	ReadOnly           bool
 	IsOpenShift        bool
 	LogoutURL          string
+	StreamLogs         bool
 }
 
 // GetPipelinesNamespace returns the PipelinesNamespace property if set

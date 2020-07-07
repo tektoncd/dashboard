@@ -62,6 +62,7 @@ Accepted options:
         [--tenant-namespace <namespace>]        Will limit the visibility to the specified namespace only
         [--ingress-url <url>]                   Will create an additional ingress with the specified url
         [--ingress-secret <secret>]             Will add ssl support to the ingress
+        [--stream-logs]                         Will enable log streaming instead of polling
         [--output <file>]                       Will output built manifests in the file instead of in the console
 ```
 

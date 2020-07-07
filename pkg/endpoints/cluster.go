@@ -43,6 +43,7 @@ type Properties struct {
 	ReadOnly           bool   `json:"ReadOnly"`
 	LogoutURL          string `json:"LogoutURL,omitempty"`
 	TenantNamespace    string `json:"TenantNamespace,omitempty"`
+	StreamLogs         bool   `json:"StreamLogs"`
 }
 
 const (
@@ -205,6 +206,7 @@ func (r Resource) GetProperties(request *restful.Request, response *restful.Resp
 		ReadOnly:           r.Options.ReadOnly,
 		LogoutURL:          r.Options.LogoutURL,
 		TenantNamespace:    r.Options.TenantNamespace,
+		StreamLogs:         r.Options.StreamLogs,
 	}
 
 	isTriggersInstalled := isTriggersInstalled(r, triggersNamespace)

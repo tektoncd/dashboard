@@ -33,11 +33,11 @@ export class LogContainer extends Component {
 
   componentDidMount() {
     this.loadLog();
-    this.initPolling();
   }
 
   componentWillUnmount() {
     clearInterval(this.timer);
+    this.canceled = true;
   }
 
   getLogList = () => {
@@ -92,27 +92,57 @@ export class LogContainer extends Component {
     }
   };
 
-  /* istanbul ignore next */
-  initPolling = () => {
-    const { stepStatus, pollingInterval } = this.props;
-    if (!this.timer && stepStatus && !stepStatus.terminated) {
-      this.timer = setInterval(() => this.loadLog(), pollingInterval);
+  readChunks = ({ done, value }, decoder, text = '') => {
+    if (this.canceled) {
+      this.reader.cancel();
+      return undefined;
     }
-    if (this.timer && stepStatus && stepStatus.terminated) {
-      clearInterval(this.timer);
+    let logs = text;
+    if (value) {
+      logs += decoder.decode(value, { stream: !done });
+      this.setState({
+        loading: false,
+        logs: logs.split('\n')
+      });
+    } else {
+      this.setState(prevState => ({
+        loading: false,
+        logs: prevState.logs
+      }));
     }
+    if (done) {
+      return undefined;
+    }
+    return this.reader
+      .read()
+      .then(result => this.readChunks(result, decoder, logs));
   };
 
   loadLog = async () => {
-    const { fetchLogs, intl } = this.props;
+    const { fetchLogs, intl, stepStatus, pollingInterval } = this.props;
     if (fetchLogs) {
       try {
         const logs = await fetchLogs();
-        this.setState({
-          loading: false,
-          logs: logs ? logs.split('\n') : undefined
-        });
-      } catch {
+        if (logs instanceof ReadableStream) {
+          const decoder = new TextDecoder();
+          this.reader = logs.getReader();
+          await this.reader
+            .read()
+            .then(result => this.readChunks(result, decoder))
+            .catch(error => {
+              throw error;
+            });
+        } else {
+          this.setState({
+            loading: false,
+            logs: logs ? logs.split('\n') : undefined
+          });
+          if (stepStatus && !stepStatus.terminated) {
+            this.timer = setTimeout(() => this.loadLog(), pollingInterval);
+          }
+        }
+      } catch (error) {
+        console.error(error); // eslint-disable-line no-console
         this.setState({
           loading: false,
           logs: [
@@ -122,6 +152,9 @@ export class LogContainer extends Component {
             })
           ]
         });
+        if (stepStatus && !stepStatus.terminated) {
+          this.timer = setTimeout(this.loadLog, pollingInterval);
+        }
       }
     }
   };
