@@ -34,6 +34,8 @@ import { getErrorMessage, paths, urls } from '@tektoncd/dashboard-utils';
 
 import {
   About,
+  Build,
+  Builds,
   ClusterTasks,
   ClusterTriggerBinding,
   ClusterTriggerBindings,
@@ -52,6 +54,8 @@ import {
   PipelineRun,
   PipelineRuns,
   Pipelines,
+  Project,
+  Projects,
   ReadWriteRoute,
   ResourceList,
   Secret,
@@ -300,6 +304,24 @@ export /* istanbul ignore next */ class App extends Component {
                       path={paths.conditions.byName()}
                       component={Condition}
                     />
+                    <Route
+                      path={paths.projects.all()}
+                      exact
+                      component={Projects}
+                    />
+                    <Route
+                      path={paths.projects.byNamespace()}
+                      exact
+                      component={Projects}
+                    />
+                    <Route path={paths.projects.byName()} component={Project} />
+                    <Route path={paths.builds.all()} exact component={Builds} />
+                    <Route
+                      path={paths.builds.byNamespace()}
+                      exact
+                      component={Builds}
+                    />
+                    <Route path={paths.builds.byName()} component={Build} />
 
                     <Route path={paths.about()} component={About} />
 

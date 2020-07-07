@@ -16,19 +16,27 @@ package controllers
 import (
 	"time"
 
+	dashboardv1alpha1 "github.com/tektoncd/dashboard/pkg/apis/dashboard/v1alpha1"
 	dashboardclientset "github.com/tektoncd/dashboard/pkg/client/clientset/versioned"
 	dashboardinformers "github.com/tektoncd/dashboard/pkg/client/informers/externalversions"
 	dashboardcontroller "github.com/tektoncd/dashboard/pkg/controllers/dashboard"
 	kubecontroller "github.com/tektoncd/dashboard/pkg/controllers/kubernetes"
+	runtimecontroller "github.com/tektoncd/dashboard/pkg/controllers/runtime"
 	tektoncontroller "github.com/tektoncd/dashboard/pkg/controllers/tekton"
 	"github.com/tektoncd/dashboard/pkg/logging"
 	"github.com/tektoncd/dashboard/pkg/router"
+	pipelinev1beta1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
 	tektonclientset "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
 	tektoninformers "github.com/tektoncd/pipeline/pkg/client/informers/externalversions"
 	resourceclientset "github.com/tektoncd/pipeline/pkg/client/resource/clientset/versioned"
 	resourceinformers "github.com/tektoncd/pipeline/pkg/client/resource/informers/externalversions"
+	triggersv1alpha1 "github.com/tektoncd/triggers/pkg/apis/triggers/v1alpha1"
+	triggersclientset "github.com/tektoncd/triggers/pkg/client/clientset/versioned"
 	k8sinformers "k8s.io/client-go/informers"
 	k8sclientset "k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
+	"sigs.k8s.io/controller-runtime/pkg/manager"
+	runtimesignals "sigs.k8s.io/controller-runtime/pkg/manager/signals"
 )
 
 // StartTektonControllers creates and starts Tekton controllers
@@ -74,11 +82,31 @@ func StartKubeControllers(clientset k8sclientset.Interface, resyncDur time.Durat
 }
 
 // StartDashboardControllers creates and starts Dashboard controllers
-func StartDashboardControllers(clientset dashboardclientset.Interface, resyncDur time.Duration, tenantNamespace string, stopCh <-chan struct{}) {
+func StartDashboardControllers(clientset dashboardclientset.Interface, triggersClient triggersclientset.Interface, k8sClient k8sclientset.Interface, resyncDur time.Duration, tenantNamespace string, stopCh <-chan struct{}) {
 	logging.Log.Info("Creating Dashboard controllers")
 	tenantInformerFactory := dashboardinformers.NewSharedInformerFactoryWithOptions(clientset, resyncDur, dashboardinformers.WithNamespace(tenantNamespace))
+	dashboardcontroller.NewBuildController(tenantInformerFactory)
 	dashboardcontroller.NewExtensionController(tenantInformerFactory)
+	dashboardcontroller.NewProjectController(tenantInformerFactory)
 	// Started once all controllers have been registered
 	logging.Log.Info("Starting Dashboard controllers")
 	tenantInformerFactory.Start(stopCh)
+}
+
+func StartRuntimeControllers(config *rest.Config) {
+	// Setup a Manager
+	mgr, _ := manager.New(config, manager.Options{})
+
+	// Register scheme
+	dashboardv1alpha1.AddToScheme(mgr.GetScheme())
+	pipelinev1beta1.AddToScheme(mgr.GetScheme())
+	triggersv1alpha1.AddToScheme(mgr.GetScheme())
+
+	runtimecontroller.ForProjects(mgr)
+	runtimecontroller.ForBuilds(mgr)
+
+	go func() {
+		mgr.Start(runtimesignals.SetupSignalHandler())
+	}()
+
 }

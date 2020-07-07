@@ -44,13 +44,13 @@ install_ingress_nginx() {
 }
 
 install_pipelines() {
-  kubectl apply --filename https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
+  kubectl apply --filename https://storage.googleapis.com/tekton-releases/pipeline/previous/v0.14.3/release.yaml
   sleep 10
   kubectl wait -n tekton-pipelines --for=condition=ready pod --selector=app.kubernetes.io/part-of=tekton-pipelines,app.kubernetes.io/component=controller --timeout=90s
 }
 
 install_triggers() {
-  kubectl apply --filename https://storage.googleapis.com/tekton-releases/triggers/latest/release.yaml
+  kubectl apply --filename https://storage.googleapis.com/tekton-releases/triggers/previous/v0.6.1/release.yaml
   sleep 10
   kubectl wait -n tekton-pipelines --for=condition=ready pod --selector=app.kubernetes.io/part-of=tekton-triggers,app.kubernetes.io/component=controller --timeout=90s
 }
@@ -66,7 +66,11 @@ case $1 in
     install_ingress_nginx
     install_pipelines
     install_triggers
-    ./scripts/installer install --log-format console $@
+    ./scripts/installer install $@ --ingress-url tekton-dashboard.127.0.0.1.nip.io --log-format console
+    ;;
+  'update'|u)
+    shift
+    ./scripts/installer install $@ --ingress-url tekton-dashboard.127.0.0.1.nip.io --log-format console
     ;;
   'delete'|d)
     delete_cluster

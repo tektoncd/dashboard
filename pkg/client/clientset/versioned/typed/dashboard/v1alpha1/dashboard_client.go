@@ -26,7 +26,9 @@ import (
 
 type DashboardV1alpha1Interface interface {
 	RESTClient() rest.Interface
+	BuildsGetter
 	ExtensionsGetter
+	ProjectsGetter
 }
 
 // DashboardV1alpha1Client is used to interact with features provided by the dashboard.tekton.dev group.
@@ -34,8 +36,16 @@ type DashboardV1alpha1Client struct {
 	restClient rest.Interface
 }
 
+func (c *DashboardV1alpha1Client) Builds(namespace string) BuildInterface {
+	return newBuilds(c, namespace)
+}
+
 func (c *DashboardV1alpha1Client) Extensions(namespace string) ExtensionInterface {
 	return newExtensions(c, namespace)
+}
+
+func (c *DashboardV1alpha1Client) Projects(namespace string) ProjectInterface {
+	return newProjects(c, namespace)
 }
 
 // NewForConfig creates a new DashboardV1alpha1Client for the given config.

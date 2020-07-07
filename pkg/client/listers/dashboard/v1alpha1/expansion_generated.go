@@ -18,6 +18,14 @@ limitations under the License.
 
 package v1alpha1
 
+// BuildListerExpansion allows custom methods to be added to
+// BuildLister.
+type BuildListerExpansion interface{}
+
+// BuildNamespaceListerExpansion allows custom methods to be added to
+// BuildNamespaceLister.
+type BuildNamespaceListerExpansion interface{}
+
 // ExtensionListerExpansion allows custom methods to be added to
 // ExtensionLister.
 type ExtensionListerExpansion interface{}
@@ -25,3 +33,11 @@ type ExtensionListerExpansion interface{}
 // ExtensionNamespaceListerExpansion allows custom methods to be added to
 // ExtensionNamespaceLister.
 type ExtensionNamespaceListerExpansion interface{}
+
+// ProjectListerExpansion allows custom methods to be added to
+// ProjectLister.
+type ProjectListerExpansion interface{}
+
+// ProjectNamespaceListerExpansion allows custom methods to be added to
+// ProjectNamespaceLister.
+type ProjectNamespaceListerExpansion interface{}

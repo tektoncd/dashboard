@@ -145,6 +145,10 @@ class SideNav extends Component {
       this.setPath(urls.conditions.all());
       return;
     }
+    if (currentURL.includes(urls.projects.all())) {
+      this.setPath(urls.projects.all());
+      return;
+    }
 
     history.push('/');
   };
@@ -160,6 +164,25 @@ class SideNav extends Component {
         aria-label="Main navigation"
       >
         <SideNavItems>
+          {this.props.isTriggersInstalled && (
+            <SideNavMenu defaultExpanded title="Projects & builds">
+              <SideNavMenuItem
+                element={NavLink}
+                icon={<span />}
+                to={this.getPath(urls.projects.all())}
+              >
+                Projects
+              </SideNavMenuItem>
+              <SideNavMenuItem
+                element={NavLink}
+                icon={<span />}
+                to={this.getPath(urls.builds.all())}
+              >
+                Builds
+              </SideNavMenuItem>
+            </SideNavMenu>
+          )}
+
           <SideNavMenu
             defaultExpanded
             title={intl.formatMessage({

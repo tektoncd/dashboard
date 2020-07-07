@@ -13,6 +13,7 @@ limitations under the License.
 
 import { combineReducers } from 'redux';
 
+import builds, * as buildsSelectors from './builds';
 import clusterTasks, * as clusterTaskSelectors from './clusterTasks';
 import conditions, * as conditionSelectors from './conditions';
 import eventListeners, * as eventListenersSelectors from './eventListeners';
@@ -23,6 +24,7 @@ import notifications, * as notificationSelectors from './notifications';
 import pipelines, * as pipelineSelectors from './pipelines';
 import pipelineResources, * as pipelineResourcesSelectors from './pipelineResources';
 import pipelineRuns, * as pipelineRunsSelectors from './pipelineRuns';
+import projects, * as projectsSelectors from './projects';
 import properties, * as propertiesSelectors from './properties';
 import secrets, * as secretSelectors from './secrets';
 import triggerTemplates, * as triggerTemplatesSelectors from './triggerTemplates';
@@ -33,6 +35,7 @@ import tasks, * as taskSelectors from './tasks';
 import taskRuns, * as taskRunsSelectors from './taskRuns';
 
 export default combineReducers({
+  builds: builds(),
   clusterTasks,
   conditions: conditions(),
   eventListeners: eventListeners(),
@@ -43,6 +46,7 @@ export default combineReducers({
   pipelines: pipelines(),
   pipelineResources: pipelineResources(),
   pipelineRuns: pipelineRuns(),
+  projects: projects(),
   properties,
   secrets,
   serviceAccounts: serviceAccounts(),
@@ -320,6 +324,52 @@ export function getConditionsErrorMessage(state) {
 
 export function isFetchingConditions(state) {
   return conditionSelectors.isFetchingConditions(state.conditions);
+}
+
+export function getProject(
+  state,
+  { name, namespace = getSelectedNamespace(state) }
+) {
+  return projectsSelectors.getProject(state.projects, name, namespace);
+}
+
+export function getProjects(
+  state,
+  { filters = [], namespace = getSelectedNamespace(state) } = {}
+) {
+  const resources = projectsSelectors.getProjects(state.projects, namespace);
+  return filterResources({ filters, resources });
+}
+
+export function getProjectsErrorMessage(state) {
+  return projectsSelectors.getProjectsErrorMessage(state.projects);
+}
+
+export function isFetchingProjects(state) {
+  return projectsSelectors.isFetchingProjects(state.projects);
+}
+
+export function getBuild(
+  state,
+  { name, namespace = getSelectedNamespace(state) }
+) {
+  return buildsSelectors.getBuild(state.builds, name, namespace);
+}
+
+export function getBuilds(
+  state,
+  { filters = [], namespace = getSelectedNamespace(state) } = {}
+) {
+  const resources = buildsSelectors.getBuilds(state.builds, namespace);
+  return filterResources({ filters, resources });
+}
+
+export function getBuildsErrorMessage(state) {
+  return buildsSelectors.getBuildsErrorMessage(state.builds);
+}
+
+export function isFetchingBuilds(state) {
+  return buildsSelectors.isFetchingBuilds(state.builds);
 }
 
 export function getSecrets(

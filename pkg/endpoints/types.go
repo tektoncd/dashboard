@@ -7,6 +7,7 @@ import (
 	dashboardclientset "github.com/tektoncd/dashboard/pkg/client/clientset/versioned"
 	pipelineclientset "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
 	resourceclientset "github.com/tektoncd/pipeline/pkg/client/resource/clientset/versioned"
+	triggersclientset "github.com/tektoncd/triggers/pkg/client/clientset/versioned"
 	k8sclientset "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 )
@@ -50,6 +51,7 @@ type Resource struct {
 	DashboardClient        dashboardclientset.Interface
 	PipelineClient         pipelineclientset.Interface
 	PipelineResourceClient resourceclientset.Interface
+	TriggersClient         triggersclientset.Interface
 	K8sClient              k8sclientset.Interface
 	RouteClient            routeclientset.Interface
 	Options                Options

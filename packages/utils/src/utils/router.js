@@ -20,6 +20,19 @@ export const paths = {
   about() {
     return '/about';
   },
+  builds: {
+    all() {
+      return '/builds';
+    },
+    byName() {
+      return byNamespace({
+        path: '/builds/:buildName'
+      });
+    },
+    byNamespace() {
+      return byNamespace({ path: '/builds' });
+    }
+  },
   byNamespace,
   clusterTasks: {
     all() {
@@ -64,6 +77,19 @@ export const paths = {
     },
     byName({ name }) {
       return `/extensions/${name}`;
+    }
+  },
+  projects: {
+    all() {
+      return '/projects';
+    },
+    byName() {
+      return byNamespace({
+        path: '/projects/:projectName'
+      });
+    },
+    byNamespace() {
+      return byNamespace({ path: '/projects' });
     }
   },
   importResources() {

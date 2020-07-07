@@ -75,3 +75,32 @@
       - delete
       - patch
       - add
+- op: add
+  path: /rules/-
+  value:
+    apiGroups:
+      - dashboard.tekton.dev
+    resources:
+      - builds
+      - builds/status
+      - extensions
+      - projects
+      - projects/status
+    verbs:
+      - create
+      - update
+      - delete
+      - patch
+- op: add
+  path: /rules/-
+  value:
+    apiGroups:
+      - extensions
+      - apps
+    resources:
+      - ingresses
+    verbs:
+      - create
+      - update
+      - delete
+      - patch

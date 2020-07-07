@@ -56,6 +56,12 @@ const (
 	ServiceAccountCreated    MessageType = "ServiceAccountCreated"
 	ServiceAccountDeleted    MessageType = "ServiceAccountDeleted"
 	ServiceAccountUpdated    MessageType = "ServiceAccountUpdated"
+	ProjectCreated           MessageType = "ProjectCreated"
+	ProjectDeleted           MessageType = "ProjectDeleted"
+	ProjectUpdated           MessageType = "ProjectUpdated"
+	BuildCreated             MessageType = "BuildCreated"
+	BuildDeleted             MessageType = "BuildDeleted"
+	BuildUpdated             MessageType = "BuildUpdated"
 )
 
 type SocketData struct {

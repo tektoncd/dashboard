@@ -33,7 +33,20 @@ rules:
   - apiGroups:
       - dashboard.tekton.dev
     resources:
+      - builds
+      - builds/status
       - extensions
+      - projects
+      - projects/status
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - extensions
+      - apps
+    resources:
+      - ingresses
     verbs:
       - get
       - list

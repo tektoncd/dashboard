@@ -23,7 +23,9 @@ resources:
   - ../../../base/200-clusterrole-tenant.yaml
   - ../../../base/200-clusterrole-triggers.yaml
   - ../../../base/201-clusterrolebinding-backend.yaml
+  - ../../../base/202-build-crd.yaml
   - ../../../base/202-extension-crd.yaml
+  - ../../../base/202-project-crd.yaml
   - ../../../base/203-serviceaccount.yaml
   - ../../../base/300-deployment.yaml
   - ../../../base/300-service.yaml

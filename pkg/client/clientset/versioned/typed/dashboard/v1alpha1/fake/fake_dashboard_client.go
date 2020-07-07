@@ -28,8 +28,16 @@ type FakeDashboardV1alpha1 struct {
 	*testing.Fake
 }
 
+func (c *FakeDashboardV1alpha1) Builds(namespace string) v1alpha1.BuildInterface {
+	return &FakeBuilds{c, namespace}
+}
+
 func (c *FakeDashboardV1alpha1) Extensions(namespace string) v1alpha1.ExtensionInterface {
 	return &FakeExtensions{c, namespace}
+}
+
+func (c *FakeDashboardV1alpha1) Projects(namespace string) v1alpha1.ProjectInterface {
+	return &FakeProjects{c, namespace}
 }
 
 // RESTClient returns a RESTClient that is used to communicate

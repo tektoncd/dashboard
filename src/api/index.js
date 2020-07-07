@@ -305,6 +305,178 @@ export function getCondition({ name, namespace }) {
   return get(uri);
 }
 
+export function getProjects({ filters = [], namespace } = {}) {
+  const uri = getTektonAPI(
+    'projects',
+    { group: dashboardAPIGroup, namespace, version: 'v1alpha1' },
+    getQueryParams(filters)
+  );
+  return get(uri).then(checkData);
+}
+
+export function getProject({ name, namespace }) {
+  const uri = getTektonAPI('projects', {
+    group: dashboardAPIGroup,
+    name,
+    namespace,
+    version: 'v1alpha1'
+  });
+  return get(uri);
+}
+
+export function createProject({
+  name,
+  namespace,
+  ingress,
+  ingressLabels,
+  ingressAnnotations,
+  bindings,
+  interceptors,
+  serviceAccount
+}) {
+  const payload = {
+    apiVersion: 'dashboard.tekton.dev/v1alpha1',
+    kind: 'Project',
+    metadata: {
+      name,
+      namespace
+    },
+    spec: {
+      serviceAccountName: serviceAccount,
+      interceptors,
+      triggerBinding: {
+        params: [
+          ...Object.keys(bindings).map(x => ({ name: x, value: bindings[x] }))
+        ]
+      },
+      triggerTemplate: {
+        params: [
+          ...Object.keys(bindings).map(x => ({ name: x })),
+          {
+            name: 'ownername'
+          },
+          {
+            name: 'owneruid'
+          }
+        ],
+        resourcetemplates: [
+          {
+            apiVersion: 'tekton.dev/v1beta1',
+            kind: 'TaskRun',
+            metadata: {
+              generateName: `${name}-`,
+              ownerReferences: [
+                {
+                  apiVersion: 'dashboard.tekton.dev/v1alpha1',
+                  kind: 'Project',
+                  name: '$(tt.params.ownername)',
+                  uid: '$(tt.params.owneruid)',
+                  controller: true,
+                  blockOwnerDeletion: true
+                }
+              ]
+            },
+            spec: {
+              serviceAccountName: serviceAccount,
+              resources: {
+                inputs: [
+                  {
+                    name: 'source',
+                    resourceSpec: {
+                      type: 'git',
+                      params: [
+                        {
+                          name: 'revision',
+                          value: '$(tt.params.gitrevision)'
+                        },
+                        {
+                          name: 'url',
+                          value: '$(tt.params.gitrepositoryurl)'
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              taskSpec: {
+                resources: {
+                  inputs: [
+                    {
+                      name: 'source',
+                      type: 'git'
+                    }
+                  ]
+                },
+                steps: [
+                  {
+                    image: 'eddycharly/build-maker:test-4',
+                    command: ['/work/build-maker'],
+                    args: [
+                      `--namespace=${namespace}`,
+                      '--file=$(resources.inputs.source.path)/.tekton.yaml',
+                      '--url=$(tt.params.gitrepositoryurl)',
+                      '--revision=$(tt.params.gitrevision)',
+                      '--owner-name=$(tt.params.ownername)',
+                      '--owner-uid=$(tt.params.owneruid)',
+                      ...Object.keys(bindings).map(
+                        x => `--param=${x}=$(tt.params.${x})`
+                      )
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    }
+  };
+
+  if (ingress) {
+    payload.spec.ingress = {
+      host: ingress,
+      annotations: ingressAnnotations,
+      labels: ingressLabels
+    };
+  }
+
+  const uri = getTektonAPI('projects', {
+    group: dashboardAPIGroup,
+    namespace,
+    version: 'v1alpha1'
+  });
+  return post(uri, payload);
+}
+
+export function deleteProject({ name, namespace }) {
+  const uri = getTektonAPI('projects', {
+    group: dashboardAPIGroup,
+    name,
+    namespace,
+    version: 'v1alpha1'
+  });
+  return deleteRequest(uri);
+}
+
+export function getBuilds({ filters = [], namespace } = {}) {
+  const uri = getTektonAPI(
+    'builds',
+    { group: dashboardAPIGroup, namespace, version: 'v1alpha1' },
+    getQueryParams(filters)
+  );
+  return get(uri).then(checkData);
+}
+
+export function getBuild({ name, namespace }) {
+  const uri = getTektonAPI('builds', {
+    group: dashboardAPIGroup,
+    name,
+    namespace,
+    version: 'v1alpha1'
+  });
+  return get(uri);
+}
+
 export function getPodLogURL({ container, name, namespace }) {
   let queryParams;
   if (container) {

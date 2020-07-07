@@ -12,6 +12,8 @@ limitations under the License.
 */
 /* istanbul ignore file */
 export { default as About } from './About';
+export { default as Build } from './Build';
+export { default as Builds } from './Builds';
 export { default as ClusterTasks } from './ClusterTasks';
 export { default as ClusterTasksDropdown } from './ClusterTasksDropdown';
 export { default as Condition } from './Condition';
@@ -20,6 +22,7 @@ export { default as CustomResourceDefinition } from './CustomResourceDefinition'
 export { default as CreatePipelineResource } from './CreatePipelineResource';
 export { default as CreatePipelineRun } from './CreatePipelineRun';
 export { default as CreateSecret } from './CreateSecret';
+export { default as CreateProject } from './CreateProject';
 export { default as CreateTaskRun } from './CreateTaskRun';
 export { default as ClusterTriggerBinding } from './ClusterTriggerBinding';
 export { default as ClusterTriggerBindings } from './ClusterTriggerBindings';
@@ -38,6 +41,8 @@ export { default as PipelineRun } from './PipelineRun';
 export { default as PipelineRuns } from './PipelineRuns';
 export { default as Pipelines } from './Pipelines';
 export { default as PipelinesDropdown } from './PipelinesDropdown';
+export { default as Project } from './Project';
+export { default as Projects } from './Projects';
 export { default as ReadWriteRoute } from './ReadWriteRoute';
 export { default as ResourceList } from './ResourceList';
 export { default as Secrets } from './Secrets';

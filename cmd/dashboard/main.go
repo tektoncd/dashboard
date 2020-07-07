@@ -31,6 +31,7 @@ import (
 	"github.com/tektoncd/dashboard/pkg/router"
 	pipelineclientset "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
 	resourceclientset "github.com/tektoncd/pipeline/pkg/client/resource/clientset/versioned"
+	triggersclientset "github.com/tektoncd/triggers/pkg/client/clientset/versioned"
 	k8sclientset "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
@@ -102,6 +103,11 @@ func main() {
 		logging.Log.Errorf("Error building pipeline clientset: %s", err.Error())
 	}
 
+	triggersClient, err := triggersclientset.NewForConfig(cfg)
+	if err != nil {
+		logging.Log.Errorf("Error building triggers clientset: %s", err.Error())
+	}
+
 	dashboardClient, err := dashboardclientset.NewForConfig(cfg)
 	if err != nil {
 		logging.Log.Errorf("Error building dashboard clientset: %s", err.Error())
@@ -147,6 +153,7 @@ func main() {
 		DashboardClient:        dashboardClient,
 		PipelineClient:         pipelineClient,
 		PipelineResourceClient: pipelineResourceClient,
+		TriggersClient:         triggersClient,
 		K8sClient:              k8sClient,
 		RouteClient:            routeClient,
 		Options:                options,
@@ -160,7 +167,9 @@ func main() {
 	resyncDur := time.Second * 30
 	controllers.StartTektonControllers(resource.PipelineClient, resource.PipelineResourceClient, *tenantNamespace, resyncDur, ctx.Done())
 	controllers.StartKubeControllers(resource.K8sClient, resyncDur, *tenantNamespace, *readOnly, routerHandler, ctx.Done())
-	controllers.StartDashboardControllers(resource.DashboardClient, resyncDur, *tenantNamespace, ctx.Done())
+	controllers.StartDashboardControllers(resource.DashboardClient, resource.TriggersClient, resource.K8sClient, resyncDur, *tenantNamespace, ctx.Done())
+
+	controllers.StartRuntimeControllers(cfg)
 
 	logging.Log.Infof("Creating server and entering wait loop")
 	CSRF := csrf.Protect(
