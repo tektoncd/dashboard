@@ -189,18 +189,8 @@ The `installer` script can create an ingress for your Dashboard service, to enab
 
 To uninstall the Dashboard, use the `uninstall` instead of the `install` command.
 
-**IMPORTANT NOTE:** this is VERY important when you uninstall using the `installer` script that you provide the same options that were given to the script at install time. This is needed for the script to know what was created at install time and must be deleted by the `uninstall` command.
-Uninstalling with the wrong options could lead to resources not being deleted (`Ingress` or `RoleBinding`s) or uninstall to fail completely (trying to uninstall for the incorrect platform or not in the good namespace).
-
 ```bash
-# for kubernetes
 ./scripts/installer uninstall
-
-# for openshift / openshift pipelines operator
-./scripts/installer uninstall --openshift
-
-# for openshift / manifests
-./scripts/installer uninstall --openshift --pipelines-namespace tekton-pipelines --triggers-namespace tekton-pipelines
 ```
 
 ## Build command

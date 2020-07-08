@@ -438,7 +438,9 @@ install() {
 # uninstall invokes kubectl delete with the built manifest.
 uninstall() {
   echo "Uninstalling ..."
-  kubectl delete -f $TMP_FILE
+  kubectl delete deployments -l=app.kubernetes.io/instance=default,app.kubernetes.io/part-of=tekton-dashboard --all-namespaces
+  kubectl api-resources --verbs=delete -o name | \
+    xargs -n 1 kubectl delete --ignore-not-found -l=app.kubernetes.io/instance=default,app.kubernetes.io/part-of=tekton-dashboard --all-namespaces
 }
 
 build() {
@@ -513,8 +515,8 @@ case $1 in
     shift
     ;;
   'uninstall'|u)
-    ACTION="uninstall"
-    shift
+    uninstall
+    exit 0
     ;;
   'build'|b)
     ACTION="build"
