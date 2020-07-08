@@ -69,10 +69,10 @@ case $1 in
     install_triggers
     ./scripts/installer install $DEFAULT_OPTIONS $@
     ;;
-    ;;
   'update'|u)
     shift
     ./scripts/installer install $DEFAULT_OPTIONS $@
+    ;;
   'delete'|d)
     delete_cluster
     ;;
