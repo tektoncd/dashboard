@@ -51,8 +51,8 @@ In a nutshell, invoking the `installer` will look something like this:
 
 ```bash
 DASHBOARD_VERSION=v0.8.0
-curl -sL https://storage.googleapis.com/tekton-releases/dashboard/previous/$DASHBOARD_VERSION/installer | \
-   bash -s -- install --read-only --version $DASHBOARD_VERSION
+curl -sL https://raw.githubusercontent.com/tektoncd/dashboard/master/scripts/release-installer | \
+   bash -s -- install $DASHBOARD_VERSION --read-only
 ```
 
 Of course, you can still use the generated manifests as detailed below.

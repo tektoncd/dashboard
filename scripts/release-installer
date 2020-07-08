@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+
+# Copyright 2020 The Tekton Authors
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#     http://www.apache.org/licenses/LICENSE-2.0
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+BASE_RELEASE_URL="https://storage.googleapis.com/tekton-releases/dashboard/previous"
+
+verifySupported() {
+  if ! type "curl" > /dev/null 2>&1 && ! type "wget" > /dev/null 2>&1; then
+    echo "Either curl or wget is required"
+    exit 1
+  fi
+}
+
+install() {
+  VERSION=$1
+  if type "curl" > /dev/null 2>&1; then
+    curl -sL $BASE_RELEASE_URL/$VERSION/installer | bash -s -- install --version $@
+  elif type "wget" > /dev/null 2>&1; then
+    wget -q $BASE_RELEASE_URL/$VERSION/installer | bash -s -- install --version $@
+  fi
+}
+
+uninstall() {
+  VERSION=$1
+  if type "curl" > /dev/null 2>&1; then
+    curl -sL $BASE_RELEASE_URL/$VERSION/installer | bash -s -- uninstall --version $@
+  elif type "wget" > /dev/null 2>&1; then
+    wget -q $BASE_RELEASE_URL/$VERSION/installer | bash -s -- uninstall --version $@
+  fi
+}
+
+# help provides possible cli installation arguments
+help () {
+  VERSION=$1
+  if type "curl" > /dev/null 2>&1; then
+    curl -sL $BASE_RELEASE_URL/$VERSION/installer | bash -s -- "help"
+  elif type "wget" > /dev/null 2>&1; then
+    wget -q $BASE_RELEASE_URL/$VERSION/installer | bash -s -- "help"
+  fi
+}
+
+set -e
+
+verifySupported
+
+# Parsing command
+case $1 in
+  'help'|h)
+    help
+    exit 0
+    ;;
+  'install'|i)
+    shift
+    VERSION="${1}"
+    shift
+    install $VERSION $@
+    ;;
+  'uninstall'|u)
+    shift
+    VERSION="${1}"
+    shift
+    uninstall $VERSION $@
+    ;;
+  *)
+    help
+    exit 0
+    ;;
+esac
