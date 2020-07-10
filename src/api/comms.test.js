@@ -96,9 +96,28 @@ describe('checkStatus', () => {
   });
 
   it('returns headers on successful create', () => {
+    const headers = { get: jest.fn() };
     const status = 201;
-    const headers = { fake: 'headers' };
-    expect(checkStatus({ ok: true, headers, status })).toEqual(headers);
+    const response = {
+      headers,
+      json: jest.fn(),
+      ok: true,
+      status
+    };
+    expect(checkStatus(response)).toEqual(expect.objectContaining({ headers }));
+  });
+
+  it('handles empty response body', () => {
+    const headers = { get: () => '0' };
+    const status = 201;
+    const response = {
+      headers,
+      ok: true,
+      status
+    };
+    expect(checkStatus(response)).toEqual(
+      expect.objectContaining({ body: null, headers })
+    );
   });
 
   it('throws an error on failure', () => {

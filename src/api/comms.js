@@ -46,19 +46,31 @@ export function getPatchHeaders(headers = {}) {
   };
 }
 
+function parseBody(response) {
+  const contentLength = response.headers.get('content-length');
+  if (contentLength === '0') {
+    return null;
+  }
+
+  const contentType = response.headers.get('content-type');
+  if (contentType && contentType.includes('text/plain')) {
+    return response.text();
+  }
+  return response.json();
+}
+
 export function checkStatus(response = {}) {
   if (response.ok) {
     switch (response.status) {
       case 201:
-        return response.headers;
+        return {
+          headers: response.headers,
+          body: parseBody(response)
+        };
       case 204:
         return {};
       default:
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('text/plain')) {
-          return response.text();
-        }
-        return response.json();
+        return parseBody(response);
     }
   }
 

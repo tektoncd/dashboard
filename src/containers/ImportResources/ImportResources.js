@@ -171,8 +171,8 @@ export class ImportResources extends Component {
       serviceAccount,
       importerNamespace
     })
-      .then(headers => {
-        const pipelineRunName = headers.metadata.name;
+      .then(body => {
+        const pipelineRunName = body.metadata.name;
 
         const finalURL = urls.pipelineRuns.byName({
           namespace: importerNamespace,
