@@ -463,7 +463,7 @@ it('createPipelineRun', () => {
     }
   };
   mockCSRFToken();
-  fetchMock.post('*', data);
+  fetchMock.post('*', { body: data, status: 201 });
   return index.createPipelineRun(payload).then(response => {
     expect(response).toEqual(data);
     expect(fetchMock.lastOptions()).toMatchObject({
@@ -525,7 +525,7 @@ it('createPipelineRun with nodeSelector', () => {
     }
   };
   mockCSRFToken();
-  fetchMock.post('*', data);
+  fetchMock.post('*', { body: data, status: 201 });
   return index.createPipelineRun(payload).then(response => {
     expect(response).toEqual(data);
     expect(fetchMock.lastOptions()).toMatchObject({
@@ -821,13 +821,16 @@ it('deleteTaskRun', () => {
 
 it('rerunPipelineRun', () => {
   const namespace = 'namespace';
-  const data = { fake: 'pipelineRun' };
+  const body = { fake: 'pipelineRun' };
+  const headerName = 'fake_headerName';
+  const headerValue = 'fake_headerValue';
+  const headers = { [headerName]: headerValue };
   mockCSRFToken();
-  fetchMock.post(`end:/rerun/`, data);
+  fetchMock.post(`end:/rerun/`, { body, headers, status: 201 });
   return index
     .rerunPipelineRun(namespace, { fake: 'existingPipelineRun' })
-    .then(pipelineRun => {
-      expect(pipelineRun).toEqual(data);
+    .then(data => {
+      expect(data.get(headerName)).toEqual(headerValue);
       fetchMock.restore();
     });
 });
@@ -835,7 +838,7 @@ it('rerunPipelineRun', () => {
 it('createTaskRun uses correct kubernetes information', () => {
   const data = { fake: 'createtaskrun' };
   mockCSRFToken();
-  fetchMock.post(/taskruns/, data);
+  fetchMock.post(/taskruns/, { body: data, status: 201 });
   return index.createTaskRun({}).then(response => {
     expect(response).toEqual(data);
     const sentBody = JSON.parse(fetchMock.lastOptions().body);
@@ -1127,7 +1130,7 @@ it('importResources', () => {
   };
 
   mockCSRFToken();
-  fetchMock.post('*', data);
+  fetchMock.post('*', { body: data, status: 201 });
   return index.importResources(payload).then(response => {
     expect(response).toEqual(data);
     expect(JSON.parse(fetchMock.lastOptions().body)).toMatchObject(data);

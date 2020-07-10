@@ -224,7 +224,7 @@ export function createPipelineRun({
     payload.spec.timeout = timeout;
   }
   const uri = getTektonAPI('pipelineruns', { namespace });
-  return post(uri, payload);
+  return post(uri, payload).then(({ body }) => body);
 }
 
 export function getClusterTasks({ filters = [] } = {}) {
@@ -325,7 +325,7 @@ export function getPodLog({ container, name, namespace }) {
 
 export function rerunPipelineRun(namespace, payload) {
   const uri = getAPI('rerun', { namespace });
-  return post(uri, payload);
+  return post(uri, payload).then(({ headers }) => headers);
 }
 
 export function getCredentials({ namespace } = {}) {
@@ -587,7 +587,7 @@ export function createTaskRun({
     payload.spec.timeout = timeout;
   }
   const uri = getTektonAPI('taskruns', { namespace });
-  return post(uri, payload);
+  return post(uri, payload).then(({ body }) => body);
 }
 
 export function importResources({
@@ -755,5 +755,5 @@ export function importResources({
   }
 
   const uri = getTektonAPI('pipelineruns', { namespace: importerNamespace });
-  return post(uri, payload);
+  return post(uri, payload).then(({ body }) => body);
 }
