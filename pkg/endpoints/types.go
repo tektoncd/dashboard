@@ -1,11 +1,14 @@
 package endpoints
 
 import (
+	"net/http"
+
 	routeclientset "github.com/openshift/client-go/route/clientset/versioned"
 	dashboardclientset "github.com/tektoncd/dashboard/pkg/client/clientset/versioned"
 	pipelineclientset "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
 	resourceclientset "github.com/tektoncd/pipeline/pkg/client/resource/clientset/versioned"
 	k8sclientset "k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 )
 
 // Options for enpoints
@@ -15,7 +18,7 @@ type Options struct {
 	TriggersNamespace  string
 	TenantNamespace    string
 	ReadOnly           bool
-	WebDir             string
+	IsOpenShift        bool
 	LogoutURL          string
 }
 
@@ -42,6 +45,8 @@ func (o Options) GetTriggersNamespace() string {
 // Store all types here that are reused throughout files
 // Wrapper around all necessary clients used for endpoints
 type Resource struct {
+	Config                 *rest.Config
+	HttpClient             *http.Client
 	DashboardClient        dashboardclientset.Interface
 	PipelineClient         pipelineclientset.Interface
 	PipelineResourceClient resourceclientset.Interface

@@ -46,7 +46,7 @@ var (
 	kubeConfigPath     = flag.String("kube-config", "", "Path to kube config file")
 	portNumber         = flag.Int("port", 8080, "Dashboard port number")
 	readOnly           = flag.Bool("read-only", false, "Enable or disable read only mode")
-	webDir             = flag.String("web-dir", "", "Dashboard web resources dir")
+	isOpenshift        = flag.Bool("openshift", false, "Indicates the dashboard is running on openshift")
 	logoutUrl          = flag.String("logout-url", "", "If set, enables logout on the frontend and binds the logout button to this url")
 	csrfSecureCookie   = flag.Bool("csrf-secure-cookie", true, "Enable or disable Secure attribute on the CSRF cookie")
 	tenantNamespace    = flag.String("namespace", "", "If set, limits the scope of resources watched to this namespace only")
@@ -117,9 +117,18 @@ func main() {
 		logging.Log.Errorf("Error building k8s clientset: %s", err.Error())
 	}
 
-	routeClient, err := routeclientset.NewForConfig(cfg)
+	var routeClient routeclientset.Interface
+
+	if *isOpenshift {
+		routeClient, err = routeclientset.NewForConfig(cfg)
+		if err != nil {
+			logging.Log.Errorf("Error building route clientset: %s", err.Error())
+		}
+	}
+
+	transport, err := rest.TransportFor(cfg)
 	if err != nil {
-		logging.Log.Errorf("Error building route clientset: %s", err.Error())
+		logging.Log.Errorf("Error building rest transport: %s", err.Error())
 	}
 
 	options := endpoints.Options{
@@ -128,11 +137,13 @@ func main() {
 		TriggersNamespace:  *triggersNamespace,
 		TenantNamespace:    *tenantNamespace,
 		ReadOnly:           *readOnly,
-		WebDir:             *webDir,
+		IsOpenShift:        *isOpenshift,
 		LogoutURL:          *logoutUrl,
 	}
 
 	resource := endpoints.Resource{
+		Config:                 cfg,
+		HttpClient:             &http.Client{Transport: transport},
 		DashboardClient:        dashboardClient,
 		PipelineClient:         pipelineClient,
 		PipelineResourceClient: pipelineResourceClient,

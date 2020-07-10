@@ -39,10 +39,6 @@ const ExtensionLabelKey = "tekton-dashboard-extension"
 // as a dashboard extension
 const ExtensionLabelValue = "true"
 
-// ExtensionLabel is the full label required by services to be registered as a
-// dashboard extension
-const ExtensionLabel = ExtensionLabelKey + "=" + ExtensionLabelValue
-
 // ExtensionURLKey specifies the valid extension paths, defaults to "/"
 const ExtensionURLKey = "tekton-dashboard-endpoints"
 
@@ -59,6 +55,8 @@ const ExtensionDisplayNameKey = "tekton-dashboard-display-name"
 // ExtensionRoot is the URL root when accessing extensions
 const ExtensionRoot = "/v1/extensions"
 
+const webResourcesDir = "/var/run/ko"
+
 var webResourcesStaticPattern = regexp.MustCompile("^/([[:alnum:]]+\\.)?[[:alnum:]]+\\.(js)|(css)|(png)$")
 var webResourcesStaticExcludePattern = regexp.MustCompile("^/favicon.png$")
 
@@ -70,7 +68,7 @@ func Register(resource endpoints.Resource) *Handler {
 		uidExtensionMap: make(map[string]*Extension),
 	}
 
-	registerWeb(h.Container, resource.Options.WebDir)
+	registerWeb(h.Container)
 	registerEndpoints(resource, h.Container)
 	registerPropertiesEndpoint(resource, h.Container)
 	registerWebsocket(resource, h.Container)
@@ -216,7 +214,7 @@ func registerKubeAPIProxy(r endpoints.Resource, container *restful.Container) {
 	container.Add(proxy)
 }
 
-func registerWeb(container *restful.Container, webResourcesDir string) {
+func registerWeb(container *restful.Container) {
 	logging.Log.Info("Adding Web API")
 
 	fs := http.FileServer(http.Dir(webResourcesDir))
@@ -244,9 +242,6 @@ func registerEndpoints(r endpoints.Resource, container *restful.Container) {
 	wsv1.Route(wsv1.POST("/{namespace}/rerun").To(r.RerunPipelineRun))
 	wsv1.Route(wsv1.GET("/{namespace}/ingress").To(r.GetIngress))
 	wsv1.Route(wsv1.GET("/{namespace}/endpoints").To(r.GetEndpoints))
-
-	wsv1.Route(wsv1.GET("/{namespace}/taskrunlogs/{name}").To(r.GetTaskRunLog))
-	wsv1.Route(wsv1.GET("/{namespace}/pipelinerunlogs/{name}").To(r.GetPipelineRunLog))
 
 	container.Add(wsv1)
 

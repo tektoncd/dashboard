@@ -83,12 +83,8 @@ limitations under the License.
   .bx--accordion {
     margin-bottom: 1rem;
 
-    .bx--accordion__heading {
-      align-items: center;
-
-      .bx--accordion__title {
-        padding-left: 1.5rem;
-      }
+    .bx--accordion__heading .bx--accordion__title {
+      padding-left: 1.5rem;
     }
 
     .bx--accordion__content,

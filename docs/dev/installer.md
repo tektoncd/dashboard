@@ -10,8 +10,10 @@ It covers the following topics:
   - [Installing on Kubernetes](#installing-on-kubernetes)
   - [OpenShift with Tekton Pipelines and Triggers installed by OpenShift Pipelines Operator](#openshift-with-tekton-pipelines-and-triggers-installed-by-openshift-pipelines-operator)
   - [OpenShift with Tekton Pipelines and Triggers installed manually using YAML manifests](#openshift-with-tekton-pipelines-and-triggers-installed-manually-using-yaml-manifests)
+  - [OpenShift image stream](#openshift-image-stream)
   - [Read only install](#read-only-install)
   - [Installing in a custom namespace](#installing-in-a-custom-namespace)
+  - [Installing for single namespace visibility](#installing-for-single-namespace-visibility)
   - [Install ingress](#install-ingress)
 - [Uninstall command](#uninstall-command)
 - [Build command](#build-command)
@@ -42,18 +44,25 @@ Accepted commands:
         help|h                                  Prints this help
         install|i                               Installs the dashboard
         uninstall|u                             Uninstalls the dashboard
-        build|b                                 Builds the manifests and docker image and outputs manfiests in the console
+        build|b                                 Builds the manifests and dashboard docker image
+        release|r                               Builds the manifests and dashboard docker image for release
 
 Accepted options:
         [--debug]                               Prints additional messages in the console
+        [--log-format]                          JSON or console
+        [--log-level]                           Change log level
+        [--version]                             Will download manifests for specified version or build everything using kustomize/ko
         [--csrf-secure-cookie]                  Enable secure CSRF cookie
         [--openshift]                           Will build manifests for openshift
+        [--image-stream]                        Will generate manifests using openshift image stream
         [--read-only]                           Will build manifests for a readonly deployment
         [--namespace <namespace>]               Will override install namespace
         [--pipelines-namespace <namespace>]     Override the namespace where Tekton Pipelines is installed (defaults to tekton-pipelines)
         [--triggers-namespace <namespace>]      Override the namespace where Tekton Triggers is installed (defaults to tekton-pipelines)
+        [--tenant-namespace <namespace>]        Will limit the visibility to the specified namespace only
         [--ingress-url <url>]                   Will create an additional ingress with the specified url
         [--ingress-secret <secret>]             Will add ssl support to the ingress
+        [--output <file>]                       Will output built manifests in the file instead of in the console
 ```
 
 ## Install command
@@ -69,6 +78,7 @@ Examples below illustrate the main `install` options:
 - [OpenShift with Tekton Pipelines and Triggers installed by OpenShift Pipelines Operator](#openshift-with-tekton-pipelines-and-triggers-installed-by-openshift-pipelines-operator)
 - [OpenShift with Tekton Pipelines and Triggers installed manually using YAML manifests](#openshift-with-tekton-pipelines-and-triggers-installed-manually-using-yaml-manifests)
 - [Installing in a custom namespace](#installing-in-a-custom-namespace)
+- [Installing for single namespace visibility](#installing-for-single-namespace-visibility)
 - [Install ingress](#install-ingress)
 
 ### Installing on Kubernetes
@@ -99,6 +109,18 @@ Therefore, you will need to add the `--pipelines-namespace tekton-pipelines` and
 
 ```bash
 ./scripts/installer install --openshift --pipelines-namespace tekton-pipelines --triggers-namespace tekton-pipelines
+```
+
+### OpenShift image stream
+
+To install the Tekton Dashboard on OpenShift with image stream support, add the `--image-stream` option:
+
+```bash
+# for openshift / openshift pipelines operator
+./scripts/installer install --openshift --image-stream
+
+# for openshift / manifests
+./scripts/installer install --openshift --image-stream --pipelines-namespace tekton-pipelines --triggers-namespace tekton-pipelines
 ```
 
 ### Read only install
@@ -133,6 +155,25 @@ CUSTOM_NAMESPACE=my-namespace
 
 # for openshift / manifests
 ./scripts/installer install --openshift --pipelines-namespace tekton-pipelines --triggers-namespace tekton-pipelines --namespace $CUSTOM_NAMESPACE
+```
+
+### Installing for single namespace visibility
+
+Single namespace visibility restricts the Tekton Dashboard actions scope and resources that can be seen to a single namespace in the cluster.
+
+To install for single namespace visibility run the following command:
+
+```bash
+TENANT_NAMESPACE=my-namespace
+
+# for kubernetes
+./scripts/installer install --tenant-namespace $TENANT_NAMESPACE
+
+# for openshift / openshift pipelines operator
+./scripts/installer install --openshift --tenant-namespace $TENANT_NAMESPACE
+
+# for openshift / manifests
+./scripts/installer install --openshift --pipelines-namespace tekton-pipelines --triggers-namespace tekton-pipelines --tenant-namespace $TENANT_NAMESPACE
 ```
 
 ### Install ingress
@@ -179,6 +220,12 @@ The `installer` script can be used to build the Dashboard docker image and the Y
 This will NOT deploy the resulting manifest in the target cluster but will build and push the Dashboard docker image to [whichever docker repo was configured](./README.md#build-and-deploy-with-kustomize-and-ko) for `ko` to work with and will display the YAML manifests in the console output.
 
 The `build` command is useful when you want to ensure everything builds correctly without altering the current deployment. It can help verifying the generated manifests are correct when a change was made in the base or overlays used by `kustomize` too.
+
+## Release command
+
+This command is essentially the same as the [build command](#build-command) but adds the `--preserve-import-paths` option when invoking `ko`.
+
+This is needed to generate the correct docker image name in the manifests when cutting a release.
 
 ---
 

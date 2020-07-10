@@ -22,10 +22,8 @@ import (
 
 // Define all broadcasters/channels
 // Keep broadcaster channels open indefinitely
-var LogChannel = make(chan broadcaster.SocketData)
 var ResourcesChannel = make(chan broadcaster.SocketData)
 
-var LogBroadcaster = broadcaster.NewBroadcaster(LogChannel)
 var ResourcesBroadcaster = broadcaster.NewBroadcaster(ResourcesChannel)
 
 // Establish websocket and subscribe to pipelinerun events

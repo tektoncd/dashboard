@@ -18,7 +18,7 @@ import { Link } from 'react-router-dom';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { urls } from '@tektoncd/dashboard-utils';
 
-import { ResourceTable, ViewYAML, WithLineBreaks } from '..';
+import { Param, ResourceTable, ViewYAML } from '..';
 import './StepDefinition.scss';
 
 const resourceTable = (title, namespace, resources, intl) => {
@@ -83,7 +83,7 @@ class StepDefinition extends Component {
               name,
               value: (
                 <span title={value}>
-                  <WithLineBreaks>{value}</WithLineBreaks>
+                  <Param>{value}</Param>
                 </span>
               )
             }))}

@@ -66,7 +66,7 @@ case $1 in
     install_ingress_nginx
     install_pipelines
     install_triggers
-    ./scripts/installer install $@
+    ./scripts/installer install --log-format console $@
     ;;
   'delete'|d)
     delete_cluster

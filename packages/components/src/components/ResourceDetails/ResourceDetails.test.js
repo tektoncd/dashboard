@@ -12,10 +12,16 @@ limitations under the License.
 */
 
 import React from 'react';
+import { fireEvent, waitForElement } from 'react-testing-library';
 import { renderWithIntl } from '../../utils/test';
 import ResourceDetails from './ResourceDetails';
 
 describe('ResourceDetails', () => {
+  it('renders the loading state', () => {
+    const { queryByText } = renderWithIntl(<ResourceDetails loading />);
+    expect(queryByText(/overview/i)).toBeFalsy();
+  });
+
   it('renders the error state', () => {
     const errorMessage = 'an error message';
     const { queryByText } = renderWithIntl(
@@ -79,5 +85,33 @@ describe('ResourceDetails', () => {
     expect(queryByText(`${labelKey}: ${labelValue}`)).toBeTruthy();
     expect(queryByText(additionalMetadata)).toBeTruthy();
     expect(queryByText(children)).toBeTruthy();
+  });
+
+  it('renders the selected tab', () => {
+    const name = 'fake_name';
+    const namespace = 'fake_namespace';
+    const resource = {
+      metadata: {
+        name,
+        namespace
+      },
+      spec: {
+        description: 'fake_description',
+        otherContent: 'some_other_content'
+      }
+    };
+
+    const onViewChange = jest.fn();
+
+    const { queryByText } = renderWithIntl(
+      <ResourceDetails
+        onViewChange={onViewChange}
+        resource={resource}
+        view="yaml"
+      />
+    );
+    waitForElement(() => queryByText('otherContent'));
+    fireEvent.click(queryByText(/overview/i));
+    expect(onViewChange).toHaveBeenCalledWith('overview');
   });
 });

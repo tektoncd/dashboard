@@ -14,39 +14,55 @@ limitations under the License.
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { fireEvent } from 'react-testing-library';
 import { renderWithRouter } from '../../utils/test';
 
 import StepDetails from './StepDetails';
 
-it('StepDetails renders', () => {
-  const mockStore = configureStore();
-  const store = mockStore({ namespaces: { selected: 'default' } });
+describe('StepDetails', () => {
+  it('renders', () => {
+    const mockStore = configureStore();
+    const store = mockStore({ namespaces: { selected: 'default' } });
 
-  renderWithRouter(
-    <Provider store={store}>
-      <StepDetails />
-    </Provider>
-  );
-});
+    renderWithRouter(
+      <Provider store={store}>
+        <StepDetails />
+      </Provider>
+    );
+  });
 
-it('StepDetails renders terminated state', () => {
-  const mockStore = configureStore();
-  const store = mockStore({ namespaces: { selected: 'default' } });
+  it('renders terminated state', () => {
+    const mockStore = configureStore();
+    const store = mockStore({ namespaces: { selected: 'default' } });
 
-  renderWithRouter(
-    <Provider store={store}>
-      <StepDetails status="terminated" />
-    </Provider>
-  );
-});
+    renderWithRouter(
+      <Provider store={store}>
+        <StepDetails status="terminated" />
+      </Provider>
+    );
+  });
 
-it('StepDetails renders cancelled state', () => {
-  const mockStore = configureStore();
-  const store = mockStore({ namespaces: { selected: 'default' } });
+  it('renders cancelled state', () => {
+    const mockStore = configureStore();
+    const store = mockStore({ namespaces: { selected: 'default' } });
 
-  renderWithRouter(
-    <Provider store={store}>
-      <StepDetails status="False" taskRun={{ reason: 'TaskRunCancelled' }} />
-    </Provider>
-  );
+    renderWithRouter(
+      <Provider store={store}>
+        <StepDetails status="False" taskRun={{ reason: 'TaskRunCancelled' }} />
+      </Provider>
+    );
+  });
+
+  it('renders with selected view', () => {
+    const mockStore = configureStore();
+    const store = mockStore({ namespaces: { selected: 'default' } });
+
+    const { getByText } = renderWithRouter(
+      <Provider store={store}>
+        <StepDetails view="details" />
+      </Provider>
+    );
+
+    fireEvent.click(getByText(/status/i));
+  });
 });

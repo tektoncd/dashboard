@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
@@ -37,7 +36,6 @@ import { Add16 as Add, TrashCan32 as Delete } from '@carbon/icons-react';
 import { LabelFilter } from '..';
 import { fetchPipelineResources } from '../../actions/pipelineResources';
 import { deletePipelineResource } from '../../api';
-import PipelineResourcesModal from '../CreatePipelineResources';
 import {
   getPipelineResources,
   getPipelineResourcesErrorMessage,
@@ -48,23 +46,13 @@ import {
 } from '../../reducers';
 
 const initialState = {
-  showCreatePipelineResourceModal: false,
-  createdPipelineResource: null,
-  submitError: '',
+  deleteError: '',
   isDeleteModalOpen: false,
   toBeDeleted: []
 };
 
 export /* istanbul ignore next */ class PipelineResources extends Component {
-  constructor(props) {
-    super(props);
-
-    this.handleCreatePipelineResourceSuccess = this.handleCreatePipelineResourceSuccess.bind(
-      this
-    );
-
-    this.state = initialState;
-  }
+  state = initialState;
 
   componentDidMount() {
     document.title = getTitle({ page: 'PipelineResources' });
@@ -87,14 +75,6 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
       this.fetchData();
     }
   }
-
-  toggleModal = showCreatePipelineResourceModal => {
-    this.setState({ showCreatePipelineResourceModal });
-  };
-
-  resetSuccess = () => {
-    this.setState({ createdPipelineResource: false });
-  };
 
   openDeleteModal = (selectedRows, cancelSelection) => {
     const pipelineResourcesById = keyBy(
@@ -132,17 +112,9 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
         if (text) {
           errorMessage = `${text} (error code ${statusCode})`;
         }
-        this.setState({ submitError: errorMessage });
+        this.setState({ deleteError: errorMessage });
       });
     });
-  };
-
-  handleCreatePipelineResourceClick = showCreatePipelineResourceModal => {
-    if (showCreatePipelineResourceModal) {
-      this.setState({
-        showCreatePipelineResourceModal: false
-      });
-    }
   };
 
   pipelineResourceActions = () => {
@@ -194,18 +166,6 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
     });
   }
 
-  handleCreatePipelineResourceSuccess(newPipelineResource) {
-    const {
-      metadata: { namespace, name }
-    } = newPipelineResource;
-    const url = urls.pipelineResources.byName({
-      namespace,
-      pipelineResourceName: name
-    });
-    this.toggleModal(false);
-    this.setState({ createdPipelineResource: { name, url } });
-  }
-
   render() {
     const {
       error,
@@ -236,7 +196,8 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
       ? []
       : [
           {
-            onClick: () => this.toggleModal(true),
+            onClick: () =>
+              this.props.history.push(urls.pipelineResources.create()),
             text: intl.formatMessage({
               id: 'dashboard.actions.createButton',
               defaultMessage: 'Create'
@@ -260,30 +221,14 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
 
     return (
       <>
-        {this.state.createdPipelineResource && (
-          <InlineNotification
-            kind="success"
-            title={intl.formatMessage({
-              id: 'dashboard.pipelineResources.createSuccess',
-              defaultMessage: 'Successfully created PipelineResource'
-            })}
-            subtitle={
-              <Link to={this.state.createdPipelineResource.url}>
-                {this.state.createdPipelineResource.name}
-              </Link>
-            }
-            onCloseButtonClick={this.resetSuccess}
-            lowContrast
-          />
-        )}
-        {this.state.submitError && (
+        {this.state.deleteError && (
           <InlineNotification
             kind="error"
             title={intl.formatMessage({
               id: 'dashboard.error.title',
               defaultMessage: 'Error:'
             })}
-            subtitle={getErrorMessage(this.state.submitError)}
+            subtitle={getErrorMessage(this.state.deleteError)}
             iconDescription={intl.formatMessage({
               id: 'dashboard.notification.clear',
               defaultMessage: 'Clear Notification'
@@ -295,18 +240,6 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
         )}
         <h1>PipelineResources</h1>
         <LabelFilter {...this.props} />
-        {!this.props.isReadOnly && (
-          <PipelineResourcesModal
-            open={this.state.showCreatePipelineResourceModal}
-            handleCreatePipelineResource={
-              this.handleCreatePipelineResourceClick
-            }
-            onClose={() => this.toggleModal(false)}
-            onSuccess={this.handleCreatePipelineResourceSuccess}
-            pipelineRef={this.props.pipelineName}
-            namespace={selectedNamespace}
-          />
-        )}
         <PipelineResourcesList
           batchActionButtons={batchActionButtons}
           loading={loading && !pipelineResources.length}

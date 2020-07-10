@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   InlineNotification,
   StructuredListSkeleton
@@ -22,6 +23,7 @@ import {
   getParams,
   getResources,
   getStatus,
+  NO_STEP,
   reorderSteps,
   selectedTask,
   selectedTaskRun,
@@ -35,15 +37,6 @@ import { Log, RunHeader, StepDetails, TaskRunDetails, TaskTree } from '..';
 import '../../scss/Run.scss';
 
 export /* istanbul ignore next */ class PipelineRunContainer extends Component {
-  state = {
-    selectedStepId: null,
-    selectedTaskId: null
-  };
-
-  handleTaskSelected = (selectedTaskId, selectedStepId) => {
-    this.setState({ selectedStepId, selectedTaskId });
-  };
-
   loadPipelineRunData = () => {
     const { pipelineRun } = this.props;
 
@@ -59,8 +52,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     return {
       error: status === 'False' && !taskRunsStatus && { message, reason },
       pipelineRun,
-      pipelineRunName: pipelineRun.metadata.name,
-      taskRunNames: taskRunsStatus && Object.keys(taskRunsStatus)
+      pipelineRunName: pipelineRun.metadata.name
     };
   };
 
@@ -218,17 +210,20 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       customNotification,
       error,
       fetchLogs,
-      logDownloadButton: LogDownloadButton,
+      handleTaskSelected,
       intl,
       loading,
+      logDownloadButton: LogDownloadButton,
+      onViewChange,
       pollingInterval,
       rerun,
+      selectedStepId,
+      selectedTaskId,
       showIO,
       sortTaskRuns,
-      triggerHeader
+      triggerHeader,
+      view
     } = this.props;
-
-    const { selectedStepId, selectedTaskId } = this.state;
 
     if (loading) {
       return <StructuredListSkeleton border />;
@@ -276,8 +271,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     const {
       pipelineRunName,
       error: pipelineRunError,
-      pipelineRun,
-      taskRunNames
+      pipelineRun
     } = this.loadPipelineRunData();
 
     const {
@@ -316,7 +310,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
         </>
       );
     }
-    const taskRuns = this.loadTaskRuns(pipelineRun, taskRunNames);
+    const taskRuns = this.loadTaskRuns(pipelineRun);
 
     if (sortTaskRuns) {
       this.sortTaskRuns(taskRuns);
@@ -341,7 +335,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       }
     );
 
-    const logContainer = (
+    const logContainer = selectedStepId && selectedStepId !== NO_STEP && (
       <Log
         downloadButton={
           LogDownloadButton && (
@@ -375,31 +369,54 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
         {customNotification}
         <div className="tkn--tasks">
           <TaskTree
-            onSelect={this.handleTaskSelected}
+            onSelect={handleTaskSelected}
             selectedTaskId={selectedTaskId}
+            selectedStepId={selectedStepId}
             taskRuns={taskRuns}
           />
-          {(selectedStepId && (
+          {(selectedStepId && selectedStepId !== NO_STEP && (
             <StepDetails
               definition={definition}
               logContainer={logContainer}
+              onViewChange={onViewChange}
               reason={reason}
               showIO={showIO}
               status={status}
               stepName={stepName}
               stepStatus={stepStatus}
               taskRun={taskRun}
+              view={view}
             />
           )) ||
-            (selectedTaskId && <TaskRunDetails taskRun={taskRun} />)}
+            (selectedTaskId && (
+              <TaskRunDetails
+                onViewChange={onViewChange}
+                taskRun={taskRun}
+                view={view}
+              />
+            ))}
         </div>
       </>
     );
   }
 }
 
+PipelineRunContainer.propTypes = {
+  handleTaskSelected: PropTypes.func,
+  onViewChange: PropTypes.func,
+  selectedStepId: PropTypes.string,
+  selectedTaskId: PropTypes.string,
+  sortTaskRuns: PropTypes.bool,
+  view: PropTypes.string
+};
+
 PipelineRunContainer.defaultProps = {
-  sortTaskRuns: false
+  handleTaskSelected: /* istanbul ignore next */ () => {},
+  onViewChange: /* istanbul ignore next */ () => {},
+  selectedStepId: null,
+  selectedTaskId: null,
+  sortTaskRuns: false,
+  view: null
 };
 
 export default injectIntl(PipelineRunContainer);

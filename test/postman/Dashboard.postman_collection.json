@@ -38,6 +38,18 @@
 							"    var json = pm.response.json();",
 							"    pm.expect(json.ReadOnly).to.eql(JSON.parse(pm.globals.get(\"readonly\")));",
 							"});",
+							"",
+							"pm.test(\"Check tenant namespace\", function () {",
+							"    var json = pm.response.json();",
+							"    if (json.TenantNamespace)",
+							"    {",
+							"        pm.expect(json.TenantNamespace).to.eql(pm.globals.get(\"tenant_namespace\"));",
+							"    }",
+							"    else",
+							"    {",
+							"        pm.expect(pm.globals.get(\"tenant_namespace\")).to.eql('');",
+							"    }",
+							"});",
 							""
 						],
 						"type": "text/javascript"

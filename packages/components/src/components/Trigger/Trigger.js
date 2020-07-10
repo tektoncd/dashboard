@@ -207,20 +207,24 @@ const Trigger = ({ intl, eventListenerNamespace, trigger }) => {
                 });
                 content = (
                   <>
-                    <p>{secretText}</p>
-                    <div className="tkn--trigger-interceptor-secret-details">
-                      <p>
-                        {nameText} {data.secretRef.secretName}
-                      </p>
-                      <p>
-                        {secretKeyText} {data.secretRef.secretKey}
-                      </p>
-                      {data.secretRef.namespace && (
-                        <p>
-                          {namespaceText} {data.secretRef.namespace}
-                        </p>
-                      )}
-                    </div>
+                    {data.secretRef && (
+                      <>
+                        <p>{secretText}</p>
+                        <div className="tkn--trigger-interceptor-secret-details">
+                          <p>
+                            {nameText} {data.secretRef.secretName}
+                          </p>
+                          <p>
+                            {secretKeyText} {data.secretRef.secretKey}
+                          </p>
+                          {data.secretRef.namespace && (
+                            <p>
+                              {namespaceText} {data.secretRef.namespace}
+                            </p>
+                          )}
+                        </div>
+                      </>
+                    )}
                     <p>Event Types: {eventTypes}</p>
                   </>
                 );

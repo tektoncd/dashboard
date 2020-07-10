@@ -12,8 +12,11 @@ limitations under the License.
 */
 
 import React from 'react';
+import { Route } from 'react-router-dom';
 import { fireEvent, waitForElement } from 'react-testing-library';
 import { createIntl } from 'react-intl';
+import { paths, urls } from '@tektoncd/dashboard-utils';
+
 import { ClusterTriggerBindingContainer } from './ClusterTriggerBinding';
 import { renderWithRouter } from '../../utils/test';
 
@@ -125,25 +128,31 @@ it('ClusterTriggerBindingContainer renders overview', async () => {
 });
 
 it('ClusterTriggerBindingContainer renders YAML', async () => {
-  const match = {
-    params: {
-      clusterTriggerBindingName: 'cluster-trigger-binding-simple'
-    }
-  };
+  const clusterTriggerBindingName = 'cluster-trigger-binding-simple';
 
   const { getByText } = renderWithRouter(
-    <ClusterTriggerBindingContainer
-      intl={intl}
-      match={match}
-      error={null}
-      fetchClusterTriggerBinding={() =>
-        Promise.resolve(clusterTriggerBindingSimple)
-      }
-      clusterTriggerBinding={clusterTriggerBindingSimple}
-    />
+    <Route
+      path={paths.clusterTriggerBindings.byName()}
+      render={props => (
+        <ClusterTriggerBindingContainer
+          {...props}
+          intl={intl}
+          error={null}
+          fetchClusterTriggerBinding={() =>
+            Promise.resolve(clusterTriggerBindingSimple)
+          }
+          clusterTriggerBinding={clusterTriggerBindingSimple}
+        />
+      )}
+    />,
+    {
+      route: urls.clusterTriggerBindings.byName({
+        clusterTriggerBindingName
+      })
+    }
   );
 
-  await waitForElement(() => getByText('cluster-trigger-binding-simple'));
+  await waitForElement(() => getByText(clusterTriggerBindingName));
   const yamlTab = getByText('YAML');
   fireEvent.click(yamlTab);
   await waitForElement(() => getByText(/creationTimestamp/i));

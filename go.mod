@@ -12,6 +12,7 @@ replace (
 )
 
 require (
+	github.com/circonus-labs/circonus-gometrics v2.3.1+incompatible
 	github.com/emicklei/go-restful v2.12.0+incompatible
 	github.com/google/go-cmp v0.4.0
 	github.com/gorilla/csrf v1.7.0

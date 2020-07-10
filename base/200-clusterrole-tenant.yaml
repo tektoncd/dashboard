@@ -25,6 +25,22 @@ rules:
   - apiGroups:
       - ''
     resources:
+      - services
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - dashboard.tekton.dev
+    resources:
+      - extensions
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ''
+    resources:
       - serviceaccounts
       - pods/log
       - namespaces

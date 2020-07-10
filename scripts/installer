@@ -13,6 +13,7 @@
 
 # dashboard flavour
 OPENSHIFT="false"
+IMAGE_STREAM="false"
 READONLY="false"
 
 # configuration default values
@@ -24,6 +25,11 @@ LOGOUT_URL=""
 CSRF_SECURE_COOKIE="false"
 LOG_LEVEL="info"
 LOG_FORMAT="json"
+TENANT_NAMESPACE=""
+BASE_RELEASE_URL="https://storage.googleapis.com/tekton-releases/dashboard/previous"
+
+# additional options passed to ko resolve
+KO_RESOLVE_OPTIONS=""
 
 initOS() {
   OS=$(echo `uname`|tr '[:upper:]' '[:lower:]')
@@ -37,36 +43,41 @@ initOS() {
 }
 
 verifySupported() {
-  if ! type "kubectl" > /dev/null; then
+  if ( [ "$ACTION" == "install" ] || [ "$ACTION" == "uninstall" ] ) && ! type "kubectl" > /dev/null 2>&1; then
     echo "kubectl is required"
     exit 1
   fi
 
-  if ! type "kustomize" > /dev/null; then
+  if ! type "kustomize" > /dev/null 2>&1; then
     echo "kustomize is required"
     exit 1
   fi
 
-  if ! type "ko" > /dev/null; then
+  if ! type "ko" > /dev/null 2>&1; then
     echo "ko is required"
     exit 1
   fi
 
-  if ! type "sed" > /dev/null; then
+  if ! type "sed" > /dev/null 2>&1; then
     echo "sed is required"
+    exit 1
+  fi
+
+  if ! type "curl" > /dev/null 2>&1 && ! type "wget" > /dev/null 2>&1; then
+    echo "Either curl or wget is required"
     exit 1
   fi
 }
 
 debug() {
-  local messsage=$1
+  local message=$1
 
   if [ "$DEBUG" == "true" ]; then
-    echo "$message"
+    echo $message
   fi
 }
 
-build() {
+compile() {
   local overlay="overlays/installer"
 
   if [ "$OPENSHIFT" == "true" ]; then
@@ -83,7 +94,35 @@ build() {
 
   debug "Building overlay $overlay ..."
 
-  kustomize build --load_restrictor none "$overlay" | ko resolve -f - > "$TMP_FILE"
+  if [ "$OPENSHIFT" == "true" ] && [ "$IMAGE_STREAM" == "true" ]; then
+    kustomize build --load_restrictor none "$overlay" > "$TMP_FILE"
+  else
+    kustomize build --load_restrictor none "$overlay" | ko resolve $KO_RESOLVE_OPTIONS -f - > "$TMP_FILE"
+  fi
+}
+
+download() {
+  local url="$BASE_RELEASE_URL/$VERSION/installer-"
+
+  if [ "$OPENSHIFT" == "true" ]; then
+    url="${url}openshift-"
+  fi
+
+  url="${url}tekton-dashboard-release"
+
+  if [ "$READONLY" == "true" ]; then
+    url="${url}-readonly"
+  fi
+
+  url="${url}.yaml"
+
+  debug "Downloading $url -> $TMP_FILE ..."
+
+  if type "curl" > /dev/null 2>&1; then
+    curl -s "$url" -o "$TMP_FILE"
+  elif type "wget" > /dev/null 2>&1; then
+    wget -q -O "$TMP_FILE" "$url"
+  fi
 }
 
 setup() {
@@ -113,7 +152,7 @@ setup() {
 replace() {
   local src=$1
   local dest=$2
-  
+
   debug "REPLACE $src -> $dest"
 
   if [ "$OS" == "darwin" ]; then
@@ -131,7 +170,167 @@ patch() {
   replace "--log-format=--log-format" "--log-format=$LOG_FORMAT"
   replace "--logout-url=--logout-url" "--logout-url=$LOGOUT_URL"
   replace "--read-only=--read-only" "--read-only=$READONLY"
+  replace "--namespace=--tenant-namespace" "--namespace=$TENANT_NAMESPACE"
+  replace "--openshift=--openshift" "--openshift=$OPENSHIFT"
   replace "namespace: tekton-dashboard" "namespace: $INSTALL_NAMESPACE"
+
+  if [ "$OPENSHIFT" == "true" ] && [ "$IMAGE_STREAM" == "true" ]; then
+    replace "image: github.com/tektoncd/dashboard/cmd/dashboard" "image: $INSTALL_NAMESPACE/tekton-dashboard"
+  fi
+}
+
+rbac() {
+cat <<EOF >> $TMP_FILE
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: dashboard
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/part-of: tekton-dashboard
+  name: tekton-dashboard-pipelines
+  namespace: $PIPELINES_NAMESPACE
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: tekton-dashboard-pipelines
+subjects:
+  - kind: ServiceAccount
+    name: tekton-dashboard
+    namespace: $INSTALL_NAMESPACE
+EOF
+
+cat <<EOF >> $TMP_FILE
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: dashboard
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/part-of: tekton-dashboard
+  name: tekton-dashboard-dashboard
+  namespace: $INSTALL_NAMESPACE
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: tekton-dashboard-dashboard
+subjects:
+  - kind: ServiceAccount
+    name: tekton-dashboard
+    namespace: $INSTALL_NAMESPACE
+EOF
+
+cat <<EOF >> $TMP_FILE
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: dashboard
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/part-of: tekton-dashboard
+  name: tekton-dashboard-triggers
+  namespace: $TRIGGERS_NAMESPACE
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: tekton-dashboard-triggers
+subjects:
+  - kind: ServiceAccount
+    name: tekton-dashboard
+    namespace: $INSTALL_NAMESPACE
+EOF
+
+
+if [ ! -z "$TENANT_NAMESPACE" ]; then
+
+cat <<EOF >> $TMP_FILE
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: dashboard
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/part-of: tekton-dashboard
+  name: tekton-dashboard-tenant
+  namespace: $TENANT_NAMESPACE
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: tekton-dashboard-tenant
+subjects:
+  - kind: ServiceAccount
+    name: tekton-dashboard
+    namespace: $INSTALL_NAMESPACE
+EOF
+
+cat <<EOF >> $TMP_FILE
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: dashboard
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/part-of: tekton-dashboard
+  name: tekton-dashboard-extensions
+  namespace: $TENANT_NAMESPACE
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: tekton-dashboard-extensions
+subjects:
+  - kind: ServiceAccount
+    name: tekton-dashboard
+    namespace: $INSTALL_NAMESPACE
+EOF
+
+else
+
+cat <<EOF >> $TMP_FILE
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: dashboard
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/part-of: tekton-dashboard
+  name: tekton-dashboard-tenant
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: tekton-dashboard-tenant
+subjects:
+  - kind: ServiceAccount
+    name: tekton-dashboard
+    namespace: $INSTALL_NAMESPACE
+EOF
+
+cat <<EOF >> $TMP_FILE
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: dashboard
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/part-of: tekton-dashboard
+  name: tekton-dashboard-extensions
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: tekton-dashboard-extensions
+subjects:
+  - kind: ServiceAccount
+    name: tekton-dashboard
+    namespace: $INSTALL_NAMESPACE
+EOF
+
+fi
 }
 
 ingress() {
@@ -176,64 +375,77 @@ EOF
 fi
 }
 
-rbac() {
+imageStream() {
+if [ "$OPENSHIFT" == "true" ] && [ "$IMAGE_STREAM" == "true" ]; then
 cat <<EOF >> $TMP_FILE
 ---
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
+apiVersion: v1
+kind: Template
 metadata:
-  name: tekton-dashboard-pipelines
-  namespace: $PIPELINES_NAMESPACE
-  labels:
-    app.kubernetes.io/component: dashboard
-    app.kubernetes.io/instance: default
-    app.kubernetes.io/part-of: tekton-dashboard
-subjects:
-  - kind: ServiceAccount
-    name: tekton-dashboard
-    namespace: $INSTALL_NAMESPACE
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: tekton-dashboard-pipelines
+  creationTimestamp: null
+  name: tekton-dashboard-build
+objects:
+  - apiVersion: v1
+    kind: BuildConfig
+    metadata:
+      labels:
+        build: tekton-dashboard
+        app: tekton-dashboard
+      name: tekton-dashboard
+      namespace: $INSTALL_NAMESPACE
+    spec:
+      failedBuildsHistoryLimit: 5
+      nodeSelector: null
+      output:
+        to:
+          kind: ImageStreamTag
+          name: tekton-dashboard:latest
+      postCommit: {}
+      resources: {}
+      runPolicy: Serial
+      source:
+        type: Git
+        git:
+          uri: https://github.com/tektoncd/dashboard.git
+          ref: master
+      triggers:
+        - type: ConfigChange
+      strategy:
+        dockerStrategy:
+          dockerfilePath: Dockerfile
+        type: Source
+      successfulBuildsHistoryLimit: 5
+    status:
+      lastVersion: 0
 EOF
-
-cat <<EOF >> $TMP_FILE
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: tekton-dashboard-triggers
-  namespace: $TRIGGERS_NAMESPACE
-  labels:
-    app.kubernetes.io/component: dashboard
-    app.kubernetes.io/instance: default
-    app.kubernetes.io/part-of: tekton-dashboard
-subjects:
-  - kind: ServiceAccount
-    name: tekton-dashboard
-    namespace: $INSTALL_NAMESPACE
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: tekton-dashboard-triggers
-EOF
+fi
 }
 
-# install invokes kubectl apply with the downloaded manifest.
+# install invokes kubectl apply with the built manifest.
 install() {
-  kubectl create ns $INSTALL_NAMESPACE || true
+  echo "Installing ..."
+
+  if [ ! -z "$TENANT_NAMESPACE" ]; then
+    kubectl create ns $TENANT_NAMESPACE > /dev/null 2>&1 || true
+  fi
+
+  kubectl create ns $INSTALL_NAMESPACE > /dev/null 2>&1 || true
   kubectl apply -f $TMP_FILE
 }
 
-# uninstall invokes kubectl delete with the downloaded manifest.
+# uninstall invokes kubectl delete with the built manifest.
 uninstall() {
+  echo "Uninstalling ..."
   kubectl delete -f $TMP_FILE
 }
 
-# uninstall invokes kubectl delete with the downloaded manifest.
-resolve() {
-  cat $TMP_FILE
+build() {
+  echo "Build ..."
+  if [ -z "$OUTPUT_FILE" ]; then
+    cat $TMP_FILE
+  else
+    cat $TMP_FILE > $OUTPUT_FILE
+  fi
 }
 
 # fail_trap is executed if an error occurs.
@@ -252,18 +464,25 @@ help () {
   echo -e "\thelp|h\t\t\t\t\tPrints this help"
   echo -e "\tinstall|i\t\t\t\tInstalls the dashboard"
   echo -e "\tuninstall|u\t\t\t\tUninstalls the dashboard"
-  echo -e "\tbuild|b\t\t\t\t\tBuilds the manifests and docker image and outputs manfiests in the console"
+  echo -e "\tbuild|b\t\t\t\t\tBuilds the manifests and dashboard docker image"
+  echo -e "\trelease|r\t\t\t\tBuilds the manifests and dashboard docker image for release"
   echo -e ""
   echo -e "Accepted options:"
   echo -e "\t[--debug]\t\t\t\tPrints additional messages in the console"
+  echo -e "\t[--log-format]\t\t\t\tJSON or console"
+  echo -e "\t[--log-level]\t\t\t\tChange log level"
+  echo -e "\t[--version]\t\t\t\tWill download manifests for specified version or build everything using kustomize/ko"
   echo -e "\t[--csrf-secure-cookie]\t\t\tEnable secure CSRF cookie"
   echo -e "\t[--openshift]\t\t\t\tWill build manifests for openshift"
+  echo -e "\t[--image-stream]\t\t\tWill generate manifests using openshift image stream"
   echo -e "\t[--read-only]\t\t\t\tWill build manifests for a readonly deployment"
   echo -e "\t[--namespace <namespace>]\t\tWill override install namespace"
   echo -e "\t[--pipelines-namespace <namespace>]\tOverride the namespace where Tekton Pipelines is installed (defaults to tekton-pipelines)"
   echo -e "\t[--triggers-namespace <namespace>]\tOverride the namespace where Tekton Triggers is installed (defaults to tekton-pipelines)"
+  echo -e "\t[--tenant-namespace <namespace>]\tWill limit the visibility to the specified namespace only"
   echo -e "\t[--ingress-url <url>]\t\t\tWill create an additional ingress with the specified url"
   echo -e "\t[--ingress-secret <secret>]\t\tWill add ssl support to the ingress"
+  echo -e "\t[--output <file>]\t\t\tWill output built manifests in the file instead of in the console"
 }
 
 # cleanup temporary files
@@ -298,6 +517,11 @@ case $1 in
     ACTION="build"
     shift
     ;;
+  'release'|b)
+    KO_RESOLVE_OPTIONS="--preserve-import-paths"
+    ACTION="build"
+    shift
+    ;;
   *)
     ACTION="build"
     ;;
@@ -309,8 +533,15 @@ set -u
 
 while [[ $# -gt 0 ]]; do
   case $1 in
+    '--version')
+      shift
+      export VERSION="${1}"
+      ;;
     '--openshift')
       OPENSHIFT="true"
+      ;;
+    '--image-stream')
+      IMAGE_STREAM="true"
       ;;
     '--read-only')
       READONLY="true"
@@ -322,6 +553,14 @@ while [[ $# -gt 0 ]]; do
       shift
       export OVERRIDE_NAMESPACE="${1}"
       ;;
+    '--log-format')
+      shift
+      LOG_FORMAT="${1}"
+      ;;
+    '--log-level')
+      shift
+      LOG_LEVEL="${1}"
+      ;;
     '--pipelines-namespace')
       shift
       export OVERRIDE_PIPELINES_NAMESPACE="${1}"
@@ -329,6 +568,10 @@ while [[ $# -gt 0 ]]; do
     '--triggers-namespace')
       shift
       export OVERRIDE_TRIGGERS_NAMESPACE="${1}"
+      ;;
+    '--tenant-namespace')
+      shift
+      TENANT_NAMESPACE="${1}"
       ;;
     '--ingress-url')
       shift
@@ -340,6 +583,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     '--debug')
       DEBUG="true"
+      ;;
+    '--output')
+      shift
+      export OUTPUT_FILE="${1}"
       ;;
     *)
       echo "ERROR: Unknown option $1"
@@ -357,22 +604,15 @@ TMP_FILE="$TMP_ROOT/manifest.yaml"
 
 initOS
 verifySupported
-build
 setup
+if [ -z "$VERSION" ]; then
+  compile
+else
+  download
+fi
 patch
 rbac
 ingress
-
-case $ACTION in
-  'install')
-    install
-    ;;
-  'uninstall')
-    uninstall
-    ;;
-  'build')
-    resolve
-    ;;
-esac
-
+imageStream
+eval $ACTION
 cleanup

@@ -23,13 +23,17 @@ import {
   ViewYAML
 } from '@tektoncd/dashboard-components';
 
+const tabs = ['overview', 'yaml'];
+
 const ResourceDetails = ({
   additionalMetadata,
   children,
   error,
   intl,
   loading,
-  resource
+  onViewChange,
+  resource,
+  view
 }) => {
   if (loading) {
     return <SkeletonText heading width="60%" />;
@@ -50,6 +54,11 @@ const ResourceDetails = ({
     );
   }
 
+  let selectedTabIndex = tabs.indexOf(view);
+  if (selectedTabIndex === -1) {
+    selectedTabIndex = 0;
+  }
+
   let formattedLabelsToRender = [];
   if (resource.metadata.labels) {
     formattedLabelsToRender = formatLabels(resource.metadata.labels);
@@ -59,11 +68,12 @@ const ResourceDetails = ({
     <div className="tkn--resourcedetails">
       <h1>{resource.metadata.name}</h1>
       <Tabs
-        selected={0}
         aria-label={intl.formatMessage({
           id: 'dashboard.resourceDetails.ariaLabel',
           defaultMessage: 'Resource details'
         })}
+        onSelectionChange={index => onViewChange(tabs[index])}
+        selected={selectedTabIndex}
       >
         <Tab
           label={intl.formatMessage({
@@ -142,14 +152,18 @@ ResourceDetails.defaultProps = {
   additionalMetadata: null,
   children: null,
   error: null,
-  resource: null
+  onViewChange: /* istanbul ignore next */ () => {},
+  resource: null,
+  view: null
 };
 
 ResourceDetails.propTypes = {
   additionalMetadata: PropTypes.node,
   children: PropTypes.node,
   error: PropTypes.oneOfType([PropTypes.string, PropTypes.shape({})]),
-  resource: PropTypes.shape({})
+  onViewChange: PropTypes.func,
+  resource: PropTypes.shape({}),
+  view: PropTypes.string
 };
 
 export default injectIntl(ResourceDetails);

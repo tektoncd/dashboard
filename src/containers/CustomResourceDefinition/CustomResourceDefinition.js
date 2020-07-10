@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -29,6 +29,7 @@ import {
   getTasksErrorMessage,
   isWebSocketConnected
 } from '../../reducers';
+import { getViewChangeHandler } from '../../utils';
 
 import { getCustomResource } from '../../api';
 
@@ -104,17 +105,29 @@ export /* istanbul ignore next */ class CustomResourceDefinition extends Compone
     const resource = this.props.resource || this.state.resource;
     const { loading } = this.state;
 
+    const { view } = this.props;
+
     return (
-      <ResourceDetails error={error} loading={loading} resource={resource} />
+      <ResourceDetails
+        error={error}
+        loading={loading}
+        onViewChange={getViewChangeHandler(this.props)}
+        resource={resource}
+        view={view}
+      />
     );
   }
 }
 
 /* istanbul ignore next */
 function mapStateToProps(state, ownProps) {
-  const { match } = ownProps;
+  const { location, match } = ownProps;
   const { name, type } = ownProps.match.params;
   const { namespace } = match.params;
+
+  const queryParams = new URLSearchParams(location.search);
+  const view = queryParams.get('view');
+
   const resourceMap = {
     clustertasks: getClusterTask(state, name),
     tasks: getTask(state, { name, namespace }),
@@ -133,6 +146,7 @@ function mapStateToProps(state, ownProps) {
     error: errorMap[type],
     namespace,
     resource: resourceMap[type],
+    view,
     webSocketConnected: isWebSocketConnected(state)
   };
 }

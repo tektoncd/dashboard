@@ -14,10 +14,8 @@ limitations under the License.
 package endpoints
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
-	"io"
 	"net/http"
 	"strings"
 
@@ -26,7 +24,6 @@ import (
 	"github.com/tektoncd/dashboard/pkg/utils"
 	v1alpha1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
 
-	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -75,119 +72,6 @@ type PipelineRunUpdateBody struct {
 
 type RerunRequest struct {
 	PIPELINERUNNAME string `json:"pipelinerunname"`
-}
-
-type PipelineRunLog []TaskRunLog
-type TaskRunLog struct {
-	PodName string
-	// Containers correlating to Task step definitions
-	StepContainers []LogContainer
-	// Additional Containers correlating to Task e.g. PipelineResources
-	PodContainers  []LogContainer
-	InitContainers []LogContainer
-}
-
-// LogContainer - represents the logs for a given container
-type LogContainer struct {
-	Name string
-	Logs []string
-}
-
-const CRDNameLengthLimit = 53
-
-// Unexported field within tekton
-// "github.com/tektoncd/pipeline/pkg/reconciler/v1alpha1/taskrun/resources"
-const ContainerPrefix = "build-step-"
-
-/* Get the logs for a given task run by name in a given namespace */
-func (r Resource) GetTaskRunLog(request *restful.Request, response *restful.Response) {
-	taskRunName := request.PathParameter("name")
-	namespace := request.PathParameter("namespace")
-
-	logging.Log.Debugf("In getTaskRunLog - name: %s, namespace: %s", taskRunName, namespace)
-	taskRunsInterface := r.PipelineClient.TektonV1alpha1().TaskRuns(namespace)
-	taskRun, err := taskRunsInterface.Get(taskRunName, metav1.GetOptions{})
-	if err != nil || taskRun.Status.PodName == "" {
-		utils.RespondError(response, err, http.StatusNotFound)
-		return
-	}
-
-	pod, err := r.K8sClient.CoreV1().Pods(namespace).Get(taskRun.Status.PodName, metav1.GetOptions{})
-	if err != nil {
-		utils.RespondError(response, err, http.StatusNotFound)
-		return
-	}
-	response.WriteEntity(makeTaskRunLog(r, namespace, pod))
-}
-
-func makeTaskRunLog(r Resource, namespace string, pod *v1.Pod) TaskRunLog {
-	podContainers := pod.Spec.Containers
-	initContainers := pod.Spec.InitContainers
-
-	taskRunLog := TaskRunLog{PodName: pod.Name}
-	buf := new(bytes.Buffer)
-	setContainers := func(containers []v1.Container, filter func(l LogContainer)) {
-		for _, container := range containers {
-			buf.Reset()
-			step := LogContainer{Name: container.Name}
-			req := r.K8sClient.CoreV1().Pods(namespace).GetLogs(pod.Name, &v1.PodLogOptions{Container: container.Name})
-			if req.URL().Path == "" {
-				continue
-			}
-			podLogs, _ := req.Stream()
-			if podLogs == nil {
-				continue
-			}
-			_, err := io.Copy(buf, podLogs)
-			if err != nil {
-				podLogs.Close()
-				continue
-			}
-			logs := strings.Split(buf.String(), "\n")
-			for _, log := range logs {
-				if log != "" {
-					step.Logs = append(step.Logs, log)
-				}
-			}
-			filter(step)
-			podLogs.Close()
-		}
-	}
-	setContainers(initContainers, func(l LogContainer) {
-		taskRunLog.InitContainers = append(taskRunLog.InitContainers, l)
-	})
-	setContainers(podContainers, func(l LogContainer) {
-		if strings.HasPrefix(l.Name, ContainerPrefix) {
-			taskRunLog.StepContainers = append(taskRunLog.StepContainers, l)
-		} else {
-			taskRunLog.PodContainers = append(taskRunLog.PodContainers, l)
-		}
-	})
-	return taskRunLog
-}
-
-/* Get the logs for a given pipelinerun by name in a given namespace */
-func (r Resource) GetPipelineRunLog(request *restful.Request, response *restful.Response) {
-	namespace := request.PathParameter("namespace")
-	name := request.PathParameter("name")
-
-	pipelineruns := r.PipelineClient.TektonV1alpha1().PipelineRuns(namespace)
-	pipelinerun, err := pipelineruns.Get(name, metav1.GetOptions{})
-	if err != nil {
-		utils.RespondError(response, err, http.StatusNotFound)
-		return
-	}
-
-	var pipelineRunLogs PipelineRunLog
-	for _, taskrunstatus := range pipelinerun.Status.TaskRuns {
-		podname := taskrunstatus.Status.PodName
-		pod, err := r.K8sClient.CoreV1().Pods(namespace).Get(podname, metav1.GetOptions{})
-		if err != nil {
-			continue
-		}
-		pipelineRunLogs = append(pipelineRunLogs, makeTaskRunLog(r, namespace, pod))
-	}
-	response.WriteEntity(pipelineRunLogs)
 }
 
 func (r Resource) Rerun(name, namespace string) (*v1alpha1.PipelineRun, error) {

@@ -15,6 +15,7 @@ package endpoints
 
 import (
 	"errors"
+	"io"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -60,22 +61,51 @@ func (r Resource) ProxyRequest(request *restful.Request, response *restful.Respo
 	}
 
 	uri := request.PathParameter("subpath") + "?" + parsedURL.RawQuery
-	forwardRequest := r.K8sClient.CoreV1().RESTClient().Verb(request.Request.Method).RequestURI(uri).Body(request.Request.Body)
-	forwardRequest.SetHeader("Content-Type", request.HeaderParameter("Content-Type"))
-	forwardResponse := forwardRequest.Do()
 
 	if secretsURIPattern.Match([]byte(uri)) {
+		forwardRequest := r.K8sClient.CoreV1().RESTClient().Verb(request.Request.Method).RequestURI(uri).Body(request.Request.Body)
+		forwardRequest.SetHeader("Content-Type", request.HeaderParameter("Content-Type"))
+		forwardResponse := forwardRequest.Do()
 		handleSecretsResponse(response, forwardResponse)
 		return
 	}
 
-	responseBody, requestError := forwardResponse.Raw()
-	if requestError != nil {
-		handleRequestError(response, responseBody, requestError)
-		return
+	req, err := http.NewRequest(request.Request.Method, r.Config.Host+"/"+uri, request.Request.Body)
+
+	req = req.WithContext(request.Request.Context())
+
+	if err != nil {
+		logging.Log.Errorf("Failed to create request: %s", err)
+		utils.RespondError(response, err, http.StatusInternalServerError)
+	} else {
+		req.Header.Set("Content-Type", request.HeaderParameter("Content-Type"))
+
+		resp, err := r.HttpClient.Do(req)
+		defer func() {
+			if resp != nil && resp.Body != nil {
+				resp.Body.Close()
+			}
+		}()
+
+		if err != nil {
+			logging.Log.Errorf("Failed to execute request: %s", err)
+			utils.RespondError(response, err, resp.StatusCode)
+		} else {
+			for name, values := range resp.Header {
+				for _, value := range values {
+					response.Header().Add(name, value)
+				}
+			}
+			response.WriteHeader(resp.StatusCode)
+			contentLength := resp.Header.Get("Content-Length")
+			if contentLength == "" {
+				io.Copy(utils.MakeFlushWriter(response), resp.Body)
+			} else {
+				io.Copy(response, resp.Body)
+			}
+			logging.Log.Debugf("END OF REQUEST: %s", uri)
+		}
 	}
-	response.Header().Add("Content-Type", utils.GetContentType(responseBody))
-	response.Write(responseBody)
 }
 
 // GetIngress returns the Ingress endpoint called "tektonDashboardIngressName" in the requested namespace
@@ -109,40 +139,43 @@ func (r Resource) GetIngress(request *restful.Request, response *restful.Respons
 	return
 }
 
-// GetIngress returns the Ingress endpoint called "tektonDashboardIngressName" in the requested namespace
+// GetEndpoints returns the Ingress or Route for the Dashboard
 func (r Resource) GetEndpoints(request *restful.Request, response *restful.Response) {
 	type element struct {
 		Type string `json:"type"`
 		Url  string `json:"url"`
 	}
 	var responses []element
+	var err error
 	requestNamespace := utils.GetNamespace(request)
 
-	route, err := r.RouteClient.RouteV1().Routes(requestNamespace).Get(tektonDashboardIngressName, metav1.GetOptions{})
-	noRuleError := "no Route found labelled " + tektonDashboardRouteName
-	if err != nil || route == nil {
-		logging.Log.Infof("Unable to retrieve any routes: %s", err)
-	} else {
-		if route.Spec.Host != "" { // For that rule, is there actually a host?
-			routeHost := route.Spec.Host
-			responses = append(responses, element{"Route", routeHost})
+	if r.Options.IsOpenShift {
+		ingress, err := r.K8sClient.ExtensionsV1beta1().Ingresses(requestNamespace).Get(tektonDashboardIngressName, metav1.GetOptions{})
+		noRuleError := "no Ingress rules found labelled " + tektonDashboardIngressName
+		if err != nil || ingress == nil {
+			logging.Log.Infof("Unable to retrieve any ingresses: %s", err)
 		} else {
-			logging.Log.Error(noRuleError)
-		}
-	}
-
-	ingress, err := r.K8sClient.ExtensionsV1beta1().Ingresses(requestNamespace).Get(tektonDashboardIngressName, metav1.GetOptions{})
-	noRuleError = "no Ingress rules found labelled " + tektonDashboardIngressName
-	if err != nil || ingress == nil {
-		logging.Log.Infof("Unable to retrieve any ingresses: %s", err)
-	} else {
-		if len(ingress.Spec.Rules) > 0 { // Got more than zero entries?
-			if ingress.Spec.Rules[0].Host != "" { // For that rule, is there actually a host?
-				ingressHost := ingress.Spec.Rules[0].Host
-				responses = append(responses, element{"Ingress", ingressHost})
+			if len(ingress.Spec.Rules) > 0 { // Got more than zero entries?
+				if ingress.Spec.Rules[0].Host != "" { // For that rule, is there actually a host?
+					ingressHost := ingress.Spec.Rules[0].Host
+					responses = append(responses, element{"Ingress", ingressHost})
+				}
+			} else {
+				logging.Log.Error(noRuleError)
 			}
+		}
+	} else {
+		route, err := r.RouteClient.RouteV1().Routes(requestNamespace).Get(tektonDashboardIngressName, metav1.GetOptions{})
+		noRuleError := "no Route found labelled " + tektonDashboardRouteName
+		if err != nil || route == nil {
+			logging.Log.Infof("Unable to retrieve any routes: %s", err)
 		} else {
-			logging.Log.Error(noRuleError)
+			if route.Spec.Host != "" { // For that rule, is there actually a host?
+				routeHost := route.Spec.Host
+				responses = append(responses, element{"Route", routeHost})
+			} else {
+				logging.Log.Error(noRuleError)
+			}
 		}
 	}
 
@@ -161,7 +194,6 @@ func (r Resource) GetProperties(request *restful.Request, response *restful.Resp
 	pipelineNamespace := r.Options.GetPipelinesNamespace()
 	triggersNamespace := r.Options.GetTriggersNamespace()
 	dashboardVersion := getDashboardVersion(r, r.Options.InstallNamespace)
-	isOpenShift := isOpenShift(r, r.Options.InstallNamespace)
 	pipelineVersion := getPipelineVersion(r, pipelineNamespace)
 
 	properties := Properties{
@@ -169,7 +201,7 @@ func (r Resource) GetProperties(request *restful.Request, response *restful.Resp
 		DashboardVersion:   dashboardVersion,
 		PipelineNamespace:  pipelineNamespace,
 		PipelineVersion:    pipelineVersion,
-		IsOpenShift:        isOpenShift,
+		IsOpenShift:        r.Options.IsOpenShift,
 		ReadOnly:           r.Options.ReadOnly,
 		LogoutURL:          r.Options.LogoutURL,
 		TenantNamespace:    r.Options.TenantNamespace,
