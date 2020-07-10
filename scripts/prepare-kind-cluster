@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+
+# Copyright 2020 The Tekton Authors
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#     http://www.apache.org/licenses/LICENSE-2.0
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+set -e
+
+CLUSTERNAME=dashboard
+
+create_cluster() {
+cat <<EOF | kind create cluster --name $CLUSTERNAME --config -
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+- role: control-plane
+  kubeadmConfigPatches:
+  - |
+    kind: InitConfiguration
+    nodeRegistration:
+      kubeletExtraArgs:
+        node-labels: "ingress-ready=true"
+  extraPortMappings:
+  - containerPort: 80
+    hostPort: 80
+    protocol: TCP
+  - containerPort: 443
+    hostPort: 443
+    protocol: TCP
+EOF
+}
+
+install_ingress_nginx() {
+  kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-0.32.0/deploy/static/provider/kind/deploy.yaml
+  sleep 20
+  kubectl wait -n ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=90s
+}
+
+install_pipelines() {
+  kubectl apply --filename https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
+  sleep 10
+  kubectl wait -n tekton-pipelines --for=condition=ready pod --selector=app.kubernetes.io/part-of=tekton-pipelines,app.kubernetes.io/component=controller --timeout=90s
+}
+
+install_triggers() {
+  kubectl apply --filename https://storage.googleapis.com/tekton-releases/triggers/latest/release.yaml
+  sleep 10
+  kubectl wait -n tekton-pipelines --for=condition=ready pod --selector=app.kubernetes.io/part-of=tekton-triggers,app.kubernetes.io/component=controller --timeout=90s
+}
+
+delete_cluster() {
+  kind delete cluster --name $CLUSTERNAME
+}
+
+case $1 in
+  'create'|c)
+    shift
+    create_cluster
+    install_ingress_nginx
+    install_pipelines
+    install_triggers
+    ./scripts/installer install --log-format console $@
+    ;;
+  'delete'|d)
+    delete_cluster
+    ;;
+  *)
+    echo "ERROR: Unknown action $1"
+    exit 1
+    ;;
+esac

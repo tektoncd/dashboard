@@ -32,7 +32,7 @@ import { createPipelineRun } from '../../api';
 import { getStore } from '../../store/index';
 import { isValidLabel } from '../../utils';
 
-import '../../scss/CreateRun.scss';
+import '../../scss/Create.scss';
 
 const initialState = {
   invalidLabels: {},
@@ -95,7 +95,10 @@ const initialResourcesState = resourceSpecs => {
 };
 
 class CreatePipelineRun extends React.Component {
-  state = initialState;
+  constructor(props) {
+    super(props);
+    this.state = this.initialState();
+  }
 
   componentDidUpdate(prevProps) {
     const { open, namespace } = this.props;
@@ -389,7 +392,7 @@ class CreatePipelineRun extends React.Component {
     return (
       <Form>
         <Modal
-          className="tkn--create-run"
+          className="tkn--create"
           open={open}
           modalHeading={intl.formatMessage({
             id: 'dashboard.createPipelineRun.heading',

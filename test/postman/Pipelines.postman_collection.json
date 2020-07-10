@@ -1,0 +1,407 @@
+{
+	"info": {
+		"_postman_id": "54e86bf3-0c0b-4c39-ae1f-2d050ae008cd",
+		"name": "Pipelines",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/v1/proerties",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "102511f5-3a49-407a-a985-85c792df2c24",
+						"exec": [
+							"pm.test(\"Response must be valid and have a body\", function () {",
+							"     pm.response.to.be.ok;",
+							"     pm.response.to.be.withBody;",
+							"     pm.response.to.be.json;",
+							"});",
+							"",
+							"pm.test(\"Check pipelines namespace\", function () {",
+							"    var json = pm.response.json();",
+							"    pm.expect(json.PipelineNamespace).to.eql(pm.globals.get(\"pipelines_namespace\"));",
+							"});",
+							"",
+							"pm.test(\"Check pipelines version\", function () {",
+							"    var json = pm.response.json();",
+							"    pm.expect(json.PipelineVersion).to.eql(pm.globals.get(\"pipelines_version\"));",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{url}}:{{port}}/v1/properties",
+					"protocol": "http",
+					"host": [
+						"{{url}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"v1",
+						"properties"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/proxy/apis/tekton.dev/v1beta1/pipelines",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "67e66e66-21ef-47b1-9d75-385694e66287",
+						"exec": [
+							"pm.test(\"Response must be valid and have a body\", function () {",
+							"     const tenant_namespace = pm.globals.get(\"tenant_namespace\");",
+							"     if (tenant_namespace === '')",
+							"     {",
+							"          pm.response.to.be.ok;",
+							"          pm.response.to.be.withBody;",
+							"          pm.response.to.be.json;",
+							"     }",
+							"     else",
+							"     {",
+							"          pm.response.to.have.status(403);",
+							"     }",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{url}}:{{port}}/proxy/apis/tekton.dev/v1beta1/pipelines",
+					"protocol": "http",
+					"host": [
+						"{{url}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"proxy",
+						"apis",
+						"tekton.dev",
+						"v1beta1",
+						"pipelines"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/proxy/apis/tekton.dev/v1beta1/pipelineruns",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6e9f1b23-8207-4155-93e1-e7d3cf0aebb6",
+						"exec": [
+							"pm.test(\"Response must be valid and have a body\", function () {",
+							"     const tenant_namespace = pm.globals.get(\"tenant_namespace\");",
+							"     if (tenant_namespace === '')",
+							"     {",
+							"          pm.response.to.be.ok;",
+							"          pm.response.to.be.withBody;",
+							"          pm.response.to.be.json;",
+							"     }",
+							"     else",
+							"     {",
+							"          pm.response.to.have.status(403);",
+							"     }",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{url}}:{{port}}/proxy/apis/tekton.dev/v1beta1/pipelineruns",
+					"protocol": "http",
+					"host": [
+						"{{url}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"proxy",
+						"apis",
+						"tekton.dev",
+						"v1beta1",
+						"pipelineruns"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/proxy/apis/tekton.dev/v1beta1/tasks",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "28035b35-7a40-43c5-a8df-fda7e2b8e255",
+						"exec": [
+							"pm.test(\"Response must be valid and have a body\", function () {",
+							"     const tenant_namespace = pm.globals.get(\"tenant_namespace\");",
+							"     if (tenant_namespace === '')",
+							"     {",
+							"          pm.response.to.be.ok;",
+							"          pm.response.to.be.withBody;",
+							"          pm.response.to.be.json;",
+							"     }",
+							"     else",
+							"     {",
+							"          pm.response.to.have.status(403);",
+							"     }",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{url}}:{{port}}/proxy/apis/tekton.dev/v1beta1/tasks",
+					"protocol": "http",
+					"host": [
+						"{{url}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"proxy",
+						"apis",
+						"tekton.dev",
+						"v1beta1",
+						"tasks"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/proxy/apis/tekton.dev/v1beta1/clustertasks",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b2bc65aa-0ffb-4801-9502-6e52d04ab6aa",
+						"exec": [
+							"pm.test(\"Response must be valid and have a body\", function () {",
+							"     pm.response.to.be.ok;",
+							"     pm.response.to.be.withBody;",
+							"     pm.response.to.be.json;",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{url}}:{{port}}/proxy/apis/tekton.dev/v1beta1/clustertasks",
+					"protocol": "http",
+					"host": [
+						"{{url}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"proxy",
+						"apis",
+						"tekton.dev",
+						"v1beta1",
+						"clustertasks"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/proxy/apis/tekton.dev/v1beta1/taskruns",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "87c16fba-2640-4398-8dab-2c5ec71611ff",
+						"exec": [
+							"pm.test(\"Response must be valid and have a body\", function () {",
+							"     const tenant_namespace = pm.globals.get(\"tenant_namespace\");",
+							"     if (tenant_namespace === '')",
+							"     {",
+							"          pm.response.to.be.ok;",
+							"          pm.response.to.be.withBody;",
+							"          pm.response.to.be.json;",
+							"     }",
+							"     else",
+							"     {",
+							"          pm.response.to.have.status(403);",
+							"     }",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{url}}:{{port}}/proxy/apis/tekton.dev/v1beta1/taskruns",
+					"protocol": "http",
+					"host": [
+						"{{url}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"proxy",
+						"apis",
+						"tekton.dev",
+						"v1beta1",
+						"taskruns"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/proxy/apis/tekton.dev/v1alpha1/conditions",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "dbed0ae7-d8e2-4d8a-8ee7-1167d3ffcce9",
+						"exec": [
+							"pm.test(\"Response must be valid and have a body\", function () {",
+							"     const tenant_namespace = pm.globals.get(\"tenant_namespace\");",
+							"     if (tenant_namespace === '')",
+							"     {",
+							"          pm.response.to.be.ok;",
+							"          pm.response.to.be.withBody;",
+							"          pm.response.to.be.json;",
+							"     }",
+							"     else",
+							"     {",
+							"          pm.response.to.have.status(403);",
+							"     }",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{url}}:{{port}}/proxy/apis/tekton.dev/v1alpha1/conditions",
+					"protocol": "http",
+					"host": [
+						"{{url}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"proxy",
+						"apis",
+						"tekton.dev",
+						"v1alpha1",
+						"conditions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/proxy/apis/tekton.dev/v1alpha1/pipelineresources",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "2594e8c8-25d2-467c-894a-711fa9de913b",
+						"exec": [
+							"pm.test(\"Response must be valid and have a body\", function () {",
+							"     const tenant_namespace = pm.globals.get(\"tenant_namespace\");",
+							"     if (tenant_namespace === '')",
+							"     {",
+							"          pm.response.to.be.ok;",
+							"          pm.response.to.be.withBody;",
+							"          pm.response.to.be.json;",
+							"     }",
+							"     else",
+							"     {",
+							"          pm.response.to.have.status(403);",
+							"     }",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{url}}:{{port}}/proxy/apis/tekton.dev/v1alpha1/pipelineresources",
+					"protocol": "http",
+					"host": [
+						"{{url}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"proxy",
+						"apis",
+						"tekton.dev",
+						"v1alpha1",
+						"pipelineresources"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "18194424-c363-4b5b-a800-8cdc8ef1f792",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "daa03737-28e7-4c6d-9863-668e3781e6d7",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
+}

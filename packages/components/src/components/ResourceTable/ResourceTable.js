@@ -30,6 +30,7 @@ const ResourceTable = props => {
     <DataTable
       rows={rowParams}
       headers={headerParams}
+      size="short"
       render={({
         rows,
         headers,

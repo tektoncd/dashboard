@@ -18,8 +18,6 @@
 
 source $(dirname $0)/../vendor/github.com/tektoncd/plumbing/scripts/e2e-tests.sh
 
-pipeline_release=https://github.com/tektoncd/pipeline/releases/download/v0.11.0/release.yaml
-
 function print_diagnostic_info() {
   echo "Diagnostics:"
   resources=("pv" "pvc" "pods")
@@ -31,17 +29,21 @@ function print_diagnostic_info() {
 }
 
 function install_kustomize() {
-  echo ">> Installing kustomize"
-  tar=kustomize_v3.6.1_linux_amd64.tar.gz
-  curl -s -O -L https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v3.6.1/$tar
-  tar xzf ./$tar
+  if ! type "kustomize" > /dev/null; then
+    echo ">> Installing kustomize"
+    tar=kustomize_v3.6.1_linux_amd64.tar.gz
+    curl -s -O -L https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v3.6.1/$tar
+    tar xzf ./$tar
 
-  cp ./kustomize /usr/local/bin
+    cp ./kustomize /usr/local/bin
+  fi
 }
 
-function install_pipeline_crd() {
-  echo ">> Deploying Tekton Pipelines"
-  kubectl apply --filename $pipeline_release  || fail_test "Tekton pipeline installation failed"
+function install_pipelines() {
+  local version=$1
+
+  echo ">> Deploying Tekton Pipelines ($version)"
+  kubectl apply --filename "https://github.com/tektoncd/pipeline/releases/download/$version/release.yaml" || fail_test "Tekton Pipelines installation failed"
 
   # Make sure thateveything is cleaned up in the current namespace.
   for res in pipelineresources tasks pipelines taskruns pipelineruns; do
@@ -49,12 +51,31 @@ function install_pipeline_crd() {
   done
 
   # Wait for pods to be running in the namespaces we are deploying to
-  wait_until_pods_running tekton-pipelines || fail_test "Tekton Pipeline did not come up"
+  wait_until_pods_running tekton-pipelines || fail_test "Tekton Pipelines did not come up"
 }
 
-function delete_pipeline_crd() {
-  echo ">> Deleting Tekton Pipelines"
-  kubectl delete --filename $pipeline_release || fail_test "Tekton pipeline deletion failed"
+function install_triggers() {
+  local version=$1
+
+  echo ">> Deploying Tekton Triggers ($version)"
+  kubectl apply --filename "https://github.com/tektoncd/triggers/releases/download/$version/release.yaml" || fail_test "Tekton Triggers installation failed"
+
+  # Wait for pods to be running in the namespaces we are deploying to
+  wait_until_pods_running tekton-pipelines || fail_test "Tekton Triggers did not come up"
+}
+
+function uninstall_pipelines() {
+  local version=$1
+  
+  echo ">> Deleting Tekton Pipelines ($version)"
+  kubectl delete --filename "https://github.com/tektoncd/pipeline/releases/download/$version/release.yaml" || fail_test "Tekton Pipelines deletion failed"
+}
+
+function uninstall_triggers() {
+  local version=$1
+  
+  echo ">> Deleting Tekton Triggers ($version)"
+  kubectl delete --filename "https://github.com/tektoncd/triggers/releases/download/$version/release.yaml" || fail_test "Tekton Triggers deletion failed"
 }
 
 # Called by `fail_test` (provided by `e2e-tests.sh`) to dump info on test failure
@@ -64,7 +85,7 @@ function dump_extra_cluster_state() {
   echo ">>> Pipeline webhook log:"
   kubectl -n tekton-pipelines logs $(get_app_pod tekton-pipelines-webhook tekton-pipelines)
   echo ">>> Dashboard backend log:"
-  kubectl -n tekton-pipelines logs $(get_app_pod tekton-dashboard tekton-pipelines)
+  kubectl -n $DASHBOARD_NAMESPACE logs $(get_app_pod tekton-dashboard $DASHBOARD_NAMESPACE)
 
   echo "Task info"
   kubectl -n tekton-pipelines get Task -o yaml
@@ -79,14 +100,11 @@ function dump_extra_cluster_state() {
   kubectl -n tekton-pipelines logs -l app=e2e-pipelinerun --all-containers
 }
 
-function install_dashboard_backend() {
-  overlay=$1
-  echo ">> Deploying the Dashboard backend ($overlay)"
-  kustomize build --load_restrictor none overlays/$overlay | ko apply -f - || fail_test "Dashboard backend installation failed"	
+function wait_dashboard_backend() {
   # Wait until deployment is running before checking pods, stops timing error
   for i in {1..30}
   do
-    wait=$(kubectl wait --namespace tekton-pipelines --for=condition=available deployments/tekton-dashboard --timeout=30s)
+    wait=$(kubectl wait --namespace $DASHBOARD_NAMESPACE --for=condition=available deployments/tekton-dashboard --timeout=30s)
     echo "WAIT RESULT: $wait"
     if [ "$wait" = "deployment.apps/tekton-dashboard condition met" ]; then
       break
@@ -97,13 +115,7 @@ function install_dashboard_backend() {
     fi
   done
   # Wait for pods to be running in the namespaces we are deploying to
-  wait_until_pods_running tekton-pipelines || fail_test "Dashboard backend did not come up"
-}
-
-function uninstall_dashboard_backend() {
-  overlay=$1
-  echo ">> Removing the Dashboard backend ($overlay)"
-  kustomize build --load_restrictor none overlays/$overlay | ko delete -f - || fail_test "Dashboard backend removal failed"	
+  wait_until_pods_running $DASHBOARD_NAMESPACE || fail_test "Dashboard backend did not come up"
 }
 
 function dump_cluster_state() {
@@ -142,6 +154,6 @@ function json_curl_envsubst_resource() {
 
 function fail_test() {
   [[ -n $1 ]] && echo "ERROR: $1"
-  dump_cluster_state
+  # dump_cluster_state
   exit 1
 }

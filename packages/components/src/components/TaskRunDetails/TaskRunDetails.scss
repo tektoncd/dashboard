@@ -17,19 +17,6 @@ limitations under the License.
     font-size: 0.75rem;
     margin-bottom: 1rem;
   }
-
-  > pre {
-    font-family: ibm-plex-mono, monospace;
-    font-size: 0.75rem;
-    @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
-      font-size: 0.6875rem;
-    }
-    line-height: 0.95rem;
-    white-space: pre-wrap;
-    word-break: break-all;
-    overflow: hidden;
-    text-shadow: 0.1px 0.1px 0 #272d3340;
-  }
 }
 
 .tkn--step-details {
@@ -46,5 +33,11 @@ limitations under the License.
 
   .bx--data-table-container th{
     width: 50%;
+  }
+
+  .bx--tab-content .tkn--table .bx--data-table.bx--data-table--short {
+    td.cell-value {
+      max-width: unset;
+    }
   }
 }

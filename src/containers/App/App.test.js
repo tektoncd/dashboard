@@ -55,7 +55,7 @@ it('App renders successfully in full cluster mode', async () => {
 
   await waitForElement(() => queryByText('Tekton resources'));
 
-  expect(queryByText(/namespaces/i)).toBeTruthy();
+  expect(queryByText(/namespace/i)).toBeTruthy();
   expect(queryByText(/pipelines/i)).toBeTruthy();
   expect(queryByText(/tasks/i)).toBeTruthy();
 });

@@ -1,0 +1,60 @@
+/*
+Copyright 2019-2020 The Tekton Authors
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+@import '~carbon-components/scss/globals/scss/vars';
+
+.tkn--create {
+  .tkn--create--heading {
+    display: flex;
+
+    h1 {
+      flex-grow: 1;
+    }
+
+    .bx--btn {
+      height: 100%;
+
+      &.bx--btn--secondary {
+        margin-right: $spacing-03;
+      }
+    }
+  }
+
+  .bx--fieldset {
+    margin-bottom: 0;
+  }
+
+  .bx--form__helper-text {
+    color: $text-05; // Since by default the contrast/colour choice is barely readable.
+    max-width: 100%;
+  }
+
+  .bx--label--disabled {
+    color: $text-05;
+  }
+
+  .bx--text-input__field-wrapper {
+    width: 100%;
+  }
+
+  .bx--list-box__wrapper,
+  .bx--form-item {
+    margin-bottom: $carbon--spacing-06;
+    max-width: 40rem;
+  }
+
+  .bx--list-box__menu,
+  .bx--list-box {
+    background-color: $ui-background;
+  }
+}

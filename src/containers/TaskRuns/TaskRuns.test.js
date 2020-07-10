@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -21,6 +21,7 @@ import { Route } from 'react-router-dom';
 import { renderWithRouter } from '../../utils/test';
 import * as API from '../../api';
 import * as selectors from '../../reducers';
+import * as store from '../../store';
 import TaskRunsContainer from './TaskRuns';
 
 const namespacesTestStore = {
@@ -146,17 +147,19 @@ const testStore = {
 describe('TaskRuns container', () => {
   beforeEach(() => {
     jest.spyOn(API, 'getTaskRuns').mockImplementation(() => []);
+    jest
+      .spyOn(store, 'getStore')
+      .mockImplementation(() => mockStore(testStore));
   });
 
   it('taskRuns can be filtered on a single label filter', async () => {
-    const mockTestStore = mockStore(testStore);
     const match = {
       params: {},
       url: '/taskruns'
     };
 
     const { queryByText, getByTestId, getByText } = renderWithRouter(
-      <Provider store={mockTestStore}>
+      <Provider store={store.getStore()}>
         <Route
           path="/taskruns"
           render={props => (
@@ -186,14 +189,13 @@ describe('TaskRuns container', () => {
   });
 
   it('taskRuns can be filtered on multiple label filters', async () => {
-    const mockTestStore = mockStore(testStore);
     const match = {
       params: {},
       url: ''
     };
 
     const { queryByText, getByTestId, getByText } = renderWithRouter(
-      <Provider store={mockTestStore}>
+      <Provider store={store.getStore()}>
         <Route
           path="/taskruns"
           render={props => (
@@ -229,14 +231,13 @@ describe('TaskRuns container', () => {
   });
 
   it('taskRuns label filter can be deleted, rendering the correct taskRuns', async () => {
-    const mockTestStore = mockStore(testStore);
     const match = {
       params: {},
       url: '/taskruns'
     };
 
     const { queryByText, getByTestId, getByText } = renderWithRouter(
-      <Provider store={mockTestStore}>
+      <Provider store={store.getStore()}>
         <Route
           path="/taskruns"
           render={props => (
@@ -273,14 +274,13 @@ describe('TaskRuns container', () => {
   });
 
   it('Duplicate label filters are prevented', async () => {
-    const mockTestStore = mockStore(testStore);
     const match = {
       params: {},
       url: '/taskruns'
     };
 
     const { queryByText, getByTestId, getByText } = renderWithRouter(
-      <Provider store={mockTestStore}>
+      <Provider store={store.getStore()}>
         <Route
           path="/taskruns"
           render={props => (
@@ -312,14 +312,13 @@ describe('TaskRuns container', () => {
   });
 
   it('An invalid filter value is disallowed and reported', async () => {
-    const mockTestStore = mockStore(testStore);
     const match = {
       params: {},
       url: '/taskruns'
     };
 
     const { queryByText, getByTestId, getByText } = renderWithRouter(
-      <Provider store={mockTestStore}>
+      <Provider store={store.getStore()}>
         <Route
           path="/taskruns"
           render={props => (
@@ -353,14 +352,13 @@ describe('TaskRuns container', () => {
   it('TaskRun actions are available when not in read-only mode', async () => {
     jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => false);
 
-    const mockTestStore = mockStore(testStore);
     const match = {
       params: {},
       url: '/taskruns'
     };
 
     const { getByText, getByTitle } = renderWithRouter(
-      <Provider store={mockTestStore}>
+      <Provider store={store.getStore()}>
         <Route
           path="/taskruns"
           render={props => (
@@ -386,14 +384,13 @@ describe('TaskRuns container', () => {
   it('TaskRun actions are not available when in read-only mode', async () => {
     jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => true);
 
-    const mockTestStore = mockStore(testStore);
     const match = {
       params: {},
       url: '/taskruns'
     };
 
     const { getByText, queryByTitle } = renderWithRouter(
-      <Provider store={mockTestStore}>
+      <Provider store={store.getStore()}>
         <Route
           path="/taskruns"
           render={props => (

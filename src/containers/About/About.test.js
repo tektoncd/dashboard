@@ -19,9 +19,9 @@ import thunk from 'redux-thunk';
 import { renderWithIntl } from '../../utils/test';
 import About from '.';
 
-const dashboardSelector = { selector: '[data-testid="dashboard-table"] *' };
-const pipelinesSelector = { selector: '[data-testid="pipelines-table"] *' };
-const triggersSelector = { selector: '[data-testid="triggers-table"] *' };
+const dashboardSelector = { selector: '.tkn--about--dashboard-table *' };
+const pipelinesSelector = { selector: '.tkn--about--pipelines-table *' };
+const triggersSelector = { selector: '.tkn--about--triggers-table *' };
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 

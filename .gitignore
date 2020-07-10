@@ -23,4 +23,5 @@ stats.json
 .DS_Store
 Thumbs.db
 
-dashboard
+csrf_headers.txt
+/dashboard

@@ -23,12 +23,13 @@ import (
 	"time"
 
 	"github.com/gorilla/csrf"
-	routeclient "github.com/openshift/client-go/route/clientset/versioned"
+	routeclientset "github.com/openshift/client-go/route/clientset/versioned"
+	dashboardclientset "github.com/tektoncd/dashboard/pkg/client/clientset/versioned"
 	"github.com/tektoncd/dashboard/pkg/controllers"
 	"github.com/tektoncd/dashboard/pkg/endpoints"
-	logging "github.com/tektoncd/dashboard/pkg/logging"
+	"github.com/tektoncd/dashboard/pkg/logging"
 	"github.com/tektoncd/dashboard/pkg/router"
-	clientset "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
+	pipelineclientset "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
 	resourceclientset "github.com/tektoncd/pipeline/pkg/client/resource/clientset/versioned"
 	k8sclientset "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
@@ -45,7 +46,7 @@ var (
 	kubeConfigPath     = flag.String("kube-config", "", "Path to kube config file")
 	portNumber         = flag.Int("port", 8080, "Dashboard port number")
 	readOnly           = flag.Bool("read-only", false, "Enable or disable read only mode")
-	webDir             = flag.String("web-dir", "", "Dashboard web resources dir")
+	isOpenshift        = flag.Bool("openshift", false, "Indicates the dashboard is running on openshift")
 	logoutUrl          = flag.String("logout-url", "", "If set, enables logout on the frontend and binds the logout button to this url")
 	csrfSecureCookie   = flag.Bool("csrf-secure-cookie", true, "Enable or disable Secure attribute on the CSRF cookie")
 	tenantNamespace    = flag.String("namespace", "", "If set, limits the scope of resources watched to this namespace only")
@@ -96,10 +97,16 @@ func main() {
 		}
 	}
 
-	pipelineClient, err := clientset.NewForConfig(cfg)
+	pipelineClient, err := pipelineclientset.NewForConfig(cfg)
 	if err != nil {
 		logging.Log.Errorf("Error building pipeline clientset: %s", err.Error())
 	}
+
+	dashboardClient, err := dashboardclientset.NewForConfig(cfg)
+	if err != nil {
+		logging.Log.Errorf("Error building dashboard clientset: %s", err.Error())
+	}
+
 	pipelineResourceClient, err := resourceclientset.NewForConfig(cfg)
 	if err != nil {
 		logging.Log.Errorf("Error building pipelineresource clientset: %s", err.Error())
@@ -110,9 +117,18 @@ func main() {
 		logging.Log.Errorf("Error building k8s clientset: %s", err.Error())
 	}
 
-	routeClient, err := routeclient.NewForConfig(cfg)
+	var routeClient routeclientset.Interface
+
+	if *isOpenshift {
+		routeClient, err = routeclientset.NewForConfig(cfg)
+		if err != nil {
+			logging.Log.Errorf("Error building route clientset: %s", err.Error())
+		}
+	}
+
+	transport, err := rest.TransportFor(cfg)
 	if err != nil {
-		logging.Log.Errorf("Error building route clientset: %s", err.Error())
+		logging.Log.Errorf("Error building rest transport: %s", err.Error())
 	}
 
 	options := endpoints.Options{
@@ -121,11 +137,14 @@ func main() {
 		TriggersNamespace:  *triggersNamespace,
 		TenantNamespace:    *tenantNamespace,
 		ReadOnly:           *readOnly,
-		WebDir:             *webDir,
+		IsOpenShift:        *isOpenshift,
 		LogoutURL:          *logoutUrl,
 	}
 
 	resource := endpoints.Resource{
+		Config:                 cfg,
+		HttpClient:             &http.Client{Transport: transport},
+		DashboardClient:        dashboardClient,
 		PipelineClient:         pipelineClient,
 		PipelineResourceClient: pipelineResourceClient,
 		K8sClient:              k8sClient,
@@ -141,6 +160,7 @@ func main() {
 	resyncDur := time.Second * 30
 	controllers.StartTektonControllers(resource.PipelineClient, resource.PipelineResourceClient, *tenantNamespace, resyncDur, ctx.Done())
 	controllers.StartKubeControllers(resource.K8sClient, resyncDur, *tenantNamespace, *readOnly, routerHandler, ctx.Done())
+	controllers.StartDashboardControllers(resource.DashboardClient, resyncDur, *tenantNamespace, ctx.Done())
 
 	logging.Log.Infof("Creating server and entering wait loop")
 	CSRF := csrf.Protect(

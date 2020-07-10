@@ -217,7 +217,12 @@ function wire({ graph, nodes, parentName, childName }) {
  * Create an ELK-compatible graph model from a set of
  * Tekton resources representing a PipelineRun.
  */
-export default function({ expanded = {}, pipeline, pipelineRun, tasks }) {
+export default function buildGraphData({
+  expanded = {},
+  pipeline,
+  pipelineRun,
+  tasks
+}) {
   const { graph, start, end } = getBaseNodes();
   const nodes = addNodes({ expanded, graph, pipeline, pipelineRun, tasks });
 

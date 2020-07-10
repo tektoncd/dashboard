@@ -29,6 +29,7 @@ import {
   isFetchingTriggerTemplates,
   isWebSocketConnected
 } from '../../reducers';
+import { getViewChangeHandler } from '../../utils';
 
 import { fetchTriggerTemplate } from '../../actions/triggerTemplates';
 
@@ -138,6 +139,7 @@ export /* istanbul ignore next */ class TriggerTemplateContainer extends Compone
           })}
           headers={headersForParameters}
           rows={rowsForParameters}
+          size="short"
           selectedNamespace={selectedNamespace}
           emptyTextAllNamespaces={emptyTextMessage}
           emptyTextSelectedNamespace={emptyTextMessage}
@@ -146,75 +148,79 @@ export /* istanbul ignore next */ class TriggerTemplateContainer extends Compone
         {resourcetemplates && (
           // This is a very customised expandable table so intentionally not the one used elsewhere
           // although it should look the same
-          <DataTable
-            rows={resourcetemplates.map((item, index) => ({
-              id: `${index}|${item.metadata.name ||
-                item.metadata.generateName}`,
-              name: item.metadata.name || item.metadata.generateName,
-              kind: item.kind
-            }))}
-            headers={[
-              {
-                key: 'name',
-                header: intl.formatMessage({
-                  id: 'dashboard.tableHeader.name',
-                  defaultMessage: 'Name'
-                })
-              },
-              {
-                key: 'kind',
-                header: 'Kind'
-              }
-            ]}
-            render={({
-              rows,
-              headers,
-              getHeaderProps,
-              getRowProps,
-              getTableProps
-            }) => (
-              <TableContainer
-                data-testid="resourcetemplatestable"
-                title={intl.formatMessage({
-                  id: 'dashboard.triggerTemplate.resourceTemplates',
-                  defaultMessage: 'Resource Templates'
-                })}
-              >
-                <Table {...getTableProps()}>
-                  <TableHead>
-                    <TableRow>
-                      <TableExpandHeader />
-                      {headers.map(header => (
-                        <TableHeader {...getHeaderProps({ header })}>
-                          {header.header}
-                        </TableHeader>
+          <div className="tkn--table">
+            <DataTable
+              rows={resourcetemplates.map((item, index) => ({
+                id: `${index}|${
+                  item.metadata.name || item.metadata.generateName
+                }`,
+                name: item.metadata.name || item.metadata.generateName,
+                kind: item.kind
+              }))}
+              headers={[
+                {
+                  key: 'name',
+                  header: intl.formatMessage({
+                    id: 'dashboard.tableHeader.name',
+                    defaultMessage: 'Name'
+                  })
+                },
+                {
+                  key: 'kind',
+                  header: 'Kind'
+                }
+              ]}
+              size="short"
+              render={({
+                rows,
+                headers,
+                getHeaderProps,
+                getRowProps,
+                getTableProps
+              }) => (
+                <TableContainer
+                  data-testid="resourcetemplatestable"
+                  title={intl.formatMessage({
+                    id: 'dashboard.triggerTemplate.resourceTemplates',
+                    defaultMessage: 'Resource Templates'
+                  })}
+                >
+                  <Table {...getTableProps()}>
+                    <TableHead>
+                      <TableRow>
+                        <TableExpandHeader />
+                        {headers.map(header => (
+                          <TableHeader {...getHeaderProps({ header })}>
+                            {header.header}
+                          </TableHeader>
+                        ))}
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {rows.map((row, index) => (
+                        <React.Fragment key={row.id}>
+                          <TableExpandRow {...getRowProps({ row })}>
+                            {row.cells.map(cell => (
+                              <TableCell key={cell.id}>{cell.value}</TableCell>
+                            ))}
+                          </TableExpandRow>
+                          {row.isExpanded && (
+                            <TableExpandedRow colSpan={headers.length + 1}>
+                              <ViewYAML
+                                resource={
+                                  triggerTemplate.spec.resourcetemplates[index]
+                                }
+                              />
+                            </TableExpandedRow>
+                          )}
+                        </React.Fragment>
                       ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {rows.map((row, index) => (
-                      <React.Fragment key={row.id}>
-                        <TableExpandRow {...getRowProps({ row })}>
-                          {row.cells.map(cell => (
-                            <TableCell key={cell.id}>{cell.value}</TableCell>
-                          ))}
-                        </TableExpandRow>
-                        {row.isExpanded && (
-                          <TableExpandedRow colSpan={headers.length + 1}>
-                            <ViewYAML
-                              resource={
-                                triggerTemplate.spec.resourcetemplates[index]
-                              }
-                            />
-                          </TableExpandedRow>
-                        )}
-                      </React.Fragment>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            )}
-          />
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              )}
+            />
+          </div>
         )}
       </>
     );
@@ -227,13 +233,15 @@ export /* istanbul ignore next */ class TriggerTemplateContainer extends Compone
   }
 
   render() {
-    const { error, loading, triggerTemplate } = this.props;
+    const { error, loading, triggerTemplate, view } = this.props;
 
     return (
       <ResourceDetails
         error={error}
         loading={loading}
+        onViewChange={getViewChangeHandler(this.props)}
         resource={triggerTemplate}
+        view={view}
       >
         {this.getContent()}
       </ResourceDetails>
@@ -251,8 +259,11 @@ TriggerTemplateContainer.propTypes = {
 
 /* istanbul ignore next */
 function mapStateToProps(state, ownProps) {
-  const { match } = ownProps;
+  const { location, match } = ownProps;
   const { namespace: namespaceParam, triggerTemplateName } = match.params;
+
+  const queryParams = new URLSearchParams(location.search);
+  const view = queryParams.get('view');
 
   const namespace = namespaceParam || getSelectedNamespace(state);
   const triggerTemplate = getTriggerTemplate(state, {
@@ -264,6 +275,7 @@ function mapStateToProps(state, ownProps) {
     loading: isFetchingTriggerTemplates(state),
     selectedNamespace: namespace,
     triggerTemplate,
+    view,
     webSocketConnected: isWebSocketConnected(state)
   };
 }

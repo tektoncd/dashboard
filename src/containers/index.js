@@ -16,9 +16,14 @@ export { default as ClusterTasks } from './ClusterTasks';
 export { default as ClusterTasksDropdown } from './ClusterTasksDropdown';
 export { default as Condition } from './Condition';
 export { default as Conditions } from './Conditions';
+<<<<<<< HEAD
 export {
   default as CustomResourceDefinition
 } from './CustomResourceDefinition';
+=======
+export { default as CustomResourceDefinition } from './CustomResourceDefinition';
+export { default as CreatePipelineResource } from './CreatePipelineResource';
+>>>>>>> master
 export { default as CreatePipelineRun } from './CreatePipelineRun';
 export { default as CreateSecret } from './CreateSecret';
 export { default as CreateTaskRun } from './CreateTaskRun';

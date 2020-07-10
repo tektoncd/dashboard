@@ -1,0 +1,263 @@
+{
+	"info": {
+		"_postman_id": "c02f5d83-02e4-4e20-aff5-d54639df1cbb",
+		"name": "Triggers",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/v1/proerties",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "00d96056-4623-4b83-bcf8-8976059634c1",
+						"exec": [
+							"pm.test(\"Response must be valid and have a body\", function () {",
+							"     pm.response.to.be.ok;",
+							"     pm.response.to.be.withBody;",
+							"     pm.response.to.be.json;",
+							"});",
+							"",
+							"pm.test(\"Check triggers namespace\", function () {",
+							"    var json = pm.response.json();",
+							"    pm.expect(json.TriggersNamespace).to.eql(pm.globals.get(\"triggers_namespace\"));",
+							"});",
+							"",
+							"pm.test(\"Check triggers version\", function () {",
+							"    var json = pm.response.json();",
+							"    pm.expect(json.TriggersVersion).to.eql(pm.globals.get(\"triggers_version\"));",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{url}}:{{port}}/v1/properties",
+					"protocol": "http",
+					"host": [
+						"{{url}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"v1",
+						"properties"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/proxy/apis/triggers.tekton.dev/v1alpha1/eventlisteners",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "48bf3ebf-bd53-4e32-bbf1-71d830cdc585",
+						"exec": [
+							"pm.test(\"Response must be valid and have a body\", function () {",
+							"     const tenant_namespace = pm.globals.get(\"tenant_namespace\");",
+							"     if (tenant_namespace === '')",
+							"     {",
+							"          pm.response.to.be.ok;",
+							"          pm.response.to.be.withBody;",
+							"          pm.response.to.be.json;",
+							"     }",
+							"     else",
+							"     {",
+							"          pm.response.to.have.status(403);",
+							"     }",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{url}}:{{port}}/proxy/apis/triggers.tekton.dev/v1alpha1/eventlisteners",
+					"protocol": "http",
+					"host": [
+						"{{url}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"proxy",
+						"apis",
+						"triggers.tekton.dev",
+						"v1alpha1",
+						"eventlisteners"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/proxy/apis/triggers.tekton.dev/v1alpha1/triggerbindings",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "93ec33a8-1bb8-4622-9c63-b6f0f7030570",
+						"exec": [
+							"pm.test(\"Response must be valid and have a body\", function () {",
+							"     const tenant_namespace = pm.globals.get(\"tenant_namespace\");",
+							"     if (tenant_namespace === '')",
+							"     {",
+							"          pm.response.to.be.ok;",
+							"          pm.response.to.be.withBody;",
+							"          pm.response.to.be.json;",
+							"     }",
+							"     else",
+							"     {",
+							"          pm.response.to.have.status(403);",
+							"     }",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{url}}:{{port}}/proxy/apis/triggers.tekton.dev/v1alpha1/triggerbindings",
+					"protocol": "http",
+					"host": [
+						"{{url}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"proxy",
+						"apis",
+						"triggers.tekton.dev",
+						"v1alpha1",
+						"triggerbindings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/proxy/apis/triggers.tekton.dev/v1alpha1/clustertriggerbindings",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ba943aaf-5624-480b-ba3a-72fb4a164698",
+						"exec": [
+							"pm.test(\"Response must be valid and have a body\", function () {",
+							"     pm.response.to.be.ok;",
+							"     pm.response.to.be.withBody;",
+							"     pm.response.to.be.json;",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{url}}:{{port}}/proxy/apis/triggers.tekton.dev/v1alpha1/clustertriggerbindings",
+					"protocol": "http",
+					"host": [
+						"{{url}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"proxy",
+						"apis",
+						"triggers.tekton.dev",
+						"v1alpha1",
+						"clustertriggerbindings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/proxy/apis/triggers.tekton.dev/v1alpha1/triggertemplates",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b0c5b00a-caf9-449c-92b5-eca970add35b",
+						"exec": [
+							"pm.test(\"Response must be valid and have a body\", function () {",
+							"     const tenant_namespace = pm.globals.get(\"tenant_namespace\");",
+							"     if (tenant_namespace === '')",
+							"     {",
+							"          pm.response.to.be.ok;",
+							"          pm.response.to.be.withBody;",
+							"          pm.response.to.be.json;",
+							"     }",
+							"     else",
+							"     {",
+							"          pm.response.to.have.status(403);",
+							"     }",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{url}}:{{port}}/proxy/apis/triggers.tekton.dev/v1alpha1/triggertemplates",
+					"protocol": "http",
+					"host": [
+						"{{url}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"proxy",
+						"apis",
+						"triggers.tekton.dev",
+						"v1alpha1",
+						"triggertemplates"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "17b41de8-b446-4a96-91a3-e3ce4c93214c",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "8a9fa110-ac8d-45e1-9b52-9e0635fb1c2e",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
+}

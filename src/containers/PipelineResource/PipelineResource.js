@@ -25,6 +25,7 @@ import {
   isFetchingPipelineResources,
   isWebSocketConnected
 } from '../../reducers';
+import { getViewChangeHandler } from '../../utils';
 
 import { fetchPipelineResource } from '../../actions/pipelineResources';
 
@@ -77,8 +78,8 @@ export /* istanbul ignore next */ class PipelineResourceContainer extends Compon
   }
 
   render() {
-    const { error, intl, loading, pipelineResource } = this.props;
-    const { params, secrets, type } = pipelineResource.spec;
+    const { error, intl, loading, pipelineResource, view } = this.props;
+    const { params = [], secrets, type } = pipelineResource?.spec || {};
 
     return (
       <ResourceDetails
@@ -95,7 +96,9 @@ export /* istanbul ignore next */ class PipelineResourceContainer extends Compon
         }
         error={error}
         loading={loading}
+        onViewChange={getViewChangeHandler(this.props)}
         resource={pipelineResource}
+        view={view}
       >
         <DataTable
           rows={params.map(({ name, value }) => ({
@@ -230,8 +233,11 @@ PipelineResourceContainer.propTypes = {
 
 /* istanbul ignore next */
 function mapStateToProps(state, ownProps) {
-  const { match } = ownProps;
+  const { location, match } = ownProps;
   const { namespace, pipelineResourceName: name } = match.params;
+
+  const queryParams = new URLSearchParams(location.search);
+  const view = queryParams.get('view');
 
   return {
     error: getPipelineResourcesErrorMessage(state),
@@ -241,6 +247,7 @@ function mapStateToProps(state, ownProps) {
       name,
       namespace
     }),
+    view,
     webSocketConnected: isWebSocketConnected(state)
   };
 }

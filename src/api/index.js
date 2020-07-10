@@ -24,6 +24,7 @@ import {
 
 const tektonAPIGroup = 'tekton.dev';
 const triggersAPIGroup = 'triggers.tekton.dev';
+const dashboardAPIGroup = 'dashboard.tekton.dev';
 
 const apiRoot = getAPIRoot();
 
@@ -437,7 +438,7 @@ export function getCustomResource(...args) {
 export async function getExtensions({ namespace } = {}) {
   const uri = `${apiRoot}/v1/extensions`;
   const resourceExtensionsUri = getResourcesAPI({
-    group: 'dashboard.tekton.dev',
+    group: dashboardAPIGroup,
     version: 'v1alpha1',
     type: 'extensions',
     namespace

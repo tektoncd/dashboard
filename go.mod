@@ -12,6 +12,7 @@ replace (
 )
 
 require (
+	github.com/circonus-labs/circonus-gometrics v2.3.1+incompatible
 	github.com/emicklei/go-restful v2.12.0+incompatible
 	github.com/google/go-cmp v0.4.0
 	github.com/gorilla/csrf v1.7.0
@@ -24,6 +25,7 @@ require (
 	k8s.io/api v0.17.6
 	k8s.io/apimachinery v0.17.6
 	k8s.io/client-go v11.0.1-0.20190805182717-6502b5e7b1b5+incompatible
+	k8s.io/code-generator v0.18.0
 	knative.dev/pkg v0.0.0-20200529164702-389d28f9b67a
 	sigs.k8s.io/yaml v1.2.0 // indirect
 )

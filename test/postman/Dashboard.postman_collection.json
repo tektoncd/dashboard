@@ -1,0 +1,101 @@
+{
+	"info": {
+		"_postman_id": "0d7003f1-9be0-49bb-bc91-374c4b63624f",
+		"name": "Dashboard",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/v1/proerties",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4a0b1d7e-480d-4bbf-8bdf-63f0a3a4643b",
+						"exec": [
+							"pm.test(\"Response must be valid and have a body\", function () {",
+							"     pm.response.to.be.ok;",
+							"     pm.response.to.be.withBody;",
+							"     pm.response.to.be.json;",
+							"});",
+							"",
+							"pm.test(\"Check dashboard namespace\", function () {",
+							"    var json = pm.response.json();",
+							"    pm.expect(json.DashboardNamespace).to.eql(pm.globals.get(\"dashboard_namespace\"));",
+							"});",
+							"",
+							"pm.test(\"Check dashboard version\", function () {",
+							"    var json = pm.response.json();",
+							"    pm.expect(json.DashboardVersion).to.eql(pm.globals.get(\"dashboard_version\"));",
+							"});",
+							"",
+							"pm.test(\"Check is openshift\", function () {",
+							"    var json = pm.response.json();",
+							"    pm.expect(json.IsOpenShift).to.eql(JSON.parse(pm.globals.get(\"is_openshift\")));",
+							"});",
+							"",
+							"pm.test(\"Check readonly\", function () {",
+							"    var json = pm.response.json();",
+							"    pm.expect(json.ReadOnly).to.eql(JSON.parse(pm.globals.get(\"readonly\")));",
+							"});",
+							"",
+							"pm.test(\"Check tenant namespace\", function () {",
+							"    var json = pm.response.json();",
+							"    if (json.TenantNamespace)",
+							"    {",
+							"        pm.expect(json.TenantNamespace).to.eql(pm.globals.get(\"tenant_namespace\"));",
+							"    }",
+							"    else",
+							"    {",
+							"        pm.expect(pm.globals.get(\"tenant_namespace\")).to.eql('');",
+							"    }",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{url}}:{{port}}/v1/properties",
+					"protocol": "http",
+					"host": [
+						"{{url}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"v1",
+						"properties"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "84e4b6cd-acc3-4ab1-8397-95e9d2ccdd18",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "567efae0-18cc-461f-b534-ad8f45ea66f6",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
+}

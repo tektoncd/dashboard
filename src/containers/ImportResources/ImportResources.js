@@ -21,8 +21,7 @@ import {
   FormGroup,
   InlineNotification,
   TextInput,
-  ToastNotification,
-  Tooltip
+  ToastNotification
 } from 'carbon-components-react';
 
 import { connect } from 'react-redux';
@@ -64,7 +63,7 @@ export class ImportResources extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      directory: '',
+      path: '',
       invalidInput: false,
       invalidNamespace: false,
       invalidImporterNamespace: false,
@@ -135,7 +134,7 @@ export class ImportResources extends Component {
 
   handleSubmit = () => {
     const {
-      directory: applyDirectory,
+      path: applyDirectory,
       namespace,
       repositoryURL,
       serviceAccount,
@@ -272,24 +271,24 @@ export class ImportResources extends Component {
               value={this.state.repositoryURL}
             />
             <TextInput
-              data-testid="directory-field"
+              data-testid="path-field"
               helperText={intl.formatMessage({
-                id: 'dashboard.importResources.directory.helperText',
+                id: 'dashboard.importResources.path.helperText',
                 defaultMessage:
-                  'The location of the Tekton resources to import from the repository. Leave blank if the resources are at the top-level directory.'
+                  'The path of the Tekton resources to import from the repository. Leave blank if the resources are at the top-level directory.'
               })}
-              id="import-directory"
+              id="import-path"
               labelText={intl.formatMessage({
-                id: 'dashboard.importResources.directory.labelText',
-                defaultMessage: 'Repository directory (optional)'
+                id: 'dashboard.importResources.path.labelText',
+                defaultMessage: 'Repository path (optional)'
               })}
-              name="directory"
+              name="path"
               onChange={this.handleTextInput}
               placeholder={intl.formatMessage({
-                id: 'dashboard.importResources.directory.placeholder',
-                defaultMessage: 'Enter repository directory'
+                id: 'dashboard.importResources.path.placeholder',
+                defaultMessage: 'Enter repository path'
               })}
-              value={this.state.directory}
+              value={this.state.path}
             />
             <NamespacesDropdown
               id="import-namespaces-dropdown"
@@ -314,38 +313,11 @@ export class ImportResources extends Component {
           </FormGroup>
           <Accordion>
             <AccordionItem
-              iconDescription={intl.formatMessage({
-                id: 'dashboard.importResources.expandCollapse',
-                defaultMessage: 'Expand/Collapse'
+              title={intl.formatMessage({
+                id: 'dashboard.importResources.advanced.accordionText',
+                defaultMessage:
+                  'Advanced configuration for the Import PipelineRun'
               })}
-              title={
-                <Tooltip
-                  direction="right"
-                  triggerText={intl.formatMessage({
-                    id: 'dashboard.importResources.advanced.accordionText',
-                    defaultMessage:
-                      'Advanced configuration for the Import PipelineRun'
-                  })}
-                >
-                  <div>
-                    {intl.formatMessage(
-                      {
-                        id: 'dashboard.importResources.advanced.tooltip',
-                        defaultMessage:
-                          'Change these parameters if you want the PipelineRun that will do the importing to run in a different namespace from the Dashboard.{break}You can optionally provide a different ServiceAccount too.'
-                      },
-                      {
-                        break: (
-                          <>
-                            <br />
-                            <br />
-                          </>
-                        )
-                      }
-                    )}
-                  </div>
-                </Tooltip>
-              }
             >
               <NamespacesDropdown
                 id="import-install-namespaces-dropdown"

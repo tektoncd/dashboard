@@ -2,23 +2,24 @@
 
 This guide explains how to install Tekton Dashboard. It covers the following topics:
 
-* [Before you begin](#before-you-begin)
-* [Pre-requisites](#pre-requisites)
-* [Which version should I use](#which-version-should-i-use)
-* [Installing Tekton Dashboard on Kubernetes](#installing-tekton-dashboard-on-kubernetes)
-* [Installing Tekton Dashboard on OpenShift](#installing-tekton-dashboard-on-openshift)
-* [Accessing the Dashboard on Kubernetes](#accessing-the-dashboard-on-kubernetes)
-* [Accessing the Dashboard on OpenShift](#accessing-the-dashboard-on-openshift)
-* [Uninstalling the Dashboard on Kubernetes](#uninstalling-the-dashboard-on-kubernetes)
-* [Next steps](#next-steps)
+- [Before you begin](#before-you-begin)
+- [Pre-requisites](#pre-requisites)
+- [Which version should I use](#which-version-should-i-use)
+- [Installing with the installer script](#installing-with-the-installer-script)
+- [Installing Tekton Dashboard on Kubernetes](#installing-tekton-dashboard-on-kubernetes)
+- [Installing Tekton Dashboard on OpenShift](#installing-tekton-dashboard-on-openshift)
+- [Accessing the Dashboard on Kubernetes](#accessing-the-dashboard-on-kubernetes)
+- [Accessing the Dashboard on OpenShift](#accessing-the-dashboard-on-openshift)
+- [Uninstalling the Dashboard on Kubernetes](#uninstalling-the-dashboard-on-kubernetes)
+- [Next steps](#next-steps)
 
 ## Before you begin
 
 Choose the version of Tekton Dashboard you want to install. You have the following options:
 
-* **[Official](https://github.com/tektoncd/dashboard/releases)** - install this unless you have a specific reason to go for a different release.
-* **[Nightly](../tekton/README.md#nightly-releases)** - may contain bugs, install at your own risk. Nightlies live at `gcr.io/tekton-nightly`.
-* **[`HEAD`]** - this is the bleeding edge. It contains unreleased code that may result in unpredictable behavior. To get started, see the [development guide](../DEVELOPMENT.md) instead of this page.
+- **[Official](https://github.com/tektoncd/dashboard/releases)** - install this unless you have a specific reason to go for a different release.
+- **[Nightly](../tekton/README.md#nightly-releases)** - may contain bugs, install at your own risk. Nightlies live at `gcr.io/tekton-nightly`.
+- **[`HEAD`]** - this is the bleeding edge. It contains unreleased code that may result in unpredictable behavior. To get started, see the [development guide](../DEVELOPMENT.md) instead of this page.
 
 ## Pre-requisites
 
@@ -36,6 +37,26 @@ See the [docs on the main page](../README.md) to find the Tekton Dashboard versi
 
 Please, pay attention to annoucements like **deprecated versions** and/or **security related recommendations** when choosing the version you want to install.
 
+## Installing with the installer script
+
+We recently introduced an installer script to make it easy to deploy the Tekton Dashboard with custom options.
+
+While this is still an experimental feature, it should help making the install process customizable and allow you to provide options that suit your needs. We would definitely love to hear your feedback on this new install mode.
+
+You can refer to the dev docs for more infos [on how to use the installer](./dev/installer.md).
+
+**Important note:** this won't work with releases prior to `v0.8.0`, the installer needs specific assets to work and those assets weren't produced in past release thus making the installer impossible to use with versions before `v0.8.0`.
+
+In a nutshell, invoking the `installer` will look something like this:
+
+```bash
+DASHBOARD_VERSION=v0.8.0
+curl -sL https://raw.githubusercontent.com/tektoncd/dashboard/master/scripts/release-installer | \
+   bash -s -- install $DASHBOARD_VERSION --read-only
+```
+
+Of course, you can still use the generated manifests as detailed below.
+
 ## Installing Tekton Dashboard on Kubernetes
 
 To install Tekton Dashboard on a Kubernetes cluster:
@@ -48,6 +69,8 @@ To install Tekton Dashboard on a Kubernetes cluster:
 
    Previous versions (up to 0.5.0) are available at `previous/$VERSION_NUMBER/release.yaml`, e.g.
    https://storage.googleapis.com/tekton-releases/dashboard/previous/v0.4.1/release.yaml
+
+   Note that versions earlier than **v0.6.1.4** should not be used owing to security problems we have addressed in that release and later.
 
    ```bash
     kubectl apply --filename https://storage.googleapis.com/tekton-releases/dashboard/previous/v0.4.1/release.yaml

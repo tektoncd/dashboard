@@ -217,98 +217,6 @@ func makeFake(t *testing.T, r *endpoints.Resource, resourceType, namespace, reso
 		if err != nil {
 			t.Fatalf("Error creating pod: %v\n", err)
 		}
-	case "taskrunlog":
-		pod := corev1.Pod{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      resourceName,
-				Namespace: namespace,
-			},
-			Spec: corev1.PodSpec{
-				Containers: []corev1.Container{
-					corev1.Container{
-						Name: endpoints.ContainerPrefix + "Container",
-					},
-				},
-			},
-		}
-		_, err := r.K8sClient.CoreV1().Pods(namespace).Create(&pod)
-		if err != nil {
-			t.Fatalf("Error creating pod: %v\n", err)
-		}
-		taskRun := v1alpha1.TaskRun{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      resourceName,
-				Namespace: namespace,
-			},
-			Spec: v1alpha1.TaskRunSpec{},
-			Status: v1alpha1.TaskRunStatus{
-				TaskRunStatusFields: v1alpha1.TaskRunStatusFields{
-					PodName: resourceName,
-				},
-			},
-		}
-		_, err = r.PipelineClient.TektonV1alpha1().TaskRuns(namespace).Create(&taskRun)
-		if err != nil {
-			t.Fatalf("Error creating taskRun: %v\n", err)
-		}
-	case "pipelinerunlog":
-		pod := corev1.Pod{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      resourceName,
-				Namespace: namespace,
-			},
-			Spec: corev1.PodSpec{
-				Containers: []corev1.Container{
-					corev1.Container{
-						Name: endpoints.ContainerPrefix + "Container",
-					},
-				},
-			},
-		}
-		_, err := r.K8sClient.CoreV1().Pods(namespace).Create(&pod)
-		if err != nil {
-			t.Fatalf("Error creating pod: %v\n", err)
-		}
-		taskRun := v1alpha1.TaskRun{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      resourceName,
-				Namespace: namespace,
-			},
-			Spec: v1alpha1.TaskRunSpec{},
-			Status: v1alpha1.TaskRunStatus{
-				TaskRunStatusFields: v1alpha1.TaskRunStatusFields{
-					PodName: resourceName,
-				},
-			},
-		}
-		_, err = r.PipelineClient.TektonV1alpha1().TaskRuns(namespace).Create(&taskRun)
-		if err != nil {
-			t.Fatalf("Error creating taskRun: %v\n", err)
-		}
-		pipelineRun := v1alpha1.PipelineRun{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      resourceName,
-				Namespace: namespace,
-			},
-			Spec: v1alpha1.PipelineRunSpec{},
-			Status: v1alpha1.PipelineRunStatus{
-				PipelineRunStatusFields: v1alpha1.PipelineRunStatusFields{
-					TaskRuns: map[string]*v1alpha1.PipelineRunTaskRunStatus{
-						resourceName: &v1alpha1.PipelineRunTaskRunStatus{
-							Status: &v1alpha1.TaskRunStatus{
-								TaskRunStatusFields: v1alpha1.TaskRunStatusFields{
-									PodName: resourceName,
-								},
-							},
-						},
-					},
-				},
-			},
-		}
-		_, err = r.PipelineClient.TektonV1alpha1().PipelineRuns(namespace).Create(&pipelineRun)
-		if err != nil {
-			t.Fatalf("Error creating pipelineRun: %v\n", err)
-		}
 	case "pipelineresource":
 		pipelineResource := v1alpha1.PipelineResource{
 			ObjectMeta: metav1.ObjectMeta{
@@ -421,5 +329,4 @@ func TestGetAllExtensions(t *testing.T) {
 			}
 		}
 	}
-
 }

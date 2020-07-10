@@ -98,15 +98,17 @@ limitations under the License.
     padding: 0 1.25rem;
     text-decoration: none;
     color: inherit;
-    margin: 1px;
+    margin: 1px 0;
     line-height: 2.2rem;
     white-space: nowrap;
     font-size: 0.76rem;
     letter-spacing: 0.06rem;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
 
-
+  &:first-child > a.tkn--task-link {
+    margin-top: 0;
   }
 
   .tkn--task-icon {
