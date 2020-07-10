@@ -48,7 +48,6 @@ export { default as Tabs } from './Tabs';
 export { default as Task } from './Task';
 export { default as TaskRuns } from './TaskRuns';
 export { default as TaskRunDetails } from './TaskRunDetails';
-export { default as TaskSkeleton } from './TaskSkeleton';
 export { default as TaskTree } from './TaskTree';
 export { default as TooltipDropdown } from './TooltipDropdown';
 export { default as Trigger } from './Trigger';
