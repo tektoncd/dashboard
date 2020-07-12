@@ -14,6 +14,7 @@
 set -e
 
 CLUSTERNAME=dashboard
+DEFAULT_OPTIONS="--log-format console"
 
 create_cluster() {
 cat <<EOF | kind create cluster --name $CLUSTERNAME --config -
@@ -66,8 +67,12 @@ case $1 in
     install_ingress_nginx
     install_pipelines
     install_triggers
-    ./scripts/installer install --log-format console $@
+    ./scripts/installer install $DEFAULT_OPTIONS $@
     ;;
+    ;;
+  'update'|u)
+    shift
+    ./scripts/installer install $DEFAULT_OPTIONS $@
   'delete'|d)
     delete_cluster
     ;;
