@@ -91,13 +91,15 @@ limitations under the License.
     }
   }
 
-  &[data-succeeded='False'] {
+  &[data-succeeded='False'],
+  &[data-succeeded='Unknown'][data-reason='PipelineRunCouldntCancel'] {
     .tkn--status-label {
       color: $failed;
     }
   }
 
-  &[data-succeeded='Unknown'][data-reason='Running'] {
+  &[data-succeeded='Unknown'][data-reason='Running'],
+  &[data-succeeded='Unknown'][data-reason='PipelineRunStopping'] {
     .tkn--status-label {
       color: $running;
     }

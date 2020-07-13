@@ -156,7 +156,10 @@ export function reorderSteps(unorderedSteps, orderedSteps) {
 }
 
 export function isRunning(reason, status) {
-  return status === 'Unknown' && reason === 'Running';
+  return (
+    status === 'Unknown' &&
+    (reason === 'Running' || reason === 'PipelineRunStopping')
+  );
 }
 
 // Generates a unique id

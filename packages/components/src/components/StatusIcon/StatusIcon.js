@@ -36,6 +36,8 @@ export default function StatusIcon({ reason, status }) {
     Icon = CheckmarkFilled;
   } else if (status === 'False') {
     Icon = CloseFilled;
+  } else if (status === 'Unknown' && reason === 'PipelineRunCouldntCancel') {
+    Icon = CloseFilled;
   }
 
   return Icon ? <Icon className="tkn--status-icon" /> : null;
