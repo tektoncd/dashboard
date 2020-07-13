@@ -167,6 +167,7 @@ it('getStatus with no status', () => {
 
 it('isRunning', () => {
   expect(isRunning('Running', 'Unknown')).toBe(true);
+  expect(isRunning('PipelineRunStopping', 'Unknown')).toBe(true);
   expect(isRunning('?', 'Unknown')).toBe(false);
   expect(isRunning('Running', '?')).toBe(false);
 });
