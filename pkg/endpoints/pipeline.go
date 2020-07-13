@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -26,49 +26,6 @@ import (
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
-
-//BuildInformation - information required to build a particular commit from a Git repository.
-type BuildInformation struct {
-	REPOURL   string
-	SHORTID   string
-	COMMITID  string
-	REPONAME  string
-	TIMESTAMP string
-}
-
-// AppResponse represents an error with a code, message, and the error itself
-type AppResponse struct {
-	ERROR   error
-	MESSAGE string
-	CODE    int
-}
-
-// BuildRequest - a manual submission data struct
-type BuildRequest struct {
-	/* Example payload
-	{
-		"repourl": "https://github.ibm.com/your-org/test-project",
-		"commitid": "7d84981c66718ee2dda1af280f915cc2feb6ffow",
-		"reponame": "test-project"
-	}
-	*/
-	REPOURL  string `json:"repourl"`
-	COMMITID string `json:"commitid"`
-	REPONAME string `json:"reponame"`
-	BRANCH   string `json:"branch"`
-}
-
-// ResourceBinding - a name and a reference to a resource
-type ResourceBinding struct {
-	BINDINGNAME     string `json:"bindingname"`
-	RESOURCEREFNAME string `json:"resourcerefname"`
-}
-
-// PipelineRunUpdateBody - represents a request that a user may provide for updating a PipelineRun
-// Currently only modifying the status is supported but this gives us scope for adding additional fields
-type PipelineRunUpdateBody struct {
-	STATUS string `json:"status"`
-}
 
 type RerunRequest struct {
 	PIPELINERUNNAME string `json:"pipelinerunname"`
