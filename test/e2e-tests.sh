@@ -44,7 +44,7 @@ fi
 
 initOS
 install_kustomize
-npm install -g newman@5
+npm install -g newman@5.1.1
 
 test_dashboard() {
   # kubectl or proxy (to create the necessary resources)
