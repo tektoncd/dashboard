@@ -188,6 +188,10 @@ Simply browse the url returned by running the following command to access your D
 kubectl get route tekton-dashboard -n openshift-pipelines
 ```
 
+**Known issue:**
+
+If the default ingress certificate in the OpenShift cluster was changed, for example via [this procedure](https://docs.openshift.com/container-platform/4.3/authentication/certificates/replacing-default-ingress-certificate.html), then the oauth-proxy sidecar might not recognize its certificate, and you might arrive at a "500 Internal Error" page instead of the dashboard. Refer to [this workaround](./oauth-certificate-workaround.md) for a procedure to resolve the issue.
+
 ## Uninstalling the Dashboard on Kubernetes
 
 The Dashboard can be uninstalled by running the following command:
