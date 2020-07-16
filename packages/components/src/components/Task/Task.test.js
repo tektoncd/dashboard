@@ -13,7 +13,6 @@ limitations under the License.
 
 import React from 'react';
 import { fireEvent, waitForElement } from 'react-testing-library';
-import { NO_STEP } from '@tektoncd/dashboard-utils';
 import Task from './Task';
 import { renderWithIntl } from '../../utils/test';
 
@@ -133,8 +132,11 @@ describe('Task', () => {
     );
   });
 
-  it('renders NO_STEP state', () => {
-    renderWithIntl(<Task {...props} expanded selectedStepId={NO_STEP} />);
+  it('renders selected step state', () => {
+    const steps = [{ id: 'step', stepName: 'a step' }];
+    renderWithIntl(
+      <Task {...props} expanded selectedStepId="some-step" steps={steps} />
+    );
   });
 
   it('handles click event', () => {
@@ -157,7 +159,8 @@ describe('Task', () => {
         steps={steps}
       />
     );
-    expect(onSelect).toHaveBeenCalledTimes(1);
+    expect(onSelect).not.toHaveBeenCalled();
+
     onSelect.mockClear();
     fireEvent.click(getByText(/build/i));
     expect(onSelect).toHaveBeenCalledTimes(1);

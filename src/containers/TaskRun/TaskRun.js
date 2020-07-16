@@ -31,7 +31,6 @@ import {
   getResources,
   getStatus,
   getTitle,
-  NO_STEP,
   reorderSteps,
   stepsStatus,
   taskRunStep,
@@ -55,6 +54,9 @@ import { fetchTask, fetchTaskByType } from '../../actions/tasks';
 import { fetchTaskRun } from '../../actions/taskRuns';
 
 const taskTypeKeys = { ClusterTask: 'clustertasks', Task: 'tasks' };
+const STEP = 'step';
+const TASK_RUN_DETAILS = 'taskRunDetails';
+const VIEW = 'view';
 
 export /* istanbul ignore next */ class TaskRunContainer extends Component {
   // once redux store is available errors will be handled properly with dedicated components
@@ -120,14 +122,16 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
     const queryParams = new URLSearchParams(location.search);
 
     if (selectedStepId) {
-      queryParams.set('step', selectedStepId);
+      queryParams.set(STEP, selectedStepId);
+      queryParams.delete(TASK_RUN_DETAILS);
     } else {
-      queryParams.delete('step');
+      queryParams.delete(STEP);
+      queryParams.set(TASK_RUN_DETAILS, true);
     }
 
     const currentStepId = this.props.selectedStepId;
     if (selectedStepId !== currentStepId) {
-      queryParams.delete('view');
+      queryParams.delete(VIEW);
     }
 
     const browserURL = match.url.concat(`?${queryParams.toString()}`);
@@ -188,7 +192,13 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
 
   render() {
     const { loading } = this.state;
-    const { error, intl, selectedStepId, view } = this.props;
+    const {
+      error,
+      intl,
+      selectedStepId,
+      showTaskRunDetails,
+      view
+    } = this.props;
 
     if (loading) {
       return <StructuredListSkeleton border />;
@@ -235,7 +245,7 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
       ? followLogs
       : fetchLogs;
 
-    const logContainer = selectedStepId && selectedStepId !== NO_STEP && (
+    const logContainer = selectedStepId && (
       <Log
         downloadButton={
           <LogDownloadButton
@@ -265,11 +275,11 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
         <div className="tkn--tasks">
           <TaskTree
             onSelect={this.handleTaskSelected}
-            selectedTaskId={taskRun.id}
             selectedStepId={selectedStepId}
+            selectedTaskId={showTaskRunDetails && taskRun.id}
             taskRuns={[taskRun]}
           />
-          {(selectedStepId && selectedStepId !== NO_STEP && (
+          {(selectedStepId && (
             <StepDetails
               definition={definition}
               logContainer={logContainer}
@@ -309,8 +319,9 @@ function mapStateToProps(state, ownProps) {
   const { namespace: namespaceParam, taskRunName } = match.params;
 
   const queryParams = new URLSearchParams(location.search);
-  const selectedStepId = queryParams.get('step');
-  const view = queryParams.get('view');
+  const selectedStepId = queryParams.get(STEP);
+  const view = queryParams.get(VIEW);
+  const showTaskRunDetails = queryParams.get(TASK_RUN_DETAILS);
 
   const namespace = namespaceParam || getSelectedNamespace(state);
   const taskRun = getTaskRun(state, {
@@ -330,6 +341,7 @@ function mapStateToProps(state, ownProps) {
     namespace,
     selectedStepId,
     isLogStreamingEnabled: isLogStreamingEnabled(state),
+    showTaskRunDetails,
     taskRun,
     task,
     view,
