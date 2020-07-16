@@ -41,6 +41,7 @@ class TaskTree extends Component {
             (!selectedTaskId && erroredTask && erroredTask.id === id) ||
             selectedTaskId === id ||
             (!erroredTask && !selectedTaskId && index === 0);
+          const selectDefaultStep = !selectedTaskId;
           return (
             <Task
               id={id}
@@ -48,6 +49,7 @@ class TaskTree extends Component {
               expanded={expanded}
               onSelect={this.handleSelect}
               reason={reason}
+              selectDefaultStep={selectDefaultStep}
               selectedStepId={selectedStepId}
               steps={sortStepsByTimestamp(steps)}
               succeeded={succeeded}

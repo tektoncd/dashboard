@@ -19,7 +19,7 @@ import {
 } from '@carbon/icons-react';
 import { Spinner, Step } from '@tektoncd/dashboard-components';
 
-import { NO_STEP, updateUnexecutedSteps } from '@tektoncd/dashboard-utils';
+import { updateUnexecutedSteps } from '@tektoncd/dashboard-utils';
 
 import './Task.scss';
 
@@ -44,13 +44,16 @@ class Task extends Component {
 
   handleTaskSelected = event => {
     event?.preventDefault(); // eslint-disable-line no-unused-expressions
-    this.setState({ selectedStepId: NO_STEP }, () => {
+    this.setState({ selectedStepId: null }, () => {
       this.handleClick();
     });
   };
 
   selectDefaultStep() {
-    const { expanded, selectedStepId, steps } = this.props;
+    const { expanded, selectDefaultStep, selectedStepId, steps } = this.props;
+    if (!selectDefaultStep) {
+      return;
+    }
     if (expanded && !selectedStepId) {
       const erroredStep = steps.find(
         step => step.reason === 'Error' || step.reason === undefined
@@ -93,10 +96,7 @@ class Task extends Component {
         className="tkn--task"
         data-succeeded={succeeded}
         data-reason={reason}
-        data-selected={
-          (expanded && (!selectedStepId || selectedStepId === NO_STEP)) ||
-          undefined
-        }
+        data-selected={(expanded && !selectedStepId) || undefined}
       >
         <a
           className="tkn--task-link"

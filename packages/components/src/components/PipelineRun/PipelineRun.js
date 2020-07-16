@@ -23,7 +23,6 @@ import {
   getParams,
   getResources,
   getStatus,
-  NO_STEP,
   reorderSteps,
   selectedTask,
   selectedTaskRun,
@@ -335,7 +334,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       }
     );
 
-    const logContainer = selectedStepId && selectedStepId !== NO_STEP && (
+    const logContainer = selectedStepId && (
       <Log
         downloadButton={
           LogDownloadButton && (
@@ -374,7 +373,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
             selectedStepId={selectedStepId}
             taskRuns={taskRuns}
           />
-          {(selectedStepId && selectedStepId !== NO_STEP && (
+          {(selectedStepId && (
             <StepDetails
               definition={definition}
               logContainer={logContainer}

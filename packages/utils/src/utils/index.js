@@ -16,7 +16,6 @@ export { paths, urls } from './router';
 export { getStatus } from './status';
 
 export const ALL_NAMESPACES = '*';
-export const NO_STEP = '__';
 
 /* istanbul ignore next */
 export const copyToClipboard = text => {
