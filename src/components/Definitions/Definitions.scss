@@ -26,6 +26,10 @@ main {
 
   .bx--inline-notification {
     max-width: 100%;
+
+    .bx--inline-notification__text-wrapper {
+      align-items: center;
+    }
   }
 }
 
