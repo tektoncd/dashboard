@@ -19,7 +19,7 @@ import thunk from 'redux-thunk';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
 import TasksDropdown from './TasksDropdown';
-import * as API from '../../api';
+import * as API from '../../api/tasks';
 import { renderWithIntl, rerenderWithIntl } from '../../utils/test';
 
 const props = {

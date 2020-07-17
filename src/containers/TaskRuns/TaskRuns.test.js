@@ -19,7 +19,7 @@ import configureStore from 'redux-mock-store';
 import { Route } from 'react-router-dom';
 
 import { renderWithRouter } from '../../utils/test';
-import * as API from '../../api';
+import * as API from '../../api/taskRuns';
 import * as selectors from '../../reducers';
 import * as store from '../../store';
 import TaskRunsContainer from './TaskRuns';

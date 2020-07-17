@@ -18,11 +18,11 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 
 import { App } from './App';
-import * as API from '../../api';
+import * as PipelinesAPI from '../../api/pipelines';
 import * as selectors from '../../reducers';
 
 beforeEach(() => {
-  jest.spyOn(API, 'getPipelines').mockImplementation(() => {});
+  jest.spyOn(PipelinesAPI, 'getPipelines').mockImplementation(() => {});
   jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => true);
   jest.spyOn(selectors, 'isTriggersInstalled').mockImplementation(() => false);
   jest

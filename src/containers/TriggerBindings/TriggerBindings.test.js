@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -19,7 +19,7 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import TriggerBindings from '.';
 import { renderWithRouter } from '../../utils/test';
-import * as API from '../../api';
+import * as API from '../../api/triggerBindings';
 
 const middleware = [thunk];
 const mockStore = configureStore(middleware);

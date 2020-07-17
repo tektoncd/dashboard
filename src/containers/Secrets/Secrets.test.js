@@ -21,13 +21,16 @@ import thunk from 'redux-thunk';
 import { renderWithRouter } from '../../utils/test';
 import Secrets from '.';
 import * as API from '../../api';
+import * as PipelinesAPI from '../../api/pipelines';
+import * as SecretsAPI from '../../api/secrets';
+import * as ServiceAccountsAPI from '../../api/serviceAccounts';
 import * as selectors from '../../reducers';
 
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 
 beforeEach(() => {
-  jest.spyOn(API, 'getPipelines').mockImplementation(() => {});
+  jest.spyOn(PipelinesAPI, 'getPipelines').mockImplementation(() => {});
   jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => false);
 });
 
@@ -158,9 +161,11 @@ it('click add new secret and create secret UI appears', () => {
     ]
   };
 
-  jest.spyOn(API, 'getCredentials').mockImplementation(() => []);
+  jest.spyOn(SecretsAPI, 'getCredentials').mockImplementation(() => []);
   jest.spyOn(API, 'getNamespaces').mockImplementation(() => []);
-  jest.spyOn(API, 'getServiceAccounts').mockImplementation(() => []);
+  jest
+    .spyOn(ServiceAccountsAPI, 'getServiceAccounts')
+    .mockImplementation(() => []);
 
   const { getByText } = renderWithRouter(
     <Provider store={store}>

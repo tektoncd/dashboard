@@ -25,7 +25,10 @@ import configureStore from 'redux-mock-store';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 import { renderWithIntl, rerenderWithIntl } from '../../utils/test';
 import CreatePipelineRun from './CreatePipelineRun';
-import * as API from '../../api';
+import * as PipelineResourcesAPI from '../../api/pipelineResources';
+import * as PipelineRunsAPI from '../../api/pipelineRuns';
+import * as PipelinesAPI from '../../api/pipelines';
+import * as ServiceAccountsAPI from '../../api/serviceAccounts';
 import * as store from '../../store';
 import * as reducers from '../../reducers';
 
@@ -242,14 +245,16 @@ describe('CreatePipelineRun', () => {
   afterEach(cleanup);
   beforeEach(() => {
     jest
-      .spyOn(API, 'getServiceAccounts')
+      .spyOn(ServiceAccountsAPI, 'getServiceAccounts')
       .mockImplementation(() => serviceAccounts.byId);
-    jest.spyOn(API, 'getPipelines').mockImplementation(() => pipelines.byId);
     jest
-      .spyOn(API, 'getPipelineResources')
+      .spyOn(PipelinesAPI, 'getPipelines')
+      .mockImplementation(() => pipelines.byId);
+    jest
+      .spyOn(PipelineResourcesAPI, 'getPipelineResources')
       .mockImplementation(() => pipelineResources.byId);
     jest
-      .spyOn(API, 'getPipelineRuns')
+      .spyOn(PipelineRunsAPI, 'getPipelineRuns')
       .mockImplementation(() => pipelineRuns.byId);
   });
 
@@ -291,7 +296,7 @@ describe('CreatePipelineRun', () => {
       response: { status: 400, text: () => Promise.resolve('') }
     };
     const createPipelineRun = jest
-      .spyOn(API, 'createPipelineRun')
+      .spyOn(PipelineRunsAPI, 'createPipelineRun')
       .mockImplementation(() => Promise.reject(errorResponseMock));
     fireEvent.click(submitButton(getAllByText));
     await wait(() => expect(createPipelineRun).toHaveBeenCalledTimes(1));
@@ -338,7 +343,7 @@ describe('CreatePipelineRun', () => {
       response: { status: 401, text: () => Promise.resolve('example message') }
     };
     const createPipelineRun = jest
-      .spyOn(API, 'createPipelineRun')
+      .spyOn(PipelineRunsAPI, 'createPipelineRun')
       .mockImplementation(() => Promise.reject(errorResponseMock));
     fireEvent.click(submitButton(getAllByText));
     await wait(() => expect(createPipelineRun).toHaveBeenCalledTimes(1));
@@ -581,7 +586,7 @@ describe('CreatePipelineRun', () => {
     });
     // Submit
     const createPipelineRun = jest
-      .spyOn(API, 'createPipelineRun')
+      .spyOn(PipelineRunsAPI, 'createPipelineRun')
       .mockImplementation(() => Promise.resolve({}));
     fireEvent.click(submitButton(getAllByText));
     expect(createPipelineRun).toHaveBeenCalledTimes(1);

@@ -18,6 +18,7 @@ import thunk from 'redux-thunk';
 import { renderWithIntl } from '../../utils/test';
 import CreatePipelineResource from '.';
 import * as API from '../../api';
+import * as PipelineResourcesAPI from '../../api/pipelineResources';
 
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
@@ -57,7 +58,7 @@ it('CreatePipelineResource error notification appears', async () => {
   };
   jest.spyOn(API, 'getNamespaces').mockImplementation(() => []);
   jest
-    .spyOn(API, 'createPipelineResource')
+    .spyOn(PipelineResourcesAPI, 'createPipelineResource')
     .mockImplementation(() => Promise.reject(errorResponseMock));
 
   const store = mockStore({
