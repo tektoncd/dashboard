@@ -15,7 +15,8 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 
 import * as creators from './actionCreators';
-import * as API from '../api';
+import * as SecretsAPI from '../api/secrets';
+import * as ServiceAccountsAPI from '../api/serviceAccounts';
 import * as selectors from '../reducers';
 import {
   clearNotification,
@@ -120,7 +121,7 @@ it('fetchSecrets', async () => {
   jest
     .spyOn(selectors, 'getSelectedNamespace')
     .mockImplementation(() => namespace);
-  jest.spyOn(API, 'getCredentials').mockImplementation(() => data);
+  jest.spyOn(SecretsAPI, 'getCredentials').mockImplementation(() => data);
 
   const expectedActions = [
     { type: 'SECRETS_FETCH_REQUEST' },
@@ -141,7 +142,7 @@ it('fetchSecrets error', async () => {
   jest
     .spyOn(selectors, 'getSelectedNamespace')
     .mockImplementation(() => namespace);
-  jest.spyOn(API, 'getCredentials').mockImplementation(() => {
+  jest.spyOn(SecretsAPI, 'getCredentials').mockImplementation(() => {
     throw error;
   });
 
@@ -164,7 +165,7 @@ it('fetchSecret', () => {
   fetchSecret({ name, namespace });
   expect(creators.fetchNamespacedResource).toHaveBeenCalledWith(
     'Secret',
-    API.getCredential,
+    SecretsAPI.getCredential,
     { name, namespace }
   );
 });
@@ -183,10 +184,12 @@ it('deleteSecret', async () => {
     .mockImplementation(() => namespace);
 
   jest
-    .spyOn(API, 'getServiceAccounts')
+    .spyOn(ServiceAccountsAPI, 'getServiceAccounts')
     .mockImplementation(() => [defaultServiceAccount]);
-  jest.spyOn(API, 'updateServiceAccountSecrets').mockImplementation(() => {});
-  jest.spyOn(API, 'deleteCredential').mockImplementation(() => {});
+  jest
+    .spyOn(ServiceAccountsAPI, 'updateServiceAccountSecrets')
+    .mockImplementation(() => {});
+  jest.spyOn(SecretsAPI, 'deleteCredential').mockImplementation(() => {});
 
   const expectedActions = [
     { type: 'CLEAR_SECRET_ERROR_NOTIFICATION' },
@@ -207,11 +210,13 @@ it('deleteSecret error', async () => {
   const store = mockStore();
 
   jest
-    .spyOn(API, 'getServiceAccounts')
+    .spyOn(ServiceAccountsAPI, 'getServiceAccounts')
     .mockImplementation(() => [defaultServiceAccount]);
-  jest.spyOn(API, 'updateServiceAccountSecrets').mockImplementation(() => {});
   jest
-    .spyOn(API, 'deleteCredential')
+    .spyOn(ServiceAccountsAPI, 'updateServiceAccountSecrets')
+    .mockImplementation(() => {});
+  jest
+    .spyOn(SecretsAPI, 'deleteCredential')
     .mockImplementation(() => Promise.reject());
 
   const expectedActions = [
@@ -235,8 +240,8 @@ it('createSecret', async () => {
     .spyOn(selectors, 'getSelectedNamespace')
     .mockImplementation(() => namespace);
 
-  jest.spyOn(API, 'getCredentials').mockImplementation(() => data);
-  jest.spyOn(API, 'createCredential').mockImplementation(() => response);
+  jest.spyOn(SecretsAPI, 'getCredentials').mockImplementation(() => data);
+  jest.spyOn(SecretsAPI, 'createCredential').mockImplementation(() => response);
 
   const expectedActions = [
     { type: 'CLEAR_SECRET_ERROR_NOTIFICATION' },
@@ -263,11 +268,11 @@ it('createSecret error', async () => {
     }
   };
 
-  jest.spyOn(API, 'createCredential').mockImplementation(() => {
+  jest.spyOn(SecretsAPI, 'createCredential').mockImplementation(() => {
     throw error;
   });
 
-  jest.spyOn(API, 'getAllCredentials').mockImplementation(() => data);
+  jest.spyOn(SecretsAPI, 'getAllCredentials').mockImplementation(() => data);
 
   const expectedActions = [
     { type: 'CLEAR_SECRET_ERROR_NOTIFICATION' },
@@ -302,7 +307,7 @@ it('patchSecret', async () => {
   const secret = data.items[0].metadata.name;
 
   jest
-    .spyOn(API, 'patchServiceAccount')
+    .spyOn(ServiceAccountsAPI, 'patchServiceAccount')
     .mockImplementation(() => Promise.resolve(response));
 
   const expectedActions = [
@@ -332,7 +337,7 @@ it('patchSecret error', async () => {
   };
 
   jest
-    .spyOn(API, 'patchServiceAccount')
+    .spyOn(ServiceAccountsAPI, 'patchServiceAccount')
     .mockImplementation(() => Promise.reject(errorResponseMock));
 
   const expectedActions = [

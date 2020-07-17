@@ -150,38 +150,3 @@ export function deleteRequest(uri) {
     headers: getHeaders()
   });
 }
-
-export function generateBodyForSecretPatching(secretName) {
-  const patchAddBody = [
-    {
-      op: 'add',
-      path: 'serviceaccount/secrets/-',
-      value: {
-        name: secretName
-      }
-    }
-  ];
-
-  return patchAddBody;
-}
-
-export function generateBodyForSecretReplacing(remainingSecrets) {
-  const replaceBody = [
-    {
-      op: 'replace',
-      path: 'serviceaccount/secrets',
-      value: remainingSecrets
-    }
-  ];
-  return replaceBody;
-}
-
-export async function patchAddSecret(uri, secretName) {
-  const patchAddBody = await generateBodyForSecretPatching(secretName);
-  return patch(uri, patchAddBody);
-}
-
-export async function patchUpdateSecrets(uri, secrets) {
-  const patchReplaceBody = await generateBodyForSecretReplacing(secrets);
-  return patch(uri, patchReplaceBody);
-}

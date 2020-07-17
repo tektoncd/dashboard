@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -17,7 +17,7 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import ServiceAccountsDropdown from './ServiceAccountsDropdown';
-import * as API from '../../api';
+import * as API from '../../api/serviceAccounts';
 import { renderWithIntl, rerenderWithIntl } from '../../utils/test';
 
 const props = {

@@ -15,12 +15,10 @@ import fetchMock from 'fetch-mock';
 
 import {
   checkStatus,
-  generateBodyForSecretPatching,
   get,
   getAPIRoot,
   getHeaders,
   getPatchHeaders,
-  patchAddSecret,
   post,
   request
 } from './comms';
@@ -176,38 +174,6 @@ describe('post', () => {
     return post(uri, data).then(() => {
       const options = fetchMock.lastOptions();
       expect(options.body).toEqual(JSON.stringify(data));
-      fetchMock.restore();
-    });
-  });
-});
-
-describe('generateBodyForSecretPatching', () => {
-  it('should return secretResponse with the name Groot', () => {
-    const secretName = 'Groot';
-    const secretResponse = [
-      {
-        op: 'add',
-        path: 'serviceaccount/secrets/-',
-        value: {
-          name: secretName
-        }
-      }
-    ];
-    const result = generateBodyForSecretPatching(secretName);
-    expect(result).toMatchObject(secretResponse);
-    expect(result).toMatchObject(generateBodyForSecretPatching(secretName));
-  });
-});
-
-describe('patchAddSecret', () => {
-  it('should return correct data from patching', () => {
-    const data = {
-      fake: 'data'
-    };
-    mockCSRFToken();
-    fetchMock.mock(uri, data);
-    return patchAddSecret(uri, data).then(response => {
-      expect(response).toEqual(data);
       fetchMock.restore();
     });
   });

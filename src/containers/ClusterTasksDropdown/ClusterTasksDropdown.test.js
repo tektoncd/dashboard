@@ -18,7 +18,7 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 
 import ClusterTasksDropdown from './ClusterTasksDropdown';
-import * as API from '../../api';
+import * as API from '../../api/clusterTasks';
 import { renderWithIntl, rerenderWithIntl } from '../../utils/test';
 
 const props = {

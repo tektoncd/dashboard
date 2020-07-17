@@ -25,7 +25,10 @@ import configureStore from 'redux-mock-store';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 import { renderWithIntl, rerenderWithIntl } from '../../utils/test';
 import CreateTaskRun from './CreateTaskRun';
-import * as API from '../../api';
+import * as PipelineResourcesAPI from '../../api/pipelineResources';
+import * as ServiceAccountsAPI from '../../api/serviceAccounts';
+import * as TaskRunsAPI from '../../api/taskRuns';
+import * as TasksAPI from '../../api/tasks';
 import * as store from '../../store';
 import * as reducers from '../../reducers';
 
@@ -282,13 +285,15 @@ describe('CreateTaskRun', () => {
   afterEach(cleanup);
   beforeEach(() => {
     jest
-      .spyOn(API, 'getServiceAccounts')
+      .spyOn(ServiceAccountsAPI, 'getServiceAccounts')
       .mockImplementation(() => serviceAccounts.byId);
-    jest.spyOn(API, 'getTasks').mockImplementation(() => tasks.byId);
+    jest.spyOn(TasksAPI, 'getTasks').mockImplementation(() => tasks.byId);
     jest
-      .spyOn(API, 'getPipelineResources')
+      .spyOn(PipelineResourcesAPI, 'getPipelineResources')
       .mockImplementation(() => pipelineResources.byId);
-    jest.spyOn(API, 'getTaskRuns').mockImplementation(() => taskRuns.byId);
+    jest
+      .spyOn(TaskRunsAPI, 'getTaskRuns')
+      .mockImplementation(() => taskRuns.byId);
 
     const mockTestStore = mockStore(testStore);
     jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
@@ -328,7 +333,7 @@ describe('CreateTaskRun', () => {
       response: { status: 400, text: () => Promise.resolve('') }
     };
     const createTaskRun = jest
-      .spyOn(API, 'createTaskRun')
+      .spyOn(TaskRunsAPI, 'createTaskRun')
       .mockImplementation(() => Promise.reject(errorResponseMock));
     fireEvent.click(submitButton(getAllByText));
     await wait(() => expect(createTaskRun).toHaveBeenCalledTimes(1));
@@ -371,7 +376,7 @@ describe('CreateTaskRun', () => {
       response: { status: 401, text: () => Promise.resolve('example message') }
     };
     const createTaskRun = jest
-      .spyOn(API, 'createTaskRun')
+      .spyOn(TaskRunsAPI, 'createTaskRun')
       .mockImplementation(() => Promise.reject(errorResponseMock));
     fireEvent.click(submitButton(getAllByText));
     await wait(() => expect(createTaskRun).toHaveBeenCalledTimes(1));
@@ -600,7 +605,7 @@ describe('CreateTaskRun', () => {
     });
     // Submit
     const createTaskRun = jest
-      .spyOn(API, 'createTaskRun')
+      .spyOn(TaskRunsAPI, 'createTaskRun')
       .mockImplementation(() => Promise.resolve({}));
     fireEvent.click(submitButton(getAllByText));
     expect(createTaskRun).toHaveBeenCalledTimes(1);

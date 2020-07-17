@@ -19,6 +19,7 @@ import thunk from 'redux-thunk';
 import { renderWithIntl, rerenderWithIntl } from '../../utils/test';
 import CreateSecret from '.';
 import * as API from '../../api';
+import * as ServiceAccountsAPI from '../../api/serviceAccounts';
 
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
@@ -101,7 +102,9 @@ const serverurlValidationErrorRegExp = /Server URL required./i;
 
 it('SecretsCreate renders blank', () => {
   jest.spyOn(API, 'getNamespaces').mockImplementation(() => []);
-  jest.spyOn(API, 'getServiceAccounts').mockImplementation(() => []);
+  jest
+    .spyOn(ServiceAccountsAPI, 'getServiceAccounts')
+    .mockImplementation(() => []);
 
   const { queryByText } = renderWithIntl(
     <Provider store={store}>
@@ -123,7 +126,9 @@ it('Test CreateSecret click events', () => {
     secrets
   };
   jest.spyOn(API, 'getNamespaces').mockImplementation(() => []);
-  jest.spyOn(API, 'getServiceAccounts').mockImplementation(() => []);
+  jest
+    .spyOn(ServiceAccountsAPI, 'getServiceAccounts')
+    .mockImplementation(() => []);
 
   const { queryByText, rerender } = renderWithIntl(
     <Provider store={store}>

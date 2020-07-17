@@ -19,7 +19,7 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import ClusterTriggerBindings from '.';
 import { renderWithRouter } from '../../utils/test';
-import * as API from '../../api';
+import * as API from '../../api/clusterTriggerBindings';
 
 const middleware = [thunk];
 const mockStore = configureStore(middleware);

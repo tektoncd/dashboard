@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -19,7 +19,10 @@ import configureStore from 'redux-mock-store';
 import { Route } from 'react-router-dom';
 import { urls } from '@tektoncd/dashboard-utils';
 import { renderWithRouter } from '../../utils/test';
-import * as API from '../../api';
+import * as PipelineResourcesAPI from '../../api/pipelineResources';
+import * as PipelinesAPI from '../../api/pipelines';
+import * as PipelineRunsAPI from '../../api/pipelineRuns';
+import * as ServiceAccountsAPI from '../../api/serviceAccounts';
 import * as selectors from '../../reducers';
 import PipelineRunsContainer from './PipelineRuns';
 
@@ -162,9 +165,13 @@ const testStore = {
 
 describe('PipelineRuns container', () => {
   beforeEach(() => {
-    jest.spyOn(API, 'getServiceAccounts').mockImplementation(() => []);
-    jest.spyOn(API, 'getPipelines').mockImplementation(() => []);
-    jest.spyOn(API, 'getPipelineResources').mockImplementation(() => []);
+    jest
+      .spyOn(ServiceAccountsAPI, 'getServiceAccounts')
+      .mockImplementation(() => []);
+    jest.spyOn(PipelinesAPI, 'getPipelines').mockImplementation(() => []);
+    jest
+      .spyOn(PipelineResourcesAPI, 'getPipelineResources')
+      .mockImplementation(() => []);
     jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => true);
   });
 
@@ -443,7 +450,9 @@ describe('PipelineRuns container', () => {
   it('TaskTree handles rerun event in PipelineRuns page', async () => {
     const mockTestStore = mockStore(testStore);
     jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => false);
-    jest.spyOn(API, 'rerunPipelineRun').mockImplementation(() => []);
+    jest
+      .spyOn(PipelineRunsAPI, 'rerunPipelineRun')
+      .mockImplementation(() => []);
     const { getByTestId, getByText } = renderWithRouter(
       <Provider store={mockTestStore}>
         <Route
@@ -463,8 +472,11 @@ describe('PipelineRuns container', () => {
     fireEvent.click(await waitForElement(() => getByTestId('overflowmenu')));
     await waitForElement(() => getByText(/Rerun/i));
     fireEvent.click(getByText('Rerun'));
-    expect(API.rerunPipelineRun).toHaveBeenCalledTimes(1);
+    expect(PipelineRunsAPI.rerunPipelineRun).toHaveBeenCalledTimes(1);
     const expected = { pipelinerunname: 'pipelineRunWithSingleLabel' };
-    expect(API.rerunPipelineRun).toHaveBeenCalledWith('namespace-1', expected);
+    expect(PipelineRunsAPI.rerunPipelineRun).toHaveBeenCalledWith(
+      'namespace-1',
+      expected
+    );
   });
 });
