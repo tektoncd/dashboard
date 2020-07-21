@@ -15,40 +15,40 @@ import fetchMock from 'fetch-mock';
 import * as API from './secrets';
 import { mockCSRFToken } from '../utils/test';
 
-it('getCredentials', () => {
+it('getSecrets', () => {
   const data = {
-    items: 'credentials'
+    items: 'secrets'
   };
   fetchMock.get(/secrets/, data);
-  return API.getCredentials().then(response => {
+  return API.getSecrets().then(response => {
     expect(response).toEqual(data.items);
     fetchMock.restore();
   });
 });
 
-it('getAllCredentials', () => {
+it('getAllSecrets', () => {
   const data = {
-    items: 'credentials'
+    items: 'secrets'
   };
   fetchMock.get(/secrets/, data);
-  return API.getAllCredentials().then(response => {
+  return API.getAllSecrets().then(response => {
     expect(response).toEqual(data);
     fetchMock.restore();
   });
 });
 
-it('getCredential', () => {
-  const credentialId = 'foo';
+it('getSecret', () => {
+  const secretId = 'foo';
   const namespace = 'default';
-  const data = { fake: 'credential' };
+  const data = { fake: 'secret' };
   fetchMock.get(/secrets/, data);
-  return API.getCredential(credentialId, namespace).then(credential => {
-    expect(credential).toEqual(data);
+  return API.getSecret(secretId, namespace).then(secret => {
+    expect(secret).toEqual(data);
     fetchMock.restore();
   });
 });
 
-it('createCredential', () => {
+it('createSecret', () => {
   const id = 'id';
   const username = 'username';
   const password = 'password';
@@ -57,7 +57,7 @@ it('createCredential', () => {
   const data = { fake: 'data' };
   mockCSRFToken();
   fetchMock.post('*', data);
-  return API.createCredential(payload).then(response => {
+  return API.createSecret(payload).then(response => {
     expect(response).toEqual(data);
     expect(fetchMock.lastOptions()).toMatchObject({
       body: JSON.stringify(payload)
@@ -66,7 +66,7 @@ it('createCredential', () => {
   });
 });
 
-it('updateCredential', () => {
+it('updateSecret', () => {
   const id = 'id';
   const username = 'username';
   const password = 'password';
@@ -75,7 +75,7 @@ it('updateCredential', () => {
   const data = { fake: 'data' };
   mockCSRFToken();
   fetchMock.put('*', data);
-  return API.updateCredential(payload).then(response => {
+  return API.updateSecret(payload).then(response => {
     expect(response).toEqual(data);
     expect(fetchMock.lastOptions()).toMatchObject({
       body: JSON.stringify(payload)
@@ -84,12 +84,12 @@ it('updateCredential', () => {
   });
 });
 
-it('deleteCredential', () => {
-  const credentialId = 'fake credential id';
+it('deleteSecret', () => {
+  const secretId = 'fake secret id';
   const data = { fake: 'data' };
   mockCSRFToken();
   fetchMock.delete('*', data);
-  return API.deleteCredential(credentialId).then(response => {
+  return API.deleteSecret(secretId).then(response => {
     expect(response).toEqual(data);
     fetchMock.restore();
   });

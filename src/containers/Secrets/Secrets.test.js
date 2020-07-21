@@ -161,7 +161,7 @@ it('click add new secret and create secret UI appears', () => {
     ]
   };
 
-  jest.spyOn(SecretsAPI, 'getCredentials').mockImplementation(() => []);
+  jest.spyOn(SecretsAPI, 'getSecrets').mockImplementation(() => []);
   jest.spyOn(API, 'getNamespaces').mockImplementation(() => []);
   jest
     .spyOn(ServiceAccountsAPI, 'getServiceAccounts')
