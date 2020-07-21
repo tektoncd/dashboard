@@ -1,0 +1,5 @@
+src/
+dist/utils/test.js
+*.stories.js
+*.test.js
+**/examples/
