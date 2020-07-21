@@ -337,7 +337,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     const logContainer = selectedStepId && (
       <Log
         downloadButton={
-          LogDownloadButton && (
+          LogDownloadButton &&
+          stepStatus && (
             <LogDownloadButton
               stepName={stepName}
               stepStatus={stepStatus}
