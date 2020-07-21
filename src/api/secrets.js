@@ -14,32 +14,32 @@ limitations under the License.
 import { deleteRequest, get, post, put } from './comms';
 import { checkData, getKubeAPI } from './utils';
 
-export function getCredentials({ namespace } = {}) {
+export function getSecrets({ namespace } = {}) {
   const uri = getKubeAPI('secrets', { namespace });
   return get(uri).then(checkData);
 }
 
-export function getAllCredentials(namespace) {
+export function getAllSecrets(namespace) {
   const uri = getKubeAPI('secrets', namespace);
   return get(uri);
 }
 
-export function getCredential(name, namespace) {
+export function getSecret(name, namespace) {
   const uri = getKubeAPI('secrets', name, namespace);
   return get(uri);
 }
 
-export function createCredential({ id, ...rest }, namespace) {
+export function createSecret({ id, ...rest }, namespace) {
   const uri = getKubeAPI('secrets', { namespace });
   return post(uri, { id, ...rest });
 }
 
-export function updateCredential({ id, ...rest }, namespace) {
+export function updateSecret({ id, ...rest }, namespace) {
   const uri = getKubeAPI('secrets', { name: id, namespace });
   return put(uri, { id, ...rest });
 }
 
-export function deleteCredential(id, namespace) {
+export function deleteSecret(id, namespace) {
   const uri = getKubeAPI('secrets', { name: id, namespace });
   return deleteRequest(uri);
 }

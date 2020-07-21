@@ -121,7 +121,7 @@ it('fetchSecrets', async () => {
   jest
     .spyOn(selectors, 'getSelectedNamespace')
     .mockImplementation(() => namespace);
-  jest.spyOn(SecretsAPI, 'getCredentials').mockImplementation(() => data);
+  jest.spyOn(SecretsAPI, 'getSecrets').mockImplementation(() => data);
 
   const expectedActions = [
     { type: 'SECRETS_FETCH_REQUEST' },
@@ -142,7 +142,7 @@ it('fetchSecrets error', async () => {
   jest
     .spyOn(selectors, 'getSelectedNamespace')
     .mockImplementation(() => namespace);
-  jest.spyOn(SecretsAPI, 'getCredentials').mockImplementation(() => {
+  jest.spyOn(SecretsAPI, 'getSecrets').mockImplementation(() => {
     throw error;
   });
 
@@ -165,7 +165,7 @@ it('fetchSecret', () => {
   fetchSecret({ name, namespace });
   expect(creators.fetchNamespacedResource).toHaveBeenCalledWith(
     'Secret',
-    SecretsAPI.getCredential,
+    SecretsAPI.getSecret,
     { name, namespace }
   );
 });
@@ -189,7 +189,7 @@ it('deleteSecret', async () => {
   jest
     .spyOn(ServiceAccountsAPI, 'updateServiceAccountSecrets')
     .mockImplementation(() => {});
-  jest.spyOn(SecretsAPI, 'deleteCredential').mockImplementation(() => {});
+  jest.spyOn(SecretsAPI, 'deleteSecret').mockImplementation(() => {});
 
   const expectedActions = [
     { type: 'CLEAR_SECRET_ERROR_NOTIFICATION' },
@@ -216,7 +216,7 @@ it('deleteSecret error', async () => {
     .spyOn(ServiceAccountsAPI, 'updateServiceAccountSecrets')
     .mockImplementation(() => {});
   jest
-    .spyOn(SecretsAPI, 'deleteCredential')
+    .spyOn(SecretsAPI, 'deleteSecret')
     .mockImplementation(() => Promise.reject());
 
   const expectedActions = [
@@ -240,8 +240,8 @@ it('createSecret', async () => {
     .spyOn(selectors, 'getSelectedNamespace')
     .mockImplementation(() => namespace);
 
-  jest.spyOn(SecretsAPI, 'getCredentials').mockImplementation(() => data);
-  jest.spyOn(SecretsAPI, 'createCredential').mockImplementation(() => response);
+  jest.spyOn(SecretsAPI, 'getSecrets').mockImplementation(() => data);
+  jest.spyOn(SecretsAPI, 'createSecret').mockImplementation(() => response);
 
   const expectedActions = [
     { type: 'CLEAR_SECRET_ERROR_NOTIFICATION' },
@@ -268,11 +268,11 @@ it('createSecret error', async () => {
     }
   };
 
-  jest.spyOn(SecretsAPI, 'createCredential').mockImplementation(() => {
+  jest.spyOn(SecretsAPI, 'createSecret').mockImplementation(() => {
     throw error;
   });
 
-  jest.spyOn(SecretsAPI, 'getAllCredentials').mockImplementation(() => data);
+  jest.spyOn(SecretsAPI, 'getAllSecrets').mockImplementation(() => data);
 
   const expectedActions = [
     { type: 'CLEAR_SECRET_ERROR_NOTIFICATION' },

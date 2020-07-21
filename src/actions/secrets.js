@@ -12,10 +12,10 @@ limitations under the License.
 */
 
 import {
-  createCredential,
-  deleteCredential,
-  getCredential,
-  getCredentials,
+  createSecret as createSecretAPI,
+  deleteSecret as deleteSecretAPI,
+  getSecret,
+  getSecrets,
   getServiceAccounts,
   patchServiceAccount,
   updateServiceAccountSecrets
@@ -34,13 +34,13 @@ export function fetchSecretsSuccess(data) {
 }
 
 export function fetchSecrets({ namespace } = {}) {
-  return fetchNamespacedCollection('Secret', getCredentials, {
+  return fetchNamespacedCollection('Secret', getSecrets, {
     namespace
   });
 }
 
 export function fetchSecret({ name, namespace }) {
-  const secret = fetchNamespacedResource('Secret', getCredential, {
+  const secret = fetchNamespacedResource('Secret', getSecret, {
     namespace,
     name
   });
@@ -120,11 +120,11 @@ export function deleteSecret(secrets, cancelMethod) {
       });
     });
 
-    // This is where we delete the credentials (kube secrets) themselves
+    // This is where we delete the kube secrets themselves
     const timeoutLength = secrets.length * 1000;
     const deletePromises = secrets.map(secret => {
       const { name, namespace } = secret;
-      const response = deleteCredential(name, namespace);
+      const response = deleteSecretAPI(name, namespace);
       const timeout = new Promise((resolve, reject) => {
         setTimeout(() => {
           reject(new Error('An error occurred deleting the secret(s).'));
@@ -155,7 +155,7 @@ export function createSecret(postData, namespace) {
     });
     dispatch({ type: 'SECRET_CREATE_REQUEST' });
     try {
-      await createCredential(postData, namespace);
+      await createSecretAPI(postData, namespace);
       dispatch({
         type: 'SECRET_CREATE_SUCCESS'
       });
