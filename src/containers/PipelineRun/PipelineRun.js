@@ -40,6 +40,11 @@ import { rerunPipelineRun } from '../../api';
 
 import { fetchLogs, followLogs, getViewChangeHandler } from '../../utils';
 
+const PIPELINE_TASK = 'pipelineTask';
+const RETRY = 'retry';
+const STEP = 'step';
+const VIEW = 'view';
+
 export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   constructor(props) {
     super(props);
@@ -88,21 +93,86 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     this.setState({ showRerunNotification: value });
   }
 
+  getSelectedTaskId(pipelineTaskName, retry) {
+    const { taskRuns } = this.props;
+    const taskRun = taskRuns.find(
+      ({ metadata }) =>
+        metadata.labels &&
+        metadata.labels['tekton.dev/pipelineTask'] === pipelineTaskName
+    );
+
+    if (!taskRun) {
+      return null;
+    }
+
+    const retryNumber = parseInt(retry, 10);
+    if (
+      !Number.isNaN(retryNumber) &&
+      taskRun.status &&
+      taskRun.status.retriesStatus
+    ) {
+      const retryStatus = taskRun.status.retriesStatus[retryNumber];
+      return retryStatus && taskRun.metadata.uid + retryStatus.podName;
+    }
+
+    return taskRun.metadata.uid + taskRun.status.podName;
+  }
+
+  getSelectedTaskRun(selectedTaskId) {
+    const { taskRuns } = this.props;
+    const lookup = taskRuns.reduce((acc, taskRun) => {
+      const { labels, uid } = taskRun.metadata;
+      const pipelineTaskName = labels && labels['tekton.dev/pipelineTask'];
+      const { podName, retriesStatus } = taskRun.status;
+      acc[uid + podName] = {
+        pipelineTaskName,
+        uid
+      };
+      if (retriesStatus) {
+        retriesStatus.forEach((retryStatus, index) => {
+          acc[uid + retryStatus.podName] = {
+            pipelineTaskName,
+            retry: index,
+            uid
+          };
+        });
+      }
+      return acc;
+    }, {});
+    return lookup[selectedTaskId];
+  }
+
   handleTaskSelected = (selectedTaskId, selectedStepId) => {
-    const { history, location, match } = this.props;
+    const {
+      history,
+      location,
+      match,
+      pipelineTaskName: currentPipelineTaskName,
+      retry: currentRetry
+    } = this.props;
+    const { pipelineTaskName, retry } = this.getSelectedTaskRun(selectedTaskId);
     const queryParams = new URLSearchParams(location.search);
 
-    queryParams.set('taskRun', selectedTaskId);
+    queryParams.set(PIPELINE_TASK, pipelineTaskName);
     if (selectedStepId) {
-      queryParams.set('step', selectedStepId);
+      queryParams.set(STEP, selectedStepId);
     } else {
-      queryParams.delete('step');
+      queryParams.delete(STEP);
+    }
+
+    if (Number.isInteger(retry)) {
+      queryParams.set(RETRY, retry);
+    } else {
+      queryParams.delete(RETRY);
     }
 
     const currentStepId = this.props.selectedStepId;
-    const currentTaskId = this.props.selectedTaskId;
+    const currentTaskId = this.getSelectedTaskId(
+      currentPipelineTaskName,
+      currentRetry
+    );
     if (selectedStepId !== currentStepId || selectedTaskId !== currentTaskId) {
-      queryParams.delete('view');
+      queryParams.delete(VIEW);
     }
 
     const browserURL = match.url.concat(`?${queryParams.toString()}`);
@@ -132,8 +202,9 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       intl,
       match,
       pipelineRun,
+      pipelineTaskName,
+      retry,
       selectedStepId,
-      selectedTaskId,
       tasks,
       taskRuns,
       view
@@ -162,6 +233,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
 
     const { loading, showRerunNotification } = this.state;
     const { pipelineRunName } = match.params;
+    const selectedTaskId = this.getSelectedTaskId(pipelineTaskName, retry);
 
     const rerun = !this.props.isReadOnly && (
       <Rerun
@@ -237,9 +309,10 @@ function mapStateToProps(state, ownProps) {
   const { namespace } = match.params;
 
   const queryParams = new URLSearchParams(location.search);
-  const selectedTaskId = queryParams.get('taskRun');
-  const selectedStepId = queryParams.get('step');
-  const view = queryParams.get('view');
+  const pipelineTaskName = queryParams.get(PIPELINE_TASK);
+  const retry = queryParams.get(RETRY);
+  const selectedStepId = queryParams.get(STEP);
+  const view = queryParams.get(VIEW);
 
   return {
     clusterTasks: getClusterTasks(state),
@@ -253,11 +326,11 @@ function mapStateToProps(state, ownProps) {
       name: ownProps.match.params.pipelineRunName,
       namespace
     }),
+    pipelineTaskName,
+    retry,
     selectedStepId,
-    selectedTaskId,
     isLogStreamingEnabled: isLogStreamingEnabled(state),
     tasks: getTasks(state, { namespace }),
-
     taskRuns: getTaskRunsByPipelineRunName(
       state,
       ownProps.match.params.pipelineRunName,
