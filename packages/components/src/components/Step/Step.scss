@@ -20,7 +20,7 @@ limitations under the License.
   &:hover > a.tkn--step-link:hover,
   &[data-selected] > a.tkn--step-link,
   &[data-selected] > a.tkn--step-link:hover {
-    background-color: #e5e8eb;
+    background-color: $hover-ui;
     text-decoration: none;
   }
 

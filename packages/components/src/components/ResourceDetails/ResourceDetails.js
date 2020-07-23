@@ -141,7 +141,7 @@ const ResourceDetails = ({
           </div>
         </Tab>
         <Tab label="YAML">
-          <ViewYAML resource={resource} />
+          <ViewYAML resource={resource} dark />
         </Tab>
       </Tabs>
     </div>

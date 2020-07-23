@@ -24,10 +24,19 @@ pre.tkn--log {
 
   line-height: 0.95rem; // Update the react-window List itemSize if changing this
   overflow: hidden;
-  background-color: $ui-01;
+  background-color: $gray-90;
+  color: $gray-10;
 
   word-break: normal;
   word-wrap: normal;
+
+  .bx--skeleton__text {
+    background-color: $gray-80;
+
+    &::before {
+      background-color: $gray-70;
+    }
+  }
 
   code {
     white-space: pre;
@@ -40,15 +49,31 @@ pre.tkn--log {
     right: 0;
   }
 
+  .bx--copy-btn {
+    background-color: $gray-90;
+
+    &:hover {
+      background-color: $gray-80;
+    }
+
+    &:focus {
+      outline-color: white;
+    }
+
+    svg {
+      fill: $gray-10;
+    }
+  }
+
   .tkn--log-trailer {
     font-family: ibm-plex-sans, sans-serif;
     font-weight: bold;
 
     &[data-status='Completed'] {
-      color: $success;
+      color: $green-40;
     }
     &[data-status='Error'] {
-      color: $failed;
+      color: $red-50;
     }
   }
 

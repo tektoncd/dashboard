@@ -16,11 +16,17 @@ import PropTypes from 'prop-types';
 import jsYaml from 'js-yaml';
 import classNames from 'classnames';
 
+import './ViewYAML.scss';
+
 const ViewYAML = props => {
-  const { className, resource } = props;
+  const { className, dark, resource } = props;
 
   return (
-    <div className={classNames('bx--snippet--multi', className)}>
+    <div
+      className={classNames('bx--snippet--multi', className, {
+        'tkn--view-yaml--dark': dark
+      })}
+    >
       <code>
         <pre>{jsYaml.dump(resource)}</pre>
       </code>

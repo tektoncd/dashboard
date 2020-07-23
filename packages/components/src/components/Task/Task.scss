@@ -37,7 +37,6 @@ limitations under the License.
   }
 
   &:not([data-succeeded]) > a.tkn--task-link {
-    text-shadow: 0.2px 0 0 #272d33ab; // increase weight slightly
     background-color: $waiting-bg;
     color: $waiting-fg;
     &:hover {
@@ -89,7 +88,7 @@ limitations under the License.
 
   &[data-selected]:not([data-succeeded]) > a.tkn--task-link,
     &[data-selected][data-succeeded='Unknown'] > a.tkn--task-link {
-    background-color: #e5e8eb;
+    background-color: $hover-ui;
   }
 
   > a.tkn--task-link {

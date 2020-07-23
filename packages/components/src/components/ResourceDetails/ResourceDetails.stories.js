@@ -39,6 +39,20 @@ const resource = {
 
 export default {
   component: ResourceDetails,
+  decorators: [
+    storyFn => (
+      <div
+        style={{
+          backgroundColor: '#f4f4f4',
+          padding: '2rem',
+          position: 'relative',
+          width: '100%'
+        }}
+      >
+        {storyFn()}
+      </div>
+    )
+  ],
   title: 'Components/ResourceDetails'
 };
 

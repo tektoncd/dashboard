@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,8 +11,73 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+@import '~carbon-components/scss/globals/scss/vars';
+
 .bx--header ~ {
   nav.bx--side-nav {
+    background-color: $gray-100;
+    border-color: $gray-80;
+    color: $gray-10;
+
+    .bx--side-nav__icon > svg {
+      fill: $gray-10;
+    }
+
+    .bx--side-nav__submenu {
+      &[aria-haspopup=true] {
+        color: $gray-10;
+      }
+
+      &:focus {
+        outline-color: white;
+      }
+
+      &:hover {
+        background-color: #2c2c2c;
+        color: white;
+
+        .bx--side-nav__icon > svg {
+          fill: white;
+        }
+      }
+    }
+
+    .bx--side-nav__link {
+      &:focus {
+        outline-color: white;
+      }
+
+      .bx--side-nav__link-text {
+        color: $gray-10;
+      }
+
+      &:hover .bx--side-nav__link-text {
+        color: white;
+      }
+    }
+
+    .bx--side-nav__menu a.bx--side-nav__link--current,
+    .bx--side-nav__menu a.bx--side-nav__link[aria-current=page] {
+      background-color: $gray-80;
+    }
+
+    a.bx--side-nav__link[aria-current=page],
+    a.bx--side-nav__link--current {
+      background-color: $gray-90;
+    }
+
+    .bx--side-nav__item:not(.bx--side-nav__item--active) > .bx--side-nav__link:hover > span,
+    .bx--side-nav__item:not(.bx--side-nav__item--active) .bx--side-nav__menu-item > .bx--side-nav__link:hover > span {
+      color: white;
+    }
+
+    .bx--side-nav__item:not(.bx--side-nav__item--active):hover .bx--side-nav__item:not(.bx--side-nav__item--active) > .bx--side-nav__submenu:hover,
+    .bx--side-nav__item:not(.bx--side-nav__item--active) > .bx--side-nav__link:hover, .bx--side-nav__menu a.bx--side-nav__link:not(.bx--side-nav__link--current):not([aria-current=page]):hover,
+    .bx--side-nav a.bx--header__menu-item:hover, .bx--side-nav .bx--header__menu-title[aria-expanded=true]:hover {
+      background-color: #2c2c2c;
+      color: white;
+    }
+
     .bx--list-box__wrapper {
       margin-top: 1rem;
       padding: 0 1rem;
@@ -22,16 +87,68 @@ limitations under the License.
         font-weight: 600;
         line-height: 1.125rem;
         letter-spacing: 0.16px;
+        color: $gray-10;
       }
 
       .bx--combo-box.bx--list-box {
-        border: none;
         margin-bottom: 1.5em;
         width: auto;
-      }
 
-      .bx--text-input {
-        border: none;
+        background-color: $gray-80;
+        color: $gray-10;
+        border-color: $gray-10;
+
+        &:hover {
+          background-color: $gray-90;
+        }
+
+        .bx--text-input {
+          color: $gray-10;
+          border-color: $gray-60;
+
+          &:focus {
+            outline-color: white;
+          }
+        }
+
+        .bx--list-box__selection > svg {
+          fill: $gray-30;
+        }
+
+        .bx--list-box__menu-icon > svg {
+          fill: $gray-10;
+        }
+
+        &.bx--list-box--expanded {
+          .bx--text-input {
+            border-color: $gray-80;
+          }
+        }
+
+        .bx--list-box__menu {
+          background-color: $gray-80;
+
+          .bx--list-box__menu-item__option {
+            color: $gray-30;
+            border-top-color: $gray-70;
+          }
+
+          // .bx--list-box__menu-item--active {
+          //   background-color: $gray-70;
+          //   border-color: $gray-70;
+          // }
+
+          .bx--list-box__menu-item--highlighted {
+            background-color: $gray-70;
+            border-color: $gray-70;
+            // border-color: transparent;
+            color: $gray-10;
+
+            .bx--list-box__menu-item__option {
+              color: $gray-10;
+            }
+          }
+        }
       }
     }
   }

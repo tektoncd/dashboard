@@ -11,15 +11,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// TODO: rename. Details section of a step
-
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { FormattedMessage, injectIntl } from 'react-intl';
+import { injectIntl } from 'react-intl';
 import { urls } from '@tektoncd/dashboard-utils';
 
 import { Param, ResourceTable, ViewYAML } from '..';
-import './StepDefinition.scss';
 
 const resourceTable = (title, namespace, resources, intl) => {
   return (
@@ -39,7 +36,7 @@ const resourceTable = (title, namespace, resources, intl) => {
               {resourceRef.name}
             </Link>
           ) : (
-            <ViewYAML resource={resourceSpec} />
+            <ViewYAML resource={resourceSpec} dark />
           )
       }))}
       headers={[
@@ -149,17 +146,10 @@ class StepDefinition extends Component {
 
     const paramsResources = this.getIOTables();
     return (
-      <div className="tkn--step-definition">
-        <div className="title">
-          <FormattedMessage
-            id="dashboard.step.stepDefinition"
-            defaultMessage="Step definition"
-          />
-          :
-        </div>
-        <ViewYAML resource={resource} />
+      <>
+        <ViewYAML resource={resource} dark />
         {paramsResources}
-      </div>
+      </>
     );
   }
 }

@@ -18,7 +18,6 @@ import {
   AccordionItem,
   Button,
   Form,
-  FormGroup,
   InlineNotification,
   TextInput,
   ToastNotification
@@ -215,7 +214,7 @@ export class ImportResources extends Component {
       : undefined;
 
     return (
-      <div className="tkn--importresources-outer">
+      <div className="tkn--importresources">
         {this.state.submitError && (
           <InlineNotification
             kind="error"
@@ -240,78 +239,71 @@ export class ImportResources extends Component {
           })}
         </h1>
         <Form>
-          <FormGroup
-            legendText={intl.formatMessage({
-              id: 'dashboard.importResources.legendText',
-              defaultMessage: 'Source repository and target namespace'
+          <TextInput
+            data-testid="repository-url-field"
+            helperText={intl.formatMessage({
+              id: 'dashboard.importResources.repo.helperText',
+              defaultMessage:
+                'The location of the YAML definitions to be applied (Git URLs supported)'
             })}
-          >
-            <TextInput
-              data-testid="repository-url-field"
-              helperText={intl.formatMessage({
-                id: 'dashboard.importResources.repo.helperText',
-                defaultMessage:
-                  'The location of the YAML definitions to be applied (Git URLs supported)'
-              })}
-              id="import-repository-url"
-              invalid={this.state.invalidInput}
-              invalidText={intl.formatMessage({
-                id: 'dashboard.importResources.repo.invalidText',
-                defaultMessage: 'Please submit a valid URL'
-              })}
-              labelText={intl.formatMessage({
-                id: 'dashboard.importResources.repo.labelText',
-                defaultMessage: 'Repository URL'
-              })}
-              name="repositoryURL"
-              onChange={this.handleTextInput}
-              placeholder="https://github.com/my-repository"
-              required
-              type="URL"
-              value={this.state.repositoryURL}
-            />
-            <TextInput
-              data-testid="path-field"
-              helperText={intl.formatMessage({
-                id: 'dashboard.importResources.path.helperText',
-                defaultMessage:
-                  'The path of the Tekton resources to import from the repository. Leave blank if the resources are at the top-level directory.'
-              })}
-              id="import-path"
-              labelText={intl.formatMessage({
-                id: 'dashboard.importResources.path.labelText',
-                defaultMessage: 'Repository path (optional)'
-              })}
-              name="path"
-              onChange={this.handleTextInput}
-              placeholder={intl.formatMessage({
-                id: 'dashboard.importResources.path.placeholder',
-                defaultMessage: 'Enter repository path'
-              })}
-              value={this.state.path}
-            />
-            <NamespacesDropdown
-              id="import-namespaces-dropdown"
-              helperText={intl.formatMessage({
-                id: 'dashboard.importResources.targetNamespace.helperText',
-                defaultMessage:
-                  'The namespace in which the resources will be created'
-              })}
-              titleText={intl.formatMessage({
-                id: 'dashboard.importResources.targetNamespace.titleText',
-                defaultMessage: 'Target namespace'
-              })}
-              invalid={this.state.invalidNamespace}
-              invalidText={intl.formatMessage({
-                id: 'dashboard.namespacesDropdown.invalidText',
-                defaultMessage: 'Please select a namespace'
-              })}
-              onChange={this.handleNamespace}
-              required
-              selectedItem={selectedNamespace}
-            />
-          </FormGroup>
-          <Accordion>
+            id="import-repository-url"
+            invalid={this.state.invalidInput}
+            invalidText={intl.formatMessage({
+              id: 'dashboard.importResources.repo.invalidText',
+              defaultMessage: 'Please submit a valid URL'
+            })}
+            labelText={intl.formatMessage({
+              id: 'dashboard.importResources.repo.labelText',
+              defaultMessage: 'Repository URL'
+            })}
+            name="repositoryURL"
+            onChange={this.handleTextInput}
+            placeholder="https://github.com/my-repository"
+            required
+            type="URL"
+            value={this.state.repositoryURL}
+          />
+          <TextInput
+            data-testid="path-field"
+            helperText={intl.formatMessage({
+              id: 'dashboard.importResources.path.helperText',
+              defaultMessage:
+                'The path of the Tekton resources to import from the repository. Leave blank if the resources are at the top-level directory.'
+            })}
+            id="import-path"
+            labelText={intl.formatMessage({
+              id: 'dashboard.importResources.path.labelText',
+              defaultMessage: 'Repository path (optional)'
+            })}
+            name="path"
+            onChange={this.handleTextInput}
+            placeholder={intl.formatMessage({
+              id: 'dashboard.importResources.path.placeholder',
+              defaultMessage: 'Enter repository path'
+            })}
+            value={this.state.path}
+          />
+          <NamespacesDropdown
+            id="import-namespaces-dropdown"
+            helperText={intl.formatMessage({
+              id: 'dashboard.importResources.targetNamespace.helperText',
+              defaultMessage:
+                'The namespace in which the resources will be created'
+            })}
+            titleText={intl.formatMessage({
+              id: 'dashboard.importResources.targetNamespace.titleText',
+              defaultMessage: 'Target namespace'
+            })}
+            invalid={this.state.invalidNamespace}
+            invalidText={intl.formatMessage({
+              id: 'dashboard.namespacesDropdown.invalidText',
+              defaultMessage: 'Please select a namespace'
+            })}
+            onChange={this.handleNamespace}
+            required
+            selectedItem={selectedNamespace}
+          />
+          <Accordion align="start">
             <AccordionItem
               title={intl.formatMessage({
                 id: 'dashboard.importResources.advanced.accordionText',
