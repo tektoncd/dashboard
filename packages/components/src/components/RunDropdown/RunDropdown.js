@@ -54,6 +54,7 @@ class RunDropdown extends Component {
           iconDescription={title}
           data-testid="overflowmenu"
           flipped
+          selectorPrimaryFocus="button:not([disabled])"
         >
           {items.map(item => {
             const {
@@ -73,7 +74,6 @@ class RunDropdown extends Component {
                 onClick={() =>
                   this.handleShow(() => action(resource), modalProperties)
                 }
-                primaryFocus={!disabled}
                 requireTitle
               />
             );
