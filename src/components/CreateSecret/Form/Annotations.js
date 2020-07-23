@@ -14,7 +14,7 @@ limitations under the License.
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { Button, Dropdown, TextInput } from 'carbon-components-react';
-import { AddAlt24 as Add, CloseOutline20 as Remove } from '@carbon/icons-react';
+import { AddAlt24 as Add, SubtractAlt16 as Remove } from '@carbon/icons-react';
 import { getTranslateWithId } from '@tektoncd/dashboard-utils';
 
 const itemToString = item => (item ? item.text : '');
@@ -38,6 +38,11 @@ const Annotations = props => {
   const dockerIntlText = intl.formatMessage({
     id: 'dashboard.createSecret.accessToDocker',
     defaultMessage: 'Docker Registry'
+  });
+
+  const removeTitle = intl.formatMessage({
+    id: 'dashboard.keyValueList.remove',
+    defaultMessage: 'Remove'
   });
 
   return (
@@ -93,11 +98,17 @@ const Annotations = props => {
               disabled={loading}
             />
             {annotations.length !== 1 && (
-              <Remove
-                className="tkn--createsecret-removeIcon"
+              <Button
                 data-testid="removeIcon"
-                onClick={() => handleRemove(index)}
                 disabled={loading}
+                hasIconOnly
+                iconDescription={removeTitle}
+                kind="ghost"
+                onClick={() => handleRemove(index)}
+                renderIcon={Remove}
+                size="field"
+                tooltipAlignment="center"
+                tooltipPosition="bottom"
               />
             )}
           </div>

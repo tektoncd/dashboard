@@ -496,12 +496,7 @@ describe('CreateTaskRun', () => {
   });
 
   it('renders labels', () => {
-    const {
-      getByText,
-      getByPlaceholderText,
-      getByTitle,
-      queryByValue
-    } = renderWithIntl(
+    const { getByText, getByPlaceholderText, queryByValue } = renderWithIntl(
       <Provider store={store.getStore()}>
         <CreateTaskRun open namespace="" />
       </Provider>
@@ -515,7 +510,7 @@ describe('CreateTaskRun', () => {
     });
     expect(queryByValue(/foo/i)).toBeTruthy();
     expect(queryByValue(/bar/i)).toBeTruthy();
-    fireEvent.click(getByTitle(/Remove/i));
+    fireEvent.click(getByText(/Remove/i));
     expect(queryByValue(/foo/i)).toBeFalsy();
     expect(queryByValue(/bar/i)).toBeFalsy();
   });
