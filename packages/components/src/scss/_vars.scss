@@ -13,25 +13,25 @@ limitations under the License.
 
 @import '~carbon-components/scss/globals/scss/vars';
 
-$not-run: #535e67;
+$not-run: $gray-70;
 
 $waiting-bg: transparent;
-$waiting-bg-hover: #e5e8eb;
+$waiting-bg-hover: $hover-ui;
 $waiting-fg: inherit;
 
-$running: $brand-01;
-$running-bg: $brand-01;
-$running-bg-hover: #5485c4;
+$running: $support-04;
+$running-bg: $support-04;
+$running-bg-hover: $inverse-support-04;
 $running-fg: white;
 
-$success: #5d8726;
-$success-bg: #5d8726;
-$success-bg-hover: #65932a;
+$success: $support-02;
+$success-bg: $support-02;
+$success-bg-hover: $inverse-support-02;
 $success-fg: white;
 
-$failed: #ad1625;
-$failed-bg: #ad1625;
-$failed-bg-hover: #cb1a2c;
+$failed: $support-01;
+$failed-bg: $support-01;
+$failed-bg-hover: $inverse-support-01;
 $failed-fg: white;
 
-$unknown: #535e67;
+$unknown: $gray-70;

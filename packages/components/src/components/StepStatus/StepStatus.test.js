@@ -18,8 +18,6 @@ import { renderWithIntl } from '../../utils/test';
 describe('StepStatus', () => {
   it('renders default content', () => {
     const { queryByText } = renderWithIntl(<StepStatus />);
-
-    expect(queryByText(/Container status:/i)).toBeTruthy();
     expect(queryByText(/Status not available/i)).toBeTruthy();
   });
 

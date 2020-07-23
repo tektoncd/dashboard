@@ -11,20 +11,32 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+@import '~carbon-components/scss/globals/scss/vars';
+
 .tkn--tasks {
   display: flex;
   flex-wrap: nowrap;
   min-height: calc(100vh - 16rem);
   align-items: stretch;
   background-color: white;
-}
 
-.tkn--task-tree {
-  flex-shrink: 0;
-}
+  .tkn--task-tree {
+    flex-shrink: 0;
+  }
 
-.tkn--step-details {
-  flex-grow: 1;
+  .tkn--step-details {
+    flex-grow: 1;
+  }
+
+  .bx--data-table {
+    td {
+      background-color: $gray-10; // ui-02 has wrong value for some reason
+      border-top-color: $gray-10;
+    }
+    tr:hover td {
+      background-color: $hover-ui;
+    }
+  }
 }
 
 .bx--snippet--multi{

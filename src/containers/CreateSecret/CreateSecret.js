@@ -375,7 +375,7 @@ export /* istanbul ignore next */ class CreateSecret extends Component {
     const secretType = this.getSecretType();
 
     return (
-      <div data-testid="createSecret">
+      <>
         {!succesfullyCreated && (
           <Form
             {...this.state}
@@ -404,7 +404,7 @@ export /* istanbul ignore next */ class CreateSecret extends Component {
             handleClose={() => this.handleFinish()}
           />
         )}
-      </div>
+      </>
     );
   }
 }

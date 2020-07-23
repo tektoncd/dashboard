@@ -210,6 +210,7 @@ export /* istanbul ignore next */ class TriggerTemplateContainer extends Compone
                                 resource={
                                   triggerTemplate.spec.resourcetemplates[index]
                                 }
+                                dark
                               />
                             </TableExpandedRow>
                           )}

@@ -13,43 +13,16 @@ limitations under the License.
 
 @import '~carbon-components/scss/globals/scss/vars';
 
-.tkn--importresources-header {
-  margin-left: 2.5rem;
-  padding-top: 2rem;
-  font-size: 1.5rem;
-}
-
-.tkn--importresources-outer {
-
-  .bx--form__helper-text {
-    color: $text-05; // Since by default the contrast/colour choice is barely readable.
-  }
-
+.tkn--importresources {
+  .bx--form__helper-text,
   .bx--label--disabled {
-    color: $text-05;
-  }
-
-  background-color: white;
-  min-height: 30rem;
-
-  legend.bx--label {
-    margin-left: 2.5rem;
-    margin-bottom: 1rem;
-    font-size: 1rem;
-  }
-
-  .bx--tooltip__label {
-    font-size: 1rem;
-  }
-
-  legend.bx--label.bx--tooltip__label {
-    margin-left: 0;
-    font-size: 1rem;
+    color: $text-05; // Since by default the contrast/colour choice is barely readable.
   }
 
   .bx--combo-box.bx--list-box,
   .bx--text-input__field-wrapper {
     width: 50%;
+    min-width: 300px;
   }
 
   .bx--combo-box.bx--list-box {
@@ -57,39 +30,25 @@ limitations under the License.
   }
 
   .bx--toast-notification {
-    margin: 2.8rem;
+    margin: 2rem 0;
   }
 
+  .bx--form-item,
   .bx--list-box__wrapper {
-    margin-left: 2.5rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
   }
 
   .bx--btn {
-    margin-left: 2.5rem;
     margin-top: 1rem;
-    margin-bottom: 2rem;
-  }
-
-  .bx--fieldset {
-    margin-bottom: 0;
-  }
-
-  .bx--form-item {
-    margin-left: 2.5rem;
-    margin-bottom: 2rem;
   }
 
   .bx--accordion {
     margin-bottom: 1rem;
 
-    .bx--accordion__heading .bx--accordion__title {
-      padding-left: 1.5rem;
-    }
-
     .bx--accordion__content,
     .bx--accordion__item--active .bx--accordion__content {
       padding: .5rem 0;
+      margin-left: 0;
     }
   }
 }

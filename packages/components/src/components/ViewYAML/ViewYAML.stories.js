@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
+import { boolean } from '@storybook/addon-knobs';
 
 import ViewYAML from './ViewYAML';
 
@@ -40,5 +41,5 @@ export const Base = () => {
     }
   };
 
-  return <ViewYAML resource={resource} />;
+  return <ViewYAML resource={resource} dark={boolean('dark', true)} />;
 };

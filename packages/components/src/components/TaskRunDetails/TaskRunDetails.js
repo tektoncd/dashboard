@@ -93,7 +93,7 @@ const TaskRunDetails = props => {
           })}
         >
           <div className="tkn--step-status">
-            <ViewYAML resource={taskRun.status} />
+            <ViewYAML resource={taskRun.status} dark />
           </div>
         </Tab>
       </Tabs>

@@ -18,6 +18,11 @@ $css--reset: true;
 $css--default-type: true;
 $css--plex: true;
 
+@import '~carbon-components/scss/globals/scss/theme';
+
+$carbon--theme: $carbon--theme--g10;
+@include carbon--theme();
+
 @import '~carbon-components/scss/globals/scss/_css--reset.scss';
 @import '~carbon-components/scss/globals/scss/_css--font-face.scss';
 @import '~carbon-components/scss/globals/scss/_css--helpers.scss';

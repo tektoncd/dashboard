@@ -16,8 +16,6 @@ import { injectIntl } from 'react-intl';
 
 import { ViewYAML } from '..';
 
-import './StepStatus.scss';
-
 const StepStatus = ({ intl, status }) => {
   const { container, imageID, name, running, terminated, waiting } =
     status || {};
@@ -37,14 +35,7 @@ const StepStatus = ({ intl, status }) => {
 
   return (
     <div className="tkn--step-status">
-      <div className="title">
-        {intl.formatMessage({
-          id: 'dashboard.step.containerStatus',
-          defaultMessage: 'Container status'
-        })}
-        :
-      </div>
-      <ViewYAML resource={resource} />
+      <ViewYAML resource={resource} dark />
     </div>
   );
 };
