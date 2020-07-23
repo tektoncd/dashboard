@@ -473,12 +473,7 @@ describe('CreatePipelineRun', () => {
   });
 
   it('renders labels', () => {
-    const {
-      getByText,
-      getByPlaceholderText,
-      getByTitle,
-      queryByValue
-    } = renderWithIntl(
+    const { getByText, getByPlaceholderText, queryByValue } = renderWithIntl(
       <Provider store={mockStore(testStore)}>
         <CreatePipelineRun open namespace="" />
       </Provider>
@@ -492,7 +487,7 @@ describe('CreatePipelineRun', () => {
     });
     expect(queryByValue(/foo/i)).toBeTruthy();
     expect(queryByValue(/bar/i)).toBeTruthy();
-    fireEvent.click(getByTitle(/Remove/i));
+    fireEvent.click(getByText(/Remove/i));
     expect(queryByValue(/foo/i)).toBeFalsy();
     expect(queryByValue(/bar/i)).toBeFalsy();
   });

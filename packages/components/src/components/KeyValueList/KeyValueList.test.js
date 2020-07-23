@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -150,7 +150,7 @@ it('KeyValueList add and remove buttons work', () => {
     onAdd: jest.fn(),
     onRemove: jest.fn()
   };
-  const { getByText, getByTitle } = renderWithIntl(<KeyValueList {...props} />);
+  const { getByText } = renderWithIntl(<KeyValueList {...props} />);
 
   const addButton = getByText(/Add/i);
 
@@ -160,9 +160,9 @@ it('KeyValueList add and remove buttons work', () => {
   fireEvent.click(addButton);
   fireEvent.click(addButton);
 
-  fireEvent.click(getByTitle(/Remove/i));
-  fireEvent.click(getByTitle(/Remove/i));
-  fireEvent.click(getByTitle(/Remove/i));
+  fireEvent.click(getByText(/Remove/i));
+  fireEvent.click(getByText(/Remove/i));
+  fireEvent.click(getByText(/Remove/i));
 
   expect(props.onAdd).toHaveBeenCalledTimes(5);
   expect(props.onRemove).toHaveBeenCalledTimes(3);

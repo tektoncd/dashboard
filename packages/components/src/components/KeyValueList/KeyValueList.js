@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,7 +14,7 @@ limitations under the License.
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { Button, TextInput } from 'carbon-components-react';
-import { AddAlt24 as Add, CloseOutline20 as Remove } from '@carbon/icons-react';
+import { AddAlt24 as Add, SubtractAlt16 as Remove } from '@carbon/icons-react';
 
 import './KeyValueList.scss';
 
@@ -74,10 +74,15 @@ const KeyValueList = props => {
             autoComplete="off"
           />
           {keyValues.length > minKeyValues && (
-            <Remove
-              className="tkn--keyvalue-remove"
+            <Button
+              hasIconOnly
+              iconDescription={removeTitle}
+              kind="ghost"
               onClick={() => onRemove(index)}
-              title={removeTitle}
+              renderIcon={Remove}
+              size="field"
+              tooltipAlignment="center"
+              tooltipPosition="bottom"
             />
           )}
         </div>
