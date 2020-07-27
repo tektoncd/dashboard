@@ -11,6 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { labels as labelConstants } from '@tektoncd/dashboard-utils';
+
 import { deleteRequest, get, post, put } from './comms';
 import { checkData, getQueryParams, getTektonAPI } from './utils';
 
@@ -55,7 +57,7 @@ export function createTaskRun({
       name: `${taskName}-run-${Date.now()}`,
       namespace,
       labels: {
-        'tekton.dev/task': taskName,
+        [labelConstants.TASK]: taskName,
         ...labels
       }
     },

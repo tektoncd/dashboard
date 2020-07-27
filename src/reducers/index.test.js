@@ -11,6 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { labels } from '@tektoncd/dashboard-utils';
+
 import {
   getClusterTask,
   getClusterTasks,
@@ -97,7 +99,7 @@ const clusterTasks = [clusterTask];
 const taskName = 'myTask';
 const taskRun = {
   metadata: {
-    labels: { 'tekton.dev/pipelineRun': pipelineRunName }
+    labels: { [labels.PIPELINE_RUN]: pipelineRunName }
   },
   fake: 'taskRun',
   spec: { taskRef: { name: taskName } }

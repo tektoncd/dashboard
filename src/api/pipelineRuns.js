@@ -11,6 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { labels as labelConstants } from '@tektoncd/dashboard-utils';
+
 import { deleteRequest, get, post, put } from './comms';
 import { checkData, getAPI, getQueryParams, getTektonAPI } from './utils';
 
@@ -60,7 +62,7 @@ export function createPipelineRun({
       name: `${pipelineName}-run-${Date.now()}`,
       labels: {
         ...labels,
-        'tekton.dev/pipeline': pipelineName,
+        [labelConstants.PIPELINE]: pipelineName,
         app: 'tekton-app'
       }
     },

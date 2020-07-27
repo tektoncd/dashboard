@@ -24,6 +24,7 @@ import {
   getStatus,
   getTitle,
   isRunning,
+  labels,
   urls
 } from '@tektoncd/dashboard-utils';
 import { Add16 as Add } from '@carbon/icons-react';
@@ -335,8 +336,8 @@ function mapStateToProps(state, props) {
   const namespace = namespaceParam || getSelectedNamespace(state);
 
   const pipelineFilter =
-    filters.find(filter => filter.indexOf('tekton.dev/pipeline=') !== -1) || '';
-  const pipelineName = pipelineFilter.replace('tekton.dev/pipeline=', '');
+    filters.find(filter => filter.indexOf(`${labels.PIPELINE}=`) !== -1) || '';
+  const pipelineName = pipelineFilter.replace(`${labels.PIPELINE}=`, '');
 
   return {
     isReadOnly: isReadOnly(state),

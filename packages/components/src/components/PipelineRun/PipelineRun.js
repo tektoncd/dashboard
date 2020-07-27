@@ -23,6 +23,7 @@ import {
   getParams,
   getResources,
   getStatus,
+  labels,
   reorderSteps,
   selectedTask,
   selectedTaskRun,
@@ -140,8 +141,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
         const { reason, status: succeeded } = getStatus(taskRun);
 
         let pipelineTaskName;
-        const conditionCheck =
-          taskRun.metadata.labels['tekton.dev/conditionCheck'];
+        const conditionCheck = taskRun.metadata.labels[labels.CONDITION_CHECK];
         if (conditionCheck) {
           pipelineTaskName = conditionCheck;
         } else {
