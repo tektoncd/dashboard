@@ -98,7 +98,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     const taskRun = taskRuns.find(
       ({ metadata }) =>
         metadata.labels &&
-        metadata.labels['tekton.dev/pipelineTask'] === pipelineTaskName
+        (metadata.labels['tekton.dev/conditionCheck'] === pipelineTaskName ||
+          metadata.labels['tekton.dev/pipelineTask'] === pipelineTaskName)
     );
 
     if (!taskRun) {
@@ -122,7 +123,10 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     const { taskRuns } = this.props;
     const lookup = taskRuns.reduce((acc, taskRun) => {
       const { labels, uid } = taskRun.metadata;
-      const pipelineTaskName = labels && labels['tekton.dev/pipelineTask'];
+      const pipelineTaskName =
+        labels &&
+        (labels['tekton.dev/conditionCheck'] ||
+          labels['tekton.dev/pipelineTask']);
       const { podName, retriesStatus } = taskRun.status;
       acc[uid + podName] = {
         pipelineTaskName,
