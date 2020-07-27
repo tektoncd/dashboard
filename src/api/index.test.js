@@ -12,6 +12,8 @@ limitations under the License.
 */
 
 import fetchMock from 'fetch-mock';
+import { labels } from '@tektoncd/dashboard-utils';
+
 import * as API from '.';
 import { mockCSRFToken } from '../utils/test';
 
@@ -118,7 +120,7 @@ it('importResources', () => {
       name: `import-resources-${Date.now()}`,
       labels: {
         app: 'tekton-app',
-        'dashboard.tekton.dev/import': 'true'
+        [labels.DASHBOARD_IMPORT]: 'true'
       }
     },
     spec: {

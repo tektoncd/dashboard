@@ -31,6 +31,7 @@ import {
   getResources,
   getStatus,
   getTitle,
+  queryParams as queryParamConstants,
   reorderSteps,
   stepsStatus,
   taskRunStep,
@@ -54,9 +55,7 @@ import { fetchTask, fetchTaskByType } from '../../actions/tasks';
 import { fetchTaskRun } from '../../actions/taskRuns';
 
 const taskTypeKeys = { ClusterTask: 'clustertasks', Task: 'tasks' };
-const STEP = 'step';
-const TASK_RUN_DETAILS = 'taskRunDetails';
-const VIEW = 'view';
+const { STEP, TASK_RUN_DETAILS, VIEW } = queryParamConstants;
 
 export /* istanbul ignore next */ class TaskRunContainer extends Component {
   // once redux store is available errors will be handled properly with dedicated components

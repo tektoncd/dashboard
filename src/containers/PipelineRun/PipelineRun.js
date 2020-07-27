@@ -15,7 +15,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { PipelineRun, Rerun } from '@tektoncd/dashboard-components';
-import { getTitle } from '@tektoncd/dashboard-utils';
+import {
+  getTitle,
+  labels as labelConstants,
+  queryParams as queryParamConstants
+} from '@tektoncd/dashboard-utils';
 import { InlineNotification } from 'carbon-components-react';
 import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
@@ -40,10 +44,7 @@ import { rerunPipelineRun } from '../../api';
 
 import { fetchLogs, followLogs, getViewChangeHandler } from '../../utils';
 
-const PIPELINE_TASK = 'pipelineTask';
-const RETRY = 'retry';
-const STEP = 'step';
-const VIEW = 'view';
+const { PIPELINE_TASK, RETRY, STEP, VIEW } = queryParamConstants;
 
 export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   constructor(props) {
@@ -98,8 +99,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     const taskRun = taskRuns.find(
       ({ metadata }) =>
         metadata.labels &&
-        (metadata.labels['tekton.dev/conditionCheck'] === pipelineTaskName ||
-          metadata.labels['tekton.dev/pipelineTask'] === pipelineTaskName)
+        (metadata.labels[labelConstants.CONDITION_CHECK] === pipelineTaskName ||
+          metadata.labels[labelConstants.PIPELINE_TASK] === pipelineTaskName)
     );
 
     if (!taskRun) {
@@ -125,8 +126,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       const { labels, uid } = taskRun.metadata;
       const pipelineTaskName =
         labels &&
-        (labels['tekton.dev/conditionCheck'] ||
-          labels['tekton.dev/pipelineTask']);
+        (labels[labelConstants.CONDITION_CHECK] ||
+          labels[labelConstants.PIPELINE_TASK]);
       const { podName, retriesStatus } = taskRun.status;
       acc[uid + podName] = {
         pipelineTaskName,
@@ -192,7 +193,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
         this.props.fetchTasks(),
         this.props.fetchClusterTasks(),
         this.props.fetchTaskRuns({
-          filters: [`tekton.dev/pipelineRun=${pipelineRunName}`]
+          filters: [`${labelConstants.PIPELINE_RUN}=${pipelineRunName}`]
         })
       ]);
       this.setState({ loading: false });

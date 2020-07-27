@@ -11,6 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { labels } from '@tektoncd/dashboard-utils';
+
 import {
   formatLabels,
   generateId,
@@ -358,15 +360,15 @@ it('generateId', () => {
 });
 
 it('formatLabels', () => {
-  const labels = {
+  const inputLabels = {
     app: 'tekton-app',
     gitOrg: 'foo',
     gitRepo: 'bar.git',
     gitServer: 'github.com',
-    'tekton.dev/pipeline': 'pipeline0'
+    [labels.PIPELINE]: 'pipeline0'
   };
 
-  const returnedLabels = formatLabels(labels);
+  const returnedLabels = formatLabels(inputLabels);
 
   expect(returnedLabels).toStrictEqual([
     'app: tekton-app',

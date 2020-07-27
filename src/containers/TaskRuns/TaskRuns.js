@@ -24,6 +24,7 @@ import {
   getStatus,
   getTitle,
   isRunning,
+  labels,
   urls
 } from '@tektoncd/dashboard-utils';
 import { Add16 as Add } from '@carbon/icons-react';
@@ -47,6 +48,8 @@ const initialState = {
   createdTaskRun: null,
   submitError: ''
 };
+
+const { CLUSTER_TASK, TASK } = labels;
 
 export /* istanbul ignore next */ class TaskRuns extends Component {
   constructor(props) {
@@ -211,7 +214,9 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
       // (and that is the filter on the page), but some taskruns might still
       // only have the old label 'tekton.dev/task='
       // So, for ClusterTasks, also fetch with the old filter:
-      this.props.fetchTaskRuns({ filters: [`tekton.dev/task=${taskName}`] });
+      this.props.fetchTaskRuns({
+        filters: [`${TASK}=${taskName}`]
+      });
     }
 
     this.props.fetchTaskRuns({
@@ -328,16 +333,15 @@ function mapStateToProps(state, props) {
   const filters = getFilters(props.location);
   const namespace = namespaceParam || getSelectedNamespace(state);
 
-  const taskFilter =
-    filters.find(f => f.indexOf('tekton.dev/task=') !== -1) || '';
+  const taskFilter = filters.find(f => f.indexOf(`${TASK}=`) !== -1) || '';
   const clusterTaskFilter =
-    filters.find(f => f.indexOf('tekton.dev/clusterTask=') !== -1) || '';
+    filters.find(f => f.indexOf(`${CLUSTER_TASK}=`) !== -1) || '';
   const kind = clusterTaskFilter ? 'ClusterTask' : 'Task';
 
   const taskName =
     kind === 'ClusterTask'
-      ? clusterTaskFilter.replace('tekton.dev/clusterTask=', '')
-      : taskFilter.replace('tekton.dev/task=', '');
+      ? clusterTaskFilter.replace(`${CLUSTER_TASK}=`, '')
+      : taskFilter.replace(`${TASK}=`, '');
 
   let taskRuns = getTaskRuns(state, { filters, namespace });
   if (kind === 'ClusterTask') {
@@ -346,7 +350,7 @@ function mapStateToProps(state, props) {
     // only have the old label 'tekton.dev/task='
     // So, for ClusterTasks, also fetch with the old filter:
     const clusterTaskRuns = getTaskRuns(state, {
-      filters: [`tekton.dev/task=${taskName}`]
+      filters: [`${TASK}=${taskName}`]
     });
 
     // Then merge the arrays, using a Set to prevent duplicates

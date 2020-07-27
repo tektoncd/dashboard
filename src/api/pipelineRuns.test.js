@@ -12,6 +12,8 @@ limitations under the License.
 */
 
 import fetchMock from 'fetch-mock';
+import { labels } from '@tektoncd/dashboard-utils';
+
 import * as API from './pipelineRuns';
 import { mockCSRFToken } from '../utils/test';
 
@@ -56,7 +58,7 @@ it('createPipelineRun', () => {
     metadata: {
       name: `${pipelineName}-run-${Date.now()}`,
       labels: {
-        'tekton.dev/pipeline': pipelineName,
+        [labels.PIPELINE]: pipelineName,
         app: 'tekton-app'
       }
     },
@@ -113,7 +115,7 @@ it('createPipelineRun with nodeSelector', () => {
     metadata: {
       name: `${pipelineName}-run-${Date.now()}`,
       labels: {
-        'tekton.dev/pipeline': pipelineName,
+        [labels.PIPELINE]: pipelineName,
         app: 'tekton-app'
       }
     },

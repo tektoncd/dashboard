@@ -11,6 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { labels as labelConstants } from '@tektoncd/dashboard-utils';
+
 import { get, post } from './comms';
 import {
   apiRoot,
@@ -232,7 +234,7 @@ export function importResources({
       labels: {
         ...labels,
         app: 'tekton-app',
-        'dashboard.tekton.dev/import': 'true'
+        [labelConstants.DASHBOARD_IMPORT]: 'true'
       }
     },
     spec: pipelineRunSpec

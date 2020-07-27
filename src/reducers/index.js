@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import { combineReducers } from 'redux';
+import { labels as labelConstants } from '@tektoncd/dashboard-utils';
 
 import clusterTasks, * as clusterTaskSelectors from './clusterTasks';
 import conditions, * as conditionSelectors from './conditions';
@@ -226,7 +227,7 @@ export function getTaskRunsByPipelineRunName(
 ) {
   const resources = taskRunsSelectors.getTaskRuns(state.taskRuns, namespace);
   return filterResources({
-    filters: [`tekton.dev/pipelineRun=${pipelineRunName}`],
+    filters: [`${labelConstants.PIPELINE_RUN}=${pipelineRunName}`],
     resources
   });
 }
