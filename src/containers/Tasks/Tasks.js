@@ -123,7 +123,17 @@ export /* istanbul ignore next */ class Tasks extends Component {
             name: task.metadata.name
           })}
         >
-          <Information16 className="tkn--resource-info-icon" />
+          <Information16 className="tkn--resource-info-icon">
+            <title>
+              {intl.formatMessage(
+                {
+                  id: 'dashboard.resourceList.viewDetails',
+                  defaultMessage: 'View {resource}'
+                },
+                { resource: task.metadata.name }
+              )}
+            </title>
+          </Information16>
         </Link>
       )
     }));
