@@ -126,6 +126,7 @@ const Table = props => {
     emptyTextSelectedNamespace,
     filters,
     headers: dataHeaders,
+    id,
     intl,
     isSortable,
     loading,
@@ -150,7 +151,7 @@ const Table = props => {
   });
 
   return (
-    <div className={tableClassNames}>
+    <div className={tableClassNames} id={id}>
       <DataTable
         key={selectedNamespace}
         rows={dataRows}
@@ -255,7 +256,7 @@ const Table = props => {
                         {row.cells.map(cell => (
                           <TableCell
                             key={cell.id}
-                            id={cell.id}
+                            id={id ? `${id}:${cell.id}` : cell.id}
                             className={`cell-${cell.info.header}`}
                             {...(typeof cell.value === 'string' && {
                               title: cell.value
@@ -281,6 +282,7 @@ Table.defaultProps = {
   batchActionButtons: [],
   emptyTextAllNamespaces: null,
   emptyTextSelectedNamespace: null,
+  id: null,
   isSortable: false,
   loading: false,
   selectedNamespace: null,
@@ -293,6 +295,7 @@ Table.propTypes = {
   emptyTextAllNamespaces: PropTypes.string,
   emptyTextSelectedNamespace: PropTypes.string,
   headers: PropTypes.arrayOf(PropTypes.object).isRequired,
+  id: PropTypes.string,
   isSortable: PropTypes.bool,
   loading: PropTypes.bool,
   rows: PropTypes.arrayOf(PropTypes.object).isRequired,

@@ -207,6 +207,7 @@
     "dashboard.resourceDetails.errorloading": "Error loading resource",
     "dashboard.resourceList.emptyState": "No resources for type {type}.",
     "dashboard.resourceList.errorLoading": "Error loading {type}",
+    "dashboard.resourceList.viewDetails": "View {resource}",
     "dashboard.secret.errorLoading": "Error loading Secret",
     "dashboard.secret.failed": "Cannot load Secret",
     "dashboard.secret.failedSubtitle": "Secret {secretName} not found",

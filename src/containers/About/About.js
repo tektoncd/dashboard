@@ -156,7 +156,7 @@ export /* istanbul ignore next */ class About extends Component {
         <div className="tkn--about--content">
           <div className="tkn--about--tables">
             <Table
-              title="Dashboard"
+              id="tkn--about--dashboard-table"
               headers={headers}
               rows={[
                 getRow('Namespace', this.props.dashboardNamespace),
@@ -166,28 +166,28 @@ export /* istanbul ignore next */ class About extends Component {
                 getRow(logoutURLLabel, this.props.logoutURL)
               ].filter(Boolean)}
               size="short"
-              className="tkn--about--dashboard-table"
+              title="Dashboard"
             />
             <Table
-              title="Pipelines"
               headers={headers}
+              id="tkn--about--pipelines-table"
               rows={[
                 getRow('Namespace', this.props.pipelinesNamespace),
                 getRow(versionLabel, this.props.pipelinesVersion)
               ].filter(Boolean)}
               size="short"
-              className="tkn--about--pipelines-table"
+              title="Pipelines"
             />
             {this.props.isTriggersInstalled && (
               <Table
-                title="Triggers"
                 headers={headers}
+                id="tkn--about--triggers-table"
                 rows={[
                   getRow('Namespace', this.props.triggersNamespace),
                   getRow(versionLabel, this.props.triggersVersion)
                 ].filter(Boolean)}
                 size="short"
-                className="tkn--about--triggers-table"
+                title="Triggers"
               />
             )}
           </div>

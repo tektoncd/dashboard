@@ -32,26 +32,32 @@ const LogDownloadButton = ({ intl, stepStatus, taskRun }) => {
       <div className="bx--btn-set">
         <a
           className="bx--copy-btn"
-          title={intl.formatMessage({
-            id: 'dashboard.logs.launchButtonTooltip',
-            defaultMessage: 'Open logs in a new window'
-          })}
           href={logURL}
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Launch16 />
+          <Launch16>
+            <title>
+              {intl.formatMessage({
+                id: 'dashboard.logs.launchButtonTooltip',
+                defaultMessage: 'Open logs in a new window'
+              })}
+            </title>
+          </Launch16>
         </a>
         <a
           className="bx--copy-btn"
-          title={intl.formatMessage({
-            id: 'dashboard.logs.downloadButtonTooltip',
-            defaultMessage: 'Download logs'
-          })}
           download={`${pod}__${container}__log.txt`}
           href={logURL}
         >
-          <Download16 />
+          <Download16>
+            <title>
+              {intl.formatMessage({
+                id: 'dashboard.logs.downloadButtonTooltip',
+                defaultMessage: 'Download logs'
+              })}
+            </title>
+          </Download16>
         </a>
       </div>
     </>
