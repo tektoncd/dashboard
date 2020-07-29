@@ -255,7 +255,6 @@
     "dashboard.tableHeader.value": "Value",
     "dashboard.taskRun.errorLoading": "Error loading TaskRun",
     "dashboard.taskRun.logs": "Logs",
-    "dashboard.taskRun.noTaskRuns": "No TaskRuns found for this PipelineRun yet…",
     "dashboard.taskRun.params": "Parameters",
     "dashboard.taskRun.status": "Status",
     "dashboard.taskRun.status.cancelled": "Cancelled",

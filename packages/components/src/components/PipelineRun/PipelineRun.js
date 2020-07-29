@@ -17,7 +17,7 @@ import {
   InlineNotification,
   StructuredListSkeleton
 } from 'carbon-components-react';
-import { FormattedMessage, injectIntl } from 'react-intl';
+import { injectIntl } from 'react-intl';
 import {
   getErrorMessage,
   getParams,
@@ -320,15 +320,6 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       this.sortTaskRuns(taskRuns);
     }
 
-    if (taskRuns.length === 0) {
-      return (
-        <FormattedMessage
-          id="dashboard.taskRun.noTaskRuns"
-          defaultMessage="No TaskRuns found for this PipelineRun yet…"
-        />
-      );
-    }
-
     const taskRun = selectedTaskRun(selectedTaskId, taskRuns) || {};
 
     const { definition, reason, status, stepName, stepStatus } = taskRunStep(
@@ -372,35 +363,37 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           {rerun}
         </RunHeader>
         {customNotification}
-        <div className="tkn--tasks">
-          <TaskTree
-            onSelect={handleTaskSelected}
-            selectedTaskId={selectedTaskId}
-            selectedStepId={selectedStepId}
-            taskRuns={taskRuns}
-          />
-          {(selectedStepId && (
-            <StepDetails
-              definition={definition}
-              logContainer={logContainer}
-              onViewChange={onViewChange}
-              reason={reason}
-              showIO={showIO}
-              status={status}
-              stepName={stepName}
-              stepStatus={stepStatus}
-              taskRun={taskRun}
-              view={view}
+        {taskRuns.length > 0 && (
+          <div className="tkn--tasks">
+            <TaskTree
+              onSelect={handleTaskSelected}
+              selectedTaskId={selectedTaskId}
+              selectedStepId={selectedStepId}
+              taskRuns={taskRuns}
             />
-          )) ||
-            (selectedTaskId && (
-              <TaskRunDetails
+            {(selectedStepId && (
+              <StepDetails
+                definition={definition}
+                logContainer={logContainer}
                 onViewChange={onViewChange}
+                reason={reason}
+                showIO={showIO}
+                status={status}
+                stepName={stepName}
+                stepStatus={stepStatus}
                 taskRun={taskRun}
                 view={view}
               />
-            ))}
-        </div>
+            )) ||
+              (selectedTaskId && (
+                <TaskRunDetails
+                  onViewChange={onViewChange}
+                  taskRun={taskRun}
+                  view={view}
+                />
+              ))}
+          </div>
+        )}
       </>
     );
   }
