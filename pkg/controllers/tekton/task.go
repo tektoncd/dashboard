@@ -27,7 +27,7 @@ func NewTaskController(sharedTektonInformerFactory tektoninformer.SharedInformer
 
 	utils.NewController(
 		"Task",
-		sharedTektonInformerFactory.Tekton().V1alpha1().Tasks().Informer(),
+		sharedTektonInformerFactory.Tekton().V1beta1().Tasks().Informer(),
 		broadcaster.TaskCreated,
 		broadcaster.TaskUpdated,
 		broadcaster.TaskDeleted,
