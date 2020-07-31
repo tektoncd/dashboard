@@ -168,7 +168,7 @@ func getTriggersVersion(r Resource, namespace string) string {
 }
 
 // Check whether Tekton Triggers is installed
-func isTriggersInstalled(r Resource, namespace string) bool {
+func IsTriggersInstalled(r Resource, namespace string) bool {
 	return searchForDeployment(r, "triggers", namespace)
 }
 
