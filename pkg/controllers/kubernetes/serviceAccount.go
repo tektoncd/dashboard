@@ -26,7 +26,7 @@ func NewServiceAccountController(sharedK8sInformerFactory k8sinformer.SharedInfo
 	logging.Log.Debug("In NewServiceAccountController")
 
 	utils.NewController(
-		"service account",
+		"ServiceAccount",
 		sharedK8sInformerFactory.Core().V1().ServiceAccounts().Informer(),
 		broadcaster.ServiceAccountCreated,
 		broadcaster.ServiceAccountUpdated,

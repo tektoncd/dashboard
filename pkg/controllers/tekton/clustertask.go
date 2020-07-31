@@ -26,7 +26,7 @@ func NewClusterTaskController(sharedTektonInformerFactory tektoninformer.SharedI
 	logging.Log.Debug("In NewClusterTaskController")
 
 	utils.NewController(
-		"cluster task",
+		"ClusterTask",
 		sharedTektonInformerFactory.Tekton().V1alpha1().ClusterTasks().Informer(),
 		broadcaster.ClusterTaskCreated,
 		broadcaster.ClusterTaskUpdated,
