@@ -12,19 +12,32 @@ limitations under the License.
 */
 
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 import { number } from '@storybook/addon-knobs';
 
 import FormattedDuration from './FormattedDuration';
 
-storiesOf('Components/FormattedDuration', module)
-  .add('1 second', () => <FormattedDuration milliseconds={1000} />)
-  .add('1 minute 1 second', () => <FormattedDuration milliseconds={61000} />)
-  .add('other', () => (
-    <FormattedDuration
-      milliseconds={number(
-        'milliseconds',
-        2 * 60 * 60 * 1000 + 1 * 60 * 1000 + 10 * 1000 // 2h 1m 10s
-      )}
-    />
-  ));
+export default {
+  component: FormattedDuration,
+  title: 'Components/FormattedDuration'
+};
+
+export const OneSecond = () => <FormattedDuration milliseconds={1000} />;
+OneSecond.story = {
+  name: '1 second'
+};
+
+export const OneMinuteOneSecond = () => (
+  <FormattedDuration milliseconds={61000} />
+);
+OneMinuteOneSecond.story = {
+  name: '1 minute 1 second'
+};
+
+export const Other = () => (
+  <FormattedDuration
+    milliseconds={number(
+      'milliseconds',
+      2 * 60 * 60 * 1000 + 1 * 60 * 1000 + 10 * 1000 // 2h 1m 10s
+    )}
+  />
+);

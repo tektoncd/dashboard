@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 
 import ResourceDetails from '.';
 
@@ -38,19 +37,26 @@ const resource = {
   }
 };
 
-storiesOf('Components/ResourceDetails', module)
-  .add('error', () => <ResourceDetails error="A helpful error message" />)
-  .add('loading', () => <ResourceDetails loading />)
-  .add('default', () => <ResourceDetails resource={resource} />)
-  .add('with additional content', () => (
-    <ResourceDetails
-      resource={resource}
-      additionalMetadata={
-        <p>
-          <span>Custom Field:</span>some additional metadata
-        </p>
-      }
-    >
-      <p>some additional content</p>
-    </ResourceDetails>
-  ));
+export default {
+  component: ResourceDetails,
+  title: 'Components/ResourceDetails'
+};
+
+export const Error = () => <ResourceDetails error="A helpful error message" />;
+
+export const Loading = () => <ResourceDetails loading />;
+
+export const Base = () => <ResourceDetails resource={resource} />;
+
+export const WithAdditionalContent = () => (
+  <ResourceDetails
+    resource={resource}
+    additionalMetadata={
+      <p>
+        <span>Custom Field:</span>some additional metadata
+      </p>
+    }
+  >
+    <p>some additional content</p>
+  </ResourceDetails>
+);

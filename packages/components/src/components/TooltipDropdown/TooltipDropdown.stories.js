@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 import { text } from '@storybook/addon-knobs';
 
 import TooltipDropdown from './TooltipDropdown';
@@ -24,22 +23,24 @@ const props = {
   loading: false
 };
 
-storiesOf('Components/TooltipDropdown', module)
-  .addDecorator(storyFn => <div style={{ width: '200px' }}>{storyFn()}</div>)
-  .add('default', () => {
-    return <TooltipDropdown {...props} titleText={text('titleText', '')} />;
-  })
-  .add('loading', () => {
-    return (
-      <TooltipDropdown {...props} loading titleText={text('titleText', '')} />
-    );
-  })
-  .add('empty', () => {
-    return (
-      <TooltipDropdown
-        {...props}
-        items={[]}
-        titleText={text('titleText', '')}
-      />
-    );
-  });
+export default {
+  component: TooltipDropdown,
+  decorators: [storyFn => <div style={{ width: '200px' }}>{storyFn()}</div>],
+  title: 'Components/TooltipDropdown'
+};
+
+export const Base = () => {
+  return <TooltipDropdown {...props} titleText={text('titleText', '')} />;
+};
+
+export const Loading = () => {
+  return (
+    <TooltipDropdown {...props} loading titleText={text('titleText', '')} />
+  );
+};
+
+export const Empty = () => {
+  return (
+    <TooltipDropdown {...props} items={[]} titleText={text('titleText', '')} />
+  );
+};

@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 
 import ResourceTable from '.';
 
@@ -28,8 +27,13 @@ const rows = [
 ];
 const headers = [{ key: 'name', header: headerValue }];
 
-storiesOf('Components/ResourceTable', module)
-  .add('default', () => <ResourceTable />)
-  .add('with content', () => (
-    <ResourceTable title={title} headers={headers} rows={rows} />
-  ));
+export default {
+  component: ResourceTable,
+  title: 'Components/ResourceTable'
+};
+
+export const Base = () => <ResourceTable />;
+
+export const WithContent = () => (
+  <ResourceTable title={title} headers={headers} rows={rows} />
+);

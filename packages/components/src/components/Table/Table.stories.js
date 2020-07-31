@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 import { boolean, text } from '@storybook/addon-knobs';
 import { Dropdown } from 'carbon-components-react';
@@ -39,151 +38,175 @@ function getFilters(showFilters) {
   ) : null;
 }
 
-storiesOf('Components/Table', module)
-  .add('simple table with title no rows, no buttons, no checkboxes', () => {
-    const headers = [
-      { key: 'name', header: text('header1', 'Name') },
-      { key: 'namespace', header: text('header2', 'Namespace') },
-      { key: 'date', header: text('header3', 'Date Created') }
-    ];
+export default {
+  component: Table,
+  title: 'Components/Table'
+};
 
-    return (
-      <Table
-        emptyTextAllNamespaces={text(
-          'emptyTextAllNamespaces',
-          'No rows in any namespace'
-        )}
-        emptyTextSelectedNamespace={text(
-          'emptyTextSelectedNamespace',
-          'No rows in selected namespace'
-        )}
-        filters={getFilters(
-          boolean('showFilters (for testing purposes only)', false)
-        )}
-        headers={headers}
-        loading={boolean('loading', false)}
-        rows={[]}
-        selectedNamespace={text('selectedNamespace', '*')}
-        title={text('title', 'Resource Name')}
-      />
-    );
-  })
-  .add('table with one row, 1 toolbar button, no checkboxes', () => {
-    const rows = [
-      {
-        id: 'namespace1:resource-one',
-        name: text('Name', 'resource-one'),
-        namespace: text('Namespace', 'namespace1'),
-        date: text('Date', '100 years ago')
-      }
-    ];
+export const Simple = () => {
+  const headers = [
+    { key: 'name', header: text('header1', 'Name') },
+    { key: 'namespace', header: text('header2', 'Namespace') },
+    { key: 'date', header: text('header3', 'Date Created') }
+  ];
 
-    return (
-      <Table
-        emptyTextAllNamespaces="No rows in any namespace"
-        emptyTextSelectedNamespace="No rows in selected namespace"
-        filters={getFilters(
-          boolean('showFilters (for testing purposes only)', false)
-        )}
-        headers={[
-          { key: 'name', header: 'Name' },
-          { key: 'namespace', header: 'Namespace' },
-          { key: 'date', header: 'Date Created' }
-        ]}
-        loading={boolean('loading', false)}
-        rows={rows}
-        selectedNamespace="*"
-        title={text('title', 'Resource Name')}
-        toolbarButtons={[
-          { onClick: action('handleNew'), text: 'Add', icon: Add }
-        ]}
-      />
-    );
-  })
-  .add('table with one row, 1 batchAction button and checkboxes', () => {
-    const rows = [
-      {
-        id: 'namespace1:resource-one',
-        name: text('Name', 'resource-one'),
-        namespace: text('Namespace', 'namespace1'),
-        date: text('Date', '100 years ago')
-      }
-    ];
-
-    return (
-      <Table
-        batchActionButtons={[
-          { onClick: action('handleDelete'), text: 'Delete', icon: Delete }
-        ]}
-        filters={getFilters(
-          boolean('showFilters (for testing purposes only)', false)
-        )}
-        headers={[
-          { key: 'name', header: 'Name' },
-          { key: 'namespace', header: 'Namespace' },
-          { key: 'date', header: 'Created' }
-        ]}
-        loading={boolean('loading', false)}
-        rows={rows}
-        selectedNamespace="*"
-        title={text('title', 'Resource Name')}
-      />
-    );
-  })
-  .add(
-    'table with one sortable row, 2 batchAction and 2 toolbar buttons checkboxes',
-    () => {
-      const rows = [
-        {
-          id: 'namespace1:resource-one',
-          name: 'resource-one',
-          namespace: 'namespace1',
-          date: '100 years ago'
-        },
-        {
-          id: 'default:resource-two',
-          name: 'resource-two',
-          namespace: 'default',
-          date: '2 weeks ago'
-        },
-        {
-          id: 'tekton:resource-three',
-          name: 'resource-three',
-          namespace: 'tekton',
-          date: '2 minutes ago'
-        }
-      ];
-
-      return (
-        <Table
-          batchActionButtons={[
-            { onClick: action('handleDelete'), text: 'Delete', icon: Delete },
-            { onClick: action('handleRerun'), text: 'Rerun', icon: Rerun }
-          ]}
-          emptyTextAllNamespaces="No rows in any namespace"
-          emptyTextSelectedNamespace="No rows in selected namespace"
-          filters={getFilters(
-            boolean('showFilters (for testing purposes only)', false)
-          )}
-          headers={[
-            { key: 'name', header: 'Name' },
-            { key: 'namespace', header: 'Namespace' },
-            { key: 'date', header: 'Date Created' }
-          ]}
-          isSortable={boolean('isSortable', true)}
-          loading={boolean('loading', false)}
-          rows={rows}
-          selectedNamespace="*"
-          title={text('title', 'Resource Name')}
-          toolbarButtons={[
-            { onClick: action('handleNew'), text: 'Add', icon: Add },
-            {
-              onClick: action('handleRerunAll'),
-              text: 'RerunAll',
-              icon: RerunAll
-            }
-          ]}
-        />
-      );
-    }
+  return (
+    <Table
+      emptyTextAllNamespaces={text(
+        'emptyTextAllNamespaces',
+        'No rows in any namespace'
+      )}
+      emptyTextSelectedNamespace={text(
+        'emptyTextSelectedNamespace',
+        'No rows in selected namespace'
+      )}
+      filters={getFilters(
+        boolean('showFilters (for testing purposes only)', false)
+      )}
+      headers={headers}
+      loading={boolean('loading', false)}
+      rows={[]}
+      selectedNamespace={text('selectedNamespace', '*')}
+      title={text('title', 'Resource Name')}
+    />
   );
+};
+Simple.story = {
+  parameters: {
+    notes: 'simple table with title, no rows, no buttons'
+  }
+};
+
+export const ToolbarButton = () => {
+  const rows = [
+    {
+      id: 'namespace1:resource-one',
+      name: text('Name', 'resource-one'),
+      namespace: text('Namespace', 'namespace1'),
+      date: text('Date', '100 years ago')
+    }
+  ];
+
+  return (
+    <Table
+      emptyTextAllNamespaces="No rows in any namespace"
+      emptyTextSelectedNamespace="No rows in selected namespace"
+      filters={getFilters(
+        boolean('showFilters (for testing purposes only)', false)
+      )}
+      headers={[
+        { key: 'name', header: 'Name' },
+        { key: 'namespace', header: 'Namespace' },
+        { key: 'date', header: 'Date Created' }
+      ]}
+      loading={boolean('loading', false)}
+      rows={rows}
+      selectedNamespace="*"
+      title={text('title', 'Resource Name')}
+      toolbarButtons={[
+        { onClick: action('handleNew'), text: 'Add', icon: Add }
+      ]}
+    />
+  );
+};
+ToolbarButton.story = {
+  parameters: {
+    notes: 'table with 1 row, 1 toolbar button, no batch actions'
+  }
+};
+
+export const BatchActions = () => {
+  const rows = [
+    {
+      id: 'namespace1:resource-one',
+      name: text('Name', 'resource-one'),
+      namespace: text('Namespace', 'namespace1'),
+      date: text('Date', '100 years ago')
+    }
+  ];
+
+  return (
+    <Table
+      batchActionButtons={[
+        { onClick: action('handleDelete'), text: 'Delete', icon: Delete }
+      ]}
+      filters={getFilters(
+        boolean('showFilters (for testing purposes only)', false)
+      )}
+      headers={[
+        { key: 'name', header: 'Name' },
+        { key: 'namespace', header: 'Namespace' },
+        { key: 'date', header: 'Created' }
+      ]}
+      loading={boolean('loading', false)}
+      rows={rows}
+      selectedNamespace="*"
+      title={text('title', 'Resource Name')}
+    />
+  );
+};
+BatchActions.story = {
+  parameters: {
+    notes: 'table with 1 row, 1 batch action'
+  }
+};
+
+export const Sorting = () => {
+  const rows = [
+    {
+      id: 'namespace1:resource-one',
+      name: 'resource-one',
+      namespace: 'namespace1',
+      date: '100 years ago'
+    },
+    {
+      id: 'default:resource-two',
+      name: 'resource-two',
+      namespace: 'default',
+      date: '2 weeks ago'
+    },
+    {
+      id: 'tekton:resource-three',
+      name: 'resource-three',
+      namespace: 'tekton',
+      date: '2 minutes ago'
+    }
+  ];
+
+  return (
+    <Table
+      batchActionButtons={[
+        { onClick: action('handleDelete'), text: 'Delete', icon: Delete },
+        { onClick: action('handleRerun'), text: 'Rerun', icon: Rerun }
+      ]}
+      emptyTextAllNamespaces="No rows in any namespace"
+      emptyTextSelectedNamespace="No rows in selected namespace"
+      filters={getFilters(
+        boolean('showFilters (for testing purposes only)', false)
+      )}
+      headers={[
+        { key: 'name', header: 'Name' },
+        { key: 'namespace', header: 'Namespace' },
+        { key: 'date', header: 'Date Created' }
+      ]}
+      isSortable={boolean('isSortable', true)}
+      loading={boolean('loading', false)}
+      rows={rows}
+      selectedNamespace="*"
+      title={text('title', 'Resource Name')}
+      toolbarButtons={[
+        { onClick: action('handleNew'), text: 'Add', icon: Add },
+        {
+          onClick: action('handleRerunAll'),
+          text: 'RerunAll',
+          icon: RerunAll
+        }
+      ]}
+    />
+  );
+};
+Sorting.story = {
+  parameters: {
+    notes: 'table with sortable rows, 2 batch actions, and 2 toolbar buttons'
+  }
+};

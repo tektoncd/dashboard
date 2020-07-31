@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,11 +12,15 @@ limitations under the License.
 */
 
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 
 import ViewYAML from './ViewYAML';
 
-storiesOf('Components/ViewYAML', module).add('default', () => {
+export default {
+  component: ViewYAML,
+  title: 'Components/ViewYAML'
+};
+
+export const Base = () => {
   const resource = {
     apiVersion: 'tekton.dev/v1alpha1',
     kind: 'Resource',
@@ -37,4 +41,4 @@ storiesOf('Components/ViewYAML', module).add('default', () => {
   };
 
   return <ViewYAML resource={resource} />;
-});
+};

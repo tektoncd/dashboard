@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 import StoryRouter from 'storybook-react-router';
 
 import Trigger from './Trigger';
@@ -78,35 +77,40 @@ const props = {
   }
 };
 
-storiesOf('Components/Trigger', module)
-  .addDecorator(StoryRouter())
-  .add('default', () => <Trigger {...props} />)
-  .add('no name', () => (
-    <Trigger {...props} trigger={{ ...props.trigger, name: undefined }} />
-  ))
-  .add('no bindings', () => (
-    <Trigger {...props} trigger={{ ...props.trigger, bindings: undefined }} />
-  ))
-  .add('no interceptors', () => (
-    <Trigger
-      {...props}
-      trigger={{ ...props.trigger, interceptors: undefined }}
-    />
-  ))
-  .add('no headers in webhook interceptor', () => (
-    <Trigger
-      {...props}
-      trigger={{
-        ...props.trigger,
-        interceptors: [
-          {
-            ...props.trigger.interceptors[0],
-            webhook: {
-              ...props.trigger.interceptors[0].webhook,
-              header: undefined
-            }
+export default {
+  component: Trigger,
+  decorators: [StoryRouter()],
+  title: 'Components/Trigger'
+};
+
+export const Base = () => <Trigger {...props} />;
+
+export const NoName = () => (
+  <Trigger {...props} trigger={{ ...props.trigger, name: undefined }} />
+);
+
+export const NoBindings = () => (
+  <Trigger {...props} trigger={{ ...props.trigger, bindings: undefined }} />
+);
+
+export const NoInterceptors = () => (
+  <Trigger {...props} trigger={{ ...props.trigger, interceptors: undefined }} />
+);
+
+export const NoHeadersInWebhookInterceptor = () => (
+  <Trigger
+    {...props}
+    trigger={{
+      ...props.trigger,
+      interceptors: [
+        {
+          ...props.trigger.interceptors[0],
+          webhook: {
+            ...props.trigger.interceptors[0].webhook,
+            header: undefined
           }
-        ]
-      }}
-    />
-  ));
+        }
+      ]
+    }}
+  />
+);

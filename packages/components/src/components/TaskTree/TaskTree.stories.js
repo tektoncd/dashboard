@@ -11,13 +11,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { Component } from 'react';
-import { storiesOf } from '@storybook/react';
+import React, { useState } from 'react';
 import { text } from '@storybook/addon-knobs';
 
 import TaskTree from './TaskTree';
 
-storiesOf('Components/TaskTree', module).add('default', () => {
+export default {
+  component: TaskTree,
+  title: 'Components/TaskTree'
+};
+
+export const Base = () => {
   const props = {
     taskRuns: [
       {
@@ -38,25 +42,18 @@ storiesOf('Components/TaskTree', module).add('default', () => {
       }
     ]
   };
-  class TaskTreeWrapper extends Component {
-    state = { selectedTaskId: null };
+  const [selectedStepId, setSelectedStepId] = useState();
+  const [selectedTaskId, setSelectedTaskId] = useState();
 
-    onSelect = (selectedTaskId, selectedStepId) => {
-      this.setState({ selectedStepId, selectedTaskId });
-    };
-
-    render() {
-      const { selectedStepId, selectedTaskId } = this.state;
-      return (
-        <TaskTree
-          {...props}
-          onSelect={this.onSelect}
-          selectedStepId={selectedStepId}
-          selectedTaskId={selectedTaskId}
-        />
-      );
-    }
-  }
-
-  return <TaskTreeWrapper />;
-});
+  return (
+    <TaskTree
+      {...props}
+      onSelect={(taskId, stepId) => {
+        setSelectedStepId(stepId);
+        setSelectedTaskId(taskId);
+      }}
+      selectedStepId={selectedStepId}
+      selectedTaskId={selectedTaskId}
+    />
+  );
+};

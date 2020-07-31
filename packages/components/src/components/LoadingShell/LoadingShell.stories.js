@@ -12,10 +12,12 @@ limitations under the License.
 */
 
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 
 import LoadingShell from './LoadingShell';
 
-storiesOf('Components/LoadingShell', module).add('default', () => (
-  <LoadingShell />
-));
+export default {
+  component: LoadingShell,
+  title: 'Components/LoadingShell'
+};
+
+export const Base = () => <LoadingShell />;

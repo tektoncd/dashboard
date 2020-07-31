@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 
 import DetailsHeader from './DetailsHeader';
 
@@ -30,24 +29,31 @@ const taskRun = {
   }
 };
 
-storiesOf('Components/DetailsHeader', module)
-  .add('running', () => (
-    <DetailsHeader status="running" stepName="build" taskRun={taskRun} />
-  ))
-  .add('completed', () => (
-    <DetailsHeader
-      reason="Completed"
-      status="terminated"
-      stepName="build"
-      taskRun={taskRun}
-    />
-  ))
-  .add('failed', () => (
-    <DetailsHeader
-      reason="Error"
-      status="terminated"
-      stepName="build"
-      taskRun={taskRun}
-    />
-  ))
-  .add('pending', () => <DetailsHeader taskRun={taskRun} />);
+export default {
+  component: DetailsHeader,
+  title: 'Components/DetailsHeader'
+};
+
+export const Running = () => (
+  <DetailsHeader status="running" stepName="build" taskRun={taskRun} />
+);
+
+export const Completed = () => (
+  <DetailsHeader
+    reason="Completed"
+    status="terminated"
+    stepName="build"
+    taskRun={taskRun}
+  />
+);
+
+export const Failed = () => (
+  <DetailsHeader
+    reason="Error"
+    status="terminated"
+    stepName="build"
+    taskRun={taskRun}
+  />
+);
+
+export const Pending = () => <DetailsHeader taskRun={taskRun} />;

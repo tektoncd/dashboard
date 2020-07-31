@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React, { useState } from 'react';
-import { storiesOf } from '@storybook/react';
 
 import PipelineRun from '.';
 
@@ -38,7 +37,7 @@ const task = {
 };
 
 const taskRun = {
-  metadata: { name: 'sampleTaskRunName', namespace: 'default' },
+  metadata: { labels: {}, name: 'sampleTaskRunName', namespace: 'default' },
   spec: {
     params: {},
     resources: {
@@ -135,37 +134,45 @@ const pipelineRun = {
   }
 };
 
-storiesOf('Components/PipelineRun', module)
-  .addDecorator(story => (
-    <div
-      style={{
-        backgroundColor: '#f4f4f4',
-        padding: '2rem',
-        position: 'relative',
-        width: '100%'
-      }}
-    >
-      {story()}
-    </div>
-  ))
-  .add('default', () => {
-    const [selectedStepId, setSelectedStepId] = useState();
-    const [selectedTaskId, setSelectedTaskId] = useState();
-    return (
-      <PipelineRun
-        fetchLogs={() => 'sample log output'}
-        handleTaskSelected={(taskId, stepId) => {
-          setSelectedStepId(stepId);
-          setSelectedTaskId(taskId);
+export default {
+  component: PipelineRun,
+  decorators: [
+    storyFn => (
+      <div
+        style={{
+          backgroundColor: '#f4f4f4',
+          padding: '2rem',
+          position: 'relative',
+          width: '100%'
         }}
-        pipelineRun={pipelineRun}
-        rerunPipelineRun={() => {}}
-        selectedStepId={selectedStepId}
-        selectedTaskId={selectedTaskId}
-        taskRuns={[taskRun]}
-        tasks={[task]}
-      />
-    );
-  })
-  .add('empty', () => <PipelineRun />)
-  .add('error', () => <PipelineRun error="Internal server error" />);
+      >
+        {storyFn()}
+      </div>
+    )
+  ],
+  title: 'Components/PipelineRun'
+};
+
+export const Base = () => {
+  const [selectedStepId, setSelectedStepId] = useState();
+  const [selectedTaskId, setSelectedTaskId] = useState();
+  return (
+    <PipelineRun
+      fetchLogs={() => 'sample log output'}
+      handleTaskSelected={(taskId, stepId) => {
+        setSelectedStepId(stepId);
+        setSelectedTaskId(taskId);
+      }}
+      pipelineRun={pipelineRun}
+      rerunPipelineRun={() => {}}
+      selectedStepId={selectedStepId}
+      selectedTaskId={selectedTaskId}
+      taskRuns={[taskRun]}
+      tasks={[task]}
+    />
+  );
+};
+
+export const Empty = () => <PipelineRun />;
+
+export const Error = () => <PipelineRun error="Internal server error" />;

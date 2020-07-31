@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 
 import StepStatus from './index';
 
@@ -27,6 +26,11 @@ const status = {
   }
 };
 
-storiesOf('Components/StepStatus', module)
-  .add('default', () => <StepStatus />)
-  .add('with content', () => <StepStatus status={status} />);
+export default {
+  component: StepStatus,
+  title: 'Components/StepStatus'
+};
+
+export const Base = () => <StepStatus />;
+
+export const WithContent = () => <StepStatus status={status} />;

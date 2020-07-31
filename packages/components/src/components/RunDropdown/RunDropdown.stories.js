@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,40 +12,43 @@ limitations under the License.
 */
 
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 import StoryRouter from 'storybook-react-router';
 
 import RunDropdown from './RunDropdown';
 
-storiesOf('Components/RunDropdown', module)
-  .addDecorator(StoryRouter())
-  .add('default', () => (
-    <RunDropdown
-      items={[
-        { actionText: 'Rerun', action: () => {} },
-        {
-          actionText: 'Delete',
-          action: () => {},
+export default {
+  component: RunDropdown,
+  decorators: [StoryRouter()],
+  title: 'Components/RunDropdown'
+};
+
+export const Base = () => (
+  <RunDropdown
+    items={[
+      { actionText: 'Rerun', action: () => {} },
+      {
+        actionText: 'Delete',
+        action: () => {},
+        danger: true,
+        modalProperties: {
           danger: true,
-          modalProperties: {
-            danger: true,
-            heading: 'Modal Heading',
-            primaryButtonText: 'primary text',
-            secondaryButtonText: 'secondary text',
-            body: () => 'modal body'
-          }
-        },
-        {
-          actionText: 'disabled option',
-          disable: () => true,
-          action: () => {},
-          modalProperties: {
-            heading: 'Modal Heading',
-            primaryButtonText: 'primary text',
-            secondaryButtonText: 'secondary text',
-            body: () => 'modal body'
-          }
+          heading: 'Modal Heading',
+          primaryButtonText: 'primary text',
+          secondaryButtonText: 'secondary text',
+          body: () => 'modal body'
         }
-      ]}
-    />
-  ));
+      },
+      {
+        actionText: 'disabled option',
+        disable: () => true,
+        action: () => {},
+        modalProperties: {
+          heading: 'Modal Heading',
+          primaryButtonText: 'primary text',
+          secondaryButtonText: 'secondary text',
+          body: () => 'modal body'
+        }
+      }
+    ]}
+  />
+);
