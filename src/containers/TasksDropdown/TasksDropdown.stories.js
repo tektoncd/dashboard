@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -66,42 +65,49 @@ const namespacesByName = {
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 
-storiesOf('Containers/Dropdowns/TasksDropdown', module)
-  .add('default', () => {
-    const store = mockStore({
-      tasks: {
-        byId: tasksById,
-        byNamespace: tasksByNamespace,
-        isFetching: false
-      },
-      namespaces: {
-        byName: namespacesByName,
-        selected: 'default'
-      },
-      notifications: {}
-    });
-    return (
-      <Provider store={store}>
-        <TasksDropdown {...props} />
-      </Provider>
-    );
-  })
-  .add('empty', () => {
-    const store = mockStore({
-      tasks: {
-        byId: {},
-        byNamespace: {},
-        isFetching: false
-      },
-      namespaces: {
-        byName: namespacesByName,
-        selected: 'default'
-      },
-      notifications: {}
-    });
-    return (
-      <Provider store={store}>
-        <TasksDropdown {...props} />
-      </Provider>
-    );
-  });
+export default {
+  component: TasksDropdown,
+  title: 'Containers/Dropdowns/TasksDropdown'
+};
+
+export const Base = () => <TasksDropdown {...props} />;
+Base.story = {
+  decorators: [
+    storyFn => {
+      const store = mockStore({
+        tasks: {
+          byId: tasksById,
+          byNamespace: tasksByNamespace,
+          isFetching: false
+        },
+        namespaces: {
+          byName: namespacesByName,
+          selected: 'default'
+        },
+        notifications: {}
+      });
+      return <Provider store={store}>{storyFn()}</Provider>;
+    }
+  ]
+};
+
+export const Empty = () => <TasksDropdown {...props} />;
+Empty.story = {
+  decorators: [
+    storyFn => {
+      const store = mockStore({
+        tasks: {
+          byId: {},
+          byNamespace: {},
+          isFetching: false
+        },
+        namespaces: {
+          byName: namespacesByName,
+          selected: 'default'
+        },
+        notifications: {}
+      });
+      return <Provider store={store}>{storyFn()}</Provider>;
+    }
+  ]
+};

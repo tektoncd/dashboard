@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 import StoryRouter from 'storybook-react-router';
 
 import { createIntl } from 'react-intl';
@@ -136,33 +135,43 @@ const props = {
   intl
 };
 
-storiesOf('Containers/EventListenerContainer', module)
-  .addDecorator(StoryRouter())
-  .add('default', () => <EventListenerContainer {...props} />)
-  .add('no triggers', () => (
-    <EventListenerContainer
-      {...props}
-      eventListener={{
-        ...eventListener,
-        spec: { ...eventListener.spec, triggers: [] }
-      }}
-    />
-  ))
-  .add('no serviceAccount', () => (
-    <EventListenerContainer
-      {...props}
-      eventListener={{
-        ...eventListener,
-        spec: { ...eventListener.spec, serviceAccountName: undefined }
-      }}
-    />
-  ))
-  .add('no service type', () => (
-    <EventListenerContainer
-      {...props}
-      eventListener={{
-        ...eventListener,
-        spec: { ...eventListener.spec, serviceType: undefined }
-      }}
-    />
-  ));
+export default {
+  component: EventListenerContainer,
+  decorators: [StoryRouter()],
+  title: 'Containers/EventListenerContainer'
+};
+
+export const Base = () => <EventListenerContainer {...props} />;
+
+export const NoTriggers = () => (
+  <EventListenerContainer
+    {...props}
+    eventListener={{
+      ...eventListener,
+      spec: { ...eventListener.spec, triggers: [] }
+    }}
+  />
+);
+
+export const NoServiceAccount = () => (
+  <EventListenerContainer
+    {...props}
+    eventListener={{
+      ...eventListener,
+      spec: { ...eventListener.spec, serviceAccountName: undefined }
+    }}
+  />
+);
+NoServiceAccount.story = {
+  name: 'No ServiceAccount'
+};
+
+export const NoServiceType = () => (
+  <EventListenerContainer
+    {...props}
+    eventListener={{
+      ...eventListener,
+      spec: { ...eventListener.spec, serviceType: undefined }
+    }}
+  />
+);

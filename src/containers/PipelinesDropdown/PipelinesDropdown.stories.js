@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -66,42 +65,49 @@ const namespacesByName = {
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 
-storiesOf('Containers/Dropdowns/PipelinesDropdown', module)
-  .add('default', () => {
-    const store = mockStore({
-      pipelines: {
-        byId: pipelinesById,
-        byNamespace: pipelinesByNamespace,
-        isFetching: false
-      },
-      namespaces: {
-        byName: namespacesByName,
-        selected: 'default'
-      },
-      notifications: {}
-    });
-    return (
-      <Provider store={store}>
-        <PipelinesDropdown {...props} />
-      </Provider>
-    );
-  })
-  .add('empty', () => {
-    const store = mockStore({
-      pipelines: {
-        byId: {},
-        byNamespace: {},
-        isFetching: false
-      },
-      namespaces: {
-        byName: namespacesByName,
-        selected: 'default'
-      },
-      notifications: {}
-    });
-    return (
-      <Provider store={store}>
-        <PipelinesDropdown {...props} />
-      </Provider>
-    );
-  });
+export default {
+  component: PipelinesDropdown,
+  title: 'Containers/Dropdowns/PipelinesDropdown'
+};
+
+export const Base = () => <PipelinesDropdown {...props} />;
+Base.story = {
+  decorators: [
+    storyFn => {
+      const store = mockStore({
+        pipelines: {
+          byId: pipelinesById,
+          byNamespace: pipelinesByNamespace,
+          isFetching: false
+        },
+        namespaces: {
+          byName: namespacesByName,
+          selected: 'default'
+        },
+        notifications: {}
+      });
+      return <Provider store={store}>{storyFn()}</Provider>;
+    }
+  ]
+};
+
+export const Empty = () => <PipelinesDropdown {...props} />;
+Empty.story = {
+  decorators: [
+    storyFn => {
+      const store = mockStore({
+        pipelines: {
+          byId: {},
+          byNamespace: {},
+          isFetching: false
+        },
+        namespaces: {
+          byName: namespacesByName,
+          selected: 'default'
+        },
+        notifications: {}
+      });
+      return <Provider store={store}>{storyFn()}</Provider>;
+    }
+  ]
+};

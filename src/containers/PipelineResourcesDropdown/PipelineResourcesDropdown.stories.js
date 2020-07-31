@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -76,80 +75,63 @@ const namespacesByName = {
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 
-storiesOf('Containers/Dropdowns/PipelineResourcesDropdown', module)
-  .add('default', () => {
-    const store = mockStore({
-      pipelineResources: {
-        byId: pipelineResourcesById,
-        byNamespace: pipelineResourcesByNamespace,
-        isFetching: false
-      },
-      namespaces: {
-        byName: namespacesByName,
-        selected: 'default'
-      },
-      notifications: {}
-    });
-    return (
-      <Provider store={store}>
-        <PipelineResourcesDropdown {...props} />
-      </Provider>
-    );
-  })
-  .add('default with type', () => {
-    const store = mockStore({
-      pipelineResources: {
-        byId: pipelineResourcesById,
-        byNamespace: pipelineResourcesByNamespace,
-        isFetching: false
-      },
-      namespaces: {
-        byName: namespacesByName,
-        selected: 'default'
-      },
-      notifications: {}
-    });
-    return (
-      <Provider store={store}>
-        <PipelineResourcesDropdown {...props} type="type-1" />
-      </Provider>
-    );
-  })
-  .add('empty', () => {
-    const store = mockStore({
-      pipelineResources: {
-        byId: {},
-        byNamespace: {},
-        isFetching: false
-      },
-      namespaces: {
-        byName: namespacesByName,
-        selected: 'default'
-      },
-      notifications: {}
-    });
-    return (
-      <Provider store={store}>
-        <PipelineResourcesDropdown {...props} />
-      </Provider>
-    );
-  })
-  .add('empty with type', () => {
-    const store = mockStore({
-      pipelineResources: {
-        byId: {},
-        byNamespace: {},
-        isFetching: false
-      },
-      namespaces: {
-        byName: namespacesByName,
-        selected: 'default'
-      },
-      notifications: {}
-    });
-    return (
-      <Provider store={store}>
-        <PipelineResourcesDropdown {...props} type="bogus" />
-      </Provider>
-    );
+const decorator = storyFn => {
+  const store = mockStore({
+    pipelineResources: {
+      byId: pipelineResourcesById,
+      byNamespace: pipelineResourcesByNamespace,
+      isFetching: false
+    },
+    namespaces: {
+      byName: namespacesByName,
+      selected: 'default'
+    },
+    notifications: {}
   });
+  return <Provider store={store}>{storyFn()}</Provider>;
+};
+
+const emptyDecorator = storyFn => {
+  const store = mockStore({
+    pipelineResources: {
+      byId: {},
+      byNamespace: {},
+      isFetching: false
+    },
+    namespaces: {
+      byName: namespacesByName,
+      selected: 'default'
+    },
+    notifications: {}
+  });
+  return <Provider store={store}>{storyFn()}</Provider>;
+};
+
+export default {
+  component: PipelineResourcesDropdown,
+  title: 'Containers/Dropdowns/PipelineResourcesDropdown'
+};
+
+export const Base = () => <PipelineResourcesDropdown {...props} />;
+Base.story = {
+  decorators: [decorator]
+};
+
+export const BaseWithType = () => (
+  <PipelineResourcesDropdown {...props} type="type-1" />
+);
+BaseWithType.story = {
+  decorators: [decorator]
+};
+
+export const Empty = () => <PipelineResourcesDropdown {...props} />;
+Empty.story = {
+  decorators: [emptyDecorator]
+};
+
+export const EmptyWithType = () => (
+  <PipelineResourcesDropdown {...props} type="bogus" />
+);
+EmptyWithType.story = {
+  decorators: [emptyDecorator]
+};
