@@ -18,6 +18,7 @@ import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 import { InlineNotification } from 'carbon-components-react';
+import { Information16 } from '@carbon/icons-react';
 import {
   getErrorMessage,
   getFilters,
@@ -77,6 +78,10 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
           id: 'dashboard.tableHeader.createdTime',
           defaultMessage: 'Created'
         })
+      },
+      {
+        key: 'actions',
+        header: ''
       }
     ];
 
@@ -94,6 +99,26 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
       ),
       createdTime: (
         <FormattedDate date={clusterTask.metadata.creationTimestamp} relative />
+      ),
+      actions: (
+        <Link
+          to={urls.rawCRD.cluster({
+            type: 'clustertasks',
+            name: clusterTask.metadata.name
+          })}
+        >
+          <Information16 className="tkn--resource-info-icon">
+            <title>
+              {intl.formatMessage(
+                {
+                  id: 'dashboard.resourceList.viewDetails',
+                  defaultMessage: 'View {resource}'
+                },
+                { resource: clusterTask.metadata.name }
+              )}
+            </title>
+          </Information16>
+        </Link>
       )
     }));
 
