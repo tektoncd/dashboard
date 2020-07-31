@@ -43,6 +43,7 @@ func StartTektonControllers(clientset tektonclientset.Interface, clientresources
 	tektoncontroller.NewTaskRunController(tenantInformerFactory)
 	tektoncontroller.NewPipelineController(tenantInformerFactory)
 	tektoncontroller.NewPipelineRunController(tenantInformerFactory)
+	tektoncontroller.NewConditionController(tenantInformerFactory)
 	tektoncontroller.NewPipelineResourceController(tenantResourceInformerFactory)
 	// Started once all controllers have been registered
 	logging.Log.Info("Starting Tekton controllers")

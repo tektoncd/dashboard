@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -20,17 +20,15 @@ import (
 	tektoninformer "github.com/tektoncd/pipeline/pkg/client/informers/externalversions"
 )
 
-// NewPipelineRunController registers a Tekton controller/informer for
-// pipelineRuns on the sharedTektonInformerFactory
-func NewPipelineRunController(sharedTektonInformerFactory tektoninformer.SharedInformerFactory) {
-	logging.Log.Debug("In NewPipelineRunController")
+func NewConditionController(sharedTektonInformerFactory tektoninformer.SharedInformerFactory) {
+	logging.Log.Debug("In NewConditionController")
 
 	utils.NewController(
-		"PipelineRun",
-		sharedTektonInformerFactory.Tekton().V1alpha1().PipelineRuns().Informer(),
-		broadcaster.PipelineRunCreated,
-		broadcaster.PipelineRunUpdated,
-		broadcaster.PipelineRunDeleted,
+		"Condition",
+		sharedTektonInformerFactory.Tekton().V1alpha1().Conditions().Informer(),
+		broadcaster.ConditionCreated,
+		broadcaster.ConditionUpdated,
+		broadcaster.ConditionDeleted,
 		nil,
 	)
 }
