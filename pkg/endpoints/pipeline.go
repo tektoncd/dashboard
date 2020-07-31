@@ -22,7 +22,7 @@ import (
 	restful "github.com/emicklei/go-restful"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
 	"github.com/tektoncd/dashboard/pkg/utils"
-	v1alpha1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
+	v1beta1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -31,8 +31,8 @@ type RerunRequest struct {
 	PIPELINERUNNAME string `json:"pipelinerunname"`
 }
 
-func (r Resource) Rerun(name, namespace string) (*v1alpha1.PipelineRun, error) {
-	pipelineRuns := r.PipelineClient.TektonV1alpha1().PipelineRuns(namespace)
+func (r Resource) Rerun(name, namespace string) (*v1beta1.PipelineRun, error) {
+	pipelineRuns := r.PipelineClient.TektonV1beta1().PipelineRuns(namespace)
 	pipelineRun, err := pipelineRuns.Get(name, metav1.GetOptions{})
 
 	if err != nil {
@@ -61,7 +61,7 @@ func (r Resource) Rerun(name, namespace string) (*v1alpha1.PipelineRun, error) {
 		newPipelineRunData.SetLabels(currentLabels)
 	}
 
-	rebuiltRun, err := r.PipelineClient.TektonV1alpha1().PipelineRuns(pipelineRun.Namespace).Create(newPipelineRunData)
+	rebuiltRun, err := r.PipelineClient.TektonV1beta1().PipelineRuns(pipelineRun.Namespace).Create(newPipelineRunData)
 
 	if err != nil {
 		logging.Log.Errorf("an error occurred rerunning the PipelineRun %s in namespace %s: %s", name, namespace, err)
@@ -95,7 +95,7 @@ func generateNewNameForRerun(name string) string {
    TODO eventually this would be great to take different params too as users may want to run the \
 	 same pipeline just with different inputs */
 
-func (r Resource) rerunImpl(existingPipelineRun *v1alpha1.PipelineRun, existingPipelineRunName, namespace string) (*v1alpha1.PipelineRun, error) {
+func (r Resource) rerunImpl(existingPipelineRun *v1beta1.PipelineRun, existingPipelineRunName, namespace string) (*v1beta1.PipelineRun, error) {
 	if existingPipelineRunName != "" {
 		rebuiltRun, err := r.Rerun(existingPipelineRunName, namespace)
 		if err != nil {
@@ -105,7 +105,7 @@ func (r Resource) rerunImpl(existingPipelineRun *v1alpha1.PipelineRun, existingP
 	}
 
 	if existingPipelineRun != nil {
-		madeRun, err := r.PipelineClient.TektonV1alpha1().PipelineRuns(existingPipelineRun.Namespace).Create(existingPipelineRun)
+		madeRun, err := r.PipelineClient.TektonV1beta1().PipelineRuns(existingPipelineRun.Namespace).Create(existingPipelineRun)
 		if err != nil {
 			logging.Log.Errorf("error creating a new PipelineRun from spec: %s", err)
 			return nil, err

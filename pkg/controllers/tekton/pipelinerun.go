@@ -27,7 +27,7 @@ func NewPipelineRunController(sharedTektonInformerFactory tektoninformer.SharedI
 
 	utils.NewController(
 		"PipelineRun",
-		sharedTektonInformerFactory.Tekton().V1alpha1().PipelineRuns().Informer(),
+		sharedTektonInformerFactory.Tekton().V1beta1().PipelineRuns().Informer(),
 		broadcaster.PipelineRunCreated,
 		broadcaster.PipelineRunUpdated,
 		broadcaster.PipelineRunDeleted,

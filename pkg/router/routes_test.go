@@ -18,6 +18,7 @@ import (
 	. "github.com/tektoncd/dashboard/pkg/router"
 	"github.com/tektoncd/dashboard/pkg/testutils"
 	v1alpha1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
+	v1beta1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
@@ -174,35 +175,35 @@ func makeFake(t *testing.T, r *endpoints.Resource, resourceType, namespace, reso
 	t.Logf("Making fake resource %s with name %s\n", resourceType, resourceName)
 	switch resourceType {
 	case "task":
-		task := v1alpha1.Task{
+		task := v1beta1.Task{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      resourceName,
 				Namespace: namespace,
 			},
 		}
-		_, err := r.PipelineClient.TektonV1alpha1().Tasks(namespace).Create(&task)
+		_, err := r.PipelineClient.TektonV1beta1().Tasks(namespace).Create(&task)
 		if err != nil {
 			t.Fatalf("Error creating task: %v\n", err)
 		}
 	case "taskrun":
-		taskRun := v1alpha1.TaskRun{
+		taskRun := v1beta1.TaskRun{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      resourceName,
 				Namespace: namespace,
 			},
 		}
-		_, err := r.PipelineClient.TektonV1alpha1().TaskRuns(namespace).Create(&taskRun)
+		_, err := r.PipelineClient.TektonV1beta1().TaskRuns(namespace).Create(&taskRun)
 		if err != nil {
 			t.Fatalf("Error creating taskRun: %v\n", err)
 		}
 	case "pipeline":
-		pipeline := v1alpha1.Pipeline{
+		pipeline := v1beta1.Pipeline{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      resourceName,
 				Namespace: namespace,
 			},
 		}
-		_, err := r.PipelineClient.TektonV1alpha1().Pipelines(namespace).Create(&pipeline)
+		_, err := r.PipelineClient.TektonV1beta1().Pipelines(namespace).Create(&pipeline)
 		if err != nil {
 			t.Fatalf("Error creating pipeline: %v\n", err)
 		}
