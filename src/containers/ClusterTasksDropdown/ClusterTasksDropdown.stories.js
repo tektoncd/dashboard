@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -45,32 +44,39 @@ const clusterTasksByName = {
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 
-storiesOf('Containers/Dropdowns/ClusterTasksDropdown', module)
-  .add('default', () => {
-    const store = mockStore({
-      clusterTasks: {
-        byName: clusterTasksByName,
-        isFetching: false
-      },
-      notifications: {}
-    });
-    return (
-      <Provider store={store}>
-        <ClusterTasksDropdown {...props} />
-      </Provider>
-    );
-  })
-  .add('empty', () => {
-    const store = mockStore({
-      clusterTasks: {
-        byName: {},
-        isFetching: false
-      },
-      notifications: {}
-    });
-    return (
-      <Provider store={store}>
-        <ClusterTasksDropdown {...props} />
-      </Provider>
-    );
-  });
+export default {
+  component: ClusterTasksDropdown,
+  title: 'Containers/Dropdowns/ClusterTasksDropdown'
+};
+
+export const normal = () => <ClusterTasksDropdown {...props} />;
+normal.story = {
+  decorators: [
+    storyFn => {
+      const store = mockStore({
+        clusterTasks: {
+          byName: clusterTasksByName,
+          isFetching: false
+        },
+        notifications: {}
+      });
+      return <Provider store={store}>{storyFn()}</Provider>;
+    }
+  ]
+};
+
+export const empty = () => <ClusterTasksDropdown {...props} />;
+empty.story = {
+  decorators: [
+    storyFn => {
+      const store = mockStore({
+        clusterTasks: {
+          byName: {},
+          isFetching: false
+        },
+        notifications: {}
+      });
+      return <Provider store={store}>{storyFn()}</Provider>;
+    }
+  ]
+};

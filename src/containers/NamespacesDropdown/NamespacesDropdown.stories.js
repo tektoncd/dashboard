@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 import { boolean } from '@storybook/addon-knobs';
 import { Provider } from 'react-redux';
@@ -36,36 +35,45 @@ const byName = {
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 
-storiesOf('Containers/Dropdowns/NamespacesDropdown', module)
-  .add('default', () => {
-    const store = mockStore({
-      namespaces: {
-        byName,
-        isFetching: false
-      },
-      properties: {}
-    });
+export default {
+  component: NamespacesDropdown,
+  title: 'Containers/Dropdowns/NamespacesDropdown'
+};
 
-    return (
-      <Provider store={store}>
-        <NamespacesDropdown
-          {...props}
-          showAllNamespaces={boolean('showAllNamespaces', false)}
-        />
-      </Provider>
-    );
-  })
-  .add('empty', () => {
-    const store = mockStore({
-      namespaces: {
-        byName: {},
-        isFetching: false
-      },
-      properties: {}
-    });
-    return (
-      <Provider store={store}>
-        <NamespacesDropdown {...props} />
-      </Provider>
-    );
-  });
+export const Base = () => (
+  <NamespacesDropdown
+    {...props}
+    showAllNamespaces={boolean('showAllNamespaces', false)}
+  />
+);
+Base.story = {
+  decorators: [
+    storyFn => {
+      const store = mockStore({
+        namespaces: {
+          byName,
+          isFetching: false
+        },
+        properties: {}
+      });
+
+      return <Provider store={store}>{storyFn()}</Provider>;
+    }
+  ]
+};
+
+export const Empty = () => <NamespacesDropdown {...props} />;
+Empty.story = {
+  decorators: [
+    storyFn => {
+      const store = mockStore({
+        namespaces: {
+          byName: {},
+          isFetching: false
+        },
+        properties: {}
+      });
+      return <Provider store={store}>{storyFn()}</Provider>;
+    }
+  ]
+};
