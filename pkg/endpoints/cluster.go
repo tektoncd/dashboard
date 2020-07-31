@@ -209,7 +209,7 @@ func (r Resource) GetProperties(request *restful.Request, response *restful.Resp
 		StreamLogs:         r.Options.StreamLogs,
 	}
 
-	isTriggersInstalled := isTriggersInstalled(r, triggersNamespace)
+	isTriggersInstalled := IsTriggersInstalled(r, triggersNamespace)
 
 	if isTriggersInstalled {
 		triggersVersion := getTriggersVersion(r, triggersNamespace)

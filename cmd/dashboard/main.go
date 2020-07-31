@@ -31,6 +31,7 @@ import (
 	"github.com/tektoncd/dashboard/pkg/router"
 	pipelineclientset "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
 	resourceclientset "github.com/tektoncd/pipeline/pkg/client/resource/clientset/versioned"
+	triggersclientset "github.com/tektoncd/triggers/pkg/client/clientset/versioned"
 	k8sclientset "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
@@ -118,6 +119,7 @@ func main() {
 		logging.Log.Errorf("Error building k8s clientset: %s", err.Error())
 	}
 
+	var triggersClient triggersclientset.Interface
 	var routeClient routeclientset.Interface
 
 	if *isOpenshift {
@@ -151,7 +153,17 @@ func main() {
 		PipelineResourceClient: pipelineResourceClient,
 		K8sClient:              k8sClient,
 		RouteClient:            routeClient,
+		TriggersClient:         triggersClient,
 		Options:                options,
+	}
+
+	isTriggersInstalled := endpoints.IsTriggersInstalled(resource, *triggersNamespace)
+	if isTriggersInstalled {
+		triggersClient, err = triggersclientset.NewForConfig(cfg)
+		if err != nil {
+			logging.Log.Errorf("Error building triggers clientset: %s", err.Error())
+		}
+		resource.TriggersClient = triggersClient
 	}
 
 	ctx := signals.NewContext()
@@ -163,6 +175,10 @@ func main() {
 	controllers.StartTektonControllers(resource.PipelineClient, resource.PipelineResourceClient, *tenantNamespace, resyncDur, ctx.Done())
 	controllers.StartKubeControllers(resource.K8sClient, resyncDur, *tenantNamespace, *readOnly, routerHandler, ctx.Done())
 	controllers.StartDashboardControllers(resource.DashboardClient, resyncDur, *tenantNamespace, ctx.Done())
+
+	if isTriggersInstalled {
+		controllers.StartTriggersControllers(resource.TriggersClient, resyncDur, *tenantNamespace, ctx.Done())
+	}
 
 	logging.Log.Infof("Creating server and entering wait loop")
 	CSRF := csrf.Protect(

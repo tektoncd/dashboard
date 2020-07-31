@@ -21,12 +21,15 @@ import (
 	dashboardcontroller "github.com/tektoncd/dashboard/pkg/controllers/dashboard"
 	kubecontroller "github.com/tektoncd/dashboard/pkg/controllers/kubernetes"
 	tektoncontroller "github.com/tektoncd/dashboard/pkg/controllers/tekton"
+	triggerscontroller "github.com/tektoncd/dashboard/pkg/controllers/triggers"
 	"github.com/tektoncd/dashboard/pkg/logging"
 	"github.com/tektoncd/dashboard/pkg/router"
 	tektonclientset "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
 	tektoninformers "github.com/tektoncd/pipeline/pkg/client/informers/externalversions"
 	resourceclientset "github.com/tektoncd/pipeline/pkg/client/resource/clientset/versioned"
 	resourceinformers "github.com/tektoncd/pipeline/pkg/client/resource/informers/externalversions"
+	triggersclientset "github.com/tektoncd/triggers/pkg/client/clientset/versioned"
+	triggersinformers "github.com/tektoncd/triggers/pkg/client/informers/externalversions"
 	k8sinformers "k8s.io/client-go/informers"
 	k8sclientset "k8s.io/client-go/kubernetes"
 )
@@ -70,6 +73,21 @@ func StartKubeControllers(clientset k8sclientset.Interface, resyncDur time.Durat
 	}
 	// Started once all controllers have been registered
 	logging.Log.Info("Starting Kube controllers")
+	clusterInformerFactory.Start(stopCh)
+	tenantInformerFactory.Start(stopCh)
+}
+
+func StartTriggersControllers(clientset triggersclientset.Interface, resyncDur time.Duration, tenantNamespace string, stopCh <-chan struct{}) {
+	logging.Log.Info("Creating Triggers controllers")
+	clusterInformerFactory := triggersinformers.NewSharedInformerFactory(clientset, resyncDur)
+	tenantInformerFactory := triggersinformers.NewSharedInformerFactoryWithOptions(clientset, resyncDur, triggersinformers.WithNamespace(tenantNamespace))
+	// Add all tekton controllers
+	triggerscontroller.NewClusterTriggerBindingController(clusterInformerFactory)
+	triggerscontroller.NewTriggerBindingController(tenantInformerFactory)
+	triggerscontroller.NewTriggerTemplateController(tenantInformerFactory)
+	triggerscontroller.NewEventListenerController(tenantInformerFactory)
+	// Started once all controllers have been registered
+	logging.Log.Info("Starting Triggers controllers")
 	clusterInformerFactory.Start(stopCh)
 	tenantInformerFactory.Start(stopCh)
 }
