@@ -12,12 +12,16 @@ limitations under the License.
 */
 
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 
 import Tabs from '.';
 import { Tab } from '..';
 
-storiesOf('Components/Tabs', module).add('default', () => (
+export default {
+  component: Tabs,
+  title: 'Components/Tabs'
+};
+
+export const Base = () => (
   <Tabs>
     <Tab label="label for tab1">content of tab 1</Tab>
     <Tab label="tab 2">content of tab 2</Tab>
@@ -25,4 +29,4 @@ storiesOf('Components/Tabs', module).add('default', () => (
       content of tab 3
     </Tab>
   </Tabs>
-));
+);

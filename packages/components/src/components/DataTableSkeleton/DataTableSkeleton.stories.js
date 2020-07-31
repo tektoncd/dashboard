@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 import { number, object } from '@storybook/addon-knobs';
 import DataTableSkeleton from './DataTableSkeleton';
 
@@ -29,6 +28,9 @@ const props = () => ({
   rowCount: number('rowCount', 5)
 });
 
-storiesOf('Components/DataTableSkeleton', module).add('default', () => (
-  <DataTableSkeleton {...props()} />
-));
+export default {
+  component: DataTableSkeleton,
+  title: 'Components/DataTableSkeleton'
+};
+
+export const Base = () => <DataTableSkeleton {...props()} />;

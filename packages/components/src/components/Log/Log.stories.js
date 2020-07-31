@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 import Log from './Log';
 
 const ansiLog =
@@ -27,42 +26,55 @@ const performanceTest = Array.from(
   (v, i) => `Batch ${i + 1}\n${ansiLog}\n`
 ).join('');
 
-storiesOf('Components/Log', module)
-  .addDecorator(story => <div style={{ width: '500px' }}>{story()}</div>)
-  .add('default', () => <Log />)
-  .add('loading', () => <Log loading />)
-  .add('completed', () => (
-    <Log
-      stepStatus={{ terminated: { reason: 'Completed' } }}
-      fetchLogs={() => 'A log message'}
-      status="Completed"
-    />
-  ))
-  .add('failed', () => (
-    <Log
-      stepStatus={{ terminated: { reason: 'Error' } }}
-      fetchLogs={() => 'A log message'}
-      status="Error"
-    />
-  ))
-  .add('ansi codes', () => (
-    <Log
-      stepStatus={{ terminated: { reason: 'Completed' } }}
-      fetchLogs={() => ansiLog}
-      status="Completed"
-    />
-  ))
-  .add('windowed', () => (
-    <Log
-      stepStatus={{ terminated: { reason: 'Completed' } }}
-      fetchLogs={() => long}
-      status="Completed"
-    />
-  ))
-  .add('performance test (<20,000 lines with ANSI)', () => (
-    <Log
-      stepStatus={{ terminated: { reason: 'Completed' } }}
-      fetchLogs={() => performanceTest}
-      status="Completed"
-    />
-  ));
+export default {
+  component: Log,
+  decorators: [storyFn => <div style={{ width: '500px' }}>{storyFn()}</div>],
+  title: 'Components/Log'
+};
+
+export const Base = () => <Log />;
+
+export const Loading = () => <Log loading />;
+
+export const Completed = () => (
+  <Log
+    stepStatus={{ terminated: { reason: 'Completed' } }}
+    fetchLogs={() => 'A log message'}
+    status="Completed"
+  />
+);
+
+export const Failed = () => (
+  <Log
+    stepStatus={{ terminated: { reason: 'Error' } }}
+    fetchLogs={() => 'A log message'}
+    status="Error"
+  />
+);
+
+export const ANSICodes = () => (
+  <Log
+    stepStatus={{ terminated: { reason: 'Completed' } }}
+    fetchLogs={() => ansiLog}
+    status="Completed"
+  />
+);
+
+export const Windowed = () => (
+  <Log
+    stepStatus={{ terminated: { reason: 'Completed' } }}
+    fetchLogs={() => long}
+    status="Completed"
+  />
+);
+
+export const Performance = () => (
+  <Log
+    stepStatus={{ terminated: { reason: 'Completed' } }}
+    fetchLogs={() => performanceTest}
+    status="Completed"
+  />
+);
+Performance.story = {
+  name: 'performance test (<20,000 lines with ANSI)'
+};

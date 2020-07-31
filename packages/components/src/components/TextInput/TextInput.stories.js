@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
 import TextInput from './TextInput';
@@ -23,17 +22,18 @@ const props = {
   onClick: action('onClick')
 };
 
-storiesOf('Components/TextInput', module)
-  .add('default', () => {
-    return (
-      <TextInput
-        {...props}
-        labelText="foo"
-        helperText="this is a description of input foo"
-        placeholder="bar"
-      />
-    );
-  })
-  .add('loading', () => {
-    return <TextInput {...props} loading />;
-  });
+export default {
+  component: TextInput,
+  title: 'Components/TextInput'
+};
+
+export const Base = () => (
+  <TextInput
+    {...props}
+    labelText="foo"
+    helperText="this is a description of input foo"
+    placeholder="bar"
+  />
+);
+
+export const Loading = () => <TextInput {...props} loading />;

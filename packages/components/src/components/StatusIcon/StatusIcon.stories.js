@@ -12,13 +12,20 @@ limitations under the License.
 */
 
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 
 import StatusIcon from './StatusIcon';
 
-storiesOf('Components/StatusIcon', module)
-  .add('queued', () => <StatusIcon />)
-  .add('pending', () => <StatusIcon reason="Pending" status="Unknown" />)
-  .add('running', () => <StatusIcon reason="Running" status="Unknown" />)
-  .add('succeeded', () => <StatusIcon status="True" />)
-  .add('failed', () => <StatusIcon status="False" />);
+export default {
+  component: StatusIcon,
+  title: 'Components/StatusIcon'
+};
+
+export const Queued = () => <StatusIcon />;
+
+export const Pending = () => <StatusIcon reason="Pending" status="Unknown" />;
+
+export const Running = () => <StatusIcon reason="Running" status="Unknown" />;
+
+export const Succeeded = () => <StatusIcon status="True" />;
+
+export const Failed = () => <StatusIcon status="False" />;

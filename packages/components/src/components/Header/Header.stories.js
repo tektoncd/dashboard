@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,19 +12,23 @@ limitations under the License.
 */
 
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 import StoryRouter from 'storybook-react-router';
 
 import Header from '.';
 import { LogoutButton } from '..';
 
-storiesOf('Components/Header', module)
-  .addDecorator(StoryRouter())
-  .add('default', () => <Header />)
-  .add('with logout', () => (
-    <Header
-      logoutButton={
-        <LogoutButton getLogoutURL={() => Promise.resolve('/something')} />
-      }
-    />
-  ));
+export default {
+  component: Header,
+  decorators: [StoryRouter()],
+  title: 'Components/Header'
+};
+
+export const Base = () => <Header />;
+
+export const WithLogout = () => (
+  <Header
+    logoutButton={
+      <LogoutButton getLogoutURL={() => Promise.resolve('/something')} />
+    }
+  />
+);

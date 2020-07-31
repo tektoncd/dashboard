@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,32 +12,36 @@ limitations under the License.
 */
 
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 
 import StepDefinition from './StepDefinition';
 
-storiesOf('Components/StepDefinition', module)
-  .add('default', () => <StepDefinition />)
-  .add('with content', () => (
-    <StepDefinition
-      definition={{
-        args: [
-          'build',
-          '-f',
-          '${params.pathToDockerFile}',
-          '-t',
-          '${resources.outputs.builtImage.url}',
-          '${params.pathToContext}'
-        ],
-        command: ['docker'],
-        image: 'docker',
-        name: 'build',
-        volumeMounts: [
-          {
-            mountPath: '/var/run/docker.sock',
-            name: 'docker-socket'
-          }
-        ]
-      }}
-    />
-  ));
+export default {
+  component: StepDefinition,
+  title: 'Components/StepDefinition'
+};
+
+export const Base = () => <StepDefinition />;
+
+export const WithContent = () => (
+  <StepDefinition
+    definition={{
+      args: [
+        'build',
+        '-f',
+        '${params.pathToDockerFile}',
+        '-t',
+        '${resources.outputs.builtImage.url}',
+        '${params.pathToContext}'
+      ],
+      command: ['docker'],
+      image: 'docker',
+      name: 'build',
+      volumeMounts: [
+        {
+          mountPath: '/var/run/docker.sock',
+          name: 'docker-socket'
+        }
+      ]
+    }}
+  />
+);

@@ -12,16 +12,20 @@ limitations under the License.
 */
 
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
 import LabelFilter from '.';
 
-storiesOf('Components/LabelFilter', module).add('default', () => (
+export default {
+  component: LabelFilter,
+  title: 'Components/LabelFilter'
+};
+
+export const Base = () => (
   <LabelFilter
     filters={['tekton.dev/pipeline=output-pipeline']}
     handleAddFilter={action('handleAddFilter')}
     handleClearFilters={action('handleClearFilters')}
     handleDeleteFilter={action('handleDeleteFilter')}
   />
-));
+);

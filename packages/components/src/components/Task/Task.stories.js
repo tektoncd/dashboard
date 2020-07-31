@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React, { useState } from 'react';
-import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
 import Task from './Task';
@@ -27,25 +26,34 @@ const steps = [
   { id: 'test', stepName: 'test', reason: 'Completed' }
 ];
 
-storiesOf('Components/Task', module)
-  .add('succeeded', () => <Task {...props} succeeded="True" />)
-  .add('failed', () => <Task {...props} succeeded="False" />)
-  .add('unknown', () => <Task {...props} succeeded="Unknown" />)
-  .add('pending', () => (
-    <Task {...props} succeeded="Unknown" reason="Pending" />
-  ))
-  .add('running', () => (
-    <Task {...props} succeeded="Unknown" reason="Running" />
-  ))
-  .add('expanded', () => {
-    const [selectedStepId, setSelectedStepId] = useState();
-    return (
-      <Task
-        {...props}
-        onSelect={(_, stepId) => setSelectedStepId(stepId)}
-        selectedStepId={selectedStepId}
-        expanded
-        steps={steps}
-      />
-    );
-  });
+export default {
+  component: Task,
+  title: 'Components/Task'
+};
+
+export const Succeeded = () => <Task {...props} succeeded="True" />;
+
+export const Failed = () => <Task {...props} succeeded="False" />;
+
+export const Unknown = () => <Task {...props} succeeded="Unknown" />;
+
+export const Pending = () => (
+  <Task {...props} succeeded="Unknown" reason="Pending" />
+);
+
+export const Running = () => (
+  <Task {...props} succeeded="Unknown" reason="Running" />
+);
+
+export const Expanded = () => {
+  const [selectedStepId, setSelectedStepId] = useState();
+  return (
+    <Task
+      {...props}
+      onSelect={(_, stepId) => setSelectedStepId(stepId)}
+      selectedStepId={selectedStepId}
+      expanded
+      steps={steps}
+    />
+  );
+};

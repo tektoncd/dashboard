@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import { storiesOf } from '@storybook/react';
 import StoryRouter from 'storybook-react-router';
 import { Log } from '..';
 
@@ -24,16 +23,21 @@ const ansiLog = '\n=== demo-pipeline-run-1-build-skaffold-app-2mrdg-pod-59e217: 
 
 const logContainer = <Log logs={ansiLog} status="Completed" />;
 
-storiesOf('Components/StepDetails', module)
-  .addDecorator(StoryRouter())
-  .add('default', () => (
-    <div style={{ alignSelf: 'stretch' }}>
-      <StepDetails
-        reason="Completed"
-        status="terminated"
-        stepName="build"
-        taskRun={{}}
-        logContainer={logContainer}
-      />
-    </div>
-  ));
+export default {
+  component: StepDetails,
+  decorators: [
+    StoryRouter(),
+    storyFn => <div style={{ alignSelf: 'stretch' }}>{storyFn()}</div>
+  ],
+  title: 'Components/StepDetails'
+};
+
+export const Base = () => (
+  <StepDetails
+    reason="Completed"
+    status="terminated"
+    stepName="build"
+    taskRun={{}}
+    logContainer={logContainer}
+  />
+);
