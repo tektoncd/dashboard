@@ -27,6 +27,7 @@ LOG_LEVEL="info"
 LOG_FORMAT="json"
 TENANT_NAMESPACE=""
 STREAM_LOGS="false"
+EXTERNAL_LOGS=""
 BASE_RELEASE_URL="https://storage.googleapis.com/tekton-releases/dashboard/previous"
 
 # additional options passed to ko resolve
@@ -174,6 +175,7 @@ patch() {
   replace "--namespace=--tenant-namespace" "--namespace=$TENANT_NAMESPACE"
   replace "--openshift=--openshift" "--openshift=$OPENSHIFT"
   replace "--stream-logs=--stream-logs" "--stream-logs=$STREAM_LOGS"
+  replace "--external-logs=--external-logs" "--external-logs=$EXTERNAL_LOGS"
   replace "namespace: tekton-dashboard" "namespace: $INSTALL_NAMESPACE"
 
   if [ "$OPENSHIFT" == "true" ] && [ "$IMAGE_STREAM" == "true" ]; then
@@ -487,6 +489,7 @@ help () {
   echo -e "\t[--ingress-url <url>]\t\t\tWill create an additional ingress with the specified url"
   echo -e "\t[--ingress-secret <secret>]\t\tWill add ssl support to the ingress"
   echo -e "\t[--stream-logs]\t\t\t\tWill enable log streaming instead of polling"
+  echo -e "\t[--external-logs]\t\t\tExternal url to fetch logs from when not available in the cluster"
   echo -e "\t[--output <file>]\t\t\tWill output built manifests in the file instead of in the console"
 }
 
@@ -553,6 +556,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     '--stream-logs')
       STREAM_LOGS="true"
+      ;;
+    '--external-logs')
+      shift
+      EXTERNAL_LOGS="${1}"
       ;;
     '--csrf-secure-cookie')
       CSRF_SECURE_COOKIE="true"

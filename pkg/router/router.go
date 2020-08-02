@@ -76,6 +76,7 @@ func Register(resource endpoints.Resource) *Handler {
 	registerReadinessProbe(resource, h.Container)
 	registerKubeAPIProxy(resource, h.Container)
 	registerCSRFTokenEndpoint(resource, h.Container)
+	registerLogsProxy(resource, h.Container)
 	h.registerExtensions()
 	return h
 }
@@ -305,6 +306,15 @@ func registerCSRFTokenEndpoint(r endpoints.Resource, container *restful.Containe
 	ws.Path("/v1/token").Produces("text/plain")
 	ws.Route(ws.GET("/").To(r.GetToken))
 	container.Add(ws)
+}
+
+func registerLogsProxy(r endpoints.Resource, container *restful.Container) {
+	if r.Options.ExternalLogsURL != "" {
+		ws := new(restful.WebService)
+		ws.Path("/v1/logs-proxy").Produces("text/plain")
+		ws.Route(ws.GET("/{subpath:*}").To(r.LogsProxy))
+		container.Add(ws)
+	}
 }
 
 // Extension is the back-end representation of an extension. A service is an

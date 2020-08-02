@@ -63,6 +63,7 @@ Accepted options:
         [--ingress-url <url>]                   Will create an additional ingress with the specified url
         [--ingress-secret <secret>]             Will add ssl support to the ingress
         [--stream-logs]                         Will enable log streaming instead of polling
+        [--external-logs]                       External url to fetch logs from when not available in the cluster
         [--output <file>]                       Will output built manifests in the file instead of in the console
 ```
 

@@ -69,4 +69,8 @@ export function isLogStreamingEnabled(state) {
   return state.StreamLogs;
 }
 
+export function getExternalLogsURL(state) {
+  return state.ExternalLogsURL;
+}
+
 export default properties;

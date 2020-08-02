@@ -15,7 +15,6 @@ package endpoints
 
 import (
 	"errors"
-	"io"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -44,6 +43,7 @@ type Properties struct {
 	LogoutURL          string `json:"LogoutURL,omitempty"`
 	TenantNamespace    string `json:"TenantNamespace,omitempty"`
 	StreamLogs         bool   `json:"StreamLogs"`
+	ExternalLogsURL    string `json:"ExternalLogsURL"`
 }
 
 const (
@@ -71,41 +71,8 @@ func (r Resource) ProxyRequest(request *restful.Request, response *restful.Respo
 		return
 	}
 
-	req, err := http.NewRequest(request.Request.Method, r.Config.Host+"/"+uri, request.Request.Body)
-
-	req = req.WithContext(request.Request.Context())
-
-	if err != nil {
-		logging.Log.Errorf("Failed to create request: %s", err)
-		utils.RespondError(response, err, http.StatusInternalServerError)
-	} else {
-		req.Header.Set("Content-Type", request.HeaderParameter("Content-Type"))
-
-		resp, err := r.HttpClient.Do(req)
-		defer func() {
-			if resp != nil && resp.Body != nil {
-				resp.Body.Close()
-			}
-		}()
-
-		if err != nil {
-			logging.Log.Errorf("Failed to execute request: %s", err)
-			utils.RespondError(response, err, resp.StatusCode)
-		} else {
-			for name, values := range resp.Header {
-				for _, value := range values {
-					response.Header().Add(name, value)
-				}
-			}
-			response.WriteHeader(resp.StatusCode)
-			contentLength := resp.Header.Get("Content-Length")
-			if contentLength == "" {
-				io.Copy(utils.MakeFlushWriter(response), resp.Body)
-			} else {
-				io.Copy(response, resp.Body)
-			}
-			logging.Log.Debugf("END OF REQUEST: %s", uri)
-		}
+	if statusCode, err := utils.Proxy(request.Request, response, r.Config.Host+"/"+uri, r.HttpClient); err != nil {
+		utils.RespondError(response, err, statusCode)
 	}
 }
 
@@ -207,6 +174,10 @@ func (r Resource) GetProperties(request *restful.Request, response *restful.Resp
 		LogoutURL:          r.Options.LogoutURL,
 		TenantNamespace:    r.Options.TenantNamespace,
 		StreamLogs:         r.Options.StreamLogs,
+	}
+
+	if r.Options.ExternalLogsURL != "" {
+		properties.ExternalLogsURL = "/v1/logs-proxy"
 	}
 
 	isTriggersInstalled := IsTriggersInstalled(r, triggersNamespace)

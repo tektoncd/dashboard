@@ -53,3 +53,7 @@
   path: /spec/template/spec/containers/0/args/-
   value:
     --stream-logs=--stream-logs
+- op: add
+  path: /spec/template/spec/containers/0/args/-
+  value:
+    --external-logs=--external-logs
