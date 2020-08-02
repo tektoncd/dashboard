@@ -54,6 +54,7 @@ var (
 	logLevel           = flag.String("log-level", "info", "Minimum log level output by the logger")
 	logFormat          = flag.String("log-format", "json", "Format for log output (json or console)")
 	streamLogs         = flag.Bool("stream-logs", false, "Enable log streaming instead of polling")
+	externalLogs       = flag.String("external-logs", "", "External logs provider url")
 )
 
 func getCSRFAuthKey() []byte {
@@ -143,6 +144,7 @@ func main() {
 		IsOpenShift:        *isOpenshift,
 		LogoutURL:          *logoutUrl,
 		StreamLogs:         *streamLogs,
+		ExternalLogsURL:    *externalLogs,
 	}
 
 	resource := endpoints.Resource{

@@ -26,6 +26,7 @@ import { injectIntl } from 'react-intl';
 
 import {
   getClusterTasks,
+  getExternalLogsURL,
   getPipelineRun,
   getPipelineRunsErrorMessage,
   getTaskRunsByPipelineRunName,
@@ -42,7 +43,7 @@ import { fetchClusterTasks, fetchTasks } from '../../actions/tasks';
 import { fetchTaskRuns } from '../../actions/taskRuns';
 import { rerunPipelineRun } from '../../api';
 
-import { fetchLogs, followLogs, getViewChangeHandler } from '../../utils';
+import { getLogsRetriever, getViewChangeHandler } from '../../utils';
 
 const { PIPELINE_TASK, RETRY, STEP, VIEW } = queryParamConstants;
 
@@ -253,10 +254,6 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       />
     );
 
-    const logsRetriever = this.props.isLogStreamingEnabled
-      ? followLogs
-      : fetchLogs;
-
     return (
       <>
         {showRerunNotification && (
@@ -284,7 +281,10 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
         )}
         <PipelineRun
           error={error}
-          fetchLogs={logsRetriever}
+          fetchLogs={getLogsRetriever(
+            this.props.isLogStreamingEnabled,
+            this.props.externalLogsURL
+          )}
           handleTaskSelected={this.handleTaskSelected}
           loading={loading}
           logDownloadButton={LogDownloadButton}
@@ -329,6 +329,7 @@ function mapStateToProps(state, ownProps) {
       getPipelineRunsErrorMessage(state) ||
       getTasksErrorMessage(state) ||
       getTaskRunsErrorMessage(state),
+    externalLogsURL: getExternalLogsURL(state),
     isReadOnly: isReadOnly(state),
     namespace,
     pipelineRun: getPipelineRun(state, {

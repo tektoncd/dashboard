@@ -64,6 +64,34 @@ export async function fetchLogs(stepName, stepStatus, taskRun) {
   return logs;
 }
 
+function fetchLogsFallback(externalLogsURL) {
+  if (!externalLogsURL) {
+    return undefined;
+  }
+
+  return (stepName, stepStatus, taskRun) => {
+    const { pod, namespace } = taskRun;
+    const { container } = stepStatus;
+    return fetch(
+      `${externalLogsURL}/${namespace}/${pod}/${container}`
+    ).then(response => response.text());
+  };
+}
+
+export function getLogsRetriever(stream, externalLogsURL) {
+  const logs = stream ? followLogs : fetchLogs;
+  const fallback = fetchLogsFallback(externalLogsURL);
+
+  if (fallback) {
+    return (stepName, stepStatus, taskRun) =>
+      logs(stepName, stepStatus, taskRun).catch(() =>
+        fallback(stepName, stepStatus, taskRun)
+      );
+  }
+
+  return logs;
+}
+
 export function isStale(resource, state, resourceIdField = 'uid') {
   const { [resourceIdField]: identifier } = resource.metadata;
   if (!state[identifier]) {

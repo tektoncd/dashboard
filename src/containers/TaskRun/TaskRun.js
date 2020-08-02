@@ -38,10 +38,11 @@ import {
   updateUnexecutedSteps
 } from '@tektoncd/dashboard-utils';
 
-import { fetchLogs, followLogs, getViewChangeHandler } from '../../utils';
+import { getLogsRetriever, getViewChangeHandler } from '../../utils';
 
 import { LogDownloadButton } from '..';
 import {
+  getExternalLogsURL,
   getSelectedNamespace,
   getTaskByType,
   getTaskRun,
@@ -240,9 +241,10 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
       message: taskRunStatusMessage
     } = getStatus(this.props.taskRun);
 
-    const logsRetriever = this.props.isLogStreamingEnabled
-      ? followLogs
-      : fetchLogs;
+    const logsRetriever = getLogsRetriever(
+      this.props.isLogStreamingEnabled,
+      this.props.externalLogsURL
+    );
 
     const logContainer = selectedStepId && (
       <Log
@@ -337,6 +339,7 @@ function mapStateToProps(state, ownProps) {
   }
   return {
     error: getTaskRunsErrorMessage(state),
+    externalLogsURL: getExternalLogsURL(state),
     namespace,
     selectedStepId,
     isLogStreamingEnabled: isLogStreamingEnabled(state),

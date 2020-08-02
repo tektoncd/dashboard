@@ -555,3 +555,7 @@ export function getTenantNamespace(state) {
 export function isLogStreamingEnabled(state) {
   return propertiesSelectors.isLogStreamingEnabled(state.properties);
 }
+
+export function getExternalLogsURL(state) {
+  return propertiesSelectors.getExternalLogsURL(state.properties);
+}
