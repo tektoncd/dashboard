@@ -38,6 +38,10 @@ pre.tkn--log {
     }
   }
 
+  a {
+    color: $inverse-link;
+  }
+
   code {
     white-space: pre;
     overflow-wrap: normal;
