@@ -24,9 +24,7 @@ limitations under the License.
     }
 
     .bx--side-nav__submenu {
-      &[aria-haspopup=true] {
-        color: $gray-10;
-      }
+      color: $gray-10;
 
       &:focus {
         outline-color: white;
