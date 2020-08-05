@@ -451,6 +451,7 @@ class CreatePipelineRun extends React.Component {
                 id: 'dashboard.createRun.invalidNamespace',
                 defaultMessage: 'Namespace cannot be empty'
               })}
+              light
               selectedItem={namespace ? { id: namespace, text: namespace } : ''}
               onChange={this.handleNamespaceChange}
             />
@@ -462,6 +463,7 @@ class CreatePipelineRun extends React.Component {
                 id: 'dashboard.createPipelineRun.invalidPipeline',
                 defaultMessage: 'Pipeline cannot be empty'
               })}
+              light
               selectedItem={
                 pipelineRef ? { id: pipelineRef, text: pipelineRef } : ''
               }
@@ -572,6 +574,7 @@ class CreatePipelineRun extends React.Component {
                     id: 'dashboard.createRun.invalidPipelineResources',
                     defaultMessage: 'PipelineResources cannot be empty'
                   })}
+                  light
                   selectedItem={(() => {
                     const value = this.state.resources[resourceSpec.name];
                     return value ? { id: value, text: value } : '';
@@ -625,6 +628,7 @@ class CreatePipelineRun extends React.Component {
                 defaultMessage:
                   'Ensure the selected ServiceAccount (or the default if none selected) has permissions for creating PipelineRuns and for anything else your PipelineRun interacts with.'
               })}
+              light
               namespace={namespace}
               selectedItem={
                 serviceAccount

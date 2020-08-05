@@ -71,7 +71,6 @@ const UniversalFields = props => {
           id: 'dashboard.createPipelineResource.namespaceError',
           defaultMessage: 'Namespace required'
         })}
-        light
       />
       <Dropdown
         id="type"
