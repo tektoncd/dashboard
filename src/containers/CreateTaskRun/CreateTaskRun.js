@@ -491,6 +491,7 @@ class CreateTaskRun extends React.Component {
                 id: 'dashboard.createRun.invalidNamespace',
                 defaultMessage: 'Namespace cannot be empty'
               })}
+              light
               selectedItem={namespace ? { id: namespace, text: namespace } : ''}
               onChange={this.handleNamespaceChange}
             />
@@ -503,6 +504,7 @@ class CreateTaskRun extends React.Component {
                   id: 'dashboard.createTaskRun.invalidTask',
                   defaultMessage: 'Task cannot be empty'
                 })}
+                light
                 selectedItem={taskRef ? { id: taskRef, text: taskRef } : ''}
                 disabled={namespace === ''}
                 onChange={this.handleTaskChange}
@@ -517,6 +519,7 @@ class CreateTaskRun extends React.Component {
                   id: 'dashboard.createTaskRun.invalidTask',
                   defaultMessage: 'Task cannot be empty'
                 })}
+                light
                 selectedItem={taskRef ? { id: taskRef, text: taskRef } : ''}
                 onChange={this.handleTaskChange}
               />
@@ -623,6 +626,7 @@ class CreateTaskRun extends React.Component {
                     id: 'dashboard.createRun.invalidPipelineResources',
                     defaultMessage: 'PipelineResources cannot be empty'
                   })}
+                  light
                   selectedItem={(() => {
                     let value = '';
                     if (resources.inputs !== undefined) {
@@ -653,6 +657,7 @@ class CreateTaskRun extends React.Component {
                     id: 'dashboard.createRun.invalidPipelineResources',
                     defaultMessage: 'PipelineResources cannot be empty'
                   })}
+                  light
                   selectedItem={(() => {
                     let value = '';
                     if (resources.outputs !== undefined) {
@@ -707,6 +712,7 @@ class CreateTaskRun extends React.Component {
                 defaultMessage:
                   'Ensure the selected ServiceAccount (or the default if none selected) has permissions for creating TaskRuns and for anything else your TaskRun interacts with.'
               })}
+              light
               namespace={namespace}
               selectedItem={
                 serviceAccount
