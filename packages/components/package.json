@@ -19,9 +19,11 @@
     "d3-path": "^1.0.8",
     "elkjs": "^0.5.1",
     "js-yaml": "^3.13.0",
+    "linkify-it": "^3.0.2",
     "prop-types": "^15.7.2",
     "react-intl-formatted-duration": "^4.0.0",
-    "react-window": "^1.8.5"
+    "react-window": "^1.8.5",
+    "tlds": "^1.208.0"
   },
   "peerDependencies": {
     "@carbon/icons-react": "^10.14.0",
@@ -39,5 +41,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "sideEffects": ["*.scss"]
+  "sideEffects": [
+    "*.scss"
+  ]
 }
