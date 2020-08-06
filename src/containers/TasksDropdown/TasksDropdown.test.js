@@ -114,198 +114,200 @@ const checkDropdownItems = ({
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 
-beforeEach(() => {
-  jest.spyOn(API, 'getTasks').mockImplementation(() => tasksById);
-});
+describe('TasksDropdown', () => {
+  beforeEach(() => {
+    jest.spyOn(API, 'getTasks').mockImplementation(() => tasksById);
+  });
 
-it('TasksDropdown renders items based on Redux state', () => {
-  const store = mockStore({
-    ...tasksStoreDefault,
-    ...namespacesStoreBlue,
-    notifications: {}
+  it('renders items based on Redux state', () => {
+    const store = mockStore({
+      ...tasksStoreDefault,
+      ...namespacesStoreBlue,
+      notifications: {}
+    });
+    const { getByPlaceholderText, getAllByText, queryByText } = renderWithIntl(
+      <Provider store={store}>
+        <TasksDropdown {...props} />
+      </Provider>
+    );
+    // View items
+    fireEvent.click(getByPlaceholderText(initialTextRegExp));
+    checkDropdownItems({
+      getAllByText,
+      queryByText,
+      testDict: tasksByNamespace.blue
+    });
   });
-  const { getByPlaceholderText, getAllByText, queryByText } = renderWithIntl(
-    <Provider store={store}>
-      <TasksDropdown {...props} />
-    </Provider>
-  );
-  // View items
-  fireEvent.click(getByPlaceholderText(initialTextRegExp));
-  checkDropdownItems({
-    getAllByText,
-    queryByText,
-    testDict: tasksByNamespace.blue
-  });
-});
 
-it('TasksDropdown renders items based on Redux state when namespace changes', () => {
-  const blueStore = mockStore({
-    ...tasksStoreDefault,
-    ...namespacesStoreBlue,
-    notifications: {}
-  });
-  const {
-    getByPlaceholderText,
-    getAllByText,
-    queryByText,
-    rerender
-  } = renderWithIntl(
-    <Provider store={blueStore}>
-      <TasksDropdown {...props} />
-    </Provider>
-  );
-  // View items
-  fireEvent.click(getByPlaceholderText(initialTextRegExp));
-  checkDropdownItems({
-    getAllByText,
-    queryByText,
-    testDict: tasksByNamespace.blue
-  });
-  fireEvent.click(getByPlaceholderText(initialTextRegExp));
+  it('renders items based on Redux state when namespace changes', () => {
+    const blueStore = mockStore({
+      ...tasksStoreDefault,
+      ...namespacesStoreBlue,
+      notifications: {}
+    });
+    const {
+      getByPlaceholderText,
+      getAllByText,
+      queryByText,
+      rerender
+    } = renderWithIntl(
+      <Provider store={blueStore}>
+        <TasksDropdown {...props} />
+      </Provider>
+    );
+    // View items
+    fireEvent.click(getByPlaceholderText(initialTextRegExp));
+    checkDropdownItems({
+      getAllByText,
+      queryByText,
+      testDict: tasksByNamespace.blue
+    });
+    fireEvent.click(getByPlaceholderText(initialTextRegExp));
 
-  // Change selected namespace from 'blue' to 'green'
-  const greenStore = mockStore({
-    ...tasksStoreDefault,
-    ...namespacesStoreGreen,
-    notifications: {}
+    // Change selected namespace from 'blue' to 'green'
+    const greenStore = mockStore({
+      ...tasksStoreDefault,
+      ...namespacesStoreGreen,
+      notifications: {}
+    });
+    rerenderWithIntl(
+      rerender,
+      <Provider store={greenStore}>
+        <TasksDropdown {...props} />
+      </Provider>
+    );
+    // View items
+    fireEvent.click(getByPlaceholderText(initialTextRegExp));
+    checkDropdownItems({
+      getAllByText,
+      queryByText,
+      testDict: tasksByNamespace.green
+    });
   });
-  rerenderWithIntl(
-    rerender,
-    <Provider store={greenStore}>
-      <TasksDropdown {...props} />
-    </Provider>
-  );
-  // View items
-  fireEvent.click(getByPlaceholderText(initialTextRegExp));
-  checkDropdownItems({
-    getAllByText,
-    queryByText,
-    testDict: tasksByNamespace.green
-  });
-});
 
-it('TasksDropdown renders controlled selection', () => {
-  const store = mockStore({
-    ...tasksStoreDefault,
-    ...namespacesStoreBlue,
-    notifications: {}
+  it('renders controlled selection', () => {
+    const store = mockStore({
+      ...tasksStoreDefault,
+      ...namespacesStoreBlue,
+      notifications: {}
+    });
+    // Select item 'task-1'
+    const {
+      queryByDisplayValue,
+      queryByPlaceholderText,
+      rerender
+    } = renderWithIntl(
+      <Provider store={store}>
+        <TasksDropdown {...props} selectedItem={{ text: 'task-1' }} />
+      </Provider>
+    );
+    expect(queryByDisplayValue(/task-1/i)).toBeTruthy();
+    // Select item 'task-2'
+    rerenderWithIntl(
+      rerender,
+      <Provider store={store}>
+        <TasksDropdown {...props} selectedItem={{ text: 'task-2' }} />
+      </Provider>
+    );
+    expect(queryByDisplayValue(/task-2/i)).toBeTruthy();
+    // No selected item (select item '')
+    rerenderWithIntl(
+      rerender,
+      <Provider store={store}>
+        <TasksDropdown {...props} selectedItem="" />
+      </Provider>
+    );
+    expect(queryByPlaceholderText(initialTextRegExp)).toBeTruthy();
   });
-  // Select item 'task-1'
-  const {
-    queryByDisplayValue,
-    queryByPlaceholderText,
-    rerender
-  } = renderWithIntl(
-    <Provider store={store}>
-      <TasksDropdown {...props} selectedItem={{ text: 'task-1' }} />
-    </Provider>
-  );
-  expect(queryByDisplayValue(/task-1/i)).toBeTruthy();
-  // Select item 'task-2'
-  rerenderWithIntl(
-    rerender,
-    <Provider store={store}>
-      <TasksDropdown {...props} selectedItem={{ text: 'task-2' }} />
-    </Provider>
-  );
-  expect(queryByDisplayValue(/task-2/i)).toBeTruthy();
-  // No selected item (select item '')
-  rerenderWithIntl(
-    rerender,
-    <Provider store={store}>
-      <TasksDropdown {...props} selectedItem="" />
-    </Provider>
-  );
-  expect(queryByPlaceholderText(initialTextRegExp)).toBeTruthy();
-});
 
-it('TasksDropdown renders controlled namespace', () => {
-  const store = mockStore({
-    ...tasksStoreDefault,
-    ...namespacesStoreBlue,
-    notifications: {}
+  it('renders controlled namespace', () => {
+    const store = mockStore({
+      ...tasksStoreDefault,
+      ...namespacesStoreBlue,
+      notifications: {}
+    });
+    // Select namespace 'green'
+    const { queryByText, getByPlaceholderText, getAllByText } = renderWithIntl(
+      <Provider store={store}>
+        <TasksDropdown {...props} namespace="green" />
+      </Provider>
+    );
+    fireEvent.click(getByPlaceholderText(initialTextRegExp));
+    checkDropdownItems({
+      getAllByText,
+      queryByText,
+      testDict: tasksByNamespace.green
+    });
   });
-  // Select namespace 'green'
-  const { queryByText, getByPlaceholderText, getAllByText } = renderWithIntl(
-    <Provider store={store}>
-      <TasksDropdown {...props} namespace="green" />
-    </Provider>
-  );
-  fireEvent.click(getByPlaceholderText(initialTextRegExp));
-  checkDropdownItems({
-    getAllByText,
-    queryByText,
-    testDict: tasksByNamespace.green
-  });
-});
 
-it('TasksDropdown renders empty', () => {
-  const store = mockStore({
-    tasks: {
-      byId: {},
-      byNamespace: {},
-      isFetching: false
-    },
-    ...namespacesStoreBlue,
-    notifications: {}
+  it('renders empty', () => {
+    const store = mockStore({
+      tasks: {
+        byId: {},
+        byNamespace: {},
+        isFetching: false
+      },
+      ...namespacesStoreBlue,
+      notifications: {}
+    });
+    const { queryByPlaceholderText } = renderWithIntl(
+      <Provider store={store}>
+        <TasksDropdown {...props} />
+      </Provider>
+    );
+    expect(
+      queryByPlaceholderText(/no tasks found in the 'blue' namespace/i)
+    ).toBeTruthy();
+    expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
   });
-  const { queryByPlaceholderText } = renderWithIntl(
-    <Provider store={store}>
-      <TasksDropdown {...props} />
-    </Provider>
-  );
-  expect(
-    queryByPlaceholderText(/no tasks found in the 'blue' namespace/i)
-  ).toBeTruthy();
-  expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
-});
 
-it('TasksDropdown for all namespaces renders empty', () => {
-  const store = mockStore({
-    tasks: {
-      byId: {},
-      byNamespace: {},
-      isFetching: false
-    },
-    ...namespacesStoreBlue,
-    notifications: {}
+  it('for all namespaces renders empty', () => {
+    const store = mockStore({
+      tasks: {
+        byId: {},
+        byNamespace: {},
+        isFetching: false
+      },
+      ...namespacesStoreBlue,
+      notifications: {}
+    });
+    const { queryByPlaceholderText } = renderWithIntl(
+      <Provider store={store}>
+        <TasksDropdown {...props} namespace={ALL_NAMESPACES} />
+      </Provider>
+    );
+    expect(queryByPlaceholderText(/no tasks found/i)).toBeTruthy();
+    expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
   });
-  const { queryByPlaceholderText } = renderWithIntl(
-    <Provider store={store}>
-      <TasksDropdown {...props} namespace={ALL_NAMESPACES} />
-    </Provider>
-  );
-  expect(queryByPlaceholderText(/no tasks found/i)).toBeTruthy();
-  expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
-});
 
-it('TasksDropdown renders loading skeleton based on Redux state', () => {
-  const store = mockStore({
-    ...tasksStoreFetching,
-    ...namespacesStoreBlue,
-    notifications: {}
+  it('renders loading skeleton based on Redux state', () => {
+    const store = mockStore({
+      ...tasksStoreFetching,
+      ...namespacesStoreBlue,
+      notifications: {}
+    });
+    const { queryByPlaceholderText } = renderWithIntl(
+      <Provider store={store}>
+        <TasksDropdown {...props} />
+      </Provider>
+    );
+    expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
   });
-  const { queryByPlaceholderText } = renderWithIntl(
-    <Provider store={store}>
-      <TasksDropdown {...props} />
-    </Provider>
-  );
-  expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
-});
 
-it('TasksDropdown handles onChange event', () => {
-  const store = mockStore({
-    ...tasksStoreDefault,
-    ...namespacesStoreBlue,
-    notifications: {}
+  it('handles onChange event', () => {
+    const store = mockStore({
+      ...tasksStoreDefault,
+      ...namespacesStoreBlue,
+      notifications: {}
+    });
+    const onChange = jest.fn();
+    const { getByPlaceholderText, getByText } = renderWithIntl(
+      <Provider store={store}>
+        <TasksDropdown {...props} onChange={onChange} />
+      </Provider>
+    );
+    fireEvent.click(getByPlaceholderText(initialTextRegExp));
+    fireEvent.click(getByText(/task-1/i));
+    expect(onChange).toHaveBeenCalledTimes(1);
   });
-  const onChange = jest.fn();
-  const { getByPlaceholderText, getByText } = renderWithIntl(
-    <Provider store={store}>
-      <TasksDropdown {...props} onChange={onChange} />
-    </Provider>
-  );
-  fireEvent.click(getByPlaceholderText(initialTextRegExp));
-  fireEvent.click(getByText(/task-1/i));
-  expect(onChange).toHaveBeenCalledTimes(1);
 });

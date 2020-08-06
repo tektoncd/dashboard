@@ -114,198 +114,200 @@ const checkDropdownItems = ({
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 
-beforeEach(() => {
-  jest.spyOn(API, 'getPipelines').mockImplementation(() => pipelinesById);
-});
+describe('PipelinesDropdown', () => {
+  beforeEach(() => {
+    jest.spyOn(API, 'getPipelines').mockImplementation(() => pipelinesById);
+  });
 
-it('PipelinesDropdown renders items based on Redux state', () => {
-  const store = mockStore({
-    ...pipelinesStoreDefault,
-    ...namespacesStoreBlue,
-    notifications: {}
+  it('renders items based on Redux state', () => {
+    const store = mockStore({
+      ...pipelinesStoreDefault,
+      ...namespacesStoreBlue,
+      notifications: {}
+    });
+    const { getByPlaceholderText, getAllByText, queryByText } = renderWithIntl(
+      <Provider store={store}>
+        <PipelinesDropdown {...props} />
+      </Provider>
+    );
+    // View items
+    fireEvent.click(getByPlaceholderText(initialTextRegExp));
+    checkDropdownItems({
+      getAllByText,
+      queryByText,
+      testDict: pipelinesByNamespace.blue
+    });
   });
-  const { getByPlaceholderText, getAllByText, queryByText } = renderWithIntl(
-    <Provider store={store}>
-      <PipelinesDropdown {...props} />
-    </Provider>
-  );
-  // View items
-  fireEvent.click(getByPlaceholderText(initialTextRegExp));
-  checkDropdownItems({
-    getAllByText,
-    queryByText,
-    testDict: pipelinesByNamespace.blue
-  });
-});
 
-it('PipelinesDropdown renders items based on Redux state when namespace changes', () => {
-  const blueStore = mockStore({
-    ...pipelinesStoreDefault,
-    ...namespacesStoreBlue,
-    notifications: {}
-  });
-  const {
-    getByPlaceholderText,
-    getAllByText,
-    queryByText,
-    rerender
-  } = renderWithIntl(
-    <Provider store={blueStore}>
-      <PipelinesDropdown {...props} />
-    </Provider>
-  );
-  // View items
-  fireEvent.click(getByPlaceholderText(initialTextRegExp));
-  checkDropdownItems({
-    getAllByText,
-    queryByText,
-    testDict: pipelinesByNamespace.blue
-  });
-  fireEvent.click(getByPlaceholderText(initialTextRegExp));
+  it('renders items based on Redux state when namespace changes', () => {
+    const blueStore = mockStore({
+      ...pipelinesStoreDefault,
+      ...namespacesStoreBlue,
+      notifications: {}
+    });
+    const {
+      getByPlaceholderText,
+      getAllByText,
+      queryByText,
+      rerender
+    } = renderWithIntl(
+      <Provider store={blueStore}>
+        <PipelinesDropdown {...props} />
+      </Provider>
+    );
+    // View items
+    fireEvent.click(getByPlaceholderText(initialTextRegExp));
+    checkDropdownItems({
+      getAllByText,
+      queryByText,
+      testDict: pipelinesByNamespace.blue
+    });
+    fireEvent.click(getByPlaceholderText(initialTextRegExp));
 
-  // Change selected namespace from 'blue' to 'green'
-  const greenStore = mockStore({
-    ...pipelinesStoreDefault,
-    ...namespacesStoreGreen,
-    notifications: {}
+    // Change selected namespace from 'blue' to 'green'
+    const greenStore = mockStore({
+      ...pipelinesStoreDefault,
+      ...namespacesStoreGreen,
+      notifications: {}
+    });
+    rerenderWithIntl(
+      rerender,
+      <Provider store={greenStore}>
+        <PipelinesDropdown {...props} />
+      </Provider>
+    );
+    // View items
+    fireEvent.click(getByPlaceholderText(initialTextRegExp));
+    checkDropdownItems({
+      getAllByText,
+      queryByText,
+      testDict: pipelinesByNamespace.green
+    });
   });
-  rerenderWithIntl(
-    rerender,
-    <Provider store={greenStore}>
-      <PipelinesDropdown {...props} />
-    </Provider>
-  );
-  // View items
-  fireEvent.click(getByPlaceholderText(initialTextRegExp));
-  checkDropdownItems({
-    getAllByText,
-    queryByText,
-    testDict: pipelinesByNamespace.green
-  });
-});
 
-it('PipelinesDropdown renders controlled selection', () => {
-  const store = mockStore({
-    ...pipelinesStoreDefault,
-    ...namespacesStoreBlue,
-    notifications: {}
+  it('renders controlled selection', () => {
+    const store = mockStore({
+      ...pipelinesStoreDefault,
+      ...namespacesStoreBlue,
+      notifications: {}
+    });
+    // Select item 'pipeline-1'
+    const {
+      queryByDisplayValue,
+      queryByPlaceholderText,
+      rerender
+    } = renderWithIntl(
+      <Provider store={store}>
+        <PipelinesDropdown {...props} selectedItem={{ text: 'pipeline-1' }} />
+      </Provider>
+    );
+    expect(queryByDisplayValue(/pipeline-1/i)).toBeTruthy();
+    // Select item 'pipeline-2'
+    rerenderWithIntl(
+      rerender,
+      <Provider store={store}>
+        <PipelinesDropdown {...props} selectedItem={{ text: 'pipeline-2' }} />
+      </Provider>
+    );
+    expect(queryByDisplayValue(/pipeline-2/i)).toBeTruthy();
+    // No selected item (select item '')
+    rerenderWithIntl(
+      rerender,
+      <Provider store={store}>
+        <PipelinesDropdown {...props} selectedItem="" />
+      </Provider>
+    );
+    expect(queryByPlaceholderText(initialTextRegExp)).toBeTruthy();
   });
-  // Select item 'pipeline-1'
-  const {
-    queryByDisplayValue,
-    queryByPlaceholderText,
-    rerender
-  } = renderWithIntl(
-    <Provider store={store}>
-      <PipelinesDropdown {...props} selectedItem={{ text: 'pipeline-1' }} />
-    </Provider>
-  );
-  expect(queryByDisplayValue(/pipeline-1/i)).toBeTruthy();
-  // Select item 'pipeline-2'
-  rerenderWithIntl(
-    rerender,
-    <Provider store={store}>
-      <PipelinesDropdown {...props} selectedItem={{ text: 'pipeline-2' }} />
-    </Provider>
-  );
-  expect(queryByDisplayValue(/pipeline-2/i)).toBeTruthy();
-  // No selected item (select item '')
-  rerenderWithIntl(
-    rerender,
-    <Provider store={store}>
-      <PipelinesDropdown {...props} selectedItem="" />
-    </Provider>
-  );
-  expect(queryByPlaceholderText(initialTextRegExp)).toBeTruthy();
-});
 
-it('PipelinesDropdown renders controlled namespace', () => {
-  const store = mockStore({
-    ...pipelinesStoreDefault,
-    ...namespacesStoreBlue,
-    notifications: {}
+  it('renders controlled namespace', () => {
+    const store = mockStore({
+      ...pipelinesStoreDefault,
+      ...namespacesStoreBlue,
+      notifications: {}
+    });
+    // Select namespace 'green'
+    const { queryByText, getByPlaceholderText, getAllByText } = renderWithIntl(
+      <Provider store={store}>
+        <PipelinesDropdown {...props} namespace="green" />
+      </Provider>
+    );
+    fireEvent.click(getByPlaceholderText(initialTextRegExp));
+    checkDropdownItems({
+      getAllByText,
+      queryByText,
+      testDict: pipelinesByNamespace.green
+    });
   });
-  // Select namespace 'green'
-  const { queryByText, getByPlaceholderText, getAllByText } = renderWithIntl(
-    <Provider store={store}>
-      <PipelinesDropdown {...props} namespace="green" />
-    </Provider>
-  );
-  fireEvent.click(getByPlaceholderText(initialTextRegExp));
-  checkDropdownItems({
-    getAllByText,
-    queryByText,
-    testDict: pipelinesByNamespace.green
-  });
-});
 
-it('PipelinesDropdown renders empty', () => {
-  const store = mockStore({
-    pipelines: {
-      byId: {},
-      byNamespace: {},
-      isFetching: false
-    },
-    ...namespacesStoreBlue,
-    notifications: {}
+  it('renders empty', () => {
+    const store = mockStore({
+      pipelines: {
+        byId: {},
+        byNamespace: {},
+        isFetching: false
+      },
+      ...namespacesStoreBlue,
+      notifications: {}
+    });
+    const { queryByPlaceholderText } = renderWithIntl(
+      <Provider store={store}>
+        <PipelinesDropdown {...props} />
+      </Provider>
+    );
+    expect(
+      queryByPlaceholderText(/no pipelines found in the 'blue' namespace/i)
+    ).toBeTruthy();
+    expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
   });
-  const { queryByPlaceholderText } = renderWithIntl(
-    <Provider store={store}>
-      <PipelinesDropdown {...props} />
-    </Provider>
-  );
-  expect(
-    queryByPlaceholderText(/no pipelines found in the 'blue' namespace/i)
-  ).toBeTruthy();
-  expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
-});
 
-it('PipelinesDropdown for all namespaces renders empty', () => {
-  const store = mockStore({
-    pipelines: {
-      byId: {},
-      byNamespace: {},
-      isFetching: false
-    },
-    ...namespacesStoreBlue,
-    notifications: {}
+  it('for all namespaces renders empty', () => {
+    const store = mockStore({
+      pipelines: {
+        byId: {},
+        byNamespace: {},
+        isFetching: false
+      },
+      ...namespacesStoreBlue,
+      notifications: {}
+    });
+    const { queryByPlaceholderText } = renderWithIntl(
+      <Provider store={store}>
+        <PipelinesDropdown {...props} namespace={ALL_NAMESPACES} />
+      </Provider>
+    );
+    expect(queryByPlaceholderText(/no pipelines found/i)).toBeTruthy();
+    expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
   });
-  const { queryByPlaceholderText } = renderWithIntl(
-    <Provider store={store}>
-      <PipelinesDropdown {...props} namespace={ALL_NAMESPACES} />
-    </Provider>
-  );
-  expect(queryByPlaceholderText(/no pipelines found/i)).toBeTruthy();
-  expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
-});
 
-it('PipelinesDropdown renders loading skeleton based on Redux state', () => {
-  const store = mockStore({
-    ...pipelinesStoreFetching,
-    ...namespacesStoreBlue,
-    notifications: {}
+  it('renders loading skeleton based on Redux state', () => {
+    const store = mockStore({
+      ...pipelinesStoreFetching,
+      ...namespacesStoreBlue,
+      notifications: {}
+    });
+    const { queryByPlaceholderText } = renderWithIntl(
+      <Provider store={store}>
+        <PipelinesDropdown {...props} />
+      </Provider>
+    );
+    expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
   });
-  const { queryByPlaceholderText } = renderWithIntl(
-    <Provider store={store}>
-      <PipelinesDropdown {...props} />
-    </Provider>
-  );
-  expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
-});
 
-it('PipelinesDropdown handles onChange event', () => {
-  const store = mockStore({
-    ...pipelinesStoreDefault,
-    ...namespacesStoreBlue,
-    notifications: {}
+  it('handles onChange event', () => {
+    const store = mockStore({
+      ...pipelinesStoreDefault,
+      ...namespacesStoreBlue,
+      notifications: {}
+    });
+    const onChange = jest.fn();
+    const { getByPlaceholderText, getByText } = renderWithIntl(
+      <Provider store={store}>
+        <PipelinesDropdown {...props} onChange={onChange} />
+      </Provider>
+    );
+    fireEvent.click(getByPlaceholderText(initialTextRegExp));
+    fireEvent.click(getByText(/pipeline-1/i));
+    expect(onChange).toHaveBeenCalledTimes(1);
   });
-  const onChange = jest.fn();
-  const { getByPlaceholderText, getByText } = renderWithIntl(
-    <Provider store={store}>
-      <PipelinesDropdown {...props} onChange={onChange} />
-    </Provider>
-  );
-  fireEvent.click(getByPlaceholderText(initialTextRegExp));
-  fireEvent.click(getByText(/pipeline-1/i));
-  expect(onChange).toHaveBeenCalledTimes(1);
 });
