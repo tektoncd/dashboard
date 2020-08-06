@@ -12,12 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import {
-  cleanup,
-  fireEvent,
-  wait,
-  waitForElement
-} from 'react-testing-library';
+import { fireEvent, wait, waitForElement } from 'react-testing-library';
 
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
@@ -282,7 +277,6 @@ const selectTask1AndFillSpec = async ({
 };
 
 describe('CreateTaskRun', () => {
-  afterEach(cleanup);
   beforeEach(() => {
     jest
       .spyOn(ServiceAccountsAPI, 'getServiceAccounts')
