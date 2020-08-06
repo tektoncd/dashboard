@@ -19,7 +19,6 @@ import { ReadableStream } from 'web-streams-polyfill/es6';
 fetchMock.catch();
 fetchMock.config.overwriteRoutes = true;
 
-window.HTMLElement.prototype.scrollIntoView = function scrollIntoViewTestStub() {};
 window.TextDecoder = TextDecoder;
 window.TextEncoder = TextEncoder;
 window.ReadableStream = ReadableStream;
