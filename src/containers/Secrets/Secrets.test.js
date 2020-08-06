@@ -29,11 +29,6 @@ import * as selectors from '../../reducers';
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 
-beforeEach(() => {
-  jest.spyOn(PipelinesAPI, 'getPipelines').mockImplementation(() => {});
-  jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => false);
-});
-
 const byNamespace = {
   default: [
     {
@@ -144,191 +139,198 @@ const store = mockStore({
   }
 });
 
-it('click add new secret and create secret UI appears', () => {
-  const currentProps = {
-    history: {
-      push: jest.fn()
-    },
-    secrets: [
-      {
-        metadata: {
+describe('Secrets', () => {
+  beforeEach(() => {
+    jest.spyOn(PipelinesAPI, 'getPipelines').mockImplementation(() => {});
+    jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => false);
+  });
+
+  it('click add new secret and create secret UI appears', () => {
+    const currentProps = {
+      history: {
+        push: jest.fn()
+      },
+      secrets: [
+        {
+          metadata: {
+            name: 'github-repo-access-secret',
+            annotations: {
+              'tekton.dev/git-0': 'https://github.ibm.com'
+            }
+          }
+        }
+      ]
+    };
+
+    jest.spyOn(SecretsAPI, 'getSecrets').mockImplementation(() => []);
+    jest.spyOn(API, 'getNamespaces').mockImplementation(() => []);
+    jest
+      .spyOn(ServiceAccountsAPI, 'getServiceAccounts')
+      .mockImplementation(() => []);
+
+    const { getByText } = renderWithRouter(
+      <Provider store={store}>
+        <Route
+          path={urls.secrets.all()}
+          render={props => <Secrets {...props} {...currentProps} />}
+        />
+      </Provider>,
+      { route: urls.secrets.all() }
+    );
+
+    fireEvent.click(getByText('Create'));
+    expect(currentProps.history.push).toHaveBeenCalledWith(
+      `${urls.secrets.create()}?secretType=password`
+    );
+  });
+
+  it('click delete secret & modal appears', () => {
+    const currentProps = {
+      secrets: [
+        {
           name: 'github-repo-access-secret',
           annotations: {
             'tekton.dev/git-0': 'https://github.ibm.com'
           }
         }
-      }
-    ]
-  };
+      ]
+    };
 
-  jest.spyOn(SecretsAPI, 'getSecrets').mockImplementation(() => []);
-  jest.spyOn(API, 'getNamespaces').mockImplementation(() => []);
-  jest
-    .spyOn(ServiceAccountsAPI, 'getServiceAccounts')
-    .mockImplementation(() => []);
+    const { getByTestId, getByText } = renderWithRouter(
+      <Provider store={store}>
+        <Route
+          path={urls.secrets.all()}
+          render={props => <Secrets {...props} {...currentProps} />}
+        />
+      </Provider>,
+      { route: urls.secrets.all() }
+    );
 
-  const { getByText } = renderWithRouter(
-    <Provider store={store}>
-      <Route
-        path={urls.secrets.all()}
-        render={props => <Secrets {...props} {...currentProps} />}
-      />
-    </Provider>,
-    { route: urls.secrets.all() }
-  );
+    expect(
+      getByTestId('deleteModal').className.includes('is-visible')
+    ).toBeFalsy();
 
-  fireEvent.click(getByText('Create'));
-  expect(currentProps.history.push).toHaveBeenCalledWith(
-    `${urls.secrets.create()}?secretType=password`
-  );
-});
+    fireEvent.click(getByText('Delete'));
 
-it('click delete secret & modal appears', () => {
-  const currentProps = {
-    secrets: [
-      {
-        name: 'github-repo-access-secret',
-        annotations: {
-          'tekton.dev/git-0': 'https://github.ibm.com'
+    expect(
+      getByTestId('deleteModal').className.includes('is-visible')
+    ).toBeTruthy();
+  });
+
+  it('renders with one secret', () => {
+    const { queryByText } = renderWithRouter(
+      <Provider store={store}>
+        <Route
+          path={urls.secrets.all()}
+          render={props => <Secrets {...props} />}
+        />
+      </Provider>,
+      { route: urls.secrets.all() }
+    );
+
+    expect(queryByText(/github-repo-access-secret/i)).toBeTruthy();
+    expect(queryByText(/service-account-1/i)).toBeTruthy();
+    expect(
+      queryByText(/tekton.dev\/git-0: https:\/\/github.ibm.com/i)
+    ).toBeTruthy();
+  });
+
+  it('only renders tekton.dev annotations', () => {
+    const currentProps = {
+      secrets: [
+        {
+          name: 'github-repo-access-secret',
+          annotations: {
+            'tekton.dev/git-0': 'https://github.ibm.com'
+          }
         }
-      }
-    ]
-  };
+      ]
+    };
 
-  const { getByTestId, getByText } = renderWithRouter(
-    <Provider store={store}>
-      <Route
-        path={urls.secrets.all()}
-        render={props => <Secrets {...props} {...currentProps} />}
-      />
-    </Provider>,
-    { route: urls.secrets.all() }
-  );
+    const { queryByText } = renderWithRouter(
+      <Provider store={store}>
+        <Route
+          path={urls.secrets.all()}
+          render={props => <Secrets {...props} {...currentProps} />}
+        />
+      </Provider>,
+      { route: urls.secrets.all() }
+    );
 
-  expect(
-    getByTestId('deleteModal').className.includes('is-visible')
-  ).toBeFalsy();
+    expect(
+      queryByText(/tekton.dev\/git-0: https:\/\/github.ibm.com/i)
+    ).toBeTruthy();
 
-  fireEvent.click(getByText('Delete'));
+    expect(queryByText(/badannotation/i)).toBeFalsy();
 
-  expect(
-    getByTestId('deleteModal').className.includes('is-visible')
-  ).toBeTruthy();
-});
+    expect(queryByText(/badcontent/i)).toBeFalsy();
+  });
 
-it('SecretsTable renders with one secret', () => {
-  const { queryByText } = renderWithRouter(
-    <Provider store={store}>
-      <Route
-        path={urls.secrets.all()}
-        render={props => <Secrets {...props} />}
-      />
-    </Provider>,
-    { route: urls.secrets.all() }
-  );
+  it('renders username in regular form (not encoded)', () => {
+    const { queryByText, getByText } = renderWithRouter(
+      <Provider store={store}>
+        <Route
+          path={urls.secrets.all()}
+          render={props => <Secrets {...props} />}
+        />
+      </Provider>,
+      { route: urls.secrets.all() }
+    );
+    expect(queryByText(/github-repo-access-secret/i)).toBeTruthy();
+    expect(getByText('myusername')).toBeTruthy();
+    expect(getByText('测试')).toBeTruthy();
+  });
 
-  expect(queryByText(/github-repo-access-secret/i)).toBeTruthy();
-  expect(queryByText(/service-account-1/i)).toBeTruthy();
-  expect(
-    queryByText(/tekton.dev\/git-0: https:\/\/github.ibm.com/i)
-  ).toBeTruthy();
-});
+  it('can be filtered on a single label filter', async () => {
+    const { getByTestId, getByText, queryByText } = renderWithRouter(
+      <Provider store={store}>
+        <Route
+          path={urls.secrets.all()}
+          render={props => <Secrets {...props} />}
+        />
+      </Provider>,
+      { route: urls.secrets.all() }
+    );
 
-it('SecretsTable only renders tekton.dev annotations', () => {
-  const currentProps = {
-    secrets: [
-      {
-        name: 'github-repo-access-secret',
-        annotations: {
-          'tekton.dev/git-0': 'https://github.ibm.com'
-        }
-      }
-    ]
-  };
+    const filterValue = 'baz:bam';
+    const filterInputField = getByTestId('filter-search-bar');
+    fireEvent.change(filterInputField, { target: { value: filterValue } });
+    fireEvent.submit(getByText(/Input a label filter/i));
 
-  const { queryByText } = renderWithRouter(
-    <Provider store={store}>
-      <Route
-        path={urls.secrets.all()}
-        render={props => <Secrets {...props} {...currentProps} />}
-      />
-    </Provider>,
-    { route: urls.secrets.all() }
-  );
+    expect(queryByText(filterValue)).toBeTruthy();
+    expect(queryByText('github-repo-access-secret')).toBeFalsy();
+    expect(queryByText('another-secret-with-label')).toBeTruthy();
+  });
 
-  expect(
-    queryByText(/tekton.dev\/git-0: https:\/\/github.ibm.com/i)
-  ).toBeTruthy();
+  it('can not be created when in read-only mode', async () => {
+    jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => true);
 
-  expect(queryByText(/badannotation/i)).toBeFalsy();
+    const { queryByText } = renderWithRouter(
+      <Provider store={store}>
+        <Route
+          path={urls.secrets.all()}
+          render={props => <Secrets {...props} />}
+        />
+      </Provider>,
+      { route: urls.secrets.all() }
+    );
+    await waitForElement(() => queryByText(/github-repo-access-secret/i));
+    expect(queryByText('Create')).toBeFalsy();
+  });
 
-  expect(queryByText(/badcontent/i)).toBeFalsy();
-});
+  it('can be created when not in read-only mode', async () => {
+    jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => false);
 
-it('SecretsTable renders username in regular form (not encoded)', () => {
-  const { queryByText, getByText } = renderWithRouter(
-    <Provider store={store}>
-      <Route
-        path={urls.secrets.all()}
-        render={props => <Secrets {...props} />}
-      />
-    </Provider>,
-    { route: urls.secrets.all() }
-  );
-  expect(queryByText(/github-repo-access-secret/i)).toBeTruthy();
-  expect(getByText('myusername')).toBeTruthy();
-  expect(getByText('测试')).toBeTruthy();
-});
-
-it('Secrets can be filtered on a single label filter', async () => {
-  const { getByTestId, getByText, queryByText } = renderWithRouter(
-    <Provider store={store}>
-      <Route
-        path={urls.secrets.all()}
-        render={props => <Secrets {...props} />}
-      />
-    </Provider>,
-    { route: urls.secrets.all() }
-  );
-
-  const filterValue = 'baz:bam';
-  const filterInputField = getByTestId('filter-search-bar');
-  fireEvent.change(filterInputField, { target: { value: filterValue } });
-  fireEvent.submit(getByText(/Input a label filter/i));
-
-  expect(queryByText(filterValue)).toBeTruthy();
-  expect(queryByText('github-repo-access-secret')).toBeFalsy();
-  expect(queryByText('another-secret-with-label')).toBeTruthy();
-});
-
-it('Secrets can not be created when in read-only mode', async () => {
-  jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => true);
-
-  const { queryByText } = renderWithRouter(
-    <Provider store={store}>
-      <Route
-        path={urls.secrets.all()}
-        render={props => <Secrets {...props} />}
-      />
-    </Provider>,
-    { route: urls.secrets.all() }
-  );
-  await waitForElement(() => queryByText(/github-repo-access-secret/i));
-  expect(queryByText('Create')).toBeFalsy();
-});
-
-it('Secrets can be created when not in read-only mode', async () => {
-  jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => false);
-
-  const { queryByText } = renderWithRouter(
-    <Provider store={store}>
-      <Route
-        path={urls.secrets.all()}
-        render={props => <Secrets {...props} />}
-      />
-    </Provider>,
-    { route: urls.secrets.all() }
-  );
-  await waitForElement(() => queryByText(/github-repo-access-secret/i));
-  expect(queryByText(/create/i)).toBeTruthy();
+    const { queryByText } = renderWithRouter(
+      <Provider store={store}>
+        <Route
+          path={urls.secrets.all()}
+          render={props => <Secrets {...props} />}
+        />
+      </Provider>,
+      { route: urls.secrets.all() }
+    );
+    await waitForElement(() => queryByText(/github-repo-access-secret/i));
+    expect(queryByText(/create/i)).toBeTruthy();
+  });
 });

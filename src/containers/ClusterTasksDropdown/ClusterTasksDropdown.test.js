@@ -76,113 +76,115 @@ const checkDropdownItems = ({
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 
-beforeEach(() => {
-  jest
-    .spyOn(API, 'getClusterTasks')
-    .mockImplementation(() => clusterTasksByName);
-});
+describe('ClusterTasksDropdown', () => {
+  beforeEach(() => {
+    jest
+      .spyOn(API, 'getClusterTasks')
+      .mockImplementation(() => clusterTasksByName);
+  });
 
-it('ClusterTasksDropdown renders items based on Redux state', () => {
-  const store = mockStore({
-    ...clusterTasksStoreDefault,
-    notifications: {}
+  it('renders items based on Redux state', () => {
+    const store = mockStore({
+      ...clusterTasksStoreDefault,
+      notifications: {}
+    });
+    const { getByPlaceholderText, getAllByText, queryByText } = renderWithIntl(
+      <Provider store={store}>
+        <ClusterTasksDropdown {...props} />
+      </Provider>
+    );
+    // View items
+    fireEvent.click(getByPlaceholderText(initialTextRegExp));
+    checkDropdownItems({
+      getAllByText,
+      queryByText,
+      testDict: clusterTasksByName
+    });
   });
-  const { getByPlaceholderText, getAllByText, queryByText } = renderWithIntl(
-    <Provider store={store}>
-      <ClusterTasksDropdown {...props} />
-    </Provider>
-  );
-  // View items
-  fireEvent.click(getByPlaceholderText(initialTextRegExp));
-  checkDropdownItems({
-    getAllByText,
-    queryByText,
-    testDict: clusterTasksByName
-  });
-});
 
-it('ClusterTasksDropdown renders controlled selection', () => {
-  const store = mockStore({
-    ...clusterTasksStoreDefault,
-    notifications: {}
+  it('renders controlled selection', () => {
+    const store = mockStore({
+      ...clusterTasksStoreDefault,
+      notifications: {}
+    });
+    // Select item 'clustertask-1'
+    const {
+      queryByDisplayValue,
+      queryByPlaceholderText,
+      rerender
+    } = renderWithIntl(
+      <Provider store={store}>
+        <ClusterTasksDropdown
+          {...props}
+          selectedItem={{ text: 'clustertask-1' }}
+        />
+      </Provider>
+    );
+    expect(queryByDisplayValue(/clustertask-1/i)).toBeTruthy();
+    // Select item 'clustertask-2'
+    rerenderWithIntl(
+      rerender,
+      <Provider store={store}>
+        <ClusterTasksDropdown
+          {...props}
+          selectedItem={{ text: 'clustertask-2' }}
+        />
+      </Provider>
+    );
+    expect(queryByDisplayValue(/clustertask-2/i)).toBeTruthy();
+    // No selected item (select item '')
+    rerenderWithIntl(
+      rerender,
+      <Provider store={store}>
+        <ClusterTasksDropdown {...props} selectedItem="" />
+      </Provider>
+    );
+    expect(queryByPlaceholderText(initialTextRegExp)).toBeTruthy();
   });
-  // Select item 'clustertask-1'
-  const {
-    queryByDisplayValue,
-    queryByPlaceholderText,
-    rerender
-  } = renderWithIntl(
-    <Provider store={store}>
-      <ClusterTasksDropdown
-        {...props}
-        selectedItem={{ text: 'clustertask-1' }}
-      />
-    </Provider>
-  );
-  expect(queryByDisplayValue(/clustertask-1/i)).toBeTruthy();
-  // Select item 'clustertask-2'
-  rerenderWithIntl(
-    rerender,
-    <Provider store={store}>
-      <ClusterTasksDropdown
-        {...props}
-        selectedItem={{ text: 'clustertask-2' }}
-      />
-    </Provider>
-  );
-  expect(queryByDisplayValue(/clustertask-2/i)).toBeTruthy();
-  // No selected item (select item '')
-  rerenderWithIntl(
-    rerender,
-    <Provider store={store}>
-      <ClusterTasksDropdown {...props} selectedItem="" />
-    </Provider>
-  );
-  expect(queryByPlaceholderText(initialTextRegExp)).toBeTruthy();
-});
 
-it('ClusterTasksDropdown renders empty', () => {
-  const store = mockStore({
-    clusterTasks: {
-      byName: {},
-      isFetching: false
-    },
-    notifications: {}
+  it('renders empty', () => {
+    const store = mockStore({
+      clusterTasks: {
+        byName: {},
+        isFetching: false
+      },
+      notifications: {}
+    });
+    const { queryByPlaceholderText } = renderWithIntl(
+      <Provider store={store}>
+        <ClusterTasksDropdown {...props} />
+      </Provider>
+    );
+    expect(queryByPlaceholderText(/no clustertasks found/i)).toBeTruthy();
+    expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
   });
-  const { queryByPlaceholderText } = renderWithIntl(
-    <Provider store={store}>
-      <ClusterTasksDropdown {...props} />
-    </Provider>
-  );
-  expect(queryByPlaceholderText(/no clustertasks found/i)).toBeTruthy();
-  expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
-});
 
-it('ClusterTasksDropdown renders loading skeleton based on Redux state', () => {
-  const store = mockStore({
-    ...clusterTasksStoreFetching,
-    notifications: {}
+  it('renders loading skeleton based on Redux state', () => {
+    const store = mockStore({
+      ...clusterTasksStoreFetching,
+      notifications: {}
+    });
+    const { queryByPlaceholderText } = renderWithIntl(
+      <Provider store={store}>
+        <ClusterTasksDropdown {...props} />
+      </Provider>
+    );
+    expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
   });
-  const { queryByPlaceholderText } = renderWithIntl(
-    <Provider store={store}>
-      <ClusterTasksDropdown {...props} />
-    </Provider>
-  );
-  expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
-});
 
-it('ClusterTasksDropdown handles onChange event', () => {
-  const store = mockStore({
-    ...clusterTasksStoreDefault,
-    notifications: {}
+  it('handles onChange event', () => {
+    const store = mockStore({
+      ...clusterTasksStoreDefault,
+      notifications: {}
+    });
+    const onChange = jest.fn();
+    const { getByPlaceholderText, getByText } = renderWithIntl(
+      <Provider store={store}>
+        <ClusterTasksDropdown {...props} onChange={onChange} />
+      </Provider>
+    );
+    fireEvent.click(getByPlaceholderText(initialTextRegExp));
+    fireEvent.click(getByText(/clustertask-1/i));
+    expect(onChange).toHaveBeenCalledTimes(1);
   });
-  const onChange = jest.fn();
-  const { getByPlaceholderText, getByText } = renderWithIntl(
-    <Provider store={store}>
-      <ClusterTasksDropdown {...props} onChange={onChange} />
-    </Provider>
-  );
-  fireEvent.click(getByPlaceholderText(initialTextRegExp));
-  fireEvent.click(getByText(/clustertask-1/i));
-  expect(onChange).toHaveBeenCalledTimes(1);
 });
