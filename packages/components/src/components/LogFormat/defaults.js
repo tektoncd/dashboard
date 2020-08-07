@@ -55,7 +55,7 @@ const textStyles = {
     fontStyle: 'italic'
   },
   conceal: {
-    visibility: 'hidden'
+    color: 'transparent'
   },
   underline: {
     textDecoration: 'underline'

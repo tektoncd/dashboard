@@ -201,14 +201,14 @@ describe('LogFormat', () => {
   it('displays concealed text', () => {
     const element = getElement('\u001b[8mHello', 'Hello');
     expect(element.outerHTML).toBe(
-      '<span style="visibility: hidden;">Hello</span>'
+      '<span style="color: transparent;">Hello</span>'
     );
   });
 
   it('can resets concealed text', () => {
     const element = getElement('\u001b[8mHello\u001b[28m world', 'Hello');
     expect(element.outerHTML).toBe(
-      '<span style="visibility: hidden;">Hello</span>'
+      '<span style="color: transparent;">Hello</span>'
     );
     expect(element.nextElementSibling.outerHTML).toBe('<span> world</span>');
   });
