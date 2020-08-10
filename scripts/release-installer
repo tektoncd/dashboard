@@ -11,7 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-BASE_RELEASE_URL="https://storage.googleapis.com/tekton-releases/dashboard/previous"
+BASE_RELEASE_URL="https://storage.googleapis.com/tekton-releases/dashboard"
 
 verifySupported() {
   if ! type "curl" > /dev/null 2>&1 && ! type "wget" > /dev/null 2>&1; then
@@ -20,31 +20,40 @@ verifySupported() {
   fi
 }
 
+getReleaseURL() {
+  local VERSION=$1
+  if [ $VERSION == "latest" ]; then
+    echo "$BASE_RELEASE_URL/latest"
+  else
+    echo "$BASE_RELEASE_URL/previous/$VERSION"
+  fi
+}
+
 install() {
-  VERSION=$1
+  local VERSION=$1
   if type "curl" > /dev/null 2>&1; then
-    curl -sL $BASE_RELEASE_URL/$VERSION/installer | bash -s -- install --version $@
+    curl -sL $(getReleaseURL $VERSION)/installer | bash -s -- install --version $@
   elif type "wget" > /dev/null 2>&1; then
-    wget -q $BASE_RELEASE_URL/$VERSION/installer | bash -s -- install --version $@
+    wget -q $(getReleaseURL $VERSION)/installer | bash -s -- install --version $@
   fi
 }
 
 uninstall() {
-  VERSION=$1
+  local VERSION=$1
   if type "curl" > /dev/null 2>&1; then
-    curl -sL $BASE_RELEASE_URL/$VERSION/installer | bash -s -- uninstall --version $@
+    curl -sL $(getReleaseURL $VERSION)/installer | bash -s -- uninstall --version $@
   elif type "wget" > /dev/null 2>&1; then
-    wget -q $BASE_RELEASE_URL/$VERSION/installer | bash -s -- uninstall --version $@
+    wget -q $(getReleaseURL $VERSION)/installer | bash -s -- uninstall --version $@
   fi
 }
 
 # help provides possible cli installation arguments
 help () {
-  VERSION=$1
+  local VERSION=$1
   if type "curl" > /dev/null 2>&1; then
-    curl -sL $BASE_RELEASE_URL/$VERSION/installer | bash -s -- "help"
+    curl -sL $(getReleaseURL $VERSION)/installer | bash -s -- "help"
   elif type "wget" > /dev/null 2>&1; then
-    wget -q $BASE_RELEASE_URL/$VERSION/installer | bash -s -- "help"
+    wget -q $(getReleaseURL $VERSION)/installer | bash -s -- "help"
   fi
 }
 
@@ -71,7 +80,8 @@ case $1 in
     uninstall $VERSION $@
     ;;
   *)
-    help
-    exit 0
+    echo "Unknown command: $1"
+    echo "Please use: help, install, or uninstall"
+    exit 1
     ;;
 esac
