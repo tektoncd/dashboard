@@ -56,6 +56,7 @@ Accepted options:
         [--openshift]                           Will build manifests for openshift
         [--image-stream]                        Will generate manifests using openshift image stream
         [--read-only]                           Will build manifests for a readonly deployment
+        [--logout-url <logout-url>]             Will set up the logout URL
         [--namespace <namespace>]               Will override install namespace
         [--pipelines-namespace <namespace>]     Override the namespace where Tekton Pipelines is installed (defaults to tekton-pipelines)
         [--triggers-namespace <namespace>]      Override the namespace where Tekton Triggers is installed (defaults to tekton-pipelines)

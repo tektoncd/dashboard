@@ -482,6 +482,7 @@ help () {
   echo -e "\t[--openshift]\t\t\t\tWill build manifests for openshift"
   echo -e "\t[--image-stream]\t\t\tWill generate manifests using openshift image stream"
   echo -e "\t[--read-only]\t\t\t\tWill build manifests for a readonly deployment"
+  echo -e "\t[--logout-url <logout-url>]\t\tWill set up the logout URL"
   echo -e "\t[--namespace <namespace>]\t\tWill override install namespace"
   echo -e "\t[--pipelines-namespace <namespace>]\tOverride the namespace where Tekton Pipelines is installed (defaults to tekton-pipelines)"
   echo -e "\t[--triggers-namespace <namespace>]\tOverride the namespace where Tekton Triggers is installed (defaults to tekton-pipelines)"
@@ -575,6 +576,10 @@ while [[ $# -gt 0 ]]; do
     '--log-level')
       shift
       LOG_LEVEL="${1}"
+      ;;
+    '--logout-url')
+      shift
+      LOGOUT_URL="${1}"
       ;;
     '--pipelines-namespace')
       shift
