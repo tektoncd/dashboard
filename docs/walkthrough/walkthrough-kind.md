@@ -135,7 +135,9 @@ Tekton Triggers should be up and running.
 Installing the latest Tekton Dashboard release is done by running the following command:
 
 ```bash
-kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.7.0/tekton-dashboard-release.yaml
+DASHBOARD_VERSION=v0.8.2
+curl -sL https://raw.githubusercontent.com/tektoncd/dashboard/master/scripts/release-installer | \
+   bash -s -- install $DASHBOARD_VERSION
 
 kubectl wait -n tekton-pipelines \
   --for=condition=ready pod \
@@ -171,6 +173,19 @@ EOF
 ```
 
 Browse `http://tekton-dashboard.127.0.0.1.nip.io` to access your dashboard.
+
+**NOTE:** Alternatively you can use the `--ingress-url` argument when invoking the `installer` script to create the `Ingress` resource:
+
+```bash
+DASHBOARD_VERSION=v0.8.2
+curl -sL https://raw.githubusercontent.com/tektoncd/dashboard/master/scripts/release-installer | \
+   bash -s -- install $DASHBOARD_VERSION --ingress-url tekton-dashboard.127.0.0.1.nip.io
+
+kubectl wait -n tekton-pipelines \
+  --for=condition=ready pod \
+  --selector=app.kubernetes.io/part-of=tekton-dashboard,app.kubernetes.io/component=dashboard \
+  --timeout=90s
+```
 
 ## Importing resources from a Github repository
 
