@@ -8,6 +8,7 @@ This guide walks you through installing a working Tekton Dashboard locally from 
 * [Creating a GitHub OAuth App](#creating-a-github-oauth-app)
 * [Installing and configuring oauth2-proxy](#installing-and-configuring-oauth2-proxy)
 * [Setting up Dashboard Ingress rule for authentication](#setting-up-dashboard-ingress-rule-for-authentication)
+* [Configuring Dashboard logout URL](#configuring-dashboard-logout-url)
 * [Cleaning up](#cleaning-up)
 
 ## Before you begin
@@ -153,7 +154,20 @@ Clicking on the `Sign in with GitHub` button should send you to the GitHub OAuth
 
 Finally, authorizing the connection should bring you back to the Tekton Dashboard.
 
-**Tip:** if you need to sign out, visit `http://auth.127.0.0.1.nip.io/oauth2/sign_out`.
+## Configuring Dashboard logout URL
+
+To configure the Dashboard logout URL, pass the `--logout-url http://auth.127.0.0.1.nip.io/oauth2/sign_out` argument to the `release-installer` script:
+
+```bash
+DASHBOARD_VERSION=v0.8.2
+curl -sL https://raw.githubusercontent.com/tektoncd/dashboard/master/scripts/release-installer | \
+   bash -s -- install $DASHBOARD_VERSION --ingress-url tekton-dashboard.127.0.0.1.nip.io --logout-url http://auth.127.0.0.1.nip.io/oauth2/sign_out
+
+kubectl wait -n tekton-pipelines \
+  --for=condition=ready pod \
+  --selector=app.kubernetes.io/part-of=tekton-dashboard,app.kubernetes.io/component=dashboard \
+  --timeout=90s
+```
 
 ## Cleaning up
 
