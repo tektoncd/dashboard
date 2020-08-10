@@ -28,7 +28,7 @@ LOG_FORMAT="json"
 TENANT_NAMESPACE=""
 STREAM_LOGS="false"
 EXTERNAL_LOGS=""
-BASE_RELEASE_URL="https://storage.googleapis.com/tekton-releases/dashboard/previous"
+BASE_RELEASE_URL="https://storage.googleapis.com/tekton-releases/dashboard"
 
 # additional options passed to ko resolve
 KO_RESOLVE_OPTIONS=""
@@ -104,7 +104,11 @@ compile() {
 }
 
 download() {
-  local url="$BASE_RELEASE_URL/$VERSION/installer-"
+  if [ $VERSION == "latest" ]; then
+    local url="$BASE_RELEASE_URL/latest/installer-"
+  else
+    local url="$BASE_RELEASE_URL/previous/$VERSION/installer-"
+  fi
 
   if [ "$OPENSHIFT" == "true" ]; then
     url="${url}openshift-"
