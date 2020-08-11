@@ -161,7 +161,7 @@ To configure the Dashboard logout URL, pass the `--logout-url http://auth.127.0.
 ```bash
 DASHBOARD_VERSION=v0.8.2
 curl -sL https://raw.githubusercontent.com/tektoncd/dashboard/master/scripts/release-installer | \
-   bash -s -- install $DASHBOARD_VERSION --ingress-url tekton-dashboard.127.0.0.1.nip.io --logout-url http://auth.127.0.0.1.nip.io/oauth2/sign_out
+   bash -s -- install $DASHBOARD_VERSION --logout-url http://auth.127.0.0.1.nip.io/oauth2/sign_out
 
 kubectl wait -n tekton-pipelines \
   --for=condition=ready pod \
