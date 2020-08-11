@@ -50,12 +50,18 @@ You can refer to the dev docs for more infos [on how to use the installer](./dev
 In a nutshell, invoking the `installer` will look something like this:
 
 ```bash
-DASHBOARD_VERSION=v0.8.0
 curl -sL https://raw.githubusercontent.com/tektoncd/dashboard/master/scripts/release-installer | \
-   bash -s -- install $DASHBOARD_VERSION --read-only
+   bash -s -- install latest --read-only
 ```
 
 Of course, you can still use the generated manifests as detailed below.
+
+**NOTE:** To install a specific version, specify it right after the `install` command:
+
+```bash
+curl -sL https://raw.githubusercontent.com/tektoncd/dashboard/master/scripts/release-installer | \
+   bash -s -- install v0.8.2 --read-only
+```
 
 ## Installing Tekton Dashboard on Kubernetes
 
