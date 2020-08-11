@@ -342,6 +342,19 @@ The logs should now be displayed again, fetched from the logs server configured 
 
 ![Logs are available again](./walkthrough-logs-logs.png)
 
+**NOTE:** Alternatively you can use the `--external-logs` argument when invoking the `installer` script:
+
+```bash
+DASHBOARD_VERSION=v0.8.2
+curl -sL https://raw.githubusercontent.com/tektoncd/dashboard/master/scripts/release-installer | \
+   bash -s -- install $DASHBOARD_VERSION --external-logs=http://logs-server.tools.svc.cluster.local:3000/logs
+
+kubectl wait -n tekton-pipelines \
+  --for=condition=ready pod \
+  --selector=app.kubernetes.io/part-of=tekton-dashboard,app.kubernetes.io/component=dashboard \
+  --timeout=90s
+```
+
 ## Cleaning up
 
 To clean up the local kind cluster, follow the [cleaning up instructions](./walkthrough-kind.md#cleaning-up) in Tekton Dashboard walkthrough with Kind.
