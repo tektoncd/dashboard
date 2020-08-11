@@ -29,6 +29,15 @@ getReleaseURL() {
   fi
 }
 
+build() {
+  local VERSION=$1
+  if type "curl" > /dev/null 2>&1; then
+    curl -sL $(getReleaseURL $VERSION)/installer | bash -s -- build --version $@
+  elif type "wget" > /dev/null 2>&1; then
+    wget -q $(getReleaseURL $VERSION)/installer | bash -s -- build --version $@
+  fi
+}
+
 install() {
   local VERSION=$1
   if type "curl" > /dev/null 2>&1; then
@@ -73,6 +82,12 @@ case $1 in
     shift
     install $VERSION $@
     ;;
+  'build'|i)
+    shift
+    VERSION="${1}"
+    shift
+    build $VERSION $@
+    ;;
   'uninstall'|u)
     shift
     VERSION="${1}"
@@ -81,7 +96,7 @@ case $1 in
     ;;
   *)
     echo "Unknown command: $1"
-    echo "Please use: help, install, or uninstall"
+    echo "Please use: help, build, install, or uninstall"
     exit 1
     ;;
 esac

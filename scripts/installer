@@ -450,7 +450,6 @@ uninstall() {
 }
 
 build() {
-  echo "Build ..."
   if [ -z "$OUTPUT_FILE" ]; then
     cat $TMP_FILE
   else
