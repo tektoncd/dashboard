@@ -12,13 +12,24 @@ limitations under the License.
 */
 
 import React from 'react';
+import { action } from '@storybook/addon-actions';
 
-import Graph from './Graph';
+import ZoomablePipelineGraph from './ZoomablePipelineGraph';
 
-import graph from './examples/graph.json';
+import pipeline from './examples/pipeline.json';
+import pipelineRun from './examples/pipelineRun.json';
+import tasks from './examples/tasks.json';
 
 export default {
-  title: 'Experimental/Components/Graph/Graph'
+  title: 'Experimental/Components/Graph/ZoomablePipelineGraph'
 };
 
-export const Base = () => <Graph graph={graph} />;
+export const Base = () => (
+  <ZoomablePipelineGraph
+    onClickStep={action('onClickStep')}
+    onClickTask={action('onClickTask')}
+    pipeline={pipeline}
+    pipelineRun={pipelineRun}
+    tasks={tasks}
+  />
+);
