@@ -161,7 +161,7 @@ Assuming you have an [ingress controller](https://kubernetes.io/docs/concepts/se
 # replace DASHBOARD_URL with the hostname you want for your dashboard
 # the hostname should be setup to point to your ingress controller
 DASHBOARD_URL=dashboard.domain.tld
-cat <<EOF | kubectl apply -n tekton-pipelines -f -
+kubectl apply -n tekton-pipelines -f - <<EOF
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:

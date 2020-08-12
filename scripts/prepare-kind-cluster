@@ -17,7 +17,7 @@ CLUSTERNAME=dashboard
 DEFAULT_OPTIONS="--log-format console --stream-logs --ingress-url tekton-dashboard.127.0.0.1.nip.io"
 
 create_cluster() {
-cat <<EOF | kind create cluster --name $CLUSTERNAME --config -
+kind create cluster --name $CLUSTERNAME --config - <<EOF
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:

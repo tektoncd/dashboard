@@ -42,7 +42,7 @@ Note that `minio` exposes other APIs similar to other cloud storage providers to
 To deploy `minio` in your cluster, run the following command to install the `minio` helm chart:
 
 ```bash
-cat <<EOF | helm upgrade --install --wait --create-namespace --namespace tools minio stable/minio --values -
+helm upgrade --install --wait --create-namespace --namespace tools minio stable/minio --values - <<EOF
 nameOverride: minio
 fullnameOverride: minio
 
@@ -94,7 +94,7 @@ To start collecting logs you will need to create the logs pipeline using the ava
 - `Logging` will deploy the necessary fluentd/fluentbit workloads:
 
 ```bash
-cat <<EOF | kubectl -n tools apply -f -
+kubectl -n tools apply -f - <<EOF
 apiVersion: logging.banzaicloud.io/v1beta1
 kind: Logging
 metadata:
@@ -111,7 +111,7 @@ This is a very simple deployment, please note that the position database and buf
 - `ClusterOutput` defines the output of the logs pipeline. In our case AWS S3 (through `minio`):
 
 ```bash
-cat <<EOF | kubectl -n tools apply -f -
+kubectl -n tools apply -f - <<EOF
 apiVersion: logging.banzaicloud.io/v1beta1
 kind: ClusterOutput
 metadata:
@@ -145,7 +145,7 @@ The `ClusterOutput` above will stream logs to our `minio` storage in a `tekton-l
 - `ClusterFlow` defines how the collected logs are dispatched to the outputs:
 
 ```bash
-cat <<EOF | kubectl -n tools apply -f -
+kubectl -n tools apply -f - <<EOF
 apiVersion: logging.banzaicloud.io/v1beta1
 kind: ClusterFlow
 metadata:
@@ -163,7 +163,7 @@ The `ClusterFlow` above takes all logs from pods that have the `app.kubernetes.i
 Running the `PipelineRun` below should produce logs and you should see corresponding objects being added in `minio` as logs get collected and stored by the logs pipeline.
 
 ```bash
-cat <<EOF | kubectl -n tekton-pipelines create -f -
+kubectl -n tekton-pipelines create -f - <<EOF
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
@@ -206,7 +206,7 @@ Given a `namespace`, `pod` and `container`, the service will list files from s3,
 Run the command below to create the kubernetes `Deployment` to serve your logs:
 
 ```bash
-cat <<EOF | kubectl apply -n tools -f -
+kubectl apply -n tools -f - <<EOF
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -286,7 +286,7 @@ Then it will run a web server exposing the `'/logs/:namespace/:pod/:container'` 
 To make this available you will need to deploy a `Service` and an `Ingress` rule to expose the `Deployment`:
 
 ```bash
-cat <<EOF | kubectl apply -n tools -f -
+kubectl apply -n tools -f - <<EOF
 kind: Service
 apiVersion: v1
 metadata:
