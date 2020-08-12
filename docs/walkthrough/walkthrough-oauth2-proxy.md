@@ -74,7 +74,7 @@ To install the chart, set the `Client ID` and `Client Secret` you just obtained 
 CLIENT_ID=__THE_CLIENT_ID_OF_YOUR_GITHUB_OAUTH_APP__
 CLIENT_SECRET=__THE_CLIENT_SECRET_OF_YOUR_GITHUB_OAUTH_APP__
 
-cat <<EOF | helm upgrade --install --wait --create-namespace --namespace tools oauth2-proxy stable/oauth2-proxy --values -
+helm upgrade --install --wait --create-namespace --namespace tools oauth2-proxy stable/oauth2-proxy --values - <<EOF
 config:
   clientID: $CLIENT_ID
   clientSecret: $CLIENT_SECRET
@@ -123,7 +123,7 @@ Two annotations are used here:
 To apply the ingress annotations run the command below:
 
 ```bash
-cat <<EOF | kubectl apply -n tekton-pipelines -f -
+kubectl apply -n tekton-pipelines -f - <<EOF
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:

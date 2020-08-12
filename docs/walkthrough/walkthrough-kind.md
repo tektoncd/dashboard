@@ -31,7 +31,7 @@ Kind is an easy solution to run a local cluster, all it needs is to have `docker
 Create a cluster by running the following command:
 
 ```bash
-cat <<EOF | kind create cluster --name walkthrough --config -
+kind create cluster --name walkthrough --config - <<EOF
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
@@ -155,7 +155,7 @@ For the sake of simplicity we will use the freely available [`nip.io`](https://n
 Assuming the following url `http://tekton-dashboard.127.0.0.1.nip.io`, run the following command to create the ingress rule:
 
 ```bash
-cat <<EOF | kubectl apply -n tekton-pipelines -f -
+kubectl apply -n tekton-pipelines -f - <<EOF
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:

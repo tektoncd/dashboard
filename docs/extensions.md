@@ -60,7 +60,7 @@ See the [Example: Register a CronJob extension](#example-register-a-cronjob-exte
 To create an `Extension` resource for `CronJob`s run the following command:
 
 ```bash
-cat <<EOF | kubectl apply -n tekton-pipelines -f -
+kubectl apply -n tekton-pipelines -f - <<EOF
 apiVersion: dashboard.tekton.dev/v1alpha1
 kind: Extension
 metadata:
@@ -85,7 +85,7 @@ Simply create a `ClusterRole` with the necessary permissions and add the `rbac.d
 To add the necessary permissions for your cronjobs extension to work, run the following command:
 
 ```bash
-cat <<EOF | kubectl apply -f -
+kubectl apply -f - <<EOF
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -129,7 +129,7 @@ You can also look at the [webhooks-extension](https://github.com/tektoncd/experi
 To begin, you will create a simple Node.js backend, deploy it in a pod and expose it through a service that will be detected by the Tekton Dashboard.
 
 ```bash
-cat <<EOF | kubectl apply -n tekton-pipelines -f -
+kubectl apply -n tekton-pipelines -f - <<EOF
 kind: Service
 apiVersion: v1
 metadata:
@@ -210,7 +210,7 @@ This can be done manually or using an ES module bundler such as [Rollup](https:/
 To deploy the service based extension with frontend code run the following command:
 
 ```bash
-cat <<EOF | kubectl apply -n tekton-pipelines -f -
+kubectl apply -n tekton-pipelines -f - <<EOF
 kind: Service
 apiVersion: v1
 metadata:
