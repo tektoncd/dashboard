@@ -18,9 +18,8 @@ kind: Kustomization
 resources:
   - ../../base
   - ../../../resources/openshift/route.yaml
-  - ../../../resources/openshift/internal-service.yaml
+  - ../../../resources/openshift/route-service.yaml
 patches:
-  - ../../../patches/openshift/service-patch.yaml
   - ../../../patches/openshift/serviceaccount-patch.yaml
 patchesJson6902:
   - target:
