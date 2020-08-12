@@ -51,4 +51,10 @@ export default {
 };
 
 export const Colors = () => <LogFormat>{ansiColors}</LogFormat>;
+Colors.story = {
+  decorators: [
+    storyFn => <div style={{ backgroundColor: '#262626' }}>{storyFn()}</div>
+  ]
+};
+
 export const TextStyles = () => <LogFormat>{ansiTextStyles}</LogFormat>;

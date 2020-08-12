@@ -11,24 +11,24 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// 256 Xterm colors https://jonasjacek.github.io/colors/
 const colors = [
-  'rgb(0, 0, 0)',
-  'rgb(128, 0, 0)',
-  'rgb(0, 128, 0)',
-  'rgb(128, 128, 0)',
-  'rgb(0, 0, 128)',
-  'rgb(128, 0, 128)',
-  'rgb(0, 128, 128)',
-  'rgb(192,192,192)',
-  'rgb(128,128,128)',
-  'rgb(255,0,0)',
-  'rgb(0, 255, 0)',
-  'rgb(255, 255, 0)',
-  'rgb(0, 0, 255)',
-  'rgb(255, 0, 255)',
-  'rgb(0, 255, 255)',
-  'rgb(255, 255, 255)'
+  'rgb(0, 0, 0)', // black
+  'rgb(187, 0, 0)', // red
+  'rgb(0, 187, 0)', // green
+  'rgb(187, 187, 0)', // yellow
+  'rgb(0, 0, 187)', // blue
+  'rgb(187, 0, 187)', // magenta
+  'rgb(0, 187, 187)', // cyan
+  'rgb(187, 187, 187)', // white
+
+  'rgb(85, 85, 85)', // light-black
+  'rgb(255, 85, 85)', // light-red
+  'rgb(0, 255, 0)', // light-green
+  'rgb(255, 255, 85)', // light-yellow
+  'rgb(85, 85, 255)', // light-blue
+  'rgb(255, 85, 255)', // light-magenta
+  'rgb(85, 255, 255)', // light-cyan
+  'rgb(255, 255, 255)' // light-white
 ];
 
 const levels = [0, 95, 135, 175, 215, 255];
