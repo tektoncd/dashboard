@@ -14,6 +14,7 @@ limitations under the License.
 import React from 'react';
 import { renderWithIntl } from '../../utils/test';
 import LogFormat from './LogFormat';
+import { colors as colorValues } from './defaults';
 
 const getElement = (text, query) => {
   const { queryByText } = renderWithIntl(<LogFormat>{text}</LogFormat>);
@@ -21,79 +22,101 @@ const getElement = (text, query) => {
   return queryByText(queryRegex);
 };
 
+const colors = [
+  'black',
+  'red',
+  'green',
+  'yellow',
+  'blue',
+  'magenta',
+  'cyan',
+  'white',
+  'lightBlack',
+  'lightRed',
+  'lightGreen',
+  'lightYellow',
+  'lightBlue',
+  'lightMagenta',
+  'lightCyan',
+  'lightWhite'
+].reduce((acc, colorName, index) => {
+  acc[colorName] = colorValues[index];
+  return acc;
+}, {});
+
 describe('LogFormat', () => {
   it('displays text', () => {
     const element = getElement('Hello World', 'Hello World');
     expect(element).toBeTruthy();
   });
 
-  it('displays green text', () => {
-    const element = getElement('\u001b[32mHello World\u001b[0m', 'Hello World');
-    expect(element.outerHTML).toBe(
-      '<span style="color: rgb(0, 128, 0);">Hello World</span>'
-    );
-  });
-
   it('displays red text', () => {
     const element = getElement('\u001b[31mHello World\u001b[0m', 'Hello World');
     expect(element.outerHTML).toBe(
-      '<span style="color: rgb(128, 0, 0);">Hello World</span>'
+      `<span style="color: ${colors.red};">Hello World</span>`
+    );
+  });
+
+  it('displays green text', () => {
+    const element = getElement('\u001b[32mHello World\u001b[0m', 'Hello World');
+    expect(element.outerHTML).toBe(
+      `<span style="color: ${colors.green};">Hello World</span>`
     );
   });
 
   it('displays yellow text', () => {
     const element = getElement('\u001b[33mHello World\u001b[0m', 'Hello World');
     expect(element.outerHTML).toBe(
-      '<span style="color: rgb(128, 128, 0);">Hello World</span>'
+      `<span style="color: ${colors.yellow};">Hello World</span>`
     );
   });
 
   it('displays blue text', () => {
     const element = getElement('\u001b[34mHello World\u001b[0m', 'Hello World');
     expect(element.outerHTML).toBe(
-      '<span style="color: rgb(0, 0, 128);">Hello World</span>'
+      `<span style="color: ${colors.blue};">Hello World</span>`
+    );
+  });
+
+  it('displays a magenta background', () => {
+    const element = getElement('\u001b[45mHello World', 'Hello World');
+    expect(element.outerHTML).toBe(
+      `<span style="background-color: ${colors.magenta};">Hello World</span>`
     );
   });
 
   it('displays a cyan background', () => {
     const element = getElement('\u001b[46mHello World\u001b[0m', 'Hello World');
     expect(element.outerHTML).toBe(
-      '<span style="background-color: rgb(0, 128, 128);">Hello World</span>'
+      `<span style="background-color: ${colors.cyan};">Hello World</span>`
     );
   });
 
-  it('displays a silver background', () => {
+  it('displays a white background', () => {
     const element = getElement('\u001b[47mHello World', 'Hello World');
     expect(element.outerHTML).toBe(
-      '<span style="background-color: rgb(192, 192, 192);">Hello World</span>'
+      `<span style="background-color: ${colors.white};">Hello World</span>`
     );
   });
 
-  it('displays a purple background', () => {
-    const element = getElement('\u001b[45mHello World', 'Hello World');
-    expect(element.outerHTML).toBe(
-      '<span style="background-color: rgb(128, 0, 128);">Hello World</span>'
-    );
-  });
-
-  it('displays red text without a trailing reset', () => {
+  it('displays cyan text without a trailing reset', () => {
     const element = getElement('\u001b[36mHello', 'Hello');
     expect(element.outerHTML).toBe(
-      '<span style="color: rgb(0, 128, 128);">Hello</span>'
+      `<span style="color: ${colors.cyan};">Hello</span>`
     );
   });
 
   it('displays red text on a blue background', () => {
     const element = getElement('\u001b[31;44mHello', 'Hello');
     expect(element.outerHTML).toBe(
-      '<span style="color: rgb(128, 0, 0); background-color: rgb(0, 0, 128);">Hello</span>'
+      `<span style="color: ${colors.red}; background-color: ${colors.blue};">Hello</span>`
     );
   });
 
   it('resets colors after red text on blue background', () => {
     const element = getElement('\u001b[31;44mHello\u001b[0m world', 'Hello');
     expect(element.outerHTML).toBe(
-      '<span style="color: rgb(128, 0, 0); background-color: rgb(0, 0, 128);">Hello</span>'
+      `<span style="color: ${colors.red}; background-color: ${colors.blue};">Hello</span>`
     );
     expect(element.nextElementSibling.outerHTML).toBe('<span> world</span>');
   });
@@ -101,23 +124,23 @@ describe('LogFormat', () => {
   it('performs a color change from red/blue to yellow/blue', () => {
     const element = getElement('\u001b[31;44mHello\u001b[33m world', 'Hello');
     expect(element.outerHTML).toBe(
-      '<span style="color: rgb(128, 0, 0); background-color: rgb(0, 0, 128);">Hello</span>'
+      `<span style="color: ${colors.red}; background-color: ${colors.blue};">Hello</span>`
     );
     expect(element.nextElementSibling.outerHTML).toBe(
-      '<span style="color: rgb(128, 128, 0); background-color: rgb(0, 0, 128);"> world</span>'
+      `<span style="color: ${colors.yellow}; background-color: ${colors.blue};"> world</span>`
     );
   });
 
-  it('performs color change from red/blue to yellow/blue', () => {
+  it('performs color change from red/blue to yellow/green', () => {
     const element = getElement(
       '\u001b[31;44mHello\u001b[33;42m world',
       'Hello'
     );
     expect(element.outerHTML).toBe(
-      '<span style="color: rgb(128, 0, 0); background-color: rgb(0, 0, 128);">Hello</span>'
+      `<span style="color: ${colors.red}; background-color: ${colors.blue};">Hello</span>`
     );
     expect(element.nextElementSibling.outerHTML).toBe(
-      '<span style="color: rgb(128, 128, 0); background-color: rgb(0, 128, 0);"> world</span>'
+      `<span style="color: ${colors.yellow}; background-color: ${colors.green};"> world</span>`
     );
   });
 
@@ -129,14 +152,14 @@ describe('LogFormat', () => {
   it('displays light red text', () => {
     const element = getElement('\u001b[91mHello\u001b[0m', 'Hello');
     expect(element.outerHTML).toBe(
-      '<span style="color: rgb(255, 0, 0);">Hello</span>'
+      `<span style="color: ${colors.lightRed};">Hello</span>`
     );
   });
 
   it('displays light red background', () => {
     const element = getElement('\u001b[101mHello\u001b[0m', 'Hello');
     expect(element.outerHTML).toBe(
-      '<span style="background-color: rgb(255, 0, 0);">Hello</span>'
+      `<span style="background-color: ${colors.lightRed};">Hello</span>`
     );
   });
 
