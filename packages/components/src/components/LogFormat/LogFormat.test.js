@@ -248,6 +248,14 @@ describe('LogFormat', () => {
     );
   });
 
+  it('converts new lines as line breaks', () => {
+    const text = 'Hello\n\nWorld';
+    const { container } = renderWithIntl(<LogFormat>{text}</LogFormat>);
+    expect(container.innerHTML).toBe(
+      '<div><span>Hello</span></div><br><div><span>World</span></div>'
+    );
+  });
+
   it('seperates text by new lines', () => {
     const text =
       'Hello World\nA dashboard for Tekton! https://github.com/tektoncd/dashboard\nTekon is cool!';
