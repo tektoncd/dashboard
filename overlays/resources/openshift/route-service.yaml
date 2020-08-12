@@ -13,21 +13,25 @@
 # limitations under the License.
 
 ---
-# ------- Insecure Dashboard Service - Do Not Expose ------ #
 kind: Service
 apiVersion: v1
 metadata:
-  name: tekton-dashboard-internal
+  name: tekton-dashboard-secure
   namespace: tekton-pipelines
   labels:
-    app: tekton-dashboard-internal
-    version: "devel"
-    dashboard.tekton.dev/release: "devel"
+    app.kubernetes.io/component: dashboard
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/part-of: tekton-dashboard
+  annotations:
+    service.alpha.openshift.io/serving-cert-secret-name: proxy-tls
 spec:
   ports:
     - name: http
       protocol: TCP
-      port: 9097
-      targetPort: 9097
+      port: 443
+      targetPort: 8443
   selector:
-    app: tekton-dashboard
+    app.kubernetes.io/component: dashboard
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/name: dashboard
+    app.kubernetes.io/part-of: tekton-dashboard

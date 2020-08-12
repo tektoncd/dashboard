@@ -18,10 +18,14 @@ kind: Route
 metadata:
   name: tekton-dashboard
   namespace: tekton-pipelines
+  labels:
+    app.kubernetes.io/component: dashboard
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/part-of: tekton-dashboard
 spec:
   to:
     kind: Service
-    name: tekton-dashboard
+    name: tekton-dashboard-secure
   tls:
     termination: Reencrypt
     insecureEdgeTerminationPolicy: Redirect
