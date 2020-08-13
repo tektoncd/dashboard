@@ -267,7 +267,7 @@ const LogFormat = ({ children }) => {
     });
   };
 
-  return convert(children);
+  return <code>{convert(children)}</code>;
 };
 
 LogFormat.propTypes = {
