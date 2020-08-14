@@ -14,7 +14,6 @@ limitations under the License.
 import React from 'react';
 import { renderWithIntl } from '../../utils/test';
 import LogFormat from './LogFormat';
-import { colors as colorValues } from './defaults';
 
 const getElement = (text, query) => {
   const { queryByText } = renderWithIntl(<LogFormat>{text}</LogFormat>);
@@ -22,27 +21,9 @@ const getElement = (text, query) => {
   return queryByText(queryRegex);
 };
 
-const colors = [
-  'black',
-  'red',
-  'green',
-  'yellow',
-  'blue',
-  'magenta',
-  'cyan',
-  'white',
-  'lightBlack',
-  'lightRed',
-  'lightGreen',
-  'lightYellow',
-  'lightBlue',
-  'lightMagenta',
-  'lightCyan',
-  'lightWhite'
-].reduce((acc, colorName, index) => {
-  acc[colorName] = colorValues[index];
-  return acc;
-}, {});
+const fgColorClassPrefix = 'tkn--ansi--color-fg-';
+const bgColorClassPrefix = 'tkn--ansi--color-bg-';
+const textClassPrefix = 'tkn--ansi--text-';
 
 describe('LogFormat', () => {
   it('displays text', () => {
@@ -53,70 +34,70 @@ describe('LogFormat', () => {
   it('displays red text', () => {
     const element = getElement('\u001b[31mHello World\u001b[0m', 'Hello World');
     expect(element.outerHTML).toBe(
-      `<span style="color: ${colors.red};">Hello World</span>`
+      `<span class="${fgColorClassPrefix}-red">Hello World</span>`
     );
   });
 
   it('displays green text', () => {
     const element = getElement('\u001b[32mHello World\u001b[0m', 'Hello World');
     expect(element.outerHTML).toBe(
-      `<span style="color: ${colors.green};">Hello World</span>`
+      `<span class="${fgColorClassPrefix}-green">Hello World</span>`
     );
   });
 
   it('displays yellow text', () => {
     const element = getElement('\u001b[33mHello World\u001b[0m', 'Hello World');
     expect(element.outerHTML).toBe(
-      `<span style="color: ${colors.yellow};">Hello World</span>`
+      `<span class="${fgColorClassPrefix}-yellow">Hello World</span>`
     );
   });
 
   it('displays blue text', () => {
     const element = getElement('\u001b[34mHello World\u001b[0m', 'Hello World');
     expect(element.outerHTML).toBe(
-      `<span style="color: ${colors.blue};">Hello World</span>`
+      `<span class="${fgColorClassPrefix}-blue">Hello World</span>`
     );
   });
 
   it('displays a magenta background', () => {
     const element = getElement('\u001b[45mHello World', 'Hello World');
     expect(element.outerHTML).toBe(
-      `<span style="background-color: ${colors.magenta};">Hello World</span>`
+      `<span class="${bgColorClassPrefix}-magenta">Hello World</span>`
     );
   });
 
   it('displays a cyan background', () => {
     const element = getElement('\u001b[46mHello World\u001b[0m', 'Hello World');
     expect(element.outerHTML).toBe(
-      `<span style="background-color: ${colors.cyan};">Hello World</span>`
+      `<span class="${bgColorClassPrefix}-cyan">Hello World</span>`
     );
   });
 
   it('displays a white background', () => {
     const element = getElement('\u001b[47mHello World', 'Hello World');
     expect(element.outerHTML).toBe(
-      `<span style="background-color: ${colors.white};">Hello World</span>`
+      `<span class="${bgColorClassPrefix}-white">Hello World</span>`
     );
   });
 
   it('displays cyan text without a trailing reset', () => {
     const element = getElement('\u001b[36mHello', 'Hello');
     expect(element.outerHTML).toBe(
-      `<span style="color: ${colors.cyan};">Hello</span>`
+      `<span class="${fgColorClassPrefix}-cyan">Hello</span>`
     );
   });
 
   it('displays red text on a blue background', () => {
     const element = getElement('\u001b[31;44mHello', 'Hello');
     expect(element.outerHTML).toBe(
-      `<span style="color: ${colors.red}; background-color: ${colors.blue};">Hello</span>`
+      `<span class="${fgColorClassPrefix}-red ${bgColorClassPrefix}-blue">Hello</span>`
     );
   });
 
   it('resets colors after red text on blue background', () => {
     const element = getElement('\u001b[31;44mHello\u001b[0m world', 'Hello');
     expect(element.outerHTML).toBe(
-      `<span style="color: ${colors.red}; background-color: ${colors.blue};">Hello</span>`
+      `<span class="${fgColorClassPrefix}-red ${bgColorClassPrefix}-blue">Hello</span>`
     );
     expect(element.nextElementSibling.outerHTML).toBe('<span> world</span>');
   });
@@ -124,10 +105,10 @@ describe('LogFormat', () => {
   it('performs a color change from red/blue to yellow/blue', () => {
     const element = getElement('\u001b[31;44mHello\u001b[33m world', 'Hello');
     expect(element.outerHTML).toBe(
-      `<span style="color: ${colors.red}; background-color: ${colors.blue};">Hello</span>`
+      `<span class="${fgColorClassPrefix}-red ${bgColorClassPrefix}-blue">Hello</span>`
     );
     expect(element.nextElementSibling.outerHTML).toBe(
-      `<span style="color: ${colors.yellow}; background-color: ${colors.blue};"> world</span>`
+      `<span class="${fgColorClassPrefix}-yellow ${bgColorClassPrefix}-blue"> world</span>`
     );
   });
 
@@ -137,10 +118,10 @@ describe('LogFormat', () => {
       'Hello'
     );
     expect(element.outerHTML).toBe(
-      `<span style="color: ${colors.red}; background-color: ${colors.blue};">Hello</span>`
+      `<span class="${fgColorClassPrefix}-red ${bgColorClassPrefix}-blue">Hello</span>`
     );
     expect(element.nextElementSibling.outerHTML).toBe(
-      `<span style="color: ${colors.yellow}; background-color: ${colors.green};"> world</span>`
+      `<span class="${fgColorClassPrefix}-yellow ${bgColorClassPrefix}-green"> world</span>`
     );
   });
 
@@ -149,17 +130,17 @@ describe('LogFormat', () => {
     expect(element.outerHTML).toBe('<span>Hello</span>');
   });
 
-  it('displays light red text', () => {
+  it('displays bright red text', () => {
     const element = getElement('\u001b[91mHello\u001b[0m', 'Hello');
     expect(element.outerHTML).toBe(
-      `<span style="color: ${colors.lightRed};">Hello</span>`
+      `<span class="${fgColorClassPrefix}-bright-red">Hello</span>`
     );
   });
 
-  it('displays light red background', () => {
+  it('displays bright red background', () => {
     const element = getElement('\u001b[101mHello\u001b[0m', 'Hello');
     expect(element.outerHTML).toBe(
-      `<span style="background-color: ${colors.lightRed};">Hello</span>`
+      `<span class="${bgColorClassPrefix}-bright-red">Hello</span>`
     );
   });
 
@@ -180,7 +161,7 @@ describe('LogFormat', () => {
   it('displays bold text', () => {
     const element = getElement('\u001b[1mHello', 'Hello');
     expect(element.outerHTML).toBe(
-      '<span style="font-weight: bold;">Hello</span>'
+      `<span class="${textClassPrefix}-bold">Hello</span>`
     );
   });
 
@@ -194,14 +175,14 @@ describe('LogFormat', () => {
   it('displays italic text', () => {
     const element = getElement('\u001b[3mHello', 'Hello');
     expect(element.outerHTML).toBe(
-      '<span style="font-style: italic;">Hello</span>'
+      `<span class="${textClassPrefix}-italic">Hello</span>`
     );
   });
 
   it('can reset italic text', () => {
     const element = getElement('\u001b[3mHello\u001b[23m world', 'Hello');
     expect(element.outerHTML).toBe(
-      '<span style="font-style: italic;">Hello</span>'
+      `<span class="${textClassPrefix}-italic">Hello</span>`
     );
     expect(element.nextElementSibling.outerHTML).toBe('<span> world</span>');
   });
@@ -209,14 +190,14 @@ describe('LogFormat', () => {
   it('displays underline text', () => {
     const element = getElement('\u001b[4mHello', 'Hello');
     expect(element.outerHTML).toBe(
-      '<span style="text-decoration: underline;">Hello</span>'
+      `<span class="${textClassPrefix}-underline">Hello</span>`
     );
   });
 
   it('can resets underline text', () => {
     const element = getElement('\u001b[4mHello\u001b[24m world', 'Hello');
     expect(element.outerHTML).toBe(
-      '<span style="text-decoration: underline;">Hello</span>'
+      `<span class="${textClassPrefix}-underline">Hello</span>`
     );
     expect(element.nextElementSibling.outerHTML).toBe('<span> world</span>');
   });
@@ -224,14 +205,14 @@ describe('LogFormat', () => {
   it('displays concealed text', () => {
     const element = getElement('\u001b[8mHello', 'Hello');
     expect(element.outerHTML).toBe(
-      '<span style="color: transparent;">Hello</span>'
+      `<span class="${textClassPrefix}-conceal">Hello</span>`
     );
   });
 
   it('can resets concealed text', () => {
     const element = getElement('\u001b[8mHello\u001b[28m world', 'Hello');
     expect(element.outerHTML).toBe(
-      '<span style="color: transparent;">Hello</span>'
+      `<span class="${textClassPrefix}-conceal">Hello</span>`
     );
     expect(element.nextElementSibling.outerHTML).toBe('<span> world</span>');
   });
@@ -239,14 +220,14 @@ describe('LogFormat', () => {
   it('displays crossed text', () => {
     const element = getElement('\u001b[9mHello', 'Hello');
     expect(element.outerHTML).toBe(
-      '<span style="text-decoration: line-through;">Hello</span>'
+      `<span class="${textClassPrefix}-cross">Hello</span>`
     );
   });
 
   it('can reset crossed-out text', () => {
     const element = getElement('\u001b[9mHello\u001b[29m world', 'Hello');
     expect(element.outerHTML).toBe(
-      '<span style="text-decoration: line-through;">Hello</span>'
+      `<span class="${textClassPrefix}-cross">Hello</span>`
     );
     expect(element.nextElementSibling.outerHTML).toBe('<span> world</span>');
   });
@@ -267,7 +248,7 @@ describe('LogFormat', () => {
       'A dashboard for Tekton!'
     );
     expect(element.nextElementSibling.outerHTML).toBe(
-      '<a href="https://github.com/tektoncd/dashboard" style="background-color: rgb(215, 255, 215); text-decoration: line-through;" target="_blank" rel="noopener noreferrer">https://github.com/tektoncd/dashboard</a>'
+      `<a href="https://github.com/tektoncd/dashboard" style="background-color: rgb(215, 255, 215);" class="${textClassPrefix}-cross" target="_blank" rel="noopener noreferrer">https://github.com/tektoncd/dashboard</a>`
     );
   });
 

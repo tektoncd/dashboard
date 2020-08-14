@@ -14,7 +14,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import tlds from 'tlds';
 import LinkifyIt from 'linkify-it';
-import { colors, textStyles } from './defaults';
+import classNames from 'classnames';
+import { colors } from './defaults';
+
+import './LogFormat.scss';
 
 const linkifyIt = LinkifyIt().tlds(tlds);
 
@@ -22,15 +25,73 @@ const linkifyIt = LinkifyIt().tlds(tlds);
 const ansiRegex = new RegExp('^\u001b([@-_])(.*?)([@-~])');
 const characterRegex = new RegExp('.', 'm');
 
+const getXtermColor = commandStack => {
+  if (commandStack.length >= 2 && commandStack[0] === '5') {
+    commandStack.shift();
+    const colorIndex = +commandStack.shift();
+    if (colorIndex >= 0 && colorIndex <= 255) {
+      return colors[colorIndex];
+    }
+  }
+  return null;
+};
+
+const linkify = (str, styleObj, classNameString) => {
+  const className = classNameString || undefined;
+  if (!str) {
+    return null;
+  }
+  const matches = linkifyIt.match(str);
+  if (!matches) {
+    return (
+      <span style={styleObj} className={className}>
+        {str}
+      </span>
+    );
+  }
+  const elements = [];
+  let offset = 0;
+  matches.forEach(match => {
+    if (match.index > offset) {
+      const string = str.substring(offset, match.index);
+      elements.push(
+        <span style={styleObj} className={className}>
+          {string}
+        </span>
+      );
+    }
+    elements.push(
+      <a
+        href={match.url}
+        style={styleObj}
+        className={className}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {match.text}
+      </a>
+    );
+    offset = match.lastIndex;
+  });
+
+  if (str.length > offset) {
+    const string = str.substring(offset, str.length);
+    elements.push(
+      <span style={styleObj} className={className}>
+        {string}
+      </span>
+    );
+  }
+  return elements;
+};
+
 const LogFormat = ({ children }) => {
   let properties = {
+    classes: {},
     foregroundColor: null,
+    foregroundColorClass: null,
     backgroundColor: null,
-    bold: false,
-    italic: false,
-    underline: false,
-    conceal: false,
-    cross: false
+    backgroundColorClass: null
   };
 
   let styles = {};
@@ -39,51 +100,28 @@ const LogFormat = ({ children }) => {
 
   const reset = () => {
     properties = {
+      classes: {},
       foregroundColor: null,
+      foregroundColorClass: null,
       backgroundColor: null,
-      bold: false,
-      italic: false,
-      underline: false,
-      conceal: false,
-      cross: false
+      backgroundColorClass: null
     };
   };
 
-  const enable = flag => {
-    properties[flag] = true;
+  const enableTextStyle = flag => {
+    properties.classes[`tkn--ansi--text--${flag}`] = true;
   };
 
-  const disable = flag => {
-    properties[flag] = false;
+  const disableTextStyle = flag => {
+    properties.classes[`tkn--ansi--text--${flag}`] = false;
   };
 
-  const getXtermColor = commandStack => {
-    if (commandStack.length >= 2 && commandStack[0] === '5') {
-      commandStack.shift();
-      const colorIndex = +commandStack.shift();
-      if (colorIndex >= 0 && colorIndex <= 255) {
-        return colors[colorIndex];
-      }
-    }
-    return null;
+  const setFGColor = color => {
+    properties.foregroundColorClass = color && `tkn--ansi--color-fg--${color}`;
   };
 
-  const getTermColor = (colorIndex, type) => {
-    if (colorIndex > 7) {
-      return null;
-    }
-    if (type === 'light') {
-      return colors[colorIndex + 8];
-    }
-    return colors[colorIndex];
-  };
-
-  const setFGColor = (type, command) => {
-    properties.foregroundColor = getTermColor(type, command);
-  };
-
-  const setBGColor = (type, command) => {
-    properties.backgroundColor = getTermColor(type, command);
+  const setBGColor = color => {
+    properties.backgroundColorClass = color && `tkn--ansi--color-bg--${color}`;
   };
 
   const setFGColor256 = commandStack => {
@@ -96,58 +134,58 @@ const LogFormat = ({ children }) => {
 
   const setProperties = {
     0: () => reset(),
-    1: () => enable('bold'),
-    3: () => enable('italic'),
-    4: () => enable('underline'),
-    8: () => enable('conceal'),
-    9: () => enable('cross'),
+    1: () => enableTextStyle('bold'),
+    3: () => enableTextStyle('italic'),
+    4: () => enableTextStyle('underline'),
+    8: () => enableTextStyle('conceal'),
+    9: () => enableTextStyle('cross'),
 
-    21: () => disable('bold'),
-    22: () => disable('bold'),
-    23: () => disable('italic'),
-    24: () => disable('underline'),
-    28: () => disable('conceal'),
-    29: () => disable('cross'),
+    21: () => disableTextStyle('bold'),
+    22: () => disableTextStyle('bold'),
+    23: () => disableTextStyle('italic'),
+    24: () => disableTextStyle('underline'),
+    28: () => disableTextStyle('conceal'),
+    29: () => disableTextStyle('cross'),
 
-    30: () => setFGColor(0),
-    31: () => setFGColor(1),
-    32: () => setFGColor(2),
-    33: () => setFGColor(3),
-    34: () => setFGColor(4),
-    35: () => setFGColor(5),
-    36: () => setFGColor(6),
-    37: () => setFGColor(7),
+    30: () => setFGColor('black'),
+    31: () => setFGColor('red'),
+    32: () => setFGColor('green'),
+    33: () => setFGColor('yellow'),
+    34: () => setFGColor('blue'),
+    35: () => setFGColor('magenta'),
+    36: () => setFGColor('cyan'),
+    37: () => setFGColor('white'),
     38: s => setFGColor256(s),
-    39: () => setFGColor(9),
+    39: () => setFGColor(null),
 
-    40: () => setBGColor(0),
-    41: () => setBGColor(1),
-    42: () => setBGColor(2),
-    43: () => setBGColor(3),
-    44: () => setBGColor(4),
-    45: () => setBGColor(5),
-    46: () => setBGColor(6),
-    47: () => setBGColor(7),
+    40: () => setBGColor('black'),
+    41: () => setBGColor('red'),
+    42: () => setBGColor('green'),
+    43: () => setBGColor('yellow'),
+    44: () => setBGColor('blue'),
+    45: () => setBGColor('magenta'),
+    46: () => setBGColor('cyan'),
+    47: () => setBGColor('white'),
     48: s => setBGColor256(s),
-    49: () => setBGColor(9),
+    49: () => setBGColor(null),
 
-    90: () => setFGColor(0, 'light'),
-    91: () => setFGColor(1, 'light'),
-    92: () => setFGColor(2, 'light'),
-    93: () => setFGColor(3, 'light'),
-    94: () => setFGColor(4, 'light'),
-    95: () => setFGColor(5, 'light'),
-    96: () => setFGColor(6, 'light'),
-    97: () => setFGColor(7, 'light'),
+    90: () => setFGColor('bright-black'),
+    91: () => setFGColor('bright-red'),
+    92: () => setFGColor('bright-green'),
+    93: () => setFGColor('bright-yellow'),
+    94: () => setFGColor('bright-blue'),
+    95: () => setFGColor('bright-magenta'),
+    96: () => setFGColor('bright-cyan'),
+    97: () => setFGColor('bright-white'),
 
-    100: () => setBGColor(0, 'light'),
-    101: () => setBGColor(1, 'light'),
-    102: () => setBGColor(2, 'light'),
-    103: () => setBGColor(3, 'light'),
-    104: () => setBGColor(4, 'light'),
-    105: () => setBGColor(5, 'light'),
-    106: () => setBGColor(6, 'light'),
-    107: () => setBGColor(7, 'light')
+    100: () => setBGColor('bright-black'),
+    101: () => setBGColor('bright-red'),
+    102: () => setBGColor('bright-green'),
+    103: () => setBGColor('bright-yellow'),
+    104: () => setBGColor('bright-blue'),
+    105: () => setBGColor('bright-magenta'),
+    106: () => setBGColor('bright-cyan'),
+    107: () => setBGColor('bright-white')
   };
 
   const setStyle = (command, stack) => {
@@ -165,41 +203,6 @@ const LogFormat = ({ children }) => {
     evaluateCommandStack(stack);
   };
 
-  const linkify = (str, styleObj) => {
-    if (!str) {
-      return null;
-    }
-    const matches = linkifyIt.match(str);
-    if (!matches) {
-      return <span style={styleObj}>{str}</span>;
-    }
-    const elements = [];
-    let offset = 0;
-    matches.forEach(match => {
-      if (match.index > offset) {
-        const string = str.substring(offset, match.index);
-        elements.push(<span style={styleObj}>{string}</span>);
-      }
-      elements.push(
-        <a
-          href={match.url}
-          style={styleObj}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {match.text}
-        </a>
-      );
-      offset = match.lastIndex;
-    });
-
-    if (str.length > offset) {
-      const string = str.substring(offset, str.length);
-      elements.push(<span style={styleObj}>{string}</span>);
-    }
-    return elements;
-  };
-
   const handleSequence = s => {
     const indicator = s[1];
     const commands = s[2].split(';');
@@ -209,13 +212,20 @@ const LogFormat = ({ children }) => {
       return;
     }
 
-    const tag = linkify(text, styles);
+    const tag = linkify(
+      text,
+      styles,
+      classNames(
+        properties.foregroundColorClass,
+        properties.backgroundColorClass,
+        properties.classes
+      )
+    );
     if (tag) {
       line = line.concat(tag);
     }
 
     text = '';
-    styles = {};
 
     if (commands.length === 0) {
       reset();
@@ -227,13 +237,6 @@ const LogFormat = ({ children }) => {
       color: properties.foregroundColor,
       backgroundColor: properties.backgroundColor
     };
-
-    Object.keys(textStyles).forEach(style => {
-      if (properties[style]) {
-        const [[key, value]] = Object.entries(textStyles[style]);
-        styles[key] = value;
-      }
-    });
   };
 
   const parse = (ansi, index) => {
@@ -254,7 +257,17 @@ const LogFormat = ({ children }) => {
       }
     }
     if (text) {
-      line.push(linkify(text, styles));
+      line.push(
+        linkify(
+          text,
+          styles,
+          classNames(
+            properties.foregroundColorClass,
+            properties.backgroundColorClass,
+            properties.classes
+          )
+        )
+      );
     }
     return <div key={index}>{line}</div>;
   };

@@ -11,6 +11,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+// 256-color lookup table
+
+// the first 16 colors are the same as the 'system' colors 30-37 and 90-97
 const colors = [
   'rgb(0, 0, 0)', // black
   'rgb(187, 0, 0)', // red
@@ -31,6 +34,7 @@ const colors = [
   'rgb(255, 255, 255)' // light-white
 ];
 
+// 216 colors (6*6*6 cube)
 const levels = [0, 95, 135, 175, 215, 255];
 for (let r = 0; r < 6; r += 1) {
   for (let g = 0; g < 6; g += 1) {
@@ -41,28 +45,11 @@ for (let r = 0; r < 6; r += 1) {
   }
 }
 
+// grayscale
 let level = 8;
 for (let i = 0; i < 24; i += 1, level += 10) {
   const rgb = `rgb(${level}, ${level}, ${level})`;
   colors.push(rgb);
 }
 
-const textStyles = {
-  bold: {
-    fontWeight: 'bold'
-  },
-  italic: {
-    fontStyle: 'italic'
-  },
-  conceal: {
-    color: 'transparent'
-  },
-  underline: {
-    textDecoration: 'underline'
-  },
-  cross: {
-    textDecoration: 'line-through'
-  }
-};
-
-export { colors, textStyles };
+export { colors };
