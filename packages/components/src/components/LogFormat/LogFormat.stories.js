@@ -16,6 +16,15 @@ import LogFormat from './LogFormat';
 
 const ansiColors = (() => {
   let text = '';
+  // 16 named 'system' colors
+  [30, 90, 40, 100].forEach(seq => {
+    for (let i = 0; i < 8; i += 1) {
+      text += `\u001b[${seq + i}m${i}  \u001b[0m`;
+    }
+    text += '\n';
+  });
+  text += '\n';
+  // 256-colors
   [38, 48].forEach(seq => {
     for (let i = 0; i < 256; i += 1) {
       text += `\u001b[${seq};5;${i}m${i}  \u001b[0m`;
