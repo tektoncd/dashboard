@@ -34,7 +34,7 @@ $colors: (
 .tkn--ansi--color-fg- {
   @each $name, $value in $colors {
     &-#{$name} {
-      color: $value;
+      color: $value !important;
     }
   }
 }
