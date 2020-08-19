@@ -26,6 +26,19 @@ The `installer` makes it easy to install the Tekton Dashboard by allowing comman
 
 For example, this allows the `installer` script to ensure that the deployed Dashboard and the RBAC permissions are consistent.
 
+**Notes:**
+- These instructions don't cover the frontend, make sure you [build the frontend](./README.md#build-the-frontend) first.
+- The `installer` script uses `ko`. Before it can build and push the dashboard docker image you will have to define the `KO_DOCKER_REPO` environment variable.
+
+  You can use a remote repository like [Docker Hub](https://hub.docker.com/) or set it to `ko.local` to avoid dealing with auth / network issues for an external repository. See [ko usage](https://github.com/google/ko#usage) for more info.
+
+  ```bash
+  export KO_DOCKER_REPO='ko.local'
+  # or use an external repository
+  # export KO_DOCKER_REPO='docker.io/myusername'
+  ```
+- **Important:** the `--csrf-secure-cookie` flag must not be set if you intend to access the Dashboard pod through port-forward or other insecure connection via `http` as any mutating API requests will be blocked. For production use (for example, when using a Route, or Ingress, which is secured with TLS) it should be set to enable the Secure attribute on the CSRF cookie.
+
 ## Help command
 
 The `help` command shows the supported commands and options by the script:
