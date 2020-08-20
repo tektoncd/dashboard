@@ -15,7 +15,8 @@ import React, { Component } from 'react';
 import { SkeletonText } from 'carbon-components-react';
 import { FixedSizeList as List } from 'react-window';
 import { injectIntl } from 'react-intl';
-import Ansi from 'ansi-to-react';
+
+import Ansi from '../LogFormat';
 
 import './Log.scss';
 
