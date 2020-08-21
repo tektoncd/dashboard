@@ -118,11 +118,11 @@ spec:
         - |
           set -x
           find .
-          mkdir -p /workspace/output/bucket-for-dashboard/$(params.bucketName)/previous/$(params.versionTag)/
-          cp /workspace/output/bucket-for-dashboard/$(params.bucketName)/tekton-dashboard-release.yaml /workspace/output/bucket-for-dashboard/$(params.bucketName)/previous/$(params.versionTag)/
-          cp /workspace/output/bucket-for-dashboard/$(params.bucketName)/tekton-dashboard-release-readonly.yaml /workspace/output/bucket-for-dashboard/$(params.bucketName)/previous/$(params.versionTag)/
-          cp /workspace/output/bucket-for-dashboard/$(params.bucketName)/openshift-tekton-dashboard-release.yaml /workspace/output/bucket-for-dashboard/$(params.bucketName)/previous/$(params.versionTag)/
-          cp /workspace/output/bucket-for-dashboard/$(params.bucketName)/openshift-tekton-dashboard-release-readonly.yaml /workspace/output/bucket-for-dashboard/$(params.bucketName)/previous/$(params.versionTag)/
+          mkdir -p /workspace/output/bucket-for-dashboard/previous/$(params.versionTag)/
+          cp /workspace/output/bucket-for-dashboard/$(params.bucketName)/tekton-dashboard-release.yaml /workspace/output/bucket-for-dashboard/previous/$(params.versionTag)/
+          cp /workspace/output/bucket-for-dashboard/$(params.bucketName)/tekton-dashboard-release-readonly.yaml /workspace/output/bucket-for-dashboard/previous/$(params.versionTag)/
+          cp /workspace/output/bucket-for-dashboard/$(params.bucketName)/openshift-tekton-dashboard-release.yaml /workspace/output/bucket-for-dashboard/previous/$(params.versionTag)/
+          cp /workspace/output/bucket-for-dashboard/$(params.bucketName)/openshift-tekton-dashboard-release-readonly.yaml /workspace/output/bucket-for-dashboard/previous/$(params.versionTag)/
 
     - name: tag-external-images
       image: python
@@ -135,10 +135,10 @@ spec:
           curl https://raw.githubusercontent.com/tektoncd/dashboard/master/tekton/scripts/lockdown.py --output lockdown.py
           chmod +x lockdown.py
           pip install docker
-          ./lockdown.py --omit dashboard --path /workspace/output/bucket-for-dashboard/$(params.bucketName)/previous/$(params.versionTag)/tekton-dashboard-release.yaml
-          ./lockdown.py --omit dashboard --path /workspace/output/bucket-for-dashboard/$(params.bucketName)/previous/$(params.versionTag)/tekton-dashboard-release-readonly.yaml
-          ./lockdown.py --omit dashboard --path /workspace/output/bucket-for-dashboard/$(params.bucketName)/previous/$(params.versionTag)/openshift-tekton-dashboard-release.yaml
-          ./lockdown.py --omit dashboard --path /workspace/output/bucket-for-dashboard/$(params.bucketName)/previous/$(params.versionTag)/openshift-tekton-dashboard-release-readonly.yaml
+          ./lockdown.py --omit dashboard --path /workspace/output/bucket-for-dashboard/previous/$(params.versionTag)/tekton-dashboard-release.yaml
+          ./lockdown.py --omit dashboard --path /workspace/output/bucket-for-dashboard/previous/$(params.versionTag)/tekton-dashboard-release-readonly.yaml
+          ./lockdown.py --omit dashboard --path /workspace/output/bucket-for-dashboard/previous/$(params.versionTag)/openshift-tekton-dashboard-release.yaml
+          ./lockdown.py --omit dashboard --path /workspace/output/bucket-for-dashboard/previous/$(params.versionTag)/openshift-tekton-dashboard-release-readonly.yaml
       volumeMounts:
         - name: docker-socket
           mountPath: /var/run/docker.sock
