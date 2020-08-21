@@ -25,7 +25,7 @@ in their creation, execution, and completion
 
 ## Tutorial
 
-Try out the [tutorial](https://katacoda.com/ncskier/scenarios/tekton-dashboard) 
+Try out the [tutorial](https://katacoda.com/tektoncd/scenarios/tekton-dashboard) 
 on Katacoda to install the Dashboard in a guided sandbox environment and explore 
 some of its features.
 
@@ -85,7 +85,7 @@ Confirm that every component listed has the status `Running`.
 ## Usage
 
 Tekton Dashboard is accessible through its `cluster IP` type service with
-a [reverse proxy](https://kubernetes.io/docs/tasks/access-kubernetes-api/http-proxy-access-api/).
+a [reverse proxy](https://kubernetes.io/docs/tasks/extend-kubernetes/http-proxy-access-api/).
 Run the following command:
 
 ```bash

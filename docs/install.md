@@ -210,7 +210,7 @@ The above command assumes that the latest version was installed, refer to [Insta
 
 ## Next steps
 
-To get started with Tekton Dashboard, see the [Tekton Dashboard katacoda tutorial](https://katacoda.com/ncskier/scenarios/tekton-dashboard).
+To get started with Tekton Dashboard, see the [Tekton Dashboard katacoda tutorial](https://katacoda.com/tektoncd/scenarios/tekton-dashboard).
 
 To add more functionality to your Tekton Dashboard, see the [Tekton Dashboard extensions](./extensions.md)
 
