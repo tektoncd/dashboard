@@ -13,7 +13,7 @@ These tasks run on your local cluster, and then copy the release artifacts - doc
 First, ensure that your credentials are set up correctly. You will need an account with access to [Google Cloud Platform](https://console.cloud.google.com). Your account must have 'proper authorization to release the images and yamls' in the [`tekton-releases` GCP project](https://github.com/tektoncd/plumbing#prow). Your account must have `Permission iam.serviceAccountKeys.create`. Contact @bobcatfish or @dlorenc if you are going to be creating dashboard releases and require this authorization.
 
 - You will need to install the [`gcloud` CLI](https://cloud.google.com/sdk/gcloud/) in order to get keys out of Google Cloud and into your local cluster. These credentials will be patched onto the service account to be used by the Tekton PipelineRuns. You do not need to create a new GCP project or pay Google any money.
-- It's convenient to use the ['tkn' CLI](https://github.com/tektoncd/cli) to kick off builds, so grab that as well.
+- It's convenient to use the Tekton Dashboard to kick off builds, alternatively you can use the ['tkn' CLI](https://github.com/tektoncd/cli) so you may want to grab that as well.
 
 ```bash
 KEY_FILE=release.json
@@ -88,13 +88,13 @@ Run a test release:
 ```bash
 VERSION_TAG=test-1
 PIPELINE_NAMESPACE=tekton-pipelines
-tkn pipeline start dashboard-release -p versionTag=$VERSION_TAG -r dashboard-source-repo=tekton-dashboard-git -r bucket-for-dashboard=tekton-bucket-dashboard -r builtDashboardImage=dashboard-image -n $PIPELINE_NAMESPACE -s $SERVICE_ACCOUNT -p bucketName=mytestbucket
+tkn pipeline start dashboard-release -p versionTag=$VERSION_TAG -r dashboard-source-repo=tekton-dashboard-git -r bucket-for-dashboard=tekton-bucket-dashboard -r builtDashboardImage=dashboard-image -n $PIPELINE_NAMESPACE -s $SERVICE_ACCOUNT -p releaseAsLatest=false
 ```
 
-This will result in release artifacts appearing in the Google Cloud bucket `gs://tekton-releases/dashboard/mytestbucket/test-1`. If you need to run a second build, incremement $VERSION_TAG. Once you're finished, clean up:
+This will result in release artifacts appearing in the Google Cloud bucket `gs://tekton-releases/dashboard/test-release/test-1`. If you need to run a second build, incremement $VERSION_TAG. Once you're finished, clean up:
 
-- delete /mytestbucket from the PipelineResource and reapply your changes
-- delete the temporary /mytestbucket bucket in Google Cloud
+- delete /test-release from the PipelineResource and reapply your changes
+- delete the temporary /test-release bucket in Google Cloud
 
 ## Running a release build
 
@@ -103,7 +103,7 @@ Now you can kick off the release build:
 ```bash
 VERSION_TAG=vX.Y.Z
 PIPELINE_NAMESPACE=tekton-pipelines
-tkn pipeline start dashboard-release -p versionTag=$VERSION_TAG -r dashboard-source-repo=tekton-dashboard-git -r bucket-for-dashboard=tekton-bucket-dashboard -r builtDashboardImage=dashboard-image -n $PIPELINE_NAMESPACE -s $SERVICE_ACCOUNT -p bucketName=latest
+tkn pipeline start dashboard-release -p versionTag=$VERSION_TAG -r dashboard-source-repo=tekton-dashboard-git -r bucket-for-dashboard=tekton-bucket-dashboard -r builtDashboardImage=dashboard-image -n $PIPELINE_NAMESPACE -s $SERVICE_ACCOUNT -p releaseAsLatest=true
 ```
 
 Monitor the build logs to see the image coordinates that the image is pushed to. The release yaml files should appear under https://console.cloud.google.com/storage/browser/tekton-releases/dashboard.
@@ -157,8 +157,7 @@ Then, install the Tekton resources from the `openshift` folder:
 We have a number of tasks that are yet to be automated:
 
 - Write the release notes
-- Attach `.yaml` files from https://console.cloud.google.com/storage/browser/tekton-releases/dashboard - be sure you copy the locked down image ones (look under `previous`): any containers such as `kubectl` and `oauth-proxy` should reference an image sha and not a tag such as `latest`
+- Attach `.yaml` files from https://console.cloud.google.com/storage/browser/tekton-releases/dashboard - any containers such as `oauth-proxy` should reference an image sha and not a tag such as `latest`
 - Note that the image pinning, if doing the release on OpenShift, has not yet been implemented - so you'll have to do this manually until then. That work should be done under https://github.com/tektoncd/dashboard/issues/1384
-- Optionally repeat for the Webhooks Extension
 - Update `/README.md` to add an entry in the table for the new release
 - Publish the GitHub release
