@@ -27,6 +27,7 @@ def scan_release(omit: List[str], path: str) -> List[str]:
     print("scan_release")
     images = []
     with open(path) as f:
+        print("path: " + path)
         for line in f:
             match = re.search("image:" + ".*" + "latest", line)
             if match:
@@ -58,7 +59,7 @@ def replace_images(org: List[str], new: List[str], path: str):
     """Replace original images with new images in the release.yaml at path
     Args:
         org: The list of original images that are replaced by the new images
-        new: The list of new images 
+        new: The list of new images
         path: The path to the file (release.yaml) that will contain the built images
     """
     print("replace_image")
@@ -88,5 +89,5 @@ if __name__ == "__main__":
     taggedimages = lockdown_image(images)
     replace_images(images, taggedimages, args.path)
 
-    print("\nDone.")
+    print("Done.\n")
 
