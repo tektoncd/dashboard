@@ -116,7 +116,11 @@ export class LogContainer extends Component {
     }
     return this.reader
       .read()
-      .then(result => this.readChunks(result, decoder, logs));
+      .then(result => this.readChunks(result, decoder, logs))
+      .catch(error => {
+        console.error(error); // eslint-disable-line no-console
+        return this.loadLog();
+      });
   };
 
   loadLog = async () => {
