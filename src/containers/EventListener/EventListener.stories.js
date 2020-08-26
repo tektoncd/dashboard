@@ -162,9 +162,7 @@ export const NoServiceAccount = () => (
     }}
   />
 );
-NoServiceAccount.story = {
-  name: 'No ServiceAccount'
-};
+NoServiceAccount.storyName = 'No ServiceAccount';
 
 export const NoServiceType = () => (
   <EventListenerContainer

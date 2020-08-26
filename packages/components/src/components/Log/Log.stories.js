@@ -75,6 +75,4 @@ export const Performance = () => (
     status="Completed"
   />
 );
-Performance.story = {
-  name: 'performance test (<20,000 lines with ANSI)'
-};
+Performance.storyName = 'performance test (<20,000 lines with ANSI)';

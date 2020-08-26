@@ -113,25 +113,17 @@ export default {
 };
 
 export const Base = () => <PipelineResourcesDropdown {...props} />;
-Base.story = {
-  decorators: [decorator]
-};
+Base.decorators = [decorator];
 
 export const BaseWithType = () => (
   <PipelineResourcesDropdown {...props} type="type-1" />
 );
-BaseWithType.story = {
-  decorators: [decorator]
-};
+BaseWithType.decorators = [decorator];
 
 export const Empty = () => <PipelineResourcesDropdown {...props} />;
-Empty.story = {
-  decorators: [emptyDecorator]
-};
+Empty.decorators = [emptyDecorator];
 
 export const EmptyWithType = () => (
   <PipelineResourcesDropdown {...props} type="bogus" />
 );
-EmptyWithType.story = {
-  decorators: [emptyDecorator]
-};
+EmptyWithType.decorators = [emptyDecorator];

@@ -22,16 +22,12 @@ export default {
 };
 
 export const OneSecond = () => <FormattedDuration milliseconds={1000} />;
-OneSecond.story = {
-  name: '1 second'
-};
+OneSecond.storyName = '1 second';
 
 export const OneMinuteOneSecond = () => (
   <FormattedDuration milliseconds={61000} />
 );
-OneMinuteOneSecond.story = {
-  name: '1 minute 1 second'
-};
+OneMinuteOneSecond.storyName = '1 minute 1 second';
 
 export const Other = () => (
   <FormattedDuration

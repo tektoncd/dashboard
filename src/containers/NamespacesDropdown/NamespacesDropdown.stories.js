@@ -46,34 +46,30 @@ export const Base = () => (
     showAllNamespaces={boolean('showAllNamespaces', false)}
   />
 );
-Base.story = {
-  decorators: [
-    storyFn => {
-      const store = mockStore({
-        namespaces: {
-          byName,
-          isFetching: false
-        },
-        properties: {}
-      });
+Base.decorators = [
+  storyFn => {
+    const store = mockStore({
+      namespaces: {
+        byName,
+        isFetching: false
+      },
+      properties: {}
+    });
 
-      return <Provider store={store}>{storyFn()}</Provider>;
-    }
-  ]
-};
+    return <Provider store={store}>{storyFn()}</Provider>;
+  }
+];
 
 export const Empty = () => <NamespacesDropdown {...props} />;
-Empty.story = {
-  decorators: [
-    storyFn => {
-      const store = mockStore({
-        namespaces: {
-          byName: {},
-          isFetching: false
-        },
-        properties: {}
-      });
-      return <Provider store={store}>{storyFn()}</Provider>;
-    }
-  ]
-};
+Empty.decorators = [
+  storyFn => {
+    const store = mockStore({
+      namespaces: {
+        byName: {},
+        isFetching: false
+      },
+      properties: {}
+    });
+    return <Provider store={store}>{storyFn()}</Provider>;
+  }
+];

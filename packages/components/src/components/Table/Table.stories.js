@@ -71,10 +71,8 @@ export const Simple = () => {
     />
   );
 };
-Simple.story = {
-  parameters: {
-    notes: 'simple table with title, no rows, no buttons'
-  }
+Simple.parameters = {
+  notes: 'simple table with title, no rows, no buttons'
 };
 
 export const ToolbarButton = () => {
@@ -109,10 +107,8 @@ export const ToolbarButton = () => {
     />
   );
 };
-ToolbarButton.story = {
-  parameters: {
-    notes: 'table with 1 row, 1 toolbar button, no batch actions'
-  }
+ToolbarButton.parameters = {
+  notes: 'table with 1 row, 1 toolbar button, no batch actions'
 };
 
 export const BatchActions = () => {
@@ -145,10 +141,8 @@ export const BatchActions = () => {
     />
   );
 };
-BatchActions.story = {
-  parameters: {
-    notes: 'table with 1 row, 1 batch action'
-  }
+BatchActions.parameters = {
+  notes: 'table with 1 row, 1 batch action'
 };
 
 export const Sorting = () => {
@@ -205,8 +199,6 @@ export const Sorting = () => {
     />
   );
 };
-Sorting.story = {
-  parameters: {
-    notes: 'table with sortable rows, 2 batch actions, and 2 toolbar buttons'
-  }
+Sorting.parameters = {
+  notes: 'table with sortable rows, 2 batch actions, and 2 toolbar buttons'
 };
