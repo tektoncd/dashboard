@@ -18,9 +18,10 @@ import messages from '../src/nls/messages_en.json';
 
 import './Container.scss';
 
-export default function Container({ story }) {
+export default function Container({ story, notes }) {
   return (
     <IntlProvider locale="en" defaultLocale="en" messages={messages['en']}>
+      {notes && <p>{notes}</p>}
       <div
         data-floating-menu-container
         role="main"

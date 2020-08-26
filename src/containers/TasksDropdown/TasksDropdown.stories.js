@@ -71,43 +71,39 @@ export default {
 };
 
 export const Base = () => <TasksDropdown {...props} />;
-Base.story = {
-  decorators: [
-    storyFn => {
-      const store = mockStore({
-        tasks: {
-          byId: tasksById,
-          byNamespace: tasksByNamespace,
-          isFetching: false
-        },
-        namespaces: {
-          byName: namespacesByName,
-          selected: 'default'
-        },
-        notifications: {}
-      });
-      return <Provider store={store}>{storyFn()}</Provider>;
-    }
-  ]
-};
+Base.decorators = [
+  storyFn => {
+    const store = mockStore({
+      tasks: {
+        byId: tasksById,
+        byNamespace: tasksByNamespace,
+        isFetching: false
+      },
+      namespaces: {
+        byName: namespacesByName,
+        selected: 'default'
+      },
+      notifications: {}
+    });
+    return <Provider store={store}>{storyFn()}</Provider>;
+  }
+];
 
 export const Empty = () => <TasksDropdown {...props} />;
-Empty.story = {
-  decorators: [
-    storyFn => {
-      const store = mockStore({
-        tasks: {
-          byId: {},
-          byNamespace: {},
-          isFetching: false
-        },
-        namespaces: {
-          byName: namespacesByName,
-          selected: 'default'
-        },
-        notifications: {}
-      });
-      return <Provider store={store}>{storyFn()}</Provider>;
-    }
-  ]
-};
+Empty.decorators = [
+  storyFn => {
+    const store = mockStore({
+      tasks: {
+        byId: {},
+        byNamespace: {},
+        isFetching: false
+      },
+      namespaces: {
+        byName: namespacesByName,
+        selected: 'default'
+      },
+      notifications: {}
+    });
+    return <Provider store={store}>{storyFn()}</Provider>;
+  }
+];

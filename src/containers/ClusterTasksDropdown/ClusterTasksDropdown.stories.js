@@ -50,33 +50,29 @@ export default {
 };
 
 export const normal = () => <ClusterTasksDropdown {...props} />;
-normal.story = {
-  decorators: [
-    storyFn => {
-      const store = mockStore({
-        clusterTasks: {
-          byName: clusterTasksByName,
-          isFetching: false
-        },
-        notifications: {}
-      });
-      return <Provider store={store}>{storyFn()}</Provider>;
-    }
-  ]
-};
+normal.decorators = [
+  storyFn => {
+    const store = mockStore({
+      clusterTasks: {
+        byName: clusterTasksByName,
+        isFetching: false
+      },
+      notifications: {}
+    });
+    return <Provider store={store}>{storyFn()}</Provider>;
+  }
+];
 
 export const empty = () => <ClusterTasksDropdown {...props} />;
-empty.story = {
-  decorators: [
-    storyFn => {
-      const store = mockStore({
-        clusterTasks: {
-          byName: {},
-          isFetching: false
-        },
-        notifications: {}
-      });
-      return <Provider store={store}>{storyFn()}</Provider>;
-    }
-  ]
-};
+empty.decorators = [
+  storyFn => {
+    const store = mockStore({
+      clusterTasks: {
+        byName: {},
+        isFetching: false
+      },
+      notifications: {}
+    });
+    return <Provider store={store}>{storyFn()}</Provider>;
+  }
+];

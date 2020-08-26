@@ -71,43 +71,39 @@ export default {
 };
 
 export const Base = () => <PipelinesDropdown {...props} />;
-Base.story = {
-  decorators: [
-    storyFn => {
-      const store = mockStore({
-        pipelines: {
-          byId: pipelinesById,
-          byNamespace: pipelinesByNamespace,
-          isFetching: false
-        },
-        namespaces: {
-          byName: namespacesByName,
-          selected: 'default'
-        },
-        notifications: {}
-      });
-      return <Provider store={store}>{storyFn()}</Provider>;
-    }
-  ]
-};
+Base.decorators = [
+  storyFn => {
+    const store = mockStore({
+      pipelines: {
+        byId: pipelinesById,
+        byNamespace: pipelinesByNamespace,
+        isFetching: false
+      },
+      namespaces: {
+        byName: namespacesByName,
+        selected: 'default'
+      },
+      notifications: {}
+    });
+    return <Provider store={store}>{storyFn()}</Provider>;
+  }
+];
 
 export const Empty = () => <PipelinesDropdown {...props} />;
-Empty.story = {
-  decorators: [
-    storyFn => {
-      const store = mockStore({
-        pipelines: {
-          byId: {},
-          byNamespace: {},
-          isFetching: false
-        },
-        namespaces: {
-          byName: namespacesByName,
-          selected: 'default'
-        },
-        notifications: {}
-      });
-      return <Provider store={store}>{storyFn()}</Provider>;
-    }
-  ]
-};
+Empty.decorators = [
+  storyFn => {
+    const store = mockStore({
+      pipelines: {
+        byId: {},
+        byNamespace: {},
+        isFetching: false
+      },
+      namespaces: {
+        byName: namespacesByName,
+        selected: 'default'
+      },
+      notifications: {}
+    });
+    return <Provider store={store}>{storyFn()}</Provider>;
+  }
+];

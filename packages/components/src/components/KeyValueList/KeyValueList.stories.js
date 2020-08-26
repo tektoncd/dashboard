@@ -86,6 +86,4 @@ export const MinKeyValues = () => {
     />
   );
 };
-MinKeyValues.story = {
-  name: 'minKeyValues'
-};
+MinKeyValues.storyName = 'minKeyValues';

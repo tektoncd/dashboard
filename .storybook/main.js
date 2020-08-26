@@ -15,10 +15,13 @@ const path = require('path');
 
 module.exports = {
   addons: [
-    '@storybook/addon-knobs/register',
-    '@storybook/addon-actions/register',
-    '@storybook/addon-notes/register-panel',
-    '@storybook/addon-viewport/register'
+    '@storybook/addon-knobs',
+    '@storybook/addon-actions',
+    '@storybook/addon-viewport'
+  ],
+  stories: [
+    '../src/**/*.stories.js',
+    '../packages/components/src/**/*.stories.js'
   ],
   webpackFinal: async (config, { configType }) => {
     // `configType` has a value of 'DEVELOPMENT' or 'PRODUCTION'
