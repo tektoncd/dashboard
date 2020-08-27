@@ -82,7 +82,7 @@ case $1 in
     shift
     install $VERSION $@
     ;;
-  'build'|i)
+  'build'|b)
     shift
     VERSION="${1}"
     shift
