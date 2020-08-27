@@ -18,7 +18,7 @@ require (
 	github.com/gorilla/websocket v1.4.2
 	github.com/openshift/api v3.9.0+incompatible // indirect
 	github.com/openshift/client-go v0.0.0-20191125132246-f6563a70e19a
-	github.com/tektoncd/pipeline v0.12.1
+	github.com/tektoncd/pipeline v0.15.2
 	github.com/tektoncd/plumbing v0.0.0-20200430135134-e53521e1d887
 	github.com/tektoncd/triggers v0.6.1
 	go.uber.org/zap v1.15.0
@@ -26,5 +26,5 @@ require (
 	k8s.io/apimachinery v0.18.2
 	k8s.io/client-go v11.0.1-0.20190805182717-6502b5e7b1b5+incompatible
 	k8s.io/code-generator v0.18.0
-	knative.dev/pkg v0.0.0-20200529164702-389d28f9b67a
+	knative.dev/pkg v0.0.0-20200702222342-ea4d6e985ba0
 )
