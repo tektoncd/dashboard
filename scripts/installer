@@ -481,6 +481,7 @@ help () {
   echo -e "\t[--log-format <log-format>]\t\tSpecifies the log format (json or console), default is json"
   echo -e "\t[--log-level <log-level>]\t\tSpecifies the log level (debug, info, warn, error, dpanic, panic, fatal), default is info"
   echo -e "\t[--version <version>]\t\t\tWill download manifests for specified version or build everything using kustomize/ko"
+  echo -e "\t[--nightly]\t\t\t\tWill download manifests from the nightly releases channel"
   echo -e "\t[--csrf-secure-cookie]\t\t\tEnable secure CSRF cookie"
   echo -e "\t[--openshift]\t\t\t\tWill build manifests for openshift"
   echo -e "\t[--image-stream]\t\t\tWill generate manifests using openshift image stream"
@@ -548,6 +549,9 @@ while [[ $# -gt 0 ]]; do
     '--version')
       shift
       export VERSION="${1}"
+      ;;
+    '--nightly')
+      BASE_RELEASE_URL="https://storage.googleapis.com/tekton-releases-nightly/dashboard"
       ;;
     '--openshift')
       OPENSHIFT="true"

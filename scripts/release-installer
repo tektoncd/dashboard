@@ -78,9 +78,16 @@ case $1 in
     ;;
   'install'|i)
     shift
+    CHANNEL=""
     VERSION="${1}"
+    if [ $VERSION == "--nightly" ]; then
+      CHANNEL="--nightly"
+      BASE_RELEASE_URL="https://storage.googleapis.com/tekton-releases-nightly/dashboard"
+      shift
+      VERSION="${1}"
+    fi
     shift
-    install $VERSION $@
+    install $VERSION $CHANNEL $@
     ;;
   'build'|b)
     shift
