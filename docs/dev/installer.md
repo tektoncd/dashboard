@@ -65,6 +65,7 @@ Accepted options:
         [--log-format <log-format>]             Specifies the log format (json or console), default is json
         [--log-level <log-level>]               Specifies the log level (debug, info, warn, error, dpanic, panic, fatal), default is info
         [--version <version>]                   Will download manifests for specified version or build everything using kustomize/ko
+        [--nightly]                             Will download manifests from the nightly releases channel
         [--csrf-secure-cookie]                  Enable secure CSRF cookie
         [--openshift]                           Will build manifests for openshift
         [--image-stream]                        Will generate manifests using openshift image stream
