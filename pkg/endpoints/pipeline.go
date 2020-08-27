@@ -43,11 +43,11 @@ func (r Resource) Rerun(name, namespace string) (*v1beta1.PipelineRun, error) {
 	}
 
 	newPipelineRunData := pipelineRun
-	newPipelineRunData.Name = ""
-	newPipelineRunData.Spec.Status = ""
-	theName := generateNewNameForRerun(name)
-	newPipelineRunData.GenerateName = theName
-	newPipelineRunData.ResourceVersion = ""
+	newPipelineRunData.ObjectMeta = metav1.ObjectMeta{
+		GenerateName: generateNewNameForRerun(name),
+		Namespace:    pipelineRun.Namespace,
+	}
+	newPipelineRunData.Status = v1beta1.PipelineRunStatus{}
 
 	currentLabels := pipelineRun.GetLabels()
 
@@ -61,7 +61,10 @@ func (r Resource) Rerun(name, namespace string) (*v1beta1.PipelineRun, error) {
 		newPipelineRunData.SetLabels(currentLabels)
 	}
 
-	rebuiltRun, err := r.PipelineClient.TektonV1beta1().PipelineRuns(pipelineRun.Namespace).Create(newPipelineRunData)
+	// looks like this label can cause troubles if present
+	delete(newPipelineRunData.Labels, "tekton.dev/pipeline")
+
+	rebuiltRun, err := pipelineRuns.Create(newPipelineRunData)
 
 	if err != nil {
 		logging.Log.Errorf("an error occurred rerunning the PipelineRun %s in namespace %s: %s", name, namespace, err)
