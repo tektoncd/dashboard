@@ -478,9 +478,9 @@ help () {
   echo -e ""
   echo -e "Accepted options:"
   echo -e "\t[--debug]\t\t\t\tPrints additional messages in the console"
-  echo -e "\t[--log-format]\t\t\t\tJSON or console"
-  echo -e "\t[--log-level]\t\t\t\tChange log level"
-  echo -e "\t[--version]\t\t\t\tWill download manifests for specified version or build everything using kustomize/ko"
+  echo -e "\t[--log-format <log-format>]\t\tSpecifies the log format (json or console), default is json"
+  echo -e "\t[--log-level <log-level>]\t\tSpecifies the log level (debug, info, warn, error, dpanic, panic, fatal), default is info"
+  echo -e "\t[--version <version>]\t\t\tWill download manifests for specified version or build everything using kustomize/ko"
   echo -e "\t[--csrf-secure-cookie]\t\t\tEnable secure CSRF cookie"
   echo -e "\t[--openshift]\t\t\t\tWill build manifests for openshift"
   echo -e "\t[--image-stream]\t\t\tWill generate manifests using openshift image stream"
@@ -493,7 +493,7 @@ help () {
   echo -e "\t[--ingress-url <url>]\t\t\tWill create an additional ingress with the specified url"
   echo -e "\t[--ingress-secret <secret>]\t\tWill add ssl support to the ingress"
   echo -e "\t[--stream-logs]\t\t\t\tWill enable log streaming instead of polling"
-  echo -e "\t[--external-logs]\t\t\tExternal url to fetch logs from when not available in the cluster"
+  echo -e "\t[--external-logs <logs-provider-url>]\tExternal url to fetch logs from when not available in the cluster"
   echo -e "\t[--output <file>]\t\t\tWill output built manifests in the file instead of in the console"
 }
 
