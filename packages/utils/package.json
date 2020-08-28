@@ -4,7 +4,7 @@
   "private": false,
   "main": "./dist/utils/index.js",
   "scripts": {
-    "build": "rimraf dist && NODE_ENV=production babel src --out-dir dist --root-mode upward --ignore \"src/**/*.test.js,src/**/*.stories.js\" --no-copy-ignored",
+    "build": "rimraf dist && cross-env NODE_ENV=production babel src --out-dir dist --root-mode upward --ignore \"src/**/*.test.js,src/**/*.stories.js\" --no-copy-ignored",
     "clean": "rimraf dist",
     "prepare": "npm run build"
   },
