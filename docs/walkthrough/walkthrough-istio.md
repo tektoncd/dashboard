@@ -11,7 +11,7 @@ This guide walks you through installing a working Tekton Dashboard locally from 
 * [Installing Tekton Pipelines](#installing-tekton-pipelines)
 * [Installing Tekton Dashboard](#installing-tekton-dashboard)
 * [Setting up the Istio Gateway and VirtualService](#setting-up-the-istio-gateway-and-virtualservice)
-* [Browsing the Istio dashboard](#browse-the-istio-dashboard)
+* [Browsing the Istio dashboard](#browsing-the-istio-dashboard)
 * [Adding basic authentication](#adding-basic-authentication)
 * [Cleaning up](#cleaning-up)
 
