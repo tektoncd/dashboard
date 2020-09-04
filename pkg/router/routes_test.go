@@ -39,8 +39,6 @@ var excludeRoutes []string = []string{
 	"health",         // Returns 204
 	"readiness",      // Returns 204
 	"proxy",          // Kube API server has its own standard
-	"ingress",        // Ingress will not exist
-	"endpoints",      // Route or Ingress will not exist
 	"properties",     // Pods and namespace will not exist
 }
 

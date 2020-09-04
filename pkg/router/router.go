@@ -241,8 +241,6 @@ func registerEndpoints(r endpoints.Resource, container *restful.Container) {
 	logging.Log.Info("Adding v1, and API for k8s resources and pipelines")
 
 	wsv1.Route(wsv1.POST("/{namespace}/rerun").To(r.RerunPipelineRun))
-	wsv1.Route(wsv1.GET("/{namespace}/ingress").To(r.GetIngress))
-	wsv1.Route(wsv1.GET("/{namespace}/endpoints").To(r.GetEndpoints))
 
 	container.Add(wsv1)
 

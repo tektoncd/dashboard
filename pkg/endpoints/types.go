@@ -3,7 +3,6 @@ package endpoints
 import (
 	"net/http"
 
-	routeclientset "github.com/openshift/client-go/route/clientset/versioned"
 	dashboardclientset "github.com/tektoncd/dashboard/pkg/client/clientset/versioned"
 	pipelineclientset "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
 	resourceclientset "github.com/tektoncd/pipeline/pkg/client/resource/clientset/versioned"
@@ -54,7 +53,6 @@ type Resource struct {
 	PipelineClient         pipelineclientset.Interface
 	PipelineResourceClient resourceclientset.Interface
 	K8sClient              k8sclientset.Interface
-	RouteClient            routeclientset.Interface
 	TriggersClient         triggersclientset.Interface
 	Options                Options
 }

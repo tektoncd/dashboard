@@ -6,7 +6,6 @@ config_frontend
 coverage
 dist
 docs
-ingress
 node_modules
 overlays
 packages/components/dist
@@ -14,5 +13,4 @@ packages/components/node_modules
 packages/utils/dist
 tekton
 test
-testdata
 vendor

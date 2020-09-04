@@ -82,12 +82,6 @@ debug() {
 compile() {
   local overlay="overlays/installer"
 
-  if [ "$OPENSHIFT" == "true" ]; then
-    overlay="$overlay/openshift"
-  else
-    overlay="$overlay/k8s"
-  fi
-
   if [ "$READONLY" == "true" ]; then
     overlay="$overlay/read-only"
   else
@@ -108,10 +102,6 @@ download() {
     local url="$BASE_RELEASE_URL/latest/installer-"
   else
     local url="$BASE_RELEASE_URL/previous/$VERSION/installer-"
-  fi
-
-  if [ "$OPENSHIFT" == "true" ]; then
-    url="${url}openshift-"
   fi
 
   url="${url}tekton-dashboard-release"
@@ -148,10 +138,6 @@ setup() {
     TRIGGERS_NAMESPACE="$OVERRIDE_TRIGGERS_NAMESPACE"
   elif [ "$OPENSHIFT" == "true" ]; then
     TRIGGERS_NAMESPACE="openshift-pipelines"
-  fi
-
-  if [ -z "$LOGOUT_URL" ] && [ "$OPENSHIFT" == "true" ]; then
-    LOGOUT_URL="/oauth/sign_out"
   fi
 }
 
