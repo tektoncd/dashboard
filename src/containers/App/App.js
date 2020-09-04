@@ -81,11 +81,9 @@ import {
   isReadOnly,
   isWebSocketConnected
 } from '../../reducers';
-import messageBundle from '../../nls/messages_en.json';
+import messages from '../../nls/messages_en.json';
 
 import '../../components/App/App.scss';
-
-const messages = messageBundle;
 
 /* istanbul ignore next */
 if (process.env.I18N_PSEUDO) {
