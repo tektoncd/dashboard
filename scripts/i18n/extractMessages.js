@@ -83,9 +83,14 @@ writeLocaleFile(defaultLocale, sortedMessages);
 buildLocales
   .filter(locale => locale !== defaultLocale)
   .forEach(locale => {
-    let translations = require(`${basePath}/src/nls/${messagesFilePrefix}${locale}.json`)[ // eslint-disable-line
-      locale
-    ];
+    let translations = { [locale]: {} };
+    try {
+      translations = require(`${basePath}/src/nls/${messagesFilePrefix}${locale}.json`)[ // eslint-disable-line
+        locale
+      ];
+    } catch {
+      log(`No message bundle found for '${locale}', one will be created.`);
+    }
 
     // remove stale strings
     const stale = difference(Object.keys(translations), messageKeys);

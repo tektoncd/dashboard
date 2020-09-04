@@ -4,6 +4,6 @@
   "locales": {
     "default": "en",
     "supported": ["en"],
-    "build": ["en"]
+    "build": ["de", "en", "es", "fr", "it", "ja", "ko", "pt", "zh-Hans", "zh-Hant"]
   }
 }
