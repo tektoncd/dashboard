@@ -109,7 +109,6 @@ Once set up, the dashboard is available in the browser under the address
 
 ## What's next
 
-Tekton Dashboard provides many features such as Webhook extension (for setting
-up a GitHub repository with a Tekton pipeline in the UI), TLS support, and
-Ingress support. For more information, see the
+Try out some of our [walkthroughs](./walkthrough) for more details on deploying and configuring the
+Tekton Dashboard for some common scenarios. For more information, see the
 [Tekton Dashboard GitHub repository](https://github.com/tektoncd/dashboard).

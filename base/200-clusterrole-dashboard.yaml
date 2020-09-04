@@ -29,19 +29,3 @@ rules:
       - deployments
     verbs:
       - list
-  - apiGroups:
-      - route.openshift.io
-    resources:
-      - routes
-    verbs:
-      - get
-      - list
-  - apiGroups:
-      - extensions
-      - apps
-    resources:
-      - ingresses
-    verbs:
-      - get
-      - list
-      - watch

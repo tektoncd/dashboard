@@ -16,8 +16,6 @@ require (
 	github.com/google/go-cmp v0.5.0
 	github.com/gorilla/csrf v1.7.0
 	github.com/gorilla/websocket v1.4.2
-	github.com/openshift/api v3.9.0+incompatible // indirect
-	github.com/openshift/client-go v0.0.0-20191125132246-f6563a70e19a
 	github.com/tektoncd/pipeline v0.15.2
 	github.com/tektoncd/plumbing v0.0.0-20200430135134-e53521e1d887
 	github.com/tektoncd/triggers v0.6.1

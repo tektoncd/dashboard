@@ -8,8 +8,7 @@ This guide explains how to install Tekton Dashboard. It covers the following top
 - [Installing with the installer script](#installing-with-the-installer-script)
 - [Installing Tekton Dashboard on Kubernetes](#installing-tekton-dashboard-on-kubernetes)
 - [Installing Tekton Dashboard on OpenShift](#installing-tekton-dashboard-on-openshift)
-- [Accessing the Dashboard on Kubernetes](#accessing-the-dashboard-on-kubernetes)
-- [Accessing the Dashboard on OpenShift](#accessing-the-dashboard-on-openshift)
+- [Accessing the Dashboard](#accessing-the-dashboard)
 - [Uninstalling the Dashboard on Kubernetes](#uninstalling-the-dashboard-on-kubernetes)
 - [Next steps](#next-steps)
 
@@ -111,15 +110,13 @@ To install Tekton Dashboard on an OpenShift cluster:
    kubectl apply --filename https://storage.googleapis.com/tekton-releases/dashboard/latest/openshift-tekton-dashboard-release.yaml --validate=false
    ```
 
-1. Access the dashboard by determining its route with `kubectl get route tekton-dashboard -n openshift-pipelines`
-
 Congratulations! You have successfully installed Tekton Dashboard on your OpenShift cluster.
 
 **Note for users installing Tekton Pipelines and Triggers outside the OpenShift Pipelines operator:**
 
 Tekton Dashboard on OpenShift works out of the box with the OpenShift Pipelines operator. If you installed Tekton Pipelines and Triggers without using the OpenShift Pipelines operator, you will need to change the following args `--pipelines-namespace=openshift-pipelines` and `--triggers-namespace=openshift-pipelines` and set their values to the namespace where Pipelines and Triggers were respectively deployed.
 
-## Accessing the Dashboard on Kubernetes
+## Accessing the Dashboard
 
 By default, the Dashboard is not exposed outside the cluster.
 
@@ -183,20 +180,6 @@ You should be able to access the Dashboard UI at `http(s)://dashboard.domain.tld
 Notes:
 - The exact `Ingress` resource definition may vary a little depending on the ingress controller installed in the cluster. Some specific annotations may be required for the ingress controller to process the `Ingress` resource correctly
 - If you don't have access to a domain you can use the freely available [`nip.io`](https://nip.io/) service
-
-## Accessing the Dashboard on OpenShift
-
-Assuming you installed the Dashboard following the instructions in [Installing Tekton Dashboard on OpenShift](#installing-tekton-dashboard-on-openshift), you can access the Dashboard by determining its route.
-
-Simply browse the url returned by running the following command to access your Dashboard:
-
-```bash
-kubectl get route tekton-dashboard -n openshift-pipelines
-```
-
-**Known issue:**
-
-If the default ingress certificate in the OpenShift cluster was changed, for example via [this procedure](https://docs.openshift.com/container-platform/4.3/authentication/certificates/replacing-default-ingress-certificate.html), then the oauth-proxy sidecar might not recognize its certificate, and you might arrive at a "500 Internal Error" page instead of the dashboard. Refer to [this workaround](./oauth-certificate-workaround.md) for a procedure to resolve the issue.
 
 ## Uninstalling the Dashboard on Kubernetes
 

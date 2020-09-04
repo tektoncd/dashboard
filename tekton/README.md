@@ -108,56 +108,11 @@ tkn pipeline start dashboard-release -p versionTag=$VERSION_TAG -r dashboard-sou
 
 Monitor the build logs to see the image coordinates that the image is pushed to. The release yaml files should appear under https://console.cloud.google.com/storage/browser/tekton-releases/dashboard.
 
-## Running the release pipeline on OpenShift
-
-Decide which namespace and ServiceAccount you'll use for this process, an example is provided below.
-
-`oc new-project dashboard-release-pipeline`
-
-```
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: release-pipeline-sa
-  namespace: dashboard-release-pipeline
-```
-
-Run the following commands to get around permission denied problems (as the build step uses `sudo`).:
-
-```
-oc adm policy add-scc-to-user privileged -z release-pipeline-sa -n dashboard-release-pipeline
-oc adm policy add-scc-to-user anyuid -z release-pipeline-sa -n dashboard-release-pipeline
-```
-
-Next, install the Tekton resources from the main `tekton` folder.
-
-- `oc apply -f tekton`
-
-Then, install the Tekton resources from the `openshift` folder:
-
-- `oc apply -f tekton/openshift`
-
-- Create your release secret and all Tekton resources in the namespace you've chosen earlier, e.g. `dashboard-release-pipeline`:
-
-  ```
-  KEY_FILE=$HOME/googlekey/release.json
-  GENERIC_SECRET=release-secret
-  kubectl create secret generic $GENERIC_SECRET --from-file=$KEY_FILE -n dashboard-release-pipeline
-  kubectl patch serviceaccount release-pipeline-sa -n dashboard-release-pipeline -p "{\"secrets\": [{\"name\": \"$GENERIC_SECRET\"}]}"
-  ```
-
-- When you're ready (secret created and patched to the ServiceAccount), specify the namespace with the `tkn` command:
-
-  ```
-  tkn pipeline start dashboard-release -p versionTag=v0.6.1 -r dashboard-source-repo=tekton-dashboard-git -r bucket-for-dashboard=tekton-bucket-dashboard -r builtDashboardImage=dashboard-image -n dashboard-release-pipeline -s release-pipeline-sa -p bucketName=mytestbucket
-  ```
-
 ## Manually complete the release work
 
 We have a number of tasks that are yet to be automated:
 
 - Write the release notes
-- Attach `.yaml` files from https://console.cloud.google.com/storage/browser/tekton-releases/dashboard - any containers such as `oauth-proxy` should reference an image sha and not a tag such as `latest`
-- Note that the image pinning, if doing the release on OpenShift, has not yet been implemented - so you'll have to do this manually until then. That work should be done under https://github.com/tektoncd/dashboard/issues/1384
+- Attach `.yaml` files from https://console.cloud.google.com/storage/browser/tekton-releases/dashboard
 - Update `/README.md` to add an entry in the table for the new release
 - Publish the GitHub release

@@ -23,7 +23,6 @@ import (
 	"time"
 
 	"github.com/gorilla/csrf"
-	routeclientset "github.com/openshift/client-go/route/clientset/versioned"
 	dashboardclientset "github.com/tektoncd/dashboard/pkg/client/clientset/versioned"
 	"github.com/tektoncd/dashboard/pkg/controllers"
 	"github.com/tektoncd/dashboard/pkg/endpoints"
@@ -121,14 +120,6 @@ func main() {
 	}
 
 	var triggersClient triggersclientset.Interface
-	var routeClient routeclientset.Interface
-
-	if *isOpenshift {
-		routeClient, err = routeclientset.NewForConfig(cfg)
-		if err != nil {
-			logging.Log.Errorf("Error building route clientset: %s", err.Error())
-		}
-	}
 
 	transport, err := rest.TransportFor(cfg)
 	if err != nil {
@@ -154,7 +145,6 @@ func main() {
 		PipelineClient:         pipelineClient,
 		PipelineResourceClient: pipelineResourceClient,
 		K8sClient:              k8sClient,
-		RouteClient:            routeClient,
 		TriggersClient:         triggersClient,
 		Options:                options,
 	}

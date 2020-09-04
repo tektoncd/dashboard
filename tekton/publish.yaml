@@ -93,8 +93,6 @@ spec:
           # build manifests for installer
           kustomize build overlays/installer/k8s/read-write --load_restrictor none        | ko resolve --preserve-import-paths -f - > $OUTPUT_BUCKET_RELEASE_DIR/installer-tekton-dashboard-release.yaml
           kustomize build overlays/installer/k8s/read-only  --load_restrictor none        | ko resolve --preserve-import-paths -f - > $OUTPUT_BUCKET_RELEASE_DIR/installer-tekton-dashboard-release-readonly.yaml
-          kustomize build overlays/installer/openshift/read-write --load_restrictor none  | ko resolve --preserve-import-paths -f - > $OUTPUT_BUCKET_RELEASE_DIR/installer-openshift-tekton-dashboard-release.yaml
-          kustomize build overlays/installer/openshift/read-only  --load_restrictor none  | ko resolve --preserve-import-paths -f - > $OUTPUT_BUCKET_RELEASE_DIR/installer-openshift-tekton-dashboard-release-readonly.yaml
 
           # build pre configured manifests
           ./scripts/installer release --debug                         --output $OUTPUT_BUCKET_RELEASE_DIR/tekton-dashboard-release.yaml
@@ -104,27 +102,6 @@ spec:
       volumeMounts:
         - name: gcp-secret
           mountPath: /secret
-
-    - name: tag-external-images
-      image: python
-      workingDir: "/workspace/output/bucket-for-dashboard"
-      command:
-        - /bin/sh
-      args:
-        - -ce
-        - |
-          curl https://raw.githubusercontent.com/tektoncd/dashboard/master/tekton/scripts/lockdown.py --output lockdown.py
-          chmod +x lockdown.py
-          pip install docker
-          OUTPUT_BUCKET_RELEASE_DIR="/workspace/output/bucket-for-dashboard/previous/$(params.versionTag)"
-
-          for MANIFEST in $OUTPUT_BUCKET_RELEASE_DIR/*.yaml
-          do
-            ./lockdown.py --omit dashboard --path $MANIFEST
-          done
-      volumeMounts:
-        - name: docker-socket
-          mountPath: /var/run/docker.sock
 
     - name: copy-to-latest-bucket
       image: busybox
@@ -193,7 +170,3 @@ spec:
     - name: gcp-secret
       secret:
         secretName: release-secret
-    - name: docker-socket
-      hostPath:
-        path: /var/run/docker.sock
-        type: Socket

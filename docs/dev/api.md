@@ -1,38 +1,9 @@
 # Tekton Dashboard - Backend API
 
 
-The backend API provides the following endpoints at `/v1/namespaces/<namespace>`:
+The backend API provides the following endpoints:
 
 __GET endpoints__
-
-__Dashboard Endpoints__
-```
-GET /v1/namespaces/<namespace>/endpoints
-Get the registered `tekton-dashboard` entry points (route and ingress) host values
-Returns HTTP code 200 and the registered dashboard ingress host value 
-Returns HTTP code 404 if an error occurred getting the ingress
-
-Example payload response is formatted as so:
-
-[
- {
-  "type": "Route",
-  "url": "tekton-dashboard-tekton-pipelines.apps.192.168.222.145.nip.io"
- },
- {
-  "type": "Ingress",
-  "url": "tekton-dashboard.192.168.222.145.nip.io"
- }
-]
-```
-
-__Dashboard Ingress__
-```
-GET /v1/namespaces/<namespace>/ingress
-Get the registered `tekton-dashboard` ingress host value
-Returns HTTP code 200 and the registered dashboard ingress host value 
-Returns HTTP code 404 if an error occurred getting the ingress
-```
 
 __Extensions__
 ```
@@ -66,4 +37,3 @@ Example payload response is formatted as so:
  "ReadOnly": true
 }
 ```
-
