@@ -22,7 +22,7 @@ Before you begin, make sure the following tools are installed:
 1. [`kind`](https://kind.sigs.k8s.io): For creating a local cluster running on top of docker.
 1. [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl): For interacting with your Kubernetes cluster.
 1. [`istioctl`](https://istio.io/latest/docs/setup/getting-started/#download): For installing Istio.
-    - Version 1.7.0 is used in this walkthrough. Other version my not work as expected.
+    - Version 1.7.0 is used in this walkthrough. Other version may not work as expected.
     - You can check your istioctl version with: `istioctl version`
 
 
