@@ -206,8 +206,7 @@ Tekton Pipelines should be up and running.
 Installing the latest Tekton Dashboard release is done by running the following command:
 
 ```bash
-curl -sL https://raw.githubusercontent.com/tektoncd/dashboard/master/scripts/release-installer | \
-   bash -s -- build latest --output /dev/stdout | istioctl kube-inject -f - | kubectl apply -f -
+curl -sL https://storage.googleapis.com/tekton-releases/dashboard/latest/tekton-dashboard-release.yaml | istioctl kube-inject -f - | kubectl apply -f -
 
 kubectl wait -n tekton-pipelines \
   --for=condition=ready pod \
@@ -266,6 +265,16 @@ Browse `http://tekton-dashboard.127.0.0.1.nip.io` to access your dashboard.
 
 ## Browsing the Istio dashboard
 
+Installing the latest Istio dashboard release is done by running the following command:
+```bash
+kubectl apply -f https://raw.githubusercontent.com/istio/istio/master/samples/addons/kiali.yaml
+```
+
+Installing the latest Prometheus release is done by running the following command:
+```bash
+kubectl apply -f https://raw.githubusercontent.com/istio/istio/master/samples/addons/prometheus.yaml
+```
+
 You can browse the Istio dashboard by running the following command:
 
 ```bash
@@ -273,6 +282,8 @@ istioctl dashboard kiali
 ```
 
 Default install uses `admin`/`admin` for login and password.
+
+Browse `http://localhost:20001/kiali/console/graph/namespaces/` to access the graph shown below
 
 ![Istio dashboard graph](./walkthrough-istio-kiali.png)
 
