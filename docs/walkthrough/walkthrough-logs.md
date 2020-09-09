@@ -84,8 +84,10 @@ helm repo add banzaicloud-stable https://kubernetes-charts.banzaicloud.com
 
 helm repo update
 
-helm upgrade --install --wait --create-namespace --namespace tools logging-operator banzaicloud-stable/logging-operator --set createCustomResource=false
+helm upgrade --install --version 3.6.0 --wait --create-namespace --namespace tools logging-operator banzaicloud-stable/logging-operator --set createCustomResource=false
 ```
+
+**NOTE**: This will install `logging-operator` version `3.6.0`, there was a [breaking change](https://github.com/banzaicloud/logging-operator/releases/tag/3.6.0) in this release. The walkthrough will not work with earlier versions.
 
 The `logging operator` should now be deployed in your cluster.
 
@@ -151,10 +153,12 @@ kind: ClusterFlow
 metadata:
   name: flow
 spec:
-  outputRefs:
+  globalOutputRefs:
     - s3
-  selectors:
-    app.kubernetes.io/managed-by: tekton-pipelines
+  match:
+    - select:
+        labels:
+          app.kubernetes.io/managed-by: tekton-pipelines
 EOF
 ```
 
