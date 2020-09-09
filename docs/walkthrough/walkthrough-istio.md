@@ -22,6 +22,9 @@ Before you begin, make sure the following tools are installed:
 1. [`kind`](https://kind.sigs.k8s.io): For creating a local cluster running on top of docker.
 1. [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl): For interacting with your Kubernetes cluster.
 1. [`istioctl`](https://istio.io/latest/docs/setup/getting-started/#download): For installing Istio.
+    - Version 1.7.0 is used in this walkthrough. Other version my not work as expected.
+    - You can check your istioctl version with: `istioctl version`
+
 
 Nothing more is required to run the walkthrough !
 
@@ -152,6 +155,13 @@ spec:
               - name: tls
                 port: 15443
                 targetPort: 15443
+  addonComponents:
+    prometheus:
+      enabled: true
+    kiali:
+      enabled: true
+    grafana:
+      enabled: true
 EOF
 ```
 
@@ -265,16 +275,6 @@ Browse `http://tekton-dashboard.127.0.0.1.nip.io` to access your dashboard.
 
 ## Browsing the Istio dashboard
 
-Installing the latest Istio dashboard release is done by running the following command:
-```bash
-kubectl apply -f https://raw.githubusercontent.com/istio/istio/master/samples/addons/kiali.yaml
-```
-
-Installing the latest Prometheus release is done by running the following command:
-```bash
-kubectl apply -f https://raw.githubusercontent.com/istio/istio/master/samples/addons/prometheus.yaml
-```
-
 You can browse the Istio dashboard by running the following command:
 
 ```bash
@@ -282,8 +282,6 @@ istioctl dashboard kiali
 ```
 
 Default install uses `admin`/`admin` for login and password.
-
-Browse `http://localhost:20001/kiali/console/graph/namespaces/` to access the graph shown below
 
 ![Istio dashboard graph](./walkthrough-istio-kiali.png)
 
