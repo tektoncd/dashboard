@@ -17,7 +17,8 @@ module.exports = {
   addons: [
     '@storybook/addon-knobs',
     '@storybook/addon-actions',
-    '@storybook/addon-viewport'
+    '@storybook/addon-viewport',
+    '@storybook/addon-storysource'
   ],
   stories: [
     '../src/**/*.stories.js',
