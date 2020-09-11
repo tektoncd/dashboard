@@ -50,12 +50,12 @@ verifySupported() {
     exit 1
   fi
 
-  if ! type "kustomize" > /dev/null 2>&1; then
+  if [ -z "$VERSION" ] && ! type "kustomize" > /dev/null 2>&1; then
     echo "kustomize is required"
     exit 1
   fi
 
-  if ! type "ko" > /dev/null 2>&1; then
+  if [ -z "$VERSION" ] && ! type "ko" > /dev/null 2>&1; then
     echo "ko is required"
     exit 1
   fi
