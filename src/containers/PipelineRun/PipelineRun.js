@@ -133,7 +133,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
         labels &&
         (labels[labelConstants.CONDITION_CHECK] ||
           labels[labelConstants.PIPELINE_TASK]);
-      const { podName, retriesStatus } = taskRun.status;
+      const { podName, retriesStatus } = taskRun.status || {};
       acc[uid + podName] = {
         pipelineTaskName,
         uid
