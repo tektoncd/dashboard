@@ -151,24 +151,10 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
         const params = getParams(taskRun.spec);
         const { inputResources, outputResources } = getResources(taskRun.spec);
 
-        let steps = '';
+        let steps = [];
 
-        if (!taskSpec || !taskRun.status) {
-          steps = {
-            id: 0,
-            reason: 'unknown',
-            status: 'unknown'
-          };
-          let theRun = taskRun;
-          theRun = {
-            metadata: {
-              uid: '0'
-            },
-            status: {
-              podName: 'unknown'
-            }
-          };
-          taskRun = theRun; // eslint-disable-line no-param-reassign
+        if (!taskRun.status) {
+          taskRun.status = {}; // eslint-disable-line no-param-reassign
         } else {
           const reorderedSteps = reorderSteps(
             taskRun.status.steps,
