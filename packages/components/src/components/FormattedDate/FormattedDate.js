@@ -19,35 +19,41 @@ const FormattedDateWrapper = ({ date, intl, relative }) => {
     return null;
   }
 
+  let content;
+
   if (relative && Intl.RelativeTimeFormat) {
-    return (
-      <span
-        title={intl.formatDate(date, {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-          hour: 'numeric',
-          minute: 'numeric'
-        })}
-      >
-        <FormattedRelativeTime
-          numeric="auto"
-          updateIntervalInSeconds={10}
-          value={(new Date(date).getTime() - Date.now()) / 1000}
-        />
-      </span>
+    content = (
+      <FormattedRelativeTime
+        numeric="auto"
+        updateIntervalInSeconds={10}
+        value={(new Date(date).getTime() - Date.now()) / 1000}
+      />
+    );
+  } else {
+    content = (
+      <FormattedDate
+        value={date}
+        day="numeric"
+        month="long"
+        year="numeric"
+        hour="numeric"
+        minute="numeric"
+      />
     );
   }
 
   return (
-    <FormattedDate
-      value={date}
-      day="numeric"
-      month="long"
-      year="numeric"
-      hour="numeric"
-      minute="numeric"
-    />
+    <span
+      title={intl.formatDate(date, {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric'
+      })}
+    >
+      {content}
+    </span>
   );
 };
 
