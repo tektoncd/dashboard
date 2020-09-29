@@ -120,6 +120,8 @@
     "dashboard.importResources.heading": "Import resources from repository",
     "dashboard.importResources.importApplyButton": "Import and Apply",
     "dashboard.importResources.importerNamespace.helperText": "The namespace in which the PipelineRun fetching the repository and creating the resources will run",
+    "dashboard.importResources.method.helperText": "If any of the resources being imported use 'generateName' rather than 'name' in their metadata, select 'create' so they can be imported correctly.",
+    "dashboard.importResources.method.label": "Method",
     "dashboard.importResources.path.helperText": "The path of the Tekton resources to import from the repository. Leave blank if the resources are at the top-level directory.",
     "dashboard.importResources.path.labelText": "Repository path (optional)",
     "dashboard.importResources.path.placeholder": "Enter repository path",

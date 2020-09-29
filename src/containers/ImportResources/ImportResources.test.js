@@ -158,12 +158,12 @@ describe('ImportResources component', () => {
       .spyOn(API, 'importResources')
       .mockImplementation(
         ({
-          repositoryURL,
-          applyDirectory,
-          namespace,
+          importerNamespace,
           labels,
-          serviceAccount,
-          importerNamespace
+          namespace,
+          path,
+          repositoryURL,
+          serviceAccount
         }) => {
           const labelsShouldEqual = {
             gitOrg: 'test',
@@ -172,7 +172,7 @@ describe('ImportResources component', () => {
           };
 
           expect(repositoryURL).toEqual('https://github.com/test/testing');
-          expect(applyDirectory).toEqual('');
+          expect(path).toEqual('');
           expect(namespace).toEqual('default');
           expect(labels).toEqual(labelsShouldEqual);
           expect(serviceAccount).toEqual('');

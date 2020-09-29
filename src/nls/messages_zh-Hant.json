@@ -120,6 +120,8 @@
     "dashboard.importResources.heading": "",
     "dashboard.importResources.importApplyButton": "",
     "dashboard.importResources.importerNamespace.helperText": "",
+    "dashboard.importResources.method.helperText": "",
+    "dashboard.importResources.method.label": "",
     "dashboard.importResources.path.helperText": "",
     "dashboard.importResources.path.labelText": "",
     "dashboard.importResources.path.placeholder": "",
