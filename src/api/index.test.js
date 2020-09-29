@@ -266,3 +266,31 @@ it('importResources', () => {
     mockDateNow.mockRestore();
   });
 });
+
+describe('getAPIResource', () => {
+  it('handles non-core group', () => {
+    const group = 'testgroup';
+    const version = 'testversion';
+    const type = 'testtype';
+    const apiResource = { name: type };
+    const data = { resources: [apiResource] };
+    fetchMock.get(`end:/proxy/apis/${group}/${version}`, data);
+    return API.getAPIResource({ group, version, type }).then(resource => {
+      expect(resource).toEqual(apiResource);
+      fetchMock.restore();
+    });
+  });
+
+  it('handles core group', () => {
+    const group = 'core';
+    const version = 'testversion';
+    const type = 'testtype';
+    const apiResource = { name: type };
+    const data = { resources: [apiResource] };
+    fetchMock.get(`end:/proxy/api/${version}`, data);
+    return API.getAPIResource({ group, version, type }).then(resource => {
+      expect(resource).toEqual(apiResource);
+      fetchMock.restore();
+    });
+  });
+});

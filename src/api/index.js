@@ -247,3 +247,16 @@ export function importResources({
   const uri = getTektonAPI('pipelineruns', { namespace: importerNamespace });
   return post(uri, payload).then(({ body }) => body);
 }
+
+export function getAPIResource({ group, version, type }) {
+  const uri = [
+    apiRoot,
+    group === 'core'
+      ? `/proxy/api/${version}`
+      : `/proxy/apis/${group}/${version}`
+  ].join('');
+
+  return get(uri).then(({ resources }) =>
+    resources.find(({ name }) => name === type)
+  );
+}

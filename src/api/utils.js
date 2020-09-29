@@ -70,7 +70,9 @@ export function getResourcesAPI(
 ) {
   return [
     apiRoot,
-    `/proxy/apis/${group}/${version}/`,
+    group === 'core'
+      ? `/proxy/api/${version}/`
+      : `/proxy/apis/${group}/${version}/`,
     namespace && namespace !== ALL_NAMESPACES
       ? `namespaces/${encodeURIComponent(namespace)}/`
       : '',

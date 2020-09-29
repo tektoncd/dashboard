@@ -19,12 +19,13 @@ import { connect } from 'react-redux';
 import { getErrorMessage, getTitle, urls } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 
-import { getCustomResources } from '../../api';
+import { getAPIResource, getCustomResources } from '../../api';
 import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
 
 export class ResourceListContainer extends Component {
   state = {
     loading: true,
+    namespaced: true,
     resources: []
   };
 
@@ -63,7 +64,16 @@ export class ResourceListContainer extends Component {
   }
 
   fetchResources(group, version, type, namespace) {
-    return getCustomResources({ group, version, type, namespace })
+    return getAPIResource({ group, version, type })
+      .then(({ namespaced }) => {
+        this.setState({ namespaced });
+        return getCustomResources({
+          group,
+          version,
+          type,
+          namespace: namespaced ? namespace : null
+        });
+      })
       .then(resources => {
         this.setState({
           loading: false,
@@ -77,8 +87,8 @@ export class ResourceListContainer extends Component {
 
   render() {
     const { intl, match } = this.props;
-    const { group, version, type } = match.params;
-    const { error, loading, resources } = this.state;
+    const { group, type, version } = match.params;
+    const { error, loading, namespaced, resources } = this.state;
 
     if (error) {
       return (
@@ -118,10 +128,12 @@ export class ResourceListContainer extends Component {
                 defaultMessage: 'Name'
               })
             },
-            {
-              key: 'namespace',
-              header: 'Namespace'
-            },
+            namespaced
+              ? {
+                  key: 'namespace',
+                  header: 'Namespace'
+                }
+              : null,
             {
               key: 'createdTime',
               header: intl.formatMessage({
@@ -129,7 +141,7 @@ export class ResourceListContainer extends Component {
                 defaultMessage: 'Created'
               })
             }
-          ]}
+          ].filter(Boolean)}
           rows={resources.map(resource => {
             const {
               creationTimestamp,
