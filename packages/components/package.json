@@ -4,6 +4,7 @@
   "author": {
     "name": "The Tekton Authors"
   },
+  "keywords": ["tekton", "tektoncd", "components", "react"],
   "license": "Apache-2.0",
   "private": false,
   "main": "./dist/components/index.js",
