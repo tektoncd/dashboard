@@ -101,17 +101,19 @@ it('importResources', () => {
     .spyOn(Date, 'now')
     .mockImplementation(() => 'fake-timestamp');
   const repositoryURL = 'https://github.com/test/testing';
-  const applyDirectory = 'fake-directory';
+  const path = 'fake-directory';
   const namespace = 'fake-namespace';
   const serviceAccount = 'fake-serviceAccount';
   const importerNamespace = 'fake-importer-namespace';
+  const method = 'apply';
 
   const payload = {
-    repositoryURL,
-    applyDirectory,
+    importerNamespace,
+    method,
     namespace,
-    serviceAccount,
-    importerNamespace
+    path,
+    repositoryURL,
+    serviceAccount
   };
   const data = {
     apiVersion: 'tekton.dev/v1beta1',
@@ -126,7 +128,7 @@ it('importResources', () => {
     spec: {
       params: [
         {
-          name: 'apply-directory',
+          name: 'path',
           value: 'fake-directory'
         },
         {
@@ -137,15 +139,9 @@ it('importResources', () => {
       pipelineSpec: {
         params: [
           {
-            default: '/workspace/git-source',
-            description: 'The path to the resource files to apply',
-            name: 'pathToResourceFiles',
-            type: 'string'
-          },
-          {
             default: '.',
-            description: 'The directory from which resources are to be applied',
-            name: 'apply-directory',
+            description: 'The path from which resources are to be imported',
+            name: 'path',
             type: 'string'
           },
           {
@@ -167,12 +163,8 @@ it('importResources', () => {
             name: 'import-resources',
             params: [
               {
-                name: 'pathToResourceFiles',
-                value: '$(params.pathToResourceFiles)'
-              },
-              {
-                name: 'apply-directory',
-                value: '$(params.apply-directory)'
+                name: 'path',
+                value: '$(params.path)'
               },
               {
                 name: 'target-namespace',
@@ -190,16 +182,10 @@ it('importResources', () => {
             taskSpec: {
               params: [
                 {
-                  default: '/workspace/git-source',
-                  description: 'The path to the resource files to apply',
-                  name: 'pathToResourceFiles',
-                  type: 'string'
-                },
-                {
                   default: '.',
                   description:
-                    'The directory from which resources are to be applied',
-                  name: 'apply-directory',
+                    'The path from which resources are to be imported',
+                  name: 'path',
                   type: 'string'
                 },
                 {
@@ -221,15 +207,15 @@ it('importResources', () => {
               steps: [
                 {
                   args: [
-                    'apply',
+                    method,
                     '-f',
-                    '$(params.pathToResourceFiles)/$(params.apply-directory)',
+                    '$(resources.inputs.git-source.path)/$(params.path)',
                     '-n',
                     '$(params.target-namespace)'
                   ],
                   command: ['kubectl'],
                   image: 'lachlanevenson/k8s-kubectl:latest',
-                  name: 'kubectl-apply'
+                  name: 'import'
                 }
               ]
             }

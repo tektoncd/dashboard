@@ -81,12 +81,13 @@ export function getWebSocketURL() {
 }
 
 export function importResources({
-  repositoryURL,
-  applyDirectory,
-  namespace,
+  importerNamespace,
   labels,
-  serviceAccount,
-  importerNamespace
+  method,
+  namespace,
+  path,
+  repositoryURL,
+  serviceAccount
 }) {
   const taskSpec = {
     resources: {
@@ -99,14 +100,8 @@ export function importResources({
     },
     params: [
       {
-        name: 'pathToResourceFiles',
-        description: 'The path to the resource files to apply',
-        default: '/workspace/git-source',
-        type: 'string'
-      },
-      {
-        name: 'apply-directory',
-        description: 'The directory from which resources are to be applied',
+        name: 'path',
+        description: 'The path from which resources are to be imported',
         default: '.',
         type: 'string'
       },
@@ -120,13 +115,13 @@ export function importResources({
     ],
     steps: [
       {
-        name: 'kubectl-apply',
+        name: 'import',
         image: 'lachlanevenson/k8s-kubectl:latest',
         command: ['kubectl'],
         args: [
-          'apply',
+          method,
           '-f',
-          '$(params.pathToResourceFiles)/$(params.apply-directory)',
+          '$(resources.inputs.git-source.path)/$(params.path)',
           '-n',
           '$(params.target-namespace)'
         ]
@@ -143,14 +138,8 @@ export function importResources({
     ],
     params: [
       {
-        name: 'pathToResourceFiles',
-        description: 'The path to the resource files to apply',
-        default: '/workspace/git-source',
-        type: 'string'
-      },
-      {
-        name: 'apply-directory',
-        description: 'The directory from which resources are to be applied',
+        name: 'path',
+        description: 'The path from which resources are to be imported',
         default: '.',
         type: 'string'
       },
@@ -168,12 +157,8 @@ export function importResources({
         taskSpec,
         params: [
           {
-            name: 'pathToResourceFiles',
-            value: '$(params.pathToResourceFiles)'
-          },
-          {
-            name: 'apply-directory',
-            value: '$(params.apply-directory)'
+            name: 'path',
+            value: '$(params.path)'
           },
           {
             name: 'target-namespace',
@@ -216,8 +201,8 @@ export function importResources({
     ],
     params: [
       {
-        name: 'apply-directory',
-        value: applyDirectory
+        name: 'path',
+        value: path
       },
       {
         name: 'target-namespace',

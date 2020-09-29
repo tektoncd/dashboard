@@ -17,6 +17,7 @@ import {
   Accordion,
   AccordionItem,
   Button,
+  Dropdown,
   Form,
   InlineNotification,
   TextInput,
@@ -29,6 +30,7 @@ import {
   ALL_NAMESPACES,
   getErrorMessage,
   getTitle,
+  getTranslateWithId,
   urls
 } from '@tektoncd/dashboard-utils';
 import { getGitValues } from '../../utils';
@@ -38,6 +40,8 @@ import { getDashboardNamespace, getSelectedNamespace } from '../../reducers';
 import { NamespacesDropdown, ServiceAccountsDropdown } from '..';
 
 import './ImportResources.scss';
+
+const itemToString = item => (item ? item.text : '');
 
 function validateURL(url) {
   if (!url.trim().startsWith('http://') && !url.trim().startsWith('https://')) {
@@ -58,21 +62,24 @@ function validateURL(url) {
   return true;
 }
 
+const initialMethod = 'apply';
+
 export class ImportResources extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      path: '',
+      importerNamespace: '',
+      invalidImporterNamespace: false,
       invalidInput: false,
       invalidNamespace: false,
-      invalidImporterNamespace: false,
-      importerNamespace: '',
       logsURL: '',
+      method: initialMethod,
       namespace: props.navNamespace !== ALL_NAMESPACES && props.navNamespace,
+      path: '',
       repositoryURL: '',
       serviceAccount: '',
-      submitSuccess: false,
-      submitError: ''
+      submitError: '',
+      submitSuccess: false
     };
   }
 
@@ -95,6 +102,10 @@ export class ImportResources extends Component {
 
   resetSuccess = () => {
     this.setState({ submitSuccess: false });
+  };
+
+  handleMethod = ({ selectedItem }) => {
+    this.setState({ method: selectedItem.text });
   };
 
   handleNamespace = ({ selectedItem }) => {
@@ -133,11 +144,12 @@ export class ImportResources extends Component {
 
   handleSubmit = () => {
     const {
-      path: applyDirectory,
+      importerNamespace,
+      method,
       namespace,
+      path,
       repositoryURL,
-      serviceAccount,
-      importerNamespace
+      serviceAccount
     } = this.state;
 
     // Without the if statement it will not display errors for both the namespace and the url at the same time
@@ -163,12 +175,13 @@ export class ImportResources extends Component {
     const labels = getGitValues(repositoryURL);
 
     importResources({
-      repositoryURL,
-      applyDirectory,
-      namespace,
+      importerNamespace,
       labels,
-      serviceAccount,
-      importerNamespace
+      method,
+      namespace,
+      path,
+      repositoryURL,
+      serviceAccount
     })
       .then(body => {
         const pipelineRunName = body.metadata.name;
@@ -341,6 +354,27 @@ export class ImportResources extends Component {
                   id: 'dashboard.serviceAccountLabel.optional',
                   defaultMessage: 'ServiceAccount (optional)'
                 })}
+              />
+              <Dropdown
+                helperText={intl.formatMessage({
+                  id: 'dashboard.importResources.method.helperText',
+                  defaultMessage:
+                    "If any of the resources being imported use 'generateName' rather than 'name' in their metadata, select 'create' so they can be imported correctly."
+                })}
+                id="import-method"
+                initialSelectedItem={{ id: initialMethod, text: initialMethod }}
+                items={[
+                  { id: 'apply', text: 'apply' },
+                  { id: 'create', text: 'create' }
+                ]}
+                itemToString={itemToString}
+                label=""
+                onChange={this.handleMethod}
+                titleText={intl.formatMessage({
+                  id: 'dashboard.importResources.method.label',
+                  defaultMessage: 'Method'
+                })}
+                translateWithId={getTranslateWithId(intl)}
               />
             </AccordionItem>
           </Accordion>
