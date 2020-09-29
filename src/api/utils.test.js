@@ -69,7 +69,7 @@ describe('getTektonAPI', () => {
   });
 });
 
-describe('getResourceAPI', () => {
+describe('getResourcesAPI', () => {
   it('returns a URI containing the given type', () => {
     const uri = utils.getResourcesAPI({
       group: 'test.dev',
@@ -104,6 +104,24 @@ describe('getResourceAPI', () => {
       name: 'testname'
     });
     expect(uri).toContain('test.dev');
+    expect(uri).toContain('testversion');
+    expect(uri).toContain('testtype');
+    expect(uri).toContain('testname');
+    expect(uri).toContain('namespaces');
+    expect(uri).toContain('testnamespace');
+  });
+
+  it('handles the core group correctly', () => {
+    const uri = utils.getResourcesAPI({
+      group: 'core',
+      version: 'testversion',
+      type: 'testtype',
+      namespace: 'testnamespace',
+      name: 'testname'
+    });
+    expect(uri).not.toContain('core');
+    expect(uri).toContain('api');
+    expect(uri).not.toContain('apis');
     expect(uri).toContain('testversion');
     expect(uri).toContain('testtype');
     expect(uri).toContain('testname');
