@@ -232,11 +232,11 @@ $tekton_repo_dir/scripts/installer build --openshift              || fail_test "
 $tekton_repo_dir/scripts/installer build --openshift --read-only  || fail_test "Failed to build manifests for openshift --read-only"
 
 if [ -z "$PIPELINES_VERSION" ]; then
-  export PIPELINES_VERSION=v0.15.2
+  export PIPELINES_VERSION=v0.16.3
 fi
 
 if [ -z "$TRIGGERS_VERSION" ]; then
-  export TRIGGERS_VERSION=v0.7.0
+  export TRIGGERS_VERSION=v0.8.1
 fi
 
 # test in default namespace
