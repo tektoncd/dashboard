@@ -400,7 +400,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
         <FormGroup
           legendText={
             <Tooltip
-              direction="bottom"
+              direction="right"
               tabIndex={0}
               tooltipBodyId="secret-type-helper"
               triggerText={intl.formatMessage({
