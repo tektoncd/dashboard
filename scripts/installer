@@ -427,12 +427,21 @@ install() {
   kubectl apply -f $TMP_FILE
 }
 
-# uninstall invokes kubectl delete with the built manifest.
 uninstall() {
   echo "Uninstalling ..."
-  kubectl delete deployments -l=app.kubernetes.io/instance=default,app.kubernetes.io/part-of=tekton-dashboard --all-namespaces
-  kubectl api-resources --verbs=delete -o name | \
-    xargs -n 1 kubectl delete --ignore-not-found -l=app.kubernetes.io/instance=default,app.kubernetes.io/part-of=tekton-dashboard --all-namespaces
+  resourceKinds=(
+    "deployments.apps"
+    "serviceaccounts"
+    "services"
+    "customresourcedefinitions.apiextensions.k8s.io"
+    "clusterrolebindings.rbac.authorization.k8s.io"
+    "clusterroles.rbac.authorization.k8s.io"
+    "rolebindings.rbac.authorization.k8s.io"
+  )
+  for resourceKind in "${resourceKinds[@]}";do
+    echo "Deleting ${resourceKind}"
+    kubectl delete ${resourceKind} --ignore-not-found -l=app.kubernetes.io/instance=default,app.kubernetes.io/part-of=tekton-dashboard --all-namespaces
+  done
 }
 
 build() {
