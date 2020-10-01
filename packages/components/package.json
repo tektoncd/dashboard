@@ -29,9 +29,9 @@
     "tlds": "^1.208.0"
   },
   "peerDependencies": {
-    "@carbon/icons-react": "^10.14.0",
-    "carbon-components": "^10.16.0",
-    "carbon-components-react": "^7.16.0",
+    "@carbon/icons-react": "^10.18.0",
+    "carbon-components": "^10.20.0",
+    "carbon-components-react": "^7.20.0",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
     "react-intl": "^4.7.1",
