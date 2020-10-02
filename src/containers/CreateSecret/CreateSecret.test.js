@@ -16,6 +16,7 @@ import { fireEvent, waitForElement } from 'react-testing-library';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 import { renderWithIntl, rerenderWithIntl } from '../../utils/test';
 import CreateSecret from '.';
 import * as API from '../../api';
@@ -44,7 +45,7 @@ const namespaces = {
   },
   errorMessage: null,
   isFetching: false,
-  selected: 'default'
+  selected: ALL_NAMESPACES
 };
 
 const serviceAccountsByNamespace = {

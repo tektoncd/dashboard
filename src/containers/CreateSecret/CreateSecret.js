@@ -11,7 +11,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { generateId, getTitle, urls } from '@tektoncd/dashboard-utils';
+import {
+  ALL_NAMESPACES,
+  generateId,
+  getTitle,
+  urls
+} from '@tektoncd/dashboard-utils';
 import React, { Component } from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
@@ -23,6 +28,7 @@ import {
   getPatchSecretsErrorMessage,
   getSecrets,
   getSecretsErrorMessage,
+  getSelectedNamespace,
   getServiceAccounts,
   isFetchingSecrets,
   isFetchingServiceAccounts,
@@ -68,9 +74,10 @@ function validateInputs(value, id) {
 export /* istanbul ignore next */ class CreateSecret extends Component {
   constructor(props) {
     super(props);
+    const { defaultNamespace } = props;
     this.state = {
       name: '',
-      namespace: '',
+      namespace: defaultNamespace === ALL_NAMESPACES ? '' : defaultNamespace,
       username: '',
       password: '',
       accessToken: '',
@@ -409,8 +416,10 @@ export /* istanbul ignore next */ class CreateSecret extends Component {
   }
 }
 
+/* istanbul ignore next */
 function mapStateToProps(state) {
   return {
+    defaultNamespace: getSelectedNamespace(state),
     errorMessageCreated: getSecretsErrorMessage(state),
     errorMessagePatched: getPatchSecretsErrorMessage(state),
     webSocketConnected: isWebSocketConnected(state),
