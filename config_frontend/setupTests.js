@@ -12,9 +12,14 @@ limitations under the License.
 */
 
 import 'react-testing-library/cleanup-after-each';
+import fetch from 'node-fetch';
 import fetchMock from 'fetch-mock';
 import { TextDecoder, TextEncoder } from 'util';
 import { ReadableStream } from 'web-streams-polyfill/es6';
+
+if (!global.fetch) {
+  global.fetch = fetch;
+}
 
 fetchMock.catch();
 fetchMock.config.overwriteRoutes = true;
