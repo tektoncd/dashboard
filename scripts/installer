@@ -169,7 +169,7 @@ patch() {
   replace "namespace: tekton-dashboard" "namespace: $INSTALL_NAMESPACE"
 
   if [ "$OPENSHIFT" == "true" ] && [ "$IMAGE_STREAM" == "true" ]; then
-    replace "image: github.com/tektoncd/dashboard/cmd/dashboard" "image: $INSTALL_NAMESPACE/tekton-dashboard"
+    replace "image: ko://github.com/tektoncd/dashboard/cmd/dashboard" "image: $INSTALL_NAMESPACE/tekton-dashboard"
   fi
 }
 
