@@ -62,7 +62,7 @@ describe('ImportResources component', () => {
     );
 
     fireEvent.click(getByText('Import and Apply'));
-    await waitForElement(() => getByText(/Please submit a valid URL/i));
+    await waitForElement(() => getByText(/Please enter a valid Git URL/i));
     await waitForElement(() => getByText(/Please select a namespace/i));
   });
 
@@ -78,7 +78,7 @@ describe('ImportResources component', () => {
     fireEvent.click(getByText(namespace));
 
     fireEvent.click(getByText('Import and Apply'));
-    await waitForElement(() => getByText(/Please submit a valid URL/i));
+    await waitForElement(() => getByText(/Please enter a valid Git URL/i));
   });
 
   it('Displays an error when Namespace is empty', async () => {
@@ -95,57 +95,6 @@ describe('ImportResources component', () => {
 
     fireEvent.click(getByText('Import and Apply'));
     await waitForElement(() => getByText(/Please select a namespace/i));
-  });
-
-  it('Displays an error when Repository URL starts with the incorrect term', async () => {
-    const { getByTestId, getByText } = await renderWithIntl(
-      <Provider store={store}>
-        <ImportResourcesContainer />
-      </Provider>
-    );
-
-    const repoURLField = getByTestId('repository-url-field');
-    fireEvent.change(repoURLField, {
-      target: { value: 'incorrecthttps://github.com/test/testing' }
-    });
-
-    fireEvent.click(getByText('Import and Apply'));
-    await waitForElement(() => getByText(/Please select a namespace/i));
-    await waitForElement(() => getByText(/Please submit a valid URL/i));
-  });
-
-  it('Displays an error when Repository URL doesnt contain github', async () => {
-    const { getByTestId, getByText } = await renderWithIntl(
-      <Provider store={store}>
-        <ImportResourcesContainer />
-      </Provider>
-    );
-
-    const repoURLField = getByTestId('repository-url-field');
-    fireEvent.change(repoURLField, {
-      target: { value: 'https://cat.com/test/testing' }
-    });
-
-    fireEvent.click(getByText('Import and Apply'));
-    await waitForElement(() => getByText(/Please select a namespace/i));
-    await waitForElement(() => getByText(/Please submit a valid URL/i));
-  });
-
-  it('Displays an error when Repository URL doesnt contain a .', async () => {
-    const { getByTestId, getByText } = await renderWithIntl(
-      <Provider store={store}>
-        <ImportResourcesContainer />
-      </Provider>
-    );
-
-    const repoURLField = getByTestId('repository-url-field');
-    fireEvent.change(repoURLField, {
-      target: { value: 'https://cat-com/test/testing' }
-    });
-
-    fireEvent.click(getByText('Import and Apply'));
-    await waitForElement(() => getByText(/Please select a namespace/i));
-    await waitForElement(() => getByText(/Please submit a valid URL/i));
   });
 
   it('Valid data submit displays success notification ', async () => {
@@ -167,7 +116,7 @@ describe('ImportResources component', () => {
         }) => {
           const labelsShouldEqual = {
             gitOrg: 'test',
-            gitRepo: 'testing.git',
+            gitRepo: 'testing',
             gitServer: 'github.com'
           };
 
@@ -242,18 +191,7 @@ describe('ImportResources component', () => {
     fireEvent.click(getByText('namespace1'));
 
     fireEvent.click(getByText('Import and Apply'));
-    await waitForElement(() => getByText(/Please submit a valid URL/i));
-  });
-
-  it('Failure to populate required field displays error', async () => {
-    const { getByText } = await renderWithIntl(
-      <Provider store={store}>
-        <ImportResourcesContainer />
-      </Provider>
-    );
-
-    fireEvent.click(getByText('Import and Apply'));
-    await waitForElement(() => getByText(/Please submit a valid URL/i));
+    await waitForElement(() => getByText(/Please enter a valid Git URL/i));
   });
 
   it('URL TextInput handles onChange event', async () => {
