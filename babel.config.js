@@ -19,9 +19,10 @@ module.exports = api => {
       [
         '@babel/preset-env',
         {
-          corejs: '3',
-          useBuiltIns: 'entry',
-          modules: false
+          corejs: '3.6',
+          exclude: ['@babel/plugin-transform-regenerator'],
+          modules: false,
+          useBuiltIns: 'entry'
         }
       ],
       '@babel/preset-react'
