@@ -29,7 +29,10 @@ it('getExtensions', () => {
 });
 
 it('getExtensions null', () => {
-  fetchMock.get(/extensions/, 'null');
+  fetchMock.get(/extensions/, {
+    body: 'null',
+    headers: { 'Content-Type': 'application/json' }
+  });
   return API.getExtensions().then(response => {
     expect(response).toEqual([]);
     fetchMock.restore();
