@@ -29,7 +29,7 @@ resources:
   - ../../../base/300-service.yaml
 images:
   - name: dashboardImage
-    newName: github.com/tektoncd/dashboard/cmd/dashboard
+    newName: ko://github.com/tektoncd/dashboard/cmd/dashboard
 patchesJson6902:
   - target:
       group: apps
