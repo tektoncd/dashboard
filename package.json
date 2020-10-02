@@ -37,7 +37,6 @@
     "carbon-icons": "^7.0.7",
     "classnames": "^2.2.6",
     "core-js": "^3.6.5",
-    "es6-promise": "^4.2.8",
     "git-url-parse": "^11.3.0",
     "history": "^4.10.1",
     "js-yaml": "^3.14.0",
@@ -55,8 +54,7 @@
     "react-router-dom": "^5.2.0",
     "reconnecting-websocket": "^4.4.0",
     "redux": "^4.0.5",
-    "redux-thunk": "^2.3.0",
-    "regenerator-runtime": "^0.13.5"
+    "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.10.2",
