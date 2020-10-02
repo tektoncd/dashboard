@@ -17,7 +17,7 @@ import { fireEvent } from 'react-testing-library';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { paths, urls } from '@tektoncd/dashboard-utils';
+import { ALL_NAMESPACES, paths, urls } from '@tektoncd/dashboard-utils';
 import { renderWithIntl, renderWithRouter } from '../../utils/test';
 import CreatePipelineResource from '.';
 import * as API from '../../api';
@@ -45,7 +45,7 @@ const namespaces = {
   },
   errorMessage: null,
   isFetching: false,
-  selected: 'default'
+  selected: ALL_NAMESPACES
 };
 
 const store = mockStore({

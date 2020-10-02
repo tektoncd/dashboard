@@ -15,11 +15,17 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import { Button, InlineNotification } from 'carbon-components-react';
-import { getErrorMessage, getTitle, urls } from '@tektoncd/dashboard-utils';
+import {
+  ALL_NAMESPACES,
+  getErrorMessage,
+  getTitle,
+  urls
+} from '@tektoncd/dashboard-utils';
 
 import GitResourceFields from '../../components/CreatePipelineResource/GitResourceFields';
 import UniversalFields from '../../components/CreatePipelineResource/UniversalFields';
 import { createPipelineResource } from '../../api';
+import { getSelectedNamespace } from '../../reducers';
 
 import '../../scss/Create.scss';
 
@@ -50,10 +56,11 @@ function validateInputs(value, id) {
 export /* istanbul ignore next */ class CreatePipelineResource extends Component {
   constructor(props) {
     super(props);
+    const { defaultNamespace } = props;
     this.state = {
       creating: false,
       name: '',
-      namespace: '',
+      namespace: defaultNamespace === ALL_NAMESPACES ? '' : defaultNamespace,
       type: 'Git',
       url: '',
       revision: '',
@@ -318,11 +325,18 @@ export /* istanbul ignore next */ class CreatePipelineResource extends Component
   }
 }
 
+/* istanbul ignore next */
+function mapStateToProps(state) {
+  return {
+    defaultNamespace: getSelectedNamespace(state)
+  };
+}
+
 const mapDispatchToProps = {
   createPipelineResource
 };
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(injectIntl(CreatePipelineResource));
