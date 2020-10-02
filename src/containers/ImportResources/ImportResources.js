@@ -33,8 +33,7 @@ import {
   getTranslateWithId,
   urls
 } from '@tektoncd/dashboard-utils';
-import { getGitValues } from '../../utils';
-
+import parseGitURL from 'git-url-parse';
 import { importResources } from '../../api';
 import { getDashboardNamespace, getSelectedNamespace } from '../../reducers';
 import { NamespacesDropdown, ServiceAccountsDropdown } from '..';
@@ -43,23 +42,12 @@ import './ImportResources.scss';
 
 const itemToString = item => (item ? item.text : '');
 
-function validateURL(url) {
-  if (!url.trim().startsWith('http://') && !url.trim().startsWith('https://')) {
+function isValidGitURL(url) {
+  if (!url || !url.trim()) {
     return false;
   }
-
-  if (url.trim() === '') {
-    return false;
-  }
-
-  if (url.includes('github') === false) {
-    return false;
-  }
-  if (url.includes('.') === false) {
-    return false;
-  }
-
-  return true;
+  const { name, owner, resource } = parseGitURL(url);
+  return !!(name && owner && resource);
 }
 
 const initialMethod = 'apply';
@@ -152,18 +140,11 @@ export class ImportResources extends Component {
       serviceAccount
     } = this.state;
 
-    // Without the if statement it will not display errors for both the namespace and the url at the same time
-    // The if / else statement inside is because the repositoryURL needs different parameters set for invalidInput
-    // for the error to display when Submit is pressed. If set to the same then the errors dont appear on the page
-    const repourlValid = validateURL(repositoryURL);
+    const repourlValid = isValidGitURL(repositoryURL);
     if (repourlValid === false || !namespace) {
-      if (repourlValid === false && repositoryURL === '') {
+      if (!repourlValid) {
         this.setState({
-          invalidInput: repositoryURL === ''
-        });
-      } else if (repourlValid === false) {
-        this.setState({
-          invalidInput: repositoryURL
+          invalidInput: true
         });
       }
       this.setState({
@@ -172,7 +153,10 @@ export class ImportResources extends Component {
       return;
     }
 
-    const labels = getGitValues(repositoryURL);
+    const { resource: gitServer, owner: gitOrg, name: gitRepo } = parseGitURL(
+      repositoryURL
+    );
+    const labels = { gitServer, gitOrg, gitRepo };
 
     importResources({
       importerNamespace,
@@ -263,7 +247,7 @@ export class ImportResources extends Component {
             invalid={this.state.invalidInput}
             invalidText={intl.formatMessage({
               id: 'dashboard.importResources.repo.invalidText',
-              defaultMessage: 'Please submit a valid URL'
+              defaultMessage: 'Please enter a valid Git URL'
             })}
             labelText={intl.formatMessage({
               id: 'dashboard.importResources.repo.labelText',

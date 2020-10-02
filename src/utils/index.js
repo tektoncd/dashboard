@@ -105,22 +105,6 @@ export function isStale(resource, state, resourceIdField = 'uid') {
   return existingVersion > incomingVersion;
 }
 
-export function getGitValues(url) {
-  let copyUrl;
-
-  copyUrl = url.toLowerCase().replace(/https?:\/\//, '');
-
-  copyUrl = copyUrl.split('/');
-  const numSlashes = copyUrl.length;
-  if (numSlashes < 2) {
-    return {};
-  }
-
-  const [gitServer, gitOrg, gitRepo] = copyUrl;
-
-  return { gitServer, gitOrg, gitRepo: `${gitRepo}.git` };
-}
-
 // K8s label documentation comes from here:
 // https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set
 const labelKeyRegex = new RegExp(

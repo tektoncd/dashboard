@@ -126,7 +126,7 @@
     "dashboard.importResources.path.labelText": "Repository path (optional)",
     "dashboard.importResources.path.placeholder": "Enter repository path",
     "dashboard.importResources.repo.helperText": "The location of the YAML definitions to be applied (Git URLs supported)",
-    "dashboard.importResources.repo.invalidText": "Please submit a valid URL",
+    "dashboard.importResources.repo.invalidText": "Please enter a valid Git URL",
     "dashboard.importResources.repo.labelText": "Repository URL",
     "dashboard.importResources.serviceAccount.helperText": "The ServiceAccount that the PipelineRun applying resources will run under (from the namespace above). Ensure the selected ServiceAccount (or the default if none selected) has permissions for creating PipelineRuns and for anything else your PipelineRun interacts with, including any Tekton resources in the Git repository.",
     "dashboard.importResources.targetNamespace.helperText": "The namespace in which the resources will be created",

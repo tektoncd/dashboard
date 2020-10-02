@@ -16,7 +16,6 @@ import * as API from '../api';
 import {
   fetchLogs,
   followLogs,
-  getGitValues,
   getViewChangeHandler,
   isStale,
   sortRunsByStartTime,
@@ -147,28 +146,6 @@ describe('followLogs', () => {
 
     followLogs(stepName, stepStatus, taskRun);
     expect(API.getPodLog).not.toHaveBeenCalled();
-  });
-});
-
-describe('getGitValues', () => {
-  it('should return an object describing the parts of the git URL', () => {
-    const url = 'https://github.com/user/repo';
-
-    const returnedValue = getGitValues(url);
-
-    expect(returnedValue).toStrictEqual({
-      gitOrg: 'user',
-      gitRepo: 'repo.git',
-      gitServer: 'github.com'
-    });
-  });
-
-  it('should return an empty object if the URL is not a valid git URL', () => {
-    const url = 'foo';
-
-    const returnedValue = getGitValues(url);
-
-    expect(returnedValue).toEqual({});
   });
 });
 
