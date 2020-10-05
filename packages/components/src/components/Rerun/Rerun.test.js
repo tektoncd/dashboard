@@ -32,7 +32,7 @@ const props = {
   }
 };
 
-const headers = {
+const response = {
   get() {
     return 'fake-pipeline-run';
   }
@@ -41,27 +41,21 @@ const headers = {
 it('rerun button creates API call with correct parameters', () => {
   const rerunMock = jest
     .fn()
-    .mockImplementation(() => Promise.resolve(headers));
+    .mockImplementation(() => Promise.resolve(response));
   const { getByText } = renderWithRouter(
-    <Rerun {...props} rerunPipelineRun={rerunMock} runName="thepipelinerun" />
+    <Rerun {...props} rerunPipelineRun={rerunMock} />
   );
   const theButton = getByText('Rerun');
   fireEvent.click(theButton);
-  const expected = { pipelinerunname: 'thepipelinerun' };
-  // No namespace provided here, payload as above
-  expect(rerunMock).toHaveBeenCalledWith('default', expected);
+  expect(rerunMock).toHaveBeenCalledWith(props.pipelineRun);
 });
 
 it('rerun button is ghost styled', async () => {
   const rerunMock = jest
     .fn()
-    .mockImplementation(() => Promise.resolve(headers));
+    .mockImplementation(() => Promise.resolve(response));
   const { getByTestId } = renderWithRouter(
-    <Rerun
-      {...props}
-      rerunPipelineRun={rerunMock}
-      runName="fake-pipeline-run"
-    />
+    <Rerun {...props} rerunPipelineRun={rerunMock} />
   );
   const rerunButton = getByTestId('rerun-btn');
   const rerunButtonIsGhost = rerunButton.getElementsByClassName(

@@ -109,8 +109,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
   };
 
   rerun = pipelineRun => {
-    const { name, namespace } = pipelineRun.metadata;
-    rerunPipelineRun(namespace, { pipelinerunname: name });
+    rerunPipelineRun(pipelineRun);
   };
 
   toggleModal = showCreatePipelineRunModal => {

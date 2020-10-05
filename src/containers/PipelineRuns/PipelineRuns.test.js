@@ -473,10 +473,8 @@ describe('PipelineRuns container', () => {
     await waitForElement(() => getByText(/Rerun/i));
     fireEvent.click(getByText('Rerun'));
     expect(PipelineRunsAPI.rerunPipelineRun).toHaveBeenCalledTimes(1);
-    const expected = { pipelinerunname: 'pipelineRunWithSingleLabel' };
     expect(PipelineRunsAPI.rerunPipelineRun).toHaveBeenCalledWith(
-      'namespace-1',
-      expected
+      pipelineRunsTestStore.pipelineRuns.byId['pipelineRunWithSingleLabel-id']
     );
   });
 });
