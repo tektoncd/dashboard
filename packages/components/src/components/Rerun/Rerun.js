@@ -21,25 +21,23 @@ import './Rerun.scss';
 class Rerun extends Component {
   handleRerun = event => {
     event.preventDefault();
-    const { intl } = this.props;
+    const {
+      intl,
+      pipelineRun,
+      rerunPipelineRun,
+      setShowRerunNotification
+    } = this.props;
 
-    const { namespace } = this.props.pipelineRun.metadata;
-    const payload = {
-      pipelinerunname: this.props.runName
-    };
+    const { namespace } = pipelineRun.metadata;
 
-    this.props
-      .rerunPipelineRun(namespace, payload)
-      .then(headers => {
-        const logsURL = headers.get('Content-Location');
-        const newPipelineRunName = logsURL.substring(
-          logsURL.lastIndexOf('/') + 1
-        );
+    rerunPipelineRun(pipelineRun)
+      .then(newPipelineRun => {
+        const newPipelineRunName = newPipelineRun.metadata.name;
         const finalURL = urls.pipelineRuns.byName({
           namespace,
           pipelineRunName: newPipelineRunName
         });
-        this.props.setShowRerunNotification({
+        setShowRerunNotification({
           message: intl.formatMessage({
             id: 'dashboard.rerun.triggered',
             defaultMessage: 'Triggered rerun'
@@ -49,32 +47,17 @@ class Rerun extends Component {
         });
       })
       .catch(error => {
-        const statusCode = error.response.status;
-        /* istanbul ignore next */
-        switch (statusCode) {
-          case 500:
-            this.props.setShowRerunNotification({
-              message: intl.formatMessage({
-                id: 'dashboard.rerun.internalServerError',
-                defaultMessage:
-                  'An internal server error occurred when rerunning this PipelineRun: check the dashboard and extension pod logs for details'
-              }),
-              kind: 'error'
-            });
-            break;
-          default:
-            this.props.setShowRerunNotification({
-              message: intl.formatMessage(
-                {
-                  id: 'dashboard.rerun.error',
-                  defaultMessage:
-                    'An error occurred when rerunning this PipelineRun: check the dashboard and extension pod logs for details. Status code: ${statusCode}'
-                },
-                { statusCode }
-              ),
-              kind: 'error'
-            });
-        }
+        setShowRerunNotification({
+          message: intl.formatMessage(
+            {
+              id: 'dashboard.rerun.error',
+              defaultMessage:
+                'An error occurred when rerunning this PipelineRun: check the dashboard logs for details. Status code: {statusCode}'
+            },
+            { statusCode: error.response.status }
+          ),
+          kind: 'error'
+        });
       });
   };
 

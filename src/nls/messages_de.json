@@ -198,7 +198,6 @@
     "dashboard.pipelinesDropdown.label": "",
     "dashboard.rerun.button": "",
     "dashboard.rerun.error": "",
-    "dashboard.rerun.internalServerError": "",
     "dashboard.rerun.triggered": "",
     "dashboard.rerunPipelineRun.actionText": "",
     "dashboard.resource.detailsTab": "Details",

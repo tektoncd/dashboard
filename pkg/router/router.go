@@ -69,7 +69,6 @@ func Register(resource endpoints.Resource) *Handler {
 	}
 
 	registerWeb(h.Container)
-	registerEndpoints(resource, h.Container)
 	registerPropertiesEndpoint(resource, h.Container)
 	registerWebsocket(resource, h.Container)
 	registerHealthProbe(resource, h.Container)
@@ -227,23 +226,6 @@ func registerWeb(container *restful.Container) {
 		w.Header().Set("X-Frame-Options", "deny")
 		fs.ServeHTTP(w, r)
 	}))
-}
-
-// registerEndpoints registers the APIs to interface with core Tekton/K8s pieces
-func registerEndpoints(r endpoints.Resource, container *restful.Container) {
-	wsv1 := new(restful.WebService)
-	wsv1.Filter(restful.NoBrowserCacheFilter)
-	wsv1.
-		Path("/v1/namespaces").
-		Consumes(restful.MIME_JSON, "text/plain").
-		Produces(restful.MIME_JSON, "text/plain")
-
-	logging.Log.Info("Adding v1, and API for k8s resources and pipelines")
-
-	wsv1.Route(wsv1.POST("/{namespace}/rerun").To(r.RerunPipelineRun))
-
-	container.Add(wsv1)
-
 }
 
 // registerWebsocket registers a websocket with which we can send log

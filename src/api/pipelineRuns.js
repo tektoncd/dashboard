@@ -12,9 +12,10 @@ limitations under the License.
 */
 
 import { labels as labelConstants } from '@tektoncd/dashboard-utils';
+import deepClone from 'lodash.clonedeep';
 
 import { deleteRequest, get, post, put } from './comms';
-import { checkData, getAPI, getQueryParams, getTektonAPI } from './utils';
+import { checkData, getQueryParams, getTektonAPI } from './utils';
 
 export function getPipelineRuns({ filters = [], namespace } = {}) {
   const uri = getTektonAPI(
@@ -93,7 +94,35 @@ export function createPipelineRun({
   return post(uri, payload).then(({ body }) => body);
 }
 
-export function rerunPipelineRun(namespace, payload) {
-  const uri = getAPI('rerun', { namespace });
-  return post(uri, payload).then(({ headers }) => headers);
+const rerunIdentifier = '-r-';
+function getGenerateNamePrefixForRerun(name) {
+  let root = name;
+  if (name.includes(rerunIdentifier)) {
+    root = name.substring(0, name.lastIndexOf(rerunIdentifier));
+  }
+  return `${root}${rerunIdentifier}`;
+}
+
+export function rerunPipelineRun(pipelineRun) {
+  const { annotations, labels, name, namespace } = pipelineRun.metadata;
+
+  const payload = deepClone(pipelineRun);
+  payload.apiVersion = payload.apiVersion || 'tekton.dev/v1beta1';
+  payload.kind = payload.kind || 'PipelineRun';
+  payload.metadata = {
+    annotations,
+    generateName: getGenerateNamePrefixForRerun(name),
+    labels: {
+      ...labels,
+      reruns: name
+    },
+    namespace
+  };
+
+  delete payload.metadata.labels['tekton.dev/pipeline'];
+
+  delete payload.status;
+
+  const uri = getTektonAPI('pipelineruns', { namespace });
+  return post(uri, payload).then(({ body }) => body);
 }

@@ -210,7 +210,6 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       clusterTasks,
       error,
       intl,
-      match,
       pipelineRun,
       pipelineTaskName,
       retry,
@@ -242,14 +241,12 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     }
 
     const { loading, showRerunNotification } = this.state;
-    const { pipelineRunName } = match.params;
     const selectedTaskId = this.getSelectedTaskId(pipelineTaskName, retry);
 
     const rerun = !this.props.isReadOnly && (
       <Rerun
         pipelineRun={pipelineRun}
         rerunPipelineRun={rerunPipelineRun}
-        runName={pipelineRunName}
         setShowRerunNotification={this.setShowRerunNotification}
       />
     );
