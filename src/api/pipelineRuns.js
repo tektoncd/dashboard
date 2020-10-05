@@ -11,7 +11,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { labels as labelConstants } from '@tektoncd/dashboard-utils';
+import {
+  getGenerateNamePrefixForRerun,
+  labels as labelConstants
+} from '@tektoncd/dashboard-utils';
 import deepClone from 'lodash.clonedeep';
 
 import { deleteRequest, get, post, put } from './comms';
@@ -92,15 +95,6 @@ export function createPipelineRun({
   }
   const uri = getTektonAPI('pipelineruns', { namespace });
   return post(uri, payload).then(({ body }) => body);
-}
-
-const rerunIdentifier = '-r-';
-function getGenerateNamePrefixForRerun(name) {
-  let root = name;
-  if (name.includes(rerunIdentifier)) {
-    root = name.substring(0, name.lastIndexOf(rerunIdentifier));
-  }
-  return `${root}${rerunIdentifier}`;
 }
 
 export function rerunPipelineRun(pipelineRun) {

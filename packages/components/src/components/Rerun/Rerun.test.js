@@ -12,54 +12,72 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, waitForElement } from 'react-testing-library';
+import { fireEvent } from 'react-testing-library';
 import { renderWithRouter } from '../../utils/test';
 import Rerun from './Rerun';
 
 /* Rerun should sit on the PipelineRun page and display notifications there
 It would be useful to have tests at the container level too, but for now just do it at the component level */
 
+const logsURL = '/fake/url';
+const fakeRunName = 'fake_runName';
+const fakeNamespace = 'fake_namespace';
 const props = {
-  pipelineRun: {
+  getURL() {
+    return logsURL;
+  },
+  run: {
     metadata: {
-      namespace: 'default'
+      namespace: fakeNamespace,
+      name: fakeRunName
     },
     spec: {
       pipelineRef: {
         name: 'thepipeline'
       }
     }
-  }
+  },
+  showNotification() {}
 };
 
-const response = {
-  get() {
-    return 'fake-pipeline-run';
-  }
-};
-
-it('rerun button creates API call with correct parameters', () => {
-  const rerunMock = jest
-    .fn()
-    .mockImplementation(() => Promise.resolve(response));
+it('Rerun button creates API call with correct parameters', done => {
+  const response = Promise.resolve({ metadata: { name: fakeRunName } });
+  const rerunMock = jest.fn().mockImplementation(() => response);
+  jest.spyOn(props, 'getURL');
+  jest.spyOn(props, 'showNotification');
   const { getByText } = renderWithRouter(
-    <Rerun {...props} rerunPipelineRun={rerunMock} />
+    <Rerun {...props} rerun={rerunMock} />
   );
-  const theButton = getByText('Rerun');
-  fireEvent.click(theButton);
-  expect(rerunMock).toHaveBeenCalledWith(props.pipelineRun);
+  fireEvent.click(getByText('Rerun'));
+  setImmediate(() => {
+    expect(rerunMock).toHaveBeenCalledWith(props.run);
+    expect(props.getURL).toHaveBeenCalledWith({
+      name: fakeRunName,
+      namespace: fakeNamespace
+    });
+    expect(props.showNotification).toHaveBeenCalledWith(
+      expect.objectContaining({ kind: 'success', logsURL })
+    );
+    done();
+  });
 });
 
-it('rerun button is ghost styled', async () => {
-  const rerunMock = jest
-    .fn()
-    .mockImplementation(() => Promise.resolve(response));
-  const { getByTestId } = renderWithRouter(
-    <Rerun {...props} rerunPipelineRun={rerunMock} />
+it('Rerun button handles API error', done => {
+  const error = { response: { status: 500 } };
+  const response = Promise.reject(error);
+  const rerunMock = jest.fn().mockImplementation(() => response);
+  jest.spyOn(props, 'getURL');
+  jest.spyOn(props, 'showNotification');
+  const { getByText } = renderWithRouter(
+    <Rerun {...props} rerun={rerunMock} />
   );
-  const rerunButton = getByTestId('rerun-btn');
-  const rerunButtonIsGhost = rerunButton.getElementsByClassName(
-    'tkn--rerun-btn bx--btn bx--btn--ghost'
-  );
-  await waitForElement(() => rerunButtonIsGhost);
+  fireEvent.click(getByText('Rerun'));
+  setImmediate(() => {
+    expect(rerunMock).toHaveBeenCalledWith(props.run);
+    expect(props.getURL).not.toHaveBeenCalled();
+    expect(props.showNotification).toHaveBeenCalledWith(
+      expect.objectContaining({ kind: 'error' })
+    );
+    done();
+  });
 });

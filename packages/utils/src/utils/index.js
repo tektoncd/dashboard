@@ -285,6 +285,15 @@ export function getClearFiltersHandler({ history, location, match }) {
   };
 }
 
+const rerunIdentifier = '-r-';
+export function getGenerateNamePrefixForRerun(name) {
+  let root = name;
+  if (name.includes(rerunIdentifier)) {
+    root = name.substring(0, name.lastIndexOf(rerunIdentifier));
+  }
+  return `${root}${rerunIdentifier}`;
+}
+
 /*
     getParams and getResources below required to support 3rd-party consumers
     of certain dashboard components (e.g. PipelineRun) while they migrate to
