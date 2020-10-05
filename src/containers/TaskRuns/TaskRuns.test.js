@@ -17,6 +17,7 @@ import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
 import { Route } from 'react-router-dom';
+import { urls } from '@tektoncd/dashboard-utils';
 
 import { renderWithRouter } from '../../utils/test';
 import * as API from '../../api/taskRuns';
@@ -155,13 +156,13 @@ describe('TaskRuns container', () => {
   it('taskRuns can be filtered on a single label filter', async () => {
     const match = {
       params: {},
-      url: '/taskruns'
+      url: urls.taskRuns.all()
     };
 
     const { queryByText, getByTestId, getByText } = renderWithRouter(
       <Provider store={store.getStore()}>
         <Route
-          path="/taskruns"
+          path={urls.taskRuns.all()}
           render={props => (
             <TaskRunsContainer
               {...props}
@@ -175,7 +176,7 @@ describe('TaskRuns container', () => {
           )}
         />
       </Provider>,
-      { route: '/taskruns' }
+      { route: urls.taskRuns.all() }
     );
 
     const filterValue = 'baz:bam';
@@ -197,7 +198,7 @@ describe('TaskRuns container', () => {
     const { queryByText, getByTestId, getByText } = renderWithRouter(
       <Provider store={store.getStore()}>
         <Route
-          path="/taskruns"
+          path={urls.taskRuns.all()}
           render={props => (
             <TaskRunsContainer
               {...props}
@@ -211,7 +212,7 @@ describe('TaskRuns container', () => {
           )}
         />
       </Provider>,
-      { route: '/taskruns' }
+      { route: urls.taskRuns.all() }
     );
 
     const firstFilterValue = 'foo:bar';
@@ -233,13 +234,13 @@ describe('TaskRuns container', () => {
   it('taskRuns label filter can be deleted, rendering the correct taskRuns', async () => {
     const match = {
       params: {},
-      url: '/taskruns'
+      url: urls.taskRuns.all()
     };
 
     const { queryByText, getByTestId, getByText } = renderWithRouter(
       <Provider store={store.getStore()}>
         <Route
-          path="/taskruns"
+          path={urls.taskRuns.all()}
           render={props => (
             <TaskRunsContainer
               {...props}
@@ -253,7 +254,7 @@ describe('TaskRuns container', () => {
           )}
         />
       </Provider>,
-      { route: '/taskruns' }
+      { route: urls.taskRuns.all() }
     );
 
     const filterValue = 'baz:bam';
@@ -276,13 +277,13 @@ describe('TaskRuns container', () => {
   it('Duplicate label filters are prevented', async () => {
     const match = {
       params: {},
-      url: '/taskruns'
+      url: urls.taskRuns.all()
     };
 
     const { queryByText, getByTestId, getByText } = renderWithRouter(
       <Provider store={store.getStore()}>
         <Route
-          path="/taskruns"
+          path={urls.taskRuns.all()}
           render={props => (
             <TaskRunsContainer
               {...props}
@@ -296,7 +297,7 @@ describe('TaskRuns container', () => {
           )}
         />
       </Provider>,
-      { route: '/taskruns' }
+      { route: urls.taskRuns.all() }
     );
 
     const filterValue = 'baz:bam';
@@ -314,13 +315,13 @@ describe('TaskRuns container', () => {
   it('An invalid filter value is disallowed and reported', async () => {
     const match = {
       params: {},
-      url: '/taskruns'
+      url: urls.taskRuns.all()
     };
 
     const { queryByText, getByTestId, getByText } = renderWithRouter(
       <Provider store={store.getStore()}>
         <Route
-          path="/taskruns"
+          path={urls.taskRuns.all()}
           render={props => (
             <TaskRunsContainer
               {...props}
@@ -334,7 +335,7 @@ describe('TaskRuns container', () => {
           )}
         />
       </Provider>,
-      { route: '/taskruns' }
+      { route: urls.taskRuns.all() }
     );
 
     const filterValue = 'baz=bam';
@@ -354,13 +355,13 @@ describe('TaskRuns container', () => {
 
     const match = {
       params: {},
-      url: '/taskruns'
+      url: urls.taskRuns.all()
     };
 
     const { getByText, getByTitle } = renderWithRouter(
       <Provider store={store.getStore()}>
         <Route
-          path="/taskruns"
+          path={urls.taskRuns.all()}
           render={props => (
             <TaskRunsContainer
               {...props}
@@ -374,7 +375,7 @@ describe('TaskRuns container', () => {
           )}
         />
       </Provider>,
-      { route: '/taskruns' }
+      { route: urls.taskRuns.all() }
     );
 
     await waitForElement(() => getByText('taskRunWithTwoLabels'));
@@ -386,13 +387,13 @@ describe('TaskRuns container', () => {
 
     const match = {
       params: {},
-      url: '/taskruns'
+      url: urls.taskRuns.all()
     };
 
     const { getByText, queryByTitle } = renderWithRouter(
       <Provider store={store.getStore()}>
         <Route
-          path="/taskruns"
+          path={urls.taskRuns.all()}
           render={props => (
             <TaskRunsContainer
               {...props}
@@ -407,10 +408,39 @@ describe('TaskRuns container', () => {
           )}
         />
       </Provider>,
-      { route: '/taskruns' }
+      { route: urls.taskRuns.all() }
     );
 
     await waitForElement(() => getByText('taskRunWithTwoLabels'));
     expect(queryByTitle(/actions/i)).toBeFalsy();
+  });
+
+  it('handles rerun event in TaskRuns page', async () => {
+    const mockTestStore = mockStore(testStore);
+    jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => false);
+    jest.spyOn(API, 'rerunTaskRun').mockImplementation(() => []);
+    const { getByTestId, getByText } = renderWithRouter(
+      <Provider store={mockTestStore}>
+        <Route
+          path={urls.taskRuns.all()}
+          render={props => (
+            <TaskRunsContainer
+              {...props}
+              fetchTaskRuns={() => Promise.resolve()}
+              taskRuns={taskRunsTestStore.taskRuns.byId}
+            />
+          )}
+        />
+      </Provider>,
+      { route: urls.taskRuns.all() }
+    );
+    await waitForElement(() => getByText(/taskRunWithTwoLabels/i));
+    fireEvent.click(await waitForElement(() => getByTestId('overflowmenu')));
+    await waitForElement(() => getByText(/Rerun/i));
+    fireEvent.click(getByText('Rerun'));
+    expect(API.rerunTaskRun).toHaveBeenCalledTimes(1);
+    expect(API.rerunTaskRun).toHaveBeenCalledWith(
+      taskRunsTestStore.taskRuns.byId['taskRunWithSingleLabel-id']
+    );
   });
 });

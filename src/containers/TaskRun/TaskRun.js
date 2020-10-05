@@ -14,6 +14,7 @@ limitations under the License.
 import React, { Component } from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {
   InlineNotification,
@@ -21,6 +22,7 @@ import {
 } from 'carbon-components-react';
 import {
   Log,
+  Rerun,
   RunHeader,
   StepDetails,
   TaskRunDetails,
@@ -35,7 +37,8 @@ import {
   reorderSteps,
   stepsStatus,
   taskRunStep,
-  updateUnexecutedSteps
+  updateUnexecutedSteps,
+  urls
 } from '@tektoncd/dashboard-utils';
 
 import { getLogsRetriever, getViewChangeHandler } from '../../utils';
@@ -48,12 +51,14 @@ import {
   getTaskRun,
   getTaskRunsErrorMessage,
   isLogStreamingEnabled,
+  isReadOnly,
   isWebSocketConnected
 } from '../../reducers';
 
 import '@tektoncd/dashboard-components/dist/scss/Run.scss';
 import { fetchTask, fetchTaskByType } from '../../actions/tasks';
 import { fetchTaskRun } from '../../actions/taskRuns';
+import { rerunTaskRun } from '../../api';
 
 const taskTypeKeys = { ClusterTask: 'clustertasks', Task: 'tasks' };
 const { STEP, TASK_RUN_DETAILS, VIEW } = queryParamConstants;
@@ -82,7 +87,12 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
     );
   }
 
-  state = { loading: true };
+  constructor(props) {
+    super(props);
+    this.showRerunNotification = this.showRerunNotification.bind(this);
+
+    this.state = { loading: true, showRerunNotification: null };
+  }
 
   componentDidMount() {
     const { match, namespace } = this.props;
@@ -175,6 +185,10 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
     return taskRun;
   };
 
+  showRerunNotification(value) {
+    this.setState({ showRerunNotification: value });
+  }
+
   fetchTaskAndRuns(taskRunName, namespace) {
     this.props.fetchTaskRun({ name: taskRunName, namespace }).then(taskRun => {
       if (taskRun && taskRun.spec.taskRef) {
@@ -191,7 +205,7 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
   }
 
   render() {
-    const { loading } = this.state;
+    const { loading, showRerunNotification } = this.state;
     const {
       error,
       intl,
@@ -263,8 +277,43 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
 
     const onViewChange = getViewChangeHandler(this.props);
 
+    const rerun = !this.props.isReadOnly &&
+      !this.props.taskRun.metadata?.labels?.['tekton.dev/pipeline'] && (
+        <Rerun
+          getURL={({ name, namespace }) =>
+            urls.taskRuns.byName({ namespace, taskRunName: name })
+          }
+          run={this.props.taskRun}
+          rerun={rerunTaskRun}
+          showNotification={this.showRerunNotification}
+        />
+      );
+
     return (
       <>
+        {showRerunNotification && (
+          <InlineNotification
+            lowContrast
+            actions={
+              showRerunNotification.logsURL ? (
+                <Link
+                  className="bx--inline-notification__text-wrapper"
+                  to={showRerunNotification.logsURL}
+                >
+                  {intl.formatMessage({
+                    id: 'dashboard.run.rerunStatusMessage',
+                    defaultMessage: 'View status'
+                  })}
+                </Link>
+              ) : (
+                ''
+              )
+            }
+            title={showRerunNotification.message}
+            kind={showRerunNotification.kind}
+            caption=""
+          />
+        )}
         <RunHeader
           lastTransitionTime={taskRun.startTime}
           loading={loading}
@@ -272,7 +321,9 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
           reason={taskRunStatusReason}
           runName={taskRun.taskRunName}
           status={taskRun.succeeded}
-        />
+        >
+          {rerun}
+        </RunHeader>
         <div className="tkn--tasks">
           <TaskTree
             onSelect={this.handleTaskSelected}
@@ -340,6 +391,7 @@ function mapStateToProps(state, ownProps) {
   return {
     error: getTaskRunsErrorMessage(state),
     externalLogsURL: getExternalLogsURL(state),
+    isReadOnly: isReadOnly(state),
     namespace,
     selectedStepId,
     isLogStreamingEnabled: isLogStreamingEnabled(state),

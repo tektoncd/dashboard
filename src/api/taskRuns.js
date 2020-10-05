@@ -11,7 +11,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { labels as labelConstants } from '@tektoncd/dashboard-utils';
+import {
+  getGenerateNamePrefixForRerun,
+  labels as labelConstants
+} from '@tektoncd/dashboard-utils';
+import deepClone from 'lodash.clonedeep';
 
 import { deleteRequest, get, post, put } from './comms';
 import { checkData, getQueryParams, getTektonAPI } from './utils';
@@ -104,6 +108,30 @@ export function createTaskRun({
   if (timeout) {
     payload.spec.timeout = timeout;
   }
+  const uri = getTektonAPI('taskruns', { namespace });
+  return post(uri, payload).then(({ body }) => body);
+}
+
+export function rerunTaskRun(taskRun) {
+  const { annotations, labels, name, namespace } = taskRun.metadata;
+
+  const payload = deepClone(taskRun);
+  payload.apiVersion = payload.apiVersion || 'tekton.dev/v1beta1';
+  payload.kind = payload.kind || 'TaskRun';
+  payload.metadata = {
+    annotations,
+    generateName: getGenerateNamePrefixForRerun(name),
+    labels: {
+      ...labels,
+      reruns: name
+    },
+    namespace
+  };
+
+  delete payload.metadata.labels['tekton.dev/task'];
+
+  delete payload.status;
+
   const uri = getTektonAPI('taskruns', { namespace });
   return post(uri, payload).then(({ body }) => body);
 }

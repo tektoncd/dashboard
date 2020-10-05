@@ -41,7 +41,7 @@ import {
   isReadOnly,
   isWebSocketConnected
 } from '../../reducers';
-import { cancelTaskRun, deleteTaskRun } from '../../api';
+import { cancelTaskRun, deleteTaskRun, rerunTaskRun } from '../../api';
 
 const initialState = {
   showCreateTaskRunModal: false,
@@ -100,6 +100,10 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
         this.setState({ submitError: errorMessage });
       });
     });
+  };
+
+  rerun = taskRun => {
+    rerunTaskRun(taskRun);
   };
 
   resetSuccess = () => {
@@ -186,6 +190,14 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
               { name: resource.metadata.name }
             )
         }
+      },
+      {
+        action: this.rerun,
+        actionText: intl.formatMessage({
+          id: 'dashboard.rerun.actionText',
+          defaultMessage: 'Rerun'
+        }),
+        disable: resource => !!resource.metadata.labels?.['tekton.dev/pipeline']
       }
     ];
   };

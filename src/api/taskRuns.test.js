@@ -212,3 +212,14 @@ it('getTaskRuns With Query Params', () => {
     fetchMock.restore();
   });
 });
+
+it('rerunTaskRun', () => {
+  const originalTaskRun = { metadata: { name: 'fake_taskRun' } };
+  const newTaskRun = { metadata: { name: 'fake_taskRun_rerun' } };
+  mockCSRFToken();
+  fetchMock.post(`end:/taskruns/`, { body: newTaskRun, status: 201 });
+  return API.rerunTaskRun(originalTaskRun).then(data => {
+    expect(data).toEqual(newTaskRun);
+    fetchMock.restore();
+  });
+});

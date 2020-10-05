@@ -14,30 +14,21 @@ limitations under the License.
 import React, { Component } from 'react';
 import { injectIntl } from 'react-intl';
 import { Button } from 'carbon-components-react';
-import { urls } from '@tektoncd/dashboard-utils';
 import { Restart32 as Restart } from '@carbon/icons-react';
 import './Rerun.scss';
 
 class Rerun extends Component {
   handleRerun = event => {
     event.preventDefault();
-    const {
-      intl,
-      pipelineRun,
-      rerunPipelineRun,
-      setShowRerunNotification
-    } = this.props;
-
-    const { namespace } = pipelineRun.metadata;
-
-    rerunPipelineRun(pipelineRun)
-      .then(newPipelineRun => {
-        const newPipelineRunName = newPipelineRun.metadata.name;
-        const finalURL = urls.pipelineRuns.byName({
+    const { getURL, intl, run, rerun, showNotification } = this.props;
+    const { namespace } = run.metadata;
+    rerun(run)
+      .then(newRun => {
+        const finalURL = getURL({
           namespace,
-          pipelineRunName: newPipelineRunName
+          name: newRun.metadata.name
         });
-        setShowRerunNotification({
+        showNotification({
           message: intl.formatMessage({
             id: 'dashboard.rerun.triggered',
             defaultMessage: 'Triggered rerun'
@@ -47,14 +38,14 @@ class Rerun extends Component {
         });
       })
       .catch(error => {
-        setShowRerunNotification({
+        showNotification({
           message: intl.formatMessage(
             {
               id: 'dashboard.rerun.error',
               defaultMessage:
-                'An error occurred when rerunning this PipelineRun: check the dashboard logs for details. Status code: {statusCode}'
+                'An error occurred when rerunning {runName}: check the dashboard logs for details. Status code: {statusCode}'
             },
-            { statusCode: error.response.status }
+            { runName: run.metadata.name, statusCode: error.response.status }
           ),
           kind: 'error'
         });
@@ -65,7 +56,6 @@ class Rerun extends Component {
     const { intl } = this.props;
     return (
       <Button
-        data-testid="rerun-btn"
         kind="ghost"
         className="tkn--rerun-btn"
         renderIcon={Restart}

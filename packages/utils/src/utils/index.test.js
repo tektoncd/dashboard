@@ -20,6 +20,7 @@ import {
   getDeleteFilterHandler,
   getErrorMessage,
   getFilters,
+  getGenerateNamePrefixForRerun,
   getParams,
   getResources,
   getStatus,
@@ -628,6 +629,18 @@ describe('getDeleteFilterHandler', () => {
     expect(history.push).toHaveBeenCalledWith(
       `${url}?labelSelector=${encodeURIComponent('foo2=bar2')}`
     );
+  });
+});
+
+describe('getGenerateNamePrefixForRerun', () => {
+  it('replaces generated suffix for rerun', () => {
+    expect(getGenerateNamePrefixForRerun('some-name-r-abcde')).toEqual(
+      'some-name-r-'
+    );
+  });
+
+  it('adds suffix for original run', () => {
+    expect(getGenerateNamePrefixForRerun('some-name')).toEqual('some-name-r-');
   });
 });
 

@@ -447,7 +447,7 @@ describe('PipelineRuns container', () => {
     expect(queryByTitle(/actions/i)).toBeFalsy();
   });
 
-  it('TaskTree handles rerun event in PipelineRuns page', async () => {
+  it('handles rerun event in PipelineRuns page', async () => {
     const mockTestStore = mockStore(testStore);
     jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => false);
     jest

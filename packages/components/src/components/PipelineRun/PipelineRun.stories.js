@@ -164,7 +164,6 @@ export const Base = () => {
         setSelectedTaskId(taskId);
       }}
       pipelineRun={pipelineRun}
-      rerunPipelineRun={() => {}}
       selectedStepId={selectedStepId}
       selectedTaskId={selectedTaskId}
       taskRuns={[taskRun]}

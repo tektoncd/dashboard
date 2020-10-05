@@ -195,7 +195,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
       },
       {
         actionText: intl.formatMessage({
-          id: 'dashboard.rerunPipelineRun.actionText',
+          id: 'dashboard.rerun.actionText',
           defaultMessage: 'Rerun'
         }),
         action: this.rerun
