@@ -50,6 +50,7 @@ spec:
       volumes: []
       securityContext:
         runAsNonRoot: true
+        runAsUser: 65532
       containers:
         - name: tekton-dashboard
           image: dashboardImage
