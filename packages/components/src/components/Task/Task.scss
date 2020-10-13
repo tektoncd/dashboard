@@ -36,6 +36,11 @@ limitations under the License.
     border-bottom: 1.1rem solid transparent;
   }
 
+  &[data-selected]:not([data-succeeded]) > a.tkn--task-link,
+    &[data-selected][data-succeeded='Unknown'] > a.tkn--task-link {
+    background-color: $hover-ui;
+  }
+
   &:not([data-succeeded]) > a.tkn--task-link {
     background-color: $waiting-bg;
     color: $waiting-fg;
@@ -84,11 +89,6 @@ limitations under the License.
     .tkn--task-icon {
       fill: $running-fg;
     }
-  }
-
-  &[data-selected]:not([data-succeeded]) > a.tkn--task-link,
-    &[data-selected][data-succeeded='Unknown'] > a.tkn--task-link {
-    background-color: $hover-ui;
   }
 
   > a.tkn--task-link {
