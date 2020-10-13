@@ -18,7 +18,7 @@ const contentSecurityPolicy = {
   development:
     "default-src 'none'; img-src 'self'; script-src 'self' 'unsafe-eval'; style-src blob:; connect-src 'self'; font-src 'self' https://fonts.gstatic.com;",
   production:
-    "default-src 'none'; img-src 'self'; script-src 'self' blob:; style-src 'self' 'unsafe-inline'; connect-src 'self'; font-src 'self' https://fonts.gstatic.com;"
+    "default-src 'none'; img-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; font-src 'self' https://fonts.gstatic.com;"
 };
 
 module.exports = ({ mode }) => ({
