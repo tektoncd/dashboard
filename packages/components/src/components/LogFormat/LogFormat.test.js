@@ -260,16 +260,22 @@ describe('LogFormat', () => {
     );
   });
 
-  it('seperates text by new lines', () => {
+  it('separates text by new lines', () => {
     const text =
       'Hello World\nA dashboard for Tekton! https://github.com/tektoncd/dashboard\nTekon is cool!';
     const { container } = renderWithIntl(<LogFormat>{text}</LogFormat>);
     expect(container.childNodes[0].childNodes).toHaveLength(3);
   });
 
-  it('seperates text by new lines and carriage returns', () => {
+  it('separates text by new lines and carriage returns', () => {
     const text = '\r \n \r \n\r \n';
     const { container } = renderWithIntl(<LogFormat>{text}</LogFormat>);
     expect(container.childNodes[0].childNodes).toHaveLength(4);
+  });
+
+  it('handles consecutive carriage returns without error', () => {
+    const text = '\r\r';
+    const { container } = renderWithIntl(<LogFormat>{text}</LogFormat>);
+    expect(container.childNodes[0].childNodes).toHaveLength(1);
   });
 });
