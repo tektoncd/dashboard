@@ -112,14 +112,18 @@ limitations under the License.
       font-weight: bold;
     }
   }
-  &[data-status='cancelled'] > a.tkn--step-link {
-    opacity: 1;
-    .tkn--step-icon {
-      fill: $failed;
-    }
-    .tkn--status-label {
-      color: $failed;
-      font-weight: bold;
+  &[data-status='cancelled'],
+  &[data-status='terminated'][data-reason='TaskRunCancelled'],
+  &[data-status='terminated'][data-reason='TaskRunTimeout'] {
+    > a.tkn--step-link {
+      opacity: 1;
+      .tkn--step-icon {
+        fill: $failed;
+      }
+      .tkn--status-label {
+        color: $failed;
+        font-weight: bold;
+      }
     }
   }
 }

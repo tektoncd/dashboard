@@ -57,7 +57,11 @@ class Step extends Component {
   statusLabel() {
     const { intl, reason, status } = this.props;
 
-    if (status === 'cancelled') {
+    if (
+      status === 'cancelled' ||
+      (status === 'terminated' &&
+        (reason === 'TaskRunCancelled' || reason === 'TaskRunTimeout'))
+    ) {
       return intl.formatMessage({
         id: 'dashboard.taskRun.status.cancelled',
         defaultMessage: 'Cancelled'

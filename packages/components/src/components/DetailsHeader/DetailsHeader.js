@@ -52,7 +52,11 @@ class DetailsHeader extends Component {
     const { intl, reason, status, taskRun } = this.props;
     const { reason: taskReason, status: taskStatus } = getStatus(taskRun);
 
-    if (status === 'cancelled') {
+    if (
+      status === 'cancelled' ||
+      (status === 'terminated' &&
+        (reason === 'TaskRunCancelled' || reason === 'TaskRunTimeout'))
+    ) {
       return intl.formatMessage({
         id: 'dashboard.taskRun.status.cancelled',
         defaultMessage: 'Cancelled'
