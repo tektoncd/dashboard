@@ -17,7 +17,6 @@ import Container from './Container';
 
 export const parameters = {
   options: {
-    showRoots: true,
     storySort: (a, b) =>
       a[1].kind === b[1].kind
         ? 0
