@@ -98,7 +98,8 @@ limitations under the License.
   }
   &[data-status='cancelled'],
   &[data-reason='PipelineRunCancelled'],
-  &[data-reason='TaskRunCancelled'] {
+  &[data-reason='TaskRunCancelled'],
+  &[data-reason='TaskRunTimeout'] {
     .tkn--status-icon {
       fill: $failed;
     }

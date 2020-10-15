@@ -45,6 +45,20 @@ it('DetailsHeader renders the cancelled state', () => {
   expect(queryByText(/Cancelled/i)).toBeTruthy();
 });
 
+it('DetailsHeader renders the cancelled state for TaskRunCancelled', () => {
+  const { queryByText } = renderWithIntl(
+    <DetailsHeader {...props} status="terminated" reason="TaskRunCancelled" />
+  );
+  expect(queryByText(/Cancelled/i)).toBeTruthy();
+});
+
+it('DetailsHeader renders the cancelled state for TaskRunTimeout', () => {
+  const { queryByText } = renderWithIntl(
+    <DetailsHeader {...props} status="terminated" reason="TaskRunTimeout" />
+  );
+  expect(queryByText(/Cancelled/i)).toBeTruthy();
+});
+
 it('DetailsHeader renders the failed state', () => {
   const { queryByText } = renderWithIntl(
     <DetailsHeader {...props} status="terminated" />

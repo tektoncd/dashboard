@@ -47,6 +47,20 @@ it('Step renders cancelled state', () => {
   expect(queryByText(/Cancelled/i)).toBeTruthy();
 });
 
+it('Step renders cancelled state for TaskRunCancelled', () => {
+  const { queryByText } = renderWithIntl(
+    <Step status="terminated" reason="TaskRunCancelled" />
+  );
+  expect(queryByText(/Cancelled/i)).toBeTruthy();
+});
+
+it('Step renders cancelled state for TaskRunTimeout', () => {
+  const { queryByText } = renderWithIntl(
+    <Step status="terminated" reason="TaskRunTimeout" />
+  );
+  expect(queryByText(/Cancelled/i)).toBeTruthy();
+});
+
 it('Step renders completed state', () => {
   const { queryByText } = renderWithIntl(
     <Step status="terminated" reason="Completed" />
