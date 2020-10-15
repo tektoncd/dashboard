@@ -153,7 +153,7 @@ describe('ImportResources component', () => {
 
     fireEvent.click(getByText('Import and Apply'));
     await waitForElement(() =>
-      getByText(/Triggered PipelineRun to apply Tekton resources/i)
+      getByText(/Triggered PipelineRun to import Tekton resources/i)
     );
 
     expect(

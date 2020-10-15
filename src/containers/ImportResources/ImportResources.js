@@ -378,7 +378,7 @@ export class ImportResources extends Component {
               title={intl.formatMessage({
                 id: 'dashboard.importResources.triggeredNotification',
                 defaultMessage:
-                  'Triggered PipelineRun to apply Tekton resources'
+                  'Triggered PipelineRun to import Tekton resources'
               })}
               subtitle=""
               onCloseButtonClick={this.resetSuccess}
