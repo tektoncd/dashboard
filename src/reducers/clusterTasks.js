@@ -28,7 +28,7 @@ function byName(state = {}, action) {
       if (isStale(action.payload, state, 'name')) {
         return state;
       }
-      return { [action.payload.metadata.name]: action.payload, ...state };
+      return { ...state, [action.payload.metadata.name]: action.payload };
     case 'ClusterTaskDeleted':
       const newState = { ...state };
       delete newState[action.payload.metadata.name];

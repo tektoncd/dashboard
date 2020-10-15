@@ -89,7 +89,7 @@ it('ResourceExtension Events', () => {
     payload: updatedExtension
   };
 
-  const updatedState = extensionsReducer({}, updateAction);
+  const updatedState = extensionsReducer(state, updateAction);
   expect(selectors.getExtensions(updatedState)).toEqual([
     selectors.mapResourceExtension(updatedExtension)
   ]);
@@ -134,7 +134,7 @@ it('ServiceExtension Events', () => {
     payload: updatedExtension
   };
 
-  const updatedState = extensionsReducer({}, updateAction);
+  const updatedState = extensionsReducer(state, updateAction);
   expect(selectors.getExtensions(updatedState)).toEqual([
     selectors.mapServiceExtension(updatedExtension)
   ]);

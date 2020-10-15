@@ -47,12 +47,12 @@ function byName(state = {}, action) {
     case 'ResourceExtensionCreated':
     case 'ResourceExtensionUpdated': {
       const extension = mapResourceExtension(action.payload);
-      return { [extension.name]: extension, ...state };
+      return { ...state, [extension.name]: extension };
     }
     case 'ServiceExtensionCreated':
     case 'ServiceExtensionUpdated': {
       const extension = mapServiceExtension(action.payload);
-      return { [extension.name]: extension, ...state };
+      return { ...state, [extension.name]: extension };
     }
     case 'ResourceExtensionDeleted': {
       const newState = { ...state };

@@ -101,7 +101,7 @@ it('ClusterTask Events', () => {
     payload: updatedClusterTask
   };
 
-  const updatedState = clusterTasksReducer({}, updateAction);
+  const updatedState = clusterTasksReducer(state, updateAction);
   expect(selectors.getClusterTasks(updatedState)).toEqual([updatedClusterTask]);
   expect(selectors.isFetchingClusterTasks(updatedState)).toBe(false);
 
