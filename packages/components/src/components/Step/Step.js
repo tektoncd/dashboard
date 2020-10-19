@@ -13,13 +13,9 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { injectIntl } from 'react-intl';
-import {
-  CheckmarkFilled16 as CheckmarkFilled,
-  ChevronRight16 as ChevronRight,
-  CloseFilled16 as CloseFilled
-} from '@carbon/icons-react';
+import { ChevronRight16 as DefaultIcon } from '@carbon/icons-react';
 
-import Spinner from '../Spinner';
+import StatusIcon from '../StatusIcon';
 
 import './Step.scss';
 
@@ -30,29 +26,6 @@ class Step extends Component {
     const { id } = this.props;
     this.props.onSelect(id);
   };
-
-  icon() {
-    const { reason, status } = this.props;
-
-    if (status === 'cancelled') {
-      return <CloseFilled className="tkn--step-icon" />;
-    }
-
-    if (status === 'running') {
-      return <Spinner className="tkn--step-icon" />;
-    }
-
-    let Icon = ChevronRight;
-    if (status === 'terminated') {
-      if (reason === 'Completed') {
-        Icon = CheckmarkFilled;
-      } else {
-        Icon = CloseFilled;
-      }
-    }
-
-    return <Icon className="tkn--step-icon" />;
-  }
 
   statusLabel() {
     const { intl, reason, status } = this.props;
@@ -102,7 +75,6 @@ class Step extends Component {
 
   render() {
     const { reason, selected, status, stepName } = this.props;
-    const icon = this.icon();
     const statusLabel = this.statusLabel();
 
     return (
@@ -118,7 +90,11 @@ class Step extends Component {
           tabIndex="0"
           onClick={this.handleClick}
         >
-          {icon}
+          <StatusIcon
+            DefaultIcon={DefaultIcon}
+            reason={reason}
+            status={status}
+          />
           <span className="tkn--step-name" title={stepName}>
             {stepName}
           </span>

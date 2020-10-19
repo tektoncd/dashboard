@@ -53,9 +53,6 @@ limitations under the License.
       left: -1px;
       right: -1px;
     }
-    .tkn--task-icon {
-      fill: $waiting-fg;
-    }
   }
   &[data-succeeded='True'] > a.tkn--task-link {
     background-color: $success-bg;
@@ -63,9 +60,6 @@ limitations under the License.
     &:focus, &:hover {
       color: $success-fg;
       background-color: $success-bg-hover;
-    }
-    .tkn--task-icon {
-      fill: $success-fg;
     }
   }
   &[data-succeeded='False'] > a.tkn--task-link {
@@ -75,9 +69,6 @@ limitations under the License.
       color: $failed-fg;
       background-color: $failed-bg-hover;
     }
-    .tkn--task-icon {
-      fill: $failed-fg;
-    }
   }
   &[data-succeeded='Unknown'][data-reason='Running'] > a.tkn--task-link {
     background-color: $running-bg;
@@ -85,9 +76,6 @@ limitations under the License.
     &:focus, &:hover {
       color: $running-fg;
       background-color: $running-bg-hover;
-    }
-    .tkn--task-icon {
-      fill: $running-fg;
     }
   }
 
@@ -104,22 +92,24 @@ limitations under the License.
     letter-spacing: 0.06rem;
     overflow: hidden;
     text-overflow: ellipsis;
+
+    > .tkn--status-icon {
+      vertical-align: text-top;
+      margin-right: 0.7rem;
+      width: 16px;
+      height: 16px;
+
+      &.tkn--spinner {
+        position: relative;
+        top: -0.1rem;
+        left: -0.1rem;
+        width: 20px;
+        height: 20px;
+      }
+    }
   }
 
   &:first-child > a.tkn--task-link {
     margin-top: 0;
-  }
-
-  .tkn--task-icon {
-    vertical-align: text-top;
-    margin-right: 0.7rem;
-
-    &.tkn--spinner {
-      position: relative;
-      top: -0.1rem;
-      left: -0.1rem;
-      width: 20px;
-      height: 20px;
-    }
   }
 }

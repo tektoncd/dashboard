@@ -54,6 +54,7 @@ export const Expanded = () => {
       selectedStepId={selectedStepId}
       expanded
       steps={steps}
+      succeeded="Unknown"
     />
   );
 };

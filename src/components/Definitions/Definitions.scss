@@ -41,37 +41,6 @@ main {
     vertical-align: sub;
     flex-shrink: 0;
   }
-
-  &:not([data-status]) {
-    .tkn--status-icon {
-      fill: $unknown;
-    }
-  }
-
-  &[data-status='True'] {
-    .tkn--status-icon {
-      fill: $success;
-    }
-  }
-
-  &[data-status='False'] {
-    .tkn--status-icon {
-      fill: $failed;
-    }
-
-    &[data-reason='PipelineRunCancelled'],
-    &[data-reason='TaskRunCancelled'] {
-      .tkn--status-icon {
-        fill: $ui-04;
-      }
-    }
-  }
-
-  &[data-status='Unknown'][data-reason='Running'] {
-    .tkn--status-icon {
-      fill: $running;
-    }
-  }
 }
 
 .bx--overflow-menu--flip.bx--overflow-menu-options::after {

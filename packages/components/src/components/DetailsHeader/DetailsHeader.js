@@ -12,42 +12,15 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
-import {
-  CheckmarkFilled24 as CheckmarkFilled,
-  ChevronRight24 as ChevronRight,
-  CloseFilled16 as CloseFilled
-} from '@carbon/icons-react';
+import { ChevronRight24 as DefaultIcon } from '@carbon/icons-react';
 import { injectIntl } from 'react-intl';
 import { getStatus } from '@tektoncd/dashboard-utils';
 
-import { Spinner, StatusIcon } from '..';
+import { StatusIcon } from '..';
 
 import './DetailsHeader.scss';
 
 class DetailsHeader extends Component {
-  icon() {
-    const { reason, status } = this.props;
-
-    if (status === 'cancelled') {
-      return <CloseFilled className="tkn--status-icon" />;
-    }
-
-    if (status === 'running') {
-      return <Spinner className="tkn--status-icon" />;
-    }
-
-    let Icon = ChevronRight;
-    if (status === 'terminated') {
-      if (reason === 'Completed') {
-        Icon = CheckmarkFilled;
-      } else {
-        Icon = CloseFilled;
-      }
-    }
-
-    return <Icon className="tkn--status-icon" />;
-  }
-
   statusLabel() {
     const { intl, reason, status, taskRun } = this.props;
     const { reason: taskReason, status: taskStatus } = getStatus(taskRun);
@@ -98,12 +71,10 @@ class DetailsHeader extends Component {
   render() {
     const { stepName, taskRun, type = 'step', intl } = this.props;
     let { reason, status } = this.props;
-    let icon;
     let statusLabel;
 
     if (type === 'taskRun') {
       ({ reason, succeeded: status } = taskRun);
-      icon = <StatusIcon reason={reason} status={status} />;
       statusLabel =
         reason ||
         intl.formatMessage({
@@ -111,9 +82,9 @@ class DetailsHeader extends Component {
           defaultMessage: 'Pending'
         });
     } else {
-      icon = this.icon();
       statusLabel = this.statusLabel();
     }
+
     return (
       <header
         className="tkn--step-details-header"
@@ -121,7 +92,11 @@ class DetailsHeader extends Component {
         data-reason={reason}
       >
         <h2>
-          {icon}
+          <StatusIcon
+            DefaultIcon={type === 'step' ? DefaultIcon : null}
+            reason={reason}
+            status={status}
+          />
           <span className="tkn--run-details-name" title={stepName}>
             {stepName}
           </span>

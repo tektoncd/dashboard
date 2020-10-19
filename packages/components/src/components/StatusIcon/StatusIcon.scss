@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,16 +13,26 @@ limitations under the License.
 
 @import '../../scss/vars';
 
-.tkn--definition .tkn--status {
-  display: flex;
+.tkn--status-icon {
+  fill: $not-run;
 
-  .tkn--status-icon {
-    margin-right: 0.5em;
-    vertical-align: sub;
-    flex-shrink: 0;
+  &--cancelled {
+    fill: $ui-04;
   }
-}
 
-.bx--overflow-menu--flip.bx--overflow-menu-options::after{
-  display: none;
+  &--error {
+    fill: $failed;
+  }
+
+  &--running {
+    fill: $running;
+  }
+
+  &--success {
+    fill: $success;
+  }
+
+  &--inverse {
+    fill: white;
+  }
 }

@@ -47,10 +47,14 @@ limitations under the License.
     text-decoration: none;
   }
 
-  .tkn--step-icon {
+  .tkn--status-icon {
     flex-shrink: 0;
     align-self: center;
     margin-right: 0.55rem;
+    &:not(.tkn--spinner) {
+      width: 16px;
+      height: 16px;
+    }
 
     &.tkn--spinner {
       position: relative;
@@ -80,11 +84,6 @@ limitations under the License.
 
   &[data-status='running'] > a.tkn--step-link {
     opacity: 1;
-    .tkn--step-icon {
-      fill: $running;
-      width: 20px;
-      height: 20px;
-    }
     .tkn--status-label {
       color: $running;
       font-weight: bold;
@@ -93,9 +92,6 @@ limitations under the License.
   }
   &[data-status='terminated'][data-reason='Completed'] > a.tkn--step-link {
     opacity: 1;
-    .tkn--step-icon {
-      fill: $success;
-    }
     .tkn--status-label {
       color: $success;
       font-size: 0.66rem;
@@ -104,9 +100,6 @@ limitations under the License.
   }
   &[data-status='terminated'][data-reason='Error'] > a.tkn--step-link {
     opacity: 1;
-    .tkn--step-icon {
-      fill: $failed;
-    }
     .tkn--status-label {
       color: $failed;
       font-weight: bold;
@@ -117,9 +110,6 @@ limitations under the License.
   &[data-status='terminated'][data-reason='TaskRunTimeout'] {
     > a.tkn--step-link {
       opacity: 1;
-      .tkn--step-icon {
-        fill: $failed;
-      }
       .tkn--status-label {
         color: $failed;
         font-weight: bold;

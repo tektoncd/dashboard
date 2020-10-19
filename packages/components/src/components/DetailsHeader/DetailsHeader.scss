@@ -63,46 +63,27 @@ limitations under the License.
   }
 
   &[data-status] {
-    .tkn--status-icon {
-      fill: $not-run;
-    }
     .tkn--status-label {
       color: $not-run;
     }
   }
   &[data-status='running'] {
-    .tkn--status-icon {
-      fill: $running;
-    }
     .tkn--status-label {
       color: $running;
     }
   }
   &[data-status='terminated'][data-reason='Completed'],
   &[data-status='True'] {
-    .tkn--status-icon {
-      fill: $success;
-    }
     .tkn--status-label {
       color: $success;
     }
   }
   &[data-status='terminated'][data-reason='Error'],
-  &[data-status='False'] {
-    .tkn--status-icon {
-      fill: $failed;
-    }
-    .tkn--status-label {
-      color: $failed;
-    }
-  }
+  &[data-status='False'],
   &[data-status='cancelled'],
   &[data-reason='PipelineRunCancelled'],
   &[data-reason='TaskRunCancelled'],
   &[data-reason='TaskRunTimeout'] {
-    .tkn--status-icon {
-      fill: $failed;
-    }
     .tkn--status-label {
       color: $failed;
     }

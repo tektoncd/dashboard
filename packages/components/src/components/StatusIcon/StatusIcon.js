@@ -12,7 +12,10 @@ limitations under the License.
 */
 /* istanbul ignore file */
 
+import './StatusIcon.scss';
+
 import React from 'react';
+import classNames from 'classnames';
 import {
   CheckmarkFilled20 as CheckmarkFilled,
   CloseFilled20 as CloseFilled,
@@ -22,23 +25,45 @@ import { isRunning } from '@tektoncd/dashboard-utils';
 
 import { Spinner } from '..';
 
-export default function StatusIcon({ reason, status }) {
-  if (!status || (status === 'Unknown' && reason === 'Pending')) {
-    return <Time className="tkn--status-icon" />;
-  }
-
-  if (isRunning(reason, status)) {
-    return <Spinner className="tkn--status-icon" />;
-  }
-
-  let Icon;
-  if (status === 'True') {
+export default function StatusIcon({ DefaultIcon, inverse, reason, status }) {
+  let Icon = DefaultIcon;
+  let statusClass;
+  if (
+    (!status && !DefaultIcon) ||
+    (status === 'Unknown' && reason === 'Pending')
+  ) {
+    Icon = Time;
+  } else if (isRunning(reason, status)) {
+    Icon = Spinner;
+    statusClass = 'running';
+  } else if (
+    status === 'True' ||
+    (status === 'terminated' && reason === 'Completed')
+  ) {
     Icon = CheckmarkFilled;
-  } else if (status === 'False') {
+    statusClass = 'success';
+  } else if (
+    status === 'False' &&
+    (reason === 'PipelineRunCancelled' || reason === 'TaskRunCancelled')
+  ) {
     Icon = CloseFilled;
-  } else if (status === 'Unknown' && reason === 'PipelineRunCouldntCancel') {
+    statusClass = 'cancelled';
+  } else if (
+    status === 'False' ||
+    status === 'cancelled' ||
+    status === 'terminated' ||
+    (status === 'Unknown' && reason === 'PipelineRunCouldntCancel')
+  ) {
     Icon = CloseFilled;
+    statusClass = 'error';
   }
 
-  return Icon ? <Icon className="tkn--status-icon" /> : null;
+  return Icon ? (
+    <Icon
+      className={classNames('tkn--status-icon', {
+        [`tkn--status-icon--${statusClass}`]: statusClass,
+        'tkn--status-icon--inverse': inverse
+      })}
+    />
+  ) : null;
 }
