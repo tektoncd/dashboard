@@ -38,7 +38,7 @@ export function typeToPlural(type) {
 export async function followLogs(stepName, stepStatus, taskRun) {
   const { pod, namespace } = taskRun;
   let logs;
-  if (pod) {
+  if (pod && stepStatus) {
     const { container } = stepStatus;
     logs = getPodLog({
       container,
@@ -53,7 +53,7 @@ export async function followLogs(stepName, stepStatus, taskRun) {
 export async function fetchLogs(stepName, stepStatus, taskRun) {
   const { pod, namespace } = taskRun;
   let logs;
-  if (pod) {
+  if (pod && stepStatus) {
     const { container } = stepStatus;
     logs = getPodLog({
       container,
