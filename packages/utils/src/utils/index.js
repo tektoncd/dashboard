@@ -157,8 +157,9 @@ export function reorderSteps(unorderedSteps, orderedSteps) {
 
 export function isRunning(reason, status) {
   return (
-    status === 'Unknown' &&
-    (reason === 'Running' || reason === 'PipelineRunStopping')
+    status === 'running' ||
+    (status === 'Unknown' &&
+      (reason === 'Running' || reason === 'PipelineRunStopping'))
   );
 }
 

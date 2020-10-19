@@ -30,7 +30,8 @@ export const Base = () => {
         steps: [
           { id: 'build', stepName: 'build' },
           { id: 'test', stepName: 'test' }
-        ]
+        ],
+        succeeded: 'Unknown'
       },
       {
         id: 'task2',
@@ -38,7 +39,8 @@ export const Base = () => {
         steps: [
           { id: 'step 1', stepName: 'step 1' },
           { id: 'step 2', stepName: 'step 2' }
-        ]
+        ],
+        succeeded: 'Unknown'
       }
     ]
   };

@@ -12,12 +12,8 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
-import {
-  CheckmarkFilled16 as CheckmarkFilled,
-  ChevronRight16 as ChevronRight,
-  CloseFilled16 as CloseFilled
-} from '@carbon/icons-react';
-import { Spinner, Step } from '@tektoncd/dashboard-components';
+import { ChevronRight16 as DefaultIcon } from '@carbon/icons-react';
+import { StatusIcon, Step } from '@tektoncd/dashboard-components';
 
 import { updateUnexecutedSteps } from '@tektoncd/dashboard-utils';
 
@@ -63,23 +59,6 @@ class Task extends Component {
     }
   }
 
-  icon() {
-    const { reason, succeeded } = this.props;
-
-    if (succeeded === 'Unknown' && reason === 'Running') {
-      return <Spinner className="tkn--task-icon" />;
-    }
-
-    let Icon = ChevronRight;
-    if (succeeded === 'True') {
-      Icon = CheckmarkFilled;
-    } else if (succeeded === 'False') {
-      Icon = CloseFilled;
-    }
-
-    return <Icon className="tkn--task-icon" />;
-  }
-
   render() {
     const {
       expanded,
@@ -89,7 +68,6 @@ class Task extends Component {
       steps,
       succeeded
     } = this.props;
-    const icon = this.icon();
 
     return (
       <li
@@ -104,7 +82,14 @@ class Task extends Component {
           title={pipelineTaskName}
           onClick={this.handleTaskSelected}
         >
-          {icon}
+          <StatusIcon
+            DefaultIcon={DefaultIcon}
+            inverse={
+              succeeded !== 'Unknown' || (reason && reason !== 'Pending')
+            }
+            reason={reason}
+            status={succeeded}
+          />
           {pipelineTaskName}
         </a>
         {expanded && (
