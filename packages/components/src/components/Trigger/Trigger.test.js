@@ -30,6 +30,10 @@ const fakeTrigger = {
       apiversion: 'v1alpha1',
       kind: 'ClusterTriggerBinding',
       ref: 'triggerbinding-2'
+    },
+    {
+      name: 'triggerbinding-3',
+      value: '$(body.head_commit_id)'
     }
   ],
   template: {
@@ -98,6 +102,11 @@ const fakeTrigger = {
             key: 'key'
           }
         ]
+      }
+    },
+    {
+      cel: {
+        filter: 'cel-filter-with-no-overlays'
       }
     }
   ]
@@ -254,5 +263,35 @@ describe('Trigger', () => {
     };
     const { queryByText } = renderWithRouter(<Trigger {...props} />);
     expect(queryByText(/TriggerBindings/i)).toBeFalsy();
+  });
+
+  it('handles embedded template spec', () => {
+    const props = {
+      eventListenerNamespace: 'tekton-pipelines',
+      trigger: {
+        ...fakeTrigger,
+        template: {
+          spec: {
+            params: [{ name: 'foo' }],
+            resourcetemplates: [
+              {
+                apiVersion: 'tekton.dev/v1beta1',
+                kind: 'TaskRun',
+                metadata: {
+                  generateName: 'pr-run-'
+                },
+                spec: {
+                  taskSpec: {
+                    steps: [{ image: 'ubuntu', script: 'echo "hello there"' }]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    };
+    const { getByText } = renderWithRouter(<Trigger {...props} />);
+    expect(getByText(/hello there/)).toBeTruthy();
   });
 });

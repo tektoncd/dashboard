@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -15,8 +15,13 @@ import { injectIntl } from 'react-intl';
 import React from 'react';
 import { urls } from '@tektoncd/dashboard-utils';
 import { Link } from 'react-router-dom';
-import { Accordion, AccordionItem } from 'carbon-components-react';
-import { Table } from '@tektoncd/dashboard-components';
+import {
+  Accordion,
+  AccordionItem,
+  ListItem,
+  UnorderedList
+} from 'carbon-components-react';
+import { Table, ViewYAML } from '@tektoncd/dashboard-components';
 
 import './Trigger.scss';
 
@@ -38,6 +43,8 @@ const Trigger = ({ intl, eventListenerNamespace, trigger }) => {
     }
   ];
 
+  const triggerTemplateName = trigger.template.ref || trigger.template.name;
+
   return (
     <div>
       <h3>Trigger: {trigger.name}</h3>
@@ -50,28 +57,31 @@ const Trigger = ({ intl, eventListenerNamespace, trigger }) => {
                 defaultMessage: 'TriggerBindings:'
               })}
             </span>
-            <div>
-              {trigger.bindings.map((binding, index) => (
-                <span key={binding.ref}>
-                  <Link
-                    className="tkn--trigger-resourcelink"
-                    to={
-                      binding.kind === 'ClusterTriggerBinding'
-                        ? urls.clusterTriggerBindings.byName({
-                            clusterTriggerBindingName: binding.ref
-                          })
-                        : urls.triggerBindings.byName({
-                            namespace: eventListenerNamespace,
-                            triggerBindingName: binding.ref
-                          })
-                    }
-                  >
-                    <span title={binding.ref}>{binding.ref}</span>
-                  </Link>
-                  {index !== trigger.bindings.length - 1 && <span>, </span>}
-                </span>
+            <UnorderedList>
+              {trigger.bindings.map(binding => (
+                <ListItem key={binding.ref || binding.name}>
+                  {binding.ref ? (
+                    <Link
+                      className="tkn--trigger-resourcelink"
+                      to={
+                        binding.kind === 'ClusterTriggerBinding'
+                          ? urls.clusterTriggerBindings.byName({
+                              clusterTriggerBindingName: binding.ref
+                            })
+                          : urls.triggerBindings.byName({
+                              namespace: eventListenerNamespace,
+                              triggerBindingName: binding.ref
+                            })
+                      }
+                    >
+                      <span title={binding.ref}>{binding.ref}</span>
+                    </Link>
+                  ) : (
+                    <ViewYAML dark resource={binding} />
+                  )}
+                </ListItem>
               ))}
-            </div>
+            </UnorderedList>
           </div>
         )}
         <div className="tkn--trigger-resourcelinks">
@@ -82,15 +92,19 @@ const Trigger = ({ intl, eventListenerNamespace, trigger }) => {
             })}
           </span>
 
-          <Link
-            className="tkn--trigger-resourcelink"
-            to={urls.triggerTemplates.byName({
-              namespace: eventListenerNamespace,
-              triggerTemplateName: trigger.template.name
-            })}
-          >
-            <span title={trigger.template.name}>{trigger.template.name}</span>
-          </Link>
+          {trigger.template.spec ? (
+            <ViewYAML dark resource={trigger.template} />
+          ) : (
+            <Link
+              className="tkn--trigger-resourcelink"
+              to={urls.triggerTemplates.byName({
+                namespace: eventListenerNamespace,
+                triggerTemplateName
+              })}
+            >
+              <span title={triggerTemplateName}>{triggerTemplateName}</span>
+            </Link>
+          )}
         </div>
       </div>
 

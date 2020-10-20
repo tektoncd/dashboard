@@ -37,6 +37,13 @@ limitations under the License.
   .bx--snippet--multi {
     margin-top: $spacing-03
   }
+
+  .tkn--trigger-details {
+    .bx--list--unordered {
+      position: relative;
+      top: 2px;
+    }
+  }
 }
 
 .tkn--resourcedetails-metadata {
