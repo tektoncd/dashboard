@@ -23,10 +23,11 @@ const props = {
     bindings: [
       { ref: 'triggerbinding0' },
       { ref: 'triggerbinding1' },
-      { ref: 'triggerbinding2' }
+      { ref: 'triggerbinding2' },
+      { name: 'triggerbinding3', value: '$(body.head_commit_id)' }
     ],
     template: {
-      name: 'triggertemplate'
+      ref: 'triggertemplate'
     },
     interceptors: [
       {
