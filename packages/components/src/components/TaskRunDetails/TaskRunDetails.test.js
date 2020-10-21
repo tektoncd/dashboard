@@ -68,6 +68,7 @@ describe('TaskRunDetails', () => {
       <TaskRunDetails taskRun={taskRun} view="status" />
     );
     expect(queryByText(/status/i)).toBeTruthy();
+    expect(queryByText(/pending/i)).toBeTruthy();
     expect(queryByText('fake_name')).toBeFalsy();
     fireEvent.click(queryByText(/parameters/i));
     expect(queryByText('fake_name')).toBeTruthy();
