@@ -93,7 +93,16 @@ const TaskRunDetails = props => {
           })}
         >
           <div className="tkn--step-status">
-            <ViewYAML resource={taskRun.status} dark />
+            <ViewYAML
+              resource={
+                taskRun.status ||
+                intl.formatMessage({
+                  id: 'dashboard.taskRuns.status.pending',
+                  defaultMessage: 'Pending'
+                })
+              }
+              dark
+            />
           </div>
         </Tab>
       </Tabs>
