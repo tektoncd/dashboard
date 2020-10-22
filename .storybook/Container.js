@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { IntlProvider } from "react-intl";
+import { IntlProvider } from 'react-intl';
 
 import messages from '../src/nls/messages_en.json';
 
@@ -22,16 +22,7 @@ export default function Container({ story, notes }) {
   return (
     <IntlProvider locale="en" defaultLocale="en" messages={messages['en']}>
       {notes && <p>{notes}</p>}
-      <div
-        data-floating-menu-container
-        role="main"
-        style={{
-          padding: '3em',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center'
-        }}
-      >
+      <div data-floating-menu-container role="main">
         {story()}
       </div>
     </IntlProvider>

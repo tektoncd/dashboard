@@ -138,6 +138,11 @@ const props = {
 export default {
   component: EventListenerContainer,
   decorators: [StoryRouter()],
+  parameters: {
+    backgrounds: {
+      default: 'gray10'
+    }
+  },
   title: 'Containers/EventListenerContainer'
 };
 

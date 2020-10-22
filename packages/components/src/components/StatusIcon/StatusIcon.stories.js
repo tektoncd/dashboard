@@ -17,15 +17,20 @@ import StatusIcon from './StatusIcon';
 
 export default {
   component: StatusIcon,
+  args: { inverse: false },
   title: 'Components/StatusIcon'
 };
 
-export const Queued = () => <StatusIcon />;
+export const Queued = args => <StatusIcon {...args} />;
 
-export const Pending = () => <StatusIcon reason="Pending" status="Unknown" />;
+export const Pending = args => (
+  <StatusIcon reason="Pending" status="Unknown" {...args} />
+);
 
-export const Running = () => <StatusIcon reason="Running" status="Unknown" />;
+export const Running = args => (
+  <StatusIcon reason="Running" status="Unknown" {...args} />
+);
 
-export const Succeeded = () => <StatusIcon status="True" />;
+export const Succeeded = args => <StatusIcon status="True" {...args} />;
 
-export const Failed = () => <StatusIcon status="False" />;
+export const Failed = args => <StatusIcon status="False" {...args} />;

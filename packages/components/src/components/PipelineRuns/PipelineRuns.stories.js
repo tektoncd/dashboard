@@ -15,7 +15,6 @@ import React from 'react';
 import StoryRouter from 'storybook-react-router';
 import { getStatus } from '@tektoncd/dashboard-utils';
 import { action } from '@storybook/addon-actions';
-import { boolean } from '@storybook/addon-knobs';
 import { TrashCan32 as Delete } from '@carbon/icons-react';
 import { Dropdown } from 'carbon-components-react';
 
@@ -276,7 +275,7 @@ export const BatchActions = () => (
   />
 );
 
-export const CustomColumns = () => (
+export const CustomColumns = ({ showFilters }) => (
   <PipelineRuns
     columns={[
       'status',
@@ -306,9 +305,7 @@ export const CustomColumns = () => (
         }
       }
     }}
-    filters={getFilters(
-      boolean('showFilters (for testing purposes only)', false)
-    )}
+    filters={getFilters(showFilters)}
     pipelineRunActions={[
       {
         actionText: 'An Action',
@@ -340,6 +337,9 @@ export const CustomColumns = () => (
     ]}
   />
 );
+CustomColumns.args = {
+  showFilters: false
+};
 
 export const Loading = () => (
   <PipelineRuns

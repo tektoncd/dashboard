@@ -136,20 +136,11 @@ const pipelineRun = {
 
 export default {
   component: PipelineRun,
-  decorators: [
-    storyFn => (
-      <div
-        style={{
-          backgroundColor: '#f4f4f4',
-          padding: '2rem',
-          position: 'relative',
-          width: '100%'
-        }}
-      >
-        {storyFn()}
-      </div>
-    )
-  ],
+  parameters: {
+    backgrounds: {
+      default: 'gray10'
+    }
+  },
   title: 'Components/PipelineRun'
 };
 

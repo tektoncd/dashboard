@@ -18,7 +18,16 @@ import RunDropdown from './RunDropdown';
 
 export default {
   component: RunDropdown,
-  decorators: [StoryRouter()],
+  decorators: [
+    StoryRouter(),
+    storyFn => (
+      <div
+        style={{ width: '200px', display: 'flex', justifyContent: 'flex-end' }}
+      >
+        {storyFn()}
+      </div>
+    )
+  ],
   title: 'Components/RunDropdown'
 };
 

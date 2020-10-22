@@ -13,7 +13,6 @@ limitations under the License.
 
 import React from 'react';
 import { action } from '@storybook/addon-actions';
-import { boolean, text } from '@storybook/addon-knobs';
 import { Dropdown } from 'carbon-components-react';
 import {
   Add16 as Add,
@@ -39,113 +38,110 @@ function getFilters(showFilters) {
 }
 
 export default {
+  args: {
+    loading: false,
+    showFilters: false,
+    title: 'Resource Name'
+  },
   component: Table,
   title: 'Components/Table'
 };
 
-export const Simple = () => {
-  const headers = [
-    { key: 'name', header: text('header1', 'Name') },
-    { key: 'namespace', header: text('header2', 'Namespace') },
-    { key: 'date', header: text('header3', 'Date Created') }
-  ];
-
+export const Simple = args => {
   return (
     <Table
-      emptyTextAllNamespaces={text(
-        'emptyTextAllNamespaces',
-        'No rows in any namespace'
-      )}
-      emptyTextSelectedNamespace={text(
-        'emptyTextSelectedNamespace',
-        'No rows in selected namespace'
-      )}
-      filters={getFilters(
-        boolean('showFilters (for testing purposes only)', false)
-      )}
-      headers={headers}
-      loading={boolean('loading', false)}
+      emptyTextAllNamespaces="No rows in any namespace"
+      emptyTextSelectedNamespace="No rows in selected namespace"
+      filters={getFilters(args.showFilters)}
+      headers={args.headers}
+      loading={args.loading}
       rows={[]}
-      selectedNamespace={text('selectedNamespace', '*')}
-      title={text('title', 'Resource Name')}
+      selectedNamespace={args.selectedNamespace}
+      title={args.title}
     />
   );
+};
+Simple.args = {
+  headers: [
+    { key: 'name', header: 'Name' },
+    { key: 'namespace', header: 'Namespace' },
+    { key: 'date', header: 'Date Created' }
+  ],
+  selectedNamespace: '*'
 };
 Simple.parameters = {
   notes: 'simple table with title, no rows, no buttons'
 };
 
-export const ToolbarButton = () => {
-  const rows = [
-    {
-      id: 'namespace1:resource-one',
-      name: text('Name', 'resource-one'),
-      namespace: text('Namespace', 'namespace1'),
-      date: text('Date', '100 years ago')
-    }
-  ];
-
+export const ToolbarButton = args => {
   return (
     <Table
       emptyTextAllNamespaces="No rows in any namespace"
       emptyTextSelectedNamespace="No rows in selected namespace"
-      filters={getFilters(
-        boolean('showFilters (for testing purposes only)', false)
-      )}
+      filters={getFilters(args.showFilters)}
       headers={[
         { key: 'name', header: 'Name' },
         { key: 'namespace', header: 'Namespace' },
         { key: 'date', header: 'Date Created' }
       ]}
-      loading={boolean('loading', false)}
-      rows={rows}
+      loading={args.loading}
+      rows={args.rows}
       selectedNamespace="*"
-      title={text('title', 'Resource Name')}
+      title={args.title}
       toolbarButtons={[
         { onClick: action('handleNew'), text: 'Add', icon: Add }
       ]}
     />
   );
 };
+ToolbarButton.args = {
+  rows: [
+    {
+      id: 'namespace1:resource-one',
+      name: 'resource-one',
+      namespace: 'namespace1',
+      date: '100 years ago'
+    }
+  ]
+};
 ToolbarButton.parameters = {
   notes: 'table with 1 row, 1 toolbar button, no batch actions'
 };
 
-export const BatchActions = () => {
-  const rows = [
-    {
-      id: 'namespace1:resource-one',
-      name: text('Name', 'resource-one'),
-      namespace: text('Namespace', 'namespace1'),
-      date: text('Date', '100 years ago')
-    }
-  ];
-
+export const BatchActions = args => {
   return (
     <Table
       batchActionButtons={[
         { onClick: action('handleDelete'), text: 'Delete', icon: Delete }
       ]}
-      filters={getFilters(
-        boolean('showFilters (for testing purposes only)', false)
-      )}
+      filters={getFilters(args.showFilters)}
       headers={[
         { key: 'name', header: 'Name' },
         { key: 'namespace', header: 'Namespace' },
         { key: 'date', header: 'Created' }
       ]}
-      loading={boolean('loading', false)}
-      rows={rows}
+      loading={args.loading}
+      rows={args.rows}
       selectedNamespace="*"
-      title={text('title', 'Resource Name')}
+      title={args.title}
     />
   );
+};
+BatchActions.args = {
+  rows: [
+    {
+      id: 'namespace1:resource-one',
+      name: 'resource-one',
+      namespace: 'namespace1',
+      date: '100 years ago'
+    }
+  ]
 };
 BatchActions.parameters = {
   notes: 'table with 1 row, 1 batch action'
 };
 
-export const Sorting = () => {
+export const Sorting = args => {
   const rows = [
     {
       id: 'namespace1:resource-one',
@@ -175,19 +171,17 @@ export const Sorting = () => {
       ]}
       emptyTextAllNamespaces="No rows in any namespace"
       emptyTextSelectedNamespace="No rows in selected namespace"
-      filters={getFilters(
-        boolean('showFilters (for testing purposes only)', false)
-      )}
+      filters={getFilters(args.showFilters)}
       headers={[
         { key: 'name', header: 'Name' },
         { key: 'namespace', header: 'Namespace' },
         { key: 'date', header: 'Date Created' }
       ]}
-      isSortable={boolean('isSortable', true)}
-      loading={boolean('loading', false)}
+      isSortable={args.isSortable}
+      loading={args.loading}
       rows={rows}
       selectedNamespace="*"
-      title={text('title', 'Resource Name')}
+      title={args.title}
       toolbarButtons={[
         { onClick: action('handleNew'), text: 'Add', icon: Add },
         {
@@ -198,6 +192,9 @@ export const Sorting = () => {
       ]}
     />
   );
+};
+Sorting.args = {
+  isSortable: true
 };
 Sorting.parameters = {
   notes: 'table with sortable rows, 2 batch actions, and 2 toolbar buttons'

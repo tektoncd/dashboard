@@ -13,7 +13,6 @@ limitations under the License.
 
 import React from 'react';
 import { action } from '@storybook/addon-actions';
-import { boolean } from '@storybook/addon-knobs';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
@@ -40,12 +39,10 @@ export default {
   title: 'Containers/Dropdowns/NamespacesDropdown'
 };
 
-export const Base = () => (
-  <NamespacesDropdown
-    {...props}
-    showAllNamespaces={boolean('showAllNamespaces', false)}
-  />
-);
+export const Base = args => <NamespacesDropdown {...props} {...args} />;
+Base.args = {
+  showAllNamespaces: false
+};
 Base.decorators = [
   storyFn => {
     const store = mockStore({

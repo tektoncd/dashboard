@@ -12,30 +12,33 @@ limitations under the License.
 */
 
 import React, { useState } from 'react';
-import { text } from '@storybook/addon-knobs';
 
 import TaskTree from './TaskTree';
 
 export default {
-  component: TaskTree,
-  title: 'Components/TaskTree'
-};
-
-export const Base = () => {
-  const props = {
+  args: {
     taskRuns: [
       {
         id: 'task',
-        pipelineTaskName: text('Task 1 name', 'Task 1'),
+        pipelineTaskName: 'Task 1',
         steps: [
           { id: 'build', stepName: 'build' },
           { id: 'test', stepName: 'test' }
         ],
-        succeeded: 'Unknown'
+        succeeded: 'True'
       },
       {
         id: 'task2',
-        pipelineTaskName: text('Task 2 name', 'Task 2'),
+        pipelineTaskName: 'Task 2',
+        steps: [
+          { id: 'step 1', stepName: 'step 1' },
+          { id: 'step 2', stepName: 'step 2' }
+        ],
+        succeeded: 'False'
+      },
+      {
+        id: 'task3',
+        pipelineTaskName: 'Task 3',
         steps: [
           { id: 'step 1', stepName: 'step 1' },
           { id: 'step 2', stepName: 'step 2' }
@@ -43,13 +46,23 @@ export const Base = () => {
         succeeded: 'Unknown'
       }
     ]
-  };
+  },
+  component: TaskTree,
+  parameters: {
+    backgrounds: {
+      default: 'gray10'
+    }
+  },
+  title: 'Components/TaskTree'
+};
+
+export const Base = args => {
   const [selectedStepId, setSelectedStepId] = useState();
   const [selectedTaskId, setSelectedTaskId] = useState();
 
   return (
     <TaskTree
-      {...props}
+      {...args}
       onSelect={(taskId, stepId) => {
         setSelectedStepId(stepId);
         setSelectedTaskId(taskId);

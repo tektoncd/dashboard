@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import { number } from '@storybook/addon-knobs';
 
 import FormattedDuration from './FormattedDuration';
 
@@ -29,11 +28,7 @@ export const OneMinuteOneSecond = () => (
 );
 OneMinuteOneSecond.storyName = '1 minute 1 second';
 
-export const Other = () => (
-  <FormattedDuration
-    milliseconds={number(
-      'milliseconds',
-      2 * 60 * 60 * 1000 + 1 * 60 * 1000 + 10 * 1000 // 2h 1m 10s
-    )}
-  />
-);
+export const Other = args => <FormattedDuration {...args} />;
+Other.args = {
+  milliseconds: 2 * 60 * 60 * 1000 + 1 * 60 * 1000 + 10 * 1000 // 2h 1m 10s
+};
