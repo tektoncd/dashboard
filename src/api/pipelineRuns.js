@@ -116,6 +116,7 @@ export function rerunPipelineRun(pipelineRun) {
   delete payload.metadata.labels['tekton.dev/pipeline'];
 
   delete payload.status;
+  delete payload.spec?.status;
 
   const uri = getTektonAPI('pipelineruns', { namespace });
   return post(uri, payload).then(({ body }) => body);

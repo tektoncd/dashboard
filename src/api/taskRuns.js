@@ -131,6 +131,7 @@ export function rerunTaskRun(taskRun) {
   delete payload.metadata.labels['tekton.dev/task'];
 
   delete payload.status;
+  delete payload.spec?.status;
 
   const uri = getTektonAPI('taskruns', { namespace });
   return post(uri, payload).then(({ body }) => body);
