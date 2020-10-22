@@ -12,25 +12,41 @@ limitations under the License.
 */
 
 import React from 'react';
-import { number, object } from '@storybook/addon-knobs';
 import DataTableSkeleton from './DataTableSkeleton';
 
-const props = () => ({
-  columnCount: number('columnCount', 5),
-  headers: object('headers', [
-    { key: 'status', header: 'Status' },
-    { key: 'name', header: 'Name' },
-    { key: 'pipeline', header: 'Pipeline' },
-    { key: 'namespace', header: 'Namespace' },
-    { key: 'created', header: 'Created' },
-    { key: 'duration', header: 'Duration' }
-  ]),
-  rowCount: number('rowCount', 5)
-});
-
 export default {
+  args: {
+    columnCount: 5,
+    headers: [
+      {
+        key: 'status',
+        header: 'Status'
+      },
+      {
+        key: 'name',
+        header: 'Name'
+      },
+      {
+        key: 'pipeline',
+        header: 'Pipeline'
+      },
+      {
+        key: 'namespace',
+        header: 'Namespace'
+      },
+      {
+        key: 'created',
+        header: 'Created'
+      },
+      {
+        key: 'duration',
+        header: 'Duration'
+      }
+    ],
+    rowCount: 5
+  },
   component: DataTableSkeleton,
   title: 'Components/DataTableSkeleton'
 };
 
-export const Base = () => <DataTableSkeleton {...props()} />;
+export const Base = args => <DataTableSkeleton {...args} />;

@@ -13,77 +13,83 @@ limitations under the License.
 
 import React from 'react';
 import { action } from '@storybook/addon-actions';
-import { text } from '@storybook/addon-knobs';
 
 import KeyValueList from './KeyValueList';
 
 export default {
+  args: {
+    legendText: 'Legend Text'
+  },
   component: KeyValueList,
   title: 'Components/KeyValueList'
 };
 
-export const Base = () => {
+export const Base = args => {
   return (
     <KeyValueList
-      legendText={text('legendText', 'Legend Text')}
-      keyValues={[
-        {
-          id: '0',
-          key: text('key', 'foo'),
-          keyPlaceholder: 'foo',
-          value: text('value', 'bar'),
-          valuePlaceholder: 'bar'
-        },
-        {
-          id: '1',
-          key: '',
-          keyPlaceholder: text('keyPlaceholder', 'key placeholder'),
-          value: '',
-          valuePlaceholder: text('valuePlaceholder', 'value placeholder')
-        },
-        {
-          id: '2',
-          key: 'invalid key',
-          keyPlaceholder: '',
-          value: 'bar',
-          valuePlaceholder: ''
-        },
-        {
-          id: '3',
-          key: 'foo',
-          keyPlaceholder: '',
-          value: 'invalid value',
-          valuePlaceholder: ''
-        }
-      ]}
       invalidFields={{ '2-key': true, '3-value': true }}
-      invalidText={text('invalidText', 'There are invalid KeyValue entries.')}
       onChange={action('onChange')}
       onAdd={action('onAdd')}
       onRemove={action('onRemove')}
+      {...args}
     />
   );
 };
+Base.args = {
+  invalidText: 'There are invalid KeyValue entries.',
+  keyValues: [
+    {
+      id: '0',
+      key: 'foo',
+      keyPlaceholder: 'foo',
+      value: 'bar',
+      valuePlaceholder: 'bar'
+    },
+    {
+      id: '1',
+      key: '',
+      keyPlaceholder: 'key placeholder',
+      value: '',
+      valuePlaceholder: 'value placeholder'
+    },
+    {
+      id: '2',
+      key: 'invalid key',
+      keyPlaceholder: '',
+      value: 'bar',
+      valuePlaceholder: ''
+    },
+    {
+      id: '3',
+      key: 'foo',
+      keyPlaceholder: '',
+      value: 'invalid value',
+      valuePlaceholder: ''
+    }
+  ]
+};
 
-export const MinKeyValues = () => {
+export const MinKeyValues = args => {
   return (
     <KeyValueList
-      legendText={text('legendText', 'Legend Text')}
       keyValues={[
         {
           id: '0',
-          key: text('key', 'foo'),
-          keyPlaceholder: text('keyPlaceholder', 'foo'),
-          value: text('value', 'bar'),
-          valuePlaceholder: text('valuePlaceholder', 'bar')
+          key: 'foo',
+          keyPlaceholder: 'foo',
+          value: 'bar',
+          valuePlaceholder: 'bar'
         }
       ]}
-      minKeyValues={1}
       invalidFields={{}}
       onChange={action('onChange')}
       onAdd={action('onAdd')}
       onRemove={action('onRemove')}
+      {...args}
     />
   );
+};
+MinKeyValues.args = {
+  minKeyValues: 1
 };
 MinKeyValues.storyName = 'minKeyValues';

@@ -12,34 +12,35 @@ limitations under the License.
 */
 
 import React from 'react';
-import { boolean } from '@storybook/addon-knobs';
 
 import ViewYAML from './ViewYAML';
 
 export default {
+  args: {
+    dark: true,
+    resource: {
+      apiVersion: 'tekton.dev/v1alpha1',
+      kind: 'Resource',
+      metadata: {
+        creationTimestamp: '1995-11-08T00:00:00Z',
+        generation: 1,
+        labels: {
+          foo: 'bar'
+        },
+        name: 'resource-example',
+        namespace: 'tekton-pipelines',
+        resourceVersion: '123456',
+        uid: '1234567890987654321'
+      },
+      spec: {
+        params: [{ name: 'parameter1', value: 'valueParameter1' }]
+      }
+    }
+  },
   component: ViewYAML,
   title: 'Components/ViewYAML'
 };
 
-export const Base = () => {
-  const resource = {
-    apiVersion: 'tekton.dev/v1alpha1',
-    kind: 'Resource',
-    metadata: {
-      creationTimestamp: '1995-11-08T00:00:00Z',
-      generation: 1,
-      labels: {
-        foo: 'bar'
-      },
-      name: 'resource-example',
-      namespace: 'tekton-pipelines',
-      resourceVersion: '123456',
-      uid: '1234567890987654321'
-    },
-    spec: {
-      params: [{ name: 'parameter1', value: 'valueParameter1' }]
-    }
-  };
-
-  return <ViewYAML resource={resource} dark={boolean('dark', true)} />;
+export const Base = args => {
+  return <ViewYAML {...args} />;
 };

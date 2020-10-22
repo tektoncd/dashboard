@@ -55,14 +55,15 @@ const ansiTextStyles = (() => {
 
 export default {
   component: LogFormat,
-  decorators: [storyFn => <div style={{ width: '500px' }}>{storyFn()}</div>],
   title: 'Components/LogFormat'
 };
 
 export const Colors = () => <LogFormat>{ansiColors}</LogFormat>;
-Colors.decorators = [
-  storyFn => <div style={{ backgroundColor: '#262626' }}>{storyFn()}</div>
-];
+Colors.parameters = {
+  backgrounds: {
+    default: 'gray90'
+  }
+};
 
 export const TextStyles = () => <LogFormat>{ansiTextStyles}</LogFormat>;
 

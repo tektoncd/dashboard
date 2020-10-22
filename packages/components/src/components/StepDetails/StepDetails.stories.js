@@ -25,10 +25,7 @@ const logContainer = <Log logs={ansiLog} status="Completed" />;
 
 export default {
   component: StepDetails,
-  decorators: [
-    StoryRouter(),
-    storyFn => <div style={{ alignSelf: 'stretch' }}>{storyFn()}</div>
-  ],
+  decorators: [StoryRouter()],
   title: 'Components/StepDetails'
 };
 

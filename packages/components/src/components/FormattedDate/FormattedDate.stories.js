@@ -12,19 +12,22 @@ limitations under the License.
 */
 
 import React from 'react';
-import { date } from '@storybook/addon-knobs';
 
 import FormattedDate from './FormattedDate';
 
 const now = new Date();
 
 export default {
+  args: {
+    date: now
+  },
+  argTypes: {
+    date: { control: { type: 'date' } }
+  },
   component: FormattedDate,
   title: 'Components/FormattedDate'
 };
 
-export const Relative = () => (
-  <FormattedDate date={date('date', now)} relative />
-);
+export const Relative = args => <FormattedDate relative {...args} />;
 
-export const Absolute = () => <FormattedDate date={date('date', now)} />;
+export const Absolute = args => <FormattedDate {...args} />;

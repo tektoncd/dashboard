@@ -22,10 +22,7 @@ const params = [{ name: paramKey, value: paramValue }];
 
 export default {
   component: TaskRunDetails,
-  decorators: [
-    StoryRouter(),
-    storyFn => <div style={{ alignSelf: 'stretch' }}>{storyFn()}</div>
-  ],
+  decorators: [StoryRouter()],
   title: 'Components/TaskRunDetails'
 };
 

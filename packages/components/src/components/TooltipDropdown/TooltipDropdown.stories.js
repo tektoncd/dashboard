@@ -12,35 +12,31 @@ limitations under the License.
 */
 
 import React from 'react';
-import { text } from '@storybook/addon-knobs';
 
 import TooltipDropdown from './TooltipDropdown';
 
 const props = {
   id: 'tooltip-dropdown-id',
   label: 'Select an item',
-  items: ['item 1', 'item 2', 'item 3'],
+  items: ['item 1', 'item 2', 'item 3', 'item 4', 'item 5', 'item 6'],
   loading: false
 };
 
 export default {
+  args: { titleText: '' },
   component: TooltipDropdown,
   decorators: [storyFn => <div style={{ width: '200px' }}>{storyFn()}</div>],
   title: 'Components/TooltipDropdown'
 };
 
-export const Base = () => {
-  return <TooltipDropdown {...props} titleText={text('titleText', '')} />;
+export const Base = args => {
+  return <TooltipDropdown {...props} {...args} />;
 };
 
-export const Loading = () => {
-  return (
-    <TooltipDropdown {...props} loading titleText={text('titleText', '')} />
-  );
+export const Loading = args => {
+  return <TooltipDropdown {...props} loading {...args} />;
 };
 
-export const Empty = () => {
-  return (
-    <TooltipDropdown {...props} items={[]} titleText={text('titleText', '')} />
-  );
+export const Empty = args => {
+  return <TooltipDropdown {...props} items={[]} {...args} />;
 };

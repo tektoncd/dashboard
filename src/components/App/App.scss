@@ -13,10 +13,6 @@ limitations under the License.
 
 @import './carbon';
 
-body {
-  background-color: $ui-background;
-}
-
 h1 {
   @include type-style('productive-heading-04');
   margin-bottom: $layout-02;
@@ -32,7 +28,7 @@ h2 {
 
 .bx--header ~ {
   .bx--content {
-    background-color: transparent;
+    background-color: $ui-background;
     transform: none;
     padding-top: $layout-02;
   }

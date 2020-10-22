@@ -21,7 +21,26 @@ export const parameters = {
       a[1].kind === b[1].kind
         ? 0
         : a[1].id.localeCompare(b[1].id, undefined, { numeric: true })
-  }
+  },
+  backgrounds: {
+    default: 'white',
+    grid: {
+      // TODO: available in 6.1.0+
+      disable: false,
+      cellSize: 20,
+      opacity: 0.5,
+      cellAmount: 5,
+      offsetX: 16, // default value depends on story layout
+      offsetY: 16 // fullscreen: 0, padded: 16
+    },
+    values: [
+      { name: 'white', value: 'white' },
+      { name: 'gray10', value: '#f4f4f4' },
+      { name: 'gray90', value: '#262626' },
+      { name: 'debug', value: 'red' }
+    ]
+  },
+  controls: { hideNoControlsWarning: true }
 };
 
 export const decorators = [

@@ -301,7 +301,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
         })
       ];
 
-      // Defaults - todo ensure all data is fetched and displayed so we don't need this
+      // Defaults - TODO ensure all data is fetched and displayed so we don't need this
       let secretUsernameToDisplay = translatedReload;
       let secretTypeToDisplay = translatedReload;
 

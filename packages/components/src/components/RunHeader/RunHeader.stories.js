@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import { text } from '@storybook/addon-knobs';
 import StoryRouter from 'storybook-react-router';
 
 import RunHeader from './RunHeader';
@@ -20,70 +19,65 @@ import RunHeader from './RunHeader';
 const now = new Date();
 
 export default {
+  args: {
+    name: 'simple-pipeline',
+    runName: 'simple-pipeline-run-1',
+    type: 'pipelines',
+    typeLabel: 'Pipelines'
+  },
   component: RunHeader,
   decorators: [StoryRouter()],
+  parameters: {
+    backgrounds: {
+      default: 'gray10'
+    }
+  },
   title: 'Components/RunHeader'
 };
 
-export const Base = () => (
-  <RunHeader
-    name={text('Pipeline Name', 'simple-pipeline')}
-    runName={text('PipelineRun Name', 'simple-pipeline-run-1')}
-    type={text('Run Type', 'pipelines')}
-    typeLabel={text('Run Type Label', 'Pipelines')}
-  />
-);
+export const Base = args => <RunHeader {...args} />;
 
-export const Running = () => (
+export const Running = args => (
   <RunHeader
     lastTransitionTime={now}
-    message={text('Status Message', 'Not all Tasks have completed executing')}
-    name={text('Pipeline Name', 'simple-pipeline')}
-    runName={text('PipelineRun Name', 'simple-pipeline-run-1')}
     reason="Running"
     status="Unknown"
-    type={text('Run Type', 'pipelines')}
-    typeLabel={text('Run Type Label', 'Pipelines')}
+    {...args}
   />
 );
+Running.args = {
+  message: 'Not all Tasks have completed executing'
+};
 
-export const Complete = () => (
+export const Complete = args => (
   <RunHeader
     lastTransitionTime={now}
-    message={text('Status Message', 'All Tasks have completed executing')}
-    name={text('Pipeline Name', 'simple-pipeline')}
-    runName={text('PipelineRun Name', 'simple-pipeline-run-1')}
     status="True"
     reason="Completed"
-    type={text('Run Type', 'pipelines')}
-    typeLabel={text('Run Type Label', 'Pipelines')}
+    {...args}
   />
 );
+Complete.args = {
+  message: 'All Tasks have completed executing'
+};
 
-export const Failed = () => (
+export const Failed = args => (
   <RunHeader
     lastTransitionTime={now}
-    message={text(
-      'Status Message',
-      'TaskRun demo-pipeline-run-1-build-skaffold-web-4dzrn has failed'
-    )}
-    name={text('Pipeline Name', 'simple-pipeline')}
-    runName={text('PipelineRun Name', 'simple-pipeline-run-1')}
     status="False"
     reason="Failed"
-    type={text('Run Type', 'pipelines')}
-    typeLabel={text('Run Type Label', 'Pipelines')}
+    {...args}
   />
 );
+Failed.args = {
+  message: 'TaskRun demo-pipeline-run-1-build-skaffold-web-4dzrn has failed'
+};
 
 export const Loading = () => <RunHeader loading />;
 
-export const WithTriggerInfo = () => (
+export const WithTriggerInfo = args => (
   <RunHeader
     lastTransitionTime={now}
-    message={text('Status Message', 'All Tasks have completed executing')}
-    name={text('Pipeline Name', 'simple-pipeline')}
-    runName={text('PipelineRun Name', 'simple-pipeline-run-1')}
     status="True"
     reason="Completed"
     triggerHeader={
@@ -91,7 +85,9 @@ export const WithTriggerInfo = () => (
         Triggered by <a href="#">Update README.md</a>
       </span>
     }
-    type={text('Run Type', 'pipelines')}
-    typeLabel={text('Run Type Label', 'Pipelines')}
+    {...args}
   />
 );
+WithTriggerInfo.args = {
+  message: 'All Tasks have completed executing'
+};
