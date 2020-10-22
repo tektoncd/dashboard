@@ -18,14 +18,15 @@ limitations under the License.
   flex-wrap: nowrap;
   min-height: calc(100vh - 16rem);
   align-items: stretch;
-  background-color: white;
 
   .tkn--task-tree {
     flex-shrink: 0;
   }
 
   .tkn--step-details {
+    background-color: white;
     flex-grow: 1;
+    padding-left: 1rem;
   }
 
   .bx--data-table {

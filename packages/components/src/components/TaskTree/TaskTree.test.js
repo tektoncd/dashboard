@@ -65,9 +65,15 @@ it('TaskTree renders and expands first Task in TaskRun with no error', () => {
   const { queryByText } = renderWithIntl(<TaskTree {...props} />);
   // Selected Task should have two child elements. The anchor and ordered list
   // of steps in expanded task
-  expect(queryByText('A Task').parentNode.childNodes).toHaveLength(2);
-  expect(queryByText('A Second Task').parentNode.childNodes).toHaveLength(1);
-  expect(queryByText('A Third Task').parentNode.childNodes).toHaveLength(1);
+  expect(queryByText('A Task').parentNode.parentNode.childNodes).toHaveLength(
+    2
+  );
+  expect(
+    queryByText('A Second Task').parentNode.parentNode.childNodes
+  ).toHaveLength(1);
+  expect(
+    queryByText('A Third Task').parentNode.parentNode.childNodes
+  ).toHaveLength(1);
 });
 
 it('TaskTree renders and expands error Task in TaskRun', () => {
@@ -76,9 +82,15 @@ it('TaskTree renders and expands error Task in TaskRun', () => {
   const { queryByText } = renderWithIntl(<TaskTree {...props} />);
   // Selected Task should have two child elements. The anchor and ordered list
   // of steps in expanded task
-  expect(queryByText('A Task').parentNode.childNodes).toHaveLength(1);
-  expect(queryByText('A Second Task').parentNode.childNodes).toHaveLength(2);
-  expect(queryByText('A Third Task').parentNode.childNodes).toHaveLength(1);
+  expect(queryByText('A Task').parentNode.parentNode.childNodes).toHaveLength(
+    1
+  );
+  expect(
+    queryByText('A Second Task').parentNode.parentNode.childNodes
+  ).toHaveLength(2);
+  expect(
+    queryByText('A Third Task').parentNode.parentNode.childNodes
+  ).toHaveLength(1);
 });
 
 it('TaskTree renders and expands first error Task in TaskRun', () => {
@@ -88,9 +100,15 @@ it('TaskTree renders and expands first error Task in TaskRun', () => {
   const { queryByText } = renderWithIntl(<TaskTree {...props} />);
   // Selected Task should have two child elements. The anchor and ordered list
   // of steps in expanded task
-  expect(queryByText('A Task').parentNode.childNodes).toHaveLength(1);
-  expect(queryByText('A Second Task').parentNode.childNodes).toHaveLength(2);
-  expect(queryByText('A Third Task').parentNode.childNodes).toHaveLength(1);
+  expect(queryByText('A Task').parentNode.parentNode.childNodes).toHaveLength(
+    1
+  );
+  expect(
+    queryByText('A Second Task').parentNode.parentNode.childNodes
+  ).toHaveLength(2);
+  expect(
+    queryByText('A Third Task').parentNode.parentNode.childNodes
+  ).toHaveLength(1);
 });
 
 it('TaskTree handles click event on Task', () => {

@@ -12,7 +12,10 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
-import { ChevronRight16 as DefaultIcon } from '@carbon/icons-react';
+import {
+  ChevronRight20 as DefaultIcon,
+  ChevronDown20 as ExpandIcon
+} from '@carbon/icons-react';
 import { StatusIcon, Step } from '@tektoncd/dashboard-components';
 
 import { updateUnexecutedSteps } from '@tektoncd/dashboard-utils';
@@ -69,12 +72,17 @@ class Task extends Component {
       succeeded
     } = this.props;
 
+    const expandIcon = expanded ? null : (
+      <ExpandIcon className="tkn--task--expand-icon" />
+    );
+
     return (
       <li
         className="tkn--task"
         data-succeeded={succeeded}
         data-reason={reason}
         data-selected={(expanded && !selectedStepId) || undefined}
+        data-active={expanded || undefined}
       >
         <a
           className="tkn--task-link"
@@ -84,13 +92,11 @@ class Task extends Component {
         >
           <StatusIcon
             DefaultIcon={DefaultIcon}
-            inverse={
-              succeeded !== 'Unknown' || (reason && reason !== 'Pending')
-            }
             reason={reason}
             status={succeeded}
           />
-          {pipelineTaskName}
+          <span className="tkn--task-link--name">{pipelineTaskName}</span>
+          {expandIcon}
         </a>
         {expanded && (
           <ol className="tkn--step-list">

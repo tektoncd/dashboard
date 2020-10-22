@@ -17,99 +17,69 @@ limitations under the License.
   list-style-type: none;
 
   > a.tkn--task-link {
-    color: $text-01;
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding: 0 1rem 0 .75rem;
+    font-size: 0.76rem;
+    letter-spacing: 0.06rem;
+    font-weight: bold;
+    line-height: 2.2rem;
     text-decoration: none;
+    color: inherit;
+    margin: 1rem 1rem 0 0;
+    white-space: nowrap;
+    background-color: white;
+    border-left: 3px solid white;
+
+    > .tkn--status-icon {
+      margin-right: 0.75rem;
+    }
 
     &:focus, &:hover {
+      background-color: $hover-ui;
       text-decoration: none;
+      border-left-color: $hover-ui;
+    }
+
+    .tkn--task-link--name {
+      flex-grow: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    > .tkn--status-icon,
+    > .tkn--task--expand-icon {
+      flex-shrink: 0;
     }
   }
 
-  &[data-selected] > a.tkn--task-link:after {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    border-top: 1.1rem solid transparent;
-    border-right: 0.8rem solid white;
-    border-bottom: 1.1rem solid transparent;
+  &[data-selected] > a.tkn--task-link {
+    border-left: 3px solid $interactive-04;
+    margin-right: 0;
   }
 
-  &[data-selected]:not([data-succeeded]) > a.tkn--task-link,
-    &[data-selected][data-succeeded='Unknown'] > a.tkn--task-link {
-    background-color: $hover-ui;
+  &[data-active] > a.tkn--task-link {
+    margin-right: 0;
+
+    .tkn--task--expand-icon {
+      /* needed when we support expanding multiple tasks */
+      margin-right: 1rem;
+    }
   }
 
   &:not([data-succeeded]) > a.tkn--task-link {
-    background-color: $waiting-bg;
-    color: $waiting-fg;
     &:hover {
       color: $waiting-fg;
       background-color: $waiting-bg-hover;
-    }
-    &:after {
-      height: 1px;
-      left: -1px;
-      right: -1px;
-    }
-  }
-  &[data-succeeded='True'] > a.tkn--task-link {
-    background-color: $success-bg;
-    color: $success-fg;
-    &:focus, &:hover {
-      color: $success-fg;
-      background-color: $success-bg-hover;
-    }
-  }
-  &[data-succeeded='False'] > a.tkn--task-link {
-    background-color: $failed-bg;
-    color: $failed-fg;
-    &:focus, &:hover {
-      color: $failed-fg;
-      background-color: $failed-bg-hover;
-    }
-  }
-  &[data-succeeded='Unknown'][data-reason='Running'] > a.tkn--task-link {
-    background-color: $running-bg;
-    color: $running-fg;
-    &:focus, &:hover {
-      color: $running-fg;
-      background-color: $running-bg-hover;
-    }
-  }
-
-  > a.tkn--task-link {
-    display: block;
-    position: relative;
-    padding: 0 1.25rem;
-    text-decoration: none;
-    color: inherit;
-    margin: 1px 0;
-    line-height: 2.2rem;
-    white-space: nowrap;
-    font-size: 0.76rem;
-    letter-spacing: 0.06rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-
-    > .tkn--status-icon {
-      vertical-align: text-top;
-      margin-right: 0.7rem;
-      width: 16px;
-      height: 16px;
-
-      &.tkn--spinner {
-        position: relative;
-        top: -0.1rem;
-        left: -0.1rem;
-        width: 20px;
-        height: 20px;
-      }
     }
   }
 
   &:first-child > a.tkn--task-link {
     margin-top: 0;
+  }
+
+  .tkn--step-list {
+    background-color: white;
   }
 }
