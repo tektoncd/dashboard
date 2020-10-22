@@ -17,7 +17,15 @@ import StatusIcon from './StatusIcon';
 
 export default {
   component: StatusIcon,
-  args: { inverse: false },
+  args: { type: 'normal' },
+  argTypes: {
+    type: {
+      control: {
+        type: 'inline-radio',
+        options: ['normal', 'inverse']
+      }
+    }
+  },
   title: 'Components/StatusIcon'
 };
 

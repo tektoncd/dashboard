@@ -42,23 +42,20 @@ limitations under the License.
 
     > .tkn--status-icon {
       vertical-align: top;
-      margin-right: 0.85rem;
+      margin-right: 0.75rem;
       width: 24px;
       height: 24px;
 
       &.tkn--spinner {
         position: relative;
-        top: -0.1rem;
-        left: -0.1rem;
-        width: 1.75rem;
-        height: 1.75rem;
-        margin-right: 0.6rem;
+        top: -1px;
+        left: -1px;
       }
     }
 
     > .tkn--status-label {
       font-size: 0.9rem;
-      margin-left: 0.8rem;
+      margin-left: 0.75rem;
     }
   }
 

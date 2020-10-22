@@ -15,6 +15,8 @@ limitations under the License.
 
 .tkn--status-icon {
   fill: $not-run;
+  width: 20px;
+  height: 20px;
 
   &--cancelled {
     fill: $ui-04;
@@ -30,9 +32,5 @@ limitations under the License.
 
   &--success {
     fill: $success;
-  }
-
-  &--inverse {
-    fill: white;
   }
 }

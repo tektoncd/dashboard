@@ -13,7 +13,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { injectIntl } from 'react-intl';
-import { ChevronRight16 as DefaultIcon } from '@carbon/icons-react';
+import { ChevronRight20 as DefaultIcon } from '@carbon/icons-react';
 
 import StatusIcon from '../StatusIcon';
 
@@ -92,6 +92,7 @@ class Step extends Component {
         >
           <StatusIcon
             DefaultIcon={DefaultIcon}
+            type="inverse"
             reason={reason}
             status={status}
           />

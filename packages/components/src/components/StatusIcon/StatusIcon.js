@@ -18,35 +18,55 @@ import React from 'react';
 import classNames from 'classnames';
 import {
   CheckmarkFilled20 as CheckmarkFilled,
+  CheckmarkOutline20 as CheckmarkOutline,
   CloseFilled20 as CloseFilled,
+  CloseOutline20 as CloseOutline,
   Time20 as Time
 } from '@carbon/icons-react';
 import { isRunning } from '@tektoncd/dashboard-utils';
 
 import { Spinner } from '..';
 
-export default function StatusIcon({ DefaultIcon, inverse, reason, status }) {
-  let Icon = DefaultIcon;
+const icons = {
+  normal: {
+    cancelled: CloseFilled,
+    error: CloseFilled,
+    pending: Time,
+    running: Spinner,
+    success: CheckmarkFilled
+  },
+  inverse: {
+    cancelled: CloseOutline,
+    error: CloseOutline,
+    pending: Time,
+    running: Spinner,
+    success: CheckmarkOutline
+  }
+};
+
+export default function StatusIcon({
+  DefaultIcon,
+  type = 'normal',
+  reason,
+  status
+}) {
   let statusClass;
   if (
     (!status && !DefaultIcon) ||
     (status === 'Unknown' && reason === 'Pending')
   ) {
-    Icon = Time;
+    statusClass = 'pending';
   } else if (isRunning(reason, status)) {
-    Icon = Spinner;
     statusClass = 'running';
   } else if (
     status === 'True' ||
     (status === 'terminated' && reason === 'Completed')
   ) {
-    Icon = CheckmarkFilled;
     statusClass = 'success';
   } else if (
     status === 'False' &&
     (reason === 'PipelineRunCancelled' || reason === 'TaskRunCancelled')
   ) {
-    Icon = CloseFilled;
     statusClass = 'cancelled';
   } else if (
     status === 'False' ||
@@ -54,15 +74,15 @@ export default function StatusIcon({ DefaultIcon, inverse, reason, status }) {
     status === 'terminated' ||
     (status === 'Unknown' && reason === 'PipelineRunCouldntCancel')
   ) {
-    Icon = CloseFilled;
     statusClass = 'error';
   }
+
+  const Icon = icons[type]?.[statusClass] || DefaultIcon;
 
   return Icon ? (
     <Icon
       className={classNames('tkn--status-icon', {
-        [`tkn--status-icon--${statusClass}`]: statusClass,
-        'tkn--status-icon--inverse': inverse
+        [`tkn--status-icon--${statusClass}`]: statusClass
       })}
     />
   ) : null;

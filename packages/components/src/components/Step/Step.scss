@@ -24,43 +24,32 @@ limitations under the License.
     text-decoration: none;
   }
 
-  &[data-selected] > a.tkn--step-link:after {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    border-top: 1.1rem solid transparent;
-    border-right: 0.8rem solid white;
-    border-bottom: 1.1rem solid transparent;
+  &:hover > a.tkn--step-link,
+  > a.tkn--step-link:hover {
+    border-left-color: $hover-ui;
+  }
+
+  &[data-selected] > a.tkn--step-link {
+    background-color: transparent;
+    border-left: 3px solid $interactive-04;
   }
 
   > a.tkn--step-link {
     display: flex;
     align-items: baseline;
     position: relative;
-    padding: 0 2.25rem;
-    margin: 1px 0;
+    padding: 0 1rem 0 .75rem;
     line-height: 2.2rem;
     font-size: 0.78rem;
     letter-spacing: 0.02rem;
     text-decoration: none;
+    border-left: 3px solid white;
   }
 
   .tkn--status-icon {
     flex-shrink: 0;
     align-self: center;
-    margin-right: 0.55rem;
-    &:not(.tkn--spinner) {
-      width: 16px;
-      height: 16px;
-    }
-
-    &.tkn--spinner {
-      position: relative;
-      top: -0.1rem;
-      left: -0.1rem;
-    }
+    margin-right: 0.75rem;
   }
 
   .tkn--step-name {
@@ -72,14 +61,9 @@ limitations under the License.
 
   .tkn--status-label {
     flex-shrink: 0;
-    margin-left: 0.5rem;
+    margin-left: 0.75rem;
     font-size: 0.7rem;
     letter-spacing: 0.01rem;
-  }
-
-  &[data-status] > a.tkn--step-link {
-    // default status
-    opacity: 0.75;
   }
 
   &[data-status='running'] > a.tkn--step-link {

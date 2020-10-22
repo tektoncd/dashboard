@@ -96,6 +96,7 @@ class DetailsHeader extends Component {
             DefaultIcon={type === 'step' ? DefaultIcon : null}
             reason={reason}
             status={status}
+            {...(type === 'step' ? { type: 'inverse' } : null)}
           />
           <span className="tkn--run-details-name" title={stepName}>
             {stepName}

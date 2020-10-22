@@ -43,7 +43,8 @@ export default {
           { id: 'step 1', stepName: 'step 1' },
           { id: 'step 2', stepName: 'step 2' }
         ],
-        succeeded: 'Unknown'
+        succeeded: 'Unknown',
+        reason: 'Running'
       }
     ]
   },
