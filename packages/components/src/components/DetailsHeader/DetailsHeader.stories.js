@@ -15,45 +15,70 @@ import React from 'react';
 
 import DetailsHeader from './DetailsHeader';
 
-const taskRun = {
+const getTaskRun = ({ reason, succeeded, taskReason, taskStatus }) => ({
   id: 'task',
   taskName: 'A Task',
+  succeeded,
+  reason,
   status: {
     conditions: [
       {
-        reason: 'Pending',
-        status: 'Unknown',
+        reason: taskReason,
+        status: taskStatus,
         type: 'Succeeded'
       }
     ]
   }
-};
+});
 
 export default {
+  args: {
+    type: 'step'
+  },
+  argTypes: {
+    type: {
+      control: {
+        type: 'inline-radio',
+        options: ['step', 'taskRun']
+      }
+    }
+  },
   component: DetailsHeader,
   title: 'Components/DetailsHeader'
 };
 
-export const Running = () => (
-  <DetailsHeader status="running" stepName="build" taskRun={taskRun} />
+export const Running = args => (
+  <DetailsHeader
+    status="running"
+    stepName="build"
+    taskRun={getTaskRun({ reason: 'Running', succeeded: 'Unknown' })}
+    {...args}
+  />
 );
 
-export const Completed = () => (
+export const Completed = args => (
   <DetailsHeader
     reason="Completed"
     status="terminated"
     stepName="build"
-    taskRun={taskRun}
+    taskRun={getTaskRun({ reason: 'Succeeded', succeeded: 'True' })}
+    {...args}
   />
 );
 
-export const Failed = () => (
+export const Failed = args => (
   <DetailsHeader
     reason="Error"
     status="terminated"
     stepName="build"
-    taskRun={taskRun}
+    taskRun={getTaskRun({ reason: 'Failed', succeeded: 'False' })}
+    {...args}
   />
 );
 
-export const Pending = () => <DetailsHeader taskRun={taskRun} />;
+export const Pending = args => (
+  <DetailsHeader
+    taskRun={getTaskRun({ taskReason: 'Pending', taskStatus: 'Unknown' })}
+    {...args}
+  />
+);
