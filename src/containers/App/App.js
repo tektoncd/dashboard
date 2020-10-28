@@ -30,7 +30,12 @@ import {
   LogoutButton,
   PageErrorBoundary
 } from '@tektoncd/dashboard-components';
-import { getErrorMessage, paths, urls } from '@tektoncd/dashboard-utils';
+import {
+  ALL_NAMESPACES,
+  getErrorMessage,
+  paths,
+  urls
+} from '@tektoncd/dashboard-utils';
 
 import {
   About,
@@ -159,7 +164,7 @@ export /* istanbul ignore next */ class App extends Component {
       }
 
       this.props.fetchExtensions({
-        namespace: this.props.tenantNamespace
+        namespace: this.props.tenantNamespace || ALL_NAMESPACES
       });
     }
   }

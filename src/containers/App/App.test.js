@@ -16,6 +16,7 @@ import { Provider } from 'react-redux';
 import { render, waitForElement } from 'react-testing-library';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
 import { App } from './App';
 import * as PipelinesAPI from '../../api/pipelines';
@@ -227,7 +228,7 @@ describe('App', () => {
     expect(fetchExtensions).toHaveBeenCalledWith({ namespace: 'fake' });
   });
 
-  it('calls fetchExtensions without namespace in full cluster mode', async () => {
+  it('calls fetchExtensions with ALL_NAMESPACES in full cluster mode', async () => {
     const middleware = [thunk];
     const mockStore = configureStore(middleware);
     const store = mockStore({
@@ -253,7 +254,7 @@ describe('App', () => {
     );
 
     await waitForElement(() => queryByText('Tekton resources'));
-    expect(fetchExtensions).toHaveBeenCalledWith({});
+    expect(fetchExtensions).toHaveBeenCalledWith({ namespace: ALL_NAMESPACES });
     expect(fetchNamespaces).toHaveBeenCalled();
   });
 });
