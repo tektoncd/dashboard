@@ -241,7 +241,7 @@ const LogFormat = ({ children }) => {
 
   const parse = (ansi, index) => {
     if (ansi.length === 0) {
-      return <br />;
+      return <br key={index} />;
     }
     let offset = 0;
     while (offset !== ansi.length) {
