@@ -111,7 +111,7 @@
     "dashboard.extensions.emptyState": "拡張機能なし",
     "dashboard.extensions.errorLoading": "拡張機能のロード中にエラーが発生しました",
     "dashboard.extensions.title": "拡張機能",
-    "dashboard.graph.pan": "pan",
+    "dashboard.graph.pan": "",
     "dashboard.graph.select": "選択",
     "dashboard.graph.zoomIn": "拡大",
     "dashboard.graph.zoomOut": "縮小",
@@ -215,7 +215,7 @@
     "dashboard.secret.serviceAccountTableTitle": "ServiceAccount",
     "dashboard.secret.type": "種類：",
     "dashboard.secretType.helper": "認証を必要とするgitまたはイメージPipelineResourceとともにパスワードを使用してください。webhookまたはpullRequest PipelineResourceとともにAccess Tokenを使用してください。認証の詳細については、Tekton Pipelineのドキュメントを参照してください。",
-    "dashboard.secretType.type": "Secret type",
+    "dashboard.secretType.type": "Secret Type",
     "dashboard.secrets.deleteConfirm": "これらのSecretを削除してもよろしいですか?",
     "dashboard.secrets.deleteHeading": "Secretを削除",
     "dashboard.secrets.deleteSuccess": "Secretが正常に削除されました",
@@ -295,10 +295,10 @@
     "dashboard.universalFields.passwordRadioButton": "パスワード",
     "dashboard.universalFields.secretType": "種類",
     "dashboard.universalFields.serverURL": "サーバURL",
-    "react-intl-formatted-duration.daysUnit": "{value, plural, one {日} other {日}}",
+    "react-intl-formatted-duration.daysUnit": "{日}",
     "react-intl-formatted-duration.duration": "{value} {unit}",
-    "react-intl-formatted-duration.hoursUnit": "{value, plural, one {時間} other {時間}}",
-    "react-intl-formatted-duration.minutesUnit": "{value, plural, one {分} other {分}}",
-    "react-intl-formatted-duration.secondsUnit": "{value, plural, one {秒} other {秒}}"
+    "react-intl-formatted-duration.hoursUnit": "{時間}",
+    "react-intl-formatted-duration.minutesUnit": "{分}",
+    "react-intl-formatted-duration.secondsUnit": "{秒}"
   }
 }
