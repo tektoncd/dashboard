@@ -39,10 +39,12 @@ module.exports = merge(common({ mode }), {
     proxy: {
       ...(process.env.EXTENSIONS_LOCAL_DEV ? extensionConfig : {}),
       '/v1': {
+        secure: false,
         target: process.env.API_DOMAIN || API_DOMAIN,
         ws: true
       },
       '/proxy': {
+        secure: false,
         target: process.env.API_DOMAIN || API_DOMAIN,
         ws: true
       }
