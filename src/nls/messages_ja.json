@@ -295,10 +295,10 @@
     "dashboard.universalFields.passwordRadioButton": "パスワード",
     "dashboard.universalFields.secretType": "種類",
     "dashboard.universalFields.serverURL": "サーバURL",
-    "react-intl-formatted-duration.daysUnit": "{日}",
+    "react-intl-formatted-duration.daysUnit": "日",
     "react-intl-formatted-duration.duration": "{value} {unit}",
-    "react-intl-formatted-duration.hoursUnit": "{時間}",
-    "react-intl-formatted-duration.minutesUnit": "{分}",
-    "react-intl-formatted-duration.secondsUnit": "{秒}"
+    "react-intl-formatted-duration.hoursUnit": "時間",
+    "react-intl-formatted-duration.minutesUnit": "分",
+    "react-intl-formatted-duration.secondsUnit": "秒"
   }
 }
