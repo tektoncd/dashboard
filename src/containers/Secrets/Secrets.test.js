@@ -196,7 +196,7 @@ describe('Secrets', () => {
       ]
     };
 
-    const { getByTestId, getByText } = renderWithRouter(
+    const { getByTestId, getByText, queryByTestId } = renderWithRouter(
       <Provider store={store}>
         <Route
           path={urls.secrets.all()}
@@ -206,9 +206,7 @@ describe('Secrets', () => {
       { route: urls.secrets.all() }
     );
 
-    expect(
-      getByTestId('deleteModal').className.includes('is-visible')
-    ).toBeFalsy();
+    expect(queryByTestId('deleteModal')).toBeFalsy();
 
     fireEvent.click(getByText('Delete'));
 

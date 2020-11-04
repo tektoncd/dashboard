@@ -247,39 +247,41 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
           selectedNamespace={selectedNamespace}
           toolbarButtons={toolbarButtons}
         />
-        <Modal
-          open={isDeleteModalOpen}
-          primaryButtonText={intl.formatMessage({
-            id: 'dashboard.actions.deleteButton',
-            defaultMessage: 'Delete'
-          })}
-          secondaryButtonText={intl.formatMessage({
-            id: 'dashboard.modal.cancelButton',
-            defaultMessage: 'Cancel'
-          })}
-          modalHeading={intl.formatMessage({
-            id: 'dashboard.pipelineResources.deleteHeading',
-            defaultMessage: 'Delete PipelineResources'
-          })}
-          onSecondarySubmit={this.closeDeleteModal}
-          onRequestSubmit={this.handleDelete}
-          onRequestClose={this.closeDeleteModal}
-          danger
-        >
-          <p>
-            {intl.formatMessage({
-              id: 'dashboard.pipelineResources.deleteConfirm',
-              defaultMessage:
-                'Are you sure you want to delete these PipelineResources?'
+        {isDeleteModalOpen ? (
+          <Modal
+            open={isDeleteModalOpen}
+            primaryButtonText={intl.formatMessage({
+              id: 'dashboard.actions.deleteButton',
+              defaultMessage: 'Delete'
             })}
-          </p>
-          <UnorderedList nested>
-            {toBeDeleted.map(pipelineResource => {
-              const { name, namespace } = pipelineResource.metadata;
-              return <ListItem key={`${name}:${namespace}`}>{name}</ListItem>;
+            secondaryButtonText={intl.formatMessage({
+              id: 'dashboard.modal.cancelButton',
+              defaultMessage: 'Cancel'
             })}
-          </UnorderedList>
-        </Modal>
+            modalHeading={intl.formatMessage({
+              id: 'dashboard.pipelineResources.deleteHeading',
+              defaultMessage: 'Delete PipelineResources'
+            })}
+            onSecondarySubmit={this.closeDeleteModal}
+            onRequestSubmit={this.handleDelete}
+            onRequestClose={this.closeDeleteModal}
+            danger
+          >
+            <p>
+              {intl.formatMessage({
+                id: 'dashboard.pipelineResources.deleteConfirm',
+                defaultMessage:
+                  'Are you sure you want to delete these PipelineResources?'
+              })}
+            </p>
+            <UnorderedList nested>
+              {toBeDeleted.map(pipelineResource => {
+                const { name, namespace } = pipelineResource.metadata;
+                return <ListItem key={`${name}:${namespace}`}>{name}</ListItem>;
+              })}
+            </UnorderedList>
+          </Modal>
+        ) : null}
       </>
     );
   }

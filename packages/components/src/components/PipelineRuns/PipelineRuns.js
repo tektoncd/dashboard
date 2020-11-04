@@ -52,8 +52,7 @@ const PipelineRuns = ({
   },
   getPipelineRunCreatedTime = pipelineRun =>
     pipelineRun.metadata.creationTimestamp,
-  getPipelineRunId = pipelineRun =>
-    `${pipelineRun.metadata.namespace}:${pipelineRun.metadata.name}`,
+  getPipelineRunId = pipelineRun => pipelineRun.metadata.uid,
   columns = [
     'status',
     'name',
