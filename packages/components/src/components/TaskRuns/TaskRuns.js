@@ -20,6 +20,7 @@ import { getStatus, urls } from '@tektoncd/dashboard-utils';
 import { FormattedDate, FormattedDuration, RunDropdown, Table } from '..';
 
 const TaskRuns = ({
+  batchActionButtons = [],
   createTaskRunURL = urls.taskRuns.byName,
   createTaskRunsDisplayName = ({ taskRunMetadata }) => taskRunMetadata.name,
   createTaskRunsURL = ({ kind, namespace, taskName }) => {
@@ -174,6 +175,7 @@ const TaskRuns = ({
 
   return (
     <Table
+      batchActionButtons={batchActionButtons}
       headers={headers}
       rows={taskRunsFormatted}
       loading={loading}

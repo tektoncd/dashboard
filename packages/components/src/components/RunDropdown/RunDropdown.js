@@ -79,18 +79,20 @@ class RunDropdown extends Component {
             );
           })}
         </OverflowMenu>
-        <Modal
-          open={showDialog}
-          modalHeading={modal.heading}
-          primaryButtonText={modal.primaryButtonText}
-          secondaryButtonText={modal.secondaryButtonText}
-          onRequestClose={this.handleClose}
-          onRequestSubmit={this.handleModalAction}
-          onSecondarySubmit={this.handleClose}
-          danger={modal.danger}
-        >
-          {modal.body && modal.body(resource)}
-        </Modal>
+        {showDialog ? (
+          <Modal
+            open={showDialog}
+            modalHeading={modal.heading}
+            primaryButtonText={modal.primaryButtonText}
+            secondaryButtonText={modal.secondaryButtonText}
+            onRequestClose={this.handleClose}
+            onRequestSubmit={this.handleModalAction}
+            onSecondarySubmit={this.handleClose}
+            danger={modal.danger}
+          >
+            {modal.body && modal.body(resource)}
+          </Modal>
+        ) : null}
       </>
     );
   }

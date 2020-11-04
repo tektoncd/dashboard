@@ -16,8 +16,16 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
-import { InlineNotification } from 'carbon-components-react';
-import { TaskRuns as TaskRunsList } from '@tektoncd/dashboard-components';
+import keyBy from 'lodash.keyby';
+import {
+  InlineNotification,
+  ListItem,
+  UnorderedList
+} from 'carbon-components-react';
+import {
+  Modal,
+  TaskRuns as TaskRunsList
+} from '@tektoncd/dashboard-components';
 import {
   getErrorMessage,
   getFilters,
@@ -27,7 +35,7 @@ import {
   labels,
   urls
 } from '@tektoncd/dashboard-utils';
-import { Add16 as Add } from '@carbon/icons-react';
+import { Add16 as Add, TrashCan32 as Delete } from '@carbon/icons-react';
 
 import { CreateTaskRun, LabelFilter } from '..';
 import { sortRunsByStartTime } from '../../utils';
@@ -44,9 +52,11 @@ import {
 import { cancelTaskRun, deleteTaskRun, rerunTaskRun } from '../../api';
 
 const initialState = {
-  showCreateTaskRunModal: false,
   createdTaskRun: null,
-  submitError: ''
+  showCreateTaskRunModal: false,
+  showDeleteModal: false,
+  submitError: '',
+  toBeDeleted: []
 };
 
 const { CLUSTER_TASK, TASK } = labels;
@@ -86,6 +96,27 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
   cancel = taskRun => {
     const { name, namespace } = taskRun.metadata;
     cancelTaskRun({ name, namespace });
+  };
+
+  openDeleteModal = (selectedRows, cancelSelection) => {
+    const taskRunsById = keyBy(this.props.taskRuns, 'metadata.uid');
+    const toBeDeleted = selectedRows.map(({ id }) => taskRunsById[id]);
+    this.setState({ showDeleteModal: true, toBeDeleted, cancelSelection });
+  };
+
+  closeDeleteModal = () => {
+    this.setState({
+      showDeleteModal: false,
+      toBeDeleted: []
+    });
+  };
+
+  handleDelete = async () => {
+    const { cancelSelection, toBeDeleted } = this.state;
+    const deletions = toBeDeleted.map(resource => this.deleteTask(resource));
+    this.closeDeleteModal();
+    await Promise.all(deletions);
+    cancelSelection();
   };
 
   deleteTask = taskRun => {
@@ -245,6 +276,7 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
       taskRuns,
       intl
     } = this.props;
+    const { showDeleteModal, toBeDeleted } = this.state;
 
     if (error) {
       return (
@@ -273,6 +305,19 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
               defaultMessage: 'Create'
             }),
             icon: Add
+          }
+        ];
+
+    const batchActionButtons = this.props.isReadOnly
+      ? []
+      : [
+          {
+            onClick: this.openDeleteModal,
+            text: intl.formatMessage({
+              id: 'dashboard.actions.deleteButton',
+              defaultMessage: 'Delete'
+            }),
+            icon: Delete
           }
         ];
 
@@ -324,12 +369,48 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
           />
         )}
         <TaskRunsList
+          batchActionButtons={batchActionButtons}
           loading={loading && !taskRuns.length}
           selectedNamespace={selectedNamespace}
           taskRuns={taskRuns}
           taskRunActions={taskRunActions}
           toolbarButtons={toolbarButtons}
         />
+        {showDeleteModal ? (
+          <Modal
+            open={showDeleteModal}
+            primaryButtonText={intl.formatMessage({
+              id: 'dashboard.actions.deleteButton',
+              defaultMessage: 'Delete'
+            })}
+            secondaryButtonText={intl.formatMessage({
+              id: 'dashboard.modal.cancelButton',
+              defaultMessage: 'Cancel'
+            })}
+            modalHeading={intl.formatMessage({
+              id: 'dashboard.taskRuns.deleteHeading',
+              defaultMessage: 'Delete TaskRuns'
+            })}
+            onSecondarySubmit={this.closeDeleteModal}
+            onRequestSubmit={this.handleDelete}
+            onRequestClose={this.closeDeleteModal}
+            danger
+          >
+            <p>
+              {intl.formatMessage({
+                id: 'dashboard.taskRuns.deleteConfirm',
+                defaultMessage:
+                  'Are you sure you want to delete these TaskRuns?'
+              })}
+            </p>
+            <UnorderedList nested>
+              {toBeDeleted.map(taskRun => {
+                const { name, namespace } = taskRun.metadata;
+                return <ListItem key={`${name}:${namespace}`}>{name}</ListItem>;
+              })}
+            </UnorderedList>
+          </Modal>
+        ) : null}
       </>
     );
   }

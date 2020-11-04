@@ -471,7 +471,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
           batchActionButtons={batchActionButtons}
           toolbarButtons={toolbarButtons}
         />
-        {!this.props.isReadOnly && (
+        {!this.props.isReadOnly && openDeleteSecret && (
           <DeleteModal
             open={openDeleteSecret}
             handleClick={this.handleHideDeleteSecret}
