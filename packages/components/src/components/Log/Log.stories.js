@@ -40,7 +40,6 @@ export const Completed = () => (
   <Log
     stepStatus={{ terminated: { reason: 'Completed' } }}
     fetchLogs={() => 'A log message'}
-    status="Completed"
   />
 );
 
@@ -48,7 +47,6 @@ export const Failed = () => (
   <Log
     stepStatus={{ terminated: { reason: 'Error' } }}
     fetchLogs={() => 'A log message'}
-    status="Error"
   />
 );
 
@@ -56,7 +54,6 @@ export const ANSICodes = () => (
   <Log
     stepStatus={{ terminated: { reason: 'Completed' } }}
     fetchLogs={() => ansiLog}
-    status="Completed"
   />
 );
 
@@ -64,7 +61,6 @@ export const Windowed = () => (
   <Log
     stepStatus={{ terminated: { reason: 'Completed' } }}
     fetchLogs={() => long}
-    status="Completed"
   />
 );
 
@@ -72,7 +68,6 @@ export const Performance = () => (
   <Log
     stepStatus={{ terminated: { reason: 'Completed' } }}
     fetchLogs={() => performanceTest}
-    status="Completed"
   />
 );
 Performance.storyName = 'performance test (<20,000 lines with ANSI)';

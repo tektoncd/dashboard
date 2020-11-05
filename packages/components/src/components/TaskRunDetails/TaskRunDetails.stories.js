@@ -29,9 +29,11 @@ export default {
 export const Base = () => (
   <TaskRunDetails
     taskRun={{
-      pipelineTaskName: 'my-task',
-      params,
-      status: 'status message'
+      metadata: { name: 'my-task' },
+      spec: {
+        params
+      },
+      status: 'this will show the TaskRun.status'
     }}
   />
 );

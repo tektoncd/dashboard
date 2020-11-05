@@ -46,113 +46,52 @@ export function getTitle({ page, resourceName }) {
   return `Tekton Dashboard | ${pageTitle}`;
 }
 
-export function selectedTask(selectedTaskName, tasks) {
-  if (tasks) {
-    return tasks.find(t => t.metadata.name === selectedTaskName);
-  }
-  return {};
-}
-
-export function selectedTaskRun(selectedTaskId, taskRuns = []) {
-  return taskRuns.find(run => run.id === selectedTaskId);
-}
-
-export function taskRunStep(selectedStepId, taskRun) {
-  if (!taskRun || !taskRun.steps) {
-    return {};
-  }
-  const step = taskRun.steps.find(s => s.id === selectedStepId);
-  if (!step) {
-    return {};
+export function getStepDefinition({ selectedStepId, task, taskRun }) {
+  if (!selectedStepId) {
+    return null;
   }
 
-  const { stepName, stepStatus, status, reason, ...definition } = step;
+  const stepDefinitions = taskRun.spec?.taskSpec
+    ? taskRun.spec.taskSpec.steps
+    : task.spec?.steps;
 
-  return {
-    definition,
-    reason,
-    stepName,
-    stepStatus,
-    status
-  };
-}
+  const definition = stepDefinitions?.find(
+    step => step.name === selectedStepId
+  );
 
-export function stepsStatus(taskSteps, taskRunStepsStatus = []) {
-  const steps = taskSteps.map(step => {
-    const stepStatus =
-      taskRunStepsStatus.find(status => status.name === step.name) || {};
-
-    let status;
-    let reason;
-    if (stepStatus.terminated) {
-      status = 'terminated';
-      ({ reason } = stepStatus.terminated);
-    } else if (stepStatus.running) {
-      status = 'running';
-    } else if (stepStatus.waiting) {
-      status = 'waiting';
-    }
-
-    return {
-      ...step,
-      reason,
-      status,
-      stepStatus,
-      stepName: step.name,
-      id: step.name
-    };
-  });
-
-  /*
-    In case of failure in an init step (git-source, init-creds, etc.),
-    include that step in the displayed list so we can surface status
-    and logs to aid the user in debugging.
-   */
-  const failedInitSteps = [];
-  taskRunStepsStatus.forEach(stepStatus => {
-    const { name: stepName, terminated } = stepStatus;
-    const step = taskSteps.find(taskStep => taskStep.name === stepName);
-    if (!step && terminated && terminated.exitCode !== 0) {
-      failedInitSteps.push({
-        reason: terminated.reason,
-        status: 'terminated',
-        stepStatus,
-        stepName,
-        id: stepName
-      });
-    }
-  });
-
-  return failedInitSteps.concat(steps);
-}
-
-/*
-  When steps are retreived from a TaskRun's status, their order is not guaranteed.
-  This function reorders the given unorderedSteps to match the order specified by the given orderedSteps.
-  Each step in unorderedSteps must have the same name as a step in the orderedSteps.
-  Unnamed steps are automatically given the name 'unnamed-NUM' where NUM is the step number starting from 0.
-    ex: 'unnamed-2' is the 3rd step
-  None of the unorderedSteps will have an empty name, but some of the orderedSteps may have empty names.
-*/
-export function reorderSteps(unorderedSteps, orderedSteps) {
-  if (!unorderedSteps || !orderedSteps) {
-    return [];
+  if (definition) {
+    return definition;
   }
 
-  const unnamedSteps = unorderedSteps
-    .filter(({ name }) => name.startsWith('unnamed-'))
-    .sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+  // handle unnamed steps
+  // unnamed step numbering skips named steps, so we could have for example:
+  // ['unnamed-2', 'unnamed-4']
+  // but the order will be consistent with unnamed steps in the definition
+  const statusSteps = taskRun.status.steps.filter(({ name }) =>
+    name.startsWith('unnamed-')
+  );
+  const unnamedSteps = stepDefinitions.filter(({ name }) => !name);
 
-  return orderedSteps.map(({ name, ...rest }) => {
-    const stepStatus = name
-      ? unorderedSteps.find(step => step.name === name)
-      : unnamedSteps.shift();
-    return {
-      name,
-      ...rest,
-      ...stepStatus
-    };
-  });
+  const index = statusSteps.findIndex(({ name }) => name === selectedStepId);
+  return unnamedSteps[index];
+}
+
+export function getStepStatus({ selectedStepId, taskRun }) {
+  return taskRun.status?.steps?.find(step => step.name === selectedStepId);
+}
+
+export function getStepStatusReason(step) {
+  let status;
+  let reason;
+  if (step.terminated) {
+    status = 'terminated';
+    reason = step.terminated.reason;
+  } else if (step.running) {
+    status = 'running';
+  } else if (step.waiting) {
+    status = 'waiting';
+  }
+  return { reason, status };
 }
 
 export function isRunning(reason, status) {
@@ -185,55 +124,21 @@ export function formatLabels(labelsRaw) {
   return formattedLabelsToRender;
 }
 
-// Sorts the steps by finishedAt and startedAt timestamps
-export function sortStepsByTimestamp(steps) {
-  if (!steps) {
-    return [];
-  }
-  return steps.sort((i, j) => {
-    const iFinishAt = new Date(i.stepStatus?.terminated?.finishedAt).getTime();
-    const jFinishAt = new Date(j.stepStatus?.terminated?.finishedAt).getTime();
-    const iStartedAt = new Date(i.stepStatus?.terminated?.startedAt).getTime();
-    const jStartedAt = new Date(j.stepStatus?.terminated?.startedAt).getTime();
-
-    if (!iFinishAt || !jFinishAt) {
-      return 0;
-    }
-    if (iFinishAt !== jFinishAt) {
-      return iFinishAt - jFinishAt;
-    }
-    if (!iStartedAt || !jStartedAt) {
-      return 0;
-    }
-    return iStartedAt - jStartedAt;
-  });
-}
-
 // Update the status of steps that follow a step with an error
 export function updateUnexecutedSteps(steps) {
   if (!steps) {
     return steps;
   }
   let errorIndex = steps.length - 1;
-  return sortStepsByTimestamp(steps).map((step, index) => {
-    // Update errorIndex
-    if (step.reason !== 'Completed') {
+  return steps.map((step, index) => {
+    if (!step.terminated || step.terminated.reason !== 'Completed') {
       errorIndex = Math.min(index, errorIndex);
     }
-    // Update step
     if (index > errorIndex) {
-      const s = {
+      return {
         ...step,
-        reason: '',
-        status: ''
+        terminated: undefined
       };
-      if (step.stepStatus && step.stepStatus.terminated) {
-        s.stepStatus = {
-          ...step.stepStatus,
-          terminated: { ...step.stepStatus.terminated, reason: '' }
-        };
-      }
-      return s;
     }
     return step;
   });

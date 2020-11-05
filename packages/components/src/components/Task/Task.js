@@ -17,8 +17,10 @@ import {
   ChevronDown20 as ExpandIcon
 } from '@carbon/icons-react';
 import { StatusIcon, Step } from '@tektoncd/dashboard-components';
-
-import { updateUnexecutedSteps } from '@tektoncd/dashboard-utils';
+import {
+  getStepStatusReason,
+  updateUnexecutedSteps
+} from '@tektoncd/dashboard-utils';
 
 import './Task.scss';
 
@@ -55,10 +57,10 @@ class Task extends Component {
     }
     if (expanded && !selectedStepId) {
       const erroredStep = steps.find(
-        step => step.reason === 'Error' || step.reason === undefined
+        step => step.terminated?.reason === 'Error' || !step.terminated
       );
-      const { id } = erroredStep || steps[0] || {};
-      this.handleStepSelected(id);
+      const { name } = erroredStep || steps[0] || {};
+      this.handleStepSelected(name);
     }
   }
 
@@ -100,26 +102,27 @@ class Task extends Component {
         </a>
         {expanded && (
           <ol className="tkn--step-list">
-            {updateUnexecutedSteps(steps).map(
-              ({ id, reason: stepReason, status, stepName }) => {
-                const selected = selectedStepId === id;
-                const stepStatus =
-                  reason === 'TaskRunCancelled' && status !== 'terminated'
-                    ? 'cancelled'
-                    : status;
-                return (
-                  <Step
-                    id={id}
-                    key={stepName}
-                    onSelect={this.handleStepSelected}
-                    reason={stepReason}
-                    selected={selected}
-                    status={stepStatus}
-                    stepName={stepName}
-                  />
-                );
-              }
-            )}
+            {updateUnexecutedSteps(steps).map(step => {
+              const { name } = step;
+              const { status, reason: stepReason } = getStepStatusReason(step);
+
+              const selected = selectedStepId === name;
+              const stepStatus =
+                reason === 'TaskRunCancelled' && status !== 'terminated'
+                  ? 'cancelled'
+                  : status;
+              return (
+                <Step
+                  id={name}
+                  key={name}
+                  onSelect={this.handleStepSelected}
+                  reason={stepReason}
+                  selected={selected}
+                  status={stepStatus}
+                  stepName={name}
+                />
+              );
+            })}
           </ol>
         )}
       </li>

@@ -26,7 +26,7 @@ describe('StepDetails', () => {
 
     renderWithRouter(
       <Provider store={store}>
-        <StepDetails />
+        <StepDetails stepStatus={{}} />
       </Provider>
     );
   });
@@ -37,7 +37,7 @@ describe('StepDetails', () => {
 
     renderWithRouter(
       <Provider store={store}>
-        <StepDetails status="terminated" />
+        <StepDetails stepStatus={{ terminated: { reason: 'Completed' } }} />
       </Provider>
     );
   });
@@ -48,7 +48,20 @@ describe('StepDetails', () => {
 
     renderWithRouter(
       <Provider store={store}>
-        <StepDetails status="False" taskRun={{ reason: 'TaskRunCancelled' }} />
+        <StepDetails
+          stepStatus={{}}
+          taskRun={{
+            status: {
+              conditions: [
+                {
+                  type: 'Succeeded',
+                  status: 'False',
+                  reason: 'TaskRunCancelled'
+                }
+              ]
+            }
+          }}
+        />
       </Provider>
     );
   });
@@ -59,7 +72,7 @@ describe('StepDetails', () => {
 
     const { getByText } = renderWithRouter(
       <Provider store={store}>
-        <StepDetails view="details" />
+        <StepDetails stepStatus={{}} view="details" />
       </Provider>
     );
 

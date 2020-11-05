@@ -21,9 +21,7 @@ const now = new Date();
 export default {
   args: {
     name: 'simple-pipeline',
-    runName: 'simple-pipeline-run-1',
-    type: 'pipelines',
-    typeLabel: 'Pipelines'
+    runName: 'simple-pipeline-run-1'
   },
   component: RunHeader,
   decorators: [StoryRouter()],

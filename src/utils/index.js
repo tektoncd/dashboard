@@ -36,13 +36,14 @@ export function typeToPlural(type) {
 }
 
 export async function followLogs(stepName, stepStatus, taskRun) {
-  const { pod, namespace } = taskRun;
+  const { namespace } = taskRun.metadata;
+  const { podName } = taskRun.status || {};
   let logs;
-  if (pod && stepStatus) {
+  if (podName && stepStatus) {
     const { container } = stepStatus;
     logs = getPodLog({
       container,
-      name: pod,
+      name: podName,
       namespace,
       stream: true
     });
@@ -51,13 +52,14 @@ export async function followLogs(stepName, stepStatus, taskRun) {
 }
 
 export async function fetchLogs(stepName, stepStatus, taskRun) {
-  const { pod, namespace } = taskRun;
+  const { namespace } = taskRun.metadata;
+  const { podName } = taskRun.status || {};
   let logs;
-  if (pod && stepStatus) {
+  if (podName && stepStatus) {
     const { container } = stepStatus;
     logs = getPodLog({
       container,
-      name: pod,
+      name: podName,
       namespace
     });
   }
@@ -70,10 +72,11 @@ function fetchLogsFallback(externalLogsURL) {
   }
 
   return (stepName, stepStatus, taskRun) => {
-    const { pod, namespace } = taskRun;
+    const { namespace } = taskRun.metadata;
+    const { podName } = taskRun.status || {};
     const { container } = stepStatus;
     return fetch(
-      `${externalLogsURL}/${namespace}/${pod}/${container}`
+      `${externalLogsURL}/${namespace}/${podName}/${container}`
     ).then(response => response.text());
   };
 }

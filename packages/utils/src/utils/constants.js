@@ -15,6 +15,7 @@ export const labels = {
   CLUSTER_TASK: 'tekton.dev/clusterTask',
   CONDITION_CHECK: 'tekton.dev/conditionCheck',
   DASHBOARD_IMPORT: 'dashboard.tekton.dev/import',
+  DASHBOARD_RETRY_NAME: 'dashboard.tekton.dev/retryName',
   PIPELINE: 'tekton.dev/pipeline',
   PIPELINE_RUN: 'tekton.dev/pipelineRun',
   PIPELINE_TASK: 'tekton.dev/pipelineTask',

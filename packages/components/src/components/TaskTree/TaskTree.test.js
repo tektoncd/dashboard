@@ -16,53 +16,77 @@ import { fireEvent } from 'react-testing-library';
 import TaskTree from './TaskTree';
 import { renderWithIntl } from '../../utils/test';
 
-const props = {
+const getProps = () => ({
   onSelect: () => {},
   taskRuns: [
     {
-      id: 'task',
-      pipelineTaskName: 'A Task',
-      succeeded: 'True',
-      steps: [
-        { id: 'build', stepName: 'build' },
-        { id: 'test', stepName: 'test' }
-      ]
+      metadata: {
+        labels: {
+          'tekton.dev/pipelineTask': 'A Task'
+        },
+        uid: 'task'
+      },
+      status: {
+        conditions: [
+          {
+            type: 'Succeeded',
+            status: 'True'
+          }
+        ],
+        steps: [{ name: 'build' }, { name: 'test' }]
+      }
     },
     {
-      id: 'task2',
-      succeeded: 'True',
-      pipelineTaskName: 'A Second Task',
-      steps: [
-        { id: 'build', stepName: 'build' },
-        { id: 'test', stepName: 'test' }
-      ]
+      metadata: {
+        labels: {
+          'tekton.dev/pipelineTask': 'A Second Task'
+        },
+        uid: 'task2'
+      },
+      status: {
+        conditions: [
+          {
+            type: 'Succeeded',
+            status: 'True'
+          }
+        ],
+        steps: [{ name: 'build' }, { name: 'test' }]
+      }
     },
     {
-      id: 'task3',
-      succeeded: 'True',
-      pipelineTaskName: 'A Third Task',
-      steps: [
-        { id: 'build', stepName: 'build' },
-        { id: 'test', stepName: 'test' }
-      ]
+      metadata: {
+        labels: {
+          'tekton.dev/pipelineTask': 'A Third Task'
+        },
+        uid: 'task3'
+      },
+      status: {
+        conditions: [
+          {
+            type: 'Succeeded',
+            status: 'True'
+          }
+        ],
+        steps: [{ name: 'build' }, { name: 'test' }]
+      }
     }
   ]
-};
+});
 
 it('TaskTree renders', () => {
-  renderWithIntl(<TaskTree {...props} />);
+  renderWithIntl(<TaskTree {...getProps()} />);
 });
 
 it('TaskTree renders when taskRuns is falsy', () => {
-  renderWithIntl(<TaskTree {...props} taskRuns={null} />);
+  renderWithIntl(<TaskTree {...getProps()} taskRuns={null} />);
 });
 
 it('TaskTree renders when taskRuns contains a falsy run', () => {
-  renderWithIntl(<TaskTree {...props} taskRuns={[null]} />);
+  renderWithIntl(<TaskTree {...getProps()} taskRuns={[null]} />);
 });
 
 it('TaskTree renders and expands first Task in TaskRun with no error', () => {
-  const { queryByText } = renderWithIntl(<TaskTree {...props} />);
+  const { queryByText } = renderWithIntl(<TaskTree {...getProps()} />);
   // Selected Task should have two child elements. The anchor and ordered list
   // of steps in expanded task
   expect(queryByText('A Task').parentNode.parentNode.childNodes).toHaveLength(
@@ -77,7 +101,8 @@ it('TaskTree renders and expands first Task in TaskRun with no error', () => {
 });
 
 it('TaskTree renders and expands error Task in TaskRun', () => {
-  props.taskRuns[1].succeeded = 'False';
+  const props = getProps();
+  props.taskRuns[1].status.conditions[0].status = 'False';
 
   const { queryByText } = renderWithIntl(<TaskTree {...props} />);
   // Selected Task should have two child elements. The anchor and ordered list
@@ -94,8 +119,9 @@ it('TaskTree renders and expands error Task in TaskRun', () => {
 });
 
 it('TaskTree renders and expands first error Task in TaskRun', () => {
-  props.taskRuns[1].succeeded = 'False';
-  props.taskRuns[2].succeeded = 'False';
+  const props = getProps();
+  props.taskRuns[1].status.conditions[0].status = 'False';
+  props.taskRuns[2].status.conditions[0].status = 'False';
 
   const { queryByText } = renderWithIntl(<TaskTree {...props} />);
   // Selected Task should have two child elements. The anchor and ordered list
@@ -114,7 +140,7 @@ it('TaskTree renders and expands first error Task in TaskRun', () => {
 it('TaskTree handles click event on Task', () => {
   const onSelect = jest.fn();
   const { getByText } = renderWithIntl(
-    <TaskTree {...props} onSelect={onSelect} />
+    <TaskTree {...getProps()} onSelect={onSelect} />
   );
   expect(onSelect).toHaveBeenCalledTimes(1);
   onSelect.mockClear();
@@ -125,7 +151,7 @@ it('TaskTree handles click event on Task', () => {
 it('TaskTree handles click event on Step', () => {
   const onSelect = jest.fn();
   const { getByText } = renderWithIntl(
-    <TaskTree {...props} selectedTaskId="task" onSelect={onSelect} />
+    <TaskTree {...getProps()} selectedTaskId="task" onSelect={onSelect} />
   );
   onSelect.mockClear();
   fireEvent.click(getByText(/build/i));

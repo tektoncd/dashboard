@@ -74,7 +74,7 @@ class DetailsHeader extends Component {
     let statusLabel;
 
     if (type === 'taskRun') {
-      ({ reason, succeeded: status } = taskRun);
+      ({ reason, status } = getStatus(taskRun));
       statusLabel =
         reason ||
         intl.formatMessage({

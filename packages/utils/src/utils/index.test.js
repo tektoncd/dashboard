@@ -24,98 +24,13 @@ import {
   getParams,
   getResources,
   getStatus,
+  getStepDefinition,
+  getStepStatus,
+  getStepStatusReason,
   getTitle,
   isRunning,
-  reorderSteps,
-  selectedTask,
-  selectedTaskRun,
-  sortStepsByTimestamp,
-  stepsStatus,
-  taskRunStep,
   updateUnexecutedSteps
 } from '.';
-
-it('taskRunSteps with no taskRun', () => {
-  const taskRun = null;
-  const step = taskRunStep('selected run', taskRun);
-  expect(step).toEqual({});
-});
-
-it('taskRunStep with no taskRun', () => {
-  const taskRun = null;
-  const step = taskRunStep('selected run', taskRun);
-  expect(step).toEqual({});
-});
-
-it('taskRunStep with no steps', () => {
-  const taskRun = {};
-  const step = taskRunStep('selected run', taskRun);
-  expect(step).toEqual({});
-});
-
-it('taskRunStep with no steps', () => {
-  const stepName = 'testName';
-  const id = 'id';
-  const targetStep = { id, stepName };
-  const taskRun = { steps: [targetStep] };
-  const step = taskRunStep(id, taskRun);
-  expect(step.stepName).toEqual(stepName);
-});
-
-it('taskRunStep does not contain selected step', () => {
-  const stepName = 'testName';
-  const id = 'id';
-  const targetStep = { id, stepName };
-  const taskRun = { steps: [targetStep] };
-  const step = taskRunStep('wrong id', taskRun);
-  expect(step).toEqual({});
-});
-
-it('taskRunStep with step finds step', () => {
-  const stepName = 'testName';
-  const id = 'id';
-  const targetStep = { id, stepName };
-  const taskRun = { steps: [targetStep] };
-  const step = taskRunStep(id, taskRun);
-  expect(step.stepName).toEqual(stepName);
-});
-
-describe('selectedTask', () => {
-  it('should return undefined if the task is not found', () => {
-    const taskName = 'testName';
-    const foundTask = selectedTask(taskName, []);
-    expect(foundTask).toEqual(undefined);
-  });
-
-  it('should return the selected task if found', () => {
-    const taskName = 'testName';
-    const expectedTask = { metadata: { name: taskName } };
-    const foundTask = selectedTask(taskName, [expectedTask]);
-    expect(foundTask.metadata.name).toEqual(taskName);
-  });
-
-  it('should return an empty object if tasks is falsy', () => {
-    const taskName = 'testName';
-    const tasks = null;
-    const foundTask = selectedTask(taskName, tasks);
-    expect(foundTask).toEqual({});
-  });
-});
-
-describe('selectedTaskRun', () => {
-  it('should return undefined if the taskRun is not found', () => {
-    const taskRunName = 'testName';
-    const foundTaskRun = selectedTaskRun(taskRunName, undefined);
-    expect(foundTaskRun).toEqual(undefined);
-  });
-
-  it('should return the selected taskRun if found', () => {
-    const taskRunName = 'testName';
-    const expectedTaskRun = { metadata: { name: taskRunName } };
-    const foundTaskRun = selectedTask(taskRunName, [expectedTaskRun]);
-    expect(foundTaskRun.metadata.name).toEqual(taskRunName);
-  });
-});
 
 it('getErrorMessage falsy', () => {
   expect(getErrorMessage()).toBeUndefined();
@@ -175,185 +90,6 @@ it('isRunning', () => {
   expect(isRunning('Running', '?')).toBe(false);
 });
 
-it('stepsStatus step is waiting', () => {
-  const stepName = 'testStep';
-  const taskSteps = [{ name: stepName, image: 'test' }];
-  const taskRunStepsStatus = [{ name: stepName, waiting: {} }];
-  const steps = stepsStatus(taskSteps, taskRunStepsStatus);
-  const returnedStep = steps[0];
-  expect(returnedStep.status).toEqual('waiting');
-});
-
-it('stepsStatus init error', () => {
-  const stepName = 'git-source';
-  const taskRunStepsStatus = [{ name: stepName, terminated: { exitCode: 1 } }];
-  const steps = stepsStatus([], taskRunStepsStatus);
-  const returnedStep = steps[0];
-  expect(returnedStep.status).toEqual('terminated');
-});
-
-it('stepsStatus no status', () => {
-  const taskSteps = [];
-  const taskRunStepsStatus = undefined;
-  const steps = stepsStatus(taskSteps, taskRunStepsStatus);
-  expect(steps).toEqual([]);
-});
-
-it('stepsStatus step is running', () => {
-  const stepName = 'testStep';
-  const taskSteps = [{ name: stepName, image: 'test' }];
-  const taskRunStepsStatus = [
-    {
-      name: stepName,
-      running: { startedAt: '2019' }
-    }
-  ];
-  const steps = stepsStatus(taskSteps, taskRunStepsStatus);
-  const returnedStep = steps[0];
-  expect(returnedStep.status).toEqual('running');
-  expect(returnedStep.stepName).toEqual(stepName);
-});
-
-it('stepsStatus step is completed', () => {
-  const reason = 'completed';
-  const stepName = 'testStep';
-  const taskSteps = [{ name: stepName, image: 'test' }];
-  const taskRunStepsStatus = [
-    {
-      name: stepName,
-      terminated: {
-        exitCode: 0,
-        reason,
-        startedAt: '2019',
-        finishedAt: '2019',
-        containerID: 'containerd://testid'
-      }
-    }
-  ];
-  const steps = stepsStatus(taskSteps, taskRunStepsStatus);
-  const returnedStep = steps[0];
-  expect(returnedStep.status).toEqual('terminated');
-  expect(returnedStep.stepName).toEqual(stepName);
-  expect(returnedStep.reason).toEqual(reason);
-});
-
-it('stepsStatus no steps', () => {
-  const taskSteps = [];
-  const taskRunStepsStatus = [];
-  const steps = stepsStatus(taskSteps, taskRunStepsStatus);
-  expect(steps).toEqual([]);
-});
-
-it('stepsStatus step is terminated with error', () => {
-  const reason = 'Error';
-  const stepName = 'testStep';
-  const taskSteps = [{ name: stepName, image: 'test' }];
-  const taskRunStepsStatus = [
-    {
-      name: stepName,
-      terminated: {
-        exitCode: 1,
-        reason,
-        startedAt: '2019',
-        finishedAt: '2019',
-        containerID: 'containerd://testid'
-      }
-    }
-  ];
-  const steps = stepsStatus(taskSteps, taskRunStepsStatus);
-  const returnedStep = steps[0];
-  expect(returnedStep.status).toEqual('terminated');
-  expect(returnedStep.stepName).toEqual(stepName);
-  expect(returnedStep.reason).toEqual(reason);
-});
-
-describe('reorderSteps', () => {
-  it('returns empty array for undefined unorderedSteps', () => {
-    const unorderedSteps = undefined;
-    const orderedSteps = [{ name: 'a' }];
-    const want = [];
-    const got = reorderSteps(unorderedSteps, orderedSteps);
-    expect(got).toEqual(want);
-  });
-
-  it('returns empty array for undefined ordered', () => {
-    const unorderedSteps = [{ name: 'a' }];
-    const orderedSteps = undefined;
-    const want = [];
-    const got = reorderSteps(unorderedSteps, orderedSteps);
-    expect(got).toEqual(want);
-  });
-
-  it('works on empty steps', () => {
-    const unorderedSteps = [];
-    const orderedSteps = [];
-    const want = [];
-    const got = reorderSteps(unorderedSteps, orderedSteps);
-    expect(got).toEqual(want);
-  });
-
-  it('works on ordered steps', () => {
-    const unorderedSteps = [{ name: 'a' }, { name: 'b' }, { name: 'c' }];
-    const orderedSteps = [{ name: 'a' }, { name: 'b' }, { name: 'c' }];
-    const want = [...unorderedSteps];
-    const got = reorderSteps(unorderedSteps, orderedSteps);
-    expect(got).toEqual(want);
-  });
-
-  it('properly reorders unnamed steps', () => {
-    const unorderedSteps = [
-      { name: 'unnamed-1' },
-      { name: 'unnamed-2' },
-      { name: 'unnamed-0' }
-    ];
-    const orderedSteps = [{ name: '' }, { name: '' }, { name: '' }];
-    const want = [
-      { name: 'unnamed-0' },
-      { name: 'unnamed-1' },
-      { name: 'unnamed-2' }
-    ];
-    const got = reorderSteps(unorderedSteps, orderedSteps);
-    expect(got).toEqual(want);
-  });
-
-  it('properly reorders unnamed and named steps', () => {
-    const unorderedSteps = [
-      { name: 'c' },
-      { name: 'unnamed-4' },
-      { name: 'a' },
-      { name: 'unnamed-0' },
-      { name: 'b' },
-      { name: 'unnamed-5' }
-    ];
-    const orderedSteps = [
-      { name: '' },
-      { name: 'a' },
-      { name: 'b' },
-      { name: 'c' },
-      { name: '' },
-      { name: '' }
-    ];
-    const want = [
-      { name: 'unnamed-0' },
-      { name: 'a' },
-      { name: 'b' },
-      { name: 'c' },
-      { name: 'unnamed-4' },
-      { name: 'unnamed-5' }
-    ];
-    const got = reorderSteps(unorderedSteps, orderedSteps);
-    expect(got).toEqual(want);
-  });
-
-  it('handles pipeline resource init steps and unnamed steps', () => {
-    const unorderedSteps = [{ name: 'some-init-step' }, { name: 'unnamed-1' }];
-    const orderedSteps = [{ name: '' }];
-    const want = [{ name: 'unnamed-1' }];
-    const got = reorderSteps(unorderedSteps, orderedSteps);
-    expect(got).toEqual(want);
-  });
-});
-
 it('generateId', () => {
   const prefix = 'prefix';
   const id = generateId(prefix);
@@ -380,132 +116,6 @@ it('formatLabels', () => {
   ]);
 });
 
-it('sortStepsByTimestamp handles falsy steps', () => {
-  expect(sortStepsByTimestamp(null)).toEqual([]);
-});
-
-it('sortStepsByTimestamp preserves order if no timestamps present', () => {
-  const steps = ['t', 'e', 's', 't'];
-  const want = ['t', 'e', 's', 't'];
-  const got = sortStepsByTimestamp(steps);
-  expect(got).toEqual(want);
-});
-
-it('sortStepsByTimestamp sorts by finishedAt', () => {
-  const step1 = {
-    id: 'step1',
-    stepStatus: {
-      terminated: {
-        finishedAt: '2020-01-01T15:30:00Z'
-      }
-    }
-  };
-  const step2 = {
-    id: 'step2',
-    stepStatus: {
-      terminated: {
-        finishedAt: '2020-01-01T15:25:00Z'
-      }
-    }
-  };
-  const step3 = {
-    id: 'step3',
-    stepStatus: {
-      terminated: {
-        finishedAt: '2020-01-01T15:35:00Z'
-      }
-    }
-  };
-  const steps = [step1, step2, step3];
-  const want = [step2, step1, step3];
-  const got = sortStepsByTimestamp(steps);
-  expect(got).toEqual(want);
-});
-
-it('sortStepsByTimestamp sorts by startedAt in a tie', () => {
-  const step1 = {
-    id: 'step1',
-    stepStatus: {
-      terminated: {
-        finishedAt: '2020-01-01T15:30:00Z',
-        startedAt: '2020-01-01T15:25:00Z'
-      }
-    }
-  };
-  const step2 = {
-    id: 'step2',
-    stepStatus: {
-      terminated: {
-        finishedAt: '2020-01-01T15:25:00Z',
-        startedAt: '2020-01-01T15:20:00Z'
-      }
-    }
-  };
-  const step3 = {
-    id: 'step3',
-    stepStatus: {
-      terminated: {
-        finishedAt: '2020-01-01T15:30:00Z',
-        startedAt: '2020-01-01T15:30:00Z'
-      }
-    }
-  };
-  const steps = [step1, step2, step3];
-  const want = [step2, step1, step3];
-  const got = sortStepsByTimestamp(steps);
-  expect(got).toEqual(want);
-});
-
-it('sortStepsByTimestamp preserves order if invalid startedAt timestamp present', () => {
-  const step1 = {
-    id: 'step1',
-    stepStatus: {
-      terminated: {
-        finishedAt: '2020-01-01T15:30:00Z',
-        startedAt: '2020-01-01T15:25:00Z'
-      }
-    }
-  };
-  const step2 = {
-    id: 'step2',
-    stepStatus: {
-      terminated: {
-        finishedAt: '2020-01-01T15:30:00Z',
-        startedAt: 'NOTATIMESTAMP'
-      }
-    }
-  };
-  const steps = [step1, step2];
-  const want = [step1, step2];
-  const got = sortStepsByTimestamp(steps);
-  expect(got).toEqual(want);
-});
-
-it('sortStepsByTimestamp preserves order if startedAt timestamps equal', () => {
-  const step1 = {
-    id: 'step-b',
-    stepStatus: {
-      terminated: {
-        finishedAt: '2020-01-01T15:30:00Z',
-        startedAt: '2020-01-01T15:25:00Z'
-      }
-    }
-  };
-  const step2 = {
-    id: 'step-a',
-    stepStatus: {
-      terminated: {
-        finishedAt: '2020-01-01T15:30:00Z',
-        startedAt: '2020-01-01T15:25:00Z'
-      }
-    }
-  };
-  const steps = [step1, step2];
-  const want = [step1, step2];
-  const got = sortStepsByTimestamp(steps);
-  expect(got).toEqual(want);
-});
-
 it('updateUnexecutedSteps no steps', () => {
   const steps = [];
   const wantUpdatedSteps = [];
@@ -521,14 +131,7 @@ it('updateUnexecutedSteps undefined steps', () => {
 });
 
 it('updateUnexecutedSteps no error steps', () => {
-  const steps = [
-    { reason: 'Completed', status: 'Terminated' },
-    {
-      reason: 'Running',
-      status: 'Unknown',
-      stepStatus: {}
-    }
-  ];
+  const steps = [{ terminated: { reason: 'Completed' } }, { running: {} }];
   const wantUpdatedSteps = [...steps];
   const gotUpdatedSteps = updateUnexecutedSteps(steps);
   expect(gotUpdatedSteps).toEqual(wantUpdatedSteps);
@@ -537,36 +140,24 @@ it('updateUnexecutedSteps no error steps', () => {
 it('updateUnexecutedSteps error step', () => {
   const steps = [
     {
-      reason: 'Completed',
-      status: 'Terminated',
-      stepStatus: { terminated: { reason: 'Completed' } }
+      terminated: { reason: 'Completed' }
     },
     {
-      reason: 'Error',
-      status: 'Error',
-      stepStatus: { terminated: { reason: 'Error' } }
+      terminated: { reason: 'Error' }
     },
     {
-      reason: 'Completed',
-      status: 'Terminated',
-      stepStatus: { terminated: { reason: 'Completed' } }
+      terminated: { reason: 'Completed' }
     }
   ];
   const wantUpdatedSteps = [
     {
-      reason: 'Completed',
-      status: 'Terminated',
-      stepStatus: { terminated: { reason: 'Completed' } }
+      terminated: { reason: 'Completed' }
     },
     {
-      reason: 'Error',
-      status: 'Error',
-      stepStatus: { terminated: { reason: 'Error' } }
+      terminated: { reason: 'Error' }
     },
     {
-      reason: '',
-      status: '',
-      stepStatus: { terminated: { reason: '' } }
+      terminated: undefined
     }
   ];
 
@@ -687,4 +278,86 @@ it('getTitle', () => {
 
   title = getTitle({ page: 'SomePage', resourceName: 'someResource' });
   expect(title).toEqual('Tekton Dashboard | SomePage - someResource');
+});
+
+describe('getStepDefinition', () => {
+  it('handles falsy selectedStepId', () => {
+    const definition = getStepDefinition({ selectedStepId: null });
+    expect(definition).toBeNull();
+  });
+
+  it('handles inline taskSpec', () => {
+    const selectedStepId = 'a-step';
+    const step = { name: selectedStepId };
+    const taskRun = {
+      spec: {
+        taskSpec: {
+          steps: [step]
+        }
+      }
+    };
+    const definition = getStepDefinition({ selectedStepId, taskRun });
+    expect(definition).toEqual(step);
+  });
+
+  it('handles task ref', () => {
+    const selectedStepId = 'a-step';
+    const step = { name: selectedStepId };
+    const task = {
+      spec: {
+        steps: [step]
+      }
+    };
+    const definition = getStepDefinition({ selectedStepId, task, taskRun: {} });
+    expect(definition).toEqual(step);
+  });
+
+  it('handles unnamed steps', () => {
+    const selectedStepId = 'unnamed-1';
+    const step = { name: '' };
+    const task = {
+      spec: {
+        steps: [{ name: 'a-step' }, step]
+      }
+    };
+    const taskRun = {
+      status: {
+        steps: [{ name: 'a-step' }, { name: 'unnamed-1' }]
+      }
+    };
+    const definition = getStepDefinition({ selectedStepId, task, taskRun });
+    expect(definition).toEqual(step);
+  });
+});
+
+it('getStepStatus', () => {
+  const selectedStepId = 'a-step';
+  const step = { name: selectedStepId };
+  const taskRun = {
+    status: {
+      steps: [{ name: 'another-step' }, step]
+    }
+  };
+  const stepStatus = getStepStatus({ selectedStepId, taskRun });
+  expect(stepStatus).toEqual(step);
+});
+
+it('getStepStatusReason', () => {
+  const reason = 'fake-reason';
+  expect(getStepStatusReason({ terminated: { reason } })).toEqual({
+    reason,
+    status: 'terminated'
+  });
+  expect(getStepStatusReason({ running: { reason } })).toEqual({
+    reason: undefined,
+    status: 'running'
+  });
+  expect(getStepStatusReason({ waiting: { reason } })).toEqual({
+    reason: undefined,
+    status: 'waiting'
+  });
+  expect(getStepStatusReason({ unknown: { reason } })).toEqual({
+    reason: undefined,
+    status: undefined
+  });
 });

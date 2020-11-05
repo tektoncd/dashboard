@@ -19,32 +19,51 @@ export default {
   args: {
     taskRuns: [
       {
-        id: 'task',
-        pipelineTaskName: 'Task 1',
-        steps: [
-          { id: 'build', stepName: 'build' },
-          { id: 'test', stepName: 'test' }
-        ],
-        succeeded: 'True'
+        metadata: {
+          labels: { 'tekton.dev/pipelineTask': 'Task 1' },
+          uid: 'task'
+        },
+        status: {
+          conditions: [
+            { reason: 'Completed', status: 'True', type: 'Succeeded' }
+          ],
+          steps: [
+            { name: 'build', terminated: { reason: 'Completed' } },
+            { name: 'test', terminated: { reason: 'Completed' } }
+          ]
+        }
       },
       {
-        id: 'task2',
-        pipelineTaskName: 'Task 2',
-        steps: [
-          { id: 'step 1', stepName: 'step 1' },
-          { id: 'step 2', stepName: 'step 2' }
-        ],
-        succeeded: 'False'
+        metadata: {
+          labels: { 'tekton.dev/pipelineTask': 'Task 2' },
+          uid: 'task2'
+        },
+        status: {
+          conditions: [
+            { reason: 'Failed', status: 'False', type: 'Succeeded' }
+          ],
+          steps: [
+            { name: 'step 1', terminated: { reason: 'Error' } },
+            // The next step will be displayed as 'Not run' by the Dashboard
+            { name: 'step 2', terminated: { reason: 'Error' } }
+          ]
+        }
       },
       {
-        id: 'task3',
+        metadata: {
+          labels: { 'tekton.dev/pipelineTask': 'Task 3' },
+          uid: 'task3'
+        },
         pipelineTaskName: 'Task 3',
-        steps: [
-          { id: 'step 1', stepName: 'step 1' },
-          { id: 'step 2', stepName: 'step 2' }
-        ],
-        succeeded: 'Unknown',
-        reason: 'Running'
+        status: {
+          conditions: [
+            { reason: 'Running', status: 'Unknown', type: 'Succeeded' }
+          ],
+          steps: [
+            { name: 'step 1', terminated: { reason: 'Completed' } },
+            { name: 'step 2', running: {} }
+          ]
+        }
       }
     ]
   },

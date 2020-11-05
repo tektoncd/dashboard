@@ -29,15 +29,11 @@ import {
   TaskTree
 } from '@tektoncd/dashboard-components';
 import {
-  getParams,
-  getResources,
   getStatus,
+  getStepDefinition,
+  getStepStatus,
   getTitle,
   queryParams as queryParamConstants,
-  reorderSteps,
-  stepsStatus,
-  taskRunStep,
-  updateUnexecutedSteps,
   urls
 } from '@tektoncd/dashboard-utils';
 
@@ -50,15 +46,15 @@ import {
   getTaskByType,
   getTaskRun,
   getTaskRunsErrorMessage,
-  isLogStreamingEnabled,
   isReadOnly,
-  isWebSocketConnected
+  isWebSocketConnected,
+  isLogStreamingEnabled as selectIsLogStreamingEnabled
 } from '../../reducers';
 
 import '@tektoncd/dashboard-components/dist/scss/Run.scss';
 import { fetchTask, fetchTaskByType } from '../../actions/tasks';
 import { fetchTaskRun } from '../../actions/taskRuns';
-import { rerunTaskRun } from '../../api';
+import { getPodLogURL, rerunTaskRun } from '../../api';
 
 const taskTypeKeys = { ClusterTask: 'clustertasks', Task: 'tasks' };
 const { STEP, TASK_RUN_DETAILS, VIEW } = queryParamConstants;
@@ -127,6 +123,46 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
     }
   }
 
+  getLogContainer({ stepName, stepStatus, taskRun }) {
+    const {
+      externalLogsURL,
+      isLogStreamingEnabled,
+      selectedStepId
+    } = this.props;
+
+    if (!selectedStepId) {
+      return null;
+    }
+
+    const logsRetriever = getLogsRetriever(
+      isLogStreamingEnabled,
+      externalLogsURL
+    );
+
+    const { container } = stepStatus;
+    const { podName } = taskRun.status;
+
+    const logURL = getPodLogURL({
+      container,
+      name: taskRun.status.podName,
+      namespace: taskRun.metadata.namespace
+    });
+
+    return (
+      <Log
+        downloadButton={
+          <LogDownloadButton
+            name={`${podName}__${container}__log.txt`}
+            url={logURL}
+          />
+        }
+        fetchLogs={() => logsRetriever(stepName, stepStatus, taskRun)}
+        key={stepName}
+        stepStatus={stepStatus}
+      />
+    );
+  }
+
   handleTaskSelected = (_, selectedStepId) => {
     const { history, location, match } = this.props;
     const queryParams = new URLSearchParams(location.search);
@@ -146,43 +182,6 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
 
     const browserURL = match.url.concat(`?${queryParams.toString()}`);
     history.push(browserURL);
-  };
-
-  loadTaskRun = () => {
-    const { task } = this.props;
-    let { taskRun } = this.props;
-    if (!taskRun) {
-      return null;
-    }
-
-    const { steps } = taskRun.status;
-    const stepDefinitions = taskRun.spec.taskSpec
-      ? taskRun.spec.taskSpec.steps
-      : task.spec.steps;
-    const reorderedSteps = reorderSteps(steps, stepDefinitions);
-    const taskRunName = taskRun.metadata.name;
-    const taskRunNamespace = taskRun.metadata.namespace;
-    const { reason, status: succeeded } = getStatus(taskRun);
-    const runSteps = stepsStatus(reorderedSteps, taskRun.status.steps);
-    const params = getParams(taskRun.spec);
-    const { inputResources, outputResources } = getResources(taskRun.spec);
-    const { startTime } = taskRun.status;
-    taskRun = {
-      id: taskRun.metadata.uid,
-      pod: taskRun.status.podName,
-      pipelineTaskName: taskRunName,
-      reason,
-      steps: runSteps,
-      succeeded,
-      taskRunName,
-      startTime,
-      namespace: taskRunNamespace,
-      params,
-      inputResources,
-      outputResources,
-      status: taskRun.status
-    };
-    return taskRun;
   };
 
   showRerunNotification(value) {
@@ -211,6 +210,8 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
       intl,
       selectedStepId,
       showTaskRunDetails,
+      task,
+      taskRun,
       view
     } = this.props;
 
@@ -229,8 +230,6 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
       });
     }
 
-    const taskRun = this.loadTaskRun();
-
     if (!taskRun) {
       return TaskRunContainer.notification({
         intl,
@@ -242,48 +241,38 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
       });
     }
 
-    const { definition, reason, status, stepName, stepStatus } = taskRunStep(
+    const definition = getStepDefinition({
       selectedStepId,
-      {
-        ...taskRun,
-        steps: updateUnexecutedSteps(taskRun.steps)
-      }
-    );
+      task,
+      taskRun
+    });
+
+    const stepStatus = getStepStatus({
+      selectedStepId,
+      taskRun
+    });
 
     const {
       reason: taskRunStatusReason,
-      message: taskRunStatusMessage
-    } = getStatus(this.props.taskRun);
+      message: taskRunStatusMessage,
+      status: succeeded
+    } = getStatus(taskRun);
 
-    const logsRetriever = getLogsRetriever(
-      this.props.isLogStreamingEnabled,
-      this.props.externalLogsURL
-    );
-
-    const logContainer = selectedStepId && (
-      <Log
-        downloadButton={
-          <LogDownloadButton
-            stepName={stepName}
-            stepStatus={stepStatus}
-            taskRun={taskRun}
-          />
-        }
-        fetchLogs={() => logsRetriever(stepName, stepStatus, taskRun)}
-        key={stepName}
-        stepStatus={stepStatus}
-      />
-    );
+    const logContainer = this.getLogContainer({
+      stepName: selectedStepId,
+      stepStatus,
+      taskRun
+    });
 
     const onViewChange = getViewChangeHandler(this.props);
 
     const rerun = !this.props.isReadOnly &&
-      !this.props.taskRun.metadata?.labels?.['tekton.dev/pipeline'] && (
+      !taskRun.metadata?.labels?.['tekton.dev/pipeline'] && (
         <Rerun
           getURL={({ name, namespace }) =>
             urls.taskRuns.byName({ namespace, taskRunName: name })
           }
-          run={this.props.taskRun}
+          run={taskRun}
           rerun={rerunTaskRun}
           showNotification={this.showRerunNotification}
         />
@@ -315,12 +304,12 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
           />
         )}
         <RunHeader
-          lastTransitionTime={taskRun.startTime}
+          lastTransitionTime={taskRun.status?.startTime}
           loading={loading}
           message={taskRunStatusMessage}
           reason={taskRunStatusReason}
-          runName={taskRun.taskRunName}
-          status={taskRun.succeeded}
+          runName={taskRun.metadata.name}
+          status={succeeded}
         >
           {rerun}
         </RunHeader>
@@ -328,7 +317,7 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
           <TaskTree
             onSelect={this.handleTaskSelected}
             selectedStepId={selectedStepId}
-            selectedTaskId={showTaskRunDetails && taskRun.id}
+            selectedTaskId={showTaskRunDetails && taskRun.metadata.uid}
             taskRuns={[taskRun]}
           />
           {(selectedStepId && (
@@ -336,10 +325,8 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
               definition={definition}
               logContainer={logContainer}
               onViewChange={onViewChange}
-              reason={reason}
               showIO
-              status={status}
-              stepName={stepName}
+              stepName={selectedStepId}
               stepStatus={stepStatus}
               taskRun={taskRun}
               view={view}
@@ -394,7 +381,7 @@ function mapStateToProps(state, ownProps) {
     isReadOnly: isReadOnly(state),
     namespace,
     selectedStepId,
-    isLogStreamingEnabled: isLogStreamingEnabled(state),
+    isLogStreamingEnabled: selectIsLogStreamingEnabled(state),
     showTaskRunDetails,
     taskRun,
     task,

@@ -42,7 +42,7 @@ import { LogDownloadButton } from '..';
 import { fetchPipelineRun } from '../../actions/pipelineRuns';
 import { fetchClusterTasks, fetchTasks } from '../../actions/tasks';
 import { fetchTaskRuns } from '../../actions/taskRuns';
-import { rerunPipelineRun } from '../../api';
+import { getPodLogURL, rerunPipelineRun } from '../../api';
 
 import { getLogsRetriever, getViewChangeHandler } from '../../utils';
 
@@ -98,7 +98,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       ({ metadata }) =>
         metadata.labels &&
         (metadata.labels[labelConstants.CONDITION_CHECK] === pipelineTaskName ||
-          // the `pipelineTask`` label is present on both TaskRuns (the owning
+          // the `pipelineTask` label is present on both TaskRuns (the owning
           // TaskRun and the TaskRun created for the condition check), ensure
           // we only match on the owning TaskRun here and not another condition
           (!metadata.labels[labelConstants.CONDITION_CHECK] &&
@@ -110,11 +110,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     }
 
     const retryNumber = parseInt(retry, 10);
-    if (
-      !Number.isNaN(retryNumber) &&
-      taskRun.status &&
-      taskRun.status.retriesStatus
-    ) {
+    if (!Number.isNaN(retryNumber) && taskRun.status?.retriesStatus) {
       const retryStatus = taskRun.status.retriesStatus[retryNumber];
       return retryStatus && taskRun.metadata.uid + retryStatus.podName;
     }
@@ -288,7 +284,20 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           )}
           handleTaskSelected={this.handleTaskSelected}
           loading={loading}
-          logDownloadButton={LogDownloadButton}
+          getLogDownloadButton={({ container, namespace, podName }) => {
+            const logURL = getPodLogURL({
+              container,
+              name: podName,
+              namespace
+            });
+
+            return (
+              <LogDownloadButton
+                name={`${podName}__${container}__log.txt`}
+                url={logURL}
+              />
+            );
+          }}
           onViewChange={getViewChangeHandler(this.props)}
           pipelineRun={pipelineRun}
           rerun={rerun}

@@ -21,9 +21,5 @@ export default {
 };
 
 export const Base = () => (
-  <LogDownloadButton
-    stepName="stepName"
-    stepStatus={{ container: 'containerName' }}
-    taskRun={{ namespace: 'namespaceName', pod: 'podName' }}
-  />
+  <LogDownloadButton name="some_filename.txt" url="/some/logs/url" />
 );

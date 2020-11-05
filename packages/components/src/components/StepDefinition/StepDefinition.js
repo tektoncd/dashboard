@@ -14,9 +14,9 @@ limitations under the License.
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
-import { urls } from '@tektoncd/dashboard-utils';
+import { getResources, urls } from '@tektoncd/dashboard-utils';
 
-import { Param, ResourceTable, ViewYAML } from '..';
+import { ResourceTable, ViewYAML } from '..';
 
 const resourceTable = (title, namespace, resources, intl) => {
   return (
@@ -67,59 +67,29 @@ class StepDefinition extends Component {
       return null;
     }
 
+    const { namespace } = taskRun.metadata;
+    const { inputResources, outputResources } = getResources(taskRun.spec);
+
     return (
       <>
-        {taskRun.params && (
-          <ResourceTable
-            title={intl.formatMessage({
-              id: 'dashboard.parameters.title',
-              defaultMessage: 'Parameters'
-            })}
-            rows={taskRun.params.map(({ name, value }) => ({
-              id: name,
-              name,
-              value: (
-                <span title={value}>
-                  <Param>{value}</Param>
-                </span>
-              )
-            }))}
-            headers={[
-              {
-                key: 'name',
-                header: intl.formatMessage({
-                  id: 'dashboard.tableHeader.name',
-                  defaultMessage: 'Name'
-                })
-              },
-              {
-                key: 'value',
-                header: intl.formatMessage({
-                  id: 'dashboard.tableHeader.value',
-                  defaultMessage: 'Value'
-                })
-              }
-            ]}
-          />
-        )}
-        {taskRun.inputResources &&
+        {inputResources &&
           resourceTable(
             intl.formatMessage({
               id: 'dashboard.stepDefinition.inputResources',
               defaultMessage: 'Input Resources'
             }),
-            taskRun.namespace,
-            taskRun.inputResources,
+            namespace,
+            inputResources,
             intl
           )}
-        {taskRun.outputResources &&
+        {outputResources &&
           resourceTable(
             intl.formatMessage({
               id: 'dashboard.stepDefinition.outputResources',
               defaultMessage: 'Output Resources'
             }),
-            taskRun.namespace,
-            taskRun.outputResources,
+            namespace,
+            outputResources,
             intl
           )}
       </>
@@ -128,27 +98,21 @@ class StepDefinition extends Component {
 
   render() {
     const { definition, intl } = this.props;
-    const {
-      container,
-      imageID,
-      running,
-      terminated,
-      waiting,
-      ...stepDefinition
-    } = definition || {};
 
-    const resource = definition
-      ? stepDefinition
-      : intl.formatMessage({
-          id: 'dashboard.step.definitionNotAvailable',
-          defaultMessage: 'Definition not available'
-        });
-
-    const paramsResources = this.getIOTables();
+    const resources = this.getIOTables();
     return (
       <>
-        <ViewYAML resource={resource} dark />
-        {paramsResources}
+        <ViewYAML
+          resource={
+            definition ||
+            intl.formatMessage({
+              id: 'dashboard.step.definitionNotAvailable',
+              defaultMessage: 'Step definition not available'
+            })
+          }
+          dark
+        />
+        {resources}
       </>
     );
   }
