@@ -14,6 +14,7 @@ limitations under the License.
 import React from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl } from 'react-intl';
+import { getParams } from '@tektoncd/dashboard-utils';
 
 import { DetailsHeader, Param, Tab, Table, Tabs, ViewYAML } from '..';
 
@@ -22,9 +23,9 @@ import './TaskRunDetails.scss';
 const tabs = ['params', 'status'];
 
 const TaskRunDetails = props => {
-  const { intl, onViewChange, taskRun, view } = props;
+  const { intl, onViewChange, pipelineTaskName, taskRun, view } = props;
 
-  const displayName = taskRun.pipelineTaskName || taskRun.taskRunName;
+  const displayName = pipelineTaskName || taskRun.metadata.name;
 
   const headers = [
     {
@@ -43,11 +44,12 @@ const TaskRunDetails = props => {
     }
   ];
 
-  const params = taskRun.params && taskRun.params.length && (
+  const params = getParams(taskRun.spec);
+  const paramsTable = params && params.length && (
     <Table
       size="short"
       headers={headers}
-      rows={taskRun.params.map(({ name, value }) => {
+      rows={params.map(({ name, value }) => {
         return {
           id: name,
           name,
@@ -74,7 +76,7 @@ const TaskRunDetails = props => {
         onSelectionChange={index => onViewChange(tabs[index])}
         selected={selectedTabIndex}
       >
-        {params && (
+        {paramsTable && (
           <Tab
             id={`${displayName}-details`}
             label={intl.formatMessage({
@@ -82,7 +84,7 @@ const TaskRunDetails = props => {
               defaultMessage: 'Parameters'
             })}
           >
-            <div className="tkn--step-status">{params}</div>
+            <div className="tkn--step-status">{paramsTable}</div>
           </Tab>
         )}
         <Tab

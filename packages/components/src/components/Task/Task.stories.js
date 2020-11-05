@@ -22,8 +22,8 @@ const props = {
 };
 
 const steps = [
-  { id: 'build', stepName: 'build', reason: 'Completed' },
-  { id: 'test', stepName: 'test', reason: 'Completed' }
+  { name: 'build', terminated: { reason: 'Completed' } },
+  { name: 'test', terminated: { reason: 'Completed' } }
 ];
 
 export default {

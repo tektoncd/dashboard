@@ -17,7 +17,7 @@ import StepDefinition from './StepDefinition';
 
 it('StepDefinition renders default content', () => {
   const { queryByText } = renderWithIntl(<StepDefinition taskRun={{}} />);
-  expect(queryByText(/Definition not available/i)).toBeTruthy();
+  expect(queryByText(/Step definition not available/i)).toBeTruthy();
 });
 
 it('StepDefinition renders the provided content', () => {
@@ -34,44 +34,41 @@ it('StepDefinition renders the provided content', () => {
   expect(queryByText(/test name/)).toBeTruthy();
   expect(queryByText(/Input Resources/)).toBeNull();
   expect(queryByText(/Output Resources/)).toBeNull();
-  expect(queryByText(/Parameters/)).toBeNull();
 });
 
-it('StepDefinition renders the provided content with resources and params', () => {
+it('StepDefinition renders the provided content with resources', () => {
   const inputResourceName = 'testInputResource';
   const outputResourceName = 'testOutputResource';
-  const testParamName = 'testParamName';
-  const testParam = 'testParam';
   const taskRun = {
-    namespace: 'test',
-    inputResources: [
-      {
-        resourceRef: {
-          name: inputResourceName
-        }
+    metadata: {
+      namespace: 'test'
+    },
+    spec: {
+      resources: {
+        inputs: [
+          {
+            resourceRef: {
+              name: inputResourceName
+            }
+          }
+        ],
+        outputs: [
+          {
+            name: 'referencedOutputResource',
+            resourceRef: {
+              name: outputResourceName
+            }
+          },
+          {
+            name: 'inlineOutputResource',
+            resourceSpec: {
+              name: 'testing',
+              params: 'inlineResourceParams'
+            }
+          }
+        ]
       }
-    ],
-    outputResources: [
-      {
-        name: 'referencedOutputResource',
-        resourceRef: {
-          name: outputResourceName
-        }
-      },
-      {
-        name: 'inlineOutputResource',
-        resourceSpec: {
-          name: 'testing',
-          params: 'inlineResourceParams'
-        }
-      }
-    ],
-    params: [
-      {
-        name: testParamName,
-        value: testParam
-      }
-    ]
+    }
   };
   const definition = {
     args: ['--someArg'],
@@ -86,9 +83,6 @@ it('StepDefinition renders the provided content with resources and params', () =
   expect(queryByText(/test name/)).toBeTruthy();
   expect(queryByText(/Input Resources/)).toBeTruthy();
   expect(queryByText(/Output Resources/)).toBeTruthy();
-  expect(queryByText(/Parameters/)).toBeTruthy();
-  expect(queryByText(testParamName)).toBeTruthy();
-  expect(queryByText(testParam)).toBeTruthy();
   expect(queryByText(inputResourceName)).toBeTruthy();
   expect(queryByText(outputResourceName)).toBeTruthy();
   expect(queryByText(/inlineResourceParams/)).toBeTruthy();

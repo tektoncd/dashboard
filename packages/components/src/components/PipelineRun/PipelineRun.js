@@ -20,16 +20,10 @@ import {
 import { injectIntl } from 'react-intl';
 import {
   getErrorMessage,
-  getParams,
-  getResources,
   getStatus,
-  labels,
-  reorderSteps,
-  selectedTask,
-  selectedTaskRun,
-  stepsStatus,
-  taskRunStep,
-  updateUnexecutedSteps
+  getStepDefinition,
+  getStepStatus,
+  labels as labelConstants
 } from '@tektoncd/dashboard-utils';
 
 import { Log, RunHeader, StepDetails, TaskRunDetails, TaskTree } from '..';
@@ -37,11 +31,11 @@ import { Log, RunHeader, StepDetails, TaskRunDetails, TaskTree } from '..';
 import '../../scss/Run.scss';
 
 export /* istanbul ignore next */ class PipelineRunContainer extends Component {
-  loadPipelineRunData = () => {
+  getPipelineRunError = () => {
     const { pipelineRun } = this.props;
 
     if (!(pipelineRun.status && pipelineRun.status.taskRuns)) {
-      return { pipelineRun };
+      return null;
     }
 
     const {
@@ -49,12 +43,40 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     } = pipelineRun;
     const { message, status, reason } = getStatus(pipelineRun);
 
-    return {
-      error: status === 'False' && !taskRunsStatus && { message, reason },
-      pipelineRun,
-      pipelineRunName: pipelineRun.metadata.name
-    };
+    return status === 'False' && !taskRunsStatus && { message, reason };
   };
+
+  getLogContainer({ stepName, stepStatus, taskRun }) {
+    const {
+      fetchLogs,
+      getLogDownloadButton,
+      pollingInterval,
+      selectedStepId,
+      selectedTaskId
+    } = this.props;
+
+    if (!selectedStepId) {
+      return null;
+    }
+
+    const { container } = stepStatus;
+    const { namespace } = taskRun.metadata;
+    const { podName } = taskRun.status;
+
+    return (
+      <Log
+        downloadButton={
+          getLogDownloadButton &&
+          stepStatus &&
+          getLogDownloadButton({ container, namespace, podName })
+        }
+        fetchLogs={() => fetchLogs(stepName, stepStatus, taskRun)}
+        key={`${selectedTaskId}:${selectedStepId}`}
+        pollingInterval={pollingInterval}
+        stepStatus={stepStatus}
+      />
+    );
+  }
 
   sortTaskRuns = taskRuns => {
     const toReturn = taskRuns.sort((taskRunA, taskRunB) => {
@@ -62,8 +84,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
         return 0;
       }
 
-      const firstStepA = taskRunA.steps[0];
-      const firstStepB = taskRunB.steps[0];
+      const firstStepA = taskRunA.status?.steps[0];
+      const firstStepB = taskRunB.status?.steps[0];
 
       if (!firstStepA || !firstStepB) {
         // shouldn't be able to reach this state (both tasks requiring at least one step)
@@ -84,21 +106,17 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     return toReturn;
   };
 
-  loadTaskRuns = pipelineRun => {
-    if (!pipelineRun || !pipelineRun.status || !pipelineRun.status.taskRuns) {
+  loadTaskRuns = () => {
+    const { intl, pipelineRun } = this.props;
+    if (!pipelineRun?.status?.taskRuns) {
       return [];
     }
 
-    const { tasks, intl } = this.props;
     let { taskRuns } = this.props;
 
-    if (!tasks || !taskRuns) {
+    if (!taskRuns) {
       return [];
     }
-
-    const {
-      status: { taskRuns: taskRunDetails }
-    } = pipelineRun;
 
     const retryPodIndex = {};
     taskRuns = taskRuns.reduce((acc, taskRun) => {
@@ -113,99 +131,62 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       acc.push(taskRun);
       return acc;
     }, []);
-    return taskRuns
-      .map(taskRun => {
-        let taskSpec;
-        if (taskRun.spec.taskRef) {
-          const task = selectedTask(taskRun.spec.taskRef.name, tasks);
 
-          if (!task) {
-            return null;
-          }
+    const {
+      status: { taskRuns: taskRunDetails }
+    } = pipelineRun;
 
-          taskSpec = task.spec;
-        } else {
-          ({ taskSpec } = taskRun.spec);
+    return taskRuns.map(taskRun => {
+      const { labels, name: taskRunName, uid } = taskRun.metadata;
+
+      let pipelineTaskName;
+      const conditionCheck = labels[labelConstants.CONDITION_CHECK];
+      if (conditionCheck) {
+        pipelineTaskName = conditionCheck;
+      } else {
+        ({ pipelineTaskName } = taskRunDetails[taskRunName] || {});
+      }
+
+      const { podName } = taskRun.status || {};
+
+      if (retryPodIndex[podName] || taskRun.status?.retriesStatus) {
+        const retryNumber =
+          retryPodIndex[podName] || taskRun.status.retriesStatus.length;
+        pipelineTaskName = intl.formatMessage(
+          {
+            id: 'dashboard.pipelineRun.pipelineTaskName.retry',
+            defaultMessage: '{pipelineTaskName} (retry {retryNumber, number})'
+          },
+          { pipelineTaskName, retryNumber }
+        );
+      }
+
+      return {
+        ...taskRun,
+        metadata: {
+          ...taskRun.metadata,
+          labels: {
+            ...taskRun.metadata.labels,
+            [labelConstants.DASHBOARD_RETRY_NAME]: pipelineTaskName
+          },
+          uid: `${uid}${podName}`
+        },
+        status: {
+          ...taskRun.status
         }
-
-        if (!taskSpec) {
-          return null;
-        }
-
-        const {
-          name: taskRunName,
-          namespace: taskRunNamespace,
-          annotations
-        } = taskRun.metadata;
-
-        const { reason, status: succeeded } = getStatus(taskRun);
-
-        let pipelineTaskName;
-        const conditionCheck = taskRun.metadata.labels[labels.CONDITION_CHECK];
-        if (conditionCheck) {
-          pipelineTaskName = conditionCheck;
-        } else {
-          ({ pipelineTaskName } = taskRunDetails[taskRunName] || {});
-        }
-
-        const params = getParams(taskRun.spec);
-        const { inputResources, outputResources } = getResources(taskRun.spec);
-
-        let steps = [];
-
-        if (!taskRun.status) {
-          taskRun.status = {}; // eslint-disable-line no-param-reassign
-        } else {
-          const reorderedSteps = reorderSteps(
-            taskRun.status.steps,
-            taskSpec.steps
-          );
-          steps = stepsStatus(reorderedSteps, taskRun.status.steps);
-        }
-        const { podName } = taskRun.status;
-
-        if (retryPodIndex[podName] || taskRun.status?.retriesStatus) {
-          const retryNumber =
-            retryPodIndex[podName] || taskRun.status.retriesStatus.length;
-          pipelineTaskName = intl.formatMessage(
-            {
-              id: 'dashboard.pipelineRun.pipelineTaskName.retry',
-              defaultMessage: '{pipelineTaskName} (retry {retryNumber, number})'
-            },
-            { pipelineTaskName, retryNumber }
-          );
-        }
-
-        return {
-          id: `${taskRun.metadata.uid}${podName}`,
-          pipelineTaskName,
-          pod: podName,
-          reason,
-          steps,
-          succeeded,
-          taskRunName,
-          namespace: taskRunNamespace,
-          inputResources,
-          outputResources,
-          params,
-          annotations,
-          status: taskRun.status
-        };
-      })
-      .filter(Boolean);
+      };
+    });
   };
 
   render() {
     const {
       customNotification,
       error,
-      fetchLogs,
       handleTaskSelected,
       intl,
       loading,
-      logDownloadButton: LogDownloadButton,
       onViewChange,
-      pollingInterval,
+      pipelineRun,
       rerun,
       selectedStepId,
       selectedTaskId,
@@ -258,11 +239,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       );
     }
 
-    const {
-      pipelineRunName,
-      error: pipelineRunError,
-      pipelineRun
-    } = this.loadPipelineRunData();
+    const pipelineRunName = pipelineRun.metadata.name;
+    const pipelineRunError = this.getPipelineRunError();
 
     const {
       lastTransitionTime,
@@ -300,40 +278,39 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
         </>
       );
     }
-    const taskRuns = this.loadTaskRuns(pipelineRun);
+
+    const taskRuns = this.loadTaskRuns();
 
     if (sortTaskRuns) {
       this.sortTaskRuns(taskRuns);
     }
 
-    const taskRun = selectedTaskRun(selectedTaskId, taskRuns) || {};
+    const taskRun =
+      taskRuns.find(run => run.metadata.uid === selectedTaskId) || {};
 
-    const { definition, reason, status, stepName, stepStatus } = taskRunStep(
+    const task =
+      (taskRun.spec?.taskRef?.name &&
+        this.props.tasks?.find(
+          t => t.metadata.name === taskRun.spec.taskRef.name
+        )) ||
+      {};
+
+    const definition = getStepDefinition({
       selectedStepId,
-      {
-        ...taskRun,
-        steps: updateUnexecutedSteps(taskRun.steps)
-      }
-    );
+      task,
+      taskRun
+    });
 
-    const logContainer = selectedStepId && (
-      <Log
-        downloadButton={
-          LogDownloadButton &&
-          stepStatus && (
-            <LogDownloadButton
-              stepName={stepName}
-              stepStatus={stepStatus}
-              taskRun={taskRun}
-            />
-          )
-        }
-        fetchLogs={() => fetchLogs(stepName, stepStatus, taskRun)}
-        key={`${selectedTaskId}:${selectedStepId}`}
-        pollingInterval={pollingInterval}
-        stepStatus={stepStatus}
-      />
-    );
+    const stepStatus = getStepStatus({
+      selectedStepId,
+      taskRun
+    });
+
+    const logContainer = this.getLogContainer({
+      stepName: selectedStepId,
+      stepStatus,
+      taskRun
+    });
 
     return (
       <>
@@ -362,10 +339,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
                 definition={definition}
                 logContainer={logContainer}
                 onViewChange={onViewChange}
-                reason={reason}
                 showIO={showIO}
-                status={status}
-                stepName={stepName}
+                stepName={selectedStepId}
                 stepStatus={stepStatus}
                 taskRun={taskRun}
                 view={view}

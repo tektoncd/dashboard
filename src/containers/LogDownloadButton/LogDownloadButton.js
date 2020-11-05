@@ -15,24 +15,13 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import { Download16, Launch16 } from '@carbon/icons-react';
 
-import { getPodLogURL } from '../../api';
-
-const LogDownloadButton = ({ intl, stepStatus, taskRun }) => {
-  const { container } = stepStatus;
-  const { namespace, pod } = taskRun;
-
-  const logURL = getPodLogURL({
-    container,
-    name: pod,
-    namespace
-  });
-
+const LogDownloadButton = ({ intl, name, url }) => {
   return (
     <>
       <div className="bx--btn-set">
         <a
           className="bx--copy-btn"
-          href={logURL}
+          href={url}
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -45,11 +34,7 @@ const LogDownloadButton = ({ intl, stepStatus, taskRun }) => {
             </title>
           </Launch16>
         </a>
-        <a
-          className="bx--copy-btn"
-          download={`${pod}__${container}__log.txt`}
-          href={logURL}
-        >
+        <a className="bx--copy-btn" download={name} href={url}>
           <Download16>
             <title>
               {intl.formatMessage({

@@ -28,13 +28,13 @@ describe('Task', () => {
   });
 
   it('does not render steps in collapsed state', () => {
-    const steps = [{ stepName: 'a step' }];
+    const steps = [{ name: 'a step' }];
     const { queryByText } = renderWithIntl(<Task {...props} steps={steps} />);
     expect(queryByText(/a step/i)).toBeFalsy();
   });
 
   it('renders steps in expanded state', () => {
-    const steps = [{ id: 'step', stepName: 'a step' }];
+    const steps = [{ name: 'a step' }];
     const { queryByText } = renderWithIntl(
       <Task {...props} expanded steps={steps} />
     );
@@ -43,8 +43,8 @@ describe('Task', () => {
 
   it('renders first step in expanded Task with no error', () => {
     const steps = [
-      { id: 'step', stepName: 'a step', reason: 'Completed' },
-      { id: 'step-two', stepName: 'a step two', reason: 'Completed' }
+      { name: 'a step', terminated: { reason: 'Completed' } },
+      { name: 'a step two', terminated: { reason: 'Completed' } }
     ];
     const { queryByText } = renderWithIntl(
       <Task {...props} expanded steps={steps} />
@@ -60,8 +60,8 @@ describe('Task', () => {
 
   it('renders error step in expanded Task', () => {
     const steps = [
-      { id: 'step', stepName: 'a step', reason: 'Completed' },
-      { id: 'step-two', stepName: 'a step two', reason: 'Error' }
+      { name: 'a step', terminated: { reason: 'Completed' } },
+      { name: 'a step two', terminated: { reason: 'Error' } }
     ];
     const { queryByText } = renderWithIntl(
       <Task {...props} expanded steps={steps} />
@@ -77,8 +77,8 @@ describe('Task', () => {
 
   it('renders cancelled step in expanded Task', () => {
     const steps = [
-      { id: 'step', stepName: 'a step', reason: 'Completed' },
-      { id: 'step-two', stepName: 'a step two', reason: undefined }
+      { name: 'a step', terminated: { reason: 'Completed' } },
+      { name: 'a step two', terminated: { reason: undefined } }
     ];
     const { queryByText } = renderWithIntl(
       <Task {...props} expanded steps={steps} />
@@ -94,9 +94,9 @@ describe('Task', () => {
 
   it('renders completed steps in expanded state', () => {
     const steps = [
-      { id: 'step1', stepName: 'step 1', reason: 'Completed' },
-      { id: 'step2', stepName: 'step 2', reason: 'Error' },
-      { id: 'step3', stepName: 'step 3', reason: 'Completed' }
+      { name: 'step 1', terminated: { reason: 'Completed' } },
+      { name: 'step 2', terminated: { reason: 'Error' } },
+      { name: 'step 3', terminated: { reason: 'Completed' } }
     ];
     const { queryByText } = renderWithIntl(
       <Task {...props} expanded steps={steps} />
@@ -128,12 +128,18 @@ describe('Task', () => {
 
   it('renders cancelled state', () => {
     renderWithIntl(
-      <Task {...props} succeeded="Unknown" reason="TaskRunCancelled" />
+      <Task
+        {...props}
+        expanded
+        succeeded="Unknown"
+        reason="TaskRunCancelled"
+        steps={[{ name: 'a step', waiting: {} }]}
+      />
     );
   });
 
   it('renders selected step state', () => {
-    const steps = [{ id: 'step', stepName: 'a step' }];
+    const steps = [{ name: 'a step' }];
     renderWithIntl(
       <Task {...props} expanded selectedStepId="some-step" steps={steps} />
     );
@@ -150,7 +156,7 @@ describe('Task', () => {
 
   it('handles click event on Step', () => {
     const onSelect = jest.fn();
-    const steps = [{ id: 'build', stepName: 'build' }];
+    const steps = [{ name: 'build' }];
     const { getByText } = renderWithIntl(
       <Task
         expanded

@@ -233,7 +233,7 @@
     "dashboard.serviceAccountsDropdown.label": "Select ServiceAccount",
     "dashboard.sideNav.kubernetesResources": "Kubernetes resources",
     "dashboard.sideNav.tektonResources": "Tekton resources",
-    "dashboard.step.definitionNotAvailable": "Definition not available",
+    "dashboard.step.definitionNotAvailable": "Step definition not available",
     "dashboard.step.statusNotAvailable": "Status not available",
     "dashboard.stepDefinition.inputResources": "Input Resources",
     "dashboard.stepDefinition.outputResources": "Output Resources",
