@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
+import keyBy from 'lodash.keyby';
 import {
   Form,
   FormGroup,
@@ -40,9 +41,11 @@ const initialState = {
   labels: [],
   namespace: '',
   nodeSelector: [],
+  params: [],
   paramSpecs: [],
   pipelineError: false,
   pipelineRef: '',
+  resources: [],
   resourceSpecs: [],
   serviceAccount: '',
   submitError: '',
@@ -121,6 +124,7 @@ class CreatePipelineRun extends React.Component {
   };
 
   checkFormValidation = () => {
+    const { paramSpecs } = this.state;
     // Namespace, PipelineRef, Resources, and Params must all have values
     const validNamespace = !!this.state.namespace;
     const validPipelineRef = !!this.state.pipelineRef;
@@ -130,10 +134,14 @@ class CreatePipelineRun extends React.Component {
         (acc, name) => acc && !!this.state.resources[name],
         true
       );
+    const paramSpecMap = keyBy(paramSpecs, 'name');
     const validParams =
       !this.state.params ||
       Object.keys(this.state.params).reduce(
-        (acc, name) => acc && !!this.state.params[name],
+        (acc, name) =>
+          acc &&
+          (!!this.state.params[name] ||
+            typeof paramSpecMap[name]?.default !== 'undefined'),
         true
       );
 
@@ -597,7 +605,9 @@ class CreatePipelineRun extends React.Component {
                   helperText={paramSpec.description}
                   placeholder={paramSpec.default || paramSpec.name}
                   invalid={
-                    validationError && !this.state.params[paramSpec.name]
+                    validationError &&
+                    !this.state.params[paramSpec.name] &&
+                    paramSpec.default !== ''
                   }
                   invalidText={intl.formatMessage({
                     id: 'dashboard.createRun.invalidParams',

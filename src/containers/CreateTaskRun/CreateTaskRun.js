@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
+import keyBy from 'lodash.keyby';
 import {
   Dropdown,
   Form,
@@ -62,7 +63,9 @@ const initialState = {
   labels: [],
   namespace: '',
   nodeSelector: [],
+  params: [],
   paramSpecs: [],
+  resources: [],
   resourceSpecs: [],
   serviceAccount: '',
   submitError: '',
@@ -129,6 +132,7 @@ class CreateTaskRun extends React.Component {
       namespace,
       nodeSelector,
       params,
+      paramSpecs,
       resources,
       taskRef,
       timeout
@@ -150,9 +154,17 @@ class CreateTaskRun extends React.Component {
         (acc, name) => acc && !!resources.outputs[name],
         true
       );
+
+    const paramSpecMap = keyBy(paramSpecs, 'name');
     const validParams =
       !params ||
-      Object.keys(params).reduce((acc, name) => acc && !!params[name], true);
+      Object.keys(params).reduce(
+        (acc, name) =>
+          acc &&
+          (!!params[name] ||
+            typeof paramSpecMap[name]?.default !== 'undefined'),
+        true
+      );
 
     // Timeout is a number and less than 1 year in minutes
     const validTimeout =
@@ -682,7 +694,11 @@ class CreateTaskRun extends React.Component {
                   labelText={paramSpec.name}
                   helperText={paramSpec.description}
                   placeholder={paramSpec.default || paramSpec.name}
-                  invalid={validationError && !params[paramSpec.name]}
+                  invalid={
+                    validationError &&
+                    !params[paramSpec.name] &&
+                    paramSpec.default !== ''
+                  }
                   invalidText={intl.formatMessage({
                     id: 'dashboard.createRun.invalidParams',
                     defaultMessage: 'Params cannot be empty'
