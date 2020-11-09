@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-@import '../../scss/vars';
+@import '~carbon-components/scss/globals/scss/vars';
 
 .tkn--step {
   list-style-type: none;
@@ -69,7 +69,7 @@ limitations under the License.
   &[data-status='running'] > a.tkn--step-link {
     opacity: 1;
     .tkn--status-label {
-      color: $running;
+      color: $support-04;
       font-weight: bold;
       font-size: 0.69rem;
     }
@@ -77,7 +77,7 @@ limitations under the License.
   &[data-status='terminated'][data-reason='Completed'] > a.tkn--step-link {
     opacity: 1;
     .tkn--status-label {
-      color: $success;
+      color: $support-02;
       font-size: 0.66rem;
       font-weight: bold;
     }
@@ -85,7 +85,7 @@ limitations under the License.
   &[data-status='terminated'][data-reason='Error'] > a.tkn--step-link {
     opacity: 1;
     .tkn--status-label {
-      color: $failed;
+      color: $support-01;
       font-weight: bold;
     }
   }
@@ -95,7 +95,7 @@ limitations under the License.
     > a.tkn--step-link {
       opacity: 1;
       .tkn--status-label {
-        color: $failed;
+        color: $support-01;
         font-weight: bold;
       }
     }

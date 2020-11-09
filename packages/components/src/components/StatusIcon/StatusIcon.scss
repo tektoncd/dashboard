@@ -11,10 +11,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-@import '../../scss/vars';
+@import '~carbon-components/scss/globals/scss/vars';
 
 .tkn--status-icon {
-  fill: $not-run;
+  fill: $gray-70;
   width: 20px;
   height: 20px;
 
@@ -23,14 +23,14 @@ limitations under the License.
   }
 
   &--error {
-    fill: $failed;
+    fill: $support-01;
   }
 
   &--running {
-    fill: $running;
+    fill: $support-04;
   }
 
   &--success {
-    fill: $success;
+    fill: $support-02;
   }
 }

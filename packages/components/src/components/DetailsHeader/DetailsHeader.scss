@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-@import '~@tektoncd/dashboard-components/dist/scss/vars';
+@import '~carbon-components/scss/globals/scss/vars';
 
 .tkn--step-details-header {
   padding: 1rem 1rem 0;
@@ -61,18 +61,18 @@ limitations under the License.
 
   &[data-status] {
     .tkn--status-label {
-      color: $not-run;
+      color: $gray-70;
     }
   }
   &[data-status='running'] {
     .tkn--status-label {
-      color: $running;
+      color: $support-04;
     }
   }
   &[data-status='terminated'][data-reason='Completed'],
   &[data-status='True'] {
     .tkn--status-label {
-      color: $success;
+      color: $support-02;
     }
   }
   &[data-status='terminated'][data-reason='Error'],
@@ -82,7 +82,7 @@ limitations under the License.
   &[data-reason='TaskRunCancelled'],
   &[data-reason='TaskRunTimeout'] {
     .tkn--status-label {
-      color: $failed;
+      color: $support-01;
     }
   }
 }

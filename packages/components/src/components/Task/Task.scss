@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-@import '~@tektoncd/dashboard-components/dist/scss/vars';
+@import '~carbon-components/scss/globals/scss/vars';
 
 .tkn--task {
   list-style-type: none;
@@ -70,8 +70,8 @@ limitations under the License.
 
   &:not([data-succeeded]) > a.tkn--task-link {
     &:hover {
-      color: $waiting-fg;
-      background-color: $waiting-bg-hover;
+      color: inherit;
+      background-color: $hover-ui;
     }
   }
 
