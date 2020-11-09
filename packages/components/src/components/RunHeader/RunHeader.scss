@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 @import '~carbon-components/scss/globals/scss/typography';
-@import '~@tektoncd/dashboard-components/dist/scss/vars';
 
 .tkn--pipeline-run-header {
   background: white;
@@ -81,27 +80,27 @@ limitations under the License.
   // catch all for unknown states
   &:not([data-succeeded]) {
     .tkn--status-label {
-      color: $unknown;
+      color: $gray-70;
     }
   }
 
   &[data-succeeded='True'] {
     .tkn--status-label {
-      color: $success;
+      color: $support-02;
     }
   }
 
   &[data-succeeded='False'],
   &[data-succeeded='Unknown'][data-reason='PipelineRunCouldntCancel'] {
     .tkn--status-label {
-      color: $failed;
+      color: $support-01;
     }
   }
 
   &[data-succeeded='Unknown'][data-reason='Running'],
   &[data-succeeded='Unknown'][data-reason='PipelineRunStopping'] {
     .tkn--status-label {
-      color: $running;
+      color: $support-04;
     }
   }
 }
