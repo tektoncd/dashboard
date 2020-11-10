@@ -22,6 +22,7 @@ import {
 } from 'carbon-components-react';
 import {
   Log,
+  LogDownloadButton,
   Rerun,
   RunHeader,
   StepDetails,
@@ -39,7 +40,6 @@ import {
 
 import { getLogsRetriever, getViewChangeHandler } from '../../utils';
 
-import { LogDownloadButton } from '..';
 import {
   getExternalLogsURL,
   getSelectedNamespace,

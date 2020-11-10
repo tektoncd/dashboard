@@ -17,7 +17,7 @@ import LogDownloadButton from './LogDownloadButton';
 
 export default {
   component: LogDownloadButton,
-  title: 'Containers/LogDownloadButton'
+  title: 'Components/LogDownloadButton'
 };
 
 export const Base = () => (

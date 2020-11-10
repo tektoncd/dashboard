@@ -14,7 +14,11 @@ limitations under the License.
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { PipelineRun, Rerun } from '@tektoncd/dashboard-components';
+import {
+  LogDownloadButton,
+  PipelineRun,
+  Rerun
+} from '@tektoncd/dashboard-components';
 import {
   getTitle,
   labels as labelConstants,
@@ -38,7 +42,6 @@ import {
   isReadOnly,
   isWebSocketConnected
 } from '../../reducers';
-import { LogDownloadButton } from '..';
 import { fetchPipelineRun } from '../../actions/pipelineRuns';
 import { fetchClusterTasks, fetchTasks } from '../../actions/tasks';
 import { fetchTaskRuns } from '../../actions/taskRuns';
