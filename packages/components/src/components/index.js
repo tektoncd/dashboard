@@ -23,6 +23,7 @@ export { default as KeyValueList } from './KeyValueList';
 export { default as LabelFilter } from './LabelFilter';
 export { default as LoadingShell } from './LoadingShell';
 export { default as Log } from './Log';
+export { default as LogDownloadButton } from './LogDownloadButton';
 export { default as LogoutButton } from './LogoutButton';
 export { default as Modal } from './Modal';
 export { default as PageErrorBoundary } from './PageErrorBoundary';
