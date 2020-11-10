@@ -81,6 +81,10 @@ export function getStepStatus({ selectedStepId, taskRun }) {
 }
 
 export function getStepStatusReason(step) {
+  if (!step) {
+    return {};
+  }
+
   let status;
   let reason;
   if (step.terminated) {
@@ -124,7 +128,7 @@ export function formatLabels(labelsRaw) {
   return formattedLabelsToRender;
 }
 
-// Update the status of steps that follow a step with an error
+// Update the status of steps that follow a step with an error or a running step
 export function updateUnexecutedSteps(steps) {
   if (!steps) {
     return steps;
@@ -135,10 +139,8 @@ export function updateUnexecutedSteps(steps) {
       errorIndex = Math.min(index, errorIndex);
     }
     if (index > errorIndex) {
-      return {
-        ...step,
-        terminated: undefined
-      };
+      const { running, terminated, ...rest } = step;
+      return { ...rest };
     }
     return step;
   });

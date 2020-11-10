@@ -130,7 +130,7 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
       selectedStepId
     } = this.props;
 
-    if (!selectedStepId) {
+    if (!selectedStepId || !stepStatus) {
       return null;
     }
 

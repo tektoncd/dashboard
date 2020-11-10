@@ -209,6 +209,7 @@
     "dashboard.resourceList.emptyState": "{type}のリソースがありません",
     "dashboard.resourceList.errorLoading": "{type}のロード中にエラーが発生しました",
     "dashboard.resourceList.viewDetails": "{resource}を表示",
+    "dashboard.run.duration": "",
     "dashboard.run.rerunStatusMessage": "ステータスを表示",
     "dashboard.secret.errorLoading": "Secretのロード中にエラーが発生しました",
     "dashboard.secret.failed": "Secretを読み込めません",

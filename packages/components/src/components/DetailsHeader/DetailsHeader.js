@@ -16,11 +16,44 @@ import { ChevronRight24 as DefaultIcon } from '@carbon/icons-react';
 import { injectIntl } from 'react-intl';
 import { getStatus } from '@tektoncd/dashboard-utils';
 
-import { StatusIcon } from '..';
+import { FormattedDuration, StatusIcon } from '..';
 
 import './DetailsHeader.scss';
 
 class DetailsHeader extends Component {
+  getDuration() {
+    const { intl, stepStatus, taskRun } = this.props;
+    let { completionTime: endTime, startTime } = taskRun.status || {};
+    if (stepStatus) {
+      ({ finishedAt: endTime, startedAt: startTime } =
+        stepStatus.terminated || {});
+    }
+
+    if (!startTime || !endTime) {
+      return null;
+    }
+
+    return (
+      <span className="tkn--run-details-time">
+        {intl.formatMessage(
+          {
+            id: 'dashboard.run.duration',
+            defaultMessage: 'Duration: {duration}'
+          },
+          {
+            duration: (
+              <FormattedDuration
+                milliseconds={
+                  new Date(endTime).getTime() - new Date(startTime).getTime()
+                }
+              />
+            )
+          }
+        )}
+      </span>
+    );
+  }
+
   statusLabel() {
     const { intl, reason, status, taskRun } = this.props;
     const { reason: taskReason, status: taskStatus } = getStatus(taskRun);
@@ -69,9 +102,11 @@ class DetailsHeader extends Component {
   }
 
   render() {
-    const { stepName, taskRun, type = 'step', intl } = this.props;
+    const { intl, stepName, taskRun, type = 'step' } = this.props;
     let { reason, status } = this.props;
     let statusLabel;
+
+    const duration = this.getDuration();
 
     if (type === 'taskRun') {
       ({ reason, status } = getStatus(taskRun));
@@ -103,6 +138,7 @@ class DetailsHeader extends Component {
           </span>
           <span className="tkn--status-label">{statusLabel}</span>
         </h2>
+        {duration}
       </header>
     );
   }
