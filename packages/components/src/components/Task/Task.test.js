@@ -18,7 +18,7 @@ import { renderWithIntl } from '../../utils/test';
 
 const props = {
   onSelect: () => {},
-  pipelineTaskName: 'A Task'
+  displayName: 'A Task'
 };
 
 describe('Task', () => {
@@ -148,7 +148,7 @@ describe('Task', () => {
   it('handles click event', () => {
     const onSelect = jest.fn();
     const { getByText } = renderWithIntl(
-      <Task pipelineTaskName="build" onSelect={onSelect} />
+      <Task displayName="build" onSelect={onSelect} />
     );
     fireEvent.click(getByText(/build/i));
     expect(onSelect).toHaveBeenCalledTimes(1);
@@ -158,12 +158,7 @@ describe('Task', () => {
     const onSelect = jest.fn();
     const steps = [{ name: 'build' }];
     const { getByText } = renderWithIntl(
-      <Task
-        expanded
-        onSelect={onSelect}
-        pipelineTaskName="A Task"
-        steps={steps}
-      />
+      <Task displayName="A Task" expanded onSelect={onSelect} steps={steps} />
     );
     expect(onSelect).not.toHaveBeenCalled();
 

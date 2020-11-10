@@ -31,23 +31,6 @@ describe('TaskRunDetails', () => {
     expect(queryByText(status)).toBeTruthy();
   });
 
-  it('renders pipeline task name and inputs', () => {
-    const pipelineTaskName = 'my-pipeline-task';
-    const paramKey = 'k';
-    const paramValue = 'v';
-    const params = [{ name: paramKey, value: paramValue }];
-    const { queryByText } = renderWithIntl(
-      <TaskRunDetails
-        pipelineTaskName={pipelineTaskName}
-        taskRun={{ metadata: { name: 'task-run-name' }, spec: { params } }}
-      />
-    );
-
-    expect(queryByText(pipelineTaskName)).toBeTruthy();
-    expect(queryByText(paramKey)).toBeTruthy();
-    expect(queryByText(paramValue)).toBeTruthy();
-  });
-
   it('renders task name and inputs', () => {
     const taskRunName = 'task-run-name';
     const status = 'error';

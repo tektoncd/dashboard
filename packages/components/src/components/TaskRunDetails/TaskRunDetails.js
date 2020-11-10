@@ -23,9 +23,8 @@ import './TaskRunDetails.scss';
 const tabs = ['params', 'status'];
 
 const TaskRunDetails = props => {
-  const { intl, onViewChange, pipelineTaskName, taskRun, view } = props;
-
-  const displayName = pipelineTaskName || taskRun.metadata.name;
+  const { intl, onViewChange, taskRun, view } = props;
+  const displayName = taskRun.metadata.name;
 
   const headers = [
     {

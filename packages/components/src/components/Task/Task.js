@@ -67,7 +67,7 @@ class Task extends Component {
   render() {
     const {
       expanded,
-      pipelineTaskName,
+      displayName,
       reason,
       selectedStepId,
       steps,
@@ -89,7 +89,7 @@ class Task extends Component {
         <a
           className="tkn--task-link"
           href="#"
-          title={pipelineTaskName}
+          title={displayName}
           onClick={this.handleTaskSelected}
         >
           <StatusIcon
@@ -97,7 +97,7 @@ class Task extends Component {
             reason={reason}
             status={succeeded}
           />
-          <span className="tkn--task-link--name">{pipelineTaskName}</span>
+          <span className="tkn--task-link--name">{displayName}</span>
           {expandIcon}
         </a>
         {expanded && (
