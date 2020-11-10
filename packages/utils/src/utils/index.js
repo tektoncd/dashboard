@@ -51,9 +51,9 @@ export function getStepDefinition({ selectedStepId, task, taskRun }) {
     return null;
   }
 
-  const stepDefinitions = taskRun.spec?.taskSpec
-    ? taskRun.spec.taskSpec.steps
-    : task.spec?.steps;
+  const stepDefinitions =
+    (taskRun.spec?.taskSpec ? taskRun.spec.taskSpec.steps : task.spec?.steps) ||
+    [];
 
   const definition = stepDefinitions?.find(
     step => step.name === selectedStepId

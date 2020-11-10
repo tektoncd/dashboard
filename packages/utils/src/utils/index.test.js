@@ -328,6 +328,18 @@ describe('getStepDefinition', () => {
     const definition = getStepDefinition({ selectedStepId, task, taskRun });
     expect(definition).toEqual(step);
   });
+
+  it('handles deleted Task spec', () => {
+    const selectedStepId = 'unnamed-1';
+    const task = {};
+    const taskRun = {
+      status: {
+        steps: [{ name: 'a-step' }, { name: 'unnamed-1' }]
+      }
+    };
+    const definition = getStepDefinition({ selectedStepId, task, taskRun });
+    expect(definition).toBeUndefined();
+  });
 });
 
 it('getStepStatus', () => {
