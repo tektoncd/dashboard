@@ -17,7 +17,7 @@ import { action } from '@storybook/addon-actions';
 import Task from './Task';
 
 const props = {
-  pipelineTaskName: 'A Task',
+  displayName: 'A Task',
   onSelect: action('selected')
 };
 
