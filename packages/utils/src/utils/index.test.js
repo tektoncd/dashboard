@@ -116,53 +116,79 @@ it('formatLabels', () => {
   ]);
 });
 
-it('updateUnexecutedSteps no steps', () => {
-  const steps = [];
-  const wantUpdatedSteps = [];
-  const gotUpdatedSteps = updateUnexecutedSteps(steps);
-  expect(gotUpdatedSteps).toEqual(wantUpdatedSteps);
-});
+describe('updateUnexecutedSteps', () => {
+  it('no steps', () => {
+    const steps = [];
+    const wantUpdatedSteps = [];
+    const gotUpdatedSteps = updateUnexecutedSteps(steps);
+    expect(gotUpdatedSteps).toEqual(wantUpdatedSteps);
+  });
 
-it('updateUnexecutedSteps undefined steps', () => {
-  let steps;
-  let wantUpdatedSteps;
-  const gotUpdatedSteps = updateUnexecutedSteps(steps);
-  expect(gotUpdatedSteps).toEqual(wantUpdatedSteps);
-});
+  it('undefined steps', () => {
+    let steps;
+    let wantUpdatedSteps;
+    const gotUpdatedSteps = updateUnexecutedSteps(steps);
+    expect(gotUpdatedSteps).toEqual(wantUpdatedSteps);
+  });
 
-it('updateUnexecutedSteps no error steps', () => {
-  const steps = [{ terminated: { reason: 'Completed' } }, { running: {} }];
-  const wantUpdatedSteps = [...steps];
-  const gotUpdatedSteps = updateUnexecutedSteps(steps);
-  expect(gotUpdatedSteps).toEqual(wantUpdatedSteps);
-});
+  it('no error steps', () => {
+    const steps = [{ terminated: { reason: 'Completed' } }, { running: {} }];
+    const wantUpdatedSteps = [...steps];
+    const gotUpdatedSteps = updateUnexecutedSteps(steps);
+    expect(gotUpdatedSteps).toEqual(wantUpdatedSteps);
+  });
 
-it('updateUnexecutedSteps error step', () => {
-  const steps = [
-    {
-      terminated: { reason: 'Completed' }
-    },
-    {
-      terminated: { reason: 'Error' }
-    },
-    {
-      terminated: { reason: 'Completed' }
-    }
-  ];
-  const wantUpdatedSteps = [
-    {
-      terminated: { reason: 'Completed' }
-    },
-    {
-      terminated: { reason: 'Error' }
-    },
-    {
-      terminated: undefined
-    }
-  ];
+  it('error step', () => {
+    const steps = [
+      {
+        terminated: { reason: 'Completed' }
+      },
+      {
+        terminated: { reason: 'Error' }
+      },
+      {
+        terminated: { reason: 'Completed' }
+      }
+    ];
+    const wantUpdatedSteps = [
+      {
+        terminated: { reason: 'Completed' }
+      },
+      {
+        terminated: { reason: 'Error' }
+      },
+      {}
+    ];
 
-  const gotUpdatedSteps = updateUnexecutedSteps(steps);
-  expect(gotUpdatedSteps).toEqual(wantUpdatedSteps);
+    const gotUpdatedSteps = updateUnexecutedSteps(steps);
+    expect(gotUpdatedSteps).toEqual(wantUpdatedSteps);
+  });
+
+  it('running step', () => {
+    const steps = [
+      {
+        terminated: { reason: 'Completed' }
+      },
+      {
+        running: {}
+      },
+      {
+        running: {}
+      }
+    ];
+    const wantUpdatedSteps = [
+      {
+        terminated: { reason: 'Completed' }
+      },
+      {
+        running: {}
+      },
+      {}
+    ];
+
+    const gotUpdatedSteps = updateUnexecutedSteps(steps);
+    expect(gotUpdatedSteps).toEqual(wantUpdatedSteps);
+  });
 });
 
 it('getFilters', () => {
@@ -372,4 +398,5 @@ it('getStepStatusReason', () => {
     reason: undefined,
     status: undefined
   });
+  expect(getStepStatusReason()).toEqual({});
 });

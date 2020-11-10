@@ -22,8 +22,10 @@ const props = {
 };
 
 const steps = [
-  { name: 'build', terminated: { reason: 'Completed' } },
-  { name: 'test', terminated: { reason: 'Completed' } }
+  { name: 'lint', terminated: { reason: 'Completed' } },
+  { name: 'test', terminated: { reason: 'Completed' } },
+  { name: 'build', running: {} },
+  { name: 'deploy', running: {} }
 ];
 
 export default {
@@ -59,6 +61,7 @@ export const Expanded = () => {
       onSelect={(_, stepId) => setSelectedStepId(stepId)}
       selectedStepId={selectedStepId}
       expanded
+      reason="Running"
       steps={steps}
       succeeded="Unknown"
     />

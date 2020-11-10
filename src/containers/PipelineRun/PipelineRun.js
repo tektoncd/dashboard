@@ -118,7 +118,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       return retryStatus && taskRun.metadata.uid + retryStatus.podName;
     }
 
-    return taskRun.metadata.uid + taskRun.status.podName;
+    return taskRun.metadata.uid + taskRun.status?.podName;
   }
 
   getSelectedTaskRun(selectedTaskId) {

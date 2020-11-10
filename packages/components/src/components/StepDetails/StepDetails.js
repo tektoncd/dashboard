@@ -51,6 +51,7 @@ const StepDetails = props => {
         reason={reason}
         status={statusValue}
         stepName={stepName}
+        stepStatus={stepStatus}
         taskRun={taskRun}
       />
       <Tabs

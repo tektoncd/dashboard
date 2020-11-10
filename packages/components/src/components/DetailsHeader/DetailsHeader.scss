@@ -59,6 +59,12 @@ limitations under the License.
     }
   }
 
+  .tkn--run-details-time {
+    display: inline-block;
+    margin-left: 2.25rem;
+    margin-top: .5rem;
+  }
+
   &[data-status] {
     .tkn--status-label {
       color: $not-run;

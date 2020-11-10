@@ -55,7 +55,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       selectedTaskId
     } = this.props;
 
-    if (!selectedStepId) {
+    if (!selectedStepId || !stepStatus) {
       return null;
     }
 
@@ -84,11 +84,10 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
         return 0;
       }
 
-      const firstStepA = taskRunA.status?.steps[0];
-      const firstStepB = taskRunB.status?.steps[0];
+      const firstStepA = taskRunA.status?.steps?.[0];
+      const firstStepB = taskRunB.status?.steps?.[0];
 
       if (!firstStepA || !firstStepB) {
-        // shouldn't be able to reach this state (both tasks requiring at least one step)
         return 0;
       }
 

@@ -209,6 +209,7 @@
     "dashboard.resourceList.emptyState": "",
     "dashboard.resourceList.errorLoading": "",
     "dashboard.resourceList.viewDetails": "",
+    "dashboard.run.duration": "",
     "dashboard.run.rerunStatusMessage": "",
     "dashboard.secret.errorLoading": "",
     "dashboard.secret.failed": "",
