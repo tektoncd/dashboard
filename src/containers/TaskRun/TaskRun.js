@@ -22,7 +22,6 @@ import {
 } from 'carbon-components-react';
 import {
   Log,
-  LogDownloadButton,
   Rerun,
   RunHeader,
   StepDetails,
@@ -38,7 +37,11 @@ import {
   urls
 } from '@tektoncd/dashboard-utils';
 
-import { getLogsRetriever, getViewChangeHandler } from '../../utils';
+import {
+  getLogDownloadButton,
+  getLogsRetriever,
+  getViewChangeHandler
+} from '../../utils';
 
 import {
   getExternalLogsURL,
@@ -54,7 +57,7 @@ import {
 import '@tektoncd/dashboard-components/dist/scss/Run.scss';
 import { fetchTask, fetchTaskByType } from '../../actions/tasks';
 import { fetchTaskRun } from '../../actions/taskRuns';
-import { getPodLogURL, rerunTaskRun } from '../../api';
+import { rerunTaskRun } from '../../api';
 
 const taskTypeKeys = { ClusterTask: 'clustertasks', Task: 'tasks' };
 const { STEP, TASK_RUN_DETAILS, VIEW } = queryParamConstants;
@@ -139,23 +142,9 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
       externalLogsURL
     );
 
-    const { container } = stepStatus;
-    const { podName } = taskRun.status;
-
-    const logURL = getPodLogURL({
-      container,
-      name: taskRun.status.podName,
-      namespace: taskRun.metadata.namespace
-    });
-
     return (
       <Log
-        downloadButton={
-          <LogDownloadButton
-            name={`${podName}__${container}__log.txt`}
-            url={logURL}
-          />
-        }
+        downloadButton={getLogDownloadButton({ stepStatus, taskRun })}
         fetchLogs={() => logsRetriever(stepName, stepStatus, taskRun)}
         key={stepName}
         stepStatus={stepStatus}

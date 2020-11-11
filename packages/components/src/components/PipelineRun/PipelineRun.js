@@ -59,16 +59,12 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       return null;
     }
 
-    const { container } = stepStatus;
-    const { namespace } = taskRun.metadata;
-    const { podName } = taskRun.status;
-
     return (
       <Log
         downloadButton={
           getLogDownloadButton &&
           stepStatus &&
-          getLogDownloadButton({ container, namespace, podName })
+          getLogDownloadButton({ stepName, stepStatus, taskRun })
         }
         fetchLogs={() => fetchLogs(stepName, stepStatus, taskRun)}
         key={`${selectedTaskId}:${selectedStepId}`}
