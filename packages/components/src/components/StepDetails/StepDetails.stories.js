@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import StoryRouter from 'storybook-react-router';
 import { Log } from '..';
 
 import StepDetails from './StepDetails';
@@ -29,7 +28,6 @@ const logContainer = (
 
 export default {
   component: StepDetails,
-  decorators: [StoryRouter()],
   title: 'Components/StepDetails'
 };
 

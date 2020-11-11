@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import StoryRouter from 'storybook-react-router';
 
 import { createIntl } from 'react-intl';
 import { EventListenerContainer } from './EventListener';
@@ -137,7 +136,6 @@ const props = {
 
 export default {
   component: EventListenerContainer,
-  decorators: [StoryRouter()],
   parameters: {
     backgrounds: {
       default: 'gray10'

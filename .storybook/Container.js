@@ -13,17 +13,23 @@ limitations under the License.
 
 import React from 'react';
 import { IntlProvider } from 'react-intl';
+import { createMemoryHistory } from 'history';
+import { Router, Route } from 'react-router-dom';
 
 import messages from '../src/nls/messages_en.json';
 
 import './Container.scss';
+
+const history = createMemoryHistory({ initialEntries: ['/'] });
 
 export default function Container({ story, notes }) {
   return (
     <IntlProvider locale="en" defaultLocale="en" messages={messages['en']}>
       {notes && <p>{notes}</p>}
       <div data-floating-menu-container role="main">
-        {story()}
+        <Router history={history}>
+          <Route path="/" component={() => story()} />
+        </Router>
       </div>
     </IntlProvider>
   );
