@@ -16,6 +16,7 @@ import * as API from '../api';
 import {
   fetchLogs,
   followLogs,
+  getLogDownloadButton,
   getViewChangeHandler,
   isStale,
   sortRunsByStartTime,
@@ -170,4 +171,22 @@ it('getViewChangeHandler', () => {
   expect(history.push).toHaveBeenCalledWith(
     `${url}?nonViewQueryParam=someValue&view=${view}`
   );
+});
+
+it('getLogDownloadButton', () => {
+  const container = 'fake_container';
+  const namespace = 'fake_namespace';
+  const podName = 'fake_podname';
+  const stepStatus = { container };
+  const taskRun = { metadata: { namespace }, status: { podName } };
+  jest.spyOn(API, 'getPodLogURL');
+
+  const logDownloadButton = getLogDownloadButton({ stepStatus, taskRun });
+
+  expect(API.getPodLogURL).toHaveBeenCalledWith({
+    container,
+    name: podName,
+    namespace
+  });
+  expect(logDownloadButton).toBeTruthy();
 });

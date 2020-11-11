@@ -14,11 +14,7 @@ limitations under the License.
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import {
-  LogDownloadButton,
-  PipelineRun,
-  Rerun
-} from '@tektoncd/dashboard-components';
+import { PipelineRun, Rerun } from '@tektoncd/dashboard-components';
 import {
   getTitle,
   labels as labelConstants,
@@ -45,9 +41,13 @@ import {
 import { fetchPipelineRun } from '../../actions/pipelineRuns';
 import { fetchClusterTasks, fetchTasks } from '../../actions/tasks';
 import { fetchTaskRuns } from '../../actions/taskRuns';
-import { getPodLogURL, rerunPipelineRun } from '../../api';
+import { rerunPipelineRun } from '../../api';
 
-import { getLogsRetriever, getViewChangeHandler } from '../../utils';
+import {
+  getLogDownloadButton,
+  getLogsRetriever,
+  getViewChangeHandler
+} from '../../utils';
 
 const { PIPELINE_TASK, RETRY, STEP, VIEW } = queryParamConstants;
 
@@ -287,20 +287,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           )}
           handleTaskSelected={this.handleTaskSelected}
           loading={loading}
-          getLogDownloadButton={({ container, namespace, podName }) => {
-            const logURL = getPodLogURL({
-              container,
-              name: podName,
-              namespace
-            });
-
-            return (
-              <LogDownloadButton
-                name={`${podName}__${container}__log.txt`}
-                url={logURL}
-              />
-            );
-          }}
+          getLogDownloadButton={getLogDownloadButton}
           onViewChange={getViewChangeHandler(this.props)}
           pipelineRun={pipelineRun}
           rerun={rerun}

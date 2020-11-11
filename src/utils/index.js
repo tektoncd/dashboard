@@ -11,8 +11,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import React from 'react';
 import snakeCase from 'lodash.snakecase';
-import { getPodLog } from '../api';
+import { LogDownloadButton } from '@tektoncd/dashboard-components';
+
+import { getPodLog, getPodLogURL } from '../api';
 
 export function sortRunsByStartTime(runs) {
   runs.sort((a, b) => {
@@ -130,4 +133,23 @@ export function getViewChangeHandler({ history, location, match }) {
     const browserURL = match.url.concat(`?${queryParams.toString()}`);
     history.push(browserURL);
   };
+}
+
+export function getLogDownloadButton({ stepStatus, taskRun }) {
+  const { container } = stepStatus;
+  const { namespace } = taskRun.metadata;
+  const { podName } = taskRun.status;
+
+  const logURL = getPodLogURL({
+    container,
+    name: podName,
+    namespace
+  });
+
+  return (
+    <LogDownloadButton
+      name={`${podName}__${container}__log.txt`}
+      url={logURL}
+    />
+  );
 }
