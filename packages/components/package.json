@@ -33,8 +33,8 @@
     "@carbon/icons-react": "^10.18.0",
     "carbon-components": "^10.20.0",
     "carbon-components-react": "^7.20.0",
-    "react": "^16.8.4",
-    "react-dom": "^16.8.4",
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0",
     "react-intl": "^4.7.1",
     "react-router-dom": "^5.0.0"
   },
