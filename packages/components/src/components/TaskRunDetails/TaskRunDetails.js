@@ -69,7 +69,11 @@ const TaskRunDetails = props => {
 
   return (
     <div className="tkn--step-details">
-      <DetailsHeader stepName={displayName} taskRun={taskRun} type="taskRun" />
+      <DetailsHeader
+        displayName={displayName}
+        taskRun={taskRun}
+        type="taskRun"
+      />
       <Tabs
         aria-label="TaskRun details"
         onSelectionChange={index => onViewChange(tabs[index])}

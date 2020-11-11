@@ -46,7 +46,7 @@ export default {
 export const Running = args => (
   <DetailsHeader
     status="running"
-    stepName="build"
+    displayName="build"
     taskRun={getTaskRun({ reason: 'Running', status: 'Unknown' })}
     {...args}
   />
@@ -56,7 +56,7 @@ export const Completed = args => (
   <DetailsHeader
     reason="Completed"
     status="terminated"
-    stepName="build"
+    displayName="build"
     taskRun={getTaskRun({ reason: 'Succeeded', status: 'True' })}
     {...args}
   />
@@ -66,7 +66,7 @@ export const Failed = args => (
   <DetailsHeader
     reason="Error"
     status="terminated"
-    stepName="build"
+    displayName="build"
     taskRun={getTaskRun({ reason: 'Failed', status: 'False' })}
     {...args}
   />

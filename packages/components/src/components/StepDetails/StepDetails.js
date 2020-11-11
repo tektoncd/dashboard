@@ -48,9 +48,9 @@ const StepDetails = props => {
   return (
     <div className="tkn--step-details">
       <DetailsHeader
+        displayName={stepName}
         reason={reason}
         status={statusValue}
-        stepName={stepName}
         stepStatus={stepStatus}
         taskRun={taskRun}
       />

@@ -102,7 +102,7 @@ class DetailsHeader extends Component {
   }
 
   render() {
-    const { intl, stepName, taskRun, type = 'step' } = this.props;
+    const { intl, displayName, taskRun, type = 'step' } = this.props;
     let { reason, status } = this.props;
     let statusLabel;
 
@@ -133,8 +133,8 @@ class DetailsHeader extends Component {
             status={status}
             {...(type === 'step' ? { type: 'inverse' } : null)}
           />
-          <span className="tkn--run-details-name" title={stepName}>
-            {stepName}
+          <span className="tkn--run-details-name" title={displayName}>
+            {displayName}
           </span>
           <span className="tkn--status-label">{statusLabel}</span>
         </h2>
