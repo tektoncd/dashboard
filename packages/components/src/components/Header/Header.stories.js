@@ -12,14 +12,12 @@ limitations under the License.
 */
 
 import React from 'react';
-import StoryRouter from 'storybook-react-router';
 
 import Header from '.';
 import { LogoutButton } from '..';
 
 export default {
   component: Header,
-  decorators: [StoryRouter()],
   title: 'Components/Header'
 };
 

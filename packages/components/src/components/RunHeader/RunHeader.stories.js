@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import StoryRouter from 'storybook-react-router';
 
 import RunHeader from './RunHeader';
 
@@ -24,7 +23,6 @@ export default {
     runName: 'simple-pipeline-run-1'
   },
   component: RunHeader,
-  decorators: [StoryRouter()],
   parameters: {
     backgrounds: {
       default: 'gray10'

@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import StoryRouter from 'storybook-react-router';
 
 import Trigger from './Trigger';
 
@@ -80,7 +79,6 @@ const props = {
 
 export default {
   component: Trigger,
-  decorators: [StoryRouter()],
   title: 'Components/Trigger'
 };
 

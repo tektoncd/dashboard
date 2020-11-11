@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import StoryRouter from 'storybook-react-router';
 
 import TaskRunDetails from './TaskRunDetails';
 
@@ -22,7 +21,6 @@ const params = [{ name: paramKey, value: paramValue }];
 
 export default {
   component: TaskRunDetails,
-  decorators: [StoryRouter()],
   title: 'Components/TaskRunDetails'
 };
 
