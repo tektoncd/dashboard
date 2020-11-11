@@ -16,7 +16,7 @@ import DetailsHeader from './DetailsHeader';
 import { renderWithIntl } from '../../utils/test';
 
 const props = {
-  stepName: 'test name'
+  displayName: 'test name'
 };
 
 describe('DetailsHeader', () => {
