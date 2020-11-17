@@ -20,7 +20,8 @@ import NamespacesDropdown from './NamespacesDropdown';
 import { renderWithIntl } from '../../utils/test';
 
 const props = {
-  id: 'namespaces-dropdown'
+  id: 'namespaces-dropdown',
+  onChange: () => {}
 };
 
 const byName = {

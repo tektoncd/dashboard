@@ -21,7 +21,8 @@ import * as API from '../../api/serviceAccounts';
 import { renderWithIntl, rerenderWithIntl } from '../../utils/test';
 
 const props = {
-  id: 'service-accounts-dropdown'
+  id: 'service-accounts-dropdown',
+  onChange: () => {}
 };
 
 const serviceAccountsByNamespace = {
