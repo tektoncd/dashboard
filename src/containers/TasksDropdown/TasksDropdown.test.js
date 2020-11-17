@@ -23,7 +23,8 @@ import * as API from '../../api/tasks';
 import { renderWithIntl, rerenderWithIntl } from '../../utils/test';
 
 const props = {
-  id: 'tasks-dropdown'
+  id: 'tasks-dropdown',
+  onChange: () => {}
 };
 
 const tasksByNamespace = {

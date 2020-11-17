@@ -23,7 +23,8 @@ import * as API from '../../api/pipelines';
 import { renderWithIntl, rerenderWithIntl } from '../../utils/test';
 
 const props = {
-  id: 'pipelines-dropdown'
+  id: 'pipelines-dropdown',
+  onChange: () => {}
 };
 
 const pipelinesByNamespace = {

@@ -22,7 +22,8 @@ import * as API from '../../api/pipelineResources';
 import { renderWithIntl, rerenderWithIntl } from '../../utils/test';
 
 const props = {
-  id: 'pipeline-resources-dropdown'
+  id: 'pipeline-resources-dropdown',
+  onChange: () => {}
 };
 
 const pipelineResourcesByNamespace = {

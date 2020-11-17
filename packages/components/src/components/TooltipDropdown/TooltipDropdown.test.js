@@ -19,9 +19,10 @@ import TooltipDropdown from './TooltipDropdown';
 
 const props = {
   id: 'tooltip-dropdown-id',
-  label: 'select an item',
   items: ['item 1', 'item 2', 'item 3', { id: '*', text: 'label' }],
-  loading: false
+  label: 'select an item',
+  loading: false,
+  onChange: () => {}
 };
 
 const initialTextRegExp = new RegExp('select an item', 'i');

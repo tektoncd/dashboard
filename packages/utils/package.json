@@ -16,9 +16,6 @@
     "@babel/cli": "^7.5.5"
   },
   "peerDependencies": {
-    "history": "^4.9.0",
-    "react": "^16.14.0",
-    "react-dom": "^16.14.0",
     "react-router-dom": "^5.0.0"
   },
   "engines": {

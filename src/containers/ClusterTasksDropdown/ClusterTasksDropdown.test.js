@@ -22,7 +22,8 @@ import * as API from '../../api/clusterTasks';
 import { renderWithIntl, rerenderWithIntl } from '../../utils/test';
 
 const props = {
-  id: 'clustertasks-dropdown'
+  id: 'clustertasks-dropdown',
+  onChange: () => {}
 };
 
 const clusterTasksByName = {
