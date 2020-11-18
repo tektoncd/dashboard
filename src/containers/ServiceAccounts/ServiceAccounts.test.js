@@ -31,12 +31,13 @@ const byNamespace = {
   }
 };
 
+const uid = '1234567890';
 const byId = {
-  '1234567890': {
+  [uid]: {
     metadata: {
       name: 'foo-service-account',
       namespace: 'default',
-      uid: '1234567890'
+      uid
     }
   }
 };

@@ -95,15 +95,21 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
     }
   }
 
+  handleCreatePipelineRunSuccess(newPipelineRun) {
+    const {
+      metadata: { namespace, name }
+    } = newPipelineRun;
+    const url = urls.pipelineRuns.byName({
+      namespace,
+      pipelineRunName: name
+    });
+    this.toggleModal(false);
+    this.setState({ createdPipelineRun: { name, url } });
+  }
+
   cancel = pipelineRun => {
     const { name, namespace } = pipelineRun.metadata;
     cancelPipelineRun({ name, namespace });
-  };
-
-  openDeleteModal = (selectedRows, cancelSelection) => {
-    const pipelineRunsById = keyBy(this.props.pipelineRuns, 'metadata.uid');
-    const toBeDeleted = selectedRows.map(({ id }) => pipelineRunsById[id]);
-    this.setState({ showDeleteModal: true, toBeDeleted, cancelSelection });
   };
 
   closeDeleteModal = () => {
@@ -111,14 +117,6 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
       showDeleteModal: false,
       toBeDeleted: []
     });
-  };
-
-  handleDelete = async () => {
-    const { cancelSelection, toBeDeleted } = this.state;
-    const deletions = toBeDeleted.map(resource => this.deleteRun(resource));
-    this.closeDeleteModal();
-    await Promise.all(deletions);
-    cancelSelection();
   };
 
   deleteRun = pipelineRun => {
@@ -135,16 +133,18 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
     });
   };
 
-  resetSuccess = () => {
-    this.setState({ createdPipelineRun: false });
+  handleDelete = async () => {
+    const { cancelSelection, toBeDeleted } = this.state;
+    const deletions = toBeDeleted.map(resource => this.deleteRun(resource));
+    this.closeDeleteModal();
+    await Promise.all(deletions);
+    cancelSelection();
   };
 
-  rerun = pipelineRun => {
-    rerunPipelineRun(pipelineRun);
-  };
-
-  toggleModal = showCreatePipelineRunModal => {
-    this.setState({ showCreatePipelineRunModal });
+  openDeleteModal = (selectedRows, cancelSelection) => {
+    const pipelineRunsById = keyBy(this.props.pipelineRuns, 'metadata.uid');
+    const toBeDeleted = selectedRows.map(({ id }) => pipelineRunsById[id]);
+    this.setState({ showDeleteModal: true, toBeDeleted, cancelSelection });
   };
 
   pipelineRunActions = () => {
@@ -234,17 +234,17 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
     ];
   };
 
-  handleCreatePipelineRunSuccess(newPipelineRun) {
-    const {
-      metadata: { namespace, name }
-    } = newPipelineRun;
-    const url = urls.pipelineRuns.byName({
-      namespace,
-      pipelineRunName: name
-    });
-    this.toggleModal(false);
-    this.setState({ createdPipelineRun: { name, url } });
-  }
+  rerun = pipelineRun => {
+    rerunPipelineRun(pipelineRun);
+  };
+
+  resetSuccess = () => {
+    this.setState({ createdPipelineRun: false });
+  };
+
+  toggleModal = showCreatePipelineRunModal => {
+    this.setState({ showCreatePipelineRunModal });
+  };
 
   reset() {
     this.setState(initialState);

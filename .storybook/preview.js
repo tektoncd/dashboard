@@ -25,13 +25,12 @@ export const parameters = {
   backgrounds: {
     default: 'white',
     grid: {
-      // TODO: available in 6.1.0+
-      disable: false,
-      cellSize: 20,
-      opacity: 0.5,
-      cellAmount: 5,
-      offsetX: 16, // default value depends on story layout
-      offsetY: 16 // fullscreen: 0, padded: 16
+      disable: true,
+      cellSize: 16,
+      opacity: 0.2,
+      cellAmount: 1,
+      offsetX: 0,
+      offsetY: 0
     },
     values: [
       { name: 'white', value: 'white' },
