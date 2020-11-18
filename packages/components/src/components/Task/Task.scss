@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-@import '~carbon-components/scss/globals/scss/vars';
+@import '../../scss/vars';
 
 .tkn--task {
   list-style-type: none;
@@ -29,8 +29,8 @@ limitations under the License.
     color: inherit;
     margin: 1rem 1rem 0 0;
     white-space: nowrap;
-    background-color: white;
-    border-left: 3px solid white;
+    background-color: $ui-01;
+    border-left: 3px solid transparent;
 
     > .tkn--status-icon {
       margin-right: 0.75rem;
@@ -80,6 +80,6 @@ limitations under the License.
   }
 
   .tkn--step-list {
-    background-color: white;
+    background-color: $ui-01;
   }
 }

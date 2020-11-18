@@ -23,11 +23,6 @@ export default {
     runName: 'simple-pipeline-run-1'
   },
   component: RunHeader,
-  parameters: {
-    backgrounds: {
-      default: 'gray10'
-    }
-  },
   title: 'Components/RunHeader'
 };
 

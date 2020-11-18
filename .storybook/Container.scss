@@ -11,11 +11,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-$css--font-face: true;
-$css--reset: true;
-
-@import '~carbon-components/scss/globals/scss/styles';
-
-.sb-show-main {
-  background-color: transparent;
-}
+@import '../src/components/App/App';

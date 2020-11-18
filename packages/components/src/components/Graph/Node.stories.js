@@ -57,8 +57,13 @@ const expandedProps = {
 };
 
 export default {
-  title: 'Experimental/Components/Graph/Node',
-  decorators: [storyFn => <div className="graph">{storyFn()}</div>]
+  decorators: [storyFn => <div className="graph">{storyFn()}</div>],
+  parameters: {
+    backgrounds: {
+      default: 'white'
+    }
+  },
+  title: 'Experimental/Components/Graph/Node'
 };
 
 export const Start = () => <Node type="Start" width="60" height="60" />;

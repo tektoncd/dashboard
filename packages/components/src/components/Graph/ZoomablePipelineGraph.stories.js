@@ -21,6 +21,11 @@ import pipelineRun from './examples/pipelineRun.json';
 import tasks from './examples/tasks.json';
 
 export default {
+  parameters: {
+    backgrounds: {
+      default: 'white'
+    }
+  },
   title: 'Experimental/Components/Graph/ZoomablePipelineGraph'
 };
 

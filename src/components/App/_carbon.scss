@@ -18,15 +18,13 @@ $css--reset: true;
 $css--default-type: true;
 $css--plex: true;
 
-@import '~carbon-components/scss/globals/scss/theme';
-
-$carbon--theme: $carbon--theme--g10;
+@import '~@tektoncd/dashboard-components/dist/scss/vars';
 @include carbon--theme();
 
-@import '~carbon-components/scss/globals/scss/_css--reset.scss';
-@import '~carbon-components/scss/globals/scss/_css--font-face.scss';
-@import '~carbon-components/scss/globals/scss/_css--helpers.scss';
-@import '~carbon-components/scss/globals/scss/_css--body.scss';
+@import '~carbon-components/scss/globals/scss/css--reset';
+@import '~carbon-components/scss/globals/scss/css--font-face';
+@import '~carbon-components/scss/globals/scss/css--helpers';
+@import '~carbon-components/scss/globals/scss/css--body';
 
 @import '~carbon-components/scss/components/button/button';
 @import '~carbon-components/scss/components/copy-button/copy-button';

@@ -23,7 +23,7 @@ export const parameters = {
         : a[1].id.localeCompare(b[1].id, undefined, { numeric: true })
   },
   backgrounds: {
-    default: 'white',
+    default: 'gray10',
     grid: {
       disable: true,
       cellSize: 16,

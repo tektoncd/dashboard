@@ -11,9 +11,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-@import '~carbon-components/scss/globals/scss/vars';
+@import '~@tektoncd/dashboard-components/dist/scss/vars';
 
 .bx--snippet--multi.tkn--view-yaml--dark {
-  background-color: $gray-90;
-  color: $gray-10;
+  background-color: $gray-90; // TODO: $inverse-02 - see Log.scss
+  color: $gray-10;            //       $inverse-01
 }

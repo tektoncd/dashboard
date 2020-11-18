@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-@import '~carbon-components/scss/globals/scss/vars';
+@import './vars';
 
 .tkn--tasks {
   display: flex;
@@ -24,15 +24,15 @@ limitations under the License.
   }
 
   .tkn--step-details {
-    background-color: white;
+    background-color: $ui-01;
     flex-grow: 1;
     padding-left: 1rem;
   }
 
   .bx--data-table {
     td {
-      background-color: $gray-10; // ui-02 has wrong value for some reason
-      border-top-color: $gray-10;
+      background-color: $ui-02;
+      border-top-color: $ui-02;
     }
     tr:hover td {
       background-color: $hover-ui;
@@ -40,6 +40,6 @@ limitations under the License.
   }
 }
 
-.bx--snippet--multi{
+.bx--snippet--multi {
   overflow-x: auto
 }

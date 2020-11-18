@@ -52,7 +52,7 @@ limitations under the License.
     .bx--btn--ghost.bx--btn--icon-only {
       &:focus, &:hover {
         svg, path {
-          fill: #ad1625;
+          fill: $danger;
         }
       }
     }

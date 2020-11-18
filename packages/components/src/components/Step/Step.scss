@@ -11,14 +11,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-@import '~carbon-components/scss/globals/scss/vars';
+@import '~@tektoncd/dashboard-components/dist/scss/vars';
 
 .tkn--step {
   list-style-type: none;
 
   &:hover > a.tkn--step-link,
   &:hover > a.tkn--step-link:hover,
-  &[data-selected] > a.tkn--step-link,
   &[data-selected] > a.tkn--step-link:hover {
     background-color: $hover-ui;
     text-decoration: none;
@@ -30,7 +29,6 @@ limitations under the License.
   }
 
   &[data-selected] > a.tkn--step-link {
-    background-color: transparent;
     border-left: 3px solid $interactive-04;
   }
 

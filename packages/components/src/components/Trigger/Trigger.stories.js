@@ -79,6 +79,11 @@ const props = {
 
 export default {
   component: Trigger,
+  parameters: {
+    backgrounds: {
+      default: 'white'
+    }
+  },
   title: 'Components/Trigger'
 };
 

@@ -68,11 +68,6 @@ export default {
     ]
   },
   component: TaskTree,
-  parameters: {
-    backgrounds: {
-      default: 'gray10'
-    }
-  },
   title: 'Components/TaskTree'
 };
 

@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-@import '~carbon-components/scss/globals/scss/vars';
+@import '~@tektoncd/dashboard-components/dist/scss/vars';
 
 .tkn--resourcedetails {
   .tkn--details {
@@ -49,5 +49,5 @@ limitations under the License.
 .tkn--resourcedetails-metadata {
   margin-bottom: $layout-01;
   padding: $layout-01;
-  background-color: $ui-02;
+  background-color: $ui-01;
 }
