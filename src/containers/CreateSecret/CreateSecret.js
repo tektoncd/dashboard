@@ -113,6 +113,21 @@ export /* istanbul ignore next */ class CreateSecret extends Component {
     }
   }
 
+  handleCancel() {
+    const { history } = this.props;
+    const secretType = this.getSecretType();
+    history.push(`${urls.secrets.all()}?secretType=${secretType}`);
+  }
+
+  handleFinish() {
+    const { history } = this.props;
+    const { namespace } = this.state;
+    const secretType = this.getSecretType();
+    history.push(
+      `${urls.secrets.byNamespace({ namespace })}?secretType=${secretType}`
+    );
+  }
+
   getSecretType() {
     const { location } = this.props;
     const urlSearchParams = new URLSearchParams(location.search);
@@ -352,21 +367,6 @@ export /* istanbul ignore next */ class CreateSecret extends Component {
 
   fetchData() {
     this.props.fetchSecrets();
-  }
-
-  handleCancel() {
-    const { history } = this.props;
-    const secretType = this.getSecretType();
-    history.push(`${urls.secrets.all()}?secretType=${secretType}`);
-  }
-
-  handleFinish() {
-    const { history } = this.props;
-    const { namespace } = this.state;
-    const secretType = this.getSecretType();
-    history.push(
-      `${urls.secrets.byNamespace({ namespace })}?secretType=${secretType}`
-    );
   }
 
   render() {

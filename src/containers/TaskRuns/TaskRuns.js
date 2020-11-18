@@ -93,15 +93,21 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
     }
   }
 
+  handleCreateTaskRunSuccess(newTaskRun) {
+    const {
+      metadata: { namespace, name }
+    } = newTaskRun;
+    const url = urls.taskRuns.byName({
+      namespace,
+      taskRunName: name
+    });
+    this.toggleModal(false);
+    this.setState({ createdTaskRun: { name, url } });
+  }
+
   cancel = taskRun => {
     const { name, namespace } = taskRun.metadata;
     cancelTaskRun({ name, namespace });
-  };
-
-  openDeleteModal = (selectedRows, cancelSelection) => {
-    const taskRunsById = keyBy(this.props.taskRuns, 'metadata.uid');
-    const toBeDeleted = selectedRows.map(({ id }) => taskRunsById[id]);
-    this.setState({ showDeleteModal: true, toBeDeleted, cancelSelection });
   };
 
   closeDeleteModal = () => {
@@ -109,14 +115,6 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
       showDeleteModal: false,
       toBeDeleted: []
     });
-  };
-
-  handleDelete = async () => {
-    const { cancelSelection, toBeDeleted } = this.state;
-    const deletions = toBeDeleted.map(resource => this.deleteTask(resource));
-    this.closeDeleteModal();
-    await Promise.all(deletions);
-    cancelSelection();
   };
 
   deleteTask = taskRun => {
@@ -133,16 +131,26 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
     });
   };
 
+  handleDelete = async () => {
+    const { cancelSelection, toBeDeleted } = this.state;
+    const deletions = toBeDeleted.map(resource => this.deleteTask(resource));
+    this.closeDeleteModal();
+    await Promise.all(deletions);
+    cancelSelection();
+  };
+
+  openDeleteModal = (selectedRows, cancelSelection) => {
+    const taskRunsById = keyBy(this.props.taskRuns, 'metadata.uid');
+    const toBeDeleted = selectedRows.map(({ id }) => taskRunsById[id]);
+    this.setState({ showDeleteModal: true, toBeDeleted, cancelSelection });
+  };
+
   rerun = taskRun => {
     rerunTaskRun(taskRun);
   };
 
   resetSuccess = () => {
     this.setState({ createdTaskRun: false });
-  };
-
-  toggleModal = showCreateTaskRunModal => {
-    this.setState({ showCreateTaskRunModal });
   };
 
   taskRunActions = () => {
@@ -233,17 +241,9 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
     ];
   };
 
-  handleCreateTaskRunSuccess(newTaskRun) {
-    const {
-      metadata: { namespace, name }
-    } = newTaskRun;
-    const url = urls.taskRuns.byName({
-      namespace,
-      taskRunName: name
-    });
-    this.toggleModal(false);
-    this.setState({ createdTaskRun: { name, url } });
-  }
+  toggleModal = showCreateTaskRunModal => {
+    this.setState({ showCreateTaskRunModal });
+  };
 
   reset() {
     this.setState(initialState);
