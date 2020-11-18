@@ -18,6 +18,11 @@ import Graph from './Graph';
 import graph from './examples/graph.json';
 
 export default {
+  parameters: {
+    backgrounds: {
+      default: 'white'
+    }
+  },
   title: 'Experimental/Components/Graph/Graph'
 };
 

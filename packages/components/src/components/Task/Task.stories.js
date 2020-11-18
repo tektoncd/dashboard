@@ -31,11 +31,6 @@ const steps = [
 export default {
   component: Task,
   decorators: [storyFn => <div style={{ width: '250px' }}>{storyFn()}</div>],
-  parameters: {
-    backgrounds: {
-      default: 'gray10'
-    }
-  },
   title: 'Components/Task'
 };
 

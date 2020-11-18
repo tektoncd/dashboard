@@ -136,11 +136,6 @@ const props = {
 
 export default {
   component: EventListenerContainer,
-  parameters: {
-    backgrounds: {
-      default: 'gray10'
-    }
-  },
   title: 'Containers/EventListenerContainer'
 };
 

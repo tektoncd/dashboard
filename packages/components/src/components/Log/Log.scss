@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-@import '~carbon-components/scss/globals/scss/vars';
+@import '~@tektoncd/dashboard-components/dist/scss/vars';
 
 pre.tkn--log {
   position: relative;
@@ -24,17 +24,17 @@ pre.tkn--log {
 
   line-height: 0.95rem; // Update the react-window List itemSize if changing this
   overflow: hidden;
-  background-color: $gray-90;
-  color: $gray-10;
+  background-color: $gray-90; // TODO: should this be $inverse-02 ?
+  color: $gray-10;            //       if so, then this should be $inverse-01
 
   word-break: normal;
   word-wrap: normal;
 
   .bx--skeleton__text {
-    background-color: $gray-80;
+    background-color: $skeleton-02;
 
     &::before {
-      background-color: $gray-70;
+      background-color: $skeleton-01;
     }
   }
 
@@ -54,10 +54,10 @@ pre.tkn--log {
   }
 
   .bx--copy-btn {
-    background-color: $gray-90;
+    background-color: $gray-90; // TODO: $inverse-02 - see above
 
     &:hover {
-      background-color: $gray-80;
+      background-color: $gray-80; // TODO: $inverse-hover-ui - see above
     }
 
     &:focus {
@@ -65,7 +65,7 @@ pre.tkn--log {
     }
 
     svg {
-      fill: $gray-10;
+      fill: $gray-10; // TODO: use theme token
     }
   }
 
@@ -74,10 +74,10 @@ pre.tkn--log {
     font-weight: bold;
 
     &[data-status='Completed'] {
-      color: $green-40;
+      color: $support-02;
     }
     &[data-status='Error'] {
-      color: $red-50;
+      color: $support-01;
     }
   }
 

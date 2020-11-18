@@ -40,6 +40,11 @@ export default {
     }
   },
   component: DetailsHeader,
+  parameters: {
+    backgrounds: {
+      default: 'white'
+    }
+  },
   title: 'Components/DetailsHeader'
 };
 

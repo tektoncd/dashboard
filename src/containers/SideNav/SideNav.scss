@@ -31,7 +31,7 @@ limitations under the License.
       }
 
       &:hover {
-        background-color: #2c2c2c;
+        background-color: $gray-90;
         color: white;
 
         .bx--side-nav__icon > svg {
@@ -72,7 +72,7 @@ limitations under the License.
     .bx--side-nav__item:not(.bx--side-nav__item--active):hover .bx--side-nav__item:not(.bx--side-nav__item--active) > .bx--side-nav__submenu:hover,
     .bx--side-nav__item:not(.bx--side-nav__item--active) > .bx--side-nav__link:hover, .bx--side-nav__menu a.bx--side-nav__link:not(.bx--side-nav__link--current):not([aria-current=page]):hover,
     .bx--side-nav a.bx--header__menu-item:hover, .bx--side-nav .bx--header__menu-title[aria-expanded=true]:hover {
-      background-color: #2c2c2c;
+      background-color: $gray-90;
       color: white;
     }
 

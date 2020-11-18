@@ -23,6 +23,11 @@ const props = {
 
 export default {
   component: Step,
+  parameters: {
+    backgrounds: {
+      default: 'white'
+    }
+  },
   title: 'Components/Step'
 };
 

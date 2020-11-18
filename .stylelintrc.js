@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,27 +11,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
-
-import Tabs from '.';
-import { Tab } from '..';
-
-export default {
-  component: Tabs,
-  parameters: {
-    backgrounds: {
-      default: 'white'
-    }
-  },
-  title: 'Components/Tabs'
+module.exports = {
+  plugins: ['stylelint-plugin-carbon-tokens'],
+  rules: {
+    'carbon/layout-token-use': null, // [true, { severity: 'error' }],
+    'carbon/motion-token-use': null, // [true, { severity: 'error' }],
+    'carbon/theme-token-use': [true, { severity: 'error' }],
+    'carbon/type-token-use': null /*[
+      true,
+      {
+        severity: 'error',
+        acceptCarbonTypeScaleFunction: true,
+        acceptCarbonFontWeightFunction: true
+      }
+    ]*/
+  }
 };
-
-export const Base = () => (
-  <Tabs>
-    <Tab label="label for tab1">content of tab 1</Tab>
-    <Tab label="tab 2">content of tab 2</Tab>
-    <Tab label="tab 3 is disabled" disabled>
-      content of tab 3
-    </Tab>
-  </Tabs>
-);

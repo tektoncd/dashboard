@@ -28,6 +28,11 @@ const logContainer = (
 
 export default {
   component: StepDetails,
+  parameters: {
+    backgrounds: {
+      default: 'white'
+    }
+  },
   title: 'Components/StepDetails'
 };
 

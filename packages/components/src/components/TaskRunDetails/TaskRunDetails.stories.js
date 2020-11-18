@@ -21,6 +21,11 @@ const params = [{ name: paramKey, value: paramValue }];
 
 export default {
   component: TaskRunDetails,
+  parameters: {
+    backgrounds: {
+      default: 'white'
+    }
+  },
   title: 'Components/TaskRunDetails'
 };
 

@@ -11,7 +11,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-@import '~carbon-components/scss/globals/scss/vars';
+@import '../../scss/vars';
+
+// TODO: move SideNav.scss to components and import here for consistency
 
 .tkn--config-loading-shell {
   .bx--header ~ {

@@ -39,11 +39,6 @@ const resource = {
 
 export default {
   component: ResourceDetails,
-  parameters: {
-    backgrounds: {
-      default: 'gray10'
-    }
-  },
   title: 'Components/ResourceDetails'
 };
 

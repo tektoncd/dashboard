@@ -136,11 +136,6 @@ const pipelineRun = {
 
 export default {
   component: PipelineRun,
-  parameters: {
-    backgrounds: {
-      default: 'gray10'
-    }
-  },
   title: 'Components/PipelineRun'
 };
 
