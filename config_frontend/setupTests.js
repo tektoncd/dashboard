@@ -23,6 +23,7 @@ if (!global.fetch) {
 
 fetchMock.catch();
 fetchMock.config.overwriteRoutes = true;
+fetchMock.config.warnOnFallback = false;
 
 window.HTMLElement.prototype.scrollIntoView = function scrollIntoViewTestStub() {};
 window.TextDecoder = TextDecoder;
