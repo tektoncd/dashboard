@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
+
 import DetailsHeader from './DetailsHeader';
 import { renderWithIntl } from '../../utils/test';
 

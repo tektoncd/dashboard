@@ -17,10 +17,10 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
+import { renderWithIntl } from '@tektoncd/dashboard-components/src/utils/test';
 
 import PipelinesDropdown from './PipelinesDropdown';
 import * as API from '../../api/pipelines';
-import { renderWithIntl, rerenderWithIntl } from '../../utils/test';
 
 const props = {
   id: 'pipelines-dropdown',
@@ -171,11 +171,11 @@ describe('PipelinesDropdown', () => {
       ...namespacesStoreGreen,
       notifications: {}
     });
-    rerenderWithIntl(
-      rerender,
+    renderWithIntl(
       <Provider store={greenStore}>
         <PipelinesDropdown {...props} />
-      </Provider>
+      </Provider>,
+      { rerender }
     );
     // View items
     fireEvent.click(getByPlaceholderText(initialTextRegExp));
@@ -204,19 +204,19 @@ describe('PipelinesDropdown', () => {
     );
     expect(queryByDisplayValue(/pipeline-1/i)).toBeTruthy();
     // Select item 'pipeline-2'
-    rerenderWithIntl(
-      rerender,
+    renderWithIntl(
       <Provider store={store}>
         <PipelinesDropdown {...props} selectedItem={{ text: 'pipeline-2' }} />
-      </Provider>
+      </Provider>,
+      { rerender }
     );
     expect(queryByDisplayValue(/pipeline-2/i)).toBeTruthy();
     // No selected item (select item '')
-    rerenderWithIntl(
-      rerender,
+    renderWithIntl(
       <Provider store={store}>
         <PipelinesDropdown {...props} selectedItem="" />
-      </Provider>
+      </Provider>,
+      { rerender }
     );
     expect(queryByPlaceholderText(initialTextRegExp)).toBeTruthy();
   });

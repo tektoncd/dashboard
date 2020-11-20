@@ -14,8 +14,9 @@ limitations under the License.
 import React from 'react';
 import { waitForElement } from 'react-testing-library';
 import { createIntl } from 'react-intl';
+import { renderWithIntl } from '@tektoncd/dashboard-components/src/utils/test';
+
 import { ConditionContainer } from './Condition';
-import { renderWithIntl, rerenderWithIntl } from '../../utils/test';
 
 const intl = createIntl({
   locale: 'en',
@@ -84,13 +85,13 @@ describe('ConditionContainer', () => {
     await waitForElement(() => getByText('Error loading resource'));
     expect(fetchConditionSpy).toHaveBeenCalledTimes(1);
 
-    rerenderWithIntl(
-      rerender,
+    renderWithIntl(
       <ConditionContainer
         intl={intl}
         match={match}
         fetchCondition={fetchConditionSpy}
-      />
+      />,
+      { rerender }
     );
     // nothing has changed so fetchData shouldn't be called
     expect(fetchConditionSpy).toHaveBeenCalledTimes(1);
@@ -101,13 +102,13 @@ describe('ConditionContainer', () => {
         namespace: 'updated_namespace'
       }
     };
-    rerenderWithIntl(
-      rerender,
+    renderWithIntl(
       <ConditionContainer
         intl={intl}
         match={matchWithUpdatedNamespace}
         fetchCondition={fetchConditionSpy}
-      />
+      />,
+      { rerender }
     );
     expect(fetchConditionSpy).toHaveBeenCalledTimes(2);
 
@@ -117,25 +118,25 @@ describe('ConditionContainer', () => {
         conditionName: 'updated_conditionName'
       }
     };
-    rerenderWithIntl(
-      rerender,
+    renderWithIntl(
       <ConditionContainer
         intl={intl}
         match={matchWithUpdatedConditionName}
         fetchCondition={fetchConditionSpy}
         webSocketConnected={false}
-      />
+      />,
+      { rerender }
     );
     expect(fetchConditionSpy).toHaveBeenCalledTimes(3);
 
-    rerenderWithIntl(
-      rerender,
+    renderWithIntl(
       <ConditionContainer
         intl={intl}
         match={matchWithUpdatedConditionName}
         fetchCondition={fetchConditionSpy}
         webSocketConnected
-      />
+      />,
+      { rerender }
     );
     expect(fetchConditionSpy).toHaveBeenCalledTimes(4);
   });

@@ -11,62 +11,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 /* istanbul ignore file */
-import React from 'react';
 import fetchMock from 'fetch-mock';
-import { Router } from 'react-router-dom';
-import { createMemoryHistory } from 'history';
-import { render } from 'react-testing-library';
-import { IntlProvider } from 'react-intl';
 
 import { getAPIRoot } from '../api/comms';
 
 const apiRoot = getAPIRoot();
-
-export function renderWithRouter(
-  ui,
-  {
-    route = '/',
-    history = createMemoryHistory({ initialEntries: [route] }),
-    container
-  } = {}
-) {
-  return {
-    ...render(
-      <Router history={history}>
-        <IntlProvider locale="en" defaultLocale="en">
-          {ui}
-        </IntlProvider>
-      </Router>,
-      {
-        container
-      }
-    ),
-    // adding `history` to the returned utilities to allow us
-    // to reference it in our tests (just try to avoid using
-    // this to test implementation details).
-    history
-  };
-}
-
-export function wrapWithIntl(ui) {
-  return (
-    <IntlProvider locale="en" defaultLocale="en">
-      {ui}
-    </IntlProvider>
-  );
-}
-
-export function renderWithIntl(ui) {
-  return {
-    ...render(wrapWithIntl(ui))
-  };
-}
-
-export function rerenderWithIntl(rerender, ui) {
-  return {
-    ...rerender(wrapWithIntl(ui))
-  };
-}
 
 export function mockCSRFToken() {
   fetchMock.get(`${apiRoot}/v1/token`, () => ({

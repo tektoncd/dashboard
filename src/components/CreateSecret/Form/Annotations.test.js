@@ -16,7 +16,8 @@ import { fireEvent, waitForElement } from 'react-testing-library';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { renderWithIntl, rerenderWithIntl } from '../../../utils/test';
+import { renderWithIntl } from '@tektoncd/dashboard-components/src/utils/test';
+
 import Annotations from './Annotations';
 
 const middleware = [thunk];
@@ -78,11 +79,11 @@ it('Annotations response correctly to add/remove actions', async () => {
     id: `annotation1-poid`
   });
 
-  rerenderWithIntl(
-    rerender,
+  renderWithIntl(
     <Provider store={store}>
       <Annotations {...props} />
-    </Provider>
+    </Provider>,
+    { rerender }
   );
 
   expect(handleAdd).toHaveBeenCalledTimes(1);
@@ -94,11 +95,11 @@ it('Annotations response correctly to add/remove actions', async () => {
 
   props.annotations.pop();
 
-  rerenderWithIntl(
-    rerender,
+  renderWithIntl(
     <Provider store={store}>
       <Annotations {...props} />
-    </Provider>
+    </Provider>,
+    { rerender }
   );
 
   // Change value and placeholder back to github (both annotations should update)

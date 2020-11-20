@@ -16,7 +16,8 @@ import { fireEvent } from 'react-testing-library';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { renderWithIntl } from '../../utils/test';
+import { renderWithIntl } from '@tektoncd/dashboard-components/src/utils/test';
+
 import ServiceAccountSelector from './ServiceAccountSelector';
 
 const middleware = [thunk];

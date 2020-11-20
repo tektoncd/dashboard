@@ -16,9 +16,10 @@ import { fireEvent, getNodeText } from 'react-testing-library';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import { renderWithIntl } from '@tektoncd/dashboard-components/src/utils/test';
+
 import ServiceAccountsDropdown from './ServiceAccountsDropdown';
 import * as API from '../../api/serviceAccounts';
-import { renderWithIntl, rerenderWithIntl } from '../../utils/test';
 
 const props = {
   id: 'service-accounts-dropdown',
@@ -171,11 +172,11 @@ describe('ServiceAccountsDropdown', () => {
       ...namespacesStoreGreen,
       notifications: {}
     });
-    rerenderWithIntl(
-      rerender,
+    renderWithIntl(
       <Provider store={greenStore}>
         <ServiceAccountsDropdown {...props} />
-      </Provider>
+      </Provider>,
+      { rerender }
     );
     // View items
     fireEvent.click(getByPlaceholderText(initialTextRegExp));
@@ -203,22 +204,22 @@ describe('ServiceAccountsDropdown', () => {
     );
     expect(queryByValue(/service-account-1/i)).toBeTruthy();
     // Select item 'service-account-2'
-    rerenderWithIntl(
-      rerender,
+    renderWithIntl(
       <Provider store={store}>
         <ServiceAccountsDropdown
           {...props}
           selectedItem={{ text: 'service-account-2' }}
         />
-      </Provider>
+      </Provider>,
+      { rerender }
     );
     expect(queryByValue(/service-account-2/i)).toBeTruthy();
     // No selected item (select item '')
-    rerenderWithIntl(
-      rerender,
+    renderWithIntl(
       <Provider store={store}>
         <ServiceAccountsDropdown {...props} selectedItem="" />
-      </Provider>
+      </Provider>,
+      { rerender }
     );
     expect(queryByPlaceholderText(initialTextRegExp)).toBeTruthy();
   });

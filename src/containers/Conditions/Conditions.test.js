@@ -18,7 +18,8 @@ import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
 import { Route } from 'react-router-dom';
 import { paths, urls } from '@tektoncd/dashboard-utils';
-import { renderWithRouter } from '../../utils/test';
+import { renderWithRouter } from '@tektoncd/dashboard-components/src/utils/test';
+
 import * as API from '../../api/conditions';
 import ConditionsContainer from './Conditions';
 

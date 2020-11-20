@@ -15,7 +15,8 @@ import { fireEvent, waitForElement } from 'react-testing-library';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { renderWithIntl } from '../../utils/test';
+import { renderWithIntl } from '@tektoncd/dashboard-components/src/utils/test';
+
 import CreatePipelineResource from '.';
 import * as API from '../../api';
 import * as PipelineResourcesAPI from '../../api/pipelineResources';

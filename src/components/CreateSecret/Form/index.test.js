@@ -16,8 +16,8 @@ import { Provider } from 'react-redux';
 import { fireEvent } from 'react-testing-library';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import { renderWithIntl } from '@tektoncd/dashboard-components/src/utils/test';
 
-import { renderWithIntl, rerenderWithIntl } from '../../../utils/test';
 import Form from './index';
 
 const middleware = [thunk];
@@ -121,11 +121,11 @@ it('Form show Password fields when radio button clicked', async () => {
 
   props.secretType = 'password';
 
-  rerenderWithIntl(
-    rerender,
+  renderWithIntl(
     <Provider store={store}>
       <Form {...props} />
-    </Provider>
+    </Provider>,
+    { rerender }
   );
 
   expect(queryByLabelText(/Username/i)).toBeTruthy();
@@ -166,11 +166,11 @@ it('Form show access token fields when radio button clicked', async () => {
 
   props.secretType = 'accessToken';
 
-  rerenderWithIntl(
-    rerender,
+  renderWithIntl(
     <Provider store={store}>
       <Form {...props} />
-    </Provider>
+    </Provider>,
+    { rerender }
   );
 
   expect(queryByLabelText(/Username/i)).toBeFalsy();
