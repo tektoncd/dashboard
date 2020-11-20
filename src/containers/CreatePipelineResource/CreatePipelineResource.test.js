@@ -18,7 +18,11 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { ALL_NAMESPACES, paths, urls } from '@tektoncd/dashboard-utils';
-import { renderWithIntl, renderWithRouter } from '../../utils/test';
+import {
+  renderWithIntl,
+  renderWithRouter
+} from '@tektoncd/dashboard-components/src/utils/test';
+
 import CreatePipelineResource from '.';
 import * as API from '../../api';
 

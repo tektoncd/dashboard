@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { renderWithIntl, rerenderWithIntl } from '../../utils/test';
+import { renderWithIntl } from '../../utils/test';
 import FormattedDuration from './FormattedDuration';
 
 describe('FormattedDuration', () => {
@@ -23,7 +23,7 @@ describe('FormattedDuration', () => {
     expect(getByText(/1 second/i)).toBeTruthy();
     expect(getByTitle(/1 second/i)).toBeTruthy();
 
-    rerenderWithIntl(rerender, <FormattedDuration milliseconds={2000} />);
+    renderWithIntl(<FormattedDuration milliseconds={2000} />, { rerender });
     expect(getByText(/2 seconds/i)).toBeTruthy();
     expect(getByTitle(/2 seconds/i)).toBeTruthy();
   });

@@ -16,10 +16,10 @@ import { fireEvent, getNodeText } from 'react-testing-library';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import { renderWithIntl } from '@tektoncd/dashboard-components/src/utils/test';
 
 import ClusterTasksDropdown from './ClusterTasksDropdown';
 import * as API from '../../api/clusterTasks';
-import { renderWithIntl, rerenderWithIntl } from '../../utils/test';
 
 const props = {
   id: 'clustertasks-dropdown',
@@ -123,22 +123,22 @@ describe('ClusterTasksDropdown', () => {
     );
     expect(queryByDisplayValue(/clustertask-1/i)).toBeTruthy();
     // Select item 'clustertask-2'
-    rerenderWithIntl(
-      rerender,
+    renderWithIntl(
       <Provider store={store}>
         <ClusterTasksDropdown
           {...props}
           selectedItem={{ text: 'clustertask-2' }}
         />
-      </Provider>
+      </Provider>,
+      { rerender }
     );
     expect(queryByDisplayValue(/clustertask-2/i)).toBeTruthy();
     // No selected item (select item '')
-    rerenderWithIntl(
-      rerender,
+    renderWithIntl(
       <Provider store={store}>
         <ClusterTasksDropdown {...props} selectedItem="" />
-      </Provider>
+      </Provider>,
+      { rerender }
     );
     expect(queryByPlaceholderText(initialTextRegExp)).toBeTruthy();
   });

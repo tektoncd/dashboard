@@ -17,8 +17,8 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { fireEvent, waitForElement } from 'react-testing-library';
 import { ALL_NAMESPACES, paths, urls } from '@tektoncd/dashboard-utils';
+import { renderWithRouter } from '@tektoncd/dashboard-components/src/utils/test';
 
-import { renderWithRouter } from '../../utils/test';
 import SideNavContainer, { SideNavWithIntl as SideNav } from './SideNav';
 
 it('SideNav renders with extensions', () => {
@@ -89,7 +89,7 @@ it('SideNav selects namespace based on URL', () => {
   });
   const namespace = 'default';
   const selectNamespace = jest.fn();
-  const { container } = renderWithRouter(
+  const { rerender } = renderWithRouter(
     <Provider store={store}>
       <SideNav
         extensions={[]}
@@ -101,6 +101,7 @@ it('SideNav selects namespace based on URL', () => {
   expect(selectNamespace).toHaveBeenCalledWith(namespace);
 
   const updatedNamespace = 'another';
+
   renderWithRouter(
     <Provider store={store}>
       <SideNav
@@ -109,9 +110,8 @@ it('SideNav selects namespace based on URL', () => {
         selectNamespace={selectNamespace}
       />
     </Provider>,
-    { container }
+    { rerender }
   );
-
   expect(selectNamespace).toHaveBeenCalledWith(updatedNamespace);
 
   renderWithRouter(
@@ -122,7 +122,7 @@ it('SideNav selects namespace based on URL', () => {
         selectNamespace={selectNamespace}
       />
     </Provider>,
-    { container }
+    { rerender }
   );
   expect(selectNamespace).toHaveBeenCalledTimes(2);
 });

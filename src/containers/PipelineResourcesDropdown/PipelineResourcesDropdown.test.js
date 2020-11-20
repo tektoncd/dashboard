@@ -16,10 +16,10 @@ import { fireEvent, getNodeText } from 'react-testing-library';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import { renderWithIntl } from '@tektoncd/dashboard-components/src/utils/test';
 
 import PipelineResourcesDropdown from './PipelineResourcesDropdown';
 import * as API from '../../api/pipelineResources';
-import { renderWithIntl, rerenderWithIntl } from '../../utils/test';
 
 const props = {
   id: 'pipeline-resources-dropdown',
@@ -167,11 +167,11 @@ describe('PipelineResourcesDropdown', () => {
     expect(queryByText(/pipeline-resource-1/i)).toBeTruthy();
     expect(queryByText(/pipeline-resource-2/i)).toBeFalsy();
     fireEvent.click(getByPlaceholderText(initialTextRegExp));
-    rerenderWithIntl(
-      rerender,
+    renderWithIntl(
       <Provider store={store}>
         <PipelineResourcesDropdown {...props} type="type-2" />
-      </Provider>
+      </Provider>,
+      { rerender }
     );
     // View items
     fireEvent.click(getByPlaceholderText(initialTextRegExp));
@@ -210,11 +210,11 @@ describe('PipelineResourcesDropdown', () => {
       ...namespacesStoreGreen,
       notifications: {}
     });
-    rerenderWithIntl(
-      rerender,
+    renderWithIntl(
       <Provider store={greenStore}>
         <PipelineResourcesDropdown {...props} />
-      </Provider>
+      </Provider>,
+      { rerender }
     );
     // View items
     fireEvent.click(getByPlaceholderText(initialTextRegExp));
@@ -242,22 +242,22 @@ describe('PipelineResourcesDropdown', () => {
     );
     expect(queryByValue(/pipeline-resource-1/i)).toBeTruthy();
     // Select item 'pipeline-resource-2'
-    rerenderWithIntl(
-      rerender,
+    renderWithIntl(
       <Provider store={store}>
         <PipelineResourcesDropdown
           {...props}
           selectedItem={{ text: 'pipeline-resource-2' }}
         />
-      </Provider>
+      </Provider>,
+      { rerender }
     );
     expect(queryByValue(/pipeline-resource-2/i)).toBeTruthy();
     // No selected item (select item '')
-    rerenderWithIntl(
-      rerender,
+    renderWithIntl(
       <Provider store={store}>
         <PipelineResourcesDropdown {...props} selectedItem="" />
-      </Provider>
+      </Provider>,
+      { rerender }
     );
     expect(queryByPlaceholderText(initialTextRegExp)).toBeTruthy();
   });

@@ -18,7 +18,8 @@ import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
-import { renderWithIntl, rerenderWithIntl } from '../../utils/test';
+import { renderWithIntl } from '@tektoncd/dashboard-components/src/utils/test';
+
 import CreatePipelineRun from './CreatePipelineRun';
 import * as PipelineResourcesAPI from '../../api/pipelineResources';
 import * as PipelineRunsAPI from '../../api/pipelineRuns';
@@ -270,11 +271,11 @@ describe('CreatePipelineRun', () => {
       </Provider>
     );
 
-    rerenderWithIntl(
-      rerender,
+    renderWithIntl(
       <Provider store={mockTestStore}>
         <CreatePipelineRun {...props} open />
-      </Provider>
+      </Provider>,
+      { rerender }
     );
 
     await selectPipeline1AndFillSpec({
@@ -317,11 +318,11 @@ describe('CreatePipelineRun', () => {
       </Provider>
     );
 
-    rerenderWithIntl(
-      rerender,
+    renderWithIntl(
       <Provider store={mockTestStore}>
         <CreatePipelineRun {...props} open />
-      </Provider>
+      </Provider>,
+      { rerender }
     );
 
     await selectPipeline1AndFillSpec({
@@ -408,11 +409,11 @@ describe('CreatePipelineRun', () => {
       </Provider>
     );
 
-    rerenderWithIntl(
-      rerender,
+    renderWithIntl(
       <Provider store={mockTestStore}>
         <CreatePipelineRun {...props} open />
-      </Provider>
+      </Provider>,
+      { rerender }
     );
 
     expect(queryByDisplayValue(/namespace-1/i)).toBeTruthy();
@@ -453,11 +454,11 @@ describe('CreatePipelineRun', () => {
       </Provider>
     );
 
-    rerenderWithIntl(
-      rerender,
+    renderWithIntl(
       <Provider store={mockTestStore}>
         <CreatePipelineRun {...props} open pipelineRef="pipeline-1" />
-      </Provider>
+      </Provider>,
+      { rerender }
     );
 
     await waitForElement(() => getByValue(/pipeline-1/i));
@@ -499,11 +500,11 @@ describe('CreatePipelineRun', () => {
         <CreatePipelineRun {...props} />
       </Provider>
     );
-    rerenderWithIntl(
-      rerender,
+    renderWithIntl(
       <Provider store={mockTestStore}>
         <CreatePipelineRun {...props} open />
-      </Provider>
+      </Provider>,
+      { rerender }
     );
     fireEvent.click(getByPlaceholderText(/select pipeline/i));
     fireEvent.click(await waitForElement(() => getByTitle(/pipeline-1/i)));
@@ -543,11 +544,11 @@ describe('CreatePipelineRun', () => {
         <CreatePipelineRun {...props} />
       </Provider>
     );
-    rerenderWithIntl(
-      rerender,
+    renderWithIntl(
       <Provider store={mockTestStore}>
         <CreatePipelineRun {...props} open />
-      </Provider>
+      </Provider>,
+      { rerender }
     );
     expect(queryByValue(/namespace-1/i)).toBeTruthy();
     // Select pipeline-1 and verify spec details are displayed
@@ -704,11 +705,11 @@ describe('CreatePipelineRun', () => {
         <CreatePipelineRun {...props} pipelineRef={badPipelineRef} />
       </Provider>
     );
-    rerenderWithIntl(
-      rerender,
+    renderWithIntl(
       <Provider store={mockStore(testStore)}>
         <CreatePipelineRun {...props} open pipelineRef={badPipelineRef} />
-      </Provider>
+      </Provider>,
+      { rerender }
     );
     expect(queryByText('pipeline-thisDoesNotExist')).toBeFalsy();
     expect(getByPlaceholderText(/select pipeline/i)).toBeTruthy();
@@ -730,11 +731,11 @@ describe('CreatePipelineRun', () => {
         <CreatePipelineRun {...props} />
       </Provider>
     );
-    rerenderWithIntl(
-      rerender,
+    renderWithIntl(
       <Provider store={mockTestStore}>
         <CreatePipelineRun {...props} open />
-      </Provider>
+      </Provider>,
+      { rerender }
     );
     // Select task-1 and verify spec details are displayed
     await selectPipeline1({ getByPlaceholderText, getByText });

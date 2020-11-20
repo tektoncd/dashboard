@@ -12,53 +12,41 @@ limitations under the License.
 */
 /* istanbul ignore file */
 import React from 'react';
-import { Router } from 'react-router-dom';
-import { createMemoryHistory } from 'history';
+import { BrowserRouter } from 'react-router-dom';
 import { render } from 'react-testing-library';
 import { IntlProvider } from 'react-intl';
 
-export function renderWithRouter(
-  ui,
-  {
-    route = '/',
-    history = createMemoryHistory({ initialEntries: [route] }),
-    container
-  } = {}
-) {
-  return {
-    ...render(
-      <Router history={history}>
-        <IntlProvider locale="en" defaultLocale="en" messages={{}}>
-          {ui}
-        </IntlProvider>
-      </Router>,
-      {
-        container
-      }
-    ),
-    // adding `history` to the returned utilities to allow us
-    // to reference it in our tests (just try to avoid using
-    // this to test implementation details).
-    history
-  };
+function RouterWrapper({ children }) {
+  return (
+    <BrowserRouter>
+      <IntlProvider locale="en" defaultLocale="en" messages={{}}>
+        {children}
+      </IntlProvider>
+    </BrowserRouter>
+  );
 }
 
-export function wrapWithIntl(ui) {
+export function renderWithRouter(
+  ui,
+  { rerender, route = '/', ...otherOptions } = {}
+) {
+  window.history.pushState({}, 'Test page', route);
+
+  return (rerender || render)(ui, {
+    route,
+    wrapper: RouterWrapper,
+    ...otherOptions
+  });
+}
+
+function IntlWrapper({ children }) {
   return (
     <IntlProvider locale="en" defaultLocale="en" messages={{}}>
-      {ui}
+      {children}
     </IntlProvider>
   );
 }
 
-export function renderWithIntl(ui) {
-  return {
-    ...render(wrapWithIntl(ui))
-  };
-}
-
-export function rerenderWithIntl(rerender, ui) {
-  return {
-    ...rerender(wrapWithIntl(ui))
-  };
+export function renderWithIntl(ui, { rerender } = {}) {
+  return (rerender || render)(ui, { wrapper: IntlWrapper });
 }

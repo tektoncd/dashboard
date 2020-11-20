@@ -16,8 +16,9 @@ import { Route } from 'react-router-dom';
 import { fireEvent, waitForElement } from 'react-testing-library';
 import { createIntl } from 'react-intl';
 import { paths, urls } from '@tektoncd/dashboard-utils';
+import { renderWithRouter } from '@tektoncd/dashboard-components/src/utils/test';
+
 import { TriggerBindingContainer } from './TriggerBinding';
-import { renderWithRouter } from '../../utils/test';
 
 const intl = createIntl({
   locale: 'en',

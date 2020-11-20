@@ -18,7 +18,8 @@ import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
-import { renderWithIntl, rerenderWithIntl } from '../../utils/test';
+import { renderWithIntl } from '@tektoncd/dashboard-components/src/utils/test';
+
 import CreateTaskRun from './CreateTaskRun';
 import * as PipelineResourcesAPI from '../../api/pipelineResources';
 import * as ServiceAccountsAPI from '../../api/serviceAccounts';
@@ -308,11 +309,11 @@ describe('CreateTaskRun', () => {
         <CreateTaskRun {...props} />
       </Provider>
     );
-    rerenderWithIntl(
-      rerender,
+    renderWithIntl(
       <Provider store={store.getStore()}>
         <CreateTaskRun {...props} open />
-      </Provider>
+      </Provider>,
+      { rerender }
     );
     await selectTask1AndFillSpec({
       getAllByPlaceholderText,
@@ -351,11 +352,11 @@ describe('CreateTaskRun', () => {
         <CreateTaskRun {...props} />
       </Provider>
     );
-    rerenderWithIntl(
-      rerender,
+    renderWithIntl(
       <Provider store={store.getStore()}>
         <CreateTaskRun {...props} open />
-      </Provider>
+      </Provider>,
+      { rerender }
     );
     await selectTask1AndFillSpec({
       getAllByPlaceholderText,
@@ -436,11 +437,11 @@ describe('CreateTaskRun', () => {
         <CreateTaskRun {...props} />
       </Provider>
     );
-    rerenderWithIntl(
-      rerender,
+    renderWithIntl(
       <Provider store={store.getStore()}>
         <CreateTaskRun {...props} open />
-      </Provider>
+      </Provider>,
+      { rerender }
     );
     expect(queryByDisplayValue(/namespace-1/i)).toBeTruthy();
     // Select task-1 and verify spec details are displayed
@@ -477,11 +478,11 @@ describe('CreateTaskRun', () => {
         <CreateTaskRun {...props} taskRef="task-1" />
       </Provider>
     );
-    rerenderWithIntl(
-      rerender,
+    renderWithIntl(
       <Provider store={store.getStore()}>
         <CreateTaskRun {...props} open taskRef="task-1" />
-      </Provider>
+      </Provider>,
+      { rerender }
     );
     await waitForElement(() => getByValue(/task-1/i));
     expect(queryByLabelText(/namespace/i)).toBeTruthy();
@@ -520,11 +521,11 @@ describe('CreateTaskRun', () => {
         <CreateTaskRun {...props} />
       </Provider>
     );
-    rerenderWithIntl(
-      rerender,
+    renderWithIntl(
       <Provider store={store.getStore()}>
         <CreateTaskRun {...props} open />
-      </Provider>
+      </Provider>,
+      { rerender }
     );
     fireEvent.click(getByPlaceholderText(/select task/i));
     fireEvent.click(await waitForElement(() => getByTitle(/task-1/i)));
@@ -562,11 +563,11 @@ describe('CreateTaskRun', () => {
         <CreateTaskRun {...props} />
       </Provider>
     );
-    rerenderWithIntl(
-      rerender,
+    renderWithIntl(
       <Provider store={store.getStore()}>
         <CreateTaskRun {...props} open />
-      </Provider>
+      </Provider>,
+      { rerender }
     );
     expect(queryByValue(/namespace-1/i)).toBeTruthy();
     // Select task-1 and verify spec details are displayed
@@ -723,11 +724,11 @@ describe('CreateTaskRun', () => {
         <CreateTaskRun {...props} taskRef={badTaskRef} />
       </Provider>
     );
-    rerenderWithIntl(
-      rerender,
+    renderWithIntl(
       <Provider store={store.getStore()}>
         <CreateTaskRun {...props} open taskRef={badTaskRef} />
-      </Provider>
+      </Provider>,
+      { rerender }
     );
     expect(queryByText('task-thisDoesNotExist')).toBeFalsy();
     expect(getByPlaceholderText(/select task/i)).toBeTruthy();
@@ -747,11 +748,11 @@ describe('CreateTaskRun', () => {
         <CreateTaskRun {...props} />
       </Provider>
     );
-    rerenderWithIntl(
-      rerender,
+    renderWithIntl(
       <Provider store={store.getStore()}>
         <CreateTaskRun {...props} open />
-      </Provider>
+      </Provider>,
+      { rerender }
     );
     // Select task-1 and verify spec details are displayed
     await selectTask1({ getByPlaceholderText, getByText });

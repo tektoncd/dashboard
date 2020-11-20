@@ -16,8 +16,9 @@ import { fireEvent, getNodeText } from 'react-testing-library';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import { renderWithIntl } from '@tektoncd/dashboard-components/src/utils/test';
+
 import NamespacesDropdown from './NamespacesDropdown';
-import { renderWithIntl } from '../../utils/test';
 
 const props = {
   id: 'namespaces-dropdown',

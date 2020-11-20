@@ -14,8 +14,9 @@ limitations under the License.
 import React from 'react';
 import { waitForElement } from 'react-testing-library';
 import { createIntl } from 'react-intl';
+import { renderWithRouter } from '@tektoncd/dashboard-components/src/utils/test';
+
 import { SecretContainer } from './Secret';
-import { renderWithRouter } from '../../utils/test';
 
 const intl = createIntl({
   locale: 'en',

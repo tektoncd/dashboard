@@ -17,7 +17,8 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
-import { renderWithIntl, rerenderWithIntl } from '../../utils/test';
+import { renderWithIntl } from '@tektoncd/dashboard-components/src/utils/test';
+
 import CreateSecret from '.';
 import * as API from '../../api';
 import * as ServiceAccountsAPI from '../../api/serviceAccounts';
@@ -139,11 +140,11 @@ it('Test CreateSecret click events', () => {
   fireEvent.click(queryByText('Cancel'));
   expect(history.push).toHaveBeenCalled();
 
-  rerenderWithIntl(
-    rerender,
+  renderWithIntl(
     <Provider store={store}>
       <CreateSecret {...props} />
-    </Provider>
+    </Provider>,
+    { rerender }
   );
   expect(queryByText(nameValidationErrorMsgRegExp)).toBeFalsy();
   fireEvent.click(queryByText('Create'));

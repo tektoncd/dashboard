@@ -17,8 +17,9 @@ import { Provider } from 'react-redux';
 import { Route } from 'react-router-dom';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import { renderWithRouter } from '@tektoncd/dashboard-components/src/utils/test';
+
 import ClusterTriggerBindings from '.';
-import { renderWithRouter } from '../../utils/test';
 import * as API from '../../api/clusterTriggerBindings';
 
 const middleware = [thunk];
