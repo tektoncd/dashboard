@@ -366,6 +366,19 @@ describe('getStepDefinition', () => {
     const definition = getStepDefinition({ selectedStepId, task, taskRun });
     expect(definition).toBeUndefined();
   });
+
+  it('handles empty TaskRun', () => {
+    const selectedStepId = 'unnamed-1';
+    const step = { name: '' };
+    const task = {
+      spec: {
+        steps: [{ name: 'a-step' }, step]
+      }
+    };
+    const taskRun = {};
+    const definition = getStepDefinition({ selectedStepId, task, taskRun });
+    expect(definition).toBeNull();
+  });
 });
 
 it('getStepStatus', () => {
