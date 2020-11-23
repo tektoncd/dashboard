@@ -63,6 +63,10 @@ export function getStepDefinition({ selectedStepId, task, taskRun }) {
     return definition;
   }
 
+  if (!taskRun.status) {
+    return null;
+  }
+
   // handle unnamed steps
   // unnamed step numbering skips named steps, so we could have for example:
   // ['unnamed-2', 'unnamed-4']
