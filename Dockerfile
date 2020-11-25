@@ -1,4 +1,4 @@
-# Copyright 2019 The Tekton Authors
+# Copyright 2019-2020 The Tekton Authors
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -17,7 +17,7 @@ RUN npm install
 RUN npm run bootstrap:ci
 RUN npm run build
 
-FROM golang:1.13 as goBuilder
+FROM golang:1.15 as goBuilder
 
 # Pass --build-arg GOARCH=ppc64le when building with docker build to build for another arch
 ARG GOARCH=amd64
