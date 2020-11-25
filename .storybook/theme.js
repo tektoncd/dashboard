@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import { create } from '@storybook/theming/create';
-import brandImage from './tekton-horizontal-color.svg';
+import brandImage from './tekton-horizontal-color.png';
 
 export default create({
   base: 'light',
