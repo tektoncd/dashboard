@@ -91,8 +91,8 @@ spec:
           cp /workspace/go/src/github.com/tektoncd/dashboard/scripts/installer $OUTPUT_BUCKET_RELEASE_DIR/installer
 
           # build manifests for installer
-          kustomize build overlays/installer/read-write --load_restrictor none        | ko resolve --preserve-import-paths -f - > $OUTPUT_BUCKET_RELEASE_DIR/installer-tekton-dashboard-release.yaml
-          kustomize build overlays/installer/read-only  --load_restrictor none        | ko resolve --preserve-import-paths -f - > $OUTPUT_BUCKET_RELEASE_DIR/installer-tekton-dashboard-release-readonly.yaml
+          kustomize build overlays/installer/read-write --load_restrictor none        | ko resolve --platform=all --preserve-import-paths -f - > $OUTPUT_BUCKET_RELEASE_DIR/installer-tekton-dashboard-release.yaml
+          kustomize build overlays/installer/read-only  --load_restrictor none        | ko resolve --platform=all --preserve-import-paths -f - > $OUTPUT_BUCKET_RELEASE_DIR/installer-tekton-dashboard-release-readonly.yaml
 
           # build pre configured manifests
           ./scripts/installer release --debug                         --output $OUTPUT_BUCKET_RELEASE_DIR/tekton-dashboard-release.yaml
