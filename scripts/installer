@@ -93,7 +93,7 @@ compile() {
   if [ "$OPENSHIFT" == "true" ] && [ "$IMAGE_STREAM" == "true" ]; then
     kustomize build --load_restrictor none "$overlay" > "$TMP_FILE"
   else
-    kustomize build --load_restrictor none "$overlay" | ko resolve $KO_RESOLVE_OPTIONS -f - > "$TMP_FILE"
+    kustomize build --load_restrictor none "$overlay" | ko resolve --platform=all $KO_RESOLVE_OPTIONS -f - > "$TMP_FILE"
   fi
 }
 
@@ -525,7 +525,7 @@ case $1 in
     ACTION="build"
     shift
     ;;
-  'release'|b)
+  'release'|r)
     KO_RESOLVE_OPTIONS="--preserve-import-paths"
     ACTION="build"
     shift
