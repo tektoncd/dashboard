@@ -100,7 +100,9 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     const taskRun = taskRuns.find(
       ({ metadata }) =>
         metadata.labels &&
-        (metadata.labels[labelConstants.CONDITION_CHECK] === pipelineTaskName ||
+        ((metadata.labels[labelConstants.CONDITION_CHECK] &&
+          metadata.labels[labelConstants.CONDITION_CHECK] ===
+            pipelineTaskName) ||
           // the `pipelineTask` label is present on both TaskRuns (the owning
           // TaskRun and the TaskRun created for the condition check), ensure
           // we only match on the owning TaskRun here and not another condition
