@@ -22,6 +22,11 @@ import {
   SideNavMenu,
   SideNavMenuItem
 } from 'carbon-components-react';
+import {
+  Information20 as AboutIcon,
+  Chip20 as ExtensionsIcon,
+  DocumentImport20 as ImportResourcesIcon
+} from '@carbon/icons-react';
 import { ALL_NAMESPACES, urls } from '@tektoncd/dashboard-utils';
 
 import { selectNamespace } from '../../actions/namespaces';
@@ -31,6 +36,9 @@ import {
   isReadOnly,
   isTriggersInstalled
 } from '../../reducers';
+
+import { ReactComponent as KubernetesIcon } from '../../images/kubernetes.svg';
+import { ReactComponent as TektonIcon } from '../../images/tekton-logo-20x20.svg';
 
 import './SideNav.scss';
 
@@ -68,18 +76,20 @@ class SideNav extends Component {
   }
 
   render() {
-    const { extensions, intl } = this.props;
+    const { expanded, extensions, intl } = this.props;
 
     return (
       <CarbonSideNav
-        isFixedNav
-        expanded
+        isFixedNav={expanded}
+        isRail={!expanded}
+        expanded={expanded}
         isChildOfHeader={false}
         aria-label="Main navigation"
       >
         <SideNavItems>
           <SideNavMenu
             defaultExpanded
+            renderIcon={TektonIcon}
             title={intl.formatMessage({
               id: 'dashboard.sideNav.tektonResources',
               defaultMessage: 'Tekton resources'
@@ -87,49 +97,39 @@ class SideNav extends Component {
           >
             <SideNavMenuItem
               element={NavLink}
-              icon={<span />}
               to={this.getPath(urls.pipelines.all())}
             >
               Pipelines
             </SideNavMenuItem>
             <SideNavMenuItem
               element={NavLink}
-              icon={<span />}
               to={this.getPath(urls.pipelineRuns.all())}
             >
               PipelineRuns
             </SideNavMenuItem>
             <SideNavMenuItem
               element={NavLink}
-              icon={<span />}
               to={this.getPath(urls.pipelineResources.all())}
             >
               PipelineResources
             </SideNavMenuItem>
             <SideNavMenuItem
               element={NavLink}
-              icon={<span />}
               to={this.getPath(urls.tasks.all())}
             >
               Tasks
             </SideNavMenuItem>
-            <SideNavMenuItem
-              element={NavLink}
-              icon={<span />}
-              to={urls.clusterTasks.all()}
-            >
+            <SideNavMenuItem element={NavLink} to={urls.clusterTasks.all()}>
               ClusterTasks
             </SideNavMenuItem>
             <SideNavMenuItem
               element={NavLink}
-              icon={<span />}
               to={this.getPath(urls.taskRuns.all())}
             >
               TaskRuns
             </SideNavMenuItem>
             <SideNavMenuItem
               element={NavLink}
-              icon={<span />}
               to={this.getPath(urls.conditions.all())}
             >
               Conditions
@@ -138,28 +138,24 @@ class SideNav extends Component {
               <>
                 <SideNavMenuItem
                   element={NavLink}
-                  icon={<span />}
                   to={this.getPath(urls.eventListeners.all())}
                 >
                   EventListeners
                 </SideNavMenuItem>
                 <SideNavMenuItem
                   element={NavLink}
-                  icon={<span />}
                   to={this.getPath(urls.triggerBindings.all())}
                 >
                   TriggerBindings
                 </SideNavMenuItem>
                 <SideNavMenuItem
                   element={NavLink}
-                  icon={<span />}
                   to={urls.clusterTriggerBindings.all()}
                 >
                   ClusterTriggerBindings
                 </SideNavMenuItem>
                 <SideNavMenuItem
                   element={NavLink}
-                  icon={<span />}
                   to={this.getPath(urls.triggerTemplates.all())}
                 >
                   TriggerTemplates
@@ -171,6 +167,7 @@ class SideNav extends Component {
           {!this.props.isReadOnly && (
             <SideNavMenu
               defaultExpanded
+              renderIcon={KubernetesIcon}
               title={intl.formatMessage({
                 id: 'dashboard.sideNav.kubernetesResources',
                 defaultMessage: 'Kubernetes resources'
@@ -178,14 +175,12 @@ class SideNav extends Component {
             >
               <SideNavMenuItem
                 element={NavLink}
-                icon={<span />}
                 to={this.getPath(urls.secrets.all())}
               >
                 Secrets
               </SideNavMenuItem>
               <SideNavMenuItem
                 element={NavLink}
-                icon={<span />}
                 to={this.getPath(urls.serviceAccounts.all())}
               >
                 ServiceAccounts
@@ -196,6 +191,7 @@ class SideNav extends Component {
           {extensions.length > 0 && (
             <SideNavMenu
               defaultExpanded
+              renderIcon={ExtensionsIcon}
               title={intl.formatMessage({
                 id: 'dashboard.extensions.title',
                 defaultMessage: 'Extensions'
@@ -212,7 +208,6 @@ class SideNav extends Component {
                 }) => (
                   <SideNavMenuItem
                     element={NavLink}
-                    icon={<span />}
                     to={
                       extensionType === 'kubernetes-resource'
                         ? this.getPath(
@@ -238,7 +233,7 @@ class SideNav extends Component {
           {!this.props.isReadOnly && (
             <SideNavLink
               element={NavLink}
-              icon={<span />}
+              renderIcon={ImportResourcesIcon}
               to={urls.importResources()}
             >
               {intl.formatMessage({
@@ -248,7 +243,11 @@ class SideNav extends Component {
             </SideNavLink>
           )}
 
-          <SideNavLink element={NavLink} icon={<span />} to={urls.about()}>
+          <SideNavLink
+            element={NavLink}
+            renderIcon={AboutIcon}
+            to={urls.about()}
+          >
             {intl.formatMessage({
               id: 'dashboard.about.title',
               defaultMessage: 'About'

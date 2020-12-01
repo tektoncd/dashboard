@@ -17,31 +17,46 @@ import { injectIntl } from 'react-intl';
 import {
   Header as CarbonHeader,
   HeaderGlobalBar,
-  HeaderName
+  HeaderMenuButton,
+  HeaderName,
+  SkipToContent
 } from 'carbon-components-react';
 
 import './Header.scss';
 
-import tektonLogo from '../../images/tekton-logo-20x20.svg';
-
-function Header({ intl, logoutButton }) {
+function Header({
+  intl,
+  isSideNavExpanded,
+  logoutButton,
+  onHeaderMenuButtonClick
+}) {
   return (
     <CarbonHeader aria-label="Tekton Dashboard" className="tkn--header">
-      <span className="tkn--logo">
-        <img
-          alt={intl.formatMessage({
-            id: 'dashboard.logo.alt',
-            defaultMessage: 'Tekton logo'
-          })}
-          src={tektonLogo}
-          title={intl.formatMessage({
-            id: 'dashboard.logo.tooltip',
-            defaultMessage: 'Meow'
-          })}
+      <SkipToContent>
+        {intl.formatMessage({
+          id: 'dashboard.skipToContent',
+          defaultMessage: 'Skip to main content'
+        })}
+      </SkipToContent>
+      {onHeaderMenuButtonClick && (
+        <HeaderMenuButton
+          aria-label={
+            isSideNavExpanded
+              ? intl.formatMessage({
+                  id: 'dashboard.header.closeNavMenu',
+                  defaultMessage: 'Close menu'
+                })
+              : intl.formatMessage({
+                  id: 'dashboard.header.openNavMenu',
+                  defaultMessage: 'Open menu'
+                })
+          }
+          isCollapsible
+          onClick={onHeaderMenuButtonClick}
         />
-      </span>
-      <HeaderName href="/" prefix="">
-        Tekton
+      )}
+      <HeaderName href="/" prefix="Tekton">
+        Dashboard
       </HeaderName>
       <HeaderGlobalBar>{logoutButton}</HeaderGlobalBar>
     </CarbonHeader>

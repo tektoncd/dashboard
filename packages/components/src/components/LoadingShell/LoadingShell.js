@@ -60,9 +60,6 @@ const LoadingShell = ({ intl }) => {
             </li>
           </SideNavMenu>
 
-          <SideNavLink icon={<span />}>Namespace</SideNavLink>
-          <SkeletonText />
-
           <SkeletonText heading />
           <SkeletonText paragraph />
 

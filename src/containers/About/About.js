@@ -197,8 +197,12 @@ export /* istanbul ignore next */ class About extends Component {
                 id: 'dashboard.logo.alt',
                 defaultMessage: 'Tekton logo'
               })}
-              src={tektonLogo}
               role="presentation"
+              src={tektonLogo}
+              title={intl.formatMessage({
+                id: 'dashboard.logo.tooltip',
+                defaultMessage: 'Meow'
+              })}
             />
           </div>
         </div>

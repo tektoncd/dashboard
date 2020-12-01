@@ -72,6 +72,7 @@
     "@storybook/react": "^6.1.6",
     "@storybook/storybook-deployer": "^2.8.7",
     "@storybook/theming": "^6.1.6",
+    "@svgr/webpack": "^5.5.0",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.1",
     "babel-plugin-react-intl": "^8.2.18",

@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2020 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,18 +12,31 @@ limitations under the License.
 */
 
 import React from 'react';
+import { fireEvent } from 'react-testing-library';
+
 import { renderWithRouter } from '../../utils/test';
 
 import Header from './Header';
 
-it('Header renders with default content', () => {
-  renderWithRouter(<Header />);
-});
+describe('Header', () => {
+  it('renders with default content', () => {
+    renderWithRouter(<Header />);
+  });
 
-it('Header renders the logout button', () => {
-  const logoutButton = 'log out';
-  const { queryByText } = renderWithRouter(
-    <Header logoutButton={logoutButton} />
-  );
-  expect(queryByText(/log out/i)).toBeTruthy();
+  it('renders the logout button', () => {
+    const logoutButton = 'log out';
+    const { getByText } = renderWithRouter(
+      <Header logoutButton={logoutButton} />
+    );
+    expect(getByText(/log out/i)).toBeTruthy();
+  });
+
+  it('renders the header menu button', () => {
+    const onHeaderMenuButtonClick = jest.fn();
+    const { getByTitle } = renderWithRouter(
+      <Header onHeaderMenuButtonClick={onHeaderMenuButtonClick} />
+    );
+    fireEvent.click(getByTitle(/open menu/i));
+    expect(onHeaderMenuButtonClick).toHaveBeenCalled();
+  });
 });
