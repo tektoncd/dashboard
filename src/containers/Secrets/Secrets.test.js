@@ -133,6 +133,7 @@ const store = mockStore({
   },
   namespaces,
   notifications: {},
+  properties: {},
   serviceAccounts: {
     byId: serviceAccountsById,
     byNamespace: serviceAccountsByNamespace,

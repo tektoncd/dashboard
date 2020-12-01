@@ -68,7 +68,8 @@ it('EventListeners renders with no bindings', () => {
       errorMessage: null
     },
     namespaces,
-    notifications: {}
+    notifications: {},
+    properties: {}
   });
 
   const { getByText } = renderWithRouter(
@@ -96,7 +97,8 @@ it('EventListeners renders with one binding', () => {
       errorMessage: null
     },
     namespaces,
-    notifications: {}
+    notifications: {},
+    properties: {}
   });
 
   const { queryByText, queryByTitle } = renderWithRouter(
@@ -126,7 +128,8 @@ it('EventListeners can be filtered on a single label filter', async () => {
       errorMessage: null
     },
     namespaces,
-    notifications: {}
+    notifications: {},
+    properties: {}
   });
 
   const { getByTestId, getByText, queryByText } = renderWithRouter(
@@ -159,7 +162,8 @@ it('EventListeners renders in loading state', () => {
       errorMessage: null
     },
     namespaces,
-    notifications: {}
+    notifications: {},
+    properties: {}
   });
 
   const { queryByText } = renderWithRouter(

@@ -25,7 +25,7 @@ import {
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 import { InlineNotification } from 'carbon-components-react';
 
-import { LabelFilter } from '..';
+import { ListPageLayout } from '..';
 import { fetchConditions } from '../../actions/conditions';
 import {
   getConditions,
@@ -131,9 +131,7 @@ export class Conditions extends Component {
     }
 
     return (
-      <>
-        <h1>Conditions</h1>
-        <LabelFilter {...this.props} />
+      <ListPageLayout title="Conditions" {...this.props}>
         <Table
           headers={headers}
           rows={conditionsFormatted}
@@ -154,7 +152,7 @@ export class Conditions extends Component {
             { kind: 'Conditions', selectedNamespace }
           )}
         />
-      </>
+      </ListPageLayout>
     );
   }
 }

@@ -37,7 +37,7 @@ import {
 } from '@tektoncd/dashboard-utils';
 import { Add16 as Add, TrashCan32 as Delete } from '@carbon/icons-react';
 
-import { CreatePipelineRun, LabelFilter } from '..';
+import { CreatePipelineRun, ListPageLayout } from '..';
 import { sortRunsByStartTime } from '../../utils';
 import { fetchPipelineRuns } from '../../actions/pipelineRuns';
 
@@ -312,7 +312,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
         ];
 
     return (
-      <>
+      <ListPageLayout title="PipelineRuns" {...this.props}>
         {this.state.createdPipelineRun && (
           <InlineNotification
             kind="success"
@@ -346,8 +346,6 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
             lowContrast
           />
         )}
-        <h1>PipelineRuns</h1>
-        <LabelFilter {...this.props} />
         {!this.props.isReadOnly && (
           <CreatePipelineRun
             open={this.state.showCreatePipelineRunModal}
@@ -400,7 +398,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
             </UnorderedList>
           </Modal>
         ) : null}
-      </>
+      </ListPageLayout>
     );
   }
 }

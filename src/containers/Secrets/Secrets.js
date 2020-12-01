@@ -31,7 +31,7 @@ import {
   urls
 } from '@tektoncd/dashboard-utils';
 import { Add16 as Add, TrashCan32 as Delete } from '@carbon/icons-react';
-import { LabelFilter } from '..';
+import { ListPageLayout } from '..';
 import DeleteModal from '../../components/SecretsDeleteModal';
 import {
   clearNotification,
@@ -339,7 +339,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
     });
 
     return (
-      <>
+      <ListPageLayout title="Secrets" {...this.props}>
         {patchSuccess && (
           <InlineNotification
             kind="success"
@@ -395,8 +395,6 @@ export /* istanbul ignore next */ class Secrets extends Component {
             lowContrast
           />
         )}
-        <h1>Secrets</h1>
-        <LabelFilter {...this.props} />
         <FormGroup
           legendText={
             <Tooltip
@@ -479,7 +477,7 @@ export /* istanbul ignore next */ class Secrets extends Component {
             toBeDeleted={toBeDeleted}
           />
         )}
-      </>
+      </ListPageLayout>
     );
   }
 }

@@ -19,6 +19,7 @@ import { connect } from 'react-redux';
 import { getErrorMessage, getTitle, urls } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 
+import { ListPageLayout } from '..';
 import { getAPIResource, getCustomResources } from '../../api';
 import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
 
@@ -117,8 +118,11 @@ export class ResourceListContainer extends Component {
     );
 
     return (
-      <>
-        <h1>{`${group}/${version}/${type}`}</h1>
+      <ListPageLayout
+        title={`${group}/${version}/${type}`}
+        hideNamespacesDropdown={!namespaced}
+        {...this.props}
+      >
         <Table
           headers={[
             {
@@ -183,7 +187,7 @@ export class ResourceListContainer extends Component {
           emptyTextAllNamespaces={emptyText}
           emptyTextSelectedNamespace={emptyText}
         />
-      </>
+      </ListPageLayout>
     );
   }
 }

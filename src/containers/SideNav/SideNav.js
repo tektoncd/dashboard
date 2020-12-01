@@ -13,7 +13,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { generatePath, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import {
   SideNav as CarbonSideNav,
@@ -24,13 +24,10 @@ import {
 } from 'carbon-components-react';
 import { ALL_NAMESPACES, urls } from '@tektoncd/dashboard-utils';
 
-import { NamespacesDropdown } from '..';
-
 import { selectNamespace } from '../../actions/namespaces';
 import {
   getExtensions,
   getSelectedNamespace,
-  getTenantNamespace,
   isReadOnly,
   isTriggersInstalled
 } from '../../reducers';
@@ -61,96 +58,17 @@ class SideNav extends Component {
     }
   }
 
-  setPath(path) {
-    const { history, location } = this.props;
-    history.push(path + location.search);
-  }
-
-  getPath(path) {
-    const { match } = this.props;
-    if (match && match.params.namespace) {
-      return urls.byNamespace({ namespace: match.params.namespace, path });
+  getPath(path, namespaced = true) {
+    const { namespace } = this.props;
+    if (namespaced && namespace && namespace !== ALL_NAMESPACES) {
+      return urls.byNamespace({ namespace, path });
     }
 
     return path;
   }
 
-  selectNamespace = event => {
-    const namespace = event.selectedItem
-      ? event.selectedItem.id
-      : ALL_NAMESPACES;
-    const { history, match } = this.props;
-
-    if (!match) {
-      this.props.selectNamespace(namespace);
-      return;
-    }
-
-    if (namespace !== ALL_NAMESPACES) {
-      const newURL = generatePath(match.path, {
-        namespace,
-        0: match.params[0]
-      });
-      this.setPath(newURL);
-      return;
-    }
-
-    this.props.selectNamespace(namespace);
-    const currentURL = this.props.match.url;
-    if (currentURL.includes(urls.taskRuns.all())) {
-      this.setPath(urls.taskRuns.all());
-      return;
-    }
-    if (currentURL.includes(urls.pipelineResources.all())) {
-      this.setPath(urls.pipelineResources.all());
-      return;
-    }
-    if (currentURL.includes(urls.pipelines.all())) {
-      this.setPath(urls.pipelines.all());
-      return;
-    }
-    if (currentURL.includes(urls.pipelineRuns.all())) {
-      this.setPath(urls.pipelineRuns.all());
-      return;
-    }
-    if (currentURL.includes(urls.serviceAccounts.all())) {
-      this.setPath(urls.serviceAccounts.all());
-      return;
-    }
-    if (currentURL.includes(urls.eventListeners.all())) {
-      this.setPath(urls.eventListeners.all());
-      return;
-    }
-    if (currentURL.includes(urls.triggerBindings.all())) {
-      this.setPath(urls.triggerBindings.all());
-      return;
-    }
-    if (currentURL.includes(urls.clusterTriggerBindings.all())) {
-      this.setPath(urls.clusterTriggerBindings.all());
-      return;
-    }
-    if (currentURL.includes(urls.triggerTemplates.all())) {
-      this.setPath(urls.triggerTemplates.all());
-      return;
-    }
-    if (currentURL.includes(urls.secrets.all())) {
-      this.setPath(urls.secrets.all());
-      return;
-    }
-    if (currentURL.includes(urls.tasks.all())) {
-      this.setPath(urls.tasks.all());
-      return;
-    }
-    if (currentURL.includes(urls.conditions.all())) {
-      this.setPath(urls.conditions.all());
-      return;
-    }
-
-    history.push('/');
-  };
-
   render() {
-    const { extensions, intl, namespace } = this.props;
+    const { extensions, intl } = this.props;
 
     return (
       <CarbonSideNav
@@ -250,22 +168,6 @@ class SideNav extends Component {
             )}
           </SideNavMenu>
 
-          {this.props.tenantNamespace ? (
-            <SideNavMenu defaultExpanded title="Namespace">
-              <SideNavMenuItem>{this.props.tenantNamespace}</SideNavMenuItem>
-            </SideNavMenu>
-          ) : (
-            <SideNavMenuItem
-              element={NamespacesDropdown}
-              id="sidenav-namespace-dropdown"
-              selectedItem={{ id: namespace, text: namespace }}
-              showAllNamespaces={!this.props.tenantNamespace}
-              onChange={this.selectNamespace}
-            >
-              &nbsp;
-            </SideNavMenuItem>
-          )}
-
           {!this.props.isReadOnly && (
             <SideNavMenu
               defaultExpanded
@@ -301,11 +203,12 @@ class SideNav extends Component {
             >
               {extensions.map(
                 ({
-                  displayName,
-                  name,
-                  extensionType,
                   apiGroup,
-                  apiVersion
+                  apiVersion,
+                  displayName,
+                  extensionType,
+                  name,
+                  namespaced
                 }) => (
                   <SideNavMenuItem
                     element={NavLink}
@@ -317,7 +220,8 @@ class SideNav extends Component {
                               group: apiGroup,
                               version: apiVersion,
                               type: name
-                            })
+                            }),
+                            namespaced
                           )
                         : urls.extensions.byName({ name })
                     }
@@ -365,8 +269,7 @@ const mapStateToProps = state => ({
   extensions: getExtensions(state),
   isReadOnly: isReadOnly(state),
   isTriggersInstalled: isTriggersInstalled(state),
-  namespace: getSelectedNamespace(state),
-  tenantNamespace: getTenantNamespace(state)
+  namespace: getSelectedNamespace(state)
 });
 
 const mapDispatchToProps = {

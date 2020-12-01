@@ -26,7 +26,7 @@ import {
   urls
 } from '@tektoncd/dashboard-utils';
 
-import { LabelFilter } from '..';
+import { ListPageLayout } from '..';
 import { fetchClusterTasks } from '../../actions/tasks';
 import {
   getClusterTasks,
@@ -137,9 +137,11 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
       );
     }
     return (
-      <>
-        <h1>ClusterTasks</h1>
-        <LabelFilter {...this.props} />
+      <ListPageLayout
+        hideNamespacesDropdown
+        title="ClusterTasks"
+        {...this.props}
+      >
         <Table
           headers={initialHeaders}
           rows={clusterTasksFormatted}
@@ -159,7 +161,7 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
             { kind: 'ClusterTasks' }
           )}
         />
-      </>
+      </ListPageLayout>
     );
   }
 }
