@@ -74,6 +74,7 @@ const testStore = {
   notifications: {
     webSocketConnected: false
   },
+  properties: {},
   ...conditionsTestStore
 };
 
@@ -86,7 +87,8 @@ describe('Conditions', () => {
     const mockTestStore = mockStore({
       conditions: { byId: {}, byNamespace: {}, isFetching: true },
       ...namespacesTestStore,
-      notifications: {}
+      notifications: {},
+      properties: {}
     });
     const { queryByText } = renderWithRouter(
       <Provider store={mockTestStore}>
@@ -131,7 +133,8 @@ describe('Conditions', () => {
           ...testStore,
           notifications: {
             webSocketConnected: true
-          }
+          },
+          propeties: {}
         })}
       >
         <Route

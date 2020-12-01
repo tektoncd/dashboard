@@ -25,7 +25,7 @@ import {
 import { InlineNotification } from 'carbon-components-react';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 
-import { LabelFilter } from '..';
+import { ListPageLayout } from '..';
 import { fetchEventListeners } from '../../actions/eventListeners';
 import {
   getEventListeners,
@@ -116,7 +116,7 @@ export /* istanbul ignore next */ class EventListeners extends Component {
     }));
 
     return (
-      <>
+      <ListPageLayout title="EventListeners" {...this.props}>
         {error && (
           <InlineNotification
             kind="error"
@@ -133,8 +133,6 @@ export /* istanbul ignore next */ class EventListeners extends Component {
             lowContrast
           />
         )}
-        <h1>EventListeners</h1>
-        <LabelFilter {...this.props} />
         <Table
           headers={initialHeaders}
           rows={eventListenersFormatted}
@@ -155,7 +153,7 @@ export /* istanbul ignore next */ class EventListeners extends Component {
             { kind: 'EventListeners', selectedNamespace }
           )}
         />
-      </>
+      </ListPageLayout>
     );
   }
 }

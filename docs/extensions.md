@@ -49,11 +49,12 @@ See the [Example: Register a CronJob extension](#example-register-a-cronjob-exte
 
 #### ExtensionSpec
 
-| Variable Name | Type              | Required | Default | Description                      |
-|---------------|-------------------|----------|---------|----------------------------------|
-| apiVersion    | string            | Yes      | -       | Extension resource group         |
-| name          | string            | Yes      | -       | Extension resource name          |
-| displayname   | string            | Yes      | -       | Display name in the Dashboard UI |
+| Variable Name | Type              | Required | Default | Description                                                      |
+|---------------|-------------------|----------|---------|------------------------------------------------------------------|
+| apiVersion    | string            | Yes      | -       | Extension resource group                                         |
+| name          | string            | Yes      | -       | Extension resource name                                          |
+| displayname   | string            | Yes      | -       | Display name in the Dashboard UI                                 |
+| namespaced    | boolean           | No       | true    | Specifies whether the Extension represents a namespaced resource |
 
 ### Example: Register a CronJob extension
 

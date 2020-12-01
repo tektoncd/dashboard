@@ -25,7 +25,7 @@ import {
 import { InlineNotification } from 'carbon-components-react';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 
-import { LabelFilter } from '..';
+import { ListPageLayout } from '..';
 import { fetchTriggerTemplates } from '../../actions/triggerTemplates';
 import {
   getSelectedNamespace,
@@ -116,7 +116,7 @@ export /* istanbul ignore next */ class TriggerTemplates extends Component {
     }));
 
     return (
-      <>
+      <ListPageLayout title="TriggerTemplates" {...this.props}>
         {error && (
           <InlineNotification
             kind="error"
@@ -133,8 +133,6 @@ export /* istanbul ignore next */ class TriggerTemplates extends Component {
             lowContrast
           />
         )}
-        <h1>TriggerTemplates</h1>
-        <LabelFilter {...this.props} />
         <Table
           headers={initialHeaders}
           rows={triggerTemplatesFormatted}
@@ -155,7 +153,7 @@ export /* istanbul ignore next */ class TriggerTemplates extends Component {
             { kind: 'TriggerTemplates', selectedNamespace }
           )}
         />
-      </>
+      </ListPageLayout>
     );
   }
 }

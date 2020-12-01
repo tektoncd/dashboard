@@ -37,7 +37,7 @@ import {
 } from '@tektoncd/dashboard-utils';
 import { Add16 as Add, TrashCan32 as Delete } from '@carbon/icons-react';
 
-import { CreateTaskRun, LabelFilter } from '..';
+import { CreateTaskRun, ListPageLayout } from '..';
 import { sortRunsByStartTime } from '../../utils';
 import { fetchTaskRuns } from '../../actions/taskRuns';
 
@@ -322,7 +322,7 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
         ];
 
     return (
-      <>
+      <ListPageLayout title="TaskRuns" {...this.props}>
         {this.state.createdTaskRun && (
           <InlineNotification
             kind="success"
@@ -356,8 +356,6 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
             lowContrast
           />
         )}
-        <h1>TaskRuns</h1>
-        <LabelFilter {...this.props} />
         {!this.props.isReadOnly && (
           <CreateTaskRun
             open={this.state.showCreateTaskRunModal}
@@ -411,7 +409,7 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
             </UnorderedList>
           </Modal>
         ) : null}
-      </>
+      </ListPageLayout>
     );
   }
 }

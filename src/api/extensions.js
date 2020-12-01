@@ -41,14 +41,15 @@ export async function getExtensions({ namespace } = {}) {
   );
   return extensions.concat(
     ((resourceExtensions && resourceExtensions.items) || []).map(({ spec }) => {
-      const { displayname: displayName, name } = spec;
+      const { displayname: displayName, name, namespaced } = spec;
       const [apiGroup, apiVersion] = spec.apiVersion.split('/');
       return {
-        displayName,
-        name,
         apiGroup,
         apiVersion,
-        extensionType: 'kubernetes-resource'
+        displayName,
+        extensionType: 'kubernetes-resource',
+        name,
+        namespaced
       };
     })
   );

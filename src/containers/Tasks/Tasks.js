@@ -26,7 +26,7 @@ import {
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 import { Information16 } from '@carbon/icons-react';
 
-import { LabelFilter } from '..';
+import { ListPageLayout } from '..';
 import { fetchTasks } from '../../actions/tasks';
 import {
   getSelectedNamespace,
@@ -154,9 +154,7 @@ export /* istanbul ignore next */ class Tasks extends Component {
     }
 
     return (
-      <>
-        <h1>Tasks</h1>
-        <LabelFilter {...this.props} />
+      <ListPageLayout title="Tasks" {...this.props}>
         <Table
           headers={initialHeaders}
           rows={tasksFormatted}
@@ -177,7 +175,7 @@ export /* istanbul ignore next */ class Tasks extends Component {
             { kind: 'Tasks', selectedNamespace }
           )}
         />
-      </>
+      </ListPageLayout>
     );
   }
 }

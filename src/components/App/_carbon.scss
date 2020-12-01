@@ -18,6 +18,10 @@ $css--reset: true;
 $css--default-type: true;
 $css--plex: true;
 
+$feature-flags: (
+  grid-columns-16: true
+);
+
 @import '~@tektoncd/dashboard-components/dist/scss/vars';
 @include carbon--theme();
 

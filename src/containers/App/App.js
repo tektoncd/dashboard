@@ -110,6 +110,7 @@ if (process.env.I18N_PSEUDO) {
   });
 }
 
+/* istanbul ignore next */
 const ConfigErrorComponent = ({ intl, loadingConfigError }) => {
   if (!loadingConfigError) {
     return null;

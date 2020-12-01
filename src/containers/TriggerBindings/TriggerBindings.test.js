@@ -68,7 +68,8 @@ it('TriggerBindings renders with no bindings', () => {
       errorMessage: null
     },
     namespaces,
-    notifications: {}
+    notifications: {},
+    properties: {}
   });
 
   const { getByText } = renderWithRouter(
@@ -96,7 +97,8 @@ it('TriggerBindings renders with one binding', () => {
       errorMessage: null
     },
     namespaces,
-    notifications: {}
+    notifications: {},
+    properties: {}
   });
 
   const { queryByText } = renderWithRouter(
@@ -125,7 +127,8 @@ it('TriggerBindings can be filtered on a single label filter', async () => {
       errorMessage: null
     },
     namespaces,
-    notifications: {}
+    notifications: {},
+    properties: {}
   });
 
   const { queryByText, getByTestId, getByText } = renderWithRouter(
@@ -158,7 +161,8 @@ it('TriggerBindings renders in loading state', () => {
       errorMessage: null
     },
     namespaces,
-    notifications: {}
+    notifications: {},
+    properties: {}
   });
 
   const { queryByText } = renderWithRouter(

@@ -33,7 +33,7 @@ import {
 } from 'carbon-components-react';
 import { Add16 as Add, TrashCan32 as Delete } from '@carbon/icons-react';
 
-import { LabelFilter } from '..';
+import { ListPageLayout } from '..';
 import { fetchPipelineResources } from '../../actions/pipelineResources';
 import { deletePipelineResource } from '../../api';
 import {
@@ -220,7 +220,7 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
         ];
 
     return (
-      <>
+      <ListPageLayout title="PipelineResources" {...this.props}>
         {this.state.deleteError && (
           <InlineNotification
             kind="error"
@@ -238,8 +238,6 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
             lowContrast
           />
         )}
-        <h1>PipelineResources</h1>
-        <LabelFilter {...this.props} />
         <PipelineResourcesList
           batchActionButtons={batchActionButtons}
           loading={loading && !pipelineResources.length}
@@ -282,7 +280,7 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
             </UnorderedList>
           </Modal>
         ) : null}
-      </>
+      </ListPageLayout>
     );
   }
 }

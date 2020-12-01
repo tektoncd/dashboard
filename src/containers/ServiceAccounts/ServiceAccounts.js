@@ -25,7 +25,7 @@ import {
 import { InlineNotification } from 'carbon-components-react';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 
-import { LabelFilter } from '..';
+import { ListPageLayout } from '..';
 import { fetchServiceAccounts } from '../../actions/serviceAccounts';
 import {
   getSelectedNamespace,
@@ -119,7 +119,7 @@ export /* istanbul ignore next */ class ServiceAccounts extends Component {
     }));
 
     return (
-      <>
+      <ListPageLayout title="ServiceAccounts" {...this.props}>
         {error && (
           <InlineNotification
             kind="error"
@@ -136,8 +136,6 @@ export /* istanbul ignore next */ class ServiceAccounts extends Component {
             lowContrast
           />
         )}
-        <h1>ServiceAccounts</h1>
-        <LabelFilter {...this.props} />
         <Table
           headers={initialHeaders}
           rows={serviceAccountsFormatted}
@@ -158,7 +156,7 @@ export /* istanbul ignore next */ class ServiceAccounts extends Component {
             { kind: 'ServiceAccounts', selectedNamespace }
           )}
         />
-      </>
+      </ListPageLayout>
     );
   }
 }

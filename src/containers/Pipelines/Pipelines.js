@@ -26,7 +26,7 @@ import {
 } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 
-import { LabelFilter } from '..';
+import { ListPageLayout } from '..';
 import { fetchPipelines } from '../../actions/pipelines';
 import {
   getPipelines,
@@ -154,9 +154,7 @@ export /* istanbul ignore next */ class Pipelines extends Component {
     }
 
     return (
-      <>
-        <h1>Pipelines</h1>
-        <LabelFilter {...this.props} />
+      <ListPageLayout title="Pipelines" {...this.props}>
         <Table
           headers={initialHeaders}
           rows={pipelinesFormatted}
@@ -177,7 +175,7 @@ export /* istanbul ignore next */ class Pipelines extends Component {
             { kind: 'Pipelines', selectedNamespace }
           )}
         />
-      </>
+      </ListPageLayout>
     );
   }
 }
