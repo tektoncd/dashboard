@@ -19,8 +19,24 @@ limitations under the License.
     border-color: $gray-80;
     color: $gray-10;
 
-    .bx--side-nav__icon > svg {
-      fill: $gray-10;
+    .bx--side-nav__icon {
+      &:not(.bx--side-nav__submenu-chevron) {
+        margin-right: 1rem;
+      }
+
+      & > svg {
+        fill: $gray-10;
+      }
+    }
+
+    &:not(.bx--side-nav--expanded) {
+      .bx--side-nav__submenu {
+        padding: 0 .875rem;
+      }
+      .bx--side-nav__icon:not(.bx--side-nav__submenu-chevron) > svg {
+        width: 1.25rem;
+        height: 1.25rem;
+      }
     }
 
     .bx--side-nav__submenu {
@@ -37,6 +53,14 @@ limitations under the License.
         .bx--side-nav__icon > svg {
           fill: white;
         }
+      }
+    }
+
+    .bx--side-nav__item.bx--side-nav__item--icon {
+      margin-bottom: 1rem;
+
+      a.bx--side-nav__link {
+        padding-left: 3rem;
       }
     }
 

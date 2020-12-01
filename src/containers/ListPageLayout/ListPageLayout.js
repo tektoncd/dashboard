@@ -10,7 +10,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-/* istanbul ignore file */
+
 import React from 'react';
 import { connect } from 'react-redux';
 import { generatePath } from 'react-router-dom';
@@ -22,7 +22,7 @@ import { LabelFilter, NamespacesDropdown } from '..';
 
 import './ListPageLayout.scss';
 
-const ListPageLayout = ({
+export const ListPageLayout = ({
   children,
   filters,
   hideNamespacesDropdown,

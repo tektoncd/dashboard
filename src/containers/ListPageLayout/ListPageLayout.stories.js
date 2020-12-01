@@ -16,7 +16,7 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 
-import ListPageLayout from './ListPageLayout';
+import ListPageLayoutContainer from './ListPageLayout';
 
 const props = {};
 
@@ -31,14 +31,14 @@ const middleware = [thunk];
 const mockStore = configureStore(middleware);
 
 export default {
-  component: ListPageLayout,
+  component: ListPageLayoutContainer,
   title: 'Containers/ListPageLayout'
 };
 
 export const Base = args => (
-  <ListPageLayout {...props} {...args}>
+  <ListPageLayoutContainer {...props} {...args}>
     page content goes here
-  </ListPageLayout>
+  </ListPageLayoutContainer>
 );
 Base.args = {
   hideNamespacesDropdown: false,

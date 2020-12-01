@@ -23,6 +23,7 @@ import SideNavContainer, { SideNavWithIntl as SideNav } from './SideNav';
 it('SideNav renders with extensions', () => {
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
+  const namespace = 'default';
   const store = mockStore({
     extensions: {
       byName: {
@@ -36,12 +37,19 @@ it('SideNav renders with extensions', () => {
           apiVersion: 'v1alpha1',
           displayName: 'dashboard_crd_extension',
           extensionType: 'kubernetes-resource',
-          name: 'crd-extension',
-          url: 'crd-sample'
+          name: 'crd-extension'
+        },
+        'cluster-crd-extension': {
+          apiGroup: 'mygroup',
+          apiVersion: 'v1alpha1',
+          displayName: 'dashboard_cluster_crd_extension',
+          extensionType: 'kubernetes-resource',
+          name: 'cluster-crd-extension',
+          namespaced: false
         }
       }
     },
-    namespaces: { byName: {} },
+    namespaces: { byName: { [namespace]: true }, selected: namespace },
     properties: {}
   });
   const { queryByText } = renderWithRouter(

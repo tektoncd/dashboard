@@ -13,15 +13,6 @@ limitations under the License.
 
 @import './carbon';
 
-h1 {
-  @include type-style('productive-heading-04');
-  margin-bottom: $layout-02;
-}
-
-h2 {
-  @include type-style('heading-01');
-}
-
 .bx--btn.link-btn.bx--btn--ghost {
   text-decoration: none;
 }
@@ -31,6 +22,15 @@ h2 {
     background-color: $ui-background;
     transform: none;
     padding-top: $layout-02;
+
+    h1 {
+      @include type-style('productive-heading-04');
+      margin-bottom: $layout-02;
+    }
+
+    h2 {
+      @include type-style('heading-01');
+    }
   }
 }
 

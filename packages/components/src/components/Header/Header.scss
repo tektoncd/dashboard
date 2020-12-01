@@ -12,18 +12,6 @@ limitations under the License.
 */
 
 header.bx--header.tkn--header {
-  .tkn--logo {
-    display: flex;
-    align-items: center;
-    width: 3rem;
-    height: 3rem;
-
-    img {
-      width: 20px;
-      margin: 0 1rem;
-    }
-  }
-
   .tkn--logout-btn {
     padding-right: 2px;
   }
