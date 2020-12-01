@@ -18,6 +18,7 @@ import {
   apiRoot,
   checkData,
   getKubeAPI,
+  getQueryParams,
   getResourcesAPI,
   getTektonAPI
 } from './utils';
@@ -37,8 +38,8 @@ export * from './tasks';
 export * from './triggerBindings';
 export * from './triggerTemplates';
 
-export function getCustomResources(...args) {
-  const uri = getResourcesAPI(...args);
+export function getCustomResources({ filters = [], ...rest }) {
+  const uri = getResourcesAPI(rest, getQueryParams(filters));
   return get(uri).then(checkData);
 }
 

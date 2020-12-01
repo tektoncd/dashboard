@@ -16,7 +16,13 @@ import { injectIntl } from 'react-intl';
 import { InlineNotification } from 'carbon-components-react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { getErrorMessage, getTitle, urls } from '@tektoncd/dashboard-utils';
+import isEqual from 'lodash.isequal';
+import {
+  getErrorMessage,
+  getFilters,
+  getTitle,
+  urls
+} from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 
 import { ListPageLayout } from '..';
@@ -35,14 +41,14 @@ export class ResourceListContainer extends Component {
     document.title = getTitle({
       page: `${group}/${version}/${type}`
     });
-    const { namespace } = this.props;
-    this.fetchResources(group, version, type, namespace);
+    this.fetchResources();
   }
 
   componentDidUpdate(prevProps) {
-    const { match, namespace, webSocketConnected } = this.props;
+    const { filters, match, namespace, webSocketConnected } = this.props;
     const { group, version, type } = match.params;
     const {
+      filters: prevFilters,
       match: prevMatch,
       namespace: prevNamespace,
       webSocketConnected: prevWebSocketConnected
@@ -58,17 +64,22 @@ export class ResourceListContainer extends Component {
       type !== prevType ||
       group !== prevGroup ||
       version !== prevVersion ||
-      (webSocketConnected && prevWebSocketConnected === false)
+      (webSocketConnected && prevWebSocketConnected === false) ||
+      !isEqual(filters, prevFilters)
     ) {
-      this.fetchResources(group, version, type, namespace);
+      this.fetchResources();
     }
   }
 
-  fetchResources(group, version, type, namespace) {
+  fetchResources() {
+    const { filters, match, namespace } = this.props;
+    const { group, version, type } = match.params;
+
     return getAPIResource({ group, version, type })
       .then(({ namespaced }) => {
         this.setState({ namespaced });
         return getCustomResources({
+          filters,
           group,
           version,
           type,
@@ -197,6 +208,7 @@ function mapStateToProps(state, props) {
   const namespace = namespaceParam || getSelectedNamespace(state);
 
   return {
+    filters: getFilters(props.location),
     namespace,
     webSocketConnected: isWebSocketConnected(state)
   };
