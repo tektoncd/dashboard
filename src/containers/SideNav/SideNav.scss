@@ -78,6 +78,15 @@ limitations under the License.
       }
     }
 
+    .bx--side-nav__item--active {
+      .bx--side-nav__submenu[aria-expanded=false] {
+        background-color: $gray-80;
+      }
+      .bx--side-nav__submenu-title {
+        color: $gray-10;
+      }
+    }
+
     .bx--side-nav__menu a.bx--side-nav__link--current,
     .bx--side-nav__menu a.bx--side-nav__link[aria-current=page] {
       background-color: $gray-80;
