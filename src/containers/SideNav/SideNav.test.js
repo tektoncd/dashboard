@@ -54,7 +54,7 @@ it('SideNav renders with extensions', () => {
   });
   const { queryByText } = renderWithRouter(
     <Provider store={store}>
-      <SideNavContainer />
+      <SideNavContainer location={{ search: '' }} />
     </Provider>
   );
   expect(queryByText(/pipelines/i)).toBeTruthy();
@@ -76,7 +76,7 @@ it('SideNav renders with triggers', async () => {
   });
   const { queryByText } = renderWithRouter(
     <Provider store={store}>
-      <SideNavContainer />
+      <SideNavContainer location={{ search: '' }} />
     </Provider>
   );
   await waitForElement(() => queryByText(/about/i));
@@ -100,6 +100,7 @@ it('SideNav selects namespace based on URL', () => {
     <Provider store={store}>
       <SideNav
         extensions={[]}
+        location={{ search: '' }}
         match={{ params: { namespace } }}
         selectNamespace={selectNamespace}
       />
@@ -113,6 +114,7 @@ it('SideNav selects namespace based on URL', () => {
     <Provider store={store}>
       <SideNav
         extensions={[]}
+        location={{ search: '' }}
         match={{ params: { namespace: updatedNamespace } }}
         selectNamespace={selectNamespace}
       />
@@ -125,6 +127,7 @@ it('SideNav selects namespace based on URL', () => {
     <Provider store={store}>
       <SideNav
         extensions={[]}
+        location={{ search: '' }}
         match={{ params: { namespace: updatedNamespace } }}
         selectNamespace={selectNamespace}
       />
@@ -144,7 +147,7 @@ it('SideNav renders import in not read-only mode', async () => {
   });
   const { queryByText } = renderWithRouter(
     <Provider store={store}>
-      <SideNavContainer />
+      <SideNavContainer location={{ search: '' }} />
     </Provider>
   );
   await waitForElement(() => queryByText(/Import/i));
@@ -162,7 +165,7 @@ it('SideNav does not render import in read-only mode', async () => {
   });
   const { queryByText } = renderWithRouter(
     <Provider store={store}>
-      <SideNavContainer isReadOnly />
+      <SideNavContainer isReadOnly location={{ search: '' }} />
     </Provider>
   );
   await waitForElement(() => queryByText(/about/i));

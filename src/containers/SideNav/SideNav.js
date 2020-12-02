@@ -13,7 +13,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { NavLink } from 'react-router-dom';
+import { matchPath, NavLink } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import {
   SideNav as CarbonSideNav,
@@ -76,7 +76,7 @@ class SideNav extends Component {
   }
 
   render() {
-    const { expanded, extensions, intl } = this.props;
+    const { expanded, extensions, intl, location } = this.props;
 
     return (
       <CarbonSideNav
@@ -97,70 +97,132 @@ class SideNav extends Component {
           >
             <SideNavMenuItem
               element={NavLink}
+              isActive={
+                !!matchPath(location.pathname, {
+                  path: this.getPath(urls.pipelines.all())
+                })
+              }
               to={this.getPath(urls.pipelines.all())}
             >
               Pipelines
             </SideNavMenuItem>
             <SideNavMenuItem
               element={NavLink}
+              isActive={
+                !!matchPath(location.pathname, {
+                  path: this.getPath(urls.pipelineRuns.all())
+                })
+              }
               to={this.getPath(urls.pipelineRuns.all())}
             >
               PipelineRuns
             </SideNavMenuItem>
             <SideNavMenuItem
               element={NavLink}
+              isActive={
+                !!matchPath(location.pathname, {
+                  path: this.getPath(urls.pipelineResources.all())
+                })
+              }
               to={this.getPath(urls.pipelineResources.all())}
             >
               PipelineResources
             </SideNavMenuItem>
             <SideNavMenuItem
               element={NavLink}
+              isActive={
+                !!matchPath(location.pathname, {
+                  path: this.getPath(urls.tasks.all())
+                })
+              }
               to={this.getPath(urls.tasks.all())}
             >
               Tasks
             </SideNavMenuItem>
-            <SideNavMenuItem element={NavLink} to={urls.clusterTasks.all()}>
+            <SideNavMenuItem
+              element={NavLink}
+              isActive={
+                !!matchPath(location.pathname, {
+                  path: urls.clusterTasks.all()
+                })
+              }
+              to={urls.clusterTasks.all()}
+            >
               ClusterTasks
             </SideNavMenuItem>
             <SideNavMenuItem
               element={NavLink}
+              isActive={
+                !!matchPath(location.pathname, {
+                  path: this.getPath(urls.taskRuns.all())
+                })
+              }
               to={this.getPath(urls.taskRuns.all())}
             >
               TaskRuns
             </SideNavMenuItem>
             <SideNavMenuItem
               element={NavLink}
+              isActive={
+                !!matchPath(location.pathname, {
+                  path: this.getPath(urls.conditions.all())
+                })
+              }
               to={this.getPath(urls.conditions.all())}
             >
               Conditions
             </SideNavMenuItem>
             {this.props.isTriggersInstalled && (
-              <>
-                <SideNavMenuItem
-                  element={NavLink}
-                  to={this.getPath(urls.eventListeners.all())}
-                >
-                  EventListeners
-                </SideNavMenuItem>
-                <SideNavMenuItem
-                  element={NavLink}
-                  to={this.getPath(urls.triggerBindings.all())}
-                >
-                  TriggerBindings
-                </SideNavMenuItem>
-                <SideNavMenuItem
-                  element={NavLink}
-                  to={urls.clusterTriggerBindings.all()}
-                >
-                  ClusterTriggerBindings
-                </SideNavMenuItem>
-                <SideNavMenuItem
-                  element={NavLink}
-                  to={this.getPath(urls.triggerTemplates.all())}
-                >
-                  TriggerTemplates
-                </SideNavMenuItem>
-              </>
+              <SideNavMenuItem
+                element={NavLink}
+                isActive={
+                  !!matchPath(location.pathname, {
+                    path: this.getPath(urls.eventListeners.all())
+                  })
+                }
+                to={this.getPath(urls.eventListeners.all())}
+              >
+                EventListeners
+              </SideNavMenuItem>
+            )}
+            {this.props.isTriggersInstalled && (
+              <SideNavMenuItem
+                element={NavLink}
+                isActive={
+                  !!matchPath(location.pathname, {
+                    path: this.getPath(urls.triggerBindings.all())
+                  })
+                }
+                to={this.getPath(urls.triggerBindings.all())}
+              >
+                TriggerBindings
+              </SideNavMenuItem>
+            )}
+            {this.props.isTriggersInstalled && (
+              <SideNavMenuItem
+                element={NavLink}
+                isActive={
+                  !!matchPath(location.pathname, {
+                    path: urls.clusterTriggerBindings.all()
+                  })
+                }
+                to={urls.clusterTriggerBindings.all()}
+              >
+                ClusterTriggerBindings
+              </SideNavMenuItem>
+            )}
+            {this.props.isTriggersInstalled && (
+              <SideNavMenuItem
+                element={NavLink}
+                isActive={
+                  !!matchPath(location.pathname, {
+                    path: this.getPath(urls.triggerTemplates.all())
+                  })
+                }
+                to={this.getPath(urls.triggerTemplates.all())}
+              >
+                TriggerTemplates
+              </SideNavMenuItem>
             )}
           </SideNavMenu>
 
@@ -175,12 +237,22 @@ class SideNav extends Component {
             >
               <SideNavMenuItem
                 element={NavLink}
+                isActive={
+                  !!matchPath(location.pathname, {
+                    path: this.getPath(urls.secrets.all())
+                  })
+                }
                 to={this.getPath(urls.secrets.all())}
               >
                 Secrets
               </SideNavMenuItem>
               <SideNavMenuItem
                 element={NavLink}
+                isActive={
+                  !!matchPath(location.pathname, {
+                    path: this.getPath(urls.serviceAccounts.all())
+                  })
+                }
                 to={this.getPath(urls.serviceAccounts.all())}
               >
                 ServiceAccounts
@@ -205,27 +277,34 @@ class SideNav extends Component {
                   extensionType,
                   name,
                   namespaced
-                }) => (
-                  <SideNavMenuItem
-                    element={NavLink}
-                    to={
-                      extensionType === 'kubernetes-resource'
-                        ? this.getPath(
-                            urls.kubernetesResources.all({
-                              group: apiGroup,
-                              version: apiVersion,
-                              type: name
-                            }),
-                            namespaced
-                          )
-                        : urls.extensions.byName({ name })
-                    }
-                    key={name}
-                    title={displayName}
-                  >
-                    {displayName}
-                  </SideNavMenuItem>
-                )
+                }) => {
+                  const to =
+                    extensionType === 'kubernetes-resource'
+                      ? this.getPath(
+                          urls.kubernetesResources.all({
+                            group: apiGroup,
+                            version: apiVersion,
+                            type: name
+                          }),
+                          namespaced
+                        )
+                      : urls.extensions.byName({ name });
+                  return (
+                    <SideNavMenuItem
+                      element={NavLink}
+                      isActive={
+                        !!matchPath(location.pathname, {
+                          path: to
+                        })
+                      }
+                      to={to}
+                      key={name}
+                      title={displayName}
+                    >
+                      {displayName}
+                    </SideNavMenuItem>
+                  );
+                }
               )}
             </SideNavMenu>
           )}
