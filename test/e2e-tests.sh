@@ -50,15 +50,13 @@ test_dashboard() {
   # kubectl or proxy (to create the necessary resources)
   local creationMethod=$1
 
-  header "Installing pipelines"
-
-  install_pipelines $PIPELINES_VERSION
-  install_triggers $TRIGGERS_VERSION
-
   header "Setting up environment (${@:2})"
   $tekton_repo_dir/scripts/installer install ${@:2}
   wait_dashboard_backend
   header "Running the e2e tests (${@:2})"
+
+  echo "Ensuring namespace $TEST_NAMESPACE exists"
+  kubectl create ns $TEST_NAMESPACE > /dev/null 2>&1 || true
 
   # Port forward the dashboard
   kubectl port-forward $(kubectl get pod --namespace $DASHBOARD_NAMESPACE -l app=tekton-dashboard -o name)  --namespace $DASHBOARD_NAMESPACE 9097:9097 &
@@ -97,7 +95,7 @@ test_dashboard() {
   echo "Creating static resources using kubectl..."
   staticFiles=($(find ${tekton_repo_dir}/test/resources/static -iname "*.y?ml"))
   for file in ${staticFiles[@]};do
-    cat "${file}" | envsubst | kubectl apply -f - || fail_test "Failed to create static resource: ${file}"
+    cat "${file}" | envsubst | kubectl apply --namespace $TEST_NAMESPACE -f - || fail_test "Failed to create static resource: ${file}"
   done
 
   curl -D $CSRF_HEADERS_STORE http://localhost:9097/v1/token
@@ -109,12 +107,12 @@ test_dashboard() {
     echo "Creating resources using kubectl..."
     pipelineResourceFiles=($(find ${tekton_repo_dir}/test/resources/envsubst -iname "pipelineresource*.y?ml"))
     for file in ${pipelineResourceFiles[@]};do
-      cat "${file}" | envsubst | kubectl apply -f - || fail_test "Failed to create pipelineresource: ${file}"
+      cat "${file}" | envsubst | kubectl apply --namespace $TEST_NAMESPACE -f - || fail_test "Failed to create pipelineresource: ${file}"
     done
 
     pipelineRunFiles=($(find ${tekton_repo_dir}/test/resources/envsubst -iname "pipelinerun*.y?ml"))
     for file in ${pipelineRunFiles[@]};do
-      cat "${file}" | envsubst | kubectl apply -f - || fail_test "Failed to create pipelinerun: ${file}"
+      cat "${file}" | envsubst | kubectl apply --namespace $TEST_NAMESPACE -f - || fail_test "Failed to create pipelinerun: ${file}"
     done
   elif [ "$creationMethod" = "proxy" ]; then
     # Create envsubst resources through dashboard proxy
@@ -221,14 +219,18 @@ test_dashboard() {
 
   $tekton_repo_dir/scripts/installer uninstall ${@:2}
 
-  uninstall_triggers $TRIGGERS_VERSION
-  uninstall_pipelines $PIPELINES_VERSION
+  echo "Deleting namespace $TEST_NAMESPACE"
+  kubectl delete ns $TEST_NAMESPACE
 }
 
-# validates that we can build the manifests we release
+header "Validating that we can build the release manifests"
+echo "Building manifests for k8s"
 $tekton_repo_dir/scripts/installer build                          || fail_test "Failed to build manifests for k8s"
+echo "Building manifests for k8s --read-only"
 $tekton_repo_dir/scripts/installer build --read-only              || fail_test "Failed to build manifests for k8s --read-only"
+echo "Building manifests for openshift"
 $tekton_repo_dir/scripts/installer build --openshift              || fail_test "Failed to build manifests for openshift"
+echo "Building manifests for openshift --read-only"
 $tekton_repo_dir/scripts/installer build --openshift --read-only  || fail_test "Failed to build manifests for openshift --read-only"
 
 if [ -z "$PIPELINES_VERSION" ]; then
@@ -239,28 +241,33 @@ if [ -z "$TRIGGERS_VERSION" ]; then
   export TRIGGERS_VERSION=v0.9.1
 fi
 
-# test in default namespace
+header "Installing Pipelines and Triggers"
+install_pipelines $PIPELINES_VERSION
+install_triggers $TRIGGERS_VERSION
+
+header "Test Dashboard default namespace"
 export DASHBOARD_NAMESPACE=tekton-pipelines
-export TEST_NAMESPACE=tekton-pipelines
+export TEST_NAMESPACE=tekton-test
 export TENANT_NAMESPACE=""
 
 test_dashboard proxy
 test_dashboard kubectl --read-only
 
-# test in custom namespace
+header "Test Dashboard custom namespace"
 export DASHBOARD_NAMESPACE=tekton-dashboard
-export TEST_NAMESPACE=tekton-pipelines
+export TEST_NAMESPACE=tekton-test
 export TENANT_NAMESPACE=""
 
 test_dashboard proxy --namespace $DASHBOARD_NAMESPACE
 test_dashboard kubectl --read-only --namespace $DASHBOARD_NAMESPACE
 
-# test single namespace visibility
-export DASHBOARD_NAMESPACE=tekton-dashboard
-export TEST_NAMESPACE=tekton-tenant
-export TENANT_NAMESPACE=tekton-tenant
+# TODO: this feature is incomplete, re-enable tests when ready
+# header "Test Dashboard single namespace visibility"
+# export DASHBOARD_NAMESPACE=tekton-dashboard
+# export TEST_NAMESPACE=tekton-tenant
+# export TENANT_NAMESPACE=tekton-tenant
 
-test_dashboard proxy --namespace $DASHBOARD_NAMESPACE --tenant-namespace $TENANT_NAMESPACE
-test_dashboard kubectl --read-only --namespace $DASHBOARD_NAMESPACE --tenant-namespace $TENANT_NAMESPACE
+# test_dashboard proxy --namespace $DASHBOARD_NAMESPACE --tenant-namespace $TENANT_NAMESPACE
+# test_dashboard kubectl --read-only --namespace $DASHBOARD_NAMESPACE --tenant-namespace $TENANT_NAMESPACE
 
 success
