@@ -126,7 +126,7 @@ class DetailsHeader extends Component {
         data-status={status}
         data-reason={reason}
       >
-        <h2>
+        <h2 className="tkn--details-header--heading">
           <StatusIcon
             DefaultIcon={type === 'step' ? DefaultIcon : null}
             reason={reason}

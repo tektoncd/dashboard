@@ -39,7 +39,7 @@ class RunHeader extends Component {
     } = this.props;
 
     return (
-      <div
+      <header
         className="tkn--pipeline-run-header"
         data-succeeded={status}
         data-reason={reason}
@@ -56,7 +56,7 @@ class RunHeader extends Component {
           return (
             runName && (
               <>
-                <h1>
+                <h1 className="tkn--run-header--heading">
                   <div className="tkn--run-name" title={runName}>
                     {runName}
                   </div>
@@ -91,7 +91,7 @@ class RunHeader extends Component {
             )
           );
         })()}
-      </div>
+      </header>
     );
   }
 }

@@ -13,10 +13,10 @@ limitations under the License.
 
 @import '~carbon-components/scss/globals/scss/vars';
 
-.tkn--step-details-header {
+header.tkn--step-details-header {
   padding: 1rem 1rem 0;
 
-  h2 {
+  h2.tkn--details-header--heading {
     height: 1.7rem;
     font-size: 1.3rem;
     font-weight: 400;
