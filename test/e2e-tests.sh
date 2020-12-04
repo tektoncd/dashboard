@@ -234,11 +234,11 @@ echo "Building manifests for openshift --read-only"
 $tekton_repo_dir/scripts/installer build --openshift --read-only  || fail_test "Failed to build manifests for openshift --read-only"
 
 if [ -z "$PIPELINES_VERSION" ]; then
-  export PIPELINES_VERSION=v0.17.2
+  export PIPELINES_VERSION=v0.18.1
 fi
 
 if [ -z "$TRIGGERS_VERSION" ]; then
-  export TRIGGERS_VERSION=v0.9.1
+  export TRIGGERS_VERSION=v0.10.1
 fi
 
 header "Installing Pipelines and Triggers"
