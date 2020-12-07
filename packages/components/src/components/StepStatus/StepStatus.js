@@ -16,21 +16,19 @@ import { injectIntl } from 'react-intl';
 
 import { ViewYAML } from '..';
 
-const StepStatus = ({ intl, status }) => {
-  return (
-    <div className="tkn--step-status">
-      <ViewYAML
-        resource={
-          status ||
-          intl.formatMessage({
-            id: 'dashboard.step.statusNotAvailable',
-            defaultMessage: 'Status not available'
-          })
-        }
-        dark
-      />
-    </div>
-  );
-};
+const StepStatus = ({ intl, status }) => (
+  <div className="tkn--step-status">
+    <ViewYAML
+      resource={
+        status ||
+        intl.formatMessage({
+          id: 'dashboard.step.statusNotAvailable',
+          defaultMessage: 'Status not available'
+        })
+      }
+      dark
+    />
+  </div>
+);
 
 export default injectIntl(StepStatus);

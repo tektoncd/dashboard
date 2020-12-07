@@ -20,17 +20,15 @@ const ReadWriteRoute = ({
   isReadOnly,
   path,
   ...rest
-}) => {
-  return (
-    <Route
-      {...rest}
-      exact={exact}
-      path={path}
-      render={props =>
-        isReadOnly ? <Redirect to="/" /> : <Component {...props} />
-      }
-    />
-  );
-};
+}) => (
+  <Route
+    {...rest}
+    exact={exact}
+    path={path}
+    render={props =>
+      isReadOnly ? <Redirect to="/" /> : <Component {...props} />
+    }
+  />
+);
 
 export default ReadWriteRoute;

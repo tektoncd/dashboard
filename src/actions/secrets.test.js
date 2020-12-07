@@ -260,11 +260,10 @@ it('createSecret error', async () => {
 
   const error = {
     response: {
-      text: () => {
-        return Promise.resolve(
+      text: () =>
+        Promise.resolve(
           'A secret already exists in namespace default with name default-token-kbn7j'
-        );
-      }
+        )
     }
   };
 

@@ -47,20 +47,18 @@ export default {
   title: 'Components/Table'
 };
 
-export const Simple = args => {
-  return (
-    <Table
-      emptyTextAllNamespaces="No rows in any namespace"
-      emptyTextSelectedNamespace="No rows in selected namespace"
-      filters={getFilters(args.showFilters)}
-      headers={args.headers}
-      loading={args.loading}
-      rows={[]}
-      selectedNamespace={args.selectedNamespace}
-      title={args.title}
-    />
-  );
-};
+export const Simple = args => (
+  <Table
+    emptyTextAllNamespaces="No rows in any namespace"
+    emptyTextSelectedNamespace="No rows in selected namespace"
+    filters={getFilters(args.showFilters)}
+    headers={args.headers}
+    loading={args.loading}
+    rows={[]}
+    selectedNamespace={args.selectedNamespace}
+    title={args.title}
+  />
+);
 Simple.args = {
   headers: [
     { key: 'name', header: 'Name' },
@@ -73,27 +71,23 @@ Simple.parameters = {
   notes: 'simple table with title, no rows, no buttons'
 };
 
-export const ToolbarButton = args => {
-  return (
-    <Table
-      emptyTextAllNamespaces="No rows in any namespace"
-      emptyTextSelectedNamespace="No rows in selected namespace"
-      filters={getFilters(args.showFilters)}
-      headers={[
-        { key: 'name', header: 'Name' },
-        { key: 'namespace', header: 'Namespace' },
-        { key: 'date', header: 'Date Created' }
-      ]}
-      loading={args.loading}
-      rows={args.rows}
-      selectedNamespace="*"
-      title={args.title}
-      toolbarButtons={[
-        { onClick: action('handleNew'), text: 'Add', icon: Add }
-      ]}
-    />
-  );
-};
+export const ToolbarButton = args => (
+  <Table
+    emptyTextAllNamespaces="No rows in any namespace"
+    emptyTextSelectedNamespace="No rows in selected namespace"
+    filters={getFilters(args.showFilters)}
+    headers={[
+      { key: 'name', header: 'Name' },
+      { key: 'namespace', header: 'Namespace' },
+      { key: 'date', header: 'Date Created' }
+    ]}
+    loading={args.loading}
+    rows={args.rows}
+    selectedNamespace="*"
+    title={args.title}
+    toolbarButtons={[{ onClick: action('handleNew'), text: 'Add', icon: Add }]}
+  />
+);
 ToolbarButton.args = {
   rows: [
     {
@@ -108,25 +102,23 @@ ToolbarButton.parameters = {
   notes: 'table with 1 row, 1 toolbar button, no batch actions'
 };
 
-export const BatchActions = args => {
-  return (
-    <Table
-      batchActionButtons={[
-        { onClick: action('handleDelete'), text: 'Delete', icon: Delete }
-      ]}
-      filters={getFilters(args.showFilters)}
-      headers={[
-        { key: 'name', header: 'Name' },
-        { key: 'namespace', header: 'Namespace' },
-        { key: 'date', header: 'Created' }
-      ]}
-      loading={args.loading}
-      rows={args.rows}
-      selectedNamespace="*"
-      title={args.title}
-    />
-  );
-};
+export const BatchActions = args => (
+  <Table
+    batchActionButtons={[
+      { onClick: action('handleDelete'), text: 'Delete', icon: Delete }
+    ]}
+    filters={getFilters(args.showFilters)}
+    headers={[
+      { key: 'name', header: 'Name' },
+      { key: 'namespace', header: 'Namespace' },
+      { key: 'date', header: 'Created' }
+    ]}
+    loading={args.loading}
+    rows={args.rows}
+    selectedNamespace="*"
+    title={args.title}
+  />
+);
 BatchActions.args = {
   rows: [
     {

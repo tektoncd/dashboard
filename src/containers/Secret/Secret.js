@@ -107,22 +107,20 @@ export /* istanbul ignore next */ class SecretContainer extends Component {
     ];
 
     const rowsForServiceAccounts = serviceAccountsWithSecret.map(
-      serviceAccount => {
-        return {
-          id: serviceAccount,
-          name: (
-            <Link
-              to={urls.serviceAccounts.byName({
-                namespace,
-                serviceAccountName: serviceAccount
-              })}
-              title={serviceAccount}
-            >
-              {serviceAccount}
-            </Link>
-          )
-        };
-      }
+      serviceAccount => ({
+        id: serviceAccount,
+        name: (
+          <Link
+            to={urls.serviceAccounts.byName({
+              namespace,
+              serviceAccountName: serviceAccount
+            })}
+            title={serviceAccount}
+          >
+            {serviceAccount}
+          </Link>
+        )
+      })
     );
 
     if (error) {

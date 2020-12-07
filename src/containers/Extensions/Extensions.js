@@ -82,27 +82,25 @@ export const Extensions = /* istanbul ignore next */ ({
           }
         ]}
         rows={extensions.map(
-          ({ apiGroup, apiVersion, displayName, extensionType, name }) => {
-            return {
-              id: name,
-              name: (
-                <Link
-                  to={
-                    extensionType === 'kubernetes-resource'
-                      ? urls.kubernetesResources.all({
-                          group: apiGroup,
-                          version: apiVersion,
-                          type: name
-                        })
-                      : urls.extensions.byName({ name })
-                  }
-                  title={displayName}
-                >
-                  {displayName}
-                </Link>
-              )
-            };
-          }
+          ({ apiGroup, apiVersion, displayName, extensionType, name }) => ({
+            id: name,
+            name: (
+              <Link
+                to={
+                  extensionType === 'kubernetes-resource'
+                    ? urls.kubernetesResources.all({
+                        group: apiGroup,
+                        version: apiVersion,
+                        type: name
+                      })
+                    : urls.extensions.byName({ name })
+                }
+                title={displayName}
+              >
+                {displayName}
+              </Link>
+            )
+          })
         )}
         loading={loading}
         emptyTextAllNamespaces={emptyText}

@@ -48,17 +48,15 @@ const TaskRunDetails = props => {
     <Table
       size="short"
       headers={headers}
-      rows={params.map(({ name, value }) => {
-        return {
-          id: name,
-          name,
-          value: (
-            <span title={value}>
-              <Param>{value}</Param>
-            </span>
-          )
-        };
-      })}
+      rows={params.map(({ name, value }) => ({
+        id: name,
+        name,
+        value: (
+          <span title={value}>
+            <Param>{value}</Param>
+          </span>
+        )
+      }))}
     />
   );
 

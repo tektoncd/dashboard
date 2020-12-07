@@ -15,38 +15,36 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import { Download16, Launch16 } from '@carbon/icons-react';
 
-const LogDownloadButton = ({ intl, name, url }) => {
-  return (
-    <>
-      <div className="bx--btn-set">
-        <a
-          className="bx--copy-btn"
-          href={url}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Launch16>
-            <title>
-              {intl.formatMessage({
-                id: 'dashboard.logs.launchButtonTooltip',
-                defaultMessage: 'Open logs in a new window'
-              })}
-            </title>
-          </Launch16>
-        </a>
-        <a className="bx--copy-btn" download={name} href={url}>
-          <Download16>
-            <title>
-              {intl.formatMessage({
-                id: 'dashboard.logs.downloadButtonTooltip',
-                defaultMessage: 'Download logs'
-              })}
-            </title>
-          </Download16>
-        </a>
-      </div>
-    </>
-  );
-};
+const LogDownloadButton = ({ intl, name, url }) => (
+  <>
+    <div className="bx--btn-set">
+      <a
+        className="bx--copy-btn"
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <Launch16>
+          <title>
+            {intl.formatMessage({
+              id: 'dashboard.logs.launchButtonTooltip',
+              defaultMessage: 'Open logs in a new window'
+            })}
+          </title>
+        </Launch16>
+      </a>
+      <a className="bx--copy-btn" download={name} href={url}>
+        <Download16>
+          <title>
+            {intl.formatMessage({
+              id: 'dashboard.logs.downloadButtonTooltip',
+              defaultMessage: 'Download logs'
+            })}
+          </title>
+        </Download16>
+      </a>
+    </div>
+  </>
+);
 
 export default injectIntl(LogDownloadButton);

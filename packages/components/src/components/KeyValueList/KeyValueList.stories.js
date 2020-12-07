@@ -24,17 +24,15 @@ export default {
   title: 'Components/KeyValueList'
 };
 
-export const Base = args => {
-  return (
-    <KeyValueList
-      invalidFields={{ '2-key': true, '3-value': true }}
-      onChange={action('onChange')}
-      onAdd={action('onAdd')}
-      onRemove={action('onRemove')}
-      {...args}
-    />
-  );
-};
+export const Base = args => (
+  <KeyValueList
+    invalidFields={{ '2-key': true, '3-value': true }}
+    onChange={action('onChange')}
+    onAdd={action('onAdd')}
+    onRemove={action('onRemove')}
+    {...args}
+  />
+);
 Base.args = {
   invalidText: 'There are invalid KeyValue entries.',
   keyValues: [
@@ -69,26 +67,24 @@ Base.args = {
   ]
 };
 
-export const MinKeyValues = args => {
-  return (
-    <KeyValueList
-      keyValues={[
-        {
-          id: '0',
-          key: 'foo',
-          keyPlaceholder: 'foo',
-          value: 'bar',
-          valuePlaceholder: 'bar'
-        }
-      ]}
-      invalidFields={{}}
-      onChange={action('onChange')}
-      onAdd={action('onAdd')}
-      onRemove={action('onRemove')}
-      {...args}
-    />
-  );
-};
+export const MinKeyValues = args => (
+  <KeyValueList
+    keyValues={[
+      {
+        id: '0',
+        key: 'foo',
+        keyPlaceholder: 'foo',
+        value: 'bar',
+        valuePlaceholder: 'bar'
+      }
+    ]}
+    invalidFields={{}}
+    onChange={action('onChange')}
+    onAdd={action('onAdd')}
+    onRemove={action('onRemove')}
+    {...args}
+  />
+);
 MinKeyValues.args = {
   minKeyValues: 1
 };

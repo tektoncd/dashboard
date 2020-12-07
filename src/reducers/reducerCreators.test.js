@@ -17,17 +17,15 @@ import { createNamespacedReducer } from './reducerCreators';
 import * as selectors from './pipelineResources';
 
 const existingResourceVersion = 123;
-const createResource = (name, namespace, resourceVersion, uid, other) => {
-  return {
-    metadata: {
-      name,
-      namespace,
-      resourceVersion,
-      uid
-    },
-    ...other
-  };
-};
+const createResource = (name, namespace, resourceVersion, uid, other) => ({
+  metadata: {
+    name,
+    namespace,
+    resourceVersion,
+    uid
+  },
+  ...other
+});
 
 const resourceType = 'PipelineResource';
 const reducer = createNamespacedReducer({ type: resourceType });

@@ -41,6 +41,4 @@ export default {
   title: 'Components/ViewYAML'
 };
 
-export const Base = args => {
-  return <ViewYAML {...args} />;
-};
+export const Base = args => <ViewYAML {...args} />;

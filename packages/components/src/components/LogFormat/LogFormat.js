@@ -272,13 +272,12 @@ const LogFormat = ({ children }) => {
     return <div key={index}>{line}</div>;
   };
 
-  const convert = ansi => {
-    return ansi.split(/\r?\n/).map((part, index) => {
+  const convert = ansi =>
+    ansi.split(/\r?\n/).map((part, index) => {
       text = '';
       line = [];
       return parse(part, index);
     });
-  };
 
   return <code>{convert(children)}</code>;
 };
