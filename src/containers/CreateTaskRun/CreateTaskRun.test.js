@@ -193,9 +193,7 @@ const apiErrorRegExp = /error creating taskrun/i;
 const timeoutValidationErrorRegExp = /Timeout must be a valid number less than 525600/i;
 const labelsValidationErrorRegExp = /Labels must follow the/i;
 
-const submitButton = allByText => {
-  return allByText(/create/i)[1];
-};
+const submitButton = allByText => allByText(/create/i)[1];
 
 const testTaskSpec = (taskId, queryByText, queryByValue) => {
   // Verify proper param and resource fields are displayed

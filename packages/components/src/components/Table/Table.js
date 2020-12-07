@@ -221,8 +221,8 @@ const Table = props => {
                     {shouldRenderBatchActions && (
                       <TableSelectAll {...getSelectionProps()} />
                     )}
-                    {headers.map(header => {
-                      return header.header ? (
+                    {headers.map(header =>
+                      header.header ? (
                         <TableHeader
                           {...getHeaderProps({ header })}
                           key={header.key}
@@ -231,8 +231,8 @@ const Table = props => {
                         </TableHeader>
                       ) : (
                         <TableHeader key={header.key} />
-                      );
-                    })}
+                      )
+                    )}
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -247,27 +247,25 @@ const Table = props => {
                       </TableCell>
                     </TableRow>
                   )}
-                  {rows.map(row => {
-                    return (
-                      <TableRow {...getRowProps({ row })} key={row.id}>
-                        {shouldRenderBatchActions && (
-                          <TableSelectRow {...getSelectionProps({ row })} />
-                        )}
-                        {row.cells.map(cell => (
-                          <TableCell
-                            key={cell.id}
-                            id={id ? `${id}:${cell.id}` : cell.id}
-                            className={`cell-${cell.info.header}`}
-                            {...(typeof cell.value === 'string' && {
-                              title: cell.value
-                            })}
-                          >
-                            {cell.value}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    );
-                  })}
+                  {rows.map(row => (
+                    <TableRow {...getRowProps({ row })} key={row.id}>
+                      {shouldRenderBatchActions && (
+                        <TableSelectRow {...getSelectionProps({ row })} />
+                      )}
+                      {row.cells.map(cell => (
+                        <TableCell
+                          key={cell.id}
+                          id={id ? `${id}:${cell.id}` : cell.id}
+                          className={`cell-${cell.info.header}`}
+                          {...(typeof cell.value === 'string' && {
+                            title: cell.value
+                          })}
+                        >
+                          {cell.value}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
                 </TableBody>
               </CarbonTable>
             )}

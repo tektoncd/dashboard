@@ -273,13 +273,11 @@ export /* istanbul ignore next */ class Secrets extends Component {
     const secretsFormatted = secretsToUse.map(secret => {
       let annotations = '';
       if (secret.metadata.annotations !== undefined) {
-        Object.keys(secret.metadata.annotations).forEach(
-          function annotationSetup(key) {
-            if (key.includes('tekton.dev')) {
-              annotations += `${key}: ${secret.metadata.annotations[key]}\n`;
-            }
+        Object.keys(secret.metadata.annotations).forEach(key => {
+          if (key.includes('tekton.dev')) {
+            annotations += `${key}: ${secret.metadata.annotations[key]}\n`;
           }
-        );
+        });
       }
       const serviceAccountsWithSecret = [];
       serviceAccounts.forEach(serviceAccount => {

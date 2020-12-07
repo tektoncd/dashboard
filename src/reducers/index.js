@@ -55,15 +55,15 @@ export default combineReducers({
 });
 
 function filterResources({ filters, resources }) {
-  return resources.filter(resource => {
-    return filters.every(filter => {
+  return resources.filter(resource =>
+    filters.every(filter => {
       const [filterKey, filterValue] = filter.split('=');
       const { labels } = resource.metadata || resource;
       return (
         labels && filterKey && filterValue && labels[filterKey] === filterValue
       );
-    });
-  });
+    })
+  );
 }
 
 export function getSelectedNamespace(state) {
@@ -329,8 +329,8 @@ export function getSecrets(
 ) {
   const allSecrets = secretSelectors.getSecrets(state.secrets, namespace);
 
-  return allSecrets.filter(secret => {
-    return filters.every(filter => {
+  return allSecrets.filter(secret =>
+    filters.every(filter => {
       const [filterKey, filterValue] = filter.split('=');
       return (
         secret.metadata.labels &&
@@ -338,8 +338,8 @@ export function getSecrets(
         filterValue &&
         secret.metadata.labels[filterKey] === filterValue
       );
-    });
-  });
+    })
+  );
 }
 
 export function getSecret(state, { name, namespace }) {

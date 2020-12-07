@@ -25,9 +25,9 @@ import './globals';
     super(props);
 
     const { source } = props;
-    const ExtensionComponent = React.lazy(() => {
-      return import(/* webpackIgnore: true */ source);
-    });
+    const ExtensionComponent = React.lazy(() =>
+      import(/* webpackIgnore: true */ source)
+    );
 
     this.state = { ExtensionComponent };
   }

@@ -47,73 +47,71 @@ const Annotations = props => {
 
   return (
     <>
-      {annotations.map((annotation, index) => {
-        return (
-          <div className="tkn--annotationDiv" key={annotation.id}>
-            <Dropdown
-              id="accessTo"
-              titleText={intl.formatMessage({
-                id: 'dashboard.createSecret.accessTo',
-                defaultMessage: 'Access To'
-              })}
-              label=""
-              initialSelectedItem={{
-                id: annotation.access,
-                text: annotation.access === 'git' ? gitIntlText : dockerIntlText
-              }}
-              items={[
-                {
-                  id: 'git',
-                  text: gitIntlText
-                },
-                {
-                  id: 'docker',
-                  text: dockerIntlText
-                }
-              ]}
-              itemToString={itemToString}
-              onChange={e =>
-                handleAnnotationChange('access', index, e.selectedItem)
+      {annotations.map((annotation, index) => (
+        <div className="tkn--annotationDiv" key={annotation.id}>
+          <Dropdown
+            id="accessTo"
+            titleText={intl.formatMessage({
+              id: 'dashboard.createSecret.accessTo',
+              defaultMessage: 'Access To'
+            })}
+            label=""
+            initialSelectedItem={{
+              id: annotation.access,
+              text: annotation.access === 'git' ? gitIntlText : dockerIntlText
+            }}
+            items={[
+              {
+                id: 'git',
+                text: gitIntlText
+              },
+              {
+                id: 'docker',
+                text: dockerIntlText
               }
+            ]}
+            itemToString={itemToString}
+            onChange={e =>
+              handleAnnotationChange('access', index, e.selectedItem)
+            }
+            disabled={loading}
+            translateWithId={getTranslateWithId(intl)}
+          />
+          <TextInput
+            id="serverURL"
+            value={annotation.value}
+            placeholder="https://github.com"
+            labelText={intl.formatMessage({
+              id: 'dashboard.universalFields.serverURL',
+              defaultMessage: 'Server URL'
+            })}
+            onChange={e =>
+              handleAnnotationChange('value', index, e.target.value)
+            }
+            invalid={annotation.id in invalidFields}
+            invalidText={intl.formatMessage({
+              id: 'dashboard.createSecret.serverURLInvalid',
+              defaultMessage: 'Server URL required.'
+            })}
+            autoComplete="off"
+            disabled={loading}
+          />
+          {annotations.length !== 1 && (
+            <Button
+              data-testid="removeIcon"
               disabled={loading}
-              translateWithId={getTranslateWithId(intl)}
+              hasIconOnly
+              iconDescription={removeTitle}
+              kind="ghost"
+              onClick={() => handleRemove(index)}
+              renderIcon={Remove}
+              size="field"
+              tooltipAlignment="center"
+              tooltipPosition="bottom"
             />
-            <TextInput
-              id="serverURL"
-              value={annotation.value}
-              placeholder="https://github.com"
-              labelText={intl.formatMessage({
-                id: 'dashboard.universalFields.serverURL',
-                defaultMessage: 'Server URL'
-              })}
-              onChange={e =>
-                handleAnnotationChange('value', index, e.target.value)
-              }
-              invalid={annotation.id in invalidFields}
-              invalidText={intl.formatMessage({
-                id: 'dashboard.createSecret.serverURLInvalid',
-                defaultMessage: 'Server URL required.'
-              })}
-              autoComplete="off"
-              disabled={loading}
-            />
-            {annotations.length !== 1 && (
-              <Button
-                data-testid="removeIcon"
-                disabled={loading}
-                hasIconOnly
-                iconDescription={removeTitle}
-                kind="ghost"
-                onClick={() => handleRemove(index)}
-                renderIcon={Remove}
-                size="field"
-                tooltipAlignment="center"
-                tooltipPosition="bottom"
-              />
-            )}
-          </div>
-        );
-      })}
+          )}
+        </div>
+      ))}
       <Button
         kind="ghost"
         renderIcon={Add}

@@ -25,9 +25,7 @@ import {
 import './LabelFilter.scss';
 
 function arrayUnique(arr) {
-  return arr.filter(function unique(item, index) {
-    return arr.indexOf(item) >= index;
-  });
+  return arr.filter((item, index) => arr.indexOf(item) >= index);
 }
 
 class LabelFilter extends Component {

@@ -96,22 +96,20 @@ export /* istanbul ignore next */ class ServiceAccountContainer extends Componen
 
     let rowsForSecrets = [];
     if (serviceAccount?.secrets && !loading) {
-      rowsForSecrets = serviceAccount.secrets.map(({ name }) => {
-        return {
-          id: name,
-          name: (
-            <Link
-              to={urls.secrets.byName({
-                namespace,
-                secretName: name
-              })}
-              title={name}
-            >
-              {name}
-            </Link>
-          )
-        };
-      });
+      rowsForSecrets = serviceAccount.secrets.map(({ name }) => ({
+        id: name,
+        name: (
+          <Link
+            to={urls.secrets.byName({
+              namespace,
+              secretName: name
+            })}
+            title={name}
+          >
+            {name}
+          </Link>
+        )
+      }));
     }
 
     const emptyTextMessageSecrets = intl.formatMessage({
@@ -131,12 +129,10 @@ export /* istanbul ignore next */ class ServiceAccountContainer extends Componen
 
     let rowsForImgPull = [];
     if (serviceAccount?.imagePullSecrets && !loading) {
-      rowsForImgPull = serviceAccount.imagePullSecrets.map(({ name }) => {
-        return {
-          id: name,
-          name
-        };
-      });
+      rowsForImgPull = serviceAccount.imagePullSecrets.map(({ name }) => ({
+        id: name,
+        name
+      }));
     }
 
     const emptyTextMessageImgPull = intl.formatMessage({

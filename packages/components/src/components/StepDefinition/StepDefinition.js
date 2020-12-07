@@ -18,46 +18,44 @@ import { getResources, urls } from '@tektoncd/dashboard-utils';
 
 import { ResourceTable, ViewYAML } from '..';
 
-const resourceTable = (title, namespace, resources, intl) => {
-  return (
-    <ResourceTable
-      title={title}
-      rows={resources.map(({ name, resourceRef, resourceSpec }) => ({
-        id: name,
-        name,
-        value:
-          resourceRef && resourceRef.name ? (
-            <Link
-              to={urls.pipelineResources.byName({
-                namespace,
-                pipelineResourceName: resourceRef.name
-              })}
-            >
-              {resourceRef.name}
-            </Link>
-          ) : (
-            <ViewYAML resource={resourceSpec} dark />
-          )
-      }))}
-      headers={[
-        {
-          key: 'name',
-          header: intl.formatMessage({
-            id: 'dashboard.tableHeader.name',
-            defaultMessage: 'Name'
-          })
-        },
-        {
-          key: 'value',
-          header: intl.formatMessage({
-            id: 'dashboard.tableHeader.value',
-            defaultMessage: 'Value'
-          })
-        }
-      ]}
-    />
-  );
-};
+const resourceTable = (title, namespace, resources, intl) => (
+  <ResourceTable
+    title={title}
+    rows={resources.map(({ name, resourceRef, resourceSpec }) => ({
+      id: name,
+      name,
+      value:
+        resourceRef && resourceRef.name ? (
+          <Link
+            to={urls.pipelineResources.byName({
+              namespace,
+              pipelineResourceName: resourceRef.name
+            })}
+          >
+            {resourceRef.name}
+          </Link>
+        ) : (
+          <ViewYAML resource={resourceSpec} dark />
+        )
+    }))}
+    headers={[
+      {
+        key: 'name',
+        header: intl.formatMessage({
+          id: 'dashboard.tableHeader.name',
+          defaultMessage: 'Name'
+        })
+      },
+      {
+        key: 'value',
+        header: intl.formatMessage({
+          id: 'dashboard.tableHeader.value',
+          defaultMessage: 'Value'
+        })
+      }
+    ]}
+  />
+);
 
 class StepDefinition extends Component {
   getIOTables() {

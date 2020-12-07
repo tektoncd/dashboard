@@ -343,14 +343,8 @@ describe('Table', () => {
 
     expect(handleDelete).toHaveBeenCalledTimes(1);
 
-    expect(
-      handleDelete.mock.calls[0][0].map(row => {
-        return row.id;
-      })
-    ).toEqual(
-      props.rows.map(row => {
-        return row.id;
-      })
+    expect(handleDelete.mock.calls[0][0].map(row => row.id)).toEqual(
+      props.rows.map(row => row.id)
     );
 
     expect(typeof handleDelete.mock.calls[0][1]).toEqual('function');
@@ -379,14 +373,8 @@ describe('Table', () => {
 
     expect(handleDelete).toHaveBeenCalledTimes(1);
 
-    expect(
-      handleDelete.mock.calls[0][0].map(row => {
-        return row.id;
-      })
-    ).toEqual(
-      props.rows.map(row => {
-        return row.id;
-      })
+    expect(handleDelete.mock.calls[0][0].map(row => row.id)).toEqual(
+      props.rows.map(row => row.id)
     );
 
     expect(typeof handleDelete.mock.calls[0][1]).toEqual('function');

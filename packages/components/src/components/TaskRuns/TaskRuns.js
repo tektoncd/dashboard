@@ -23,11 +23,10 @@ const TaskRuns = ({
   batchActionButtons = [],
   createTaskRunURL = urls.taskRuns.byName,
   createTaskRunsDisplayName = ({ taskRunMetadata }) => taskRunMetadata.name,
-  createTaskRunsURL = ({ kind, namespace, taskName }) => {
-    return kind === 'ClusterTask'
+  createTaskRunsURL = ({ kind, namespace, taskName }) =>
+    kind === 'ClusterTask'
       ? urls.taskRuns.byClusterTask({ taskName })
-      : urls.taskRuns.byTask({ namespace, taskName });
-  },
+      : urls.taskRuns.byTask({ namespace, taskName }),
   getTaskRunStatus = (taskRun, intl) => {
     const { reason } = getStatus(taskRun);
     return (

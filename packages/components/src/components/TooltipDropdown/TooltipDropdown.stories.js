@@ -29,14 +29,10 @@ export default {
   title: 'Components/TooltipDropdown'
 };
 
-export const Base = args => {
-  return <TooltipDropdown {...props} {...args} />;
-};
+export const Base = args => <TooltipDropdown {...props} {...args} />;
 
-export const Loading = args => {
-  return <TooltipDropdown {...props} loading {...args} />;
-};
+export const Loading = args => <TooltipDropdown {...props} loading {...args} />;
 
-export const Empty = args => {
-  return <TooltipDropdown {...props} items={[]} {...args} />;
-};
+export const Empty = args => (
+  <TooltipDropdown {...props} items={[]} {...args} />
+);
