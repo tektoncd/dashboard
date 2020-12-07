@@ -13,7 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import { Route } from 'react-router-dom';
-import { fireEvent, waitForElement } from 'react-testing-library';
+import { fireEvent, waitForElement } from '@testing-library/react';
 import { createIntl } from 'react-intl';
 import { paths, urls } from '@tektoncd/dashboard-utils';
 import { renderWithRouter } from '@tektoncd/dashboard-components/src/utils/test';
@@ -244,7 +244,7 @@ it('TriggerTemplateContainer renders parameters', async () => {
     }
   };
 
-  const { getByText } = renderWithRouter(
+  const { getByText, getAllByText } = renderWithRouter(
     <TriggerTemplateContainer
       intl={intl}
       match={match}
@@ -255,11 +255,11 @@ it('TriggerTemplateContainer renders parameters', async () => {
   );
 
   await waitForElement(() => getByText(/pipeline-template/i));
-  await waitForElement(() => getByText(/default/i));
+  await waitForElement(() => getByText('Default'));
   await waitForElement(() => getByText(/description/i));
   await waitForElement(() => getByText(/gitrevision/i));
   await waitForElement(() => getByText(/gitrepositoryurl/i));
-  await waitForElement(() => getByText(/message/i));
+  await waitForElement(() => getAllByText(/message/i)[0]);
   await waitForElement(() => getByText(/contenttype/i));
   await waitForElement(() => getByText(/the git revision/i));
   await waitForElement(() => getByText(/the git repository url/i));
@@ -296,7 +296,7 @@ it('TriggerTemplateContainer renders full resource template information', async 
     }
   };
 
-  const { getByText } = renderWithRouter(
+  const { getByText, getAllByText } = renderWithRouter(
     <TriggerTemplateContainer
       intl={intl}
       match={match}
@@ -308,12 +308,12 @@ it('TriggerTemplateContainer renders full resource template information', async 
 
   const compareToName = resourceTemplate1Details.metadata.name;
   await waitForElement(() => getByText(compareToName));
-  await waitForElement(() => getByText(/revision/i));
-  await waitForElement(() => getByText(/url/i));
+  await waitForElement(() => getAllByText(/revision/i)[0]);
+  await waitForElement(() => getAllByText(/url/i)[0]);
   await waitForElement(() => getByText(/gitrevision/i));
   await waitForElement(() => getByText(/gitrepositoryurl/i));
   await waitForElement(() => getByText(/simple-pipeline-run/i));
-  await waitForElement(() => getByText(/message/i));
+  await waitForElement(() => getAllByText(/message/i)[0]);
   await waitForElement(() => getByText(/contenttype/i));
 });
 
@@ -341,7 +341,7 @@ it('TriggerTemplateContainer contains overview tab with accurate information', a
 });
 
 it('TriggerTemplateContainer contains YAML tab with accurate information', async () => {
-  const { getByText } = renderWithRouter(
+  const { getByText, getAllByText } = renderWithRouter(
     <Route
       path={paths.triggerTemplates.byName()}
       render={props => (
@@ -374,7 +374,7 @@ it('TriggerTemplateContainer contains YAML tab with accurate information', async
   await waitForElement(() => getByText(/git-source/i));
   await waitForElement(() => getByText(/params.message/i));
   await waitForElement(() => getByText(/type: git/i));
-  await waitForElement(() => getByText(/revision/i));
+  await waitForElement(() => getAllByText(/revision/i)[0]);
 });
 
 it('TriggerTemplateContainer does not render label section if they are not present', async () => {

@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent } from 'react-testing-library';
+import { fireEvent } from '@testing-library/react';
 import { renderWithIntl } from '@tektoncd/dashboard-components/src/utils/test';
 
 import SecretsDeleteModal from './SecretsDeleteModal';

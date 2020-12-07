@@ -15,7 +15,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { fireEvent } from 'react-testing-library';
+import { fireEvent } from '@testing-library/react';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 import { renderWithRouter } from '@tektoncd/dashboard-components/src/utils/test';
 
@@ -42,7 +42,7 @@ describe('ListPageLayout', () => {
     const path = '/fake/path';
     const match = { path };
     const selectNamespace = jest.fn();
-    const { getByText, getByValue } = renderWithRouter(
+    const { getByText, getByDisplayValue } = renderWithRouter(
       <Provider store={store}>
         <ListPageLayout
           history={history}
@@ -53,7 +53,7 @@ describe('ListPageLayout', () => {
         />
       </Provider>
     );
-    fireEvent.click(getByValue(/All Namespaces/i));
+    fireEvent.click(getByDisplayValue(/All Namespaces/i));
     fireEvent.click(getByText(otherNamespace));
     expect(selectNamespace).not.toHaveBeenCalled();
     expect(history.push).toHaveBeenCalledWith(
@@ -83,7 +83,7 @@ describe('ListPageLayout', () => {
     const path = '/namespaces/:namespace/fake/path';
     const match = { path, params: { namespace } };
     const selectNamespace = jest.fn();
-    const { getByText, getByValue } = renderWithRouter(
+    const { getByText, getByDisplayValue } = renderWithRouter(
       <Provider store={store}>
         <ListPageLayout
           history={history}
@@ -94,7 +94,7 @@ describe('ListPageLayout', () => {
         />
       </Provider>
     );
-    fireEvent.click(getByValue(namespace));
+    fireEvent.click(getByDisplayValue(namespace));
     fireEvent.click(getByText(otherNamespace));
     expect(selectNamespace).not.toHaveBeenCalled();
     expect(history.push).toHaveBeenCalledWith(
@@ -122,7 +122,7 @@ describe('ListPageLayout', () => {
     const path = '/namespaces/:namespace/fake/path';
     const match = { path, params: { namespace } };
     const selectNamespace = jest.fn();
-    const { getByText, getByValue } = renderWithRouter(
+    const { getByText, getByDisplayValue } = renderWithRouter(
       <Provider store={store}>
         <ListPageLayout
           history={history}
@@ -133,7 +133,7 @@ describe('ListPageLayout', () => {
         />
       </Provider>
     );
-    fireEvent.click(getByValue(namespace));
+    fireEvent.click(getByDisplayValue(namespace));
     fireEvent.click(getByText(/All Namespaces/i));
     expect(selectNamespace).toHaveBeenCalledWith(ALL_NAMESPACES);
     expect(history.push).toHaveBeenCalledWith(`/fake/path`);
@@ -233,11 +233,11 @@ describe('ListPageLayout', () => {
       namespaces: { byName: {} },
       properties: {}
     });
-    const { getByLabelText } = renderWithRouter(
+    const { getAllByLabelText } = renderWithRouter(
       <Provider store={store}>
         <ListPageLayout filters={[]} />
       </Provider>
     );
-    expect(getByLabelText(/Input a label filter/i)).toBeTruthy();
+    expect(getAllByLabelText(/Input a label filter/i)[0]).toBeTruthy();
   });
 });

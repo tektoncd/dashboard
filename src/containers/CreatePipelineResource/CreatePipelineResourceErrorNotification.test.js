@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 import React from 'react';
-import { fireEvent, waitForElement } from 'react-testing-library';
+import { fireEvent, waitForElement } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
@@ -94,7 +94,6 @@ it('CreatePipelineResource error notification appears', async () => {
   });
   fireEvent.click(queryByText('Create'));
 
-  await waitForElement(() => getByText(/Error/i));
-  expect(getByText('Error:')).toBeTruthy();
+  await waitForElement(() => getByText('Error:'));
   expect(getByText('error code 404'));
 });

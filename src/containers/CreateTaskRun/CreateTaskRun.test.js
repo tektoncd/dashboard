@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, wait, waitForElement } from 'react-testing-library';
+import { fireEvent, wait, waitForElement } from '@testing-library/react';
 
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
@@ -195,7 +195,7 @@ const labelsValidationErrorRegExp = /Labels must follow the/i;
 
 const submitButton = allByText => allByText(/create/i)[1];
 
-const testTaskSpec = (taskId, queryByText, queryByValue) => {
+const testTaskSpec = (taskId, queryByText, queryByDisplayValue) => {
   // Verify proper param and resource fields are displayed
   const task = tasks.byId[taskId];
   const paramsRegExp = /params/i;
@@ -208,7 +208,9 @@ const testTaskSpec = (taskId, queryByText, queryByValue) => {
         expect(queryByText(new RegExp(param.description, 'i'))).toBeTruthy();
       }
       if (param.default) {
-        expect(queryByValue(new RegExp(param.default, 'i'))).toBeTruthy();
+        expect(
+          queryByDisplayValue(new RegExp(param.default, 'i'))
+        ).toBeTruthy();
       }
     });
   } else {
@@ -216,14 +218,14 @@ const testTaskSpec = (taskId, queryByText, queryByValue) => {
   }
   if (task.spec.resources) {
     if (task.spec.resources.inputs) {
-      expect(queryByText(resourcesRegExp)).toBeTruthy();
+      expect(queryByText('Input PipelineResources')).toBeTruthy();
       task.spec.resources.inputs.forEach(resource => {
         expect(queryByText(new RegExp(resource.name, 'i'))).toBeTruthy();
         expect(queryByText(new RegExp(resource.type, 'i'))).toBeTruthy();
       });
     }
     if (task.spec.resources.outputs) {
-      expect(queryByText(resourcesRegExp)).toBeTruthy();
+      expect(queryByText('Output PipelineResources')).toBeTruthy();
       task.spec.resources.outputs.forEach(resource => {
         expect(queryByText(new RegExp(resource.name, 'i'))).toBeTruthy();
         expect(queryByText(new RegExp(resource.type, 'i'))).toBeTruthy();
@@ -265,11 +267,11 @@ const selectTask1AndFillSpec = async ({
   getByText,
   getByTitle,
   queryByText,
-  queryByValue
+  queryByDisplayValue
 }) => {
   // Select task-1 and verify spec details are displayed
   await selectTask1({ getByPlaceholderText, getByText });
-  testTaskSpec('id-task-1', queryByText, queryByValue);
+  testTaskSpec('id-task-1', queryByText, queryByDisplayValue);
   // Fill task spec
   fillTask1Resources({ getAllByPlaceholderText, getByTitle });
   fillTask1Params(getByPlaceholderText);
@@ -300,7 +302,7 @@ describe('CreateTaskRun', () => {
       getByText,
       getByTitle,
       queryByText,
-      queryByValue,
+      queryByDisplayValue,
       rerender
     } = renderWithIntl(
       <Provider store={store.getStore()}>
@@ -319,7 +321,7 @@ describe('CreateTaskRun', () => {
       getByText,
       getByTitle,
       queryByText,
-      queryByValue
+      queryByDisplayValue
     });
     // Submit
     const errorResponseMock = {
@@ -343,7 +345,7 @@ describe('CreateTaskRun', () => {
       getByText,
       getByTitle,
       queryByText,
-      queryByValue,
+      queryByDisplayValue,
       rerender
     } = renderWithIntl(
       <Provider store={store.getStore()}>
@@ -362,7 +364,7 @@ describe('CreateTaskRun', () => {
       getByText,
       getByTitle,
       queryByText,
-      queryByValue
+      queryByDisplayValue
     });
     // Submit
     const errorResponseMock = {
@@ -428,7 +430,6 @@ describe('CreateTaskRun', () => {
       getByTitle,
       queryByDisplayValue,
       queryByText,
-      queryByValue,
       rerender
     } = renderWithIntl(
       <Provider store={store.getStore()}>
@@ -444,7 +445,7 @@ describe('CreateTaskRun', () => {
     expect(queryByDisplayValue(/namespace-1/i)).toBeTruthy();
     // Select task-1 and verify spec details are displayed
     await selectTask1({ getByPlaceholderText, getByText });
-    testTaskSpec('id-task-1', queryByText, queryByValue);
+    testTaskSpec('id-task-1', queryByText, queryByDisplayValue);
     // Fill task spec
     fillTask1Resources({
       getAllByPlaceholderText,
@@ -453,23 +454,23 @@ describe('CreateTaskRun', () => {
     fillTask1Params(getByPlaceholderText);
     expect(queryByDisplayValue(/pipeline-resource-1/i)).toBeTruthy();
     expect(queryByDisplayValue(/pipeline-resource-2/i)).toBeTruthy();
-    expect(queryByValue(/value-1/i)).toBeTruthy();
-    expect(queryByValue(/value-2/i)).toBeTruthy();
+    expect(queryByDisplayValue(/value-1/i)).toBeTruthy();
+    expect(queryByDisplayValue(/value-2/i)).toBeTruthy();
 
     // Select task-2 and verify spec details are displayed
-    fireEvent.click(queryByValue(/task-1/i));
+    fireEvent.click(queryByDisplayValue(/task-1/i));
     fireEvent.click(await waitForElement(() => getByTitle(/task-2/i)));
-    testTaskSpec('id-task-2', queryByText, queryByValue);
+    testTaskSpec('id-task-2', queryByText, queryByDisplayValue);
   });
 
   it('renders task controlled', async () => {
     // Display with task-1 selected
 
     const {
-      getByValue,
-      queryByLabelText,
+      getByDisplayValue,
+      queryAllByLabelText,
       queryByText,
-      queryByValue,
+      queryByDisplayValue,
       rerender
     } = renderWithIntl(
       <Provider store={store.getStore()}>
@@ -482,37 +483,42 @@ describe('CreateTaskRun', () => {
       </Provider>,
       { rerender }
     );
-    await waitForElement(() => getByValue(/task-1/i));
-    expect(queryByLabelText(/namespace/i)).toBeTruthy();
+    await waitForElement(() => getByDisplayValue(/task-1/i));
+    expect(queryAllByLabelText('Namespace')[0]).toBeTruthy();
     // Verify spec details are displayed
-    testTaskSpec('id-task-1', queryByText, queryByValue);
+    testTaskSpec('id-task-1', queryByText, queryByDisplayValue);
   });
 
   it('renders labels', () => {
-    const { getByText, getByPlaceholderText, queryByValue } = renderWithIntl(
+    const {
+      getAllByText,
+      getByText,
+      getByPlaceholderText,
+      queryByDisplayValue
+    } = renderWithIntl(
       <Provider store={store.getStore()}>
         <CreateTaskRun open namespace="" />
       </Provider>
     );
-    fireEvent.click(getByText(/Add/i));
+    fireEvent.click(getAllByText(/Add/i)[0]);
     fireEvent.change(getByPlaceholderText(/key/i), {
       target: { value: 'foo' }
     });
     fireEvent.change(getByPlaceholderText(/value/i), {
       target: { value: 'bar' }
     });
-    expect(queryByValue(/foo/i)).toBeTruthy();
-    expect(queryByValue(/bar/i)).toBeTruthy();
+    expect(queryByDisplayValue(/foo/i)).toBeTruthy();
+    expect(queryByDisplayValue(/bar/i)).toBeTruthy();
     fireEvent.click(getByText(/Remove/i));
-    expect(queryByValue(/foo/i)).toBeFalsy();
-    expect(queryByValue(/bar/i)).toBeFalsy();
+    expect(queryByDisplayValue(/foo/i)).toBeFalsy();
+    expect(queryByDisplayValue(/bar/i)).toBeFalsy();
   });
 
   it('resets Task and ServiceAccount when namespace changes', async () => {
     const {
       getByPlaceholderText,
       getByTitle,
-      getByValue,
+      getByDisplayValue,
       rerender
     } = renderWithIntl(
       <Provider store={store.getStore()}>
@@ -532,13 +538,13 @@ describe('CreateTaskRun', () => {
       await waitForElement(() => getByTitle(/service-account-1/i))
     );
     // Change selected namespace to the same namespace (expect no change)
-    fireEvent.click(getByValue(/namespace-1/i));
+    fireEvent.click(getByDisplayValue(/namespace-1/i));
     fireEvent.click(await waitForElement(() => getByTitle(/namespace-1/i)));
 
-    expect(getByValue(/task-1/i)).toBeTruthy();
-    expect(getByValue(/service-account-1/i)).toBeTruthy();
+    expect(getByDisplayValue(/task-1/i)).toBeTruthy();
+    expect(getByDisplayValue(/service-account-1/i)).toBeTruthy();
     // Change selected namespace
-    fireEvent.click(getByValue(/namespace-1/i));
+    fireEvent.click(getByDisplayValue(/namespace-1/i));
     fireEvent.click(await waitForElement(() => getByTitle(/namespace-2/i)));
 
     // Verify that Task and ServiceAccount value have reset
@@ -554,7 +560,7 @@ describe('CreateTaskRun', () => {
       getByText,
       getByTitle,
       queryByText,
-      queryByValue,
+      queryByDisplayValue,
       rerender
     } = renderWithIntl(
       <Provider store={store.getStore()}>
@@ -567,10 +573,10 @@ describe('CreateTaskRun', () => {
       </Provider>,
       { rerender }
     );
-    expect(queryByValue(/namespace-1/i)).toBeTruthy();
+    expect(queryByDisplayValue(/namespace-1/i)).toBeTruthy();
     // Select task-1 and verify spec details are displayed
     await selectTask1({ getByPlaceholderText, getByText });
-    testTaskSpec('id-task-1', queryByText, queryByValue);
+    testTaskSpec('id-task-1', queryByText, queryByDisplayValue);
     // Fill task spec
     fillTask1Resources({ getAllByPlaceholderText, getByTitle });
     fillTask1Params(getByPlaceholderText);
@@ -584,7 +590,7 @@ describe('CreateTaskRun', () => {
       target: { value: '120' }
     });
     // Fill label
-    fireEvent.click(getByText(/Add/i));
+    fireEvent.click(getAllByText(/Add/i)[0]);
     fireEvent.change(getByPlaceholderText(/key/i), {
       target: { value: 'foo' }
     });
@@ -642,6 +648,7 @@ describe('CreateTaskRun', () => {
       getByPlaceholderText,
       getByText,
       getByTitle,
+      queryAllByText,
       queryByText
     } = renderWithIntl(
       <Provider store={store.getStore()}>
@@ -662,15 +669,19 @@ describe('CreateTaskRun', () => {
     expect(queryByText(namespaceValidationErrorRegExp)).toBeFalsy();
     // Test validation on task1 spec
     fireEvent.click(submitButton(getAllByText));
-    expect(queryByText(pipelineResourceValidationErrorRegExp)).toBeTruthy();
+    expect(
+      queryAllByText(pipelineResourceValidationErrorRegExp)[0]
+    ).toBeTruthy();
     expect(queryByText(paramsValidationErrorRegExp)).toBeTruthy();
     // Fix validation error
     fillTask1Resources({ getAllByPlaceholderText, getByTitle });
-    expect(queryByText(pipelineResourceValidationErrorRegExp)).toBeFalsy();
+    expect(
+      queryAllByText(pipelineResourceValidationErrorRegExp)[0]
+    ).toBeFalsy();
     fillTask1Params(getByPlaceholderText);
     expect(queryByText(paramsValidationErrorRegExp)).toBeFalsy();
     // Test validation on labels
-    fireEvent.click(getByText(/Add/i));
+    fireEvent.click(getAllByText(/Add/i)[0]);
     fireEvent.click(submitButton(getAllByText));
     expect(queryByText(labelsValidationErrorRegExp)).toBeTruthy();
     fireEvent.change(getByPlaceholderText(/key/i), {
@@ -736,10 +747,10 @@ describe('CreateTaskRun', () => {
     const {
       getByPlaceholderText,
       getByText,
-      getByValue,
+      getByDisplayValue,
       queryAllByTitle,
       queryByText,
-      queryByValue,
+      queryByDisplayValue,
       rerender
     } = renderWithIntl(
       <Provider store={store.getStore()}>
@@ -754,11 +765,11 @@ describe('CreateTaskRun', () => {
     );
     // Select task-1 and verify spec details are displayed
     await selectTask1({ getByPlaceholderText, getByText });
-    testTaskSpec('id-task-1', queryByText, queryByValue);
-    expect(getByValue('task-1')).toBeTruthy();
+    testTaskSpec('id-task-1', queryByText, queryByDisplayValue);
+    expect(getByDisplayValue('task-1')).toBeTruthy();
 
     fireEvent.click(queryAllByTitle(/clear selected item/i)[1]);
-    expect(getByValue(/namespace-1/i)).toBeTruthy();
+    expect(getByDisplayValue(/namespace-1/i)).toBeTruthy();
     expect(queryByText('Select PipelineResource')).toBeFalsy();
   });
 

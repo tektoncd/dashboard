@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { waitForElement } from 'react-testing-library';
+import { waitForElement } from '@testing-library/react';
 import { createIntl } from 'react-intl';
 import { renderWithRouter } from '@tektoncd/dashboard-components/src/utils/test';
 

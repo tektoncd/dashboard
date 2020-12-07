@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { waitForElement } from 'react-testing-library';
+import { waitForElement } from '@testing-library/react';
 import { renderWithRouter } from '../../utils/test';
 import Logout from './LogoutButton';
 

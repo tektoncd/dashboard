@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, waitForElement } from 'react-testing-library';
+import { fireEvent, waitForElement } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
@@ -387,7 +387,7 @@ describe('PipelineRuns container', () => {
       url: '/pipelineruns'
     };
 
-    const { getByText, getByTitle, queryByText } = renderWithRouter(
+    const { getByText, getAllByTitle, queryAllByText } = renderWithRouter(
       <Provider store={mockTestStore}>
         <Route
           path="/pipelineruns"
@@ -409,8 +409,8 @@ describe('PipelineRuns container', () => {
 
     // Let the page finish rendering so we know if we're in read-only mode or not
     await waitForElement(() => getByText('pipelineRunWithTwoLabels'));
-    expect(queryByText('Create')).toBeTruthy(); // So we don't match on "Created" which is a table header
-    expect(getByTitle(/actions/i)).toBeTruthy();
+    expect(queryAllByText('Create')[0]).toBeTruthy(); // So we don't match on "Created" which is a table header
+    expect(getAllByTitle(/actions/i)[0]).toBeTruthy();
   });
 
   it('Creation, deletion and stop events are not possible when in read-only mode', async () => {
@@ -422,7 +422,7 @@ describe('PipelineRuns container', () => {
       url: '/pipelineruns'
     };
 
-    const { getByText, queryByText, queryByTitle } = renderWithRouter(
+    const { getByText, queryAllByText, queryAllByTitle } = renderWithRouter(
       <Provider store={mockTestStore}>
         <Route
           path="/pipelineruns"
@@ -431,7 +431,6 @@ describe('PipelineRuns container', () => {
               {...props}
               match={match}
               error={null}
-              isReadOnly
               loading={false}
               namespace="namespace-1"
               fetchPipelineRuns={() => Promise.resolve()}
@@ -444,8 +443,8 @@ describe('PipelineRuns container', () => {
     );
     // Let the page finish rendering so we know if we're in read-only mode or not
     await waitForElement(() => getByText('pipelineRunWithTwoLabels'));
-    expect(queryByText('Create')).toBeFalsy(); // So we don't match on "Created" which is a table header
-    expect(queryByTitle(/actions/i)).toBeFalsy();
+    expect(queryAllByText('Create')[0]).toBeFalsy();
+    expect(queryAllByTitle(/actions/i)[0]).toBeFalsy();
   });
 
   it('handles rerun event in PipelineRuns page', async () => {
@@ -454,7 +453,7 @@ describe('PipelineRuns container', () => {
     jest
       .spyOn(PipelineRunsAPI, 'rerunPipelineRun')
       .mockImplementation(() => []);
-    const { getByTestId, getByText } = renderWithRouter(
+    const { getAllByTestId, getByText } = renderWithRouter(
       <Provider store={mockTestStore}>
         <Route
           path={urls.pipelineRuns.all()}
@@ -470,7 +469,9 @@ describe('PipelineRuns container', () => {
       { route: urls.pipelineRuns.all() }
     );
     await waitForElement(() => getByText(/pipelineRunWithTwoLabels/i));
-    fireEvent.click(await waitForElement(() => getByTestId('overflowmenu')));
+    fireEvent.click(
+      await waitForElement(() => getAllByTestId('overflowmenu')[0])
+    );
     await waitForElement(() => getByText(/Rerun/i));
     fireEvent.click(getByText('Rerun'));
     expect(PipelineRunsAPI.rerunPipelineRun).toHaveBeenCalledTimes(1);

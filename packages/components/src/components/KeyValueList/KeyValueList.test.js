@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent } from 'react-testing-library';
+import { fireEvent } from '@testing-library/react';
 import KeyValueList from './KeyValueList';
 import { renderWithIntl } from '../../utils/test';
 
@@ -58,30 +58,14 @@ it('KeyValueList incorrect fields', () => {
   };
   const { getByDisplayValue } = renderWithIntl(<KeyValueList {...props} />);
 
-  const annotationKey0 = getByDisplayValue(
-    new RegExp(props.keyValues[0].key, 'i')
-  );
-  const annotationKey1 = getByDisplayValue(
-    new RegExp(props.keyValues[1].key, 'i')
-  );
-  const annotationKey2 = getByDisplayValue(
-    new RegExp(props.keyValues[2].key, 'i')
-  );
-  const annotationKey3 = getByDisplayValue(
-    new RegExp(props.keyValues[3].key, 'i')
-  );
-  const annotationValue0 = getByDisplayValue(
-    new RegExp(props.keyValues[0].value, 'i')
-  );
-  const annotationValue1 = getByDisplayValue(
-    new RegExp(props.keyValues[1].value, 'i')
-  );
-  const annotationValue2 = getByDisplayValue(
-    new RegExp(props.keyValues[2].value, 'i')
-  );
-  const annotationValue3 = getByDisplayValue(
-    new RegExp(props.keyValues[3].value, 'i')
-  );
+  const annotationKey0 = getByDisplayValue(props.keyValues[0].key);
+  const annotationKey1 = getByDisplayValue(props.keyValues[1].key);
+  const annotationKey2 = getByDisplayValue(props.keyValues[2].key);
+  const annotationKey3 = getByDisplayValue(props.keyValues[3].key);
+  const annotationValue0 = getByDisplayValue(props.keyValues[0].value);
+  const annotationValue1 = getByDisplayValue(props.keyValues[1].value);
+  const annotationValue2 = getByDisplayValue(props.keyValues[2].value);
+  const annotationValue3 = getByDisplayValue(props.keyValues[3].value);
 
   expect(annotationKey0.getAttribute('data-invalid')).toBeFalsy();
   expect(annotationKey1.getAttribute('data-invalid')).toBeTruthy();
@@ -101,9 +85,9 @@ it('KeyValueList change key', () => {
     onAdd() {},
     onRemove() {}
   };
-  const { getByValue } = renderWithIntl(<KeyValueList {...props} />);
+  const { getByDisplayValue } = renderWithIntl(<KeyValueList {...props} />);
 
-  fireEvent.change(getByValue(/foo0/i), {
+  fireEvent.change(getByDisplayValue(/foo0/i), {
     target: { value: 'new key 0' }
   });
 
@@ -123,9 +107,9 @@ it('KeyValueList change value', () => {
     onAdd() {},
     onRemove() {}
   };
-  const { getByValue } = renderWithIntl(<KeyValueList {...props} />);
+  const { getByDisplayValue } = renderWithIntl(<KeyValueList {...props} />);
 
-  fireEvent.change(getByValue(/bar0/i), {
+  fireEvent.change(getByDisplayValue(/bar0/i), {
     target: { value: 'new value 0' }
   });
 
@@ -150,7 +134,9 @@ it('KeyValueList add and remove buttons work', () => {
     onAdd: jest.fn(),
     onRemove: jest.fn()
   };
-  const { getByText } = renderWithIntl(<KeyValueList {...props} />);
+  const { getByText, getAllByText } = renderWithIntl(
+    <KeyValueList {...props} />
+  );
 
   const addButton = getByText(/Add/i);
 
@@ -160,9 +146,9 @@ it('KeyValueList add and remove buttons work', () => {
   fireEvent.click(addButton);
   fireEvent.click(addButton);
 
-  fireEvent.click(getByText(/Remove/i));
-  fireEvent.click(getByText(/Remove/i));
-  fireEvent.click(getByText(/Remove/i));
+  fireEvent.click(getAllByText(/Remove/i)[0]);
+  fireEvent.click(getAllByText(/Remove/i)[0]);
+  fireEvent.click(getAllByText(/Remove/i)[0]);
 
   expect(props.onAdd).toHaveBeenCalledTimes(5);
   expect(props.onRemove).toHaveBeenCalledTimes(3);

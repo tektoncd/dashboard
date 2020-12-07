@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, waitForElement } from 'react-testing-library';
+import { fireEvent, waitForElement } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { Route } from 'react-router-dom';
 import { urls } from '@tektoncd/dashboard-utils';
@@ -331,6 +331,6 @@ describe('Secrets', () => {
       { route: urls.secrets.all() }
     );
     await waitForElement(() => queryByText(/github-repo-access-secret/i));
-    expect(queryByText(/create/i)).toBeTruthy();
+    expect(queryByText('Create')).toBeTruthy();
   });
 });

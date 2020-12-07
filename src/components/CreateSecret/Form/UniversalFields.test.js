@@ -98,14 +98,15 @@ it('UniversalFields renders with blank inputs', () => {
   const {
     getByLabelText,
     getAllByDisplayValue,
+    getAllByLabelText,
     getByPlaceholderText
   } = renderWithIntl(
     <Provider store={store}>
       <UniversalFields {...props} />
     </Provider>
   );
-  expect(getByLabelText(/Name/i)).toBeTruthy();
-  expect(getByLabelText(/Namespace/i)).toBeTruthy();
+  expect(getByLabelText('Name')).toBeTruthy();
+  expect(getAllByLabelText('Namespace')[0]).toBeTruthy();
   expect(getByPlaceholderText(/Select Namespace/i)).toBeTruthy();
   expect(getAllByDisplayValue('').length).toEqual(2);
 });
@@ -127,7 +128,7 @@ it('UniversalFields incorrect fields', () => {
     </Provider>
   );
 
-  const nameInput = getByLabelText(/Name/i);
+  const nameInput = getByLabelText('Name');
 
   expect(nameInput.getAttribute('data-invalid')).toBeTruthy();
   expect(getByText(/Namespace required./i)).toBeTruthy();
@@ -144,14 +145,14 @@ it('UniversalFields disabled when loading', () => {
     secretType: '',
     loading: true
   };
-  const { getByLabelText } = renderWithIntl(
+  const { getByLabelText, getAllByLabelText } = renderWithIntl(
     <Provider store={store}>
       <UniversalFields {...props} />
     </Provider>
   );
 
-  const nameInput = getByLabelText(/Name/i);
-  const namespaceDropdown = getByLabelText(/Namespace/i);
+  const nameInput = getByLabelText('Name');
+  const namespaceDropdown = getAllByLabelText('Namespace')[1];
 
   expect(nameInput.disabled).toBeTruthy();
   expect(namespaceDropdown.disabled).toBeTruthy();

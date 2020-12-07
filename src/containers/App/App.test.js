@@ -13,7 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import { Provider } from 'react-redux';
-import { render, waitForElement } from 'react-testing-library';
+import { render, waitForElement } from '@testing-library/react';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
@@ -59,9 +59,9 @@ describe('App', () => {
 
     await waitForElement(() => queryByText('Tekton resources'));
 
-    expect(queryByText(/namespace/i)).toBeTruthy();
-    expect(queryByText(/pipelines/i)).toBeTruthy();
-    expect(queryByText(/tasks/i)).toBeTruthy();
+    expect(queryByText('Namespace')).toBeTruthy();
+    expect(queryByText('Pipelines')).toBeTruthy();
+    expect(queryByText('Tasks')).toBeTruthy();
   });
 
   it('renders successfully in single namespace mode', async () => {
@@ -91,9 +91,9 @@ describe('App', () => {
 
     await waitForElement(() => queryByText('Tekton resources'));
 
-    expect(queryByText(/namespaces/i)).toBeFalsy();
-    expect(queryByText(/pipelines/i)).toBeTruthy();
-    expect(queryByText(/tasks/i)).toBeTruthy();
+    expect(queryByText('Namespaces')).toBeFalsy();
+    expect(queryByText('Pipelines')).toBeTruthy();
+    expect(queryByText('Tasks')).toBeTruthy();
   });
 
   it('selects namespace based on tenant namespace', async () => {

@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { render } from 'react-testing-library';
+import { render } from '@testing-library/react';
 import ResourceTable from './ResourceTable';
 
 it('ResourceTable renders with one row', () => {

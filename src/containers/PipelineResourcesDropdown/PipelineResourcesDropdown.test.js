@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, getNodeText } from 'react-testing-library';
+import { fireEvent, getNodeText } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
@@ -232,7 +232,11 @@ describe('PipelineResourcesDropdown', () => {
       notifications: {}
     });
     // Select item 'pipeline-resource-1'
-    const { queryByPlaceholderText, queryByValue, rerender } = renderWithIntl(
+    const {
+      queryByPlaceholderText,
+      queryByDisplayValue,
+      rerender
+    } = renderWithIntl(
       <Provider store={store}>
         <PipelineResourcesDropdown
           {...props}
@@ -240,7 +244,7 @@ describe('PipelineResourcesDropdown', () => {
         />
       </Provider>
     );
-    expect(queryByValue(/pipeline-resource-1/i)).toBeTruthy();
+    expect(queryByDisplayValue(/pipeline-resource-1/i)).toBeTruthy();
     // Select item 'pipeline-resource-2'
     renderWithIntl(
       <Provider store={store}>
@@ -251,7 +255,7 @@ describe('PipelineResourcesDropdown', () => {
       </Provider>,
       { rerender }
     );
-    expect(queryByValue(/pipeline-resource-2/i)).toBeTruthy();
+    expect(queryByDisplayValue(/pipeline-resource-2/i)).toBeTruthy();
     // No selected item (select item '')
     renderWithIntl(
       <Provider store={store}>

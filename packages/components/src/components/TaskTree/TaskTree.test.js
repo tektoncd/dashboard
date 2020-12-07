@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent } from 'react-testing-library';
+import { fireEvent } from '@testing-library/react';
 import TaskTree from './TaskTree';
 import { renderWithIntl } from '../../utils/test';
 

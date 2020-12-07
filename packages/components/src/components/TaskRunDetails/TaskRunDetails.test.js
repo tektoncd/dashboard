@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent } from 'react-testing-library';
+import { fireEvent } from '@testing-library/react';
 
 import { renderWithIntl } from '../../utils/test';
 import TaskRunDetails from './TaskRunDetails';
@@ -53,11 +53,11 @@ describe('TaskRunDetails', () => {
       metadata: { name: 'task-run-name' },
       spec: { params: [{ name: 'fake_name', value: 'fake_value' }] }
     };
-    const { queryByText } = renderWithIntl(
+    const { queryByText, queryAllByText } = renderWithIntl(
       <TaskRunDetails taskRun={taskRun} view="status" />
     );
     expect(queryByText(/status/i)).toBeTruthy();
-    expect(queryByText(/pending/i)).toBeTruthy();
+    expect(queryAllByText(/pending/i)[0]).toBeTruthy();
     expect(queryByText('fake_name')).toBeFalsy();
     fireEvent.click(queryByText(/parameters/i));
     expect(queryByText('fake_name')).toBeTruthy();

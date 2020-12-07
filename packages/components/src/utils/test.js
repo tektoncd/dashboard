@@ -13,7 +13,7 @@ limitations under the License.
 /* istanbul ignore file */
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { render } from 'react-testing-library';
+import { render } from '@testing-library/react';
 import { IntlProvider } from 'react-intl';
 
 function RouterWrapper({ children }) {

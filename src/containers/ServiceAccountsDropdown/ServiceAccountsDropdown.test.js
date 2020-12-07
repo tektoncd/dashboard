@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, getNodeText } from 'react-testing-library';
+import { fireEvent, getNodeText } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
@@ -194,7 +194,11 @@ describe('ServiceAccountsDropdown', () => {
       notifications: {}
     });
     // Select item 'service-account-1'
-    const { queryByPlaceholderText, queryByValue, rerender } = renderWithIntl(
+    const {
+      queryByPlaceholderText,
+      queryByDisplayValue,
+      rerender
+    } = renderWithIntl(
       <Provider store={store}>
         <ServiceAccountsDropdown
           {...props}
@@ -202,7 +206,7 @@ describe('ServiceAccountsDropdown', () => {
         />
       </Provider>
     );
-    expect(queryByValue(/service-account-1/i)).toBeTruthy();
+    expect(queryByDisplayValue(/service-account-1/i)).toBeTruthy();
     // Select item 'service-account-2'
     renderWithIntl(
       <Provider store={store}>
@@ -213,7 +217,7 @@ describe('ServiceAccountsDropdown', () => {
       </Provider>,
       { rerender }
     );
-    expect(queryByValue(/service-account-2/i)).toBeTruthy();
+    expect(queryByDisplayValue(/service-account-2/i)).toBeTruthy();
     // No selected item (select item '')
     renderWithIntl(
       <Provider store={store}>

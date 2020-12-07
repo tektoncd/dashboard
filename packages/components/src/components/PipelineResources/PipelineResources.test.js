@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, waitForElement } from 'react-testing-library';
+import { fireEvent, waitForElement } from '@testing-library/react';
 import { TrashCan32 as Delete } from '@carbon/icons-react';
 import { renderWithIntl, renderWithRouter } from '../../utils/test';
 import PipelineResources from './PipelineResources';
@@ -22,7 +22,7 @@ it('PipelineResources renders empty state', () => {
     <PipelineResources pipelineResources={[]} />
   );
   expect(queryByText(/no pipelineresources/i)).toBeTruthy();
-  expect(queryByText(/namespace/i)).toBeTruthy();
+  expect(queryByText('Namespace')).toBeTruthy();
 });
 
 it('PipelineResources renders headers state', () => {
@@ -30,7 +30,7 @@ it('PipelineResources renders headers state', () => {
     <PipelineResources pipelineResources={[]} />
   );
   expect(queryByText(/pipelineresources/i)).toBeTruthy();
-  expect(queryByText(/namespace/i)).toBeTruthy();
+  expect(queryByText('Namespace')).toBeTruthy();
   expect(queryByText(/type/i)).toBeTruthy();
   expect(document.getElementsByClassName('bx--overflow-menu')).toBeTruthy();
 });

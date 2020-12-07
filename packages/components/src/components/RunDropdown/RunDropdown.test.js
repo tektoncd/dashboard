@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, waitForElement } from 'react-testing-library';
+import { fireEvent, waitForElement } from '@testing-library/react';
 import { renderWithIntl } from '../../utils/test';
 import RunDropdown from './RunDropdown';
 
@@ -31,10 +31,10 @@ describe('RunDropdown dropdown no modal', () => {
         action: () => mockCallBack()
       }
     ];
-    const { getByText, getByTitle } = renderWithIntl(
+    const { getByText, getAllByTitle } = renderWithIntl(
       <RunDropdown items={items} resource={resource} />
     );
-    fireEvent.click(getByTitle(`Actions`));
+    fireEvent.click(getAllByTitle('Actions')[0]);
     await waitForElement(() => getByText('Action'));
     fireEvent.click(getByText(`Action`));
     expect(mockCallBack).toHaveBeenCalled();
@@ -50,10 +50,10 @@ describe('RunDropdown dropdown missing disable default behaviour', () => {
         action: () => mockCallBack()
       }
     ];
-    const { getByText, getByTitle } = renderWithIntl(
+    const { getByText, getAllByTitle } = renderWithIntl(
       <RunDropdown items={items} resource={resource} />
     );
-    fireEvent.click(getByTitle(`Actions`));
+    fireEvent.click(getAllByTitle('Actions')[0]);
     await waitForElement(() => getByText('Action'));
     fireEvent.click(getByText(`Action`));
     expect(mockCallBack).toHaveBeenCalled();
@@ -70,10 +70,10 @@ describe('RunDropdown disabled field', () => {
         action: () => mockCallBack()
       }
     ];
-    const { getByText, getByTitle } = renderWithIntl(
+    const { getByText, getAllByTitle } = renderWithIntl(
       <RunDropdown items={items} resource={resource} />
     );
-    fireEvent.click(getByTitle(`Actions`));
+    fireEvent.click(getAllByTitle('Actions')[0]);
     await waitForElement(() => getByText('Action'));
     fireEvent.click(getByText(`Action`));
     expect(mockCallBack).not.toHaveBeenCalled();
@@ -96,10 +96,10 @@ describe('RunDropdown with modal', () => {
         }
       }
     ];
-    const { getByText, getByTitle } = renderWithIntl(
+    const { getByText, getAllByTitle } = renderWithIntl(
       <RunDropdown items={items} resource={resource} />
     );
-    fireEvent.click(getByTitle(`Actions`));
+    fireEvent.click(getAllByTitle('Actions')[0]);
     await waitForElement(() => getByText('Action'));
     fireEvent.click(getByText(`Action`));
     await waitForElement(() => getByText('primary'));
