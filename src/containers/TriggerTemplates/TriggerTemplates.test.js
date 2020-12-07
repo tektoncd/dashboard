@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent } from 'react-testing-library';
+import { fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { Route } from 'react-router-dom';
 import configureStore from 'redux-mock-store';
@@ -82,7 +82,7 @@ it('TriggerTemplates renders with no templates', () => {
     { route: '/triggerTemplates' }
   );
 
-  expect(queryByText(/TriggerTemplates/i)).toBeTruthy();
+  expect(queryByText('TriggerTemplates')).toBeTruthy();
   expect(queryByText('No TriggerTemplates in any namespace.')).toBeTruthy();
 });
 

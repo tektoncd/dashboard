@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { waitForElement } from 'react-testing-library';
+import { waitForElement } from '@testing-library/react';
 import Log from './Log';
 import { renderWithIntl } from '../../utils/test';
 
@@ -64,7 +64,7 @@ describe('Log', () => {
       />
     );
 
-    await waitForElement(() => getByText(/Line 1/i));
+    await waitForElement(() => getByText('Line 1'));
   });
 
   it('renders the provided content when streaming logs', async () => {

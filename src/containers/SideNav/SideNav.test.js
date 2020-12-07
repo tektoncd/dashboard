@@ -15,7 +15,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { waitForElement } from 'react-testing-library';
+import { waitForElement } from '@testing-library/react';
 import { renderWithRouter } from '@tektoncd/dashboard-components/src/utils/test';
 
 import SideNavContainer, { SideNavWithIntl as SideNav } from './SideNav';
@@ -57,8 +57,8 @@ it('SideNav renders with extensions', () => {
       <SideNavContainer location={{ search: '' }} />
     </Provider>
   );
-  expect(queryByText(/pipelines/i)).toBeTruthy();
-  expect(queryByText(/tasks/i)).toBeTruthy();
+  expect(queryByText('Pipelines')).toBeTruthy();
+  expect(queryByText('Tasks')).toBeTruthy();
   expect(queryByText(/tekton_dashboard_extension/i)).toBeTruthy();
   expect(queryByText(/dashboard_crd_extension/i)).toBeTruthy();
 });
@@ -80,11 +80,11 @@ it('SideNav renders with triggers', async () => {
     </Provider>
   );
   await waitForElement(() => queryByText(/about/i));
-  expect(queryByText(/pipelines/i)).toBeTruthy();
-  expect(queryByText(/tasks/i)).toBeTruthy();
-  await waitForElement(() => queryByText(/eventlisteners/i));
-  expect(queryByText(/triggertemplates/i)).toBeTruthy();
-  expect(queryByText(/triggerbindings/i)).toBeTruthy();
+  expect(queryByText('Pipelines')).toBeTruthy();
+  expect(queryByText('Tasks')).toBeTruthy();
+  await waitForElement(() => queryByText('EventListeners'));
+  expect(queryByText('TriggerTemplates')).toBeTruthy();
+  expect(queryByText('TriggerBindings')).toBeTruthy();
 });
 
 it('SideNav selects namespace based on URL', () => {

@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, getNodeText } from 'react-testing-library';
+import { fireEvent, getNodeText } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
@@ -67,26 +67,30 @@ it('NamespacesDropdown renders controlled selection', () => {
     properties: {}
   });
   // Select item 'namespace-1'
-  const { container, queryByPlaceholderText, queryByValue } = renderWithIntl(
+  const {
+    queryByPlaceholderText,
+    queryByDisplayValue,
+    rerender
+  } = renderWithIntl(
     <Provider store={store}>
       <NamespacesDropdown {...props} selectedItem={{ text: 'namespace-1' }} />
     </Provider>
   );
-  expect(queryByValue(/namespace-1/i)).toBeTruthy();
+  expect(queryByDisplayValue(/namespace-1/i)).toBeTruthy();
   // Select item 'namespace-2'
   renderWithIntl(
     <Provider store={store}>
       <NamespacesDropdown {...props} selectedItem={{ text: 'namespace-2' }} />
     </Provider>,
-    { container }
+    { rerender }
   );
-  expect(queryByValue(/namespace-2/i)).toBeTruthy();
+  expect(queryByDisplayValue(/namespace-2/i)).toBeTruthy();
   // No selected item (select item '')
   renderWithIntl(
     <Provider store={store}>
       <NamespacesDropdown {...props} selectedItem="" />
     </Provider>,
-    { container }
+    { rerender }
   );
   expect(queryByPlaceholderText(initialTextRegExp)).toBeTruthy();
 });

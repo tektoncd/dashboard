@@ -20,7 +20,7 @@ describe('PipelineRuns', () => {
   it('renders empty state', () => {
     const { queryByText } = renderWithIntl(<PipelineRuns pipelineRuns={[]} />);
     expect(queryByText(/no pipelineruns/i)).toBeTruthy();
-    expect(queryByText(/namespace/i)).toBeTruthy();
+    expect(queryByText('Namespace')).toBeTruthy();
   });
 
   it('hides namespace when omitted from the list of columns', () => {
@@ -31,8 +31,8 @@ describe('PipelineRuns', () => {
       />
     );
 
-    expect(queryByText(/Namespacei/)).toBeFalsy();
-    expect(queryByText(/pipeline/i)).toBeTruthy();
+    expect(queryByText('Namespace')).toBeFalsy();
+    expect(queryByText('Pipeline')).toBeTruthy();
     expect(queryByText(/no pipelineruns/i)).toBeTruthy();
   });
 

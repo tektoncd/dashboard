@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, waitForElement } from 'react-testing-library';
+import { fireEvent, waitForElement } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
@@ -358,7 +358,7 @@ describe('TaskRuns container', () => {
       url: urls.taskRuns.all()
     };
 
-    const { getByText, getByTitle } = renderWithRouter(
+    const { getAllByTitle, getByText } = renderWithRouter(
       <Provider store={store.getStore()}>
         <Route
           path={urls.taskRuns.all()}
@@ -379,7 +379,7 @@ describe('TaskRuns container', () => {
     );
 
     await waitForElement(() => getByText('taskRunWithTwoLabels'));
-    expect(getByTitle(/actions/i)).toBeTruthy();
+    expect(getAllByTitle(/actions/i)[0]).toBeTruthy();
   });
 
   it('TaskRun actions are not available when in read-only mode', async () => {
@@ -390,7 +390,7 @@ describe('TaskRuns container', () => {
       url: urls.taskRuns.all()
     };
 
-    const { getByText, queryByTitle } = renderWithRouter(
+    const { getByText, queryAllByTitle } = renderWithRouter(
       <Provider store={store.getStore()}>
         <Route
           path={urls.taskRuns.all()}
@@ -399,7 +399,6 @@ describe('TaskRuns container', () => {
               {...props}
               match={match}
               error={null}
-              isReadOnly
               loading={false}
               namespace="namespace-1"
               fetchTaskRuns={() => Promise.resolve()}
@@ -412,14 +411,14 @@ describe('TaskRuns container', () => {
     );
 
     await waitForElement(() => getByText('taskRunWithTwoLabels'));
-    expect(queryByTitle(/actions/i)).toBeFalsy();
+    expect(queryAllByTitle(/actions/i)[0]).toBeFalsy();
   });
 
   it('handles rerun event in TaskRuns page', async () => {
     const mockTestStore = mockStore(testStore);
     jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => false);
     jest.spyOn(API, 'rerunTaskRun').mockImplementation(() => []);
-    const { getByTestId, getByText } = renderWithRouter(
+    const { getAllByTestId, getByText } = renderWithRouter(
       <Provider store={mockTestStore}>
         <Route
           path={urls.taskRuns.all()}
@@ -435,7 +434,9 @@ describe('TaskRuns container', () => {
       { route: urls.taskRuns.all() }
     );
     await waitForElement(() => getByText(/taskRunWithTwoLabels/i));
-    fireEvent.click(await waitForElement(() => getByTestId('overflowmenu')));
+    fireEvent.click(
+      await waitForElement(() => getAllByTestId('overflowmenu')[0])
+    );
     await waitForElement(() => getByText(/Rerun/i));
     fireEvent.click(getByText('Rerun'));
     expect(API.rerunTaskRun).toHaveBeenCalledTimes(1);

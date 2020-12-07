@@ -40,7 +40,7 @@ describe('About', () => {
       }
     });
 
-    const { queryByText } = renderWithIntl(
+    const { queryByText, queryAllByText } = renderWithIntl(
       <Provider store={store}>
         <About />)
       </Provider>
@@ -54,7 +54,7 @@ describe('About', () => {
     expect(queryByText('v0.100.0', dashboardSelector)).toBeTruthy();
     expect(queryByText('IsOpenShift', dashboardSelector)).toBeTruthy();
     expect(queryByText('ReadOnly', dashboardSelector)).toBeTruthy();
-    expect(queryByText('True', dashboardSelector)).toBeTruthy();
+    expect(queryAllByText('True', dashboardSelector).length).toBe(2);
 
     expect(queryByText('Property', pipelinesSelector)).toBeTruthy();
     expect(queryByText('Value', pipelinesSelector)).toBeTruthy();

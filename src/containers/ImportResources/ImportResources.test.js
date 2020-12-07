@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, waitForElement } from 'react-testing-library';
+import { fireEvent, waitForElement } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
@@ -70,14 +70,14 @@ describe('ImportResources component', () => {
   });
 
   it('Displays an error when Repository URL is empty', async () => {
-    const { getByPlaceholderText, getByText } = await renderWithIntl(
+    const { getAllByPlaceholderText, getByText } = await renderWithIntl(
       <Provider store={store}>
         <ImportResourcesContainer />
       </Provider>
     );
     const namespace = 'default';
 
-    fireEvent.click(getByPlaceholderText(/select namespace/i));
+    fireEvent.click(getAllByPlaceholderText(/select namespace/i)[0]);
     fireEvent.click(getByText(namespace));
 
     fireEvent.click(getByText('Import and Apply'));
@@ -137,7 +137,7 @@ describe('ImportResources component', () => {
     const namespace = 'default';
 
     const {
-      getByPlaceholderText,
+      getAllByPlaceholderText,
       getByTestId,
       getByText
     } = await renderWithRouter(
@@ -151,7 +151,7 @@ describe('ImportResources component', () => {
       target: { value: 'https://github.com/test/testing' }
     });
 
-    fireEvent.click(getByPlaceholderText(/select namespace/i));
+    fireEvent.click(getAllByPlaceholderText(/select namespace/i)[0]);
     fireEvent.click(getByText(namespace));
 
     fireEvent.click(getByText('Import and Apply'));
@@ -178,7 +178,7 @@ describe('ImportResources component', () => {
       .mockImplementation(() => Promise.reject(importResourcesResponseMock));
 
     const {
-      getByPlaceholderText,
+      getAllByPlaceholderText,
       getByTestId,
       getByText
     } = await renderWithIntl(
@@ -190,7 +190,7 @@ describe('ImportResources component', () => {
     const repoURLField = getByTestId('repository-url-field');
     fireEvent.change(repoURLField, { target: { value: 'URL' } });
 
-    fireEvent.click(getByPlaceholderText(/select namespace/i));
+    fireEvent.click(getAllByPlaceholderText(/select namespace/i)[0]);
     fireEvent.click(getByText('namespace1'));
 
     fireEvent.click(getByText('Import and Apply'));
@@ -213,20 +213,20 @@ describe('ImportResources component', () => {
 
   it('Can clear the selected namespace', async () => {
     const {
-      getByPlaceholderText,
+      getAllByPlaceholderText,
       getByText,
-      getByTitle,
+      getAllByTitle,
       queryByText,
-      queryByValue
+      queryByDisplayValue
     } = await renderWithIntl(
       <Provider store={store}>
         <ImportResourcesContainer />
       </Provider>
     );
-    fireEvent.click(getByPlaceholderText(/select namespace/i));
-    fireEvent.click(getByText(/default/i));
-    fireEvent.click(getByTitle(/Clear selected item/i));
+    fireEvent.click(getAllByPlaceholderText(/select namespace/i)[0]);
+    fireEvent.click(getByText('default'));
+    fireEvent.click(getAllByTitle(/Clear selected item/i)[0]);
     await waitForElement(() => queryByText(/please select a namespace/i));
-    expect(queryByValue('default')).toBeFalsy();
+    expect(queryByDisplayValue('default')).toBeFalsy();
   });
 });

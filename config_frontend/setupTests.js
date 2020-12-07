@@ -11,7 +11,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import 'react-testing-library/cleanup-after-each';
 import fetch from 'node-fetch';
 import fetchMock from 'fetch-mock';
 import { TextDecoder, TextEncoder } from 'util';

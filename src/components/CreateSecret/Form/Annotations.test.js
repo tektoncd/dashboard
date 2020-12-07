@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, waitForElement } from 'react-testing-library';
+import { fireEvent, waitForElement } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
@@ -27,7 +27,7 @@ const store = mockStore({});
 
 const gitServerPlaceholder = new RegExp('https://github.com', 'i');
 
-it('Annotations response correctly to add/remove actions', async () => {
+it('Annotations respond correctly to add/remove actions', async () => {
   const handleAdd = jest.fn();
   const handleRemove = jest.fn();
 
@@ -54,7 +54,7 @@ it('Annotations response correctly to add/remove actions', async () => {
     queryAllByDisplayValue,
     queryAllByPlaceholderText,
     getByText,
-    getByTestId,
+    getAllByTestId,
     rerender
   } = renderWithIntl(
     <Provider store={store}>
@@ -90,7 +90,7 @@ it('Annotations response correctly to add/remove actions', async () => {
   expect(queryAllByDisplayValue(gitServerPlaceholder).length).toEqual(2);
   expect(queryAllByPlaceholderText(gitServerPlaceholder).length).toEqual(2);
 
-  fireEvent.click(await waitForElement(() => getByTestId(/removeIcon/i)));
+  fireEvent.click(await waitForElement(() => getAllByTestId(/removeIcon/i)[0]));
   expect(handleRemove).toHaveBeenCalledTimes(1);
 
   props.annotations.pop();

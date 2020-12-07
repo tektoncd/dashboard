@@ -13,7 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import { Route } from 'react-router-dom';
-import { fireEvent, waitForElement } from 'react-testing-library';
+import { fireEvent, waitForElement } from '@testing-library/react';
 import { createIntl } from 'react-intl';
 import { paths, urls } from '@tektoncd/dashboard-utils';
 import { renderWithRouter } from '@tektoncd/dashboard-components/src/utils/test';
@@ -178,7 +178,7 @@ it('ServiceAccountContainer renders labels section if they are present', async (
   );
 
   await waitForElement(() => getByText('service-account-labels'));
-  await waitForElement(() => getByText(/Labels/i));
+  await waitForElement(() => getByText('Labels:'));
   await waitForElement(() => getByText(/mylabel: foo/i));
   await waitForElement(() => getByText(/myotherlabel: bar/i));
 });

@@ -165,10 +165,13 @@ describe('LogFormat', () => {
     );
   });
 
-  it('can reset bold text', () => {
+  it('can reset bold text (bold off)', () => {
     const element = getElement('\u001b[1mHello\u001b[21m world', 'Hello');
-    const element2 = getElement('\u001b[1mHello\u001b[22m world', 'Hello');
     expect(element.nextElementSibling.outerHTML).toBe('<span> world</span>');
+  });
+
+  it('can reset bold text (normal color / intensity)', () => {
+    const element2 = getElement('\u001b[1mHello\u001b[22m world', 'Hello');
     expect(element2.nextElementSibling.outerHTML).toBe('<span> world</span>');
   });
 

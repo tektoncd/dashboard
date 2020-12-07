@@ -24,8 +24,8 @@ it('TaskRuns renders empty state', () => {
 it('TaskRuns renders headers state', () => {
   const { queryByText } = renderWithIntl(<TaskRuns taskRuns={[]} />);
   expect(queryByText(/taskrun/i)).toBeTruthy();
-  expect(queryByText(/task/i)).toBeTruthy();
-  expect(queryByText(/namespace/i)).toBeTruthy();
+  expect(queryByText('Task')).toBeTruthy();
+  expect(queryByText('Namespace')).toBeTruthy();
   expect(queryByText(/status/i)).toBeTruthy();
   expect(queryByText(/created/i)).toBeTruthy();
   expect(queryByText(/duration/i)).toBeTruthy();
@@ -34,7 +34,7 @@ it('TaskRuns renders headers state', () => {
 
 it('TaskRuns renders correct data', async () => {
   const taskRunName = 'pipeline0-run-123';
-  const { queryByText, queryByTitle } = renderWithRouter(
+  const { queryByText, queryByTitle, queryAllByText } = renderWithRouter(
     <TaskRuns
       taskRuns={[
         {
@@ -92,11 +92,11 @@ it('TaskRuns renders correct data', async () => {
     />
   );
   expect(queryByText(taskRunName)).toBeTruthy();
-  expect(queryByText(/pipeline0-task/i)).toBeTruthy();
-  expect(queryByText(/default-namespace/i)).toBeTruthy();
+  expect(queryByText('pipeline0-task')).toBeTruthy();
+  expect(queryAllByText('default-namespace')[0]).toBeTruthy();
   expect(queryByTitle(/FAKE_REASON/i)).toBeTruthy();
-  expect(queryByText(/cluster-task/i)).toBeTruthy();
-  expect(queryByText(/cluster-taskrun/i)).toBeTruthy();
+  expect(queryByText('cluster-task')).toBeTruthy();
+  expect(queryByText('cluster-taskrun')).toBeTruthy();
 });
 
 it('TaskRuns renders pending', async () => {
@@ -147,7 +147,7 @@ it('TaskRuns renders pending', async () => {
     />
   );
   expect(queryByText(taskRunName)).toBeTruthy();
-  expect(queryByText(/task-of-doom/i)).toBeTruthy();
-  expect(queryByText(/namespace-of-doom/i)).toBeTruthy();
+  expect(queryByText('task-of-doom')).toBeTruthy();
+  expect(queryByText('namespace-of-doom')).toBeTruthy();
   expect(queryByTitle(/Pending/i)).toBeTruthy();
 });

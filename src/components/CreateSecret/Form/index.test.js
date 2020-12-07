@@ -13,7 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import { Provider } from 'react-redux';
-import { fireEvent } from 'react-testing-library';
+import { fireEvent } from '@testing-library/react';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { renderWithIntl } from '@tektoncd/dashboard-components/src/utils/test';
@@ -78,15 +78,16 @@ it('Form renders with universal fields only', () => {
   const {
     queryByLabelText,
     getAllByDisplayValue,
+    queryAllByLabelText,
     queryByPlaceholderText
   } = renderWithIntl(
     <Provider store={store}>
       <Form {...props} />
     </Provider>
   );
-  expect(queryByLabelText(/Name/i)).toBeTruthy();
-  expect(queryByLabelText(/Namespace/i)).toBeTruthy();
-  expect(queryByLabelText(/Username/i)).toBeFalsy();
+  expect(queryByLabelText('Name')).toBeTruthy();
+  expect(queryAllByLabelText('Namespace')[0]).toBeTruthy();
+  expect(queryByLabelText('Username')).toBeFalsy();
   // access token
   expect(queryByPlaceholderText('********')).toBeFalsy();
   // password
@@ -99,6 +100,7 @@ it('Form show Password fields when radio button clicked', async () => {
   const {
     queryByLabelText,
     getAllByDisplayValue,
+    queryAllByLabelText,
     queryByPlaceholderText,
     rerender
   } = renderWithIntl(
@@ -106,9 +108,9 @@ it('Form show Password fields when radio button clicked', async () => {
       <Form {...props} />
     </Provider>
   );
-  expect(queryByLabelText(/Name/i)).toBeTruthy();
-  expect(queryByLabelText(/Namespace/i)).toBeTruthy();
-  expect(queryByLabelText(/Username/i)).toBeFalsy();
+  expect(queryByLabelText('Name')).toBeTruthy();
+  expect(queryAllByLabelText('Namespace')[0]).toBeTruthy();
+  expect(queryByLabelText('Username')).toBeFalsy();
   // access token
   expect(queryByPlaceholderText('*********')).toBeFalsy();
   // password
@@ -128,7 +130,7 @@ it('Form show Password fields when radio button clicked', async () => {
     { rerender }
   );
 
-  expect(queryByLabelText(/Username/i)).toBeTruthy();
+  expect(queryByLabelText('Username')).toBeTruthy();
   // password
   expect(queryByPlaceholderText('********')).toBeTruthy();
   expect(queryByPlaceholderText(/github/)).toBeTruthy();
@@ -143,6 +145,7 @@ it('Form show access token fields when radio button clicked', async () => {
   const {
     queryByLabelText,
     getAllByDisplayValue,
+    queryAllByLabelText,
     queryByPlaceholderText,
     rerender
   } = renderWithIntl(
@@ -151,9 +154,9 @@ it('Form show access token fields when radio button clicked', async () => {
     </Provider>
   );
 
-  expect(queryByLabelText(/Name/i)).toBeTruthy();
-  expect(queryByLabelText(/Namespace/i)).toBeTruthy();
-  expect(queryByLabelText(/Username/i)).toBeFalsy();
+  expect(queryByLabelText('Name')).toBeTruthy();
+  expect(queryAllByLabelText('Namespace')[0]).toBeTruthy();
+  expect(queryByLabelText('Username')).toBeFalsy();
   // access token
   expect(queryByPlaceholderText('*********')).toBeFalsy();
   // password
@@ -173,7 +176,7 @@ it('Form show access token fields when radio button clicked', async () => {
     { rerender }
   );
 
-  expect(queryByLabelText(/Username/i)).toBeFalsy();
+  expect(queryByLabelText('Username')).toBeFalsy();
   // password
   expect(queryByPlaceholderText('********')).toBeFalsy();
   expect(queryByPlaceholderText(/github/)).toBeFalsy();
@@ -199,14 +202,14 @@ it('Form disabled when loading', () => {
   props.loading = true;
   props.errorMessageDuplicate = null;
 
-  const { getByLabelText, queryByText } = renderWithIntl(
+  const { getByLabelText, queryByText, getAllByLabelText } = renderWithIntl(
     <Provider store={store}>
       <Form {...props} />
     </Provider>
   );
 
-  const nameInput = getByLabelText(/name/i);
-  const namespaceDropdown = getByLabelText(/namespace/i);
+  const nameInput = getByLabelText('Name');
+  const namespaceDropdown = getAllByLabelText('Namespace')[1];
   const cancelButton = queryByText(/Cancel/i);
   const createButton = queryByText('Create');
 

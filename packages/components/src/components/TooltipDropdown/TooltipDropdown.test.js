@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent } from 'react-testing-library';
+import { fireEvent } from '@testing-library/react';
 
 import { renderWithIntl } from '../../utils/test';
 import TooltipDropdown from './TooltipDropdown';
@@ -32,21 +32,21 @@ it('TooltipDropdown renders', () => {
     getByText,
     getByPlaceholderText,
     queryByText,
-    queryByValue
+    queryByDisplayValue
   } = renderWithIntl(<TooltipDropdown {...props} />);
   fireEvent.click(getByPlaceholderText(initialTextRegExp));
   props.items.forEach(item => {
-    expect(queryByText(new RegExp(item, 'i'))).toBeTruthy();
+    expect(queryByText(item.text || item)).toBeTruthy();
   });
-  fireEvent.click(getByText(/item 1/i));
-  expect(queryByValue(/item 1/i)).toBeTruthy();
+  fireEvent.click(getByText('item 1'));
+  expect(queryByDisplayValue('item 1')).toBeTruthy();
 });
 
 it('TooltipDropdown renders selected item', () => {
-  const { queryByValue } = renderWithIntl(
+  const { queryByDisplayValue } = renderWithIntl(
     <TooltipDropdown {...props} selectedItem={{ text: 'item 1' }} />
   );
-  expect(queryByValue(/item 1/i)).toBeTruthy();
+  expect(queryByDisplayValue('item 1')).toBeTruthy();
 });
 
 it('TooltipDropdown renders empty', () => {
@@ -70,6 +70,6 @@ it('TooltipDropdown handles onChange event', () => {
     <TooltipDropdown {...props} onChange={onChange} />
   );
   fireEvent.click(getByPlaceholderText(initialTextRegExp));
-  fireEvent.click(getByText(/item 1/i));
+  fireEvent.click(getByText('item 1'));
   expect(onChange).toHaveBeenCalledTimes(1);
 });

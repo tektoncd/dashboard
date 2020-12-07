@@ -118,33 +118,30 @@ describe('Trigger', () => {
       eventListenerNamespace: 'tekton-pipelines',
       trigger: fakeTrigger
     };
-    const { queryByText } = renderWithRouter(<Trigger {...props} />);
-    expect(queryByText(/Name/i)).toBeTruthy();
+    const { queryByText, queryAllByText } = renderWithRouter(
+      <Trigger {...props} />
+    );
     expect(queryByText(/my-fake-trigger/i)).toBeTruthy();
-    expect(queryByText(/TriggerBinding/i)).toBeTruthy();
-    expect(queryByText(/triggerbinding-0/i)).toBeTruthy();
-    expect(queryByText(/triggerbinding-1/i)).toBeTruthy();
-    expect(queryByText(/triggerbinding-2/i)).toBeTruthy();
-    expect(queryByText(/TriggerTemplate/i)).toBeTruthy();
-    expect(queryByText(/simple-pipeline-template/i)).toBeTruthy();
-    expect(queryByText(/Interceptors/i)).toBeTruthy();
+    expect(queryByText('triggerbinding-0')).toBeTruthy();
+    expect(queryByText('triggerbinding-1')).toBeTruthy();
+    expect(queryByText('triggerbinding-2')).toBeTruthy();
+    expect(queryByText('simple-pipeline-template')).toBeTruthy();
     // Check Webhook Interceptor
-    expect(queryByText(/(webhook)/i)).toBeTruthy();
-    expect(queryByText(/webhook-service-name/i)).toBeTruthy();
-    expect(queryByText(/webhook-service-namespace/i)).toBeTruthy();
-    expect(queryByText(/Header/i)).toBeTruthy();
+    expect(queryByText(/\(webhook\)/i)).toBeTruthy();
+    expect(queryByText('webhook-service-name')).toBeTruthy();
+    expect(queryByText('webhook-service-namespace')).toBeTruthy();
     fakeTrigger.interceptors[0].webhook.header.forEach(({ name, value }) => {
-      expect(queryByText(new RegExp(name, 'i'))).toBeTruthy();
+      expect(queryByText(name)).toBeTruthy();
       if (Array.isArray(value)) {
         value.forEach(element => {
           expect(queryByText(new RegExp(element, 'i'))).toBeTruthy();
         });
       } else {
-        expect(queryByText(new RegExp(value, 'i'))).toBeTruthy();
+        expect(queryByText(value)).toBeTruthy();
       }
     });
     // Check GitHub Interceptor
-    expect(queryByText(/(github)/i)).toBeTruthy();
+    expect(queryByText(/\(github\)/i)).toBeTruthy();
     expect(queryByText(/my-github-secret/i)).toBeTruthy();
     expect(queryByText(/github-secret-key/i)).toBeTruthy();
     expect(queryByText(/github-secret-namespace/i)).toBeTruthy();
@@ -152,7 +149,7 @@ describe('Trigger', () => {
     expect(queryByText(/github-event-1/i)).toBeTruthy();
     expect(queryByText(/github-event-2/i)).toBeTruthy();
     // Check GitLab Interceptor
-    expect(queryByText(/(gitlab)/i)).toBeTruthy();
+    expect(queryByText(/\(gitlab\)/i)).toBeTruthy();
     expect(queryByText(/my-gitlab-secret/i)).toBeTruthy();
     expect(queryByText(/gitlab-secret-key/i)).toBeTruthy();
     expect(queryByText(/gitlab-secret-namespace/i)).toBeTruthy();
@@ -160,10 +157,10 @@ describe('Trigger', () => {
     expect(queryByText(/gitlab-event-1/i)).toBeTruthy();
     expect(queryByText(/gitlab-event-2/i)).toBeTruthy();
     // Check CEL Interceptor
-    expect(queryByText(/(cel)/i)).toBeTruthy();
-    expect(queryByText(/cel-filter/i)).toBeTruthy();
-    expect(queryByText(/key/i)).toBeTruthy();
-    expect(queryByText(/expression/i)).toBeTruthy();
+    expect(queryAllByText(/\(cel\)/i)[0]).toBeTruthy();
+    expect(queryByText('cel-filter')).toBeTruthy();
+    expect(queryByText('key')).toBeTruthy();
+    expect(queryByText('expression')).toBeTruthy();
   });
 
   it('handles no objectRef in webhook Interceptor', () => {
@@ -250,7 +247,7 @@ describe('Trigger', () => {
       }
     };
     const { queryByText } = renderWithRouter(<Trigger {...props} />);
-    expect(queryByText(/Trigger/i)).toBeTruthy();
+    expect(queryByText('Trigger:')).toBeTruthy();
   });
 
   it('handles no bindings', () => {

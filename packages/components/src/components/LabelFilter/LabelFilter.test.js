@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, waitForElement } from 'react-testing-library';
+import { fireEvent, waitForElement } from '@testing-library/react';
 
 import LabelFilter from './LabelFilter';
 import { renderWithIntl } from '../../utils/test';

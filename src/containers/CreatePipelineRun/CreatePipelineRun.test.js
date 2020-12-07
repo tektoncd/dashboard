@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, wait, waitForElement } from 'react-testing-library';
+import { fireEvent, wait, waitForElement } from '@testing-library/react';
 
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
@@ -166,7 +166,7 @@ const labelsValidationErrorRegExp = /Labels must follow the/i;
 
 const submitButton = allByText => allByText(/create/i)[1];
 
-const testPipelineSpec = (pipelineId, queryByText, queryByValue) => {
+const testPipelineSpec = (pipelineId, queryByText, queryByDisplayValue) => {
   // Verify proper param and resource fields are displayed
   const pipeline = pipelines.byId[pipelineId];
   const paramsRegExp = /params/i;
@@ -179,7 +179,9 @@ const testPipelineSpec = (pipelineId, queryByText, queryByValue) => {
         expect(queryByText(new RegExp(param.description, 'i'))).toBeTruthy();
       }
       if (param.default) {
-        expect(queryByValue(new RegExp(param.default, 'i'))).toBeTruthy();
+        expect(
+          queryByDisplayValue(new RegExp(param.default, 'i'))
+        ).toBeTruthy();
       }
     });
   } else {
@@ -225,11 +227,11 @@ const selectPipeline1AndFillSpec = async ({
   getByText,
   getByTitle,
   queryByText,
-  queryByValue
+  queryByDisplayValue
 }) => {
   // Select pipeline-1 and verify spec details are displayed
   await selectPipeline1({ getByPlaceholderText, getByText });
-  testPipelineSpec('id-pipeline-1', queryByText, queryByValue);
+  testPipelineSpec('id-pipeline-1', queryByText, queryByDisplayValue);
   // Fill pipeline spec
   fillPipeline1Resources({ getAllByPlaceholderText, getByTitle });
   fillPipeline1Params(getByPlaceholderText);
@@ -261,7 +263,7 @@ describe('CreatePipelineRun', () => {
       getByText,
       getByTitle,
       queryByText,
-      queryByValue,
+      queryByDisplayValue,
       rerender
     } = renderWithIntl(
       <Provider store={mockTestStore}>
@@ -282,7 +284,7 @@ describe('CreatePipelineRun', () => {
       getByText,
       getByTitle,
       queryByText,
-      queryByValue
+      queryByDisplayValue
     });
     // Submit
     const errorResponseMock = {
@@ -308,7 +310,7 @@ describe('CreatePipelineRun', () => {
       getByText,
       getByTitle,
       queryByText,
-      queryByValue,
+      queryByDisplayValue,
       rerender
     } = renderWithIntl(
       <Provider store={mockTestStore}>
@@ -329,7 +331,7 @@ describe('CreatePipelineRun', () => {
       getByText,
       getByTitle,
       queryByText,
-      queryByValue
+      queryByDisplayValue
     });
     // Submit
     const errorResponseMock = {
@@ -399,7 +401,6 @@ describe('CreatePipelineRun', () => {
       getByTitle,
       queryByDisplayValue,
       queryByText,
-      queryByValue,
       rerender
     } = renderWithIntl(
       <Provider store={mockTestStore}>
@@ -417,7 +418,7 @@ describe('CreatePipelineRun', () => {
     expect(queryByDisplayValue(/namespace-1/i)).toBeTruthy();
     // Select pipeline-1 and verify spec details are displayed
     await selectPipeline1({ getByPlaceholderText, getByText });
-    testPipelineSpec('id-pipeline-1', queryByText, queryByValue);
+    testPipelineSpec('id-pipeline-1', queryByText, queryByDisplayValue);
     // Fill pipeline spec
     fillPipeline1Resources({
       getAllByPlaceholderText,
@@ -426,13 +427,13 @@ describe('CreatePipelineRun', () => {
     fillPipeline1Params(getByPlaceholderText);
     expect(queryByDisplayValue(/pipeline-resource-1/i)).toBeTruthy();
     expect(queryByDisplayValue(/pipeline-resource-2/i)).toBeTruthy();
-    expect(queryByValue(/value-1/i)).toBeTruthy();
-    expect(queryByValue(/value-2/i)).toBeTruthy();
+    expect(queryByDisplayValue(/value-1/i)).toBeTruthy();
+    expect(queryByDisplayValue(/value-2/i)).toBeTruthy();
 
     // Select pipeline-2 and verify spec details are displayed
-    fireEvent.click(queryByValue(/pipeline-1/i));
+    fireEvent.click(queryByDisplayValue(/pipeline-1/i));
     fireEvent.click(await waitForElement(() => getByTitle(/pipeline-2/i)));
-    testPipelineSpec('id-pipeline-2', queryByText, queryByValue);
+    testPipelineSpec('id-pipeline-2', queryByText, queryByDisplayValue);
   });
 
   it('renders pipeline controlled', async () => {
@@ -441,10 +442,10 @@ describe('CreatePipelineRun', () => {
     jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
 
     const {
-      getByValue,
-      queryByLabelText,
+      getByDisplayValue,
+      queryAllByLabelText,
       queryByText,
-      queryByValue,
+      queryByDisplayValue,
       rerender
     } = renderWithIntl(
       <Provider store={mockTestStore}>
@@ -459,30 +460,35 @@ describe('CreatePipelineRun', () => {
       { rerender }
     );
 
-    await waitForElement(() => getByValue(/pipeline-1/i));
-    expect(queryByLabelText(/namespace/i)).toBeTruthy();
+    await waitForElement(() => getByDisplayValue(/pipeline-1/i));
+    expect(queryAllByLabelText('Namespace')[0]).toBeTruthy();
     // Verify spec details are displayed
-    testPipelineSpec('id-pipeline-1', queryByText, queryByValue);
+    testPipelineSpec('id-pipeline-1', queryByText, queryByDisplayValue);
   });
 
   it('renders labels', () => {
-    const { getByText, getByPlaceholderText, queryByValue } = renderWithIntl(
+    const {
+      getAllByText,
+      getByText,
+      getByPlaceholderText,
+      queryByDisplayValue
+    } = renderWithIntl(
       <Provider store={mockStore(testStore)}>
         <CreatePipelineRun open namespace="" />
       </Provider>
     );
-    fireEvent.click(getByText(/Add/i));
+    fireEvent.click(getAllByText(/Add/i)[0]);
     fireEvent.change(getByPlaceholderText(/key/i), {
       target: { value: 'foo' }
     });
     fireEvent.change(getByPlaceholderText(/value/i), {
       target: { value: 'bar' }
     });
-    expect(queryByValue(/foo/i)).toBeTruthy();
-    expect(queryByValue(/bar/i)).toBeTruthy();
+    expect(queryByDisplayValue(/foo/i)).toBeTruthy();
+    expect(queryByDisplayValue(/bar/i)).toBeTruthy();
     fireEvent.click(getByText(/Remove/i));
-    expect(queryByValue(/foo/i)).toBeFalsy();
-    expect(queryByValue(/bar/i)).toBeFalsy();
+    expect(queryByDisplayValue(/foo/i)).toBeFalsy();
+    expect(queryByDisplayValue(/bar/i)).toBeFalsy();
   });
 
   it('resets Pipeline and ServiceAccount when namespace changes', async () => {
@@ -491,7 +497,7 @@ describe('CreatePipelineRun', () => {
     const {
       getByPlaceholderText,
       getByTitle,
-      getByValue,
+      getByDisplayValue,
       rerender
     } = renderWithIntl(
       <Provider store={mockTestStore}>
@@ -511,13 +517,13 @@ describe('CreatePipelineRun', () => {
       await waitForElement(() => getByTitle(/service-account-1/i))
     );
     // Change selected namespace to the same namespace (expect no change)
-    fireEvent.click(getByValue(/namespace-1/i));
+    fireEvent.click(getByDisplayValue(/namespace-1/i));
     fireEvent.click(await waitForElement(() => getByTitle(/namespace-1/i)));
 
-    expect(getByValue(/pipeline-1/i)).toBeTruthy();
-    expect(getByValue(/service-account-1/i)).toBeTruthy();
+    expect(getByDisplayValue(/pipeline-1/i)).toBeTruthy();
+    expect(getByDisplayValue(/service-account-1/i)).toBeTruthy();
     // Change selected namespace
-    fireEvent.click(getByValue(/namespace-1/i));
+    fireEvent.click(getByDisplayValue(/namespace-1/i));
     fireEvent.click(await waitForElement(() => getByTitle(/namespace-2/i)));
 
     // Verify that Pipeline and ServiceAccount value have reset
@@ -535,7 +541,7 @@ describe('CreatePipelineRun', () => {
       getByText,
       getByTitle,
       queryByText,
-      queryByValue,
+      queryByDisplayValue,
       rerender
     } = renderWithIntl(
       <Provider store={mockTestStore}>
@@ -548,10 +554,10 @@ describe('CreatePipelineRun', () => {
       </Provider>,
       { rerender }
     );
-    expect(queryByValue(/namespace-1/i)).toBeTruthy();
+    expect(queryByDisplayValue(/namespace-1/i)).toBeTruthy();
     // Select pipeline-1 and verify spec details are displayed
     await selectPipeline1({ getByPlaceholderText, getByText });
-    testPipelineSpec('id-pipeline-1', queryByText, queryByValue);
+    testPipelineSpec('id-pipeline-1', queryByText, queryByDisplayValue);
     // Fill pipeline spec
     fillPipeline1Resources({ getAllByPlaceholderText, getByTitle });
     fillPipeline1Params(getByPlaceholderText);
@@ -565,7 +571,7 @@ describe('CreatePipelineRun', () => {
       target: { value: '120' }
     });
     // Fill label
-    fireEvent.click(getByText(/Add/i));
+    fireEvent.click(getAllByText(/Add/i)[0]);
     fireEvent.change(getByPlaceholderText(/key/i), {
       target: { value: 'foo' }
     });
@@ -619,6 +625,7 @@ describe('CreatePipelineRun', () => {
       getByPlaceholderText,
       getByText,
       getByTitle,
+      queryAllByText,
       queryByText
     } = renderWithIntl(
       <Provider store={mockTestStore}>
@@ -639,15 +646,19 @@ describe('CreatePipelineRun', () => {
     expect(queryByText(namespaceValidationErrorRegExp)).toBeFalsy();
     // Test validation on pipeline1 spec
     fireEvent.click(submitButton(getAllByText));
-    expect(queryByText(pipelineResourceValidationErrorRegExp)).toBeTruthy();
+    expect(
+      queryAllByText(pipelineResourceValidationErrorRegExp)[0]
+    ).toBeTruthy();
     expect(queryByText(paramsValidationErrorRegExp)).toBeTruthy();
     // Fix validation error
     fillPipeline1Resources({ getAllByPlaceholderText, getByTitle });
-    expect(queryByText(pipelineResourceValidationErrorRegExp)).toBeFalsy();
+    expect(
+      queryAllByText(pipelineResourceValidationErrorRegExp)[0]
+    ).toBeFalsy();
     fillPipeline1Params(getByPlaceholderText);
     expect(queryByText(paramsValidationErrorRegExp)).toBeFalsy();
     // Test validation on labels
-    fireEvent.click(getByText(/Add/i));
+    fireEvent.click(getAllByText(/Add/i)[0]);
     fireEvent.click(submitButton(getAllByText));
     expect(queryByText(labelsValidationErrorRegExp)).toBeTruthy();
     fireEvent.change(getByPlaceholderText(/key/i), {
@@ -719,10 +730,10 @@ describe('CreatePipelineRun', () => {
     const {
       getByPlaceholderText,
       getByText,
-      getByValue,
+      getByDisplayValue,
       queryAllByTitle,
       queryByText,
-      queryByValue,
+      queryByDisplayValue,
       rerender
     } = renderWithIntl(
       <Provider store={mockTestStore}>
@@ -737,11 +748,11 @@ describe('CreatePipelineRun', () => {
     );
     // Select task-1 and verify spec details are displayed
     await selectPipeline1({ getByPlaceholderText, getByText });
-    testPipelineSpec('id-pipeline-1', queryByText, queryByValue);
-    expect(getByValue('pipeline-1')).toBeTruthy();
+    testPipelineSpec('id-pipeline-1', queryByText, queryByDisplayValue);
+    expect(getByDisplayValue('pipeline-1')).toBeTruthy();
 
     fireEvent.click(queryAllByTitle(/clear selected item/i)[1]);
-    expect(getByValue(/namespace-1/i)).toBeTruthy();
+    expect(getByDisplayValue(/namespace-1/i)).toBeTruthy();
     expect(queryByText('Select PipelineResource')).toBeFalsy();
   });
 

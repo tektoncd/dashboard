@@ -44,7 +44,7 @@ class Task extends Component {
   };
 
   handleTaskSelected = event => {
-    event?.preventDefault(); // eslint-disable-line no-unused-expressions
+    event?.preventDefault();
     this.setState({ selectedStepId: null }, () => {
       this.handleClick();
     });

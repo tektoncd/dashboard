@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, waitForElement } from 'react-testing-library';
+import { fireEvent, waitForElement } from '@testing-library/react';
 import { renderWithIntl } from '../../utils/test';
 import ResourceDetails from './ResourceDetails';
 
@@ -40,7 +40,7 @@ describe('ResourceDetails', () => {
         namespace
       },
       spec: {
-        description: 'fake_description'
+        description: 'fake_content'
       }
     };
 

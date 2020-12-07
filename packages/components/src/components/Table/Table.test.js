@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent } from 'react-testing-library';
+import { fireEvent } from '@testing-library/react';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
 import { renderWithIntl } from '../../utils/test';
@@ -69,11 +69,11 @@ describe('Table', () => {
 
     expect(queryByText(title)).toBeFalsy();
     expect(
-      queryByText(/Name/i).parentNode.className.includes('sort')
+      queryByText('Name').parentNode.className.includes('sort')
     ).toBeFalsy();
-    expect(queryByText(/Name/i)).toBeTruthy();
-    expect(queryByText(/Namespace/i)).toBeTruthy();
-    expect(queryByText(/Date Created/i)).toBeTruthy();
+    expect(queryByText('Name')).toBeTruthy();
+    expect(queryByText('Namespace')).toBeTruthy();
+    expect(queryByText('Date Created')).toBeTruthy();
     expect(queryByText(/Delete/i)).toBeFalsy();
     expect(queryByText(/Add/i)).toBeFalsy();
     expect(queryByText(emptyTextAllNamespaces)).toBeTruthy();
@@ -102,7 +102,7 @@ describe('Table', () => {
 
     expect(queryByText('Resource')).toBeTruthy();
     expect(
-      queryByText(/Name/i).parentNode.className.includes('sort')
+      queryByText('Name').parentNode.className.includes('sort')
     ).toBeFalsy();
     expect(queryByText(/Delete/i)).toBeFalsy();
     expect(queryByText(/Add/i)).toBeTruthy();
@@ -126,7 +126,7 @@ describe('Table', () => {
 
     expect(queryByText(title)).toBeNull();
     expect(
-      queryByText(/Name/i).parentNode.className.includes('sort')
+      queryByText('Name').parentNode.className.includes('sort')
     ).toBeFalsy();
     expect(queryByText(/resource-one/i)).toBeTruthy();
     expect(queryByText(/namespace1/i)).toBeTruthy();
@@ -150,7 +150,7 @@ describe('Table', () => {
     const { queryByText } = renderWithIntl(<Table {...props} />);
 
     expect(
-      queryByText(/Name/i).parentNode.className.includes('sort')
+      queryByText('Name').parentNode.className.includes('sort')
     ).toBeTruthy();
   });
 
@@ -181,7 +181,7 @@ describe('Table', () => {
     );
 
     expect(
-      queryByText(/Name/i).parentNode.className.includes('sort')
+      queryByText('Name').parentNode.className.includes('sort')
     ).toBeFalsy();
     expect(queryByText(/Delete/i)).toBeNull();
     expect(queryByText(/Rerun All/i)).toBeNull();
@@ -203,7 +203,7 @@ describe('Table', () => {
     );
 
     expect(
-      queryByText(/Name/i).parentNode.className.includes('sort')
+      queryByText('Name').parentNode.className.includes('sort')
     ).toBeFalsy();
     expect(queryByText(/Delete/i)).toBeNull();
     expect(queryByText(/Add/i)).toBeTruthy();
@@ -225,7 +225,7 @@ describe('Table', () => {
     );
 
     expect(
-      queryByText(/Name/i).parentNode.className.includes('sort')
+      queryByText('Name').parentNode.className.includes('sort')
     ).toBeFalsy();
     expect(queryByText(/Delete/i)).toBeTruthy();
     expect(queryByText(/Add/i)).toBeNull();
@@ -247,7 +247,7 @@ describe('Table', () => {
     );
 
     expect(
-      queryByText(/Name/i).parentNode.className.includes('sort')
+      queryByText('Name').parentNode.className.includes('sort')
     ).toBeFalsy();
     expect(queryByText(/Delete/i)).toBeTruthy();
     expect(queryByText(/Rerun/i)).toBeTruthy();
@@ -267,19 +267,21 @@ describe('Table', () => {
       toolbarButtons,
       isSortable: true
     };
-    const { queryByText, queryByLabelText } = renderWithIntl(
-      <Table {...props} />
-    );
+    const {
+      queryAllByLabelText,
+      queryByText,
+      queryByLabelText
+    } = renderWithIntl(<Table {...props} />);
 
     expect(
-      queryByText(/Name/i).parentNode.className.includes('sort')
+      queryByText('Name').parentNode.className.includes('sort')
     ).toBeTruthy();
     expect(queryByText(/Add/i)).toBeTruthy();
     expect(queryByText(/Delete/i)).toBeTruthy();
     expect(queryByText('Rerun')).toBeTruthy();
     expect(queryByText('Rerun All')).toBeTruthy();
     expect(queryByLabelText('Select all rows')).toBeTruthy();
-    expect(queryByLabelText('Select row')).toBeTruthy();
+    expect(queryAllByLabelText('Select row')[0]).toBeTruthy();
   });
 
   it('loading with no rows, ALL_NAMESPACES, 1 toolbar button, no checkboxes and non-sortable', () => {
@@ -307,9 +309,9 @@ describe('Table', () => {
     );
 
     expect(queryByText(/Resources/i)).toBeNull();
-    expect(queryByText(/Name/i)).toBeTruthy();
-    expect(queryByText(/Namespace/i)).toBeTruthy();
-    expect(queryByText(/Date Created/i)).toBeTruthy();
+    expect(queryByText('Name')).toBeTruthy();
+    expect(queryByText('Namespace')).toBeTruthy();
+    expect(queryByText('Date Created')).toBeTruthy();
     expect(queryByText(/Delete/i)).toBeNull();
     expect(queryByText(/Add/i)).toBeNull();
     expect(queryByLabelText('Select all rows')).toBeNull();
