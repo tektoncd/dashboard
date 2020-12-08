@@ -11,6 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { labels as labelConstants } from './constants';
 import { getStatus } from './status';
 
 export { default as buildGraphData } from './buildGraphData';
@@ -340,4 +341,100 @@ export function getTranslateWithId(intl) {
         return '';
     }
   };
+}
+
+export function getTaskSpecFromTaskRef({ clusterTasks, pipelineTask, tasks }) {
+  if (!pipelineTask.taskRef) {
+    return {};
+  }
+
+  const definitions =
+    pipelineTask.taskRef.kind === 'ClusterTask' ? clusterTasks : tasks;
+  const definition = (definitions || []).find(
+    task => task.metadata.name === pipelineTask.taskRef.name
+  );
+
+  return definition?.spec || {};
+}
+
+export function getPlaceholderTaskRun({
+  clusterTasks,
+  condition,
+  pipelineTask,
+  tasks
+}) {
+  const { name: pipelineTaskName, taskSpec } = pipelineTask;
+  const specToDisplay =
+    taskSpec || getTaskSpecFromTaskRef({ clusterTasks, pipelineTask, tasks });
+  const { steps = [] } = specToDisplay;
+
+  const displayName =
+    pipelineTaskName + (condition ? `-${condition.conditionRef}` : '');
+
+  return {
+    metadata: {
+      name: displayName,
+      labels: {
+        [labelConstants.PIPELINE_TASK]: pipelineTaskName,
+        ...(condition && {
+          [labelConstants.CONDITION_CHECK]: displayName,
+          [labelConstants.CONDITION_NAME]: condition.conditionRef
+        })
+      },
+      uid: `_placeholder_${displayName}`
+    },
+    spec: {
+      taskSpec: specToDisplay
+    },
+    status: {
+      steps: steps.map(({ name }) => ({ name }))
+    }
+  };
+}
+
+export function getTaskRunsWithPlaceholders({
+  clusterTasks,
+  pipeline,
+  pipelineRun,
+  taskRuns,
+  tasks
+}) {
+  const pipelineTasks = []
+    .concat(pipeline?.spec?.tasks)
+    .concat(pipelineRun?.spec?.pipelineSpec?.tasks)
+    .concat(pipeline?.spec?.finally)
+    .concat(pipelineRun?.spec?.pipelineSpec?.finally)
+    .filter(Boolean);
+
+  const taskRunsToDisplay = [];
+  pipelineTasks.forEach(pipelineTask => {
+    if (pipelineTask.conditions) {
+      pipelineTask.conditions.forEach(condition => {
+        const conditionTaskRun = taskRuns.find(
+          taskRun =>
+            taskRun.metadata.labels?.[labelConstants.PIPELINE_TASK] ===
+              pipelineTask.name &&
+            taskRun.metadata.labels?.[labelConstants.CONDITION_NAME] ===
+              condition.conditionRef
+        );
+        taskRunsToDisplay.push(
+          conditionTaskRun || getPlaceholderTaskRun({ pipelineTask, condition })
+        );
+      });
+    }
+
+    const realTaskRun = taskRuns.find(
+      taskRun =>
+        taskRun.metadata.labels?.[labelConstants.PIPELINE_TASK] ===
+          pipelineTask.name &&
+        !taskRun.metadata.labels?.[labelConstants.CONDITION_CHECK]
+    );
+
+    taskRunsToDisplay.push(
+      realTaskRun ||
+        getPlaceholderTaskRun({ clusterTasks, pipelineTask, tasks })
+    );
+  });
+
+  return taskRunsToDisplay;
 }

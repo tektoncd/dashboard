@@ -74,33 +74,6 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     );
   }
 
-  sortTaskRuns = taskRuns => {
-    const toReturn = taskRuns.sort((taskRunA, taskRunB) => {
-      if (!taskRunA || !taskRunB) {
-        return 0;
-      }
-
-      const firstStepA = taskRunA.status?.steps?.[0];
-      const firstStepB = taskRunB.status?.steps?.[0];
-
-      if (!firstStepA || !firstStepB) {
-        return 0;
-      }
-
-      const { startedAt: startedAtA } =
-        firstStepA.terminated || firstStepA.running || {};
-      const { startedAt: startedAtB } =
-        firstStepB.terminated || firstStepB.running || {};
-
-      if (!startedAtA || !startedAtB) {
-        return 0;
-      }
-
-      return new Date(startedAtA).getTime() - new Date(startedAtB).getTime();
-    });
-    return toReturn;
-  };
-
   loadTaskRuns = () => {
     const { intl, pipelineRun } = this.props;
     if (!pipelineRun?.status?.taskRuns) {
@@ -186,7 +159,6 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       selectedStepId,
       selectedTaskId,
       showIO,
-      sortTaskRuns,
       triggerHeader,
       view
     } = this.props;
@@ -275,11 +247,6 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     }
 
     const taskRuns = this.loadTaskRuns();
-
-    if (sortTaskRuns) {
-      this.sortTaskRuns(taskRuns);
-    }
-
     const taskRun =
       taskRuns.find(run => run.metadata.uid === selectedTaskId) || {};
 
@@ -360,7 +327,6 @@ PipelineRunContainer.propTypes = {
   onViewChange: PropTypes.func,
   selectedStepId: PropTypes.string,
   selectedTaskId: PropTypes.string,
-  sortTaskRuns: PropTypes.bool,
   view: PropTypes.string
 };
 
@@ -369,7 +335,6 @@ PipelineRunContainer.defaultProps = {
   onViewChange: /* istanbul ignore next */ () => {},
   selectedStepId: null,
   selectedTaskId: null,
-  sortTaskRuns: false,
   view: null
 };
 

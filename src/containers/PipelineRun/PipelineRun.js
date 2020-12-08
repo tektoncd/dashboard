@@ -16,6 +16,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { PipelineRun, Rerun } from '@tektoncd/dashboard-components';
 import {
+  getTaskRunsWithPlaceholders,
   getTitle,
   labels as labelConstants,
   queryParams as queryParamConstants,
@@ -28,6 +29,7 @@ import { injectIntl } from 'react-intl';
 import {
   getClusterTasks,
   getExternalLogsURL,
+  getPipeline,
   getPipelineRun,
   getPipelineRunsErrorMessage,
   getTaskRunsByPipelineRunName,
@@ -39,6 +41,7 @@ import {
   isWebSocketConnected
 } from '../../reducers';
 import { fetchPipelineRun } from '../../actions/pipelineRuns';
+import { fetchPipeline } from '../../actions/pipelines';
 import { fetchClusterTasks, fetchTasks } from '../../actions/tasks';
 import { fetchTaskRuns } from '../../actions/taskRuns';
 import { rerunPipelineRun } from '../../api';
@@ -195,14 +198,23 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     const { match } = this.props;
     const { namespace, pipelineRunName } = match.params;
     this.setState({ loading: !skipLoading }, async () => {
-      await Promise.all([
+      const [pipelineRun] = await Promise.all([
         this.props.fetchPipelineRun({ name: pipelineRunName, namespace }),
-        this.props.fetchTasks(),
-        this.props.fetchClusterTasks(),
         this.props.fetchTaskRuns({
           filters: [`${labelConstants.PIPELINE_RUN}=${pipelineRunName}`]
-        })
+        }),
+        // TODO: only request the Tasks / ClusterTasks we actually need
+        //       move these to the Promise.all below, with `fetchPipeline`
+        this.props.fetchTasks(),
+        this.props.fetchClusterTasks()
       ]);
+      const pipelineName = pipelineRun?.spec.pipelineRef?.name;
+      await Promise.all([
+        pipelineName
+          ? this.props.fetchPipeline({ name: pipelineName, namespace })
+          : Promise.resolve()
+      ]);
+
       this.setState({ loading: false });
     });
   }
@@ -296,7 +308,6 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           selectedStepId={selectedStepId}
           selectedTaskId={selectedTaskId}
           showIO
-          sortTaskRuns
           taskRuns={taskRuns}
           tasks={tasks.concat(clusterTasks)}
           view={view}
@@ -325,8 +336,33 @@ function mapStateToProps(state, ownProps) {
   const selectedStepId = queryParams.get(STEP);
   const view = queryParams.get(VIEW);
 
+  const pipelineRun = getPipelineRun(state, {
+    name: ownProps.match.params.pipelineRunName,
+    namespace
+  });
+  const pipelineName = pipelineRun?.spec?.pipelineRef?.name;
+  const pipeline =
+    pipelineName && getPipeline(state, { name: pipelineName, namespace });
+  const clusterTasks = getClusterTasks(state);
+  const tasks = getTasks(state, { namespace });
+  let taskRuns = getTaskRunsByPipelineRunName(
+    state,
+    ownProps.match.params.pipelineRunName,
+    {
+      namespace
+    }
+  );
+
+  taskRuns = getTaskRunsWithPlaceholders({
+    clusterTasks,
+    pipeline,
+    pipelineRun,
+    taskRuns,
+    tasks
+  });
+
   return {
-    clusterTasks: getClusterTasks(state),
+    clusterTasks,
     error:
       getPipelineRunsErrorMessage(state) ||
       getTasksErrorMessage(state) ||
@@ -334,22 +370,14 @@ function mapStateToProps(state, ownProps) {
     externalLogsURL: getExternalLogsURL(state),
     isReadOnly: isReadOnly(state),
     namespace,
-    pipelineRun: getPipelineRun(state, {
-      name: ownProps.match.params.pipelineRunName,
-      namespace
-    }),
+    pipelineRun,
+    pipeline,
     pipelineTaskName,
     retry,
     selectedStepId,
     isLogStreamingEnabled: isLogStreamingEnabled(state),
-    tasks: getTasks(state, { namespace }),
-    taskRuns: getTaskRunsByPipelineRunName(
-      state,
-      ownProps.match.params.pipelineRunName,
-      {
-        namespace
-      }
-    ),
+    tasks,
+    taskRuns,
     view,
     webSocketConnected: isWebSocketConnected(state)
   };
@@ -357,6 +385,7 @@ function mapStateToProps(state, ownProps) {
 
 const mapDispatchToProps = {
   fetchClusterTasks,
+  fetchPipeline,
   fetchPipelineRun,
   fetchTasks,
   fetchTaskRuns
