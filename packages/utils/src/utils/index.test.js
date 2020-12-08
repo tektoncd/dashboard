@@ -22,6 +22,7 @@ import {
   getFilters,
   getGenerateNamePrefixForRerun,
   getParams,
+  getPlaceholderTaskRun,
   getResources,
   getStatus,
   getStatusFilter,
@@ -29,6 +30,8 @@ import {
   getStepDefinition,
   getStepStatus,
   getStepStatusReason,
+  getTaskRunsWithPlaceholders,
+  getTaskSpecFromTaskRef,
   getTitle,
   isRunning,
   updateUnexecutedSteps
@@ -498,5 +501,267 @@ describe('getStatusFilterHandler', () => {
     const statusFilter = 'completed';
     setStatusFilter(statusFilter);
     expect(history.push).toHaveBeenCalledWith(`${url}?status=${statusFilter}`);
+  });
+});
+
+describe('getTaskSpecFromTaskRef', () => {
+  it('handles missing taskRef', () => {
+    const taskSpec = getTaskSpecFromTaskRef({ pipelineTask: {} });
+    expect(taskSpec).toEqual({});
+  });
+
+  it('handles missing definitions', () => {
+    const taskSpec = getTaskSpecFromTaskRef({
+      pipelineTask: { taskRef: { name: 'someTaskRef' } }
+    });
+    expect(taskSpec).toEqual({});
+  });
+
+  it('handles Tasks', () => {
+    const name = 'fakeTaskName';
+    const task = { metadata: { name }, spec: { fake: 'taskSpec' } };
+    const taskSpec = getTaskSpecFromTaskRef({
+      pipelineTask: { taskRef: { kind: 'Task', name } },
+      tasks: [task]
+    });
+    expect(taskSpec).toEqual(task.spec);
+  });
+
+  it('handles ClusterTasks', () => {
+    const name = 'fakeTaskName';
+    const task = { metadata: { name }, spec: { fake: 'taskSpec' } };
+    const taskSpec = getTaskSpecFromTaskRef({
+      pipelineTask: { taskRef: { kind: 'ClusterTask', name } },
+      clusterTasks: [task]
+    });
+    expect(taskSpec).toEqual(task.spec);
+  });
+});
+
+describe('getPlaceholderTaskRun', () => {
+  it('handles inline taskSpec', () => {
+    const pipelineTask = {
+      name: 'somePipelineTask',
+      taskSpec: {
+        fake: 'taskSpec'
+      }
+    };
+    const taskRun = getPlaceholderTaskRun({ pipelineTask });
+    expect(taskRun.spec.taskSpec).toEqual(pipelineTask.taskSpec);
+    expect(taskRun.status.steps).toEqual([]);
+    expect(taskRun.metadata.labels[labels.PIPELINE_TASK]).toEqual(
+      pipelineTask.name
+    );
+  });
+
+  it('handles steps', () => {
+    const step1Name = 'step1Name';
+    const step2Name = 'step2Name';
+    const pipelineTask = {
+      name: 'somePipelineTask',
+      taskSpec: {
+        fake: 'taskSpec',
+        steps: [
+          { name: step1Name, other: 'dummyValue' },
+          { name: step2Name, other: 'dummyValue' }
+        ]
+      }
+    };
+    const taskRun = getPlaceholderTaskRun({ pipelineTask });
+    expect(taskRun.spec.taskSpec).toEqual(pipelineTask.taskSpec);
+    expect(taskRun.status.steps).toEqual([
+      { name: step1Name },
+      { name: step2Name }
+    ]);
+  });
+
+  it('handles taskRef', () => {
+    const name = 'someTaskName';
+    const task = {
+      metadata: {
+        name
+      },
+      spec: {
+        fake: 'spec'
+      }
+    };
+    const pipelineTask = {
+      name: 'somePipelineTask',
+      taskRef: {
+        name
+      }
+    };
+    const taskRun = getPlaceholderTaskRun({ pipelineTask, tasks: [task] });
+    expect(taskRun.spec.taskSpec).toEqual(task.spec);
+    expect(taskRun.metadata.labels[labels.PIPELINE_TASK]).toEqual(
+      pipelineTask.name
+    );
+  });
+
+  it('handles conditions', () => {
+    const condition = {
+      conditionRef: 'someCondition'
+    };
+    const name = 'someTaskName';
+    const task = {
+      metadata: {
+        name
+      },
+      spec: {
+        fake: 'spec'
+      }
+    };
+    const pipelineTask = {
+      name: 'somePipelineTask',
+      taskRef: {
+        name
+      }
+    };
+    const taskRun = getPlaceholderTaskRun({
+      condition,
+      pipelineTask,
+      tasks: [task]
+    });
+    expect(taskRun.spec.taskSpec).toEqual(task.spec);
+    expect(taskRun.metadata.labels[labels.CONDITION_CHECK]).toBeTruthy();
+    expect(taskRun.metadata.labels[labels.CONDITION_NAME]).toBeTruthy();
+  });
+});
+
+describe('getTaskRunsWithPlaceholders', () => {
+  it('handles pipeline', () => {
+    const conditionRef = 'someCondition';
+    const finallyTaskName = 'someFinallyTaskName';
+    const pipelineTaskName = 'somePipelineTaskName';
+    const pipeline = {
+      spec: {
+        tasks: [
+          {
+            name: pipelineTaskName,
+            conditions: [{ conditionRef }]
+          }
+        ],
+        finally: [
+          {
+            name: finallyTaskName
+          }
+        ]
+      }
+    };
+    const taskRun = {
+      metadata: {
+        labels: {
+          [labels.PIPELINE_TASK]: pipelineTaskName
+        },
+        name: 'someTaskRun'
+      }
+    };
+    const finallyTaskRun = {
+      metadata: {
+        labels: {
+          [labels.PIPELINE_TASK]: finallyTaskName
+        },
+        name: 'someFinallyTaskRun'
+      }
+    };
+    const conditionTaskRun = {
+      metadata: {
+        labels: {
+          [labels.PIPELINE_TASK]: pipelineTaskName,
+          [labels.CONDITION_NAME]: conditionRef
+        }
+      }
+    };
+    const taskRuns = [
+      finallyTaskRun,
+      { metadata: { labels: {}, name: 'junk' } },
+      taskRun,
+      conditionTaskRun
+    ];
+    const runs = getTaskRunsWithPlaceholders({ pipeline, taskRuns });
+    expect(runs).toEqual([conditionTaskRun, taskRun, finallyTaskRun]);
+  });
+
+  it('handles inline spec', () => {
+    const finallyTaskName = 'someFinallyTaskName';
+    const pipelineTaskName = 'somePipelineTaskName';
+    const pipelineRun = {
+      spec: {
+        pipelineSpec: {
+          tasks: [
+            {
+              name: pipelineTaskName
+            }
+          ],
+          finally: [
+            {
+              name: finallyTaskName
+            }
+          ]
+        }
+      }
+    };
+    const taskRun = {
+      metadata: {
+        labels: {
+          [labels.PIPELINE_TASK]: pipelineTaskName
+        },
+        name: 'someTaskRun'
+      }
+    };
+    const finallyTaskRun = {
+      metadata: {
+        labels: {
+          [labels.PIPELINE_TASK]: finallyTaskName
+        },
+        name: 'someFinallyTaskRun'
+      }
+    };
+    const taskRuns = [
+      finallyTaskRun,
+      { metadata: { labels: {}, name: 'junk' } },
+      taskRun
+    ];
+    const runs = getTaskRunsWithPlaceholders({ pipelineRun, taskRuns });
+    expect(runs).toEqual([taskRun, finallyTaskRun]);
+  });
+
+  it('handles missing TaskRuns', () => {
+    const conditionRef = 'someCondition';
+    const finallyTaskName = 'someFinallyTaskName';
+    const pipelineTaskName = 'somePipelineTaskName';
+    const pipeline = {
+      spec: {
+        tasks: [
+          {
+            name: pipelineTaskName,
+            conditions: [{ conditionRef }]
+          }
+        ],
+        finally: [
+          {
+            name: finallyTaskName
+          }
+        ]
+      }
+    };
+    const [
+      conditionTaskRun,
+      taskRun,
+      finallyTaskRun
+    ] = getTaskRunsWithPlaceholders({ pipeline, taskRuns: [] });
+    expect(conditionTaskRun.metadata.labels[labels.PIPELINE_TASK]).toEqual(
+      pipelineTaskName
+    );
+    expect(conditionTaskRun.metadata.labels[labels.CONDITION_NAME]).toEqual(
+      conditionRef
+    );
+    expect(taskRun.metadata.labels[labels.PIPELINE_TASK]).toEqual(
+      pipelineTaskName
+    );
+    expect(taskRun.metadata.labels[labels.CONDITION_NAME]).toBeUndefined();
+    expect(finallyTaskRun.metadata.labels[labels.PIPELINE_TASK]).toEqual(
+      finallyTaskName
+    );
   });
 });
