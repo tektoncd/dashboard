@@ -14,7 +14,6 @@ limitations under the License.
 
 import 'core-js/stable';
 
-import './object-is';
 import '@formatjs/intl-pluralrules/polyfill';
 import '@formatjs/intl-relativetimeformat/polyfill';
 import '@formatjs/intl-relativetimeformat/locale-data/en';
