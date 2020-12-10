@@ -24,15 +24,20 @@ import {
 } from 'carbon-components-react';
 import {
   Modal,
-  PipelineRuns as PipelineRunsList
+  PipelineRuns as PipelineRunsList,
+  StatusFilterDropdown
 } from '@tektoncd/dashboard-components';
 import {
+  generateId,
   getErrorMessage,
   getFilters,
   getStatus,
+  getStatusFilter,
+  getStatusFilterHandler,
   getTitle,
   isRunning,
   labels,
+  runMatchesStatusFilter,
   urls
 } from '@tektoncd/dashboard-utils';
 import { Add16 as Add, TrashCan32 as Delete } from '@carbon/icons-react';
@@ -261,10 +266,11 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
   render() {
     const {
       error,
+      intl,
       loading,
-      namespace: selectedNamespace,
       pipelineRuns,
-      intl
+      namespace: selectedNamespace,
+      statusFilter
     } = this.props;
     const { showDeleteModal, toBeDeleted } = this.state;
 
@@ -310,6 +316,16 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
             icon: Delete
           }
         ];
+
+    const filters = (
+      <StatusFilterDropdown
+        id={generateId('status-filter-')}
+        initialSelectedStatus={statusFilter}
+        onChange={({ selectedItem }) => {
+          this.props.setStatusFilter(selectedItem.id);
+        }}
+      />
+    );
 
     return (
       <ListPageLayout title="PipelineRuns" {...this.props}>
@@ -357,8 +373,14 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
         )}
         <PipelineRunsList
           batchActionButtons={batchActionButtons}
+          filters={filters}
           loading={loading && !pipelineRuns.length}
-          pipelineRuns={pipelineRuns}
+          pipelineRuns={pipelineRuns.filter(run => {
+            return runMatchesStatusFilter({
+              run,
+              statusFilter
+            });
+          })}
           pipelineRunActions={pipelineRunActions}
           selectedNamespace={selectedNamespace}
           toolbarButtons={toolbarButtons}
@@ -411,6 +433,7 @@ PipelineRuns.defaultProps = {
 function mapStateToProps(state, props) {
   const { namespace: namespaceParam } = props.match.params;
   const filters = getFilters(props.location);
+  const statusFilter = getStatusFilter(props.location);
   const namespace = namespaceParam || getSelectedNamespace(state);
 
   const pipelineFilter =
@@ -428,6 +451,8 @@ function mapStateToProps(state, props) {
       filters,
       namespace
     }),
+    setStatusFilter: getStatusFilterHandler(props),
+    statusFilter,
     webSocketConnected: isWebSocketConnected(state)
   };
 }

@@ -24,6 +24,8 @@ import {
   getParams,
   getResources,
   getStatus,
+  getStatusFilter,
+  getStatusFilterHandler,
   getStepDefinition,
   getStepStatus,
   getStepStatusReason,
@@ -412,4 +414,89 @@ it('getStepStatusReason', () => {
     status: undefined
   });
   expect(getStepStatusReason()).toEqual({});
+});
+
+describe('getStatusFilter', () => {
+  it('should return null for an unsupported status', () => {
+    const search = '?status=invalidStatus';
+    const statusFilter = getStatusFilter({ search });
+    expect(statusFilter).toBeNull();
+  });
+
+  it('should return a supported status', () => {
+    const status = 'cancelled';
+    const search = `?status=${status}`;
+    const statusFilter = getStatusFilter({ search });
+    expect(statusFilter).toEqual(status);
+  });
+
+  it('should correctly remove a filter from the URL', () => {
+    const search = `?labelSelector=${encodeURIComponent(
+      'foo1=bar1,foo2=bar2'
+    )}`;
+    const url = 'someURL';
+    const history = { push: jest.fn() };
+    const location = { search };
+    const match = { url };
+    const handleDeleteFilter = getDeleteFilterHandler({
+      history,
+      location,
+      match
+    });
+    handleDeleteFilter('foo1=bar1');
+    expect(history.push).toHaveBeenCalledWith(
+      `${url}?labelSelector=${encodeURIComponent('foo2=bar2')}`
+    );
+  });
+});
+
+describe('getStatusFilterHandler', () => {
+  it('should redirect to unfiltered URL if no status specified', () => {
+    const search = '?nonFilterQueryParam=someValue&status=cancelled';
+    const url = 'someURL';
+    const history = { push: jest.fn() };
+    const location = { search };
+    const match = { url };
+    const setStatusFilter = getStatusFilterHandler({
+      history,
+      location,
+      match
+    });
+    setStatusFilter('');
+    expect(history.push).toHaveBeenCalledWith(
+      `${url}?nonFilterQueryParam=someValue`
+    );
+  });
+
+  it('should set a valid status filter in the URL', () => {
+    const url = 'someURL';
+    const history = { push: jest.fn() };
+    const location = { search: '?nonFilterQueryParam=someValue' };
+    const match = { url };
+    const setStatusFilter = getStatusFilterHandler({
+      history,
+      location,
+      match
+    });
+    const statusFilter = 'cancelled';
+    setStatusFilter(statusFilter);
+    expect(history.push).toHaveBeenCalledWith(
+      `${url}?nonFilterQueryParam=someValue&status=${statusFilter}`
+    );
+  });
+
+  it('should update the status filter in the URL', () => {
+    const url = 'someURL';
+    const history = { push: jest.fn() };
+    const location = { search: '?status=cancelled' };
+    const match = { url };
+    const setStatusFilter = getStatusFilterHandler({
+      history,
+      location,
+      match
+    });
+    const statusFilter = 'completed';
+    setStatusFilter(statusFilter);
+    expect(history.push).toHaveBeenCalledWith(`${url}?status=${statusFilter}`);
+  });
 });

@@ -27,12 +27,13 @@ const TaskRuns = ({
     kind === 'ClusterTask'
       ? urls.taskRuns.byClusterTask({ taskName })
       : urls.taskRuns.byTask({ namespace, taskName }),
+  filters,
   getTaskRunStatus = (taskRun, intl) => {
     const { reason } = getStatus(taskRun);
     return (
       reason ||
       intl.formatMessage({
-        id: 'dashboard.taskRuns.status.pending',
+        id: 'dashboard.taskRun.status.pending',
         defaultMessage: 'Pending'
       })
     );
@@ -175,6 +176,7 @@ const TaskRuns = ({
   return (
     <Table
       batchActionButtons={batchActionButtons}
+      filters={filters}
       headers={headers}
       rows={taskRunsFormatted}
       loading={loading}

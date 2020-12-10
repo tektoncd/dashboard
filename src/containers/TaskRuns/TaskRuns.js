@@ -24,15 +24,20 @@ import {
 } from 'carbon-components-react';
 import {
   Modal,
+  StatusFilterDropdown,
   TaskRuns as TaskRunsList
 } from '@tektoncd/dashboard-components';
 import {
+  generateId,
   getErrorMessage,
   getFilters,
   getStatus,
+  getStatusFilter,
+  getStatusFilterHandler,
   getTitle,
   isRunning,
   labels,
+  runMatchesStatusFilter,
   urls
 } from '@tektoncd/dashboard-utils';
 import { Add16 as Add, TrashCan32 as Delete } from '@carbon/icons-react';
@@ -273,6 +278,7 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
       error,
       loading,
       namespace: selectedNamespace,
+      statusFilter,
       taskRuns,
       intl
     } = this.props;
@@ -321,6 +327,16 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
           }
         ];
 
+    const filters = (
+      <StatusFilterDropdown
+        id={generateId('status-filter-')}
+        initialSelectedStatus={statusFilter}
+        onChange={({ selectedItem }) => {
+          this.props.setStatusFilter(selectedItem.id);
+        }}
+      />
+    );
+
     return (
       <ListPageLayout title="TaskRuns" {...this.props}>
         {this.state.createdTaskRun && (
@@ -368,9 +384,12 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
         )}
         <TaskRunsList
           batchActionButtons={batchActionButtons}
+          filters={filters}
           loading={loading && !taskRuns.length}
           selectedNamespace={selectedNamespace}
-          taskRuns={taskRuns}
+          taskRuns={taskRuns.filter(run => {
+            return runMatchesStatusFilter({ run, statusFilter });
+          })}
           taskRunActions={taskRunActions}
           toolbarButtons={toolbarButtons}
         />
@@ -422,6 +441,7 @@ TaskRuns.defaultProps = {
 function mapStateToProps(state, props) {
   const { namespace: namespaceParam } = props.match.params;
   const filters = getFilters(props.location);
+  const statusFilter = getStatusFilter(props.location);
   const namespace = namespaceParam || getSelectedNamespace(state);
 
   const taskFilter = filters.find(f => f.indexOf(`${TASK}=`) !== -1) || '';
@@ -456,6 +476,8 @@ function mapStateToProps(state, props) {
     filters,
     taskName,
     kind,
+    setStatusFilter: getStatusFilterHandler(props),
+    statusFilter,
     taskRuns,
     webSocketConnected: isWebSocketConnected(state)
   };
