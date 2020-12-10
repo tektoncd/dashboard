@@ -89,7 +89,6 @@ limitations under the License.
     .bx--table-toolbar {
       overflow: visible;
       flex-direction: row;
-      background-color: $ui-01;
 
       .bx--multi-select__wrapper {
         .bx--combo-box {
@@ -104,6 +103,7 @@ limitations under the License.
 
       .bx--multi-select__wrapper,
       .bx--dropdown__wrapper {
+        background-color: $ui-01;
         display: flex;
         align-items: center;
         border-right: 1px solid $ui-03;

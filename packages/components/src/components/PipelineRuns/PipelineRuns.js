@@ -33,7 +33,7 @@ const PipelineRuns = ({
     return (
       reason ||
       intl.formatMessage({
-        id: 'dashboard.pipelineRuns.status.pending',
+        id: 'dashboard.taskRun.status.pending',
         defaultMessage: 'Pending'
       })
     );

@@ -11,6 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { getStatus } from './status';
+
 export { default as buildGraphData } from './buildGraphData';
 export * from './constants';
 export { paths, urls } from './router';
@@ -195,6 +197,68 @@ export function getClearFiltersHandler({ history, location, match }) {
     const browserURL = match.url.concat(`?${queryParams.toString()}`);
     history.push(browserURL);
   };
+}
+
+export const statusFilterOrder = [
+  'running',
+  'pending',
+  'failed',
+  'cancelled',
+  'completed'
+];
+
+export function getStatusFilter({ search }) {
+  const queryParams = new URLSearchParams(search);
+  const status = queryParams.get('status');
+  if (!statusFilterOrder.includes(status)) {
+    return null;
+  }
+  return status;
+}
+
+export function getStatusFilterHandler({ history, location, match }) {
+  return function setStatusFilter(statusFilter) {
+    const queryParams = new URLSearchParams(location.search);
+    if (!statusFilter) {
+      queryParams.delete('status');
+    } else {
+      queryParams.set('status', statusFilter);
+    }
+    const browserURL = match.url.concat(`?${queryParams.toString()}`);
+    history.push(browserURL);
+  };
+}
+
+/* istanbul ignore next */
+export function runMatchesStatusFilter({ run, statusFilter }) {
+  if (!statusFilter) {
+    return true;
+  }
+
+  const { reason, status } = getStatus(run);
+
+  switch (statusFilter) {
+    case 'running':
+      return isRunning(reason, status);
+    case 'pending':
+      return !status || (status === 'Unknown' && reason === 'Pending');
+    case 'failed':
+      return (
+        (status === 'False' &&
+          reason !== 'PipelineRunCancelled' &&
+          reason !== 'TaskRunCancelled') ||
+        (status === 'Unknown' && reason === 'PipelineRunCouldntCancel')
+      );
+    case 'cancelled':
+      return (
+        status === 'False' &&
+        (reason === 'PipelineRunCancelled' || reason === 'TaskRunCancelled')
+      );
+    case 'completed':
+      return status === 'True';
+    default:
+      return true;
+  }
 }
 
 const rerunIdentifier = '-r-';
