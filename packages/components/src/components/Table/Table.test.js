@@ -316,10 +316,6 @@ describe('Table', () => {
     expect(queryByText(/Add/i)).toBeNull();
     expect(queryByLabelText('Select all rows')).toBeNull();
     expect(queryByLabelText('Select row')).toBeNull();
-    expect(
-      queryByText("No Resources created in namespace 'default'.")
-    ).toBeNull();
-    expect(queryByText('No Resources created in any namespace.')).toBeNull();
   });
 
   it('batch action button specifies correct arguments for callback with one row selected', () => {

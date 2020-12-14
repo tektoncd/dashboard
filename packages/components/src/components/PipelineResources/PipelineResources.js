@@ -97,14 +97,15 @@ const PipelineResources = ({
       emptyTextAllNamespaces={intl.formatMessage(
         {
           id: 'dashboard.emptyState.allNamespaces',
-          defaultMessage: 'No {kind} in any namespace.'
+          defaultMessage: 'No matching {kind} found'
         },
         { kind: 'PipelineResources' }
       )}
       emptyTextSelectedNamespace={intl.formatMessage(
         {
           id: 'dashboard.emptyState.selectedNamespace',
-          defaultMessage: 'No {kind} in namespace {selectedNamespace}'
+          defaultMessage:
+            'No matching {kind} found in namespace {selectedNamespace}'
         },
         { kind: 'PipelineResources', selectedNamespace }
       )}

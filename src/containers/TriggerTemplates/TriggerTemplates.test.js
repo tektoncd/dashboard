@@ -83,7 +83,7 @@ it('TriggerTemplates renders with no templates', () => {
   );
 
   expect(queryByText('TriggerTemplates')).toBeTruthy();
-  expect(queryByText('No TriggerTemplates in any namespace.')).toBeTruthy();
+  expect(queryByText('No matching TriggerTemplates found')).toBeTruthy();
 });
 
 it('TriggerTemplates renders with one template', () => {
@@ -112,7 +112,7 @@ it('TriggerTemplates renders with one template', () => {
   );
 
   expect(queryByText(/TriggerTemplates/i)).toBeTruthy();
-  expect(queryByText('No TriggerTemplates in any namespace.')).toBeFalsy();
+  expect(queryByText('No matching TriggerTemplates found')).toBeFalsy();
   expect(queryByText('trigger-template')).toBeTruthy();
 });
 
@@ -176,5 +176,5 @@ it('TriggerTemplates renders in loading state', () => {
   );
 
   expect(queryByText(/TriggerTemplates/i)).toBeTruthy();
-  expect(queryByText('No TriggerTemplates in any namespace.')).toBeFalsy();
+  expect(queryByText('No matching TriggerTemplates found')).toBeFalsy();
 });

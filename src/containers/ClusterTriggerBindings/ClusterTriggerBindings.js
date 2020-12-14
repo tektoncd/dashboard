@@ -129,14 +129,14 @@ export /* istanbul ignore next */ class ClusterTriggerBindings extends Component
           emptyTextAllNamespaces={intl.formatMessage(
             {
               id: 'dashboard.emptyState.clusterResource',
-              defaultMessage: 'No {kind}'
+              defaultMessage: 'No matching {kind} found'
             },
             { kind: 'ClusterTriggerBindings' }
           )}
           emptyTextSelectedNamespace={intl.formatMessage(
             {
               id: 'dashboard.emptyState.clusterResource',
-              defaultMessage: 'No {kind}'
+              defaultMessage: 'No matching {kind} found'
             },
             { kind: 'ClusterTriggerBindings' }
           )}

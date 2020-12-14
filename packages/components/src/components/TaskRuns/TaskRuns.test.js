@@ -18,7 +18,7 @@ import TaskRuns from './TaskRuns';
 
 it('TaskRuns renders empty state', () => {
   const { queryByText } = renderWithIntl(<TaskRuns taskRuns={[]} />);
-  expect(queryByText(/no taskruns/i)).toBeTruthy();
+  expect(queryByText(/no matching taskruns/i)).toBeTruthy();
 });
 
 it('TaskRuns renders headers state', () => {

@@ -21,7 +21,7 @@ it('PipelineResources renders empty state', () => {
   const { queryByText } = renderWithIntl(
     <PipelineResources pipelineResources={[]} />
   );
-  expect(queryByText(/no pipelineresources/i)).toBeTruthy();
+  expect(queryByText(/no matching pipelineresources/i)).toBeTruthy();
   expect(queryByText('Namespace')).toBeTruthy();
 });
 

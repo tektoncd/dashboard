@@ -83,7 +83,7 @@ it('EventListeners renders with no bindings', () => {
   );
 
   expect(getByText('EventListeners')).toBeTruthy();
-  expect(getByText('No EventListeners in any namespace.')).toBeTruthy();
+  expect(getByText('No matching EventListeners found')).toBeTruthy();
 });
 
 it('EventListeners renders with one binding', () => {
@@ -112,7 +112,7 @@ it('EventListeners renders with one binding', () => {
   );
 
   expect(queryByText('EventListeners')).toBeTruthy();
-  expect(queryByText('No EventListeners in any namespace.')).toBeFalsy();
+  expect(queryByText('No matching EventListeners found')).toBeFalsy();
   expect(queryByText('event-listener')).toBeTruthy();
   expect(queryByTitle('event-listener')).toBeTruthy();
 });
@@ -177,6 +177,6 @@ it('EventListeners renders in loading state', () => {
   );
 
   expect(queryByText(/EventListeners/i)).toBeTruthy();
-  expect(queryByText('No EventListeners in any namespace.')).toBeFalsy();
+  expect(queryByText('No matching EventListeners found')).toBeFalsy();
   expect(queryByText('event-listeners')).toBeFalsy();
 });

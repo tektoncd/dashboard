@@ -83,7 +83,7 @@ it('ClusterTriggerBindings renders with no bindings', () => {
   );
 
   expect(getByText('ClusterTriggerBindings')).toBeTruthy();
-  expect(getByText('No ClusterTriggerBindings')).toBeTruthy();
+  expect(getByText('No matching ClusterTriggerBindings found')).toBeTruthy();
 });
 
 it('ClusterTriggerBindings renders with one binding', () => {
@@ -112,7 +112,7 @@ it('ClusterTriggerBindings renders with one binding', () => {
   );
 
   expect(queryByText('ClusterTriggerBindings')).toBeTruthy();
-  expect(queryByText('No ClusterTriggerBindings')).toBeTruthy();
+  expect(queryByText('No matching ClusterTriggerBindings found')).toBeTruthy();
   expect(queryByText('cluster-trigger-binding')).toBeFalsy();
 });
 
@@ -176,8 +176,6 @@ it('ClusterTriggerBindings renders in loading state', () => {
   );
 
   expect(queryByText(/ClusterTriggerBindings/i)).toBeTruthy();
-  expect(
-    queryByText('No ClusterTriggerBindings in any namespace.')
-  ).toBeFalsy();
+  expect(queryByText('No matching ClusterTriggerBindings found')).toBeFalsy();
   expect(queryByText('cluster-trigger-bindings')).toBeFalsy();
 });
