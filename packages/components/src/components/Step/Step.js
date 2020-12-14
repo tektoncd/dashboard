@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,7 +13,7 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { injectIntl } from 'react-intl';
-import { ChevronRight20 as DefaultIcon } from '@carbon/icons-react';
+import { Pending20 as DefaultIcon } from '@carbon/icons-react';
 
 import StatusIcon from '../StatusIcon';
 
