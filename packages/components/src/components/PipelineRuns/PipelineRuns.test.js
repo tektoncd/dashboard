@@ -19,7 +19,7 @@ import PipelineRuns from './PipelineRuns';
 describe('PipelineRuns', () => {
   it('renders empty state', () => {
     const { queryByText } = renderWithIntl(<PipelineRuns pipelineRuns={[]} />);
-    expect(queryByText(/no pipelineruns/i)).toBeTruthy();
+    expect(queryByText(/no matching pipelineruns/i)).toBeTruthy();
     expect(queryByText('Namespace')).toBeTruthy();
   });
 
@@ -33,7 +33,7 @@ describe('PipelineRuns', () => {
 
     expect(queryByText('Namespace')).toBeFalsy();
     expect(queryByText('Pipeline')).toBeTruthy();
-    expect(queryByText(/no pipelineruns/i)).toBeTruthy();
+    expect(queryByText(/no matching pipelineruns/i)).toBeTruthy();
   });
 
   it('renders custom columns', () => {

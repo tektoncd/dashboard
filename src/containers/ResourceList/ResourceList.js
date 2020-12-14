@@ -123,7 +123,7 @@ export class ResourceListContainer extends Component {
     const emptyText = intl.formatMessage(
       {
         id: 'dashboard.resourceList.emptyState',
-        defaultMessage: 'No resources for type {type}.'
+        defaultMessage: 'No matching resources found for type {type}'
       },
       { type }
     );

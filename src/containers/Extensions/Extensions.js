@@ -59,7 +59,7 @@ export const Extensions = /* istanbul ignore next */ ({
 
   const emptyText = intl.formatMessage({
     id: 'dashboard.extensions.emptyState',
-    defaultMessage: 'No extensions'
+    defaultMessage: 'No extensions found'
   });
 
   return (
