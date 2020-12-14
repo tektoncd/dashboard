@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
-import { ChevronRight24 as DefaultIcon } from '@carbon/icons-react';
+import { Pending24 as DefaultIcon } from '@carbon/icons-react';
 import { injectIntl } from 'react-intl';
 import { getStatus } from '@tektoncd/dashboard-utils';
 
@@ -128,7 +128,7 @@ class DetailsHeader extends Component {
       >
         <h2 className="tkn--details-header--heading">
           <StatusIcon
-            DefaultIcon={type === 'step' ? DefaultIcon : null}
+            DefaultIcon={DefaultIcon}
             reason={reason}
             status={status}
             {...(type === 'step' ? { type: 'inverse' } : null)}

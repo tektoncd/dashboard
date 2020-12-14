@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -21,7 +21,7 @@ import {
   CheckmarkOutline20 as CheckmarkOutline,
   CloseFilled20 as CloseFilled,
   CloseOutline20 as CloseOutline,
-  Time20 as Time
+  Time20 as Pending
 } from '@carbon/icons-react';
 import { isRunning } from '@tektoncd/dashboard-utils';
 
@@ -31,14 +31,14 @@ const icons = {
   normal: {
     cancelled: CloseFilled,
     error: CloseFilled,
-    pending: Time,
+    pending: Pending,
     running: Spinner,
     success: CheckmarkFilled
   },
   inverse: {
     cancelled: CloseOutline,
     error: CloseOutline,
-    pending: Time,
+    pending: Pending,
     running: Spinner,
     success: CheckmarkOutline
   }
