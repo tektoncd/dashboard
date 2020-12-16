@@ -163,7 +163,6 @@
     "dashboard.namespacesDropdown.invalidText": "Namespaceを選択してください",
     "dashboard.namespacesDropdown.label": "Namespaceを選択",
     "dashboard.notification.clear": "通知をクリア",
-    "dashboard.paramaters.title": "パラメータ",
     "dashboard.parameters.title": "パラメータ",
     "dashboard.passwordTypeFields.hidePasswordLabel": "パスワードを隠す",
     "dashboard.passwordTypeFields.passwordToken": "パスワード",

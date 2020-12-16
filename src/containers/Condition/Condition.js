@@ -100,7 +100,7 @@ export class ConditionContainer extends Component {
     return (
       <Table
         title={intl.formatMessage({
-          id: 'dashboard.paramaters.title',
+          id: 'dashboard.parameters.title',
           defaultMessage: 'Parameters'
         })}
         headers={headers}

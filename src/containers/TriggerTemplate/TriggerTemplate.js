@@ -134,7 +134,7 @@ export /* istanbul ignore next */ class TriggerTemplateContainer extends Compone
       <>
         <DashboardTable
           title={intl.formatMessage({
-            id: 'dashboard.paramaters.title',
+            id: 'dashboard.parameters.title',
             defaultMessage: 'Parameters'
           })}
           headers={headersForParameters}
