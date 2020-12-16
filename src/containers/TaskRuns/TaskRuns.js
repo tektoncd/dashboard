@@ -58,9 +58,9 @@ import { cancelTaskRun, deleteTaskRun, rerunTaskRun } from '../../api';
 
 const initialState = {
   createdTaskRun: null,
+  deleteError: null,
   showCreateTaskRunModal: false,
   showDeleteModal: false,
-  submitError: '',
   toBeDeleted: []
 };
 
@@ -131,7 +131,7 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
         if (text) {
           errorMessage = `${text} (error code ${statusCode})`;
         }
-        this.setState({ submitError: errorMessage });
+        this.setState({ deleteError: errorMessage });
       });
     });
   };
@@ -212,10 +212,13 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
         },
         modalProperties: {
           danger: true,
-          heading: intl.formatMessage({
-            id: 'dashboard.deleteTaskRun.heading',
-            defaultMessage: 'Delete TaskRun'
-          }),
+          heading: intl.formatMessage(
+            {
+              id: 'dashboard.deleteResources.heading',
+              defaultMessage: 'Delete {kind}'
+            },
+            { kind: 'TaskRuns' }
+          ),
           primaryButtonText: intl.formatMessage({
             id: 'dashboard.actions.deleteButton',
             defaultMessage: 'Delete'
@@ -355,20 +358,22 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
             lowContrast
           />
         )}
-        {this.state.submitError && (
+        {this.state.deleteError && (
           <InlineNotification
             kind="error"
             title={intl.formatMessage({
               id: 'dashboard.error.title',
               defaultMessage: 'Error:'
             })}
-            subtitle={getErrorMessage(this.state.submitError)}
+            subtitle={getErrorMessage(this.state.deleteError)}
             iconDescription={intl.formatMessage({
               id: 'dashboard.notification.clear',
               defaultMessage: 'Clear Notification'
             })}
             data-testid="errorNotificationComponent"
-            onCloseButtonClick={this.props.clearNotification}
+            onCloseButtonClick={() => {
+              this.setState({ deleteError: null });
+            }}
             lowContrast
           />
         )}
@@ -404,21 +409,27 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
               id: 'dashboard.modal.cancelButton',
               defaultMessage: 'Cancel'
             })}
-            modalHeading={intl.formatMessage({
-              id: 'dashboard.taskRuns.deleteHeading',
-              defaultMessage: 'Delete TaskRuns'
-            })}
+            modalHeading={intl.formatMessage(
+              {
+                id: 'dashboard.deleteResources.heading',
+                defaultMessage: 'Delete {kind}'
+              },
+              { kind: 'TaskRuns' }
+            )}
             onSecondarySubmit={this.closeDeleteModal}
             onRequestSubmit={this.handleDelete}
             onRequestClose={this.closeDeleteModal}
             danger
           >
             <p>
-              {intl.formatMessage({
-                id: 'dashboard.taskRuns.deleteConfirm',
-                defaultMessage:
-                  'Are you sure you want to delete these TaskRuns?'
-              })}
+              {intl.formatMessage(
+                {
+                  id: 'dashboard.deleteResources.confirm',
+                  defaultMessage:
+                    'Are you sure you want to delete these {kind}?'
+                },
+                { kind: 'TaskRuns' }
+              )}
             </p>
             <UnorderedList nested>
               {toBeDeleted.map(taskRun => {

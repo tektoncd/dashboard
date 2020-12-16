@@ -13,6 +13,7 @@ limitations under the License.
 
 import fetchMock from 'fetch-mock';
 import * as API from './clusterTasks';
+import { mockCSRFToken } from '../utils/test';
 
 it('getClusterTasks', () => {
   const data = {
@@ -31,6 +32,17 @@ it('getClusterTask', () => {
   fetchMock.get(`end:${name}`, data);
   return API.getClusterTask({ name }).then(task => {
     expect(task).toEqual(data);
+    fetchMock.restore();
+  });
+});
+
+it('deletePipelineRun', () => {
+  const name = 'foo';
+  const data = { fake: 'clusterTask' };
+  mockCSRFToken();
+  fetchMock.delete(`end:${name}`, data);
+  return API.deleteClusterTask({ name }).then(clusterTask => {
+    expect(clusterTask).toEqual(data);
     fetchMock.restore();
   });
 });

@@ -31,20 +31,26 @@ const SecretsDeleteModal = props => {
         id: 'dashboard.modal.cancelButton',
         defaultMessage: 'Cancel'
       })}
-      modalHeading={intl.formatMessage({
-        id: 'dashboard.secrets.deleteHeading',
-        defaultMessage: 'Delete Secret'
-      })}
+      modalHeading={intl.formatMessage(
+        {
+          id: 'dashboard.deleteResources.heading',
+          defaultMessage: 'Delete {kind}'
+        },
+        { kind: 'Secrets' }
+      )}
       onSecondarySubmit={handleClick}
       onRequestSubmit={handleDelete}
       onRequestClose={handleClick}
       danger
     >
       <p>
-        {intl.formatMessage({
-          id: 'dashboard.secrets.deleteConfirm',
-          defaultMessage: 'Are you sure you want to delete these Secrets?'
-        })}
+        {intl.formatMessage(
+          {
+            id: 'dashboard.deleteResources.confirm',
+            defaultMessage: 'Are you sure you want to delete these {kind}?'
+          },
+          { kind: 'Secrets' }
+        )}
       </p>
       <UnorderedList nested>
         {toBeDeleted.map(secret => {

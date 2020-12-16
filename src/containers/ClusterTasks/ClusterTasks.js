@@ -16,9 +16,16 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
+import keyBy from 'lodash.keyby';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
-import { InlineNotification } from 'carbon-components-react';
-import { Information16 } from '@carbon/icons-react';
+import {
+  Button,
+  InlineNotification,
+  ListItem,
+  Modal,
+  UnorderedList
+} from 'carbon-components-react';
+import { TrashCan32 as Delete, Information16 } from '@carbon/icons-react';
 import {
   getErrorMessage,
   getFilters,
@@ -28,16 +35,24 @@ import {
 
 import { ListPageLayout } from '..';
 import { fetchClusterTasks } from '../../actions/tasks';
+import { deleteClusterTask } from '../../api';
 import {
   getClusterTasks,
   getClusterTasksErrorMessage,
   isFetchingClusterTasks,
+  isReadOnly,
   isWebSocketConnected
 } from '../../reducers';
 
 import '../../components/Definitions/Definitions.scss';
 
 export /* istanbul ignore next */ class ClusterTasksContainer extends Component {
+  state = {
+    deleteError: null,
+    showDeleteModal: false,
+    toBeDeleted: []
+  };
+
   componentDidMount() {
     document.title = getTitle({ page: 'ClusterTasks' });
     this.fetchData();
@@ -57,6 +72,43 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
     }
   }
 
+  closeDeleteModal = () => {
+    this.setState({
+      showDeleteModal: false,
+      toBeDeleted: []
+    });
+  };
+
+  deleteClusterTask = clusterTask => {
+    const { name, namespace } = clusterTask.metadata;
+    deleteClusterTask({ name, namespace }).catch(error => {
+      error.response.text().then(text => {
+        const statusCode = error.response.status;
+        let errorMessage = `error code ${statusCode}`;
+        if (text) {
+          errorMessage = `${text} (error code ${statusCode})`;
+        }
+        this.setState({ deleteError: errorMessage });
+      });
+    });
+  };
+
+  handleDelete = async () => {
+    const { cancelSelection, toBeDeleted } = this.state;
+    const deletions = toBeDeleted.map(resource =>
+      this.deleteClusterTask(resource)
+    );
+    this.closeDeleteModal();
+    await Promise.all(deletions);
+    cancelSelection();
+  };
+
+  openDeleteModal = (selectedRows, cancelSelection) => {
+    const resourcesById = keyBy(this.props.clusterTasks, 'metadata.uid');
+    const toBeDeleted = selectedRows.map(({ id }) => resourcesById[id]);
+    this.setState({ showDeleteModal: true, toBeDeleted, cancelSelection });
+  };
+
   fetchData() {
     const { filters } = this.props;
     this.props.fetchClusterTasks({ filters });
@@ -64,6 +116,21 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
 
   render() {
     const { error, loading, clusterTasks, intl } = this.props;
+    const { showDeleteModal, toBeDeleted } = this.state;
+
+    const batchActionButtons = this.props.isReadOnly
+      ? []
+      : [
+          {
+            onClick: this.openDeleteModal,
+            text: intl.formatMessage({
+              id: 'dashboard.actions.deleteButton',
+              defaultMessage: 'Delete'
+            }),
+            icon: Delete
+          }
+        ];
+
     const initialHeaders = [
       {
         key: 'name',
@@ -86,7 +153,7 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
     ];
 
     const clusterTasksFormatted = clusterTasks.map(clusterTask => ({
-      id: `${clusterTask.metadata.namespace}:${clusterTask.metadata.name}`,
+      id: clusterTask.metadata.uid,
       name: (
         <Link
           to={urls.taskRuns.byClusterTask({
@@ -101,24 +168,49 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
         <FormattedDate date={clusterTask.metadata.creationTimestamp} relative />
       ),
       actions: (
-        <Link
-          to={urls.rawCRD.cluster({
-            type: 'clustertasks',
-            name: clusterTask.metadata.name
-          })}
-        >
-          <Information16 className="tkn--resource-info-icon">
-            <title>
-              {intl.formatMessage(
-                {
-                  id: 'dashboard.resourceList.viewDetails',
-                  defaultMessage: 'View {resource}'
-                },
-                { resource: clusterTask.metadata.name }
-              )}
-            </title>
-          </Information16>
-        </Link>
+        <>
+          {!this.props.isReadOnly ? (
+            <Button
+              className="tkn--danger"
+              hasIconOnly
+              iconDescription={intl.formatMessage({
+                id: 'dashboard.actions.deleteButton',
+                defaultMessage: 'Delete'
+              })}
+              kind="ghost"
+              onClick={() =>
+                this.openDeleteModal(
+                  [{ id: clusterTask.metadata.uid }],
+                  () => {}
+                )
+              }
+              renderIcon={Delete}
+              size="sm"
+              tooltipAlignment="center"
+              tooltipPosition="left"
+            />
+          ) : null}
+          <Button
+            as={Link}
+            hasIconOnly
+            iconDescription={intl.formatMessage(
+              {
+                id: 'dashboard.resourceList.viewDetails',
+                defaultMessage: 'View {resource}'
+              },
+              { resource: clusterTask.metadata.name }
+            )}
+            kind="ghost"
+            renderIcon={Information16}
+            size="sm"
+            to={urls.rawCRD.cluster({
+              type: 'clustertasks',
+              name: clusterTask.metadata.name
+            })}
+            tooltipAlignment="center"
+            tooltipPosition="left"
+          />
+        </>
       )
     }));
 
@@ -142,7 +234,28 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
         title="ClusterTasks"
         {...this.props}
       >
+        {this.state.deleteError && (
+          <InlineNotification
+            kind="error"
+            title={intl.formatMessage({
+              id: 'dashboard.error.title',
+              defaultMessage: 'Error:'
+            })}
+            subtitle={getErrorMessage(this.state.deleteError)}
+            iconDescription={intl.formatMessage({
+              id: 'dashboard.notification.clear',
+              defaultMessage: 'Clear Notification'
+            })}
+            data-testid="errorNotificationComponent"
+            onCloseButtonClick={() => {
+              this.setState({ deleteError: null });
+            }}
+            lowContrast
+          />
+        )}
         <Table
+          batchActionButtons={batchActionButtons}
+          className="tkn--table--inline-actions"
           headers={initialHeaders}
           rows={clusterTasksFormatted}
           loading={loading && !clusterTasksFormatted.length}
@@ -161,6 +274,47 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
             { kind: 'ClusterTasks' }
           )}
         />
+        {showDeleteModal ? (
+          <Modal
+            open={showDeleteModal}
+            primaryButtonText={intl.formatMessage({
+              id: 'dashboard.actions.deleteButton',
+              defaultMessage: 'Delete'
+            })}
+            secondaryButtonText={intl.formatMessage({
+              id: 'dashboard.modal.cancelButton',
+              defaultMessage: 'Cancel'
+            })}
+            modalHeading={intl.formatMessage(
+              {
+                id: 'dashboard.deleteResources.heading',
+                defaultMessage: 'Delete {kind}'
+              },
+              { kind: 'ClusterTasks' }
+            )}
+            onSecondarySubmit={this.closeDeleteModal}
+            onRequestSubmit={this.handleDelete}
+            onRequestClose={this.closeDeleteModal}
+            danger
+          >
+            <p>
+              {intl.formatMessage(
+                {
+                  id: 'dashboard.deleteResources.confirm',
+                  defaultMessage:
+                    'Are you sure you want to delete these {kind}?'
+                },
+                { kind: 'ClusterTasks' }
+              )}
+            </p>
+            <UnorderedList nested>
+              {toBeDeleted.map(clusterTask => {
+                const { name } = clusterTask.metadata;
+                return <ListItem key={name}>{name}</ListItem>;
+              })}
+            </UnorderedList>
+          </Modal>
+        ) : null}
       </ListPageLayout>
     );
   }
@@ -178,6 +332,7 @@ function mapStateToProps(state, props) {
     clusterTasks: getClusterTasks(state, { filters }),
     error: getClusterTasksErrorMessage(state),
     filters,
+    isReadOnly: isReadOnly(state),
     loading: isFetchingClusterTasks(state),
     webSocketConnected: isWebSocketConnected(state)
   };
