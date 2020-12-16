@@ -163,7 +163,6 @@
     "dashboard.namespacesDropdown.invalidText": "Please select a namespace",
     "dashboard.namespacesDropdown.label": "Select Namespace",
     "dashboard.notification.clear": "Clear Notification",
-    "dashboard.paramaters.title": "Parameters",
     "dashboard.parameters.title": "Parameters",
     "dashboard.passwordTypeFields.hidePasswordLabel": "Hide password",
     "dashboard.passwordTypeFields.passwordToken": "Password",
