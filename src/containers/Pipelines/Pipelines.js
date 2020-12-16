@@ -14,10 +14,17 @@ limitations under the License.
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Information16 } from '@carbon/icons-react';
+import { TrashCan32 as Delete, Information16 } from '@carbon/icons-react';
 import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
-import { InlineNotification } from 'carbon-components-react';
+import keyBy from 'lodash.keyby';
+import {
+  Button,
+  InlineNotification,
+  ListItem,
+  Modal,
+  UnorderedList
+} from 'carbon-components-react';
 import {
   getErrorMessage,
   getFilters,
@@ -28,17 +35,25 @@ import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 
 import { ListPageLayout } from '..';
 import { fetchPipelines } from '../../actions/pipelines';
+import { deletePipeline } from '../../api';
 import {
   getPipelines,
   getPipelinesErrorMessage,
   getSelectedNamespace,
   isFetchingPipelines,
+  isReadOnly,
   isWebSocketConnected
 } from '../../reducers';
 
 import '../../components/Definitions/Definitions.scss';
 
 export /* istanbul ignore next */ class Pipelines extends Component {
+  state = {
+    deleteError: null,
+    showDeleteModal: false,
+    toBeDeleted: []
+  };
+
   componentDidMount() {
     document.title = getTitle({ page: 'Pipelines' });
     this.fetchData();
@@ -59,6 +74,43 @@ export /* istanbul ignore next */ class Pipelines extends Component {
     }
   }
 
+  closeDeleteModal = () => {
+    this.setState({
+      showDeleteModal: false,
+      toBeDeleted: []
+    });
+  };
+
+  deletePipeline = pipeline => {
+    const { name, namespace } = pipeline.metadata;
+    deletePipeline({ name, namespace }).catch(error => {
+      error.response.text().then(text => {
+        const statusCode = error.response.status;
+        let errorMessage = `error code ${statusCode}`;
+        if (text) {
+          errorMessage = `${text} (error code ${statusCode})`;
+        }
+        this.setState({ deleteError: errorMessage });
+      });
+    });
+  };
+
+  handleDelete = async () => {
+    const { cancelSelection, toBeDeleted } = this.state;
+    const deletions = toBeDeleted.map(resource =>
+      this.deletePipeline(resource)
+    );
+    this.closeDeleteModal();
+    await Promise.all(deletions);
+    cancelSelection();
+  };
+
+  openDeleteModal = (selectedRows, cancelSelection) => {
+    const resourcesById = keyBy(this.props.pipelines, 'metadata.uid');
+    const toBeDeleted = selectedRows.map(({ id }) => resourcesById[id]);
+    this.setState({ showDeleteModal: true, toBeDeleted, cancelSelection });
+  };
+
   fetchData() {
     const { filters, namespace } = this.props;
     this.props.fetchPipelines({ filters, namespace });
@@ -72,6 +124,20 @@ export /* istanbul ignore next */ class Pipelines extends Component {
       intl,
       namespace: selectedNamespace
     } = this.props;
+    const { showDeleteModal, toBeDeleted } = this.state;
+
+    const batchActionButtons = this.props.isReadOnly
+      ? []
+      : [
+          {
+            onClick: this.openDeleteModal,
+            text: intl.formatMessage({
+              id: 'dashboard.actions.deleteButton',
+              defaultMessage: 'Delete'
+            }),
+            icon: Delete
+          }
+        ];
 
     const initialHeaders = [
       {
@@ -99,7 +165,7 @@ export /* istanbul ignore next */ class Pipelines extends Component {
     ];
 
     const pipelinesFormatted = pipelines.map(pipeline => ({
-      id: `${pipeline.metadata.namespace}:${pipeline.metadata.name}`,
+      id: pipeline.metadata.uid,
       name: (
         <Link
           to={urls.pipelineRuns.byPipeline({
@@ -116,25 +182,47 @@ export /* istanbul ignore next */ class Pipelines extends Component {
         <FormattedDate date={pipeline.metadata.creationTimestamp} relative />
       ),
       actions: (
-        <Link
-          to={urls.rawCRD.byNamespace({
-            namespace: pipeline.metadata.namespace,
-            type: 'pipelines',
-            name: pipeline.metadata.name
-          })}
-        >
-          <Information16 className="tkn--resource-info-icon">
-            <title>
-              {intl.formatMessage(
-                {
-                  id: 'dashboard.resourceList.viewDetails',
-                  defaultMessage: 'View {resource}'
-                },
-                { resource: pipeline.metadata.name }
-              )}
-            </title>
-          </Information16>
-        </Link>
+        <>
+          {!this.props.isReadOnly ? (
+            <Button
+              className="tkn--danger"
+              hasIconOnly
+              iconDescription={intl.formatMessage({
+                id: 'dashboard.actions.deleteButton',
+                defaultMessage: 'Delete'
+              })}
+              kind="ghost"
+              onClick={() =>
+                this.openDeleteModal([{ id: pipeline.metadata.uid }], () => {})
+              }
+              renderIcon={Delete}
+              size="sm"
+              tooltipAlignment="center"
+              tooltipPosition="left"
+            />
+          ) : null}
+          <Button
+            as={Link}
+            hasIconOnly
+            iconDescription={intl.formatMessage(
+              {
+                id: 'dashboard.resourceList.viewDetails',
+                defaultMessage: 'View {resource}'
+              },
+              { resource: pipeline.metadata.name }
+            )}
+            kind="ghost"
+            renderIcon={Information16}
+            size="sm"
+            to={urls.rawCRD.byNamespace({
+              namespace: pipeline.metadata.namespace,
+              type: 'pipelines',
+              name: pipeline.metadata.name
+            })}
+            tooltipAlignment="center"
+            tooltipPosition="left"
+          />
+        </>
       )
     }));
 
@@ -155,7 +243,28 @@ export /* istanbul ignore next */ class Pipelines extends Component {
 
     return (
       <ListPageLayout title="Pipelines" {...this.props}>
+        {this.state.deleteError && (
+          <InlineNotification
+            kind="error"
+            title={intl.formatMessage({
+              id: 'dashboard.error.title',
+              defaultMessage: 'Error:'
+            })}
+            subtitle={getErrorMessage(this.state.deleteError)}
+            iconDescription={intl.formatMessage({
+              id: 'dashboard.notification.clear',
+              defaultMessage: 'Clear Notification'
+            })}
+            data-testid="errorNotificationComponent"
+            onCloseButtonClick={() => {
+              this.setState({ deleteError: null });
+            }}
+            lowContrast
+          />
+        )}
         <Table
+          batchActionButtons={batchActionButtons}
+          className="tkn--table--inline-actions"
           headers={initialHeaders}
           rows={pipelinesFormatted}
           loading={loading && !pipelinesFormatted.length}
@@ -176,6 +285,47 @@ export /* istanbul ignore next */ class Pipelines extends Component {
             { kind: 'Pipelines', selectedNamespace }
           )}
         />
+        {showDeleteModal ? (
+          <Modal
+            open={showDeleteModal}
+            primaryButtonText={intl.formatMessage({
+              id: 'dashboard.actions.deleteButton',
+              defaultMessage: 'Delete'
+            })}
+            secondaryButtonText={intl.formatMessage({
+              id: 'dashboard.modal.cancelButton',
+              defaultMessage: 'Cancel'
+            })}
+            modalHeading={intl.formatMessage(
+              {
+                id: 'dashboard.deleteResources.heading',
+                defaultMessage: 'Delete {kind}'
+              },
+              { kind: 'Pipelines' }
+            )}
+            onSecondarySubmit={this.closeDeleteModal}
+            onRequestSubmit={this.handleDelete}
+            onRequestClose={this.closeDeleteModal}
+            danger
+          >
+            <p>
+              {intl.formatMessage(
+                {
+                  id: 'dashboard.deleteResources.confirm',
+                  defaultMessage:
+                    'Are you sure you want to delete these {kind}?'
+                },
+                { kind: 'Pipelines' }
+              )}
+            </p>
+            <UnorderedList nested>
+              {toBeDeleted.map(pipeline => {
+                const { name, namespace } = pipeline.metadata;
+                return <ListItem key={`${name}:${namespace}`}>{name}</ListItem>;
+              })}
+            </UnorderedList>
+          </Modal>
+        ) : null}
       </ListPageLayout>
     );
   }
@@ -195,6 +345,7 @@ function mapStateToProps(state, props) {
   return {
     error: getPipelinesErrorMessage(state),
     filters,
+    isReadOnly: isReadOnly(state),
     loading: isFetchingPipelines(state),
     namespace,
     pipelines: getPipelines(state, { filters, namespace }),

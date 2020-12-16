@@ -28,7 +28,6 @@ it('SecretsDeleteModal renders with one passed secret', () => {
   expect(queryByText('secret-name')).toBeTruthy();
   expect(queryByText('Cancel')).toBeTruthy();
   expect(queryByText('Delete')).toBeTruthy();
-  expect(queryByText('Delete Secret')).toBeTruthy();
 });
 
 it('SecretsDeleteModal renders with multiple passed secrets', () => {
@@ -48,7 +47,6 @@ it('SecretsDeleteModal renders with multiple passed secrets', () => {
   expect(queryByText('another-one')).toBeTruthy();
   expect(queryByText('Cancel')).toBeTruthy();
   expect(queryByText('Delete')).toBeTruthy();
-  expect(queryByText('Delete Secret')).toBeTruthy();
 });
 
 it('Test SecretsDeleteModal click events', () => {

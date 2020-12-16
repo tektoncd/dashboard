@@ -57,7 +57,17 @@ limitations under the License.
     }
 
     &.cell-status, &.cell-actions {
-      width: 40px;
+      width: 3rem;
+    }
+
+    &.cell-actions {
+      .tkn--danger.bx--btn--ghost.bx--btn--icon-only {
+        &:focus, &:hover {
+          svg, path {
+            fill: $danger;
+          }
+        }
+      }
     }
   }
 
@@ -78,6 +88,14 @@ limitations under the License.
 
     .bx--batch-summary {
       margin-left: 1rem;
+    }
+  }
+
+  &.tkn--table--inline-actions {
+    .bx--data-table td {
+      &.cell-actions {
+        width: 6rem;
+      }
     }
   }
 

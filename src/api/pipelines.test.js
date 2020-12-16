@@ -13,6 +13,7 @@ limitations under the License.
 
 import fetchMock from 'fetch-mock';
 import * as API from './pipelines';
+import { mockCSRFToken } from '../utils/test';
 
 it('getPipelines', () => {
   const data = {
@@ -30,6 +31,17 @@ it('getPipeline', () => {
   const data = { fake: 'pipeline' };
   fetchMock.get(`end:${name}`, data);
   return API.getPipeline({ name }).then(pipeline => {
+    expect(pipeline).toEqual(data);
+    fetchMock.restore();
+  });
+});
+
+it('deletePipeline', () => {
+  const name = 'foo';
+  const data = { fake: 'pipeline' };
+  mockCSRFToken();
+  fetchMock.delete(`end:${name}`, data);
+  return API.deletePipeline({ name }).then(pipeline => {
     expect(pipeline).toEqual(data);
     fetchMock.restore();
   });

@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { get } from './comms';
+import { deleteRequest, get } from './comms';
 import { checkData, getQueryParams, getTektonAPI } from './utils';
 
 export function getTasks({ filters = [], namespace } = {}) {
@@ -22,4 +22,9 @@ export function getTasks({ filters = [], namespace } = {}) {
 export function getTask({ name, namespace }) {
   const uri = getTektonAPI('tasks', { name, namespace });
   return get(uri);
+}
+
+export function deleteTask({ name, namespace }) {
+  const uri = getTektonAPI('tasks', { name, namespace });
+  return deleteRequest(uri);
 }
