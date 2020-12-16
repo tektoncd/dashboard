@@ -24,7 +24,7 @@ limitations under the License.
         margin-right: 1rem;
       }
 
-      & > svg {
+      & > svg path {
         fill: $gray-10;
       }
     }
@@ -50,7 +50,7 @@ limitations under the License.
         background-color: $gray-90;
         color: white;
 
-        .bx--side-nav__icon > svg {
+        .bx--side-nav__icon > svg path {
           fill: white;
         }
       }
