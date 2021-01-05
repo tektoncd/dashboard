@@ -1,30 +1,23 @@
 # Tekton Dashboard Roadmap
 
-In 2019 we created a web-based UI to observe and inspect Tekton resources, both those created by the core Tekton Pipeline project, and by Tekton Triggers.
+In 2019 we created a web-based UI to observe and inspect Tekton resources, both those created by the core Tekton Pipelines project, and by Tekton Triggers. 2020 brought new functionality, improved configurability, and a redesigned UI.
 
-In 2020 we would like to continue adding new features to make this experience even better, as well as ensuring it remains stable and reliable.
+In 2021 and beyond we would like to continue adding new features to make this experience even better, as well as ensuring it remains stable and reliable.
 
-This is an incomplete list of work we hope to accomplish this year.
+This is an incomplete list of work we hope to accomplish.
 
 ## Currency
-- continue adding support for latest Pipeline ([roadmap](https://github.com/tektoncd/pipeline/blob/master/roadmap.md)) and Triggers ([roadmap](https://github.com/tektoncd/triggers/blob/master/roadmap.md)) releases
-- this includes support for workspaces, retries, improved display of conditions, etc.
+- continue adding support for latest Pipelines ([roadmap](https://github.com/tektoncd/pipeline/blob/master/roadmap.md)) and Triggers ([roadmap](https://github.com/tektoncd/triggers/blob/master/roadmap.md)) releases
+- this includes support for workspaces, Custom Tasks (i.e. the Run CRD), etc.
 - we also want to have a Dashboard beta release
 
 ## Observability
 - which Trigger resulted in which PipelineRun or TaskRun?
 - it should be easy for a user to navigate between related resources for more details, as well as surfacing some relevant information in context in the PipelineRun and TaskRun views
 
-## Platform support
-- currently known to work on GKE (read-only at least) and some versions of OpenShift
-- we've mostly used Docker Desktop for local development of the Dashboard, but should also make it easy to develop on some other common platforms (OpenShift CodeReady Containers works)
-- document known good combinations and improve cross-platform testing
-- this includes documentation for auth in supported environments
-
 ## Consistency
 - improve consistency across resource types
-- use a common layout on core pages. A good chunk of this is done already, need to update remaining pages and ensure it's applied to any new resource types as they're added
-- ensure all resource types provide a core feature set, e.g. list, delete, view YAML, etc.
+- ensure all resource types provide a core feature set, e.g. list, delete, view YAML, etc. Most of this is done already, need to update the few remaining pages and ensure the same pattern is applied to any new resource types as they're added.
 
 ## Authentication / authorization
 - document common patterns for auth in different scenarios / different platforms, e.g. oauth-proxy with OpenShift
