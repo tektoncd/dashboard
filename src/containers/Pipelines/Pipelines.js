@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,7 +14,10 @@ limitations under the License.
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { TrashCan32 as Delete, Information16 } from '@carbon/icons-react';
+import {
+  TrashCan16 as DeleteIcon,
+  Playlist16 as RunsIcon
+} from '@carbon/icons-react';
 import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
 import keyBy from 'lodash.keyby';
@@ -135,7 +138,7 @@ export /* istanbul ignore next */ class Pipelines extends Component {
               id: 'dashboard.actions.deleteButton',
               defaultMessage: 'Delete'
             }),
-            icon: Delete
+            icon: DeleteIcon
           }
         ];
 
@@ -168,9 +171,10 @@ export /* istanbul ignore next */ class Pipelines extends Component {
       id: pipeline.metadata.uid,
       name: (
         <Link
-          to={urls.pipelineRuns.byPipeline({
+          to={urls.rawCRD.byNamespace({
             namespace: pipeline.metadata.namespace,
-            pipelineName: pipeline.metadata.name
+            type: 'pipelines',
+            name: pipeline.metadata.name
           })}
           title={pipeline.metadata.name}
         >
@@ -195,7 +199,7 @@ export /* istanbul ignore next */ class Pipelines extends Component {
               onClick={() =>
                 this.openDeleteModal([{ id: pipeline.metadata.uid }], () => {})
               }
-              renderIcon={Delete}
+              renderIcon={DeleteIcon}
               size="sm"
               tooltipAlignment="center"
               tooltipPosition="left"
@@ -206,18 +210,17 @@ export /* istanbul ignore next */ class Pipelines extends Component {
             hasIconOnly
             iconDescription={intl.formatMessage(
               {
-                id: 'dashboard.resourceList.viewDetails',
-                defaultMessage: 'View {resource}'
+                id: 'dashboard.resourceList.viewRuns',
+                defaultMessage: 'View {kind} of {resource}'
               },
-              { resource: pipeline.metadata.name }
+              { kind: 'PipelineRuns', resource: pipeline.metadata.name }
             )}
             kind="ghost"
-            renderIcon={Information16}
+            renderIcon={RunsIcon}
             size="sm"
-            to={urls.rawCRD.byNamespace({
+            to={urls.pipelineRuns.byPipeline({
               namespace: pipeline.metadata.namespace,
-              type: 'pipelines',
-              name: pipeline.metadata.name
+              pipelineName: pipeline.metadata.name
             })}
             tooltipAlignment="center"
             tooltipPosition="left"

@@ -204,7 +204,7 @@
     "dashboard.resourceDetails.errorloading": "Error loading resource",
     "dashboard.resourceList.emptyState": "No matching resources found for type {type}",
     "dashboard.resourceList.errorLoading": "Error loading {type}",
-    "dashboard.resourceList.viewDetails": "View {resource}",
+    "dashboard.resourceList.viewRuns": "View {kind} of {resource}",
     "dashboard.run.duration": "Duration: {duration}",
     "dashboard.run.rerunStatusMessage": "View status",
     "dashboard.secret.errorLoading": "Error loading Secret",
