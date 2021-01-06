@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -17,17 +17,14 @@ import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
 import keyBy from 'lodash.keyby';
+import { InlineNotification } from 'carbon-components-react';
 import {
-  InlineNotification,
-  ListItem,
-  UnorderedList
-} from 'carbon-components-react';
-import {
-  Modal,
+  DeleteModal,
   StatusFilterDropdown,
   TaskRuns as TaskRunsList
 } from '@tektoncd/dashboard-components';
 import {
+  ALL_NAMESPACES,
   generateId,
   getErrorMessage,
   getFilters,
@@ -399,45 +396,13 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
           toolbarButtons={toolbarButtons}
         />
         {showDeleteModal ? (
-          <Modal
-            open={showDeleteModal}
-            primaryButtonText={intl.formatMessage({
-              id: 'dashboard.actions.deleteButton',
-              defaultMessage: 'Delete'
-            })}
-            secondaryButtonText={intl.formatMessage({
-              id: 'dashboard.modal.cancelButton',
-              defaultMessage: 'Cancel'
-            })}
-            modalHeading={intl.formatMessage(
-              {
-                id: 'dashboard.deleteResources.heading',
-                defaultMessage: 'Delete {kind}'
-              },
-              { kind: 'TaskRuns' }
-            )}
-            onSecondarySubmit={this.closeDeleteModal}
-            onRequestSubmit={this.handleDelete}
-            onRequestClose={this.closeDeleteModal}
-            danger
-          >
-            <p>
-              {intl.formatMessage(
-                {
-                  id: 'dashboard.deleteResources.confirm',
-                  defaultMessage:
-                    'Are you sure you want to delete these {kind}?'
-                },
-                { kind: 'TaskRuns' }
-              )}
-            </p>
-            <UnorderedList nested>
-              {toBeDeleted.map(taskRun => {
-                const { name, namespace } = taskRun.metadata;
-                return <ListItem key={`${name}:${namespace}`}>{name}</ListItem>;
-              })}
-            </UnorderedList>
-          </Modal>
+          <DeleteModal
+            kind="TaskRuns"
+            onClose={this.closeDeleteModal}
+            onSubmit={this.handleDelete}
+            resources={toBeDeleted}
+            showNamespace={selectedNamespace === ALL_NAMESPACES}
+          />
         ) : null}
       </ListPageLayout>
     );

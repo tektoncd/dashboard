@@ -17,14 +17,12 @@ import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
 import keyBy from 'lodash.keyby';
-import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 import {
-  Button,
-  InlineNotification,
-  ListItem,
-  Modal,
-  UnorderedList
-} from 'carbon-components-react';
+  DeleteModal,
+  FormattedDate,
+  Table
+} from '@tektoncd/dashboard-components';
+import { Button, InlineNotification } from 'carbon-components-react';
 import {
   TrashCan16 as DeleteIcon,
   Playlist16 as RunsIcon
@@ -278,45 +276,13 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
           )}
         />
         {showDeleteModal ? (
-          <Modal
-            open={showDeleteModal}
-            primaryButtonText={intl.formatMessage({
-              id: 'dashboard.actions.deleteButton',
-              defaultMessage: 'Delete'
-            })}
-            secondaryButtonText={intl.formatMessage({
-              id: 'dashboard.modal.cancelButton',
-              defaultMessage: 'Cancel'
-            })}
-            modalHeading={intl.formatMessage(
-              {
-                id: 'dashboard.deleteResources.heading',
-                defaultMessage: 'Delete {kind}'
-              },
-              { kind: 'ClusterTasks' }
-            )}
-            onSecondarySubmit={this.closeDeleteModal}
-            onRequestSubmit={this.handleDelete}
-            onRequestClose={this.closeDeleteModal}
-            danger
-          >
-            <p>
-              {intl.formatMessage(
-                {
-                  id: 'dashboard.deleteResources.confirm',
-                  defaultMessage:
-                    'Are you sure you want to delete these {kind}?'
-                },
-                { kind: 'ClusterTasks' }
-              )}
-            </p>
-            <UnorderedList nested>
-              {toBeDeleted.map(clusterTask => {
-                const { name } = clusterTask.metadata;
-                return <ListItem key={name}>{name}</ListItem>;
-              })}
-            </UnorderedList>
-          </Modal>
+          <DeleteModal
+            kind="ClusterTasks"
+            onClose={this.closeDeleteModal}
+            onSubmit={this.handleDelete}
+            resources={toBeDeleted}
+            showNamespace={false}
+          />
         ) : null}
       </ListPageLayout>
     );

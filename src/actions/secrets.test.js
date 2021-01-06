@@ -172,8 +172,8 @@ it('fetchSecret', () => {
 
 it('deleteSecret', async () => {
   const secrets = [
-    { name: 'default-token-kbn7j', namespace: 'default' },
-    { name: 'another-token-kbn7j', namespace: 'default' }
+    { metadata: { name: 'default-token-kbn7j', namespace: 'default' } },
+    { metadata: { name: 'another-token-kbn7j', namespace: 'default' } }
   ];
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
@@ -204,7 +204,9 @@ it('deleteSecret', async () => {
 });
 
 it('deleteSecret error', async () => {
-  const secrets = [{ name: 'default-token-kbn7j', namespace: 'default' }];
+  const secrets = [
+    { metadata: { name: 'default-token-kbn7j', namespace: 'default' } }
+  ];
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const store = mockStore();

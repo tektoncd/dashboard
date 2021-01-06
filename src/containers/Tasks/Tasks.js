@@ -17,20 +17,19 @@ import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
 import keyBy from 'lodash.keyby';
+import { Button, InlineNotification } from 'carbon-components-react';
 import {
-  Button,
-  InlineNotification,
-  ListItem,
-  Modal,
-  UnorderedList
-} from 'carbon-components-react';
-import {
+  ALL_NAMESPACES,
   getErrorMessage,
   getFilters,
   getTitle,
   urls
 } from '@tektoncd/dashboard-utils';
-import { FormattedDate, Table } from '@tektoncd/dashboard-components';
+import {
+  DeleteModal,
+  FormattedDate,
+  Table
+} from '@tektoncd/dashboard-components';
 import {
   TrashCan16 as DeleteIcon,
   Playlist16 as RunsIcon
@@ -287,45 +286,13 @@ export /* istanbul ignore next */ class Tasks extends Component {
           )}
         />
         {showDeleteModal ? (
-          <Modal
-            open={showDeleteModal}
-            primaryButtonText={intl.formatMessage({
-              id: 'dashboard.actions.deleteButton',
-              defaultMessage: 'Delete'
-            })}
-            secondaryButtonText={intl.formatMessage({
-              id: 'dashboard.modal.cancelButton',
-              defaultMessage: 'Cancel'
-            })}
-            modalHeading={intl.formatMessage(
-              {
-                id: 'dashboard.deleteResources.heading',
-                defaultMessage: 'Delete {kind}'
-              },
-              { kind: 'Tasks' }
-            )}
-            onSecondarySubmit={this.closeDeleteModal}
-            onRequestSubmit={this.handleDelete}
-            onRequestClose={this.closeDeleteModal}
-            danger
-          >
-            <p>
-              {intl.formatMessage(
-                {
-                  id: 'dashboard.deleteResources.confirm',
-                  defaultMessage:
-                    'Are you sure you want to delete these {kind}?'
-                },
-                { kind: 'Tasks' }
-              )}
-            </p>
-            <UnorderedList nested>
-              {toBeDeleted.map(task => {
-                const { name, namespace } = task.metadata;
-                return <ListItem key={`${name}:${namespace}`}>{name}</ListItem>;
-              })}
-            </UnorderedList>
-          </Modal>
+          <DeleteModal
+            kind="Tasks"
+            onClose={this.closeDeleteModal}
+            onSubmit={this.handleDelete}
+            resources={toBeDeleted}
+            showNamespace={selectedNamespace === ALL_NAMESPACES}
+          />
         ) : null}
       </ListPageLayout>
     );
