@@ -14,6 +14,7 @@ limitations under the License.
 
 export { default as DataTableSkeleton } from './DataTableSkeleton';
 export { default as DetailsHeader } from './DetailsHeader';
+export { default as DeleteModal } from './DeleteModal';
 export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as FormattedDate } from './FormattedDate';
 export { default as FormattedDuration } from './FormattedDuration';

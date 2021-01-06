@@ -57,13 +57,14 @@ export function deleteSecret(secrets, cancelMethod) {
     // from error handling and additional notifications on success/error
     const namespacesToSecretsMap = new Map();
     secrets.forEach(secret => {
-      let foundSecretInfo = namespacesToSecretsMap.get(secret.namespace);
+      const { name, namespace } = secret.metadata;
+      let foundSecretInfo = namespacesToSecretsMap.get(namespace);
       if (foundSecretInfo) {
-        foundSecretInfo.push(secret.name);
+        foundSecretInfo.push(name);
       } else {
-        foundSecretInfo = [secret.name];
+        foundSecretInfo = [name];
       }
-      namespacesToSecretsMap.set(secret.namespace, foundSecretInfo);
+      namespacesToSecretsMap.set(namespace, foundSecretInfo);
     });
 
     /* Now we know the secrets for each namespace, iterate and determine which secrets
@@ -120,7 +121,7 @@ export function deleteSecret(secrets, cancelMethod) {
     // This is where we delete the kube secrets themselves
     const timeoutLength = secrets.length * 1000;
     const deletePromises = secrets.map(secret => {
-      const { name, namespace } = secret;
+      const { name, namespace } = secret.metadata;
       const response = deleteSecretAPI(name, namespace);
       const timeout = new Promise((resolve, reject) => {
         setTimeout(() => {
