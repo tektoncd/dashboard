@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -25,7 +25,10 @@ import {
   Modal,
   UnorderedList
 } from 'carbon-components-react';
-import { TrashCan32 as Delete, Information16 } from '@carbon/icons-react';
+import {
+  TrashCan16 as DeleteIcon,
+  Playlist16 as RunsIcon
+} from '@carbon/icons-react';
 import {
   getErrorMessage,
   getFilters,
@@ -127,7 +130,7 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
               id: 'dashboard.actions.deleteButton',
               defaultMessage: 'Delete'
             }),
-            icon: Delete
+            icon: DeleteIcon
           }
         ];
 
@@ -156,8 +159,9 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
       id: clusterTask.metadata.uid,
       name: (
         <Link
-          to={urls.taskRuns.byClusterTask({
-            taskName: clusterTask.metadata.name
+          to={urls.rawCRD.cluster({
+            type: 'clustertasks',
+            name: clusterTask.metadata.name
           })}
           title={clusterTask.metadata.name}
         >
@@ -184,7 +188,7 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
                   () => {}
                 )
               }
-              renderIcon={Delete}
+              renderIcon={DeleteIcon}
               size="sm"
               tooltipAlignment="center"
               tooltipPosition="left"
@@ -195,17 +199,16 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
             hasIconOnly
             iconDescription={intl.formatMessage(
               {
-                id: 'dashboard.resourceList.viewDetails',
-                defaultMessage: 'View {resource}'
+                id: 'dashboard.resourceList.viewRuns',
+                defaultMessage: 'View {kind} of {resource}'
               },
-              { resource: clusterTask.metadata.name }
+              { kind: 'TaskRuns', resource: clusterTask.metadata.name }
             )}
             kind="ghost"
-            renderIcon={Information16}
+            renderIcon={RunsIcon}
             size="sm"
-            to={urls.rawCRD.cluster({
-              type: 'clustertasks',
-              name: clusterTask.metadata.name
+            to={urls.taskRuns.byClusterTask({
+              taskName: clusterTask.metadata.name
             })}
             tooltipAlignment="center"
             tooltipPosition="left"

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -31,7 +31,10 @@ import {
   urls
 } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
-import { TrashCan32 as Delete, Information16 } from '@carbon/icons-react';
+import {
+  TrashCan16 as DeleteIcon,
+  Playlist16 as RunsIcon
+} from '@carbon/icons-react';
 
 import { ListPageLayout } from '..';
 import { fetchTasks } from '../../actions/tasks';
@@ -133,7 +136,7 @@ export /* istanbul ignore next */ class Tasks extends Component {
               id: 'dashboard.actions.deleteButton',
               defaultMessage: 'Delete'
             }),
-            icon: Delete
+            icon: DeleteIcon
           }
         ];
 
@@ -166,9 +169,10 @@ export /* istanbul ignore next */ class Tasks extends Component {
       id: task.metadata.uid,
       name: (
         <Link
-          to={urls.taskRuns.byTask({
+          to={urls.rawCRD.byNamespace({
             namespace: task.metadata.namespace,
-            taskName: task.metadata.name
+            type: 'tasks',
+            name: task.metadata.name
           })}
           title={task.metadata.name}
         >
@@ -193,7 +197,7 @@ export /* istanbul ignore next */ class Tasks extends Component {
               onClick={() =>
                 this.openDeleteModal([{ id: task.metadata.uid }], () => {})
               }
-              renderIcon={Delete}
+              renderIcon={DeleteIcon}
               size="sm"
               tooltipAlignment="center"
               tooltipPosition="left"
@@ -204,18 +208,17 @@ export /* istanbul ignore next */ class Tasks extends Component {
             hasIconOnly
             iconDescription={intl.formatMessage(
               {
-                id: 'dashboard.resourceList.viewDetails',
-                defaultMessage: 'View {resource}'
+                id: 'dashboard.resourceList.viewRuns',
+                defaultMessage: 'View {kind} of {resource}'
               },
-              { resource: task.metadata.name }
+              { kind: 'TaskRuns', resource: task.metadata.name }
             )}
             kind="ghost"
-            renderIcon={Information16}
+            renderIcon={RunsIcon}
             size="sm"
-            to={urls.rawCRD.byNamespace({
+            to={urls.taskRuns.byTask({
               namespace: task.metadata.namespace,
-              type: 'tasks',
-              name: task.metadata.name
+              taskName: task.metadata.name
             })}
             tooltipAlignment="center"
             tooltipPosition="left"
