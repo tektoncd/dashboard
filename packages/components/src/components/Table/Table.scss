@@ -94,6 +94,7 @@ limitations under the License.
   &.tkn--table--inline-actions {
     .bx--data-table td {
       &.cell-actions {
+        text-align: right;
         width: 6rem;
       }
     }
