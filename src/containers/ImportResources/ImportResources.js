@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -362,12 +362,6 @@ export class ImportResources extends Component {
               />
             </AccordionItem>
           </Accordion>
-          <Button kind="primary" onClick={this.handleSubmit}>
-            {intl.formatMessage({
-              id: 'dashboard.importResources.importApplyButton',
-              defaultMessage: 'Import and Apply'
-            })}
-          </Button>
           {this.state.submitSuccess && (
             <ToastNotification
               caption={
@@ -384,6 +378,12 @@ export class ImportResources extends Component {
               onCloseButtonClick={this.resetSuccess}
             />
           )}
+          <Button kind="primary" onClick={this.handleSubmit}>
+            {intl.formatMessage({
+              id: 'dashboard.importResources.importApplyButton',
+              defaultMessage: 'Import and Apply'
+            })}
+          </Button>
         </Form>
       </div>
     );
