@@ -88,7 +88,7 @@ import {
 } from '../../reducers';
 import messages from '../../nls/messages_en.json';
 
-import '../../components/App/App.scss';
+import '../../scss/App.scss';
 
 /* istanbul ignore next */
 if (process.env.I18N_PSEUDO) {

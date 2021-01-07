@@ -47,7 +47,7 @@ import {
   isWebSocketConnected
 } from '../../reducers';
 
-import '../../components/Definitions/Definitions.scss';
+import '../../scss/Definitions.scss';
 
 export /* istanbul ignore next */ class Pipelines extends Component {
   state = {

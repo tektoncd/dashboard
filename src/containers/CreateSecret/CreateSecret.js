@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -21,8 +21,8 @@ import React, { Component } from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 
-import Form from '../../components/CreateSecret/Form';
-import ServiceAccountSelector from '../../components/CreateSecret/ServiceAccountSelector';
+import Form from './Form';
+import ServiceAccountSelector from './ServiceAccountSelector';
 import {
   getCreateSecretsSuccessMessage,
   getPatchSecretsErrorMessage,
@@ -42,7 +42,8 @@ import {
 } from '../../actions/secrets';
 import { fetchServiceAccounts } from '../../actions/serviceAccounts';
 import { selectNamespace } from '../../actions/namespaces';
-import '../../components/CreateSecret/CreateSecret.scss';
+
+import './CreateSecret.scss';
 
 const defaultGithubServerURL = 'https://github.com';
 const defaultDockerServerURL = 'https://index.docker.io/v1/';
