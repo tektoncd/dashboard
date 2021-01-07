@@ -13,7 +13,6 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
 import keyBy from 'lodash.keyby';
@@ -39,7 +38,7 @@ import {
 } from '@tektoncd/dashboard-utils';
 import { Add16 as Add, TrashCan32 as Delete } from '@carbon/icons-react';
 
-import { CreatePipelineRun, ListPageLayout } from '..';
+import { ListPageLayout } from '..';
 import { sortRunsByStartTime } from '../../utils';
 import { fetchPipelineRuns } from '../../actions/pipelineRuns';
 
@@ -58,23 +57,13 @@ import {
 } from '../../api';
 
 const initialState = {
-  createdPipelineRun: null,
   deleteError: null,
-  showCreatePipelineRunModal: false,
   showDeleteModal: false,
   toBeDeleted: []
 };
 
 export /* istanbul ignore next */ class PipelineRuns extends Component {
-  constructor(props) {
-    super(props);
-
-    this.handleCreatePipelineRunSuccess = this.handleCreatePipelineRunSuccess.bind(
-      this
-    );
-
-    this.state = initialState;
-  }
+  state = initialState;
 
   componentDidMount() {
     document.title = getTitle({ page: 'PipelineRuns' });
@@ -95,18 +84,6 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
     } else if (webSocketConnected && prevWebSocketConnected === false) {
       this.fetchPipelineRuns();
     }
-  }
-
-  handleCreatePipelineRunSuccess(newPipelineRun) {
-    const {
-      metadata: { namespace, name }
-    } = newPipelineRun;
-    const url = urls.pipelineRuns.byName({
-      namespace,
-      pipelineRunName: name
-    });
-    this.toggleModal(false);
-    this.setState({ createdPipelineRun: { name, url } });
   }
 
   cancel = pipelineRun => {
@@ -243,14 +220,6 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
     rerunPipelineRun(pipelineRun);
   };
 
-  resetSuccess = () => {
-    this.setState({ createdPipelineRun: false });
-  };
-
-  toggleModal = showCreatePipelineRunModal => {
-    this.setState({ showCreatePipelineRunModal });
-  };
-
   reset() {
     this.setState(initialState);
   }
@@ -268,6 +237,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
       error,
       intl,
       loading,
+      pipelineName,
       pipelineRuns,
       namespace: selectedNamespace,
       statusFilter
@@ -295,7 +265,11 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
       ? []
       : [
           {
-            onClick: () => this.toggleModal(true),
+            onClick: () =>
+              this.props.history.push(
+                urls.pipelineRuns.create() +
+                  (pipelineName ? `?pipelineName=${pipelineName}` : '')
+              ),
             text: intl.formatMessage({
               id: 'dashboard.actions.createButton',
               defaultMessage: 'Create'
@@ -329,22 +303,6 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
 
     return (
       <ListPageLayout title="PipelineRuns" {...this.props}>
-        {this.state.createdPipelineRun && (
-          <InlineNotification
-            kind="success"
-            title={intl.formatMessage({
-              id: 'dashboard.pipelineRuns.createSuccess',
-              defaultMessage: 'Successfully created PipelineRun'
-            })}
-            subtitle={
-              <Link to={this.state.createdPipelineRun.url}>
-                {this.state.createdPipelineRun.name}
-              </Link>
-            }
-            onCloseButtonClick={this.resetSuccess}
-            lowContrast
-          />
-        )}
         {this.state.deleteError && (
           <InlineNotification
             kind="error"
@@ -362,15 +320,6 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
               this.setState({ deleteError: null });
             }}
             lowContrast
-          />
-        )}
-        {!this.props.isReadOnly && (
-          <CreatePipelineRun
-            open={this.state.showCreatePipelineRunModal}
-            onClose={() => this.toggleModal(false)}
-            onSuccess={this.handleCreatePipelineRunSuccess}
-            pipelineRef={this.props.pipelineName}
-            namespace={selectedNamespace}
           />
         )}
         <PipelineRunsList

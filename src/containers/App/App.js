@@ -45,6 +45,7 @@ import {
   Condition,
   Conditions,
   CreatePipelineResource,
+  CreatePipelineRun,
   CreateSecret,
   CustomResourceDefinition,
   EventListener,
@@ -238,6 +239,12 @@ export /* istanbul ignore next */ class App extends Component {
                       path={paths.pipelines.byNamespace()}
                       exact
                       component={Pipelines}
+                    />
+                    <ReadWriteRoute
+                      isReadOnly={this.props.isReadOnly}
+                      path={paths.pipelineRuns.create()}
+                      exact
+                      component={CreatePipelineRun}
                     />
                     <Route
                       path={paths.pipelineRuns.all()}

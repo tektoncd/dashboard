@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,15 +12,22 @@ limitations under the License.
 */
 
 import React from 'react';
+import { connect } from 'react-redux';
 import keyBy from 'lodash.keyby';
 import {
+  Button,
   Form,
   FormGroup,
   InlineNotification,
   TextInput
 } from 'carbon-components-react';
-import { ALL_NAMESPACES, generateId } from '@tektoncd/dashboard-utils';
-import { KeyValueList, Modal } from '@tektoncd/dashboard-components';
+import {
+  ALL_NAMESPACES,
+  generateId,
+  getTitle,
+  urls
+} from '@tektoncd/dashboard-utils';
+import { KeyValueList } from '@tektoncd/dashboard-components';
 import { injectIntl } from 'react-intl';
 import {
   NamespacesDropdown,
@@ -28,7 +35,7 @@ import {
   PipelinesDropdown,
   ServiceAccountsDropdown
 } from '..';
-import { getPipeline } from '../../reducers';
+import { getPipeline, getSelectedNamespace } from '../../reducers';
 import { createPipelineRun } from '../../api';
 import { getStore } from '../../store/index';
 import { isValidLabel } from '../../utils';
@@ -36,6 +43,7 @@ import { isValidLabel } from '../../utils';
 import '../../scss/Create.scss';
 
 const initialState = {
+  creating: false,
   invalidLabels: {},
   invalidNodeSelector: {},
   labels: [],
@@ -103,25 +111,21 @@ class CreatePipelineRun extends React.Component {
     this.state = this.initialState();
   }
 
-  componentDidUpdate(prevProps) {
-    const { open, namespace } = this.props;
-    const { open: prevOpen, namespace: prevNamespace } = prevProps;
-
-    if ((open && !prevOpen) || namespace !== prevNamespace) {
-      this.resetForm();
-    }
+  componentDidMount() {
+    const { intl } = this.props;
+    document.title = getTitle({
+      page: intl.formatMessage({
+        id: 'dashboard.createPipelineRun.title',
+        defaultMessage: 'Create PipelineRun'
+      })
+    });
   }
 
-  resetError = () => {
-    this.setState({ submitError: '' });
-  };
-
-  isDisabled = () => {
-    if (this.state.namespace === '') {
-      return true;
-    }
-    return false;
-  };
+  getPipelineName() {
+    const { location } = this.props;
+    const urlSearchParams = new URLSearchParams(location.search);
+    return urlSearchParams.get('pipelineName') || '';
+  }
 
   checkFormValidation = () => {
     const { paramSpecs } = this.state;
@@ -199,8 +203,27 @@ class CreatePipelineRun extends React.Component {
     );
   };
 
+  isDisabled = () => {
+    if (this.state.namespace === '') {
+      return true;
+    }
+    return false;
+  };
+
+  resetError = () => {
+    this.setState({ submitError: '' });
+  };
+
   handleClose = () => {
-    this.props.onClose();
+    const { defaultNamespace: namespace, history } = this.props;
+    const pipelineName = this.getPipelineName();
+    let url = urls.pipelineRuns.all();
+    if (pipelineName && namespace !== ALL_NAMESPACES) {
+      url = urls.pipelineRuns.byPipeline({ namespace, pipelineName });
+    } else if (namespace !== ALL_NAMESPACES) {
+      url = urls.pipelineRuns.byNamespace({ namespace });
+    }
+    history.push(url);
   };
 
   handleAddLabel = prop => {
@@ -314,7 +337,8 @@ class CreatePipelineRun extends React.Component {
       return;
     }
 
-    // Send API request to create PipelineRun
+    this.setState({ creating: true });
+
     const {
       labels,
       namespace,
@@ -344,8 +368,9 @@ class CreatePipelineRun extends React.Component {
           }, {})
         : null
     })
-      .then(response => {
-        this.props.onSuccess(response);
+      .then(() => {
+        const { history } = this.props;
+        history.push(urls.pipelineRuns.byNamespace({ namespace }));
       })
       .catch(error => {
         error.response.text().then(text => {
@@ -354,22 +379,22 @@ class CreatePipelineRun extends React.Component {
           if (text) {
             errorMessage = `${text} (error code ${statusCode})`;
           }
-          this.setState({ submitError: errorMessage });
+          this.setState({ creating: false, submitError: errorMessage });
         });
       });
   };
 
   initialState = () => {
-    const { namespace } = this.props;
-    let { pipelineRef } = this.props;
-    const pipelineInfo = parsePipelineInfo(pipelineRef, namespace);
+    const { defaultNamespace } = this.props;
+    let pipelineRef = this.getPipelineName();
+    const pipelineInfo = parsePipelineInfo(pipelineRef, defaultNamespace);
     if (pipelineInfo.pipelineError) {
       pipelineRef = '';
     }
     return {
       ...initialState,
       ...pipelineInfo,
-      namespace: namespace !== ALL_NAMESPACES ? namespace : '',
+      namespace: defaultNamespace !== ALL_NAMESPACES ? defaultNamespace : '',
       pipelineRef: pipelineRef || '',
       params: initialParamsState(pipelineInfo.paramSpecs),
       resources: initialResourcesState(pipelineInfo.resourceSpecs),
@@ -377,13 +402,10 @@ class CreatePipelineRun extends React.Component {
     };
   };
 
-  resetForm = () => {
-    this.setState(this.initialState());
-  };
-
   render() {
-    const { open, intl } = this.props;
+    const { intl } = this.props;
     const {
+      creating,
       invalidLabels,
       invalidNodeSelector,
       labels,
@@ -398,26 +420,43 @@ class CreatePipelineRun extends React.Component {
     } = this.state;
 
     return (
-      <Form>
-        <Modal
-          className="tkn--create"
-          open={open}
-          modalHeading={intl.formatMessage({
-            id: 'dashboard.createPipelineRun.heading',
-            defaultMessage: 'Create PipelineRun'
-          })}
-          primaryButtonText={intl.formatMessage({
-            id: 'dashboard.actions.createButton',
-            defaultMessage: 'Create'
-          })}
-          secondaryButtonText={intl.formatMessage({
-            id: 'dashboard.modal.cancelButton',
-            defaultMessage: 'Cancel'
-          })}
-          onRequestSubmit={this.handleSubmit}
-          onRequestClose={this.handleClose}
-          onSecondarySubmit={this.handleClose}
-        >
+      <div className="tkn--create">
+        <div className="tkn--create--heading">
+          <h1>
+            {intl.formatMessage({
+              id: 'dashboard.createPipelineRun.title',
+              defaultMessage: 'Create PipelineRun'
+            })}
+          </h1>
+          <Button
+            iconDescription={intl.formatMessage({
+              id: 'dashboard.modal.cancelButton',
+              defaultMessage: 'Cancel'
+            })}
+            kind="secondary"
+            onClick={this.handleClose}
+            disabled={creating}
+          >
+            {intl.formatMessage({
+              id: 'dashboard.modal.cancelButton',
+              defaultMessage: 'Cancel'
+            })}
+          </Button>
+          <Button
+            iconDescription={intl.formatMessage({
+              id: 'dashboard.actions.createButton',
+              defaultMessage: 'Create'
+            })}
+            onClick={this.handleSubmit}
+            disabled={creating}
+          >
+            {intl.formatMessage({
+              id: 'dashboard.actions.createButton',
+              defaultMessage: 'Create'
+            })}
+          </Button>
+        </div>
+        <Form>
           {this.state.pipelineError && (
             <InlineNotification
               kind="error"
@@ -459,7 +498,6 @@ class CreatePipelineRun extends React.Component {
                 id: 'dashboard.createRun.invalidNamespace',
                 defaultMessage: 'Namespace cannot be empty'
               })}
-              light
               selectedItem={namespace ? { id: namespace, text: namespace } : ''}
               onChange={this.handleNamespaceChange}
             />
@@ -471,7 +509,6 @@ class CreatePipelineRun extends React.Component {
                 id: 'dashboard.createPipelineRun.invalidPipeline',
                 defaultMessage: 'Pipeline cannot be empty'
               })}
-              light
               selectedItem={
                 pipelineRef ? { id: pipelineRef, text: pipelineRef } : ''
               }
@@ -582,7 +619,6 @@ class CreatePipelineRun extends React.Component {
                     id: 'dashboard.createRun.invalidPipelineResources',
                     defaultMessage: 'PipelineResources cannot be empty'
                   })}
-                  light
                   selectedItem={(() => {
                     const value = this.state.resources[resourceSpec.name];
                     return value ? { id: value, text: value } : '';
@@ -638,7 +674,6 @@ class CreatePipelineRun extends React.Component {
                 defaultMessage:
                   'Ensure the selected ServiceAccount (or the default if none selected) has permissions for creating PipelineRuns and for anything else your PipelineRun interacts with.'
               })}
-              light
               namespace={namespace}
               selectedItem={
                 serviceAccount
@@ -674,16 +709,17 @@ class CreatePipelineRun extends React.Component {
               }
             />
           </FormGroup>
-        </Modal>
-      </Form>
+        </Form>
+      </div>
     );
   }
 }
 
-CreatePipelineRun.defaultProps = {
-  open: false,
-  onClose: () => {},
-  onSuccess: () => {}
-};
+/* istanbul ignore next */
+function mapStateToProps(state) {
+  return {
+    defaultNamespace: getSelectedNamespace(state)
+  };
+}
 
-export default injectIntl(CreatePipelineRun);
+export default connect(mapStateToProps)(injectIntl(CreatePipelineRun));
