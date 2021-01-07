@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -252,7 +252,7 @@ export /* istanbul ignore next */ class CreatePipelineResource extends Component
         <div className="tkn--create--heading">
           <h1>
             {intl.formatMessage({
-              id: 'dashboard.createPipelineResource.heading',
+              id: 'dashboard.createPipelineResource.title',
               defaultMessage: 'Create PipelineResource'
             })}
           </h1>
@@ -332,11 +332,4 @@ function mapStateToProps(state) {
   };
 }
 
-const mapDispatchToProps = {
-  createPipelineResource
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(injectIntl(CreatePipelineResource));
+export default connect(mapStateToProps)(injectIntl(CreatePipelineResource));
