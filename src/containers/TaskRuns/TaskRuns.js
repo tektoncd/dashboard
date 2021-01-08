@@ -13,7 +13,6 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
 import keyBy from 'lodash.keyby';
@@ -39,7 +38,7 @@ import {
 } from '@tektoncd/dashboard-utils';
 import { Add16 as Add, TrashCan32 as Delete } from '@carbon/icons-react';
 
-import { CreateTaskRun, ListPageLayout } from '..';
+import { ListPageLayout } from '..';
 import { sortRunsByStartTime } from '../../utils';
 import { fetchTaskRuns } from '../../actions/taskRuns';
 
@@ -54,9 +53,7 @@ import {
 import { cancelTaskRun, deleteTaskRun, rerunTaskRun } from '../../api';
 
 const initialState = {
-  createdTaskRun: null,
   deleteError: null,
-  showCreateTaskRunModal: false,
   showDeleteModal: false,
   toBeDeleted: []
 };
@@ -64,15 +61,7 @@ const initialState = {
 const { CLUSTER_TASK, TASK } = labels;
 
 export /* istanbul ignore next */ class TaskRuns extends Component {
-  constructor(props) {
-    super(props);
-
-    this.handleCreateTaskRunSuccess = this.handleCreateTaskRunSuccess.bind(
-      this
-    );
-
-    this.state = initialState;
-  }
+  state = initialState;
 
   componentDidMount() {
     document.title = getTitle({ page: 'TaskRuns' });
@@ -93,18 +82,6 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
     } else if (webSocketConnected && prevWebSocketConnected === false) {
       this.fetchTaskRuns();
     }
-  }
-
-  handleCreateTaskRunSuccess(newTaskRun) {
-    const {
-      metadata: { namespace, name }
-    } = newTaskRun;
-    const url = urls.taskRuns.byName({
-      namespace,
-      taskRunName: name
-    });
-    this.toggleModal(false);
-    this.setState({ createdTaskRun: { name, url } });
   }
 
   cancel = taskRun => {
@@ -149,10 +126,6 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
 
   rerun = taskRun => {
     rerunTaskRun(taskRun);
-  };
-
-  resetSuccess = () => {
-    this.setState({ createdTaskRun: false });
   };
 
   taskRunActions = () => {
@@ -246,10 +219,6 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
     ];
   };
 
-  toggleModal = showCreateTaskRunModal => {
-    this.setState({ showCreateTaskRunModal });
-  };
-
   reset() {
     this.setState(initialState);
   }
@@ -276,9 +245,11 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
   render() {
     const {
       error,
+      kind,
       loading,
       namespace: selectedNamespace,
       statusFilter,
+      taskName,
       taskRuns,
       intl
     } = this.props;
@@ -305,7 +276,11 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
       ? []
       : [
           {
-            onClick: () => this.toggleModal(true),
+            onClick: () =>
+              this.props.history.push(
+                urls.taskRuns.create() +
+                  (taskName ? `?taskName=${taskName}&kind=${kind}` : '')
+              ),
             text: intl.formatMessage({
               id: 'dashboard.actions.createButton',
               defaultMessage: 'Create'
@@ -339,22 +314,6 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
 
     return (
       <ListPageLayout title="TaskRuns" {...this.props}>
-        {this.state.createdTaskRun && (
-          <InlineNotification
-            kind="success"
-            title={intl.formatMessage({
-              id: 'dashboard.taskRuns.createSuccess',
-              defaultMessage: 'Successfully created TaskRun'
-            })}
-            subtitle={
-              <Link to={this.state.createdTaskRun.url}>
-                {this.state.createdTaskRun.name}
-              </Link>
-            }
-            onCloseButtonClick={this.resetSuccess}
-            lowContrast
-          />
-        )}
         {this.state.deleteError && (
           <InlineNotification
             kind="error"
@@ -372,16 +331,6 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
               this.setState({ deleteError: null });
             }}
             lowContrast
-          />
-        )}
-        {!this.props.isReadOnly && (
-          <CreateTaskRun
-            open={this.state.showCreateTaskRunModal}
-            onClose={() => this.toggleModal(false)}
-            onSuccess={this.handleCreateTaskRunSuccess}
-            taskRef={this.props.taskName}
-            namespace={selectedNamespace}
-            kind={this.props.kind}
           />
         )}
         <TaskRunsList
