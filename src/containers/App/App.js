@@ -47,6 +47,7 @@ import {
   CreatePipelineResource,
   CreatePipelineRun,
   CreateSecret,
+  CreateTaskRun,
   CustomResourceDefinition,
   EventListener,
   EventListeners,
@@ -291,6 +292,12 @@ export /* istanbul ignore next */ class App extends Component {
                       path={paths.tasks.byNamespace()}
                       exact
                       component={Tasks}
+                    />
+                    <ReadWriteRoute
+                      isReadOnly={this.props.isReadOnly}
+                      path={paths.taskRuns.create()}
+                      exact
+                      component={CreateTaskRun}
                     />
                     <Route path={paths.taskRuns.all()} component={TaskRuns} />
                     <Route

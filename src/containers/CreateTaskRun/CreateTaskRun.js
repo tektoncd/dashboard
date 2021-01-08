@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,8 +12,10 @@ limitations under the License.
 */
 
 import React from 'react';
+import { connect } from 'react-redux';
 import keyBy from 'lodash.keyby';
 import {
+  Button,
   Dropdown,
   Form,
   FormGroup,
@@ -23,9 +25,11 @@ import {
 import {
   ALL_NAMESPACES,
   generateId,
-  getTranslateWithId
+  getTitle,
+  getTranslateWithId,
+  urls
 } from '@tektoncd/dashboard-utils';
-import { KeyValueList, Modal } from '@tektoncd/dashboard-components';
+import { KeyValueList } from '@tektoncd/dashboard-components';
 import { injectIntl } from 'react-intl';
 import {
   ClusterTasksDropdown,
@@ -34,13 +38,15 @@ import {
   ServiceAccountsDropdown,
   TasksDropdown
 } from '..';
-import { getClusterTask, getTask } from '../../reducers';
+import { getClusterTask, getSelectedNamespace, getTask } from '../../reducers';
 import { createTaskRun } from '../../api';
 import { getStore } from '../../store/index';
 import { isValidLabel } from '../../utils';
 
 import '../../scss/Create.scss';
 
+const clusterTaskItem = { id: 'clustertask', text: 'ClusterTask' };
+const taskItem = { id: 'task', text: 'Task' };
 const parseTaskInfo = (taskRef, kind, namespace) => {
   const state = getStore().getState();
   if (taskRef) {
@@ -57,6 +63,7 @@ const parseTaskInfo = (taskRef, kind, namespace) => {
 };
 
 const initialState = {
+  creating: false,
   invalidLabels: {},
   invalidNodeSelector: {},
   kind: 'Task',
@@ -117,13 +124,22 @@ class CreateTaskRun extends React.Component {
     this.state = this.initialState();
   }
 
-  componentDidUpdate(prevProps) {
-    const { namespace, open } = this.props;
-    const { namespace: prevNamespace, open: prevOpen } = prevProps;
+  componentDidMount() {
+    const { intl } = this.props;
+    document.title = getTitle({
+      page: intl.formatMessage({
+        id: 'dashboard.createTaskRun.title',
+        defaultMessage: 'Create TaskRun'
+      })
+    });
+  }
 
-    if ((open && !prevOpen) || namespace !== prevNamespace) {
-      this.resetForm();
-    }
+  getTaskDetails() {
+    const { location } = this.props;
+    const urlSearchParams = new URLSearchParams(location.search);
+    const kind = urlSearchParams.get('kind') || 'Task';
+    const taskName = urlSearchParams.get('taskName') || '';
+    return { kind, taskName };
   }
 
   checkFormValidation = () => {
@@ -216,7 +232,18 @@ class CreateTaskRun extends React.Component {
   };
 
   handleClose = () => {
-    this.props.onClose();
+    const { defaultNamespace: namespace, history } = this.props;
+    const { kind, taskName } = this.getTaskDetails();
+    let url = urls.taskRuns.all();
+    if (taskName && namespace !== ALL_NAMESPACES) {
+      url = urls.taskRuns[kind === 'ClusterTask' ? 'byClusterTask' : 'byTask']({
+        namespace,
+        taskName
+      });
+    } else if (namespace !== ALL_NAMESPACES) {
+      url = urls.taskRuns.byNamespace({ namespace });
+    }
+    history.push(url);
   };
 
   handleAddLabel = prop => {
@@ -337,6 +364,8 @@ class CreateTaskRun extends React.Component {
       return;
     }
 
+    this.setState({ creating: true });
+
     const {
       namespace,
       nodeSelector,
@@ -368,8 +397,9 @@ class CreateTaskRun extends React.Component {
           }, {})
         : null
     })
-      .then(response => {
-        this.props.onSuccess(response);
+      .then(() => {
+        const { history } = this.props;
+        history.push(urls.taskRuns.byNamespace({ namespace }));
       })
       .catch(error => {
         error.response.text().then(text => {
@@ -378,37 +408,35 @@ class CreateTaskRun extends React.Component {
           if (text) {
             errorMessage = `${text} (error code ${statusCode})`;
           }
-          this.setState({ submitError: errorMessage });
+          this.setState({ creating: false, submitError: errorMessage });
         });
       });
   };
 
   initialState = () => {
-    const { kind, namespace } = this.props;
-    let { taskRef } = this.props;
-    const taskInfo = parseTaskInfo(taskRef, kind, namespace);
+    const { defaultNamespace } = this.props;
+    const { kind, taskName: taskRef } = this.getTaskDetails();
+    let taskName = taskRef;
+    const taskInfo = parseTaskInfo(taskName, kind, defaultNamespace);
     if (taskInfo.taskError) {
-      taskRef = '';
+      taskName = '';
     }
     return {
       ...initialState,
       ...taskInfo,
       kind,
-      namespace: namespace !== ALL_NAMESPACES ? namespace : '',
-      taskRef: taskRef || '',
+      namespace: defaultNamespace !== ALL_NAMESPACES ? defaultNamespace : '',
+      taskRef: taskName || '',
       params: initialParamsState(taskInfo.paramSpecs),
       resources: initialResourcesState(taskInfo.resourceSpecs),
       taskError: ''
     };
   };
 
-  resetForm = () => {
-    this.setState(this.initialState());
-  };
-
   render() {
-    const { open, intl } = this.props;
+    const { intl } = this.props;
     const {
+      creating,
       invalidLabels,
       invalidNodeSelector,
       kind,
@@ -429,26 +457,43 @@ class CreateTaskRun extends React.Component {
     } = this.state;
 
     return (
-      <Form>
-        <Modal
-          className="tkn--create"
-          open={open}
-          modalHeading={intl.formatMessage({
-            id: 'dashboard.createTaskRun.heading',
-            defaultMessage: 'Create TaskRun'
-          })}
-          primaryButtonText={intl.formatMessage({
-            id: 'dashboard.actions.createButton',
-            defaultMessage: 'Create'
-          })}
-          secondaryButtonText={intl.formatMessage({
-            id: 'dashboard.modal.cancelButton',
-            defaultMessage: 'Cancel'
-          })}
-          onRequestSubmit={this.handleSubmit}
-          onRequestClose={this.handleClose}
-          onSecondarySubmit={this.handleClose}
-        >
+      <div className="tkn--create">
+        <div className="tkn--create--heading">
+          <h1>
+            {intl.formatMessage({
+              id: 'dashboard.createTaskRun.title',
+              defaultMessage: 'Create TaskRun'
+            })}
+          </h1>
+          <Button
+            iconDescription={intl.formatMessage({
+              id: 'dashboard.modal.cancelButton',
+              defaultMessage: 'Cancel'
+            })}
+            kind="secondary"
+            onClick={this.handleClose}
+            disabled={creating}
+          >
+            {intl.formatMessage({
+              id: 'dashboard.modal.cancelButton',
+              defaultMessage: 'Cancel'
+            })}
+          </Button>
+          <Button
+            iconDescription={intl.formatMessage({
+              id: 'dashboard.actions.createButton',
+              defaultMessage: 'Create'
+            })}
+            onClick={this.handleSubmit}
+            disabled={creating}
+          >
+            {intl.formatMessage({
+              id: 'dashboard.actions.createButton',
+              defaultMessage: 'Create'
+            })}
+          </Button>
+        </div>
+        <Form>
           {taskError && (
             <InlineNotification
               kind="error"
@@ -487,11 +532,10 @@ class CreateTaskRun extends React.Component {
               id="create-taskrun--kind-dropdown"
               titleText="Kind"
               label=""
-              initialSelectedItem={{ id: 'task', text: 'Task' }}
-              items={[
-                { id: 'task', text: 'Task' },
-                { id: 'clustertask', text: 'ClusterTask' }
-              ]}
+              initialSelectedItem={
+                kind === 'ClusterTask' ? clusterTaskItem : taskItem
+              }
+              items={[taskItem, clusterTaskItem]}
               itemToString={itemToString}
               onChange={this.handleKindChange}
               translateWithId={getTranslateWithId(intl)}
@@ -503,7 +547,6 @@ class CreateTaskRun extends React.Component {
                 id: 'dashboard.createRun.invalidNamespace',
                 defaultMessage: 'Namespace cannot be empty'
               })}
-              light
               selectedItem={namespace ? { id: namespace, text: namespace } : ''}
               onChange={this.handleNamespaceChange}
             />
@@ -516,7 +559,6 @@ class CreateTaskRun extends React.Component {
                   id: 'dashboard.createTaskRun.invalidTask',
                   defaultMessage: 'Task cannot be empty'
                 })}
-                light
                 selectedItem={taskRef ? { id: taskRef, text: taskRef } : ''}
                 disabled={namespace === ''}
                 onChange={this.handleTaskChange}
@@ -531,7 +573,6 @@ class CreateTaskRun extends React.Component {
                   id: 'dashboard.createTaskRun.invalidTask',
                   defaultMessage: 'Task cannot be empty'
                 })}
-                light
                 selectedItem={taskRef ? { id: taskRef, text: taskRef } : ''}
                 onChange={this.handleTaskChange}
               />
@@ -638,7 +679,6 @@ class CreateTaskRun extends React.Component {
                     id: 'dashboard.createRun.invalidPipelineResources',
                     defaultMessage: 'PipelineResources cannot be empty'
                   })}
-                  light
                   selectedItem={(() => {
                     let value = '';
                     if (resources.inputs !== undefined) {
@@ -669,7 +709,6 @@ class CreateTaskRun extends React.Component {
                     id: 'dashboard.createRun.invalidPipelineResources',
                     defaultMessage: 'PipelineResources cannot be empty'
                   })}
-                  light
                   selectedItem={(() => {
                     let value = '';
                     if (resources.outputs !== undefined) {
@@ -728,7 +767,6 @@ class CreateTaskRun extends React.Component {
                 defaultMessage:
                   'Ensure the selected ServiceAccount (or the default if none selected) has permissions for creating TaskRuns and for anything else your TaskRun interacts with.'
               })}
-              light
               namespace={namespace}
               selectedItem={
                 serviceAccount
@@ -764,16 +802,17 @@ class CreateTaskRun extends React.Component {
               }
             />
           </FormGroup>
-        </Modal>
-      </Form>
+        </Form>
+      </div>
     );
   }
 }
 
-CreateTaskRun.defaultProps = {
-  open: false,
-  onClose: () => {},
-  onSuccess: () => {}
-};
+/* istanbul ignore next */
+function mapStateToProps(state) {
+  return {
+    defaultNamespace: getSelectedNamespace(state)
+  };
+}
 
-export default injectIntl(CreateTaskRun);
+export default connect(mapStateToProps)(injectIntl(CreateTaskRun));
