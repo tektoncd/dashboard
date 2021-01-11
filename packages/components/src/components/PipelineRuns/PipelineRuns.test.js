@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -53,7 +53,8 @@ describe('PipelineRuns', () => {
             metadata: {
               name: 'pipelineRunName',
               namespace: 'default',
-              someField: 'A custom value'
+              someField: 'A custom value',
+              uid: '093d9905-4e4f-4e14-8da1-d250e8c9523f'
             },
             spec: {}
           }
@@ -78,7 +79,8 @@ describe('PipelineRuns', () => {
           {
             metadata: {
               name: 'pipelineRunName',
-              namespace: 'default'
+              namespace: 'default',
+              uid: '53944d31-d979-4e9e-a5c1-3f2201c6cd65'
             },
             spec: {}
           }
@@ -105,7 +107,8 @@ describe('PipelineRuns', () => {
           {
             metadata: {
               name: 'pipelineRunName',
-              namespace: 'default'
+              namespace: 'default',
+              uid: '72160103-d8d4-43c7-bd98-170c6a7eb679'
             },
             spec: {}
           }
