@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, waitForElement } from '@testing-library/react';
+import { fireEvent, waitFor } from '@testing-library/react';
 
 import LabelFilter from './LabelFilter';
 import { renderWithIntl } from '../../utils/test';
@@ -58,7 +58,7 @@ it('LabelFilter displays notification if character length is over 63 characters 
   });
   fireEvent.submit(getByText(/Input a label filter/i));
   expect(handleAddFilter).not.toHaveBeenCalled();
-  await waitForElement(() =>
+  await waitFor(() =>
     getByText(
       /Filters must be of the format labelKey:labelValue and contain less than 64 characters/i
     )
@@ -88,7 +88,7 @@ it('LabelFilter handles adding a duplicate filter', async () => {
   });
   fireEvent.submit(getByText(/Input a label filter/i));
   expect(handleAddFilter).not.toHaveBeenCalled();
-  await waitForElement(() => getByText(/no duplicate filters allowed/i));
+  await waitFor(() => getByText(/no duplicate filters allowed/i));
   fireEvent.click(getByTitle(/closes notification/i));
   expect(queryByText(/no duplicate filters allowed/i)).toBeNull();
 });

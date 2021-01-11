@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, waitForElement } from '@testing-library/react';
+import { fireEvent, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
@@ -67,11 +67,11 @@ it('Annotations respond correctly to add/remove actions', async () => {
   expect(queryByPlaceholderText(gitServerPlaceholder)).toBeTruthy();
 
   // Change value and placeholder to dockerhub
-  fireEvent.click(await waitForElement(() => getByText(/Git Server/i)));
-  fireEvent.click(await waitForElement(() => getByText(/Docker Registry/i)));
+  fireEvent.click(await waitFor(() => getByText(/Git Server/i)));
+  fireEvent.click(await waitFor(() => getByText(/Docker Registry/i)));
 
   // Add a second annotation to the list
-  fireEvent.click(await waitForElement(() => getByText(/add/i)));
+  fireEvent.click(await waitFor(() => getByText(/add/i)));
 
   props.annotations.push({
     access: 'git',
@@ -90,7 +90,7 @@ it('Annotations respond correctly to add/remove actions', async () => {
   expect(queryAllByDisplayValue(gitServerPlaceholder).length).toEqual(2);
   expect(queryAllByPlaceholderText(gitServerPlaceholder).length).toEqual(2);
 
-  fireEvent.click(await waitForElement(() => getAllByTestId(/removeIcon/i)[0]));
+  fireEvent.click(await waitFor(() => getAllByTestId(/removeIcon/i)[0]));
   expect(handleRemove).toHaveBeenCalledTimes(1);
 
   props.annotations.pop();
@@ -103,8 +103,8 @@ it('Annotations respond correctly to add/remove actions', async () => {
   );
 
   // Change value and placeholder back to github (both annotations should update)
-  fireEvent.click(await waitForElement(() => getByText(/Docker Registry/i)));
-  fireEvent.click(await waitForElement(() => getByText(/Git Server/i)));
+  fireEvent.click(await waitFor(() => getByText(/Docker Registry/i)));
+  fireEvent.click(await waitFor(() => getByText(/Git Server/i)));
   expect(queryAllByDisplayValue(gitServerPlaceholder).length).toEqual(1);
   expect(queryAllByPlaceholderText(gitServerPlaceholder).length).toEqual(1);
 });

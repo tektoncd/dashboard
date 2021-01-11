@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { waitForElement } from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
 import { createIntl } from 'react-intl';
 import { renderWithIntl } from '@tektoncd/dashboard-components/src/utils/test';
 
@@ -40,7 +40,7 @@ describe('ConditionContainer', () => {
         error={null}
       />
     );
-    await waitForElement(() => getByText('Error loading resource'));
+    await waitFor(() => getByText('Error loading resource'));
   });
 
   it('handles error state', async () => {
@@ -60,7 +60,7 @@ describe('ConditionContainer', () => {
         fetchCondition={() => Promise.resolve()}
       />
     );
-    await waitForElement(() => getByText('Error loading resource'));
+    await waitFor(() => getByText('Error loading resource'));
     expect(getByText(errorMessage)).toBeTruthy();
   });
 
@@ -82,7 +82,7 @@ describe('ConditionContainer', () => {
         fetchCondition={fetchConditionSpy}
       />
     );
-    await waitForElement(() => getByText('Error loading resource'));
+    await waitFor(() => getByText('Error loading resource'));
     expect(fetchConditionSpy).toHaveBeenCalledTimes(1);
 
     renderWithIntl(

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, waitForElement } from '@testing-library/react';
+import { fireEvent, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
@@ -65,8 +65,8 @@ describe('ImportResources component', () => {
     );
 
     fireEvent.click(getByText('Import and Apply'));
-    await waitForElement(() => getByText(/Please enter a valid Git URL/i));
-    await waitForElement(() => getByText(/Please select a namespace/i));
+    await waitFor(() => getByText(/Please enter a valid Git URL/i));
+    await waitFor(() => getByText(/Please select a namespace/i));
   });
 
   it('Displays an error when Repository URL is empty', async () => {
@@ -81,7 +81,7 @@ describe('ImportResources component', () => {
     fireEvent.click(getByText(namespace));
 
     fireEvent.click(getByText('Import and Apply'));
-    await waitForElement(() => getByText(/Please enter a valid Git URL/i));
+    await waitFor(() => getByText(/Please enter a valid Git URL/i));
   });
 
   it('Displays an error when Namespace is empty', async () => {
@@ -97,7 +97,7 @@ describe('ImportResources component', () => {
     });
 
     fireEvent.click(getByText('Import and Apply'));
-    await waitForElement(() => getByText(/Please select a namespace/i));
+    await waitFor(() => getByText(/Please select a namespace/i));
   });
 
   it('Valid data submit displays success notification ', async () => {
@@ -155,7 +155,7 @@ describe('ImportResources component', () => {
     fireEvent.click(getByText(namespace));
 
     fireEvent.click(getByText('Import and Apply'));
-    await waitForElement(() =>
+    await waitFor(() =>
       getByText(/Triggered PipelineRun to import Tekton resources/i)
     );
 
@@ -194,7 +194,7 @@ describe('ImportResources component', () => {
     fireEvent.click(getByText('namespace1'));
 
     fireEvent.click(getByText('Import and Apply'));
-    await waitForElement(() => getByText(/Please enter a valid Git URL/i));
+    await waitFor(() => getByText(/Please enter a valid Git URL/i));
   });
 
   it('URL TextInput handles onChange event', async () => {
@@ -208,7 +208,7 @@ describe('ImportResources component', () => {
       target: { value: 'Invalid URL here' }
     });
 
-    await waitForElement(() => queryByDisplayValue(/Invalid URL here/i));
+    await waitFor(() => queryByDisplayValue(/Invalid URL here/i));
   });
 
   it('Can clear the selected namespace', async () => {
@@ -226,7 +226,7 @@ describe('ImportResources component', () => {
     fireEvent.click(getAllByPlaceholderText(/select namespace/i)[0]);
     fireEvent.click(getByText('default'));
     fireEvent.click(getAllByTitle(/Clear selected item/i)[0]);
-    await waitForElement(() => queryByText(/please select a namespace/i));
+    await waitFor(() => queryByText(/please select a namespace/i));
     expect(queryByDisplayValue('default')).toBeFalsy();
   });
 });

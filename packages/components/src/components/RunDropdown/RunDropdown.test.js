@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, waitForElement } from '@testing-library/react';
+import { fireEvent, waitFor } from '@testing-library/react';
 import { renderWithIntl } from '../../utils/test';
 import RunDropdown from './RunDropdown';
 
@@ -35,7 +35,7 @@ describe('RunDropdown dropdown no modal', () => {
       <RunDropdown items={items} resource={resource} />
     );
     fireEvent.click(getAllByTitle('Actions')[0]);
-    await waitForElement(() => getByText('Action'));
+    await waitFor(() => getByText('Action'));
     fireEvent.click(getByText(`Action`));
     expect(mockCallBack).toHaveBeenCalled();
   });
@@ -54,7 +54,7 @@ describe('RunDropdown dropdown missing disable default behaviour', () => {
       <RunDropdown items={items} resource={resource} />
     );
     fireEvent.click(getAllByTitle('Actions')[0]);
-    await waitForElement(() => getByText('Action'));
+    await waitFor(() => getByText('Action'));
     fireEvent.click(getByText(`Action`));
     expect(mockCallBack).toHaveBeenCalled();
   });
@@ -74,7 +74,7 @@ describe('RunDropdown disabled field', () => {
       <RunDropdown items={items} resource={resource} />
     );
     fireEvent.click(getAllByTitle('Actions')[0]);
-    await waitForElement(() => getByText('Action'));
+    await waitFor(() => getByText('Action'));
     fireEvent.click(getByText(`Action`));
     expect(mockCallBack).not.toHaveBeenCalled();
   });
@@ -100,9 +100,9 @@ describe('RunDropdown with modal', () => {
       <RunDropdown items={items} resource={resource} />
     );
     fireEvent.click(getAllByTitle('Actions')[0]);
-    await waitForElement(() => getByText('Action'));
+    await waitFor(() => getByText('Action'));
     fireEvent.click(getByText(`Action`));
-    await waitForElement(() => getByText('primary'));
+    await waitFor(() => getByText('primary'));
     fireEvent.click(getByText(`primary`));
     expect(mockCallBack).toHaveBeenCalled();
   });

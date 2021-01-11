@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { waitForElement } from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
 import PipelineRun from './PipelineRun';
 import { renderWithIntl } from '../../utils/test';
 
@@ -20,12 +20,12 @@ it('PipelineRunContainer renders', async () => {
   const { getByText } = renderWithIntl(
     <PipelineRun error={null} loading={false} />
   );
-  await waitForElement(() => getByText('PipelineRun not found'));
+  await waitFor(() => getByText('PipelineRun not found'));
 });
 
 it('PipelineRunContainer handles error state', async () => {
   const { getByText } = renderWithIntl(<PipelineRun error="Error" />);
-  await waitForElement(() => getByText('Error loading PipelineRun'));
+  await waitFor(() => getByText('Error loading PipelineRun'));
 });
 
 it('PipelineRunContainer handles init step failures', async () => {
@@ -73,7 +73,7 @@ it('PipelineRunContainer handles init step failures', async () => {
       tasks={[]}
     />
   );
-  await waitForElement(() => getByText(initStepName));
+  await waitFor(() => getByText(initStepName));
 });
 
 it('PipelineRunContainer handles init step failures for retry', async () => {
@@ -162,6 +162,6 @@ it('PipelineRunContainer handles init step failures for retry', async () => {
       )}
     </TestWrapper>
   );
-  await waitForElement(() => getByText(/(retry 1)/));
-  await waitForElement(() => getByText(initStepName));
+  await waitFor(() => getByText(/(retry 1)/));
+  await waitFor(() => getByText(initStepName));
 });

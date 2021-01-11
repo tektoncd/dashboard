@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 import React from 'react';
-import { fireEvent, waitForElement } from '@testing-library/react';
+import { fireEvent, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
@@ -83,7 +83,7 @@ it('CreatePipelineResource error notification appears', async () => {
     target: { value: 'test-pipeline-resource' }
   });
   fireEvent.click(getByPlaceholderText(/select namespace/i));
-  await waitForElement(() => getByText(/default/i));
+  await waitFor(() => getByText(/default/i));
   fireEvent.click(getByText(/default/i));
 
   fireEvent.change(getByPlaceholderText(/pipeline-resource-url/i), {
@@ -94,6 +94,6 @@ it('CreatePipelineResource error notification appears', async () => {
   });
   fireEvent.click(queryByText('Create'));
 
-  await waitForElement(() => getByText('Error:'));
+  await waitFor(() => getByText('Error:'));
   expect(getByText('error code 404'));
 });

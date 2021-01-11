@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,7 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import { Route } from 'react-router-dom';
-import { fireEvent, waitForElement } from '@testing-library/react';
+import { fireEvent, waitFor } from '@testing-library/react';
 import { createIntl } from 'react-intl';
 import { paths, urls } from '@tektoncd/dashboard-utils';
 import { renderWithRouter } from '@tektoncd/dashboard-components/src/utils/test';
@@ -79,7 +79,7 @@ it('ClusterTriggerBindingContainer renders', async () => {
       loading={false}
     />
   );
-  await waitForElement(() => getByText('Error loading resource'));
+  await waitFor(() => getByText('Error loading resource'));
 });
 
 it('ClusterTriggerBindingContainer handles error state', async () => {
@@ -97,7 +97,7 @@ it('ClusterTriggerBindingContainer handles error state', async () => {
       fetchClusterTriggerBinding={() => Promise.resolve()}
     />
   );
-  await waitForElement(() => getByText('Error loading resource'));
+  await waitFor(() => getByText('Error loading resource'));
 });
 
 it('ClusterTriggerBindingContainer renders overview', async () => {
@@ -119,12 +119,12 @@ it('ClusterTriggerBindingContainer renders overview', async () => {
     />
   );
 
-  await waitForElement(() => getByText('cluster-trigger-binding-simple'));
-  await waitForElement(() => getByText(/param1/i));
-  await waitForElement(() => getByText(/param2/i));
-  await waitForElement(() => getByText('$(body.head_commit.id)'));
-  await waitForElement(() => getByText('$(body.repository.clone_url)'));
-  await waitForElement(() => getByText('None'));
+  await waitFor(() => getByText('cluster-trigger-binding-simple'));
+  await waitFor(() => getByText(/param1/i));
+  await waitFor(() => getByText(/param2/i));
+  await waitFor(() => getByText('$(body.head_commit.id)'));
+  await waitFor(() => getByText('$(body.repository.clone_url)'));
+  await waitFor(() => getByText('None'));
 });
 
 it('ClusterTriggerBindingContainer renders YAML', async () => {
@@ -152,14 +152,14 @@ it('ClusterTriggerBindingContainer renders YAML', async () => {
     }
   );
 
-  await waitForElement(() => getByText(clusterTriggerBindingName));
+  await waitFor(() => getByText(clusterTriggerBindingName));
   const yamlTab = getByText('YAML');
   fireEvent.click(yamlTab);
-  await waitForElement(() => getByText(/creationTimestamp/i));
-  await waitForElement(() => getByText(/spec/i));
-  await waitForElement(() => getByText(/params/i));
-  await waitForElement(() => getByText(/metadata/i));
-  await waitForElement(() => getByText(/ClusterTriggerBinding/i));
+  await waitFor(() => getByText(/creationTimestamp/i));
+  await waitFor(() => getByText(/spec/i));
+  await waitFor(() => getByText(/params/i));
+  await waitFor(() => getByText(/metadata/i));
+  await waitFor(() => getByText(/ClusterTriggerBinding/i));
 });
 
 it('ClusterTriggerBindingContainer does not render label section if they are not present', async () => {
@@ -181,8 +181,8 @@ it('ClusterTriggerBindingContainer does not render label section if they are not
     />
   );
 
-  await waitForElement(() => getByText('cluster-trigger-binding-simple'));
-  await waitForElement(() => getByText('None'));
+  await waitFor(() => getByText('cluster-trigger-binding-simple'));
+  await waitFor(() => getByText('None'));
 });
 
 it('ClusterTriggerBindingContainer renders labels section if they are present', async () => {
@@ -204,8 +204,8 @@ it('ClusterTriggerBindingContainer renders labels section if they are present', 
     />
   );
 
-  await waitForElement(() => getByText('cluster-trigger-binding-labels'));
-  await waitForElement(() => getByText('Labels:'));
-  await waitForElement(() => getByText(/mylabel: foo/i));
-  await waitForElement(() => getByText(/myotherlabel: bar/i));
+  await waitFor(() => getByText('cluster-trigger-binding-labels'));
+  await waitFor(() => getByText('Labels:'));
+  await waitFor(() => getByText(/mylabel: foo/i));
+  await waitFor(() => getByText(/myotherlabel: bar/i));
 });

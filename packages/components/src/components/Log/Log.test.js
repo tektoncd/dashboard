@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,14 +12,14 @@ limitations under the License.
 */
 
 import React from 'react';
-import { waitForElement } from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
 import Log from './Log';
 import { renderWithIntl } from '../../utils/test';
 
 describe('Log', () => {
   it('renders default content', async () => {
     const { getByText } = renderWithIntl(<Log fetchLogs={() => undefined} />);
-    await waitForElement(() => getByText(/No log available/i));
+    await waitFor(() => getByText(/No log available/i));
   });
 
   it('renders the provided content', async () => {
@@ -29,7 +29,7 @@ describe('Log', () => {
         fetchLogs={() => 'testing'}
       />
     );
-    await waitForElement(() => getByText(/testing/i));
+    await waitFor(() => getByText(/testing/i));
   });
 
   it('renders trailer', async () => {
@@ -39,7 +39,7 @@ describe('Log', () => {
         fetchLogs={() => 'testing'}
       />
     );
-    await waitForElement(() => getByText(/step completed/i));
+    await waitFor(() => getByText(/step completed/i));
   });
 
   it('renders error trailer', async () => {
@@ -49,7 +49,7 @@ describe('Log', () => {
         fetchLogs={() => 'testing'}
       />
     );
-    await waitForElement(() => getByText(/step failed/i));
+    await waitFor(() => getByText(/step failed/i));
   });
 
   it('renders virtualized list', async () => {
@@ -64,7 +64,7 @@ describe('Log', () => {
       />
     );
 
-    await waitForElement(() => getByText('Line 1'));
+    await waitFor(() => getByText('Line 1'));
   });
 
   it('renders the provided content when streaming logs', async () => {
@@ -82,7 +82,7 @@ describe('Log', () => {
         }
       />
     );
-    await waitForElement(() => getByText(/testing/i));
+    await waitFor(() => getByText(/testing/i));
   });
 
   it('renders trailer when streaming logs', async () => {
@@ -100,7 +100,7 @@ describe('Log', () => {
         }
       />
     );
-    await waitForElement(() => getByText(/step completed/i));
+    await waitFor(() => getByText(/step completed/i));
   });
 
   it('renders error trailer when streaming logs', async () => {
@@ -118,6 +118,6 @@ describe('Log', () => {
         }
       />
     );
-    await waitForElement(() => getByText(/step failed/i));
+    await waitFor(() => getByText(/step failed/i));
   });
 });

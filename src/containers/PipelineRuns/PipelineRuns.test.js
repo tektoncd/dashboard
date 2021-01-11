@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, waitForElement } from '@testing-library/react';
+import { fireEvent, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
@@ -293,7 +293,7 @@ describe('PipelineRuns container', () => {
     expect(queryByText('pipelineRunWithTwoLabels')).toBeTruthy();
 
     fireEvent.click(getByText(filterValue));
-    await waitForElement(() => getByText('pipelineRunWithSingleLabel'));
+    await waitFor(() => getByText('pipelineRunWithSingleLabel'));
     expect(queryByText(filterValue)).toBeFalsy();
 
     expect(queryByText('pipelineRunWithSingleLabel')).toBeTruthy();
@@ -408,7 +408,7 @@ describe('PipelineRuns container', () => {
     );
 
     // Let the page finish rendering so we know if we're in read-only mode or not
-    await waitForElement(() => getByText('pipelineRunWithTwoLabels'));
+    await waitFor(() => getByText('pipelineRunWithTwoLabels'));
     expect(queryAllByText('Create')[0]).toBeTruthy(); // So we don't match on "Created" which is a table header
     expect(getAllByTitle(/actions/i)[0]).toBeTruthy();
   });
@@ -442,7 +442,7 @@ describe('PipelineRuns container', () => {
       { route: '/pipelineruns' }
     );
     // Let the page finish rendering so we know if we're in read-only mode or not
-    await waitForElement(() => getByText('pipelineRunWithTwoLabels'));
+    await waitFor(() => getByText('pipelineRunWithTwoLabels'));
     expect(queryAllByText('Create')[0]).toBeFalsy();
     expect(queryAllByTitle(/actions/i)[0]).toBeFalsy();
   });
@@ -468,11 +468,9 @@ describe('PipelineRuns container', () => {
       </Provider>,
       { route: urls.pipelineRuns.all() }
     );
-    await waitForElement(() => getByText(/pipelineRunWithTwoLabels/i));
-    fireEvent.click(
-      await waitForElement(() => getAllByTestId('overflowmenu')[0])
-    );
-    await waitForElement(() => getByText(/Rerun/i));
+    await waitFor(() => getByText(/pipelineRunWithTwoLabels/i));
+    fireEvent.click(await waitFor(() => getAllByTestId('overflowmenu')[0]));
+    await waitFor(() => getByText(/Rerun/i));
     fireEvent.click(getByText('Rerun'));
     expect(PipelineRunsAPI.rerunPipelineRun).toHaveBeenCalledTimes(1);
     expect(PipelineRunsAPI.rerunPipelineRun).toHaveBeenCalledWith(

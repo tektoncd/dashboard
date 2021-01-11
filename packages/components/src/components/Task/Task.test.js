@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, waitForElement } from '@testing-library/react';
+import { fireEvent, waitFor } from '@testing-library/react';
 import Task from './Task';
 import { renderWithIntl } from '../../utils/test';
 
@@ -49,7 +49,7 @@ describe('Task', () => {
     const { queryByText } = renderWithIntl(
       <Task {...props} expanded steps={steps} />
     );
-    waitForElement(() =>
+    waitFor(() =>
       queryByText(
         (content, element) =>
           content === 'a step' &&
@@ -66,7 +66,7 @@ describe('Task', () => {
     const { queryByText } = renderWithIntl(
       <Task {...props} expanded steps={steps} />
     );
-    waitForElement(() =>
+    waitFor(() =>
       queryByText(
         (content, element) =>
           content === 'a step two' &&
@@ -83,7 +83,7 @@ describe('Task', () => {
     const { queryByText } = renderWithIntl(
       <Task {...props} expanded steps={steps} />
     );
-    waitForElement(() =>
+    waitFor(() =>
       queryByText(
         (content, element) =>
           content === 'a step two' &&

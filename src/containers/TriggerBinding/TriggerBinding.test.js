@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,7 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import { Route } from 'react-router-dom';
-import { fireEvent, waitForElement } from '@testing-library/react';
+import { fireEvent, waitFor } from '@testing-library/react';
 import { createIntl } from 'react-intl';
 import { paths, urls } from '@tektoncd/dashboard-utils';
 import { renderWithRouter } from '@tektoncd/dashboard-components/src/utils/test';
@@ -83,7 +83,7 @@ it('TriggerBindingContainer renders', async () => {
       loading={false}
     />
   );
-  await waitForElement(() => getByText('Error loading resource'));
+  await waitFor(() => getByText('Error loading resource'));
 });
 
 it('TriggerBindingContainer handles error state', async () => {
@@ -101,7 +101,7 @@ it('TriggerBindingContainer handles error state', async () => {
       fetchTriggerBinding={() => Promise.resolve()}
     />
   );
-  await waitForElement(() => getByText('Error loading resource'));
+  await waitFor(() => getByText('Error loading resource'));
 });
 
 it('TriggerBindingContainer renders details', async () => {
@@ -121,13 +121,13 @@ it('TriggerBindingContainer renders details', async () => {
     />
   );
 
-  await waitForElement(() => getByText('trigger-binding-simple'));
-  await waitForElement(() => getByText(/param1/i));
-  await waitForElement(() => getByText(/param2/i));
-  await waitForElement(() => getByText('$(body.head_commit.id)'));
-  await waitForElement(() => getByText('$(body.repository.clone_url)'));
-  await waitForElement(() => getByText(namespace));
-  await waitForElement(() => getByText('None'));
+  await waitFor(() => getByText('trigger-binding-simple'));
+  await waitFor(() => getByText(/param1/i));
+  await waitFor(() => getByText(/param2/i));
+  await waitFor(() => getByText('$(body.head_commit.id)'));
+  await waitFor(() => getByText('$(body.repository.clone_url)'));
+  await waitFor(() => getByText(namespace));
+  await waitFor(() => getByText('None'));
 });
 
 it('TriggerBindingContainer renders YAML', async () => {
@@ -154,15 +154,15 @@ it('TriggerBindingContainer renders YAML', async () => {
     }
   );
 
-  await waitForElement(() => getByText(triggerBindingName));
+  await waitFor(() => getByText(triggerBindingName));
   const yamlTab = getByText('YAML');
   fireEvent.click(yamlTab);
-  await waitForElement(() => getByText(/creationTimestamp/i));
-  await waitForElement(() => getByText(/spec/i));
-  await waitForElement(() => getByText(/params/i));
-  await waitForElement(() => getByText(/metadata/i));
-  await waitForElement(() => getByText(/TriggerBinding/i));
-  await waitForElement(() => getByText(/namespace/i));
+  await waitFor(() => getByText(/creationTimestamp/i));
+  await waitFor(() => getByText(/spec/i));
+  await waitFor(() => getByText(/params/i));
+  await waitFor(() => getByText(/metadata/i));
+  await waitFor(() => getByText(/TriggerBinding/i));
+  await waitFor(() => getByText(/namespace/i));
 });
 
 it('TriggerBindingContainer does not render label section if they are not present', async () => {
@@ -182,8 +182,8 @@ it('TriggerBindingContainer does not render label section if they are not presen
     />
   );
 
-  await waitForElement(() => getByText('trigger-binding-simple'));
-  await waitForElement(() => getByText('None'));
+  await waitFor(() => getByText('trigger-binding-simple'));
+  await waitFor(() => getByText('None'));
 });
 
 it('TriggerBindingContainer renders labels section if they are present', async () => {
@@ -203,8 +203,8 @@ it('TriggerBindingContainer renders labels section if they are present', async (
     />
   );
 
-  await waitForElement(() => getByText('trigger-binding-labels'));
-  await waitForElement(() => getByText('Labels:'));
-  await waitForElement(() => getByText(/mylabel: foo/i));
-  await waitForElement(() => getByText(/myotherlabel: bar/i));
+  await waitFor(() => getByText('trigger-binding-labels'));
+  await waitFor(() => getByText('Labels:'));
+  await waitFor(() => getByText(/mylabel: foo/i));
+  await waitFor(() => getByText(/myotherlabel: bar/i));
 });

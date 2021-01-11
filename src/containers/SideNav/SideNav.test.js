@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -15,7 +15,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { waitForElement } from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
 import { renderWithRouter } from '@tektoncd/dashboard-components/src/utils/test';
 
 import SideNavContainer, { SideNavWithIntl as SideNav } from './SideNav';
@@ -79,10 +79,10 @@ it('SideNav renders with triggers', async () => {
       <SideNavContainer location={{ search: '' }} />
     </Provider>
   );
-  await waitForElement(() => queryByText(/about/i));
+  await waitFor(() => queryByText(/about/i));
   expect(queryByText('Pipelines')).toBeTruthy();
   expect(queryByText('Tasks')).toBeTruthy();
-  await waitForElement(() => queryByText('EventListeners'));
+  await waitFor(() => queryByText('EventListeners'));
   expect(queryByText('TriggerTemplates')).toBeTruthy();
   expect(queryByText('TriggerBindings')).toBeTruthy();
 });
@@ -150,7 +150,7 @@ it('SideNav renders import in not read-only mode', async () => {
       <SideNavContainer location={{ search: '' }} />
     </Provider>
   );
-  await waitForElement(() => queryByText(/Import/i));
+  await waitFor(() => queryByText(/Import/i));
 });
 
 it('SideNav does not render import in read-only mode', async () => {
@@ -168,6 +168,6 @@ it('SideNav does not render import in read-only mode', async () => {
       <SideNavContainer isReadOnly location={{ search: '' }} />
     </Provider>
   );
-  await waitForElement(() => queryByText(/about/i));
+  await waitFor(() => queryByText(/about/i));
   expect(queryByText(/import/i)).toBeFalsy();
 });
