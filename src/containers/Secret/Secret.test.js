@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { waitForElement } from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
 import { createIntl } from 'react-intl';
 import { renderWithRouter } from '@tektoncd/dashboard-components/src/utils/test';
 
@@ -65,7 +65,7 @@ it('SecretContainer renders', async () => {
       loading={false}
     />
   );
-  await waitForElement(() => getByText(`Secret bar not found`));
+  await waitFor(() => getByText(`Secret bar not found`));
 });
 
 it('SecretContainer renders service accounts', async () => {
@@ -88,8 +88,8 @@ it('SecretContainer renders service accounts', async () => {
     />
   );
 
-  await waitForElement(() => getByText('secret-simple'));
-  await waitForElement(() => getByText('tekton-pipelines'));
-  await waitForElement(() => getByText('None'));
-  await waitForElement(() => getByText('serviceAccount1'));
+  await waitFor(() => getByText('secret-simple'));
+  await waitFor(() => getByText('tekton-pipelines'));
+  await waitFor(() => getByText('None'));
+  await waitFor(() => getByText('serviceAccount1'));
 });

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, waitForElement } from '@testing-library/react';
+import { fireEvent, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
@@ -267,7 +267,7 @@ describe('TaskRuns container', () => {
     expect(queryByText('taskRunWithTwoLabels')).toBeTruthy();
 
     fireEvent.click(getByText(filterValue));
-    await waitForElement(() => getByText('taskRunWithSingleLabel'));
+    await waitFor(() => getByText('taskRunWithSingleLabel'));
     expect(queryByText(filterValue)).toBeFalsy();
 
     expect(queryByText('taskRunWithSingleLabel')).toBeTruthy();
@@ -378,7 +378,7 @@ describe('TaskRuns container', () => {
       { route: urls.taskRuns.all() }
     );
 
-    await waitForElement(() => getByText('taskRunWithTwoLabels'));
+    await waitFor(() => getByText('taskRunWithTwoLabels'));
     expect(getAllByTitle(/actions/i)[0]).toBeTruthy();
   });
 
@@ -410,7 +410,7 @@ describe('TaskRuns container', () => {
       { route: urls.taskRuns.all() }
     );
 
-    await waitForElement(() => getByText('taskRunWithTwoLabels'));
+    await waitFor(() => getByText('taskRunWithTwoLabels'));
     expect(queryAllByTitle(/actions/i)[0]).toBeFalsy();
   });
 
@@ -433,11 +433,9 @@ describe('TaskRuns container', () => {
       </Provider>,
       { route: urls.taskRuns.all() }
     );
-    await waitForElement(() => getByText(/taskRunWithTwoLabels/i));
-    fireEvent.click(
-      await waitForElement(() => getAllByTestId('overflowmenu')[0])
-    );
-    await waitForElement(() => getByText(/Rerun/i));
+    await waitFor(() => getByText(/taskRunWithTwoLabels/i));
+    fireEvent.click(await waitFor(() => getAllByTestId('overflowmenu')[0]));
+    await waitFor(() => getByText(/Rerun/i));
     fireEvent.click(getByText('Rerun'));
     expect(API.rerunTaskRun).toHaveBeenCalledTimes(1);
     expect(API.rerunTaskRun).toHaveBeenCalledWith(

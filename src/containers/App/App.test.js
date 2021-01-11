@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,7 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import { Provider } from 'react-redux';
-import { render, waitForElement } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
@@ -57,7 +57,7 @@ describe('App', () => {
       </Provider>
     );
 
-    await waitForElement(() => queryByText('Tekton resources'));
+    await waitFor(() => queryByText('Tekton resources'));
 
     expect(queryByText('Namespace')).toBeTruthy();
     expect(queryByText('Pipelines')).toBeTruthy();
@@ -89,7 +89,7 @@ describe('App', () => {
       </Provider>
     );
 
-    await waitForElement(() => queryByText('Tekton resources'));
+    await waitFor(() => queryByText('Tekton resources'));
 
     expect(queryByText('Namespaces')).toBeFalsy();
     expect(queryByText('Pipelines')).toBeTruthy();
@@ -122,7 +122,7 @@ describe('App', () => {
       </Provider>
     );
 
-    await waitForElement(() => queryByText('Tekton resources'));
+    await waitFor(() => queryByText('Tekton resources'));
     expect(selectNamespace).toHaveBeenCalledWith('fake');
   });
 
@@ -157,7 +157,7 @@ describe('App', () => {
       </Provider>
     );
 
-    await waitForElement(() => queryByText('Tekton resources'));
+    await waitFor(() => queryByText('Tekton resources'));
     expect(selectNamespace).toHaveBeenCalledWith('fake');
     expect(fetchNamespaces).not.toHaveBeenCalled();
   });
@@ -188,7 +188,7 @@ describe('App', () => {
       </Provider>
     );
 
-    await waitForElement(() => queryByText('Tekton resources'));
+    await waitFor(() => queryByText('Tekton resources'));
     expect(selectNamespace).not.toHaveBeenCalled();
     expect(fetchNamespaces).toHaveBeenCalled();
   });
@@ -223,7 +223,7 @@ describe('App', () => {
       </Provider>
     );
 
-    await waitForElement(() => queryByText('Tekton resources'));
+    await waitFor(() => queryByText('Tekton resources'));
     expect(selectNamespace).toHaveBeenCalledWith('fake');
     expect(fetchExtensions).toHaveBeenCalledWith({ namespace: 'fake' });
   });
@@ -253,7 +253,7 @@ describe('App', () => {
       </Provider>
     );
 
-    await waitForElement(() => queryByText('Tekton resources'));
+    await waitFor(() => queryByText('Tekton resources'));
     expect(fetchExtensions).toHaveBeenCalledWith({ namespace: ALL_NAMESPACES });
     expect(fetchNamespaces).toHaveBeenCalled();
   });

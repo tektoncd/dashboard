@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { waitForElement } from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
 import { createIntl } from 'react-intl';
 import { renderWithRouter } from '@tektoncd/dashboard-components/src/utils/test';
 
@@ -44,7 +44,7 @@ it('PipelineRunContainer renders', async () => {
       loading={false}
     />
   );
-  await waitForElement(() => getByText(`PipelineRun not found`));
+  await waitFor(() => getByText(`PipelineRun not found`));
 });
 
 it('PipelineRunContainer handles error state', async () => {
@@ -66,5 +66,5 @@ it('PipelineRunContainer handles error state', async () => {
       fetchClusterTasks={() => Promise.resolve()}
     />
   );
-  await waitForElement(() => getByText('Error loading PipelineRun'));
+  await waitFor(() => getByText('Error loading PipelineRun'));
 });

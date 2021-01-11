@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { waitForElement } from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
 import { createIntl } from 'react-intl';
 import { renderWithRouter } from '@tektoncd/dashboard-components/src/utils/test';
 
@@ -138,7 +138,7 @@ it('EventListener displays with formatted labels', async () => {
     />
   );
 
-  await waitForElement(() => getByText(eventListenerName));
+  await waitFor(() => getByText(eventListenerName));
   expect(queryByText(/Namespace/i)).toBeTruthy();
   expect(queryByText(/tekton-pipelines/i)).toBeTruthy();
   expect(queryByText(/Labels/i)).toBeTruthy();
@@ -180,7 +180,7 @@ it('EventListener handles no serviceAccountName', async () => {
     />
   );
 
-  await waitForElement(() => getByText(eventListenerName));
+  await waitFor(() => getByText(eventListenerName));
   expect(queryByText('ServiceAccount:')).toBeFalsy();
 });
 
@@ -202,7 +202,7 @@ it('EventListener handles no service type', async () => {
     />
   );
 
-  await waitForElement(() => getByText(eventListenerName));
+  await waitFor(() => getByText(eventListenerName));
   expect(queryByText(/Service Type/i)).toBeFalsy();
 });
 
@@ -224,6 +224,6 @@ it('EventListener handles no triggers', async () => {
     />
   );
 
-  await waitForElement(() => getByText(eventListenerName));
+  await waitFor(() => getByText(eventListenerName));
   expect(queryByText(/Trigger/i)).toBeFalsy();
 });

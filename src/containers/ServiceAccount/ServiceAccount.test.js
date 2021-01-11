@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,7 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import { Route } from 'react-router-dom';
-import { fireEvent, waitForElement } from '@testing-library/react';
+import { fireEvent, waitFor } from '@testing-library/react';
 import { createIntl } from 'react-intl';
 import { paths, urls } from '@tektoncd/dashboard-utils';
 import { renderWithRouter } from '@tektoncd/dashboard-components/src/utils/test';
@@ -83,7 +83,7 @@ it('ServiceAccountContainer renders', async () => {
       loading={false}
     />
   );
-  await waitForElement(() => getByText('Error loading resource'));
+  await waitFor(() => getByText('Error loading resource'));
 });
 
 it('ServiceAccountContainer handles error state', async () => {
@@ -102,7 +102,7 @@ it('ServiceAccountContainer handles error state', async () => {
       fetchSecrets={() => Promise.resolve()}
     />
   );
-  await waitForElement(() => getByText('Error loading resource'));
+  await waitFor(() => getByText('Error loading resource'));
 });
 
 it('ServiceAccountContainer renders YAML', async () => {
@@ -128,13 +128,13 @@ it('ServiceAccountContainer renders YAML', async () => {
     }
   );
 
-  await waitForElement(() => getByText(serviceAccountName));
+  await waitFor(() => getByText(serviceAccountName));
   const yamlTab = getByText(/yaml/i);
   fireEvent.click(yamlTab);
-  await waitForElement(() => getByText(/creationTimestamp/i));
-  await waitForElement(() => getByText(/metadata/i));
-  await waitForElement(() => getByText(/ServiceAccount/i));
-  await waitForElement(() => getByText(/namespace/i));
+  await waitFor(() => getByText(/creationTimestamp/i));
+  await waitFor(() => getByText(/metadata/i));
+  await waitFor(() => getByText(/ServiceAccount/i));
+  await waitFor(() => getByText(/namespace/i));
 });
 
 it('ServiceAccountContainer does not render label section if they are not present', async () => {
@@ -155,8 +155,8 @@ it('ServiceAccountContainer does not render label section if they are not presen
     />
   );
 
-  await waitForElement(() => getByText(serviceAccountName));
-  await waitForElement(() => getByText('None'));
+  await waitFor(() => getByText(serviceAccountName));
+  await waitFor(() => getByText('None'));
 });
 
 it('ServiceAccountContainer renders labels section if they are present', async () => {
@@ -177,10 +177,10 @@ it('ServiceAccountContainer renders labels section if they are present', async (
     />
   );
 
-  await waitForElement(() => getByText('service-account-labels'));
-  await waitForElement(() => getByText('Labels:'));
-  await waitForElement(() => getByText(/mylabel: foo/i));
-  await waitForElement(() => getByText(/myotherlabel: bar/i));
+  await waitFor(() => getByText('service-account-labels'));
+  await waitFor(() => getByText('Labels:'));
+  await waitFor(() => getByText(/mylabel: foo/i));
+  await waitFor(() => getByText(/myotherlabel: bar/i));
 });
 
 it('ServiceAccountContainer renders overview with no secret nor imagePullSecrets ', async () => {
@@ -201,13 +201,11 @@ it('ServiceAccountContainer renders overview with no secret nor imagePullSecrets
     />
   );
 
-  await waitForElement(() => getByText(serviceAccountName));
-  await waitForElement(() => getByText(namespace));
-  await waitForElement(() => getByText('None')); // Label
-  await waitForElement(() =>
-    getByText('No Secrets found for this ServiceAccount.')
-  );
-  await waitForElement(() =>
+  await waitFor(() => getByText(serviceAccountName));
+  await waitFor(() => getByText(namespace));
+  await waitFor(() => getByText('None')); // Label
+  await waitFor(() => getByText('No Secrets found for this ServiceAccount.'));
+  await waitFor(() =>
     getByText('No imagePullSecrets found for this ServiceAccount.')
   );
 });
@@ -234,11 +232,11 @@ it('ServiceAccountContainer renders secrets', async () => {
     />
   );
 
-  await waitForElement(() => getByText(serviceAccountName));
-  await waitForElement(() => getByText(namespace));
-  await waitForElement(() => getByText('None'));
-  await waitForElement(() => getByText('secret1'));
-  await waitForElement(() =>
+  await waitFor(() => getByText(serviceAccountName));
+  await waitFor(() => getByText(namespace));
+  await waitFor(() => getByText('None'));
+  await waitFor(() => getByText('secret1'));
+  await waitFor(() =>
     getByText('No imagePullSecrets found for this ServiceAccount.')
   );
 });
@@ -264,10 +262,8 @@ it('ServiceAccountContainer renders imagePullSecrets', async () => {
     />
   );
 
-  await waitForElement(() => getByText('service-account-labels'));
-  await waitForElement(() => getByText(namespace));
-  await waitForElement(() => getByText('imagePull1'));
-  await waitForElement(() =>
-    getByText('No Secrets found for this ServiceAccount.')
-  );
+  await waitFor(() => getByText('service-account-labels'));
+  await waitFor(() => getByText(namespace));
+  await waitFor(() => getByText('imagePull1'));
+  await waitFor(() => getByText('No Secrets found for this ServiceAccount.'));
 });

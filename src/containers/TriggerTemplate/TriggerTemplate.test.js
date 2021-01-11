@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,7 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import { Route } from 'react-router-dom';
-import { fireEvent, waitForElement } from '@testing-library/react';
+import { fireEvent, waitFor } from '@testing-library/react';
 import { createIntl } from 'react-intl';
 import { paths, urls } from '@tektoncd/dashboard-utils';
 import { renderWithRouter } from '@tektoncd/dashboard-components/src/utils/test';
@@ -197,7 +197,7 @@ it('TriggerTemplateContainer renders', async () => {
       loading={false}
     />
   );
-  await waitForElement(() => getByText('Error loading resource'));
+  await waitFor(() => getByText('Error loading resource'));
 });
 
 it('TriggerTemplateContainer handles error state', async () => {
@@ -215,7 +215,7 @@ it('TriggerTemplateContainer handles error state', async () => {
       fetchTriggerTemplate={() => Promise.resolve()}
     />
   );
-  await waitForElement(() => getByText('Error loading resource'));
+  await waitFor(() => getByText('Error loading resource'));
 });
 
 it('TriggerTemplateContainer renders basic information', async () => {
@@ -234,7 +234,7 @@ it('TriggerTemplateContainer renders basic information', async () => {
       triggerTemplate={fakeTriggerTemplate}
     />
   );
-  await waitForElement(() => getByText('pipeline-template'));
+  await waitFor(() => getByText('pipeline-template'));
 });
 
 it('TriggerTemplateContainer renders parameters', async () => {
@@ -254,17 +254,17 @@ it('TriggerTemplateContainer renders parameters', async () => {
     />
   );
 
-  await waitForElement(() => getByText(/pipeline-template/i));
-  await waitForElement(() => getByText('Default'));
-  await waitForElement(() => getByText(/description/i));
-  await waitForElement(() => getByText(/gitrevision/i));
-  await waitForElement(() => getByText(/gitrepositoryurl/i));
-  await waitForElement(() => getAllByText(/message/i)[0]);
-  await waitForElement(() => getByText(/contenttype/i));
-  await waitForElement(() => getByText(/the git revision/i));
-  await waitForElement(() => getByText(/the git repository url/i));
-  await waitForElement(() => getByText(/the message to print/i));
-  await waitForElement(() => getByText(/the Content-Type of the event/i));
+  await waitFor(() => getByText(/pipeline-template/i));
+  await waitFor(() => getByText('Default'));
+  await waitFor(() => getByText(/description/i));
+  await waitFor(() => getByText(/gitrevision/i));
+  await waitFor(() => getByText(/gitrepositoryurl/i));
+  await waitFor(() => getAllByText(/message/i)[0]);
+  await waitFor(() => getByText(/contenttype/i));
+  await waitFor(() => getByText(/the git revision/i));
+  await waitFor(() => getByText(/the git repository url/i));
+  await waitFor(() => getByText(/the message to print/i));
+  await waitFor(() => getByText(/the Content-Type of the event/i));
 });
 
 it('TriggerTemplateContainer renders resource templates', async () => {
@@ -284,7 +284,7 @@ it('TriggerTemplateContainer renders resource templates', async () => {
     />
   );
 
-  await waitForElement(() => getByText('pipeline-template'));
+  await waitFor(() => getByText('pipeline-template'));
   expect(getByText(resourceTemplate1NameInfo)).toBeTruthy();
   expect(getByText(resourceTemplate2NameInfo)).toBeTruthy();
 });
@@ -307,14 +307,14 @@ it('TriggerTemplateContainer renders full resource template information', async 
   );
 
   const compareToName = resourceTemplate1Details.metadata.name;
-  await waitForElement(() => getByText(compareToName));
-  await waitForElement(() => getAllByText(/revision/i)[0]);
-  await waitForElement(() => getAllByText(/url/i)[0]);
-  await waitForElement(() => getByText(/gitrevision/i));
-  await waitForElement(() => getByText(/gitrepositoryurl/i));
-  await waitForElement(() => getByText(/simple-pipeline-run/i));
-  await waitForElement(() => getAllByText(/message/i)[0]);
-  await waitForElement(() => getByText(/contenttype/i));
+  await waitFor(() => getByText(compareToName));
+  await waitFor(() => getAllByText(/revision/i)[0]);
+  await waitFor(() => getAllByText(/url/i)[0]);
+  await waitFor(() => getByText(/gitrevision/i));
+  await waitFor(() => getByText(/gitrepositoryurl/i));
+  await waitFor(() => getByText(/simple-pipeline-run/i));
+  await waitFor(() => getAllByText(/message/i)[0]);
+  await waitFor(() => getByText(/contenttype/i));
 });
 
 it('TriggerTemplateContainer contains overview tab with accurate information', async () => {
@@ -333,11 +333,11 @@ it('TriggerTemplateContainer contains overview tab with accurate information', a
       triggerTemplate={fakeTriggerTemplate}
     />
   );
-  await waitForElement(() => getByText('pipeline-template'));
+  await waitFor(() => getByText('pipeline-template'));
   const overviewTab = getByText(/overview/i);
   fireEvent.click(overviewTab);
-  await waitForElement(() => getByText(/Date created/i));
-  await waitForElement(() => getByText(/tekton-pipelines/i));
+  await waitFor(() => getByText(/Date created/i));
+  await waitFor(() => getByText(/tekton-pipelines/i));
 });
 
 it('TriggerTemplateContainer contains YAML tab with accurate information', async () => {
@@ -362,19 +362,19 @@ it('TriggerTemplateContainer contains YAML tab with accurate information', async
     }
   );
 
-  await waitForElement(() => getByText('pipeline-template'));
+  await waitFor(() => getByText('pipeline-template'));
   const yamlTab = getByText('YAML');
   fireEvent.click(yamlTab);
-  await waitForElement(() => getByText(/creationtimestamp/i));
-  await waitForElement(() => getByText(/selflink/i));
-  await waitForElement(() => getByText(/pipelineref/i));
-  await waitForElement(() => getByText(/resourceref/i));
-  await waitForElement(() => getByText(/generation/i));
-  await waitForElement(() => getByText(/resourceversion/i));
-  await waitForElement(() => getByText(/git-source/i));
-  await waitForElement(() => getByText(/params.message/i));
-  await waitForElement(() => getByText(/type: git/i));
-  await waitForElement(() => getAllByText(/revision/i)[0]);
+  await waitFor(() => getByText(/creationtimestamp/i));
+  await waitFor(() => getByText(/selflink/i));
+  await waitFor(() => getByText(/pipelineref/i));
+  await waitFor(() => getByText(/resourceref/i));
+  await waitFor(() => getByText(/generation/i));
+  await waitFor(() => getByText(/resourceversion/i));
+  await waitFor(() => getByText(/git-source/i));
+  await waitFor(() => getByText(/params.message/i));
+  await waitFor(() => getByText(/type: git/i));
+  await waitFor(() => getAllByText(/revision/i)[0]);
 });
 
 it('TriggerTemplateContainer does not render label section if they are not present', async () => {
@@ -394,7 +394,7 @@ it('TriggerTemplateContainer does not render label section if they are not prese
     />
   );
 
-  await waitForElement(() => getByText('pipeline-template'));
+  await waitFor(() => getByText('pipeline-template'));
   expect(queryByText('Labels')).toBeFalsy();
 });
 
@@ -417,14 +417,14 @@ it('TriggerTemplateContainer renders labels section if they are present', async 
     />
   );
 
-  await waitForElement(() => getByText(triggerTemplateName));
+  await waitFor(() => getByText(triggerTemplateName));
   const overviewTab = getByText(/overview/i);
   fireEvent.click(overviewTab);
-  await waitForElement(() => getByText(/labels/i));
-  await waitForElement(() => getByText(/mylabel/i));
-  await waitForElement(() => getByText(/foo/i));
-  await waitForElement(() => getByText(/myotherlabel/i));
-  await waitForElement(() => getByText(/bar/i));
+  await waitFor(() => getByText(/labels/i));
+  await waitFor(() => getByText(/mylabel/i));
+  await waitFor(() => getByText(/foo/i));
+  await waitFor(() => getByText(/myotherlabel/i));
+  await waitFor(() => getByText(/bar/i));
 });
 
 it('TriggerTemplateContainer contains formatted labels', async () => {
@@ -446,10 +446,10 @@ it('TriggerTemplateContainer contains formatted labels', async () => {
     />
   );
 
-  await waitForElement(() => getByText(triggerTemplateName));
+  await waitFor(() => getByText(triggerTemplateName));
   const overviewTab = getByText(/overview/i);
   fireEvent.click(overviewTab);
-  await waitForElement(() => getByText('Labels:'));
-  await waitForElement(() => getByText(/mylabel: foo/i));
-  await waitForElement(() => getByText(/myotherlabel: bar/i));
+  await waitFor(() => getByText('Labels:'));
+  await waitFor(() => getByText(/mylabel: foo/i));
+  await waitFor(() => getByText(/myotherlabel: bar/i));
 });
