@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -41,12 +41,14 @@ it('StepDefinition renders the provided content with resources', () => {
   const outputResourceName = 'testOutputResource';
   const taskRun = {
     metadata: {
-      namespace: 'test'
+      namespace: 'test',
+      uid: '386bd486-355a-422e-ad82-573a55699053'
     },
     spec: {
       resources: {
         inputs: [
           {
+            name: 'referencedInputResource',
             resourceRef: {
               name: inputResourceName
             }

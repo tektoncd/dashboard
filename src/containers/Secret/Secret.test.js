@@ -51,7 +51,8 @@ it('SecretContainer renders', async () => {
   const secretName = 'bar';
   const match = {
     params: {
-      secretName
+      secretName,
+      namespace: 'foo'
     }
   };
 

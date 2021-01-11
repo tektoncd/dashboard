@@ -36,7 +36,8 @@ it('PipelineRunContainer handles init step failures', async () => {
   const taskRun = {
     metadata: {
       name: taskRunName,
-      labels: {}
+      labels: {},
+      uid: '41deea80-53bc-4500-a20e-3b18549e23ab'
     },
     spec: {
       params: {},
@@ -84,7 +85,8 @@ it('PipelineRunContainer handles init step failures for retry', async () => {
   const taskRun = {
     metadata: {
       labels: {},
-      name: taskRunName
+      name: taskRunName,
+      uid: 'b4402feb-69fe-4a5a-a0c2-5e390aa58894'
     },
     spec: {
       params: {},
@@ -95,6 +97,13 @@ it('PipelineRunContainer handles init step failures for retry', async () => {
       taskSpec: {}
     },
     status: {
+      conditions: [
+        {
+          type: 'Succeeded',
+          status: 'False'
+        }
+      ],
+      podName: 'taskrun-pod-name',
       steps: [
         {
           name: initStepName,
@@ -104,6 +113,7 @@ it('PipelineRunContainer handles init step failures for retry', async () => {
       retriesStatus: [
         {
           status: {
+            podName: 'retry-pod-name',
             steps: [
               {
                 name: initStepName,
@@ -152,6 +162,7 @@ it('PipelineRunContainer handles init step failures for retry', async () => {
     <TestWrapper>
       {({ handleTaskSelected, selectedStepId, selectedTaskId }) => (
         <PipelineRun
+          fetchLogs={() => {}}
           handleTaskSelected={handleTaskSelected}
           pipelineRun={pipelineRun}
           selectedStepId={selectedStepId}
@@ -163,5 +174,5 @@ it('PipelineRunContainer handles init step failures for retry', async () => {
     </TestWrapper>
   );
   await waitFor(() => getByText(/(retry 1)/));
-  await waitFor(() => getByText(initStepName));
+  await waitFor(() => getByText(initStepName, { selector: '.tkn--step-name' }));
 });

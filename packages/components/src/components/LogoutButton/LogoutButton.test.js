@@ -36,6 +36,7 @@ it('Header renders logout button when logout url is not set', async () => {
 });
 
 it('Header does not render logout button when promise for getting properties is rejected', async () => {
+  jest.spyOn(console, 'log').mockImplementation(() => {}); // suppress log from test output
   const getLogoutURLMock = jest.fn().mockImplementation(() => Promise.reject());
   const { queryByText } = renderWithRouter(
     <Logout getLogoutURL={getLogoutURLMock} />
