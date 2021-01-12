@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -15,13 +15,11 @@ import fetchMock from 'fetch-mock';
 import { labels as labelConstants } from '@tektoncd/dashboard-utils';
 
 import * as API from './taskRuns';
-import { mockCSRFToken } from '../utils/test';
 
 it('cancelTaskRun', () => {
   const name = 'foo';
   const namespace = 'foospace';
   const data = { fake: 'taskRun', spec: { status: 'running' } };
-  mockCSRFToken();
   fetchMock.get(/taskruns/, Promise.resolve(data));
   const payload = {
     fake: 'taskRun',
@@ -38,7 +36,6 @@ it('cancelTaskRun', () => {
 
 it('createTaskRun uses correct kubernetes information', () => {
   const data = { fake: 'createtaskrun' };
-  mockCSRFToken();
   fetchMock.post(/taskruns/, { body: data, status: 201 });
   return API.createTaskRun({}).then(response => {
     expect(response).toEqual(data);
@@ -58,7 +55,6 @@ it('createTaskRun has correct metadata', () => {
   const namespace = 'fake-namespace';
   const taskName = 'fake-task';
   const labels = { app: 'fake-app' };
-  mockCSRFToken();
   fetchMock.post(/taskruns/, {});
   return API.createTaskRun({ namespace, taskName, labels }).then(() => {
     const sentMetadata = JSON.parse(fetchMock.lastOptions().body).metadata;
@@ -74,7 +70,6 @@ it('createTaskRun has correct metadata', () => {
 
 it('createTaskRun handles taskRef', () => {
   const taskName = 'fake-task';
-  mockCSRFToken();
   fetchMock.post(/taskruns/, {});
   return API.createTaskRun({ taskName }).then(() => {
     const sentSpec = JSON.parse(fetchMock.lastOptions().body).spec;
@@ -86,7 +81,6 @@ it('createTaskRun handles taskRef', () => {
 
 it('createTaskRun handles ClusterTask in taskRef', () => {
   const taskName = 'fake-task';
-  mockCSRFToken();
   fetchMock.post(/taskruns/, {});
   return API.createTaskRun({ taskName, kind: 'ClusterTask' }).then(() => {
     const sentSpec = JSON.parse(fetchMock.lastOptions().body).spec;
@@ -98,7 +92,6 @@ it('createTaskRun handles ClusterTask in taskRef', () => {
 it('createTaskRun handles parameters', () => {
   const taskName = 'fake-task';
   const params = { 'fake-param-name': 'fake-param-value' };
-  mockCSRFToken();
   fetchMock.post(/taskruns/, {});
   return API.createTaskRun({ taskName, params }).then(() => {
     const sentSpec = JSON.parse(fetchMock.lastOptions().body).spec;
@@ -116,7 +109,6 @@ it('createTaskRun handles resources', () => {
     inputs: { 'fake-task-input': 'fake-input-resource' },
     outputs: { 'fake-task-output': 'fake-output-resource' }
   };
-  mockCSRFToken();
   fetchMock.post(/taskruns/, {});
   return API.createTaskRun({ taskName, resources }).then(() => {
     const sentResources = JSON.parse(fetchMock.lastOptions().body).spec
@@ -136,7 +128,6 @@ it('createTaskRun handles resources', () => {
 it('createTaskRun handles serviceAccount', () => {
   const taskName = 'fake-task';
   const serviceAccount = 'fake-service-account';
-  mockCSRFToken();
   fetchMock.post(/taskruns/, {});
   return API.createTaskRun({ taskName, serviceAccount }).then(() => {
     const sentSpec = JSON.parse(fetchMock.lastOptions().body).spec;
@@ -148,7 +139,6 @@ it('createTaskRun handles serviceAccount', () => {
 it('createTaskRun handles nodeSelector', () => {
   const taskName = 'fake-task';
   const nodeSelector = { disk: 'ssd' };
-  mockCSRFToken();
   fetchMock.post(/taskruns/, {});
   return API.createTaskRun({ taskName, nodeSelector }).then(() => {
     const sentSpec = JSON.parse(fetchMock.lastOptions().body).spec;
@@ -160,7 +150,6 @@ it('createTaskRun handles nodeSelector', () => {
 it('createTaskRun handles timeout', () => {
   const taskName = 'fake-task';
   const timeout = 'fake-timeout';
-  mockCSRFToken();
   fetchMock.post(/taskruns/, {});
   return API.createTaskRun({ taskName, timeout }).then(() => {
     const sentSpec = JSON.parse(fetchMock.lastOptions().body).spec;
@@ -172,7 +161,6 @@ it('createTaskRun handles timeout', () => {
 it('deleteTaskRun', () => {
   const name = 'foo';
   const data = { fake: 'taskRun' };
-  mockCSRFToken();
   fetchMock.delete(`end:${name}`, data);
   return API.deleteTaskRun({ name }).then(taskRun => {
     expect(taskRun).toEqual(data);
@@ -221,7 +209,6 @@ it('rerunTaskRun', () => {
     status: 'fake_status'
   };
   const newTaskRun = { metadata: { name: 'fake_taskRun_rerun' } };
-  mockCSRFToken();
   fetchMock.post(filter, { body: newTaskRun, status: 201 });
   return API.rerunTaskRun(originalTaskRun).then(data => {
     const body = JSON.parse(fetchMock.lastCall(filter)[1].body);

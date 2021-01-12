@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2018-2020 The Tekton Authors
+# Copyright 2018-2021 The Tekton Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -66,14 +66,14 @@ function install_triggers() {
 
 function uninstall_pipelines() {
   local version=$1
-  
+
   echo ">> Deleting Tekton Pipelines ($version)"
   kubectl delete --filename "https://github.com/tektoncd/pipeline/releases/download/$version/release.yaml" || fail_test "Tekton Pipelines deletion failed"
 }
 
 function uninstall_triggers() {
   local version=$1
-  
+
   echo ">> Deleting Tekton Triggers ($version)"
   kubectl delete --filename "https://github.com/tektoncd/triggers/releases/download/$version/release.yaml" || fail_test "Tekton Triggers deletion failed"
 }
@@ -148,7 +148,7 @@ function json_curl_envsubst_resource() {
   fi
   yq --version
   set -x
-  cat "$1" | envsubst | yq r -j - | curl -sS -X "$2" --data-binary @- -H "Content-Type: application/json" "$3" -H "Cookie: $CSRF_COOKIE" -H "X-CSRF-Token: $CSRF_TOKEN"
+  cat "$1" | envsubst | yq r -j - | curl -sS -X "$2" --data-binary @- -H "Content-Type: application/json" "$3" -H "Tekton-Client: tektoncd/dashboard"
   set +x
 }
 

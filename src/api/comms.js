@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,9 +11,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-const CSRF_HEADER = 'X-CSRF-Token';
-const CSRF_SAFE_METHODS = ['GET', 'HEAD', 'OPTIONS'];
-
+const csrfHeader = {
+  'Tekton-Client': 'tektoncd/dashboard'
+};
 const defaultOptions = {
   method: 'GET',
   credentials: 'same-origin'
@@ -27,8 +27,6 @@ export function getAPIRoot() {
   }
   return baseURL;
 }
-
-const apiRoot = getAPIRoot();
 
 export function getHeaders(headers = {}) {
   return {
@@ -82,24 +80,10 @@ export function checkStatus(response = {}, stream = false) {
   throw error;
 }
 
-function getToken() {
-  return fetch(`${apiRoot}/v1/token`, {
-    ...defaultOptions,
-    headers: {
-      Accept: 'text/plain'
-    }
-  }).then(response => response.headers.get(CSRF_HEADER));
-}
-
 export async function request(uri, options = defaultOptions, stream) {
-  let token;
-  if (!CSRF_SAFE_METHODS.includes(options.method)) {
-    token = await getToken();
-  }
-
   const headers = {
     ...options.headers,
-    ...(token && { [CSRF_HEADER]: token })
+    ...csrfHeader
   };
 
   return fetch(uri, {

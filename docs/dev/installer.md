@@ -37,7 +37,6 @@ For example, this allows the `installer` script to ensure that the deployed Dash
   # or use an external repository
   # export KO_DOCKER_REPO='docker.io/myusername'
   ```
-- **Important:** the `--csrf-secure-cookie` flag must not be set if you intend to access the Dashboard pod through port-forward or other insecure connection via `http` as any mutating API requests will be blocked. For production use (for example, when using a Route, or Ingress, which is secured with TLS) it should be set to enable the Secure attribute on the CSRF cookie.
 
 ## Help command
 
@@ -66,7 +65,6 @@ Accepted options:
         [--log-level <log-level>]               Specifies the log level (debug, info, warn, error, dpanic, panic, fatal), default is info
         [--version <version>]                   Will download manifests for specified version or build everything using kustomize/ko
         [--nightly]                             Will download manifests from the nightly releases channel
-        [--csrf-secure-cookie]                  Enable secure CSRF cookie
         [--openshift]                           Will build manifests for openshift
         [--image-stream]                        Will generate manifests using openshift image stream
         [--read-only]                           Will build manifests for a readonly deployment

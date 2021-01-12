@@ -1,4 +1,4 @@
-# Copyright 2020 The Tekton Authors
+# Copyright 2020-2021 The Tekton Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,10 +29,6 @@
   path: /spec/template/spec/containers/0/args/-
   value:
     --read-only=--read-only
-- op: add
-  path: /spec/template/spec/containers/0/args/-
-  value:
-    --csrf-secure-cookie=--csrf-secure-cookie
 - op: add
   path: /spec/template/spec/containers/0/args/-
   value:

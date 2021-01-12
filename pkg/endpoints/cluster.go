@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -22,7 +22,6 @@ import (
 	"strings"
 
 	restful "github.com/emicklei/go-restful"
-	"github.com/gorilla/csrf"
 	"github.com/tektoncd/dashboard/pkg/logging"
 	"github.com/tektoncd/dashboard/pkg/utils"
 	corev1 "k8s.io/api/core/v1"
@@ -105,11 +104,6 @@ func (r Resource) GetProperties(request *restful.Request, response *restful.Resp
 	}
 
 	response.WriteEntity(properties)
-}
-
-func (r Resource) GetToken(request *restful.Request, response *restful.Response) {
-	response.Header().Add("X-CSRF-Token", csrf.Token(request.Request))
-	response.Write([]byte("OK"))
 }
 
 func handleRequestError(response *restful.Response, responseBody []byte, requestError error) {

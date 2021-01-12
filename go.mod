@@ -14,7 +14,6 @@ replace (
 require (
 	github.com/emicklei/go-restful v2.12.0+incompatible
 	github.com/google/go-cmp v0.5.0
-	github.com/gorilla/csrf v1.7.0
 	github.com/gorilla/websocket v1.4.2
 	github.com/tektoncd/pipeline v0.15.2
 	github.com/tektoncd/plumbing v0.0.0-20200430135134-e53521e1d887

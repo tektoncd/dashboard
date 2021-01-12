@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,7 +14,6 @@ limitations under the License.
 package router
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httputil"
@@ -74,7 +73,6 @@ func Register(resource endpoints.Resource) *Handler {
 	registerHealthProbe(resource, h.Container)
 	registerReadinessProbe(resource, h.Container)
 	registerKubeAPIProxy(resource, h.Container)
-	registerCSRFTokenEndpoint(resource, h.Container)
 	registerLogsProxy(resource, h.Container)
 	h.registerExtensions()
 	return h
@@ -280,14 +278,6 @@ func registerPropertiesEndpoint(r endpoints.Resource, container *restful.Contain
 	container.Add(wsDefaults)
 }
 
-func registerCSRFTokenEndpoint(r endpoints.Resource, container *restful.Container) {
-	ws := new(restful.WebService)
-	ws.Filter(restful.NoBrowserCacheFilter)
-	ws.Path("/v1/token").Produces("text/plain")
-	ws.Route(ws.GET("/").To(r.GetToken))
-	container.Add(ws)
-}
-
 func registerLogsProxy(r endpoints.Resource, container *restful.Container) {
 	if r.Options.ExternalLogsURL != "" {
 		ws := new(restful.WebService)
@@ -321,21 +311,6 @@ func newExtension(extService *corev1.Service) *Extension {
 		BundleLocation: extService.ObjectMeta.Annotations[ExtensionBundleLocationKey],
 		endpoints:      getExtensionEndpoints(extService.ObjectMeta.Annotations[ExtensionURLKey]),
 	}
-}
-
-// MarshalJSON marshals the Extension into JSON. This override is explicitly
-// declared since url.URL will marshal each component, where a single field of
-// the string representation is desired. An alias for Extension is used to
-// prevent a stack overflow
-func (e Extension) MarshalJSON() ([]byte, error) {
-	type Alias Extension
-	return json.Marshal(&struct {
-		URL string `json:"url"`
-		*Alias
-	}{
-		URL:   e.URL.String(),
-		Alias: (*Alias)(&e),
-	})
 }
 
 // handleExtension handles requests to the extension service by stripping the
