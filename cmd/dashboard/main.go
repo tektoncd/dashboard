@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -15,16 +15,15 @@ package main
 
 import (
 	"context"
-	"crypto/rand"
 	"flag"
 	"fmt"
 	"net/http"
 	"os"
 	"time"
 
-	"github.com/gorilla/csrf"
 	dashboardclientset "github.com/tektoncd/dashboard/pkg/client/clientset/versioned"
 	"github.com/tektoncd/dashboard/pkg/controllers"
+	"github.com/tektoncd/dashboard/pkg/csrf"
 	"github.com/tektoncd/dashboard/pkg/endpoints"
 	"github.com/tektoncd/dashboard/pkg/logging"
 	"github.com/tektoncd/dashboard/pkg/router"
@@ -37,8 +36,6 @@ import (
 	"knative.dev/pkg/signals"
 )
 
-const csrfTokenLength = 32
-
 var (
 	help               = flag.Bool("help", false, "Prints defaults")
 	pipelinesNamespace = flag.String("pipelines-namespace", "", "Namespace where Tekton pipelines is installed (assumes same namespace as dashboard if not specified)")
@@ -48,25 +45,12 @@ var (
 	readOnly           = flag.Bool("read-only", false, "Enable or disable read only mode")
 	isOpenshift        = flag.Bool("openshift", false, "Indicates the dashboard is running on openshift")
 	logoutUrl          = flag.String("logout-url", "", "If set, enables logout on the frontend and binds the logout button to this url")
-	csrfSecureCookie   = flag.Bool("csrf-secure-cookie", true, "Enable or disable Secure attribute on the CSRF cookie")
 	tenantNamespace    = flag.String("namespace", "", "If set, limits the scope of resources watched to this namespace only")
 	logLevel           = flag.String("log-level", "info", "Minimum log level output by the logger")
 	logFormat          = flag.String("log-format", "json", "Format for log output (json or console)")
 	streamLogs         = flag.Bool("stream-logs", false, "Enable log streaming instead of polling")
 	externalLogs       = flag.String("external-logs", "", "External logs provider url")
 )
-
-func getCSRFAuthKey() []byte {
-	logging.Log.Info("Generating CSRF auth key")
-	authKey := make([]byte, csrfTokenLength)
-	_, err := rand.Read(authKey)
-	if err == nil {
-		return authKey
-	}
-
-	logging.Log.Errorf("Couldn't generate random value for CSRF auth key: %s", err.Error())
-	return nil
-}
 
 func main() {
 	flag.Parse()
@@ -173,13 +157,7 @@ func main() {
 	}
 
 	logging.Log.Infof("Creating server and entering wait loop")
-	CSRF := csrf.Protect(
-		getCSRFAuthKey(),
-		csrf.CookieName("token"),
-		csrf.Path("/"),
-		csrf.SameSite(csrf.SameSiteLaxMode),
-		csrf.Secure(*csrfSecureCookie),
-	)
+	CSRF := csrf.Protect()
 	server := &http.Server{Addr: fmt.Sprintf(":%d", *portNumber), Handler: CSRF(routerHandler)}
 
 	errCh := make(chan error, 1)

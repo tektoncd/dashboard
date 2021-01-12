@@ -96,7 +96,6 @@ These options are documented below:
 
 | Argument | Description | Type | Default value |
 |---|---|---|---|
-| `--csrf-secure-cookie` | Enable or disable Secure attribute on the CSRF cookie | `bool` | `true` |
 | `--help` | Print help message and exit | `bool` | `false` |
 | `--kube-config` | Path to kube config file, uses in cluster config if empty | `string` | `""` |
 | `--pipelines-namespace` | Namespace where Tekton pipelines is installed (assumes same namespace as dashboard if not set) | `string` | `""` |

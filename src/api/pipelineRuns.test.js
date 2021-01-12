@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -15,13 +15,11 @@ import fetchMock from 'fetch-mock';
 import { labels } from '@tektoncd/dashboard-utils';
 
 import * as API from './pipelineRuns';
-import { mockCSRFToken } from '../utils/test';
 
 it('cancelPipelineRun', () => {
   const name = 'foo';
   const namespace = 'foospace';
   const data = { fake: 'pipelineRun', spec: { status: 'running' } };
-  mockCSRFToken();
   fetchMock.get(/pipelineruns/, Promise.resolve(data));
   const payload = {
     fake: 'pipelineRun',
@@ -78,7 +76,6 @@ it('createPipelineRun', () => {
       timeout
     }
   };
-  mockCSRFToken();
   fetchMock.post('*', { body: data, status: 201 });
   return API.createPipelineRun(payload).then(response => {
     expect(response).toEqual(data);
@@ -140,7 +137,6 @@ it('createPipelineRun with nodeSelector', () => {
       timeout
     }
   };
-  mockCSRFToken();
   fetchMock.post('*', { body: data, status: 201 });
   return API.createPipelineRun(payload).then(response => {
     expect(response).toEqual(data);
@@ -155,7 +151,6 @@ it('createPipelineRun with nodeSelector', () => {
 it('deletePipelineRun', () => {
   const name = 'foo';
   const data = { fake: 'pipelineRun' };
-  mockCSRFToken();
   fetchMock.delete(`end:${name}`, data);
   return API.deletePipelineRun({ name }).then(pipelineRun => {
     expect(pipelineRun).toEqual(data);
@@ -206,7 +201,6 @@ it('rerunPipelineRun', () => {
     status: 'fake_status'
   };
   const newPipelineRun = { metadata: { name: 'fake_pipelineRun_rerun' } };
-  mockCSRFToken();
   fetchMock.post(filter, { body: newPipelineRun, status: 201 });
   return API.rerunPipelineRun(originalPipelineRun).then(data => {
     const body = JSON.parse(fetchMock.lastCall(filter)[1].body);

@@ -89,7 +89,6 @@ test_dashboard() {
   export REPO_URL="https://github.com/a-roberts/go-hello-world"
   export EXPECTED_RETURN_VALUE="Hello World!"
   export TEKTON_PROXY_URL="http://localhost:9097/proxy/apis/tekton.dev/v1alpha1/namespaces/$TEST_NAMESPACE"
-  export CSRF_HEADERS_STORE="csrf_headers.txt"
 
   # Kubectl static resources
   echo "Creating static resources using kubectl..."
@@ -97,10 +96,6 @@ test_dashboard() {
   for file in ${staticFiles[@]};do
     cat "${file}" | envsubst | kubectl apply --namespace $TEST_NAMESPACE -f - || fail_test "Failed to create static resource: ${file}"
   done
-
-  curl -D $CSRF_HEADERS_STORE http://localhost:9097/v1/token
-  export CSRF_TOKEN=`grep -i 'X-CSRF-Token' $CSRF_HEADERS_STORE | $SED -e 's/^X-CSRF-Token: //i;s/\r//'`
-  export CSRF_COOKIE=`grep -i 'Set-Cookie' $CSRF_HEADERS_STORE | $SED -e 's/Set-Cookie: //i;s/; .*//;s/\r//'`
 
   if [ "$creationMethod" = "kubectl" ]; then
     # Kubectl envsubst resources

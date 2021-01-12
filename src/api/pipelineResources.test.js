@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,7 +14,6 @@ limitations under the License.
 import fetchMock from 'fetch-mock';
 
 import * as API from './pipelineResources';
-import { mockCSRFToken } from '../utils/test';
 
 it('createPipelineResource', () => {
   const namespace = 'namespace1';
@@ -40,7 +39,6 @@ it('createPipelineResource', () => {
     }
   };
   const data = { fake: 'data' };
-  mockCSRFToken();
   fetchMock.post('*', data);
   return API.createPipelineResource({ namespace, payload }).then(response => {
     expect(response).toEqual(data);
@@ -51,7 +49,6 @@ it('createPipelineResource', () => {
 it('deletePipelineResource', () => {
   const name = 'foo';
   const data = { fake: 'pipelineResource' };
-  mockCSRFToken();
   fetchMock.delete(`end:${name}`, data);
   return API.deletePipelineResource({ name }).then(pipelineResource => {
     expect(pipelineResource).toEqual(data);

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,7 +13,6 @@ limitations under the License.
 
 import fetchMock from 'fetch-mock';
 import * as API from './secrets';
-import { mockCSRFToken } from '../utils/test';
 
 it('getSecrets', () => {
   const data = {
@@ -55,7 +54,6 @@ it('createSecret', () => {
   const type = 'type';
   const payload = { id, username, password, type };
   const data = { fake: 'data' };
-  mockCSRFToken();
   fetchMock.post('*', data);
   return API.createSecret(payload).then(response => {
     expect(response).toEqual(data);
@@ -73,7 +71,6 @@ it('updateSecret', () => {
   const type = 'type';
   const payload = { id, username, password, type };
   const data = { fake: 'data' };
-  mockCSRFToken();
   fetchMock.put('*', data);
   return API.updateSecret(payload).then(response => {
     expect(response).toEqual(data);
@@ -87,7 +84,6 @@ it('updateSecret', () => {
 it('deleteSecret', () => {
   const secretId = 'fake secret id';
   const data = { fake: 'data' };
-  mockCSRFToken();
   fetchMock.delete('*', data);
   return API.deleteSecret(secretId).then(response => {
     expect(response).toEqual(data);
