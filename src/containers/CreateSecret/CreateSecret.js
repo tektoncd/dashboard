@@ -21,6 +21,8 @@ import React, { Component } from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 
+import { Buffer } from 'buffer';
+
 import Form from './Form';
 import ServiceAccountSelector from './ServiceAccountSelector';
 import {
