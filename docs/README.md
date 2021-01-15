@@ -25,7 +25,7 @@ in their creation, execution, and completion
 
 ## Tutorial
 
-Try out the [tutorial](https://katacoda.com/tektoncd/scenarios/tekton-dashboard) 
+Try out the [tutorial](https://katacoda.com/tektoncd/scenarios/dashboard) 
 on Katacoda to install the Dashboard in a guided sandbox environment and explore 
 some of its features.
 

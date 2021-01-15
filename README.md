@@ -21,7 +21,7 @@ Among other things, the Tekton Dashboard supports:
 
 - Tekton Dashboard [install](./docs/install.md)
 - Tekton Dashboard [extensions overview](./docs/extensions.md)
-- Try out the [katacoda tutorial](https://katacoda.com/tektoncd/scenarios/tekton-dashboard)
+- Try out the [katacoda tutorial](https://katacoda.com/tektoncd/scenarios/dashboard)
 - Take a look at our [roadmap](./roadmap.md)
 - Try our [walk-throughs](./docs/walkthrough/README.md)
 - Feature requests and bug reports welcome, please [open an issue](https://github.com/tektoncd/dashboard/issues/new/choose)
