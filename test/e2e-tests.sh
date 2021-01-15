@@ -220,13 +220,13 @@ test_dashboard() {
 
 header "Validating that we can build the release manifests"
 echo "Building manifests for k8s"
-$tekton_repo_dir/scripts/installer build                          || fail_test "Failed to build manifests for k8s"
+$tekton_repo_dir/scripts/installer release                          || fail_test "Failed to build manifests for k8s"
 echo "Building manifests for k8s --read-only"
-$tekton_repo_dir/scripts/installer build --read-only              || fail_test "Failed to build manifests for k8s --read-only"
+$tekton_repo_dir/scripts/installer release --read-only              || fail_test "Failed to build manifests for k8s --read-only"
 echo "Building manifests for openshift"
-$tekton_repo_dir/scripts/installer build --openshift              || fail_test "Failed to build manifests for openshift"
+$tekton_repo_dir/scripts/installer release --openshift              || fail_test "Failed to build manifests for openshift"
 echo "Building manifests for openshift --read-only"
-$tekton_repo_dir/scripts/installer build --openshift --read-only  || fail_test "Failed to build manifests for openshift --read-only"
+$tekton_repo_dir/scripts/installer release --openshift --read-only  || fail_test "Failed to build manifests for openshift --read-only"
 
 if [ -z "$PIPELINES_VERSION" ]; then
   export PIPELINES_VERSION=v0.19.0
