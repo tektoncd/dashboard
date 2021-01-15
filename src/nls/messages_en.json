@@ -105,6 +105,7 @@
     "dashboard.eventListener.serviceAccount": "ServiceAccount:",
     "dashboard.eventListener.serviceType": "Service Type:",
     "dashboard.extension.error": "Error loading extension",
+    "dashboard.extension.loading": "Loading…",
     "dashboard.extensions.emptyState": "No extensions found",
     "dashboard.extensions.errorLoading": "Error loading extensions",
     "dashboard.extensions.title": "Extensions",

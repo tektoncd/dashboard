@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -51,7 +51,16 @@ import './globals';
           defaultMessage: 'Error loading extension'
         })}
       >
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense
+          fallback={
+            <div>
+              {intl.formatMessage({
+                id: 'dashboard.extension.loading',
+                defaultMessage: 'Loading…'
+              })}
+            </div>
+          }
+        >
           <ExtensionComponent
             actions={actions}
             selectors={selectors}
