@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -21,6 +21,11 @@ export function fetchInstallProperties() {
       dispatch({ type: 'INSTALL_PROPERTIES_SUCCESS', data });
     } catch (error) {
       dispatch({ type: 'INSTALL_PROPERTIES_FAILURE', error });
+      if (error?.response?.status === 404) {
+        dispatch({
+          type: 'CLIENT_PROPERTIES_SUCCESS'
+        });
+      }
     }
     return data;
   };

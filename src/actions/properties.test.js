@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -41,6 +41,26 @@ it('fetchInstallProperties error', async () => {
   const store = mockStore({});
 
   const expectedActions = [{ type: 'INSTALL_PROPERTIES_FAILURE', error }];
+
+  await store.dispatch(fetchInstallProperties());
+  expect(API.getInstallProperties).toHaveBeenCalled();
+  expect(store.getActions()).toEqual(expectedActions);
+});
+
+it('fetchInstallProperties kubectl client', async () => {
+  const error = new Error();
+  error.response = { status: 404 };
+  jest.spyOn(API, 'getInstallProperties').mockImplementation(() => {
+    throw error;
+  });
+  const middleware = [thunk];
+  const mockStore = configureStore(middleware);
+  const store = mockStore({});
+
+  const expectedActions = [
+    { type: 'INSTALL_PROPERTIES_FAILURE', error },
+    { type: 'CLIENT_PROPERTIES_SUCCESS' }
+  ];
 
   await store.dispatch(fetchInstallProperties());
   expect(API.getInstallProperties).toHaveBeenCalled();
