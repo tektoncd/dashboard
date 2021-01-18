@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -20,18 +20,21 @@ it('handles init or unknown actions', () => {
 });
 
 it('INSTALL_PROPERTIES_SUCCESS', () => {
+  const ExternalLogsURL = 'fake_logs_url';
   const installProperties = {
     fake: 'installProperties',
-    ReadOnly: false,
+    ExternalLogsURL,
     IsOpenShift: false,
     LogoutURL: '/logout',
     DashboardNamespace: 'ns-dashboard',
     DashboardVersion: 'version-dashboard',
     PipelineNamespace: 'ns-pipeline',
     PipelineVersion: 'version-pipeline',
+    ReadOnly: false,
+    StreamLogs: true,
+    TenantNamespace: 'ns-tenant',
     TriggersNamespace: 'ns-triggers',
-    TriggersVersion: 'version-triggers',
-    TenantNamespace: 'ns-tenant'
+    TriggersVersion: 'version-triggers'
   };
 
   const action = {
@@ -40,15 +43,31 @@ it('INSTALL_PROPERTIES_SUCCESS', () => {
   };
 
   const state = propertiesReducer({}, action);
-  expect(selectors.isReadOnly(state)).toBe(false);
-  expect(selectors.isOpenShift(state)).toBe(false);
-  expect(selectors.isTriggersInstalled(state)).toBe(true);
-  expect(selectors.getLogoutURL(state)).toBe('/logout');
-  expect(selectors.getDashboardNamespace(state)).toBe('ns-dashboard');
-  expect(selectors.getDashboardVersion(state)).toBe('version-dashboard');
-  expect(selectors.getPipelineNamespace(state)).toBe('ns-pipeline');
-  expect(selectors.getPipelineVersion(state)).toBe('version-pipeline');
-  expect(selectors.getTriggersNamespace(state)).toBe('ns-triggers');
-  expect(selectors.getTriggersVersion(state)).toBe('version-triggers');
-  expect(selectors.getTenantNamespace(state)).toBe('ns-tenant');
+  expect(selectors.isReadOnly(state)).toEqual(false);
+  expect(selectors.isOpenShift(state)).toEqual(false);
+  expect(selectors.isTriggersInstalled(state)).toEqual(true);
+  expect(selectors.isLogStreamingEnabled(state)).toEqual(true);
+  expect(selectors.getExternalLogsURL(state)).toEqual(ExternalLogsURL);
+  expect(selectors.getLogoutURL(state)).toEqual('/logout');
+  expect(selectors.getDashboardNamespace(state)).toEqual('ns-dashboard');
+  expect(selectors.getDashboardVersion(state)).toEqual('version-dashboard');
+  expect(selectors.getPipelineNamespace(state)).toEqual('ns-pipeline');
+  expect(selectors.getPipelineVersion(state)).toEqual('version-pipeline');
+  expect(selectors.getTriggersNamespace(state)).toEqual('ns-triggers');
+  expect(selectors.getTriggersVersion(state)).toEqual('version-triggers');
+  expect(selectors.getTenantNamespace(state)).toEqual('ns-tenant');
+});
+
+it('CLIENT_PROPERTIES_SUCCESS', () => {
+  const action = { type: 'CLIENT_PROPERTIES_SUCCESS' };
+
+  const state = propertiesReducer({}, action);
+  expect(selectors.isReadOnly(state)).toEqual(false);
+  expect(selectors.isTriggersInstalled(state)).toEqual(true);
+  expect(selectors.getDashboardNamespace(state)).toEqual('N/A');
+  expect(selectors.getDashboardVersion(state)).toEqual('kubectl-proxy-client');
+  expect(selectors.getPipelineNamespace(state)).toEqual('Unknown');
+  expect(selectors.getPipelineVersion(state)).toEqual('Unknown');
+  expect(selectors.getTriggersNamespace(state)).toEqual('Unknown');
+  expect(selectors.getTriggersVersion(state)).toEqual('Unknown');
 });
