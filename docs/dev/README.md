@@ -82,7 +82,7 @@ The backend uses `go modules` to manage its dependencies. To build the go backen
 go build ./cmd/dashboard
 ```
 
-This should generate the `dashboard` binary. You can run the backend on your local computer by invoking it with the `--kube-config` flag:
+This generates a binary named `dashboard` which you can run on your local computer by invoking it with the `--kube-config` flag:
 
 ```bash
 ./dashboard --kube-config $HOME/.kube/config
@@ -192,7 +192,8 @@ This project uses `react-intl` for internationalization, and provides a script t
 
 ## Storybook
 
-Run `npm run storybook` to start [storybook](https://storybook.js.org/) in development mode. It should automatically open [`http://localhost:5000/`](http://localhost:5000/) in your browser. The app will automatically hot-reload any changes to the source files, including CSS.
+Run `npm run storybook` to start [storybook](https://storybook.js.org/) in development mode. It automatically opens 
+[`http://localhost:5000/`](http://localhost:5000/) in your browser. The app automatically hot-reloads any changes to the source files, including CSS.
 
 Stories are defined in `*.stories.js` files alongside their components.
 

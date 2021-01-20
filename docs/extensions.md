@@ -10,30 +10,24 @@ This guide explains what Tekton Dashboard extensions are and how to manage them.
 - [Service based extensions](#service-based-extensions)
    - [Example: Create a simple nodejs backend](#example-create-a-simple-nodejs-backend)
    - [Example: Add and serve frontend code](#example-add-and-serve-frontend-code)
-- [Next steps](#next-steps)
 
 ## Before you begin
 
-Tekton Dashboard Extensions should be considered alpha and are highly experimental. This means things could change at any time.
+Tekton Dashboard Extensions are currently alpha and are considered experimental. This means things could change at any time.
 
 There are two types of extension supported by the Tekton Dashboard:
 - [Resource based extensions](#resource-based-extensions) are deployed as `Extension` resources,
-the Dashboard will adapt itself to display the registered resource extensions on the frontend
-- [Service based extensions](#service-based-extensions) are deployed as independent services in the cluster,
-the Dashboard automatically recognizes thoses services, injects the frontend code in the web UI and proxies calls to the backend extension service
-
-Resource based extensions are more limited than service based extensions, they provide a simple and easy way to list and view resources inside a cluster.
-Service based extensions are much more powerful but require more work to develop.
-
-An example of a complete service based extension is the [webhooks-extension](https://github.com/tektoncd/experimental/tree/master/webhooks-extension).
+the Dashboard will generate UI to display the chosen resources
+- [Service based extensions](#service-based-extensions) are deployed as independent services in the cluster, and can provide 
+custom UI and APIs to be surfaced by the Dashboard
 
 ## Resource based extensions
 
 Resource based extensions provide a simple and easy way to list and view resources inside a cluster.
 
 Using them requires two steps (see an example below):
-1. You will need to create an [Extension resource](#extension-crd-apiversion-dashboardtektondevv1alpha1) in your cluster to let the Tekton Dashboard know that it should display additional Kubernetes resources
-1. You will need to add RBAC rules to the Tekton Dashboard service account to allow it access to the target resources
+1. create an [Extension resource](#extension-crd-apiversion-dashboardtektondevv1alpha1) in your cluster
+1. add RBAC rules to the Tekton Dashboard service account to allow it access to the target resources
 
 See the [Example: Register a CronJob extension](#example-register-a-cronjob-extension) below for a working example.
 
@@ -73,7 +67,7 @@ spec:
 EOF
 ```
 
-This will add a new item in the side nav of the dashboard.
+This adds a new item in the side nav of the Dashboard.
 
 Clicking on it will show an error though, you need to allow the Tekton Dashboard service account to access cronjobs in your cluster. See [next step](#example-extend-tekton-dashboard-service-account-permissions) to learn how you can easily extend RBAC rules of the service account.
 
@@ -81,7 +75,7 @@ Clicking on it will show an error though, you need to allow the Tekton Dashboard
 
 Extending the Tekton Dashboard service account can be done easily using [ClusterRole aggregation](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#aggregated-clusterroles).
 
-Simply create a `ClusterRole` with the necessary permissions and add the `rbac.dashboard.tekton.dev/aggregate-to-dashboard: "true"` label to it.
+Create a `ClusterRole` with the necessary permissions and add the `rbac.dashboard.tekton.dev/aggregate-to-dashboard: "true"` label to it.
 
 To add the necessary permissions for your cronjobs extension to work, run the following command:
 
@@ -100,7 +94,7 @@ rules:
 EOF
 ```
 
-Now the Tekton Dashboard should be able to show `CronJob`s in your cluster.
+Now the Tekton Dashboard will show `CronJob`s in your cluster.
 
 ![Resource based extension RBAC](./extensions-resource-based-rbac.png)
 
@@ -122,7 +116,7 @@ Well-known annotations are used to describe inner workings of the extension:
 
 Additionally, the Tekton Dashboard host will globally expose a few objects to let the extension's frontend code connect to these shared components (you can view the list of shared objects [here](../src/containers/Extension/globals.js)).
 
-Follow the [next steps](#example-create-a-simple-nodejs-backend) to learn how to develop a simple service based extension.
+The next section provides an example of developing a simple service based extension.
 You can also look at the [webhooks-extension](https://github.com/tektoncd/experimental/tree/master/webhooks-extension) to learn more about service based extensions.
 
 ### Example: Create a simple nodejs backend
@@ -193,7 +187,7 @@ The command above does the following:
   - the  `tekton-dashboard-display-name: Hello` annotation make the extension appear in the side nav under the `Hello` name
   - the `tekton-dashboard-endpoints: sample` annotation allows proxying requests to the extension by the Tekton Dashboard
 
-You can verify that the extension backend is working by hitting the path `/v1/extensions/sample-extension/sample`, it should display the `Hello Tekton Dashboard !` message.
+You can verify that the extension backend is working by hitting the path `/v1/extensions/sample-extension/sample` and checking for the `Hello Tekton Dashboard !` message.
 
 ![Service based extension backend](./extensions-service-based-backend.png)
 
@@ -297,13 +291,9 @@ In the extension `Pod`, a new `frontend.js` file is generated containing the fro
 
 Once the extension frontend code is injected in the page, it will call `/sample` backend endpoint to fetch a message and will render the obtained message in the Dashboard UI.
 
-The complete extension should look something like this:
+The complete extension looks something like this:
 
 ![Service based extension frontend](./extensions-service-based-frontend.png)
-
-## Next steps
-
-You can install or learn more about service based extensions on the [webhooks-extension](https://github.com/tektoncd/experimental/tree/master/webhooks-extension) page.
 
 ---
 

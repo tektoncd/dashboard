@@ -48,7 +48,7 @@ The `help` command shows the supported commands and options by the script:
 ./scripts/installer help
 ```
 
-It should output the following message:
+It will produce output similar to the following:
 
 ```bash
 Global command syntax:

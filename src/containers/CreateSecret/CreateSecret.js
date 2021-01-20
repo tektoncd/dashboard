@@ -181,7 +181,7 @@ export /* istanbul ignore next */ class CreateSecret extends Component {
       const annotations = [...prevState.annotations];
       const previousAccessType = annotations[index].access;
       // We enter this when it's the same access type, so a user is
-      // simply changing the value for server URL - set it to that
+      // changing the value for server URL - set it to that
       if (currentAccess === undefined) {
         annotations[index][type] = value;
       }

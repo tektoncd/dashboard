@@ -35,7 +35,7 @@ The picture below illustrates the deployed components and interactions between t
 
 ## Installing a working Tekton Dashboard locally from scratch
 
-If you didn't follow the [Tekton Dashboard walkthrough with Kind](./walkthrough-kind.md) yet, you should start there to get a local cluster with a working Tekton Dashboard installed.
+If you didn't follow the [Tekton Dashboard walkthrough with Kind](./walkthrough-kind.md) yet, start there to get a local cluster with a working Tekton Dashboard installed.
 
 The following steps will focus on getting `oauth2-proxy` installed in your cluster and securing the Tekton Dashboard `Ingress`.
 
@@ -66,7 +66,7 @@ Now you have the OAuth application created on GitHub, you can deploy [oauth2-pro
 
 You will install it using helm. The helm chart used in this guide is hosted on the [helm official repository](https://github.com/helm/charts/tree/master/stable/oauth2-proxy).
 
-To install the chart, set the `Client ID` and `Client Secret` you just obtained from GitHub and run the command below:
+To install the chart, set the `Client ID` and `Client Secret` you obtained from GitHub and run the command below:
 
 ```bash
 # CLIENT_ID and CLIENT_SECRET are the Client ID and Client Secret obtained
@@ -106,9 +106,7 @@ Explanation of the parameters:
 
 Although not used in this walkthrough, the GitHub provider supports restricting logins to members of an organisation, members of a team, or collaborators of a repository for more security.
 
-See supported [configuration parameters](https://oauth2-proxy.github.io/oauth2-proxy/configuration) for the full list of configuration options.
-
-`oauth2-proxy` also supports other providers, see the list of [supported providers](https://oauth2-proxy.github.io/oauth2-proxy/auth-configuration) to setup a different provider than GitHub.
+For the full list of configuration options and other supported providers see the [oauth2-proxy documentation](https://oauth2-proxy.github.io/oauth2-proxy/docs/).
 
 ## Setting up Dashboard Ingress rule for authentication
 
@@ -144,15 +142,15 @@ EOF
 
 **NOTE:** The URL set in the `nginx.ingress.kubernetes.io/auth-url` is the in-cluster DNS name of the `oauth2-proxy` service. We can't use `auth.127.0.0.1.nip.io` here because it resolves to `127.0.0.1` and therefore the ingress controller would call itself instead of the `oauth2-proxy` service.
 
-Visiting the Tekton Dashboard URL `http://tekton-dashboard.127.0.0.1.nip.io` for the first time should redirect you to the `oauth2-proxy` sign in page (`http://auth.127.0.0.1.nip.io/oauth2/sign_in?rd=http://tekton-dashboard.127.0.0.1.nip.io/`):
+Visiting the Tekton Dashboard URL `http://tekton-dashboard.127.0.0.1.nip.io` for the first time redirects you to the `oauth2-proxy` sign in page (`http://auth.127.0.0.1.nip.io/oauth2/sign_in?rd=http://tekton-dashboard.127.0.0.1.nip.io/`):
 
 ![oauth2-proxy sign in page](./walkthrough-oauth2-proxy-sign-in.png)
 
-Clicking on the `Sign in with GitHub` button should send you to the GitHub OAuth sign in page:
+Clicking on the `Sign in with GitHub` button sends you to the GitHub OAuth sign in page:
 
 ![GitHub OAuth sign in page](./walkthrough-oauth2-proxy-github.png)
 
-Finally, authorizing the connection should bring you back to the Tekton Dashboard.
+Finally, authorizing the connection brings you back to the Tekton Dashboard.
 
 ## Configuring Dashboard logout URL
 

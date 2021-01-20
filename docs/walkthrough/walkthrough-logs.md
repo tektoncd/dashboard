@@ -29,7 +29,7 @@ Then, you will create a service to serve those logs and will plug the Tekton Das
 
 ## Installing a working Tekton Dashboard locally from scratch
 
-If you didn't follow the [Tekton Dashboard walkthrough with Kind](./walkthrough-kind.md) yet, you should start there to get a local cluster with a working Tekton Dashboard installed.
+If you didn't follow the [Tekton Dashboard walkthrough with Kind](./walkthrough-kind.md) yet, start there to get a local cluster with a working Tekton Dashboard installed.
 
 The following steps will focus on collecting, storing and serving pod logs to finally plug the logs service on the Tekton Dashboard.
 
@@ -88,8 +88,6 @@ helm upgrade --install --version 3.6.0 --wait --create-namespace --namespace too
 ```
 
 **NOTE**: This will install `logging-operator` version `3.6.0`, there was a [breaking change](https://github.com/banzaicloud/logging-operator/releases/tag/3.6.0) in this release. The walkthrough will not work with earlier versions.
-
-The `logging operator` should now be deployed in your cluster.
 
 To start collecting logs you will need to create the logs pipeline using the available CRDs:
 
@@ -164,7 +162,7 @@ EOF
 
 The `ClusterFlow` above takes all logs from pods that have the `app.kubernetes.io/managed-by: tekton-pipelines` label (those are the pods baking `TaskRun`s) and dispatches them to the `ClusterOutput` created in the previous step.
 
-Running the `PipelineRun` below should produce logs and you should see corresponding objects being added in `minio` as logs get collected and stored by the logs pipeline.
+Running the `PipelineRun` below produces logs and you will see corresponding objects being added in `minio` as logs are collected and stored by the logs pipeline.
 
 ```bash
 kubectl -n tekton-pipelines create -f - <<EOF
@@ -319,7 +317,7 @@ spec:
 EOF
 ```
 
-The logs server should now be available ar `http://logs.127.0.0.1.nip.io`.
+The logs server is available at `http://logs.127.0.0.1.nip.io`.
 
 ## Setting up the Dashboard logs fallback
 
@@ -331,7 +329,7 @@ First, delete the pods for your `TaskRun`s so that the Dashboard backend can't f
 kubectl delete pod -l=app.kubernetes.io/managed-by=tekton-pipelines -n tekton-pipelines
 ```
 
-The Dashboard should now display the `Unable to fetch logs` message when browsing tasks.
+The Dashboard displays the `Unable to fetch logs` message when browsing tasks.
 
 ![Unable to fetch logs](./walkthrough-logs-nologs.png)
 
@@ -342,7 +340,7 @@ kubectl patch deployment tekton-dashboard -n tekton-pipelines --type='json' \
   --patch='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--external-logs=http://logs-server.tools.svc.cluster.local:3000/logs"}]'
 ```
 
-The logs should now be displayed again, fetched from the logs server configured in the previous steps.
+The logs are now displayed again, fetched from the logs server configured in the previous steps.
 
 ![Logs are available again](./walkthrough-logs-logs.png)
 

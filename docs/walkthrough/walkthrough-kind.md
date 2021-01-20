@@ -60,16 +60,16 @@ Once the cluster is started, you can check that the context was added in your ku
 kubectl config get-contexts
 ```
 
-The output should look something like this:
+The output looks something like this:
 
 ```bash
 CURRENT   NAME                                                 CLUSTER                          AUTHINFO                               NAMESPACE
 *         kind-walkthrough                                     kind-walkthrough                 kind-walkthrough                       
 ```
 
-The `kind-walkthrough` is the context for the cluster you just created and the `*` at the beginning means that it is the currently active context.
+The `kind-walkthrough` is the context for the cluster you created and the `*` at the beginning means that it is the currently active context.
 
-You can verify that the ports were correctly mapped by `docker` by running `docker ps`. The output should show something like this:
+You can verify that the ports were correctly mapped by `docker` by running `docker ps`. The output shows something like this:
 
 ```bash
 CONTAINER ID        IMAGE                  COMMAND                  CREATED             STATUS             PORTS                                                                 NAMES
@@ -93,7 +93,7 @@ kubectl wait -n ingress-nginx \
   --timeout=90s
 ```
 
-The ingress controller should be up and ready to process requests.
+If the command exited successfully the ingress controller is now up and ready to process requests.
 
 ## Installing Tekton Pipelines
 
@@ -109,8 +109,6 @@ kubectl wait -n tekton-pipelines \
   --selector=app.kubernetes.io/part-of=tekton-pipelines,app.kubernetes.io/component=controller \
   --timeout=90s
 ```
-
-Tekton Pipelines should be up and running.
 
 ## Installing Tekton Triggers (optional)
 
@@ -128,8 +126,6 @@ kubectl wait -n tekton-pipelines \
   --timeout=90s
 ```
 
-Tekton Triggers should be up and running.
-
 ## Installing Tekton Dashboard
 
 Installing the latest Tekton Dashboard release is done by running the following command:
@@ -143,8 +139,6 @@ kubectl wait -n tekton-pipelines \
   --selector=app.kubernetes.io/part-of=tekton-dashboard,app.kubernetes.io/component=dashboard \
   --timeout=90s
 ```
-
-Tekton Dashboard should be up and running.
 
 ## Setting up an Ingress rule to access the Dashboard
 
@@ -199,13 +193,11 @@ Open `http://tekton-dashboard.127.0.0.1.nip.io/#/importresources` and fill in th
 
 Then click the **Import and Apply** button to launch the importing `PipelineRun`.
 
-You should see a `PipelineRun` running when looking at the PipelineRuns page (`http://tekton-dashboard.127.0.0.1.nip.io/#/pipelineruns`), this is the `PipelineRun` responsible for importing the resources from the GitHub repository.
+You will see a `PipelineRun` running when looking at the PipelineRuns page (`http://tekton-dashboard.127.0.0.1.nip.io/#/pipelineruns`), this is the `PipelineRun` responsible for importing the resources from the GitHub repository.
 
 ![Importing resources from a GitHub repository](./walkthrough-kind-import.png)
 
 ## Viewing and managing resources from the Dashboard
-
-After importing resources from the previous step, `PipelineRun`s, `TaskRun`s, `PipelineResource`s, should start running in your cluster.
 
 You can view resource lists, individual resource details, `PipelineRun` and `TaskRun` logs, start new `PipelineRuns` or `TaskRuns`, delete resources, etc...
 
