@@ -10,18 +10,22 @@ cascade:
 ---
 -->
 
-{{% pageinfo %}}
-This document is a work in progress.
-{{% /pageinfo %}}
-
 ## Overview
 
-Tekton provides a component, Tekton Dashboard, as a general-purpose,
-web-based UI for Tekton Pipelines, which allows developers to:
+Tekton Dashboard is a general-purpose, web-based UI for 
+[Tekton Pipelines](https://github.com/tektoncd/pipeline) and 
+[Tekton triggers](https://github.com/tektoncd/triggers) resources.
 
-* View and manage **taskRuns** and **pipelineRuns**
-* View and manage resources associated with **taskRuns** and **pipelineRuns**
-in their creation, execution, and completion
+It allows users to manage and view Tekton resource creation, execution, and completion.
+
+Some of the features the Dashboard supports:
+- Realtime view of `PipelineRun` and `TaskRun` status and logs.
+- Filter lists of resources by label.
+- View resource details and YAML.
+- Show resources for the whole cluster or limit visibility to a particular namespace.
+- Import resources directly from a git repository.
+- Add functionality using extensions.
+
 
 ## Tutorial
 
@@ -68,9 +72,10 @@ you would like to use on the [Tekton Dashboard Releases](https://github.com/tekt
 page, and run the command below:
 
 ```bash
-# Replace YOUR-RELEASE with the URL of the release you would like to use.
-kubectl apply --filename YOUR-RELEASE
+kubectl apply --filename <release-url>
 ```
+where `<release-url>` is the URL of the release you would like to use.
+
 {{% /alert %}}
 
 It may take a few moments before the installation completes. You can check
@@ -84,7 +89,7 @@ Confirm that every component listed has the status `Running`.
 
 ## Usage
 
-Tekton Dashboard is accessible through its `cluster IP` type service with
+Tekton Dashboard is accessible through its `cluster IP` service with
 a [reverse proxy](https://kubernetes.io/docs/tasks/extend-kubernetes/http-proxy-access-api/).
 Run the following command:
 
@@ -92,20 +97,18 @@ Run the following command:
 kubectl proxy --port=8080
 ```
 
-And you can open the dashboard in your browser under the address
+Then you can open the Dashboard in your browser at
 
-```
-localhost:8080/api/v1/namespaces/tekton-pipelines/services/tekton-dashboard:http/proxy/
-```
+http://localhost:8080/api/v1/namespaces/tekton-pipelines/services/tekton-dashboard:http/proxy/
 
-It is also possible to set up port forwarding with Tekton Dashboard:
+Alternatively, you can use port forwarding:
 
 ```bash
 kubectl --namespace tekton-pipelines port-forward svc/tekton-dashboard 9097:9097
 ```
 
-Once set up, the dashboard is available in the browser under the address
-`localhost:9097`.
+Once set up, the Dashboard is available in the browser at
+http://localhost:9097
 
 ## What's next
 

@@ -86,16 +86,16 @@ Once the cluster is started, you can check that the context was added in your ku
 kubectl config get-contexts
 ```
 
-The output should look something like this:
+The output looks something like this:
 
 ```bash
 CURRENT   NAME                                                 CLUSTER                          AUTHINFO                               NAMESPACE
 *         kind-walkthrough                                     kind-walkthrough                 kind-walkthrough                       
 ```
 
-The `kind-walkthrough` is the context for the cluster you just created and the `*` at the beginning means that it is the currently active context.
+The `kind-walkthrough` is the context for the cluster you created and the `*` at the beginning means that it is the currently active context.
 
-You can verify that the ports were correctly mapped by `docker` by running `docker ps`. The output should show something like this:
+You can verify that the ports were correctly mapped by `docker` by running `docker ps`. The output shows something like this:
 
 ```bash
 CONTAINER ID        IMAGE                  COMMAND                  CREATED              STATUS              PORTS                                                                      NAMES
@@ -357,7 +357,7 @@ spec:
 EOF
 ```
 
-Now, visiting `http://tekton-dashboard.127.0.0.1.nip.io` should require a login / password, enter `ok` / `test2` to access the Dashboard.
+Now, visiting `http://tekton-dashboard.127.0.0.1.nip.io` requires a login / password, enter `ok` / `test2` to access the Dashboard.
 
 ## Cleaning up
 
