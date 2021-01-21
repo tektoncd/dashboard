@@ -17,6 +17,8 @@ It covers the following topics:
   - [Install ingress](#install-ingress)
 - [Uninstall command](#uninstall-command)
 - [Build command](#build-command)
+- [Release command](#release-command)
+- [Platform support](#platform-support)
 
 ## Before you begin
 
@@ -78,6 +80,7 @@ Accepted options:
         [--stream-logs]                         Will enable log streaming instead of polling
         [--external-logs <logs-provider-url>]   External url to fetch logs from when not available in the cluster
         [--output <file>]                       Will output built manifests in the file instead of in the console
+        [--platform <platform>]                 Override the platform to build for
 ```
 
 ## Install command
@@ -231,6 +234,28 @@ The `build` command is useful when you want to ensure everything builds correctl
 This command is essentially the same as the [build command](#build-command) but adds the `--preserve-import-paths` option when invoking `ko`.
 
 This is needed to generate the correct docker image name in the manifests when cutting a release.
+
+## Platform support
+
+Official Dashboard releases since v0.12.0 provide multi-platform images supporting the following:
+- `linux/amd64`
+- `linux/arm`
+- `linux/arm64`
+- `linux/ppc64le`
+- `linux/s390x`
+
+The `installer` script's `build` and `install` commands will build an image for `linux/amd64` by default.
+To override the platform in cases where the target cluster is running on a different architecture, add `--platform <platform>` where `<platform>` is a value from the list of supported values, for example:
+```bash
+./scripts/installer install --platform linux/arm
+```
+or build a multi-platform image by specifying `all` or a comma-separated list of supported platforms:
+```bash
+./scripts/installer install --platform all
+```
+
+This behaviour can also be controlled using the `GOOS` and `GOARCH` environment variables. 
+See the [`ko` documentation](https://github.com/google/ko#multi-platform-images) for further details.
 
 ---
 

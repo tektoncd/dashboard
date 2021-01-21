@@ -488,6 +488,7 @@ help () {
   echo -e "\t[--stream-logs]\t\t\t\tWill enable log streaming instead of polling"
   echo -e "\t[--external-logs <logs-provider-url>]\tExternal url to fetch logs from when not available in the cluster"
   echo -e "\t[--output <file>]\t\t\tWill output built manifests in the file instead of in the console"
+  echo -e "\t[--platform <platform>]\t\t\tOverride the platform to build for"
 }
 
 # cleanup temporary files
@@ -603,6 +604,10 @@ while [[ $# -gt 0 ]]; do
     '--output')
       shift
       export OUTPUT_FILE="${1}"
+      ;;
+    '--platform')
+      shift
+      KO_RESOLVE_OPTIONS="$KO_RESOLVE_OPTIONS --platform=${1}"
       ;;
     *)
       echo "ERROR: Unknown option $1"
