@@ -15,7 +15,7 @@ Among other things, the Tekton Dashboard supports:
 - Import resources directly from a git repository
 - Adding functionality through extensions, like automatically triggering pipelines on git events (GitHub and GitLab supported)
 
-![Dashboard UI workloads page](docs/dashboard-ui.png)
+![Dashboard UI workloads page](docs/dashboard-ui.jpg)
 
 ## Start using Tekton Dashboard
 
