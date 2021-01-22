@@ -1,1 +1,4 @@
 * text=auto eol=lf
+**/zz_generated.*.go linguist-generated=true
+/pkg/client/** linguist-generated=true
+go.sum linguist-generated=true
