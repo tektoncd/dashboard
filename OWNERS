@@ -3,21 +3,21 @@
 # It supports a list of approvers and reviewers and their github names must be provided.
 
 approvers:
-- a-roberts
 - alangreene
-- eddycharly
-- mnuttall
 - skaegi
 - steveodonovan
-- dibbles
-- carolynmabbott
 
 reviewers:
 - ziheng
 
 # Alumni ❤️
-# jessm12
-# vtereso
+# a-roberts
 # akihikokuroda
-# ncskier
+# carolynmabbott
+# dibbles
+# eddycharly
+# jessm12
 # megan-wright
+# mnuttall
+# ncskier
+# vtereso
