@@ -42,7 +42,11 @@ Note that `minio` exposes other APIs similar to other cloud storage providers to
 To deploy `minio` in your cluster, run the following command to install the `minio` helm chart:
 
 ```bash
-helm upgrade --install --wait --create-namespace --namespace tools minio stable/minio --values - <<EOF
+helm repo add minio https://helm.min.io/
+
+helm repo update
+
+helm upgrade --install --version 8.0.9 --wait --create-namespace --namespace tools minio minio/minio --values - <<EOF
 nameOverride: minio
 fullnameOverride: minio
 
@@ -229,7 +233,7 @@ spec:
     spec:
       containers:
       - name: node
-        image: node:latest
+        image: node:14
         ports:
         - containerPort: 3000
         command:
@@ -277,7 +281,7 @@ spec:
           app.listen(3000, '0.0.0.0');
           EOF
 
-          npm install aws-sdk express
+          npm install aws-sdk@2.748.0 express@4.17.1
 
           node ./server.js
 EOF
@@ -350,7 +354,7 @@ The logs should now be displayed again, fetched from the logs server configured 
 
 ```bash
 curl -sL https://raw.githubusercontent.com/tektoncd/dashboard/master/scripts/release-installer | \
-   bash -s -- install latest --external-logs=http://logs-server.tools.svc.cluster.local:3000/logs
+   bash -s -- install latest --external-logs http://logs-server.tools.svc.cluster.local:3000/logs
 
 kubectl wait -n tekton-pipelines \
   --for=condition=ready pod \
