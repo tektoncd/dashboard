@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,9 +12,11 @@ limitations under the License.
 */
 
 import * as API from '../api';
+import * as comms from '../api/comms';
 
 import {
   fetchLogs,
+  fetchLogsFallback,
   followLogs,
   getLogDownloadButton,
   getViewChangeHandler,
@@ -114,6 +116,32 @@ describe('fetchLogs', () => {
 
     fetchLogs(stepName, stepStatus, taskRun);
     expect(API.getPodLog).not.toHaveBeenCalled();
+  });
+});
+
+describe('fetchLogsFallback', () => {
+  it('should return undefined when no external log provider configured', () => {
+    expect(fetchLogsFallback()).toBeUndefined();
+  });
+
+  it('should return a function to retrieve logs from the external provider', () => {
+    const container = 'fake_container';
+    const externalLogsURL = 'fake_url';
+    const namespace = 'fake_namespace';
+    const podName = 'fake_podName';
+    const stepName = 'fake_stepName';
+    const stepStatus = { container };
+    const taskRun = { metadata: { namespace }, status: { podName } };
+    jest.spyOn(comms, 'get');
+
+    const fallback = fetchLogsFallback(externalLogsURL);
+    fallback(stepName, stepStatus, taskRun);
+    expect(
+      comms.get
+    ).toHaveBeenCalledWith(
+      `${externalLogsURL}/${namespace}/${podName}/${container}`,
+      { Accept: 'text/plain' }
+    );
   });
 });
 

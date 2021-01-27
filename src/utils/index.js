@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,6 +16,7 @@ import snakeCase from 'lodash.snakecase';
 import { LogDownloadButton } from '@tektoncd/dashboard-components';
 
 import { getPodLog, getPodLogURL } from '../api';
+import { get } from '../api/comms';
 
 export function sortRunsByStartTime(runs) {
   runs.sort((a, b) => {
@@ -69,7 +70,7 @@ export async function fetchLogs(stepName, stepStatus, taskRun) {
   return logs;
 }
 
-function fetchLogsFallback(externalLogsURL) {
+export function fetchLogsFallback(externalLogsURL) {
   if (!externalLogsURL) {
     return undefined;
   }
@@ -78,9 +79,9 @@ function fetchLogsFallback(externalLogsURL) {
     const { namespace } = taskRun.metadata;
     const { podName } = taskRun.status || {};
     const { container } = stepStatus;
-    return fetch(
-      `${externalLogsURL}/${namespace}/${podName}/${container}`
-    ).then(response => response.text());
+    return get(`${externalLogsURL}/${namespace}/${podName}/${container}`, {
+      Accept: 'text/plain'
+    });
   };
 }
 
