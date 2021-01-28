@@ -1,0 +1,165 @@
+error	エラー
+errors	エラー
+load	ロード
+required	必要
+release	リソース
+create	作成
+select	選択
+row	行
+rows	行
+delete	削除
+item	項目
+items	項目
+stop	停止
+parameter	パラメータ
+password 	パスワード
+type	種類
+Successfully	正常に
+log	ログ
+logs	ログ
+add	追加
+details	詳細
+show	表示
+extention	拡張機能
+extensions	拡張機能
+cannot be empty	が必須
+name	名前
+rerun	再実行
+filter	フィルタ
+filters	フィルタ
+status	ステータス
+clear	クリア
+option	オプション
+resource	リソース
+resources	リソース
+permissions	権限
+valid	有効
+format	形式
+fetch	取得
+get	取得
+retrieve	取得
+repository	リポジトリ
+label	ラベル
+labels	ラベル
+Username	ユーザー名
+default	デフォルト	デフォルト値
+timeout	タイムアウト
+import	インポート
+access token	アクセストークン
+unselect	選択解除
+authentication	認証
+configuration	構成
+expand	展開
+run	実行
+Trigger	実行
+value	値
+values	値
+created	作成される	作成日
+repository path	リポジトリパス
+revision	リビジョン
+menu	メニュー
+page	ページ
+step	ステップ
+key	キー
+cancel	キャンセル
+less than 64 characters	64文字未満
+start	開始
+duplicate filters	重複フィルタ
+apply	適用
+notification	通知
+ReadOnly	読み取り専用
+description	説明
+advanced configuration	詳細設定
+alphanumeric characters	英数字
+zoom out	縮小
+finish	終了
+blank	空白
+empty	空
+second	秒
+seconds	秒
+syntax	構文
+overview	概要
+conditions	条件
+not run	未実行
+top-level directory	最上位ディレクトリ
+day	日
+days	日
+new window	新しいウィンドウ
+new secret	新しいSecret
+number	数値
+zoom in	拡大
+success	成功
+waiting	待機
+lowercase alphanumeric characters	小文字英数字
+lowercase	小文字
+definition	定義
+definitions	定義
+completed	完了
+fail	失敗
+location	場所
+available	利用可能
+output Resources	出力リソース
+input Resources	入力リソース
+input	入力
+Pending	保留
+accepted	使用可能
+logout	ログアウト
+repository URL	リポジトリのURL
+resource remplates	リソーステンプレート
+label characters	ラベル文字
+metadata	メタデータ
+method	メソッド
+documentation	ドキュメント
+head	ヘッダー
+property	プロパティ
+filed name	フィールド名
+field	フィールド
+path	パス
+version	バージョン
+meow	ニャー
+document	ドキュメント
+data	データ
+template	テンプレート
+templates	テンプレート
+dashboard logs	ダッシュボードログ
+download	ダウンロード
+target	ターゲット
+status message	ステータスメッセージ
+status code	ステータスコード
+server URL	サーバのURL
+server	サーバ
+support	サポート
+copy	コピー
+clipboard	クリップボード
+cancelled	キャンセル済み
+overlays	オーバーレイ
+image	イメージ
+access to	アクセス先
+action	アクション
+labels syntax	ラベル構文
+information	情報
+Secret name	Secret名
+less than	未満
+field name	フィルター名
+date created	作成日
+Something went wrong	問題が発生しています
+namespace	Namespace
+namespaces	Namespace
+ServiceAccount	ServiceAccount
+ServiceAccounts	ServiceAccount
+PipelineRun	PipelineRun
+PipelineRuns	PipelineRun
+Taskrun	Taskrun
+Taskruns	Taskrun
+ClusterTask	ClusterTask
+ClusterTasks	ClusterTask
+ClusterTriggerBinding	ClusterTriggerBinding
+PipelineResource	PipelineResource
+PipelineResources	PipelineResource
+Secret	Secret
+Secrets	Secret
+URL	URL
+URLs	URL
+Pipeline	Pipeline
+Pipelines	Pipeline
+TriggerBinding	TriggerBinding
