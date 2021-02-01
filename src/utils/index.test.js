@@ -156,11 +156,18 @@ describe('followLogs', () => {
       status: { podName }
     };
 
-    const logs = new ReadableStream({
-      start(controller) {
-        controller.enqueue(new TextEncoder().encode('fake logs'));
+    const logs = {
+      getReader() {
+        return {
+          read() {
+            return Promise.resolve({
+              done: true,
+              value: new TextEncoder().encode('fake logs')
+            });
+          }
+        };
       }
-    });
+    };
     jest.spyOn(API, 'getPodLog').mockImplementation(() => logs);
 
     const returnedLogs = followLogs(stepName, stepStatus, taskRun);
