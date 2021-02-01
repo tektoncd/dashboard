@@ -15,7 +15,6 @@
   },
   "dependencies": {
     "@babel/cli": "^7.12.1",
-    "@formatjs/intl-pluralrules": "^3.5.6",
     "@formatjs/intl-relativetimeformat": "^7.3.6",
     "@tektoncd/dashboard-utils": "file:../utils",
     "@vx/event": "0.0.192",
