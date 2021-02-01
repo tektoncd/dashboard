@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -38,7 +38,7 @@ export class LogContainer extends Component {
 
   componentWillUnmount() {
     clearInterval(this.timer);
-    this.canceled = true;
+    this.cancelled = true;
   }
 
   getLogList = () => {
@@ -94,7 +94,7 @@ export class LogContainer extends Component {
   };
 
   readChunks = ({ done, value }, decoder, text = '') => {
-    if (this.canceled) {
+    if (this.cancelled) {
       this.reader.cancel();
       return undefined;
     }
@@ -106,10 +106,9 @@ export class LogContainer extends Component {
         logs: logs.split('\n')
       });
     } else {
-      this.setState(prevState => ({
-        loading: false,
-        logs: prevState.logs
-      }));
+      this.setState({
+        loading: false
+      });
     }
     if (done) {
       return undefined;
@@ -128,7 +127,8 @@ export class LogContainer extends Component {
     if (fetchLogs) {
       try {
         const logs = await fetchLogs();
-        if (logs instanceof ReadableStream) {
+        if (logs?.getReader) {
+          // logs is a https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream
           const decoder = new TextDecoder();
           this.reader = logs.getReader();
           await this.reader

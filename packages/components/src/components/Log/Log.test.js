@@ -72,13 +72,18 @@ describe('Log', () => {
       <Log
         stepStatus={{ terminated: { reason: 'Completed' } }}
         fetchLogs={() =>
-          Promise.resolve(
-            new ReadableStream({
-              start(controller) {
-                controller.enqueue(new TextEncoder().encode('testing'));
-              }
-            })
-          )
+          Promise.resolve({
+            getReader() {
+              return {
+                read() {
+                  return Promise.resolve({
+                    done: true,
+                    value: new TextEncoder().encode('testing')
+                  });
+                }
+              };
+            }
+          })
         }
       />
     );
@@ -90,13 +95,18 @@ describe('Log', () => {
       <Log
         stepStatus={{ terminated: { reason: 'Completed' } }}
         fetchLogs={() =>
-          Promise.resolve(
-            new ReadableStream({
-              start(controller) {
-                controller.enqueue(new TextEncoder().encode('testing'));
-              }
-            })
-          )
+          Promise.resolve({
+            getReader() {
+              return {
+                read() {
+                  return Promise.resolve({
+                    done: true,
+                    value: new TextEncoder().encode('testing')
+                  });
+                }
+              };
+            }
+          })
         }
       />
     );
@@ -108,13 +118,18 @@ describe('Log', () => {
       <Log
         stepStatus={{ terminated: { reason: 'Error' } }}
         fetchLogs={() =>
-          Promise.resolve(
-            new ReadableStream({
-              start(controller) {
-                controller.enqueue(new TextEncoder().encode('testing'));
-              }
-            })
-          )
+          Promise.resolve({
+            getReader() {
+              return {
+                read() {
+                  return Promise.resolve({
+                    done: true,
+                    value: new TextEncoder().encode('testing')
+                  });
+                }
+              };
+            }
+          })
         }
       />
     );

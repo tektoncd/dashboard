@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,7 +14,6 @@ limitations under the License.
 import fetch from 'node-fetch';
 import fetchMock from 'fetch-mock';
 import { TextDecoder, TextEncoder } from 'util';
-import { ReadableStream } from 'web-streams-polyfill/es6';
 
 if (!global.fetch) {
   global.fetch = fetch;
@@ -27,4 +26,3 @@ fetchMock.config.warnOnFallback = false;
 window.HTMLElement.prototype.scrollIntoView = function scrollIntoViewTestStub() {};
 window.TextDecoder = TextDecoder;
 window.TextEncoder = TextEncoder;
-window.ReadableStream = ReadableStream;
