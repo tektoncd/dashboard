@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -25,7 +25,6 @@ import pipelines, * as pipelineSelectors from './pipelines';
 import pipelineResources, * as pipelineResourcesSelectors from './pipelineResources';
 import pipelineRuns, * as pipelineRunsSelectors from './pipelineRuns';
 import properties, * as propertiesSelectors from './properties';
-import secrets, * as secretSelectors from './secrets';
 import triggerTemplates, * as triggerTemplatesSelectors from './triggerTemplates';
 import triggerBindings, * as triggerBindingsSelectors from './triggerBindings';
 import clusterTriggerBindings, * as clusterTriggerBindingsSelectors from './clusterTriggerBindings';
@@ -45,7 +44,6 @@ export default combineReducers({
   pipelineResources: pipelineResources(),
   pipelineRuns: pipelineRuns(),
   properties,
-  secrets,
   serviceAccounts: serviceAccounts(),
   tasks: tasks(),
   taskRuns: taskRuns(),
@@ -72,17 +70,6 @@ export function getSelectedNamespace(state) {
 
 export function getNamespaces(state) {
   return namespaceSelectors.getNamespaces(state.namespaces);
-}
-
-export function getServiceAccount(
-  state,
-  { name, namespace = getSelectedNamespace(state) }
-) {
-  return serviceAccountSelectors.getServiceAccount(
-    state.serviceAccounts,
-    name,
-    namespace
-  );
 }
 
 export function getServiceAccounts(
@@ -321,57 +308,6 @@ export function getConditionsErrorMessage(state) {
 
 export function isFetchingConditions(state) {
   return conditionSelectors.isFetchingConditions(state.conditions);
-}
-
-export function getSecrets(
-  state,
-  { filters = [], namespace = getSelectedNamespace(state) } = {}
-) {
-  const allSecrets = secretSelectors.getSecrets(state.secrets, namespace);
-
-  return allSecrets.filter(secret =>
-    filters.every(filter => {
-      const [filterKey, filterValue] = filter.split('=');
-      return (
-        secret.metadata.labels &&
-        filterKey &&
-        filterValue &&
-        secret.metadata.labels[filterKey] === filterValue
-      );
-    })
-  );
-}
-
-export function getSecret(state, { name, namespace }) {
-  return secretSelectors.getSecret(state.secrets, name, namespace);
-}
-
-export function getSecretsErrorMessage(state) {
-  return secretSelectors.getSecretsErrorMessage(state.secrets);
-}
-
-export function getDeleteSecretsErrorMessage(state) {
-  return secretSelectors.getDeleteSecretsErrorMessage(state.secrets);
-}
-
-export function getPatchSecretsErrorMessage(state) {
-  return secretSelectors.getPatchSecretsErrorMessage(state.secrets);
-}
-
-export function getCreateSecretsSuccessMessage(state) {
-  return secretSelectors.getCreateSecretsSuccessMessage(state.secrets);
-}
-
-export function getDeleteSecretsSuccessMessage(state) {
-  return secretSelectors.getDeleteSecretsSuccessMessage(state.secrets);
-}
-
-export function getPatchSecretsSuccessMessage(state) {
-  return secretSelectors.getPatchSecretsSuccessMessage(state.secrets);
-}
-
-export function isFetchingSecrets(state) {
-  return secretSelectors.isFetchingSecrets(state.secrets);
 }
 
 export function getLocale(state) {

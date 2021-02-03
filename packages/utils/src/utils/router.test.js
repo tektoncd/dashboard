@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -20,8 +20,6 @@ const namespace = 'fake_namespace';
 const pipelineName = 'fake_pipelineName';
 const pipelineResourceName = 'fake_pipelineResourceName';
 const pipelineRunName = 'fake_pipelineRunName';
-const secretName = 'fake_secretName';
-const serviceAccountName = 'fake_serviceAccountName';
 const taskName = 'fake_taskName';
 const taskRunName = 'fake_taskRunName';
 const triggerBindingName = 'fake_triggerBindingName';
@@ -280,56 +278,6 @@ describe('rawCRD', () => {
     expect(urls.rawCRD.cluster({ type, name })).toEqual(
       generatePath(paths.rawCRD.cluster(), { type, name })
     );
-  });
-});
-
-describe('secrets', () => {
-  it('all', () => {
-    expect(urls.secrets.all()).toEqual(generatePath(paths.secrets.all()));
-  });
-
-  it('byName', () => {
-    expect(urls.secrets.byName({ namespace, secretName })).toEqual(
-      generatePath(paths.secrets.byName(), {
-        namespace,
-        secretName
-      })
-    );
-  });
-
-  it('byNamespace', () => {
-    expect(urls.secrets.byNamespace({ namespace })).toEqual(
-      generatePath(paths.secrets.byNamespace(), { namespace })
-    );
-  });
-});
-
-describe('serviceAccounts', () => {
-  it('all', () => {
-    expect(urls.serviceAccounts.all()).toEqual(
-      generatePath(paths.serviceAccounts.all())
-    );
-  });
-
-  it('byName', () => {
-    expect(
-      urls.serviceAccounts.byName({ namespace, serviceAccountName })
-    ).toEqual(
-      generatePath(paths.serviceAccounts.byName(), {
-        namespace,
-        serviceAccountName
-      })
-    );
-  });
-
-  it('byNamespace', () => {
-    expect(urls.serviceAccounts.byNamespace({ namespace })).toEqual(
-      generatePath(paths.serviceAccounts.byNamespace(), { namespace })
-    );
-  });
-
-  it('create', () => {
-    expect(urls.secrets.create()).toEqual(generatePath(paths.secrets.create()));
   });
 });
 

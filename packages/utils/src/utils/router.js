@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -133,31 +133,6 @@ export const paths = {
     },
     cluster() {
       return '/:type/:name';
-    }
-  },
-  secrets: {
-    all() {
-      return '/secrets';
-    },
-    byName() {
-      return byNamespace({ path: '/secrets/:secretName' });
-    },
-    byNamespace() {
-      return byNamespace({ path: '/secrets' });
-    },
-    create() {
-      return '/secrets/create';
-    }
-  },
-  serviceAccounts: {
-    all() {
-      return '/serviceaccounts';
-    },
-    byName() {
-      return byNamespace({ path: '/serviceaccounts/:serviceAccountName' });
-    },
-    byNamespace() {
-      return byNamespace({ path: '/serviceaccounts' });
     }
   },
   taskRuns: {

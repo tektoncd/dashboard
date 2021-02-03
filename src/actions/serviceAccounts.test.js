@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,7 +13,7 @@ limitations under the License.
 
 import * as API from '../api';
 import * as creators from './actionCreators';
-import { fetchServiceAccount, fetchServiceAccounts } from './serviceAccounts';
+import { fetchServiceAccounts } from './serviceAccounts';
 
 it('fetchServiceAccounts', async () => {
   jest.spyOn(creators, 'fetchNamespacedCollection');
@@ -23,21 +23,6 @@ it('fetchServiceAccounts', async () => {
     'ServiceAccount',
     API.getServiceAccounts,
     {
-      namespace
-    }
-  );
-});
-
-it('fetchServiceAccount', async () => {
-  jest.spyOn(creators, 'fetchNamespacedResource');
-  const name = 'service-account1';
-  const namespace = 'namespace';
-  fetchServiceAccount({ name, namespace });
-  expect(creators.fetchNamespacedResource).toHaveBeenCalledWith(
-    'ServiceAccount',
-    API.getServiceAccount,
-    {
-      name,
       namespace
     }
   );

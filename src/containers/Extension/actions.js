@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,6 +13,5 @@ limitations under the License.
 export { fetchNamespaces } from '../../actions/namespaces';
 export { fetchPipeline, fetchPipelines } from '../../actions/pipelines';
 export { fetchPipelineRuns } from '../../actions/pipelineRuns';
-export { fetchSecrets } from '../../actions/secrets';
 export { fetchServiceAccounts } from '../../actions/serviceAccounts';
 export { fetchTask, fetchTasks } from '../../actions/tasks';

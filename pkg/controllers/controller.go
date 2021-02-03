@@ -60,7 +60,6 @@ func StartKubeControllers(clientset k8sclientset.Interface, resyncDur time.Durat
 		kubecontroller.NewExtensionController(tenantInformerFactory, handler)
 	}
 	if !readOnly {
-		kubecontroller.NewSecretController(tenantInformerFactory)
 		kubecontroller.NewServiceAccountController(tenantInformerFactory)
 	}
 

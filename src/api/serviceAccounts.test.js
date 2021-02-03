@@ -14,58 +14,6 @@ limitations under the License.
 import fetchMock from 'fetch-mock';
 import * as API from './serviceAccounts';
 
-const uri = 'http://example.com';
-
-it('generateBodyForSecretPatching should return secretResponse with the name Groot', () => {
-  const secretName = 'Groot';
-  const secretResponse = [
-    {
-      op: 'add',
-      path: 'serviceaccount/secrets/-',
-      value: {
-        name: secretName
-      }
-    }
-  ];
-  const result = API.generateBodyForSecretPatching(secretName);
-  expect(result).toMatchObject(secretResponse);
-  expect(result).toMatchObject(API.generateBodyForSecretPatching(secretName));
-});
-
-it('patchAddSecret should return correct data from patching', () => {
-  const data = {
-    fake: 'data'
-  };
-  fetchMock.mock(uri, data);
-  return API.patchAddSecret(uri, data).then(response => {
-    expect(response).toEqual(data);
-    fetchMock.restore();
-  });
-});
-
-it('patchServiceAccount', () => {
-  const data = { fake: 'serviceAccount' };
-  jest.spyOn(API, 'patchAddSecret').mockImplementation(() => data);
-  fetchMock.patch(/serviceaccounts/, data);
-  return API.patchServiceAccount('default', 'default', 'secret-name').then(
-    response => {
-      expect(response).toEqual(data);
-      fetchMock.restore();
-    }
-  );
-});
-
-it('getServiceAccount returns the correct data', () => {
-  const data = { items: 'serviceaccounts' };
-  fetchMock.get(/serviceaccounts/, data);
-  return API.getServiceAccount({ name: 'default', namespace: 'default' }).then(
-    response => {
-      expect(response).toEqual(data);
-      fetchMock.restore();
-    }
-  );
-});
-
 it('getServiceAccounts returns the correct data', () => {
   const data = { items: 'serviceaccounts' };
   fetchMock.get(/serviceaccounts/, data);

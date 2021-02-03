@@ -38,7 +38,6 @@ describe('App', () => {
     const middleware = [thunk];
     const mockStore = configureStore(middleware);
     const store = mockStore({
-      secrets: { byNamespace: {} },
       extensions: { byName: {} },
       namespaces: { byName: {} },
       notifications: {},
@@ -70,7 +69,6 @@ describe('App', () => {
     const middleware = [thunk];
     const mockStore = configureStore(middleware);
     const store = mockStore({
-      secrets: { byNamespace: {} },
       extensions: { byName: {} },
       namespaces: { byName: {} },
       notifications: {},
@@ -100,7 +98,6 @@ describe('App', () => {
     const middleware = [thunk];
     const mockStore = configureStore(middleware);
     const store = mockStore({
-      secrets: { byNamespace: {} },
       extensions: { byName: {} },
       namespaces: { byName: {} },
       notifications: {},
@@ -130,7 +127,6 @@ describe('App', () => {
     const middleware = [thunk];
     const mockStore = configureStore(middleware);
     const store = mockStore({
-      secrets: { byNamespace: {} },
       extensions: { byName: {} },
       namespaces: { byName: {} },
       notifications: {},
@@ -166,7 +162,6 @@ describe('App', () => {
     const middleware = [thunk];
     const mockStore = configureStore(middleware);
     const store = mockStore({
-      secrets: { byNamespace: {} },
       extensions: { byName: {} },
       namespaces: { byName: {} },
       notifications: {},
@@ -197,7 +192,6 @@ describe('App', () => {
     const middleware = [thunk];
     const mockStore = configureStore(middleware);
     const store = mockStore({
-      secrets: { byNamespace: {} },
       extensions: { byName: {} },
       namespaces: { byName: {} },
       notifications: {},
@@ -232,7 +226,6 @@ describe('App', () => {
     const middleware = [thunk];
     const mockStore = configureStore(middleware);
     const store = mockStore({
-      secrets: { byNamespace: {} },
       extensions: { byName: {} },
       namespaces: { byName: {} },
       notifications: {},
