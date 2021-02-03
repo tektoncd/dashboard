@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -46,7 +46,6 @@ import {
   Conditions,
   CreatePipelineResource,
   CreatePipelineRun,
-  CreateSecret,
   CreateTaskRun,
   CustomResourceDefinition,
   EventListener,
@@ -61,10 +60,6 @@ import {
   Pipelines,
   ReadWriteRoute,
   ResourceList,
-  Secret,
-  Secrets,
-  ServiceAccount,
-  ServiceAccounts,
   SideNav,
   TaskRun,
   TaskRuns,
@@ -340,50 +335,6 @@ export /* istanbul ignore next */ class App extends Component {
                       isReadOnly={this.props.isReadOnly}
                       path={paths.importResources()}
                       component={ImportResources}
-                    />
-
-                    <ReadWriteRoute
-                      isReadOnly={this.props.isReadOnly}
-                      path={paths.secrets.all()}
-                      exact
-                      component={Secrets}
-                    />
-                    <ReadWriteRoute
-                      isReadOnly={this.props.isReadOnly}
-                      path={paths.secrets.byName()}
-                      exact
-                      component={Secret}
-                    />
-                    <ReadWriteRoute
-                      isReadOnly={this.props.isReadOnly}
-                      path={paths.secrets.byNamespace()}
-                      exact
-                      component={Secrets}
-                    />
-                    <ReadWriteRoute
-                      isReadOnly={this.props.isReadOnly}
-                      path={paths.secrets.create()}
-                      exact
-                      component={CreateSecret}
-                    />
-
-                    <ReadWriteRoute
-                      isReadOnly={this.props.isReadOnly}
-                      path={paths.serviceAccounts.byName()}
-                      exact
-                      component={ServiceAccount}
-                    />
-                    <ReadWriteRoute
-                      isReadOnly={this.props.isReadOnly}
-                      path={paths.serviceAccounts.all()}
-                      exact
-                      component={ServiceAccounts}
-                    />
-                    <ReadWriteRoute
-                      isReadOnly={this.props.isReadOnly}
-                      path={paths.serviceAccounts.byNamespace()}
-                      exact
-                      component={ServiceAccounts}
                     />
 
                     <Route

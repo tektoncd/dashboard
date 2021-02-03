@@ -17,16 +17,11 @@ import (
 	"errors"
 	"net/http"
 	"net/url"
-	"regexp"
 	"strconv"
 	"strings"
 
 	restful "github.com/emicklei/go-restful"
-	"github.com/tektoncd/dashboard/pkg/logging"
 	"github.com/tektoncd/dashboard/pkg/utils"
-	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/rest"
 )
 
 // Properties : properties we want to be able to retrieve via REST
@@ -45,8 +40,6 @@ type Properties struct {
 	ExternalLogsURL    string `json:"ExternalLogsURL"`
 }
 
-var secretsURIPattern *regexp.Regexp = regexp.MustCompile("/secrets[?/]")
-
 // ProxyRequest does as the name suggests: proxies requests and logs what's going on
 func (r Resource) ProxyRequest(request *restful.Request, response *restful.Response) {
 	parsedURL, err := url.Parse(request.Request.URL.String())
@@ -56,14 +49,6 @@ func (r Resource) ProxyRequest(request *restful.Request, response *restful.Respo
 	}
 
 	uri := request.PathParameter("subpath") + "?" + parsedURL.RawQuery
-
-	if secretsURIPattern.Match([]byte(uri)) {
-		forwardRequest := r.K8sClient.CoreV1().RESTClient().Verb(request.Request.Method).RequestURI(uri).Body(request.Request.Body)
-		forwardRequest.SetHeader("Content-Type", request.HeaderParameter("Content-Type"))
-		forwardResponse := forwardRequest.Do()
-		handleSecretsResponse(response, forwardResponse)
-		return
-	}
 
 	if statusCode, err := utils.Proxy(request.Request, response, r.Config.Host+"/"+uri, r.HttpClient); err != nil {
 		utils.RespondError(response, err, statusCode)
@@ -130,39 +115,4 @@ func handleRequestError(response *restful.Response, responseBody []byte, request
 		return
 	}
 	utils.RespondError(response, requestError, http.StatusInternalServerError)
-}
-
-func handleSecretsResponse(response *restful.Response, forwardResponse rest.Result) {
-	responseBody, requestError := forwardResponse.Get()
-	if requestError != nil {
-		responseBodyRaw, requestError := forwardResponse.Raw()
-		handleRequestError(response, responseBodyRaw, requestError)
-		return
-	}
-
-	var responseObject interface{}
-
-	list, _ := responseBody.(*corev1.SecretList)
-	if list != nil {
-		logging.Log.Debug("Processing SecretList response")
-		secrets := make([]corev1.Secret, 0, len(list.Items))
-		for _, secret := range list.Items {
-			secrets = append(secrets, utils.SanitizeSecret(&secret, true).(corev1.Secret))
-		}
-		list.Items = secrets
-		responseObject = list
-	} else {
-		secret, _ := responseBody.(*corev1.Secret)
-		if secret != nil {
-			logging.Log.Debug("Processing Secret response")
-			responseObject = utils.SanitizeSecret(secret, true).(corev1.Secret)
-		} else {
-			responseObject = responseBody.(*metav1.Status)
-		}
-	}
-
-	var statusCode *int = new(int)
-	forwardResponse.StatusCode(statusCode)
-	response.Header().Add("Content-Type", restful.MIME_JSON)
-	response.WriteHeaderAndEntity(*statusCode, responseObject)
 }

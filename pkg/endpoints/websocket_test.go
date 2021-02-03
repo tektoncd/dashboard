@@ -105,7 +105,6 @@ func TestWebsocketResources(t *testing.T) {
 	taskRecord := NewInformerRecord(getKind(string(broadcaster.TaskCreated)), true)
 	clusterTaskRecord := NewInformerRecord(getKind(string(broadcaster.ClusterTaskCreated)), true)
 	extensionRecord := NewInformerRecord(getKind(string(broadcaster.ServiceExtensionCreated)), true)
-	secretRecord := NewInformerRecord(getKind(string(broadcaster.SecretCreated)), true)
 	// CD records
 	namespaceRecord := NewInformerRecord(getKind(string(broadcaster.NamespaceCreated)), false)
 
@@ -115,7 +114,6 @@ func TestWebsocketResources(t *testing.T) {
 		clusterTaskRecord.CRD: &clusterTaskRecord,
 		namespaceRecord.CRD:   &namespaceRecord,
 		extensionRecord.CRD:   &extensionRecord,
-		secretRecord.CRD:      &secretRecord,
 	}
 
 	for i := 1; i <= clients; i++ {
@@ -148,7 +146,6 @@ func TestWebsocketResources(t *testing.T) {
 	// Create, Update, and Delete records
 	CUDTasks(r, t, installNamespace)
 	CUDClusterTasks(r, t)
-	CUDSecrets(r, t, installNamespace)
 	CUDExtensions(r, t, installNamespace)
 	// Create and Delete records
 	CDNamespaces(r, t)
@@ -341,36 +338,6 @@ func CUDExtensions(r *Resource, t *testing.T, namespace string) {
 	err = r.K8sClient.CoreV1().Services(namespace).Delete(extensionService.Name, &metav1.DeleteOptions{})
 	if err != nil {
 		t.Fatalf("Error deleting extensionService: %s: %s\n", extensionService.Name, err.Error())
-	}
-}
-
-func CUDSecrets(r *Resource, t *testing.T, namespace string) {
-	resourceVersion := "1"
-
-	secret := corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:            "secret",
-			ResourceVersion: resourceVersion,
-		},
-	}
-
-	_, err := r.K8sClient.CoreV1().Secrets(namespace).Create(&secret)
-	if err != nil {
-		t.Fatalf("Error creating secret: %s: %s\n", secret.Name, err.Error())
-	}
-
-	newVersion := "2"
-	secret.ResourceVersion = newVersion
-	t.Log("Updating secret")
-	_, err = r.K8sClient.CoreV1().Secrets(namespace).Update(&secret)
-	if err != nil {
-		t.Fatalf("Error updating secret: %s: %s\n", secret.Name, err.Error())
-	}
-
-	t.Log("Deleting secret")
-	err = r.K8sClient.CoreV1().Secrets(namespace).Delete(secret.Name, &metav1.DeleteOptions{})
-	if err != nil {
-		t.Fatalf("Error deleting secret: %s: %s\n", secret.Name, err.Error())
 	}
 }
 

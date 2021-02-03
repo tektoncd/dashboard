@@ -13,8 +13,6 @@ replace (
 
 require (
 	github.com/emicklei/go-restful v2.12.0+incompatible
-	github.com/fsnotify/fsnotify v1.4.9 // indirect
-	github.com/golang/protobuf v1.4.2 // indirect
 	github.com/gorilla/websocket v1.4.2
 	github.com/imdario/mergo v0.3.9 // indirect
 	github.com/kr/text v0.2.0 // indirect

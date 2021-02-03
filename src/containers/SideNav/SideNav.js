@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -88,7 +88,7 @@ class SideNav extends Component {
   }
 
   render() {
-    const { expanded, extensions, intl } = this.props;
+    const { expanded, extensions, intl, showKubernetesResources } = this.props;
 
     return (
       <CarbonSideNav
@@ -180,7 +180,7 @@ class SideNav extends Component {
             )}
           </SideNavMenu>
 
-          {!this.props.isReadOnly && (
+          {showKubernetesResources && (
             <SideNavMenu
               defaultExpanded
               renderIcon={KubernetesIcon}
@@ -189,18 +189,7 @@ class SideNav extends Component {
                 defaultMessage: 'Kubernetes resources'
               })}
             >
-              <SideNavMenuItem
-                {...this.getMenuItemProps(this.getPath(urls.secrets.all()))}
-              >
-                Secrets
-              </SideNavMenuItem>
-              <SideNavMenuItem
-                {...this.getMenuItemProps(
-                  this.getPath(urls.serviceAccounts.all())
-                )}
-              >
-                ServiceAccounts
-              </SideNavMenuItem>
+              placeholder
             </SideNavMenu>
           )}
 
@@ -277,7 +266,8 @@ class SideNav extends Component {
 }
 
 SideNav.defaultProps = {
-  isTriggersInstalled: false
+  isTriggersInstalled: false,
+  showKubernetesResources: false
 };
 
 /* istanbul ignore next */

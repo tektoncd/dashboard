@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -22,13 +22,11 @@ import {
   getConditionsErrorMessage,
   getDashboardNamespace,
   getDashboardVersion,
-  getDeleteSecretsErrorMessage,
   getExtensions,
   getExtensionsErrorMessage,
   getLocale,
   getLogoutURL,
   getNamespaces,
-  getPatchSecretsErrorMessage,
   getPipelineNamespace,
   getPipelineResource,
   getPipelineResources,
@@ -39,10 +37,7 @@ import {
   getPipelines,
   getPipelinesErrorMessage,
   getPipelineVersion,
-  getSecrets,
-  getSecretsErrorMessage,
   getSelectedNamespace,
-  getServiceAccount,
   getServiceAccountsErrorMessage,
   getTaskByType,
   getTaskRun,
@@ -60,7 +55,6 @@ import {
   isFetchingPipelineResources,
   isFetchingPipelineRuns,
   isFetchingPipelines,
-  isFetchingSecrets,
   isFetchingTaskRuns,
   isFetchingTasks,
   isLogStreamingEnabled,
@@ -77,7 +71,6 @@ import * as pipelineResourcesSelectors from './pipelineResources';
 import * as pipelineSelectors from './pipelines';
 import * as pipelineRunsSelectors from './pipelineRuns';
 import * as propertiesSelectors from './properties';
-import * as secretSelectors from './secrets';
 import * as serviceAccountSelectors from './serviceAccounts';
 import * as taskSelectors from './tasks';
 import * as taskRunsSelectors from './taskRuns';
@@ -90,7 +83,6 @@ const extension = { displayName: 'extension' };
 const pipelineResources = [{ fake: 'pipelineResource' }];
 const pipelines = [{ fake: 'pipeline' }];
 const pipelineRuns = [{ fake: 'pipelineRun' }];
-const secrets = [{ fake: 'secrets' }];
 const serviceAccounts = [{ fake: 'account' }];
 const task = { fake: 'task' };
 const tasks = [task];
@@ -118,7 +110,6 @@ const state = {
   },
   pipelineResources,
   pipelines,
-  secrets,
   serviceAccounts,
   tasks,
   clusterTasks,
@@ -350,65 +341,6 @@ it('isFetchingConditions', () => {
   expect(isFetchingConditions(state)).toBe(true);
   expect(conditionSelectors.isFetchingConditions).toHaveBeenCalledWith(
     state.conditions
-  );
-});
-
-it('getSecrets', () => {
-  jest.spyOn(secretSelectors, 'getSecrets').mockImplementation(() => secrets);
-  expect(getSecrets(state)).toEqual(secrets);
-  expect(secretSelectors.getSecrets).toHaveBeenCalledWith(
-    state.secrets,
-    namespace
-  );
-});
-
-it('getSecretsErrorMessage', () => {
-  const errorMessage = 'fake error message';
-  jest
-    .spyOn(secretSelectors, 'getSecretsErrorMessage')
-    .mockImplementation(() => errorMessage);
-  expect(getSecretsErrorMessage(state)).toEqual(errorMessage);
-  expect(secretSelectors.getSecretsErrorMessage).toHaveBeenCalledWith(
-    state.secrets
-  );
-});
-
-it('getDeleteSecretsErrorMessage', () => {
-  const errorMessage = 'fake error message';
-  jest
-    .spyOn(secretSelectors, 'getDeleteSecretsErrorMessage')
-    .mockImplementation(() => errorMessage);
-  expect(getDeleteSecretsErrorMessage(state)).toEqual(errorMessage);
-  expect(secretSelectors.getDeleteSecretsErrorMessage).toHaveBeenCalledWith(
-    state.secrets
-  );
-});
-
-it('getPatchSecretsErrorMessage', () => {
-  const errorMessage = 'fake error message';
-  jest
-    .spyOn(secretSelectors, 'getPatchSecretsErrorMessage')
-    .mockImplementation(() => errorMessage);
-  expect(getPatchSecretsErrorMessage(state)).toEqual(errorMessage);
-  expect(secretSelectors.getPatchSecretsErrorMessage).toHaveBeenCalledWith(
-    state.secrets
-  );
-});
-
-it('isFetchingSecrets', () => {
-  jest
-    .spyOn(secretSelectors, 'isFetchingSecrets')
-    .mockImplementation(() => true);
-  expect(isFetchingSecrets(state)).toBe(true);
-  expect(secretSelectors.isFetchingSecrets).toHaveBeenCalledWith(state.secrets);
-});
-
-it('getServiceAccount', () => {
-  jest
-    .spyOn(serviceAccountSelectors, 'getServiceAccount')
-    .mockImplementation(() => serviceAccounts);
-  expect(getServiceAccount(state, 'account', namespace)).toEqual(
-    serviceAccounts
   );
 });
 
