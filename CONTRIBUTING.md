@@ -11,19 +11,19 @@ To get started developing, see our [DEVELOPMENT.md](./DEVELOPMENT.md).
 In [the community repo](https://github.com/tektoncd/community) you'll find info
 on:
 
-- [Contacting other contributors](https://github.com/tektoncd/community/blob/master/contact.md)
-- [Development standards](https://github.com/tektoncd/community/blob/master/standards.md)
+- [Contacting other contributors](https://github.com/tektoncd/community/blob/main/contact.md)
+- [Development standards](https://github.com/tektoncd/community/blob/main/standards.md)
   around
-  [principles](https://github.com/tektoncd/community/blob/master/standards.md#principles),
-  [commit messages](https://github.com/tektoncd/community/blob/master/standards.md#commit-messages)
+  [principles](https://github.com/tektoncd/community/blob/main/standards.md#principles),
+  [commit messages](https://github.com/tektoncd/community/blob/main/standards.md#commit-messages)
   and
-  [code](https://github.com/tektoncd/community/blob/master/standards.md#coding-standards)
-- [Processes](https://github.com/tektoncd/community/blob/master/process.md) like
-  [finding something to work on](https://github.com/tektoncd/community/blob/master/process.md#finding-something-to-work-on),
-  [proposing features](https://github.com/tektoncd/community/blob/master/process.md#proposing-features),
-  [reviews](https://github.com/tektoncd/community/blob/master/process.md#reviews)
+  [code](https://github.com/tektoncd/community/blob/main/standards.md#coding-standards)
+- [Processes](https://github.com/tektoncd/community/blob/main/process.md) like
+  [finding something to work on](https://github.com/tektoncd/community/blob/main/process.md#finding-something-to-work-on),
+  [proposing features](https://github.com/tektoncd/community/blob/main/process.md#proposing-features),
+  [reviews](https://github.com/tektoncd/community/blob/main/process.md#reviews)
   and
-  [becoming an OWNER](https://github.com/tektoncd/community/blob/master/process.md#owners)
+  [becoming an OWNER](https://github.com/tektoncd/community/blob/main/process.md#owners)
 
 You can find details on our automation infrastructure in
 [the plumbing repo](https://github.com/tektoncd/plumbing).
