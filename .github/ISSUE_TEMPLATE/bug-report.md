@@ -7,7 +7,7 @@ labels: kind/bug
 <!-- 
 Bugs should be filed for issues encountered whilst operating the Tekton Dashboard.
 You should first attempt to resolve your issues through the community support channels,
-e.g. `#dashboard` channel in the [Community Slack](https://github.com/tektoncd/community/blob/master/contact.md#slack).
+e.g. `#dashboard` channel in the [Community Slack](https://github.com/tektoncd/community/blob/main/contact.md#slack).
 Please provide as much detail as possible.
 -->
 
