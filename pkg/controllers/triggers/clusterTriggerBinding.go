@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -17,15 +17,22 @@ import (
 	"github.com/tektoncd/dashboard/pkg/broadcaster"
 	"github.com/tektoncd/dashboard/pkg/controllers/utils"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
-	triggersinformer "github.com/tektoncd/triggers/pkg/client/informers/externalversions"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/client-go/dynamic/dynamicinformer"
 )
 
-func NewClusterTriggerBindingController(sharedTriggersInformerFactory triggersinformer.SharedInformerFactory) {
+func NewClusterTriggerBindingController(sharedInformerFactory dynamicinformer.DynamicSharedInformerFactory) {
 	logging.Log.Debug("In NewClusterTriggerBindingController")
+
+	gvr := schema.GroupVersionResource{
+		Group:    "triggers.tekton.dev",
+		Version:  "v1alpha1",
+		Resource: "clustertriggerbindings",
+	}
 
 	utils.NewController(
 		"ClusterTriggerBinding",
-		sharedTriggersInformerFactory.Triggers().V1alpha1().ClusterTriggerBindings().Informer(),
+		sharedInformerFactory.ForResource(gvr).Informer(),
 		broadcaster.ClusterTriggerBindingCreated,
 		broadcaster.ClusterTriggerBindingUpdated,
 		broadcaster.ClusterTriggerBindingDeleted,

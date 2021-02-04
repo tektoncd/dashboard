@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -17,17 +17,22 @@ import (
 	"github.com/tektoncd/dashboard/pkg/broadcaster"
 	"github.com/tektoncd/dashboard/pkg/controllers/utils"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
-	tektonresourceinformer "github.com/tektoncd/pipeline/pkg/client/resource/informers/externalversions"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/client-go/dynamic/dynamicinformer"
 )
 
-// NewPipelineResourceController registers a Tekton controller/informer for
-// pipelineResources on the sharedTektonInformerFactory
-func NewPipelineResourceController(sharedTektonInformerFactory tektonresourceinformer.SharedInformerFactory) {
+func NewPipelineResourceController(sharedInformerFactory dynamicinformer.DynamicSharedInformerFactory) {
 	logging.Log.Debug("In NewPipelineResourceController")
+
+	gvr := schema.GroupVersionResource{
+		Group:    "tekton.dev",
+		Version:  "v1alpha1",
+		Resource: "pipelineresources",
+	}
 
 	utils.NewController(
 		"PipelineResource",
-		sharedTektonInformerFactory.Tekton().V1alpha1().PipelineResources().Informer(),
+		sharedInformerFactory.ForResource(gvr).Informer(),
 		broadcaster.PipelineResourceCreated,
 		broadcaster.PipelineResourceUpdated,
 		broadcaster.PipelineResourceDeleted,
