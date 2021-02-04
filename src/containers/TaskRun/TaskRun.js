@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,10 +16,7 @@ import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import {
-  InlineNotification,
-  StructuredListSkeleton
-} from 'carbon-components-react';
+import { InlineNotification, SkeletonText } from 'carbon-components-react';
 import {
   Log,
   Rerun,
@@ -205,7 +202,7 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
     } = this.props;
 
     if (loading) {
-      return <StructuredListSkeleton border />;
+      return <SkeletonText heading width="60%" />;
     }
 
     if (error) {
