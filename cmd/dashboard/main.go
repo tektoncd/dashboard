@@ -27,9 +27,7 @@ import (
 	"github.com/tektoncd/dashboard/pkg/endpoints"
 	"github.com/tektoncd/dashboard/pkg/logging"
 	"github.com/tektoncd/dashboard/pkg/router"
-	pipelineclientset "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
-	resourceclientset "github.com/tektoncd/pipeline/pkg/client/resource/clientset/versioned"
-	triggersclientset "github.com/tektoncd/triggers/pkg/client/clientset/versioned"
+	"k8s.io/client-go/dynamic"
 	k8sclientset "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
@@ -83,19 +81,9 @@ func main() {
 		}
 	}
 
-	pipelineClient, err := pipelineclientset.NewForConfig(cfg)
-	if err != nil {
-		logging.Log.Errorf("Error building pipeline clientset: %s", err.Error())
-	}
-
 	dashboardClient, err := dashboardclientset.NewForConfig(cfg)
 	if err != nil {
 		logging.Log.Errorf("Error building dashboard clientset: %s", err.Error())
-	}
-
-	pipelineResourceClient, err := resourceclientset.NewForConfig(cfg)
-	if err != nil {
-		logging.Log.Errorf("Error building pipelineresource clientset: %s", err.Error())
 	}
 
 	k8sClient, err := k8sclientset.NewForConfig(cfg)
@@ -103,7 +91,10 @@ func main() {
 		logging.Log.Errorf("Error building k8s clientset: %s", err.Error())
 	}
 
-	var triggersClient triggersclientset.Interface
+	dynamicClient, err := dynamic.NewForConfig(cfg)
+	if err != nil {
+		logging.Log.Errorf("Error building dynamic clientset: %s", err.Error())
+	}
 
 	transport, err := rest.TransportFor(cfg)
 	if err != nil {
@@ -123,24 +114,15 @@ func main() {
 	}
 
 	resource := endpoints.Resource{
-		Config:                 cfg,
-		HttpClient:             &http.Client{Transport: transport},
-		DashboardClient:        dashboardClient,
-		PipelineClient:         pipelineClient,
-		PipelineResourceClient: pipelineResourceClient,
-		K8sClient:              k8sClient,
-		TriggersClient:         triggersClient,
-		Options:                options,
+		Config:          cfg,
+		HttpClient:      &http.Client{Transport: transport},
+		DashboardClient: dashboardClient,
+		DynamicClient:   dynamicClient,
+		K8sClient:       k8sClient,
+		Options:         options,
 	}
 
 	isTriggersInstalled := endpoints.IsTriggersInstalled(resource, *triggersNamespace)
-	if isTriggersInstalled {
-		triggersClient, err = triggersclientset.NewForConfig(cfg)
-		if err != nil {
-			logging.Log.Errorf("Error building triggers clientset: %s", err.Error())
-		}
-		resource.TriggersClient = triggersClient
-	}
 
 	ctx := signals.NewContext()
 
@@ -148,12 +130,12 @@ func main() {
 
 	logging.Log.Info("Creating controllers")
 	resyncDur := time.Second * 30
-	controllers.StartTektonControllers(resource.PipelineClient, resource.PipelineResourceClient, *tenantNamespace, resyncDur, ctx.Done())
+	controllers.StartTektonControllers(resource.DynamicClient, resyncDur, *tenantNamespace, ctx.Done())
 	controllers.StartKubeControllers(resource.K8sClient, resyncDur, *tenantNamespace, *readOnly, routerHandler, ctx.Done())
 	controllers.StartDashboardControllers(resource.DashboardClient, resyncDur, *tenantNamespace, ctx.Done())
 
 	if isTriggersInstalled {
-		controllers.StartTriggersControllers(resource.TriggersClient, resyncDur, *tenantNamespace, ctx.Done())
+		controllers.StartTriggersControllers(resource.DynamicClient, resyncDur, *tenantNamespace, ctx.Done())
 	}
 
 	logging.Log.Infof("Creating server and entering wait loop")

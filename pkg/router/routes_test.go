@@ -29,10 +29,9 @@ import (
 	"github.com/tektoncd/dashboard/pkg/router"
 	. "github.com/tektoncd/dashboard/pkg/router"
 	"github.com/tektoncd/dashboard/pkg/testutils"
-	v1alpha1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
-	v1beta1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
@@ -184,35 +183,35 @@ func makeFake(t *testing.T, r *endpoints.Resource, resourceType, namespace, reso
 	t.Logf("Making fake resource %s with name %s\n", resourceType, resourceName)
 	switch resourceType {
 	case "task":
-		task := v1beta1.Task{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      resourceName,
-				Namespace: namespace,
-			},
+		task := testutils.GetObject("v1beta1", "Task", namespace, resourceName, "1")
+		gvr := schema.GroupVersionResource{
+			Group:    "tekton.dev",
+			Version:  "v1beta1",
+			Resource: "tasks",
 		}
-		_, err := r.PipelineClient.TektonV1beta1().Tasks(namespace).Create(&task)
+		_, err := r.DynamicClient.Resource(gvr).Namespace(namespace).Create(task, metav1.CreateOptions{})
 		if err != nil {
 			t.Fatalf("Error creating task: %v\n", err)
 		}
 	case "taskrun":
-		taskRun := v1beta1.TaskRun{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      resourceName,
-				Namespace: namespace,
-			},
+		taskRun := testutils.GetObject("v1beta1", "TaskRun", namespace, resourceName, "1")
+		gvr := schema.GroupVersionResource{
+			Group:    "tekton.dev",
+			Version:  "v1beta1",
+			Resource: "taskruns",
 		}
-		_, err := r.PipelineClient.TektonV1beta1().TaskRuns(namespace).Create(&taskRun)
+		_, err := r.DynamicClient.Resource(gvr).Namespace(namespace).Create(taskRun, metav1.CreateOptions{})
 		if err != nil {
 			t.Fatalf("Error creating taskRun: %v\n", err)
 		}
 	case "pipeline":
-		pipeline := v1beta1.Pipeline{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      resourceName,
-				Namespace: namespace,
-			},
+		pipeline := testutils.GetObject("v1beta1", "Pipeline", namespace, resourceName, "1")
+		gvr := schema.GroupVersionResource{
+			Group:    "tekton.dev",
+			Version:  "v1beta1",
+			Resource: "pipelines",
 		}
-		_, err := r.PipelineClient.TektonV1beta1().Pipelines(namespace).Create(&pipeline)
+		_, err := r.DynamicClient.Resource(gvr).Namespace(namespace).Create(pipeline, metav1.CreateOptions{})
 		if err != nil {
 			t.Fatalf("Error creating pipeline: %v\n", err)
 		}
@@ -228,13 +227,13 @@ func makeFake(t *testing.T, r *endpoints.Resource, resourceType, namespace, reso
 			t.Fatalf("Error creating pod: %v\n", err)
 		}
 	case "pipelineresource":
-		pipelineResource := v1alpha1.PipelineResource{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      resourceName,
-				Namespace: namespace,
-			},
+		pipelineResource := testutils.GetObject("v1alpha1", "PipelineResource", namespace, resourceName, "1")
+		gvr := schema.GroupVersionResource{
+			Group:    "tekton.dev",
+			Version:  "v1alpha1",
+			Resource: "pipelineresources",
 		}
-		_, err := r.PipelineResourceClient.TektonV1alpha1().PipelineResources(namespace).Create(&pipelineResource)
+		_, err := r.DynamicClient.Resource(gvr).Namespace(namespace).Create(pipelineResource, metav1.CreateOptions{})
 		if err != nil {
 			t.Fatalf("Error creating pipelineResource: %v\n", err)
 		}

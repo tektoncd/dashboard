@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -17,17 +17,22 @@ import (
 	"github.com/tektoncd/dashboard/pkg/broadcaster"
 	"github.com/tektoncd/dashboard/pkg/controllers/utils"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
-	tektoninformer "github.com/tektoncd/pipeline/pkg/client/informers/externalversions"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/client-go/dynamic/dynamicinformer"
 )
 
-// NewClusterTaskController registers a Tekton controller/informer for cluster
-// tasks on the sharedTektonInformerFactory
-func NewClusterTaskController(sharedTektonInformerFactory tektoninformer.SharedInformerFactory) {
+func NewClusterTaskController(sharedInformerFactory dynamicinformer.DynamicSharedInformerFactory) {
 	logging.Log.Debug("In NewClusterTaskController")
+
+	gvr := schema.GroupVersionResource{
+		Group:    "tekton.dev",
+		Version:  "v1beta1",
+		Resource: "clustertasks",
+	}
 
 	utils.NewController(
 		"ClusterTask",
-		sharedTektonInformerFactory.Tekton().V1beta1().ClusterTasks().Informer(),
+		sharedInformerFactory.ForResource(gvr).Informer(),
 		broadcaster.ClusterTaskCreated,
 		broadcaster.ClusterTaskUpdated,
 		broadcaster.ClusterTaskDeleted,

@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -27,10 +27,11 @@ import (
 	"github.com/tektoncd/dashboard/pkg/endpoints"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
 	"github.com/tektoncd/dashboard/pkg/router"
-	fakeclientset "github.com/tektoncd/pipeline/pkg/client/clientset/versioned/fake"
-	fakeresourceclientset "github.com/tektoncd/pipeline/pkg/client/resource/clientset/versioned/fake"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/runtime"
+	fakedynamicclientset "k8s.io/client-go/dynamic/fake"
 	fakek8sclientset "k8s.io/client-go/kubernetes/fake"
 )
 
@@ -40,24 +41,17 @@ func DummyK8sClientset() *fakek8sclientset.Clientset {
 	return result
 }
 
-// DummyClientset returns a fake Tekton Pipelines clientset
-func DummyClientset() *fakeclientset.Clientset {
-	result := fakeclientset.NewSimpleClientset()
-	return result
-}
-
-// DummyResourceClientset returns a fake Tekton Pipelines clientset
-func DummyResourceClientset() *fakeresourceclientset.Clientset {
-	result := fakeresourceclientset.NewSimpleClientset()
+// DummyK8sClientset returns a fake K8s clientset
+func DummyDynamicClientset() *fakedynamicclientset.FakeDynamicClient {
+	result := fakedynamicclientset.NewSimpleDynamicClient(runtime.NewScheme())
 	return result
 }
 
 // DummyResource returns a Resource populated by fake clientsets
 func DummyResource() *endpoints.Resource {
 	resource := endpoints.Resource{
-		PipelineClient:         DummyClientset(),
-		PipelineResourceClient: DummyResourceClientset(),
-		K8sClient:              DummyK8sClientset(),
+		DynamicClient: DummyDynamicClientset(),
+		K8sClient:     DummyK8sClientset(),
 	}
 	return &resource
 }
@@ -89,7 +83,7 @@ func DummyServer() (*httptest.Server, *endpoints.Resource, string) {
 	logging.Log.Info("Creating controllers")
 	stopCh := make(<-chan struct{})
 	resyncDur := time.Second * 30
-	controllers.StartTektonControllers(resource.PipelineClient, resource.PipelineResourceClient, "", resyncDur, stopCh)
+	controllers.StartTektonControllers(resource.DynamicClient, resyncDur, "", stopCh)
 	controllers.StartKubeControllers(resource.K8sClient, resyncDur, "", false, routerHandler, stopCh)
 	// Wait until namespace is detected by informer and functionally "dropped" since the informer will be eventually consistent
 	timeout := time.After(5 * time.Second)
@@ -165,4 +159,31 @@ func ObjectListDeepEqual(expectedListPointer interface{}, actualListPointer inte
 	}
 	// The two lists are equal
 	return nil
+}
+
+func GetObject(version, kind, namespace, name, resourceVersion string) *unstructured.Unstructured {
+	return &unstructured.Unstructured{
+		Object: map[string]interface{}{
+			"apiVersion": version,
+			"kind":       kind,
+			"metadata": map[string]interface{}{
+				"name":            name,
+				"namespace":       namespace,
+				"resourceVersion": resourceVersion,
+			},
+		},
+	}
+}
+
+func GetClusterObject(version, kind, name, resourceVersion string) *unstructured.Unstructured {
+	return &unstructured.Unstructured{
+		Object: map[string]interface{}{
+			"apiVersion": version,
+			"kind":       kind,
+			"metadata": map[string]interface{}{
+				"name":            name,
+				"resourceVersion": resourceVersion,
+			},
+		},
+	}
 }
