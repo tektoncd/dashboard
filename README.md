@@ -30,7 +30,8 @@ Among other things, the Tekton Dashboard supports:
 
 | Version | Docs | Pipelines | Triggers |
 | ------- | ---- | --------- | -------- |
-| [HEAD](./DEVELOPMENT.md) | [Docs @ HEAD](./docs/README.md) | v0.11.x - v0.20.x | v0.5.x - 0.10.x |
+| [HEAD](./DEVELOPMENT.md) | [Docs @ HEAD](./docs/README.md) | v0.11.x - v0.20.x | v0.5.x - 0.11.x |
+| [v0.14.0](https://github.com/tektoncd/dashboard/releases/tag/v0.14.0) | [Docs @ v0.14.0](https://github.com/tektoncd/dashboard/tree/v0.14.0/docs) | v0.11.x - v0.20.x | v0.5.x - 0.11.x |
 | [v0.13.0](https://github.com/tektoncd/dashboard/releases/tag/v0.13.0) | [Docs @ v0.13.0](https://github.com/tektoncd/dashboard/tree/v0.13.0/docs) | v0.11.x - v0.20.x | v0.5.x - 0.10.x |
 | [v0.12.0](https://github.com/tektoncd/dashboard/releases/tag/v0.12.0) | [Docs @ v0.12.0](https://github.com/tektoncd/dashboard/tree/v0.12.0/docs) | v0.11.x - v0.19.x | v0.5.x - 0.10.x |
 | [v0.11.1](https://github.com/tektoncd/dashboard/releases/tag/v0.11.1) | [Docs @ v0.11.1](https://github.com/tektoncd/dashboard/tree/v0.11.1/docs) | v0.11.x - v0.18.x | v0.5.x - 0.9.x |
