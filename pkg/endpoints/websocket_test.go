@@ -13,6 +13,7 @@ limitations under the License.
 package endpoints_test
 
 import (
+	"context"
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
@@ -246,7 +247,7 @@ func CUDTasks(r *Resource, t *testing.T, namespace string) {
 	}
 
 	t.Log("Creating task")
-	_, err := r.DynamicClient.Resource(gvr).Namespace(namespace).Create(task, metav1.CreateOptions{})
+	_, err := r.DynamicClient.Resource(gvr).Namespace(namespace).Create(context.TODO(), task, metav1.CreateOptions{})
 	if err != nil {
 		t.Fatalf("Error creating task: %s: %s\n", name, err.Error())
 	}
@@ -254,13 +255,13 @@ func CUDTasks(r *Resource, t *testing.T, namespace string) {
 	newVersion := "2"
 	task.SetResourceVersion(newVersion)
 	t.Log("Updating task")
-	_, err = r.DynamicClient.Resource(gvr).Namespace(namespace).Update(task, metav1.UpdateOptions{})
+	_, err = r.DynamicClient.Resource(gvr).Namespace(namespace).Update(context.TODO(), task, metav1.UpdateOptions{})
 	if err != nil {
 		t.Fatalf("Error updating task: %s: %s\n", name, err.Error())
 	}
 
 	t.Log("Deleting task")
-	err = r.DynamicClient.Resource(gvr).Namespace(namespace).Delete(name, &metav1.DeleteOptions{})
+	err = r.DynamicClient.Resource(gvr).Namespace(namespace).Delete(context.TODO(), name, metav1.DeleteOptions{})
 	if err != nil {
 		t.Fatalf("Error deleting task: %s: %s\n", name, err.Error())
 	}
@@ -278,7 +279,7 @@ func CUDClusterTasks(r *Resource, t *testing.T) {
 	}
 
 	t.Log("Creating clusterTask")
-	_, err := r.DynamicClient.Resource(gvr).Create(clusterTask, metav1.CreateOptions{})
+	_, err := r.DynamicClient.Resource(gvr).Create(context.TODO(), clusterTask, metav1.CreateOptions{})
 	if err != nil {
 		t.Fatalf("Error creating clusterTask: %s: %s\n", name, err.Error())
 	}
@@ -286,13 +287,13 @@ func CUDClusterTasks(r *Resource, t *testing.T) {
 	newVersion := "2"
 	clusterTask.SetResourceVersion(newVersion)
 	t.Log("Updating clusterTask")
-	_, err = r.DynamicClient.Resource(gvr).Update(clusterTask, metav1.UpdateOptions{})
+	_, err = r.DynamicClient.Resource(gvr).Update(context.TODO(), clusterTask, metav1.UpdateOptions{})
 	if err != nil {
 		t.Fatalf("Error updating clusterTask: %s: %s\n", name, err.Error())
 	}
 
 	t.Log("Deleting clusterTask")
-	err = r.DynamicClient.Resource(gvr).Delete(name, &metav1.DeleteOptions{})
+	err = r.DynamicClient.Resource(gvr).Delete(context.TODO(), name, metav1.DeleteOptions{})
 	if err != nil {
 		t.Fatalf("Error deleting clusterTask: %s: %s\n", name, err.Error())
 	}
@@ -321,7 +322,7 @@ func CUDExtensions(r *Resource, t *testing.T, namespace string) {
 	}
 
 	t.Log("Creating extensionService")
-	_, err := r.K8sClient.CoreV1().Services(namespace).Create(&extensionService)
+	_, err := r.K8sClient.CoreV1().Services(namespace).Create(context.TODO(), &extensionService, metav1.CreateOptions{})
 	if err != nil {
 		t.Fatalf("Error creating extensionService: %s: %s\n", extensionService.Name, err.Error())
 	}
@@ -329,13 +330,13 @@ func CUDExtensions(r *Resource, t *testing.T, namespace string) {
 	newVersion := "2"
 	extensionService.ResourceVersion = newVersion
 	t.Log("Updating extensionService")
-	_, err = r.K8sClient.CoreV1().Services(namespace).Update(&extensionService)
+	_, err = r.K8sClient.CoreV1().Services(namespace).Update(context.TODO(), &extensionService, metav1.UpdateOptions{})
 	if err != nil {
 		t.Fatalf("Error updating extensionService: %s: %s\n", extensionService.Name, err.Error())
 	}
 
 	t.Log("Deleting extensionService")
-	err = r.K8sClient.CoreV1().Services(namespace).Delete(extensionService.Name, &metav1.DeleteOptions{})
+	err = r.K8sClient.CoreV1().Services(namespace).Delete(context.TODO(), extensionService.Name, metav1.DeleteOptions{})
 	if err != nil {
 		t.Fatalf("Error deleting extensionService: %s: %s\n", extensionService.Name, err.Error())
 	}
@@ -345,13 +346,13 @@ func CUDExtensions(r *Resource, t *testing.T, namespace string) {
 
 func CDNamespaces(r *Resource, t *testing.T) {
 	namespace := "ns1"
-	_, err := r.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace}})
+	_, err := r.K8sClient.CoreV1().Namespaces().Create(context.TODO(), &corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace}}, metav1.CreateOptions{})
 	if err != nil {
 		t.Fatalf("Error creating namespace '%s': %s\n", namespace, err)
 	}
 
 	t.Log("Deleting namespace")
-	err = r.K8sClient.CoreV1().Namespaces().Delete(namespace, &metav1.DeleteOptions{})
+	err = r.K8sClient.CoreV1().Namespaces().Delete(context.TODO(), namespace, metav1.DeleteOptions{})
 	if err != nil {
 		t.Fatalf("Error deleting namespace: %s: %s\n", namespace, err.Error())
 	}

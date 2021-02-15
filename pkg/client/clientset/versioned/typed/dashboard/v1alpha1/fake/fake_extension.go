@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2021 The Tekton Authors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ limitations under the License.
 package fake
 
 import (
+	"context"
+
 	v1alpha1 "github.com/tektoncd/dashboard/pkg/apis/dashboard/v1alpha1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	labels "k8s.io/apimachinery/pkg/labels"
@@ -39,7 +41,7 @@ var extensionsResource = schema.GroupVersionResource{Group: "dashboard.tekton.de
 var extensionsKind = schema.GroupVersionKind{Group: "dashboard.tekton.dev", Version: "v1alpha1", Kind: "Extension"}
 
 // Get takes name of the extension, and returns the corresponding extension object, and an error if there is any.
-func (c *FakeExtensions) Get(name string, options v1.GetOptions) (result *v1alpha1.Extension, err error) {
+func (c *FakeExtensions) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.Extension, err error) {
 	obj, err := c.Fake.
 		Invokes(testing.NewGetAction(extensionsResource, c.ns, name), &v1alpha1.Extension{})
 
@@ -50,7 +52,7 @@ func (c *FakeExtensions) Get(name string, options v1.GetOptions) (result *v1alph
 }
 
 // List takes label and field selectors, and returns the list of Extensions that match those selectors.
-func (c *FakeExtensions) List(opts v1.ListOptions) (result *v1alpha1.ExtensionList, err error) {
+func (c *FakeExtensions) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.ExtensionList, err error) {
 	obj, err := c.Fake.
 		Invokes(testing.NewListAction(extensionsResource, extensionsKind, c.ns, opts), &v1alpha1.ExtensionList{})
 
@@ -72,14 +74,14 @@ func (c *FakeExtensions) List(opts v1.ListOptions) (result *v1alpha1.ExtensionLi
 }
 
 // Watch returns a watch.Interface that watches the requested extensions.
-func (c *FakeExtensions) Watch(opts v1.ListOptions) (watch.Interface, error) {
+func (c *FakeExtensions) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
 	return c.Fake.
 		InvokesWatch(testing.NewWatchAction(extensionsResource, c.ns, opts))
 
 }
 
 // Create takes the representation of a extension and creates it.  Returns the server's representation of the extension, and an error, if there is any.
-func (c *FakeExtensions) Create(extension *v1alpha1.Extension) (result *v1alpha1.Extension, err error) {
+func (c *FakeExtensions) Create(ctx context.Context, extension *v1alpha1.Extension, opts v1.CreateOptions) (result *v1alpha1.Extension, err error) {
 	obj, err := c.Fake.
 		Invokes(testing.NewCreateAction(extensionsResource, c.ns, extension), &v1alpha1.Extension{})
 
@@ -90,7 +92,7 @@ func (c *FakeExtensions) Create(extension *v1alpha1.Extension) (result *v1alpha1
 }
 
 // Update takes the representation of a extension and updates it. Returns the server's representation of the extension, and an error, if there is any.
-func (c *FakeExtensions) Update(extension *v1alpha1.Extension) (result *v1alpha1.Extension, err error) {
+func (c *FakeExtensions) Update(ctx context.Context, extension *v1alpha1.Extension, opts v1.UpdateOptions) (result *v1alpha1.Extension, err error) {
 	obj, err := c.Fake.
 		Invokes(testing.NewUpdateAction(extensionsResource, c.ns, extension), &v1alpha1.Extension{})
 
@@ -101,7 +103,7 @@ func (c *FakeExtensions) Update(extension *v1alpha1.Extension) (result *v1alpha1
 }
 
 // Delete takes name of the extension and deletes it. Returns an error if one occurs.
-func (c *FakeExtensions) Delete(name string, options *v1.DeleteOptions) error {
+func (c *FakeExtensions) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
 	_, err := c.Fake.
 		Invokes(testing.NewDeleteAction(extensionsResource, c.ns, name), &v1alpha1.Extension{})
 
@@ -109,15 +111,15 @@ func (c *FakeExtensions) Delete(name string, options *v1.DeleteOptions) error {
 }
 
 // DeleteCollection deletes a collection of objects.
-func (c *FakeExtensions) DeleteCollection(options *v1.DeleteOptions, listOptions v1.ListOptions) error {
-	action := testing.NewDeleteCollectionAction(extensionsResource, c.ns, listOptions)
+func (c *FakeExtensions) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
+	action := testing.NewDeleteCollectionAction(extensionsResource, c.ns, listOpts)
 
 	_, err := c.Fake.Invokes(action, &v1alpha1.ExtensionList{})
 	return err
 }
 
 // Patch applies the patch and returns the patched extension.
-func (c *FakeExtensions) Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *v1alpha1.Extension, err error) {
+func (c *FakeExtensions) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.Extension, err error) {
 	obj, err := c.Fake.
 		Invokes(testing.NewPatchSubresourceAction(extensionsResource, c.ns, name, pt, data, subresources...), &v1alpha1.Extension{})
 

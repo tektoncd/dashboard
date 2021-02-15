@@ -15,6 +15,7 @@ limitations under the License.
 package testutils
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"net/http"
@@ -72,7 +73,7 @@ func DummyServer() (*httptest.Server, *endpoints.Resource, string) {
 
 	// Create namespace that is referenced by extensionController
 	dashboardNamespace := "tekton-pipelines"
-	_, err := resource.K8sClient.CoreV1().Namespaces().Create(&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: dashboardNamespace}})
+	_, err := resource.K8sClient.CoreV1().Namespaces().Create(context.TODO(), &corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: dashboardNamespace}}, metav1.CreateOptions{})
 	if err != nil {
 		logging.Log.Fatalf("Error creating namespace '%s': %v", dashboardNamespace, err)
 	}

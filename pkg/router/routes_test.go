@@ -15,6 +15,7 @@ package router_test
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -189,7 +190,7 @@ func makeFake(t *testing.T, r *endpoints.Resource, resourceType, namespace, reso
 			Version:  "v1beta1",
 			Resource: "tasks",
 		}
-		_, err := r.DynamicClient.Resource(gvr).Namespace(namespace).Create(task, metav1.CreateOptions{})
+		_, err := r.DynamicClient.Resource(gvr).Namespace(namespace).Create(context.TODO(), task, metav1.CreateOptions{})
 		if err != nil {
 			t.Fatalf("Error creating task: %v\n", err)
 		}
@@ -200,7 +201,7 @@ func makeFake(t *testing.T, r *endpoints.Resource, resourceType, namespace, reso
 			Version:  "v1beta1",
 			Resource: "taskruns",
 		}
-		_, err := r.DynamicClient.Resource(gvr).Namespace(namespace).Create(taskRun, metav1.CreateOptions{})
+		_, err := r.DynamicClient.Resource(gvr).Namespace(namespace).Create(context.TODO(), taskRun, metav1.CreateOptions{})
 		if err != nil {
 			t.Fatalf("Error creating taskRun: %v\n", err)
 		}
@@ -211,7 +212,7 @@ func makeFake(t *testing.T, r *endpoints.Resource, resourceType, namespace, reso
 			Version:  "v1beta1",
 			Resource: "pipelines",
 		}
-		_, err := r.DynamicClient.Resource(gvr).Namespace(namespace).Create(pipeline, metav1.CreateOptions{})
+		_, err := r.DynamicClient.Resource(gvr).Namespace(namespace).Create(context.TODO(), pipeline, metav1.CreateOptions{})
 		if err != nil {
 			t.Fatalf("Error creating pipeline: %v\n", err)
 		}
@@ -222,7 +223,7 @@ func makeFake(t *testing.T, r *endpoints.Resource, resourceType, namespace, reso
 				Namespace: namespace,
 			},
 		}
-		_, err := r.K8sClient.CoreV1().Pods(namespace).Create(&pod)
+		_, err := r.K8sClient.CoreV1().Pods(namespace).Create(context.TODO(), &pod, metav1.CreateOptions{})
 		if err != nil {
 			t.Fatalf("Error creating pod: %v\n", err)
 		}
@@ -233,7 +234,7 @@ func makeFake(t *testing.T, r *endpoints.Resource, resourceType, namespace, reso
 			Version:  "v1alpha1",
 			Resource: "pipelineresources",
 		}
-		_, err := r.DynamicClient.Resource(gvr).Namespace(namespace).Create(pipelineResource, metav1.CreateOptions{})
+		_, err := r.DynamicClient.Resource(gvr).Namespace(namespace).Create(context.TODO(), pipelineResource, metav1.CreateOptions{})
 		if err != nil {
 			t.Fatalf("Error creating pipelineResource: %v\n", err)
 		}
