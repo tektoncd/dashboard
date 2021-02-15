@@ -14,6 +14,7 @@ limitations under the License.
 package endpoints
 
 import (
+	"context"
 	"strings"
 
 	"github.com/tektoncd/dashboard/pkg/logging"
@@ -27,8 +28,7 @@ func getDashboardVersion(r Resource, installedNamespace string) string {
 	listOptions := metav1.ListOptions{
 		LabelSelector: "app=tekton-dashboard",
 	}
-
-	deployments, err := r.K8sClient.AppsV1().Deployments(installedNamespace).List(listOptions)
+	deployments, err := r.K8sClient.AppsV1().Deployments(installedNamespace).List(context.TODO(), listOptions)
 	if err != nil {
 		logging.Log.Errorf("Error getting dashboard deployment: %s", err.Error())
 		return ""
@@ -70,7 +70,7 @@ func getDeployments(r Resource, thingSearchingFor string, namespace string) stri
 	oldListOptions := metav1.ListOptions{
 		LabelSelector: "app.kubernetes.io/component=controller,app.kubernetes.io/name=tekton-" + thingSearchingFor,
 	}
-	oldDeployments, err := r.K8sClient.AppsV1().Deployments(namespace).List(oldListOptions)
+	oldDeployments, err := r.K8sClient.AppsV1().Deployments(namespace).List(context.TODO(), oldListOptions)
 	if err != nil {
 		logging.Log.Errorf("Error getting the Tekton %s deployment: %s", thingSearchingFor, err.Error())
 		return ""
@@ -78,7 +78,7 @@ func getDeployments(r Resource, thingSearchingFor string, namespace string) stri
 	newListOptions := metav1.ListOptions{
 		LabelSelector: "app.kubernetes.io/component=controller,app.kubernetes.io/name=controller,app.kubernetes.io/part-of=tekton-" + thingSearchingFor,
 	}
-	newDeployments, err := r.K8sClient.AppsV1().Deployments(namespace).List(newListOptions)
+	newDeployments, err := r.K8sClient.AppsV1().Deployments(namespace).List(context.TODO(), newListOptions)
 	if err != nil {
 		logging.Log.Errorf("Error getting the Tekton %s deployment: %s", thingSearchingFor, err.Error())
 		return ""
@@ -177,7 +177,7 @@ func searchForDeployment(r Resource, thingSearchingFor string, namespace string)
 	oldListOptions := metav1.ListOptions{
 		LabelSelector: "app.kubernetes.io/component=controller,app.kubernetes.io/name=tekton-" + thingSearchingFor,
 	}
-	oldDeployments, err := r.K8sClient.AppsV1().Deployments(namespace).List(oldListOptions)
+	oldDeployments, err := r.K8sClient.AppsV1().Deployments(namespace).List(context.TODO(), oldListOptions)
 	if err != nil {
 		logging.Log.Errorf("Error getting the Tekton %s deployment: %s", thingSearchingFor, err.Error())
 		return false
@@ -185,7 +185,7 @@ func searchForDeployment(r Resource, thingSearchingFor string, namespace string)
 	newListOptions := metav1.ListOptions{
 		LabelSelector: "app.kubernetes.io/component=controller,app.kubernetes.io/name=controller,app.kubernetes.io/part-of=tekton-" + thingSearchingFor,
 	}
-	newDeployments, err := r.K8sClient.AppsV1().Deployments(namespace).List(newListOptions)
+	newDeployments, err := r.K8sClient.AppsV1().Deployments(namespace).List(context.TODO(), newListOptions)
 	if err != nil {
 		logging.Log.Errorf("Error getting the Tekton %s deployment: %s", thingSearchingFor, err.Error())
 		return false
