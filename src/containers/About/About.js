@@ -136,6 +136,7 @@ export /* istanbul ignore next */ class About extends Component {
 
     return (
       <div className="tkn--about">
+        <span>test</span>
         {error && (
           <InlineNotification
             kind="error"
