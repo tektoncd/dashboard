@@ -88,7 +88,16 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
 
   cancel = pipelineRun => {
     const { name, namespace } = pipelineRun.metadata;
-    cancelPipelineRun({ name, namespace });
+    cancelPipelineRun({ name, namespace }).catch(error => {
+      error.response.text().then(text => {
+        const statusCode = error.response.status;
+        let errorMessage = `error code ${statusCode}`;
+        if (text) {
+          errorMessage = `${text} (error code ${statusCode})`;
+        }
+        this.setState({ deleteError: errorMessage });
+      });
+    });
   };
 
   closeDeleteModal = () => {
