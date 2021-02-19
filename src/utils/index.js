@@ -13,7 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import snakeCase from 'lodash.snakecase';
-import { LogDownloadButton } from '@tektoncd/dashboard-components';
+import { LogsToolbar } from '@tektoncd/dashboard-components';
 
 import { getPodLog, getPodLogURL } from '../api';
 import { get } from '../api/comms';
@@ -136,7 +136,12 @@ export function getViewChangeHandler({ history, location, match }) {
   };
 }
 
-export function getLogDownloadButton({ stepStatus, taskRun }) {
+export function getLogsToolbar({
+  isMaximized,
+  stepStatus,
+  taskRun,
+  toggleMaximized
+}) {
   const { container } = stepStatus;
   const { namespace } = taskRun.metadata;
   const { podName } = taskRun.status;
@@ -148,8 +153,10 @@ export function getLogDownloadButton({ stepStatus, taskRun }) {
   });
 
   return (
-    <LogDownloadButton
+    <LogsToolbar
+      isMaximized={isMaximized}
       name={`${podName}__${container}__log.txt`}
+      toggleMaximized={toggleMaximized}
       url={logURL}
     />
   );

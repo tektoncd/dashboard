@@ -23,11 +23,22 @@ import {
   labels as labelConstants
 } from '@tektoncd/dashboard-utils';
 
-import { Log, RunHeader, StepDetails, TaskRunDetails, TaskTree } from '..';
+import {
+  Log,
+  Portal,
+  RunHeader,
+  StepDetails,
+  TaskRunDetails,
+  TaskTree
+} from '..';
 
 import '../../scss/Run.scss';
 
 export /* istanbul ignore next */ class PipelineRunContainer extends Component {
+  state = {
+    isLogsMaximized: false
+  };
+
   getPipelineRunError = () => {
     const { pipelineRun } = this.props;
 
@@ -46,30 +57,52 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   getLogContainer({ stepName, stepStatus, taskRun }) {
     const {
       fetchLogs,
-      getLogDownloadButton,
+      getLogsToolbar,
+      maximizedLogsContainer,
       pollingInterval,
       selectedStepId,
       selectedTaskId
     } = this.props;
 
+    const { isLogsMaximized } = this.state;
+
     if (!selectedStepId || !stepStatus) {
       return null;
     }
 
+    const LogsRoot =
+      isLogsMaximized && maximizedLogsContainer ? Portal : React.Fragment;
+
     return (
-      <Log
-        downloadButton={
-          getLogDownloadButton &&
-          stepStatus &&
-          getLogDownloadButton({ stepName, stepStatus, taskRun })
-        }
-        fetchLogs={() => fetchLogs(stepName, stepStatus, taskRun)}
-        key={`${selectedTaskId}:${selectedStepId}`}
-        pollingInterval={pollingInterval}
-        stepStatus={stepStatus}
-      />
+      <LogsRoot
+        {...(isLogsMaximized ? { container: maximizedLogsContainer } : null)}
+      >
+        <Log
+          toolbar={
+            getLogsToolbar &&
+            stepStatus &&
+            getLogsToolbar({
+              isMaximized: isLogsMaximized,
+              stepStatus,
+              taskRun,
+              toggleMaximized:
+                !!maximizedLogsContainer && this.toggleLogsMaximized
+            })
+          }
+          fetchLogs={() => fetchLogs(stepName, stepStatus, taskRun)}
+          key={`${selectedTaskId}:${selectedStepId}`}
+          pollingInterval={pollingInterval}
+          stepStatus={stepStatus}
+        />
+      </LogsRoot>
     );
   }
+
+  toggleLogsMaximized = () => {
+    this.setState(({ isLogsMaximized }) => ({
+      isLogsMaximized: !isLogsMaximized
+    }));
+  };
 
   loadTaskRuns = () => {
     const { intl, pipelineRun } = this.props;

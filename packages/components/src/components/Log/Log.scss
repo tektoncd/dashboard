@@ -56,6 +56,8 @@ pre.tkn--log {
   }
 
   .bx--copy-btn {
+    width: 2rem;
+    height: 2rem;
     background-color: $gray-90; // TODO: $inverse-02 - see above
 
     &:hover {

@@ -18,7 +18,7 @@ import {
   fetchLogs,
   fetchLogsFallback,
   followLogs,
-  getLogDownloadButton,
+  getLogsToolbar,
   getViewChangeHandler,
   isStale,
   sortRunsByStartTime,
@@ -208,7 +208,7 @@ it('getViewChangeHandler', () => {
   );
 });
 
-it('getLogDownloadButton', () => {
+it('getLogsToolbar', () => {
   const container = 'fake_container';
   const namespace = 'fake_namespace';
   const podName = 'fake_podname';
@@ -216,12 +216,12 @@ it('getLogDownloadButton', () => {
   const taskRun = { metadata: { namespace }, status: { podName } };
   jest.spyOn(API, 'getPodLogURL');
 
-  const logDownloadButton = getLogDownloadButton({ stepStatus, taskRun });
+  const logsToolbar = getLogsToolbar({ stepStatus, taskRun });
 
   expect(API.getPodLogURL).toHaveBeenCalledWith({
     container,
     name: podName,
     namespace
   });
-  expect(logDownloadButton).toBeTruthy();
+  expect(logsToolbar).toBeTruthy();
 });

@@ -134,6 +134,8 @@
     "dashboard.logo.tooltip": "ニャー",
     "dashboard.logs.downloadButtonTooltip": "ログをダウンロード",
     "dashboard.logs.launchButtonTooltip": "新しいウィンドウでログを開く",
+    "dashboard.logs.maximize": "",
+    "dashboard.logs.restore": "",
     "dashboard.metadata.dateCreated": "作成日：",
     "dashboard.metadata.labels": "ラベル：",
     "dashboard.metadata.namespace": "Namespace：",
