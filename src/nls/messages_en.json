@@ -134,6 +134,8 @@
     "dashboard.logo.tooltip": "Meow",
     "dashboard.logs.downloadButtonTooltip": "Download logs",
     "dashboard.logs.launchButtonTooltip": "Open logs in a new window",
+    "dashboard.logs.maximize": "Maximize logs",
+    "dashboard.logs.restore": "Return to embedded logs",
     "dashboard.metadata.dateCreated": "Date Created:",
     "dashboard.metadata.labels": "Labels:",
     "dashboard.metadata.namespace": "Namespace:",

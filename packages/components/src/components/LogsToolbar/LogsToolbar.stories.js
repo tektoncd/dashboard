@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,13 +13,13 @@ limitations under the License.
 
 import React from 'react';
 
-import LogDownloadButton from './LogDownloadButton';
+import LogsToolbar from './LogsToolbar';
 
 export default {
-  component: LogDownloadButton,
-  title: 'Components/LogDownloadButton'
+  component: LogsToolbar,
+  title: 'Components/LogsToolbar'
 };
 
 export const Base = () => (
-  <LogDownloadButton name="some_filename.txt" url="/some/logs/url" />
+  <LogsToolbar name="some_filename.txt" url="/some/logs/url" />
 );

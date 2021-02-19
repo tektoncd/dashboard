@@ -19,6 +19,7 @@ import PropTypes from 'prop-types';
 import { InlineNotification, SkeletonText } from 'carbon-components-react';
 import {
   Log,
+  Portal,
   Rerun,
   RunHeader,
   StepDetails,
@@ -35,8 +36,8 @@ import {
 } from '@tektoncd/dashboard-utils';
 
 import {
-  getLogDownloadButton,
   getLogsRetriever,
+  getLogsToolbar,
   getViewChangeHandler
 } from '../../utils';
 
@@ -87,7 +88,12 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
     super(props);
     this.showRerunNotification = this.showRerunNotification.bind(this);
 
-    this.state = { loading: true, showRerunNotification: null };
+    this.state = {
+      isLogsMaximized: false,
+      loading: true,
+      showRerunNotification: null
+    };
+    this.maximizedLogsContainer = React.createRef();
   }
 
   componentDidMount() {
@@ -134,20 +140,42 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
       return null;
     }
 
+    const { isLogsMaximized } = this.state;
+
     const logsRetriever = getLogsRetriever(
       isLogStreamingEnabled,
       externalLogsURL
     );
 
+    const LogsRoot = isLogsMaximized ? Portal : React.Fragment;
+
     return (
-      <Log
-        downloadButton={getLogDownloadButton({ stepStatus, taskRun })}
-        fetchLogs={() => logsRetriever(stepName, stepStatus, taskRun)}
-        key={stepName}
-        stepStatus={stepStatus}
-      />
+      <LogsRoot
+        {...(isLogsMaximized
+          ? { container: this.maximizedLogsContainer.current }
+          : null)}
+      >
+        <Log
+          toolbar={getLogsToolbar({
+            isMaximized: isLogsMaximized,
+            stepStatus,
+            taskRun,
+            toggleMaximized:
+              !!this.maximizedLogsContainer && this.toggleLogsMaximized
+          })}
+          fetchLogs={() => logsRetriever(stepName, stepStatus, taskRun)}
+          key={stepName}
+          stepStatus={stepStatus}
+        />
+      </LogsRoot>
     );
   }
+
+  toggleLogsMaximized = () => {
+    this.setState(({ isLogsMaximized }) => ({
+      isLogsMaximized: !isLogsMaximized
+    }));
+  };
 
   handleTaskSelected = (_, selectedStepId) => {
     const { history, location, match } = this.props;
@@ -266,6 +294,10 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
 
     return (
       <>
+        <div
+          id="tkn--maximized-logs-container"
+          ref={this.maximizedLogsContainer}
+        />
         {showRerunNotification && (
           <InlineNotification
             lowContrast

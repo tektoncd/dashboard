@@ -134,6 +134,8 @@
     "dashboard.logo.tooltip": "",
     "dashboard.logs.downloadButtonTooltip": "",
     "dashboard.logs.launchButtonTooltip": "",
+    "dashboard.logs.maximize": "",
+    "dashboard.logs.restore": "",
     "dashboard.metadata.dateCreated": "",
     "dashboard.metadata.labels": "",
     "dashboard.metadata.namespace": "",

@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,11 +13,43 @@ limitations under the License.
 /* istanbul ignore file */
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import { Download16, Launch16 } from '@carbon/icons-react';
+import {
+  Download16,
+  Launch16,
+  Maximize16,
+  Minimize16
+} from '@carbon/icons-react';
 
-const LogDownloadButton = ({ intl, name, url }) => (
+const LogsToolbar = ({ intl, isMaximized, name, toggleMaximized, url }) => (
   <>
     <div className="bx--btn-set">
+      {toggleMaximized ? (
+        <button
+          className="bx--copy-btn"
+          onClick={toggleMaximized}
+          type="button"
+        >
+          {isMaximized ? (
+            <Minimize16>
+              <title>
+                {intl.formatMessage({
+                  id: 'dashboard.logs.restore',
+                  defaultMessage: 'Return to embedded logs'
+                })}
+              </title>
+            </Minimize16>
+          ) : (
+            <Maximize16>
+              <title>
+                {intl.formatMessage({
+                  id: 'dashboard.logs.maximize',
+                  defaultMessage: 'Maximize logs'
+                })}
+              </title>
+            </Maximize16>
+          )}
+        </button>
+      ) : null}
       <a
         className="bx--copy-btn"
         href={url}
@@ -47,4 +79,4 @@ const LogDownloadButton = ({ intl, name, url }) => (
   </>
 );
 
-export default injectIntl(LogDownloadButton);
+export default injectIntl(LogsToolbar);

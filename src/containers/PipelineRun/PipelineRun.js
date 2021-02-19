@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -47,8 +47,8 @@ import { fetchTaskRuns } from '../../actions/taskRuns';
 import { rerunPipelineRun } from '../../api';
 
 import {
-  getLogDownloadButton,
   getLogsRetriever,
+  getLogsToolbar,
   getViewChangeHandler
 } from '../../utils';
 
@@ -63,6 +63,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       loading: true,
       showRerunNotification: null
     };
+
+    this.maximizedLogsContainer = React.createRef();
   }
 
   componentDidMount() {
@@ -270,6 +272,10 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
 
     return (
       <>
+        <div
+          id="tkn--maximized-logs-container"
+          ref={this.maximizedLogsContainer}
+        />
         {showRerunNotification && (
           <InlineNotification
             lowContrast
@@ -301,7 +307,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           )}
           handleTaskSelected={this.handleTaskSelected}
           loading={loading}
-          getLogDownloadButton={getLogDownloadButton}
+          getLogsToolbar={getLogsToolbar}
+          maximizedLogsContainer={this.maximizedLogsContainer.current}
           onViewChange={getViewChangeHandler(this.props)}
           pipelineRun={pipelineRun}
           rerun={rerun}
