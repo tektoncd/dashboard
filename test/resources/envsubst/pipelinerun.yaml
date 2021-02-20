@@ -1,5 +1,5 @@
 ---
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
   name: e2e-pipelinerun
@@ -10,10 +10,3 @@ spec:
   pipelineRef:
     name: ${PIPELINE_NAME}
   serviceAccountName: ${APP_SERVICE_ACCOUNT}
-  resources:
-    - name: git-source
-      resourceRef:
-        name: ${GIT_RESOURCE_NAME}
-    - name: docker-image
-      resourceRef:
-        name: ${IMAGE_RESOURCE_NAME}

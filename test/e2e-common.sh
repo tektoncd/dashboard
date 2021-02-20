@@ -148,7 +148,7 @@ function json_curl_envsubst_resource() {
   fi
   yq --version
   set -x
-  cat "$1" | envsubst | yq r -j - | curl -sS -X "$2" --data-binary @- -H "Content-Type: application/json" "$3" -H "Tekton-Client: tektoncd/dashboard"
+  cat "$1" | envsubst | yq e -j - | curl -sS -X "$2" --data-binary @- -H "Content-Type: application/json" "$3" -H "Tekton-Client: tektoncd/dashboard"
   set +x
 }
 

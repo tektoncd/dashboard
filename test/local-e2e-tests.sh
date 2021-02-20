@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2020 The Tekton Authors
+# Copyright 2020-2021 The Tekton Authors
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -16,6 +16,7 @@ set -e
 CLUSTERNAME="dashboard-tests"
 
 verifySupported() {
+  echo "Checking for dependencies"
   local OS=$(echo `uname`|tr '[:upper:]' '[:lower:]')
   local SED="sed"
 
@@ -33,8 +34,8 @@ verifySupported() {
     exit 1
   fi
 
-  if ! type "helm" > /dev/null; then
-    echo "helm is required"
+  if ! type "yq" > /dev/null; then
+    echo "yq is required"
     exit 1
   fi
 
@@ -62,7 +63,8 @@ fail_trap() {
 
 setup() {
   kind create cluster --name $CLUSTERNAME
-  helm install --wait registry stable/docker-registry --set fullnameOverride=registry
+  export KO_DOCKER_REPO="kind.local"
+  export KIND_CLUSTER_NAME=$CLUSTERNAME
 }
 
 run() {

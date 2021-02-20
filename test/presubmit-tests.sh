@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2018 The Tekton Authors
+# Copyright 2018-2021 The Tekton Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -53,7 +53,8 @@ function utility_install() {
   apt-get install gettext-base
   # Get yaml-to-json converter
   echo "Getting yq"
-  wget https://github.com/mikefarah/yq/releases/download/2.4.1/yq_linux_amd64 .
+  wget https://github.com/mikefarah/yq/releases/download/v4.6.0/yq_linux_amd64 .
+
   chmod +x yq_linux_amd64
   mv yq_linux_amd64 /bin/yq
   echo "yq being used from $(which yq), version is: $(yq --version)"

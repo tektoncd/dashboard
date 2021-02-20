@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2018-2020 The Tekton Authors
+# Copyright 2018-2021 The Tekton Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,15 +36,13 @@ initOS() {
 
 if [ -z "$LOCAL_RUN" ]; then
   initialize $@
-  export REGISTRY="gcr.io/${E2E_PROJECT_ID}/${E2E_BASE_NAME}-e2e-img"
 else
-  export REGISTRY="registry.default.svc.cluster.local:5000/e2e-img"
   END=50
 fi
 
 initOS
 install_kustomize
-npm install -g newman@5.1.1
+npm install -g newman@5.2.2
 
 test_dashboard() {
   # kubectl or proxy (to create the necessary resources)
@@ -59,40 +57,39 @@ test_dashboard() {
   kubectl create ns $TEST_NAMESPACE > /dev/null 2>&1 || true
 
   # Port forward the dashboard
-  kubectl port-forward $(kubectl get pod --namespace $DASHBOARD_NAMESPACE -l app=tekton-dashboard -o name)  --namespace $DASHBOARD_NAMESPACE 9097:9097 &
+  kubectl port-forward svc/tekton-dashboard --namespace $DASHBOARD_NAMESPACE 9097:9097 &
   dashboardForwardPID=$!
 
   # Wait until dashboard is found
-  dashboardExists=false
+  dashboardReady=false
   for i in $(eval echo "{$START..$END}")
   do
-    respF=$(curl -k  http://127.0.0.1:9097)
-    if [ "$respF" != "" ]; then
-      dashboardExists=true
+    resp=$(curl -k http://127.0.0.1:9097)
+    if [ "$resp" != "" ]; then
+      dashboardReady=true
+      echo "Dashboard ready"
       break
     else
+      echo "Sleeping 5 seconds before retry..."
       sleep 5
     fi
   done
 
-  if [ "$dashboardExists" = "false" ]; then
+  if [ "$dashboardReady" = "false" ]; then
     fail_test "Test failure, not able to curl the Dashboard"
   fi
 
   # API/resource configuration
   export APP_SERVICE_ACCOUNT="e2e-tests"
-  export PIPELINE_NAME="simple-pipeline-insecure"
-  export IMAGE_RESOURCE_NAME="docker-image"
-  export GIT_RESOURCE_NAME="git-source"
-  export GIT_COMMIT="master"
-  export REPO_NAME="go-hello-world"
-  export REPO_URL="https://github.com/a-roberts/go-hello-world"
+  export PIPELINE_NAME="simple-pipeline"
+  export PIPELINE_RUN_NAME="e2e-pipelinerun"
+  export POD_LABEL="tekton.dev/pipelineRun=$PIPELINE_RUN_NAME"
   export EXPECTED_RETURN_VALUE="Hello World!"
-  export TEKTON_PROXY_URL="http://localhost:9097/proxy/apis/tekton.dev/v1alpha1/namespaces/$TEST_NAMESPACE"
+  export TEKTON_PROXY_URL="http://localhost:9097/proxy/apis/tekton.dev/v1beta1/namespaces/$TEST_NAMESPACE"
 
   # Kubectl static resources
   echo "Creating static resources using kubectl..."
-  staticFiles=($(find ${tekton_repo_dir}/test/resources/static -iname "*.y?ml"))
+  staticFiles=($(find ${tekton_repo_dir}/test/resources/static -iname "*.yaml"))
   for file in ${staticFiles[@]};do
     cat "${file}" | envsubst | kubectl apply --namespace $TEST_NAMESPACE -f - || fail_test "Failed to create static resource: ${file}"
   done
@@ -100,24 +97,14 @@ test_dashboard() {
   if [ "$creationMethod" = "kubectl" ]; then
     # Kubectl envsubst resources
     echo "Creating resources using kubectl..."
-    pipelineResourceFiles=($(find ${tekton_repo_dir}/test/resources/envsubst -iname "pipelineresource*.y?ml"))
-    for file in ${pipelineResourceFiles[@]};do
-      cat "${file}" | envsubst | kubectl apply --namespace $TEST_NAMESPACE -f - || fail_test "Failed to create pipelineresource: ${file}"
-    done
-
-    pipelineRunFiles=($(find ${tekton_repo_dir}/test/resources/envsubst -iname "pipelinerun*.y?ml"))
+    pipelineRunFiles=($(find ${tekton_repo_dir}/test/resources/envsubst -iname "pipelinerun*.yaml"))
     for file in ${pipelineRunFiles[@]};do
       cat "${file}" | envsubst | kubectl apply --namespace $TEST_NAMESPACE -f - || fail_test "Failed to create pipelinerun: ${file}"
     done
   elif [ "$creationMethod" = "proxy" ]; then
     # Create envsubst resources through dashboard proxy
     echo "Creating resources using the dashboard proxy..."
-    pipelineResourceFiles=($(find ${tekton_repo_dir}/test/resources/envsubst -iname "pipelineresource*.y?ml"))
-    for file in ${pipelineResourceFiles[@]};do
-      json_curl_envsubst_resource "${file}" "POST" "${TEKTON_PROXY_URL}/pipelineresources" || fail_test "Failed to create pipelineresource: ${file}"
-    done
-
-    pipelineRunFiles=($(find ${tekton_repo_dir}/test/resources/envsubst -iname "pipelinerun*.y?ml"))
+    pipelineRunFiles=($(find ${tekton_repo_dir}/test/resources/envsubst -iname "pipelinerun*.yaml"))
     for file in ${pipelineRunFiles[@]};do
       json_curl_envsubst_resource "${file}" "POST" "${TEKTON_PROXY_URL}/pipelineruns" || fail_test "Failed to create pipelinerun: ${file}"
     done
@@ -126,17 +113,17 @@ test_dashboard() {
   fi
 
   print_diagnostic_info
-  # Wait for deployment
-  echo "About to check the deployment..."
-  deploymentExist=false
-  for i in $(eval echo "{$START..$END}")
+  # Wait for PipelineRun
+  echo "Checking results..."
+  URL="${TEKTON_PROXY_URL}/pipelineruns/$PIPELINE_RUN_NAME"
+  pipelineRunFound=false
+  for i in {1..20}
   do
-    wait=$(kubectl wait --namespace $TEST_NAMESPACE --for=condition=available deployments/go-hello-world --timeout=30s)
-    if [ "$wait" = "deployment.apps/go-hello-world condition met" ]; then
-      deploymentExist=true
-      break
-    elif [ "$wait" = "deployment.extensions/go-hello-world condition met" ]; then
-      deploymentExist=true
+    # curl will exit with code 22 if not found
+    curl -sS -f -H "Content-Type: application/json" $URL
+    if [ "$?" = "0" ]; then
+      pipelineRunFound=true
+      echo "PipelineRun successfully retrieved"
       break
     else
       echo "Sleeping 5 seconds before retry..."
@@ -144,37 +131,37 @@ test_dashboard() {
     fi
   done
 
-  if [ "$deploymentExist" = "false" ]; then
-    echo "Here's the failed pod info"
-    kubectl get pod --namespace $TEST_NAMESPACE -l app=go-hello-world -o name -o yaml
-    kubectl describe pod --namespace $TEST_NAMESPACE -l app=go-hello-world
-    fail_test "Test Failure, go-hello-world deployment is not running, see above for the PV and pod information"
+  if [ "$pipelineRunFound" = "false" ]; then
+    fail_test "PipelineRun not found"
   fi
 
-  # Ping deployment
-  kubectl port-forward $(kubectl get pod  --namespace $TEST_NAMESPACE -l app=go-hello-world -o name) --namespace $TEST_NAMESPACE 8080 &
-  podForwardPID=$!
-
-  podCurled=false
-  for i in {1..20}
+  echo "Waiting for run to complete..."
+  runCompleted=false
+  for i in $(eval echo "{$START..$END}")
   do
-    resp=$(curl -k  http://127.0.0.1:8080)
-    if [ "$resp" != "" ]; then
-      echo "Response from pod is: $resp"
-      podCurled=true
-      if [[ "$resp" = *${EXPECTED_RETURN_VALUE}* ]]; then
-        echo "PipelineRun successfully executed"
-        break
-      else
-        fail_test "PipelineRun error, returned an incorrect message: $resp"
-      fi
+    wait=$(kubectl get pods --namespace $TEST_NAMESPACE -l $POD_LABEL -o 'jsonpath={..status.conditions[?(@.reason=="PodCompleted")]}')
+    if [ "$wait" != "" ]; then
+      runCompleted=true
+      echo "Run completed"
+      break
     else
+      echo "Sleeping 5 seconds before retry..."
       sleep 5
     fi
   done
 
-  if [ "$podCurled" = "false" ]; then
-    fail_test "Test Failure, Not able to curl the pod"
+  if [ "$runCompleted" = "false" ]; then
+    echo "Here's the failed pod info"
+    kubectl get pod --namespace $TEST_NAMESPACE -l $POD_LABEL -o name -o yaml
+    kubectl describe pod --namespace $TEST_NAMESPACE -l $POD_LABEL
+    fail_test "Test Failure, TaskRun pod did not complete, see above for the PV and pod information"
+  fi
+
+  logs=$(kubectl logs --namespace $TEST_NAMESPACE -l $POD_LABEL)
+  if [ "$logs" = "$EXPECTED_RETURN_VALUE" ]; then
+    echo "PipelineRun successfully executed"
+  else
+    fail_test "PipelineRun error, returned an incorrect message: $logs"
   fi
 
   echo "Running postman collections..."
