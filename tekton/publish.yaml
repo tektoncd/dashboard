@@ -130,7 +130,7 @@ spec:
           set -e
           set -x
 
-          curl https://raw.githubusercontent.com/tektoncd/pipeline/master/tekton/koparse/koparse.py --output /usr/bin/koparse.py
+          curl https://raw.githubusercontent.com/tektoncd/plumbing/main/tekton/images/koparse/koparse/koparse.py --output /usr/bin/koparse.py
           chmod +x /usr/bin/koparse.py
 
           REGIONS=(us eu asia)
