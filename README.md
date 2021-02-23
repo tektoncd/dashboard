@@ -17,7 +17,7 @@ Among other things, the Tekton Dashboard supports:
 - View resource details and YAML
 - Show resources for the whole cluster or limit visibility to a particular namespace
 - Import resources directly from a git repository
-- Adding functionality through extensions, like automatically triggering pipelines on git events (GitHub and GitLab supported)
+- Adding functionality through extensions
 
 ![Dashboard UI workloads page](docs/dashboard-ui.jpg)
 
