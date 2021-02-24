@@ -238,6 +238,28 @@ describe('Trigger', () => {
     expect(queryByText(/Header/i)).toBeFalsy();
   });
 
+  it('handles github Interceptor without eventTypes', () => {
+    const props = {
+      eventListenerNamespace: 'tekton-pipelines',
+      trigger: {
+        ...fakeTrigger,
+        interceptors: [
+          {
+            github: {
+              secretRef: {
+                secretName: 'my-github-secret-no-event-types',
+                secretKey: 'github-secret-key',
+                namespace: 'github-secret-namespace'
+              }
+            }
+          }
+        ]
+      }
+    };
+    const { getByText } = renderWithRouter(<Trigger {...props} />);
+    expect(getByText(/my-github-secret-no-event-types/)).toBeTruthy();
+  });
+
   it('handles no name', () => {
     const props = {
       eventListenerNamespace: 'tekton-pipelines',
