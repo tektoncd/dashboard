@@ -3,7 +3,7 @@
   "PORT": "8000",
   "locales": {
     "default": "en",
-    "supported": ["en"],
+    "supported": ["en", "ja"],
     "build": ["de", "en", "es", "fr", "it", "ja", "ko", "pt", "zh-Hans", "zh-Hant"]
   }
 }
