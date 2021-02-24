@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -88,29 +88,11 @@ import {
   isReadOnly,
   isWebSocketConnected
 } from '../../reducers';
-import messages from '../../nls/messages_en.json';
 
 import '../../scss/App.scss';
+import { locales } from '../../../config_frontend/config.json';
 
-/* istanbul ignore next */
-if (process.env.I18N_PSEUDO) {
-  const startBoundary = '[[%';
-  const endBoundary = '%]]';
-  // Make it easier to identify untranslated strings in the UI
-  Object.keys(messages).forEach(lang => {
-    const messagesToDisplay = messages[lang];
-    Object.keys(messagesToDisplay).forEach(messageId => {
-      if (messagesToDisplay[messageId].startsWith(startBoundary)) {
-        // avoid repeating the boundaries when
-        // hot reloading in dev mode
-        return;
-      }
-      messagesToDisplay[
-        messageId
-      ] = `${startBoundary}${messagesToDisplay[messageId]}${endBoundary}`;
-    });
-  });
-}
+const { default: defaultLocale, supported: supportedLocales } = locales;
 
 /* istanbul ignore next */
 const ConfigErrorComponent = ({ intl, loadingConfigError }) => {
@@ -137,6 +119,7 @@ const initialState = {
   isSideNavExpanded: true,
   loadingConfigError: null,
   loadingConfig: true,
+  messages: {},
   showLoadingState: true
 };
 
@@ -181,6 +164,7 @@ export /* istanbul ignore next */ class App extends Component {
     this.setState({ loadingConfig: true });
     try {
       await this.props.fetchInstallProperties();
+      await this.loadMessages();
       this.setState({ loadingConfig: false, showLoadingState: false });
     } catch (error) {
       console.error(error); // eslint-disable-line no-console
@@ -192,21 +176,55 @@ export /* istanbul ignore next */ class App extends Component {
     }
   }
 
+  async loadMessages() {
+    const isSupportedLocale = supportedLocales.includes(this.props.lang);
+    const targetLocale = isSupportedLocale ? this.props.lang : defaultLocale;
+    const { default: messages } = await import(
+      /* webpackChunkName: "[request]" */ `../../nls/messages_${targetLocale}.json`
+    );
+    /* istanbul ignore next */
+    if (process.env.I18N_PSEUDO) {
+      const startBoundary = '[[%';
+      const endBoundary = '%]]';
+      // Make it easier to identify untranslated strings in the UI
+      Object.keys(messages).forEach(lang => {
+        const messagesToDisplay = messages[lang];
+        Object.keys(messagesToDisplay).forEach(messageId => {
+          if (messagesToDisplay[messageId].startsWith(startBoundary)) {
+            // avoid repeating the boundaries when
+            // hot reloading in dev mode
+            return;
+          }
+          messagesToDisplay[
+            messageId
+          ] = `${startBoundary}${messagesToDisplay[messageId]}${endBoundary}`;
+        });
+      });
+    }
+
+    this.setState({ messages });
+  }
+
   render() {
     const { extensions } = this.props;
     const {
       isSideNavExpanded,
       loadingConfigError,
+      messages,
       showLoadingState
     } = this.state;
 
-    const lang = messages[this.props.lang] ? this.props.lang : 'en';
+    const lang = messages[this.props.lang] ? this.props.lang : defaultLocale;
     const logoutButton = (
       <LogoutButton getLogoutURL={() => this.props.logoutURL} />
     );
 
     return (
-      <IntlProvider locale={lang} defaultLocale="en" messages={messages[lang]}>
+      <IntlProvider
+        locale={lang}
+        defaultLocale={defaultLocale}
+        messages={messages[lang]}
+      >
         <ConfigError loadingConfigError={loadingConfigError} />
 
         {showLoadingState && <LoadingShell />}
