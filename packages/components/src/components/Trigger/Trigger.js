@@ -210,7 +210,7 @@ const Trigger = ({ intl, eventListenerNamespace, trigger }) => {
                   interceptorType = 'GitLab';
                   data = interceptor.gitlab;
                 }
-                const eventTypes = data.eventTypes.join(', ');
+                const eventTypes = data.eventTypes?.join(', ');
                 const secretText = intl.formatMessage({
                   id: 'dashboard.triggerDetails.webhookInterceptorSecret',
                   defaultMessage: 'Secret:'
