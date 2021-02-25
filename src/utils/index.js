@@ -17,6 +17,15 @@ import { LogsToolbar } from '@tektoncd/dashboard-components';
 
 import { getPodLog, getPodLogURL } from '../api';
 import { get } from '../api/comms';
+import config from '../../config_frontend/config.json';
+
+const { locales: localesConfig } = config;
+const {
+  build: buildLocales,
+  default: defaultLocale,
+  devOverrideKey,
+  supported: supportedLocales
+} = localesConfig;
 
 export function sortRunsByStartTime(runs) {
   runs.sort((a, b) => {
@@ -160,4 +169,36 @@ export function getLogsToolbar({
       url={logURL}
     />
   );
+}
+
+export function formatLocale(locale) {
+  switch (locale) {
+    case 'zh':
+      return 'zh-Hans';
+    case 'zh-HA':
+    case 'zh-HK':
+    case 'zh-MO':
+    case 'zh-TW':
+      return 'zh-Hant';
+    default:
+      return locale;
+  }
+}
+
+export function getSupportedLocale(requestedLocale, locales) {
+  let locale = formatLocale(requestedLocale);
+  if (!locales.includes(locale)) {
+    locale = formatLocale(locale.split('-')[0]);
+    if (!locales.includes(locale)) {
+      locale = defaultLocale;
+    }
+  }
+  return locale;
+}
+
+export function getLocale(requestedLocale) {
+  const locales = localStorage.getItem(devOverrideKey)
+    ? buildLocales
+    : supportedLocales;
+  return getSupportedLocale(requestedLocale, locales);
 }

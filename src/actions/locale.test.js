@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,9 +13,11 @@ limitations under the License.
 
 import { setLocale } from './locale';
 
-it('setLocale', () => {
-  const locale = 'it';
-  expect(setLocale(locale)).toMatchObject({
-    locale
+describe('setLocale', () => {
+  it('handles exact matches for supported locales', () => {
+    const locale = 'en';
+    expect(setLocale(locale)).toMatchObject({
+      locale
+    });
   });
 });

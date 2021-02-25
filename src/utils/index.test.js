@@ -13,17 +13,21 @@ limitations under the License.
 
 import * as API from '../api';
 import * as comms from '../api/comms';
+import config from '../../config_frontend/config.json';
 
 import {
   fetchLogs,
   fetchLogsFallback,
   followLogs,
+  getLocale,
   getLogsToolbar,
   getViewChangeHandler,
   isStale,
   sortRunsByStartTime,
   typeToPlural
 } from '.';
+
+const { locales: localesConfig } = config;
 
 describe('sortRunsByStartTime', () => {
   it('should handle missing start time or status', () => {
@@ -224,4 +228,39 @@ it('getLogsToolbar', () => {
     namespace
   });
   expect(logsToolbar).toBeTruthy();
+});
+
+describe('getLocale', () => {
+  it('handles exact matches for supported locales', () => {
+    const locale = 'en';
+    expect(getLocale(locale)).toEqual(locale);
+  });
+
+  it('handles fallback matches for supported locales', () => {
+    expect(getLocale('en-US')).toEqual('en');
+  });
+
+  it('handles Chinese locales', () => {
+    localStorage.setItem(localesConfig.devOverrideKey, true);
+    const locales = {
+      zh: 'zh-Hans',
+      'zh-CN': 'zh-Hans',
+      'zh-Hans': 'zh-Hans',
+      'zh-Hant': 'zh-Hant',
+      'zh-HA': 'zh-Hant',
+      'zh-HK': 'zh-Hant',
+      'zh-MO': 'zh-Hant',
+      'zh-SG': 'zh-Hans',
+      'zh-TW': 'zh-Hant'
+    };
+
+    Object.keys(locales).forEach(locale => {
+      expect(getLocale(locale)).toEqual(locales[locale]);
+    });
+    localStorage.removeItem(localesConfig.devOverrideKey);
+  });
+
+  it('handles unsupported locales', () => {
+    expect(getLocale('zz')).toEqual('en');
+  });
 });
