@@ -16,6 +16,7 @@ import { injectIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { StatusIcon, Table } from '@tektoncd/dashboard-components';
 import { getStatus, urls } from '@tektoncd/dashboard-utils';
+import { Pending24 as DefaultIcon } from '@carbon/icons-react';
 
 import { FormattedDate, FormattedDuration, RunDropdown } from '..';
 
@@ -40,7 +41,9 @@ const PipelineRuns = ({
   },
   getPipelineRunStatusIcon = pipelineRun => {
     const { reason, status } = getStatus(pipelineRun);
-    return <StatusIcon reason={reason} status={status} />;
+    return (
+      <StatusIcon DefaultIcon={DefaultIcon} reason={reason} status={status} />
+    );
   },
   getPipelineRunStatusTooltip = (pipelineRun, intl) => {
     const { message } = getStatus(pipelineRun);
