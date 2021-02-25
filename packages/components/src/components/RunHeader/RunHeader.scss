@@ -94,6 +94,12 @@ header.tkn--pipeline-run-header {
     }
   }
 
+  &[data-succeeded='Unknown'][data-reason='PipelineRunPending'] {
+    .tkn--status-label {
+      color: $gray-70;
+    }
+  }
+
   &[data-succeeded='Unknown'][data-reason='Running'],
   &[data-succeeded='Unknown'][data-reason='PipelineRunStopping'] {
     .tkn--status-label {
