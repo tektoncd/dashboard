@@ -3,6 +3,7 @@
   "PORT": "8000",
   "locales": {
     "default": "en",
+    "devOverrideKey": "tkn-locale-dev",
     "supported": ["en", "ja"],
     "build": ["de", "en", "es", "fr", "it", "ja", "ko", "pt", "zh-Hans", "zh-Hant"]
   }
