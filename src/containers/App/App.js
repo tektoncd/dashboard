@@ -85,9 +85,9 @@ import {
 } from '../../reducers';
 
 import '../../scss/App.scss';
-import { locales } from '../../../config_frontend/config.json';
+import config from '../../../config_frontend/config.json';
 
-const { default: defaultLocale, supported: supportedLocales } = locales;
+const { default: defaultLocale, supported: supportedLocales } = config.locales;
 
 /* istanbul ignore next */
 const ConfigErrorComponent = ({ intl, loadingConfigError }) => {
