@@ -4,7 +4,7 @@
   "locales": {
     "default": "en",
     "devOverrideKey": "tkn-locale-dev",
-    "supported": ["en", "ja"],
+    "supported": ["en", "ja", "zh-Hans"],
     "build": ["de", "en", "es", "fr", "it", "ja", "ko", "pt", "zh-Hans", "zh-Hant"]
   }
 }
