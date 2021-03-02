@@ -34,7 +34,7 @@ const LogsToolbar = ({ intl, isMaximized, name, toggleMaximized, url }) => (
               <title>
                 {intl.formatMessage({
                   id: 'dashboard.logs.restore',
-                  defaultMessage: 'Return to embedded logs'
+                  defaultMessage: 'Return to default'
                 })}
               </title>
             </Minimize16>
@@ -43,7 +43,7 @@ const LogsToolbar = ({ intl, isMaximized, name, toggleMaximized, url }) => (
               <title>
                 {intl.formatMessage({
                   id: 'dashboard.logs.maximize',
-                  defaultMessage: 'Maximize logs'
+                  defaultMessage: 'Maximize'
                 })}
               </title>
             </Maximize16>
