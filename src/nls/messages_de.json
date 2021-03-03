@@ -212,6 +212,7 @@
     "dashboard.taskRun.errorLoading": "",
     "dashboard.taskRun.logs": "Protokolle",
     "dashboard.taskRun.params": "",
+    "dashboard.taskRun.results": "",
     "dashboard.taskRun.status": "Status",
     "dashboard.taskRun.status.cancelled": "Abgebrochen",
     "dashboard.taskRun.status.failed": "Fehlgeschlagen",

@@ -212,6 +212,7 @@
     "dashboard.taskRun.errorLoading": "",
     "dashboard.taskRun.logs": "로그",
     "dashboard.taskRun.params": "",
+    "dashboard.taskRun.results": "",
     "dashboard.taskRun.status": "상태",
     "dashboard.taskRun.status.cancelled": "취소됨",
     "dashboard.taskRun.status.failed": "실패",

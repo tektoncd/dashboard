@@ -212,6 +212,7 @@
     "dashboard.taskRun.errorLoading": "",
     "dashboard.taskRun.logs": "Anotaciones",
     "dashboard.taskRun.params": "",
+    "dashboard.taskRun.results": "",
     "dashboard.taskRun.status": "Estado",
     "dashboard.taskRun.status.cancelled": "Cancelado",
     "dashboard.taskRun.status.failed": "Fallidas",

@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -48,6 +48,20 @@ describe('TaskRunDetails', () => {
     expect(queryByText(paramValue)).toBeTruthy();
   });
 
+  it('does not render parameters or results tabs when those fields are not present', () => {
+    const taskRun = {
+      metadata: { name: 'task-run-name' },
+      spec: {},
+      status: {}
+    };
+    const { queryByText } = renderWithIntl(
+      <TaskRunDetails taskRun={taskRun} />
+    );
+    expect(queryByText(/parameters/i)).toBeFalsy();
+    expect(queryByText(/results/i)).toBeFalsy();
+    expect(queryByText(/status/i)).toBeTruthy();
+  });
+
   it('renders selected view', () => {
     const taskRun = {
       metadata: { name: 'task-run-name' },
@@ -61,5 +75,19 @@ describe('TaskRunDetails', () => {
     expect(queryByText('fake_name')).toBeFalsy();
     fireEvent.click(queryByText(/parameters/i));
     expect(queryByText('fake_name')).toBeTruthy();
+  });
+
+  it('renders results', () => {
+    const taskRun = {
+      metadata: { name: 'task-run-name' },
+      spec: {},
+      status: { taskResults: [{ name: 'message', value: 'hello' }] }
+    };
+    const { queryByText } = renderWithIntl(
+      <TaskRunDetails taskRun={taskRun} view="results" />
+    );
+    expect(queryByText(/results/i)).toBeTruthy();
+    expect(queryByText(/message/)).toBeTruthy();
+    expect(queryByText(/hello/)).toBeTruthy();
   });
 });

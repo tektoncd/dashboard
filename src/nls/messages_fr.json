@@ -212,6 +212,7 @@
     "dashboard.taskRun.errorLoading": "",
     "dashboard.taskRun.logs": "Journaux",
     "dashboard.taskRun.params": "",
+    "dashboard.taskRun.results": "",
     "dashboard.taskRun.status": "Statut",
     "dashboard.taskRun.status.cancelled": "Annulé",
     "dashboard.taskRun.status.failed": "Echec",

@@ -212,6 +212,7 @@
     "dashboard.taskRun.errorLoading": "加载 TaskRun 时失败",
     "dashboard.taskRun.logs": "日志",
     "dashboard.taskRun.params": "参数",
+    "dashboard.taskRun.results": "",
     "dashboard.taskRun.status": "状态",
     "dashboard.taskRun.status.cancelled": "已取消",
     "dashboard.taskRun.status.failed": "失败",
