@@ -157,7 +157,7 @@ Finally, authorizing the connection brings you back to the Tekton Dashboard.
 To configure the Dashboard logout URL, pass the `--logout-url http://auth.127.0.0.1.nip.io/oauth2/sign_out` argument to the `release-installer` script:
 
 ```bash
-curl -sL https://raw.githubusercontent.com/tektoncd/dashboard/master/scripts/release-installer | \
+curl -sL https://raw.githubusercontent.com/tektoncd/dashboard/main/scripts/release-installer | \
    bash -s -- install latest --logout-url http://auth.127.0.0.1.nip.io/oauth2/sign_out
 
 kubectl wait -n tekton-pipelines \

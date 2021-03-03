@@ -399,7 +399,7 @@ objects:
         type: Git
         git:
           uri: https://github.com/tektoncd/dashboard.git
-          ref: master
+          ref: main
       triggers:
         - type: ConfigChange
       strategy:

@@ -117,7 +117,7 @@ Well-known annotations are used to describe inner workings of the extension:
 Additionally, the Tekton Dashboard host will globally expose a few objects to let the extension's frontend code connect to these shared components (you can view the list of shared objects [here](../src/containers/Extension/globals.js)).
 
 The next section provides an example of developing a simple service based extension.
-You can also look at the [webhooks-extension](https://github.com/tektoncd/experimental/tree/master/webhooks-extension) to learn more about service based extensions.
+You can also look at the [webhooks-extension](https://github.com/tektoncd/experimental/tree/main/webhooks-extension) to learn more about service based extensions.
 
 ### Example: Create a simple nodejs backend
 

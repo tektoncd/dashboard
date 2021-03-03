@@ -41,11 +41,11 @@ Steps to reproduce the bug should be clear and easily reproducible to help peopl
 <!-- (e.g. AKS, GKE, EKS, PKE) -->
 - Versions:
    - Tekton Dashboard:
-   <!-- (e.g. 0.3.0, 0.4.0, master) -->
+   <!-- (e.g. 0.3.0, 0.4.0, main) -->
    - Tekton Pipelines:
-   <!-- (e.g. 0.8.0, 0.9.2, master) -->
+   <!-- (e.g. 0.8.0, 0.9.2, main) -->
    - Tekton Triggers:
-   <!-- (e.g. 0.1, 0.2, master) -->
+   <!-- (e.g. 0.1, 0.2, main) -->
 - Install namespaces:
    - Tekton Dashboard:
    <!-- (e.g. tekton-pipelines, openshift-pipelines) -->

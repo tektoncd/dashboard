@@ -137,7 +137,7 @@ kubectl wait -n tekton-pipelines \
 Installing the latest Tekton Dashboard release is done by running the following command:
 
 ```bash
-curl -sL https://raw.githubusercontent.com/tektoncd/dashboard/master/scripts/release-installer | \
+curl -sL https://raw.githubusercontent.com/tektoncd/dashboard/main/scripts/release-installer | \
    bash -s -- install latest
 
 kubectl wait -n tekton-pipelines \
@@ -176,7 +176,7 @@ Browse `http://tekton-dashboard.127.0.0.1.nip.io` to access your dashboard.
 **NOTE:** Alternatively you can use the `--ingress-url` argument when invoking the `installer` script to create the `Ingress` resource:
 
 ```bash
-curl -sL https://raw.githubusercontent.com/tektoncd/dashboard/master/scripts/release-installer | \
+curl -sL https://raw.githubusercontent.com/tektoncd/dashboard/main/scripts/release-installer | \
    bash -s -- install latest --ingress-url tekton-dashboard.127.0.0.1.nip.io
 
 kubectl wait -n tekton-pipelines \

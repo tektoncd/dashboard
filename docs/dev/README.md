@@ -127,7 +127,7 @@ Make sure that the backend service running in the cluster is proxied using `kube
 e.g. to connect your local dev frontend to the Dashboard deployed on the robotcat cluster:
 `API_DOMAIN=https://dashboard.robotcat.tekton.dev/ npm start`
 
-**Note:** If modifying any of the sub-packages (e.g. components or utils in https://github.com/tektoncd/dashboard/tree/master/packages), you'll need to run `npm run bootstrap` to ensure those packages are correctly built and linked before starting the dev server or running a build. This is done automatically by `npm ci` or `npm install` so you may not have to run it directly depending on your workflow.
+**Note:** If modifying any of the sub-packages (e.g. components or utils in https://github.com/tektoncd/dashboard/tree/main/packages), you'll need to run `npm run bootstrap` to ensure those packages are correctly built and linked before starting the dev server or running a build. This is done automatically by `npm ci` or `npm install` so you may not have to run it directly depending on your workflow.
 
 ## Run backend tests
 

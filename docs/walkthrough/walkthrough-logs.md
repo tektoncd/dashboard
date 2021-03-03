@@ -351,7 +351,7 @@ The logs are now displayed again, fetched from the logs server configured in the
 **NOTE:** Alternatively you can use the `--external-logs` argument when invoking the `installer` script:
 
 ```bash
-curl -sL https://raw.githubusercontent.com/tektoncd/dashboard/master/scripts/release-installer | \
+curl -sL https://raw.githubusercontent.com/tektoncd/dashboard/main/scripts/release-installer | \
    bash -s -- install latest --external-logs http://logs-server.tools.svc.cluster.local:3000/logs
 
 kubectl wait -n tekton-pipelines \

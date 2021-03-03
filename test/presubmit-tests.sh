@@ -61,7 +61,7 @@ function utility_install() {
 }
 function get_node() {
   echo "Script is running as $(whoami) on $(hostname)"
-  # It's Stretch and https://github.com/tektoncd/dashboard/blob/master/package.json
+  # It's Stretch and https://github.com/tektoncd/dashboard/blob/main/package.json
   # denotes the Node.js and npm versions
   apt-get update
   apt-get install -y curl
