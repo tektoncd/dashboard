@@ -91,7 +91,7 @@ You can refer to the dev docs for more info on [how to use the installer](./dev/
 For example, to install the latest release in read only mode:
 
 ```bash
-curl -sL https://raw.githubusercontent.com/tektoncd/dashboard/master/scripts/release-installer | \
+curl -sL https://raw.githubusercontent.com/tektoncd/dashboard/main/scripts/release-installer | \
    bash -s -- install latest --read-only
 ```
 
