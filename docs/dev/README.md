@@ -124,8 +124,8 @@ Make sure that the backend service running in the cluster is proxied using `kube
 
 **Note:** If you've exposed the backend by some other means than port-forwarding port 9097 as described above, set the `API_DOMAIN` environment variable to provide the correct details.
 
-e.g. to connect your local dev frontend to the Dashboard deployed on the robotcat cluster:
-`API_DOMAIN=https://dashboard.robotcat.tekton.dev/ npm start`
+e.g. to connect your local dev frontend to the Dashboard deployed on the robocat cluster:
+`API_DOMAIN=https://dashboard.robocat.tekton.dev/ npm start`
 
 **Note:** If modifying any of the sub-packages (e.g. components or utils in https://github.com/tektoncd/dashboard/tree/main/packages), you'll need to run `npm run bootstrap` to ensure those packages are correctly built and linked before starting the dev server or running a build. This is done automatically by `npm ci` or `npm install` so you may not have to run it directly depending on your workflow.
 
