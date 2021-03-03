@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -19,8 +19,6 @@ import { getParams } from '@tektoncd/dashboard-utils';
 import { DetailsHeader, Param, Tab, Table, Tabs, ViewYAML } from '..';
 
 import './TaskRunDetails.scss';
-
-const tabs = ['params', 'status'];
 
 const TaskRunDetails = props => {
   const { intl, onViewChange, taskRun, view } = props;
@@ -60,6 +58,29 @@ const TaskRunDetails = props => {
     />
   );
 
+  const results = taskRun.status?.taskResults;
+  const resultsTable = results && results.length && (
+    <Table
+      size="short"
+      headers={headers}
+      rows={results.map(({ name, value }) => ({
+        id: name,
+        name,
+        value: (
+          <span title={value}>
+            <Param>{value}</Param>
+          </span>
+        )
+      }))}
+    />
+  );
+
+  const tabs = [
+    paramsTable && 'params',
+    resultsTable && 'results',
+    'status'
+  ].filter(Boolean);
+
   let selectedTabIndex = tabs.indexOf(view);
   if (selectedTabIndex === -1) {
     selectedTabIndex = 0;
@@ -79,13 +100,24 @@ const TaskRunDetails = props => {
       >
         {paramsTable && (
           <Tab
-            id={`${displayName}-details`}
+            id={`${displayName}-params`}
             label={intl.formatMessage({
               id: 'dashboard.taskRun.params',
               defaultMessage: 'Parameters'
             })}
           >
             <div className="tkn--step-status">{paramsTable}</div>
+          </Tab>
+        )}
+        {resultsTable && (
+          <Tab
+            id={`${displayName}-results`}
+            label={intl.formatMessage({
+              id: 'dashboard.taskRun.results',
+              defaultMessage: 'Results'
+            })}
+          >
+            <div className="tkn--step-status">{resultsTable}</div>
           </Tab>
         )}
         <Tab

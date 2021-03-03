@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -36,7 +36,12 @@ export const Base = () => (
       spec: {
         params
       },
-      status: 'this will show the TaskRun.status'
+      status: {
+        completionTime: '2021-03-03T15:25:34Z',
+        podName: 'my-task-h7d6j-pod-pdtb7',
+        startTime: '2021-03-03T15:25:27Z',
+        taskResults: [{ name: 'message', value: 'hello' }]
+      }
     }}
   />
 );
