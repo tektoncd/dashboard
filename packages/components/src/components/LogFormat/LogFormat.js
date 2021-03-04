@@ -36,6 +36,18 @@ const getXtermColor = commandStack => {
   return null;
 };
 
+const createFormattedString = (str, styleObj, className) => {
+  const hasStyles = styleObj.color || styleObj.backgroundColor || className;
+  if (hasStyles) {
+    return (
+      <span style={styleObj} className={className}>
+        {str}
+      </span>
+    );
+  }
+  return str;
+};
+
 const linkify = (str, styleObj, classNameString) => {
   const className = classNameString || undefined;
   if (!str) {
@@ -43,22 +55,14 @@ const linkify = (str, styleObj, classNameString) => {
   }
   const matches = linkifyIt.match(str);
   if (!matches) {
-    return (
-      <span style={styleObj} className={className}>
-        {str}
-      </span>
-    );
+    return createFormattedString(str, styleObj, className);
   }
   const elements = [];
   let offset = 0;
   matches.forEach(match => {
     if (match.index > offset) {
       const string = str.substring(offset, match.index);
-      elements.push(
-        <span style={styleObj} className={className}>
-          {string}
-        </span>
-      );
+      elements.push(createFormattedString(string, styleObj, className));
     }
     elements.push(
       <a
@@ -76,11 +80,7 @@ const linkify = (str, styleObj, classNameString) => {
 
   if (str.length > offset) {
     const string = str.substring(offset, str.length);
-    elements.push(
-      <span style={styleObj} className={className}>
-        {string}
-      </span>
-    );
+    elements.push(createFormattedString(string, styleObj, className));
   }
   return elements;
 };

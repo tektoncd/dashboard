@@ -18,6 +18,7 @@ node_modules/
 npm-debug.log
 yarn-error.log
 stats.json
+.vscode/
 
 # System Files
 .DS_Store
