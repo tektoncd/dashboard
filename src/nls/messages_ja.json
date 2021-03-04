@@ -86,6 +86,7 @@
     "dashboard.error.title": "エラー：",
     "dashboard.errorBoundary.defaultError": "問題が発生しています",
     "dashboard.errorBoundary.pageError": "ページのロード中にエラーが発生しました",
+    "dashboard.eventListener.namespaceSelector": "",
     "dashboard.eventListener.serviceAccount": "ServiceAccount：",
     "dashboard.eventListener.serviceType": "Service Type：",
     "dashboard.extension.error": "拡張機能のロード中にエラーが発生しました",

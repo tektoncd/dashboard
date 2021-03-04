@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -68,7 +68,11 @@ export /* istanbul ignore next */ class EventListenerContainer extends Component
       return null;
     }
 
-    const { serviceAccountName, serviceType } = eventListener.spec;
+    const {
+      namespaceSelector,
+      serviceAccountName,
+      serviceType
+    } = eventListener.spec;
     return (
       <>
         {serviceAccountName && (
@@ -93,6 +97,17 @@ export /* istanbul ignore next */ class EventListenerContainer extends Component
             {serviceType}
           </p>
         )}
+        {namespaceSelector?.matchNames?.length ? (
+          <p>
+            <span>
+              {intl.formatMessage({
+                id: 'dashboard.eventListener.namespaceSelector',
+                defaultMessage: 'Namespace Selector:'
+              })}
+            </span>
+            {namespaceSelector.matchNames.join(', ')}
+          </p>
+        ) : null}
       </>
     );
   }
@@ -100,7 +115,7 @@ export /* istanbul ignore next */ class EventListenerContainer extends Component
   getTriggersContent() {
     const { eventListener } = this.props;
 
-    if (!eventListener) {
+    if (!eventListener?.spec?.triggers) {
       return null;
     }
 

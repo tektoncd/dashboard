@@ -86,6 +86,7 @@
     "dashboard.error.title": "Error:",
     "dashboard.errorBoundary.defaultError": "Something went wrong",
     "dashboard.errorBoundary.pageError": "Error loading page",
+    "dashboard.eventListener.namespaceSelector": "Namespace Selector:",
     "dashboard.eventListener.serviceAccount": "ServiceAccount:",
     "dashboard.eventListener.serviceType": "Service Type:",
     "dashboard.extension.error": "Error loading extension",

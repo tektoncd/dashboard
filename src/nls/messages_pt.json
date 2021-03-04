@@ -86,6 +86,7 @@
     "dashboard.error.title": "",
     "dashboard.errorBoundary.defaultError": "",
     "dashboard.errorBoundary.pageError": "",
+    "dashboard.eventListener.namespaceSelector": "",
     "dashboard.eventListener.serviceAccount": "",
     "dashboard.eventListener.serviceType": "",
     "dashboard.extension.error": "",

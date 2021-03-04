@@ -86,6 +86,7 @@
     "dashboard.error.title": "错误：",
     "dashboard.errorBoundary.defaultError": "出了点问题",
     "dashboard.errorBoundary.pageError": "加载页面时发生错误",
+    "dashboard.eventListener.namespaceSelector": "",
     "dashboard.eventListener.serviceAccount": "ServiceAccount：",
     "dashboard.eventListener.serviceType": "Service 类型：",
     "dashboard.extension.error": "加载扩展时发生错误",
