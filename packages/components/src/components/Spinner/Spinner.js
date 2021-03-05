@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -17,6 +17,10 @@ import { Renew20 as SpinnerIcon } from '@carbon/icons-react';
 
 import './Spinner.scss';
 
-export default function Spinner({ className }) {
-  return <SpinnerIcon className={`tkn--spinner ${className}`} />;
+export default function Spinner({ children, className }) {
+  return (
+    <SpinnerIcon className={`tkn--spinner ${className}`}>
+      {children}
+    </SpinnerIcon>
+  );
 }
