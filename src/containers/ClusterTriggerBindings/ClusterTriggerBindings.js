@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,13 +16,7 @@ import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
-import {
-  getErrorMessage,
-  getFilters,
-  getTitle,
-  urls
-} from '@tektoncd/dashboard-utils';
-import { InlineNotification } from 'carbon-components-react';
+import { getFilters, getTitle, urls } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 
 import { ListPageLayout } from '..';
@@ -55,6 +49,15 @@ export /* istanbul ignore next */ class ClusterTriggerBindings extends Component
     }
   }
 
+  getError() {
+    const { error } = this.props;
+    if (error) {
+      return { error };
+    }
+
+    return null;
+  }
+
   fetchClusterTriggerBindings() {
     const { filters } = this.props;
     this.props.fetchClusterTriggerBindings({
@@ -63,7 +66,7 @@ export /* istanbul ignore next */ class ClusterTriggerBindings extends Component
   }
 
   render() {
-    const { error, intl, loading, clusterTriggerBindings } = this.props;
+    const { intl, loading, clusterTriggerBindings } = this.props;
     const initialHeaders = [
       {
         key: 'name',
@@ -102,26 +105,11 @@ export /* istanbul ignore next */ class ClusterTriggerBindings extends Component
 
     return (
       <ListPageLayout
+        {...this.props}
+        error={this.getError()}
         hideNamespacesDropdown
         title="ClusterTriggerBindings"
-        {...this.props}
       >
-        {error && (
-          <InlineNotification
-            kind="error"
-            title={intl.formatMessage({
-              id: 'dashboard.error.title',
-              defaultMessage: 'Error:'
-            })}
-            subtitle={getErrorMessage(error)}
-            iconDescription={intl.formatMessage({
-              id: 'dashboard.notification.clear',
-              defaultMessage: 'Clear Notification'
-            })}
-            data-testid="errorNotificationComponent"
-            lowContrast
-          />
-        )}
         <Table
           headers={initialHeaders}
           rows={clusterTriggerBindingsFormatted}

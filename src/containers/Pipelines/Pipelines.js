@@ -21,10 +21,9 @@ import {
 import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
 import keyBy from 'lodash.keyby';
-import { Button, InlineNotification } from 'carbon-components-react';
+import { Button } from 'carbon-components-react';
 import {
   ALL_NAMESPACES,
-  getErrorMessage,
   getFilters,
   getTitle,
   urls
@@ -76,6 +75,29 @@ export /* istanbul ignore next */ class Pipelines extends Component {
     }
   }
 
+  getError() {
+    const { error, intl } = this.props;
+    if (error) {
+      return {
+        error,
+        title: intl.formatMessage({
+          id: 'dashboard.pipelines.errorLoading',
+          defaultMessage: 'Error loading Pipelines'
+        })
+      };
+    }
+
+    const { deleteError } = this.state;
+    if (deleteError) {
+      return {
+        clear: () => this.setState({ deleteError: null }),
+        error: deleteError
+      };
+    }
+
+    return null;
+  }
+
   closeDeleteModal = () => {
     this.setState({
       showDeleteModal: false,
@@ -120,7 +142,6 @@ export /* istanbul ignore next */ class Pipelines extends Component {
 
   render() {
     const {
-      error,
       loading,
       pipelines,
       intl,
@@ -228,42 +249,8 @@ export /* istanbul ignore next */ class Pipelines extends Component {
       )
     }));
 
-    if (error) {
-      return (
-        <InlineNotification
-          kind="error"
-          hideCloseButton
-          lowContrast
-          title={intl.formatMessage({
-            id: 'dashboard.pipelines.errorLoading',
-            defaultMessage: 'Error loading Pipelines'
-          })}
-          subtitle={getErrorMessage(error)}
-        />
-      );
-    }
-
     return (
-      <ListPageLayout title="Pipelines" {...this.props}>
-        {this.state.deleteError && (
-          <InlineNotification
-            kind="error"
-            title={intl.formatMessage({
-              id: 'dashboard.error.title',
-              defaultMessage: 'Error:'
-            })}
-            subtitle={getErrorMessage(this.state.deleteError)}
-            iconDescription={intl.formatMessage({
-              id: 'dashboard.notification.clear',
-              defaultMessage: 'Clear Notification'
-            })}
-            data-testid="errorNotificationComponent"
-            onCloseButtonClick={() => {
-              this.setState({ deleteError: null });
-            }}
-            lowContrast
-          />
-        )}
+      <ListPageLayout {...this.props} error={this.getError()} title="Pipelines">
         <Table
           batchActionButtons={batchActionButtons}
           className="tkn--table--inline-actions"

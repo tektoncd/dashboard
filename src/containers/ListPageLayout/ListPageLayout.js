@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,7 +14,13 @@ limitations under the License.
 import React from 'react';
 import { connect } from 'react-redux';
 import { generatePath } from 'react-router-dom';
-import { ALL_NAMESPACES, paths } from '@tektoncd/dashboard-utils';
+import { injectIntl } from 'react-intl';
+import { InlineNotification } from 'carbon-components-react';
+import {
+  ALL_NAMESPACES,
+  getErrorMessage,
+  paths
+} from '@tektoncd/dashboard-utils';
 
 import { selectNamespace as selectNamespaceAction } from '../../actions/namespaces';
 import { getSelectedNamespace, getTenantNamespace } from '../../reducers';
@@ -24,9 +30,11 @@ import './ListPageLayout.scss';
 
 export const ListPageLayout = ({
   children,
+  error,
   filters,
   hideNamespacesDropdown,
   history,
+  intl,
   location,
   match,
   namespace,
@@ -83,6 +91,25 @@ export const ListPageLayout = ({
           match={match}
         />
       )}
+      {error && (
+        <InlineNotification
+          iconDescription={intl.formatMessage({
+            id: 'dashboard.notification.clear',
+            defaultMessage: 'Clear Notification'
+          })}
+          kind="error"
+          lowContrast
+          {...(error.clear && { onCloseButtonClick: error.clear })}
+          subtitle={getErrorMessage(error.error)}
+          title={
+            error.title ||
+            intl.formatMessage({
+              id: 'dashboard.error.title',
+              defaultMessage: 'Error:'
+            })
+          }
+        />
+      )}
       {children}
     </>
   );
@@ -98,4 +125,7 @@ const mapDispatchToProps = {
   selectNamespace: selectNamespaceAction
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ListPageLayout);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(injectIntl(ListPageLayout));

@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,14 +16,8 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
-import {
-  getErrorMessage,
-  getFilters,
-  getTitle,
-  urls
-} from '@tektoncd/dashboard-utils';
+import { getFilters, getTitle, urls } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
-import { InlineNotification } from 'carbon-components-react';
 
 import { ListPageLayout } from '..';
 import { fetchConditions } from '../../actions/conditions';
@@ -58,6 +52,21 @@ export class Conditions extends Component {
     }
   }
 
+  getError() {
+    const { error, intl } = this.props;
+    if (error) {
+      return {
+        error,
+        title: intl.formatMessage({
+          id: 'dashboard.conditions.errorLoading',
+          defaultMessage: 'Error loading Conditions'
+        })
+      };
+    }
+
+    return null;
+  }
+
   fetchData() {
     const { filters, namespace } = this.props;
     this.props.fetchConditions({
@@ -68,7 +77,6 @@ export class Conditions extends Component {
 
   render() {
     const {
-      error,
       loading,
       conditions,
       intl,
@@ -115,23 +123,12 @@ export class Conditions extends Component {
       )
     }));
 
-    if (error) {
-      return (
-        <InlineNotification
-          kind="error"
-          hideCloseButton
-          lowContrast
-          title={intl.formatMessage({
-            id: 'dashboard.conditions.errorLoading',
-            defaultMessage: 'Error loading Conditions'
-          })}
-          subtitle={getErrorMessage(error)}
-        />
-      );
-    }
-
     return (
-      <ListPageLayout title="Conditions" {...this.props}>
+      <ListPageLayout
+        {...this.props}
+        error={this.getError()}
+        title="Conditions"
+      >
         <Table
           headers={headers}
           rows={conditionsFormatted}

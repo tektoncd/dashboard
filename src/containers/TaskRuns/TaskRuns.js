@@ -16,7 +16,6 @@ import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
 import keyBy from 'lodash.keyby';
-import { InlineNotification } from 'carbon-components-react';
 import {
   DeleteModal,
   StatusFilterDropdown,
@@ -25,7 +24,6 @@ import {
 import {
   ALL_NAMESPACES,
   generateId,
-  getErrorMessage,
   getFilters,
   getStatus,
   getStatusFilter,
@@ -82,6 +80,29 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
     } else if (webSocketConnected && prevWebSocketConnected === false) {
       this.fetchTaskRuns();
     }
+  }
+
+  getError() {
+    const { error, intl } = this.props;
+    if (error) {
+      return {
+        error,
+        title: intl.formatMessage({
+          id: 'dashboard.taskRuns.errorLoading',
+          defaultMessage: 'Error loading TaskRuns'
+        })
+      };
+    }
+
+    const { deleteError } = this.state;
+    if (deleteError) {
+      return {
+        clear: () => this.setState({ deleteError: null }),
+        error: deleteError
+      };
+    }
+
+    return null;
   }
 
   cancel = taskRun => {
@@ -244,7 +265,6 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
 
   render() {
     const {
-      error,
       kind,
       loading,
       namespace: selectedNamespace,
@@ -255,20 +275,6 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
     } = this.props;
     const { showDeleteModal, toBeDeleted } = this.state;
 
-    if (error) {
-      return (
-        <InlineNotification
-          kind="error"
-          hideCloseButton
-          lowContrast
-          title={intl.formatMessage({
-            id: 'dashboard.taskRuns.errorLoading',
-            defaultMessage: 'Error loading TaskRuns'
-          })}
-          subtitle={getErrorMessage(error)}
-        />
-      );
-    }
     const taskRunActions = this.taskRunActions();
     sortRunsByStartTime(taskRuns);
 
@@ -313,26 +319,7 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
     );
 
     return (
-      <ListPageLayout title="TaskRuns" {...this.props}>
-        {this.state.deleteError && (
-          <InlineNotification
-            kind="error"
-            title={intl.formatMessage({
-              id: 'dashboard.error.title',
-              defaultMessage: 'Error:'
-            })}
-            subtitle={getErrorMessage(this.state.deleteError)}
-            iconDescription={intl.formatMessage({
-              id: 'dashboard.notification.clear',
-              defaultMessage: 'Clear Notification'
-            })}
-            data-testid="errorNotificationComponent"
-            onCloseButtonClick={() => {
-              this.setState({ deleteError: null });
-            }}
-            lowContrast
-          />
-        )}
+      <ListPageLayout {...this.props} error={this.getError()} title="TaskRuns">
         <TaskRunsList
           batchActionButtons={batchActionButtons}
           filters={filters}

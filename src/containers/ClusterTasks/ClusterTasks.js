@@ -22,17 +22,12 @@ import {
   FormattedDate,
   Table
 } from '@tektoncd/dashboard-components';
-import { Button, InlineNotification } from 'carbon-components-react';
+import { Button } from 'carbon-components-react';
 import {
   TrashCan16 as DeleteIcon,
   Playlist16 as RunsIcon
 } from '@carbon/icons-react';
-import {
-  getErrorMessage,
-  getFilters,
-  getTitle,
-  urls
-} from '@tektoncd/dashboard-utils';
+import { getFilters, getTitle, urls } from '@tektoncd/dashboard-utils';
 
 import { ListPageLayout } from '..';
 import { fetchClusterTasks } from '../../actions/tasks';
@@ -71,6 +66,29 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
     ) {
       this.fetchData();
     }
+  }
+
+  getError() {
+    const { error, intl } = this.props;
+    if (error) {
+      return {
+        error,
+        title: intl.formatMessage({
+          id: 'dashboard.clusterTasks.errorLoading',
+          defaultMessage: 'Error loading ClusterTasks'
+        })
+      };
+    }
+
+    const { deleteError } = this.state;
+    if (deleteError) {
+      return {
+        clear: () => this.setState({ deleteError: null }),
+        error: deleteError
+      };
+    }
+
+    return null;
   }
 
   closeDeleteModal = () => {
@@ -116,7 +134,7 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
   }
 
   render() {
-    const { error, loading, clusterTasks, intl } = this.props;
+    const { loading, clusterTasks, intl } = this.props;
     const { showDeleteModal, toBeDeleted } = this.state;
 
     const batchActionButtons = this.props.isReadOnly
@@ -215,45 +233,13 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
       )
     }));
 
-    if (error) {
-      return (
-        <InlineNotification
-          hideCloseButton
-          kind="error"
-          title={intl.formatMessage({
-            id: 'dashboard.clusterTasks.errorLoading',
-            defaultMessage: 'Error loading ClusterTasks'
-          })}
-          subtitle={getErrorMessage(error)}
-          lowContrast
-        />
-      );
-    }
     return (
       <ListPageLayout
+        {...this.props}
+        error={this.getError()}
         hideNamespacesDropdown
         title="ClusterTasks"
-        {...this.props}
       >
-        {this.state.deleteError && (
-          <InlineNotification
-            kind="error"
-            title={intl.formatMessage({
-              id: 'dashboard.error.title',
-              defaultMessage: 'Error:'
-            })}
-            subtitle={getErrorMessage(this.state.deleteError)}
-            iconDescription={intl.formatMessage({
-              id: 'dashboard.notification.clear',
-              defaultMessage: 'Clear Notification'
-            })}
-            data-testid="errorNotificationComponent"
-            onCloseButtonClick={() => {
-              this.setState({ deleteError: null });
-            }}
-            lowContrast
-          />
-        )}
         <Table
           batchActionButtons={batchActionButtons}
           className="tkn--table--inline-actions"

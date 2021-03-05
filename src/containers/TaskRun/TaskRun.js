@@ -86,7 +86,6 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
 
   constructor(props) {
     super(props);
-    this.showRerunNotification = this.showRerunNotification.bind(this);
 
     this.state = {
       isLogsMaximized: false,
@@ -198,9 +197,9 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
     history.push(browserURL);
   };
 
-  showRerunNotification(value) {
+  showRerunNotification = value => {
     this.setState({ showRerunNotification: value });
-  }
+  };
 
   fetchTaskAndRuns(taskRunName, namespace) {
     this.props.fetchTaskRun({ name: taskRunName, namespace }).then(taskRun => {

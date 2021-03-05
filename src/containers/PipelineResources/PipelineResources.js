@@ -18,7 +18,6 @@ import isEqual from 'lodash.isequal';
 import keyBy from 'lodash.keyby';
 import {
   ALL_NAMESPACES,
-  getErrorMessage,
   getFilters,
   getTitle,
   urls
@@ -27,7 +26,6 @@ import {
   DeleteModal,
   PipelineResources as PipelineResourcesList
 } from '@tektoncd/dashboard-components';
-import { InlineNotification } from 'carbon-components-react';
 import { Add16 as Add, TrashCan32 as Delete } from '@carbon/icons-react';
 
 import { ListPageLayout } from '..';
@@ -71,6 +69,29 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
     ) {
       this.fetchData();
     }
+  }
+
+  getError() {
+    const { error, intl } = this.props;
+    if (error) {
+      return {
+        error,
+        title: intl.formatMessage({
+          id: 'dashboard.pipelineResources.error',
+          defaultMessage: 'Error loading PipelineResources'
+        })
+      };
+    }
+
+    const { deleteError } = this.state;
+    if (deleteError) {
+      return {
+        clear: () => this.setState({ deleteError: null }),
+        error: deleteError
+      };
+    }
+
+    return null;
   }
 
   openDeleteModal = (selectedRows, cancelSelection) => {
@@ -168,7 +189,6 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
 
   render() {
     const {
-      error,
       loading,
       namespace: selectedNamespace,
       pipelineResources,
@@ -176,21 +196,6 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
     } = this.props;
 
     const { isDeleteModalOpen, toBeDeleted } = this.state;
-
-    if (error) {
-      return (
-        <InlineNotification
-          kind="error"
-          hideCloseButton
-          lowContrast
-          title={intl.formatMessage({
-            id: 'dashboard.pipelineResources.error',
-            defaultMessage: 'Error loading PipelineResources'
-          })}
-          subtitle={getErrorMessage(error)}
-        />
-      );
-    }
 
     const toolbarButtons = this.props.isReadOnly
       ? []
@@ -220,26 +225,11 @@ export /* istanbul ignore next */ class PipelineResources extends Component {
         ];
 
     return (
-      <ListPageLayout title="PipelineResources" {...this.props}>
-        {this.state.deleteError && (
-          <InlineNotification
-            kind="error"
-            title={intl.formatMessage({
-              id: 'dashboard.error.title',
-              defaultMessage: 'Error:'
-            })}
-            subtitle={getErrorMessage(this.state.deleteError)}
-            iconDescription={intl.formatMessage({
-              id: 'dashboard.notification.clear',
-              defaultMessage: 'Clear Notification'
-            })}
-            data-testid="errorNotificationComponent"
-            onCloseButtonClick={() => {
-              this.setState({ deleteError: null });
-            }}
-            lowContrast
-          />
-        )}
+      <ListPageLayout
+        {...this.props}
+        error={this.getError()}
+        title="PipelineResources"
+      >
         <PipelineResourcesList
           batchActionButtons={batchActionButtons}
           loading={loading && !pipelineResources.length}

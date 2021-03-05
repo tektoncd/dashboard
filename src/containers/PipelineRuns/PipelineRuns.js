@@ -16,7 +16,6 @@ import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
 import keyBy from 'lodash.keyby';
-import { InlineNotification } from 'carbon-components-react';
 import {
   DeleteModal,
   PipelineRuns as PipelineRunsList,
@@ -25,7 +24,6 @@ import {
 import {
   ALL_NAMESPACES,
   generateId,
-  getErrorMessage,
   getFilters,
   getStatus,
   getStatusFilter,
@@ -84,6 +82,29 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
     } else if (webSocketConnected && prevWebSocketConnected === false) {
       this.fetchPipelineRuns();
     }
+  }
+
+  getError() {
+    const { error, intl } = this.props;
+    if (error) {
+      return {
+        error,
+        title: intl.formatMessage({
+          id: 'dashboard.pipelineRuns.error',
+          defaultMessage: 'Error loading PipelineRuns'
+        })
+      };
+    }
+
+    const { deleteError } = this.state;
+    if (deleteError) {
+      return {
+        clear: () => this.setState({ deleteError: null }),
+        error: deleteError
+      };
+    }
+
+    return null;
   }
 
   cancel = pipelineRun => {
@@ -243,7 +264,6 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
 
   render() {
     const {
-      error,
       intl,
       loading,
       pipelineName,
@@ -253,20 +273,6 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
     } = this.props;
     const { showDeleteModal, toBeDeleted } = this.state;
 
-    if (error) {
-      return (
-        <InlineNotification
-          kind="error"
-          hideCloseButton
-          lowContrast
-          title={intl.formatMessage({
-            id: 'dashboard.pipelineRuns.error',
-            defaultMessage: 'Error loading PipelineRuns'
-          })}
-          subtitle={getErrorMessage(error)}
-        />
-      );
-    }
     const pipelineRunActions = this.pipelineRunActions();
     sortRunsByStartTime(pipelineRuns);
 
@@ -311,26 +317,11 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
     );
 
     return (
-      <ListPageLayout title="PipelineRuns" {...this.props}>
-        {this.state.deleteError && (
-          <InlineNotification
-            kind="error"
-            title={intl.formatMessage({
-              id: 'dashboard.error.title',
-              defaultMessage: 'Error:'
-            })}
-            subtitle={getErrorMessage(this.state.deleteError)}
-            iconDescription={intl.formatMessage({
-              id: 'dashboard.notification.clear',
-              defaultMessage: 'Clear Notification'
-            })}
-            data-testid="errorNotificationComponent"
-            onCloseButtonClick={() => {
-              this.setState({ deleteError: null });
-            }}
-            lowContrast
-          />
-        )}
+      <ListPageLayout
+        {...this.props}
+        error={this.getError()}
+        title="PipelineRuns"
+      >
         <PipelineRunsList
           batchActionButtons={batchActionButtons}
           filters={filters}
