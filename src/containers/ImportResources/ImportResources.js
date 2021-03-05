@@ -212,29 +212,28 @@ export class ImportResources extends Component {
 
     return (
       <div className="tkn--importresources">
-        {this.state.submitError && (
-          <InlineNotification
-            kind="error"
-            title={intl.formatMessage({
-              id: 'dashboard.error.title',
-              defaultMessage: 'Error:'
-            })}
-            subtitle={getErrorMessage(this.state.submitError)}
-            iconDescription={intl.formatMessage({
-              id: 'dashboard.notification.clear',
-              defaultMessage: 'Clear Notification'
-            })}
-            data-testid="errorNotificationComponent"
-            onCloseButtonClick={this.resetError}
-            lowContrast
-          />
-        )}
         <h1 className="tkn--importresources-header">
           {intl.formatMessage({
             id: 'dashboard.importResources.heading',
             defaultMessage: 'Import resources from repository'
           })}
         </h1>
+        {this.state.submitError && (
+          <InlineNotification
+            iconDescription={intl.formatMessage({
+              id: 'dashboard.notification.clear',
+              defaultMessage: 'Clear Notification'
+            })}
+            kind="error"
+            lowContrast
+            onCloseButtonClick={this.resetError}
+            subtitle={getErrorMessage(this.state.submitError)}
+            title={intl.formatMessage({
+              id: 'dashboard.error.title',
+              defaultMessage: 'Error:'
+            })}
+          />
+        )}
         <Form>
           <TextInput
             data-testid="repository-url-field"

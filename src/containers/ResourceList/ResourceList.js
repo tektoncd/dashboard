@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,16 +13,10 @@ limitations under the License.
 /* istanbul ignore file */
 import React, { Component } from 'react';
 import { injectIntl } from 'react-intl';
-import { InlineNotification } from 'carbon-components-react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
-import {
-  getErrorMessage,
-  getFilters,
-  getTitle,
-  urls
-} from '@tektoncd/dashboard-utils';
+import { getFilters, getTitle, urls } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 
 import { ListPageLayout } from '..';
@@ -71,6 +65,26 @@ export class ResourceListContainer extends Component {
     }
   }
 
+  getError() {
+    const { intl, match } = this.props;
+    const { error } = this.state;
+    const { type } = match.params;
+    if (error) {
+      return {
+        error,
+        title: intl.formatMessage(
+          {
+            id: 'dashboard.resourceList.errorLoading',
+            defaultMessage: 'Error loading {type}'
+          },
+          { type }
+        )
+      };
+    }
+
+    return null;
+  }
+
   fetchResources() {
     const { filters, match, namespace } = this.props;
     const { group, version, type } = match.params;
@@ -100,25 +114,7 @@ export class ResourceListContainer extends Component {
   render() {
     const { intl, match } = this.props;
     const { group, type, version } = match.params;
-    const { error, loading, namespaced, resources } = this.state;
-
-    if (error) {
-      return (
-        <InlineNotification
-          kind="error"
-          hideCloseButton
-          lowContrast
-          title={intl.formatMessage(
-            {
-              id: 'dashboard.resourceList.errorLoading',
-              defaultMessage: 'Error loading {type}'
-            },
-            { type }
-          )}
-          subtitle={getErrorMessage(error)}
-        />
-      );
-    }
+    const { loading, namespaced, resources } = this.state;
 
     const emptyText = intl.formatMessage(
       {
@@ -130,9 +126,10 @@ export class ResourceListContainer extends Component {
 
     return (
       <ListPageLayout
+        {...this.props}
+        error={this.getError()}
         title={`${group}/${version}/${type}`}
         hideNamespacesDropdown={!namespaced}
-        {...this.props}
       >
         <Table
           headers={[

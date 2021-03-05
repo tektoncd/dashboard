@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -42,21 +42,6 @@ export const Extensions = /* istanbul ignore next */ ({
     });
   }, []);
 
-  if (error) {
-    return (
-      <InlineNotification
-        kind="error"
-        hideCloseButton
-        lowContrast
-        title={intl.formatMessage({
-          id: 'dashboard.extensions.errorLoading',
-          defaultMessage: 'Error loading extensions'
-        })}
-        subtitle={getErrorMessage(error)}
-      />
-    );
-  }
-
   const emptyText = intl.formatMessage({
     id: 'dashboard.extensions.emptyState',
     defaultMessage: 'No extensions found'
@@ -70,6 +55,18 @@ export const Extensions = /* istanbul ignore next */ ({
           defaultMessage: 'Extensions'
         })}
       </h1>
+
+      {error && (
+        <InlineNotification
+          kind="error"
+          lowContrast
+          subtitle={getErrorMessage(error)}
+          title={intl.formatMessage({
+            id: 'dashboard.extensions.errorLoading',
+            defaultMessage: 'Error loading extensions'
+          })}
+        />
+      )}
 
       <Table
         headers={[

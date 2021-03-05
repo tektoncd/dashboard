@@ -136,6 +136,12 @@ export /* istanbul ignore next */ class About extends Component {
 
     return (
       <div className="tkn--about">
+        <h1>
+          {intl.formatMessage({
+            id: 'dashboard.about.title',
+            defaultMessage: 'About'
+          })}
+        </h1>
         {error && (
           <InlineNotification
             kind="error"
@@ -147,12 +153,6 @@ export /* istanbul ignore next */ class About extends Component {
             lowContrast
           />
         )}
-        <h1>
-          {intl.formatMessage({
-            id: 'dashboard.about.title',
-            defaultMessage: 'About'
-          })}
-        </h1>
         <div className="tkn--about--content">
           <div className="tkn--about--tables">
             <Table

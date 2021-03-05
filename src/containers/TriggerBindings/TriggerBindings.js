@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,13 +16,7 @@ import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
-import {
-  getErrorMessage,
-  getFilters,
-  getTitle,
-  urls
-} from '@tektoncd/dashboard-utils';
-import { InlineNotification } from 'carbon-components-react';
+import { getFilters, getTitle, urls } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 
 import { ListPageLayout } from '..';
@@ -58,6 +52,15 @@ export /* istanbul ignore next */ class TriggerBindings extends Component {
     }
   }
 
+  getError() {
+    const { error } = this.props;
+    if (error) {
+      return { error };
+    }
+
+    return null;
+  }
+
   fetchTriggerBindings() {
     const { filters, namespace } = this.props;
     this.props.fetchTriggerBindings({
@@ -67,13 +70,7 @@ export /* istanbul ignore next */ class TriggerBindings extends Component {
   }
 
   render() {
-    const {
-      error,
-      intl,
-      loading,
-      selectedNamespace,
-      triggerBindings
-    } = this.props;
+    const { intl, loading, selectedNamespace, triggerBindings } = this.props;
 
     const initialHeaders = [
       {
@@ -114,23 +111,11 @@ export /* istanbul ignore next */ class TriggerBindings extends Component {
     }));
 
     return (
-      <ListPageLayout title="TriggerBindings" {...this.props}>
-        {error && (
-          <InlineNotification
-            kind="error"
-            title={intl.formatMessage({
-              id: 'dashboard.error.title',
-              defaultMessage: 'Error:'
-            })}
-            subtitle={getErrorMessage(error)}
-            iconDescription={intl.formatMessage({
-              id: 'dashboard.notification.clear',
-              defaultMessage: 'Clear Notification'
-            })}
-            data-testid="errorNotificationComponent"
-            lowContrast
-          />
-        )}
+      <ListPageLayout
+        {...this.props}
+        error={this.getError()}
+        title="TriggerBindings"
+      >
         <Table
           headers={initialHeaders}
           rows={triggerBindingsFormatted}

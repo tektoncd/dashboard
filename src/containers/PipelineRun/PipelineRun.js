@@ -57,7 +57,6 @@ const { PIPELINE_TASK, RETRY, STEP, VIEW } = queryParamConstants;
 export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   constructor(props) {
     super(props);
-    this.showRerunNotification = this.showRerunNotification.bind(this);
 
     this.state = {
       loading: true,
@@ -192,9 +191,9 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     history.push(browserURL);
   };
 
-  showRerunNotification(value) {
+  showRerunNotification = value => {
     this.setState({ showRerunNotification: value });
-  }
+  };
 
   fetchData({ skipLoading } = {}) {
     const { match } = this.props;

@@ -17,10 +17,9 @@ import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import isEqual from 'lodash.isequal';
 import keyBy from 'lodash.keyby';
-import { Button, InlineNotification } from 'carbon-components-react';
+import { Button } from 'carbon-components-react';
 import {
   ALL_NAMESPACES,
-  getErrorMessage,
   getFilters,
   getTitle,
   urls
@@ -76,6 +75,29 @@ export /* istanbul ignore next */ class Tasks extends Component {
     }
   }
 
+  getError() {
+    const { error, intl } = this.props;
+    if (error) {
+      return {
+        error,
+        title: intl.formatMessage({
+          id: 'dashboard.tasks.errorLoading',
+          defaultMessage: 'Error loading Tasks'
+        })
+      };
+    }
+
+    const { deleteError } = this.state;
+    if (deleteError) {
+      return {
+        clear: () => this.setState({ deleteError: null }),
+        error: deleteError
+      };
+    }
+
+    return null;
+  }
+
   closeDeleteModal = () => {
     this.setState({
       showDeleteModal: false,
@@ -117,13 +139,7 @@ export /* istanbul ignore next */ class Tasks extends Component {
   }
 
   render() {
-    const {
-      error,
-      loading,
-      tasks,
-      intl,
-      namespace: selectedNamespace
-    } = this.props;
+    const { loading, tasks, intl, namespace: selectedNamespace } = this.props;
     const { showDeleteModal, toBeDeleted } = this.state;
 
     const batchActionButtons = this.props.isReadOnly
@@ -226,42 +242,8 @@ export /* istanbul ignore next */ class Tasks extends Component {
       )
     }));
 
-    if (error) {
-      return (
-        <InlineNotification
-          kind="error"
-          hideCloseButton
-          lowContrast
-          title={intl.formatMessage({
-            id: 'dashboard.tasks.errorLoading',
-            defaultMessage: 'Error loading Tasks'
-          })}
-          subtitle={getErrorMessage(error)}
-        />
-      );
-    }
-
     return (
-      <ListPageLayout title="Tasks" {...this.props}>
-        {this.state.deleteError && (
-          <InlineNotification
-            kind="error"
-            title={intl.formatMessage({
-              id: 'dashboard.error.title',
-              defaultMessage: 'Error:'
-            })}
-            subtitle={getErrorMessage(this.state.deleteError)}
-            iconDescription={intl.formatMessage({
-              id: 'dashboard.notification.clear',
-              defaultMessage: 'Clear Notification'
-            })}
-            data-testid="errorNotificationComponent"
-            onCloseButtonClick={() => {
-              this.setState({ deleteError: null });
-            }}
-            lowContrast
-          />
-        )}
+      <ListPageLayout {...this.props} error={this.getError()} title="Tasks">
         <Table
           batchActionButtons={batchActionButtons}
           className="tkn--table--inline-actions"
