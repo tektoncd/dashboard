@@ -60,13 +60,14 @@ class Step extends Component {
         defaultMessage: 'Failed'
       });
     }
+
     if (status === 'waiting') {
       return intl.formatMessage({
         id: 'dashboard.taskRun.status.waiting',
         defaultMessage: 'Waiting'
       });
     }
-    // task is done, step did not run
+
     return intl.formatMessage({
       id: 'dashboard.taskRun.status.notRun',
       defaultMessage: 'Not run'
@@ -95,11 +96,11 @@ class Step extends Component {
             type="inverse"
             reason={reason}
             status={status}
+            title={statusLabel}
           />
           <span className="tkn--step-name" title={stepName}>
             {stepName}
           </span>
-          <span className="tkn--status-label">{statusLabel}</span>
         </a>
       </li>
     );

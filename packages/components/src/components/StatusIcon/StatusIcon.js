@@ -10,7 +10,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-/* istanbul ignore file */
 
 import './StatusIcon.scss';
 
@@ -48,7 +47,8 @@ export default function StatusIcon({
   DefaultIcon,
   type = 'normal',
   reason,
-  status
+  status,
+  title
 }) {
   let statusClass;
   if (
@@ -84,6 +84,8 @@ export default function StatusIcon({
       className={classNames('tkn--status-icon', {
         [`tkn--status-icon--${statusClass}`]: statusClass
       })}
-    />
+    >
+      {title && <title>{title}</title>}
+    </Icon>
   ) : null;
 }
