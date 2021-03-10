@@ -7,7 +7,7 @@ In 2021 and beyond we would like to continue adding new features to make this ex
 This is an incomplete list of work we hope to accomplish.
 
 ## Currency
-- continue adding support for latest Pipelines ([roadmap](https://github.com/tektoncd/pipeline/blob/master/roadmap.md)) and Triggers ([roadmap](https://github.com/tektoncd/triggers/blob/master/roadmap.md)) releases
+- continue adding support for latest Pipelines ([roadmap](https://github.com/tektoncd/pipeline/blob/main/roadmap.md)) and Triggers ([roadmap](https://github.com/tektoncd/triggers/blob/main/roadmap.md)) releases
 - this includes support for workspaces, Custom Tasks (i.e. the Run CRD), etc.
 - we also want to have a Dashboard beta release
 
