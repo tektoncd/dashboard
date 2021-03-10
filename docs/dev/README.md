@@ -2,7 +2,6 @@
 
 This guide explains how to build, deploy and test the Tekton Dashboard. It covers the following topics:
 
-- [Before you begin](#before-you-begin)
 - [Pre-requisites](#pre-requisites)
 - [Checkout your fork](#checkout-your-fork)
 - [Build the frontend](#build-the-frontend)
@@ -20,10 +19,6 @@ This guide explains how to build, deploy and test the Tekton Dashboard. It cover
 - [Storybook](#storybook)
 - [Troubleshooting](#troubleshooting)
 - [Next steps](#next-steps)
-
-## Before you begin
-
-Many of the instructions here replicate what's in the [tektoncd/pipeline development guide](https://github.com/tektoncd/pipeline/blob/master/DEVELOPMENT.md), with a couple of caveats currently.
 
 ## Pre-requisites
 

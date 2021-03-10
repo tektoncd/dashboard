@@ -31,8 +31,8 @@ or other projects may require a newer version.
   will create a cluster running locally, with RBAC enabled and your user granted
   the `cluster-admin` role.
 
-- Tekton Pipelines must be installed in the cluster. See [Installing Tekton Pipelines](https://github.com/tektoncd/pipeline/blob/master/docs/install.md).
-- Optionally, install Tekton Triggers. See [Installing Tekton Triggers](https://github.com/tektoncd/triggers/blob/master/docs/install.md).
+- Tekton Pipelines must be installed in the cluster. See [Installing Tekton Pipelines](https://github.com/tektoncd/pipeline/blob/main/docs/install.md).
+- Optionally, install Tekton Triggers. See [Installing Tekton Triggers](https://github.com/tektoncd/triggers/blob/main/docs/install.md).
 
 ## Which version should I use
 
