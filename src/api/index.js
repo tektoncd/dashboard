@@ -87,6 +87,7 @@ export function importResources({
   namespace,
   path,
   repositoryURL,
+  revision,
   serviceAccount
 }) {
   const taskSpec = {
@@ -184,11 +185,13 @@ export function importResources({
         name: 'url',
         value: repositoryURL
       },
-      {
-        name: 'revision',
-        value: 'master'
-      }
-    ]
+      revision
+        ? {
+            name: 'revision',
+            value: revision
+          }
+        : null
+    ].filter(Boolean)
   };
 
   const pipelineRunSpec = {

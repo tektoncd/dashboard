@@ -99,12 +99,12 @@ it('importResources', () => {
   const mockDateNow = jest
     .spyOn(Date, 'now')
     .mockImplementation(() => 'fake-timestamp');
-  const repositoryURL = 'https://github.com/test/testing';
-  const path = 'fake-directory';
-  const namespace = 'fake-namespace';
-  const serviceAccount = 'fake-serviceAccount';
   const importerNamespace = 'fake-importer-namespace';
   const method = 'apply';
+  const namespace = 'fake-namespace';
+  const path = 'fake-directory';
+  const repositoryURL = 'https://github.com/test/testing';
+  const serviceAccount = 'fake-serviceAccount';
 
   const payload = {
     importerNamespace,
@@ -229,10 +229,163 @@ it('importResources', () => {
               {
                 name: 'url',
                 value: 'https://github.com/test/testing'
+              }
+            ],
+            type: 'git'
+          }
+        }
+      ],
+      serviceAccountName: serviceAccount
+    }
+  };
+
+  fetchMock.post('*', { body: data, status: 201 });
+  return API.importResources(payload).then(response => {
+    expect(response).toEqual(data);
+    expect(JSON.parse(fetchMock.lastOptions().body)).toMatchObject(data);
+    fetchMock.restore();
+    mockDateNow.mockRestore();
+  });
+});
+
+it('importResources with revision and no serviceAccount', () => {
+  const mockDateNow = jest
+    .spyOn(Date, 'now')
+    .mockImplementation(() => 'fake-timestamp');
+  const importerNamespace = 'fake-importer-namespace';
+  const method = 'apply';
+  const namespace = 'fake-namespace';
+  const path = 'fake-directory';
+  const repositoryURL = 'https://github.com/test/testing';
+  const revision = 'some_git_revision';
+
+  const payload = {
+    importerNamespace,
+    method,
+    namespace,
+    path,
+    repositoryURL,
+    revision
+  };
+  const data = {
+    apiVersion: 'tekton.dev/v1beta1',
+    kind: 'PipelineRun',
+    metadata: {
+      name: `import-resources-${Date.now()}`,
+      labels: {
+        app: 'tekton-app',
+        [labels.DASHBOARD_IMPORT]: 'true'
+      }
+    },
+    spec: {
+      params: [
+        {
+          name: 'path',
+          value: 'fake-directory'
+        },
+        {
+          name: 'target-namespace',
+          value: 'fake-namespace'
+        }
+      ],
+      pipelineSpec: {
+        params: [
+          {
+            default: '.',
+            description: 'The path from which resources are to be imported',
+            name: 'path',
+            type: 'string'
+          },
+          {
+            default: 'tekton-pipelines',
+            description:
+              'The namespace in which to create the resources being imported',
+            name: 'target-namespace',
+            type: 'string'
+          }
+        ],
+        resources: [
+          {
+            name: 'git-source',
+            type: 'git'
+          }
+        ],
+        tasks: [
+          {
+            name: 'import-resources',
+            params: [
+              {
+                name: 'path',
+                value: '$(params.path)'
+              },
+              {
+                name: 'target-namespace',
+                value: '$(params.target-namespace)'
+              }
+            ],
+            resources: {
+              inputs: [
+                {
+                  name: 'git-source',
+                  resource: 'git-source'
+                }
+              ]
+            },
+            taskSpec: {
+              params: [
+                {
+                  default: '.',
+                  description:
+                    'The path from which resources are to be imported',
+                  name: 'path',
+                  type: 'string'
+                },
+                {
+                  default: 'tekton-pipelines',
+                  description:
+                    'The namespace in which to create the resources being imported',
+                  name: 'target-namespace',
+                  type: 'string'
+                }
+              ],
+              resources: {
+                inputs: [
+                  {
+                    name: 'git-source',
+                    type: 'git'
+                  }
+                ]
+              },
+              steps: [
+                {
+                  args: [
+                    method,
+                    '-f',
+                    '$(resources.inputs.git-source.path)/$(params.path)',
+                    '-n',
+                    '$(params.target-namespace)'
+                  ],
+                  command: ['kubectl'],
+                  image: 'lachlanevenson/k8s-kubectl:latest',
+                  name: 'import'
+                }
+              ]
+            }
+          }
+        ]
+      },
+      resources: [
+        {
+          name: 'git-source',
+          resourceSpec: {
+            params: [
+              {
+                name: 'url',
+                value: 'https://github.com/test/testing'
               },
               {
                 name: 'revision',
-                value: 'master'
+                value: revision
               }
             ],
             type: 'git'
