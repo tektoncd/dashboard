@@ -19,6 +19,15 @@ limitations under the License.
     color: $text-05; // Since by default the contrast/colour choice is barely readable.
   }
 
+  .bx--label {
+    display: flex;
+    align-items: center;
+
+    .bx--tooltip__trigger {
+      margin-left: 0.5rem;
+    }
+  }
+
   .bx--combo-box.bx--list-box,
   .bx--dropdown.bx--list-box,
   .bx--text-input__field-wrapper {

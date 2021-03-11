@@ -21,9 +21,10 @@ import {
   Form,
   InlineNotification,
   TextInput,
-  ToastNotification
+  ToastNotification,
+  TooltipIcon
 } from 'carbon-components-react';
-
+import { Information16 } from '@carbon/icons-react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
@@ -52,6 +53,12 @@ function isValidGitURL(url) {
 
 const initialMethod = 'apply';
 
+const HelpIcon = ({ title }) => (
+  <TooltipIcon direction="top" align="start" tooltipText={title}>
+    <Information16 />
+  </TooltipIcon>
+);
+
 export class ImportResources extends Component {
   constructor(props) {
     super(props);
@@ -65,6 +72,7 @@ export class ImportResources extends Component {
       namespace: props.navNamespace !== ALL_NAMESPACES && props.navNamespace,
       path: '',
       repositoryURL: '',
+      revision: '',
       serviceAccount: '',
       submitError: '',
       submitSuccess: false
@@ -137,6 +145,7 @@ export class ImportResources extends Component {
       namespace,
       path,
       repositoryURL,
+      revision,
       serviceAccount
     } = this.state;
 
@@ -165,6 +174,7 @@ export class ImportResources extends Component {
       namespace,
       path,
       repositoryURL,
+      revision,
       serviceAccount
     })
       .then(body => {
@@ -237,21 +247,27 @@ export class ImportResources extends Component {
         <Form>
           <TextInput
             data-testid="repository-url-field"
-            helperText={intl.formatMessage({
-              id: 'dashboard.importResources.repo.helperText',
-              defaultMessage:
-                'The location of the YAML definitions to be applied (Git URLs supported)'
-            })}
             id="import-repository-url"
             invalid={this.state.invalidInput}
             invalidText={intl.formatMessage({
               id: 'dashboard.importResources.repo.invalidText',
               defaultMessage: 'Please enter a valid Git URL'
             })}
-            labelText={intl.formatMessage({
-              id: 'dashboard.importResources.repo.labelText',
-              defaultMessage: 'Repository URL'
-            })}
+            labelText={
+              <>
+                {intl.formatMessage({
+                  id: 'dashboard.importResources.repo.labelText',
+                  defaultMessage: 'Repository URL'
+                })}
+                <HelpIcon
+                  title={intl.formatMessage({
+                    id: 'dashboard.importResources.repo.helperText',
+                    defaultMessage:
+                      'The location of the YAML definitions to be applied (Git URLs supported)'
+                  })}
+                />
+              </>
+            }
             name="repositoryURL"
             onChange={this.handleTextInput}
             placeholder="https://github.com/my-repository"
@@ -261,16 +277,22 @@ export class ImportResources extends Component {
           />
           <TextInput
             data-testid="path-field"
-            helperText={intl.formatMessage({
-              id: 'dashboard.importResources.path.helperText',
-              defaultMessage:
-                'The path of the Tekton resources to import from the repository. Leave blank if the resources are at the top-level directory.'
-            })}
             id="import-path"
-            labelText={intl.formatMessage({
-              id: 'dashboard.importResources.path.labelText',
-              defaultMessage: 'Repository path (optional)'
-            })}
+            labelText={
+              <>
+                {intl.formatMessage({
+                  id: 'dashboard.importResources.path.labelText',
+                  defaultMessage: 'Repository path (optional)'
+                })}
+                <HelpIcon
+                  title={intl.formatMessage({
+                    id: 'dashboard.importResources.path.helperText',
+                    defaultMessage:
+                      'The path of the Tekton resources to import from the repository. Leave blank if the resources are at the top-level directory.'
+                  })}
+                />
+              </>
+            }
             name="path"
             onChange={this.handleTextInput}
             placeholder={intl.formatMessage({
@@ -279,17 +301,49 @@ export class ImportResources extends Component {
             })}
             value={this.state.path}
           />
+          <TextInput
+            data-testid="revision-field"
+            id="import-revision"
+            labelText={
+              <>
+                {intl.formatMessage({
+                  id: 'dashboard.importResources.revision.labelText',
+                  defaultMessage: 'Revision (optional)'
+                })}
+                <HelpIcon
+                  title={intl.formatMessage({
+                    id: 'dashboard.importResources.revision.helperText',
+                    defaultMessage:
+                      'The git revision (branch, tag, commit SHA or ref) of the repository to clone. Leave blank to use the default branch.'
+                  })}
+                />
+              </>
+            }
+            name="revision"
+            onChange={this.handleTextInput}
+            placeholder={intl.formatMessage({
+              id: 'dashboard.importResources.revision.placeholder',
+              defaultMessage: 'Enter revision'
+            })}
+            value={this.state.revision}
+          />
           <NamespacesDropdown
             id="import-namespaces-dropdown"
-            helperText={intl.formatMessage({
-              id: 'dashboard.importResources.targetNamespace.helperText',
-              defaultMessage:
-                'The namespace in which the resources will be created'
-            })}
-            titleText={intl.formatMessage({
-              id: 'dashboard.importResources.targetNamespace.titleText',
-              defaultMessage: 'Target namespace'
-            })}
+            titleText={
+              <>
+                {intl.formatMessage({
+                  id: 'dashboard.importResources.targetNamespace.titleText',
+                  defaultMessage: 'Target namespace'
+                })}
+                <HelpIcon
+                  title={intl.formatMessage({
+                    id: 'dashboard.importResources.targetNamespace.helperText',
+                    defaultMessage:
+                      'The namespace in which the resources will be created'
+                  })}
+                />
+              </>
+            }
             invalid={this.state.invalidNamespace}
             invalidText={intl.formatMessage({
               id: 'dashboard.namespacesDropdown.invalidText',
@@ -309,12 +363,19 @@ export class ImportResources extends Component {
             >
               <NamespacesDropdown
                 id="import-install-namespaces-dropdown"
-                helperText={intl.formatMessage({
-                  id: 'dashboard.importResources.importerNamespace.helperText',
-                  defaultMessage:
-                    'The namespace in which the PipelineRun fetching the repository and creating the resources will run'
-                })}
-                titleText="Namespace"
+                titleText={
+                  <>
+                    Namespace
+                    <HelpIcon
+                      title={intl.formatMessage({
+                        id:
+                          'dashboard.importResources.importerNamespace.helperText',
+                        defaultMessage:
+                          'The namespace in which the PipelineRun fetching the repository and creating the resources will run'
+                      })}
+                    />
+                  </>
+                }
                 invalid={this.state.invalidImporterNamespace}
                 invalidText={intl.formatMessage({
                   id: 'dashboard.namespacesDropdown.invalidText',
@@ -325,25 +386,27 @@ export class ImportResources extends Component {
                 selectedItem={selectedImporterNamespace}
               />
               <ServiceAccountsDropdown
-                helperText={intl.formatMessage({
-                  id: 'dashboard.importResources.serviceAccount.helperText',
-                  defaultMessage:
-                    'The ServiceAccount that the PipelineRun applying resources will run under (from the namespace above). Ensure the selected ServiceAccount (or the default if none selected) has permissions for creating PipelineRuns and for anything else your PipelineRun interacts with, including any Tekton resources in the Git repository.'
-                })}
                 id="import-service-accounts-dropdown"
                 namespace={this.state.importerNamespace}
                 onChange={this.handleServiceAccount}
-                titleText={intl.formatMessage({
-                  id: 'dashboard.serviceAccountLabel.optional',
-                  defaultMessage: 'ServiceAccount (optional)'
-                })}
+                titleText={
+                  <>
+                    {intl.formatMessage({
+                      id: 'dashboard.serviceAccountLabel.optional',
+                      defaultMessage: 'ServiceAccount (optional)'
+                    })}
+                    <HelpIcon
+                      title={intl.formatMessage({
+                        id:
+                          'dashboard.importResources.serviceAccount.helperText',
+                        defaultMessage:
+                          'The ServiceAccount that the PipelineRun applying resources will run under (from the namespace above). Ensure the selected ServiceAccount (or the default if none selected) has permissions for creating PipelineRuns and for anything else your PipelineRun interacts with, including any Tekton resources in the Git repository.'
+                      })}
+                    />
+                  </>
+                }
               />
               <Dropdown
-                helperText={intl.formatMessage({
-                  id: 'dashboard.importResources.method.helperText',
-                  defaultMessage:
-                    "If any of the resources being imported use 'generateName' rather than 'name' in their metadata, select 'create' so they can be imported correctly."
-                })}
                 id="import-method"
                 initialSelectedItem={{ id: initialMethod, text: initialMethod }}
                 items={[
@@ -353,10 +416,21 @@ export class ImportResources extends Component {
                 itemToString={itemToString}
                 label=""
                 onChange={this.handleMethod}
-                titleText={intl.formatMessage({
-                  id: 'dashboard.importResources.method.label',
-                  defaultMessage: 'Method'
-                })}
+                titleText={
+                  <>
+                    {intl.formatMessage({
+                      id: 'dashboard.importResources.method.label',
+                      defaultMessage: 'Method'
+                    })}
+                    <HelpIcon
+                      title={intl.formatMessage({
+                        id: 'dashboard.importResources.method.helperText',
+                        defaultMessage:
+                          "If any of the resources being imported use 'generateName' rather than 'name' in their metadata, select 'create' so they can be imported correctly."
+                      })}
+                    />
+                  </>
+                }
                 translateWithId={getTranslateWithId(intl)}
               />
             </AccordionItem>
