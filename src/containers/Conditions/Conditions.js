@@ -11,49 +11,43 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
-import isEqual from 'lodash.isequal';
 import { getFilters, getTitle, urls } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 
 import { ListPageLayout } from '..';
-import { fetchConditions } from '../../actions/conditions';
+import { fetchConditions as fetchConditionsActionCreator } from '../../actions/conditions';
 import {
   getConditions,
   getConditionsErrorMessage,
   getSelectedNamespace,
-  isFetchingConditions,
-  isWebSocketConnected
+  isFetchingConditions as selectIsFetchingConditions,
+  isWebSocketConnected as selectIsWebSocketConnected
 } from '../../reducers';
 
-export class Conditions extends Component {
-  componentDidMount() {
+function Conditions(props) {
+  const {
+    conditions,
+    error,
+    fetchConditions,
+    filters,
+    intl,
+    loading,
+    namespace,
+    webSocketConnected
+  } = props;
+  useEffect(() => {
     document.title = getTitle({ page: 'Conditions' });
-    this.fetchData();
-  }
+  }, []);
 
-  componentDidUpdate(prevProps) {
-    const { filters, namespace, webSocketConnected } = this.props;
-    const {
-      filters: prevFilters,
-      namespace: prevNamespace,
-      webSocketConnected: prevWebSocketConnected
-    } = prevProps;
+  useEffect(() => {
+    fetchConditions({ filters, namespace });
+  }, [JSON.stringify(filters), namespace, webSocketConnected]);
 
-    if (
-      namespace !== prevNamespace ||
-      (webSocketConnected && prevWebSocketConnected === false) ||
-      !isEqual(filters, prevFilters)
-    ) {
-      this.fetchData();
-    }
-  }
-
-  getError() {
-    const { error, intl } = this.props;
+  function getError() {
     if (error) {
       return {
         error,
@@ -67,92 +61,71 @@ export class Conditions extends Component {
     return null;
   }
 
-  fetchData() {
-    const { filters, namespace } = this.props;
-    this.props.fetchConditions({
-      filters,
-      namespace
-    });
-  }
+  const headers = [
+    {
+      key: 'name',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.name',
+        defaultMessage: 'Name'
+      })
+    },
+    {
+      key: 'namespace',
+      header: 'Namespace'
+    },
+    {
+      key: 'createdTime',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.createdTime',
+        defaultMessage: 'Created'
+      })
+    }
+  ];
 
-  render() {
-    const {
-      loading,
-      conditions,
-      intl,
-      namespace: selectedNamespace
-    } = this.props;
-
-    const headers = [
-      {
-        key: 'name',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.name',
-          defaultMessage: 'Name'
-        })
-      },
-      {
-        key: 'namespace',
-        header: 'Namespace'
-      },
-      {
-        key: 'createdTime',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.createdTime',
-          defaultMessage: 'Created'
-        })
-      }
-    ];
-
-    const conditionsFormatted = conditions.map(condition => ({
-      id: condition.metadata.uid,
-      name: (
-        <Link
-          to={urls.conditions.byName({
-            namespace: condition.metadata.namespace,
-            conditionName: condition.metadata.name
-          })}
-          title={condition.metadata.name}
-        >
-          {condition.metadata.name}
-        </Link>
-      ),
-      namespace: condition.metadata.namespace,
-      createdTime: (
-        <FormattedDate date={condition.metadata.creationTimestamp} relative />
-      )
-    }));
-
-    return (
-      <ListPageLayout
-        {...this.props}
-        error={this.getError()}
-        title="Conditions"
+  const conditionsFormatted = conditions.map(condition => ({
+    id: condition.metadata.uid,
+    name: (
+      <Link
+        to={urls.conditions.byName({
+          namespace: condition.metadata.namespace,
+          conditionName: condition.metadata.name
+        })}
+        title={condition.metadata.name}
       >
-        <Table
-          headers={headers}
-          rows={conditionsFormatted}
-          loading={loading && !conditionsFormatted.length}
-          selectedNamespace={selectedNamespace}
-          emptyTextAllNamespaces={intl.formatMessage(
-            {
-              id: 'dashboard.emptyState.allNamespaces',
-              defaultMessage: 'No matching {kind} found'
-            },
-            { kind: 'Conditions' }
-          )}
-          emptyTextSelectedNamespace={intl.formatMessage(
-            {
-              id: 'dashboard.emptyState.selectedNamespace',
-              defaultMessage:
-                'No matching {kind} found in namespace {selectedNamespace}'
-            },
-            { kind: 'Conditions', selectedNamespace }
-          )}
-        />
-      </ListPageLayout>
-    );
-  }
+        {condition.metadata.name}
+      </Link>
+    ),
+    namespace: condition.metadata.namespace,
+    createdTime: (
+      <FormattedDate date={condition.metadata.creationTimestamp} relative />
+    )
+  }));
+
+  return (
+    <ListPageLayout {...props} error={getError()} title="Conditions">
+      <Table
+        headers={headers}
+        rows={conditionsFormatted}
+        loading={loading && !conditionsFormatted.length}
+        selectedNamespace={namespace}
+        emptyTextAllNamespaces={intl.formatMessage(
+          {
+            id: 'dashboard.emptyState.allNamespaces',
+            defaultMessage: 'No matching {kind} found'
+          },
+          { kind: 'Conditions' }
+        )}
+        emptyTextSelectedNamespace={intl.formatMessage(
+          {
+            id: 'dashboard.emptyState.selectedNamespace',
+            defaultMessage:
+              'No matching {kind} found in namespace {selectedNamespace}'
+          },
+          { kind: 'Conditions', selectedNamespace: namespace }
+        )}
+      />
+    </ListPageLayout>
+  );
 }
 
 /* istanbul ignore next */
@@ -162,17 +135,17 @@ function mapStateToProps(state, props) {
   const filters = getFilters(props.location);
 
   return {
+    conditions: getConditions(state, { filters, namespace }),
     error: getConditionsErrorMessage(state),
     filters,
-    loading: isFetchingConditions(state),
+    loading: selectIsFetchingConditions(state),
     namespace,
-    conditions: getConditions(state, { filters, namespace }),
-    webSocketConnected: isWebSocketConnected(state)
+    webSocketConnected: selectIsWebSocketConnected(state)
   };
 }
 
 const mapDispatchToProps = {
-  fetchConditions
+  fetchConditions: fetchConditionsActionCreator
 };
 
 export default connect(

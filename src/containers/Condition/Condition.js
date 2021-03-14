@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -21,116 +21,95 @@ import {
   getCondition,
   getConditionsErrorMessage,
   getSelectedNamespace,
-  isWebSocketConnected
+  isWebSocketConnected as selectIsWebSocketConnected
 } from '../../reducers';
-import { fetchCondition } from '../../actions/conditions';
+import { fetchCondition as fetchConditionActionCreator } from '../../actions/conditions';
 import { getViewChangeHandler } from '../../utils';
 
-export class ConditionContainer extends Component {
-  componentDidMount() {
-    const { match } = this.props;
-    const { conditionName: resourceName } = match.params;
+function ConditionParameters({ condition, intl }) {
+  if (!condition || !condition.spec.params) {
+    return null;
+  }
+
+  const headers = [
+    {
+      key: 'name',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.name',
+        defaultMessage: 'Name'
+      })
+    },
+    {
+      key: 'default',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.default',
+        defaultMessage: 'Default'
+      })
+    },
+    {
+      key: 'type',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.type',
+        defaultMessage: 'Type'
+      })
+    }
+  ];
+
+  const rows = condition.spec.params.map(
+    ({ name, default: defaultValue, type = 'string' }) => ({
+      id: name,
+      name,
+      default: defaultValue,
+      type
+    })
+  );
+
+  return (
+    <Table
+      title={intl.formatMessage({
+        id: 'dashboard.parameters.title',
+        defaultMessage: 'Parameters'
+      })}
+      headers={headers}
+      rows={rows}
+    />
+  );
+}
+
+export function ConditionContainer(props) {
+  const {
+    condition,
+    error,
+    fetchCondition,
+    intl,
+    match,
+    view,
+    webSocketConnected
+  } = props;
+  const { conditionName, namespace } = match.params;
+
+  useEffect(() => {
     document.title = getTitle({
       page: 'Condition',
-      resourceName
+      resourceName: conditionName
     });
-    this.fetchData();
-  }
+  }, []);
 
-  componentDidUpdate(prevProps) {
-    const { match, webSocketConnected } = this.props;
-    const { namespace, conditionName } = match.params;
-    const {
-      match: prevMatch,
-      webSocketConnected: prevWebSocketConnected
-    } = prevProps;
-    const {
-      namespace: prevNamespace,
-      conditionName: prevConditionName
-    } = prevMatch.params;
+  useEffect(() => {
+    fetchCondition({ name: conditionName, namespace });
+  }, [conditionName, namespace, webSocketConnected]);
 
-    if (
-      namespace !== prevNamespace ||
-      conditionName !== prevConditionName ||
-      (webSocketConnected && prevWebSocketConnected === false)
-    ) {
-      this.fetchData();
-    }
-  }
-
-  getAdditionalContent() {
-    const { condition, intl } = this.props;
-    if (!condition || !condition.spec.params) {
-      return null;
-    }
-
-    const headers = [
-      {
-        key: 'name',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.name',
-          defaultMessage: 'Name'
-        })
-      },
-      {
-        key: 'default',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.default',
-          defaultMessage: 'Default'
-        })
-      },
-      {
-        key: 'type',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.type',
-          defaultMessage: 'Type'
-        })
-      }
-    ];
-
-    const rows = condition.spec.params.map(
-      ({ name, default: defaultValue, type = 'string' }) => ({
-        id: name,
-        name,
-        default: defaultValue,
-        type
-      })
-    );
-
-    return (
-      <Table
-        title={intl.formatMessage({
-          id: 'dashboard.parameters.title',
-          defaultMessage: 'Parameters'
-        })}
-        headers={headers}
-        rows={rows}
-      />
-    );
-  }
-
-  fetchData() {
-    const { match } = this.props;
-    const { namespace, conditionName } = match.params;
-    this.props.fetchCondition({ name: conditionName, namespace });
-  }
-
-  render() {
-    const { condition, error, view } = this.props;
-    const additionalContent = this.getAdditionalContent();
-
-    return (
-      <ResourceDetails
-        error={error}
-        kind="Condition"
-        onViewChange={getViewChangeHandler(this.props)}
-        resource={condition}
-        view={view}
-      >
-        {additionalContent}
-      </ResourceDetails>
-    );
-  }
+  return (
+    <ResourceDetails
+      error={error}
+      kind="Condition"
+      onViewChange={getViewChangeHandler(props)}
+      resource={condition}
+      view={view}
+    >
+      <ConditionParameters condition={condition} intl={intl} />
+    </ResourceDetails>
+  );
 }
 
 ConditionContainer.propTypes = {
@@ -158,12 +137,12 @@ function mapStateToProps(state, ownProps) {
     error: getConditionsErrorMessage(state),
     condition,
     view,
-    webSocketConnected: isWebSocketConnected(state)
+    webSocketConnected: selectIsWebSocketConnected(state)
   };
 }
 
 const mapDispatchToProps = {
-  fetchCondition
+  fetchCondition: fetchConditionActionCreator
 };
 
 export default connect(

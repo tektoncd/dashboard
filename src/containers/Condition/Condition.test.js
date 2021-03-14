@@ -24,25 +24,6 @@ const intl = createIntl({
 });
 
 describe('ConditionContainer', () => {
-  it('renders', async () => {
-    const conditionName = 'bar';
-    const match = {
-      params: {
-        conditionName
-      }
-    };
-
-    const { getByText } = renderWithIntl(
-      <ConditionContainer
-        intl={intl}
-        match={match}
-        fetchCondition={() => Promise.resolve()}
-        error={null}
-      />
-    );
-    await waitFor(() => getByText('Error loading resource'));
-  });
-
   it('handles error state', async () => {
     const match = {
       params: {
@@ -54,10 +35,10 @@ describe('ConditionContainer', () => {
 
     const { getByText } = renderWithIntl(
       <ConditionContainer
-        intl={intl}
-        match={match}
         error={errorMessage}
         fetchCondition={() => Promise.resolve()}
+        intl={intl}
+        match={match}
       />
     );
     await waitFor(() => getByText('Error loading resource'));
@@ -77,9 +58,9 @@ describe('ConditionContainer', () => {
 
     const { getByText, rerender } = renderWithIntl(
       <ConditionContainer
+        fetchCondition={fetchConditionSpy}
         intl={intl}
         match={match}
-        fetchCondition={fetchConditionSpy}
       />
     );
     await waitFor(() => getByText('Error loading resource'));
@@ -87,9 +68,9 @@ describe('ConditionContainer', () => {
 
     renderWithIntl(
       <ConditionContainer
+        fetchCondition={fetchConditionSpy}
         intl={intl}
         match={match}
-        fetchCondition={fetchConditionSpy}
       />,
       { rerender }
     );
@@ -104,9 +85,9 @@ describe('ConditionContainer', () => {
     };
     renderWithIntl(
       <ConditionContainer
+        fetchCondition={fetchConditionSpy}
         intl={intl}
         match={matchWithUpdatedNamespace}
-        fetchCondition={fetchConditionSpy}
       />,
       { rerender }
     );
@@ -120,9 +101,9 @@ describe('ConditionContainer', () => {
     };
     renderWithIntl(
       <ConditionContainer
+        fetchCondition={fetchConditionSpy}
         intl={intl}
         match={matchWithUpdatedConditionName}
-        fetchCondition={fetchConditionSpy}
         webSocketConnected={false}
       />,
       { rerender }
@@ -131,9 +112,9 @@ describe('ConditionContainer', () => {
 
     renderWithIntl(
       <ConditionContainer
+        fetchCondition={fetchConditionSpy}
         intl={intl}
         match={matchWithUpdatedConditionName}
-        fetchCondition={fetchConditionSpy}
         webSocketConnected
       />,
       { rerender }
@@ -164,9 +145,9 @@ describe('ConditionContainer', () => {
     const { getByText } = renderWithIntl(
       <ConditionContainer
         condition={condition}
+        fetchCondition={fetchConditionSpy}
         intl={intl}
         match={match}
-        fetchCondition={fetchConditionSpy}
       />
     );
     expect(getByText(/parameters/i)).toBeTruthy();
@@ -174,5 +155,31 @@ describe('ConditionContainer', () => {
     expect(getByText('param2')).toBeTruthy();
     expect(getByText('array')).toBeTruthy();
     expect(getByText('string')).toBeTruthy();
+  });
+
+  it('renders without params', async () => {
+    const condition = {
+      metadata: {},
+      spec: {}
+    };
+    const fetchConditionSpy = jest
+      .fn()
+      .mockImplementation(() => Promise.resolve(condition));
+    const match = {
+      params: {
+        conditionName: 'bar',
+        namespace: 'default'
+      }
+    };
+
+    const { queryByText } = renderWithIntl(
+      <ConditionContainer
+        condition={condition}
+        fetchCondition={fetchConditionSpy}
+        intl={intl}
+        match={match}
+      />
+    );
+    expect(queryByText(/parameters/i)).toBeFalsy();
   });
 });
