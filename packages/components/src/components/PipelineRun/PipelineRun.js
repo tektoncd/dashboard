@@ -341,6 +341,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
               (selectedTaskId && (
                 <TaskRunDetails
                   onViewChange={onViewChange}
+                  task={task}
                   taskRun={taskRun}
                   view={view}
                 />

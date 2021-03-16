@@ -351,6 +351,7 @@ export /* istanbul ignore next */ class TaskRunContainer extends Component {
           )) || (
             <TaskRunDetails
               onViewChange={onViewChange}
+              task={task}
               taskRun={taskRun}
               view={view}
             />

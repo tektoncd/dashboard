@@ -20,9 +20,19 @@ import { DetailsHeader, Param, Tab, Table, Tabs, ViewYAML } from '..';
 
 import './TaskRunDetails.scss';
 
-const TaskRunDetails = props => {
-  const { intl, onViewChange, taskRun, view } = props;
+function getDescriptions(array = []) {
+  return array.reduce((accumulator, { name, description }) => {
+    accumulator[name] = description;
+    return accumulator;
+  }, {});
+}
+
+const TaskRunDetails = ({ intl, onViewChange, task, taskRun, view }) => {
   const displayName = taskRun.metadata.name;
+  const taskSpec = task?.spec || taskRun.spec.taskSpec;
+
+  const paramsDescriptions = getDescriptions(taskSpec?.params);
+  const resultsDescriptions = getDescriptions(taskSpec?.results);
 
   const headers = [
     {
@@ -38,17 +48,25 @@ const TaskRunDetails = props => {
         id: 'dashboard.taskRunParams.value',
         defaultMessage: 'Value'
       })
+    },
+    {
+      key: 'description',
+      header: intl.formatMessage({
+        id: 'dashboard.resourceDetails.description',
+        defaultMessage: 'Description'
+      })
     }
   ];
 
   const params = getParams(taskRun.spec);
-  const paramsTable = params && params.length && (
+  const paramsTable = params?.length ? (
     <Table
       size="short"
       headers={headers}
       rows={params.map(({ name, value }) => ({
         id: name,
         name,
+        description: paramsDescriptions[name],
         value: (
           <span title={value}>
             <Param>{value}</Param>
@@ -56,16 +74,17 @@ const TaskRunDetails = props => {
         )
       }))}
     />
-  );
+  ) : null;
 
   const results = taskRun.status?.taskResults;
-  const resultsTable = results && results.length && (
+  const resultsTable = results?.length ? (
     <Table
       size="short"
       headers={headers}
       rows={results.map(({ name, value }) => ({
         id: name,
         name,
+        description: resultsDescriptions[name],
         value: (
           <span title={value}>
             <Param>{value}</Param>
@@ -73,7 +92,7 @@ const TaskRunDetails = props => {
         )
       }))}
     />
-  );
+  ) : null;
 
   const tabs = [
     paramsTable && 'params',
@@ -147,11 +166,13 @@ const TaskRunDetails = props => {
 
 TaskRunDetails.propTypes = {
   onViewChange: PropTypes.func,
+  task: PropTypes.shape({}),
   taskRun: PropTypes.shape({})
 };
 
 TaskRunDetails.defaultProps = {
   onViewChange: /* istanbul ignore next */ () => {},
+  task: {},
   taskRun: {}
 };
 
