@@ -37,8 +37,13 @@ describe('TaskRunDetails', () => {
     const paramKey = 'k';
     const paramValue = 'v';
     const params = [{ name: paramKey, value: paramValue }];
+    const description = 'param_description';
     const { queryByText } = renderWithIntl(
       <TaskRunDetails
+        task={{
+          metadata: 'task',
+          spec: { params: [{ name: paramKey, description }] }
+        }}
         taskRun={{ metadata: { name: taskRunName }, spec: { params }, status }}
       />
     );
@@ -46,6 +51,32 @@ describe('TaskRunDetails', () => {
     expect(queryByText(taskRunName)).toBeTruthy();
     expect(queryByText(paramKey)).toBeTruthy();
     expect(queryByText(paramValue)).toBeTruthy();
+    expect(queryByText(description)).toBeTruthy();
+  });
+
+  it('renders params with description from inline taskSpec', () => {
+    const taskRunName = 'task-run-name';
+    const status = 'error';
+    const paramKey = 'k';
+    const paramValue = 'v';
+    const params = [{ name: paramKey, value: paramValue }];
+    const description = 'param_description';
+    const { queryByText } = renderWithIntl(
+      <TaskRunDetails
+        taskRun={{
+          metadata: { name: taskRunName },
+          spec: {
+            params,
+            taskSpec: { params: [{ name: paramKey, description }] }
+          },
+          status
+        }}
+      />
+    );
+
+    expect(queryByText(paramKey)).toBeTruthy();
+    expect(queryByText(paramValue)).toBeTruthy();
+    expect(queryByText(description)).toBeTruthy();
   });
 
   it('does not render parameters or results tabs when those fields are not present', () => {
@@ -78,16 +109,42 @@ describe('TaskRunDetails', () => {
   });
 
   it('renders results', () => {
+    const resultName = 'message';
+    const description = 'result_description';
     const taskRun = {
       metadata: { name: 'task-run-name' },
       spec: {},
-      status: { taskResults: [{ name: 'message', value: 'hello' }] }
+      status: { taskResults: [{ name: resultName, value: 'hello' }] }
     };
     const { queryByText } = renderWithIntl(
-      <TaskRunDetails taskRun={taskRun} view="results" />
+      <TaskRunDetails
+        task={{
+          metadata: 'task',
+          spec: { results: [{ name: resultName, description }] }
+        }}
+        taskRun={taskRun}
+        view="results"
+      />
     );
     expect(queryByText(/results/i)).toBeTruthy();
     expect(queryByText(/message/)).toBeTruthy();
     expect(queryByText(/hello/)).toBeTruthy();
+    expect(queryByText(description)).toBeTruthy();
+  });
+
+  it('renders results with description from inline taskSpec', () => {
+    const resultName = 'message';
+    const description = 'result_description';
+    const taskRun = {
+      metadata: { name: 'task-run-name' },
+      spec: {
+        taskSpec: { results: [{ name: resultName, description }] }
+      },
+      status: { taskResults: [{ name: resultName, value: 'hello' }] }
+    };
+    const { queryByText } = renderWithIntl(
+      <TaskRunDetails taskRun={taskRun} view="results" />
+    );
+    expect(queryByText(description)).toBeTruthy();
   });
 });
