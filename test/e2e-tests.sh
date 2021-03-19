@@ -25,6 +25,7 @@ source $(dirname $0)/e2e-common.sh
 SED="sed"
 START=1
 END=30
+PLATFORM=${PLATFORM:+"--platform $PLATFORM"}
 
 initOS() {
   local OS=$(echo `uname`|tr '[:upper:]' '[:lower:]')
@@ -205,15 +206,17 @@ test_dashboard() {
   kubectl delete ns $TEST_NAMESPACE
 }
 
-header "Validating that we can build the release manifests"
-echo "Building manifests for k8s"
-$tekton_repo_dir/scripts/installer release                          || fail_test "Failed to build manifests for k8s"
-echo "Building manifests for k8s --read-only"
-$tekton_repo_dir/scripts/installer release --read-only              || fail_test "Failed to build manifests for k8s --read-only"
-echo "Building manifests for openshift"
-$tekton_repo_dir/scripts/installer release --openshift              || fail_test "Failed to build manifests for openshift"
-echo "Building manifests for openshift --read-only"
-$tekton_repo_dir/scripts/installer release --openshift --read-only  || fail_test "Failed to build manifests for openshift --read-only"
+if [ -z "$SKIP_BUILD_TEST" ]; then
+	header "Validating that we can build the release manifests"
+	echo "Building manifests for k8s"
+	$tekton_repo_dir/scripts/installer release                          || fail_test "Failed to build manifests for k8s"
+	echo "Building manifests for k8s --read-only"
+	$tekton_repo_dir/scripts/installer release --read-only              || fail_test "Failed to build manifests for k8s --read-only"
+	echo "Building manifests for openshift"
+	$tekton_repo_dir/scripts/installer release --openshift              || fail_test "Failed to build manifests for openshift"
+	echo "Building manifests for openshift --read-only"
+	$tekton_repo_dir/scripts/installer release --openshift --read-only  || fail_test "Failed to build manifests for openshift --read-only"
+fi
 
 if [ -z "$PIPELINES_VERSION" ]; then
   export PIPELINES_VERSION=v0.22.0
@@ -232,16 +235,16 @@ export DASHBOARD_NAMESPACE=tekton-pipelines
 export TEST_NAMESPACE=tekton-test
 export TENANT_NAMESPACE=""
 
-test_dashboard proxy
-test_dashboard kubectl --read-only
+test_dashboard proxy ${PLATFORM}
+test_dashboard kubectl ${PLATFORM} --read-only
 
 header "Test Dashboard custom namespace"
 export DASHBOARD_NAMESPACE=tekton-dashboard
 export TEST_NAMESPACE=tekton-test
 export TENANT_NAMESPACE=""
 
-test_dashboard proxy --namespace $DASHBOARD_NAMESPACE
-test_dashboard kubectl --read-only --namespace $DASHBOARD_NAMESPACE
+test_dashboard proxy ${PLATFORM} --namespace $DASHBOARD_NAMESPACE
+test_dashboard kubectl ${PLATFORM} --read-only --namespace $DASHBOARD_NAMESPACE
 
 # TODO: this feature is incomplete, re-enable tests when ready
 # header "Test Dashboard single namespace visibility"
