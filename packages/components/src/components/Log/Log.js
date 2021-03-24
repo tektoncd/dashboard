@@ -124,42 +124,46 @@ export class LogContainer extends Component {
 
   loadLog = async () => {
     const { fetchLogs, intl, stepStatus, pollingInterval } = this.props;
-    if (fetchLogs) {
-      try {
-        const logs = await fetchLogs();
-        if (logs?.getReader) {
-          // logs is a https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream
-          const decoder = new TextDecoder();
-          this.reader = logs.getReader();
-          await this.reader
-            .read()
-            .then(result => this.readChunks(result, decoder))
-            .catch(error => {
-              throw error;
-            });
-        } else {
-          this.setState({
-            loading: false,
-            logs: logs ? logs.split('\n') : undefined
+    if (!fetchLogs) {
+      return;
+    }
+
+    let continuePolling = false;
+    try {
+      continuePolling = stepStatus && !stepStatus.terminated;
+      const logs = await fetchLogs();
+      if (logs?.getReader) {
+        // logs is a https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream
+        const decoder = new TextDecoder();
+        this.reader = logs.getReader();
+        await this.reader
+          .read()
+          .then(result => this.readChunks(result, decoder))
+          .catch(error => {
+            throw error;
           });
-          if (stepStatus && !stepStatus.terminated) {
-            this.timer = setTimeout(() => this.loadLog(), pollingInterval);
-          }
-        }
-      } catch (error) {
-        console.error(error); // eslint-disable-line no-console
+      } else {
         this.setState({
           loading: false,
-          logs: [
-            intl.formatMessage({
-              id: 'dashboard.pipelineRun.logFailed',
-              defaultMessage: 'Unable to fetch log'
-            })
-          ]
+          logs: logs ? logs.split('\n') : undefined
         });
-        if (stepStatus && !stepStatus.terminated) {
+        if (continuePolling) {
           this.timer = setTimeout(this.loadLog, pollingInterval);
         }
+      }
+    } catch (error) {
+      console.error(error); // eslint-disable-line no-console
+      this.setState({
+        loading: false,
+        logs: [
+          intl.formatMessage({
+            id: 'dashboard.pipelineRun.logFailed',
+            defaultMessage: 'Unable to fetch log'
+          })
+        ]
+      });
+      if (continuePolling) {
+        this.timer = setTimeout(this.loadLog, pollingInterval);
       }
     }
   };
