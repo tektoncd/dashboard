@@ -17,10 +17,4 @@ limitations under the License.
   flex-wrap: nowrap;
   align-items: stretch;
   overflow: hidden;
-
-  .bx--tab-content .tkn--table .bx--data-table.bx--data-table--short {
-    td.cell-value {
-      max-width: unset;
-    }
-  }
 }
