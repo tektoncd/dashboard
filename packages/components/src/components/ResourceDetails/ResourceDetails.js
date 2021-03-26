@@ -108,7 +108,7 @@ const ResourceDetails = ({
                       defaultMessage: 'None'
                     })
                   : formattedLabelsToRender.map(label => (
-                      <Tag type="blue" key={label}>
+                      <Tag key={label} size="sm" type="blue">
                         {label}
                       </Tag>
                     ))}
