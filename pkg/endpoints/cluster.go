@@ -32,7 +32,6 @@ type Properties struct {
 	PipelineVersion    string `json:"PipelineVersion"`
 	TriggersNamespace  string `json:"TriggersNamespace,omitempty"`
 	TriggersVersion    string `json:"TriggersVersion,omitempty"`
-	IsOpenShift        bool   `json:"IsOpenShift"`
 	ReadOnly           bool   `json:"ReadOnly"`
 	LogoutURL          string `json:"LogoutURL,omitempty"`
 	TenantNamespace    string `json:"TenantNamespace,omitempty"`
@@ -56,8 +55,8 @@ func (r Resource) ProxyRequest(request *restful.Request, response *restful.Respo
 }
 
 // GetProperties is used to get the installed namespace for the Dashboard,
-// the version of the Tekton Dashboard, the version of Tekton Pipelines, whether or not one's
-// running on OpenShift, when one's in read-only mode and Tekton Triggers version (if Installed)
+// the version of the Tekton Dashboard, the version of Tekton Pipelines,
+// when one's in read-only mode and Tekton Triggers version (if Installed)
 func (r Resource) GetProperties(request *restful.Request, response *restful.Response) {
 	pipelineNamespace := r.Options.GetPipelinesNamespace()
 	triggersNamespace := r.Options.GetTriggersNamespace()
@@ -69,7 +68,6 @@ func (r Resource) GetProperties(request *restful.Request, response *restful.Resp
 		DashboardVersion:   dashboardVersion,
 		PipelineNamespace:  pipelineNamespace,
 		PipelineVersion:    pipelineVersion,
-		IsOpenShift:        r.Options.IsOpenShift,
 		ReadOnly:           r.Options.ReadOnly,
 		LogoutURL:          r.Options.LogoutURL,
 		TenantNamespace:    r.Options.TenantNamespace,

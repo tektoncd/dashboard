@@ -58,7 +58,6 @@ import {
   isFetchingTaskRuns,
   isFetchingTasks,
   isLogStreamingEnabled,
-  isOpenShift,
   isReadOnly,
   isTriggersInstalled
 } from '.';
@@ -501,14 +500,6 @@ it('isReadOnly', () => {
   jest.spyOn(propertiesSelectors, 'isReadOnly').mockImplementation(() => true);
   expect(isReadOnly(state)).toBe(true);
   expect(propertiesSelectors.isReadOnly).toHaveBeenCalledWith(state.properties);
-});
-
-it('isOpenShift', () => {
-  jest.spyOn(propertiesSelectors, 'isOpenShift').mockImplementation(() => true);
-  expect(isOpenShift(state)).toBe(true);
-  expect(propertiesSelectors.isOpenShift).toHaveBeenCalledWith(
-    state.properties
-  );
 });
 
 it('isTriggersInstalled', () => {

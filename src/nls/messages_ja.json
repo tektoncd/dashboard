@@ -16,7 +16,6 @@
     "carbon.table.row.select": "行を選択",
     "carbon.table.row.unselect": "行を選択解除",
     "dashboard.about.error": "データの取得中にエラーが発生しました",
-    "dashboard.about.isOpenShift": "IsOpenShift",
     "dashboard.about.isReadOnly": "読み取り専用",
     "dashboard.about.logoutURL": "ログアウトURL",
     "dashboard.about.missingProperties": "次のものが見つかりません：{errorsFound}",

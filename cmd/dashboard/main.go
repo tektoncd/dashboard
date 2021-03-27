@@ -41,7 +41,6 @@ var (
 	kubeConfigPath     = flag.String("kube-config", "", "Path to kube config file")
 	portNumber         = flag.Int("port", 8080, "Dashboard port number")
 	readOnly           = flag.Bool("read-only", false, "Enable or disable read only mode")
-	isOpenshift        = flag.Bool("openshift", false, "Indicates the dashboard is running on openshift")
 	logoutUrl          = flag.String("logout-url", "", "If set, enables logout on the frontend and binds the logout button to this url")
 	tenantNamespace    = flag.String("namespace", "", "If set, limits the scope of resources watched to this namespace only")
 	logLevel           = flag.String("log-level", "info", "Minimum log level output by the logger")
@@ -107,7 +106,6 @@ func main() {
 		TriggersNamespace:  *triggersNamespace,
 		TenantNamespace:    *tenantNamespace,
 		ReadOnly:           *readOnly,
-		IsOpenShift:        *isOpenshift,
 		LogoutURL:          *logoutUrl,
 		StreamLogs:         *streamLogs,
 		ExternalLogsURL:    *externalLogs,

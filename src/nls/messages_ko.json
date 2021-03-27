@@ -16,7 +16,6 @@
     "carbon.table.row.select": "행 선택",
     "carbon.table.row.unselect": "행 선택 취소",
     "dashboard.about.error": "",
-    "dashboard.about.isOpenShift": "",
     "dashboard.about.isReadOnly": "",
     "dashboard.about.logoutURL": "",
     "dashboard.about.missingProperties": "",

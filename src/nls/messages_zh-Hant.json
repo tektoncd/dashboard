@@ -16,7 +16,6 @@
     "carbon.table.row.select": "選取列",
     "carbon.table.row.unselect": "取消選取列",
     "dashboard.about.error": "",
-    "dashboard.about.isOpenShift": "",
     "dashboard.about.isReadOnly": "",
     "dashboard.about.logoutURL": "",
     "dashboard.about.missingProperties": "",

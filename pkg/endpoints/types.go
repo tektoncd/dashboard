@@ -29,7 +29,6 @@ type Options struct {
 	TriggersNamespace  string
 	TenantNamespace    string
 	ReadOnly           bool
-	IsOpenShift        bool
 	LogoutURL          string
 	StreamLogs         bool
 	ExternalLogsURL    string

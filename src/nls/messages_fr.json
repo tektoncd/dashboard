@@ -16,7 +16,6 @@
     "carbon.table.row.select": "Sélectionner une ligne",
     "carbon.table.row.unselect": "Désélectionner une ligne",
     "dashboard.about.error": "",
-    "dashboard.about.isOpenShift": "",
     "dashboard.about.isReadOnly": "",
     "dashboard.about.logoutURL": "",
     "dashboard.about.missingProperties": "",

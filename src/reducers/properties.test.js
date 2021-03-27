@@ -24,7 +24,6 @@ it('INSTALL_PROPERTIES_SUCCESS', () => {
   const installProperties = {
     fake: 'installProperties',
     ExternalLogsURL,
-    IsOpenShift: false,
     LogoutURL: '/logout',
     DashboardNamespace: 'ns-dashboard',
     DashboardVersion: 'version-dashboard',
@@ -44,7 +43,6 @@ it('INSTALL_PROPERTIES_SUCCESS', () => {
 
   const state = propertiesReducer({}, action);
   expect(selectors.isReadOnly(state)).toEqual(false);
-  expect(selectors.isOpenShift(state)).toEqual(false);
   expect(selectors.isTriggersInstalled(state)).toEqual(true);
   expect(selectors.isLogStreamingEnabled(state)).toEqual(true);
   expect(selectors.getExternalLogsURL(state)).toEqual(ExternalLogsURL);
