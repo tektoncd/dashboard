@@ -28,7 +28,6 @@ import {
   getPipelineVersion,
   getTriggersNamespace,
   getTriggersVersion,
-  isOpenShift as selectIsOpenShift,
   isReadOnly as selectIsReadOnly,
   isTriggersInstalled as selectIsTriggersInstalled
 } from '../../reducers';
@@ -40,7 +39,6 @@ export function About({
   dashboardNamespace,
   dashboardVersion,
   intl,
-  isOpenShift,
   isReadOnly,
   isTriggersInstalled,
   logoutURL,
@@ -127,10 +125,6 @@ export function About({
     id: 'dashboard.about.version',
     defaultMessage: 'Version'
   });
-  const isOpenShiftLabel = intl.formatMessage({
-    id: 'dashboard.about.isOpenShift',
-    defaultMessage: 'IsOpenShift'
-  });
   const isReadOnlyLabel = intl.formatMessage({
     id: 'dashboard.about.isReadOnly',
     defaultMessage: 'ReadOnly'
@@ -167,7 +161,6 @@ export function About({
             rows={[
               getRow('Namespace', dashboardNamespace),
               getRow(versionLabel, dashboardVersion),
-              getRow(isOpenShiftLabel, isOpenShift),
               getRow(isReadOnlyLabel, isReadOnly),
               getRow(logoutURLLabel, logoutURL)
             ].filter(Boolean)}
@@ -220,7 +213,6 @@ export function About({
 const mapStateToProps = state => ({
   dashboardNamespace: getDashboardNamespace(state),
   dashboardVersion: getDashboardVersion(state),
-  isOpenShift: selectIsOpenShift(state),
   isReadOnly: selectIsReadOnly(state),
   isTriggersInstalled: selectIsTriggersInstalled(state),
   logoutURL: getLogoutURL(state),

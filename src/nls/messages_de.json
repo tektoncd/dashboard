@@ -16,7 +16,6 @@
     "carbon.table.row.select": "Zeile auswählen",
     "carbon.table.row.unselect": "Zeile abwählen",
     "dashboard.about.error": "",
-    "dashboard.about.isOpenShift": "",
     "dashboard.about.isReadOnly": "",
     "dashboard.about.logoutURL": "",
     "dashboard.about.missingProperties": "",

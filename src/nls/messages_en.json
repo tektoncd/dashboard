@@ -16,7 +16,6 @@
     "carbon.table.row.select": "Select row",
     "carbon.table.row.unselect": "Unselect row",
     "dashboard.about.error": "Error getting data",
-    "dashboard.about.isOpenShift": "IsOpenShift",
     "dashboard.about.isReadOnly": "ReadOnly",
     "dashboard.about.logoutURL": "LogoutURL",
     "dashboard.about.missingProperties": "Could not find: {errorsFound}",

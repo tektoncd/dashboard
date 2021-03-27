@@ -16,7 +16,6 @@
     "carbon.table.row.select": "选择行",
     "carbon.table.row.unselect": "取消选择行",
     "dashboard.about.error": "获取数据时发生错误",
-    "dashboard.about.isOpenShift": "是否是 OpenShift",
     "dashboard.about.isReadOnly": "只读",
     "dashboard.about.logoutURL": "登出 URL",
     "dashboard.about.missingProperties": "未找到：{errorsFound}",

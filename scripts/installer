@@ -161,7 +161,6 @@ patch() {
   replace "--logout-url=--logout-url" "--logout-url=$LOGOUT_URL"
   replace "--read-only=--read-only" "--read-only=$READONLY"
   replace "--namespace=--tenant-namespace" "--namespace=$TENANT_NAMESPACE"
-  replace "--openshift=--openshift" "--openshift=$OPENSHIFT"
   replace "--stream-logs=--stream-logs" "--stream-logs=$STREAM_LOGS"
   replace "--external-logs=--external-logs" "--external-logs=$EXTERNAL_LOGS"
   replace "namespace: tekton-dashboard" "namespace: $INSTALL_NAMESPACE"

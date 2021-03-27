@@ -33,7 +33,6 @@ Example payload response is formatted as so:
  "PipelineVersion": "v0.10.0",
  "TriggersNamespace": "tekton-pipelines",
  "TriggersVersion": "v0.3.1",
- "IsOpenShift": false,
  "ReadOnly": true
 }
 ```

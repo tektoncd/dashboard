@@ -38,10 +38,6 @@ export function isReadOnly(state) {
   return state.ReadOnly;
 }
 
-export function isOpenShift(state) {
-  return state.IsOpenShift;
-}
-
 export function isTriggersInstalled(state) {
   return !!(state.TriggersNamespace && state.TriggersVersion);
 }

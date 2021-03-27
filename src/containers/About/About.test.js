@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -35,7 +35,6 @@ describe('About', () => {
         PipelineVersion: 'v0.10.0',
         TriggersNamespace: 'tekton-triggers',
         TriggersVersion: 'v0.3.1',
-        IsOpenShift: true,
         ReadOnly: true
       }
     });
@@ -52,9 +51,8 @@ describe('About', () => {
     expect(queryByText('tekton-dashboard', dashboardSelector)).toBeTruthy();
     expect(queryByText('Version', dashboardSelector)).toBeTruthy();
     expect(queryByText('v0.100.0', dashboardSelector)).toBeTruthy();
-    expect(queryByText('IsOpenShift', dashboardSelector)).toBeTruthy();
     expect(queryByText('ReadOnly', dashboardSelector)).toBeTruthy();
-    expect(queryAllByText('True', dashboardSelector).length).toBe(2);
+    expect(queryAllByText('True', dashboardSelector).length).toBe(1);
 
     expect(queryByText('Property', pipelinesSelector)).toBeTruthy();
     expect(queryByText('Value', pipelinesSelector)).toBeTruthy();
@@ -78,7 +76,6 @@ describe('About', () => {
         // DashboardVersion: '', this is intentionally missing
         PipelineNamespace: 'tekton-pipelines',
         PipelineVersion: 'v0.10.0',
-        IsOpenShift: false,
         ReadOnly: false
       }
     });
@@ -94,7 +91,6 @@ describe('About', () => {
     expect(queryByText('Namespace', dashboardSelector)).toBeTruthy();
     expect(queryByText('tekton-dashboard', dashboardSelector)).toBeTruthy();
     expect(queryByText('Version', dashboardSelector)).toBeFalsy();
-    expect(queryByText('IsOpenShift', dashboardSelector)).toBeFalsy();
     expect(queryByText('ReadOnly', dashboardSelector)).toBeFalsy();
 
     expect(queryByText('Property', pipelinesSelector)).toBeTruthy();
@@ -128,7 +124,6 @@ describe('About', () => {
     expect(queryByText('Namespace', dashboardSelector)).toBeTruthy();
     expect(queryByText('tekton-dashboard', dashboardSelector)).toBeTruthy();
     expect(queryByText('Version', dashboardSelector)).toBeFalsy();
-    expect(queryByText('IsOpenShift', dashboardSelector)).toBeFalsy();
     expect(queryByText('ReadOnly', dashboardSelector)).toBeFalsy();
 
     expect(queryByText('Property', pipelinesSelector)).toBeTruthy();
@@ -166,7 +161,6 @@ describe('About', () => {
     expect(queryByText('Namespace', dashboardSelector)).toBeTruthy();
     expect(queryByText('tekton-dashboard', dashboardSelector)).toBeTruthy();
     expect(queryByText('Version', dashboardSelector)).toBeTruthy();
-    expect(queryByText('IsOpenShift', dashboardSelector)).toBeFalsy();
     expect(queryByText('ReadOnly', dashboardSelector)).toBeFalsy();
 
     expect(queryByText('Property', pipelinesSelector)).toBeTruthy();
