@@ -165,6 +165,13 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
     return [
       {
         actionText: intl.formatMessage({
+          id: 'dashboard.rerun.actionText',
+          defaultMessage: 'Rerun'
+        }),
+        action: this.rerun
+      },
+      {
+        actionText: intl.formatMessage({
           id: 'dashboard.cancelPipelineRun.actionText',
           defaultMessage: 'Stop'
         }),
@@ -208,6 +215,7 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
           const { reason, status } = getStatus(resource);
           return isRunning(reason, status);
         },
+        hasDivider: true,
         modalProperties: {
           danger: true,
           heading: intl.formatMessage(
@@ -235,13 +243,6 @@ export /* istanbul ignore next */ class PipelineRuns extends Component {
               { name: resource.metadata.name }
             )
         }
-      },
-      {
-        actionText: intl.formatMessage({
-          id: 'dashboard.rerun.actionText',
-          defaultMessage: 'Rerun'
-        }),
-        action: this.rerun
       }
     ];
   };

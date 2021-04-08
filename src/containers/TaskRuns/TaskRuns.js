@@ -157,6 +157,14 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
     }
     return [
       {
+        action: this.rerun,
+        actionText: intl.formatMessage({
+          id: 'dashboard.rerun.actionText',
+          defaultMessage: 'Rerun'
+        }),
+        disable: resource => !!resource.metadata.labels?.['tekton.dev/pipeline']
+      },
+      {
         actionText: intl.formatMessage({
           id: 'dashboard.cancelTaskRun.actionText',
           defaultMessage: 'Stop'
@@ -201,6 +209,7 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
           const { reason, status } = getStatus(resource);
           return isRunning(reason, status);
         },
+        hasDivider: true,
         modalProperties: {
           danger: true,
           heading: intl.formatMessage(
@@ -228,14 +237,6 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
               { name: resource.metadata.name }
             )
         }
-      },
-      {
-        action: this.rerun,
-        actionText: intl.formatMessage({
-          id: 'dashboard.rerun.actionText',
-          defaultMessage: 'Rerun'
-        }),
-        disable: resource => !!resource.metadata.labels?.['tekton.dev/pipeline']
       }
     ];
   };
