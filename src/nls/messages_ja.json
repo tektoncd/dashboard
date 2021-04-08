@@ -132,6 +132,7 @@
     "dashboard.labelFilter.invalidLength": "フィルタはlabelKey:labelValueの形式で、64文字未満である必要があります",
     "dashboard.labelFilter.searchPlaceholder": "labelKey:labelValueの形式で検索",
     "dashboard.labelFilter.syntaxMessage": "有効な構文については、Kubernetes Labelのドキュメントを参照してください。",
+    "dashboard.lastUpdated": "",
     "dashboard.list.menu.tooltip": "アクション",
     "dashboard.loading.config": "構成をロード中…",
     "dashboard.logo.alt": "Tektonロゴ",

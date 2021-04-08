@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -29,13 +29,20 @@ it('RunHeader renders the provided content', () => {
   expect(queryByText(/simple-pipeline/i)).toBeTruthy();
   expect(queryByText(props.message)).toBeTruthy();
   expect(queryByTitle(props.message)).toBeTruthy();
+  expect(queryByText(/Last updated/i)).toBeFalsy();
 });
 
 it('RunHeader renders the running state', () => {
   const { queryByText } = renderWithRouter(
-    <RunHeader {...props} status="Unknown" reason="Running" />
+    <RunHeader
+      {...props}
+      lastTransitionTime={new Date()}
+      status="Unknown"
+      reason="Running"
+    />
   );
   expect(queryByText(/running/i)).toBeTruthy();
+  expect(queryByText(/Last updated/i)).toBeTruthy();
 });
 
 it('RunHeader renders the completed state', () => {

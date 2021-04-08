@@ -132,6 +132,7 @@
     "dashboard.labelFilter.invalidLength": "过滤器的格式必须是 labelKey:labelValue，并包含少于 64 个字符。",
     "dashboard.labelFilter.searchPlaceholder": "输入一个格式为 labelKey:labelValue 的标签过滤器",
     "dashboard.labelFilter.syntaxMessage": "请参阅 Kubernetes 标签文档了解有效的语法。",
+    "dashboard.lastUpdated": "",
     "dashboard.list.menu.tooltip": "操作",
     "dashboard.loading.config": "加载配置中",
     "dashboard.logo.alt": "Tekton 标志",
