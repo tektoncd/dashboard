@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -61,7 +61,22 @@ class RunHeader extends Component {
                     {runName}
                   </div>
                   <span className="tkn--time">
-                    <FormattedDate date={lastTransitionTime} relative />
+                    {lastTransitionTime
+                      ? intl.formatMessage(
+                          {
+                            id: 'dashboard.lastUpdated',
+                            defaultMessage: 'Last updated {time}'
+                          },
+                          {
+                            time: (
+                              <FormattedDate
+                                date={lastTransitionTime}
+                                relative
+                              />
+                            )
+                          }
+                        )
+                      : null}
                   </span>
                   {this.props.children}
                 </h1>
