@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -62,15 +62,17 @@ class RunDropdown extends Component {
               action,
               danger,
               disable,
+              hasDivider,
               modalProperties
             } = item;
             const disabled = disable && disable(resource);
             return (
               <OverflowMenuItem
-                key={actionText}
-                itemText={actionText}
-                isDelete={danger}
                 disabled={disabled}
+                hasDivider={hasDivider}
+                isDelete={danger}
+                itemText={actionText}
+                key={actionText}
                 onClick={() =>
                   this.handleShow(() => action(resource), modalProperties)
                 }
