@@ -22,11 +22,11 @@ limitations under the License.
     position: relative;
     background-color: $ui-background;
     transform: none;
-    padding-top: $layout-02;
+    padding-top: $spacing-06;
 
     h1 {
       @include type-style('productive-heading-04');
-      margin-bottom: $layout-02;
+      margin-bottom: $spacing-06;
     }
 
     h2 {
@@ -46,11 +46,11 @@ limitations under the License.
 }
 
 .bx--modal-content {
-  margin-bottom: $carbon--spacing-07
+  margin-bottom: $spacing-07
 }
 
 .bx--data-table-container {
-  margin-top: $carbon--spacing-07;
+  margin-top: $spacing-07;
 }
 
 .bx--table-header-label {
