@@ -151,7 +151,7 @@ class LabelFilter extends Component {
         )}
         <Form onSubmit={this.handleAddFilter} autoComplete="on">
           <Search
-            placeHolderText={searchDescription}
+            placeholder={searchDescription}
             labelText={searchDescription}
             onChange={this.handleChange}
             value={currentFilterValue}

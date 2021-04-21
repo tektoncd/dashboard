@@ -218,9 +218,9 @@ export function App({
               isSideNavExpanded={isSideNavExpanded}
               logoutButton={logoutButton}
               onHeaderMenuButtonClick={() => {
-                setIsSideNavExpanded(prevIsSideNavExpanded => ({
-                  isSideNavExpanded: !prevIsSideNavExpanded
-                }));
+                setIsSideNavExpanded(
+                  prevIsSideNavExpanded => !prevIsSideNavExpanded
+                );
               }}
             />
             <Route path={paths.byNamespace({ path: '/*' })}>
