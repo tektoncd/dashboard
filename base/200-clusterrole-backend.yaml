@@ -49,6 +49,7 @@ rules:
   - apiGroups:
       - triggers.tekton.dev
     resources:
+      - clusterinterceptors
       - clustertriggerbindings
     verbs:
       - get
