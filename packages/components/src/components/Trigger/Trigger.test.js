@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -115,7 +115,7 @@ const fakeTrigger = {
 describe('Trigger', () => {
   it('renders all details', () => {
     const props = {
-      eventListenerNamespace: 'tekton-pipelines',
+      namespace: 'tekton-pipelines',
       trigger: fakeTrigger
     };
     const { queryByText, queryAllByText } = renderWithRouter(
@@ -165,7 +165,7 @@ describe('Trigger', () => {
 
   it('handles no objectRef in webhook Interceptor', () => {
     const props = {
-      eventListenerNamespace: 'tekton-pipelines',
+      namespace: 'tekton-pipelines',
       trigger: {
         ...fakeTrigger,
         interceptors: [
@@ -181,7 +181,7 @@ describe('Trigger', () => {
 
   it('handles empty Interceptor', () => {
     const props = {
-      eventListenerNamespace: 'tekton-pipelines',
+      namespace: 'tekton-pipelines',
       trigger: {
         ...fakeTrigger,
         interceptors: [{}]
@@ -193,7 +193,7 @@ describe('Trigger', () => {
 
   it('handles no Interceptors', () => {
     const props = {
-      eventListenerNamespace: 'tekton-pipelines',
+      namespace: 'tekton-pipelines',
       trigger: {
         ...fakeTrigger,
         interceptors: []
@@ -205,7 +205,7 @@ describe('Trigger', () => {
 
   it('handles missing Interceptors', () => {
     const props = {
-      eventListenerNamespace: 'tekton-pipelines',
+      namespace: 'tekton-pipelines',
       trigger: {
         ...fakeTrigger,
         interceptors: undefined
@@ -217,7 +217,7 @@ describe('Trigger', () => {
 
   it('handles webhook Interceptor without Header', () => {
     const props = {
-      eventListenerNamespace: 'tekton-pipelines',
+      namespace: 'tekton-pipelines',
       trigger: {
         ...fakeTrigger,
         interceptors: [
@@ -240,7 +240,7 @@ describe('Trigger', () => {
 
   it('handles github Interceptor without eventTypes', () => {
     const props = {
-      eventListenerNamespace: 'tekton-pipelines',
+      namespace: 'tekton-pipelines',
       trigger: {
         ...fakeTrigger,
         interceptors: [
@@ -262,19 +262,19 @@ describe('Trigger', () => {
 
   it('handles no name', () => {
     const props = {
-      eventListenerNamespace: 'tekton-pipelines',
+      namespace: 'tekton-pipelines',
       trigger: {
         ...fakeTrigger,
         name: undefined
       }
     };
     const { queryByText } = renderWithRouter(<Trigger {...props} />);
-    expect(queryByText('Trigger:')).toBeTruthy();
+    expect(queryByText('Trigger:')).toBeFalsy();
   });
 
   it('handles no bindings', () => {
     const props = {
-      eventListenerNamespace: 'tekton-pipelines',
+      namespace: 'tekton-pipelines',
       trigger: {
         ...fakeTrigger,
         bindings: undefined
@@ -286,7 +286,7 @@ describe('Trigger', () => {
 
   it('handles embedded template spec', () => {
     const props = {
-      eventListenerNamespace: 'tekton-pipelines',
+      namespace: 'tekton-pipelines',
       trigger: {
         ...fakeTrigger,
         template: {
@@ -312,5 +312,25 @@ describe('Trigger', () => {
     };
     const { getByText } = renderWithRouter(<Trigger {...props} />);
     expect(getByText(/hello there/)).toBeTruthy();
+  });
+
+  it('handles ClusterInterceptor', () => {
+    const clusterInterceptorName = 'fake_clusterInterceptorName';
+    const props = {
+      namespace: 'tekton-pipelines',
+      trigger: {
+        ...fakeTrigger,
+        interceptors: [
+          {
+            ref: {
+              name: clusterInterceptorName
+            }
+          }
+        ]
+      }
+    };
+    const { queryByText } = renderWithRouter(<Trigger {...props} />);
+    expect(queryByText(/ClusterInterceptor/)).toBeTruthy();
+    expect(queryByText(clusterInterceptorName)).toBeTruthy();
   });
 });

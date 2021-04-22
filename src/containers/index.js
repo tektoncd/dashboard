@@ -12,16 +12,17 @@ limitations under the License.
 */
 /* istanbul ignore file */
 export { default as About } from './About';
+export { default as ClusterInterceptors } from './ClusterInterceptors';
 export { default as ClusterTasks } from './ClusterTasks';
 export { default as ClusterTasksDropdown } from './ClusterTasksDropdown';
+export { default as ClusterTriggerBinding } from './ClusterTriggerBinding';
+export { default as ClusterTriggerBindings } from './ClusterTriggerBindings';
 export { default as Condition } from './Condition';
 export { default as Conditions } from './Conditions';
 export { default as CustomResourceDefinition } from './CustomResourceDefinition';
 export { default as CreatePipelineResource } from './CreatePipelineResource';
 export { default as CreatePipelineRun } from './CreatePipelineRun';
 export { default as CreateTaskRun } from './CreateTaskRun';
-export { default as ClusterTriggerBinding } from './ClusterTriggerBinding';
-export { default as ClusterTriggerBindings } from './ClusterTriggerBindings';
 export { default as EventListener } from './EventListener';
 export { default as EventListeners } from './EventListeners';
 export { default as Extension } from './Extension';
@@ -47,5 +48,7 @@ export { default as TaskRun } from './TaskRun';
 export { default as TaskRuns } from './TaskRuns';
 export { default as TriggerBinding } from './TriggerBinding';
 export { default as TriggerBindings } from './TriggerBindings';
+export { default as Trigger } from './Trigger';
+export { default as Triggers } from './Triggers';
 export { default as TriggerTemplate } from './TriggerTemplate';
 export { default as TriggerTemplates } from './TriggerTemplates';

@@ -13,9 +13,10 @@ limitations under the License.
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { injectIntl } from 'react-intl';
-import { getTitle } from '@tektoncd/dashboard-utils';
+import { getTitle, urls } from '@tektoncd/dashboard-utils';
 import { ResourceDetails, Trigger } from '@tektoncd/dashboard-components';
 import {
   getEventListener,
@@ -129,7 +130,22 @@ export /* istanbul ignore next */ class EventListenerContainer extends Component
             className="tkn--resourcedetails-metadata"
             key={trigger.name ? trigger.name : idx}
           >
-            <Trigger eventListenerNamespace={namespace} trigger={trigger} />
+            {trigger.triggerRef ? (
+              <div className="tkn--trigger-resourcelinks">
+                <span>Trigger:</span>
+                <Link
+                  to={urls.triggers.byName({
+                    namespace,
+                    triggerName: trigger.triggerRef
+                  })}
+                  title={trigger.triggerRef}
+                >
+                  {trigger.triggerRef}
+                </Link>
+              </div>
+            ) : (
+              <Trigger namespace={namespace} trigger={trigger} />
+            )}
           </div>
         ))}
       </div>
