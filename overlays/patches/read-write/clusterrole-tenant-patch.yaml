@@ -44,6 +44,7 @@
     resources:
       - eventlisteners
       - triggerbindings
+      - triggers
       - triggertemplates
     verbs:
       - create
