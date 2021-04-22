@@ -23,6 +23,7 @@ import {
   getTektonAPI
 } from './utils';
 
+export * from './clusterInterceptors';
 export * from './clusterTasks';
 export * from './clusterTriggerBindings';
 export * from './conditions';
@@ -35,6 +36,7 @@ export * from './serviceAccounts';
 export * from './taskRuns';
 export * from './tasks';
 export * from './triggerBindings';
+export * from './triggers';
 export * from './triggerTemplates';
 
 export function getCustomResources({ filters = [], ...rest }) {
