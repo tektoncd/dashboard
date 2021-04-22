@@ -73,7 +73,9 @@ func StartTriggersControllers(clientset dynamic.Interface, resyncDur time.Durati
 	clusterInformerFactory := dynamicinformer.NewDynamicSharedInformerFactory(clientset, resyncDur)
 	tenantInformerFactory := dynamicinformer.NewFilteredDynamicSharedInformerFactory(clientset, resyncDur, tenantNamespace, nil)
 
+	triggerscontroller.NewClusterInterceptorController(clusterInformerFactory)
 	triggerscontroller.NewClusterTriggerBindingController(clusterInformerFactory)
+	triggerscontroller.NewTriggerController(tenantInformerFactory)
 	triggerscontroller.NewTriggerBindingController(tenantInformerFactory)
 	triggerscontroller.NewTriggerTemplateController(tenantInformerFactory)
 	triggerscontroller.NewEventListenerController(tenantInformerFactory)
