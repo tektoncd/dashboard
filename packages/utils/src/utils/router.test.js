@@ -13,6 +13,7 @@ limitations under the License.
 import { generatePath } from 'react-router-dom';
 import { paths, urls } from './router';
 
+const clusterInterceptorName = 'fake_clusterInterceptorName';
 const clusterTriggerBindingName = 'fake_clusterTriggerBindingName';
 const conditionName = 'fake_conditionName';
 const eventListenerName = 'fake_eventListenerName';
@@ -22,6 +23,7 @@ const pipelineResourceName = 'fake_pipelineResourceName';
 const pipelineRunName = 'fake_pipelineRunName';
 const taskName = 'fake_taskName';
 const taskRunName = 'fake_taskRunName';
+const triggerName = 'fake_triggerName';
 const triggerBindingName = 'fake_triggerBindingName';
 const triggerTemplateName = 'fake_triggerTemplateName';
 
@@ -48,6 +50,21 @@ describe('clusterTasks', () => {
   it('all', () => {
     expect(urls.clusterTasks.all()).toEqual(
       generatePath(paths.clusterTasks.all())
+    );
+  });
+});
+
+describe('clusterInterceptors', () => {
+  it('all', () => {
+    expect(urls.clusterInterceptors.all()).toEqual(
+      generatePath(paths.clusterInterceptors.all())
+    );
+  });
+  it('byName', () => {
+    expect(urls.clusterInterceptors.byName({ clusterInterceptorName })).toEqual(
+      generatePath(paths.clusterInterceptors.byName(), {
+        clusterInterceptorName
+      })
     );
   });
 });
@@ -353,6 +370,27 @@ describe('triggerBindings', () => {
   it('byNamespace', () => {
     expect(urls.triggerBindings.byNamespace({ namespace })).toEqual(
       generatePath(paths.triggerBindings.byNamespace(), { namespace })
+    );
+  });
+});
+
+describe('triggers', () => {
+  it('all', () => {
+    expect(urls.triggers.all()).toEqual(generatePath(paths.triggers.all()));
+  });
+
+  it('byName', () => {
+    expect(urls.triggers.byName({ namespace, triggerName })).toEqual(
+      generatePath(paths.triggers.byName(), {
+        namespace,
+        triggerName
+      })
+    );
+  });
+
+  it('byNamespace', () => {
+    expect(urls.triggers.byNamespace({ namespace })).toEqual(
+      generatePath(paths.triggers.byNamespace(), { namespace })
     );
   });
 });

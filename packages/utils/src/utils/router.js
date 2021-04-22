@@ -26,6 +26,14 @@ export const paths = {
       return '/clustertasks';
     }
   },
+  clusterInterceptors: {
+    all() {
+      return '/clusterinterceptors';
+    },
+    byName: function byName() {
+      return '/clusterinterceptors/:clusterInterceptorName';
+    }
+  },
   clusterTriggerBindings: {
     all() {
       return '/clustertriggerbindings';
@@ -174,6 +182,17 @@ export const paths = {
     },
     byNamespace() {
       return byNamespace({ path: '/triggerbindings' });
+    }
+  },
+  triggers: {
+    all() {
+      return '/triggers';
+    },
+    byName() {
+      return byNamespace({ path: '/triggers/:triggerName' });
+    },
+    byNamespace() {
+      return byNamespace({ path: '/triggers' });
     }
   },
   triggerTemplates: {

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -17,10 +17,12 @@ import { connect } from 'react-redux';
 import { getTitle } from '@tektoncd/dashboard-utils';
 import { ResourceDetails } from '@tektoncd/dashboard-components';
 
-import { fetchClusterTask, fetchTask } from '../../actions/tasks';
+import { fetchClusterInterceptor } from '../../actions/clusterInterceptors';
 import { fetchPipeline } from '../../actions/pipelines';
-
+import { fetchClusterTask, fetchTask } from '../../actions/tasks';
 import {
+  getClusterInterceptor,
+  getClusterInterceptorsErrorMessage,
   getClusterTask,
   getClusterTasksErrorMessage,
   getPipeline,
@@ -30,7 +32,6 @@ import {
   isWebSocketConnected
 } from '../../reducers';
 import { getViewChangeHandler } from '../../utils';
-
 import { getCustomResource } from '../../api';
 
 export /* istanbul ignore next */ class CustomResourceDefinition extends Component {
@@ -72,12 +73,14 @@ export /* istanbul ignore next */ class CustomResourceDefinition extends Compone
 
   fetch = ({ group, version, name, namespace, type }) => {
     switch (type) {
-      case 'tasks':
-        return this.props.fetchTask({ name, namespace });
-      case 'pipelines':
-        return this.props.fetchPipeline({ name, namespace });
+      case 'clusterinterceptors':
+        return this.props.fetchClusterInterceptor({ name });
       case 'clustertasks':
         return this.props.fetchClusterTask(name);
+      case 'pipelines':
+        return this.props.fetchPipeline({ name, namespace });
+      case 'tasks':
+        return this.props.fetchTask({ name, namespace });
       default:
         return getCustomResource({
           group,
@@ -129,6 +132,7 @@ function mapStateToProps(state, ownProps) {
   const view = queryParams.get('view');
 
   const resourceMap = {
+    clusterinterceptors: getClusterInterceptor(state, { name }),
     clustertasks: getClusterTask(state, name),
     tasks: getTask(state, { name, namespace }),
     pipelines: getPipeline(state, {
@@ -137,6 +141,7 @@ function mapStateToProps(state, ownProps) {
     })
   };
   const errorMap = {
+    clusterinterceptors: getClusterInterceptorsErrorMessage(state),
     clustertasks: getClusterTasksErrorMessage(state),
     tasks: getTasksErrorMessage(state),
     pipelines: getPipelinesErrorMessage(state)
@@ -152,6 +157,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 const mapDispatchToProps = {
+  fetchClusterInterceptor,
   fetchClusterTask,
   fetchPipeline,
   fetchTask
