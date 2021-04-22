@@ -11,11 +11,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
-import isEqual from 'lodash.isequal';
 import keyBy from 'lodash.keyby';
 import {
   DeleteModal,
@@ -30,46 +29,44 @@ import {
 import { getFilters, getTitle, urls } from '@tektoncd/dashboard-utils';
 
 import { ListPageLayout } from '..';
-import { fetchClusterTasks } from '../../actions/tasks';
+import { fetchClusterTasks as fetchClusterTasksActionCreator } from '../../actions/tasks';
 import { deleteClusterTask } from '../../api';
 import {
   getClusterTasks,
   getClusterTasksErrorMessage,
   isFetchingClusterTasks,
-  isReadOnly,
-  isWebSocketConnected
+  isWebSocketConnected,
+  isReadOnly as selectIsReadOnly
 } from '../../reducers';
 
 import '../../scss/Definitions.scss';
 
-export /* istanbul ignore next */ class ClusterTasksContainer extends Component {
-  state = {
-    deleteError: null,
-    showDeleteModal: false,
-    toBeDeleted: []
-  };
+/* istanbul ignore next */
+function ClusterTasksContainer(props) {
+  const {
+    clusterTasks,
+    error,
+    fetchClusterTasks,
+    filters,
+    intl,
+    isReadOnly,
+    loading,
+    webSocketConnected
+  } = props;
+  const [cancelSelection, setCancelSelection] = useState(null);
+  const [deleteError, setDeleteError] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [toBeDeleted, setToBeDeleted] = useState([]);
 
-  componentDidMount() {
+  useEffect(() => {
     document.title = getTitle({ page: 'ClusterTasks' });
-    this.fetchData();
-  }
+  }, []);
 
-  componentDidUpdate(prevProps) {
-    const { filters, webSocketConnected } = this.props;
-    const {
-      filters: prevFilters,
-      webSocketConnected: prevWebSocketConnected
-    } = prevProps;
-    if (
-      (webSocketConnected && prevWebSocketConnected === false) ||
-      !isEqual(filters, prevFilters)
-    ) {
-      this.fetchData();
-    }
-  }
+  useEffect(() => {
+    fetchClusterTasks({ filters });
+  }, [JSON.stringify(filters), webSocketConnected]);
 
-  getError() {
-    const { error, intl } = this.props;
+  function getError() {
     if (error) {
       return {
         error,
@@ -80,10 +77,9 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
       };
     }
 
-    const { deleteError } = this.state;
     if (deleteError) {
       return {
-        clear: () => this.setState({ deleteError: null }),
+        clear: () => setDeleteError(null),
         error: deleteError
       };
     }
@@ -91,188 +87,173 @@ export /* istanbul ignore next */ class ClusterTasksContainer extends Component 
     return null;
   }
 
-  closeDeleteModal = () => {
-    this.setState({
-      showDeleteModal: false,
-      toBeDeleted: []
-    });
-  };
+  function closeDeleteModal() {
+    setShowDeleteModal(false);
+    setToBeDeleted([]);
+  }
 
-  deleteClusterTask = clusterTask => {
+  function handleDeleteClusterTask(clusterTask) {
     const { name, namespace } = clusterTask.metadata;
-    deleteClusterTask({ name, namespace }).catch(error => {
-      error.response.text().then(text => {
-        const statusCode = error.response.status;
+    deleteClusterTask({ name, namespace }).catch(err => {
+      err.response.text().then(text => {
+        const statusCode = err.response.status;
         let errorMessage = `error code ${statusCode}`;
         if (text) {
           errorMessage = `${text} (error code ${statusCode})`;
         }
-        this.setState({ deleteError: errorMessage });
+        setDeleteError(errorMessage);
       });
     });
-  };
-
-  handleDelete = async () => {
-    const { cancelSelection, toBeDeleted } = this.state;
-    const deletions = toBeDeleted.map(resource =>
-      this.deleteClusterTask(resource)
-    );
-    this.closeDeleteModal();
-    await Promise.all(deletions);
-    cancelSelection();
-  };
-
-  openDeleteModal = (selectedRows, cancelSelection) => {
-    const resourcesById = keyBy(this.props.clusterTasks, 'metadata.uid');
-    const toBeDeleted = selectedRows.map(({ id }) => resourcesById[id]);
-    this.setState({ showDeleteModal: true, toBeDeleted, cancelSelection });
-  };
-
-  fetchData() {
-    const { filters } = this.props;
-    this.props.fetchClusterTasks({ filters });
   }
 
-  render() {
-    const { loading, clusterTasks, intl } = this.props;
-    const { showDeleteModal, toBeDeleted } = this.state;
+  async function handleDelete() {
+    const deletions = toBeDeleted.map(resource =>
+      handleDeleteClusterTask(resource)
+    );
+    closeDeleteModal();
+    await Promise.all(deletions);
+    cancelSelection();
+  }
 
-    const batchActionButtons = this.props.isReadOnly
-      ? []
-      : [
-          {
-            onClick: this.openDeleteModal,
-            text: intl.formatMessage({
+  async function openDeleteModal(selectedRows, handleCancelSelection) {
+    const resourcesById = keyBy(clusterTasks, 'metadata.uid');
+    setShowDeleteModal(true);
+    setToBeDeleted(selectedRows.map(({ id }) => resourcesById[id]));
+    setCancelSelection(handleCancelSelection);
+  }
+
+  const batchActionButtons = isReadOnly
+    ? []
+    : [
+        {
+          onClick: openDeleteModal,
+          text: intl.formatMessage({
+            id: 'dashboard.actions.deleteButton',
+            defaultMessage: 'Delete'
+          }),
+          icon: DeleteIcon
+        }
+      ];
+
+  const initialHeaders = [
+    {
+      key: 'name',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.name',
+        defaultMessage: 'Name'
+      })
+    },
+    {
+      key: 'createdTime',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.createdTime',
+        defaultMessage: 'Created'
+      })
+    },
+    {
+      key: 'actions',
+      header: ''
+    }
+  ];
+
+  const clusterTasksFormatted = clusterTasks.map(clusterTask => ({
+    id: clusterTask.metadata.uid,
+    name: (
+      <Link
+        to={urls.rawCRD.cluster({
+          type: 'clustertasks',
+          name: clusterTask.metadata.name
+        })}
+        title={clusterTask.metadata.name}
+      >
+        {clusterTask.metadata.name}
+      </Link>
+    ),
+    createdTime: (
+      <FormattedDate date={clusterTask.metadata.creationTimestamp} relative />
+    ),
+    actions: (
+      <>
+        {!isReadOnly ? (
+          <Button
+            className="tkn--danger"
+            hasIconOnly
+            iconDescription={intl.formatMessage({
               id: 'dashboard.actions.deleteButton',
               defaultMessage: 'Delete'
-            }),
-            icon: DeleteIcon
-          }
-        ];
-
-    const initialHeaders = [
-      {
-        key: 'name',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.name',
-          defaultMessage: 'Name'
-        })
-      },
-      {
-        key: 'createdTime',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.createdTime',
-          defaultMessage: 'Created'
-        })
-      },
-      {
-        key: 'actions',
-        header: ''
-      }
-    ];
-
-    const clusterTasksFormatted = clusterTasks.map(clusterTask => ({
-      id: clusterTask.metadata.uid,
-      name: (
-        <Link
-          to={urls.rawCRD.cluster({
-            type: 'clustertasks',
-            name: clusterTask.metadata.name
-          })}
-          title={clusterTask.metadata.name}
-        >
-          {clusterTask.metadata.name}
-        </Link>
-      ),
-      createdTime: (
-        <FormattedDate date={clusterTask.metadata.creationTimestamp} relative />
-      ),
-      actions: (
-        <>
-          {!this.props.isReadOnly ? (
-            <Button
-              className="tkn--danger"
-              hasIconOnly
-              iconDescription={intl.formatMessage({
-                id: 'dashboard.actions.deleteButton',
-                defaultMessage: 'Delete'
-              })}
-              kind="ghost"
-              onClick={() =>
-                this.openDeleteModal(
-                  [{ id: clusterTask.metadata.uid }],
-                  () => {}
-                )
-              }
-              renderIcon={DeleteIcon}
-              size="sm"
-              tooltipAlignment="center"
-              tooltipPosition="left"
-            />
-          ) : null}
-          <Button
-            as={Link}
-            hasIconOnly
-            iconDescription={intl.formatMessage(
-              {
-                id: 'dashboard.resourceList.viewRuns',
-                defaultMessage: 'View {kind} of {resource}'
-              },
-              { kind: 'TaskRuns', resource: clusterTask.metadata.name }
-            )}
-            kind="ghost"
-            renderIcon={RunsIcon}
-            size="sm"
-            to={urls.taskRuns.byClusterTask({
-              taskName: clusterTask.metadata.name
             })}
+            kind="ghost"
+            onClick={() =>
+              openDeleteModal([{ id: clusterTask.metadata.uid }], () => {})
+            }
+            renderIcon={DeleteIcon}
+            size="sm"
             tooltipAlignment="center"
             tooltipPosition="left"
           />
-        </>
-      )
-    }));
-
-    return (
-      <ListPageLayout
-        {...this.props}
-        error={this.getError()}
-        hideNamespacesDropdown
-        title="ClusterTasks"
-      >
-        <Table
-          batchActionButtons={batchActionButtons}
-          className="tkn--table--inline-actions"
-          headers={initialHeaders}
-          rows={clusterTasksFormatted}
-          loading={loading && !clusterTasksFormatted.length}
-          emptyTextAllNamespaces={intl.formatMessage(
-            {
-              id: 'dashboard.emptyState.clusterResource',
-              defaultMessage: 'No matching {kind} found'
-            },
-            { kind: 'ClusterTasks' }
-          )}
-          emptyTextSelectedNamespace={intl.formatMessage(
-            {
-              id: 'dashboard.emptyState.clusterResource',
-              defaultMessage: 'No matching {kind} found'
-            },
-            { kind: 'ClusterTasks' }
-          )}
-        />
-        {showDeleteModal ? (
-          <DeleteModal
-            kind="ClusterTasks"
-            onClose={this.closeDeleteModal}
-            onSubmit={this.handleDelete}
-            resources={toBeDeleted}
-            showNamespace={false}
-          />
         ) : null}
-      </ListPageLayout>
-    );
-  }
+        <Button
+          as={Link}
+          hasIconOnly
+          iconDescription={intl.formatMessage(
+            {
+              id: 'dashboard.resourceList.viewRuns',
+              defaultMessage: 'View {kind} of {resource}'
+            },
+            { kind: 'TaskRuns', resource: clusterTask.metadata.name }
+          )}
+          kind="ghost"
+          renderIcon={RunsIcon}
+          size="sm"
+          to={urls.taskRuns.byClusterTask({
+            taskName: clusterTask.metadata.name
+          })}
+          tooltipAlignment="center"
+          tooltipPosition="left"
+        />
+      </>
+    )
+  }));
+
+  return (
+    <ListPageLayout
+      {...props}
+      error={getError()}
+      hideNamespacesDropdown
+      title="ClusterTasks"
+    >
+      <Table
+        batchActionButtons={batchActionButtons}
+        className="tkn--table--inline-actions"
+        headers={initialHeaders}
+        rows={clusterTasksFormatted}
+        loading={loading && !clusterTasksFormatted.length}
+        emptyTextAllNamespaces={intl.formatMessage(
+          {
+            id: 'dashboard.emptyState.clusterResource',
+            defaultMessage: 'No matching {kind} found'
+          },
+          { kind: 'ClusterTasks' }
+        )}
+        emptyTextSelectedNamespace={intl.formatMessage(
+          {
+            id: 'dashboard.emptyState.clusterResource',
+            defaultMessage: 'No matching {kind} found'
+          },
+          { kind: 'ClusterTasks' }
+        )}
+      />
+      {showDeleteModal ? (
+        <DeleteModal
+          kind="ClusterTasks"
+          onClose={closeDeleteModal}
+          onSubmit={handleDelete}
+          resources={toBeDeleted}
+          showNamespace={false}
+        />
+      ) : null}
+    </ListPageLayout>
+  );
 }
 
 ClusterTasksContainer.defaultProps = {
@@ -287,14 +268,14 @@ function mapStateToProps(state, props) {
     clusterTasks: getClusterTasks(state, { filters }),
     error: getClusterTasksErrorMessage(state),
     filters,
-    isReadOnly: isReadOnly(state),
+    isReadOnly: selectIsReadOnly(state),
     loading: isFetchingClusterTasks(state),
     webSocketConnected: isWebSocketConnected(state)
   };
 }
 
 const mapDispatchToProps = {
-  fetchClusterTasks
+  fetchClusterTasks: fetchClusterTasksActionCreator
 };
 
 export default connect(
