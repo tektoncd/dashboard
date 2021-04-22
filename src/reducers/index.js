@@ -14,25 +14,29 @@ limitations under the License.
 import { combineReducers } from 'redux';
 import { labels as labelConstants } from '@tektoncd/dashboard-utils';
 
+import clusterInterceptors, * as clusterInterceptorsSelectors from './clusterInterceptors';
 import clusterTasks, * as clusterTaskSelectors from './clusterTasks';
+import clusterTriggerBindings, * as clusterTriggerBindingsSelectors from './clusterTriggerBindings';
 import conditions, * as conditionSelectors from './conditions';
 import eventListeners, * as eventListenersSelectors from './eventListeners';
 import extensions, * as extensionSelectors from './extensions';
 import locale, * as localeSelectors from './locale';
 import namespaces, * as namespaceSelectors from './namespaces';
 import notifications, * as notificationSelectors from './notifications';
-import pipelines, * as pipelineSelectors from './pipelines';
 import pipelineResources, * as pipelineResourcesSelectors from './pipelineResources';
 import pipelineRuns, * as pipelineRunsSelectors from './pipelineRuns';
+import pipelines, * as pipelineSelectors from './pipelines';
 import properties, * as propertiesSelectors from './properties';
+import serviceAccounts, * as serviceAccountSelectors from './serviceAccounts';
+import taskRuns, * as taskRunsSelectors from './taskRuns';
+import tasks, * as taskSelectors from './tasks';
+import triggers, * as triggersSelectors from './triggers';
 import triggerTemplates, * as triggerTemplatesSelectors from './triggerTemplates';
 import triggerBindings, * as triggerBindingsSelectors from './triggerBindings';
-import clusterTriggerBindings, * as clusterTriggerBindingsSelectors from './clusterTriggerBindings';
-import serviceAccounts, * as serviceAccountSelectors from './serviceAccounts';
-import tasks, * as taskSelectors from './tasks';
-import taskRuns, * as taskRunsSelectors from './taskRuns';
 
 export default combineReducers({
+  clusterInterceptors: clusterInterceptors(),
+  clusterTriggerBindings: clusterTriggerBindings(),
   clusterTasks,
   conditions: conditions(),
   eventListeners: eventListeners(),
@@ -48,7 +52,7 @@ export default combineReducers({
   tasks: tasks(),
   taskRuns: taskRuns(),
   triggerBindings: triggerBindings(),
-  clusterTriggerBindings: clusterTriggerBindings(),
+  triggers: triggers(),
   triggerTemplates: triggerTemplates()
 });
 
@@ -410,6 +414,55 @@ export function isFetchingClusterTriggerBindings(state) {
   return clusterTriggerBindingsSelectors.isFetchingClusterTriggerBindings(
     state.clusterTriggerBindings
   );
+}
+
+export function getClusterInterceptors(state, { filters } = {}) {
+  const resources = clusterInterceptorsSelectors.getClusterInterceptors(
+    state.clusterInterceptors
+  );
+  return filterResources({ filters, resources });
+}
+
+export function getClusterInterceptor(state, { name }) {
+  return clusterInterceptorsSelectors.getClusterInterceptor(
+    state.clusterInterceptors,
+    name
+  );
+}
+
+export function getClusterInterceptorsErrorMessage(state) {
+  return clusterInterceptorsSelectors.getClusterInterceptorsErrorMessage(
+    state.clusterInterceptors
+  );
+}
+
+export function isFetchingClusterInterceptors(state) {
+  return clusterInterceptorsSelectors.isFetchingClusterInterceptors(
+    state.clusterInterceptors
+  );
+}
+
+export function getTriggers(
+  state,
+  { filters, namespace = getSelectedNamespace(state) } = {}
+) {
+  const resources = triggersSelectors.getTriggers(state.triggers, namespace);
+  return filterResources({ filters, resources });
+}
+
+export function getTrigger(
+  state,
+  { name, namespace = getSelectedNamespace(state) }
+) {
+  return triggersSelectors.getTrigger(state.triggers, name, namespace);
+}
+
+export function getTriggersErrorMessage(state) {
+  return triggersSelectors.getTriggersErrorMessage(state.triggers);
+}
+
+export function isFetchingTriggers(state) {
+  return triggersSelectors.isFetchingTriggers(state.triggers);
 }
 
 export function getEventListeners(
