@@ -155,6 +155,13 @@ class SideNav extends Component {
             )}
             {this.props.isTriggersInstalled && (
               <SideNavMenuItem
+                {...this.getMenuItemProps(this.getPath(urls.triggers.all()))}
+              >
+                Triggers
+              </SideNavMenuItem>
+            )}
+            {this.props.isTriggersInstalled && (
+              <SideNavMenuItem
                 {...this.getMenuItemProps(
                   this.getPath(urls.triggerBindings.all())
                 )}
@@ -176,6 +183,13 @@ class SideNav extends Component {
                 )}
               >
                 TriggerTemplates
+              </SideNavMenuItem>
+            )}
+            {this.props.isTriggersInstalled && (
+              <SideNavMenuItem
+                {...this.getMenuItemProps(urls.clusterInterceptors.all())}
+              >
+                ClusterInterceptors
               </SideNavMenuItem>
             )}
           </SideNavMenu>

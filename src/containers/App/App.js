@@ -39,6 +39,7 @@ import {
 
 import {
   About,
+  ClusterInterceptors,
   ClusterTasks,
   ClusterTriggerBinding,
   ClusterTriggerBindings,
@@ -64,8 +65,10 @@ import {
   TaskRun,
   TaskRuns,
   Tasks,
+  Trigger,
   TriggerBinding,
   TriggerBindings,
+  Triggers,
   TriggerTemplate,
   TriggerTemplates
 } from '..';
@@ -354,6 +357,21 @@ export function App({
                     component={EventListener}
                   />
                   <Route
+                    path={paths.triggers.byName()}
+                    exact
+                    component={Trigger}
+                  />
+                  <Route
+                    path={paths.triggers.all()}
+                    exact
+                    component={Triggers}
+                  />
+                  <Route
+                    path={paths.triggers.byNamespace()}
+                    exact
+                    component={Triggers}
+                  />
+                  <Route
                     path={paths.triggerBindings.byName()}
                     exact
                     component={TriggerBinding}
@@ -392,6 +410,11 @@ export function App({
                     path={paths.triggerTemplates.byNamespace()}
                     exact
                     component={TriggerTemplates}
+                  />
+                  <Route
+                    path={paths.clusterInterceptors.all()}
+                    exact
+                    component={ClusterInterceptors}
                   />
                   <Route
                     path={paths.extensions.all()}
