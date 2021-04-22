@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { TooltipDropdown } from '@tektoncd/dashboard-components';
@@ -21,44 +21,35 @@ import {
   isFetchingClusterTasks,
   isWebSocketConnected
 } from '../../reducers';
-import { fetchClusterTasks } from '../../actions/tasks';
+import { fetchClusterTasks as fetchClusterTasksActionCreator } from '../../actions/tasks';
 
-class ClusterTasksDropdown extends React.Component {
-  componentDidMount() {
-    this.props.fetchClusterTasks();
-  }
-
-  componentDidUpdate(prevProps) {
-    const { webSocketConnected } = this.props;
-    const { webSocketConnected: prevWebSocketConnected } = prevProps;
-    if (webSocketConnected && prevWebSocketConnected === false) {
-      this.props.fetchClusterTasks();
+function ClusterTasksDropdown({
+  fetchClusterTasks,
+  intl,
+  label,
+  webSocketConnected,
+  ...rest
+}) {
+  useEffect(() => {
+    if (webSocketConnected !== false) {
+      fetchClusterTasks();
     }
-  }
+  }, [webSocketConnected]);
 
-  render() {
-    const {
-      fetchClusterTasks: _fetchClusterTasks,
-      intl,
-      label,
-      webSocketConnected,
-      ...rest
-    } = this.props;
-    const emptyText = intl.formatMessage({
-      id: 'dashboard.clusterTasksDropdown.empty',
-      defaultMessage: 'No ClusterTasks found'
+  const emptyText = intl.formatMessage({
+    id: 'dashboard.clusterTasksDropdown.empty',
+    defaultMessage: 'No ClusterTasks found'
+  });
+
+  const labelString =
+    label ||
+    intl.formatMessage({
+      id: 'dashboard.clusterTasksDropdown.label',
+      defaultMessage: 'Select ClusterTask'
     });
-
-    const labelString =
-      label ||
-      intl.formatMessage({
-        id: 'dashboard.clusterTasksDropdown.label',
-        defaultMessage: 'Select ClusterTask'
-      });
-    return (
-      <TooltipDropdown {...rest} emptyText={emptyText} label={labelString} />
-    );
-  }
+  return (
+    <TooltipDropdown {...rest} emptyText={emptyText} label={labelString} />
+  );
 }
 
 ClusterTasksDropdown.defaultProps = {
@@ -76,7 +67,7 @@ function mapStateToProps(state) {
 }
 
 const mapDispatchToProps = {
-  fetchClusterTasks
+  fetchClusterTasks: fetchClusterTasksActionCreator
 };
 
 export default connect(

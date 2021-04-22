@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -20,6 +20,7 @@ import { renderWithIntl } from '@tektoncd/dashboard-components/src/utils/test';
 
 import ClusterTasksDropdown from './ClusterTasksDropdown';
 import * as API from '../../api/clusterTasks';
+import * as reducers from '../../reducers';
 
 const props = {
   id: 'clustertasks-dropdown',
@@ -187,5 +188,23 @@ describe('ClusterTasksDropdown', () => {
     fireEvent.click(getByPlaceholderText(initialTextRegExp));
     fireEvent.click(getByText(/clustertask-1/i));
     expect(onChange).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not make the API call when the websocket disconnects', () => {
+    jest
+      .spyOn(reducers, 'isWebSocketConnected')
+      .mockImplementation(() => false);
+    jest.spyOn(API, 'getClusterTasks');
+
+    const store = mockStore({
+      ...clusterTasksStoreDefault,
+      notifications: {}
+    });
+    renderWithIntl(
+      <Provider store={store}>
+        <ClusterTasksDropdown {...props} />
+      </Provider>
+    );
+    expect(API.getClusterTasks).not.toHaveBeenCalled();
   });
 });
