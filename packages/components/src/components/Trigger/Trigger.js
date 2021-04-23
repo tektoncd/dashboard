@@ -45,7 +45,10 @@ const Trigger = ({ intl, namespace, trigger }) => {
 
   const { bindings, interceptors, template } = trigger.spec || trigger;
   const triggerTemplateName = template.ref || template.name;
-  const triggerName = trigger.metadata?.name || trigger.name;
+  // we deliberately don't get the name from a Trigger resource here
+  // as it will already have a heading on the page so we only want to display
+  // a header in this component when it's for a trigger in an EventListener
+  const triggerName = trigger.name;
 
   return (
     <div>

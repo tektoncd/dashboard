@@ -127,6 +127,7 @@ describe('TriggerContainer', () => {
 
   it('renders the trigger resource', async () => {
     const triggerName = 'fake_triggerName';
+    const templateName = 'fake_templateName';
     const fetchTriggerSpy = jest
       .fn()
       .mockImplementation(() => Promise.resolve());
@@ -144,10 +145,11 @@ describe('TriggerContainer', () => {
         match={match}
         trigger={{
           metadata: { name: triggerName },
-          spec: { template: { ref: 'foo' } }
+          spec: { template: { ref: templateName } }
         }}
       />
     );
-    expect(queryByText(`Trigger: ${triggerName}`)).toBeTruthy();
+    expect(queryByText(triggerName)).toBeTruthy();
+    expect(queryByText(templateName)).toBeTruthy();
   });
 });
