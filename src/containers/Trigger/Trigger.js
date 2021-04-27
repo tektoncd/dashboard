@@ -15,7 +15,7 @@ import React, { useEffect } from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { getTitle } from '@tektoncd/dashboard-utils';
+import { getTitle, useWebSocketReconnected } from '@tektoncd/dashboard-utils';
 import { ResourceDetails, Trigger } from '@tektoncd/dashboard-components';
 import {
   getSelectedNamespace,
@@ -46,9 +46,15 @@ export function TriggerContainer(props) {
     });
   }, []);
 
-  useEffect(() => {
+  function fetchData() {
     fetchTrigger({ name: triggerName, namespace });
-  }, [triggerName, namespace, webSocketConnected]);
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, [triggerName, namespace]);
+
+  useWebSocketReconnected(fetchData, webSocketConnected);
 
   return (
     <ResourceDetails

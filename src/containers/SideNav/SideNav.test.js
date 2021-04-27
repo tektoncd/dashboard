@@ -137,7 +137,7 @@ it('SideNav selects namespace based on URL', () => {
   expect(selectNamespace).toHaveBeenCalledTimes(2);
 });
 
-it('SideNav renders import in not read-only mode', async () => {
+it('SideNav renders import in the default read-write mode', async () => {
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const store = mockStore({
@@ -170,4 +170,20 @@ it('SideNav does not render import in read-only mode', async () => {
   );
   await waitFor(() => queryByText(/about/i));
   expect(queryByText(/import/i)).toBeFalsy();
+});
+
+it('SideNav renders kubernetes resources placeholder', async () => {
+  const middleware = [thunk];
+  const mockStore = configureStore(middleware);
+  const store = mockStore({
+    extensions: { byName: {} },
+    namespaces: { byName: {} },
+    properties: {}
+  });
+  const { queryByText } = renderWithRouter(
+    <Provider store={store}>
+      <SideNavContainer location={{ search: '' }} showKubernetesResources />
+    </Provider>
+  );
+  await waitFor(() => queryByText('placeholder'));
 });

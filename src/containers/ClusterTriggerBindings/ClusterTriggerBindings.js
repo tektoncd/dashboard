@@ -11,16 +11,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import isEqual from 'lodash.isequal';
 import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
-import { getFilters, getTitle, urls } from '@tektoncd/dashboard-utils';
+import {
+  getFilters,
+  getTitle,
+  urls,
+  useWebSocketReconnected
+} from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 
 import { ListPageLayout } from '..';
-import { fetchClusterTriggerBindings } from '../../actions/clusterTriggerBindings';
+import { fetchClusterTriggerBindings as fetchClusterTriggerBindingsActionCreator } from '../../actions/clusterTriggerBindings';
 import {
   getClusterTriggerBindings,
   getClusterTriggerBindingsErrorMessage,
@@ -28,29 +32,33 @@ import {
   isWebSocketConnected
 } from '../../reducers';
 
-export /* istanbul ignore next */ class ClusterTriggerBindings extends Component {
-  componentDidMount() {
+/* istanbul ignore next */
+function ClusterTriggerBindings(props) {
+  const {
+    clusterTriggerBindings,
+    fetchClusterTriggerBindings,
+    filters,
+    intl,
+    loading,
+    webSocketConnected
+  } = props;
+
+  useEffect(() => {
     document.title = getTitle({ page: 'ClusterTriggerBindings' });
-    this.fetchClusterTriggerBindings();
+  }, []);
+
+  function fetchData() {
+    fetchClusterTriggerBindings({ filters });
   }
 
-  componentDidUpdate(prevProps) {
-    const { filters, webSocketConnected } = this.props;
-    const {
-      filters: prevFilters,
-      webSocketConnected: prevWebSocketConnected
-    } = prevProps;
+  useEffect(() => {
+    fetchData();
+  }, [JSON.stringify(filters)]);
 
-    if (
-      !isEqual(filters, prevFilters) ||
-      (webSocketConnected && prevWebSocketConnected === false)
-    ) {
-      this.fetchClusterTriggerBindings();
-    }
-  }
+  useWebSocketReconnected(fetchData, webSocketConnected);
 
-  getError() {
-    const { error } = this.props;
+  function getError() {
+    const { error } = props;
     if (error) {
       return { error };
     }
@@ -58,80 +66,68 @@ export /* istanbul ignore next */ class ClusterTriggerBindings extends Component
     return null;
   }
 
-  fetchClusterTriggerBindings() {
-    const { filters } = this.props;
-    this.props.fetchClusterTriggerBindings({
-      filters
-    });
-  }
-
-  render() {
-    const { intl, loading, clusterTriggerBindings } = this.props;
-    const initialHeaders = [
-      {
-        key: 'name',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.name',
-          defaultMessage: 'Name'
-        })
-      },
-      {
-        key: 'date',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.createdTime',
-          defaultMessage: 'Created'
-        })
-      }
-    ];
-
-    const clusterTriggerBindingsFormatted = clusterTriggerBindings.map(
-      binding => ({
-        id: `${binding.metadata.name}`,
-        name: (
-          <Link
-            to={urls.clusterTriggerBindings.byName({
-              clusterTriggerBindingName: binding.metadata.name
-            })}
-            title={binding.metadata.name}
-          >
-            {binding.metadata.name}
-          </Link>
-        ),
-        date: (
-          <FormattedDate date={binding.metadata.creationTimestamp} relative />
-        )
+  const initialHeaders = [
+    {
+      key: 'name',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.name',
+        defaultMessage: 'Name'
       })
-    );
+    },
+    {
+      key: 'date',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.createdTime',
+        defaultMessage: 'Created'
+      })
+    }
+  ];
 
-    return (
-      <ListPageLayout
-        {...this.props}
-        error={this.getError()}
-        hideNamespacesDropdown
-        title="ClusterTriggerBindings"
-      >
-        <Table
-          headers={initialHeaders}
-          rows={clusterTriggerBindingsFormatted}
-          loading={loading && !clusterTriggerBindingsFormatted.length}
-          emptyTextAllNamespaces={intl.formatMessage(
-            {
-              id: 'dashboard.emptyState.clusterResource',
-              defaultMessage: 'No matching {kind} found'
-            },
-            { kind: 'ClusterTriggerBindings' }
-          )}
-          emptyTextSelectedNamespace={intl.formatMessage(
-            {
-              id: 'dashboard.emptyState.clusterResource',
-              defaultMessage: 'No matching {kind} found'
-            },
-            { kind: 'ClusterTriggerBindings' }
-          )}
-        />
-      </ListPageLayout>
-    );
-  }
+  const clusterTriggerBindingsFormatted = clusterTriggerBindings.map(
+    binding => ({
+      id: `${binding.metadata.name}`,
+      name: (
+        <Link
+          to={urls.clusterTriggerBindings.byName({
+            clusterTriggerBindingName: binding.metadata.name
+          })}
+          title={binding.metadata.name}
+        >
+          {binding.metadata.name}
+        </Link>
+      ),
+      date: <FormattedDate date={binding.metadata.creationTimestamp} relative />
+    })
+  );
+
+  return (
+    <ListPageLayout
+      {...props}
+      error={getError()}
+      hideNamespacesDropdown
+      title="ClusterTriggerBindings"
+    >
+      <Table
+        headers={initialHeaders}
+        rows={clusterTriggerBindingsFormatted}
+        loading={loading && !clusterTriggerBindingsFormatted.length}
+        emptyTextAllNamespaces={intl.formatMessage(
+          {
+            id: 'dashboard.emptyState.clusterResource',
+            defaultMessage: 'No matching {kind} found'
+          },
+          { kind: 'ClusterTriggerBindings' }
+        )}
+        emptyTextSelectedNamespace={intl.formatMessage(
+          {
+            id: 'dashboard.emptyState.clusterResource',
+            defaultMessage: 'No matching {kind} found'
+          },
+          { kind: 'ClusterTriggerBindings' }
+        )}
+      />
+    </ListPageLayout>
+  );
 }
 
 function mapStateToProps(state, props) {
@@ -147,7 +143,7 @@ function mapStateToProps(state, props) {
 }
 
 const mapDispatchToProps = {
-  fetchClusterTriggerBindings
+  fetchClusterTriggerBindings: fetchClusterTriggerBindingsActionCreator
 };
 
 export default connect(

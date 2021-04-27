@@ -11,15 +11,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import { getTitle } from '@tektoncd/dashboard-utils';
+import { getTitle, useWebSocketReconnected } from '@tektoncd/dashboard-utils';
 import { ResourceDetails } from '@tektoncd/dashboard-components';
 
-import { fetchClusterInterceptor } from '../../actions/clusterInterceptors';
-import { fetchPipeline } from '../../actions/pipelines';
-import { fetchClusterTask, fetchTask } from '../../actions/tasks';
+import { fetchClusterInterceptor as fetchClusterInterceptorActionCreator } from '../../actions/clusterInterceptors';
+import { fetchPipeline as fetchPipelineActionCreator } from '../../actions/pipelines';
+import {
+  fetchClusterTask as fetchClusterTaskActionCreator,
+  fetchTask as fetchTaskActionCreator
+} from '../../actions/tasks';
 import {
   getClusterInterceptor,
   getClusterInterceptorsErrorMessage,
@@ -34,53 +37,41 @@ import {
 import { getViewChangeHandler } from '../../utils';
 import { getCustomResource } from '../../api';
 
-export /* istanbul ignore next */ class CustomResourceDefinition extends Component {
-  state = {
-    loading: true
-  };
+/* istanbul ignore next */
+function CustomResourceDefinition(props) {
+  const {
+    error,
+    fetchClusterInterceptor,
+    fetchClusterTask,
+    fetchPipeline,
+    fetchTask,
+    match,
+    resource,
+    view,
+    webSocketConnected
+  } = props;
+  const { group, name, namespace, type, version } = match.params;
 
-  componentDidMount() {
-    const { match } = this.props;
-    const { name, type } = match.params;
+  const [loading, setLoading] = useState(true);
+  const [customResource, setCustomResource] = useState(null);
+
+  useEffect(() => {
     document.title = getTitle({
       page: type,
       resourceName: name
     });
-    this.fetchData();
-  }
+  }, []);
 
-  componentDidUpdate(prevProps) {
-    const { match, webSocketConnected } = this.props;
-    const { name, namespace, type } = match.params;
-    const {
-      match: prevMatch,
-      webSocketConnected: prevWebSocketConnected
-    } = prevProps;
-    const {
-      name: prevName,
-      namespace: prevNamespace,
-      type: prevType
-    } = prevMatch.params;
-    if (
-      namespace !== prevNamespace ||
-      name !== prevName ||
-      type !== prevType ||
-      (webSocketConnected && prevWebSocketConnected === false)
-    ) {
-      this.fetchData();
-    }
-  }
-
-  fetch = ({ group, version, name, namespace, type }) => {
+  function fetch() {
     switch (type) {
       case 'clusterinterceptors':
-        return this.props.fetchClusterInterceptor({ name });
+        return fetchClusterInterceptor({ name });
       case 'clustertasks':
-        return this.props.fetchClusterTask(name);
+        return fetchClusterTask(name);
       case 'pipelines':
-        return this.props.fetchPipeline({ name, namespace });
+        return fetchPipeline({ name, namespace });
       case 'tasks':
-        return this.props.fetchTask({ name, namespace });
+        return fetchTask({ name, namespace });
       default:
         return getCustomResource({
           group,
@@ -88,38 +79,32 @@ export /* istanbul ignore next */ class CustomResourceDefinition extends Compone
           type,
           namespace,
           name
-        }).then(resource => {
-          this.setState({ resource });
+        }).then(res => {
+          setCustomResource(res);
         });
     }
-  };
-
-  fetchData() {
-    const { match } = this.props;
-    const { group, version, name, namespace, type } = match.params;
-    this.setState({ loading: true }); // eslint-disable-line
-    this.fetch({ group, version, name, namespace, type }).then(() =>
-      this.setState({ loading: false })
-    );
   }
 
-  render() {
-    const error = this.props.error || this.state.error;
-    const resource = this.props.resource || this.state.resource;
-    const { loading } = this.state;
-
-    const { view } = this.props;
-
-    return (
-      <ResourceDetails
-        error={error}
-        loading={loading}
-        onViewChange={getViewChangeHandler(this.props)}
-        resource={resource}
-        view={view}
-      />
-    );
+  function fetchData() {
+    setLoading(true);
+    fetch().then(() => setLoading(false));
   }
+
+  useEffect(() => {
+    fetchData();
+  }, [name, namespace, type]);
+
+  useWebSocketReconnected(fetchData, webSocketConnected);
+
+  return (
+    <ResourceDetails
+      error={error}
+      loading={loading}
+      onViewChange={getViewChangeHandler(props)}
+      resource={resource || customResource}
+      view={view}
+    />
+  );
 }
 
 /* istanbul ignore next */
@@ -157,10 +142,10 @@ function mapStateToProps(state, ownProps) {
 }
 
 const mapDispatchToProps = {
-  fetchClusterInterceptor,
-  fetchClusterTask,
-  fetchPipeline,
-  fetchTask
+  fetchClusterInterceptor: fetchClusterInterceptorActionCreator,
+  fetchClusterTask: fetchClusterTaskActionCreator,
+  fetchPipeline: fetchPipelineActionCreator,
+  fetchTask: fetchTaskActionCreator
 };
 
 export default connect(

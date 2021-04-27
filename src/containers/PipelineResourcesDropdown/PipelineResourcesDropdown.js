@@ -14,7 +14,10 @@ limitations under the License.
 import React, { useEffect } from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
+import {
+  ALL_NAMESPACES,
+  useWebSocketReconnected
+} from '@tektoncd/dashboard-utils';
 import { TooltipDropdown } from '@tektoncd/dashboard-components';
 
 import {
@@ -34,9 +37,15 @@ function PipelineResourcesDropdown({
   webSocketConnected,
   ...rest
 }) {
-  useEffect(() => {
+  function fetchData() {
     fetchPipelineResources({ namespace });
-  }, [namespace, webSocketConnected]);
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, [namespace]);
+
+  useWebSocketReconnected(fetchData, webSocketConnected);
 
   let emptyText = intl.formatMessage({
     id: 'dashboard.pipelineResourcesDropdown.empty.allNamespaces',

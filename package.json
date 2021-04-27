@@ -74,6 +74,7 @@
     "@storybook/theming": "^6.2.1",
     "@svgr/webpack": "^5.5.0",
     "@testing-library/react": "^11.2.2",
+    "@testing-library/react-hooks": "5.1.2",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.2",
     "babel-plugin-react-intl": "^8.2.18",

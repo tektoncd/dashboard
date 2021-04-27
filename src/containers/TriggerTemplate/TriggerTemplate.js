@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { injectIntl } from 'react-intl';
@@ -21,7 +21,7 @@ import {
   ResourceDetails,
   ViewYAML
 } from '@tektoncd/dashboard-components';
-import { getTitle } from '@tektoncd/dashboard-utils';
+import { getTitle, useWebSocketReconnected } from '@tektoncd/dashboard-utils';
 import {
   getSelectedNamespace,
   getTriggerTemplate,
@@ -31,7 +31,7 @@ import {
 } from '../../reducers';
 import { getViewChangeHandler } from '../../utils';
 
-import { fetchTriggerTemplate } from '../../actions/triggerTemplates';
+import { fetchTriggerTemplate as fetchTriggerTemplateActionCreator } from '../../actions/triggerTemplates';
 
 import '../../scss/Triggers.scss';
 
@@ -48,41 +48,38 @@ const {
   TableRow
 } = DataTable;
 
-export /* istanbul ignore next */ class TriggerTemplateContainer extends Component {
-  componentDidMount() {
-    const { match } = this.props;
-    const { triggerTemplateName: resourceName } = match.params;
+export /* istanbul ignore next */ function TriggerTemplateContainer(props) {
+  const {
+    error,
+    fetchTriggerTemplate,
+    intl,
+    loading,
+    match,
+    selectedNamespace,
+    triggerTemplate,
+    view,
+    webSocketConnected
+  } = props;
+  const { namespace, triggerTemplateName: resourceName } = match.params;
+
+  useEffect(() => {
     document.title = getTitle({
       page: 'TriggerTemplate',
       resourceName
     });
-    this.fetchData();
+  }, []);
+
+  function fetchData() {
+    fetchTriggerTemplate({ name: resourceName, namespace });
   }
 
-  componentDidUpdate(prevProps) {
-    const { match, webSocketConnected } = this.props;
-    const { namespace, triggerTemplateName } = match.params;
-    const {
-      match: prevMatch,
-      webSocketConnected: prevWebSocketConnected
-    } = prevProps;
-    const {
-      namespace: prevNamespace,
-      triggerTemplateName: prevTriggerTemplateName
-    } = prevMatch.params;
+  useEffect(() => {
+    fetchData();
+  }, [namespace, resourceName]);
 
-    if (
-      namespace !== prevNamespace ||
-      triggerTemplateName !== prevTriggerTemplateName ||
-      (webSocketConnected && prevWebSocketConnected === false)
-    ) {
-      this.fetchData();
-    }
-  }
+  useWebSocketReconnected(fetchData, webSocketConnected);
 
-  getContent() {
-    const { intl, selectedNamespace, triggerTemplate } = this.props;
-
+  function getContent() {
     if (!triggerTemplate) {
       return null;
     }
@@ -227,27 +224,17 @@ export /* istanbul ignore next */ class TriggerTemplateContainer extends Compone
     );
   }
 
-  fetchData() {
-    const { match } = this.props;
-    const { namespace, triggerTemplateName } = match.params;
-    this.props.fetchTriggerTemplate({ name: triggerTemplateName, namespace });
-  }
-
-  render() {
-    const { error, loading, triggerTemplate, view } = this.props;
-
-    return (
-      <ResourceDetails
-        error={error}
-        loading={loading}
-        onViewChange={getViewChangeHandler(this.props)}
-        resource={triggerTemplate}
-        view={view}
-      >
-        {this.getContent()}
-      </ResourceDetails>
-    );
-  }
+  return (
+    <ResourceDetails
+      error={error}
+      loading={loading}
+      onViewChange={getViewChangeHandler(props)}
+      resource={triggerTemplate}
+      view={view}
+    >
+      {getContent()}
+    </ResourceDetails>
+  );
 }
 
 TriggerTemplateContainer.propTypes = {
@@ -282,7 +269,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 const mapDispatchToProps = {
-  fetchTriggerTemplate
+  fetchTriggerTemplate: fetchTriggerTemplateActionCreator
 };
 
 export default connect(

@@ -11,16 +11,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import isEqual from 'lodash.isequal';
 import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
-import { getFilters, getTitle, urls } from '@tektoncd/dashboard-utils';
+import {
+  getFilters,
+  getTitle,
+  urls,
+  useWebSocketReconnected
+} from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 
 import { ListPageLayout } from '..';
-import { fetchTriggerTemplates } from '../../actions/triggerTemplates';
+import { fetchTriggerTemplates as fetchTriggerTemplatesActionCreator } from '../../actions/triggerTemplates';
 import {
   getSelectedNamespace,
   getTriggerTemplates,
@@ -29,31 +33,34 @@ import {
   isWebSocketConnected
 } from '../../reducers';
 
-export /* istanbul ignore next */ class TriggerTemplates extends Component {
-  componentDidMount() {
+/* istanbul ignore next */
+function TriggerTemplates(props) {
+  const {
+    fetchTriggerTemplates,
+    filters,
+    intl,
+    loading,
+    selectedNamespace,
+    triggerTemplates,
+    webSocketConnected
+  } = props;
+
+  useEffect(() => {
     document.title = getTitle({ page: 'TriggerTemplates' });
-    this.fetchTriggerTemplates();
+  }, []);
+
+  function fetchData() {
+    fetchTriggerTemplates({ filters, namespace: selectedNamespace });
   }
 
-  componentDidUpdate(prevProps) {
-    const { filters, namespace, webSocketConnected } = this.props;
-    const {
-      filters: prevFilters,
-      namespace: prevNamespace,
-      webSocketConnected: prevWebSocketConnected
-    } = prevProps;
+  useEffect(() => {
+    fetchData();
+  }, [JSON.stringify(filters), selectedNamespace]);
 
-    if (
-      !isEqual(filters, prevFilters) ||
-      namespace !== prevNamespace ||
-      (webSocketConnected && prevWebSocketConnected === false)
-    ) {
-      this.fetchTriggerTemplates();
-    }
-  }
+  useWebSocketReconnected(fetchData, webSocketConnected);
 
-  getError() {
-    const { error } = this.props;
+  function getError() {
+    const { error } = props;
     if (error) {
       return { error };
     }
@@ -61,87 +68,69 @@ export /* istanbul ignore next */ class TriggerTemplates extends Component {
     return null;
   }
 
-  fetchTriggerTemplates() {
-    const { filters, namespace } = this.props;
-    this.props.fetchTriggerTemplates({
-      filters,
-      namespace
-    });
-  }
+  const initialHeaders = [
+    {
+      key: 'name',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.name',
+        defaultMessage: 'Name'
+      })
+    },
+    {
+      key: 'namespace',
+      header: 'Namespace'
+    },
+    {
+      key: 'date',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.createdTime',
+        defaultMessage: 'Created'
+      })
+    }
+  ];
 
-  render() {
-    const { intl, loading, selectedNamespace, triggerTemplates } = this.props;
-
-    const initialHeaders = [
-      {
-        key: 'name',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.name',
-          defaultMessage: 'Name'
-        })
-      },
-      {
-        key: 'namespace',
-        header: 'Namespace'
-      },
-      {
-        key: 'date',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.createdTime',
-          defaultMessage: 'Created'
-        })
-      }
-    ];
-
-    const triggerTemplatesFormatted = triggerTemplates.map(template => ({
-      id: `${template.metadata.namespace}:${template.metadata.name}`,
-      name: (
-        <Link
-          to={urls.triggerTemplates.byName({
-            namespace: template.metadata.namespace,
-            triggerTemplateName: template.metadata.name
-          })}
-          title={template.metadata.name}
-        >
-          {template.metadata.name}
-        </Link>
-      ),
-      namespace: template.metadata.namespace,
-      date: (
-        <FormattedDate date={template.metadata.creationTimestamp} relative />
-      )
-    }));
-
-    return (
-      <ListPageLayout
-        {...this.props}
-        error={this.getError()}
-        title="TriggerTemplates"
+  const triggerTemplatesFormatted = triggerTemplates.map(template => ({
+    id: `${template.metadata.namespace}:${template.metadata.name}`,
+    name: (
+      <Link
+        to={urls.triggerTemplates.byName({
+          namespace: template.metadata.namespace,
+          triggerTemplateName: template.metadata.name
+        })}
+        title={template.metadata.name}
       >
-        <Table
-          headers={initialHeaders}
-          rows={triggerTemplatesFormatted}
-          loading={loading && !triggerTemplatesFormatted.length}
-          selectedNamespace={selectedNamespace}
-          emptyTextAllNamespaces={intl.formatMessage(
-            {
-              id: 'dashboard.emptyState.allNamespaces',
-              defaultMessage: 'No matching {kind} found'
-            },
-            { kind: 'TriggerTemplates' }
-          )}
-          emptyTextSelectedNamespace={intl.formatMessage(
-            {
-              id: 'dashboard.emptyState.selectedNamespace',
-              defaultMessage:
-                'No matching {kind} found in namespace {selectedNamespace}'
-            },
-            { kind: 'TriggerTemplates', selectedNamespace }
-          )}
-        />
-      </ListPageLayout>
-    );
-  }
+        {template.metadata.name}
+      </Link>
+    ),
+    namespace: template.metadata.namespace,
+    date: <FormattedDate date={template.metadata.creationTimestamp} relative />
+  }));
+
+  return (
+    <ListPageLayout {...props} error={getError()} title="TriggerTemplates">
+      <Table
+        headers={initialHeaders}
+        rows={triggerTemplatesFormatted}
+        loading={loading && !triggerTemplatesFormatted.length}
+        selectedNamespace={selectedNamespace}
+        emptyTextAllNamespaces={intl.formatMessage(
+          {
+            id: 'dashboard.emptyState.allNamespaces',
+            defaultMessage: 'No matching {kind} found'
+          },
+          { kind: 'TriggerTemplates' }
+        )}
+        emptyTextSelectedNamespace={intl.formatMessage(
+          {
+            id: 'dashboard.emptyState.selectedNamespace',
+            defaultMessage:
+              'No matching {kind} found in namespace {selectedNamespace}'
+          },
+          { kind: 'TriggerTemplates', selectedNamespace }
+        )}
+      />
+    </ListPageLayout>
+  );
 }
 
 function mapStateToProps(state, props) {
@@ -160,7 +149,7 @@ function mapStateToProps(state, props) {
 }
 
 const mapDispatchToProps = {
-  fetchTriggerTemplates
+  fetchTriggerTemplates: fetchTriggerTemplatesActionCreator
 };
 
 export default connect(
