@@ -15,7 +15,7 @@ import React, { useEffect } from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { getTitle } from '@tektoncd/dashboard-utils';
+import { getTitle, useWebSocketReconnected } from '@tektoncd/dashboard-utils';
 import { ResourceDetails, Table } from '@tektoncd/dashboard-components';
 import {
   getCondition,
@@ -95,9 +95,15 @@ export function ConditionContainer(props) {
     });
   }, []);
 
-  useEffect(() => {
+  function fetchData() {
     fetchCondition({ name: conditionName, namespace });
-  }, [conditionName, namespace, webSocketConnected]);
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, [conditionName, namespace]);
+
+  useWebSocketReconnected(fetchData, webSocketConnected);
 
   return (
     <ResourceDetails

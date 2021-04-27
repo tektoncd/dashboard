@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,12 +11,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { injectIntl } from 'react-intl';
 import { ResourceDetails, Table } from '@tektoncd/dashboard-components';
-import { getTitle } from '@tektoncd/dashboard-utils';
+import { getTitle, useWebSocketReconnected } from '@tektoncd/dashboard-utils';
 import {
   getClusterTriggerBinding,
   getClusterTriggerBindingsErrorMessage,
@@ -24,110 +24,94 @@ import {
   isWebSocketConnected
 } from '../../reducers';
 import { getViewChangeHandler } from '../../utils';
-import { fetchClusterTriggerBinding } from '../../actions/clusterTriggerBindings';
+import { fetchClusterTriggerBinding as fetchClusterTriggerBindingActionCreator } from '../../actions/clusterTriggerBindings';
 
 import '../../scss/Triggers.scss';
 
-export /* istanbul ignore next */ class ClusterTriggerBindingContainer extends Component {
-  componentDidMount() {
-    const { match } = this.props;
-    const { clusterTriggerBindingName: resourceName } = match.params;
+export /* istanbul ignore next */ function ClusterTriggerBindingContainer(
+  props
+) {
+  const {
+    clusterTriggerBinding,
+    error,
+    fetchClusterTriggerBinding,
+    intl,
+    loading,
+    match,
+    view,
+    webSocketConnected
+  } = props;
+  const { clusterTriggerBindingName } = match.params;
+
+  useEffect(() => {
     document.title = getTitle({
       page: 'ClusterTriggerBinding',
-      resourceName
+      resourceName: clusterTriggerBindingName
     });
-    this.fetchData();
-  }
+  }, []);
 
-  componentDidUpdate(prevProps) {
-    const { match, webSocketConnected } = this.props;
-    const { clusterTriggerBindingName } = match.params;
-    const {
-      match: prevMatch,
-      webSocketConnected: prevWebSocketConnected
-    } = prevProps;
-    const {
-      clusterTriggerBindingName: prevClusterTriggerBindingName
-    } = prevMatch.params;
-
-    if (
-      clusterTriggerBindingName !== prevClusterTriggerBindingName ||
-      (webSocketConnected && prevWebSocketConnected === false)
-    ) {
-      this.fetchData();
-    }
-  }
-
-  fetchData() {
-    const { match } = this.props;
-    const { clusterTriggerBindingName } = match.params;
-    this.props.fetchClusterTriggerBinding({
+  function fetchData() {
+    fetchClusterTriggerBinding({
       name: clusterTriggerBindingName
     });
   }
 
-  render() {
-    const {
-      clusterTriggerBinding,
-      intl,
-      error,
-      loading,
-      selectedNamespace,
-      view
-    } = this.props;
+  useEffect(() => {
+    fetchData();
+  }, [clusterTriggerBindingName]);
 
-    const headersForParameters = [
-      {
-        key: 'name',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.name',
-          defaultMessage: 'Name'
-        })
-      },
-      {
-        key: 'value',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.value',
-          defaultMessage: 'Value'
-        })
-      }
-    ];
+  useWebSocketReconnected(fetchData, webSocketConnected);
 
-    const rowsForParameters =
-      clusterTriggerBinding?.spec.params.map(({ name, value }) => ({
-        id: name,
-        name,
-        value
-      })) || [];
+  const headersForParameters = [
+    {
+      key: 'name',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.name',
+        defaultMessage: 'Name'
+      })
+    },
+    {
+      key: 'value',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.value',
+        defaultMessage: 'Value'
+      })
+    }
+  ];
 
-    const emptyTextMessage = intl.formatMessage({
-      id: 'dashboard.clusterTriggerBinding.noParams',
-      defaultMessage: 'No parameters found for this ClusterTriggerBinding.'
-    });
+  const rowsForParameters =
+    clusterTriggerBinding?.spec.params.map(({ name, value }) => ({
+      id: name,
+      name,
+      value
+    })) || [];
 
-    return (
-      <ResourceDetails
-        error={error}
-        loading={loading}
-        onViewChange={getViewChangeHandler(this.props)}
-        resource={clusterTriggerBinding}
-        view={view}
-      >
-        <Table
-          title={intl.formatMessage({
-            id: 'dashboard.parameters.title',
-            defaultMessage: 'Parameters'
-          })}
-          headers={headersForParameters}
-          rows={rowsForParameters}
-          size="short"
-          selectedNamespace={selectedNamespace}
-          emptyTextAllNamespaces={emptyTextMessage}
-          emptyTextSelectedNamespace={emptyTextMessage}
-        />
-      </ResourceDetails>
-    );
-  }
+  const emptyTextMessage = intl.formatMessage({
+    id: 'dashboard.clusterTriggerBinding.noParams',
+    defaultMessage: 'No parameters found for this ClusterTriggerBinding.'
+  });
+
+  return (
+    <ResourceDetails
+      error={error}
+      loading={loading}
+      onViewChange={getViewChangeHandler(props)}
+      resource={clusterTriggerBinding}
+      view={view}
+    >
+      <Table
+        title={intl.formatMessage({
+          id: 'dashboard.parameters.title',
+          defaultMessage: 'Parameters'
+        })}
+        headers={headersForParameters}
+        rows={rowsForParameters}
+        size="short"
+        emptyTextAllNamespaces={emptyTextMessage}
+        emptyTextSelectedNamespace={emptyTextMessage}
+      />
+    </ResourceDetails>
+  );
 }
 
 ClusterTriggerBindingContainer.propTypes = {
@@ -159,7 +143,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 const mapDispatchToProps = {
-  fetchClusterTriggerBinding
+  fetchClusterTriggerBinding: fetchClusterTriggerBindingActionCreator
 };
 
 export default connect(

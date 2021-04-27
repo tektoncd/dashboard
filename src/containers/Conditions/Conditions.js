@@ -15,7 +15,12 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
-import { getFilters, getTitle, urls } from '@tektoncd/dashboard-utils';
+import {
+  getFilters,
+  getTitle,
+  urls,
+  useWebSocketReconnected
+} from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 
 import { ListPageLayout } from '..';
@@ -43,9 +48,15 @@ function Conditions(props) {
     document.title = getTitle({ page: 'Conditions' });
   }, []);
 
-  useEffect(() => {
+  function fetchData() {
     fetchConditions({ filters, namespace });
-  }, [JSON.stringify(filters), namespace, webSocketConnected]);
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, [JSON.stringify(filters), namespace]);
+
+  useWebSocketReconnected(fetchData, webSocketConnected);
 
   function getError() {
     if (error) {

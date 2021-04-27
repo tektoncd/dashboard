@@ -14,7 +14,10 @@ limitations under the License.
 import React, { useEffect } from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
+import {
+  ALL_NAMESPACES,
+  useWebSocketReconnected
+} from '@tektoncd/dashboard-utils';
 import { TooltipDropdown } from '@tektoncd/dashboard-components';
 
 import {
@@ -33,9 +36,15 @@ function TasksDropdown({
   webSocketConnected,
   ...rest
 }) {
-  useEffect(() => {
+  function fetchData() {
     fetchTasks({ namespace });
-  }, [namespace, webSocketConnected]);
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, [namespace]);
+
+  useWebSocketReconnected(fetchData, webSocketConnected);
 
   const emptyText =
     namespace === ALL_NAMESPACES

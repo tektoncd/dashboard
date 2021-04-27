@@ -11,16 +11,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import isEqual from 'lodash.isequal';
 import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
-import { getFilters, getTitle, urls } from '@tektoncd/dashboard-utils';
+import {
+  getFilters,
+  getTitle,
+  urls,
+  useWebSocketReconnected
+} from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 
 import { ListPageLayout } from '..';
-import { fetchTriggerBindings } from '../../actions/triggerBindings';
+import { fetchTriggerBindings as fetchTriggerBindingsActionCreator } from '../../actions/triggerBindings';
 import {
   getSelectedNamespace,
   getTriggerBindings,
@@ -29,31 +33,33 @@ import {
   isWebSocketConnected
 } from '../../reducers';
 
-export /* istanbul ignore next */ class TriggerBindings extends Component {
-  componentDidMount() {
+export /* istanbul ignore next */ function TriggerBindings(props) {
+  const {
+    fetchTriggerBindings,
+    filters,
+    intl,
+    loading,
+    selectedNamespace,
+    triggerBindings,
+    webSocketConnected
+  } = props;
+
+  useEffect(() => {
     document.title = getTitle({ page: 'TriggerBindings' });
-    this.fetchTriggerBindings();
+  }, []);
+
+  function fetchData() {
+    fetchTriggerBindings({ filters, namespace: selectedNamespace });
   }
 
-  componentDidUpdate(prevProps) {
-    const { filters, namespace, webSocketConnected } = this.props;
-    const {
-      filters: prevFilters,
-      namespace: prevNamespace,
-      webSocketConnected: prevWebSocketConnected
-    } = prevProps;
+  useEffect(() => {
+    fetchData();
+  }, [JSON.stringify(filters), selectedNamespace]);
 
-    if (
-      !isEqual(filters, prevFilters) ||
-      namespace !== prevNamespace ||
-      (webSocketConnected && prevWebSocketConnected === false)
-    ) {
-      this.fetchTriggerBindings();
-    }
-  }
+  useWebSocketReconnected(fetchData, webSocketConnected);
 
-  getError() {
-    const { error } = this.props;
+  function getError() {
+    const { error } = props;
     if (error) {
       return { error };
     }
@@ -61,85 +67,69 @@ export /* istanbul ignore next */ class TriggerBindings extends Component {
     return null;
   }
 
-  fetchTriggerBindings() {
-    const { filters, namespace } = this.props;
-    this.props.fetchTriggerBindings({
-      filters,
-      namespace
-    });
-  }
+  const initialHeaders = [
+    {
+      key: 'name',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.name',
+        defaultMessage: 'Name'
+      })
+    },
+    {
+      key: 'namespace',
+      header: 'Namespace'
+    },
+    {
+      key: 'date',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.createdTime',
+        defaultMessage: 'Created'
+      })
+    }
+  ];
 
-  render() {
-    const { intl, loading, selectedNamespace, triggerBindings } = this.props;
-
-    const initialHeaders = [
-      {
-        key: 'name',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.name',
-          defaultMessage: 'Name'
-        })
-      },
-      {
-        key: 'namespace',
-        header: 'Namespace'
-      },
-      {
-        key: 'date',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.createdTime',
-          defaultMessage: 'Created'
-        })
-      }
-    ];
-
-    const triggerBindingsFormatted = triggerBindings.map(binding => ({
-      id: `${binding.metadata.namespace}:${binding.metadata.name}`,
-      name: (
-        <Link
-          to={urls.triggerBindings.byName({
-            namespace: binding.metadata.namespace,
-            triggerBindingName: binding.metadata.name
-          })}
-          title={binding.metadata.name}
-        >
-          {binding.metadata.name}
-        </Link>
-      ),
-      namespace: binding.metadata.namespace,
-      date: <FormattedDate date={binding.metadata.creationTimestamp} relative />
-    }));
-
-    return (
-      <ListPageLayout
-        {...this.props}
-        error={this.getError()}
-        title="TriggerBindings"
+  const triggerBindingsFormatted = triggerBindings.map(binding => ({
+    id: `${binding.metadata.namespace}:${binding.metadata.name}`,
+    name: (
+      <Link
+        to={urls.triggerBindings.byName({
+          namespace: binding.metadata.namespace,
+          triggerBindingName: binding.metadata.name
+        })}
+        title={binding.metadata.name}
       >
-        <Table
-          headers={initialHeaders}
-          rows={triggerBindingsFormatted}
-          loading={loading && !triggerBindingsFormatted.length}
-          selectedNamespace={selectedNamespace}
-          emptyTextAllNamespaces={intl.formatMessage(
-            {
-              id: 'dashboard.emptyState.allNamespaces',
-              defaultMessage: 'No matching {kind} found'
-            },
-            { kind: 'TriggerBindings' }
-          )}
-          emptyTextSelectedNamespace={intl.formatMessage(
-            {
-              id: 'dashboard.emptyState.selectedNamespace',
-              defaultMessage:
-                'No matching {kind} found in namespace {selectedNamespace}'
-            },
-            { kind: 'TriggerBindings', selectedNamespace }
-          )}
-        />
-      </ListPageLayout>
-    );
-  }
+        {binding.metadata.name}
+      </Link>
+    ),
+    namespace: binding.metadata.namespace,
+    date: <FormattedDate date={binding.metadata.creationTimestamp} relative />
+  }));
+
+  return (
+    <ListPageLayout {...props} error={getError()} title="TriggerBindings">
+      <Table
+        headers={initialHeaders}
+        rows={triggerBindingsFormatted}
+        loading={loading && !triggerBindingsFormatted.length}
+        selectedNamespace={selectedNamespace}
+        emptyTextAllNamespaces={intl.formatMessage(
+          {
+            id: 'dashboard.emptyState.allNamespaces',
+            defaultMessage: 'No matching {kind} found'
+          },
+          { kind: 'TriggerBindings' }
+        )}
+        emptyTextSelectedNamespace={intl.formatMessage(
+          {
+            id: 'dashboard.emptyState.selectedNamespace',
+            defaultMessage:
+              'No matching {kind} found in namespace {selectedNamespace}'
+          },
+          { kind: 'TriggerBindings', selectedNamespace }
+        )}
+      />
+    </ListPageLayout>
+  );
 }
 
 function mapStateToProps(state, props) {
@@ -158,7 +148,7 @@ function mapStateToProps(state, props) {
 }
 
 const mapDispatchToProps = {
-  fetchTriggerBindings
+  fetchTriggerBindings: fetchTriggerBindingsActionCreator
 };
 
 export default connect(

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,12 +11,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { injectIntl } from 'react-intl';
 import { ResourceDetails, Table } from '@tektoncd/dashboard-components';
-import { getTitle } from '@tektoncd/dashboard-utils';
+import { getTitle, useWebSocketReconnected } from '@tektoncd/dashboard-utils';
 import {
   getSelectedNamespace,
   getTriggerBinding,
@@ -26,110 +26,92 @@ import {
 } from '../../reducers';
 import { getViewChangeHandler } from '../../utils';
 
-import { fetchTriggerBinding } from '../../actions/triggerBindings';
+import { fetchTriggerBinding as fetchTriggerBindingActionCreator } from '../../actions/triggerBindings';
 
 import '../../scss/Triggers.scss';
 
-export /* istanbul ignore next */ class TriggerBindingContainer extends Component {
-  componentDidMount() {
-    const { match } = this.props;
-    const { triggerBindingName: resourceName } = match.params;
+export /* istanbul ignore next */ function TriggerBindingContainer(props) {
+  const {
+    error,
+    fetchTriggerBinding,
+    intl,
+    loading,
+    match,
+    selectedNamespace,
+    triggerBinding,
+    view,
+    webSocketConnected
+  } = props;
+  const { namespace, triggerBindingName: resourceName } = match.params;
+
+  useEffect(() => {
     document.title = getTitle({
       page: 'TriggerBinding',
       resourceName
     });
-    this.fetchData();
+  }, []);
+
+  function fetchData() {
+    fetchTriggerBinding({ name: resourceName, namespace });
   }
 
-  componentDidUpdate(prevProps) {
-    const { match, webSocketConnected } = this.props;
-    const { namespace, triggerBindingName } = match.params;
-    const {
-      match: prevMatch,
-      webSocketConnected: prevWebSocketConnected
-    } = prevProps;
-    const {
-      namespace: prevNamespace,
-      triggerBindingName: prevTriggerBindingName
-    } = prevMatch.params;
+  useEffect(() => {
+    fetchData();
+  }, [namespace, resourceName]);
 
-    if (
-      namespace !== prevNamespace ||
-      triggerBindingName !== prevTriggerBindingName ||
-      (webSocketConnected && prevWebSocketConnected === false)
-    ) {
-      this.fetchData();
+  useWebSocketReconnected(fetchData, webSocketConnected);
+
+  const headersForParameters = [
+    {
+      key: 'name',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.name',
+        defaultMessage: 'Name'
+      })
+    },
+    {
+      key: 'value',
+      header: intl.formatMessage({
+        id: 'dashboard.tableHeader.value',
+        defaultMessage: 'Value'
+      })
     }
-  }
+  ];
 
-  fetchData() {
-    const { match } = this.props;
-    const { namespace, triggerBindingName } = match.params;
-    this.props.fetchTriggerBinding({ name: triggerBindingName, namespace });
-  }
+  const rowsForParameters =
+    triggerBinding?.spec.params.map(({ name, value }) => ({
+      id: name,
+      name,
+      value
+    })) || [];
 
-  render() {
-    const {
-      intl,
-      error,
-      loading,
-      selectedNamespace,
-      triggerBinding,
-      view
-    } = this.props;
+  const emptyTextMessage = intl.formatMessage({
+    id: 'dashboard.triggerBinding.noParams',
+    defaultMessage: 'No parameters found for this TriggerBinding.'
+  });
 
-    const headersForParameters = [
-      {
-        key: 'name',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.name',
-          defaultMessage: 'Name'
-        })
-      },
-      {
-        key: 'value',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.value',
-          defaultMessage: 'Value'
-        })
-      }
-    ];
-
-    const rowsForParameters =
-      triggerBinding?.spec.params.map(({ name, value }) => ({
-        id: name,
-        name,
-        value
-      })) || [];
-
-    const emptyTextMessage = intl.formatMessage({
-      id: 'dashboard.triggerBinding.noParams',
-      defaultMessage: 'No parameters found for this TriggerBinding.'
-    });
-
-    return (
-      <ResourceDetails
-        error={error}
-        loading={loading}
-        onViewChange={getViewChangeHandler(this.props)}
-        resource={triggerBinding}
-        view={view}
-      >
-        <Table
-          title={intl.formatMessage({
-            id: 'dashboard.parameters.title',
-            defaultMessage: 'Parameters'
-          })}
-          headers={headersForParameters}
-          rows={rowsForParameters}
-          size="short"
-          selectedNamespace={selectedNamespace}
-          emptyTextAllNamespaces={emptyTextMessage}
-          emptyTextSelectedNamespace={emptyTextMessage}
-        />
-      </ResourceDetails>
-    );
-  }
+  return (
+    <ResourceDetails
+      error={error}
+      loading={loading}
+      onViewChange={getViewChangeHandler(props)}
+      resource={triggerBinding}
+      view={view}
+    >
+      <Table
+        title={intl.formatMessage({
+          id: 'dashboard.parameters.title',
+          defaultMessage: 'Parameters'
+        })}
+        headers={headersForParameters}
+        rows={rowsForParameters}
+        size="short"
+        selectedNamespace={selectedNamespace}
+        emptyTextAllNamespaces={emptyTextMessage}
+        emptyTextSelectedNamespace={emptyTextMessage}
+      />
+    </ResourceDetails>
+  );
 }
 
 TriggerBindingContainer.propTypes = {
@@ -164,7 +146,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 const mapDispatchToProps = {
-  fetchTriggerBinding
+  fetchTriggerBinding: fetchTriggerBindingActionCreator
 };
 
 export default connect(

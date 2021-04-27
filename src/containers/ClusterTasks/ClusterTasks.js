@@ -26,7 +26,12 @@ import {
   TrashCan16 as DeleteIcon,
   Playlist16 as RunsIcon
 } from '@carbon/icons-react';
-import { getFilters, getTitle, urls } from '@tektoncd/dashboard-utils';
+import {
+  getFilters,
+  getTitle,
+  urls,
+  useWebSocketReconnected
+} from '@tektoncd/dashboard-utils';
 
 import { ListPageLayout } from '..';
 import { fetchClusterTasks as fetchClusterTasksActionCreator } from '../../actions/tasks';
@@ -62,9 +67,15 @@ function ClusterTasksContainer(props) {
     document.title = getTitle({ page: 'ClusterTasks' });
   }, []);
 
-  useEffect(() => {
+  function fetchData() {
     fetchClusterTasks({ filters });
-  }, [JSON.stringify(filters), webSocketConnected]);
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, [JSON.stringify(filters)]);
+
+  useWebSocketReconnected(fetchData, webSocketConnected);
 
   function getError() {
     if (error) {
