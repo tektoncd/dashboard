@@ -13,6 +13,41 @@ limitations under the License.
 
 @import './carbon';
 
+@import './Definitions.scss';
+@import './Triggers.scss';
+@import './Create.scss';
+@import '../containers/About/About.scss';
+@import '../containers/EventListener/EventListener.scss';
+@import '../containers/ImportResources/ImportResources.scss';
+@import '../containers/ListPageLayout/ListPageLayout.scss';
+@import '../containers/SideNav/SideNav.scss';
+
+@import '~@tektoncd/dashboard-components/dist/scss/Run.scss';
+@import '~@tektoncd/dashboard-components/dist/components/DataTableSkeleton/DataTableSkeleton.scss';
+@import '~@tektoncd/dashboard-components/dist/components/DeleteModal/DeleteModal.scss';
+@import '~@tektoncd/dashboard-components/dist/components/DetailsHeader/DetailsHeader.scss';
+@import '~@tektoncd/dashboard-components/dist/components/Header/Header.scss';
+@import '~@tektoncd/dashboard-components/dist/components/KeyValueList/KeyValueList.scss';
+@import '~@tektoncd/dashboard-components/dist/components/LabelFilter/LabelFilter.scss';
+@import '~@tektoncd/dashboard-components/dist/components/LoadingShell/LoadingShell.scss';
+@import '~@tektoncd/dashboard-components/dist/components/Log/Log.scss';
+@import '~@tektoncd/dashboard-components/dist/components/LogFormat/LogFormat.scss';
+@import '~@tektoncd/dashboard-components/dist/components/LogoutButton/LogoutButton.scss';
+@import '~@tektoncd/dashboard-components/dist/components/Param/Param.scss';
+@import '~@tektoncd/dashboard-components/dist/components/PipelineRuns/PipelineRuns.scss';
+@import '~@tektoncd/dashboard-components/dist/components/Rerun/Rerun.scss';
+@import '~@tektoncd/dashboard-components/dist/components/RunHeader/RunHeader.scss';
+@import '~@tektoncd/dashboard-components/dist/components/Spinner/Spinner.scss';
+@import '~@tektoncd/dashboard-components/dist/components/StatusIcon/StatusIcon.scss';
+@import '~@tektoncd/dashboard-components/dist/components/Step/Step.scss';
+@import '~@tektoncd/dashboard-components/dist/components/StepDetails/StepDetails.scss';
+@import '~@tektoncd/dashboard-components/dist/components/Table/Table.scss';
+@import '~@tektoncd/dashboard-components/dist/components/Task/Task.scss';
+@import '~@tektoncd/dashboard-components/dist/components/TaskRunDetails/TaskRunDetails.scss';
+@import '~@tektoncd/dashboard-components/dist/components/TaskTree/TaskTree.scss';
+@import '~@tektoncd/dashboard-components/dist/components/Trigger/Trigger.scss';
+@import '~@tektoncd/dashboard-components/dist/components/ViewYAML/ViewYAML.scss';
+
 .bx--btn.link-btn.bx--btn--ghost {
   text-decoration: none;
 }

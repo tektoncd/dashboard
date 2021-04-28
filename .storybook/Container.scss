@@ -12,3 +12,6 @@ limitations under the License.
 */
 
 @import '../src/scss/App';
+
+@import '@tektoncd/dashboard-components/dist/components/Graph/Graph.scss';
+@import '@tektoncd/dashboard-components/dist/components/Graph/ZoomablePipelineGraph.scss';

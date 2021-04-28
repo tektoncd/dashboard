@@ -28,8 +28,6 @@ import {
 import { fetchEventListener } from '../../actions/eventListeners';
 import { getViewChangeHandler } from '../../utils';
 
-import './EventListener.scss';
-
 export /* istanbul ignore next */ class EventListenerContainer extends Component {
   componentDidMount() {
     const { match } = this.props;

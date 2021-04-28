@@ -245,14 +245,14 @@ const selectTask1 = async ({ getByPlaceholderText, getByText }) => {
   fireEvent.click(task1);
 };
 
-const fillTask1Resources = ({ getAllByPlaceholderText, getByTitle }) => {
+const fillTask1Resources = ({ getAllByPlaceholderText, getByText }) => {
   const resourceDropdowns = getAllByPlaceholderText(/select pipelineresource/i);
   fireEvent.click(resourceDropdowns[0]);
-  fireEvent.click(getByTitle(/pipeline-resource-1/i));
+  fireEvent.click(getByText(/pipeline-resource-1/i));
   fireEvent.click(resourceDropdowns[1]);
-  fireEvent.click(getByTitle(/pipeline-resource-2/i));
+  fireEvent.click(getByText(/pipeline-resource-2/i));
   fireEvent.click(resourceDropdowns[2]);
-  fireEvent.click(getByTitle(/pipeline-resource-3/i));
+  fireEvent.click(getByText(/pipeline-resource-3/i));
 };
 
 const fillTask1Params = getByPlaceholderText => {
@@ -268,7 +268,6 @@ const selectTask1AndFillSpec = async ({
   getAllByPlaceholderText,
   getByPlaceholderText,
   getByText,
-  getByTitle,
   queryByText,
   queryByDisplayValue
 }) => {
@@ -276,7 +275,7 @@ const selectTask1AndFillSpec = async ({
   await selectTask1({ getByPlaceholderText, getByText });
   testTaskSpec('id-task-1', queryByText, queryByDisplayValue);
   // Fill task spec
-  fillTask1Resources({ getAllByPlaceholderText, getByTitle });
+  fillTask1Resources({ getAllByPlaceholderText, getByText });
   fillTask1Params(getByPlaceholderText);
 };
 
@@ -316,7 +315,6 @@ describe('CreateTaskRun', () => {
       getAllByPlaceholderText,
       getByPlaceholderText,
       getByText,
-      getByTitle,
       queryByText,
       queryByDisplayValue
     });
@@ -340,7 +338,6 @@ describe('CreateTaskRun', () => {
       getAllByText,
       getByPlaceholderText,
       getByText,
-      getByTitle,
       queryByText,
       queryByDisplayValue
     } = renderWithIntl(
@@ -353,7 +350,6 @@ describe('CreateTaskRun', () => {
       getAllByPlaceholderText,
       getByPlaceholderText,
       getByText,
-      getByTitle,
       queryByText,
       queryByDisplayValue
     });
@@ -373,7 +369,7 @@ describe('CreateTaskRun', () => {
   it('renders empty, dropdowns disabled when no namespace selected', async () => {
     const {
       getByPlaceholderText,
-      getByTitle,
+      getByText,
       queryByText,
       queryAllByText,
       queryByPlaceholderText
@@ -403,7 +399,7 @@ describe('CreateTaskRun', () => {
     fireEvent.click(
       await waitFor(() => getByPlaceholderText(/select namespace/i))
     );
-    fireEvent.click(await waitFor(() => getByTitle(/namespace-1/i)));
+    fireEvent.click(await waitFor(() => getByText(/namespace-1/i)));
     await waitFor(() =>
       expect(document.querySelector('[label="Select Task"]').disabled).toBe(
         false
@@ -421,7 +417,6 @@ describe('CreateTaskRun', () => {
       getAllByPlaceholderText,
       getByPlaceholderText,
       getByText,
-      getByTitle,
       queryByDisplayValue,
       queryByText
     } = renderWithIntl(
@@ -437,7 +432,7 @@ describe('CreateTaskRun', () => {
     // Fill task spec
     fillTask1Resources({
       getAllByPlaceholderText,
-      getByTitle
+      getByText
     });
     fillTask1Params(getByPlaceholderText);
     expect(queryByDisplayValue(/pipeline-resource-1/i)).toBeTruthy();
@@ -447,7 +442,7 @@ describe('CreateTaskRun', () => {
 
     // Select task-2 and verify spec details are displayed
     fireEvent.click(queryByDisplayValue(/task-1/i));
-    fireEvent.click(await waitFor(() => getByTitle(/task-2/i)));
+    fireEvent.click(await waitFor(() => getByText(/task-2/i)));
     testTaskSpec('id-task-2', queryByText, queryByDisplayValue);
   });
 
@@ -491,7 +486,7 @@ describe('CreateTaskRun', () => {
     });
     expect(queryByDisplayValue(/foo/i)).toBeTruthy();
     expect(queryByDisplayValue(/bar/i)).toBeTruthy();
-    fireEvent.click(getByText(/Remove/i));
+    fireEvent.click(getByText(/Remove/i).parentNode);
     expect(queryByDisplayValue(/foo/i)).toBeFalsy();
     expect(queryByDisplayValue(/bar/i)).toBeFalsy();
   });
@@ -499,7 +494,7 @@ describe('CreateTaskRun', () => {
   it('resets Task and ServiceAccount when namespace changes', async () => {
     const {
       getByPlaceholderText,
-      getByTitle,
+      getByText,
       getByDisplayValue
     } = renderWithIntl(
       <Provider store={store.getStore()}>
@@ -508,18 +503,18 @@ describe('CreateTaskRun', () => {
     );
 
     fireEvent.click(getByPlaceholderText(/select task/i));
-    fireEvent.click(await waitFor(() => getByTitle(/task-1/i)));
+    fireEvent.click(await waitFor(() => getByText(/task-1/i)));
     fireEvent.click(getByPlaceholderText(/select serviceaccount/i));
-    fireEvent.click(await waitFor(() => getByTitle(/service-account-1/i)));
+    fireEvent.click(await waitFor(() => getByText(/service-account-1/i)));
     // Change selected namespace to the same namespace (expect no change)
     fireEvent.click(getByDisplayValue(/namespace-1/i));
-    fireEvent.click(await waitFor(() => getByTitle(/namespace-1/i)));
+    fireEvent.click(await waitFor(() => getByText(/namespace-1/i)));
 
     expect(getByDisplayValue(/task-1/i)).toBeTruthy();
     expect(getByDisplayValue(/service-account-1/i)).toBeTruthy();
     // Change selected namespace
     fireEvent.click(getByDisplayValue(/namespace-1/i));
-    fireEvent.click(await waitFor(() => getByTitle(/namespace-2/i)));
+    fireEvent.click(await waitFor(() => getByText(/namespace-2/i)));
 
     // Verify that Task and ServiceAccount value have reset
     expect(getByPlaceholderText(/select task/i)).toBeTruthy();
@@ -532,7 +527,6 @@ describe('CreateTaskRun', () => {
       getAllByText,
       getByPlaceholderText,
       getByText,
-      getByTitle,
       queryByText,
       queryByDisplayValue
     } = renderWithIntl(
@@ -546,11 +540,11 @@ describe('CreateTaskRun', () => {
     await selectTask1({ getByPlaceholderText, getByText });
     testTaskSpec('id-task-1', queryByText, queryByDisplayValue);
     // Fill task spec
-    fillTask1Resources({ getAllByPlaceholderText, getByTitle });
+    fillTask1Resources({ getAllByPlaceholderText, getByText });
     fillTask1Params(getByPlaceholderText);
     // Fill ServiceAccount
     fireEvent.click(getByPlaceholderText(/select serviceaccount/i));
-    fireEvent.click(await waitFor(() => getByTitle(/service-account-1/i)));
+    fireEvent.click(await waitFor(() => getByText(/service-account-1/i)));
     // Fill timeout
     fireEvent.change(getByPlaceholderText(/60/i), {
       target: { value: '120' }
@@ -613,7 +607,6 @@ describe('CreateTaskRun', () => {
       getAllByText,
       getByPlaceholderText,
       getByText,
-      getByTitle,
       queryAllByText,
       queryByText
     } = renderWithIntl(
@@ -633,7 +626,7 @@ describe('CreateTaskRun', () => {
     expect(queryByText(taskValidationErrorRegExp)).toBeTruthy();
     // Fix validation error
     fireEvent.click(getByPlaceholderText(/select namespace/i));
-    fireEvent.click(await waitFor(() => getByTitle(/namespace-1/i)));
+    fireEvent.click(await waitFor(() => getByText(/namespace-1/i)));
 
     await selectTask1({ getByPlaceholderText, getByText });
     expect(queryByText(taskValidationErrorRegExp)).toBeFalsy();
@@ -645,7 +638,7 @@ describe('CreateTaskRun', () => {
     ).toBeTruthy();
     expect(queryByText(paramsValidationErrorRegExp)).toBeTruthy();
     // Fix validation error
-    fillTask1Resources({ getAllByPlaceholderText, getByTitle });
+    fillTask1Resources({ getAllByPlaceholderText, getByText });
     expect(
       queryAllByText(pipelineResourceValidationErrorRegExp)[0]
     ).toBeFalsy();

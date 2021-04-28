@@ -27,8 +27,6 @@ import UniversalFields from './UniversalFields';
 import { createPipelineResource } from '../../api';
 import { getSelectedNamespace } from '../../reducers';
 
-import '../../scss/Create.scss';
-
 /* istanbul ignore next */
 function validateInputs(value, id) {
   const trimmed = value.trim();

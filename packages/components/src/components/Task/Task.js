@@ -22,8 +22,6 @@ import {
   updateUnexecutedSteps
 } from '@tektoncd/dashboard-utils';
 
-import './Task.scss';
-
 class Task extends Component {
   state = { selectedStepId: null };
 

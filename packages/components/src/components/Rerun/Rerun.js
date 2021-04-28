@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -15,7 +15,6 @@ import React, { Component } from 'react';
 import { injectIntl } from 'react-intl';
 import { Button } from 'carbon-components-react';
 import { Restart32 as Restart } from '@carbon/icons-react';
-import './Rerun.scss';
 
 class Rerun extends Component {
   handleRerun = event => {

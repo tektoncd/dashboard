@@ -15,8 +15,6 @@ import React from 'react';
 
 import { Renew20 as SpinnerIcon } from '@carbon/icons-react';
 
-import './Spinner.scss';
-
 export default function Spinner({ children, className }) {
   return (
     <SpinnerIcon className={`tkn--spinner ${className}`}>

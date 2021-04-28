@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,8 +14,6 @@ limitations under the License.
 import React from 'react';
 import { getStatus, labels as labelConstants } from '@tektoncd/dashboard-utils';
 import Task from '../Task';
-
-import './TaskTree.scss';
 
 const TaskTree = ({ onSelect, selectedStepId, selectedTaskId, taskRuns }) => {
   if (!taskRuns) {

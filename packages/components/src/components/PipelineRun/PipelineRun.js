@@ -32,8 +32,6 @@ import {
   TaskTree
 } from '..';
 
-import '../../scss/Run.scss';
-
 export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   state = {
     isLogsMaximized: false

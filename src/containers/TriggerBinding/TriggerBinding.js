@@ -28,8 +28,6 @@ import { getViewChangeHandler } from '../../utils';
 
 import { fetchTriggerBinding as fetchTriggerBindingActionCreator } from '../../actions/triggerBindings';
 
-import '../../scss/Triggers.scss';
-
 export /* istanbul ignore next */ function TriggerBindingContainer(props) {
   const {
     error,

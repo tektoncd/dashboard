@@ -26,8 +26,6 @@ import { selectNamespace as selectNamespaceAction } from '../../actions/namespac
 import { getSelectedNamespace, getTenantNamespace } from '../../reducers';
 import { LabelFilter, NamespacesDropdown } from '..';
 
-import './ListPageLayout.scss';
-
 export const ListPageLayout = ({
   children,
   error,

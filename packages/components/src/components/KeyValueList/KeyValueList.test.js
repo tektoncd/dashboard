@@ -146,9 +146,9 @@ it('KeyValueList add and remove buttons work', () => {
   fireEvent.click(addButton);
   fireEvent.click(addButton);
 
-  fireEvent.click(getAllByText(/Remove/i)[0]);
-  fireEvent.click(getAllByText(/Remove/i)[0]);
-  fireEvent.click(getAllByText(/Remove/i)[0]);
+  fireEvent.click(getAllByText(/Remove/i)[0].parentNode);
+  fireEvent.click(getAllByText(/Remove/i)[0].parentNode);
+  fireEvent.click(getAllByText(/Remove/i)[0].parentNode);
 
   expect(props.onAdd).toHaveBeenCalledTimes(5);
   expect(props.onRemove).toHaveBeenCalledTimes(3);

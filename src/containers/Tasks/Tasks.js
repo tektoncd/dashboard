@@ -46,8 +46,6 @@ import {
   isWebSocketConnected
 } from '../../reducers';
 
-import '../../scss/Definitions.scss';
-
 export /* istanbul ignore next */ class Tasks extends Component {
   state = {
     deleteError: null,

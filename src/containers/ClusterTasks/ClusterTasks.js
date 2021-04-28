@@ -44,8 +44,6 @@ import {
   isReadOnly as selectIsReadOnly
 } from '../../reducers';
 
-import '../../scss/Definitions.scss';
-
 /* istanbul ignore next */
 function ClusterTasksContainer(props) {
   const {

@@ -40,8 +40,6 @@ import {
 import { ReactComponent as KubernetesIcon } from '../../images/kubernetes.svg';
 import { ReactComponent as TektonIcon } from '../../images/tekton-logo-20x20.svg';
 
-import './SideNav.scss';
-
 function SideNav(props) {
   const {
     expanded,
