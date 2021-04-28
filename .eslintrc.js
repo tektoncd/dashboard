@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -38,6 +38,15 @@ module.exports = {
     'jsx-a11y/anchor-is-valid': 'off',
     'no-case-declarations': 'off',
     'no-template-curly-in-string': 'off',
+    'no-unused-vars': [
+      'error',
+      {
+        args: 'after-used',
+        argsIgnorePattern: '^_',
+        ignoreRestSiblings: true,
+        vars: 'all'
+      }
+    ],
     'notice/notice': [
       'error',
       {

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -28,6 +28,21 @@ const extensionConfig = {
 
 const mode = 'development';
 
+const proxyOptions = {
+  changeOrigin: true,
+  onError(err) {
+    console.warn('webpack-dev-server proxy error:', err); // eslint-disable-line no-console
+  },
+  onProxyReqWs(proxyReq, req, socket, _options, _head) {
+    socket.on('error', function handleProxyWSError(err) {
+      console.warn('webpack-dev-server websocket proxy error:', err); // eslint-disable-line no-console
+    });
+  },
+  secure: false,
+  target: process.env.API_DOMAIN || API_DOMAIN,
+  ws: true
+};
+
 module.exports = merge(common({ mode }), {
   mode,
   devtool: 'eval-source-map',
@@ -40,14 +55,10 @@ module.exports = merge(common({ mode }), {
     proxy: {
       ...(process.env.EXTENSIONS_LOCAL_DEV ? extensionConfig : {}),
       '/v1': {
-        secure: false,
-        target: process.env.API_DOMAIN || API_DOMAIN,
-        ws: true
+        ...proxyOptions
       },
       '/proxy': {
-        secure: false,
-        target: process.env.API_DOMAIN || API_DOMAIN,
-        ws: true
+        ...proxyOptions
       }
     }
   },
