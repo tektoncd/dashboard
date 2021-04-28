@@ -39,8 +39,6 @@ import { importResources } from '../../api';
 import { getDashboardNamespace, getSelectedNamespace } from '../../reducers';
 import { NamespacesDropdown, ServiceAccountsDropdown } from '..';
 
-import './ImportResources.scss';
-
 const itemToString = item => (item ? item.text : '');
 
 function isValidGitURL(url) {

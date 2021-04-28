@@ -26,8 +26,6 @@ import {
 import { getViewChangeHandler } from '../../utils';
 import { fetchClusterTriggerBinding as fetchClusterTriggerBindingActionCreator } from '../../actions/clusterTriggerBindings';
 
-import '../../scss/Triggers.scss';
-
 export /* istanbul ignore next */ function ClusterTriggerBindingContainer(
   props
 ) {

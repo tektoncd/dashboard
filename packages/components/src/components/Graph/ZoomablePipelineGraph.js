@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,6 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 /* istanbul ignore file */
+
 import React from 'react';
 import { injectIntl } from 'react-intl';
 
@@ -24,8 +25,6 @@ import {
 
 import PanZoom from './PanZoom';
 import PipelineGraph from './PipelineGraph';
-
-import './ZoomablePipelineGraph.scss';
 
 const width = 300;
 const height = 600;

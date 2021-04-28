@@ -33,8 +33,6 @@ import { getViewChangeHandler } from '../../utils';
 
 import { fetchTriggerTemplate as fetchTriggerTemplateActionCreator } from '../../actions/triggerTemplates';
 
-import '../../scss/Triggers.scss';
-
 const {
   Table,
   TableBody,

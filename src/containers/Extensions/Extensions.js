@@ -25,8 +25,6 @@ import {
   isFetchingExtensions
 } from '../../reducers';
 
-import '../../scss/Definitions.scss';
-
 export const Extensions = /* istanbul ignore next */ ({
   error,
   intl,

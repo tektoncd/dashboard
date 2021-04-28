@@ -11,8 +11,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-@import '~@tektoncd/dashboard-components/dist/scss/vars';
-
 .tkn--step {
   list-style-type: none;
 
@@ -41,7 +39,7 @@ limitations under the License.
     font-size: 0.78rem;
     letter-spacing: 0.02rem;
     text-decoration: none;
-    border-left: 3px solid white;
+    border-left: 3px solid $ui-01;
   }
 
   .tkn--status-icon {

@@ -19,12 +19,21 @@ $css--default-type: true;
 $css--plex: true;
 
 $feature-flags: (
-  grid-columns-16: true
+  grid-columns-16: true,
+  enable-css-custom-properties: true
 );
 
-@import '~@tektoncd/dashboard-components/dist/scss/vars';
-@include carbon--theme();
+@import '~@carbon/themes/scss/themes';
 
+:root {
+  @include carbon--theme($carbon--theme--g10, true);
+}
+
+body.tkn--dark-theme {
+  @include carbon--theme($carbon--theme--g90, true);
+}
+
+@import '~carbon-components/scss/globals/scss/vars';
 @import '~carbon-components/scss/globals/scss/css--reset';
 @import '~carbon-components/scss/globals/scss/css--font-face';
 @import '~carbon-components/scss/globals/scss/css--helpers';

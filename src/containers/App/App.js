@@ -90,8 +90,9 @@ import {
   isWebSocketConnected as selectIsWebSocketConnected
 } from '../../reducers';
 
-import '../../scss/App.scss';
 import config from '../../../config_frontend/config.json';
+
+import '../../scss/App.scss';
 
 const { default: defaultLocale, supported: supportedLocales } = config.locales;
 

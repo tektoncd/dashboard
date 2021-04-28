@@ -11,8 +11,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import './StatusIcon.scss';
-
 import React from 'react';
 import classNames from 'classnames';
 import {

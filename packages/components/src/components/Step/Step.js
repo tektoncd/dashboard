@@ -17,8 +17,6 @@ import { Pending20 as DefaultIcon } from '@carbon/icons-react';
 
 import StatusIcon from '../StatusIcon';
 
-import './Step.scss';
-
 class Step extends Component {
   handleClick = event => {
     event.preventDefault();

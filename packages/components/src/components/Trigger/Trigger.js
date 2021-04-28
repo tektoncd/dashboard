@@ -23,8 +23,6 @@ import {
 import { urls } from '@tektoncd/dashboard-utils';
 import { Table, ViewYAML } from '@tektoncd/dashboard-components';
 
-import './Trigger.scss';
-
 const Trigger = ({ intl, namespace, trigger }) => {
   const tableHeaders = [
     {

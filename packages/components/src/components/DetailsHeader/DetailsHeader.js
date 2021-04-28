@@ -18,8 +18,6 @@ import { getStatus } from '@tektoncd/dashboard-utils';
 
 import { FormattedDuration, StatusIcon } from '..';
 
-import './DetailsHeader.scss';
-
 class DetailsHeader extends Component {
   getDuration() {
     const { intl, stepStatus, taskRun } = this.props;

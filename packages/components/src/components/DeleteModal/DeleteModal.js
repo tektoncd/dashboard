@@ -17,8 +17,6 @@ import { injectIntl } from 'react-intl';
 import { Modal } from 'carbon-components-react';
 import { Table } from '@tektoncd/dashboard-components';
 
-import './DeleteModal.scss';
-
 const DeleteModal = ({
   onClose,
   onSubmit,

@@ -52,7 +52,6 @@ import {
   isLogStreamingEnabled as selectIsLogStreamingEnabled
 } from '../../reducers';
 
-import '@tektoncd/dashboard-components/dist/scss/Run.scss';
 import { fetchTask, fetchTaskByType } from '../../actions/tasks';
 import { fetchTaskRun } from '../../actions/taskRuns';
 import { rerunTaskRun } from '../../api';

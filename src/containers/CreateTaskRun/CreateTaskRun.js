@@ -43,8 +43,6 @@ import { createTaskRun } from '../../api';
 import { getStore } from '../../store/index';
 import { isValidLabel } from '../../utils';
 
-import '../../scss/Create.scss';
-
 const clusterTaskItem = { id: 'clustertask', text: 'ClusterTask' };
 const taskItem = { id: 'task', text: 'Task' };
 const parseTaskInfo = (taskRef, kind, namespace) => {

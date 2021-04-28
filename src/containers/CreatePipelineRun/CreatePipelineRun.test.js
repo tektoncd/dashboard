@@ -208,12 +208,12 @@ const selectPipeline1 = async ({ getByPlaceholderText, getByText }) => {
   fireEvent.click(pipeline1);
 };
 
-const fillPipeline1Resources = ({ getAllByPlaceholderText, getByTitle }) => {
+const fillPipeline1Resources = ({ getAllByPlaceholderText, getByText }) => {
   const resourceDropdowns = getAllByPlaceholderText(/select pipelineresource/i);
   fireEvent.click(resourceDropdowns[0]);
-  fireEvent.click(getByTitle(/pipeline-resource-1/i));
+  fireEvent.click(getByText(/pipeline-resource-1/i));
   fireEvent.click(resourceDropdowns[1]);
-  fireEvent.click(getByTitle(/pipeline-resource-2/i));
+  fireEvent.click(getByText(/pipeline-resource-2/i));
 };
 
 const fillPipeline1Params = getByPlaceholderText => {
@@ -229,7 +229,6 @@ const selectPipeline1AndFillSpec = async ({
   getAllByPlaceholderText,
   getByPlaceholderText,
   getByText,
-  getByTitle,
   queryByText,
   queryByDisplayValue
 }) => {
@@ -237,7 +236,7 @@ const selectPipeline1AndFillSpec = async ({
   await selectPipeline1({ getByPlaceholderText, getByText });
   testPipelineSpec('id-pipeline-1', queryByText, queryByDisplayValue);
   // Fill pipeline spec
-  fillPipeline1Resources({ getAllByPlaceholderText, getByTitle });
+  fillPipeline1Resources({ getAllByPlaceholderText, getByText });
   fillPipeline1Params(getByPlaceholderText);
 };
 
@@ -278,7 +277,6 @@ describe('CreatePipelineRun', () => {
       getAllByPlaceholderText,
       getByPlaceholderText,
       getByText,
-      getByTitle,
       queryByText,
       queryByDisplayValue
     });
@@ -304,7 +302,6 @@ describe('CreatePipelineRun', () => {
       getAllByText,
       getByPlaceholderText,
       getByText,
-      getByTitle,
       queryByText,
       queryByDisplayValue
     } = renderWithIntl(
@@ -317,7 +314,6 @@ describe('CreatePipelineRun', () => {
       getAllByPlaceholderText,
       getByPlaceholderText,
       getByText,
-      getByTitle,
       queryByText,
       queryByDisplayValue
     });
@@ -337,7 +333,7 @@ describe('CreatePipelineRun', () => {
   it('renders empty, dropdowns disabled when no namespace selected', async () => {
     const {
       getByPlaceholderText,
-      getByTitle,
+      getByText,
       queryByText,
       queryAllByText,
       queryByPlaceholderText
@@ -369,7 +365,7 @@ describe('CreatePipelineRun', () => {
     fireEvent.click(
       await waitFor(() => getByPlaceholderText(/select namespace/i))
     );
-    fireEvent.click(await waitFor(() => getByTitle(/namespace-1/i)));
+    fireEvent.click(await waitFor(() => getByText(/namespace-1/i)));
     await waitFor(() =>
       expect(document.querySelector('[label="Select Pipeline"]').disabled).toBe(
         false
@@ -389,7 +385,6 @@ describe('CreatePipelineRun', () => {
       getAllByPlaceholderText,
       getByPlaceholderText,
       getByText,
-      getByTitle,
       queryByDisplayValue,
       queryByText
     } = renderWithIntl(
@@ -405,7 +400,7 @@ describe('CreatePipelineRun', () => {
     // Fill pipeline spec
     fillPipeline1Resources({
       getAllByPlaceholderText,
-      getByTitle
+      getByText
     });
     fillPipeline1Params(getByPlaceholderText);
     expect(queryByDisplayValue(/pipeline-resource-1/i)).toBeTruthy();
@@ -415,7 +410,7 @@ describe('CreatePipelineRun', () => {
 
     // Select pipeline-2 and verify spec details are displayed
     fireEvent.click(queryByDisplayValue(/pipeline-1/i));
-    fireEvent.click(await waitFor(() => getByTitle(/pipeline-2/i)));
+    fireEvent.click(await waitFor(() => getByText(/pipeline-2/i)));
     testPipelineSpec('id-pipeline-2', queryByText, queryByDisplayValue);
   });
 
@@ -464,7 +459,7 @@ describe('CreatePipelineRun', () => {
     });
     expect(queryByDisplayValue(/foo/i)).toBeTruthy();
     expect(queryByDisplayValue(/bar/i)).toBeTruthy();
-    fireEvent.click(getByText(/Remove/i));
+    fireEvent.click(getByText(/Remove/i).parentNode);
     expect(queryByDisplayValue(/foo/i)).toBeFalsy();
     expect(queryByDisplayValue(/bar/i)).toBeFalsy();
   });
@@ -474,7 +469,7 @@ describe('CreatePipelineRun', () => {
     jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
     const {
       getByPlaceholderText,
-      getByTitle,
+      getByText,
       getByDisplayValue
     } = renderWithIntl(
       <Provider store={mockTestStore}>
@@ -483,18 +478,18 @@ describe('CreatePipelineRun', () => {
     );
 
     fireEvent.click(getByPlaceholderText(/select pipeline/i));
-    fireEvent.click(await waitFor(() => getByTitle(/pipeline-1/i)));
+    fireEvent.click(await waitFor(() => getByText(/pipeline-1/i)));
     fireEvent.click(getByPlaceholderText(/select serviceaccount/i));
-    fireEvent.click(await waitFor(() => getByTitle(/service-account-1/i)));
+    fireEvent.click(await waitFor(() => getByText(/service-account-1/i)));
     // Change selected namespace to the same namespace (expect no change)
     fireEvent.click(getByDisplayValue(/namespace-1/i));
-    fireEvent.click(await waitFor(() => getByTitle(/namespace-1/i)));
+    fireEvent.click(await waitFor(() => getByText(/namespace-1/i)));
 
     expect(getByDisplayValue(/pipeline-1/i)).toBeTruthy();
     expect(getByDisplayValue(/service-account-1/i)).toBeTruthy();
     // Change selected namespace
     fireEvent.click(getByDisplayValue(/namespace-1/i));
-    fireEvent.click(await waitFor(() => getByTitle(/namespace-2/i)));
+    fireEvent.click(await waitFor(() => getByText(/namespace-2/i)));
 
     // Verify that Pipeline and ServiceAccount value have reset
     expect(getByPlaceholderText(/select pipeline/i)).toBeTruthy();
@@ -509,7 +504,6 @@ describe('CreatePipelineRun', () => {
       getAllByText,
       getByPlaceholderText,
       getByText,
-      getByTitle,
       queryByText,
       queryByDisplayValue
     } = renderWithIntl(
@@ -523,11 +517,11 @@ describe('CreatePipelineRun', () => {
     await selectPipeline1({ getByPlaceholderText, getByText });
     testPipelineSpec('id-pipeline-1', queryByText, queryByDisplayValue);
     // Fill pipeline spec
-    fillPipeline1Resources({ getAllByPlaceholderText, getByTitle });
+    fillPipeline1Resources({ getAllByPlaceholderText, getByText });
     fillPipeline1Params(getByPlaceholderText);
     // Fill ServiceAccount
     fireEvent.click(getByPlaceholderText(/select serviceaccount/i));
-    fireEvent.click(await waitFor(() => getByTitle(/service-account-1/i)));
+    fireEvent.click(await waitFor(() => getByText(/service-account-1/i)));
     // Fill timeout
     fireEvent.change(getByPlaceholderText(/60/i), {
       target: { value: '120' }
@@ -589,7 +583,6 @@ describe('CreatePipelineRun', () => {
       getAllByText,
       getByPlaceholderText,
       getByText,
-      getByTitle,
       queryAllByText,
       queryByText
     } = renderWithIntl(
@@ -604,7 +597,7 @@ describe('CreatePipelineRun', () => {
     expect(queryByText(pipelineValidationErrorRegExp)).toBeTruthy();
     // Fix validation error
     fireEvent.click(getByPlaceholderText(/select namespace/i));
-    fireEvent.click(await waitFor(() => getByTitle(/namespace-1/i)));
+    fireEvent.click(await waitFor(() => getByText(/namespace-1/i)));
 
     await selectPipeline1({ getByPlaceholderText, getByText });
     expect(queryByText(pipelineValidationErrorRegExp)).toBeFalsy();
@@ -616,7 +609,7 @@ describe('CreatePipelineRun', () => {
     ).toBeTruthy();
     expect(queryByText(paramsValidationErrorRegExp)).toBeTruthy();
     // Fix validation error
-    fillPipeline1Resources({ getAllByPlaceholderText, getByTitle });
+    fillPipeline1Resources({ getAllByPlaceholderText, getByText });
     expect(
       queryAllByText(pipelineResourceValidationErrorRegExp)[0]
     ).toBeFalsy();

@@ -40,8 +40,6 @@ import { createPipelineRun } from '../../api';
 import { getStore } from '../../store/index';
 import { isValidLabel } from '../../utils';
 
-import '../../scss/Create.scss';
-
 const initialState = {
   creating: false,
   invalidLabels: {},

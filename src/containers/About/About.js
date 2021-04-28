@@ -32,8 +32,6 @@ import {
   isTriggersInstalled as selectIsTriggersInstalled
 } from '../../reducers';
 
-import './About.scss';
-
 /* istanbul ignore next */
 export function About({
   dashboardNamespace,

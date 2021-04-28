@@ -18,8 +18,6 @@ import { copyToClipboard } from '@tektoncd/dashboard-utils';
 
 import { FormattedDate } from '..';
 
-import './RunHeader.scss';
-
 class RunHeader extends Component {
   /* istanbul ignore next */
   copyStatusMessage = () => {

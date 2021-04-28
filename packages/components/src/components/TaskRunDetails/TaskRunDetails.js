@@ -18,8 +18,6 @@ import { getParams } from '@tektoncd/dashboard-utils';
 
 import { DetailsHeader, Param, Tab, Table, Tabs, ViewYAML } from '..';
 
-import './TaskRunDetails.scss';
-
 function getDescriptions(array = []) {
   return array.reduce((accumulator, { name, description }) => {
     accumulator[name] = description;

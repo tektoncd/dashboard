@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -10,14 +10,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import tlds from 'tlds';
 import LinkifyIt from 'linkify-it';
 import classNames from 'classnames';
 import { colors } from './defaults';
-
-import './LogFormat.scss';
 
 const linkifyIt = LinkifyIt().tlds(tlds);
 

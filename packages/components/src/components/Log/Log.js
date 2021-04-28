@@ -18,8 +18,6 @@ import { injectIntl } from 'react-intl';
 
 import Ansi from '../LogFormat';
 
-import './Log.scss';
-
 const LogLine = ({ data, index, style }) => (
   <div style={style}>
     <Ansi>{`${data[index]}\n`}</Ansi>
