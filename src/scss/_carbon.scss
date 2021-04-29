@@ -24,13 +24,29 @@ $feature-flags: (
 );
 
 @import '~@carbon/themes/scss/themes';
+@import '~carbon-components/scss/globals/scss/component-tokens';
+@import '~carbon-components/scss/components/notification/tokens';
+@import '~carbon-components/scss/components/tag/tokens';
 
-:root {
+:root, .tkn--theme-light {
   @include carbon--theme($carbon--theme--g10, true);
 }
 
-body.tkn--dark-theme {
-  @include carbon--theme($carbon--theme--g90, true);
+@mixin tkn--theme-dark {
+  @include carbon--theme($carbon--theme--g90, true) {
+    @include emit-component-tokens($notification-colors);
+    @include emit-component-tokens($tag-colors);
+  };
+}
+
+.tkn--theme-dark {
+  @include tkn--theme-dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  .tkn--theme-system {
+    @include tkn--theme-dark;
+  }
 }
 
 @import '~carbon-components/scss/globals/scss/vars';
