@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   PendingFilled20 as DefaultIcon,
   ChevronDown20 as ExpandIcon
@@ -22,34 +22,31 @@ import {
   updateUnexecutedSteps
 } from '@tektoncd/dashboard-utils';
 
-class Task extends Component {
-  state = { selectedStepId: null };
+function Task({
+  expanded,
+  selectDefaultStep,
+  selectedStepId,
+  steps,
+  id,
+  onSelect,
+  displayName,
+  reason,
+  succeeded
+}) {
+  const [stepId, setStepId] = useState(null);
 
-  componentDidMount() {
-    this.selectDefaultStep();
+  function handleStepSelected(selectedStepId) {
+    setStepId(selectedStepId);
+    onSelect(id, selectedStepId);
   }
 
-  handleClick = () => {
-    const { id } = this.props;
-    const { selectedStepId } = this.state;
-    this.props.onSelect(id, selectedStepId);
-  };
-
-  handleStepSelected = selectedStepId => {
-    this.setState({ selectedStepId }, () => {
-      this.handleClick();
-    });
-  };
-
-  handleTaskSelected = event => {
+  function handleTaskSelected(event) {
     event?.preventDefault();
-    this.setState({ selectedStepId: null }, () => {
-      this.handleClick();
-    });
-  };
+    setStepId(null);
+    onSelect(id, null);
+  }
 
-  selectDefaultStep() {
-    const { expanded, selectDefaultStep, selectedStepId, steps } = this.props;
+  useEffect(() => {
     if (!selectDefaultStep) {
       return;
     }
@@ -58,74 +55,63 @@ class Task extends Component {
         step => step.terminated?.reason === 'Error' || !step.terminated
       );
       const { name } = erroredStep || steps[0] || {};
-      this.handleStepSelected(name);
+      handleStepSelected(name);
     }
-  }
+  }, []);
 
-  render() {
-    const {
-      expanded,
-      displayName,
-      reason,
-      selectedStepId,
-      steps,
-      succeeded
-    } = this.props;
+  const expandIcon = expanded ? null : (
+    <ExpandIcon className="tkn--task--expand-icon" />
+  );
 
-    const expandIcon = expanded ? null : (
-      <ExpandIcon className="tkn--task--expand-icon" />
-    );
-
-    return (
-      <li
-        className="tkn--task"
-        data-succeeded={succeeded}
-        data-reason={reason}
-        data-selected={(expanded && !selectedStepId) || undefined}
-        data-active={expanded || undefined}
+  return (
+    <li
+      className="tkn--task"
+      data-succeeded={succeeded}
+      data-reason={reason}
+      data-selected={(expanded && !stepId) || undefined}
+      data-active={expanded || undefined}
+    >
+      <a
+        className="tkn--task-link"
+        href="#"
+        title={displayName}
+        onClick={handleTaskSelected}
       >
-        <a
-          className="tkn--task-link"
-          href="#"
-          title={displayName}
-          onClick={this.handleTaskSelected}
-        >
-          <StatusIcon
-            DefaultIcon={DefaultIcon}
-            reason={reason}
-            status={succeeded}
-          />
-          <span className="tkn--task-link--name">{displayName}</span>
-          {expandIcon}
-        </a>
-        {expanded && (
-          <ol className="tkn--step-list">
-            {updateUnexecutedSteps(steps).map(step => {
-              const { name } = step;
-              const { status, reason: stepReason } = getStepStatusReason(step);
+        <StatusIcon
+          DefaultIcon={DefaultIcon}
+          reason={reason}
+          status={succeeded}
+        />
+        <span className="tkn--task-link--name">{displayName}</span>
+        {expandIcon}
+      </a>
+      {expanded && (
+        <ol className="tkn--step-list">
+          {updateUnexecutedSteps(steps).map(step => {
+            const { name } = step;
+            const { status, reason: stepReason } = getStepStatusReason(step);
 
-              const selected = selectedStepId === name;
-              const stepStatus =
-                reason === 'TaskRunCancelled' && status !== 'terminated'
-                  ? 'cancelled'
-                  : status;
-              return (
-                <Step
-                  id={name}
-                  key={name}
-                  onSelect={this.handleStepSelected}
-                  reason={stepReason}
-                  selected={selected}
-                  status={stepStatus}
-                  stepName={name}
-                />
-              );
-            })}
-          </ol>
-        )}
-      </li>
-    );
-  }
+            const selected = stepId === name;
+            const stepStatus =
+              reason === 'TaskRunCancelled' && status !== 'terminated'
+                ? 'cancelled'
+                : status;
+            return (
+              <Step
+                id={name}
+                key={name}
+                onSelect={handleStepSelected}
+                reason={stepReason}
+                selected={selected}
+                status={stepStatus}
+                stepName={name}
+              />
+            );
+          })}
+        </ol>
+      )}
+    </li>
+  );
 }
 
 Task.defaultProps = {
