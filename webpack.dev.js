@@ -34,9 +34,7 @@ const proxyOptions = {
     console.warn('webpack-dev-server proxy error:', err); // eslint-disable-line no-console
   },
   onProxyReqWs(proxyReq, req, socket, _options, _head) {
-    socket.on('error', function handleProxyWSError(err) {
-      console.warn('webpack-dev-server websocket proxy error:', err); // eslint-disable-line no-console
-    });
+    socket.on('error', function handleProxyWSError(_err) {});
   },
   secure: false,
   target: process.env.API_DOMAIN || API_DOMAIN,
