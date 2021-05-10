@@ -11,12 +11,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { injectIntl } from 'react-intl';
-import { getTitle, urls } from '@tektoncd/dashboard-utils';
+import {
+  getTitle,
+  urls,
+  useWebSocketReconnected
+} from '@tektoncd/dashboard-utils';
 import { ResourceDetails, Trigger } from '@tektoncd/dashboard-components';
 import {
   getEventListener,
@@ -25,44 +29,40 @@ import {
   isFetchingEventListeners,
   isWebSocketConnected
 } from '../../reducers';
-import { fetchEventListener } from '../../actions/eventListeners';
+import { fetchEventListener as fetchEventListenerActionCreator } from '../../actions/eventListeners';
 import { getViewChangeHandler } from '../../utils';
 
-export /* istanbul ignore next */ class EventListenerContainer extends Component {
-  componentDidMount() {
-    const { match } = this.props;
-    const { eventListenerName: resourceName } = match.params;
+export /* istanbul ignore next */ function EventListenerContainer(props) {
+  const {
+    error,
+    eventListener,
+    fetchEventListener,
+    intl,
+    loading,
+    match,
+    webSocketConnected,
+    view
+  } = props;
+  const { eventListenerName, namespace } = match.params;
+
+  function fetchData() {
+    fetchEventListener({ name: eventListenerName, namespace });
+  }
+
+  useEffect(() => {
     document.title = getTitle({
       page: 'EventListener',
-      resourceName
+      resourceName: eventListenerName
     });
-    this.fetchData();
-  }
+  }, []);
 
-  componentDidUpdate(prevProps) {
-    const { match, webSocketConnected } = this.props;
-    const { namespace, eventListenerName } = match.params;
-    const {
-      match: prevMatch,
-      webSocketConnected: prevWebSocketConnected
-    } = prevProps;
-    const {
-      namespace: prevNamespace,
-      eventListenerName: prevEventListenerName
-    } = prevMatch.params;
+  useEffect(() => {
+    fetchData();
+  }, [namespace, eventListenerName]);
 
-    if (
-      namespace !== prevNamespace ||
-      eventListenerName !== prevEventListenerName ||
-      (webSocketConnected && prevWebSocketConnected === false)
-    ) {
-      this.fetchData();
-    }
-  }
+  useWebSocketReconnected(fetchData, webSocketConnected);
 
-  getAdditionalMetadata() {
-    const { eventListener, intl } = this.props;
-
+  function getAdditionalMetadata() {
     if (!eventListener) {
       return null;
     }
@@ -111,15 +111,12 @@ export /* istanbul ignore next */ class EventListenerContainer extends Component
     );
   }
 
-  getTriggersContent() {
-    const { eventListener } = this.props;
-
+  function getTriggersContent() {
     if (!eventListener?.spec?.triggers) {
       return null;
     }
 
     const { triggers } = eventListener.spec;
-    const { namespace } = eventListener.metadata;
 
     return (
       <div className="tkn--eventlistener--triggers">
@@ -150,28 +147,18 @@ export /* istanbul ignore next */ class EventListenerContainer extends Component
     );
   }
 
-  fetchData() {
-    const { match } = this.props;
-    const { namespace, eventListenerName } = match.params;
-    this.props.fetchEventListener({ name: eventListenerName, namespace });
-  }
-
-  render() {
-    const { error, eventListener, loading, view } = this.props;
-
-    return (
-      <ResourceDetails
-        additionalMetadata={this.getAdditionalMetadata()}
-        error={error}
-        loading={loading}
-        onViewChange={getViewChangeHandler(this.props)}
-        resource={eventListener}
-        view={view}
-      >
-        {this.getTriggersContent()}
-      </ResourceDetails>
-    );
-  }
+  return (
+    <ResourceDetails
+      additionalMetadata={getAdditionalMetadata()}
+      error={error}
+      loading={loading}
+      onViewChange={getViewChangeHandler(props)}
+      resource={eventListener}
+      view={view}
+    >
+      {getTriggersContent()}
+    </ResourceDetails>
+  );
 }
 
 EventListenerContainer.propTypes = {
@@ -205,7 +192,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 const mapDispatchToProps = {
-  fetchEventListener
+  fetchEventListener: fetchEventListenerActionCreator
 };
 
 export default connect(

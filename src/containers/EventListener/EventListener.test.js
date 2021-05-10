@@ -26,12 +26,13 @@ const intl = createIntl({
 /* Displaying of Trigger info is tested in the component test */
 
 const eventListenerName = 'tekton-webhooks-eventlistener';
+const namespace = 'tekton-pipelines';
 const fakeEventListenerWithLabels = {
   apiVersion: 'triggers.tekton.dev/v1alpha1',
   kind: 'EventListener',
   metadata: {
     name: eventListenerName,
-    namespace: 'tekton-pipelines',
+    namespace,
     labels: {
       foo: 'bar',
       bar: 'baz'
@@ -124,7 +125,7 @@ const fakeEventListenerWithLabels = {
 };
 
 const match = {
-  params: { eventListenerName }
+  params: { eventListenerName, namespace }
 };
 
 it('EventListener displays with formatted labels', async () => {
