@@ -27,9 +27,10 @@ const extensionConfig = {
 };
 
 const mode = 'development';
+const customAPIDomain = process.env.API_DOMAIN;
 
 const proxyOptions = {
-  changeOrigin: true,
+  changeOrigin: !!customAPIDomain,
   onError(err) {
     console.warn('webpack-dev-server proxy error:', err); // eslint-disable-line no-console
   },
@@ -37,7 +38,7 @@ const proxyOptions = {
     socket.on('error', function handleProxyWSError(_err) {});
   },
   secure: false,
-  target: process.env.API_DOMAIN || API_DOMAIN,
+  target: customAPIDomain || API_DOMAIN,
   ws: true
 };
 
