@@ -128,7 +128,7 @@ function ClusterTasksContainer(props) {
     const resourcesById = keyBy(clusterTasks, 'metadata.uid');
     setShowDeleteModal(true);
     setToBeDeleted(selectedRows.map(({ id }) => resourcesById[id]));
-    setCancelSelection(handleCancelSelection);
+    setCancelSelection(() => handleCancelSelection);
   }
 
   const batchActionButtons = isReadOnly
