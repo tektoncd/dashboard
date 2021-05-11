@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { Component } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { PipelineRun, Rerun } from '@tektoncd/dashboard-components';
@@ -20,7 +20,8 @@ import {
   getTitle,
   labels as labelConstants,
   queryParams as queryParamConstants,
-  urls
+  urls,
+  useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
 import { InlineNotification } from 'carbon-components-react';
 import { Link } from 'react-router-dom';
@@ -36,14 +37,17 @@ import {
   getTaskRunsErrorMessage,
   getTasks,
   getTasksErrorMessage,
-  isLogStreamingEnabled,
-  isReadOnly,
-  isWebSocketConnected
+  isWebSocketConnected,
+  isLogStreamingEnabled as selectIsLogStreamingEnabled,
+  isReadOnly as selectIsReadOnly
 } from '../../reducers';
-import { fetchPipelineRun } from '../../actions/pipelineRuns';
-import { fetchPipeline } from '../../actions/pipelines';
-import { fetchClusterTasks, fetchTasks } from '../../actions/tasks';
-import { fetchTaskRuns } from '../../actions/taskRuns';
+import { fetchPipelineRun as fetchPipelineRunActionCreator } from '../../actions/pipelineRuns';
+import { fetchPipeline as fetchPipelineActionCreator } from '../../actions/pipelines';
+import {
+  fetchClusterTasks as fetchClusterTasksActionCreator,
+  fetchTasks as fetchTasksActionCreator
+} from '../../actions/tasks';
+import { fetchTaskRuns as fetchTaskRunsActionCreator } from '../../actions/taskRuns';
 import { rerunPipelineRun } from '../../api';
 
 import {
@@ -54,53 +58,77 @@ import {
 
 const { PIPELINE_TASK, RETRY, STEP, VIEW } = queryParamConstants;
 
-export /* istanbul ignore next */ class PipelineRunContainer extends Component {
-  constructor(props) {
-    super(props);
+export /* istanbul ignore next */ function PipelineRunContainer(props) {
+  const {
+    clusterTasks,
+    error,
+    fetchClusterTasks,
+    fetchPipeline,
+    fetchPipelineRun,
+    fetchTaskRuns,
+    fetchTasks,
+    history,
+    intl,
+    location,
+    match,
+    pipelineRun,
+    pipelineTaskName: currentPipelineTaskName,
+    retry: currentRetry,
+    selectedStepId: currentSelectedStepId,
+    tasks,
+    taskRuns,
+    view,
+    webSocketConnected
+  } = props;
 
-    this.state = {
-      loading: true,
-      showRerunNotification: null
-    };
+  const { namespace, pipelineRunName } = match.params;
 
-    this.maximizedLogsContainer = React.createRef();
-  }
+  const maximizedLogsContainer = useRef();
+  const [loading, setLoading] = useState(true);
+  const [showRerunNotification, setShowRerunNotification] = useState(null);
 
-  componentDidMount() {
-    const { match } = this.props;
-    const { pipelineRunName: resourceName } = match.params;
+  useEffect(() => {
     document.title = getTitle({
       page: 'PipelineRun',
-      resourceName
+      resourceName: pipelineRunName
     });
-    this.fetchData();
+  }, []);
+
+  async function fetchResources() {
+    const [run] = await Promise.all([
+      fetchPipelineRun({ name: pipelineRunName, namespace }),
+      fetchTaskRuns({
+        filters: [`${labelConstants.PIPELINE_RUN}=${pipelineRunName}`]
+      }),
+      // TODO: only request the Tasks / ClusterTasks we actually need
+      //       move these to the Promise.all below, with `fetchPipeline`
+      fetchTasks(),
+      fetchClusterTasks()
+    ]);
+    const pipelineName = run?.spec.pipelineRef?.name;
+    await Promise.all([
+      pipelineName
+        ? fetchPipeline({ name: pipelineName, namespace })
+        : Promise.resolve()
+    ]);
+
+    setLoading(false);
   }
 
-  componentDidUpdate(prevProps) {
-    const { match, webSocketConnected } = this.props;
-    const { namespace, pipelineRunName } = match.params;
-    const {
-      match: prevMatch,
-      webSocketConnected: prevWebSocketConnected
-    } = prevProps;
-    const {
-      namespace: prevNamespace,
-      pipelineRunName: prevPipelineRunName
-    } = prevMatch.params;
-
-    const websocketReconnected =
-      webSocketConnected && prevWebSocketConnected === false;
-    if (
-      namespace !== prevNamespace ||
-      pipelineRunName !== prevPipelineRunName ||
-      websocketReconnected
-    ) {
-      this.fetchData({ skipLoading: websocketReconnected });
-    }
+  function fetchData({ skipLoading } = {}) {
+    setLoading(!skipLoading);
+    fetchResources();
   }
 
-  getSelectedTaskId(pipelineTaskName, retry) {
-    const { taskRuns } = this.props;
+  useEffect(() => {
+    fetchData();
+  }, [namespace, pipelineRunName]);
+
+  useWebSocketReconnected(() => {
+    fetchData({ skipLoading: true });
+  }, webSocketConnected);
+
+  function getSelectedTaskId(pipelineTaskName, retry) {
     const taskRun = taskRuns.find(
       ({ metadata }) =>
         metadata.labels &&
@@ -127,8 +155,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     return taskRun.metadata.uid + taskRun.status?.podName;
   }
 
-  getSelectedTaskRun(selectedTaskId) {
-    const { taskRuns } = this.props;
+  function getSelectedTaskRun(selectedTaskId) {
     const lookup = taskRuns.reduce((acc, taskRun) => {
       const { labels, uid } = taskRun.metadata;
       const pipelineTaskName =
@@ -154,15 +181,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     return lookup[selectedTaskId];
   }
 
-  handleTaskSelected = (selectedTaskId, selectedStepId) => {
-    const {
-      history,
-      location,
-      match,
-      pipelineTaskName: currentPipelineTaskName,
-      retry: currentRetry
-    } = this.props;
-    const { pipelineTaskName, retry } = this.getSelectedTaskRun(selectedTaskId);
+  function handleTaskSelected(selectedTaskId, selectedStepId) {
+    const { pipelineTaskName, retry } = getSelectedTaskRun(selectedTaskId);
     const queryParams = new URLSearchParams(location.search);
 
     queryParams.set(PIPELINE_TASK, pipelineTaskName);
@@ -178,149 +198,109 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       queryParams.delete(RETRY);
     }
 
-    const currentStepId = this.props.selectedStepId;
-    const currentTaskId = this.getSelectedTaskId(
+    const currentTaskId = getSelectedTaskId(
       currentPipelineTaskName,
       currentRetry
     );
-    if (selectedStepId !== currentStepId || selectedTaskId !== currentTaskId) {
+    if (
+      selectedStepId !== currentSelectedStepId ||
+      selectedTaskId !== currentTaskId
+    ) {
       queryParams.delete(VIEW);
     }
 
     const browserURL = match.url.concat(`?${queryParams.toString()}`);
     history.push(browserURL);
-  };
-
-  showRerunNotification = value => {
-    this.setState({ showRerunNotification: value });
-  };
-
-  fetchData({ skipLoading } = {}) {
-    const { match } = this.props;
-    const { namespace, pipelineRunName } = match.params;
-    this.setState({ loading: !skipLoading }, async () => {
-      const [pipelineRun] = await Promise.all([
-        this.props.fetchPipelineRun({ name: pipelineRunName, namespace }),
-        this.props.fetchTaskRuns({
-          filters: [`${labelConstants.PIPELINE_RUN}=${pipelineRunName}`]
-        }),
-        // TODO: only request the Tasks / ClusterTasks we actually need
-        //       move these to the Promise.all below, with `fetchPipeline`
-        this.props.fetchTasks(),
-        this.props.fetchClusterTasks()
-      ]);
-      const pipelineName = pipelineRun?.spec.pipelineRef?.name;
-      await Promise.all([
-        pipelineName
-          ? this.props.fetchPipeline({ name: pipelineName, namespace })
-          : Promise.resolve()
-      ]);
-
-      this.setState({ loading: false });
-    });
   }
 
-  render() {
-    const {
-      clusterTasks,
-      error,
-      intl,
-      pipelineRun,
-      pipelineTaskName,
-      retry,
-      selectedStepId,
-      tasks,
-      taskRuns,
-      view
-    } = this.props;
-
-    if (!pipelineRun) {
-      return (
-        <PipelineRun
-          error={intl.formatMessage({
-            id: 'dashboard.pipelineRun.notFound',
-            defaultMessage: 'PipelineRun not found'
-          })}
-          loading={false}
-        />
-      );
-    }
-
-    if (!pipelineRun.status) {
-      pipelineRun.status = {
-        taskRuns: []
-      };
-    }
-    if (!pipelineRun.status.taskRuns) {
-      pipelineRun.status.taskRuns = [];
-    }
-
-    const { loading, showRerunNotification } = this.state;
-    const selectedTaskId = this.getSelectedTaskId(pipelineTaskName, retry);
-
-    const rerun = !this.props.isReadOnly && (
-      <Rerun
-        getURL={({ name, namespace }) =>
-          urls.pipelineRuns.byName({ namespace, pipelineRunName: name })
-        }
-        run={pipelineRun}
-        rerun={rerunPipelineRun}
-        showNotification={this.showRerunNotification}
+  if (!pipelineRun) {
+    return (
+      <PipelineRun
+        error={intl.formatMessage({
+          id: 'dashboard.pipelineRun.notFound',
+          defaultMessage: 'PipelineRun not found'
+        })}
+        loading={false}
       />
     );
-
-    return (
-      <>
-        <div
-          id="tkn--maximized-logs-container"
-          ref={this.maximizedLogsContainer}
-        />
-        {showRerunNotification && (
-          <InlineNotification
-            lowContrast
-            actions={
-              showRerunNotification.logsURL ? (
-                <Link
-                  className="bx--inline-notification__text-wrapper"
-                  to={showRerunNotification.logsURL}
-                >
-                  {intl.formatMessage({
-                    id: 'dashboard.run.rerunStatusMessage',
-                    defaultMessage: 'View status'
-                  })}
-                </Link>
-              ) : (
-                ''
-              )
-            }
-            title={showRerunNotification.message}
-            kind={showRerunNotification.kind}
-            caption=""
-          />
-        )}
-        <PipelineRun
-          error={error}
-          fetchLogs={getLogsRetriever(
-            this.props.isLogStreamingEnabled,
-            this.props.externalLogsURL
-          )}
-          handleTaskSelected={this.handleTaskSelected}
-          loading={loading}
-          getLogsToolbar={getLogsToolbar}
-          maximizedLogsContainer={this.maximizedLogsContainer.current}
-          onViewChange={getViewChangeHandler(this.props)}
-          pipelineRun={pipelineRun}
-          rerun={rerun}
-          selectedStepId={selectedStepId}
-          selectedTaskId={selectedTaskId}
-          showIO
-          taskRuns={taskRuns}
-          tasks={tasks.concat(clusterTasks)}
-          view={view}
-        />
-      </>
-    );
   }
+
+  if (!pipelineRun.status) {
+    pipelineRun.status = {
+      taskRuns: []
+    };
+  }
+  if (!pipelineRun.status.taskRuns) {
+    pipelineRun.status.taskRuns = [];
+  }
+
+  const selectedTaskId = getSelectedTaskId(
+    currentPipelineTaskName,
+    currentRetry
+  );
+
+  const rerun = !props.isReadOnly && (
+    <Rerun
+      getURL={({ name, namespace: resourceNamespace }) =>
+        urls.pipelineRuns.byName({
+          namespace: resourceNamespace,
+          pipelineRunName: name
+        })
+      }
+      run={pipelineRun}
+      rerun={rerunPipelineRun}
+      showNotification={value => setShowRerunNotification(value)}
+    />
+  );
+
+  return (
+    <>
+      <div id="tkn--maximized-logs-container" ref={maximizedLogsContainer} />
+      {showRerunNotification && (
+        <InlineNotification
+          lowContrast
+          actions={
+            showRerunNotification.logsURL ? (
+              <Link
+                className="bx--inline-notification__text-wrapper"
+                to={showRerunNotification.logsURL}
+              >
+                {intl.formatMessage({
+                  id: 'dashboard.run.rerunStatusMessage',
+                  defaultMessage: 'View status'
+                })}
+              </Link>
+            ) : (
+              ''
+            )
+          }
+          title={showRerunNotification.message}
+          kind={showRerunNotification.kind}
+          caption=""
+        />
+      )}
+      <PipelineRun
+        error={error}
+        fetchLogs={getLogsRetriever(
+          props.isLogStreamingEnabled,
+          props.externalLogsURL
+        )}
+        handleTaskSelected={handleTaskSelected}
+        loading={loading}
+        getLogsToolbar={getLogsToolbar}
+        maximizedLogsContainer={maximizedLogsContainer.current}
+        onViewChange={getViewChangeHandler(props)}
+        pipelineRun={pipelineRun}
+        rerun={rerun}
+        selectedStepId={currentSelectedStepId}
+        selectedTaskId={selectedTaskId}
+        showIO
+        taskRuns={taskRuns}
+        tasks={tasks.concat(clusterTasks)}
+        view={view}
+      />
+    </>
+  );
 }
 
 PipelineRunContainer.propTypes = {
@@ -374,14 +354,14 @@ function mapStateToProps(state, ownProps) {
       getTasksErrorMessage(state) ||
       getTaskRunsErrorMessage(state),
     externalLogsURL: getExternalLogsURL(state),
-    isReadOnly: isReadOnly(state),
+    isReadOnly: selectIsReadOnly(state),
     namespace,
     pipelineRun,
     pipeline,
     pipelineTaskName,
     retry,
     selectedStepId,
-    isLogStreamingEnabled: isLogStreamingEnabled(state),
+    isLogStreamingEnabled: selectIsLogStreamingEnabled(state),
     tasks,
     taskRuns,
     view,
@@ -390,11 +370,11 @@ function mapStateToProps(state, ownProps) {
 }
 
 const mapDispatchToProps = {
-  fetchClusterTasks,
-  fetchPipeline,
-  fetchPipelineRun,
-  fetchTasks,
-  fetchTaskRuns
+  fetchClusterTasks: fetchClusterTasksActionCreator,
+  fetchPipeline: fetchPipelineActionCreator,
+  fetchPipelineRun: fetchPipelineRunActionCreator,
+  fetchTasks: fetchTasksActionCreator,
+  fetchTaskRuns: fetchTaskRunsActionCreator
 };
 
 export default connect(
