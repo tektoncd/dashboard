@@ -74,7 +74,6 @@
     "dashboard.createTaskRun.serviceAccountHelperText": "選択したServiceAccount（選択していない場合はデフォルト）に、TaskRunの作成およびTaskRunに関するリソースに対する権限があることを確認してください。",
     "dashboard.createTaskRun.timeoutHelperText": "TaskRunタイムアウト（分）",
     "dashboard.createTaskRun.title": "TaskRunを作成",
-    "dashboard.deletePipelineResource.body": "PipelineResource {name}を削除してもよろしいですか？",
     "dashboard.deletePipelineRun.body": "PipelineRun {name}を削除してもよろしいですか？",
     "dashboard.deleteResources.confirm": "これらの{kind}を削除してもよろしいですか？",
     "dashboard.deleteResources.heading": "{kind}を削除",

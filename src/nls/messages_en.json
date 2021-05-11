@@ -74,7 +74,6 @@
     "dashboard.createTaskRun.serviceAccountHelperText": "Ensure the selected ServiceAccount (or the default if none selected) has permissions for creating TaskRuns and for anything else your TaskRun interacts with.",
     "dashboard.createTaskRun.timeoutHelperText": "TaskRun timeout in minutes",
     "dashboard.createTaskRun.title": "Create TaskRun",
-    "dashboard.deletePipelineResource.body": "Are you sure you would like to delete PipelineResource {name}?",
     "dashboard.deletePipelineRun.body": "Are you sure you would like to delete PipelineRun {name}?",
     "dashboard.deleteResources.confirm": "Are you sure you want to delete these {kind}?",
     "dashboard.deleteResources.heading": "Delete {kind}",

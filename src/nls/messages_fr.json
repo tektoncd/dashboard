@@ -74,7 +74,6 @@
     "dashboard.createTaskRun.serviceAccountHelperText": "",
     "dashboard.createTaskRun.timeoutHelperText": "",
     "dashboard.createTaskRun.title": "",
-    "dashboard.deletePipelineResource.body": "",
     "dashboard.deletePipelineRun.body": "Voulez-vous vraiment supprimer la ressource PipelineRun {name} ?",
     "dashboard.deleteResources.confirm": "",
     "dashboard.deleteResources.heading": "Suppression des {kind}",

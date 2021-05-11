@@ -11,64 +11,65 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 /* istanbul ignore file */
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import { injectIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import isEqual from 'lodash.isequal';
-import { getFilters, getTitle, urls } from '@tektoncd/dashboard-utils';
+import {
+  getFilters,
+  getTitle,
+  urls,
+  useWebSocketReconnected
+} from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 
 import { ListPageLayout } from '..';
 import { getAPIResource, getCustomResources } from '../../api';
 import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
 
-export class ResourceListContainer extends Component {
-  state = {
-    loading: true,
-    namespaced: true,
-    resources: []
-  };
+export function ResourceListContainer(props) {
+  const { filters, intl, match, namespace, webSocketConnected } = props;
+  const { group, version, type } = match.params;
 
-  componentDidMount() {
-    const { group, version, type } = this.props.match.params;
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isNamespaced, setIsNamespaced] = useState(true);
+  const [resources, setResources] = useState([]);
+
+  useEffect(() => {
     document.title = getTitle({
       page: `${group}/${version}/${type}`
     });
-    this.fetchResources();
+  }, []);
+
+  function fetchResources() {
+    return getAPIResource({ group, version, type })
+      .then(({ namespaced }) => {
+        setIsNamespaced(namespaced);
+        return getCustomResources({
+          filters,
+          group,
+          version,
+          type,
+          namespace: namespaced ? namespace : null
+        });
+      })
+      .then(res => {
+        setLoading(false);
+        setResources(res);
+      })
+      .catch(err => {
+        setError(err);
+      });
   }
 
-  componentDidUpdate(prevProps) {
-    const { filters, match, namespace, webSocketConnected } = this.props;
-    const { group, version, type } = match.params;
-    const {
-      filters: prevFilters,
-      match: prevMatch,
-      namespace: prevNamespace,
-      webSocketConnected: prevWebSocketConnected
-    } = prevProps;
-    const {
-      type: prevType,
-      group: prevGroup,
-      version: prevVersion
-    } = prevMatch.params;
+  useEffect(() => {
+    fetchResources();
+  }, [JSON.stringify(filters), group, namespace, type, version]);
 
-    if (
-      namespace !== prevNamespace ||
-      type !== prevType ||
-      group !== prevGroup ||
-      version !== prevVersion ||
-      (webSocketConnected && prevWebSocketConnected === false) ||
-      !isEqual(filters, prevFilters)
-    ) {
-      this.fetchResources();
-    }
-  }
+  useWebSocketReconnected(fetchResources, webSocketConnected);
 
-  getError() {
-    const { intl, match } = this.props;
-    const { error } = this.state;
-    const { type } = match.params;
+  function getError() {
     if (error) {
       return {
         error,
@@ -85,119 +86,87 @@ export class ResourceListContainer extends Component {
     return null;
   }
 
-  fetchResources() {
-    const { filters, match, namespace } = this.props;
-    const { group, version, type } = match.params;
+  const emptyText = intl.formatMessage(
+    {
+      id: 'dashboard.resourceList.emptyState',
+      defaultMessage: 'No matching resources found for type {type}'
+    },
+    { type }
+  );
 
-    return getAPIResource({ group, version, type })
-      .then(({ namespaced }) => {
-        this.setState({ namespaced });
-        return getCustomResources({
-          filters,
-          group,
-          version,
-          type,
-          namespace: namespaced ? namespace : null
-        });
-      })
-      .then(resources => {
-        this.setState({
-          loading: false,
-          resources
-        });
-      })
-      .catch(error => {
-        this.setState({ error });
-      });
-  }
+  return (
+    <ListPageLayout
+      {...props}
+      error={getError()}
+      title={`${group}/${version}/${type}`}
+      hideNamespacesDropdown={!isNamespaced}
+    >
+      <Table
+        headers={[
+          {
+            key: 'name',
+            header: intl.formatMessage({
+              id: 'dashboard.tableHeader.name',
+              defaultMessage: 'Name'
+            })
+          },
+          isNamespaced
+            ? {
+                key: 'namespace',
+                header: 'Namespace'
+              }
+            : null,
+          {
+            key: 'createdTime',
+            header: intl.formatMessage({
+              id: 'dashboard.tableHeader.createdTime',
+              defaultMessage: 'Created'
+            })
+          }
+        ].filter(Boolean)}
+        rows={resources.map(resource => {
+          const {
+            creationTimestamp,
+            name,
+            namespace: resourceNamespace,
+            uid
+          } = resource.metadata;
 
-  render() {
-    const { intl, match } = this.props;
-    const { group, type, version } = match.params;
-    const { loading, namespaced, resources } = this.state;
-
-    const emptyText = intl.formatMessage(
-      {
-        id: 'dashboard.resourceList.emptyState',
-        defaultMessage: 'No matching resources found for type {type}'
-      },
-      { type }
-    );
-
-    return (
-      <ListPageLayout
-        {...this.props}
-        error={this.getError()}
-        title={`${group}/${version}/${type}`}
-        hideNamespacesDropdown={!namespaced}
-      >
-        <Table
-          headers={[
-            {
-              key: 'name',
-              header: intl.formatMessage({
-                id: 'dashboard.tableHeader.name',
-                defaultMessage: 'Name'
-              })
-            },
-            namespaced
-              ? {
-                  key: 'namespace',
-                  header: 'Namespace'
+          return {
+            id: uid,
+            name: (
+              <Link
+                to={
+                  resourceNamespace
+                    ? urls.kubernetesResources.byName({
+                        namespace: resourceNamespace,
+                        group,
+                        version,
+                        type,
+                        name
+                      })
+                    : urls.kubernetesResources.cluster({
+                        group,
+                        version,
+                        type,
+                        name
+                      })
                 }
-              : null,
-            {
-              key: 'createdTime',
-              header: intl.formatMessage({
-                id: 'dashboard.tableHeader.createdTime',
-                defaultMessage: 'Created'
-              })
-            }
-          ].filter(Boolean)}
-          rows={resources.map(resource => {
-            const {
-              creationTimestamp,
-              name,
-              namespace,
-              uid
-            } = resource.metadata;
-
-            return {
-              id: uid,
-              name: (
-                <Link
-                  to={
-                    namespace
-                      ? urls.kubernetesResources.byName({
-                          namespace,
-                          group,
-                          version,
-                          type,
-                          name
-                        })
-                      : urls.kubernetesResources.cluster({
-                          group,
-                          version,
-                          type,
-                          name
-                        })
-                  }
-                  title={name}
-                >
-                  {name}
-                </Link>
-              ),
-              namespace,
-              createdTime: <FormattedDate date={creationTimestamp} relative />
-            };
-          })}
-          loading={loading}
-          emptyTextAllNamespaces={emptyText}
-          emptyTextSelectedNamespace={emptyText}
-        />
-      </ListPageLayout>
-    );
-  }
+                title={name}
+              >
+                {name}
+              </Link>
+            ),
+            namespace: resourceNamespace,
+            createdTime: <FormattedDate date={creationTimestamp} relative />
+          };
+        })}
+        loading={loading}
+        emptyTextAllNamespaces={emptyText}
+        emptyTextSelectedNamespace={emptyText}
+      />
+    </ListPageLayout>
+  );
 }
 
 function mapStateToProps(state, props) {
