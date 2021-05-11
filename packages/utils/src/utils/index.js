@@ -243,7 +243,11 @@ export function runMatchesStatusFilter({ run, statusFilter }) {
     case 'running':
       return isRunning(reason, status);
     case 'pending':
-      return !status || (status === 'Unknown' && reason === 'Pending');
+      return (
+        !status ||
+        (status === 'Unknown' &&
+          (reason === 'Pending' || reason === 'PipelineRunPending'))
+      );
     case 'failed':
       return (
         (status === 'False' &&
