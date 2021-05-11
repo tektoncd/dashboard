@@ -74,7 +74,6 @@
     "dashboard.createTaskRun.serviceAccountHelperText": "确保所选的（若未选择则为默认的）ServiceAccount 具有创建 TaskRun 和与 TaskRun 交互的任何其他权限。",
     "dashboard.createTaskRun.timeoutHelperText": "TaskRun 的超时（分钟）",
     "dashboard.createTaskRun.title": "创建 TaskRun",
-    "dashboard.deletePipelineResource.body": "您确定要删除 PipelineResource {name} 吗",
     "dashboard.deletePipelineRun.body": "您确定要删除 PipelineRun {name} 吗",
     "dashboard.deleteResources.confirm": "您确定要删除这些 {kind} 吗",
     "dashboard.deleteResources.heading": "删除 {kind}",
