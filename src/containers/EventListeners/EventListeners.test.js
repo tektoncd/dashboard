@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -132,7 +132,7 @@ it('EventListeners can be filtered on a single label filter', async () => {
     properties: {}
   });
 
-  const { getByTestId, getByText, queryByText } = renderWithRouter(
+  const { getByPlaceholderText, getByText, queryByText } = renderWithRouter(
     <Provider store={store}>
       <Route
         path="/eventlisteners"
@@ -143,7 +143,7 @@ it('EventListeners can be filtered on a single label filter', async () => {
   );
 
   const filterValue = 'baz:bam';
-  const filterInputField = getByTestId('filter-search-bar');
+  const filterInputField = getByPlaceholderText(/Input a label filter/);
   fireEvent.change(filterInputField, { target: { value: filterValue } });
   fireEvent.submit(getByText(/Input a label filter/i));
 

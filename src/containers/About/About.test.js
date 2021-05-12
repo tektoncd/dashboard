@@ -80,7 +80,7 @@ describe('About', () => {
       }
     });
 
-    const { queryByText, queryByTestId } = renderWithIntl(
+    const { queryByText } = renderWithIntl(
       <Provider store={store}>
         <About />)
       </Provider>
@@ -100,8 +100,6 @@ describe('About', () => {
     expect(queryByText('Version', pipelinesSelector)).toBeTruthy();
     expect(queryByText('v0.10.0', pipelinesSelector)).toBeTruthy();
 
-    expect(queryByTestId('triggers-table')).toBeFalsy();
-
     expect(queryByText('Error getting data')).toBeTruthy();
     expect(queryByText('Could not find: DashboardVersion')).toBeTruthy();
   });
@@ -113,7 +111,7 @@ describe('About', () => {
       }
     });
 
-    const { queryByText, queryByTestId } = renderWithIntl(
+    const { queryByText } = renderWithIntl(
       <Provider store={store}>
         <About />)
       </Provider>
@@ -130,8 +128,6 @@ describe('About', () => {
     expect(queryByText('Value', pipelinesSelector)).toBeTruthy();
     expect(queryByText('Namespace', pipelinesSelector)).toBeFalsy();
     expect(queryByText('Version', pipelinesSelector)).toBeFalsy();
-
-    expect(queryByTestId('triggers-table')).toBeFalsy();
 
     expect(
       queryByText(
@@ -150,7 +146,7 @@ describe('About', () => {
       }
     });
 
-    const { queryByText, queryByTestId } = renderWithIntl(
+    const { queryByText } = renderWithIntl(
       <Provider store={store}>
         <About />)
       </Provider>
@@ -169,7 +165,5 @@ describe('About', () => {
     expect(queryByText('tekton-pipelines', pipelinesSelector)).toBeTruthy();
     expect(queryByText('Version', pipelinesSelector)).toBeTruthy();
     expect(queryByText('v0.10.0', pipelinesSelector)).toBeTruthy();
-
-    expect(queryByTestId('triggers-table')).toBeFalsy();
   });
 });

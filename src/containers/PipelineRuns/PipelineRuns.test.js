@@ -183,7 +183,7 @@ describe('PipelineRuns container', () => {
       url: '/pipelineruns'
     };
 
-    const { queryByText, getByTestId, getByText } = renderWithRouter(
+    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
       <Provider store={mockTestStore}>
         <Route
           path="/pipelineruns"
@@ -204,7 +204,7 @@ describe('PipelineRuns container', () => {
     );
 
     const filterValue = 'baz:bam';
-    const filterInputField = getByTestId('filter-search-bar');
+    const filterInputField = getByPlaceholderText(/Input a label filter/);
     fireEvent.change(filterInputField, { target: { value: filterValue } });
     fireEvent.submit(getByText(/Input a label filter/i));
 
@@ -220,7 +220,7 @@ describe('PipelineRuns container', () => {
       url: ''
     };
 
-    const { queryByText, getByTestId, getByText } = renderWithRouter(
+    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
       <Provider store={mockTestStore}>
         <Route
           path="/pipelineruns"
@@ -242,7 +242,7 @@ describe('PipelineRuns container', () => {
 
     const firstFilterValue = 'foo:bar';
     const secondFilterValue = 'baz:bam';
-    const filterInputField = getByTestId('filter-search-bar');
+    const filterInputField = getByPlaceholderText(/Input a label filter/);
     fireEvent.change(filterInputField, { target: { value: firstFilterValue } });
     fireEvent.submit(getByText(/Input a label filter/i));
     fireEvent.change(filterInputField, {
@@ -263,7 +263,7 @@ describe('PipelineRuns container', () => {
       url: '/pipelineruns'
     };
 
-    const { queryByText, getByTestId, getByText } = renderWithRouter(
+    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
       <Provider store={mockTestStore}>
         <Route
           path="/pipelineruns"
@@ -284,7 +284,7 @@ describe('PipelineRuns container', () => {
     );
 
     const filterValue = 'baz:bam';
-    const filterInputField = getByTestId('filter-search-bar');
+    const filterInputField = getByPlaceholderText(/Input a label filter/);
     fireEvent.change(filterInputField, { target: { value: filterValue } });
     fireEvent.submit(getByText(/Input a label filter/i));
 
@@ -307,7 +307,7 @@ describe('PipelineRuns container', () => {
       url: '/pipelineruns'
     };
 
-    const { queryByText, getByTestId, getByText } = renderWithRouter(
+    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
       <Provider store={mockTestStore}>
         <Route
           path="/pipelineruns"
@@ -328,7 +328,7 @@ describe('PipelineRuns container', () => {
     );
 
     const filterValue = 'baz:bam';
-    const filterInputField = getByTestId('filter-search-bar');
+    const filterInputField = getByPlaceholderText(/Input a label filter/);
     fireEvent.change(filterInputField, { target: { value: filterValue } });
     fireEvent.submit(getByText(/Input a label filter/i));
 
@@ -346,7 +346,7 @@ describe('PipelineRuns container', () => {
       url: '/pipelineruns'
     };
 
-    const { queryByText, getByTestId, getByText } = renderWithRouter(
+    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
       <Provider store={mockTestStore}>
         <Route
           path="/pipelineruns"
@@ -367,7 +367,7 @@ describe('PipelineRuns container', () => {
     );
 
     const filterValue = 'baz=bam';
-    const filterInputField = getByTestId('filter-search-bar');
+    const filterInputField = getByPlaceholderText(/Input a label filter/);
     fireEvent.change(filterInputField, { target: { value: filterValue } });
     fireEvent.submit(getByText(/Input a label filter/i));
 
@@ -453,7 +453,7 @@ describe('PipelineRuns container', () => {
     jest
       .spyOn(PipelineRunsAPI, 'rerunPipelineRun')
       .mockImplementation(() => []);
-    const { getAllByTestId, getByText } = renderWithRouter(
+    const { getAllByTitle, getByText } = renderWithRouter(
       <Provider store={mockTestStore}>
         <Route
           path={urls.pipelineRuns.all()}
@@ -469,7 +469,7 @@ describe('PipelineRuns container', () => {
       { route: urls.pipelineRuns.all() }
     );
     await waitFor(() => getByText(/pipelineRunWithTwoLabels/i));
-    fireEvent.click(await waitFor(() => getAllByTestId('overflowmenu')[0]));
+    fireEvent.click(await waitFor(() => getAllByTitle('Actions')[0]));
     await waitFor(() => getByText(/Rerun/i));
     fireEvent.click(getByText('Rerun'));
     expect(PipelineRunsAPI.rerunPipelineRun).toHaveBeenCalledTimes(1);

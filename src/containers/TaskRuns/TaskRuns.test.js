@@ -159,7 +159,7 @@ describe('TaskRuns container', () => {
       url: urls.taskRuns.all()
     };
 
-    const { queryByText, getByTestId, getByText } = renderWithRouter(
+    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
       <Provider store={store.getStore()}>
         <Route
           path={urls.taskRuns.all()}
@@ -180,7 +180,7 @@ describe('TaskRuns container', () => {
     );
 
     const filterValue = 'baz:bam';
-    const filterInputField = getByTestId('filter-search-bar');
+    const filterInputField = getByPlaceholderText(/Input a label filter/);
     fireEvent.change(filterInputField, { target: { value: filterValue } });
     fireEvent.submit(getByText(/Input a label filter/i));
 
@@ -195,7 +195,7 @@ describe('TaskRuns container', () => {
       url: ''
     };
 
-    const { queryByText, getByTestId, getByText } = renderWithRouter(
+    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
       <Provider store={store.getStore()}>
         <Route
           path={urls.taskRuns.all()}
@@ -217,7 +217,7 @@ describe('TaskRuns container', () => {
 
     const firstFilterValue = 'foo:bar';
     const secondFilterValue = 'baz:bam';
-    const filterInputField = getByTestId('filter-search-bar');
+    const filterInputField = getByPlaceholderText(/Input a label filter/);
     fireEvent.change(filterInputField, { target: { value: firstFilterValue } });
     fireEvent.submit(getByText(/Input a label filter/i));
     fireEvent.change(filterInputField, {
@@ -237,7 +237,7 @@ describe('TaskRuns container', () => {
       url: urls.taskRuns.all()
     };
 
-    const { queryByText, getByTestId, getByText } = renderWithRouter(
+    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
       <Provider store={store.getStore()}>
         <Route
           path={urls.taskRuns.all()}
@@ -258,7 +258,7 @@ describe('TaskRuns container', () => {
     );
 
     const filterValue = 'baz:bam';
-    const filterInputField = getByTestId('filter-search-bar');
+    const filterInputField = getByPlaceholderText(/Input a label filter/);
     fireEvent.change(filterInputField, { target: { value: filterValue } });
     fireEvent.submit(getByText(/Input a label filter/i));
 
@@ -280,7 +280,7 @@ describe('TaskRuns container', () => {
       url: urls.taskRuns.all()
     };
 
-    const { queryByText, getByTestId, getByText } = renderWithRouter(
+    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
       <Provider store={store.getStore()}>
         <Route
           path={urls.taskRuns.all()}
@@ -301,7 +301,7 @@ describe('TaskRuns container', () => {
     );
 
     const filterValue = 'baz:bam';
-    const filterInputField = getByTestId('filter-search-bar');
+    const filterInputField = getByPlaceholderText(/Input a label filter/);
     fireEvent.change(filterInputField, { target: { value: filterValue } });
     fireEvent.submit(getByText(/Input a label filter/i));
 
@@ -318,7 +318,7 @@ describe('TaskRuns container', () => {
       url: urls.taskRuns.all()
     };
 
-    const { queryByText, getByTestId, getByText } = renderWithRouter(
+    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
       <Provider store={store.getStore()}>
         <Route
           path={urls.taskRuns.all()}
@@ -339,7 +339,7 @@ describe('TaskRuns container', () => {
     );
 
     const filterValue = 'baz=bam';
-    const filterInputField = getByTestId('filter-search-bar');
+    const filterInputField = getByPlaceholderText(/Input a label filter/);
     fireEvent.change(filterInputField, { target: { value: filterValue } });
     fireEvent.submit(getByText(/Input a label filter/i));
 
@@ -418,7 +418,7 @@ describe('TaskRuns container', () => {
     const mockTestStore = mockStore(testStore);
     jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => false);
     jest.spyOn(API, 'rerunTaskRun').mockImplementation(() => []);
-    const { getAllByTestId, getByText } = renderWithRouter(
+    const { getAllByTitle, getByText } = renderWithRouter(
       <Provider store={mockTestStore}>
         <Route
           path={urls.taskRuns.all()}
@@ -434,7 +434,7 @@ describe('TaskRuns container', () => {
       { route: urls.taskRuns.all() }
     );
     await waitFor(() => getByText(/taskRunWithTwoLabels/i));
-    fireEvent.click(await waitFor(() => getAllByTestId('overflowmenu')[0]));
+    fireEvent.click(await waitFor(() => getAllByTitle('Actions')[0]));
     await waitFor(() => getByText(/Rerun/i));
     fireEvent.click(getByText('Rerun'));
     expect(API.rerunTaskRun).toHaveBeenCalledTimes(1);

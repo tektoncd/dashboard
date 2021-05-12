@@ -55,7 +55,7 @@ import './globals';
           fallback={
             <div>
               {intl.formatMessage({
-                id: 'dashboard.extension.loading',
+                id: 'dashboard.loading',
                 defaultMessage: 'Loading…'
               })}
             </div>
