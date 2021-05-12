@@ -54,7 +54,6 @@ export class LogoutButton extends Component {
     return (
       <HeaderGlobalAction
         aria-label={logoutString}
-        data-testid="logout-btn"
         className="tkn--logout-btn"
         onClick={this.handleLogout}
         title={logoutString}

@@ -174,7 +174,6 @@ export /* istanbul ignore next */ function TriggerTemplateContainer(props) {
                 getTableProps
               }) => (
                 <TableContainer
-                  data-testid="resourcetemplatestable"
                   title={intl.formatMessage({
                     id: 'dashboard.triggerTemplate.resourceTemplates',
                     defaultMessage: 'Resource Templates'

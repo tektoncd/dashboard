@@ -52,7 +52,6 @@ class RunDropdown extends Component {
           title={title}
           ariaLabel={title}
           iconDescription={title}
-          data-testid="overflowmenu"
           flipped
           selectorPrimaryFocus="button:not([disabled])"
         >

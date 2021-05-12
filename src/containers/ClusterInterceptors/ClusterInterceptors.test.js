@@ -101,7 +101,12 @@ describe('ClusterInterceptors', () => {
 
   it('handles updates', async () => {
     const mockTestStore = mockStore(testStore);
-    const { container, getByTestId, getByText, queryByText } = renderWithRouter(
+    const {
+      container,
+      getByPlaceholderText,
+      getByText,
+      queryByText
+    } = renderWithRouter(
       <Provider store={mockTestStore}>
         <Route
           path={paths.clusterInterceptors.all()}
@@ -115,7 +120,7 @@ describe('ClusterInterceptors', () => {
     expect(API.getClusterInterceptors).toHaveBeenCalledTimes(1);
 
     const filterValue = 'baz:bam';
-    const filterInputField = getByTestId('filter-search-bar');
+    const filterInputField = getByPlaceholderText(/Input a label filter/);
     fireEvent.change(filterInputField, { target: { value: filterValue } });
     fireEvent.submit(getByText(/Input a label filter/i));
 

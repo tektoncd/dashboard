@@ -60,6 +60,6 @@ it('RunHeader renders the failed state', () => {
 });
 
 it('RunHeader renders the loading state', () => {
-  const { queryByTestId } = renderWithRouter(<RunHeader loading />);
-  expect(queryByTestId('loading')).toBeTruthy();
+  const { queryByTitle } = renderWithRouter(<RunHeader loading />);
+  expect(queryByTitle(/loading/i)).toBeTruthy();
 });

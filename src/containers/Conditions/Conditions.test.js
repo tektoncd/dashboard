@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -104,7 +104,12 @@ describe('Conditions', () => {
 
   it('handles updates', async () => {
     const mockTestStore = mockStore(testStore);
-    const { container, getByTestId, getByText, queryByText } = renderWithRouter(
+    const {
+      container,
+      getByPlaceholderText,
+      getByText,
+      queryByText
+    } = renderWithRouter(
       <Provider store={mockTestStore}>
         <Route
           path={paths.conditions.all()}
@@ -118,7 +123,7 @@ describe('Conditions', () => {
     expect(API.getConditions).toHaveBeenCalledTimes(1);
 
     const filterValue = 'baz:bam';
-    const filterInputField = getByTestId('filter-search-bar');
+    const filterInputField = getByPlaceholderText(/Input a label filter/);
     fireEvent.change(filterInputField, { target: { value: filterValue } });
     fireEvent.submit(getByText(/Input a label filter/i));
 

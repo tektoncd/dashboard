@@ -153,7 +153,6 @@ class LabelFilter extends Component {
             labelText={searchDescription}
             onChange={this.handleChange}
             value={currentFilterValue}
-            data-testid="filter-search-bar"
             name="filter-search"
           />
           <Button type="submit" className="tkn--visually-hidden">
