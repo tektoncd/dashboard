@@ -85,13 +85,13 @@ describe('ImportResources component', () => {
   });
 
   it('Displays an error when Namespace is empty', async () => {
-    const { getByTestId, getByText } = await renderWithIntl(
+    const { getByPlaceholderText, getByText } = await renderWithIntl(
       <Provider store={store}>
         <ImportResourcesContainer />
       </Provider>
     );
 
-    const repoURLField = getByTestId('repository-url-field');
+    const repoURLField = getByPlaceholderText(/my-repository/);
     fireEvent.change(repoURLField, {
       target: { value: 'https://github.com/test/testing' }
     });
@@ -106,6 +106,10 @@ describe('ImportResources component', () => {
       metadata: { name: pipelineRunName }
     };
 
+    const pathValue = 'some/path';
+    const repositoryURLValue = 'https://github.com/test/testing';
+    const revisionValue = 'main';
+
     jest
       .spyOn(API, 'importResources')
       .mockImplementation(
@@ -115,6 +119,7 @@ describe('ImportResources component', () => {
           namespace,
           path,
           repositoryURL,
+          revision,
           serviceAccount
         }) => {
           const labelsShouldEqual = {
@@ -123,8 +128,9 @@ describe('ImportResources component', () => {
             gitServer: 'github.com'
           };
 
-          expect(repositoryURL).toEqual('https://github.com/test/testing');
-          expect(path).toEqual('');
+          expect(repositoryURL).toEqual(repositoryURLValue);
+          expect(path).toEqual(pathValue);
+          expect(revision).toEqual(revisionValue);
           expect(namespace).toEqual('default');
           expect(labels).toEqual(labelsShouldEqual);
           expect(serviceAccount).toEqual('');
@@ -138,7 +144,7 @@ describe('ImportResources component', () => {
 
     const {
       getAllByPlaceholderText,
-      getByTestId,
+      getByPlaceholderText,
       getByText
     } = await renderWithRouter(
       <Provider store={store}>
@@ -146,10 +152,14 @@ describe('ImportResources component', () => {
       </Provider>
     );
 
-    const repoURLField = getByTestId('repository-url-field');
-    fireEvent.change(repoURLField, {
-      target: { value: 'https://github.com/test/testing' }
-    });
+    const repoURLField = getByPlaceholderText(/my-repository/);
+    fireEvent.change(repoURLField, { target: { value: repositoryURLValue } });
+
+    const pathField = getByPlaceholderText(/enter repository path/i);
+    fireEvent.change(pathField, { target: { value: pathValue } });
+
+    const revisionField = getByPlaceholderText(/revision/i);
+    fireEvent.change(revisionField, { target: { value: revisionValue } });
 
     fireEvent.click(getAllByPlaceholderText(/select namespace/i)[0]);
     fireEvent.click(getByText(namespace));
@@ -179,7 +189,7 @@ describe('ImportResources component', () => {
 
     const {
       getAllByPlaceholderText,
-      getByTestId,
+      getByPlaceholderText,
       getByText
     } = await renderWithIntl(
       <Provider store={store}>
@@ -187,7 +197,7 @@ describe('ImportResources component', () => {
       </Provider>
     );
 
-    const repoURLField = getByTestId('repository-url-field');
+    const repoURLField = getByPlaceholderText(/my-repository/);
     fireEvent.change(repoURLField, { target: { value: 'URL' } });
 
     fireEvent.click(getAllByPlaceholderText(/select namespace/i)[0]);
@@ -198,12 +208,12 @@ describe('ImportResources component', () => {
   });
 
   it('URL TextInput handles onChange event', async () => {
-    const { getByTestId, queryByDisplayValue } = await renderWithIntl(
+    const { getByPlaceholderText, queryByDisplayValue } = await renderWithIntl(
       <Provider store={store}>
         <ImportResourcesContainer />
       </Provider>
     );
-    const repoURLField = getByTestId('repository-url-field');
+    const repoURLField = getByPlaceholderText(/my-repository/);
     fireEvent.change(repoURLField, {
       target: { value: 'Invalid URL here' }
     });
