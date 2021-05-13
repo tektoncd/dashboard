@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import keyBy from 'lodash.keyby';
 import {
@@ -103,68 +103,104 @@ const initialResourcesState = resourceSpecs => {
   return resourceSpecs.reduce(resourcesReducer, {});
 };
 
-class CreatePipelineRun extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = this.initialState();
+function CreatePipelineRun(props) {
+  const { defaultNamespace, history, intl, location } = props;
+
+  function getPipelineName() {
+    const urlSearchParams = new URLSearchParams(location.search);
+    return urlSearchParams.get('pipelineName') || '';
   }
 
-  componentDidMount() {
-    const { intl } = this.props;
+  function getInitialState() {
+    let currentPipelineRef = getPipelineName();
+    const pipelineInfo = parsePipelineInfo(
+      currentPipelineRef,
+      defaultNamespace
+    );
+    if (pipelineInfo.pipelineError) {
+      currentPipelineRef = '';
+    }
+    return {
+      ...initialState,
+      ...pipelineInfo,
+      namespace: defaultNamespace !== ALL_NAMESPACES ? defaultNamespace : '',
+      pipelineRef: currentPipelineRef || '',
+      params: initialParamsState(pipelineInfo.paramSpecs),
+      resources: initialResourcesState(pipelineInfo.resourceSpecs),
+      pipelineError: ''
+    };
+  }
+
+  const [
+    {
+      creating,
+      invalidLabels,
+      invalidNodeSelector,
+      labels,
+      namespace,
+      nodeSelector,
+      params,
+      paramSpecs,
+      pipelineError,
+      pipelineRef,
+      resources,
+      resourceSpecs,
+      serviceAccount,
+      submitError,
+      timeout,
+      validationError,
+      validTimeout
+    },
+    setState
+  ] = useState(getInitialState());
+
+  useEffect(() => {
     document.title = getTitle({
       page: intl.formatMessage({
         id: 'dashboard.createPipelineRun.title',
         defaultMessage: 'Create PipelineRun'
       })
     });
-  }
+  }, []);
 
-  getPipelineName() {
-    const { location } = this.props;
-    const urlSearchParams = new URLSearchParams(location.search);
-    return urlSearchParams.get('pipelineName') || '';
-  }
-
-  checkFormValidation = () => {
-    const { paramSpecs } = this.state;
+  function checkFormValidation() {
     // Namespace, PipelineRef, Resources, and Params must all have values
-    const validNamespace = !!this.state.namespace;
-    const validPipelineRef = !!this.state.pipelineRef;
+    const validNamespace = !!namespace;
+    const validPipelineRef = !!pipelineRef;
     const validResources =
-      !this.state.resources ||
-      Object.keys(this.state.resources).reduce(
-        (acc, name) => acc && !!this.state.resources[name],
+      !resources ||
+      Object.keys(resources).reduce(
+        (acc, name) => acc && !!resources[name],
         true
       );
     const paramSpecMap = keyBy(paramSpecs, 'name');
     const validParams =
-      !this.state.params ||
-      Object.keys(this.state.params).reduce(
+      !params ||
+      Object.keys(params).reduce(
         (acc, name) =>
           acc &&
-          (!!this.state.params[name] ||
+          (!!params[name] ||
             typeof paramSpecMap[name]?.default !== 'undefined'),
         true
       );
 
     // Timeout is a number and less than 1 year in minutes
     const timeoutTest =
-      !Number.isNaN(this.state.timeout) &&
-      this.state.timeout < 525600 &&
-      this.state.timeout.trim() !== '';
+      !Number.isNaN(timeout) && timeout < 525600 && timeout.trim() !== '';
     if (!timeoutTest) {
-      this.setState({ validTimeout: false });
+      setState(state => ({ ...state, validTimeout: false }));
     } else {
-      this.setState({ validTimeout: true });
+      setState(state => ({ ...state, validTimeout: true }));
     }
 
     // Labels
     let validLabels = true;
-    this.state.labels.forEach(label => {
+    labels.forEach(label => {
       ['key', 'value'].forEach(type => {
         if (!isValidLabel(type, label[type])) {
           validLabels = false;
-          this.setState(prevState => ({
+          setState(prevState => ({
+            ...prevState,
             invalidLabels: {
               ...prevState.invalidLabels,
               [`${label.id}-${type}`]: true
@@ -176,11 +212,12 @@ class CreatePipelineRun extends React.Component {
 
     // Node selector
     let validNodeSelector = true;
-    this.state.nodeSelector.forEach(label => {
+    nodeSelector.forEach(label => {
       ['key', 'value'].forEach(type => {
         if (!isValidLabel(type, label[type])) {
           validNodeSelector = false;
-          this.setState(prevState => ({
+          setState(prevState => ({
+            ...prevState,
             invalidNodeSelector: {
               ...prevState.invalidNodeSelector,
               [`${label.id}-${type}`]: true
@@ -199,33 +236,36 @@ class CreatePipelineRun extends React.Component {
       validLabels &&
       validNodeSelector
     );
-  };
+  }
 
-  isDisabled = () => {
-    if (this.state.namespace === '') {
+  function isDisabled() {
+    if (namespace === '') {
       return true;
     }
     return false;
-  };
+  }
 
-  resetError = () => {
-    this.setState({ submitError: '' });
-  };
+  function resetError() {
+    setState(state => ({ ...state, submitError: '' }));
+  }
 
-  handleClose = () => {
-    const { defaultNamespace: namespace, history } = this.props;
-    const pipelineName = this.getPipelineName();
+  function handleClose() {
+    const pipelineName = getPipelineName();
     let url = urls.pipelineRuns.all();
-    if (pipelineName && namespace !== ALL_NAMESPACES) {
-      url = urls.pipelineRuns.byPipeline({ namespace, pipelineName });
-    } else if (namespace !== ALL_NAMESPACES) {
-      url = urls.pipelineRuns.byNamespace({ namespace });
+    if (pipelineName && defaultNamespace !== ALL_NAMESPACES) {
+      url = urls.pipelineRuns.byPipeline({
+        namespace: defaultNamespace,
+        pipelineName
+      });
+    } else if (defaultNamespace !== ALL_NAMESPACES) {
+      url = urls.pipelineRuns.byNamespace({ namespace: defaultNamespace });
     }
     history.push(url);
-  };
+  }
 
-  handleAddLabel = prop => {
-    this.setState(prevState => ({
+  function handleAddLabel(prop) {
+    setState(prevState => ({
+      ...prevState,
       [prop]: [
         ...prevState[prop],
         {
@@ -237,68 +277,73 @@ class CreatePipelineRun extends React.Component {
         }
       ]
     }));
-  };
+  }
 
-  handleRemoveLabel = (prop, invalidProp, index) => {
-    this.setState(prevState => {
-      const labels = [...prevState[prop]];
-      const invalidLabels = { ...prevState[invalidProp] };
-      const removedLabel = labels[index];
-      labels.splice(index, 1);
-      if (removedLabel.id in invalidLabels) {
-        delete invalidLabels[`${removedLabel.id}-key`];
-        delete invalidLabels[`${removedLabel.id}-value`];
+  function handleRemoveLabel(prop, invalidProp, index) {
+    setState(prevState => {
+      const newLabels = [...prevState[prop]];
+      const newInvalidLabels = { ...prevState[invalidProp] };
+      const removedLabel = newLabels[index];
+      newLabels.splice(index, 1);
+      if (removedLabel.id in newInvalidLabels) {
+        delete newInvalidLabels[`${removedLabel.id}-key`];
+        delete newInvalidLabels[`${removedLabel.id}-value`];
       }
       return {
-        [prop]: labels,
-        [invalidProp]: invalidLabels
+        ...prevState,
+        [prop]: newLabels,
+        [invalidProp]: newInvalidLabels
       };
     });
-  };
+  }
 
-  handleChangeLabel = (prop, invalidProp, { type, index, value }) => {
-    this.setState(prevState => {
-      const labels = [...prevState[prop]];
-      labels[index][type] = value;
-      const invalidLabels = { ...prevState[invalidProp] };
+  function handleChangeLabel(prop, invalidProp, { type, index, value }) {
+    setState(prevState => {
+      const newLabels = [...prevState[prop]];
+      newLabels[index][type] = value;
+      const newInvalidLabels = { ...prevState[invalidProp] };
       if (!isValidLabel(type, value)) {
-        invalidLabels[`${labels[index].id}-${type}`] = true;
+        newInvalidLabels[`${newLabels[index].id}-${type}`] = true;
       } else {
-        delete invalidLabels[`${labels[index].id}-${type}`];
+        delete newInvalidLabels[`${newLabels[index].id}-${type}`];
       }
       return {
-        [prop]: labels,
-        [invalidProp]: invalidLabels
+        ...prevState,
+        [prop]: newLabels,
+        [invalidProp]: newInvalidLabels
       };
     });
-  };
+  }
 
-  handleNamespaceChange = ({ selectedItem }) => {
+  function handleNamespaceChange({ selectedItem }) {
     const { text = '' } = selectedItem || {};
     // Reset pipeline and ServiceAccount when namespace changes
-    if (text !== this.state.namespace) {
-      this.setState({
+    if (text !== namespace) {
+      setState(state => ({
+        ...state,
         ...initialState,
         namespace: text
-      });
+      }));
     }
-  };
+  }
 
-  handleParamChange = (key, value) => {
-    this.setState(state => ({
+  function handleParamChange(key, value) {
+    setState(state => ({
+      ...state,
       params: {
         ...state.params,
         [key]: value
       }
     }));
-  };
+  }
 
-  handlePipelineChange = ({ selectedItem }) => {
+  function handlePipelineChange({ selectedItem }) {
     const { text } = selectedItem || {};
-    if (text && text !== this.state.pipelineRef) {
-      this.setState(state => {
+    if (text && text !== pipelineRef) {
+      setState(state => {
         const pipelineInfo = parsePipelineInfo(text, state.namespace);
         return {
+          ...state,
           ...pipelineInfo,
           pipelineRef: text,
           resources: initialResourcesState(pipelineInfo.resourceSpecs),
@@ -308,45 +353,38 @@ class CreatePipelineRun extends React.Component {
       return;
     }
     // Reset pipelineresources and params when no Pipeline is selected
-    this.setState(state => ({
+    setState(state => ({
+      ...state,
       ...initialState,
       namespace: state.namespace
     }));
-  };
+  }
 
-  handleResourceChange = (key, value) => {
-    this.setState(state => ({
+  function handleResourceChange(key, value) {
+    setState(state => ({
+      ...state,
       resources: {
         ...state.resources,
         [key]: value
       }
     }));
-  };
+  }
 
-  handleSubmit = event => {
+  function handleSubmit(event) {
     event.preventDefault();
 
     // Check form validation
-    const valid = this.checkFormValidation();
-    this.setState({
+    const valid = checkFormValidation();
+    setState(state => ({
+      ...state,
       validationError: !valid
-    });
+    }));
     if (!valid) {
       return;
     }
 
-    this.setState({ creating: true });
+    setState(state => ({ ...state, creating: true }));
 
-    const {
-      labels,
-      namespace,
-      nodeSelector,
-      params,
-      pipelineRef,
-      resources,
-      serviceAccount,
-      timeout
-    } = this.state;
     const timeoutInMins = `${timeout}m`;
     createPipelineRun({
       namespace,
@@ -367,7 +405,6 @@ class CreatePipelineRun extends React.Component {
         : null
     })
       .then(() => {
-        const { history } = this.props;
         history.push(urls.pipelineRuns.byNamespace({ namespace }));
       })
       .catch(error => {
@@ -377,340 +414,294 @@ class CreatePipelineRun extends React.Component {
           if (text) {
             errorMessage = `${text} (error code ${statusCode})`;
           }
-          this.setState({ creating: false, submitError: errorMessage });
+          setState(state => ({
+            ...state,
+            creating: false,
+            submitError: errorMessage
+          }));
         });
       });
-  };
-
-  initialState = () => {
-    const { defaultNamespace } = this.props;
-    let pipelineRef = this.getPipelineName();
-    const pipelineInfo = parsePipelineInfo(pipelineRef, defaultNamespace);
-    if (pipelineInfo.pipelineError) {
-      pipelineRef = '';
-    }
-    return {
-      ...initialState,
-      ...pipelineInfo,
-      namespace: defaultNamespace !== ALL_NAMESPACES ? defaultNamespace : '',
-      pipelineRef: pipelineRef || '',
-      params: initialParamsState(pipelineInfo.paramSpecs),
-      resources: initialResourcesState(pipelineInfo.resourceSpecs),
-      pipelineError: ''
-    };
-  };
-
-  render() {
-    const { intl } = this.props;
-    const {
-      creating,
-      invalidLabels,
-      invalidNodeSelector,
-      labels,
-      namespace,
-      nodeSelector,
-      paramSpecs,
-      pipelineRef,
-      resourceSpecs,
-      serviceAccount,
-      validationError,
-      validTimeout
-    } = this.state;
-
-    return (
-      <div className="tkn--create">
-        <div className="tkn--create--heading">
-          <h1>
-            {intl.formatMessage({
-              id: 'dashboard.createPipelineRun.title',
-              defaultMessage: 'Create PipelineRun'
-            })}
-          </h1>
-          <Button
-            iconDescription={intl.formatMessage({
-              id: 'dashboard.modal.cancelButton',
-              defaultMessage: 'Cancel'
-            })}
-            kind="secondary"
-            onClick={this.handleClose}
-            disabled={creating}
-          >
-            {intl.formatMessage({
-              id: 'dashboard.modal.cancelButton',
-              defaultMessage: 'Cancel'
-            })}
-          </Button>
-          <Button
-            iconDescription={intl.formatMessage({
-              id: 'dashboard.actions.createButton',
-              defaultMessage: 'Create'
-            })}
-            onClick={this.handleSubmit}
-            disabled={creating}
-          >
-            {intl.formatMessage({
-              id: 'dashboard.actions.createButton',
-              defaultMessage: 'Create'
-            })}
-          </Button>
-        </div>
-        <Form>
-          {this.state.pipelineError && (
-            <InlineNotification
-              kind="error"
-              title={intl.formatMessage({
-                id: 'dashboard.createPipelineRun.errorLoading',
-                defaultMessage: 'Error retrieving Pipeline information'
-              })}
-              lowContrast
-            />
-          )}
-          {validationError && (
-            <InlineNotification
-              kind="error"
-              title={intl.formatMessage({
-                id: 'dashboard.createRun.validationError',
-                defaultMessage:
-                  'Please fix the fields with errors, then resubmit'
-              })}
-              lowContrast
-            />
-          )}
-          {this.state.submitError !== '' && (
-            <InlineNotification
-              kind="error"
-              title={intl.formatMessage({
-                id: 'dashboard.createPipelineRun.createError',
-                defaultMessage: 'Error creating PipelineRun'
-              })}
-              subtitle={this.state.submitError}
-              onCloseButtonClick={this.resetError}
-              lowContrast
-            />
-          )}
-          <FormGroup legendText="">
-            <NamespacesDropdown
-              id="create-pipelinerun--namespaces-dropdown"
-              invalid={validationError && !namespace}
-              invalidText={intl.formatMessage({
-                id: 'dashboard.createRun.invalidNamespace',
-                defaultMessage: 'Namespace cannot be empty'
-              })}
-              selectedItem={namespace ? { id: namespace, text: namespace } : ''}
-              onChange={this.handleNamespaceChange}
-            />
-            <PipelinesDropdown
-              id="create-pipelinerun--pipelines-dropdown"
-              namespace={namespace}
-              invalid={validationError && !pipelineRef}
-              invalidText={intl.formatMessage({
-                id: 'dashboard.createPipelineRun.invalidPipeline',
-                defaultMessage: 'Pipeline cannot be empty'
-              })}
-              selectedItem={
-                pipelineRef ? { id: pipelineRef, text: pipelineRef } : ''
-              }
-              disabled={this.isDisabled()}
-              onChange={this.handlePipelineChange}
-            />
-          </FormGroup>
-          <FormGroup legendText="">
-            <KeyValueList
-              legendText={intl.formatMessage({
-                id: 'dashboard.createRun.labels.legendText',
-                defaultMessage: 'Labels'
-              })}
-              invalidText={
-                <span
-                  dangerouslySetInnerHTML /* eslint-disable-line react/no-danger */={{
-                    __html: intl.formatMessage(
-                      {
-                        id: 'dashboard.createRun.label.invalidText',
-                        defaultMessage:
-                          'Labels must follow the {0}kubernetes labels syntax{1}.'
-                      },
-                      [
-                        `<a
-                            href="https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >`,
-                        '</a>'
-                      ]
-                    )
-                  }}
-                />
-              }
-              keyValues={labels}
-              minKeyValues={0}
-              invalidFields={invalidLabels}
-              onChange={label =>
-                this.handleChangeLabel('labels', 'invalidLabels', label)
-              }
-              onRemove={index =>
-                this.handleRemoveLabel('labels', 'invalidLabels', index)
-              }
-              onAdd={() => this.handleAddLabel('labels')}
-            />
-          </FormGroup>
-          <FormGroup legendText="">
-            <KeyValueList
-              legendText={intl.formatMessage({
-                id: 'dashboard.createRun.nodeSelector.legendText',
-                defaultMessage: 'Node Selector'
-              })}
-              invalidText={
-                <span
-                  dangerouslySetInnerHTML /* eslint-disable-line react/no-danger */={{
-                    __html: intl.formatMessage(
-                      {
-                        id: 'dashboard.createRun.label.invalidText',
-                        defaultMessage:
-                          'Labels must follow the {0}kubernetes labels syntax{1}.'
-                      },
-                      [
-                        `<a
-                            href="https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >`,
-                        '</a>'
-                      ]
-                    )
-                  }}
-                />
-              }
-              keyValues={nodeSelector}
-              minKeyValues={0}
-              invalidFields={invalidNodeSelector}
-              onChange={label =>
-                this.handleChangeLabel(
-                  'nodeSelector',
-                  'invalidNodeSelector',
-                  label
-                )
-              }
-              onRemove={index =>
-                this.handleRemoveLabel(
-                  'nodeSelector',
-                  'invalidNodeSelector',
-                  index
-                )
-              }
-              onAdd={() => this.handleAddLabel('nodeSelector')}
-            />
-          </FormGroup>
-          {resourceSpecs && resourceSpecs.length !== 0 && (
-            <FormGroup legendText="PipelineResources">
-              {resourceSpecs.map(resourceSpec => (
-                <PipelineResourcesDropdown
-                  id={`create-pipelinerun--pr-dropdown-${resourceSpec.name}`}
-                  key={`create-pipelinerun--pr-dropdown-${resourceSpec.name}`}
-                  titleText={resourceSpec.name}
-                  helperText={resourceSpec.type}
-                  type={resourceSpec.type}
-                  namespace={namespace}
-                  invalid={
-                    validationError && !this.state.resources[resourceSpec.name]
-                  }
-                  invalidText={intl.formatMessage({
-                    id: 'dashboard.createRun.invalidPipelineResources',
-                    defaultMessage: 'PipelineResources cannot be empty'
-                  })}
-                  selectedItem={(() => {
-                    const value = this.state.resources[resourceSpec.name];
-                    return value ? { id: value, text: value } : '';
-                  })()}
-                  onChange={({ selectedItem }) => {
-                    const { text } = selectedItem || {};
-                    this.handleResourceChange(resourceSpec.name, text);
-                  }}
-                />
-              ))}
-            </FormGroup>
-          )}
-          {paramSpecs && paramSpecs.length !== 0 && (
-            <FormGroup legendText="Params">
-              {paramSpecs.map(paramSpec => (
-                <TextInput
-                  id={`create-pipelinerun--param-${paramSpec.name}`}
-                  key={`create-pipelinerun--param-${paramSpec.name}`}
-                  labelText={paramSpec.name}
-                  helperText={paramSpec.description}
-                  placeholder={paramSpec.default || paramSpec.name}
-                  invalid={
-                    validationError &&
-                    !this.state.params[paramSpec.name] &&
-                    paramSpec.default !== ''
-                  }
-                  invalidText={intl.formatMessage({
-                    id: 'dashboard.createRun.invalidParams',
-                    defaultMessage: 'Params cannot be empty'
-                  })}
-                  value={this.state.params[paramSpec.name] || ''}
-                  onChange={({ target: { value } }) =>
-                    this.handleParamChange(paramSpec.name, value)
-                  }
-                />
-              ))}
-            </FormGroup>
-          )}
-          <FormGroup
-            legendText={intl.formatMessage({
-              id: 'dashboard.createRun.optional.legendText',
-              defaultMessage: 'Optional values'
-            })}
-          >
-            <ServiceAccountsDropdown
-              id="create-pipelinerun--sa-dropdown"
-              titleText={intl.formatMessage({
-                id: 'dashboard.serviceAccountLabel.optional',
-                defaultMessage: 'ServiceAccount (optional)'
-              })}
-              helperText={intl.formatMessage({
-                id: 'dashboard.createPipelineRun.serviceAccountHelperText',
-                defaultMessage:
-                  'Ensure the selected ServiceAccount (or the default if none selected) has permissions for creating PipelineRuns and for anything else your PipelineRun interacts with.'
-              })}
-              namespace={namespace}
-              selectedItem={
-                serviceAccount
-                  ? { id: serviceAccount, text: serviceAccount }
-                  : ''
-              }
-              disabled={this.isDisabled()}
-              onChange={({ selectedItem }) => {
-                const { text } = selectedItem || {};
-                this.setState({ serviceAccount: text });
-              }}
-            />
-            <TextInput
-              id="create-pipelinerun--timeout"
-              labelText={intl.formatMessage({
-                id: 'dashboard.createRun.timeoutLabel',
-                defaultMessage: 'Timeout'
-              })}
-              helperText={intl.formatMessage({
-                id: 'dashboard.createPipelineRun.timeoutHelperText',
-                defaultMessage: 'PipelineRun timeout in minutes'
-              })}
-              invalid={validationError && !validTimeout}
-              invalidText={intl.formatMessage({
-                id: 'dashboard.createRun.invalidTimeout',
-                defaultMessage:
-                  'Timeout must be a valid number less than 525600'
-              })}
-              placeholder="60"
-              value={this.state.timeout}
-              onChange={({ target: { value } }) =>
-                this.setState({ timeout: value })
-              }
-            />
-          </FormGroup>
-        </Form>
-      </div>
-    );
   }
+
+  return (
+    <div className="tkn--create">
+      <div className="tkn--create--heading">
+        <h1>
+          {intl.formatMessage({
+            id: 'dashboard.createPipelineRun.title',
+            defaultMessage: 'Create PipelineRun'
+          })}
+        </h1>
+        <Button
+          iconDescription={intl.formatMessage({
+            id: 'dashboard.modal.cancelButton',
+            defaultMessage: 'Cancel'
+          })}
+          kind="secondary"
+          onClick={handleClose}
+          disabled={creating}
+        >
+          {intl.formatMessage({
+            id: 'dashboard.modal.cancelButton',
+            defaultMessage: 'Cancel'
+          })}
+        </Button>
+        <Button
+          iconDescription={intl.formatMessage({
+            id: 'dashboard.actions.createButton',
+            defaultMessage: 'Create'
+          })}
+          onClick={handleSubmit}
+          disabled={creating}
+        >
+          {intl.formatMessage({
+            id: 'dashboard.actions.createButton',
+            defaultMessage: 'Create'
+          })}
+        </Button>
+      </div>
+      <Form>
+        {pipelineError && (
+          <InlineNotification
+            kind="error"
+            title={intl.formatMessage({
+              id: 'dashboard.createPipelineRun.errorLoading',
+              defaultMessage: 'Error retrieving Pipeline information'
+            })}
+            lowContrast
+          />
+        )}
+        {validationError && (
+          <InlineNotification
+            kind="error"
+            title={intl.formatMessage({
+              id: 'dashboard.createRun.validationError',
+              defaultMessage: 'Please fix the fields with errors, then resubmit'
+            })}
+            lowContrast
+          />
+        )}
+        {submitError !== '' && (
+          <InlineNotification
+            kind="error"
+            title={intl.formatMessage({
+              id: 'dashboard.createPipelineRun.createError',
+              defaultMessage: 'Error creating PipelineRun'
+            })}
+            subtitle={submitError}
+            onCloseButtonClick={resetError}
+            lowContrast
+          />
+        )}
+        <FormGroup legendText="">
+          <NamespacesDropdown
+            id="create-pipelinerun--namespaces-dropdown"
+            invalid={validationError && !namespace}
+            invalidText={intl.formatMessage({
+              id: 'dashboard.createRun.invalidNamespace',
+              defaultMessage: 'Namespace cannot be empty'
+            })}
+            selectedItem={namespace ? { id: namespace, text: namespace } : ''}
+            onChange={handleNamespaceChange}
+          />
+          <PipelinesDropdown
+            id="create-pipelinerun--pipelines-dropdown"
+            namespace={namespace}
+            invalid={validationError && !pipelineRef}
+            invalidText={intl.formatMessage({
+              id: 'dashboard.createPipelineRun.invalidPipeline',
+              defaultMessage: 'Pipeline cannot be empty'
+            })}
+            selectedItem={
+              pipelineRef ? { id: pipelineRef, text: pipelineRef } : ''
+            }
+            disabled={isDisabled()}
+            onChange={handlePipelineChange}
+          />
+        </FormGroup>
+        <FormGroup legendText="">
+          <KeyValueList
+            legendText={intl.formatMessage({
+              id: 'dashboard.createRun.labels.legendText',
+              defaultMessage: 'Labels'
+            })}
+            invalidText={
+              <span
+                dangerouslySetInnerHTML /* eslint-disable-line react/no-danger */={{
+                  __html: intl.formatMessage(
+                    {
+                      id: 'dashboard.createRun.label.invalidText',
+                      defaultMessage:
+                        'Labels must follow the {0}kubernetes labels syntax{1}.'
+                    },
+                    [
+                      `<a
+                          href="https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >`,
+                      '</a>'
+                    ]
+                  )
+                }}
+              />
+            }
+            keyValues={labels}
+            minKeyValues={0}
+            invalidFields={invalidLabels}
+            onChange={label =>
+              handleChangeLabel('labels', 'invalidLabels', label)
+            }
+            onRemove={index =>
+              handleRemoveLabel('labels', 'invalidLabels', index)
+            }
+            onAdd={() => handleAddLabel('labels')}
+          />
+        </FormGroup>
+        <FormGroup legendText="">
+          <KeyValueList
+            legendText={intl.formatMessage({
+              id: 'dashboard.createRun.nodeSelector.legendText',
+              defaultMessage: 'Node Selector'
+            })}
+            invalidText={
+              <span
+                dangerouslySetInnerHTML /* eslint-disable-line react/no-danger */={{
+                  __html: intl.formatMessage(
+                    {
+                      id: 'dashboard.createRun.label.invalidText',
+                      defaultMessage:
+                        'Labels must follow the {0}kubernetes labels syntax{1}.'
+                    },
+                    [
+                      `<a
+                          href="https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >`,
+                      '</a>'
+                    ]
+                  )
+                }}
+              />
+            }
+            keyValues={nodeSelector}
+            minKeyValues={0}
+            invalidFields={invalidNodeSelector}
+            onChange={label =>
+              handleChangeLabel('nodeSelector', 'invalidNodeSelector', label)
+            }
+            onRemove={index =>
+              handleRemoveLabel('nodeSelector', 'invalidNodeSelector', index)
+            }
+            onAdd={() => handleAddLabel('nodeSelector')}
+          />
+        </FormGroup>
+        {resourceSpecs && resourceSpecs.length !== 0 && (
+          <FormGroup legendText="PipelineResources">
+            {resourceSpecs.map(resourceSpec => (
+              <PipelineResourcesDropdown
+                id={`create-pipelinerun--pr-dropdown-${resourceSpec.name}`}
+                key={`create-pipelinerun--pr-dropdown-${resourceSpec.name}`}
+                titleText={resourceSpec.name}
+                helperText={resourceSpec.type}
+                type={resourceSpec.type}
+                namespace={namespace}
+                invalid={validationError && !resources[resourceSpec.name]}
+                invalidText={intl.formatMessage({
+                  id: 'dashboard.createRun.invalidPipelineResources',
+                  defaultMessage: 'PipelineResources cannot be empty'
+                })}
+                selectedItem={(() => {
+                  const value = resources[resourceSpec.name];
+                  return value ? { id: value, text: value } : '';
+                })()}
+                onChange={({ selectedItem }) => {
+                  const { text } = selectedItem || {};
+                  handleResourceChange(resourceSpec.name, text);
+                }}
+              />
+            ))}
+          </FormGroup>
+        )}
+        {paramSpecs && paramSpecs.length !== 0 && (
+          <FormGroup legendText="Params">
+            {paramSpecs.map(paramSpec => (
+              <TextInput
+                id={`create-pipelinerun--param-${paramSpec.name}`}
+                key={`create-pipelinerun--param-${paramSpec.name}`}
+                labelText={paramSpec.name}
+                helperText={paramSpec.description}
+                placeholder={paramSpec.default || paramSpec.name}
+                invalid={
+                  validationError &&
+                  !params[paramSpec.name] &&
+                  paramSpec.default !== ''
+                }
+                invalidText={intl.formatMessage({
+                  id: 'dashboard.createRun.invalidParams',
+                  defaultMessage: 'Params cannot be empty'
+                })}
+                value={params[paramSpec.name] || ''}
+                onChange={({ target: { value } }) =>
+                  handleParamChange(paramSpec.name, value)
+                }
+              />
+            ))}
+          </FormGroup>
+        )}
+        <FormGroup
+          legendText={intl.formatMessage({
+            id: 'dashboard.createRun.optional.legendText',
+            defaultMessage: 'Optional values'
+          })}
+        >
+          <ServiceAccountsDropdown
+            id="create-pipelinerun--sa-dropdown"
+            titleText={intl.formatMessage({
+              id: 'dashboard.serviceAccountLabel.optional',
+              defaultMessage: 'ServiceAccount (optional)'
+            })}
+            helperText={intl.formatMessage({
+              id: 'dashboard.createPipelineRun.serviceAccountHelperText',
+              defaultMessage:
+                'Ensure the selected ServiceAccount (or the default if none selected) has permissions for creating PipelineRuns and for anything else your PipelineRun interacts with.'
+            })}
+            namespace={namespace}
+            selectedItem={
+              serviceAccount ? { id: serviceAccount, text: serviceAccount } : ''
+            }
+            disabled={isDisabled()}
+            onChange={({ selectedItem }) => {
+              const { text } = selectedItem || {};
+              setState(state => ({ ...state, serviceAccount: text }));
+            }}
+          />
+          <TextInput
+            id="create-pipelinerun--timeout"
+            labelText={intl.formatMessage({
+              id: 'dashboard.createRun.timeoutLabel',
+              defaultMessage: 'Timeout'
+            })}
+            helperText={intl.formatMessage({
+              id: 'dashboard.createPipelineRun.timeoutHelperText',
+              defaultMessage: 'PipelineRun timeout in minutes'
+            })}
+            invalid={validationError && !validTimeout}
+            invalidText={intl.formatMessage({
+              id: 'dashboard.createRun.invalidTimeout',
+              defaultMessage: 'Timeout must be a valid number less than 525600'
+            })}
+            placeholder="60"
+            value={timeout}
+            onChange={({ target: { value } }) =>
+              setState(state => ({ ...state, timeout: value }))
+            }
+          />
+        </FormGroup>
+      </Form>
+    </div>
+  );
 }
 
 /* istanbul ignore next */

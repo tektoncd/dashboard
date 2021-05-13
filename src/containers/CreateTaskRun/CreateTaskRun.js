@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import keyBy from 'lodash.keyby';
 import {
@@ -114,43 +114,72 @@ const initialResourcesState = resourceSpecs => {
   return resources;
 };
 
-const itemToString = item => (item ? item.text : '');
+const itemToString = ({ text }) => text;
 
-class CreateTaskRun extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = this.initialState();
-  }
+function CreateTaskRun(props) {
+  const { defaultNamespace, history, intl, location } = props;
 
-  componentDidMount() {
-    const { intl } = this.props;
-    document.title = getTitle({
-      page: intl.formatMessage({
-        id: 'dashboard.createTaskRun.title',
-        defaultMessage: 'Create TaskRun'
-      })
-    });
-  }
-
-  getTaskDetails() {
-    const { location } = this.props;
+  function getTaskDetails() {
     const urlSearchParams = new URLSearchParams(location.search);
-    const kind = urlSearchParams.get('kind') || 'Task';
-    const taskName = urlSearchParams.get('taskName') || '';
-    return { kind, taskName };
+    return {
+      kind: urlSearchParams.get('kind') || 'Task',
+      taskName: urlSearchParams.get('taskName') || ''
+    };
   }
 
-  checkFormValidation = () => {
-    const {
+  function getInitialState() {
+    const { kind: taskKind, taskName: taskRefFromDetails } = getTaskDetails();
+    let taskName = taskRefFromDetails;
+    const taskInfo = parseTaskInfo(taskName, taskKind, defaultNamespace);
+    if (taskInfo.taskError) {
+      taskName = '';
+    }
+    return {
+      ...initialState,
+      ...taskInfo,
+      kind: taskKind,
+      namespace: defaultNamespace !== ALL_NAMESPACES ? defaultNamespace : '',
+      taskRef: taskName || '',
+      params: initialParamsState(taskInfo.paramSpecs),
+      resources: initialResourcesState(taskInfo.resourceSpecs),
+      taskError: ''
+    };
+  }
+
+  const [
+    {
+      creating,
+      invalidLabels,
+      invalidNodeSelector,
+      kind,
       labels,
       namespace,
       nodeSelector,
       params,
       paramSpecs,
       resources,
+      resourceSpecs,
+      serviceAccount,
+      submitError,
+      taskError,
       taskRef,
-      timeout
-    } = this.state;
+      timeout,
+      validationError,
+      validTimeout
+    },
+    setState
+  ] = useState(getInitialState());
+
+  useEffect(() => {
+    document.title = getTitle({
+      page: intl.formatMessage({
+        id: 'dashboard.createTaskRun.title',
+        defaultMessage: 'Create TaskRun'
+      })
+    });
+  }, []);
+
+  function checkFormValidation() {
     // Namespace, PipelineRef, Resources, and Params must all have values
     const validNamespace = !!namespace;
     const validTaskRef = !!taskRef;
@@ -181,9 +210,12 @@ class CreateTaskRun extends React.Component {
       );
 
     // Timeout is a number and less than 1 year in minutes
-    const validTimeout =
+    const isValidTimeout =
       !Number.isNaN(timeout) && timeout < 525600 && timeout.trim() !== '';
-    this.setState(() => ({ validTimeout }));
+    setState(state => ({
+      ...state,
+      validTimeout: isValidTimeout
+    }));
 
     // Labels
     let validLabels = true;
@@ -191,7 +223,8 @@ class CreateTaskRun extends React.Component {
       ['key', 'value'].forEach(type => {
         if (!isValidLabel(type, label[type])) {
           validLabels = false;
-          this.setState(prevState => ({
+          setState(prevState => ({
+            ...prevState,
             invalidLabels: {
               ...prevState.invalidLabels,
               [`${label.id}-${type}`]: true
@@ -207,7 +240,8 @@ class CreateTaskRun extends React.Component {
       ['key', 'value'].forEach(type => {
         if (!isValidLabel(type, label[type])) {
           validNodeSelector = false;
-          this.setState(prevState => ({
+          setState(prevState => ({
+            ...prevState,
             invalidNodeSelector: {
               ...prevState.invalidNodeSelector,
               [`${label.id}-${type}`]: true
@@ -223,29 +257,31 @@ class CreateTaskRun extends React.Component {
       validInputResources &&
       validOutputResources &&
       validParams &&
-      validTimeout &&
+      isValidTimeout &&
       validLabels &&
       validNodeSelector
     );
-  };
+  }
 
-  handleClose = () => {
-    const { defaultNamespace: namespace, history } = this.props;
-    const { kind, taskName } = this.getTaskDetails();
+  function handleClose() {
+    const { kind: taskKind, taskName } = getTaskDetails();
     let url = urls.taskRuns.all();
-    if (taskName && namespace !== ALL_NAMESPACES) {
-      url = urls.taskRuns[kind === 'ClusterTask' ? 'byClusterTask' : 'byTask']({
-        namespace,
+    if (taskName && defaultNamespace !== ALL_NAMESPACES) {
+      url = urls.taskRuns[
+        taskKind === 'ClusterTask' ? 'byClusterTask' : 'byTask'
+      ]({
+        namespace: defaultNamespace,
         taskName
       });
-    } else if (namespace !== ALL_NAMESPACES) {
-      url = urls.taskRuns.byNamespace({ namespace });
+    } else if (defaultNamespace !== ALL_NAMESPACES) {
+      url = urls.taskRuns.byNamespace({ namespace: defaultNamespace });
     }
     history.push(url);
-  };
+  }
 
-  handleAddLabel = prop => {
-    this.setState(prevState => ({
+  function handleAddLabel(prop) {
+    setState(prevState => ({
+      ...prevState,
       [prop]: [
         ...prevState[prop],
         {
@@ -257,78 +293,84 @@ class CreateTaskRun extends React.Component {
         }
       ]
     }));
-  };
+  }
 
-  handleRemoveLabel = (prop, invalidProp, index) => {
-    this.setState(prevState => {
-      const labels = [...prevState[prop]];
-      const invalidLabels = { ...prevState[invalidProp] };
-      const removedLabel = labels[index];
-      labels.splice(index, 1);
-      if (removedLabel.id in invalidLabels) {
-        delete invalidLabels[`${removedLabel.id}-key`];
-        delete invalidLabels[`${removedLabel.id}-value`];
+  function handleRemoveLabel(prop, invalidProp, index) {
+    setState(prevState => {
+      const newLabels = [...prevState[prop]];
+      const newInvalidLabels = { ...prevState[invalidProp] };
+      const removedLabel = newLabels[index];
+      newLabels.splice(index, 1);
+      if (removedLabel.id in newInvalidLabels) {
+        delete newInvalidLabels[`${removedLabel.id}-key`];
+        delete newInvalidLabels[`${removedLabel.id}-value`];
       }
       return {
-        [prop]: labels,
-        [invalidProp]: invalidLabels
+        ...prevState,
+        [prop]: newLabels,
+        [invalidProp]: newInvalidLabels
       };
     });
-  };
+  }
 
-  handleChangeLabel = (prop, invalidProp, { type, index, value }) => {
-    this.setState(prevState => {
-      const labels = [...prevState[prop]];
-      labels[index][type] = value;
-      const invalidLabels = { ...prevState[invalidProp] };
+  function handleChangeLabel(prop, invalidProp, { type, index, value }) {
+    setState(prevState => {
+      const newLabels = [...prevState[prop]];
+      newLabels[index][type] = value;
+      const newInvalidLabels = { ...prevState[invalidProp] };
       if (!isValidLabel(type, value)) {
-        invalidLabels[`${labels[index].id}-${type}`] = true;
+        newInvalidLabels[`${newLabels[index].id}-${type}`] = true;
       } else {
-        delete invalidLabels[`${labels[index].id}-${type}`];
+        delete newInvalidLabels[`${newLabels[index].id}-${type}`];
       }
       return {
-        [prop]: labels,
-        [invalidProp]: invalidLabels
+        ...prevState,
+        [prop]: newLabels,
+        [invalidProp]: newInvalidLabels
       };
     });
-  };
+  }
 
-  handleNamespaceChange = ({ selectedItem }) => {
+  function handleNamespaceChange({ selectedItem }) {
     const { text = '' } = selectedItem || {};
-    if (text !== this.state.namespace) {
-      this.setState(state => ({
+    if (text !== namespace) {
+      setState(state => ({
+        ...state,
         ...initialState,
         kind: state.kind,
         namespace: text
       }));
     }
-  };
+  }
 
-  handleKindChange = ({ selectedItem }) => {
+  function handleKindChange({ selectedItem }) {
     const { text = '' } = selectedItem || {};
-    if (text !== this.state.kind) {
-      this.setState({
+    if (text !== kind) {
+      setState(state => ({
+        ...state,
         ...initialState,
         kind: text
-      });
+      }));
     }
-  };
+  }
 
-  handleParamChange = (key, value) => {
-    this.setState(state => ({
+  function handleParamChange(key, value) {
+    setState(state => ({
+      ...state,
       params: {
         ...state.params,
         [key]: value
       }
     }));
-  };
+  }
 
-  handleTaskChange = ({ selectedItem }) => {
+  function handleTaskChange({ selectedItem }) {
     const { text } = selectedItem || {};
-    if (text && text !== this.state.taskRef) {
-      this.setState(state => {
+    if (text && text !== taskRef) {
+      setState(state => {
         const taskInfo = parseTaskInfo(text, state.kind, state.namespace);
         return {
+          ...state,
           ...taskInfo,
           taskRef: text,
           resources: initialResourcesState(taskInfo.resourceSpecs),
@@ -338,43 +380,33 @@ class CreateTaskRun extends React.Component {
       return;
     }
     // Reset pipelineresources and params when no Task is selected
-    this.setState(state => ({
+    setState(state => ({
+      ...state,
       ...initialState,
       namespace: state.namespace
     }));
-  };
+  }
 
-  handleResourceChange = (kind, key, value) => {
-    this.setState(state => {
+  function handleResourceChange(resourceKind, key, value) {
+    setState(state => {
       const next = { ...state };
-      next.resources[kind][key] = value;
+      next.resources[resourceKind][key] = value;
       return next;
     });
-  };
+  }
 
-  handleSubmit = event => {
+  function handleSubmit(event) {
     event.preventDefault();
 
     // Check form validation
-    const valid = this.checkFormValidation();
-    this.setState({ validationError: !valid });
+    const valid = checkFormValidation();
+    setState(state => ({ ...state, validationError: !valid }));
     if (!valid) {
       return;
     }
 
-    this.setState({ creating: true });
+    setState(state => ({ ...state, creating: true }));
 
-    const {
-      namespace,
-      nodeSelector,
-      params,
-      resources,
-      serviceAccount,
-      taskRef,
-      timeout,
-      labels,
-      kind
-    } = this.state;
     const timeoutInMins = `${timeout}m`;
     createTaskRun({
       namespace,
@@ -396,7 +428,6 @@ class CreateTaskRun extends React.Component {
         : null
     })
       .then(() => {
-        const { history } = this.props;
         history.push(urls.taskRuns.byNamespace({ namespace }));
       })
       .catch(error => {
@@ -406,404 +437,354 @@ class CreateTaskRun extends React.Component {
           if (text) {
             errorMessage = `${text} (error code ${statusCode})`;
           }
-          this.setState({ creating: false, submitError: errorMessage });
+          setState(state => ({
+            ...state,
+            creating: false,
+            submitError: errorMessage
+          }));
         });
       });
-  };
-
-  initialState = () => {
-    const { defaultNamespace } = this.props;
-    const { kind, taskName: taskRef } = this.getTaskDetails();
-    let taskName = taskRef;
-    const taskInfo = parseTaskInfo(taskName, kind, defaultNamespace);
-    if (taskInfo.taskError) {
-      taskName = '';
-    }
-    return {
-      ...initialState,
-      ...taskInfo,
-      kind,
-      namespace: defaultNamespace !== ALL_NAMESPACES ? defaultNamespace : '',
-      taskRef: taskName || '',
-      params: initialParamsState(taskInfo.paramSpecs),
-      resources: initialResourcesState(taskInfo.resourceSpecs),
-      taskError: ''
-    };
-  };
-
-  render() {
-    const { intl } = this.props;
-    const {
-      creating,
-      invalidLabels,
-      invalidNodeSelector,
-      kind,
-      labels,
-      namespace,
-      nodeSelector,
-      params,
-      paramSpecs,
-      resources,
-      resourceSpecs,
-      serviceAccount,
-      submitError,
-      taskError,
-      taskRef,
-      timeout,
-      validationError,
-      validTimeout
-    } = this.state;
-
-    return (
-      <div className="tkn--create">
-        <div className="tkn--create--heading">
-          <h1>
-            {intl.formatMessage({
-              id: 'dashboard.createTaskRun.title',
-              defaultMessage: 'Create TaskRun'
-            })}
-          </h1>
-          <Button
-            iconDescription={intl.formatMessage({
-              id: 'dashboard.modal.cancelButton',
-              defaultMessage: 'Cancel'
-            })}
-            kind="secondary"
-            onClick={this.handleClose}
-            disabled={creating}
-          >
-            {intl.formatMessage({
-              id: 'dashboard.modal.cancelButton',
-              defaultMessage: 'Cancel'
-            })}
-          </Button>
-          <Button
-            iconDescription={intl.formatMessage({
-              id: 'dashboard.actions.createButton',
-              defaultMessage: 'Create'
-            })}
-            onClick={this.handleSubmit}
-            disabled={creating}
-          >
-            {intl.formatMessage({
-              id: 'dashboard.actions.createButton',
-              defaultMessage: 'Create'
-            })}
-          </Button>
-        </div>
-        <Form>
-          {taskError && (
-            <InlineNotification
-              kind="error"
-              title={intl.formatMessage({
-                id: 'dashboard.createTaskRun.errorLoading',
-                defaultMessage: 'Error retrieving Task information'
-              })}
-              lowContrast
-            />
-          )}
-          {validationError && (
-            <InlineNotification
-              kind="error"
-              title={intl.formatMessage({
-                id: 'dashboard.createRun.validationError',
-                defaultMessage:
-                  'Please fix the fields with errors, then resubmit'
-              })}
-              lowContrast
-            />
-          )}
-          {submitError !== '' && (
-            <InlineNotification
-              kind="error"
-              title={intl.formatMessage({
-                id: 'dashboard.createTaskRun.createError',
-                defaultMessage: 'Error creating TaskRun'
-              })}
-              subtitle={submitError}
-              onCloseButtonClick={() => this.setState({ submitError: '' })}
-              lowContrast
-            />
-          )}
-          <FormGroup legendText="">
-            <Dropdown
-              id="create-taskrun--kind-dropdown"
-              titleText="Kind"
-              label=""
-              initialSelectedItem={
-                kind === 'ClusterTask' ? clusterTaskItem : taskItem
-              }
-              items={[taskItem, clusterTaskItem]}
-              itemToString={itemToString}
-              onChange={this.handleKindChange}
-              translateWithId={getTranslateWithId(intl)}
-            />
-            <NamespacesDropdown
-              id="create-taskrun--namespaces-dropdown"
-              invalid={validationError && !namespace}
-              invalidText={intl.formatMessage({
-                id: 'dashboard.createRun.invalidNamespace',
-                defaultMessage: 'Namespace cannot be empty'
-              })}
-              selectedItem={namespace ? { id: namespace, text: namespace } : ''}
-              onChange={this.handleNamespaceChange}
-            />
-            {kind === 'Task' && (
-              <TasksDropdown
-                id="create-taskrun--tasks-dropdown"
-                namespace={namespace}
-                invalid={validationError && !taskRef}
-                invalidText={intl.formatMessage({
-                  id: 'dashboard.createTaskRun.invalidTask',
-                  defaultMessage: 'Task cannot be empty'
-                })}
-                selectedItem={taskRef ? { id: taskRef, text: taskRef } : ''}
-                disabled={namespace === ''}
-                onChange={this.handleTaskChange}
-              />
-            )}
-            {kind === 'ClusterTask' && (
-              <ClusterTasksDropdown
-                id="create-taskrun--clustertasks-dropdown"
-                namespace={namespace}
-                invalid={validationError && !taskRef}
-                invalidText={intl.formatMessage({
-                  id: 'dashboard.createTaskRun.invalidTask',
-                  defaultMessage: 'Task cannot be empty'
-                })}
-                selectedItem={taskRef ? { id: taskRef, text: taskRef } : ''}
-                onChange={this.handleTaskChange}
-              />
-            )}
-          </FormGroup>
-          <FormGroup legendText="">
-            <KeyValueList
-              legendText={intl.formatMessage({
-                id: 'dashboard.createRun.labels.legendText',
-                defaultMessage: 'Labels'
-              })}
-              invalidText={
-                <span
-                  dangerouslySetInnerHTML /* eslint-disable-line react/no-danger */={{
-                    __html: intl.formatMessage(
-                      {
-                        id: 'dashboard.createRun.label.invalidText',
-                        defaultMessage:
-                          'Labels must follow the {0}kubernetes labels syntax{1}.'
-                      },
-                      [
-                        `<a
-                            href="https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >`,
-                        '</a>'
-                      ]
-                    )
-                  }}
-                />
-              }
-              keyValues={labels}
-              minKeyValues={0}
-              invalidFields={invalidLabels}
-              onChange={label =>
-                this.handleChangeLabel('labels', 'invalidLabels', label)
-              }
-              onRemove={index =>
-                this.handleRemoveLabel('labels', 'invalidLabels', index)
-              }
-              onAdd={() => this.handleAddLabel('labels')}
-            />
-          </FormGroup>
-          <FormGroup legendText="">
-            <KeyValueList
-              legendText={intl.formatMessage({
-                id: 'dashboard.createRun.nodeSelector.legendText',
-                defaultMessage: 'Node Selector'
-              })}
-              invalidText={
-                <span
-                  dangerouslySetInnerHTML /* eslint-disable-line react/no-danger */={{
-                    __html: intl.formatMessage(
-                      {
-                        id: 'dashboard.createRun.label.invalidText',
-                        defaultMessage:
-                          'Labels must follow the {0}kubernetes labels syntax{1}.'
-                      },
-                      [
-                        `<a
-                            href="https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >`,
-                        '</a>'
-                      ]
-                    )
-                  }}
-                />
-              }
-              keyValues={nodeSelector}
-              minKeyValues={0}
-              invalidFields={invalidNodeSelector}
-              onChange={label =>
-                this.handleChangeLabel(
-                  'nodeSelector',
-                  'invalidNodeSelector',
-                  label
-                )
-              }
-              onRemove={index =>
-                this.handleRemoveLabel(
-                  'nodeSelector',
-                  'invalidNodeSelector',
-                  index
-                )
-              }
-              onAdd={() => this.handleAddLabel('nodeSelector')}
-            />
-          </FormGroup>
-          {resourceSpecs?.inputs?.length > 0 && (
-            <FormGroup legendText="Input PipelineResources">
-              {resourceSpecs.inputs.map(spec => (
-                <PipelineResourcesDropdown
-                  id={`create-taskrun--pr-dropdown-${spec.name}`}
-                  key={`create-taskrun--pr-dropdown-${spec.name}`}
-                  titleText={spec.name}
-                  helperText={spec.type}
-                  type={spec.type}
-                  namespace={namespace}
-                  invalid={validationError && !resources.inputs[spec.name]}
-                  invalidText={intl.formatMessage({
-                    id: 'dashboard.createRun.invalidPipelineResources',
-                    defaultMessage: 'PipelineResources cannot be empty'
-                  })}
-                  selectedItem={(() => {
-                    let value = '';
-                    if (resources.inputs !== undefined) {
-                      value = resources.inputs[spec.name];
-                    }
-                    return value ? { id: value, text: value } : '';
-                  })()}
-                  onChange={({ selectedItem }) => {
-                    const { text } = selectedItem || {};
-                    this.handleResourceChange('inputs', spec.name, text);
-                  }}
-                />
-              ))}
-            </FormGroup>
-          )}
-          {resourceSpecs?.outputs?.length > 0 && (
-            <FormGroup legendText="Output PipelineResources">
-              {resourceSpecs.outputs.map(spec => (
-                <PipelineResourcesDropdown
-                  id={`create-taskrun--pr-dropdown-${spec.name}`}
-                  key={`create-taskrun--pr-dropdown-${spec.name}`}
-                  titleText={spec.name}
-                  helperText={spec.type}
-                  type={spec.type}
-                  namespace={namespace}
-                  invalid={validationError && !resources.outputs[spec.name]}
-                  invalidText={intl.formatMessage({
-                    id: 'dashboard.createRun.invalidPipelineResources',
-                    defaultMessage: 'PipelineResources cannot be empty'
-                  })}
-                  selectedItem={(() => {
-                    let value = '';
-                    if (resources.outputs !== undefined) {
-                      value = resources.outputs[spec.name];
-                    }
-                    return value ? { id: value, text: value } : '';
-                  })()}
-                  onChange={({ selectedItem }) => {
-                    const { text } = selectedItem || {};
-                    this.handleResourceChange('outputs', spec.name, text);
-                  }}
-                />
-              ))}
-            </FormGroup>
-          )}
-          {paramSpecs && paramSpecs.length !== 0 && (
-            <FormGroup legendText="Params">
-              {paramSpecs.map(paramSpec => (
-                <TextInput
-                  id={`create-taskrun--param-${paramSpec.name}`}
-                  key={`create-taskrun--param-${paramSpec.name}`}
-                  labelText={paramSpec.name}
-                  helperText={paramSpec.description}
-                  placeholder={paramSpec.default || paramSpec.name}
-                  invalid={
-                    validationError &&
-                    !params[paramSpec.name] &&
-                    paramSpec.default !== ''
-                  }
-                  invalidText={intl.formatMessage({
-                    id: 'dashboard.createRun.invalidParams',
-                    defaultMessage: 'Params cannot be empty'
-                  })}
-                  value={params[paramSpec.name] || ''}
-                  onChange={({ target: { value } }) =>
-                    this.handleParamChange(paramSpec.name, value)
-                  }
-                />
-              ))}
-            </FormGroup>
-          )}
-          <FormGroup
-            legendText={intl.formatMessage({
-              id: 'dashboard.createRun.optional.legendText',
-              defaultMessage: 'Optional values'
-            })}
-          >
-            <ServiceAccountsDropdown
-              id="create-taskrun--sa-dropdown"
-              titleText={intl.formatMessage({
-                id: 'dashboard.serviceAccountLabel.optional',
-                defaultMessage: 'ServiceAccount (optional)'
-              })}
-              helperText={intl.formatMessage({
-                id: 'dashboard.createTaskRun.serviceAccountHelperText',
-                defaultMessage:
-                  'Ensure the selected ServiceAccount (or the default if none selected) has permissions for creating TaskRuns and for anything else your TaskRun interacts with.'
-              })}
-              namespace={namespace}
-              selectedItem={
-                serviceAccount
-                  ? { id: serviceAccount, text: serviceAccount }
-                  : ''
-              }
-              disabled={namespace === ''}
-              onChange={({ selectedItem }) => {
-                const { text } = selectedItem || {};
-                this.setState({ serviceAccount: text });
-              }}
-            />
-            <TextInput
-              id="create-taskrun--timeout"
-              labelText={intl.formatMessage({
-                id: 'dashboard.createRun.timeoutLabel',
-                defaultMessage: 'Timeout'
-              })}
-              helperText={intl.formatMessage({
-                id: 'dashboard.createTaskRun.timeoutHelperText',
-                defaultMessage: 'TaskRun timeout in minutes'
-              })}
-              invalid={validationError && !validTimeout}
-              invalidText={intl.formatMessage({
-                id: 'dashboard.createRun.invalidTimeout',
-                defaultMessage:
-                  'Timeout must be a valid number less than 525600'
-              })}
-              placeholder="60"
-              value={timeout}
-              onChange={({ target: { value } }) =>
-                this.setState({ timeout: value })
-              }
-            />
-          </FormGroup>
-        </Form>
-      </div>
-    );
   }
+
+  return (
+    <div className="tkn--create">
+      <div className="tkn--create--heading">
+        <h1>
+          {intl.formatMessage({
+            id: 'dashboard.createTaskRun.title',
+            defaultMessage: 'Create TaskRun'
+          })}
+        </h1>
+        <Button
+          iconDescription={intl.formatMessage({
+            id: 'dashboard.modal.cancelButton',
+            defaultMessage: 'Cancel'
+          })}
+          kind="secondary"
+          onClick={handleClose}
+          disabled={creating}
+        >
+          {intl.formatMessage({
+            id: 'dashboard.modal.cancelButton',
+            defaultMessage: 'Cancel'
+          })}
+        </Button>
+        <Button
+          iconDescription={intl.formatMessage({
+            id: 'dashboard.actions.createButton',
+            defaultMessage: 'Create'
+          })}
+          onClick={handleSubmit}
+          disabled={creating}
+        >
+          {intl.formatMessage({
+            id: 'dashboard.actions.createButton',
+            defaultMessage: 'Create'
+          })}
+        </Button>
+      </div>
+      <Form>
+        {taskError && (
+          <InlineNotification
+            kind="error"
+            title={intl.formatMessage({
+              id: 'dashboard.createTaskRun.errorLoading',
+              defaultMessage: 'Error retrieving Task information'
+            })}
+            lowContrast
+          />
+        )}
+        {validationError && (
+          <InlineNotification
+            kind="error"
+            title={intl.formatMessage({
+              id: 'dashboard.createRun.validationError',
+              defaultMessage: 'Please fix the fields with errors, then resubmit'
+            })}
+            lowContrast
+          />
+        )}
+        {submitError !== '' && (
+          <InlineNotification
+            kind="error"
+            title={intl.formatMessage({
+              id: 'dashboard.createTaskRun.createError',
+              defaultMessage: 'Error creating TaskRun'
+            })}
+            subtitle={submitError}
+            onCloseButtonClick={() =>
+              setState(state => ({ ...state, submitError: '' }))
+            }
+            lowContrast
+          />
+        )}
+        <FormGroup legendText="">
+          <Dropdown
+            id="create-taskrun--kind-dropdown"
+            titleText="Kind"
+            label=""
+            initialSelectedItem={
+              kind === 'ClusterTask' ? clusterTaskItem : taskItem
+            }
+            items={[taskItem, clusterTaskItem]}
+            itemToString={itemToString}
+            onChange={handleKindChange}
+            translateWithId={getTranslateWithId(intl)}
+          />
+          <NamespacesDropdown
+            id="create-taskrun--namespaces-dropdown"
+            invalid={validationError && !namespace}
+            invalidText={intl.formatMessage({
+              id: 'dashboard.createRun.invalidNamespace',
+              defaultMessage: 'Namespace cannot be empty'
+            })}
+            selectedItem={namespace ? { id: namespace, text: namespace } : ''}
+            onChange={handleNamespaceChange}
+          />
+          {kind === 'Task' && (
+            <TasksDropdown
+              id="create-taskrun--tasks-dropdown"
+              namespace={namespace}
+              invalid={validationError && !taskRef}
+              invalidText={intl.formatMessage({
+                id: 'dashboard.createTaskRun.invalidTask',
+                defaultMessage: 'Task cannot be empty'
+              })}
+              selectedItem={taskRef ? { id: taskRef, text: taskRef } : ''}
+              disabled={namespace === ''}
+              onChange={handleTaskChange}
+            />
+          )}
+          {kind === 'ClusterTask' && (
+            <ClusterTasksDropdown
+              id="create-taskrun--clustertasks-dropdown"
+              namespace={namespace}
+              invalid={validationError && !taskRef}
+              invalidText={intl.formatMessage({
+                id: 'dashboard.createTaskRun.invalidTask',
+                defaultMessage: 'Task cannot be empty'
+              })}
+              selectedItem={taskRef ? { id: taskRef, text: taskRef } : ''}
+              onChange={handleTaskChange}
+            />
+          )}
+        </FormGroup>
+        <FormGroup legendText="">
+          <KeyValueList
+            legendText={intl.formatMessage({
+              id: 'dashboard.createRun.labels.legendText',
+              defaultMessage: 'Labels'
+            })}
+            invalidText={
+              <span
+                dangerouslySetInnerHTML /* eslint-disable-line react/no-danger */={{
+                  __html: intl.formatMessage(
+                    {
+                      id: 'dashboard.createRun.label.invalidText',
+                      defaultMessage:
+                        'Labels must follow the {0}kubernetes labels syntax{1}.'
+                    },
+                    [
+                      `<a
+                          href="https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >`,
+                      '</a>'
+                    ]
+                  )
+                }}
+              />
+            }
+            keyValues={labels}
+            minKeyValues={0}
+            invalidFields={invalidLabels}
+            onChange={label =>
+              handleChangeLabel('labels', 'invalidLabels', label)
+            }
+            onRemove={index =>
+              handleRemoveLabel('labels', 'invalidLabels', index)
+            }
+            onAdd={() => handleAddLabel('labels')}
+          />
+        </FormGroup>
+        <FormGroup legendText="">
+          <KeyValueList
+            legendText={intl.formatMessage({
+              id: 'dashboard.createRun.nodeSelector.legendText',
+              defaultMessage: 'Node Selector'
+            })}
+            invalidText={
+              <span
+                dangerouslySetInnerHTML /* eslint-disable-line react/no-danger */={{
+                  __html: intl.formatMessage(
+                    {
+                      id: 'dashboard.createRun.label.invalidText',
+                      defaultMessage:
+                        'Labels must follow the {0}kubernetes labels syntax{1}.'
+                    },
+                    [
+                      `<a
+                          href="https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >`,
+                      '</a>'
+                    ]
+                  )
+                }}
+              />
+            }
+            keyValues={nodeSelector}
+            minKeyValues={0}
+            invalidFields={invalidNodeSelector}
+            onChange={label =>
+              handleChangeLabel('nodeSelector', 'invalidNodeSelector', label)
+            }
+            onRemove={index =>
+              handleRemoveLabel('nodeSelector', 'invalidNodeSelector', index)
+            }
+            onAdd={() => handleAddLabel('nodeSelector')}
+          />
+        </FormGroup>
+        {resourceSpecs?.inputs?.length > 0 && (
+          <FormGroup legendText="Input PipelineResources">
+            {resourceSpecs.inputs.map(spec => (
+              <PipelineResourcesDropdown
+                id={`create-taskrun--pr-dropdown-${spec.name}`}
+                key={`create-taskrun--pr-dropdown-${spec.name}`}
+                titleText={spec.name}
+                helperText={spec.type}
+                type={spec.type}
+                namespace={namespace}
+                invalid={validationError && !resources.inputs[spec.name]}
+                invalidText={intl.formatMessage({
+                  id: 'dashboard.createRun.invalidPipelineResources',
+                  defaultMessage: 'PipelineResources cannot be empty'
+                })}
+                selectedItem={(() => {
+                  let value = '';
+                  if (resources.inputs !== undefined) {
+                    value = resources.inputs[spec.name];
+                  }
+                  return value ? { id: value, text: value } : '';
+                })()}
+                onChange={({ selectedItem }) => {
+                  const { text } = selectedItem || {};
+                  handleResourceChange('inputs', spec.name, text);
+                }}
+              />
+            ))}
+          </FormGroup>
+        )}
+        {resourceSpecs?.outputs?.length > 0 && (
+          <FormGroup legendText="Output PipelineResources">
+            {resourceSpecs.outputs.map(spec => (
+              <PipelineResourcesDropdown
+                id={`create-taskrun--pr-dropdown-${spec.name}`}
+                key={`create-taskrun--pr-dropdown-${spec.name}`}
+                titleText={spec.name}
+                helperText={spec.type}
+                type={spec.type}
+                namespace={namespace}
+                invalid={validationError && !resources.outputs[spec.name]}
+                invalidText={intl.formatMessage({
+                  id: 'dashboard.createRun.invalidPipelineResources',
+                  defaultMessage: 'PipelineResources cannot be empty'
+                })}
+                selectedItem={(() => {
+                  let value = '';
+                  if (resources.outputs !== undefined) {
+                    value = resources.outputs[spec.name];
+                  }
+                  return value ? { id: value, text: value } : '';
+                })()}
+                onChange={({ selectedItem }) => {
+                  const { text } = selectedItem || {};
+                  handleResourceChange('outputs', spec.name, text);
+                }}
+              />
+            ))}
+          </FormGroup>
+        )}
+        {paramSpecs && paramSpecs.length !== 0 && (
+          <FormGroup legendText="Params">
+            {paramSpecs.map(paramSpec => (
+              <TextInput
+                id={`create-taskrun--param-${paramSpec.name}`}
+                key={`create-taskrun--param-${paramSpec.name}`}
+                labelText={paramSpec.name}
+                helperText={paramSpec.description}
+                placeholder={paramSpec.default || paramSpec.name}
+                invalid={
+                  validationError &&
+                  !params[paramSpec.name] &&
+                  paramSpec.default !== ''
+                }
+                invalidText={intl.formatMessage({
+                  id: 'dashboard.createRun.invalidParams',
+                  defaultMessage: 'Params cannot be empty'
+                })}
+                value={params[paramSpec.name] || ''}
+                onChange={({ target: { value } }) =>
+                  handleParamChange(paramSpec.name, value)
+                }
+              />
+            ))}
+          </FormGroup>
+        )}
+        <FormGroup
+          legendText={intl.formatMessage({
+            id: 'dashboard.createRun.optional.legendText',
+            defaultMessage: 'Optional values'
+          })}
+        >
+          <ServiceAccountsDropdown
+            id="create-taskrun--sa-dropdown"
+            titleText={intl.formatMessage({
+              id: 'dashboard.serviceAccountLabel.optional',
+              defaultMessage: 'ServiceAccount (optional)'
+            })}
+            helperText={intl.formatMessage({
+              id: 'dashboard.createTaskRun.serviceAccountHelperText',
+              defaultMessage:
+                'Ensure the selected ServiceAccount (or the default if none selected) has permissions for creating TaskRuns and for anything else your TaskRun interacts with.'
+            })}
+            namespace={namespace}
+            selectedItem={
+              serviceAccount ? { id: serviceAccount, text: serviceAccount } : ''
+            }
+            disabled={namespace === ''}
+            onChange={({ selectedItem }) => {
+              const { text } = selectedItem || {};
+              setState(state => ({ ...state, serviceAccount: text }));
+            }}
+          />
+          <TextInput
+            id="create-taskrun--timeout"
+            labelText={intl.formatMessage({
+              id: 'dashboard.createRun.timeoutLabel',
+              defaultMessage: 'Timeout'
+            })}
+            helperText={intl.formatMessage({
+              id: 'dashboard.createTaskRun.timeoutHelperText',
+              defaultMessage: 'TaskRun timeout in minutes'
+            })}
+            invalid={validationError && !validTimeout}
+            invalidText={intl.formatMessage({
+              id: 'dashboard.createRun.invalidTimeout',
+              defaultMessage: 'Timeout must be a valid number less than 525600'
+            })}
+            placeholder="60"
+            value={timeout}
+            onChange={({ target: { value } }) =>
+              setState(state => ({ ...state, timeout: value }))
+            }
+          />
+        </FormGroup>
+      </Form>
+    </div>
+  );
 }
 
 /* istanbul ignore next */

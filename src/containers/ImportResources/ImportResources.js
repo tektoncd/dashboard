@@ -39,7 +39,7 @@ import { importResources } from '../../api';
 import { getDashboardNamespace, getSelectedNamespace } from '../../reducers';
 import { NamespacesDropdown, ServiceAccountsDropdown } from '..';
 
-const itemToString = item => (item ? item.text : '');
+const itemToString = ({ text }) => text;
 
 function isValidGitURL(url) {
   if (!url || !url.trim()) {
