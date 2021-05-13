@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -112,7 +112,7 @@ describe('CreatePipelineResource', () => {
     expect(queryByText(revisionValidationErrorRegExp)).toBeTruthy();
   });
 
-  it('errors when starting with a "-"', () => {
+  it('errors when name starts with a "-"', () => {
     const { queryByText, getByPlaceholderText } = renderWithIntl(
       <Provider store={store}>
         <CreatePipelineResource />
@@ -128,7 +128,7 @@ describe('CreatePipelineResource', () => {
     expect(queryByText(revisionValidationErrorRegExp)).toBeTruthy();
   });
 
-  it('errors when ends with a "-"', () => {
+  it('errors when name ends with a "-"', () => {
     const { queryByText, getByPlaceholderText } = renderWithIntl(
       <Provider store={store}>
         <CreatePipelineResource />
@@ -144,7 +144,7 @@ describe('CreatePipelineResource', () => {
     expect(queryByText(revisionValidationErrorRegExp)).toBeTruthy();
   });
 
-  it('errors when contains "."', () => {
+  it('errors when name contains "."', () => {
     const { queryByText, getByPlaceholderText } = renderWithIntl(
       <Provider store={store}>
         <CreatePipelineResource />
@@ -160,7 +160,7 @@ describe('CreatePipelineResource', () => {
     expect(queryByText(revisionValidationErrorRegExp)).toBeTruthy();
   });
 
-  it('errors when contains spaces', () => {
+  it('errors when name contains spaces', () => {
     const { queryByText, getByPlaceholderText } = renderWithIntl(
       <Provider store={store}>
         <CreatePipelineResource />
@@ -176,7 +176,7 @@ describe('CreatePipelineResource', () => {
     expect(queryByText(revisionValidationErrorRegExp)).toBeTruthy();
   });
 
-  it('errors when contains capital letters', () => {
+  it('errors when name contains capital letters', () => {
     const { queryByText, getByPlaceholderText } = renderWithIntl(
       <Provider store={store}>
         <CreatePipelineResource />
@@ -208,7 +208,7 @@ describe('CreatePipelineResource', () => {
     expect(queryByText(revisionValidationErrorRegExp)).toBeTruthy();
   });
 
-  it("doesn't error when contains 0", () => {
+  it("doesn't error when name contains number", () => {
     const { queryByText, getByPlaceholderText } = renderWithIntl(
       <Provider store={store}>
         <CreatePipelineResource />
@@ -224,23 +224,7 @@ describe('CreatePipelineResource', () => {
     expect(queryByText(revisionValidationErrorRegExp)).toBeTruthy();
   });
 
-  it("doesn't error when contains 9", () => {
-    const { queryByText, getByPlaceholderText } = renderWithIntl(
-      <Provider store={store}>
-        <CreatePipelineResource />
-      </Provider>
-    );
-    fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
-      target: { value: 'the-cat-likes-9' }
-    });
-    fireEvent.click(queryByText('Create'));
-    expect(queryByText(nameValidationErrorMsgRegExp)).toBeFalsy();
-    expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
-    expect(queryByText(urlValidationErrorRegExp)).toBeTruthy();
-    expect(queryByText(revisionValidationErrorRegExp)).toBeTruthy();
-  });
-
-  it('errors when contains 64 characters', () => {
+  it('errors when name contains 64 characters', () => {
     const { queryByText, getByPlaceholderText } = renderWithIntl(
       <Provider store={store}>
         <CreatePipelineResource />
@@ -259,7 +243,7 @@ describe('CreatePipelineResource', () => {
     expect(queryByText(revisionValidationErrorRegExp)).toBeTruthy();
   });
 
-  it("doesn't error when contains 63 characters", () => {
+  it("doesn't error when name contains 63 characters", () => {
     const { queryByText, getByPlaceholderText } = renderWithIntl(
       <Provider store={store}>
         <CreatePipelineResource />
@@ -333,6 +317,32 @@ describe('CreatePipelineResource', () => {
     fireEvent.change(getByPlaceholderText(/pipeline-resource-revision/i), {
       target: { value: 'the-cat-goes-meow' }
     });
+
+    fireEvent.click(queryByText('Create'));
+    expect(queryByText(nameValidationErrorMsgRegExp)).toBeFalsy();
+    expect(queryByText(namespaceValidationErrorRegExp)).toBeFalsy();
+    expect(queryByText(urlValidationErrorRegExp)).toBeTruthy();
+    expect(queryByText(revisionValidationErrorRegExp)).toBeFalsy();
+  });
+
+  it('handles type change', () => {
+    const { queryByText, getByPlaceholderText, getByText } = renderWithIntl(
+      <Provider store={store}>
+        <CreatePipelineResource />
+      </Provider>
+    );
+    fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
+      target: { value: 'the-cat-goes-meow' }
+    });
+    fireEvent.click(getByPlaceholderText(/select namespace/i));
+    fireEvent.click(getByText(/default/i));
+
+    fireEvent.change(getByPlaceholderText(/pipeline-resource-revision/i), {
+      target: { value: 'the-cat-goes-meow' }
+    });
+
+    fireEvent.click(getByText(/git/i));
+    fireEvent.click(getByText(/image/i));
 
     fireEvent.click(queryByText('Create'));
     expect(queryByText(nameValidationErrorMsgRegExp)).toBeFalsy();
