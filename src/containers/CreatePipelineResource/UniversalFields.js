@@ -18,7 +18,7 @@ import { getTranslateWithId } from '@tektoncd/dashboard-utils';
 
 import NamespacesDropdown from '../NamespacesDropdown';
 
-const itemToString = item => (item ? item.text : '');
+const itemToString = ({ text }) => text;
 
 const UniversalFields = props => {
   const {

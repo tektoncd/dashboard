@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import { Button, InlineNotification } from 'carbon-components-react';
@@ -51,49 +51,45 @@ function validateInputs(value, id) {
   return true;
 }
 
-export /* istanbul ignore next */ class CreatePipelineResource extends Component {
-  constructor(props) {
-    super(props);
-    const { defaultNamespace } = props;
-    this.state = {
-      creating: false,
-      name: '',
-      namespace: defaultNamespace === ALL_NAMESPACES ? '' : defaultNamespace,
-      type: 'Git',
-      url: '',
-      revision: '',
-      invalidFields: {},
-      submitError: ''
-    };
-  }
+export /* istanbul ignore next */ function CreatePipelineResource(props) {
+  const { defaultNamespace, history, intl } = props;
 
-  componentDidMount() {
-    const { intl } = this.props;
+  const [creating, setCreating] = useState(false);
+  const [gitSource, setGitSource] = useState(true);
+  const [invalidFields, setInvalidFields] = useState({});
+  const [name, setName] = useState('');
+  const [namespace, setNamespace] = useState(
+    defaultNamespace === ALL_NAMESPACES ? '' : defaultNamespace
+  );
+  const [revision, setRevision] = useState('');
+  const [submitError, setSubmitError] = useState('');
+  const [type, setType] = useState('Git');
+  const [url, setURL] = useState('');
+
+  useEffect(() => {
     document.title = getTitle({
       page: intl.formatMessage({
         id: 'dashboard.createPipelineResource.title',
         defaultMessage: 'Create PipelineResource'
       })
     });
+  }, []);
+
+  function handleClose() {
+    history.push(urls.pipelineResources.all());
   }
 
-  handleClose = () => {
-    const { history } = this.props;
-    history.push(urls.pipelineResources.all());
-  };
+  function resetError() {
+    setSubmitError('');
+  }
 
-  resetError = () => {
-    this.setState({ submitError: '' });
-  };
-
-  handleSubmit = () => {
-    const { name, namespace, type, url, revision } = this.state;
-    const invalidFields = {};
+  function handleSubmit() {
+    const newInvalidFields = {};
     let resource;
 
-    this.setState({ creating: true });
+    setCreating(true);
 
-    if (this.state.type === 'Git') {
+    if (type === 'Git') {
       resource = {
         apiVersion: 'tekton.dev/v1alpha1',
         kind: 'PipelineResource',
@@ -136,7 +132,7 @@ export /* istanbul ignore next */ class CreatePipelineResource extends Component
     }
 
     if (!validateInputs(namespace, 'namespace')) {
-      invalidFields.namespace = true;
+      newInvalidFields.namespace = true;
     } else {
       resource.metadata.namespace = namespace;
     }
@@ -144,33 +140,33 @@ export /* istanbul ignore next */ class CreatePipelineResource extends Component
     if (validateInputs(name, 'name')) {
       resource.metadata.name = name.trim();
     } else {
-      invalidFields.name = true;
+      newInvalidFields.name = true;
     }
 
     if (validateInputs(url, 'url')) {
       resource.spec.params[0].value = url.trim();
     } else {
-      invalidFields.url = true;
+      newInvalidFields.url = true;
     }
 
     resource.spec.type = type.toLowerCase();
 
-    if (this.state.type === 'Git') {
+    if (type === 'Git') {
       if (validateInputs(revision, 'revision')) {
         resource.spec.params[1].value = revision;
       } else {
-        invalidFields.revision = true;
+        newInvalidFields.revision = true;
       }
     }
 
-    if (Object.keys(invalidFields).length) {
-      this.setState({ creating: false, invalidFields });
+    if (Object.keys(newInvalidFields).length) {
+      setCreating(false);
+      setInvalidFields(newInvalidFields);
       return;
     }
 
     createPipelineResource({ namespace, resource })
       .then(() => {
-        const { history } = this.props;
         history.push(urls.pipelineResources.byNamespace({ namespace }));
       })
       .catch(error => {
@@ -180,147 +176,133 @@ export /* istanbul ignore next */ class CreatePipelineResource extends Component
           if (text) {
             errorMessage = `${text} (error code ${statusCode})`;
           }
-          this.setState({ creating: false, submitError: errorMessage });
+          setCreating(false);
+          setSubmitError(errorMessage);
         });
       });
-  };
+  }
 
-  handleChangeTextInput = e => {
+  function handleChangeTextInput(e) {
+    const updaters = {
+      name: setName,
+      revision: setRevision,
+      url: setURL
+    };
+
     const stateVar = e.target.id;
     const stateValue = e.target.value;
-    this.setState(prevState => {
-      const newInvalidFields = prevState.invalidFields;
-      if (validateInputs(stateValue, stateVar)) {
-        delete newInvalidFields[stateVar];
-      } else {
-        newInvalidFields[stateVar] = true;
-      }
-      return { [stateVar]: stateValue, invalidFields: newInvalidFields };
-    });
-  };
+    const newInvalidFields = { ...invalidFields };
+    if (validateInputs(stateValue, stateVar)) {
+      delete newInvalidFields[stateVar];
+    } else {
+      newInvalidFields[stateVar] = true;
+    }
+    updaters[stateVar](stateValue);
+    setInvalidFields(newInvalidFields);
+  }
 
-  handleChangeNamespace = ({ selectedItem }) => {
+  function handleChangeNamespace({ selectedItem }) {
     const stateVar = 'namespace';
     const { text: stateValue = '' } = selectedItem || {};
-    this.setState(prevState => {
-      const newInvalidFields = prevState.invalidFields;
-      if (validateInputs(stateValue, stateVar)) {
-        delete newInvalidFields[stateVar];
-      } else {
-        newInvalidFields[stateVar] = true;
-      }
-      return { [stateVar]: stateValue, invalidFields: newInvalidFields };
-    });
-  };
+    const newInvalidFields = { ...invalidFields };
+    if (validateInputs(stateValue, stateVar)) {
+      delete newInvalidFields[stateVar];
+    } else {
+      newInvalidFields[stateVar] = true;
+    }
+    setNamespace(stateValue);
+    setInvalidFields(newInvalidFields);
+  }
 
-  handleChangeType = e => {
+  function handleChangeType(e) {
     const stateVar = 'type';
     const stateValue = e.selectedItem.text;
-    this.setState(prevState => {
-      const gitSource = stateValue === 'Git';
-      const newInvalidFields = prevState.invalidFields;
-      if (validateInputs(stateValue, stateVar)) {
-        delete newInvalidFields[stateVar];
-      } else {
-        newInvalidFields[stateVar] = true;
-      }
-      return {
-        [stateVar]: stateValue,
-        invalidFields: newInvalidFields,
-        gitSource
-      };
-    });
-  };
+    const newInvalidFields = { ...invalidFields };
+    if (validateInputs(stateValue, stateVar)) {
+      delete newInvalidFields[stateVar];
+    } else {
+      newInvalidFields[stateVar] = true;
+    }
+    setType(stateValue);
+    setInvalidFields(newInvalidFields);
+    setGitSource(stateValue === 'Git');
+  }
 
-  render() {
-    const { intl } = this.props;
-    const {
-      creating,
-      gitSource = true,
-      invalidFields,
-      name,
-      namespace,
-      revision,
-      type,
-      url
-    } = this.state;
+  return (
+    <div className="tkn--create">
+      <div className="tkn--create--heading">
+        <h1>
+          {intl.formatMessage({
+            id: 'dashboard.createPipelineResource.title',
+            defaultMessage: 'Create PipelineResource'
+          })}
+        </h1>
+        <Button
+          iconDescription={intl.formatMessage({
+            id: 'dashboard.modal.cancelButton',
+            defaultMessage: 'Cancel'
+          })}
+          kind="secondary"
+          onClick={handleClose}
+          disabled={creating}
+        >
+          {intl.formatMessage({
+            id: 'dashboard.modal.cancelButton',
+            defaultMessage: 'Cancel'
+          })}
+        </Button>
+        <Button
+          iconDescription={intl.formatMessage({
+            id: 'dashboard.actions.createButton',
+            defaultMessage: 'Create'
+          })}
+          onClick={handleSubmit}
+          disabled={creating}
+        >
+          {intl.formatMessage({
+            id: 'dashboard.actions.createButton',
+            defaultMessage: 'Create'
+          })}
+        </Button>
+      </div>
 
-    return (
-      <div className="tkn--create">
-        <div className="tkn--create--heading">
-          <h1>
-            {intl.formatMessage({
-              id: 'dashboard.createPipelineResource.title',
-              defaultMessage: 'Create PipelineResource'
+      <form>
+        {submitError && (
+          <InlineNotification
+            kind="error"
+            title={intl.formatMessage({
+              id: 'dashboard.error.title',
+              defaultMessage: 'Error:'
             })}
-          </h1>
-          <Button
+            subtitle={getErrorMessage(submitError)}
             iconDescription={intl.formatMessage({
-              id: 'dashboard.modal.cancelButton',
-              defaultMessage: 'Cancel'
+              id: 'dashboard.notification.clear',
+              defaultMessage: 'Clear Notification'
             })}
-            kind="secondary"
-            onClick={this.handleClose}
-            disabled={creating}
-          >
-            {intl.formatMessage({
-              id: 'dashboard.modal.cancelButton',
-              defaultMessage: 'Cancel'
-            })}
-          </Button>
-          <Button
-            iconDescription={intl.formatMessage({
-              id: 'dashboard.actions.createButton',
-              defaultMessage: 'Create'
-            })}
-            onClick={this.handleSubmit}
-            disabled={creating}
-          >
-            {intl.formatMessage({
-              id: 'dashboard.actions.createButton',
-              defaultMessage: 'Create'
-            })}
-          </Button>
-        </div>
-
-        <form>
-          {this.state.submitError && (
-            <InlineNotification
-              kind="error"
-              title={intl.formatMessage({
-                id: 'dashboard.error.title',
-                defaultMessage: 'Error:'
-              })}
-              subtitle={getErrorMessage(this.state.submitError)}
-              iconDescription={intl.formatMessage({
-                id: 'dashboard.notification.clear',
-                defaultMessage: 'Clear Notification'
-              })}
-              onCloseButtonClick={this.resetError}
-              lowContrast
-            />
-          )}
-          <UniversalFields
-            name={name}
-            selectedNamespace={namespace}
-            type={type}
-            handleChangeTextInput={this.handleChangeTextInput}
-            handleChangeType={this.handleChangeType}
-            handleChangeNamespace={this.handleChangeNamespace}
-            url={url}
+            onCloseButtonClick={resetError}
+            lowContrast
+          />
+        )}
+        <UniversalFields
+          name={name}
+          selectedNamespace={namespace}
+          type={type}
+          handleChangeTextInput={handleChangeTextInput}
+          handleChangeType={handleChangeType}
+          handleChangeNamespace={handleChangeNamespace}
+          url={url}
+          invalidFields={invalidFields}
+        />
+        {gitSource && (
+          <GitResourceFields
+            revision={revision}
+            handleChangeTextInput={handleChangeTextInput}
             invalidFields={invalidFields}
           />
-          {gitSource && (
-            <GitResourceFields
-              revision={revision}
-              handleChangeTextInput={this.handleChangeTextInput}
-              invalidFields={invalidFields}
-            />
-          )}
-        </form>
-      </div>
-    );
-  }
+        )}
+      </form>
+    </div>
+  );
 }
 
 /* istanbul ignore next */
