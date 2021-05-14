@@ -11,10 +11,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
-import isEqual from 'lodash.isequal';
 import keyBy from 'lodash.keyby';
 import {
   DeleteModal,
@@ -32,58 +31,83 @@ import {
   isRunning,
   labels,
   runMatchesStatusFilter,
-  urls
+  urls,
+  useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
 import { Add16 as Add, TrashCan32 as Delete } from '@carbon/icons-react';
 
 import { ListPageLayout } from '..';
 import { sortRunsByStartTime } from '../../utils';
-import { fetchTaskRuns } from '../../actions/taskRuns';
+import { fetchTaskRuns as fetchTaskRunsActionCreator } from '../../actions/taskRuns';
 
 import {
   getSelectedNamespace,
   getTaskRuns,
   getTaskRunsErrorMessage,
   isFetchingTaskRuns,
-  isReadOnly,
-  isWebSocketConnected
+  isWebSocketConnected,
+  isReadOnly as selectIsReadOnly
 } from '../../reducers';
 import { cancelTaskRun, deleteTaskRun, rerunTaskRun } from '../../api';
 
-const initialState = {
-  deleteError: null,
-  showDeleteModal: false,
-  toBeDeleted: []
-};
-
 const { CLUSTER_TASK, TASK } = labels;
 
-export /* istanbul ignore next */ class TaskRuns extends Component {
-  state = initialState;
+/* istanbul ignore next */
+function TaskRuns(props) {
+  const {
+    error,
+    fetchTaskRuns,
+    filters,
+    history,
+    intl,
+    isReadOnly,
+    kind,
+    loading,
+    namespace,
+    setStatusFilter,
+    statusFilter,
+    taskName,
+    taskRuns,
+    webSocketConnected
+  } = props;
 
-  componentDidMount() {
+  const [deleteError, setDeleteError] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [toBeDeleted, setToBeDeleted] = useState([]);
+  const [cancelSelection, setCancelSelection] = useState(null);
+
+  useEffect(() => {
     document.title = getTitle({ page: 'TaskRuns' });
-    this.fetchTaskRuns();
-  }
+  }, []);
 
-  componentDidUpdate(prevProps) {
-    const { filters, namespace, webSocketConnected } = this.props;
-    const {
-      filters: prevFilters,
-      namespace: prevNamespace,
-      webSocketConnected: prevWebSocketConnected
-    } = prevProps;
-
-    if (namespace !== prevNamespace || !isEqual(filters, prevFilters)) {
-      this.reset();
-      this.fetchTaskRuns();
-    } else if (webSocketConnected && prevWebSocketConnected === false) {
-      this.fetchTaskRuns();
+  function fetchData() {
+    if (kind === 'ClusterTask') {
+      // TaskRuns from ClusterTask should have label 'tekton.dev/clusterTask=',
+      // (and that is the filter on the page), but some taskruns might still
+      // only have the old label 'tekton.dev/task='
+      // So, for ClusterTasks, also fetch with the old filter:
+      fetchTaskRuns({
+        filters: [`${TASK}=${taskName}`]
+      });
     }
+
+    fetchTaskRuns({ filters, namespace });
   }
 
-  getError() {
-    const { error, intl } = this.props;
+  function reset() {
+    setDeleteError(null);
+    setShowDeleteModal(false);
+    setToBeDeleted([]);
+  }
+
+  useEffect(() => {
+    reset();
+    fetchData();
+  }, [JSON.stringify(filters), namespace]);
+
+  useWebSocketReconnected(fetchData, webSocketConnected);
+
+  function getError() {
     if (error) {
       return {
         error,
@@ -94,10 +118,9 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
       };
     }
 
-    const { deleteError } = this.state;
     if (deleteError) {
       return {
-        clear: () => this.setState({ deleteError: null }),
+        clear: () => setDeleteError(null),
         error: deleteError
       };
     }
@@ -105,59 +128,59 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
     return null;
   }
 
-  cancel = taskRun => {
-    const { name, namespace } = taskRun.metadata;
-    cancelTaskRun({ name, namespace });
-  };
-
-  closeDeleteModal = () => {
-    this.setState({
-      showDeleteModal: false,
-      toBeDeleted: []
+  function cancel(taskRun) {
+    cancelTaskRun({
+      name: taskRun.metadata.name,
+      namespace: taskRun.metadata.namespace
     });
-  };
+  }
 
-  deleteTask = taskRun => {
-    const { name, namespace } = taskRun.metadata;
-    deleteTaskRun({ name, namespace }).catch(error => {
-      error.response.text().then(text => {
-        const statusCode = error.response.status;
+  function closeDeleteModal() {
+    setShowDeleteModal(false);
+    setToBeDeleted([]);
+  }
+
+  function deleteTask(taskRun) {
+    deleteTaskRun({
+      name: taskRun.metadata.name,
+      namespace: taskRun.metadata.namespace
+    }).catch(err => {
+      err.response.text().then(text => {
+        const statusCode = err.response.status;
         let errorMessage = `error code ${statusCode}`;
         if (text) {
           errorMessage = `${text} (error code ${statusCode})`;
         }
-        this.setState({ deleteError: errorMessage });
+        setDeleteError(errorMessage);
       });
     });
-  };
+  }
 
-  handleDelete = async () => {
-    const { cancelSelection, toBeDeleted } = this.state;
-    const deletions = toBeDeleted.map(resource => this.deleteTask(resource));
-    this.closeDeleteModal();
+  async function handleDelete() {
+    const deletions = toBeDeleted.map(resource => deleteTask(resource));
+    closeDeleteModal();
     await Promise.all(deletions);
     cancelSelection();
-  };
+  }
 
-  openDeleteModal = (selectedRows, cancelSelection) => {
-    const taskRunsById = keyBy(this.props.taskRuns, 'metadata.uid');
-    const toBeDeleted = selectedRows.map(({ id }) => taskRunsById[id]);
-    this.setState({ showDeleteModal: true, toBeDeleted, cancelSelection });
-  };
+  function openDeleteModal(selectedRows, handleCancelSelection) {
+    const taskRunsById = keyBy(taskRuns, 'metadata.uid');
+    setShowDeleteModal(true);
+    setToBeDeleted(selectedRows.map(({ id }) => taskRunsById[id]));
+    setCancelSelection(() => handleCancelSelection);
+  }
 
-  rerun = taskRun => {
+  function rerun(taskRun) {
     rerunTaskRun(taskRun);
-  };
+  }
 
-  taskRunActions = () => {
-    const { intl } = this.props;
-
-    if (this.props.isReadOnly) {
+  function taskRunActions() {
+    if (isReadOnly) {
       return [];
     }
     return [
       {
-        action: this.rerun,
+        action: rerun,
         actionText: intl.formatMessage({
           id: 'dashboard.rerun.actionText',
           defaultMessage: 'Rerun'
@@ -169,7 +192,7 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
           id: 'dashboard.cancelTaskRun.actionText',
           defaultMessage: 'Stop'
         }),
-        action: this.cancel,
+        action: cancel,
         disable: resource => {
           const { reason, status } = getStatus(resource);
           return !isRunning(reason, status);
@@ -203,7 +226,7 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
           id: 'dashboard.actions.deleteButton',
           defaultMessage: 'Delete'
         }),
-        action: this.deleteTask,
+        action: deleteTask,
         danger: true,
         disable: resource => {
           const { reason, status } = getStatus(resource);
@@ -239,111 +262,74 @@ export /* istanbul ignore next */ class TaskRuns extends Component {
         }
       }
     ];
-  };
-
-  reset() {
-    this.setState(initialState);
   }
 
-  fetchTaskRuns() {
-    const { namespace, taskName, filters, kind } = this.props;
+  sortRunsByStartTime(taskRuns);
 
-    if (kind === 'ClusterTask') {
-      // TaskRuns from ClusterTask should have label 'tekton.dev/clusterTask=',
-      // (and that is the filter on the page), but some taskruns might still
-      // only have the old label 'tekton.dev/task='
-      // So, for ClusterTasks, also fetch with the old filter:
-      this.props.fetchTaskRuns({
-        filters: [`${TASK}=${taskName}`]
-      });
-    }
+  const toolbarButtons = isReadOnly
+    ? []
+    : [
+        {
+          onClick: () =>
+            history.push(
+              urls.taskRuns.create() +
+                (taskName ? `?taskName=${taskName}&kind=${kind}` : '')
+            ),
+          text: intl.formatMessage({
+            id: 'dashboard.actions.createButton',
+            defaultMessage: 'Create'
+          }),
+          icon: Add
+        }
+      ];
 
-    this.props.fetchTaskRuns({
-      filters,
-      namespace
-    });
-  }
+  const batchActionButtons = props.isReadOnly
+    ? []
+    : [
+        {
+          onClick: openDeleteModal,
+          text: intl.formatMessage({
+            id: 'dashboard.actions.deleteButton',
+            defaultMessage: 'Delete'
+          }),
+          icon: Delete
+        }
+      ];
 
-  render() {
-    const {
-      kind,
-      loading,
-      namespace: selectedNamespace,
-      statusFilter,
-      taskName,
-      taskRuns,
-      intl
-    } = this.props;
-    const { showDeleteModal, toBeDeleted } = this.state;
+  const statusFilters = (
+    <StatusFilterDropdown
+      id={generateId('status-filter-')}
+      initialSelectedStatus={statusFilter}
+      onChange={({ selectedItem }) => {
+        setStatusFilter(selectedItem.id);
+      }}
+    />
+  );
 
-    const taskRunActions = this.taskRunActions();
-    sortRunsByStartTime(taskRuns);
-
-    const toolbarButtons = this.props.isReadOnly
-      ? []
-      : [
-          {
-            onClick: () =>
-              this.props.history.push(
-                urls.taskRuns.create() +
-                  (taskName ? `?taskName=${taskName}&kind=${kind}` : '')
-              ),
-            text: intl.formatMessage({
-              id: 'dashboard.actions.createButton',
-              defaultMessage: 'Create'
-            }),
-            icon: Add
-          }
-        ];
-
-    const batchActionButtons = this.props.isReadOnly
-      ? []
-      : [
-          {
-            onClick: this.openDeleteModal,
-            text: intl.formatMessage({
-              id: 'dashboard.actions.deleteButton',
-              defaultMessage: 'Delete'
-            }),
-            icon: Delete
-          }
-        ];
-
-    const filters = (
-      <StatusFilterDropdown
-        id={generateId('status-filter-')}
-        initialSelectedStatus={statusFilter}
-        onChange={({ selectedItem }) => {
-          this.props.setStatusFilter(selectedItem.id);
-        }}
+  return (
+    <ListPageLayout {...props} error={getError()} title="TaskRuns">
+      <TaskRunsList
+        batchActionButtons={batchActionButtons}
+        filters={statusFilters}
+        loading={loading && !taskRuns.length}
+        selectedNamespace={namespace}
+        taskRuns={taskRuns.filter(run => {
+          return runMatchesStatusFilter({ run, statusFilter });
+        })}
+        taskRunActions={taskRunActions()}
+        toolbarButtons={toolbarButtons}
       />
-    );
-
-    return (
-      <ListPageLayout {...this.props} error={this.getError()} title="TaskRuns">
-        <TaskRunsList
-          batchActionButtons={batchActionButtons}
-          filters={filters}
-          loading={loading && !taskRuns.length}
-          selectedNamespace={selectedNamespace}
-          taskRuns={taskRuns.filter(run => {
-            return runMatchesStatusFilter({ run, statusFilter });
-          })}
-          taskRunActions={taskRunActions}
-          toolbarButtons={toolbarButtons}
+      {showDeleteModal ? (
+        <DeleteModal
+          kind="TaskRuns"
+          onClose={closeDeleteModal}
+          onSubmit={handleDelete}
+          resources={toBeDeleted}
+          showNamespace={namespace === ALL_NAMESPACES}
         />
-        {showDeleteModal ? (
-          <DeleteModal
-            kind="TaskRuns"
-            onClose={this.closeDeleteModal}
-            onSubmit={this.handleDelete}
-            resources={toBeDeleted}
-            showNamespace={selectedNamespace === ALL_NAMESPACES}
-          />
-        ) : null}
-      </ListPageLayout>
-    );
-  }
+      ) : null}
+    </ListPageLayout>
+  );
 }
 
 TaskRuns.defaultProps = {
@@ -382,7 +368,7 @@ function mapStateToProps(state, props) {
   }
 
   return {
-    isReadOnly: isReadOnly(state),
+    isReadOnly: selectIsReadOnly(state),
     error: getTaskRunsErrorMessage(state),
     loading: isFetchingTaskRuns(state),
     namespace,
@@ -397,7 +383,7 @@ function mapStateToProps(state, props) {
 }
 
 const mapDispatchToProps = {
-  fetchTaskRuns
+  fetchTaskRuns: fetchTaskRunsActionCreator
 };
 
 export default connect(
