@@ -328,7 +328,7 @@ ingress() {
 if [ ! -z "$INGRESS_URL" ] && [ ! -z "$INGRESS_SECRET" ]; then
 cat <<EOF >> $TMP_FILE
 ---
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: tekton-dashboard
@@ -342,14 +342,17 @@ spec:
   - host: $INGRESS_URL
     http:
       paths:
-      - backend:
-          serviceName: tekton-dashboard
-          servicePort: 9097
+      - pathType: ImplementationSpecific
+        backend:
+          service:
+            name: tekton-dashboard
+            port:
+              number: 9097
 EOF
 elif [ ! -z "$INGRESS_URL" ]; then
 cat <<EOF >> $TMP_FILE
 ---
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: tekton-dashboard
@@ -359,9 +362,12 @@ spec:
   - host: $INGRESS_URL
     http:
       paths:
-      - backend:
-          serviceName: tekton-dashboard
-          servicePort: 9097
+      - pathType: ImplementationSpecific
+        backend:
+          service:
+            name: tekton-dashboard
+            port:
+              number: 9097
 EOF
 fi
 }

@@ -138,7 +138,7 @@ Assuming you have an [ingress controller](https://kubernetes.io/docs/concepts/se
 # the hostname should be setup to point to your ingress controller
 DASHBOARD_URL=dashboard.domain.tld
 kubectl apply -n tekton-pipelines -f - <<EOF
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: tekton-dashboard
@@ -148,9 +148,12 @@ spec:
   - host: $DASHBOARD_URL
     http:
       paths:
-      - backend:
-          serviceName: tekton-dashboard
-          servicePort: 9097
+      - pathType: ImplementationSpecific
+        backend:
+          service:
+            name: tekton-dashboard
+            port:
+              number: 9097
 EOF
 ```
 

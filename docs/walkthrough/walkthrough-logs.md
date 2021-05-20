@@ -306,7 +306,7 @@ spec:
   selector:
     app: logs-server
 ---
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: tekton-logs
@@ -315,9 +315,12 @@ spec:
   - host: logs.127.0.0.1.nip.io
     http:
       paths:
-      - backend:
-          serviceName: logs-server
-          servicePort: 3000
+      - pathType: ImplementationSpecific
+        backend:
+          service:
+            name: logs-server
+            port:
+              number: 3000
 EOF
 ```
 
