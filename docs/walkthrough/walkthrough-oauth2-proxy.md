@@ -122,7 +122,7 @@ To apply the ingress annotations run the command below:
 
 ```bash
 kubectl apply -n tekton-pipelines -f - <<EOF
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: tekton-dashboard
@@ -134,9 +134,12 @@ spec:
   - host: tekton-dashboard.127.0.0.1.nip.io
     http:
       paths:
-      - backend:
-          serviceName: tekton-dashboard
-          servicePort: 9097
+      - pathType: ImplementationSpecific
+        backend:
+          service:
+            name: tekton-dashboard
+            port:
+              number: 9097
 EOF
 ```
 
