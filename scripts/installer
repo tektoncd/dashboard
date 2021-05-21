@@ -49,12 +49,12 @@ verifySupported() {
     exit 1
   fi
 
-  if [ -z "$VERSION" ] && ! type "kustomize" > /dev/null 2>&1; then
+  if [ -z "$DASHBOARD_VERSION" ] && ! type "kustomize" > /dev/null 2>&1; then
     echo "kustomize is required"
     exit 1
   fi
 
-  if [ -z "$VERSION" ] && ! type "ko" > /dev/null 2>&1; then
+  if [ -z "$DASHBOARD_VERSION" ] && ! type "ko" > /dev/null 2>&1; then
     echo "ko is required"
     exit 1
   fi
@@ -97,10 +97,10 @@ compile() {
 }
 
 download() {
-  if [ $VERSION == "latest" ]; then
+  if [ $DASHBOARD_VERSION == "latest" ]; then
     local url="$BASE_RELEASE_URL/latest/installer-"
   else
-    local url="$BASE_RELEASE_URL/previous/$VERSION/installer-"
+    local url="$BASE_RELEASE_URL/previous/$DASHBOARD_VERSION/installer-"
   fi
 
   url="${url}tekton-dashboard-release"
@@ -540,7 +540,7 @@ while [[ $# -gt 0 ]]; do
   case $1 in
     '--version')
       shift
-      export VERSION="${1}"
+      DASHBOARD_VERSION="${1}"
       ;;
     '--nightly')
       BASE_RELEASE_URL="https://storage.googleapis.com/tekton-releases-nightly/dashboard"
@@ -563,7 +563,7 @@ while [[ $# -gt 0 ]]; do
       ;;
     '--namespace')
       shift
-      export OVERRIDE_NAMESPACE="${1}"
+      OVERRIDE_NAMESPACE="${1}"
       ;;
     '--log-format')
       shift
@@ -579,11 +579,11 @@ while [[ $# -gt 0 ]]; do
       ;;
     '--pipelines-namespace')
       shift
-      export OVERRIDE_PIPELINES_NAMESPACE="${1}"
+      OVERRIDE_PIPELINES_NAMESPACE="${1}"
       ;;
     '--triggers-namespace')
       shift
-      export OVERRIDE_TRIGGERS_NAMESPACE="${1}"
+      OVERRIDE_TRIGGERS_NAMESPACE="${1}"
       ;;
     '--tenant-namespace')
       shift
@@ -591,18 +591,18 @@ while [[ $# -gt 0 ]]; do
       ;;
     '--ingress-url')
       shift
-      export INGRESS_URL="${1}"
+      INGRESS_URL="${1}"
       ;;
     '--ingress-secret')
       shift
-      export INGRESS_SECRET="${1}"
+      INGRESS_SECRET="${1}"
       ;;
     '--debug')
       DEBUG="true"
       ;;
     '--output')
       shift
-      export OUTPUT_FILE="${1}"
+      OUTPUT_FILE="${1}"
       ;;
     '--platform')
       shift
@@ -625,7 +625,7 @@ TMP_FILE="$TMP_ROOT/manifest.yaml"
 initOS
 verifySupported
 setup
-if [ -z "$VERSION" ]; then
+if [ -z "$DASHBOARD_VERSION" ]; then
   compile
 else
   download
