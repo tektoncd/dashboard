@@ -50,6 +50,13 @@ git remote set-url --push upstream no_push
 _Adding the `upstream` remote sets you up nicely for regularly
 [syncing your fork](https://help.github.com/articles/syncing-a-fork/)._
 
+**Note:** If using Windows and you initially cloned your repo before this PR was merged: https://github.com/tektoncd/dashboard/pull/1707, you may need to clear your git cache to avoid line-ending problems when building the frontend.
+
+```
+git rm --cached -r .
+git reset --hard
+```
+
 ## Build the frontend
 
 First install and build the npm project.
