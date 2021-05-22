@@ -51,6 +51,11 @@ function SideNav(props) {
     selectNamespace,
     showKubernetesResources
   } = props;
+
+  if (!expanded) {
+    return null;
+  }
+
   const { namespace } = match?.params || {};
 
   useEffect(() => {
@@ -81,11 +86,10 @@ function SideNav(props) {
 
   return (
     <CarbonSideNav
-      isFixedNav={expanded}
-      isRail={!expanded}
-      expanded={expanded}
-      isChildOfHeader={false}
       aria-label="Main navigation"
+      expanded
+      isChildOfHeader={false}
+      isFixedNav
     >
       <SideNavItems>
         <SideNavMenu
