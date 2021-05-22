@@ -63,24 +63,25 @@ Accepted commands:
 
 Accepted options:
         [--debug]                               Prints additional messages in the console
+        [--extensions-rbac]                     Enable ClusterRole aggregation for easier management of extensions RBAC
+        [--external-logs <logs-provider-url>]   External URL from which to fetch logs when logs are not available in the cluster
+        [--image-stream]                        Will generate manifests using openshift image stream
+        [--ingress-secret <secret>]             Will add SSL support to the ingress
+        [--ingress-url <url>]                   Will create an additional ingress with the specified URL
         [--log-format <log-format>]             Specifies the log format (json or console), default is json
         [--log-level <log-level>]               Specifies the log level (debug, info, warn, error, dpanic, panic, fatal), default is info
-        [--version <version>]                   Will download manifests for specified version or build everything using kustomize/ko
-        [--nightly]                             Will download manifests from the nightly releases channel
-        [--openshift]                           Will build manifests for openshift
-        [--image-stream]                        Will generate manifests using openshift image stream
-        [--read-only]                           Will build manifests for a readonly deployment
         [--logout-url <logout-url>]             Will set up the logout URL
         [--namespace <namespace>]               Will override install namespace
-        [--pipelines-namespace <namespace>]     Override the namespace where Tekton Pipelines is installed (defaults to tekton-pipelines)
-        [--triggers-namespace <namespace>]      Override the namespace where Tekton Triggers is installed (defaults to tekton-pipelines)
-        [--tenant-namespace <namespace>]        Will limit the visibility to the specified namespace only
-        [--ingress-url <url>]                   Will create an additional ingress with the specified url
-        [--ingress-secret <secret>]             Will add ssl support to the ingress
-        [--stream-logs]                         Will enable log streaming instead of polling
-        [--external-logs <logs-provider-url>]   External url to fetch logs from when not available in the cluster
+        [--nightly]                             Will download manifests from the nightly releases channel
+        [--openshift]                           Will build manifests for openshift
         [--output <file>]                       Will output built manifests in the file instead of in the console
+        [--pipelines-namespace <namespace>]     Override the namespace where Tekton Pipelines is installed (defaults to tekton-pipelines)
         [--platform <platform>]                 Override the platform to build for
+        [--read-only]                           Will build manifests for a readonly deployment
+        [--stream-logs]                         Will enable log streaming instead of polling
+        [--tenant-namespace <namespace>]        Will limit the visibility to the specified namespace only
+        [--triggers-namespace <namespace>]      Override the namespace where Tekton Triggers is installed (defaults to tekton-pipelines)
+        [--version <version>]                   Will download manifests for specified version or build everything using kustomize/ko
 ```
 
 ## Install command

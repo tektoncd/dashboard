@@ -73,9 +73,9 @@ Clicking on it will show an error though, you need to allow the Tekton Dashboard
 
 ### Example: Extend Tekton Dashboard service account permissions
 
-Extending the Tekton Dashboard service account can be done easily using [ClusterRole aggregation](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#aggregated-clusterroles).
+Extending the Tekton Dashboard service account can be done easily using [ClusterRole aggregation](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#aggregated-clusterroles). To support this method the Dashboard must be installed with the `--extensions-rbac` flag to ensure that the aggregationRule is correctly configured.
 
-Create a `ClusterRole` with the necessary permissions and add the `rbac.dashboard.tekton.dev/aggregate-to-dashboard: "true"` label to it.
+Create a `ClusterRole` with the necessary permissions and the label `rbac.dashboard.tekton.dev/aggregate-to-dashboard: "true"`.
 
 To add the necessary permissions for your cronjobs extension to work, run the following command:
 
@@ -93,6 +93,8 @@ rules:
     verbs: ["get", "list"]
 EOF
 ```
+
+Alternatively, if the `--extensions-rbac` is not used, omit the label from the ClusterRole, and define the appropriate RoleBinding or ClusterRoleBinding yourself with the subject set to the `tekton-dashboard` service account.
 
 Now the Tekton Dashboard will show `CronJob`s in your cluster.
 

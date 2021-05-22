@@ -21,6 +21,7 @@ DEBUG="false"
 INSTALL_NAMESPACE="tekton-pipelines"
 PIPELINES_NAMESPACE="tekton-pipelines"
 TRIGGERS_NAMESPACE="tekton-pipelines"
+EXTENSIONS_RBAC="false"
 LOGOUT_URL=""
 LOG_LEVEL="info"
 LOG_FORMAT="json"
@@ -234,6 +235,23 @@ subjects:
     namespace: $INSTALL_NAMESPACE
 EOF
 
+if [ "$EXTENSIONS_RBAC" == "true" ]; then
+cat <<EOF >> $TMP_FILE
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: tekton-dashboard-extensions
+  labels:
+    app.kubernetes.io/component: dashboard
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/part-of: tekton-dashboard
+aggregationRule:
+  clusterRoleSelectors:
+    - matchLabels:
+        rbac.dashboard.tekton.dev/aggregate-to-dashboard: 'true'
+EOF
+fi
 
 if [ ! -z "$TENANT_NAMESPACE" ]; then
 
@@ -258,6 +276,7 @@ subjects:
     namespace: $INSTALL_NAMESPACE
 EOF
 
+if [ "$EXTENSIONS_RBAC" == "true" ]; then
 cat <<EOF >> $TMP_FILE
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -278,6 +297,7 @@ subjects:
     name: tekton-dashboard
     namespace: $INSTALL_NAMESPACE
 EOF
+fi
 
 else
 
@@ -301,6 +321,7 @@ subjects:
     namespace: $INSTALL_NAMESPACE
 EOF
 
+if [ "$EXTENSIONS_RBAC" == "true" ]; then
 cat <<EOF >> $TMP_FILE
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -320,6 +341,7 @@ subjects:
     name: tekton-dashboard
     namespace: $INSTALL_NAMESPACE
 EOF
+fi
 
 fi
 }
@@ -476,24 +498,25 @@ help () {
   echo -e ""
   echo -e "Accepted options:"
   echo -e "\t[--debug]\t\t\t\tPrints additional messages in the console"
+  echo -e "\t[--extensions-rbac]\t\t\tEnable ClusterRole aggregation for easier management of extensions RBAC"
+  echo -e "\t[--external-logs <logs-provider-url>]\tExternal URL from which to fetch logs when logs are not available in the cluster"
+  echo -e "\t[--image-stream]\t\t\tWill generate manifests using openshift image stream"
+  echo -e "\t[--ingress-secret <secret>]\t\tWill add SSL support to the ingress"
+  echo -e "\t[--ingress-url <url>]\t\t\tWill create an additional ingress with the specified URL"
   echo -e "\t[--log-format <log-format>]\t\tSpecifies the log format (json or console), default is json"
   echo -e "\t[--log-level <log-level>]\t\tSpecifies the log level (debug, info, warn, error, dpanic, panic, fatal), default is info"
-  echo -e "\t[--version <version>]\t\t\tWill download manifests for specified version or build everything using kustomize/ko"
-  echo -e "\t[--nightly]\t\t\t\tWill download manifests from the nightly releases channel"
-  echo -e "\t[--openshift]\t\t\t\tWill build manifests for openshift"
-  echo -e "\t[--image-stream]\t\t\tWill generate manifests using openshift image stream"
-  echo -e "\t[--read-only]\t\t\t\tWill build manifests for a readonly deployment"
   echo -e "\t[--logout-url <logout-url>]\t\tWill set up the logout URL"
   echo -e "\t[--namespace <namespace>]\t\tWill override install namespace"
-  echo -e "\t[--pipelines-namespace <namespace>]\tOverride the namespace where Tekton Pipelines is installed (defaults to tekton-pipelines)"
-  echo -e "\t[--triggers-namespace <namespace>]\tOverride the namespace where Tekton Triggers is installed (defaults to tekton-pipelines)"
-  echo -e "\t[--tenant-namespace <namespace>]\tWill limit the visibility to the specified namespace only"
-  echo -e "\t[--ingress-url <url>]\t\t\tWill create an additional ingress with the specified url"
-  echo -e "\t[--ingress-secret <secret>]\t\tWill add ssl support to the ingress"
-  echo -e "\t[--stream-logs]\t\t\t\tWill enable log streaming instead of polling"
-  echo -e "\t[--external-logs <logs-provider-url>]\tExternal url to fetch logs from when not available in the cluster"
+  echo -e "\t[--nightly]\t\t\t\tWill download manifests from the nightly releases channel"
+  echo -e "\t[--openshift]\t\t\t\tWill build manifests for openshift"
   echo -e "\t[--output <file>]\t\t\tWill output built manifests in the file instead of in the console"
+  echo -e "\t[--pipelines-namespace <namespace>]\tOverride the namespace where Tekton Pipelines is installed (defaults to tekton-pipelines)"
   echo -e "\t[--platform <platform>]\t\t\tOverride the platform to build for"
+  echo -e "\t[--read-only]\t\t\t\tWill build manifests for a readonly deployment"
+  echo -e "\t[--stream-logs]\t\t\t\tWill enable log streaming instead of polling"
+  echo -e "\t[--tenant-namespace <namespace>]\tWill limit the visibility to the specified namespace only"
+  echo -e "\t[--triggers-namespace <namespace>]\tOverride the namespace where Tekton Triggers is installed (defaults to tekton-pipelines)"
+  echo -e "\t[--version <version>]\t\t\tWill download manifests for specified version or build everything using kustomize/ko"
 }
 
 # cleanup temporary files
@@ -570,6 +593,10 @@ while [[ $# -gt 0 ]]; do
     '--namespace')
       shift
       OVERRIDE_NAMESPACE="${1}"
+      ;;
+    '--extensions-rbac')
+      shift
+      EXTENSIONS_RBAC="true"
       ;;
     '--log-format')
       shift
