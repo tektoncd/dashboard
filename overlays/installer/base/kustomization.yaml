@@ -18,7 +18,6 @@ kind: Kustomization
 resources:
   - ../../../base/200-clusterrole-backend.yaml
   - ../../../base/200-clusterrole-dashboard.yaml
-  - ../../../base/200-clusterrole-extensions.yaml
   - ../../../base/200-clusterrole-pipelines.yaml
   - ../../../base/200-clusterrole-tenant.yaml
   - ../../../base/200-clusterrole-triggers.yaml
