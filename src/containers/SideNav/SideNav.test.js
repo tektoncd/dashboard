@@ -20,6 +20,32 @@ import { renderWithRouter } from '@tektoncd/dashboard-components/src/utils/test'
 
 import SideNavContainer, { SideNavWithIntl as SideNav } from './SideNav';
 
+it('SideNav renders only when expanded', () => {
+  const namespace = 'default';
+  const selectNamespace = jest.fn();
+  const { queryByText, rerender } = renderWithRouter(
+    <SideNav
+      expanded
+      extensions={[]}
+      location={{ search: '' }}
+      match={{ params: { namespace } }}
+      selectNamespace={selectNamespace}
+    />
+  );
+  expect(queryByText(/Tekton/)).toBeTruthy();
+
+  renderWithRouter(
+    <SideNav
+      extensions={[]}
+      location={{ search: '' }}
+      match={{ params: { namespace } }}
+      selectNamespace={selectNamespace}
+    />,
+    { rerender }
+  );
+  expect(queryByText(/Tekton/)).toBeFalsy();
+});
+
 it('SideNav renders with extensions', () => {
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
@@ -54,7 +80,7 @@ it('SideNav renders with extensions', () => {
   });
   const { queryByText } = renderWithRouter(
     <Provider store={store}>
-      <SideNavContainer location={{ search: '' }} />
+      <SideNavContainer expanded location={{ search: '' }} />
     </Provider>
   );
   expect(queryByText('Pipelines')).toBeTruthy();
@@ -76,7 +102,7 @@ it('SideNav renders with triggers', async () => {
   });
   const { queryByText } = renderWithRouter(
     <Provider store={store}>
-      <SideNavContainer location={{ search: '' }} />
+      <SideNavContainer expanded location={{ search: '' }} />
     </Provider>
   );
   await waitFor(() => queryByText(/about/i));
@@ -88,50 +114,41 @@ it('SideNav renders with triggers', async () => {
 });
 
 it('SideNav selects namespace based on URL', () => {
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const store = mockStore({
-    namespaces: { byName: {} },
-    properties: {}
-  });
   const namespace = 'default';
   const selectNamespace = jest.fn();
   const { rerender } = renderWithRouter(
-    <Provider store={store}>
-      <SideNav
-        extensions={[]}
-        location={{ search: '' }}
-        match={{ params: { namespace } }}
-        selectNamespace={selectNamespace}
-      />
-    </Provider>
+    <SideNav
+      expanded
+      extensions={[]}
+      location={{ search: '' }}
+      match={{ params: { namespace } }}
+      selectNamespace={selectNamespace}
+    />
   );
   expect(selectNamespace).toHaveBeenCalledWith(namespace);
 
   const updatedNamespace = 'another';
 
   renderWithRouter(
-    <Provider store={store}>
-      <SideNav
-        extensions={[]}
-        location={{ search: '' }}
-        match={{ params: { namespace: updatedNamespace } }}
-        selectNamespace={selectNamespace}
-      />
-    </Provider>,
+    <SideNav
+      expanded
+      extensions={[]}
+      location={{ search: '' }}
+      match={{ params: { namespace: updatedNamespace } }}
+      selectNamespace={selectNamespace}
+    />,
     { rerender }
   );
   expect(selectNamespace).toHaveBeenCalledWith(updatedNamespace);
 
   renderWithRouter(
-    <Provider store={store}>
-      <SideNav
-        extensions={[]}
-        location={{ search: '' }}
-        match={{ params: { namespace: updatedNamespace } }}
-        selectNamespace={selectNamespace}
-      />
-    </Provider>,
+    <SideNav
+      expanded
+      extensions={[]}
+      location={{ search: '' }}
+      match={{ params: { namespace: updatedNamespace } }}
+      selectNamespace={selectNamespace}
+    />,
     { rerender }
   );
   expect(selectNamespace).toHaveBeenCalledTimes(2);
@@ -147,7 +164,7 @@ it('SideNav renders import in the default read-write mode', async () => {
   });
   const { queryByText } = renderWithRouter(
     <Provider store={store}>
-      <SideNavContainer location={{ search: '' }} />
+      <SideNavContainer expanded location={{ search: '' }} />
     </Provider>
   );
   await waitFor(() => queryByText(/Import/i));
@@ -165,7 +182,7 @@ it('SideNav does not render import in read-only mode', async () => {
   });
   const { queryByText } = renderWithRouter(
     <Provider store={store}>
-      <SideNavContainer isReadOnly location={{ search: '' }} />
+      <SideNavContainer expanded isReadOnly location={{ search: '' }} />
     </Provider>
   );
   await waitFor(() => queryByText(/about/i));
@@ -182,7 +199,11 @@ it('SideNav renders kubernetes resources placeholder', async () => {
   });
   const { queryByText } = renderWithRouter(
     <Provider store={store}>
-      <SideNavContainer location={{ search: '' }} showKubernetesResources />
+      <SideNavContainer
+        expanded
+        location={{ search: '' }}
+        showKubernetesResources
+      />
     </Provider>
   );
   await waitFor(() => queryByText('placeholder'));
