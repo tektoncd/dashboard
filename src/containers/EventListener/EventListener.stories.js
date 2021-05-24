@@ -120,6 +120,7 @@ const eventListener = {
 };
 const match = {
   params: {
+    namespace: 'foo',
     eventListenerName: 'my-eventlistener'
   }
 };
