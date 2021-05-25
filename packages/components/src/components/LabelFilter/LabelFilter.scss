@@ -21,7 +21,8 @@ limitations under the License.
     flex-wrap: wrap;
     align-items: baseline;
 
-    min-height: calc(#{$spacing-08} + #{$button-border-width});
+    // NOTE: add offset to min-height to prevent layout shift.
+    min-height: calc(#{$spacing-08} + #{$button-border-width} + 2px);
     margin-bottom: calc(#{$spacing-05} - #{$button-border-width});
 
     .bx--tag {
