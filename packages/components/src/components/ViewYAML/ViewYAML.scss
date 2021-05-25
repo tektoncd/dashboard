@@ -11,7 +11,116 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+$colors: (
+  "black": rgb(0, 0, 0),
+  "red": rgb(187, 0, 0),
+  "green": rgb(0, 187, 0),
+  "yellow": rgb(187, 187, 0),
+  "blue": rgb(85, 85, 255),
+  "magenta": rgb(187, 0, 187),
+  "cyan": rgb(0, 187, 187),
+  "white": rgb(187, 187, 187),
+
+  "bright-black": rgb(85, 85, 85),
+  "bright-red": rgb(255, 85, 85),
+  "bright-green": rgb(0, 255, 0),
+  "bright-yellow": rgb(255, 255, 85),
+  "bright-blue": rgb(136, 136, 255),
+  "bright-magenta": rgb(255, 85, 255),
+  "bright-cyan": rgb(85, 255, 255),
+  "bright-white": rgb(255, 255, 255)
+);
+
+// Light theme.
+.bx--snippet--multi {
+  .token.comment {
+    color: hsl(30, 20%, 50%);
+  }
+
+  .token.property,
+  .token.tag,
+  .token.boolean,
+  .token.number,
+  .token.constant,
+  .token.symbol {
+    color: hsl(350, 40%, 70%);
+  }
+
+  .token.selector,
+  .token.attr-name,
+  .token.string,
+  .token.char,
+  .token.builtin,
+  .token.inserted {
+    // color: hsl(75, 70%, 60%);
+    color: rgb(0, 187, 0)
+  }
+
+  .token.operator,
+  .token.entity,
+  .token.url,
+  .language-css .token.string,
+  .style .token.string,
+  .token.variable {
+    color: hsl(40, 90%, 60%);
+  }
+
+  // .token.atrule,
+  // .token.attr-value,
+  // .token.keyword {
+  //   color: hsl(350, 40%, 70%);
+  // }
+
+  // .token.regex,
+  // .token.important {
+  //   color: #e90;
+  // }
+}
+
 .bx--snippet--multi.tkn--view-yaml--dark {
-  background-color: $gray-90; // TODO: $inverse-02 - see Log.scss
-  color: $gray-10;            //       $inverse-01
+  background-color: $inverse-02;
+  color: $inverse-01;
+
+  .token.comment {
+    color: hsl(30, 20%, 50%);
+  }
+
+  .token.property,
+  .token.tag,
+  .token.boolean,
+  .token.number,
+  .token.constant,
+  .token.symbol {
+    color: hsl(350, 40%, 70%);
+  }
+
+  .token.selector,
+  .token.attr-name,
+  .token.string,
+  .token.char,
+  .token.builtin,
+  .token.inserted {
+    // color: hsl(75, 70%, 60%);
+    color: rgb(0, 187, 0)
+  }
+
+  .token.operator,
+  .token.entity,
+  .token.url,
+  .language-css .token.string,
+  .style .token.string,
+  .token.variable {
+    color: hsl(40, 90%, 60%);
+  }
+
+  // .token.atrule,
+  // .token.attr-value,
+  // .token.keyword {
+  //   color: hsl(350, 40%, 70%);
+  // }
+
+  // .token.regex,
+  // .token.important {
+  //   color: #e90;
+  // }
 }

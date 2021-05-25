@@ -15,20 +15,22 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import jsYaml from 'js-yaml';
 import classNames from 'classnames';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
 const ViewYAML = props => {
   const { className, dark, resource } = props;
 
   return (
-    <div
+    <SyntaxHighlighter
       className={classNames('bx--snippet--multi', className, {
         'tkn--view-yaml--dark': dark
       })}
+      codeTagProps={{}}
+      language="yaml"
+      useInlineStyles={false}
     >
-      <code>
-        <pre>{jsYaml.dump(resource)}</pre>
-      </code>
-    </div>
+      {jsYaml.dump(resource).trim()}
+    </SyntaxHighlighter>
   );
 };
 
