@@ -34,11 +34,10 @@ export const Base = () => (
     items={[
       { actionText: 'Rerun', action: () => {} },
       {
-        actionText: 'Delete',
+        actionText: 'disabled option',
+        disable: () => true,
         action: () => {},
-        danger: true,
         modalProperties: {
-          danger: true,
           heading: 'Modal Heading',
           primaryButtonText: 'primary text',
           secondaryButtonText: 'secondary text',
@@ -46,10 +45,12 @@ export const Base = () => (
         }
       },
       {
-        actionText: 'disabled option',
-        disable: () => true,
+        actionText: 'Delete',
         action: () => {},
+        danger: true,
+        hasDivider: true,
         modalProperties: {
+          danger: true,
           heading: 'Modal Heading',
           primaryButtonText: 'primary text',
           secondaryButtonText: 'secondary text',
