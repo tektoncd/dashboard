@@ -13,20 +13,18 @@ limitations under the License.
 
 import React from 'react';
 import { fireEvent, waitFor } from '@testing-library/react';
-import { renderWithIntl } from '../../utils/test';
+import { render } from '../../utils/test';
 import ResourceDetails from './ResourceDetails';
 
 describe('ResourceDetails', () => {
   it('renders the loading state', () => {
-    const { queryByText } = renderWithIntl(<ResourceDetails loading />);
+    const { queryByText } = render(<ResourceDetails loading />);
     expect(queryByText(/overview/i)).toBeFalsy();
   });
 
   it('renders the error state', () => {
     const errorMessage = 'an error message';
-    const { queryByText } = renderWithIntl(
-      <ResourceDetails error={errorMessage} />
-    );
+    const { queryByText } = render(<ResourceDetails error={errorMessage} />);
     expect(queryByText(/labels/i)).toBeFalsy();
     expect(queryByText(errorMessage)).toBeTruthy();
   });
@@ -44,9 +42,7 @@ describe('ResourceDetails', () => {
       }
     };
 
-    const { queryByText } = renderWithIntl(
-      <ResourceDetails resource={resource} />
-    );
+    const { queryByText } = render(<ResourceDetails resource={resource} />);
     expect(queryByText(/labels/i)).toBeTruthy();
     expect(queryByText(/description/i)).toBeTruthy();
     expect(queryByText(name)).toBeTruthy();
@@ -71,7 +67,7 @@ describe('ResourceDetails', () => {
     const additionalMetadata = 'fake_additionalMetadata';
     const children = 'fake_children';
 
-    const { queryByText } = renderWithIntl(
+    const { queryByText } = render(
       <ResourceDetails
         resource={resource}
         additionalMetadata={additionalMetadata}
@@ -103,7 +99,7 @@ describe('ResourceDetails', () => {
 
     const onViewChange = jest.fn();
 
-    const { queryByText } = renderWithIntl(
+    const { queryByText } = render(
       <ResourceDetails
         onViewChange={onViewChange}
         resource={resource}

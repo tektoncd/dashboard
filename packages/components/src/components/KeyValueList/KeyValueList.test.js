@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,7 +14,7 @@ limitations under the License.
 import React from 'react';
 import { fireEvent } from '@testing-library/react';
 import KeyValueList from './KeyValueList';
-import { renderWithIntl } from '../../utils/test';
+import { render } from '../../utils/test';
 
 it('KeyValueList shows blank fields', () => {
   const props = {
@@ -29,7 +29,7 @@ it('KeyValueList shows blank fields', () => {
     onAdd() {},
     onRemove() {}
   };
-  const { getAllByDisplayValue, getByText } = renderWithIntl(
+  const { getAllByDisplayValue, getByText } = render(
     <KeyValueList {...props} />
   );
 
@@ -56,7 +56,7 @@ it('KeyValueList incorrect fields', () => {
     onAdd() {},
     onRemove() {}
   };
-  const { getByDisplayValue } = renderWithIntl(<KeyValueList {...props} />);
+  const { getByDisplayValue } = render(<KeyValueList {...props} />);
 
   const annotationKey0 = getByDisplayValue(props.keyValues[0].key);
   const annotationKey1 = getByDisplayValue(props.keyValues[1].key);
@@ -85,7 +85,7 @@ it('KeyValueList change key', () => {
     onAdd() {},
     onRemove() {}
   };
-  const { getByDisplayValue } = renderWithIntl(<KeyValueList {...props} />);
+  const { getByDisplayValue } = render(<KeyValueList {...props} />);
 
   fireEvent.change(getByDisplayValue(/foo0/i), {
     target: { value: 'new key 0' }
@@ -107,7 +107,7 @@ it('KeyValueList change value', () => {
     onAdd() {},
     onRemove() {}
   };
-  const { getByDisplayValue } = renderWithIntl(<KeyValueList {...props} />);
+  const { getByDisplayValue } = render(<KeyValueList {...props} />);
 
   fireEvent.change(getByDisplayValue(/bar0/i), {
     target: { value: 'new value 0' }
@@ -134,9 +134,7 @@ it('KeyValueList add and remove buttons work', () => {
     onAdd: jest.fn(),
     onRemove: jest.fn()
   };
-  const { getByText, getAllByText } = renderWithIntl(
-    <KeyValueList {...props} />
-  );
+  const { getByText, getAllByText } = render(<KeyValueList {...props} />);
 
   const addButton = getByText(/Add/i);
 

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,7 +16,7 @@ import { fireEvent, getNodeText } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { renderWithIntl } from '@tektoncd/dashboard-components/src/utils/test';
+import { render } from '@tektoncd/dashboard-components/src/utils/test';
 
 import PipelineResourcesDropdown from './PipelineResourcesDropdown';
 import * as API from '../../api/pipelineResources';
@@ -137,7 +137,7 @@ describe('PipelineResourcesDropdown', () => {
       ...namespacesStoreBlue,
       notifications: {}
     });
-    const { getByPlaceholderText, getAllByText, queryByText } = renderWithIntl(
+    const { getByPlaceholderText, getAllByText, queryByText } = render(
       <Provider store={store}>
         <PipelineResourcesDropdown {...props} />
       </Provider>
@@ -157,7 +157,7 @@ describe('PipelineResourcesDropdown', () => {
       ...namespacesStoreBlue,
       notifications: {}
     });
-    const { getByPlaceholderText, queryByText, rerender } = renderWithIntl(
+    const { getByPlaceholderText, queryByText, rerender } = render(
       <Provider store={store}>
         <PipelineResourcesDropdown {...props} type="type-1" />
       </Provider>
@@ -167,7 +167,7 @@ describe('PipelineResourcesDropdown', () => {
     expect(queryByText(/pipeline-resource-1/i)).toBeTruthy();
     expect(queryByText(/pipeline-resource-2/i)).toBeFalsy();
     fireEvent.click(getByPlaceholderText(initialTextRegExp));
-    renderWithIntl(
+    render(
       <Provider store={store}>
         <PipelineResourcesDropdown {...props} type="type-2" />
       </Provider>,
@@ -190,7 +190,7 @@ describe('PipelineResourcesDropdown', () => {
       getAllByText,
       queryByText,
       rerender
-    } = renderWithIntl(
+    } = render(
       <Provider store={blueStore}>
         <PipelineResourcesDropdown {...props} />
       </Provider>
@@ -210,7 +210,7 @@ describe('PipelineResourcesDropdown', () => {
       ...namespacesStoreGreen,
       notifications: {}
     });
-    renderWithIntl(
+    render(
       <Provider store={greenStore}>
         <PipelineResourcesDropdown {...props} />
       </Provider>,
@@ -232,11 +232,7 @@ describe('PipelineResourcesDropdown', () => {
       notifications: {}
     });
     // Select item 'pipeline-resource-1'
-    const {
-      queryByPlaceholderText,
-      queryByDisplayValue,
-      rerender
-    } = renderWithIntl(
+    const { queryByPlaceholderText, queryByDisplayValue, rerender } = render(
       <Provider store={store}>
         <PipelineResourcesDropdown
           {...props}
@@ -246,7 +242,7 @@ describe('PipelineResourcesDropdown', () => {
     );
     expect(queryByDisplayValue(/pipeline-resource-1/i)).toBeTruthy();
     // Select item 'pipeline-resource-2'
-    renderWithIntl(
+    render(
       <Provider store={store}>
         <PipelineResourcesDropdown
           {...props}
@@ -257,7 +253,7 @@ describe('PipelineResourcesDropdown', () => {
     );
     expect(queryByDisplayValue(/pipeline-resource-2/i)).toBeTruthy();
     // No selected item (select item '')
-    renderWithIntl(
+    render(
       <Provider store={store}>
         <PipelineResourcesDropdown {...props} selectedItem="" />
       </Provider>,
@@ -273,7 +269,7 @@ describe('PipelineResourcesDropdown', () => {
       notifications: {}
     });
     // Select namespace 'green'
-    const { queryByText, getByPlaceholderText, getAllByText } = renderWithIntl(
+    const { queryByText, getByPlaceholderText, getAllByText } = render(
       <Provider store={store}>
         <PipelineResourcesDropdown {...props} namespace="green" />
       </Provider>
@@ -296,7 +292,7 @@ describe('PipelineResourcesDropdown', () => {
       ...namespacesStoreBlue,
       notifications: {}
     });
-    const { queryByPlaceholderText } = renderWithIntl(
+    const { queryByPlaceholderText } = render(
       <Provider store={store}>
         <PipelineResourcesDropdown {...props} />
       </Provider>
@@ -319,7 +315,7 @@ describe('PipelineResourcesDropdown', () => {
       ...namespacesStoreAll,
       notifications: {}
     });
-    const { queryByPlaceholderText } = renderWithIntl(
+    const { queryByPlaceholderText } = render(
       <Provider store={store}>
         <PipelineResourcesDropdown {...props} />
       </Provider>
@@ -338,7 +334,7 @@ describe('PipelineResourcesDropdown', () => {
       ...namespacesStoreBlue,
       notifications: {}
     });
-    const { queryByPlaceholderText } = renderWithIntl(
+    const { queryByPlaceholderText } = render(
       <Provider store={store}>
         <PipelineResourcesDropdown {...props} type="bogus" />
       </Provider>
@@ -361,7 +357,7 @@ describe('PipelineResourcesDropdown', () => {
       ...namespacesStoreAll,
       notifications: {}
     });
-    const { queryByPlaceholderText } = renderWithIntl(
+    const { queryByPlaceholderText } = render(
       <Provider store={store}>
         <PipelineResourcesDropdown {...props} type="bogus" />
       </Provider>
@@ -378,7 +374,7 @@ describe('PipelineResourcesDropdown', () => {
       ...namespacesStoreBlue,
       notifications: {}
     });
-    const { queryByPlaceholderText } = renderWithIntl(
+    const { queryByPlaceholderText } = render(
       <Provider store={store}>
         <PipelineResourcesDropdown {...props} />
       </Provider>
@@ -393,7 +389,7 @@ describe('PipelineResourcesDropdown', () => {
       notifications: {}
     });
     const onChange = jest.fn();
-    const { getByPlaceholderText, getByText } = renderWithIntl(
+    const { getByPlaceholderText, getByText } = render(
       <Provider store={store}>
         <PipelineResourcesDropdown {...props} onChange={onChange} />
       </Provider>

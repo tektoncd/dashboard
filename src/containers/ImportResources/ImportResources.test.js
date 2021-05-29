@@ -18,7 +18,7 @@ import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
 import { ALL_NAMESPACES, urls } from '@tektoncd/dashboard-utils';
 import {
-  renderWithIntl,
+  render,
   renderWithRouter
 } from '@tektoncd/dashboard-components/src/utils/test';
 
@@ -58,7 +58,7 @@ describe('ImportResources component', () => {
   });
 
   it('Displays errors when Repository URL and Namespace is empty', async () => {
-    const { getByText } = await renderWithIntl(
+    const { getByText } = await render(
       <Provider store={store}>
         <ImportResourcesContainer />
       </Provider>
@@ -70,7 +70,7 @@ describe('ImportResources component', () => {
   });
 
   it('Displays an error when Repository URL is empty', async () => {
-    const { getAllByPlaceholderText, getByText } = await renderWithIntl(
+    const { getAllByPlaceholderText, getByText } = await render(
       <Provider store={store}>
         <ImportResourcesContainer />
       </Provider>
@@ -85,7 +85,7 @@ describe('ImportResources component', () => {
   });
 
   it('Displays an error when Namespace is empty', async () => {
-    const { getByPlaceholderText, getByText } = await renderWithIntl(
+    const { getByPlaceholderText, getByText } = await render(
       <Provider store={store}>
         <ImportResourcesContainer />
       </Provider>
@@ -191,7 +191,7 @@ describe('ImportResources component', () => {
       getAllByPlaceholderText,
       getByPlaceholderText,
       getByText
-    } = await renderWithIntl(
+    } = await render(
       <Provider store={store}>
         <ImportResourcesContainer />
       </Provider>
@@ -208,7 +208,7 @@ describe('ImportResources component', () => {
   });
 
   it('URL TextInput handles onChange event', async () => {
-    const { getByPlaceholderText, queryByDisplayValue } = await renderWithIntl(
+    const { getByPlaceholderText, queryByDisplayValue } = await render(
       <Provider store={store}>
         <ImportResourcesContainer />
       </Provider>
@@ -228,7 +228,7 @@ describe('ImportResources component', () => {
       getAllByTitle,
       queryByText,
       queryByDisplayValue
-    } = await renderWithIntl(
+    } = await render(
       <Provider store={store}>
         <ImportResourcesContainer />
       </Provider>

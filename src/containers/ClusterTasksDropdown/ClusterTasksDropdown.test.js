@@ -16,7 +16,7 @@ import { fireEvent, getNodeText } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { renderWithIntl } from '@tektoncd/dashboard-components/src/utils/test';
+import { render } from '@tektoncd/dashboard-components/src/utils/test';
 
 import ClusterTasksDropdown from './ClusterTasksDropdown';
 import * as API from '../../api/clusterTasks';
@@ -90,7 +90,7 @@ describe('ClusterTasksDropdown', () => {
       ...clusterTasksStoreDefault,
       notifications: {}
     });
-    const { getByPlaceholderText, getAllByText, queryByText } = renderWithIntl(
+    const { getByPlaceholderText, getAllByText, queryByText } = render(
       <Provider store={store}>
         <ClusterTasksDropdown {...props} />
       </Provider>
@@ -110,11 +110,7 @@ describe('ClusterTasksDropdown', () => {
       notifications: {}
     });
     // Select item 'clustertask-1'
-    const {
-      queryByDisplayValue,
-      queryByPlaceholderText,
-      rerender
-    } = renderWithIntl(
+    const { queryByDisplayValue, queryByPlaceholderText, rerender } = render(
       <Provider store={store}>
         <ClusterTasksDropdown
           {...props}
@@ -124,7 +120,7 @@ describe('ClusterTasksDropdown', () => {
     );
     expect(queryByDisplayValue(/clustertask-1/i)).toBeTruthy();
     // Select item 'clustertask-2'
-    renderWithIntl(
+    render(
       <Provider store={store}>
         <ClusterTasksDropdown
           {...props}
@@ -135,7 +131,7 @@ describe('ClusterTasksDropdown', () => {
     );
     expect(queryByDisplayValue(/clustertask-2/i)).toBeTruthy();
     // No selected item (select item '')
-    renderWithIntl(
+    render(
       <Provider store={store}>
         <ClusterTasksDropdown {...props} selectedItem="" />
       </Provider>,
@@ -152,7 +148,7 @@ describe('ClusterTasksDropdown', () => {
       },
       notifications: {}
     });
-    const { queryByPlaceholderText } = renderWithIntl(
+    const { queryByPlaceholderText } = render(
       <Provider store={store}>
         <ClusterTasksDropdown {...props} />
       </Provider>
@@ -166,7 +162,7 @@ describe('ClusterTasksDropdown', () => {
       ...clusterTasksStoreFetching,
       notifications: {}
     });
-    const { queryByPlaceholderText } = renderWithIntl(
+    const { queryByPlaceholderText } = render(
       <Provider store={store}>
         <ClusterTasksDropdown {...props} />
       </Provider>
@@ -180,7 +176,7 @@ describe('ClusterTasksDropdown', () => {
       notifications: {}
     });
     const onChange = jest.fn();
-    const { getByPlaceholderText, getByText } = renderWithIntl(
+    const { getByPlaceholderText, getByText } = render(
       <Provider store={store}>
         <ClusterTasksDropdown {...props} onChange={onChange} />
       </Provider>
@@ -200,7 +196,7 @@ describe('ClusterTasksDropdown', () => {
       ...clusterTasksStoreDefault,
       notifications: {}
     });
-    renderWithIntl(
+    render(
       <Provider store={store}>
         <ClusterTasksDropdown {...props} />
       </Provider>

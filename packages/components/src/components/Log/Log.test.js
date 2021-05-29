@@ -14,16 +14,16 @@ limitations under the License.
 import React from 'react';
 import { waitFor } from '@testing-library/react';
 import Log from './Log';
-import { renderWithIntl } from '../../utils/test';
+import { render } from '../../utils/test';
 
 describe('Log', () => {
   it('renders default content', async () => {
-    const { getByText } = renderWithIntl(<Log fetchLogs={() => undefined} />);
+    const { getByText } = render(<Log fetchLogs={() => undefined} />);
     await waitFor(() => getByText(/No log available/i));
   });
 
   it('renders the provided content', async () => {
-    const { getByText } = renderWithIntl(
+    const { getByText } = render(
       <Log
         stepStatus={{ terminated: { reason: 'Completed' } }}
         fetchLogs={() => 'testing'}
@@ -33,7 +33,7 @@ describe('Log', () => {
   });
 
   it('renders trailer', async () => {
-    const { getByText } = renderWithIntl(
+    const { getByText } = render(
       <Log
         stepStatus={{ terminated: { reason: 'Completed' } }}
         fetchLogs={() => 'testing'}
@@ -43,7 +43,7 @@ describe('Log', () => {
   });
 
   it('renders error trailer', async () => {
-    const { getByText } = renderWithIntl(
+    const { getByText } = render(
       <Log
         stepStatus={{ terminated: { reason: 'Error' } }}
         fetchLogs={() => 'testing'}
@@ -57,7 +57,7 @@ describe('Log', () => {
       { length: 60000 },
       (v, i) => `Line ${i + 1}\n`
     ).join('');
-    const { getByText } = renderWithIntl(
+    const { getByText } = render(
       <Log
         stepStatus={{ terminated: { reason: 'Completed' } }}
         fetchLogs={() => long}
@@ -68,7 +68,7 @@ describe('Log', () => {
   });
 
   it('renders the provided content when streaming logs', async () => {
-    const { getByText } = renderWithIntl(
+    const { getByText } = render(
       <Log
         stepStatus={{ terminated: { reason: 'Completed' } }}
         fetchLogs={() =>
@@ -91,7 +91,7 @@ describe('Log', () => {
   });
 
   it('renders trailer when streaming logs', async () => {
-    const { getByText } = renderWithIntl(
+    const { getByText } = render(
       <Log
         stepStatus={{ terminated: { reason: 'Completed' } }}
         fetchLogs={() =>
@@ -114,7 +114,7 @@ describe('Log', () => {
   });
 
   it('renders error trailer when streaming logs', async () => {
-    const { getByText } = renderWithIntl(
+    const { getByText } = render(
       <Log
         stepStatus={{ terminated: { reason: 'Error' } }}
         fetchLogs={() =>

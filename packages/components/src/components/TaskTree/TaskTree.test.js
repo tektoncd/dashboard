@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,7 +14,7 @@ limitations under the License.
 import React from 'react';
 import { fireEvent } from '@testing-library/react';
 import TaskTree from './TaskTree';
-import { renderWithIntl } from '../../utils/test';
+import { render } from '../../utils/test';
 
 const getProps = () => ({
   onSelect: () => {},
@@ -74,19 +74,19 @@ const getProps = () => ({
 });
 
 it('TaskTree renders', () => {
-  renderWithIntl(<TaskTree {...getProps()} />);
+  render(<TaskTree {...getProps()} />);
 });
 
 it('TaskTree renders when taskRuns is falsy', () => {
-  renderWithIntl(<TaskTree {...getProps()} taskRuns={null} />);
+  render(<TaskTree {...getProps()} taskRuns={null} />);
 });
 
 it('TaskTree renders when taskRuns contains a falsy run', () => {
-  renderWithIntl(<TaskTree {...getProps()} taskRuns={[null]} />);
+  render(<TaskTree {...getProps()} taskRuns={[null]} />);
 });
 
 it('TaskTree renders and expands first Task in TaskRun with no error', () => {
-  const { queryByText } = renderWithIntl(<TaskTree {...getProps()} />);
+  const { queryByText } = render(<TaskTree {...getProps()} />);
   // Selected Task should have two child elements. The anchor and ordered list
   // of steps in expanded task
   expect(queryByText('A Task').parentNode.parentNode.childNodes).toHaveLength(
@@ -104,7 +104,7 @@ it('TaskTree renders and expands error Task in TaskRun', () => {
   const props = getProps();
   props.taskRuns[1].status.conditions[0].status = 'False';
 
-  const { queryByText } = renderWithIntl(<TaskTree {...props} />);
+  const { queryByText } = render(<TaskTree {...props} />);
   // Selected Task should have two child elements. The anchor and ordered list
   // of steps in expanded task
   expect(queryByText('A Task').parentNode.parentNode.childNodes).toHaveLength(
@@ -123,7 +123,7 @@ it('TaskTree renders and expands first error Task in TaskRun', () => {
   props.taskRuns[1].status.conditions[0].status = 'False';
   props.taskRuns[2].status.conditions[0].status = 'False';
 
-  const { queryByText } = renderWithIntl(<TaskTree {...props} />);
+  const { queryByText } = render(<TaskTree {...props} />);
   // Selected Task should have two child elements. The anchor and ordered list
   // of steps in expanded task
   expect(queryByText('A Task').parentNode.parentNode.childNodes).toHaveLength(
@@ -139,7 +139,7 @@ it('TaskTree renders and expands first error Task in TaskRun', () => {
 
 it('TaskTree handles click event on Task', () => {
   const onSelect = jest.fn();
-  const { getByText } = renderWithIntl(
+  const { getByText } = render(
     <TaskTree {...getProps()} onSelect={onSelect} />
   );
   expect(onSelect).toHaveBeenCalledTimes(1);
@@ -150,7 +150,7 @@ it('TaskTree handles click event on Task', () => {
 
 it('TaskTree handles click event on Step', () => {
   const onSelect = jest.fn();
-  const { getByText } = renderWithIntl(
+  const { getByText } = render(
     <TaskTree {...getProps()} selectedTaskId="task" onSelect={onSelect} />
   );
   onSelect.mockClear();

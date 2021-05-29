@@ -14,17 +14,15 @@ limitations under the License.
 import React from 'react';
 import { waitFor } from '@testing-library/react';
 import PipelineRun from './PipelineRun';
-import { renderWithIntl } from '../../utils/test';
+import { render } from '../../utils/test';
 
 it('PipelineRunContainer renders', async () => {
-  const { getByText } = renderWithIntl(
-    <PipelineRun error={null} loading={false} />
-  );
+  const { getByText } = render(<PipelineRun error={null} loading={false} />);
   await waitFor(() => getByText('PipelineRun not found'));
 });
 
 it('PipelineRunContainer handles error state', async () => {
-  const { getByText } = renderWithIntl(<PipelineRun error="Error" />);
+  const { getByText } = render(<PipelineRun error="Error" />);
   await waitFor(() => getByText('Error loading PipelineRun'));
 });
 
@@ -66,7 +64,7 @@ it('PipelineRunContainer handles init step failures', async () => {
     }
   };
 
-  const { getByText } = renderWithIntl(
+  const { getByText } = render(
     <PipelineRun
       handleTaskSelected={() => {}}
       pipelineRun={pipelineRun}
@@ -158,7 +156,7 @@ it('PipelineRunContainer handles init step failures for retry', async () => {
     }
   }
 
-  const { getByText } = renderWithIntl(
+  const { getByText } = render(
     <TestWrapper>
       {({ handleTaskSelected, selectedStepId, selectedTaskId }) => (
         <PipelineRun

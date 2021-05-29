@@ -14,21 +14,17 @@ limitations under the License.
 import React from 'react';
 import { fireEvent, waitFor } from '@testing-library/react';
 import { TrashCan32 as Delete } from '@carbon/icons-react';
-import { renderWithIntl, renderWithRouter } from '../../utils/test';
+import { render, renderWithRouter } from '../../utils/test';
 import PipelineResources from './PipelineResources';
 
 it('PipelineResources renders empty state', () => {
-  const { queryByText } = renderWithIntl(
-    <PipelineResources pipelineResources={[]} />
-  );
+  const { queryByText } = render(<PipelineResources pipelineResources={[]} />);
   expect(queryByText(/no matching pipelineresources/i)).toBeTruthy();
   expect(queryByText('Namespace')).toBeTruthy();
 });
 
 it('PipelineResources renders headers state', () => {
-  const { queryByText } = renderWithIntl(
-    <PipelineResources pipelineResources={[]} />
-  );
+  const { queryByText } = render(<PipelineResources pipelineResources={[]} />);
   expect(queryByText(/pipelineresources/i)).toBeTruthy();
   expect(queryByText('Namespace')).toBeTruthy();
   expect(queryByText(/type/i)).toBeTruthy();

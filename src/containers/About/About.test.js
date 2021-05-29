@@ -15,7 +15,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { renderWithIntl } from '@tektoncd/dashboard-components/src/utils/test';
+import { render } from '@tektoncd/dashboard-components/src/utils/test';
 
 import About from '.';
 
@@ -39,7 +39,7 @@ describe('About', () => {
       }
     });
 
-    const { queryByText, queryAllByText } = renderWithIntl(
+    const { queryByText, queryAllByText } = render(
       <Provider store={store}>
         <About />)
       </Provider>
@@ -80,7 +80,7 @@ describe('About', () => {
       }
     });
 
-    const { queryByText } = renderWithIntl(
+    const { queryByText } = render(
       <Provider store={store}>
         <About />)
       </Provider>
@@ -111,7 +111,7 @@ describe('About', () => {
       }
     });
 
-    const { queryByText } = renderWithIntl(
+    const { queryByText } = render(
       <Provider store={store}>
         <About />)
       </Provider>
@@ -146,7 +146,7 @@ describe('About', () => {
       }
     });
 
-    const { queryByText } = renderWithIntl(
+    const { queryByText } = render(
       <Provider store={store}>
         <About />)
       </Provider>

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,7 +14,7 @@ limitations under the License.
 import React from 'react';
 
 import DetailsHeader from './DetailsHeader';
-import { renderWithIntl } from '../../utils/test';
+import { render } from '../../utils/test';
 
 const props = {
   displayName: 'test name'
@@ -22,47 +22,47 @@ const props = {
 
 describe('DetailsHeader', () => {
   it('renders the provided content', () => {
-    const { queryByText } = renderWithIntl(<DetailsHeader {...props} />);
+    const { queryByText } = render(<DetailsHeader {...props} />);
     expect(queryByText(/test name/i)).toBeTruthy();
   });
 
   it('renders the running state', () => {
-    const { queryByText } = renderWithIntl(
+    const { queryByText } = render(
       <DetailsHeader {...props} status="running" />
     );
     expect(queryByText(/running/i)).toBeTruthy();
   });
 
   it('renders the completed state', () => {
-    const { queryByText } = renderWithIntl(
+    const { queryByText } = render(
       <DetailsHeader {...props} status="terminated" reason="Completed" />
     );
     expect(queryByText(/completed/i)).toBeTruthy();
   });
 
   it('renders the cancelled state', () => {
-    const { queryByText } = renderWithIntl(
+    const { queryByText } = render(
       <DetailsHeader {...props} status="cancelled" />
     );
     expect(queryByText(/Cancelled/i)).toBeTruthy();
   });
 
   it('renders the cancelled state for TaskRunCancelled', () => {
-    const { queryByText } = renderWithIntl(
+    const { queryByText } = render(
       <DetailsHeader {...props} status="terminated" reason="TaskRunCancelled" />
     );
     expect(queryByText(/Cancelled/i)).toBeTruthy();
   });
 
   it('renders the cancelled state for TaskRunTimeout', () => {
-    const { queryByText } = renderWithIntl(
+    const { queryByText } = render(
       <DetailsHeader {...props} status="terminated" reason="TaskRunTimeout" />
     );
     expect(queryByText(/Cancelled/i)).toBeTruthy();
   });
 
   it('renders the failed state', () => {
-    const { queryByText } = renderWithIntl(
+    const { queryByText } = render(
       <DetailsHeader {...props} status="terminated" />
     );
     expect(queryByText(/failed/i)).toBeTruthy();
@@ -81,7 +81,7 @@ describe('DetailsHeader', () => {
       }
     };
 
-    const { queryByText } = renderWithIntl(
+    const { queryByText } = render(
       <DetailsHeader {...props} taskRun={taskRun} />
     );
     expect(queryByText(/waiting/i)).toBeTruthy();
@@ -100,7 +100,7 @@ describe('DetailsHeader', () => {
       }
     };
 
-    const { queryByText } = renderWithIntl(
+    const { queryByText } = render(
       <DetailsHeader {...props} taskRun={taskRun} type="taskRun" />
     );
     expect(queryByText(/pending/i)).toBeTruthy();
@@ -113,7 +113,7 @@ describe('DetailsHeader', () => {
       }
     };
 
-    const { queryByText } = renderWithIntl(
+    const { queryByText } = render(
       <DetailsHeader {...props} stepStatus={stepStatus} />
     );
     expect(queryByText(/duration/i)).toBeFalsy();
@@ -128,7 +128,7 @@ describe('DetailsHeader', () => {
       }
     };
 
-    const { queryByText } = renderWithIntl(
+    const { queryByText } = render(
       <DetailsHeader {...props} stepStatus={stepStatus} />
     );
     expect(queryByText(/duration/i)).toBeTruthy();
@@ -140,7 +140,7 @@ describe('DetailsHeader', () => {
       waiting: {}
     };
 
-    const { queryByText } = renderWithIntl(
+    const { queryByText } = render(
       <DetailsHeader {...props} stepStatus={stepStatus} />
     );
     expect(queryByText(/duration/i)).toBeFalsy();
@@ -162,7 +162,7 @@ describe('DetailsHeader', () => {
       }
     };
 
-    const { queryByText } = renderWithIntl(
+    const { queryByText } = render(
       <DetailsHeader {...props} taskRun={taskRun} type="taskRun" />
     );
     expect(queryByText(/duration/i)).toBeTruthy();

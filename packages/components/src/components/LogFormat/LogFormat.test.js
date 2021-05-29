@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,11 +12,11 @@ limitations under the License.
 */
 
 import React from 'react';
-import { renderWithIntl } from '../../utils/test';
+import { render } from '../../utils/test';
 import LogFormat from './LogFormat';
 
 const getElement = (text, query) => {
-  const { queryByText } = renderWithIntl(<LogFormat>{text}</LogFormat>);
+  const { queryByText } = render(<LogFormat>{text}</LogFormat>);
   const queryRegex = new RegExp(query, 'i');
   return queryByText(queryRegex);
 };
@@ -256,7 +256,7 @@ describe('LogFormat', () => {
 
   it('converts new lines as line breaks', () => {
     const text = 'Hello\n\nWorld';
-    const { container } = renderWithIntl(<LogFormat>{text}</LogFormat>);
+    const { container } = render(<LogFormat>{text}</LogFormat>);
     expect(container.childNodes[0].innerHTML).toBe(
       '<div>Hello</div><br><div>World</div>'
     );
@@ -265,19 +265,19 @@ describe('LogFormat', () => {
   it('separates text by new lines', () => {
     const text =
       'Hello World\nA dashboard for Tekton! https://github.com/tektoncd/dashboard\nTekon is cool!';
-    const { container } = renderWithIntl(<LogFormat>{text}</LogFormat>);
+    const { container } = render(<LogFormat>{text}</LogFormat>);
     expect(container.childNodes[0].childNodes).toHaveLength(3);
   });
 
   it('separates text by new lines and carriage returns', () => {
     const text = '\r \n \r \n\r \n';
-    const { container } = renderWithIntl(<LogFormat>{text}</LogFormat>);
+    const { container } = render(<LogFormat>{text}</LogFormat>);
     expect(container.childNodes[0].childNodes).toHaveLength(4);
   });
 
   it('handles consecutive carriage returns without error', () => {
     const text = '\r\r';
-    const { container } = renderWithIntl(<LogFormat>{text}</LogFormat>);
+    const { container } = render(<LogFormat>{text}</LogFormat>);
     expect(container.childNodes[0].childNodes).toHaveLength(1);
   });
 });

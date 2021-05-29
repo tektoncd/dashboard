@@ -14,7 +14,7 @@ limitations under the License.
 import React from 'react';
 import { fireEvent, waitFor } from '@testing-library/react';
 import Task from './Task';
-import { renderWithIntl } from '../../utils/test';
+import { render } from '../../utils/test';
 
 const props = {
   onSelect: () => {},
@@ -23,21 +23,19 @@ const props = {
 
 describe('Task', () => {
   it('renders default content', () => {
-    const { queryByText } = renderWithIntl(<Task {...props} />);
+    const { queryByText } = render(<Task {...props} />);
     expect(queryByText(/a task/i)).toBeTruthy();
   });
 
   it('does not render steps in collapsed state', () => {
     const steps = [{ name: 'a step' }];
-    const { queryByText } = renderWithIntl(<Task {...props} steps={steps} />);
+    const { queryByText } = render(<Task {...props} steps={steps} />);
     expect(queryByText(/a step/i)).toBeFalsy();
   });
 
   it('renders steps in expanded state', () => {
     const steps = [{ name: 'a step' }];
-    const { queryByText } = renderWithIntl(
-      <Task {...props} expanded steps={steps} />
-    );
+    const { queryByText } = render(<Task {...props} expanded steps={steps} />);
     expect(queryByText(/a step/i)).toBeTruthy();
   });
 
@@ -46,9 +44,7 @@ describe('Task', () => {
       { name: 'a step', terminated: { reason: 'Completed' } },
       { name: 'a step two', terminated: { reason: 'Completed' } }
     ];
-    const { queryByText } = renderWithIntl(
-      <Task {...props} expanded steps={steps} />
-    );
+    const { queryByText } = render(<Task {...props} expanded steps={steps} />);
     waitFor(() =>
       queryByText(
         (content, element) =>
@@ -63,9 +59,7 @@ describe('Task', () => {
       { name: 'a step', terminated: { reason: 'Completed' } },
       { name: 'a step two', terminated: { reason: 'Error' } }
     ];
-    const { queryByText } = renderWithIntl(
-      <Task {...props} expanded steps={steps} />
-    );
+    const { queryByText } = render(<Task {...props} expanded steps={steps} />);
     waitFor(() =>
       queryByText(
         (content, element) =>
@@ -80,9 +74,7 @@ describe('Task', () => {
       { name: 'a step', terminated: { reason: 'Completed' } },
       { name: 'a step two', terminated: { reason: undefined } }
     ];
-    const { queryByText } = renderWithIntl(
-      <Task {...props} expanded steps={steps} />
-    );
+    const { queryByText } = render(<Task {...props} expanded steps={steps} />);
     waitFor(() =>
       queryByText(
         (content, element) =>
@@ -98,36 +90,34 @@ describe('Task', () => {
       { name: 'step 2', terminated: { reason: 'Error' } },
       { name: 'step 3', terminated: { reason: 'Completed' } }
     ];
-    const { queryByText } = renderWithIntl(
-      <Task {...props} expanded steps={steps} />
-    );
+    const { queryByText } = render(<Task {...props} expanded steps={steps} />);
     expect(queryByText(/step 1/i)).toBeTruthy();
     expect(queryByText(/step 2/i)).toBeTruthy();
     expect(queryByText(/step 3/i)).toBeTruthy();
   });
 
   it('renders success state', () => {
-    renderWithIntl(<Task {...props} succeeded="True" />);
+    render(<Task {...props} succeeded="True" />);
   });
 
   it('renders failure state', () => {
-    renderWithIntl(<Task {...props} succeeded="False" />);
+    render(<Task {...props} succeeded="False" />);
   });
 
   it('renders unknown state', () => {
-    renderWithIntl(<Task {...props} succeeded="Unknown" />);
+    render(<Task {...props} succeeded="Unknown" />);
   });
 
   it('renders pending state', () => {
-    renderWithIntl(<Task {...props} succeeded="Unknown" reason="Pending" />);
+    render(<Task {...props} succeeded="Unknown" reason="Pending" />);
   });
 
   it('renders running state', () => {
-    renderWithIntl(<Task {...props} succeeded="Unknown" reason="Running" />);
+    render(<Task {...props} succeeded="Unknown" reason="Running" />);
   });
 
   it('renders cancelled state', () => {
-    renderWithIntl(
+    render(
       <Task
         {...props}
         expanded
@@ -140,14 +130,14 @@ describe('Task', () => {
 
   it('renders selected step state', () => {
     const steps = [{ name: 'a step' }];
-    renderWithIntl(
+    render(
       <Task {...props} expanded selectedStepId="some-step" steps={steps} />
     );
   });
 
   it('handles click event', () => {
     const onSelect = jest.fn();
-    const { getByText } = renderWithIntl(
+    const { getByText } = render(
       <Task displayName="build" onSelect={onSelect} />
     );
     fireEvent.click(getByText(/build/i));
@@ -157,7 +147,7 @@ describe('Task', () => {
   it('handles click event on Step', () => {
     const onSelect = jest.fn();
     const steps = [{ name: 'build' }];
-    const { getByText } = renderWithIntl(
+    const { getByText } = render(
       <Task displayName="A Task" expanded onSelect={onSelect} steps={steps} />
     );
     expect(onSelect).not.toHaveBeenCalled();

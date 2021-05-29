@@ -12,11 +12,11 @@ limitations under the License.
 */
 
 import React from 'react';
-import { renderWithIntl, renderWithRouter } from '../../utils/test';
+import { render, renderWithRouter } from '../../utils/test';
 import StepDefinition from './StepDefinition';
 
 it('StepDefinition renders default content', () => {
-  const { queryByText } = renderWithIntl(<StepDefinition taskRun={{}} />);
+  const { queryByText } = render(<StepDefinition taskRun={{}} />);
   expect(queryByText(/Step definition not available/i)).toBeTruthy();
 });
 
@@ -26,7 +26,7 @@ it('StepDefinition renders the provided content', () => {
     command: ['docker'],
     name: 'test name'
   };
-  const { queryByText } = renderWithIntl(
+  const { queryByText } = render(
     <StepDefinition definition={definition} taskRun={{}} />
   );
 

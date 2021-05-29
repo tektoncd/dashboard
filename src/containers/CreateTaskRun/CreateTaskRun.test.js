@@ -18,7 +18,7 @@ import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
-import { renderWithIntl } from '@tektoncd/dashboard-components/src/utils/test';
+import { render } from '@tektoncd/dashboard-components/src/utils/test';
 
 import CreateTaskRun from './CreateTaskRun';
 import * as PipelineResourcesAPI from '../../api/pipelineResources';
@@ -305,7 +305,7 @@ describe('CreateTaskRun', () => {
       getByTitle,
       queryByText,
       queryByDisplayValue
-    } = renderWithIntl(
+    } = render(
       <Provider store={store.getStore()}>
         <CreateTaskRun {...props} />
       </Provider>
@@ -340,7 +340,7 @@ describe('CreateTaskRun', () => {
       getByText,
       queryByText,
       queryByDisplayValue
-    } = renderWithIntl(
+    } = render(
       <Provider store={store.getStore()}>
         <CreateTaskRun {...props} />
       </Provider>
@@ -373,7 +373,7 @@ describe('CreateTaskRun', () => {
       queryByText,
       queryAllByText,
       queryByPlaceholderText
-    } = renderWithIntl(
+    } = render(
       <Provider
         store={mockStore({
           ...testStore,
@@ -419,7 +419,7 @@ describe('CreateTaskRun', () => {
       getByText,
       queryByDisplayValue,
       queryByText
-    } = renderWithIntl(
+    } = render(
       <Provider store={store.getStore()}>
         <CreateTaskRun {...props} />
       </Provider>
@@ -454,7 +454,7 @@ describe('CreateTaskRun', () => {
       queryAllByLabelText,
       queryByText,
       queryByDisplayValue
-    } = renderWithIntl(
+    } = render(
       <Provider store={store.getStore()}>
         <CreateTaskRun {...props} location={{ search: '?taskName=task-1' }} />
       </Provider>
@@ -472,7 +472,7 @@ describe('CreateTaskRun', () => {
       getByText,
       getByPlaceholderText,
       queryByDisplayValue
-    } = renderWithIntl(
+    } = render(
       <Provider store={store.getStore()}>
         <CreateTaskRun {...props} />
       </Provider>
@@ -492,11 +492,7 @@ describe('CreateTaskRun', () => {
   });
 
   it('resets Task and ServiceAccount when namespace changes', async () => {
-    const {
-      getByPlaceholderText,
-      getByText,
-      getByDisplayValue
-    } = renderWithIntl(
+    const { getByPlaceholderText, getByText, getByDisplayValue } = render(
       <Provider store={store.getStore()}>
         <CreateTaskRun {...props} />
       </Provider>
@@ -529,7 +525,7 @@ describe('CreateTaskRun', () => {
       getByText,
       queryByText,
       queryByDisplayValue
-    } = renderWithIntl(
+    } = render(
       <Provider store={store.getStore()}>
         <CreateTaskRun {...props} />
       </Provider>
@@ -592,7 +588,7 @@ describe('CreateTaskRun', () => {
 
   it('handles onClose event', () => {
     jest.spyOn(props.history, 'push');
-    const { getByText } = renderWithIntl(
+    const { getByText } = render(
       <Provider store={store.getStore()}>
         <CreateTaskRun {...props} />
       </Provider>
@@ -609,7 +605,7 @@ describe('CreateTaskRun', () => {
       getByText,
       queryAllByText,
       queryByText
-    } = renderWithIntl(
+    } = render(
       <Provider
         store={mockStore({
           ...testStore,
@@ -681,7 +677,7 @@ describe('CreateTaskRun', () => {
 
   it('handles error getting task', async () => {
     jest.spyOn(reducers, 'getTask').mockImplementation(() => null);
-    const { getByPlaceholderText, getByText, queryByText } = renderWithIntl(
+    const { getByPlaceholderText, getByText, queryByText } = render(
       <Provider store={store.getStore()}>
         <CreateTaskRun {...props} />
       </Provider>
@@ -692,7 +688,7 @@ describe('CreateTaskRun', () => {
 
   it('handles error getting task controlled', () => {
     const badTaskRef = 'task-thisDoesNotExist';
-    const { getByPlaceholderText, queryByText } = renderWithIntl(
+    const { getByPlaceholderText, queryByText } = render(
       <Provider store={store.getStore()}>
         <CreateTaskRun
           {...props}
@@ -713,7 +709,7 @@ describe('CreateTaskRun', () => {
       queryAllByTitle,
       queryByText,
       queryByDisplayValue
-    } = renderWithIntl(
+    } = render(
       <Provider store={store.getStore()}>
         <CreateTaskRun {...props} />
       </Provider>

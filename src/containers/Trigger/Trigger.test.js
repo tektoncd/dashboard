@@ -15,7 +15,7 @@ import React from 'react';
 import { waitFor } from '@testing-library/react';
 import { createIntl } from 'react-intl';
 import {
-  renderWithIntl,
+  render,
   renderWithRouter
 } from '@tektoncd/dashboard-components/src/utils/test';
 
@@ -36,7 +36,7 @@ describe('TriggerContainer', () => {
 
     const errorMessage = 'fake_errorMessage';
 
-    const { getByText } = renderWithIntl(
+    const { getByText } = render(
       <TriggerContainer
         error={errorMessage}
         fetchTrigger={() => Promise.resolve()}
@@ -59,7 +59,7 @@ describe('TriggerContainer', () => {
       }
     };
 
-    const { getByText, rerender } = renderWithIntl(
+    const { getByText, rerender } = render(
       <TriggerContainer
         fetchTrigger={fetchTriggerSpy}
         intl={intl}
@@ -69,7 +69,7 @@ describe('TriggerContainer', () => {
     await waitFor(() => getByText('Error loading resource'));
     expect(fetchTriggerSpy).toHaveBeenCalledTimes(1);
 
-    renderWithIntl(
+    render(
       <TriggerContainer
         fetchTrigger={fetchTriggerSpy}
         intl={intl}
@@ -86,7 +86,7 @@ describe('TriggerContainer', () => {
         namespace: 'updated_namespace'
       }
     };
-    renderWithIntl(
+    render(
       <TriggerContainer
         fetchTrigger={fetchTriggerSpy}
         intl={intl}
@@ -102,7 +102,7 @@ describe('TriggerContainer', () => {
         triggerName: 'updated_triggerName'
       }
     };
-    renderWithIntl(
+    render(
       <TriggerContainer
         fetchTrigger={fetchTriggerSpy}
         intl={intl}
@@ -113,7 +113,7 @@ describe('TriggerContainer', () => {
     );
     expect(fetchTriggerSpy).toHaveBeenCalledTimes(3);
 
-    renderWithIntl(
+    render(
       <TriggerContainer
         fetchTrigger={fetchTriggerSpy}
         intl={intl}

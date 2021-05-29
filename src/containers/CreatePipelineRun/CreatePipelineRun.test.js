@@ -18,7 +18,7 @@ import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
-import { renderWithIntl } from '@tektoncd/dashboard-components/src/utils/test';
+import { render } from '@tektoncd/dashboard-components/src/utils/test';
 
 import CreatePipelineRun from './CreatePipelineRun';
 import * as PipelineResourcesAPI from '../../api/pipelineResources';
@@ -267,7 +267,7 @@ describe('CreatePipelineRun', () => {
       getByTitle,
       queryByText,
       queryByDisplayValue
-    } = renderWithIntl(
+    } = render(
       <Provider store={mockTestStore}>
         <CreatePipelineRun {...props} />
       </Provider>
@@ -304,7 +304,7 @@ describe('CreatePipelineRun', () => {
       getByText,
       queryByText,
       queryByDisplayValue
-    } = renderWithIntl(
+    } = render(
       <Provider store={mockTestStore}>
         <CreatePipelineRun {...props} />
       </Provider>
@@ -337,7 +337,7 @@ describe('CreatePipelineRun', () => {
       queryByText,
       queryAllByText,
       queryByPlaceholderText
-    } = renderWithIntl(
+    } = render(
       <Provider
         store={mockStore({
           ...testStore,
@@ -387,7 +387,7 @@ describe('CreatePipelineRun', () => {
       getByText,
       queryByDisplayValue,
       queryByText
-    } = renderWithIntl(
+    } = render(
       <Provider store={mockTestStore}>
         <CreatePipelineRun {...props} />
       </Provider>
@@ -424,7 +424,7 @@ describe('CreatePipelineRun', () => {
       queryAllByLabelText,
       queryByText,
       queryByDisplayValue
-    } = renderWithIntl(
+    } = render(
       <Provider store={mockTestStore}>
         <CreatePipelineRun
           {...props}
@@ -445,7 +445,7 @@ describe('CreatePipelineRun', () => {
       getByText,
       getByPlaceholderText,
       queryByDisplayValue
-    } = renderWithIntl(
+    } = render(
       <Provider store={mockStore(testStore)}>
         <CreatePipelineRun {...props} />
       </Provider>
@@ -467,11 +467,7 @@ describe('CreatePipelineRun', () => {
   it('resets Pipeline and ServiceAccount when namespace changes', async () => {
     const mockTestStore = mockStore(testStore);
     jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
-    const {
-      getByPlaceholderText,
-      getByText,
-      getByDisplayValue
-    } = renderWithIntl(
+    const { getByPlaceholderText, getByText, getByDisplayValue } = render(
       <Provider store={mockTestStore}>
         <CreatePipelineRun {...props} />
       </Provider>
@@ -506,7 +502,7 @@ describe('CreatePipelineRun', () => {
       getByText,
       queryByText,
       queryByDisplayValue
-    } = renderWithIntl(
+    } = render(
       <Provider store={mockTestStore}>
         <CreatePipelineRun {...props} />
       </Provider>
@@ -563,7 +559,7 @@ describe('CreatePipelineRun', () => {
 
   it('handles onClose event', () => {
     jest.spyOn(props.history, 'push');
-    const { getByText } = renderWithIntl(
+    const { getByText } = render(
       <Provider store={mockStore(testStore)}>
         <CreatePipelineRun {...props} />
       </Provider>
@@ -585,7 +581,7 @@ describe('CreatePipelineRun', () => {
       getByText,
       queryAllByText,
       queryByText
-    } = renderWithIntl(
+    } = render(
       <Provider store={mockTestStore}>
         <CreatePipelineRun {...props} />
       </Provider>
@@ -654,7 +650,7 @@ describe('CreatePipelineRun', () => {
     const mockTestStore = mockStore(testStore);
     jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
     jest.spyOn(reducers, 'getPipeline').mockImplementation(() => null);
-    const { getByPlaceholderText, getByText, queryByText } = renderWithIntl(
+    const { getByPlaceholderText, getByText, queryByText } = render(
       <Provider store={mockTestStore}>
         <CreatePipelineRun {...props} />
       </Provider>
@@ -667,7 +663,7 @@ describe('CreatePipelineRun', () => {
     const mockTestStore = mockStore(testStore);
     jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
     const badPipelineName = 'pipeline-thisDoesNotExist';
-    const { getByPlaceholderText, queryByText } = renderWithIntl(
+    const { getByPlaceholderText, queryByText } = render(
       <Provider store={mockTestStore}>
         <CreatePipelineRun
           {...props}
@@ -690,7 +686,7 @@ describe('CreatePipelineRun', () => {
       queryAllByTitle,
       queryByText,
       queryByDisplayValue
-    } = renderWithIntl(
+    } = render(
       <Provider store={mockTestStore}>
         <CreatePipelineRun {...props} />
       </Provider>
@@ -709,7 +705,7 @@ describe('CreatePipelineRun', () => {
   it('handles close', () => {
     jest.spyOn(props.history, 'push');
     const mockTestStore = mockStore(testStore);
-    const { getByText } = renderWithIntl(
+    const { getByText } = render(
       <Provider store={mockTestStore}>
         <CreatePipelineRun {...props} />
       </Provider>
