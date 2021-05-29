@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,7 +16,7 @@ import { fireEvent, getNodeText } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { renderWithIntl } from '@tektoncd/dashboard-components/src/utils/test';
+import { render } from '@tektoncd/dashboard-components/src/utils/test';
 
 import ServiceAccountsDropdown from './ServiceAccountsDropdown';
 import * as API from '../../api/serviceAccounts';
@@ -127,7 +127,7 @@ describe('ServiceAccountsDropdown', () => {
       ...namespacesStoreBlue,
       notifications: {}
     });
-    const { getByPlaceholderText, getAllByText, queryByText } = renderWithIntl(
+    const { getByPlaceholderText, getAllByText, queryByText } = render(
       <Provider store={store}>
         <ServiceAccountsDropdown {...props} />
       </Provider>
@@ -152,7 +152,7 @@ describe('ServiceAccountsDropdown', () => {
       getAllByText,
       queryByText,
       rerender
-    } = renderWithIntl(
+    } = render(
       <Provider store={blueStore}>
         <ServiceAccountsDropdown {...props} />
       </Provider>
@@ -172,7 +172,7 @@ describe('ServiceAccountsDropdown', () => {
       ...namespacesStoreGreen,
       notifications: {}
     });
-    renderWithIntl(
+    render(
       <Provider store={greenStore}>
         <ServiceAccountsDropdown {...props} />
       </Provider>,
@@ -194,11 +194,7 @@ describe('ServiceAccountsDropdown', () => {
       notifications: {}
     });
     // Select item 'service-account-1'
-    const {
-      queryByPlaceholderText,
-      queryByDisplayValue,
-      rerender
-    } = renderWithIntl(
+    const { queryByPlaceholderText, queryByDisplayValue, rerender } = render(
       <Provider store={store}>
         <ServiceAccountsDropdown
           {...props}
@@ -208,7 +204,7 @@ describe('ServiceAccountsDropdown', () => {
     );
     expect(queryByDisplayValue(/service-account-1/i)).toBeTruthy();
     // Select item 'service-account-2'
-    renderWithIntl(
+    render(
       <Provider store={store}>
         <ServiceAccountsDropdown
           {...props}
@@ -219,7 +215,7 @@ describe('ServiceAccountsDropdown', () => {
     );
     expect(queryByDisplayValue(/service-account-2/i)).toBeTruthy();
     // No selected item (select item '')
-    renderWithIntl(
+    render(
       <Provider store={store}>
         <ServiceAccountsDropdown {...props} selectedItem="" />
       </Provider>,
@@ -235,7 +231,7 @@ describe('ServiceAccountsDropdown', () => {
       notifications: {}
     });
     // Select namespace 'green'
-    const { queryByText, getByPlaceholderText, getAllByText } = renderWithIntl(
+    const { queryByText, getByPlaceholderText, getAllByText } = render(
       <Provider store={store}>
         <ServiceAccountsDropdown {...props} namespace="green" />
       </Provider>
@@ -259,7 +255,7 @@ describe('ServiceAccountsDropdown', () => {
       notifications: {}
     });
     // Select item 'service-account-1'
-    const { queryByPlaceholderText } = renderWithIntl(
+    const { queryByPlaceholderText } = render(
       <Provider store={store}>
         <ServiceAccountsDropdown {...props} />
       </Provider>
@@ -278,7 +274,7 @@ describe('ServiceAccountsDropdown', () => {
       ...namespacesStoreBlue,
       notifications: {}
     });
-    const { queryByText } = renderWithIntl(
+    const { queryByText } = render(
       <Provider store={store}>
         <ServiceAccountsDropdown {...props} />
       </Provider>
@@ -293,7 +289,7 @@ describe('ServiceAccountsDropdown', () => {
       notifications: {}
     });
     const onChange = jest.fn();
-    const { getByPlaceholderText, getByText } = renderWithIntl(
+    const { getByPlaceholderText, getByText } = render(
       <Provider store={store}>
         <ServiceAccountsDropdown {...props} onChange={onChange} />
       </Provider>

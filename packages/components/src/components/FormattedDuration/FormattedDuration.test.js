@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,18 +12,18 @@ limitations under the License.
 */
 
 import React from 'react';
-import { renderWithIntl } from '../../utils/test';
+import { render } from '../../utils/test';
 import FormattedDuration from './FormattedDuration';
 
 describe('FormattedDuration', () => {
   it('renders the duration and handles updates', () => {
-    const { getByText, getByTitle, rerender } = renderWithIntl(
+    const { getByText, getByTitle, rerender } = render(
       <FormattedDuration milliseconds={1000} />
     );
     expect(getByText(/1 second/i)).toBeTruthy();
     expect(getByTitle(/1 second/i)).toBeTruthy();
 
-    renderWithIntl(<FormattedDuration milliseconds={2000} />, { rerender });
+    render(<FormattedDuration milliseconds={2000} />, { rerender });
     expect(getByText(/2 seconds/i)).toBeTruthy();
     expect(getByTitle(/2 seconds/i)).toBeTruthy();
   });

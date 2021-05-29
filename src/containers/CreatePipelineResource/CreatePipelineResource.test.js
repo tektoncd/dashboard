@@ -19,7 +19,7 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { ALL_NAMESPACES, paths, urls } from '@tektoncd/dashboard-utils';
 import {
-  renderWithIntl,
+  render,
   renderWithRouter
 } from '@tektoncd/dashboard-components/src/utils/test';
 
@@ -63,7 +63,7 @@ describe('CreatePipelineResource', () => {
   it('renders blank', () => {
     jest.spyOn(API, 'getNamespaces').mockImplementation(() => []);
 
-    const { queryByText } = renderWithIntl(
+    const { queryByText } = render(
       <Provider store={store}>
         <CreatePipelineResource />
       </Provider>
@@ -100,7 +100,7 @@ describe('CreatePipelineResource', () => {
   const revisionValidationErrorRegExp = /Revision required/i;
 
   it('validates all empty inputs', () => {
-    const { queryByText } = renderWithIntl(
+    const { queryByText } = render(
       <Provider store={store}>
         <CreatePipelineResource />
       </Provider>
@@ -113,7 +113,7 @@ describe('CreatePipelineResource', () => {
   });
 
   it('errors when name starts with a "-"', () => {
-    const { queryByText, getByPlaceholderText } = renderWithIntl(
+    const { queryByText, getByPlaceholderText } = render(
       <Provider store={store}>
         <CreatePipelineResource />
       </Provider>
@@ -129,7 +129,7 @@ describe('CreatePipelineResource', () => {
   });
 
   it('errors when name ends with a "-"', () => {
-    const { queryByText, getByPlaceholderText } = renderWithIntl(
+    const { queryByText, getByPlaceholderText } = render(
       <Provider store={store}>
         <CreatePipelineResource />
       </Provider>
@@ -145,7 +145,7 @@ describe('CreatePipelineResource', () => {
   });
 
   it('errors when name contains "."', () => {
-    const { queryByText, getByPlaceholderText } = renderWithIntl(
+    const { queryByText, getByPlaceholderText } = render(
       <Provider store={store}>
         <CreatePipelineResource />
       </Provider>
@@ -161,7 +161,7 @@ describe('CreatePipelineResource', () => {
   });
 
   it('errors when name contains spaces', () => {
-    const { queryByText, getByPlaceholderText } = renderWithIntl(
+    const { queryByText, getByPlaceholderText } = render(
       <Provider store={store}>
         <CreatePipelineResource />
       </Provider>
@@ -177,7 +177,7 @@ describe('CreatePipelineResource', () => {
   });
 
   it('errors when name contains capital letters', () => {
-    const { queryByText, getByPlaceholderText } = renderWithIntl(
+    const { queryByText, getByPlaceholderText } = render(
       <Provider store={store}>
         <CreatePipelineResource />
       </Provider>
@@ -193,7 +193,7 @@ describe('CreatePipelineResource', () => {
   });
 
   it('doesn\'t error when contains "-" in the middle of the name', () => {
-    const { queryByText, getByPlaceholderText } = renderWithIntl(
+    const { queryByText, getByPlaceholderText } = render(
       <Provider store={store}>
         <CreatePipelineResource />
       </Provider>
@@ -209,7 +209,7 @@ describe('CreatePipelineResource', () => {
   });
 
   it("doesn't error when name contains number", () => {
-    const { queryByText, getByPlaceholderText } = renderWithIntl(
+    const { queryByText, getByPlaceholderText } = render(
       <Provider store={store}>
         <CreatePipelineResource />
       </Provider>
@@ -225,7 +225,7 @@ describe('CreatePipelineResource', () => {
   });
 
   it('errors when name contains 64 characters', () => {
-    const { queryByText, getByPlaceholderText } = renderWithIntl(
+    const { queryByText, getByPlaceholderText } = render(
       <Provider store={store}>
         <CreatePipelineResource />
       </Provider>
@@ -244,7 +244,7 @@ describe('CreatePipelineResource', () => {
   });
 
   it("doesn't error when name contains 63 characters", () => {
-    const { queryByText, getByPlaceholderText } = renderWithIntl(
+    const { queryByText, getByPlaceholderText } = render(
       <Provider store={store}>
         <CreatePipelineResource />
       </Provider>
@@ -262,7 +262,7 @@ describe('CreatePipelineResource', () => {
   });
 
   it("doesn't error when contains a valid namespace", () => {
-    const { queryByText, getByPlaceholderText, getByText } = renderWithIntl(
+    const { queryByText, getByPlaceholderText, getByText } = render(
       <Provider store={store}>
         <CreatePipelineResource />
       </Provider>
@@ -280,7 +280,7 @@ describe('CreatePipelineResource', () => {
   });
 
   it("doesn't error when a url is entered", () => {
-    const { queryByText, getByPlaceholderText, getByText } = renderWithIntl(
+    const { queryByText, getByPlaceholderText, getByText } = render(
       <Provider store={store}>
         <CreatePipelineResource />
       </Provider>
@@ -303,7 +303,7 @@ describe('CreatePipelineResource', () => {
   });
 
   it("doesn't error when a revision is entered", () => {
-    const { queryByText, getByPlaceholderText, getByText } = renderWithIntl(
+    const { queryByText, getByPlaceholderText, getByText } = render(
       <Provider store={store}>
         <CreatePipelineResource />
       </Provider>
@@ -326,7 +326,7 @@ describe('CreatePipelineResource', () => {
   });
 
   it('handles type change', () => {
-    const { queryByText, getByPlaceholderText, getByText } = renderWithIntl(
+    const { queryByText, getByPlaceholderText, getByText } = render(
       <Provider store={store}>
         <CreatePipelineResource />
       </Provider>

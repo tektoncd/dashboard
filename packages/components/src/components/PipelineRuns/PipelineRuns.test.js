@@ -13,18 +13,18 @@ limitations under the License.
 
 import React from 'react';
 
-import { renderWithIntl, renderWithRouter } from '../../utils/test';
+import { render, renderWithRouter } from '../../utils/test';
 import PipelineRuns from './PipelineRuns';
 
 describe('PipelineRuns', () => {
   it('renders empty state', () => {
-    const { queryByText } = renderWithIntl(<PipelineRuns pipelineRuns={[]} />);
+    const { queryByText } = render(<PipelineRuns pipelineRuns={[]} />);
     expect(queryByText(/no matching pipelineruns/i)).toBeTruthy();
     expect(queryByText('Namespace')).toBeTruthy();
   });
 
   it('hides namespace when omitted from the list of columns', () => {
-    const { queryByText } = renderWithIntl(
+    const { queryByText } = render(
       <PipelineRuns
         columns={['status', 'name', 'pipeline']}
         pipelineRuns={[]}
@@ -37,7 +37,7 @@ describe('PipelineRuns', () => {
   });
 
   it('renders custom columns', () => {
-    const { queryByText } = renderWithIntl(
+    const { queryByText } = render(
       <PipelineRuns
         columns={['aCustomColumn']}
         customColumns={{
@@ -67,7 +67,7 @@ describe('PipelineRuns', () => {
   });
 
   it('renders custom column headers', () => {
-    const { queryByText } = renderWithIntl(
+    const { queryByText } = render(
       <PipelineRuns
         columns={['status']}
         customColumns={{
@@ -93,7 +93,7 @@ describe('PipelineRuns', () => {
   });
 
   it('renders custom column values', () => {
-    const { queryByText } = renderWithIntl(
+    const { queryByText } = render(
       <PipelineRuns
         columns={['status']}
         customColumns={{

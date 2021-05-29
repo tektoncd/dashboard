@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,7 +14,7 @@ limitations under the License.
 import React from 'react';
 import { fireEvent } from '@testing-library/react';
 
-import { renderWithIntl } from '../../utils/test';
+import { render } from '../../utils/test';
 import TooltipDropdown from './TooltipDropdown';
 
 const props = {
@@ -33,7 +33,7 @@ it('TooltipDropdown renders', () => {
     getByPlaceholderText,
     queryByText,
     queryByDisplayValue
-  } = renderWithIntl(<TooltipDropdown {...props} />);
+  } = render(<TooltipDropdown {...props} />);
   fireEvent.click(getByPlaceholderText(initialTextRegExp));
   props.items.forEach(item => {
     expect(queryByText(item.text || item)).toBeTruthy();
@@ -43,14 +43,14 @@ it('TooltipDropdown renders', () => {
 });
 
 it('TooltipDropdown renders selected item', () => {
-  const { queryByDisplayValue } = renderWithIntl(
+  const { queryByDisplayValue } = render(
     <TooltipDropdown {...props} selectedItem={{ text: 'item 1' }} />
   );
   expect(queryByDisplayValue('item 1')).toBeTruthy();
 });
 
 it('TooltipDropdown renders empty', () => {
-  const { queryByPlaceholderText } = renderWithIntl(
+  const { queryByPlaceholderText } = render(
     <TooltipDropdown {...props} items={[]} />
   );
   expect(queryByPlaceholderText(/no items found/i)).toBeTruthy();
@@ -58,7 +58,7 @@ it('TooltipDropdown renders empty', () => {
 });
 
 it('TooltipDropdown renders loading skeleton', () => {
-  const { queryByPlaceholderText } = renderWithIntl(
+  const { queryByPlaceholderText } = render(
     <TooltipDropdown {...props} loading />
   );
   expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
@@ -66,7 +66,7 @@ it('TooltipDropdown renders loading skeleton', () => {
 
 it('TooltipDropdown handles onChange event', () => {
   const onChange = jest.fn();
-  const { getByPlaceholderText, getByText } = renderWithIntl(
+  const { getByPlaceholderText, getByText } = render(
     <TooltipDropdown {...props} onChange={onChange} />
   );
   fireEvent.click(getByPlaceholderText(initialTextRegExp));

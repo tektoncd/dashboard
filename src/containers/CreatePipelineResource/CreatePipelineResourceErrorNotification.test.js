@@ -15,7 +15,7 @@ import { fireEvent, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { renderWithIntl } from '@tektoncd/dashboard-components/src/utils/test';
+import { render } from '@tektoncd/dashboard-components/src/utils/test';
 
 import CreatePipelineResource from '.';
 import * as API from '../../api';
@@ -73,7 +73,7 @@ it('CreatePipelineResource error notification appears', async () => {
     notifications: {}
   });
 
-  const { getByPlaceholderText, getByText, queryByText } = renderWithIntl(
+  const { getByPlaceholderText, getByText, queryByText } = render(
     <Provider store={store}>
       <CreatePipelineResource />
     </Provider>

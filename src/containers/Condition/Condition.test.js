@@ -14,7 +14,7 @@ limitations under the License.
 import React from 'react';
 import { waitFor } from '@testing-library/react';
 import { createIntl } from 'react-intl';
-import { renderWithIntl } from '@tektoncd/dashboard-components/src/utils/test';
+import { render } from '@tektoncd/dashboard-components/src/utils/test';
 
 import { ConditionContainer } from './Condition';
 
@@ -33,7 +33,7 @@ describe('ConditionContainer', () => {
 
     const errorMessage = 'fake_errorMessage';
 
-    const { getByText } = renderWithIntl(
+    const { getByText } = render(
       <ConditionContainer
         error={errorMessage}
         fetchCondition={() => Promise.resolve()}
@@ -56,7 +56,7 @@ describe('ConditionContainer', () => {
       }
     };
 
-    const { getByText, rerender } = renderWithIntl(
+    const { getByText, rerender } = render(
       <ConditionContainer
         fetchCondition={fetchConditionSpy}
         intl={intl}
@@ -66,7 +66,7 @@ describe('ConditionContainer', () => {
     await waitFor(() => getByText('Error loading resource'));
     expect(fetchConditionSpy).toHaveBeenCalledTimes(1);
 
-    renderWithIntl(
+    render(
       <ConditionContainer
         fetchCondition={fetchConditionSpy}
         intl={intl}
@@ -83,7 +83,7 @@ describe('ConditionContainer', () => {
         namespace: 'updated_namespace'
       }
     };
-    renderWithIntl(
+    render(
       <ConditionContainer
         fetchCondition={fetchConditionSpy}
         intl={intl}
@@ -99,7 +99,7 @@ describe('ConditionContainer', () => {
         conditionName: 'updated_conditionName'
       }
     };
-    renderWithIntl(
+    render(
       <ConditionContainer
         fetchCondition={fetchConditionSpy}
         intl={intl}
@@ -110,7 +110,7 @@ describe('ConditionContainer', () => {
     );
     expect(fetchConditionSpy).toHaveBeenCalledTimes(3);
 
-    renderWithIntl(
+    render(
       <ConditionContainer
         fetchCondition={fetchConditionSpy}
         intl={intl}
@@ -142,7 +142,7 @@ describe('ConditionContainer', () => {
       }
     };
 
-    const { getByText } = renderWithIntl(
+    const { getByText } = render(
       <ConditionContainer
         condition={condition}
         fetchCondition={fetchConditionSpy}
@@ -172,7 +172,7 @@ describe('ConditionContainer', () => {
       }
     };
 
-    const { queryByText } = renderWithIntl(
+    const { queryByText } = render(
       <ConditionContainer
         condition={condition}
         fetchCondition={fetchConditionSpy}

@@ -15,17 +15,17 @@ import React from 'react';
 import { fireEvent, waitFor } from '@testing-library/react';
 
 import LabelFilter from './LabelFilter';
-import { renderWithIntl } from '../../utils/test';
+import { render } from '../../utils/test';
 
 it('LabelFilter renders', () => {
   const filter = 'tekton.dev/pipeline=demo-pipeline';
-  const { queryByText } = renderWithIntl(<LabelFilter filters={[filter]} />);
+  const { queryByText } = render(<LabelFilter filters={[filter]} />);
   expect(queryByText(/Input a label filter/i)).not.toBeNull();
   expect(queryByText(filter.replace('=', ':'))).not.toBeNull();
 });
 
 it('LabelFilter renders error on empty filter', () => {
-  const { getByText, queryByText } = renderWithIntl(<LabelFilter />);
+  const { getByText, queryByText } = render(<LabelFilter />);
   fireEvent.submit(getByText(/Input a label filter/i));
   expect(queryByText(/filters must be/i)).not.toBeNull();
 });
@@ -33,7 +33,7 @@ it('LabelFilter renders error on empty filter', () => {
 it('LabelFilter handles adding a filter', () => {
   const filter = 'app:test';
   const handleAddFilter = jest.fn();
-  const { getByPlaceholderText, getByText } = renderWithIntl(
+  const { getByPlaceholderText, getByText } = render(
     <LabelFilter handleAddFilter={handleAddFilter} />
   );
   fireEvent.change(getByPlaceholderText(/input a label filter/i), {
@@ -47,12 +47,9 @@ it('LabelFilter displays notification if character length is over 63 characters 
   const filter =
     'app:1234567890123456789012345678901234567890123456789012345678901234';
   const handleAddFilter = jest.fn();
-  const {
-    getByPlaceholderText,
-    getByText,
-    getByTitle,
-    queryByText
-  } = renderWithIntl(<LabelFilter handleAddFilter={handleAddFilter} />);
+  const { getByPlaceholderText, getByText, getByTitle, queryByText } = render(
+    <LabelFilter handleAddFilter={handleAddFilter} />
+  );
   fireEvent.change(getByPlaceholderText(/input a label filter/i), {
     target: { value: filter }
   });
@@ -75,12 +72,7 @@ it('LabelFilter handles adding a duplicate filter', async () => {
   const filter = 'app=test';
   const filterDisplayValue = 'app:test';
   const handleAddFilter = jest.fn();
-  const {
-    getByPlaceholderText,
-    getByText,
-    getByTitle,
-    queryByText
-  } = renderWithIntl(
+  const { getByPlaceholderText, getByText, getByTitle, queryByText } = render(
     <LabelFilter filters={[filter]} handleAddFilter={handleAddFilter} />
   );
   fireEvent.change(getByPlaceholderText(/input a label filter/i), {
@@ -96,7 +88,7 @@ it('LabelFilter handles adding a duplicate filter', async () => {
 it('LabelFilter handles deleting a filter', () => {
   const filter = 'tekton.dev/pipeline=demo-pipeline';
   const handleDeleteFilter = jest.fn();
-  const { getByText } = renderWithIntl(
+  const { getByText } = render(
     <LabelFilter filters={[filter]} handleDeleteFilter={handleDeleteFilter} />
   );
   fireEvent.click(getByText(filter.replace('=', ':')));
@@ -106,7 +98,7 @@ it('LabelFilter handles deleting a filter', () => {
 it('LabelFilter handles clearing all filters', () => {
   const filter = 'tekton.dev/pipeline=demo-pipeline';
   const handleClearFilters = jest.fn();
-  const { getByText } = renderWithIntl(
+  const { getByText } = render(
     <LabelFilter filters={[filter]} handleClearFilters={handleClearFilters} />
   );
   fireEvent.click(getByText(/clear all/i));

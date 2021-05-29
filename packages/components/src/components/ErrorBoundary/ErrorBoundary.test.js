@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,12 +12,12 @@ limitations under the License.
 */
 
 import React from 'react';
-import { renderWithIntl } from '../../utils/test';
+import { render } from '../../utils/test';
 
 import ErrorBoundary from './ErrorBoundary';
 
 it('ErrorBoundary renders children', () => {
-  const { queryByText } = renderWithIntl(
+  const { queryByText } = render(
     <ErrorBoundary>
       <span>hello</span>
     </ErrorBoundary>
@@ -30,7 +30,7 @@ it('ErrorBoundary renders the error message', () => {
     throw new Error();
   }
   jest.spyOn(console, 'error').mockImplementation(() => {}); // suppress error log from test output
-  const { queryByText } = renderWithIntl(
+  const { queryByText } = render(
     <ErrorBoundary>
       <Bomb />
     </ErrorBoundary>

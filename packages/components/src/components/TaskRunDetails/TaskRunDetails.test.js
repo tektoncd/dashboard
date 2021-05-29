@@ -14,14 +14,14 @@ limitations under the License.
 import React from 'react';
 import { fireEvent } from '@testing-library/react';
 
-import { renderWithIntl } from '../../utils/test';
+import { render } from '../../utils/test';
 import TaskRunDetails from './TaskRunDetails';
 
 describe('TaskRunDetails', () => {
   it('renders task name and error state', () => {
     const taskRunName = 'task-run-name';
     const status = 'error';
-    const { queryByText } = renderWithIntl(
+    const { queryByText } = render(
       <TaskRunDetails
         taskRun={{ metadata: { name: taskRunName }, spec: {}, status }}
       />
@@ -38,7 +38,7 @@ describe('TaskRunDetails', () => {
     const paramValue = 'v';
     const params = [{ name: paramKey, value: paramValue }];
     const description = 'param_description';
-    const { queryByText } = renderWithIntl(
+    const { queryByText } = render(
       <TaskRunDetails
         task={{
           metadata: 'task',
@@ -61,7 +61,7 @@ describe('TaskRunDetails', () => {
     const paramValue = 'v';
     const params = [{ name: paramKey, value: paramValue }];
     const description = 'param_description';
-    const { queryByText } = renderWithIntl(
+    const { queryByText } = render(
       <TaskRunDetails
         taskRun={{
           metadata: { name: taskRunName },
@@ -85,9 +85,7 @@ describe('TaskRunDetails', () => {
       spec: {},
       status: {}
     };
-    const { queryByText } = renderWithIntl(
-      <TaskRunDetails taskRun={taskRun} />
-    );
+    const { queryByText } = render(<TaskRunDetails taskRun={taskRun} />);
     expect(queryByText(/parameters/i)).toBeFalsy();
     expect(queryByText(/results/i)).toBeFalsy();
     expect(queryByText(/status/i)).toBeTruthy();
@@ -98,7 +96,7 @@ describe('TaskRunDetails', () => {
       metadata: { name: 'task-run-name' },
       spec: { params: [{ name: 'fake_name', value: 'fake_value' }] }
     };
-    const { queryByText, queryAllByText } = renderWithIntl(
+    const { queryByText, queryAllByText } = render(
       <TaskRunDetails taskRun={taskRun} view="status" />
     );
     expect(queryByText(/status/i)).toBeTruthy();
@@ -116,7 +114,7 @@ describe('TaskRunDetails', () => {
       spec: {},
       status: { taskResults: [{ name: resultName, value: 'hello' }] }
     };
-    const { queryByText } = renderWithIntl(
+    const { queryByText } = render(
       <TaskRunDetails
         task={{
           metadata: 'task',
@@ -142,7 +140,7 @@ describe('TaskRunDetails', () => {
       },
       status: { taskResults: [{ name: resultName, value: 'hello' }] }
     };
-    const { queryByText } = renderWithIntl(
+    const { queryByText } = render(
       <TaskRunDetails taskRun={taskRun} view="results" />
     );
     expect(queryByText(description)).toBeTruthy();

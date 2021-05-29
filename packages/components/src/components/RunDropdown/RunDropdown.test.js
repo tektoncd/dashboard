@@ -13,7 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import { fireEvent, waitFor } from '@testing-library/react';
-import { renderWithIntl } from '../../utils/test';
+import { render } from '../../utils/test';
 import RunDropdown from './RunDropdown';
 
 const resource = {
@@ -31,7 +31,7 @@ describe('RunDropdown dropdown no modal', () => {
         action: () => mockCallBack()
       }
     ];
-    const { getByText, getAllByTitle } = renderWithIntl(
+    const { getByText, getAllByTitle } = render(
       <RunDropdown items={items} resource={resource} />
     );
     fireEvent.click(getAllByTitle('Actions')[0]);
@@ -50,7 +50,7 @@ describe('RunDropdown dropdown missing disable default behaviour', () => {
         action: () => mockCallBack()
       }
     ];
-    const { getByText, getAllByTitle } = renderWithIntl(
+    const { getByText, getAllByTitle } = render(
       <RunDropdown items={items} resource={resource} />
     );
     fireEvent.click(getAllByTitle('Actions')[0]);
@@ -70,7 +70,7 @@ describe('RunDropdown disabled field', () => {
         action: () => mockCallBack()
       }
     ];
-    const { getByText, getAllByTitle } = renderWithIntl(
+    const { getByText, getAllByTitle } = render(
       <RunDropdown items={items} resource={resource} />
     );
     fireEvent.click(getAllByTitle('Actions')[0]);
@@ -96,7 +96,7 @@ describe('RunDropdown with modal', () => {
         }
       }
     ];
-    const { getByText, getAllByTitle } = renderWithIntl(
+    const { getByText, getAllByTitle } = render(
       <RunDropdown items={items} resource={resource} />
     );
     fireEvent.click(getAllByTitle('Actions')[0]);

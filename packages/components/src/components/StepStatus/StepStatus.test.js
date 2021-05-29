@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,11 +13,11 @@ limitations under the License.
 
 import React from 'react';
 import StepStatus from './StepStatus';
-import { renderWithIntl } from '../../utils/test';
+import { render } from '../../utils/test';
 
 describe('StepStatus', () => {
   it('renders default content', () => {
-    const { queryByText } = renderWithIntl(<StepStatus />);
+    const { queryByText } = render(<StepStatus />);
     expect(queryByText(/Status not available/i)).toBeTruthy();
   });
 
@@ -27,7 +27,7 @@ describe('StepStatus', () => {
     const name = 'fake_name';
     const terminated = 'fake_terminated';
     const status = { container, imageID, name, terminated };
-    const { queryByText } = renderWithIntl(<StepStatus status={status} />);
+    const { queryByText } = render(<StepStatus status={status} />);
 
     expect(queryByText(new RegExp(container, 'i'))).toBeTruthy();
     expect(queryByText(new RegExp(imageID, 'i'))).toBeTruthy();
@@ -43,7 +43,7 @@ describe('StepStatus', () => {
     const running = 'fake_running';
     const waiting = 'fake_waiting';
     const status = { container, imageID, name, running, waiting };
-    const { queryByText } = renderWithIntl(<StepStatus status={status} />);
+    const { queryByText } = render(<StepStatus status={status} />);
 
     expect(queryByText(new RegExp(container, 'i'))).toBeTruthy();
     expect(queryByText(new RegExp(imageID, 'i'))).toBeTruthy();

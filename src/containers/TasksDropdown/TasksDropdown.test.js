@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -17,7 +17,7 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
-import { renderWithIntl } from '@tektoncd/dashboard-components/src/utils/test';
+import { render } from '@tektoncd/dashboard-components/src/utils/test';
 
 import TasksDropdown from './TasksDropdown';
 import * as API from '../../api/tasks';
@@ -126,7 +126,7 @@ describe('TasksDropdown', () => {
       ...namespacesStoreBlue,
       notifications: {}
     });
-    const { getByPlaceholderText, getAllByText, queryByText } = renderWithIntl(
+    const { getByPlaceholderText, getAllByText, queryByText } = render(
       <Provider store={store}>
         <TasksDropdown {...props} />
       </Provider>
@@ -151,7 +151,7 @@ describe('TasksDropdown', () => {
       getAllByText,
       queryByText,
       rerender
-    } = renderWithIntl(
+    } = render(
       <Provider store={blueStore}>
         <TasksDropdown {...props} />
       </Provider>
@@ -171,7 +171,7 @@ describe('TasksDropdown', () => {
       ...namespacesStoreGreen,
       notifications: {}
     });
-    renderWithIntl(
+    render(
       <Provider store={greenStore}>
         <TasksDropdown {...props} />
       </Provider>,
@@ -193,18 +193,14 @@ describe('TasksDropdown', () => {
       notifications: {}
     });
     // Select item 'task-1'
-    const {
-      queryByDisplayValue,
-      queryByPlaceholderText,
-      rerender
-    } = renderWithIntl(
+    const { queryByDisplayValue, queryByPlaceholderText, rerender } = render(
       <Provider store={store}>
         <TasksDropdown {...props} selectedItem={{ text: 'task-1' }} />
       </Provider>
     );
     expect(queryByDisplayValue(/task-1/i)).toBeTruthy();
     // Select item 'task-2'
-    renderWithIntl(
+    render(
       <Provider store={store}>
         <TasksDropdown {...props} selectedItem={{ text: 'task-2' }} />
       </Provider>,
@@ -212,7 +208,7 @@ describe('TasksDropdown', () => {
     );
     expect(queryByDisplayValue(/task-2/i)).toBeTruthy();
     // No selected item (select item '')
-    renderWithIntl(
+    render(
       <Provider store={store}>
         <TasksDropdown {...props} selectedItem="" />
       </Provider>,
@@ -228,7 +224,7 @@ describe('TasksDropdown', () => {
       notifications: {}
     });
     // Select namespace 'green'
-    const { queryByText, getByPlaceholderText, getAllByText } = renderWithIntl(
+    const { queryByText, getByPlaceholderText, getAllByText } = render(
       <Provider store={store}>
         <TasksDropdown {...props} namespace="green" />
       </Provider>
@@ -251,7 +247,7 @@ describe('TasksDropdown', () => {
       ...namespacesStoreBlue,
       notifications: {}
     });
-    const { queryByPlaceholderText } = renderWithIntl(
+    const { queryByPlaceholderText } = render(
       <Provider store={store}>
         <TasksDropdown {...props} />
       </Provider>
@@ -272,7 +268,7 @@ describe('TasksDropdown', () => {
       ...namespacesStoreBlue,
       notifications: {}
     });
-    const { queryByPlaceholderText } = renderWithIntl(
+    const { queryByPlaceholderText } = render(
       <Provider store={store}>
         <TasksDropdown {...props} namespace={ALL_NAMESPACES} />
       </Provider>
@@ -287,7 +283,7 @@ describe('TasksDropdown', () => {
       ...namespacesStoreBlue,
       notifications: {}
     });
-    const { queryByPlaceholderText } = renderWithIntl(
+    const { queryByPlaceholderText } = render(
       <Provider store={store}>
         <TasksDropdown {...props} />
       </Provider>
@@ -302,7 +298,7 @@ describe('TasksDropdown', () => {
       notifications: {}
     });
     const onChange = jest.fn();
-    const { getByPlaceholderText, getByText } = renderWithIntl(
+    const { getByPlaceholderText, getByText } = render(
       <Provider store={store}>
         <TasksDropdown {...props} onChange={onChange} />
       </Provider>

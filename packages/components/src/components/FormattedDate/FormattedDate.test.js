@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,17 +12,17 @@ limitations under the License.
 */
 
 import React from 'react';
-import { renderWithIntl } from '../../utils/test';
+import { render } from '../../utils/test';
 import FormattedDate from './FormattedDate';
 
 describe('FormattedDate', () => {
   it('handles missing props', () => {
-    const { container } = renderWithIntl(<FormattedDate />);
+    const { container } = render(<FormattedDate />);
     expect(container.firstChild).toBeNull();
   });
 
   it('handles absolute date formatting', () => {
-    const { queryByText } = renderWithIntl(<FormattedDate date="2019/12/01" />);
+    const { queryByText } = render(<FormattedDate date="2019/12/01" />);
     expect(queryByText(/December 1, 2019/i)).toBeTruthy();
   });
 
@@ -30,7 +30,7 @@ describe('FormattedDate', () => {
     if (!Intl.RelativeTimeFormat) {
       Intl.RelativeTimeFormat = {};
     }
-    const { container, queryByText } = renderWithIntl(
+    const { container, queryByText } = render(
       <FormattedDate date="2019/12/01" relative />
     );
     expect(container.firstChild).not.toBeNull();
