@@ -1,3 +1,15 @@
+/*
+Copyright 2019-2021 The Tekton Authors
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+		http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
 package kubernetes
 
 import (
@@ -40,8 +52,9 @@ func (e extensionHandler) serviceCreated(obj interface{}) {
 		logging.Log.Debugf("Extension Controller detected extension '%s' created", service.Name)
 		ext := e.RegisterExtension(service)
 		data := broadcaster.SocketData{
-			MessageType: broadcaster.ServiceExtensionCreated,
-			Payload:     ext,
+			Kind:      "ServiceExtension",
+			Operation: broadcaster.Created,
+			Payload:   ext,
 		}
 		endpoints.ResourcesChannel <- data
 	}
@@ -72,20 +85,23 @@ func (e extensionHandler) serviceUpdated(oldObj, newObj interface{}) {
 		switch event {
 		case "delete": // Service has removed the extension label
 			data := broadcaster.SocketData{
-				MessageType: broadcaster.ServiceExtensionDeleted,
-				Payload:     ext,
+				Kind:      "ServiceExtension",
+				Operation: broadcaster.Deleted,
+				Payload:   ext,
 			}
 			endpoints.ResourcesChannel <- data
 		case "create": // Service has added the extension label
 			data := broadcaster.SocketData{
-				MessageType: broadcaster.ServiceExtensionCreated,
-				Payload:     ext,
+				Kind:      "ServiceExtension",
+				Operation: broadcaster.Created,
+				Payload:   ext,
 			}
 			endpoints.ResourcesChannel <- data
 		case "update": // Extension service was modified
 			data := broadcaster.SocketData{
-				MessageType: broadcaster.ServiceExtensionUpdated,
-				Payload:     ext,
+				Kind:      "ServiceExtension",
+				Operation: broadcaster.Updated,
+				Payload:   ext,
 			}
 			endpoints.ResourcesChannel <- data
 		}
@@ -99,8 +115,9 @@ func (e extensionHandler) serviceDeleted(obj interface{}) {
 		if serviceMeta.GetUID() != "" {
 			ext := e.UnregisterExtensionByMeta(serviceMeta)
 			data := broadcaster.SocketData{
-				MessageType: broadcaster.ServiceExtensionDeleted,
-				Payload:     ext,
+				Kind:      "ServiceExtension",
+				Operation: broadcaster.Deleted,
+				Payload:   ext,
 			}
 			endpoints.ResourcesChannel <- data
 		}

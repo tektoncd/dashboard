@@ -59,13 +59,13 @@ func NewInformerRecord(kind string, updatable bool) informerRecord {
 	return newRecord
 }
 
-func (i *informerRecord) Handle(event string) {
+func (i *informerRecord) Handle(event broadcaster.Operation) {
 	switch event {
-	case "Created":
+	case broadcaster.Created:
 		atomic.AddInt32(&i.create, 1)
-	case "Updated":
+	case broadcaster.Updated:
 		atomic.AddInt32(&i.update, 1)
-	case "Deleted":
+	case broadcaster.Deleted:
 		atomic.AddInt32(&i.delete, 1)
 	}
 }
@@ -95,19 +95,12 @@ func TestWebsocketResources(t *testing.T) {
 	connectionDur := time.Second * 5
 	var wg sync.WaitGroup
 
-	// Remove event suffixes
-	getKind := func(event string) string {
-		event = strings.TrimSuffix(event, "Created")
-		event = strings.TrimSuffix(event, "Updated")
-		event = strings.TrimSuffix(event, "Deleted")
-		return event
-	}
 	// CUD records
-	taskRecord := NewInformerRecord(getKind(string(broadcaster.TaskCreated)), true)
-	clusterTaskRecord := NewInformerRecord(getKind(string(broadcaster.ClusterTaskCreated)), true)
-	extensionRecord := NewInformerRecord(getKind(string(broadcaster.ServiceExtensionCreated)), true)
+	taskRecord := NewInformerRecord("Task", true)
+	clusterTaskRecord := NewInformerRecord("ClusterTask", true)
+	extensionRecord := NewInformerRecord("ServiceExtension", true)
 	// CD records
-	namespaceRecord := NewInformerRecord(getKind(string(broadcaster.NamespaceCreated)), false)
+	namespaceRecord := NewInformerRecord("Namespace", false)
 
 	// Route incoming socket data to correct informer
 	recordMap := map[string]*informerRecord{
@@ -127,12 +120,8 @@ func TestWebsocketResources(t *testing.T) {
 				if !open {
 					return
 				}
-				// Get CRD kind key to grab the correct informerRecord
-				messageType := getKind(string(socketData.MessageType))
-				informerRecord := recordMap[messageType]
-				// Get event type to update proper informerRecord field
-				eventType := strings.TrimPrefix(string(socketData.MessageType), messageType)
-				informerRecord.Handle(eventType)
+				informerRecord := recordMap[socketData.Kind]
+				informerRecord.Handle(socketData.Operation)
 			}
 		}()
 		wg.Add(1)

@@ -14,7 +14,6 @@ limitations under the License.
 package triggers
 
 import (
-	"github.com/tektoncd/dashboard/pkg/broadcaster"
 	"github.com/tektoncd/dashboard/pkg/controllers/utils"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -33,9 +32,6 @@ func NewTriggerTemplateController(sharedInformerFactory dynamicinformer.DynamicS
 	utils.NewController(
 		"TriggerTemplate",
 		sharedInformerFactory.ForResource(gvr).Informer(),
-		broadcaster.TriggerTemplateCreated,
-		broadcaster.TriggerTemplateUpdated,
-		broadcaster.TriggerTemplateDeleted,
 		nil,
 	)
 }
