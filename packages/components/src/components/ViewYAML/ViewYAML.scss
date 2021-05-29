@@ -15,3 +15,12 @@ limitations under the License.
   background-color: $gray-90; // TODO: $inverse-02 - see Log.scss
   color: $gray-10;            //       $inverse-01
 }
+
+// TODO: Colorize YAML syntax to conform carbon design. See
+// https://github.com/carbon-design-system/carbon-website/issues/965 for more
+// details.
+.bx--snippet--multi {
+  .token.string {
+    color: rgb(0, 187, 0);
+  }
+}

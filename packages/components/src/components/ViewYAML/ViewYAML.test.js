@@ -56,3 +56,12 @@ it('YAML renders correctly', () => {
   expect(getByText(/- name: parameter1/i)).toBeTruthy();
   expect(getByText(/value: valueParameter1/i)).toBeTruthy();
 });
+
+it('render syntax highlight', () => {
+  const props = {
+    resource,
+    enableSyntaxHighlighting: true
+  };
+  const { container } = render(<ViewYAML {...props} />);
+  expect(container.firstChild.className).toMatch(/prism/);
+});
