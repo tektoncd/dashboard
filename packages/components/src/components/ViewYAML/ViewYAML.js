@@ -15,29 +15,54 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import jsYaml from 'js-yaml';
 import classNames from 'classnames';
+import { Prism as SyntaxHighlight } from 'react-syntax-highlighter';
 
-const ViewYAML = props => {
-  const { className, dark, resource } = props;
-
+function YAMLHighlighter({ children, className }) {
   return (
-    <div
-      className={classNames('bx--snippet--multi', className, {
-        'tkn--view-yaml--dark': dark
-      })}
+    <SyntaxHighlight
+      className={className}
+      language="yaml"
+      useInlineStyles={false}
+      codeTagProps={{}}
     >
+      {children}
+    </SyntaxHighlight>
+  );
+}
+
+function YAMLRaw({ children, className }) {
+  return (
+    <div className={className}>
       <code>
-        <pre>{jsYaml.dump(resource)}</pre>
+        <pre>{children}</pre>
       </code>
     </div>
   );
-};
+}
+
+function ViewYAML({ className, dark, enableSyntaxHighlighting, resource }) {
+  const clz = classNames('bx--snippet--multi', className, {
+    'tkn--view-yaml--dark': dark
+  });
+  const yaml = jsYaml.dump(resource);
+
+  if (enableSyntaxHighlighting) {
+    return <YAMLHighlighter className={clz}>{yaml}</YAMLHighlighter>;
+  }
+  return <YAMLRaw className={clz}>{yaml}</YAMLRaw>;
+}
 
 ViewYAML.propTypes = {
   resource: PropTypes.oneOfType([
     PropTypes.array,
     PropTypes.shape({}),
     PropTypes.string
-  ]).isRequired
+  ]).isRequired,
+  enableSyntaxHighlighting: PropTypes.bool
+};
+
+ViewYAML.defaultProps = {
+  enableSyntaxHighlighting: false
 };
 
 export default ViewYAML;
