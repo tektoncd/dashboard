@@ -22,7 +22,7 @@ import (
 	"k8s.io/client-go/tools/cache"
 )
 
-func NewController(kind string, informer cache.SharedIndexInformer, onCreated, onUpdated, onDeleted broadcaster.MessageType, filter func(interface{}, bool) interface{}) {
+func NewController(kind string, informer cache.SharedIndexInformer, filter func(interface{}, bool) interface{}) {
 	logging.Log.Debug("In NewController")
 
 	if filter == nil {
@@ -35,8 +35,9 @@ func NewController(kind string, informer cache.SharedIndexInformer, onCreated, o
 		AddFunc: func(obj interface{}) {
 			logging.Log.Debugf("Controller detected %s '%s' created", kind, obj.(metav1.Object).GetName())
 			data := broadcaster.SocketData{
-				MessageType: onCreated,
-				Payload:     filter(obj, true),
+				Kind:      kind,
+				Operation: broadcaster.Created,
+				Payload:   filter(obj, true),
 			}
 			endpoints.ResourcesChannel <- data
 		},
@@ -46,8 +47,9 @@ func NewController(kind string, informer cache.SharedIndexInformer, onCreated, o
 			if oldResource.GetResourceVersion() != newResource.GetResourceVersion() {
 				logging.Log.Debugf("Controller detected %s '%s' updated", kind, oldResource.GetName())
 				data := broadcaster.SocketData{
-					MessageType: onUpdated,
-					Payload:     filter(newObj, true),
+					Kind:      kind,
+					Operation: broadcaster.Updated,
+					Payload:   filter(newObj, true),
 				}
 				endpoints.ResourcesChannel <- data
 			}
@@ -55,8 +57,9 @@ func NewController(kind string, informer cache.SharedIndexInformer, onCreated, o
 		DeleteFunc: func(obj interface{}) {
 			logging.Log.Debugf("Controller detected %s '%s' deleted", kind, utils.GetDeletedObjectMeta(obj).GetName())
 			data := broadcaster.SocketData{
-				MessageType: onDeleted,
-				Payload:     filter(obj, false),
+				Kind:      kind,
+				Operation: broadcaster.Deleted,
+				Payload:   filter(obj, false),
 			}
 			endpoints.ResourcesChannel <- data
 		},

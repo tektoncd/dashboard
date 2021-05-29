@@ -26,8 +26,8 @@ export function createWebSocketMiddleware(socket) {
       if (event.type !== 'message') {
         return;
       }
-      const message = JSON.parse(event.data);
-      dispatch({ type: message.MessageType, payload: message.Payload });
+      const { kind, operation, payload } = JSON.parse(event.data);
+      dispatch({ type: kind + operation, payload });
     });
     return next => action => next(action);
   };

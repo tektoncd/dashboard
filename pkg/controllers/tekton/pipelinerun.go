@@ -14,7 +14,6 @@ limitations under the License.
 package tekton
 
 import (
-	"github.com/tektoncd/dashboard/pkg/broadcaster"
 	"github.com/tektoncd/dashboard/pkg/controllers/utils"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -33,9 +32,6 @@ func NewPipelineRunController(sharedInformerFactory dynamicinformer.DynamicShare
 	utils.NewController(
 		"PipelineRun",
 		sharedInformerFactory.ForResource(gvr).Informer(),
-		broadcaster.PipelineRunCreated,
-		broadcaster.PipelineRunUpdated,
-		broadcaster.PipelineRunDeleted,
 		nil,
 	)
 }

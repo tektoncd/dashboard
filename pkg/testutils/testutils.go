@@ -93,7 +93,7 @@ func DummyServer() (*httptest.Server, *endpoints.Resource, string) {
 		case <-timeout:
 			logging.Log.Fatalf("Namespace informer did not detect installNamespace by deadline")
 		case event := <-subscriber.SubChan():
-			if event.MessageType == broadcaster.NamespaceCreated {
+			if event.Kind == "Namespace" && event.Operation == broadcaster.Created {
 				goto NamespaceDetected
 			}
 		}

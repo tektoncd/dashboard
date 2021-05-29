@@ -18,67 +18,18 @@ import (
 	"sync"
 )
 
-type MessageType string
+type Operation string
 
-// Reference outside of package
 const (
-	Log                          MessageType = "Log"
-	NamespaceCreated             MessageType = "NamespaceCreated"
-	NamespaceUpdated             MessageType = "NamespaceUpdated"
-	NamespaceDeleted             MessageType = "NamespaceDeleted"
-	PipelineCreated              MessageType = "PipelineCreated"
-	PipelineDeleted              MessageType = "PipelineDeleted"
-	PipelineUpdated              MessageType = "PipelineUpdated"
-	ClusterTaskCreated           MessageType = "ClusterTaskCreated"
-	ClusterTaskDeleted           MessageType = "ClusterTaskDeleted"
-	ClusterTaskUpdated           MessageType = "ClusterTaskUpdated"
-	TaskCreated                  MessageType = "TaskCreated"
-	TaskDeleted                  MessageType = "TaskDeleted"
-	TaskUpdated                  MessageType = "TaskUpdated"
-	PipelineResourceCreated      MessageType = "PipelineResourceCreated"
-	PipelineResourceDeleted      MessageType = "PipelineResourceDeleted"
-	PipelineResourceUpdated      MessageType = "PipelineResourceUpdated"
-	PipelineRunCreated           MessageType = "PipelineRunCreated"
-	PipelineRunDeleted           MessageType = "PipelineRunDeleted"
-	PipelineRunUpdated           MessageType = "PipelineRunUpdated"
-	TaskRunCreated               MessageType = "TaskRunCreated"
-	TaskRunDeleted               MessageType = "TaskRunDeleted"
-	TaskRunUpdated               MessageType = "TaskRunUpdated"
-	ConditionCreated             MessageType = "ConditionCreated"
-	ConditionDeleted             MessageType = "ConditionDeleted"
-	ConditionUpdated             MessageType = "ConditionUpdated"
-	ResourceExtensionCreated     MessageType = "ResourceExtensionCreated"
-	ResourceExtensionUpdated     MessageType = "ResourceExtensionUpdated"
-	ResourceExtensionDeleted     MessageType = "ResourceExtensionDeleted"
-	ServiceExtensionCreated      MessageType = "ServiceExtensionCreated"
-	ServiceExtensionUpdated      MessageType = "ServiceExtensionUpdated"
-	ServiceExtensionDeleted      MessageType = "ServiceExtensionDeleted"
-	ServiceAccountCreated        MessageType = "ServiceAccountCreated"
-	ServiceAccountDeleted        MessageType = "ServiceAccountDeleted"
-	ServiceAccountUpdated        MessageType = "ServiceAccountUpdated"
-	TriggerCreated               MessageType = "TriggerCreated"
-	TriggerDeleted               MessageType = "TriggerDeleted"
-	TriggerUpdated               MessageType = "TriggerUpdated"
-	TriggerBindingCreated        MessageType = "TriggerBindingCreated"
-	TriggerBindingDeleted        MessageType = "TriggerBindingDeleted"
-	TriggerBindingUpdated        MessageType = "TriggerBindingUpdated"
-	ClusterInterceptorCreated    MessageType = "ClusterInterceptorCreated"
-	ClusterInterceptorDeleted    MessageType = "ClusterInterceptorDeleted"
-	ClusterInterceptorUpdated    MessageType = "ClusterInterceptorUpdated"
-	ClusterTriggerBindingCreated MessageType = "ClusterTriggerBindingCreated"
-	ClusterTriggerBindingDeleted MessageType = "ClusterTriggerBindingDeleted"
-	ClusterTriggerBindingUpdated MessageType = "ClusterTriggerBindingUpdated"
-	TriggerTemplateCreated       MessageType = "TriggerTemplateCreated"
-	TriggerTemplateDeleted       MessageType = "TriggerTemplateDeleted"
-	TriggerTemplateUpdated       MessageType = "TriggerTemplateUpdated"
-	EventListenerCreated         MessageType = "EventListenerCreated"
-	EventListenerDeleted         MessageType = "EventListenerDeleted"
-	EventListenerUpdated         MessageType = "EventListenerUpdated"
+	Created Operation = "Created"
+	Deleted Operation = "Deleted"
+	Updated Operation = "Updated"
 )
 
 type SocketData struct {
-	MessageType MessageType
-	Payload     interface{}
+	Kind      string      `json:"kind"`
+	Operation Operation   `json:"operation"`
+	Payload   interface{} `json:"payload"`
 }
 
 // Only a pointer to the struct should be used

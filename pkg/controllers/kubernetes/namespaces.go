@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,7 +14,6 @@ limitations under the License.
 package kubernetes
 
 import (
-	"github.com/tektoncd/dashboard/pkg/broadcaster"
 	"github.com/tektoncd/dashboard/pkg/controllers/utils"
 	"github.com/tektoncd/dashboard/pkg/logging"
 	k8sinformer "k8s.io/client-go/informers"
@@ -28,9 +27,6 @@ func NewNamespaceController(sharedK8sInformerFactory k8sinformer.SharedInformerF
 	utils.NewController(
 		"Namespace",
 		sharedK8sInformerFactory.Core().V1().Namespaces().Informer(),
-		broadcaster.NamespaceCreated,
-		broadcaster.NamespaceUpdated,
-		broadcaster.NamespaceDeleted,
 		nil,
 	)
 }
