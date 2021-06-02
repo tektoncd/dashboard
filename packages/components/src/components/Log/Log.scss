@@ -12,6 +12,8 @@ limitations under the License.
 */
 
 pre.tkn--log {
+  @include carbon--theme($carbon--theme--g90, true);
+
   position: relative;
   padding: 2rem 1.6rem 1.3rem 1.6rem;
   font-family: ibm-plex-mono, monospace;
@@ -22,24 +24,22 @@ pre.tkn--log {
 
   line-height: 0.95rem; // Update the react-window List itemSize if changing this
   overflow: hidden;
-  background-color: $gray-90; // TODO: should this be $inverse-02 ?
-  color: $gray-10;            //       if so, then this should be $inverse-01
+  background-color: $ui-background;
+  color: $text-01;
 
   word-break: normal;
   word-wrap: normal;
 
   .bx--skeleton__text {
-    // TODO: revisit when Carbon supports component-level themeing
-    //       these should be using the $skeleton-01 and $skeleton-02 tokens
-    background-color: $gray-80;
+    background-color: $skeleton-01;
 
     &::before {
-      background-color: $gray-70;
+      background-color: $skeleton-02;
     }
   }
 
   a {
-    color: $inverse-link;
+    color: $link-01;
   }
 
   code {
@@ -56,10 +56,10 @@ pre.tkn--log {
   .bx--copy-btn {
     width: 2rem;
     height: 2rem;
-    background-color: $gray-90; // TODO: $inverse-02 - see above
+    background-color: $ui-background;
 
     &:hover {
-      background-color: $gray-80; // TODO: $inverse-hover-ui - see above
+      background-color: $hover-ui;
     }
 
     &:focus {
@@ -67,7 +67,7 @@ pre.tkn--log {
     }
 
     svg {
-      fill: $gray-10; // TODO: use theme token
+      fill: $icon-01;
     }
   }
 
