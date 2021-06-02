@@ -48,6 +48,10 @@ limitations under the License.
 @import '@tektoncd/dashboard-components/dist/components/Trigger/Trigger.scss';
 @import '@tektoncd/dashboard-components/dist/components/ViewYAML/ViewYAML.scss';
 
+a {
+  color: $link-01;
+}
+
 .bx--btn.link-btn.bx--btn--ghost {
   text-decoration: none;
 }
