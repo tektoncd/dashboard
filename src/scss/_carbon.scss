@@ -23,10 +23,10 @@ $feature-flags: (
   enable-css-custom-properties: true
 );
 
-@import '~@carbon/themes/scss/themes';
-@import '~carbon-components/scss/globals/scss/component-tokens';
-@import '~carbon-components/scss/components/notification/tokens';
-@import '~carbon-components/scss/components/tag/tokens';
+@import '@carbon/themes/scss/themes';
+@import 'carbon-components/scss/globals/scss/component-tokens';
+@import 'carbon-components/scss/components/notification/tokens';
+@import 'carbon-components/scss/components/tag/tokens';
 
 :root, .tkn--theme-light {
   @include carbon--theme($carbon--theme--g10, true);
@@ -49,34 +49,34 @@ $feature-flags: (
   }
 }
 
-@import '~carbon-components/scss/globals/scss/vars';
-@import '~carbon-components/scss/globals/scss/css--reset';
-@import '~carbon-components/scss/globals/scss/css--font-face';
-@import '~carbon-components/scss/globals/scss/css--helpers';
-@import '~carbon-components/scss/globals/scss/css--body';
+@import 'carbon-components/scss/globals/scss/vars';
+@import 'carbon-components/scss/globals/scss/css--reset';
+@import 'carbon-components/scss/globals/scss/css--font-face';
+@import 'carbon-components/scss/globals/scss/css--helpers';
+@import 'carbon-components/scss/globals/scss/css--body';
 
-@import '~carbon-components/scss/components/button/button';
-@import '~carbon-components/scss/components/copy-button/copy-button';
-@import '~carbon-components/scss/components/checkbox/checkbox';
-@import '~carbon-components/scss/components/combo-box/combo-box';
-@import '~carbon-components/scss/components/radio-button/radio-button';
-@import '~carbon-components/scss/components/search/search';
-@import '~carbon-components/scss/components/text-input/text-input';
-@import '~carbon-components/scss/components/form/form';
-@import '~carbon-components/scss/components/link/link';
-@import '~carbon-components/scss/components/data-table/data-table';
-@import '~carbon-components/scss/components/code-snippet/code-snippet';
-@import '~carbon-components/scss/components/overflow-menu/overflow-menu';
-@import '~carbon-components/scss/components/dropdown/dropdown';
-@import '~carbon-components/scss/components/loading/loading';
-@import '~carbon-components/scss/components/modal/modal';
-@import '~carbon-components/scss/components/notification/inline-notification';
-@import '~carbon-components/scss/components/notification/toast-notification';
-@import '~carbon-components/scss/components/tooltip/tooltip';
-@import '~carbon-components/scss/components/tabs/tabs';
-@import '~carbon-components/scss/components/tag/tag';
-@import '~carbon-components/scss/components/accordion/accordion';
-@import '~carbon-components/scss/components/skeleton/skeleton';
-@import '~carbon-components/scss/components/inline-loading/inline-loading';
-@import '~carbon-components/scss/components/ui-shell/ui-shell';
-@import '~carbon-components/scss/components/list/list';
+@import 'carbon-components/scss/components/button/button';
+@import 'carbon-components/scss/components/copy-button/copy-button';
+@import 'carbon-components/scss/components/checkbox/checkbox';
+@import 'carbon-components/scss/components/combo-box/combo-box';
+@import 'carbon-components/scss/components/radio-button/radio-button';
+@import 'carbon-components/scss/components/search/search';
+@import 'carbon-components/scss/components/text-input/text-input';
+@import 'carbon-components/scss/components/form/form';
+@import 'carbon-components/scss/components/link/link';
+@import 'carbon-components/scss/components/data-table/data-table';
+@import 'carbon-components/scss/components/code-snippet/code-snippet';
+@import 'carbon-components/scss/components/overflow-menu/overflow-menu';
+@import 'carbon-components/scss/components/dropdown/dropdown';
+@import 'carbon-components/scss/components/loading/loading';
+@import 'carbon-components/scss/components/modal/modal';
+@import 'carbon-components/scss/components/notification/inline-notification';
+@import 'carbon-components/scss/components/notification/toast-notification';
+@import 'carbon-components/scss/components/tooltip/tooltip';
+@import 'carbon-components/scss/components/tabs/tabs';
+@import 'carbon-components/scss/components/tag/tag';
+@import 'carbon-components/scss/components/accordion/accordion';
+@import 'carbon-components/scss/components/skeleton/skeleton';
+@import 'carbon-components/scss/components/inline-loading/inline-loading';
+@import 'carbon-components/scss/components/ui-shell/ui-shell';
+@import 'carbon-components/scss/components/list/list';
