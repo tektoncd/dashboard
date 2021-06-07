@@ -14,11 +14,8 @@ limitations under the License.
 package endpoints
 
 import (
-	"errors"
 	"net/http"
 	"net/url"
-	"strconv"
-	"strings"
 
 	restful "github.com/emicklei/go-restful"
 	"github.com/tektoncd/dashboard/pkg/utils"
@@ -87,30 +84,4 @@ func (r Resource) GetProperties(request *restful.Request, response *restful.Resp
 	}
 
 	response.WriteEntity(properties)
-}
-
-func handleRequestError(response *restful.Response, responseBody []byte, requestError error) {
-	errorInfo := string(responseBody)
-	errorInfo = strings.Replace(errorInfo, "\"", "", -1)
-	errorInfo = strings.Replace(errorInfo, "\\", "", -1)
-	errorInfo = strings.Replace(errorInfo, "\n", "", -1)
-	// Checks if an error code can be found in the response
-	if strings.LastIndex(errorInfo, "code:") != -1 {
-		errorCodeString := strings.LastIndex(errorInfo, "code:")
-		// Checks if the code is 3-digits long
-		if len(errorInfo[errorCodeString+5:errorCodeString+8]) == 3 {
-			errorCode := errorInfo[errorCodeString+5 : errorCodeString+8]
-			errorCodeFormatted, err := strconv.Atoi(errorCode)
-			// Checks if the code can be converted to an integer without error
-			if err != nil {
-				utils.RespondError(response, requestError, http.StatusInternalServerError)
-				return
-			}
-			utils.RespondError(response, errors.New(errorInfo), errorCodeFormatted)
-			return
-		}
-		utils.RespondError(response, requestError, http.StatusInternalServerError)
-		return
-	}
-	utils.RespondError(response, requestError, http.StatusInternalServerError)
 }

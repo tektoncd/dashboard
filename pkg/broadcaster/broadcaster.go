@@ -58,14 +58,14 @@ func (s *Subscriber) UnsubChan() <-chan struct{} {
 	return s.unsubChan
 }
 
-var expiredError error = errors.New("Broadcaster expired")
+var errExpired error = errors.New("broadcaster expired")
 
 // Creates broadcaster from channel parameter and immediately starts broadcasting
 // Without any subscribers, received data will be discarded
 // Broadcaster should be the only channel reader
 func NewBroadcaster(c chan SocketData) *Broadcaster {
 	if c == nil {
-		panic("Channel passed cannot be nil")
+		panic("channel passed cannot be nil")
 	}
 
 	b := &Broadcaster{subscribers: new(sync.Map)}
@@ -112,7 +112,7 @@ func (b *Broadcaster) Subscribe() (*Subscriber, error) {
 	defer b.expiredLock.Unlock()
 
 	if b.expired {
-		return &Subscriber{}, expiredError
+		return &Subscriber{}, errExpired
 	}
 	newSub := &Subscriber{
 		subChan:   make(chan SocketData),
@@ -128,14 +128,14 @@ func (b *Broadcaster) Unsubscribe(sub *Subscriber) error {
 	defer b.expiredLock.Unlock()
 
 	if b.expired {
-		return expiredError
+		return errExpired
 	}
 	if _, ok := b.subscribers.Load(sub); ok {
 		b.subscribers.Delete(sub)
 		close(sub.unsubChan)
 		return nil
 	}
-	return errors.New("Subscription not found")
+	return errors.New("subscription not found")
 }
 
 // Iterates over sync.Map and returns number of elements
