@@ -595,7 +595,6 @@ while [[ $# -gt 0 ]]; do
       OVERRIDE_NAMESPACE="${1}"
       ;;
     '--extensions-rbac')
-      shift
       EXTENSIONS_RBAC="true"
       ;;
     '--log-format')
