@@ -9,44 +9,105 @@ spec:
     - name: versionTag
       description: The vX.Y.Z version that the artifacts should be tagged with (including `v`)
     - name: imageRegistry
-      description: TODO(#569) This is a hack to make it easy for folks to switch the registry being used by the many many image outputs
-    - name: pathToProject
-      description: The path to the folder in the go/src dir that contains the project, which is used by `ko` to name the resulting images
+      description: The target image registry
+      default: gcr.io
+
+#    - name: pathToProject
+#      description: The path to the folder in the go/src dir that contains the project, which is used by `ko` to name the resulting images
     - name: releaseAsLatest
       description: Whether to tag and publish this release as the latest
       default: "true"
-  resources:
-    inputs:
-      - name: dashboard-source-repo
-        type: git
-        targetPath: go/src/github.com/tektoncd/dashboard
-      - name: bucket-for-dashboard
-        type: storage
-    outputs:
-      - name: bucket-for-dashboard
-        type: storage
-      - name: builtDashboardImage
-        type: image
+    - name: package
+      description: package to release (e.g. github.com/<org>/<project>)
+      default: github.com/tektoncd/dashboard
+    - name: images
+      description: List of cmd/* paths to be published as images  in release manifest release.yaml
+      default: "dashboard"
+    - name: imageRegistryPath
+      description: The path (project) in the image registry
+    - name: imageRegistryRegions
+      description: The target image registry regions
+      default: "us eu asia"
+    - name: platforms
+      description: Platforms to publish for the images (e.g. linux/amd64,linux/arm64)
+      default: linux/amd64,linux/arm64,linux/s390x,linux/ppc64le
+    - name: serviceAccountPath
+      description: The name of the service account path within the release-secret workspace
+
+
+
+
+#  resources:
+#    inputs:
+#      - name: dashboard-source-repo
+#        type: git
+#        targetPath: go/src/github.com/tektoncd/dashboard
+#      - name: bucket-for-dashboard
+#        type: storage
+#    outputs:
+#      - name: bucket-for-dashboard
+#        type: storage
+#      - name: builtDashboardImage
+#        type: image
+  workspaces:
+  - name: source
+    description: >-
+    mountPath: /go/src/github.com/$(params.package)
+  - name: release-secret
+    description: The secret that contains a service account authorized to push to the imageRegistry and to the output bucket
+  - name: output
+    description: The release YAML will be written to this workspace
+  stepTemplate:
+    env:
+    - name: "PROJECT_ROOT"
+      value: "$(workspaces.source.path)"
+    - name: CONTAINER_REGISTY_CREDENTIALS
+      value: "$(workspaces.release-secret.path)/$(params.serviceAccountPath)"
+    - name: CONTAINER_REGISTRY
+      value: "$(params.imageRegistry)/$(params.imageRegistryPath)"
+    - name: REGIONS
+      value: "$(params.imageRegistryRegions)"
+    - name: OUTPUT_RELEASE_DIR
+      value: "$(workspaces.output.path)/$(params.versionTag)"
   steps:
-    - name: link-input-bucket-to-output
-      image: busybox
-      command: ["cp"]
-      args:
-        - -r
-        - "/workspace/bucket-for-dashboard"
-        - "/workspace/output/"
-    - name: ensure-release-dirs-exist
-      image: busybox
-      command: ["mkdir"]
-      args:
-        - "-p"
-        - "/workspace/output/bucket-for-dashboard/latest/"
-        - "/workspace/output/bucket-for-dashboard/previous/$(params.versionTag)/"
+    - name: container-registy-auth
+      image: gcr.io/go-containerregistry/crane:debug
+      script: |
+        #!/busybox/sh
+        set -ex
+        # Login to the container registry
+        DOCKER_CONFIG=$(cat ${CONTAINER_REGISTY_CREDENTIALS} | \
+          crane auth login -u _json_key --password-stdin $(params.imageRegistry) 2>&1 | \
+          sed 's,^.*logged in via \(.*\)$,\1,g')
+        # Auth with account credentials for all regions.
+        for region in ${REGIONS}
+        do
+          HOSTNAME=${region}.$(params.imageRegistry)
+          cat ${CONTAINER_REGISTY_CREDENTIALS} | crane auth login -u _json_key --password-stdin ${HOSTNAME}
+        done
+        cp ${DOCKER_CONFIG} /workspace/docker-config.json
+
+      #    - name: link-input-bucket-to-output
+#      image: busybox
+#      command: ["cp"]
+#      args:
+#        - -r
+#        - "/workspace/bucket-for-dashboard"
+#        - "/workspace/output/"
+#    - name: ensure-release-dirs-exist
+#      image: busybox
+#      command: ["mkdir"]
+#      args:
+#        - "-p"
+#        - "/workspace/output/bucket-for-dashboard/latest/"
+#        - "/workspace/output/bucket-for-dashboard/previous/$(params.versionTag)/"
+
     - name: dashboard-run-ko
       # TODO(#639) we should be able to use the image built by an upstream Task here instead of hardcoding
       # Want to use your own plumbing image? Change this
       image: gcr.io/tekton-releases/dogfooding/ko-gcloud:latest
       imagePullPolicy: Always
+      workingDir: /workspace/source-repo/git
       env:
         - name: KO_DOCKER_REPO
           value: $(params.imageRegistry)
@@ -103,70 +164,70 @@ spec:
         - name: gcp-secret
           mountPath: /secret
 
-    - name: copy-to-latest-bucket
-      image: busybox
-      workingDir: "/workspace/output/bucket-for-dashboard"
-      script: |
-        #!/bin/sh
-        set -ex
-        find .
-        if [[ "$(params.releaseAsLatest)" == "true" ]]
-        then
-          OUTPUT_BUCKET_RELEASE_DIR="/workspace/output/bucket-for-dashboard/previous/$(params.versionTag)"
-          OUTPUT_BUCKET_LATEST_DIR="/workspace/output/bucket-for-dashboard/latest"
-          cp $OUTPUT_BUCKET_RELEASE_DIR/* $OUTPUT_BUCKET_LATEST_DIR/
-        fi
-
-    - name: tag-images
-      image: google/cloud-sdk
-      command:
-        - /bin/bash
-      volumeMounts:
-        - name: gcp-secret
-          mountPath: /secret
-      args:
-        - -ce
-        - |
-          set -e
-          set -x
-
-          curl https://raw.githubusercontent.com/tektoncd/plumbing/main/tekton/images/koparse/koparse/koparse.py --output /usr/bin/koparse.py
-          chmod +x /usr/bin/koparse.py
-
-          REGIONS=(us eu asia)
-          IMAGES=(
-            $(params.imageRegistry)/$(params.pathToProject)/$(resources.outputs.builtDashboardImage.url)
-          )
-          # Parse the built images from the release.yaml generated by ko
-          BUILT_IMAGES=( $(/usr/bin/koparse.py --path /workspace/output/bucket-for-dashboard/previous/$(params.versionTag)/tekton-dashboard-release.yaml --base $(params.imageRegistry)/$(params.pathToProject) --images ${IMAGES[@]}) )
-
-          # Auth with account credentials
-          gcloud auth activate-service-account --key-file=/secret/release.json
-
-          # Tag the images and put them in all the regions
-          for IMAGE in "${BUILT_IMAGES[@]}"
-          do
-            IMAGE_WITHOUT_SHA=${IMAGE%%@*}
-            if [[ "$(inputs.params.releaseAsLatest)" == "true" ]]
-            then
-              gcloud -q container images add-tag ${IMAGE} ${IMAGE_WITHOUT_SHA}:latest
-            fi
-            gcloud -q container images add-tag ${IMAGE} ${IMAGE_WITHOUT_SHA}:$(params.versionTag)
-            for REGION in "${REGIONS[@]}"
-            do
-              if [[ "$(inputs.params.releaseAsLatest)" == "true" ]]
-              then
-                for TAG in "latest" $(params.versionTag)
-                do
-                  gcloud -q container images add-tag ${IMAGE} ${REGION}.${IMAGE_WITHOUT_SHA}:$TAG
-                done
-              else
-                TAG="$(params.versionTag)"
-                gcloud -q container images add-tag ${IMAGE} ${REGION}.${IMAGE_WITHOUT_SHA}:$TAG
-              fi
-            done
-          done
-  volumes:
-    - name: gcp-secret
-      secret:
-        secretName: release-secret
+#    - name: copy-to-latest-bucket
+#      image: busybox
+#      workingDir: "/workspace/output/bucket-for-dashboard"
+#      script: |
+#        #!/bin/sh
+#        set -ex
+#        find .
+#        if [[ "$(params.releaseAsLatest)" == "true" ]]
+#        then
+#          OUTPUT_BUCKET_RELEASE_DIR="/workspace/output/bucket-for-dashboard/previous/$(params.versionTag)"
+#          OUTPUT_BUCKET_LATEST_DIR="/workspace/output/bucket-for-dashboard/latest"
+#          cp $OUTPUT_BUCKET_RELEASE_DIR/* $OUTPUT_BUCKET_LATEST_DIR/
+#        fi
+#
+#    - name: tag-images
+#      image: google/cloud-sdk
+#      command:
+#        - /bin/bash
+#      volumeMounts:
+#        - name: gcp-secret
+#          mountPath: /secret
+#      args:
+#        - -ce
+#        - |
+#          set -e
+#          set -x
+#
+#          curl https://raw.githubusercontent.com/tektoncd/plumbing/main/tekton/images/koparse/koparse/koparse.py --output /usr/bin/koparse.py
+#          chmod +x /usr/bin/koparse.py
+#
+#          REGIONS=(us eu asia)
+#          IMAGES=(
+#            $(params.imageRegistry)/$(params.pathToProject)/$(resources.outputs.builtDashboardImage.url)
+#          )
+#          # Parse the built images from the release.yaml generated by ko
+#          BUILT_IMAGES=( $(/usr/bin/koparse.py --path /workspace/output/bucket-for-dashboard/previous/$(params.versionTag)/tekton-dashboard-release.yaml --base $(params.imageRegistry)/$(params.pathToProject) --images ${IMAGES[@]}) )
+#
+#          # Auth with account credentials
+#          gcloud auth activate-service-account --key-file=/secret/release.json
+#
+#          # Tag the images and put them in all the regions
+#          for IMAGE in "${BUILT_IMAGES[@]}"
+#          do
+#            IMAGE_WITHOUT_SHA=${IMAGE%%@*}
+#            if [[ "$(inputs.params.releaseAsLatest)" == "true" ]]
+#            then
+#              gcloud -q container images add-tag ${IMAGE} ${IMAGE_WITHOUT_SHA}:latest
+#            fi
+#            gcloud -q container images add-tag ${IMAGE} ${IMAGE_WITHOUT_SHA}:$(params.versionTag)
+#            for REGION in "${REGIONS[@]}"
+#            do
+#              if [[ "$(inputs.params.releaseAsLatest)" == "true" ]]
+#              then
+#                for TAG in "latest" $(params.versionTag)
+#                do
+#                  gcloud -q container images add-tag ${IMAGE} ${REGION}.${IMAGE_WITHOUT_SHA}:$TAG
+#                done
+#              else
+#                TAG="$(params.versionTag)"
+#                gcloud -q container images add-tag ${IMAGE} ${REGION}.${IMAGE_WITHOUT_SHA}:$TAG
+#              fi
+#            done
+#          done
+#  volumes:
+#    - name: gcp-secret
+#      secret:
+#        secretName: release-secret
