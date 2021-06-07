@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import keyBy from 'lodash.keyby';
 import {
@@ -25,9 +25,9 @@ import {
 import {
   ALL_NAMESPACES,
   generateId,
-  getTitle,
   getTranslateWithId,
-  urls
+  urls,
+  useTitleSync
 } from '@tektoncd/dashboard-utils';
 import { KeyValueList } from '@tektoncd/dashboard-components';
 import { injectIntl } from 'react-intl';
@@ -170,14 +170,12 @@ function CreateTaskRun(props) {
     setState
   ] = useState(getInitialState());
 
-  useEffect(() => {
-    document.title = getTitle({
-      page: intl.formatMessage({
-        id: 'dashboard.createTaskRun.title',
-        defaultMessage: 'Create TaskRun'
-      })
-    });
-  }, []);
+  useTitleSync({
+    page: intl.formatMessage({
+      id: 'dashboard.createTaskRun.title',
+      defaultMessage: 'Create TaskRun'
+    })
+  });
 
   function checkFormValidation() {
     // Namespace, PipelineRef, Resources, and Params must all have values

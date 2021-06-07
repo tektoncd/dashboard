@@ -28,8 +28,8 @@ import {
 } from '@carbon/icons-react';
 import {
   getFilters,
-  getTitle,
   urls,
+  useTitleSync,
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
 
@@ -61,9 +61,7 @@ function ClusterTasksContainer(props) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [toBeDeleted, setToBeDeleted] = useState([]);
 
-  useEffect(() => {
-    document.title = getTitle({ page: 'ClusterTasks' });
-  }, []);
+  useTitleSync({ page: 'ClusterTasks' });
 
   function fetchData() {
     fetchClusterTasks({ filters });

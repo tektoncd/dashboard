@@ -17,8 +17,8 @@ import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import {
   getFilters,
-  getTitle,
   urls,
+  useTitleSync,
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
@@ -44,9 +44,7 @@ export /* istanbul ignore next */ function TriggerBindings(props) {
     webSocketConnected
   } = props;
 
-  useEffect(() => {
-    document.title = getTitle({ page: 'TriggerBindings' });
-  }, []);
+  useTitleSync({ page: 'TriggerBindings' });
 
   function fetchData() {
     fetchTriggerBindings({ filters, namespace: selectedNamespace });

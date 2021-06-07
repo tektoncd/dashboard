@@ -24,8 +24,8 @@ import { Button } from 'carbon-components-react';
 import {
   ALL_NAMESPACES,
   getFilters,
-  getTitle,
   urls,
+  useTitleSync,
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
 import {
@@ -64,9 +64,7 @@ export /* istanbul ignore next */ function Pipelines(props) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [toBeDeleted, setToBeDeleted] = useState([]);
 
-  useEffect(() => {
-    document.title = getTitle({ page: 'Pipelines' });
-  }, []);
+  useTitleSync({ page: 'Pipelines' });
 
   function fetchData() {
     fetchPipelines({ filters, namespace });

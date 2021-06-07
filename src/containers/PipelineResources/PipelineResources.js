@@ -18,8 +18,8 @@ import keyBy from 'lodash.keyby';
 import {
   ALL_NAMESPACES,
   getFilters,
-  getTitle,
   urls,
+  useTitleSync,
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
 import {
@@ -59,9 +59,7 @@ export /* istanbul ignore next */ function PipelineResources(props) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [toBeDeleted, setToBeDeleted] = useState([]);
 
-  useEffect(() => {
-    document.title = getTitle({ page: 'PipelineResources' });
-  }, []);
+  useTitleSync({ page: 'PipelineResources' });
 
   function fetchData() {
     fetchPipelineResources({ filters, namespace });

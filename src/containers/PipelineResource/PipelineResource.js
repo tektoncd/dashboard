@@ -17,7 +17,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { DataTable } from 'carbon-components-react';
 import { ResourceDetails } from '@tektoncd/dashboard-components';
-import { getTitle, useWebSocketReconnected } from '@tektoncd/dashboard-utils';
+import {
+  useTitleSync,
+  useWebSocketReconnected
+} from '@tektoncd/dashboard-utils';
 
 import {
   getPipelineResource,
@@ -53,12 +56,10 @@ function PipelineResource(props) {
   } = props;
   const { namespace, pipelineResourceName: resourceName } = match.params;
 
-  useEffect(() => {
-    document.title = getTitle({
-      page: 'PipelineResource',
-      resourceName
-    });
-  }, []);
+  useTitleSync({
+    page: 'PipelineResource',
+    resourceName
+  });
 
   function fetchData() {
     fetchPipelineResource({ name: resourceName, namespace });

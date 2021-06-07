@@ -17,8 +17,8 @@ import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import {
   getFilters,
-  getTitle,
   urls,
+  useTitleSync,
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
@@ -43,9 +43,7 @@ function ClusterInterceptors(props) {
     webSocketConnected
   } = props;
 
-  useEffect(() => {
-    document.title = getTitle({ page: 'ClusterInterceptors' });
-  }, []);
+  useTitleSync({ page: 'ClusterInterceptors' });
 
   function fetchData() {
     fetchClusterInterceptors({ filters });

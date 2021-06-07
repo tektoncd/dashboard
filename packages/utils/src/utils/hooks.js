@@ -23,6 +23,13 @@ export function usePrevious(value) {
   return ref.current;
 }
 
+export function useTitleSync({ page, resourceName }) {
+  useEffect(() => {
+    const pageTitle = page + (resourceName ? ` - ${resourceName}` : '');
+    document.title = `Tekton Dashboard | ${pageTitle}`;
+  }, [resourceName]);
+}
+
 export function useWebSocketReconnected(callback, webSocketConnected) {
   const prevWebSocketConnected = usePrevious(webSocketConnected);
 

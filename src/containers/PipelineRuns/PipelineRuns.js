@@ -27,11 +27,11 @@ import {
   getStatus,
   getStatusFilter,
   getStatusFilterHandler,
-  getTitle,
   isRunning,
   labels,
   runMatchesStatusFilter,
   urls,
+  useTitleSync,
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
 import { Add16 as Add, TrashCan32 as Delete } from '@carbon/icons-react';
@@ -76,9 +76,7 @@ export /* istanbul ignore next */ function PipelineRuns(props) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [toBeDeleted, setToBeDeleted] = useState([]);
 
-  useEffect(() => {
-    document.title = getTitle({ page: 'PipelineRuns' });
-  }, []);
+  useTitleSync({ page: 'PipelineRuns' });
 
   function reset() {
     setDeleteError(null);

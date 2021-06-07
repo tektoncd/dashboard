@@ -17,8 +17,8 @@ import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import {
   getFilters,
-  getTitle,
   urls,
+  useTitleSync,
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
@@ -44,9 +44,7 @@ function Triggers(props) {
     triggers,
     webSocketConnected
   } = props;
-  useEffect(() => {
-    document.title = getTitle({ page: 'Triggers' });
-  }, []);
+  useTitleSync({ page: 'Triggers' });
 
   function fetchData() {
     fetchTriggers({ filters, namespace });

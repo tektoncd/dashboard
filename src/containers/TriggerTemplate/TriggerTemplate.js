@@ -21,7 +21,10 @@ import {
   ResourceDetails,
   ViewYAML
 } from '@tektoncd/dashboard-components';
-import { getTitle, useWebSocketReconnected } from '@tektoncd/dashboard-utils';
+import {
+  useTitleSync,
+  useWebSocketReconnected
+} from '@tektoncd/dashboard-utils';
 import {
   getSelectedNamespace,
   getTriggerTemplate,
@@ -60,12 +63,10 @@ export /* istanbul ignore next */ function TriggerTemplateContainer(props) {
   } = props;
   const { namespace, triggerTemplateName: resourceName } = match.params;
 
-  useEffect(() => {
-    document.title = getTitle({
-      page: 'TriggerTemplate',
-      resourceName
-    });
-  }, []);
+  useTitleSync({
+    page: 'TriggerTemplate',
+    resourceName
+  });
 
   function fetchData() {
     fetchTriggerTemplate({ name: resourceName, namespace });

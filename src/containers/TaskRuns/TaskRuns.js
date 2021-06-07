@@ -27,11 +27,11 @@ import {
   getStatus,
   getStatusFilter,
   getStatusFilterHandler,
-  getTitle,
   isRunning,
   labels,
   runMatchesStatusFilter,
   urls,
+  useTitleSync,
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
 import { Add16 as Add, TrashCan32 as Delete } from '@carbon/icons-react';
@@ -76,9 +76,7 @@ function TaskRuns(props) {
   const [toBeDeleted, setToBeDeleted] = useState([]);
   const [cancelSelection, setCancelSelection] = useState(null);
 
-  useEffect(() => {
-    document.title = getTitle({ page: 'TaskRuns' });
-  }, []);
+  useTitleSync({ page: 'TaskRuns' });
 
   function fetchData() {
     if (kind === 'ClusterTask') {

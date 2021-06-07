@@ -30,9 +30,9 @@ import {
   getStatus,
   getStepDefinition,
   getStepStatus,
-  getTitle,
   queryParams as queryParamConstants,
   urls,
+  useTitleSync,
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
 
@@ -113,12 +113,10 @@ export /* istanbul ignore next */ function TaskRunContainer(props) {
   const [loading, setLoading] = useState(true);
   const [rerunNotification, setRerunNotification] = useState(null);
 
-  useEffect(() => {
-    document.title = getTitle({
-      page: 'TaskRun',
-      resourceName: taskRunName
-    });
-  }, []);
+  useTitleSync({
+    page: 'TaskRun',
+    resourceName: taskRunName
+  });
 
   function fetchTaskAndRuns() {
     fetchTaskRun({ name: taskRunName, namespace }).then(run => {

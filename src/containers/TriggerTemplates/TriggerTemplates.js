@@ -17,8 +17,8 @@ import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import {
   getFilters,
-  getTitle,
   urls,
+  useTitleSync,
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
@@ -45,9 +45,7 @@ function TriggerTemplates(props) {
     webSocketConnected
   } = props;
 
-  useEffect(() => {
-    document.title = getTitle({ page: 'TriggerTemplates' });
-  }, []);
+  useTitleSync({ page: 'TriggerTemplates' });
 
   function fetchData() {
     fetchTriggerTemplates({ filters, namespace: selectedNamespace });
