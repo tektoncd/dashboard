@@ -75,7 +75,7 @@ func DummyServer() (*httptest.Server, *endpoints.Resource, string) {
 	dashboardNamespace := "tekton-pipelines"
 	_, err := resource.K8sClient.CoreV1().Namespaces().Create(context.TODO(), &corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: dashboardNamespace}}, metav1.CreateOptions{})
 	if err != nil {
-		logging.Log.Fatalf("Error creating namespace '%s': %v", dashboardNamespace, err)
+		logging.Log.Fatalf("error creating namespace '%s': %v", dashboardNamespace, err)
 	}
 
 	// K8s signals only allows for a single channel, which will panic when executed twice
@@ -91,7 +91,7 @@ func DummyServer() (*httptest.Server, *endpoints.Resource, string) {
 	for {
 		select {
 		case <-timeout:
-			logging.Log.Fatalf("Namespace informer did not detect installNamespace by deadline")
+			logging.Log.Fatalf("namespace informer did not detect installNamespace by deadline")
 		case event := <-subscriber.SubChan():
 			if event.Kind == "Namespace" && event.Operation == broadcaster.Created {
 				goto NamespaceDetected
@@ -111,7 +111,7 @@ func ObjectListDeepEqual(expectedListPointer interface{}, actualListPointer inte
 		// slicePointer should refer to a slice of struct (likely a CRD)
 		slice := reflect.ValueOf(slicePointer)
 		if slice.Kind() != reflect.Slice {
-			return nil, fmt.Errorf("Interface passed was a non-slice type")
+			return nil, fmt.Errorf("interface passed was a non-slice type")
 		}
 
 		// Convert *[]someType (interface{}) to []interface{}
@@ -137,24 +137,24 @@ func ObjectListDeepEqual(expectedListPointer interface{}, actualListPointer inte
 	// actual/response
 	actualMap, err := createNamespaceToNameObjectMap(actualListPointer)
 	if err != nil {
-		return fmt.Errorf("Unable to create map for actual list: %v", err)
+		return fmt.Errorf("unable to create map for actual list: %v", err)
 	}
 	expectedMap, err := createNamespaceToNameObjectMap(expectedListPointer)
 	if err != nil {
-		return fmt.Errorf("Unable to create map for expected list: %v", err)
+		return fmt.Errorf("unable to create map for expected list: %v", err)
 	}
 	for namespace, actualNameObjectMap := range actualMap {
 		for name, actualObject := range actualNameObjectMap {
 			expectedNameObjectMap, found := expectedMap[namespace]
 			if !found {
-				return fmt.Errorf("Actual object list has references to namespace %s that expected list does not", namespace)
+				return fmt.Errorf("actual object list has references to namespace %s that expected list does not", namespace)
 			}
 			expectedObject, found := expectedNameObjectMap[name]
 			if !found {
-				return fmt.Errorf("Did not find object in %s namespace with name %s in expectedList", namespace, name)
+				return fmt.Errorf("did not find object in %s namespace with name %s in expectedList", namespace, name)
 			}
 			if !reflect.DeepEqual(expectedObject, actualObject) {
-				return fmt.Errorf("Actual object %v did not equal expected %v", actualObject, expectedObject)
+				return fmt.Errorf("actual object %v did not equal expected %v", actualObject, expectedObject)
 			}
 		}
 	}

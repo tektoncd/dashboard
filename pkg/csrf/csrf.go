@@ -76,7 +76,6 @@ func unauthorizedHandler(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, fmt.Sprintf("%s - %s",
 		http.StatusText(http.StatusForbidden), errorNoHeader),
 		http.StatusForbidden)
-	return
 }
 
 func parseOptions(h http.Handler, opts ...Option) *csrf {
