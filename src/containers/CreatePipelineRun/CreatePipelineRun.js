@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import keyBy from 'lodash.keyby';
 import {
@@ -24,8 +24,8 @@ import {
 import {
   ALL_NAMESPACES,
   generateId,
-  getTitle,
-  urls
+  urls,
+  useTitleSync
 } from '@tektoncd/dashboard-utils';
 import { KeyValueList } from '@tektoncd/dashboard-components';
 import { injectIntl } from 'react-intl';
@@ -154,14 +154,12 @@ function CreatePipelineRun(props) {
     setState
   ] = useState(getInitialState());
 
-  useEffect(() => {
-    document.title = getTitle({
-      page: intl.formatMessage({
-        id: 'dashboard.createPipelineRun.title',
-        defaultMessage: 'Create PipelineRun'
-      })
-    });
-  }, []);
+  useTitleSync({
+    page: intl.formatMessage({
+      id: 'dashboard.createPipelineRun.title',
+      defaultMessage: 'Create PipelineRun'
+    })
+  });
 
   function checkFormValidation() {
     // Namespace, PipelineRef, Resources, and Params must all have values

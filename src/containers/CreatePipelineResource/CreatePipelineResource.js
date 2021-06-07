@@ -11,15 +11,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import { Button, InlineNotification } from 'carbon-components-react';
 import {
   ALL_NAMESPACES,
   getErrorMessage,
-  getTitle,
-  urls
+  urls,
+  useTitleSync
 } from '@tektoncd/dashboard-utils';
 
 import GitResourceFields from './GitResourceFields';
@@ -66,14 +66,12 @@ export /* istanbul ignore next */ function CreatePipelineResource(props) {
   const [type, setType] = useState('Git');
   const [url, setURL] = useState('');
 
-  useEffect(() => {
-    document.title = getTitle({
-      page: intl.formatMessage({
-        id: 'dashboard.createPipelineResource.title',
-        defaultMessage: 'Create PipelineResource'
-      })
-    });
-  }, []);
+  useTitleSync({
+    page: intl.formatMessage({
+      id: 'dashboard.createPipelineResource.title',
+      defaultMessage: 'Create PipelineResource'
+    })
+  });
 
   function handleClose() {
     history.push(urls.pipelineResources.all());

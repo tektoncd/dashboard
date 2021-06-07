@@ -17,10 +17,10 @@ import { connect } from 'react-redux';
 import { PipelineRun, Rerun } from '@tektoncd/dashboard-components';
 import {
   getTaskRunsWithPlaceholders,
-  getTitle,
   labels as labelConstants,
   queryParams as queryParamConstants,
   urls,
+  useTitleSync,
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
 import { InlineNotification } from 'carbon-components-react';
@@ -87,12 +87,10 @@ export /* istanbul ignore next */ function PipelineRunContainer(props) {
   const [loading, setLoading] = useState(true);
   const [showRerunNotification, setShowRerunNotification] = useState(null);
 
-  useEffect(() => {
-    document.title = getTitle({
-      page: 'PipelineRun',
-      resourceName: pipelineRunName
-    });
-  }, []);
+  useTitleSync({
+    page: 'PipelineRun',
+    resourceName: pipelineRunName
+  });
 
   async function fetchResources() {
     const [run] = await Promise.all([

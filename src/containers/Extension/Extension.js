@@ -11,65 +11,51 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { Component, Suspense } from 'react';
+import React, { Suspense, useState } from 'react';
 import { injectIntl } from 'react-intl';
 import { ErrorBoundary } from '@tektoncd/dashboard-components';
-import { getTitle, paths, urls } from '@tektoncd/dashboard-utils';
+import { paths, urls, useTitleSync } from '@tektoncd/dashboard-utils';
 
 import * as actions from './actions';
 import * as selectors from '../../reducers';
 import './globals';
 
-/* istanbul ignore next */ class Extension extends Component {
-  constructor(props) {
-    super(props);
+/* istanbul ignore next */
+function Extension({ displayName: resourceName, intl, source }) {
+  const [ExtensionComponent] = useState(() =>
+    React.lazy(() => import(/* webpackIgnore: true */ source))
+  );
 
-    const { source } = props;
-    const ExtensionComponent = React.lazy(() =>
-      import(/* webpackIgnore: true */ source)
-    );
+  useTitleSync({
+    page: 'Extension',
+    resourceName
+  });
 
-    this.state = { ExtensionComponent };
-  }
-
-  componentDidMount() {
-    const { displayName: resourceName } = this.props;
-    document.title = getTitle({
-      page: 'Extension',
-      resourceName
-    });
-  }
-
-  render() {
-    const { intl } = this.props;
-    const { ExtensionComponent } = this.state;
-
-    return (
-      <ErrorBoundary
-        message={intl.formatMessage({
-          id: 'dashboard.extension.error',
-          defaultMessage: 'Error loading extension'
-        })}
+  return (
+    <ErrorBoundary
+      message={intl.formatMessage({
+        id: 'dashboard.extension.error',
+        defaultMessage: 'Error loading extension'
+      })}
+    >
+      <Suspense
+        fallback={
+          <div>
+            {intl.formatMessage({
+              id: 'dashboard.loading',
+              defaultMessage: 'Loading…'
+            })}
+          </div>
+        }
       >
-        <Suspense
-          fallback={
-            <div>
-              {intl.formatMessage({
-                id: 'dashboard.loading',
-                defaultMessage: 'Loading…'
-              })}
-            </div>
-          }
-        >
-          <ExtensionComponent
-            actions={actions}
-            selectors={selectors}
-            utils={{ paths, urls }}
-          />
-        </Suspense>
-      </ErrorBoundary>
-    );
-  }
+        <ExtensionComponent
+          actions={actions}
+          selectors={selectors}
+          utils={{ paths, urls }}
+        />
+      </Suspense>
+    </ErrorBoundary>
+  );
 }
 
 export default injectIntl(Extension);

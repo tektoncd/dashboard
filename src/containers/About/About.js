@@ -11,12 +11,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import { InlineNotification } from 'carbon-components-react';
 import { Table } from '@tektoncd/dashboard-components';
-import { getErrorMessage, getTitle } from '@tektoncd/dashboard-utils';
+import { getErrorMessage, useTitleSync } from '@tektoncd/dashboard-utils';
 
 import tektonLogo from '../../images/tekton-dashboard-color.svg';
 
@@ -45,14 +45,12 @@ export function About({
   triggersNamespace,
   triggersVersion
 }) {
-  useEffect(() => {
-    document.title = getTitle({
-      page: intl.formatMessage({
-        id: 'dashboard.about.title',
-        defaultMessage: 'About'
-      })
-    });
-  }, []);
+  useTitleSync({
+    page: intl.formatMessage({
+      id: 'dashboard.about.title',
+      defaultMessage: 'About'
+    })
+  });
 
   const getDisplayValue = value => {
     switch (value) {

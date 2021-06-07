@@ -17,8 +17,8 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import {
   getFilters,
-  getTitle,
   urls,
+  useTitleSync,
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
@@ -36,11 +36,7 @@ export function ResourceListContainer(props) {
   const [isNamespaced, setIsNamespaced] = useState(true);
   const [resources, setResources] = useState([]);
 
-  useEffect(() => {
-    document.title = getTitle({
-      page: `${group}/${version}/${type}`
-    });
-  }, []);
+  useTitleSync({ page: `${group}/${version}/${type}` });
 
   function fetchResources() {
     return getAPIResource({ group, version, type })

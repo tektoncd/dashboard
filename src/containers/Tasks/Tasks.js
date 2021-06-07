@@ -20,8 +20,8 @@ import { Button } from 'carbon-components-react';
 import {
   ALL_NAMESPACES,
   getFilters,
-  getTitle,
   urls,
+  useTitleSync,
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
 import {
@@ -90,9 +90,7 @@ function Tasks(props) {
     return null;
   }
 
-  useEffect(() => {
-    document.title = getTitle({ page: 'Tasks' });
-  }, []);
+  useTitleSync({ page: 'Tasks' });
 
   useEffect(() => {
     fetchData();

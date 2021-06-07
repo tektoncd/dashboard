@@ -17,8 +17,8 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { injectIntl } from 'react-intl';
 import {
-  getTitle,
   urls,
+  useTitleSync,
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
 import { ResourceDetails, Trigger } from '@tektoncd/dashboard-components';
@@ -49,12 +49,10 @@ export /* istanbul ignore next */ function EventListenerContainer(props) {
     fetchEventListener({ name: eventListenerName, namespace });
   }
 
-  useEffect(() => {
-    document.title = getTitle({
-      page: 'EventListener',
-      resourceName: eventListenerName
-    });
-  }, []);
+  useTitleSync({
+    page: 'EventListener',
+    resourceName: eventListenerName
+  });
 
   useEffect(() => {
     fetchData();

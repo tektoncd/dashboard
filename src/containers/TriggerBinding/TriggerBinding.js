@@ -16,7 +16,10 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { injectIntl } from 'react-intl';
 import { ResourceDetails, Table } from '@tektoncd/dashboard-components';
-import { getTitle, useWebSocketReconnected } from '@tektoncd/dashboard-utils';
+import {
+  useTitleSync,
+  useWebSocketReconnected
+} from '@tektoncd/dashboard-utils';
 import {
   getSelectedNamespace,
   getTriggerBinding,
@@ -42,12 +45,10 @@ export /* istanbul ignore next */ function TriggerBindingContainer(props) {
   } = props;
   const { namespace, triggerBindingName: resourceName } = match.params;
 
-  useEffect(() => {
-    document.title = getTitle({
-      page: 'TriggerBinding',
-      resourceName
-    });
-  }, []);
+  useTitleSync({
+    page: 'TriggerBinding',
+    resourceName
+  });
 
   function fetchData() {
     fetchTriggerBinding({ name: resourceName, namespace });

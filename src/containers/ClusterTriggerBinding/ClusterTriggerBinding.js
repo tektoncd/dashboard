@@ -16,7 +16,10 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { injectIntl } from 'react-intl';
 import { ResourceDetails, Table } from '@tektoncd/dashboard-components';
-import { getTitle, useWebSocketReconnected } from '@tektoncd/dashboard-utils';
+import {
+  useTitleSync,
+  useWebSocketReconnected
+} from '@tektoncd/dashboard-utils';
 import {
   getClusterTriggerBinding,
   getClusterTriggerBindingsErrorMessage,
@@ -41,12 +44,10 @@ export /* istanbul ignore next */ function ClusterTriggerBindingContainer(
   } = props;
   const { clusterTriggerBindingName } = match.params;
 
-  useEffect(() => {
-    document.title = getTitle({
-      page: 'ClusterTriggerBinding',
-      resourceName: clusterTriggerBindingName
-    });
-  }, []);
+  useTitleSync({
+    page: 'ClusterTriggerBinding',
+    resourceName: clusterTriggerBindingName
+  });
 
   function fetchData() {
     fetchClusterTriggerBinding({

@@ -45,11 +45,6 @@ export function getErrorMessage(error) {
   );
 }
 
-export function getTitle({ page, resourceName }) {
-  const pageTitle = page + (resourceName ? ` - ${resourceName}` : '');
-  return `Tekton Dashboard | ${pageTitle}`;
-}
-
 export function getStepDefinition({ selectedStepId, task, taskRun }) {
   if (!selectedStepId) {
     return null;

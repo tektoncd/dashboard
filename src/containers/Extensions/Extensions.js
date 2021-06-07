@@ -11,12 +11,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { injectIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { InlineNotification } from 'carbon-components-react';
-import { getErrorMessage, getTitle, urls } from '@tektoncd/dashboard-utils';
+import { getErrorMessage, urls, useTitleSync } from '@tektoncd/dashboard-utils';
 import { Table } from '@tektoncd/dashboard-components';
 
 import {
@@ -31,14 +31,12 @@ export const Extensions = /* istanbul ignore next */ ({
   loading,
   extensions
 }) => {
-  useEffect(() => {
-    document.title = getTitle({
-      page: intl.formatMessage({
-        id: 'dashboard.extensions.title',
-        defaultMessage: 'Extensions'
-      })
-    });
-  }, []);
+  useTitleSync({
+    page: intl.formatMessage({
+      id: 'dashboard.extensions.title',
+      defaultMessage: 'Extensions'
+    })
+  });
 
   const emptyText = intl.formatMessage({
     id: 'dashboard.extensions.emptyState',

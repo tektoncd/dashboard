@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { injectIntl } from 'react-intl';
 import {
   Accordion,
@@ -30,9 +30,9 @@ import { Link } from 'react-router-dom';
 import {
   ALL_NAMESPACES,
   getErrorMessage,
-  getTitle,
   getTranslateWithId,
-  urls
+  urls,
+  useTitleSync
 } from '@tektoncd/dashboard-utils';
 import parseGitURL from 'git-url-parse';
 import { importResources } from '../../api';
@@ -80,14 +80,12 @@ export function ImportResources(props) {
   const [submitError, setSubmitError] = useState('');
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
-  useEffect(() => {
-    document.title = getTitle({
-      page: intl.formatMessage({
-        id: 'dashboard.importResources.title',
-        defaultMessage: 'Import resources'
-      })
-    });
-  }, []);
+  useTitleSync({
+    page: intl.formatMessage({
+      id: 'dashboard.importResources.title',
+      defaultMessage: 'Import resources'
+    })
+  });
 
   function resetError() {
     setSubmitError('');

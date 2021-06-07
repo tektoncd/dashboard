@@ -15,7 +15,10 @@ import React, { useEffect } from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { getTitle, useWebSocketReconnected } from '@tektoncd/dashboard-utils';
+import {
+  useTitleSync,
+  useWebSocketReconnected
+} from '@tektoncd/dashboard-utils';
 import { ResourceDetails, Trigger } from '@tektoncd/dashboard-components';
 import {
   getSelectedNamespace,
@@ -39,12 +42,10 @@ export function TriggerContainer(props) {
   } = props;
   const { triggerName, namespace } = match.params;
 
-  useEffect(() => {
-    document.title = getTitle({
-      page: 'Trigger',
-      resourceName: triggerName
-    });
-  }, []);
+  useTitleSync({
+    page: 'Trigger',
+    resourceName: triggerName
+  });
 
   function fetchData() {
     fetchTrigger({ name: triggerName, namespace });

@@ -15,7 +15,10 @@ import React, { useEffect } from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { getTitle, useWebSocketReconnected } from '@tektoncd/dashboard-utils';
+import {
+  useTitleSync,
+  useWebSocketReconnected
+} from '@tektoncd/dashboard-utils';
 import { ResourceDetails, Table } from '@tektoncd/dashboard-components';
 import {
   getCondition,
@@ -88,12 +91,10 @@ export function ConditionContainer(props) {
   } = props;
   const { conditionName, namespace } = match.params;
 
-  useEffect(() => {
-    document.title = getTitle({
-      page: 'Condition',
-      resourceName: conditionName
-    });
-  }, []);
+  useTitleSync({
+    page: 'Condition',
+    resourceName: conditionName
+  });
 
   function fetchData() {
     fetchCondition({ name: conditionName, namespace });

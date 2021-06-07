@@ -14,7 +14,10 @@ limitations under the License.
 import React, { useEffect, useState } from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import { getTitle, useWebSocketReconnected } from '@tektoncd/dashboard-utils';
+import {
+  useTitleSync,
+  useWebSocketReconnected
+} from '@tektoncd/dashboard-utils';
 import { ResourceDetails } from '@tektoncd/dashboard-components';
 
 import { fetchClusterInterceptor as fetchClusterInterceptorActionCreator } from '../../actions/clusterInterceptors';
@@ -55,12 +58,10 @@ function CustomResourceDefinition(props) {
   const [loading, setLoading] = useState(true);
   const [customResource, setCustomResource] = useState(null);
 
-  useEffect(() => {
-    document.title = getTitle({
-      page: type,
-      resourceName: name
-    });
-  }, []);
+  useTitleSync({
+    page: type,
+    resourceName: name
+  });
 
   function fetch() {
     switch (type) {
