@@ -47,6 +47,15 @@ function IntlWrapper({ children }) {
   );
 }
 
-export function render(ui, { rerender } = {}) {
-  return (rerender || baseRender)(ui, { wrapper: IntlWrapper });
+export function render(
+  ui,
+  { rerender, wrapper: Wrapper = React.Fragment } = {}
+) {
+  return (rerender || baseRender)(ui, {
+    wrapper: ({ children }) => (
+      <Wrapper>
+        <IntlWrapper>{children}</IntlWrapper>
+      </Wrapper>
+    )
+  });
 }
