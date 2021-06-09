@@ -43,6 +43,12 @@ export default {
     showFilters: false,
     title: 'Resource Name'
   },
+  argTypes: {
+    size: {
+      type: 'select',
+      options: ['xs', 'sm', 'md', 'lg', 'xl']
+    }
+  },
   component: Table,
   title: 'Components/Table'
 };
@@ -56,6 +62,7 @@ export const Simple = args => (
     loading={args.loading}
     rows={[]}
     selectedNamespace={args.selectedNamespace}
+    size={args.size}
     title={args.title}
   />
 );
@@ -84,6 +91,7 @@ export const ToolbarButton = args => (
     loading={args.loading}
     rows={args.rows}
     selectedNamespace="*"
+    size={args.size}
     title={args.title}
     toolbarButtons={[{ onClick: action('handleNew'), text: 'Add', icon: Add }]}
   />
@@ -116,6 +124,7 @@ export const BatchActions = args => (
     loading={args.loading}
     rows={args.rows}
     selectedNamespace="*"
+    size={args.size}
     title={args.title}
   />
 );
@@ -173,6 +182,7 @@ export const Sorting = args => {
       loading={args.loading}
       rows={rows}
       selectedNamespace="*"
+      size={args.size}
       title={args.title}
       toolbarButtons={[
         { onClick: action('handleNew'), text: 'Add', icon: Add },

@@ -208,9 +208,10 @@ const Table = props => {
             )}
             {loading ? (
               <DataTableSkeleton
-                headers={headers}
                 columnCount={headers.length}
+                headers={headers}
                 rowCount={skeletonRowCount}
+                size={size}
               />
             ) : (
               <CarbonTable {...getTableProps()}>
