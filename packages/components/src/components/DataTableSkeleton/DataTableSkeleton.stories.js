@@ -45,6 +45,12 @@ export default {
     ],
     rowCount: 5
   },
+  argTypes: {
+    size: {
+      type: 'select',
+      options: ['xs', 'sm', 'md', 'lg', 'xl']
+    }
+  },
   component: DataTableSkeleton,
   title: 'Components/DataTableSkeleton'
 };

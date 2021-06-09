@@ -20,6 +20,7 @@ const DataTableSkeleton = ({
   columnCount,
   headers,
   rowCount,
+  size,
   ...rest
 }) => {
   const rowRepeat = rowCount - 1;
@@ -34,9 +35,11 @@ const DataTableSkeleton = ({
     </tr>
   ));
 
+  const sizeClassName = size ? `bx--data-table--${size}` : '';
+
   return (
     <table
-      className={`${className} bx--data-table bx--skeleton tkn--data-table-skeleton`}
+      className={`${className} ${sizeClassName} bx--data-table bx--skeleton tkn--data-table-skeleton`}
       {...rest}
     >
       <thead>
