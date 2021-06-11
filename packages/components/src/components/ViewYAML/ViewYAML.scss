@@ -20,6 +20,8 @@ limitations under the License.
 // https://github.com/carbon-design-system/carbon-website/issues/965 for more
 // details.
 .bx--snippet--multi {
+  max-width: none;
+
   .token.string {
     color: rgb(0, 187, 0);
   }
