@@ -14,7 +14,7 @@ limitations under the License.
 import React from 'react';
 import { waitFor } from '@testing-library/react';
 import { createIntl } from 'react-intl';
-import { render } from '@tektoncd/dashboard-components/src/utils/test';
+import { render } from '../../utils/test';
 
 import { ConditionContainer } from './Condition';
 

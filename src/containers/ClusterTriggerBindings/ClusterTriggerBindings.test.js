@@ -17,8 +17,8 @@ import { Provider } from 'react-redux';
 import { Route } from 'react-router-dom';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { renderWithRouter } from '@tektoncd/dashboard-components/src/utils/test';
 
+import { renderWithRouter } from '../../utils/test';
 import ClusterTriggerBindings from '.';
 import * as API from '../../api/clusterTriggerBindings';
 
@@ -68,8 +68,7 @@ it('ClusterTriggerBindings renders with no bindings', () => {
       errorMessage: null
     },
     namespaces,
-    notifications: {},
-    properties: {}
+    notifications: {}
   });
 
   const { getByText } = renderWithRouter(
@@ -97,8 +96,7 @@ it('ClusterTriggerBindings renders with one binding', () => {
       errorMessage: null
     },
     namespaces,
-    notifications: {},
-    properties: {}
+    notifications: {}
   });
 
   const { queryByText } = renderWithRouter(
@@ -127,8 +125,7 @@ it('ClusterTriggerBindings can be filtered on a single label filter', async () =
       errorMessage: null
     },
     namespaces,
-    notifications: {},
-    properties: {}
+    notifications: {}
   });
 
   const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
@@ -161,8 +158,7 @@ it('ClusterTriggerBindings renders in loading state', () => {
       errorMessage: null
     },
     namespaces,
-    notifications: {},
-    properties: {}
+    notifications: {}
   });
 
   const { queryByText } = renderWithRouter(

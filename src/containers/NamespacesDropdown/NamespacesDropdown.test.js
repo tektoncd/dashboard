@@ -16,8 +16,9 @@ import { fireEvent, getNodeText } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { render } from '@tektoncd/dashboard-components/src/utils/test';
 
+import { render } from '../../utils/test';
+import * as API from '../../api';
 import NamespacesDropdown from './NamespacesDropdown';
 
 const props = {
@@ -41,8 +42,7 @@ it('NamespacesDropdown renders items based on Redux state', () => {
     namespaces: {
       byName,
       isFetching: false
-    },
-    properties: {}
+    }
   });
   const { getAllByText, getByPlaceholderText, queryByText } = render(
     <Provider store={store}>
@@ -63,8 +63,7 @@ it('NamespacesDropdown renders controlled selection', () => {
     namespaces: {
       byName,
       isFetching: false
-    },
-    properties: {}
+    }
   });
   // Select item 'namespace-1'
   const { queryByPlaceholderText, queryByDisplayValue, rerender } = render(
@@ -96,8 +95,7 @@ it('NamespacesDropdown renders empty', () => {
     namespaces: {
       byName: {},
       isFetching: false
-    },
-    properties: {}
+    }
   });
 
   const { queryByPlaceholderText } = render(
@@ -113,8 +111,7 @@ it('NamespacesDropdown renders loading skeleton based on Redux state', () => {
     namespaces: {
       byName,
       isFetching: true
-    },
-    properties: {}
+    }
   });
 
   const { queryByPlaceholderText } = render(
@@ -130,8 +127,7 @@ it('NamespacesDropdown handles onChange event', () => {
     namespaces: {
       byName,
       isFetching: false
-    },
-    properties: {}
+    }
   });
   const onChange = jest.fn();
   const { getByPlaceholderText, getByText } = render(
@@ -145,12 +141,10 @@ it('NamespacesDropdown handles onChange event', () => {
 });
 
 it('NamespacesDropdown renders tenant namespace in single namespace mode', () => {
+  jest.spyOn(API, 'useTenantNamespace').mockImplementation(() => 'fake');
   const store = mockStore({
     namespaces: {
       byName: {}
-    },
-    properties: {
-      TenantNamespace: 'fake'
     }
   });
   const { getByPlaceholderText, getByText } = render(

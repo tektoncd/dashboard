@@ -23,8 +23,9 @@ import {
 } from '@tektoncd/dashboard-utils';
 
 import { selectNamespace as selectNamespaceAction } from '../../actions/namespaces';
-import { getSelectedNamespace, getTenantNamespace } from '../../reducers';
+import { getSelectedNamespace } from '../../reducers';
 import { LabelFilter, NamespacesDropdown } from '..';
+import { useTenantNamespace } from '../../api';
 
 export const ListPageLayout = ({
   children,
@@ -37,9 +38,10 @@ export const ListPageLayout = ({
   match,
   namespace,
   selectNamespace,
-  tenantNamespace,
   title
 }) => {
+  const tenantNamespace = useTenantNamespace();
+
   function setPath(path) {
     history.push(`${path}${location.search}`);
   }
@@ -115,8 +117,7 @@ export const ListPageLayout = ({
 
 /* istanbul ignore next */
 const mapStateToProps = state => ({
-  namespace: getSelectedNamespace(state),
-  tenantNamespace: getTenantNamespace(state)
+  namespace: getSelectedNamespace(state)
 });
 
 const mapDispatchToProps = {

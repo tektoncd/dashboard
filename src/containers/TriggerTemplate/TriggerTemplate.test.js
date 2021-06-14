@@ -16,8 +16,8 @@ import { Route } from 'react-router-dom';
 import { fireEvent, waitFor } from '@testing-library/react';
 import { createIntl } from 'react-intl';
 import { paths, urls } from '@tektoncd/dashboard-utils';
-import { renderWithRouter } from '@tektoncd/dashboard-components/src/utils/test';
 
+import { renderWithRouter } from '../../utils/test';
 import { TriggerTemplateContainer } from './TriggerTemplate';
 
 const intl = createIntl({

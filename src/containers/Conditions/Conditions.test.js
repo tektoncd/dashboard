@@ -18,8 +18,8 @@ import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
 import { Route } from 'react-router-dom';
 import { paths, urls } from '@tektoncd/dashboard-utils';
-import { renderWithRouter } from '@tektoncd/dashboard-components/src/utils/test';
 
+import { renderWithRouter } from '../../utils/test';
 import * as API from '../../api/conditions';
 import ConditionsContainer from './Conditions';
 
@@ -74,7 +74,6 @@ const testStore = {
   notifications: {
     webSocketConnected: false
   },
-  properties: {},
   ...conditionsTestStore
 };
 
@@ -87,8 +86,7 @@ describe('Conditions', () => {
     const mockTestStore = mockStore({
       conditions: { byId: {}, byNamespace: {}, isFetching: true },
       ...namespacesTestStore,
-      notifications: {},
-      properties: {}
+      notifications: {}
     });
     const { queryByText } = renderWithRouter(
       <Provider store={mockTestStore}>

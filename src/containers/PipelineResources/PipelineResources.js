@@ -30,14 +30,13 @@ import { Add16 as Add, TrashCan32 as Delete } from '@carbon/icons-react';
 
 import { ListPageLayout } from '..';
 import { fetchPipelineResources as fetchPipelineResourcesActionCreator } from '../../actions/pipelineResources';
-import { deletePipelineResource } from '../../api';
+import { deletePipelineResource, useIsReadOnly } from '../../api';
 import {
   getPipelineResources,
   getPipelineResourcesErrorMessage,
   getSelectedNamespace,
   isFetchingPipelineResources,
-  isWebSocketConnected,
-  isReadOnly as selectIsReadOnly
+  isWebSocketConnected
 } from '../../reducers';
 
 export /* istanbul ignore next */ function PipelineResources(props) {
@@ -47,7 +46,6 @@ export /* istanbul ignore next */ function PipelineResources(props) {
     filters,
     history,
     intl,
-    isReadOnly,
     loading,
     namespace,
     pipelineResources,
@@ -58,6 +56,8 @@ export /* istanbul ignore next */ function PipelineResources(props) {
   const [deleteError, setDeleteError] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [toBeDeleted, setToBeDeleted] = useState([]);
+
+  const isReadOnly = useIsReadOnly();
 
   useTitleSync({ page: 'PipelineResources' });
 
@@ -187,7 +187,6 @@ function mapStateToProps(state, props) {
 
   return {
     error: getPipelineResourcesErrorMessage(state),
-    isReadOnly: selectIsReadOnly(state),
     filters,
     loading: isFetchingPipelineResources(state),
     namespace,

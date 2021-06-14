@@ -13,7 +13,10 @@ limitations under the License.
 
 import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { render as baseRender } from '@tektoncd/dashboard-components/src/utils/test';
+import {
+  render as baseRender,
+  renderWithRouter as baseRenderWithRouter
+} from '@tektoncd/dashboard-components/src/utils/test';
 
 import { WebSocketContext } from '../api/utils';
 
@@ -61,5 +64,15 @@ export function getAPIWrapper({
 export function render(ui, { queryClient, rerender, webSocket } = {}) {
   return (rerender || baseRender)(ui, {
     wrapper: getAPIWrapper({ queryClient, webSocket })
+  });
+}
+
+export function renderWithRouter(
+  ui,
+  { queryClient, rerender, webSocket, ...rest } = {}
+) {
+  return (rerender || baseRenderWithRouter)(ui, {
+    wrapper: getAPIWrapper({ queryClient, webSocket }),
+    ...rest
   });
 }

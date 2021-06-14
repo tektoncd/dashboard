@@ -36,14 +36,13 @@ import {
 
 import { ListPageLayout } from '..';
 import { fetchTasks as fetchTasksActionCreator } from '../../actions/tasks';
-import { deleteTask } from '../../api';
+import { deleteTask, useIsReadOnly } from '../../api';
 import {
   getSelectedNamespace,
   getTasks,
   getTasksErrorMessage,
   isFetchingTasks,
-  isWebSocketConnected,
-  isReadOnly as selectIsReadOnly
+  isWebSocketConnected
 } from '../../reducers';
 
 /* istanbul ignore next */
@@ -53,7 +52,6 @@ function Tasks(props) {
     fetchTasks,
     filters,
     intl,
-    isReadOnly,
     loading,
     namespace,
     tasks,
@@ -64,6 +62,8 @@ function Tasks(props) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [toBeDeleted, setToBeDeleted] = useState([]);
   const [cancelSelection, setCancelSelection] = useState(null);
+
+  const isReadOnly = useIsReadOnly();
 
   function fetchData() {
     fetchTasks({ filters, namespace });
@@ -285,7 +285,6 @@ function mapStateToProps(state, props) {
   return {
     error: getTasksErrorMessage(state),
     filters,
-    isReadOnly: selectIsReadOnly(state),
     loading: isFetchingTasks(state),
     namespace,
     tasks: getTasks(state, { filters, namespace }),

@@ -14,11 +14,8 @@ limitations under the License.
 import React from 'react';
 import { waitFor } from '@testing-library/react';
 import { createIntl } from 'react-intl';
-import {
-  render,
-  renderWithRouter
-} from '@tektoncd/dashboard-components/src/utils/test';
 
+import { render, renderWithRouter } from '../../utils/test';
 import { TriggerContainer } from './Trigger';
 
 const intl = createIntl({

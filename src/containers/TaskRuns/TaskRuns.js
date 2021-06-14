@@ -45,10 +45,14 @@ import {
   getTaskRuns,
   getTaskRunsErrorMessage,
   isFetchingTaskRuns,
-  isWebSocketConnected,
-  isReadOnly as selectIsReadOnly
+  isWebSocketConnected
 } from '../../reducers';
-import { cancelTaskRun, deleteTaskRun, rerunTaskRun } from '../../api';
+import {
+  cancelTaskRun,
+  deleteTaskRun,
+  rerunTaskRun,
+  useIsReadOnly
+} from '../../api';
 
 const { CLUSTER_TASK, TASK } = labels;
 
@@ -60,7 +64,6 @@ function TaskRuns(props) {
     filters,
     history,
     intl,
-    isReadOnly,
     kind,
     loading,
     namespace,
@@ -75,6 +78,8 @@ function TaskRuns(props) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [toBeDeleted, setToBeDeleted] = useState([]);
   const [cancelSelection, setCancelSelection] = useState(null);
+
+  const isReadOnly = useIsReadOnly();
 
   useTitleSync({ page: 'TaskRuns' });
 
@@ -366,7 +371,6 @@ function mapStateToProps(state, props) {
   }
 
   return {
-    isReadOnly: selectIsReadOnly(state),
     error: getTaskRunsErrorMessage(state),
     loading: isFetchingTaskRuns(state),
     namespace,

@@ -16,8 +16,9 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { waitFor } from '@testing-library/react';
-import { renderWithRouter } from '@tektoncd/dashboard-components/src/utils/test';
 
+import { renderWithRouter } from '../../utils/test';
+import * as API from '../../api';
 import SideNavContainer, { SideNavWithIntl as SideNav } from './SideNav';
 
 it('SideNav renders only when expanded', () => {
@@ -75,8 +76,7 @@ it('SideNav renders with extensions', () => {
         }
       }
     },
-    namespaces: { byName: { [namespace]: true }, selected: namespace },
-    properties: {}
+    namespaces: { byName: { [namespace]: true }, selected: namespace }
   });
   const { queryByText } = renderWithRouter(
     <Provider store={store}>
@@ -90,15 +90,12 @@ it('SideNav renders with extensions', () => {
 });
 
 it('SideNav renders with triggers', async () => {
+  jest.spyOn(API, 'useIsTriggersInstalled').mockImplementation(() => true);
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const store = mockStore({
     extensions: { byName: {} },
-    namespaces: { byName: {} },
-    properties: {
-      TriggersNamespace: 'fake-triggers',
-      TriggersVersion: 'fake-triggers'
-    }
+    namespaces: { byName: {} }
   });
   const { queryByText } = renderWithRouter(
     <Provider store={store}>
@@ -159,8 +156,7 @@ it('SideNav renders import in the default read-write mode', async () => {
   const mockStore = configureStore(middleware);
   const store = mockStore({
     extensions: { byName: {} },
-    namespaces: { byName: {} },
-    properties: {}
+    namespaces: { byName: {} }
   });
   const { queryByText } = renderWithRouter(
     <Provider store={store}>
@@ -171,14 +167,12 @@ it('SideNav renders import in the default read-write mode', async () => {
 });
 
 it('SideNav does not render import in read-only mode', async () => {
+  jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => true);
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const store = mockStore({
     extensions: { byName: {} },
-    namespaces: { byName: {} },
-    properties: {
-      ReadOnly: true
-    }
+    namespaces: { byName: {} }
   });
   const { queryByText } = renderWithRouter(
     <Provider store={store}>
@@ -194,8 +188,7 @@ it('SideNav renders kubernetes resources placeholder', async () => {
   const mockStore = configureStore(middleware);
   const store = mockStore({
     extensions: { byName: {} },
-    namespaces: { byName: {} },
-    properties: {}
+    namespaces: { byName: {} }
   });
   const { queryByText } = renderWithRouter(
     <Provider store={store}>

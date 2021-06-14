@@ -17,11 +17,8 @@ import { connect } from 'react-redux';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 import { TooltipDropdown } from '@tektoncd/dashboard-components';
 
-import {
-  getNamespaces,
-  getTenantNamespace,
-  isFetchingNamespaces
-} from '../../reducers';
+import { getNamespaces, isFetchingNamespaces } from '../../reducers';
+import { useTenantNamespace } from '../../api';
 
 const NamespacesDropdown = ({
   allNamespacesLabel,
@@ -34,7 +31,6 @@ const NamespacesDropdown = ({
   namespaces,
   selectedItem: originalSelectedItem,
   showAllNamespaces,
-  tenantNamespace,
   ...rest
 }) => {
   const labelString =
@@ -56,6 +52,8 @@ const NamespacesDropdown = ({
       id: 'dashboard.namespacesDropdown.allNamespaces',
       defaultMessage: 'All Namespaces'
     });
+
+  const tenantNamespace = useTenantNamespace();
 
   const selectedItem = { ...originalSelectedItem };
   if (selectedItem && selectedItem.id === ALL_NAMESPACES) {
@@ -88,8 +86,7 @@ NamespacesDropdown.defaultProps = {
 function mapStateToProps(state) {
   return {
     loading: isFetchingNamespaces(state),
-    namespaces: getNamespaces(state),
-    tenantNamespace: getTenantNamespace(state)
+    namespaces: getNamespaces(state)
   };
 }
 

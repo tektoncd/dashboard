@@ -27,12 +27,12 @@ Example payload response is formatted as so:
 
 ```
 {
- "DashboardNamespace": "tekton-pipelines",
- "DashboardVersion": "devel",
- "PipelineNamespace": "tekton-pipelines",
- "PipelineVersion": "v0.10.0",
- "TriggersNamespace": "tekton-pipelines",
- "TriggersVersion": "v0.3.1",
- "ReadOnly": true
+ "dashboardNamespace": "tekton-pipelines",
+ "dashboardVersion": "devel",
+ "isReadOnly": true,
+ "pipelinesNamespace": "tekton-pipelines",
+ "pipelinesVersion": "v0.10.0",
+ "triggersNamespace": "tekton-pipelines",
+ "triggersVersion": "v0.3.1"
 }
 ```

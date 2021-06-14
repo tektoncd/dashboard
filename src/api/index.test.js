@@ -12,7 +12,10 @@ limitations under the License.
 */
 
 import fetchMock from 'fetch-mock';
+import { renderHook } from '@testing-library/react-hooks';
 import { labels } from '@tektoncd/dashboard-utils';
+
+import { getAPIWrapper, getQueryClient } from '../utils/test';
 
 import * as API from '.';
 
@@ -430,4 +433,130 @@ describe('getAPIResource', () => {
       fetchMock.restore();
     });
   });
+});
+
+describe('getInstallProperties', () => {
+  it('returns expected data', async () => {
+    const data = { fake: 'properties' };
+    fetchMock.get(/properties/, data);
+    const properties = await API.getInstallProperties();
+    expect(properties).toEqual(data);
+    fetchMock.restore();
+  });
+
+  it('handles error in case of Dashboard client mode', async () => {
+    const error = new Error();
+    error.response = {
+      data: {
+        status: 404
+      }
+    };
+    fetchMock.get(/properties/, { throws: error });
+    const properties = await API.getInstallProperties();
+    expect(properties.dashboardVersion).toEqual('kubectl-proxy-client');
+    fetchMock.restore();
+  });
+
+  it('handles unexpected errors', async () => {
+    const error = new Error();
+    fetchMock.get(/properties/, { throws: error });
+    const properties = await API.getInstallProperties();
+    expect(properties).toBeUndefined();
+    fetchMock.restore();
+  });
+});
+
+it('useProperties', async () => {
+  const properties = { fake: 'properties' };
+  fetchMock.get(/properties/, properties);
+  const { result, waitFor } = renderHook(() => API.useProperties(), {
+    wrapper: getAPIWrapper()
+  });
+  await waitFor(() => result.current.isFetching);
+  await waitFor(() => !result.current.isFetching);
+  expect(result.current.data).toEqual(properties);
+  fetchMock.restore();
+});
+
+it('other hooks that depend on useProperties', async () => {
+  const queryClient = getQueryClient();
+
+  const dashboardNamespace = 'fake_dashboardNamespace';
+  const externalLogsURL = 'fake_externalLogsURL';
+  const isReadOnly = 'fake_isReadOnly';
+  const logoutURL = 'fake_logoutURL';
+  const streamLogs = 'fake_streamLogs';
+  const tenantNamespace = 'fake_tenantNamespace';
+  const triggersNamespace = 'fake_triggersNamespace';
+  const triggersVersion = 'fake_triggersVersion';
+
+  const properties = {
+    dashboardNamespace,
+    externalLogsURL,
+    isReadOnly,
+    logoutURL,
+    streamLogs,
+    tenantNamespace,
+    triggersNamespace,
+    triggersVersion
+  };
+  fetchMock.get(/properties/, properties);
+  const { result, waitFor } = renderHook(() => API.useProperties(), {
+    wrapper: getAPIWrapper({ queryClient })
+  });
+  await waitFor(() => result.current.isFetching);
+  await waitFor(() => !result.current.isFetching);
+  expect(result.current.data).toEqual(properties);
+
+  const { result: dashboardNamespaceResult } = renderHook(
+    () => API.useDashboardNamespace(),
+    {
+      wrapper: getAPIWrapper({ queryClient })
+    }
+  );
+  expect(dashboardNamespaceResult.current).toEqual(dashboardNamespace);
+
+  const { result: externalLogsURLResult } = renderHook(
+    () => API.useExternalLogsURL(),
+    {
+      wrapper: getAPIWrapper({ queryClient })
+    }
+  );
+  expect(externalLogsURLResult.current).toEqual(externalLogsURL);
+
+  const { result: isReadOnlyResult } = renderHook(() => API.useIsReadOnly(), {
+    wrapper: getAPIWrapper({ queryClient })
+  });
+  expect(isReadOnlyResult.current).toEqual(isReadOnly);
+
+  const { result: logoutURLResult } = renderHook(() => API.useLogoutURL(), {
+    wrapper: getAPIWrapper({ queryClient })
+  });
+  expect(logoutURLResult.current).toEqual(logoutURL);
+
+  const { result: isLogStreamingEnabledResult } = renderHook(
+    () => API.useIsLogStreamingEnabled(),
+    {
+      wrapper: getAPIWrapper({ queryClient })
+    }
+  );
+  expect(isLogStreamingEnabledResult.current).toEqual(streamLogs);
+
+  const { result: tenantNamespaceResult } = renderHook(
+    () => API.useTenantNamespace(),
+    {
+      wrapper: getAPIWrapper({ queryClient })
+    }
+  );
+  expect(tenantNamespaceResult.current).toEqual(tenantNamespace);
+
+  const { result: isTriggersInstalledResult } = renderHook(
+    () => API.useIsTriggersInstalled(),
+    {
+      wrapper: getAPIWrapper({ queryClient })
+    }
+  );
+  expect(isTriggersInstalledResult.current).toEqual(true);
+
+  fetchMock.restore();
 });

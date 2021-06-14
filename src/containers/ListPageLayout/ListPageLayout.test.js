@@ -17,8 +17,9 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { fireEvent } from '@testing-library/react';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
-import { renderWithRouter } from '@tektoncd/dashboard-components/src/utils/test';
 
+import { renderWithRouter } from '../../utils/test';
+import * as API from '../../api';
 import { ListPageLayout } from './ListPageLayout';
 
 describe('ListPageLayout', () => {
@@ -33,8 +34,7 @@ describe('ListPageLayout', () => {
         },
         isFetching: false,
         selected: ALL_NAMESPACES
-      },
-      properties: {}
+      }
     });
     const history = {
       push: jest.fn()
@@ -74,8 +74,7 @@ describe('ListPageLayout', () => {
         },
         isFetching: false,
         selected: namespace
-      },
-      properties: {}
+      }
     });
     const history = {
       push: jest.fn()
@@ -113,8 +112,7 @@ describe('ListPageLayout', () => {
         },
         isFetching: false,
         selected: namespace
-      },
-      properties: {}
+      }
     });
     const history = {
       push: jest.fn()
@@ -150,8 +148,7 @@ describe('ListPageLayout', () => {
         },
         isFetching: false,
         selected: namespace
-      },
-      properties: {}
+      }
     });
     const history = {
       push: jest.fn()
@@ -180,11 +177,9 @@ describe('ListPageLayout', () => {
     const mockStore = configureStore(middleware);
     const store = mockStore({
       extensions: { byName: {} },
-      namespaces: { byName: {} },
-      properties: {
-        TenantNamespace: 'fake'
-      }
+      namespaces: { byName: {} }
     });
+    jest.spyOn(API, 'useTenantNamespace').mockImplementation(() => 'fake');
     const { queryByPlaceholderText } = renderWithRouter(
       <Provider store={store}>
         <ListPageLayout tenantNamespace="fake" />
@@ -198,8 +193,7 @@ describe('ListPageLayout', () => {
     const mockStore = configureStore(middleware);
     const store = mockStore({
       extensions: { byName: {} },
-      namespaces: { byName: {} },
-      properties: {}
+      namespaces: { byName: {} }
     });
     const { queryByPlaceholderText } = renderWithRouter(
       <Provider store={store}>
@@ -214,8 +208,7 @@ describe('ListPageLayout', () => {
     const mockStore = configureStore(middleware);
     const store = mockStore({
       extensions: { byName: {} },
-      namespaces: { byName: {} },
-      properties: {}
+      namespaces: { byName: {} }
     });
     const { queryByLabelText } = renderWithRouter(
       <Provider store={store}>
@@ -230,8 +223,7 @@ describe('ListPageLayout', () => {
     const mockStore = configureStore(middleware);
     const store = mockStore({
       extensions: { byName: {} },
-      namespaces: { byName: {} },
-      properties: {}
+      namespaces: { byName: {} }
     });
     const { getAllByLabelText } = renderWithRouter(
       <Provider store={store}>

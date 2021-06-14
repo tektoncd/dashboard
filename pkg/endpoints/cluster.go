@@ -23,17 +23,17 @@ import (
 
 // Properties : properties we want to be able to retrieve via REST
 type Properties struct {
-	DashboardNamespace string `json:"DashboardNamespace"`
-	DashboardVersion   string `json:"DashboardVersion"`
-	PipelineNamespace  string `json:"PipelineNamespace"`
-	PipelineVersion    string `json:"PipelineVersion"`
-	TriggersNamespace  string `json:"TriggersNamespace,omitempty"`
-	TriggersVersion    string `json:"TriggersVersion,omitempty"`
-	ReadOnly           bool   `json:"ReadOnly"`
-	LogoutURL          string `json:"LogoutURL,omitempty"`
-	TenantNamespace    string `json:"TenantNamespace,omitempty"`
-	StreamLogs         bool   `json:"StreamLogs"`
-	ExternalLogsURL    string `json:"ExternalLogsURL"`
+	DashboardNamespace string `json:"dashboardNamespace"`
+	DashboardVersion   string `json:"dashboardVersion"`
+	ExternalLogsURL    string `json:"externalLogsURL"`
+	LogoutURL          string `json:"logoutURL,omitempty"`
+	PipelineNamespace  string `json:"pipelinesNamespace"`
+	PipelineVersion    string `json:"pipelinesVersion"`
+	ReadOnly           bool   `json:"isReadOnly"`
+	StreamLogs         bool   `json:"streamLogs"`
+	TenantNamespace    string `json:"tenantNamespace,omitempty"`
+	TriggersNamespace  string `json:"triggersNamespace,omitempty"`
+	TriggersVersion    string `json:"triggersVersion,omitempty"`
 }
 
 // ProxyRequest does as the name suggests: proxies requests and logs what's going on

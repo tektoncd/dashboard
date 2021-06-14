@@ -35,13 +35,12 @@ import {
 
 import { ListPageLayout } from '..';
 import { fetchClusterTasks as fetchClusterTasksActionCreator } from '../../actions/tasks';
-import { deleteClusterTask } from '../../api';
+import { deleteClusterTask, useIsReadOnly } from '../../api';
 import {
   getClusterTasks,
   getClusterTasksErrorMessage,
   isFetchingClusterTasks,
-  isWebSocketConnected,
-  isReadOnly as selectIsReadOnly
+  isWebSocketConnected
 } from '../../reducers';
 
 /* istanbul ignore next */
@@ -52,7 +51,6 @@ function ClusterTasksContainer(props) {
     fetchClusterTasks,
     filters,
     intl,
-    isReadOnly,
     loading,
     webSocketConnected
   } = props;
@@ -60,6 +58,8 @@ function ClusterTasksContainer(props) {
   const [deleteError, setDeleteError] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [toBeDeleted, setToBeDeleted] = useState([]);
+
+  const isReadOnly = useIsReadOnly();
 
   useTitleSync({ page: 'ClusterTasks' });
 
@@ -275,7 +275,6 @@ function mapStateToProps(state, props) {
     clusterTasks: getClusterTasks(state, { filters }),
     error: getClusterTasksErrorMessage(state),
     filters,
-    isReadOnly: selectIsReadOnly(state),
     loading: isFetchingClusterTasks(state),
     webSocketConnected: isWebSocketConnected(state)
   };

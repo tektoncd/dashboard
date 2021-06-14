@@ -16,7 +16,7 @@ import { fireEvent, getNodeText } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { render } from '@tektoncd/dashboard-components/src/utils/test';
+import { render } from '../../utils/test';
 
 import ServiceAccountsDropdown from './ServiceAccountsDropdown';
 import * as API from '../../api/serviceAccounts';

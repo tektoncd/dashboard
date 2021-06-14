@@ -28,13 +28,22 @@ function RouterWrapper({ children }) {
 
 export function renderWithRouter(
   ui,
-  { rerender, route = '/', ...otherOptions } = {}
+  {
+    rerender,
+    route = '/',
+    wrapper: Wrapper = React.Fragment,
+    ...otherOptions
+  } = {}
 ) {
   window.history.pushState({}, 'Test page', route);
 
   return (rerender || baseRender)(ui, {
     route,
-    wrapper: RouterWrapper,
+    wrapper: ({ children }) => (
+      <Wrapper>
+        <RouterWrapper>{children}</RouterWrapper>
+      </Wrapper>
+    ),
     ...otherOptions
   });
 }

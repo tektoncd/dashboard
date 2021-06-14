@@ -12,38 +12,30 @@ limitations under the License.
 */
 
 import React from 'react';
-import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
-import { render } from '@tektoncd/dashboard-components/src/utils/test';
+import { render } from '../../utils/test';
 
+import * as api from '../../api';
 import About from '.';
 
 const dashboardSelector = { selector: '#tkn--about--dashboard-table *' };
 const pipelinesSelector = { selector: '#tkn--about--pipelines-table *' };
 const triggersSelector = { selector: '#tkn--about--triggers-table *' };
-const middleware = [thunk];
-const mockStore = configureStore(middleware);
 
 describe('About', () => {
   it('should render correctly', async () => {
-    const store = mockStore({
-      properties: {
-        DashboardNamespace: 'tekton-dashboard',
-        DashboardVersion: 'v0.100.0',
-        PipelineNamespace: 'tekton-pipelines',
-        PipelineVersion: 'v0.10.0',
-        TriggersNamespace: 'tekton-triggers',
-        TriggersVersion: 'v0.3.1',
-        ReadOnly: true
+    jest.spyOn(api, 'useProperties').mockImplementation(() => ({
+      data: {
+        dashboardNamespace: 'tekton-dashboard',
+        dashboardVersion: 'v0.100.0',
+        isReadOnly: true,
+        pipelinesNamespace: 'tekton-pipelines',
+        pipelinesVersion: 'v0.10.0',
+        triggersNamespace: 'tekton-triggers',
+        triggersVersion: 'v0.3.1'
       }
-    });
+    }));
 
-    const { queryByText, queryAllByText } = render(
-      <Provider store={store}>
-        <About />)
-      </Provider>
-    );
+    const { queryByText, queryAllByText } = render(<About />);
 
     expect(queryByText('Property', dashboardSelector)).toBeTruthy();
     expect(queryByText('Value', dashboardSelector)).toBeTruthy();
@@ -70,21 +62,17 @@ describe('About', () => {
   });
 
   it('should render error when an expected property is missing', async () => {
-    const store = mockStore({
-      properties: {
-        DashboardNamespace: 'tekton-dashboard',
+    jest.spyOn(api, 'useProperties').mockImplementation(() => ({
+      data: {
+        dashboardNamespace: 'tekton-dashboard',
         // DashboardVersion: '', this is intentionally missing
-        PipelineNamespace: 'tekton-pipelines',
-        PipelineVersion: 'v0.10.0',
-        ReadOnly: false
+        isReadOnly: false,
+        pipelinesNamespace: 'tekton-pipelines',
+        pipelinesVersion: 'v0.10.0'
       }
-    });
+    }));
 
-    const { queryByText } = render(
-      <Provider store={store}>
-        <About />)
-      </Provider>
-    );
+    const { queryByText } = render(<About />);
 
     expect(queryByText('Property', dashboardSelector)).toBeTruthy();
     expect(queryByText('Value', dashboardSelector)).toBeTruthy();
@@ -101,21 +89,17 @@ describe('About', () => {
     expect(queryByText('v0.10.0', pipelinesSelector)).toBeTruthy();
 
     expect(queryByText('Error getting data')).toBeTruthy();
-    expect(queryByText('Could not find: DashboardVersion')).toBeTruthy();
+    expect(queryByText('Could not find: dashboardVersion')).toBeTruthy();
   });
 
   it('should render error when multiple expected properties are missing', async () => {
-    const store = mockStore({
-      properties: {
-        DashboardNamespace: 'tekton-dashboard'
+    jest.spyOn(api, 'useProperties').mockImplementation(() => ({
+      data: {
+        dashboardNamespace: 'tekton-dashboard'
       }
-    });
+    }));
 
-    const { queryByText } = render(
-      <Provider store={store}>
-        <About />)
-      </Provider>
-    );
+    const { queryByText } = render(<About />);
 
     expect(queryByText('Property', dashboardSelector)).toBeTruthy();
     expect(queryByText('Value', dashboardSelector)).toBeTruthy();
@@ -131,26 +115,22 @@ describe('About', () => {
 
     expect(
       queryByText(
-        'Could not find: DashboardVersion, PipelineNamespace, PipelineVersion'
+        'Could not find: dashboardVersion, pipelinesNamespace, pipelinesVersion'
       )
     ).toBeTruthy();
   });
 
   it('should not display TiggersVersion when value is not returned in the API', async () => {
-    const store = mockStore({
-      properties: {
-        DashboardNamespace: 'tekton-dashboard',
-        DashboardVersion: 'v0.100.0',
-        PipelineNamespace: 'tekton-pipelines',
-        PipelineVersion: 'v0.10.0'
+    jest.spyOn(api, 'useProperties').mockImplementation(() => ({
+      data: {
+        dashboardNamespace: 'tekton-dashboard',
+        dashboardVersion: 'v0.100.0',
+        pipelinesNamespace: 'tekton-pipelines',
+        pipelinesVersion: 'v0.10.0'
       }
-    });
+    }));
 
-    const { queryByText } = render(
-      <Provider store={store}>
-        <About />)
-      </Provider>
-    );
+    const { queryByText } = render(<About />);
 
     expect(queryByText('Property', dashboardSelector)).toBeTruthy();
     expect(queryByText('Value', dashboardSelector)).toBeTruthy();
