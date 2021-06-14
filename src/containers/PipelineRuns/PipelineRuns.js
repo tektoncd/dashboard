@@ -45,13 +45,13 @@ import {
   getPipelineRunsErrorMessage,
   getSelectedNamespace,
   isFetchingPipelineRuns,
-  isWebSocketConnected,
-  isReadOnly as selectIsReadOnly
+  isWebSocketConnected
 } from '../../reducers';
 import {
   cancelPipelineRun,
   deletePipelineRun,
-  rerunPipelineRun
+  rerunPipelineRun,
+  useIsReadOnly
 } from '../../api';
 
 export /* istanbul ignore next */ function PipelineRuns(props) {
@@ -61,7 +61,6 @@ export /* istanbul ignore next */ function PipelineRuns(props) {
     filters,
     history,
     intl,
-    isReadOnly,
     loading,
     namespace,
     pipelineName,
@@ -75,6 +74,8 @@ export /* istanbul ignore next */ function PipelineRuns(props) {
   const [deleteError, setDeleteError] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [toBeDeleted, setToBeDeleted] = useState([]);
+
+  const isReadOnly = useIsReadOnly();
 
   useTitleSync({ page: 'PipelineRuns' });
 
@@ -350,7 +351,6 @@ function mapStateToProps(state, props) {
   const pipelineName = pipelineFilter.replace(`${labels.PIPELINE}=`, '');
 
   return {
-    isReadOnly: selectIsReadOnly(state),
     error: getPipelineRunsErrorMessage(state),
     loading: isFetchingPipelineRuns(state),
     namespace,

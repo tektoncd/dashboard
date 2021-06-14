@@ -17,11 +17,8 @@ import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
 import { ALL_NAMESPACES, urls } from '@tektoncd/dashboard-utils';
-import {
-  render,
-  renderWithRouter
-} from '@tektoncd/dashboard-components/src/utils/test';
 
+import { render, renderWithRouter } from '../../utils/test';
 import ImportResourcesContainer from './ImportResources';
 import * as API from '../../api';
 
@@ -35,9 +32,6 @@ describe('ImportResources component', () => {
       selected: ALL_NAMESPACES
     },
     notifications: {},
-    properties: {
-      DashboardNamespace: 'namespace1'
-    },
     serviceAccounts: {
       byNamespace: {
         namespace1: {
@@ -55,6 +49,12 @@ describe('ImportResources component', () => {
       },
       isFetching: false
     }
+  });
+
+  beforeEach(() => {
+    jest
+      .spyOn(API, 'useDashboardNamespace')
+      .mockImplementation(() => 'namespace1');
   });
 
   it('Displays errors when Repository URL and Namespace is empty', async () => {

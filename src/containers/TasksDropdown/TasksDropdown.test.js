@@ -17,7 +17,7 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
-import { render } from '@tektoncd/dashboard-components/src/utils/test';
+import { render } from '../../utils/test';
 
 import TasksDropdown from './TasksDropdown';
 import * as API from '../../api/tasks';

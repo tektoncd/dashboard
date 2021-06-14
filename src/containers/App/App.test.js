@@ -13,25 +13,22 @@ limitations under the License.
 
 import React from 'react';
 import { Provider } from 'react-redux';
-import { render, waitFor } from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
 import { App } from './App';
+import { render } from '../../utils/test';
+import * as API from '../../api';
 import * as PipelinesAPI from '../../api/pipelines';
-import * as selectors from '../../reducers';
 
 describe('App', () => {
   beforeEach(() => {
     jest.spyOn(PipelinesAPI, 'getPipelines').mockImplementation(() => {});
-    jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => true);
-    jest
-      .spyOn(selectors, 'isTriggersInstalled')
-      .mockImplementation(() => false);
-    jest
-      .spyOn(selectors, 'getTenantNamespace')
-      .mockImplementation(() => undefined);
+    jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => true);
+    jest.spyOn(API, 'useIsTriggersInstalled').mockImplementation(() => false);
+    jest.spyOn(API, 'useTenantNamespace').mockImplementation(() => undefined);
   });
 
   it('renders successfully in full cluster mode', async () => {
@@ -49,9 +46,9 @@ describe('App', () => {
       <Provider store={store}>
         <App
           extensions={[]}
+          lang="en"
           fetchExtensions={() => {}}
           fetchNamespaces={() => {}}
-          fetchInstallProperties={() => {}}
         />
       </Provider>
     );
@@ -64,8 +61,7 @@ describe('App', () => {
   });
 
   it('renders successfully in single namespace mode', async () => {
-    selectors.getTenantNamespace.mockImplementation(() => 'fake');
-
+    jest.spyOn(API, 'useTenantNamespace').mockImplementation(() => 'fake');
     const middleware = [thunk];
     const mockStore = configureStore(middleware);
     const store = mockStore({
@@ -82,7 +78,7 @@ describe('App', () => {
           extensions={[]}
           fetchExtensions={() => {}}
           fetchNamespaces={() => {}}
-          fetchInstallProperties={() => {}}
+          selectNamespace={() => {}}
         />
       </Provider>
     );
@@ -106,14 +102,13 @@ describe('App', () => {
       serviceAccounts: { byNamespace: {} }
     });
     const selectNamespace = jest.fn();
+    jest.spyOn(API, 'useTenantNamespace').mockImplementation(() => 'fake');
     const { queryByText } = render(
       <Provider store={store}>
         <App
           extensions={[]}
           fetchExtensions={() => {}}
           fetchNamespaces={() => {}}
-          fetchInstallProperties={() => {}}
-          tenantNamespace="fake"
           selectNamespace={selectNamespace}
         />
       </Provider>
@@ -136,18 +131,13 @@ describe('App', () => {
     });
     const fetchNamespaces = jest.fn();
     const selectNamespace = jest.fn();
+    jest.spyOn(API, 'useTenantNamespace').mockImplementation(() => 'fake');
     const { queryByText } = render(
       <Provider store={store}>
         <App
           extensions={[]}
           fetchExtensions={() => {}}
           fetchNamespaces={fetchNamespaces}
-          fetchInstallProperties={() =>
-            Promise.resolve({
-              TenantNamespace: 'fake'
-            })
-          }
-          tenantNamespace="fake"
           selectNamespace={selectNamespace}
         />
       </Provider>
@@ -177,7 +167,6 @@ describe('App', () => {
           extensions={[]}
           fetchExtensions={() => {}}
           fetchNamespaces={fetchNamespaces}
-          fetchInstallProperties={() => Promise.resolve({})}
           selectNamespace={selectNamespace}
         />
       </Provider>
@@ -199,6 +188,7 @@ describe('App', () => {
       pipelineRuns: { byNamespace: {} },
       serviceAccounts: { byNamespace: {} }
     });
+    jest.spyOn(API, 'useTenantNamespace').mockImplementation(() => 'fake');
     const fetchExtensions = jest.fn();
     const selectNamespace = jest.fn();
     const { queryByText } = render(
@@ -206,12 +196,6 @@ describe('App', () => {
         <App
           extensions={[]}
           fetchExtensions={fetchExtensions}
-          fetchInstallProperties={() =>
-            Promise.resolve({
-              TenantNamespace: 'fake'
-            })
-          }
-          tenantNamespace="fake"
           selectNamespace={selectNamespace}
         />
       </Provider>
@@ -241,7 +225,6 @@ describe('App', () => {
           extensions={[]}
           fetchExtensions={fetchExtensions}
           fetchNamespaces={fetchNamespaces}
-          fetchInstallProperties={() => Promise.resolve({})}
         />
       </Provider>
     );

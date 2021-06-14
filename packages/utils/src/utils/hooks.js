@@ -23,6 +23,7 @@ export function usePrevious(value) {
   return ref.current;
 }
 
+/* istanbul ignore next */
 export function useTitleSync({ page, resourceName }) {
   useEffect(() => {
     const pageTitle = page + (resourceName ? ` - ${resourceName}` : '');

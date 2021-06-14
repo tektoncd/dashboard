@@ -18,8 +18,8 @@ import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
 import { Route } from 'react-router-dom';
 import { ALL_NAMESPACES, paths, urls } from '@tektoncd/dashboard-utils';
-import { renderWithRouter } from '@tektoncd/dashboard-components/src/utils/test';
 
+import { renderWithRouter } from '../../utils/test';
 import * as API from '../../api/clusterInterceptors';
 import ClusterInterceptorsContainer from './ClusterInterceptors';
 
@@ -71,8 +71,7 @@ const testStore = {
   ...namespacesTestStore,
   notifications: {
     webSocketConnected: false
-  },
-  properties: {}
+  }
 };
 
 describe('ClusterInterceptors', () => {
@@ -84,8 +83,7 @@ describe('ClusterInterceptors', () => {
     const mockTestStore = mockStore({
       clusterInterceptors: { byId: {}, byNamespace: {}, isFetching: true },
       ...namespacesTestStore,
-      notifications: {},
-      properties: {}
+      notifications: {}
     });
     const { queryByText } = renderWithRouter(
       <Provider store={mockTestStore}>

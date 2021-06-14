@@ -35,8 +35,8 @@ import {
   useTitleSync
 } from '@tektoncd/dashboard-utils';
 import parseGitURL from 'git-url-parse';
-import { importResources } from '../../api';
-import { getDashboardNamespace, getSelectedNamespace } from '../../reducers';
+import { importResources, useDashboardNamespace } from '../../api';
+import { getSelectedNamespace } from '../../reducers';
 import { NamespacesDropdown, ServiceAccountsDropdown } from '..';
 
 const itemToString = ({ text }) => text;
@@ -58,7 +58,9 @@ const HelpIcon = ({ title }) => (
 );
 
 export function ImportResources(props) {
-  const { dashboardNamespace, intl, navNamespace } = props;
+  const { intl, navNamespace } = props;
+
+  const dashboardNamespace = useDashboardNamespace();
 
   const [importerNamespace, setImporterNamespace] = useState(
     dashboardNamespace
@@ -430,8 +432,7 @@ export function ImportResources(props) {
 /* istanbul ignore next */
 function mapStateToProps(state) {
   return {
-    navNamespace: getSelectedNamespace(state),
-    dashboardNamespace: getDashboardNamespace(state)
+    navNamespace: getSelectedNamespace(state)
   };
 }
 

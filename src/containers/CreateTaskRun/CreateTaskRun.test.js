@@ -18,7 +18,7 @@ import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
-import { render } from '@tektoncd/dashboard-components/src/utils/test';
+import { render } from '../../utils/test';
 
 import CreateTaskRun from './CreateTaskRun';
 import * as PipelineResourcesAPI from '../../api/pipelineResources';
@@ -171,7 +171,6 @@ const testStore = {
   namespaces,
   notifications: {},
   pipelineResources,
-  properties: {},
   taskRuns,
   tasks,
   clusterTasks,

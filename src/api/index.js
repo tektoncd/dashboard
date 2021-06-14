@@ -11,6 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { useQuery } from 'react-query';
 import { labels as labelConstants } from '@tektoncd/dashboard-utils';
 
 import { get, post } from './comms';
@@ -23,6 +24,7 @@ import {
   getTektonAPI
 } from './utils';
 
+export { WebSocketContext } from './utils';
 export * from './clusterInterceptors';
 export * from './clusterTasks';
 export * from './clusterTriggerBindings';
@@ -49,9 +51,25 @@ export function getCustomResource(...args) {
   return get(uri);
 }
 
-export function getInstallProperties() {
+export async function getInstallProperties() {
   const uri = `${apiRoot}/v1/properties`;
-  return get(uri);
+  let data;
+  try {
+    data = await get(uri);
+  } catch (error) {
+    if (error?.response?.data?.status === 404) {
+      data = {
+        dashboardNamespace: 'N/A',
+        dashboardVersion: 'kubectl-proxy-client',
+        isReadOnly: false,
+        pipelinesNamespace: 'Unknown',
+        pipelinesVersion: 'Unknown',
+        triggersNamespace: 'Unknown',
+        triggersVersion: 'Unknown'
+      };
+    }
+  }
+  return data;
 }
 
 export function getNamespaces() {
@@ -249,4 +267,45 @@ export function getAPIResource({ group, version, type }) {
   return get(uri).then(({ resources }) =>
     resources.find(({ name }) => name === type)
   );
+}
+
+export function useProperties() {
+  return useQuery('properties', getInstallProperties, {
+    placeholderData: { isReadOnly: true }
+  });
+}
+
+export function useDashboardNamespace() {
+  const { data } = useProperties();
+  return data.dashboardNamespace;
+}
+
+export function useExternalLogsURL() {
+  const { data } = useProperties();
+  return data.externalLogsURL;
+}
+
+export function useIsLogStreamingEnabled() {
+  const { data } = useProperties();
+  return data.streamLogs;
+}
+
+export function useIsReadOnly() {
+  const { data } = useProperties();
+  return data.isReadOnly;
+}
+
+export function useIsTriggersInstalled() {
+  const { data } = useProperties();
+  return !!(data.triggersNamespace && data.triggersVersion);
+}
+
+export function useLogoutURL() {
+  const { data } = useProperties();
+  return data.logoutURL;
+}
+
+export function useTenantNamespace() {
+  const { data } = useProperties();
+  return data.tenantNamespace;
 }

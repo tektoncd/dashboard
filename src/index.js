@@ -15,14 +15,27 @@ limitations under the License.
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 import ReconnectingWebSocket from 'reconnecting-websocket';
 
 import './utils/polyfills';
 import { configureStore } from './store';
-import { getWebSocketURL } from './api';
+import { getWebSocketURL, WebSocketContext } from './api';
 import { setLocale } from './actions/locale';
 
 import App from './containers/App';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      cacheTime: 1000 * 60 * 5, // 5 minutes
+      refetchOnWindowFocus: false,
+      retry: false,
+      staleTime: Infinity
+    }
+  }
+});
 
 const webSocket = new ReconnectingWebSocket(getWebSocketURL());
 function closeSocket() {
@@ -38,9 +51,17 @@ if (['dark', 'system'].includes(theme)) {
   document.body.classList.add(`tkn--theme-${theme}`);
 }
 
+const enableReactQueryDevTools =
+  localStorage.getItem('tkn-devtools-rq') === 'true';
+
 ReactDOM.render(
-  <Provider store={store}>
-    <App onUnload={closeSocket} />
-  </Provider>,
+  <WebSocketContext.Provider value={webSocket}>
+    <QueryClientProvider client={queryClient}>
+      <Provider store={store}>
+        <App onUnload={closeSocket} />
+      </Provider>
+      {enableReactQueryDevTools && <ReactQueryDevtools initialIsOpen={false} />}
+    </QueryClientProvider>
+  </WebSocketContext.Provider>,
   document.getElementById('root')
 );

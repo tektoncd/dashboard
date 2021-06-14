@@ -18,13 +18,13 @@ import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
 import { Route } from 'react-router-dom';
 import { urls } from '@tektoncd/dashboard-utils';
-import { renderWithRouter } from '@tektoncd/dashboard-components/src/utils/test';
 
+import { renderWithRouter } from '../../utils/test';
+import * as API from '../../api';
 import * as PipelineResourcesAPI from '../../api/pipelineResources';
 import * as PipelinesAPI from '../../api/pipelines';
 import * as PipelineRunsAPI from '../../api/pipelineRuns';
 import * as ServiceAccountsAPI from '../../api/serviceAccounts';
-import * as selectors from '../../reducers';
 import PipelineRunsContainer from './PipelineRuns';
 
 const namespacesTestStore = {
@@ -160,7 +160,6 @@ const testStore = {
   ...pipelineResourcesTestStore,
   ...pipelineRunsTestStore,
   ...pipelinesTestStore,
-  properties: {},
   ...serviceAccountsTestStore
 };
 
@@ -173,7 +172,7 @@ describe('PipelineRuns container', () => {
     jest
       .spyOn(PipelineResourcesAPI, 'getPipelineResources')
       .mockImplementation(() => []);
-    jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => true);
+    jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => true);
   });
 
   it('PipelineRuns can be filtered on a single label filter', async () => {
@@ -379,7 +378,7 @@ describe('PipelineRuns container', () => {
   });
 
   it('Creation, deletion and stop events are possible when not in read-only mode', async () => {
-    jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => false);
+    jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => false);
 
     const mockTestStore = mockStore(testStore);
     const match = {
@@ -414,7 +413,7 @@ describe('PipelineRuns container', () => {
   });
 
   it('Creation, deletion and stop events are not possible when in read-only mode', async () => {
-    jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => true);
+    jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => true);
 
     const mockTestStore = mockStore(testStore);
     const match = {
@@ -449,7 +448,7 @@ describe('PipelineRuns container', () => {
 
   it('handles rerun event in PipelineRuns page', async () => {
     const mockTestStore = mockStore(testStore);
-    jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => false);
+    jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => false);
     jest
       .spyOn(PipelineRunsAPI, 'rerunPipelineRun')
       .mockImplementation(() => []);

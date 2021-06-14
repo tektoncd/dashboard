@@ -26,7 +26,6 @@ import notifications, * as notificationSelectors from './notifications';
 import pipelineResources, * as pipelineResourcesSelectors from './pipelineResources';
 import pipelineRuns, * as pipelineRunsSelectors from './pipelineRuns';
 import pipelines, * as pipelineSelectors from './pipelines';
-import properties, * as propertiesSelectors from './properties';
 import serviceAccounts, * as serviceAccountSelectors from './serviceAccounts';
 import taskRuns, * as taskRunsSelectors from './taskRuns';
 import tasks, * as taskSelectors from './tasks';
@@ -47,7 +46,6 @@ export default combineReducers({
   pipelines: pipelines(),
   pipelineResources: pipelineResources(),
   pipelineRuns: pipelineRuns(),
-  properties,
   serviceAccounts: serviceAccounts(),
   tasks: tasks(),
   taskRuns: taskRuns(),
@@ -495,52 +493,4 @@ export function getEventListenersErrorMessage(state) {
 
 export function isFetchingEventListeners(state) {
   return eventListenersSelectors.isFetchingEventListeners(state.eventListeners);
-}
-
-export function isReadOnly(state) {
-  return propertiesSelectors.isReadOnly(state.properties);
-}
-
-export function isTriggersInstalled(state) {
-  return propertiesSelectors.isTriggersInstalled(state.properties);
-}
-
-export function getLogoutURL(state) {
-  return propertiesSelectors.getLogoutURL(state.properties);
-}
-
-export function getDashboardNamespace(state) {
-  return propertiesSelectors.getDashboardNamespace(state.properties);
-}
-
-export function getDashboardVersion(state) {
-  return propertiesSelectors.getDashboardVersion(state.properties);
-}
-
-export function getPipelineNamespace(state) {
-  return propertiesSelectors.getPipelineNamespace(state.properties);
-}
-
-export function getPipelineVersion(state) {
-  return propertiesSelectors.getPipelineVersion(state.properties);
-}
-
-export function getTriggersNamespace(state) {
-  return propertiesSelectors.getTriggersNamespace(state.properties);
-}
-
-export function getTriggersVersion(state) {
-  return propertiesSelectors.getTriggersVersion(state.properties);
-}
-
-export function getTenantNamespace(state) {
-  return propertiesSelectors.getTenantNamespace(state.properties);
-}
-
-export function isLogStreamingEnabled(state) {
-  return propertiesSelectors.isLogStreamingEnabled(state.properties);
-}
-
-export function getExternalLogsURL(state) {
-  return propertiesSelectors.getExternalLogsURL(state.properties);
 }

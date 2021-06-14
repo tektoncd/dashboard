@@ -18,10 +18,10 @@ import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
 import { Route } from 'react-router-dom';
 import { urls } from '@tektoncd/dashboard-utils';
-import { renderWithRouter } from '@tektoncd/dashboard-components/src/utils/test';
 
-import * as API from '../../api/taskRuns';
-import * as selectors from '../../reducers';
+import { renderWithRouter } from '../../utils/test';
+import * as API from '../../api';
+import * as taskRunsAPI from '../../api/taskRuns';
 import * as store from '../../store';
 import TaskRunsContainer from './TaskRuns';
 
@@ -139,7 +139,6 @@ const mockStore = configureStore(middleware);
 const testStore = {
   ...namespacesTestStore,
   notifications: {},
-  properties: {},
   ...taskRunsTestStore,
   ...tasksTestStore,
   ...serviceAccountsTestStore
@@ -147,7 +146,7 @@ const testStore = {
 
 describe('TaskRuns container', () => {
   beforeEach(() => {
-    jest.spyOn(API, 'getTaskRuns').mockImplementation(() => []);
+    jest.spyOn(taskRunsAPI, 'getTaskRuns').mockImplementation(() => []);
     jest
       .spyOn(store, 'getStore')
       .mockImplementation(() => mockStore(testStore));
@@ -351,7 +350,7 @@ describe('TaskRuns container', () => {
   });
 
   it('TaskRun actions are available when not in read-only mode', async () => {
-    jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => false);
+    jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => false);
 
     const match = {
       params: {},
@@ -383,7 +382,7 @@ describe('TaskRuns container', () => {
   });
 
   it('TaskRun actions are not available when in read-only mode', async () => {
-    jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => true);
+    jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => true);
 
     const match = {
       params: {},
@@ -416,8 +415,8 @@ describe('TaskRuns container', () => {
 
   it('handles rerun event in TaskRuns page', async () => {
     const mockTestStore = mockStore(testStore);
-    jest.spyOn(selectors, 'isReadOnly').mockImplementation(() => false);
-    jest.spyOn(API, 'rerunTaskRun').mockImplementation(() => []);
+    jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => false);
+    jest.spyOn(taskRunsAPI, 'rerunTaskRun').mockImplementation(() => []);
     const { getAllByTitle, getByText } = renderWithRouter(
       <Provider store={mockTestStore}>
         <Route

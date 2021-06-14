@@ -29,7 +29,6 @@ import { injectIntl } from 'react-intl';
 
 import {
   getClusterTasks,
-  getExternalLogsURL,
   getPipeline,
   getPipelineRun,
   getPipelineRunsErrorMessage,
@@ -37,9 +36,7 @@ import {
   getTaskRunsErrorMessage,
   getTasks,
   getTasksErrorMessage,
-  isWebSocketConnected,
-  isLogStreamingEnabled as selectIsLogStreamingEnabled,
-  isReadOnly as selectIsReadOnly
+  isWebSocketConnected
 } from '../../reducers';
 import { fetchPipelineRun as fetchPipelineRunActionCreator } from '../../actions/pipelineRuns';
 import { fetchPipeline as fetchPipelineActionCreator } from '../../actions/pipelines';
@@ -48,7 +45,12 @@ import {
   fetchTasks as fetchTasksActionCreator
 } from '../../actions/tasks';
 import { fetchTaskRuns as fetchTaskRunsActionCreator } from '../../actions/taskRuns';
-import { rerunPipelineRun } from '../../api';
+import {
+  rerunPipelineRun,
+  useExternalLogsURL,
+  useIsLogStreamingEnabled,
+  useIsReadOnly
+} from '../../api';
 
 import {
   getLogsRetriever,
@@ -86,6 +88,10 @@ export /* istanbul ignore next */ function PipelineRunContainer(props) {
   const maximizedLogsContainer = useRef();
   const [loading, setLoading] = useState(true);
   const [showRerunNotification, setShowRerunNotification] = useState(null);
+
+  const externalLogsURL = useExternalLogsURL();
+  const isLogStreamingEnabled = useIsLogStreamingEnabled();
+  const isReadOnly = useIsReadOnly();
 
   useTitleSync({
     page: 'PipelineRun',
@@ -237,7 +243,7 @@ export /* istanbul ignore next */ function PipelineRunContainer(props) {
     currentRetry
   );
 
-  const rerun = !props.isReadOnly && (
+  const rerun = !isReadOnly && (
     <Rerun
       getURL={({ name, namespace: resourceNamespace }) =>
         urls.pipelineRuns.byName({
@@ -279,10 +285,7 @@ export /* istanbul ignore next */ function PipelineRunContainer(props) {
       )}
       <PipelineRun
         error={error}
-        fetchLogs={getLogsRetriever(
-          props.isLogStreamingEnabled,
-          props.externalLogsURL
-        )}
+        fetchLogs={getLogsRetriever(isLogStreamingEnabled, externalLogsURL)}
         handleTaskSelected={handleTaskSelected}
         loading={loading}
         getLogsToolbar={getLogsToolbar}
@@ -351,15 +354,12 @@ function mapStateToProps(state, ownProps) {
       getPipelineRunsErrorMessage(state) ||
       getTasksErrorMessage(state) ||
       getTaskRunsErrorMessage(state),
-    externalLogsURL: getExternalLogsURL(state),
-    isReadOnly: selectIsReadOnly(state),
     namespace,
     pipelineRun,
     pipeline,
     pipelineTaskName,
     retry,
     selectedStepId,
-    isLogStreamingEnabled: selectIsLogStreamingEnabled(state),
     tasks,
     taskRuns,
     view,

@@ -30,12 +30,8 @@ import {
 import { ALL_NAMESPACES, urls } from '@tektoncd/dashboard-utils';
 
 import { selectNamespace as selectNamespaceActionCreator } from '../../actions/namespaces';
-import {
-  getExtensions,
-  getSelectedNamespace,
-  isReadOnly as selectIsReadOnly,
-  isTriggersInstalled as selectIsTriggersInstalled
-} from '../../reducers';
+import { getExtensions, getSelectedNamespace } from '../../reducers';
+import { useIsReadOnly, useIsTriggersInstalled } from '../../api';
 
 import { ReactComponent as KubernetesIcon } from '../../images/kubernetes.svg';
 import { ReactComponent as TektonIcon } from '../../images/tekton-logo-20x20.svg';
@@ -45,8 +41,6 @@ function SideNav(props) {
     expanded,
     extensions,
     intl,
-    isReadOnly,
-    isTriggersInstalled,
     match,
     selectNamespace,
     showKubernetesResources
@@ -83,6 +77,9 @@ function SideNav(props) {
 
     return path;
   }
+
+  const isReadOnly = useIsReadOnly();
+  const isTriggersInstalled = useIsTriggersInstalled();
 
   return (
     <CarbonSideNav
@@ -252,15 +249,12 @@ function SideNav(props) {
 }
 
 SideNav.defaultProps = {
-  isTriggersInstalled: false,
   showKubernetesResources: false
 };
 
 /* istanbul ignore next */
 const mapStateToProps = state => ({
   extensions: getExtensions(state),
-  isReadOnly: selectIsReadOnly(state),
-  isTriggersInstalled: selectIsTriggersInstalled(state),
   namespace: getSelectedNamespace(state)
 });
 

@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import React, { useEffect, useState } from 'react';
+import { useQuery } from 'react-query';
 import { connect } from 'react-redux';
 import { hot } from 'react-hot-loader/root';
 import {
@@ -34,7 +35,8 @@ import {
   ALL_NAMESPACES,
   getErrorMessage,
   paths,
-  urls
+  urls,
+  useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
 
 import {
@@ -78,17 +80,19 @@ import {
   fetchNamespaces as fetchNamespacesActionCreator,
   selectNamespace as selectNamespaceActionCreator
 } from '../../actions/namespaces';
-import { fetchInstallProperties as fetchInstallPropertiesActionCreator } from '../../actions/properties';
 
 import {
   getExtensions,
   getLocale,
-  getLogoutURL,
   getSelectedNamespace,
-  getTenantNamespace,
-  isReadOnly as selectIsReadOnly,
   isWebSocketConnected as selectIsWebSocketConnected
 } from '../../reducers';
+import {
+  useIsReadOnly,
+  useLogoutURL,
+  useProperties,
+  useTenantNamespace
+} from '../../api';
 
 import config from '../../../config_frontend/config.json';
 
@@ -117,80 +121,76 @@ const ConfigErrorComponent = ({ intl, loadingConfigError }) => {
 
 const ConfigError = injectIntl(ConfigErrorComponent);
 
+async function loadMessages(lang) {
+  const isSupportedLocale = supportedLocales.includes(lang);
+  const targetLocale = isSupportedLocale ? lang : defaultLocale;
+  const { default: loadedMessages } = await import(
+    /* webpackChunkName: "[request]" */ `../../nls/messages_${targetLocale}.json`
+  );
+  /* istanbul ignore next */
+  if (process.env.I18N_PSEUDO) {
+    const startBoundary = '[[%';
+    const endBoundary = '%]]';
+    // Make it easier to identify untranslated strings in the UI
+    Object.keys(loadedMessages).forEach(loadedLang => {
+      const messagesToDisplay = loadedMessages[loadedLang];
+      Object.keys(messagesToDisplay).forEach(messageId => {
+        if (messagesToDisplay[messageId].startsWith(startBoundary)) {
+          // avoid repeating the boundaries when
+          // hot reloading in dev mode
+          return;
+        }
+        messagesToDisplay[
+          messageId
+        ] = `${startBoundary}${messagesToDisplay[messageId]}${endBoundary}`;
+      });
+    });
+  }
+
+  return loadedMessages;
+}
+
 /* istanbul ignore next */
 export function App({
   extensions,
   fetchExtensions,
-  fetchInstallProperties,
   fetchNamespaces,
-  isReadOnly,
   lang,
-  logoutURL,
   onUnload,
   selectNamespace,
-  tenantNamespace,
   webSocketConnected
 }) {
   useEffect(() => onUnload, []);
 
-  const [isLoadingConfig, setIsLoadingConfig] = useState(true);
   const [isSideNavExpanded, setIsSideNavExpanded] = useState(true);
-  const [loadingConfigError, setLoadingConfigError] = useState(null);
-  const [messages, setMessages] = useState({});
-  const [showLoadingState, setShowLoadingState] = useState(true);
 
-  async function loadMessages() {
-    const isSupportedLocale = supportedLocales.includes(lang);
-    const targetLocale = isSupportedLocale ? lang : defaultLocale;
-    const { default: loadedMessages } = await import(
-      /* webpackChunkName: "[request]" */ `../../nls/messages_${targetLocale}.json`
-    );
-    /* istanbul ignore next */
-    if (process.env.I18N_PSEUDO) {
-      const startBoundary = '[[%';
-      const endBoundary = '%]]';
-      // Make it easier to identify untranslated strings in the UI
-      Object.keys(loadedMessages).forEach(loadedLang => {
-        const messagesToDisplay = loadedMessages[loadedLang];
-        Object.keys(messagesToDisplay).forEach(messageId => {
-          if (messagesToDisplay[messageId].startsWith(startBoundary)) {
-            // avoid repeating the boundaries when
-            // hot reloading in dev mode
-            return;
-          }
-          messagesToDisplay[
-            messageId
-          ] = `${startBoundary}${messagesToDisplay[messageId]}${endBoundary}`;
-        });
-      });
-    }
+  const {
+    error: propertiesError,
+    isFetching: isFetchingProperties,
+    isPlaceholderData: isPropertiesPlaceholder,
+    refetch: refetchProperties
+  } = useProperties();
+  const isReadOnly = useIsReadOnly();
+  const logoutURL = useLogoutURL();
+  const tenantNamespace = useTenantNamespace();
 
-    setMessages(loadedMessages);
-  }
+  const {
+    data: messages,
+    error: messagesError,
+    isFetching: isFetchingMessages,
+    isPlaceholderData: isMessagesPlaceholder
+  } = useQuery(['i18n', lang], () => loadMessages(lang), {
+    placeholderData: {}
+  });
 
-  async function fetchConfig() {
-    setIsLoadingConfig(true);
-    try {
-      await fetchInstallProperties();
-      await loadMessages();
-      setIsLoadingConfig(false);
-      setShowLoadingState(false);
-    } catch (error) {
-      console.error(error); // eslint-disable-line no-console
-      setLoadingConfigError(error);
-      setIsLoadingConfig(false);
-      setShowLoadingState(false);
-    }
-  }
+  const showLoadingState = isPropertiesPlaceholder || isMessagesPlaceholder;
+  const isFetchingConfig = isFetchingProperties || isFetchingMessages;
+  const loadingConfigError = propertiesError || messagesError;
+
+  useWebSocketReconnected(refetchProperties, webSocketConnected);
 
   useEffect(() => {
-    if (webSocketConnected !== false) {
-      fetchConfig();
-    }
-  }, [webSocketConnected]);
-
-  useEffect(() => {
-    if (isLoadingConfig) {
+    if (isFetchingConfig) {
       return;
     }
     if (tenantNamespace) {
@@ -202,7 +202,7 @@ export function App({
     fetchExtensions({
       namespace: tenantNamespace || ALL_NAMESPACES
     });
-  }, [isLoadingConfig, tenantNamespace]);
+  }, [isFetchingConfig, tenantNamespace]);
 
   const logoutButton = <LogoutButton getLogoutURL={() => logoutURL} />;
 
@@ -488,18 +488,14 @@ App.defaultProps = {
 /* istanbul ignore next */
 const mapStateToProps = state => ({
   extensions: getExtensions(state),
-  isReadOnly: selectIsReadOnly(state),
   lang: getLocale(state),
-  logoutURL: getLogoutURL(state),
   namespace: getSelectedNamespace(state),
-  tenantNamespace: getTenantNamespace(state),
   webSocketConnected: selectIsWebSocketConnected(state)
 });
 
 const mapDispatchToProps = {
   fetchExtensions: fetchExtensionsActionCreator,
   fetchNamespaces: fetchNamespacesActionCreator,
-  fetchInstallProperties: fetchInstallPropertiesActionCreator,
   selectNamespace: selectNamespaceActionCreator
 };
 

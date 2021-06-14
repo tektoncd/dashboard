@@ -43,14 +43,11 @@ import {
 } from '../../utils';
 
 import {
-  getExternalLogsURL,
   getSelectedNamespace,
   getTaskByType,
   getTaskRun,
   getTaskRunsErrorMessage,
-  isWebSocketConnected,
-  isLogStreamingEnabled as selectIsLogStreamingEnabled,
-  isReadOnly as selectIsReadOnly
+  isWebSocketConnected
 } from '../../reducers';
 
 import {
@@ -58,7 +55,12 @@ import {
   fetchTaskByType as fetchTaskByTypeActionCreator
 } from '../../actions/tasks';
 import { fetchTaskRun as fetchTaskRunActionCreator } from '../../actions/taskRuns';
-import { rerunTaskRun } from '../../api';
+import {
+  rerunTaskRun,
+  useExternalLogsURL,
+  useIsLogStreamingEnabled,
+  useIsReadOnly
+} from '../../api';
 
 const taskTypeKeys = { ClusterTask: 'clustertasks', Task: 'tasks' };
 const { STEP, TASK_RUN_DETAILS, VIEW } = queryParamConstants;
@@ -88,13 +90,10 @@ function notification({ intl, kind, message }) {
 export /* istanbul ignore next */ function TaskRunContainer(props) {
   const {
     error,
-    externalLogsURL,
     fetchTaskByType,
     fetchTaskRun,
     history,
     intl,
-    isLogStreamingEnabled,
-    isReadOnly,
     location,
     match,
     namespace,
@@ -112,6 +111,10 @@ export /* istanbul ignore next */ function TaskRunContainer(props) {
   const [isLogsMaximized, setIsLogsMaximized] = useState(false);
   const [loading, setLoading] = useState(true);
   const [rerunNotification, setRerunNotification] = useState(null);
+
+  const externalLogsURL = useExternalLogsURL();
+  const isLogStreamingEnabled = useIsLogStreamingEnabled();
+  const isReadOnly = useIsReadOnly();
 
   useTitleSync({
     page: 'TaskRun',
@@ -362,11 +365,8 @@ function mapStateToProps(state, ownProps) {
   }
   return {
     error: getTaskRunsErrorMessage(state),
-    externalLogsURL: getExternalLogsURL(state),
-    isReadOnly: selectIsReadOnly(state),
     namespace,
     selectedStepId,
-    isLogStreamingEnabled: selectIsLogStreamingEnabled(state),
     showTaskRunDetails,
     taskRun,
     task,

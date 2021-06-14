@@ -50,8 +50,7 @@ Base.decorators = [
       namespaces: {
         byName,
         isFetching: false
-      },
-      properties: {}
+      }
     });
 
     return <Provider store={store}>{storyFn()}</Provider>;

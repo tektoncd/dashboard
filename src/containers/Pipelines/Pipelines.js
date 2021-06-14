@@ -36,14 +36,13 @@ import {
 
 import { ListPageLayout } from '..';
 import { fetchPipelines as fetchPipelinesActionCreator } from '../../actions/pipelines';
-import { deletePipeline } from '../../api';
+import { deletePipeline, useIsReadOnly } from '../../api';
 import {
   getPipelines,
   getPipelinesErrorMessage,
   getSelectedNamespace,
   isFetchingPipelines,
-  isWebSocketConnected,
-  isReadOnly as selectIsReadOnly
+  isWebSocketConnected
 } from '../../reducers';
 
 export /* istanbul ignore next */ function Pipelines(props) {
@@ -52,7 +51,6 @@ export /* istanbul ignore next */ function Pipelines(props) {
     fetchPipelines,
     filters,
     intl,
-    isReadOnly,
     loading,
     namespace,
     pipelines,
@@ -63,6 +61,8 @@ export /* istanbul ignore next */ function Pipelines(props) {
   const [deleteError, setDeleteError] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [toBeDeleted, setToBeDeleted] = useState([]);
+
+  const isReadOnly = useIsReadOnly();
 
   useTitleSync({ page: 'Pipelines' });
 
@@ -287,7 +287,6 @@ function mapStateToProps(state, props) {
   return {
     error: getPipelinesErrorMessage(state),
     filters,
-    isReadOnly: selectIsReadOnly(state),
     loading: isFetchingPipelines(state),
     namespace,
     pipelines: getPipelines(state, { filters, namespace }),

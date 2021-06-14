@@ -23,14 +23,10 @@ import {
   getCondition,
   getConditions,
   getConditionsErrorMessage,
-  getDashboardNamespace,
-  getDashboardVersion,
   getExtensions,
   getExtensionsErrorMessage,
   getLocale,
-  getLogoutURL,
   getNamespaces,
-  getPipelineNamespace,
   getPipelineResource,
   getPipelineResources,
   getPipelineResourcesErrorMessage,
@@ -39,7 +35,6 @@ import {
   getPipelineRunsErrorMessage,
   getPipelines,
   getPipelinesErrorMessage,
-  getPipelineVersion,
   getSelectedNamespace,
   getServiceAccountsErrorMessage,
   getTaskByType,
@@ -49,12 +44,9 @@ import {
   getTaskRunsErrorMessage,
   getTasks,
   getTasksErrorMessage,
-  getTenantNamespace,
   getTrigger,
   getTriggers,
   getTriggersErrorMessage,
-  getTriggersNamespace,
-  getTriggersVersion,
   isFetchingClusterInterceptors,
   isFetchingClusterTasks,
   isFetchingConditions,
@@ -64,10 +56,7 @@ import {
   isFetchingPipelines,
   isFetchingTaskRuns,
   isFetchingTasks,
-  isFetchingTriggers,
-  isLogStreamingEnabled,
-  isReadOnly,
-  isTriggersInstalled
+  isFetchingTriggers
 } from '.';
 import * as clusterInterceptorSelectors from './clusterInterceptors';
 import * as clusterTaskSelectors from './clusterTasks';
@@ -78,7 +67,6 @@ import * as namespaceSelectors from './namespaces';
 import * as pipelineResourcesSelectors from './pipelineResources';
 import * as pipelineSelectors from './pipelines';
 import * as pipelineRunsSelectors from './pipelineRuns';
-import * as propertiesSelectors from './properties';
 import * as serviceAccountSelectors from './serviceAccounts';
 import * as taskSelectors from './tasks';
 import * as taskRunsSelectors from './taskRuns';
@@ -511,112 +499,6 @@ it('isFetchingTaskRuns', () => {
   expect(isFetchingTaskRuns(state)).toBe(true);
   expect(taskRunsSelectors.isFetchingTaskRuns).toHaveBeenCalledWith(
     state.taskRuns
-  );
-});
-
-it('isReadOnly', () => {
-  jest.spyOn(propertiesSelectors, 'isReadOnly').mockImplementation(() => true);
-  expect(isReadOnly(state)).toBe(true);
-  expect(propertiesSelectors.isReadOnly).toHaveBeenCalledWith(state.properties);
-});
-
-it('isTriggersInstalled', () => {
-  jest
-    .spyOn(propertiesSelectors, 'isTriggersInstalled')
-    .mockImplementation(() => true);
-  expect(isTriggersInstalled(state)).toBe(true);
-  expect(propertiesSelectors.isTriggersInstalled).toHaveBeenCalledWith(
-    state.properties
-  );
-});
-
-it('getLogoutURL', () => {
-  jest
-    .spyOn(propertiesSelectors, 'getLogoutURL')
-    .mockImplementation(() => '/logout');
-  expect(getLogoutURL(state)).toBe('/logout');
-  expect(propertiesSelectors.getLogoutURL).toHaveBeenCalledWith(
-    state.properties
-  );
-});
-
-it('getDashboardNamespace', () => {
-  jest
-    .spyOn(propertiesSelectors, 'getDashboardNamespace')
-    .mockImplementation(() => 'ns');
-  expect(getDashboardNamespace(state)).toBe('ns');
-  expect(propertiesSelectors.getDashboardNamespace).toHaveBeenCalledWith(
-    state.properties
-  );
-});
-
-it('getDashboardVersion', () => {
-  jest
-    .spyOn(propertiesSelectors, 'getDashboardVersion')
-    .mockImplementation(() => 'x');
-  expect(getDashboardVersion(state)).toBe('x');
-  expect(propertiesSelectors.getDashboardVersion).toHaveBeenCalledWith(
-    state.properties
-  );
-});
-
-it('getPipelineNamespace', () => {
-  jest
-    .spyOn(propertiesSelectors, 'getPipelineNamespace')
-    .mockImplementation(() => 'x');
-  expect(getPipelineNamespace(state)).toBe('x');
-  expect(propertiesSelectors.getPipelineNamespace).toHaveBeenCalledWith(
-    state.properties
-  );
-});
-
-it('getPipelineVersion', () => {
-  jest
-    .spyOn(propertiesSelectors, 'getPipelineVersion')
-    .mockImplementation(() => 'x');
-  expect(getPipelineVersion(state)).toBe('x');
-  expect(propertiesSelectors.getPipelineVersion).toHaveBeenCalledWith(
-    state.properties
-  );
-});
-
-it('getTriggersNamespace', () => {
-  jest
-    .spyOn(propertiesSelectors, 'getTriggersNamespace')
-    .mockImplementation(() => 'x');
-  expect(getTriggersNamespace(state)).toBe('x');
-  expect(propertiesSelectors.getTriggersNamespace).toHaveBeenCalledWith(
-    state.properties
-  );
-});
-
-it('getTriggersVersion', () => {
-  jest
-    .spyOn(propertiesSelectors, 'getTriggersVersion')
-    .mockImplementation(() => 'x');
-  expect(getTriggersVersion(state)).toBe('x');
-  expect(propertiesSelectors.getTriggersVersion).toHaveBeenCalledWith(
-    state.properties
-  );
-});
-
-it('getTenantNamespace', () => {
-  jest
-    .spyOn(propertiesSelectors, 'getTenantNamespace')
-    .mockImplementation(() => 'x');
-  expect(getTenantNamespace(state)).toBe('x');
-  expect(propertiesSelectors.getTenantNamespace).toHaveBeenCalledWith(
-    state.properties
-  );
-});
-
-it('isLogStreamingEnabled', () => {
-  jest
-    .spyOn(propertiesSelectors, 'isLogStreamingEnabled')
-    .mockImplementation(() => true);
-  expect(isLogStreamingEnabled(state)).toBe(true);
-  expect(propertiesSelectors.isLogStreamingEnabled).toHaveBeenCalledWith(
-    state.properties
   );
 });
 
