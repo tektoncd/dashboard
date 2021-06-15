@@ -79,6 +79,7 @@ spec:
           # Rewrite "devel" to params.versionTag
           sed -i 's/devel/$(params.versionTag)/g' /workspace/go/src/github.com/tektoncd/dashboard/base/300-deployment.yaml
           sed -i 's/devel/$(params.versionTag)/g' /workspace/go/src/github.com/tektoncd/dashboard/base/300-service.yaml
+          sed -i 's/devel/$(params.versionTag)/g' /workspace/go/src/github.com/tektoncd/dashboard/base/config-info.yaml
 
           # Publish images and create release.yamls
           which ko # Tested with 0.2.0
