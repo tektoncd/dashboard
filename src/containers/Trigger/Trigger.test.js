@@ -15,6 +15,7 @@ import React from 'react';
 import { waitFor } from '@testing-library/react';
 import { createIntl } from 'react-intl';
 
+import * as API from '../../api/triggers';
 import { render, renderWithRouter } from '../../utils/test';
 import { TriggerContainer } from './Trigger';
 
@@ -32,102 +33,20 @@ describe('TriggerContainer', () => {
     };
 
     const errorMessage = 'fake_errorMessage';
+    jest
+      .spyOn(API, 'useTrigger')
+      .mockImplementation(() => ({ error: errorMessage }));
 
     const { getByText } = render(
-      <TriggerContainer
-        error={errorMessage}
-        fetchTrigger={() => Promise.resolve()}
-        intl={intl}
-        match={match}
-      />
+      <TriggerContainer intl={intl} match={match} />
     );
     await waitFor(() => getByText('Error loading resource'));
     expect(getByText(errorMessage)).toBeTruthy();
   });
 
-  it('handles updates', async () => {
-    const fetchTriggerSpy = jest
-      .fn()
-      .mockImplementation(() => Promise.resolve());
-    const match = {
-      params: {
-        triggerName: 'bar',
-        namespace: 'default'
-      }
-    };
-
-    const { getByText, rerender } = render(
-      <TriggerContainer
-        fetchTrigger={fetchTriggerSpy}
-        intl={intl}
-        match={match}
-      />
-    );
-    await waitFor(() => getByText('Error loading resource'));
-    expect(fetchTriggerSpy).toHaveBeenCalledTimes(1);
-
-    render(
-      <TriggerContainer
-        fetchTrigger={fetchTriggerSpy}
-        intl={intl}
-        match={match}
-      />,
-      { rerender }
-    );
-    // nothing has changed so fetchData shouldn't be called
-    expect(fetchTriggerSpy).toHaveBeenCalledTimes(1);
-
-    const matchWithUpdatedNamespace = {
-      params: {
-        ...match.params,
-        namespace: 'updated_namespace'
-      }
-    };
-    render(
-      <TriggerContainer
-        fetchTrigger={fetchTriggerSpy}
-        intl={intl}
-        match={matchWithUpdatedNamespace}
-      />,
-      { rerender }
-    );
-    expect(fetchTriggerSpy).toHaveBeenCalledTimes(2);
-
-    const matchWithUpdatedtriggerName = {
-      params: {
-        ...matchWithUpdatedNamespace.params,
-        triggerName: 'updated_triggerName'
-      }
-    };
-    render(
-      <TriggerContainer
-        fetchTrigger={fetchTriggerSpy}
-        intl={intl}
-        match={matchWithUpdatedtriggerName}
-        webSocketConnected={false}
-      />,
-      { rerender }
-    );
-    expect(fetchTriggerSpy).toHaveBeenCalledTimes(3);
-
-    render(
-      <TriggerContainer
-        fetchTrigger={fetchTriggerSpy}
-        intl={intl}
-        match={matchWithUpdatedtriggerName}
-        webSocketConnected
-      />,
-      { rerender }
-    );
-    expect(fetchTriggerSpy).toHaveBeenCalledTimes(4);
-  });
-
   it('renders the trigger resource', async () => {
     const triggerName = 'fake_triggerName';
     const templateName = 'fake_templateName';
-    const fetchTriggerSpy = jest
-      .fn()
-      .mockImplementation(() => Promise.resolve());
     const match = {
       params: {
         triggerName,
@@ -135,16 +54,15 @@ describe('TriggerContainer', () => {
       }
     };
 
+    jest.spyOn(API, 'useTrigger').mockImplementation(() => ({
+      data: {
+        metadata: { name: triggerName },
+        spec: { template: { ref: templateName } }
+      }
+    }));
+
     const { queryByText } = renderWithRouter(
-      <TriggerContainer
-        fetchTrigger={fetchTriggerSpy}
-        intl={intl}
-        match={match}
-        trigger={{
-          metadata: { name: triggerName },
-          spec: { template: { ref: templateName } }
-        }}
-      />
+      <TriggerContainer intl={intl} match={match} />
     );
     expect(queryByText(triggerName)).toBeTruthy();
     expect(queryByText(templateName)).toBeTruthy();

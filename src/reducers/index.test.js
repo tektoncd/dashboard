@@ -44,9 +44,6 @@ import {
   getTaskRunsErrorMessage,
   getTasks,
   getTasksErrorMessage,
-  getTrigger,
-  getTriggers,
-  getTriggersErrorMessage,
   isFetchingClusterInterceptors,
   isFetchingClusterTasks,
   isFetchingConditions,
@@ -55,8 +52,7 @@ import {
   isFetchingPipelineRuns,
   isFetchingPipelines,
   isFetchingTaskRuns,
-  isFetchingTasks,
-  isFetchingTriggers
+  isFetchingTasks
 } from '.';
 import * as clusterInterceptorSelectors from './clusterInterceptors';
 import * as clusterTaskSelectors from './clusterTasks';
@@ -70,7 +66,6 @@ import * as pipelineRunsSelectors from './pipelineRuns';
 import * as serviceAccountSelectors from './serviceAccounts';
 import * as taskSelectors from './tasks';
 import * as taskRunsSelectors from './taskRuns';
-import * as triggersSelectors from './triggers';
 
 const locale = 'it';
 const namespace = 'default';
@@ -88,9 +83,6 @@ const clusterInterceptorName = 'fake_clusterInterceptorName';
 const clusterInterceptors = [clusterInterceptor];
 const clusterTask = { fake: 'clusterTask' };
 const clusterTasks = [clusterTask];
-const trigger = { fake: 'trigger' };
-const triggerName = 'fake_triggerName';
-const triggers = [trigger];
 const taskName = 'myTask';
 const taskRun = {
   metadata: {
@@ -117,8 +109,7 @@ const state = {
   pipelineResources,
   pipelines,
   serviceAccounts,
-  tasks,
-  triggers
+  tasks
 };
 
 it('getLocale', () => {
@@ -545,46 +536,4 @@ it('isFetchingClusterInterceptors', () => {
   expect(
     clusterInterceptorSelectors.isFetchingClusterInterceptors
   ).toHaveBeenCalledWith(state.clusterInterceptors);
-});
-
-it('getTrigger', () => {
-  jest.spyOn(triggersSelectors, 'getTrigger').mockImplementation(() => trigger);
-  expect(getTrigger(state, { name: triggerName })).toEqual(trigger);
-  expect(triggersSelectors.getTrigger).toHaveBeenCalledWith(
-    state.triggers,
-    triggerName,
-    namespace
-  );
-});
-
-it('getTriggers', () => {
-  jest
-    .spyOn(triggersSelectors, 'getTriggers')
-    .mockImplementation(() => triggers);
-  expect(getTriggers(state, { filters: [], namespace })).toEqual(triggers);
-  expect(triggersSelectors.getTriggers).toHaveBeenCalledWith(
-    state.triggers,
-    namespace
-  );
-});
-
-it('getTriggersErrorMessage', () => {
-  const errorMessage = 'fake error message';
-  jest
-    .spyOn(triggersSelectors, 'getTriggersErrorMessage')
-    .mockImplementation(() => errorMessage);
-  expect(getTriggersErrorMessage(state)).toEqual(errorMessage);
-  expect(triggersSelectors.getTriggersErrorMessage).toHaveBeenCalledWith(
-    state.triggers
-  );
-});
-
-it('isFetchingTriggers', () => {
-  jest
-    .spyOn(triggersSelectors, 'isFetchingTriggers')
-    .mockImplementation(() => true);
-  expect(isFetchingTriggers(state)).toBe(true);
-  expect(triggersSelectors.isFetchingTriggers).toHaveBeenCalledWith(
-    state.triggers
-  );
 });

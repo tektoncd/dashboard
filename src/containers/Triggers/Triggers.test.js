@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
@@ -33,48 +32,13 @@ const namespacesTestStore = {
   }
 };
 
-const triggersTestStore = {
-  triggers: {
-    isFetching: false,
-    byId: {
-      'triggerWithTwoLabels-id': {
-        metadata: {
-          name: 'triggerWithTwoLabels',
-          namespace: 'namespace-1',
-          labels: {
-            foo: 'bar',
-            baz: 'bam'
-          },
-          uid: 'triggerWithTwoLabels-id'
-        }
-      },
-      'triggerWithSingleLabel-id': {
-        metadata: {
-          name: 'triggerWithSingleLabel',
-          namespace: 'namespace-1',
-          uid: 'triggerWithSingleLabel-id',
-          labels: {
-            foo: 'bar'
-          }
-        }
-      }
-    },
-    byNamespace: {
-      'namespace-1': {
-        triggerWithTwoLabels: 'triggerWithTwoLabels-id',
-        triggerWithSingleLabel: 'triggerWithSingleLabel-id'
-      }
-    }
-  }
-};
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 const testStore = {
   ...namespacesTestStore,
   notifications: {
     webSocketConnected: false
-  },
-  ...triggersTestStore
+  }
 };
 
 describe('Triggers', () => {
@@ -83,8 +47,10 @@ describe('Triggers', () => {
   });
 
   it('renders loading state', async () => {
+    jest
+      .spyOn(API, 'useTriggers')
+      .mockImplementation(() => ({ isLoading: true }));
     const mockTestStore = mockStore({
-      triggers: { byId: {}, byNamespace: {}, isFetching: true },
       ...namespacesTestStore,
       notifications: {}
     });
@@ -100,14 +66,23 @@ describe('Triggers', () => {
     expect(queryByText('Triggers')).toBeTruthy();
   });
 
-  it('handles updates', async () => {
+  it('renders resources', async () => {
     const mockTestStore = mockStore(testStore);
-    const {
-      container,
-      getByPlaceholderText,
-      getByText,
-      queryByText
-    } = renderWithRouter(
+    jest.spyOn(API, 'useTriggers').mockImplementation(() => ({
+      data: [
+        {
+          metadata: {
+            name: 'triggerWithSingleLabel',
+            namespace: 'namespace-1',
+            uid: 'triggerWithSingleLabel-id',
+            labels: {
+              foo: 'bar'
+            }
+          }
+        }
+      ]
+    }));
+    const { queryByText } = renderWithRouter(
       <Provider store={mockTestStore}>
         <Route
           path={paths.triggers.all()}
@@ -118,44 +93,15 @@ describe('Triggers', () => {
     );
 
     expect(queryByText('triggerWithSingleLabel')).toBeTruthy();
-    expect(API.getTriggers).toHaveBeenCalledTimes(1);
-
-    const filterValue = 'baz:bam';
-    const filterInputField = getByPlaceholderText(/Input a label filter/);
-    fireEvent.change(filterInputField, { target: { value: filterValue } });
-    fireEvent.submit(getByText(/Input a label filter/i));
-
-    expect(queryByText(filterValue)).toBeTruthy();
-    expect(queryByText('triggerWithSingleLabel')).toBeFalsy();
-    expect(queryByText('triggerWithTwoLabels')).toBeTruthy();
-    expect(API.getTriggers).toHaveBeenCalledTimes(2);
-
-    renderWithRouter(
-      <Provider
-        store={mockStore({
-          ...testStore,
-          notifications: {
-            webSocketConnected: true
-          },
-          propeties: {}
-        })}
-      >
-        <Route
-          path={paths.triggers.all()}
-          render={props => <TriggersContainer {...props} />}
-        />
-      </Provider>,
-      { container, route: urls.triggers.all() }
-    );
-
-    expect(API.getTriggers).toHaveBeenCalledTimes(3);
   });
 
   it('handles error', async () => {
     const errorMessage = 'fake_errorMessage';
+    jest
+      .spyOn(API, 'useTriggers')
+      .mockImplementation(() => ({ error: errorMessage }));
     const mockTestStore = mockStore({
-      ...testStore,
-      triggers: { ...triggersTestStore.triggers, errorMessage }
+      ...testStore
     });
     const { queryByText } = renderWithRouter(
       <Provider store={mockTestStore}>

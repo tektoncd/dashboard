@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,6 +13,7 @@ limitations under the License.
 
 import fetchMock from 'fetch-mock';
 import * as API from './eventListeners';
+import * as utils from './utils';
 
 it('getEventListener', () => {
   const name = 'foo';
@@ -33,4 +34,28 @@ it('getEventListeners', () => {
     expect(eventListeners).toEqual(data.items);
     fetchMock.restore();
   });
+});
+
+it('useEventListeners', () => {
+  const query = { fake: 'query' };
+  const params = { fake: 'params' };
+  jest.spyOn(utils, 'useCollection').mockImplementation(() => query);
+  expect(API.useEventListeners(params)).toEqual(query);
+  expect(utils.useCollection).toHaveBeenCalledWith(
+    'EventListener',
+    API.getEventListeners,
+    params
+  );
+});
+
+it('useEventListener', () => {
+  const query = { fake: 'query' };
+  const params = { fake: 'params' };
+  jest.spyOn(utils, 'useResource').mockImplementation(() => query);
+  expect(API.useEventListener(params)).toEqual(query);
+  expect(utils.useResource).toHaveBeenCalledWith(
+    'EventListener',
+    API.getEventListener,
+    params
+  );
 });

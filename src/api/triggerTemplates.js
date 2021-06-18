@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,7 +16,9 @@ import {
   checkData,
   getQueryParams,
   getTektonAPI,
-  triggersAPIGroup
+  triggersAPIGroup,
+  useCollection,
+  useResource
 } from './utils';
 
 export function getTriggerTemplates({ filters = [], namespace } = {}) {
@@ -36,4 +38,12 @@ export function getTriggerTemplate({ name, namespace }) {
     version: 'v1alpha1'
   });
   return get(uri);
+}
+
+export function useTriggerTemplates(params) {
+  return useCollection('TriggerTemplate', getTriggerTemplates, params);
+}
+
+export function useTriggerTemplate(params) {
+  return useResource('TriggerTemplate', getTriggerTemplate, params);
 }

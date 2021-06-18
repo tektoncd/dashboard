@@ -13,6 +13,7 @@ limitations under the License.
 
 import fetchMock from 'fetch-mock';
 import * as API from './clusterInterceptors';
+import * as utils from './utils';
 
 it('getClusterInterceptors', () => {
   const data = {
@@ -33,4 +34,28 @@ it('getClusterInterceptor', () => {
     expect(task).toEqual(data);
     fetchMock.restore();
   });
+});
+
+it('useClusterInterceptors', () => {
+  const query = { fake: 'query' };
+  const params = { fake: 'params' };
+  jest.spyOn(utils, 'useCollection').mockImplementation(() => query);
+  expect(API.useClusterInterceptors(params)).toEqual(query);
+  expect(utils.useCollection).toHaveBeenCalledWith(
+    'ClusterInterceptor',
+    API.getClusterInterceptors,
+    params
+  );
+});
+
+it('useClusterInterceptor', () => {
+  const query = { fake: 'query' };
+  const params = { fake: 'params' };
+  jest.spyOn(utils, 'useResource').mockImplementation(() => query);
+  expect(API.useClusterInterceptor(params)).toEqual(query);
+  expect(utils.useResource).toHaveBeenCalledWith(
+    'ClusterInterceptor',
+    API.getClusterInterceptor,
+    params
+  );
 });

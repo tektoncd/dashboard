@@ -16,9 +16,7 @@ import { labels as labelConstants } from '@tektoncd/dashboard-utils';
 
 import clusterInterceptors, * as clusterInterceptorsSelectors from './clusterInterceptors';
 import clusterTasks, * as clusterTaskSelectors from './clusterTasks';
-import clusterTriggerBindings, * as clusterTriggerBindingsSelectors from './clusterTriggerBindings';
 import conditions, * as conditionSelectors from './conditions';
-import eventListeners, * as eventListenersSelectors from './eventListeners';
 import extensions, * as extensionSelectors from './extensions';
 import locale, * as localeSelectors from './locale';
 import namespaces, * as namespaceSelectors from './namespaces';
@@ -29,16 +27,11 @@ import pipelines, * as pipelineSelectors from './pipelines';
 import serviceAccounts, * as serviceAccountSelectors from './serviceAccounts';
 import taskRuns, * as taskRunsSelectors from './taskRuns';
 import tasks, * as taskSelectors from './tasks';
-import triggers, * as triggersSelectors from './triggers';
-import triggerTemplates, * as triggerTemplatesSelectors from './triggerTemplates';
-import triggerBindings, * as triggerBindingsSelectors from './triggerBindings';
 
 export default combineReducers({
   clusterInterceptors: clusterInterceptors(),
-  clusterTriggerBindings: clusterTriggerBindings(),
   clusterTasks,
   conditions: conditions(),
-  eventListeners: eventListeners(),
   extensions,
   locale,
   namespaces,
@@ -48,10 +41,7 @@ export default combineReducers({
   pipelineRuns: pipelineRuns(),
   serviceAccounts: serviceAccounts(),
   tasks: tasks(),
-  taskRuns: taskRuns(),
-  triggerBindings: triggerBindings(),
-  triggers: triggers(),
-  triggerTemplates: triggerTemplates()
+  taskRuns: taskRuns()
 });
 
 function filterResources({ filters, resources }) {
@@ -320,100 +310,6 @@ export function isWebSocketConnected(state) {
   return notificationSelectors.isWebSocketConnected(state.notifications);
 }
 
-export function getTriggerTemplates(
-  state,
-  { filters, namespace = getSelectedNamespace(state) } = {}
-) {
-  const resources = triggerTemplatesSelectors.getTriggerTemplates(
-    state.triggerTemplates,
-    namespace
-  );
-  return filterResources({ filters, resources });
-}
-
-export function getTriggerTemplate(
-  state,
-  { name, namespace = getSelectedNamespace(state) }
-) {
-  return triggerTemplatesSelectors.getTriggerTemplate(
-    state.triggerTemplates,
-    name,
-    namespace
-  );
-}
-
-export function getTriggerTemplatesErrorMessage(state) {
-  return triggerTemplatesSelectors.getTriggerTemplatesErrorMessage(
-    state.triggerTemplates
-  );
-}
-
-export function isFetchingTriggerTemplates(state) {
-  return triggerTemplatesSelectors.isFetchingTriggerTemplates(
-    state.triggerTemplates
-  );
-}
-
-export function getTriggerBindings(
-  state,
-  { filters, namespace = getSelectedNamespace(state) } = {}
-) {
-  const resources = triggerBindingsSelectors.getTriggerBindings(
-    state.triggerBindings,
-    namespace
-  );
-  return filterResources({ filters, resources });
-}
-
-export function getClusterTriggerBindings(state, { filters } = {}) {
-  const resources = clusterTriggerBindingsSelectors.getClusterTriggerBindings(
-    state.clusterTriggerBindings
-  );
-  return filterResources({ filters, resources });
-}
-
-export function getTriggerBinding(
-  state,
-  { name, namespace = getSelectedNamespace(state) }
-) {
-  return triggerBindingsSelectors.getTriggerBinding(
-    state.triggerBindings,
-    name,
-    namespace
-  );
-}
-
-export function getClusterTriggerBinding(state, { name }) {
-  return clusterTriggerBindingsSelectors.getClusterTriggerBinding(
-    state.clusterTriggerBindings,
-    name
-  );
-}
-
-export function getTriggerBindingsErrorMessage(state) {
-  return triggerBindingsSelectors.getTriggerBindingsErrorMessage(
-    state.triggerBindings
-  );
-}
-
-export function getClusterTriggerBindingsErrorMessage(state) {
-  return clusterTriggerBindingsSelectors.getClusterTriggerBindingsErrorMessage(
-    state.clusterTriggerBindings
-  );
-}
-
-export function isFetchingTriggerBindings(state) {
-  return triggerBindingsSelectors.isFetchingTriggerBindings(
-    state.triggerBindings
-  );
-}
-
-export function isFetchingClusterTriggerBindings(state) {
-  return clusterTriggerBindingsSelectors.isFetchingClusterTriggerBindings(
-    state.clusterTriggerBindings
-  );
-}
-
 export function getClusterInterceptors(state, { filters } = {}) {
   const resources = clusterInterceptorsSelectors.getClusterInterceptors(
     state.clusterInterceptors
@@ -438,59 +334,4 @@ export function isFetchingClusterInterceptors(state) {
   return clusterInterceptorsSelectors.isFetchingClusterInterceptors(
     state.clusterInterceptors
   );
-}
-
-export function getTriggers(
-  state,
-  { filters, namespace = getSelectedNamespace(state) } = {}
-) {
-  const resources = triggersSelectors.getTriggers(state.triggers, namespace);
-  return filterResources({ filters, resources });
-}
-
-export function getTrigger(
-  state,
-  { name, namespace = getSelectedNamespace(state) }
-) {
-  return triggersSelectors.getTrigger(state.triggers, name, namespace);
-}
-
-export function getTriggersErrorMessage(state) {
-  return triggersSelectors.getTriggersErrorMessage(state.triggers);
-}
-
-export function isFetchingTriggers(state) {
-  return triggersSelectors.isFetchingTriggers(state.triggers);
-}
-
-export function getEventListeners(
-  state,
-  { filters, namespace = getSelectedNamespace(state) } = {}
-) {
-  const resources = eventListenersSelectors.getEventListeners(
-    state.eventListeners,
-    namespace
-  );
-  return filterResources({ filters, resources });
-}
-
-export function getEventListener(
-  state,
-  { name, namespace = getSelectedNamespace(state) }
-) {
-  return eventListenersSelectors.getEventListener(
-    state.eventListeners,
-    name,
-    namespace
-  );
-}
-
-export function getEventListenersErrorMessage(state) {
-  return eventListenersSelectors.getEventListenersErrorMessage(
-    state.eventListeners
-  );
-}
-
-export function isFetchingEventListeners(state) {
-  return eventListenersSelectors.isFetchingEventListeners(state.eventListeners);
 }

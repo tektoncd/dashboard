@@ -16,7 +16,9 @@ import {
   checkData,
   getQueryParams,
   getTektonAPI,
-  triggersAPIGroup
+  triggersAPIGroup,
+  useCollection,
+  useResource
 } from './utils';
 
 export function getClusterInterceptors({ filters = [] } = {}) {
@@ -35,4 +37,12 @@ export function getClusterInterceptor({ name }) {
     version: 'v1alpha1'
   });
   return get(uri);
+}
+
+export function useClusterInterceptors(params) {
+  return useCollection('ClusterInterceptor', getClusterInterceptors, params);
+}
+
+export function useClusterInterceptor(params) {
+  return useResource('ClusterInterceptor', getClusterInterceptor, params);
 }

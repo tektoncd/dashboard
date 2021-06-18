@@ -25,22 +25,14 @@ import * as API from '../../api/triggerBindings';
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 
-const byNamespace = {
-  default: {
-    'trigger-binding': 'c930f02e-0582-11ea-8c1f-025765432111'
-  }
-};
-
-const byId = {
-  'c930f02e-0582-11ea-8c1f-025765432111': {
-    apiVersion: 'triggers.tekton.dev/v1alpha1',
-    kind: 'triggerBinding',
-    metadata: {
-      creationTimestamp: '2019-11-12T19:29:46Z',
-      name: 'trigger-binding',
-      namespace: 'default',
-      uid: 'c930f02e-0582-11ea-8c1f-025765432111'
-    }
+const triggerBinding = {
+  apiVersion: 'triggers.tekton.dev/v1alpha1',
+  kind: 'triggerBinding',
+  metadata: {
+    creationTimestamp: '2019-11-12T19:29:46Z',
+    name: 'trigger-binding',
+    namespace: 'default',
+    uid: 'c930f02e-0582-11ea-8c1f-025765432111'
   }
 };
 
@@ -58,15 +50,11 @@ const namespaces = {
 };
 
 it('TriggerBindings renders with no bindings', () => {
-  jest.spyOn(API, 'getTriggerBindings').mockImplementation(() => []);
+  jest
+    .spyOn(API, 'useTriggerBindings')
+    .mockImplementation(() => ({ data: [] }));
 
   const store = mockStore({
-    triggerBindings: {
-      byId: {},
-      byNamespace: {},
-      isFetching: false,
-      errorMessage: null
-    },
     namespaces,
     notifications: {}
   });
@@ -86,15 +74,11 @@ it('TriggerBindings renders with no bindings', () => {
 });
 
 it('TriggerBindings renders with one binding', () => {
-  jest.spyOn(API, 'getTriggerBindings').mockImplementation(() => []);
+  jest
+    .spyOn(API, 'useTriggerBindings')
+    .mockImplementation(() => ({ data: [triggerBinding] }));
 
   const store = mockStore({
-    triggerBindings: {
-      byId,
-      byNamespace,
-      isFetching: false,
-      errorMessage: null
-    },
     namespaces,
     notifications: {}
   });
@@ -115,15 +99,11 @@ it('TriggerBindings renders with one binding', () => {
 });
 
 it('TriggerBindings can be filtered on a single label filter', async () => {
-  jest.spyOn(API, 'getTriggerBindings').mockImplementation(() => []);
+  jest.spyOn(API, 'useTriggerBindings').mockImplementation(({ filters }) => ({
+    data: filters.length ? [] : [triggerBinding]
+  }));
 
   const store = mockStore({
-    triggerBindings: {
-      byId,
-      byNamespace,
-      isFetching: true,
-      errorMessage: null
-    },
     namespaces,
     notifications: {}
   });
@@ -148,15 +128,11 @@ it('TriggerBindings can be filtered on a single label filter', async () => {
 });
 
 it('TriggerBindings renders in loading state', () => {
-  jest.spyOn(API, 'getTriggerBindings').mockImplementation(() => []);
+  jest
+    .spyOn(API, 'useTriggerBindings')
+    .mockImplementation(() => ({ isLoading: true }));
 
   const store = mockStore({
-    triggerBindings: {
-      byId,
-      byNamespace,
-      isFetching: true,
-      errorMessage: null
-    },
     namespaces,
     notifications: {}
   });
@@ -174,4 +150,26 @@ it('TriggerBindings renders in loading state', () => {
   expect(queryByText(/TriggerBindings/i)).toBeTruthy();
   expect(queryByText('No matching TriggerBindings found')).toBeFalsy();
   expect(queryByText('trigger-bindings')).toBeFalsy();
+});
+
+it('TriggerBindings renders in error state', () => {
+  const error = 'fake_error_message';
+  jest.spyOn(API, 'useTriggerBindings').mockImplementation(() => ({ error }));
+
+  const store = mockStore({
+    namespaces,
+    notifications: {}
+  });
+
+  const { queryByText } = renderWithRouter(
+    <Provider store={store}>
+      <Route
+        path="/triggerbindings"
+        render={props => <TriggerBindings {...props} />}
+      />
+    </Provider>,
+    { route: '/triggerbindings' }
+  );
+
+  expect(queryByText(error)).toBeTruthy();
 });

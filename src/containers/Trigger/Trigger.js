@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -20,26 +20,13 @@ import {
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
 import { ResourceDetails, Trigger } from '@tektoncd/dashboard-components';
-import {
-  getSelectedNamespace,
-  getTrigger,
-  getTriggersErrorMessage,
-  isFetchingTriggers,
-  isWebSocketConnected as selectIsWebSocketConnected
-} from '../../reducers';
-import { fetchTrigger as fetchTriggerActionCreator } from '../../actions/triggers';
+
+import { isWebSocketConnected as selectIsWebSocketConnected } from '../../reducers';
+import { useTrigger } from '../../api';
 import { getViewChangeHandler } from '../../utils';
 
 export function TriggerContainer(props) {
-  const {
-    error,
-    fetchTrigger,
-    loading,
-    match,
-    trigger,
-    view,
-    webSocketConnected
-  } = props;
+  const { match, view, webSocketConnected } = props;
   const { triggerName, namespace } = match.params;
 
   useTitleSync({
@@ -47,20 +34,17 @@ export function TriggerContainer(props) {
     resourceName: triggerName
   });
 
-  function fetchData() {
-    fetchTrigger({ name: triggerName, namespace });
-  }
+  const { data: trigger, error, isFetching, refetch } = useTrigger({
+    name: triggerName,
+    namespace
+  });
 
-  useEffect(() => {
-    fetchData();
-  }, [triggerName, namespace]);
-
-  useWebSocketReconnected(fetchData, webSocketConnected);
+  useWebSocketReconnected(refetch, webSocketConnected);
 
   return (
     <ResourceDetails
       error={error}
-      loading={loading}
+      loading={isFetching}
       onViewChange={getViewChangeHandler(props)}
       resource={trigger}
       view={view}
@@ -84,31 +68,14 @@ TriggerContainer.propTypes = {
 
 /* istanbul ignore next */
 function mapStateToProps(state, ownProps) {
-  const { location, match } = ownProps;
-  const { namespace: namespaceParam, triggerName } = match.params;
-
+  const { location } = ownProps;
   const queryParams = new URLSearchParams(location.search);
   const view = queryParams.get('view');
 
-  const namespace = namespaceParam || getSelectedNamespace(state);
-  const trigger = getTrigger(state, {
-    name: triggerName,
-    namespace
-  });
   return {
-    error: getTriggersErrorMessage(state),
-    loading: isFetchingTriggers(state),
-    trigger,
     view,
     webSocketConnected: selectIsWebSocketConnected(state)
   };
 }
 
-const mapDispatchToProps = {
-  fetchTrigger: fetchTriggerActionCreator
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(injectIntl(TriggerContainer));
+export default connect(mapStateToProps)(injectIntl(TriggerContainer));

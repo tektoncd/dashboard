@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
@@ -24,40 +24,24 @@ import {
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 
 import { ListPageLayout } from '..';
-import { fetchTriggerBindings as fetchTriggerBindingsActionCreator } from '../../actions/triggerBindings';
-import {
-  getSelectedNamespace,
-  getTriggerBindings,
-  getTriggerBindingsErrorMessage,
-  isFetchingTriggerBindings,
-  isWebSocketConnected
-} from '../../reducers';
+import { useTriggerBindings } from '../../api';
+import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
 
-export /* istanbul ignore next */ function TriggerBindings(props) {
-  const {
-    fetchTriggerBindings,
-    filters,
-    intl,
-    loading,
-    selectedNamespace,
-    triggerBindings,
-    webSocketConnected
-  } = props;
+export function TriggerBindings(props) {
+  const { filters, intl, selectedNamespace, webSocketConnected } = props;
 
   useTitleSync({ page: 'TriggerBindings' });
 
-  function fetchData() {
-    fetchTriggerBindings({ filters, namespace: selectedNamespace });
-  }
+  const {
+    data: triggerBindings = [],
+    error,
+    isLoading,
+    refetch
+  } = useTriggerBindings({ filters, namespace: selectedNamespace });
 
-  useEffect(() => {
-    fetchData();
-  }, [JSON.stringify(filters), selectedNamespace]);
-
-  useWebSocketReconnected(fetchData, webSocketConnected);
+  useWebSocketReconnected(refetch, webSocketConnected);
 
   function getError() {
-    const { error } = props;
     if (error) {
       return { error };
     }
@@ -108,7 +92,7 @@ export /* istanbul ignore next */ function TriggerBindings(props) {
       <Table
         headers={initialHeaders}
         rows={triggerBindingsFormatted}
-        loading={loading && !triggerBindingsFormatted.length}
+        loading={isLoading}
         selectedNamespace={selectedNamespace}
         emptyTextAllNamespaces={intl.formatMessage(
           {
@@ -136,20 +120,10 @@ function mapStateToProps(state, props) {
   const namespace = namespaceParam || getSelectedNamespace(state);
 
   return {
-    error: getTriggerBindingsErrorMessage(state),
     filters,
-    loading: isFetchingTriggerBindings(state),
-    triggerBindings: getTriggerBindings(state, { filters, namespace }),
     selectedNamespace: namespace,
     webSocketConnected: isWebSocketConnected(state)
   };
 }
 
-const mapDispatchToProps = {
-  fetchTriggerBindings: fetchTriggerBindingsActionCreator
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(injectIntl(TriggerBindings));
+export default connect(mapStateToProps)(injectIntl(TriggerBindings));

@@ -15,6 +15,7 @@ import React from 'react';
 import { waitFor } from '@testing-library/react';
 import { createIntl } from 'react-intl';
 
+import * as API from '../../api/eventListeners';
 import { renderWithRouter } from '../../utils/test';
 import { EventListenerContainer } from './EventListener';
 
@@ -129,14 +130,11 @@ const match = {
 };
 
 it('EventListener displays with formatted labels', async () => {
+  jest
+    .spyOn(API, 'useEventListener')
+    .mockImplementation(() => ({ data: fakeEventListenerWithLabels }));
   const { queryByText, getByText } = renderWithRouter(
-    <EventListenerContainer
-      intl={intl}
-      match={match}
-      error={null}
-      fetchEventListener={() => Promise.resolve(fakeEventListenerWithLabels)}
-      eventListener={fakeEventListenerWithLabels}
-    />
+    <EventListenerContainer intl={intl} match={match} />
   );
 
   await waitFor(() => getByText(eventListenerName));
@@ -171,14 +169,11 @@ it('EventListener handles no serviceAccountName', async () => {
       serviceAccountName: undefined
     }
   };
+  jest
+    .spyOn(API, 'useEventListener')
+    .mockImplementation(() => ({ data: eventListener }));
   const { queryByText, getByText } = renderWithRouter(
-    <EventListenerContainer
-      intl={intl}
-      match={match}
-      error={null}
-      fetchEventListener={() => Promise.resolve(eventListener)}
-      eventListener={eventListener}
-    />
+    <EventListenerContainer intl={intl} match={match} />
   );
 
   await waitFor(() => getByText(eventListenerName));
@@ -193,14 +188,11 @@ it('EventListener handles no service type', async () => {
       serviceType: undefined
     }
   };
+  jest
+    .spyOn(API, 'useEventListener')
+    .mockImplementation(() => ({ data: eventListener }));
   const { queryByText, getByText } = renderWithRouter(
-    <EventListenerContainer
-      intl={intl}
-      match={match}
-      error={null}
-      fetchEventListener={() => Promise.resolve(eventListener)}
-      eventListener={eventListener}
-    />
+    <EventListenerContainer intl={intl} match={match} />
   );
 
   await waitFor(() => getByText(eventListenerName));
@@ -215,14 +207,11 @@ it('EventListener handles no triggers', async () => {
       triggers: []
     }
   };
+  jest
+    .spyOn(API, 'useEventListener')
+    .mockImplementation(() => ({ data: eventListener }));
   const { queryByText, getByText } = renderWithRouter(
-    <EventListenerContainer
-      intl={intl}
-      match={match}
-      error={null}
-      fetchEventListener={() => Promise.resolve(eventListener)}
-      eventListener={eventListener}
-    />
+    <EventListenerContainer intl={intl} match={match} />
   );
 
   await waitFor(() => getByText(eventListenerName));

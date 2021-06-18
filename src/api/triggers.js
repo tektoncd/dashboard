@@ -16,7 +16,9 @@ import {
   checkData,
   getQueryParams,
   getTektonAPI,
-  triggersAPIGroup
+  triggersAPIGroup,
+  useCollection,
+  useResource
 } from './utils';
 
 export function getTriggers({ filters = [], namespace } = {}) {
@@ -36,4 +38,12 @@ export function getTrigger({ name, namespace }) {
     version: 'v1alpha1'
   });
   return get(uri);
+}
+
+export function useTriggers(params) {
+  return useCollection('Trigger', getTriggers, params);
+}
+
+export function useTrigger(params) {
+  return useResource('Trigger', getTrigger, params);
 }

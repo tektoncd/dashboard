@@ -17,6 +17,7 @@ import { fireEvent, waitFor } from '@testing-library/react';
 import { createIntl } from 'react-intl';
 import { paths, urls } from '@tektoncd/dashboard-utils';
 
+import * as API from '../../api/triggerTemplates';
 import { renderWithRouter } from '../../utils/test';
 import { TriggerTemplateContainer } from './TriggerTemplate';
 
@@ -181,26 +182,9 @@ const fakeTriggerTemplateWithLabels = {
   }
 };
 
-it('TriggerTemplateContainer renders', async () => {
-  const match = {
-    params: {
-      triggerTemplateName: 'bar'
-    }
-  };
-
-  const { getByText } = renderWithRouter(
-    <TriggerTemplateContainer
-      intl={intl}
-      match={match}
-      fetchTriggerTemplate={() => Promise.resolve()}
-      error={null}
-      loading={false}
-    />
-  );
-  await waitFor(() => getByText('Error loading resource'));
-});
-
 it('TriggerTemplateContainer handles error state', async () => {
+  const error = 'fake_error_message';
+  jest.spyOn(API, 'useTriggerTemplate').mockImplementation(() => ({ error }));
   const match = {
     params: {
       triggerTemplateName: 'foo'
@@ -208,52 +192,24 @@ it('TriggerTemplateContainer handles error state', async () => {
   };
 
   const { getByText } = renderWithRouter(
-    <TriggerTemplateContainer
-      intl={intl}
-      match={match}
-      error="Error"
-      fetchTriggerTemplate={() => Promise.resolve()}
-    />
+    <TriggerTemplateContainer intl={intl} match={match} />
   );
   await waitFor(() => getByText('Error loading resource'));
 });
 
-it('TriggerTemplateContainer renders basic information', async () => {
+it('TriggerTemplateContainer renders', async () => {
+  jest
+    .spyOn(API, 'useTriggerTemplate')
+    .mockImplementation(() => ({ data: fakeTriggerTemplate }));
   const match = {
     params: {
       triggerTemplateName: 'pipeline-template'
     }
   };
 
-  const { getByText } = renderWithRouter(
-    <TriggerTemplateContainer
-      intl={intl}
-      match={match}
-      error={null}
-      fetchTriggerTemplate={() => Promise.resolve(fakeTriggerTemplate)}
-      triggerTemplate={fakeTriggerTemplate}
-    />
+  const { getAllByText, getByText } = renderWithRouter(
+    <TriggerTemplateContainer intl={intl} match={match} />
   );
-  await waitFor(() => getByText('pipeline-template'));
-});
-
-it('TriggerTemplateContainer renders parameters', async () => {
-  const match = {
-    params: {
-      triggerTemplateName: 'pipeline-template'
-    }
-  };
-
-  const { getByText, getAllByText } = renderWithRouter(
-    <TriggerTemplateContainer
-      intl={intl}
-      match={match}
-      error={null}
-      fetchTriggerTemplate={() => Promise.resolve(fakeTriggerTemplate)}
-      triggerTemplate={fakeTriggerTemplate}
-    />
-  );
-
   await waitFor(() => getByText(/pipeline-template/i));
   await waitFor(() => getByText('Default'));
   await waitFor(() => getByText(/description/i));
@@ -265,59 +221,19 @@ it('TriggerTemplateContainer renders parameters', async () => {
   await waitFor(() => getByText(/the git repository url/i));
   await waitFor(() => getByText(/the message to print/i));
   await waitFor(() => getByText(/the Content-Type of the event/i));
-});
-
-it('TriggerTemplateContainer renders resource templates', async () => {
-  const match = {
-    params: {
-      triggerTemplateName: 'pipeline-template'
-    }
-  };
-
-  const { getByText } = renderWithRouter(
-    <TriggerTemplateContainer
-      intl={intl}
-      match={match}
-      error={null}
-      fetchTriggerTemplate={() => Promise.resolve(fakeTriggerTemplate)}
-      triggerTemplate={fakeTriggerTemplate}
-    />
-  );
-
-  await waitFor(() => getByText('pipeline-template'));
   expect(getByText(resourceTemplate1NameInfo)).toBeTruthy();
   expect(getByText(resourceTemplate2NameInfo)).toBeTruthy();
-});
-
-it('TriggerTemplateContainer renders full resource template information', async () => {
-  const match = {
-    params: {
-      triggerTemplateName: 'pipeline-template'
-    }
-  };
-
-  const { getByText, getAllByText } = renderWithRouter(
-    <TriggerTemplateContainer
-      intl={intl}
-      match={match}
-      error={null}
-      fetchTriggerTemplate={() => Promise.resolve(fakeTriggerTemplate)}
-      triggerTemplate={fakeTriggerTemplate}
-    />
-  );
-
   const compareToName = resourceTemplate1Details.metadata.name;
   await waitFor(() => getByText(compareToName));
   await waitFor(() => getAllByText(/revision/i)[0]);
   await waitFor(() => getAllByText(/url/i)[0]);
-  await waitFor(() => getByText(/gitrevision/i));
-  await waitFor(() => getByText(/gitrepositoryurl/i));
   await waitFor(() => getByText(/simple-pipeline-run/i));
-  await waitFor(() => getAllByText(/message/i)[0]);
-  await waitFor(() => getByText(/contenttype/i));
 });
 
 it('TriggerTemplateContainer contains overview tab with accurate information', async () => {
+  jest
+    .spyOn(API, 'useTriggerTemplate')
+    .mockImplementation(() => ({ data: fakeTriggerTemplate }));
   const match = {
     params: {
       triggerTemplateName: 'pipeline-template'
@@ -325,13 +241,7 @@ it('TriggerTemplateContainer contains overview tab with accurate information', a
   };
 
   const { getByText } = renderWithRouter(
-    <TriggerTemplateContainer
-      intl={intl}
-      match={match}
-      error={null}
-      fetchTriggerTemplate={() => Promise.resolve(fakeTriggerTemplate)}
-      triggerTemplate={fakeTriggerTemplate}
-    />
+    <TriggerTemplateContainer intl={intl} match={match} />
   );
   await waitFor(() => getByText('pipeline-template'));
   const overviewTab = getByText(/overview/i);
@@ -341,18 +251,13 @@ it('TriggerTemplateContainer contains overview tab with accurate information', a
 });
 
 it('TriggerTemplateContainer contains YAML tab with accurate information', async () => {
+  jest
+    .spyOn(API, 'useTriggerTemplate')
+    .mockImplementation(() => ({ data: fakeTriggerTemplate }));
   const { getByText, getAllByText } = renderWithRouter(
     <Route
       path={paths.triggerTemplates.byName()}
-      render={props => (
-        <TriggerTemplateContainer
-          {...props}
-          intl={intl}
-          error={null}
-          fetchTriggerTemplate={() => Promise.resolve(fakeTriggerTemplate)}
-          triggerTemplate={fakeTriggerTemplate}
-        />
-      )}
+      render={props => <TriggerTemplateContainer {...props} intl={intl} />}
     />,
     {
       route: urls.triggerTemplates.byName({
@@ -378,6 +283,9 @@ it('TriggerTemplateContainer contains YAML tab with accurate information', async
 });
 
 it('TriggerTemplateContainer does not render label section if they are not present', async () => {
+  jest
+    .spyOn(API, 'useTriggerTemplate')
+    .mockImplementation(() => ({ data: fakeTriggerTemplate }));
   const match = {
     params: {
       triggerTemplateName: 'pipeline-template'
@@ -385,13 +293,7 @@ it('TriggerTemplateContainer does not render label section if they are not prese
   };
 
   const { getByText, queryByText } = renderWithRouter(
-    <TriggerTemplateContainer
-      intl={intl}
-      match={match}
-      error={null}
-      fetchTriggerTemplate={() => Promise.resolve(fakeTriggerTemplate)}
-      triggerTemplate={fakeTriggerTemplate}
-    />
+    <TriggerTemplateContainer intl={intl} match={match} />
   );
 
   await waitFor(() => getByText('pipeline-template'));
@@ -399,6 +301,9 @@ it('TriggerTemplateContainer does not render label section if they are not prese
 });
 
 it('TriggerTemplateContainer renders labels section if they are present', async () => {
+  jest
+    .spyOn(API, 'useTriggerTemplate')
+    .mockImplementation(() => ({ data: fakeTriggerTemplateWithLabels }));
   const match = {
     params: {
       triggerTemplateName
@@ -406,15 +311,7 @@ it('TriggerTemplateContainer renders labels section if they are present', async 
   };
 
   const { getByText } = renderWithRouter(
-    <TriggerTemplateContainer
-      intl={intl}
-      match={match}
-      error={null}
-      fetchTriggerTemplate={() =>
-        Promise.resolve(fakeTriggerTemplateWithLabels)
-      }
-      triggerTemplate={fakeTriggerTemplateWithLabels}
-    />
+    <TriggerTemplateContainer intl={intl} match={match} />
   );
 
   await waitFor(() => getByText(triggerTemplateName));
@@ -428,6 +325,9 @@ it('TriggerTemplateContainer renders labels section if they are present', async 
 });
 
 it('TriggerTemplateContainer contains formatted labels', async () => {
+  jest
+    .spyOn(API, 'useTriggerTemplate')
+    .mockImplementation(() => ({ data: fakeTriggerTemplateWithLabels }));
   const match = {
     params: {
       triggerTemplateName
@@ -435,15 +335,7 @@ it('TriggerTemplateContainer contains formatted labels', async () => {
   };
 
   const { getByText } = renderWithRouter(
-    <TriggerTemplateContainer
-      intl={intl}
-      match={match}
-      error={null}
-      fetchTriggerTemplate={() =>
-        Promise.resolve(fakeTriggerTemplateWithLabels)
-      }
-      triggerTemplate={fakeTriggerTemplateWithLabels}
-    />
+    <TriggerTemplateContainer intl={intl} match={match} />
   );
 
   await waitFor(() => getByText(triggerTemplateName));

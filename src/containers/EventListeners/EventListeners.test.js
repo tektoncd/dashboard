@@ -25,22 +25,14 @@ import * as API from '../../api/eventListeners';
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 
-const byNamespace = {
-  default: {
-    'event-listener': 'c930f02e-0582-11ea-8c1f-025765432111'
-  }
-};
-
-const byId = {
-  'c930f02e-0582-11ea-8c1f-025765432111': {
-    apiVersion: 'triggers.tekton.dev/v1alpha1',
-    kind: 'EventListener',
-    metadata: {
-      creationTimestamp: '2019-11-12T19:29:46Z',
-      name: 'event-listener',
-      namespace: 'default',
-      uid: 'c930f02e-0582-11ea-8c1f-025765432111'
-    }
+const eventListener = {
+  apiVersion: 'triggers.tekton.dev/v1alpha1',
+  kind: 'EventListener',
+  metadata: {
+    creationTimestamp: '2019-11-12T19:29:46Z',
+    name: 'event-listener',
+    namespace: 'default',
+    uid: 'c930f02e-0582-11ea-8c1f-025765432111'
   }
 };
 
@@ -58,15 +50,9 @@ const namespaces = {
 };
 
 it('EventListeners renders with no bindings', () => {
-  jest.spyOn(API, 'getEventListeners').mockImplementation(() => []);
+  jest.spyOn(API, 'useEventListeners').mockImplementation(() => ({ data: [] }));
 
   const store = mockStore({
-    eventListeners: {
-      byId: {},
-      byNamespace: {},
-      isFetching: false,
-      errorMessage: null
-    },
     namespaces,
     notifications: {}
   });
@@ -86,15 +72,11 @@ it('EventListeners renders with no bindings', () => {
 });
 
 it('EventListeners renders with one binding', () => {
-  jest.spyOn(API, 'getEventListeners').mockImplementation(() => []);
+  jest
+    .spyOn(API, 'useEventListeners')
+    .mockImplementation(() => ({ data: [eventListener] }));
 
   const store = mockStore({
-    eventListeners: {
-      byId,
-      byNamespace,
-      isFetching: false,
-      errorMessage: null
-    },
     namespaces,
     notifications: {}
   });
@@ -116,15 +98,11 @@ it('EventListeners renders with one binding', () => {
 });
 
 it('EventListeners can be filtered on a single label filter', async () => {
-  jest.spyOn(API, 'getEventListeners').mockImplementation(() => []);
+  jest.spyOn(API, 'useEventListeners').mockImplementation(({ filters }) => ({
+    data: filters.length ? [] : [eventListener]
+  }));
 
   const store = mockStore({
-    eventListeners: {
-      byId,
-      byNamespace,
-      isFetching: true,
-      errorMessage: null
-    },
     namespaces,
     notifications: {}
   });
@@ -149,15 +127,11 @@ it('EventListeners can be filtered on a single label filter', async () => {
 });
 
 it('EventListeners renders in loading state', () => {
-  jest.spyOn(API, 'getEventListeners').mockImplementation(() => []);
+  jest
+    .spyOn(API, 'useEventListeners')
+    .mockImplementation(() => ({ isLoading: true }));
 
   const store = mockStore({
-    eventListeners: {
-      byId,
-      byNamespace,
-      isFetching: true,
-      errorMessage: null
-    },
     namespaces,
     notifications: {}
   });
@@ -175,4 +149,26 @@ it('EventListeners renders in loading state', () => {
   expect(queryByText(/EventListeners/i)).toBeTruthy();
   expect(queryByText('No matching EventListeners found')).toBeFalsy();
   expect(queryByText('event-listeners')).toBeFalsy();
+});
+
+it('EventListeners renders in error state', () => {
+  const error = 'fake_error_message';
+  jest.spyOn(API, 'useEventListeners').mockImplementation(() => ({ error }));
+
+  const store = mockStore({
+    namespaces,
+    notifications: {}
+  });
+
+  const { queryByText } = renderWithRouter(
+    <Provider store={store}>
+      <Route
+        path="/eventlisteners"
+        render={props => <EventListeners {...props} />}
+      />
+    </Provider>,
+    { route: '/eventlisteners' }
+  );
+
+  expect(queryByText(error)).toBeTruthy();
 });
