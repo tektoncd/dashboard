@@ -109,7 +109,57 @@ function getResourceVersion(resource) {
   return parseInt(resource.metadata.resourceVersion, 10);
 }
 
-export function useWebSocket(resourceType) {
+function handleCreated({ payload, queryClient }) {
+  const { kind } = payload;
+  queryClient.invalidateQueries(kind);
+}
+
+function handleDeleted({ payload, queryClient }) {
+  const {
+    kind,
+    metadata: { name, namespace }
+  } = payload;
+  // remove any matching details page cache
+  queryClient.removeQueries([kind, { name, ...(namespace && { namespace }) }]);
+  // remove resource from any list page caches
+  queryClient.setQueriesData(kind, data => {
+    if (!Array.isArray(data)) {
+      // another details page cache, but not the one we're looking for
+      // since we've just deleted its query above
+      return data;
+    }
+    return data.filter(
+      resource => resource.metadata.uid !== payload.metadata.uid
+    );
+  });
+}
+
+function updateResource({ existing, incoming }) {
+  return incoming.metadata.uid === existing.metadata.uid &&
+    // only apply the update if it's newer than the version we already have
+    getResourceVersion(incoming) > getResourceVersion(existing)
+    ? incoming
+    : existing;
+}
+
+function handleUpdated({ payload, queryClient }) {
+  const {
+    kind,
+    metadata: { uid }
+  } = payload;
+  queryClient.setQueriesData(kind, data => {
+    if (data.metadata?.uid === uid) {
+      // it's a details page cache (i.e. a single resource)
+      return updateResource({ existing: data, incoming: payload });
+    }
+    // otherwise it's a list page cache
+    return data.map(resource =>
+      updateResource({ existing: resource, incoming: payload })
+    );
+  });
+}
+
+export function useWebSocket({ kind: _ }) {
   const webSocket = useContext(WebSocketContext);
   const queryClient = useQueryClient();
   useEffect(() => {
@@ -118,40 +168,32 @@ export function useWebSocket(resourceType) {
         return;
       }
       const { operation, payload } = JSON.parse(event.data);
-      queryClient.setQueriesData(resourceType, data => {
-        switch (operation) {
-          case 'Created':
-            const existingResource = data.find(
-              resource => resource.metadata.uid === payload.metadata.uid
-            );
-            if (existingResource) {
-              return data; // payload is stale, ignore it
-            }
-            return [...data, payload];
-          case 'Deleted':
-            return data.filter(
-              resource => resource.metadata.uid !== payload.metadata.uid
-            );
-          case 'Updated':
-            return data.map(resource => {
-              return resource.metadata.uid === payload.metadata.uid &&
-                // only apply the update if it's newer than the version we already have
-                getResourceVersion(payload) > getResourceVersion(resource)
-                ? payload
-                : resource;
-            });
-          default:
-            return data;
-        }
-      });
+      switch (operation) {
+        case 'Created':
+          handleCreated({ payload, queryClient });
+          break;
+        case 'Deleted':
+          handleDeleted({ payload, queryClient });
+          break;
+        case 'Updated':
+          handleUpdated({ payload, queryClient });
+          break;
+        default:
+      }
     };
     webSocket.addEventListener('message', eventListener);
     return () => webSocket.removeEventListener('message', eventListener);
   }, [queryClient, webSocket]);
 }
 
-export function useNamespacedCollection(resourceType, api, params) {
-  const query = useQuery([resourceType, params], () => api(params));
-  useWebSocket(resourceType);
+export function useCollection(kind, api, params) {
+  const query = useQuery([kind, params], () => api(params));
+  useWebSocket({ kind });
+  return query;
+}
+
+export function useResource(kind, api, params) {
+  const query = useQuery([kind, params], () => api(params));
+  useWebSocket({ kind });
   return query;
 }

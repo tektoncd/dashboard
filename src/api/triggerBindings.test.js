@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,6 +13,7 @@ limitations under the License.
 
 import fetchMock from 'fetch-mock';
 import * as API from './triggerBindings';
+import * as utils from './utils';
 
 it('getTriggerBinding', () => {
   const name = 'foo';
@@ -33,4 +34,28 @@ it('getTriggerBindings', () => {
     expect(triggerBindings).toEqual(data.items);
     fetchMock.restore();
   });
+});
+
+it('useTriggerBindings', () => {
+  const query = { fake: 'query' };
+  const params = { fake: 'params' };
+  jest.spyOn(utils, 'useCollection').mockImplementation(() => query);
+  expect(API.useTriggerBindings(params)).toEqual(query);
+  expect(utils.useCollection).toHaveBeenCalledWith(
+    'TriggerBinding',
+    API.getTriggerBindings,
+    params
+  );
+});
+
+it('useTriggerBinding', () => {
+  const query = { fake: 'query' };
+  const params = { fake: 'params' };
+  jest.spyOn(utils, 'useResource').mockImplementation(() => query);
+  expect(API.useTriggerBinding(params)).toEqual(query);
+  expect(utils.useResource).toHaveBeenCalledWith(
+    'TriggerBinding',
+    API.getTriggerBinding,
+    params
+  );
 });

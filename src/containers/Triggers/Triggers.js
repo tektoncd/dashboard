@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
@@ -24,37 +24,22 @@ import {
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 
 import { ListPageLayout } from '..';
-import { fetchTriggers as fetchTriggersActionCreator } from '../../actions/triggers';
+import { useTriggers } from '../../api';
 import {
   getSelectedNamespace,
-  getTriggers,
-  getTriggersErrorMessage,
-  isFetchingTriggers as selectIsFetchingTriggers,
   isWebSocketConnected as selectIsWebSocketConnected
 } from '../../reducers';
 
 function Triggers(props) {
-  const {
-    error,
-    fetchTriggers,
-    filters,
-    intl,
-    loading,
-    namespace,
-    triggers,
-    webSocketConnected
-  } = props;
+  const { filters, intl, namespace, webSocketConnected } = props;
   useTitleSync({ page: 'Triggers' });
 
-  function fetchData() {
-    fetchTriggers({ filters, namespace });
-  }
+  const { data: triggers = [], error, isLoading, refetch } = useTriggers({
+    filters,
+    namespace
+  });
 
-  useEffect(() => {
-    fetchData();
-  }, [JSON.stringify(filters), namespace]);
-
-  useWebSocketReconnected(fetchData, webSocketConnected);
+  useWebSocketReconnected(refetch, webSocketConnected);
 
   function getError() {
     if (error) {
@@ -118,7 +103,7 @@ function Triggers(props) {
       <Table
         headers={headers}
         rows={triggersFormatted}
-        loading={loading && !triggersFormatted.length}
+        loading={isLoading}
         selectedNamespace={namespace}
         emptyTextAllNamespaces={intl.formatMessage(
           {
@@ -147,20 +132,10 @@ function mapStateToProps(state, props) {
   const filters = getFilters(props.location);
 
   return {
-    triggers: getTriggers(state, { filters, namespace }),
-    error: getTriggersErrorMessage(state),
     filters,
-    loading: selectIsFetchingTriggers(state),
     namespace,
     webSocketConnected: selectIsWebSocketConnected(state)
   };
 }
 
-const mapDispatchToProps = {
-  fetchTriggers: fetchTriggersActionCreator
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(injectIntl(Triggers));
+export default connect(mapStateToProps)(injectIntl(Triggers));

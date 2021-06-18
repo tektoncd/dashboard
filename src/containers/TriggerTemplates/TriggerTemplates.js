@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
@@ -24,41 +24,24 @@ import {
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 
 import { ListPageLayout } from '..';
-import { fetchTriggerTemplates as fetchTriggerTemplatesActionCreator } from '../../actions/triggerTemplates';
-import {
-  getSelectedNamespace,
-  getTriggerTemplates,
-  getTriggerTemplatesErrorMessage,
-  isFetchingTriggerTemplates,
-  isWebSocketConnected
-} from '../../reducers';
+import { useTriggerTemplates } from '../../api';
+import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
 
-/* istanbul ignore next */
 function TriggerTemplates(props) {
-  const {
-    fetchTriggerTemplates,
-    filters,
-    intl,
-    loading,
-    selectedNamespace,
-    triggerTemplates,
-    webSocketConnected
-  } = props;
+  const { filters, intl, selectedNamespace, webSocketConnected } = props;
 
   useTitleSync({ page: 'TriggerTemplates' });
 
-  function fetchData() {
-    fetchTriggerTemplates({ filters, namespace: selectedNamespace });
-  }
+  const {
+    data: triggerTemplates = [],
+    error,
+    isLoading,
+    refetch
+  } = useTriggerTemplates({ filters, namespace: selectedNamespace });
 
-  useEffect(() => {
-    fetchData();
-  }, [JSON.stringify(filters), selectedNamespace]);
-
-  useWebSocketReconnected(fetchData, webSocketConnected);
+  useWebSocketReconnected(refetch, webSocketConnected);
 
   function getError() {
-    const { error } = props;
     if (error) {
       return { error };
     }
@@ -109,7 +92,7 @@ function TriggerTemplates(props) {
       <Table
         headers={initialHeaders}
         rows={triggerTemplatesFormatted}
-        loading={loading && !triggerTemplatesFormatted.length}
+        loading={isLoading}
         selectedNamespace={selectedNamespace}
         emptyTextAllNamespaces={intl.formatMessage(
           {
@@ -137,20 +120,10 @@ function mapStateToProps(state, props) {
   const namespace = namespaceParam || getSelectedNamespace(state);
 
   return {
-    error: getTriggerTemplatesErrorMessage(state),
     filters,
-    loading: isFetchingTriggerTemplates(state),
-    triggerTemplates: getTriggerTemplates(state, { filters, namespace }),
     selectedNamespace: namespace,
     webSocketConnected: isWebSocketConnected(state)
   };
 }
 
-const mapDispatchToProps = {
-  fetchTriggerTemplates: fetchTriggerTemplatesActionCreator
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(injectIntl(TriggerTemplates));
+export default connect(mapStateToProps)(injectIntl(TriggerTemplates));

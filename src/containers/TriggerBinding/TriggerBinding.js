@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { injectIntl } from 'react-intl';
@@ -20,29 +20,13 @@ import {
   useTitleSync,
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
-import {
-  getSelectedNamespace,
-  getTriggerBinding,
-  getTriggerBindingsErrorMessage,
-  isFetchingTriggerBindings,
-  isWebSocketConnected
-} from '../../reducers';
+
+import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
+import { useTriggerBinding } from '../../api';
 import { getViewChangeHandler } from '../../utils';
 
-import { fetchTriggerBinding as fetchTriggerBindingActionCreator } from '../../actions/triggerBindings';
-
-export /* istanbul ignore next */ function TriggerBindingContainer(props) {
-  const {
-    error,
-    fetchTriggerBinding,
-    intl,
-    loading,
-    match,
-    selectedNamespace,
-    triggerBinding,
-    view,
-    webSocketConnected
-  } = props;
+export function TriggerBindingContainer(props) {
+  const { intl, match, selectedNamespace, view, webSocketConnected } = props;
   const { namespace, triggerBindingName: resourceName } = match.params;
 
   useTitleSync({
@@ -50,15 +34,14 @@ export /* istanbul ignore next */ function TriggerBindingContainer(props) {
     resourceName
   });
 
-  function fetchData() {
-    fetchTriggerBinding({ name: resourceName, namespace });
-  }
+  const {
+    data: triggerBinding,
+    error,
+    isFetching,
+    refetch
+  } = useTriggerBinding({ name: resourceName, namespace });
 
-  useEffect(() => {
-    fetchData();
-  }, [namespace, resourceName]);
-
-  useWebSocketReconnected(fetchData, webSocketConnected);
+  useWebSocketReconnected(refetch, webSocketConnected);
 
   const headersForParameters = [
     {
@@ -92,7 +75,7 @@ export /* istanbul ignore next */ function TriggerBindingContainer(props) {
   return (
     <ResourceDetails
       error={error}
-      loading={loading}
+      loading={isFetching}
       onViewChange={getViewChangeHandler(props)}
       resource={triggerBinding}
       view={view}
@@ -124,31 +107,17 @@ TriggerBindingContainer.propTypes = {
 /* istanbul ignore next */
 function mapStateToProps(state, ownProps) {
   const { location, match } = ownProps;
-  const { namespace: namespaceParam, triggerBindingName } = match.params;
+  const { namespace: namespaceParam } = match.params;
 
   const queryParams = new URLSearchParams(location.search);
   const view = queryParams.get('view');
-
   const namespace = namespaceParam || getSelectedNamespace(state);
-  const triggerBinding = getTriggerBinding(state, {
-    name: triggerBindingName,
-    namespace
-  });
+
   return {
-    error: getTriggerBindingsErrorMessage(state),
-    loading: isFetchingTriggerBindings(state),
     selectedNamespace: namespace,
-    triggerBinding,
     view,
     webSocketConnected: isWebSocketConnected(state)
   };
 }
 
-const mapDispatchToProps = {
-  fetchTriggerBinding: fetchTriggerBindingActionCreator
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(injectIntl(TriggerBindingContainer));
+export default connect(mapStateToProps)(injectIntl(TriggerBindingContainer));

@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { injectIntl } from 'react-intl';
@@ -25,16 +25,10 @@ import {
   useTitleSync,
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
-import {
-  getSelectedNamespace,
-  getTriggerTemplate,
-  getTriggerTemplatesErrorMessage,
-  isFetchingTriggerTemplates,
-  isWebSocketConnected
-} from '../../reducers';
-import { getViewChangeHandler } from '../../utils';
 
-import { fetchTriggerTemplate as fetchTriggerTemplateActionCreator } from '../../actions/triggerTemplates';
+import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
+import { useTriggerTemplate } from '../../api';
+import { getViewChangeHandler } from '../../utils';
 
 const {
   Table,
@@ -50,17 +44,7 @@ const {
 } = DataTable;
 
 export /* istanbul ignore next */ function TriggerTemplateContainer(props) {
-  const {
-    error,
-    fetchTriggerTemplate,
-    intl,
-    loading,
-    match,
-    selectedNamespace,
-    triggerTemplate,
-    view,
-    webSocketConnected
-  } = props;
+  const { intl, match, selectedNamespace, view, webSocketConnected } = props;
   const { namespace, triggerTemplateName: resourceName } = match.params;
 
   useTitleSync({
@@ -68,15 +52,14 @@ export /* istanbul ignore next */ function TriggerTemplateContainer(props) {
     resourceName
   });
 
-  function fetchData() {
-    fetchTriggerTemplate({ name: resourceName, namespace });
-  }
+  const {
+    data: triggerTemplate,
+    error,
+    isFetching,
+    refetch
+  } = useTriggerTemplate({ name: resourceName, namespace });
 
-  useEffect(() => {
-    fetchData();
-  }, [namespace, resourceName]);
-
-  useWebSocketReconnected(fetchData, webSocketConnected);
+  useWebSocketReconnected(refetch, webSocketConnected);
 
   function getContent() {
     if (!triggerTemplate) {
@@ -225,7 +208,7 @@ export /* istanbul ignore next */ function TriggerTemplateContainer(props) {
   return (
     <ResourceDetails
       error={error}
-      loading={loading}
+      loading={isFetching}
       onViewChange={getViewChangeHandler(props)}
       resource={triggerTemplate}
       view={view}
@@ -246,31 +229,17 @@ TriggerTemplateContainer.propTypes = {
 /* istanbul ignore next */
 function mapStateToProps(state, ownProps) {
   const { location, match } = ownProps;
-  const { namespace: namespaceParam, triggerTemplateName } = match.params;
+  const { namespace: namespaceParam } = match.params;
 
   const queryParams = new URLSearchParams(location.search);
   const view = queryParams.get('view');
-
   const namespace = namespaceParam || getSelectedNamespace(state);
-  const triggerTemplate = getTriggerTemplate(state, {
-    name: triggerTemplateName,
-    namespace
-  });
+
   return {
-    error: getTriggerTemplatesErrorMessage(state),
-    loading: isFetchingTriggerTemplates(state),
     selectedNamespace: namespace,
-    triggerTemplate,
     view,
     webSocketConnected: isWebSocketConnected(state)
   };
 }
 
-const mapDispatchToProps = {
-  fetchTriggerTemplate: fetchTriggerTemplateActionCreator
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(injectIntl(TriggerTemplateContainer));
+export default connect(mapStateToProps)(injectIntl(TriggerTemplateContainer));

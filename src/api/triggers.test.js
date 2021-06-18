@@ -13,6 +13,7 @@ limitations under the License.
 
 import fetchMock from 'fetch-mock';
 import * as API from './triggers';
+import * as utils from './utils';
 
 it('getTrigger', () => {
   const name = 'foo';
@@ -33,4 +34,28 @@ it('getTriggers', () => {
     expect(triggers).toEqual(data.items);
     fetchMock.restore();
   });
+});
+
+it('useTriggers', () => {
+  const query = { fake: 'query' };
+  const params = { fake: 'params' };
+  jest.spyOn(utils, 'useCollection').mockImplementation(() => query);
+  expect(API.useTriggers(params)).toEqual(query);
+  expect(utils.useCollection).toHaveBeenCalledWith(
+    'Trigger',
+    API.getTriggers,
+    params
+  );
+});
+
+it('useTrigger', () => {
+  const query = { fake: 'query' };
+  const params = { fake: 'params' };
+  jest.spyOn(utils, 'useResource').mockImplementation(() => query);
+  expect(API.useTrigger(params)).toEqual(query);
+  expect(utils.useResource).toHaveBeenCalledWith(
+    'Trigger',
+    API.getTrigger,
+    params
+  );
 });

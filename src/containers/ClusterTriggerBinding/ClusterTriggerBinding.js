@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { injectIntl } from 'react-intl';
@@ -20,28 +20,14 @@ import {
   useTitleSync,
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
-import {
-  getClusterTriggerBinding,
-  getClusterTriggerBindingsErrorMessage,
-  isFetchingClusterTriggerBindings,
-  isWebSocketConnected
-} from '../../reducers';
+import { useClusterTriggerBinding } from '../../api';
+import { isWebSocketConnected } from '../../reducers';
 import { getViewChangeHandler } from '../../utils';
-import { fetchClusterTriggerBinding as fetchClusterTriggerBindingActionCreator } from '../../actions/clusterTriggerBindings';
 
 export /* istanbul ignore next */ function ClusterTriggerBindingContainer(
   props
 ) {
-  const {
-    clusterTriggerBinding,
-    error,
-    fetchClusterTriggerBinding,
-    intl,
-    loading,
-    match,
-    view,
-    webSocketConnected
-  } = props;
+  const { intl, match, view, webSocketConnected } = props;
   const { clusterTriggerBindingName } = match.params;
 
   useTitleSync({
@@ -49,17 +35,14 @@ export /* istanbul ignore next */ function ClusterTriggerBindingContainer(
     resourceName: clusterTriggerBindingName
   });
 
-  function fetchData() {
-    fetchClusterTriggerBinding({
-      name: clusterTriggerBindingName
-    });
-  }
+  const {
+    data: clusterTriggerBinding,
+    error,
+    isFetching,
+    refetch
+  } = useClusterTriggerBinding({ name: clusterTriggerBindingName });
 
-  useEffect(() => {
-    fetchData();
-  }, [clusterTriggerBindingName]);
-
-  useWebSocketReconnected(fetchData, webSocketConnected);
+  useWebSocketReconnected(refetch, webSocketConnected);
 
   const headersForParameters = [
     {
@@ -93,7 +76,7 @@ export /* istanbul ignore next */ function ClusterTriggerBindingContainer(
   return (
     <ResourceDetails
       error={error}
-      loading={loading}
+      loading={isFetching}
       onViewChange={getViewChangeHandler(props)}
       resource={clusterTriggerBinding}
       view={view}
@@ -123,29 +106,17 @@ ClusterTriggerBindingContainer.propTypes = {
 
 /* istanbul ignore next */
 function mapStateToProps(state, ownProps) {
-  const { location, match } = ownProps;
-  const { clusterTriggerBindingName } = match.params;
+  const { location } = ownProps;
 
   const queryParams = new URLSearchParams(location.search);
   const view = queryParams.get('view');
 
-  const clusterTriggerBinding = getClusterTriggerBinding(state, {
-    name: clusterTriggerBindingName
-  });
   return {
-    clusterTriggerBinding,
-    error: getClusterTriggerBindingsErrorMessage(state),
-    loading: isFetchingClusterTriggerBindings(state),
     view,
     webSocketConnected: isWebSocketConnected(state)
   };
 }
 
-const mapDispatchToProps = {
-  fetchClusterTriggerBinding: fetchClusterTriggerBindingActionCreator
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(injectIntl(ClusterTriggerBindingContainer));
+export default connect(mapStateToProps)(
+  injectIntl(ClusterTriggerBindingContainer)
+);

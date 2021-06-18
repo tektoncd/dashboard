@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
@@ -24,41 +24,24 @@ import {
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 
 import { ListPageLayout } from '..';
-import { fetchEventListeners as fetchEventListenersActionCreator } from '../../actions/eventListeners';
-import {
-  getEventListeners,
-  getEventListenersErrorMessage,
-  getSelectedNamespace,
-  isFetchingEventListeners,
-  isWebSocketConnected
-} from '../../reducers';
+import { useEventListeners } from '../../api';
+import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
 
-/* istanbul ignore next */
 function EventListeners(props) {
-  const {
-    eventListeners,
-    fetchEventListeners,
-    filters,
-    intl,
-    loading,
-    selectedNamespace,
-    webSocketConnected
-  } = props;
+  const { filters, intl, selectedNamespace, webSocketConnected } = props;
 
   useTitleSync({ page: 'EventListeners' });
 
-  function fetchData() {
-    fetchEventListeners({ filters, namespace: selectedNamespace });
-  }
+  const {
+    data: eventListeners = [],
+    error,
+    isLoading,
+    refetch
+  } = useEventListeners({ filters, namespace: selectedNamespace });
 
-  useEffect(() => {
-    fetchData();
-  }, [JSON.stringify(filters), selectedNamespace]);
-
-  useWebSocketReconnected(fetchData, webSocketConnected);
+  useWebSocketReconnected(refetch, webSocketConnected);
 
   function getError() {
-    const { error } = props;
     if (error) {
       return { error };
     }
@@ -109,7 +92,7 @@ function EventListeners(props) {
       <Table
         headers={initialHeaders}
         rows={eventListenersFormatted}
-        loading={loading && !eventListenersFormatted.length}
+        loading={isLoading}
         selectedNamespace={selectedNamespace}
         emptyTextAllNamespaces={intl.formatMessage(
           {
@@ -137,20 +120,10 @@ function mapStateToProps(state, props) {
   const namespace = namespaceParam || getSelectedNamespace(state);
 
   return {
-    error: getEventListenersErrorMessage(state),
     filters,
-    loading: isFetchingEventListeners(state),
-    eventListeners: getEventListeners(state, { filters, namespace }),
     selectedNamespace: namespace,
     webSocketConnected: isWebSocketConnected(state)
   };
 }
 
-const mapDispatchToProps = {
-  fetchEventListeners: fetchEventListenersActionCreator
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(injectIntl(EventListeners));
+export default connect(mapStateToProps)(injectIntl(EventListeners));

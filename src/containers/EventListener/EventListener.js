@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
@@ -22,43 +22,26 @@ import {
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
 import { ResourceDetails, Trigger } from '@tektoncd/dashboard-components';
-import {
-  getEventListener,
-  getEventListenersErrorMessage,
-  getSelectedNamespace,
-  isFetchingEventListeners,
-  isWebSocketConnected
-} from '../../reducers';
-import { fetchEventListener as fetchEventListenerActionCreator } from '../../actions/eventListeners';
+
+import { isWebSocketConnected } from '../../reducers';
+import { useEventListener } from '../../api';
 import { getViewChangeHandler } from '../../utils';
 
 export /* istanbul ignore next */ function EventListenerContainer(props) {
-  const {
-    error,
-    eventListener,
-    fetchEventListener,
-    intl,
-    loading,
-    match,
-    webSocketConnected,
-    view
-  } = props;
+  const { intl, match, webSocketConnected, view } = props;
   const { eventListenerName, namespace } = match.params;
-
-  function fetchData() {
-    fetchEventListener({ name: eventListenerName, namespace });
-  }
 
   useTitleSync({
     page: 'EventListener',
     resourceName: eventListenerName
   });
 
-  useEffect(() => {
-    fetchData();
-  }, [namespace, eventListenerName]);
+  const { data: eventListener, error, isFetching, refetch } = useEventListener({
+    name: eventListenerName,
+    namespace
+  });
 
-  useWebSocketReconnected(fetchData, webSocketConnected);
+  useWebSocketReconnected(refetch, webSocketConnected);
 
   function getAdditionalMetadata() {
     if (!eventListener) {
@@ -149,7 +132,7 @@ export /* istanbul ignore next */ function EventListenerContainer(props) {
     <ResourceDetails
       additionalMetadata={getAdditionalMetadata()}
       error={error}
-      loading={loading}
+      loading={isFetching}
       onViewChange={getViewChangeHandler(props)}
       resource={eventListener}
       view={view}
@@ -169,31 +152,14 @@ EventListenerContainer.propTypes = {
 
 /* istanbul ignore next */
 function mapStateToProps(state, ownProps) {
-  const { location, match } = ownProps;
-  const { namespace: namespaceParam, eventListenerName } = match.params;
-
+  const { location } = ownProps;
   const queryParams = new URLSearchParams(location.search);
   const view = queryParams.get('view');
 
-  const namespace = namespaceParam || getSelectedNamespace(state);
-  const eventListener = getEventListener(state, {
-    name: eventListenerName,
-    namespace
-  });
   return {
-    error: getEventListenersErrorMessage(state),
-    eventListener,
-    loading: isFetchingEventListeners(state),
     view,
     webSocketConnected: isWebSocketConnected(state)
   };
 }
 
-const mapDispatchToProps = {
-  fetchEventListener: fetchEventListenerActionCreator
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(injectIntl(EventListenerContainer));
+export default connect(mapStateToProps)(injectIntl(EventListenerContainer));

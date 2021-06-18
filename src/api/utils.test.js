@@ -14,7 +14,7 @@ limitations under the License.
 import { act, renderHook } from '@testing-library/react-hooks';
 
 import * as utils from './utils';
-import { useNamespacedCollection, useWebSocket } from './utils';
+import { useCollection, useResource, useWebSocket } from './utils';
 import { getAPIWrapper, getQueryClient, getWebSocket } from '../utils/test';
 
 describe('getAPI', () => {
@@ -154,39 +154,16 @@ describe('useWebSocket', () => {
     const queryClient = getQueryClient();
     const webSocket = getWebSocket();
 
+    jest.spyOn(queryClient, 'invalidateQueries');
     const existingResource = { metadata: { uid: 'existing-id' } };
-    const newResource = { metadata: { uid: 'new-uid' } };
+    const newResource = { kind, metadata: { uid: 'new-uid' } };
 
     queryClient.setQueryData(kind, () => [existingResource]);
 
-    renderHook(() => useWebSocket(kind), {
+    renderHook(() => useWebSocket({ kind }), {
       wrapper: getAPIWrapper({ queryClient, webSocket })
     });
 
-    // should ignore non-message websocket events
-    jest.spyOn(queryClient, 'setQueriesData');
-    act(() => {
-      webSocket.fireEvent({
-        type: 'foo'
-      });
-    });
-    expect(queryClient.getQueryData(kind)).toEqual([existingResource]);
-    expect(queryClient.setQueriesData).not.toHaveBeenCalled();
-
-    // should ignore Create events for resources we already have in the cache
-    act(() => {
-      webSocket.fireEvent({
-        type: 'message',
-        data: JSON.stringify({
-          kind,
-          operation: 'Created',
-          payload: existingResource
-        })
-      });
-    });
-    expect(queryClient.getQueryData(kind)).toEqual([existingResource]);
-
-    // should add new resources to the cache
     act(() => {
       webSocket.fireEvent({
         type: 'message',
@@ -197,23 +174,36 @@ describe('useWebSocket', () => {
         })
       });
     });
-    expect(queryClient.getQueryData(kind)).toEqual([
-      existingResource,
-      newResource
-    ]);
+    expect(queryClient.invalidateQueries).toHaveBeenCalledWith(kind);
   });
 
   it('should handle Deleted events', () => {
     const queryClient = getQueryClient();
     const webSocket = getWebSocket();
 
-    const resource1 = { metadata: { uid: 'existing-id-1' } };
-    const resource2 = { metadata: { uid: 'existing-id-2' } };
-    const resource3 = { metadata: { uid: 'existing-id-3' } };
+    const name = 'resource-name';
+    const otherName = 'other-resource-name';
+    const namespace = 'resource-namespace';
+    const resource1 = { kind, metadata: { uid: 'existing-id-1' } };
+    const resource2 = {
+      kind,
+      metadata: { name, namespace, uid: 'existing-id-2' }
+    };
+    const resource3 = {
+      kind,
+      metadata: { name: otherName, namespace, uid: 'existing-id-3' }
+    };
 
     queryClient.setQueryData(kind, () => [resource1, resource2, resource3]);
+    queryClient.setQueryData([kind, { name, namespace }], () => resource2);
+    queryClient.setQueryData(
+      [kind, { name: otherName, namespace }],
+      () => resource3
+    );
 
-    renderHook(() => useWebSocket(kind), {
+    jest.spyOn(queryClient, 'removeQueries');
+
+    renderHook(() => useWebSocket({ kind }), {
       wrapper: getAPIWrapper({ queryClient, webSocket })
     });
 
@@ -228,14 +218,22 @@ describe('useWebSocket', () => {
       });
     });
     expect(queryClient.getQueryData(kind)).toEqual([resource1, resource3]);
+    expect(
+      queryClient.getQueryData([kind, { name: otherName, namespace }])
+    ).toEqual(resource3);
+    expect(queryClient.removeQueries).toHaveBeenCalledWith([
+      kind,
+      { name, namespace }
+    ]);
   });
 
   it('should handle Updated events', () => {
     const queryClient = getQueryClient();
     const webSocket = getWebSocket();
+    const name = 'resource-name';
 
     const existingResource = {
-      metadata: { uid: 'existing-id', resourceVersion: '10' }
+      metadata: { name, uid: 'existing-id', resourceVersion: '10' }
     };
     const staleResource = {
       metadata: { ...existingResource.metadata, resourceVersion: '9' }
@@ -245,8 +243,9 @@ describe('useWebSocket', () => {
     };
 
     queryClient.setQueryData(kind, () => [existingResource]);
+    queryClient.setQueryData([kind, { name }], () => existingResource);
 
-    renderHook(() => useWebSocket(kind), {
+    renderHook(() => useWebSocket({ kind }), {
       wrapper: getAPIWrapper({ queryClient, webSocket })
     });
 
@@ -262,6 +261,9 @@ describe('useWebSocket', () => {
       });
     });
     expect(queryClient.getQueryData(kind)).toEqual([existingResource]);
+    expect(queryClient.getQueryData([kind, { name }])).toEqual(
+      existingResource
+    );
 
     // should update cache when a fresh update is received
     act(() => {
@@ -275,6 +277,7 @@ describe('useWebSocket', () => {
       });
     });
     expect(queryClient.getQueryData(kind)).toEqual([updatedResource]);
+    expect(queryClient.getQueryData([kind, { name }])).toEqual(updatedResource);
   });
 
   it('should handle unsupported events', () => {
@@ -287,11 +290,10 @@ describe('useWebSocket', () => {
 
     queryClient.setQueryData(kind, () => [existingResource]);
 
-    renderHook(() => useWebSocket(kind), {
+    renderHook(() => useWebSocket({ kind }), {
       wrapper: getAPIWrapper({ queryClient, webSocket })
     });
 
-    // should ignore stale update events
     act(() => {
       webSocket.fireEvent({
         type: 'message',
@@ -302,10 +304,17 @@ describe('useWebSocket', () => {
       });
     });
     expect(queryClient.getQueryData(kind)).toEqual([existingResource]);
+
+    act(() => {
+      webSocket.fireEvent({
+        type: 'non-message-event'
+      });
+    });
+    expect(queryClient.getQueryData(kind)).toEqual([existingResource]);
   });
 });
 
-describe('useNamespacedCollection', () => {
+describe('useCollection', () => {
   const kind = 'TaskRun';
   it('should return a valid query response', async () => {
     const queryClient = getQueryClient();
@@ -320,7 +329,7 @@ describe('useNamespacedCollection', () => {
 
     const api = () => [existingResource];
     const { result, waitFor, waitForNextUpdate } = renderHook(
-      () => useNamespacedCollection(kind, api),
+      () => useCollection(kind, api),
       {
         wrapper: getAPIWrapper({ queryClient, webSocket })
       }
@@ -339,5 +348,43 @@ describe('useNamespacedCollection', () => {
     });
     await waitForNextUpdate();
     expect(result.current.data).toEqual([updatedResource]);
+  });
+});
+
+describe('useResource', () => {
+  const kind = 'TaskRun';
+  it('should return a valid query response', async () => {
+    const queryClient = getQueryClient();
+    const webSocket = getWebSocket();
+
+    const name = 'resource-name';
+    const existingResource = {
+      metadata: { name, uid: 'existing-id', resourceVersion: '10' }
+    };
+    const updatedResource = {
+      metadata: { ...existingResource.metadata, resourceVersion: '11' }
+    };
+
+    const api = () => existingResource;
+    const { result, waitFor, waitForNextUpdate } = renderHook(
+      () => useResource(kind, api, { name }),
+      {
+        wrapper: getAPIWrapper({ queryClient, webSocket })
+      }
+    );
+
+    await waitFor(() => result.current.isSuccess);
+    expect(result.current.data).toEqual(existingResource);
+
+    webSocket.fireEvent({
+      type: 'message',
+      data: JSON.stringify({
+        kind,
+        operation: 'Updated',
+        payload: updatedResource
+      })
+    });
+    await waitForNextUpdate();
+    expect(result.current.data).toEqual(updatedResource);
   });
 });

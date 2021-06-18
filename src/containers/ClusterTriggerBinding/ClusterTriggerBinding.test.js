@@ -17,6 +17,7 @@ import { fireEvent, waitFor } from '@testing-library/react';
 import { createIntl } from 'react-intl';
 import { paths, urls } from '@tektoncd/dashboard-utils';
 
+import * as API from '../../api/clusterTriggerBindings';
 import { renderWithRouter } from '../../utils/test';
 import { ClusterTriggerBindingContainer } from './ClusterTriggerBinding';
 
@@ -62,27 +63,11 @@ const clusterTriggerBindingWithLabels = {
   }
 };
 
-it('ClusterTriggerBindingContainer renders', async () => {
-  const clusterTriggerBindingName = 'bar';
-  const match = {
-    params: {
-      clusterTriggerBindingName
-    }
-  };
-
-  const { getByText } = renderWithRouter(
-    <ClusterTriggerBindingContainer
-      intl={intl}
-      match={match}
-      fetchClusterTriggerBinding={() => Promise.resolve()}
-      error={null}
-      loading={false}
-    />
-  );
-  await waitFor(() => getByText('Error loading resource'));
-});
-
 it('ClusterTriggerBindingContainer handles error state', async () => {
+  const error = 'fake_error_message';
+  jest
+    .spyOn(API, 'useClusterTriggerBinding')
+    .mockImplementation(() => ({ error }));
   const match = {
     params: {
       clusterTriggerBindingName: 'foo'
@@ -90,17 +75,16 @@ it('ClusterTriggerBindingContainer handles error state', async () => {
   };
 
   const { getByText } = renderWithRouter(
-    <ClusterTriggerBindingContainer
-      intl={intl}
-      match={match}
-      error="Error"
-      fetchClusterTriggerBinding={() => Promise.resolve()}
-    />
+    <ClusterTriggerBindingContainer intl={intl} match={match} />
   );
   await waitFor(() => getByText('Error loading resource'));
+  await waitFor(() => getByText(error));
 });
 
 it('ClusterTriggerBindingContainer renders overview', async () => {
+  jest
+    .spyOn(API, 'useClusterTriggerBinding')
+    .mockImplementation(() => ({ data: clusterTriggerBindingSimple }));
   const match = {
     params: {
       clusterTriggerBindingName: 'cluster-trigger-binding-simple'
@@ -108,15 +92,7 @@ it('ClusterTriggerBindingContainer renders overview', async () => {
   };
 
   const { getByText } = renderWithRouter(
-    <ClusterTriggerBindingContainer
-      intl={intl}
-      match={match}
-      error={null}
-      fetchClusterTriggerBinding={() =>
-        Promise.resolve(clusterTriggerBindingSimple)
-      }
-      clusterTriggerBinding={clusterTriggerBindingSimple}
-    />
+    <ClusterTriggerBindingContainer intl={intl} match={match} />
   );
 
   await waitFor(() => getByText('cluster-trigger-binding-simple'));
@@ -128,21 +104,16 @@ it('ClusterTriggerBindingContainer renders overview', async () => {
 });
 
 it('ClusterTriggerBindingContainer renders YAML', async () => {
+  jest
+    .spyOn(API, 'useClusterTriggerBinding')
+    .mockImplementation(() => ({ data: clusterTriggerBindingSimple }));
   const clusterTriggerBindingName = 'cluster-trigger-binding-simple';
 
   const { getByText } = renderWithRouter(
     <Route
       path={paths.clusterTriggerBindings.byName()}
       render={props => (
-        <ClusterTriggerBindingContainer
-          {...props}
-          intl={intl}
-          error={null}
-          fetchClusterTriggerBinding={() =>
-            Promise.resolve(clusterTriggerBindingSimple)
-          }
-          clusterTriggerBinding={clusterTriggerBindingSimple}
-        />
+        <ClusterTriggerBindingContainer {...props} intl={intl} />
       )}
     />,
     {
@@ -163,6 +134,9 @@ it('ClusterTriggerBindingContainer renders YAML', async () => {
 });
 
 it('ClusterTriggerBindingContainer does not render label section if they are not present', async () => {
+  jest
+    .spyOn(API, 'useClusterTriggerBinding')
+    .mockImplementation(() => ({ data: clusterTriggerBindingSimple }));
   const match = {
     params: {
       clusterTriggerBindingName: 'cluster-trigger-binding-simple'
@@ -170,15 +144,7 @@ it('ClusterTriggerBindingContainer does not render label section if they are not
   };
 
   const { getByText } = renderWithRouter(
-    <ClusterTriggerBindingContainer
-      intl={intl}
-      match={match}
-      error={null}
-      fetchClusterTriggerBinding={() =>
-        Promise.resolve(clusterTriggerBindingSimple)
-      }
-      clusterTriggerBinding={clusterTriggerBindingSimple}
-    />
+    <ClusterTriggerBindingContainer intl={intl} match={match} />
   );
 
   await waitFor(() => getByText('cluster-trigger-binding-simple'));
@@ -186,6 +152,9 @@ it('ClusterTriggerBindingContainer does not render label section if they are not
 });
 
 it('ClusterTriggerBindingContainer renders labels section if they are present', async () => {
+  jest
+    .spyOn(API, 'useClusterTriggerBinding')
+    .mockImplementation(() => ({ data: clusterTriggerBindingWithLabels }));
   const match = {
     params: {
       clusterTriggerBindingName: 'cluster-trigger-binding-labels'
@@ -193,15 +162,7 @@ it('ClusterTriggerBindingContainer renders labels section if they are present', 
   };
 
   const { getByText } = renderWithRouter(
-    <ClusterTriggerBindingContainer
-      intl={intl}
-      match={match}
-      error={null}
-      fetchClusterTriggerBinding={() =>
-        Promise.resolve(clusterTriggerBindingWithLabels)
-      }
-      clusterTriggerBinding={clusterTriggerBindingWithLabels}
-    />
+    <ClusterTriggerBindingContainer intl={intl} match={match} />
   );
 
   await waitFor(() => getByText('cluster-trigger-binding-labels'));

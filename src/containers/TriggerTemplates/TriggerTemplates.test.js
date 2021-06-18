@@ -25,22 +25,14 @@ import * as API from '../../api/triggerTemplates';
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 
-const byNamespace = {
-  default: {
-    'trigger-template': 'c930f02e-0582-11ea-8c1f-025765432111'
-  }
-};
-
-const byId = {
-  'c930f02e-0582-11ea-8c1f-025765432111': {
-    apiVersion: 'triggers.tekton.dev/v1alpha1',
-    kind: 'TriggerTemplate',
-    metadata: {
-      creationTimestamp: '2019-11-12T19:29:46Z',
-      name: 'trigger-template',
-      namespace: 'default',
-      uid: 'c930f02e-0582-11ea-8c1f-025765432111'
-    }
+const triggerTemplate = {
+  apiVersion: 'triggers.tekton.dev/v1alpha1',
+  kind: 'TriggerTemplate',
+  metadata: {
+    creationTimestamp: '2019-11-12T19:29:46Z',
+    name: 'trigger-template',
+    namespace: 'default',
+    uid: 'c930f02e-0582-11ea-8c1f-025765432111'
   }
 };
 
@@ -58,15 +50,11 @@ const namespaces = {
 };
 
 it('TriggerTemplates renders with no templates', () => {
-  jest.spyOn(API, 'getTriggerTemplates').mockImplementation(() => []);
+  jest
+    .spyOn(API, 'useTriggerTemplates')
+    .mockImplementation(() => ({ data: [] }));
 
   const store = mockStore({
-    triggerTemplates: {
-      byId: {},
-      byNamespace: {},
-      isFetching: false,
-      errorMessage: null
-    },
     namespaces,
     notifications: {}
   });
@@ -86,15 +74,11 @@ it('TriggerTemplates renders with no templates', () => {
 });
 
 it('TriggerTemplates renders with one template', () => {
-  jest.spyOn(API, 'getTriggerTemplates').mockImplementation(() => []);
+  jest
+    .spyOn(API, 'useTriggerTemplates')
+    .mockImplementation(() => ({ data: [triggerTemplate] }));
 
   const store = mockStore({
-    triggerTemplates: {
-      byId,
-      byNamespace,
-      isFetching: false,
-      errorMessage: null
-    },
     namespaces,
     notifications: {}
   });
@@ -115,15 +99,11 @@ it('TriggerTemplates renders with one template', () => {
 });
 
 it('TriggerTemplates can be filtered on a single label filter', async () => {
-  jest.spyOn(API, 'getTriggerTemplates').mockImplementation(() => []);
+  jest.spyOn(API, 'useTriggerTemplates').mockImplementation(({ filters }) => ({
+    data: filters.length ? [] : [triggerTemplate]
+  }));
 
   const store = mockStore({
-    triggerTemplates: {
-      byId,
-      byNamespace,
-      isFetching: true,
-      errorMessage: null
-    },
     namespaces,
     notifications: {}
   });
@@ -148,15 +128,11 @@ it('TriggerTemplates can be filtered on a single label filter', async () => {
 });
 
 it('TriggerTemplates renders in loading state', () => {
-  jest.spyOn(API, 'getTriggerTemplates').mockImplementation(() => []);
+  jest
+    .spyOn(API, 'useTriggerTemplates')
+    .mockImplementation(() => ({ isLoading: true }));
 
   const store = mockStore({
-    triggerTemplates: {
-      byId: {},
-      byNamespace: {},
-      isFetching: true,
-      errorMessage: null
-    },
     namespaces,
     notifications: {}
   });
@@ -173,4 +149,26 @@ it('TriggerTemplates renders in loading state', () => {
 
   expect(queryByText(/TriggerTemplates/i)).toBeTruthy();
   expect(queryByText('No matching TriggerTemplates found')).toBeFalsy();
+});
+
+it('TriggerTemplates renders in error state', () => {
+  const error = 'fake_error_message';
+  jest.spyOn(API, 'useTriggerTemplates').mockImplementation(() => ({ error }));
+
+  const store = mockStore({
+    namespaces,
+    notifications: {}
+  });
+
+  const { queryByText } = renderWithRouter(
+    <Provider store={store}>
+      <Route
+        path="/triggerTemplates"
+        render={props => <TriggerTemplates {...props} />}
+      />
+    </Provider>,
+    { route: '/triggerTemplates' }
+  );
+
+  expect(queryByText(error)).toBeTruthy();
 });

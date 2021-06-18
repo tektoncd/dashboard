@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
@@ -24,39 +24,24 @@ import {
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 
 import { ListPageLayout } from '..';
-import { fetchClusterTriggerBindings as fetchClusterTriggerBindingsActionCreator } from '../../actions/clusterTriggerBindings';
-import {
-  getClusterTriggerBindings,
-  getClusterTriggerBindingsErrorMessage,
-  isFetchingClusterTriggerBindings,
-  isWebSocketConnected
-} from '../../reducers';
+import { useClusterTriggerBindings } from '../../api';
+import { isWebSocketConnected } from '../../reducers';
 
-/* istanbul ignore next */
 function ClusterTriggerBindings(props) {
-  const {
-    clusterTriggerBindings,
-    fetchClusterTriggerBindings,
-    filters,
-    intl,
-    loading,
-    webSocketConnected
-  } = props;
+  const { filters, intl, webSocketConnected } = props;
 
   useTitleSync({ page: 'ClusterTriggerBindings' });
 
-  function fetchData() {
-    fetchClusterTriggerBindings({ filters });
-  }
+  const {
+    data: clusterTriggerBindings = [],
+    error,
+    isLoading,
+    refetch
+  } = useClusterTriggerBindings({ filters });
 
-  useEffect(() => {
-    fetchData();
-  }, [JSON.stringify(filters)]);
-
-  useWebSocketReconnected(fetchData, webSocketConnected);
+  useWebSocketReconnected(refetch, webSocketConnected);
 
   function getError() {
-    const { error } = props;
     if (error) {
       return { error };
     }
@@ -108,7 +93,7 @@ function ClusterTriggerBindings(props) {
       <Table
         headers={initialHeaders}
         rows={clusterTriggerBindingsFormatted}
-        loading={loading && !clusterTriggerBindingsFormatted.length}
+        loading={isLoading}
         emptyTextAllNamespaces={intl.formatMessage(
           {
             id: 'dashboard.emptyState.clusterResource',
@@ -132,19 +117,9 @@ function mapStateToProps(state, props) {
   const filters = getFilters(props.location);
 
   return {
-    error: getClusterTriggerBindingsErrorMessage(state),
     filters,
-    loading: isFetchingClusterTriggerBindings(state),
-    clusterTriggerBindings: getClusterTriggerBindings(state, { filters }),
     webSocketConnected: isWebSocketConnected(state)
   };
 }
 
-const mapDispatchToProps = {
-  fetchClusterTriggerBindings: fetchClusterTriggerBindingsActionCreator
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(injectIntl(ClusterTriggerBindings));
+export default connect(mapStateToProps)(injectIntl(ClusterTriggerBindings));
