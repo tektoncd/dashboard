@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import {
@@ -20,16 +20,10 @@ import {
 } from '@tektoncd/dashboard-utils';
 import { TooltipDropdown } from '@tektoncd/dashboard-components';
 
-import {
-  getPipelineResources,
-  getSelectedNamespace,
-  isFetchingPipelineResources,
-  isWebSocketConnected
-} from '../../reducers';
-import { fetchPipelineResources as fetchPipelineResourcesActionCreator } from '../../actions/pipelineResources';
+import { usePipelineResources } from '../../api';
+import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
 
 function PipelineResourcesDropdown({
-  fetchPipelineResources,
   intl,
   label,
   namespace,
@@ -37,15 +31,16 @@ function PipelineResourcesDropdown({
   webSocketConnected,
   ...rest
 }) {
-  function fetchData() {
-    fetchPipelineResources({ namespace });
-  }
+  const {
+    data: pipelineResources = [],
+    isFetching,
+    refetch
+  } = usePipelineResources({ namespace });
+  useWebSocketReconnected(refetch, webSocketConnected);
 
-  useEffect(() => {
-    fetchData();
-  }, [namespace]);
-
-  useWebSocketReconnected(fetchData, webSocketConnected);
+  const items = pipelineResources
+    .filter(pipelineResource => !type || type === pipelineResource.spec.type)
+    .map(pipelineResource => pipelineResource.metadata.name);
 
   let emptyText = intl.formatMessage({
     id: 'dashboard.pipelineResourcesDropdown.empty.allNamespaces',
@@ -90,34 +85,26 @@ function PipelineResourcesDropdown({
     });
 
   return (
-    <TooltipDropdown {...rest} emptyText={emptyText} label={labelString} />
+    <TooltipDropdown
+      {...rest}
+      emptyText={emptyText}
+      items={items}
+      label={labelString}
+      loading={isFetching}
+    />
   );
 }
 
 PipelineResourcesDropdown.defaultProps = {
-  items: [],
-  loading: false,
   titleText: 'PipelineResource'
 };
 
 function mapStateToProps(state, ownProps) {
   const namespace = ownProps.namespace || getSelectedNamespace(state);
-  const { type } = ownProps;
   return {
-    items: getPipelineResources(state, { namespace })
-      .filter(pipelineResource => !type || type === pipelineResource.spec.type)
-      .map(pipelineResource => pipelineResource.metadata.name),
-    loading: isFetchingPipelineResources(state),
     namespace,
     webSocketConnected: isWebSocketConnected(state)
   };
 }
 
-const mapDispatchToProps = {
-  fetchPipelineResources: fetchPipelineResourcesActionCreator
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(injectIntl(PipelineResourcesDropdown));
+export default connect(mapStateToProps)(injectIntl(PipelineResourcesDropdown));

@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { injectIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -22,15 +22,9 @@ import {
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
 
-import {
-  getPipelineResource,
-  getPipelineResourcesErrorMessage,
-  isFetchingPipelineResources,
-  isWebSocketConnected
-} from '../../reducers';
+import { usePipelineResource } from '../../api';
+import { isWebSocketConnected } from '../../reducers';
 import { getViewChangeHandler } from '../../utils';
-
-import { fetchPipelineResource as fetchPipelineResourceActionCreator } from '../../actions/pipelineResources';
 
 const {
   Table,
@@ -44,16 +38,7 @@ const {
 
 /* istanbul ignore next */
 function PipelineResource(props) {
-  const {
-    error,
-    fetchPipelineResource,
-    intl,
-    loading,
-    match,
-    pipelineResource,
-    view,
-    webSocketConnected
-  } = props;
+  const { intl, match, view, webSocketConnected } = props;
   const { namespace, pipelineResourceName: resourceName } = match.params;
 
   useTitleSync({
@@ -61,15 +46,14 @@ function PipelineResource(props) {
     resourceName
   });
 
-  function fetchData() {
-    fetchPipelineResource({ name: resourceName, namespace });
-  }
+  const {
+    data: pipelineResource,
+    error,
+    isFetching,
+    refetch
+  } = usePipelineResource({ name: resourceName, namespace });
 
-  useEffect(() => {
-    fetchData();
-  }, [namespace, resourceName]);
-
-  useWebSocketReconnected(fetchData, webSocketConnected);
+  useWebSocketReconnected(refetch, webSocketConnected);
 
   const { params = [], secrets, type } = pipelineResource?.spec || {};
 
@@ -87,7 +71,7 @@ function PipelineResource(props) {
         </p>
       }
       error={error}
-      loading={loading}
+      loading={isFetching}
       onViewChange={getViewChangeHandler(props)}
       resource={pipelineResource}
       view={view}
@@ -225,29 +209,16 @@ PipelineResource.propTypes = {
 /* istanbul ignore next */
 function mapStateToProps(state, ownProps) {
   const { location, match } = ownProps;
-  const { namespace, pipelineResourceName: name } = match.params;
+  const { namespace } = match.params;
 
   const queryParams = new URLSearchParams(location.search);
   const view = queryParams.get('view');
 
   return {
-    error: getPipelineResourcesErrorMessage(state),
-    loading: isFetchingPipelineResources(state),
     namespace,
-    pipelineResource: getPipelineResource(state, {
-      name,
-      namespace
-    }),
     view,
     webSocketConnected: isWebSocketConnected(state)
   };
 }
 
-const mapDispatchToProps = {
-  fetchPipelineResource: fetchPipelineResourceActionCreator
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(injectIntl(PipelineResource));
+export default connect(mapStateToProps)(injectIntl(PipelineResource));

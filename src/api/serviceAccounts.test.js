@@ -13,6 +13,7 @@ limitations under the License.
 
 import fetchMock from 'fetch-mock';
 import * as API from './serviceAccounts';
+import * as utils from './utils';
 
 it('getServiceAccounts returns the correct data', () => {
   const data = { items: 'serviceaccounts' };
@@ -21,4 +22,16 @@ it('getServiceAccounts returns the correct data', () => {
     expect(response).toEqual(data.items);
     fetchMock.restore();
   });
+});
+
+it('useServiceAccounts', () => {
+  const query = { fake: 'query' };
+  const params = { fake: 'params' };
+  jest.spyOn(utils, 'useCollection').mockImplementation(() => query);
+  expect(API.useServiceAccounts(params)).toEqual(query);
+  expect(utils.useCollection).toHaveBeenCalledWith(
+    'ServiceAccount',
+    API.getServiceAccounts,
+    params
+  );
 });

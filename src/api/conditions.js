@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,13 @@ limitations under the License.
 */
 
 import { get } from './comms';
-import { checkData, getQueryParams, getTektonAPI } from './utils';
+import {
+  checkData,
+  getQueryParams,
+  getTektonAPI,
+  useCollection,
+  useResource
+} from './utils';
 
 export function getConditions({ filters = [], namespace } = {}) {
   const uri = getTektonAPI(
@@ -30,4 +36,12 @@ export function getCondition({ name, namespace }) {
     version: 'v1alpha1'
   });
   return get(uri);
+}
+
+export function useConditions(params) {
+  return useCollection('Condition', getConditions, params);
+}
+
+export function useCondition(params) {
+  return useResource('Condition', getCondition, params);
 }

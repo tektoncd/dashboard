@@ -39,8 +39,7 @@ describe('App', () => {
       namespaces: { byName: {} },
       notifications: {},
       pipelines: { byNamespace: {} },
-      pipelineRuns: { byNamespace: {} },
-      serviceAccounts: { byNamespace: {} }
+      pipelineRuns: { byNamespace: {} }
     });
     const { queryByText } = render(
       <Provider store={store}>
@@ -69,8 +68,7 @@ describe('App', () => {
       namespaces: { byName: {} },
       notifications: {},
       pipelines: { byNamespace: {} },
-      pipelineRuns: { byNamespace: {} },
-      serviceAccounts: { byNamespace: {} }
+      pipelineRuns: { byNamespace: {} }
     });
     const { queryByText } = render(
       <Provider store={store}>
@@ -98,8 +96,7 @@ describe('App', () => {
       namespaces: { byName: {} },
       notifications: {},
       pipelines: { byNamespace: {} },
-      pipelineRuns: { byNamespace: {} },
-      serviceAccounts: { byNamespace: {} }
+      pipelineRuns: { byNamespace: {} }
     });
     const selectNamespace = jest.fn();
     jest.spyOn(API, 'useTenantNamespace').mockImplementation(() => 'fake');
@@ -126,8 +123,7 @@ describe('App', () => {
       namespaces: { byName: {} },
       notifications: {},
       pipelines: { byNamespace: {} },
-      pipelineRuns: { byNamespace: {} },
-      serviceAccounts: { byNamespace: {} }
+      pipelineRuns: { byNamespace: {} }
     });
     const fetchNamespaces = jest.fn();
     const selectNamespace = jest.fn();
@@ -156,8 +152,7 @@ describe('App', () => {
       namespaces: { byName: {} },
       notifications: {},
       pipelines: { byNamespace: {} },
-      pipelineRuns: { byNamespace: {} },
-      serviceAccounts: { byNamespace: {} }
+      pipelineRuns: { byNamespace: {} }
     });
     const fetchNamespaces = jest.fn();
     const selectNamespace = jest.fn();
@@ -185,8 +180,7 @@ describe('App', () => {
       namespaces: { byName: {} },
       notifications: {},
       pipelines: { byNamespace: {} },
-      pipelineRuns: { byNamespace: {} },
-      serviceAccounts: { byNamespace: {} }
+      pipelineRuns: { byNamespace: {} }
     });
     jest.spyOn(API, 'useTenantNamespace').mockImplementation(() => 'fake');
     const fetchExtensions = jest.fn();
@@ -214,8 +208,7 @@ describe('App', () => {
       namespaces: { byName: {} },
       notifications: {},
       pipelines: { byNamespace: {} },
-      pipelineRuns: { byNamespace: {} },
-      serviceAccounts: { byNamespace: {} }
+      pipelineRuns: { byNamespace: {} }
     });
     const fetchExtensions = jest.fn();
     const fetchNamespaces = jest.fn();

@@ -14,6 +14,7 @@ limitations under the License.
 import fetchMock from 'fetch-mock';
 
 import * as API from './pipelineResources';
+import * as utils from './utils';
 
 it('createPipelineResource', () => {
   const namespace = 'namespace1';
@@ -75,4 +76,28 @@ it('getPipelineResource', () => {
     expect(pipelineResource).toEqual(data);
     fetchMock.restore();
   });
+});
+
+it('usePipelineResources', () => {
+  const query = { fake: 'query' };
+  const params = { fake: 'params' };
+  jest.spyOn(utils, 'useCollection').mockImplementation(() => query);
+  expect(API.usePipelineResources(params)).toEqual(query);
+  expect(utils.useCollection).toHaveBeenCalledWith(
+    'PipelineResource',
+    API.getPipelineResources,
+    params
+  );
+});
+
+it('usePipelineResource', () => {
+  const query = { fake: 'query' };
+  const params = { fake: 'params' };
+  jest.spyOn(utils, 'useResource').mockImplementation(() => query);
+  expect(API.usePipelineResource(params)).toEqual(query);
+  expect(utils.useResource).toHaveBeenCalledWith(
+    'PipelineResource',
+    API.getPipelineResource,
+    params
+  );
 });

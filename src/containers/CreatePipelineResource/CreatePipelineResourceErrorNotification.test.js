@@ -41,18 +41,6 @@ const namespaces = {
   selected: 'default'
 };
 
-const byNamespace = {
-  default: [
-    {
-      uid: '0',
-      name: 'test-pipeline-resource',
-      type: 'git',
-      url: 'test-url',
-      revision: 'test-revision'
-    }
-  ]
-};
-
 it('CreatePipelineResource error notification appears', async () => {
   const errorResponseMock = {
     response: { status: 404, text: () => Promise.resolve('') }
@@ -63,11 +51,6 @@ it('CreatePipelineResource error notification appears', async () => {
     .mockImplementation(() => Promise.reject(errorResponseMock));
 
   const store = mockStore({
-    pipelineResources: {
-      byNamespace,
-      isFetching: false,
-      submitError: 'Some error message'
-    },
     namespaces,
     notifications: {}
   });

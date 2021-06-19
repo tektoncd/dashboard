@@ -12,9 +12,13 @@ limitations under the License.
 */
 
 import { get } from './comms';
-import { checkData, getKubeAPI } from './utils';
+import { checkData, getKubeAPI, useCollection } from './utils';
 
 export function getServiceAccounts({ namespace } = {}) {
   const uri = getKubeAPI('serviceaccounts', { namespace });
   return get(uri).then(checkData);
+}
+
+export function useServiceAccounts(params) {
+  return useCollection('ServiceAccount', getServiceAccounts, params);
 }

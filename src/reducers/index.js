@@ -16,30 +16,24 @@ import { labels as labelConstants } from '@tektoncd/dashboard-utils';
 
 import clusterInterceptors, * as clusterInterceptorsSelectors from './clusterInterceptors';
 import clusterTasks, * as clusterTaskSelectors from './clusterTasks';
-import conditions, * as conditionSelectors from './conditions';
 import extensions, * as extensionSelectors from './extensions';
 import locale, * as localeSelectors from './locale';
 import namespaces, * as namespaceSelectors from './namespaces';
 import notifications, * as notificationSelectors from './notifications';
-import pipelineResources, * as pipelineResourcesSelectors from './pipelineResources';
 import pipelineRuns, * as pipelineRunsSelectors from './pipelineRuns';
 import pipelines, * as pipelineSelectors from './pipelines';
-import serviceAccounts, * as serviceAccountSelectors from './serviceAccounts';
 import taskRuns, * as taskRunsSelectors from './taskRuns';
 import tasks, * as taskSelectors from './tasks';
 
 export default combineReducers({
   clusterInterceptors: clusterInterceptors(),
   clusterTasks,
-  conditions: conditions(),
   extensions,
   locale,
   namespaces,
   notifications,
   pipelines: pipelines(),
-  pipelineResources: pipelineResources(),
   pipelineRuns: pipelineRuns(),
-  serviceAccounts: serviceAccounts(),
   tasks: tasks(),
   taskRuns: taskRuns()
 });
@@ -62,29 +56,6 @@ export function getSelectedNamespace(state) {
 
 export function getNamespaces(state) {
   return namespaceSelectors.getNamespaces(state.namespaces);
-}
-
-export function getServiceAccounts(
-  state,
-  { filters = [], namespace = getSelectedNamespace(state) } = {}
-) {
-  const resources = serviceAccountSelectors.getServiceAccounts(
-    state.serviceAccounts,
-    namespace
-  );
-  return filterResources({ filters, resources });
-}
-
-export function isFetchingServiceAccounts(state) {
-  return serviceAccountSelectors.isFetchingServiceAccounts(
-    state.serviceAccounts
-  );
-}
-
-export function getServiceAccountsErrorMessage(state) {
-  return serviceAccountSelectors.getServiceAccountsErrorMessage(
-    state.serviceAccounts
-  );
 }
 
 export function isFetchingNamespaces(state) {
@@ -126,40 +97,6 @@ export function getPipelinesErrorMessage(state) {
 
 export function isFetchingPipelines(state) {
   return pipelineSelectors.isFetchingPipelines(state.pipelines);
-}
-
-export function getPipelineResources(
-  state,
-  { filters = [], namespace = getSelectedNamespace(state) } = {}
-) {
-  const resources = pipelineResourcesSelectors.getPipelineResources(
-    state.pipelineResources,
-    namespace
-  );
-  return filterResources({ filters, resources });
-}
-
-export function getPipelineResource(
-  state,
-  { name, namespace = getSelectedNamespace(state) }
-) {
-  return pipelineResourcesSelectors.getPipelineResource(
-    state.pipelineResources,
-    name,
-    namespace
-  );
-}
-
-export function getPipelineResourcesErrorMessage(state) {
-  return pipelineResourcesSelectors.getPipelineResourcesErrorMessage(
-    state.pipelineResources
-  );
-}
-
-export function isFetchingPipelineResources(state) {
-  return pipelineResourcesSelectors.isFetchingPipelineResources(
-    state.pipelineResources
-  );
 }
 
 export function getPipelineRuns(
@@ -274,32 +211,6 @@ export function getTaskByType(
   return type === 'clustertasks'
     ? getClusterTask(state, name)
     : getTask(state, { name, namespace });
-}
-
-export function getCondition(
-  state,
-  { name, namespace = getSelectedNamespace(state) }
-) {
-  return conditionSelectors.getCondition(state.conditions, name, namespace);
-}
-
-export function getConditions(
-  state,
-  { filters = [], namespace = getSelectedNamespace(state) } = {}
-) {
-  const resources = conditionSelectors.getConditions(
-    state.conditions,
-    namespace
-  );
-  return filterResources({ filters, resources });
-}
-
-export function getConditionsErrorMessage(state) {
-  return conditionSelectors.getConditionsErrorMessage(state.conditions);
-}
-
-export function isFetchingConditions(state) {
-  return conditionSelectors.isFetchingConditions(state.conditions);
 }
 
 export function getLocale(state) {

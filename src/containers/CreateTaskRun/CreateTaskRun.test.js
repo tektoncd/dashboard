@@ -109,57 +109,30 @@ const clusterTasks = {
   },
   isFetching: false
 };
-const serviceAccounts = {
-  byNamespace: {
-    'namespace-1': {
-      'service-account-1': 'id-service-account-1'
-    },
-    'namespace-2': {
-      'service-account-2': 'id-service-account-2'
-    }
-  },
-  byId: {
-    'id-service-account-1': {
-      metadata: {
-        name: 'service-account-1',
-        namespace: 'namespace-1',
-        uid: 'id-service-account-1'
-      }
-    },
-    'id-service-account-2': {
-      metadata: {
-        name: 'service-account-2',
-        namespace: 'namespace-2',
-        uid: 'id-service-account-2'
-      }
-    }
-  },
-  isFetching: false
+
+const serviceAccount = {
+  metadata: {
+    name: 'service-account-1',
+    namespace: 'namespace-1',
+    uid: 'id-service-account-1'
+  }
 };
-const pipelineResources = {
-  byNamespace: {
-    'namespace-1': {
-      'pipeline-resource-1': 'id-pipeline-resource-1',
-      'pipeline-resource-2': 'id-pipeline-resource-2',
-      'pipeline-resource-3': 'id-pipeline-resource-3'
-    }
-  },
-  byId: {
-    'id-pipeline-resource-1': {
-      metadata: { name: 'pipeline-resource-1' },
-      spec: { type: 'type-1' }
-    },
-    'id-pipeline-resource-2': {
-      metadata: { name: 'pipeline-resource-2' },
-      spec: { type: 'type-2' }
-    },
-    'id-pipeline-resource-3': {
-      metadata: { name: 'pipeline-resource-3' },
-      spec: { type: 'type-3' }
-    }
-  },
-  isFetching: false
+
+const pipelineResource1 = {
+  metadata: { name: 'pipeline-resource-1' },
+  spec: { type: 'type-1' }
 };
+
+const pipelineResource2 = {
+  metadata: { name: 'pipeline-resource-2' },
+  spec: { type: 'type-2' }
+};
+
+const pipelineResource3 = {
+  metadata: { name: 'pipeline-resource-3' },
+  spec: { type: 'type-3' }
+};
+
 const taskRuns = {
   isFetching: false,
   byId: {},
@@ -170,11 +143,9 @@ const mockStore = configureStore(middleware);
 const testStore = {
   namespaces,
   notifications: {},
-  pipelineResources,
   taskRuns,
   tasks,
-  clusterTasks,
-  serviceAccounts
+  clusterTasks
 };
 
 const props = {
@@ -281,12 +252,14 @@ const selectTask1AndFillSpec = async ({
 describe('CreateTaskRun', () => {
   beforeEach(() => {
     jest
-      .spyOn(ServiceAccountsAPI, 'getServiceAccounts')
-      .mockImplementation(() => serviceAccounts.byId);
+      .spyOn(ServiceAccountsAPI, 'useServiceAccounts')
+      .mockImplementation(() => ({ data: [serviceAccount] }));
     jest.spyOn(TasksAPI, 'getTasks').mockImplementation(() => tasks.byId);
     jest
-      .spyOn(PipelineResourcesAPI, 'getPipelineResources')
-      .mockImplementation(() => pipelineResources.byId);
+      .spyOn(PipelineResourcesAPI, 'usePipelineResources')
+      .mockImplementation(() => ({
+        data: [pipelineResource1, pipelineResource2, pipelineResource3]
+      }));
     jest
       .spyOn(TaskRunsAPI, 'getTaskRuns')
       .mockImplementation(() => taskRuns.byId);

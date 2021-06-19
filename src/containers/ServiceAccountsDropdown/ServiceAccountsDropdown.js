@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import {
@@ -20,31 +20,24 @@ import {
 } from '@tektoncd/dashboard-utils';
 import { TooltipDropdown } from '@tektoncd/dashboard-components';
 
-import {
-  getSelectedNamespace,
-  getServiceAccounts,
-  isFetchingServiceAccounts,
-  isWebSocketConnected
-} from '../../reducers';
-import { fetchServiceAccounts as fetchServiceAccountsActionCreator } from '../../actions/serviceAccounts';
+import { useServiceAccounts } from '../../api';
+import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
 
 function ServiceAccountsDropdown({
-  fetchServiceAccounts,
   intl,
   label,
   namespace,
   webSocketConnected,
   ...rest
 }) {
-  function fetchData() {
-    fetchServiceAccounts({ namespace });
-  }
+  const {
+    data: serviceAccounts = [],
+    isFetching,
+    refetch
+  } = useServiceAccounts({ namespace });
+  useWebSocketReconnected(refetch, webSocketConnected);
 
-  useEffect(() => {
-    fetchData();
-  }, [namespace]);
-
-  useWebSocketReconnected(fetchData, webSocketConnected);
+  const items = serviceAccounts.map(sa => sa.metadata.name);
 
   const emptyText =
     namespace === ALL_NAMESPACES
@@ -68,31 +61,26 @@ function ServiceAccountsDropdown({
       defaultMessage: 'Select ServiceAccount'
     });
   return (
-    <TooltipDropdown {...rest} emptyText={emptyText} label={labelString} />
+    <TooltipDropdown
+      {...rest}
+      emptyText={emptyText}
+      items={items}
+      label={labelString}
+      loading={isFetching}
+    />
   );
 }
 
 ServiceAccountsDropdown.defaultProps = {
-  items: [],
-  loading: false,
   titleText: 'ServiceAccount'
 };
 
 function mapStateToProps(state, ownProps) {
   const namespace = ownProps.namespace || getSelectedNamespace(state);
   return {
-    items: getServiceAccounts(state, { namespace }).map(sa => sa.metadata.name),
-    loading: isFetchingServiceAccounts(state),
     namespace,
     webSocketConnected: isWebSocketConnected(state)
   };
 }
 
-const mapDispatchToProps = {
-  fetchServiceAccounts: fetchServiceAccountsActionCreator
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(injectIntl(ServiceAccountsDropdown));
+export default connect(mapStateToProps)(injectIntl(ServiceAccountsDropdown));
