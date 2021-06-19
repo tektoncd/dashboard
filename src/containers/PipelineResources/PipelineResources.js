@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import keyBy from 'lodash.keyby';
@@ -29,28 +29,15 @@ import {
 import { Add16 as Add, TrashCan32 as Delete } from '@carbon/icons-react';
 
 import { ListPageLayout } from '..';
-import { fetchPipelineResources as fetchPipelineResourcesActionCreator } from '../../actions/pipelineResources';
-import { deletePipelineResource, useIsReadOnly } from '../../api';
 import {
-  getPipelineResources,
-  getPipelineResourcesErrorMessage,
-  getSelectedNamespace,
-  isFetchingPipelineResources,
-  isWebSocketConnected
-} from '../../reducers';
+  deletePipelineResource,
+  useIsReadOnly,
+  usePipelineResources
+} from '../../api';
+import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
 
 export /* istanbul ignore next */ function PipelineResources(props) {
-  const {
-    error,
-    fetchPipelineResources,
-    filters,
-    history,
-    intl,
-    loading,
-    namespace,
-    pipelineResources,
-    webSocketConnected
-  } = props;
+  const { filters, history, intl, namespace, webSocketConnected } = props;
 
   const [cancelSelection, setCancelSelection] = useState(null);
   const [deleteError, setDeleteError] = useState(null);
@@ -61,15 +48,14 @@ export /* istanbul ignore next */ function PipelineResources(props) {
 
   useTitleSync({ page: 'PipelineResources' });
 
-  function fetchData() {
-    fetchPipelineResources({ filters, namespace });
-  }
+  const {
+    data: pipelineResources = [],
+    error,
+    isLoading,
+    refetch
+  } = usePipelineResources({ filters, namespace });
 
-  useEffect(() => {
-    fetchData();
-  }, [JSON.stringify(filters), namespace]);
-
-  useWebSocketReconnected(fetchData, webSocketConnected);
+  useWebSocketReconnected(refetch, webSocketConnected);
 
   function getError() {
     if (error) {
@@ -161,7 +147,7 @@ export /* istanbul ignore next */ function PipelineResources(props) {
     <ListPageLayout {...props} error={getError()} title="PipelineResources">
       <PipelineResourcesList
         batchActionButtons={batchActionButtons}
-        loading={loading && !pipelineResources.length}
+        loading={isLoading}
         pipelineResources={pipelineResources}
         selectedNamespace={namespace}
         toolbarButtons={toolbarButtons}
@@ -186,20 +172,10 @@ function mapStateToProps(state, props) {
   const filters = getFilters(props.location);
 
   return {
-    error: getPipelineResourcesErrorMessage(state),
     filters,
-    loading: isFetchingPipelineResources(state),
     namespace,
-    pipelineResources: getPipelineResources(state, { filters, namespace }),
     webSocketConnected: isWebSocketConnected(state)
   };
 }
 
-const mapDispatchToProps = {
-  fetchPipelineResources: fetchPipelineResourcesActionCreator
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(injectIntl(PipelineResources));
+export default connect(mapStateToProps)(injectIntl(PipelineResources));

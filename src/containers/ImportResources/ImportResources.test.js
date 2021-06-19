@@ -31,24 +31,7 @@ describe('ImportResources component', () => {
       isFetching: false,
       selected: ALL_NAMESPACES
     },
-    notifications: {},
-    serviceAccounts: {
-      byNamespace: {
-        namespace1: {
-          'service-account-1': 'id-service-account-1'
-        }
-      },
-      byId: {
-        'id-service-account-1': {
-          metadata: {
-            name: 'service-account-1',
-            namespace: 'namespace1',
-            uid: 'id-service-account-1'
-          }
-        }
-      },
-      isFetching: false
-    }
+    notifications: {}
   });
 
   beforeEach(() => {

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,13 @@ limitations under the License.
 */
 
 import { deleteRequest, get, post } from './comms';
-import { checkData, getQueryParams, getTektonAPI } from './utils';
+import {
+  checkData,
+  getQueryParams,
+  getTektonAPI,
+  useCollection,
+  useResource
+} from './utils';
 
 export function createPipelineResource({ namespace, resource } = {}) {
   const uri = getTektonAPI('pipelineresources', {
@@ -51,4 +57,12 @@ export function getPipelineResource({ name, namespace }) {
     undefined
   );
   return get(uri);
+}
+
+export function usePipelineResources(params) {
+  return useCollection('PipelineResource', getPipelineResources, params);
+}
+
+export function usePipelineResource(params) {
+  return useResource('PipelineResource', getPipelineResource, params);
 }

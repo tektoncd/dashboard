@@ -21,10 +21,8 @@ import { urls } from '@tektoncd/dashboard-utils';
 
 import { renderWithRouter } from '../../utils/test';
 import * as API from '../../api';
-import * as PipelineResourcesAPI from '../../api/pipelineResources';
 import * as PipelinesAPI from '../../api/pipelines';
 import * as PipelineRunsAPI from '../../api/pipelineRuns';
-import * as ServiceAccountsAPI from '../../api/serviceAccounts';
 import PipelineRunsContainer from './PipelineRuns';
 
 const namespacesTestStore = {
@@ -61,41 +59,6 @@ const pipelinesTestStore = {
             { name: 'param-2' }
           ]
         }
-      }
-    },
-    isFetching: false
-  }
-};
-const serviceAccountsTestStore = {
-  serviceAccounts: {
-    byNamespace: {
-      'namespace-1': {
-        'service-account-1': 'id-service-account-1'
-      }
-    },
-    byId: {
-      'id-service-account-1': {
-        metadata: {
-          name: 'service-account-1',
-          namespace: 'namespace-1',
-          uid: 'id-service-account-1'
-        }
-      }
-    },
-    isFetching: false
-  }
-};
-const pipelineResourcesTestStore = {
-  pipelineResources: {
-    byNamespace: {
-      'namespace-1': {
-        'pipeline-resource-1': 'id-pipeline-resource-1'
-      }
-    },
-    byId: {
-      'id-pipeline-resource-1': {
-        metadata: { name: 'pipeline-resource-1' },
-        spec: { type: 'type-1' }
       }
     },
     isFetching: false
@@ -157,21 +120,13 @@ const mockStore = configureStore(middleware);
 const testStore = {
   ...namespacesTestStore,
   notifications: {},
-  ...pipelineResourcesTestStore,
   ...pipelineRunsTestStore,
-  ...pipelinesTestStore,
-  ...serviceAccountsTestStore
+  ...pipelinesTestStore
 };
 
 describe('PipelineRuns container', () => {
   beforeEach(() => {
-    jest
-      .spyOn(ServiceAccountsAPI, 'getServiceAccounts')
-      .mockImplementation(() => []);
     jest.spyOn(PipelinesAPI, 'getPipelines').mockImplementation(() => []);
-    jest
-      .spyOn(PipelineResourcesAPI, 'getPipelineResources')
-      .mockImplementation(() => []);
     jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => true);
   });
 

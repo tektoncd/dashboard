@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
@@ -23,38 +23,23 @@ import {
 } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 
+import { useConditions } from '../../api';
 import { ListPageLayout } from '..';
-import { fetchConditions as fetchConditionsActionCreator } from '../../actions/conditions';
 import {
-  getConditions,
-  getConditionsErrorMessage,
   getSelectedNamespace,
-  isFetchingConditions as selectIsFetchingConditions,
   isWebSocketConnected as selectIsWebSocketConnected
 } from '../../reducers';
 
 function Conditions(props) {
-  const {
-    conditions,
-    error,
-    fetchConditions,
-    filters,
-    intl,
-    loading,
-    namespace,
-    webSocketConnected
-  } = props;
+  const { filters, intl, namespace, webSocketConnected } = props;
   useTitleSync({ page: 'Conditions' });
 
-  function fetchData() {
-    fetchConditions({ filters, namespace });
-  }
+  const { data: conditions = [], error, isLoading, refetch } = useConditions({
+    filters,
+    namespace
+  });
 
-  useEffect(() => {
-    fetchData();
-  }, [JSON.stringify(filters), namespace]);
-
-  useWebSocketReconnected(fetchData, webSocketConnected);
+  useWebSocketReconnected(refetch, webSocketConnected);
 
   function getError() {
     if (error) {
@@ -115,7 +100,7 @@ function Conditions(props) {
       <Table
         headers={headers}
         rows={conditionsFormatted}
-        loading={loading && !conditionsFormatted.length}
+        loading={isLoading}
         selectedNamespace={namespace}
         emptyTextAllNamespaces={intl.formatMessage(
           {
@@ -144,20 +129,10 @@ function mapStateToProps(state, props) {
   const filters = getFilters(props.location);
 
   return {
-    conditions: getConditions(state, { filters, namespace }),
-    error: getConditionsErrorMessage(state),
     filters,
-    loading: selectIsFetchingConditions(state),
     namespace,
     webSocketConnected: selectIsWebSocketConnected(state)
   };
 }
 
-const mapDispatchToProps = {
-  fetchConditions: fetchConditionsActionCreator
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(injectIntl(Conditions));
+export default connect(mapStateToProps)(injectIntl(Conditions));

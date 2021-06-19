@@ -20,23 +20,16 @@ import {
   getClusterTask,
   getClusterTasks,
   getClusterTasksErrorMessage,
-  getCondition,
-  getConditions,
-  getConditionsErrorMessage,
   getExtensions,
   getExtensionsErrorMessage,
   getLocale,
   getNamespaces,
-  getPipelineResource,
-  getPipelineResources,
-  getPipelineResourcesErrorMessage,
   getPipelineRun,
   getPipelineRuns,
   getPipelineRunsErrorMessage,
   getPipelines,
   getPipelinesErrorMessage,
   getSelectedNamespace,
-  getServiceAccountsErrorMessage,
   getTaskByType,
   getTaskRun,
   getTaskRuns,
@@ -46,9 +39,7 @@ import {
   getTasksErrorMessage,
   isFetchingClusterInterceptors,
   isFetchingClusterTasks,
-  isFetchingConditions,
   isFetchingExtensions,
-  isFetchingPipelineResources,
   isFetchingPipelineRuns,
   isFetchingPipelines,
   isFetchingTaskRuns,
@@ -56,26 +47,20 @@ import {
 } from '.';
 import * as clusterInterceptorSelectors from './clusterInterceptors';
 import * as clusterTaskSelectors from './clusterTasks';
-import * as conditionSelectors from './conditions';
 import * as extensionSelectors from './extensions';
 import * as localeSelectors from './locale';
 import * as namespaceSelectors from './namespaces';
-import * as pipelineResourcesSelectors from './pipelineResources';
 import * as pipelineSelectors from './pipelines';
 import * as pipelineRunsSelectors from './pipelineRuns';
-import * as serviceAccountSelectors from './serviceAccounts';
 import * as taskSelectors from './tasks';
 import * as taskRunsSelectors from './taskRuns';
 
 const locale = 'it';
 const namespace = 'default';
 const pipelineRunName = 'pipelineRunName';
-const conditions = [{ fake: 'condition' }];
 const extension = { displayName: 'extension' };
-const pipelineResources = [{ fake: 'pipelineResource' }];
 const pipelines = [{ fake: 'pipeline' }];
 const pipelineRuns = [{ fake: 'pipelineRun' }];
-const serviceAccounts = [{ fake: 'account' }];
 const task = { fake: 'task' };
 const tasks = [task];
 const clusterInterceptor = { fake: 'clusterInterceptor' };
@@ -96,7 +81,6 @@ const taskRuns = [taskRun, inlineTaskRun];
 const state = {
   clusterInterceptors,
   clusterTasks,
-  conditions,
   extensions: {
     byName: {
       foo: extension
@@ -106,9 +90,7 @@ const state = {
   namespaces: {
     selected: namespace
   },
-  pipelineResources,
   pipelines,
-  serviceAccounts,
   tasks
 };
 
@@ -202,52 +184,6 @@ it('isFetchingPipelines', () => {
   );
 });
 
-it('getPipelineResources', () => {
-  jest
-    .spyOn(pipelineResourcesSelectors, 'getPipelineResources')
-    .mockImplementation(() => pipelineResources);
-  expect(getPipelineResources(state)).toEqual(pipelineResources);
-  expect(pipelineResourcesSelectors.getPipelineResources).toHaveBeenCalledWith(
-    state.pipelineResources,
-    namespace
-  );
-});
-
-it('getPipelineResource', () => {
-  const name = 'pipelineResourceName';
-  const pipelineResource = { fake: 'pipelineResource' };
-  jest
-    .spyOn(pipelineResourcesSelectors, 'getPipelineResource')
-    .mockImplementation(() => pipelineResource);
-  expect(getPipelineResource(state, { name })).toEqual(pipelineResource);
-  expect(pipelineResourcesSelectors.getPipelineResource).toHaveBeenCalledWith(
-    state.pipelineResources,
-    name,
-    namespace
-  );
-});
-
-it('getPipelineResourcesErrorMessage', () => {
-  const errorMessage = 'fake error message';
-  jest
-    .spyOn(pipelineResourcesSelectors, 'getPipelineResourcesErrorMessage')
-    .mockImplementation(() => errorMessage);
-  expect(getPipelineResourcesErrorMessage(state)).toEqual(errorMessage);
-  expect(
-    pipelineResourcesSelectors.getPipelineResourcesErrorMessage
-  ).toHaveBeenCalledWith(state.pipelineResources);
-});
-
-it('isFetchingPipelineResources', () => {
-  jest
-    .spyOn(pipelineResourcesSelectors, 'isFetchingPipelineResources')
-    .mockImplementation(() => true);
-  expect(isFetchingPipelineResources(state)).toBe(true);
-  expect(
-    pipelineResourcesSelectors.isFetchingPipelineResources
-  ).toHaveBeenCalledWith(state.pipelineResources);
-});
-
 it('getPipelineRuns', () => {
   jest
     .spyOn(pipelineRunsSelectors, 'getPipelineRuns')
@@ -292,63 +228,6 @@ it('isFetchingPipelineRuns', () => {
   expect(pipelineRunsSelectors.isFetchingPipelineRuns).toHaveBeenCalledWith(
     state.pipelineRuns
   );
-});
-
-it('getConditions', () => {
-  jest
-    .spyOn(conditionSelectors, 'getConditions')
-    .mockImplementation(() => conditions);
-  expect(getConditions(state, { filters: [] })).toEqual(conditions);
-  expect(conditionSelectors.getConditions).toHaveBeenCalledWith(
-    state.conditions,
-    namespace
-  );
-});
-
-it('getPipelineRun', () => {
-  const name = 'conditionName';
-  const condition = { fake: 'condition' };
-  jest
-    .spyOn(conditionSelectors, 'getCondition')
-    .mockImplementation(() => condition);
-  expect(getCondition(state, { name })).toEqual(condition);
-  expect(conditionSelectors.getCondition).toHaveBeenCalledWith(
-    state.conditions,
-    name,
-    namespace
-  );
-});
-
-it('getConditionsErrorMessage', () => {
-  const errorMessage = 'fake error message';
-  jest
-    .spyOn(conditionSelectors, 'getConditionsErrorMessage')
-    .mockImplementation(() => errorMessage);
-  expect(getConditionsErrorMessage(state)).toEqual(errorMessage);
-  expect(conditionSelectors.getConditionsErrorMessage).toHaveBeenCalledWith(
-    state.conditions
-  );
-});
-
-it('isFetchingConditions', () => {
-  jest
-    .spyOn(conditionSelectors, 'isFetchingConditions')
-    .mockImplementation(() => true);
-  expect(isFetchingConditions(state)).toBe(true);
-  expect(conditionSelectors.isFetchingConditions).toHaveBeenCalledWith(
-    state.conditions
-  );
-});
-
-it('getServiceAccountsErrorMessage', () => {
-  const errorMessage = 'fake error message';
-  jest
-    .spyOn(serviceAccountSelectors, 'getServiceAccountsErrorMessage')
-    .mockImplementation(() => errorMessage);
-  expect(getServiceAccountsErrorMessage(state)).toEqual(errorMessage);
-  expect(
-    serviceAccountSelectors.getServiceAccountsErrorMessage
-  ).toHaveBeenCalledWith(state.serviceAccounts);
 });
 
 it('getTasks', () => {

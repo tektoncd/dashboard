@@ -13,5 +13,4 @@ limitations under the License.
 export { fetchNamespaces } from '../../actions/namespaces';
 export { fetchPipeline, fetchPipelines } from '../../actions/pipelines';
 export { fetchPipelineRuns } from '../../actions/pipelineRuns';
-export { fetchServiceAccounts } from '../../actions/serviceAccounts';
 export { fetchTask, fetchTasks } from '../../actions/tasks';

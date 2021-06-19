@@ -33,58 +33,44 @@ const namespacesTestStore = {
   }
 };
 
-const conditionsTestStore = {
-  conditions: {
-    isFetching: false,
-    byId: {
-      'conditionWithTwoLabels-id': {
-        metadata: {
-          name: 'conditionWithTwoLabels',
-          namespace: 'namespace-1',
-          labels: {
-            foo: 'bar',
-            baz: 'bam'
-          },
-          uid: 'conditionWithTwoLabels-id'
-        }
-      },
-      'conditionWithSingleLabel-id': {
-        metadata: {
-          name: 'conditionWithSingleLabel',
-          namespace: 'namespace-1',
-          uid: 'conditionWithSingleLabel-id',
-          labels: {
-            foo: 'bar'
-          }
-        }
-      }
-    },
-    byNamespace: {
-      'namespace-1': {
-        conditionWithTwoLabels: 'conditionWithTwoLabels-id',
-        conditionWithSingleLabel: 'conditionWithSingleLabel-id'
-      }
+const conditionWithSingleLabel = {
+  metadata: {
+    name: 'conditionWithSingleLabel',
+    namespace: 'namespace-1',
+    uid: 'conditionWithSingleLabel-id',
+    labels: {
+      foo: 'bar'
     }
   }
 };
+
+const conditionWithTwoLabels = {
+  metadata: {
+    name: 'conditionWithTwoLabels',
+    namespace: 'namespace-1',
+    labels: {
+      foo: 'bar',
+      baz: 'bam'
+    },
+    uid: 'conditionWithTwoLabels-id'
+  }
+};
+
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 const testStore = {
   ...namespacesTestStore,
   notifications: {
     webSocketConnected: false
-  },
-  ...conditionsTestStore
+  }
 };
 
 describe('Conditions', () => {
-  beforeEach(() => {
-    jest.spyOn(API, 'getConditions').mockImplementation(() => []);
-  });
-
   it('renders loading state', async () => {
+    jest
+      .spyOn(API, 'useConditions')
+      .mockImplementation(() => ({ isLoading: true }));
     const mockTestStore = mockStore({
-      conditions: { byId: {}, byNamespace: {}, isFetching: true },
       ...namespacesTestStore,
       notifications: {}
     });
@@ -100,14 +86,14 @@ describe('Conditions', () => {
     expect(queryByText('Conditions')).toBeTruthy();
   });
 
-  it('handles updates', async () => {
+  it('renders', async () => {
+    jest.spyOn(API, 'useConditions').mockImplementation(({ filters }) => ({
+      data: filters.length
+        ? [conditionWithTwoLabels]
+        : [conditionWithSingleLabel, conditionWithTwoLabels]
+    }));
     const mockTestStore = mockStore(testStore);
-    const {
-      container,
-      getByPlaceholderText,
-      getByText,
-      queryByText
-    } = renderWithRouter(
+    const { getByPlaceholderText, getByText, queryByText } = renderWithRouter(
       <Provider store={mockTestStore}>
         <Route
           path={paths.conditions.all()}
@@ -118,7 +104,6 @@ describe('Conditions', () => {
     );
 
     expect(queryByText('conditionWithSingleLabel')).toBeTruthy();
-    expect(API.getConditions).toHaveBeenCalledTimes(1);
 
     const filterValue = 'baz:bam';
     const filterInputField = getByPlaceholderText(/Input a label filter/);
@@ -128,35 +113,12 @@ describe('Conditions', () => {
     expect(queryByText(filterValue)).toBeTruthy();
     expect(queryByText('conditionWithSingleLabel')).toBeFalsy();
     expect(queryByText('conditionWithTwoLabels')).toBeTruthy();
-    expect(API.getConditions).toHaveBeenCalledTimes(2);
-
-    renderWithRouter(
-      <Provider
-        store={mockStore({
-          ...testStore,
-          notifications: {
-            webSocketConnected: true
-          },
-          propeties: {}
-        })}
-      >
-        <Route
-          path={paths.conditions.all()}
-          render={props => <ConditionsContainer {...props} />}
-        />
-      </Provider>,
-      { container, route: urls.conditions.all() }
-    );
-
-    expect(API.getConditions).toHaveBeenCalledTimes(3);
   });
 
   it('handles error', async () => {
-    const errorMessage = 'fake_errorMessage';
-    const mockTestStore = mockStore({
-      ...testStore,
-      conditions: { ...conditionsTestStore.conditions, errorMessage }
-    });
+    const error = 'fake_errorMessage';
+    jest.spyOn(API, 'useConditions').mockImplementation(() => ({ error }));
+    const mockTestStore = mockStore(testStore);
     const { queryByText } = renderWithRouter(
       <Provider store={mockTestStore}>
         <Route
@@ -167,6 +129,6 @@ describe('Conditions', () => {
       { route: urls.conditions.all() }
     );
 
-    expect(queryByText(errorMessage)).toBeTruthy();
+    expect(queryByText(error)).toBeTruthy();
   });
 });

@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -20,13 +20,9 @@ import {
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
 import { ResourceDetails, Table } from '@tektoncd/dashboard-components';
-import {
-  getCondition,
-  getConditionsErrorMessage,
-  getSelectedNamespace,
-  isWebSocketConnected as selectIsWebSocketConnected
-} from '../../reducers';
-import { fetchCondition as fetchConditionActionCreator } from '../../actions/conditions';
+
+import { useCondition } from '../../api';
+import { isWebSocketConnected as selectIsWebSocketConnected } from '../../reducers';
 import { getViewChangeHandler } from '../../utils';
 
 function ConditionParameters({ condition, intl }) {
@@ -80,15 +76,7 @@ function ConditionParameters({ condition, intl }) {
 }
 
 export function ConditionContainer(props) {
-  const {
-    condition,
-    error,
-    fetchCondition,
-    intl,
-    match,
-    view,
-    webSocketConnected
-  } = props;
+  const { intl, match, view, webSocketConnected } = props;
   const { conditionName, namespace } = match.params;
 
   useTitleSync({
@@ -96,15 +84,12 @@ export function ConditionContainer(props) {
     resourceName: conditionName
   });
 
-  function fetchData() {
-    fetchCondition({ name: conditionName, namespace });
-  }
+  const { data: condition, error, refetch } = useCondition({
+    name: conditionName,
+    namespace
+  });
 
-  useEffect(() => {
-    fetchData();
-  }, [conditionName, namespace]);
-
-  useWebSocketReconnected(fetchData, webSocketConnected);
+  useWebSocketReconnected(refetch, webSocketConnected);
 
   return (
     <ResourceDetails
@@ -129,30 +114,14 @@ ConditionContainer.propTypes = {
 
 /* istanbul ignore next */
 function mapStateToProps(state, ownProps) {
-  const { location, match } = ownProps;
-  const { namespace: namespaceParam, conditionName } = match.params;
-
+  const { location } = ownProps;
   const queryParams = new URLSearchParams(location.search);
   const view = queryParams.get('view');
 
-  const namespace = namespaceParam || getSelectedNamespace(state);
-  const condition = getCondition(state, {
-    name: conditionName,
-    namespace
-  });
   return {
-    error: getConditionsErrorMessage(state),
-    condition,
     view,
     webSocketConnected: selectIsWebSocketConnected(state)
   };
 }
 
-const mapDispatchToProps = {
-  fetchCondition: fetchConditionActionCreator
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(injectIntl(ConditionContainer));
+export default connect(mapStateToProps)(injectIntl(ConditionContainer));

@@ -84,25 +84,6 @@ const taskRunsTestStore = {
     }
   }
 };
-const serviceAccountsTestStore = {
-  serviceAccounts: {
-    byNamespace: {
-      'namespace-1': {
-        'service-account-1': 'id-service-account-1'
-      }
-    },
-    byId: {
-      'id-service-account-1': {
-        metadata: {
-          name: 'service-account-1',
-          namespace: 'namespace-1',
-          uid: 'id-service-account-1'
-        }
-      }
-    },
-    isFetching: false
-  }
-};
 const tasksTestStore = {
   tasks: {
     byNamespace: {
@@ -140,8 +121,7 @@ const testStore = {
   ...namespacesTestStore,
   notifications: {},
   ...taskRunsTestStore,
-  ...tasksTestStore,
-  ...serviceAccountsTestStore
+  ...tasksTestStore
 };
 
 describe('TaskRuns container', () => {
