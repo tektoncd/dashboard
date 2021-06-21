@@ -20,7 +20,7 @@ import {
 } from '@carbon/icons-react';
 import { injectIntl } from 'react-intl';
 import keyBy from 'lodash.keyby';
-import { Button } from 'carbon-components-react';
+import { Button, Link as CarbonLink } from 'carbon-components-react';
 import {
   ALL_NAMESPACES,
   getFilters,
@@ -177,6 +177,7 @@ export /* istanbul ignore next */ function Pipelines(props) {
     id: pipeline.metadata.uid,
     name: (
       <Link
+        component={CarbonLink}
         to={urls.rawCRD.byNamespace({
           namespace: pipeline.metadata.namespace,
           type: 'pipelines',

@@ -22,6 +22,7 @@ import {
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
+import { Link as CarbonLink } from 'carbon-components-react';
 
 import { ListPageLayout } from '..';
 import { useTriggers } from '../../api';
@@ -83,6 +84,7 @@ function Triggers(props) {
     id: trigger.metadata.uid,
     name: (
       <Link
+        component={CarbonLink}
         to={urls.triggers.byName({
           namespace: trigger.metadata.namespace,
           triggerName: trigger.metadata.name

@@ -22,6 +22,7 @@ import {
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
+import { Link as CarbonLink } from 'carbon-components-react';
 
 import { ListPageLayout } from '..';
 import { fetchClusterInterceptors as fetchClusterInterceptorsActionCreator } from '../../actions/clusterInterceptors';
@@ -94,6 +95,7 @@ function ClusterInterceptors(props) {
       id: clusterInterceptor.metadata.uid,
       name: (
         <Link
+          component={CarbonLink}
           to={urls.rawCRD.cluster({
             name: clusterInterceptor.metadata.name,
             type: 'clusterinterceptors'

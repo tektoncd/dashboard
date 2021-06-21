@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -15,6 +15,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import { getResources, urls } from '@tektoncd/dashboard-utils';
+import { Link as CarbonLink } from 'carbon-components-react';
 
 import { ResourceTable, ViewYAML } from '..';
 
@@ -27,6 +28,7 @@ const resourceTable = (title, namespace, resources, intl) => (
       value:
         resourceRef && resourceRef.name ? (
           <Link
+            component={CarbonLink}
             to={urls.pipelineResources.byName({
               namespace,
               pipelineResourceName: resourceRef.name

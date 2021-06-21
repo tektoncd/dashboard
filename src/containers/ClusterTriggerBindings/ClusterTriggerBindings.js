@@ -22,6 +22,7 @@ import {
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
+import { Link as CarbonLink } from 'carbon-components-react';
 
 import { ListPageLayout } from '..';
 import { useClusterTriggerBindings } from '../../api';
@@ -71,6 +72,7 @@ function ClusterTriggerBindings(props) {
       id: `${binding.metadata.name}`,
       name: (
         <Link
+          component={CarbonLink}
           to={urls.clusterTriggerBindings.byName({
             clusterTriggerBindingName: binding.metadata.name
           })}

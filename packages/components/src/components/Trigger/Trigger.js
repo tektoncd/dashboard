@@ -17,6 +17,7 @@ import { Link } from 'react-router-dom';
 import {
   Accordion,
   AccordionItem,
+  Link as CarbonLink,
   ListItem,
   UnorderedList
 } from 'carbon-components-react';
@@ -66,6 +67,7 @@ const Trigger = ({ intl, namespace, trigger }) => {
                   {binding.ref ? (
                     <Link
                       className="tkn--trigger-resourcelink"
+                      component={CarbonLink}
                       to={
                         binding.kind === 'ClusterTriggerBinding'
                           ? urls.clusterTriggerBindings.byName({
@@ -100,6 +102,7 @@ const Trigger = ({ intl, namespace, trigger }) => {
           ) : (
             <Link
               className="tkn--trigger-resourcelink"
+              component={CarbonLink}
               to={urls.triggerTemplates.byName({
                 namespace,
                 triggerTemplateName
@@ -317,6 +320,7 @@ const Trigger = ({ intl, namespace, trigger }) => {
                 const clusterInterceptorName = interceptor.ref.name;
                 content = (
                   <Link
+                    component={CarbonLink}
                     to={urls.clusterInterceptors.byName({
                       clusterInterceptorName
                     })}
