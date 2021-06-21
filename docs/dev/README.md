@@ -9,6 +9,7 @@ This guide explains how to build, deploy and test the Tekton Dashboard. It cover
   - [Command line arguments](#command-line-arguments)
 - [Build and deploy with the installer script](#build-and-deploy-with-the-installer-script)
 - [Development server](#development-server)
+- [Quick setup for local cluster](#quick-setup-for-local-cluster)
 - [Run backend tests](#run-backend-tests)
   - [Backend unit tests](#backend-unit-tests)
   - [Integration tests](#integration-tests)
@@ -130,6 +131,18 @@ e.g. to connect your local dev frontend to the Dashboard deployed on the robocat
 `API_DOMAIN=https://dashboard.robocat.tekton.dev/ npm start`
 
 **Note:** If modifying any of the sub-packages (e.g. components or utils in https://github.com/tektoncd/dashboard/tree/main/packages), you'll need to run `npm run bootstrap` to ensure those packages are correctly built and linked before starting the dev server or running a build. This is done automatically by `npm ci` or `npm install` so you may not have to run it directly depending on your workflow.
+
+## Quick setup for local cluster
+
+The Dashboard repository contains a script that will provision a [`kind` cluster](https://kind.sigs.k8s.io/) named 'tekton-dashboard' with the latest releases of Tekton Pipelines and Tekton Triggers installed, as well as a version of the Tekton Dashboard which can be customised by providing additional parameters matching those expected by the installer script described earlier.
+
+For example, the following will create a cluster with a local build of the Tekton Dashboard with log streaming enabled, exposed via ingress at `tekton-dashboard.127.0.0.1.nip.io`:
+
+`./scripts/prepare-kind-cluster create`
+
+To delete the cluster:
+
+`./script/prepare-kind-cluster delete`
 
 ## Run backend tests
 
