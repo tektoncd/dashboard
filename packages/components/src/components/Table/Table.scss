@@ -48,6 +48,10 @@ limitations under the License.
       padding-top: 0;
       padding-bottom: 0;
       vertical-align: middle;
+
+      .bx--checkbox-label {
+        padding-left: $spacing-05;
+      }
     }
 
     &.cell-status {
