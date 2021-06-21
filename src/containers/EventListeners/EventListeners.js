@@ -22,6 +22,7 @@ import {
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
+import { Link as CarbonLink } from 'carbon-components-react';
 
 import { ListPageLayout } from '..';
 import { useEventListeners } from '../../api';
@@ -74,6 +75,7 @@ function EventListeners(props) {
     id: `${listener.metadata.namespace}:${listener.metadata.name}`,
     name: (
       <Link
+        component={CarbonLink}
         to={urls.eventListeners.byName({
           namespace: listener.metadata.namespace,
           eventListenerName: listener.metadata.name

@@ -22,6 +22,7 @@ import {
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
+import { Link as CarbonLink } from 'carbon-components-react';
 
 import { useConditions } from '../../api';
 import { ListPageLayout } from '..';
@@ -80,6 +81,7 @@ function Conditions(props) {
     id: condition.metadata.uid,
     name: (
       <Link
+        component={CarbonLink}
         to={urls.conditions.byName({
           namespace: condition.metadata.namespace,
           conditionName: condition.metadata.name

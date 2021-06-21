@@ -16,7 +16,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import keyBy from 'lodash.keyby';
-import { Button } from 'carbon-components-react';
+import { Button, Link as CarbonLink } from 'carbon-components-react';
 import {
   ALL_NAMESPACES,
   getFilters,
@@ -175,6 +175,7 @@ function Tasks(props) {
     id: task.metadata.uid,
     name: (
       <Link
+        component={CarbonLink}
         to={urls.rawCRD.byNamespace({
           namespace: task.metadata.namespace,
           type: 'tasks',

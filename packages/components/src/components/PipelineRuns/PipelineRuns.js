@@ -17,6 +17,7 @@ import { Link } from 'react-router-dom';
 import { StatusIcon, Table } from '@tektoncd/dashboard-components';
 import { getStatus, urls } from '@tektoncd/dashboard-utils';
 import { Pending24 as DefaultIcon } from '@carbon/icons-react';
+import { Link as CarbonLink } from 'carbon-components-react';
 
 import { FormattedDate, FormattedDuration, RunDropdown } from '..';
 
@@ -155,7 +156,11 @@ const PipelineRuns = ({
     return {
       id: getPipelineRunId(pipelineRun),
       name: pipelineRunURL ? (
-        <Link to={pipelineRunURL} title={pipelineRunName}>
+        <Link
+          component={CarbonLink}
+          to={pipelineRunURL}
+          title={pipelineRunName}
+        >
           {pipelineRunName}
         </Link>
       ) : (
@@ -164,7 +169,11 @@ const PipelineRuns = ({
       pipeline:
         pipelineRefName &&
         (pipelineRunsByPipelineURL ? (
-          <Link to={pipelineRunsByPipelineURL} title={pipelineRefName}>
+          <Link
+            component={CarbonLink}
+            to={pipelineRunsByPipelineURL}
+            title={pipelineRefName}
+          >
             {pipelineRefName}
           </Link>
         ) : (

@@ -22,6 +22,7 @@ import {
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
+import { Link as CarbonLink } from 'carbon-components-react';
 
 import { ListPageLayout } from '..';
 import { getAPIResource, getCustomResources } from '../../api';
@@ -132,6 +133,7 @@ export function ResourceListContainer(props) {
             id: uid,
             name: (
               <Link
+                component={CarbonLink}
                 to={
                   resourceNamespace
                     ? urls.kubernetesResources.byName({

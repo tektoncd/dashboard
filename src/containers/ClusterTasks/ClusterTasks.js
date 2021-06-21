@@ -21,7 +21,7 @@ import {
   FormattedDate,
   Table
 } from '@tektoncd/dashboard-components';
-import { Button } from 'carbon-components-react';
+import { Button, Link as CarbonLink } from 'carbon-components-react';
 import {
   TrashCan16 as DeleteIcon,
   Playlist16 as RunsIcon
@@ -167,6 +167,7 @@ function ClusterTasksContainer(props) {
     id: clusterTask.metadata.uid,
     name: (
       <Link
+        component={CarbonLink}
         to={urls.rawCRD.cluster({
           type: 'clustertasks',
           name: clusterTask.metadata.name

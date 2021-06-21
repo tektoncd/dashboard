@@ -22,6 +22,7 @@ import {
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
+import { Link as CarbonLink } from 'carbon-components-react';
 
 import { ListPageLayout } from '..';
 import { useTriggerBindings } from '../../api';
@@ -74,6 +75,7 @@ export function TriggerBindings(props) {
     id: `${binding.metadata.namespace}:${binding.metadata.name}`,
     name: (
       <Link
+        component={CarbonLink}
         to={urls.triggerBindings.byName({
           namespace: binding.metadata.namespace,
           triggerBindingName: binding.metadata.name

@@ -22,6 +22,7 @@ import {
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
 import { ResourceDetails, Trigger } from '@tektoncd/dashboard-components';
+import { Link as CarbonLink } from 'carbon-components-react';
 
 import { isWebSocketConnected } from '../../reducers';
 import { useEventListener } from '../../api';
@@ -110,6 +111,7 @@ export /* istanbul ignore next */ function EventListenerContainer(props) {
               <div className="tkn--trigger-resourcelinks">
                 <span>Trigger:</span>
                 <Link
+                  component={CarbonLink}
                   to={urls.triggers.byName({
                     namespace,
                     triggerName: trigger.triggerRef

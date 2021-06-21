@@ -15,7 +15,10 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { InlineNotification } from 'carbon-components-react';
+import {
+  Link as CarbonLink,
+  InlineNotification
+} from 'carbon-components-react';
 import { getErrorMessage, urls, useTitleSync } from '@tektoncd/dashboard-utils';
 import { Table } from '@tektoncd/dashboard-components';
 
@@ -79,6 +82,7 @@ export const Extensions = /* istanbul ignore next */ ({
             id: name,
             name: (
               <Link
+                component={CarbonLink}
                 to={
                   extensionType === 'kubernetes-resource'
                     ? urls.kubernetesResources.all({
