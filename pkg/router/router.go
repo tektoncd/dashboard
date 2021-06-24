@@ -67,7 +67,7 @@ func Register(resource endpoints.Resource) *Handler {
 		uidExtensionMap: make(map[string]*Extension),
 	}
 
-	registerWeb(h.Container)
+	registerWeb(resource, h.Container)
 	registerPropertiesEndpoint(resource, h.Container)
 	registerWebsocket(resource, h.Container)
 	registerHealthProbe(resource, h.Container)
@@ -212,7 +212,7 @@ func registerKubeAPIProxy(r endpoints.Resource, container *restful.Container) {
 	container.Add(proxy)
 }
 
-func registerWeb(container *restful.Container) {
+func registerWeb(resource endpoints.Resource, container *restful.Container) {
 	logging.Log.Info("Adding Web API")
 
 	fs := http.FileServer(http.Dir(webResourcesDir))
@@ -221,7 +221,9 @@ func registerWeb(container *restful.Container) {
 			// Static resources are immutable and have a content hash in their URL
 			w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
 		}
-		w.Header().Set("X-Frame-Options", "deny")
+		if !resource.Options.EnableXframe {
+			w.Header().Set("X-Frame-Options", "deny")
+		}
 		fs.ServeHTTP(w, r)
 	}))
 }
