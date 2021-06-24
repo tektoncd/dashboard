@@ -305,3 +305,44 @@ func TestGetAllExtensions(t *testing.T) {
 		}
 	}
 }
+
+func TestXframeOptions(t *testing.T) {
+	tests := []struct {
+		options  endpoints.Options
+		expected []string
+	}{
+		{
+			options:  endpoints.Options{},
+			expected: []string{"deny"},
+		},
+		{
+			options:  endpoints.Options{EnableXframe: false},
+			expected: []string{"deny"},
+		},
+		{
+			options:  endpoints.Options{EnableXframe: true},
+			expected: nil,
+		},
+	}
+
+	server, _, _ := testutils.DummyServer()
+	defer server.Close()
+
+	for _, tt := range tests {
+		r := testutils.DummyResource()
+		r.Options = tt.options
+		h := router.Register(*r)
+		server.Config.Handler = h
+		httpReq := testutils.DummyHTTPRequest("GET", server.URL, nil)
+		response, err := http.DefaultClient.Do(httpReq)
+		if err != nil {
+			t.Fatalf("Error getting server response: %s", err.Error())
+		}
+		if tt.expected == nil && response.Header["X-Frame-Options"] != nil {
+			t.Fatalf("response xframe header: %v, expected: %v ", response.Header["X-Frame-Options"], tt.expected)
+		}
+		if tt.expected != nil && !reflect.DeepEqual(response.Header["X-Frame-Options"], tt.expected) {
+			t.Fatalf("response xframe header: %v, expected: %v ", response.Header["X-Frame-Options"], tt.expected)
+		}
+	}
+}
