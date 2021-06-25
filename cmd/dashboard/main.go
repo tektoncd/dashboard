@@ -47,6 +47,7 @@ var (
 	logFormat          = flag.String("log-format", "json", "Format for log output (json or console)")
 	streamLogs         = flag.Bool("stream-logs", false, "Enable log streaming instead of polling")
 	externalLogs       = flag.String("external-logs", "", "External logs provider url")
+	xFrameOptions      = flag.String("x-frame-options", "DENY", "Value for the X-Frame-Options response header, set '' to omit it")
 )
 
 func main() {
@@ -109,6 +110,7 @@ func main() {
 		LogoutURL:          *logoutURL,
 		StreamLogs:         *streamLogs,
 		ExternalLogsURL:    *externalLogs,
+		XFrameOptions:      *xFrameOptions,
 	}
 
 	resource := endpoints.Resource{
