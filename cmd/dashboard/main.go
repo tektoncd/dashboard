@@ -47,7 +47,7 @@ var (
 	logFormat          = flag.String("log-format", "json", "Format for log output (json or console)")
 	streamLogs         = flag.Bool("stream-logs", false, "Enable log streaming instead of polling")
 	externalLogs       = flag.String("external-logs", "", "External logs provider url")
-	enableXframe       = flag.Bool("enable-xframe", false, "Whether or not a browser should be allowed to render a page in a <frame>, <iframe>, <embed> or <object>")
+	xFrameOptions      = flag.String("xframe-options", "DENY", "Whether or not a browser should be allowed to render a page in a <frame>, <iframe>, <embed> or <object>")
 )
 
 func main() {
@@ -110,7 +110,7 @@ func main() {
 		LogoutURL:          *logoutURL,
 		StreamLogs:         *streamLogs,
 		ExternalLogsURL:    *externalLogs,
-		EnableXframe:       *enableXframe,
+		XFrameOptions:      *xFrameOptions,
 	}
 
 	resource := endpoints.Resource{

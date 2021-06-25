@@ -221,8 +221,13 @@ func registerWeb(resource endpoints.Resource, container *restful.Container) {
 			// Static resources are immutable and have a content hash in their URL
 			w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
 		}
-		if !resource.Options.EnableXframe {
-			w.Header().Set("X-Frame-Options", "deny")
+
+		switch resource.Options.XFrameOptions {
+		case "": //DO nothing, no X-Frame-Options header
+		case "SAMEORIGIN":
+			w.Header().Set("X-Frame-Options", "SAMEORIGIN")
+		default:
+			w.Header().Set("X-Frame-Options", "DENY")
 		}
 		fs.ServeHTTP(w, r)
 	}))

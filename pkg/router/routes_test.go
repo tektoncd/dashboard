@@ -312,16 +312,20 @@ func TestXframeOptions(t *testing.T) {
 		expected []string
 	}{
 		{
-			options:  endpoints.Options{},
-			expected: []string{"deny"},
+			options:  endpoints.Options{XFrameOptions: "DENY"},
+			expected: []string{"DENY"},
 		},
 		{
-			options:  endpoints.Options{EnableXframe: false},
-			expected: []string{"deny"},
+			options:  endpoints.Options{XFrameOptions: "SAMEORIGIN"},
+			expected: []string{"SAMEORIGIN"},
 		},
 		{
-			options:  endpoints.Options{EnableXframe: true},
+			options:  endpoints.Options{XFrameOptions: ""},
 			expected: nil,
+		},
+		{
+			options:  endpoints.Options{XFrameOptions: "FOO"},
+			expected: []string{"DENY"},
 		},
 	}
 
