@@ -32,6 +32,7 @@ type Options struct {
 	LogoutURL          string
 	StreamLogs         bool
 	ExternalLogsURL    string
+	XFrameOptions      string
 }
 
 // GetPipelinesNamespace returns the PipelinesNamespace property if set
