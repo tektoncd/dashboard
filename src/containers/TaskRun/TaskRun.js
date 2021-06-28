@@ -90,6 +90,7 @@ function notification({ intl, kind, message }) {
 
 export function TaskRunContainer(props) {
   const {
+    enableLogAutoScroll,
     error,
     fetchTaskByType,
     fetchTaskRun,
@@ -176,6 +177,8 @@ export function TaskRunContainer(props) {
           fetchLogs={() => logsRetriever(stepName, stepStatus, run)}
           key={stepName}
           stepStatus={stepStatus}
+          isLogsMaximized={isLogsMaximized}
+          enableLogAutoScroll={enableLogAutoScroll}
         />
       </LogsRoot>
     );

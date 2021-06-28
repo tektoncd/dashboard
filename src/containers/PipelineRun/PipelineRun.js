@@ -63,6 +63,7 @@ const { PIPELINE_TASK, RETRY, STEP, VIEW } = queryParamConstants;
 export /* istanbul ignore next */ function PipelineRunContainer(props) {
   const {
     clusterTasks,
+    enableLogAutoScroll,
     error,
     fetchClusterTasks,
     fetchPipeline,
@@ -284,6 +285,7 @@ export /* istanbul ignore next */ function PipelineRunContainer(props) {
         />
       )}
       <PipelineRun
+        enableLogAutoScroll={enableLogAutoScroll}
         error={error}
         fetchLogs={getLogsRetriever(isLogStreamingEnabled, externalLogsURL)}
         handleTaskSelected={handleTaskSelected}

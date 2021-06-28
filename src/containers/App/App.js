@@ -205,6 +205,7 @@ export function App({
   }, [isFetchingConfig, tenantNamespace]);
 
   const logoutButton = <LogoutButton getLogoutURL={() => logoutURL} />;
+  const enableLogAutoScroll = true;
 
   return (
     <IntlProvider
@@ -266,7 +267,12 @@ export function App({
                   />
                   <Route
                     path={paths.pipelineRuns.byName()}
-                    component={PipelineRun}
+                    render={routeProps => (
+                      <PipelineRun
+                        {...routeProps}
+                        enableLogAutoScroll={enableLogAutoScroll}
+                      />
+                    )}
                   />
                   <Route
                     path={paths.pipelineResources.all()}
@@ -316,7 +322,12 @@ export function App({
                   <Route
                     path={paths.taskRuns.byName()}
                     exact
-                    component={TaskRun}
+                    render={routeProps => (
+                      <TaskRun
+                        {...routeProps}
+                        enableLogAutoScroll={enableLogAutoScroll}
+                      />
+                    )}
                   />
                   <Route
                     path={paths.clusterTasks.all()}

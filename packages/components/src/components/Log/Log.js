@@ -15,6 +15,7 @@ import React, { Component } from 'react';
 import { SkeletonText } from 'carbon-components-react';
 import { FixedSizeList as List } from 'react-window';
 import { injectIntl } from 'react-intl';
+import utils from './utils';
 
 import Ansi from '../LogFormat';
 
@@ -28,16 +29,76 @@ const itemSize = 15; // This should be kept in sync with the line-height in SCSS
 const defaultHeight = itemSize * 100 + itemSize / 2;
 
 export class LogContainer extends Component {
-  state = { loading: true };
+  constructor(props) {
+    super(props);
+    this.state = { loading: true };
+    this.logRef = React.createRef();
+    this.textRef = React.createRef();
+  }
 
   componentDidMount() {
     this.loadLog();
+    window.addEventListener("scroll", this.handleLogScroll, true);
+    if (this.shouldAutoScroll(this.props.stepStatus)) {
+      this.scrollToBottomLog();
+      return; // the scroll event listener will call handleLogScroll
+    }
+    this.handleLogScroll();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      prevState.logs?.length !== this.state.logs?.length ||
+      prevProps.isLogsMaximized !== this.props.isLogsMaximized
+    ) {
+      if (this.shouldAutoScroll(this.props.stepStatus, prevProps.stepStatus)) {
+        this.scrollToBottomLog();
+        return; // the scroll event listener will call handleLogScroll
+      }
+      this.handleLogScroll();
+    }
   }
 
   componentWillUnmount() {
     clearInterval(this.timer);
+    window.removeEventListener("scroll", this.handleLogScroll, true);
     this.cancelled = true;
   }
+
+  handleLogScroll = () => {
+    const isLogBottomUnseen = this.isLogBottomUnseen();
+
+    if (
+      isLogBottomUnseen !== this.state.isLogBottomUnseen
+    ) {
+      this.setState({
+        isLogBottomUnseen
+      });
+    }
+  };
+  
+  isLogBottomUnseen = () => {
+    return utils.isElementEndBelowViewBottom(this.logRef?.current)
+      || utils.hasElementPositiveScrollBottom(this.textRef?.current?.firstElementChild);
+  };
+
+  scrollToBottomLog = () => {
+    const longTextElement = this.textRef?.current?.firstElementChild;
+    if (utils.hasElementPositiveScrollBottom(longTextElement)) {
+      longTextElement.scrollTop = longTextElement.scrollHeight - longTextElement.clientHeight;
+    }
+    const rootElement = document.documentElement;
+    rootElement.scrollTop = rootElement.scrollHeight - rootElement.clientHeight;
+  };
+
+  shouldAutoScroll = (stepStatus, prevStepStatus) => {
+    return this.props.enableLogAutoScroll && !this.state.isLogBottomUnseen &&
+      (
+        (stepStatus && !stepStatus.terminated) ||
+        (stepStatus?.terminated && prevStepStatus && !prevStepStatus.terminated)
+      ) &&
+      this.isLogBottomUnseen();
+  };
 
   getLogList = () => {
     const { stepStatus, intl } = this.props;
@@ -191,13 +252,13 @@ export class LogContainer extends Component {
     const { toolbar } = this.props;
     const { loading } = this.state;
     return (
-      <pre className="tkn--log">
+      <pre className="tkn--log" ref={this.logRef}>
         {loading ? (
           <SkeletonText paragraph width="60%" />
         ) : (
           <>
             {toolbar}
-            <div className="tkn--log-container">{this.getLogList()}</div>
+            <div className="tkn--log-container" ref={this.textRef}>{this.getLogList()}</div>
             {this.logTrailer()}
           </>
         )}
