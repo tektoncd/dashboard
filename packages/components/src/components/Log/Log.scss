@@ -53,6 +53,20 @@ pre.tkn--log {
     right: 0;
   }
 
+  .bx--copy-btn.scroll-btn {
+    position: fixed;
+    width: 1.6rem;
+    right: var(--log-element-right);
+  }
+
+  .scroll-to-top-btn {
+    top: 64px;
+  }
+
+  .scroll-to-bottom-btn {
+    bottom: 64px;
+  }
+
   .bx--copy-btn {
     width: 2rem;
     height: 2rem;

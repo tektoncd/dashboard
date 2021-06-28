@@ -11,10 +11,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { SkeletonText } from 'carbon-components-react';
 import { FixedSizeList as List } from 'react-window';
 import { injectIntl } from 'react-intl';
+import { DownToBottom16, UpToTop16 } from "@carbon/icons-react";
 import utils from './utils';
 
 import Ansi from '../LogFormat';
@@ -66,13 +67,17 @@ export class LogContainer extends Component {
   }
 
   handleLogScroll = () => {
+    this.updateScrollButtonHorizontalCoordinate();
+    const isLogTopUnseen = this.isLogTopUnseen();
     const isLogBottomUnseen = this.isLogBottomUnseen();
 
     if (
-      isLogBottomUnseen !== this.state.isLogBottomUnseen
+      isLogBottomUnseen !== this.state.isLogBottomUnseen ||
+      isLogTopUnseen !== this.state.isLogTopUnseen
     ) {
       this.setState({
-        isLogBottomUnseen
+        isLogBottomUnseen,
+        isLogTopUnseen
       });
     }
   };
@@ -80,6 +85,11 @@ export class LogContainer extends Component {
   isLogBottomUnseen = () => {
     return utils.isElementEndBelowViewBottom(this.logRef?.current)
       || utils.hasElementPositiveScrollBottom(this.textRef?.current?.firstElementChild);
+  };
+
+  isLogTopUnseen = () => {
+    return utils.isElementStartAboveViewTop(this.logRef?.current)
+      || utils.hasElementPositiveScrollTop(this.textRef?.current?.firstElementChild);
   };
 
   scrollToBottomLog = () => {
@@ -91,6 +101,14 @@ export class LogContainer extends Component {
     rootElement.scrollTop = rootElement.scrollHeight - rootElement.clientHeight;
   };
 
+  scrollToTopLog = () => {
+    const longTextElement = this.textRef?.current?.firstElementChild;
+    if (utils.hasElementPositiveScrollTop(longTextElement)) {
+      longTextElement.scrollTop = 0;
+    }
+    document.documentElement.scrollTop = 0;
+  };
+
   shouldAutoScroll = (stepStatus, prevStepStatus) => {
     return this.props.enableLogAutoScroll && !this.state.isLogBottomUnseen &&
       (
@@ -98,6 +116,59 @@ export class LogContainer extends Component {
         (stepStatus?.terminated && prevStepStatus && !prevStepStatus.terminated)
       ) &&
       this.isLogBottomUnseen();
+  };
+
+  updateScrollButtonHorizontalCoordinate = () => {
+    const logElementRight = (window.innerWidth || document.documentElement.clientWidth) -
+      this.logRef?.current?.getBoundingClientRect().right;
+    document.documentElement.style.setProperty("--log-element-right",
+      `${logElementRight.toString()}px`);
+  };
+
+  getScrollButtons = () => {
+    const { enableLogScrollButtons, intl } = this.props;
+    if (!enableLogScrollButtons) {
+      return <Fragment />;
+    }
+
+    return (
+      <Fragment>
+        {this.state.isLogTopUnseen ? (
+          <button
+            key="scroll-to-top-btn"
+            className="scroll-btn bx--copy-btn scroll-to-top-btn"
+            onClick={this.scrollToTopLog}
+            type="button"
+          >
+            <UpToTop16>
+              <title>
+                {intl.formatMessage({
+                  id: 'dashboard.pipelineRun.scrollToTop',
+                  defaultMessage: 'Scroll to start of log'
+                })}
+              </title>
+            </UpToTop16>
+          </button>
+        ) : null}
+        {this.state.isLogBottomUnseen ? (
+          <button
+            key="scroll-to-bottom-btn"
+            className="scroll-btn bx--copy-btn scroll-to-bottom-btn"
+            onClick={this.scrollToBottomLog}
+            type="button"
+          >
+            <DownToBottom16>
+              <title>
+                {intl.formatMessage({
+                  id: 'dashboard.pipelineRun.scrollToBottom',
+                  defaultMessage: 'Scroll to end of log'
+                })}
+              </title>
+            </DownToBottom16>
+          </button>
+        ) : null}
+      </Fragment>
+    );
   };
 
   getLogList = () => {
@@ -260,6 +331,7 @@ export class LogContainer extends Component {
             {toolbar}
             <div className="tkn--log-container" ref={this.textRef}>{this.getLogList()}</div>
             {this.logTrailer()}
+            {this.getScrollButtons()}
           </>
         )}
       </pre>

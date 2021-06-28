@@ -64,6 +64,7 @@ export /* istanbul ignore next */ function PipelineRunContainer(props) {
   const {
     clusterTasks,
     enableLogAutoScroll,
+    enableLogScrollButtons,
     error,
     fetchClusterTasks,
     fetchPipeline,
@@ -286,6 +287,7 @@ export /* istanbul ignore next */ function PipelineRunContainer(props) {
       )}
       <PipelineRun
         enableLogAutoScroll={enableLogAutoScroll}
+        enableLogScrollButtons={enableLogScrollButtons}
         error={error}
         fetchLogs={getLogsRetriever(isLogStreamingEnabled, externalLogsURL)}
         handleTaskSelected={handleTaskSelected}

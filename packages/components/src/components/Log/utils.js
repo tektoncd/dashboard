@@ -15,6 +15,20 @@ function hasElementPositiveScrollBottom(el) {
     return el.scrollHeight - el.clientHeight > el.scrollTop;
 }
 
+function hasElementPositiveScrollTop(el) {
+    if (!isElementScrollable(el)) {
+        return false;
+    }
+    return el.scrollTop > 0;
+}
+
+function isElementStartAboveViewTop(el) {
+    if (!el) {
+        return false;
+    }
+    return el.getBoundingClientRect().top < 0;
+}
+
 function isElementEndBelowViewBottom(el) {
     if (!el) {
         return false;
@@ -36,6 +50,8 @@ function isElementScrollable(el, includeHorizontalScroll = false) {
 
 const utils = {
     hasElementPositiveScrollBottom,
+    hasElementPositiveScrollTop,
+    isElementStartAboveViewTop,
     isElementEndBelowViewBottom,
 };
 export default utils;

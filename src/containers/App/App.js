@@ -206,6 +206,7 @@ export function App({
 
   const logoutButton = <LogoutButton getLogoutURL={() => logoutURL} />;
   const enableLogAutoScroll = true;
+  const enableLogScrollButtons = true;
 
   return (
     <IntlProvider
@@ -271,6 +272,7 @@ export function App({
                       <PipelineRun
                         {...routeProps}
                         enableLogAutoScroll={enableLogAutoScroll}
+                        enableLogScrollButtons={enableLogScrollButtons}
                       />
                     )}
                   />
@@ -326,6 +328,7 @@ export function App({
                       <TaskRun
                         {...routeProps}
                         enableLogAutoScroll={enableLogAutoScroll}
+                        enableLogScrollButtons={enableLogScrollButtons}
                       />
                     )}
                   />
