@@ -55,6 +55,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   getLogContainer({ stepName, stepStatus, taskRun }) {
     const {
       fetchLogs,
+      forceLogPolling,
       getLogsToolbar,
       maximizedLogsContainer,
       pollingInterval,
@@ -88,6 +89,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
             })
           }
           fetchLogs={() => fetchLogs(stepName, stepStatus, taskRun)}
+          forcePolling={forceLogPolling}
           key={`${selectedTaskId}:${selectedStepId}`}
           pollingInterval={pollingInterval}
           stepStatus={stepStatus}

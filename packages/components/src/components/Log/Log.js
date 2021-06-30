@@ -121,14 +121,20 @@ export class LogContainer extends Component {
   };
 
   loadLog = async () => {
-    const { fetchLogs, intl, stepStatus, pollingInterval } = this.props;
+    const {
+      fetchLogs,
+      forcePolling,
+      intl,
+      stepStatus,
+      pollingInterval
+    } = this.props;
     if (!fetchLogs) {
       return;
     }
 
     let continuePolling = false;
     try {
-      continuePolling = stepStatus && !stepStatus.terminated;
+      continuePolling = forcePolling || (stepStatus && !stepStatus.terminated);
       const logs = await fetchLogs();
       if (logs?.getReader) {
         // logs is a https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream
