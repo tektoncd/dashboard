@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
@@ -25,36 +25,22 @@ import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 import { Link as CarbonLink } from 'carbon-components-react';
 
 import { ListPageLayout } from '..';
-import { fetchClusterInterceptors as fetchClusterInterceptorsActionCreator } from '../../actions/clusterInterceptors';
-import {
-  getClusterInterceptors,
-  getClusterInterceptorsErrorMessage,
-  isFetchingClusterInterceptors as selectIsFetchingClusterInterceptors,
-  isWebSocketConnected as selectIsWebSocketConnected
-} from '../../reducers';
+import { useClusterInterceptors } from '../../api';
+import { isWebSocketConnected as selectIsWebSocketConnected } from '../../reducers';
 
 function ClusterInterceptors(props) {
-  const {
-    clusterInterceptors,
-    error,
-    fetchClusterInterceptors,
-    filters,
-    intl,
-    loading,
-    webSocketConnected
-  } = props;
+  const { filters, intl, webSocketConnected } = props;
 
   useTitleSync({ page: 'ClusterInterceptors' });
 
-  function fetchData() {
-    fetchClusterInterceptors({ filters });
-  }
+  const {
+    data: clusterInterceptors = [],
+    error,
+    isLoading,
+    refetch
+  } = useClusterInterceptors({ filters });
 
-  useEffect(() => {
-    fetchData();
-  }, [JSON.stringify(filters)]);
-
-  useWebSocketReconnected(fetchData, webSocketConnected);
+  useWebSocketReconnected(refetch, webSocketConnected);
 
   function getError() {
     if (error) {
@@ -124,7 +110,7 @@ function ClusterInterceptors(props) {
       <Table
         headers={headers}
         rows={clusterInterceptorsFormatted}
-        loading={loading && !clusterInterceptorsFormatted.length}
+        loading={isLoading}
         emptyTextAllNamespaces={intl.formatMessage(
           {
             id: 'dashboard.emptyState.clusterResource',
@@ -146,22 +132,10 @@ function ClusterInterceptors(props) {
 
 /* istanbul ignore next */
 function mapStateToProps(state, props) {
-  const filters = getFilters(props.location);
-
   return {
-    clusterInterceptors: getClusterInterceptors(state, { filters }),
-    error: getClusterInterceptorsErrorMessage(state),
-    filters,
-    loading: selectIsFetchingClusterInterceptors(state),
+    filters: getFilters(props.location),
     webSocketConnected: selectIsWebSocketConnected(state)
   };
 }
 
-const mapDispatchToProps = {
-  fetchClusterInterceptors: fetchClusterInterceptorsActionCreator
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(injectIntl(ClusterInterceptors));
+export default connect(mapStateToProps)(injectIntl(ClusterInterceptors));

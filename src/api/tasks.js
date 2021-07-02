@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,13 @@ limitations under the License.
 */
 
 import { deleteRequest, get } from './comms';
-import { checkData, getQueryParams, getTektonAPI } from './utils';
+import {
+  checkData,
+  getQueryParams,
+  getTektonAPI,
+  useCollection,
+  useResource
+} from './utils';
 
 export function getTasks({ filters = [], namespace } = {}) {
   const uri = getTektonAPI('tasks', { namespace }, getQueryParams(filters));
@@ -27,4 +33,12 @@ export function getTask({ name, namespace }) {
 export function deleteTask({ name, namespace }) {
   const uri = getTektonAPI('tasks', { name, namespace });
   return deleteRequest(uri);
+}
+
+export function useTasks(params) {
+  return useCollection('Task', getTasks, params);
+}
+
+export function useTask(params) {
+  return useResource('Task', getTask, params);
 }

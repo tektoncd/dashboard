@@ -12,14 +12,15 @@ limitations under the License.
 */
 
 import fetchMock from 'fetch-mock';
-import * as index from '.';
+import * as API from './tasks';
+import * as utils from './utils';
 
 it('getTasks', () => {
   const data = {
     items: 'tasks'
   };
   fetchMock.get(/tasks/, data);
-  return index.getTasks().then(tasks => {
+  return API.getTasks().then(tasks => {
     expect(tasks).toEqual(data.items);
     fetchMock.restore();
   });
@@ -29,7 +30,7 @@ it('getTask', () => {
   const name = 'foo';
   const data = { fake: 'task' };
   fetchMock.get(`end:${name}`, data);
-  return index.getTask({ name }).then(task => {
+  return API.getTask({ name }).then(task => {
     expect(task).toEqual(data);
     fetchMock.restore();
   });
@@ -39,8 +40,28 @@ it('deleteTask', () => {
   const name = 'foo';
   const data = { fake: 'task' };
   fetchMock.delete(`end:${name}`, data);
-  return index.deleteTask({ name }).then(task => {
+  return API.deleteTask({ name }).then(task => {
     expect(task).toEqual(data);
     fetchMock.restore();
   });
+});
+
+it('useTasks', () => {
+  const query = { fake: 'query' };
+  const params = { fake: 'params' };
+  jest.spyOn(utils, 'useCollection').mockImplementation(() => query);
+  expect(API.useTasks(params)).toEqual(query);
+  expect(utils.useCollection).toHaveBeenCalledWith(
+    'Task',
+    API.getTasks,
+    params
+  );
+});
+
+it('useTask', () => {
+  const query = { fake: 'query' };
+  const params = { fake: 'params' };
+  jest.spyOn(utils, 'useResource').mockImplementation(() => query);
+  expect(API.useTask(params)).toEqual(query);
+  expect(utils.useResource).toHaveBeenCalledWith('Task', API.getTask, params);
 });

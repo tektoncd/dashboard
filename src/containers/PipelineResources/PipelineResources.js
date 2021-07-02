@@ -10,6 +10,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+/* istanbul ignore file */
 
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
@@ -36,7 +37,7 @@ import {
 } from '../../api';
 import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
 
-export /* istanbul ignore next */ function PipelineResources(props) {
+export function PipelineResources(props) {
   const { filters, history, intl, namespace, webSocketConnected } = props;
 
   const [cancelSelection, setCancelSelection] = useState(null);
@@ -165,7 +166,6 @@ export /* istanbul ignore next */ function PipelineResources(props) {
   );
 }
 
-/* istanbul ignore next */
 function mapStateToProps(state, props) {
   const { namespace: namespaceParam } = props.match.params;
   const namespace = namespaceParam || getSelectedNamespace(state);
