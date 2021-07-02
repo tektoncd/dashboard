@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
@@ -31,43 +30,19 @@ const namespacesTestStore = {
   }
 };
 
-const clusterInterceptorsTestStore = {
-  clusterInterceptors: {
-    isFetching: false,
-    byId: {
-      'clusterInterceptorWithTwoLabels-id': {
-        metadata: {
-          name: 'clusterInterceptorWithTwoLabels',
-          labels: {
-            foo: 'bar',
-            baz: 'bam'
-          },
-          uid: 'clusterInterceptorWithTwoLabels-id'
-        }
-      },
-      'clusterInterceptorWithSingleLabel-id': {
-        metadata: {
-          name: 'clusterInterceptorWithSingleLabel',
-          uid: 'clusterInterceptorWithSingleLabel-id',
-          labels: {
-            foo: 'bar'
-          }
-        }
-      }
-    },
-    byNamespace: {
-      [undefined]: {
-        clusterInterceptorWithTwoLabels: 'clusterInterceptorWithTwoLabels-id',
-        clusterInterceptorWithSingleLabel:
-          'clusterInterceptorWithSingleLabel-id'
-      }
+const clusterInterceptor = {
+  metadata: {
+    name: 'clusterInterceptorWithSingleLabel',
+    uid: 'clusterInterceptorWithSingleLabel-id',
+    labels: {
+      foo: 'bar'
     }
   }
 };
+
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 const testStore = {
-  ...clusterInterceptorsTestStore,
   ...namespacesTestStore,
   notifications: {
     webSocketConnected: false
@@ -75,16 +50,14 @@ const testStore = {
 };
 
 describe('ClusterInterceptors', () => {
-  beforeEach(() => {
-    jest.spyOn(API, 'getClusterInterceptors').mockImplementation(() => []);
-  });
-
   it('renders loading state', async () => {
     const mockTestStore = mockStore({
-      clusterInterceptors: { byId: {}, byNamespace: {}, isFetching: true },
       ...namespacesTestStore,
       notifications: {}
     });
+    jest
+      .spyOn(API, 'useClusterInterceptors')
+      .mockImplementation(() => ({ isLoading: true }));
     const { queryByText } = renderWithRouter(
       <Provider store={mockTestStore}>
         <Route
@@ -97,66 +70,11 @@ describe('ClusterInterceptors', () => {
     expect(queryByText('ClusterInterceptors')).toBeTruthy();
   });
 
-  it('handles updates', async () => {
+  it('renders data', async () => {
     const mockTestStore = mockStore(testStore);
-    const {
-      container,
-      getByPlaceholderText,
-      getByText,
-      queryByText
-    } = renderWithRouter(
-      <Provider store={mockTestStore}>
-        <Route
-          path={paths.clusterInterceptors.all()}
-          render={props => <ClusterInterceptorsContainer {...props} />}
-        />
-      </Provider>,
-      { route: urls.clusterInterceptors.all() }
-    );
-
-    expect(queryByText('clusterInterceptorWithSingleLabel')).toBeTruthy();
-    expect(API.getClusterInterceptors).toHaveBeenCalledTimes(1);
-
-    const filterValue = 'baz:bam';
-    const filterInputField = getByPlaceholderText(/Input a label filter/);
-    fireEvent.change(filterInputField, { target: { value: filterValue } });
-    fireEvent.submit(getByText(/Input a label filter/i));
-
-    expect(queryByText(filterValue)).toBeTruthy();
-    expect(queryByText('clusterInterceptorWithSingleLabel')).toBeFalsy();
-    expect(queryByText('clusterInterceptorWithTwoLabels')).toBeTruthy();
-    expect(API.getClusterInterceptors).toHaveBeenCalledTimes(2);
-
-    renderWithRouter(
-      <Provider
-        store={mockStore({
-          ...testStore,
-          notifications: {
-            webSocketConnected: true
-          },
-          propeties: {}
-        })}
-      >
-        <Route
-          path={paths.clusterInterceptors.all()}
-          render={props => <ClusterInterceptorsContainer {...props} />}
-        />
-      </Provider>,
-      { container, route: urls.clusterInterceptors.all() }
-    );
-
-    expect(API.getClusterInterceptors).toHaveBeenCalledTimes(3);
-  });
-
-  it('handles error', async () => {
-    const errorMessage = 'fake_errorMessage';
-    const mockTestStore = mockStore({
-      ...testStore,
-      clusterInterceptors: {
-        ...clusterInterceptorsTestStore.clusterInterceptors,
-        errorMessage
-      }
-    });
+    jest
+      .spyOn(API, 'useClusterInterceptors')
+      .mockImplementation(() => ({ data: [clusterInterceptor] }));
     const { queryByText } = renderWithRouter(
       <Provider store={mockTestStore}>
         <Route
@@ -167,6 +85,25 @@ describe('ClusterInterceptors', () => {
       { route: urls.clusterInterceptors.all() }
     );
 
-    expect(queryByText(errorMessage)).toBeTruthy();
+    expect(queryByText('clusterInterceptorWithSingleLabel')).toBeTruthy();
+  });
+
+  it('handles error', async () => {
+    const error = 'fake_errorMessage';
+    jest
+      .spyOn(API, 'useClusterInterceptors')
+      .mockImplementation(() => ({ error }));
+    const mockTestStore = mockStore(testStore);
+    const { queryByText } = renderWithRouter(
+      <Provider store={mockTestStore}>
+        <Route
+          path={paths.clusterInterceptors.all()}
+          render={props => <ClusterInterceptorsContainer {...props} />}
+        />
+      </Provider>,
+      { route: urls.clusterInterceptors.all() }
+    );
+
+    expect(queryByText(error)).toBeTruthy();
   });
 });

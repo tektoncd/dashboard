@@ -14,9 +14,6 @@ limitations under the License.
 import { labels } from '@tektoncd/dashboard-utils';
 
 import {
-  getClusterInterceptor,
-  getClusterInterceptors,
-  getClusterInterceptorsErrorMessage,
   getClusterTask,
   getClusterTasks,
   getClusterTasksErrorMessage,
@@ -37,7 +34,6 @@ import {
   getTaskRunsErrorMessage,
   getTasks,
   getTasksErrorMessage,
-  isFetchingClusterInterceptors,
   isFetchingClusterTasks,
   isFetchingExtensions,
   isFetchingPipelineRuns,
@@ -45,7 +41,6 @@ import {
   isFetchingTaskRuns,
   isFetchingTasks
 } from '.';
-import * as clusterInterceptorSelectors from './clusterInterceptors';
 import * as clusterTaskSelectors from './clusterTasks';
 import * as extensionSelectors from './extensions';
 import * as localeSelectors from './locale';
@@ -63,9 +58,6 @@ const pipelines = [{ fake: 'pipeline' }];
 const pipelineRuns = [{ fake: 'pipelineRun' }];
 const task = { fake: 'task' };
 const tasks = [task];
-const clusterInterceptor = { fake: 'clusterInterceptor' };
-const clusterInterceptorName = 'fake_clusterInterceptorName';
-const clusterInterceptors = [clusterInterceptor];
 const clusterTask = { fake: 'clusterTask' };
 const clusterTasks = [clusterTask];
 const taskName = 'myTask';
@@ -79,7 +71,6 @@ const taskRun = {
 const inlineTaskRun = { fake: 'taskRun', spec: {} };
 const taskRuns = [taskRun, inlineTaskRun];
 const state = {
-  clusterInterceptors,
   clusterTasks,
   extensions: {
     byName: {
@@ -370,49 +361,4 @@ it('isFetchingTaskRuns', () => {
   expect(taskRunsSelectors.isFetchingTaskRuns).toHaveBeenCalledWith(
     state.taskRuns
   );
-});
-
-it('getClusterInterceptor', () => {
-  jest
-    .spyOn(clusterInterceptorSelectors, 'getClusterInterceptor')
-    .mockImplementation(() => clusterInterceptor);
-  expect(
-    getClusterInterceptor(state, { name: clusterInterceptorName })
-  ).toEqual(clusterInterceptor);
-  expect(
-    clusterInterceptorSelectors.getClusterInterceptor
-  ).toHaveBeenCalledWith(state.clusterInterceptors, clusterInterceptorName);
-});
-
-it('getClusterInterceptors', () => {
-  jest
-    .spyOn(clusterInterceptorSelectors, 'getClusterInterceptors')
-    .mockImplementation(() => clusterInterceptors);
-  expect(getClusterInterceptors(state, { filters: [] })).toEqual(
-    clusterInterceptors
-  );
-  expect(
-    clusterInterceptorSelectors.getClusterInterceptors
-  ).toHaveBeenCalledWith(state.clusterInterceptors);
-});
-
-it('getClusterInterceptorsErrorMessage', () => {
-  const errorMessage = 'fake error message';
-  jest
-    .spyOn(clusterInterceptorSelectors, 'getClusterInterceptorsErrorMessage')
-    .mockImplementation(() => errorMessage);
-  expect(getClusterInterceptorsErrorMessage(state)).toEqual(errorMessage);
-  expect(
-    clusterInterceptorSelectors.getClusterInterceptorsErrorMessage
-  ).toHaveBeenCalledWith(state.clusterInterceptors);
-});
-
-it('isFetchingClusterInterceptors', () => {
-  jest
-    .spyOn(clusterInterceptorSelectors, 'isFetchingClusterInterceptors')
-    .mockImplementation(() => true);
-  expect(isFetchingClusterInterceptors(state)).toBe(true);
-  expect(
-    clusterInterceptorSelectors.isFetchingClusterInterceptors
-  ).toHaveBeenCalledWith(state.clusterInterceptors);
 });

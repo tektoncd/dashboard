@@ -14,7 +14,6 @@ limitations under the License.
 import { combineReducers } from 'redux';
 import { labels as labelConstants } from '@tektoncd/dashboard-utils';
 
-import clusterInterceptors, * as clusterInterceptorsSelectors from './clusterInterceptors';
 import clusterTasks, * as clusterTaskSelectors from './clusterTasks';
 import extensions, * as extensionSelectors from './extensions';
 import locale, * as localeSelectors from './locale';
@@ -26,7 +25,6 @@ import taskRuns, * as taskRunsSelectors from './taskRuns';
 import tasks, * as taskSelectors from './tasks';
 
 export default combineReducers({
-  clusterInterceptors: clusterInterceptors(),
   clusterTasks,
   extensions,
   locale,
@@ -219,30 +217,4 @@ export function getLocale(state) {
 
 export function isWebSocketConnected(state) {
   return notificationSelectors.isWebSocketConnected(state.notifications);
-}
-
-export function getClusterInterceptors(state, { filters } = {}) {
-  const resources = clusterInterceptorsSelectors.getClusterInterceptors(
-    state.clusterInterceptors
-  );
-  return filterResources({ filters, resources });
-}
-
-export function getClusterInterceptor(state, { name }) {
-  return clusterInterceptorsSelectors.getClusterInterceptor(
-    state.clusterInterceptors,
-    name
-  );
-}
-
-export function getClusterInterceptorsErrorMessage(state) {
-  return clusterInterceptorsSelectors.getClusterInterceptorsErrorMessage(
-    state.clusterInterceptors
-  );
-}
-
-export function isFetchingClusterInterceptors(state) {
-  return clusterInterceptorsSelectors.isFetchingClusterInterceptors(
-    state.clusterInterceptors
-  );
 }

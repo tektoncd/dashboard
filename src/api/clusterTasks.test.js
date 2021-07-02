@@ -13,6 +13,7 @@ limitations under the License.
 
 import fetchMock from 'fetch-mock';
 import * as API from './clusterTasks';
+import * as utils from './utils';
 
 it('getClusterTasks', () => {
   const data = {
@@ -43,4 +44,28 @@ it('deletePipelineRun', () => {
     expect(clusterTask).toEqual(data);
     fetchMock.restore();
   });
+});
+
+it('useClusterTasks', () => {
+  const query = { fake: 'query' };
+  const params = { fake: 'params' };
+  jest.spyOn(utils, 'useCollection').mockImplementation(() => query);
+  expect(API.useClusterTasks(params)).toEqual(query);
+  expect(utils.useCollection).toHaveBeenCalledWith(
+    'ClusterTask',
+    API.getClusterTasks,
+    params
+  );
+});
+
+it('useClusterTask', () => {
+  const query = { fake: 'query' };
+  const params = { fake: 'params' };
+  jest.spyOn(utils, 'useResource').mockImplementation(() => query);
+  expect(API.useClusterTask(params)).toEqual(query);
+  expect(utils.useResource).toHaveBeenCalledWith(
+    'ClusterTask',
+    API.getClusterTask,
+    params
+  );
 });

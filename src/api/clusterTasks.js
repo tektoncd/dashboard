@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,13 @@ limitations under the License.
 */
 
 import { deleteRequest, get } from './comms';
-import { checkData, getQueryParams, getTektonAPI } from './utils';
+import {
+  checkData,
+  getQueryParams,
+  getTektonAPI,
+  useCollection,
+  useResource
+} from './utils';
 
 export function getClusterTasks({ filters = [] } = {}) {
   const uri = getTektonAPI('clustertasks', undefined, getQueryParams(filters));
@@ -27,4 +33,12 @@ export function getClusterTask({ name }) {
 export function deleteClusterTask({ name }) {
   const uri = getTektonAPI('clustertasks', { name });
   return deleteRequest(uri);
+}
+
+export function useClusterTasks(params) {
+  return useCollection('ClusterTask', getClusterTasks, params);
+}
+
+export function useClusterTask(params) {
+  return useResource('ClusterTask', getClusterTask, params);
 }

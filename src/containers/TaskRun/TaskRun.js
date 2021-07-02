@@ -10,6 +10,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+/* istanbul ignore file */
 
 import React, { useEffect, useRef, useState } from 'react';
 import { injectIntl } from 'react-intl';
@@ -87,7 +88,7 @@ function notification({ intl, kind, message }) {
   );
 }
 
-export /* istanbul ignore next */ function TaskRunContainer(props) {
+export function TaskRunContainer(props) {
   const {
     error,
     fetchTaskByType,
@@ -340,7 +341,6 @@ TaskRunContainer.propTypes = {
   }).isRequired
 };
 
-/* istanbul ignore next */
 function mapStateToProps(state, ownProps) {
   const { location, match } = ownProps;
   const { namespace: namespaceParam, taskRunName } = match.params;

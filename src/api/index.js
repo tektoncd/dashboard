@@ -51,6 +51,10 @@ export function getCustomResource(...args) {
   return get(uri);
 }
 
+export function useCustomResource(params) {
+  return useQuery('customResource', getCustomResource, params);
+}
+
 export async function getInstallProperties() {
   const uri = `${apiRoot}/v1/properties`;
   let data;

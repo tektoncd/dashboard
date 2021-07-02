@@ -13,6 +13,7 @@ limitations under the License.
 
 import fetchMock from 'fetch-mock';
 import * as API from './pipelines';
+import * as utils from './utils';
 
 it('getPipelines', () => {
   const data = {
@@ -43,4 +44,28 @@ it('deletePipeline', () => {
     expect(pipeline).toEqual(data);
     fetchMock.restore();
   });
+});
+
+it('usePipelines', () => {
+  const query = { fake: 'query' };
+  const params = { fake: 'params' };
+  jest.spyOn(utils, 'useCollection').mockImplementation(() => query);
+  expect(API.usePipelines(params)).toEqual(query);
+  expect(utils.useCollection).toHaveBeenCalledWith(
+    'Pipeline',
+    API.getPipelines,
+    params
+  );
+});
+
+it('usePipeline', () => {
+  const query = { fake: 'query' };
+  const params = { fake: 'params' };
+  jest.spyOn(utils, 'useResource').mockImplementation(() => query);
+  expect(API.usePipeline(params)).toEqual(query);
+  expect(utils.useResource).toHaveBeenCalledWith(
+    'Pipeline',
+    API.getPipeline,
+    params
+  );
 });

@@ -439,6 +439,16 @@ export function App({
                     ))}
 
                   <Route
+                    path={paths.rawCRD.byNamespace()}
+                    exact
+                    component={CustomResourceDefinition}
+                  />
+                  <Route
+                    path={paths.rawCRD.cluster()}
+                    exact
+                    component={CustomResourceDefinition}
+                  />
+                  <Route
                     path={paths.kubernetesResources.all()}
                     exact
                     component={ResourceList}
@@ -455,16 +465,6 @@ export function App({
                   />
                   <Route
                     path={paths.kubernetesResources.cluster()}
-                    exact
-                    component={CustomResourceDefinition}
-                  />
-                  <Route
-                    path={paths.rawCRD.byNamespace()}
-                    exact
-                    component={CustomResourceDefinition}
-                  />
-                  <Route
-                    path={paths.rawCRD.cluster()}
                     exact
                     component={CustomResourceDefinition}
                   />
