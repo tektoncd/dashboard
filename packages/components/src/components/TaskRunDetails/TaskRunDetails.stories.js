@@ -45,3 +45,21 @@ export const Base = () => (
     }}
   />
 );
+
+export const Pod = () => (
+  <TaskRunDetails
+    pod={{
+      events: '<Pod events go here>',
+      resource: '<Pod resource goes here>'
+    }}
+    taskRun={{
+      metadata: { name: 'my-task' },
+      spec: {},
+      status: {
+        completionTime: '2021-03-03T15:25:34Z',
+        podName: 'my-task-h7d6j-pod-pdtb7',
+        startTime: '2021-03-03T15:25:27Z'
+      }
+    }}
+  />
+);

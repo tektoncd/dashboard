@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -150,6 +150,29 @@ export const Base = () => {
         setSelectedTaskId(taskId);
       }}
       pipelineRun={pipelineRun}
+      selectedStepId={selectedStepId}
+      selectedTaskId={selectedTaskId}
+      taskRuns={[taskRun]}
+      tasks={[task]}
+    />
+  );
+};
+
+export const WithPodDetails = () => {
+  const [selectedStepId, setSelectedStepId] = useState();
+  const [selectedTaskId, setSelectedTaskId] = useState();
+  return (
+    <PipelineRun
+      fetchLogs={() => 'sample log output'}
+      handleTaskSelected={(taskId, stepId) => {
+        setSelectedStepId(stepId);
+        setSelectedTaskId(taskId);
+      }}
+      pipelineRun={pipelineRun}
+      pod={{
+        events: '<Pod events go here>',
+        resource: '<Pod resource goes here>'
+      }}
       selectedStepId={selectedStepId}
       selectedTaskId={selectedTaskId}
       taskRuns={[taskRun]}

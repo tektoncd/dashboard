@@ -175,6 +175,8 @@
     "dashboard.pipelinesDropdown.empty.allNamespaces": "未找到 Pipelines",
     "dashboard.pipelinesDropdown.empty.selectedNamespace": "在Namespace ''{namespace}'' 中未找到 Pipelines",
     "dashboard.pipelinesDropdown.label": "选择 Pipeline",
+    "dashboard.pod.events": "",
+    "dashboard.pod.resource": "",
     "dashboard.rerun.actionText": "重新运行",
     "dashboard.rerun.button": "重新运行",
     "dashboard.rerun.error": "重新运行 {runName} 时发生错误：检查 Dashboard 日志以了解详情。状态代码：{statusCode}",

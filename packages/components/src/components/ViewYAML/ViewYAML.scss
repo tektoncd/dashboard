@@ -16,6 +16,15 @@ limitations under the License.
   color: $gray-10;            //       $inverse-01
 }
 
+.tkn--view-yaml--title {
+  display: inline-block;
+  margin-bottom: .5rem;
+
+  &:not(:first-child) {
+    margin-top: 1rem;
+  }
+}
+
 // TODO: Colorize YAML syntax to conform carbon design. See
 // https://github.com/carbon-design-system/carbon-website/issues/965 for more
 // details.

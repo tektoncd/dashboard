@@ -25,7 +25,7 @@ function getDescriptions(array = []) {
   }, {});
 }
 
-const TaskRunDetails = ({ intl, onViewChange, task, taskRun, view }) => {
+const TaskRunDetails = ({ intl, onViewChange, pod, task, taskRun, view }) => {
   const displayName = taskRun.metadata.name;
   const taskSpec = task?.spec || taskRun.spec.taskSpec;
 
@@ -95,7 +95,8 @@ const TaskRunDetails = ({ intl, onViewChange, task, taskRun, view }) => {
   const tabs = [
     paramsTable && 'params',
     resultsTable && 'results',
-    'status'
+    'status',
+    pod && 'pod'
   ].filter(Boolean);
 
   let selectedTabIndex = tabs.indexOf(view);
@@ -157,6 +158,30 @@ const TaskRunDetails = ({ intl, onViewChange, task, taskRun, view }) => {
             />
           </div>
         </Tab>
+        {pod && (
+          <Tab id={`${displayName}-pod`} label="Pod">
+            <div className="tkn--step-status">
+              {pod.events && (
+                <ViewYAML
+                  dark
+                  resource={pod.events}
+                  title={intl.formatMessage({
+                    id: 'dashboard.pod.events',
+                    defaultMessage: 'Events'
+                  })}
+                />
+              )}
+              <ViewYAML
+                dark
+                resource={pod.resource}
+                title={intl.formatMessage({
+                  id: 'dashboard.pod.resource',
+                  defaultMessage: 'Resource'
+                })}
+              />
+            </div>
+          </Tab>
+        )}
       </Tabs>
     </div>
   );

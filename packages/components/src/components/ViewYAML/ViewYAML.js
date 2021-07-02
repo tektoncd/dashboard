@@ -40,16 +40,25 @@ function YAMLRaw({ children, className }) {
   );
 }
 
-function ViewYAML({ className, dark, enableSyntaxHighlighting, resource }) {
+function ViewYAML({
+  className,
+  dark,
+  enableSyntaxHighlighting,
+  resource,
+  title
+}) {
   const clz = classNames('bx--snippet--multi', className, {
     'tkn--view-yaml--dark': dark
   });
   const yaml = jsYaml.dump(resource);
+  const Wrapper = enableSyntaxHighlighting ? YAMLHighlighter : YAMLRaw;
 
-  if (enableSyntaxHighlighting) {
-    return <YAMLHighlighter className={clz}>{yaml}</YAMLHighlighter>;
-  }
-  return <YAMLRaw className={clz}>{yaml}</YAMLRaw>;
+  return (
+    <>
+      {title && <span className="tkn--view-yaml--title">{title}</span>}
+      <Wrapper className={clz}>{yaml}</Wrapper>
+    </>
+  );
 }
 
 ViewYAML.propTypes = {
