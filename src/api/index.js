@@ -57,7 +57,7 @@ export async function getInstallProperties() {
   try {
     data = await get(uri);
   } catch (error) {
-    if (error?.response?.data?.status === 404) {
+    if (error?.response?.status === 404) {
       data = {
         dashboardNamespace: 'N/A',
         dashboardVersion: 'kubectl-proxy-client',
