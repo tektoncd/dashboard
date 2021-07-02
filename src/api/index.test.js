@@ -447,9 +447,7 @@ describe('getInstallProperties', () => {
   it('handles error in case of Dashboard client mode', async () => {
     const error = new Error();
     error.response = {
-      data: {
-        status: 404
-      }
+      status: 404
     };
     fetchMock.get(/properties/, { throws: error });
     const properties = await API.getInstallProperties();
