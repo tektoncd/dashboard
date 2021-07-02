@@ -185,6 +185,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       loading,
       onViewChange,
       pipelineRun,
+      pod,
       rerun,
       selectedStepId,
       selectedTaskId,
@@ -341,6 +342,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
               (selectedTaskId && (
                 <TaskRunDetails
                   onViewChange={onViewChange}
+                  pod={pod}
                   task={task}
                   taskRun={taskRun}
                   view={view}

@@ -79,7 +79,7 @@ describe('TaskRunDetails', () => {
     expect(queryByText(description)).toBeTruthy();
   });
 
-  it('does not render parameters or results tabs when those fields are not present', () => {
+  it('does not render tabs whose fields are not provided', () => {
     const taskRun = {
       metadata: { name: 'task-run-name' },
       spec: {},
@@ -88,6 +88,7 @@ describe('TaskRunDetails', () => {
     const { queryByText } = render(<TaskRunDetails taskRun={taskRun} />);
     expect(queryByText(/parameters/i)).toBeFalsy();
     expect(queryByText(/results/i)).toBeFalsy();
+    expect(queryByText(/pod/i)).toBeFalsy();
     expect(queryByText(/status/i)).toBeTruthy();
   });
 
@@ -144,5 +145,32 @@ describe('TaskRunDetails', () => {
       <TaskRunDetails taskRun={taskRun} view="results" />
     );
     expect(queryByText(description)).toBeTruthy();
+  });
+
+  it('renders pod', () => {
+    const events = 'fake-events';
+    const pod = 'fake-pod';
+    const taskRun = {
+      metadata: { name: 'task-run-name' },
+      spec: {},
+      status: {}
+    };
+    const { queryByText } = render(
+      <TaskRunDetails
+        pod={{
+          events,
+          resource: pod
+        }}
+        task={{
+          metadata: 'task',
+          spec: {}
+        }}
+        taskRun={taskRun}
+        view="pod"
+      />
+    );
+    expect(queryByText('Pod')).toBeTruthy();
+    expect(queryByText(events)).toBeTruthy();
+    expect(queryByText(pod)).toBeTruthy();
   });
 });

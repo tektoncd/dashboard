@@ -175,6 +175,8 @@
     "dashboard.pipelinesDropdown.empty.allNamespaces": "",
     "dashboard.pipelinesDropdown.empty.selectedNamespace": "",
     "dashboard.pipelinesDropdown.label": "",
+    "dashboard.pod.events": "",
+    "dashboard.pod.resource": "",
     "dashboard.rerun.actionText": "",
     "dashboard.rerun.button": "",
     "dashboard.rerun.error": "",

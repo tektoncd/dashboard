@@ -175,6 +175,8 @@
     "dashboard.pipelinesDropdown.empty.allNamespaces": "No Pipelines found",
     "dashboard.pipelinesDropdown.empty.selectedNamespace": "No Pipelines found in the ''{namespace}'' namespace",
     "dashboard.pipelinesDropdown.label": "Select Pipeline",
+    "dashboard.pod.events": "Events",
+    "dashboard.pod.resource": "Resource",
     "dashboard.rerun.actionText": "Rerun",
     "dashboard.rerun.button": "Rerun",
     "dashboard.rerun.error": "An error occurred when rerunning {runName}: check the dashboard logs for details. Status code: {statusCode}",
