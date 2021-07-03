@@ -16,26 +16,19 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
-	"fmt"
-	"net/url"
 	"strings"
-	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
 
-	"strconv"
-
 	gorillaSocket "github.com/gorilla/websocket"
 	"github.com/tektoncd/dashboard/pkg/broadcaster"
 	. "github.com/tektoncd/dashboard/pkg/endpoints"
-	"github.com/tektoncd/dashboard/pkg/router"
 	"github.com/tektoncd/dashboard/pkg/testutils"
 	"github.com/tektoncd/dashboard/pkg/websocket"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
-	"k8s.io/apimachinery/pkg/types"
 )
 
 type informerRecord struct {
@@ -80,91 +73,6 @@ func (i *informerRecord) Update() int32 {
 
 func (i *informerRecord) Delete() int32 {
 	return atomic.LoadInt32(&i.delete)
-}
-
-// Ensures all resource types sent over websocket are received as intended
-func TestWebsocketResources(t *testing.T) {
-	t.Log("Enter TestLogWebsocket...")
-	server, r, installNamespace := testutils.DummyServer()
-	defer server.Close()
-
-	devopsServer := strings.TrimPrefix(server.URL, "http://")
-	websocketURL := url.URL{Scheme: "ws", Host: devopsServer, Path: "/v1/websockets/resources"}
-	websocketEndpoint := websocketURL.String()
-	const clients int = 5
-	connectionDur := time.Second * 5
-	var wg sync.WaitGroup
-
-	// CUD records
-	taskRecord := NewInformerRecord("Task", true)
-	clusterTaskRecord := NewInformerRecord("ClusterTask", true)
-	extensionRecord := NewInformerRecord("ServiceExtension", true)
-	// CD records
-	namespaceRecord := NewInformerRecord("Namespace", false)
-
-	// Route incoming socket data to correct informer
-	recordMap := map[string]*informerRecord{
-		taskRecord.CRD:        &taskRecord,
-		clusterTaskRecord.CRD: &clusterTaskRecord,
-		namespaceRecord.CRD:   &namespaceRecord,
-		extensionRecord.CRD:   &extensionRecord,
-	}
-
-	for i := 1; i <= clients; i++ {
-		websocketChan := clientWebsocket(websocketEndpoint, connectionDur, t)
-		// Wait until connection timeout
-		go func() {
-			defer wg.Done()
-			for {
-				socketData, open := <-websocketChan
-				if !open {
-					return
-				}
-				informerRecord := recordMap[socketData.Kind]
-				informerRecord.Handle(socketData.Operation)
-			}
-		}()
-		wg.Add(1)
-	}
-	awaitAllClients := func() bool {
-		return ResourcesBroadcaster.PoolSize() == clients
-	}
-	// Wait until all broadcaster has registered all clients
-	awaitFatal(awaitAllClients, t, fmt.Sprintf("Expected %d clients within pool", clients))
-
-	// CUD/CD methods should create a single informer event for each type (Create|Update|Delete)
-	// Create, Update, and Delete records
-	CUDTasks(r, t, installNamespace)
-	CUDClusterTasks(r, t)
-	CUDExtensions(r, t, installNamespace)
-	// Create and Delete records
-	CDNamespaces(r, t)
-	// Wait until connections terminate and all subscribers have been removed from pool
-	// This is our synchronization point to compare against each informerRecord
-	t.Log("Waiting for clients to terminate...")
-	wg.Wait()
-	awaitNoClients := func() bool {
-		return ResourcesBroadcaster.PoolSize() == 0
-	}
-	awaitFatal(awaitNoClients, t, "Pool should be empty")
-
-	// Check that all fields have been populated
-	for _, informerRecord := range recordMap {
-		t.Log(informerRecord)
-		creates := int(informerRecord.Create())
-		updates := int(informerRecord.Update())
-		deletes := int(informerRecord.Delete())
-		// records without an update hook/informer
-		if updates == -1 {
-			if creates != clients || creates != deletes {
-				t.Fatalf("CD informer %s creates[%d] and deletes[%d] not equal expected to value: %d\n", informerRecord.CRD, creates, deletes, clients)
-			}
-		} else {
-			if creates != clients || creates != deletes || creates != updates {
-				t.Fatalf("CUD informer %s creates[%d], updates[%d] and deletes[%d] not equal to expected value: %d\n", informerRecord.CRD, creates, updates, deletes, clients)
-			}
-		}
-	}
 }
 
 // Abstract connection into a channel of broadcaster.SocketData
@@ -285,49 +193,6 @@ func CUDClusterTasks(r *Resource, t *testing.T) {
 	err = r.DynamicClient.Resource(gvr).Delete(context.TODO(), name, metav1.DeleteOptions{})
 	if err != nil {
 		t.Fatalf("Error deleting clusterTask: %s: %s\n", name, err.Error())
-	}
-}
-
-func CUDExtensions(r *Resource, t *testing.T, namespace string) {
-	resourceVersion := "1"
-
-	extensionService := corev1.Service{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:            "extension",
-			ResourceVersion: resourceVersion,
-			UID:             types.UID(strconv.FormatInt(time.Now().UnixNano(), 10)),
-			Labels: map[string]string{
-				router.ExtensionLabelKey: router.ExtensionLabelValue,
-			},
-		},
-		Spec: corev1.ServiceSpec{
-			ClusterIP: "127.0.0.1",
-			Ports: []corev1.ServicePort{
-				{
-					Port: int32(1234),
-				},
-			},
-		},
-	}
-
-	t.Log("Creating extensionService")
-	_, err := r.K8sClient.CoreV1().Services(namespace).Create(context.TODO(), &extensionService, metav1.CreateOptions{})
-	if err != nil {
-		t.Fatalf("Error creating extensionService: %s: %s\n", extensionService.Name, err.Error())
-	}
-
-	newVersion := "2"
-	extensionService.ResourceVersion = newVersion
-	t.Log("Updating extensionService")
-	_, err = r.K8sClient.CoreV1().Services(namespace).Update(context.TODO(), &extensionService, metav1.UpdateOptions{})
-	if err != nil {
-		t.Fatalf("Error updating extensionService: %s: %s\n", extensionService.Name, err.Error())
-	}
-
-	t.Log("Deleting extensionService")
-	err = r.K8sClient.CoreV1().Services(namespace).Delete(context.TODO(), extensionService.Name, metav1.DeleteOptions{})
-	if err != nil {
-		t.Fatalf("Error deleting extensionService: %s: %s\n", extensionService.Name, err.Error())
 	}
 }
 

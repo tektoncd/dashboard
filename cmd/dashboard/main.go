@@ -14,7 +14,6 @@ limitations under the License.
 package main
 
 import (
-	"context"
 	"flag"
 	"fmt"
 	"net/http"
@@ -23,7 +22,6 @@ import (
 
 	dashboardclientset "github.com/tektoncd/dashboard/pkg/client/clientset/versioned"
 	"github.com/tektoncd/dashboard/pkg/controllers"
-	"github.com/tektoncd/dashboard/pkg/csrf"
 	"github.com/tektoncd/dashboard/pkg/endpoints"
 	"github.com/tektoncd/dashboard/pkg/logging"
 	"github.com/tektoncd/dashboard/pkg/router"
@@ -126,37 +124,29 @@ func main() {
 
 	ctx := signals.NewContext()
 
-	routerHandler := router.Register(resource)
+	server, err := router.Register(resource, cfg)
+
+	if err != nil {
+		logging.Log.Errorf("Error creating proxy: %s", err.Error())
+		return
+	}
 
 	logging.Log.Info("Creating controllers")
 	resyncDur := time.Second * 30
 	controllers.StartTektonControllers(resource.DynamicClient, resyncDur, *tenantNamespace, ctx.Done())
-	controllers.StartKubeControllers(resource.K8sClient, resyncDur, *tenantNamespace, *readOnly, routerHandler, ctx.Done())
+	controllers.StartKubeControllers(resource.K8sClient, resyncDur, *tenantNamespace, *readOnly, ctx.Done())
 	controllers.StartDashboardControllers(resource.DashboardClient, resyncDur, *tenantNamespace, ctx.Done())
 
 	if isTriggersInstalled {
 		controllers.StartTriggersControllers(resource.DynamicClient, resyncDur, *tenantNamespace, ctx.Done())
 	}
 
-	logging.Log.Infof("Creating server and entering wait loop")
-	CSRF := csrf.Protect()
-	server := &http.Server{Addr: fmt.Sprintf(":%d", *portNumber), Handler: CSRF(routerHandler)}
-
-	errCh := make(chan error, 1)
-	defer close(errCh)
-	go func() {
-		// Don't forward ErrServerClosed as that indicates we're already shutting down.
-		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			errCh <- fmt.Errorf("dashboard server failed: %w", err)
-		}
-	}()
-
-	select {
-	case err := <-errCh:
-		logging.Log.Fatal(err)
-	case <-ctx.Done():
-		if err := server.Shutdown(context.Background()); err != nil {
-			logging.Log.Fatal(err)
-		}
+	l, err := server.Listen("", *portNumber)
+	if err != nil {
+		logging.Log.Errorf("Error listening: %s", err.Error())
+		return
 	}
+
+	logging.Log.Infof("Starting to serve on %s", l.Addr().String())
+	server.ServeOnListener(l)
 }

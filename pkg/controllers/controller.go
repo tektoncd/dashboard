@@ -23,7 +23,6 @@ import (
 	tektoncontroller "github.com/tektoncd/dashboard/pkg/controllers/tekton"
 	triggerscontroller "github.com/tektoncd/dashboard/pkg/controllers/triggers"
 	"github.com/tektoncd/dashboard/pkg/logging"
-	"github.com/tektoncd/dashboard/pkg/router"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/dynamic/dynamicinformer"
 	k8sinformers "k8s.io/client-go/informers"
@@ -48,16 +47,13 @@ func StartTektonControllers(clientset dynamic.Interface, resyncDur time.Duration
 	tenantInformerFactory.Start(stopCh)
 }
 
-func StartKubeControllers(clientset k8sclientset.Interface, resyncDur time.Duration, tenantNamespace string, readOnly bool, handler *router.Handler, stopCh <-chan struct{}) {
+func StartKubeControllers(clientset k8sclientset.Interface, resyncDur time.Duration, tenantNamespace string, readOnly bool, stopCh <-chan struct{}) {
 	logging.Log.Info("Creating Kube controllers")
 	clusterInformerFactory := k8sinformers.NewSharedInformerFactory(clientset, resyncDur)
 	tenantInformerFactory := k8sinformers.NewSharedInformerFactoryWithOptions(clientset, resyncDur, k8sinformers.WithNamespace(tenantNamespace))
 
 	if tenantNamespace == "" {
-		kubecontroller.NewExtensionController(clusterInformerFactory, handler)
 		kubecontroller.NewNamespaceController(clusterInformerFactory)
-	} else {
-		kubecontroller.NewExtensionController(tenantInformerFactory, handler)
 	}
 	if !readOnly {
 		kubecontroller.NewServiceAccountController(tenantInformerFactory)
