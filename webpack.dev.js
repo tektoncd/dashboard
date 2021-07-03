@@ -15,17 +15,6 @@ const { merge } = require('webpack-merge');
 const common = require('./webpack.common.js');
 const { API_DOMAIN, PORT } = require('./config_frontend/config.json');
 
-const extensionConfig = {
-  '/v1/extensions': {
-    target: 'http://localhost:9999',
-    pathRewrite: { '^/v1/extensions': '' }
-  },
-  '/v1/extensions/dev-extension': {
-    target: 'http://localhost:9999',
-    pathRewrite: { '^/v1/extensions/dev-extension': '' }
-  }
-};
-
 const mode = 'development';
 const customAPIDomain = process.env.API_DOMAIN;
 
@@ -52,7 +41,6 @@ module.exports = merge(common({ mode }), {
     overlay: true,
     port: process.env.PORT || PORT,
     proxy: {
-      ...(process.env.EXTENSIONS_LOCAL_DEV ? extensionConfig : {}),
       '/v1': {
         ...proxyOptions
       },

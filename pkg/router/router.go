@@ -15,208 +15,32 @@ package router
 
 import (
 	"fmt"
+	"net"
 	"net/http"
-	"net/http/httputil"
 	"net/url"
 	"regexp"
-	"strconv"
 	"strings"
-	"sync"
+	"time"
 
-	restful "github.com/emicklei/go-restful"
+	"github.com/tektoncd/dashboard/pkg/csrf"
 	"github.com/tektoncd/dashboard/pkg/endpoints"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
-	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	utilnet "k8s.io/apimachinery/pkg/util/net"
+	"k8s.io/apimachinery/pkg/util/proxy"
+	"k8s.io/client-go/rest"
+	"k8s.io/client-go/transport"
 )
-
-// ExtensionLabelKey is the label key required by services to be registered as a
-// dashboard extension
-const ExtensionLabelKey = "tekton-dashboard-extension"
-
-// ExtensionLabelValue is the label value required by services to be registered
-// as a dashboard extension
-const ExtensionLabelValue = "true"
-
-// ExtensionURLKey specifies the valid extension paths, defaults to "/"
-const ExtensionURLKey = "tekton-dashboard-endpoints"
-
-// ExtensionEndpointDelimiter is the Delimiter to be used between the extension
-// endpoints annotation value
-const ExtensionEndpointDelimiter = "."
-
-// ExtensionBundleLocationKey IS the UI bundle location annotation key
-const ExtensionBundleLocationKey = "tekton-dashboard-bundle-location"
-
-// ExtensionDisplayNameKey is the display name annotation key
-const ExtensionDisplayNameKey = "tekton-dashboard-display-name"
-
-// ExtensionRoot is the URL root when accessing extensions
-const ExtensionRoot = "/v1/extensions"
 
 const webResourcesDir = "/var/run/ko"
 
 var webResourcesStaticPattern = regexp.MustCompile("^/([[:alnum:]]+\\.)?[[:alnum:]]+\\.(js)|(css)|(png)$")
 var webResourcesStaticExcludePattern = regexp.MustCompile("^/favicon.png$")
 
-// Register returns an HTTP handler that has the Dashboard REST API registered
-func Register(resource endpoints.Resource) *Handler {
-	logging.Log.Info("Registering all endpoints")
-	h := &Handler{
-		Container:       restful.NewContainer(),
-		uidExtensionMap: make(map[string]*Extension),
-	}
-
-	registerWeb(resource, h.Container)
-	registerPropertiesEndpoint(resource, h.Container)
-	registerWebsocket(resource, h.Container)
-	registerHealthProbe(resource, h.Container)
-	registerReadinessProbe(resource, h.Container)
-	registerKubeAPIProxy(resource, h.Container)
-	registerLogsProxy(resource, h.Container)
-	h.registerExtensions()
-	return h
-}
-
-// Handler is an HTTP handler with internal configuration to avoid global state
-type Handler struct {
-	*restful.Container
-	// extensionWebService is the exposed dynamic route webservice that
-	// extensions are added to
-	extensionWebService *restful.WebService
-	uidExtensionMap     map[string]*Extension
-	sync.RWMutex
-}
-
-// RegisterExtension registers a discovered extension service as a webservice
-// to the container/mux. The extension should have a unique name
-func (h *Handler) RegisterExtension(extensionService *corev1.Service) *Extension {
-	logging.Log.Infof("Adding Extension %s", extensionService.Name)
-
-	ext := newExtension(extensionService)
-	h.Lock()
-	defer h.Unlock()
-	// Add routes for extension service
-	for _, path := range ext.endpoints {
-		extensionPath := extensionPath(ext.Name, path)
-		// Routes
-		h.extensionWebService.Route(h.extensionWebService.GET(extensionPath).To(ext.handleExtension))
-		h.extensionWebService.Route(h.extensionWebService.POST(extensionPath).To(ext.handleExtension))
-		h.extensionWebService.Route(h.extensionWebService.PUT(extensionPath).To(ext.handleExtension))
-		h.extensionWebService.Route(h.extensionWebService.DELETE(extensionPath).To(ext.handleExtension))
-		// Subroutes
-		h.extensionWebService.Route(h.extensionWebService.GET(extensionPath + "/{var:*}").To(ext.handleExtension))
-		h.extensionWebService.Route(h.extensionWebService.POST(extensionPath + "/{var:*}").To(ext.handleExtension))
-		h.extensionWebService.Route(h.extensionWebService.PUT(extensionPath + "/{var:*}").To(ext.handleExtension))
-		h.extensionWebService.Route(h.extensionWebService.DELETE(extensionPath + "/{var:*}").To(ext.handleExtension))
-	}
-	h.uidExtensionMap[string(extensionService.UID)] = ext
-	return ext
-}
-
-// UnregisterExtension unregisters an extension. This should be called BEFORE
-// registration of extensionService on informer update
-func (h *Handler) UnregisterExtension(extensionService *corev1.Service) *Extension {
-	return h.UnregisterExtensionByMeta(&extensionService.ObjectMeta)
-}
-
-// UnregisterExtensionByMeta unregisters an extension by its metadata. This
-// should be called BEFORE registration of extensionService on informer update
-func (h *Handler) UnregisterExtensionByMeta(extensionService metav1.Object) *Extension {
-	logging.Log.Infof("Removing extension %s", extensionService.GetName())
-	h.Lock()
-	defer h.Unlock()
-
-	// Grab endpoints to remove from service
-	uid := extensionService.GetUID()
-	ext := h.uidExtensionMap[string(uid)]
-	defer delete(h.uidExtensionMap, string(uid))
-	for _, path := range ext.endpoints {
-		extensionPath := extensionPath(ext.Name, path)
-		fullPath := fmt.Sprintf("%s/%s", h.extensionWebService.RootPath(), extensionPath)
-		// Routes must be removed individually and should correspond to the above registration
-		h.extensionWebService.RemoveRoute(fullPath, "GET")
-		h.extensionWebService.RemoveRoute(fullPath, "POST")
-		h.extensionWebService.RemoveRoute(fullPath, "PUT")
-		h.extensionWebService.RemoveRoute(fullPath, "DELETE")
-		h.extensionWebService.RemoveRoute(fullPath+"/{var:*}", "GET")
-		h.extensionWebService.RemoveRoute(fullPath+"/{var:*}", "POST")
-		h.extensionWebService.RemoveRoute(fullPath+"/{var:*}", "PUT")
-		h.extensionWebService.RemoveRoute(fullPath+"/{var:*}", "DELETE")
-	}
-	return ext
-}
-
-// registerExtensions registers the WebService responsible for
-// proxying to all extensions and also the endpoint to get all extensions
-func (h *Handler) registerExtensions() {
-	logging.Log.Info("Adding API for Extensions")
-	extensionWebService := new(restful.WebService)
-	extensionWebService.SetDynamicRoutes(true)
-	extensionWebService.
-		Path(ExtensionRoot).
-		Consumes(restful.MIME_JSON).
-		Produces(restful.MIME_JSON)
-	extensionWebService.Route(extensionWebService.GET("").To(h.getAllExtensions))
-	h.Add(extensionWebService)
-	h.extensionWebService = extensionWebService
-}
-
-type RedactedExtension struct {
-	Name           string `json:"name"`
-	DisplayName    string `json:"displayname"`
-	BundleLocation string `json:"bundlelocation"`
-	endpoints      []string
-}
-
-// getExtensions gets all of the registered extensions on the handler
-func (h *Handler) getExtensions() []RedactedExtension {
-	h.RLock()
-	defer h.RUnlock()
-
-	extensions := []RedactedExtension{}
-	for _, e := range h.uidExtensionMap {
-		redactedExtension := RedactedExtension{
-			Name:           e.Name,
-			DisplayName:    e.DisplayName,
-			BundleLocation: e.BundleLocation,
-			endpoints:      e.endpoints,
-		}
-		extensions = append(extensions, redactedExtension)
-	}
-	return extensions
-}
-
-// getAllExtensions returns all of the extensions within the install namespace
-func (h *Handler) getAllExtensions(request *restful.Request, response *restful.Response) {
-	logging.Log.Debugf("In getAllExtensions")
-	extensions := h.getExtensions()
-	logging.Log.Debugf("Extensions: %+v", extensions)
-	response.WriteEntity(extensions)
-}
-
-func registerKubeAPIProxy(r endpoints.Resource, container *restful.Container) {
-	proxy := new(restful.WebService)
-	proxy.Filter(restful.NoBrowserCacheFilter)
-	proxy.Consumes(restful.MIME_JSON, "text/plain", "application/json-patch+json").
-		Produces(restful.MIME_JSON, "text/plain", "application/json-patch+json").
-		Path("/proxy")
-
-	logging.Log.Info("Adding Kube API Proxy")
-
-	proxy.Route(proxy.GET("/{subpath:*}").To(r.ProxyRequest))
-	proxy.Route(proxy.POST("/{subpath:*}").To(r.ProxyRequest))
-	proxy.Route(proxy.PUT("/{subpath:*}").To(r.ProxyRequest))
-	proxy.Route(proxy.DELETE("/{subpath:*}").To(r.ProxyRequest))
-	proxy.Route(proxy.PATCH("/{subpath:*}").To(r.ProxyRequest))
-	container.Add(proxy)
-}
-
-func registerWeb(resource endpoints.Resource, container *restful.Container) {
+func registerWeb(resource endpoints.Resource, mux *http.ServeMux) {
 	logging.Log.Info("Adding Web API")
 
 	fs := http.FileServer(http.Dir(webResourcesDir))
-	container.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if webResourcesStaticPattern.Match([]byte(r.URL.Path)) && !webResourcesStaticExcludePattern.Match([]byte(r.URL.Path)) {
 			// Static resources are immutable and have a content hash in their URL
 			w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
@@ -233,131 +57,156 @@ func registerWeb(resource endpoints.Resource, container *restful.Container) {
 	}))
 }
 
+// registerHealthProbe registers the /health endpoint
+func registerHealthProbe(r endpoints.Resource, mux *http.ServeMux) {
+	logging.Log.Info("Adding API for health")
+	mux.HandleFunc("/health", r.CheckHealth)
+
+}
+
+// registerReadinessProbe registers the /readiness endpoint
+func registerReadinessProbe(r endpoints.Resource, mux *http.ServeMux) {
+	logging.Log.Info("Adding API for readiness")
+	mux.HandleFunc("/readiness", r.CheckHealth)
+}
+
 // registerWebsocket registers a websocket with which we can send log
 // information
-func registerWebsocket(r endpoints.Resource, container *restful.Container) {
+func registerWebsocket(r endpoints.Resource, mux *http.ServeMux) {
 	logging.Log.Info("Adding API for websocket")
-	wsv2 := new(restful.WebService)
-	wsv2.
-		Path("/v1/websockets").
-		Consumes(restful.MIME_JSON).
-		Produces(restful.MIME_JSON)
-	wsv2.Route(wsv2.GET("/resources").To(r.EstablishResourcesWebsocket))
-	container.Add(wsv2)
-}
-
-// registerHealthProbes registers the /health endpoint
-func registerHealthProbe(r endpoints.Resource, container *restful.Container) {
-	logging.Log.Info("Adding API for health")
-	wsv3 := new(restful.WebService)
-	wsv3.
-		Path("/health")
-
-	wsv3.Route(wsv3.GET("").To(r.CheckHealth))
-
-	container.Add(wsv3)
-}
-
-// registerReadinessProbes registers the /readiness endpoint
-func registerReadinessProbe(r endpoints.Resource, container *restful.Container) {
-	logging.Log.Info("Adding API for readiness")
-	wsv4 := new(restful.WebService)
-	wsv4.
-		Path("/readiness")
-
-	wsv4.Route(wsv4.GET("").To(r.CheckHealth))
-
-	container.Add(wsv4)
+	mux.HandleFunc("/v1/websockets/resources", r.EstablishResourcesWebsocket)
 }
 
 // registerPropertiesEndpoint adds the endpoint for obtaining any properties we
 // want to serve.
-func registerPropertiesEndpoint(r endpoints.Resource, container *restful.Container) {
+func registerPropertiesEndpoint(r endpoints.Resource, mux *http.ServeMux) {
 	logging.Log.Info("Adding API for properties")
-	wsDefaults := new(restful.WebService)
-	wsDefaults.Filter(restful.NoBrowserCacheFilter)
-	wsDefaults.
-		Path("/v1/properties").
-		Consumes(restful.MIME_JSON, "text/plain").
-		Produces(restful.MIME_JSON, "text/plain")
-
-	wsDefaults.Route(wsDefaults.GET("/").To(r.GetProperties))
-	container.Add(wsDefaults)
+	mux.HandleFunc("/v1/properties", r.GetProperties)
 }
 
-func registerLogsProxy(r endpoints.Resource, container *restful.Container) {
+func registerLogsProxy(r endpoints.Resource, mux *http.ServeMux) {
 	if r.Options.ExternalLogsURL != "" {
-		ws := new(restful.WebService)
-		ws.Path("/v1/logs-proxy").Produces("text/plain")
-		ws.Route(ws.GET("/{subpath:*}").To(r.LogsProxy))
-		container.Add(ws)
+		logging.Log.Info("Adding API for logs proxy")
+		mux.HandleFunc("/v1/logs-proxy", r.LogsProxy)
 	}
 }
 
-// Extension is the back-end representation of an extension. A service is an
-// extension when it is in the dashboard namespace with the dashboard label
-// key/value pair. Endpoints are specified with the extension URL annotation
-type Extension struct {
-	Name           string   `json:"name"`
-	URL            *url.URL `json:"url"`
-	Port           string   `json:"port"`
-	DisplayName    string   `json:"displayname"`
-	BundleLocation string   `json:"bundlelocation"`
-	endpoints      []string
+// Server is a http.Handler which proxies Kubernetes APIs to the API server.
+type Server struct {
+	handler http.Handler
 }
 
-// newExtension returns a new extension
-func newExtension(extService *corev1.Service) *Extension {
-	port := getServicePort(extService)
-	url, _ := url.ParseRequestURI(fmt.Sprintf("http://%s:%s", extService.Spec.ClusterIP, port))
-	return &Extension{
-		Name:           extService.ObjectMeta.Name,
-		URL:            url,
-		Port:           port,
-		DisplayName:    extService.ObjectMeta.Annotations[ExtensionDisplayNameKey],
-		BundleLocation: extService.ObjectMeta.Annotations[ExtensionBundleLocationKey],
-		endpoints:      getExtensionEndpoints(extService.ObjectMeta.Annotations[ExtensionURLKey]),
-	}
+type responder struct{}
+
+func (r *responder) Error(w http.ResponseWriter, req *http.Request, err error) {
+	logging.Log.Errorf("Error while proxying request: %v", err)
+	http.Error(w, err.Error(), http.StatusInternalServerError)
 }
 
-// handleExtension handles requests to the extension service by stripping the
-// extension root prefix from the request URL and reverse proxying
-func (e Extension) handleExtension(request *restful.Request, response *restful.Response) {
-	logging.Log.Debugf("Request Path: %s %+v", request.Request.Method, request.Request.URL.Path)
-	request.Request.URL.Path = strings.TrimPrefix(request.Request.URL.Path, fmt.Sprintf("%s/%s", ExtensionRoot, e.Name))
-	// Explicitly route to root, better visibility in logs
-	if request.Request.URL.Path == "" {
-		request.Request.URL.Path = "/"
+func makeUpgradeTransport(config *rest.Config, keepalive time.Duration) (proxy.UpgradeRequestRoundTripper, error) {
+	transportConfig, err := config.TransportConfig()
+	if err != nil {
+		return nil, err
 	}
-	logging.Log.Debugf("Proxy Path: %s %+v", request.Request.Method, request.Request.URL.Path)
-	proxy := httputil.NewSingleHostReverseProxy(e.URL)
-	proxy.ServeHTTP(response, request.Request)
+	tlsConfig, err := transport.TLSConfigFor(transportConfig)
+	if err != nil {
+		return nil, err
+	}
+	rt := utilnet.SetOldTransportDefaults(&http.Transport{
+		TLSClientConfig: tlsConfig,
+		DialContext: (&net.Dialer{
+			Timeout:   30 * time.Second,
+			KeepAlive: keepalive,
+		}).DialContext,
+	})
+
+	upgrader, err := transport.HTTPWrappersForConfig(transportConfig, proxy.MirrorRequest)
+	if err != nil {
+		return nil, err
+	}
+	return proxy.NewUpgradeRequestRoundTripper(rt, upgrader), nil
 }
 
-// getExtensionEndpoints sanitizes the delimited endpoints
-func getExtensionEndpoints(delimited string) []string {
-	endpoints := strings.Split(delimited, ExtensionEndpointDelimiter)
-	if endpoints == nil {
-		return []string{""}
+// Register returns a HTTP handler with the Dashboard and Kubernetes APIs registered
+func Register(r endpoints.Resource, cfg *rest.Config) (*Server, error) {
+	logging.Log.Info("Adding Kube API")
+	apiProxyPrefix := "/proxy/"
+	proxyHandler, err := NewProxyHandler(apiProxyPrefix, cfg, 30*time.Second)
+	if err != nil {
+		return nil, err
 	}
-	for i := range endpoints {
-		// Remove trailing/leading slashes
-		endpoints[i] = strings.TrimSuffix(endpoints[i], "/")
-		endpoints[i] = strings.TrimPrefix(endpoints[i], "/")
-	}
-	return endpoints
+	mux := http.NewServeMux()
+	mux.Handle(apiProxyPrefix, proxyHandler)
+
+	logging.Log.Info("Adding Dashboard APIs")
+	registerWeb(r, mux)
+	registerPropertiesEndpoint(r, mux)
+	registerWebsocket(r, mux)
+	registerHealthProbe(r, mux)
+	registerReadinessProbe(r, mux)
+	registerLogsProxy(r, mux)
+
+	return &Server{handler: mux}, nil
 }
 
-// extensionPath constructs the extension path (excluding the root) used by
-// restful.Route
-func extensionPath(extName, path string) string {
-	return strings.TrimSuffix(fmt.Sprintf("%s/%s", extName, path), "/")
+// NewProxyHandler creates an API proxy handler for the cluster
+func NewProxyHandler(apiProxyPrefix string, cfg *rest.Config, keepalive time.Duration) (http.Handler, error) {
+	host := cfg.Host
+	if !strings.HasSuffix(host, "/") {
+		host = host + "/"
+	}
+	target, err := url.Parse(host)
+	if err != nil {
+		return nil, err
+	}
+
+	responder := &responder{}
+	transport, err := rest.TransportFor(cfg)
+	if err != nil {
+		return nil, err
+	}
+	upgradeTransport, err := makeUpgradeTransport(cfg, keepalive)
+	if err != nil {
+		return nil, err
+	}
+	proxy := proxy.NewUpgradeAwareHandler(target, transport, false, false, responder)
+	proxy.UpgradeTransport = upgradeTransport
+	proxy.UseRequestLocation = true
+	// TODO: enable after update to k8s apimachinery 0.21
+	// proxy.UseLocationHost = true
+
+	proxyServer := http.Handler(proxy)
+	proxyServer = stripLeaveSlash(apiProxyPrefix, proxyServer)
+
+	return proxyServer, nil
 }
 
-// getServicePort returns the target port if exists or the source port otherwise
-func getServicePort(svc *corev1.Service) string {
-	if svc.Spec.Ports[0].TargetPort.StrVal != "" {
-		return svc.Spec.Ports[0].TargetPort.String()
+// Listen is a simple wrapper around net.Listen.
+func (s *Server) Listen(address string, port int) (net.Listener, error) {
+	return net.Listen("tcp", fmt.Sprintf("%s:%d", address, port))
+}
+
+// ServeOnListener starts the server using given listener, loops forever.
+func (s *Server) ServeOnListener(l net.Listener) error {
+	CSRF := csrf.Protect()
+
+	server := http.Server{
+		Handler: CSRF(s.handler),
 	}
-	return strconv.Itoa(int(svc.Spec.Ports[0].Port))
+	return server.Serve(l)
+}
+
+func stripLeaveSlash(prefix string, h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		p := strings.TrimPrefix(req.URL.Path, prefix)
+		if len(p) >= len(req.URL.Path) {
+			http.NotFound(w, req)
+			return
+		}
+		if len(p) > 0 && p[:1] != "/" {
+			p = "/" + p
+		}
+		req.URL.Path = p
+		h.ServeHTTP(w, req)
+	})
 }

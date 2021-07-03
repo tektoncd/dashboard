@@ -14,11 +14,8 @@ limitations under the License.
 package endpoints
 
 import (
+	"encoding/json"
 	"net/http"
-	"net/url"
-
-	restful "github.com/emicklei/go-restful"
-	"github.com/tektoncd/dashboard/pkg/utils"
 )
 
 // Properties : properties we want to be able to retrieve via REST
@@ -36,25 +33,10 @@ type Properties struct {
 	TriggersVersion    string `json:"triggersVersion,omitempty"`
 }
 
-// ProxyRequest does as the name suggests: proxies requests and logs what's going on
-func (r Resource) ProxyRequest(request *restful.Request, response *restful.Response) {
-	parsedURL, err := url.Parse(request.Request.URL.String())
-	if err != nil {
-		utils.RespondError(response, err, http.StatusNotFound)
-		return
-	}
-
-	uri := request.PathParameter("subpath") + "?" + parsedURL.RawQuery
-
-	if statusCode, err := utils.Proxy(request.Request, response, r.Config.Host+"/"+uri, r.HttpClient); err != nil {
-		utils.RespondError(response, err, statusCode)
-	}
-}
-
 // GetProperties is used to get the installed namespace for the Dashboard,
 // the version of the Tekton Dashboard, the version of Tekton Pipelines,
 // when one's in read-only mode and Tekton Triggers version (if Installed)
-func (r Resource) GetProperties(request *restful.Request, response *restful.Response) {
+func (r Resource) GetProperties(response http.ResponseWriter, request *http.Request) {
 	pipelineNamespace := r.Options.GetPipelinesNamespace()
 	triggersNamespace := r.Options.GetTriggersNamespace()
 	dashboardVersion := getDashboardVersion(r, r.Options.InstallNamespace)
@@ -83,5 +65,9 @@ func (r Resource) GetProperties(request *restful.Request, response *restful.Resp
 		properties.TriggersVersion = triggersVersion
 	}
 
-	response.WriteEntity(properties)
+	response.Header().Set("Content-Type", "application/json")
+	response.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+	response.Header().Set("Pragma", "no-cache")
+	response.Header().Set("Expires", "0")
+	json.NewEncoder(response).Encode(properties)
 }

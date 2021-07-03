@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -97,51 +97,6 @@ it('ResourceExtension Events', () => {
 
   const deleteAction = {
     type: 'ResourceExtensionDeleted',
-    payload: updatedExtension
-  };
-
-  const deletedState = extensionsReducer(state, deleteAction);
-  expect(selectors.getExtensions(deletedState)).toEqual([]);
-  expect(selectors.isFetchingExtensions(deletedState)).toBe(false);
-});
-
-it('ServiceExtension Events', () => {
-  const extension = {
-    bundlelocation: 'bundle',
-    displayname: 'before',
-    name: 'sample-extension'
-  };
-
-  const action = {
-    type: 'ServiceExtensionCreated',
-    payload: extension
-  };
-
-  const state = extensionsReducer({}, action);
-  expect(selectors.getExtensions(state)).toEqual([
-    selectors.mapServiceExtension(extension)
-  ]);
-  expect(selectors.isFetchingExtensions(state)).toBe(false);
-
-  const updatedExtension = {
-    bundlelocation: 'bundle',
-    displayname: 'after',
-    name: 'sample-extension'
-  };
-
-  const updateAction = {
-    type: 'ServiceExtensionUpdated',
-    payload: updatedExtension
-  };
-
-  const updatedState = extensionsReducer(state, updateAction);
-  expect(selectors.getExtensions(updatedState)).toEqual([
-    selectors.mapServiceExtension(updatedExtension)
-  ]);
-  expect(selectors.isFetchingExtensions(updatedState)).toBe(false);
-
-  const deleteAction = {
-    type: 'ServiceExtensionDeleted',
     payload: updatedExtension
   };
 

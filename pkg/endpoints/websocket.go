@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,7 +14,8 @@ limitations under the License.
 package endpoints
 
 import (
-	restful "github.com/emicklei/go-restful"
+	"net/http"
+
 	broadcaster "github.com/tektoncd/dashboard/pkg/broadcaster"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
 	"github.com/tektoncd/dashboard/pkg/websocket"
@@ -27,7 +28,7 @@ var ResourcesChannel = make(chan broadcaster.SocketData)
 var ResourcesBroadcaster = broadcaster.NewBroadcaster(ResourcesChannel)
 
 // Establish websocket and subscribe to pipelinerun events
-func (r Resource) EstablishResourcesWebsocket(request *restful.Request, response *restful.Response) {
+func (r Resource) EstablishResourcesWebsocket(response http.ResponseWriter, request *http.Request) {
 	connection, err := websocket.UpgradeToWebsocket(request, response)
 	if err != nil {
 		logging.Log.Errorf("Could not upgrade to websocket connection: %s", err)

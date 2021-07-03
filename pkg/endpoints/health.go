@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -15,11 +15,9 @@ package endpoints
 
 import (
 	"net/http"
-
-	restful "github.com/emicklei/go-restful"
 )
 
-func (r Resource) CheckHealth(request *restful.Request, response *restful.Response) {
+func (r Resource) CheckHealth(response http.ResponseWriter, request *http.Request) {
 	// A method here so there's scope for doing anything fancy e.g. checking anything else
 	response.WriteHeader(http.StatusOK)
 }

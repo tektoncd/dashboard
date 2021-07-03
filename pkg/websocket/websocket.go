@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -18,22 +18,20 @@ import (
 	"net/http"
 	"time"
 
-	restful "github.com/emicklei/go-restful"
 	"github.com/gorilla/websocket"
 	broadcaster "github.com/tektoncd/dashboard/pkg/broadcaster"
 	logging "github.com/tektoncd/dashboard/pkg/logging"
 )
 
 // UpgradeToWebsocket attempts to upgrade connection from HTTP(S) to WS(S)
-func UpgradeToWebsocket(request *restful.Request, response *restful.Response) (*websocket.Conn, error) {
-	var writer http.ResponseWriter = response
+func UpgradeToWebsocket(request *http.Request, response http.ResponseWriter) (*websocket.Conn, error) {
 	logging.Log.Debug("Upgrading connection to websocket...")
 	// Handles writing error to response
 	upgrader := websocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 4096,
 	}
-	connection, err := upgrader.Upgrade(writer, request.Request, nil)
+	connection, err := upgrader.Upgrade(response, request, nil)
 	return connection, err
 }
 
