@@ -96,7 +96,7 @@ export function getPodLogURL({ container, name, namespace, follow }) {
 
 export function getPodLog({ container, name, namespace, stream }) {
   const uri = getPodLogURL({ container, name, namespace, follow: stream });
-  return get(uri, { Accept: 'text/plain' }, { stream });
+  return get(uri, { Accept: 'text/plain,*/*' }, { stream });
 }
 
 /* istanbul ignore next */
