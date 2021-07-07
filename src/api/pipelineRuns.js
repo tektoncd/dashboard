@@ -17,7 +17,7 @@ import {
 } from '@tektoncd/dashboard-utils';
 import deepClone from 'lodash.clonedeep';
 
-import { deleteRequest, get, post, put } from './comms';
+import { deleteRequest, get, patch, post, put } from './comms';
 import { checkData, getQueryParams, getTektonAPI } from './utils';
 
 export function getPipelineRuns({ filters = [], namespace } = {}) {
@@ -120,4 +120,13 @@ export function rerunPipelineRun(pipelineRun) {
 
   const uri = getTektonAPI('pipelineruns', { namespace });
   return post(uri, payload).then(({ body }) => body);
+}
+
+export function startPipelineRun(pipelineRun) {
+  const { name, namespace } = pipelineRun.metadata;
+
+  const payload = [{ op: 'remove', path: '/spec/status' }];
+
+  const uri = getTektonAPI('pipelineruns', { name, namespace });
+  return patch(uri, payload).then(({ body }) => body);
 }

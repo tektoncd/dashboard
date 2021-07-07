@@ -23,6 +23,10 @@ export const labels = {
   TASK: 'tekton.dev/task'
 };
 
+export const pipelineRunStatuses = {
+  PENDING: 'PipelineRunPending'
+};
+
 export const queryParams = {
   PIPELINE_TASK: 'pipelineTask',
   RETRY: 'retry',

@@ -71,7 +71,10 @@ const pipelineRunsTestStore = {
     byId: {
       'pipelineRunWithTwoLabels-id': {
         status: {
-          startTime: '0'
+          startTime: '0',
+          conditions: [
+            { reason: 'Completed', status: 'True', type: 'Succeeded' }
+          ]
         },
         metadata: {
           name: 'pipelineRunWithTwoLabels',
@@ -90,7 +93,10 @@ const pipelineRunsTestStore = {
       },
       'pipelineRunWithSingleLabel-id': {
         status: {
-          startTime: '1'
+          startTime: '1',
+          conditions: [
+            { reason: 'Completed', status: 'True', type: 'Succeeded' }
+          ]
         },
         metadata: {
           name: 'pipelineRunWithSingleLabel',
@@ -105,12 +111,29 @@ const pipelineRunsTestStore = {
             name: 'pipeline-1'
           }
         }
+      },
+      'pipelineRunPending-id': {
+        metadata: {
+          name: 'pipelineRunPending',
+          namespace: 'namespace-1',
+          uid: 'pipelineRunPending-id',
+          labels: {
+            foo: 'bar'
+          }
+        },
+        spec: {
+          pipelineRef: {
+            name: 'pipeline-1'
+          },
+          status: 'PipelineRunPending'
+        }
       }
     },
     byNamespace: {
       'namespace-1': {
         pipelineRunWithTwoLabels: 'pipelineRunWithTwoLabels-id',
-        pipelineRunWithSingleLabel: 'pipelineRunWithSingleLabel-id'
+        pipelineRunWithSingleLabel: 'pipelineRunWithSingleLabel-id',
+        pipelineRunPending: 'pipelineRunPending-id'
       }
     }
   }
@@ -423,12 +446,43 @@ describe('PipelineRuns container', () => {
       { route: urls.pipelineRuns.all() }
     );
     await waitFor(() => getByText(/pipelineRunWithTwoLabels/i));
-    fireEvent.click(await waitFor(() => getAllByTitle('Actions')[0]));
+    fireEvent.click(await waitFor(() => getAllByTitle('Actions')[2]));
     await waitFor(() => getByText(/Rerun/i));
     fireEvent.click(getByText('Rerun'));
     expect(PipelineRunsAPI.rerunPipelineRun).toHaveBeenCalledTimes(1);
     expect(PipelineRunsAPI.rerunPipelineRun).toHaveBeenCalledWith(
       pipelineRunsTestStore.pipelineRuns.byId['pipelineRunWithSingleLabel-id']
+    );
+  });
+
+  it('handles start event in PipelineRuns page', async () => {
+    const mockTestStore = mockStore(testStore);
+    jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => false);
+    jest
+      .spyOn(PipelineRunsAPI, 'startPipelineRun')
+      .mockImplementation(() => []);
+    const { getAllByTitle, getByText } = renderWithRouter(
+      <Provider store={mockTestStore}>
+        <Route
+          path={urls.pipelineRuns.all()}
+          render={props => (
+            <PipelineRunsContainer
+              {...props}
+              fetchPipelineRuns={() => Promise.resolve()}
+              pipelineRuns={pipelineRunsTestStore.pipelineRuns.byId}
+            />
+          )}
+        />
+      </Provider>,
+      { route: urls.pipelineRuns.all() }
+    );
+    await waitFor(() => getByText(/pipelineRunWithTwoLabels/i));
+    fireEvent.click(await waitFor(() => getAllByTitle('Actions')[0]));
+    await waitFor(() => getByText(/Start/i));
+    fireEvent.click(getByText('Start'));
+    expect(PipelineRunsAPI.startPipelineRun).toHaveBeenCalledTimes(1);
+    expect(PipelineRunsAPI.startPipelineRun).toHaveBeenCalledWith(
+      pipelineRunsTestStore.pipelineRuns.byId['pipelineRunPending-id']
     );
   });
 });

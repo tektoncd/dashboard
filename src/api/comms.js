@@ -38,7 +38,7 @@ export function getHeaders(headers = {}) {
 
 export function getPatchHeaders(headers = {}) {
   return {
-    Accept: 'application/json-patch+json',
+    Accept: 'application/json',
     'Content-Type': 'application/json-patch+json',
     ...headers
   };
