@@ -27,6 +27,10 @@ spec:
         type: storage
       - name: builtDashboardImage
         type: image
+  stepTemplate:
+    env:
+      - name: HOME
+        value: /tekton/home
   steps:
     - name: link-input-bucket-to-output
       image: busybox
