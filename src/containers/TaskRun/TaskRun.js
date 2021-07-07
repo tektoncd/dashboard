@@ -21,7 +21,7 @@ import { InlineNotification, SkeletonText } from 'carbon-components-react';
 import {
   Log,
   Portal,
-  Rerun,
+  RunAction,
   RunHeader,
   StepDetails,
   TaskRunDetails,
@@ -253,7 +253,8 @@ export function TaskRunContainer(props) {
 
   const rerun = !isReadOnly &&
     !taskRun.metadata?.labels?.['tekton.dev/pipeline'] && (
-      <Rerun
+      <RunAction
+        action="rerun"
         getURL={({ name, namespace: currentNamespace }) =>
           urls.taskRuns.byName({
             namespace: currentNamespace,
@@ -261,7 +262,7 @@ export function TaskRunContainer(props) {
           })
         }
         run={taskRun}
-        rerun={rerunTaskRun}
+        runaction={rerunTaskRun}
         showNotification={setRerunNotification}
       />
     );

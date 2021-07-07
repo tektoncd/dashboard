@@ -101,6 +101,14 @@ export function getStepStatusReason(step) {
   return { reason, status };
 }
 
+export function isPending(reason, status) {
+  return (
+    !status ||
+    (status === 'Unknown' &&
+      (reason === 'Pending' || reason === 'PipelineRunPending'))
+  );
+}
+
 export function isRunning(reason, status) {
   return (
     status === 'running' ||
@@ -238,11 +246,7 @@ export function runMatchesStatusFilter({ run, statusFilter }) {
     case 'running':
       return isRunning(reason, status);
     case 'pending':
-      return (
-        !status ||
-        (status === 'Unknown' &&
-          (reason === 'Pending' || reason === 'PipelineRunPending'))
-      );
+      return isPending(reason, status);
     case 'failed':
       return (
         (status === 'False' &&

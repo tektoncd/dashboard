@@ -34,7 +34,7 @@ export { default as PipelineResources } from './PipelineResources';
 export { default as PipelineRun } from './PipelineRun';
 export { default as PipelineRuns } from './PipelineRuns';
 export { default as Portal } from './Portal';
-export { default as Rerun } from './Rerun';
+export { default as RunAction } from './RunAction';
 export { default as ResourceDetails } from './ResourceDetails';
 export { default as ResourceTable } from './ResourceTable';
 export { default as RunDropdown } from './RunDropdown';

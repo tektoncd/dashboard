@@ -14,10 +14,11 @@ limitations under the License.
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { PipelineRun, Rerun } from '@tektoncd/dashboard-components';
+import { PipelineRun, RunAction } from '@tektoncd/dashboard-components';
 import {
   getTaskRunsWithPlaceholders,
   labels as labelConstants,
+  pipelineRunStatuses,
   queryParams as queryParamConstants,
   urls,
   useTitleSync,
@@ -47,6 +48,7 @@ import {
 import { fetchTaskRuns as fetchTaskRunsActionCreator } from '../../actions/taskRuns';
 import {
   rerunPipelineRun,
+  startPipelineRun,
   useExternalLogsURL,
   useIsLogStreamingEnabled,
   useIsReadOnly
@@ -87,7 +89,9 @@ export /* istanbul ignore next */ function PipelineRunContainer(props) {
 
   const maximizedLogsContainer = useRef();
   const [loading, setLoading] = useState(true);
-  const [showRerunNotification, setShowRerunNotification] = useState(null);
+  const [showRunActionNotification, setShowRunActionNotification] = useState(
+    null
+  );
 
   const externalLogsURL = useExternalLogsURL();
   const isLogStreamingEnabled = useIsLogStreamingEnabled();
@@ -243,31 +247,47 @@ export /* istanbul ignore next */ function PipelineRunContainer(props) {
     currentRetry
   );
 
-  const rerun = !isReadOnly && (
-    <Rerun
-      getURL={({ name, namespace: resourceNamespace }) =>
-        urls.pipelineRuns.byName({
-          namespace: resourceNamespace,
-          pipelineRunName: name
-        })
-      }
-      run={pipelineRun}
-      rerun={rerunPipelineRun}
-      showNotification={value => setShowRerunNotification(value)}
-    />
-  );
+  let runAction = null;
+
+  if (!isReadOnly) {
+    if (pipelineRun.spec.status !== pipelineRunStatuses.PENDING) {
+      runAction = (
+        <RunAction
+          action="rerun"
+          getURL={({ name, namespace: resourceNamespace }) =>
+            urls.pipelineRuns.byName({
+              namespace: resourceNamespace,
+              pipelineRunName: name
+            })
+          }
+          run={pipelineRun}
+          runaction={rerunPipelineRun}
+          showNotification={value => setShowRunActionNotification(value)}
+        />
+      );
+    } else {
+      runAction = (
+        <RunAction
+          action="start"
+          run={pipelineRun}
+          runaction={startPipelineRun}
+          showNotification={value => setShowRunActionNotification(value)}
+        />
+      );
+    }
+  }
 
   return (
     <>
       <div id="tkn--maximized-logs-container" ref={maximizedLogsContainer} />
-      {showRerunNotification && (
+      {showRunActionNotification && (
         <InlineNotification
           lowContrast
           actions={
-            showRerunNotification.logsURL ? (
+            showRunActionNotification.logsURL ? (
               <Link
                 className="bx--inline-notification__text-wrapper"
-                to={showRerunNotification.logsURL}
+                to={showRunActionNotification.logsURL}
               >
                 {intl.formatMessage({
                   id: 'dashboard.run.rerunStatusMessage',
@@ -278,8 +298,8 @@ export /* istanbul ignore next */ function PipelineRunContainer(props) {
               ''
             )
           }
-          title={showRerunNotification.message}
-          kind={showRerunNotification.kind}
+          title={showRunActionNotification.message}
+          kind={showRunActionNotification.kind}
           caption=""
         />
       )}
@@ -292,7 +312,7 @@ export /* istanbul ignore next */ function PipelineRunContainer(props) {
         maximizedLogsContainer={maximizedLogsContainer.current}
         onViewChange={getViewChangeHandler(props)}
         pipelineRun={pipelineRun}
-        rerun={rerun}
+        runaction={runAction}
         selectedStepId={currentSelectedStepId}
         selectedTaskId={selectedTaskId}
         showIO

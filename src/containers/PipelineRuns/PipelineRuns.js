@@ -27,6 +27,7 @@ import {
   getStatus,
   getStatusFilter,
   getStatusFilterHandler,
+  isPending,
   isRunning,
   labels,
   runMatchesStatusFilter,
@@ -51,6 +52,7 @@ import {
   cancelPipelineRun,
   deletePipelineRun,
   rerunPipelineRun,
+  startPipelineRun,
   useIsReadOnly
 } from '../../api';
 
@@ -170,10 +172,6 @@ export /* istanbul ignore next */ function PipelineRuns(props) {
     setCancelSelection(() => handleCancel);
   }
 
-  function rerun(pipelineRun) {
-    rerunPipelineRun(pipelineRun);
-  }
-
   function pipelineRunActions() {
     if (isReadOnly) {
       return [];
@@ -185,7 +183,22 @@ export /* istanbul ignore next */ function PipelineRuns(props) {
           id: 'dashboard.rerun.actionText',
           defaultMessage: 'Rerun'
         }),
-        action: rerun
+        action: rerunPipelineRun,
+        disable: resource => {
+          const { reason, status } = getStatus(resource);
+          return isPending(reason, status);
+        }
+      },
+      {
+        actionText: intl.formatMessage({
+          id: 'dashboard.startPipelineRun.actionText',
+          defaultMessage: 'Start'
+        }),
+        action: startPipelineRun,
+        disable: resource => {
+          const { reason, status } = getStatus(resource);
+          return !isPending(reason, status);
+        }
       },
       {
         actionText: intl.formatMessage({
@@ -195,7 +208,7 @@ export /* istanbul ignore next */ function PipelineRuns(props) {
         action: cancel,
         disable: resource => {
           const { reason, status } = getStatus(resource);
-          return !isRunning(reason, status);
+          return !isRunning(reason, status) && !isPending(reason, status);
         },
         modalProperties: {
           heading: intl.formatMessage({

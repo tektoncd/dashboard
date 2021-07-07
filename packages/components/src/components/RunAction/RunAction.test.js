@@ -14,9 +14,9 @@ limitations under the License.
 import React from 'react';
 import { fireEvent } from '@testing-library/react';
 import { renderWithRouter } from '../../utils/test';
-import Rerun from './Rerun';
+import RunAction from './RunAction';
 
-/* Rerun should sit on the PipelineRun page and display notifications there
+/* RunAction should sit on the PipelineRun page and display notifications there
 It would be useful to have tests at the container level too, but for now just do it at the component level */
 
 const logsURL = '/fake/url';
@@ -46,7 +46,7 @@ it('Rerun button creates API call with correct parameters', done => {
   jest.spyOn(props, 'getURL');
   jest.spyOn(props, 'showNotification');
   const { getByText } = renderWithRouter(
-    <Rerun {...props} rerun={rerunMock} />
+    <RunAction {...props} action="rerun" runaction={rerunMock} />
   );
   fireEvent.click(getByText('Rerun'));
   setImmediate(() => {
@@ -69,7 +69,7 @@ it('Rerun button handles API error', done => {
   jest.spyOn(props, 'getURL');
   jest.spyOn(props, 'showNotification');
   const { getByText } = renderWithRouter(
-    <Rerun {...props} rerun={rerunMock} />
+    <RunAction {...props} action="rerun" runaction={rerunMock} />
   );
   fireEvent.click(getByText('Rerun'));
   setImmediate(() => {
