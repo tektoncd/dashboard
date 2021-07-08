@@ -27,55 +27,29 @@ const props = {
   onChange: () => {}
 };
 
-const pipelinesByNamespace = {
-  blue: {
-    'pipeline-1': 'id-pipeline-1',
-    'pipeline-2': 'id-pipeline-2'
-  },
-  green: {
-    'pipeline-3': 'id-pipeline-3'
-  }
-};
-
-const pipelinesById = {
-  'id-pipeline-1': {
+const pipelines = [
+  {
     metadata: {
       name: 'pipeline-1',
       namespace: 'blue',
       uid: 'id-pipeline-1'
     }
   },
-  'id-pipeline-2': {
+  {
     metadata: {
       name: 'pipeline-2',
       namespace: 'blue',
       uid: 'id-pipeline-2'
     }
   },
-  'id-pipeline-3': {
+  {
     metadata: {
       name: 'pipeline-3',
       namespace: 'green',
       uid: 'id-pipeline-3'
     }
   }
-};
-
-const pipelinesStoreDefault = {
-  pipelines: {
-    byId: pipelinesById,
-    byNamespace: pipelinesByNamespace,
-    isFetching: false
-  }
-};
-
-const pipelinesStoreFetching = {
-  pipelines: {
-    byId: pipelinesById,
-    byNamespace: pipelinesByNamespace,
-    isFetching: true
-  }
-};
+];
 
 const namespacesByName = {
   blue: '',
@@ -89,13 +63,6 @@ const namespacesStoreBlue = {
   }
 };
 
-const namespacesStoreGreen = {
-  namespaces: {
-    byName: namespacesByName,
-    selected: 'green'
-  }
-};
-
 const initialTextRegExp = new RegExp('select pipeline', 'i');
 
 const checkDropdownItems = ({
@@ -104,11 +71,13 @@ const checkDropdownItems = ({
   testDict,
   itemPrefixRegExp = new RegExp('pipeline-', 'i')
 }) => {
-  Object.keys(testDict).forEach(item => {
-    expect(queryByText(new RegExp(item, 'i'))).toBeTruthy();
+  testDict.forEach(item => {
+    expect(queryByText(new RegExp(item.metadata.name, 'i'))).toBeTruthy();
   });
   getAllByText(itemPrefixRegExp).forEach(node => {
-    expect(getNodeText(node) in testDict).toBeTruthy();
+    expect(
+      testDict.some(item => getNodeText(node) === item.metadata.name)
+    ).toBeTruthy();
   });
 };
 
@@ -116,13 +85,11 @@ const middleware = [thunk];
 const mockStore = configureStore(middleware);
 
 describe('PipelinesDropdown', () => {
-  beforeEach(() => {
-    jest.spyOn(API, 'getPipelines').mockImplementation(() => pipelinesById);
-  });
-
-  it('renders items based on Redux state', () => {
+  it('renders items', () => {
+    jest
+      .spyOn(API, 'usePipelines')
+      .mockImplementation(() => ({ data: pipelines }));
     const store = mockStore({
-      ...pipelinesStoreDefault,
       ...namespacesStoreBlue,
       notifications: {}
     });
@@ -131,64 +98,19 @@ describe('PipelinesDropdown', () => {
         <PipelinesDropdown {...props} />
       </Provider>
     );
-    // View items
     fireEvent.click(getByPlaceholderText(initialTextRegExp));
     checkDropdownItems({
       getAllByText,
       queryByText,
-      testDict: pipelinesByNamespace.blue
-    });
-  });
-
-  it('renders items based on Redux state when namespace changes', () => {
-    const blueStore = mockStore({
-      ...pipelinesStoreDefault,
-      ...namespacesStoreBlue,
-      notifications: {}
-    });
-    const {
-      getByPlaceholderText,
-      getAllByText,
-      queryByText,
-      rerender
-    } = render(
-      <Provider store={blueStore}>
-        <PipelinesDropdown {...props} />
-      </Provider>
-    );
-    // View items
-    fireEvent.click(getByPlaceholderText(initialTextRegExp));
-    checkDropdownItems({
-      getAllByText,
-      queryByText,
-      testDict: pipelinesByNamespace.blue
-    });
-    fireEvent.click(getByPlaceholderText(initialTextRegExp));
-
-    // Change selected namespace from 'blue' to 'green'
-    const greenStore = mockStore({
-      ...pipelinesStoreDefault,
-      ...namespacesStoreGreen,
-      notifications: {}
-    });
-    render(
-      <Provider store={greenStore}>
-        <PipelinesDropdown {...props} />
-      </Provider>,
-      { rerender }
-    );
-    // View items
-    fireEvent.click(getByPlaceholderText(initialTextRegExp));
-    checkDropdownItems({
-      getAllByText,
-      queryByText,
-      testDict: pipelinesByNamespace.green
+      testDict: pipelines
     });
   });
 
   it('renders controlled selection', () => {
+    jest
+      .spyOn(API, 'usePipelines')
+      .mockImplementation(() => ({ data: pipelines }));
     const store = mockStore({
-      ...pipelinesStoreDefault,
       ...namespacesStoreBlue,
       notifications: {}
     });
@@ -217,33 +139,9 @@ describe('PipelinesDropdown', () => {
     expect(queryByPlaceholderText(initialTextRegExp)).toBeTruthy();
   });
 
-  it('renders controlled namespace', () => {
-    const store = mockStore({
-      ...pipelinesStoreDefault,
-      ...namespacesStoreBlue,
-      notifications: {}
-    });
-    // Select namespace 'green'
-    const { queryByText, getByPlaceholderText, getAllByText } = render(
-      <Provider store={store}>
-        <PipelinesDropdown {...props} namespace="green" />
-      </Provider>
-    );
-    fireEvent.click(getByPlaceholderText(initialTextRegExp));
-    checkDropdownItems({
-      getAllByText,
-      queryByText,
-      testDict: pipelinesByNamespace.green
-    });
-  });
-
   it('renders empty', () => {
+    jest.spyOn(API, 'usePipelines').mockImplementation(() => ({ data: [] }));
     const store = mockStore({
-      pipelines: {
-        byId: {},
-        byNamespace: {},
-        isFetching: false
-      },
       ...namespacesStoreBlue,
       notifications: {}
     });
@@ -259,12 +157,8 @@ describe('PipelinesDropdown', () => {
   });
 
   it('for all namespaces renders empty', () => {
+    jest.spyOn(API, 'usePipelines').mockImplementation(() => ({ data: [] }));
     const store = mockStore({
-      pipelines: {
-        byId: {},
-        byNamespace: {},
-        isFetching: false
-      },
       ...namespacesStoreBlue,
       notifications: {}
     });
@@ -277,9 +171,11 @@ describe('PipelinesDropdown', () => {
     expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
   });
 
-  it('renders loading skeleton based on Redux state', () => {
+  it('renders loading state', () => {
+    jest
+      .spyOn(API, 'usePipelines')
+      .mockImplementation(() => ({ isFetching: true }));
     const store = mockStore({
-      ...pipelinesStoreFetching,
       ...namespacesStoreBlue,
       notifications: {}
     });
@@ -292,8 +188,10 @@ describe('PipelinesDropdown', () => {
   });
 
   it('handles onChange event', () => {
+    jest
+      .spyOn(API, 'usePipelines')
+      .mockImplementation(() => ({ data: pipelines }));
     const store = mockStore({
-      ...pipelinesStoreDefault,
       ...namespacesStoreBlue,
       notifications: {}
     });

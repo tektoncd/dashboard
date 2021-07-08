@@ -24,9 +24,9 @@ import CreateTaskRun from './CreateTaskRun';
 import * as PipelineResourcesAPI from '../../api/pipelineResources';
 import * as ServiceAccountsAPI from '../../api/serviceAccounts';
 import * as TaskRunsAPI from '../../api/taskRuns';
+import * as ClusterTasksAPI from '../../api/clusterTasks';
 import * as TasksAPI from '../../api/tasks';
 import * as store from '../../store';
-import * as reducers from '../../reducers';
 
 const namespaces = {
   selected: 'namespace-1',
@@ -36,79 +36,64 @@ const namespaces = {
   },
   isFetching: false
 };
-const tasks = {
-  byNamespace: {
-    'namespace-1': {
-      'task-1': 'id-task-1',
-      'task-2': 'id-task-2'
+const tasks = [
+  {
+    metadata: {
+      name: 'task-1',
+      namespace: 'namespace-1',
+      uid: 'id-task-1'
     },
-    'namespace-2': {
-      'task-3': 'id-task-3'
-    }
-  },
-  byId: {
-    'id-task-1': {
-      metadata: {
-        name: 'task-1',
-        namespace: 'namespace-1',
-        uid: 'id-task-1'
+    spec: {
+      resources: {
+        inputs: [
+          { name: 'resource-1', type: 'type-1' },
+          { name: 'resource-2', type: 'type-2' }
+        ],
+        outputs: [{ name: 'resource-3', type: 'type-3' }]
       },
-      spec: {
-        resources: {
-          inputs: [
-            { name: 'resource-1', type: 'type-1' },
-            { name: 'resource-2', type: 'type-2' }
-          ],
-          outputs: [{ name: 'resource-3', type: 'type-3' }]
+      params: [
+        {
+          name: 'param-1',
+          description: 'description-1',
+          default: 'default-1'
         },
-        params: [
-          {
-            name: 'param-1',
-            description: 'description-1',
-            default: 'default-1'
-          },
-          { name: 'param-2' }
-        ]
-      }
-    },
-    'id-task-2': {
-      metadata: {
-        name: 'task-2',
-        namespace: 'namespace-1',
-        uid: 'id-task-2'
-      },
-      spec: {}
-    },
-    'id-task-3': {
-      metadata: {
-        name: 'task-3',
-        namespace: 'namespace-2',
-        uid: 'id-task-3'
-      },
-      spec: {}
+        { name: 'param-2' }
+      ]
     }
   },
-  isFetching: false
-};
-const clusterTasks = {
-  byName: {
-    'clustertask-1': {
-      metadata: {
-        name: 'clustertask-1',
-        uid: 'id-task-1'
-      },
-      spec: {}
+  {
+    metadata: {
+      name: 'task-2',
+      namespace: 'namespace-1',
+      uid: 'id-task-2'
     },
-    'clustertask-2': {
-      metadata: {
-        name: 'clustertask-2',
-        uid: 'id-task-2'
-      },
-      spec: {}
-    }
+    spec: {}
   },
-  isFetching: false
-};
+  {
+    metadata: {
+      name: 'task-3',
+      namespace: 'namespace-2',
+      uid: 'id-task-3'
+    },
+    spec: {}
+  }
+];
+const clusterTasks = [
+  {
+    metadata: {
+      name: 'clustertask-1',
+      uid: 'id-task-1'
+    },
+    spec: {}
+  },
+  {
+    metadata: {
+      name: 'clustertask-2',
+      uid: 'id-task-2'
+    },
+    spec: {}
+  }
+];
 
 const serviceAccount = {
   metadata: {
@@ -143,9 +128,7 @@ const mockStore = configureStore(middleware);
 const testStore = {
   namespaces,
   notifications: {},
-  taskRuns,
-  tasks,
-  clusterTasks
+  taskRuns
 };
 
 const props = {
@@ -157,104 +140,19 @@ const props = {
   }
 };
 
-const validationErrorMsgRegExp = /please fix the fields with errors, then resubmit/i;
-const namespaceValidationErrorRegExp = /namespace cannot be empty/i;
-const taskValidationErrorRegExp = /task cannot be empty/i;
-const pipelineResourceValidationErrorRegExp = /pipelineresources cannot be empty/i;
-const paramsValidationErrorRegExp = /params cannot be empty/i;
-const apiErrorRegExp = /error creating taskrun/i;
-const timeoutValidationErrorRegExp = /Timeout must be a valid number less than 525600/i;
-const labelsValidationErrorRegExp = /Labels must follow the/i;
-
 const submitButton = allByText => allByText('Create')[0];
-
-const testTaskSpec = (taskId, queryByText, queryByDisplayValue) => {
-  // Verify proper param and resource fields are displayed
-  const task = tasks.byId[taskId];
-  const paramsRegExp = /params/i;
-  const resourcesRegExp = /resources/i;
-  if (task.spec.params) {
-    expect(queryByText(paramsRegExp)).toBeTruthy();
-    task.spec.params.forEach(param => {
-      expect(queryByText(new RegExp(param.name, 'i'))).toBeTruthy();
-      if (param.description) {
-        expect(queryByText(new RegExp(param.description, 'i'))).toBeTruthy();
-      }
-      if (param.default) {
-        expect(
-          queryByDisplayValue(new RegExp(param.default, 'i'))
-        ).toBeTruthy();
-      }
-    });
-  } else {
-    expect(queryByText(paramsRegExp)).toBeFalsy();
-  }
-  if (task.spec.resources) {
-    if (task.spec.resources.inputs) {
-      expect(queryByText('Input PipelineResources')).toBeTruthy();
-      task.spec.resources.inputs.forEach(resource => {
-        expect(queryByText(new RegExp(resource.name, 'i'))).toBeTruthy();
-        expect(queryByText(new RegExp(resource.type, 'i'))).toBeTruthy();
-      });
-    }
-    if (task.spec.resources.outputs) {
-      expect(queryByText('Output PipelineResources')).toBeTruthy();
-      task.spec.resources.outputs.forEach(resource => {
-        expect(queryByText(new RegExp(resource.name, 'i'))).toBeTruthy();
-        expect(queryByText(new RegExp(resource.type, 'i'))).toBeTruthy();
-      });
-    }
-  } else {
-    expect(queryByText(resourcesRegExp)).toBeFalsy();
-  }
-};
-
-const selectTask1 = async ({ getByPlaceholderText, getByText }) => {
-  fireEvent.click(getByPlaceholderText(/select task/i));
-  const task1 = await waitFor(() => getByText(/task-1/i));
-  fireEvent.click(task1);
-};
-
-const fillTask1Resources = ({ getAllByPlaceholderText, getByText }) => {
-  const resourceDropdowns = getAllByPlaceholderText(/select pipelineresource/i);
-  fireEvent.click(resourceDropdowns[0]);
-  fireEvent.click(getByText(/pipeline-resource-1/i));
-  fireEvent.click(resourceDropdowns[1]);
-  fireEvent.click(getByText(/pipeline-resource-2/i));
-  fireEvent.click(resourceDropdowns[2]);
-  fireEvent.click(getByText(/pipeline-resource-3/i));
-};
-
-const fillTask1Params = getByPlaceholderText => {
-  fireEvent.change(getByPlaceholderText(/default-1/i), {
-    target: { value: 'value-1' }
-  });
-  fireEvent.change(getByPlaceholderText(/param-2/i), {
-    target: { value: 'value-2' }
-  });
-};
-
-const selectTask1AndFillSpec = async ({
-  getAllByPlaceholderText,
-  getByPlaceholderText,
-  getByText,
-  queryByText,
-  queryByDisplayValue
-}) => {
-  // Select task-1 and verify spec details are displayed
-  await selectTask1({ getByPlaceholderText, getByText });
-  testTaskSpec('id-task-1', queryByText, queryByDisplayValue);
-  // Fill task spec
-  fillTask1Resources({ getAllByPlaceholderText, getByText });
-  fillTask1Params(getByPlaceholderText);
-};
 
 describe('CreateTaskRun', () => {
   beforeEach(() => {
     jest
       .spyOn(ServiceAccountsAPI, 'useServiceAccounts')
       .mockImplementation(() => ({ data: [serviceAccount] }));
-    jest.spyOn(TasksAPI, 'getTasks').mockImplementation(() => tasks.byId);
+    jest
+      .spyOn(TasksAPI, 'useTasks')
+      .mockImplementation(() => ({ data: tasks }));
+    jest
+      .spyOn(ClusterTasksAPI, 'useClusterTasks')
+      .mockImplementation(() => ({ data: clusterTasks }));
     jest
       .spyOn(PipelineResourcesAPI, 'usePipelineResources')
       .mockImplementation(() => ({
@@ -266,76 +164,6 @@ describe('CreateTaskRun', () => {
 
     const mockTestStore = mockStore(testStore);
     jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
-  });
-
-  it('handles api error', async () => {
-    const {
-      getAllByPlaceholderText,
-      getAllByText,
-      getByPlaceholderText,
-      getByText,
-      getByTitle,
-      queryByText,
-      queryByDisplayValue
-    } = render(
-      <Provider store={store.getStore()}>
-        <CreateTaskRun {...props} />
-      </Provider>
-    );
-
-    await selectTask1AndFillSpec({
-      getAllByPlaceholderText,
-      getByPlaceholderText,
-      getByText,
-      queryByText,
-      queryByDisplayValue
-    });
-    // Submit
-    const errorResponseMock = {
-      response: { status: 400, text: () => Promise.resolve('') }
-    };
-    const createTaskRun = jest
-      .spyOn(TaskRunsAPI, 'createTaskRun')
-      .mockImplementation(() => Promise.reject(errorResponseMock));
-    fireEvent.click(submitButton(getAllByText));
-    await waitFor(() => expect(createTaskRun).toHaveBeenCalledTimes(1));
-    await waitFor(() => getByText(apiErrorRegExp));
-    await waitFor(() => getByText(/error code 400/i));
-    fireEvent.click(getByTitle(/closes notification/i));
-  });
-
-  it('handles api error with text', async () => {
-    const {
-      getAllByPlaceholderText,
-      getAllByText,
-      getByPlaceholderText,
-      getByText,
-      queryByText,
-      queryByDisplayValue
-    } = render(
-      <Provider store={store.getStore()}>
-        <CreateTaskRun {...props} />
-      </Provider>
-    );
-
-    await selectTask1AndFillSpec({
-      getAllByPlaceholderText,
-      getByPlaceholderText,
-      getByText,
-      queryByText,
-      queryByDisplayValue
-    });
-    // Submit
-    const errorResponseMock = {
-      response: { status: 401, text: () => Promise.resolve('example message') }
-    };
-    const createTaskRun = jest
-      .spyOn(TaskRunsAPI, 'createTaskRun')
-      .mockImplementation(() => Promise.reject(errorResponseMock));
-    fireEvent.click(submitButton(getAllByText));
-    await waitFor(() => expect(createTaskRun).toHaveBeenCalledTimes(1));
-    await waitFor(() => getByText(apiErrorRegExp));
-    await waitFor(() => getByText(/example message \(error code 401\)/i));
   });
 
   it('renders empty, dropdowns disabled when no namespace selected', async () => {
@@ -382,60 +210,6 @@ describe('CreateTaskRun', () => {
         document.querySelector('[label="Select ServiceAccount"]').disabled
       ).toBe(false)
     );
-  });
-
-  it('renders task', async () => {
-    const {
-      getAllByPlaceholderText,
-      getByPlaceholderText,
-      getByText,
-      queryByDisplayValue,
-      queryByText
-    } = render(
-      <Provider store={store.getStore()}>
-        <CreateTaskRun {...props} />
-      </Provider>
-    );
-
-    expect(queryByDisplayValue(/namespace-1/i)).toBeTruthy();
-    // Select task-1 and verify spec details are displayed
-    await selectTask1({ getByPlaceholderText, getByText });
-    testTaskSpec('id-task-1', queryByText, queryByDisplayValue);
-    // Fill task spec
-    fillTask1Resources({
-      getAllByPlaceholderText,
-      getByText
-    });
-    fillTask1Params(getByPlaceholderText);
-    expect(queryByDisplayValue(/pipeline-resource-1/i)).toBeTruthy();
-    expect(queryByDisplayValue(/pipeline-resource-2/i)).toBeTruthy();
-    expect(queryByDisplayValue(/value-1/i)).toBeTruthy();
-    expect(queryByDisplayValue(/value-2/i)).toBeTruthy();
-
-    // Select task-2 and verify spec details are displayed
-    fireEvent.click(queryByDisplayValue(/task-1/i));
-    fireEvent.click(await waitFor(() => getByText(/task-2/i)));
-    testTaskSpec('id-task-2', queryByText, queryByDisplayValue);
-  });
-
-  it('renders task controlled', async () => {
-    // Display with task-1 selected
-
-    const {
-      getByDisplayValue,
-      queryAllByLabelText,
-      queryByText,
-      queryByDisplayValue
-    } = render(
-      <Provider store={store.getStore()}>
-        <CreateTaskRun {...props} location={{ search: '?taskName=task-1' }} />
-      </Provider>
-    );
-
-    await waitFor(() => getByDisplayValue(/task-1/i));
-    expect(queryAllByLabelText('Namespace')[0]).toBeTruthy();
-    // Verify spec details are displayed
-    testTaskSpec('id-task-1', queryByText, queryByDisplayValue);
   });
 
   it('renders labels', () => {
@@ -489,75 +263,6 @@ describe('CreateTaskRun', () => {
     expect(getByPlaceholderText(/select serviceaccount/i)).toBeTruthy();
   });
 
-  it('submits form', async () => {
-    const {
-      getAllByPlaceholderText,
-      getAllByText,
-      getByPlaceholderText,
-      getByText,
-      queryByText,
-      queryByDisplayValue
-    } = render(
-      <Provider store={store.getStore()}>
-        <CreateTaskRun {...props} />
-      </Provider>
-    );
-
-    expect(queryByDisplayValue(/namespace-1/i)).toBeTruthy();
-    // Select task-1 and verify spec details are displayed
-    await selectTask1({ getByPlaceholderText, getByText });
-    testTaskSpec('id-task-1', queryByText, queryByDisplayValue);
-    // Fill task spec
-    fillTask1Resources({ getAllByPlaceholderText, getByText });
-    fillTask1Params(getByPlaceholderText);
-    // Fill ServiceAccount
-    fireEvent.click(getByPlaceholderText(/select serviceaccount/i));
-    fireEvent.click(await waitFor(() => getByText(/service-account-1/i)));
-    // Fill timeout
-    fireEvent.change(getByPlaceholderText(/60/i), {
-      target: { value: '120' }
-    });
-    // Fill label
-    fireEvent.click(getAllByText(/Add/i)[0]);
-    fireEvent.change(getByPlaceholderText(/key/i), {
-      target: { value: 'foo' }
-    });
-    fireEvent.change(getByPlaceholderText(/value/i), {
-      target: { value: 'bar' }
-    });
-    // Submit
-    const createTaskRun = jest
-      .spyOn(TaskRunsAPI, 'createTaskRun')
-      .mockImplementation(() => Promise.resolve({}));
-    fireEvent.click(submitButton(getAllByText));
-    expect(createTaskRun).toHaveBeenCalledTimes(1);
-    const payload = {
-      namespace: 'namespace-1',
-      kind: 'Task',
-      taskName: 'task-1',
-      labels: {
-        foo: 'bar'
-      },
-      nodeSelector: null,
-      resources: {
-        inputs: {
-          'resource-1': 'pipeline-resource-1',
-          'resource-2': 'pipeline-resource-2'
-        },
-        outputs: {
-          'resource-3': 'pipeline-resource-3'
-        }
-      },
-      params: {
-        'param-1': 'value-1',
-        'param-2': 'value-2'
-      },
-      serviceAccount: 'service-account-1',
-      timeout: '120m'
-    };
-    expect(createTaskRun).toHaveBeenCalledWith(payload);
-  });
-
   it('handles onClose event', () => {
     jest.spyOn(props.history, 'push');
     const { getByText } = render(
@@ -567,95 +272,6 @@ describe('CreateTaskRun', () => {
     );
     fireEvent.click(getByText(/cancel/i));
     expect(props.history.push).toHaveBeenCalledTimes(1);
-  });
-
-  it('validates inputs', async () => {
-    const {
-      getAllByPlaceholderText,
-      getAllByText,
-      getByPlaceholderText,
-      getByText,
-      queryAllByText,
-      queryByText
-    } = render(
-      <Provider
-        store={mockStore({
-          ...testStore,
-          namespaces: { ...namespaces, selected: ALL_NAMESPACES }
-        })}
-      >
-        <CreateTaskRun {...props} />
-      </Provider>
-    );
-    // Test validation error on empty form submit
-    fireEvent.click(submitButton(getAllByText));
-    expect(queryByText(validationErrorMsgRegExp)).toBeTruthy();
-    expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
-    expect(queryByText(taskValidationErrorRegExp)).toBeTruthy();
-    // Fix validation error
-    fireEvent.click(getByPlaceholderText(/select namespace/i));
-    fireEvent.click(await waitFor(() => getByText(/namespace-1/i)));
-
-    await selectTask1({ getByPlaceholderText, getByText });
-    expect(queryByText(taskValidationErrorRegExp)).toBeFalsy();
-    expect(queryByText(namespaceValidationErrorRegExp)).toBeFalsy();
-    // Test validation on task1 spec
-    fireEvent.click(submitButton(getAllByText));
-    expect(
-      queryAllByText(pipelineResourceValidationErrorRegExp)[0]
-    ).toBeTruthy();
-    expect(queryByText(paramsValidationErrorRegExp)).toBeTruthy();
-    // Fix validation error
-    fillTask1Resources({ getAllByPlaceholderText, getByText });
-    expect(
-      queryAllByText(pipelineResourceValidationErrorRegExp)[0]
-    ).toBeFalsy();
-    fillTask1Params(getByPlaceholderText);
-    expect(queryByText(paramsValidationErrorRegExp)).toBeFalsy();
-    // Test validation on labels
-    fireEvent.click(getAllByText(/Add/i)[0]);
-    fireEvent.click(submitButton(getAllByText));
-    expect(queryByText(labelsValidationErrorRegExp)).toBeTruthy();
-    fireEvent.change(getByPlaceholderText(/key/i), {
-      target: { value: 'invalid key' }
-    });
-    expect(queryByText(labelsValidationErrorRegExp)).toBeTruthy();
-    // Fix validation error
-    fireEvent.change(getByPlaceholderText(/key/i), {
-      target: { value: 'foo' }
-    });
-    fireEvent.change(getByPlaceholderText(/value/i), {
-      target: { value: 'bar' }
-    });
-    expect(queryByText(labelsValidationErrorRegExp)).toBeFalsy();
-    // Test invalid timeouts
-    fireEvent.change(getByPlaceholderText(/60/i), {
-      target: { value: '120m' }
-    });
-    fireEvent.click(submitButton(getAllByText));
-    expect(queryByText(timeoutValidationErrorRegExp)).toBeTruthy();
-    // Test invalid timeouts for empty Timeout
-    fireEvent.change(document.getElementById('create-taskrun--timeout'), {
-      target: { value: ' ' }
-    });
-    fireEvent.click(submitButton(getAllByText));
-    expect(queryByText(timeoutValidationErrorRegExp)).toBeTruthy();
-    fireEvent.change(document.getElementById('create-taskrun--timeout'), {
-      target: { value: '525600' }
-    });
-    fireEvent.click(submitButton(getAllByText));
-    expect(queryByText(timeoutValidationErrorRegExp)).toBeTruthy();
-  });
-
-  it('handles error getting task', async () => {
-    jest.spyOn(reducers, 'getTask').mockImplementation(() => null);
-    const { getByPlaceholderText, getByText, queryByText } = render(
-      <Provider store={store.getStore()}>
-        <CreateTaskRun {...props} />
-      </Provider>
-    );
-    await selectTask1({ getByPlaceholderText, getByText });
-    expect(queryByText(/error retrieving task information/i)).toBeTruthy();
   });
 
   it('handles error getting task controlled', () => {
@@ -671,29 +287,5 @@ describe('CreateTaskRun', () => {
 
     expect(queryByText(badTaskRef)).toBeFalsy();
     expect(getByPlaceholderText(/select task/i)).toBeTruthy();
-  });
-
-  it('checks that pressing x on Task doesnt cause errors', async () => {
-    const {
-      getByPlaceholderText,
-      getByText,
-      getByDisplayValue,
-      queryAllByTitle,
-      queryByText,
-      queryByDisplayValue
-    } = render(
-      <Provider store={store.getStore()}>
-        <CreateTaskRun {...props} />
-      </Provider>
-    );
-
-    // Select task-1 and verify spec details are displayed
-    await selectTask1({ getByPlaceholderText, getByText });
-    testTaskSpec('id-task-1', queryByText, queryByDisplayValue);
-    expect(getByDisplayValue('task-1')).toBeTruthy();
-
-    fireEvent.click(queryAllByTitle(/clear selected item/i)[1]);
-    expect(getByDisplayValue(/namespace-1/i)).toBeTruthy();
-    expect(queryByText('Select PipelineResource')).toBeFalsy();
   });
 });

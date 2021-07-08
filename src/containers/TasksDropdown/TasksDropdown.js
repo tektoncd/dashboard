@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import {
@@ -20,31 +20,20 @@ import {
 } from '@tektoncd/dashboard-utils';
 import { TooltipDropdown } from '@tektoncd/dashboard-components';
 
-import {
-  getSelectedNamespace,
-  getTasks,
-  isFetchingTasks,
-  isWebSocketConnected
-} from '../../reducers';
-import { fetchTasks as fetchTasksActionCreator } from '../../actions/tasks';
+import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
+import { useTasks } from '../../api';
 
 function TasksDropdown({
-  fetchTasks,
   intl,
   label,
   namespace,
   webSocketConnected,
   ...rest
 }) {
-  function fetchData() {
-    fetchTasks({ namespace });
-  }
+  const { data: tasks = [], isFetching, refetch } = useTasks({ namespace });
+  useWebSocketReconnected(refetch, webSocketConnected);
 
-  useEffect(() => {
-    fetchData();
-  }, [namespace]);
-
-  useWebSocketReconnected(fetchData, webSocketConnected);
+  const items = tasks.map(task => task.metadata.name);
 
   const emptyText =
     namespace === ALL_NAMESPACES
@@ -68,31 +57,26 @@ function TasksDropdown({
     });
 
   return (
-    <TooltipDropdown {...rest} emptyText={emptyText} label={labelString} />
+    <TooltipDropdown
+      {...rest}
+      emptyText={emptyText}
+      items={items}
+      label={labelString}
+      loading={isFetching}
+    />
   );
 }
 
 TasksDropdown.defaultProps = {
-  items: [],
-  loading: false,
   titleText: 'Task'
 };
 
 function mapStateToProps(state, ownProps) {
   const namespace = ownProps.namespace || getSelectedNamespace(state);
   return {
-    items: getTasks(state, { namespace }).map(task => task.metadata.name),
-    loading: isFetchingTasks(state),
     namespace,
     webSocketConnected: isWebSocketConnected(state)
   };
 }
 
-const mapDispatchToProps = {
-  fetchTasks: fetchTasksActionCreator
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(injectIntl(TasksDropdown));
+export default connect(mapStateToProps)(injectIntl(TasksDropdown));

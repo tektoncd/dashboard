@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
@@ -34,26 +34,12 @@ import {
 } from '@tektoncd/dashboard-utils';
 
 import { ListPageLayout } from '..';
-import { fetchClusterTasks as fetchClusterTasksActionCreator } from '../../actions/tasks';
-import { deleteClusterTask, useIsReadOnly } from '../../api';
-import {
-  getClusterTasks,
-  getClusterTasksErrorMessage,
-  isFetchingClusterTasks,
-  isWebSocketConnected
-} from '../../reducers';
+import { deleteClusterTask, useClusterTasks, useIsReadOnly } from '../../api';
+import { isWebSocketConnected } from '../../reducers';
 
 /* istanbul ignore next */
 function ClusterTasksContainer(props) {
-  const {
-    clusterTasks,
-    error,
-    fetchClusterTasks,
-    filters,
-    intl,
-    loading,
-    webSocketConnected
-  } = props;
+  const { filters, intl, webSocketConnected } = props;
   const [cancelSelection, setCancelSelection] = useState(null);
   const [deleteError, setDeleteError] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -63,15 +49,14 @@ function ClusterTasksContainer(props) {
 
   useTitleSync({ page: 'ClusterTasks' });
 
-  function fetchData() {
-    fetchClusterTasks({ filters });
-  }
+  const {
+    data: clusterTasks = [],
+    error,
+    isLoading,
+    refetch
+  } = useClusterTasks({ filters });
 
-  useEffect(() => {
-    fetchData();
-  }, [JSON.stringify(filters)]);
-
-  useWebSocketReconnected(fetchData, webSocketConnected);
+  useWebSocketReconnected(refetch, webSocketConnected);
 
   function getError() {
     if (error) {
@@ -235,7 +220,7 @@ function ClusterTasksContainer(props) {
         className="tkn--table--inline-actions"
         headers={initialHeaders}
         rows={clusterTasksFormatted}
-        loading={loading && !clusterTasksFormatted.length}
+        loading={isLoading}
         emptyTextAllNamespaces={intl.formatMessage(
           {
             id: 'dashboard.emptyState.clusterResource',
@@ -265,27 +250,15 @@ function ClusterTasksContainer(props) {
 }
 
 ClusterTasksContainer.defaultProps = {
-  clusterTasks: [],
   filters: []
 };
 
 /* istanbul ignore next */
 function mapStateToProps(state, props) {
-  const filters = getFilters(props.location);
   return {
-    clusterTasks: getClusterTasks(state, { filters }),
-    error: getClusterTasksErrorMessage(state),
-    filters,
-    loading: isFetchingClusterTasks(state),
+    filters: getFilters(props.location),
     webSocketConnected: isWebSocketConnected(state)
   };
 }
 
-const mapDispatchToProps = {
-  fetchClusterTasks: fetchClusterTasksActionCreator
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(injectIntl(ClusterTasksContainer));
+export default connect(mapStateToProps)(injectIntl(ClusterTasksContainer));

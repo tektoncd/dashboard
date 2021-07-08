@@ -27,55 +27,29 @@ const props = {
   onChange: () => {}
 };
 
-const tasksByNamespace = {
-  blue: {
-    'task-1': 'id-task-1',
-    'task-2': 'id-task-2'
-  },
-  green: {
-    'task-3': 'id-task-3'
-  }
-};
-
-const tasksById = {
-  'id-task-1': {
+const tasks = [
+  {
     metadata: {
       name: 'task-1',
       namespace: 'blue',
       uid: 'id-task-1'
     }
   },
-  'id-task-2': {
+  {
     metadata: {
       name: 'task-2',
       namespace: 'blue',
       uid: 'id-task-2'
     }
   },
-  'id-task-3': {
+  {
     metadata: {
       name: 'task-3',
       namespace: 'green',
       uid: 'id-task-3'
     }
   }
-};
-
-const tasksStoreDefault = {
-  tasks: {
-    byId: tasksById,
-    byNamespace: tasksByNamespace,
-    isFetching: false
-  }
-};
-
-const tasksStoreFetching = {
-  tasks: {
-    byId: tasksById,
-    byNamespace: tasksByNamespace,
-    isFetching: true
-  }
-};
+];
 
 const namespacesByName = {
   blue: '',
@@ -89,13 +63,6 @@ const namespacesStoreBlue = {
   }
 };
 
-const namespacesStoreGreen = {
-  namespaces: {
-    byName: namespacesByName,
-    selected: 'green'
-  }
-};
-
 const initialTextRegExp = new RegExp('select task', 'i');
 
 const checkDropdownItems = ({
@@ -104,11 +71,13 @@ const checkDropdownItems = ({
   testDict,
   itemPrefixRegExp = new RegExp('task-', 'i')
 }) => {
-  Object.keys(testDict).forEach(item => {
-    expect(queryByText(new RegExp(item, 'i'))).toBeTruthy();
+  testDict.forEach(item => {
+    expect(queryByText(new RegExp(item.metadata.name, 'i'))).toBeTruthy();
   });
   getAllByText(itemPrefixRegExp).forEach(node => {
-    expect(getNodeText(node) in testDict).toBeTruthy();
+    expect(
+      testDict.some(item => getNodeText(node) === item.metadata.name)
+    ).toBeTruthy();
   });
 };
 
@@ -116,13 +85,9 @@ const middleware = [thunk];
 const mockStore = configureStore(middleware);
 
 describe('TasksDropdown', () => {
-  beforeEach(() => {
-    jest.spyOn(API, 'getTasks').mockImplementation(() => tasksById);
-  });
-
-  it('renders items based on Redux state', () => {
+  it('renders items', () => {
+    jest.spyOn(API, 'useTasks').mockImplementation(() => ({ data: tasks }));
     const store = mockStore({
-      ...tasksStoreDefault,
       ...namespacesStoreBlue,
       notifications: {}
     });
@@ -136,59 +101,13 @@ describe('TasksDropdown', () => {
     checkDropdownItems({
       getAllByText,
       queryByText,
-      testDict: tasksByNamespace.blue
-    });
-  });
-
-  it('renders items based on Redux state when namespace changes', () => {
-    const blueStore = mockStore({
-      ...tasksStoreDefault,
-      ...namespacesStoreBlue,
-      notifications: {}
-    });
-    const {
-      getByPlaceholderText,
-      getAllByText,
-      queryByText,
-      rerender
-    } = render(
-      <Provider store={blueStore}>
-        <TasksDropdown {...props} />
-      </Provider>
-    );
-    // View items
-    fireEvent.click(getByPlaceholderText(initialTextRegExp));
-    checkDropdownItems({
-      getAllByText,
-      queryByText,
-      testDict: tasksByNamespace.blue
-    });
-    fireEvent.click(getByPlaceholderText(initialTextRegExp));
-
-    // Change selected namespace from 'blue' to 'green'
-    const greenStore = mockStore({
-      ...tasksStoreDefault,
-      ...namespacesStoreGreen,
-      notifications: {}
-    });
-    render(
-      <Provider store={greenStore}>
-        <TasksDropdown {...props} />
-      </Provider>,
-      { rerender }
-    );
-    // View items
-    fireEvent.click(getByPlaceholderText(initialTextRegExp));
-    checkDropdownItems({
-      getAllByText,
-      queryByText,
-      testDict: tasksByNamespace.green
+      testDict: tasks
     });
   });
 
   it('renders controlled selection', () => {
+    jest.spyOn(API, 'useTasks').mockImplementation(() => ({ data: tasks }));
     const store = mockStore({
-      ...tasksStoreDefault,
       ...namespacesStoreBlue,
       notifications: {}
     });
@@ -217,33 +136,9 @@ describe('TasksDropdown', () => {
     expect(queryByPlaceholderText(initialTextRegExp)).toBeTruthy();
   });
 
-  it('renders controlled namespace', () => {
-    const store = mockStore({
-      ...tasksStoreDefault,
-      ...namespacesStoreBlue,
-      notifications: {}
-    });
-    // Select namespace 'green'
-    const { queryByText, getByPlaceholderText, getAllByText } = render(
-      <Provider store={store}>
-        <TasksDropdown {...props} namespace="green" />
-      </Provider>
-    );
-    fireEvent.click(getByPlaceholderText(initialTextRegExp));
-    checkDropdownItems({
-      getAllByText,
-      queryByText,
-      testDict: tasksByNamespace.green
-    });
-  });
-
   it('renders empty', () => {
+    jest.spyOn(API, 'useTasks').mockImplementation(() => ({ data: [] }));
     const store = mockStore({
-      tasks: {
-        byId: {},
-        byNamespace: {},
-        isFetching: false
-      },
       ...namespacesStoreBlue,
       notifications: {}
     });
@@ -259,12 +154,8 @@ describe('TasksDropdown', () => {
   });
 
   it('for all namespaces renders empty', () => {
+    jest.spyOn(API, 'useTasks').mockImplementation(() => ({ data: [] }));
     const store = mockStore({
-      tasks: {
-        byId: {},
-        byNamespace: {},
-        isFetching: false
-      },
       ...namespacesStoreBlue,
       notifications: {}
     });
@@ -277,9 +168,11 @@ describe('TasksDropdown', () => {
     expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
   });
 
-  it('renders loading skeleton based on Redux state', () => {
+  it('renders loading state', () => {
+    jest
+      .spyOn(API, 'useTasks')
+      .mockImplementation(() => ({ isFetching: true }));
     const store = mockStore({
-      ...tasksStoreFetching,
       ...namespacesStoreBlue,
       notifications: {}
     });
@@ -292,8 +185,8 @@ describe('TasksDropdown', () => {
   });
 
   it('handles onChange event', () => {
+    jest.spyOn(API, 'useTasks').mockImplementation(() => ({ data: tasks }));
     const store = mockStore({
-      ...tasksStoreDefault,
       ...namespacesStoreBlue,
       notifications: {}
     });

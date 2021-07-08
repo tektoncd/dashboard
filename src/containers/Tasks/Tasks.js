@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
@@ -35,28 +35,12 @@ import {
 } from '@carbon/icons-react';
 
 import { ListPageLayout } from '..';
-import { fetchTasks as fetchTasksActionCreator } from '../../actions/tasks';
-import { deleteTask, useIsReadOnly } from '../../api';
-import {
-  getSelectedNamespace,
-  getTasks,
-  getTasksErrorMessage,
-  isFetchingTasks,
-  isWebSocketConnected
-} from '../../reducers';
+import { deleteTask, useIsReadOnly, useTasks } from '../../api';
+import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
 
 /* istanbul ignore next */
 function Tasks(props) {
-  const {
-    error,
-    fetchTasks,
-    filters,
-    intl,
-    loading,
-    namespace,
-    tasks,
-    webSocketConnected
-  } = props;
+  const { filters, intl, namespace, webSocketConnected } = props;
 
   const [deleteError, setDeleteError] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -65,9 +49,10 @@ function Tasks(props) {
 
   const isReadOnly = useIsReadOnly();
 
-  function fetchData() {
-    fetchTasks({ filters, namespace });
-  }
+  const { data: tasks = [], error, isLoading, refetch } = useTasks({
+    filters,
+    namespace
+  });
 
   function getError() {
     if (error) {
@@ -92,11 +77,7 @@ function Tasks(props) {
 
   useTitleSync({ page: 'Tasks' });
 
-  useEffect(() => {
-    fetchData();
-  }, [JSON.stringify(filters), namespace]);
-
-  useWebSocketReconnected(fetchData, webSocketConnected);
+  useWebSocketReconnected(refetch, webSocketConnected);
 
   function closeDeleteModal() {
     setShowDeleteModal(false);
@@ -241,7 +222,7 @@ function Tasks(props) {
         className="tkn--table--inline-actions"
         headers={initialHeaders}
         rows={tasksFormatted}
-        loading={loading && !tasksFormatted.length}
+        loading={isLoading}
         selectedNamespace={namespace}
         emptyTextAllNamespaces={intl.formatMessage(
           {
@@ -273,8 +254,7 @@ function Tasks(props) {
 }
 
 Tasks.defaultProps = {
-  filters: [],
-  tasks: []
+  filters: []
 };
 
 /* istanbul ignore next */
@@ -284,17 +264,10 @@ function mapStateToProps(state, props) {
   const filters = getFilters(props.location);
 
   return {
-    error: getTasksErrorMessage(state),
     filters,
-    loading: isFetchingTasks(state),
     namespace,
-    tasks: getTasks(state, { filters, namespace }),
     webSocketConnected: isWebSocketConnected(state)
   };
 }
 
-const mapDispatchToProps = {
-  fetchTasks: fetchTasksActionCreator
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(injectIntl(Tasks));
+export default connect(mapStateToProps)(injectIntl(Tasks));

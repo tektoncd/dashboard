@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,7 +13,7 @@ limitations under the License.
 
 import * as API from '../api';
 import * as creators from './actionCreators';
-import { fetchPipeline, fetchPipelines } from './pipelines';
+import { fetchPipeline } from './pipelines';
 
 it('fetchPipeline', async () => {
   jest.spyOn(creators, 'fetchNamespacedResource');
@@ -24,26 +24,5 @@ it('fetchPipeline', async () => {
     'Pipeline',
     API.getPipeline,
     { name, namespace }
-  );
-});
-
-it('fetchPipelines', async () => {
-  jest.spyOn(creators, 'fetchNamespacedCollection');
-  const namespace = 'namespace';
-  fetchPipelines({ namespace });
-  expect(creators.fetchNamespacedCollection).toHaveBeenCalledWith(
-    'Pipeline',
-    API.getPipelines,
-    { namespace }
-  );
-});
-
-it('fetchPipelines no namespace', async () => {
-  jest.spyOn(creators, 'fetchNamespacedCollection');
-  fetchPipelines();
-  expect(creators.fetchNamespacedCollection).toHaveBeenCalledWith(
-    'Pipeline',
-    API.getPipelines,
-    { namespace: undefined }
   );
 });

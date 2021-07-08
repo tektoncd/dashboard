@@ -11,30 +11,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { TooltipDropdown } from '@tektoncd/dashboard-components';
+import { useWebSocketReconnected } from '@tektoncd/dashboard-utils';
 
-import {
-  getClusterTasks,
-  isFetchingClusterTasks,
-  isWebSocketConnected
-} from '../../reducers';
-import { fetchClusterTasks as fetchClusterTasksActionCreator } from '../../actions/tasks';
+import { isWebSocketConnected } from '../../reducers';
+import { useClusterTasks } from '../../api';
 
-function ClusterTasksDropdown({
-  fetchClusterTasks,
-  intl,
-  label,
-  webSocketConnected,
-  ...rest
-}) {
-  useEffect(() => {
-    if (webSocketConnected !== false) {
-      fetchClusterTasks();
-    }
-  }, [webSocketConnected]);
+function ClusterTasksDropdown({ intl, label, webSocketConnected, ...rest }) {
+  const { data: clusterTasks = [], isFetching, refetch } = useClusterTasks();
+  useWebSocketReconnected(refetch, webSocketConnected);
+
+  const items = clusterTasks.map(clusterTask => clusterTask.metadata.name);
 
   const emptyText = intl.formatMessage({
     id: 'dashboard.clusterTasksDropdown.empty',
@@ -47,30 +37,26 @@ function ClusterTasksDropdown({
       id: 'dashboard.clusterTasksDropdown.label',
       defaultMessage: 'Select ClusterTask'
     });
+
   return (
-    <TooltipDropdown {...rest} emptyText={emptyText} label={labelString} />
+    <TooltipDropdown
+      {...rest}
+      emptyText={emptyText}
+      items={items}
+      label={labelString}
+      loading={isFetching}
+    />
   );
 }
 
 ClusterTasksDropdown.defaultProps = {
-  items: [],
-  loading: false,
   titleText: 'ClusterTask'
 };
 
 function mapStateToProps(state) {
   return {
-    items: getClusterTasks(state).map(clusterTask => clusterTask.metadata.name),
-    loading: isFetchingClusterTasks(state),
     webSocketConnected: isWebSocketConnected(state)
   };
 }
 
-const mapDispatchToProps = {
-  fetchClusterTasks: fetchClusterTasksActionCreator
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(injectIntl(ClusterTasksDropdown));
+export default connect(mapStateToProps)(injectIntl(ClusterTasksDropdown));
