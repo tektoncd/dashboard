@@ -53,9 +53,7 @@ function Header({
           onClick={onHeaderMenuButtonClick}
         />
       )}
-      <HeaderName href="/" prefix="Tekton">
-        Dashboard
-      </HeaderName>
+      <HeaderName prefix="Tekton">Dashboard</HeaderName>
       <HeaderGlobalBar>{logoutButton}</HeaderGlobalBar>
     </CarbonHeader>
   );
