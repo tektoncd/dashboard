@@ -10,6 +10,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+/* istanbul ignore file */
 
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
@@ -38,27 +39,12 @@ import {
   ServiceAccountsDropdown,
   TasksDropdown
 } from '..';
-import { getClusterTask, getSelectedNamespace, getTask } from '../../reducers';
-import { createTaskRun } from '../../api';
-import { getStore } from '../../store/index';
+import { getSelectedNamespace } from '../../reducers';
+import { createTaskRun, useTaskByKind } from '../../api';
 import { isValidLabel } from '../../utils';
 
 const clusterTaskItem = { id: 'clustertask', text: 'ClusterTask' };
 const taskItem = { id: 'task', text: 'Task' };
-const parseTaskInfo = (taskRef, kind, namespace) => {
-  const state = getStore().getState();
-  if (taskRef) {
-    const task =
-      kind === 'ClusterTask'
-        ? getClusterTask(state, taskRef)
-        : getTask(state, { name: taskRef, namespace });
-    const paramSpecs = task?.spec?.params;
-    const resourceSpecs = task?.spec?.resources;
-    const taskError = !task;
-    return { paramSpecs, resourceSpecs, taskError };
-  }
-  return {};
-};
 
 const initialState = {
   creating: false,
@@ -74,7 +60,6 @@ const initialState = {
   resourceSpecs: [],
   serviceAccount: '',
   submitError: '',
-  taskError: false,
   taskRef: '',
   timeout: '60',
   validationError: false,
@@ -127,25 +112,10 @@ function CreateTaskRun(props) {
     };
   }
 
-  function getInitialState() {
-    const { kind: taskKind, taskName: taskRefFromDetails } = getTaskDetails();
-    let taskName = taskRefFromDetails;
-    const taskInfo = parseTaskInfo(taskName, taskKind, defaultNamespace);
-    if (taskInfo.taskError) {
-      taskName = '';
-    }
-    return {
-      ...initialState,
-      ...taskInfo,
-      kind: taskKind,
-      namespace: defaultNamespace !== ALL_NAMESPACES ? defaultNamespace : '',
-      taskRef: taskName || '',
-      params: initialParamsState(taskInfo.paramSpecs),
-      resources: initialResourcesState(taskInfo.resourceSpecs),
-      taskError: ''
-    };
-  }
-
+  const {
+    kind: initialTaskKind,
+    taskName: taskRefFromDetails
+  } = getTaskDetails();
   const [
     {
       creating,
@@ -156,19 +126,31 @@ function CreateTaskRun(props) {
       namespace,
       nodeSelector,
       params,
-      paramSpecs,
       resources,
-      resourceSpecs,
       serviceAccount,
       submitError,
-      taskError,
       taskRef,
       timeout,
       validationError,
       validTimeout
     },
     setState
-  ] = useState(getInitialState());
+  ] = useState({
+    ...initialState,
+    kind: initialTaskKind || 'Task',
+    namespace: defaultNamespace !== ALL_NAMESPACES ? defaultNamespace : '',
+    taskRef: taskRefFromDetails,
+    params: initialParamsState(null),
+    resources: initialResourcesState(null)
+  });
+
+  const { data: task, error: taskError } = useTaskByKind(
+    { kind, name: taskRef, namespace },
+    { enabled: taskRef }
+  );
+
+  const paramSpecs = task?.spec?.params;
+  const resourceSpecs = task?.spec?.resources;
 
   useTitleSync({
     page: intl.formatMessage({
@@ -366,13 +348,11 @@ function CreateTaskRun(props) {
     const { text } = selectedItem || {};
     if (text && text !== taskRef) {
       setState(state => {
-        const taskInfo = parseTaskInfo(text, state.kind, state.namespace);
         return {
           ...state,
-          ...taskInfo,
           taskRef: text,
-          resources: initialResourcesState(taskInfo.resourceSpecs),
-          params: initialParamsState(taskInfo.paramSpecs)
+          resources: initialResourcesState(resourceSpecs),
+          params: initialParamsState(paramSpecs)
         };
       });
       return;
@@ -785,7 +765,6 @@ function CreateTaskRun(props) {
   );
 }
 
-/* istanbul ignore next */
 function mapStateToProps(state) {
   return {
     defaultNamespace: getSelectedNamespace(state)

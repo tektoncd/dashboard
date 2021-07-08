@@ -14,6 +14,8 @@ limitations under the License.
 import { useQuery } from 'react-query';
 import { labels as labelConstants } from '@tektoncd/dashboard-utils';
 
+import { useClusterTask } from './clusterTasks';
+import { useTask } from './tasks';
 import { get, post } from './comms';
 import {
   apiRoot,
@@ -53,6 +55,13 @@ export function getCustomResource(...args) {
 
 export function useCustomResource(params) {
   return useQuery('customResource', getCustomResource, params);
+}
+
+export function useTaskByKind({ kind, ...rest }) {
+  if (kind === 'ClusterTask') {
+    return useClusterTask({ ...rest });
+  }
+  return useTask({ ...rest });
 }
 
 export async function getInstallProperties() {

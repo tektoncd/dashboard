@@ -16,8 +16,6 @@ import { injectIntl } from 'react-intl';
 import { ErrorBoundary } from '@tektoncd/dashboard-components';
 import { paths, urls, useTitleSync } from '@tektoncd/dashboard-utils';
 
-import * as actions from './actions';
-import * as selectors from '../../reducers';
 import './globals';
 
 /* istanbul ignore next */
@@ -48,11 +46,7 @@ function Extension({ displayName: resourceName, intl, source }) {
           </div>
         }
       >
-        <ExtensionComponent
-          actions={actions}
-          selectors={selectors}
-          utils={{ paths, urls }}
-        />
+        <ExtensionComponent utils={{ paths, urls }} />
       </Suspense>
     </ErrorBoundary>
   );

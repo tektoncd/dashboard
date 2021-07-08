@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import {
@@ -35,27 +35,11 @@ import {
 } from '@tektoncd/dashboard-components';
 
 import { ListPageLayout } from '..';
-import { fetchPipelines as fetchPipelinesActionCreator } from '../../actions/pipelines';
-import { deletePipeline, useIsReadOnly } from '../../api';
-import {
-  getPipelines,
-  getPipelinesErrorMessage,
-  getSelectedNamespace,
-  isFetchingPipelines,
-  isWebSocketConnected
-} from '../../reducers';
+import { deletePipeline, useIsReadOnly, usePipelines } from '../../api';
+import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
 
 export /* istanbul ignore next */ function Pipelines(props) {
-  const {
-    error,
-    fetchPipelines,
-    filters,
-    intl,
-    loading,
-    namespace,
-    pipelines,
-    webSocketConnected
-  } = props;
+  const { filters, intl, namespace, webSocketConnected } = props;
 
   const [cancelSelection, setCancelSelection] = useState(null);
   const [deleteError, setDeleteError] = useState(null);
@@ -66,15 +50,12 @@ export /* istanbul ignore next */ function Pipelines(props) {
 
   useTitleSync({ page: 'Pipelines' });
 
-  function fetchData() {
-    fetchPipelines({ filters, namespace });
-  }
+  const { data: pipelines = [], error, isLoading, refetch } = usePipelines({
+    filters,
+    namespace
+  });
 
-  useEffect(() => {
-    fetchData();
-  }, [JSON.stringify(filters), namespace]);
-
-  useWebSocketReconnected(fetchData, webSocketConnected);
+  useWebSocketReconnected(refetch, webSocketConnected);
 
   function getError() {
     if (error) {
@@ -243,7 +224,7 @@ export /* istanbul ignore next */ function Pipelines(props) {
         className="tkn--table--inline-actions"
         headers={initialHeaders}
         rows={pipelinesFormatted}
-        loading={loading && !pipelinesFormatted.length}
+        loading={isLoading}
         selectedNamespace={namespace}
         emptyTextAllNamespaces={intl.formatMessage(
           {
@@ -275,8 +256,7 @@ export /* istanbul ignore next */ function Pipelines(props) {
 }
 
 Pipelines.defaultProps = {
-  filters: [],
-  pipelines: []
+  filters: []
 };
 
 /* istanbul ignore next */
@@ -286,20 +266,10 @@ function mapStateToProps(state, props) {
   const filters = getFilters(props.location);
 
   return {
-    error: getPipelinesErrorMessage(state),
     filters,
-    loading: isFetchingPipelines(state),
     namespace,
-    pipelines: getPipelines(state, { filters, namespace }),
     webSocketConnected: isWebSocketConnected(state)
   };
 }
 
-const mapDispatchToProps = {
-  fetchPipelines: fetchPipelinesActionCreator
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(injectIntl(Pipelines));
+export default connect(mapStateToProps)(injectIntl(Pipelines));

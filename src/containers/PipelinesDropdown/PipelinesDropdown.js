@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import {
@@ -20,31 +20,22 @@ import {
 } from '@tektoncd/dashboard-utils';
 import { TooltipDropdown } from '@tektoncd/dashboard-components';
 
-import {
-  getPipelines,
-  getSelectedNamespace,
-  isFetchingPipelines,
-  isWebSocketConnected
-} from '../../reducers';
-import { fetchPipelines as fetchPipelinesActionCreator } from '../../actions/pipelines';
+import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
+import { usePipelines } from '../../api';
 
 function PipelinesDropdown({
-  fetchPipelines,
   intl,
   label,
   namespace,
   webSocketConnected,
   ...rest
 }) {
-  function fetchData() {
-    fetchPipelines({ namespace });
-  }
+  const { data: pipelines = [], isFetching, refetch } = usePipelines({
+    namespace
+  });
+  useWebSocketReconnected(refetch, webSocketConnected);
 
-  useEffect(() => {
-    fetchData();
-  }, [namespace]);
-
-  useWebSocketReconnected(fetchData, webSocketConnected);
+  const items = pipelines.map(pipeline => pipeline.metadata.name);
 
   const emptyText =
     namespace === ALL_NAMESPACES
@@ -68,33 +59,26 @@ function PipelinesDropdown({
       defaultMessage: 'Select Pipeline'
     });
   return (
-    <TooltipDropdown {...rest} emptyText={emptyText} label={labelString} />
+    <TooltipDropdown
+      {...rest}
+      emptyText={emptyText}
+      items={items}
+      label={labelString}
+      loading={isFetching}
+    />
   );
 }
 
 PipelinesDropdown.defaultProps = {
-  items: [],
-  loading: false,
   titleText: 'Pipeline'
 };
 
 function mapStateToProps(state, ownProps) {
   const namespace = ownProps.namespace || getSelectedNamespace(state);
   return {
-    items: getPipelines(state, { namespace }).map(
-      pipeline => pipeline.metadata.name
-    ),
-    loading: isFetchingPipelines(state),
     namespace,
     webSocketConnected: isWebSocketConnected(state)
   };
 }
 
-const mapDispatchToProps = {
-  fetchPipelines: fetchPipelinesActionCreator
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(injectIntl(PipelinesDropdown));
+export default connect(mapStateToProps)(injectIntl(PipelinesDropdown));

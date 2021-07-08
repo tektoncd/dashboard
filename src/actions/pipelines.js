@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,19 +11,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { getPipeline, getPipelines } from '../api';
-import {
-  fetchNamespacedCollection,
-  fetchNamespacedResource
-} from './actionCreators';
+import { getPipeline } from '../api';
+import { fetchNamespacedResource } from './actionCreators';
 
 export function fetchPipeline({ name, namespace }) {
   return fetchNamespacedResource('Pipeline', getPipeline, { name, namespace });
-}
-
-export function fetchPipelines({ filters, namespace } = {}) {
-  return fetchNamespacedCollection('Pipeline', getPipelines, {
-    filters,
-    namespace
-  });
 }

@@ -10,6 +10,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+/* istanbul ignore file */
 
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
@@ -35,9 +36,8 @@ import {
   PipelinesDropdown,
   ServiceAccountsDropdown
 } from '..';
-import { getPipeline, getSelectedNamespace } from '../../reducers';
-import { createPipelineRun } from '../../api';
-import { getStore } from '../../store/index';
+import { getSelectedNamespace } from '../../reducers';
+import { createPipelineRun, usePipeline } from '../../api';
 import { isValidLabel } from '../../utils';
 
 const initialState = {
@@ -58,27 +58,6 @@ const initialState = {
   timeout: '60',
   validationError: false,
   validTimeout: true
-};
-
-const parsePipelineInfo = (pipelineRef, namespace) => {
-  if (!pipelineRef) {
-    return {};
-  }
-
-  let resourceSpecs;
-  let paramSpecs;
-  const pipeline = getPipeline(getStore().getState(), {
-    name: pipelineRef,
-    namespace
-  });
-  if (pipeline) {
-    ({ resources: resourceSpecs, params: paramSpecs } = pipeline.spec);
-  }
-  return {
-    resourceSpecs,
-    paramSpecs,
-    pipelineError: !pipeline
-  };
 };
 
 const initialParamsState = paramSpecs => {
@@ -111,26 +90,6 @@ function CreatePipelineRun(props) {
     return urlSearchParams.get('pipelineName') || '';
   }
 
-  function getInitialState() {
-    let currentPipelineRef = getPipelineName();
-    const pipelineInfo = parsePipelineInfo(
-      currentPipelineRef,
-      defaultNamespace
-    );
-    if (pipelineInfo.pipelineError) {
-      currentPipelineRef = '';
-    }
-    return {
-      ...initialState,
-      ...pipelineInfo,
-      namespace: defaultNamespace !== ALL_NAMESPACES ? defaultNamespace : '',
-      pipelineRef: currentPipelineRef || '',
-      params: initialParamsState(pipelineInfo.paramSpecs),
-      resources: initialResourcesState(pipelineInfo.resourceSpecs),
-      pipelineError: ''
-    };
-  }
-
   const [
     {
       creating,
@@ -140,11 +99,8 @@ function CreatePipelineRun(props) {
       namespace,
       nodeSelector,
       params,
-      paramSpecs,
-      pipelineError,
       pipelineRef,
       resources,
-      resourceSpecs,
       serviceAccount,
       submitError,
       timeout,
@@ -152,7 +108,24 @@ function CreatePipelineRun(props) {
       validTimeout
     },
     setState
-  ] = useState(getInitialState());
+  ] = useState({
+    ...initialState,
+    namespace: defaultNamespace !== ALL_NAMESPACES ? defaultNamespace : '',
+    pipelineRef: getPipelineName() || '',
+    params: initialParamsState(null),
+    resources: initialResourcesState(null)
+  });
+
+  const { data: pipeline, error: pipelineError } = usePipeline(
+    { name: pipelineRef, namespace },
+    { enabled: pipelineRef }
+  );
+
+  let paramSpecs;
+  let resourceSpecs;
+  if (pipeline?.spec) {
+    ({ resources: resourceSpecs, params: paramSpecs } = pipeline.spec);
+  }
 
   useTitleSync({
     page: intl.formatMessage({
@@ -339,13 +312,11 @@ function CreatePipelineRun(props) {
     const { text } = selectedItem || {};
     if (text && text !== pipelineRef) {
       setState(state => {
-        const pipelineInfo = parsePipelineInfo(text, state.namespace);
         return {
           ...state,
-          ...pipelineInfo,
           pipelineRef: text,
-          resources: initialResourcesState(pipelineInfo.resourceSpecs),
-          params: initialParamsState(pipelineInfo.paramSpecs)
+          resources: initialResourcesState(resourceSpecs),
+          params: initialParamsState(paramSpecs)
         };
       });
       return;
@@ -702,7 +673,6 @@ function CreatePipelineRun(props) {
   );
 }
 
-/* istanbul ignore next */
 function mapStateToProps(state) {
   return {
     defaultNamespace: getSelectedNamespace(state)
