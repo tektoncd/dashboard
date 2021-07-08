@@ -14,7 +14,7 @@ limitations under the License.
 import { getGenerateNamePrefixForRerun } from '@tektoncd/dashboard-utils';
 import deepClone from 'lodash.clonedeep';
 
-import { deleteRequest, get, patch, post, put } from './comms';
+import { deleteRequest, get, patch, post } from './comms';
 import { checkData, getQueryParams, getTektonAPI } from './utils';
 
 export function getPipelineRuns({ filters = [], namespace } = {}) {
@@ -32,11 +32,12 @@ export function getPipelineRun({ name, namespace }) {
 }
 
 export function cancelPipelineRun({ name, namespace }) {
-  return getPipelineRun({ name, namespace }).then(pipelineRun => {
-    pipelineRun.spec.status = 'PipelineRunCancelled'; // eslint-disable-line
-    const uri = getTektonAPI('pipelineruns', { name, namespace });
-    return put(uri, pipelineRun);
-  });
+  const payload = [
+    { op: 'replace', path: '/spec/status', value: 'PipelineRunCancelled' }
+  ];
+
+  const uri = getTektonAPI('pipelineruns', { name, namespace });
+  return patch(uri, payload);
 }
 
 export function deletePipelineRun({ name, namespace }) {
@@ -121,5 +122,5 @@ export function startPipelineRun(pipelineRun) {
   const payload = [{ op: 'remove', path: '/spec/status' }];
 
   const uri = getTektonAPI('pipelineruns', { name, namespace });
-  return patch(uri, payload).then(({ body }) => body);
+  return patch(uri, payload);
 }

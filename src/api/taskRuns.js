@@ -14,7 +14,7 @@ limitations under the License.
 import { getGenerateNamePrefixForRerun } from '@tektoncd/dashboard-utils';
 import deepClone from 'lodash.clonedeep';
 
-import { deleteRequest, get, post, put } from './comms';
+import { deleteRequest, get, patch, post } from './comms';
 import { checkData, getQueryParams, getTektonAPI } from './utils';
 
 export function deleteTaskRun({ name, namespace }) {
@@ -33,11 +33,12 @@ export function getTaskRun({ name, namespace }) {
 }
 
 export function cancelTaskRun({ name, namespace }) {
-  return getTaskRun({ name, namespace }).then(taskRun => {
-    taskRun.spec.status = 'TaskRunCancelled'; // eslint-disable-line
-    const uri = getTektonAPI('taskruns', { name, namespace });
-    return put(uri, taskRun);
-  });
+  const payload = [
+    { op: 'replace', path: '/spec/status', value: 'TaskRunCancelled' }
+  ];
+
+  const uri = getTektonAPI('taskruns', { name, namespace });
+  return patch(uri, payload);
 }
 
 export function createTaskRun({

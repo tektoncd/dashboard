@@ -18,17 +18,16 @@ import * as API from './taskRuns';
 it('cancelTaskRun', () => {
   const name = 'foo';
   const namespace = 'foospace';
-  const data = { fake: 'taskRun', spec: { status: 'running' } };
-  fetchMock.get(/taskruns/, Promise.resolve(data));
-  const payload = {
-    fake: 'taskRun',
-    spec: { status: 'TaskRunCancelled' }
-  };
-  fetchMock.put(`end:${name}`, 204);
-  return API.cancelTaskRun({ name, namespace }).then(() => {
+  const returnedTaskRun = { fake: 'taskRun' };
+  const payload = [
+    { op: 'replace', path: '/spec/status', value: 'TaskRunCancelled' }
+  ];
+  fetchMock.patch(`end:${name}`, returnedTaskRun);
+  return API.cancelTaskRun({ name, namespace }).then(response => {
     expect(fetchMock.lastOptions()).toMatchObject({
       body: JSON.stringify(payload)
     });
+    expect(response).toEqual(returnedTaskRun);
     fetchMock.restore();
   });
 });
