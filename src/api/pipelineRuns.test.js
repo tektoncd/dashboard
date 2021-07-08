@@ -19,17 +19,16 @@ import * as API from './pipelineRuns';
 it('cancelPipelineRun', () => {
   const name = 'foo';
   const namespace = 'foospace';
-  const data = { fake: 'pipelineRun', spec: { status: 'running' } };
-  fetchMock.get(/pipelineruns/, Promise.resolve(data));
-  const payload = {
-    fake: 'pipelineRun',
-    spec: { status: 'PipelineRunCancelled' }
-  };
-  fetchMock.put(`end:${name}`, 204);
-  return API.cancelPipelineRun({ name, namespace }).then(() => {
+  const payload = [
+    { op: 'replace', path: '/spec/status', value: 'PipelineRunCancelled' }
+  ];
+  const returnedPipelineRun = { fake: 'PipelineRun' };
+  fetchMock.patch(`end:${name}`, returnedPipelineRun);
+  return API.cancelPipelineRun({ name, namespace }).then(response => {
     expect(fetchMock.lastOptions()).toMatchObject({
       body: JSON.stringify(payload)
     });
+    expect(response).toEqual(returnedPipelineRun);
     fetchMock.restore();
   });
 });
@@ -212,4 +211,21 @@ it('rerunPipelineRun', () => {
     expect(data).toEqual(newPipelineRun);
     fetchMock.restore();
   });
+});
+
+it('startPipelineRun', () => {
+  const name = 'foo';
+  const namespace = 'foospace';
+  const returnedPipelineRun = { fake: 'PipelineRun' };
+  const payload = [{ op: 'remove', path: '/spec/status' }];
+  fetchMock.patch(`end:${name}`, returnedPipelineRun);
+  return API.startPipelineRun({ metadata: { name, namespace } }).then(
+    response => {
+      expect(fetchMock.lastOptions()).toMatchObject({
+        body: JSON.stringify(payload)
+      });
+      expect(response).toEqual(returnedPipelineRun);
+      fetchMock.restore();
+    }
+  );
 });

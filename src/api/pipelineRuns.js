@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -17,7 +17,7 @@ import {
 } from '@tektoncd/dashboard-utils';
 import deepClone from 'lodash.clonedeep';
 
-import { deleteRequest, get, patch, post, put } from './comms';
+import { deleteRequest, get, patch, post } from './comms';
 import { checkData, getQueryParams, getTektonAPI } from './utils';
 
 export function getPipelineRuns({ filters = [], namespace } = {}) {
@@ -35,11 +35,12 @@ export function getPipelineRun({ name, namespace }) {
 }
 
 export function cancelPipelineRun({ name, namespace }) {
-  return getPipelineRun({ name, namespace }).then(pipelineRun => {
-    pipelineRun.spec.status = 'PipelineRunCancelled'; // eslint-disable-line
-    const uri = getTektonAPI('pipelineruns', { name, namespace });
-    return put(uri, pipelineRun);
-  });
+  const payload = [
+    { op: 'replace', path: '/spec/status', value: 'PipelineRunCancelled' }
+  ];
+
+  const uri = getTektonAPI('pipelineruns', { name, namespace });
+  return patch(uri, payload);
 }
 
 export function deletePipelineRun({ name, namespace }) {
@@ -128,5 +129,5 @@ export function startPipelineRun(pipelineRun) {
   const payload = [{ op: 'remove', path: '/spec/status' }];
 
   const uri = getTektonAPI('pipelineruns', { name, namespace });
-  return patch(uri, payload).then(({ body }) => body);
+  return patch(uri, payload);
 }
