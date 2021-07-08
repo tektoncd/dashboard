@@ -54,6 +54,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
 
   getLogContainer({ stepName, stepStatus, taskRun }) {
     const {
+      enableLogAutoScroll,
       fetchLogs,
       forceLogPolling,
       getLogsToolbar,
@@ -93,6 +94,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           key={`${selectedTaskId}:${selectedStepId}`}
           pollingInterval={pollingInterval}
           stepStatus={stepStatus}
+          isLogsMaximized={isLogsMaximized}
+          enableLogAutoScroll={enableLogAutoScroll}
         />
       </LogsRoot>
     );

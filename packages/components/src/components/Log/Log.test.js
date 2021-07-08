@@ -67,6 +67,102 @@ describe('Log', () => {
     await waitFor(() => getByText('Line 1'));
   });
 
+  it('auto-scrolls down, for a running step, when new logs are added and the Log component bottom is below the viewport', async () => {
+    const medium = Array.from(
+      { length: 199 },
+      (_v, i) => `Line ${i + 2}\n`
+    ).join('');
+    jest
+      .spyOn(Element.prototype, 'getBoundingClientRect')
+      .mockReturnValue({ bottom: 2500 })
+      .mockReturnValueOnce({ bottom: 0 });
+    const spiedFn = jest.spyOn(Element.prototype, 'scrollTop', 'set'); // the scrollTop value is changed in scrollToBottomLog
+
+    const { rerender } = render(
+      <Log
+        stepStatus={{ running: true }}
+        enableLogAutoScroll
+        pollingInterval={100}
+        fetchLogs={() => 'Line 1'}
+      />
+    );
+    rerender(
+      <Log
+        stepStatus={{ running: true }}
+        enableLogAutoScroll
+        pollingInterval={100}
+        fetchLogs={() => `Line1\n${medium}`}
+      />
+    );
+    await waitFor(() => expect(spiedFn).toHaveBeenCalled());
+  });
+
+  it('auto-scrolls down, for a running step, when new logs are added and the Log component is scrollable', async () => {
+    const long = Array.from(
+      { length: 19999 },
+      (_v, i) => `Line ${i + 1}\n`
+    ).join('');
+    jest
+      .spyOn(Element.prototype, 'getBoundingClientRect')
+      .mockReturnValue({ bottom: 0 });
+    jest
+      .spyOn(Element.prototype, 'scrollTop', 'get')
+      .mockReturnValue(-1) // to ensure el.scrollHeight - el.clientHeight > el.scrollTop i.e. 0 - 0 > -1
+      .mockReturnValueOnce(0);
+    const spiedFn = jest.spyOn(Element.prototype, 'scrollTop', 'set'); // the scrollTop value is changed in scrollToBottomLog
+
+    const { rerender } = render(
+      <Log
+        stepStatus={{ running: true }}
+        enableLogAutoScroll
+        pollingInterval={100}
+        fetchLogs={() => long}
+      />
+    );
+    rerender(
+      <Log
+        stepStatus={{ running: true }}
+        enableLogAutoScroll
+        pollingInterval={100}
+        fetchLogs={() => `${long}\nLine 20000`}
+      />
+    );
+    await waitFor(() => expect(spiedFn).toHaveBeenCalled());
+  });
+
+  it('does not auto-scroll down when the step was never running after the component mounting', async () => {
+    const long = Array.from(
+      { length: 19999 },
+      (_v, i) => `Line ${i + 1}\n`
+    ).join('');
+    jest
+      .spyOn(Element.prototype, 'getBoundingClientRect')
+      .mockReturnValue({ bottom: 0 });
+    jest
+      .spyOn(Element.prototype, 'scrollTop', 'get')
+      .mockReturnValue(-1) // to ensure el.scrollHeight - el.clientHeight > el.scrollTop i.e. 0 - 0 > -1
+      .mockReturnValueOnce(0);
+    const spiedFn = jest.spyOn(Element.prototype, 'scrollTop', 'set'); // the scrollTop value is changed in scrollToBottomLog
+
+    const { rerender } = render(
+      <Log
+        stepStatus={{ terminated: { reason: 'Completed' } }}
+        enableLogAutoScroll
+        pollingInterval={100}
+        fetchLogs={() => long}
+      />
+    );
+    rerender(
+      <Log
+        stepStatus={{ terminated: { reason: 'Completed' } }}
+        enableLogAutoScroll
+        pollingInterval={100}
+        fetchLogs={() => `${long}\nLine 20000`}
+      />
+    );
+    await waitFor(() => expect(spiedFn).not.toHaveBeenCalled());
+  });
+
   it('renders the provided content when streaming logs', async () => {
     const { getByText } = render(
       <Log
