@@ -76,7 +76,7 @@ class StepDefinition extends Component {
           resourceTable(
             intl.formatMessage({
               id: 'dashboard.stepDefinition.inputResources',
-              defaultMessage: 'Input Resources'
+              defaultMessage: 'Input resources'
             }),
             namespace,
             inputResources,
@@ -86,7 +86,7 @@ class StepDefinition extends Component {
           resourceTable(
             intl.formatMessage({
               id: 'dashboard.stepDefinition.outputResources',
-              defaultMessage: 'Output Resources'
+              defaultMessage: 'Output resources'
             }),
             namespace,
             outputResources,

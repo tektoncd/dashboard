@@ -145,7 +145,7 @@ it('EventListener displays with formatted labels', async () => {
   expect(queryByText(/bar: baz/i)).toBeTruthy();
   expect(queryByText('ServiceAccount:')).toBeTruthy();
   expect(queryByText(/my-serviceaccount/i)).toBeTruthy();
-  expect(queryByText(/Service Type/i)).toBeTruthy();
+  expect(queryByText(/Service type/i)).toBeTruthy();
   expect(queryByText(/NodePort/i)).toBeTruthy();
   // Check Trigger 0
   expect(queryByText(/my-trigger-0/i)).toBeTruthy();
@@ -196,7 +196,7 @@ it('EventListener handles no service type', async () => {
   );
 
   await waitFor(() => getByText(eventListenerName));
-  expect(queryByText(/Service Type/i)).toBeFalsy();
+  expect(queryByText(/Service type/i)).toBeFalsy();
 });
 
 it('EventListener handles no triggers', async () => {

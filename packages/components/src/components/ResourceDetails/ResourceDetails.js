@@ -87,7 +87,7 @@ const ResourceDetails = ({
                 <span>
                   {intl.formatMessage({
                     id: 'dashboard.metadata.dateCreated',
-                    defaultMessage: 'Date Created:'
+                    defaultMessage: 'Date created:'
                   })}
                 </span>
                 <FormattedDate

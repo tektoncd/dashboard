@@ -160,7 +160,7 @@ export /* istanbul ignore next */ function TriggerTemplateContainer(props) {
                 <TableContainer
                   title={intl.formatMessage({
                     id: 'dashboard.triggerTemplate.resourceTemplates',
-                    defaultMessage: 'Resource Templates'
+                    defaultMessage: 'Resource templates'
                   })}
                 >
                   <Table {...getTableProps()}>

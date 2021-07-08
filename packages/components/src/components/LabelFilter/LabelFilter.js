@@ -158,7 +158,7 @@ class LabelFilter extends Component {
           <Button type="submit" className="tkn--visually-hidden">
             {intl.formatMessage({
               id: 'dashboard.labelFilter.addFilterButton',
-              defaultMessage: 'Add Filter'
+              defaultMessage: 'Add filter'
             })}
           </Button>
         </Form>

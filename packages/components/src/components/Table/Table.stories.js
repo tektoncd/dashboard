@@ -70,7 +70,7 @@ Simple.args = {
   headers: [
     { key: 'name', header: 'Name' },
     { key: 'namespace', header: 'Namespace' },
-    { key: 'date', header: 'Date Created' }
+    { key: 'date', header: 'Date created' }
   ],
   selectedNamespace: '*'
 };
@@ -86,7 +86,7 @@ export const ToolbarButton = args => (
     headers={[
       { key: 'name', header: 'Name' },
       { key: 'namespace', header: 'Namespace' },
-      { key: 'date', header: 'Date Created' }
+      { key: 'date', header: 'Date created' }
     ]}
     loading={args.loading}
     rows={args.rows}
@@ -176,7 +176,7 @@ export const Sorting = args => {
       headers={[
         { key: 'name', header: 'Name' },
         { key: 'namespace', header: 'Namespace' },
-        { key: 'date', header: 'Date Created' }
+        { key: 'date', header: 'Date created' }
       ]}
       isSortable={args.isSortable}
       loading={args.loading}

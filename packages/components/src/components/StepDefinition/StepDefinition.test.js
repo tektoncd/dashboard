@@ -32,8 +32,8 @@ it('StepDefinition renders the provided content', () => {
 
   expect(queryByText(/--someArg/)).toBeTruthy();
   expect(queryByText(/test name/)).toBeTruthy();
-  expect(queryByText(/Input Resources/)).toBeNull();
-  expect(queryByText(/Output Resources/)).toBeNull();
+  expect(queryByText(/Input resources/)).toBeNull();
+  expect(queryByText(/Output resources/)).toBeNull();
 });
 
 it('StepDefinition renders the provided content with resources', () => {
@@ -83,8 +83,8 @@ it('StepDefinition renders the provided content with resources', () => {
 
   expect(queryByText(/--someArg/)).toBeTruthy();
   expect(queryByText(/test name/)).toBeTruthy();
-  expect(queryByText(/Input Resources/)).toBeTruthy();
-  expect(queryByText(/Output Resources/)).toBeTruthy();
+  expect(queryByText(/Input resources/)).toBeTruthy();
+  expect(queryByText(/Output resources/)).toBeTruthy();
   expect(queryByText(inputResourceName)).toBeTruthy();
   expect(queryByText(outputResourceName)).toBeTruthy();
   expect(queryByText(/inlineResourceParams/)).toBeTruthy();

@@ -610,7 +610,7 @@ function CreateTaskRun(props) {
           <KeyValueList
             legendText={intl.formatMessage({
               id: 'dashboard.createRun.nodeSelector.legendText',
-              defaultMessage: 'Node Selector'
+              defaultMessage: 'Node selector'
             })}
             invalidText={
               <span

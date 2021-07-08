@@ -275,7 +275,7 @@ export /* istanbul ignore next */ function CreatePipelineResource(props) {
             subtitle={getErrorMessage(submitError)}
             iconDescription={intl.formatMessage({
               id: 'dashboard.notification.clear',
-              defaultMessage: 'Clear Notification'
+              defaultMessage: 'Clear notification'
             })}
             onCloseButtonClick={resetError}
             lowContrast

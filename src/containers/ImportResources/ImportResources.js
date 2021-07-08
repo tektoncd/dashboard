@@ -206,7 +206,7 @@ export function ImportResources(props) {
         <InlineNotification
           iconDescription={intl.formatMessage({
             id: 'dashboard.notification.clear',
-            defaultMessage: 'Clear Notification'
+            defaultMessage: 'Clear notification'
           })}
           kind="error"
           lowContrast
@@ -318,7 +318,7 @@ export function ImportResources(props) {
           invalid={invalidNamespace}
           invalidText={intl.formatMessage({
             id: 'dashboard.namespacesDropdown.invalidText',
-            defaultMessage: 'Please select a namespace'
+            defaultMessage: 'Please select a Namespace'
           })}
           onChange={handleNamespace}
           required
@@ -350,7 +350,7 @@ export function ImportResources(props) {
               invalid={invalidImporterNamespace}
               invalidText={intl.formatMessage({
                 id: 'dashboard.namespacesDropdown.invalidText',
-                defaultMessage: 'Please select a namespace'
+                defaultMessage: 'Please select a Namespace'
               })}
               onChange={handleImporterNamespace}
               required
@@ -421,7 +421,7 @@ export function ImportResources(props) {
         <Button kind="primary" onClick={handleSubmit}>
           {intl.formatMessage({
             id: 'dashboard.importResources.importApplyButton',
-            defaultMessage: 'Import and Apply'
+            defaultMessage: 'Import'
           })}
         </Button>
       </Form>
