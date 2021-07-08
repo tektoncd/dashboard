@@ -36,12 +36,12 @@ const rows = [
 const headers = [
   { key: 'name', header: 'Name' },
   { key: 'namespace', header: 'Namespace' },
-  { key: 'date', header: 'Date Created' }
+  { key: 'date', header: 'Date created' }
 ];
 
 const toolbarButtons = [
   { onClick: () => {}, text: 'Add', icon: null },
-  { onClick: () => {}, text: 'Rerun All', icon: null }
+  { onClick: () => {}, text: 'Rerun all', icon: null }
 ];
 
 const batchActionButtons = [
@@ -71,7 +71,7 @@ describe('Table', () => {
     ).toBeFalsy();
     expect(queryByText('Name')).toBeTruthy();
     expect(queryByText('Namespace')).toBeTruthy();
-    expect(queryByText('Date Created')).toBeTruthy();
+    expect(queryByText('Date created')).toBeTruthy();
     expect(queryByText(/Delete/i)).toBeFalsy();
     expect(queryByText(/Add/i)).toBeFalsy();
     expect(queryByText(emptyTextAllNamespaces)).toBeTruthy();
@@ -176,7 +176,7 @@ describe('Table', () => {
       queryByText('Name').parentNode.className.includes('sort')
     ).toBeFalsy();
     expect(queryByText(/Delete/i)).toBeNull();
-    expect(queryByText(/Rerun All/i)).toBeNull();
+    expect(queryByText(/Rerun all/i)).toBeNull();
     expect(queryByText(/Add/i)).toBeTruthy();
     expect(queryByLabelText('Select all rows')).toBeNull();
     expect(queryByLabelText('Select row')).toBeNull();
@@ -197,7 +197,7 @@ describe('Table', () => {
     ).toBeFalsy();
     expect(queryByText(/Delete/i)).toBeNull();
     expect(queryByText(/Add/i)).toBeTruthy();
-    expect(queryByText(/Rerun All/i)).toBeTruthy();
+    expect(queryByText(/Rerun all/i)).toBeTruthy();
     expect(queryByLabelText('Select all rows')).toBeNull();
     expect(queryByLabelText('Select row')).toBeNull();
   });
@@ -237,7 +237,7 @@ describe('Table', () => {
     ).toBeFalsy();
     expect(queryByText(/Delete/i)).toBeTruthy();
     expect(queryByText(/Rerun/i)).toBeTruthy();
-    expect(queryByText(/Rerun All/i)).toBeNull();
+    expect(queryByText(/Rerun all/i)).toBeNull();
     expect(queryByText(/Add/i)).toBeNull();
     expect(queryByLabelText('Select all rows')).toBeTruthy();
     expect(queryByLabelText('Select row')).toBeTruthy();
@@ -263,7 +263,7 @@ describe('Table', () => {
     expect(queryByText(/Add/i)).toBeTruthy();
     expect(queryByText(/Delete/i)).toBeTruthy();
     expect(queryByText('Rerun')).toBeTruthy();
-    expect(queryByText('Rerun All')).toBeTruthy();
+    expect(queryByText('Rerun all')).toBeTruthy();
     expect(queryByLabelText('Select all rows')).toBeTruthy();
     expect(queryAllByLabelText('Select row')[0]).toBeTruthy();
   });
@@ -293,7 +293,7 @@ describe('Table', () => {
     expect(queryByText(/Resources/i)).toBeNull();
     expect(queryByText('Name')).toBeTruthy();
     expect(queryByText('Namespace')).toBeTruthy();
-    expect(queryByText('Date Created')).toBeTruthy();
+    expect(queryByText('Date created')).toBeTruthy();
     expect(queryByText(/Delete/i)).toBeNull();
     expect(queryByText(/Add/i)).toBeNull();
     expect(queryByLabelText('Select all rows')).toBeNull();

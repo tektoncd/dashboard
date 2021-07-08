@@ -128,7 +128,7 @@ class ZoomablePipelineGraph extends React.Component {
                 hasIconOnly
                 iconDescription={intl.formatMessage({
                   id: 'dashboard.graph.zoomOut',
-                  defaultMessage: 'Zoom Out'
+                  defaultMessage: 'Zoom out'
                 })}
                 kind="ghost"
                 onClick={zoomOut}
@@ -149,7 +149,7 @@ class ZoomablePipelineGraph extends React.Component {
                 hasIconOnly
                 iconDescription={intl.formatMessage({
                   id: 'dashboard.graph.zoomIn',
-                  defaultMessage: 'Zoom In'
+                  defaultMessage: 'Zoom in'
                 })}
                 kind="ghost"
                 onClick={zoomIn}

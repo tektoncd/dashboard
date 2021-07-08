@@ -72,7 +72,7 @@ export /* istanbul ignore next */ function EventListenerContainer(props) {
             <span>
               {intl.formatMessage({
                 id: 'dashboard.eventListener.serviceType',
-                defaultMessage: 'Service Type:'
+                defaultMessage: 'Service type:'
               })}
             </span>
             {serviceType}
@@ -83,7 +83,7 @@ export /* istanbul ignore next */ function EventListenerContainer(props) {
             <span>
               {intl.formatMessage({
                 id: 'dashboard.eventListener.namespaceSelector',
-                defaultMessage: 'Namespace Selector:'
+                defaultMessage: 'Namespace selector:'
               })}
             </span>
             {namespaceSelector.matchNames.join(', ')}

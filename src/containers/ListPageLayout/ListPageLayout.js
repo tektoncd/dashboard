@@ -95,7 +95,7 @@ export const ListPageLayout = ({
         <InlineNotification
           iconDescription={intl.formatMessage({
             id: 'dashboard.notification.clear',
-            defaultMessage: 'Clear Notification'
+            defaultMessage: 'Clear notification'
           })}
           kind="error"
           lowContrast

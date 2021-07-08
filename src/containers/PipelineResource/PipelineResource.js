@@ -143,21 +143,21 @@ function PipelineResource(props) {
               key: 'fieldName',
               header: intl.formatMessage({
                 id: 'dashboard.pipelineResource.fieldName',
-                defaultMessage: 'Field Name'
+                defaultMessage: 'Field name'
               })
             },
             {
               key: 'secretKey',
               header: intl.formatMessage({
                 id: 'dashboard.pipelineResource.secretKey',
-                defaultMessage: 'Secret Key'
+                defaultMessage: 'Secret key'
               })
             },
             {
               key: 'secretName',
               header: intl.formatMessage({
                 id: 'dashboard.pipelineResource.secretName',
-                defaultMessage: 'Secret Name'
+                defaultMessage: 'Secret name'
               })
             }
           ]}
