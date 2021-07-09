@@ -84,16 +84,6 @@ function TaskRuns(props) {
   useTitleSync({ page: 'TaskRuns' });
 
   function fetchData() {
-    if (kind === 'ClusterTask') {
-      // TaskRuns from ClusterTask should have label 'tekton.dev/clusterTask=',
-      // (and that is the filter on the page), but some taskruns might still
-      // only have the old label 'tekton.dev/task='
-      // So, for ClusterTasks, also fetch with the old filter:
-      fetchTaskRuns({
-        filters: [`${TASK}=${taskName}`]
-      });
-    }
-
     fetchTaskRuns({ filters, namespace });
   }
 
@@ -356,19 +346,7 @@ function mapStateToProps(state, props) {
       ? clusterTaskFilter.replace(`${CLUSTER_TASK}=`, '')
       : taskFilter.replace(`${TASK}=`, '');
 
-  let taskRuns = getTaskRuns(state, { filters, namespace });
-  if (kind === 'ClusterTask') {
-    // TaskRuns from ClusterTask should have label 'tekton.dev/clusterTask=',
-    // (and that is the filter on the page), but some taskruns might still
-    // only have the old label 'tekton.dev/task='
-    // So, for ClusterTasks, also fetch with the old filter:
-    const clusterTaskRuns = getTaskRuns(state, {
-      filters: [`${TASK}=${taskName}`]
-    });
-
-    // Then merge the arrays, using a Set to prevent duplicates
-    taskRuns = [...new Set([...taskRuns, ...clusterTaskRuns])];
-  }
+  const taskRuns = getTaskRuns(state, { filters, namespace });
 
   return {
     error: getTaskRunsErrorMessage(state),

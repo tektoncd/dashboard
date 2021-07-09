@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import fetchMock from 'fetch-mock';
-import { labels as labelConstants } from '@tektoncd/dashboard-utils';
 
 import * as API from './taskRuns';
 
@@ -62,7 +61,6 @@ it('createTaskRun has correct metadata', () => {
     expect(sentMetadata.name).toMatch('fake-timestamp'); // include timestamp
     expect(sentMetadata).toHaveProperty('namespace', namespace);
     expect(sentMetadata.labels).toHaveProperty('app', 'fake-app');
-    expect(sentMetadata.labels).toHaveProperty([labelConstants.TASK], taskName);
     fetchMock.restore();
     mockDateNow.mockRestore();
   });

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,10 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {
-  getGenerateNamePrefixForRerun,
-  labels as labelConstants
-} from '@tektoncd/dashboard-utils';
+import { getGenerateNamePrefixForRerun } from '@tektoncd/dashboard-utils';
 import deepClone from 'lodash.clonedeep';
 
 import { deleteRequest, get, post, put } from './comms';
@@ -60,10 +57,7 @@ export function createTaskRun({
     metadata: {
       name: `${taskName}-run-${Date.now()}`,
       namespace,
-      labels: {
-        [labelConstants.TASK]: taskName,
-        ...labels
-      }
+      labels
     },
     spec: {
       params: [],
