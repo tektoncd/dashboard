@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import fetchMock from 'fetch-mock';
-import { labels } from '@tektoncd/dashboard-utils';
 
 import * as API from './pipelineRuns';
 
@@ -54,11 +53,7 @@ it('createPipelineRun', () => {
     apiVersion: 'tekton.dev/v1beta1',
     kind: 'PipelineRun',
     metadata: {
-      name: `${pipelineName}-run-${Date.now()}`,
-      labels: {
-        [labels.PIPELINE]: pipelineName,
-        app: 'tekton-app'
-      }
+      name: `${pipelineName}-run-${Date.now()}`
     },
     spec: {
       pipelineRef: {
@@ -110,11 +105,7 @@ it('createPipelineRun with nodeSelector', () => {
     apiVersion: 'tekton.dev/v1beta1',
     kind: 'PipelineRun',
     metadata: {
-      name: `${pipelineName}-run-${Date.now()}`,
-      labels: {
-        [labels.PIPELINE]: pipelineName,
-        app: 'tekton-app'
-      }
+      name: `${pipelineName}-run-${Date.now()}`
     },
     spec: {
       pipelineRef: {
