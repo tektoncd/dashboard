@@ -424,7 +424,7 @@ function CreatePipelineRun(props) {
   return (
     <div className="tkn--create">
       <div className="tkn--create--heading">
-        <h1>
+        <h1 id="main-content-header">
           {intl.formatMessage({
             id: 'dashboard.createPipelineRun.title',
             defaultMessage: 'Create PipelineRun'

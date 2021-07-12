@@ -231,7 +231,12 @@ export function App({
               {props => <SideNav {...props} expanded={isSideNavExpanded} />}
             </Route>
 
-            <Content id="main-content" className="tkn--main-content">
+            <Content
+              id="main-content"
+              className="tkn--main-content"
+              aria-labelledby="main-content-header"
+              tabIndex="0"
+            >
               <PageErrorBoundary>
                 <Switch>
                   <Route
