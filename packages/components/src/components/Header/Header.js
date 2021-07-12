@@ -22,6 +22,12 @@ import {
   SkipToContent
 } from 'carbon-components-react';
 
+function skipToContentClick(event) {
+  event.preventDefault();
+  window.scrollTo(0, 0);
+  document.getElementById('main-content').focus();
+}
+
 function Header({
   intl,
   isSideNavExpanded,
@@ -30,7 +36,7 @@ function Header({
 }) {
   return (
     <CarbonHeader aria-label="Tekton Dashboard" className="tkn--header">
-      <SkipToContent>
+      <SkipToContent href="#" onClick={skipToContentClick}>
         {intl.formatMessage({
           id: 'dashboard.skipToContent',
           defaultMessage: 'Skip to main content'

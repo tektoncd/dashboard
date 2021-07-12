@@ -128,7 +128,7 @@ export function About({ intl }) {
 
   return (
     <div className="tkn--about">
-      <h1>
+      <h1 id="main-content-header">
         {intl.formatMessage({
           id: 'dashboard.about.title',
           defaultMessage: 'About'

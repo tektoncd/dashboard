@@ -196,7 +196,7 @@ export function ImportResources(props) {
 
   return (
     <div className="tkn--importresources">
-      <h1 className="tkn--importresources-header">
+      <h1 id="main-content-header" className="tkn--importresources-header">
         {intl.formatMessage({
           id: 'dashboard.importResources.heading',
           defaultMessage: 'Import resources from repository'

@@ -447,7 +447,7 @@ function CreateTaskRun(props) {
   return (
     <div className="tkn--create">
       <div className="tkn--create--heading">
-        <h1>
+        <h1 id="main-content-header">
           {intl.formatMessage({
             id: 'dashboard.createTaskRun.title',
             defaultMessage: 'Create TaskRun'

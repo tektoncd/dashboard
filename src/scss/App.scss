@@ -116,3 +116,8 @@ a {
     min-height: 100%;
   }
 }
+
+//height of the main header, added for accessibility of skip to main content link
+#main-content {
+  scroll-margin-top: 3rem;
+}

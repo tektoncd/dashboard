@@ -229,7 +229,7 @@ export /* istanbul ignore next */ function CreatePipelineResource(props) {
   return (
     <div className="tkn--create">
       <div className="tkn--create--heading">
-        <h1>
+        <h1 id="main-content-header">
           {intl.formatMessage({
             id: 'dashboard.createPipelineResource.title',
             defaultMessage: 'Create PipelineResource'

@@ -71,7 +71,7 @@ export const ListPageLayout = ({
   return (
     <>
       <div className="tkn--list-page--header">
-        <h1>{title}</h1>
+        <h1 id="main-content-header">{title}</h1>
 
         {!(hideNamespacesDropdown || tenantNamespace) && (
           <NamespacesDropdown
