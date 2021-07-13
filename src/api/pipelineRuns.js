@@ -64,6 +64,7 @@ export function createPipelineRun({
   pipelineName,
   resources,
   params,
+  pipelinePendingStatus,
   serviceAccount,
   timeout,
   labels,
@@ -89,7 +90,8 @@ export function createPipelineRun({
       params: Object.keys(params).map(name => ({
         name,
         value: params[name]
-      }))
+      })),
+      status: pipelinePendingStatus
     }
   };
   if (nodeSelector) {
