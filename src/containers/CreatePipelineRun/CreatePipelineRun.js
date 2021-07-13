@@ -20,7 +20,8 @@ import {
   Form,
   FormGroup,
   InlineNotification,
-  TextInput
+  TextInput,
+  Toggle
 } from 'carbon-components-react';
 import {
   ALL_NAMESPACES,
@@ -49,6 +50,7 @@ const initialState = {
   nodeSelector: [],
   params: [],
   paramSpecs: [],
+  pendingPipelineStatus: '',
   pipelineError: false,
   pipelineRef: '',
   resources: [],
@@ -99,6 +101,7 @@ function CreatePipelineRun(props) {
       namespace,
       nodeSelector,
       params,
+      pipelinePendingStatus,
       pipelineRef,
       resources,
       serviceAccount,
@@ -134,6 +137,12 @@ function CreatePipelineRun(props) {
     })
   });
 
+  const checked = isPending => {
+    setState(state => ({
+      ...state,
+      pipelinePendingStatus: isPending ? 'PipelineRunPending' : ''
+    }));
+  };
   function checkFormValidation() {
     // Namespace, PipelineRef, Resources, and Params must all have values
     const validNamespace = !!namespace;
@@ -360,6 +369,7 @@ function CreatePipelineRun(props) {
       pipelineName: pipelineRef,
       resources,
       params,
+      pipelinePendingStatus,
       serviceAccount,
       timeout: timeoutInMins,
       labels: labels.reduce((acc, { key, value }) => {
@@ -666,6 +676,23 @@ function CreatePipelineRun(props) {
             onChange={({ target: { value } }) =>
               setState(state => ({ ...state, timeout: value }))
             }
+          />
+          <Toggle
+            defaultToggled={false}
+            id="pending-pipeline-toggle"
+            labelText={intl.formatMessage({
+              id: 'dashboard.createPipelineRun.status.pending',
+              defaultMessage: 'Create PipelineRun in pending state'
+            })}
+            onToggle={checked}
+            labelA={intl.formatMessage({
+              id: 'dashboard.createPipelineRun.disabled',
+              defaultMessage: 'Disabled'
+            })}
+            labelB={intl.formatMessage({
+              id: 'dashboard.createPipelineRun.enabled',
+              defaultMessage: 'Enabled'
+            })}
           />
         </FormGroup>
       </Form>
