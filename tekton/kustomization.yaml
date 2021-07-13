@@ -4,4 +4,3 @@ resources:
   - build.yaml
   - publish.yaml
   - release-pipeline.yaml
-  - resources.yaml
