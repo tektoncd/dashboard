@@ -15,7 +15,6 @@ import { combineReducers } from 'redux';
 import { labels as labelConstants } from '@tektoncd/dashboard-utils';
 
 import clusterTasks, * as clusterTaskSelectors from './clusterTasks';
-import extensions, * as extensionSelectors from './extensions';
 import locale, * as localeSelectors from './locale';
 import namespaces, * as namespaceSelectors from './namespaces';
 import notifications, * as notificationSelectors from './notifications';
@@ -26,7 +25,6 @@ import tasks, * as taskSelectors from './tasks';
 
 export default combineReducers({
   clusterTasks,
-  extensions,
   locale,
   namespaces,
   notifications,
@@ -58,20 +56,6 @@ export function getNamespaces(state) {
 
 export function isFetchingNamespaces(state) {
   return namespaceSelectors.isFetchingNamespaces(state.namespaces);
-}
-
-export function getExtensions(state) {
-  return extensionSelectors
-    .getExtensions(state.extensions)
-    .filter(({ displayName }) => !!displayName);
-}
-
-export function getExtensionsErrorMessage(state) {
-  return extensionSelectors.getExtensionsErrorMessage(state.extensions);
-}
-
-export function isFetchingExtensions(state) {
-  return extensionSelectors.isFetchingExtensions(state.extensions);
 }
 
 export function getPipeline(

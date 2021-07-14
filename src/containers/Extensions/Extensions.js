@@ -14,7 +14,6 @@ limitations under the License.
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
 import {
   Link as CarbonLink,
   InlineNotification
@@ -22,24 +21,19 @@ import {
 import { getErrorMessage, urls, useTitleSync } from '@tektoncd/dashboard-utils';
 import { Table } from '@tektoncd/dashboard-components';
 
-import {
-  getExtensions,
-  getExtensionsErrorMessage,
-  isFetchingExtensions
-} from '../../reducers';
+import { useExtensions } from '../../api';
 
-export const Extensions = /* istanbul ignore next */ ({
-  error,
-  intl,
-  loading,
-  extensions
-}) => {
+function Extensions(props) {
+  const { intl } = props;
+
   useTitleSync({
     page: intl.formatMessage({
       id: 'dashboard.extensions.title',
       defaultMessage: 'Extensions'
     })
   });
+
+  const { data: extensions = [], error, isFetching } = useExtensions();
 
   const emptyText = intl.formatMessage({
     id: 'dashboard.extensions.emptyState',
@@ -77,47 +71,32 @@ export const Extensions = /* istanbul ignore next */ ({
             })
           }
         ]}
-        rows={extensions.map(
-          ({ apiGroup, apiVersion, displayName, extensionType, name }) => ({
-            id: name,
-            name: (
-              <Link
-                component={CarbonLink}
-                to={
-                  extensionType === 'kubernetes-resource'
-                    ? urls.kubernetesResources.all({
-                        group: apiGroup,
-                        version: apiVersion,
-                        type: name
-                      })
-                    : urls.extensions.byName({ name })
-                }
-                title={displayName}
-              >
-                {displayName}
-              </Link>
-            )
-          })
-        )}
-        loading={loading}
+        rows={extensions.map(({ apiGroup, apiVersion, displayName, name }) => ({
+          id: name,
+          name: (
+            <Link
+              component={CarbonLink}
+              to={urls.kubernetesResources.all({
+                group: apiGroup,
+                version: apiVersion,
+                type: name
+              })}
+              title={displayName}
+            >
+              {displayName}
+            </Link>
+          )
+        }))}
+        loading={isFetching}
         emptyTextAllNamespaces={emptyText}
         emptyTextSelectedNamespace={emptyText}
       />
     </>
   );
-};
+}
 
 Extensions.defaultProps = {
   extensions: []
 };
 
-/* istanbul ignore next */
-function mapStateToProps(state) {
-  return {
-    error: getExtensionsErrorMessage(state),
-    loading: isFetchingExtensions(state),
-    extensions: getExtensions(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(Extensions));
+export default injectIntl(Extensions);
