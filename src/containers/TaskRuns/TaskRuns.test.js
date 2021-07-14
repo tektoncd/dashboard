@@ -369,7 +369,11 @@ describe('TaskRuns container', () => {
       url: urls.taskRuns.all()
     };
 
-    const { getByText, queryAllByTitle } = renderWithRouter(
+    const {
+      getByText,
+      queryAllByLabelText,
+      queryAllByTitle
+    } = renderWithRouter(
       <Provider store={store.getStore()}>
         <Route
           path={urls.taskRuns.all()}
@@ -391,6 +395,7 @@ describe('TaskRuns container', () => {
 
     await waitFor(() => getByText('taskRunWithTwoLabels'));
     expect(queryAllByTitle(/actions/i)[0]).toBeFalsy();
+    expect(queryAllByLabelText('Select row').length).toBe(0);
   });
 
   it('handles rerun event in TaskRuns page', async () => {
