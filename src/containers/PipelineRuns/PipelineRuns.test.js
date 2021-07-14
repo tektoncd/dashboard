@@ -376,7 +376,12 @@ describe('PipelineRuns container', () => {
       url: '/pipelineruns'
     };
 
-    const { getByText, queryAllByText, queryAllByTitle } = renderWithRouter(
+    const {
+      getByText,
+      queryAllByLabelText,
+      queryAllByText,
+      queryAllByTitle
+    } = renderWithRouter(
       <Provider store={mockTestStore}>
         <Route
           path="/pipelineruns"
@@ -399,6 +404,7 @@ describe('PipelineRuns container', () => {
     await waitFor(() => getByText('pipelineRunWithTwoLabels'));
     expect(queryAllByText('Create')[0]).toBeFalsy();
     expect(queryAllByTitle(/actions/i)[0]).toBeFalsy();
+    expect(queryAllByLabelText('Select row').length).toBe(0);
   });
 
   it('handles rerun event in PipelineRuns page', async () => {

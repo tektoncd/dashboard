@@ -286,7 +286,7 @@ function TaskRuns(props) {
         }
       ];
 
-  const batchActionButtons = props.isReadOnly
+  const batchActionButtons = isReadOnly
     ? []
     : [
         {
