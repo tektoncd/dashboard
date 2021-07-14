@@ -146,7 +146,7 @@ function CreateTaskRun(props) {
 
   const { data: task, error: taskError } = useTaskByKind(
     { kind, name: taskRef, namespace },
-    { enabled: taskRef }
+    { enabled: !!taskRef }
   );
 
   const paramSpecs = task?.spec?.params;

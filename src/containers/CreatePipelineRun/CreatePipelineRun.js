@@ -118,7 +118,7 @@ function CreatePipelineRun(props) {
 
   const { data: pipeline, error: pipelineError } = usePipeline(
     { name: pipelineRef, namespace },
-    { enabled: pipelineRef }
+    { enabled: !!pipelineRef }
   );
 
   let paramSpecs;

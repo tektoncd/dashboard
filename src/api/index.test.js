@@ -78,10 +78,12 @@ it('useTaskByKind', () => {
 
   let returnValue = API.useTaskByKind({ ...params, kind: 'ClusterTask' });
   expect(ClusterTasksAPI.useClusterTask).toHaveBeenCalledWith(
-    expect.objectContaining(params)
+    expect.objectContaining(params),
+    undefined
   );
   expect(ClusterTasksAPI.useClusterTask).not.toHaveBeenCalledWith(
-    expect.objectContaining({ kind: expect.any(String) })
+    expect.objectContaining({ kind: expect.any(String) }),
+    undefined
   );
   expect(TasksAPI.useTask).not.toHaveBeenCalled();
   expect(returnValue).toEqual(clusterTaskQuery);
@@ -90,10 +92,12 @@ it('useTaskByKind', () => {
   returnValue = API.useTaskByKind({ ...params, kind: 'Task' });
   expect(ClusterTasksAPI.useClusterTask).not.toHaveBeenCalled();
   expect(TasksAPI.useTask).toHaveBeenCalledWith(
-    expect.objectContaining(params)
+    expect.objectContaining(params),
+    undefined
   );
   expect(TasksAPI.useTask).not.toHaveBeenCalledWith(
-    expect.objectContaining({ kind: expect.any(String) })
+    expect.objectContaining({ kind: expect.any(String) }),
+    undefined
   );
   expect(returnValue).toEqual(taskQuery);
 });
