@@ -30,8 +30,12 @@ import {
 import { ALL_NAMESPACES, urls } from '@tektoncd/dashboard-utils';
 
 import { selectNamespace as selectNamespaceActionCreator } from '../../actions/namespaces';
-import { getExtensions, getSelectedNamespace } from '../../reducers';
-import { useIsReadOnly, useIsTriggersInstalled } from '../../api';
+import { getSelectedNamespace } from '../../reducers';
+import {
+  useExtensions,
+  useIsReadOnly,
+  useIsTriggersInstalled
+} from '../../api';
 
 import { ReactComponent as KubernetesIcon } from '../../images/kubernetes.svg';
 import { ReactComponent as TektonIcon } from '../../images/tekton-logo-20x20.svg';
@@ -39,7 +43,6 @@ import { ReactComponent as TektonIcon } from '../../images/tekton-logo-20x20.svg
 function SideNav(props) {
   const {
     expanded,
-    extensions,
     intl,
     match,
     selectNamespace,
@@ -51,6 +54,8 @@ function SideNav(props) {
   }
 
   const { namespace } = match?.params || {};
+
+  const { data: extensions = [] } = useExtensions();
 
   useEffect(() => {
     if (namespace) {
@@ -191,25 +196,15 @@ function SideNav(props) {
             })}
           >
             {extensions.map(
-              ({
-                apiGroup,
-                apiVersion,
-                displayName,
-                extensionType,
-                name,
-                namespaced
-              }) => {
-                const to =
-                  extensionType === 'kubernetes-resource'
-                    ? getPath(
-                        urls.kubernetesResources.all({
-                          group: apiGroup,
-                          version: apiVersion,
-                          type: name
-                        }),
-                        namespaced
-                      )
-                    : urls.extensions.byName({ name });
+              ({ apiGroup, apiVersion, displayName, name, namespaced }) => {
+                const to = getPath(
+                  urls.kubernetesResources.all({
+                    group: apiGroup,
+                    version: apiVersion,
+                    type: name
+                  }),
+                  namespaced
+                );
                 return (
                   <SideNavMenuItem
                     {...getMenuItemProps(to)}
@@ -254,7 +249,6 @@ SideNav.defaultProps = {
 
 /* istanbul ignore next */
 const mapStateToProps = state => ({
-  extensions: getExtensions(state),
   namespace: getSelectedNamespace(state)
 });
 

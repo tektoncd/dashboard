@@ -75,19 +75,18 @@ import {
   TriggerTemplates
 } from '..';
 
-import { fetchExtensions as fetchExtensionsActionCreator } from '../../actions/extensions';
 import {
   fetchNamespaces as fetchNamespacesActionCreator,
   selectNamespace as selectNamespaceActionCreator
 } from '../../actions/namespaces';
 
 import {
-  getExtensions,
   getLocale,
   getSelectedNamespace,
   isWebSocketConnected as selectIsWebSocketConnected
 } from '../../reducers';
 import {
+  useExtensions,
   useIsReadOnly,
   useLogoutURL,
   useProperties,
@@ -152,8 +151,6 @@ async function loadMessages(lang) {
 
 /* istanbul ignore next */
 export function App({
-  extensions,
-  fetchExtensions,
   fetchNamespaces,
   lang,
   onUnload,
@@ -185,9 +182,20 @@ export function App({
 
   const showLoadingState = isPropertiesPlaceholder || isMessagesPlaceholder;
   const isFetchingConfig = isFetchingProperties || isFetchingMessages;
+
+  const { data: extensions = [], refetch: refetchExtensions } = useExtensions(
+    { namespace: tenantNamespace || ALL_NAMESPACES },
+    { enabled: !isFetchingConfig }
+  );
+
   const loadingConfigError = propertiesError || messagesError;
 
-  useWebSocketReconnected(refetchProperties, webSocketConnected);
+  function fetchData() {
+    refetchProperties();
+    refetchExtensions();
+  }
+
+  useWebSocketReconnected(fetchData, webSocketConnected);
 
   useEffect(() => {
     if (isFetchingConfig) {
@@ -198,10 +206,6 @@ export function App({
     } else {
       fetchNamespaces();
     }
-
-    fetchExtensions({
-      namespace: tenantNamespace || ALL_NAMESPACES
-    });
   }, [isFetchingConfig, tenantNamespace]);
 
   const logoutButton = <LogoutButton getLogoutURL={() => logoutURL} />;
@@ -486,20 +490,17 @@ export function App({
 }
 
 App.defaultProps = {
-  extensions: [],
   onUnload: () => {}
 };
 
 /* istanbul ignore next */
 const mapStateToProps = state => ({
-  extensions: getExtensions(state),
   lang: getLocale(state),
   namespace: getSelectedNamespace(state),
   webSocketConnected: selectIsWebSocketConnected(state)
 });
 
 const mapDispatchToProps = {
-  fetchExtensions: fetchExtensionsActionCreator,
   fetchNamespaces: fetchNamespacesActionCreator,
   selectNamespace: selectNamespaceActionCreator
 };
