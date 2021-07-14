@@ -39,6 +39,6 @@ export function useClusterTasks(params) {
   return useCollection('ClusterTask', getClusterTasks, params);
 }
 
-export function useClusterTask(params) {
-  return useResource('ClusterTask', getClusterTask, params);
+export function useClusterTask(params, queryConfig) {
+  return useResource('ClusterTask', getClusterTask, params, queryConfig);
 }

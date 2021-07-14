@@ -39,6 +39,6 @@ export function usePipelines(params) {
   return useCollection('Pipeline', getPipelines, params);
 }
 
-export function usePipeline(params) {
-  return useResource('Pipeline', getPipeline, params);
+export function usePipeline(params, queryConfig) {
+  return useResource('Pipeline', getPipeline, params, queryConfig);
 }

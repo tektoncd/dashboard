@@ -58,11 +58,11 @@ export function useCustomResource(params) {
   return useResource('customResource', getCustomResource, params);
 }
 
-export function useTaskByKind({ kind, ...rest }) {
+export function useTaskByKind({ kind, ...rest }, queryConfig) {
   if (kind === 'ClusterTask') {
-    return useClusterTask({ ...rest });
+    return useClusterTask({ ...rest }, queryConfig);
   }
-  return useTask({ ...rest });
+  return useTask({ ...rest }, queryConfig);
 }
 
 export async function getInstallProperties() {

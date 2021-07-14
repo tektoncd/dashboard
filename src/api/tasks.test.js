@@ -63,5 +63,19 @@ it('useTask', () => {
   const params = { fake: 'params' };
   jest.spyOn(utils, 'useResource').mockImplementation(() => query);
   expect(API.useTask(params)).toEqual(query);
-  expect(utils.useResource).toHaveBeenCalledWith('Task', API.getTask, params);
+  expect(utils.useResource).toHaveBeenCalledWith(
+    'Task',
+    API.getTask,
+    params,
+    undefined
+  );
+
+  const queryConfig = { fake: 'queryConfig' };
+  API.useTask(params, queryConfig);
+  expect(utils.useResource).toHaveBeenCalledWith(
+    'Task',
+    API.getTask,
+    params,
+    queryConfig
+  );
 });
