@@ -66,6 +66,16 @@ it('useClusterTask', () => {
   expect(utils.useResource).toHaveBeenCalledWith(
     'ClusterTask',
     API.getClusterTask,
-    params
+    params,
+    undefined
+  );
+
+  const queryConfig = { fake: 'queryConfig' };
+  API.useClusterTask(params, queryConfig);
+  expect(utils.useResource).toHaveBeenCalledWith(
+    'ClusterTask',
+    API.getClusterTask,
+    params,
+    queryConfig
   );
 });

@@ -39,6 +39,6 @@ export function useTasks(params) {
   return useCollection('Task', getTasks, params);
 }
 
-export function useTask(params) {
-  return useResource('Task', getTask, params);
+export function useTask(params, queryConfig) {
+  return useResource('Task', getTask, params, queryConfig);
 }
