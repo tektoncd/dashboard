@@ -308,6 +308,7 @@ export /* istanbul ignore next */ function PipelineRunContainer(props) {
       )}
       <PipelineRun
         enableLogAutoScroll
+        enableLogScrollButtons
         error={error}
         fetchLogs={getLogsRetriever(isLogStreamingEnabled, externalLogsURL)}
         handleTaskSelected={handleTaskSelected}

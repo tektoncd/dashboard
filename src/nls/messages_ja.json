@@ -140,6 +140,8 @@
     "dashboard.logs.maximize": "最大化",
     "dashboard.logs.pending": "",
     "dashboard.logs.restore": "デフォルトに戻す",
+    "dashboard.logs.scrollToBottom": "",
+    "dashboard.logs.scrollToTop": "",
     "dashboard.metadata.dateCreated": "作成日：",
     "dashboard.metadata.labels": "ラベル：",
     "dashboard.metadata.namespace": "Namespace：",
