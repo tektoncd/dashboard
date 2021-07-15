@@ -170,6 +170,7 @@ export function TaskRunContainer(props) {
           stepStatus={stepStatus}
           isLogsMaximized={isLogsMaximized}
           enableLogAutoScroll
+          enableLogScrollButtons
         />
       </LogsRoot>
     );

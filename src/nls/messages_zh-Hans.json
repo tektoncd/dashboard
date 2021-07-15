@@ -140,6 +140,8 @@
     "dashboard.logs.maximize": "",
     "dashboard.logs.pending": "",
     "dashboard.logs.restore": "",
+    "dashboard.logs.scrollToBottom": "",
+    "dashboard.logs.scrollToTop": "",
     "dashboard.metadata.dateCreated": "创建日期：",
     "dashboard.metadata.labels": "标签：",
     "dashboard.metadata.namespace": "Namespace：",
