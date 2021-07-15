@@ -53,6 +53,31 @@ pre.tkn--log {
     right: 0;
   }
 
+  .bx--copy-btn.scroll-btn {
+    position: fixed;
+    width: 1.6rem;
+    height: 1.6rem;
+    min-height: 1.6rem; //to override Carbon's .bx--btn
+    right: var(--log-element-right);
+  }
+
+  .button-container {
+    position: absolute;
+    clip-path: inset(0); // ensure the children with position:fixed are not shown outside this element.
+    top: 3.125rem; //equals the maximum between padding-top of pre.tkn--log and betwwen the page header height
+    bottom: 0;
+    right: 0;
+    width: 1.6rem; //equals the padding-right of pre.tkn--log
+  }
+  
+  .scroll-to-top-btn {
+    top: calc(var(--scroll-button-top) + 3.125rem); //3.125 rem is the maximum between padding-top of pre.tkn--log and betwwen the page header height
+  }
+
+  .scroll-to-bottom-btn {
+    bottom: var(--scroll-button-bottom);
+  }
+
   .bx--copy-btn {
     width: 2rem;
     height: 2rem;

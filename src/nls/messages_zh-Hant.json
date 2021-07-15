@@ -139,6 +139,8 @@
     "dashboard.logs.launchButtonTooltip": "",
     "dashboard.logs.maximize": "",
     "dashboard.logs.restore": "",
+    "dashboard.logs.scrollToBottom": "",
+    "dashboard.logs.scrollToTop": "",
     "dashboard.metadata.dateCreated": "",
     "dashboard.metadata.labels": "",
     "dashboard.metadata.namespace": "",

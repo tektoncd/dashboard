@@ -31,8 +31,17 @@ export function hasElementPositiveVerticalScrollBottom(el) {
   );
 }
 
+export function hasElementPositiveVerticalScrollTop(el) {
+  return isElementVerticallyScrollable(el) && el.scrollTop > 0;
+}
+
+export function isElementStartAboveViewTop(el) {
+  return Math.round(el?.getBoundingClientRect().top) < 0;
+}
+
 export function isElementEndBelowViewBottom(el) {
   return (
-    el?.getBoundingClientRect().bottom > document.documentElement?.clientHeight
+    Math.round(el?.getBoundingClientRect().bottom) >
+    document.documentElement?.clientHeight
   );
 }
