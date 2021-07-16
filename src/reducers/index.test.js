@@ -17,8 +17,6 @@ import {
   getClusterTask,
   getClusterTasks,
   getClusterTasksErrorMessage,
-  getExtensions,
-  getExtensionsErrorMessage,
   getLocale,
   getNamespaces,
   getPipelineRun,
@@ -35,14 +33,12 @@ import {
   getTasks,
   getTasksErrorMessage,
   isFetchingClusterTasks,
-  isFetchingExtensions,
   isFetchingPipelineRuns,
   isFetchingPipelines,
   isFetchingTaskRuns,
   isFetchingTasks
 } from '.';
 import * as clusterTaskSelectors from './clusterTasks';
-import * as extensionSelectors from './extensions';
 import * as localeSelectors from './locale';
 import * as namespaceSelectors from './namespaces';
 import * as pipelineSelectors from './pipelines';
@@ -109,37 +105,6 @@ it('getNamespaces', () => {
   expect(getNamespaces(state)).toEqual(namespaces);
   expect(namespaceSelectors.getNamespaces).toHaveBeenCalledWith(
     state.namespaces
-  );
-});
-
-it('getExtensions', () => {
-  jest
-    .spyOn(extensionSelectors, 'getExtensions')
-    .mockImplementation(() => [extension]);
-  expect(getExtensions(state)).toEqual([extension]);
-  expect(extensionSelectors.getExtensions).toHaveBeenCalledWith(
-    state.extensions
-  );
-});
-
-it('getExtensionsErrorMessage', () => {
-  const errorMessage = 'fake error message';
-  jest
-    .spyOn(extensionSelectors, 'getExtensionsErrorMessage')
-    .mockImplementation(() => errorMessage);
-  expect(getExtensionsErrorMessage(state)).toEqual(errorMessage);
-  expect(extensionSelectors.getExtensionsErrorMessage).toHaveBeenCalledWith(
-    state.extensions
-  );
-});
-
-it('isFetchingExtensions', () => {
-  jest
-    .spyOn(extensionSelectors, 'isFetchingExtensions')
-    .mockImplementation(() => true);
-  expect(isFetchingExtensions(state)).toBe(true);
-  expect(extensionSelectors.isFetchingExtensions).toHaveBeenCalledWith(
-    state.extensions
   );
 });
 

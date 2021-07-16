@@ -19,7 +19,24 @@ import { waitFor } from '@testing-library/react';
 
 import { renderWithRouter } from '../../utils/test';
 import * as API from '../../api';
+import * as extensionsAPI from '../../api/extensions';
 import SideNavContainer, { SideNavWithIntl as SideNav } from './SideNav';
+
+const mockExtensions = [
+  {
+    apiGroup: 'mygroup',
+    apiVersion: 'v1alpha1',
+    displayName: 'dashboard_crd_extension',
+    name: 'crd-extension'
+  },
+  {
+    apiGroup: 'mygroup',
+    apiVersion: 'v1alpha1',
+    displayName: 'dashboard_cluster_crd_extension',
+    name: 'cluster-crd-extension',
+    namespaced: false
+  }
+];
 
 it('SideNav renders only when expanded', () => {
   const namespace = 'default';
@@ -27,7 +44,6 @@ it('SideNav renders only when expanded', () => {
   const { queryByText, rerender } = renderWithRouter(
     <SideNav
       expanded
-      extensions={[]}
       location={{ search: '' }}
       match={{ params: { namespace } }}
       selectNamespace={selectNamespace}
@@ -37,7 +53,6 @@ it('SideNav renders only when expanded', () => {
 
   renderWithRouter(
     <SideNav
-      extensions={[]}
       location={{ search: '' }}
       match={{ params: { namespace } }}
       selectNamespace={selectNamespace}
@@ -48,35 +63,15 @@ it('SideNav renders only when expanded', () => {
 });
 
 it('SideNav renders with extensions', () => {
+  jest
+    .spyOn(extensionsAPI, 'useExtensions')
+    .mockImplementation(() => ({ data: mockExtensions }));
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const namespace = 'default';
   const store = mockStore({
-    extensions: {
-      byName: {
-        'dashboard-extension': {
-          displayName: 'tekton_dashboard_extension',
-          name: 'dashboard-extension',
-          url: 'sample'
-        },
-        'crd-extension': {
-          apiGroup: 'mygroup',
-          apiVersion: 'v1alpha1',
-          displayName: 'dashboard_crd_extension',
-          extensionType: 'kubernetes-resource',
-          name: 'crd-extension'
-        },
-        'cluster-crd-extension': {
-          apiGroup: 'mygroup',
-          apiVersion: 'v1alpha1',
-          displayName: 'dashboard_cluster_crd_extension',
-          extensionType: 'kubernetes-resource',
-          name: 'cluster-crd-extension',
-          namespaced: false
-        }
-      }
-    },
-    namespaces: { byName: { [namespace]: true }, selected: namespace }
+    namespaces: { byName: { [namespace]: true }, selected: namespace },
+    notifications: {}
   });
   const { queryByText } = renderWithRouter(
     <Provider store={store}>
@@ -85,7 +80,6 @@ it('SideNav renders with extensions', () => {
   );
   expect(queryByText('Pipelines')).toBeTruthy();
   expect(queryByText('Tasks')).toBeTruthy();
-  expect(queryByText(/tekton_dashboard_extension/i)).toBeTruthy();
   expect(queryByText(/dashboard_crd_extension/i)).toBeTruthy();
 });
 
@@ -94,7 +88,6 @@ it('SideNav renders with triggers', async () => {
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const store = mockStore({
-    extensions: { byName: {} },
     namespaces: { byName: {} }
   });
   const { queryByText } = renderWithRouter(
@@ -116,7 +109,6 @@ it('SideNav selects namespace based on URL', () => {
   const { rerender } = renderWithRouter(
     <SideNav
       expanded
-      extensions={[]}
       location={{ search: '' }}
       match={{ params: { namespace } }}
       selectNamespace={selectNamespace}
@@ -129,7 +121,6 @@ it('SideNav selects namespace based on URL', () => {
   renderWithRouter(
     <SideNav
       expanded
-      extensions={[]}
       location={{ search: '' }}
       match={{ params: { namespace: updatedNamespace } }}
       selectNamespace={selectNamespace}
@@ -141,7 +132,6 @@ it('SideNav selects namespace based on URL', () => {
   renderWithRouter(
     <SideNav
       expanded
-      extensions={[]}
       location={{ search: '' }}
       match={{ params: { namespace: updatedNamespace } }}
       selectNamespace={selectNamespace}
@@ -155,7 +145,6 @@ it('SideNav renders import in the default read-write mode', async () => {
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const store = mockStore({
-    extensions: { byName: {} },
     namespaces: { byName: {} }
   });
   const { queryByText } = renderWithRouter(
@@ -171,7 +160,6 @@ it('SideNav does not render import in read-only mode', async () => {
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const store = mockStore({
-    extensions: { byName: {} },
     namespaces: { byName: {} }
   });
   const { queryByText } = renderWithRouter(
@@ -187,7 +175,6 @@ it('SideNav renders kubernetes resources placeholder', async () => {
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const store = mockStore({
-    extensions: { byName: {} },
     namespaces: { byName: {} }
   });
   const { queryByText } = renderWithRouter(

@@ -19,27 +19,30 @@ import {
   Link as CarbonLink,
   InlineNotification
 } from 'carbon-components-react';
-import { getErrorMessage, urls, useTitleSync } from '@tektoncd/dashboard-utils';
+import {
+  getErrorMessage,
+  urls,
+  useTitleSync,
+  useWebSocketReconnected
+} from '@tektoncd/dashboard-utils';
 import { Table } from '@tektoncd/dashboard-components';
 
-import {
-  getExtensions,
-  getExtensionsErrorMessage,
-  isFetchingExtensions
-} from '../../reducers';
+import { useExtensions } from '../../api';
+import { isWebSocketConnected } from '../../reducers';
 
-export const Extensions = /* istanbul ignore next */ ({
-  error,
-  intl,
-  loading,
-  extensions
-}) => {
+function Extensions(props) {
+  const { intl, webSocketConnected } = props;
+
   useTitleSync({
     page: intl.formatMessage({
       id: 'dashboard.extensions.title',
       defaultMessage: 'Extensions'
     })
   });
+
+  const { data: extensions = [], error, isFetching, refetch } = useExtensions();
+
+  useWebSocketReconnected(refetch, webSocketConnected);
 
   const emptyText = intl.formatMessage({
     id: 'dashboard.extensions.emptyState',
@@ -77,46 +80,37 @@ export const Extensions = /* istanbul ignore next */ ({
             })
           }
         ]}
-        rows={extensions.map(
-          ({ apiGroup, apiVersion, displayName, extensionType, name }) => ({
-            id: name,
-            name: (
-              <Link
-                component={CarbonLink}
-                to={
-                  extensionType === 'kubernetes-resource'
-                    ? urls.kubernetesResources.all({
-                        group: apiGroup,
-                        version: apiVersion,
-                        type: name
-                      })
-                    : urls.extensions.byName({ name })
-                }
-                title={displayName}
-              >
-                {displayName}
-              </Link>
-            )
-          })
-        )}
-        loading={loading}
+        rows={extensions.map(({ apiGroup, apiVersion, displayName, name }) => ({
+          id: name,
+          name: (
+            <Link
+              component={CarbonLink}
+              to={urls.kubernetesResources.all({
+                group: apiGroup,
+                version: apiVersion,
+                type: name
+              })}
+              title={displayName}
+            >
+              {displayName}
+            </Link>
+          )
+        }))}
+        loading={isFetching}
         emptyTextAllNamespaces={emptyText}
         emptyTextSelectedNamespace={emptyText}
       />
     </>
   );
-};
+}
 
 Extensions.defaultProps = {
   extensions: []
 };
 
-/* istanbul ignore next */
 function mapStateToProps(state) {
   return {
-    error: getExtensionsErrorMessage(state),
-    loading: isFetchingExtensions(state),
-    extensions: getExtensions(state)
+    webSocketConnected: isWebSocketConnected(state)
   };
 }
 

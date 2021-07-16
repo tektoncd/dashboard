@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import { get } from './comms';
-import { dashboardAPIGroup, getResourcesAPI } from './utils';
+import { dashboardAPIGroup, getResourcesAPI, useCollection } from './utils';
 
 export async function getExtensions({ namespace } = {}) {
   const resourceExtensionsUri = getResourcesAPI({
@@ -29,9 +29,12 @@ export async function getExtensions({ namespace } = {}) {
       apiGroup,
       apiVersion,
       displayName,
-      extensionType: 'kubernetes-resource',
       name,
       namespaced
     };
   });
+}
+
+export function useExtensions(params, queryConfig) {
+  return useCollection('Extensions', getExtensions, params, queryConfig);
 }

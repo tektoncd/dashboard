@@ -16,7 +16,6 @@ import { Provider } from 'react-redux';
 import { waitFor } from '@testing-library/react';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
 import { App } from './App';
 import { render } from '../../utils/test';
@@ -35,7 +34,6 @@ describe('App', () => {
     const middleware = [thunk];
     const mockStore = configureStore(middleware);
     const store = mockStore({
-      extensions: { byName: {} },
       namespaces: { byName: {} },
       notifications: {},
       pipelines: { byNamespace: {} },
@@ -43,12 +41,7 @@ describe('App', () => {
     });
     const { queryByText } = render(
       <Provider store={store}>
-        <App
-          extensions={[]}
-          lang="en"
-          fetchExtensions={() => {}}
-          fetchNamespaces={() => {}}
-        />
+        <App extensions={[]} lang="en" fetchNamespaces={() => {}} />
       </Provider>
     );
 
@@ -74,7 +67,6 @@ describe('App', () => {
       <Provider store={store}>
         <App
           extensions={[]}
-          fetchExtensions={() => {}}
           fetchNamespaces={() => {}}
           selectNamespace={() => {}}
         />
@@ -92,7 +84,6 @@ describe('App', () => {
     const middleware = [thunk];
     const mockStore = configureStore(middleware);
     const store = mockStore({
-      extensions: { byName: {} },
       namespaces: { byName: {} },
       notifications: {},
       pipelines: { byNamespace: {} },
@@ -104,7 +95,6 @@ describe('App', () => {
       <Provider store={store}>
         <App
           extensions={[]}
-          fetchExtensions={() => {}}
           fetchNamespaces={() => {}}
           selectNamespace={selectNamespace}
         />
@@ -119,7 +109,6 @@ describe('App', () => {
     const middleware = [thunk];
     const mockStore = configureStore(middleware);
     const store = mockStore({
-      extensions: { byName: {} },
       namespaces: { byName: {} },
       notifications: {},
       pipelines: { byNamespace: {} },
@@ -132,7 +121,6 @@ describe('App', () => {
       <Provider store={store}>
         <App
           extensions={[]}
-          fetchExtensions={() => {}}
           fetchNamespaces={fetchNamespaces}
           selectNamespace={selectNamespace}
         />
@@ -148,7 +136,6 @@ describe('App', () => {
     const middleware = [thunk];
     const mockStore = configureStore(middleware);
     const store = mockStore({
-      extensions: { byName: {} },
       namespaces: { byName: {} },
       notifications: {},
       pipelines: { byNamespace: {} },
@@ -160,7 +147,6 @@ describe('App', () => {
       <Provider store={store}>
         <App
           extensions={[]}
-          fetchExtensions={() => {}}
           fetchNamespaces={fetchNamespaces}
           selectNamespace={selectNamespace}
         />
@@ -169,61 +155,6 @@ describe('App', () => {
 
     await waitFor(() => queryByText('Tekton resources'));
     expect(selectNamespace).not.toHaveBeenCalled();
-    expect(fetchNamespaces).toHaveBeenCalled();
-  });
-
-  it('calls fetchExtensions for tenant namespace in single namespace mode', async () => {
-    const middleware = [thunk];
-    const mockStore = configureStore(middleware);
-    const store = mockStore({
-      extensions: { byName: {} },
-      namespaces: { byName: {} },
-      notifications: {},
-      pipelines: { byNamespace: {} },
-      pipelineRuns: { byNamespace: {} }
-    });
-    jest.spyOn(API, 'useTenantNamespace').mockImplementation(() => 'fake');
-    const fetchExtensions = jest.fn();
-    const selectNamespace = jest.fn();
-    const { queryByText } = render(
-      <Provider store={store}>
-        <App
-          extensions={[]}
-          fetchExtensions={fetchExtensions}
-          selectNamespace={selectNamespace}
-        />
-      </Provider>
-    );
-
-    await waitFor(() => queryByText('Tekton resources'));
-    expect(selectNamespace).toHaveBeenCalledWith('fake');
-    expect(fetchExtensions).toHaveBeenCalledWith({ namespace: 'fake' });
-  });
-
-  it('calls fetchExtensions with ALL_NAMESPACES in full cluster mode', async () => {
-    const middleware = [thunk];
-    const mockStore = configureStore(middleware);
-    const store = mockStore({
-      extensions: { byName: {} },
-      namespaces: { byName: {} },
-      notifications: {},
-      pipelines: { byNamespace: {} },
-      pipelineRuns: { byNamespace: {} }
-    });
-    const fetchExtensions = jest.fn();
-    const fetchNamespaces = jest.fn();
-    const { queryByText } = render(
-      <Provider store={store}>
-        <App
-          extensions={[]}
-          fetchExtensions={fetchExtensions}
-          fetchNamespaces={fetchNamespaces}
-        />
-      </Provider>
-    );
-
-    await waitFor(() => queryByText('Tekton resources'));
-    expect(fetchExtensions).toHaveBeenCalledWith({ namespace: ALL_NAMESPACES });
     expect(fetchNamespaces).toHaveBeenCalled();
   });
 });

@@ -13,6 +13,7 @@ limitations under the License.
 
 import fetchMock from 'fetch-mock';
 import * as API from './extensions';
+import * as utils from './utils';
 
 it('getExtensions', () => {
   const displayName = 'displayName';
@@ -39,4 +40,26 @@ it('getExtensions null', () => {
     expect(response).toEqual([]);
     fetchMock.restore();
   });
+});
+
+it('useExtensions', () => {
+  const query = { fake: 'query' };
+  const params = { fake: 'params' };
+  jest.spyOn(utils, 'useCollection').mockImplementation(() => query);
+  expect(API.useExtensions(params)).toEqual(query);
+  expect(utils.useCollection).toHaveBeenCalledWith(
+    'Extensions',
+    API.getExtensions,
+    params,
+    undefined
+  );
+
+  const queryConfig = { fake: 'queryConfig' };
+  API.useExtensions(params, queryConfig);
+  expect(utils.useCollection).toHaveBeenCalledWith(
+    'Extensions',
+    API.getExtensions,
+    params,
+    queryConfig
+  );
 });
