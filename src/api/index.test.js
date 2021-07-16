@@ -18,6 +18,9 @@ import { labels } from '@tektoncd/dashboard-utils';
 import { getAPIWrapper, getQueryClient } from '../utils/test';
 
 import * as API from '.';
+import * as ClusterTasksAPI from './clusterTasks';
+import * as TasksAPI from './tasks';
+import * as utils from './utils';
 
 it('getCustomResource', () => {
   const group = 'testgroup';
@@ -48,6 +51,51 @@ it('getCustomResources', () => {
       fetchMock.restore();
     }
   );
+});
+
+it('useCustomResource', () => {
+  const params = { fake: 'params' };
+  const query = { fake: 'query' };
+  jest.spyOn(utils, 'useResource').mockImplementation(() => query);
+  const returnValue = API.useCustomResource(params);
+
+  expect(utils.useResource).toHaveBeenCalledWith(
+    'customResource',
+    API.getCustomResource,
+    params
+  );
+  expect(returnValue).toEqual(query);
+});
+
+it('useTaskByKind', () => {
+  const params = { fake: 'params' };
+  const clusterTaskQuery = { fake: 'clusterTaskQuery' };
+  const taskQuery = { fake: 'taskQuery' };
+  jest
+    .spyOn(ClusterTasksAPI, 'useClusterTask')
+    .mockImplementation(() => clusterTaskQuery);
+  jest.spyOn(TasksAPI, 'useTask').mockImplementation(() => taskQuery);
+
+  let returnValue = API.useTaskByKind({ ...params, kind: 'ClusterTask' });
+  expect(ClusterTasksAPI.useClusterTask).toHaveBeenCalledWith(
+    expect.objectContaining(params)
+  );
+  expect(ClusterTasksAPI.useClusterTask).not.toHaveBeenCalledWith(
+    expect.objectContaining({ kind: expect.any(String) })
+  );
+  expect(TasksAPI.useTask).not.toHaveBeenCalled();
+  expect(returnValue).toEqual(clusterTaskQuery);
+  API.useClusterTask.mockClear();
+
+  returnValue = API.useTaskByKind({ ...params, kind: 'Task' });
+  expect(ClusterTasksAPI.useClusterTask).not.toHaveBeenCalled();
+  expect(TasksAPI.useTask).toHaveBeenCalledWith(
+    expect.objectContaining(params)
+  );
+  expect(TasksAPI.useTask).not.toHaveBeenCalledWith(
+    expect.objectContaining({ kind: expect.any(String) })
+  );
+  expect(returnValue).toEqual(taskQuery);
 });
 
 it('getNamespaces returns the correct data', () => {
