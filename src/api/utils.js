@@ -186,14 +186,14 @@ export function useWebSocket({ kind: _ }) {
   }, [queryClient, webSocket]);
 }
 
-export function useCollection(kind, api, params) {
-  const query = useQuery([kind, params], () => api(params));
+export function useCollection(kind, api, params, queryConfig) {
+  const query = useQuery([kind, params], () => api(params), queryConfig);
   useWebSocket({ kind });
   return query;
 }
 
-export function useResource(kind, api, params) {
-  const query = useQuery([kind, params], () => api(params));
+export function useResource(kind, api, params, queryConfig) {
+  const query = useQuery([kind, params], () => api(params), queryConfig);
   useWebSocket({ kind });
   return query;
 }

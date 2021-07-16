@@ -66,6 +66,16 @@ it('usePipeline', () => {
   expect(utils.useResource).toHaveBeenCalledWith(
     'Pipeline',
     API.getPipeline,
-    params
+    params,
+    undefined
+  );
+
+  const queryConfig = { fake: 'queryConfig' };
+  API.usePipeline(params, queryConfig);
+  expect(utils.useResource).toHaveBeenCalledWith(
+    'Pipeline',
+    API.getPipeline,
+    params,
+    queryConfig
   );
 });
