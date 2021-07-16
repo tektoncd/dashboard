@@ -139,6 +139,8 @@
     "dashboard.logs.launchButtonTooltip": "Open logs in a new window",
     "dashboard.logs.maximize": "Maximize",
     "dashboard.logs.restore": "Return to default",
+    "dashboard.logs.scrollToBottom": "Scroll to end of logs",
+    "dashboard.logs.scrollToTop": "Scroll to start of logs",
     "dashboard.metadata.dateCreated": "Date created:",
     "dashboard.metadata.labels": "Labels:",
     "dashboard.metadata.namespace": "Namespace:",

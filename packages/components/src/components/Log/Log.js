@@ -12,13 +12,16 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
-import { SkeletonText } from 'carbon-components-react';
+import { Button, SkeletonText } from 'carbon-components-react';
 import { FixedSizeList as List } from 'react-window';
 import { injectIntl } from 'react-intl';
 import { getStepStatusReason, isRunning } from '@tektoncd/dashboard-utils';
+import { DownToBottom16, UpToTop16 } from '@carbon/icons-react';
 import {
   hasElementPositiveVerticalScrollBottom,
-  isElementEndBelowViewBottom
+  hasElementPositiveVerticalScrollTop,
+  isElementEndBelowViewBottom,
+  isElementStartAboveViewTop
 } from './domUtils';
 
 import Ansi from '../LogFormat';
@@ -42,7 +45,7 @@ export class LogContainer extends Component {
 
   componentDidMount() {
     this.loadLog();
-    if (this.props.enableLogAutoScroll) {
+    if (this.props.enableLogAutoScroll || this.props.enableLogScrollButtons) {
       this.wasRunningAfterMounting();
       window.addEventListener('scroll', this.handleLogScroll, true);
       this.handleLogScroll();
@@ -51,7 +54,7 @@ export class LogContainer extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (
-      this.props.enableLogAutoScroll &&
+      (this.props.enableLogAutoScroll || this.props.enableLogScrollButtons) &&
       (prevState.logs?.length !== this.state.logs?.length ||
         prevProps.isLogsMaximized !== this.props.isLogsMaximized)
     ) {
@@ -72,10 +75,18 @@ export class LogContainer extends Component {
   handleLogScroll = () => {
     if (!this.state.loading) {
       const isLogBottomUnseen = this.isLogBottomUnseen();
+      const isLogTopUnseen =
+        this.props.enableLogScrollButtons && this.isLogTopUnseen();
+      this.updateScrollButtonCoordinates();
 
-      if (isLogBottomUnseen !== this.state.isLogBottomUnseen) {
+      if (
+        isLogBottomUnseen !== this.state.isLogBottomUnseen ||
+        (this.props.enableLogScrollButtons &&
+          isLogTopUnseen !== this.state.isLogTopUnseen)
+      ) {
         this.setState({
-          isLogBottomUnseen
+          isLogBottomUnseen,
+          isLogTopUnseen
         });
       }
     }
@@ -99,6 +110,15 @@ export class LogContainer extends Component {
     );
   };
 
+  isLogTopUnseen = () => {
+    return (
+      isElementStartAboveViewTop(this.logRef?.current) ||
+      hasElementPositiveVerticalScrollTop(
+        this.textRef?.current?.firstElementChild
+      )
+    );
+  };
+
   scrollToBottomLog = () => {
     const longTextElement = this.textRef?.current?.firstElementChild;
     if (longTextElement) {
@@ -107,6 +127,14 @@ export class LogContainer extends Component {
     }
     const rootElement = document.documentElement;
     rootElement.scrollTop = rootElement.scrollHeight - rootElement.clientHeight;
+  };
+
+  scrollToTopLog = () => {
+    const longTextElement = this.textRef?.current?.firstElementChild;
+    if (longTextElement) {
+      longTextElement.scrollTop = 0;
+    }
+    document.documentElement.scrollTop = 0;
   };
 
   wasRunningAfterMounting = () => {
@@ -120,6 +148,105 @@ export class LogContainer extends Component {
       return true;
     }
     return false;
+  };
+
+  updateScrollButtonCoordinates = () => {
+    if (this.props.enableLogScrollButtons) {
+      const logRectangle = this.logRef.current?.getBoundingClientRect();
+      const logElementRight =
+        document.documentElement?.clientWidth - logRectangle.right;
+
+      const scrollButtonTop = Math.max(0, logRectangle.top);
+
+      const scrollButtonBottom = Math.max(
+        0,
+        document.documentElement?.clientHeight - logRectangle.bottom
+      );
+
+      this.updateCssStyleProperty(
+        logElementRight,
+        Object.keys({ logElementRight })[0]
+      );
+      this.updateCssStyleProperty(
+        scrollButtonTop,
+        Object.keys({ scrollButtonTop })[0]
+      );
+      this.updateCssStyleProperty(
+        scrollButtonBottom,
+        Object.keys({ scrollButtonBottom })[0]
+      );
+    }
+  };
+
+  updateCssStyleProperty = (computedVariable, classVariableName) => {
+    // instead of using a state variable + inline styling for the button vertical position,
+    // a class variable + css custom property are used (avoiding unnecessary re-rendering of entire component)
+    const cssProperty = `--${classVariableName.replace(
+      /[A-Z]/g,
+      str => `-${str.toLowerCase()}`
+    )}`;
+    if (
+      !Number.isNaN(computedVariable) &&
+      this[classVariableName] !== computedVariable
+    ) {
+      this[classVariableName] = computedVariable;
+      document.documentElement?.style.setProperty(
+        cssProperty,
+        `${computedVariable.toString()}px`
+      );
+    }
+  };
+
+  getScrollButtons = () => {
+    const { enableLogScrollButtons, intl } = this.props;
+    const { isLogBottomUnseen, isLogTopUnseen, loading } = this.state;
+
+    if (!enableLogScrollButtons || loading) {
+      return null;
+    }
+    const scrollButtonTopMessage = intl.formatMessage({
+      id: 'dashboard.logs.scrollToTop',
+      defaultMessage: 'Scroll to start of logs'
+    });
+    const scrollButtonBottomMessage = intl.formatMessage({
+      id: 'dashboard.logs.scrollToBottom',
+      defaultMessage: 'Scroll to end of logs'
+    });
+
+    return (
+      <div className="button-container">
+        {isLogTopUnseen ? (
+          <Button
+            key="scroll-to-top-btn"
+            className="scroll-btn bx--copy-btn scroll-to-top-btn"
+            onClick={this.scrollToTopLog}
+            hasIconOnly
+            renderIcon={() => (
+              <UpToTop16>
+                <title>{scrollButtonTopMessage}</title>
+              </UpToTop16>
+            )}
+            tooltipPosition="right"
+            iconDescription={scrollButtonTopMessage}
+          />
+        ) : null}
+        {isLogBottomUnseen ? (
+          <Button
+            key="scroll-to-bottom-btn"
+            className="scroll-btn bx--copy-btn scroll-to-bottom-btn"
+            onClick={this.scrollToBottomLog}
+            hasIconOnly
+            renderIcon={() => (
+              <DownToBottom16>
+                <title>{scrollButtonBottomMessage}</title>
+              </DownToBottom16>
+            )}
+            tooltipPosition="right"
+            iconDescription={scrollButtonBottomMessage}
+          />
+        ) : null}
+      </div>
+    );
   };
 
   getLogList = () => {
@@ -284,6 +411,7 @@ export class LogContainer extends Component {
               {this.getLogList()}
             </div>
             {this.logTrailer()}
+            {this.getScrollButtons()}
           </>
         )}
       </pre>
