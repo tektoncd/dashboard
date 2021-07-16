@@ -23,7 +23,8 @@ import {
   getKubeAPI,
   getQueryParams,
   getResourcesAPI,
-  getTektonAPI
+  getTektonAPI,
+  useResource
 } from './utils';
 
 export { WebSocketContext } from './utils';
@@ -48,13 +49,13 @@ export function getCustomResources({ filters = [], ...rest }) {
   return get(uri).then(checkData);
 }
 
-export function getCustomResource(...args) {
-  const uri = getResourcesAPI(...args);
+export function getCustomResource(params) {
+  const uri = getResourcesAPI(params);
   return get(uri);
 }
 
 export function useCustomResource(params) {
-  return useQuery('customResource', getCustomResource, params);
+  return useResource('customResource', getCustomResource, params);
 }
 
 export function useTaskByKind({ kind, ...rest }) {
