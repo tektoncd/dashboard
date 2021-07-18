@@ -11,9 +11,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { setLogger } from 'react-query';
 import fetch from 'node-fetch';
 import fetchMock from 'fetch-mock';
 import { TextDecoder, TextEncoder } from 'util';
+
+setLogger({
+  log: console.log, // eslint-disable-line no-console
+  warn: console.warn, // eslint-disable-line no-console
+  error: () => {}
+});
 
 if (!global.fetch) {
   global.fetch = fetch;
