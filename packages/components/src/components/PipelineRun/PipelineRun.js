@@ -335,7 +335,6 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
                 definition={definition}
                 logContainer={logContainer}
                 onViewChange={onViewChange}
-                showIO={showIO}
                 stepName={selectedStepId}
                 stepStatus={stepStatus}
                 taskRun={taskRun}
@@ -349,6 +348,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
                   task={task}
                   taskRun={taskRun}
                   view={view}
+                  showIO={showIO}
                 />
               ))}
           </div>

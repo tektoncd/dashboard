@@ -221,6 +221,7 @@
     "dashboard.taskRun.errorLoading": "TaskRunのロード中にエラーが発生しました",
     "dashboard.taskRun.logs": "ログ",
     "dashboard.taskRun.params": "パラメータ",
+    "dashboard.taskRun.resources": "",
     "dashboard.taskRun.results": "結果",
     "dashboard.taskRun.status": "ステータス",
     "dashboard.taskRun.status.cancelled": "キャンセル済み",

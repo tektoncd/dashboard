@@ -14,7 +14,7 @@ limitations under the License.
 import React from 'react';
 import { fireEvent } from '@testing-library/react';
 
-import { render } from '../../utils/test';
+import { render, renderWithRouter } from '../../utils/test';
 import TaskRunDetails from './TaskRunDetails';
 
 describe('TaskRunDetails', () => {
@@ -88,6 +88,7 @@ describe('TaskRunDetails', () => {
     const { queryByText } = render(<TaskRunDetails taskRun={taskRun} />);
     expect(queryByText(/parameters/i)).toBeFalsy();
     expect(queryByText(/results/i)).toBeFalsy();
+    expect(queryByText(/resources/i)).toBeFalsy();
     expect(queryByText(/pod/i)).toBeFalsy();
     expect(queryByText(/status/i)).toBeTruthy();
   });
@@ -172,5 +173,31 @@ describe('TaskRunDetails', () => {
     expect(queryByText('Pod')).toBeTruthy();
     expect(queryByText(events)).toBeTruthy();
     expect(queryByText(pod)).toBeTruthy();
+  });
+
+  it('renders resources', () => {
+    const inputResourceName = 'input-resource';
+    const outputResourceName = 'output-resource';
+    const inputs = [
+      { name: inputResourceName, resourceRef: { name: 'input-resource-ref' } }
+    ];
+    const outputs = [{ name: outputResourceName, resourceSpec: '' }];
+
+    const taskRun = {
+      metadata: { name: 'task-run-name', namespace: 'namespace-name' },
+      spec: {
+        resources: {
+          inputs,
+          outputs
+        }
+      }
+    };
+
+    const { queryByText } = renderWithRouter(
+      <TaskRunDetails taskRun={taskRun} view="resources" showIO />
+    );
+
+    expect(queryByText(inputResourceName)).toBeTruthy();
+    expect(queryByText(outputResourceName)).toBeTruthy();
   });
 });
