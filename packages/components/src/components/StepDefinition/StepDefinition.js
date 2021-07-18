@@ -11,95 +11,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import React, { PureComponent } from 'react';
 import { injectIntl } from 'react-intl';
-import { getResources, urls } from '@tektoncd/dashboard-utils';
-import { Link as CarbonLink } from 'carbon-components-react';
 
-import { ResourceTable, ViewYAML } from '..';
+import { ViewYAML } from '..';
 
-const resourceTable = (title, namespace, resources, intl) => (
-  <ResourceTable
-    title={title}
-    rows={resources.map(({ name, resourceRef, resourceSpec }) => ({
-      id: name,
-      name,
-      value:
-        resourceRef && resourceRef.name ? (
-          <Link
-            component={CarbonLink}
-            to={urls.pipelineResources.byName({
-              namespace,
-              pipelineResourceName: resourceRef.name
-            })}
-          >
-            {resourceRef.name}
-          </Link>
-        ) : (
-          <ViewYAML resource={resourceSpec} dark />
-        )
-    }))}
-    headers={[
-      {
-        key: 'name',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.name',
-          defaultMessage: 'Name'
-        })
-      },
-      {
-        key: 'value',
-        header: intl.formatMessage({
-          id: 'dashboard.tableHeader.value',
-          defaultMessage: 'Value'
-        })
-      }
-    ]}
-  />
-);
-
-class StepDefinition extends Component {
-  getIOTables() {
-    const { intl, showIO, taskRun } = this.props;
-
-    if (!showIO) {
-      return null;
-    }
-
-    const { namespace } = taskRun.metadata;
-    const { inputResources, outputResources } = getResources(taskRun.spec);
-
-    return (
-      <>
-        {inputResources &&
-          resourceTable(
-            intl.formatMessage({
-              id: 'dashboard.stepDefinition.inputResources',
-              defaultMessage: 'Input resources'
-            }),
-            namespace,
-            inputResources,
-            intl
-          )}
-        {outputResources &&
-          resourceTable(
-            intl.formatMessage({
-              id: 'dashboard.stepDefinition.outputResources',
-              defaultMessage: 'Output resources'
-            }),
-            namespace,
-            outputResources,
-            intl
-          )}
-      </>
-    );
-  }
-
+class StepDefinition extends PureComponent {
   render() {
     const { definition, intl } = this.props;
 
-    const resources = this.getIOTables();
     return (
       <>
         <ViewYAML
@@ -112,15 +32,9 @@ class StepDefinition extends Component {
           }
           dark
         />
-        {resources}
       </>
     );
   }
 }
-
-StepDefinition.defaultProps = {
-  showIO: false,
-  taskRun: {}
-};
 
 export default injectIntl(StepDefinition);

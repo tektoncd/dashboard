@@ -221,6 +221,7 @@
     "dashboard.taskRun.errorLoading": "Error loading TaskRun",
     "dashboard.taskRun.logs": "Logs",
     "dashboard.taskRun.params": "Parameters",
+    "dashboard.taskRun.resources": "Resources",
     "dashboard.taskRun.results": "Results",
     "dashboard.taskRun.status": "Status",
     "dashboard.taskRun.status.cancelled": "Cancelled",

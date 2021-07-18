@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { render, renderWithRouter } from '../../utils/test';
+import { render } from '../../utils/test';
 import StepDefinition from './StepDefinition';
 
 it('StepDefinition renders default content', () => {
@@ -34,58 +34,4 @@ it('StepDefinition renders the provided content', () => {
   expect(queryByText(/test name/)).toBeTruthy();
   expect(queryByText(/Input resources/)).toBeNull();
   expect(queryByText(/Output resources/)).toBeNull();
-});
-
-it('StepDefinition renders the provided content with resources', () => {
-  const inputResourceName = 'testInputResource';
-  const outputResourceName = 'testOutputResource';
-  const taskRun = {
-    metadata: {
-      namespace: 'test',
-      uid: '386bd486-355a-422e-ad82-573a55699053'
-    },
-    spec: {
-      resources: {
-        inputs: [
-          {
-            name: 'referencedInputResource',
-            resourceRef: {
-              name: inputResourceName
-            }
-          }
-        ],
-        outputs: [
-          {
-            name: 'referencedOutputResource',
-            resourceRef: {
-              name: outputResourceName
-            }
-          },
-          {
-            name: 'inlineOutputResource',
-            resourceSpec: {
-              name: 'testing',
-              params: 'inlineResourceParams'
-            }
-          }
-        ]
-      }
-    }
-  };
-  const definition = {
-    args: ['--someArg'],
-    command: ['docker'],
-    name: 'test name'
-  };
-  const { queryByText } = renderWithRouter(
-    <StepDefinition definition={definition} showIO taskRun={taskRun} />
-  );
-
-  expect(queryByText(/--someArg/)).toBeTruthy();
-  expect(queryByText(/test name/)).toBeTruthy();
-  expect(queryByText(/Input resources/)).toBeTruthy();
-  expect(queryByText(/Output resources/)).toBeTruthy();
-  expect(queryByText(inputResourceName)).toBeTruthy();
-  expect(queryByText(outputResourceName)).toBeTruthy();
-  expect(queryByText(/inlineResourceParams/)).toBeTruthy();
 });

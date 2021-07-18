@@ -26,7 +26,6 @@ const StepDetails = props => {
     intl,
     logContainer,
     onViewChange,
-    showIO,
     stepName,
     stepStatus,
     taskRun,
@@ -82,11 +81,7 @@ const StepDetails = props => {
             defaultMessage: 'Details'
           })}
         >
-          <StepDefinition
-            definition={definition}
-            showIO={showIO}
-            taskRun={taskRun}
-          />
+          <StepDefinition definition={definition} />
         </Tab>
       </Tabs>
     </div>
@@ -95,13 +90,11 @@ const StepDetails = props => {
 
 StepDetails.propTypes = {
   onViewChange: PropTypes.func,
-  showIO: PropTypes.bool,
   taskRun: PropTypes.shape({})
 };
 
 StepDetails.defaultProps = {
   onViewChange: /* istanbul ignore next */ () => {},
-  showIO: false,
   taskRun: {}
 };
 
