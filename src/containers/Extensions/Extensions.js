@@ -18,10 +18,15 @@ import {
   Link as CarbonLink,
   InlineNotification
 } from 'carbon-components-react';
-import { getErrorMessage, urls, useTitleSync } from '@tektoncd/dashboard-utils';
+import {
+  ALL_NAMESPACES,
+  getErrorMessage,
+  urls,
+  useTitleSync
+} from '@tektoncd/dashboard-utils';
 import { Table } from '@tektoncd/dashboard-components';
 
-import { useExtensions } from '../../api';
+import { useExtensions, useTenantNamespace } from '../../api';
 
 function Extensions(props) {
   const { intl } = props;
@@ -33,7 +38,10 @@ function Extensions(props) {
     })
   });
 
-  const { data: extensions = [], error, isFetching } = useExtensions();
+  const tenantNamespace = useTenantNamespace();
+  const { data: extensions = [], error, isFetching } = useExtensions({
+    namespace: tenantNamespace || ALL_NAMESPACES
+  });
 
   const emptyText = intl.formatMessage({
     id: 'dashboard.extensions.emptyState',

@@ -34,7 +34,8 @@ import { getSelectedNamespace } from '../../reducers';
 import {
   useExtensions,
   useIsReadOnly,
-  useIsTriggersInstalled
+  useIsTriggersInstalled,
+  useTenantNamespace
 } from '../../api';
 
 import { ReactComponent as KubernetesIcon } from '../../images/kubernetes.svg';
@@ -55,7 +56,10 @@ function SideNav(props) {
 
   const { namespace } = match?.params || {};
 
-  const { data: extensions = [] } = useExtensions();
+  const tenantNamespace = useTenantNamespace();
+  const { data: extensions = [] } = useExtensions({
+    namespace: tenantNamespace || ALL_NAMESPACES
+  });
 
   useEffect(() => {
     if (namespace) {
