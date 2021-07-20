@@ -39,34 +39,23 @@ import { Add16 as Add, TrashCan32 as Delete } from '@carbon/icons-react';
 
 import { ListPageLayout } from '..';
 import { sortRunsByStartTime } from '../../utils';
-import { fetchPipelineRuns as fetchPipelineRunsActionCreator } from '../../actions/pipelineRuns';
-
-import {
-  getPipelineRuns,
-  getPipelineRunsErrorMessage,
-  getSelectedNamespace,
-  isFetchingPipelineRuns,
-  isWebSocketConnected
-} from '../../reducers';
+import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
 import {
   cancelPipelineRun,
   deletePipelineRun,
   rerunPipelineRun,
   startPipelineRun,
-  useIsReadOnly
+  useIsReadOnly,
+  usePipelineRuns
 } from '../../api';
 
 export /* istanbul ignore next */ function PipelineRuns(props) {
   const {
-    error,
-    fetchPipelineRuns,
     filters,
     history,
     intl,
-    loading,
     namespace,
     pipelineName,
-    pipelineRuns,
     setStatusFilter,
     statusFilter,
     webSocketConnected
@@ -81,25 +70,20 @@ export /* istanbul ignore next */ function PipelineRuns(props) {
 
   useTitleSync({ page: 'PipelineRuns' });
 
-  function reset() {
+  useEffect(() => {
     setDeleteError(null);
     setShowDeleteModal(false);
     setToBeDeleted([]);
-  }
-
-  function fetchData() {
-    fetchPipelineRuns({
-      filters,
-      namespace
-    });
-  }
-
-  useEffect(() => {
-    reset();
-    fetchData();
   }, [JSON.stringify(filters), namespace]);
 
-  useWebSocketReconnected(fetchData, webSocketConnected);
+  const {
+    data: pipelineRuns = [],
+    error,
+    isLoading,
+    refetch
+  } = usePipelineRuns({ filters, namespace });
+
+  useWebSocketReconnected(refetch, webSocketConnected);
 
   function getError() {
     if (error) {
@@ -324,7 +308,7 @@ export /* istanbul ignore next */ function PipelineRuns(props) {
       <PipelineRunsList
         batchActionButtons={batchActionButtons}
         filters={filtersUI}
-        loading={loading && !pipelineRuns.length}
+        loading={isLoading}
         pipelineRuns={pipelineRuns.filter(run => {
           return runMatchesStatusFilter({
             run,
@@ -364,26 +348,13 @@ function mapStateToProps(state, props) {
   const pipelineName = pipelineFilter.replace(`${labels.PIPELINE}=`, '');
 
   return {
-    error: getPipelineRunsErrorMessage(state),
-    loading: isFetchingPipelineRuns(state),
     namespace,
     filters,
     pipelineName,
-    pipelineRuns: getPipelineRuns(state, {
-      filters,
-      namespace
-    }),
     setStatusFilter: getStatusFilterHandler(props),
     statusFilter,
     webSocketConnected: isWebSocketConnected(state)
   };
 }
 
-const mapDispatchToProps = {
-  fetchPipelineRuns: fetchPipelineRunsActionCreator
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(injectIntl(PipelineRuns));
+export default connect(mapStateToProps)(injectIntl(PipelineRuns));

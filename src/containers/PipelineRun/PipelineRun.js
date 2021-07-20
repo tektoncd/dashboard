@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { PipelineRun, RunAction } from '@tektoncd/dashboard-components';
@@ -28,30 +28,18 @@ import { InlineNotification } from 'carbon-components-react';
 import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 
-import {
-  getClusterTasks,
-  getPipeline,
-  getPipelineRun,
-  getPipelineRunsErrorMessage,
-  getTaskRunsByPipelineRunName,
-  getTaskRunsErrorMessage,
-  getTasks,
-  getTasksErrorMessage,
-  isWebSocketConnected
-} from '../../reducers';
-import { fetchPipelineRun as fetchPipelineRunActionCreator } from '../../actions/pipelineRuns';
-import { fetchPipeline as fetchPipelineActionCreator } from '../../actions/pipelines';
-import {
-  fetchClusterTasks as fetchClusterTasksActionCreator,
-  fetchTasks as fetchTasksActionCreator
-} from '../../actions/tasks';
-import { fetchTaskRuns as fetchTaskRunsActionCreator } from '../../actions/taskRuns';
+import { isWebSocketConnected } from '../../reducers';
 import {
   rerunPipelineRun,
   startPipelineRun,
+  useClusterTasks,
   useExternalLogsURL,
   useIsLogStreamingEnabled,
-  useIsReadOnly
+  useIsReadOnly,
+  usePipeline,
+  usePipelineRun,
+  useTaskRuns,
+  useTasks
 } from '../../api';
 
 import {
@@ -64,23 +52,13 @@ const { PIPELINE_TASK, RETRY, STEP, VIEW } = queryParamConstants;
 
 export /* istanbul ignore next */ function PipelineRunContainer(props) {
   const {
-    clusterTasks,
-    error,
-    fetchClusterTasks,
-    fetchPipeline,
-    fetchPipelineRun,
-    fetchTaskRuns,
-    fetchTasks,
     history,
     intl,
     location,
     match,
-    pipelineRun,
     pipelineTaskName: currentPipelineTaskName,
     retry: currentRetry,
     selectedStepId: currentSelectedStepId,
-    tasks,
-    taskRuns,
     view,
     webSocketConnected
   } = props;
@@ -88,7 +66,6 @@ export /* istanbul ignore next */ function PipelineRunContainer(props) {
   const { namespace, pipelineRunName } = match.params;
 
   const maximizedLogsContainer = useRef();
-  const [loading, setLoading] = useState(true);
   const [showRunActionNotification, setShowRunActionNotification] = useState(
     null
   );
@@ -102,39 +79,65 @@ export /* istanbul ignore next */ function PipelineRunContainer(props) {
     resourceName: pipelineRunName
   });
 
-  async function fetchResources() {
-    const [run] = await Promise.all([
-      fetchPipelineRun({ name: pipelineRunName, namespace }),
-      fetchTaskRuns({
-        filters: [`${labelConstants.PIPELINE_RUN}=${pipelineRunName}`]
-      }),
-      // TODO: only request the Tasks / ClusterTasks we actually need
-      //       move these to the Promise.all below, with `fetchPipeline`
-      fetchTasks(),
-      fetchClusterTasks()
-    ]);
-    const pipelineName = run?.spec.pipelineRef?.name;
-    await Promise.all([
-      pipelineName
-        ? fetchPipeline({ name: pipelineName, namespace })
-        : Promise.resolve()
-    ]);
+  const {
+    data: pipelineRun,
+    error: pipelineRunError,
+    isLoading: isLoadingPipelineRun,
+    refetch: refetchPipelineRun
+  } = usePipelineRun({ name: pipelineRunName, namespace });
 
-    setLoading(false);
+  const {
+    data: taskRunsResponse = [],
+    error: taskRunsError,
+    isLoading: isLoadingTaskRuns,
+    refetch: refetchTaskRuns
+  } = useTaskRuns({
+    filters: [`${labelConstants.PIPELINE_RUN}=${pipelineRunName}`],
+    namespace
+  });
+
+  // TODO: only request the Tasks / ClusterTasks we actually need
+  const {
+    data: tasks = [],
+    error: tasksError,
+    isLoading: isLoadingTasks,
+    refetch: refetchTasks
+  } = useTasks({ namespace });
+  const {
+    data: clusterTasks = [],
+    isLoading: isLoadingClusterTasks,
+    refetch: refetchClusterTasks
+  } = useClusterTasks();
+
+  const pipelineName = pipelineRun?.spec.pipelineRef?.name;
+  const {
+    data: pipeline,
+    isLoading: isLoadingPipeline,
+    refetch: refetchPipeline
+  } = usePipeline(
+    { name: pipelineName, namespace },
+    { enabled: !!pipelineName }
+  );
+
+  const error = pipelineRunError || tasksError || taskRunsError;
+
+  const taskRuns = getTaskRunsWithPlaceholders({
+    clusterTasks,
+    pipeline,
+    pipelineRun,
+    taskRuns: taskRunsResponse,
+    tasks
+  });
+
+  function refetchData() {
+    refetchPipelineRun();
+    refetchTaskRuns();
+    refetchTasks();
+    refetchClusterTasks();
+    refetchPipeline();
   }
 
-  function fetchData({ skipLoading } = {}) {
-    setLoading(!skipLoading);
-    fetchResources();
-  }
-
-  useEffect(() => {
-    fetchData();
-  }, [namespace, pipelineRunName]);
-
-  useWebSocketReconnected(() => {
-    fetchData({ skipLoading: true });
-  }, webSocketConnected);
+  useWebSocketReconnected(refetchData, webSocketConnected);
 
   function getSelectedTaskId(pipelineTaskName, retry) {
     const taskRun = taskRuns.find(
@@ -308,7 +311,13 @@ export /* istanbul ignore next */ function PipelineRunContainer(props) {
         error={error}
         fetchLogs={getLogsRetriever(isLogStreamingEnabled, externalLogsURL)}
         handleTaskSelected={handleTaskSelected}
-        loading={loading}
+        loading={
+          isLoadingPipelineRun ||
+          isLoadingTaskRuns ||
+          isLoadingTasks ||
+          isLoadingClusterTasks ||
+          isLoadingPipeline
+        }
         getLogsToolbar={getLogsToolbar}
         maximizedLogsContainer={maximizedLogsContainer.current}
         onViewChange={getViewChangeHandler(props)}
@@ -344,59 +353,14 @@ function mapStateToProps(state, ownProps) {
   const selectedStepId = queryParams.get(STEP);
   const view = queryParams.get(VIEW);
 
-  const pipelineRun = getPipelineRun(state, {
-    name: ownProps.match.params.pipelineRunName,
-    namespace
-  });
-  const pipelineName = pipelineRun?.spec?.pipelineRef?.name;
-  const pipeline =
-    pipelineName && getPipeline(state, { name: pipelineName, namespace });
-  const clusterTasks = getClusterTasks(state);
-  const tasks = getTasks(state, { namespace });
-  let taskRuns = getTaskRunsByPipelineRunName(
-    state,
-    ownProps.match.params.pipelineRunName,
-    {
-      namespace
-    }
-  );
-
-  taskRuns = getTaskRunsWithPlaceholders({
-    clusterTasks,
-    pipeline,
-    pipelineRun,
-    taskRuns,
-    tasks
-  });
-
   return {
-    clusterTasks,
-    error:
-      getPipelineRunsErrorMessage(state) ||
-      getTasksErrorMessage(state) ||
-      getTaskRunsErrorMessage(state),
     namespace,
-    pipelineRun,
-    pipeline,
     pipelineTaskName,
     retry,
     selectedStepId,
-    tasks,
-    taskRuns,
     view,
     webSocketConnected: isWebSocketConnected(state)
   };
 }
 
-const mapDispatchToProps = {
-  fetchClusterTasks: fetchClusterTasksActionCreator,
-  fetchPipeline: fetchPipelineActionCreator,
-  fetchPipelineRun: fetchPipelineRunActionCreator,
-  fetchTasks: fetchTasksActionCreator,
-  fetchTaskRuns: fetchTaskRunsActionCreator
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(injectIntl(PipelineRunContainer));
+export default connect(mapStateToProps)(injectIntl(PipelineRunContainer));
