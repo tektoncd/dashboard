@@ -38,20 +38,13 @@ import { Add16 as Add, TrashCan32 as Delete } from '@carbon/icons-react';
 
 import { ListPageLayout } from '..';
 import { sortRunsByStartTime } from '../../utils';
-import { fetchTaskRuns as fetchTaskRunsActionCreator } from '../../actions/taskRuns';
-
-import {
-  getSelectedNamespace,
-  getTaskRuns,
-  getTaskRunsErrorMessage,
-  isFetchingTaskRuns,
-  isWebSocketConnected
-} from '../../reducers';
+import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
 import {
   cancelTaskRun,
   deleteTaskRun,
   rerunTaskRun,
-  useIsReadOnly
+  useIsReadOnly,
+  useTaskRuns
 } from '../../api';
 
 const { CLUSTER_TASK, TASK } = labels;
@@ -59,18 +52,14 @@ const { CLUSTER_TASK, TASK } = labels;
 /* istanbul ignore next */
 function TaskRuns(props) {
   const {
-    error,
-    fetchTaskRuns,
     filters,
     history,
     intl,
     kind,
-    loading,
     namespace,
     setStatusFilter,
     statusFilter,
     taskName,
-    taskRuns,
     webSocketConnected
   } = props;
 
@@ -83,22 +72,18 @@ function TaskRuns(props) {
 
   useTitleSync({ page: 'TaskRuns' });
 
-  function fetchData() {
-    fetchTaskRuns({ filters, namespace });
-  }
-
-  function reset() {
+  useEffect(() => {
     setDeleteError(null);
     setShowDeleteModal(false);
     setToBeDeleted([]);
-  }
-
-  useEffect(() => {
-    reset();
-    fetchData();
   }, [JSON.stringify(filters), namespace]);
 
-  useWebSocketReconnected(fetchData, webSocketConnected);
+  const { data: taskRuns = [], error, isLoading, refetch } = useTaskRuns({
+    filters,
+    namespace
+  });
+
+  useWebSocketReconnected(refetch, webSocketConnected);
 
   function getError() {
     if (error) {
@@ -304,7 +289,7 @@ function TaskRuns(props) {
       <TaskRunsList
         batchActionButtons={batchActionButtons}
         filters={statusFilters}
-        loading={loading && !taskRuns.length}
+        loading={isLoading}
         selectedNamespace={namespace}
         taskRuns={taskRuns.filter(run => {
           return runMatchesStatusFilter({ run, statusFilter });
@@ -346,27 +331,15 @@ function mapStateToProps(state, props) {
       ? clusterTaskFilter.replace(`${CLUSTER_TASK}=`, '')
       : taskFilter.replace(`${TASK}=`, '');
 
-  const taskRuns = getTaskRuns(state, { filters, namespace });
-
   return {
-    error: getTaskRunsErrorMessage(state),
-    loading: isFetchingTaskRuns(state),
     namespace,
     filters,
     taskName,
     kind,
     setStatusFilter: getStatusFilterHandler(props),
     statusFilter,
-    taskRuns,
     webSocketConnected: isWebSocketConnected(state)
   };
 }
 
-const mapDispatchToProps = {
-  fetchTaskRuns: fetchTaskRunsActionCreator
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(injectIntl(TaskRuns));
+export default connect(mapStateToProps)(injectIntl(TaskRuns));

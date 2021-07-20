@@ -15,7 +15,13 @@ import { getGenerateNamePrefixForRerun } from '@tektoncd/dashboard-utils';
 import deepClone from 'lodash.clonedeep';
 
 import { deleteRequest, get, patch, post } from './comms';
-import { checkData, getQueryParams, getTektonAPI } from './utils';
+import {
+  checkData,
+  getQueryParams,
+  getTektonAPI,
+  useCollection,
+  useResource
+} from './utils';
 
 export function getPipelineRuns({ filters = [], namespace } = {}) {
   const uri = getTektonAPI(
@@ -29,6 +35,14 @@ export function getPipelineRuns({ filters = [], namespace } = {}) {
 export function getPipelineRun({ name, namespace }) {
   const uri = getTektonAPI('pipelineruns', { name, namespace });
   return get(uri);
+}
+
+export function usePipelineRuns(params) {
+  return useCollection('PipelineRun', getPipelineRuns, params);
+}
+
+export function usePipelineRun(params, queryConfig) {
+  return useResource('PipelineRun', getPipelineRun, params, queryConfig);
 }
 
 export function cancelPipelineRun({ name, namespace }) {

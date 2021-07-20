@@ -12,83 +12,7 @@ limitations under the License.
 */
 /* istanbul ignore file */
 
-import { combineReducers } from 'redux';
-import keyBy from 'lodash.keyby';
-import merge from 'lodash.merge';
-
-import { isStale, typeToPlural } from '../utils';
-
-function createByIdReducer({ type }) {
-  const typePlural = typeToPlural(type);
-  return function byId(state = {}, action) {
-    switch (action.type) {
-      case `${type}Created`:
-      case `${type}Updated`:
-        if (isStale(action.payload, state)) {
-          return state;
-        }
-        return {
-          ...state,
-          [action.payload.metadata.uid]: action.payload
-        };
-      case `${type}Deleted`:
-        const newState = { ...state };
-        delete newState[action.payload.metadata.uid];
-        return newState;
-      case `${typePlural}_FETCH_SUCCESS`:
-        return {
-          ...state,
-          ...keyBy(
-            action.data.filter(resource => !isStale(resource, state)),
-            'metadata.uid'
-          )
-        };
-      default:
-        return state;
-    }
-  };
-}
-
-function createByNamespaceReducer({ type }) {
-  const typePlural = typeToPlural(type);
-  return function byNamespace(state = {}, action) {
-    switch (action.type) {
-      case `${type}Created`:
-      case `${type}Updated`:
-        const resource = {
-          [action.payload.metadata.namespace]: {
-            [action.payload.metadata.name]: action.payload.metadata.uid
-          }
-        };
-        return merge({}, state, resource);
-      case `${type}Deleted`:
-        const newState = { ...state };
-        if (!newState[action.payload.metadata.namespace]) {
-          return newState;
-        }
-        delete newState[action.payload.metadata.namespace][
-          action.payload.metadata.name
-        ];
-        return newState;
-      case `${typePlural}_FETCH_SUCCESS`:
-        const namespaces = action.data.reduce(
-          (accumulator, pipelineResource) => {
-            const { name, namespace, uid } = pipelineResource.metadata;
-            return merge(accumulator, {
-              [namespace]: {
-                [name]: uid
-              }
-            });
-          },
-          {}
-        );
-
-        return merge({}, state, namespaces);
-      default:
-        return state;
-    }
-  };
-}
+import { typeToPlural } from '../utils';
 
 export function createIsFetchingReducer({ type }) {
   const typePlural = typeToPlural(type);
@@ -118,13 +42,4 @@ export function createErrorMessageReducer({ type }) {
         return state;
     }
   };
-}
-
-export function createNamespacedReducer({ type }) {
-  return combineReducers({
-    byId: createByIdReducer({ type }),
-    byNamespace: createByNamespaceReducer({ type }),
-    errorMessage: createErrorMessageReducer({ type }),
-    isFetching: createIsFetchingReducer({ type })
-  });
 }

@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,12 +14,7 @@ limitations under the License.
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 
-import {
-  fetchCollection,
-  fetchNamespacedResource,
-  fetchResource,
-  fetchSuccess
-} from './actionCreators';
+import { fetchCollection, fetchSuccess } from './actionCreators';
 
 it('fetchSuccess', () => {
   const data = { fake: 'data' };
@@ -63,89 +58,5 @@ describe('fetchCollection', () => {
 
     await store.dispatch(fetchCollection('Extension', fakeAPI));
     expect(store.getActions()).toEqual(expectedActions);
-  });
-});
-
-describe('fetchNamespacedResource', () => {
-  it('success', async () => {
-    const data = { fake: 'data' };
-    const namespace = 'default';
-    const params = { name: 'name' };
-    const fakeAPI = jest.fn().mockImplementation(() => data);
-    const middleware = [thunk];
-    const mockStore = configureStore(middleware);
-    const store = mockStore({ namespaces: { selected: namespace } });
-
-    const expectedActions = [
-      { type: 'EXTENSIONS_FETCH_REQUEST' },
-      { type: 'EXTENSIONS_FETCH_SUCCESS', data: [data] }
-    ];
-
-    await store.dispatch(fetchNamespacedResource('Extension', fakeAPI, params));
-    expect(store.getActions()).toEqual(expectedActions);
-    expect(fakeAPI).toHaveBeenCalledWith({ ...params, namespace });
-  });
-
-  it('error', async () => {
-    const namespace = 'default';
-    const params = { name: 'name' };
-    const error = new Error();
-    const fakeAPI = jest.fn().mockImplementation(() => {
-      throw error;
-    });
-
-    const middleware = [thunk];
-    const mockStore = configureStore(middleware);
-    const store = mockStore({ namespaces: { selected: namespace } });
-
-    const expectedActions = [
-      { type: 'EXTENSIONS_FETCH_REQUEST' },
-      { type: 'EXTENSIONS_FETCH_FAILURE', error }
-    ];
-
-    await store.dispatch(fetchNamespacedResource('Extension', fakeAPI, params));
-    expect(store.getActions()).toEqual(expectedActions);
-    expect(fakeAPI).toHaveBeenCalledWith({ ...params, namespace });
-  });
-});
-
-describe('fetchResource', () => {
-  it('success', async () => {
-    const data = { fake: 'data' };
-    const params = { name: 'name' };
-    const fakeAPI = jest.fn().mockImplementation(() => data);
-    const middleware = [thunk];
-    const mockStore = configureStore(middleware);
-    const store = mockStore({});
-
-    const expectedActions = [
-      { type: 'EXTENSIONS_FETCH_REQUEST' },
-      { type: 'EXTENSIONS_FETCH_SUCCESS', data: [data] }
-    ];
-
-    await store.dispatch(fetchResource('Extension', fakeAPI, params));
-    expect(store.getActions()).toEqual(expectedActions);
-    expect(fakeAPI).toHaveBeenCalledWith({ ...params });
-  });
-
-  it('error', async () => {
-    const params = { name: 'name' };
-    const error = new Error();
-    const fakeAPI = jest.fn().mockImplementation(() => {
-      throw error;
-    });
-
-    const middleware = [thunk];
-    const mockStore = configureStore(middleware);
-    const store = mockStore();
-
-    const expectedActions = [
-      { type: 'EXTENSIONS_FETCH_REQUEST' },
-      { type: 'EXTENSIONS_FETCH_FAILURE', error }
-    ];
-
-    await store.dispatch(fetchResource('Extension', fakeAPI, params));
-    expect(store.getActions()).toEqual(expectedActions);
-    expect(fakeAPI).toHaveBeenCalledWith({ ...params });
   });
 });

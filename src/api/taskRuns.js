@@ -15,7 +15,13 @@ import { getGenerateNamePrefixForRerun } from '@tektoncd/dashboard-utils';
 import deepClone from 'lodash.clonedeep';
 
 import { deleteRequest, get, patch, post } from './comms';
-import { checkData, getQueryParams, getTektonAPI } from './utils';
+import {
+  checkData,
+  getQueryParams,
+  getTektonAPI,
+  useCollection,
+  useResource
+} from './utils';
 
 export function deleteTaskRun({ name, namespace }) {
   const uri = getTektonAPI('taskruns', { name, namespace });
@@ -30,6 +36,14 @@ export function getTaskRuns({ filters = [], namespace } = {}) {
 export function getTaskRun({ name, namespace }) {
   const uri = getTektonAPI('taskruns', { name, namespace });
   return get(uri);
+}
+
+export function useTaskRuns(params) {
+  return useCollection('TaskRun', getTaskRuns, params);
+}
+
+export function useTaskRun(params, queryConfig) {
+  return useResource('TaskRun', getTaskRun, params, queryConfig);
 }
 
 export function cancelTaskRun({ name, namespace }) {

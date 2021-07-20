@@ -34,247 +34,101 @@ const namespacesTestStore = {
     isFetching: false
   }
 };
-const pipelinesTestStore = {
-  pipelines: {
-    byNamespace: {
-      'namespace-1': {
-        'pipeline-1': 'id-pipeline-1'
-      }
+const pipelines = [
+  {
+    metadata: {
+      name: 'pipeline-1',
+      namespace: 'namespace-1',
+      uid: 'id-pipeline-1'
     },
-    byId: {
-      'id-pipeline-1': {
-        metadata: {
-          name: 'pipeline-1',
-          namespace: 'namespace-1',
-          uid: 'id-pipeline-1'
+    spec: {
+      resources: [{ name: 'resource-1', type: 'type-1' }],
+      params: [
+        {
+          name: 'param-1',
+          description: 'description-1',
+          default: 'default-1'
         },
-        spec: {
-          resources: [{ name: 'resource-1', type: 'type-1' }],
-          params: [
-            {
-              name: 'param-1',
-              description: 'description-1',
-              default: 'default-1'
-            },
-            { name: 'param-2' }
-          ]
-        }
-      }
-    },
-    isFetching: false
-  }
-};
-
-const pipelineRunsTestStore = {
-  pipelineRuns: {
-    isFetching: false,
-    byId: {
-      'pipelineRunWithTwoLabels-id': {
-        status: {
-          startTime: '0',
-          conditions: [
-            { reason: 'Completed', status: 'True', type: 'Succeeded' }
-          ]
-        },
-        metadata: {
-          name: 'pipelineRunWithTwoLabels',
-          namespace: 'namespace-1',
-          labels: {
-            foo: 'bar',
-            baz: 'bam'
-          },
-          uid: 'pipelineRunWithTwoLabels-id'
-        },
-        spec: {
-          pipelineRef: {
-            name: 'pipeline-1'
-          }
-        }
-      },
-      'pipelineRunWithSingleLabel-id': {
-        status: {
-          startTime: '1',
-          conditions: [
-            { reason: 'Completed', status: 'True', type: 'Succeeded' }
-          ]
-        },
-        metadata: {
-          name: 'pipelineRunWithSingleLabel',
-          namespace: 'namespace-1',
-          uid: 'pipelineRunWithSingleLabel-id',
-          labels: {
-            foo: 'bar'
-          }
-        },
-        spec: {
-          pipelineRef: {
-            name: 'pipeline-1'
-          }
-        }
-      },
-      'pipelineRunPending-id': {
-        metadata: {
-          name: 'pipelineRunPending',
-          namespace: 'namespace-1',
-          uid: 'pipelineRunPending-id',
-          labels: {
-            foo: 'bar'
-          }
-        },
-        spec: {
-          pipelineRef: {
-            name: 'pipeline-1'
-          },
-          status: 'PipelineRunPending'
-        }
-      }
-    },
-    byNamespace: {
-      'namespace-1': {
-        pipelineRunWithTwoLabels: 'pipelineRunWithTwoLabels-id',
-        pipelineRunWithSingleLabel: 'pipelineRunWithSingleLabel-id',
-        pipelineRunPending: 'pipelineRunPending-id'
-      }
+        { name: 'param-2' }
+      ]
     }
   }
-};
+];
+
+const pipelineRuns = [
+  {
+    status: {
+      startTime: '0',
+      conditions: [{ reason: 'Completed', status: 'True', type: 'Succeeded' }]
+    },
+    metadata: {
+      name: 'pipelineRunWithTwoLabels',
+      namespace: 'namespace-1',
+      labels: {
+        foo: 'bar',
+        baz: 'bam'
+      },
+      uid: 'pipelineRunWithTwoLabels-id'
+    },
+    spec: {
+      pipelineRef: {
+        name: 'pipeline-1'
+      }
+    }
+  },
+  {
+    status: {
+      startTime: '1',
+      conditions: [{ reason: 'Completed', status: 'True', type: 'Succeeded' }]
+    },
+    metadata: {
+      name: 'pipelineRunWithSingleLabel',
+      namespace: 'namespace-1',
+      uid: 'pipelineRunWithSingleLabel-id',
+      labels: {
+        foo: 'bar'
+      }
+    },
+    spec: {
+      pipelineRef: {
+        name: 'pipeline-1'
+      }
+    }
+  },
+  {
+    metadata: {
+      name: 'pipelineRunPending',
+      namespace: 'namespace-1',
+      uid: 'pipelineRunPending-id',
+      labels: {
+        foo: 'bar'
+      }
+    },
+    spec: {
+      pipelineRef: {
+        name: 'pipeline-1'
+      },
+      status: 'PipelineRunPending'
+    }
+  }
+];
+
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 const testStore = {
   ...namespacesTestStore,
-  notifications: {},
-  ...pipelineRunsTestStore,
-  ...pipelinesTestStore
+  notifications: {}
 };
 
 describe('PipelineRuns container', () => {
   beforeEach(() => {
-    jest.spyOn(PipelinesAPI, 'getPipelines').mockImplementation(() => []);
+    jest
+      .spyOn(PipelinesAPI, 'usePipelines')
+      .mockImplementation(() => ({ data: pipelines }));
+    jest
+      .spyOn(PipelineRunsAPI, 'usePipelineRuns')
+      .mockImplementation(() => ({ data: [...pipelineRuns] }));
     jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => true);
-  });
-
-  it('PipelineRuns can be filtered on a single label filter', async () => {
-    const mockTestStore = mockStore(testStore);
-    const match = {
-      params: {},
-      url: '/pipelineruns'
-    };
-
-    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
-      <Provider store={mockTestStore}>
-        <Route
-          path="/pipelineruns"
-          render={props => (
-            <PipelineRunsContainer
-              {...props}
-              match={match}
-              error={null}
-              loading={false}
-              namespace="namespace-1"
-              fetchPipelineRuns={() => Promise.resolve()}
-              pipelineRuns={pipelineRunsTestStore.pipelineRuns.byId}
-            />
-          )}
-        />
-      </Provider>,
-      { route: '/pipelineruns' }
-    );
-
-    const filterValue = 'baz:bam';
-    const filterInputField = getByPlaceholderText(/Input a label filter/);
-    fireEvent.change(filterInputField, { target: { value: filterValue } });
-    fireEvent.submit(getByText(/Input a label filter/i));
-
-    expect(queryByText(filterValue)).toBeTruthy();
-    expect(queryByText('pipelineRunWithSingleLabel')).toBeFalsy();
-    expect(queryByText('pipelineRunWithTwoLabels')).toBeTruthy();
-  });
-
-  it('PipelineRuns can be filtered on multiple label filters', async () => {
-    const mockTestStore = mockStore(testStore);
-    const match = {
-      params: {},
-      url: ''
-    };
-
-    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
-      <Provider store={mockTestStore}>
-        <Route
-          path="/pipelineruns"
-          render={props => (
-            <PipelineRunsContainer
-              {...props}
-              match={match}
-              error={null}
-              loading={false}
-              namespace="namespace-1"
-              fetchPipelineRuns={() => Promise.resolve()}
-              pipelineRuns={pipelineRunsTestStore.pipelineRuns.byId}
-            />
-          )}
-        />
-      </Provider>,
-      { route: '/pipelineruns' }
-    );
-
-    const firstFilterValue = 'foo:bar';
-    const secondFilterValue = 'baz:bam';
-    const filterInputField = getByPlaceholderText(/Input a label filter/);
-    fireEvent.change(filterInputField, { target: { value: firstFilterValue } });
-    fireEvent.submit(getByText(/Input a label filter/i));
-    fireEvent.change(filterInputField, {
-      target: { value: secondFilterValue }
-    });
-    fireEvent.submit(getByText(/Input a label filter/i));
-
-    expect(queryByText(firstFilterValue)).toBeTruthy();
-    expect(queryByText(secondFilterValue)).toBeTruthy();
-    expect(queryByText('pipelineRunWithSingleLabel')).toBeFalsy();
-    expect(queryByText('pipelineRunWithTwoLabels')).toBeTruthy();
-  });
-
-  it('PipelineRuns label filter can be deleted, rendering the correct PipelineRuns', async () => {
-    const mockTestStore = mockStore(testStore);
-    const match = {
-      params: {},
-      url: '/pipelineruns'
-    };
-
-    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
-      <Provider store={mockTestStore}>
-        <Route
-          path="/pipelineruns"
-          render={props => (
-            <PipelineRunsContainer
-              {...props}
-              match={match}
-              error={null}
-              loading={false}
-              namespace="namespace-1"
-              fetchPipelineRuns={() => Promise.resolve()}
-              pipelineRuns={pipelineRunsTestStore.pipelineRuns.byId}
-            />
-          )}
-        />
-      </Provider>,
-      { route: '/pipelineruns' }
-    );
-
-    const filterValue = 'baz:bam';
-    const filterInputField = getByPlaceholderText(/Input a label filter/);
-    fireEvent.change(filterInputField, { target: { value: filterValue } });
-    fireEvent.submit(getByText(/Input a label filter/i));
-
-    expect(queryByText(filterValue)).toBeTruthy();
-    expect(queryByText('pipelineRunWithSingleLabel')).toBeFalsy();
-    expect(queryByText('pipelineRunWithTwoLabels')).toBeTruthy();
-
-    fireEvent.click(getByText(filterValue));
-    await waitFor(() => getByText('pipelineRunWithSingleLabel'));
-    expect(queryByText(filterValue)).toBeFalsy();
-
-    expect(queryByText('pipelineRunWithSingleLabel')).toBeTruthy();
-    expect(queryByText('pipelineRunWithTwoLabels')).toBeTruthy();
   });
 
   it('Duplicate label filters are prevented', async () => {
@@ -295,8 +149,6 @@ describe('PipelineRuns container', () => {
               error={null}
               loading={false}
               namespace="namespace-1"
-              fetchPipelineRuns={() => Promise.resolve()}
-              pipelineRuns={pipelineRunsTestStore.pipelineRuns.byId}
             />
           )}
         />
@@ -334,8 +186,6 @@ describe('PipelineRuns container', () => {
               error={null}
               loading={false}
               namespace="namespace-1"
-              fetchPipelineRuns={() => Promise.resolve()}
-              pipelineRuns={pipelineRunsTestStore.pipelineRuns.byId}
             />
           )}
         />
@@ -375,8 +225,6 @@ describe('PipelineRuns container', () => {
               error={null}
               loading={false}
               namespace="namespace-1"
-              fetchPipelineRuns={() => Promise.resolve()}
-              pipelineRuns={pipelineRunsTestStore.pipelineRuns.byId}
             />
           )}
         />
@@ -415,8 +263,6 @@ describe('PipelineRuns container', () => {
               error={null}
               loading={false}
               namespace="namespace-1"
-              fetchPipelineRuns={() => Promise.resolve()}
-              pipelineRuns={pipelineRunsTestStore.pipelineRuns.byId}
             />
           )}
         />
@@ -433,6 +279,9 @@ describe('PipelineRuns container', () => {
   it('handles rerun event in PipelineRuns page', async () => {
     const mockTestStore = mockStore(testStore);
     jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => false);
+    PipelineRunsAPI.usePipelineRuns.mockImplementation(() => ({
+      data: [pipelineRuns[0]]
+    }));
     jest
       .spyOn(PipelineRunsAPI, 'rerunPipelineRun')
       .mockImplementation(() => []);
@@ -440,24 +289,18 @@ describe('PipelineRuns container', () => {
       <Provider store={mockTestStore}>
         <Route
           path={urls.pipelineRuns.all()}
-          render={props => (
-            <PipelineRunsContainer
-              {...props}
-              fetchPipelineRuns={() => Promise.resolve()}
-              pipelineRuns={pipelineRunsTestStore.pipelineRuns.byId}
-            />
-          )}
+          render={props => <PipelineRunsContainer {...props} />}
         />
       </Provider>,
       { route: urls.pipelineRuns.all() }
     );
     await waitFor(() => getByText(/pipelineRunWithTwoLabels/i));
-    fireEvent.click(await waitFor(() => getAllByTitle('Actions')[2]));
+    fireEvent.click(await waitFor(() => getAllByTitle('Actions')[0]));
     await waitFor(() => getByText(/Rerun/i));
     fireEvent.click(getByText('Rerun'));
     expect(PipelineRunsAPI.rerunPipelineRun).toHaveBeenCalledTimes(1);
     expect(PipelineRunsAPI.rerunPipelineRun).toHaveBeenCalledWith(
-      pipelineRunsTestStore.pipelineRuns.byId['pipelineRunWithSingleLabel-id']
+      pipelineRuns[0]
     );
   });
 
@@ -465,30 +308,27 @@ describe('PipelineRuns container', () => {
     const mockTestStore = mockStore(testStore);
     jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => false);
     jest
+      .spyOn(PipelineRunsAPI, 'usePipelineRuns')
+      .mockImplementation(() => ({ data: [pipelineRuns[2]] }));
+    jest
       .spyOn(PipelineRunsAPI, 'startPipelineRun')
       .mockImplementation(() => []);
     const { getAllByTitle, getByText } = renderWithRouter(
       <Provider store={mockTestStore}>
         <Route
           path={urls.pipelineRuns.all()}
-          render={props => (
-            <PipelineRunsContainer
-              {...props}
-              fetchPipelineRuns={() => Promise.resolve()}
-              pipelineRuns={pipelineRunsTestStore.pipelineRuns.byId}
-            />
-          )}
+          render={props => <PipelineRunsContainer {...props} />}
         />
       </Provider>,
       { route: urls.pipelineRuns.all() }
     );
-    await waitFor(() => getByText(/pipelineRunWithTwoLabels/i));
+    await waitFor(() => getByText(/pipelineRunPending/i));
     fireEvent.click(await waitFor(() => getAllByTitle('Actions')[0]));
     await waitFor(() => getByText(/Start/i));
     fireEvent.click(getByText('Start'));
     expect(PipelineRunsAPI.startPipelineRun).toHaveBeenCalledTimes(1);
     expect(PipelineRunsAPI.startPipelineRun).toHaveBeenCalledWith(
-      pipelineRunsTestStore.pipelineRuns.byId['pipelineRunPending-id']
+      pipelineRuns[2]
     );
   });
 });

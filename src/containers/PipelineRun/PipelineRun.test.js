@@ -16,6 +16,10 @@ import { waitFor } from '@testing-library/react';
 import { createIntl } from 'react-intl';
 
 import { renderWithRouter } from '../../utils/test';
+import * as PipelineRunsAPI from '../../api/pipelineRuns';
+import * as TaskRunsAPI from '../../api/taskRuns';
+import * as TasksAPI from '../../api/tasks';
+import * as ClusterTasksAPI from '../../api/clusterTasks';
 import { PipelineRunContainer } from './PipelineRun';
 
 const intl = createIntl({
@@ -23,7 +27,14 @@ const intl = createIntl({
   defaultLocale: 'en'
 });
 
-it('PipelineRunContainer renders', async () => {
+const pipelineRun = {
+  metadata: {
+    name: 'pipeline-run'
+  },
+  spec: {}
+};
+
+it('PipelineRunContainer renders data', async () => {
   const pipelineRunName = 'bar';
   const match = {
     params: {
@@ -31,40 +42,54 @@ it('PipelineRunContainer renders', async () => {
       pipelineRunName
     }
   };
+  jest
+    .spyOn(PipelineRunsAPI, 'usePipelineRun')
+    .mockImplementation(() => ({ data: pipelineRun }));
+  jest
+    .spyOn(TaskRunsAPI, 'useTaskRuns')
+    .mockImplementation(() => ({ data: [] }));
+  jest.spyOn(TasksAPI, 'useTasks').mockImplementation(() => ({ data: [] }));
+  jest
+    .spyOn(ClusterTasksAPI, 'useClusterTasks')
+    .mockImplementation(() => ({ data: [] }));
 
   const { getByText } = renderWithRouter(
-    <PipelineRunContainer
-      intl={intl}
-      match={match}
-      fetchTaskRuns={() => Promise.resolve()}
-      fetchPipelineRun={() => Promise.resolve()}
-      fetchTasks={() => Promise.resolve()}
-      fetchClusterTasks={() => Promise.resolve()}
-      error={null}
-      loading={false}
-    />
+    <PipelineRunContainer intl={intl} match={match} />
+  );
+  await waitFor(() => getByText(pipelineRun.metadata.name));
+});
+
+it('PipelineRunContainer renders not found state', async () => {
+  const pipelineRunName = 'bar';
+  const match = {
+    params: {
+      pipelineName: 'foo',
+      pipelineRunName
+    }
+  };
+  jest
+    .spyOn(PipelineRunsAPI, 'usePipelineRun')
+    .mockImplementation(() => ({ data: null, error: null }));
+
+  const { getByText } = renderWithRouter(
+    <PipelineRunContainer intl={intl} match={match} />
   );
   await waitFor(() => getByText(`PipelineRun not found`));
 });
 
-it('PipelineRunContainer handles error state', async () => {
+it('PipelineRunContainer renders error state', async () => {
   const match = {
     params: {
       pipelineName: 'foo',
       pipelineRunName: 'bar'
     }
   };
+  jest
+    .spyOn(PipelineRunsAPI, 'usePipelineRun')
+    .mockImplementation(() => ({ data: null, error: 'some error' }));
 
   const { getByText } = renderWithRouter(
-    <PipelineRunContainer
-      intl={intl}
-      match={match}
-      error="Error"
-      fetchTaskRuns={() => Promise.resolve()}
-      fetchPipelineRun={() => Promise.resolve()}
-      fetchTasks={() => Promise.resolve()}
-      fetchClusterTasks={() => Promise.resolve()}
-    />
+    <PipelineRunContainer intl={intl} match={match} />
   );
   await waitFor(() => getByText('Error loading PipelineRun'));
 });
