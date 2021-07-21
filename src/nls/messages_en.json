@@ -138,6 +138,7 @@
     "dashboard.logs.downloadButtonTooltip": "Download logs",
     "dashboard.logs.launchButtonTooltip": "Open logs in a new window",
     "dashboard.logs.maximize": "Maximize",
+    "dashboard.logs.pending": "Final logs pending",
     "dashboard.logs.restore": "Return to default",
     "dashboard.metadata.dateCreated": "Date created:",
     "dashboard.metadata.labels": "Labels:",

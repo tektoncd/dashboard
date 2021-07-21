@@ -156,7 +156,14 @@ export class LogContainer extends Component {
   };
 
   getTrailerMessage = trailer => {
-    const { intl } = this.props;
+    const { forcePolling, intl } = this.props;
+
+    if (trailer && forcePolling) {
+      return intl.formatMessage({
+        id: 'dashboard.logs.pending',
+        defaultMessage: 'Final logs pending'
+      });
+    }
 
     switch (trailer) {
       case 'Completed':
@@ -256,7 +263,7 @@ export class LogContainer extends Component {
   };
 
   logTrailer = () => {
-    const { stepStatus } = this.props;
+    const { forcePolling, stepStatus } = this.props;
     const { reason } = (stepStatus && stepStatus.terminated) || {};
     const trailer = this.getTrailerMessage(reason);
     if (!trailer) {
@@ -264,7 +271,10 @@ export class LogContainer extends Component {
     }
 
     return (
-      <div className="tkn--log-trailer" data-status={reason}>
+      <div
+        className="tkn--log-trailer"
+        data-status={reason && (forcePolling ? 'LogsPending' : reason)}
+      >
         {trailer}
       </div>
     );

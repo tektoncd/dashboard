@@ -52,6 +52,18 @@ describe('Log', () => {
     await waitFor(() => getByText(/step failed/i));
   });
 
+  it('renders pending trailer when step complete and forcePolling is true', async () => {
+    const { getByText, queryByText } = render(
+      <Log
+        fetchLogs={() => 'testing'}
+        forcePolling
+        stepStatus={{ terminated: { reason: 'Error' } }}
+      />
+    );
+    await waitFor(() => getByText(/final logs pending/i));
+    expect(queryByText(/step failed/)).toBeFalsy();
+  });
+
   it('renders virtualized list', async () => {
     const long = Array.from(
       { length: 60000 },

@@ -138,6 +138,7 @@
     "dashboard.logs.downloadButtonTooltip": "下载日志",
     "dashboard.logs.launchButtonTooltip": "在新窗口中打开日志",
     "dashboard.logs.maximize": "",
+    "dashboard.logs.pending": "",
     "dashboard.logs.restore": "",
     "dashboard.metadata.dateCreated": "创建日期：",
     "dashboard.metadata.labels": "标签：",
