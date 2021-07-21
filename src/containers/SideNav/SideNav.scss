@@ -17,6 +17,23 @@ limitations under the License.
     border-color: $gray-80;
     color: $gray-10;
 
+    .bx--side-nav__items {
+      display: flex;
+      flex-direction: column;
+
+      .bx--side-nav__item.bx--side-nav__item--icon
+        + .bx--side-nav__item:not(.bx--side-nav__item--icon) {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        justify-content: flex-end;
+      }
+
+      .bx--side-nav__item:last-child {
+        margin-bottom: 1rem;
+      }
+    }
+
     .bx--side-nav__icon {
       &:not(.bx--side-nav__submenu-chevron) {
         margin-right: 1rem;
