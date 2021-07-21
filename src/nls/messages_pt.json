@@ -138,6 +138,7 @@
     "dashboard.logs.downloadButtonTooltip": "",
     "dashboard.logs.launchButtonTooltip": "",
     "dashboard.logs.maximize": "",
+    "dashboard.logs.pending": "",
     "dashboard.logs.restore": "",
     "dashboard.metadata.dateCreated": "",
     "dashboard.metadata.labels": "",
