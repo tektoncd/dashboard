@@ -20,16 +20,19 @@ import {
 } from '@tektoncd/dashboard-utils';
 import { TooltipDropdown } from '@tektoncd/dashboard-components';
 
-import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
-import { usePipelines } from '../../api';
+import { isWebSocketConnected } from '../../reducers';
+import { usePipelines, useSelectedNamespace } from '../../api';
 
 function PipelinesDropdown({
   intl,
   label,
-  namespace,
+  namespace: namespaceProp,
   webSocketConnected,
   ...rest
 }) {
+  const { selectedNamespace } = useSelectedNamespace();
+  const namespace = namespaceProp || selectedNamespace;
+
   const { data: pipelines = [], isFetching, refetch } = usePipelines({
     namespace
   });
@@ -73,10 +76,8 @@ PipelinesDropdown.defaultProps = {
   titleText: 'Pipeline'
 };
 
-function mapStateToProps(state, ownProps) {
-  const namespace = ownProps.namespace || getSelectedNamespace(state);
+function mapStateToProps(state) {
   return {
-    namespace,
     webSocketConnected: isWebSocketConnected(state)
   };
 }

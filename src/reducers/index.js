@@ -14,26 +14,12 @@ limitations under the License.
 import { combineReducers } from 'redux';
 
 import locale, * as localeSelectors from './locale';
-import namespaces, * as namespaceSelectors from './namespaces';
 import notifications, * as notificationSelectors from './notifications';
 
 export default combineReducers({
   locale,
-  namespaces,
   notifications
 });
-
-export function getSelectedNamespace(state) {
-  return namespaceSelectors.getSelectedNamespace(state.namespaces);
-}
-
-export function getNamespaces(state) {
-  return namespaceSelectors.getNamespaces(state.namespaces);
-}
-
-export function isFetchingNamespaces(state) {
-  return namespaceSelectors.isFetchingNamespaces(state.namespaces);
-}
 
 export function getLocale(state) {
   return localeSelectors.getLocale(state.locale);

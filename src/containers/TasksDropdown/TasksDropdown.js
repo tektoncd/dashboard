@@ -20,16 +20,19 @@ import {
 } from '@tektoncd/dashboard-utils';
 import { TooltipDropdown } from '@tektoncd/dashboard-components';
 
-import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
-import { useTasks } from '../../api';
+import { isWebSocketConnected } from '../../reducers';
+import { useSelectedNamespace, useTasks } from '../../api';
 
 function TasksDropdown({
   intl,
   label,
-  namespace,
+  namespace: namespaceProp,
   webSocketConnected,
   ...rest
 }) {
+  const { selectedNamespace } = useSelectedNamespace();
+  const namespace = namespaceProp || selectedNamespace;
+
   const { data: tasks = [], isFetching, refetch } = useTasks({ namespace });
   useWebSocketReconnected(refetch, webSocketConnected);
 
@@ -71,10 +74,8 @@ TasksDropdown.defaultProps = {
   titleText: 'Task'
 };
 
-function mapStateToProps(state, ownProps) {
-  const namespace = ownProps.namespace || getSelectedNamespace(state);
+function mapStateToProps(state) {
   return {
-    namespace,
     webSocketConnected: isWebSocketConnected(state)
   };
 }

@@ -25,12 +25,19 @@ import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 import { Link as CarbonLink } from 'carbon-components-react';
 
 import { ListPageLayout } from '..';
-import { getAPIResource, getCustomResources } from '../../api';
-import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
+import {
+  getAPIResource,
+  getCustomResources,
+  useSelectedNamespace
+} from '../../api';
+import { isWebSocketConnected } from '../../reducers';
 
 export function ResourceListContainer(props) {
-  const { filters, intl, match, namespace, webSocketConnected } = props;
-  const { group, version, type } = match.params;
+  const { filters, intl, match, webSocketConnected } = props;
+  const { group, namespace: namespaceParam, version, type } = match.params;
+
+  const { selectedNamespace } = useSelectedNamespace();
+  const namespace = namespaceParam || selectedNamespace;
 
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -168,12 +175,8 @@ export function ResourceListContainer(props) {
 }
 
 function mapStateToProps(state, props) {
-  const { namespace: namespaceParam } = props.match.params;
-  const namespace = namespaceParam || getSelectedNamespace(state);
-
   return {
     filters: getFilters(props.location),
-    namespace,
     webSocketConnected: isWebSocketConnected(state)
   };
 }

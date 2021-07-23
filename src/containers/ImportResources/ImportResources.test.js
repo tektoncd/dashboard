@@ -21,16 +21,12 @@ import { ALL_NAMESPACES, urls } from '@tektoncd/dashboard-utils';
 import { render, renderWithRouter } from '../../utils/test';
 import ImportResourcesContainer from './ImportResources';
 import * as API from '../../api';
+import * as APIUtils from '../../api/utils';
 
 describe('ImportResources component', () => {
   const middleware = [thunk];
   const mockStore = configureStore(middleware);
   const store = mockStore({
-    namespaces: {
-      byName: { namespace1: true, default: true },
-      isFetching: false,
-      selected: ALL_NAMESPACES
-    },
     notifications: {}
   });
 
@@ -38,6 +34,12 @@ describe('ImportResources component', () => {
     jest
       .spyOn(API, 'useDashboardNamespace')
       .mockImplementation(() => 'namespace1');
+    jest
+      .spyOn(API, 'useNamespaces')
+      .mockImplementation(() => ({ data: ['namespace1', 'default'] }));
+    jest
+      .spyOn(APIUtils, 'useSelectedNamespace')
+      .mockImplementation(() => ({ selectedNamespace: ALL_NAMESPACES }));
   });
 
   it('Displays errors when Repository URL and Namespace is empty', async () => {

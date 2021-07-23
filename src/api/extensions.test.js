@@ -48,7 +48,7 @@ it('useExtensions', () => {
   jest.spyOn(utils, 'useCollection').mockImplementation(() => query);
   expect(API.useExtensions(params)).toEqual(query);
   expect(utils.useCollection).toHaveBeenCalledWith(
-    'Extensions',
+    'Extension',
     API.getExtensions,
     params,
     undefined
@@ -57,7 +57,7 @@ it('useExtensions', () => {
   const queryConfig = { fake: 'queryConfig' };
   API.useExtensions(params, queryConfig);
   expect(utils.useCollection).toHaveBeenCalledWith(
-    'Extensions',
+    'Extension',
     API.getExtensions,
     params,
     queryConfig

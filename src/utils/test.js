@@ -19,7 +19,7 @@ import {
   renderWithRouter as baseRenderWithRouter
 } from '@tektoncd/dashboard-components/src/utils/test';
 
-import { WebSocketContext } from '../api/utils';
+import { NamespaceContext, WebSocketContext } from '../api/utils';
 
 export function getQueryClient() {
   return new QueryClient({
@@ -54,9 +54,13 @@ export function getAPIWrapper({
   return function apiWrapper({ children }) {
     return (
       <WebSocketContext.Provider value={webSocket}>
-        <QueryClientProvider client={queryClient}>
-          {children}
-        </QueryClientProvider>
+        <NamespaceContext.Provider
+          value={{ selectedNamespace: null, selectNamespace: () => {} }}
+        >
+          <QueryClientProvider client={queryClient}>
+            {children}
+          </QueryClientProvider>
+        </NamespaceContext.Provider>
       </WebSocketContext.Provider>
     );
   };

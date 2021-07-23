@@ -26,8 +26,8 @@ import {
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
 
-import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
-import { useTriggerTemplate } from '../../api';
+import { isWebSocketConnected } from '../../reducers';
+import { useSelectedNamespace, useTriggerTemplate } from '../../api';
 import { getViewChangeHandler } from '../../utils';
 
 const {
@@ -44,8 +44,11 @@ const {
 } = DataTable;
 
 export /* istanbul ignore next */ function TriggerTemplateContainer(props) {
-  const { intl, match, selectedNamespace, view, webSocketConnected } = props;
+  const { intl, match, view, webSocketConnected } = props;
   const { namespace, triggerTemplateName: resourceName } = match.params;
+
+  const { selectedNamespace: defaultNamespace } = useSelectedNamespace();
+  const selectedNamespace = namespace || defaultNamespace;
 
   useTitleSync({
     page: 'TriggerTemplate',
@@ -228,15 +231,12 @@ TriggerTemplateContainer.propTypes = {
 
 /* istanbul ignore next */
 function mapStateToProps(state, ownProps) {
-  const { location, match } = ownProps;
-  const { namespace: namespaceParam } = match.params;
+  const { location } = ownProps;
 
   const queryParams = new URLSearchParams(location.search);
   const view = queryParams.get('view');
-  const namespace = namespaceParam || getSelectedNamespace(state);
 
   return {
-    selectedNamespace: namespace,
     view,
     webSocketConnected: isWebSocketConnected(state)
   };

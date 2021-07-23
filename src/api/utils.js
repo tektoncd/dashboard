@@ -104,6 +104,7 @@ export function getTektonAPI(
 }
 
 export const WebSocketContext = React.createContext();
+export const NamespaceContext = React.createContext();
 
 function getResourceVersion(resource) {
   return parseInt(resource.metadata.resourceVersion, 10);
@@ -186,14 +187,26 @@ export function useWebSocket({ kind: _ }) {
   }, [queryClient, webSocket]);
 }
 
+export function useSelectedNamespace() {
+  return useContext(NamespaceContext);
+}
+
 export function useCollection(kind, api, params, queryConfig) {
-  const query = useQuery([kind, params], () => api(params), queryConfig);
+  const query = useQuery(
+    [kind, params].filter(Boolean),
+    () => api(params),
+    queryConfig
+  );
   useWebSocket({ kind });
   return query;
 }
 
 export function useResource(kind, api, params, queryConfig) {
-  const query = useQuery([kind, params], () => api(params), queryConfig);
+  const query = useQuery(
+    [kind, params].filter(Boolean),
+    () => api(params),
+    queryConfig
+  );
   useWebSocket({ kind });
   return query;
 }

@@ -25,15 +25,15 @@ import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 import { Link as CarbonLink } from 'carbon-components-react';
 
 import { ListPageLayout } from '..';
-import { useTriggers } from '../../api';
-import {
-  getSelectedNamespace,
-  isWebSocketConnected as selectIsWebSocketConnected
-} from '../../reducers';
+import { useSelectedNamespace, useTriggers } from '../../api';
+import { isWebSocketConnected as selectIsWebSocketConnected } from '../../reducers';
 
 function Triggers(props) {
-  const { filters, intl, namespace, webSocketConnected } = props;
+  const { filters, intl, match, webSocketConnected } = props;
   useTitleSync({ page: 'Triggers' });
+
+  const { selectedNamespace } = useSelectedNamespace();
+  const { namespace = selectedNamespace } = match.params;
 
   const { data: triggers = [], error, isLoading, refetch } = useTriggers({
     filters,
@@ -129,13 +129,10 @@ function Triggers(props) {
 
 /* istanbul ignore next */
 function mapStateToProps(state, props) {
-  const { namespace: namespaceParam } = props.match.params;
-  const namespace = namespaceParam || getSelectedNamespace(state);
   const filters = getFilters(props.location);
 
   return {
     filters,
-    namespace,
     webSocketConnected: selectIsWebSocketConnected(state)
   };
 }

@@ -13,7 +13,6 @@ limitations under the License.
 /* istanbul ignore file */
 
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
 import keyBy from 'lodash.keyby';
 import {
   Button,
@@ -37,8 +36,11 @@ import {
   PipelinesDropdown,
   ServiceAccountsDropdown
 } from '..';
-import { getSelectedNamespace } from '../../reducers';
-import { createPipelineRun, usePipeline } from '../../api';
+import {
+  createPipelineRun,
+  usePipeline,
+  useSelectedNamespace
+} from '../../api';
 import { isValidLabel } from '../../utils';
 
 const initialState = {
@@ -85,13 +87,14 @@ const initialResourcesState = resourceSpecs => {
 };
 
 function CreatePipelineRun(props) {
-  const { defaultNamespace, history, intl, location } = props;
+  const { history, intl, location } = props;
 
   function getPipelineName() {
     const urlSearchParams = new URLSearchParams(location.search);
     return urlSearchParams.get('pipelineName') || '';
   }
 
+  const { selectedNamespace: defaultNamespace } = useSelectedNamespace();
   const [
     {
       creating,
@@ -700,10 +703,4 @@ function CreatePipelineRun(props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    defaultNamespace: getSelectedNamespace(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(CreatePipelineRun));
+export default injectIntl(CreatePipelineRun);

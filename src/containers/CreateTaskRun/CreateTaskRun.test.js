@@ -21,6 +21,8 @@ import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 import { render } from '../../utils/test';
 
 import CreateTaskRun from './CreateTaskRun';
+import * as API from '../../api';
+import * as APIUtils from '../../api/utils';
 import * as PipelineResourcesAPI from '../../api/pipelineResources';
 import * as ServiceAccountsAPI from '../../api/serviceAccounts';
 import * as TaskRunsAPI from '../../api/taskRuns';
@@ -28,14 +30,6 @@ import * as ClusterTasksAPI from '../../api/clusterTasks';
 import * as TasksAPI from '../../api/tasks';
 import * as store from '../../store';
 
-const namespaces = {
-  selected: 'namespace-1',
-  byName: {
-    'namespace-1': '',
-    'namespace-2': ''
-  },
-  isFetching: false
-};
 const tasks = [
   {
     metadata: {
@@ -126,9 +120,7 @@ const taskRuns = {
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 const testStore = {
-  namespaces,
-  notifications: {},
-  taskRuns
+  notifications: {}
 };
 
 const props = {
@@ -162,11 +154,18 @@ describe('CreateTaskRun', () => {
       .spyOn(TaskRunsAPI, 'getTaskRuns')
       .mockImplementation(() => taskRuns.byId);
 
+    jest
+      .spyOn(API, 'useNamespaces')
+      .mockImplementation(() => ({ data: ['namespace-1', 'namespace-2'] }));
+
     const mockTestStore = mockStore(testStore);
     jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
   });
 
   it('renders empty, dropdowns disabled when no namespace selected', async () => {
+    jest
+      .spyOn(APIUtils, 'useSelectedNamespace')
+      .mockImplementation(() => ({ selectedNamespace: ALL_NAMESPACES }));
     const {
       getByPlaceholderText,
       getByText,
@@ -174,12 +173,7 @@ describe('CreateTaskRun', () => {
       queryAllByText,
       queryByPlaceholderText
     } = render(
-      <Provider
-        store={mockStore({
-          ...testStore,
-          namespaces: { ...namespaces, selected: ALL_NAMESPACES }
-        })}
-      >
+      <Provider store={mockStore(testStore)}>
         <CreateTaskRun {...props} location={{ search: '?kind=Task' }} />
       </Provider>
     );
@@ -238,6 +232,10 @@ describe('CreateTaskRun', () => {
   });
 
   it('resets Task and ServiceAccount when namespace changes', async () => {
+    jest
+      .spyOn(APIUtils, 'useSelectedNamespace')
+      .mockImplementation(() => ({ selectedNamespace: 'namespace-1' }));
+
     const { getByPlaceholderText, getByText, getByDisplayValue } = render(
       <Provider store={store.getStore()}>
         <CreateTaskRun {...props} />
@@ -264,6 +262,9 @@ describe('CreateTaskRun', () => {
   });
 
   it('handles onClose event', () => {
+    jest
+      .spyOn(APIUtils, 'useSelectedNamespace')
+      .mockImplementation(() => ({ selectedNamespace: 'namespace-1' }));
     jest.spyOn(props.history, 'push');
     const { getByText } = render(
       <Provider store={store.getStore()}>

@@ -24,24 +24,24 @@ import * as PipelinesAPI from '../../api/pipelines';
 
 describe('App', () => {
   beforeEach(() => {
-    jest.spyOn(PipelinesAPI, 'getPipelines').mockImplementation(() => {});
+    jest
+      .spyOn(PipelinesAPI, 'usePipelines')
+      .mockImplementation(() => ({ data: [] }));
     jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => true);
     jest.spyOn(API, 'useIsTriggersInstalled').mockImplementation(() => false);
     jest.spyOn(API, 'useTenantNamespace').mockImplementation(() => undefined);
+    jest.spyOn(API, 'useNamespaces').mockImplementation(() => ({ data: [] }));
   });
 
   it('renders successfully in full cluster mode', async () => {
     const middleware = [thunk];
     const mockStore = configureStore(middleware);
     const store = mockStore({
-      namespaces: { byName: {} },
-      notifications: {},
-      pipelines: { byNamespace: {} },
-      pipelineRuns: { byNamespace: {} }
+      notifications: {}
     });
     const { queryByText } = render(
       <Provider store={store}>
-        <App extensions={[]} lang="en" fetchNamespaces={() => {}} />
+        <App lang="en" />
       </Provider>
     );
 
@@ -57,19 +57,11 @@ describe('App', () => {
     const middleware = [thunk];
     const mockStore = configureStore(middleware);
     const store = mockStore({
-      extensions: { byName: {} },
-      namespaces: { byName: {} },
-      notifications: {},
-      pipelines: { byNamespace: {} },
-      pipelineRuns: { byNamespace: {} }
+      notifications: {}
     });
     const { queryByText } = render(
       <Provider store={store}>
-        <App
-          extensions={[]}
-          fetchNamespaces={() => {}}
-          selectNamespace={() => {}}
-        />
+        <App />
       </Provider>
     );
 
@@ -80,81 +72,44 @@ describe('App', () => {
     expect(queryByText('Tasks')).toBeTruthy();
   });
 
-  it('selects namespace based on tenant namespace', async () => {
+  it('does not call namespaces API in single namespace mode', async () => {
     const middleware = [thunk];
     const mockStore = configureStore(middleware);
     const store = mockStore({
-      namespaces: { byName: {} },
-      notifications: {},
-      pipelines: { byNamespace: {} },
-      pipelineRuns: { byNamespace: {} }
+      notifications: {}
     });
-    const selectNamespace = jest.fn();
+    jest.spyOn(API, 'getNamespaces');
     jest.spyOn(API, 'useTenantNamespace').mockImplementation(() => 'fake');
     const { queryByText } = render(
       <Provider store={store}>
-        <App
-          extensions={[]}
-          fetchNamespaces={() => {}}
-          selectNamespace={selectNamespace}
-        />
+        <App />
       </Provider>
     );
 
     await waitFor(() => queryByText('Tekton resources'));
-    expect(selectNamespace).toHaveBeenCalledWith('fake');
+    expect(API.useNamespaces).toHaveBeenCalledWith(
+      expect.objectContaining({ enabled: false })
+    );
   });
 
-  it('does not call fetchNamespaces in single namespace mode', async () => {
+  it('calls namespaces API in full cluster mode', async () => {
     const middleware = [thunk];
     const mockStore = configureStore(middleware);
     const store = mockStore({
-      namespaces: { byName: {} },
-      notifications: {},
-      pipelines: { byNamespace: {} },
-      pipelineRuns: { byNamespace: {} }
+      notifications: {}
     });
-    const fetchNamespaces = jest.fn();
-    const selectNamespace = jest.fn();
-    jest.spyOn(API, 'useTenantNamespace').mockImplementation(() => 'fake');
+    jest.spyOn(API, 'getNamespaces');
     const { queryByText } = render(
       <Provider store={store}>
-        <App
-          extensions={[]}
-          fetchNamespaces={fetchNamespaces}
-          selectNamespace={selectNamespace}
-        />
+        <App />
       </Provider>
     );
 
     await waitFor(() => queryByText('Tekton resources'));
-    expect(selectNamespace).toHaveBeenCalledWith('fake');
-    expect(fetchNamespaces).not.toHaveBeenCalled();
-  });
-
-  it('calls fetchNamespaces in full cluster mode', async () => {
-    const middleware = [thunk];
-    const mockStore = configureStore(middleware);
-    const store = mockStore({
-      namespaces: { byName: {} },
-      notifications: {},
-      pipelines: { byNamespace: {} },
-      pipelineRuns: { byNamespace: {} }
-    });
-    const fetchNamespaces = jest.fn();
-    const selectNamespace = jest.fn();
-    const { queryByText } = render(
-      <Provider store={store}>
-        <App
-          extensions={[]}
-          fetchNamespaces={fetchNamespaces}
-          selectNamespace={selectNamespace}
-        />
-      </Provider>
+    await waitFor(() =>
+      expect(API.useNamespaces).toHaveBeenCalledWith(
+        expect.objectContaining({ enabled: true })
+      )
     );
-
-    await waitFor(() => queryByText('Tekton resources'));
-    expect(selectNamespace).not.toHaveBeenCalled();
-    expect(fetchNamespaces).toHaveBeenCalled();
   });
 });

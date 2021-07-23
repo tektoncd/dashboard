@@ -25,11 +25,14 @@ import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 import { Link as CarbonLink } from 'carbon-components-react';
 
 import { ListPageLayout } from '..';
-import { useTriggerBindings } from '../../api';
-import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
+import { useSelectedNamespace, useTriggerBindings } from '../../api';
+import { isWebSocketConnected } from '../../reducers';
 
 export function TriggerBindings(props) {
-  const { filters, intl, selectedNamespace, webSocketConnected } = props;
+  const { filters, intl, match, webSocketConnected } = props;
+
+  const { selectedNamespace } = useSelectedNamespace();
+  const { namespace = selectedNamespace } = match.params;
 
   useTitleSync({ page: 'TriggerBindings' });
 
@@ -38,7 +41,7 @@ export function TriggerBindings(props) {
     error,
     isLoading,
     refetch
-  } = useTriggerBindings({ filters, namespace: selectedNamespace });
+  } = useTriggerBindings({ filters, namespace });
 
   useWebSocketReconnected(refetch, webSocketConnected);
 
@@ -117,13 +120,10 @@ export function TriggerBindings(props) {
 }
 
 function mapStateToProps(state, props) {
-  const { namespace: namespaceParam } = props.match.params;
   const filters = getFilters(props.location);
-  const namespace = namespaceParam || getSelectedNamespace(state);
 
   return {
     filters,
-    selectedNamespace: namespace,
     webSocketConnected: isWebSocketConnected(state)
   };
 }

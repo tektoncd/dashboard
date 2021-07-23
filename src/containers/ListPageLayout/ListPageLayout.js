@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import { connect } from 'react-redux';
 import { generatePath } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import { InlineNotification } from 'carbon-components-react';
@@ -22,10 +21,8 @@ import {
   paths
 } from '@tektoncd/dashboard-utils';
 
-import { selectNamespace as selectNamespaceAction } from '../../actions/namespaces';
-import { getSelectedNamespace } from '../../reducers';
 import { LabelFilter, NamespacesDropdown } from '..';
-import { useTenantNamespace } from '../../api';
+import { useSelectedNamespace, useTenantNamespace } from '../../api';
 
 export const ListPageLayout = ({
   children,
@@ -36,11 +33,13 @@ export const ListPageLayout = ({
   intl,
   location,
   match,
-  namespace,
-  selectNamespace,
   title
 }) => {
   const tenantNamespace = useTenantNamespace();
+  const {
+    selectedNamespace: namespace,
+    selectNamespace
+  } = useSelectedNamespace();
 
   function setPath(path) {
     history.push(`${path}${location.search}`);
@@ -115,16 +114,4 @@ export const ListPageLayout = ({
   );
 };
 
-/* istanbul ignore next */
-const mapStateToProps = state => ({
-  namespace: getSelectedNamespace(state)
-});
-
-const mapDispatchToProps = {
-  selectNamespace: selectNamespaceAction
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(injectIntl(ListPageLayout));
+export default injectIntl(ListPageLayout);

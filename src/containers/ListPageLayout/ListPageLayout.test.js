@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,30 +12,23 @@ limitations under the License.
 */
 
 import React from 'react';
-import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
 import { fireEvent } from '@testing-library/react';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
 import { renderWithRouter } from '../../utils/test';
 import * as API from '../../api';
+import * as APIUtils from '../../api/utils';
 import { ListPageLayout } from './ListPageLayout';
 
 describe('ListPageLayout', () => {
   it('add namespace to URL when selected', async () => {
-    const middleware = [thunk];
-    const mockStore = configureStore(middleware);
     const otherNamespace = 'foo';
-    const store = mockStore({
-      namespaces: {
-        byName: {
-          [otherNamespace]: true
-        },
-        isFetching: false,
-        selected: ALL_NAMESPACES
-      }
-    });
+    jest
+      .spyOn(API, 'useNamespaces')
+      .mockImplementation(() => ({ data: [otherNamespace] }));
+    jest
+      .spyOn(APIUtils, 'useSelectedNamespace')
+      .mockImplementation(() => ({ selectedNamespace: ALL_NAMESPACES }));
     const history = {
       push: jest.fn()
     };
@@ -43,15 +36,13 @@ describe('ListPageLayout', () => {
     const match = { path };
     const selectNamespace = jest.fn();
     const { getByText, getByDisplayValue } = renderWithRouter(
-      <Provider store={store}>
-        <ListPageLayout
-          history={history}
-          location={{ search: '' }}
-          match={match}
-          namespace={ALL_NAMESPACES}
-          selectNamespace={selectNamespace}
-        />
-      </Provider>
+      <ListPageLayout
+        history={history}
+        location={{ search: '' }}
+        match={match}
+        namespace={ALL_NAMESPACES}
+        selectNamespace={selectNamespace}
+      />
     );
     fireEvent.click(getByDisplayValue(/All Namespaces/i));
     fireEvent.click(getByText(otherNamespace));
@@ -62,20 +53,14 @@ describe('ListPageLayout', () => {
   });
 
   it('updates namespace in URL', async () => {
-    const middleware = [thunk];
-    const mockStore = configureStore(middleware);
     const namespace = 'default';
     const otherNamespace = 'foo';
-    const store = mockStore({
-      namespaces: {
-        byName: {
-          [namespace]: true,
-          [otherNamespace]: true
-        },
-        isFetching: false,
-        selected: namespace
-      }
-    });
+    jest
+      .spyOn(API, 'useNamespaces')
+      .mockImplementation(() => ({ data: [namespace, otherNamespace] }));
+    jest
+      .spyOn(APIUtils, 'useSelectedNamespace')
+      .mockImplementation(() => ({ selectedNamespace: namespace }));
     const history = {
       push: jest.fn()
     };
@@ -83,15 +68,13 @@ describe('ListPageLayout', () => {
     const match = { path, params: { namespace } };
     const selectNamespace = jest.fn();
     const { getByText, getByDisplayValue } = renderWithRouter(
-      <Provider store={store}>
-        <ListPageLayout
-          history={history}
-          location={{ search: '' }}
-          match={match}
-          namespace={namespace}
-          selectNamespace={selectNamespace}
-        />
-      </Provider>
+      <ListPageLayout
+        history={history}
+        location={{ search: '' }}
+        match={match}
+        namespace={namespace}
+        selectNamespace={selectNamespace}
+      />
     );
     fireEvent.click(getByDisplayValue(namespace));
     fireEvent.click(getByText(otherNamespace));
@@ -102,34 +85,28 @@ describe('ListPageLayout', () => {
   });
 
   it('removes namespace from URL when ALL_NAMESPACES is selected', async () => {
-    const middleware = [thunk];
-    const mockStore = configureStore(middleware);
     const namespace = 'default';
-    const store = mockStore({
-      namespaces: {
-        byName: {
-          [namespace]: true
-        },
-        isFetching: false,
-        selected: namespace
-      }
-    });
+    const selectNamespace = jest.fn();
+    jest
+      .spyOn(API, 'useNamespaces')
+      .mockImplementation(() => ({ data: [namespace] }));
+    jest.spyOn(APIUtils, 'useSelectedNamespace').mockImplementation(() => ({
+      selectedNamespace: namespace,
+      selectNamespace
+    }));
     const history = {
       push: jest.fn()
     };
     const path = '/namespaces/:namespace/fake/path';
     const match = { path, params: { namespace } };
-    const selectNamespace = jest.fn();
     const { getByText, getByDisplayValue } = renderWithRouter(
-      <Provider store={store}>
-        <ListPageLayout
-          history={history}
-          location={{ search: '' }}
-          match={match}
-          namespace={namespace}
-          selectNamespace={selectNamespace}
-        />
-      </Provider>
+      <ListPageLayout
+        history={history}
+        location={{ search: '' }}
+        match={match}
+        namespace={namespace}
+        selectNamespace={selectNamespace}
+      />
     );
     fireEvent.click(getByDisplayValue(namespace));
     fireEvent.click(getByText(/All Namespaces/i));
@@ -138,34 +115,28 @@ describe('ListPageLayout', () => {
   });
 
   it('removes namespace from URL when clearing selection', async () => {
-    const middleware = [thunk];
-    const mockStore = configureStore(middleware);
     const namespace = 'default';
-    const store = mockStore({
-      namespaces: {
-        byName: {
-          [namespace]: true
-        },
-        isFetching: false,
-        selected: namespace
-      }
-    });
+    const selectNamespace = jest.fn();
+    jest
+      .spyOn(API, 'useNamespaces')
+      .mockImplementation(() => ({ data: [namespace] }));
+    jest.spyOn(APIUtils, 'useSelectedNamespace').mockImplementation(() => ({
+      selectedNamespace: namespace,
+      selectNamespace
+    }));
     const history = {
       push: jest.fn()
     };
     const path = '/namespaces/:namespace/fake/path';
     const match = { path, params: { namespace } };
-    const selectNamespace = jest.fn();
     const { getByTitle } = renderWithRouter(
-      <Provider store={store}>
-        <ListPageLayout
-          history={history}
-          location={{ search: '' }}
-          match={match}
-          namespace={namespace}
-          selectNamespace={selectNamespace}
-        />
-      </Provider>
+      <ListPageLayout
+        history={history}
+        location={{ search: '' }}
+        match={match}
+        namespace={namespace}
+        selectNamespace={selectNamespace}
+      />
     );
     fireEvent.click(getByTitle(/clear selected item/i));
     expect(selectNamespace).toHaveBeenCalledWith(ALL_NAMESPACES);
@@ -173,62 +144,28 @@ describe('ListPageLayout', () => {
   });
 
   it('does not render namespaces dropdown in single namespace visibility mode', () => {
-    const middleware = [thunk];
-    const mockStore = configureStore(middleware);
-    const store = mockStore({
-      extensions: { byName: {} },
-      namespaces: { byName: {} }
-    });
     jest.spyOn(API, 'useTenantNamespace').mockImplementation(() => 'fake');
     const { queryByPlaceholderText } = renderWithRouter(
-      <Provider store={store}>
-        <ListPageLayout tenantNamespace="fake" />
-      </Provider>
+      <ListPageLayout tenantNamespace="fake" />
     );
     expect(queryByPlaceholderText(/select namespace/i)).toBeFalsy();
   });
 
   it('does not render namespaces dropdown when hideNamespacesDropdown is true', () => {
-    const middleware = [thunk];
-    const mockStore = configureStore(middleware);
-    const store = mockStore({
-      extensions: { byName: {} },
-      namespaces: { byName: {} }
-    });
     const { queryByPlaceholderText } = renderWithRouter(
-      <Provider store={store}>
-        <ListPageLayout hideNamespacesDropdown />
-      </Provider>
+      <ListPageLayout hideNamespacesDropdown />
     );
     expect(queryByPlaceholderText(/select namespace/i)).toBeFalsy();
   });
 
   it('does not render LabelFilter input by default', () => {
-    const middleware = [thunk];
-    const mockStore = configureStore(middleware);
-    const store = mockStore({
-      extensions: { byName: {} },
-      namespaces: { byName: {} }
-    });
-    const { queryByLabelText } = renderWithRouter(
-      <Provider store={store}>
-        <ListPageLayout />
-      </Provider>
-    );
+    const { queryByLabelText } = renderWithRouter(<ListPageLayout />);
     expect(queryByLabelText(/Input a label filter/i)).toBeFalsy();
   });
 
   it('renders LabelFilter input when filters prop is provided', () => {
-    const middleware = [thunk];
-    const mockStore = configureStore(middleware);
-    const store = mockStore({
-      extensions: { byName: {} },
-      namespaces: { byName: {} }
-    });
     const { getAllByLabelText } = renderWithRouter(
-      <Provider store={store}>
-        <ListPageLayout filters={[]} />
-      </Provider>
+      <ListPageLayout filters={[]} />
     );
     expect(getAllByLabelText(/Input a label filter/i)[0]).toBeTruthy();
   });

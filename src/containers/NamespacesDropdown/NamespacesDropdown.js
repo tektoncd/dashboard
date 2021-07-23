@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,12 +13,10 @@ limitations under the License.
 
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import { connect } from 'react-redux';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 import { TooltipDropdown } from '@tektoncd/dashboard-components';
 
-import { getNamespaces, isFetchingNamespaces } from '../../reducers';
-import { useTenantNamespace } from '../../api';
+import { useNamespaces, useTenantNamespace } from '../../api';
 
 const NamespacesDropdown = ({
   allNamespacesLabel,
@@ -28,7 +26,6 @@ const NamespacesDropdown = ({
   intl,
   isSideNavExpanded,
   label,
-  namespaces,
   selectedItem: originalSelectedItem,
   showAllNamespaces,
   ...rest
@@ -54,13 +51,14 @@ const NamespacesDropdown = ({
     });
 
   const tenantNamespace = useTenantNamespace();
+  const { data: namespaces = [], isFetching } = useNamespaces();
 
   const selectedItem = { ...originalSelectedItem };
   if (selectedItem && selectedItem.id === ALL_NAMESPACES) {
     selectedItem.text = allNamespacesString;
   }
 
-  const items = tenantNamespace ? [tenantNamespace] : [...namespaces];
+  const items = tenantNamespace ? [tenantNamespace] : namespaces;
   if (!tenantNamespace && showAllNamespaces) {
     items.unshift({ id: ALL_NAMESPACES, text: allNamespacesString });
   }
@@ -69,6 +67,7 @@ const NamespacesDropdown = ({
     <TooltipDropdown
       {...rest}
       label={labelString}
+      loading={isFetching}
       emptyText={emptyString}
       selectedItem={selectedItem}
       items={items}
@@ -82,12 +81,4 @@ NamespacesDropdown.defaultProps = {
   titleText: 'Namespace'
 };
 
-/* istanbul ignore next */
-function mapStateToProps(state) {
-  return {
-    loading: isFetchingNamespaces(state),
-    namespaces: getNamespaces(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(NamespacesDropdown));
+export default injectIntl(NamespacesDropdown);

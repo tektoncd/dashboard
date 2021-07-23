@@ -20,7 +20,9 @@ import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 import { render } from '../../utils/test';
 
 import TasksDropdown from './TasksDropdown';
-import * as API from '../../api/tasks';
+import * as API from '../../api';
+import * as APIUtils from '../../api/utils';
+import * as TasksAPI from '../../api/tasks';
 
 const props = {
   id: 'tasks-dropdown',
@@ -51,18 +53,6 @@ const tasks = [
   }
 ];
 
-const namespacesByName = {
-  blue: '',
-  green: ''
-};
-
-const namespacesStoreBlue = {
-  namespaces: {
-    byName: namespacesByName,
-    selected: 'blue'
-  }
-};
-
 const initialTextRegExp = new RegExp('select task', 'i');
 
 const checkDropdownItems = ({
@@ -85,10 +75,20 @@ const middleware = [thunk];
 const mockStore = configureStore(middleware);
 
 describe('TasksDropdown', () => {
+  beforeEach(() => {
+    jest
+      .spyOn(API, 'useNamespaces')
+      .mockImplementation(() => ({ data: ['blue', 'green'] }));
+    jest
+      .spyOn(APIUtils, 'useSelectedNamespace')
+      .mockImplementation(() => ({ selectedNamespace: 'blue' }));
+  });
+
   it('renders items', () => {
-    jest.spyOn(API, 'useTasks').mockImplementation(() => ({ data: tasks }));
+    jest
+      .spyOn(TasksAPI, 'useTasks')
+      .mockImplementation(() => ({ data: tasks }));
     const store = mockStore({
-      ...namespacesStoreBlue,
       notifications: {}
     });
     const { getByPlaceholderText, getAllByText, queryByText } = render(
@@ -106,9 +106,10 @@ describe('TasksDropdown', () => {
   });
 
   it('renders controlled selection', () => {
-    jest.spyOn(API, 'useTasks').mockImplementation(() => ({ data: tasks }));
+    jest
+      .spyOn(TasksAPI, 'useTasks')
+      .mockImplementation(() => ({ data: tasks }));
     const store = mockStore({
-      ...namespacesStoreBlue,
       notifications: {}
     });
     // Select item 'task-1'
@@ -137,9 +138,8 @@ describe('TasksDropdown', () => {
   });
 
   it('renders empty', () => {
-    jest.spyOn(API, 'useTasks').mockImplementation(() => ({ data: [] }));
+    jest.spyOn(TasksAPI, 'useTasks').mockImplementation(() => ({ data: [] }));
     const store = mockStore({
-      ...namespacesStoreBlue,
       notifications: {}
     });
     const { queryByPlaceholderText } = render(
@@ -154,9 +154,8 @@ describe('TasksDropdown', () => {
   });
 
   it('for all namespaces renders empty', () => {
-    jest.spyOn(API, 'useTasks').mockImplementation(() => ({ data: [] }));
+    jest.spyOn(TasksAPI, 'useTasks').mockImplementation(() => ({ data: [] }));
     const store = mockStore({
-      ...namespacesStoreBlue,
       notifications: {}
     });
     const { queryByPlaceholderText } = render(
@@ -170,10 +169,9 @@ describe('TasksDropdown', () => {
 
   it('renders loading state', () => {
     jest
-      .spyOn(API, 'useTasks')
+      .spyOn(TasksAPI, 'useTasks')
       .mockImplementation(() => ({ isFetching: true }));
     const store = mockStore({
-      ...namespacesStoreBlue,
       notifications: {}
     });
     const { queryByPlaceholderText } = render(
@@ -185,9 +183,10 @@ describe('TasksDropdown', () => {
   });
 
   it('handles onChange event', () => {
-    jest.spyOn(API, 'useTasks').mockImplementation(() => ({ data: tasks }));
+    jest
+      .spyOn(TasksAPI, 'useTasks')
+      .mockImplementation(() => ({ data: tasks }));
     const store = mockStore({
-      ...namespacesStoreBlue,
       notifications: {}
     });
     const onChange = jest.fn();

@@ -19,7 +19,9 @@ import thunk from 'redux-thunk';
 import { render } from '../../utils/test';
 
 import ServiceAccountsDropdown from './ServiceAccountsDropdown';
-import * as API from '../../api/serviceAccounts';
+import * as API from '../../api';
+import * as APIUtils from '../../api/utils';
+import * as ServiceAccountsAPI from '../../api/serviceAccounts';
 
 const props = {
   id: 'service-accounts-dropdown',
@@ -60,18 +62,6 @@ const serviceAccount3 = {
   }
 };
 
-const namespacesByName = {
-  blue: '',
-  green: ''
-};
-
-const namespacesStoreBlue = {
-  namespaces: {
-    byName: namespacesByName,
-    selected: 'blue'
-  }
-};
-
 const initialTextRegExp = new RegExp('select serviceaccount', 'i');
 
 const checkDropdownItems = ({
@@ -92,12 +82,22 @@ const middleware = [thunk];
 const mockStore = configureStore(middleware);
 
 describe('ServiceAccountsDropdown', () => {
+  beforeEach(() => {
+    jest
+      .spyOn(API, 'useNamespaces')
+      .mockImplementation(() => ({ data: ['blue', 'green'] }));
+    jest
+      .spyOn(APIUtils, 'useSelectedNamespace')
+      .mockImplementation(() => ({ selectedNamespace: 'blue' }));
+  });
+
   it('renders items', () => {
-    jest.spyOn(API, 'useServiceAccounts').mockImplementation(() => ({
-      data: [serviceAccount1, serviceAccount2]
-    }));
+    jest
+      .spyOn(ServiceAccountsAPI, 'useServiceAccounts')
+      .mockImplementation(() => ({
+        data: [serviceAccount1, serviceAccount2]
+      }));
     const store = mockStore({
-      ...namespacesStoreBlue,
       notifications: {}
     });
     const { getByPlaceholderText, getAllByText, queryByText } = render(
@@ -115,11 +115,12 @@ describe('ServiceAccountsDropdown', () => {
   });
 
   it('renders controlled selection', () => {
-    jest.spyOn(API, 'useServiceAccounts').mockImplementation(() => ({
-      data: [serviceAccount1, serviceAccount2]
-    }));
+    jest
+      .spyOn(ServiceAccountsAPI, 'useServiceAccounts')
+      .mockImplementation(() => ({
+        data: [serviceAccount1, serviceAccount2]
+      }));
     const store = mockStore({
-      ...namespacesStoreBlue,
       notifications: {}
     });
     // Select item 'service-account-1'
@@ -155,12 +156,11 @@ describe('ServiceAccountsDropdown', () => {
 
   it('renders controlled namespace', () => {
     jest
-      .spyOn(API, 'useServiceAccounts')
+      .spyOn(ServiceAccountsAPI, 'useServiceAccounts')
       .mockImplementation(({ namespace }) => ({
         data: namespace === 'green' ? [serviceAccount3] : []
       }));
     const store = mockStore({
-      ...namespacesStoreBlue,
       notifications: {}
     });
     // Select namespace 'green'
@@ -179,10 +179,9 @@ describe('ServiceAccountsDropdown', () => {
 
   it('renders empty', () => {
     jest
-      .spyOn(API, 'useServiceAccounts')
+      .spyOn(ServiceAccountsAPI, 'useServiceAccounts')
       .mockImplementation(() => ({ data: [] }));
     const store = mockStore({
-      ...namespacesStoreBlue,
       notifications: {}
     });
     // Select item 'service-account-1'
@@ -201,10 +200,9 @@ describe('ServiceAccountsDropdown', () => {
 
   it('renders loading skeleton based on Redux state', () => {
     jest
-      .spyOn(API, 'useServiceAccounts')
+      .spyOn(ServiceAccountsAPI, 'useServiceAccounts')
       .mockImplementation(() => ({ isFetching: true }));
     const store = mockStore({
-      ...namespacesStoreBlue,
       notifications: {}
     });
     const { queryByText } = render(
@@ -216,11 +214,12 @@ describe('ServiceAccountsDropdown', () => {
   });
 
   it('handles onChange event', () => {
-    jest.spyOn(API, 'useServiceAccounts').mockImplementation(() => ({
-      data: [serviceAccount1, serviceAccount2]
-    }));
+    jest
+      .spyOn(ServiceAccountsAPI, 'useServiceAccounts')
+      .mockImplementation(() => ({
+        data: [serviceAccount1, serviceAccount2]
+      }));
     const store = mockStore({
-      ...namespacesStoreBlue,
       notifications: {}
     });
     const onChange = jest.fn();

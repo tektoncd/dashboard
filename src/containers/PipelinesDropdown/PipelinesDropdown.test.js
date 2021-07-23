@@ -21,6 +21,7 @@ import { render } from '../../utils/test';
 
 import PipelinesDropdown from './PipelinesDropdown';
 import * as API from '../../api/pipelines';
+import * as APIUtils from '../../api/utils';
 
 const props = {
   id: 'pipelines-dropdown',
@@ -51,18 +52,6 @@ const pipelines = [
   }
 ];
 
-const namespacesByName = {
-  blue: '',
-  green: ''
-};
-
-const namespacesStoreBlue = {
-  namespaces: {
-    byName: namespacesByName,
-    selected: 'blue'
-  }
-};
-
 const initialTextRegExp = new RegExp('select pipeline', 'i');
 
 const checkDropdownItems = ({
@@ -90,7 +79,6 @@ describe('PipelinesDropdown', () => {
       .spyOn(API, 'usePipelines')
       .mockImplementation(() => ({ data: pipelines }));
     const store = mockStore({
-      ...namespacesStoreBlue,
       notifications: {}
     });
     const { getByPlaceholderText, getAllByText, queryByText } = render(
@@ -111,7 +99,6 @@ describe('PipelinesDropdown', () => {
       .spyOn(API, 'usePipelines')
       .mockImplementation(() => ({ data: pipelines }));
     const store = mockStore({
-      ...namespacesStoreBlue,
       notifications: {}
     });
     // Select item 'pipeline-1'
@@ -141,8 +128,10 @@ describe('PipelinesDropdown', () => {
 
   it('renders empty', () => {
     jest.spyOn(API, 'usePipelines').mockImplementation(() => ({ data: [] }));
+    jest
+      .spyOn(APIUtils, 'useSelectedNamespace')
+      .mockImplementation(() => ({ selectedNamespace: 'blue' }));
     const store = mockStore({
-      ...namespacesStoreBlue,
       notifications: {}
     });
     const { queryByPlaceholderText } = render(
@@ -159,7 +148,6 @@ describe('PipelinesDropdown', () => {
   it('for all namespaces renders empty', () => {
     jest.spyOn(API, 'usePipelines').mockImplementation(() => ({ data: [] }));
     const store = mockStore({
-      ...namespacesStoreBlue,
       notifications: {}
     });
     const { queryByPlaceholderText } = render(
@@ -176,7 +164,6 @@ describe('PipelinesDropdown', () => {
       .spyOn(API, 'usePipelines')
       .mockImplementation(() => ({ isFetching: true }));
     const store = mockStore({
-      ...namespacesStoreBlue,
       notifications: {}
     });
     const { queryByPlaceholderText } = render(
@@ -192,7 +179,6 @@ describe('PipelinesDropdown', () => {
       .spyOn(API, 'usePipelines')
       .mockImplementation(() => ({ data: pipelines }));
     const store = mockStore({
-      ...namespacesStoreBlue,
       notifications: {}
     });
     const onChange = jest.fn();

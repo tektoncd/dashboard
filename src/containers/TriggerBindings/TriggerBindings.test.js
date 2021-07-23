@@ -17,10 +17,13 @@ import { Provider } from 'react-redux';
 import { Route } from 'react-router-dom';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
 import { renderWithRouter } from '../../utils/test';
 import TriggerBindings from '.';
-import * as API from '../../api/triggerBindings';
+import * as API from '../../api';
+import * as APIUtils from '../../api/utils';
+import * as TriggerBindingsAPI from '../../api/triggerBindings';
 
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
@@ -36,140 +39,137 @@ const triggerBinding = {
   }
 };
 
-const namespaces = {
-  byName: {
-    default: {
-      metadata: {
-        name: 'default'
-      }
-    }
-  },
-  errorMessage: null,
-  isFetching: false,
-  selected: '*'
-};
-
-it('TriggerBindings renders with no bindings', () => {
-  jest
-    .spyOn(API, 'useTriggerBindings')
-    .mockImplementation(() => ({ data: [] }));
-
-  const store = mockStore({
-    namespaces,
-    notifications: {}
+describe('TriggerBindings', () => {
+  beforeEach(() => {
+    jest
+      .spyOn(API, 'useNamespaces')
+      .mockImplementation(() => ({ data: ['default'] }));
+    jest
+      .spyOn(APIUtils, 'useSelectedNamespace')
+      .mockImplementation(() => ({ selectedNamespace: ALL_NAMESPACES }));
   });
 
-  const { getByText } = renderWithRouter(
-    <Provider store={store}>
-      <Route
-        path="/triggerbindings"
-        render={props => <TriggerBindings {...props} />}
-      />
-    </Provider>,
-    { route: '/triggerbindings' }
-  );
+  it('renders with no bindings', () => {
+    jest
+      .spyOn(TriggerBindingsAPI, 'useTriggerBindings')
+      .mockImplementation(() => ({ data: [] }));
 
-  expect(getByText('TriggerBindings')).toBeTruthy();
-  expect(getByText('No matching TriggerBindings found')).toBeTruthy();
-});
+    const store = mockStore({
+      notifications: {}
+    });
 
-it('TriggerBindings renders with one binding', () => {
-  jest
-    .spyOn(API, 'useTriggerBindings')
-    .mockImplementation(() => ({ data: [triggerBinding] }));
+    const { getByText } = renderWithRouter(
+      <Provider store={store}>
+        <Route
+          path="/triggerbindings"
+          render={props => <TriggerBindings {...props} />}
+        />
+      </Provider>,
+      { route: '/triggerbindings' }
+    );
 
-  const store = mockStore({
-    namespaces,
-    notifications: {}
+    expect(getByText('TriggerBindings')).toBeTruthy();
+    expect(getByText('No matching TriggerBindings found')).toBeTruthy();
   });
 
-  const { queryByText } = renderWithRouter(
-    <Provider store={store}>
-      <Route
-        path="/triggerbindings"
-        render={props => <TriggerBindings {...props} />}
-      />
-    </Provider>,
-    { route: '/triggerbindings' }
-  );
+  it('renders with one binding', () => {
+    jest
+      .spyOn(TriggerBindingsAPI, 'useTriggerBindings')
+      .mockImplementation(() => ({ data: [triggerBinding] }));
 
-  expect(queryByText('TriggerBindings')).toBeTruthy();
-  expect(queryByText('No matching TriggerBindings found')).toBeFalsy();
-  expect(queryByText('trigger-binding')).toBeTruthy();
-});
+    const store = mockStore({
+      notifications: {}
+    });
 
-it('TriggerBindings can be filtered on a single label filter', async () => {
-  jest.spyOn(API, 'useTriggerBindings').mockImplementation(({ filters }) => ({
-    data: filters.length ? [] : [triggerBinding]
-  }));
+    const { queryByText } = renderWithRouter(
+      <Provider store={store}>
+        <Route
+          path="/triggerbindings"
+          render={props => <TriggerBindings {...props} />}
+        />
+      </Provider>,
+      { route: '/triggerbindings' }
+    );
 
-  const store = mockStore({
-    namespaces,
-    notifications: {}
+    expect(queryByText('TriggerBindings')).toBeTruthy();
+    expect(queryByText('No matching TriggerBindings found')).toBeFalsy();
+    expect(queryByText('trigger-binding')).toBeTruthy();
   });
 
-  const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
-    <Provider store={store}>
-      <Route
-        path="/triggerbindings"
-        render={props => <TriggerBindings {...props} />}
-      />
-    </Provider>,
-    { route: '/triggerbindings' }
-  );
+  it('can be filtered on a single label filter', async () => {
+    jest
+      .spyOn(TriggerBindingsAPI, 'useTriggerBindings')
+      .mockImplementation(({ filters }) => ({
+        data: filters.length ? [] : [triggerBinding]
+      }));
 
-  const filterValue = 'baz:bam';
-  const filterInputField = getByPlaceholderText(/Input a label filter/);
-  fireEvent.change(filterInputField, { target: { value: filterValue } });
-  fireEvent.submit(getByText(/Input a label filter/i));
+    const store = mockStore({
+      notifications: {}
+    });
 
-  expect(queryByText(filterValue)).toBeTruthy();
-  expect(queryByText('trigger-bindings')).toBeFalsy();
-});
+    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
+      <Provider store={store}>
+        <Route
+          path="/triggerbindings"
+          render={props => <TriggerBindings {...props} />}
+        />
+      </Provider>,
+      { route: '/triggerbindings' }
+    );
 
-it('TriggerBindings renders in loading state', () => {
-  jest
-    .spyOn(API, 'useTriggerBindings')
-    .mockImplementation(() => ({ isLoading: true }));
+    const filterValue = 'baz:bam';
+    const filterInputField = getByPlaceholderText(/Input a label filter/);
+    fireEvent.change(filterInputField, { target: { value: filterValue } });
+    fireEvent.submit(getByText(/Input a label filter/i));
 
-  const store = mockStore({
-    namespaces,
-    notifications: {}
+    expect(queryByText(filterValue)).toBeTruthy();
+    expect(queryByText('trigger-bindings')).toBeFalsy();
   });
 
-  const { queryByText } = renderWithRouter(
-    <Provider store={store}>
-      <Route
-        path="/triggerbindings"
-        render={props => <TriggerBindings {...props} />}
-      />
-    </Provider>,
-    { route: '/triggerbindings' }
-  );
+  it('renders in loading state', () => {
+    jest
+      .spyOn(TriggerBindingsAPI, 'useTriggerBindings')
+      .mockImplementation(() => ({ isLoading: true }));
 
-  expect(queryByText(/TriggerBindings/i)).toBeTruthy();
-  expect(queryByText('No matching TriggerBindings found')).toBeFalsy();
-  expect(queryByText('trigger-bindings')).toBeFalsy();
-});
+    const store = mockStore({
+      notifications: {}
+    });
 
-it('TriggerBindings renders in error state', () => {
-  const error = 'fake_error_message';
-  jest.spyOn(API, 'useTriggerBindings').mockImplementation(() => ({ error }));
+    const { queryByText } = renderWithRouter(
+      <Provider store={store}>
+        <Route
+          path="/triggerbindings"
+          render={props => <TriggerBindings {...props} />}
+        />
+      </Provider>,
+      { route: '/triggerbindings' }
+    );
 
-  const store = mockStore({
-    namespaces,
-    notifications: {}
+    expect(queryByText(/TriggerBindings/i)).toBeTruthy();
+    expect(queryByText('No matching TriggerBindings found')).toBeFalsy();
+    expect(queryByText('trigger-bindings')).toBeFalsy();
   });
 
-  const { queryByText } = renderWithRouter(
-    <Provider store={store}>
-      <Route
-        path="/triggerbindings"
-        render={props => <TriggerBindings {...props} />}
-      />
-    </Provider>,
-    { route: '/triggerbindings' }
-  );
+  it('renders in error state', () => {
+    const error = 'fake_error_message';
+    jest
+      .spyOn(TriggerBindingsAPI, 'useTriggerBindings')
+      .mockImplementation(() => ({ error }));
 
-  expect(queryByText(error)).toBeTruthy();
+    const store = mockStore({
+      notifications: {}
+    });
+
+    const { queryByText } = renderWithRouter(
+      <Provider store={store}>
+        <Route
+          path="/triggerbindings"
+          render={props => <TriggerBindings {...props} />}
+        />
+      </Provider>,
+      { route: '/triggerbindings' }
+    );
+
+    expect(queryByText(error)).toBeTruthy();
+  });
 });
