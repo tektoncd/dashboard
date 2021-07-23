@@ -33,12 +33,16 @@ import { ListPageLayout } from '..';
 import {
   deletePipelineResource,
   useIsReadOnly,
-  usePipelineResources
+  usePipelineResources,
+  useSelectedNamespace
 } from '../../api';
-import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
+import { isWebSocketConnected } from '../../reducers';
 
 export function PipelineResources(props) {
-  const { filters, history, intl, namespace, webSocketConnected } = props;
+  const { filters, history, intl, match, webSocketConnected } = props;
+
+  const { selectedNamespace } = useSelectedNamespace();
+  const { namespace = selectedNamespace } = match.params;
 
   const [cancelSelection, setCancelSelection] = useState(null);
   const [deleteError, setDeleteError] = useState(null);
@@ -167,13 +171,10 @@ export function PipelineResources(props) {
 }
 
 function mapStateToProps(state, props) {
-  const { namespace: namespaceParam } = props.match.params;
-  const namespace = namespaceParam || getSelectedNamespace(state);
   const filters = getFilters(props.location);
 
   return {
     filters,
-    namespace,
     webSocketConnected: isWebSocketConnected(state)
   };
 }

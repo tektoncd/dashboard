@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
 import { matchPath, NavLink } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import {
@@ -30,12 +29,11 @@ import {
 } from '@carbon/icons-react';
 import { ALL_NAMESPACES, urls } from '@tektoncd/dashboard-utils';
 
-import { selectNamespace as selectNamespaceActionCreator } from '../../actions/namespaces';
-import { getSelectedNamespace } from '../../reducers';
 import {
   useExtensions,
   useIsReadOnly,
   useIsTriggersInstalled,
+  useSelectedNamespace,
   useTenantNamespace
 } from '../../api';
 
@@ -43,13 +41,7 @@ import { ReactComponent as KubernetesIcon } from '../../images/kubernetes.svg';
 import { ReactComponent as TektonIcon } from '../../images/tekton-logo-20x20.svg';
 
 function SideNav(props) {
-  const {
-    expanded,
-    intl,
-    match,
-    selectNamespace,
-    showKubernetesResources
-  } = props;
+  const { expanded, intl, match, showKubernetesResources } = props;
 
   if (!expanded) {
     return null;
@@ -57,6 +49,7 @@ function SideNav(props) {
 
   const { namespace } = match?.params || {};
 
+  const { selectNamespace } = useSelectedNamespace();
   const tenantNamespace = useTenantNamespace();
   const { data: extensions = [] } = useExtensions({
     namespace: tenantNamespace || ALL_NAMESPACES
@@ -263,14 +256,4 @@ SideNav.defaultProps = {
   showKubernetesResources: false
 };
 
-/* istanbul ignore next */
-const mapStateToProps = state => ({
-  namespace: getSelectedNamespace(state)
-});
-
-const mapDispatchToProps = {
-  selectNamespace: selectNamespaceActionCreator
-};
-
-export const SideNavWithIntl = injectIntl(SideNav);
-export default connect(mapStateToProps, mapDispatchToProps)(SideNavWithIntl);
+export default injectIntl(SideNav);

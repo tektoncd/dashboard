@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import { Button, InlineNotification } from 'carbon-components-react';
 import {
@@ -24,8 +23,7 @@ import {
 
 import GitResourceFields from './GitResourceFields';
 import UniversalFields from './UniversalFields';
-import { createPipelineResource } from '../../api';
-import { getSelectedNamespace } from '../../reducers';
+import { createPipelineResource, useSelectedNamespace } from '../../api';
 
 /* istanbul ignore next */
 function validateInputs(value, id) {
@@ -52,8 +50,9 @@ function validateInputs(value, id) {
 }
 
 export /* istanbul ignore next */ function CreatePipelineResource(props) {
-  const { defaultNamespace, history, intl } = props;
+  const { history, intl } = props;
 
+  const { selectedNamespace: defaultNamespace } = useSelectedNamespace();
   const [creating, setCreating] = useState(false);
   const [gitSource, setGitSource] = useState(true);
   const [invalidFields, setInvalidFields] = useState({});
@@ -303,11 +302,4 @@ export /* istanbul ignore next */ function CreatePipelineResource(props) {
   );
 }
 
-/* istanbul ignore next */
-function mapStateToProps(state) {
-  return {
-    defaultNamespace: getSelectedNamespace(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(CreatePipelineResource));
+export default injectIntl(CreatePipelineResource);

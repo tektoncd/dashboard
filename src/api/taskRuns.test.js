@@ -14,6 +14,7 @@ limitations under the License.
 import fetchMock from 'fetch-mock';
 
 import * as API from './taskRuns';
+import * as utils from './utils';
 
 it('cancelTaskRun', () => {
   const name = 'foo';
@@ -196,6 +197,40 @@ it('getTaskRuns With Query Params', () => {
     expect(taskRuns).toEqual(data.items);
     fetchMock.restore();
   });
+});
+
+it('useTaskRuns', () => {
+  const query = { fake: 'query' };
+  const params = { fake: 'params' };
+  jest.spyOn(utils, 'useCollection').mockImplementation(() => query);
+  expect(API.useTaskRuns(params)).toEqual(query);
+  expect(utils.useCollection).toHaveBeenCalledWith(
+    'TaskRun',
+    API.getTaskRuns,
+    params
+  );
+});
+
+it('useTaskRun', () => {
+  const query = { fake: 'query' };
+  const params = { fake: 'params' };
+  jest.spyOn(utils, 'useResource').mockImplementation(() => query);
+  expect(API.useTaskRun(params)).toEqual(query);
+  expect(utils.useResource).toHaveBeenCalledWith(
+    'TaskRun',
+    API.getTaskRun,
+    params,
+    undefined
+  );
+
+  const queryConfig = { fake: 'queryConfig' };
+  API.useTaskRun(params, queryConfig);
+  expect(utils.useResource).toHaveBeenCalledWith(
+    'TaskRun',
+    API.getTaskRun,
+    params,
+    queryConfig
+  );
 });
 
 it('rerunTaskRun', () => {

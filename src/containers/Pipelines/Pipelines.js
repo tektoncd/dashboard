@@ -35,11 +35,19 @@ import {
 } from '@tektoncd/dashboard-components';
 
 import { ListPageLayout } from '..';
-import { deletePipeline, useIsReadOnly, usePipelines } from '../../api';
-import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
+import {
+  deletePipeline,
+  useIsReadOnly,
+  usePipelines,
+  useSelectedNamespace
+} from '../../api';
+import { isWebSocketConnected } from '../../reducers';
 
 export /* istanbul ignore next */ function Pipelines(props) {
-  const { filters, intl, namespace, webSocketConnected } = props;
+  const { filters, intl, match, webSocketConnected } = props;
+
+  const { selectedNamespace } = useSelectedNamespace();
+  const { namespace = selectedNamespace } = match.params;
 
   const [cancelSelection, setCancelSelection] = useState(null);
   const [deleteError, setDeleteError] = useState(null);
@@ -261,13 +269,10 @@ Pipelines.defaultProps = {
 
 /* istanbul ignore next */
 function mapStateToProps(state, props) {
-  const { namespace: namespaceParam } = props.match.params;
-  const namespace = namespaceParam || getSelectedNamespace(state);
   const filters = getFilters(props.location);
 
   return {
     filters,
-    namespace,
     webSocketConnected: isWebSocketConnected(state)
   };
 }

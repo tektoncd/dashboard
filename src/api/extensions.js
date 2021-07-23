@@ -36,5 +36,5 @@ export async function getExtensions({ namespace } = {}) {
 }
 
 export function useExtensions(params, queryConfig) {
-  return useCollection('Extensions', getExtensions, params, queryConfig);
+  return useCollection('Extension', getExtensions, params, queryConfig);
 }

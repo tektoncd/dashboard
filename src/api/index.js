@@ -24,10 +24,15 @@ import {
   getQueryParams,
   getResourcesAPI,
   getTektonAPI,
+  useCollection,
   useResource
 } from './utils';
 
-export { WebSocketContext } from './utils';
+export {
+  NamespaceContext,
+  useSelectedNamespace,
+  WebSocketContext
+} from './utils';
 export * from './clusterInterceptors';
 export * from './clusterTasks';
 export * from './clusterTriggerBindings';
@@ -89,6 +94,13 @@ export async function getInstallProperties() {
 export function getNamespaces() {
   const uri = getKubeAPI('namespaces');
   return get(uri).then(checkData);
+}
+
+export function useNamespaces(queryConfig) {
+  return useCollection('Namespace', getNamespaces, null, {
+    select: namespaces => namespaces.map(namespace => namespace.metadata.name),
+    ...queryConfig
+  });
 }
 
 export function getPodLogURL({ container, name, namespace, follow }) {

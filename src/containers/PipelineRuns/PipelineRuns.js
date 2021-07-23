@@ -39,14 +39,15 @@ import { Add16 as Add, TrashCan32 as Delete } from '@carbon/icons-react';
 
 import { ListPageLayout } from '..';
 import { sortRunsByStartTime } from '../../utils';
-import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
+import { isWebSocketConnected } from '../../reducers';
 import {
   cancelPipelineRun,
   deletePipelineRun,
   rerunPipelineRun,
   startPipelineRun,
   useIsReadOnly,
-  usePipelineRuns
+  usePipelineRuns,
+  useSelectedNamespace
 } from '../../api';
 
 export /* istanbul ignore next */ function PipelineRuns(props) {
@@ -54,12 +55,15 @@ export /* istanbul ignore next */ function PipelineRuns(props) {
     filters,
     history,
     intl,
-    namespace,
+    match,
     pipelineName,
     setStatusFilter,
     statusFilter,
     webSocketConnected
   } = props;
+
+  const { selectedNamespace } = useSelectedNamespace();
+  const { namespace = selectedNamespace } = match.params;
 
   const [cancelSelection, setCancelSelection] = useState(null);
   const [deleteError, setDeleteError] = useState(null);
@@ -338,17 +342,14 @@ PipelineRuns.defaultProps = {
 
 /* istanbul ignore next */
 function mapStateToProps(state, props) {
-  const { namespace: namespaceParam } = props.match.params;
   const filters = getFilters(props.location);
   const statusFilter = getStatusFilter(props.location);
-  const namespace = namespaceParam || getSelectedNamespace(state);
 
   const pipelineFilter =
     filters.find(filter => filter.indexOf(`${labels.PIPELINE}=`) !== -1) || '';
   const pipelineName = pipelineFilter.replace(`${labels.PIPELINE}=`, '');
 
   return {
-    namespace,
     filters,
     pipelineName,
     setStatusFilter: getStatusFilterHandler(props),

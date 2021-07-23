@@ -22,43 +22,26 @@ import { ALL_NAMESPACES, paths, urls } from '@tektoncd/dashboard-utils';
 import { render, renderWithRouter } from '../../utils/test';
 import CreatePipelineResource from '.';
 import * as API from '../../api';
+import * as APIUtils from '../../api/utils';
 
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 
-const pipelineResources = {
-  byNamespace: {},
-  errorMessage: null,
-  isFetching: false
-};
-
-const namespaces = {
-  byName: {
-    default: {
-      metadata: {
-        name: 'default',
-        selfLink: '/api/v1/namespaces/default',
-        uid: '32b35d3b-6ce1-11e9-af21-025000000001',
-        resourceVersion: '4',
-        creationTimestamp: '2019-05-02T13:50:08Z'
-      }
-    }
-  },
-  errorMessage: null,
-  isFetching: false,
-  selected: ALL_NAMESPACES
-};
-
 const store = mockStore({
-  pipelineResources,
-  namespaces,
   notifications: {}
 });
 
 describe('CreatePipelineResource', () => {
-  it('renders blank', () => {
-    jest.spyOn(API, 'getNamespaces').mockImplementation(() => []);
+  beforeEach(() => {
+    jest
+      .spyOn(API, 'useNamespaces')
+      .mockImplementation(() => ({ data: ['default'] }));
+    jest
+      .spyOn(APIUtils, 'useSelectedNamespace')
+      .mockImplementation(() => ({ selectedNamespace: ALL_NAMESPACES }));
+  });
 
+  it('renders blank', () => {
     const { queryByText } = render(
       <Provider store={store}>
         <CreatePipelineResource />

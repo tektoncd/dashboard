@@ -20,17 +20,20 @@ import {
 } from '@tektoncd/dashboard-utils';
 import { TooltipDropdown } from '@tektoncd/dashboard-components';
 
-import { usePipelineResources } from '../../api';
-import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
+import { usePipelineResources, useSelectedNamespace } from '../../api';
+import { isWebSocketConnected } from '../../reducers';
 
 function PipelineResourcesDropdown({
   intl,
   label,
-  namespace,
+  namespace: namespaceProp,
   type,
   webSocketConnected,
   ...rest
 }) {
+  const { selectedNamespace } = useSelectedNamespace();
+  const namespace = namespaceProp || selectedNamespace;
+
   const {
     data: pipelineResources = [],
     isFetching,
@@ -99,10 +102,8 @@ PipelineResourcesDropdown.defaultProps = {
   titleText: 'PipelineResource'
 };
 
-function mapStateToProps(state, ownProps) {
-  const namespace = ownProps.namespace || getSelectedNamespace(state);
+function mapStateToProps(state) {
   return {
-    namespace,
     webSocketConnected: isWebSocketConnected(state)
   };
 }

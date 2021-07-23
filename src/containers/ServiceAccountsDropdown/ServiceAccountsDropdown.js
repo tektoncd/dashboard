@@ -20,16 +20,19 @@ import {
 } from '@tektoncd/dashboard-utils';
 import { TooltipDropdown } from '@tektoncd/dashboard-components';
 
-import { useServiceAccounts } from '../../api';
-import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
+import { useSelectedNamespace, useServiceAccounts } from '../../api';
+import { isWebSocketConnected } from '../../reducers';
 
 function ServiceAccountsDropdown({
   intl,
   label,
-  namespace,
+  namespace: namespaceProp,
   webSocketConnected,
   ...rest
 }) {
+  const { selectedNamespace } = useSelectedNamespace();
+  const namespace = namespaceProp || selectedNamespace;
+
   const {
     data: serviceAccounts = [],
     isFetching,
@@ -75,10 +78,8 @@ ServiceAccountsDropdown.defaultProps = {
   titleText: 'ServiceAccount'
 };
 
-function mapStateToProps(state, ownProps) {
-  const namespace = ownProps.namespace || getSelectedNamespace(state);
+function mapStateToProps(state) {
   return {
-    namespace,
     webSocketConnected: isWebSocketConnected(state)
   };
 }

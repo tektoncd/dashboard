@@ -12,15 +12,13 @@ limitations under the License.
 */
 
 import React from 'react';
-import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
 import { waitFor } from '@testing-library/react';
 
 import { renderWithRouter } from '../../utils/test';
 import * as API from '../../api';
+import * as APIUtils from '../../api/utils';
 import * as extensionsAPI from '../../api/extensions';
-import SideNavContainer, { SideNavWithIntl as SideNav } from './SideNav';
+import SideNav from './SideNav';
 
 const mockExtensions = [
   {
@@ -40,23 +38,17 @@ const mockExtensions = [
 
 it('SideNav renders only when expanded', () => {
   const namespace = 'default';
-  const selectNamespace = jest.fn();
   const { queryByText, rerender } = renderWithRouter(
     <SideNav
       expanded
       location={{ search: '' }}
       match={{ params: { namespace } }}
-      selectNamespace={selectNamespace}
     />
   );
   expect(queryByText(/Tekton/)).toBeTruthy();
 
   renderWithRouter(
-    <SideNav
-      location={{ search: '' }}
-      match={{ params: { namespace } }}
-      selectNamespace={selectNamespace}
-    />,
+    <SideNav location={{ search: '' }} match={{ params: { namespace } }} />,
     { rerender }
   );
   expect(queryByText(/Tekton/)).toBeFalsy();
@@ -66,17 +58,8 @@ it('SideNav renders with extensions', () => {
   jest
     .spyOn(extensionsAPI, 'useExtensions')
     .mockImplementation(() => ({ data: mockExtensions }));
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const namespace = 'default';
-  const store = mockStore({
-    namespaces: { byName: { [namespace]: true }, selected: namespace },
-    notifications: {}
-  });
   const { queryByText } = renderWithRouter(
-    <Provider store={store}>
-      <SideNavContainer expanded location={{ search: '' }} />
-    </Provider>
+    <SideNav expanded location={{ search: '' }} />
   );
   expect(queryByText('Pipelines')).toBeTruthy();
   expect(queryByText('Tasks')).toBeTruthy();
@@ -85,15 +68,8 @@ it('SideNav renders with extensions', () => {
 
 it('SideNav renders with triggers', async () => {
   jest.spyOn(API, 'useIsTriggersInstalled').mockImplementation(() => true);
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const store = mockStore({
-    namespaces: { byName: {} }
-  });
   const { queryByText } = renderWithRouter(
-    <Provider store={store}>
-      <SideNavContainer expanded location={{ search: '' }} />
-    </Provider>
+    <SideNav expanded location={{ search: '' }} />
   );
   await waitFor(() => queryByText(/about/i));
   expect(queryByText('Pipelines')).toBeTruthy();
@@ -106,6 +82,9 @@ it('SideNav renders with triggers', async () => {
 it('SideNav selects namespace based on URL', () => {
   const namespace = 'default';
   const selectNamespace = jest.fn();
+  jest
+    .spyOn(APIUtils, 'useSelectedNamespace')
+    .mockImplementation(() => ({ selectedNamespace: null, selectNamespace }));
   const { rerender } = renderWithRouter(
     <SideNav
       expanded
@@ -142,49 +121,24 @@ it('SideNav selects namespace based on URL', () => {
 });
 
 it('SideNav renders import in the default read-write mode', async () => {
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const store = mockStore({
-    namespaces: { byName: {} }
-  });
   const { queryByText } = renderWithRouter(
-    <Provider store={store}>
-      <SideNavContainer expanded location={{ search: '' }} />
-    </Provider>
+    <SideNav expanded location={{ search: '' }} />
   );
   await waitFor(() => queryByText(/Import/i));
 });
 
 it('SideNav does not render import in read-only mode', async () => {
   jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => true);
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const store = mockStore({
-    namespaces: { byName: {} }
-  });
   const { queryByText } = renderWithRouter(
-    <Provider store={store}>
-      <SideNavContainer expanded isReadOnly location={{ search: '' }} />
-    </Provider>
+    <SideNav expanded isReadOnly location={{ search: '' }} />
   );
   await waitFor(() => queryByText(/about/i));
   expect(queryByText(/import/i)).toBeFalsy();
 });
 
 it('SideNav renders kubernetes resources placeholder', async () => {
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const store = mockStore({
-    namespaces: { byName: {} }
-  });
   const { queryByText } = renderWithRouter(
-    <Provider store={store}>
-      <SideNavContainer
-        expanded
-        location={{ search: '' }}
-        showKubernetesResources
-      />
-    </Provider>
+    <SideNav expanded location={{ search: '' }} showKubernetesResources />
   );
   await waitFor(() => queryByText('placeholder'));
 });

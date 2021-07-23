@@ -113,6 +113,23 @@ it('getNamespaces returns the correct data', () => {
   });
 });
 
+it('useNamespaces', async () => {
+  const namespaces = {
+    items: [
+      { metadata: { name: 'namespace1' } },
+      { metadata: { name: 'namespace2' } }
+    ]
+  };
+  fetchMock.get(/namespaces/, namespaces);
+  const { result, waitFor } = renderHook(() => API.useNamespaces(), {
+    wrapper: getAPIWrapper()
+  });
+  await waitFor(() => result.current.isFetching);
+  await waitFor(() => !result.current.isFetching);
+  expect(result.current.data).toEqual(['namespace1', 'namespace2']);
+  fetchMock.restore();
+});
+
 it('getPodLog', () => {
   const namespace = 'default';
   const name = 'foo';

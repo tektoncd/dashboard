@@ -20,70 +20,52 @@ import configureStore from 'redux-mock-store';
 import { render } from '../../utils/test';
 
 import CreatePipelineRun from './CreatePipelineRun';
+import * as API from '../../api';
+import * as APIUtils from '../../api/utils';
 import * as PipelineResourcesAPI from '../../api/pipelineResources';
 import * as PipelineRunsAPI from '../../api/pipelineRuns';
 import * as PipelinesAPI from '../../api/pipelines';
 import * as ServiceAccountsAPI from '../../api/serviceAccounts';
 
-const namespaces = {
-  selected: 'namespace-1',
-  byName: {
-    'namespace-1': '',
-    'namespace-2': ''
-  },
-  isFetching: false
-};
-const pipelines = {
-  byNamespace: {
-    'namespace-1': {
-      'pipeline-1': 'id-pipeline-1',
-      'pipeline-2': 'id-pipeline-2'
+const pipelines = [
+  {
+    metadata: {
+      name: 'pipeline-1',
+      namespace: 'namespace-1',
+      uid: 'id-pipeline-1'
     },
-    'namespace-2': {
-      'pipeline-3': 'id-pipeline-3'
+    spec: {
+      resources: [
+        { name: 'resource-1', type: 'type-1' },
+        { name: 'resource-2', type: 'type-2' }
+      ],
+      params: [
+        {
+          name: 'param-1',
+          description: 'description-1',
+          default: 'default-1'
+        },
+        { name: 'param-2' }
+      ]
     }
   },
-  byId: {
-    'id-pipeline-1': {
-      metadata: {
-        name: 'pipeline-1',
-        namespace: 'namespace-1',
-        uid: 'id-pipeline-1'
-      },
-      spec: {
-        resources: [
-          { name: 'resource-1', type: 'type-1' },
-          { name: 'resource-2', type: 'type-2' }
-        ],
-        params: [
-          {
-            name: 'param-1',
-            description: 'description-1',
-            default: 'default-1'
-          },
-          { name: 'param-2' }
-        ]
-      }
+  {
+    metadata: {
+      name: 'pipeline-2',
+      namespace: 'namespace-1',
+      uid: 'id-pipeline-2'
     },
-    'id-pipeline-2': {
-      metadata: {
-        name: 'pipeline-2',
-        namespace: 'namespace-1',
-        uid: 'id-pipeline-2'
-      },
-      spec: {}
-    },
-    'id-pipeline-3': {
-      metadata: {
-        name: 'pipeline-3',
-        namespace: 'namespace-2',
-        uid: 'id-pipeline-3'
-      },
-      spec: {}
-    }
+    spec: {}
   },
-  isFetching: false
-};
+  {
+    metadata: {
+      name: 'pipeline-3',
+      namespace: 'namespace-2',
+      uid: 'id-pipeline-3'
+    },
+    spec: {}
+  }
+];
 
 const serviceAccount = {
   metadata: {
@@ -103,18 +85,10 @@ const pipelineResource2 = {
   spec: { type: 'type-2' }
 };
 
-const pipelineRuns = {
-  isFetching: false,
-  byId: {},
-  byNamespace: {}
-};
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 const testStore = {
-  namespaces,
-  notifications: {},
-  pipelineRuns,
-  pipelines
+  notifications: {}
 };
 
 const props = {
@@ -132,16 +106,22 @@ describe('CreatePipelineRun', () => {
       .spyOn(ServiceAccountsAPI, 'useServiceAccounts')
       .mockImplementation(() => ({ data: [serviceAccount] }));
     jest
-      .spyOn(PipelinesAPI, 'getPipelines')
-      .mockImplementation(() => pipelines.byId);
+      .spyOn(PipelinesAPI, 'usePipelines')
+      .mockImplementation(() => ({ data: pipelines }));
     jest
       .spyOn(PipelineResourcesAPI, 'usePipelineResources')
       .mockImplementation(() => ({
         data: [pipelineResource1, pipelineResource2]
       }));
     jest
-      .spyOn(PipelineRunsAPI, 'getPipelineRuns')
-      .mockImplementation(() => pipelineRuns.byId);
+      .spyOn(PipelineRunsAPI, 'usePipelineRuns')
+      .mockImplementation(() => ({ data: [] }));
+    jest
+      .spyOn(API, 'useNamespaces')
+      .mockImplementation(() => ({ data: ['namespace-1', 'namespace-2'] }));
+    jest
+      .spyOn(APIUtils, 'useSelectedNamespace')
+      .mockImplementation(() => ({ selectedNamespace: 'namespace-1' }));
   });
 
   it('renders labels', () => {

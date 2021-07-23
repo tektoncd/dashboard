@@ -35,12 +35,20 @@ import {
 } from '@carbon/icons-react';
 
 import { ListPageLayout } from '..';
-import { deleteTask, useIsReadOnly, useTasks } from '../../api';
-import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
+import {
+  deleteTask,
+  useIsReadOnly,
+  useSelectedNamespace,
+  useTasks
+} from '../../api';
+import { isWebSocketConnected } from '../../reducers';
 
 /* istanbul ignore next */
 function Tasks(props) {
-  const { filters, intl, namespace, webSocketConnected } = props;
+  const { filters, intl, match, webSocketConnected } = props;
+
+  const { selectedNamespace } = useSelectedNamespace();
+  const { namespace = selectedNamespace } = match.params;
 
   const [deleteError, setDeleteError] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -259,13 +267,10 @@ Tasks.defaultProps = {
 
 /* istanbul ignore next */
 function mapStateToProps(state, props) {
-  const { namespace: namespaceParam } = props.match.params;
-  const namespace = namespaceParam || getSelectedNamespace(state);
   const filters = getFilters(props.location);
 
   return {
     filters,
-    namespace,
     webSocketConnected: isWebSocketConnected(state)
   };
 }

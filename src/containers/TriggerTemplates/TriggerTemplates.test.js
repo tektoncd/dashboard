@@ -17,10 +17,13 @@ import { Provider } from 'react-redux';
 import { Route } from 'react-router-dom';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
 import { renderWithRouter } from '../../utils/test';
 import TriggerTemplates from '.';
-import * as API from '../../api/triggerTemplates';
+import * as API from '../../api';
+import * as APIUtils from '../../api/utils';
+import * as TriggerTemplatesAPI from '../../api/triggerTemplates';
 
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
@@ -36,26 +39,20 @@ const triggerTemplate = {
   }
 };
 
-const namespaces = {
-  byName: {
-    default: {
-      metadata: {
-        name: 'default'
-      }
-    }
-  },
-  errorMessage: null,
-  isFetching: false,
-  selected: '*'
-};
+const namespaces = ['default'];
 
 it('TriggerTemplates renders with no templates', () => {
   jest
-    .spyOn(API, 'useTriggerTemplates')
+    .spyOn(TriggerTemplatesAPI, 'useTriggerTemplates')
     .mockImplementation(() => ({ data: [] }));
 
+  jest
+    .spyOn(API, 'useNamespaces')
+    .mockImplementation(() => ({ data: namespaces }));
+  jest
+    .spyOn(APIUtils, 'useSelectedNamespace')
+    .mockImplementation(() => ({ selectedNamespace: ALL_NAMESPACES }));
   const store = mockStore({
-    namespaces,
     notifications: {}
   });
 
@@ -75,7 +72,7 @@ it('TriggerTemplates renders with no templates', () => {
 
 it('TriggerTemplates renders with one template', () => {
   jest
-    .spyOn(API, 'useTriggerTemplates')
+    .spyOn(TriggerTemplatesAPI, 'useTriggerTemplates')
     .mockImplementation(() => ({ data: [triggerTemplate] }));
 
   const store = mockStore({
@@ -99,9 +96,11 @@ it('TriggerTemplates renders with one template', () => {
 });
 
 it('TriggerTemplates can be filtered on a single label filter', async () => {
-  jest.spyOn(API, 'useTriggerTemplates').mockImplementation(({ filters }) => ({
-    data: filters.length ? [] : [triggerTemplate]
-  }));
+  jest
+    .spyOn(TriggerTemplatesAPI, 'useTriggerTemplates')
+    .mockImplementation(({ filters }) => ({
+      data: filters.length ? [] : [triggerTemplate]
+    }));
 
   const store = mockStore({
     namespaces,
@@ -129,7 +128,7 @@ it('TriggerTemplates can be filtered on a single label filter', async () => {
 
 it('TriggerTemplates renders in loading state', () => {
   jest
-    .spyOn(API, 'useTriggerTemplates')
+    .spyOn(TriggerTemplatesAPI, 'useTriggerTemplates')
     .mockImplementation(() => ({ isLoading: true }));
 
   const store = mockStore({
@@ -153,7 +152,9 @@ it('TriggerTemplates renders in loading state', () => {
 
 it('TriggerTemplates renders in error state', () => {
   const error = 'fake_error_message';
-  jest.spyOn(API, 'useTriggerTemplates').mockImplementation(() => ({ error }));
+  jest
+    .spyOn(TriggerTemplatesAPI, 'useTriggerTemplates')
+    .mockImplementation(() => ({ error }));
 
   const store = mockStore({
     namespaces,

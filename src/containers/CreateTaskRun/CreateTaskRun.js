@@ -13,7 +13,6 @@ limitations under the License.
 /* istanbul ignore file */
 
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
 import keyBy from 'lodash.keyby';
 import {
   Button,
@@ -39,8 +38,7 @@ import {
   ServiceAccountsDropdown,
   TasksDropdown
 } from '..';
-import { getSelectedNamespace } from '../../reducers';
-import { createTaskRun, useTaskByKind } from '../../api';
+import { createTaskRun, useSelectedNamespace, useTaskByKind } from '../../api';
 import { isValidLabel } from '../../utils';
 
 const clusterTaskItem = { id: 'clustertask', text: 'ClusterTask' };
@@ -102,7 +100,7 @@ const initialResourcesState = resourceSpecs => {
 const itemToString = ({ text }) => text;
 
 function CreateTaskRun(props) {
-  const { defaultNamespace, history, intl, location } = props;
+  const { history, intl, location } = props;
 
   function getTaskDetails() {
     const urlSearchParams = new URLSearchParams(location.search);
@@ -112,6 +110,7 @@ function CreateTaskRun(props) {
     };
   }
 
+  const { selectedNamespace: defaultNamespace } = useSelectedNamespace();
   const {
     kind: initialTaskKind,
     taskName: taskRefFromDetails
@@ -765,10 +764,4 @@ function CreateTaskRun(props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    defaultNamespace: getSelectedNamespace(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(CreateTaskRun));
+export default injectIntl(CreateTaskRun);

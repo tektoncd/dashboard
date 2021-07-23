@@ -43,13 +43,14 @@ import {
   getViewChangeHandler
 } from '../../utils';
 
-import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
+import { isWebSocketConnected } from '../../reducers';
 
 import {
   rerunTaskRun,
   useExternalLogsURL,
   useIsLogStreamingEnabled,
   useIsReadOnly,
+  useSelectedNamespace,
   useTaskByKind,
   useTaskRun
 } from '../../api';
@@ -84,14 +85,16 @@ export function TaskRunContainer(props) {
     intl,
     location,
     match,
-    namespace,
     selectedStepId,
     showTaskRunDetails,
     view,
     webSocketConnected
   } = props;
 
-  const { taskRunName } = match.params;
+  const { namespace: namespaceParam, taskRunName } = match.params;
+
+  const { selectedNamespace } = useSelectedNamespace();
+  const namespace = namespaceParam || selectedNamespace;
 
   const maximizedLogsContainer = useRef();
   const [isLogsMaximized, setIsLogsMaximized] = useState(false);
@@ -338,17 +341,14 @@ TaskRunContainer.propTypes = {
 };
 
 function mapStateToProps(state, ownProps) {
-  const { location, match } = ownProps;
-  const { namespace: namespaceParam } = match.params;
+  const { location } = ownProps;
 
   const queryParams = new URLSearchParams(location.search);
   const selectedStepId = queryParams.get(STEP);
   const view = queryParams.get(VIEW);
   const showTaskRunDetails = queryParams.get(TASK_RUN_DETAILS);
 
-  const namespace = namespaceParam || getSelectedNamespace(state);
   return {
-    namespace,
     selectedStepId,
     showTaskRunDetails,
     view,

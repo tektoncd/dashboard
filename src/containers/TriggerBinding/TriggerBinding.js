@@ -21,13 +21,16 @@ import {
   useWebSocketReconnected
 } from '@tektoncd/dashboard-utils';
 
-import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
-import { useTriggerBinding } from '../../api';
+import { isWebSocketConnected } from '../../reducers';
+import { useSelectedNamespace, useTriggerBinding } from '../../api';
 import { getViewChangeHandler } from '../../utils';
 
 export function TriggerBindingContainer(props) {
-  const { intl, match, selectedNamespace, view, webSocketConnected } = props;
+  const { intl, match, view, webSocketConnected } = props;
   const { namespace, triggerBindingName: resourceName } = match.params;
+
+  const { selectedNamespace: defaultNamespace } = useSelectedNamespace();
+  const selectedNamespace = namespace || defaultNamespace;
 
   useTitleSync({
     page: 'TriggerBinding',
@@ -106,15 +109,12 @@ TriggerBindingContainer.propTypes = {
 
 /* istanbul ignore next */
 function mapStateToProps(state, ownProps) {
-  const { location, match } = ownProps;
-  const { namespace: namespaceParam } = match.params;
+  const { location } = ownProps;
 
   const queryParams = new URLSearchParams(location.search);
   const view = queryParams.get('view');
-  const namespace = namespaceParam || getSelectedNamespace(state);
 
   return {
-    selectedNamespace: namespace,
     view,
     webSocketConnected: isWebSocketConnected(state)
   };

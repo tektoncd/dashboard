@@ -24,16 +24,16 @@ import {
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 import { Link as CarbonLink } from 'carbon-components-react';
 
-import { useConditions } from '../../api';
+import { useConditions, useSelectedNamespace } from '../../api';
 import { ListPageLayout } from '..';
-import {
-  getSelectedNamespace,
-  isWebSocketConnected as selectIsWebSocketConnected
-} from '../../reducers';
+import { isWebSocketConnected as selectIsWebSocketConnected } from '../../reducers';
 
 function Conditions(props) {
-  const { filters, intl, namespace, webSocketConnected } = props;
+  const { filters, intl, webSocketConnected } = props;
   useTitleSync({ page: 'Conditions' });
+
+  const { selectedNamespace } = useSelectedNamespace();
+  const { namespace = selectedNamespace } = props.match.params;
 
   const { data: conditions = [], error, isLoading, refetch } = useConditions({
     filters,
@@ -126,13 +126,10 @@ function Conditions(props) {
 
 /* istanbul ignore next */
 function mapStateToProps(state, props) {
-  const { namespace: namespaceParam } = props.match.params;
-  const namespace = namespaceParam || getSelectedNamespace(state);
   const filters = getFilters(props.location);
 
   return {
     filters,
-    namespace,
     webSocketConnected: selectIsWebSocketConnected(state)
   };
 }

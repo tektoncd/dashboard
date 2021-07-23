@@ -14,6 +14,7 @@ limitations under the License.
 import fetchMock from 'fetch-mock';
 
 import * as API from './pipelineRuns';
+import * as utils from './utils';
 
 it('cancelPipelineRun', () => {
   const name = 'foo';
@@ -180,6 +181,40 @@ it('getPipelineRuns With Query Params', () => {
       expect(pipelineRuns).toEqual(data.items);
       fetchMock.restore();
     }
+  );
+});
+
+it('usePipelineRuns', () => {
+  const query = { fake: 'query' };
+  const params = { fake: 'params' };
+  jest.spyOn(utils, 'useCollection').mockImplementation(() => query);
+  expect(API.usePipelineRuns(params)).toEqual(query);
+  expect(utils.useCollection).toHaveBeenCalledWith(
+    'PipelineRun',
+    API.getPipelineRuns,
+    params
+  );
+});
+
+it('usePipelineRun', () => {
+  const query = { fake: 'query' };
+  const params = { fake: 'params' };
+  jest.spyOn(utils, 'useResource').mockImplementation(() => query);
+  expect(API.usePipelineRun(params)).toEqual(query);
+  expect(utils.useResource).toHaveBeenCalledWith(
+    'PipelineRun',
+    API.getPipelineRun,
+    params,
+    undefined
+  );
+
+  const queryConfig = { fake: 'queryConfig' };
+  API.usePipelineRun(params, queryConfig);
+  expect(utils.useResource).toHaveBeenCalledWith(
+    'PipelineRun',
+    API.getPipelineRun,
+    params,
+    queryConfig
   );
 });
 

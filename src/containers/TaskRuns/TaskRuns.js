@@ -38,12 +38,13 @@ import { Add16 as Add, TrashCan32 as Delete } from '@carbon/icons-react';
 
 import { ListPageLayout } from '..';
 import { sortRunsByStartTime } from '../../utils';
-import { getSelectedNamespace, isWebSocketConnected } from '../../reducers';
+import { isWebSocketConnected } from '../../reducers';
 import {
   cancelTaskRun,
   deleteTaskRun,
   rerunTaskRun,
   useIsReadOnly,
+  useSelectedNamespace,
   useTaskRuns
 } from '../../api';
 
@@ -56,12 +57,16 @@ function TaskRuns(props) {
     history,
     intl,
     kind,
-    namespace,
+    match,
     setStatusFilter,
     statusFilter,
     taskName,
     webSocketConnected
   } = props;
+
+  const { namespace: namespaceParam } = match.params;
+  const { selectedNamespace } = useSelectedNamespace();
+  const namespace = namespaceParam || selectedNamespace;
 
   const [deleteError, setDeleteError] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -316,10 +321,8 @@ TaskRuns.defaultProps = {
 
 /* istanbul ignore next */
 function mapStateToProps(state, props) {
-  const { namespace: namespaceParam } = props.match.params;
   const filters = getFilters(props.location);
   const statusFilter = getStatusFilter(props.location);
-  const namespace = namespaceParam || getSelectedNamespace(state);
 
   const taskFilter = filters.find(f => f.indexOf(`${TASK}=`) !== -1) || '';
   const clusterTaskFilter =
@@ -332,7 +335,6 @@ function mapStateToProps(state, props) {
       : taskFilter.replace(`${TASK}=`, '');
 
   return {
-    namespace,
     filters,
     taskName,
     kind,

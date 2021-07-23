@@ -17,10 +17,13 @@ import { Provider } from 'react-redux';
 import { Route } from 'react-router-dom';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
 import { renderWithRouter } from '../../utils/test';
 import EventListeners from '.';
-import * as API from '../../api/eventListeners';
+import * as API from '../../api';
+import * as APIUtils from '../../api/utils';
+import * as EventListenersAPI from '../../api/eventListeners';
 
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
@@ -36,139 +39,137 @@ const eventListener = {
   }
 };
 
-const namespaces = {
-  byName: {
-    default: {
-      metadata: {
-        name: 'default'
-      }
-    }
-  },
-  errorMessage: null,
-  isFetching: false,
-  selected: '*'
-};
+describe('EventListeners', () => {
+  beforeEach(() => {
+    jest
+      .spyOn(API, 'useNamespaces')
+      .mockImplementation(() => ({ data: ['default'] }));
+    jest
+      .spyOn(APIUtils, 'useSelectedNamespace')
+      .mockImplementation(() => ({ selectedNamespace: ALL_NAMESPACES }));
+  });
+  it('renders with no bindings', () => {
+    jest
+      .spyOn(EventListenersAPI, 'useEventListeners')
+      .mockImplementation(() => ({ data: [] }));
 
-it('EventListeners renders with no bindings', () => {
-  jest.spyOn(API, 'useEventListeners').mockImplementation(() => ({ data: [] }));
+    const store = mockStore({
+      notifications: {}
+    });
 
-  const store = mockStore({
-    namespaces,
-    notifications: {}
+    const { getByText } = renderWithRouter(
+      <Provider store={store}>
+        <Route
+          path="/eventlisteners"
+          render={props => <EventListeners {...props} />}
+        />
+      </Provider>,
+      { route: '/eventlisteners' }
+    );
+
+    expect(getByText('EventListeners')).toBeTruthy();
+    expect(getByText('No matching EventListeners found')).toBeTruthy();
   });
 
-  const { getByText } = renderWithRouter(
-    <Provider store={store}>
-      <Route
-        path="/eventlisteners"
-        render={props => <EventListeners {...props} />}
-      />
-    </Provider>,
-    { route: '/eventlisteners' }
-  );
+  it('renders with one binding', () => {
+    jest
+      .spyOn(EventListenersAPI, 'useEventListeners')
+      .mockImplementation(() => ({ data: [eventListener] }));
 
-  expect(getByText('EventListeners')).toBeTruthy();
-  expect(getByText('No matching EventListeners found')).toBeTruthy();
-});
+    const store = mockStore({
+      notifications: {}
+    });
 
-it('EventListeners renders with one binding', () => {
-  jest
-    .spyOn(API, 'useEventListeners')
-    .mockImplementation(() => ({ data: [eventListener] }));
+    const { queryByText, queryByTitle } = renderWithRouter(
+      <Provider store={store}>
+        <Route
+          path="/eventlisteners"
+          render={props => <EventListeners {...props} />}
+        />
+      </Provider>,
+      { route: '/eventlisteners' }
+    );
 
-  const store = mockStore({
-    namespaces,
-    notifications: {}
+    expect(queryByText('EventListeners')).toBeTruthy();
+    expect(queryByText('No matching EventListeners found')).toBeFalsy();
+    expect(queryByText('event-listener')).toBeTruthy();
+    expect(queryByTitle('event-listener')).toBeTruthy();
   });
 
-  const { queryByText, queryByTitle } = renderWithRouter(
-    <Provider store={store}>
-      <Route
-        path="/eventlisteners"
-        render={props => <EventListeners {...props} />}
-      />
-    </Provider>,
-    { route: '/eventlisteners' }
-  );
+  it('can be filtered on a single label filter', async () => {
+    jest
+      .spyOn(EventListenersAPI, 'useEventListeners')
+      .mockImplementation(({ filters }) => ({
+        data: filters.length ? [] : [eventListener]
+      }));
 
-  expect(queryByText('EventListeners')).toBeTruthy();
-  expect(queryByText('No matching EventListeners found')).toBeFalsy();
-  expect(queryByText('event-listener')).toBeTruthy();
-  expect(queryByTitle('event-listener')).toBeTruthy();
-});
+    const store = mockStore({
+      notifications: {}
+    });
 
-it('EventListeners can be filtered on a single label filter', async () => {
-  jest.spyOn(API, 'useEventListeners').mockImplementation(({ filters }) => ({
-    data: filters.length ? [] : [eventListener]
-  }));
+    const { getByPlaceholderText, getByText, queryByText } = renderWithRouter(
+      <Provider store={store}>
+        <Route
+          path="/eventlisteners"
+          render={props => <EventListeners {...props} />}
+        />
+      </Provider>,
+      { route: '/eventlisteners' }
+    );
 
-  const store = mockStore({
-    namespaces,
-    notifications: {}
+    const filterValue = 'baz:bam';
+    const filterInputField = getByPlaceholderText(/Input a label filter/);
+    fireEvent.change(filterInputField, { target: { value: filterValue } });
+    fireEvent.submit(getByText(/Input a label filter/i));
+
+    expect(queryByText(filterValue)).toBeTruthy();
+    expect(queryByText('event-listeners')).toBeFalsy();
   });
 
-  const { getByPlaceholderText, getByText, queryByText } = renderWithRouter(
-    <Provider store={store}>
-      <Route
-        path="/eventlisteners"
-        render={props => <EventListeners {...props} />}
-      />
-    </Provider>,
-    { route: '/eventlisteners' }
-  );
+  it('renders in loading state', () => {
+    jest
+      .spyOn(EventListenersAPI, 'useEventListeners')
+      .mockImplementation(() => ({ isLoading: true }));
 
-  const filterValue = 'baz:bam';
-  const filterInputField = getByPlaceholderText(/Input a label filter/);
-  fireEvent.change(filterInputField, { target: { value: filterValue } });
-  fireEvent.submit(getByText(/Input a label filter/i));
+    const store = mockStore({
+      notifications: {}
+    });
 
-  expect(queryByText(filterValue)).toBeTruthy();
-  expect(queryByText('event-listeners')).toBeFalsy();
-});
+    const { queryByText } = renderWithRouter(
+      <Provider store={store}>
+        <Route
+          path="/eventlisteners"
+          render={props => <EventListeners {...props} />}
+        />
+      </Provider>,
+      { route: '/eventlisteners' }
+    );
 
-it('EventListeners renders in loading state', () => {
-  jest
-    .spyOn(API, 'useEventListeners')
-    .mockImplementation(() => ({ isLoading: true }));
-
-  const store = mockStore({
-    namespaces,
-    notifications: {}
+    expect(queryByText(/EventListeners/i)).toBeTruthy();
+    expect(queryByText('No matching EventListeners found')).toBeFalsy();
+    expect(queryByText('event-listeners')).toBeFalsy();
   });
 
-  const { queryByText } = renderWithRouter(
-    <Provider store={store}>
-      <Route
-        path="/eventlisteners"
-        render={props => <EventListeners {...props} />}
-      />
-    </Provider>,
-    { route: '/eventlisteners' }
-  );
+  it('renders in error state', () => {
+    const error = 'fake_error_message';
+    jest
+      .spyOn(EventListenersAPI, 'useEventListeners')
+      .mockImplementation(() => ({ error }));
 
-  expect(queryByText(/EventListeners/i)).toBeTruthy();
-  expect(queryByText('No matching EventListeners found')).toBeFalsy();
-  expect(queryByText('event-listeners')).toBeFalsy();
-});
+    const store = mockStore({
+      notifications: {}
+    });
 
-it('EventListeners renders in error state', () => {
-  const error = 'fake_error_message';
-  jest.spyOn(API, 'useEventListeners').mockImplementation(() => ({ error }));
+    const { queryByText } = renderWithRouter(
+      <Provider store={store}>
+        <Route
+          path="/eventlisteners"
+          render={props => <EventListeners {...props} />}
+        />
+      </Provider>,
+      { route: '/eventlisteners' }
+    );
 
-  const store = mockStore({
-    namespaces,
-    notifications: {}
+    expect(queryByText(error)).toBeTruthy();
   });
-
-  const { queryByText } = renderWithRouter(
-    <Provider store={store}>
-      <Route
-        path="/eventlisteners"
-        render={props => <EventListeners {...props} />}
-      />
-    </Provider>,
-    { route: '/eventlisteners' }
-  );
-
-  expect(queryByText(error)).toBeTruthy();
 });

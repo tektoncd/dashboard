@@ -11,42 +11,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { getLocale, getNamespaces, getSelectedNamespace } from '.';
+import { getLocale } from '.';
 import * as localeSelectors from './locale';
-import * as namespaceSelectors from './namespaces';
 
 const locale = 'it';
-const namespace = 'default';
 const state = {
-  locale: { selected: locale },
-  namespaces: {
-    selected: namespace
-  }
+  locale: { selected: locale }
 };
 
 it('getLocale', () => {
   jest.spyOn(localeSelectors, 'getLocale').mockImplementation(() => locale);
   expect(getLocale(state)).toEqual(locale);
   expect(localeSelectors.getLocale).toHaveBeenCalledWith(state.locale);
-});
-
-it('getSelectedNamespace', () => {
-  jest
-    .spyOn(namespaceSelectors, 'getSelectedNamespace')
-    .mockImplementation(() => namespace);
-  expect(getSelectedNamespace(state)).toEqual(namespace);
-  expect(namespaceSelectors.getSelectedNamespace).toHaveBeenCalledWith(
-    state.namespaces
-  );
-});
-
-it('getNamespaces', () => {
-  const namespaces = [namespace];
-  jest
-    .spyOn(namespaceSelectors, 'getNamespaces')
-    .mockImplementation(() => namespaces);
-  expect(getNamespaces(state)).toEqual(namespaces);
-  expect(namespaceSelectors.getNamespaces).toHaveBeenCalledWith(
-    state.namespaces
-  );
 });

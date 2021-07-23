@@ -25,7 +25,6 @@ import {
   TooltipIcon
 } from 'carbon-components-react';
 import { Information16 } from '@carbon/icons-react';
-import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
   ALL_NAMESPACES,
@@ -35,8 +34,11 @@ import {
   useTitleSync
 } from '@tektoncd/dashboard-utils';
 import parseGitURL from 'git-url-parse';
-import { importResources, useDashboardNamespace } from '../../api';
-import { getSelectedNamespace } from '../../reducers';
+import {
+  importResources,
+  useDashboardNamespace,
+  useSelectedNamespace
+} from '../../api';
 import { NamespacesDropdown, ServiceAccountsDropdown } from '..';
 
 const itemToString = ({ text }) => text;
@@ -58,8 +60,9 @@ const HelpIcon = ({ title }) => (
 );
 
 export function ImportResources(props) {
-  const { intl, navNamespace } = props;
+  const { intl } = props;
 
+  const { selectedNamespace: navNamespace } = useSelectedNamespace();
   const dashboardNamespace = useDashboardNamespace();
 
   const [importerNamespace, setImporterNamespace] = useState(
@@ -429,11 +432,4 @@ export function ImportResources(props) {
   );
 }
 
-/* istanbul ignore next */
-function mapStateToProps(state) {
-  return {
-    navNamespace: getSelectedNamespace(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(ImportResources));
+export default injectIntl(ImportResources);

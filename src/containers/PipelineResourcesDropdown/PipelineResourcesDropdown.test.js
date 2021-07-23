@@ -16,10 +16,13 @@ import { fireEvent, getNodeText } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { render } from '../../utils/test';
+import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
+import { render } from '../../utils/test';
 import PipelineResourcesDropdown from './PipelineResourcesDropdown';
-import * as API from '../../api/pipelineResources';
+import * as API from '../../api';
+import * as APIUtils from '../../api/utils';
+import * as PipelineResourcesAPI from '../../api/pipelineResources';
 
 const props = {
   id: 'pipeline-resources-dropdown',
@@ -63,25 +66,6 @@ const pipelineResource3 = {
   spec: { type: 'type-1' }
 };
 
-const namespacesByName = {
-  blue: '',
-  green: ''
-};
-
-const namespacesStoreBlue = {
-  namespaces: {
-    byName: namespacesByName,
-    selected: 'blue'
-  }
-};
-
-const namespacesStoreAll = {
-  namespaces: {
-    byName: namespacesByName,
-    selected: '*'
-  }
-};
-
 const initialTextRegExp = new RegExp('select pipelineresource', 'i');
 
 const checkDropdownItems = ({
@@ -102,13 +86,22 @@ const middleware = [thunk];
 const mockStore = configureStore(middleware);
 
 describe('PipelineResourcesDropdown', () => {
-  it('renders items', () => {
-    jest.spyOn(API, 'usePipelineResources').mockImplementation(() => ({
-      data: [pipelineResource1, pipelineResource2]
-    }));
+  beforeEach(() => {
+    jest
+      .spyOn(API, 'useNamespaces')
+      .mockImplementation(() => ({ data: ['blue', 'green'] }));
+  });
 
+  it('renders items', () => {
+    jest
+      .spyOn(PipelineResourcesAPI, 'usePipelineResources')
+      .mockImplementation(() => ({
+        data: [pipelineResource1, pipelineResource2]
+      }));
+    jest
+      .spyOn(APIUtils, 'useSelectedNamespace')
+      .mockImplementation(() => ({ selectedNamespace: 'blue' }));
     const store = mockStore({
-      ...namespacesStoreBlue,
       notifications: {}
     });
     const { getByPlaceholderText, getAllByText, queryByText } = render(
@@ -126,11 +119,15 @@ describe('PipelineResourcesDropdown', () => {
   });
 
   it('renders items based on type', () => {
-    jest.spyOn(API, 'usePipelineResources').mockImplementation(() => ({
-      data: [pipelineResource1, pipelineResource2]
-    }));
+    jest
+      .spyOn(PipelineResourcesAPI, 'usePipelineResources')
+      .mockImplementation(() => ({
+        data: [pipelineResource1, pipelineResource2]
+      }));
+    jest
+      .spyOn(APIUtils, 'useSelectedNamespace')
+      .mockImplementation(() => ({ selectedNamespace: 'blue' }));
     const store = mockStore({
-      ...namespacesStoreBlue,
       notifications: {}
     });
     const { getByPlaceholderText, queryByText, rerender } = render(
@@ -156,11 +153,15 @@ describe('PipelineResourcesDropdown', () => {
   });
 
   it('renders controlled selection', () => {
-    jest.spyOn(API, 'usePipelineResources').mockImplementation(() => ({
-      data: [pipelineResource1, pipelineResource2]
-    }));
+    jest
+      .spyOn(PipelineResourcesAPI, 'usePipelineResources')
+      .mockImplementation(() => ({
+        data: [pipelineResource1, pipelineResource2]
+      }));
+    jest
+      .spyOn(APIUtils, 'useSelectedNamespace')
+      .mockImplementation(() => ({ selectedNamespace: 'blue' }));
     const store = mockStore({
-      ...namespacesStoreBlue,
       notifications: {}
     });
     // Select item 'pipeline-resource-1'
@@ -196,10 +197,12 @@ describe('PipelineResourcesDropdown', () => {
 
   it('renders controlled namespace', () => {
     jest
-      .spyOn(API, 'usePipelineResources')
+      .spyOn(PipelineResourcesAPI, 'usePipelineResources')
       .mockImplementation(() => ({ data: [pipelineResource3] }));
+    jest
+      .spyOn(APIUtils, 'useSelectedNamespace')
+      .mockImplementation(() => ({ selectedNamespace: 'blue' }));
     const store = mockStore({
-      ...namespacesStoreBlue,
       notifications: {}
     });
     // Select namespace 'green'
@@ -218,10 +221,12 @@ describe('PipelineResourcesDropdown', () => {
 
   it('renders empty', () => {
     jest
-      .spyOn(API, 'usePipelineResources')
+      .spyOn(PipelineResourcesAPI, 'usePipelineResources')
       .mockImplementation(() => ({ data: [] }));
+    jest
+      .spyOn(APIUtils, 'useSelectedNamespace')
+      .mockImplementation(() => ({ selectedNamespace: 'blue' }));
     const store = mockStore({
-      ...namespacesStoreBlue,
       notifications: {}
     });
     const { queryByPlaceholderText } = render(
@@ -239,10 +244,12 @@ describe('PipelineResourcesDropdown', () => {
 
   it('renders empty all namespaces', () => {
     jest
-      .spyOn(API, 'usePipelineResources')
+      .spyOn(PipelineResourcesAPI, 'usePipelineResources')
       .mockImplementation(() => ({ data: [] }));
+    jest
+      .spyOn(APIUtils, 'useSelectedNamespace')
+      .mockImplementation(() => ({ selectedNamespace: ALL_NAMESPACES }));
     const store = mockStore({
-      ...namespacesStoreAll,
       notifications: {}
     });
     const { queryByPlaceholderText } = render(
@@ -256,10 +263,12 @@ describe('PipelineResourcesDropdown', () => {
 
   it('renders empty with type', () => {
     jest
-      .spyOn(API, 'usePipelineResources')
+      .spyOn(PipelineResourcesAPI, 'usePipelineResources')
       .mockImplementation(() => ({ data: [] }));
+    jest
+      .spyOn(APIUtils, 'useSelectedNamespace')
+      .mockImplementation(() => ({ selectedNamespace: 'blue' }));
     const store = mockStore({
-      ...namespacesStoreBlue,
       notifications: {}
     });
     const { queryByPlaceholderText } = render(
@@ -277,10 +286,12 @@ describe('PipelineResourcesDropdown', () => {
 
   it('renders empty with type and all namespaces', () => {
     jest
-      .spyOn(API, 'usePipelineResources')
+      .spyOn(PipelineResourcesAPI, 'usePipelineResources')
       .mockImplementation(() => ({ data: [] }));
+    jest
+      .spyOn(APIUtils, 'useSelectedNamespace')
+      .mockImplementation(() => ({ selectedNamespace: ALL_NAMESPACES }));
     const store = mockStore({
-      ...namespacesStoreAll,
       notifications: {}
     });
     const { queryByPlaceholderText } = render(
@@ -296,10 +307,12 @@ describe('PipelineResourcesDropdown', () => {
 
   it('renders loading state', () => {
     jest
-      .spyOn(API, 'usePipelineResources')
+      .spyOn(PipelineResourcesAPI, 'usePipelineResources')
       .mockImplementation(() => ({ isFetching: true }));
+    jest
+      .spyOn(APIUtils, 'useSelectedNamespace')
+      .mockImplementation(() => ({ selectedNamespace: 'blue' }));
     const store = mockStore({
-      ...namespacesStoreBlue,
       notifications: {}
     });
     const { queryByPlaceholderText } = render(
@@ -311,11 +324,15 @@ describe('PipelineResourcesDropdown', () => {
   });
 
   it('handles onChange event', () => {
-    jest.spyOn(API, 'usePipelineResources').mockImplementation(() => ({
-      data: [pipelineResource1]
-    }));
+    jest
+      .spyOn(PipelineResourcesAPI, 'usePipelineResources')
+      .mockImplementation(() => ({
+        data: [pipelineResource1]
+      }));
+    jest
+      .spyOn(APIUtils, 'useSelectedNamespace')
+      .mockImplementation(() => ({ selectedNamespace: 'blue' }));
     const store = mockStore({
-      ...namespacesStoreBlue,
       notifications: {}
     });
     const onChange = jest.fn();
