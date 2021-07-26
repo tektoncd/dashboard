@@ -22,7 +22,7 @@ const pipelinesSelector = { selector: '#tkn--about--pipelines-table *' };
 const triggersSelector = { selector: '#tkn--about--triggers-table *' };
 
 describe('About', () => {
-  it('should render correctly', async () => {
+  it('should render correctly', () => {
     jest.spyOn(api, 'useProperties').mockImplementation(() => ({
       data: {
         dashboardNamespace: 'tekton-dashboard',
@@ -61,7 +61,7 @@ describe('About', () => {
     expect(queryByText('v0.3.1', triggersSelector)).toBeTruthy();
   });
 
-  it('should render error when an expected property is missing', async () => {
+  it('should render error when an expected property is missing', () => {
     jest.spyOn(api, 'useProperties').mockImplementation(() => ({
       data: {
         dashboardNamespace: 'tekton-dashboard',
@@ -92,7 +92,7 @@ describe('About', () => {
     expect(queryByText('Could not find: dashboardVersion')).toBeTruthy();
   });
 
-  it('should render error when multiple expected properties are missing', async () => {
+  it('should render error when multiple expected properties are missing', () => {
     jest.spyOn(api, 'useProperties').mockImplementation(() => ({
       data: {
         dashboardNamespace: 'tekton-dashboard'
@@ -120,7 +120,7 @@ describe('About', () => {
     ).toBeTruthy();
   });
 
-  it('should not display TiggersVersion when value is not returned in the API', async () => {
+  it('should not display TiggersVersion when value is not returned in the API', () => {
     jest.spyOn(api, 'useProperties').mockImplementation(() => ({
       data: {
         dashboardNamespace: 'tekton-dashboard',

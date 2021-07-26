@@ -41,6 +41,7 @@ export { default as PipelinesDropdown } from './PipelinesDropdown';
 export { default as ReadWriteRoute } from './ReadWriteRoute';
 export { default as ResourceList } from './ResourceList';
 export { default as ServiceAccountsDropdown } from './ServiceAccountsDropdown';
+export { default as Settings } from './Settings';
 export { default as SideNav } from './SideNav';
 export { default as Tasks } from './Tasks';
 export { default as TasksDropdown } from './TasksDropdown';

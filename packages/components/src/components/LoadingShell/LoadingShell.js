@@ -67,6 +67,13 @@ const LoadingShell = ({ intl }) => {
               defaultMessage: 'About'
             })}
           </SideNavLink>
+
+          <SideNavLink icon={<span />}>
+            {intl.formatMessage({
+              id: 'dashboard.settings.title',
+              defaultMessage: 'Settings'
+            })}
+          </SideNavLink>
         </SideNavItems>
       </SideNav>
       <Content>

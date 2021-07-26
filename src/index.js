@@ -22,6 +22,7 @@ import ReconnectingWebSocket from 'reconnecting-websocket';
 import './utils/polyfills';
 import { configureStore } from './store';
 import { getWebSocketURL, WebSocketContext } from './api';
+import { setTheme } from './utils';
 import { setLocale } from './actions/locale';
 
 import App from './containers/App';
@@ -46,10 +47,7 @@ const store = configureStore({ webSocket });
 
 store.dispatch(setLocale(navigator.language));
 
-const theme = localStorage.getItem('tkn-theme');
-if (['dark', 'system'].includes(theme)) {
-  document.body.classList.add(`tkn--theme-${theme}`);
-}
+setTheme();
 
 const enableReactQueryDevTools =
   localStorage.getItem('tkn-devtools-rq') === 'true';

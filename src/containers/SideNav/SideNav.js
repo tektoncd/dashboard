@@ -25,7 +25,8 @@ import {
 import {
   Information20 as AboutIcon,
   Chip20 as ExtensionsIcon,
-  DocumentImport20 as ImportResourcesIcon
+  DocumentImport20 as ImportResourcesIcon,
+  Settings20 as SettingsIcon
 } from '@carbon/icons-react';
 import { ALL_NAMESPACES, urls } from '@tektoncd/dashboard-utils';
 
@@ -240,6 +241,17 @@ function SideNav(props) {
           {intl.formatMessage({
             id: 'dashboard.about.title',
             defaultMessage: 'About'
+          })}
+        </SideNavLink>
+
+        <SideNavLink
+          element={NavLink}
+          renderIcon={SettingsIcon}
+          to={urls.settings()}
+        >
+          {intl.formatMessage({
+            id: 'dashboard.settings.title',
+            defaultMessage: 'Settings'
           })}
         </SideNavLink>
       </SideNavItems>
