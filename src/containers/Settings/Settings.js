@@ -14,7 +14,7 @@ limitations under the License.
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { useTitleSync } from '@tektoncd/dashboard-utils';
-import { RadioTile, TileGroup } from 'carbon-components-react';
+import { RadioTile, TileGroup, Toggle } from 'carbon-components-react';
 import {
   Asleep16 as DarkIcon,
   Light16 as LightIcon,
@@ -22,6 +22,10 @@ import {
 } from '@carbon/icons-react';
 
 import { getTheme, setTheme } from '../../utils';
+import {
+  isLogTimestampsEnabled,
+  setLogTimestampsEnabled
+} from '../../api/utils';
 
 export function Settings({ intl }) {
   useTitleSync({
@@ -71,6 +75,24 @@ export function Settings({ intl }) {
             })}
           </RadioTile>
         </TileGroup>
+
+        <Toggle
+          defaultToggled={isLogTimestampsEnabled()}
+          id="tkn--log-timestamps-toggle"
+          labelText={intl.formatMessage({
+            id: 'dashboard.logs.showTimestamps.label',
+            defaultMessage: 'Show log timestamps'
+          })}
+          labelA={intl.formatMessage({
+            id: 'dashboard.toggle.off',
+            defaultMessage: 'Off'
+          })}
+          labelB={intl.formatMessage({
+            id: 'dashboard.toggle.on',
+            defaultMessage: 'On'
+          })}
+          onToggle={checked => setLogTimestampsEnabled(checked)}
+        />
       </div>
     </div>
   );
