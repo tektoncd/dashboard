@@ -175,7 +175,7 @@ describe('TaskRunDetails', () => {
     expect(queryByText(pod)).toBeTruthy();
   });
 
-  it('renders resources', () => {
+  it('renders both input and output resources', () => {
     const inputResourceName = 'input-resource';
     const outputResourceName = 'output-resource';
     const inputs = [
@@ -197,7 +197,31 @@ describe('TaskRunDetails', () => {
       <TaskRunDetails taskRun={taskRun} view="resources" showIO />
     );
 
+    expect(queryByText(/input resources/i)).toBeTruthy();
     expect(queryByText(inputResourceName)).toBeTruthy();
+    expect(queryByText(/output resources/i)).toBeTruthy();
+    expect(queryByText(outputResourceName)).toBeTruthy();
+  });
+
+  it('renders output resources', () => {
+    const outputResourceName = 'output-resource';
+    const outputs = [{ name: outputResourceName, resourceSpec: '' }];
+
+    const taskRun = {
+      metadata: { name: 'task-run-name', namespace: 'namespace-name' },
+      spec: {
+        resources: {
+          outputs
+        }
+      }
+    };
+
+    const { queryByText } = renderWithRouter(
+      <TaskRunDetails taskRun={taskRun} view="resources" showIO />
+    );
+
+    expect(queryByText(/input resources/i)).toBeFalsy();
+    expect(queryByText(/output resources/i)).toBeTruthy();
     expect(queryByText(outputResourceName)).toBeTruthy();
   });
 });

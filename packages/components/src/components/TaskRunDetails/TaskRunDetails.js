@@ -181,7 +181,7 @@ const TaskRunDetails = ({
   const tabs = [
     paramsTable && 'params',
     resultsTable && 'results',
-    showIO && resources && 'resources',
+    resources && 'resources',
     'status',
     pod && 'pod'
   ].filter(Boolean);

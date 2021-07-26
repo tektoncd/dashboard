@@ -163,9 +163,12 @@ export class LogContainer extends Component {
         document.documentElement?.clientHeight - logRectangle.bottom
       );
 
-      this.updateCssStyleProperty(logElementRight, '--log-element-right');
-      this.updateCssStyleProperty(scrollButtonTop, '--scroll-button-top');
-      this.updateCssStyleProperty(scrollButtonBottom, '--scroll-button-bottom');
+      this.updateCssStyleProperty(logElementRight, '--tkn-log-element-right');
+      this.updateCssStyleProperty(scrollButtonTop, '--tkn-scroll-button-top');
+      this.updateCssStyleProperty(
+        scrollButtonBottom,
+        '--tkn-scroll-button-bottom'
+      );
     }
   };
 
@@ -204,36 +207,34 @@ export class LogContainer extends Component {
       <div className="button-container">
         {isLogTopUnseen ? (
           <Button
-            key="log-scroll-to-top-btn"
-            id="log-scroll-to-top-btn"
             className="bx--copy-btn"
-            onClick={this.scrollToTopLog}
             hasIconOnly
-            size="sm"
+            iconDescription={scrollButtonTopMessage}
+            id="log-scroll-to-top-btn"
+            onClick={this.scrollToTopLog}
             renderIcon={() => (
               <UpToTop16>
                 <title>{scrollButtonTopMessage}</title>
               </UpToTop16>
             )}
+            size="sm"
             tooltipPosition="right"
-            iconDescription={scrollButtonTopMessage}
           />
         ) : null}
         {isLogBottomUnseen ? (
           <Button
-            key="log-scroll-to-bottom-btn"
-            id="log-scroll-to-bottom-btn"
             className="bx--copy-btn"
-            onClick={this.scrollToBottomLog}
+            iconDescription={scrollButtonBottomMessage}
             hasIconOnly
-            size="sm"
+            id="log-scroll-to-bottom-btn"
+            onClick={this.scrollToBottomLog}
             renderIcon={() => (
               <DownToBottom16>
                 <title>{scrollButtonBottomMessage}</title>
               </DownToBottom16>
             )}
+            size="sm"
             tooltipPosition="right"
-            iconDescription={scrollButtonBottomMessage}
           />
         ) : null}
       </div>
