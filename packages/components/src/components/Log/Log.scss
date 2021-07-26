@@ -64,7 +64,7 @@ pre.tkn--log {
 
   #log-scroll-to-top-btn, #log-scroll-to-bottom-btn {
     position: fixed;
-    right: var(--log-element-right);
+    right: var(--tkn-log-element-right);
 
     &::before { // the tooltip is not shown because it is outside of its parent .button-container (which has clip-path inset) But fin still appears.
       content: none; // To remove fin of truncated tooltip. To  obtain higher specificity than Carbon css, id selector is needed.
@@ -72,11 +72,11 @@ pre.tkn--log {
   }
   
   #log-scroll-to-top-btn {
-    top: calc(var(--scroll-button-top) + 3.125rem); //3.125 rem is the maximum between padding-top of pre.tkn--log and between the page header height
+    top: calc(var(--tkn-scroll-button-top) + 3.125rem); //3.125 rem is the maximum between padding-top of pre.tkn--log and between the page header height
   }
 
   #log-scroll-to-bottom-btn {
-    bottom: var(--scroll-button-bottom);
+    bottom: var(--tkn-scroll-button-bottom);
   }
 
   .bx--copy-btn {

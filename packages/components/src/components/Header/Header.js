@@ -22,6 +22,7 @@ import {
   SkipToContent
 } from 'carbon-components-react';
 
+/* istanbul ignore next */
 function skipToContentClick(event) {
   event.preventDefault();
   window.scrollTo(0, 0);
