@@ -63,6 +63,7 @@ import {
   Pipelines,
   ReadWriteRoute,
   ResourceList,
+  Settings,
   SideNav,
   TaskRun,
   TaskRuns,
@@ -344,6 +345,7 @@ export function App({
                   />
 
                   <Route path={paths.about()} component={About} />
+                  <Route path={paths.settings()} component={Settings} />
 
                   <ReadWriteRoute
                     isReadOnly={isReadOnly}

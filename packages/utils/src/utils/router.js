@@ -143,6 +143,9 @@ export const paths = {
       return '/:type/:name';
     }
   },
+  settings() {
+    return '/settings';
+  },
   taskRuns: {
     all() {
       return '/taskruns';

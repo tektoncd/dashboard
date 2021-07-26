@@ -202,3 +202,24 @@ export function getLocale(requestedLocale) {
     : supportedLocales;
   return getSupportedLocale(requestedLocale, locales);
 }
+
+function sanitiseTheme(theme) {
+  if (['dark', 'light'].includes(theme)) {
+    return theme;
+  }
+  return 'system';
+}
+
+export function getTheme() {
+  return sanitiseTheme(localStorage.getItem('tkn-theme'));
+}
+
+export function setTheme(selectedTheme = getTheme()) {
+  const theme = sanitiseTheme(selectedTheme);
+  ['dark', 'light', 'system'].forEach(themeType =>
+    document.body.classList[themeType === theme ? 'add' : 'remove'](
+      `tkn--theme-${themeType}`
+    )
+  );
+  localStorage.setItem('tkn-theme', theme);
+}

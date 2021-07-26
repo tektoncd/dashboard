@@ -21,8 +21,10 @@ import {
   followLogs,
   getLocale,
   getLogsToolbar,
+  getTheme,
   getViewChangeHandler,
   isStale,
+  setTheme,
   sortRunsByStartTime,
   typeToPlural
 } from '.';
@@ -262,5 +264,49 @@ describe('getLocale', () => {
 
   it('handles unsupported locales', () => {
     expect(getLocale('zz')).toEqual('en');
+  });
+});
+
+describe('getTheme', () => {
+  afterEach(() => {
+    localStorage.removeItem('tkn-theme');
+  });
+
+  it('defaults to system if no theme persisted', () => {
+    localStorage.removeItem('tkn-theme');
+    const theme = getTheme();
+    expect(theme).toEqual('system');
+  });
+
+  it('defaults to system if an invalid theme was persisted', () => {
+    localStorage.setItem('tkn-theme', 'foo');
+    const theme = getTheme();
+    expect(theme).toEqual('system');
+  });
+
+  it('returns a valid persisted theme', () => {
+    localStorage.setItem('tkn-theme', 'light');
+    const theme = getTheme();
+    expect(theme).toEqual('light');
+  });
+});
+
+describe('setTheme', () => {
+  it('defaults to system if no theme specified', () => {
+    localStorage.removeItem('tkn-theme');
+    setTheme();
+    expect(localStorage.getItem('tkn-theme')).toEqual('system');
+  });
+
+  it('defaults to system if an invalid theme is specified', () => {
+    localStorage.removeItem('tkn-theme');
+    setTheme('foo');
+    expect(localStorage.getItem('tkn-theme')).toEqual('system');
+  });
+
+  it('persists a valid theme', () => {
+    localStorage.removeItem('tkn-theme');
+    setTheme('light');
+    expect(localStorage.getItem('tkn-theme')).toEqual('light');
   });
 });

@@ -298,6 +298,10 @@ describe('rawCRD', () => {
   });
 });
 
+it('settings', () => {
+  expect(urls.settings()).toEqual(generatePath(paths.settings()));
+});
+
 describe('taskRuns', () => {
   it('all', () => {
     expect(urls.taskRuns.all()).toEqual(generatePath(paths.taskRuns.all()));
