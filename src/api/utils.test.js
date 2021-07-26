@@ -388,3 +388,53 @@ describe('useResource', () => {
     expect(result.current.data).toEqual(updatedResource);
   });
 });
+
+describe('isLogTimestampsEnabled', () => {
+  afterEach(() => {
+    localStorage.removeItem('tkn-logs-timestamps');
+  });
+
+  it('handles valid values', () => {
+    localStorage.setItem('tkn-logs-timestamps', true);
+    expect(utils.isLogTimestampsEnabled()).toBe(true);
+    localStorage.setItem('tkn-logs-timestamps', false);
+    expect(utils.isLogTimestampsEnabled()).toBe(false);
+  });
+
+  it('handles invalid values', () => {
+    localStorage.setItem('tkn-logs-timestamps', 'foo');
+    expect(utils.isLogTimestampsEnabled()).toBe(false);
+  });
+});
+
+describe('isLogTimestampsEnabled', () => {
+  afterEach(() => {
+    localStorage.removeItem('tkn-logs-timestamps');
+  });
+
+  it('handles valid values', () => {
+    localStorage.setItem('tkn-logs-timestamps', true);
+    expect(utils.isLogTimestampsEnabled()).toBe(true);
+    localStorage.setItem('tkn-logs-timestamps', false);
+    expect(utils.isLogTimestampsEnabled()).toBe(false);
+  });
+
+  it('handles invalid values', () => {
+    localStorage.setItem('tkn-logs-timestamps', 'foo');
+    expect(utils.isLogTimestampsEnabled()).toBe(false);
+  });
+});
+
+describe('setLogTimestampsEnabled', () => {
+  afterEach(() => {
+    localStorage.removeItem('tkn-logs-timestamps');
+  });
+
+  it('persists the specified value', () => {
+    utils.setLogTimestampsEnabled(true);
+    expect(localStorage.getItem('tkn-logs-timestamps')).toEqual('true');
+
+    utils.setLogTimestampsEnabled(false);
+    expect(localStorage.getItem('tkn-logs-timestamps')).toEqual('false');
+  });
+});

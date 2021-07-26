@@ -16,6 +16,8 @@ import { fireEvent } from '@testing-library/react';
 
 import { render } from '../../utils/test';
 import * as Utils from '../../utils';
+import * as APIUtils from '../../api/utils';
+
 import Settings from '.';
 
 describe('Settings', () => {
@@ -33,5 +35,19 @@ describe('Settings', () => {
 
     fireEvent.click(getByText(/dark/i));
     expect(Utils.setTheme).toHaveBeenCalledWith('dark');
+  });
+
+  it('should render the log timestamp settings correctly', () => {
+    jest
+      .spyOn(APIUtils, 'isLogTimestampsEnabled')
+      .mockImplementation(() => true);
+    jest.spyOn(APIUtils, 'setLogTimestampsEnabled');
+
+    const { getByLabelText, getByText } = render(<Settings />);
+
+    expect(getByText(/show log timestamps/i)).toBeTruthy();
+    expect(getByText(/on/i)).toBeTruthy();
+    fireEvent.click(getByLabelText(/show log timestamps/i));
+    expect(APIUtils.setLogTimestampsEnabled).toHaveBeenCalledWith(false);
   });
 });

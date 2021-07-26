@@ -210,3 +210,11 @@ export function useResource(kind, api, params, queryConfig) {
   useWebSocket({ kind });
   return query;
 }
+
+export function isLogTimestampsEnabled() {
+  return localStorage.getItem('tkn-logs-timestamps') === 'true';
+}
+
+export function setLogTimestampsEnabled(enabled) {
+  localStorage.setItem('tkn-logs-timestamps', enabled);
+}

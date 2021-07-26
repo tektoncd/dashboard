@@ -24,6 +24,7 @@ import {
   getQueryParams,
   getResourcesAPI,
   getTektonAPI,
+  isLogTimestampsEnabled,
   useCollection,
   useResource
 } from './utils';
@@ -104,9 +105,11 @@ export function useNamespaces(queryConfig) {
 }
 
 export function getPodLogURL({ container, name, namespace, follow }) {
+  const timestamps = isLogTimestampsEnabled();
   const queryParams = {
     ...(container && { container }),
-    ...(follow && { follow })
+    ...(follow && { follow }),
+    ...(timestamps && { timestamps })
   };
   const uri = `${getKubeAPI(
     'pods',

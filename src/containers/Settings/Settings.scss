@@ -14,30 +14,31 @@ limitations under the License.
 .tkn--settings {
   .tkn--settings--content {
     .bx--tile-group {
+      margin-bottom: 2rem;
       max-width: 400px;
-    }
 
-    .bx--tile {
-      display: flex;
-      align-items: center;
-
-      .bx--tile__checkmark {
-        top: calc(50% - 0.5rem);
-      }
-
-      .bx--tile-content {
+      .bx--tile {
         display: flex;
         align-items: center;
 
-        svg {
-          fill: $icon-01;
-          margin-right: 0.5rem;
+        .bx--tile__checkmark {
+          top: calc(50% - 0.5rem);
+        }
+
+        .bx--tile-content {
+          display: flex;
+          align-items: center;
+
+          svg {
+            fill: $icon-01;
+            margin-right: 0.5rem;
+          }
         }
       }
-    }
 
-    .bx--tile:not(:last-child) {
-      margin-bottom: 0.5rem;
+      .bx--tile:not(:last-child) {
+        margin-bottom: 0.5rem;
+      }
     }
   }
 }
