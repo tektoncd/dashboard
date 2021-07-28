@@ -96,7 +96,7 @@ header.tkn--pipeline-run-header {
 
   &[data-succeeded='Unknown'][data-reason='PipelineRunPending'] {
     .tkn--status-label {
-      color: $gray-70;
+      color: $text-02;
     }
   }
 
