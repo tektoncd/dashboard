@@ -21,6 +21,10 @@ limitations under the License.
       display: flex;
       flex-direction: column;
 
+      .bx--side-nav__item {
+        flex-shrink: 0;
+      }
+
       .bx--side-nav__item.bx--side-nav__item--icon
         + .bx--side-nav__item:not(.bx--side-nav__item--icon) {
         display: flex;
