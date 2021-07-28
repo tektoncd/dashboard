@@ -13,6 +13,10 @@ limitations under the License.
 
 .tkn--settings {
   .tkn--settings--content {
+    .bx--tile-group {
+      max-width: 400px;
+    }
+
     .bx--tile {
       display: flex;
       align-items: center;
