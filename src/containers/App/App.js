@@ -12,8 +12,7 @@ limitations under the License.
 */
 
 import React, { useEffect, useState } from 'react';
-import { useQuery } from 'react-query';
-import { connect } from 'react-redux';
+import { useQuery, useQueryClient } from 'react-query';
 import { hot } from 'react-hot-loader/root';
 import {
   Redirect,
@@ -76,7 +75,6 @@ import {
   TriggerTemplates
 } from '..';
 
-import { isWebSocketConnected as selectIsWebSocketConnected } from '../../reducers';
 import {
   NamespaceContext,
   useExtensions,
@@ -144,7 +142,7 @@ async function loadMessages(lang) {
 }
 
 /* istanbul ignore next */
-export function App({ lang, onUnload, webSocketConnected }) {
+export function App({ lang, onUnload }) {
   useEffect(() => onUnload, []);
 
   const [isSideNavExpanded, setIsSideNavExpanded] = useState(true);
@@ -153,8 +151,7 @@ export function App({ lang, onUnload, webSocketConnected }) {
   const {
     error: propertiesError,
     isFetching: isFetchingProperties,
-    isPlaceholderData: isPropertiesPlaceholder,
-    refetch: refetchProperties
+    isPlaceholderData: isPropertiesPlaceholder
   } = useProperties();
   const isReadOnly = useIsReadOnly();
   const logoutURL = useLogoutURL();
@@ -172,21 +169,22 @@ export function App({ lang, onUnload, webSocketConnected }) {
   const showLoadingState = isPropertiesPlaceholder || isMessagesPlaceholder;
   const isFetchingConfig = isFetchingProperties || isFetchingMessages;
 
-  const { data: extensions = [], refetch: refetchExtensions } = useExtensions(
+  const { data: extensions = [], isWebSocketConnected } = useExtensions(
     { namespace: tenantNamespace || ALL_NAMESPACES },
     { enabled: !isFetchingConfig }
   );
 
   const loadingConfigError = propertiesError || messagesError;
 
-  function fetchData() {
-    refetchProperties();
-    refetchExtensions();
-  }
+  const queryClient = useQueryClient();
 
-  useWebSocketReconnected(fetchData, webSocketConnected);
-
-  useNamespaces({ enabled: !isFetchingConfig && !tenantNamespace });
+  useNamespaces({
+    enabled: !isFetchingConfig && !tenantNamespace
+  });
+  useWebSocketReconnected(
+    () => queryClient.invalidateQueries(),
+    isWebSocketConnected
+  );
 
   useEffect(() => {
     if (!isFetchingConfig && tenantNamespace) {
@@ -483,13 +481,4 @@ export function App({ lang, onUnload, webSocketConnected }) {
   );
 }
 
-App.defaultProps = {
-  onUnload: () => {}
-};
-
-/* istanbul ignore next */
-const mapStateToProps = state => ({
-  webSocketConnected: selectIsWebSocketConnected(state)
-});
-
-export default hot(connect(mapStateToProps)(App));
+export default hot(App);

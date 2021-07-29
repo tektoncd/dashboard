@@ -10,10 +10,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+/* istanbul ignore file */
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
 import {
   TrashCan16 as DeleteIcon,
   Playlist16 as RunsIcon
@@ -25,8 +25,7 @@ import {
   ALL_NAMESPACES,
   getFilters,
   urls,
-  useTitleSync,
-  useWebSocketReconnected
+  useTitleSync
 } from '@tektoncd/dashboard-utils';
 import {
   DeleteModal,
@@ -41,10 +40,10 @@ import {
   usePipelines,
   useSelectedNamespace
 } from '../../api';
-import { isWebSocketConnected } from '../../reducers';
 
-export /* istanbul ignore next */ function Pipelines(props) {
-  const { filters, intl, match, webSocketConnected } = props;
+export function Pipelines(props) {
+  const { intl, location, match } = props;
+  const filters = getFilters(location);
 
   const { selectedNamespace } = useSelectedNamespace();
   const { namespace = selectedNamespace } = match.params;
@@ -58,12 +57,10 @@ export /* istanbul ignore next */ function Pipelines(props) {
 
   useTitleSync({ page: 'Pipelines' });
 
-  const { data: pipelines = [], error, isLoading, refetch } = usePipelines({
+  const { data: pipelines = [], error, isLoading } = usePipelines({
     filters,
     namespace
   });
-
-  useWebSocketReconnected(refetch, webSocketConnected);
 
   function getError() {
     if (error) {
@@ -226,7 +223,12 @@ export /* istanbul ignore next */ function Pipelines(props) {
   }));
 
   return (
-    <ListPageLayout {...props} error={getError()} title="Pipelines">
+    <ListPageLayout
+      {...props}
+      error={getError()}
+      filters={filters}
+      title="Pipelines"
+    >
       <Table
         batchActionButtons={batchActionButtons}
         className="tkn--table--inline-actions"
@@ -263,18 +265,4 @@ export /* istanbul ignore next */ function Pipelines(props) {
   );
 }
 
-Pipelines.defaultProps = {
-  filters: []
-};
-
-/* istanbul ignore next */
-function mapStateToProps(state, props) {
-  const filters = getFilters(props.location);
-
-  return {
-    filters,
-    webSocketConnected: isWebSocketConnected(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(Pipelines));
+export default injectIntl(Pipelines);

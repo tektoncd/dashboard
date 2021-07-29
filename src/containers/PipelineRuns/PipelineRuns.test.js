@@ -13,9 +13,6 @@ limitations under the License.
 
 import React from 'react';
 import { fireEvent, waitFor } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import thunk from 'redux-thunk';
-import configureStore from 'redux-mock-store';
 import { Route } from 'react-router-dom';
 import { urls } from '@tektoncd/dashboard-utils';
 
@@ -104,12 +101,6 @@ const pipelineRuns = [
   }
 ];
 
-const middleware = [thunk];
-const mockStore = configureStore(middleware);
-const testStore = {
-  notifications: {}
-};
-
 describe('PipelineRuns container', () => {
   beforeEach(() => {
     jest
@@ -122,27 +113,28 @@ describe('PipelineRuns container', () => {
   });
 
   it('Duplicate label filters are prevented', async () => {
-    const mockTestStore = mockStore(testStore);
     const match = {
       params: {},
       url: '/pipelineruns'
     };
 
-    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
-      <Provider store={mockTestStore}>
-        <Route
-          path="/pipelineruns"
-          render={props => (
-            <PipelineRunsContainer
-              {...props}
-              match={match}
-              error={null}
-              loading={false}
-              namespace="namespace-1"
-            />
-          )}
-        />
-      </Provider>,
+    const {
+      queryByText,
+      getByPlaceholderText,
+      getByText
+    } = renderWithRouter(
+      <Route
+        path="/pipelineruns"
+        render={props => (
+          <PipelineRunsContainer
+            {...props}
+            match={match}
+            error={null}
+            loading={false}
+            namespace="namespace-1"
+          />
+        )}
+      />,
       { route: '/pipelineruns' }
     );
 
@@ -159,27 +151,28 @@ describe('PipelineRuns container', () => {
   });
 
   it('An invalid filter value is disallowed and reported', async () => {
-    const mockTestStore = mockStore(testStore);
     const match = {
       params: {},
       url: '/pipelineruns'
     };
 
-    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
-      <Provider store={mockTestStore}>
-        <Route
-          path="/pipelineruns"
-          render={props => (
-            <PipelineRunsContainer
-              {...props}
-              match={match}
-              error={null}
-              loading={false}
-              namespace="namespace-1"
-            />
-          )}
-        />
-      </Provider>,
+    const {
+      queryByText,
+      getByPlaceholderText,
+      getByText
+    } = renderWithRouter(
+      <Route
+        path="/pipelineruns"
+        render={props => (
+          <PipelineRunsContainer
+            {...props}
+            match={match}
+            error={null}
+            loading={false}
+            namespace="namespace-1"
+          />
+        )}
+      />,
       { route: '/pipelineruns' }
     );
 
@@ -198,27 +191,24 @@ describe('PipelineRuns container', () => {
   it('Creation, deletion and stop events are possible when not in read-only mode', async () => {
     jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => false);
 
-    const mockTestStore = mockStore(testStore);
     const match = {
       params: {},
       url: '/pipelineruns'
     };
 
     const { getByText, getAllByTitle, queryAllByText } = renderWithRouter(
-      <Provider store={mockTestStore}>
-        <Route
-          path="/pipelineruns"
-          render={props => (
-            <PipelineRunsContainer
-              {...props}
-              match={match}
-              error={null}
-              loading={false}
-              namespace="namespace-1"
-            />
-          )}
-        />
-      </Provider>,
+      <Route
+        path="/pipelineruns"
+        render={props => (
+          <PipelineRunsContainer
+            {...props}
+            match={match}
+            error={null}
+            loading={false}
+            namespace="namespace-1"
+          />
+        )}
+      />,
       { route: '/pipelineruns' }
     );
 
@@ -231,7 +221,6 @@ describe('PipelineRuns container', () => {
   it('Creation, deletion and stop events are not possible when in read-only mode', async () => {
     jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => true);
 
-    const mockTestStore = mockStore(testStore);
     const match = {
       params: {},
       url: '/pipelineruns'
@@ -243,20 +232,18 @@ describe('PipelineRuns container', () => {
       queryAllByText,
       queryAllByTitle
     } = renderWithRouter(
-      <Provider store={mockTestStore}>
-        <Route
-          path="/pipelineruns"
-          render={props => (
-            <PipelineRunsContainer
-              {...props}
-              match={match}
-              error={null}
-              loading={false}
-              namespace="namespace-1"
-            />
-          )}
-        />
-      </Provider>,
+      <Route
+        path="/pipelineruns"
+        render={props => (
+          <PipelineRunsContainer
+            {...props}
+            match={match}
+            error={null}
+            loading={false}
+            namespace="namespace-1"
+          />
+        )}
+      />,
       { route: '/pipelineruns' }
     );
     // Let the page finish rendering so we know if we're in read-only mode or not
@@ -267,7 +254,6 @@ describe('PipelineRuns container', () => {
   });
 
   it('handles rerun event in PipelineRuns page', async () => {
-    const mockTestStore = mockStore(testStore);
     jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => false);
     PipelineRunsAPI.usePipelineRuns.mockImplementation(() => ({
       data: [pipelineRuns[0]]
@@ -276,12 +262,10 @@ describe('PipelineRuns container', () => {
       .spyOn(PipelineRunsAPI, 'rerunPipelineRun')
       .mockImplementation(() => []);
     const { getAllByTitle, getByText } = renderWithRouter(
-      <Provider store={mockTestStore}>
-        <Route
-          path={urls.pipelineRuns.all()}
-          render={props => <PipelineRunsContainer {...props} />}
-        />
-      </Provider>,
+      <Route
+        path={urls.pipelineRuns.all()}
+        render={props => <PipelineRunsContainer {...props} />}
+      />,
       { route: urls.pipelineRuns.all() }
     );
     await waitFor(() => getByText(/pipelineRunWithTwoLabels/i));
@@ -295,7 +279,6 @@ describe('PipelineRuns container', () => {
   });
 
   it('handles start event in PipelineRuns page', async () => {
-    const mockTestStore = mockStore(testStore);
     jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => false);
     jest
       .spyOn(PipelineRunsAPI, 'usePipelineRuns')
@@ -304,12 +287,10 @@ describe('PipelineRuns container', () => {
       .spyOn(PipelineRunsAPI, 'startPipelineRun')
       .mockImplementation(() => []);
     const { getAllByTitle, getByText } = renderWithRouter(
-      <Provider store={mockTestStore}>
-        <Route
-          path={urls.pipelineRuns.all()}
-          render={props => <PipelineRunsContainer {...props} />}
-        />
-      </Provider>,
+      <Route
+        path={urls.pipelineRuns.all()}
+        render={props => <PipelineRunsContainer {...props} />}
+      />,
       { route: urls.pipelineRuns.all() }
     );
     await waitFor(() => getByText(/pipelineRunPending/i));

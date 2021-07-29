@@ -36,7 +36,7 @@ describe('ConditionContainer', () => {
     jest.spyOn(API, 'useCondition').mockImplementation(() => ({ error }));
 
     const { getByText } = render(
-      <ConditionContainer intl={intl} match={match} />
+      <ConditionContainer intl={intl} location={{}} match={match} />
     );
     await waitFor(() => getByText('Error loading resource'));
     expect(getByText(error)).toBeTruthy();
@@ -63,7 +63,7 @@ describe('ConditionContainer', () => {
     };
 
     const { getByText } = render(
-      <ConditionContainer intl={intl} match={match} />
+      <ConditionContainer intl={intl} location={{}} match={match} />
     );
     expect(getByText(/parameters/i)).toBeTruthy();
     expect(getByText('param1')).toBeTruthy();
@@ -88,7 +88,7 @@ describe('ConditionContainer', () => {
     };
 
     const { queryByText } = render(
-      <ConditionContainer intl={intl} match={match} />
+      <ConditionContainer intl={intl} location={{}} match={match} />
     );
     expect(queryByText(/parameters/i)).toBeFalsy();
   });

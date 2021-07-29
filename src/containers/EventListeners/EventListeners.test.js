@@ -13,10 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import { fireEvent } from '@testing-library/react';
-import { Provider } from 'react-redux';
 import { Route } from 'react-router-dom';
-import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
 import { renderWithRouter } from '../../utils/test';
@@ -24,9 +21,6 @@ import EventListeners from '.';
 import * as API from '../../api';
 import * as APIUtils from '../../api/utils';
 import * as EventListenersAPI from '../../api/eventListeners';
-
-const middleware = [thunk];
-const mockStore = configureStore(middleware);
 
 const eventListener = {
   apiVersion: 'triggers.tekton.dev/v1alpha1',
@@ -53,17 +47,11 @@ describe('EventListeners', () => {
       .spyOn(EventListenersAPI, 'useEventListeners')
       .mockImplementation(() => ({ data: [] }));
 
-    const store = mockStore({
-      notifications: {}
-    });
-
     const { getByText } = renderWithRouter(
-      <Provider store={store}>
-        <Route
-          path="/eventlisteners"
-          render={props => <EventListeners {...props} />}
-        />
-      </Provider>,
+      <Route
+        path="/eventlisteners"
+        render={props => <EventListeners {...props} />}
+      />,
       { route: '/eventlisteners' }
     );
 
@@ -76,17 +64,11 @@ describe('EventListeners', () => {
       .spyOn(EventListenersAPI, 'useEventListeners')
       .mockImplementation(() => ({ data: [eventListener] }));
 
-    const store = mockStore({
-      notifications: {}
-    });
-
     const { queryByText, queryByTitle } = renderWithRouter(
-      <Provider store={store}>
-        <Route
-          path="/eventlisteners"
-          render={props => <EventListeners {...props} />}
-        />
-      </Provider>,
+      <Route
+        path="/eventlisteners"
+        render={props => <EventListeners {...props} />}
+      />,
       { route: '/eventlisteners' }
     );
 
@@ -103,17 +85,15 @@ describe('EventListeners', () => {
         data: filters.length ? [] : [eventListener]
       }));
 
-    const store = mockStore({
-      notifications: {}
-    });
-
-    const { getByPlaceholderText, getByText, queryByText } = renderWithRouter(
-      <Provider store={store}>
-        <Route
-          path="/eventlisteners"
-          render={props => <EventListeners {...props} />}
-        />
-      </Provider>,
+    const {
+      getByPlaceholderText,
+      getByText,
+      queryByText
+    } = renderWithRouter(
+      <Route
+        path="/eventlisteners"
+        render={props => <EventListeners {...props} />}
+      />,
       { route: '/eventlisteners' }
     );
 
@@ -131,17 +111,11 @@ describe('EventListeners', () => {
       .spyOn(EventListenersAPI, 'useEventListeners')
       .mockImplementation(() => ({ isLoading: true }));
 
-    const store = mockStore({
-      notifications: {}
-    });
-
     const { queryByText } = renderWithRouter(
-      <Provider store={store}>
-        <Route
-          path="/eventlisteners"
-          render={props => <EventListeners {...props} />}
-        />
-      </Provider>,
+      <Route
+        path="/eventlisteners"
+        render={props => <EventListeners {...props} />}
+      />,
       { route: '/eventlisteners' }
     );
 
@@ -156,17 +130,11 @@ describe('EventListeners', () => {
       .spyOn(EventListenersAPI, 'useEventListeners')
       .mockImplementation(() => ({ error }));
 
-    const store = mockStore({
-      notifications: {}
-    });
-
     const { queryByText } = renderWithRouter(
-      <Provider store={store}>
-        <Route
-          path="/eventlisteners"
-          render={props => <EventListeners {...props} />}
-        />
-      </Provider>,
+      <Route
+        path="/eventlisteners"
+        render={props => <EventListeners {...props} />}
+      />,
       { route: '/eventlisteners' }
     );
 

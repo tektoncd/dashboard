@@ -13,28 +13,16 @@ limitations under the License.
 
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import { connect } from 'react-redux';
-import {
-  ALL_NAMESPACES,
-  useWebSocketReconnected
-} from '@tektoncd/dashboard-utils';
+import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 import { TooltipDropdown } from '@tektoncd/dashboard-components';
 
-import { isWebSocketConnected } from '../../reducers';
 import { useSelectedNamespace, useTasks } from '../../api';
 
-function TasksDropdown({
-  intl,
-  label,
-  namespace: namespaceProp,
-  webSocketConnected,
-  ...rest
-}) {
+function TasksDropdown({ intl, label, namespace: namespaceProp, ...rest }) {
   const { selectedNamespace } = useSelectedNamespace();
   const namespace = namespaceProp || selectedNamespace;
 
-  const { data: tasks = [], isFetching, refetch } = useTasks({ namespace });
-  useWebSocketReconnected(refetch, webSocketConnected);
+  const { data: tasks = [], isFetching } = useTasks({ namespace });
 
   const items = tasks.map(task => task.metadata.name);
 
@@ -74,10 +62,4 @@ TasksDropdown.defaultProps = {
   titleText: 'Task'
 };
 
-function mapStateToProps(state) {
-  return {
-    webSocketConnected: isWebSocketConnected(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(TasksDropdown));
+export default injectIntl(TasksDropdown);

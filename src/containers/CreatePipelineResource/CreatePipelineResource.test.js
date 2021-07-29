@@ -14,22 +14,12 @@ limitations under the License.
 import React from 'react';
 import { Route } from 'react-router-dom';
 import { fireEvent } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
 import { ALL_NAMESPACES, paths, urls } from '@tektoncd/dashboard-utils';
 
 import { render, renderWithRouter } from '../../utils/test';
 import CreatePipelineResource from '.';
 import * as API from '../../api';
 import * as APIUtils from '../../api/utils';
-
-const middleware = [thunk];
-const mockStore = configureStore(middleware);
-
-const store = mockStore({
-  notifications: {}
-});
 
 describe('CreatePipelineResource', () => {
   beforeEach(() => {
@@ -42,11 +32,7 @@ describe('CreatePipelineResource', () => {
   });
 
   it('renders blank', () => {
-    const { queryByText } = render(
-      <Provider store={store}>
-        <CreatePipelineResource />
-      </Provider>
-    );
+    const { queryByText } = render(<CreatePipelineResource />);
     expect(queryByText('Create PipelineResource')).toBeTruthy();
     expect(queryByText('Cancel')).toBeTruthy();
     expect(queryByText('Create')).toBeTruthy();
@@ -57,14 +43,12 @@ describe('CreatePipelineResource', () => {
     const history = { push: jest.fn() };
 
     const { queryByText } = renderWithRouter(
-      <Provider store={store}>
-        <Route
-          path={paths.pipelineResources.create()}
-          render={props => (
-            <CreatePipelineResource {...props} history={history} />
-          )}
-        />
-      </Provider>,
+      <Route
+        path={paths.pipelineResources.create()}
+        render={props => (
+          <CreatePipelineResource {...props} history={history} />
+        )}
+      />,
       {
         route: urls.pipelineResources.create()
       }
@@ -79,11 +63,7 @@ describe('CreatePipelineResource', () => {
   const revisionValidationErrorRegExp = /Revision required/i;
 
   it('validates all empty inputs', () => {
-    const { queryByText } = render(
-      <Provider store={store}>
-        <CreatePipelineResource />
-      </Provider>
-    );
+    const { queryByText } = render(<CreatePipelineResource />);
     fireEvent.click(queryByText('Create'));
     expect(queryByText(nameValidationErrorMsgRegExp)).toBeTruthy();
     expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
@@ -93,9 +73,7 @@ describe('CreatePipelineResource', () => {
 
   it('errors when name starts with a "-"', () => {
     const { queryByText, getByPlaceholderText } = render(
-      <Provider store={store}>
-        <CreatePipelineResource />
-      </Provider>
+      <CreatePipelineResource />
     );
     fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
       target: { value: '-meow' }
@@ -109,9 +87,7 @@ describe('CreatePipelineResource', () => {
 
   it('errors when name ends with a "-"', () => {
     const { queryByText, getByPlaceholderText } = render(
-      <Provider store={store}>
-        <CreatePipelineResource />
-      </Provider>
+      <CreatePipelineResource />
     );
     fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
       target: { value: 'meow-' }
@@ -125,9 +101,7 @@ describe('CreatePipelineResource', () => {
 
   it('errors when name contains "."', () => {
     const { queryByText, getByPlaceholderText } = render(
-      <Provider store={store}>
-        <CreatePipelineResource />
-      </Provider>
+      <CreatePipelineResource />
     );
     fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
       target: { value: 'meow.meow' }
@@ -141,9 +115,7 @@ describe('CreatePipelineResource', () => {
 
   it('errors when name contains spaces', () => {
     const { queryByText, getByPlaceholderText } = render(
-      <Provider store={store}>
-        <CreatePipelineResource />
-      </Provider>
+      <CreatePipelineResource />
     );
     fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
       target: { value: 'the cat goes meow' }
@@ -157,9 +129,7 @@ describe('CreatePipelineResource', () => {
 
   it('errors when name contains capital letters', () => {
     const { queryByText, getByPlaceholderText } = render(
-      <Provider store={store}>
-        <CreatePipelineResource />
-      </Provider>
+      <CreatePipelineResource />
     );
     fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
       target: { value: 'MEOW' }
@@ -173,9 +143,7 @@ describe('CreatePipelineResource', () => {
 
   it('doesn\'t error when contains "-" in the middle of the name', () => {
     const { queryByText, getByPlaceholderText } = render(
-      <Provider store={store}>
-        <CreatePipelineResource />
-      </Provider>
+      <CreatePipelineResource />
     );
     fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
       target: { value: 'the-cat-goes-meow' }
@@ -189,9 +157,7 @@ describe('CreatePipelineResource', () => {
 
   it("doesn't error when name contains number", () => {
     const { queryByText, getByPlaceholderText } = render(
-      <Provider store={store}>
-        <CreatePipelineResource />
-      </Provider>
+      <CreatePipelineResource />
     );
     fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
       target: { value: 'the-cat-likes-0' }
@@ -205,9 +171,7 @@ describe('CreatePipelineResource', () => {
 
   it('errors when name contains 64 characters', () => {
     const { queryByText, getByPlaceholderText } = render(
-      <Provider store={store}>
-        <CreatePipelineResource />
-      </Provider>
+      <CreatePipelineResource />
     );
     fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
       target: {
@@ -224,9 +188,7 @@ describe('CreatePipelineResource', () => {
 
   it("doesn't error when name contains 63 characters", () => {
     const { queryByText, getByPlaceholderText } = render(
-      <Provider store={store}>
-        <CreatePipelineResource />
-      </Provider>
+      <CreatePipelineResource />
     );
     fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
       target: {
@@ -242,9 +204,7 @@ describe('CreatePipelineResource', () => {
 
   it("doesn't error when contains a valid namespace", () => {
     const { queryByText, getByPlaceholderText, getByText } = render(
-      <Provider store={store}>
-        <CreatePipelineResource />
-      </Provider>
+      <CreatePipelineResource />
     );
     fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
       target: { value: 'the-cat-goes-meow' }
@@ -260,9 +220,7 @@ describe('CreatePipelineResource', () => {
 
   it("doesn't error when a url is entered", () => {
     const { queryByText, getByPlaceholderText, getByText } = render(
-      <Provider store={store}>
-        <CreatePipelineResource />
-      </Provider>
+      <CreatePipelineResource />
     );
     fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
       target: { value: 'the-cat-goes-meow' }
@@ -283,9 +241,7 @@ describe('CreatePipelineResource', () => {
 
   it("doesn't error when a revision is entered", () => {
     const { queryByText, getByPlaceholderText, getByText } = render(
-      <Provider store={store}>
-        <CreatePipelineResource />
-      </Provider>
+      <CreatePipelineResource />
     );
     fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
       target: { value: 'the-cat-goes-meow' }
@@ -306,9 +262,7 @@ describe('CreatePipelineResource', () => {
 
   it('handles type change', () => {
     const { queryByText, getByPlaceholderText, getByText } = render(
-      <Provider store={store}>
-        <CreatePipelineResource />
-      </Provider>
+      <CreatePipelineResource />
     );
     fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
       target: { value: 'the-cat-goes-meow' }

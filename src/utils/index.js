@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import snakeCase from 'lodash.snakecase';
 import { LogsToolbar } from '@tektoncd/dashboard-components';
 
 import { getPodLog, getPodLogURL } from '../api';
@@ -42,10 +41,6 @@ export function sortRunsByStartTime(runs) {
     }
     return -1 * aTime.localeCompare(bTime);
   });
-}
-
-export function typeToPlural(type) {
-  return `${snakeCase(type).toUpperCase()}S`;
 }
 
 export async function followLogs(stepName, stepStatus, taskRun) {
@@ -106,19 +101,6 @@ export function getLogsRetriever(stream, externalLogsURL) {
   }
 
   return logs;
-}
-
-export function isStale(resource, state, resourceIdField = 'uid') {
-  const { [resourceIdField]: identifier } = resource.metadata;
-  if (!state[identifier]) {
-    return false;
-  }
-  const existingVersion = parseInt(
-    state[identifier].metadata.resourceVersion,
-    10
-  );
-  const incomingVersion = parseInt(resource.metadata.resourceVersion, 10);
-  return existingVersion > incomingVersion;
 }
 
 // K8s label documentation comes from here:

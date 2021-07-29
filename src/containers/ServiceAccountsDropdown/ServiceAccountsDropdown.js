@@ -13,32 +13,23 @@ limitations under the License.
 
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import { connect } from 'react-redux';
-import {
-  ALL_NAMESPACES,
-  useWebSocketReconnected
-} from '@tektoncd/dashboard-utils';
+import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 import { TooltipDropdown } from '@tektoncd/dashboard-components';
 
 import { useSelectedNamespace, useServiceAccounts } from '../../api';
-import { isWebSocketConnected } from '../../reducers';
 
 function ServiceAccountsDropdown({
   intl,
   label,
   namespace: namespaceProp,
-  webSocketConnected,
   ...rest
 }) {
   const { selectedNamespace } = useSelectedNamespace();
   const namespace = namespaceProp || selectedNamespace;
 
-  const {
-    data: serviceAccounts = [],
-    isFetching,
-    refetch
-  } = useServiceAccounts({ namespace });
-  useWebSocketReconnected(refetch, webSocketConnected);
+  const { data: serviceAccounts = [], isFetching } = useServiceAccounts({
+    namespace
+  });
 
   const items = serviceAccounts.map(sa => sa.metadata.name);
 
@@ -78,10 +69,4 @@ ServiceAccountsDropdown.defaultProps = {
   titleText: 'ServiceAccount'
 };
 
-function mapStateToProps(state) {
-  return {
-    webSocketConnected: isWebSocketConnected(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(ServiceAccountsDropdown));
+export default injectIntl(ServiceAccountsDropdown);

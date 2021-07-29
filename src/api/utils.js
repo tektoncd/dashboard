@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
@@ -103,8 +103,8 @@ export function getTektonAPI(
   );
 }
 
-export const WebSocketContext = React.createContext();
 export const NamespaceContext = React.createContext();
+export const WebSocketContext = React.createContext();
 
 function getResourceVersion(resource) {
   return parseInt(resource.metadata.resourceVersion, 10);
@@ -120,6 +120,10 @@ function handleDeleted({ payload, queryClient }) {
     kind,
     metadata: { name, namespace }
   } = payload;
+  if (!kind) {
+    // TODO: remove this once we have per-kind ws
+    return;
+  }
   // remove any matching details page cache
   queryClient.removeQueries([kind, { name, ...(namespace && { namespace }) }]);
   // remove resource from any list page caches
@@ -148,10 +152,18 @@ function handleUpdated({ payload, queryClient }) {
     kind,
     metadata: { uid }
   } = payload;
+  if (!kind) {
+    // TODO: remove this once we have per-kind ws
+    return;
+  }
   queryClient.setQueriesData(kind, data => {
-    if (data.metadata?.uid === uid) {
+    if (data?.metadata?.uid === uid) {
       // it's a details page cache (i.e. a single resource)
       return updateResource({ existing: data, incoming: payload });
+    }
+    if (!Array.isArray(data)) {
+      // another single resource but not a match
+      return data;
     }
     // otherwise it's a list page cache
     return data.map(resource =>
@@ -163,8 +175,16 @@ function handleUpdated({ payload, queryClient }) {
 export function useWebSocket({ kind: _ }) {
   const webSocket = useContext(WebSocketContext);
   const queryClient = useQueryClient();
+  const [isWebSocketConnected, setWebSocketConnected] = useState(null);
+
   useEffect(() => {
-    const eventListener = event => {
+    function handleClose() {
+      setWebSocketConnected(false);
+    }
+    function handleOpen() {
+      setWebSocketConnected(true);
+    }
+    function handleMessage(event) {
       if (event.type !== 'message') {
         return;
       }
@@ -181,10 +201,22 @@ export function useWebSocket({ kind: _ }) {
           break;
         default:
       }
+    }
+
+    webSocket.addEventListener('close', handleClose);
+    webSocket.addEventListener('open', handleOpen);
+    webSocket.addEventListener('message', handleMessage);
+
+    return () => {
+      if (webSocket) {
+        webSocket.removeEventListener('close', handleClose);
+        webSocket.removeEventListener('open', handleOpen);
+        webSocket.removeEventListener('message', handleMessage);
+      }
     };
-    webSocket.addEventListener('message', eventListener);
-    return () => webSocket.removeEventListener('message', eventListener);
-  }, [queryClient, webSocket]);
+  }, []);
+
+  return { isWebSocketConnected };
 }
 
 export function useSelectedNamespace() {
@@ -197,8 +229,8 @@ export function useCollection(kind, api, params, queryConfig) {
     () => api(params),
     queryConfig
   );
-  useWebSocket({ kind });
-  return query;
+  const { isWebSocketConnected } = useWebSocket({ kind });
+  return { ...query, isWebSocketConnected };
 }
 
 export function useResource(kind, api, params, queryConfig) {
@@ -207,8 +239,8 @@ export function useResource(kind, api, params, queryConfig) {
     () => api(params),
     queryConfig
   );
-  useWebSocket({ kind });
-  return query;
+  const { isWebSocketConnected } = useWebSocket({ kind });
+  return { ...query, isWebSocketConnected };
 }
 
 export function isLogTimestampsEnabled() {

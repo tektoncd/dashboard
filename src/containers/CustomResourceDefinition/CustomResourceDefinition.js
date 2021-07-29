@@ -14,14 +14,9 @@ limitations under the License.
 
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import { connect } from 'react-redux';
-import {
-  useTitleSync,
-  useWebSocketReconnected
-} from '@tektoncd/dashboard-utils';
+import { useTitleSync } from '@tektoncd/dashboard-utils';
 import { ResourceDetails } from '@tektoncd/dashboard-components';
 
-import { isWebSocketConnected } from '../../reducers';
 import { getViewChangeHandler } from '../../utils';
 import {
   useClusterInterceptor,
@@ -47,10 +42,13 @@ function useResource({ group, name, namespace, type, version }) {
 }
 
 function CustomResourceDefinition(props) {
-  const { match, view, webSocketConnected } = props;
+  const { location, match } = props;
   const { group, name, namespace, type, version } = match.params;
 
-  const { data, error, isFetching, refetch } = useResource({
+  const queryParams = new URLSearchParams(location.search);
+  const view = queryParams.get('view');
+
+  const { data, error, isFetching } = useResource({
     group,
     name,
     namespace,
@@ -63,8 +61,6 @@ function CustomResourceDefinition(props) {
     resourceName: name
   });
 
-  useWebSocketReconnected(refetch, webSocketConnected);
-
   return (
     <ResourceDetails
       error={error}
@@ -76,15 +72,4 @@ function CustomResourceDefinition(props) {
   );
 }
 
-function mapStateToProps(state, ownProps) {
-  const { location } = ownProps;
-  const queryParams = new URLSearchParams(location.search);
-  const view = queryParams.get('view');
-
-  return {
-    view,
-    webSocketConnected: isWebSocketConnected(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(CustomResourceDefinition));
+export default injectIntl(CustomResourceDefinition);

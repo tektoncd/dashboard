@@ -54,7 +54,7 @@ it('PipelineRunContainer renders data', async () => {
     .mockImplementation(() => ({ data: [] }));
 
   const { getByText } = renderWithRouter(
-    <PipelineRunContainer intl={intl} match={match} />
+    <PipelineRunContainer intl={intl} location={{}} match={match} />
   );
   await waitFor(() => getByText(pipelineRun.metadata.name));
 });
@@ -72,7 +72,7 @@ it('PipelineRunContainer renders not found state', async () => {
     .mockImplementation(() => ({ data: null, error: null }));
 
   const { getByText } = renderWithRouter(
-    <PipelineRunContainer intl={intl} match={match} />
+    <PipelineRunContainer intl={intl} location={{}} match={match} />
   );
   await waitFor(() => getByText(`PipelineRun not found`));
 });
@@ -89,7 +89,7 @@ it('PipelineRunContainer renders error state', async () => {
     .mockImplementation(() => ({ data: null, error: 'some error' }));
 
   const { getByText } = renderWithRouter(
-    <PipelineRunContainer intl={intl} match={match} />
+    <PipelineRunContainer intl={intl} location={{}} match={match} />
   );
   await waitFor(() => getByText('Error loading PipelineRun'));
 });

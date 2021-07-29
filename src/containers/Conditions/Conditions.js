@@ -13,34 +13,26 @@ limitations under the License.
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
-import {
-  getFilters,
-  urls,
-  useTitleSync,
-  useWebSocketReconnected
-} from '@tektoncd/dashboard-utils';
+import { getFilters, urls, useTitleSync } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 import { Link as CarbonLink } from 'carbon-components-react';
 
 import { useConditions, useSelectedNamespace } from '../../api';
 import { ListPageLayout } from '..';
-import { isWebSocketConnected as selectIsWebSocketConnected } from '../../reducers';
 
 function Conditions(props) {
-  const { filters, intl, webSocketConnected } = props;
+  const { intl, location, match } = props;
   useTitleSync({ page: 'Conditions' });
 
   const { selectedNamespace } = useSelectedNamespace();
-  const { namespace = selectedNamespace } = props.match.params;
+  const { namespace = selectedNamespace } = match.params;
+  const filters = getFilters(location);
 
-  const { data: conditions = [], error, isLoading, refetch } = useConditions({
+  const { data: conditions = [], error, isLoading } = useConditions({
     filters,
     namespace
   });
-
-  useWebSocketReconnected(refetch, webSocketConnected);
 
   function getError() {
     if (error) {
@@ -98,7 +90,12 @@ function Conditions(props) {
   }));
 
   return (
-    <ListPageLayout {...props} error={getError()} title="Conditions">
+    <ListPageLayout
+      {...props}
+      error={getError()}
+      filters={filters}
+      title="Conditions"
+    >
       <Table
         headers={headers}
         rows={conditionsFormatted}
@@ -124,14 +121,4 @@ function Conditions(props) {
   );
 }
 
-/* istanbul ignore next */
-function mapStateToProps(state, props) {
-  const filters = getFilters(props.location);
-
-  return {
-    filters,
-    webSocketConnected: selectIsWebSocketConnected(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(Conditions));
+export default injectIntl(Conditions);

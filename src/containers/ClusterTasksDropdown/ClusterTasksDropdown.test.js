@@ -13,9 +13,6 @@ limitations under the License.
 
 import React from 'react';
 import { fireEvent, getNodeText } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
 import { render } from '../../utils/test';
 
 import ClusterTasksDropdown from './ClusterTasksDropdown';
@@ -62,21 +59,13 @@ const checkDropdownItems = ({
   });
 };
 
-const middleware = [thunk];
-const mockStore = configureStore(middleware);
-
 describe('ClusterTasksDropdown', () => {
   it('renders items', () => {
     jest
       .spyOn(API, 'useClusterTasks')
       .mockImplementation(() => ({ data: clusterTasks }));
-    const store = mockStore({
-      notifications: {}
-    });
     const { getByPlaceholderText, getAllByText, queryByText } = render(
-      <Provider store={store}>
-        <ClusterTasksDropdown {...props} />
-      </Provider>
+      <ClusterTasksDropdown {...props} />
     );
     // View items
     fireEvent.click(getByPlaceholderText(initialTextRegExp));
@@ -91,50 +80,33 @@ describe('ClusterTasksDropdown', () => {
     jest
       .spyOn(API, 'useClusterTasks')
       .mockImplementation(() => ({ data: clusterTasks }));
-    const store = mockStore({
-      notifications: {}
-    });
     // Select item 'clustertask-1'
     const { queryByDisplayValue, queryByPlaceholderText, rerender } = render(
-      <Provider store={store}>
-        <ClusterTasksDropdown
-          {...props}
-          selectedItem={{ text: 'clustertask-1' }}
-        />
-      </Provider>
+      <ClusterTasksDropdown
+        {...props}
+        selectedItem={{ text: 'clustertask-1' }}
+      />
     );
     expect(queryByDisplayValue(/clustertask-1/i)).toBeTruthy();
     // Select item 'clustertask-2'
     render(
-      <Provider store={store}>
-        <ClusterTasksDropdown
-          {...props}
-          selectedItem={{ text: 'clustertask-2' }}
-        />
-      </Provider>,
+      <ClusterTasksDropdown
+        {...props}
+        selectedItem={{ text: 'clustertask-2' }}
+      />,
       { rerender }
     );
     expect(queryByDisplayValue(/clustertask-2/i)).toBeTruthy();
     // No selected item (select item '')
-    render(
-      <Provider store={store}>
-        <ClusterTasksDropdown {...props} selectedItem="" />
-      </Provider>,
-      { rerender }
-    );
+    render(<ClusterTasksDropdown {...props} selectedItem="" />, { rerender });
     expect(queryByPlaceholderText(initialTextRegExp)).toBeTruthy();
   });
 
   it('renders empty', () => {
     jest.spyOn(API, 'useClusterTasks').mockImplementation(() => ({ data: [] }));
 
-    const store = mockStore({
-      notifications: {}
-    });
     const { queryByPlaceholderText } = render(
-      <Provider store={store}>
-        <ClusterTasksDropdown {...props} />
-      </Provider>
+      <ClusterTasksDropdown {...props} />
     );
     expect(queryByPlaceholderText(/no clustertasks found/i)).toBeTruthy();
     expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
@@ -144,13 +116,8 @@ describe('ClusterTasksDropdown', () => {
     jest
       .spyOn(API, 'useClusterTasks')
       .mockImplementation(() => ({ isFetching: true }));
-    const store = mockStore({
-      notifications: {}
-    });
     const { queryByPlaceholderText } = render(
-      <Provider store={store}>
-        <ClusterTasksDropdown {...props} />
-      </Provider>
+      <ClusterTasksDropdown {...props} />
     );
     expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
   });
@@ -159,14 +126,9 @@ describe('ClusterTasksDropdown', () => {
     jest
       .spyOn(API, 'useClusterTasks')
       .mockImplementation(() => ({ data: clusterTasks }));
-    const store = mockStore({
-      notifications: {}
-    });
     const onChange = jest.fn();
     const { getByPlaceholderText, getByText } = render(
-      <Provider store={store}>
-        <ClusterTasksDropdown {...props} onChange={onChange} />
-      </Provider>
+      <ClusterTasksDropdown {...props} onChange={onChange} />
     );
     fireEvent.click(getByPlaceholderText(initialTextRegExp));
     fireEvent.click(getByText(/clustertask-1/i));

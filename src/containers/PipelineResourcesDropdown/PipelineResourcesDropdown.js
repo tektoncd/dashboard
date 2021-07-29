@@ -13,33 +13,24 @@ limitations under the License.
 
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import { connect } from 'react-redux';
-import {
-  ALL_NAMESPACES,
-  useWebSocketReconnected
-} from '@tektoncd/dashboard-utils';
+import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 import { TooltipDropdown } from '@tektoncd/dashboard-components';
 
 import { usePipelineResources, useSelectedNamespace } from '../../api';
-import { isWebSocketConnected } from '../../reducers';
 
 function PipelineResourcesDropdown({
   intl,
   label,
   namespace: namespaceProp,
   type,
-  webSocketConnected,
   ...rest
 }) {
   const { selectedNamespace } = useSelectedNamespace();
   const namespace = namespaceProp || selectedNamespace;
 
-  const {
-    data: pipelineResources = [],
-    isFetching,
-    refetch
-  } = usePipelineResources({ namespace });
-  useWebSocketReconnected(refetch, webSocketConnected);
+  const { data: pipelineResources = [], isFetching } = usePipelineResources({
+    namespace
+  });
 
   const items = pipelineResources
     .filter(pipelineResource => !type || type === pipelineResource.spec.type)
@@ -102,10 +93,4 @@ PipelineResourcesDropdown.defaultProps = {
   titleText: 'PipelineResource'
 };
 
-function mapStateToProps(state) {
-  return {
-    webSocketConnected: isWebSocketConnected(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(PipelineResourcesDropdown));
+export default injectIntl(PipelineResourcesDropdown);

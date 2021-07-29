@@ -14,16 +14,11 @@ limitations under the License.
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { DataTable } from 'carbon-components-react';
 import { ResourceDetails } from '@tektoncd/dashboard-components';
-import {
-  useTitleSync,
-  useWebSocketReconnected
-} from '@tektoncd/dashboard-utils';
+import { useTitleSync } from '@tektoncd/dashboard-utils';
 
 import { usePipelineResource } from '../../api';
-import { isWebSocketConnected } from '../../reducers';
 import { getViewChangeHandler } from '../../utils';
 
 const {
@@ -38,22 +33,21 @@ const {
 
 /* istanbul ignore next */
 function PipelineResource(props) {
-  const { intl, match, view, webSocketConnected } = props;
+  const { intl, location, match } = props;
   const { namespace, pipelineResourceName: resourceName } = match.params;
+
+  const queryParams = new URLSearchParams(location.search);
+  const view = queryParams.get('view');
 
   useTitleSync({
     page: 'PipelineResource',
     resourceName
   });
 
-  const {
-    data: pipelineResource,
-    error,
-    isFetching,
-    refetch
-  } = usePipelineResource({ name: resourceName, namespace });
-
-  useWebSocketReconnected(refetch, webSocketConnected);
+  const { data: pipelineResource, error, isFetching } = usePipelineResource({
+    name: resourceName,
+    namespace
+  });
 
   const { params = [], secrets, type } = pipelineResource?.spec || {};
 
@@ -206,19 +200,4 @@ PipelineResource.propTypes = {
   }).isRequired
 };
 
-/* istanbul ignore next */
-function mapStateToProps(state, ownProps) {
-  const { location, match } = ownProps;
-  const { namespace } = match.params;
-
-  const queryParams = new URLSearchParams(location.search);
-  const view = queryParams.get('view');
-
-  return {
-    namespace,
-    view,
-    webSocketConnected: isWebSocketConnected(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(PipelineResource));
+export default injectIntl(PipelineResource);

@@ -5,7 +5,7 @@ you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
     http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
+dist;ributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
@@ -13,9 +13,6 @@ limitations under the License.
 
 import React from 'react';
 import { fireEvent, getNodeText } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
 import { render } from '../../utils/test';
@@ -82,9 +79,6 @@ const checkDropdownItems = ({
   });
 };
 
-const middleware = [thunk];
-const mockStore = configureStore(middleware);
-
 describe('PipelineResourcesDropdown', () => {
   beforeEach(() => {
     jest.spyOn(API, 'useNamespaces').mockImplementation(() => ({
@@ -101,13 +95,8 @@ describe('PipelineResourcesDropdown', () => {
     jest
       .spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: 'blue' }));
-    const store = mockStore({
-      notifications: {}
-    });
     const { getByPlaceholderText, getAllByText, queryByText } = render(
-      <Provider store={store}>
-        <PipelineResourcesDropdown {...props} />
-      </Provider>
+      <PipelineResourcesDropdown {...props} />
     );
     // View items
     fireEvent.click(getByPlaceholderText(initialTextRegExp));
@@ -127,25 +116,17 @@ describe('PipelineResourcesDropdown', () => {
     jest
       .spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: 'blue' }));
-    const store = mockStore({
-      notifications: {}
-    });
     const { getByPlaceholderText, queryByText, rerender } = render(
-      <Provider store={store}>
-        <PipelineResourcesDropdown {...props} type="type-1" />
-      </Provider>
+      <PipelineResourcesDropdown {...props} type="type-1" />
     );
     // View items
     fireEvent.click(getByPlaceholderText(initialTextRegExp));
     expect(queryByText(/pipeline-resource-1/i)).toBeTruthy();
     expect(queryByText(/pipeline-resource-2/i)).toBeFalsy();
     fireEvent.click(getByPlaceholderText(initialTextRegExp));
-    render(
-      <Provider store={store}>
-        <PipelineResourcesDropdown {...props} type="type-2" />
-      </Provider>,
-      { rerender }
-    );
+    render(<PipelineResourcesDropdown {...props} type="type-2" />, {
+      rerender
+    });
     // View items
     fireEvent.click(getByPlaceholderText(initialTextRegExp));
     expect(queryByText(/pipeline-resource-1/i)).toBeFalsy();
@@ -161,37 +142,28 @@ describe('PipelineResourcesDropdown', () => {
     jest
       .spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: 'blue' }));
-    const store = mockStore({
-      notifications: {}
-    });
+
     // Select item 'pipeline-resource-1'
     const { queryByPlaceholderText, queryByDisplayValue, rerender } = render(
-      <Provider store={store}>
-        <PipelineResourcesDropdown
-          {...props}
-          selectedItem={{ text: 'pipeline-resource-1' }}
-        />
-      </Provider>
+      <PipelineResourcesDropdown
+        {...props}
+        selectedItem={{ text: 'pipeline-resource-1' }}
+      />
     );
     expect(queryByDisplayValue(/pipeline-resource-1/i)).toBeTruthy();
     // Select item 'pipeline-resource-2'
     render(
-      <Provider store={store}>
-        <PipelineResourcesDropdown
-          {...props}
-          selectedItem={{ text: 'pipeline-resource-2' }}
-        />
-      </Provider>,
+      <PipelineResourcesDropdown
+        {...props}
+        selectedItem={{ text: 'pipeline-resource-2' }}
+      />,
       { rerender }
     );
     expect(queryByDisplayValue(/pipeline-resource-2/i)).toBeTruthy();
     // No selected item (select item '')
-    render(
-      <Provider store={store}>
-        <PipelineResourcesDropdown {...props} selectedItem="" />
-      </Provider>,
-      { rerender }
-    );
+    render(<PipelineResourcesDropdown {...props} selectedItem="" />, {
+      rerender
+    });
     expect(queryByPlaceholderText(initialTextRegExp)).toBeTruthy();
   });
 
@@ -202,14 +174,9 @@ describe('PipelineResourcesDropdown', () => {
     jest
       .spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: 'blue' }));
-    const store = mockStore({
-      notifications: {}
-    });
     // Select namespace 'green'
     const { queryByText, getByPlaceholderText, getAllByText } = render(
-      <Provider store={store}>
-        <PipelineResourcesDropdown {...props} namespace="green" />
-      </Provider>
+      <PipelineResourcesDropdown {...props} namespace="green" />
     );
     fireEvent.click(getByPlaceholderText(initialTextRegExp));
     checkDropdownItems({
@@ -226,13 +193,8 @@ describe('PipelineResourcesDropdown', () => {
     jest
       .spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: 'blue' }));
-    const store = mockStore({
-      notifications: {}
-    });
     const { queryByPlaceholderText } = render(
-      <Provider store={store}>
-        <PipelineResourcesDropdown {...props} />
-      </Provider>
+      <PipelineResourcesDropdown {...props} />
     );
     expect(
       queryByPlaceholderText(
@@ -249,13 +211,8 @@ describe('PipelineResourcesDropdown', () => {
     jest
       .spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: ALL_NAMESPACES }));
-    const store = mockStore({
-      notifications: {}
-    });
     const { queryByPlaceholderText } = render(
-      <Provider store={store}>
-        <PipelineResourcesDropdown {...props} />
-      </Provider>
+      <PipelineResourcesDropdown {...props} />
     );
     expect(queryByPlaceholderText(/no pipelineresources found/i)).toBeTruthy();
     expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
@@ -268,13 +225,8 @@ describe('PipelineResourcesDropdown', () => {
     jest
       .spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: 'blue' }));
-    const store = mockStore({
-      notifications: {}
-    });
     const { queryByPlaceholderText } = render(
-      <Provider store={store}>
-        <PipelineResourcesDropdown {...props} type="bogus" />
-      </Provider>
+      <PipelineResourcesDropdown {...props} type="bogus" />
     );
     expect(
       queryByPlaceholderText(
@@ -291,13 +243,8 @@ describe('PipelineResourcesDropdown', () => {
     jest
       .spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: ALL_NAMESPACES }));
-    const store = mockStore({
-      notifications: {}
-    });
     const { queryByPlaceholderText } = render(
-      <Provider store={store}>
-        <PipelineResourcesDropdown {...props} type="bogus" />
-      </Provider>
+      <PipelineResourcesDropdown {...props} type="bogus" />
     );
     expect(
       queryByPlaceholderText(/no pipelineresources found of type 'bogus'/i)
@@ -312,13 +259,8 @@ describe('PipelineResourcesDropdown', () => {
     jest
       .spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: 'blue' }));
-    const store = mockStore({
-      notifications: {}
-    });
     const { queryByPlaceholderText } = render(
-      <Provider store={store}>
-        <PipelineResourcesDropdown {...props} />
-      </Provider>
+      <PipelineResourcesDropdown {...props} />
     );
     expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
   });
@@ -332,14 +274,9 @@ describe('PipelineResourcesDropdown', () => {
     jest
       .spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: 'blue' }));
-    const store = mockStore({
-      notifications: {}
-    });
     const onChange = jest.fn();
     const { getByPlaceholderText, getByText } = render(
-      <Provider store={store}>
-        <PipelineResourcesDropdown {...props} onChange={onChange} />
-      </Provider>
+      <PipelineResourcesDropdown {...props} onChange={onChange} />
     );
     fireEvent.click(getByPlaceholderText(initialTextRegExp));
     fireEvent.click(getByText(/pipeline-resource-1/i));

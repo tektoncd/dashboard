@@ -12,37 +12,32 @@ limitations under the License.
 */
 
 import React from 'react';
-import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { injectIntl } from 'react-intl';
-import {
-  urls,
-  useTitleSync,
-  useWebSocketReconnected
-} from '@tektoncd/dashboard-utils';
+import { urls, useTitleSync } from '@tektoncd/dashboard-utils';
 import { ResourceDetails, Trigger } from '@tektoncd/dashboard-components';
 import { Link as CarbonLink } from 'carbon-components-react';
 
-import { isWebSocketConnected } from '../../reducers';
 import { useEventListener } from '../../api';
 import { getViewChangeHandler } from '../../utils';
 
 export /* istanbul ignore next */ function EventListenerContainer(props) {
-  const { intl, match, webSocketConnected, view } = props;
+  const { intl, location, match } = props;
   const { eventListenerName, namespace } = match.params;
+
+  const queryParams = new URLSearchParams(location.search);
+  const view = queryParams.get('view');
 
   useTitleSync({
     page: 'EventListener',
     resourceName: eventListenerName
   });
 
-  const { data: eventListener, error, isFetching, refetch } = useEventListener({
+  const { data: eventListener, error, isFetching } = useEventListener({
     name: eventListenerName,
     namespace
   });
-
-  useWebSocketReconnected(refetch, webSocketConnected);
 
   function getAdditionalMetadata() {
     if (!eventListener) {
@@ -152,16 +147,4 @@ EventListenerContainer.propTypes = {
   }).isRequired
 };
 
-/* istanbul ignore next */
-function mapStateToProps(state, ownProps) {
-  const { location } = ownProps;
-  const queryParams = new URLSearchParams(location.search);
-  const view = queryParams.get('view');
-
-  return {
-    view,
-    webSocketConnected: isWebSocketConnected(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(EventListenerContainer));
+export default injectIntl(EventListenerContainer);

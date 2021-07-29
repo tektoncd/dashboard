@@ -13,9 +13,6 @@ limitations under the License.
 
 import React from 'react';
 import { fireEvent, waitFor } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import thunk from 'redux-thunk';
-import configureStore from 'redux-mock-store';
 import { ALL_NAMESPACES, urls } from '@tektoncd/dashboard-utils';
 
 import { render, renderWithRouter } from '../../utils/test';
@@ -24,12 +21,6 @@ import * as API from '../../api';
 import * as APIUtils from '../../api/utils';
 
 describe('ImportResources component', () => {
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
-  const store = mockStore({
-    notifications: {}
-  });
-
   beforeEach(() => {
     jest
       .spyOn(API, 'useDashboardNamespace')
@@ -46,11 +37,7 @@ describe('ImportResources component', () => {
   });
 
   it('Displays errors when Repository URL and Namespace is empty', async () => {
-    const { getByText } = await render(
-      <Provider store={store}>
-        <ImportResourcesContainer />
-      </Provider>
-    );
+    const { getByText } = await render(<ImportResourcesContainer />);
 
     fireEvent.click(getByText('Import'));
     await waitFor(() => getByText(/Please enter a valid Git URL/i));
@@ -59,9 +46,7 @@ describe('ImportResources component', () => {
 
   it('Displays an error when Repository URL is empty', async () => {
     const { getAllByPlaceholderText, getByText } = await render(
-      <Provider store={store}>
-        <ImportResourcesContainer />
-      </Provider>
+      <ImportResourcesContainer />
     );
     const namespace = 'default';
 
@@ -74,9 +59,7 @@ describe('ImportResources component', () => {
 
   it('Displays an error when Namespace is empty', async () => {
     const { getByPlaceholderText, getByText } = await render(
-      <Provider store={store}>
-        <ImportResourcesContainer />
-      </Provider>
+      <ImportResourcesContainer />
     );
 
     const repoURLField = getByPlaceholderText(/my-repository/);
@@ -134,11 +117,7 @@ describe('ImportResources component', () => {
       getAllByPlaceholderText,
       getByPlaceholderText,
       getByText
-    } = await renderWithRouter(
-      <Provider store={store}>
-        <ImportResourcesContainer />
-      </Provider>
-    );
+    } = await renderWithRouter(<ImportResourcesContainer />);
 
     const repoURLField = getByPlaceholderText(/my-repository/);
     fireEvent.change(repoURLField, { target: { value: repositoryURLValue } });
@@ -179,11 +158,7 @@ describe('ImportResources component', () => {
       getAllByPlaceholderText,
       getByPlaceholderText,
       getByText
-    } = await render(
-      <Provider store={store}>
-        <ImportResourcesContainer />
-      </Provider>
-    );
+    } = await render(<ImportResourcesContainer />);
 
     const repoURLField = getByPlaceholderText(/my-repository/);
     fireEvent.change(repoURLField, { target: { value: 'URL' } });
@@ -197,9 +172,7 @@ describe('ImportResources component', () => {
 
   it('URL TextInput handles onChange event', async () => {
     const { getByPlaceholderText, queryByDisplayValue } = await render(
-      <Provider store={store}>
-        <ImportResourcesContainer />
-      </Provider>
+      <ImportResourcesContainer />
     );
     const repoURLField = getByPlaceholderText(/my-repository/);
     fireEvent.change(repoURLField, {
@@ -216,11 +189,7 @@ describe('ImportResources component', () => {
       getAllByTitle,
       queryByText,
       queryByDisplayValue
-    } = await render(
-      <Provider store={store}>
-        <ImportResourcesContainer />
-      </Provider>
-    );
+    } = await render(<ImportResourcesContainer />);
     fireEvent.click(getAllByPlaceholderText(/select namespace/i)[0]);
     fireEvent.click(getByText('default'));
     fireEvent.click(getAllByTitle(/Clear selected item/i)[0]);

@@ -13,16 +13,11 @@ limitations under the License.
 
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import {
-  useTitleSync,
-  useWebSocketReconnected
-} from '@tektoncd/dashboard-utils';
+import { useTitleSync } from '@tektoncd/dashboard-utils';
 import { ResourceDetails, Table } from '@tektoncd/dashboard-components';
 
 import { useCondition } from '../../api';
-import { isWebSocketConnected as selectIsWebSocketConnected } from '../../reducers';
 import { getViewChangeHandler } from '../../utils';
 
 function ConditionParameters({ condition, intl }) {
@@ -76,20 +71,21 @@ function ConditionParameters({ condition, intl }) {
 }
 
 export function ConditionContainer(props) {
-  const { intl, match, view, webSocketConnected } = props;
+  const { intl, location, match } = props;
   const { conditionName, namespace } = match.params;
+
+  const queryParams = new URLSearchParams(location.search);
+  const view = queryParams.get('view');
 
   useTitleSync({
     page: 'Condition',
     resourceName: conditionName
   });
 
-  const { data: condition, error, refetch } = useCondition({
+  const { data: condition, error } = useCondition({
     name: conditionName,
     namespace
   });
-
-  useWebSocketReconnected(refetch, webSocketConnected);
 
   return (
     <ResourceDetails
@@ -112,16 +108,4 @@ ConditionContainer.propTypes = {
   }).isRequired
 };
 
-/* istanbul ignore next */
-function mapStateToProps(state, ownProps) {
-  const { location } = ownProps;
-  const queryParams = new URLSearchParams(location.search);
-  const view = queryParams.get('view');
-
-  return {
-    view,
-    webSocketConnected: selectIsWebSocketConnected(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(ConditionContainer));
+export default injectIntl(ConditionContainer);

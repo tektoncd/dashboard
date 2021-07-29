@@ -75,7 +75,7 @@ it('ClusterTriggerBindingContainer handles error state', async () => {
   };
 
   const { getByText } = renderWithRouter(
-    <ClusterTriggerBindingContainer intl={intl} match={match} />
+    <ClusterTriggerBindingContainer intl={intl} location={{}} match={match} />
   );
   await waitFor(() => getByText('Error loading resource'));
   await waitFor(() => getByText(error));
@@ -92,7 +92,7 @@ it('ClusterTriggerBindingContainer renders overview', async () => {
   };
 
   const { getByText } = renderWithRouter(
-    <ClusterTriggerBindingContainer intl={intl} match={match} />
+    <ClusterTriggerBindingContainer intl={intl} location={{}} match={match} />
   );
 
   await waitFor(() => getByText('cluster-trigger-binding-simple'));
@@ -144,7 +144,7 @@ it('ClusterTriggerBindingContainer does not render label section if they are not
   };
 
   const { getByText } = renderWithRouter(
-    <ClusterTriggerBindingContainer intl={intl} match={match} />
+    <ClusterTriggerBindingContainer intl={intl} location={{}} match={match} />
   );
 
   await waitFor(() => getByText('cluster-trigger-binding-simple'));
@@ -162,7 +162,7 @@ it('ClusterTriggerBindingContainer renders labels section if they are present', 
   };
 
   const { getByText } = renderWithRouter(
-    <ClusterTriggerBindingContainer intl={intl} match={match} />
+    <ClusterTriggerBindingContainer intl={intl} location={{}} match={match} />
   );
 
   await waitFor(() => getByText('cluster-trigger-binding-labels'));

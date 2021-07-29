@@ -10,10 +10,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+/* istanbul ignore file */
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import keyBy from 'lodash.keyby';
 import {
@@ -26,37 +26,25 @@ import {
   TrashCan16 as DeleteIcon,
   Playlist16 as RunsIcon
 } from '@carbon/icons-react';
-import {
-  getFilters,
-  urls,
-  useTitleSync,
-  useWebSocketReconnected
-} from '@tektoncd/dashboard-utils';
+import { getFilters, urls, useTitleSync } from '@tektoncd/dashboard-utils';
 
 import { ListPageLayout } from '..';
 import { deleteClusterTask, useClusterTasks, useIsReadOnly } from '../../api';
-import { isWebSocketConnected } from '../../reducers';
 
-/* istanbul ignore next */
 function ClusterTasksContainer(props) {
-  const { filters, intl, webSocketConnected } = props;
+  const { intl, location } = props;
   const [cancelSelection, setCancelSelection] = useState(null);
   const [deleteError, setDeleteError] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [toBeDeleted, setToBeDeleted] = useState([]);
-
   const isReadOnly = useIsReadOnly();
+  const filters = getFilters(location);
 
   useTitleSync({ page: 'ClusterTasks' });
 
-  const {
-    data: clusterTasks = [],
-    error,
-    isLoading,
-    refetch
-  } = useClusterTasks({ filters });
-
-  useWebSocketReconnected(refetch, webSocketConnected);
+  const { data: clusterTasks = [], error, isLoading } = useClusterTasks({
+    filters
+  });
 
   function getError() {
     if (error) {
@@ -212,6 +200,7 @@ function ClusterTasksContainer(props) {
     <ListPageLayout
       {...props}
       error={getError()}
+      filters={filters}
       hideNamespacesDropdown
       title="ClusterTasks"
     >
@@ -249,16 +238,4 @@ function ClusterTasksContainer(props) {
   );
 }
 
-ClusterTasksContainer.defaultProps = {
-  filters: []
-};
-
-/* istanbul ignore next */
-function mapStateToProps(state, props) {
-  return {
-    filters: getFilters(props.location),
-    webSocketConnected: isWebSocketConnected(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(ClusterTasksContainer));
+export default injectIntl(ClusterTasksContainer);

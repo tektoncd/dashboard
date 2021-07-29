@@ -10,9 +10,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+/* istanbul ignore file */
 
 import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import keyBy from 'lodash.keyby';
 import {
@@ -32,14 +32,12 @@ import {
   labels,
   runMatchesStatusFilter,
   urls,
-  useTitleSync,
-  useWebSocketReconnected
+  useTitleSync
 } from '@tektoncd/dashboard-utils';
 import { Add16 as Add, TrashCan32 as Delete } from '@carbon/icons-react';
 
 import { ListPageLayout } from '..';
 import { sortRunsByStartTime } from '../../utils';
-import { isWebSocketConnected } from '../../reducers';
 import {
   cancelPipelineRun,
   deletePipelineRun,
@@ -50,20 +48,19 @@ import {
   useSelectedNamespace
 } from '../../api';
 
-export /* istanbul ignore next */ function PipelineRuns(props) {
-  const {
-    filters,
-    history,
-    intl,
-    match,
-    pipelineName,
-    setStatusFilter,
-    statusFilter,
-    webSocketConnected
-  } = props;
+export function PipelineRuns(props) {
+  const { history, intl, location, match } = props;
 
   const { selectedNamespace } = useSelectedNamespace();
   const { namespace = selectedNamespace } = match.params;
+
+  const filters = getFilters(location);
+  const statusFilter = getStatusFilter(location);
+  const setStatusFilter = getStatusFilterHandler(props);
+
+  const pipelineFilter =
+    filters.find(filter => filter.indexOf(`${labels.PIPELINE}=`) !== -1) || '';
+  const pipelineName = pipelineFilter.replace(`${labels.PIPELINE}=`, '');
 
   const [cancelSelection, setCancelSelection] = useState(null);
   const [deleteError, setDeleteError] = useState(null);
@@ -80,14 +77,10 @@ export /* istanbul ignore next */ function PipelineRuns(props) {
     setToBeDeleted([]);
   }, [JSON.stringify(filters), namespace]);
 
-  const {
-    data: pipelineRuns = [],
-    error,
-    isLoading,
-    refetch
-  } = usePipelineRuns({ filters, namespace });
-
-  useWebSocketReconnected(refetch, webSocketConnected);
+  const { data: pipelineRuns = [], error, isLoading } = usePipelineRuns({
+    filters,
+    namespace
+  });
 
   function getError() {
     if (error) {
@@ -308,7 +301,12 @@ export /* istanbul ignore next */ function PipelineRuns(props) {
   );
 
   return (
-    <ListPageLayout {...props} error={getError()} title="PipelineRuns">
+    <ListPageLayout
+      {...props}
+      error={getError()}
+      filters={filters}
+      title="PipelineRuns"
+    >
       <PipelineRunsList
         batchActionButtons={batchActionButtons}
         filters={filtersUI}
@@ -336,26 +334,4 @@ export /* istanbul ignore next */ function PipelineRuns(props) {
   );
 }
 
-PipelineRuns.defaultProps = {
-  filters: []
-};
-
-/* istanbul ignore next */
-function mapStateToProps(state, props) {
-  const filters = getFilters(props.location);
-  const statusFilter = getStatusFilter(props.location);
-
-  const pipelineFilter =
-    filters.find(filter => filter.indexOf(`${labels.PIPELINE}=`) !== -1) || '';
-  const pipelineName = pipelineFilter.replace(`${labels.PIPELINE}=`, '');
-
-  return {
-    filters,
-    pipelineName,
-    setStatusFilter: getStatusFilterHandler(props),
-    statusFilter,
-    webSocketConnected: isWebSocketConnected(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(PipelineRuns));
+export default injectIntl(PipelineRuns);

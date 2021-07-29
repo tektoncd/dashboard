@@ -12,24 +12,18 @@ limitations under the License.
 */
 
 import React from 'react';
-import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
-import {
-  getFilters,
-  urls,
-  useTitleSync,
-  useWebSocketReconnected
-} from '@tektoncd/dashboard-utils';
+import { getFilters, urls, useTitleSync } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 import { Link as CarbonLink } from 'carbon-components-react';
 
 import { ListPageLayout } from '..';
 import { useEventListeners, useSelectedNamespace } from '../../api';
-import { isWebSocketConnected } from '../../reducers';
 
 function EventListeners(props) {
-  const { filters, intl, webSocketConnected } = props;
+  const { intl, location } = props;
+  const filters = getFilters(location);
 
   useTitleSync({ page: 'EventListeners' });
 
@@ -38,14 +32,10 @@ function EventListeners(props) {
     namespace: selectedNamespace = defaultNamespace
   } = props.match.params;
 
-  const {
-    data: eventListeners = [],
-    error,
-    isLoading,
-    refetch
-  } = useEventListeners({ filters, namespace: selectedNamespace });
-
-  useWebSocketReconnected(refetch, webSocketConnected);
+  const { data: eventListeners = [], error, isLoading } = useEventListeners({
+    filters,
+    namespace: selectedNamespace
+  });
 
   function getError() {
     if (error) {
@@ -95,7 +85,12 @@ function EventListeners(props) {
   }));
 
   return (
-    <ListPageLayout {...props} error={getError()} title="EventListeners">
+    <ListPageLayout
+      {...props}
+      error={getError()}
+      filters={filters}
+      title="EventListeners"
+    >
       <Table
         headers={initialHeaders}
         rows={eventListenersFormatted}
@@ -121,13 +116,4 @@ function EventListeners(props) {
   );
 }
 
-function mapStateToProps(state, props) {
-  const filters = getFilters(props.location);
-
-  return {
-    filters,
-    webSocketConnected: isWebSocketConnected(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(EventListeners));
+export default injectIntl(EventListeners);

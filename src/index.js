@@ -14,13 +14,11 @@ limitations under the License.
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import ReconnectingWebSocket from 'reconnecting-websocket';
 
 import './utils/polyfills';
-import { configureStore } from './store';
 import { getWebSocketURL, WebSocketContext } from './api';
 import { getLocale, setTheme } from './utils';
 
@@ -42,8 +40,6 @@ function closeSocket() {
   webSocket.close();
 }
 
-const store = configureStore({ webSocket });
-
 setTheme();
 
 const enableReactQueryDevTools =
@@ -52,9 +48,7 @@ const enableReactQueryDevTools =
 ReactDOM.render(
   <WebSocketContext.Provider value={webSocket}>
     <QueryClientProvider client={queryClient}>
-      <Provider store={store}>
-        <App lang={getLocale(navigator.language)} onUnload={closeSocket} />
-      </Provider>
+      <App lang={getLocale(navigator.language)} onUnload={closeSocket} />
       {enableReactQueryDevTools && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
   </WebSocketContext.Provider>,

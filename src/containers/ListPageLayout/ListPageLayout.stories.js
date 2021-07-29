@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,26 +12,61 @@ limitations under the License.
 */
 
 import React from 'react';
-import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
 import ListPageLayoutContainer from './ListPageLayout';
+import { NamespaceContext, WebSocketContext } from '../../api/utils';
+import { getWebSocket } from '../../utils/test';
 
-const props = {};
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      cacheTime: 1000 * 60 * 5, // 5 minutes
+      refetchOnWindowFocus: false,
+      retry: false,
+      staleTime: Infinity
+    }
+  }
+});
 
-const byName = {
-  default: '',
-  'kube-public': '',
-  'kube-system': '',
-  'tekton-pipelines': ''
+const namespaces = [
+  'default',
+  'kube-public',
+  'kube-system',
+  'tekton-pipelines'
+].map(namespace => ({ metadata: { name: namespace } }));
+
+const props = {
+  history: { push: () => {} },
+  location: {},
+  match: { path: '/' }
 };
 
-const middleware = [thunk];
-const mockStore = configureStore(middleware);
+const webSocket = getWebSocket();
 
 export default {
   component: ListPageLayoutContainer,
+  decorators: [
+    storyFn => {
+      queryClient.setQueryData('Namespace', namespaces);
+
+      return (
+        <WebSocketContext.Provider value={webSocket}>
+          <QueryClientProvider client={queryClient}>
+            <NamespaceContext.Provider
+              value={{
+                selectedNamespace: ALL_NAMESPACES,
+                selectNamespace: () => {}
+              }}
+            >
+              {storyFn()}
+            </NamespaceContext.Provider>
+          </QueryClientProvider>
+        </WebSocketContext.Provider>
+      );
+    }
+  ],
   title: 'Containers/ListPageLayout'
 };
 
@@ -44,15 +79,13 @@ Base.args = {
   hideNamespacesDropdown: false,
   title: 'PipelineRuns'
 };
-Base.decorators = [
-  storyFn => {
-    const store = mockStore({
-      namespaces: {
-        byName,
-        isFetching: false
-      }
-    });
 
-    return <Provider store={store}>{storyFn()}</Provider>;
-  }
-];
+export const WithFilters = args => (
+  <ListPageLayoutContainer {...props} filters={[]} {...args}>
+    page content goes here
+  </ListPageLayoutContainer>
+);
+WithFilters.args = {
+  hideNamespacesDropdown: false,
+  title: 'PipelineRuns'
+};

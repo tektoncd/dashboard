@@ -14,13 +14,7 @@ limitations under the License.
 import React, { useEffect, useState } from 'react';
 import { injectIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
-import {
-  getFilters,
-  urls,
-  useTitleSync,
-  useWebSocketReconnected
-} from '@tektoncd/dashboard-utils';
+import { getFilters, urls, useTitleSync } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 import { Link as CarbonLink } from 'carbon-components-react';
 
@@ -30,10 +24,9 @@ import {
   getCustomResources,
   useSelectedNamespace
 } from '../../api';
-import { isWebSocketConnected } from '../../reducers';
 
 export function ResourceListContainer(props) {
-  const { filters, intl, match, webSocketConnected } = props;
+  const { intl, location, match } = props;
   const { group, namespace: namespaceParam, version, type } = match.params;
 
   const { selectedNamespace } = useSelectedNamespace();
@@ -43,6 +36,7 @@ export function ResourceListContainer(props) {
   const [loading, setLoading] = useState(true);
   const [isNamespaced, setIsNamespaced] = useState(true);
   const [resources, setResources] = useState([]);
+  const filters = getFilters(location);
 
   useTitleSync({ page: `${group}/${version}/${type}` });
 
@@ -70,8 +64,6 @@ export function ResourceListContainer(props) {
   useEffect(() => {
     fetchResources();
   }, [JSON.stringify(filters), group, namespace, type, version]);
-
-  useWebSocketReconnected(fetchResources, webSocketConnected);
 
   function getError() {
     if (error) {
@@ -102,6 +94,7 @@ export function ResourceListContainer(props) {
     <ListPageLayout
       {...props}
       error={getError()}
+      filters={filters}
       title={`${group}/${version}/${type}`}
       hideNamespacesDropdown={!isNamespaced}
     >
@@ -174,11 +167,4 @@ export function ResourceListContainer(props) {
   );
 }
 
-function mapStateToProps(state, props) {
-  return {
-    filters: getFilters(props.location),
-    webSocketConnected: isWebSocketConnected(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(ResourceListContainer));
+export default injectIntl(ResourceListContainer);

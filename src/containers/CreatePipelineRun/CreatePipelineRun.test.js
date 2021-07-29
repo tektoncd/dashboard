@@ -14,9 +14,6 @@ limitations under the License.
 import React from 'react';
 import { fireEvent } from '@testing-library/react';
 
-import { Provider } from 'react-redux';
-import thunk from 'redux-thunk';
-import configureStore from 'redux-mock-store';
 import { render } from '../../utils/test';
 
 import CreatePipelineRun from './CreatePipelineRun';
@@ -85,12 +82,6 @@ const pipelineResource2 = {
   spec: { type: 'type-2' }
 };
 
-const middleware = [thunk];
-const mockStore = configureStore(middleware);
-const testStore = {
-  notifications: {}
-};
-
 const props = {
   history: {
     push: () => {}
@@ -133,11 +124,7 @@ describe('CreatePipelineRun', () => {
       getByText,
       getByPlaceholderText,
       queryByDisplayValue
-    } = render(
-      <Provider store={mockStore(testStore)}>
-        <CreatePipelineRun {...props} />
-      </Provider>
-    );
+    } = render(<CreatePipelineRun {...props} />);
     fireEvent.click(getAllByText(/Add/i)[0]);
     fireEvent.change(getByPlaceholderText(/key/i), {
       target: { value: 'foo' }
@@ -154,23 +141,14 @@ describe('CreatePipelineRun', () => {
 
   it('handles onClose event', () => {
     jest.spyOn(props.history, 'push');
-    const { getByText } = render(
-      <Provider store={mockStore(testStore)}>
-        <CreatePipelineRun {...props} />
-      </Provider>
-    );
+    const { getByText } = render(<CreatePipelineRun {...props} />);
     fireEvent.click(getByText(/cancel/i));
     expect(props.history.push).toHaveBeenCalledTimes(1);
   });
 
   it('handles close', () => {
     jest.spyOn(props.history, 'push');
-    const mockTestStore = mockStore(testStore);
-    const { getByText } = render(
-      <Provider store={mockTestStore}>
-        <CreatePipelineRun {...props} />
-      </Provider>
-    );
+    const { getByText } = render(<CreatePipelineRun {...props} />);
 
     fireEvent.click(getByText(/cancel/i));
     expect(props.history.push).toHaveBeenCalledTimes(1);

@@ -14,7 +14,6 @@ limitations under the License.
 
 import React, { useRef, useState } from 'react';
 import { injectIntl } from 'react-intl';
-import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { InlineNotification, SkeletonText } from 'carbon-components-react';
@@ -33,8 +32,7 @@ import {
   getStepStatus,
   queryParams as queryParamConstants,
   urls,
-  useTitleSync,
-  useWebSocketReconnected
+  useTitleSync
 } from '@tektoncd/dashboard-utils';
 
 import {
@@ -42,8 +40,6 @@ import {
   getLogsToolbar,
   getViewChangeHandler
 } from '../../utils';
-
-import { isWebSocketConnected } from '../../reducers';
 
 import {
   rerunTaskRun,
@@ -80,18 +76,14 @@ function notification({ intl, kind, message }) {
 }
 
 export function TaskRunContainer(props) {
-  const {
-    history,
-    intl,
-    location,
-    match,
-    selectedStepId,
-    showTaskRunDetails,
-    view,
-    webSocketConnected
-  } = props;
+  const { history, intl, location, match } = props;
 
   const { namespace: namespaceParam, taskRunName } = match.params;
+
+  const queryParams = new URLSearchParams(location.search);
+  const selectedStepId = queryParams.get(STEP);
+  const view = queryParams.get(VIEW);
+  const showTaskRunDetails = queryParams.get(TASK_RUN_DETAILS);
 
   const { selectedNamespace } = useSelectedNamespace();
   const namespace = namespaceParam || selectedNamespace;
@@ -109,21 +101,12 @@ export function TaskRunContainer(props) {
     resourceName: taskRunName
   });
 
-  const {
-    data: taskRun,
-    error,
-    isLoading: isLoadingTaskRun,
-    refetch: refetchTaskRun
-  } = useTaskRun({
+  const { data: taskRun, error, isLoading: isLoadingTaskRun } = useTaskRun({
     name: taskRunName,
     namespace
   });
 
-  const {
-    data: task,
-    isLoading: isLoadingTask,
-    refetch: refetchTask
-  } = useTaskByKind(
+  const { data: task, isLoading: isLoadingTask } = useTaskByKind(
     {
       kind: taskRun?.spec.taskRef?.kind,
       name: taskRun?.spec.taskRef?.name,
@@ -131,13 +114,6 @@ export function TaskRunContainer(props) {
     },
     { enabled: !!taskRun?.spec.taskRef }
   );
-
-  function refetchData() {
-    refetchTaskRun();
-    refetchTask();
-  }
-
-  useWebSocketReconnected(refetchData, webSocketConnected);
 
   function toggleLogsMaximized() {
     setIsLogsMaximized(state => !state);
@@ -180,8 +156,6 @@ export function TaskRunContainer(props) {
   }
 
   function handleTaskSelected(_, newSelectedStepId) {
-    const queryParams = new URLSearchParams(location.search);
-
     if (newSelectedStepId) {
       queryParams.set(STEP, newSelectedStepId);
       queryParams.delete(TASK_RUN_DETAILS);
@@ -340,20 +314,4 @@ TaskRunContainer.propTypes = {
   }).isRequired
 };
 
-function mapStateToProps(state, ownProps) {
-  const { location } = ownProps;
-
-  const queryParams = new URLSearchParams(location.search);
-  const selectedStepId = queryParams.get(STEP);
-  const view = queryParams.get(VIEW);
-  const showTaskRunDetails = queryParams.get(TASK_RUN_DETAILS);
-
-  return {
-    selectedStepId,
-    showTaskRunDetails,
-    view,
-    webSocketConnected: isWebSocketConnected(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(TaskRunContainer));
+export default injectIntl(TaskRunContainer);

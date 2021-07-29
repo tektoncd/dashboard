@@ -72,7 +72,7 @@ it('NamespacesDropdown renders empty', () => {
   expect(queryByPlaceholderText(/no namespaces found/i)).toBeTruthy();
 });
 
-it('NamespacesDropdown renders loading skeleton based on Redux state', () => {
+it('NamespacesDropdown renders loading skeleton', () => {
   jest
     .spyOn(API, 'useNamespaces')
     .mockImplementation(() => ({ isFetching: true }));

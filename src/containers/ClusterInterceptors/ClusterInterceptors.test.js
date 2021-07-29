@@ -12,9 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import { Provider } from 'react-redux';
-import thunk from 'redux-thunk';
-import configureStore from 'redux-mock-store';
 import { Route } from 'react-router-dom';
 import { paths, urls } from '@tektoncd/dashboard-utils';
 
@@ -32,46 +29,30 @@ const clusterInterceptor = {
   }
 };
 
-const middleware = [thunk];
-const mockStore = configureStore(middleware);
-const testStore = {
-  notifications: {
-    webSocketConnected: false
-  }
-};
-
 describe('ClusterInterceptors', () => {
   it('renders loading state', async () => {
-    const mockTestStore = mockStore({
-      notifications: {}
-    });
     jest
       .spyOn(API, 'useClusterInterceptors')
       .mockImplementation(() => ({ isLoading: true }));
     const { queryByText } = renderWithRouter(
-      <Provider store={mockTestStore}>
-        <Route
-          path={paths.clusterInterceptors.all()}
-          render={props => <ClusterInterceptorsContainer {...props} />}
-        />
-      </Provider>,
+      <Route
+        path={paths.clusterInterceptors.all()}
+        render={props => <ClusterInterceptorsContainer {...props} />}
+      />,
       { route: urls.clusterInterceptors.all() }
     );
     expect(queryByText('ClusterInterceptors')).toBeTruthy();
   });
 
   it('renders data', async () => {
-    const mockTestStore = mockStore(testStore);
     jest
       .spyOn(API, 'useClusterInterceptors')
       .mockImplementation(() => ({ data: [clusterInterceptor] }));
     const { queryByText } = renderWithRouter(
-      <Provider store={mockTestStore}>
-        <Route
-          path={paths.clusterInterceptors.all()}
-          render={props => <ClusterInterceptorsContainer {...props} />}
-        />
-      </Provider>,
+      <Route
+        path={paths.clusterInterceptors.all()}
+        render={props => <ClusterInterceptorsContainer {...props} />}
+      />,
       { route: urls.clusterInterceptors.all() }
     );
 
@@ -83,14 +64,11 @@ describe('ClusterInterceptors', () => {
     jest
       .spyOn(API, 'useClusterInterceptors')
       .mockImplementation(() => ({ error }));
-    const mockTestStore = mockStore(testStore);
     const { queryByText } = renderWithRouter(
-      <Provider store={mockTestStore}>
-        <Route
-          path={paths.clusterInterceptors.all()}
-          render={props => <ClusterInterceptorsContainer {...props} />}
-        />
-      </Provider>,
+      <Route
+        path={paths.clusterInterceptors.all()}
+        render={props => <ClusterInterceptorsContainer {...props} />}
+      />,
       { route: urls.clusterInterceptors.all() }
     );
 

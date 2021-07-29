@@ -192,7 +192,7 @@ it('TriggerTemplateContainer handles error state', async () => {
   };
 
   const { getByText } = renderWithRouter(
-    <TriggerTemplateContainer intl={intl} match={match} />
+    <TriggerTemplateContainer intl={intl} location={{}} match={match} />
   );
   await waitFor(() => getByText('Error loading resource'));
 });
@@ -208,7 +208,7 @@ it('TriggerTemplateContainer renders', async () => {
   };
 
   const { getAllByText, getByText } = renderWithRouter(
-    <TriggerTemplateContainer intl={intl} match={match} />
+    <TriggerTemplateContainer intl={intl} location={{}} match={match} />
   );
   await waitFor(() => getByText(/pipeline-template/i));
   await waitFor(() => getByText('Default'));
@@ -241,7 +241,7 @@ it('TriggerTemplateContainer contains overview tab with accurate information', a
   };
 
   const { getByText } = renderWithRouter(
-    <TriggerTemplateContainer intl={intl} match={match} />
+    <TriggerTemplateContainer intl={intl} location={{}} match={match} />
   );
   await waitFor(() => getByText('pipeline-template'));
   const overviewTab = getByText(/overview/i);
@@ -293,7 +293,7 @@ it('TriggerTemplateContainer does not render label section if they are not prese
   };
 
   const { getByText, queryByText } = renderWithRouter(
-    <TriggerTemplateContainer intl={intl} match={match} />
+    <TriggerTemplateContainer intl={intl} location={{}} match={match} />
   );
 
   await waitFor(() => getByText('pipeline-template'));
@@ -311,7 +311,7 @@ it('TriggerTemplateContainer renders labels section if they are present', async 
   };
 
   const { getByText } = renderWithRouter(
-    <TriggerTemplateContainer intl={intl} match={match} />
+    <TriggerTemplateContainer intl={intl} location={{}} match={match} />
   );
 
   await waitFor(() => getByText(triggerTemplateName));
@@ -335,7 +335,7 @@ it('TriggerTemplateContainer contains formatted labels', async () => {
   };
 
   const { getByText } = renderWithRouter(
-    <TriggerTemplateContainer intl={intl} match={match} />
+    <TriggerTemplateContainer intl={intl} location={{}} match={match} />
   );
 
   await waitFor(() => getByText(triggerTemplateName));
