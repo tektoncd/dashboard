@@ -42,9 +42,11 @@ it('useClusterTriggerBindings', () => {
   jest.spyOn(utils, 'useCollection').mockImplementation(() => query);
   expect(API.useClusterTriggerBindings(params)).toEqual(query);
   expect(utils.useCollection).toHaveBeenCalledWith(
-    'ClusterTriggerBinding',
-    API.getClusterTriggerBindings,
-    params
+    expect.objectContaining({
+      api: API.getClusterTriggerBindings,
+      kind: 'ClusterTriggerBinding',
+      params
+    })
   );
 });
 
@@ -54,8 +56,10 @@ it('useClusterTriggerBinding', () => {
   jest.spyOn(utils, 'useResource').mockImplementation(() => query);
   expect(API.useClusterTriggerBinding(params)).toEqual(query);
   expect(utils.useResource).toHaveBeenCalledWith(
-    'ClusterTriggerBinding',
-    API.getClusterTriggerBinding,
-    params
+    expect.objectContaining({
+      api: API.getClusterTriggerBinding,
+      kind: 'ClusterTriggerBinding',
+      params
+    })
   );
 });

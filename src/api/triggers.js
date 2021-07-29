@@ -21,12 +21,16 @@ import {
   useResource
 } from './utils';
 
-export function getTriggers({ filters = [], namespace } = {}) {
-  const uri = getTektonAPI(
+function getTriggersAPI({ filters, isWebSocket, name, namespace }) {
+  return getTektonAPI(
     'triggers',
-    { group: triggersAPIGroup, namespace, version: 'v1alpha1' },
-    getQueryParams(filters)
+    { group: triggersAPIGroup, isWebSocket, namespace, version: 'v1alpha1' },
+    getQueryParams({ filters, name })
   );
+}
+
+export function getTriggers({ filters = [], namespace } = {}) {
+  const uri = getTriggersAPI({ filters, namespace });
   return get(uri).then(checkData);
 }
 
@@ -41,9 +45,21 @@ export function getTrigger({ name, namespace }) {
 }
 
 export function useTriggers(params) {
-  return useCollection('Trigger', getTriggers, params);
+  const webSocketURL = getTriggersAPI({ ...params, isWebSocket: true });
+  return useCollection({
+    api: getTriggers,
+    kind: 'Trigger',
+    params,
+    webSocketURL
+  });
 }
 
 export function useTrigger(params) {
-  return useResource('Trigger', getTrigger, params);
+  const webSocketURL = getTriggersAPI({ ...params, isWebSocket: true });
+  return useResource({
+    api: getTrigger,
+    kind: 'Trigger',
+    params,
+    webSocketURL
+  });
 }

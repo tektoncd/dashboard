@@ -18,13 +18,22 @@ import { TooltipDropdown } from '@tektoncd/dashboard-components';
 
 import { usePipelines, useSelectedNamespace } from '../../api';
 
-function PipelinesDropdown({ intl, label, namespace: namespaceProp, ...rest }) {
+function PipelinesDropdown({
+  disabled,
+  intl,
+  label,
+  namespace: namespaceProp,
+  ...rest
+}) {
   const { selectedNamespace } = useSelectedNamespace();
   const namespace = namespaceProp || selectedNamespace;
 
-  const { data: pipelines = [], isFetching } = usePipelines({
-    namespace
-  });
+  const { data: pipelines = [], isFetching } = usePipelines(
+    {
+      namespace
+    },
+    { enabled: !disabled }
+  );
 
   const items = pipelines.map(pipeline => pipeline.metadata.name);
 
@@ -52,6 +61,7 @@ function PipelinesDropdown({ intl, label, namespace: namespaceProp, ...rest }) {
   return (
     <TooltipDropdown
       {...rest}
+      disabled={disabled}
       emptyText={emptyText}
       items={items}
       label={labelString}

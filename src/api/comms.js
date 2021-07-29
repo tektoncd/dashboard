@@ -11,6 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import ReconnectingWebSocket from 'reconnecting-websocket';
+
 const csrfHeader = {
   'Tekton-Client': 'tektoncd/dashboard'
 };
@@ -18,6 +20,10 @@ const defaultOptions = {
   method: 'GET',
   credentials: 'same-origin'
 };
+
+export function createWebSocket(url) {
+  return new ReconnectingWebSocket(url);
+}
 
 export function getAPIRoot() {
   const { host, pathname, protocol } = window.location;

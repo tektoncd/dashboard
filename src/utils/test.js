@@ -19,7 +19,7 @@ import {
   renderWithRouter as baseRenderWithRouter
 } from '@tektoncd/dashboard-components/src/utils/test';
 
-import { NamespaceContext, WebSocketContext } from '../api/utils';
+import { NamespaceContext } from '../api/utils';
 
 export function getQueryClient() {
   return new QueryClient({
@@ -40,6 +40,7 @@ export function getWebSocket() {
     addEventListener(type, listener) {
       this.listener = listener;
     },
+    close() {},
     removeEventListener() {},
     fireEvent(event) {
       this.listener(event);
@@ -47,22 +48,16 @@ export function getWebSocket() {
   };
 }
 
-export function getAPIWrapper({
-  queryClient = getQueryClient(),
-  // TODO: test-friendly replacement for this when we move to socket per kind
-  webSocket = getWebSocket()
-} = {}) {
+export function getAPIWrapper({ queryClient = getQueryClient() } = {}) {
   return function apiWrapper({ children }) {
     return (
-      <WebSocketContext.Provider value={webSocket}>
-        <NamespaceContext.Provider
-          value={{ selectedNamespace: null, selectNamespace: () => {} }}
-        >
-          <QueryClientProvider client={queryClient}>
-            {children}
-          </QueryClientProvider>
-        </NamespaceContext.Provider>
-      </WebSocketContext.Provider>
+      <NamespaceContext.Provider
+        value={{ selectedNamespace: null, selectNamespace: () => {} }}
+      >
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
+      </NamespaceContext.Provider>
     );
   };
 }

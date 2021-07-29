@@ -190,9 +190,11 @@ it('usePipelineRuns', () => {
   jest.spyOn(utils, 'useCollection').mockImplementation(() => query);
   expect(API.usePipelineRuns(params)).toEqual(query);
   expect(utils.useCollection).toHaveBeenCalledWith(
-    'PipelineRun',
-    API.getPipelineRuns,
-    params
+    expect.objectContaining({
+      api: API.getPipelineRuns,
+      kind: 'PipelineRun',
+      params
+    })
   );
 });
 
@@ -202,19 +204,22 @@ it('usePipelineRun', () => {
   jest.spyOn(utils, 'useResource').mockImplementation(() => query);
   expect(API.usePipelineRun(params)).toEqual(query);
   expect(utils.useResource).toHaveBeenCalledWith(
-    'PipelineRun',
-    API.getPipelineRun,
-    params,
-    undefined
+    expect.objectContaining({
+      api: API.getPipelineRun,
+      kind: 'PipelineRun',
+      params
+    })
   );
 
   const queryConfig = { fake: 'queryConfig' };
   API.usePipelineRun(params, queryConfig);
   expect(utils.useResource).toHaveBeenCalledWith(
-    'PipelineRun',
-    API.getPipelineRun,
-    params,
-    queryConfig
+    expect.objectContaining({
+      api: API.getPipelineRun,
+      kind: 'PipelineRun',
+      params,
+      queryConfig
+    })
   );
 });
 

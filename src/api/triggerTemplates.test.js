@@ -42,9 +42,11 @@ it('useTriggerTemplates', () => {
   jest.spyOn(utils, 'useCollection').mockImplementation(() => query);
   expect(API.useTriggerTemplates(params)).toEqual(query);
   expect(utils.useCollection).toHaveBeenCalledWith(
-    'TriggerTemplate',
-    API.getTriggerTemplates,
-    params
+    expect.objectContaining({
+      api: API.getTriggerTemplates,
+      kind: 'TriggerTemplate',
+      params
+    })
   );
 });
 
@@ -54,8 +56,10 @@ it('useTriggerTemplate', () => {
   jest.spyOn(utils, 'useResource').mockImplementation(() => query);
   expect(API.useTriggerTemplate(params)).toEqual(query);
   expect(utils.useResource).toHaveBeenCalledWith(
-    'TriggerTemplate',
-    API.getTriggerTemplate,
-    params
+    expect.objectContaining({
+      api: API.getTriggerTemplate,
+      kind: 'TriggerTemplate',
+      params
+    })
   );
 });

@@ -14,13 +14,18 @@ limitations under the License.
 import { get } from './comms';
 import { dashboardAPIGroup, getResourcesAPI, useCollection } from './utils';
 
-export async function getExtensions({ namespace } = {}) {
-  const resourceExtensionsUri = getResourcesAPI({
+function getExtensionsAPI({ isWebSocket, namespace }) {
+  return getResourcesAPI({
     group: dashboardAPIGroup,
+    isWebSocket,
     version: 'v1alpha1',
     type: 'extensions',
     namespace
   });
+}
+
+export async function getExtensions({ namespace } = {}) {
+  const resourceExtensionsUri = getExtensionsAPI({ namespace });
   const resourceExtensions = await get(resourceExtensionsUri);
   return (resourceExtensions?.items || []).map(({ spec }) => {
     const { displayname: displayName, name, namespaced } = spec;
@@ -36,5 +41,12 @@ export async function getExtensions({ namespace } = {}) {
 }
 
 export function useExtensions(params, queryConfig) {
-  return useCollection('Extension', getExtensions, params, queryConfig);
+  const webSocketURL = getExtensionsAPI({ ...params, isWebSocket: true });
+  return useCollection({
+    api: getExtensions,
+    kind: 'Extension',
+    params,
+    queryConfig,
+    webSocketURL
+  });
 }

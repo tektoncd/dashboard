@@ -20,8 +20,16 @@ import {
   useResource
 } from './utils';
 
+function getClusterTasksAPI({ filters, isWebSocket, name }) {
+  return getTektonAPI(
+    'clustertasks',
+    { isWebSocket },
+    getQueryParams({ filters, name })
+  );
+}
+
 export function getClusterTasks({ filters = [] } = {}) {
-  const uri = getTektonAPI('clustertasks', undefined, getQueryParams(filters));
+  const uri = getClusterTasksAPI({ filters });
   return get(uri).then(checkData);
 }
 
@@ -36,9 +44,22 @@ export function deleteClusterTask({ name }) {
 }
 
 export function useClusterTasks(params) {
-  return useCollection('ClusterTask', getClusterTasks, params);
+  const webSocketURL = getClusterTasksAPI({ ...params, isWebSocket: true });
+  return useCollection({
+    api: getClusterTasks,
+    kind: 'ClusterTask',
+    params,
+    webSocketURL
+  });
 }
 
 export function useClusterTask(params, queryConfig) {
-  return useResource('ClusterTask', getClusterTask, params, queryConfig);
+  const webSocketURL = getClusterTasksAPI({ ...params, isWebSocket: true });
+  return useResource({
+    api: getClusterTask,
+    kind: 'ClusterTask',
+    params,
+    queryConfig,
+    webSocketURL
+  });
 }

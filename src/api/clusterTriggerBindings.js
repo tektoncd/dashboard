@@ -21,12 +21,16 @@ import {
   useResource
 } from './utils';
 
-export function getClusterTriggerBindings({ filters = [] } = {}) {
-  const uri = getTektonAPI(
+function getClusterTriggerBindingsAPI({ filters, isWebSocket, name }) {
+  return getTektonAPI(
     'clustertriggerbindings',
-    { group: triggersAPIGroup, version: 'v1alpha1' },
-    getQueryParams(filters)
+    { group: triggersAPIGroup, isWebSocket, version: 'v1alpha1' },
+    getQueryParams({ filters, name })
   );
+}
+
+export function getClusterTriggerBindings({ filters = [] } = {}) {
+  const uri = getClusterTriggerBindingsAPI({ filters });
   return get(uri).then(checkData);
 }
 
@@ -40,13 +44,27 @@ export function getClusterTriggerBinding({ name }) {
 }
 
 export function useClusterTriggerBindings(params) {
-  return useCollection(
-    'ClusterTriggerBinding',
-    getClusterTriggerBindings,
-    params
-  );
+  const webSocketURL = getClusterTriggerBindingsAPI({
+    ...params,
+    isWebSocket: true
+  });
+  return useCollection({
+    api: getClusterTriggerBindings,
+    kind: 'ClusterTriggerBinding',
+    params,
+    webSocketURL
+  });
 }
 
 export function useClusterTriggerBinding(params) {
-  return useResource('ClusterTriggerBinding', getClusterTriggerBinding, params);
+  const webSocketURL = getClusterTriggerBindingsAPI({
+    ...params,
+    isWebSocket: true
+  });
+  return useResource({
+    api: getClusterTriggerBinding,
+    kind: 'ClusterTriggerBinding',
+    params,
+    webSocketURL
+  });
 }

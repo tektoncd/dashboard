@@ -42,9 +42,11 @@ it('useTriggers', () => {
   jest.spyOn(utils, 'useCollection').mockImplementation(() => query);
   expect(API.useTriggers(params)).toEqual(query);
   expect(utils.useCollection).toHaveBeenCalledWith(
-    'Trigger',
-    API.getTriggers,
-    params
+    expect.objectContaining({
+      api: API.getTriggers,
+      kind: 'Trigger',
+      params
+    })
   );
 });
 
@@ -54,8 +56,10 @@ it('useTrigger', () => {
   jest.spyOn(utils, 'useResource').mockImplementation(() => query);
   expect(API.useTrigger(params)).toEqual(query);
   expect(utils.useResource).toHaveBeenCalledWith(
-    'Trigger',
-    API.getTrigger,
-    params
+    expect.objectContaining({
+      api: API.getTrigger,
+      kind: 'Trigger',
+      params
+    })
   );
 });

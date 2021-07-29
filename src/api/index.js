@@ -29,11 +29,7 @@ import {
   useResource
 } from './utils';
 
-export {
-  NamespaceContext,
-  useSelectedNamespace,
-  WebSocketContext
-} from './utils';
+export { NamespaceContext, useSelectedNamespace } from './utils';
 export * from './clusterInterceptors';
 export * from './clusterTasks';
 export * from './clusterTriggerBindings';
@@ -50,8 +46,12 @@ export * from './triggerBindings';
 export * from './triggers';
 export * from './triggerTemplates';
 
+function getCustomResourcesAPI({ filters, name, ...rest }) {
+  return getResourcesAPI(rest, getQueryParams({ filters, name }));
+}
+
 export function getCustomResources({ filters = [], ...rest }) {
-  const uri = getResourcesAPI(rest, getQueryParams(filters));
+  const uri = getCustomResourcesAPI({ filters, ...rest });
   return get(uri).then(checkData);
 }
 
@@ -61,7 +61,13 @@ export function getCustomResource(params) {
 }
 
 export function useCustomResource(params) {
-  return useResource('customResource', getCustomResource, params);
+  const webSocketURL = getCustomResourcesAPI({ ...params, isWebSocket: true });
+  return useResource({
+    api: getCustomResource,
+    kind: 'customResource',
+    params,
+    webSocketURL
+  });
 }
 
 export function useTaskByKind({ kind, ...rest }, queryConfig) {
@@ -92,13 +98,23 @@ export async function getInstallProperties() {
   return data;
 }
 
+function getNamespacesAPI({ isWebSocket } = {}) {
+  return getKubeAPI('namespaces', { isWebSocket });
+}
+
 export function getNamespaces() {
-  const uri = getKubeAPI('namespaces');
+  const uri = getNamespacesAPI();
   return get(uri).then(checkData);
 }
 
 export function useNamespaces(queryConfig) {
-  return useCollection('Namespace', getNamespaces, null, queryConfig);
+  const webSocketURL = getNamespacesAPI({ isWebSocket: true });
+  return useCollection({
+    api: getNamespaces,
+    kind: 'Namespace',
+    queryConfig,
+    webSocketURL
+  });
 }
 
 export function getPodLogURL({ container, name, namespace, follow }) {
@@ -119,11 +135,6 @@ export function getPodLogURL({ container, name, namespace, follow }) {
 export function getPodLog({ container, name, namespace, stream }) {
   const uri = getPodLogURL({ container, name, namespace, follow: stream });
   return get(uri, { Accept: 'text/plain,*/*' }, { stream });
-}
-
-/* istanbul ignore next */
-export function getWebSocketURL() {
-  return `${apiRoot.replace(/^http/, 'ws')}/v1/websockets/resources`;
 }
 
 export function importResources({

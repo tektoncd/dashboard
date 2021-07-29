@@ -60,9 +60,11 @@ it('useCustomResource', () => {
   const returnValue = API.useCustomResource(params);
 
   expect(utils.useResource).toHaveBeenCalledWith(
-    'customResource',
-    API.getCustomResource,
-    params
+    expect.objectContaining({
+      api: API.getCustomResource,
+      kind: 'customResource',
+      params
+    })
   );
   expect(returnValue).toEqual(query);
 });

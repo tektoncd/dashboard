@@ -20,8 +20,16 @@ import {
   useResource
 } from './utils';
 
+function getPipelinesAPI({ filters, isWebSocket, name, namespace }) {
+  return getTektonAPI(
+    'pipelines',
+    { isWebSocket, namespace },
+    getQueryParams({ filters, name })
+  );
+}
+
 export function getPipelines({ filters = [], namespace } = {}) {
-  const uri = getTektonAPI('pipelines', { namespace }, getQueryParams(filters));
+  const uri = getPipelinesAPI({ filters, namespace });
   return get(uri).then(checkData);
 }
 
@@ -35,10 +43,24 @@ export function deletePipeline({ name, namespace }) {
   return deleteRequest(uri);
 }
 
-export function usePipelines(params) {
-  return useCollection('Pipeline', getPipelines, params);
+export function usePipelines(params, queryConfig) {
+  const webSocketURL = getPipelinesAPI({ ...params, isWebSocket: true });
+  return useCollection({
+    api: getPipelines,
+    kind: 'Pipeline',
+    params,
+    queryConfig,
+    webSocketURL
+  });
 }
 
 export function usePipeline(params, queryConfig) {
-  return useResource('Pipeline', getPipeline, params, queryConfig);
+  const webSocketURL = getPipelinesAPI({ ...params, isWebSocket: true });
+  return useResource({
+    api: getPipeline,
+    kind: 'Pipeline',
+    params,
+    queryConfig,
+    webSocketURL
+  });
 }

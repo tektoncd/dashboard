@@ -20,8 +20,16 @@ import {
   useResource
 } from './utils';
 
+function getTasksAPI({ filters, isWebSocket, name, namespace }) {
+  return getTektonAPI(
+    'tasks',
+    { isWebSocket, namespace },
+    getQueryParams({ filters, name })
+  );
+}
+
 export function getTasks({ filters = [], namespace } = {}) {
-  const uri = getTektonAPI('tasks', { namespace }, getQueryParams(filters));
+  const uri = getTasksAPI({ filters, namespace });
   return get(uri).then(checkData);
 }
 
@@ -36,9 +44,17 @@ export function deleteTask({ name, namespace }) {
 }
 
 export function useTasks(params) {
-  return useCollection('Task', getTasks, params);
+  const webSocketURL = getTasksAPI({ ...params, isWebSocket: true });
+  return useCollection({ api: getTasks, kind: 'Task', params, webSocketURL });
 }
 
 export function useTask(params, queryConfig) {
-  return useResource('Task', getTask, params, queryConfig);
+  const webSocketURL = getTasksAPI({ ...params, isWebSocket: true });
+  return useResource({
+    api: getTask,
+    kind: 'Task',
+    params,
+    queryConfig,
+    webSocketURL
+  });
 }

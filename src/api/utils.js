@@ -11,11 +11,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
-import { getAPIRoot } from './comms';
+import { createWebSocket, getAPIRoot } from './comms';
 
 export const apiRoot = getAPIRoot();
 export const tektonAPIGroup = 'tekton.dev';
@@ -47,11 +47,18 @@ export function getAPI(type, { name = '', namespace } = {}, queryParams) {
 
 export function getKubeAPI(
   type,
-  { name = '', namespace, subResource } = {},
+  { isWebSocket, name = '', namespace, subResource } = {},
   queryParams
 ) {
+  const queryParamsToUse = {
+    ...queryParams,
+    ...(isWebSocket
+      ? { [subResource === 'log' ? 'follow' : 'watch']: true }
+      : null)
+  };
+
   return [
-    apiRoot,
+    isWebSocket ? apiRoot.replace('http', 'ws') : apiRoot,
     '/proxy/api/v1/',
     namespace && namespace !== ALL_NAMESPACES
       ? `namespaces/${encodeURIComponent(namespace)}/`
@@ -60,18 +67,23 @@ export function getKubeAPI(
     '/',
     encodeURIComponent(name),
     subResource ? `/${subResource}` : '',
-    queryParams && Object.keys(queryParams).length > 0
-      ? `?${new URLSearchParams(queryParams).toString()}`
+    queryParamsToUse && Object.keys(queryParamsToUse).length > 0
+      ? `?${new URLSearchParams(queryParamsToUse).toString()}`
       : ''
   ].join('');
 }
 
 export function getResourcesAPI(
-  { group, version, type, name = '', namespace },
+  { isWebSocket, group, name = '', namespace, type, version },
   queryParams
 ) {
+  const queryParamsToUse = {
+    ...queryParams,
+    ...(isWebSocket ? { watch: true } : null)
+  };
+
   return [
-    apiRoot,
+    isWebSocket ? apiRoot.replace('http', 'ws') : apiRoot,
     group === 'core'
       ? `/proxy/api/${version}/`
       : `/proxy/apis/${group}/${version}/`,
@@ -81,49 +93,53 @@ export function getResourcesAPI(
     type,
     '/',
     encodeURIComponent(name),
-    queryParams ? `?${new URLSearchParams(queryParams).toString()}` : ''
+    queryParamsToUse && Object.keys(queryParamsToUse).length > 0
+      ? `?${new URLSearchParams(queryParamsToUse).toString()}`
+      : ''
   ].join('');
 }
 
-export function getQueryParams(filters) {
-  if (filters.length) {
+export function getQueryParams({ filters, name }) {
+  if (filters?.length) {
     return { labelSelector: filters };
+  }
+  if (name) {
+    return { fieldSelector: `metadata.name=${name}` };
   }
   return '';
 }
 
 export function getTektonAPI(
   type,
-  { group = tektonAPIGroup, name = '', namespace, version = 'v1beta1' } = {},
+  {
+    group = tektonAPIGroup,
+    isWebSocket,
+    name = '',
+    namespace,
+    version = 'v1beta1'
+  } = {},
   queryParams
 ) {
   return getResourcesAPI(
-    { group, version, type, name, namespace },
+    { group, isWebSocket, name, namespace, type, version },
     queryParams
   );
 }
 
 export const NamespaceContext = React.createContext();
-export const WebSocketContext = React.createContext();
 
 function getResourceVersion(resource) {
   return parseInt(resource.metadata.resourceVersion, 10);
 }
 
-function handleCreated({ payload, queryClient }) {
-  const { kind } = payload;
+function handleCreated({ kind, payload: _, queryClient }) {
   queryClient.invalidateQueries(kind);
 }
 
-function handleDeleted({ payload, queryClient }) {
+function handleDeleted({ kind, payload, queryClient }) {
   const {
-    kind,
     metadata: { name, namespace }
   } = payload;
-  if (!kind) {
-    // TODO: remove this once we have per-kind ws
-    return;
-  }
   // remove any matching details page cache
   queryClient.removeQueries([kind, { name, ...(namespace && { namespace }) }]);
   // remove resource from any list page caches
@@ -147,15 +163,10 @@ function updateResource({ existing, incoming }) {
     : existing;
 }
 
-function handleUpdated({ payload, queryClient }) {
+function handleUpdated({ kind, payload, queryClient }) {
   const {
-    kind,
     metadata: { uid }
   } = payload;
-  if (!kind) {
-    // TODO: remove this once we have per-kind ws
-    return;
-  }
   queryClient.setQueriesData(kind, data => {
     if (data?.metadata?.uid === uid) {
       // it's a details page cache (i.e. a single resource)
@@ -172,12 +183,16 @@ function handleUpdated({ payload, queryClient }) {
   });
 }
 
-export function useWebSocket({ kind: _ }) {
-  const webSocket = useContext(WebSocketContext);
+export function useWebSocket({ enabled, kind, url }) {
   const queryClient = useQueryClient();
   const [isWebSocketConnected, setWebSocketConnected] = useState(null);
+  let { current: webSocket } = useRef(null);
 
   useEffect(() => {
+    if (enabled === false) {
+      return null;
+    }
+
     function handleClose() {
       setWebSocketConnected(false);
     }
@@ -188,20 +203,22 @@ export function useWebSocket({ kind: _ }) {
       if (event.type !== 'message') {
         return;
       }
-      const { operation, payload } = JSON.parse(event.data);
+      const { type: operation, object: payload } = JSON.parse(event.data);
       switch (operation) {
-        case 'Created':
-          handleCreated({ payload, queryClient });
+        case 'ADDED':
+          handleCreated({ kind, payload, queryClient });
           break;
-        case 'Deleted':
-          handleDeleted({ payload, queryClient });
+        case 'DELETED':
+          handleDeleted({ kind, payload, queryClient });
           break;
-        case 'Updated':
-          handleUpdated({ payload, queryClient });
+        case 'MODIFIED':
+          handleUpdated({ kind, payload, queryClient });
           break;
         default:
       }
     }
+
+    webSocket = createWebSocket(url);
 
     webSocket.addEventListener('close', handleClose);
     webSocket.addEventListener('open', handleOpen);
@@ -212,9 +229,10 @@ export function useWebSocket({ kind: _ }) {
         webSocket.removeEventListener('close', handleClose);
         webSocket.removeEventListener('open', handleOpen);
         webSocket.removeEventListener('message', handleMessage);
+        webSocket.close();
       }
     };
-  }, []);
+  }, [enabled, url]);
 
   return { isWebSocketConnected };
 }
@@ -223,23 +241,37 @@ export function useSelectedNamespace() {
   return useContext(NamespaceContext);
 }
 
-export function useCollection(kind, api, params, queryConfig) {
+export function useCollection({
+  api,
+  kind,
+  params,
+  queryConfig,
+  webSocketURL
+}) {
   const query = useQuery(
     [kind, params].filter(Boolean),
     () => api(params),
     queryConfig
   );
-  const { isWebSocketConnected } = useWebSocket({ kind });
+  const { isWebSocketConnected } = useWebSocket({
+    enabled: queryConfig?.enabled,
+    kind,
+    url: webSocketURL
+  });
   return { ...query, isWebSocketConnected };
 }
 
-export function useResource(kind, api, params, queryConfig) {
+export function useResource({ api, kind, params, queryConfig, webSocketURL }) {
   const query = useQuery(
     [kind, params].filter(Boolean),
     () => api(params),
     queryConfig
   );
-  const { isWebSocketConnected } = useWebSocket({ kind });
+  const { isWebSocketConnected } = useWebSocket({
+    enabled: queryConfig?.enabled,
+    kind,
+    url: webSocketURL
+  });
   return { ...query, isWebSocketConnected };
 }
 

@@ -52,9 +52,11 @@ it('useTasks', () => {
   jest.spyOn(utils, 'useCollection').mockImplementation(() => query);
   expect(API.useTasks(params)).toEqual(query);
   expect(utils.useCollection).toHaveBeenCalledWith(
-    'Task',
-    API.getTasks,
-    params
+    expect.objectContaining({
+      api: API.getTasks,
+      kind: 'Task',
+      params
+    })
   );
 });
 
@@ -64,18 +66,21 @@ it('useTask', () => {
   jest.spyOn(utils, 'useResource').mockImplementation(() => query);
   expect(API.useTask(params)).toEqual(query);
   expect(utils.useResource).toHaveBeenCalledWith(
-    'Task',
-    API.getTask,
-    params,
-    undefined
+    expect.objectContaining({
+      api: API.getTask,
+      kind: 'Task',
+      params
+    })
   );
 
   const queryConfig = { fake: 'queryConfig' };
   API.useTask(params, queryConfig);
   expect(utils.useResource).toHaveBeenCalledWith(
-    'Task',
-    API.getTask,
-    params,
-    queryConfig
+    expect.objectContaining({
+      api: API.getTask,
+      kind: 'Task',
+      params,
+      queryConfig
+    })
   );
 });
