@@ -49,6 +49,7 @@ export function getWebSocket() {
 
 export function getAPIWrapper({
   queryClient = getQueryClient(),
+  // TODO: test-friendly replacement for this when we move to socket per kind
   webSocket = getWebSocket()
 } = {}) {
   return function apiWrapper({ children }) {

@@ -13,17 +13,11 @@ limitations under the License.
 
 import React from 'react';
 import { fireEvent } from '@testing-library/react';
-import { Provider } from 'react-redux';
 import { Route } from 'react-router-dom';
-import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
 
 import { renderWithRouter } from '../../utils/test';
 import ClusterTriggerBindings from '.';
 import * as API from '../../api/clusterTriggerBindings';
-
-const middleware = [thunk];
-const mockStore = configureStore(middleware);
 
 const clusterTriggerBinding = {
   apiVersion: 'triggers.tekton.dev/v1alpha1',
@@ -41,17 +35,11 @@ it('ClusterTriggerBindings renders with no bindings', () => {
     data: []
   }));
 
-  const store = mockStore({
-    notifications: {}
-  });
-
   const { getByText } = renderWithRouter(
-    <Provider store={store}>
-      <Route
-        path="/clustertriggerbindings"
-        render={props => <ClusterTriggerBindings {...props} />}
-      />
-    </Provider>,
+    <Route
+      path="/clustertriggerbindings"
+      render={props => <ClusterTriggerBindings {...props} />}
+    />,
     { route: '/clustertriggerbindings' }
   );
 
@@ -64,17 +52,11 @@ it('ClusterTriggerBindings renders with one binding', () => {
     .spyOn(API, 'useClusterTriggerBindings')
     .mockImplementation(() => ({ data: [clusterTriggerBinding] }));
 
-  const store = mockStore({
-    notifications: {}
-  });
-
   const { queryByText } = renderWithRouter(
-    <Provider store={store}>
-      <Route
-        path="/clusterTriggerBindings"
-        render={props => <ClusterTriggerBindings {...props} />}
-      />
-    </Provider>,
+    <Route
+      path="/clusterTriggerBindings"
+      render={props => <ClusterTriggerBindings {...props} />}
+    />,
     { route: '/clusterTriggerBindings' }
   );
 
@@ -89,17 +71,15 @@ it('ClusterTriggerBindings can be filtered on a single label filter', async () =
       data: filters.length ? [] : [clusterTriggerBinding]
     }));
 
-  const store = mockStore({
-    notifications: {}
-  });
-
-  const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
-    <Provider store={store}>
-      <Route
-        path="/clustertriggerbindings"
-        render={props => <ClusterTriggerBindings {...props} />}
-      />
-    </Provider>,
+  const {
+    queryByText,
+    getByPlaceholderText,
+    getByText
+  } = renderWithRouter(
+    <Route
+      path="/clustertriggerbindings"
+      render={props => <ClusterTriggerBindings {...props} />}
+    />,
     { route: '/clustertriggerbindings' }
   );
 
@@ -117,17 +97,11 @@ it('ClusterTriggerBindings renders in loading state', () => {
     .spyOn(API, 'useClusterTriggerBindings')
     .mockImplementation(() => ({ isLoading: true }));
 
-  const store = mockStore({
-    notifications: {}
-  });
-
   const { queryByText } = renderWithRouter(
-    <Provider store={store}>
-      <Route
-        path="/clustertriggerbindings"
-        render={props => <ClusterTriggerBindings {...props} />}
-      />
-    </Provider>,
+    <Route
+      path="/clustertriggerbindings"
+      render={props => <ClusterTriggerBindings {...props} />}
+    />,
     { route: '/clustertriggerbindings' }
   );
 
@@ -142,17 +116,11 @@ it('ClusterTriggerBindings renders in error state', () => {
     .spyOn(API, 'useClusterTriggerBindings')
     .mockImplementation(() => ({ error }));
 
-  const store = mockStore({
-    notifications: {}
-  });
-
   const { queryByText } = renderWithRouter(
-    <Provider store={store}>
-      <Route
-        path="/clustertriggerbindings"
-        render={props => <ClusterTriggerBindings {...props} />}
-      />
-    </Provider>,
+    <Route
+      path="/clustertriggerbindings"
+      render={props => <ClusterTriggerBindings {...props} />}
+    />,
     { route: '/clustertriggerbindings' }
   );
 

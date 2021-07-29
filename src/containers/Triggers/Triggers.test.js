@@ -12,23 +12,12 @@ limitations under the License.
 */
 
 import React from 'react';
-import { Provider } from 'react-redux';
-import thunk from 'redux-thunk';
-import configureStore from 'redux-mock-store';
 import { Route } from 'react-router-dom';
 import { paths, urls } from '@tektoncd/dashboard-utils';
 
 import { renderWithRouter } from '../../utils/test';
 import * as API from '../../api/triggers';
 import TriggersContainer from './Triggers';
-
-const middleware = [thunk];
-const mockStore = configureStore(middleware);
-const testStore = {
-  notifications: {
-    webSocketConnected: false
-  }
-};
 
 describe('Triggers', () => {
   beforeEach(() => {
@@ -39,23 +28,17 @@ describe('Triggers', () => {
     jest
       .spyOn(API, 'useTriggers')
       .mockImplementation(() => ({ isLoading: true }));
-    const mockTestStore = mockStore({
-      notifications: {}
-    });
     const { queryByText } = renderWithRouter(
-      <Provider store={mockTestStore}>
-        <Route
-          path={paths.triggers.all()}
-          render={props => <TriggersContainer {...props} />}
-        />
-      </Provider>,
+      <Route
+        path={paths.triggers.all()}
+        render={props => <TriggersContainer {...props} />}
+      />,
       { route: urls.triggers.all() }
     );
     expect(queryByText('Triggers')).toBeTruthy();
   });
 
   it('renders resources', async () => {
-    const mockTestStore = mockStore(testStore);
     jest.spyOn(API, 'useTriggers').mockImplementation(() => ({
       data: [
         {
@@ -71,12 +54,10 @@ describe('Triggers', () => {
       ]
     }));
     const { queryByText } = renderWithRouter(
-      <Provider store={mockTestStore}>
-        <Route
-          path={paths.triggers.all()}
-          render={props => <TriggersContainer {...props} />}
-        />
-      </Provider>,
+      <Route
+        path={paths.triggers.all()}
+        render={props => <TriggersContainer {...props} />}
+      />,
       { route: urls.triggers.all() }
     );
 
@@ -88,16 +69,11 @@ describe('Triggers', () => {
     jest
       .spyOn(API, 'useTriggers')
       .mockImplementation(() => ({ error: errorMessage }));
-    const mockTestStore = mockStore({
-      ...testStore
-    });
     const { queryByText } = renderWithRouter(
-      <Provider store={mockTestStore}>
-        <Route
-          path={paths.triggers.all()}
-          render={props => <TriggersContainer {...props} />}
-        />
-      </Provider>,
+      <Route
+        path={paths.triggers.all()}
+        render={props => <TriggersContainer {...props} />}
+      />,
       { route: urls.triggers.all() }
     );
 

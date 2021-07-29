@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,12 +13,10 @@ limitations under the License.
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import * as ReactRedux from 'react-redux';
 import * as ReactRouterDOM from 'react-router-dom';
 import * as CarbonComponentsReact from 'carbon-components-react';
 
 window.CarbonComponentsReact = CarbonComponentsReact;
 window.React = React;
 window.ReactDOM = ReactDOM;
-window.ReactRedux = ReactRedux;
 window.ReactRouterDOM = ReactRouterDOM;

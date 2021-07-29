@@ -77,7 +77,7 @@ it('TriggerBindingContainer handles error state', async () => {
   };
 
   const { getByText } = renderWithRouter(
-    <TriggerBindingContainer intl={intl} match={match} />
+    <TriggerBindingContainer intl={intl} location={{}} match={match} />
   );
   await waitFor(() => getByText('Error loading resource'));
 });
@@ -93,7 +93,7 @@ it('TriggerBindingContainer renders details', async () => {
   };
 
   const { getByText } = renderWithRouter(
-    <TriggerBindingContainer intl={intl} match={match} />
+    <TriggerBindingContainer intl={intl} location={{}} match={match} />
   );
 
   await waitFor(() => getByText('trigger-binding-simple'));
@@ -146,7 +146,7 @@ it('TriggerBindingContainer does not render label section if they are not presen
   };
 
   const { getByText } = renderWithRouter(
-    <TriggerBindingContainer intl={intl} match={match} />
+    <TriggerBindingContainer intl={intl} location={{}} match={match} />
   );
 
   await waitFor(() => getByText('trigger-binding-simple'));
@@ -164,7 +164,7 @@ it('TriggerBindingContainer renders labels section if they are present', async (
   };
 
   const { getByText } = renderWithRouter(
-    <TriggerBindingContainer intl={intl} match={match} />
+    <TriggerBindingContainer intl={intl} location={{}} match={match} />
   );
 
   await waitFor(() => getByText('trigger-binding-labels'));

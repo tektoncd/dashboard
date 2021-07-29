@@ -13,15 +13,13 @@ limitations under the License.
 /* istanbul ignore file */
 
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import keyBy from 'lodash.keyby';
 import {
   ALL_NAMESPACES,
   getFilters,
   urls,
-  useTitleSync,
-  useWebSocketReconnected
+  useTitleSync
 } from '@tektoncd/dashboard-utils';
 import {
   DeleteModal,
@@ -36,10 +34,10 @@ import {
   usePipelineResources,
   useSelectedNamespace
 } from '../../api';
-import { isWebSocketConnected } from '../../reducers';
 
 export function PipelineResources(props) {
-  const { filters, history, intl, match, webSocketConnected } = props;
+  const { history, intl, location, match } = props;
+  const filters = getFilters(location);
 
   const { selectedNamespace } = useSelectedNamespace();
   const { namespace = selectedNamespace } = match.params;
@@ -56,11 +54,8 @@ export function PipelineResources(props) {
   const {
     data: pipelineResources = [],
     error,
-    isLoading,
-    refetch
+    isLoading
   } = usePipelineResources({ filters, namespace });
-
-  useWebSocketReconnected(refetch, webSocketConnected);
 
   function getError() {
     if (error) {
@@ -149,7 +144,12 @@ export function PipelineResources(props) {
       ];
 
   return (
-    <ListPageLayout {...props} error={getError()} title="PipelineResources">
+    <ListPageLayout
+      {...props}
+      error={getError()}
+      filters={filters}
+      title="PipelineResources"
+    >
       <PipelineResourcesList
         batchActionButtons={batchActionButtons}
         loading={isLoading}
@@ -170,13 +170,4 @@ export function PipelineResources(props) {
   );
 }
 
-function mapStateToProps(state, props) {
-  const filters = getFilters(props.location);
-
-  return {
-    filters,
-    webSocketConnected: isWebSocketConnected(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(PipelineResources));
+export default injectIntl(PipelineResources);

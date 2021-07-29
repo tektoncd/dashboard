@@ -12,38 +12,28 @@ limitations under the License.
 */
 
 import React from 'react';
-import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
-import {
-  getFilters,
-  urls,
-  useTitleSync,
-  useWebSocketReconnected
-} from '@tektoncd/dashboard-utils';
+import { getFilters, urls, useTitleSync } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 import { Link as CarbonLink } from 'carbon-components-react';
 
 import { ListPageLayout } from '..';
 import { useSelectedNamespace, useTriggerBindings } from '../../api';
-import { isWebSocketConnected } from '../../reducers';
 
 export function TriggerBindings(props) {
-  const { filters, intl, match, webSocketConnected } = props;
+  const { intl, location, match } = props;
+  const filters = getFilters(location);
 
   const { selectedNamespace } = useSelectedNamespace();
   const { namespace = selectedNamespace } = match.params;
 
   useTitleSync({ page: 'TriggerBindings' });
 
-  const {
-    data: triggerBindings = [],
-    error,
-    isLoading,
-    refetch
-  } = useTriggerBindings({ filters, namespace });
-
-  useWebSocketReconnected(refetch, webSocketConnected);
+  const { data: triggerBindings = [], error, isLoading } = useTriggerBindings({
+    filters,
+    namespace
+  });
 
   function getError() {
     if (error) {
@@ -93,7 +83,12 @@ export function TriggerBindings(props) {
   }));
 
   return (
-    <ListPageLayout {...props} error={getError()} title="TriggerBindings">
+    <ListPageLayout
+      {...props}
+      error={getError()}
+      filters={filters}
+      title="TriggerBindings"
+    >
       <Table
         headers={initialHeaders}
         rows={triggerBindingsFormatted}
@@ -119,13 +114,4 @@ export function TriggerBindings(props) {
   );
 }
 
-function mapStateToProps(state, props) {
-  const filters = getFilters(props.location);
-
-  return {
-    filters,
-    webSocketConnected: isWebSocketConnected(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(TriggerBindings));
+export default injectIntl(TriggerBindings);

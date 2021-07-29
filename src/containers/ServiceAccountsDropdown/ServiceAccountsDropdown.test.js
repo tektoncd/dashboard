@@ -13,9 +13,6 @@ limitations under the License.
 
 import React from 'react';
 import { fireEvent, getNodeText } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
 import { render } from '../../utils/test';
 
 import ServiceAccountsDropdown from './ServiceAccountsDropdown';
@@ -78,9 +75,6 @@ const checkDropdownItems = ({
   });
 };
 
-const middleware = [thunk];
-const mockStore = configureStore(middleware);
-
 describe('ServiceAccountsDropdown', () => {
   beforeEach(() => {
     jest.spyOn(API, 'useNamespaces').mockImplementation(() => ({
@@ -97,13 +91,8 @@ describe('ServiceAccountsDropdown', () => {
       .mockImplementation(() => ({
         data: [serviceAccount1, serviceAccount2]
       }));
-    const store = mockStore({
-      notifications: {}
-    });
     const { getByPlaceholderText, getAllByText, queryByText } = render(
-      <Provider store={store}>
-        <ServiceAccountsDropdown {...props} />
-      </Provider>
+      <ServiceAccountsDropdown {...props} />
     );
     // View items
     fireEvent.click(getByPlaceholderText(initialTextRegExp));
@@ -120,37 +109,27 @@ describe('ServiceAccountsDropdown', () => {
       .mockImplementation(() => ({
         data: [serviceAccount1, serviceAccount2]
       }));
-    const store = mockStore({
-      notifications: {}
-    });
     // Select item 'service-account-1'
     const { queryByPlaceholderText, queryByDisplayValue, rerender } = render(
-      <Provider store={store}>
-        <ServiceAccountsDropdown
-          {...props}
-          selectedItem={{ text: 'service-account-1' }}
-        />
-      </Provider>
+      <ServiceAccountsDropdown
+        {...props}
+        selectedItem={{ text: 'service-account-1' }}
+      />
     );
     expect(queryByDisplayValue(/service-account-1/i)).toBeTruthy();
     // Select item 'service-account-2'
     render(
-      <Provider store={store}>
-        <ServiceAccountsDropdown
-          {...props}
-          selectedItem={{ text: 'service-account-2' }}
-        />
-      </Provider>,
+      <ServiceAccountsDropdown
+        {...props}
+        selectedItem={{ text: 'service-account-2' }}
+      />,
       { rerender }
     );
     expect(queryByDisplayValue(/service-account-2/i)).toBeTruthy();
     // No selected item (select item '')
-    render(
-      <Provider store={store}>
-        <ServiceAccountsDropdown {...props} selectedItem="" />
-      </Provider>,
-      { rerender }
-    );
+    render(<ServiceAccountsDropdown {...props} selectedItem="" />, {
+      rerender
+    });
     expect(queryByPlaceholderText(initialTextRegExp)).toBeTruthy();
   });
 
@@ -160,14 +139,9 @@ describe('ServiceAccountsDropdown', () => {
       .mockImplementation(({ namespace }) => ({
         data: namespace === 'green' ? [serviceAccount3] : []
       }));
-    const store = mockStore({
-      notifications: {}
-    });
     // Select namespace 'green'
     const { queryByText, getByPlaceholderText, getAllByText } = render(
-      <Provider store={store}>
-        <ServiceAccountsDropdown {...props} namespace="green" />
-      </Provider>
+      <ServiceAccountsDropdown {...props} namespace="green" />
     );
     fireEvent.click(getByPlaceholderText(initialTextRegExp));
     checkDropdownItems({
@@ -181,14 +155,9 @@ describe('ServiceAccountsDropdown', () => {
     jest
       .spyOn(ServiceAccountsAPI, 'useServiceAccounts')
       .mockImplementation(() => ({ data: [] }));
-    const store = mockStore({
-      notifications: {}
-    });
     // Select item 'service-account-1'
     const { queryByPlaceholderText } = render(
-      <Provider store={store}>
-        <ServiceAccountsDropdown {...props} />
-      </Provider>
+      <ServiceAccountsDropdown {...props} />
     );
     expect(
       queryByPlaceholderText(
@@ -198,18 +167,11 @@ describe('ServiceAccountsDropdown', () => {
     expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
   });
 
-  it('renders loading skeleton based on Redux state', () => {
+  it('renders loading skeleton', () => {
     jest
       .spyOn(ServiceAccountsAPI, 'useServiceAccounts')
       .mockImplementation(() => ({ isFetching: true }));
-    const store = mockStore({
-      notifications: {}
-    });
-    const { queryByText } = render(
-      <Provider store={store}>
-        <ServiceAccountsDropdown {...props} />
-      </Provider>
-    );
+    const { queryByText } = render(<ServiceAccountsDropdown {...props} />);
     expect(queryByText(initialTextRegExp)).toBeFalsy();
   });
 
@@ -219,14 +181,9 @@ describe('ServiceAccountsDropdown', () => {
       .mockImplementation(() => ({
         data: [serviceAccount1, serviceAccount2]
       }));
-    const store = mockStore({
-      notifications: {}
-    });
     const onChange = jest.fn();
     const { getByPlaceholderText, getByText } = render(
-      <Provider store={store}>
-        <ServiceAccountsDropdown {...props} onChange={onChange} />
-      </Provider>
+      <ServiceAccountsDropdown {...props} onChange={onChange} />
     );
     fireEvent.click(getByPlaceholderText(initialTextRegExp));
     fireEvent.click(getByText(/service-account-1/i));

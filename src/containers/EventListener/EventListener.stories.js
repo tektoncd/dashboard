@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,16 +12,20 @@ limitations under the License.
 */
 
 import React from 'react';
-
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { createIntl } from 'react-intl';
+
 import { EventListenerContainer } from './EventListener';
+
+const name = 'my-eventlistener';
+const namespace = 'foo';
 
 const eventListener = {
   apiVersion: 'triggers.tekton.dev/v1alpha1',
   kind: 'EventListener',
   metadata: {
-    name: 'my-eventlistener',
-    namespace: 'foo',
+    name,
+    namespace,
     creationTimestamp: '2020-01-31T16:39:21Z',
     labels: {
       foo: 'bar',
@@ -120,17 +124,28 @@ const eventListener = {
 };
 const match = {
   params: {
-    namespace: 'foo',
-    eventListenerName: 'my-eventlistener'
+    namespace,
+    eventListenerName: name
   }
 };
 const intl = createIntl({
   locale: 'en',
   defaultLocale: 'en'
 });
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      cacheTime: 1000 * 60 * 5, // 5 minutes
+      refetchOnWindowFocus: false,
+      retry: false,
+      staleTime: Infinity
+    }
+  }
+});
+
 const props = {
-  fetchEventListener: () => Promise.resolve(eventListener),
-  eventListener,
+  location: {},
   match,
   intl
 };
@@ -141,26 +156,52 @@ export default {
 };
 
 export const Base = () => <EventListenerContainer {...props} />;
+Base.decorators = [
+  storyFn => {
+    queryClient.setQueryData(
+      ['EventListener', { name, namespace }],
+      eventListener
+    );
 
-export const NoTriggers = () => (
-  <EventListenerContainer
-    {...props}
-    eventListener={{
+    return (
+      <QueryClientProvider client={queryClient}>
+        {storyFn()}
+      </QueryClientProvider>
+    );
+  }
+];
+
+export const NoTriggers = () => <EventListenerContainer {...props} />;
+NoTriggers.decorators = [
+  storyFn => {
+    queryClient.setQueryData(['EventListener', { name, namespace }], {
       ...eventListener,
       spec: { ...eventListener.spec, triggers: [] }
-    }}
-  />
-);
+    });
 
-export const NoServiceAccount = () => (
-  <EventListenerContainer
-    {...props}
-    eventListener={{
+    return (
+      <QueryClientProvider client={queryClient}>
+        {storyFn()}
+      </QueryClientProvider>
+    );
+  }
+];
+
+export const NoServiceAccount = () => <EventListenerContainer {...props} />;
+NoServiceAccount.decorators = [
+  storyFn => {
+    queryClient.setQueryData(['EventListener', { name, namespace }], {
       ...eventListener,
       spec: { ...eventListener.spec, serviceAccountName: undefined }
-    }}
-  />
-);
+    });
+
+    return (
+      <QueryClientProvider client={queryClient}>
+        {storyFn()}
+      </QueryClientProvider>
+    );
+  }
+];
 NoServiceAccount.storyName = 'No ServiceAccount';
 
 export const NoServiceType = () => (
@@ -172,3 +213,17 @@ export const NoServiceType = () => (
     }}
   />
 );
+NoServiceType.decorators = [
+  storyFn => {
+    queryClient.setQueryData(['EventListener', { name, namespace }], {
+      ...eventListener,
+      spec: { ...eventListener.spec, serviceType: undefined }
+    });
+
+    return (
+      <QueryClientProvider client={queryClient}>
+        {storyFn()}
+      </QueryClientProvider>
+    );
+  }
+];

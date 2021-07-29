@@ -13,34 +13,25 @@ limitations under the License.
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
-import {
-  getFilters,
-  urls,
-  useTitleSync,
-  useWebSocketReconnected
-} from '@tektoncd/dashboard-utils';
+import { getFilters, urls, useTitleSync } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 import { Link as CarbonLink } from 'carbon-components-react';
 
 import { ListPageLayout } from '..';
 import { useClusterInterceptors } from '../../api';
-import { isWebSocketConnected as selectIsWebSocketConnected } from '../../reducers';
 
 function ClusterInterceptors(props) {
-  const { filters, intl, webSocketConnected } = props;
+  const { intl, location } = props;
+  const filters = getFilters(location);
 
   useTitleSync({ page: 'ClusterInterceptors' });
 
   const {
     data: clusterInterceptors = [],
     error,
-    isLoading,
-    refetch
+    isLoading
   } = useClusterInterceptors({ filters });
-
-  useWebSocketReconnected(refetch, webSocketConnected);
 
   function getError() {
     if (error) {
@@ -104,6 +95,7 @@ function ClusterInterceptors(props) {
     <ListPageLayout
       {...props}
       error={getError()}
+      filters={filters}
       hideNamespacesDropdown
       title="ClusterInterceptors"
     >
@@ -130,12 +122,4 @@ function ClusterInterceptors(props) {
   );
 }
 
-/* istanbul ignore next */
-function mapStateToProps(state, props) {
-  return {
-    filters: getFilters(props.location),
-    webSocketConnected: selectIsWebSocketConnected(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(ClusterInterceptors));
+export default injectIntl(ClusterInterceptors);

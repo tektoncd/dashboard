@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { injectIntl } from 'react-intl';
 import { DataTable } from 'carbon-components-react';
@@ -21,12 +20,8 @@ import {
   ResourceDetails,
   ViewYAML
 } from '@tektoncd/dashboard-components';
-import {
-  useTitleSync,
-  useWebSocketReconnected
-} from '@tektoncd/dashboard-utils';
+import { useTitleSync } from '@tektoncd/dashboard-utils';
 
-import { isWebSocketConnected } from '../../reducers';
 import { useSelectedNamespace, useTriggerTemplate } from '../../api';
 import { getViewChangeHandler } from '../../utils';
 
@@ -44,8 +39,11 @@ const {
 } = DataTable;
 
 export /* istanbul ignore next */ function TriggerTemplateContainer(props) {
-  const { intl, match, view, webSocketConnected } = props;
+  const { intl, location, match } = props;
   const { namespace, triggerTemplateName: resourceName } = match.params;
+
+  const queryParams = new URLSearchParams(location.search);
+  const view = queryParams.get('view');
 
   const { selectedNamespace: defaultNamespace } = useSelectedNamespace();
   const selectedNamespace = namespace || defaultNamespace;
@@ -55,14 +53,10 @@ export /* istanbul ignore next */ function TriggerTemplateContainer(props) {
     resourceName
   });
 
-  const {
-    data: triggerTemplate,
-    error,
-    isFetching,
-    refetch
-  } = useTriggerTemplate({ name: resourceName, namespace });
-
-  useWebSocketReconnected(refetch, webSocketConnected);
+  const { data: triggerTemplate, error, isFetching } = useTriggerTemplate({
+    name: resourceName,
+    namespace
+  });
 
   function getContent() {
     if (!triggerTemplate) {
@@ -229,17 +223,4 @@ TriggerTemplateContainer.propTypes = {
   }).isRequired
 };
 
-/* istanbul ignore next */
-function mapStateToProps(state, ownProps) {
-  const { location } = ownProps;
-
-  const queryParams = new URLSearchParams(location.search);
-  const view = queryParams.get('view');
-
-  return {
-    view,
-    webSocketConnected: isWebSocketConnected(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(TriggerTemplateContainer));
+export default injectIntl(TriggerTemplateContainer);

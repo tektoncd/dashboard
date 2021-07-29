@@ -13,16 +13,12 @@ limitations under the License.
 
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import { connect } from 'react-redux';
 import { TooltipDropdown } from '@tektoncd/dashboard-components';
-import { useWebSocketReconnected } from '@tektoncd/dashboard-utils';
 
-import { isWebSocketConnected } from '../../reducers';
 import { useClusterTasks } from '../../api';
 
-function ClusterTasksDropdown({ intl, label, webSocketConnected, ...rest }) {
-  const { data: clusterTasks = [], isFetching, refetch } = useClusterTasks();
-  useWebSocketReconnected(refetch, webSocketConnected);
+function ClusterTasksDropdown({ intl, label, ...rest }) {
+  const { data: clusterTasks = [], isFetching } = useClusterTasks();
 
   const items = clusterTasks.map(clusterTask => clusterTask.metadata.name);
 
@@ -53,10 +49,4 @@ ClusterTasksDropdown.defaultProps = {
   titleText: 'ClusterTask'
 };
 
-function mapStateToProps(state) {
-  return {
-    webSocketConnected: isWebSocketConnected(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(ClusterTasksDropdown));
+export default injectIntl(ClusterTasksDropdown);

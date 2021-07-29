@@ -13,9 +13,6 @@ limitations under the License.
 
 import React from 'react';
 import { fireEvent, getNodeText } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 import { render } from '../../utils/test';
 
@@ -71,9 +68,6 @@ const checkDropdownItems = ({
   });
 };
 
-const middleware = [thunk];
-const mockStore = configureStore(middleware);
-
 describe('TasksDropdown', () => {
   beforeEach(() => {
     jest.spyOn(API, 'useNamespaces').mockImplementation(() => ({
@@ -88,13 +82,8 @@ describe('TasksDropdown', () => {
     jest
       .spyOn(TasksAPI, 'useTasks')
       .mockImplementation(() => ({ data: tasks }));
-    const store = mockStore({
-      notifications: {}
-    });
     const { getByPlaceholderText, getAllByText, queryByText } = render(
-      <Provider store={store}>
-        <TasksDropdown {...props} />
-      </Provider>
+      <TasksDropdown {...props} />
     );
     // View items
     fireEvent.click(getByPlaceholderText(initialTextRegExp));
@@ -109,44 +98,24 @@ describe('TasksDropdown', () => {
     jest
       .spyOn(TasksAPI, 'useTasks')
       .mockImplementation(() => ({ data: tasks }));
-    const store = mockStore({
-      notifications: {}
-    });
     // Select item 'task-1'
     const { queryByDisplayValue, queryByPlaceholderText, rerender } = render(
-      <Provider store={store}>
-        <TasksDropdown {...props} selectedItem={{ text: 'task-1' }} />
-      </Provider>
+      <TasksDropdown {...props} selectedItem={{ text: 'task-1' }} />
     );
     expect(queryByDisplayValue(/task-1/i)).toBeTruthy();
     // Select item 'task-2'
-    render(
-      <Provider store={store}>
-        <TasksDropdown {...props} selectedItem={{ text: 'task-2' }} />
-      </Provider>,
-      { rerender }
-    );
+    render(<TasksDropdown {...props} selectedItem={{ text: 'task-2' }} />, {
+      rerender
+    });
     expect(queryByDisplayValue(/task-2/i)).toBeTruthy();
     // No selected item (select item '')
-    render(
-      <Provider store={store}>
-        <TasksDropdown {...props} selectedItem="" />
-      </Provider>,
-      { rerender }
-    );
+    render(<TasksDropdown {...props} selectedItem="" />, { rerender });
     expect(queryByPlaceholderText(initialTextRegExp)).toBeTruthy();
   });
 
   it('renders empty', () => {
     jest.spyOn(TasksAPI, 'useTasks').mockImplementation(() => ({ data: [] }));
-    const store = mockStore({
-      notifications: {}
-    });
-    const { queryByPlaceholderText } = render(
-      <Provider store={store}>
-        <TasksDropdown {...props} />
-      </Provider>
-    );
+    const { queryByPlaceholderText } = render(<TasksDropdown {...props} />);
     expect(
       queryByPlaceholderText(/no tasks found in the 'blue' namespace/i)
     ).toBeTruthy();
@@ -155,13 +124,8 @@ describe('TasksDropdown', () => {
 
   it('for all namespaces renders empty', () => {
     jest.spyOn(TasksAPI, 'useTasks').mockImplementation(() => ({ data: [] }));
-    const store = mockStore({
-      notifications: {}
-    });
     const { queryByPlaceholderText } = render(
-      <Provider store={store}>
-        <TasksDropdown {...props} namespace={ALL_NAMESPACES} />
-      </Provider>
+      <TasksDropdown {...props} namespace={ALL_NAMESPACES} />
     );
     expect(queryByPlaceholderText(/no tasks found/i)).toBeTruthy();
     expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
@@ -171,14 +135,7 @@ describe('TasksDropdown', () => {
     jest
       .spyOn(TasksAPI, 'useTasks')
       .mockImplementation(() => ({ isFetching: true }));
-    const store = mockStore({
-      notifications: {}
-    });
-    const { queryByPlaceholderText } = render(
-      <Provider store={store}>
-        <TasksDropdown {...props} />
-      </Provider>
-    );
+    const { queryByPlaceholderText } = render(<TasksDropdown {...props} />);
     expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
   });
 
@@ -186,14 +143,9 @@ describe('TasksDropdown', () => {
     jest
       .spyOn(TasksAPI, 'useTasks')
       .mockImplementation(() => ({ data: tasks }));
-    const store = mockStore({
-      notifications: {}
-    });
     const onChange = jest.fn();
     const { getByPlaceholderText, getByText } = render(
-      <Provider store={store}>
-        <TasksDropdown {...props} onChange={onChange} />
-      </Provider>
+      <TasksDropdown {...props} onChange={onChange} />
     );
     fireEvent.click(getByPlaceholderText(initialTextRegExp));
     fireEvent.click(getByText(/task-1/i));

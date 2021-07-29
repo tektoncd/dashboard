@@ -13,10 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import { fireEvent } from '@testing-library/react';
-import { Provider } from 'react-redux';
 import { Route } from 'react-router-dom';
-import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
 import { renderWithRouter } from '../../utils/test';
@@ -24,9 +21,6 @@ import TriggerBindings from '.';
 import * as API from '../../api';
 import * as APIUtils from '../../api/utils';
 import * as TriggerBindingsAPI from '../../api/triggerBindings';
-
-const middleware = [thunk];
-const mockStore = configureStore(middleware);
 
 const triggerBinding = {
   apiVersion: 'triggers.tekton.dev/v1alpha1',
@@ -54,17 +48,11 @@ describe('TriggerBindings', () => {
       .spyOn(TriggerBindingsAPI, 'useTriggerBindings')
       .mockImplementation(() => ({ data: [] }));
 
-    const store = mockStore({
-      notifications: {}
-    });
-
     const { getByText } = renderWithRouter(
-      <Provider store={store}>
-        <Route
-          path="/triggerbindings"
-          render={props => <TriggerBindings {...props} />}
-        />
-      </Provider>,
+      <Route
+        path="/triggerbindings"
+        render={props => <TriggerBindings {...props} />}
+      />,
       { route: '/triggerbindings' }
     );
 
@@ -77,17 +65,11 @@ describe('TriggerBindings', () => {
       .spyOn(TriggerBindingsAPI, 'useTriggerBindings')
       .mockImplementation(() => ({ data: [triggerBinding] }));
 
-    const store = mockStore({
-      notifications: {}
-    });
-
     const { queryByText } = renderWithRouter(
-      <Provider store={store}>
-        <Route
-          path="/triggerbindings"
-          render={props => <TriggerBindings {...props} />}
-        />
-      </Provider>,
+      <Route
+        path="/triggerbindings"
+        render={props => <TriggerBindings {...props} />}
+      />,
       { route: '/triggerbindings' }
     );
 
@@ -103,17 +85,15 @@ describe('TriggerBindings', () => {
         data: filters.length ? [] : [triggerBinding]
       }));
 
-    const store = mockStore({
-      notifications: {}
-    });
-
-    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
-      <Provider store={store}>
-        <Route
-          path="/triggerbindings"
-          render={props => <TriggerBindings {...props} />}
-        />
-      </Provider>,
+    const {
+      queryByText,
+      getByPlaceholderText,
+      getByText
+    } = renderWithRouter(
+      <Route
+        path="/triggerbindings"
+        render={props => <TriggerBindings {...props} />}
+      />,
       { route: '/triggerbindings' }
     );
 
@@ -131,17 +111,11 @@ describe('TriggerBindings', () => {
       .spyOn(TriggerBindingsAPI, 'useTriggerBindings')
       .mockImplementation(() => ({ isLoading: true }));
 
-    const store = mockStore({
-      notifications: {}
-    });
-
     const { queryByText } = renderWithRouter(
-      <Provider store={store}>
-        <Route
-          path="/triggerbindings"
-          render={props => <TriggerBindings {...props} />}
-        />
-      </Provider>,
+      <Route
+        path="/triggerbindings"
+        render={props => <TriggerBindings {...props} />}
+      />,
       { route: '/triggerbindings' }
     );
 
@@ -156,17 +130,11 @@ describe('TriggerBindings', () => {
       .spyOn(TriggerBindingsAPI, 'useTriggerBindings')
       .mockImplementation(() => ({ error }));
 
-    const store = mockStore({
-      notifications: {}
-    });
-
     const { queryByText } = renderWithRouter(
-      <Provider store={store}>
-        <Route
-          path="/triggerbindings"
-          render={props => <TriggerBindings {...props} />}
-        />
-      </Provider>,
+      <Route
+        path="/triggerbindings"
+        render={props => <TriggerBindings {...props} />}
+      />,
       { route: '/triggerbindings' }
     );
 

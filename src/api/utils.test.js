@@ -233,12 +233,15 @@ describe('useWebSocket', () => {
     const name = 'resource-name';
 
     const existingResource = {
+      kind,
       metadata: { name, uid: 'existing-id', resourceVersion: '10' }
     };
     const staleResource = {
+      kind,
       metadata: { ...existingResource.metadata, resourceVersion: '9' }
     };
     const updatedResource = {
+      kind,
       metadata: { ...existingResource.metadata, resourceVersion: '11' }
     };
 
@@ -321,9 +324,11 @@ describe('useCollection', () => {
     const webSocket = getWebSocket();
 
     const existingResource = {
+      kind,
       metadata: { uid: 'existing-id', resourceVersion: '10' }
     };
     const updatedResource = {
+      kind,
       metadata: { ...existingResource.metadata, resourceVersion: '11' }
     };
 
@@ -359,9 +364,11 @@ describe('useResource', () => {
 
     const name = 'resource-name';
     const existingResource = {
+      kind,
       metadata: { name, uid: 'existing-id', resourceVersion: '10' }
     };
     const updatedResource = {
+      kind,
       metadata: { ...existingResource.metadata, resourceVersion: '11' }
     };
 

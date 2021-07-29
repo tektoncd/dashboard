@@ -13,34 +13,26 @@ limitations under the License.
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
-import {
-  getFilters,
-  urls,
-  useTitleSync,
-  useWebSocketReconnected
-} from '@tektoncd/dashboard-utils';
+import { getFilters, urls, useTitleSync } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 import { Link as CarbonLink } from 'carbon-components-react';
 
 import { ListPageLayout } from '..';
 import { useSelectedNamespace, useTriggers } from '../../api';
-import { isWebSocketConnected as selectIsWebSocketConnected } from '../../reducers';
 
 function Triggers(props) {
-  const { filters, intl, match, webSocketConnected } = props;
+  const { intl, location, match } = props;
   useTitleSync({ page: 'Triggers' });
 
+  const filters = getFilters(location);
   const { selectedNamespace } = useSelectedNamespace();
   const { namespace = selectedNamespace } = match.params;
 
-  const { data: triggers = [], error, isLoading, refetch } = useTriggers({
+  const { data: triggers = [], error, isLoading } = useTriggers({
     filters,
     namespace
   });
-
-  useWebSocketReconnected(refetch, webSocketConnected);
 
   function getError() {
     if (error) {
@@ -101,7 +93,12 @@ function Triggers(props) {
   }));
 
   return (
-    <ListPageLayout {...props} error={getError()} title="Triggers">
+    <ListPageLayout
+      {...props}
+      error={getError()}
+      filters={filters}
+      title="Triggers"
+    >
       <Table
         headers={headers}
         rows={triggersFormatted}
@@ -127,14 +124,4 @@ function Triggers(props) {
   );
 }
 
-/* istanbul ignore next */
-function mapStateToProps(state, props) {
-  const filters = getFilters(props.location);
-
-  return {
-    filters,
-    webSocketConnected: selectIsWebSocketConnected(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(Triggers));
+export default injectIntl(Triggers);

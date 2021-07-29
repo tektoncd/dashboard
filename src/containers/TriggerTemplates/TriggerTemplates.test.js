@@ -13,10 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import { fireEvent } from '@testing-library/react';
-import { Provider } from 'react-redux';
 import { Route } from 'react-router-dom';
-import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
 import { renderWithRouter } from '../../utils/test';
@@ -24,9 +21,6 @@ import TriggerTemplates from '.';
 import * as API from '../../api';
 import * as APIUtils from '../../api/utils';
 import * as TriggerTemplatesAPI from '../../api/triggerTemplates';
-
-const middleware = [thunk];
-const mockStore = configureStore(middleware);
 
 const triggerTemplate = {
   apiVersion: 'triggers.tekton.dev/v1alpha1',
@@ -50,17 +44,12 @@ it('TriggerTemplates renders with no templates', () => {
   jest
     .spyOn(APIUtils, 'useSelectedNamespace')
     .mockImplementation(() => ({ selectedNamespace: ALL_NAMESPACES }));
-  const store = mockStore({
-    notifications: {}
-  });
 
   const { queryByText } = renderWithRouter(
-    <Provider store={store}>
-      <Route
-        path="/triggerTemplates"
-        render={props => <TriggerTemplates {...props} />}
-      />
-    </Provider>,
+    <Route
+      path="/triggerTemplates"
+      render={props => <TriggerTemplates {...props} />}
+    />,
     { route: '/triggerTemplates' }
   );
 
@@ -73,17 +62,11 @@ it('TriggerTemplates renders with one template', () => {
     .spyOn(TriggerTemplatesAPI, 'useTriggerTemplates')
     .mockImplementation(() => ({ data: [triggerTemplate] }));
 
-  const store = mockStore({
-    notifications: {}
-  });
-
   const { queryByText } = renderWithRouter(
-    <Provider store={store}>
-      <Route
-        path="/triggerTemplates"
-        render={props => <TriggerTemplates {...props} />}
-      />
-    </Provider>,
+    <Route
+      path="/triggerTemplates"
+      render={props => <TriggerTemplates {...props} />}
+    />,
     { route: '/triggerTemplates' }
   );
 
@@ -99,17 +82,15 @@ it('TriggerTemplates can be filtered on a single label filter', async () => {
       data: filters.length ? [] : [triggerTemplate]
     }));
 
-  const store = mockStore({
-    notifications: {}
-  });
-
-  const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
-    <Provider store={store}>
-      <Route
-        path="/triggerTemplates"
-        render={props => <TriggerTemplates {...props} />}
-      />
-    </Provider>,
+  const {
+    queryByText,
+    getByPlaceholderText,
+    getByText
+  } = renderWithRouter(
+    <Route
+      path="/triggerTemplates"
+      render={props => <TriggerTemplates {...props} />}
+    />,
     { route: '/triggerTemplates' }
   );
 
@@ -127,17 +108,11 @@ it('TriggerTemplates renders in loading state', () => {
     .spyOn(TriggerTemplatesAPI, 'useTriggerTemplates')
     .mockImplementation(() => ({ isLoading: true }));
 
-  const store = mockStore({
-    notifications: {}
-  });
-
   const { queryByText } = renderWithRouter(
-    <Provider store={store}>
-      <Route
-        path="/triggerTemplates"
-        render={props => <TriggerTemplates {...props} />}
-      />
-    </Provider>,
+    <Route
+      path="/triggerTemplates"
+      render={props => <TriggerTemplates {...props} />}
+    />,
     { route: '/triggerTemplates' }
   );
 
@@ -151,17 +126,11 @@ it('TriggerTemplates renders in error state', () => {
     .spyOn(TriggerTemplatesAPI, 'useTriggerTemplates')
     .mockImplementation(() => ({ error }));
 
-  const store = mockStore({
-    notifications: {}
-  });
-
   const { queryByText } = renderWithRouter(
-    <Provider store={store}>
-      <Route
-        path="/triggerTemplates"
-        render={props => <TriggerTemplates {...props} />}
-      />
-    </Provider>,
+    <Route
+      path="/triggerTemplates"
+      render={props => <TriggerTemplates {...props} />}
+    />,
     { route: '/triggerTemplates' }
   );
 

@@ -13,7 +13,6 @@ limitations under the License.
 
 import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { PipelineRun, RunAction } from '@tektoncd/dashboard-components';
 import {
   getTaskRunsWithPlaceholders,
@@ -21,14 +20,12 @@ import {
   pipelineRunStatuses,
   queryParams as queryParamConstants,
   urls,
-  useTitleSync,
-  useWebSocketReconnected
+  useTitleSync
 } from '@tektoncd/dashboard-utils';
 import { InlineNotification } from 'carbon-components-react';
 import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 
-import { isWebSocketConnected } from '../../reducers';
 import {
   rerunPipelineRun,
   startPipelineRun,
@@ -51,19 +48,15 @@ import {
 const { PIPELINE_TASK, RETRY, STEP, VIEW } = queryParamConstants;
 
 export /* istanbul ignore next */ function PipelineRunContainer(props) {
-  const {
-    history,
-    intl,
-    location,
-    match,
-    pipelineTaskName: currentPipelineTaskName,
-    retry: currentRetry,
-    selectedStepId: currentSelectedStepId,
-    view,
-    webSocketConnected
-  } = props;
+  const { history, intl, location, match } = props;
 
   const { namespace, pipelineRunName } = match.params;
+
+  const queryParams = new URLSearchParams(location.search);
+  const currentPipelineTaskName = queryParams.get(PIPELINE_TASK);
+  const currentRetry = queryParams.get(RETRY);
+  const currentSelectedStepId = queryParams.get(STEP);
+  const view = queryParams.get(VIEW);
 
   const maximizedLogsContainer = useRef();
   const [showRunActionNotification, setShowRunActionNotification] = useState(
@@ -82,15 +75,13 @@ export /* istanbul ignore next */ function PipelineRunContainer(props) {
   const {
     data: pipelineRun,
     error: pipelineRunError,
-    isLoading: isLoadingPipelineRun,
-    refetch: refetchPipelineRun
+    isLoading: isLoadingPipelineRun
   } = usePipelineRun({ name: pipelineRunName, namespace });
 
   const {
     data: taskRunsResponse = [],
     error: taskRunsError,
-    isLoading: isLoadingTaskRuns,
-    refetch: refetchTaskRuns
+    isLoading: isLoadingTaskRuns
   } = useTaskRuns({
     filters: [`${labelConstants.PIPELINE_RUN}=${pipelineRunName}`],
     namespace
@@ -100,21 +91,15 @@ export /* istanbul ignore next */ function PipelineRunContainer(props) {
   const {
     data: tasks = [],
     error: tasksError,
-    isLoading: isLoadingTasks,
-    refetch: refetchTasks
+    isLoading: isLoadingTasks
   } = useTasks({ namespace });
   const {
     data: clusterTasks = [],
-    isLoading: isLoadingClusterTasks,
-    refetch: refetchClusterTasks
+    isLoading: isLoadingClusterTasks
   } = useClusterTasks();
 
   const pipelineName = pipelineRun?.spec.pipelineRef?.name;
-  const {
-    data: pipeline,
-    isLoading: isLoadingPipeline,
-    refetch: refetchPipeline
-  } = usePipeline(
+  const { data: pipeline, isLoading: isLoadingPipeline } = usePipeline(
     { name: pipelineName, namespace },
     { enabled: !!pipelineName }
   );
@@ -128,16 +113,6 @@ export /* istanbul ignore next */ function PipelineRunContainer(props) {
     taskRuns: taskRunsResponse,
     tasks
   });
-
-  function refetchData() {
-    refetchPipelineRun();
-    refetchTaskRuns();
-    refetchTasks();
-    refetchClusterTasks();
-    refetchPipeline();
-  }
-
-  useWebSocketReconnected(refetchData, webSocketConnected);
 
   function getSelectedTaskId(pipelineTaskName, retry) {
     const taskRun = taskRuns.find(
@@ -194,7 +169,6 @@ export /* istanbul ignore next */ function PipelineRunContainer(props) {
 
   function handleTaskSelected(selectedTaskId, selectedStepId) {
     const { pipelineTaskName, retry } = getSelectedTaskRun(selectedTaskId);
-    const queryParams = new URLSearchParams(location.search);
 
     queryParams.set(PIPELINE_TASK, pipelineTaskName);
     if (selectedStepId) {
@@ -343,25 +317,4 @@ PipelineRunContainer.propTypes = {
   }).isRequired
 };
 
-/* istanbul ignore next */
-function mapStateToProps(state, ownProps) {
-  const { location, match } = ownProps;
-  const { namespace } = match.params;
-
-  const queryParams = new URLSearchParams(location.search);
-  const pipelineTaskName = queryParams.get(PIPELINE_TASK);
-  const retry = queryParams.get(RETRY);
-  const selectedStepId = queryParams.get(STEP);
-  const view = queryParams.get(VIEW);
-
-  return {
-    namespace,
-    pipelineTaskName,
-    retry,
-    selectedStepId,
-    view,
-    webSocketConnected: isWebSocketConnected(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(PipelineRunContainer));
+export default injectIntl(PipelineRunContainer);

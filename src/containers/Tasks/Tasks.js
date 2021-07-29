@@ -10,10 +10,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+/* istanbul ignore file */
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import keyBy from 'lodash.keyby';
 import { Button, Link as CarbonLink } from 'carbon-components-react';
@@ -21,8 +21,7 @@ import {
   ALL_NAMESPACES,
   getFilters,
   urls,
-  useTitleSync,
-  useWebSocketReconnected
+  useTitleSync
 } from '@tektoncd/dashboard-utils';
 import {
   DeleteModal,
@@ -41,11 +40,9 @@ import {
   useSelectedNamespace,
   useTasks
 } from '../../api';
-import { isWebSocketConnected } from '../../reducers';
 
-/* istanbul ignore next */
 function Tasks(props) {
-  const { filters, intl, match, webSocketConnected } = props;
+  const { intl, location, match } = props;
 
   const { selectedNamespace } = useSelectedNamespace();
   const { namespace = selectedNamespace } = match.params;
@@ -54,10 +51,11 @@ function Tasks(props) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [toBeDeleted, setToBeDeleted] = useState([]);
   const [cancelSelection, setCancelSelection] = useState(null);
+  const filters = getFilters(location);
 
   const isReadOnly = useIsReadOnly();
 
-  const { data: tasks = [], error, isLoading, refetch } = useTasks({
+  const { data: tasks = [], error, isLoading } = useTasks({
     filters,
     namespace
   });
@@ -84,8 +82,6 @@ function Tasks(props) {
   }
 
   useTitleSync({ page: 'Tasks' });
-
-  useWebSocketReconnected(refetch, webSocketConnected);
 
   function closeDeleteModal() {
     setShowDeleteModal(false);
@@ -224,7 +220,12 @@ function Tasks(props) {
   }));
 
   return (
-    <ListPageLayout {...props} error={getError()} title="Tasks">
+    <ListPageLayout
+      {...props}
+      error={getError()}
+      filters={filters}
+      title="Tasks"
+    >
       <Table
         batchActionButtons={batchActionButtons}
         className="tkn--table--inline-actions"
@@ -261,18 +262,4 @@ function Tasks(props) {
   );
 }
 
-Tasks.defaultProps = {
-  filters: []
-};
-
-/* istanbul ignore next */
-function mapStateToProps(state, props) {
-  const filters = getFilters(props.location);
-
-  return {
-    filters,
-    webSocketConnected: isWebSocketConnected(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(Tasks));
+export default injectIntl(Tasks);

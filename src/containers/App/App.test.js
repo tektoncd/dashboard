@@ -12,10 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { Provider } from 'react-redux';
 import { waitFor } from '@testing-library/react';
-import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
 
 import { App } from './App';
 import { render } from '../../utils/test';
@@ -34,16 +31,7 @@ describe('App', () => {
   });
 
   it('renders successfully in full cluster mode', async () => {
-    const middleware = [thunk];
-    const mockStore = configureStore(middleware);
-    const store = mockStore({
-      notifications: {}
-    });
-    const { queryByText } = render(
-      <Provider store={store}>
-        <App lang="en" />
-      </Provider>
-    );
+    const { queryByText } = render(<App lang="en" />);
 
     await waitFor(() => queryByText('Tekton resources'));
 
@@ -54,16 +42,7 @@ describe('App', () => {
 
   it('renders successfully in single namespace mode', async () => {
     jest.spyOn(API, 'useTenantNamespace').mockImplementation(() => 'fake');
-    const middleware = [thunk];
-    const mockStore = configureStore(middleware);
-    const store = mockStore({
-      notifications: {}
-    });
-    const { queryByText } = render(
-      <Provider store={store}>
-        <App />
-      </Provider>
-    );
+    const { queryByText } = render(<App />);
 
     await waitFor(() => queryByText('Tekton resources'));
 
@@ -73,18 +52,9 @@ describe('App', () => {
   });
 
   it('does not call namespaces API in single namespace mode', async () => {
-    const middleware = [thunk];
-    const mockStore = configureStore(middleware);
-    const store = mockStore({
-      notifications: {}
-    });
     jest.spyOn(API, 'getNamespaces');
     jest.spyOn(API, 'useTenantNamespace').mockImplementation(() => 'fake');
-    const { queryByText } = render(
-      <Provider store={store}>
-        <App />
-      </Provider>
-    );
+    const { queryByText } = render(<App />);
 
     await waitFor(() => queryByText('Tekton resources'));
     expect(API.useNamespaces).toHaveBeenCalledWith(
@@ -93,17 +63,8 @@ describe('App', () => {
   });
 
   it('calls namespaces API in full cluster mode', async () => {
-    const middleware = [thunk];
-    const mockStore = configureStore(middleware);
-    const store = mockStore({
-      notifications: {}
-    });
     jest.spyOn(API, 'getNamespaces');
-    const { queryByText } = render(
-      <Provider store={store}>
-        <App />
-      </Provider>
-    );
+    const { queryByText } = render(<App />);
 
     await waitFor(() => queryByText('Tekton resources'));
     await waitFor(() =>

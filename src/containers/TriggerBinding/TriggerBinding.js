@@ -12,22 +12,20 @@ limitations under the License.
 */
 
 import React from 'react';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { injectIntl } from 'react-intl';
 import { ResourceDetails, Table } from '@tektoncd/dashboard-components';
-import {
-  useTitleSync,
-  useWebSocketReconnected
-} from '@tektoncd/dashboard-utils';
+import { useTitleSync } from '@tektoncd/dashboard-utils';
 
-import { isWebSocketConnected } from '../../reducers';
 import { useSelectedNamespace, useTriggerBinding } from '../../api';
 import { getViewChangeHandler } from '../../utils';
 
 export function TriggerBindingContainer(props) {
-  const { intl, match, view, webSocketConnected } = props;
+  const { intl, location, match } = props;
   const { namespace, triggerBindingName: resourceName } = match.params;
+
+  const queryParams = new URLSearchParams(location.search);
+  const view = queryParams.get('view');
 
   const { selectedNamespace: defaultNamespace } = useSelectedNamespace();
   const selectedNamespace = namespace || defaultNamespace;
@@ -37,14 +35,10 @@ export function TriggerBindingContainer(props) {
     resourceName
   });
 
-  const {
-    data: triggerBinding,
-    error,
-    isFetching,
-    refetch
-  } = useTriggerBinding({ name: resourceName, namespace });
-
-  useWebSocketReconnected(refetch, webSocketConnected);
+  const { data: triggerBinding, error, isFetching } = useTriggerBinding({
+    name: resourceName,
+    namespace
+  });
 
   const headersForParameters = [
     {
@@ -107,17 +101,4 @@ TriggerBindingContainer.propTypes = {
   }).isRequired
 };
 
-/* istanbul ignore next */
-function mapStateToProps(state, ownProps) {
-  const { location } = ownProps;
-
-  const queryParams = new URLSearchParams(location.search);
-  const view = queryParams.get('view');
-
-  return {
-    view,
-    webSocketConnected: isWebSocketConnected(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(TriggerBindingContainer));
+export default injectIntl(TriggerBindingContainer);

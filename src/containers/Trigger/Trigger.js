@@ -13,33 +13,29 @@ limitations under the License.
 
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import {
-  useTitleSync,
-  useWebSocketReconnected
-} from '@tektoncd/dashboard-utils';
+import { useTitleSync } from '@tektoncd/dashboard-utils';
 import { ResourceDetails, Trigger } from '@tektoncd/dashboard-components';
 
-import { isWebSocketConnected as selectIsWebSocketConnected } from '../../reducers';
 import { useTrigger } from '../../api';
 import { getViewChangeHandler } from '../../utils';
 
 export function TriggerContainer(props) {
-  const { match, view, webSocketConnected } = props;
+  const { location, match } = props;
   const { triggerName, namespace } = match.params;
+
+  const queryParams = new URLSearchParams(location.search);
+  const view = queryParams.get('view');
 
   useTitleSync({
     page: 'Trigger',
     resourceName: triggerName
   });
 
-  const { data: trigger, error, isFetching, refetch } = useTrigger({
+  const { data: trigger, error, isFetching } = useTrigger({
     name: triggerName,
     namespace
   });
-
-  useWebSocketReconnected(refetch, webSocketConnected);
 
   return (
     <ResourceDetails
@@ -66,16 +62,4 @@ TriggerContainer.propTypes = {
   }).isRequired
 };
 
-/* istanbul ignore next */
-function mapStateToProps(state, ownProps) {
-  const { location } = ownProps;
-  const queryParams = new URLSearchParams(location.search);
-  const view = queryParams.get('view');
-
-  return {
-    view,
-    webSocketConnected: selectIsWebSocketConnected(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(TriggerContainer));
+export default injectIntl(TriggerContainer);

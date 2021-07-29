@@ -14,9 +14,6 @@ limitations under the License.
 import React from 'react';
 import { fireEvent, waitFor } from '@testing-library/react';
 
-import { Provider } from 'react-redux';
-import thunk from 'redux-thunk';
-import configureStore from 'redux-mock-store';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 import { render } from '../../utils/test';
 
@@ -28,7 +25,6 @@ import * as ServiceAccountsAPI from '../../api/serviceAccounts';
 import * as TaskRunsAPI from '../../api/taskRuns';
 import * as ClusterTasksAPI from '../../api/clusterTasks';
 import * as TasksAPI from '../../api/tasks';
-import * as store from '../../store';
 
 const tasks = [
   {
@@ -117,11 +113,6 @@ const taskRuns = {
   byId: {},
   byNamespace: {}
 };
-const middleware = [thunk];
-const mockStore = configureStore(middleware);
-const testStore = {
-  notifications: {}
-};
 
 const props = {
   history: {
@@ -160,9 +151,6 @@ describe('CreateTaskRun', () => {
         { metadata: { name: 'namespace-2' } }
       ]
     }));
-
-    const mockTestStore = mockStore(testStore);
-    jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);
   });
 
   it('renders empty, dropdowns disabled when no namespace selected', async () => {
@@ -176,9 +164,7 @@ describe('CreateTaskRun', () => {
       queryAllByText,
       queryByPlaceholderText
     } = render(
-      <Provider store={mockStore(testStore)}>
-        <CreateTaskRun {...props} location={{ search: '?kind=Task' }} />
-      </Provider>
+      <CreateTaskRun {...props} location={{ search: '?kind=Task' }} />
     );
     expect(queryByText(/create taskrun/i)).toBeTruthy();
     expect(queryByPlaceholderText(/select namespace/i)).toBeTruthy();
@@ -215,11 +201,7 @@ describe('CreateTaskRun', () => {
       getByText,
       getByPlaceholderText,
       queryByDisplayValue
-    } = render(
-      <Provider store={store.getStore()}>
-        <CreateTaskRun {...props} />
-      </Provider>
-    );
+    } = render(<CreateTaskRun {...props} />);
     fireEvent.click(getAllByText(/Add/i)[0]);
     fireEvent.change(getByPlaceholderText(/key/i), {
       target: { value: 'foo' }
@@ -240,9 +222,7 @@ describe('CreateTaskRun', () => {
       .mockImplementation(() => ({ selectedNamespace: 'namespace-1' }));
 
     const { getByPlaceholderText, getByText, getByDisplayValue } = render(
-      <Provider store={store.getStore()}>
-        <CreateTaskRun {...props} />
-      </Provider>
+      <CreateTaskRun {...props} />
     );
 
     fireEvent.click(getByPlaceholderText(/select task/i));
@@ -269,11 +249,7 @@ describe('CreateTaskRun', () => {
       .spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: 'namespace-1' }));
     jest.spyOn(props.history, 'push');
-    const { getByText } = render(
-      <Provider store={store.getStore()}>
-        <CreateTaskRun {...props} />
-      </Provider>
-    );
+    const { getByText } = render(<CreateTaskRun {...props} />);
     fireEvent.click(getByText(/cancel/i));
     expect(props.history.push).toHaveBeenCalledTimes(1);
   });
@@ -281,12 +257,10 @@ describe('CreateTaskRun', () => {
   it('handles error getting task controlled', () => {
     const badTaskRef = 'task-thisDoesNotExist';
     const { getByPlaceholderText, queryByText } = render(
-      <Provider store={store.getStore()}>
-        <CreateTaskRun
-          {...props}
-          location={{ search: `?taskName=${badTaskRef}` }}
-        />
-      </Provider>
+      <CreateTaskRun
+        {...props}
+        location={{ search: `?taskName=${badTaskRef}` }}
+      />
     );
 
     expect(queryByText(badTaskRef)).toBeFalsy();

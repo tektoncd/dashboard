@@ -13,9 +13,6 @@ limitations under the License.
 
 import React from 'react';
 import { fireEvent } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import thunk from 'redux-thunk';
-import configureStore from 'redux-mock-store';
 import { Route } from 'react-router-dom';
 import { paths, urls } from '@tektoncd/dashboard-utils';
 
@@ -46,29 +43,16 @@ const conditionWithTwoLabels = {
   }
 };
 
-const middleware = [thunk];
-const mockStore = configureStore(middleware);
-const testStore = {
-  notifications: {
-    webSocketConnected: false
-  }
-};
-
 describe('Conditions', () => {
   it('renders loading state', async () => {
     jest
       .spyOn(API, 'useConditions')
       .mockImplementation(() => ({ isLoading: true }));
-    const mockTestStore = mockStore({
-      notifications: {}
-    });
     const { queryByText } = renderWithRouter(
-      <Provider store={mockTestStore}>
-        <Route
-          path={paths.conditions.all()}
-          render={props => <ConditionsContainer {...props} />}
-        />
-      </Provider>,
+      <Route
+        path={paths.conditions.all()}
+        render={props => <ConditionsContainer {...props} />}
+      />,
       { route: urls.conditions.all() }
     );
     expect(queryByText('Conditions')).toBeTruthy();
@@ -80,14 +64,15 @@ describe('Conditions', () => {
         ? [conditionWithTwoLabels]
         : [conditionWithSingleLabel, conditionWithTwoLabels]
     }));
-    const mockTestStore = mockStore(testStore);
-    const { getByPlaceholderText, getByText, queryByText } = renderWithRouter(
-      <Provider store={mockTestStore}>
-        <Route
-          path={paths.conditions.all()}
-          render={props => <ConditionsContainer {...props} />}
-        />
-      </Provider>,
+    const {
+      getByPlaceholderText,
+      getByText,
+      queryByText
+    } = renderWithRouter(
+      <Route
+        path={paths.conditions.all()}
+        render={props => <ConditionsContainer {...props} />}
+      />,
       { route: urls.conditions.all() }
     );
 
@@ -106,14 +91,11 @@ describe('Conditions', () => {
   it('handles error', async () => {
     const error = 'fake_errorMessage';
     jest.spyOn(API, 'useConditions').mockImplementation(() => ({ error }));
-    const mockTestStore = mockStore(testStore);
     const { queryByText } = renderWithRouter(
-      <Provider store={mockTestStore}>
-        <Route
-          path={paths.conditions.all()}
-          render={props => <ConditionsContainer {...props} />}
-        />
-      </Provider>,
+      <Route
+        path={paths.conditions.all()}
+        render={props => <ConditionsContainer {...props} />}
+      />,
       { route: urls.conditions.all() }
     );
 

@@ -12,38 +12,29 @@ limitations under the License.
 */
 
 import React from 'react';
-import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
-import {
-  getFilters,
-  urls,
-  useTitleSync,
-  useWebSocketReconnected
-} from '@tektoncd/dashboard-utils';
+import { getFilters, urls, useTitleSync } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 import { Link as CarbonLink } from 'carbon-components-react';
 
 import { ListPageLayout } from '..';
 import { useSelectedNamespace, useTriggerTemplates } from '../../api';
-import { isWebSocketConnected } from '../../reducers';
 
 function TriggerTemplates(props) {
-  const { filters, intl, match, webSocketConnected } = props;
+  const { intl, location, match } = props;
 
   useTitleSync({ page: 'TriggerTemplates' });
 
+  const filters = getFilters(location);
   const { selectedNamespace: defaultNamespace } = useSelectedNamespace();
   const { namespace: selectedNamespace = defaultNamespace } = match.params;
 
   const {
     data: triggerTemplates = [],
     error,
-    isLoading,
-    refetch
+    isLoading
   } = useTriggerTemplates({ filters, namespace: selectedNamespace });
-
-  useWebSocketReconnected(refetch, webSocketConnected);
 
   function getError() {
     if (error) {
@@ -93,7 +84,12 @@ function TriggerTemplates(props) {
   }));
 
   return (
-    <ListPageLayout {...props} error={getError()} title="TriggerTemplates">
+    <ListPageLayout
+      {...props}
+      error={getError()}
+      filters={filters}
+      title="TriggerTemplates"
+    >
       <Table
         headers={initialHeaders}
         rows={triggerTemplatesFormatted}
@@ -119,13 +115,4 @@ function TriggerTemplates(props) {
   );
 }
 
-function mapStateToProps(state, props) {
-  const filters = getFilters(props.location);
-
-  return {
-    filters,
-    webSocketConnected: isWebSocketConnected(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(TriggerTemplates));
+export default injectIntl(TriggerTemplates);

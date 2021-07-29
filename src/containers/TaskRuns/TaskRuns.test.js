@@ -13,16 +13,12 @@ limitations under the License.
 
 import React from 'react';
 import { fireEvent, waitFor } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import thunk from 'redux-thunk';
-import configureStore from 'redux-mock-store';
 import { Route } from 'react-router-dom';
 import { urls } from '@tektoncd/dashboard-utils';
 
 import { renderWithRouter } from '../../utils/test';
 import * as API from '../../api';
 import * as taskRunsAPI from '../../api/taskRuns';
-import * as store from '../../store';
 import TaskRunsContainer from './TaskRuns';
 
 const taskRuns = [
@@ -65,20 +61,11 @@ const taskRuns = [
   }
 ];
 
-const middleware = [thunk];
-const mockStore = configureStore(middleware);
-const testStore = {
-  notifications: {}
-};
-
 describe('TaskRuns container', () => {
   beforeEach(() => {
     jest
       .spyOn(taskRunsAPI, 'useTaskRuns')
       .mockImplementation(() => ({ data: taskRuns }));
-    jest
-      .spyOn(store, 'getStore')
-      .mockImplementation(() => mockStore(testStore));
   });
 
   it('Duplicate label filters are prevented', async () => {
@@ -87,21 +74,23 @@ describe('TaskRuns container', () => {
       url: urls.taskRuns.all()
     };
 
-    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
-      <Provider store={store.getStore()}>
-        <Route
-          path={urls.taskRuns.all()}
-          render={props => (
-            <TaskRunsContainer
-              {...props}
-              match={match}
-              error={null}
-              loading={false}
-              namespace="namespace-1"
-            />
-          )}
-        />
-      </Provider>,
+    const {
+      queryByText,
+      getByPlaceholderText,
+      getByText
+    } = renderWithRouter(
+      <Route
+        path={urls.taskRuns.all()}
+        render={props => (
+          <TaskRunsContainer
+            {...props}
+            match={match}
+            error={null}
+            loading={false}
+            namespace="namespace-1"
+          />
+        )}
+      />,
       { route: urls.taskRuns.all() }
     );
 
@@ -123,21 +112,23 @@ describe('TaskRuns container', () => {
       url: urls.taskRuns.all()
     };
 
-    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
-      <Provider store={store.getStore()}>
-        <Route
-          path={urls.taskRuns.all()}
-          render={props => (
-            <TaskRunsContainer
-              {...props}
-              match={match}
-              error={null}
-              loading={false}
-              namespace="namespace-1"
-            />
-          )}
-        />
-      </Provider>,
+    const {
+      queryByText,
+      getByPlaceholderText,
+      getByText
+    } = renderWithRouter(
+      <Route
+        path={urls.taskRuns.all()}
+        render={props => (
+          <TaskRunsContainer
+            {...props}
+            match={match}
+            error={null}
+            loading={false}
+            namespace="namespace-1"
+          />
+        )}
+      />,
       { route: urls.taskRuns.all() }
     );
 
@@ -162,20 +153,18 @@ describe('TaskRuns container', () => {
     };
 
     const { getAllByTitle, getByText } = renderWithRouter(
-      <Provider store={store.getStore()}>
-        <Route
-          path={urls.taskRuns.all()}
-          render={props => (
-            <TaskRunsContainer
-              {...props}
-              match={match}
-              error={null}
-              loading={false}
-              namespace="namespace-1"
-            />
-          )}
-        />
-      </Provider>,
+      <Route
+        path={urls.taskRuns.all()}
+        render={props => (
+          <TaskRunsContainer
+            {...props}
+            match={match}
+            error={null}
+            loading={false}
+            namespace="namespace-1"
+          />
+        )}
+      />,
       { route: urls.taskRuns.all() }
     );
 
@@ -196,20 +185,18 @@ describe('TaskRuns container', () => {
       queryAllByLabelText,
       queryAllByTitle
     } = renderWithRouter(
-      <Provider store={store.getStore()}>
-        <Route
-          path={urls.taskRuns.all()}
-          render={props => (
-            <TaskRunsContainer
-              {...props}
-              match={match}
-              error={null}
-              loading={false}
-              namespace="namespace-1"
-            />
-          )}
-        />
-      </Provider>,
+      <Route
+        path={urls.taskRuns.all()}
+        render={props => (
+          <TaskRunsContainer
+            {...props}
+            match={match}
+            error={null}
+            loading={false}
+            namespace="namespace-1"
+          />
+        )}
+      />,
       { route: urls.taskRuns.all() }
     );
 
@@ -219,16 +206,13 @@ describe('TaskRuns container', () => {
   });
 
   it('handles rerun event in TaskRuns page', async () => {
-    const mockTestStore = mockStore(testStore);
     jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => false);
     jest.spyOn(taskRunsAPI, 'rerunTaskRun').mockImplementation(() => []);
     const { getAllByTitle, getByText } = renderWithRouter(
-      <Provider store={mockTestStore}>
-        <Route
-          path={urls.taskRuns.all()}
-          render={props => <TaskRunsContainer {...props} />}
-        />
-      </Provider>,
+      <Route
+        path={urls.taskRuns.all()}
+        render={props => <TaskRunsContainer {...props} />}
+      />,
       { route: urls.taskRuns.all() }
     );
     await waitFor(() => getByText(/taskRunWithTwoLabels/i));

@@ -38,7 +38,7 @@ describe('TriggerContainer', () => {
       .mockImplementation(() => ({ error: errorMessage }));
 
     const { getByText } = render(
-      <TriggerContainer intl={intl} match={match} />
+      <TriggerContainer intl={intl} location={{}} match={match} />
     );
     await waitFor(() => getByText('Error loading resource'));
     expect(getByText(errorMessage)).toBeTruthy();
@@ -62,7 +62,7 @@ describe('TriggerContainer', () => {
     }));
 
     const { queryByText } = renderWithRouter(
-      <TriggerContainer intl={intl} match={match} />
+      <TriggerContainer intl={intl} location={{}} match={match} />
     );
     expect(queryByText(triggerName)).toBeTruthy();
     expect(queryByText(templateName)).toBeTruthy();

@@ -129,12 +129,18 @@ const match = {
   params: { eventListenerName, namespace }
 };
 
+const props = {
+  intl,
+  location: {},
+  match
+};
+
 it('EventListener displays with formatted labels', async () => {
   jest
     .spyOn(API, 'useEventListener')
     .mockImplementation(() => ({ data: fakeEventListenerWithLabels }));
   const { queryByText, getByText } = renderWithRouter(
-    <EventListenerContainer intl={intl} match={match} />
+    <EventListenerContainer {...props} />
   );
 
   await waitFor(() => getByText(eventListenerName));
@@ -173,7 +179,7 @@ it('EventListener handles no serviceAccountName', async () => {
     .spyOn(API, 'useEventListener')
     .mockImplementation(() => ({ data: eventListener }));
   const { queryByText, getByText } = renderWithRouter(
-    <EventListenerContainer intl={intl} match={match} />
+    <EventListenerContainer {...props} />
   );
 
   await waitFor(() => getByText(eventListenerName));
@@ -192,7 +198,7 @@ it('EventListener handles no service type', async () => {
     .spyOn(API, 'useEventListener')
     .mockImplementation(() => ({ data: eventListener }));
   const { queryByText, getByText } = renderWithRouter(
-    <EventListenerContainer intl={intl} match={match} />
+    <EventListenerContainer {...props} />
   );
 
   await waitFor(() => getByText(eventListenerName));
@@ -211,7 +217,7 @@ it('EventListener handles no triggers', async () => {
     .spyOn(API, 'useEventListener')
     .mockImplementation(() => ({ data: eventListener }));
   const { queryByText, getByText } = renderWithRouter(
-    <EventListenerContainer intl={intl} match={match} />
+    <EventListenerContainer {...props} />
   );
 
   await waitFor(() => getByText(eventListenerName));

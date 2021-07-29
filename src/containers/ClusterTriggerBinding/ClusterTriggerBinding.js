@@ -12,23 +12,21 @@ limitations under the License.
 */
 
 import React from 'react';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { injectIntl } from 'react-intl';
 import { ResourceDetails, Table } from '@tektoncd/dashboard-components';
-import {
-  useTitleSync,
-  useWebSocketReconnected
-} from '@tektoncd/dashboard-utils';
+import { useTitleSync } from '@tektoncd/dashboard-utils';
 import { useClusterTriggerBinding } from '../../api';
-import { isWebSocketConnected } from '../../reducers';
 import { getViewChangeHandler } from '../../utils';
 
 export /* istanbul ignore next */ function ClusterTriggerBindingContainer(
   props
 ) {
-  const { intl, match, view, webSocketConnected } = props;
+  const { intl, location, match } = props;
   const { clusterTriggerBindingName } = match.params;
+
+  const queryParams = new URLSearchParams(location.search);
+  const view = queryParams.get('view');
 
   useTitleSync({
     page: 'ClusterTriggerBinding',
@@ -38,11 +36,8 @@ export /* istanbul ignore next */ function ClusterTriggerBindingContainer(
   const {
     data: clusterTriggerBinding,
     error,
-    isFetching,
-    refetch
+    isFetching
   } = useClusterTriggerBinding({ name: clusterTriggerBindingName });
-
-  useWebSocketReconnected(refetch, webSocketConnected);
 
   const headersForParameters = [
     {
@@ -104,19 +99,4 @@ ClusterTriggerBindingContainer.propTypes = {
   }).isRequired
 };
 
-/* istanbul ignore next */
-function mapStateToProps(state, ownProps) {
-  const { location } = ownProps;
-
-  const queryParams = new URLSearchParams(location.search);
-  const view = queryParams.get('view');
-
-  return {
-    view,
-    webSocketConnected: isWebSocketConnected(state)
-  };
-}
-
-export default connect(mapStateToProps)(
-  injectIntl(ClusterTriggerBindingContainer)
-);
+export default injectIntl(ClusterTriggerBindingContainer);

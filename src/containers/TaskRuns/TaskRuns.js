@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import keyBy from 'lodash.keyby';
 import {
@@ -31,14 +30,12 @@ import {
   labels,
   runMatchesStatusFilter,
   urls,
-  useTitleSync,
-  useWebSocketReconnected
+  useTitleSync
 } from '@tektoncd/dashboard-utils';
 import { Add16 as Add, TrashCan32 as Delete } from '@carbon/icons-react';
 
 import { ListPageLayout } from '..';
 import { sortRunsByStartTime } from '../../utils';
-import { isWebSocketConnected } from '../../reducers';
 import {
   cancelTaskRun,
   deleteTaskRun,
@@ -52,17 +49,7 @@ const { CLUSTER_TASK, TASK } = labels;
 
 /* istanbul ignore next */
 function TaskRuns(props) {
-  const {
-    filters,
-    history,
-    intl,
-    kind,
-    match,
-    setStatusFilter,
-    statusFilter,
-    taskName,
-    webSocketConnected
-  } = props;
+  const { history, intl, location, match } = props;
 
   const { namespace: namespaceParam } = match.params;
   const { selectedNamespace } = useSelectedNamespace();
@@ -75,6 +62,21 @@ function TaskRuns(props) {
 
   const isReadOnly = useIsReadOnly();
 
+  const filters = getFilters(location);
+  const statusFilter = getStatusFilter(location);
+
+  const taskFilter = filters.find(f => f.indexOf(`${TASK}=`) !== -1) || '';
+  const clusterTaskFilter =
+    filters.find(f => f.indexOf(`${CLUSTER_TASK}=`) !== -1) || '';
+  const kind = clusterTaskFilter ? 'ClusterTask' : 'Task';
+
+  const taskName =
+    kind === 'ClusterTask'
+      ? clusterTaskFilter.replace(`${CLUSTER_TASK}=`, '')
+      : taskFilter.replace(`${TASK}=`, '');
+
+  const setStatusFilter = getStatusFilterHandler(props);
+
   useTitleSync({ page: 'TaskRuns' });
 
   useEffect(() => {
@@ -83,12 +85,10 @@ function TaskRuns(props) {
     setToBeDeleted([]);
   }, [JSON.stringify(filters), namespace]);
 
-  const { data: taskRuns = [], error, isLoading, refetch } = useTaskRuns({
+  const { data: taskRuns = [], error, isLoading } = useTaskRuns({
     filters,
     namespace
   });
-
-  useWebSocketReconnected(refetch, webSocketConnected);
 
   function getError() {
     if (error) {
@@ -290,7 +290,12 @@ function TaskRuns(props) {
   );
 
   return (
-    <ListPageLayout {...props} error={getError()} title="TaskRuns">
+    <ListPageLayout
+      {...props}
+      error={getError()}
+      filters={filters}
+      title="TaskRuns"
+    >
       <TaskRunsList
         batchActionButtons={batchActionButtons}
         filters={statusFilters}
@@ -315,33 +320,4 @@ function TaskRuns(props) {
   );
 }
 
-TaskRuns.defaultProps = {
-  filters: []
-};
-
-/* istanbul ignore next */
-function mapStateToProps(state, props) {
-  const filters = getFilters(props.location);
-  const statusFilter = getStatusFilter(props.location);
-
-  const taskFilter = filters.find(f => f.indexOf(`${TASK}=`) !== -1) || '';
-  const clusterTaskFilter =
-    filters.find(f => f.indexOf(`${CLUSTER_TASK}=`) !== -1) || '';
-  const kind = clusterTaskFilter ? 'ClusterTask' : 'Task';
-
-  const taskName =
-    kind === 'ClusterTask'
-      ? clusterTaskFilter.replace(`${CLUSTER_TASK}=`, '')
-      : taskFilter.replace(`${TASK}=`, '');
-
-  return {
-    filters,
-    taskName,
-    kind,
-    setStatusFilter: getStatusFilterHandler(props),
-    statusFilter,
-    webSocketConnected: isWebSocketConnected(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(TaskRuns));
+export default injectIntl(TaskRuns);

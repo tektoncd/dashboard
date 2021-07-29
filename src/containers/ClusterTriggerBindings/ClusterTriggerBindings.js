@@ -12,35 +12,26 @@ limitations under the License.
 */
 
 import React from 'react';
-import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
-import {
-  getFilters,
-  urls,
-  useTitleSync,
-  useWebSocketReconnected
-} from '@tektoncd/dashboard-utils';
+import { getFilters, urls, useTitleSync } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 import { Link as CarbonLink } from 'carbon-components-react';
 
 import { ListPageLayout } from '..';
 import { useClusterTriggerBindings } from '../../api';
-import { isWebSocketConnected } from '../../reducers';
 
 function ClusterTriggerBindings(props) {
-  const { filters, intl, webSocketConnected } = props;
+  const { intl, location } = props;
+  const filters = getFilters(location);
 
   useTitleSync({ page: 'ClusterTriggerBindings' });
 
   const {
     data: clusterTriggerBindings = [],
     error,
-    isLoading,
-    refetch
+    isLoading
   } = useClusterTriggerBindings({ filters });
-
-  useWebSocketReconnected(refetch, webSocketConnected);
 
   function getError() {
     if (error) {
@@ -89,6 +80,7 @@ function ClusterTriggerBindings(props) {
     <ListPageLayout
       {...props}
       error={getError()}
+      filters={filters}
       hideNamespacesDropdown
       title="ClusterTriggerBindings"
     >
@@ -115,13 +107,4 @@ function ClusterTriggerBindings(props) {
   );
 }
 
-function mapStateToProps(state, props) {
-  const filters = getFilters(props.location);
-
-  return {
-    filters,
-    webSocketConnected: isWebSocketConnected(state)
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(ClusterTriggerBindings));
+export default injectIntl(ClusterTriggerBindings);

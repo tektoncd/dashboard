@@ -12,17 +12,11 @@ limitations under the License.
 */
 import React from 'react';
 import { fireEvent, waitFor } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
 import { render } from '../../utils/test';
 
 import CreatePipelineResource from '.';
 import * as API from '../../api';
 import * as PipelineResourcesAPI from '../../api/pipelineResources';
-
-const middleware = [thunk];
-const mockStore = configureStore(middleware);
 
 it('CreatePipelineResource error notification appears', async () => {
   const errorResponseMock = {
@@ -35,14 +29,8 @@ it('CreatePipelineResource error notification appears', async () => {
     .spyOn(PipelineResourcesAPI, 'createPipelineResource')
     .mockImplementation(() => Promise.reject(errorResponseMock));
 
-  const store = mockStore({
-    notifications: {}
-  });
-
   const { getByPlaceholderText, getByText, queryByText } = render(
-    <Provider store={store}>
-      <CreatePipelineResource />
-    </Provider>
+    <CreatePipelineResource />
   );
 
   fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
