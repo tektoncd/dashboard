@@ -23,9 +23,9 @@ import { ListPageLayout } from './ListPageLayout';
 describe('ListPageLayout', () => {
   it('add namespace to URL when selected', async () => {
     const otherNamespace = 'foo';
-    jest
-      .spyOn(API, 'useNamespaces')
-      .mockImplementation(() => ({ data: [otherNamespace] }));
+    jest.spyOn(API, 'useNamespaces').mockImplementation(() => ({
+      data: [{ metadata: { name: otherNamespace } }]
+    }));
     jest
       .spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: ALL_NAMESPACES }));
@@ -55,9 +55,12 @@ describe('ListPageLayout', () => {
   it('updates namespace in URL', async () => {
     const namespace = 'default';
     const otherNamespace = 'foo';
-    jest
-      .spyOn(API, 'useNamespaces')
-      .mockImplementation(() => ({ data: [namespace, otherNamespace] }));
+    jest.spyOn(API, 'useNamespaces').mockImplementation(() => ({
+      data: [
+        { metadata: { name: namespace } },
+        { metadata: { name: otherNamespace } }
+      ]
+    }));
     jest
       .spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: namespace }));
@@ -87,9 +90,9 @@ describe('ListPageLayout', () => {
   it('removes namespace from URL when ALL_NAMESPACES is selected', async () => {
     const namespace = 'default';
     const selectNamespace = jest.fn();
-    jest
-      .spyOn(API, 'useNamespaces')
-      .mockImplementation(() => ({ data: [namespace] }));
+    jest.spyOn(API, 'useNamespaces').mockImplementation(() => ({
+      data: [{ metadata: { name: namespace } }]
+    }));
     jest.spyOn(APIUtils, 'useSelectedNamespace').mockImplementation(() => ({
       selectedNamespace: namespace,
       selectNamespace
@@ -117,9 +120,9 @@ describe('ListPageLayout', () => {
   it('removes namespace from URL when clearing selection', async () => {
     const namespace = 'default';
     const selectNamespace = jest.fn();
-    jest
-      .spyOn(API, 'useNamespaces')
-      .mockImplementation(() => ({ data: [namespace] }));
+    jest.spyOn(API, 'useNamespaces').mockImplementation(() => ({
+      data: [{ metadata: { name: namespace } }]
+    }));
     jest.spyOn(APIUtils, 'useSelectedNamespace').mockImplementation(() => ({
       selectedNamespace: namespace,
       selectNamespace

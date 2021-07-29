@@ -25,19 +25,6 @@ import * as API from '../../api/clusterTriggerBindings';
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 
-const namespaces = {
-  byName: {
-    default: {
-      metadata: {
-        name: 'default'
-      }
-    }
-  },
-  errorMessage: null,
-  isFetching: false,
-  selected: '*'
-};
-
 const clusterTriggerBinding = {
   apiVersion: 'triggers.tekton.dev/v1alpha1',
   kind: 'ClusterTriggerBinding',
@@ -55,7 +42,6 @@ it('ClusterTriggerBindings renders with no bindings', () => {
   }));
 
   const store = mockStore({
-    namespaces,
     notifications: {}
   });
 
@@ -79,7 +65,6 @@ it('ClusterTriggerBindings renders with one binding', () => {
     .mockImplementation(() => ({ data: [clusterTriggerBinding] }));
 
   const store = mockStore({
-    namespaces,
     notifications: {}
   });
 
@@ -105,7 +90,6 @@ it('ClusterTriggerBindings can be filtered on a single label filter', async () =
     }));
 
   const store = mockStore({
-    namespaces,
     notifications: {}
   });
 
@@ -134,7 +118,6 @@ it('ClusterTriggerBindings renders in loading state', () => {
     .mockImplementation(() => ({ isLoading: true }));
 
   const store = mockStore({
-    namespaces,
     notifications: {}
   });
 
@@ -160,7 +143,6 @@ it('ClusterTriggerBindings renders in error state', () => {
     .mockImplementation(() => ({ error }));
 
   const store = mockStore({
-    namespaces,
     notifications: {}
   });
 

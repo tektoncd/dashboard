@@ -24,13 +24,16 @@ const props = {
 };
 
 const namespaces = ['namespace-1', 'namespace-2', 'namespace-3'];
+const namespaceResources = namespaces.map(namespace => ({
+  metadata: { name: namespace }
+}));
 
 const initialTextRegExp = new RegExp('select namespace', 'i');
 
 it('NamespacesDropdown renders items', () => {
   jest
     .spyOn(API, 'useNamespaces')
-    .mockImplementation(() => ({ data: namespaces }));
+    .mockImplementation(() => ({ data: namespaceResources }));
   const { getAllByText, getByPlaceholderText, queryByText } = render(
     <NamespacesDropdown {...props} />
   );
@@ -46,7 +49,7 @@ it('NamespacesDropdown renders items', () => {
 it('NamespacesDropdown renders controlled selection', () => {
   jest
     .spyOn(API, 'useNamespaces')
-    .mockImplementation(() => ({ data: namespaces }));
+    .mockImplementation(() => ({ data: namespaceResources }));
   // Select item 'namespace-1'
   const { queryByPlaceholderText, queryByDisplayValue, rerender } = render(
     <NamespacesDropdown {...props} selectedItem={{ text: 'namespace-1' }} />
@@ -80,7 +83,7 @@ it('NamespacesDropdown renders loading skeleton based on Redux state', () => {
 it('NamespacesDropdown handles onChange event', () => {
   jest
     .spyOn(API, 'useNamespaces')
-    .mockImplementation(() => ({ data: namespaces }));
+    .mockImplementation(() => ({ data: namespaceResources }));
   const onChange = jest.fn();
   const { getByPlaceholderText, getByText } = render(
     <NamespacesDropdown {...props} onChange={onChange} />

@@ -126,7 +126,7 @@ it('useNamespaces', async () => {
   });
   await waitFor(() => result.current.isFetching);
   await waitFor(() => !result.current.isFetching);
-  expect(result.current.data).toEqual(['namespace1', 'namespace2']);
+  expect(result.current.data).toEqual(namespaces.items);
   fetchMock.restore();
 });
 

@@ -98,10 +98,7 @@ export function getNamespaces() {
 }
 
 export function useNamespaces(queryConfig) {
-  return useCollection('Namespace', getNamespaces, null, {
-    select: namespaces => namespaces.map(namespace => namespace.metadata.name),
-    ...queryConfig
-  });
+  return useCollection('Namespace', getNamespaces, null, queryConfig);
 }
 
 export function getPodLogURL({ container, name, namespace, follow }) {

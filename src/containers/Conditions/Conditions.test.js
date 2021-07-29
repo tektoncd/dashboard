@@ -23,16 +23,6 @@ import { renderWithRouter } from '../../utils/test';
 import * as API from '../../api/conditions';
 import ConditionsContainer from './Conditions';
 
-const namespacesTestStore = {
-  namespaces: {
-    selected: 'namespace-1',
-    byName: {
-      'namespace-1': ''
-    },
-    isFetching: false
-  }
-};
-
 const conditionWithSingleLabel = {
   metadata: {
     name: 'conditionWithSingleLabel',
@@ -59,7 +49,6 @@ const conditionWithTwoLabels = {
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 const testStore = {
-  ...namespacesTestStore,
   notifications: {
     webSocketConnected: false
   }
@@ -71,7 +60,6 @@ describe('Conditions', () => {
       .spyOn(API, 'useConditions')
       .mockImplementation(() => ({ isLoading: true }));
     const mockTestStore = mockStore({
-      ...namespacesTestStore,
       notifications: {}
     });
     const { queryByText } = renderWithRouter(

@@ -25,15 +25,6 @@ import * as PipelinesAPI from '../../api/pipelines';
 import * as PipelineRunsAPI from '../../api/pipelineRuns';
 import PipelineRunsContainer from './PipelineRuns';
 
-const namespacesTestStore = {
-  namespaces: {
-    selected: 'namespace-1',
-    byName: {
-      'namespace-1': ''
-    },
-    isFetching: false
-  }
-};
 const pipelines = [
   {
     metadata: {
@@ -116,7 +107,6 @@ const pipelineRuns = [
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 const testStore = {
-  ...namespacesTestStore,
   notifications: {}
 };
 

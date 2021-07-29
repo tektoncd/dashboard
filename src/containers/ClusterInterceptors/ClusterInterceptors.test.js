@@ -16,19 +16,11 @@ import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
 import { Route } from 'react-router-dom';
-import { ALL_NAMESPACES, paths, urls } from '@tektoncd/dashboard-utils';
+import { paths, urls } from '@tektoncd/dashboard-utils';
 
 import { renderWithRouter } from '../../utils/test';
 import * as API from '../../api/clusterInterceptors';
 import ClusterInterceptorsContainer from './ClusterInterceptors';
-
-const namespacesTestStore = {
-  namespaces: {
-    selected: ALL_NAMESPACES,
-    byName: {},
-    isFetching: false
-  }
-};
 
 const clusterInterceptor = {
   metadata: {
@@ -43,7 +35,6 @@ const clusterInterceptor = {
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 const testStore = {
-  ...namespacesTestStore,
   notifications: {
     webSocketConnected: false
   }
@@ -52,7 +43,6 @@ const testStore = {
 describe('ClusterInterceptors', () => {
   it('renders loading state', async () => {
     const mockTestStore = mockStore({
-      ...namespacesTestStore,
       notifications: {}
     });
     jest
