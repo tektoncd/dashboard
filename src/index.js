@@ -22,8 +22,7 @@ import ReconnectingWebSocket from 'reconnecting-websocket';
 import './utils/polyfills';
 import { configureStore } from './store';
 import { getWebSocketURL, WebSocketContext } from './api';
-import { setTheme } from './utils';
-import { setLocale } from './actions/locale';
+import { getLocale, setTheme } from './utils';
 
 import App from './containers/App';
 
@@ -45,8 +44,6 @@ function closeSocket() {
 
 const store = configureStore({ webSocket });
 
-store.dispatch(setLocale(navigator.language));
-
 setTheme();
 
 const enableReactQueryDevTools =
@@ -56,7 +53,7 @@ ReactDOM.render(
   <WebSocketContext.Provider value={webSocket}>
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
-        <App onUnload={closeSocket} />
+        <App lang={getLocale(navigator.language)} onUnload={closeSocket} />
       </Provider>
       {enableReactQueryDevTools && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
