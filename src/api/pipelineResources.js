@@ -37,12 +37,19 @@ export function deletePipelineResource({ name, namespace } = {}) {
   return deleteRequest(uri, name);
 }
 
-export function getPipelineResources({ filters = [], namespace } = {}) {
-  const uri = getTektonAPI(
+function getPipelineResourcesAPI({ filters, isWebSocket, name, namespace }) {
+  return getTektonAPI(
     'pipelineresources',
-    { namespace, version: 'v1alpha1' },
-    getQueryParams(filters)
+    { isWebSocket, namespace, version: 'v1alpha1' },
+    getQueryParams({ filters, name })
   );
+}
+
+export function getPipelineResources({ filters = [], namespace } = {}) {
+  const uri = getPipelineResourcesAPI({
+    filters,
+    namespace
+  });
   return get(uri).then(checkData);
 }
 
@@ -60,9 +67,27 @@ export function getPipelineResource({ name, namespace }) {
 }
 
 export function usePipelineResources(params) {
-  return useCollection('PipelineResource', getPipelineResources, params);
+  const webSocketURL = getPipelineResourcesAPI({
+    ...params,
+    isWebSocket: true
+  });
+  return useCollection({
+    api: getPipelineResources,
+    kind: 'PipelineResource',
+    params,
+    webSocketURL
+  });
 }
 
 export function usePipelineResource(params) {
-  return useResource('PipelineResource', getPipelineResource, params);
+  const webSocketURL = getPipelineResourcesAPI({
+    ...params,
+    isWebSocket: true
+  });
+  return useResource({
+    api: getPipelineResource,
+    kind: 'PipelineResource',
+    params,
+    webSocketURL
+  });
 }

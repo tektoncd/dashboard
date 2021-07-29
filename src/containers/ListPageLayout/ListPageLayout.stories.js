@@ -16,8 +16,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
 import ListPageLayoutContainer from './ListPageLayout';
-import { NamespaceContext, WebSocketContext } from '../../api/utils';
-import { getWebSocket } from '../../utils/test';
+import { NamespaceContext } from '../../api/utils';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -43,8 +42,6 @@ const props = {
   match: { path: '/' }
 };
 
-const webSocket = getWebSocket();
-
 export default {
   component: ListPageLayoutContainer,
   decorators: [
@@ -52,18 +49,16 @@ export default {
       queryClient.setQueryData('Namespace', namespaces);
 
       return (
-        <WebSocketContext.Provider value={webSocket}>
-          <QueryClientProvider client={queryClient}>
-            <NamespaceContext.Provider
-              value={{
-                selectedNamespace: ALL_NAMESPACES,
-                selectNamespace: () => {}
-              }}
-            >
-              {storyFn()}
-            </NamespaceContext.Provider>
-          </QueryClientProvider>
-        </WebSocketContext.Provider>
+        <QueryClientProvider client={queryClient}>
+          <NamespaceContext.Provider
+            value={{
+              selectedNamespace: ALL_NAMESPACES,
+              selectNamespace: () => {}
+            }}
+          >
+            {storyFn()}
+          </NamespaceContext.Provider>
+        </QueryClientProvider>
       );
     }
   ],

@@ -52,9 +52,11 @@ it('useClusterTasks', () => {
   jest.spyOn(utils, 'useCollection').mockImplementation(() => query);
   expect(API.useClusterTasks(params)).toEqual(query);
   expect(utils.useCollection).toHaveBeenCalledWith(
-    'ClusterTask',
-    API.getClusterTasks,
-    params
+    expect.objectContaining({
+      api: API.getClusterTasks,
+      kind: 'ClusterTask',
+      params
+    })
   );
 });
 
@@ -64,18 +66,21 @@ it('useClusterTask', () => {
   jest.spyOn(utils, 'useResource').mockImplementation(() => query);
   expect(API.useClusterTask(params)).toEqual(query);
   expect(utils.useResource).toHaveBeenCalledWith(
-    'ClusterTask',
-    API.getClusterTask,
-    params,
-    undefined
+    expect.objectContaining({
+      api: API.getClusterTask,
+      kind: 'ClusterTask',
+      params
+    })
   );
 
   const queryConfig = { fake: 'queryConfig' };
   API.useClusterTask(params, queryConfig);
   expect(utils.useResource).toHaveBeenCalledWith(
-    'ClusterTask',
-    API.getClusterTask,
-    params,
-    queryConfig
+    expect.objectContaining({
+      api: API.getClusterTask,
+      kind: 'ClusterTask',
+      params,
+      queryConfig
+    })
   );
 });

@@ -21,12 +21,16 @@ import {
   useResource
 } from './utils';
 
-export function getTriggerBindings({ filters = [], namespace } = {}) {
-  const uri = getTektonAPI(
+function getTriggerBindingsAPI({ filters, isWebSocket, name, namespace }) {
+  return getTektonAPI(
     'triggerbindings',
-    { group: triggersAPIGroup, namespace, version: 'v1alpha1' },
-    getQueryParams(filters)
+    { group: triggersAPIGroup, isWebSocket, namespace, version: 'v1alpha1' },
+    getQueryParams({ filters, name })
   );
+}
+
+export function getTriggerBindings({ filters = [], namespace } = {}) {
+  const uri = getTriggerBindingsAPI({ filters, namespace });
   return get(uri).then(checkData);
 }
 
@@ -41,9 +45,21 @@ export function getTriggerBinding({ name, namespace }) {
 }
 
 export function useTriggerBindings(params) {
-  return useCollection('TriggerBinding', getTriggerBindings, params);
+  const webSocketURL = getTriggerBindingsAPI({ ...params, isWebSocket: true });
+  return useCollection({
+    api: getTriggerBindings,
+    kind: 'TriggerBinding',
+    params,
+    webSocketURL
+  });
 }
 
 export function useTriggerBinding(params) {
-  return useResource('TriggerBinding', getTriggerBinding, params);
+  const webSocketURL = getTriggerBindingsAPI({ ...params, isWebSocket: true });
+  return useResource({
+    api: getTriggerBinding,
+    kind: 'TriggerBinding',
+    params,
+    webSocketURL
+  });
 }

@@ -42,9 +42,11 @@ it('useEventListeners', () => {
   jest.spyOn(utils, 'useCollection').mockImplementation(() => query);
   expect(API.useEventListeners(params)).toEqual(query);
   expect(utils.useCollection).toHaveBeenCalledWith(
-    'EventListener',
-    API.getEventListeners,
-    params
+    expect.objectContaining({
+      api: API.getEventListeners,
+      kind: 'EventListener',
+      params
+    })
   );
 });
 
@@ -54,8 +56,10 @@ it('useEventListener', () => {
   jest.spyOn(utils, 'useResource').mockImplementation(() => query);
   expect(API.useEventListener(params)).toEqual(query);
   expect(utils.useResource).toHaveBeenCalledWith(
-    'EventListener',
-    API.getEventListener,
-    params
+    expect.objectContaining({
+      api: API.getEventListener,
+      kind: 'EventListener',
+      params
+    })
   );
 });

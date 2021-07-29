@@ -19,6 +19,7 @@ import { TooltipDropdown } from '@tektoncd/dashboard-components';
 import { useSelectedNamespace, useServiceAccounts } from '../../api';
 
 function ServiceAccountsDropdown({
+  disabled,
   intl,
   label,
   namespace: namespaceProp,
@@ -27,9 +28,14 @@ function ServiceAccountsDropdown({
   const { selectedNamespace } = useSelectedNamespace();
   const namespace = namespaceProp || selectedNamespace;
 
-  const { data: serviceAccounts = [], isFetching } = useServiceAccounts({
-    namespace
-  });
+  const { data: serviceAccounts = [], isFetching } = useServiceAccounts(
+    {
+      namespace
+    },
+    {
+      enabled: !disabled
+    }
+  );
 
   const items = serviceAccounts.map(sa => sa.metadata.name);
 
@@ -57,6 +63,7 @@ function ServiceAccountsDropdown({
   return (
     <TooltipDropdown
       {...rest}
+      disabled={disabled}
       emptyText={emptyText}
       items={items}
       label={labelString}

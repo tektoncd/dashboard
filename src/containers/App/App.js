@@ -142,9 +142,7 @@ async function loadMessages(lang) {
 }
 
 /* istanbul ignore next */
-export function App({ lang, onUnload }) {
-  useEffect(() => onUnload, []);
-
+export function App({ lang }) {
   const [isSideNavExpanded, setIsSideNavExpanded] = useState(true);
   const [selectedNamespace, setSelectedNamespace] = useState(ALL_NAMESPACES);
 

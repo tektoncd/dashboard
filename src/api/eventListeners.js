@@ -21,12 +21,16 @@ import {
   useResource
 } from './utils';
 
-export function getEventListeners({ filters = [], namespace } = {}) {
-  const uri = getTektonAPI(
+function getEventListenersAPI({ filters, isWebSocket, name, namespace }) {
+  return getTektonAPI(
     'eventlisteners',
-    { group: triggersAPIGroup, namespace, version: 'v1alpha1' },
-    getQueryParams(filters)
+    { group: triggersAPIGroup, isWebSocket, namespace, version: 'v1alpha1' },
+    getQueryParams({ filters, name })
   );
+}
+
+export function getEventListeners({ filters = [], namespace } = {}) {
+  const uri = getEventListenersAPI({ filters, namespace });
   return get(uri).then(checkData);
 }
 
@@ -41,9 +45,21 @@ export function getEventListener({ name, namespace }) {
 }
 
 export function useEventListeners(params) {
-  return useCollection('EventListener', getEventListeners, params);
+  const webSocketURL = getEventListenersAPI({ ...params, isWebSocket: true });
+  return useCollection({
+    api: getEventListeners,
+    kind: 'EventListener',
+    params,
+    webSocketURL
+  });
 }
 
 export function useEventListener(params) {
-  return useResource('EventListener', getEventListener, params);
+  const webSocketURL = getEventListenersAPI({ ...params, isWebSocket: true });
+  return useResource({
+    api: getEventListener,
+    kind: 'EventListener',
+    params,
+    webSocketURL
+  });
 }

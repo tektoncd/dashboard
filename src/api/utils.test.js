@@ -13,6 +13,7 @@ limitations under the License.
 
 import { act, renderHook } from '@testing-library/react-hooks';
 
+import * as comms from './comms';
 import * as utils from './utils';
 import { useCollection, useResource, useWebSocket } from './utils';
 import { getAPIWrapper, getQueryClient, getWebSocket } from '../utils/test';
@@ -150,36 +151,39 @@ describe('checkData', () => {
 
 describe('useWebSocket', () => {
   const kind = 'TaskRun';
-  it('should handle Created events', () => {
+  it('should handle ADDED events', () => {
     const queryClient = getQueryClient();
     const webSocket = getWebSocket();
-
+    jest.spyOn(comms, 'createWebSocket').mockImplementation(() => webSocket);
     jest.spyOn(queryClient, 'invalidateQueries');
     const existingResource = { metadata: { uid: 'existing-id' } };
     const newResource = { kind, metadata: { uid: 'new-uid' } };
+    const url = 'fake_url';
 
     queryClient.setQueryData(kind, () => [existingResource]);
 
-    renderHook(() => useWebSocket({ kind }), {
-      wrapper: getAPIWrapper({ queryClient, webSocket })
+    renderHook(() => useWebSocket({ kind, url }), {
+      wrapper: getAPIWrapper({ queryClient })
     });
+
+    expect(comms.createWebSocket).toHaveBeenCalledWith(url);
 
     act(() => {
       webSocket.fireEvent({
         type: 'message',
         data: JSON.stringify({
-          kind,
-          operation: 'Created',
-          payload: newResource
+          type: 'ADDED',
+          object: newResource
         })
       });
     });
     expect(queryClient.invalidateQueries).toHaveBeenCalledWith(kind);
   });
 
-  it('should handle Deleted events', () => {
+  it('should handle DELETED events', () => {
     const queryClient = getQueryClient();
     const webSocket = getWebSocket();
+    jest.spyOn(comms, 'createWebSocket').mockImplementation(() => webSocket);
 
     const name = 'resource-name';
     const otherName = 'other-resource-name';
@@ -204,16 +208,15 @@ describe('useWebSocket', () => {
     jest.spyOn(queryClient, 'removeQueries');
 
     renderHook(() => useWebSocket({ kind }), {
-      wrapper: getAPIWrapper({ queryClient, webSocket })
+      wrapper: getAPIWrapper({ queryClient })
     });
 
     act(() => {
       webSocket.fireEvent({
         type: 'message',
         data: JSON.stringify({
-          kind,
-          operation: 'Deleted',
-          payload: resource2
+          type: 'DELETED',
+          object: resource2
         })
       });
     });
@@ -227,9 +230,10 @@ describe('useWebSocket', () => {
     ]);
   });
 
-  it('should handle Updated events', () => {
+  it('should handle MODIFIED events', () => {
     const queryClient = getQueryClient();
     const webSocket = getWebSocket();
+    jest.spyOn(comms, 'createWebSocket').mockImplementation(() => webSocket);
     const name = 'resource-name';
 
     const existingResource = {
@@ -249,7 +253,7 @@ describe('useWebSocket', () => {
     queryClient.setQueryData([kind, { name }], () => existingResource);
 
     renderHook(() => useWebSocket({ kind }), {
-      wrapper: getAPIWrapper({ queryClient, webSocket })
+      wrapper: getAPIWrapper({ queryClient })
     });
 
     // should ignore stale update events
@@ -257,9 +261,8 @@ describe('useWebSocket', () => {
       webSocket.fireEvent({
         type: 'message',
         data: JSON.stringify({
-          kind,
-          operation: 'Updated',
-          payload: staleResource
+          type: 'MODIFIED',
+          object: staleResource
         })
       });
     });
@@ -273,9 +276,8 @@ describe('useWebSocket', () => {
       webSocket.fireEvent({
         type: 'message',
         data: JSON.stringify({
-          kind,
-          operation: 'Updated',
-          payload: updatedResource
+          type: 'MODIFIED',
+          object: updatedResource
         })
       });
     });
@@ -286,6 +288,7 @@ describe('useWebSocket', () => {
   it('should handle unsupported events', () => {
     const queryClient = getQueryClient();
     const webSocket = getWebSocket();
+    jest.spyOn(comms, 'createWebSocket').mockImplementation(() => webSocket);
 
     const existingResource = {
       metadata: { uid: 'existing-id' }
@@ -294,7 +297,7 @@ describe('useWebSocket', () => {
     queryClient.setQueryData(kind, () => [existingResource]);
 
     renderHook(() => useWebSocket({ kind }), {
-      wrapper: getAPIWrapper({ queryClient, webSocket })
+      wrapper: getAPIWrapper({ queryClient })
     });
 
     act(() => {
@@ -322,6 +325,7 @@ describe('useCollection', () => {
   it('should return a valid query response', async () => {
     const queryClient = getQueryClient();
     const webSocket = getWebSocket();
+    jest.spyOn(comms, 'createWebSocket').mockImplementation(() => webSocket);
 
     const existingResource = {
       kind,
@@ -334,9 +338,9 @@ describe('useCollection', () => {
 
     const api = () => [existingResource];
     const { result, waitFor, waitForNextUpdate } = renderHook(
-      () => useCollection(kind, api),
+      () => useCollection({ api, kind }),
       {
-        wrapper: getAPIWrapper({ queryClient, webSocket })
+        wrapper: getAPIWrapper({ queryClient })
       }
     );
 
@@ -346,9 +350,8 @@ describe('useCollection', () => {
     webSocket.fireEvent({
       type: 'message',
       data: JSON.stringify({
-        kind,
-        operation: 'Updated',
-        payload: updatedResource
+        type: 'MODIFIED',
+        object: updatedResource
       })
     });
     await waitForNextUpdate();
@@ -361,6 +364,7 @@ describe('useResource', () => {
   it('should return a valid query response', async () => {
     const queryClient = getQueryClient();
     const webSocket = getWebSocket();
+    jest.spyOn(comms, 'createWebSocket').mockImplementation(() => webSocket);
 
     const name = 'resource-name';
     const existingResource = {
@@ -374,9 +378,9 @@ describe('useResource', () => {
 
     const api = () => existingResource;
     const { result, waitFor, waitForNextUpdate } = renderHook(
-      () => useResource(kind, api, { name }),
+      () => useResource({ api, kind, params: { name } }),
       {
-        wrapper: getAPIWrapper({ queryClient, webSocket })
+        wrapper: getAPIWrapper({ queryClient })
       }
     );
 
@@ -386,9 +390,8 @@ describe('useResource', () => {
     webSocket.fireEvent({
       type: 'message',
       data: JSON.stringify({
-        kind,
-        operation: 'Updated',
-        payload: updatedResource
+        type: 'MODIFIED',
+        object: updatedResource
       })
     });
     await waitForNextUpdate();

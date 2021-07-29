@@ -42,9 +42,11 @@ it('useClusterInterceptors', () => {
   jest.spyOn(utils, 'useCollection').mockImplementation(() => query);
   expect(API.useClusterInterceptors(params)).toEqual(query);
   expect(utils.useCollection).toHaveBeenCalledWith(
-    'ClusterInterceptor',
-    API.getClusterInterceptors,
-    params
+    expect.objectContaining({
+      api: API.getClusterInterceptors,
+      kind: 'ClusterInterceptor',
+      params
+    })
   );
 });
 
@@ -54,8 +56,10 @@ it('useClusterInterceptor', () => {
   jest.spyOn(utils, 'useResource').mockImplementation(() => query);
   expect(API.useClusterInterceptor(params)).toEqual(query);
   expect(utils.useResource).toHaveBeenCalledWith(
-    'ClusterInterceptor',
-    API.getClusterInterceptor,
-    params
+    expect.objectContaining({
+      api: API.getClusterInterceptor,
+      kind: 'ClusterInterceptor',
+      params
+    })
   );
 });

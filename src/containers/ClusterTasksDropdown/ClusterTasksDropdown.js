@@ -17,8 +17,10 @@ import { TooltipDropdown } from '@tektoncd/dashboard-components';
 
 import { useClusterTasks } from '../../api';
 
-function ClusterTasksDropdown({ intl, label, ...rest }) {
-  const { data: clusterTasks = [], isFetching } = useClusterTasks();
+function ClusterTasksDropdown({ disabled, intl, label, ...rest }) {
+  const { data: clusterTasks = [], isFetching } = useClusterTasks(null, {
+    enabled: !disabled
+  });
 
   const items = clusterTasks.map(clusterTask => clusterTask.metadata.name);
 
@@ -37,6 +39,7 @@ function ClusterTasksDropdown({ intl, label, ...rest }) {
   return (
     <TooltipDropdown
       {...rest}
+      disabled={disabled}
       emptyText={emptyText}
       items={items}
       label={labelString}

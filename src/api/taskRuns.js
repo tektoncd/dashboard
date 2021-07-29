@@ -28,8 +28,16 @@ export function deleteTaskRun({ name, namespace }) {
   return deleteRequest(uri);
 }
 
+function getTaskRunsAPI({ filters, isWebSocket, name, namespace }) {
+  return getTektonAPI(
+    'taskruns',
+    { isWebSocket, namespace },
+    getQueryParams({ filters, name })
+  );
+}
+
 export function getTaskRuns({ filters = [], namespace } = {}) {
-  const uri = getTektonAPI('taskruns', { namespace }, getQueryParams(filters));
+  const uri = getTaskRunsAPI({ filters, namespace });
   return get(uri).then(checkData);
 }
 
@@ -39,11 +47,24 @@ export function getTaskRun({ name, namespace }) {
 }
 
 export function useTaskRuns(params) {
-  return useCollection('TaskRun', getTaskRuns, params);
+  const webSocketURL = getTaskRunsAPI({ ...params, isWebSocket: true });
+  return useCollection({
+    api: getTaskRuns,
+    kind: 'TaskRun',
+    params,
+    webSocketURL
+  });
 }
 
 export function useTaskRun(params, queryConfig) {
-  return useResource('TaskRun', getTaskRun, params, queryConfig);
+  const webSocketURL = getTaskRunsAPI({ ...params, isWebSocket: true });
+  return useResource({
+    api: getTaskRun,
+    kind: 'TaskRun',
+    params,
+    queryConfig,
+    webSocketURL
+  });
 }
 
 export function cancelTaskRun({ name, namespace }) {

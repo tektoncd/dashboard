@@ -30,8 +30,10 @@ it('useServiceAccounts', () => {
   jest.spyOn(utils, 'useCollection').mockImplementation(() => query);
   expect(API.useServiceAccounts(params)).toEqual(query);
   expect(utils.useCollection).toHaveBeenCalledWith(
-    'ServiceAccount',
-    API.getServiceAccounts,
-    params
+    expect.objectContaining({
+      api: API.getServiceAccounts,
+      kind: 'ServiceAccount',
+      params
+    })
   );
 });

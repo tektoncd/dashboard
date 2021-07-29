@@ -42,9 +42,11 @@ it('useConditions', () => {
   jest.spyOn(utils, 'useCollection').mockImplementation(() => query);
   expect(API.useConditions(params)).toEqual(query);
   expect(utils.useCollection).toHaveBeenCalledWith(
-    'Condition',
-    API.getConditions,
-    params
+    expect.objectContaining({
+      api: API.getConditions,
+      kind: 'Condition',
+      params
+    })
   );
 });
 
@@ -54,8 +56,10 @@ it('useCondition', () => {
   jest.spyOn(utils, 'useResource').mockImplementation(() => query);
   expect(API.useCondition(params)).toEqual(query);
   expect(utils.useResource).toHaveBeenCalledWith(
-    'Condition',
-    API.getCondition,
-    params
+    expect.objectContaining({
+      kind: 'Condition',
+      api: API.getCondition,
+      params
+    })
   );
 });

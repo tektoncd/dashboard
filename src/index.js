@@ -16,10 +16,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import ReconnectingWebSocket from 'reconnecting-websocket';
 
 import './utils/polyfills';
-import { getWebSocketURL, WebSocketContext } from './api';
 import { getLocale, setTheme } from './utils';
 
 import App from './containers/App';
@@ -35,22 +33,15 @@ const queryClient = new QueryClient({
   }
 });
 
-const webSocket = new ReconnectingWebSocket(getWebSocketURL());
-function closeSocket() {
-  webSocket.close();
-}
-
 setTheme();
 
 const enableReactQueryDevTools =
   localStorage.getItem('tkn-devtools-rq') === 'true';
 
 ReactDOM.render(
-  <WebSocketContext.Provider value={webSocket}>
-    <QueryClientProvider client={queryClient}>
-      <App lang={getLocale(navigator.language)} onUnload={closeSocket} />
-      {enableReactQueryDevTools && <ReactQueryDevtools initialIsOpen={false} />}
-    </QueryClientProvider>
-  </WebSocketContext.Provider>,
+  <QueryClientProvider client={queryClient}>
+    <App lang={getLocale(navigator.language)} />
+    {enableReactQueryDevTools && <ReactQueryDevtools initialIsOpen={false} />}
+  </QueryClientProvider>,
   document.getElementById('root')
 );

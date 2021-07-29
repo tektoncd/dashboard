@@ -42,9 +42,11 @@ it('useTriggerBindings', () => {
   jest.spyOn(utils, 'useCollection').mockImplementation(() => query);
   expect(API.useTriggerBindings(params)).toEqual(query);
   expect(utils.useCollection).toHaveBeenCalledWith(
-    'TriggerBinding',
-    API.getTriggerBindings,
-    params
+    expect.objectContaining({
+      api: API.getTriggerBindings,
+      kind: 'TriggerBinding',
+      params
+    })
   );
 });
 
@@ -54,8 +56,10 @@ it('useTriggerBinding', () => {
   jest.spyOn(utils, 'useResource').mockImplementation(() => query);
   expect(API.useTriggerBinding(params)).toEqual(query);
   expect(utils.useResource).toHaveBeenCalledWith(
-    'TriggerBinding',
-    API.getTriggerBinding,
-    params
+    expect.objectContaining({
+      api: API.getTriggerBinding,
+      kind: 'TriggerBinding',
+      params
+    })
   );
 });

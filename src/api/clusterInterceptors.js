@@ -21,12 +21,16 @@ import {
   useResource
 } from './utils';
 
-export function getClusterInterceptors({ filters = [] } = {}) {
-  const uri = getTektonAPI(
+function getClusterInterceptorsAPI({ filters, isWebSocket, name }) {
+  return getTektonAPI(
     'clusterinterceptors',
-    { group: triggersAPIGroup, version: 'v1alpha1' },
-    getQueryParams(filters)
+    { group: triggersAPIGroup, isWebSocket, version: 'v1alpha1' },
+    getQueryParams({ filters, name })
   );
+}
+
+export function getClusterInterceptors({ filters = [] } = {}) {
+  const uri = getClusterInterceptorsAPI({ filters });
   return get(uri).then(checkData);
 }
 
@@ -40,9 +44,27 @@ export function getClusterInterceptor({ name }) {
 }
 
 export function useClusterInterceptors(params) {
-  return useCollection('ClusterInterceptor', getClusterInterceptors, params);
+  const webSocketURL = getClusterInterceptorsAPI({
+    ...params,
+    isWebSocket: true
+  });
+  return useCollection({
+    api: getClusterInterceptors,
+    kind: 'ClusterInterceptor',
+    params,
+    webSocketURL
+  });
 }
 
 export function useClusterInterceptor(params) {
-  return useResource('ClusterInterceptor', getClusterInterceptor, params);
+  const webSocketURL = getClusterInterceptorsAPI({
+    ...params,
+    isWebSocket: true
+  });
+  return useResource({
+    api: getClusterInterceptor,
+    kind: 'ClusterInterceptor',
+    params,
+    webSocketURL
+  });
 }

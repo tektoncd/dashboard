@@ -19,6 +19,16 @@ export function getServiceAccounts({ namespace } = {}) {
   return get(uri).then(checkData);
 }
 
-export function useServiceAccounts(params) {
-  return useCollection('ServiceAccount', getServiceAccounts, params);
+export function useServiceAccounts(params, queryConfig) {
+  const webSocketURL = getKubeAPI('serviceaccounts', {
+    ...params,
+    isWebSocket: true
+  });
+  return useCollection({
+    api: getServiceAccounts,
+    kind: 'ServiceAccount',
+    params,
+    queryConfig,
+    webSocketURL
+  });
 }

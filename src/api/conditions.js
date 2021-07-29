@@ -20,12 +20,16 @@ import {
   useResource
 } from './utils';
 
-export function getConditions({ filters = [], namespace } = {}) {
-  const uri = getTektonAPI(
+function getConditionsAPI({ filters, isWebSocket, name, namespace }) {
+  return getTektonAPI(
     'conditions',
-    { namespace, version: 'v1alpha1' },
-    getQueryParams(filters)
+    { isWebSocket, namespace, version: 'v1alpha1' },
+    getQueryParams({ filters, name })
   );
+}
+
+export function getConditions({ filters = [], namespace } = {}) {
+  const uri = getConditionsAPI({ filters, namespace });
   return get(uri).then(checkData);
 }
 
@@ -39,9 +43,21 @@ export function getCondition({ name, namespace }) {
 }
 
 export function useConditions(params) {
-  return useCollection('Condition', getConditions, params);
+  const webSocketURL = getConditionsAPI({ ...params, isWebSocket: true });
+  return useCollection({
+    api: getConditions,
+    kind: 'Condition',
+    params,
+    webSocketURL
+  });
 }
 
 export function useCondition(params) {
-  return useResource('Condition', getCondition, params);
+  const webSocketURL = getConditionsAPI({ ...params, isWebSocket: true });
+  return useResource({
+    api: getCondition,
+    kind: 'Condition',
+    params,
+    webSocketURL
+  });
 }
