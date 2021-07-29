@@ -76,10 +76,7 @@ import {
   TriggerTemplates
 } from '..';
 
-import {
-  getLocale,
-  isWebSocketConnected as selectIsWebSocketConnected
-} from '../../reducers';
+import { isWebSocketConnected as selectIsWebSocketConnected } from '../../reducers';
 import {
   NamespaceContext,
   useExtensions,
@@ -492,7 +489,6 @@ App.defaultProps = {
 
 /* istanbul ignore next */
 const mapStateToProps = state => ({
-  lang: getLocale(state),
   webSocketConnected: selectIsWebSocketConnected(state)
 });
 

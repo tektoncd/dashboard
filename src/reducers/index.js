@@ -13,17 +13,9 @@ limitations under the License.
 
 import { combineReducers } from 'redux';
 
-import locale, * as localeSelectors from './locale';
 import notifications, * as notificationSelectors from './notifications';
 
-export default combineReducers({
-  locale,
-  notifications
-});
-
-export function getLocale(state) {
-  return localeSelectors.getLocale(state.locale);
-}
+export default combineReducers({ notifications });
 
 export function isWebSocketConnected(state) {
   return notificationSelectors.isWebSocketConnected(state.notifications);
