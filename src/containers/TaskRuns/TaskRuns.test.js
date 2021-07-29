@@ -25,15 +25,6 @@ import * as taskRunsAPI from '../../api/taskRuns';
 import * as store from '../../store';
 import TaskRunsContainer from './TaskRuns';
 
-const namespacesTestStore = {
-  namespaces: {
-    selected: 'namespace-1',
-    byName: {
-      'namespace-1': ''
-    },
-    isFetching: false
-  }
-};
 const taskRuns = [
   {
     status: {
@@ -77,7 +68,6 @@ const taskRuns = [
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 const testStore = {
-  ...namespacesTestStore,
   notifications: {}
 };
 

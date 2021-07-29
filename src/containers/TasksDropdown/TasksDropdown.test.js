@@ -76,9 +76,9 @@ const mockStore = configureStore(middleware);
 
 describe('TasksDropdown', () => {
   beforeEach(() => {
-    jest
-      .spyOn(API, 'useNamespaces')
-      .mockImplementation(() => ({ data: ['blue', 'green'] }));
+    jest.spyOn(API, 'useNamespaces').mockImplementation(() => ({
+      data: [{ metadata: { name: 'blue' } }, { metadata: { name: 'green' } }]
+    }));
     jest
       .spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: 'blue' }));

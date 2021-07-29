@@ -41,9 +41,9 @@ const triggerBinding = {
 
 describe('TriggerBindings', () => {
   beforeEach(() => {
-    jest
-      .spyOn(API, 'useNamespaces')
-      .mockImplementation(() => ({ data: ['default'] }));
+    jest.spyOn(API, 'useNamespaces').mockImplementation(() => ({
+      data: [{ metadata: { name: 'default' } }]
+    }));
     jest
       .spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: ALL_NAMESPACES }));

@@ -34,9 +34,12 @@ describe('ImportResources component', () => {
     jest
       .spyOn(API, 'useDashboardNamespace')
       .mockImplementation(() => 'namespace1');
-    jest
-      .spyOn(API, 'useNamespaces')
-      .mockImplementation(() => ({ data: ['namespace1', 'default'] }));
+    jest.spyOn(API, 'useNamespaces').mockImplementation(() => ({
+      data: [
+        { metadata: { name: 'namespace1' } },
+        { metadata: { name: 'default' } }
+      ]
+    }));
     jest
       .spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: ALL_NAMESPACES }));

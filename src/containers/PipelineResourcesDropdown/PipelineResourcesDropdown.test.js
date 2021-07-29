@@ -87,9 +87,9 @@ const mockStore = configureStore(middleware);
 
 describe('PipelineResourcesDropdown', () => {
   beforeEach(() => {
-    jest
-      .spyOn(API, 'useNamespaces')
-      .mockImplementation(() => ({ data: ['blue', 'green'] }));
+    jest.spyOn(API, 'useNamespaces').mockImplementation(() => ({
+      data: [{ metadata: { name: 'blue' } }, { metadata: { name: 'green' } }]
+    }));
   });
 
   it('renders items', () => {

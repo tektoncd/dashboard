@@ -30,7 +30,7 @@ it('CreatePipelineResource error notification appears', async () => {
   };
   jest
     .spyOn(API, 'useNamespaces')
-    .mockImplementation(() => ({ data: ['default'] }));
+    .mockImplementation(() => ({ data: [{ metadata: { name: 'default' } }] }));
   jest
     .spyOn(PipelineResourcesAPI, 'createPipelineResource')
     .mockImplementation(() => Promise.reject(errorResponseMock));

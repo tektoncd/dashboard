@@ -39,8 +39,6 @@ const triggerTemplate = {
   }
 };
 
-const namespaces = ['default'];
-
 it('TriggerTemplates renders with no templates', () => {
   jest
     .spyOn(TriggerTemplatesAPI, 'useTriggerTemplates')
@@ -48,7 +46,7 @@ it('TriggerTemplates renders with no templates', () => {
 
   jest
     .spyOn(API, 'useNamespaces')
-    .mockImplementation(() => ({ data: namespaces }));
+    .mockImplementation(() => ({ data: [{ metadata: { name: 'default' } }] }));
   jest
     .spyOn(APIUtils, 'useSelectedNamespace')
     .mockImplementation(() => ({ selectedNamespace: ALL_NAMESPACES }));
@@ -76,7 +74,6 @@ it('TriggerTemplates renders with one template', () => {
     .mockImplementation(() => ({ data: [triggerTemplate] }));
 
   const store = mockStore({
-    namespaces,
     notifications: {}
   });
 
@@ -103,7 +100,6 @@ it('TriggerTemplates can be filtered on a single label filter', async () => {
     }));
 
   const store = mockStore({
-    namespaces,
     notifications: {}
   });
 
@@ -132,7 +128,6 @@ it('TriggerTemplates renders in loading state', () => {
     .mockImplementation(() => ({ isLoading: true }));
 
   const store = mockStore({
-    namespaces,
     notifications: {}
   });
 
@@ -157,7 +152,6 @@ it('TriggerTemplates renders in error state', () => {
     .mockImplementation(() => ({ error }));
 
   const store = mockStore({
-    namespaces,
     notifications: {}
   });
 

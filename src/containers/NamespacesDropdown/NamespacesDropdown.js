@@ -58,7 +58,9 @@ const NamespacesDropdown = ({
     selectedItem.text = allNamespacesString;
   }
 
-  const items = tenantNamespace ? [tenantNamespace] : namespaces;
+  const items = tenantNamespace
+    ? [tenantNamespace]
+    : namespaces.map(namespace => namespace.metadata.name);
   if (!tenantNamespace && showAllNamespaces) {
     items.unshift({ id: ALL_NAMESPACES, text: allNamespacesString });
   }

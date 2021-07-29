@@ -116,9 +116,12 @@ describe('CreatePipelineRun', () => {
     jest
       .spyOn(PipelineRunsAPI, 'usePipelineRuns')
       .mockImplementation(() => ({ data: [] }));
-    jest
-      .spyOn(API, 'useNamespaces')
-      .mockImplementation(() => ({ data: ['namespace-1', 'namespace-2'] }));
+    jest.spyOn(API, 'useNamespaces').mockImplementation(() => ({
+      data: [
+        { metadata: { name: 'namespace-1' } },
+        { metadata: { name: 'namespace-2' } }
+      ]
+    }));
     jest
       .spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: 'namespace-1' }));

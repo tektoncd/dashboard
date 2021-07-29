@@ -154,9 +154,12 @@ describe('CreateTaskRun', () => {
       .spyOn(TaskRunsAPI, 'getTaskRuns')
       .mockImplementation(() => taskRuns.byId);
 
-    jest
-      .spyOn(API, 'useNamespaces')
-      .mockImplementation(() => ({ data: ['namespace-1', 'namespace-2'] }));
+    jest.spyOn(API, 'useNamespaces').mockImplementation(() => ({
+      data: [
+        { metadata: { name: 'namespace-1' } },
+        { metadata: { name: 'namespace-2' } }
+      ]
+    }));
 
     const mockTestStore = mockStore(testStore);
     jest.spyOn(store, 'getStore').mockImplementation(() => mockTestStore);

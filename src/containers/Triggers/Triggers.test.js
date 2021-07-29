@@ -22,20 +22,9 @@ import { renderWithRouter } from '../../utils/test';
 import * as API from '../../api/triggers';
 import TriggersContainer from './Triggers';
 
-const namespacesTestStore = {
-  namespaces: {
-    selected: 'namespace-1',
-    byName: {
-      'namespace-1': ''
-    },
-    isFetching: false
-  }
-};
-
 const middleware = [thunk];
 const mockStore = configureStore(middleware);
 const testStore = {
-  ...namespacesTestStore,
   notifications: {
     webSocketConnected: false
   }
@@ -51,7 +40,6 @@ describe('Triggers', () => {
       .spyOn(API, 'useTriggers')
       .mockImplementation(() => ({ isLoading: true }));
     const mockTestStore = mockStore({
-      ...namespacesTestStore,
       notifications: {}
     });
     const { queryByText } = renderWithRouter(

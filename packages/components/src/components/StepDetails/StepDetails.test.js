@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,8 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
 import { fireEvent } from '@testing-library/react';
 import { renderWithRouter } from '../../utils/test';
 
@@ -21,59 +19,37 @@ import StepDetails from './StepDetails';
 
 describe('StepDetails', () => {
   it('renders', () => {
-    const mockStore = configureStore();
-    const store = mockStore({ namespaces: { selected: 'default' } });
-
-    renderWithRouter(
-      <Provider store={store}>
-        <StepDetails stepStatus={{}} />
-      </Provider>
-    );
+    renderWithRouter(<StepDetails stepStatus={{}} />);
   });
 
   it('renders terminated state', () => {
-    const mockStore = configureStore();
-    const store = mockStore({ namespaces: { selected: 'default' } });
-
     renderWithRouter(
-      <Provider store={store}>
-        <StepDetails stepStatus={{ terminated: { reason: 'Completed' } }} />
-      </Provider>
+      <StepDetails stepStatus={{ terminated: { reason: 'Completed' } }} />
     );
   });
 
   it('renders cancelled state', () => {
-    const mockStore = configureStore();
-    const store = mockStore({ namespaces: { selected: 'default' } });
-
     renderWithRouter(
-      <Provider store={store}>
-        <StepDetails
-          stepStatus={{}}
-          taskRun={{
-            status: {
-              conditions: [
-                {
-                  type: 'Succeeded',
-                  status: 'False',
-                  reason: 'TaskRunCancelled'
-                }
-              ]
-            }
-          }}
-        />
-      </Provider>
+      <StepDetails
+        stepStatus={{}}
+        taskRun={{
+          status: {
+            conditions: [
+              {
+                type: 'Succeeded',
+                status: 'False',
+                reason: 'TaskRunCancelled'
+              }
+            ]
+          }
+        }}
+      />
     );
   });
 
   it('renders with selected view', () => {
-    const mockStore = configureStore();
-    const store = mockStore({ namespaces: { selected: 'default' } });
-
     const { getByText } = renderWithRouter(
-      <Provider store={store}>
-        <StepDetails stepStatus={{}} view="details" />
-      </Provider>
+      <StepDetails stepStatus={{}} view="details" />
     );
 
     fireEvent.click(getByText(/status/i));
