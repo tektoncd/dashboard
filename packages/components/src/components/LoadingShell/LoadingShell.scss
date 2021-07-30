@@ -46,4 +46,26 @@ limitations under the License.
       z-index: 10000; // need to put this in front of the overlay
     }
   }
+
+  nav.bx--side-nav {
+    .bx--side-nav__items {
+      display: flex;
+      flex-direction: column;
+
+      .bx--side-nav__item {
+        flex-shrink: 0;
+      }
+
+      div + .bx--side-nav__item {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        justify-content: flex-end;
+      }
+
+      .bx--side-nav__item:last-child {
+        margin-bottom: 1rem;
+      }
+    }
+  }
 }
