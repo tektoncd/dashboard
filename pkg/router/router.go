@@ -70,13 +70,6 @@ func registerReadinessProbe(r endpoints.Resource, mux *http.ServeMux) {
 	mux.HandleFunc("/readiness", r.CheckHealth)
 }
 
-// registerWebsocket registers a websocket with which we can send log
-// information
-func registerWebsocket(r endpoints.Resource, mux *http.ServeMux) {
-	logging.Log.Info("Adding API for websocket")
-	mux.HandleFunc("/v1/websockets/resources", r.EstablishResourcesWebsocket)
-}
-
 // registerPropertiesEndpoint adds the endpoint for obtaining any properties we
 // want to serve.
 func registerPropertiesEndpoint(r endpoints.Resource, mux *http.ServeMux) {
@@ -141,7 +134,6 @@ func Register(r endpoints.Resource, cfg *rest.Config) (*Server, error) {
 	logging.Log.Info("Adding Dashboard APIs")
 	registerWeb(r, mux)
 	registerPropertiesEndpoint(r, mux)
-	registerWebsocket(r, mux)
 	registerHealthProbe(r, mux)
 	registerReadinessProbe(r, mux)
 	registerLogsProxy(r, mux)
