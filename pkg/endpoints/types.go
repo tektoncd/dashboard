@@ -14,10 +14,6 @@ limitations under the License.
 package endpoints
 
 import (
-	"net/http"
-
-	dashboardclientset "github.com/tektoncd/dashboard/pkg/client/clientset/versioned"
-	"k8s.io/client-go/dynamic"
 	k8sclientset "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 )
@@ -58,10 +54,7 @@ func (o Options) GetTriggersNamespace() string {
 // Store all types here that are reused throughout files
 // Wrapper around all necessary clients used for endpoints
 type Resource struct {
-	Config          *rest.Config
-	HttpClient      *http.Client
-	DashboardClient dashboardclientset.Interface
-	DynamicClient   dynamic.Interface
-	K8sClient       k8sclientset.Interface
-	Options         Options
+	Config    *rest.Config
+	K8sClient k8sclientset.Interface
+	Options   Options
 }

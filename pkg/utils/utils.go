@@ -18,10 +18,6 @@ import (
 	"strings"
 
 	logging "github.com/tektoncd/dashboard/pkg/logging"
-
-	"k8s.io/apimachinery/pkg/api/meta"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/tools/cache"
 )
 
 // RespondError - logs and writes an error response with a desired status code
@@ -30,30 +26,4 @@ func RespondError(response http.ResponseWriter, err error, statusCode int) {
 	response.Header().Set("Content-Type", "text/plain")
 	response.WriteHeader(statusCode)
 	response.Write([]byte(err.Error()))
-}
-
-// Adapted from https://github.com/kubernetes-sigs/controller-runtime/blob/v0.5.2/pkg/source/internal/eventsource.go#L131-L149
-func GetDeletedObjectMeta(obj interface{}) metav1.Object {
-	// Deal with tombstone events by pulling the object out.  Tombstone events wrap the object in a
-	// DeleteFinalStateUnknown struct, so the object needs to be pulled out.
-	// Copied from sample-controller
-	// This should only happen when we're missing events.
-	if _, ok := obj.(metav1.Object); !ok {
-		// If the object doesn't have Metadata, assume it is a tombstone object of type DeletedFinalStateUnknown
-		if tombstone, ok := obj.(cache.DeletedFinalStateUnknown); !ok {
-			logging.Log.Errorf("Error decoding object: Expected cache.DeletedFinalStateUnknown, got %T", obj)
-			return &metav1.ObjectMeta{}
-		} else {
-			// Set obj to the tombstone obj
-			obj = tombstone.Obj
-		}
-	}
-
-	// Pull metav1.Object out of the object
-	if o, err := meta.Accessor(obj); err != nil {
-		logging.Log.Errorf("Missing meta for object %T: %v", obj, err)
-		return &metav1.ObjectMeta{}
-	} else {
-		return o
-	}
 }

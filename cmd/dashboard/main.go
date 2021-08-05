@@ -16,20 +16,14 @@ package main
 import (
 	"flag"
 	"fmt"
-	"net/http"
 	"os"
-	"time"
 
-	dashboardclientset "github.com/tektoncd/dashboard/pkg/client/clientset/versioned"
-	"github.com/tektoncd/dashboard/pkg/controllers"
 	"github.com/tektoncd/dashboard/pkg/endpoints"
 	"github.com/tektoncd/dashboard/pkg/logging"
 	"github.com/tektoncd/dashboard/pkg/router"
-	"k8s.io/client-go/dynamic"
 	k8sclientset "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
-	"knative.dev/pkg/signals"
 )
 
 var (
@@ -79,24 +73,9 @@ func main() {
 		}
 	}
 
-	dashboardClient, err := dashboardclientset.NewForConfig(cfg)
-	if err != nil {
-		logging.Log.Errorf("Error building dashboard clientset: %s", err.Error())
-	}
-
 	k8sClient, err := k8sclientset.NewForConfig(cfg)
 	if err != nil {
 		logging.Log.Errorf("Error building k8s clientset: %s", err.Error())
-	}
-
-	dynamicClient, err := dynamic.NewForConfig(cfg)
-	if err != nil {
-		logging.Log.Errorf("Error building dynamic clientset: %s", err.Error())
-	}
-
-	transport, err := rest.TransportFor(cfg)
-	if err != nil {
-		logging.Log.Errorf("Error building rest transport: %s", err.Error())
 	}
 
 	options := endpoints.Options{
@@ -112,33 +91,16 @@ func main() {
 	}
 
 	resource := endpoints.Resource{
-		Config:          cfg,
-		HttpClient:      &http.Client{Transport: transport},
-		DashboardClient: dashboardClient,
-		DynamicClient:   dynamicClient,
-		K8sClient:       k8sClient,
-		Options:         options,
+		Config:    cfg,
+		K8sClient: k8sClient,
+		Options:   options,
 	}
-
-	isTriggersInstalled := endpoints.IsTriggersInstalled(resource, *triggersNamespace)
-
-	ctx := signals.NewContext()
 
 	server, err := router.Register(resource, cfg)
 
 	if err != nil {
 		logging.Log.Errorf("Error creating proxy: %s", err.Error())
 		return
-	}
-
-	logging.Log.Info("Creating controllers")
-	resyncDur := time.Second * 30
-	controllers.StartTektonControllers(resource.DynamicClient, resyncDur, *tenantNamespace, ctx.Done())
-	controllers.StartKubeControllers(resource.K8sClient, resyncDur, *tenantNamespace, *readOnly, ctx.Done())
-	controllers.StartDashboardControllers(resource.DashboardClient, resyncDur, *tenantNamespace, ctx.Done())
-
-	if isTriggersInstalled {
-		controllers.StartTriggersControllers(resource.DynamicClient, resyncDur, *tenantNamespace, ctx.Done())
 	}
 
 	l, err := server.Listen("", *portNumber)
