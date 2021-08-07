@@ -13,7 +13,6 @@
 
 # dashboard flavour
 OPENSHIFT="false"
-IMAGE_STREAM="false"
 READONLY="false"
 
 # configuration default values
@@ -89,12 +88,7 @@ compile() {
   fi
 
   debug "Building overlay $overlay ..."
-
-  if [ "$OPENSHIFT" == "true" ] && [ "$IMAGE_STREAM" == "true" ]; then
-    kustomize build --load_restrictor none "$overlay" > "$TMP_FILE"
-  else
-    kustomize build --load_restrictor none "$overlay" | ko resolve $KO_RESOLVE_OPTIONS -f - > "$TMP_FILE"
-  fi
+  kustomize build --load_restrictor none "$overlay" | ko resolve $KO_RESOLVE_OPTIONS -f - > "$TMP_FILE"
 }
 
 download() {
@@ -165,10 +159,6 @@ patch() {
   replace "--stream-logs=--stream-logs" "--stream-logs=$STREAM_LOGS"
   replace "--external-logs=--external-logs" "--external-logs=$EXTERNAL_LOGS"
   replace "namespace: tekton-dashboard" "namespace: $INSTALL_NAMESPACE"
-
-  if [ "$OPENSHIFT" == "true" ] && [ "$IMAGE_STREAM" == "true" ]; then
-    replace "image: ko://github.com/tektoncd/dashboard/cmd/dashboard" "image: $INSTALL_NAMESPACE/tekton-dashboard"
-  fi
 }
 
 rbac() {
@@ -394,52 +384,6 @@ EOF
 fi
 }
 
-imageStream() {
-if [ "$OPENSHIFT" == "true" ] && [ "$IMAGE_STREAM" == "true" ]; then
-cat <<EOF >> $TMP_FILE
----
-apiVersion: v1
-kind: Template
-metadata:
-  creationTimestamp: null
-  name: tekton-dashboard-build
-objects:
-  - apiVersion: v1
-    kind: BuildConfig
-    metadata:
-      labels:
-        build: tekton-dashboard
-        app: tekton-dashboard
-      name: tekton-dashboard
-      namespace: $INSTALL_NAMESPACE
-    spec:
-      failedBuildsHistoryLimit: 5
-      nodeSelector: null
-      output:
-        to:
-          kind: ImageStreamTag
-          name: tekton-dashboard:latest
-      postCommit: {}
-      resources: {}
-      runPolicy: Serial
-      source:
-        type: Git
-        git:
-          uri: https://github.com/tektoncd/dashboard.git
-          ref: main
-      triggers:
-        - type: ConfigChange
-      strategy:
-        dockerStrategy:
-          dockerfilePath: Dockerfile
-        type: Source
-      successfulBuildsHistoryLimit: 5
-    status:
-      lastVersion: 0
-EOF
-fi
-}
-
 # install invokes kubectl apply with the built manifest.
 install() {
   echo "Installing ..."
@@ -501,7 +445,6 @@ help () {
   echo -e "\t[--debug]\t\t\t\tPrints additional messages in the console"
   echo -e "\t[--extensions-rbac]\t\t\tEnable ClusterRole aggregation for easier management of extensions RBAC"
   echo -e "\t[--external-logs <logs-provider-url>]\tExternal URL from which to fetch logs when logs are not available in the cluster"
-  echo -e "\t[--image-stream]\t\t\tWill generate manifests using openshift image stream"
   echo -e "\t[--ingress-secret <secret>]\t\tWill add SSL support to the ingress"
   echo -e "\t[--ingress-url <url>]\t\t\tWill create an additional ingress with the specified URL"
   echo -e "\t[--log-format <log-format>]\t\tSpecifies the log format (json or console), default is json"
@@ -577,9 +520,6 @@ while [[ $# -gt 0 ]]; do
       ;;
     '--openshift')
       OPENSHIFT="true"
-      ;;
-    '--image-stream')
-      IMAGE_STREAM="true"
       ;;
     '--read-only')
       READONLY="true"
@@ -666,6 +606,5 @@ fi
 patch
 rbac
 ingress
-imageStream
 eval $ACTION
 cleanup

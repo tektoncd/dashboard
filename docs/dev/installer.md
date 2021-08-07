@@ -10,7 +10,6 @@ It covers the following topics:
   - [Installing on Kubernetes](#installing-on-kubernetes)
   - [OpenShift with Tekton Pipelines and Triggers installed by OpenShift Pipelines Operator](#openshift-with-tekton-pipelines-and-triggers-installed-by-openshift-pipelines-operator)
   - [OpenShift with Tekton Pipelines and Triggers installed manually using YAML manifests](#openshift-with-tekton-pipelines-and-triggers-installed-manually-using-yaml-manifests)
-  - [OpenShift image stream](#openshift-image-stream)
   - [Read only install](#read-only-install)
   - [Installing in a custom namespace](#installing-in-a-custom-namespace)
   - [Installing for single namespace visibility](#installing-for-single-namespace-visibility)
@@ -65,7 +64,6 @@ Accepted options:
         [--debug]                               Prints additional messages in the console
         [--extensions-rbac]                     Enable ClusterRole aggregation for easier management of extensions RBAC
         [--external-logs <logs-provider-url>]   External URL from which to fetch logs when logs are not available in the cluster
-        [--image-stream]                        Will generate manifests using openshift image stream
         [--ingress-secret <secret>]             Will add SSL support to the ingress
         [--ingress-url <url>]                   Will create an additional ingress with the specified URL
         [--log-format <log-format>]             Specifies the log format (json or console), default is json
@@ -128,18 +126,6 @@ Therefore, you will need to add the `--pipelines-namespace tekton-pipelines` and
 
 ```bash
 ./scripts/installer install --openshift --pipelines-namespace tekton-pipelines --triggers-namespace tekton-pipelines
-```
-
-### OpenShift image stream
-
-To install the Tekton Dashboard on OpenShift with image stream support, add the `--image-stream` option:
-
-```bash
-# for openshift / openshift pipelines operator
-./scripts/installer install --openshift --image-stream
-
-# for openshift / manifests
-./scripts/installer install --openshift --image-stream --pipelines-namespace tekton-pipelines --triggers-namespace tekton-pipelines
 ```
 
 ### Read only install
