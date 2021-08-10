@@ -6,7 +6,7 @@
 	},
 	"item": [
 		{
-			"name": "/v1/proerties",
+			"name": "/v1/properties",
 			"event": [
 				{
 					"listen": "test",
