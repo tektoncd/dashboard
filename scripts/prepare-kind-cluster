@@ -14,7 +14,7 @@
 set -e
 
 CLUSTERNAME=tekton-dashboard
-DEFAULT_OPTIONS="--log-format console --stream-logs --ingress-url tekton-dashboard.127.0.0.1.nip.io"
+DEFAULT_OPTIONS="--log-format console --ingress-url tekton-dashboard.127.0.0.1.nip.io"
 
 create_cluster() {
 kind create cluster --name $CLUSTERNAME --config - <<EOF

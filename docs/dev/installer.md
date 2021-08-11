@@ -76,7 +76,7 @@ Accepted options:
         [--pipelines-namespace <namespace>]     Override the namespace where Tekton Pipelines is installed (defaults to tekton-pipelines)
         [--platform <platform>]                 Override the platform to build for
         [--read-only]                           Will build manifests for a readonly deployment
-        [--stream-logs]                         Will enable log streaming instead of polling
+        [--stream-logs false]                   Will disable log streaming and use polling instead
         [--tenant-namespace <namespace>]        Will limit the visibility to the specified namespace only
         [--triggers-namespace <namespace>]      Override the namespace where Tekton Triggers is installed (defaults to tekton-pipelines)
         [--version <version>]                   Will download manifests for specified version or build everything using kustomize/ko

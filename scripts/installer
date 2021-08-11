@@ -25,7 +25,7 @@ LOGOUT_URL=""
 LOG_LEVEL="info"
 LOG_FORMAT="json"
 TENANT_NAMESPACE=""
-STREAM_LOGS="false"
+STREAM_LOGS="true"
 EXTERNAL_LOGS=""
 BASE_RELEASE_URL="https://storage.googleapis.com/tekton-releases/dashboard"
 
@@ -457,7 +457,7 @@ help () {
   echo -e "\t[--pipelines-namespace <namespace>]\tOverride the namespace where Tekton Pipelines is installed (defaults to tekton-pipelines)"
   echo -e "\t[--platform <platform>]\t\t\tOverride the platform to build for"
   echo -e "\t[--read-only]\t\t\t\tWill build manifests for a readonly deployment"
-  echo -e "\t[--stream-logs]\t\t\t\tWill enable log streaming instead of polling"
+  echo -e "\t[--stream-logs false]\t\t\t\tWill disable log streaming and use polling instead"
   echo -e "\t[--tenant-namespace <namespace>]\tWill limit the visibility to the specified namespace only"
   echo -e "\t[--triggers-namespace <namespace>]\tOverride the namespace where Tekton Triggers is installed (defaults to tekton-pipelines)"
   echo -e "\t[--version <version>]\t\t\tWill download manifests for specified version or build everything using kustomize/ko"
@@ -525,7 +525,8 @@ while [[ $# -gt 0 ]]; do
       READONLY="true"
       ;;
     '--stream-logs')
-      STREAM_LOGS="true"
+      shift
+      STREAM_LOGS="${1}"
       ;;
     '--external-logs')
       shift
