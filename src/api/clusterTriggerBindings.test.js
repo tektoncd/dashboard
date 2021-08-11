@@ -31,7 +31,7 @@ it('getClusterTriggerBindings', () => {
   };
   fetchMock.get(/clustertriggerbindings/, data);
   return API.getClusterTriggerBindings().then(clusterTriggerBindings => {
-    expect(clusterTriggerBindings).toEqual(data.items);
+    expect(clusterTriggerBindings).toEqual(data);
     fetchMock.restore();
   });
 });

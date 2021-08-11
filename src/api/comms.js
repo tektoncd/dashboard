@@ -21,6 +21,7 @@ const defaultOptions = {
   credentials: 'same-origin'
 };
 
+/* istanbul ignore next */
 export function createWebSocket(url) {
   return new ReconnectingWebSocket(url);
 }

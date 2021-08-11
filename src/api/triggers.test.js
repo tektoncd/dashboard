@@ -31,7 +31,7 @@ it('getTriggers', () => {
   };
   fetchMock.get(/triggers/, data);
   return API.getTriggers().then(triggers => {
-    expect(triggers).toEqual(data.items);
+    expect(triggers).toEqual(data);
     fetchMock.restore();
   });
 });

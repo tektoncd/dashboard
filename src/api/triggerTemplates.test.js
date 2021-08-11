@@ -31,7 +31,7 @@ it('getTriggerTemplates', () => {
   };
   fetchMock.get(/triggertemplates/, data);
   return API.getTriggerTemplates().then(triggerTemplates => {
-    expect(triggerTemplates).toEqual(data.items);
+    expect(triggerTemplates).toEqual(data);
     fetchMock.restore();
   });
 });

@@ -135,22 +135,11 @@ describe('getResourcesAPI', () => {
   });
 });
 
-describe('checkData', () => {
-  it('returns items if present', () => {
-    const items = 'foo';
-    const data = {
-      items
-    };
-    expect(utils.checkData(data)).toEqual(items);
-  });
-
-  it('throws an error if items is not present', () => {
-    expect(() => utils.checkData({})).toThrow();
-  });
-});
-
 describe('useWebSocket', () => {
   const kind = 'TaskRun';
+  const resourceVersion = 'fake_resourceVersion';
+  const url = 'http://localhost/fake_url';
+
   it('should handle ADDED events', () => {
     const queryClient = getQueryClient();
     const webSocket = getWebSocket();
@@ -158,15 +147,19 @@ describe('useWebSocket', () => {
     jest.spyOn(queryClient, 'invalidateQueries');
     const existingResource = { metadata: { uid: 'existing-id' } };
     const newResource = { kind, metadata: { uid: 'new-uid' } };
-    const url = 'fake_url';
 
-    queryClient.setQueryData(kind, () => [existingResource]);
+    queryClient.setQueryData(kind, () => ({
+      items: [existingResource],
+      metadata: {}
+    }));
 
-    renderHook(() => useWebSocket({ kind, url }), {
+    renderHook(() => useWebSocket({ kind, resourceVersion, url }), {
       wrapper: getAPIWrapper({ queryClient })
     });
 
-    expect(comms.createWebSocket).toHaveBeenCalledWith(url);
+    expect(comms.createWebSocket).toHaveBeenCalledWith(
+      `${url}?resourceVersion=${resourceVersion}`
+    );
 
     act(() => {
       webSocket.fireEvent({
@@ -198,7 +191,10 @@ describe('useWebSocket', () => {
       metadata: { name: otherName, namespace, uid: 'existing-id-3' }
     };
 
-    queryClient.setQueryData(kind, () => [resource1, resource2, resource3]);
+    queryClient.setQueryData(kind, () => ({
+      items: [resource1, resource2, resource3],
+      metadata: {}
+    }));
     queryClient.setQueryData([kind, { name, namespace }], () => resource2);
     queryClient.setQueryData(
       [kind, { name: otherName, namespace }],
@@ -207,7 +203,7 @@ describe('useWebSocket', () => {
 
     jest.spyOn(queryClient, 'removeQueries');
 
-    renderHook(() => useWebSocket({ kind }), {
+    renderHook(() => useWebSocket({ kind, resourceVersion, url }), {
       wrapper: getAPIWrapper({ queryClient })
     });
 
@@ -220,7 +216,10 @@ describe('useWebSocket', () => {
         })
       });
     });
-    expect(queryClient.getQueryData(kind)).toEqual([resource1, resource3]);
+    expect(queryClient.getQueryData(kind)).toEqual({
+      items: [resource1, resource3],
+      metadata: {}
+    });
     expect(
       queryClient.getQueryData([kind, { name: otherName, namespace }])
     ).toEqual(resource3);
@@ -249,10 +248,13 @@ describe('useWebSocket', () => {
       metadata: { ...existingResource.metadata, resourceVersion: '11' }
     };
 
-    queryClient.setQueryData(kind, () => [existingResource]);
+    queryClient.setQueryData(kind, () => ({
+      items: [existingResource],
+      metadata: {}
+    }));
     queryClient.setQueryData([kind, { name }], () => existingResource);
 
-    renderHook(() => useWebSocket({ kind }), {
+    renderHook(() => useWebSocket({ kind, resourceVersion, url }), {
       wrapper: getAPIWrapper({ queryClient })
     });
 
@@ -266,7 +268,10 @@ describe('useWebSocket', () => {
         })
       });
     });
-    expect(queryClient.getQueryData(kind)).toEqual([existingResource]);
+    expect(queryClient.getQueryData(kind)).toEqual({
+      items: [existingResource],
+      metadata: {}
+    });
     expect(queryClient.getQueryData([kind, { name }])).toEqual(
       existingResource
     );
@@ -281,7 +286,10 @@ describe('useWebSocket', () => {
         })
       });
     });
-    expect(queryClient.getQueryData(kind)).toEqual([updatedResource]);
+    expect(queryClient.getQueryData(kind)).toEqual({
+      items: [updatedResource],
+      metadata: {}
+    });
     expect(queryClient.getQueryData([kind, { name }])).toEqual(updatedResource);
   });
 
@@ -294,9 +302,12 @@ describe('useWebSocket', () => {
       metadata: { uid: 'existing-id' }
     };
 
-    queryClient.setQueryData(kind, () => [existingResource]);
+    queryClient.setQueryData(kind, () => ({
+      items: [existingResource],
+      metadata: {}
+    }));
 
-    renderHook(() => useWebSocket({ kind }), {
+    renderHook(() => useWebSocket({ kind, resourceVersion, url }), {
       wrapper: getAPIWrapper({ queryClient })
     });
 
@@ -309,19 +320,28 @@ describe('useWebSocket', () => {
         })
       });
     });
-    expect(queryClient.getQueryData(kind)).toEqual([existingResource]);
+    expect(queryClient.getQueryData(kind)).toEqual({
+      items: [existingResource],
+      metadata: {}
+    });
 
     act(() => {
       webSocket.fireEvent({
         type: 'non-message-event'
       });
     });
-    expect(queryClient.getQueryData(kind)).toEqual([existingResource]);
+    expect(queryClient.getQueryData(kind)).toEqual({
+      items: [existingResource],
+      metadata: {}
+    });
   });
 });
 
 describe('useCollection', () => {
   const kind = 'TaskRun';
+  const resourceVersion = 'fake_resourceVersion';
+  const webSocketURL = 'http://localhost/fake_url';
+
   it('should return a valid query response', async () => {
     const queryClient = getQueryClient();
     const webSocket = getWebSocket();
@@ -336,9 +356,12 @@ describe('useCollection', () => {
       metadata: { ...existingResource.metadata, resourceVersion: '11' }
     };
 
-    const api = () => [existingResource];
+    const api = () => ({
+      items: [existingResource],
+      metadata: { resourceVersion }
+    });
     const { result, waitFor, waitForNextUpdate } = renderHook(
-      () => useCollection({ api, kind }),
+      () => useCollection({ api, kind, webSocketURL }),
       {
         wrapper: getAPIWrapper({ queryClient })
       }
@@ -364,6 +387,7 @@ describe('useResource', () => {
   it('should return a valid query response', async () => {
     const queryClient = getQueryClient();
     const webSocket = getWebSocket();
+    const webSocketURL = 'http://localhost/fake_url';
     jest.spyOn(comms, 'createWebSocket').mockImplementation(() => webSocket);
 
     const name = 'resource-name';
@@ -378,7 +402,7 @@ describe('useResource', () => {
 
     const api = () => existingResource;
     const { result, waitFor, waitForNextUpdate } = renderHook(
-      () => useResource({ api, kind, params: { name } }),
+      () => useResource({ api, kind, params: { name }, webSocketURL }),
       {
         wrapper: getAPIWrapper({ queryClient })
       }

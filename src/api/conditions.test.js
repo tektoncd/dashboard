@@ -21,7 +21,7 @@ it('getConditions', () => {
   };
   fetchMock.get(/conditions/, data);
   return API.getConditions().then(conditions => {
-    expect(conditions).toEqual(data.items);
+    expect(conditions).toEqual(data);
     fetchMock.restore();
   });
 });

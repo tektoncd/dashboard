@@ -21,7 +21,7 @@ it('getClusterInterceptors', () => {
   };
   fetchMock.get(/clusterinterceptors/, data);
   return API.getClusterInterceptors().then(tasks => {
-    expect(tasks).toEqual(data.items);
+    expect(tasks).toEqual(data);
     fetchMock.restore();
   });
 });

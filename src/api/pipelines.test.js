@@ -21,7 +21,7 @@ it('getPipelines', () => {
   };
   fetchMock.get(/pipelines/, data);
   return API.getPipelines().then(pipelines => {
-    expect(pipelines).toEqual(data.items);
+    expect(pipelines).toEqual(data);
     fetchMock.restore();
   });
 });

@@ -13,7 +13,6 @@ limitations under the License.
 
 import { deleteRequest, get, post } from './comms';
 import {
-  checkData,
   getQueryParams,
   getTektonAPI,
   useCollection,
@@ -50,7 +49,7 @@ export function getPipelineResources({ filters = [], namespace } = {}) {
     filters,
     namespace
   });
-  return get(uri).then(checkData);
+  return get(uri);
 }
 
 export function getPipelineResource({ name, namespace }) {

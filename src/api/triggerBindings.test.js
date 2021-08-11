@@ -31,7 +31,7 @@ it('getTriggerBindings', () => {
   };
   fetchMock.get(/triggerbindings/, data);
   return API.getTriggerBindings().then(triggerBindings => {
-    expect(triggerBindings).toEqual(data.items);
+    expect(triggerBindings).toEqual(data);
     fetchMock.restore();
   });
 });

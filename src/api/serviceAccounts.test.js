@@ -19,7 +19,7 @@ it('getServiceAccounts returns the correct data', () => {
   const data = { items: 'serviceaccounts' };
   fetchMock.get(/serviceaccounts/, data);
   return API.getServiceAccounts().then(response => {
-    expect(response).toEqual(data.items);
+    expect(response).toEqual(data);
     fetchMock.restore();
   });
 });

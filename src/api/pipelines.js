@@ -13,7 +13,6 @@ limitations under the License.
 
 import { deleteRequest, get } from './comms';
 import {
-  checkData,
   getQueryParams,
   getTektonAPI,
   useCollection,
@@ -30,7 +29,7 @@ function getPipelinesAPI({ filters, isWebSocket, name, namespace }) {
 
 export function getPipelines({ filters = [], namespace } = {}) {
   const uri = getPipelinesAPI({ filters, namespace });
-  return get(uri).then(checkData);
+  return get(uri);
 }
 
 export function getPipeline({ name, namespace }) {

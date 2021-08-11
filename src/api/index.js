@@ -19,7 +19,6 @@ import { useTask } from './tasks';
 import { get, getAPIRoot, post } from './comms';
 import {
   apiRoot,
-  checkData,
   getKubeAPI,
   getQueryParams,
   getResourcesAPI,
@@ -52,7 +51,7 @@ function getCustomResourcesAPI({ filters, name, ...rest }) {
 
 export function getCustomResources({ filters = [], ...rest }) {
   const uri = getCustomResourcesAPI({ filters, ...rest });
-  return get(uri).then(checkData);
+  return get(uri);
 }
 
 export function getCustomResource(params) {
@@ -104,7 +103,7 @@ function getNamespacesAPI({ isWebSocket } = {}) {
 
 export function getNamespaces() {
   const uri = getNamespacesAPI();
-  return get(uri).then(checkData);
+  return get(uri);
 }
 
 export function useNamespaces(queryConfig) {

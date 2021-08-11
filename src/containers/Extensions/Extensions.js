@@ -40,9 +40,12 @@ function Extensions(props) {
   });
 
   const tenantNamespace = useTenantNamespace();
-  const { data: extensions = [], error, isFetching } = useExtensions({
-    namespace: tenantNamespace || ALL_NAMESPACES
-  });
+  const { data: extensions = [], error, isFetching } = useExtensions(
+    {
+      namespace: tenantNamespace || ALL_NAMESPACES
+    },
+    { disableWebSocket: true }
+  );
 
   const emptyText = intl.formatMessage({
     id: 'dashboard.extensions.emptyState',

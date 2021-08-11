@@ -51,7 +51,9 @@ const NamespacesDropdown = ({
     });
 
   const tenantNamespace = useTenantNamespace();
-  const { data: namespaces = [], isFetching } = useNamespaces();
+  const { data: namespaces = [], isFetching } = useNamespaces({
+    disableWebSocket: true
+  });
 
   const selectedItem = { ...originalSelectedItem };
   if (selectedItem && selectedItem.id === ALL_NAMESPACES) {

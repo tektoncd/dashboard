@@ -13,7 +13,6 @@ limitations under the License.
 
 import { get } from './comms';
 import {
-  checkData,
   getQueryParams,
   getTektonAPI,
   triggersAPIGroup,
@@ -31,7 +30,7 @@ function getTriggerTemplatesAPI({ filters, isWebSocket, name, namespace }) {
 
 export function getTriggerTemplates({ filters = [], namespace } = {}) {
   const uri = getTriggerTemplatesAPI({ filters, namespace });
-  return get(uri).then(checkData);
+  return get(uri);
 }
 
 export function getTriggerTemplate({ name, namespace }) {

@@ -13,7 +13,6 @@ limitations under the License.
 
 import { get } from './comms';
 import {
-  checkData,
   getQueryParams,
   getTektonAPI,
   useCollection,
@@ -30,7 +29,7 @@ function getConditionsAPI({ filters, isWebSocket, name, namespace }) {
 
 export function getConditions({ filters = [], namespace } = {}) {
   const uri = getConditionsAPI({ filters, namespace });
-  return get(uri).then(checkData);
+  return get(uri);
 }
 
 export function getCondition({ name, namespace }) {

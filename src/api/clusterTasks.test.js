@@ -21,7 +21,7 @@ it('getClusterTasks', () => {
   };
   fetchMock.get(/clustertasks/, data);
   return API.getClusterTasks().then(tasks => {
-    expect(tasks).toEqual(data.items);
+    expect(tasks).toEqual(data);
     fetchMock.restore();
   });
 });

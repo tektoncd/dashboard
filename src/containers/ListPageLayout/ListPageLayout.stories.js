@@ -46,7 +46,10 @@ export default {
   component: ListPageLayoutContainer,
   decorators: [
     storyFn => {
-      queryClient.setQueryData('Namespace', namespaces);
+      queryClient.setQueryData('Namespace', () => ({
+        items: namespaces,
+        metadata: {}
+      }));
 
       return (
         <QueryClientProvider client={queryClient}>

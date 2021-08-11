@@ -165,7 +165,7 @@ it('getPipelineRuns', () => {
   };
   fetchMock.get(/pipelineruns/, data);
   return API.getPipelineRuns({ filters: [] }).then(pipelineRuns => {
-    expect(pipelineRuns).toEqual(data.items);
+    expect(pipelineRuns).toEqual(data);
     fetchMock.restore();
   });
 });
@@ -178,7 +178,7 @@ it('getPipelineRuns With Query Params', () => {
   fetchMock.get(/pipelineruns/, data);
   return API.getPipelineRuns({ pipelineName, filters: [] }).then(
     pipelineRuns => {
-      expect(pipelineRuns).toEqual(data.items);
+      expect(pipelineRuns).toEqual(data);
       fetchMock.restore();
     }
   );
