@@ -21,7 +21,7 @@ it('getTasks', () => {
   };
   fetchMock.get(/tasks/, data);
   return API.getTasks().then(tasks => {
-    expect(tasks).toEqual(data.items);
+    expect(tasks).toEqual(data);
     fetchMock.restore();
   });
 });

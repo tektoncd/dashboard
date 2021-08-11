@@ -47,7 +47,7 @@ it('getCustomResources', () => {
   fetchMock.get(`end:${type}/`, data);
   return API.getCustomResources({ group, version, type, namespace }).then(
     resources => {
-      expect(resources).toEqual(data.items);
+      expect(resources).toEqual(data);
       fetchMock.restore();
     }
   );
@@ -110,13 +110,14 @@ it('getNamespaces returns the correct data', () => {
   };
   fetchMock.get(/namespaces/, data);
   return API.getNamespaces().then(response => {
-    expect(response).toEqual(data.items);
+    expect(response).toEqual(data);
     fetchMock.restore();
   });
 });
 
 it('useNamespaces', async () => {
   const namespaces = {
+    metadata: {},
     items: [
       { metadata: { name: 'namespace1' } },
       { metadata: { name: 'namespace2' } }

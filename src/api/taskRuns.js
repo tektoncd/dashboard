@@ -16,7 +16,6 @@ import deepClone from 'lodash.clonedeep';
 
 import { deleteRequest, get, patch, post } from './comms';
 import {
-  checkData,
   getQueryParams,
   getTektonAPI,
   useCollection,
@@ -38,7 +37,7 @@ function getTaskRunsAPI({ filters, isWebSocket, name, namespace }) {
 
 export function getTaskRuns({ filters = [], namespace } = {}) {
   const uri = getTaskRunsAPI({ filters, namespace });
-  return get(uri).then(checkData);
+  return get(uri);
 }
 
 export function getTaskRun({ name, namespace }) {

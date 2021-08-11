@@ -13,7 +13,6 @@ limitations under the License.
 
 import { get } from './comms';
 import {
-  checkData,
   getQueryParams,
   getTektonAPI,
   triggersAPIGroup,
@@ -31,7 +30,7 @@ function getClusterInterceptorsAPI({ filters, isWebSocket, name }) {
 
 export function getClusterInterceptors({ filters = [] } = {}) {
   const uri = getClusterInterceptorsAPI({ filters });
-  return get(uri).then(checkData);
+  return get(uri);
 }
 
 export function getClusterInterceptor({ name }) {

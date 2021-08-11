@@ -63,7 +63,7 @@ it('getPipelineResources', () => {
   };
   fetchMock.get(/pipelineresources/, data);
   return API.getPipelineResources().then(pipelineResources => {
-    expect(pipelineResources).toEqual(data.items);
+    expect(pipelineResources).toEqual(data);
     fetchMock.restore();
   });
 });

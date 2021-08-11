@@ -51,9 +51,12 @@ function SideNav(props) {
 
   const { selectNamespace } = useSelectedNamespace();
   const tenantNamespace = useTenantNamespace();
-  const { data: extensions = [] } = useExtensions({
-    namespace: tenantNamespace || ALL_NAMESPACES
-  });
+  const { data: extensions = [] } = useExtensions(
+    {
+      namespace: tenantNamespace || ALL_NAMESPACES
+    },
+    { disableWebSocket: true }
+  );
 
   useEffect(() => {
     if (namespace) {

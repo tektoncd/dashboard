@@ -182,7 +182,7 @@ it('getTaskRuns', () => {
   };
   fetchMock.get(/taskruns/, data);
   return API.getTaskRuns().then(taskRuns => {
-    expect(taskRuns).toEqual(data.items);
+    expect(taskRuns).toEqual(data);
     fetchMock.restore();
   });
 });
@@ -194,7 +194,7 @@ it('getTaskRuns With Query Params', () => {
   };
   fetchMock.get(/taskruns/, data);
   return API.getTaskRuns({ taskName }).then(taskRuns => {
-    expect(taskRuns).toEqual(data.items);
+    expect(taskRuns).toEqual(data);
     fetchMock.restore();
   });
 });

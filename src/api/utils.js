@@ -22,16 +22,6 @@ export const tektonAPIGroup = 'tekton.dev';
 export const triggersAPIGroup = 'triggers.tekton.dev';
 export const dashboardAPIGroup = 'dashboard.tekton.dev';
 
-export function checkData(data) {
-  if (data.items) {
-    return data.items;
-  }
-
-  const error = new Error('Unable to retrieve data');
-  error.data = data;
-  throw error;
-}
-
 export function getAPI(type, { name = '', namespace } = {}, queryParams) {
   return [
     apiRoot,
@@ -144,14 +134,17 @@ function handleDeleted({ kind, payload, queryClient }) {
   queryClient.removeQueries([kind, { name, ...(namespace && { namespace }) }]);
   // remove resource from any list page caches
   queryClient.setQueriesData(kind, data => {
-    if (!Array.isArray(data)) {
+    if (!Array.isArray(data.items)) {
       // another details page cache, but not the one we're looking for
       // since we've just deleted its query above
       return data;
     }
-    return data.filter(
-      resource => resource.metadata.uid !== payload.metadata.uid
-    );
+    return {
+      ...data,
+      items: data.items.filter(
+        resource => resource.metadata.uid !== payload.metadata.uid
+      )
+    };
   });
 }
 
@@ -172,18 +165,21 @@ function handleUpdated({ kind, payload, queryClient }) {
       // it's a details page cache (i.e. a single resource)
       return updateResource({ existing: data, incoming: payload });
     }
-    if (!Array.isArray(data)) {
+    if (!Array.isArray(data.items)) {
       // another single resource but not a match
       return data;
     }
     // otherwise it's a list page cache
-    return data.map(resource =>
-      updateResource({ existing: resource, incoming: payload })
-    );
+    return {
+      ...data,
+      items: data.items.map(resource =>
+        updateResource({ existing: resource, incoming: payload })
+      )
+    };
   });
 }
 
-export function useWebSocket({ enabled, kind, url }) {
+export function useWebSocket({ enabled, kind, resourceVersion, url }) {
   const queryClient = useQueryClient();
   const [isWebSocketConnected, setWebSocketConnected] = useState(null);
   let { current: webSocket } = useRef(null);
@@ -218,7 +214,11 @@ export function useWebSocket({ enabled, kind, url }) {
       }
     }
 
-    webSocket = createWebSocket(url);
+    const webSocketURL = new URL(url);
+    const queryParams = new URLSearchParams(webSocketURL.search);
+    queryParams.set('resourceVersion', resourceVersion);
+    webSocketURL.search = queryParams.toString();
+    webSocket = createWebSocket(webSocketURL.toString());
 
     webSocket.addEventListener('close', handleClose);
     webSocket.addEventListener('open', handleOpen);
@@ -248,28 +248,60 @@ export function useCollection({
   queryConfig,
   webSocketURL
 }) {
+  const { disableWebSocket, ...reactQueryConfig } = queryConfig || {};
   const query = useQuery(
     [kind, params].filter(Boolean),
     () => api(params),
-    queryConfig
+    reactQueryConfig
   );
+
+  let resourceVersion;
+  if (query.data?.items) {
+    resourceVersion = query.data.metadata.resourceVersion;
+    query.data = query.data.items;
+  } else {
+    query.data = [];
+  }
+
   const { isWebSocketConnected } = useWebSocket({
-    enabled: queryConfig?.enabled,
+    enabled:
+      !disableWebSocket &&
+      queryConfig?.enabled !== false &&
+      query.isSuccess &&
+      !!resourceVersion,
     kind,
+    resourceVersion,
     url: webSocketURL
   });
   return { ...query, isWebSocketConnected };
 }
 
-export function useResource({ api, kind, params, queryConfig, webSocketURL }) {
+export function useResource({
+  api,
+  kind,
+  params,
+  queryConfig = {},
+  webSocketURL
+}) {
+  const { disableWebSocket, ...reactQueryConfig } = queryConfig;
   const query = useQuery(
     [kind, params].filter(Boolean),
     () => api(params),
-    queryConfig
+    reactQueryConfig
   );
+
+  let resourceVersion;
+  if (query.data?.metadata) {
+    resourceVersion = query.data.metadata.resourceVersion;
+  }
   const { isWebSocketConnected } = useWebSocket({
-    enabled: queryConfig?.enabled,
+    enabled:
+      !disableWebSocket &&
+      queryConfig?.enabled !== false &&
+      query.isSuccess &&
+      !!resourceVersion,
     kind,
+    resourceVersion,
     url: webSocketURL
   });
   return { ...query, isWebSocketConnected };

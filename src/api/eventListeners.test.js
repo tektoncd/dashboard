@@ -31,7 +31,7 @@ it('getEventListeners', () => {
   };
   fetchMock.get(/eventlisteners/, data);
   return API.getEventListeners().then(eventListeners => {
-    expect(eventListeners).toEqual(data.items);
+    expect(eventListeners).toEqual(data);
     fetchMock.restore();
   });
 });

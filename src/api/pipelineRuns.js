@@ -16,7 +16,6 @@ import deepClone from 'lodash.clonedeep';
 
 import { deleteRequest, get, patch, post } from './comms';
 import {
-  checkData,
   getQueryParams,
   getTektonAPI,
   useCollection,
@@ -33,7 +32,7 @@ function getPipelineRunsAPI({ filters, isWebSocket, name, namespace }) {
 
 export function getPipelineRuns({ filters = [], namespace } = {}) {
   const uri = getPipelineRunsAPI({ filters, namespace });
-  return get(uri).then(checkData);
+  return get(uri);
 }
 
 export function getPipelineRun({ name, namespace }) {
