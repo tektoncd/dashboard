@@ -11,11 +11,6 @@
             "enabled": true
         },
         {
-            "key": "dashboard_namespace",
-            "value": "tekton-pipelines",
-            "enabled": true
-        },
-        {
             "key": "dashboard_version",
             "value": "devel",
             "enabled": true
@@ -28,11 +23,6 @@
         {
             "key": "triggers_namespace",
             "value": "tekton-pipelines",
-            "enabled": true
-        },
-        {
-            "key": "triggers_version",
-            "value": "v0.5.0",
             "enabled": true
         }
     ]
