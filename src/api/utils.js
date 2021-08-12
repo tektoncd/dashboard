@@ -59,7 +59,7 @@ export function getKubeAPI(
 
   return [
     isWebSocket ? apiRoot.replace('http', 'ws') : apiRoot,
-    '/proxy/api/v1/',
+    '/api/v1/',
     namespace && namespace !== ALL_NAMESPACES
       ? `namespaces/${encodeURIComponent(namespace)}/`
       : '',
@@ -84,9 +84,7 @@ export function getResourcesAPI(
 
   return [
     isWebSocket ? apiRoot.replace('http', 'ws') : apiRoot,
-    group === 'core'
-      ? `/proxy/api/${version}/`
-      : `/proxy/apis/${group}/${version}/`,
+    group === 'core' ? `/api/${version}/` : `/apis/${group}/${version}/`,
     namespace && namespace !== ALL_NAMESPACES
       ? `namespaces/${encodeURIComponent(namespace)}/`
       : '',

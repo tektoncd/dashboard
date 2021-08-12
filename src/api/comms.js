@@ -25,12 +25,24 @@ export function createWebSocket(url) {
   return new ReconnectingWebSocket(url);
 }
 
-export function getAPIRoot() {
-  const { host, pathname, protocol } = window.location;
-  let baseURL = `${protocol}//${host}${pathname}`;
+export function getAPIRoot({ isDashboardAPI } = {}) {
+  const { host, pathname: originalPathName, protocol } = window.location;
+
+  const pathName = isDashboardAPI
+    ? originalPathName
+    : originalPathName
+        .replace(/^\/tkn-dashboard\//, '') // when accessed in client mode
+        .replace(
+          // when accessed via `kubectl proxy`
+          /^\/api\/v1\/namespaces\/[^/]+\/services\/tekton-dashboard:http\/proxy\//,
+          ''
+        );
+
+  let baseURL = `${protocol}//${host}${pathName}`;
   if (baseURL.endsWith('/')) {
     baseURL = baseURL.slice(0, -1);
   }
+
   return baseURL;
 }
 

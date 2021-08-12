@@ -53,7 +53,7 @@
 			"response": []
 		},
 		{
-			"name": "/proxy/apis/triggers.tekton.dev/v1alpha1/eventlisteners",
+			"name": "/apis/triggers.tekton.dev/v1alpha1/eventlisteners",
 			"event": [
 				{
 					"listen": "test",
@@ -83,14 +83,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://{{url}}:{{port}}/proxy/apis/triggers.tekton.dev/v1alpha1/eventlisteners",
+					"raw": "http://{{url}}:{{port}}/apis/triggers.tekton.dev/v1alpha1/eventlisteners",
 					"protocol": "http",
 					"host": [
 						"{{url}}"
 					],
 					"port": "{{port}}",
 					"path": [
-						"proxy",
 						"apis",
 						"triggers.tekton.dev",
 						"v1alpha1",
@@ -101,7 +100,7 @@
 			"response": []
 		},
 		{
-			"name": "/proxy/apis/triggers.tekton.dev/v1alpha1/triggerbindings",
+			"name": "/apis/triggers.tekton.dev/v1alpha1/triggerbindings",
 			"event": [
 				{
 					"listen": "test",
@@ -131,14 +130,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://{{url}}:{{port}}/proxy/apis/triggers.tekton.dev/v1alpha1/triggerbindings",
+					"raw": "http://{{url}}:{{port}}/apis/triggers.tekton.dev/v1alpha1/triggerbindings",
 					"protocol": "http",
 					"host": [
 						"{{url}}"
 					],
 					"port": "{{port}}",
 					"path": [
-						"proxy",
 						"apis",
 						"triggers.tekton.dev",
 						"v1alpha1",
@@ -149,7 +147,7 @@
 			"response": []
 		},
 		{
-			"name": "/proxy/apis/triggers.tekton.dev/v1alpha1/clustertriggerbindings",
+			"name": "/apis/triggers.tekton.dev/v1alpha1/clustertriggerbindings",
 			"event": [
 				{
 					"listen": "test",
@@ -171,14 +169,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://{{url}}:{{port}}/proxy/apis/triggers.tekton.dev/v1alpha1/clustertriggerbindings",
+					"raw": "http://{{url}}:{{port}}/apis/triggers.tekton.dev/v1alpha1/clustertriggerbindings",
 					"protocol": "http",
 					"host": [
 						"{{url}}"
 					],
 					"port": "{{port}}",
 					"path": [
-						"proxy",
 						"apis",
 						"triggers.tekton.dev",
 						"v1alpha1",
@@ -189,7 +186,7 @@
 			"response": []
 		},
 		{
-			"name": "/proxy/apis/triggers.tekton.dev/v1alpha1/triggertemplates",
+			"name": "/apis/triggers.tekton.dev/v1alpha1/triggertemplates",
 			"event": [
 				{
 					"listen": "test",
@@ -219,14 +216,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://{{url}}:{{port}}/proxy/apis/triggers.tekton.dev/v1alpha1/triggertemplates",
+					"raw": "http://{{url}}:{{port}}/apis/triggers.tekton.dev/v1alpha1/triggertemplates",
 					"protocol": "http",
 					"host": [
 						"{{url}}"
 					],
 					"port": "{{port}}",
 					"path": [
-						"proxy",
 						"apis",
 						"triggers.tekton.dev",
 						"v1alpha1",

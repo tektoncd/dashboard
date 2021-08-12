@@ -485,7 +485,7 @@ describe('getAPIResource', () => {
     const type = 'testtype';
     const apiResource = { name: type };
     const data = { resources: [apiResource] };
-    fetchMock.get(`end:/proxy/apis/${group}/${version}`, data);
+    fetchMock.get(`end:/apis/${group}/${version}`, data);
     return API.getAPIResource({ group, version, type }).then(resource => {
       expect(resource).toEqual(apiResource);
       fetchMock.restore();
@@ -498,7 +498,7 @@ describe('getAPIResource', () => {
     const type = 'testtype';
     const apiResource = { name: type };
     const data = { resources: [apiResource] };
-    fetchMock.get(`end:/proxy/api/${version}`, data);
+    fetchMock.get(`end:/api/${version}`, data);
     return API.getAPIResource({ group, version, type }).then(resource => {
       expect(resource).toEqual(apiResource);
       fetchMock.restore();
