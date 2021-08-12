@@ -80,7 +80,7 @@ func registerPropertiesEndpoint(r endpoints.Resource, mux *http.ServeMux) {
 func registerLogsProxy(r endpoints.Resource, mux *http.ServeMux) {
 	if r.Options.ExternalLogsURL != "" {
 		logging.Log.Info("Adding API for logs proxy")
-		mux.HandleFunc("/v1/logs-proxy", r.LogsProxy)
+		mux.HandleFunc("/v1/logs-proxy/", r.LogsProxy)
 	}
 }
 

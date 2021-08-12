@@ -30,7 +30,7 @@ func (r Resource) LogsProxy(response http.ResponseWriter, request *http.Request)
 
 	uri := strings.TrimPrefix(request.URL.Path, "/v1/logs-proxy") + "?" + parsedURL.RawQuery
 
-	if statusCode, err := utils.Proxy(request, response, r.Options.ExternalLogsURL+"/"+uri, http.DefaultClient); err != nil {
+	if statusCode, err := utils.Proxy(request, response, r.Options.ExternalLogsURL+uri, http.DefaultClient); err != nil {
 		utils.RespondError(response, err, statusCode)
 	}
 }
