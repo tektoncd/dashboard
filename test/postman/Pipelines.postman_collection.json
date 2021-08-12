@@ -53,7 +53,7 @@
 			"response": []
 		},
 		{
-			"name": "/proxy/apis/tekton.dev/v1beta1/pipelines",
+			"name": "/apis/tekton.dev/v1beta1/pipelines",
 			"event": [
 				{
 					"listen": "test",
@@ -83,14 +83,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://{{url}}:{{port}}/proxy/apis/tekton.dev/v1beta1/pipelines",
+					"raw": "http://{{url}}:{{port}}/apis/tekton.dev/v1beta1/pipelines",
 					"protocol": "http",
 					"host": [
 						"{{url}}"
 					],
 					"port": "{{port}}",
 					"path": [
-						"proxy",
 						"apis",
 						"tekton.dev",
 						"v1beta1",
@@ -101,7 +100,7 @@
 			"response": []
 		},
 		{
-			"name": "/proxy/apis/tekton.dev/v1beta1/pipelineruns",
+			"name": "/apis/tekton.dev/v1beta1/pipelineruns",
 			"event": [
 				{
 					"listen": "test",
@@ -131,14 +130,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://{{url}}:{{port}}/proxy/apis/tekton.dev/v1beta1/pipelineruns",
+					"raw": "http://{{url}}:{{port}}/apis/tekton.dev/v1beta1/pipelineruns",
 					"protocol": "http",
 					"host": [
 						"{{url}}"
 					],
 					"port": "{{port}}",
 					"path": [
-						"proxy",
 						"apis",
 						"tekton.dev",
 						"v1beta1",
@@ -149,7 +147,7 @@
 			"response": []
 		},
 		{
-			"name": "/proxy/apis/tekton.dev/v1beta1/tasks",
+			"name": "/apis/tekton.dev/v1beta1/tasks",
 			"event": [
 				{
 					"listen": "test",
@@ -179,14 +177,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://{{url}}:{{port}}/proxy/apis/tekton.dev/v1beta1/tasks",
+					"raw": "http://{{url}}:{{port}}/apis/tekton.dev/v1beta1/tasks",
 					"protocol": "http",
 					"host": [
 						"{{url}}"
 					],
 					"port": "{{port}}",
 					"path": [
-						"proxy",
 						"apis",
 						"tekton.dev",
 						"v1beta1",
@@ -197,7 +194,7 @@
 			"response": []
 		},
 		{
-			"name": "/proxy/apis/tekton.dev/v1beta1/clustertasks",
+			"name": "/apis/tekton.dev/v1beta1/clustertasks",
 			"event": [
 				{
 					"listen": "test",
@@ -219,14 +216,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://{{url}}:{{port}}/proxy/apis/tekton.dev/v1beta1/clustertasks",
+					"raw": "http://{{url}}:{{port}}/apis/tekton.dev/v1beta1/clustertasks",
 					"protocol": "http",
 					"host": [
 						"{{url}}"
 					],
 					"port": "{{port}}",
 					"path": [
-						"proxy",
 						"apis",
 						"tekton.dev",
 						"v1beta1",
@@ -237,7 +233,7 @@
 			"response": []
 		},
 		{
-			"name": "/proxy/apis/tekton.dev/v1beta1/taskruns",
+			"name": "/apis/tekton.dev/v1beta1/taskruns",
 			"event": [
 				{
 					"listen": "test",
@@ -267,14 +263,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://{{url}}:{{port}}/proxy/apis/tekton.dev/v1beta1/taskruns",
+					"raw": "http://{{url}}:{{port}}/apis/tekton.dev/v1beta1/taskruns",
 					"protocol": "http",
 					"host": [
 						"{{url}}"
 					],
 					"port": "{{port}}",
 					"path": [
-						"proxy",
 						"apis",
 						"tekton.dev",
 						"v1beta1",
@@ -285,7 +280,7 @@
 			"response": []
 		},
 		{
-			"name": "/proxy/apis/tekton.dev/v1alpha1/conditions",
+			"name": "/apis/tekton.dev/v1alpha1/conditions",
 			"event": [
 				{
 					"listen": "test",
@@ -315,14 +310,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://{{url}}:{{port}}/proxy/apis/tekton.dev/v1alpha1/conditions",
+					"raw": "http://{{url}}:{{port}}/apis/tekton.dev/v1alpha1/conditions",
 					"protocol": "http",
 					"host": [
 						"{{url}}"
 					],
 					"port": "{{port}}",
 					"path": [
-						"proxy",
 						"apis",
 						"tekton.dev",
 						"v1alpha1",
@@ -333,7 +327,7 @@
 			"response": []
 		},
 		{
-			"name": "/proxy/apis/tekton.dev/v1alpha1/pipelineresources",
+			"name": "/apis/tekton.dev/v1alpha1/pipelineresources",
 			"event": [
 				{
 					"listen": "test",
@@ -363,14 +357,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://{{url}}:{{port}}/proxy/apis/tekton.dev/v1alpha1/pipelineresources",
+					"raw": "http://{{url}}:{{port}}/apis/tekton.dev/v1alpha1/pipelineresources",
 					"protocol": "http",
 					"host": [
 						"{{url}}"
 					],
 					"port": "{{port}}",
 					"path": [
-						"proxy",
 						"apis",
 						"tekton.dev",
 						"v1alpha1",

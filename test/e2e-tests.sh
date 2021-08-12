@@ -86,7 +86,7 @@ test_dashboard() {
   export PIPELINE_RUN_NAME="e2e-pipelinerun"
   export POD_LABEL="tekton.dev/pipelineRun=$PIPELINE_RUN_NAME"
   export EXPECTED_RETURN_VALUE="Hello World!"
-  export TEKTON_PROXY_URL="http://localhost:9097/proxy/apis/tekton.dev/v1beta1/namespaces/$TEST_NAMESPACE"
+  export TEKTON_PROXY_URL="http://localhost:9097/apis/tekton.dev/v1beta1/namespaces/$TEST_NAMESPACE"
 
   # Kubectl static resources
   echo "Creating static resources using kubectl..."

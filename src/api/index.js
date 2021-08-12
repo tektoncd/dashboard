@@ -16,7 +16,7 @@ import { labels as labelConstants } from '@tektoncd/dashboard-utils';
 
 import { useClusterTask } from './clusterTasks';
 import { useTask } from './tasks';
-import { get, post } from './comms';
+import { get, getAPIRoot, post } from './comms';
 import {
   apiRoot,
   checkData,
@@ -78,7 +78,7 @@ export function useTaskByKind({ kind, ...rest }, queryConfig) {
 }
 
 export async function getInstallProperties() {
-  const uri = `${apiRoot}/v1/properties`;
+  const uri = `${getAPIRoot({ isDashboardAPI: true })}/v1/properties`;
   let data;
   try {
     data = await get(uri);
@@ -296,9 +296,7 @@ export function importResources({
 export function getAPIResource({ group, version, type }) {
   const uri = [
     apiRoot,
-    group === 'core'
-      ? `/proxy/api/${version}`
-      : `/proxy/apis/${group}/${version}`
+    group === 'core' ? `/api/${version}` : `/apis/${group}/${version}`
   ].join('');
 
   return get(uri).then(({ resources }) =>

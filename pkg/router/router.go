@@ -123,13 +123,19 @@ func makeUpgradeTransport(config *rest.Config, keepalive time.Duration) (proxy.U
 // Register returns a HTTP handler with the Dashboard and Kubernetes APIs registered
 func Register(r endpoints.Resource, cfg *rest.Config) (*Server, error) {
 	logging.Log.Info("Adding Kube API")
-	apiProxyPrefix := "/proxy/"
-	proxyHandler, err := NewProxyHandler(apiProxyPrefix, cfg, 30*time.Second)
+	apiProxyPrefix := "/api/"
+	apisProxyPrefix := "/apis/"
+	proxyHandlerAPI, err := NewProxyHandler(apiProxyPrefix, cfg, 30*time.Second)
+	if err != nil {
+		return nil, err
+	}
+	proxyHandlerAPIs, err := NewProxyHandler(apisProxyPrefix, cfg, 30*time.Second)
 	if err != nil {
 		return nil, err
 	}
 	mux := http.NewServeMux()
-	mux.Handle(apiProxyPrefix, proxyHandler)
+	mux.Handle(apiProxyPrefix, proxyHandlerAPI)
+	mux.Handle(apisProxyPrefix, proxyHandlerAPIs)
 
 	logging.Log.Info("Adding Dashboard APIs")
 	registerWeb(r, mux)
@@ -164,11 +170,9 @@ func NewProxyHandler(apiProxyPrefix string, cfg *rest.Config, keepalive time.Dur
 	proxy := proxy.NewUpgradeAwareHandler(target, transport, false, false, responder)
 	proxy.UpgradeTransport = upgradeTransport
 	proxy.UseRequestLocation = true
-	// TODO: enable after update to k8s apimachinery 0.21
-	// proxy.UseLocationHost = true
+	proxy.UseLocationHost = true
 
 	proxyServer := http.Handler(proxy)
-	proxyServer = stripLeaveSlash(apiProxyPrefix, proxyServer)
 
 	return proxyServer, nil
 }
@@ -186,19 +190,4 @@ func (s *Server) ServeOnListener(l net.Listener) error {
 		Handler: CSRF(s.handler),
 	}
 	return server.Serve(l)
-}
-
-func stripLeaveSlash(prefix string, h http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		p := strings.TrimPrefix(req.URL.Path, prefix)
-		if len(p) >= len(req.URL.Path) {
-			http.NotFound(w, req)
-			return
-		}
-		if len(p) > 0 && p[:1] != "/" {
-			p = "/" + p
-		}
-		req.URL.Path = p
-		h.ServeHTTP(w, req)
-	})
 }

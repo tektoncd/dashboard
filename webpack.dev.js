@@ -44,7 +44,8 @@ module.exports = merge(common({ mode }), {
       '/v1': {
         ...proxyOptions
       },
-      '/proxy': {
+      '/api': {
+        // also handles `/apis` since they have a common prefix
         ...proxyOptions
       }
     }
