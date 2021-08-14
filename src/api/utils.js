@@ -22,19 +22,6 @@ export const tektonAPIGroup = 'tekton.dev';
 export const triggersAPIGroup = 'triggers.tekton.dev';
 export const dashboardAPIGroup = 'dashboard.tekton.dev';
 
-export function getAPI(type, { name = '', namespace } = {}, queryParams) {
-  return [
-    apiRoot,
-    '/v1/namespaces/',
-    encodeURIComponent(namespace),
-    '/',
-    type,
-    '/',
-    encodeURIComponent(name),
-    queryParams ? `?${new URLSearchParams(queryParams).toString()}` : ''
-  ].join('');
-}
-
 export function getKubeAPI(
   type,
   { isWebSocket, name = '', namespace, subResource } = {},
@@ -57,7 +44,7 @@ export function getKubeAPI(
     '/',
     encodeURIComponent(name),
     subResource ? `/${subResource}` : '',
-    queryParamsToUse && Object.keys(queryParamsToUse).length > 0
+    Object.keys(queryParamsToUse).length > 0
       ? `?${new URLSearchParams(queryParamsToUse).toString()}`
       : ''
   ].join('');
@@ -81,18 +68,31 @@ export function getResourcesAPI(
     type,
     '/',
     encodeURIComponent(name),
-    queryParamsToUse && Object.keys(queryParamsToUse).length > 0
+    Object.keys(queryParamsToUse).length > 0
       ? `?${new URLSearchParams(queryParamsToUse).toString()}`
       : ''
   ].join('');
 }
 
-export function getQueryParams({ filters, name }) {
+export function getQueryParams({
+  filters,
+  involvedObjectKind,
+  involvedObjectName,
+  name
+}) {
   if (filters?.length) {
     return { labelSelector: filters };
   }
   if (name) {
     return { fieldSelector: `metadata.name=${name}` };
+  }
+  if (involvedObjectKind && involvedObjectName) {
+    return {
+      fieldSelector: [
+        `involvedObject.kind=${involvedObjectKind}`,
+        `involvedObject.name=${involvedObjectName}`
+      ]
+    };
   }
   return '';
 }
@@ -132,7 +132,7 @@ function handleDeleted({ kind, payload, queryClient }) {
   queryClient.removeQueries([kind, { name, ...(namespace && { namespace }) }]);
   // remove resource from any list page caches
   queryClient.setQueriesData(kind, data => {
-    if (!Array.isArray(data.items)) {
+    if (!Array.isArray(data?.items)) {
       // another details page cache, but not the one we're looking for
       // since we've just deleted its query above
       return data;
@@ -163,7 +163,7 @@ function handleUpdated({ kind, payload, queryClient }) {
       // it's a details page cache (i.e. a single resource)
       return updateResource({ existing: data, incoming: payload });
     }
-    if (!Array.isArray(data.items)) {
+    if (!Array.isArray(data?.items)) {
       // another single resource but not a match
       return data;
     }

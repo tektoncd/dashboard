@@ -259,7 +259,15 @@ const TaskRunDetails = ({
         {pod && (
           <Tab id={`${displayName}-pod`} label="Pod">
             <div className="tkn--step-status">
-              {pod.events && (
+              <ViewYAML
+                dark
+                resource={pod.resource}
+                title={intl.formatMessage({
+                  id: 'dashboard.pod.resource',
+                  defaultMessage: 'Resource'
+                })}
+              />
+              {pod.events && pod.events.length > 0 && (
                 <ViewYAML
                   dark
                   resource={pod.events}
@@ -269,14 +277,6 @@ const TaskRunDetails = ({
                   })}
                 />
               )}
-              <ViewYAML
-                dark
-                resource={pod.resource}
-                title={intl.formatMessage({
-                  id: 'dashboard.pod.resource',
-                  defaultMessage: 'Resource'
-                })}
-              />
             </div>
           </Tab>
         )}

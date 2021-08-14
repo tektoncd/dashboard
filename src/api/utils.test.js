@@ -15,31 +15,13 @@ import { act, renderHook } from '@testing-library/react-hooks';
 
 import * as comms from './comms';
 import * as utils from './utils';
-import { useCollection, useResource, useWebSocket } from './utils';
+import {
+  getQueryParams,
+  useCollection,
+  useResource,
+  useWebSocket
+} from './utils';
 import { getAPIWrapper, getQueryClient, getWebSocket } from '../utils/test';
-
-describe('getAPI', () => {
-  it('returns a URI containing the given type', () => {
-    const uri = utils.getAPI('pipelines');
-    expect(uri).toContain('pipelines');
-  });
-
-  it('returns a URI containing the given type and name', () => {
-    const uri = utils.getAPI('pipelines', { name: 'somename' });
-    expect(uri).toContain('pipelines');
-    expect(uri).toContain('somename');
-  });
-
-  it('returns a URI containing the given type, name, and namespace', () => {
-    const uri = utils.getAPI('pipelines', {
-      name: 'somename',
-      namespace: 'customnamespace'
-    });
-    expect(uri).toContain('pipelines');
-    expect(uri).toContain('somename');
-    expect(uri).toContain('customnamespace');
-  });
-});
 
 describe('getTektonAPI', () => {
   it('returns a URI containing the given type', () => {
@@ -132,6 +114,32 @@ describe('getResourcesAPI', () => {
     expect(uri).toContain('testname');
     expect(uri).toContain('namespaces');
     expect(uri).toContain('testnamespace');
+  });
+});
+
+describe('getQueryParams', () => {
+  it('should handle label filters', () => {
+    const filters = ['fakeLabel=fakeValue'];
+    expect(getQueryParams({ filters })).toEqual({ labelSelector: filters });
+    expect(getQueryParams({ filters: [] })).toEqual('');
+  });
+
+  it('should handle name for a single resource', () => {
+    const name = 'fake_name';
+    expect(getQueryParams({ name })).toEqual({
+      fieldSelector: `metadata.name=${name}`
+    });
+  });
+
+  it('should handle involvedObject for events', () => {
+    const involvedObjectKind = 'fake_kind';
+    const involvedObjectName = 'fake_name';
+    expect(getQueryParams({ involvedObjectKind, involvedObjectName })).toEqual({
+      fieldSelector: [
+        `involvedObject.kind=${involvedObjectKind}`,
+        `involvedObject.name=${involvedObjectName}`
+      ]
+    });
   });
 });
 

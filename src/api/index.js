@@ -45,8 +45,17 @@ export * from './triggerBindings';
 export * from './triggers';
 export * from './triggerTemplates';
 
-function getCustomResourcesAPI({ filters, name, ...rest }) {
-  return getResourcesAPI(rest, getQueryParams({ filters, name }));
+function getCustomResourcesAPI({
+  filters,
+  involvedObjectKind,
+  involvedObjectName,
+  name,
+  ...rest
+}) {
+  return getResourcesAPI(
+    rest,
+    getQueryParams({ filters, involvedObjectKind, involvedObjectName, name })
+  );
 }
 
 export function getCustomResources({ filters = [], ...rest }) {
@@ -111,6 +120,47 @@ export function useNamespaces(queryConfig) {
   return useCollection({
     api: getNamespaces,
     kind: 'Namespace',
+    queryConfig,
+    webSocketURL
+  });
+}
+
+export function usePod(params, queryConfig) {
+  const gvt = { group: 'core', type: 'pods', version: 'v1' };
+  const webSocketURL = getCustomResourcesAPI({
+    ...gvt,
+    ...params,
+    isWebSocket: true
+  });
+  return useResource({
+    api: getCustomResource,
+    kind: 'customResource',
+    params: { ...gvt, ...params },
+    queryConfig,
+    webSocketURL
+  });
+}
+
+export function useEvents(
+  { involvedObjectKind, involvedObjectName, namespace },
+  queryConfig
+) {
+  const params = {
+    group: 'core',
+    involvedObjectKind,
+    involvedObjectName,
+    namespace,
+    type: 'events',
+    version: 'v1'
+  };
+  const webSocketURL = getCustomResourcesAPI({
+    ...params,
+    isWebSocket: true
+  });
+  return useCollection({
+    api: getCustomResources,
+    kind: 'customResource',
+    params,
     queryConfig,
     webSocketURL
   });
