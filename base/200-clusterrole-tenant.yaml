@@ -41,9 +41,11 @@ rules:
   - apiGroups:
       - ''
     resources:
-      - serviceaccounts
-      - pods/log
+      - events
       - namespaces
+      - pods
+      - pods/log
+      - serviceaccounts
     verbs:
       - get
       - list

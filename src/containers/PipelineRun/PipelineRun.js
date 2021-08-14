@@ -30,11 +30,13 @@ import {
   rerunPipelineRun,
   startPipelineRun,
   useClusterTasks,
+  useEvents,
   useExternalLogsURL,
   useIsLogStreamingEnabled,
   useIsReadOnly,
   usePipeline,
   usePipelineRun,
+  usePod,
   useTaskRuns,
   useTasks
 } from '../../api';
@@ -151,12 +153,14 @@ export /* istanbul ignore next */ function PipelineRunContainer(props) {
       const { podName, retriesStatus } = taskRun.status || {};
       acc[uid + podName] = {
         pipelineTaskName,
+        podName,
         uid
       };
       if (retriesStatus) {
         retriesStatus.forEach((retryStatus, index) => {
           acc[uid + retryStatus.podName] = {
             pipelineTaskName,
+            podName: retryStatus.podName,
             retry: index,
             uid
           };
@@ -198,6 +202,27 @@ export /* istanbul ignore next */ function PipelineRunContainer(props) {
     history.push(browserURL);
   }
 
+  const selectedTaskId = getSelectedTaskId(
+    currentPipelineTaskName,
+    currentRetry
+  );
+
+  const { podName } = getSelectedTaskRun(selectedTaskId) || {};
+  const { data: pod = {} } = usePod(
+    { name: podName, namespace },
+    { enabled: !!podName && view === 'pod' }
+  );
+
+  const { data: events = [] } = useEvents(
+    { involvedObjectKind: 'Pod', involvedObjectName: podName, namespace },
+    { enabled: !!podName && view === 'pod' }
+  );
+
+  let podDetails;
+  if (!currentSelectedStepId) {
+    podDetails = (events || pod) && { events, resource: pod };
+  }
+
   if (!pipelineRun) {
     return (
       <PipelineRun
@@ -218,11 +243,6 @@ export /* istanbul ignore next */ function PipelineRunContainer(props) {
   if (!pipelineRun.status.taskRuns) {
     pipelineRun.status.taskRuns = [];
   }
-
-  const selectedTaskId = getSelectedTaskId(
-    currentPipelineTaskName,
-    currentRetry
-  );
 
   let runAction = null;
 
@@ -297,6 +317,7 @@ export /* istanbul ignore next */ function PipelineRunContainer(props) {
         maximizedLogsContainer={maximizedLogsContainer.current}
         onViewChange={getViewChangeHandler(props)}
         pipelineRun={pipelineRun}
+        pod={podDetails}
         runaction={runAction}
         selectedStepId={currentSelectedStepId}
         selectedTaskId={selectedTaskId}

@@ -43,9 +43,11 @@ import {
 
 import {
   rerunTaskRun,
+  useEvents,
   useExternalLogsURL,
   useIsLogStreamingEnabled,
   useIsReadOnly,
+  usePod,
   useSelectedNamespace,
   useTaskByKind,
   useTaskRun
@@ -113,6 +115,17 @@ export function TaskRunContainer(props) {
       namespace
     },
     { enabled: !!taskRun?.spec.taskRef }
+  );
+
+  const podName = taskRun?.status?.podName;
+  const { data: pod = {} } = usePod(
+    { name: podName, namespace },
+    { enabled: !!podName && view === 'pod' }
+  );
+
+  const { data: events = [] } = useEvents(
+    { involvedObjectKind: 'Pod', involvedObjectName: podName, namespace },
+    { enabled: !!podName && view === 'pod' }
   );
 
   function toggleLogsMaximized() {
@@ -239,6 +252,11 @@ export function TaskRunContainer(props) {
       />
     );
 
+  let podDetails;
+  if (!selectedStepId) {
+    podDetails = (events || pod) && { events, resource: pod };
+  }
+
   return (
     <>
       <div id="tkn--maximized-logs-container" ref={maximizedLogsContainer} />
@@ -296,6 +314,7 @@ export function TaskRunContainer(props) {
         )) || (
           <TaskRunDetails
             onViewChange={onViewChange}
+            pod={podDetails}
             task={task}
             taskRun={taskRun}
             view={view}

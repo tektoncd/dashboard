@@ -133,6 +133,47 @@ it('useNamespaces', async () => {
   fetchMock.restore();
 });
 
+it('usePod', async () => {
+  const name = 'fake_name';
+  const namespace = 'fake_namespace';
+  const pod = {
+    metadata: {},
+    spec: 'fake_spec'
+  };
+  fetchMock.get(/pods/, pod);
+  const { result, waitFor } = renderHook(
+    () => API.usePod({ name, namespace }),
+    {
+      wrapper: getAPIWrapper()
+    }
+  );
+  await waitFor(() => result.current.isFetching);
+  await waitFor(() => !result.current.isFetching);
+  expect(result.current.data).toEqual(pod);
+  fetchMock.restore();
+});
+
+it('useEvents', async () => {
+  const involvedObjectKind = 'fake_kind';
+  const involvedObjectName = 'fake_name';
+  const namespace = 'fake_namespace';
+  const events = {
+    metadata: {},
+    items: [{ metadata: { name: 'event1' } }, { metadata: { name: 'event2' } }]
+  };
+  fetchMock.get(/events/, events);
+  const { result, waitFor } = renderHook(
+    () => API.useEvents({ involvedObjectKind, involvedObjectName, namespace }),
+    {
+      wrapper: getAPIWrapper()
+    }
+  );
+  await waitFor(() => result.current.isFetching);
+  await waitFor(() => !result.current.isFetching);
+  expect(result.current.data).toEqual(events.items);
+  fetchMock.restore();
+});
+
 it('getPodLog', () => {
   const namespace = 'default';
   const name = 'foo';
