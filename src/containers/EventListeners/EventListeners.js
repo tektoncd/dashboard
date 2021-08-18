@@ -28,11 +28,14 @@ function EventListeners(props) {
   useTitleSync({ page: 'EventListeners' });
 
   const { selectedNamespace: defaultNamespace } = useSelectedNamespace();
-  const {
-    namespace: selectedNamespace = defaultNamespace
-  } = props.match.params;
+  const { namespace: selectedNamespace = defaultNamespace } =
+    props.match.params;
 
-  const { data: eventListeners = [], error, isLoading } = useEventListeners({
+  const {
+    data: eventListeners = [],
+    error,
+    isLoading
+  } = useEventListeners({
     filters,
     namespace: selectedNamespace
   });

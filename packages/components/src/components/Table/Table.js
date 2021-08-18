@@ -70,16 +70,10 @@ function getTranslateWithId(intl) {
           defaultMessage: 'Cancel'
         });
       case 'carbon.table.batch.item.selected':
-        return intl.formatMessage(
-          {
-            id: 'carbon.table.batch.item.selected',
-            defaultMessage:
-              '{totalSelected, plural, =0 {0 items} one {1 item}} selected'
-          },
-          {
-            totalSelected: state.totalSelected
-          }
-        );
+        return intl.formatMessage({
+          id: 'carbon.table.batch.item.selected',
+          defaultMessage: '1 item selected'
+        });
       case 'carbon.table.batch.items.selected':
         return intl.formatMessage(
           {

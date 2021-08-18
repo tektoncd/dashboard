@@ -22,14 +22,8 @@ import {
 class RunAction extends Component {
   handleAction = event => {
     event.preventDefault();
-    const {
-      action,
-      getURL,
-      intl,
-      run,
-      runaction,
-      showNotification
-    } = this.props;
+    const { action, getURL, intl, run, runaction, showNotification } =
+      this.props;
     const { namespace } = run.metadata;
     let triggerMsg = null;
     switch (action) {

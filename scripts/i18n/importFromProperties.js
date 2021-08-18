@@ -59,8 +59,8 @@ buildLocales
   .filter(locale => locale !== defaultLocale)
   .forEach(locale => {
     let translations = require(`${basePath}/src/nls/${messagesFilePrefix}${locale}.json`)[ // eslint-disable-line
-      locale
-    ];
+        locale
+      ];
 
     const propertiesPath = `${propertiesPathPrefix}${locale}.properties`;
     try {

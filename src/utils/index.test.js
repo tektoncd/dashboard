@@ -114,9 +114,7 @@ describe('fetchLogsFallback', () => {
 
     const fallback = fetchLogsFallback(externalLogsURL);
     fallback(stepName, stepStatus, taskRun);
-    expect(
-      comms.get
-    ).toHaveBeenCalledWith(
+    expect(comms.get).toHaveBeenCalledWith(
       `${externalLogsURL}/${namespace}/${podName}/${container}`,
       { Accept: 'text/plain' }
     );

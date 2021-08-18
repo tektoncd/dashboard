@@ -82,11 +82,7 @@ it('TriggerTemplates can be filtered on a single label filter', async () => {
       data: filters.length ? [] : [triggerTemplate]
     }));
 
-  const {
-    queryByText,
-    getByPlaceholderText,
-    getByText
-  } = renderWithRouter(
+  const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
     <Route
       path="/triggerTemplates"
       render={props => <TriggerTemplates {...props} />}

@@ -29,7 +29,11 @@ function Triggers(props) {
   const { selectedNamespace } = useSelectedNamespace();
   const { namespace = selectedNamespace } = match.params;
 
-  const { data: triggers = [], error, isLoading } = useTriggers({
+  const {
+    data: triggers = [],
+    error,
+    isLoading
+  } = useTriggers({
     filters,
     namespace
   });

@@ -28,12 +28,8 @@ const props = {
 const initialTextRegExp = new RegExp('select an item', 'i');
 
 it('TooltipDropdown renders', () => {
-  const {
-    getByText,
-    getByPlaceholderText,
-    queryByText,
-    queryByDisplayValue
-  } = render(<TooltipDropdown {...props} />);
+  const { getByText, getByPlaceholderText, queryByText, queryByDisplayValue } =
+    render(<TooltipDropdown {...props} />);
   fireEvent.click(getByPlaceholderText(initialTextRegExp));
   props.items.forEach(item => {
     expect(queryByText(item.text || item)).toBeTruthy();

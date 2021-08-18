@@ -330,13 +330,8 @@ export class LogContainer extends Component {
   };
 
   loadLog = async () => {
-    const {
-      fetchLogs,
-      forcePolling,
-      intl,
-      stepStatus,
-      pollingInterval
-    } = this.props;
+    const { fetchLogs, forcePolling, intl, stepStatus, pollingInterval } =
+      this.props;
     if (!fetchLogs) {
       return;
     }

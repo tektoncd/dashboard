@@ -101,7 +101,11 @@ export function TaskRunContainer(props) {
     resourceName: taskRunName
   });
 
-  const { data: taskRun, error, isLoading: isLoadingTaskRun } = useTaskRun({
+  const {
+    data: taskRun,
+    error,
+    isLoading: isLoadingTaskRun
+  } = useTaskRun({
     name: taskRunName,
     namespace
   });

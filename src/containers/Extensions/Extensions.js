@@ -40,7 +40,11 @@ function Extensions(props) {
   });
 
   const tenantNamespace = useTenantNamespace();
-  const { data: extensions = [], error, isFetching } = useExtensions(
+  const {
+    data: extensions = [],
+    error,
+    isFetching
+  } = useExtensions(
     {
       namespace: tenantNamespace || ALL_NAMESPACES
     },

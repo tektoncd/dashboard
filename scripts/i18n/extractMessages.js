@@ -86,8 +86,8 @@ buildLocales
     let translations = { [locale]: {} };
     try {
       translations = require(`${basePath}/src/nls/${messagesFilePrefix}${locale}.json`)[ // eslint-disable-line
-        locale
-      ];
+          locale
+        ];
     } catch {
       log(`No message bundle found for '${locale}', one will be created.`);
     }

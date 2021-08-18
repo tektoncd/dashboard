@@ -57,7 +57,11 @@ export function Pipelines(props) {
 
   useTitleSync({ page: 'Pipelines' });
 
-  const { data: pipelines = [], error, isLoading } = usePipelines({
+  const {
+    data: pipelines = [],
+    error,
+    isLoading
+  } = usePipelines({
     filters,
     namespace
   });

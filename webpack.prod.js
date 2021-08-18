@@ -16,7 +16,7 @@ const webpack = require('webpack');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-const common = require('./webpack.common.js');
+const common = require('./webpack.common');
 
 const mode = 'production';
 

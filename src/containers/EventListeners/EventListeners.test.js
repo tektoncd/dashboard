@@ -85,11 +85,7 @@ describe('EventListeners', () => {
         data: filters.length ? [] : [eventListener]
       }));
 
-    const {
-      getByPlaceholderText,
-      getByText,
-      queryByText
-    } = renderWithRouter(
+    const { getByPlaceholderText, getByText, queryByText } = renderWithRouter(
       <Route
         path="/eventlisteners"
         render={props => <EventListeners {...props} />}

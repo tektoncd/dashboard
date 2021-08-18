@@ -85,7 +85,11 @@ function TaskRuns(props) {
     setToBeDeleted([]);
   }, [JSON.stringify(filters), namespace]);
 
-  const { data: taskRuns = [], error, isLoading } = useTaskRuns({
+  const {
+    data: taskRuns = [],
+    error,
+    isLoading
+  } = useTaskRuns({
     filters,
     namespace
   });

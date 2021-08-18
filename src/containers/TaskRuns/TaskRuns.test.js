@@ -74,11 +74,7 @@ describe('TaskRuns container', () => {
       url: urls.taskRuns.all()
     };
 
-    const {
-      queryByText,
-      getByPlaceholderText,
-      getByText
-    } = renderWithRouter(
+    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
       <Route
         path={urls.taskRuns.all()}
         render={props => (
@@ -112,11 +108,7 @@ describe('TaskRuns container', () => {
       url: urls.taskRuns.all()
     };
 
-    const {
-      queryByText,
-      getByPlaceholderText,
-      getByText
-    } = renderWithRouter(
+    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
       <Route
         path={urls.taskRuns.all()}
         render={props => (
@@ -180,25 +172,22 @@ describe('TaskRuns container', () => {
       url: urls.taskRuns.all()
     };
 
-    const {
-      getByText,
-      queryAllByLabelText,
-      queryAllByTitle
-    } = renderWithRouter(
-      <Route
-        path={urls.taskRuns.all()}
-        render={props => (
-          <TaskRunsContainer
-            {...props}
-            match={match}
-            error={null}
-            loading={false}
-            namespace="namespace-1"
-          />
-        )}
-      />,
-      { route: urls.taskRuns.all() }
-    );
+    const { getByText, queryAllByLabelText, queryAllByTitle } =
+      renderWithRouter(
+        <Route
+          path={urls.taskRuns.all()}
+          render={props => (
+            <TaskRunsContainer
+              {...props}
+              match={match}
+              error={null}
+              loading={false}
+              namespace="namespace-1"
+            />
+          )}
+        />,
+        { route: urls.taskRuns.all() }
+      );
 
     await waitFor(() => getByText('taskRunWithTwoLabels'));
     expect(queryAllByTitle(/actions/i)[0]).toBeFalsy();

@@ -71,11 +71,7 @@ it('ClusterTriggerBindings can be filtered on a single label filter', async () =
       data: filters.length ? [] : [clusterTriggerBinding]
     }));
 
-  const {
-    queryByText,
-    getByPlaceholderText,
-    getByText
-  } = renderWithRouter(
+  const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
     <Route
       path="/clustertriggerbindings"
       render={props => <ClusterTriggerBindings {...props} />}

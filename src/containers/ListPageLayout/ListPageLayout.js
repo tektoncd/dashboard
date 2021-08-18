@@ -36,10 +36,8 @@ export const ListPageLayout = ({
   title
 }) => {
   const tenantNamespace = useTenantNamespace();
-  const {
-    selectedNamespace: namespace,
-    selectNamespace
-  } = useSelectedNamespace();
+  const { selectedNamespace: namespace, selectNamespace } =
+    useSelectedNamespace();
 
   function setPath(path) {
     history.push(`${path}${location.search}`);

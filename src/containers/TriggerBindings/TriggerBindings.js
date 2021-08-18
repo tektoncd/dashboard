@@ -30,7 +30,11 @@ export function TriggerBindings(props) {
 
   useTitleSync({ page: 'TriggerBindings' });
 
-  const { data: triggerBindings = [], error, isLoading } = useTriggerBindings({
+  const {
+    data: triggerBindings = [],
+    error,
+    isLoading
+  } = useTriggerBindings({
     filters,
     namespace
   });

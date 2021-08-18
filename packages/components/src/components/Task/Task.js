@@ -63,14 +63,8 @@ class Task extends Component {
   }
 
   render() {
-    const {
-      expanded,
-      displayName,
-      reason,
-      selectedStepId,
-      steps,
-      succeeded
-    } = this.props;
+    const { expanded, displayName, reason, selectedStepId, steps, succeeded } =
+      this.props;
 
     const expandIcon = expanded ? null : (
       <ExpandIcon className="tkn--task--expand-icon" />

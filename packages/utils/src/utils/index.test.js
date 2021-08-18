@@ -736,11 +736,8 @@ describe('getTaskRunsWithPlaceholders', () => {
         ]
       }
     };
-    const [
-      conditionTaskRun,
-      taskRun,
-      finallyTaskRun
-    ] = getTaskRunsWithPlaceholders({ pipeline, taskRuns: [] });
+    const [conditionTaskRun, taskRun, finallyTaskRun] =
+      getTaskRunsWithPlaceholders({ pipeline, taskRuns: [] });
     expect(conditionTaskRun.metadata.labels[labels.PIPELINE_TASK]).toEqual(
       pipelineTaskName
     );

@@ -18,6 +18,9 @@ module.exports = {
     '@storybook/addon-essentials',
     '@storybook/addon-storysource'
   ],
+  core: {
+    builder: "webpack5"
+  },
   stories: [
     '../src/**/*.stories.js',
     '../packages/components/src/**/*.stories.js'
@@ -32,7 +35,7 @@ module.exports = {
       type: 'javascript/auto'
     },{
       test: /\.scss$/,
-      loaders: ['style-loader', 'css-loader', 'sass-loader'],
+      use: ['style-loader', 'css-loader', 'sass-loader'],
       include: path.resolve(__dirname, '../'),
     });
 

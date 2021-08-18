@@ -64,11 +64,7 @@ describe('Conditions', () => {
         ? [conditionWithTwoLabels]
         : [conditionWithSingleLabel, conditionWithTwoLabels]
     }));
-    const {
-      getByPlaceholderText,
-      getByText,
-      queryByText
-    } = renderWithRouter(
+    const { getByPlaceholderText, getByText, queryByText } = renderWithRouter(
       <Route
         path={paths.conditions.all()}
         render={props => <ConditionsContainer {...props} />}

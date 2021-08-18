@@ -59,9 +59,8 @@ export /* istanbul ignore next */ function PipelineRunContainer(props) {
   const view = queryParams.get(VIEW);
 
   const maximizedLogsContainer = useRef();
-  const [showRunActionNotification, setShowRunActionNotification] = useState(
-    null
-  );
+  const [showRunActionNotification, setShowRunActionNotification] =
+    useState(null);
 
   const externalLogsURL = useExternalLogsURL();
   const isLogStreamingEnabled = useIsLogStreamingEnabled();
@@ -93,10 +92,8 @@ export /* istanbul ignore next */ function PipelineRunContainer(props) {
     error: tasksError,
     isLoading: isLoadingTasks
   } = useTasks({ namespace });
-  const {
-    data: clusterTasks = [],
-    isLoading: isLoadingClusterTasks
-  } = useClusterTasks();
+  const { data: clusterTasks = [], isLoading: isLoadingClusterTasks } =
+    useClusterTasks();
 
   const pipelineName = pipelineRun?.spec.pipelineRef?.name;
   const { data: pipeline, isLoading: isLoadingPipeline } = usePipeline(

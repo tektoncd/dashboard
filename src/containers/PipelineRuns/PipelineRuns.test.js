@@ -118,11 +118,7 @@ describe('PipelineRuns container', () => {
       url: '/pipelineruns'
     };
 
-    const {
-      queryByText,
-      getByPlaceholderText,
-      getByText
-    } = renderWithRouter(
+    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
       <Route
         path="/pipelineruns"
         render={props => (
@@ -156,11 +152,7 @@ describe('PipelineRuns container', () => {
       url: '/pipelineruns'
     };
 
-    const {
-      queryByText,
-      getByPlaceholderText,
-      getByText
-    } = renderWithRouter(
+    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
       <Route
         path="/pipelineruns"
         render={props => (
@@ -226,26 +218,22 @@ describe('PipelineRuns container', () => {
       url: '/pipelineruns'
     };
 
-    const {
-      getByText,
-      queryAllByLabelText,
-      queryAllByText,
-      queryAllByTitle
-    } = renderWithRouter(
-      <Route
-        path="/pipelineruns"
-        render={props => (
-          <PipelineRunsContainer
-            {...props}
-            match={match}
-            error={null}
-            loading={false}
-            namespace="namespace-1"
-          />
-        )}
-      />,
-      { route: '/pipelineruns' }
-    );
+    const { getByText, queryAllByLabelText, queryAllByText, queryAllByTitle } =
+      renderWithRouter(
+        <Route
+          path="/pipelineruns"
+          render={props => (
+            <PipelineRunsContainer
+              {...props}
+              match={match}
+              error={null}
+              loading={false}
+              namespace="namespace-1"
+            />
+          )}
+        />,
+        { route: '/pipelineruns' }
+      );
     // Let the page finish rendering so we know if we're in read-only mode or not
     await waitFor(() => getByText('pipelineRunWithTwoLabels'));
     expect(queryAllByText('Create')[0]).toBeFalsy();

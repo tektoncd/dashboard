@@ -85,11 +85,7 @@ describe('TriggerBindings', () => {
         data: filters.length ? [] : [triggerBinding]
       }));
 
-    const {
-      queryByText,
-      getByPlaceholderText,
-      getByText
-    } = renderWithRouter(
+    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
       <Route
         path="/triggerbindings"
         render={props => <TriggerBindings {...props} />}

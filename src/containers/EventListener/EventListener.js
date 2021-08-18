@@ -34,7 +34,11 @@ export /* istanbul ignore next */ function EventListenerContainer(props) {
     resourceName: eventListenerName
   });
 
-  const { data: eventListener, error, isFetching } = useEventListener({
+  const {
+    data: eventListener,
+    error,
+    isFetching
+  } = useEventListener({
     name: eventListenerName,
     namespace
   });
@@ -44,11 +48,8 @@ export /* istanbul ignore next */ function EventListenerContainer(props) {
       return null;
     }
 
-    const {
-      namespaceSelector,
-      serviceAccountName,
-      serviceType
-    } = eventListener.spec;
+    const { namespaceSelector, serviceAccountName, serviceType } =
+      eventListener.spec;
     return (
       <>
         {serviceAccountName && (

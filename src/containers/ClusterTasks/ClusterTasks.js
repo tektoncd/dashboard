@@ -42,7 +42,11 @@ function ClusterTasksContainer(props) {
 
   useTitleSync({ page: 'ClusterTasks' });
 
-  const { data: clusterTasks = [], error, isLoading } = useClusterTasks({
+  const {
+    data: clusterTasks = [],
+    error,
+    isLoading
+  } = useClusterTasks({
     filters
   });
 

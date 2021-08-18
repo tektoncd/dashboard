@@ -35,7 +35,11 @@ export function TriggerBindingContainer(props) {
     resourceName
   });
 
-  const { data: triggerBinding, error, isFetching } = useTriggerBinding({
+  const {
+    data: triggerBinding,
+    error,
+    isFetching
+  } = useTriggerBinding({
     name: resourceName,
     namespace
   });

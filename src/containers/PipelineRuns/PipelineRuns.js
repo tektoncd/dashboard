@@ -77,7 +77,11 @@ export function PipelineRuns(props) {
     setToBeDeleted([]);
   }, [JSON.stringify(filters), namespace]);
 
-  const { data: pipelineRuns = [], error, isLoading } = usePipelineRuns({
+  const {
+    data: pipelineRuns = [],
+    error,
+    isLoading
+  } = usePipelineRuns({
     filters,
     namespace
   });
