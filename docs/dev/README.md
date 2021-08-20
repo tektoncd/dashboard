@@ -136,13 +136,19 @@ e.g. to connect your local dev frontend to the Dashboard deployed on the robocat
 
 The Dashboard repository contains a script that will provision a [`kind` cluster](https://kind.sigs.k8s.io/) named 'tekton-dashboard' with the latest releases of Tekton Pipelines and Tekton Triggers installed, as well as a version of the Tekton Dashboard which can be customised by providing additional parameters matching those expected by the installer script described earlier.
 
-For example, the following will create a cluster with a local build of the Tekton Dashboard with log streaming enabled, exposed via ingress at `tekton-dashboard.127.0.0.1.nip.io`:
+For example, the following will create a cluster with a local build of the Tekton Dashboard with log streaming enabled:
 
 `./scripts/prepare-kind-cluster create`
 
 To delete the cluster:
 
 `./script/prepare-kind-cluster delete`
+
+To create a cluster with the Tekton Dashboard exposed via ingress at `tekton-dashboard.127.0.0.1.nip.io`:
+
+`./scripts/prepare-kind-cluster create-with-ingress`
+
+This ensures the cluster is created with the required node labels and port mappings (ports 80 and 443).
 
 ## Run backend tests
 

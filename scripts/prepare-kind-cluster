@@ -14,10 +14,14 @@
 set -e
 
 CLUSTERNAME=tekton-dashboard
-DEFAULT_OPTIONS="--log-format console --ingress-url tekton-dashboard.127.0.0.1.nip.io"
+DEFAULT_OPTIONS="--log-format console"
+ENABLE_INGRESS="false"
 
 create_cluster() {
-kind create cluster --name $CLUSTERNAME --config - <<EOF
+if [ "$ENABLE_INGRESS" == "false" ]; then
+  kind create cluster --name $CLUSTERNAME
+else
+  kind create cluster --name $CLUSTERNAME --config - <<EOF
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
@@ -36,6 +40,7 @@ nodes:
     hostPort: 443
     protocol: TCP
 EOF
+fi
 }
 
 # Display a box banner.
@@ -86,10 +91,18 @@ case $1 in
   'create'|c)
     shift
     create_cluster
-    install_ingress_nginx
     install_pipelines
     install_triggers
     install_dashboard $@
+    ;;
+  'create-with-ingress'|i)
+    shift
+    ENABLE_INGRESS="true"
+    create_cluster
+    install_ingress_nginx
+    install_pipelines
+    install_triggers
+    install_dashboard --ingress-url tekton-dashboard.127.0.0.1.nip.io $@
     ;;
   'update'|u)
     shift
