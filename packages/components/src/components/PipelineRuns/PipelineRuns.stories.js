@@ -241,7 +241,8 @@ export const BatchActions = () => (
         metadata: {
           name: 'pipeline-run-20190816124708',
           namespace: 'cb4552a6-b2d7-45e2-9773-3d4ca33909ff',
-          creationTimestamp: '2019-08-16T12:48:00Z'
+          creationTimestamp: '2019-08-16T12:48:00Z',
+          uid: '93531810-1b80-4246-a2bd-ee146c448d13'
         },
         spec: {
           pipelineRef: {
@@ -255,7 +256,8 @@ export const BatchActions = () => (
         metadata: {
           name: 'output-pipeline-run',
           namespace: 'default',
-          creationTimestamp: '2019-10-09T17:10:49Z'
+          creationTimestamp: '2019-10-09T17:10:49Z',
+          uid: '77e0f4a3-40e5-46f1-84cc-ab7aa93c382c'
         },
         spec: {
           serviceAccountName: 'default',

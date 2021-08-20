@@ -9,7 +9,7 @@
     "carbon.table.all.select": "Alle Zeilen auswählen",
     "carbon.table.all.unselect": "Alle Zeilen abwählen",
     "carbon.table.batch.cancel": "Abbrechen",
-    "carbon.table.batch.item.selected": "{totalSelected, plural, =0 {0 Elemente} one {1 Element}} ausgewählt",
+    "carbon.table.batch.item.selected": "1 Element ausgewählt",
     "carbon.table.batch.items.selected": "{totalSelected, plural, other {# Elemente}} ausgewählt",
     "carbon.table.row.collapse": "",
     "carbon.table.row.expand": "",
