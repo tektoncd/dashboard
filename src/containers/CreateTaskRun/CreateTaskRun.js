@@ -52,9 +52,9 @@ const initialState = {
   labels: [],
   namespace: '',
   nodeSelector: [],
-  params: [],
+  params: {},
   paramSpecs: [],
-  resources: [],
+  resources: { inputs: {}, outputs: {} },
   resourceSpecs: [],
   serviceAccount: '',
   submitError: '',
@@ -75,13 +75,13 @@ const initialParamsState = paramSpecs => {
 };
 
 const initialResourcesState = resourceSpecs => {
-  if (!resourceSpecs) {
-    return {};
-  }
   const resources = {
     inputs: {},
     outputs: {}
   };
+  if (!resourceSpecs) {
+    return resources;
+  }
   if (resourceSpecs.inputs) {
     resources.inputs = resourceSpecs.inputs.reduce(
       (acc, res) => ({ ...acc, [res.name]: '' }),
