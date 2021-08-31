@@ -166,6 +166,15 @@ export function useEvents(
   });
 }
 
+export function getExternalLogURL({
+  container,
+  externalLogsURL,
+  namespace,
+  podName
+}) {
+  return `${externalLogsURL}/${namespace}/${podName}/${container}`;
+}
+
 export function getPodLogURL({ container, name, namespace, follow }) {
   const timestamps = isLogTimestampsEnabled();
   const queryParams = {

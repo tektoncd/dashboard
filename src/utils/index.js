@@ -14,7 +14,7 @@ limitations under the License.
 import React from 'react';
 import { LogsToolbar } from '@tektoncd/dashboard-components';
 
-import { getPodLog, getPodLogURL } from '../api';
+import { getExternalLogURL, getPodLog, getPodLogURL } from '../api';
 import { get } from '../api/comms';
 import config from '../../config_frontend/config.json';
 
@@ -83,21 +83,29 @@ export function fetchLogsFallback(externalLogsURL) {
     const { namespace } = taskRun.metadata;
     const { podName } = taskRun.status || {};
     const { container } = stepStatus;
-    return get(`${externalLogsURL}/${namespace}/${podName}/${container}`, {
-      Accept: 'text/plain'
-    });
+    return get(
+      getExternalLogURL({ container, externalLogsURL, namespace, podName }),
+      {
+        Accept: 'text/plain'
+      }
+    );
   };
 }
 
-export function getLogsRetriever(stream, externalLogsURL) {
-  const logs = stream ? followLogs : fetchLogs;
+export function getLogsRetriever({
+  externalLogsURL,
+  isLogStreamingEnabled,
+  onFallback
+}) {
+  const logs = isLogStreamingEnabled ? followLogs : fetchLogs;
   const fallback = fetchLogsFallback(externalLogsURL);
 
   if (fallback) {
     return (stepName, stepStatus, taskRun) =>
-      logs(stepName, stepStatus, taskRun).catch(() =>
-        fallback(stepName, stepStatus, taskRun)
-      );
+      logs(stepName, stepStatus, taskRun).catch(() => {
+        onFallback(true);
+        return fallback(stepName, stepStatus, taskRun);
+      });
   }
 
   return logs;
@@ -128,7 +136,9 @@ export function getViewChangeHandler({ history, location, match }) {
 }
 
 export function getLogsToolbar({
+  externalLogsURL,
   isMaximized,
+  isUsingExternalLogs,
   stepStatus,
   taskRun,
   toggleMaximized
@@ -137,11 +147,13 @@ export function getLogsToolbar({
   const { namespace } = taskRun.metadata;
   const { podName } = taskRun.status;
 
-  const logURL = getPodLogURL({
-    container,
-    name: podName,
-    namespace
-  });
+  const logURL = isUsingExternalLogs
+    ? getExternalLogURL({ container, externalLogsURL, namespace, podName })
+    : getPodLogURL({
+        container,
+        name: podName,
+        namespace
+      });
 
   return (
     <LogsToolbar

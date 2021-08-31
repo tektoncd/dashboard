@@ -174,6 +174,16 @@ it('useEvents', async () => {
   fetchMock.restore();
 });
 
+it('getExternalLogURL', () => {
+  const container = 'fake_container';
+  const externalLogsURL = 'fake_externalLogsURL';
+  const namespace = 'fake_namespace';
+  const podName = 'fake_podName';
+  expect(
+    API.getExternalLogURL({ container, externalLogsURL, namespace, podName })
+  ).toEqual(`${externalLogsURL}/${namespace}/${podName}/${container}`);
+});
+
 it('getPodLog', () => {
   const namespace = 'default';
   const name = 'foo';

@@ -20,6 +20,7 @@ import {
   fetchLogsFallback,
   followLogs,
   getLocale,
+  getLogsRetriever,
   getLogsToolbar,
   getTheme,
   getViewChangeHandler,
@@ -173,6 +174,60 @@ describe('followLogs', () => {
   });
 });
 
+describe('getLogsRetriever', () => {
+  const namespace = 'fake_namespace';
+  const podName = 'fake_podName';
+  const stepName = 'fake_stepName';
+  const stepStatus = { container: stepName };
+  const taskRun = { metadata: { namespace }, status: { podName } };
+
+  it('should handle default logs retriever', () => {
+    jest.spyOn(API, 'getPodLog');
+    const logsRetriever = getLogsRetriever({});
+    expect(logsRetriever).toBeDefined();
+    logsRetriever(stepName, stepStatus, taskRun);
+    expect(API.getPodLog).toHaveBeenCalledWith({
+      container: stepName,
+      name: podName,
+      namespace
+    });
+  });
+
+  it('should handle default logs retriever with external fallback enabled', async () => {
+    const externalLogsURL = 'fake_externalLogsURL';
+    jest.spyOn(API, 'getPodLog');
+    const onFallback = jest.fn();
+    const logsRetriever = getLogsRetriever({ externalLogsURL, onFallback });
+    expect(logsRetriever).toBeDefined();
+    await logsRetriever(stepName, stepStatus, taskRun);
+    expect(API.getPodLog).toHaveBeenCalledWith({
+      container: stepName,
+      name: podName,
+      namespace
+    });
+    expect(onFallback).not.toHaveBeenCalled();
+  });
+
+  it('should handle external logs fallback', async () => {
+    const externalLogsURL = 'fake_externalLogsURL';
+    jest.spyOn(API, 'getExternalLogURL');
+    jest.spyOn(API, 'getPodLog').mockImplementation(() => {
+      throw new Error();
+    });
+    const onFallback = jest.fn();
+    const logsRetriever = getLogsRetriever({ externalLogsURL, onFallback });
+    expect(logsRetriever).toBeDefined();
+    await logsRetriever(stepName, stepStatus, taskRun);
+    expect(API.getPodLog).toHaveBeenCalledWith({
+      container: stepName,
+      name: podName,
+      namespace
+    });
+    expect(API.getExternalLogURL).toHaveBeenCalled();
+    expect(onFallback).toHaveBeenCalledWith(true);
+  });
+});
+
 it('getViewChangeHandler', () => {
   const url = 'someURL';
   const history = { push: jest.fn() };
@@ -186,22 +241,53 @@ it('getViewChangeHandler', () => {
   );
 });
 
-it('getLogsToolbar', () => {
-  const container = 'fake_container';
-  const namespace = 'fake_namespace';
-  const podName = 'fake_podname';
-  const stepStatus = { container };
-  const taskRun = { metadata: { namespace }, status: { podName } };
-  jest.spyOn(API, 'getPodLogURL');
+describe('getLogsToolbar', () => {
+  it('should handle pod logs (default)', () => {
+    const container = 'fake_container';
+    const namespace = 'fake_namespace';
+    const podName = 'fake_podname';
+    const stepStatus = { container };
+    const taskRun = { metadata: { namespace }, status: { podName } };
+    jest.spyOn(API, 'getPodLogURL');
+    jest.spyOn(API, 'getExternalLogURL');
 
-  const logsToolbar = getLogsToolbar({ stepStatus, taskRun });
+    const logsToolbar = getLogsToolbar({ stepStatus, taskRun });
 
-  expect(API.getPodLogURL).toHaveBeenCalledWith({
-    container,
-    name: podName,
-    namespace
+    expect(API.getExternalLogURL).not.toHaveBeenCalled();
+    expect(API.getPodLogURL).toHaveBeenCalledWith({
+      container,
+      name: podName,
+      namespace
+    });
+    expect(logsToolbar).toBeTruthy();
   });
-  expect(logsToolbar).toBeTruthy();
+
+  it('should handle external logs', () => {
+    const container = 'fake_container';
+    const externalLogsURL = 'fake_externalLogsURL';
+    const namespace = 'fake_namespace';
+    const podName = 'fake_podname';
+    const stepStatus = { container };
+    const taskRun = { metadata: { namespace }, status: { podName } };
+    jest.spyOn(API, 'getPodLogURL');
+    jest.spyOn(API, 'getExternalLogURL');
+
+    const logsToolbar = getLogsToolbar({
+      externalLogsURL,
+      isUsingExternalLogs: true,
+      stepStatus,
+      taskRun
+    });
+
+    expect(API.getPodLogURL).not.toHaveBeenCalled();
+    expect(API.getExternalLogURL).toHaveBeenCalledWith({
+      container,
+      externalLogsURL,
+      namespace,
+      podName
+    });
+    expect(logsToolbar).toBeTruthy();
+  });
 });
 
 describe('getLocale', () => {
