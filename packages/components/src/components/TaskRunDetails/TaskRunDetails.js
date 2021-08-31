@@ -11,12 +11,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { injectIntl } from 'react-intl';
 import { getParams, getResources, urls } from '@tektoncd/dashboard-utils';
-import { Link as CarbonLink } from 'carbon-components-react';
+import {
+  Link as CarbonLink,
+  ContentSwitcher,
+  Switch
+} from 'carbon-components-react';
 
 import {
   DetailsHeader,
@@ -89,6 +93,9 @@ const TaskRunDetails = ({
 
   const paramsDescriptions = getDescriptions(taskSpec?.params);
   const resultsDescriptions = getDescriptions(taskSpec?.results);
+
+  const [podContent, setPodContent] = useState('resource');
+  const hasEvents = pod?.events?.length > 0;
 
   const headers = [
     {
@@ -259,24 +266,41 @@ const TaskRunDetails = ({
         {pod && (
           <Tab id={`${displayName}-pod`} label="Pod">
             <div className="tkn--step-status">
-              <ViewYAML
-                dark
-                resource={pod.resource}
-                title={intl.formatMessage({
-                  id: 'dashboard.pod.resource',
-                  defaultMessage: 'Resource'
-                })}
-              />
-              {pod.events && pod.events.length > 0 && (
+              {hasEvents ? (
+                <ContentSwitcher onChange={({ name }) => setPodContent(name)}>
+                  <Switch
+                    name="resource"
+                    text={intl.formatMessage({
+                      id: 'dashboard.pod.resource',
+                      defaultMessage: 'Resource'
+                    })}
+                  />
+                  <Switch
+                    name="events"
+                    text={intl.formatMessage({
+                      id: 'dashboard.pod.events',
+                      defaultMessage: 'Events'
+                    })}
+                  />
+                </ContentSwitcher>
+              ) : null}
+              {podContent === 'resource' ? (
                 <ViewYAML
                   dark
-                  resource={pod.events}
-                  title={intl.formatMessage({
-                    id: 'dashboard.pod.events',
-                    defaultMessage: 'Events'
-                  })}
+                  resource={pod.resource}
+                  {...(hasEvents
+                    ? null
+                    : {
+                        title: intl.formatMessage({
+                          id: 'dashboard.pod.resource',
+                          defaultMessage: 'Resource'
+                        })
+                      })}
                 />
-              )}
+              ) : null}
+              {hasEvents && podContent === 'events' ? (
+                <ViewYAML dark resource={pod.events} />
+              ) : null}
             </div>
           </Tab>
         )}

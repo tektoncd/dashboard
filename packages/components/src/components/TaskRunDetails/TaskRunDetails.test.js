@@ -171,8 +171,11 @@ describe('TaskRunDetails', () => {
       />
     );
     expect(queryByText('Pod')).toBeTruthy();
-    expect(queryByText(events)).toBeTruthy();
+    expect(queryByText('Resource')).toBeTruthy();
     expect(queryByText(pod)).toBeTruthy();
+    expect(queryByText('Events')).toBeTruthy();
+    fireEvent.click(queryByText('Events'));
+    expect(queryByText(events)).toBeTruthy();
   });
 
   it('renders both input and output resources', () => {
