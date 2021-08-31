@@ -93,6 +93,7 @@ export function TaskRunContainer(props) {
   const maximizedLogsContainer = useRef();
   const [isLogsMaximized, setIsLogsMaximized] = useState(false);
   const [rerunNotification, setRerunNotification] = useState(null);
+  const [isUsingExternalLogs, setIsUsingExternalLogs] = useState(false);
 
   const externalLogsURL = useExternalLogsURL();
   const isLogStreamingEnabled = useIsLogStreamingEnabled();
@@ -137,10 +138,11 @@ export function TaskRunContainer(props) {
       return null;
     }
 
-    const logsRetriever = getLogsRetriever(
+    const logsRetriever = getLogsRetriever({
+      externalLogsURL,
       isLogStreamingEnabled,
-      externalLogsURL
-    );
+      onFallback: setIsUsingExternalLogs
+    });
 
     const LogsRoot = isLogsMaximized ? Portal : React.Fragment;
 
@@ -152,7 +154,9 @@ export function TaskRunContainer(props) {
       >
         <Log
           toolbar={getLogsToolbar({
+            externalLogsURL,
             isMaximized: isLogsMaximized,
+            isUsingExternalLogs,
             stepStatus,
             taskRun: run,
             toggleMaximized: !!maximizedLogsContainer && toggleLogsMaximized
