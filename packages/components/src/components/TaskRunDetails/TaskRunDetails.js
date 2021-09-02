@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { injectIntl } from 'react-intl';
@@ -94,8 +94,12 @@ const TaskRunDetails = ({
   const paramsDescriptions = getDescriptions(taskSpec?.params);
   const resultsDescriptions = getDescriptions(taskSpec?.results);
 
-  const [podContent, setPodContent] = useState('resource');
+  const [podContent, setPodContent] = useState();
   const hasEvents = pod?.events?.length > 0;
+
+  useEffect(() => {
+    setPodContent('resource');
+  }, [displayName, view]);
 
   const headers = [
     {
