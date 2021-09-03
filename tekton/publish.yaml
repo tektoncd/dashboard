@@ -4,6 +4,8 @@ apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: publish-tekton-dashboard
+  annotations:
+    chains.tekton.dev/transparency-upload: "true"
 spec:
   params:
     - name: versionTag
@@ -31,6 +33,10 @@ spec:
     env:
       - name: HOME
         value: /tekton/home
+  results:
+    # IMAGES result is picked up by Tekton Chains to sign the release.
+    # See https://github.com/tektoncd/plumbing/blob/main/docs/signing.md for more info.
+    - name: IMAGES
   steps:
     - name: link-input-bucket-to-output
       image: busybox
@@ -152,6 +158,10 @@ spec:
           for IMAGE in "${BUILT_IMAGES[@]}"
           do
             IMAGE_WITHOUT_SHA=${IMAGE%%@*}
+            IMAGE_WITHOUT_SHA_AND_TAG=${IMAGE_WITHOUT_SHA%%:*}
+            IMAGE_WITH_SHA=${IMAGE_WITHOUT_SHA_AND_TAG}@${IMAGE##*@}
+            echo $IMAGE_WITH_SHA, >> $(results.IMAGES.path)
+
             if [[ "$(inputs.params.releaseAsLatest)" == "true" ]]
             then
               gcloud -q container images add-tag ${IMAGE} ${IMAGE_WITHOUT_SHA}:latest
@@ -168,6 +178,7 @@ spec:
               else
                 TAG="$(params.versionTag)"
                 gcloud -q container images add-tag ${IMAGE} ${REGION}.${IMAGE_WITHOUT_SHA}:$TAG
+                echo ${REGION}.$IMAGE_WITH_SHA, >> $(results.IMAGES.path)
               fi
             done
           done
