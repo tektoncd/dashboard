@@ -65,7 +65,7 @@ header.tkn--step-details-header {
 
   &[data-status] {
     .tkn--status-label {
-      color: $gray-70;
+      color: $text-02;
     }
   }
   &[data-status='running'] {

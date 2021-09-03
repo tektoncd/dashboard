@@ -77,7 +77,7 @@ header.tkn--pipeline-run-header {
   // catch all for unknown states
   &:not([data-succeeded]) {
     .tkn--status-label {
-      color: $gray-70;
+      color: $text-02;
     }
   }
 
