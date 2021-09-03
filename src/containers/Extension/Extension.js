@@ -10,15 +10,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+/* istanbul ignore file */
 
 import React, { Suspense, useState } from 'react';
 import { injectIntl } from 'react-intl';
 import { ErrorBoundary } from '@tektoncd/dashboard-components';
 import { paths, urls, useTitleSync } from '@tektoncd/dashboard-utils';
 
-import './globals';
+// TODO: restore this when adding support for custom UI extensions
+// import './globals';
 
-/* istanbul ignore next */
 function Extension({ displayName: resourceName, intl, source }) {
   const [ExtensionComponent] = useState(() =>
     React.lazy(() => import(/* webpackIgnore: true */ source))
