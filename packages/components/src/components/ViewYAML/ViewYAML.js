@@ -15,18 +15,22 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import jsYaml from 'js-yaml';
 import classNames from 'classnames';
-import { Prism as SyntaxHighlight } from 'react-syntax-highlighter';
+import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
+import yamlRules from 'react-syntax-highlighter/dist/esm/languages/hljs/yaml';
+
+SyntaxHighlighter.registerLanguage('yaml', yamlRules);
 
 function YAMLHighlighter({ children, className }) {
   return (
-    <SyntaxHighlight
+    <SyntaxHighlighter
       className={className}
-      language="yaml"
-      useInlineStyles={false}
       codeTagProps={{}}
+      language="yaml"
+      showLineNumbers
+      useInlineStyles={false}
     >
       {children}
-    </SyntaxHighlight>
+    </SyntaxHighlighter>
   );
 }
 
