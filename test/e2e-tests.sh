@@ -219,11 +219,11 @@ if [ -z "$SKIP_BUILD_TEST" ]; then
 fi
 
 if [ -z "$PIPELINES_VERSION" ]; then
-  export PIPELINES_VERSION=v0.26.0
+  export PIPELINES_VERSION=v0.27.3
 fi
 
 if [ -z "$TRIGGERS_VERSION" ]; then
-  export TRIGGERS_VERSION=v0.15.0
+  export TRIGGERS_VERSION=v0.16.0
 fi
 
 header "Installing Pipelines and Triggers"
