@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -18,6 +18,9 @@ module.exports = {
     '@storybook/addon-essentials',
     '@storybook/addon-storysource'
   ],
+  core: {
+    builder: 'webpack5'
+  },
   stories: [
     '../src/**/*.stories.js',
     '../packages/components/src/**/*.stories.js'
@@ -32,7 +35,7 @@ module.exports = {
       type: 'javascript/auto'
     },{
       test: /\.scss$/,
-      loaders: ['style-loader', 'css-loader', 'sass-loader'],
+      use: ['style-loader', 'css-loader', 'sass-loader'],
       include: path.resolve(__dirname, '../'),
     });
 
