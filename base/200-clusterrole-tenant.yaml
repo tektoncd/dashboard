@@ -1,4 +1,4 @@
-# Copyright 2019 The Tekton Authors
+# Copyright 2019-2021 The Tekton Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,14 +23,6 @@ metadata:
     app.kubernetes.io/part-of: tekton-dashboard
 rules:
   - apiGroups:
-      - ''
-    resources:
-      - services
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
       - dashboard.tekton.dev
     resources:
       - extensions
@@ -45,7 +37,6 @@ rules:
       - namespaces
       - pods
       - pods/log
-      - serviceaccounts
     verbs:
       - get
       - list
