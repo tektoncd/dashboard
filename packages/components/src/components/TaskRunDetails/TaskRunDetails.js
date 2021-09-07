@@ -290,7 +290,7 @@ const TaskRunDetails = ({
               ) : null}
               {podContent === 'resource' ? (
                 <ViewYAML
-                  dark
+                  enableSyntaxHighlighting
                   resource={pod.resource}
                   {...(hasEvents
                     ? null
@@ -303,7 +303,7 @@ const TaskRunDetails = ({
                 />
               ) : null}
               {hasEvents && podContent === 'events' ? (
-                <ViewYAML dark resource={pod.events} />
+                <ViewYAML enableSyntaxHighlighting resource={pod.events} />
               ) : null}
             </div>
           </Tab>

@@ -25,13 +25,48 @@ limitations under the License.
   }
 }
 
-// TODO: Colorize YAML syntax to conform carbon design. See
-// https://github.com/carbon-design-system/carbon-website/issues/965 for more
-// details.
 .bx--snippet--multi {
   max-width: none;
 
-  .token.string {
-    color: rgb(0, 187, 0);
+  // Styles based on a11y-dark by @ericwbailey
+  &.hljs {
+    background: #2b2b2b;
+    color: #f8f8f2;
+
+    .react-syntax-highlighter-line-number {
+      color: #f8f8f2;
+    }
+
+    .hljs-comment {
+      color: #d4d0ab;
+    }
+
+    .hljs-template-variable {
+      color: #ffa07a;
+    }
+
+    .hljs-number,
+    .hljs-literal,
+    .hljs-type,
+    .hljs-meta {
+      color: #f5ab35;
+    }
+
+    .hljs-string,
+    .hljs-bullet {
+      color: #abe338;
+    }
+  }
+}
+
+@media screen and (-ms-high-contrast: active) {
+  .hljs-bullet,
+  .hljs-comment,
+  .hljs-literal,
+  .hljs-meta,
+  .hljs-number,
+  .hljs-string,
+  .hljs-type {
+    color: highlight;
   }
 }

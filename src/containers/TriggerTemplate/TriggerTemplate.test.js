@@ -254,7 +254,7 @@ it('TriggerTemplateContainer contains YAML tab with accurate information', async
   jest
     .spyOn(API, 'useTriggerTemplate')
     .mockImplementation(() => ({ data: fakeTriggerTemplate }));
-  const { getByText, getAllByText } = renderWithRouter(
+  const { getByText } = renderWithRouter(
     <Route
       path={paths.triggerTemplates.byName()}
       render={props => <TriggerTemplateContainer {...props} intl={intl} />}
@@ -270,16 +270,12 @@ it('TriggerTemplateContainer contains YAML tab with accurate information', async
   await waitFor(() => getByText('pipeline-template'));
   const yamlTab = getByText('YAML');
   fireEvent.click(yamlTab);
-  await waitFor(() => getByText(/creationtimestamp/i));
-  await waitFor(() => getByText(/selflink/i));
-  await waitFor(() => getByText(/pipelineref/i));
-  await waitFor(() => getByText(/resourceref/i));
-  await waitFor(() => getByText(/generation/i));
-  await waitFor(() => getByText(/resourceversion/i));
-  await waitFor(() => getByText(/git-source/i));
-  await waitFor(() => getByText(/params.message/i));
-  await waitFor(() => getByText(/type: git/i));
-  await waitFor(() => getAllByText(/revision/i)[0]);
+  await waitFor(() => getByText('creationTimestamp:'));
+  await waitFor(() => getByText('selfLink:'));
+  await waitFor(() => getByText('pipelineRef:'));
+  await waitFor(() => getByText('resourceRef:'));
+  await waitFor(() => getByText('generation:'));
+  await waitFor(() => getByText('resourceVersion:'));
 });
 
 it('TriggerTemplateContainer does not render label section if they are not present', async () => {
