@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,10 +14,12 @@ limitations under the License.
 import React from 'react';
 
 import ViewYAML from './ViewYAML';
+import pod from './examples/pod.json';
 
 export default {
   args: {
     dark: true,
+    enableSyntaxHighlighting: false,
     resource: {
       apiVersion: 'tekton.dev/v1alpha1',
       kind: 'Resource',
@@ -42,3 +44,9 @@ export default {
 };
 
 export const Base = args => <ViewYAML {...args} />;
+
+export const SyntaxHighlighter = args => <ViewYAML {...args} />;
+SyntaxHighlighter.args = {
+  enableSyntaxHighlighting: true,
+  resource: pod
+};

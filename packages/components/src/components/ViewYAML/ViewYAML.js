@@ -24,7 +24,6 @@ function YAMLHighlighter({ children, className }) {
   return (
     <SyntaxHighlighter
       className={className}
-      codeTagProps={{}}
       language="yaml"
       showLineNumbers
       useInlineStyles={false}
