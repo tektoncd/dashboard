@@ -13,6 +13,8 @@ This guide walks you through installing a working Tekton Dashboard locally from 
 
 ## Before you begin
 
+**Note:** This walkthrough requires Kubernetes 1.19 or newer.
+
 Before you begin, make sure the following tools are installed:
 
 1. [`kind`](https://kind.sigs.k8s.io/): For creating a local cluster running on top of docker.
