@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 /* istanbul ignore file */
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { injectIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { getFilters, urls, useTitleSync } from '@tektoncd/dashboard-utils';
@@ -20,8 +20,8 @@ import { Link as CarbonLink } from 'carbon-components-react';
 
 import { ListPageLayout } from '..';
 import {
-  getAPIResource,
-  getCustomResources,
+  useAPIResource,
+  useCustomResources,
   useSelectedNamespace
 } from '../../api';
 
@@ -31,55 +31,48 @@ export function ResourceListContainer(props) {
 
   const { selectedNamespace } = useSelectedNamespace();
   const namespace = namespaceParam || selectedNamespace;
-
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [isNamespaced, setIsNamespaced] = useState(true);
-  const [resources, setResources] = useState([]);
   const filters = getFilters(location);
 
   useTitleSync({ page: `${group}/${version}/${type}` });
 
-  function fetchResources() {
-    return getAPIResource({ group, version, type })
-      .then(({ namespaced }) => {
-        setIsNamespaced(namespaced);
-        return getCustomResources({
-          filters,
-          group,
-          version,
-          type,
-          namespace: namespaced ? namespace : null
-        });
-      })
-      .then(res => {
-        setLoading(false);
-        setResources(res);
-      })
-      .catch(err => {
-        setError(err);
-      });
-  }
+  const {
+    data: apiResource,
+    error: apiResourceError,
+    isLoading: isLoadingAPIResource
+  } = useAPIResource({ group, type, version });
+  const isNamespaced = !isLoadingAPIResource && apiResource.namespaced;
 
-  useEffect(() => {
-    fetchResources();
-  }, [JSON.stringify(filters), group, namespace, type, version]);
+  const {
+    data: resources,
+    error: resourcesError,
+    isLoading: isLoadingResources
+  } = useCustomResources(
+    {
+      filters,
+      group,
+      namespace: isNamespaced ? namespace : null,
+      type,
+      version
+    },
+    {
+      enabled: !isLoadingAPIResource
+    }
+  );
 
   function getError() {
-    if (error) {
-      return {
-        error,
-        title: intl.formatMessage(
-          {
-            id: 'dashboard.resourceList.errorLoading',
-            defaultMessage: 'Error loading {type}'
-          },
-          { type }
-        )
-      };
+    if (!apiResourceError && !resourcesError) {
+      return null;
     }
-
-    return null;
+    return {
+      error: apiResourceError || resourcesError,
+      title: intl.formatMessage(
+        {
+          id: 'dashboard.resourceList.errorLoading',
+          defaultMessage: 'Error loading {type}'
+        },
+        { type }
+      )
+    };
   }
 
   const emptyText = intl.formatMessage(
@@ -159,7 +152,7 @@ export function ResourceListContainer(props) {
             createdTime: <FormattedDate date={creationTimestamp} relative />
           };
         })}
-        loading={loading}
+        loading={isLoadingAPIResource || isLoadingResources}
         emptyTextAllNamespaces={emptyText}
         emptyTextSelectedNamespace={emptyText}
       />

@@ -54,7 +54,8 @@ it('getCustomResources', () => {
 });
 
 it('useCustomResource', () => {
-  const params = { fake: 'params' };
+  const type = 'fake_type';
+  const params = { fake: 'params', type };
   const query = { fake: 'query' };
   jest.spyOn(utils, 'useResource').mockImplementation(() => query);
   const returnValue = API.useCustomResource(params);
@@ -62,9 +63,51 @@ it('useCustomResource', () => {
   expect(utils.useResource).toHaveBeenCalledWith(
     expect.objectContaining({
       api: API.getCustomResource,
-      kind: 'customResource',
+      kind: type,
       params
     })
+  );
+  expect(returnValue).toEqual(query);
+});
+
+it('useCustomResources', async () => {
+  const group = 'fake_group';
+  const type = 'fake_type';
+  const version = 'fake_version';
+  const resources = {
+    metadata: {},
+    items: [
+      { metadata: { name: 'resource1' } },
+      { metadata: { name: 'resource2' } }
+    ]
+  };
+  fetchMock.get(/fake_type/, resources);
+  const { result, waitFor } = renderHook(
+    () => API.useCustomResources({ group, type, version }),
+    {
+      wrapper: getAPIWrapper()
+    }
+  );
+  await waitFor(() => result.current.isFetching);
+  await waitFor(() => !result.current.isFetching);
+  expect(result.current.data).toEqual(resources.items);
+  fetchMock.restore();
+});
+
+it('useAPIResource', () => {
+  const type = 'fake_type';
+  const params = { fake: 'params', type };
+  const query = { fake: 'query' };
+  jest.spyOn(utils, 'useResource').mockImplementation(() => query);
+  const returnValue = API.useAPIResource(params);
+
+  expect(utils.useResource).toHaveBeenCalledWith(
+    expect.objectContaining({
+      api: API.getAPIResource,
+      kind: type,
+      params
+    }),
+    { disableWebSocket: true }
   );
   expect(returnValue).toEqual(query);
 });
