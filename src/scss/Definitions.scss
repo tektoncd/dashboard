@@ -31,20 +31,6 @@ main {
   }
 }
 
-.tkn--definition .tkn--status {
-  display: flex;
-
-  .tkn--status-icon {
-    margin-right: 0.5em;
-    vertical-align: sub;
-    flex-shrink: 0;
-  }
-}
-
-.bx--overflow-menu--flip.bx--overflow-menu-options::after {
-  display: none;
-}
-
 .tkn--resource-info-icon {
   float: right;
 }
