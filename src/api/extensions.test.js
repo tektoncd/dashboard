@@ -18,35 +18,33 @@ import * as utils from './utils';
 it('getExtensions', () => {
   const displayName = 'displayName';
   const name = 'name';
-  const extensions = [
-    { spec: { apiVersion: 'v1alpha1', displayname: displayName, name } }
-  ];
-  const transformedExtensions = [
-    expect.objectContaining({ displayName, name })
-  ];
-  fetchMock.get(/extensions/, { items: extensions });
+  const extensions = {
+    spec: {
+      items: [
+        { spec: { apiVersion: 'v1alpha1', displayname: displayName, name } }
+      ]
+    }
+  };
+  fetchMock.get(/extensions/, extensions);
   return API.getExtensions().then(response => {
-    expect(response).toEqual(transformedExtensions);
-    fetchMock.restore();
-  });
-});
-
-it('getExtensions null', () => {
-  fetchMock.get(/extensions/, {
-    body: 'null',
-    headers: { 'Content-Type': 'application/json' }
-  });
-  return API.getExtensions().then(response => {
-    expect(response).toEqual([]);
+    expect(response).toEqual(extensions);
     fetchMock.restore();
   });
 });
 
 it('useExtensions', () => {
-  const query = { fake: 'query' };
+  const name = 'fake_name';
+  const group = 'fake_group';
+  const version = 'fake_version';
+  const apiVersion = `${group}/${version}`;
+  const displayName = 'fake_displayName';
+  const namespaced = true;
+  const query = {
+    data: [{ spec: { apiVersion, displayname: displayName, name, namespaced } }]
+  };
   const params = { fake: 'params' };
   jest.spyOn(utils, 'useCollection').mockImplementation(() => query);
-  expect(API.useExtensions(params)).toEqual(query);
+  const extensions = API.useExtensions(params);
   expect(utils.useCollection).toHaveBeenCalledWith(
     expect.objectContaining({
       api: API.getExtensions,
@@ -54,15 +52,15 @@ it('useExtensions', () => {
       params
     })
   );
-
-  const queryConfig = { fake: 'queryConfig' };
-  API.useExtensions(params, queryConfig);
-  expect(utils.useCollection).toHaveBeenCalledWith(
-    expect.objectContaining({
-      api: API.getExtensions,
-      kind: 'Extension',
-      params,
-      queryConfig
-    })
-  );
+  expect(extensions).toEqual({
+    data: [
+      {
+        apiGroup: group,
+        apiVersion: version,
+        displayName,
+        name,
+        namespaced
+      }
+    ]
+  });
 });

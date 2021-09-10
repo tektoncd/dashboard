@@ -24,29 +24,33 @@ function getExtensionsAPI({ isWebSocket, namespace }) {
   });
 }
 
-export async function getExtensions({ namespace } = {}) {
+export function getExtensions({ namespace } = {}) {
   const resourceExtensionsUri = getExtensionsAPI({ namespace });
-  const resourceExtensions = await get(resourceExtensionsUri);
-  return (resourceExtensions?.items || []).map(({ spec }) => {
-    const { displayname: displayName, name, namespaced } = spec;
-    const [apiGroup, apiVersion] = spec.apiVersion.split('/');
-    return {
-      apiGroup,
-      apiVersion,
-      displayName,
-      name,
-      namespaced
-    };
-  });
+  return get(resourceExtensionsUri);
 }
 
 export function useExtensions(params, queryConfig) {
   const webSocketURL = getExtensionsAPI({ ...params, isWebSocket: true });
-  return useCollection({
+  const { data, ...query } = useCollection({
     api: getExtensions,
     kind: 'Extension',
     params,
     queryConfig,
     webSocketURL
   });
+
+  return {
+    ...query,
+    data: (data || []).map(({ spec }) => {
+      const { displayname: displayName, name, namespaced } = spec;
+      const [apiGroup, apiVersion] = spec.apiVersion.split('/');
+      return {
+        apiGroup,
+        apiVersion,
+        displayName,
+        name,
+        namespaced
+      };
+    })
+  };
 }

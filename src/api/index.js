@@ -63,6 +63,17 @@ export function getCustomResources({ filters = [], ...rest }) {
   return get(uri);
 }
 
+export function useCustomResources(params, queryConfig) {
+  const webSocketURL = getCustomResourcesAPI({ ...params, isWebSocket: true });
+  return useCollection({
+    api: getCustomResources,
+    kind: params.type,
+    params,
+    queryConfig,
+    webSocketURL
+  });
+}
+
 export function getCustomResource(params) {
   const uri = getResourcesAPI(params);
   return get(uri);
@@ -72,7 +83,7 @@ export function useCustomResource(params) {
   const webSocketURL = getCustomResourcesAPI({ ...params, isWebSocket: true });
   return useResource({
     api: getCustomResource,
-    kind: 'customResource',
+    kind: params.type,
     params,
     webSocketURL
   });
@@ -359,6 +370,17 @@ export function getAPIResource({ group, version, type }) {
 
   return get(uri).then(({ resources }) =>
     resources.find(({ name }) => name === type)
+  );
+}
+
+export function useAPIResource(params) {
+  return useResource(
+    {
+      api: getAPIResource,
+      kind: params.type,
+      params
+    },
+    { disableWebSocket: true }
   );
 }
 
