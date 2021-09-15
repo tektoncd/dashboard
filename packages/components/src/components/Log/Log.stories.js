@@ -30,7 +30,13 @@ const performanceTest = Array.from(
 
 export default {
   component: Log,
-  decorators: [storyFn => <div style={{ width: '500px' }}>{storyFn()}</div>],
+  decorators: [
+    Story => (
+      <div style={{ width: '500px' }}>
+        <Story />
+      </div>
+    )
+  ],
   title: 'Components/Log'
 };
 

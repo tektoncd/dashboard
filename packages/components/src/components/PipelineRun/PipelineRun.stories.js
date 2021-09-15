@@ -136,6 +136,7 @@ const pipelineRun = {
 
 export default {
   component: PipelineRun,
+  decorators: [Story => <Story />],
   title: 'Components/PipelineRun'
 };
 

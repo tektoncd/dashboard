@@ -39,7 +39,7 @@ const namespaces = [
 export default {
   component: ListPageLayoutContainer,
   decorators: [
-    storyFn => {
+    Story => {
       queryClient.setQueryData('Namespace', () => ({
         items: namespaces,
         metadata: {}
@@ -53,7 +53,7 @@ export default {
               selectNamespace: () => {}
             }}
           >
-            {storyFn()}
+            <Story />
           </NamespaceContext.Provider>
         </QueryClientProvider>
       );
