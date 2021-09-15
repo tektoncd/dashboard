@@ -19,7 +19,7 @@
     "prepare": "npm run build"
   },
   "dependencies": {
-    "@babel/cli": "^7.12.1",
+    "@babel/cli": "^7.15.4",
     "@formatjs/intl-relativetimeformat": "^7.3.6",
     "@tektoncd/dashboard-utils": "file:../utils",
     "@visx/event": "^2.1.0",

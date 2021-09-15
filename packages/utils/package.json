@@ -13,7 +13,7 @@
     "prepare": "npm run build"
   },
   "dependencies": {
-    "@babel/cli": "^7.12.1"
+    "@babel/cli": "^7.15.4"
   },
   "peerDependencies": {
     "react-router-dom": "^5.0.0"
