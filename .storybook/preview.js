@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -44,6 +44,11 @@ export const parameters = {
 
 export const decorators = [
   (story, context) => (
-    <Container story={story} notes={context.parameters.notes} />
+    <Container
+      notes={context.parameters.notes}
+      path={context.args.path}
+      route={context.args.route}
+      story={story}
+    />
   )
 ];

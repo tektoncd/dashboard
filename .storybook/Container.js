@@ -20,15 +20,13 @@ import messages from '../src/nls/messages_en.json';
 
 import './Container.scss';
 
-const history = createMemoryHistory({ initialEntries: ['/'] });
-
-export default function Container({ story, notes }) {
+export default function Container({ notes, path = '/', route = '/', story }) {
   return (
     <IntlProvider locale="en" defaultLocale="en" messages={messages['en']}>
       {notes && <p>{notes}</p>}
       <div data-floating-menu-container role="main">
-        <Router history={history}>
-          <Route path="/">{() => story()}</Route>
+        <Router history={createMemoryHistory({ initialEntries: [route] })}>
+          <Route path={path}>{() => story()}</Route>
         </Router>
       </div>
     </IntlProvider>

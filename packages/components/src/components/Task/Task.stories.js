@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -30,7 +30,13 @@ const steps = [
 
 export default {
   component: Task,
-  decorators: [storyFn => <div style={{ width: '250px' }}>{storyFn()}</div>],
+  decorators: [
+    Story => (
+      <div style={{ width: '250px' }}>
+        <Story />
+      </div>
+    )
+  ],
   title: 'Components/Task'
 };
 
