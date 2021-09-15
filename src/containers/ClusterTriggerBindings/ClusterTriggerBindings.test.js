@@ -13,7 +13,6 @@ limitations under the License.
 
 import React from 'react';
 import { fireEvent } from '@testing-library/react';
-import { Route } from 'react-router-dom';
 
 import { renderWithRouter } from '../../utils/test';
 import ClusterTriggerBindings from '.';
@@ -35,13 +34,9 @@ it('ClusterTriggerBindings renders with no bindings', () => {
     data: []
   }));
 
-  const { getByText } = renderWithRouter(
-    <Route
-      path="/clustertriggerbindings"
-      render={props => <ClusterTriggerBindings {...props} />}
-    />,
-    { route: '/clustertriggerbindings' }
-  );
+  const { getByText } = renderWithRouter(<ClusterTriggerBindings />, {
+    route: '/clustertriggerbindings'
+  });
 
   expect(getByText('ClusterTriggerBindings')).toBeTruthy();
   expect(getByText('No matching ClusterTriggerBindings found')).toBeTruthy();
@@ -52,13 +47,9 @@ it('ClusterTriggerBindings renders with one binding', () => {
     .spyOn(API, 'useClusterTriggerBindings')
     .mockImplementation(() => ({ data: [clusterTriggerBinding] }));
 
-  const { queryByText } = renderWithRouter(
-    <Route
-      path="/clusterTriggerBindings"
-      render={props => <ClusterTriggerBindings {...props} />}
-    />,
-    { route: '/clusterTriggerBindings' }
-  );
+  const { queryByText } = renderWithRouter(<ClusterTriggerBindings />, {
+    route: '/clustertriggerbindings'
+  });
 
   expect(queryByText('ClusterTriggerBindings')).toBeTruthy();
   expect(queryByText(clusterTriggerBinding.metadata.name)).toBeTruthy();
@@ -71,16 +62,11 @@ it('ClusterTriggerBindings can be filtered on a single label filter', async () =
       data: filters.length ? [] : [clusterTriggerBinding]
     }));
 
-  const {
-    queryByText,
-    getByPlaceholderText,
-    getByText
-  } = renderWithRouter(
-    <Route
-      path="/clustertriggerbindings"
-      render={props => <ClusterTriggerBindings {...props} />}
-    />,
-    { route: '/clustertriggerbindings' }
+  const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
+    <ClusterTriggerBindings />,
+    {
+      route: '/clustertriggerbindings'
+    }
   );
 
   const filterValue = 'baz:bam';
@@ -97,13 +83,9 @@ it('ClusterTriggerBindings renders in loading state', () => {
     .spyOn(API, 'useClusterTriggerBindings')
     .mockImplementation(() => ({ isLoading: true }));
 
-  const { queryByText } = renderWithRouter(
-    <Route
-      path="/clustertriggerbindings"
-      render={props => <ClusterTriggerBindings {...props} />}
-    />,
-    { route: '/clustertriggerbindings' }
-  );
+  const { queryByText } = renderWithRouter(<ClusterTriggerBindings />, {
+    route: '/clustertriggerbindings'
+  });
 
   expect(queryByText(/ClusterTriggerBindings/i)).toBeTruthy();
   expect(queryByText('No matching ClusterTriggerBindings found')).toBeFalsy();
@@ -116,13 +98,9 @@ it('ClusterTriggerBindings renders in error state', () => {
     .spyOn(API, 'useClusterTriggerBindings')
     .mockImplementation(() => ({ error }));
 
-  const { queryByText } = renderWithRouter(
-    <Route
-      path="/clustertriggerbindings"
-      render={props => <ClusterTriggerBindings {...props} />}
-    />,
-    { route: '/clustertriggerbindings' }
-  );
+  const { queryByText } = renderWithRouter(<ClusterTriggerBindings />, {
+    route: '/clustertriggerbindings'
+  });
 
   expect(queryByText(error)).toBeTruthy();
 });

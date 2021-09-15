@@ -13,7 +13,7 @@ limitations under the License.
 /* istanbul ignore file */
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import keyBy from 'lodash.keyby';
 import { Button, Link as CarbonLink } from 'carbon-components-react';
@@ -41,11 +41,12 @@ import {
   useTasks
 } from '../../api';
 
-function Tasks(props) {
-  const { intl, location, match } = props;
+function Tasks({ intl }) {
+  const location = useLocation();
+  const params = useParams();
 
   const { selectedNamespace } = useSelectedNamespace();
-  const { namespace = selectedNamespace } = match.params;
+  const { namespace = selectedNamespace } = params;
 
   const [deleteError, setDeleteError] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -220,12 +221,7 @@ function Tasks(props) {
   }));
 
   return (
-    <ListPageLayout
-      {...props}
-      error={getError()}
-      filters={filters}
-      title="Tasks"
-    >
+    <ListPageLayout error={getError()} filters={filters} title="Tasks">
       <Table
         batchActionButtons={batchActionButtons}
         className="tkn--table--inline-actions"

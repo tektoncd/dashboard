@@ -12,8 +12,8 @@ limitations under the License.
 */
 
 import React from 'react';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
-import PropTypes from 'prop-types';
 import { useTitleSync } from '@tektoncd/dashboard-utils';
 import { ResourceDetails, Table } from '@tektoncd/dashboard-components';
 
@@ -70,9 +70,11 @@ function ConditionParameters({ condition, intl }) {
   );
 }
 
-export function ConditionContainer(props) {
-  const { intl, location, match } = props;
-  const { conditionName, namespace } = match.params;
+export function ConditionContainer({ intl }) {
+  const history = useHistory();
+  const location = useLocation();
+  const params = useParams();
+  const { conditionName, namespace } = params;
 
   const queryParams = new URLSearchParams(location.search);
   const view = queryParams.get('view');
@@ -91,7 +93,7 @@ export function ConditionContainer(props) {
     <ResourceDetails
       error={error}
       kind="Condition"
-      onViewChange={getViewChangeHandler(props)}
+      onViewChange={getViewChangeHandler({ history, location })}
       resource={condition}
       view={view}
     >
@@ -99,13 +101,5 @@ export function ConditionContainer(props) {
     </ResourceDetails>
   );
 }
-
-ConditionContainer.propTypes = {
-  match: PropTypes.shape({
-    params: PropTypes.shape({
-      conditionName: PropTypes.string.isRequired
-    }).isRequired
-  }).isRequired
-};
 
 export default injectIntl(ConditionContainer);

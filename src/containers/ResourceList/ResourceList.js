@@ -13,7 +13,7 @@ limitations under the License.
 /* istanbul ignore file */
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { getFilters, urls, useTitleSync } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
 import { Link as CarbonLink } from 'carbon-components-react';
@@ -25,9 +25,9 @@ import {
   useSelectedNamespace
 } from '../../api';
 
-export function ResourceListContainer(props) {
-  const { intl, location, match } = props;
-  const { group, namespace: namespaceParam, version, type } = match.params;
+export function ResourceListContainer({ intl }) {
+  const location = useLocation();
+  const { group, namespace: namespaceParam, version, type } = useParams();
 
   const { selectedNamespace } = useSelectedNamespace();
   const namespace = namespaceParam || selectedNamespace;
@@ -85,11 +85,10 @@ export function ResourceListContainer(props) {
 
   return (
     <ListPageLayout
-      {...props}
       error={getError()}
       filters={filters}
-      title={`${group}/${version}/${type}`}
       hideNamespacesDropdown={!isNamespaced}
+      title={`${group}/${version}/${type}`}
     >
       <Table
         headers={[

@@ -12,7 +12,13 @@ limitations under the License.
 */
 
 import React from 'react';
-import { generatePath } from 'react-router-dom';
+import {
+  generatePath,
+  useHistory,
+  useLocation,
+  useParams,
+  useRouteMatch
+} from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import { InlineNotification } from 'carbon-components-react';
 import {
@@ -29,12 +35,13 @@ export const ListPageLayout = ({
   error,
   filters,
   hideNamespacesDropdown,
-  history,
   intl,
-  location,
-  match,
   title
 }) => {
+  const history = useHistory();
+  const location = useLocation();
+  const match = useRouteMatch();
+  const params = useParams();
   const tenantNamespace = useTenantNamespace();
   const {
     selectedNamespace: namespace,
@@ -52,16 +59,16 @@ export const ListPageLayout = ({
       selectNamespace(selectedNamespace);
       setPath(
         generatePath(match.path.replace(paths.byNamespace(), ''), {
-          ...match.params
+          ...params
         })
       );
       return;
     }
 
-    const prefix = match?.params?.namespace ? '' : paths.byNamespace();
+    const prefix = params?.namespace ? '' : paths.byNamespace();
 
     const newURL = generatePath(`${prefix}${match.path}`, {
-      ...match.params,
+      ...params,
       namespace: selectedNamespace
     });
     setPath(newURL);
@@ -83,12 +90,7 @@ export const ListPageLayout = ({
         )}
       </div>
       {filters && (
-        <LabelFilter
-          filters={filters}
-          history={history}
-          location={location}
-          match={match}
-        />
+        <LabelFilter filters={filters} history={history} location={location} />
       )}
       {error && (
         <InlineNotification

@@ -13,7 +13,7 @@ limitations under the License.
 /* istanbul ignore file */
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import {
   TrashCan16 as DeleteIcon,
   Playlist16 as RunsIcon
@@ -41,12 +41,13 @@ import {
   useSelectedNamespace
 } from '../../api';
 
-export function Pipelines(props) {
-  const { intl, location, match } = props;
+export function Pipelines({ intl }) {
+  const location = useLocation();
+  const params = useParams();
   const filters = getFilters(location);
 
   const { selectedNamespace } = useSelectedNamespace();
-  const { namespace = selectedNamespace } = match.params;
+  const { namespace = selectedNamespace } = params;
 
   const [cancelSelection, setCancelSelection] = useState(null);
   const [deleteError, setDeleteError] = useState(null);
@@ -223,12 +224,7 @@ export function Pipelines(props) {
   }));
 
   return (
-    <ListPageLayout
-      {...props}
-      error={getError()}
-      filters={filters}
-      title="Pipelines"
-    >
+    <ListPageLayout error={getError()} filters={filters} title="Pipelines">
       <Table
         batchActionButtons={batchActionButtons}
         className="tkn--table--inline-actions"

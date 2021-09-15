@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import { getFilters, urls, useTitleSync } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
@@ -21,14 +21,14 @@ import { Link as CarbonLink } from 'carbon-components-react';
 import { ListPageLayout } from '..';
 import { useSelectedNamespace, useTriggerTemplates } from '../../api';
 
-function TriggerTemplates(props) {
-  const { intl, location, match } = props;
-
+function TriggerTemplates({ intl }) {
   useTitleSync({ page: 'TriggerTemplates' });
 
+  const location = useLocation();
+  const params = useParams();
   const filters = getFilters(location);
   const { selectedNamespace: defaultNamespace } = useSelectedNamespace();
-  const { namespace: selectedNamespace = defaultNamespace } = match.params;
+  const { namespace: selectedNamespace = defaultNamespace } = params;
 
   const {
     data: triggerTemplates = [],
@@ -85,7 +85,6 @@ function TriggerTemplates(props) {
 
   return (
     <ListPageLayout
-      {...props}
       error={getError()}
       filters={filters}
       title="TriggerTemplates"

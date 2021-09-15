@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import { getFilters, urls, useTitleSync } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
@@ -21,8 +21,8 @@ import { Link as CarbonLink } from 'carbon-components-react';
 import { ListPageLayout } from '..';
 import { useClusterTriggerBindings } from '../../api';
 
-function ClusterTriggerBindings(props) {
-  const { intl, location } = props;
+function ClusterTriggerBindings({ intl }) {
+  const location = useLocation();
   const filters = getFilters(location);
 
   useTitleSync({ page: 'ClusterTriggerBindings' });
@@ -78,7 +78,6 @@ function ClusterTriggerBindings(props) {
 
   return (
     <ListPageLayout
-      {...props}
       error={getError()}
       filters={filters}
       hideNamespacesDropdown

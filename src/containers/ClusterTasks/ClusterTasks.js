@@ -13,7 +13,7 @@ limitations under the License.
 /* istanbul ignore file */
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import keyBy from 'lodash.keyby';
 import {
@@ -31,8 +31,8 @@ import { getFilters, urls, useTitleSync } from '@tektoncd/dashboard-utils';
 import { ListPageLayout } from '..';
 import { deleteClusterTask, useClusterTasks, useIsReadOnly } from '../../api';
 
-function ClusterTasksContainer(props) {
-  const { intl, location } = props;
+function ClusterTasksContainer({ intl }) {
+  const location = useLocation();
   const [cancelSelection, setCancelSelection] = useState(null);
   const [deleteError, setDeleteError] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -198,7 +198,6 @@ function ClusterTasksContainer(props) {
 
   return (
     <ListPageLayout
-      {...props}
       error={getError()}
       filters={filters}
       hideNamespacesDropdown

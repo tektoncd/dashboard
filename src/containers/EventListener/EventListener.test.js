@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
+import { paths, urls } from '@tektoncd/dashboard-utils';
 import { waitFor } from '@testing-library/react';
 import { createIntl } from 'react-intl';
 
@@ -125,22 +126,18 @@ const fakeEventListenerWithLabels = {
   }
 };
 
-const match = {
-  params: { eventListenerName, namespace }
-};
-
-const props = {
-  intl,
-  location: {},
-  match
-};
+const props = { intl };
 
 it('EventListener displays with formatted labels', async () => {
   jest
     .spyOn(API, 'useEventListener')
     .mockImplementation(() => ({ data: fakeEventListenerWithLabels }));
   const { queryByText, getByText } = renderWithRouter(
-    <EventListenerContainer {...props} />
+    <EventListenerContainer {...props} />,
+    {
+      path: paths.eventListeners.byName(),
+      route: urls.eventListeners.byName({ eventListenerName, namespace })
+    }
   );
 
   await waitFor(() => getByText(eventListenerName));
@@ -179,7 +176,11 @@ it('EventListener handles no serviceAccountName', async () => {
     .spyOn(API, 'useEventListener')
     .mockImplementation(() => ({ data: eventListener }));
   const { queryByText, getByText } = renderWithRouter(
-    <EventListenerContainer {...props} />
+    <EventListenerContainer {...props} />,
+    {
+      path: paths.eventListeners.byName(),
+      route: urls.eventListeners.byName({ eventListenerName, namespace })
+    }
   );
 
   await waitFor(() => getByText(eventListenerName));
@@ -198,7 +199,11 @@ it('EventListener handles no service type', async () => {
     .spyOn(API, 'useEventListener')
     .mockImplementation(() => ({ data: eventListener }));
   const { queryByText, getByText } = renderWithRouter(
-    <EventListenerContainer {...props} />
+    <EventListenerContainer {...props} />,
+    {
+      path: paths.eventListeners.byName(),
+      route: urls.eventListeners.byName({ eventListenerName, namespace })
+    }
   );
 
   await waitFor(() => getByText(eventListenerName));

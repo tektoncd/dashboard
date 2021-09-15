@@ -37,20 +37,10 @@ const mockExtensions = [
 ];
 
 it('SideNav renders only when expanded', () => {
-  const namespace = 'default';
-  const { queryByText, rerender } = renderWithRouter(
-    <SideNav
-      expanded
-      location={{ search: '' }}
-      match={{ params: { namespace } }}
-    />
-  );
+  const { queryByText, rerender } = renderWithRouter(<SideNav expanded />);
   expect(queryByText(/Tekton/)).toBeTruthy();
 
-  renderWithRouter(
-    <SideNav location={{ search: '' }} match={{ params: { namespace } }} />,
-    { rerender }
-  );
+  renderWithRouter(<SideNav />, { rerender });
   expect(queryByText(/Tekton/)).toBeFalsy();
 });
 
@@ -58,9 +48,7 @@ it('SideNav renders with extensions', () => {
   jest
     .spyOn(extensionsAPI, 'useExtensions')
     .mockImplementation(() => ({ data: mockExtensions }));
-  const { queryByText } = renderWithRouter(
-    <SideNav expanded location={{ search: '' }} />
-  );
+  const { queryByText } = renderWithRouter(<SideNav expanded />);
   expect(queryByText('Pipelines')).toBeTruthy();
   expect(queryByText('Tasks')).toBeTruthy();
   expect(queryByText(/dashboard_crd_extension/i)).toBeTruthy();
@@ -68,9 +56,7 @@ it('SideNav renders with extensions', () => {
 
 it('SideNav renders with triggers', async () => {
   jest.spyOn(API, 'useIsTriggersInstalled').mockImplementation(() => true);
-  const { queryByText } = renderWithRouter(
-    <SideNav expanded location={{ search: '' }} />
-  );
+  const { queryByText } = renderWithRouter(<SideNav expanded />);
   await waitFor(() => queryByText(/about/i));
   expect(queryByText('Pipelines')).toBeTruthy();
   expect(queryByText('Tasks')).toBeTruthy();
@@ -85,60 +71,29 @@ it('SideNav selects namespace based on URL', () => {
   jest
     .spyOn(APIUtils, 'useSelectedNamespace')
     .mockImplementation(() => ({ selectedNamespace: null, selectNamespace }));
-  const { rerender } = renderWithRouter(
-    <SideNav
-      expanded
-      location={{ search: '' }}
-      match={{ params: { namespace } }}
-      selectNamespace={selectNamespace}
-    />
-  );
+  const path = '/namespaces/:namespace/foo';
+  renderWithRouter(<SideNav expanded selectNamespace={selectNamespace} />, {
+    path,
+    route: `/namespaces/${namespace}/foo`
+  });
   expect(selectNamespace).toHaveBeenCalledWith(namespace);
-
-  const updatedNamespace = 'another';
-
-  renderWithRouter(
-    <SideNav
-      expanded
-      location={{ search: '' }}
-      match={{ params: { namespace: updatedNamespace } }}
-      selectNamespace={selectNamespace}
-    />,
-    { rerender }
-  );
-  expect(selectNamespace).toHaveBeenCalledWith(updatedNamespace);
-
-  renderWithRouter(
-    <SideNav
-      expanded
-      location={{ search: '' }}
-      match={{ params: { namespace: updatedNamespace } }}
-      selectNamespace={selectNamespace}
-    />,
-    { rerender }
-  );
-  expect(selectNamespace).toHaveBeenCalledTimes(2);
 });
 
 it('SideNav renders import in the default read-write mode', async () => {
-  const { queryByText } = renderWithRouter(
-    <SideNav expanded location={{ search: '' }} />
-  );
+  const { queryByText } = renderWithRouter(<SideNav expanded />);
   await waitFor(() => queryByText(/Import/i));
 });
 
 it('SideNav does not render import in read-only mode', async () => {
   jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => true);
-  const { queryByText } = renderWithRouter(
-    <SideNav expanded isReadOnly location={{ search: '' }} />
-  );
+  const { queryByText } = renderWithRouter(<SideNav expanded isReadOnly />);
   await waitFor(() => queryByText(/about/i));
   expect(queryByText(/import/i)).toBeFalsy();
 });
 
 it('SideNav renders kubernetes resources placeholder', async () => {
   const { queryByText } = renderWithRouter(
-    <SideNav expanded location={{ search: '' }} showKubernetesResources />
+    <SideNav expanded showKubernetesResources />
   );
   await waitFor(() => queryByText('placeholder'));
 });

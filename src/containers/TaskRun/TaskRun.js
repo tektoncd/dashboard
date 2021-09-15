@@ -14,8 +14,7 @@ limitations under the License.
 
 import React, { useRef, useState } from 'react';
 import { injectIntl } from 'react-intl';
-import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
+import { Link, useHistory, useLocation, useParams } from 'react-router-dom';
 import { InlineNotification, SkeletonText } from 'carbon-components-react';
 import {
   Log,
@@ -77,10 +76,12 @@ function notification({ intl, kind, message }) {
   );
 }
 
-export function TaskRunContainer(props) {
-  const { history, intl, location, match } = props;
+export function TaskRunContainer({ intl }) {
+  const history = useHistory();
+  const location = useLocation();
+  const params = useParams();
 
-  const { namespace: namespaceParam, taskRunName } = match.params;
+  const { namespace: namespaceParam, taskRunName } = params;
 
   const queryParams = new URLSearchParams(location.search);
   const selectedStepId = queryParams.get(STEP);
@@ -185,7 +186,7 @@ export function TaskRunContainer(props) {
       queryParams.delete(VIEW);
     }
 
-    const browserURL = match.url.concat(`?${queryParams.toString()}`);
+    const browserURL = location.pathname.concat(`?${queryParams.toString()}`);
     history.push(browserURL);
   }
 
@@ -238,7 +239,7 @@ export function TaskRunContainer(props) {
     taskRun
   });
 
-  const onViewChange = getViewChangeHandler(props);
+  const onViewChange = getViewChangeHandler({ history, location });
 
   const rerun = !isReadOnly &&
     !taskRun.metadata?.labels?.['tekton.dev/pipeline'] && (
@@ -328,13 +329,5 @@ export function TaskRunContainer(props) {
     </>
   );
 }
-
-TaskRunContainer.propTypes = {
-  match: PropTypes.shape({
-    params: PropTypes.shape({
-      taskRunName: PropTypes.string.isRequired
-    }).isRequired
-  }).isRequired
-};
 
 export default injectIntl(TaskRunContainer);

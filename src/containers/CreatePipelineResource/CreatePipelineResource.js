@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import { Button, InlineNotification } from 'carbon-components-react';
 import {
@@ -49,9 +50,8 @@ function validateInputs(value, id) {
   return true;
 }
 
-export /* istanbul ignore next */ function CreatePipelineResource(props) {
-  const { history, intl } = props;
-
+export /* istanbul ignore next */ function CreatePipelineResource({ intl }) {
+  const history = useHistory();
   const { selectedNamespace: defaultNamespace } = useSelectedNamespace();
   const [creating, setCreating] = useState(false);
   const [gitSource, setGitSource] = useState(true);

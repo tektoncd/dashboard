@@ -16,7 +16,7 @@ import { waitFor } from '@testing-library/react';
 import { createIntl } from 'react-intl';
 
 import * as API from '../../api/triggers';
-import { render, renderWithRouter } from '../../utils/test';
+import { renderWithRouter } from '../../utils/test';
 import { TriggerContainer } from './Trigger';
 
 const intl = createIntl({
@@ -26,20 +26,12 @@ const intl = createIntl({
 
 describe('TriggerContainer', () => {
   it('handles error state', async () => {
-    const match = {
-      params: {
-        triggerName: 'bar'
-      }
-    };
-
     const errorMessage = 'fake_errorMessage';
     jest
       .spyOn(API, 'useTrigger')
       .mockImplementation(() => ({ error: errorMessage }));
 
-    const { getByText } = render(
-      <TriggerContainer intl={intl} location={{}} match={match} />
-    );
+    const { getByText } = renderWithRouter(<TriggerContainer intl={intl} />);
     await waitFor(() => getByText('Error loading resource'));
     expect(getByText(errorMessage)).toBeTruthy();
   });
@@ -47,23 +39,20 @@ describe('TriggerContainer', () => {
   it('renders the trigger resource', async () => {
     const triggerName = 'fake_triggerName';
     const templateName = 'fake_templateName';
-    const match = {
-      params: {
-        triggerName,
-        namespace: 'default'
-      }
-    };
+    const namespace = 'fake_namespace';
 
     jest.spyOn(API, 'useTrigger').mockImplementation(() => ({
       data: {
-        metadata: { name: triggerName },
+        metadata: { name: triggerName, namespace },
         spec: { template: { ref: templateName } }
       }
     }));
 
-    const { queryByText } = renderWithRouter(
-      <TriggerContainer intl={intl} location={{}} match={match} />
-    );
+    const path = '/namespaces/:namespace/triggers/:triggerName';
+    const { queryByText } = renderWithRouter(<TriggerContainer intl={intl} />, {
+      path,
+      route: `/namespaces/${namespace}/triggers/${triggerName}`
+    });
     expect(queryByText(triggerName)).toBeTruthy();
     expect(queryByText(templateName)).toBeTruthy();
   });

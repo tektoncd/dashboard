@@ -15,7 +15,7 @@ import React from 'react';
 import { waitFor } from '@testing-library/react';
 import { createIntl } from 'react-intl';
 
-import { render } from '../../utils/test';
+import { renderWithRouter } from '../../utils/test';
 import * as API from '../../api/conditions';
 import { ConditionContainer } from './Condition';
 
@@ -26,18 +26,10 @@ const intl = createIntl({
 
 describe('ConditionContainer', () => {
   it('handles error state', async () => {
-    const match = {
-      params: {
-        conditionName: 'bar'
-      }
-    };
-
     const error = 'fake_errorMessage';
     jest.spyOn(API, 'useCondition').mockImplementation(() => ({ error }));
 
-    const { getByText } = render(
-      <ConditionContainer intl={intl} location={{}} match={match} />
-    );
+    const { getByText } = renderWithRouter(<ConditionContainer intl={intl} />);
     await waitFor(() => getByText('Error loading resource'));
     expect(getByText(error)).toBeTruthy();
   });
@@ -55,16 +47,8 @@ describe('ConditionContainer', () => {
     jest
       .spyOn(API, 'useCondition')
       .mockImplementation(() => ({ data: condition }));
-    const match = {
-      params: {
-        conditionName: 'bar',
-        namespace: 'default'
-      }
-    };
 
-    const { getByText } = render(
-      <ConditionContainer intl={intl} location={{}} match={match} />
-    );
+    const { getByText } = renderWithRouter(<ConditionContainer intl={intl} />);
     expect(getByText(/parameters/i)).toBeTruthy();
     expect(getByText('param1')).toBeTruthy();
     expect(getByText('param2')).toBeTruthy();
@@ -80,15 +64,9 @@ describe('ConditionContainer', () => {
     jest
       .spyOn(API, 'useCondition')
       .mockImplementation(() => ({ data: condition }));
-    const match = {
-      params: {
-        conditionName: 'bar',
-        namespace: 'default'
-      }
-    };
 
-    const { queryByText } = render(
-      <ConditionContainer intl={intl} location={{}} match={match} />
+    const { queryByText } = renderWithRouter(
+      <ConditionContainer intl={intl} />
     );
     expect(queryByText(/parameters/i)).toBeFalsy();
   });

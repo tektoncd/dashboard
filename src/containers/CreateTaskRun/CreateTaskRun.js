@@ -13,6 +13,7 @@ limitations under the License.
 /* istanbul ignore file */
 
 import React, { useState } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 import keyBy from 'lodash.keyby';
 import {
   Button,
@@ -99,8 +100,9 @@ const initialResourcesState = resourceSpecs => {
 
 const itemToString = ({ text }) => text;
 
-function CreateTaskRun(props) {
-  const { history, intl, location } = props;
+function CreateTaskRun({ intl }) {
+  const history = useHistory();
+  const location = useLocation();
 
   function getTaskDetails() {
     const urlSearchParams = new URLSearchParams(location.search);

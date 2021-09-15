@@ -122,12 +122,6 @@ const eventListener = {
     ]
   }
 };
-const match = {
-  params: {
-    namespace,
-    eventListenerName: name
-  }
-};
 const intl = createIntl({
   locale: 'en',
   defaultLocale: 'en'
@@ -144,11 +138,7 @@ const queryClient = new QueryClient({
   }
 });
 
-const props = {
-  location: {},
-  match,
-  intl
-};
+const props = { intl };
 
 export default {
   component: EventListenerContainer,

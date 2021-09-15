@@ -12,9 +12,8 @@ limitations under the License.
 */
 
 import React from 'react';
-import { Route } from 'react-router-dom';
 import { fireEvent } from '@testing-library/react';
-import { ALL_NAMESPACES, paths, urls } from '@tektoncd/dashboard-utils';
+import { ALL_NAMESPACES, urls } from '@tektoncd/dashboard-utils';
 
 import { render, renderWithRouter } from '../../utils/test';
 import CreatePipelineResource from '.';
@@ -40,21 +39,17 @@ describe('CreatePipelineResource', () => {
 
   it('redirects to PipelineResources on cancel', () => {
     jest.spyOn(API, 'getNamespaces').mockImplementation(() => []);
-    const history = { push: jest.fn() };
+    jest.spyOn(window.history, 'pushState');
 
-    const { queryByText } = renderWithRouter(
-      <Route
-        path={paths.pipelineResources.create()}
-        render={props => (
-          <CreatePipelineResource {...props} history={history} />
-        )}
-      />,
-      {
-        route: urls.pipelineResources.create()
-      }
-    );
+    const { queryByText } = renderWithRouter(<CreatePipelineResource />, {
+      route: urls.pipelineResources.create()
+    });
     fireEvent.click(queryByText(/cancel/i));
-    expect(history.push).toHaveBeenCalledWith(urls.pipelineResources.all());
+    expect(window.history.pushState).toHaveBeenCalledWith(
+      expect.anything(),
+      null,
+      urls.pipelineResources.all()
+    );
   });
 
   const nameValidationErrorMsgRegExp = /Must be less than 64 characters and contain only lowercase alphanumeric characters or -/i;

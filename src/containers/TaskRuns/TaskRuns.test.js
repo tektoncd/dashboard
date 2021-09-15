@@ -13,7 +13,6 @@ limitations under the License.
 
 import React from 'react';
 import { fireEvent, waitFor } from '@testing-library/react';
-import { Route } from 'react-router-dom';
 import { urls } from '@tektoncd/dashboard-utils';
 
 import { renderWithRouter } from '../../utils/test';
@@ -69,27 +68,15 @@ describe('TaskRuns container', () => {
   });
 
   it('Duplicate label filters are prevented', async () => {
-    const match = {
-      params: {},
-      url: urls.taskRuns.all()
-    };
-
     const {
       queryByText,
       getByPlaceholderText,
       getByText
     } = renderWithRouter(
-      <Route
-        path={urls.taskRuns.all()}
-        render={props => (
-          <TaskRunsContainer
-            {...props}
-            match={match}
-            error={null}
-            loading={false}
-            namespace="namespace-1"
-          />
-        )}
+      <TaskRunsContainer
+        error={null}
+        loading={false}
+        namespace="namespace-1"
       />,
       { route: urls.taskRuns.all() }
     );
@@ -107,27 +94,15 @@ describe('TaskRuns container', () => {
   });
 
   it('An invalid filter value is disallowed and reported', async () => {
-    const match = {
-      params: {},
-      url: urls.taskRuns.all()
-    };
-
     const {
       queryByText,
       getByPlaceholderText,
       getByText
     } = renderWithRouter(
-      <Route
-        path={urls.taskRuns.all()}
-        render={props => (
-          <TaskRunsContainer
-            {...props}
-            match={match}
-            error={null}
-            loading={false}
-            namespace="namespace-1"
-          />
-        )}
+      <TaskRunsContainer
+        error={null}
+        loading={false}
+        namespace="namespace-1"
       />,
       { route: urls.taskRuns.all() }
     );
@@ -147,23 +122,11 @@ describe('TaskRuns container', () => {
   it('TaskRun actions are available when not in read-only mode', async () => {
     jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => false);
 
-    const match = {
-      params: {},
-      url: urls.taskRuns.all()
-    };
-
     const { getAllByTitle, getByText } = renderWithRouter(
-      <Route
-        path={urls.taskRuns.all()}
-        render={props => (
-          <TaskRunsContainer
-            {...props}
-            match={match}
-            error={null}
-            loading={false}
-            namespace="namespace-1"
-          />
-        )}
+      <TaskRunsContainer
+        error={null}
+        loading={false}
+        namespace="namespace-1"
       />,
       { route: urls.taskRuns.all() }
     );
@@ -175,27 +138,15 @@ describe('TaskRuns container', () => {
   it('TaskRun actions are not available when in read-only mode', async () => {
     jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => true);
 
-    const match = {
-      params: {},
-      url: urls.taskRuns.all()
-    };
-
     const {
       getByText,
       queryAllByLabelText,
       queryAllByTitle
     } = renderWithRouter(
-      <Route
-        path={urls.taskRuns.all()}
-        render={props => (
-          <TaskRunsContainer
-            {...props}
-            match={match}
-            error={null}
-            loading={false}
-            namespace="namespace-1"
-          />
-        )}
+      <TaskRunsContainer
+        error={null}
+        loading={false}
+        namespace="namespace-1"
       />,
       { route: urls.taskRuns.all() }
     );
@@ -209,10 +160,7 @@ describe('TaskRuns container', () => {
     jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => false);
     jest.spyOn(taskRunsAPI, 'rerunTaskRun').mockImplementation(() => []);
     const { getAllByTitle, getByText } = renderWithRouter(
-      <Route
-        path={urls.taskRuns.all()}
-        render={props => <TaskRunsContainer {...props} />}
-      />,
+      <TaskRunsContainer />,
       { route: urls.taskRuns.all() }
     );
     await waitFor(() => getByText(/taskRunWithTwoLabels/i));

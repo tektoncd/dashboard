@@ -13,7 +13,6 @@ limitations under the License.
 
 import React from 'react';
 import { fireEvent } from '@testing-library/react';
-import { Route } from 'react-router-dom';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
 import { renderWithRouter } from '../../utils/test';
@@ -47,13 +46,9 @@ describe('EventListeners', () => {
       .spyOn(EventListenersAPI, 'useEventListeners')
       .mockImplementation(() => ({ data: [] }));
 
-    const { getByText } = renderWithRouter(
-      <Route
-        path="/eventlisteners"
-        render={props => <EventListeners {...props} />}
-      />,
-      { route: '/eventlisteners' }
-    );
+    const { getByText } = renderWithRouter(<EventListeners />, {
+      route: '/eventlisteners'
+    });
 
     expect(getByText('EventListeners')).toBeTruthy();
     expect(getByText('No matching EventListeners found')).toBeTruthy();
@@ -64,13 +59,9 @@ describe('EventListeners', () => {
       .spyOn(EventListenersAPI, 'useEventListeners')
       .mockImplementation(() => ({ data: [eventListener] }));
 
-    const { queryByText, queryByTitle } = renderWithRouter(
-      <Route
-        path="/eventlisteners"
-        render={props => <EventListeners {...props} />}
-      />,
-      { route: '/eventlisteners' }
-    );
+    const { queryByText, queryByTitle } = renderWithRouter(<EventListeners />, {
+      route: '/eventlisteners'
+    });
 
     expect(queryByText('EventListeners')).toBeTruthy();
     expect(queryByText('No matching EventListeners found')).toBeFalsy();
@@ -89,13 +80,7 @@ describe('EventListeners', () => {
       getByPlaceholderText,
       getByText,
       queryByText
-    } = renderWithRouter(
-      <Route
-        path="/eventlisteners"
-        render={props => <EventListeners {...props} />}
-      />,
-      { route: '/eventlisteners' }
-    );
+    } = renderWithRouter(<EventListeners />, { route: '/eventlisteners' });
 
     const filterValue = 'baz:bam';
     const filterInputField = getByPlaceholderText(/Input a label filter/);
@@ -111,13 +96,9 @@ describe('EventListeners', () => {
       .spyOn(EventListenersAPI, 'useEventListeners')
       .mockImplementation(() => ({ isLoading: true }));
 
-    const { queryByText } = renderWithRouter(
-      <Route
-        path="/eventlisteners"
-        render={props => <EventListeners {...props} />}
-      />,
-      { route: '/eventlisteners' }
-    );
+    const { queryByText } = renderWithRouter(<EventListeners />, {
+      route: '/eventlisteners'
+    });
 
     expect(queryByText(/EventListeners/i)).toBeTruthy();
     expect(queryByText('No matching EventListeners found')).toBeFalsy();
@@ -130,13 +111,9 @@ describe('EventListeners', () => {
       .spyOn(EventListenersAPI, 'useEventListeners')
       .mockImplementation(() => ({ error }));
 
-    const { queryByText } = renderWithRouter(
-      <Route
-        path="/eventlisteners"
-        render={props => <EventListeners {...props} />}
-      />,
-      { route: '/eventlisteners' }
-    );
+    const { queryByText } = renderWithRouter(<EventListeners />, {
+      route: '/eventlisteners'
+    });
 
     expect(queryByText(error)).toBeTruthy();
   });

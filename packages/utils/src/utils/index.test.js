@@ -205,9 +205,8 @@ it('getFilters', () => {
 it('getAddFilterHandler', () => {
   const url = 'someURL';
   const history = { push: jest.fn() };
-  const location = { search: '?nonFilterQueryParam=someValue' };
-  const match = { url };
-  const handleAddFilter = getAddFilterHandler({ history, location, match });
+  const location = { pathname: url, search: '?nonFilterQueryParam=someValue' };
+  const handleAddFilter = getAddFilterHandler({ history, location });
   const labelFilters = ['foo1=bar1', 'foo2=bar2'];
   handleAddFilter(labelFilters);
   expect(history.push).toHaveBeenCalledWith(
@@ -222,12 +221,10 @@ describe('getDeleteFilterHandler', () => {
     const search = `?labelSelector=${encodeURIComponent('foo=bar')}`;
     const url = 'someURL';
     const history = { push: jest.fn() };
-    const location = { search };
-    const match = { url };
+    const location = { pathname: url, search };
     const handleDeleteFilter = getDeleteFilterHandler({
       history,
-      location,
-      match
+      location
     });
     handleDeleteFilter('foo=bar');
     expect(history.push).toHaveBeenCalledWith(url);
@@ -239,12 +236,10 @@ describe('getDeleteFilterHandler', () => {
     )}`;
     const url = 'someURL';
     const history = { push: jest.fn() };
-    const location = { search };
-    const match = { url };
+    const location = { pathname: url, search };
     const handleDeleteFilter = getDeleteFilterHandler({
       history,
-      location,
-      match
+      location
     });
     handleDeleteFilter('foo1=bar1');
     expect(history.push).toHaveBeenCalledWith(
@@ -430,12 +425,10 @@ describe('getStatusFilter', () => {
     )}`;
     const url = 'someURL';
     const history = { push: jest.fn() };
-    const location = { search };
-    const match = { url };
+    const location = { pathname: url, search };
     const handleDeleteFilter = getDeleteFilterHandler({
       history,
-      location,
-      match
+      location
     });
     handleDeleteFilter('foo1=bar1');
     expect(history.push).toHaveBeenCalledWith(
@@ -449,12 +442,10 @@ describe('getStatusFilterHandler', () => {
     const search = '?nonFilterQueryParam=someValue&status=cancelled';
     const url = 'someURL';
     const history = { push: jest.fn() };
-    const location = { search };
-    const match = { url };
+    const location = { pathname: url, search };
     const setStatusFilter = getStatusFilterHandler({
       history,
-      location,
-      match
+      location
     });
     setStatusFilter('');
     expect(history.push).toHaveBeenCalledWith(
@@ -465,12 +456,13 @@ describe('getStatusFilterHandler', () => {
   it('should set a valid status filter in the URL', () => {
     const url = 'someURL';
     const history = { push: jest.fn() };
-    const location = { search: '?nonFilterQueryParam=someValue' };
-    const match = { url };
+    const location = {
+      pathname: url,
+      search: '?nonFilterQueryParam=someValue'
+    };
     const setStatusFilter = getStatusFilterHandler({
       history,
-      location,
-      match
+      location
     });
     const statusFilter = 'cancelled';
     setStatusFilter(statusFilter);
@@ -482,12 +474,10 @@ describe('getStatusFilterHandler', () => {
   it('should update the status filter in the URL', () => {
     const url = 'someURL';
     const history = { push: jest.fn() };
-    const location = { search: '?status=cancelled' };
-    const match = { url };
+    const location = { pathname: url, search: '?status=cancelled' };
     const setStatusFilter = getStatusFilterHandler({
       history,
-      location,
-      match
+      location
     });
     const statusFilter = 'completed';
     setStatusFilter(statusFilter);

@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React, { useRef, useState } from 'react';
-import PropTypes from 'prop-types';
 import { PipelineRun, RunAction } from '@tektoncd/dashboard-components';
 import {
   getTaskRunsWithPlaceholders,
@@ -23,7 +22,7 @@ import {
   useTitleSync
 } from '@tektoncd/dashboard-utils';
 import { InlineNotification } from 'carbon-components-react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory, useLocation, useParams } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 
 import {
@@ -49,10 +48,12 @@ import {
 
 const { PIPELINE_TASK, RETRY, STEP, VIEW } = queryParamConstants;
 
-export /* istanbul ignore next */ function PipelineRunContainer(props) {
-  const { history, intl, location, match } = props;
+export /* istanbul ignore next */ function PipelineRunContainer({ intl }) {
+  const history = useHistory();
+  const location = useLocation();
+  const params = useParams();
 
-  const { namespace, pipelineRunName } = match.params;
+  const { namespace, pipelineRunName } = params;
 
   const queryParams = new URLSearchParams(location.search);
   const currentPipelineTaskName = queryParams.get(PIPELINE_TASK);
@@ -99,7 +100,7 @@ export /* istanbul ignore next */ function PipelineRunContainer(props) {
   const {
     data: clusterTasks = [],
     isLoading: isLoadingClusterTasks
-  } = useClusterTasks();
+  } = useClusterTasks({});
 
   const pipelineName = pipelineRun?.spec.pipelineRef?.name;
   const { data: pipeline, isLoading: isLoadingPipeline } = usePipeline(
@@ -199,7 +200,7 @@ export /* istanbul ignore next */ function PipelineRunContainer(props) {
       queryParams.delete(VIEW);
     }
 
-    const browserURL = match.url.concat(`?${queryParams.toString()}`);
+    const browserURL = location.pathname.concat(`?${queryParams.toString()}`);
     history.push(browserURL);
   }
 
@@ -318,11 +319,15 @@ export /* istanbul ignore next */ function PipelineRunContainer(props) {
           isLoadingClusterTasks ||
           isLoadingPipeline
         }
-        getLogsToolbar={params =>
-          getLogsToolbar({ ...params, externalLogsURL, isUsingExternalLogs })
+        getLogsToolbar={toolbarParams =>
+          getLogsToolbar({
+            ...toolbarParams,
+            externalLogsURL,
+            isUsingExternalLogs
+          })
         }
         maximizedLogsContainer={maximizedLogsContainer.current}
-        onViewChange={getViewChangeHandler(props)}
+        onViewChange={getViewChangeHandler({ history, location })}
         pipelineRun={pipelineRun}
         pod={podDetails}
         runaction={runAction}
@@ -336,13 +341,5 @@ export /* istanbul ignore next */ function PipelineRunContainer(props) {
     </>
   );
 }
-
-PipelineRunContainer.propTypes = {
-  match: PropTypes.shape({
-    params: PropTypes.shape({
-      pipelineRunName: PropTypes.string.isRequired
-    }).isRequired
-  }).isRequired
-};
 
 export default injectIntl(PipelineRunContainer);
