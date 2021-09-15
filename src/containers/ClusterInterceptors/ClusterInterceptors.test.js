@@ -12,8 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { Route } from 'react-router-dom';
-import { paths, urls } from '@tektoncd/dashboard-utils';
+import { urls } from '@tektoncd/dashboard-utils';
 
 import { renderWithRouter } from '../../utils/test';
 import * as API from '../../api/clusterInterceptors';
@@ -34,13 +33,9 @@ describe('ClusterInterceptors', () => {
     jest
       .spyOn(API, 'useClusterInterceptors')
       .mockImplementation(() => ({ isLoading: true }));
-    const { queryByText } = renderWithRouter(
-      <Route
-        path={paths.clusterInterceptors.all()}
-        render={props => <ClusterInterceptorsContainer {...props} />}
-      />,
-      { route: urls.clusterInterceptors.all() }
-    );
+    const { queryByText } = renderWithRouter(<ClusterInterceptorsContainer />, {
+      route: urls.clusterInterceptors.all()
+    });
     expect(queryByText('ClusterInterceptors')).toBeTruthy();
   });
 
@@ -48,13 +43,9 @@ describe('ClusterInterceptors', () => {
     jest
       .spyOn(API, 'useClusterInterceptors')
       .mockImplementation(() => ({ data: [clusterInterceptor] }));
-    const { queryByText } = renderWithRouter(
-      <Route
-        path={paths.clusterInterceptors.all()}
-        render={props => <ClusterInterceptorsContainer {...props} />}
-      />,
-      { route: urls.clusterInterceptors.all() }
-    );
+    const { queryByText } = renderWithRouter(<ClusterInterceptorsContainer />, {
+      route: urls.clusterInterceptors.all()
+    });
 
     expect(queryByText('clusterInterceptorWithSingleLabel')).toBeTruthy();
   });
@@ -64,13 +55,9 @@ describe('ClusterInterceptors', () => {
     jest
       .spyOn(API, 'useClusterInterceptors')
       .mockImplementation(() => ({ error }));
-    const { queryByText } = renderWithRouter(
-      <Route
-        path={paths.clusterInterceptors.all()}
-        render={props => <ClusterInterceptorsContainer {...props} />}
-      />,
-      { route: urls.clusterInterceptors.all() }
-    );
+    const { queryByText } = renderWithRouter(<ClusterInterceptorsContainer />, {
+      route: urls.clusterInterceptors.all()
+    });
 
     expect(queryByText(error)).toBeTruthy();
   });

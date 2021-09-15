@@ -29,25 +29,22 @@ describe('ListPageLayout', () => {
     jest
       .spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: ALL_NAMESPACES }));
-    const history = {
-      push: jest.fn()
-    };
+    jest.spyOn(window.history, 'pushState');
     const path = '/fake/path';
-    const match = { path };
     const selectNamespace = jest.fn();
     const { getByText, getByDisplayValue } = renderWithRouter(
       <ListPageLayout
-        history={history}
-        location={{ search: '' }}
-        match={match}
         namespace={ALL_NAMESPACES}
         selectNamespace={selectNamespace}
-      />
+      />,
+      { path, route: path }
     );
     fireEvent.click(getByDisplayValue(/All Namespaces/i));
     fireEvent.click(getByText(otherNamespace));
     expect(selectNamespace).not.toHaveBeenCalled();
-    expect(history.push).toHaveBeenCalledWith(
+    expect(window.history.pushState).toHaveBeenCalledWith(
+      expect.anything(),
+      null,
       `/namespaces/${otherNamespace}${path}`
     );
   });
@@ -64,25 +61,22 @@ describe('ListPageLayout', () => {
     jest
       .spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: namespace }));
-    const history = {
-      push: jest.fn()
-    };
     const path = '/namespaces/:namespace/fake/path';
-    const match = { path, params: { namespace } };
     const selectNamespace = jest.fn();
+    jest.spyOn(window.history, 'pushState');
     const { getByText, getByDisplayValue } = renderWithRouter(
       <ListPageLayout
-        history={history}
-        location={{ search: '' }}
-        match={match}
         namespace={namespace}
         selectNamespace={selectNamespace}
-      />
+      />,
+      { path, route: `/namespaces/${namespace}/fake/path` }
     );
     fireEvent.click(getByDisplayValue(namespace));
     fireEvent.click(getByText(otherNamespace));
     expect(selectNamespace).not.toHaveBeenCalled();
-    expect(history.push).toHaveBeenCalledWith(
+    expect(window.history.pushState).toHaveBeenCalledWith(
+      expect.anything(),
+      null,
       `/namespaces/${otherNamespace}/fake/path`
     );
   });
@@ -97,24 +91,26 @@ describe('ListPageLayout', () => {
       selectedNamespace: namespace,
       selectNamespace
     }));
-    const history = {
-      push: jest.fn()
-    };
+    jest.spyOn(window.history, 'pushState');
     const path = '/namespaces/:namespace/fake/path';
-    const match = { path, params: { namespace } };
     const { getByText, getByDisplayValue } = renderWithRouter(
       <ListPageLayout
-        history={history}
-        location={{ search: '' }}
-        match={match}
         namespace={namespace}
         selectNamespace={selectNamespace}
-      />
+      />,
+      {
+        path,
+        route: `/namespaces/${namespace}/fake/path`
+      }
     );
     fireEvent.click(getByDisplayValue(namespace));
     fireEvent.click(getByText(/All Namespaces/i));
     expect(selectNamespace).toHaveBeenCalledWith(ALL_NAMESPACES);
-    expect(history.push).toHaveBeenCalledWith(`/fake/path`);
+    expect(window.history.pushState).toHaveBeenCalledWith(
+      expect.anything(),
+      null,
+      '/fake/path'
+    );
   });
 
   it('removes namespace from URL when clearing selection', async () => {
@@ -127,23 +123,22 @@ describe('ListPageLayout', () => {
       selectedNamespace: namespace,
       selectNamespace
     }));
-    const history = {
-      push: jest.fn()
-    };
+    jest.spyOn(window.history, 'pushState');
     const path = '/namespaces/:namespace/fake/path';
-    const match = { path, params: { namespace } };
     const { getByTitle } = renderWithRouter(
       <ListPageLayout
-        history={history}
-        location={{ search: '' }}
-        match={match}
         namespace={namespace}
         selectNamespace={selectNamespace}
-      />
+      />,
+      { path, route: `/namespaces/${namespace}/fake/path` }
     );
     fireEvent.click(getByTitle(/clear selected item/i));
     expect(selectNamespace).toHaveBeenCalledWith(ALL_NAMESPACES);
-    expect(history.push).toHaveBeenCalledWith(`/fake/path`);
+    expect(window.history.pushState).toHaveBeenCalledWith(
+      expect.anything(),
+      null,
+      '/fake/path'
+    );
   });
 
   it('does not render namespaces dropdown in single namespace visibility mode', () => {

@@ -13,6 +13,7 @@ limitations under the License.
 /* istanbul ignore file */
 
 import React from 'react';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import { useTitleSync } from '@tektoncd/dashboard-utils';
 import { ResourceDetails } from '@tektoncd/dashboard-components';
@@ -41,9 +42,11 @@ function useResource({ group, name, namespace, type, version }) {
   }
 }
 
-function CustomResourceDefinition(props) {
-  const { location, match } = props;
-  const { group, name, namespace, type, version } = match.params;
+function CustomResourceDefinition() {
+  const history = useHistory();
+  const location = useLocation();
+  const params = useParams();
+  const { group, name, namespace, type, version } = params;
 
   const queryParams = new URLSearchParams(location.search);
   const view = queryParams.get('view');
@@ -65,7 +68,7 @@ function CustomResourceDefinition(props) {
     <ResourceDetails
       error={error}
       loading={isFetching}
-      onViewChange={getViewChangeHandler(props)}
+      onViewChange={getViewChangeHandler({ history, location })}
       resource={data}
       view={view}
     />

@@ -12,8 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { Route } from 'react-router-dom';
-import { paths, urls } from '@tektoncd/dashboard-utils';
+import { urls } from '@tektoncd/dashboard-utils';
 
 import { renderWithRouter } from '../../utils/test';
 import * as API from '../../api/triggers';
@@ -28,13 +27,9 @@ describe('Triggers', () => {
     jest
       .spyOn(API, 'useTriggers')
       .mockImplementation(() => ({ isLoading: true }));
-    const { queryByText } = renderWithRouter(
-      <Route
-        path={paths.triggers.all()}
-        render={props => <TriggersContainer {...props} />}
-      />,
-      { route: urls.triggers.all() }
-    );
+    const { queryByText } = renderWithRouter(<TriggersContainer />, {
+      route: urls.triggers.all()
+    });
     expect(queryByText('Triggers')).toBeTruthy();
   });
 
@@ -53,13 +48,9 @@ describe('Triggers', () => {
         }
       ]
     }));
-    const { queryByText } = renderWithRouter(
-      <Route
-        path={paths.triggers.all()}
-        render={props => <TriggersContainer {...props} />}
-      />,
-      { route: urls.triggers.all() }
-    );
+    const { queryByText } = renderWithRouter(<TriggersContainer />, {
+      route: urls.triggers.all()
+    });
 
     expect(queryByText('triggerWithSingleLabel')).toBeTruthy();
   });
@@ -69,13 +60,9 @@ describe('Triggers', () => {
     jest
       .spyOn(API, 'useTriggers')
       .mockImplementation(() => ({ error: errorMessage }));
-    const { queryByText } = renderWithRouter(
-      <Route
-        path={paths.triggers.all()}
-        render={props => <TriggersContainer {...props} />}
-      />,
-      { route: urls.triggers.all() }
-    );
+    const { queryByText } = renderWithRouter(<TriggersContainer />, {
+      route: urls.triggers.all()
+    });
 
     expect(queryByText(errorMessage)).toBeTruthy();
   });

@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React, { useEffect } from 'react';
-import { matchPath, NavLink } from 'react-router-dom';
+import { matchPath, NavLink, useLocation, useParams } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import {
   SideNav as CarbonSideNav,
@@ -40,14 +40,13 @@ import {
 import { ReactComponent as KubernetesIcon } from '../../images/kubernetes.svg';
 import { ReactComponent as TektonIcon } from '../../images/tekton-logo-20x20.svg';
 
-function SideNav(props) {
-  const { expanded, intl, match, showKubernetesResources } = props;
-
+function SideNav({ expanded, intl, showKubernetesResources }) {
   if (!expanded) {
     return null;
   }
 
-  const { namespace } = match?.params || {};
+  const location = useLocation();
+  const { namespace } = useParams();
 
   const { selectNamespace } = useSelectedNamespace();
   const tenantNamespace = useTenantNamespace();
@@ -65,8 +64,6 @@ function SideNav(props) {
   }, [namespace]);
 
   function getMenuItemProps(to) {
-    const { location } = props;
-
     return {
       element: NavLink,
       isActive: !!matchPath(location.pathname, {

@@ -13,7 +13,6 @@ limitations under the License.
 
 import React from 'react';
 import { fireEvent } from '@testing-library/react';
-import { Route } from 'react-router-dom';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
 import { renderWithRouter } from '../../utils/test';
@@ -48,13 +47,9 @@ describe('TriggerBindings', () => {
       .spyOn(TriggerBindingsAPI, 'useTriggerBindings')
       .mockImplementation(() => ({ data: [] }));
 
-    const { getByText } = renderWithRouter(
-      <Route
-        path="/triggerbindings"
-        render={props => <TriggerBindings {...props} />}
-      />,
-      { route: '/triggerbindings' }
-    );
+    const { getByText } = renderWithRouter(<TriggerBindings />, {
+      route: '/triggerbindings'
+    });
 
     expect(getByText('TriggerBindings')).toBeTruthy();
     expect(getByText('No matching TriggerBindings found')).toBeTruthy();
@@ -65,13 +60,9 @@ describe('TriggerBindings', () => {
       .spyOn(TriggerBindingsAPI, 'useTriggerBindings')
       .mockImplementation(() => ({ data: [triggerBinding] }));
 
-    const { queryByText } = renderWithRouter(
-      <Route
-        path="/triggerbindings"
-        render={props => <TriggerBindings {...props} />}
-      />,
-      { route: '/triggerbindings' }
-    );
+    const { queryByText } = renderWithRouter(<TriggerBindings />, {
+      route: '/triggerbindings'
+    });
 
     expect(queryByText('TriggerBindings')).toBeTruthy();
     expect(queryByText('No matching TriggerBindings found')).toBeFalsy();
@@ -89,13 +80,7 @@ describe('TriggerBindings', () => {
       queryByText,
       getByPlaceholderText,
       getByText
-    } = renderWithRouter(
-      <Route
-        path="/triggerbindings"
-        render={props => <TriggerBindings {...props} />}
-      />,
-      { route: '/triggerbindings' }
-    );
+    } = renderWithRouter(<TriggerBindings />, { route: '/triggerbindings' });
 
     const filterValue = 'baz:bam';
     const filterInputField = getByPlaceholderText(/Input a label filter/);
@@ -111,13 +96,9 @@ describe('TriggerBindings', () => {
       .spyOn(TriggerBindingsAPI, 'useTriggerBindings')
       .mockImplementation(() => ({ isLoading: true }));
 
-    const { queryByText } = renderWithRouter(
-      <Route
-        path="/triggerbindings"
-        render={props => <TriggerBindings {...props} />}
-      />,
-      { route: '/triggerbindings' }
-    );
+    const { queryByText } = renderWithRouter(<TriggerBindings />, {
+      route: '/triggerbindings'
+    });
 
     expect(queryByText(/TriggerBindings/i)).toBeTruthy();
     expect(queryByText('No matching TriggerBindings found')).toBeFalsy();
@@ -130,13 +111,9 @@ describe('TriggerBindings', () => {
       .spyOn(TriggerBindingsAPI, 'useTriggerBindings')
       .mockImplementation(() => ({ error }));
 
-    const { queryByText } = renderWithRouter(
-      <Route
-        path="/triggerbindings"
-        render={props => <TriggerBindings {...props} />}
-      />,
-      { route: '/triggerbindings' }
-    );
+    const { queryByText } = renderWithRouter(<TriggerBindings />, {
+      route: '/triggerbindings'
+    });
 
     expect(queryByText(error)).toBeTruthy();
   });

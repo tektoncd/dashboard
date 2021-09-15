@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import PropTypes from 'prop-types';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import { ResourceDetails, Table } from '@tektoncd/dashboard-components';
 import { useTitleSync } from '@tektoncd/dashboard-utils';
@@ -20,9 +20,11 @@ import { useTitleSync } from '@tektoncd/dashboard-utils';
 import { useSelectedNamespace, useTriggerBinding } from '../../api';
 import { getViewChangeHandler } from '../../utils';
 
-export function TriggerBindingContainer(props) {
-  const { intl, location, match } = props;
-  const { namespace, triggerBindingName: resourceName } = match.params;
+export function TriggerBindingContainer({ intl }) {
+  const history = useHistory();
+  const location = useLocation();
+  const params = useParams();
+  const { namespace, triggerBindingName: resourceName } = params;
 
   const queryParams = new URLSearchParams(location.search);
   const view = queryParams.get('view');
@@ -73,7 +75,7 @@ export function TriggerBindingContainer(props) {
     <ResourceDetails
       error={error}
       loading={isFetching}
-      onViewChange={getViewChangeHandler(props)}
+      onViewChange={getViewChangeHandler({ history, location })}
       resource={triggerBinding}
       view={view}
     >
@@ -92,13 +94,5 @@ export function TriggerBindingContainer(props) {
     </ResourceDetails>
   );
 }
-
-TriggerBindingContainer.propTypes = {
-  match: PropTypes.shape({
-    params: PropTypes.shape({
-      triggerBindingName: PropTypes.string.isRequired
-    }).isRequired
-  }).isRequired
-};
 
 export default injectIntl(TriggerBindingContainer);

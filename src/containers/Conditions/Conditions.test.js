@@ -13,8 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import { fireEvent } from '@testing-library/react';
-import { Route } from 'react-router-dom';
-import { paths, urls } from '@tektoncd/dashboard-utils';
+import { urls } from '@tektoncd/dashboard-utils';
 
 import { renderWithRouter } from '../../utils/test';
 import * as API from '../../api/conditions';
@@ -48,13 +47,9 @@ describe('Conditions', () => {
     jest
       .spyOn(API, 'useConditions')
       .mockImplementation(() => ({ isLoading: true }));
-    const { queryByText } = renderWithRouter(
-      <Route
-        path={paths.conditions.all()}
-        render={props => <ConditionsContainer {...props} />}
-      />,
-      { route: urls.conditions.all() }
-    );
+    const { queryByText } = renderWithRouter(<ConditionsContainer />, {
+      route: urls.conditions.all()
+    });
     expect(queryByText('Conditions')).toBeTruthy();
   });
 
@@ -64,16 +59,11 @@ describe('Conditions', () => {
         ? [conditionWithTwoLabels]
         : [conditionWithSingleLabel, conditionWithTwoLabels]
     }));
-    const {
-      getByPlaceholderText,
-      getByText,
-      queryByText
-    } = renderWithRouter(
-      <Route
-        path={paths.conditions.all()}
-        render={props => <ConditionsContainer {...props} />}
-      />,
-      { route: urls.conditions.all() }
+    const { getByPlaceholderText, getByText, queryByText } = renderWithRouter(
+      <ConditionsContainer />,
+      {
+        route: urls.conditions.all()
+      }
     );
 
     expect(queryByText('conditionWithSingleLabel')).toBeTruthy();
@@ -91,13 +81,9 @@ describe('Conditions', () => {
   it('handles error', async () => {
     const error = 'fake_errorMessage';
     jest.spyOn(API, 'useConditions').mockImplementation(() => ({ error }));
-    const { queryByText } = renderWithRouter(
-      <Route
-        path={paths.conditions.all()}
-        render={props => <ConditionsContainer {...props} />}
-      />,
-      { route: urls.conditions.all() }
-    );
+    const { queryByText } = renderWithRouter(<ConditionsContainer />, {
+      route: urls.conditions.all()
+    });
 
     expect(queryByText(error)).toBeTruthy();
   });

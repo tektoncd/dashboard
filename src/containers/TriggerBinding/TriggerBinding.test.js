@@ -12,10 +12,9 @@ limitations under the License.
 */
 
 import React from 'react';
-import { Route } from 'react-router-dom';
 import { fireEvent, waitFor } from '@testing-library/react';
 import { createIntl } from 'react-intl';
-import { paths, urls } from '@tektoncd/dashboard-utils';
+import { urls } from '@tektoncd/dashboard-utils';
 
 import * as API from '../../api/triggerBindings';
 import { renderWithRouter } from '../../utils/test';
@@ -70,14 +69,9 @@ const triggerBindingWithLabels = {
 it('TriggerBindingContainer handles error state', async () => {
   const error = 'fake_error_message';
   jest.spyOn(API, 'useTriggerBinding').mockImplementation(() => ({ error }));
-  const match = {
-    params: {
-      triggerBindingName: 'foo'
-    }
-  };
 
   const { getByText } = renderWithRouter(
-    <TriggerBindingContainer intl={intl} location={{}} match={match} />
+    <TriggerBindingContainer intl={intl} />
   );
   await waitFor(() => getByText('Error loading resource'));
 });
@@ -86,14 +80,9 @@ it('TriggerBindingContainer renders details', async () => {
   jest
     .spyOn(API, 'useTriggerBinding')
     .mockImplementation(() => ({ data: triggerBindingSimple }));
-  const match = {
-    params: {
-      triggerBindingName: 'trigger-binding-simple'
-    }
-  };
 
   const { getByText } = renderWithRouter(
-    <TriggerBindingContainer intl={intl} location={{}} match={match} />
+    <TriggerBindingContainer intl={intl} />
   );
 
   await waitFor(() => getByText('trigger-binding-simple'));
@@ -112,10 +101,7 @@ it('TriggerBindingContainer renders YAML', async () => {
   const triggerBindingName = 'trigger-binding-simple';
 
   const { getByText } = renderWithRouter(
-    <Route
-      path={paths.triggerBindings.byName()}
-      render={props => <TriggerBindingContainer {...props} intl={intl} />}
-    />,
+    <TriggerBindingContainer intl={intl} />,
     {
       route: urls.triggerBindings.byName({
         namespace,
@@ -139,14 +125,9 @@ it('TriggerBindingContainer does not render label section if they are not presen
   jest
     .spyOn(API, 'useTriggerBinding')
     .mockImplementation(() => ({ data: triggerBindingSimple }));
-  const match = {
-    params: {
-      triggerBindingName: 'trigger-binding-simple'
-    }
-  };
 
   const { getByText } = renderWithRouter(
-    <TriggerBindingContainer intl={intl} location={{}} match={match} />
+    <TriggerBindingContainer intl={intl} />
   );
 
   await waitFor(() => getByText('trigger-binding-simple'));
@@ -157,14 +138,9 @@ it('TriggerBindingContainer renders labels section if they are present', async (
   jest
     .spyOn(API, 'useTriggerBinding')
     .mockImplementation(() => ({ data: triggerBindingWithLabels }));
-  const match = {
-    params: {
-      triggerBindingName: 'trigger-binding-labels'
-    }
-  };
 
   const { getByText } = renderWithRouter(
-    <TriggerBindingContainer intl={intl} location={{}} match={match} />
+    <TriggerBindingContainer intl={intl} />
   );
 
   await waitFor(() => getByText('trigger-binding-labels'));

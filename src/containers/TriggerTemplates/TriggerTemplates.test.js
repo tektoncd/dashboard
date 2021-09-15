@@ -13,7 +13,6 @@ limitations under the License.
 
 import React from 'react';
 import { fireEvent } from '@testing-library/react';
-import { Route } from 'react-router-dom';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
 import { renderWithRouter } from '../../utils/test';
@@ -45,13 +44,9 @@ it('TriggerTemplates renders with no templates', () => {
     .spyOn(APIUtils, 'useSelectedNamespace')
     .mockImplementation(() => ({ selectedNamespace: ALL_NAMESPACES }));
 
-  const { queryByText } = renderWithRouter(
-    <Route
-      path="/triggerTemplates"
-      render={props => <TriggerTemplates {...props} />}
-    />,
-    { route: '/triggerTemplates' }
-  );
+  const { queryByText } = renderWithRouter(<TriggerTemplates />, {
+    route: '/triggerTemplates'
+  });
 
   expect(queryByText('TriggerTemplates')).toBeTruthy();
   expect(queryByText('No matching TriggerTemplates found')).toBeTruthy();
@@ -62,13 +57,9 @@ it('TriggerTemplates renders with one template', () => {
     .spyOn(TriggerTemplatesAPI, 'useTriggerTemplates')
     .mockImplementation(() => ({ data: [triggerTemplate] }));
 
-  const { queryByText } = renderWithRouter(
-    <Route
-      path="/triggerTemplates"
-      render={props => <TriggerTemplates {...props} />}
-    />,
-    { route: '/triggerTemplates' }
-  );
+  const { queryByText } = renderWithRouter(<TriggerTemplates />, {
+    route: '/triggerTemplates'
+  });
 
   expect(queryByText(/TriggerTemplates/i)).toBeTruthy();
   expect(queryByText('No matching TriggerTemplates found')).toBeFalsy();
@@ -86,13 +77,7 @@ it('TriggerTemplates can be filtered on a single label filter', async () => {
     queryByText,
     getByPlaceholderText,
     getByText
-  } = renderWithRouter(
-    <Route
-      path="/triggerTemplates"
-      render={props => <TriggerTemplates {...props} />}
-    />,
-    { route: '/triggerTemplates' }
-  );
+  } = renderWithRouter(<TriggerTemplates />, { route: '/triggerTemplates' });
 
   const filterValue = 'baz:bam';
   const filterInputField = getByPlaceholderText(/Input a label filter/);
@@ -108,13 +93,9 @@ it('TriggerTemplates renders in loading state', () => {
     .spyOn(TriggerTemplatesAPI, 'useTriggerTemplates')
     .mockImplementation(() => ({ isLoading: true }));
 
-  const { queryByText } = renderWithRouter(
-    <Route
-      path="/triggerTemplates"
-      render={props => <TriggerTemplates {...props} />}
-    />,
-    { route: '/triggerTemplates' }
-  );
+  const { queryByText } = renderWithRouter(<TriggerTemplates />, {
+    route: '/triggerTemplates'
+  });
 
   expect(queryByText(/TriggerTemplates/i)).toBeTruthy();
   expect(queryByText('No matching TriggerTemplates found')).toBeFalsy();
@@ -126,13 +107,9 @@ it('TriggerTemplates renders in error state', () => {
     .spyOn(TriggerTemplatesAPI, 'useTriggerTemplates')
     .mockImplementation(() => ({ error }));
 
-  const { queryByText } = renderWithRouter(
-    <Route
-      path="/triggerTemplates"
-      render={props => <TriggerTemplates {...props} />}
-    />,
-    { route: '/triggerTemplates' }
-  );
+  const { queryByText } = renderWithRouter(<TriggerTemplates />, {
+    route: '/triggerTemplates'
+  });
 
   expect(queryByText(error)).toBeTruthy();
 });

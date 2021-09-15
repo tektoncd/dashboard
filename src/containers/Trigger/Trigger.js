@@ -12,17 +12,19 @@ limitations under the License.
 */
 
 import React from 'react';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
-import PropTypes from 'prop-types';
 import { useTitleSync } from '@tektoncd/dashboard-utils';
 import { ResourceDetails, Trigger } from '@tektoncd/dashboard-components';
 
 import { useTrigger } from '../../api';
 import { getViewChangeHandler } from '../../utils';
 
-export function TriggerContainer(props) {
-  const { location, match } = props;
-  const { triggerName, namespace } = match.params;
+export function TriggerContainer() {
+  const history = useHistory();
+  const location = useLocation();
+  const params = useParams();
+  const { triggerName, namespace } = params;
 
   const queryParams = new URLSearchParams(location.search);
   const view = queryParams.get('view');
@@ -41,7 +43,7 @@ export function TriggerContainer(props) {
     <ResourceDetails
       error={error}
       loading={isFetching}
-      onViewChange={getViewChangeHandler(props)}
+      onViewChange={getViewChangeHandler({ history, location })}
       resource={trigger}
       view={view}
     >
@@ -53,13 +55,5 @@ export function TriggerContainer(props) {
     </ResourceDetails>
   );
 }
-
-TriggerContainer.propTypes = {
-  match: PropTypes.shape({
-    params: PropTypes.shape({
-      triggerName: PropTypes.string.isRequired
-    }).isRequired
-  }).isRequired
-};
 
 export default injectIntl(TriggerContainer);

@@ -12,16 +12,18 @@ limitations under the License.
 */
 /* istanbul ignore file */
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Route } from 'react-router-dom';
 import { render as baseRender } from '@testing-library/react';
 import { IntlProvider } from 'react-intl';
 
-function RouterWrapper({ children }) {
+function RouterWrapper({ children, path }) {
   return (
     <BrowserRouter>
-      <IntlProvider locale="en" defaultLocale="en" messages={{}}>
-        {children}
-      </IntlProvider>
+      <Route path={path}>
+        <IntlProvider locale="en" defaultLocale="en" messages={{}}>
+          {children}
+        </IntlProvider>
+      </Route>
     </BrowserRouter>
   );
 }
@@ -29,6 +31,7 @@ function RouterWrapper({ children }) {
 export function renderWithRouter(
   ui,
   {
+    path = '/',
     rerender,
     route = '/',
     wrapper: Wrapper = React.Fragment,
@@ -41,7 +44,7 @@ export function renderWithRouter(
     route,
     wrapper: ({ children }) => (
       <Wrapper>
-        <RouterWrapper>{children}</RouterWrapper>
+        <RouterWrapper path={path}>{children}</RouterWrapper>
       </Wrapper>
     ),
     ...otherOptions

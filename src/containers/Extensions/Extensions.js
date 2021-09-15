@@ -29,9 +29,7 @@ import { Table } from '@tektoncd/dashboard-components';
 
 import { useExtensions, useTenantNamespace } from '../../api';
 
-function Extensions(props) {
-  const { intl } = props;
-
+function Extensions({ intl }) {
   useTitleSync({
     page: intl.formatMessage({
       id: 'dashboard.extensions.title',
@@ -106,9 +104,5 @@ function Extensions(props) {
     </>
   );
 }
-
-Extensions.defaultProps = {
-  extensions: []
-};
 
 export default injectIntl(Extensions);

@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import { getFilters, urls, useTitleSync } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
@@ -21,12 +21,13 @@ import { Link as CarbonLink } from 'carbon-components-react';
 import { useConditions, useSelectedNamespace } from '../../api';
 import { ListPageLayout } from '..';
 
-function Conditions(props) {
-  const { intl, location, match } = props;
+function Conditions({ intl }) {
+  const location = useLocation();
+  const params = useParams();
   useTitleSync({ page: 'Conditions' });
 
   const { selectedNamespace } = useSelectedNamespace();
-  const { namespace = selectedNamespace } = match.params;
+  const { namespace = selectedNamespace } = params;
   const filters = getFilters(location);
 
   const { data: conditions = [], error, isLoading } = useConditions({
@@ -90,12 +91,7 @@ function Conditions(props) {
   }));
 
   return (
-    <ListPageLayout
-      {...props}
-      error={getError()}
-      filters={filters}
-      title="Conditions"
-    >
+    <ListPageLayout error={getError()} filters={filters} title="Conditions">
       <Table
         headers={headers}
         rows={conditionsFormatted}

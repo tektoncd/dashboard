@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import PropTypes from 'prop-types';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import { DataTable } from 'carbon-components-react';
 import {
@@ -38,9 +38,10 @@ const {
   TableRow
 } = DataTable;
 
-export /* istanbul ignore next */ function TriggerTemplateContainer(props) {
-  const { intl, location, match } = props;
-  const { namespace, triggerTemplateName: resourceName } = match.params;
+export /* istanbul ignore next */ function TriggerTemplateContainer({ intl }) {
+  const history = useHistory();
+  const location = useLocation();
+  const { namespace, triggerTemplateName: resourceName } = useParams();
 
   const queryParams = new URLSearchParams(location.search);
   const view = queryParams.get('view');
@@ -206,7 +207,7 @@ export /* istanbul ignore next */ function TriggerTemplateContainer(props) {
     <ResourceDetails
       error={error}
       loading={isFetching}
-      onViewChange={getViewChangeHandler(props)}
+      onViewChange={getViewChangeHandler({ history, location })}
       resource={triggerTemplate}
       view={view}
     >
@@ -214,13 +215,5 @@ export /* istanbul ignore next */ function TriggerTemplateContainer(props) {
     </ResourceDetails>
   );
 }
-
-TriggerTemplateContainer.propTypes = {
-  match: PropTypes.shape({
-    params: PropTypes.shape({
-      triggerTemplateName: PropTypes.string.isRequired
-    }).isRequired
-  }).isRequired
-};
 
 export default injectIntl(TriggerTemplateContainer);

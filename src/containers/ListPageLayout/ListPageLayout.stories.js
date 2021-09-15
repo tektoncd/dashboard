@@ -36,12 +36,6 @@ const namespaces = [
   'tekton-pipelines'
 ].map(namespace => ({ metadata: { name: namespace } }));
 
-const props = {
-  history: { push: () => {} },
-  location: {},
-  match: { path: '/' }
-};
-
 export default {
   component: ListPageLayoutContainer,
   decorators: [
@@ -69,7 +63,7 @@ export default {
 };
 
 export const Base = args => (
-  <ListPageLayoutContainer {...props} {...args}>
+  <ListPageLayoutContainer {...args}>
     page content goes here
   </ListPageLayoutContainer>
 );
@@ -79,7 +73,7 @@ Base.args = {
 };
 
 export const WithFilters = args => (
-  <ListPageLayoutContainer {...props} filters={[]} {...args}>
+  <ListPageLayoutContainer filters={[]} {...args}>
     page content goes here
   </ListPageLayoutContainer>
 );

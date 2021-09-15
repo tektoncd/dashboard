@@ -13,6 +13,7 @@ limitations under the License.
 /* istanbul ignore file */
 
 import React, { useEffect, useState } from 'react';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import keyBy from 'lodash.keyby';
 import {
@@ -48,15 +49,17 @@ import {
   useSelectedNamespace
 } from '../../api';
 
-export function PipelineRuns(props) {
-  const { history, intl, location, match } = props;
+export function PipelineRuns({ intl }) {
+  const history = useHistory();
+  const location = useLocation();
+  const params = useParams();
 
   const { selectedNamespace } = useSelectedNamespace();
-  const { namespace = selectedNamespace } = match.params;
+  const { namespace = selectedNamespace } = params;
 
   const filters = getFilters(location);
   const statusFilter = getStatusFilter(location);
-  const setStatusFilter = getStatusFilterHandler(props);
+  const setStatusFilter = getStatusFilterHandler({ history, location });
 
   const pipelineFilter =
     filters.find(filter => filter.indexOf(`${labels.PIPELINE}=`) !== -1) || '';
@@ -301,12 +304,7 @@ export function PipelineRuns(props) {
   );
 
   return (
-    <ListPageLayout
-      {...props}
-      error={getError()}
-      filters={filters}
-      title="PipelineRuns"
-    >
+    <ListPageLayout error={getError()} filters={filters} title="PipelineRuns">
       <PipelineRunsList
         batchActionButtons={batchActionButtons}
         filters={filtersUI}

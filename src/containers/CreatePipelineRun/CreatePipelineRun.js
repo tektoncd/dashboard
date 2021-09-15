@@ -13,6 +13,7 @@ limitations under the License.
 /* istanbul ignore file */
 
 import React, { useState } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 import keyBy from 'lodash.keyby';
 import {
   Button,
@@ -86,8 +87,9 @@ const initialResourcesState = resourceSpecs => {
   return resourceSpecs.reduce(resourcesReducer, {});
 };
 
-function CreatePipelineRun(props) {
-  const { history, intl, location } = props;
+function CreatePipelineRun({ intl }) {
+  const history = useHistory();
+  const location = useLocation();
 
   function getPipelineName() {
     const urlSearchParams = new URLSearchParams(location.search);

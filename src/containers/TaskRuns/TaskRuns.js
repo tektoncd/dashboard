@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 import React, { useEffect, useState } from 'react';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import keyBy from 'lodash.keyby';
 import {
@@ -48,10 +49,12 @@ import {
 const { CLUSTER_TASK, TASK } = labels;
 
 /* istanbul ignore next */
-function TaskRuns(props) {
-  const { history, intl, location, match } = props;
+function TaskRuns({ intl }) {
+  const history = useHistory();
+  const location = useLocation();
+  const params = useParams();
 
-  const { namespace: namespaceParam } = match.params;
+  const { namespace: namespaceParam } = params;
   const { selectedNamespace } = useSelectedNamespace();
   const namespace = namespaceParam || selectedNamespace;
 
@@ -75,7 +78,7 @@ function TaskRuns(props) {
       ? clusterTaskFilter.replace(`${CLUSTER_TASK}=`, '')
       : taskFilter.replace(`${TASK}=`, '');
 
-  const setStatusFilter = getStatusFilterHandler(props);
+  const setStatusFilter = getStatusFilterHandler({ history, location });
 
   useTitleSync({ page: 'TaskRuns' });
 
@@ -290,12 +293,7 @@ function TaskRuns(props) {
   );
 
   return (
-    <ListPageLayout
-      {...props}
-      error={getError()}
-      filters={filters}
-      title="TaskRuns"
-    >
+    <ListPageLayout error={getError()} filters={filters} title="TaskRuns">
       <TaskRunsList
         batchActionButtons={batchActionButtons}
         filters={statusFilters}

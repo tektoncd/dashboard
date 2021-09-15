@@ -124,13 +124,13 @@ export function isValidLabel(type, value) {
   return regex.test(value);
 }
 
-export function getViewChangeHandler({ history, location, match }) {
+export function getViewChangeHandler({ history, location }) {
   return function handleViewChange(view) {
     const queryParams = new URLSearchParams(location.search);
 
     queryParams.set('view', view);
 
-    const browserURL = match.url.concat(`?${queryParams.toString()}`);
+    const browserURL = location.pathname.concat(`?${queryParams.toString()}`);
     history.push(browserURL);
   };
 }

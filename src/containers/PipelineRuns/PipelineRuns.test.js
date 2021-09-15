@@ -13,7 +13,6 @@ limitations under the License.
 
 import React from 'react';
 import { fireEvent, waitFor } from '@testing-library/react';
-import { Route } from 'react-router-dom';
 import { urls } from '@tektoncd/dashboard-utils';
 
 import { renderWithRouter } from '../../utils/test';
@@ -113,27 +112,15 @@ describe('PipelineRuns container', () => {
   });
 
   it('Duplicate label filters are prevented', async () => {
-    const match = {
-      params: {},
-      url: '/pipelineruns'
-    };
-
     const {
       queryByText,
       getByPlaceholderText,
       getByText
     } = renderWithRouter(
-      <Route
-        path="/pipelineruns"
-        render={props => (
-          <PipelineRunsContainer
-            {...props}
-            match={match}
-            error={null}
-            loading={false}
-            namespace="namespace-1"
-          />
-        )}
+      <PipelineRunsContainer
+        error={null}
+        loading={false}
+        namespace="namespace-1"
       />,
       { route: '/pipelineruns' }
     );
@@ -151,27 +138,15 @@ describe('PipelineRuns container', () => {
   });
 
   it('An invalid filter value is disallowed and reported', async () => {
-    const match = {
-      params: {},
-      url: '/pipelineruns'
-    };
-
     const {
       queryByText,
       getByPlaceholderText,
       getByText
     } = renderWithRouter(
-      <Route
-        path="/pipelineruns"
-        render={props => (
-          <PipelineRunsContainer
-            {...props}
-            match={match}
-            error={null}
-            loading={false}
-            namespace="namespace-1"
-          />
-        )}
+      <PipelineRunsContainer
+        error={null}
+        loading={false}
+        namespace="namespace-1"
       />,
       { route: '/pipelineruns' }
     );
@@ -191,23 +166,15 @@ describe('PipelineRuns container', () => {
   it('Creation, deletion and stop events are possible when not in read-only mode', async () => {
     jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => false);
 
-    const match = {
-      params: {},
-      url: '/pipelineruns'
-    };
-
-    const { getByText, getAllByTitle, queryAllByText } = renderWithRouter(
-      <Route
-        path="/pipelineruns"
-        render={props => (
-          <PipelineRunsContainer
-            {...props}
-            match={match}
-            error={null}
-            loading={false}
-            namespace="namespace-1"
-          />
-        )}
+    const {
+      getByText,
+      getAllByTitle,
+      queryAllByText
+    } = renderWithRouter(
+      <PipelineRunsContainer
+        error={null}
+        loading={false}
+        namespace="namespace-1"
       />,
       { route: '/pipelineruns' }
     );
@@ -221,28 +188,16 @@ describe('PipelineRuns container', () => {
   it('Creation, deletion and stop events are not possible when in read-only mode', async () => {
     jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => true);
 
-    const match = {
-      params: {},
-      url: '/pipelineruns'
-    };
-
     const {
       getByText,
       queryAllByLabelText,
       queryAllByText,
       queryAllByTitle
     } = renderWithRouter(
-      <Route
-        path="/pipelineruns"
-        render={props => (
-          <PipelineRunsContainer
-            {...props}
-            match={match}
-            error={null}
-            loading={false}
-            namespace="namespace-1"
-          />
-        )}
+      <PipelineRunsContainer
+        error={null}
+        loading={false}
+        namespace="namespace-1"
       />,
       { route: '/pipelineruns' }
     );
@@ -262,11 +217,10 @@ describe('PipelineRuns container', () => {
       .spyOn(PipelineRunsAPI, 'rerunPipelineRun')
       .mockImplementation(() => []);
     const { getAllByTitle, getByText } = renderWithRouter(
-      <Route
-        path={urls.pipelineRuns.all()}
-        render={props => <PipelineRunsContainer {...props} />}
-      />,
-      { route: urls.pipelineRuns.all() }
+      <PipelineRunsContainer />,
+      {
+        route: urls.pipelineRuns.all()
+      }
     );
     await waitFor(() => getByText(/pipelineRunWithTwoLabels/i));
     fireEvent.click(await waitFor(() => getAllByTitle('Actions')[0]));
@@ -287,11 +241,10 @@ describe('PipelineRuns container', () => {
       .spyOn(PipelineRunsAPI, 'startPipelineRun')
       .mockImplementation(() => []);
     const { getAllByTitle, getByText } = renderWithRouter(
-      <Route
-        path={urls.pipelineRuns.all()}
-        render={props => <PipelineRunsContainer {...props} />}
-      />,
-      { route: urls.pipelineRuns.all() }
+      <PipelineRunsContainer />,
+      {
+        route: urls.pipelineRuns.all()
+      }
     );
     await waitFor(() => getByText(/pipelineRunPending/i));
     fireEvent.click(await waitFor(() => getAllByTitle('Actions')[0]));

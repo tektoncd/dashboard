@@ -14,7 +14,7 @@ limitations under the License.
 import React from 'react';
 import { fireEvent } from '@testing-library/react';
 
-import { render } from '../../utils/test';
+import { renderWithRouter } from '../../utils/test';
 
 import CreatePipelineRun from './CreatePipelineRun';
 import * as API from '../../api';
@@ -82,14 +82,7 @@ const pipelineResource2 = {
   spec: { type: 'type-2' }
 };
 
-const props = {
-  history: {
-    push: () => {}
-  },
-  location: {
-    search: ''
-  }
-};
+const history = { push: () => {} };
 
 describe('CreatePipelineRun', () => {
   beforeEach(() => {
@@ -116,6 +109,8 @@ describe('CreatePipelineRun', () => {
     jest
       .spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: 'namespace-1' }));
+
+    jest.spyOn(history, 'push');
   });
 
   it('renders labels', () => {
@@ -124,7 +119,7 @@ describe('CreatePipelineRun', () => {
       getByText,
       getByPlaceholderText,
       queryByDisplayValue
-    } = render(<CreatePipelineRun {...props} />);
+    } = renderWithRouter(<CreatePipelineRun />);
     fireEvent.click(getAllByText(/Add/i)[0]);
     fireEvent.change(getByPlaceholderText(/key/i), {
       target: { value: 'foo' }
@@ -140,17 +135,17 @@ describe('CreatePipelineRun', () => {
   });
 
   it('handles onClose event', () => {
-    jest.spyOn(props.history, 'push');
-    const { getByText } = render(<CreatePipelineRun {...props} />);
+    jest.spyOn(window.history, 'pushState');
+    const { getByText } = renderWithRouter(<CreatePipelineRun />);
     fireEvent.click(getByText(/cancel/i));
-    expect(props.history.push).toHaveBeenCalledTimes(1);
+    // will be called once for render (from test utils) and once for navigation
+    expect(window.history.pushState).toHaveBeenCalledTimes(2);
   });
 
   it('handles close', () => {
-    jest.spyOn(props.history, 'push');
-    const { getByText } = render(<CreatePipelineRun {...props} />);
-
+    jest.spyOn(window.history, 'pushState');
+    const { getByText } = renderWithRouter(<CreatePipelineRun />);
     fireEvent.click(getByText(/cancel/i));
-    expect(props.history.push).toHaveBeenCalledTimes(1);
+    expect(window.history.pushState).toHaveBeenCalledTimes(2);
   });
 });

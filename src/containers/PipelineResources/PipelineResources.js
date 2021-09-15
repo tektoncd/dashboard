@@ -13,6 +13,7 @@ limitations under the License.
 /* istanbul ignore file */
 
 import React, { useState } from 'react';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import keyBy from 'lodash.keyby';
 import {
@@ -35,12 +36,14 @@ import {
   useSelectedNamespace
 } from '../../api';
 
-export function PipelineResources(props) {
-  const { history, intl, location, match } = props;
+export function PipelineResources({ intl }) {
+  const history = useHistory();
+  const location = useLocation();
+  const params = useParams();
   const filters = getFilters(location);
 
   const { selectedNamespace } = useSelectedNamespace();
-  const { namespace = selectedNamespace } = match.params;
+  const { namespace = selectedNamespace } = params;
 
   const [cancelSelection, setCancelSelection] = useState(null);
   const [deleteError, setDeleteError] = useState(null);
@@ -145,7 +148,6 @@ export function PipelineResources(props) {
 
   return (
     <ListPageLayout
-      {...props}
       error={getError()}
       filters={filters}
       title="PipelineResources"

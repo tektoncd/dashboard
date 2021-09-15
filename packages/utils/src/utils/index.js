@@ -167,16 +167,16 @@ export function getFilters({ search }) {
   return filters;
 }
 
-export function getAddFilterHandler({ history, location, match }) {
+export function getAddFilterHandler({ history, location }) {
   return function handleAddFilter(labelFilters) {
     const queryParams = new URLSearchParams(location.search);
     queryParams.set('labelSelector', labelFilters);
-    const browserURL = match.url.concat(`?${queryParams.toString()}`);
+    const browserURL = location.pathname.concat(`?${queryParams.toString()}`);
     history.push(browserURL);
   };
 }
 
-export function getDeleteFilterHandler({ history, location, match }) {
+export function getDeleteFilterHandler({ history, location }) {
   return function handleDeleteFilter(filter) {
     const queryParams = new URLSearchParams(location.search);
     const labelFilters = queryParams.getAll('labelSelector');
@@ -190,16 +190,18 @@ export function getDeleteFilterHandler({ history, location, match }) {
       queryParams.set('labelSelector', labelFiltersArray);
     }
     const queryString = queryParams.toString();
-    const browserURL = match.url.concat(queryString ? `?${queryString}` : '');
+    const browserURL = location.pathname.concat(
+      queryString ? `?${queryString}` : ''
+    );
     history.push(browserURL);
   };
 }
 
-export function getClearFiltersHandler({ history, location, match }) {
+export function getClearFiltersHandler({ history, location }) {
   return function handleClearFilters() {
     const queryParams = new URLSearchParams(location.search);
     queryParams.delete('labelSelector');
-    const browserURL = match.url.concat(`?${queryParams.toString()}`);
+    const browserURL = location.pathname.concat(`?${queryParams.toString()}`);
     history.push(browserURL);
   };
 }
@@ -221,7 +223,7 @@ export function getStatusFilter({ search }) {
   return status;
 }
 
-export function getStatusFilterHandler({ history, location, match }) {
+export function getStatusFilterHandler({ history, location }) {
   return function setStatusFilter(statusFilter) {
     const queryParams = new URLSearchParams(location.search);
     if (!statusFilter) {
@@ -229,7 +231,7 @@ export function getStatusFilterHandler({ history, location, match }) {
     } else {
       queryParams.set('status', statusFilter);
     }
-    const browserURL = match.url.concat(`?${queryParams.toString()}`);
+    const browserURL = location.pathname.concat(`?${queryParams.toString()}`);
     history.push(browserURL);
   };
 }

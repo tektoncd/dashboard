@@ -35,13 +35,6 @@ const pipelineRun = {
 };
 
 it('PipelineRunContainer renders data', async () => {
-  const pipelineRunName = 'bar';
-  const match = {
-    params: {
-      pipelineName: 'foo',
-      pipelineRunName
-    }
-  };
   jest
     .spyOn(PipelineRunsAPI, 'usePipelineRun')
     .mockImplementation(() => ({ data: pipelineRun }));
@@ -53,43 +46,24 @@ it('PipelineRunContainer renders data', async () => {
     .spyOn(ClusterTasksAPI, 'useClusterTasks')
     .mockImplementation(() => ({ data: [] }));
 
-  const { getByText } = renderWithRouter(
-    <PipelineRunContainer intl={intl} location={{}} match={match} />
-  );
+  const { getByText } = renderWithRouter(<PipelineRunContainer intl={intl} />);
   await waitFor(() => getByText(pipelineRun.metadata.name));
 });
 
 it('PipelineRunContainer renders not found state', async () => {
-  const pipelineRunName = 'bar';
-  const match = {
-    params: {
-      pipelineName: 'foo',
-      pipelineRunName
-    }
-  };
   jest
     .spyOn(PipelineRunsAPI, 'usePipelineRun')
     .mockImplementation(() => ({ data: null, error: null }));
 
-  const { getByText } = renderWithRouter(
-    <PipelineRunContainer intl={intl} location={{}} match={match} />
-  );
+  const { getByText } = renderWithRouter(<PipelineRunContainer intl={intl} />);
   await waitFor(() => getByText(`PipelineRun not found`));
 });
 
 it('PipelineRunContainer renders error state', async () => {
-  const match = {
-    params: {
-      pipelineName: 'foo',
-      pipelineRunName: 'bar'
-    }
-  };
   jest
     .spyOn(PipelineRunsAPI, 'usePipelineRun')
     .mockImplementation(() => ({ data: null, error: 'some error' }));
 
-  const { getByText } = renderWithRouter(
-    <PipelineRunContainer intl={intl} location={{}} match={match} />
-  );
+  const { getByText } = renderWithRouter(<PipelineRunContainer intl={intl} />);
   await waitFor(() => getByText('Error loading PipelineRun'));
 });

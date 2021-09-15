@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import { getFilters, urls, useTitleSync } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Table } from '@tektoncd/dashboard-components';
@@ -21,16 +21,15 @@ import { Link as CarbonLink } from 'carbon-components-react';
 import { ListPageLayout } from '..';
 import { useEventListeners, useSelectedNamespace } from '../../api';
 
-function EventListeners(props) {
-  const { intl, location } = props;
+function EventListeners({ intl }) {
+  const location = useLocation();
+  const params = useParams();
   const filters = getFilters(location);
 
   useTitleSync({ page: 'EventListeners' });
 
   const { selectedNamespace: defaultNamespace } = useSelectedNamespace();
-  const {
-    namespace: selectedNamespace = defaultNamespace
-  } = props.match.params;
+  const { namespace: selectedNamespace = defaultNamespace } = params;
 
   const { data: eventListeners = [], error, isLoading } = useEventListeners({
     filters,
@@ -85,12 +84,7 @@ function EventListeners(props) {
   }));
 
   return (
-    <ListPageLayout
-      {...props}
-      error={getError()}
-      filters={filters}
-      title="EventListeners"
-    >
+    <ListPageLayout error={getError()} filters={filters} title="EventListeners">
       <Table
         headers={initialHeaders}
         rows={eventListenersFormatted}

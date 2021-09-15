@@ -15,7 +15,7 @@ import React from 'react';
 import { fireEvent, waitFor } from '@testing-library/react';
 
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
-import { render } from '../../utils/test';
+import { renderWithRouter } from '../../utils/test';
 
 import CreateTaskRun from './CreateTaskRun';
 import * as API from '../../api';
@@ -114,15 +114,6 @@ const taskRuns = {
   byNamespace: {}
 };
 
-const props = {
-  history: {
-    push: () => {}
-  },
-  location: {
-    search: ''
-  }
-};
-
 const submitButton = allByText => allByText('Create')[0];
 
 describe('CreateTaskRun', () => {
@@ -163,9 +154,9 @@ describe('CreateTaskRun', () => {
       queryByText,
       queryAllByText,
       queryByPlaceholderText
-    } = render(
-      <CreateTaskRun {...props} location={{ search: '?kind=Task' }} />
-    );
+    } = renderWithRouter(<CreateTaskRun />, {
+      route: '/taskruns/create?kind=Task'
+    });
     expect(queryByText(/create taskrun/i)).toBeTruthy();
     expect(queryByPlaceholderText(/select namespace/i)).toBeTruthy();
     expect(queryByPlaceholderText(/select task/i)).toBeTruthy();
@@ -201,7 +192,7 @@ describe('CreateTaskRun', () => {
       getByText,
       getByPlaceholderText,
       queryByDisplayValue
-    } = render(<CreateTaskRun {...props} />);
+    } = renderWithRouter(<CreateTaskRun />);
     fireEvent.click(getAllByText(/Add/i)[0]);
     fireEvent.change(getByPlaceholderText(/key/i), {
       target: { value: 'foo' }
@@ -221,9 +212,11 @@ describe('CreateTaskRun', () => {
       .spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: 'namespace-1' }));
 
-    const { getByPlaceholderText, getByText, getByDisplayValue } = render(
-      <CreateTaskRun {...props} />
-    );
+    const {
+      getByPlaceholderText,
+      getByText,
+      getByDisplayValue
+    } = renderWithRouter(<CreateTaskRun />);
 
     fireEvent.click(getByPlaceholderText(/select task/i));
     fireEvent.click(await waitFor(() => getByText(/task-1/i)));
@@ -248,19 +241,20 @@ describe('CreateTaskRun', () => {
     jest
       .spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: 'namespace-1' }));
-    jest.spyOn(props.history, 'push');
-    const { getByText } = render(<CreateTaskRun {...props} />);
+    jest.spyOn(window.history, 'pushState');
+    const { getByText } = renderWithRouter(<CreateTaskRun />);
     fireEvent.click(getByText(/cancel/i));
-    expect(props.history.push).toHaveBeenCalledTimes(1);
+    // will be called once for render (from test utils) and once on navigation
+    expect(window.history.pushState).toHaveBeenCalledTimes(2);
   });
 
   it('handles error getting task controlled', () => {
     const badTaskRef = 'task-thisDoesNotExist';
-    const { getByPlaceholderText, queryByText } = render(
-      <CreateTaskRun
-        {...props}
-        location={{ search: `?taskName=${badTaskRef}` }}
-      />
+    const { getByPlaceholderText, queryByText } = renderWithRouter(
+      <CreateTaskRun />,
+      {
+        route: `/taskruns/create?taskName=${badTaskRef}`
+      }
     );
 
     expect(queryByText(badTaskRef)).toBeFalsy();

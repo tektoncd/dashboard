@@ -12,8 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
+import { Link, useHistory, useLocation, useParams } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import { urls, useTitleSync } from '@tektoncd/dashboard-utils';
 import { ResourceDetails, Trigger } from '@tektoncd/dashboard-components';
@@ -22,9 +21,11 @@ import { Link as CarbonLink } from 'carbon-components-react';
 import { useEventListener } from '../../api';
 import { getViewChangeHandler } from '../../utils';
 
-export /* istanbul ignore next */ function EventListenerContainer(props) {
-  const { intl, location, match } = props;
-  const { eventListenerName, namespace } = match.params;
+export /* istanbul ignore next */ function EventListenerContainer({ intl }) {
+  const history = useHistory();
+  const location = useLocation();
+  const params = useParams();
+  const { eventListenerName, namespace } = params;
 
   const queryParams = new URLSearchParams(location.search);
   const view = queryParams.get('view');
@@ -130,7 +131,7 @@ export /* istanbul ignore next */ function EventListenerContainer(props) {
       additionalMetadata={getAdditionalMetadata()}
       error={error}
       loading={isFetching}
-      onViewChange={getViewChangeHandler(props)}
+      onViewChange={getViewChangeHandler({ history, location })}
       resource={eventListener}
       view={view}
     >
@@ -138,13 +139,5 @@ export /* istanbul ignore next */ function EventListenerContainer(props) {
     </ResourceDetails>
   );
 }
-
-EventListenerContainer.propTypes = {
-  match: PropTypes.shape({
-    params: PropTypes.shape({
-      eventListenerName: PropTypes.string.isRequired
-    }).isRequired
-  }).isRequired
-};
 
 export default injectIntl(EventListenerContainer);

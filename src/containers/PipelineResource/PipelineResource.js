@@ -12,8 +12,8 @@ limitations under the License.
 */
 
 import React from 'react';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
-import PropTypes from 'prop-types';
 import { DataTable } from 'carbon-components-react';
 import { ResourceDetails } from '@tektoncd/dashboard-components';
 import { useTitleSync } from '@tektoncd/dashboard-utils';
@@ -32,9 +32,10 @@ const {
 } = DataTable;
 
 /* istanbul ignore next */
-function PipelineResource(props) {
-  const { intl, location, match } = props;
-  const { namespace, pipelineResourceName: resourceName } = match.params;
+function PipelineResource({ intl }) {
+  const history = useHistory();
+  const location = useLocation();
+  const { namespace, pipelineResourceName: resourceName } = useParams();
 
   const queryParams = new URLSearchParams(location.search);
   const view = queryParams.get('view');
@@ -66,7 +67,7 @@ function PipelineResource(props) {
       }
       error={error}
       loading={isFetching}
-      onViewChange={getViewChangeHandler(props)}
+      onViewChange={getViewChangeHandler({ history, location })}
       resource={pipelineResource}
       view={view}
     >
@@ -190,14 +191,5 @@ function PipelineResource(props) {
     </ResourceDetails>
   );
 }
-
-PipelineResource.propTypes = {
-  match: PropTypes.shape({
-    params: PropTypes.shape({
-      namespace: PropTypes.string.isRequired,
-      pipelineResourceName: PropTypes.string.isRequired
-    }).isRequired
-  }).isRequired
-};
 
 export default injectIntl(PipelineResource);
