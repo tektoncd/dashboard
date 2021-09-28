@@ -29,6 +29,10 @@ limitations under the License.
       flex-shrink: 0;
       margin: $spacing-05 $spacing-03 0 0;
     }
+
+    .bx--btn {
+      margin-top: calc(#{$spacing-04} - 1px );
+    }
   }
 }
 
