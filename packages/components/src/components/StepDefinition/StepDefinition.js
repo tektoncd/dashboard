@@ -23,6 +23,7 @@ class StepDefinition extends PureComponent {
     return (
       <>
         <ViewYAML
+          enableSyntaxHighlighting
           resource={
             definition ||
             intl.formatMessage({
@@ -30,7 +31,6 @@ class StepDefinition extends PureComponent {
               defaultMessage: 'Step definition not available'
             })
           }
-          dark
         />
       </>
     );

@@ -256,6 +256,7 @@ const TaskRunDetails = ({
         >
           <div className="tkn--step-status">
             <ViewYAML
+              enableSyntaxHighlighting
               resource={
                 taskRun.status ||
                 intl.formatMessage({
@@ -263,7 +264,6 @@ const TaskRunDetails = ({
                   defaultMessage: 'Pending'
                 })
               }
-              dark
             />
           </div>
         </Tab>

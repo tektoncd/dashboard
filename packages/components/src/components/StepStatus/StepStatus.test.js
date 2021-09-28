@@ -18,7 +18,12 @@ import { render } from '../../utils/test';
 describe('StepStatus', () => {
   it('renders default content', () => {
     const { queryByText } = render(<StepStatus />);
-    expect(queryByText(/Status not available/i)).toBeTruthy();
+    // due to an issue with the react-syntax-highlighter
+    // the message is rendered in 3 spans (space delimited)
+    // TODO: revert this when react-syntax-highlighter is updated or we replace it
+    expect(queryByText(/Status/i)).toBeTruthy();
+    expect(queryByText(/not/i)).toBeTruthy();
+    expect(queryByText(/available/i)).toBeTruthy();
   });
 
   it('renders the provided content', () => {
@@ -32,7 +37,7 @@ describe('StepStatus', () => {
     expect(queryByText(new RegExp(container, 'i'))).toBeTruthy();
     expect(queryByText(new RegExp(imageID, 'i'))).toBeTruthy();
     expect(queryByText(new RegExp(name, 'i'))).toBeTruthy();
-    expect(queryByText(/terminated/i)).toBeTruthy();
+    expect(queryByText('fake_terminated')).toBeTruthy();
     expect(queryByText(new RegExp(terminated, 'i'))).toBeTruthy();
   });
 
@@ -48,7 +53,7 @@ describe('StepStatus', () => {
     expect(queryByText(new RegExp(container, 'i'))).toBeTruthy();
     expect(queryByText(new RegExp(imageID, 'i'))).toBeTruthy();
     expect(queryByText(new RegExp(name, 'i'))).toBeTruthy();
-    expect(queryByText(/terminated/i)).toBeFalsy();
+    expect(queryByText('terminated')).toBeFalsy();
     expect(queryByText(new RegExp(running, 'i'))).toBeTruthy();
     expect(queryByText(new RegExp(waiting, 'i'))).toBeTruthy();
   });
