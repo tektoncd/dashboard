@@ -19,6 +19,7 @@ import { ViewYAML } from '..';
 const StepStatus = ({ intl, status }) => (
   <div className="tkn--step-status">
     <ViewYAML
+      enableSyntaxHighlighting
       resource={
         status ||
         intl.formatMessage({
@@ -26,7 +27,6 @@ const StepStatus = ({ intl, status }) => (
           defaultMessage: 'Status not available'
         })
       }
-      dark
     />
   </div>
 );
