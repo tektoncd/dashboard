@@ -289,18 +289,7 @@ const TaskRunDetails = ({
                 </ContentSwitcher>
               ) : null}
               {podContent === 'resource' ? (
-                <ViewYAML
-                  enableSyntaxHighlighting
-                  resource={pod.resource}
-                  {...(hasEvents
-                    ? null
-                    : {
-                        title: intl.formatMessage({
-                          id: 'dashboard.pod.resource',
-                          defaultMessage: 'Resource'
-                        })
-                      })}
-                />
+                <ViewYAML enableSyntaxHighlighting resource={pod.resource} />
               ) : null}
               {hasEvents && podContent === 'events' ? (
                 <ViewYAML enableSyntaxHighlighting resource={pod.events} />
