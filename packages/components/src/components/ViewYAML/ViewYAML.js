@@ -15,23 +15,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import jsYaml from 'js-yaml';
 import classNames from 'classnames';
-import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
-import yamlRules from 'react-syntax-highlighter/dist/esm/languages/hljs/yaml';
-
-SyntaxHighlighter.registerLanguage('yaml', yamlRules);
-
-function YAMLHighlighter({ children, className }) {
-  return (
-    <SyntaxHighlighter
-      className={className}
-      language="yaml"
-      showLineNumbers
-      useInlineStyles={false}
-    >
-      {children}
-    </SyntaxHighlighter>
-  );
-}
+import SyntaxHighlighter from './SyntaxHighlighter';
 
 function YAMLRaw({ children, className }) {
   return (
@@ -50,16 +34,21 @@ function ViewYAML({
   resource,
   title
 }) {
-  const clz = classNames('bx--snippet--multi', className, {
-    'tkn--view-yaml--dark': dark
-  });
-  const yaml = jsYaml.dump(resource);
-  const Wrapper = enableSyntaxHighlighting ? YAMLHighlighter : YAMLRaw;
+  let yamlComponent;
+  if (enableSyntaxHighlighting && typeof resource !== 'string') {
+    yamlComponent = <SyntaxHighlighter resource={resource} />;
+  } else {
+    const clz = classNames('bx--snippet--multi', className, {
+      'tkn--view-yaml--dark': dark
+    });
+    const yaml = jsYaml.dump(resource);
+    yamlComponent = <YAMLRaw className={clz}>{yaml}</YAMLRaw>;
+  }
 
   return (
     <>
       {title && <span className="tkn--view-yaml--title">{title}</span>}
-      <Wrapper className={clz}>{yaml}</Wrapper>
+      {yamlComponent}
     </>
   );
 }

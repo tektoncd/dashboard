@@ -23,6 +23,7 @@ class StepDefinition extends PureComponent {
     return (
       <>
         <ViewYAML
+          dark
           enableSyntaxHighlighting
           resource={
             definition ||

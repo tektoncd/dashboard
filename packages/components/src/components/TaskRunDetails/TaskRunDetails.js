@@ -256,6 +256,7 @@ const TaskRunDetails = ({
         >
           <div className="tkn--step-status">
             <ViewYAML
+              dark
               enableSyntaxHighlighting
               resource={
                 taskRun.status ||
@@ -289,10 +290,14 @@ const TaskRunDetails = ({
                 </ContentSwitcher>
               ) : null}
               {podContent === 'resource' ? (
-                <ViewYAML enableSyntaxHighlighting resource={pod.resource} />
+                <ViewYAML
+                  dark
+                  enableSyntaxHighlighting
+                  resource={pod.resource}
+                />
               ) : null}
               {hasEvents && podContent === 'events' ? (
-                <ViewYAML enableSyntaxHighlighting resource={pod.events} />
+                <ViewYAML dark enableSyntaxHighlighting resource={pod.events} />
               ) : null}
             </div>
           </Tab>

@@ -17,13 +17,7 @@ import StepDefinition from './StepDefinition';
 
 it('StepDefinition renders default content', () => {
   const { queryByText } = render(<StepDefinition taskRun={{}} />);
-  // due to an issue with the react-syntax-highlighter
-  // the message is rendered in multiple spans (space delimited)
-  // TODO: revert this when react-syntax-highlighter is updated or we replace it
-  expect(queryByText(/Step/i)).toBeTruthy();
-  expect(queryByText(/definition/i)).toBeTruthy();
-  expect(queryByText(/not/i)).toBeTruthy();
-  expect(queryByText(/available/i)).toBeTruthy();
+  expect(queryByText(/Step definition not available/i)).toBeTruthy();
 });
 
 it('StepDefinition renders the provided content', () => {
@@ -38,10 +32,6 @@ it('StepDefinition renders the provided content', () => {
 
   expect(queryByText(/--someArg/)).toBeTruthy();
   expect(queryByText('test-name')).toBeTruthy();
-  // due to an issue with the react-syntax-highlighter
-  // these strings are rendered in multiple spans (space delimited)
-  // TODO: revert this when react-syntax-highlighter is updated or we replace it
-  expect(queryByText('Input')).toBeNull();
-  expect(queryByText('resources')).toBeNull();
-  expect(queryByText('Output')).toBeNull();
+  expect(queryByText('Input resources')).toBeNull();
+  expect(queryByText('Output resources')).toBeNull();
 });

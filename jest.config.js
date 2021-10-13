@@ -39,6 +39,5 @@ module.exports = {
   testMatch: [
     '<rootDir>/src/**/*.test.js',
     '<rootDir>/packages/**/src/**/*.test.js'
-  ],
-  transformIgnorePatterns: ['/node_modules/(?!(react-syntax-highlighter)/)']
+  ]
 };

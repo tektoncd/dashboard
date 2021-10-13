@@ -19,6 +19,7 @@ import { ViewYAML } from '..';
 const StepStatus = ({ intl, status }) => (
   <div className="tkn--step-status">
     <ViewYAML
+      dark
       enableSyntaxHighlighting
       resource={
         status ||

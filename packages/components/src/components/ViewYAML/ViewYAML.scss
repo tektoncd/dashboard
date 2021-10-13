@@ -25,6 +25,29 @@ limitations under the License.
   }
 }
 
+pre.tkn--syntax-highlighter {
+  white-space: pre-wrap;
+}
+
+.tkn--code-line {
+  counter-increment: tkn--code-line;
+  display: inline-flex;
+  width: 100%;
+}
+
+.tkn--code-line::before {
+  content: counter(tkn--code-line);
+  display: inline-block;
+  text-align: right;
+  min-width: var(--tkn--line-number--min-width, 1rem);
+  padding-right: 1rem;
+  user-select: none;
+}
+
+.tkn--code-line-content {
+  display: inline-block;
+}
+
 .bx--snippet--multi {
   max-width: none;
 
@@ -33,8 +56,8 @@ limitations under the License.
     background: #2b2b2b;
     color: #f8f8f2;
 
-    .react-syntax-highlighter-line-number {
-      color: #f8f8f2;
+    .tkn--code-line::before {
+      color: #b8b8b8;
     }
 
     .hljs-comment {

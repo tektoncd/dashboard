@@ -57,11 +57,21 @@ it('YAML renders correctly', () => {
   expect(getByText(/value: valueParameter1/i)).toBeTruthy();
 });
 
-it('render syntax highlight', () => {
+it('renders syntax highlight', () => {
   const props = {
     resource,
     enableSyntaxHighlighting: true
   };
   const { container } = render(<ViewYAML {...props} />);
   expect(container.firstChild.className).toMatch(/hljs/);
+});
+
+it('renders title', () => {
+  const title = 'fake_title';
+  const props = {
+    resource,
+    title
+  };
+  const { queryByText } = render(<ViewYAML {...props} />);
+  expect(queryByText(title)).toBeTruthy();
 });
