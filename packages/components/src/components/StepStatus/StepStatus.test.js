@@ -18,12 +18,7 @@ import { render } from '../../utils/test';
 describe('StepStatus', () => {
   it('renders default content', () => {
     const { queryByText } = render(<StepStatus />);
-    // due to an issue with the react-syntax-highlighter
-    // the message is rendered in 3 spans (space delimited)
-    // TODO: revert this when react-syntax-highlighter is updated or we replace it
-    expect(queryByText(/Status/i)).toBeTruthy();
-    expect(queryByText(/not/i)).toBeTruthy();
-    expect(queryByText(/available/i)).toBeTruthy();
+    expect(queryByText(/Status not available/i)).toBeTruthy();
   });
 
   it('renders the provided content', () => {

@@ -10,6 +10,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+/* istanbul ignore file */
 
 import React from 'react';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
@@ -19,9 +20,7 @@ import { useTitleSync } from '@tektoncd/dashboard-utils';
 import { useClusterTriggerBinding } from '../../api';
 import { getViewChangeHandler } from '../../utils';
 
-export /* istanbul ignore next */ function ClusterTriggerBindingContainer({
-  intl
-}) {
+export function ClusterTriggerBindingContainer({ intl }) {
   const history = useHistory();
   const location = useLocation();
   const params = useParams();
