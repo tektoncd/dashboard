@@ -51,6 +51,8 @@ spec:
       securityContext:
         runAsNonRoot: true
         runAsUser: 65532
+      nodeSelector:
+        kubernetes.io/os: linux
       containers:
         - name: tekton-dashboard
           image: dashboardImage
