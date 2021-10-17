@@ -34,11 +34,6 @@ verifySupported() {
     exit 1
   fi
 
-  if ! type "yq" > /dev/null; then
-    echo "yq is required"
-    exit 1
-  fi
-
   if ! type "ko" > /dev/null; then
     echo "ko is required"
     exit 1

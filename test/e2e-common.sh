@@ -140,15 +140,14 @@ function dump_cluster_state() {
 # $1 = File name
 # $2 = HTTP Method
 # $3 = Endpoint
-# Assuming a yaml k8s resource file, do envsubst replacement as well as conversion into json. This payload is then curled as specified.
-function json_curl_envsubst_resource() {
+# Assuming a yaml k8s resource file, do envsubst replacement. This payload is then curled as specified.
+function curl_envsubst_resource() {
   if [ $# -ne 3 ];then
     echo "File/HTTP-Method/Endpoint not found."
     exit 1
   fi
-  yq --version
   set -x
-  cat "$1" | envsubst | yq e -j - | curl -sS -X "$2" --data-binary @- -H "Content-Type: application/json" "$3" -H "Tekton-Client: tektoncd/dashboard"
+  cat "$1" | envsubst | curl -sS -X "$2" --data-binary @- -H "Content-Type: application/yaml" "$3" -H "Tekton-Client: tektoncd/dashboard"
   set +x
 }
 

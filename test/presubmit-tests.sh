@@ -51,14 +51,8 @@ source $(dirname $0)/../vendor/github.com/tektoncd/plumbing/scripts/presubmit-te
 function utility_install() {
   # Install envsubst
   apt-get install gettext-base
-  # Get yaml-to-json converter
-  echo "Getting yq"
-  wget https://github.com/mikefarah/yq/releases/download/v4.6.0/yq_linux_amd64 .
-
-  chmod +x yq_linux_amd64
-  mv yq_linux_amd64 /bin/yq
-  echo "yq being used from $(which yq), version is: $(yq --version)"
 }
+
 function get_node() {
   echo "Script is running as $(whoami) on $(hostname)"
   # It's Stretch and https://github.com/tektoncd/dashboard/blob/main/package.json
