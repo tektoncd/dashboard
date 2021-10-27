@@ -142,7 +142,7 @@ For example, the following will create a cluster with a local build of the Tekto
 
 To delete the cluster:
 
-`./script/prepare-kind-cluster delete`
+`./scripts/prepare-kind-cluster delete`
 
 To create a cluster with the Tekton Dashboard exposed via ingress at `tekton-dashboard.127.0.0.1.nip.io`:
 
