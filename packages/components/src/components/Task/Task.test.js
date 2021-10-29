@@ -12,13 +12,14 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent, waitFor } from '@testing-library/react';
+import { fireEvent } from '@testing-library/react';
 import Task from './Task';
 import { render } from '../../utils/test';
 
 const props = {
-  onSelect: () => {},
-  displayName: 'A Task'
+  displayName: 'A Task',
+  id: 'fake_task_id',
+  onSelect: () => {}
 };
 
 describe('Task', () => {
@@ -39,49 +40,64 @@ describe('Task', () => {
     expect(queryByText(/a step/i)).toBeTruthy();
   });
 
-  it('renders first step in expanded Task with no error', () => {
+  it('automatically selects first step in expanded Task with no error', () => {
+    const firstStepName = 'a step';
     const steps = [
-      { name: 'a step', terminated: { reason: 'Completed' } },
+      { name: firstStepName, terminated: { reason: 'Completed' } },
       { name: 'a step two', terminated: { reason: 'Completed' } }
     ];
-    const { queryByText } = render(<Task {...props} expanded steps={steps} />);
-    waitFor(() =>
-      queryByText(
-        (content, element) =>
-          content === 'a step' &&
-          element.parentNode.parentNode.getAttribute('data-selected')
-      )
+
+    const onSelect = jest.fn();
+
+    render(
+      <Task
+        {...props}
+        expanded
+        onSelect={onSelect}
+        selectDefaultStep
+        steps={steps}
+      />
     );
+
+    expect(onSelect).toHaveBeenCalledWith(props.id, firstStepName);
   });
 
-  it('renders error step in expanded Task', () => {
+  it('automatically selects first error step in expanded Task', () => {
+    const errorStepName = 'a step two';
     const steps = [
       { name: 'a step', terminated: { reason: 'Completed' } },
-      { name: 'a step two', terminated: { reason: 'Error' } }
+      { name: errorStepName, terminated: { reason: 'Error' } }
     ];
-    const { queryByText } = render(<Task {...props} expanded steps={steps} />);
-    waitFor(() =>
-      queryByText(
-        (content, element) =>
-          content === 'a step two' &&
-          element.parentNode.parentNode.getAttribute('data-selected')
-      )
+
+    const onSelect = jest.fn();
+
+    render(
+      <Task
+        {...props}
+        expanded
+        onSelect={onSelect}
+        selectDefaultStep
+        steps={steps}
+      />
     );
+
+    expect(onSelect).toHaveBeenCalledWith(props.id, errorStepName);
   });
 
-  it('renders cancelled step in expanded Task', () => {
-    const steps = [
-      { name: 'a step', terminated: { reason: 'Completed' } },
-      { name: 'a step two', terminated: { reason: undefined } }
-    ];
-    const { queryByText } = render(<Task {...props} expanded steps={steps} />);
-    waitFor(() =>
-      queryByText(
-        (content, element) =>
-          content === 'a step two' &&
-          element.parentNode.parentNode.getAttribute('data-selected')
-      )
+  it('handles no steps', () => {
+    const onSelect = jest.fn();
+
+    render(
+      <Task
+        {...props}
+        expanded
+        onSelect={onSelect}
+        selectDefaultStep
+        steps={[]}
+      />
     );
+
+    expect(onSelect).toHaveBeenCalledWith(props.id, undefined);
   });
 
   it('renders completed steps in expanded state', () => {
@@ -129,31 +145,40 @@ describe('Task', () => {
   });
 
   it('renders selected step state', () => {
-    const steps = [{ name: 'a step' }];
-    render(
-      <Task {...props} expanded selectedStepId="some-step" steps={steps} />
+    const stepName = 'a step';
+    const steps = [{ name: stepName }];
+    const { getByText } = render(
+      <Task {...props} expanded selectedStepId={stepName} steps={steps} />
     );
+
+    expect(
+      getByText(
+        (content, element) =>
+          content === stepName &&
+          element.parentNode.parentNode.getAttribute('data-selected')
+      )
+    ).toBeTruthy();
   });
 
   it('handles click event', () => {
     const onSelect = jest.fn();
-    const { getByText } = render(
-      <Task displayName="build" onSelect={onSelect} />
-    );
-    fireEvent.click(getByText(/build/i));
+    const { getByText } = render(<Task {...props} onSelect={onSelect} />);
+    expect(onSelect).not.toHaveBeenCalled();
+    fireEvent.click(getByText(props.displayName));
     expect(onSelect).toHaveBeenCalledTimes(1);
+    expect(onSelect).toHaveBeenCalledWith(props.id, null);
   });
 
   it('handles click event on Step', () => {
     const onSelect = jest.fn();
-    const steps = [{ name: 'build' }];
+    const stepName = 'build';
+    const steps = [{ name: stepName }];
     const { getByText } = render(
-      <Task displayName="A Task" expanded onSelect={onSelect} steps={steps} />
+      <Task {...props} expanded onSelect={onSelect} steps={steps} />
     );
     expect(onSelect).not.toHaveBeenCalled();
-
-    onSelect.mockClear();
-    fireEvent.click(getByText(/build/i));
+    fireEvent.click(getByText(stepName));
     expect(onSelect).toHaveBeenCalledTimes(1);
+    expect(onSelect).toHaveBeenCalledWith(props.id, stepName);
   });
 });
