@@ -50,9 +50,14 @@ export function getStepDefinition({ selectedStepId, task, taskRun }) {
     return null;
   }
 
-  const stepDefinitions =
-    (taskRun.spec?.taskSpec ? taskRun.spec.taskSpec.steps : task.spec?.steps) ||
-    [];
+  let stepDefinitions = [];
+  if (taskRun.status?.taskSpec?.steps) {
+    stepDefinitions = taskRun.status.taskSpec.steps;
+  } else if (taskRun.spec?.taskSpec?.steps) {
+    stepDefinitions = taskRun.spec.taskSpec.steps;
+  } else if (task?.spec?.steps) {
+    stepDefinitions = task.spec.steps;
+  }
 
   const definition = stepDefinitions?.find(
     step => step.name === selectedStepId
@@ -405,9 +410,16 @@ export function getTaskRunsWithPlaceholders({
   taskRuns,
   tasks
 }) {
-  const pipelineTasks = []
-    .concat(pipeline?.spec?.tasks)
-    .concat(pipelineRun?.spec?.pipelineSpec?.tasks)
+  let pipelineTasks = [];
+
+  if (pipelineRun?.status?.pipelineSpec?.tasks) {
+    pipelineTasks = pipelineTasks.concat(pipelineRun.status.pipelineSpec.tasks);
+  } else {
+    pipelineTasks = pipelineTasks
+      .concat(pipeline?.spec?.tasks)
+      .concat(pipelineRun?.spec?.pipelineSpec?.tasks);
+  }
+  pipelineTasks = pipelineTasks
     .concat(pipeline?.spec?.finally)
     .concat(pipelineRun?.spec?.pipelineSpec?.finally)
     .filter(Boolean);
