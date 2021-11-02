@@ -370,6 +370,27 @@ describe('getStepDefinition', () => {
     const definition = getStepDefinition({ selectedStepId, task, taskRun });
     expect(definition).toBeNull();
   });
+
+  it('handles taskRun using tekton bundle', () => {
+    const selectedStepId = 'a-bundle-step';
+    const bundleStep = { name: selectedStepId };
+    const task = {};
+    const taskRun = {
+      spec: {
+        taskRef: {
+          bundle: 'index.docker.io/fake/dummybundle@0.1',
+          name: 'dummy-task'
+        }
+      },
+      status: {
+        taskSpec: {
+          steps: [bundleStep]
+        }
+      }
+    };
+    const definition = getStepDefinition({ selectedStepId, task, taskRun });
+    expect(definition).toEqual(bundleStep);
+  });
 });
 
 it('getStepStatus', () => {
@@ -744,5 +765,56 @@ describe('getTaskRunsWithPlaceholders', () => {
     expect(finallyTaskRun.metadata.labels[labels.PIPELINE_TASK]).toEqual(
       finallyTaskName
     );
+  });
+
+  it('handles pipeline using tekton bundle', () => {
+    const finallyTaskName = 'bundleFinallyTaskName';
+    const pipelineTaskName = 'bundlePipelineTaskName';
+
+    const pipelineRun = {
+      spec: {
+        pipelineRef: {
+          bundle: 'index.docker.io/fake/dummybundle@0.1',
+          name: 'dummy-pipeline'
+        }
+      },
+      status: {
+        pipelineSpec: {
+          tasks: [
+            {
+              name: pipelineTaskName
+            }
+          ],
+          finally: [
+            {
+              name: finallyTaskName
+            }
+          ]
+        }
+      }
+    };
+    const taskRun = {
+      metadata: {
+        labels: {
+          [labels.PIPELINE_TASK]: pipelineTaskName
+        },
+        name: pipelineTaskName
+      }
+    };
+    const finallyTaskRun = {
+      metadata: {
+        labels: {
+          [labels.PIPELINE_TASK]: finallyTaskName
+        },
+        name: finallyTaskName
+      }
+    };
+    const taskRuns = [
+      finallyTaskRun,
+      { metadata: { labels: {}, name: 'junk' } },
+      taskRun
+    ];
+    const runs = getTaskRunsWithPlaceholders({ pipelineRun, taskRuns });
+    expect(runs).toEqual([taskRun, finallyTaskRun]);
   });
 });
