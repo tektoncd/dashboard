@@ -419,10 +419,16 @@ export function getTaskRunsWithPlaceholders({
       .concat(pipeline?.spec?.tasks)
       .concat(pipelineRun?.spec?.pipelineSpec?.tasks);
   }
-  pipelineTasks = pipelineTasks
-    .concat(pipeline?.spec?.finally)
-    .concat(pipelineRun?.spec?.pipelineSpec?.finally)
-    .filter(Boolean);
+  if (pipelineRun?.status?.pipelineSpec?.finally) {
+    pipelineTasks = pipelineTasks.concat(
+      pipelineRun.status.pipelineSpec.finally
+    );
+  } else {
+    pipelineTasks = pipelineTasks
+      .concat(pipeline?.spec?.finally)
+      .concat(pipelineRun?.spec?.pipelineSpec?.finally);
+  }
+  pipelineTasks = pipelineTasks.filter(Boolean);
 
   const taskRunsToDisplay = [];
   pipelineTasks.forEach(pipelineTask => {
