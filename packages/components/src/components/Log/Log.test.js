@@ -35,11 +35,21 @@ describe('Log', () => {
   it('renders trailer', async () => {
     const { getByText } = render(
       <Log
-        stepStatus={{ terminated: { reason: 'Completed' } }}
+        stepStatus={{ terminated: { reason: 'Completed', exitCode: 0 } }}
         fetchLogs={() => 'testing'}
       />
     );
-    await waitFor(() => getByText(/step completed/i));
+    await waitFor(() => getByText(/step completed successfully/i));
+  });
+
+  it('renders warning trailer', async () => {
+    const { getByText } = render(
+      <Log
+        stepStatus={{ terminated: { reason: 'Completed', exitCode: 1 } }}
+        fetchLogs={() => 'testing'}
+      />
+    );
+    await waitFor(() => getByText(/step completed with exit code 1/i));
   });
 
   it('renders error trailer', async () => {
@@ -256,7 +266,7 @@ describe('Log', () => {
   it('renders trailer when streaming logs', async () => {
     const { getByText } = render(
       <Log
-        stepStatus={{ terminated: { reason: 'Completed' } }}
+        stepStatus={{ terminated: { reason: 'Completed', exitCode: 0 } }}
         fetchLogs={() =>
           Promise.resolve({
             getReader() {
@@ -273,7 +283,30 @@ describe('Log', () => {
         }
       />
     );
-    await waitFor(() => getByText(/step completed/i));
+    await waitFor(() => getByText(/Step completed successfully/i));
+  });
+
+  it('renders warning trailer when streaming logs', async () => {
+    const { getByText } = render(
+      <Log
+        stepStatus={{ terminated: { reason: 'Completed', exitCode: 1 } }}
+        fetchLogs={() =>
+          Promise.resolve({
+            getReader() {
+              return {
+                read() {
+                  return Promise.resolve({
+                    done: true,
+                    value: new TextEncoder().encode('testing')
+                  });
+                }
+              };
+            }
+          })
+        }
+      />
+    );
+    await waitFor(() => getByText(/Step completed with exit code 1/i));
   });
 
   it('renders error trailer when streaming logs', async () => {

@@ -176,6 +176,7 @@
     "dashboard.pipelineRun.notFound": "找不到 PipelineRun",
     "dashboard.pipelineRun.pipelineTaskName.retry": "",
     "dashboard.pipelineRun.stepCompleted": "步驟已完成",
+    "dashboard.pipelineRun.stepCompleted.withError": "",
     "dashboard.pipelineRun.stepFailed": "步驟失敗",
     "dashboard.pipelineRuns.error": "載入 PipelineRuns 時發生錯誤",
     "dashboard.pipelines.errorLoading": "",

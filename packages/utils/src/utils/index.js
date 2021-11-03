@@ -95,6 +95,7 @@ export function getStepStatusReason(step) {
 
   let status;
   let reason;
+  const exitCode = step?.terminated?.exitCode;
   if (step.terminated) {
     status = 'terminated';
     reason = step.terminated.reason;
@@ -103,7 +104,7 @@ export function getStepStatusReason(step) {
   } else if (step.waiting) {
     status = 'waiting';
   }
-  return { reason, status };
+  return { exitCode, reason, status };
 }
 
 export function isPending(reason, status) {

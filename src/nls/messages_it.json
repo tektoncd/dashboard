@@ -176,6 +176,7 @@
     "dashboard.pipelineRun.notFound": "Esecuzione pipeline non trovata",
     "dashboard.pipelineRun.pipelineTaskName.retry": "",
     "dashboard.pipelineRun.stepCompleted": "Passo completato",
+    "dashboard.pipelineRun.stepCompleted.withError": "",
     "dashboard.pipelineRun.stepFailed": "Passo non riuscito",
     "dashboard.pipelineRuns.error": "Errore nel caricamento delle esecuzioni pipeline",
     "dashboard.pipelines.errorLoading": "",
