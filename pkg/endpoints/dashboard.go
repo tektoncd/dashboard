@@ -22,27 +22,13 @@ import (
 
 // Get installed version of the requested Tekton project
 func getVersion(r Resource, projectName string, namespace string) string {
-	version := ""
-
-	listOptions := metav1.ListOptions{
-		LabelSelector: "app.kubernetes.io/part-of=tekton-" + projectName,
-	}
-	deployments, err := r.K8sClient.AppsV1().Deployments(namespace).List(context.TODO(), listOptions)
+	configMap, err := r.K8sClient.CoreV1().ConfigMaps(namespace).Get(context.TODO(), projectName+"-info", metav1.GetOptions{})
 	if err != nil {
-		logging.Log.Errorf("Error getting the Tekton %s deployment: %s", projectName, err.Error())
+		logging.Log.Errorf("Error getting the Tekton %s info ConfigMap: %s", projectName, err.Error())
 		return ""
 	}
 
-	for _, deployment := range deployments.Items {
-		deploymentLabels := deployment.GetLabels()
-
-		version = deploymentLabels["app.kubernetes.io/version"]
-		if version != "" {
-			return version
-		}
-	}
-
-	return version
+	return configMap.Data["version"]
 }
 
 func getDashboardVersion(r Resource, namespace string) string {
