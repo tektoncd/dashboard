@@ -45,10 +45,76 @@ export function getErrorMessage(error) {
   );
 }
 
+function mergeContainerField({
+  definition,
+  field,
+  mergeKey,
+  step,
+  stepTemplate
+}) {
+  const items = stepTemplate[field];
+  if (!items) {
+    return;
+  }
+
+  const stepItems = step[field];
+  (stepItems || []).forEach(stepItem => {
+    const matchIndex = items.findIndex(
+      candidate => candidate[mergeKey] === stepItem[mergeKey]
+    );
+    if (matchIndex !== -1) {
+      items[matchIndex] = stepItem;
+    } else {
+      items.push(stepItem);
+    }
+  });
+
+  definition[field] = items; // eslint-disable-line no-param-reassign
+}
+
+export function applyStepTemplate({ step, stepTemplate }) {
+  if (!step || !stepTemplate) {
+    return step;
+  }
+
+  const definition = {
+    ...stepTemplate,
+    ...step
+  };
+
+  [
+    {
+      field: 'ports',
+      mergeKey: 'containerPort'
+    },
+    {
+      field: 'env',
+      mergeKey: 'name'
+    },
+    {
+      field: 'volumeMounts',
+      mergeKey: 'mountPath'
+    },
+    {
+      field: 'volumeDevices',
+      mergeKey: 'devicePath'
+    }
+  ].forEach(({ field, mergeKey }) =>
+    mergeContainerField({ definition, field, mergeKey, step, stepTemplate })
+  );
+
+  return definition;
+}
+
 export function getStepDefinition({ selectedStepId, task, taskRun }) {
   if (!selectedStepId) {
     return null;
   }
+
+  const stepTemplate =
+    taskRun.status?.taskSpec?.stepTemplate ||
+    taskRun.spec?.taskSpec?.stepTemplate ||
+    task?.spec?.stepTemplate;
 
   let stepDefinitions = [];
   if (taskRun.status?.taskSpec?.steps) {
@@ -64,7 +130,7 @@ export function getStepDefinition({ selectedStepId, task, taskRun }) {
   );
 
   if (definition) {
-    return definition;
+    return applyStepTemplate({ step: definition, stepTemplate });
   }
 
   if (!taskRun.status) {
@@ -81,7 +147,7 @@ export function getStepDefinition({ selectedStepId, task, taskRun }) {
   const unnamedSteps = stepDefinitions.filter(({ name }) => !name);
 
   const index = statusSteps.findIndex(({ name }) => name === selectedStepId);
-  return unnamedSteps[index];
+  return applyStepTemplate({ step: unnamedSteps[index], stepTemplate });
 }
 
 export function getStepStatus({ selectedStepId, taskRun }) {
