@@ -14,6 +14,7 @@ limitations under the License.
 import { labels } from '@tektoncd/dashboard-utils';
 
 import {
+  applyStepTemplate,
   formatLabels,
   generateId,
   getAddFilterHandler,
@@ -294,6 +295,37 @@ describe('getResources', () => {
     });
     expect(inputResources).toEqual(fakeInputResources);
     expect(outputResources).toEqual(fakeOutputResources);
+  });
+});
+
+it('applyStepTemplate', () => {
+  const stepTemplate = {
+    args: ['some_args'],
+    command: ['sh'],
+    env: [
+      { name: 'env1', value: 'value1' },
+      { name: 'env2', value: 'value2' }
+    ],
+    image: 'alpine',
+    ports: [{ containerPort: 8888 }, { containerPort: 7777, name: 'my-port' }]
+  };
+
+  const step = {
+    args: ['step_args'],
+    env: [
+      { name: 'env1', value: 'step_value1' },
+      { name: 'env3', value: 'step_value3' }
+    ],
+    image: 'ubuntu',
+    ports: [{ containerPort: 7777, name: 'my-step-port' }]
+  };
+
+  expect(applyStepTemplate({ step, stepTemplate })).toEqual({
+    args: step.args,
+    command: stepTemplate.command,
+    env: [step.env[0], stepTemplate.env[1], step.env[1]],
+    image: step.image,
+    ports: [stepTemplate.ports[0], step.ports[0]]
   });
 });
 
