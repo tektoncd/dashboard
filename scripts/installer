@@ -394,7 +394,8 @@ help () {
   echo -e "\t[--pipelines-namespace <namespace>]\tOverride the namespace where Tekton Pipelines is installed (defaults to tekton-pipelines)"
   echo -e "\t[--platform <platform>]\t\t\tOverride the platform to build for"
   echo -e "\t[--read-only]\t\t\t\tWill build manifests for a readonly deployment"
-  echo -e "\t[--stream-logs false]\t\t\t\tWill disable log streaming and use polling instead"
+  echo -e "\t[--stream-logs false]\t\t\tWill disable log streaming and use polling instead"
+  echo -e "\t[--tag <tag>]\t\t\t\tTag used for the image produced by ko"
   echo -e "\t[--tenant-namespace <namespace>]\tWill limit the visibility to the specified namespace only"
   echo -e "\t[--triggers-namespace <namespace>]\tOverride the namespace where Tekton Triggers is installed (defaults to tekton-pipelines)"
   echo -e "\t[--version <version>]\t\t\tWill download manifests for specified version or build everything using kustomize/ko"
@@ -518,6 +519,10 @@ while [[ $# -gt 0 ]]; do
     '--platform')
       shift
       KO_RESOLVE_OPTIONS="$KO_RESOLVE_OPTIONS --platform=${1}"
+      ;;
+    '--tag')
+      shift
+      KO_RESOLVE_OPTIONS="$KO_RESOLVE_OPTIONS -t ${1}"
       ;;
     *)
       echo "ERROR: Unknown option $1"
