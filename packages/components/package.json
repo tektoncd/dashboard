@@ -44,8 +44,8 @@
     "react-router-dom": "^5.0.0"
   },
   "engines": {
-    "node": "^14.15.0",
-    "npm": "^6.14.4"
+    "node": "^14.18.1",
+    "npm": "^6.14.15"
   },
   "publishConfig": {
     "access": "public"

@@ -434,7 +434,7 @@ case $1 in
     shift
     ;;
   'release'|r)
-    KO_RESOLVE_OPTIONS="--preserve-import-paths --platform=all"
+    KO_RESOLVE_OPTIONS="--preserve-import-paths"
     ACTION="build"
     shift
     ;;

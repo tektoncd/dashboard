@@ -59,9 +59,9 @@ function get_node() {
   # denotes the Node.js and npm versions
   apt-get update
   apt-get install -y curl
-  curl -O https://nodejs.org/dist/v14.15.0/node-v14.15.0-linux-x64.tar.xz
-  tar xf node-v14.15.0-linux-x64.tar.xz
-  export PATH=$PATH:$(pwd)/node-v14.15.0-linux-x64/bin
+  curl -O https://nodejs.org/dist/v14.18.1/node-v14.18.1-linux-x64.tar.xz
+  tar xf node-v14.18.1-linux-x64.tar.xz
+  export PATH=$PATH:$(pwd)/node-v14.18.1-linux-x64/bin
 }
 
 function node_npm_install() {
