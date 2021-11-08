@@ -433,7 +433,7 @@ case $1 in
     shift
     ;;
   'release'|r)
-    KO_RESOLVE_OPTIONS="--preserve-import-paths --platform=all"
+    KO_RESOLVE_OPTIONS="--preserve-import-paths"
     ACTION="build"
     shift
     ;;
@@ -518,6 +518,10 @@ while [[ $# -gt 0 ]]; do
     '--platform')
       shift
       KO_RESOLVE_OPTIONS="$KO_RESOLVE_OPTIONS --platform=${1}"
+      ;;
+    '--tag')
+      shift
+      KO_RESOLVE_OPTIONS="$KO_RESOLVE_OPTIONS -t ${1}"
       ;;
     *)
       echo "ERROR: Unknown option $1"

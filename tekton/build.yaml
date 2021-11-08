@@ -2,48 +2,21 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: build-tekton-dashboard
+  name: build-dashboard
 spec:
-  resources:
-    inputs:
-      - name: dashboard-source-repo
-        type: git
-        targetPath: go/src/github.com/tektoncd/dashboard
-    outputs:
-      - name: dashboard-source-repo
-        type: git
+  workspaces:
+    - name: source
   steps:
     - name: build-static
-      # yamllint disable rule:line-length
-      # Because of long image coordinates and later in the Task when we get Node.js
-      image: gcr.io/tekton-releases/tests/test-runner@sha256:a4a64b2b70f85a618bbbcc6c0b713b313b2e410504dee24c9f90ec6fe3ebf63f
-      workingDir: /workspace/go/src/github.com/tektoncd/dashboard
+      image: node:14.18-alpine
+      workingDir: $(workspaces.source.path)
       env:
-        - name: GOPATH
-          value: /workspace/go
-      command: ["/bin/sh", "-ce"]
-      args:
-        - |
-          set -e
-          set -x
+        - name: CI
+          value: "true"
+      script: |
+        #/usr/bin/env sh
+        set -euxo pipefail
 
-          apt-get update
-          apt-get install -y curl
-          curl -O https://nodejs.org/dist/v14.15.0/node-v14.15.0-linux-x64.tar.xz
-          tar xf node-v14.15.0-linux-x64.tar.xz
-          export PATH=$PATH:$(pwd)/node-v14.15.0-linux-x64/bin
-          mkdir ~/.npm-global
-          npm config set prefix '~/.npm-global'
-          export PATH=$PATH:$HOME/.npm-global/bin
-          npm ci
-          npm run bootstrap:ci
-          npm run build_ko
-    - name: copy-files-to-output-resource
-      image: busybox
-      command: ["/bin/sh", "-ce"]
-      args:
-        - |
-          # Further to https://github.com/tektoncd/pipeline/pull/1122 it is necessary to copy files into $(resources.outputs.dashboard-source-repo.path)
-          echo "Input source path=$(resources.inputs.dashboard-source-repo.path)"
-          echo "Output source path=$(resources.outputs.dashboard-source-repo.path)"
-          cp -a $(resources.inputs.dashboard-source-repo.path)/. $(resources.outputs.dashboard-source-repo.path)
+        npm ci
+        npm run bootstrap:ci
+        npm run build_ko

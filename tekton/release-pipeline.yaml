@@ -8,53 +8,178 @@ spec:
     - name: package
       description: package to release
       default: github.com/tektoncd/dashboard
+    - name: gitRevision
+      description: the git revision to release
     - name: imageRegistry
-      default: gcr.io/tekton-releases
+      description: The target image registry
+      default: gcr.io
+    - name: imageRegistryPath
+      description: The path (project) in the image registry
+      default: tekton-releases
     - name: versionTag
       description: The X.Y.Z version that the artifacts should be tagged with
+    - name: releaseBucket
+      description: bucket where the release is stored. The bucket must be project specific.
+      default: gs://tekton-releases-nightly/dashboard
     - name: releaseAsLatest
-      description: Whether to tag and publish this release as the latest
+      description: Whether to tag and publish this release as Pipelines' latest
       default: "true"
-  resources:
-    - name: dashboard-source-repo
-      type: git
-    - name: bucket-for-dashboard
-      type: storage
-    - name: builtDashboardImage
-      type: image
+    - name: platforms
+      description: Platforms to publish for the images (e.g. linux/amd64,linux/arm64)
+      default: linux/amd64,linux/arm,linux/arm64,linux/s390x,linux/ppc64le
+    - name: serviceAccountPath
+      description: The path to the service account file within the release-secret workspace
+  workspaces:
+    - name: workarea
+      description: The workspace where the repo will be cloned.
+    - name: release-secret
+      description: The secret that contains a service account authorized to push to the imageRegistry and to the output bucket
+  results:
+    - name: commit-sha
+      description: the sha of the commit that was released
+      value: $(tasks.git-clone.results.commit)
+    - name: release-file
+      description: the URL of the release file
+      value: $(tasks.report-bucket.results.release)
+    - name: release-file-readonly
+      description: the URL of the release file
+      value: $(tasks.report-bucket.results.release-readonly)
+    - name: release-file-openshift
+      description: the URL of the release file
+      value: $(tasks.report-bucket.results.release-openshift)
+    - name: release-file-openshift-readonly
+      description: the URL of the release file
+      value: $(tasks.report-bucket.results.release-openshift-readonly)
   tasks:
-    - name: build
+    - name: git-clone
       taskRef:
-        name: build-tekton-dashboard
-      resources:
-        inputs:
-          - name: dashboard-source-repo
-            resource: dashboard-source-repo
-        outputs:
-          - name: dashboard-source-repo
-            resource: dashboard-source-repo
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: workarea
+          subpath: git
+      params:
+        - name: url
+          value: https://$(params.package)
+        - name: revision
+          value: $(params.gitRevision)
+    - name: precheck
+      runAfter: [git-clone]
+      taskRef:
+        name: dashboard-prerelease-checks
+      params:
+        - name: package
+          value: $(params.package)
+        - name: versionTag
+          value: $(params.versionTag)
+        - name: releaseBucket
+          value: $(params.releaseBucket)
+      workspaces:
+        - name: source-to-release
+          workspace: workarea
+          subpath: git
+    - name: build
+      runAfter: [precheck]
+      taskRef:
+        name: build-dashboard
+      workspaces:
+        - name: source
+          workspace: workarea
+          subpath: git
     - name: publish-images
       runAfter: [build]
       taskRef:
-        name: publish-tekton-dashboard
+        name: publish-dashboard-release
       params:
-        - name: pathToProject
+        - name: package
           value: $(params.package)
         - name: versionTag
           value: $(params.versionTag)
         - name: imageRegistry
           value: $(params.imageRegistry)
+        - name: imageRegistryPath
+          value: $(params.imageRegistryPath)
         - name: releaseAsLatest
           value: $(params.releaseAsLatest)
-      resources:
-        inputs:
-          - name: dashboard-source-repo
-            resource: dashboard-source-repo
-            from: [build]
-          - name: bucket-for-dashboard
-            resource: bucket-for-dashboard
-        outputs:
-          - name: bucket-for-dashboard
-            resource: bucket-for-dashboard
-          - name: builtDashboardImage
-            resource: builtDashboardImage
+        - name: serviceAccountPath
+          value: $(params.serviceAccountPath)
+        - name: platforms
+          value: $(params.platforms)
+      workspaces:
+        - name: source
+          workspace: workarea
+          subpath: git
+        - name: output
+          workspace: workarea
+          subpath: bucket
+        - name: release-secret
+          workspace: release-secret
+    - name: publish-to-bucket
+      runAfter: [publish-images]
+      taskRef:
+        name: gcs-upload
+      workspaces:
+        - name: credentials
+          workspace: release-secret
+        - name: source
+          workspace: workarea
+          subpath: bucket
+      params:
+        - name: location
+          value: $(params.releaseBucket)/previous/$(params.versionTag)
+        - name: path
+          value: $(params.versionTag)
+        - name: serviceAccountPath
+          value: $(params.serviceAccountPath)
+    - name: publish-to-bucket-latest
+      runAfter: [publish-images]
+      when:
+        - input: "$(params.releaseAsLatest)"
+          operator: in
+          values: ["true"]
+      taskRef:
+        name: gcs-upload
+      workspaces:
+        - name: credentials
+          workspace: release-secret
+        - name: source
+          workspace: workarea
+          subpath: bucket
+      params:
+        - name: location
+          value: $(params.releaseBucket)/latest
+        - name: path
+          value: $(params.versionTag)
+        - name: serviceAccountPath
+          value: $(params.serviceAccountPath)
+    - name: report-bucket
+      runAfter: [publish-to-bucket]
+      params:
+        - name: releaseBucket
+          value: $(params.releaseBucket)
+        - name: versionTag
+          value: $(params.versionTag)
+      taskSpec:
+        params:
+          - name: releaseBucket
+          - name: versionTag
+        results:
+          - name: release
+            description: The full URL of the release file in the bucket
+          - name: release-readonly
+            description: The full URL of the release file (read-only) in the bucket
+          - name: release-openshift
+            description: The full URL of the release file (OpenShift) in the bucket
+          - name: release-openshift-readonly
+            description: The full URL of the release file (OpenShift read-only) in the bucket
+        steps:
+          - name: create-results
+            image: alpine
+            script: |
+              BASE_URL=$(echo "$(params.releaseBucket)/previous/$(params.versionTag)")
+              # If the bucket is in the gs:// return the corresponding public https URL
+              BASE_URL=$(echo ${BASE_URL} | sed 's,gs://,https://storage.googleapis.com/,g')
+              echo "${BASE_URL}/tekton-dashboard-release.yaml" > $(results.release.path)
+              echo "${BASE_URL}/tekton-dashboard-release-readonly.yaml" > $(results.release-readonly.path)
+              echo "${BASE_URL}/openshift-tekton-dashboard-release.yaml" > $(results.release-openshift.path)
+              echo "${BASE_URL}/openshift-tekton-dashboard-release-readonly.yaml" > $(results.release-openshift-readonly.path)

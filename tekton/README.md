@@ -1,118 +1,118 @@
 # Tekton Dashboard CI/CD
 
-This directory contains the Tekton `Tasks` and `Pipelines` used to create Dashboard releases.
+_Why do Tekton projects have a folder called `tekton`? Cuz we think it would be cool
+if the `tekton` folder were the place to look for CI/CD logic in most repos!_
 
-These tasks run on your local cluster, and then copy the release artifacts - docker images and yaml files - into [the `tekton releases` bucket in Google Cloud Platform](https://console.cloud.google.com/storage/browser/tekton-releases/dashboard). Your cluster must contain keys from a Google account with the necessary authorization in order for this to work.
+We dogfood our project by using Tekton to build, test, and release
+Tekton! This directory contains the
+[`Tasks`](https://github.com/tektoncd/pipeline/blob/main/docs/tasks.md) and
+[`Pipelines`](https://github.com/tektoncd/pipeline/blob/main/docs/pipelines.md)
+that we use.
+
+* [How to create a release](#create-an-official-release)
+* [Automated nightly releases](#nightly-releases)
+* [Setup releases](#setup)
+
+## Create an official release
+
+To create an official release, follow the steps in the [release-cheat-sheet](./release-cheat-sheet.md)
+
+## Nightly releases
+
+The nightly release pipeline is
+[triggered nightly by Tekton](https://github.com/tektoncd/plumbing/tree/main/tekton).
+
+This uses the same `Pipeline` and `Task`s as an official release.
 
 ## Setup
 
-> **Note:** 
-> Depending on your cluster you may need to increase the memory allocated. 6GB is known to work on Docker Desktop.
-> See https://github.com/tektoncd/pipeline/issues/2417 for details.
+To start from scratch and use these `Pipeline`s and `Task`s:
 
-First, ensure that your credentials are set up correctly. You will need an account with access to [Google Cloud Platform](https://console.cloud.google.com). Your account must have 'proper authorization to release the images and yamls' in the [`tekton-releases` GCP project](https://github.com/tektoncd/plumbing#prow). Your account must have `Permission iam.serviceAccountKeys.create`. Contact @bobcatfish or @dlorenc if you are going to be creating dashboard releases and require this authorization.
+1. [Install Tekton](#install-tekton)
+1. [Setup the Tasks and Pipelines](#install-tasks-and-pipelines)
+1. [Create the required service account + secrets](#service-account-and-secrets)
 
-- You will need to install the [`gcloud` CLI](https://cloud.google.com/sdk/gcloud/) in order to get keys out of Google Cloud and into your local cluster. These credentials will be patched onto the service account to be used by the Tekton PipelineRuns. You do not need to create a new GCP project or pay Google any money.
-- It's convenient to use the Tekton Dashboard to kick off builds, alternatively you can use the ['tkn' CLI](https://github.com/tektoncd/cli) so you may want to grab that as well.
+### Install Tekton
+
+```bash
+# If this is your first time installing Tekton in the cluster you might need to give yourself permission to do so
+kubectl create clusterrolebinding cluster-admin-binding-someusername \
+  --clusterrole=cluster-admin \
+  --user=$(gcloud config get-value core/account)
+
+# Example, Tekton v0.29.0
+export TEKTON_VERSION=0.29.0
+kubectl apply --filename  https://storage.googleapis.com/tekton-releases/pipeline/previous/v${TEKTON_VERSION}/release.yaml
+```
+
+### Install tasks and pipelines
+
+Add all the `Tasks` to the cluster, including the
+[`git-clone`](https://github.com/tektoncd/catalog/tree/main/task/git-clone) and 
+[`gcs-upload`](https://github.com/tektoncd/catalog/tree/main/task/gcs-upload)
+Tasks from the
+[`tektoncd/catalog`](https://github.com/tektoncd/catalog), and the
+[release](https://github.com/tektoncd/plumbing/tree/main/tekton/resources/release) Tasks from
+[`tektoncd/plumbing`](https://github.com/tektoncd/plumbing).
+
+Use a version of the [`tektoncd/catalog`](https://github.com/tektoncd/catalog)
+tasks that is compatible with version of Tekton being released, usually `main`.
+Install Tasks from plumbing too:
+
+```bash
+# Apply the Tasks we are using from the catalog
+kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/git-clone/0.2/git-clone.yaml
+kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/gcs-upload/0.1/gcs-upload.yaml
+# Apply the Tasks we are using from tektoncd/plumbing
+kubectl apply -f https://raw.githubusercontent.com/tektoncd/plumbing/main/tekton/resources/release/base/prerelease_checks.yaml
+```
+
+Apply the tasks from the `dashboard` repo:
+```bash
+# Apply the Tasks and Pipelines we use from this repo
+kubectl apply -f tekton/build.yaml
+kubectl apply -f tekton/publish.yaml
+kubectl apply -f tekton/release-pipeline.yaml
+```
+
+`Tasks` and `Pipelines` from this repo are:
+
+- [`build.yaml`](build.yaml) - This `Task` builds the UI bundles and places them
+  in the `kodata` directory to be picked up by the backend
+- [`publish.yaml`](publish.yaml) - This `Task` uses
+  [`ko`](https://github.com/google/ko) to build all of the container images we
+  release and generate the `release.yaml`
+- [`release-pipeline.yaml`](./release-pipeline.yaml) - This `Pipeline`
+  uses the above `Task`s
+
+### Service account and secrets
+
+In order to release, these Pipelines use the `release-right-meow` service account,
+which uses `release-secret` and has
+[`Storage Admin`](https://cloud.google.com/container-registry/docs/access-control)
+access to
+[`tekton-releases`]((https://github.com/tektoncd/plumbing/blob/main/gcp.md))
+and
+[`tekton-releases-nightly`]((https://github.com/tektoncd/plumbing/blob/main/gcp.md)).
+
+After creating these service accounts in GCP, the kubernetes service account and
+secret were created with:
 
 ```bash
 KEY_FILE=release.json
 GENERIC_SECRET=release-secret
-PIPELINE_NAMESPACE=tekton-pipelines
-# The kubernetes ServiceAccount that will be used by your Tekton tasks. 'default' is the default. It should already exist.
-SERVICE_ACCOUNT=default
-GCP_ACCOUNT="release-right-meow@tekton-releases.iam.gserviceaccount.com"
+ACCOUNT=release-right-meow
 
-# 1. Create a GCP private key for the service account. It is vital to keep a copy safe since there is a limit of ten keys in total.
-gcloud iam service-accounts keys create --iam-account $GCP_ACCOUNT $KEY_FILE
+# Connected to the `prow` in the `tekton-releases` GCP project
+GCP_ACCOUNT="$ACCOUNT@tekton-releases.iam.gserviceaccount.com"
 
-# 2. Sore GCP key in a secret
-kubectl create secret generic $GENERIC_SECRET -n $PIPELINE_NAMESPACE --from-file=./$KEY_FILE
+# 1. Create a private key for the service account
+gcloud iam service-accounts keys create $KEY_FILE --iam-account $GCP_ACCOUNT
 
-# 3. Patch the GCP key onto the service account to be used to run the release pipeline.
-kubectl patch serviceaccount $SERVICE_ACCOUNT -n $PIPELINE_NAMESPACE -p "{\"secrets\": [{\"name\": \"$GENERIC_SECRET\"}]}"
+# 2. Create kubernetes secret, which we will use via a service account and directly mounting
+kubectl create secret generic $GENERIC_SECRET --from-file=./$KEY_FILE
+
+# 3. Add the docker secret to the service account
+kubectl patch serviceaccount $ACCOUNT \
+  -p "{\"secrets\": [{\"name\": \"$GENERIC_SECRET\"}]}"
 ```
-
-Next:
-
-1. Install [Tekton pipelines](https://github.com/tektoncd/pipeline) into your local cluster.
-1. Create a GitHub release by pushing a tag to the [dashboard](https://github.com/tektoncd/dashboard) repository. This should be of the form, `vX.Y.Z' e.g.' 'v0.2.5'.
-1. Edit the `tekton-dashboard-git` PipelineResource in `resources.yaml` and set `spec.params.revision.value` to 'vX.Y.Z' e.g., `v0.2.5`. This can also be a git commit if you have not created a release yet.
-1. From the root directory of the dashboard repository, create the Tekton Dashboard release pipeline:
-
-   ```bash
-   PIPELINE_NAMESPACE=tekton-pipelines
-   kubectl apply -f tekton -n $PIPELINE_NAMESPACE
-   ```
-
-## Building a test release
-
-You may want to run a test release first. To do this:
-
-- Create a directory in the Google Cloud bucket
-- Add that directory to the associated PipelineResource
-- Apply your changes
-- Run a test release
-- Clean up
-
-So for example, we might want to run one or more test releases under the name 'test-release'. 
-
-- Go to https://console.cloud.google.com/storage/browser/tekton-releases/dashboard and click 'Create folder'. Create the folder Buckets/tekton-releases/dashboard/test-release.
-- Modify the tekton-bucket-dashboard PipelineResource:
-
-  ```yaml
-  apiVersion: tekton.dev/v1alpha1
-  kind: PipelineResource
-  metadata:
-    name: tekton-bucket-dashboard
-  spec:
-    type: storage
-    params:
-     - name: type
-       value: gcs
-     - name: location
-       value: gs://tekton-releases/dashboard/test-release # If you're testing use your bucket name here instead of test-release
-     - name: dir
-       value: "y"
-  ```
-
-- Apply your changes
-
-  ```bash
-  PIPELINE_NAMESPACE=tekton-pipelines
-  kubectl apply -f tekton -n $PIPELINE_NAMESPACE
-  ```
-
-Run a test release:
-
-```bash
-VERSION_TAG=test-1
-PIPELINE_NAMESPACE=tekton-pipelines
-tkn pipeline start dashboard-release -p versionTag=$VERSION_TAG -r dashboard-source-repo=tekton-dashboard-git -r bucket-for-dashboard=tekton-bucket-dashboard -r builtDashboardImage=dashboard-image -n $PIPELINE_NAMESPACE -s $SERVICE_ACCOUNT -p releaseAsLatest=false
-```
-
-This will result in release artifacts appearing in the Google Cloud bucket `gs://tekton-releases/dashboard/test-release/test-1`. If you need to run a second build, incremement $VERSION_TAG. Once you're finished, clean up:
-
-- delete /test-release from the PipelineResource and reapply your changes
-- delete the temporary /test-release bucket in Google Cloud
-
-## Running a release build
-
-Now you can kick off the release build:
-
-```bash
-VERSION_TAG=vX.Y.Z
-PIPELINE_NAMESPACE=tekton-pipelines
-tkn pipeline start dashboard-release -p versionTag=$VERSION_TAG -r dashboard-source-repo=tekton-dashboard-git -r bucket-for-dashboard=tekton-bucket-dashboard -r builtDashboardImage=dashboard-image -n $PIPELINE_NAMESPACE -s $SERVICE_ACCOUNT -p releaseAsLatest=true
-```
-
-Monitor the build logs to see the image coordinates that the image is pushed to. The release yaml files should appear under https://console.cloud.google.com/storage/browser/tekton-releases/dashboard.
-
-## Manually complete the release work
-
-We have a number of tasks that are yet to be automated:
-
-- Write the release notes
-- Attach `.yaml` files from https://console.cloud.google.com/storage/browser/tekton-releases/dashboard
-- Update `/README.md` to add an entry in the table for the new release
-- Publish the GitHub release
