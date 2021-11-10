@@ -13,7 +13,6 @@ limitations under the License.
 
 import React from 'react';
 import { injectIntl } from 'react-intl';
-
 import {
   Header as CarbonHeader,
   HeaderGlobalBar,
@@ -30,6 +29,7 @@ function skipToContentClick(event) {
 }
 
 function Header({
+  headerNameProps,
   intl,
   isSideNavExpanded,
   logoutButton,
@@ -60,7 +60,9 @@ function Header({
           onClick={onHeaderMenuButtonClick}
         />
       )}
-      <HeaderName prefix="Tekton">Dashboard</HeaderName>
+      <HeaderName prefix="Tekton" {...headerNameProps}>
+        Dashboard
+      </HeaderName>
       <HeaderGlobalBar>{logoutButton}</HeaderGlobalBar>
     </CarbonHeader>
   );

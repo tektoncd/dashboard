@@ -233,7 +233,7 @@ function SideNav({ expanded, intl, showKubernetesResources }) {
         <SideNavLink element={NavLink} renderIcon={AboutIcon} to={urls.about()}>
           {intl.formatMessage({
             id: 'dashboard.about.title',
-            defaultMessage: 'About'
+            defaultMessage: 'About Tekton'
           })}
         </SideNavLink>
 

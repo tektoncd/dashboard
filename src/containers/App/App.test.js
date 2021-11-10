@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { waitFor } from '@testing-library/react';
+import { fireEvent, waitFor } from '@testing-library/react';
 
 import { App } from './App';
 import { render } from '../../utils/test';
@@ -31,9 +31,10 @@ describe('App', () => {
   });
 
   it('renders successfully in full cluster mode', async () => {
-    const { queryByText } = render(<App lang="en" />);
+    const { queryAllByText, queryByText } = render(<App lang="en" />);
 
     await waitFor(() => queryByText('Tekton resources'));
+    fireEvent.click(queryAllByText('PipelineRuns')[0]);
 
     expect(queryByText('Namespace')).toBeTruthy();
     expect(queryByText('Pipelines')).toBeTruthy();
@@ -42,9 +43,10 @@ describe('App', () => {
 
   it('renders successfully in single namespace mode', async () => {
     jest.spyOn(API, 'useTenantNamespace').mockImplementation(() => 'fake');
-    const { queryByText } = render(<App />);
+    const { queryAllByText, queryByText } = render(<App />);
 
     await waitFor(() => queryByText('Tekton resources'));
+    fireEvent.click(queryAllByText('PipelineRuns')[0]);
 
     expect(queryByText('Namespaces')).toBeFalsy();
     expect(queryByText('Pipelines')).toBeTruthy();

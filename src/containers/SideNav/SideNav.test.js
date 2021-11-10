@@ -38,10 +38,10 @@ const mockExtensions = [
 
 it('SideNav renders only when expanded', () => {
   const { queryByText, rerender } = renderWithRouter(<SideNav expanded />);
-  expect(queryByText(/Tekton/)).toBeTruthy();
+  expect(queryByText(/Tekton resources/)).toBeTruthy();
 
   renderWithRouter(<SideNav />, { rerender });
-  expect(queryByText(/Tekton/)).toBeFalsy();
+  expect(queryByText(/Tekton resources/)).toBeFalsy();
 });
 
 it('SideNav renders with extensions', () => {

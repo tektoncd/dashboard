@@ -15,6 +15,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import { hot } from 'react-hot-loader/root';
 import {
+  Link,
   Redirect,
   Route,
   HashRouter as Router,
@@ -141,6 +142,10 @@ async function loadMessages(lang) {
   return loadedMessages;
 }
 
+function HeaderNameLink(props) {
+  return <Link {...props} to={urls.about()} />;
+}
+
 /* istanbul ignore next */
 export function App({ lang }) {
   const [isSideNavExpanded, setIsSideNavExpanded] = useState(true);
@@ -211,6 +216,9 @@ export function App({ lang }) {
           <Router>
             <>
               <Header
+                headerNameProps={{
+                  element: HeaderNameLink
+                }}
                 isSideNavExpanded={isSideNavExpanded}
                 logoutButton={logoutButton}
                 onHeaderMenuButtonClick={() => {
@@ -231,6 +239,7 @@ export function App({ lang }) {
               >
                 <PageErrorBoundary>
                   <Switch>
+                    <Redirect exact from="/" to={urls.about()} />
                     <Route path={paths.pipelines.all()} exact>
                       <Pipelines />
                     </Route>
