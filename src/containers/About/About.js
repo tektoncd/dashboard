@@ -12,21 +12,37 @@ limitations under the License.
 */
 /* istanbul ignore file */
 
-import React from 'react';
+import React, { Fragment } from 'react';
 import { injectIntl } from 'react-intl';
-import { InlineNotification } from 'carbon-components-react';
-import { Table } from '@tektoncd/dashboard-components';
+import {
+  ClickableTile as CarbonClickableTile,
+  InlineNotification,
+  SkeletonText,
+  Tile
+} from 'carbon-components-react';
+import { ArrowRight24 as ArrowIcon } from '@carbon/icons-react';
 import { getErrorMessage, useTitleSync } from '@tektoncd/dashboard-utils';
 
 import { useProperties } from '../../api';
 
 import tektonLogo from '../../images/tekton-dashboard-color.svg';
 
+function ClickableTile(props) {
+  return (
+    <CarbonClickableTile
+      className="tkn--tile--docs"
+      rel="noopener"
+      target="_blank"
+      {...props}
+    />
+  );
+}
+
 export function About({ intl }) {
   useTitleSync({
     page: intl.formatMessage({
       id: 'dashboard.about.title',
-      defaultMessage: 'About'
+      defaultMessage: 'About Tekton'
     })
   });
 
@@ -83,31 +99,15 @@ export function About({ intl }) {
       : null;
   };
 
-  const headers = [
-    {
-      key: 'property',
-      header: intl.formatMessage({
-        id: 'dashboard.tableHeader.property',
-        defaultMessage: 'Property'
-      })
-    },
-    {
-      key: 'value',
-      header: intl.formatMessage({
-        id: 'dashboard.tableHeader.value',
-        defaultMessage: 'Value'
-      })
-    }
-  ];
-
-  const getRow = (property, value) => {
+  const getField = (property, value) => {
     const displayValue = getDisplayValue(value);
     return (
-      displayValue && {
-        id: property,
-        property,
-        value: displayValue
-      }
+      displayValue && (
+        <Fragment key={property}>
+          <dt className="bx--label">{property}</dt>
+          <dd>{displayValue}</dd>
+        </Fragment>
+      )
     );
   };
 
@@ -128,12 +128,36 @@ export function About({ intl }) {
 
   return (
     <div className="tkn--about">
-      <h1 id="main-content-header">
-        {intl.formatMessage({
-          id: 'dashboard.about.title',
-          defaultMessage: 'About'
-        })}
-      </h1>
+      <div className="tkn--css-grid tkn--about-header">
+        <header>
+          <h1 id="main-content-header">
+            {intl.formatMessage({
+              id: 'dashboard.about.title',
+              defaultMessage: 'About Tekton'
+            })}
+          </h1>
+          <p>
+            {intl.formatMessage({
+              id: 'dashboard.about.description',
+              defaultMessage:
+                'Tekton is a powerful and flexible open-source framework for creating CI/CD systems, allowing developers to build, test, and deploy across cloud providers and on-premises systems.'
+            })}
+          </p>
+        </header>
+        <img
+          alt={intl.formatMessage({
+            id: 'dashboard.logo.alt',
+            defaultMessage: 'Tekton logo'
+          })}
+          role="presentation"
+          src={tektonLogo}
+          title={intl.formatMessage({
+            id: 'dashboard.logo.tooltip',
+            defaultMessage: 'Meow'
+          })}
+        />
+      </div>
+
       {error && (
         <InlineNotification
           kind="error"
@@ -145,64 +169,91 @@ export function About({ intl }) {
           lowContrast
         />
       )}
-      <div className="tkn--about--content">
-        <div className="tkn--about--tables">
-          <Table
-            id="tkn--about--dashboard-table"
-            headers={headers}
-            loading={isPlaceholderData}
-            rows={[
-              getRow('Namespace', dashboardNamespace),
-              getRow(versionLabel, dashboardVersion),
-              getRow(isReadOnlyLabel, isReadOnly),
-              getRow(logoutURLLabel, logoutURL)
-            ].filter(Boolean)}
-            size="short"
-            skeletonRowCount={2}
-            title="Dashboard"
-          />
-          <Table
-            headers={headers}
-            id="tkn--about--pipelines-table"
-            loading={isPlaceholderData}
-            rows={[
-              getRow('Namespace', pipelinesNamespace),
-              getRow(versionLabel, pipelinesVersion)
-            ].filter(Boolean)}
-            size="short"
-            skeletonRowCount={2}
-            title="Pipelines"
-          />
-          {isTriggersInstalled && (
-            <Table
-              headers={headers}
-              id="tkn--about--triggers-table"
-              loading={isPlaceholderData}
-              rows={[
-                getRow('Namespace', triggersNamespace),
-                getRow(versionLabel, triggersVersion)
+
+      <section className="tkn--css-grid">
+        <header>
+          <h2 className="tkn--section-title">
+            {intl.formatMessage({
+              id: 'dashboard.about.environmentDetails',
+              defaultMessage: 'Environment details'
+            })}
+          </h2>
+        </header>
+        <Tile id="tkn--about--dashboard-tile">
+          <h3>Dashboard</h3>
+          {isPlaceholderData ? (
+            <SkeletonText paragraph />
+          ) : (
+            <dl>
+              {[
+                getField(isReadOnlyLabel, isReadOnly),
+                getField(logoutURLLabel, logoutURL),
+                getField('Namespace', dashboardNamespace),
+                getField(versionLabel, dashboardVersion)
               ].filter(Boolean)}
-              size="short"
-              skeletonRowCount={2}
-              title="Triggers"
-            />
+            </dl>
           )}
-        </div>
-        <div className="tkn--about--image-wrapper">
-          <img
-            alt={intl.formatMessage({
-              id: 'dashboard.logo.alt',
-              defaultMessage: 'Tekton logo'
+        </Tile>
+        <Tile id="tkn--about--pipelines-tile">
+          <h3>Pipelines</h3>
+          {isPlaceholderData ? (
+            <SkeletonText paragraph />
+          ) : (
+            <dl>
+              {[
+                getField('Namespace', pipelinesNamespace),
+                getField(versionLabel, pipelinesVersion)
+              ].filter(Boolean)}
+            </dl>
+          )}
+        </Tile>
+        {isTriggersInstalled && (
+          <Tile id="tkn--about--triggers-tile">
+            <h3>Triggers</h3>
+            {isPlaceholderData ? (
+              <SkeletonText paragraph />
+            ) : (
+              <dl>
+                {[
+                  getField('Namespace', triggersNamespace),
+                  getField(versionLabel, triggersVersion)
+                ].filter(Boolean)}
+              </dl>
+            )}
+          </Tile>
+        )}
+      </section>
+
+      <section className="tkn--about-docs tkn--css-grid">
+        <header>
+          <h2 className="tkn--section-title">
+            {intl.formatMessage({
+              id: 'dashboard.about.documentation',
+              defaultMessage: 'Documentation'
             })}
-            role="presentation"
-            src={tektonLogo}
-            title={intl.formatMessage({
-              id: 'dashboard.logo.tooltip',
-              defaultMessage: 'Meow'
-            })}
-          />
-        </div>
-      </div>
+          </h2>
+        </header>
+        <ClickableTile href="https://tekton.dev/docs/overview/">
+          <h3>Overview of Tekton</h3>
+          <p>Components, benefits and caveats, common usage</p>
+          <ArrowIcon />
+        </ClickableTile>
+        <ClickableTile href="https://tekton.dev/docs/concepts/">
+          <h3>Concepts</h3>
+          <p>Technical information and architecture</p>
+          <ArrowIcon />
+        </ClickableTile>
+        <ClickableTile href="https://tekton.dev/docs/pipelines/">
+          <h3>Tasks and Pipelines</h3>
+          <p>Building blocks of Tekton CI/CD workflow</p>
+          <ArrowIcon />
+        </ClickableTile>
+        <ClickableTile href="https://hub.tekton.dev/">
+          <h3>Tekton Hub</h3>
+          <p>Discover, search, and share reusable Tasks and Pipelines</p>
+          <ArrowIcon />
+        </ClickableTile>
+      </section>
     </div>
   );
 }

@@ -17,9 +17,9 @@ import { render } from '../../utils/test';
 import * as api from '../../api';
 import About from '.';
 
-const dashboardSelector = { selector: '#tkn--about--dashboard-table *' };
-const pipelinesSelector = { selector: '#tkn--about--pipelines-table *' };
-const triggersSelector = { selector: '#tkn--about--triggers-table *' };
+const dashboardSelector = { selector: '#tkn--about--dashboard-tile *' };
+const pipelinesSelector = { selector: '#tkn--about--pipelines-tile *' };
+const triggersSelector = { selector: '#tkn--about--triggers-tile *' };
 
 describe('About', () => {
   it('should render correctly', () => {
@@ -37,8 +37,6 @@ describe('About', () => {
 
     const { queryByText, queryAllByText } = render(<About />);
 
-    expect(queryByText('Property', dashboardSelector)).toBeTruthy();
-    expect(queryByText('Value', dashboardSelector)).toBeTruthy();
     expect(queryByText('Namespace', dashboardSelector)).toBeTruthy();
     expect(queryByText('tekton-dashboard', dashboardSelector)).toBeTruthy();
     expect(queryByText('Version', dashboardSelector)).toBeTruthy();
@@ -46,15 +44,11 @@ describe('About', () => {
     expect(queryByText('ReadOnly', dashboardSelector)).toBeTruthy();
     expect(queryAllByText('True', dashboardSelector).length).toBe(1);
 
-    expect(queryByText('Property', pipelinesSelector)).toBeTruthy();
-    expect(queryByText('Value', pipelinesSelector)).toBeTruthy();
     expect(queryByText('Namespace', pipelinesSelector)).toBeTruthy();
     expect(queryByText('tekton-pipelines', pipelinesSelector)).toBeTruthy();
     expect(queryByText('Version', pipelinesSelector)).toBeTruthy();
     expect(queryByText('v0.10.0', pipelinesSelector)).toBeTruthy();
 
-    expect(queryByText('Property', triggersSelector)).toBeTruthy();
-    expect(queryByText('Value', triggersSelector)).toBeTruthy();
     expect(queryByText('Namespace', triggersSelector)).toBeTruthy();
     expect(queryByText('tekton-triggers', triggersSelector)).toBeTruthy();
     expect(queryByText('Version', triggersSelector)).toBeTruthy();
@@ -74,15 +68,11 @@ describe('About', () => {
 
     const { queryByText } = render(<About />);
 
-    expect(queryByText('Property', dashboardSelector)).toBeTruthy();
-    expect(queryByText('Value', dashboardSelector)).toBeTruthy();
     expect(queryByText('Namespace', dashboardSelector)).toBeTruthy();
     expect(queryByText('tekton-dashboard', dashboardSelector)).toBeTruthy();
     expect(queryByText('Version', dashboardSelector)).toBeFalsy();
     expect(queryByText('ReadOnly', dashboardSelector)).toBeFalsy();
 
-    expect(queryByText('Property', pipelinesSelector)).toBeTruthy();
-    expect(queryByText('Value', pipelinesSelector)).toBeTruthy();
     expect(queryByText('Namespace', pipelinesSelector)).toBeTruthy();
     expect(queryByText('tekton-pipelines', pipelinesSelector)).toBeTruthy();
     expect(queryByText('Version', pipelinesSelector)).toBeTruthy();
@@ -101,15 +91,11 @@ describe('About', () => {
 
     const { queryByText } = render(<About />);
 
-    expect(queryByText('Property', dashboardSelector)).toBeTruthy();
-    expect(queryByText('Value', dashboardSelector)).toBeTruthy();
     expect(queryByText('Namespace', dashboardSelector)).toBeTruthy();
     expect(queryByText('tekton-dashboard', dashboardSelector)).toBeTruthy();
     expect(queryByText('Version', dashboardSelector)).toBeFalsy();
     expect(queryByText('ReadOnly', dashboardSelector)).toBeFalsy();
 
-    expect(queryByText('Property', pipelinesSelector)).toBeTruthy();
-    expect(queryByText('Value', pipelinesSelector)).toBeTruthy();
     expect(queryByText('Namespace', pipelinesSelector)).toBeFalsy();
     expect(queryByText('Version', pipelinesSelector)).toBeFalsy();
 
@@ -132,15 +118,11 @@ describe('About', () => {
 
     const { queryByText } = render(<About />);
 
-    expect(queryByText('Property', dashboardSelector)).toBeTruthy();
-    expect(queryByText('Value', dashboardSelector)).toBeTruthy();
     expect(queryByText('Namespace', dashboardSelector)).toBeTruthy();
     expect(queryByText('tekton-dashboard', dashboardSelector)).toBeTruthy();
     expect(queryByText('Version', dashboardSelector)).toBeTruthy();
     expect(queryByText('ReadOnly', dashboardSelector)).toBeFalsy();
 
-    expect(queryByText('Property', pipelinesSelector)).toBeTruthy();
-    expect(queryByText('Value', pipelinesSelector)).toBeTruthy();
     expect(queryByText('Namespace', pipelinesSelector)).toBeTruthy();
     expect(queryByText('tekton-pipelines', pipelinesSelector)).toBeTruthy();
     expect(queryByText('Version', pipelinesSelector)).toBeTruthy();
