@@ -80,19 +80,6 @@ limitations under the License.
     font-size: 1rem;
   }
 
-  .bx--batch-actions--active {
-    justify-content: flex-end;
-    visibility: visible !important;
-  }
-
-  .bx--batch-actions {
-    visibility: hidden;
-
-    .bx--batch-summary {
-      margin-left: 1rem;
-    }
-  }
-
   &.tkn--table--inline-actions {
     .bx--data-table td {
       &.cell-actions {
