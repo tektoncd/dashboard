@@ -31,7 +31,7 @@ const StepDetails = props => {
     taskRun,
     view
   } = props;
-  const { reason, status } = getStepStatusReason(stepStatus);
+  const { exitCode, reason, status } = getStepStatusReason(stepStatus);
   const statusValue =
     getStatus(taskRun).reason === 'TaskRunCancelled' && status !== 'terminated'
       ? 'cancelled'
@@ -46,6 +46,8 @@ const StepDetails = props => {
     <div className="tkn--step-details">
       <DetailsHeader
         displayName={stepName}
+        exitCode={exitCode}
+        hasWarning={exitCode !== 0}
         reason={reason}
         status={statusValue}
         stepStatus={stepStatus}

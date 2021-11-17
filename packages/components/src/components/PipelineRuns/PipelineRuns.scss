@@ -18,5 +18,11 @@ limitations under the License.
     margin-right: 0.5em;
     vertical-align: sub;
     flex-shrink: 0;
+
+    &.tkn--status-icon--warning {
+      width: 24px;
+      height: 24px;
+      margin-top: 1px;
+    }
   }
 }

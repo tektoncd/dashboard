@@ -239,6 +239,7 @@
     "dashboard.taskRun.status.pending": "擱置中",
     "dashboard.taskRun.status.running": "執行中",
     "dashboard.taskRun.status.succeeded": "已完成",
+    "dashboard.taskRun.status.succeeded.warning": "",
     "dashboard.taskRun.status.waiting": "等待中",
     "dashboard.taskRun.unavailable": "",
     "dashboard.taskRunParams.name": "",

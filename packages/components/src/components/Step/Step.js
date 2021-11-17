@@ -26,7 +26,7 @@ class Step extends Component {
   };
 
   statusLabel() {
-    const { intl, reason, status } = this.props;
+    const { exitCode, intl, reason, status } = this.props;
 
     if (
       status === 'cancelled' ||
@@ -48,10 +48,18 @@ class Step extends Component {
 
     if (status === 'terminated') {
       if (reason === 'Completed') {
-        return intl.formatMessage({
-          id: 'dashboard.taskRun.status.succeeded',
-          defaultMessage: 'Completed'
-        });
+        return exitCode !== 0
+          ? intl.formatMessage(
+              {
+                id: 'dashboard.taskRun.status.succeeded.warning',
+                defaultMessage: 'Completed with exit code {exitCode}'
+              },
+              { exitCode }
+            )
+          : intl.formatMessage({
+              id: 'dashboard.taskRun.status.succeeded',
+              defaultMessage: 'Completed'
+            });
       }
       return intl.formatMessage({
         id: 'dashboard.taskRun.status.failed',
@@ -73,7 +81,7 @@ class Step extends Component {
   }
 
   render() {
-    const { reason, selected, status, stepName } = this.props;
+    const { exitCode, reason, selected, status, stepName } = this.props;
     const statusLabel = this.statusLabel();
 
     return (
@@ -91,10 +99,11 @@ class Step extends Component {
         >
           <StatusIcon
             DefaultIcon={DefaultIcon}
-            type="inverse"
+            hasWarning={exitCode !== 0}
             reason={reason}
             status={status}
             title={statusLabel}
+            type="inverse"
           />
           <span className="tkn--step-name" title={stepName}>
             {stepName}

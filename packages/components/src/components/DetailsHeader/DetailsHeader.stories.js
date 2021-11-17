@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -66,6 +66,19 @@ export const Completed = args => (
     {...args}
   />
 );
+
+export const CompletedWithWarning = args => (
+  <DetailsHeader
+    exitCode={1}
+    hasWarning
+    reason="Completed"
+    status="terminated"
+    displayName="build"
+    taskRun={getTaskRun({ reason: 'Succeeded', status: 'True' })}
+    {...args}
+  />
+);
+CompletedWithWarning.storyName = 'Completed with warning';
 
 export const Failed = args => (
   <DetailsHeader

@@ -22,8 +22,8 @@ const props = {
 };
 
 const steps = [
-  { name: 'lint', terminated: { reason: 'Completed' } },
-  { name: 'test', terminated: { reason: 'Completed' } },
+  { name: 'lint', terminated: { exitCode: 0, reason: 'Completed' } },
+  { name: 'test', terminated: { exitCode: 1, reason: 'Completed' } },
   { name: 'build', running: {} },
   { name: 'deploy', running: {} }
 ];
@@ -41,6 +41,15 @@ export default {
 };
 
 export const Succeeded = () => <Task {...props} succeeded="True" />;
+
+export const SucceededWithWarning = () => (
+  <Task
+    {...props}
+    steps={[{ terminated: { exitCode: 1, reason: 'Completed' } }]}
+    succeeded="True"
+  />
+);
+SucceededWithWarning.storyName = 'Succeeded with warning';
 
 export const Failed = () => <Task {...props} succeeded="False" />;
 

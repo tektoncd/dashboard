@@ -529,3 +529,16 @@ export function getTaskRunsWithPlaceholders({
 
   return taskRunsToDisplay;
 }
+
+export function taskRunHasWarning(taskRun) {
+  const { reason, status } = getStatus(taskRun);
+  if (status !== 'True' || reason !== 'Succeeded') {
+    return false;
+  }
+
+  const onErrorContinueStep = taskRun.status?.steps?.find(
+    step =>
+      step.terminated?.reason === 'Completed' && step.terminated?.exitCode !== 0
+  );
+  return !!onErrorContinueStep;
+}

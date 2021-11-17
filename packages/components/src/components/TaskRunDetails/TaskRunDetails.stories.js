@@ -62,6 +62,40 @@ export const Base = () => (
   />
 );
 
+export const WithWarning = () => (
+  <TaskRunDetails
+    taskRun={{
+      metadata: { name: 'my-task', namespace: 'my-namespace' },
+      spec: {
+        params,
+        resources
+      },
+      status: {
+        completionTime: '2021-03-03T15:25:34Z',
+        podName: 'my-task-h7d6j-pod-pdtb7',
+        conditions: [
+          {
+            reason: 'Succeeded',
+            status: 'True',
+            type: 'Succeeded'
+          }
+        ],
+        steps: [
+          {
+            terminated: {
+              exitCode: 1,
+              reason: 'Completed'
+            }
+          }
+        ],
+        startTime: '2021-03-03T15:25:27Z',
+        taskResults: [{ name: 'message', value: 'hello' }]
+      }
+    }}
+    showIO
+  />
+);
+
 export const Pod = () => (
   <TaskRunDetails
     pod={{

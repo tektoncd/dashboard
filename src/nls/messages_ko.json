@@ -239,6 +239,7 @@
     "dashboard.taskRun.status.pending": "보류 중",
     "dashboard.taskRun.status.running": "실행 중",
     "dashboard.taskRun.status.succeeded": "완료됨",
+    "dashboard.taskRun.status.succeeded.warning": "",
     "dashboard.taskRun.status.waiting": "대기 중",
     "dashboard.taskRun.unavailable": "",
     "dashboard.taskRunParams.name": "",

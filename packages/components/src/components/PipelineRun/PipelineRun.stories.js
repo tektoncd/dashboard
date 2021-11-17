@@ -36,46 +36,54 @@ const task = {
   }
 };
 
-const taskRun = {
-  metadata: { labels: {}, name: 'sampleTaskRunName', namespace: 'default' },
-  spec: {
-    params: {},
-    resources: {
-      inputs: {},
-      outputs: {}
+function getTaskRun({ exitCode = 0, name }) {
+  return {
+    metadata: { labels: {}, name, namespace: 'default', uid: name },
+    spec: {
+      params: {},
+      resources: {
+        inputs: {},
+        outputs: {}
+      },
+      serviceAccountName: 'default',
+      taskRef: { kind: 'Task', name: 'task1' },
+      timeout: '24h0m0s'
     },
-    serviceAccountName: 'default',
-    taskRef: { kind: 'Task', name: 'task1' },
-    timeout: '24h0m0s'
-  },
-  status: {
-    completionTime: '2019-08-21T17:15:31Z',
-    conditions: [
-      {
-        lastTransitionTime: '2019-08-21T17:15:31Z',
-        message: 'All Steps have completed executing',
-        reason: 'Succeeded',
-        status: 'True',
-        type: 'Succeeded'
-      }
-    ],
-    podName: 'sample-task-run-pod-name',
-    startTime: '2019-08-21T17:12:21Z',
-    steps: [
-      {
-        name: 'build',
-        terminated: {
-          containerID:
-            'docker://88659459cb477936d2ee859822b024bf02768c9ff3dd048f7d8af85843064f95',
-          exitCode: 0,
-          finishedAt: '2019-08-21T17:12:29Z',
-          reason: 'Completed',
-          startedAt: '2019-08-21T17:12:26Z'
+    status: {
+      completionTime: '2019-08-21T17:15:31Z',
+      conditions: [
+        {
+          lastTransitionTime: '2019-08-21T17:15:31Z',
+          message: 'All Steps have completed executing',
+          reason: 'Succeeded',
+          status: 'True',
+          type: 'Succeeded'
         }
-      }
-    ]
-  }
-};
+      ],
+      podName: `sample-task-run-pod-name-${name}`,
+      startTime: '2019-08-21T17:12:21Z',
+      steps: [
+        {
+          name: 'build',
+          terminated: {
+            containerID:
+              'docker://88659459cb477936d2ee859822b024bf02768c9ff3dd048f7d8af85843064f95',
+            exitCode,
+            finishedAt: '2019-08-21T17:12:29Z',
+            reason: 'Completed',
+            startedAt: '2019-08-21T17:12:26Z'
+          }
+        }
+      ]
+    }
+  };
+}
+
+const taskRun = getTaskRun({ name: 'sampleTaskRunName' });
+const taskRunWithWarning = getTaskRun({
+  exitCode: 1,
+  name: 'sampleTaskRunName2'
+});
 
 const pipelineRun = {
   metadata: {
@@ -102,33 +110,11 @@ const pipelineRun = {
     taskRuns: {
       sampleTaskRunName: {
         pipelineTaskName: 'task1',
-        status: {
-          completionTime: '2019-08-21T17:15:31Z',
-          conditions: [
-            {
-              lastTransitionTime: '2019-08-21T17:15:31Z',
-              message: 'All Steps have completed executing',
-              reason: 'Succeeded',
-              status: 'True',
-              type: 'Succeeded'
-            }
-          ],
-          podName: 'sample-task-run-pod-name',
-          startTime: '2019-08-21T17:12:21Z',
-          steps: [
-            {
-              name: 'build',
-              terminated: {
-                containerID:
-                  'docker://88659459cb477936d2ee859822b024bf02768c9ff3dd048f7d8af85843064f95',
-                exitCode: 0,
-                finishedAt: '2019-08-21T17:12:29Z',
-                reason: 'Completed',
-                startedAt: '2019-08-21T17:12:26Z'
-              }
-            }
-          ]
-        }
+        status: taskRun.status
+      },
+      sampleTaskRunName2: {
+        pipelineTaskName: 'task2',
+        status: taskRunWithWarning.status
       }
     }
   }
@@ -153,7 +139,7 @@ export const Base = () => {
       pipelineRun={pipelineRun}
       selectedStepId={selectedStepId}
       selectedTaskId={selectedTaskId}
-      taskRuns={[taskRun]}
+      taskRuns={[taskRun, taskRunWithWarning]}
       tasks={[task]}
     />
   );
