@@ -23,10 +23,47 @@ import {
 } from '@tektoncd/dashboard-utils';
 
 class Task extends Component {
-  state = { selectedStepId: null };
+  state = { hasWarning: false, selectedStepId: null };
 
   componentDidMount() {
     this.selectDefaultStep();
+    this.getStepData({ propagateWarning: true });
+  }
+
+  componentDidUpdate(prevProps) {
+    const { reason } = this.props;
+    if (prevProps.reason !== reason && reason === 'Succeeded') {
+      this.getStepData({ propagateWarning: true });
+    }
+  }
+
+  getStepData({ propagateWarning = false } = {}) {
+    const { reason, selectedStepId, steps } = this.props;
+    let hasWarning = false;
+    const stepData = updateUnexecutedSteps(steps).map(step => {
+      const { name } = step;
+      const { exitCode, status, reason: stepReason } = getStepStatusReason(
+        step
+      );
+
+      if (stepReason === 'Completed') {
+        hasWarning = hasWarning || exitCode !== 0;
+      }
+
+      const selected = selectedStepId === name;
+      const stepStatus =
+        reason === 'TaskRunCancelled' && status !== 'terminated'
+          ? 'cancelled'
+          : status;
+
+      return { exitCode, name, selected, stepReason, stepStatus };
+    });
+
+    if (propagateWarning) {
+      this.setState({ hasWarning });
+    }
+
+    return stepData;
   }
 
   handleClick = () => {
@@ -68,9 +105,9 @@ class Task extends Component {
       displayName,
       reason,
       selectedStepId,
-      steps,
       succeeded
     } = this.props;
+    const { hasWarning } = this.state;
 
     const expandIcon = expanded ? null : (
       <ExpandIcon className="tkn--task--expand-icon" />
@@ -79,10 +116,11 @@ class Task extends Component {
     return (
       <li
         className="tkn--task"
-        data-succeeded={succeeded}
-        data-reason={reason}
-        data-selected={(expanded && !selectedStepId) || undefined}
         data-active={expanded || undefined}
+        data-has-warning={hasWarning}
+        data-reason={reason}
+        data-succeeded={succeeded}
+        data-selected={(expanded && !selectedStepId) || undefined}
       >
         <a
           className="tkn--task-link"
@@ -92,6 +130,7 @@ class Task extends Component {
         >
           <StatusIcon
             DefaultIcon={DefaultIcon}
+            hasWarning={hasWarning}
             reason={reason}
             status={succeeded}
           />
@@ -100,17 +139,11 @@ class Task extends Component {
         </a>
         {expanded && (
           <ol className="tkn--step-list">
-            {updateUnexecutedSteps(steps).map(step => {
-              const { name } = step;
-              const { status, reason: stepReason } = getStepStatusReason(step);
-
-              const selected = selectedStepId === name;
-              const stepStatus =
-                reason === 'TaskRunCancelled' && status !== 'terminated'
-                  ? 'cancelled'
-                  : status;
+            {this.getStepData().map(step => {
+              const { exitCode, name, selected, stepReason, stepStatus } = step;
               return (
                 <Step
+                  exitCode={exitCode}
                   id={name}
                   key={name}
                   onSelect={this.handleStepSelected}

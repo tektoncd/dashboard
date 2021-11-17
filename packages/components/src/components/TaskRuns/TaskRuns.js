@@ -15,7 +15,7 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { StatusIcon } from '@tektoncd/dashboard-components';
-import { getStatus, urls } from '@tektoncd/dashboard-utils';
+import { getStatus, taskRunHasWarning, urls } from '@tektoncd/dashboard-utils';
 import { Link as CarbonLink } from 'carbon-components-react';
 
 import { FormattedDate, FormattedDuration, RunDropdown, Table } from '..';
@@ -41,7 +41,13 @@ const TaskRuns = ({
   },
   getTaskRunStatusIcon = taskRun => {
     const { reason, status } = getStatus(taskRun);
-    return <StatusIcon reason={reason} status={status} />;
+    return (
+      <StatusIcon
+        hasWarning={taskRunHasWarning(taskRun)}
+        reason={reason}
+        status={status}
+      />
+    );
   },
   getTaskRunStatusTooltip = (taskRun, intl) => {
     const { message } = getStatus(taskRun);

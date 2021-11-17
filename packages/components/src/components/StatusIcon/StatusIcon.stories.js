@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -45,5 +45,10 @@ export const Running = args => (
 );
 
 export const Succeeded = args => <StatusIcon status="True" {...args} />;
+
+export const SucceededWithWarning = args => (
+  <StatusIcon hasWarning status="True" {...args} />
+);
+SucceededWithWarning.storyName = 'Succeeded with warning';
 
 export const Failed = args => <StatusIcon status="False" {...args} />;

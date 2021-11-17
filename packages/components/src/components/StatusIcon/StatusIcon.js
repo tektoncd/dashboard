@@ -15,10 +15,12 @@ import React from 'react';
 import classNames from 'classnames';
 import {
   CheckmarkFilled20 as CheckmarkFilled,
+  CheckmarkFilledWarning20 as CheckmarkFilledWarning,
   CheckmarkOutline20 as CheckmarkOutline,
   CloseFilled20 as CloseFilled,
   CloseOutline20 as CloseOutline,
-  Time20 as Pending
+  Time20 as Pending,
+  WarningAltFilled20 as WarningFilled
 } from '@carbon/icons-react';
 import { isRunning } from '@tektoncd/dashboard-utils';
 
@@ -30,23 +32,26 @@ const icons = {
     error: CloseFilled,
     pending: Pending,
     running: Spinner,
-    success: CheckmarkFilled
+    success: CheckmarkFilled,
+    warning: CheckmarkFilledWarning
   },
   inverse: {
     cancelled: CloseOutline,
     error: CloseOutline,
     pending: Pending,
     running: Spinner,
-    success: CheckmarkOutline
+    success: CheckmarkOutline,
+    warning: WarningFilled
   }
 };
 
 export default function StatusIcon({
   DefaultIcon,
-  type = 'normal',
+  hasWarning,
   reason,
   status,
-  title
+  title,
+  type = 'normal'
 }) {
   let statusClass;
   if (
@@ -60,7 +65,7 @@ export default function StatusIcon({
     status === 'True' ||
     (status === 'terminated' && reason === 'Completed')
   ) {
-    statusClass = 'success';
+    statusClass = hasWarning ? 'warning' : 'success';
   } else if (
     status === 'False' &&
     (reason === 'PipelineRunCancelled' || reason === 'TaskRunCancelled')
@@ -79,9 +84,13 @@ export default function StatusIcon({
 
   return Icon ? (
     <Icon
-      className={classNames('tkn--status-icon', {
-        [`tkn--status-icon--${statusClass}`]: statusClass
-      })}
+      className={classNames(
+        'tkn--status-icon',
+        {
+          [`tkn--status-icon--${statusClass}`]: statusClass
+        },
+        `tkn--status-icon--type-${type}`
+      )}
     >
       {title && <title>{title}</title>}
     </Icon>

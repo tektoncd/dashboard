@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -137,6 +137,51 @@ export const Base = () => (
               }
             }
           ]
+        }
+      },
+      {
+        metadata: {
+          name: 'pipeline-run-20211118145503',
+          namespace: 'cb4552a6-b2d7-45e2-9773-3d4ca33909ff',
+          uid: '90cde04b-ef64-4e3a-a74c-9cd7f78738d2',
+          creationTimestamp: '2021-11-18T14:55:00Z'
+        },
+        spec: {
+          pipelineRef: {
+            name: 'pipeline'
+          }
+        },
+        status: {
+          conditions: [
+            {
+              lastTransitionTime: '2021-11-18T14:58:47Z',
+              message: 'All Tasks have completed executing',
+              reason: 'Succeeded',
+              status: 'True',
+              type: 'Succeeded'
+            }
+          ],
+          taskRuns: {
+            foo: {
+              status: {
+                conditions: [
+                  {
+                    reason: 'Succeeded',
+                    status: 'True',
+                    type: 'Succeeded'
+                  }
+                ],
+                steps: [
+                  {
+                    terminated: {
+                      exitCode: 1,
+                      reason: 'Completed'
+                    }
+                  }
+                ]
+              }
+            }
+          }
         }
       }
     ]}

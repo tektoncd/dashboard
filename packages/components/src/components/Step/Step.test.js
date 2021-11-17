@@ -63,9 +63,16 @@ it('Step renders cancelled state for TaskRunTimeout', () => {
 
 it('Step renders completed state', () => {
   const { queryByText } = render(
-    <Step status="terminated" reason="Completed" />
+    <Step exitCode={0} status="terminated" reason="Completed" />
   );
   expect(queryByText(/Completed/i)).toBeTruthy();
+});
+
+it('Step renders completed with warning state', () => {
+  const { queryByText } = render(
+    <Step exitCode={1} status="terminated" reason="Completed" />
+  );
+  expect(queryByText(/Completed with exit code 1/i)).toBeTruthy();
 });
 
 it('Step renders error state', () => {

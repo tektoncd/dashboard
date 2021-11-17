@@ -15,7 +15,7 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { StatusIcon, Table } from '@tektoncd/dashboard-components';
-import { getStatus, urls } from '@tektoncd/dashboard-utils';
+import { getStatus, taskRunHasWarning, urls } from '@tektoncd/dashboard-utils';
 import { Pending24 as DefaultIcon } from '@carbon/icons-react';
 import { Link as CarbonLink } from 'carbon-components-react';
 
@@ -40,8 +40,20 @@ const PipelineRuns = ({
   },
   getPipelineRunStatusIcon = pipelineRun => {
     const { reason, status } = getStatus(pipelineRun);
+    let hasWarning = false;
+    if (status === 'True' && reason === 'Succeeded') {
+      hasWarning = Object.values(
+        pipelineRun.status?.taskRuns || {}
+      ).some(taskRun => taskRunHasWarning(taskRun));
+    }
+
     return (
-      <StatusIcon DefaultIcon={DefaultIcon} reason={reason} status={status} />
+      <StatusIcon
+        DefaultIcon={DefaultIcon}
+        hasWarning={hasWarning}
+        reason={reason}
+        status={status}
+      />
     );
   },
   getPipelineRunStatusTooltip = (pipelineRun, intl) => {

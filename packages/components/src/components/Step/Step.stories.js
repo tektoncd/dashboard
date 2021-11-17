@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -17,6 +17,7 @@ import { action } from '@storybook/addon-actions';
 import Step from './Step';
 
 const props = {
+  exitCode: 0,
   onSelect: action('selected'),
   stepName: 'build'
 };
@@ -42,6 +43,11 @@ export const Running = () => <Step {...props} status="running" />;
 export const Completed = () => (
   <Step {...props} status="terminated" reason="Completed" />
 );
+
+export const CompletedWithWarning = () => (
+  <Step {...props} exitCode={1} status="terminated" reason="Completed" />
+);
+CompletedWithWarning.storyName = 'Completed with warning';
 
 export const Error = () => (
   <Step {...props} status="terminated" reason="Error" />

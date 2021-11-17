@@ -49,6 +49,12 @@ header.tkn--step-details-header {
         top: -1px;
         left: -1px;
       }
+
+      &.tkn--status-icon--warning.tkn--status-icon--type-normal {
+        width: 28px;
+        height: 28px;
+        margin-right: 0.5rem;
+      }
     }
 
     > .tkn--status-label {

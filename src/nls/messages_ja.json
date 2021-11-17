@@ -239,6 +239,7 @@
     "dashboard.taskRun.status.pending": "保留中",
     "dashboard.taskRun.status.running": "実行中",
     "dashboard.taskRun.status.succeeded": "完了",
+    "dashboard.taskRun.status.succeeded.warning": "",
     "dashboard.taskRun.status.waiting": "待機中",
     "dashboard.taskRun.unavailable": "TaskRunは使用できません",
     "dashboard.taskRunParams.name": "名前",

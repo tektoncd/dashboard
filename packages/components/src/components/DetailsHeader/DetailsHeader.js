@@ -53,7 +53,7 @@ class DetailsHeader extends Component {
   }
 
   statusLabel() {
-    const { intl, reason, status, taskRun } = this.props;
+    const { exitCode, hasWarning, intl, reason, status, taskRun } = this.props;
     const { reason: taskReason, status: taskStatus } = getStatus(taskRun);
 
     if (
@@ -75,10 +75,18 @@ class DetailsHeader extends Component {
     }
     if (status === 'terminated') {
       if (reason === 'Completed') {
-        return intl.formatMessage({
-          id: 'dashboard.taskRun.status.succeeded',
-          defaultMessage: 'Completed'
-        });
+        return hasWarning
+          ? intl.formatMessage(
+              {
+                id: 'dashboard.taskRun.status.succeeded.warning',
+                defaultMessage: 'Completed with exit code {exitCode}'
+              },
+              { exitCode }
+            )
+          : intl.formatMessage({
+              id: 'dashboard.taskRun.status.succeeded',
+              defaultMessage: 'Completed'
+            });
       }
       return intl.formatMessage({
         id: 'dashboard.taskRun.status.failed',
@@ -100,7 +108,13 @@ class DetailsHeader extends Component {
   }
 
   render() {
-    const { intl, displayName, taskRun, type = 'step' } = this.props;
+    const {
+      displayName,
+      hasWarning,
+      intl,
+      taskRun,
+      type = 'step'
+    } = this.props;
     let { reason, status } = this.props;
     let statusLabel;
 
@@ -127,6 +141,7 @@ class DetailsHeader extends Component {
         <h2 className="tkn--details-header--heading">
           <StatusIcon
             DefaultIcon={DefaultIcon}
+            hasWarning={hasWarning}
             reason={reason}
             status={status}
             {...(type === 'step' ? { type: 'inverse' } : null)}

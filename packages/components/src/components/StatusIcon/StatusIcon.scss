@@ -31,4 +31,18 @@ limitations under the License.
   &--success {
     fill: $support-02;
   }
+
+  &--warning {
+    &.tkn--status-icon--type-normal {
+      fill: $support-02;
+
+      path:nth-child(2) {
+        fill: $support-03;
+      }
+    }
+
+    &.tkn--status-icon--type-inverse {
+      fill: $support-03;
+    }
+  }
 }
