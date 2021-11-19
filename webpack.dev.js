@@ -38,7 +38,6 @@ module.exports = merge(common({ mode }), {
     historyApiFallback: true,
     hot: true,
     liveReload: false,
-    overlay: true,
     port: process.env.PORT || PORT,
     proxy: {
       '/v1': {
