@@ -34,7 +34,11 @@ export function TriggerContainer() {
     resourceName: triggerName
   });
 
-  const { data: trigger, error, isFetching } = useTrigger({
+  const {
+    data: trigger,
+    error,
+    isFetching
+  } = useTrigger({
     name: triggerName,
     namespace
   });

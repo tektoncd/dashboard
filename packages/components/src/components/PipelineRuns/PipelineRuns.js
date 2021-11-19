@@ -42,9 +42,9 @@ const PipelineRuns = ({
     const { reason, status } = getStatus(pipelineRun);
     let hasWarning = false;
     if (status === 'True' && reason === 'Succeeded') {
-      hasWarning = Object.values(
-        pipelineRun.status?.taskRuns || {}
-      ).some(taskRun => taskRunHasWarning(taskRun));
+      hasWarning = Object.values(pipelineRun.status?.taskRuns || {}).some(
+        taskRun => taskRunHasWarning(taskRun)
+      );
     }
 
     return (

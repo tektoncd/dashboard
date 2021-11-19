@@ -212,11 +212,8 @@ describe('CreateTaskRun', () => {
       .spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: 'namespace-1' }));
 
-    const {
-      getByPlaceholderText,
-      getByText,
-      getByDisplayValue
-    } = renderWithRouter(<CreateTaskRun />);
+    const { getByPlaceholderText, getByText, getByDisplayValue } =
+      renderWithRouter(<CreateTaskRun />);
 
     fireEvent.click(getByPlaceholderText(/select task/i));
     fireEvent.click(await waitFor(() => getByText(/task-1/i)));

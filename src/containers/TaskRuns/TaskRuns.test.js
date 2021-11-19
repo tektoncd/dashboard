@@ -68,11 +68,7 @@ describe('TaskRuns container', () => {
   });
 
   it('Duplicate label filters are prevented', async () => {
-    const {
-      queryByText,
-      getByPlaceholderText,
-      getByText
-    } = renderWithRouter(
+    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
       <TaskRunsContainer
         error={null}
         loading={false}
@@ -94,11 +90,7 @@ describe('TaskRuns container', () => {
   });
 
   it('An invalid filter value is disallowed and reported', async () => {
-    const {
-      queryByText,
-      getByPlaceholderText,
-      getByText
-    } = renderWithRouter(
+    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
       <TaskRunsContainer
         error={null}
         loading={false}
@@ -138,18 +130,15 @@ describe('TaskRuns container', () => {
   it('TaskRun actions are not available when in read-only mode', async () => {
     jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => true);
 
-    const {
-      getByText,
-      queryAllByLabelText,
-      queryAllByTitle
-    } = renderWithRouter(
-      <TaskRunsContainer
-        error={null}
-        loading={false}
-        namespace="namespace-1"
-      />,
-      { route: urls.taskRuns.all() }
-    );
+    const { getByText, queryAllByLabelText, queryAllByTitle } =
+      renderWithRouter(
+        <TaskRunsContainer
+          error={null}
+          loading={false}
+          namespace="namespace-1"
+        />,
+        { route: urls.taskRuns.all() }
+      );
 
     await waitFor(() => getByText('taskRunWithTwoLabels'));
     expect(queryAllByTitle(/actions/i)[0]).toBeFalsy();

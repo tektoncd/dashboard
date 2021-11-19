@@ -36,6 +36,11 @@ const namespaces = [
   'tekton-pipelines'
 ].map(namespace => ({ metadata: { name: namespace } }));
 
+const namespaceContext = {
+  selectedNamespace: ALL_NAMESPACES,
+  selectNamespace: () => {}
+};
+
 export default {
   component: ListPageLayoutContainer,
   decorators: [
@@ -47,12 +52,7 @@ export default {
 
       return (
         <QueryClientProvider client={queryClient}>
-          <NamespaceContext.Provider
-            value={{
-              selectedNamespace: ALL_NAMESPACES,
-              selectNamespace: () => {}
-            }}
-          >
+          <NamespaceContext.Provider value={namespaceContext}>
             <Story />
           </NamespaceContext.Provider>
         </QueryClientProvider>

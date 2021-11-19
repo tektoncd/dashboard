@@ -11,14 +11,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 module.exports = {
-  parser: 'babel-eslint',
+  parser: '@babel/eslint-parser',
   env: {
     browser: true,
     es6: true,
     jest: true,
     node: true
   },
-  extends: ['airbnb', 'plugin:prettier/recommended', 'prettier/react'],
+  extends: ['airbnb', 'plugin:prettier/recommended'],
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly'
@@ -33,10 +33,12 @@ module.exports = {
   plugins: ['notice', 'react'],
   rules: {
     curly: ['error', 'all'],
+    'default-param-last': 'off',
     'import/prefer-default-export': 'off',
     'import/no-extraneous-dependencies': 'off',
     'jsx-a11y/anchor-is-valid': 'off',
     'no-case-declarations': 'off',
+    'no-restricted-exports': 'off',
     'no-template-curly-in-string': 'off',
     'no-unused-vars': [
       'error',
@@ -55,8 +57,11 @@ module.exports = {
       }
     ],
     'react/destructuring-assignment': 'off',
+    'react/function-component-definition': 'off',
+    'react/no-unstable-nested-components': 'off',
     'react/jsx-curly-newline': 'off',
     'react/jsx-filename-extension': 'off',
+    'react/jsx-no-bind': 'off',
     'react/jsx-props-no-spreading': 'off',
     'react/prop-types': 'off',
     'react/state-in-constructor': 'off',

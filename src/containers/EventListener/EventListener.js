@@ -36,7 +36,11 @@ export function EventListenerContainer({ intl }) {
     resourceName: eventListenerName
   });
 
-  const { data: eventListener, error, isFetching } = useEventListener({
+  const {
+    data: eventListener,
+    error,
+    isFetching
+  } = useEventListener({
     name: eventListenerName,
     namespace
   });
@@ -46,11 +50,8 @@ export function EventListenerContainer({ intl }) {
       return null;
     }
 
-    const {
-      namespaceSelector,
-      serviceAccountName,
-      serviceType
-    } = eventListener.spec;
+    const { namespaceSelector, serviceAccountName, serviceType } =
+      eventListener.spec;
     return (
       <>
         {serviceAccountName && (

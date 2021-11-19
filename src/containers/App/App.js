@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import { hot } from 'react-hot-loader/root';
 import {
@@ -192,10 +192,13 @@ export function App({ lang }) {
 
   const logoutButton = <LogoutButton getLogoutURL={() => logoutURL} />;
 
+  const namespaceContext = useMemo(
+    () => ({ selectedNamespace, selectNamespace: setSelectedNamespace }),
+    [selectedNamespace]
+  );
+
   return (
-    <NamespaceContext.Provider
-      value={{ selectedNamespace, selectNamespace: setSelectedNamespace }}
-    >
+    <NamespaceContext.Provider value={namespaceContext}>
       <IntlProvider
         defaultLocale={defaultLocale}
         locale={messages[lang] ? lang : defaultLocale}

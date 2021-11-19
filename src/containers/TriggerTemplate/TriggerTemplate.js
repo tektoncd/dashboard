@@ -54,7 +54,11 @@ export /* istanbul ignore next */ function TriggerTemplateContainer({ intl }) {
     resourceName
   });
 
-  const { data: triggerTemplate, error, isFetching } = useTriggerTemplate({
+  const {
+    data: triggerTemplate,
+    error,
+    isFetching
+  } = useTriggerTemplate({
     name: resourceName,
     namespace
   });

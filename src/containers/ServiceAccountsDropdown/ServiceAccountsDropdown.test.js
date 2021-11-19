@@ -59,13 +59,13 @@ const serviceAccount3 = {
   }
 };
 
-const initialTextRegExp = new RegExp('select serviceaccount', 'i');
+const initialTextRegExp = /select serviceaccount/i;
 
 const checkDropdownItems = ({
   queryByText,
   getAllByText,
   testDict,
-  itemPrefixRegExp = new RegExp('service-account-', 'i')
+  itemPrefixRegExp = /service-account-/i
 }) => {
   Object.keys(testDict).forEach(item => {
     expect(queryByText(new RegExp(item, 'i'))).toBeTruthy();

@@ -21,62 +21,56 @@ import {
 } from '@carbon/icons-react';
 
 const LogsToolbar = ({ intl, isMaximized, name, toggleMaximized, url }) => (
-  <>
-    <div className="bx--btn-set">
-      {toggleMaximized ? (
-        <button
-          className="bx--copy-btn"
-          onClick={toggleMaximized}
-          type="button"
-        >
-          {isMaximized ? (
-            <Minimize16>
-              <title>
-                {intl.formatMessage({
-                  id: 'dashboard.logs.restore',
-                  defaultMessage: 'Return to default'
-                })}
-              </title>
-            </Minimize16>
-          ) : (
-            <Maximize16>
-              <title>
-                {intl.formatMessage({
-                  id: 'dashboard.logs.maximize',
-                  defaultMessage: 'Maximize'
-                })}
-              </title>
-            </Maximize16>
-          )}
-        </button>
-      ) : null}
-      <a
-        className="bx--copy-btn"
-        href={url}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <Launch16>
-          <title>
-            {intl.formatMessage({
-              id: 'dashboard.logs.launchButtonTooltip',
-              defaultMessage: 'Open logs in a new window'
-            })}
-          </title>
-        </Launch16>
-      </a>
-      <a className="bx--copy-btn" download={name} href={url}>
-        <Download16>
-          <title>
-            {intl.formatMessage({
-              id: 'dashboard.logs.downloadButtonTooltip',
-              defaultMessage: 'Download logs'
-            })}
-          </title>
-        </Download16>
-      </a>
-    </div>
-  </>
+  <div className="bx--btn-set">
+    {toggleMaximized ? (
+      <button className="bx--copy-btn" onClick={toggleMaximized} type="button">
+        {isMaximized ? (
+          <Minimize16>
+            <title>
+              {intl.formatMessage({
+                id: 'dashboard.logs.restore',
+                defaultMessage: 'Return to default'
+              })}
+            </title>
+          </Minimize16>
+        ) : (
+          <Maximize16>
+            <title>
+              {intl.formatMessage({
+                id: 'dashboard.logs.maximize',
+                defaultMessage: 'Maximize'
+              })}
+            </title>
+          </Maximize16>
+        )}
+      </button>
+    ) : null}
+    <a
+      className="bx--copy-btn"
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <Launch16>
+        <title>
+          {intl.formatMessage({
+            id: 'dashboard.logs.launchButtonTooltip',
+            defaultMessage: 'Open logs in a new window'
+          })}
+        </title>
+      </Launch16>
+    </a>
+    <a className="bx--copy-btn" download={name} href={url}>
+      <Download16>
+        <title>
+          {intl.formatMessage({
+            id: 'dashboard.logs.downloadButtonTooltip',
+            defaultMessage: 'Download logs'
+          })}
+        </title>
+      </Download16>
+    </a>
+  </div>
 );
 
 export default injectIntl(LogsToolbar);

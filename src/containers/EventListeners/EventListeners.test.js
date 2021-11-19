@@ -76,11 +76,10 @@ describe('EventListeners', () => {
         data: filters.length ? [] : [eventListener]
       }));
 
-    const {
-      getByPlaceholderText,
-      getByText,
-      queryByText
-    } = renderWithRouter(<EventListeners />, { route: '/eventlisteners' });
+    const { getByPlaceholderText, getByText, queryByText } = renderWithRouter(
+      <EventListeners />,
+      { route: '/eventlisteners' }
+    );
 
     const filterValue = 'baz:bam';
     const filterInputField = getByPlaceholderText(/Input a label filter/);

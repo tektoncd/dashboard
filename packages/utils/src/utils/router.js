@@ -119,8 +119,7 @@ export const paths = {
     },
     byPipeline() {
       return byNamespace({
-        path:
-          '/pipelineruns?labelSelector=tekton.dev%2Fpipeline%3D:pipelineName'
+        path: '/pipelineruns?labelSelector=tekton.dev%2Fpipeline%3D:pipelineName'
       });
     },
     create() {

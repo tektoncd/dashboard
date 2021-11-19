@@ -12,7 +12,7 @@ limitations under the License.
 */
 const { merge } = require('webpack-merge');
 
-const common = require('./webpack.common.js');
+const common = require('./webpack.common');
 const { API_DOMAIN, PORT } = require('./config_frontend/config.json');
 
 const mode = 'development';
