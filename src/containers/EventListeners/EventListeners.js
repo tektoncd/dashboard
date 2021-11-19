@@ -31,7 +31,11 @@ function EventListeners({ intl }) {
   const { selectedNamespace: defaultNamespace } = useSelectedNamespace();
   const { namespace: selectedNamespace = defaultNamespace } = params;
 
-  const { data: eventListeners = [], error, isLoading } = useEventListeners({
+  const {
+    data: eventListeners = [],
+    error,
+    isLoading
+  } = useEventListeners({
     filters,
     namespace: selectedNamespace
   });

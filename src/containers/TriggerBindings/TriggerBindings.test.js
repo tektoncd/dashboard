@@ -76,11 +76,10 @@ describe('TriggerBindings', () => {
         data: filters.length ? [] : [triggerBinding]
       }));
 
-    const {
-      queryByText,
-      getByPlaceholderText,
-      getByText
-    } = renderWithRouter(<TriggerBindings />, { route: '/triggerbindings' });
+    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
+      <TriggerBindings />,
+      { route: '/triggerbindings' }
+    );
 
     const filterValue = 'baz:bam';
     const filterInputField = getByPlaceholderText(/Input a label filter/);

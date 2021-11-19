@@ -37,7 +37,11 @@ export function TriggerBindingContainer({ intl }) {
     resourceName
   });
 
-  const { data: triggerBinding, error, isFetching } = useTriggerBinding({
+  const {
+    data: triggerBinding,
+    error,
+    isFetching
+  } = useTriggerBinding({
     name: resourceName,
     namespace
   });

@@ -52,7 +52,8 @@ describe('CreatePipelineResource', () => {
     );
   });
 
-  const nameValidationErrorMsgRegExp = /Must be less than 64 characters and contain only lowercase alphanumeric characters or -/i;
+  const nameValidationErrorMsgRegExp =
+    /Must be less than 64 characters and contain only lowercase alphanumeric characters or -/i;
   const namespaceValidationErrorRegExp = /Namespace required/i;
   const urlValidationErrorRegExp = /URL required/i;
   const revisionValidationErrorRegExp = /Revision required/i;

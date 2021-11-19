@@ -56,7 +56,11 @@ function Tasks({ intl }) {
 
   const isReadOnly = useIsReadOnly();
 
-  const { data: tasks = [], error, isLoading } = useTasks({
+  const {
+    data: tasks = [],
+    error,
+    isLoading
+  } = useTasks({
     filters,
     namespace
   });

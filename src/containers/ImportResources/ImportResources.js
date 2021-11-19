@@ -63,12 +63,10 @@ export function ImportResources({ intl }) {
   const { selectedNamespace: navNamespace } = useSelectedNamespace();
   const dashboardNamespace = useDashboardNamespace();
 
-  const [importerNamespace, setImporterNamespace] = useState(
-    dashboardNamespace
-  );
-  const [invalidImporterNamespace, setInvalidImporterNamespace] = useState(
-    false
-  );
+  const [importerNamespace, setImporterNamespace] =
+    useState(dashboardNamespace);
+  const [invalidImporterNamespace, setInvalidImporterNamespace] =
+    useState(false);
   const [invalidInput, setInvalidInput] = useState(false);
   const [invalidNamespace, setInvalidNamespace] = useState(false);
   const [logsURL, setLogsURL] = useState('');
@@ -142,9 +140,11 @@ export function ImportResources({ intl }) {
       return;
     }
 
-    const { resource: gitServer, owner: gitOrg, name: gitRepo } = parseGitURL(
-      repositoryURL
-    );
+    const {
+      resource: gitServer,
+      owner: gitOrg,
+      name: gitRepo
+    } = parseGitURL(repositoryURL);
     const labels = { gitServer, gitOrg, gitRepo };
 
     importResources({
@@ -340,8 +340,7 @@ export function ImportResources({ intl }) {
                   Namespace
                   <HelpIcon
                     title={intl.formatMessage({
-                      id:
-                        'dashboard.importResources.importerNamespace.helperText',
+                      id: 'dashboard.importResources.importerNamespace.helperText',
                       defaultMessage:
                         'The namespace in which the PipelineRun fetching the repository and creating the resources will run'
                     })}

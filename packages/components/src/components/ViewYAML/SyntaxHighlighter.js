@@ -19,11 +19,7 @@ function addLine({ addBullet, key, level, lines, path, rawString, value }) {
   let valueNode;
 
   if (rawString) {
-    valueNode = (
-      <>
-        <span className="hljs-string">{value}</span>
-      </>
-    );
+    valueNode = <span className="hljs-string">{value}</span>;
   } else if (value === null) {
     valueNode = (
       <>

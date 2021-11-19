@@ -30,7 +30,11 @@ function Conditions({ intl }) {
   const { namespace = selectedNamespace } = params;
   const filters = getFilters(location);
 
-  const { data: conditions = [], error, isLoading } = useConditions({
+  const {
+    data: conditions = [],
+    error,
+    isLoading
+  } = useConditions({
     filters,
     namespace
   });

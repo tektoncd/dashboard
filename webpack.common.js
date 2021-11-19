@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2021 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,6 +13,7 @@ limitations under the License.
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 const contentSecurityPolicy = {
   development:
@@ -34,10 +35,7 @@ module.exports = ({ mode }) => ({
       {
         test: /\.js$/,
         include: path.resolve(__dirname, 'src'),
-        use: [
-          { loader: 'babel-loader', options: { cacheDirectory: true } },
-          'eslint-loader'
-        ]
+        use: [{ loader: 'babel-loader', options: { cacheDirectory: true } }]
       },
       {
         test: /\.(png|jpg|gif)$/,
@@ -57,6 +55,9 @@ module.exports = ({ mode }) => ({
     new webpack.EnvironmentPlugin({
       NODE_ENV: mode,
       I18N_PSEUDO: false
+    }),
+    new ESLintPlugin({
+      files: 'src'
     }),
     new HtmlWebpackPlugin({
       title: 'Tekton Dashboard',

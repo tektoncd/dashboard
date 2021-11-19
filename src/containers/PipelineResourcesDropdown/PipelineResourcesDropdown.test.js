@@ -63,13 +63,13 @@ const pipelineResource3 = {
   spec: { type: 'type-1' }
 };
 
-const initialTextRegExp = new RegExp('select pipelineresource', 'i');
+const initialTextRegExp = /select pipelineresource/i;
 
 const checkDropdownItems = ({
   queryByText,
   getAllByText,
   testDict,
-  itemPrefixRegExp = new RegExp('pipeline-resource-', 'i')
+  itemPrefixRegExp = /pipeline-resource-/i
 }) => {
   Object.keys(testDict).forEach(item => {
     expect(queryByText(new RegExp(item, 'i'))).toBeTruthy();

@@ -73,11 +73,10 @@ it('TriggerTemplates can be filtered on a single label filter', async () => {
       data: filters.length ? [] : [triggerTemplate]
     }));
 
-  const {
-    queryByText,
-    getByPlaceholderText,
-    getByText
-  } = renderWithRouter(<TriggerTemplates />, { route: '/triggerTemplates' });
+  const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
+    <TriggerTemplates />,
+    { route: '/triggerTemplates' }
+  );
 
   const filterValue = 'baz:bam';
   const filterInputField = getByPlaceholderText(/Input a label filter/);

@@ -21,8 +21,8 @@ import { colors } from './defaults';
 const linkifyIt = LinkifyIt().tlds(tlds);
 
 // eslint-disable-next-line no-control-regex
-const ansiRegex = new RegExp('^\u001b([@-_])(.*?)([@-~])');
-const characterRegex = new RegExp('[^]', 'm');
+const ansiRegex = /^\u001b([@-_])(.*?)([@-~])/;
+const characterRegex = /[^]/m;
 
 const getXtermColor = commandStack => {
   if (commandStack.length >= 2 && commandStack[0] === '5') {

@@ -113,11 +113,8 @@ describe('ImportResources component', () => {
 
     const namespace = 'default';
 
-    const {
-      getAllByPlaceholderText,
-      getByPlaceholderText,
-      getByText
-    } = await renderWithRouter(<ImportResourcesContainer />);
+    const { getAllByPlaceholderText, getByPlaceholderText, getByText } =
+      await renderWithRouter(<ImportResourcesContainer />);
 
     const repoURLField = getByPlaceholderText(/my-repository/);
     fireEvent.change(repoURLField, { target: { value: repositoryURLValue } });
@@ -154,11 +151,8 @@ describe('ImportResources component', () => {
       .spyOn(API, 'importResources')
       .mockImplementation(() => Promise.reject(importResourcesResponseMock));
 
-    const {
-      getAllByPlaceholderText,
-      getByPlaceholderText,
-      getByText
-    } = await render(<ImportResourcesContainer />);
+    const { getAllByPlaceholderText, getByPlaceholderText, getByText } =
+      await render(<ImportResourcesContainer />);
 
     const repoURLField = getByPlaceholderText(/my-repository/);
     fireEvent.change(repoURLField, { target: { value: 'URL' } });

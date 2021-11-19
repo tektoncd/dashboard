@@ -30,7 +30,11 @@ function Triggers({ intl }) {
   const { selectedNamespace } = useSelectedNamespace();
   const { namespace = selectedNamespace } = params;
 
-  const { data: triggers = [], error, isLoading } = useTriggers({
+  const {
+    data: triggers = [],
+    error,
+    isLoading
+  } = useTriggers({
     filters,
     namespace
   });

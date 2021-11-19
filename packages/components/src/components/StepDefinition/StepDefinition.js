@@ -21,19 +21,17 @@ class StepDefinition extends PureComponent {
     const { definition, intl } = this.props;
 
     return (
-      <>
-        <ViewYAML
-          dark
-          enableSyntaxHighlighting
-          resource={
-            definition ||
-            intl.formatMessage({
-              id: 'dashboard.step.definitionNotAvailable',
-              defaultMessage: 'Step definition not available'
-            })
-          }
-        />
-      </>
+      <ViewYAML
+        dark
+        enableSyntaxHighlighting
+        resource={
+          definition ||
+          intl.formatMessage({
+            id: 'dashboard.step.definitionNotAvailable',
+            defaultMessage: 'Step definition not available'
+          })
+        }
+      />
     );
   }
 }

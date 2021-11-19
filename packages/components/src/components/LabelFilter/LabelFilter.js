@@ -50,8 +50,7 @@ class LabelFilter extends Component {
           defaultMessage:
             'Filters must be of the format labelKey:labelValue and contain accepted label characters'
         }),
-        url:
-          'https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set',
+        url: 'https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set',
         urlMessage: intl.formatMessage({
           id: 'dashboard.labelFilter.syntaxMessage',
           defaultMessage:
@@ -120,13 +119,8 @@ class LabelFilter extends Component {
   render() {
     const { filters, intl } = this.props;
 
-    const {
-      currentFilterValue,
-      filterMessage,
-      isValid,
-      url,
-      urlMessage
-    } = this.state;
+    const { currentFilterValue, filterMessage, isValid, url, urlMessage } =
+      this.state;
 
     const searchDescription = intl.formatMessage({
       id: 'dashboard.labelFilter.searchPlaceholder',

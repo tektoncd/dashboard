@@ -49,13 +49,13 @@ const pipelines = [
   }
 ];
 
-const initialTextRegExp = new RegExp('select pipeline', 'i');
+const initialTextRegExp = /select pipeline/i;
 
 const checkDropdownItems = ({
   queryByText,
   getAllByText,
   testDict,
-  itemPrefixRegExp = new RegExp('pipeline-', 'i')
+  itemPrefixRegExp = /pipeline-/i
 }) => {
   testDict.forEach(item => {
     expect(queryByText(new RegExp(item.metadata.name, 'i'))).toBeTruthy();

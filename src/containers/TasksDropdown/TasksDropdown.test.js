@@ -50,13 +50,13 @@ const tasks = [
   }
 ];
 
-const initialTextRegExp = new RegExp('select task', 'i');
+const initialTextRegExp = /select task/i;
 
 const checkDropdownItems = ({
   queryByText,
   getAllByText,
   testDict,
-  itemPrefixRegExp = new RegExp('task-', 'i')
+  itemPrefixRegExp = /task-/i
 }) => {
   testDict.forEach(item => {
     expect(queryByText(new RegExp(item.metadata.name, 'i'))).toBeTruthy();

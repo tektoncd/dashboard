@@ -45,7 +45,11 @@ function PipelineResource({ intl }) {
     resourceName
   });
 
-  const { data: pipelineResource, error, isFetching } = usePipelineResource({
+  const {
+    data: pipelineResource,
+    error,
+    isFetching
+  } = usePipelineResource({
     name: resourceName,
     namespace
   });

@@ -112,11 +112,7 @@ describe('PipelineRuns container', () => {
   });
 
   it('Duplicate label filters are prevented', async () => {
-    const {
-      queryByText,
-      getByPlaceholderText,
-      getByText
-    } = renderWithRouter(
+    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
       <PipelineRunsContainer
         error={null}
         loading={false}
@@ -138,11 +134,7 @@ describe('PipelineRuns container', () => {
   });
 
   it('An invalid filter value is disallowed and reported', async () => {
-    const {
-      queryByText,
-      getByPlaceholderText,
-      getByText
-    } = renderWithRouter(
+    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
       <PipelineRunsContainer
         error={null}
         loading={false}
@@ -166,11 +158,7 @@ describe('PipelineRuns container', () => {
   it('Creation, deletion and stop events are possible when not in read-only mode', async () => {
     jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => false);
 
-    const {
-      getByText,
-      getAllByTitle,
-      queryAllByText
-    } = renderWithRouter(
+    const { getByText, getAllByTitle, queryAllByText } = renderWithRouter(
       <PipelineRunsContainer
         error={null}
         loading={false}
@@ -188,19 +176,15 @@ describe('PipelineRuns container', () => {
   it('Creation, deletion and stop events are not possible when in read-only mode', async () => {
     jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => true);
 
-    const {
-      getByText,
-      queryAllByLabelText,
-      queryAllByText,
-      queryAllByTitle
-    } = renderWithRouter(
-      <PipelineRunsContainer
-        error={null}
-        loading={false}
-        namespace="namespace-1"
-      />,
-      { route: '/pipelineruns' }
-    );
+    const { getByText, queryAllByLabelText, queryAllByText, queryAllByTitle } =
+      renderWithRouter(
+        <PipelineRunsContainer
+          error={null}
+          loading={false}
+          namespace="namespace-1"
+        />,
+        { route: '/pipelineruns' }
+      );
     // Let the page finish rendering so we know if we're in read-only mode or not
     await waitFor(() => getByText('pipelineRunWithTwoLabels'));
     expect(queryAllByText('Create')[0]).toBeFalsy();

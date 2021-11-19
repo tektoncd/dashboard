@@ -113,10 +113,8 @@ function CreateTaskRun({ intl }) {
   }
 
   const { selectedNamespace: defaultNamespace } = useSelectedNamespace();
-  const {
-    kind: initialTaskKind,
-    taskName: taskRefFromDetails
-  } = getTaskDetails();
+  const { kind: initialTaskKind, taskName: taskRefFromDetails } =
+    getTaskDetails();
   const [
     {
       creating,

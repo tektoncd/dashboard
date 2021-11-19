@@ -28,7 +28,7 @@ const namespaceResources = namespaces.map(namespace => ({
   metadata: { name: namespace }
 }));
 
-const initialTextRegExp = new RegExp('select namespace', 'i');
+const initialTextRegExp = /select namespace/i;
 
 it('NamespacesDropdown renders items', () => {
   jest

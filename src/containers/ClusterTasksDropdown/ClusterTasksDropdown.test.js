@@ -41,13 +41,13 @@ const clusterTasks = [
   }
 ];
 
-const initialTextRegExp = new RegExp('select clustertask', 'i');
+const initialTextRegExp = /select clustertask/i;
 
 const checkDropdownItems = ({
   queryByText,
   getAllByText,
   testDict,
-  itemPrefixRegExp = new RegExp('clustertask-', 'i')
+  itemPrefixRegExp = /clustertask-/i
 }) => {
   testDict.forEach(item => {
     expect(queryByText(new RegExp(item.metadata.name, 'i'))).toBeTruthy();

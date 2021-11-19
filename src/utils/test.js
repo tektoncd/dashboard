@@ -48,12 +48,12 @@ export function getWebSocket() {
   };
 }
 
+const namespaceContext = { selectedNamespace: null, selectNamespace: () => {} };
+
 export function getAPIWrapper({ queryClient = getQueryClient() } = {}) {
   return function apiWrapper({ children }) {
     return (
-      <NamespaceContext.Provider
-        value={{ selectedNamespace: null, selectNamespace: () => {} }}
-      >
+      <NamespaceContext.Provider value={namespaceContext}>
         <QueryClientProvider client={queryClient}>
           {children}
         </QueryClientProvider>

@@ -154,13 +154,13 @@ export class LogContainer extends Component {
     if (this.props.enableLogScrollButtons) {
       const logRectangle = this.logRef.current?.getBoundingClientRect();
       const logElementRight =
-        document.documentElement?.clientWidth - logRectangle.right;
+        document.documentElement.clientWidth - logRectangle.right;
 
       const scrollButtonTop = Math.max(0, logRectangle.top);
 
       const scrollButtonBottom = Math.max(
         0,
-        document.documentElement?.clientHeight - logRectangle.bottom
+        document.documentElement.clientHeight - logRectangle.bottom
       );
 
       this.updateCssStyleProperty(logElementRight, '--tkn-log-element-right');
@@ -180,7 +180,7 @@ export class LogContainer extends Component {
       this[variableName] !== computedVariable
     ) {
       this[variableName] = computedVariable;
-      document.documentElement?.style.setProperty(
+      document.documentElement.style.setProperty(
         variableName,
         `${computedVariable.toString()}px`
       );
@@ -339,13 +339,8 @@ export class LogContainer extends Component {
   };
 
   loadLog = async () => {
-    const {
-      fetchLogs,
-      forcePolling,
-      intl,
-      stepStatus,
-      pollingInterval
-    } = this.props;
+    const { fetchLogs, forcePolling, intl, stepStatus, pollingInterval } =
+      this.props;
     if (!fetchLogs) {
       return;
     }

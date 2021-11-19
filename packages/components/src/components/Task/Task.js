@@ -42,9 +42,11 @@ class Task extends Component {
     let hasWarning = false;
     const stepData = updateUnexecutedSteps(steps).map(step => {
       const { name } = step;
-      const { exitCode, status, reason: stepReason } = getStepStatusReason(
-        step
-      );
+      const {
+        exitCode,
+        status,
+        reason: stepReason
+      } = getStepStatusReason(step);
 
       if (stepReason === 'Completed') {
         hasWarning = hasWarning || exitCode !== 0;
@@ -100,13 +102,8 @@ class Task extends Component {
   }
 
   render() {
-    const {
-      expanded,
-      displayName,
-      reason,
-      selectedStepId,
-      succeeded
-    } = this.props;
+    const { expanded, displayName, reason, selectedStepId, succeeded } =
+      this.props;
     const { hasWarning } = this.state;
 
     const expandIcon = expanded ? null : (
