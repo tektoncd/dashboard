@@ -17,7 +17,9 @@ func Proxy(request *http.Request, response http.ResponseWriter, url string, clie
 
 	req = req.WithContext(request.Context())
 
-	req.Header.Set("Content-Type", request.Header.Get("Content-Type"))
+	if request.Method == "POST" || request.Method == "PATCH" || request.Method == "PUT" || request.Method == "DELETE" {
+		req.Header.Set("Content-Type", request.Header.Get("Content-Type"))
+	}
 
 	resp, err := client.Do(req)
 	defer func() {
