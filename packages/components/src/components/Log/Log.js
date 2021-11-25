@@ -24,11 +24,11 @@ import {
   isElementStartAboveViewTop
 } from './domUtils';
 
-import Ansi from '../LogFormat';
+import { DotSpinner, LogFormat } from '..';
 
 const LogLine = ({ data, index, style }) => (
   <div style={style}>
-    <Ansi>{`${data[index]}\n`}</Ansi>
+    <LogFormat>{`${data[index]}\n`}</LogFormat>
   </div>
 );
 
@@ -254,7 +254,7 @@ export class LogContainer extends Component {
     } = this.state;
 
     if (logs.length < 20000) {
-      return <Ansi>{logs.join('\n')}</Ansi>;
+      return <LogFormat>{logs.join('\n')}</LogFormat>;
     }
 
     const height = reason
@@ -278,10 +278,15 @@ export class LogContainer extends Component {
     const { forcePolling, intl } = this.props;
 
     if (reason && forcePolling) {
-      return intl.formatMessage({
-        id: 'dashboard.logs.pending',
-        defaultMessage: 'Final logs pending'
-      });
+      return (
+        <>
+          {intl.formatMessage({
+            id: 'dashboard.logs.pending',
+            defaultMessage: 'Final logs pending'
+          })}
+          <DotSpinner />
+        </>
+      );
     }
 
     switch (reason) {
