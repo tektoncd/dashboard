@@ -101,10 +101,6 @@ pre.tkn--log {
     font-family: ibm-plex-sans, sans-serif;
     font-weight: bold;
 
-    &[data-status='LogsPending'] {
-      color: $support-03;
-    }
-
     &[data-status='Completed'] {
       color: $support-02;
     }

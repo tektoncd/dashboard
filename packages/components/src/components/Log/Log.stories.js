@@ -40,9 +40,15 @@ export default {
   title: 'Components/Log'
 };
 
-export const Base = () => <Log />;
+export const Loading = () => <Log />;
 
-export const Loading = () => <Log loading />;
+export const Pending = () => (
+  <Log
+    fetchLogs={() => 'partial logs'}
+    forcePolling
+    stepStatus={{ terminated: { reason: 'Completed' } }}
+  />
+);
 
 export const Completed = () => (
   <Log

@@ -15,6 +15,7 @@ limitations under the License.
 export { default as DataTableSkeleton } from './DataTableSkeleton';
 export { default as DetailsHeader } from './DetailsHeader';
 export { default as DeleteModal } from './DeleteModal';
+export { default as DotSpinner } from './DotSpinner';
 export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as FormattedDate } from './FormattedDate';
 export { default as FormattedDuration } from './FormattedDuration';
@@ -24,6 +25,7 @@ export { default as KeyValueList } from './KeyValueList';
 export { default as LabelFilter } from './LabelFilter';
 export { default as LoadingShell } from './LoadingShell';
 export { default as Log } from './Log';
+export { default as LogFormat } from './LogFormat';
 export { default as LogoutButton } from './LogoutButton';
 export { default as LogsToolbar } from './LogsToolbar';
 export { default as Modal } from './Modal';
