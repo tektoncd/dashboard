@@ -50,3 +50,12 @@ SyntaxHighlighter.args = {
   enableSyntaxHighlighting: true,
   resource: pod
 };
+
+export const SyntaxHighlighterRootArray = args => <ViewYAML {...args} />;
+SyntaxHighlighterRootArray.args = {
+  enableSyntaxHighlighting: true,
+  resource: [
+    { metadata: { name: 'event-one', namespace: 'tekton-pipelines' } },
+    { metadata: { name: 'event-two', namespace: 'tekton-pipelines' } }
+  ]
+};

@@ -174,8 +174,15 @@ function addLine({ addBullet, key, level, lines, path, rawString, value }) {
 }
 
 function getLines({ level = 0, lines, path, resource }) {
+  const isRootArray = level === 0 && Array.isArray(resource);
   return Object.keys(resource).reduce((acc, key) => {
-    addLine({ key, level, lines: acc, path, value: resource[key] });
+    addLine({
+      key: isRootArray ? parseInt(key, 10) : key,
+      level,
+      lines: acc,
+      path,
+      value: resource[key]
+    });
     return acc;
   }, lines);
 }
