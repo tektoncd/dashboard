@@ -185,6 +185,7 @@
     "dashboard.pipelinesDropdown.label": "Pipelineを選択",
     "dashboard.pod.events": "",
     "dashboard.pod.resource": "",
+    "dashboard.pod.resource.empty": "",
     "dashboard.rerun.actionText": "再実行",
     "dashboard.rerun.button": "再実行",
     "dashboard.rerun.error": "{runName}の再実行中にエラーが発生しました：詳細については、ダッシュボードログを確認してください。ステータスコード：{statusCode}",
