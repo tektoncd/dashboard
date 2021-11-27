@@ -35,6 +35,12 @@ module.exports = merge(common({ mode }), {
   mode,
   devtool: 'eval-source-map',
   devServer: {
+    client: {
+      overlay: {
+        errors: true,
+        warnings: false
+      }
+    },
     historyApiFallback: true,
     hot: true,
     liveReload: false,
