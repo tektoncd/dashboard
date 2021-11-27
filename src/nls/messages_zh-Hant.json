@@ -185,6 +185,7 @@
     "dashboard.pipelinesDropdown.label": "",
     "dashboard.pod.events": "",
     "dashboard.pod.resource": "",
+    "dashboard.pod.resource.empty": "",
     "dashboard.rerun.actionText": "",
     "dashboard.rerun.button": "",
     "dashboard.rerun.error": "",
