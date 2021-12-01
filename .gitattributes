@@ -2,3 +2,5 @@
 **/zz_generated.*.go linguist-generated=true
 /pkg/client/** linguist-generated=true
 go.sum linguist-generated=true
+*.jpg binary
+*.png binary
