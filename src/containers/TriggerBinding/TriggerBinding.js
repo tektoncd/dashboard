@@ -64,7 +64,7 @@ export function TriggerBindingContainer({ intl }) {
   ];
 
   const rowsForParameters =
-    triggerBinding?.spec.params.map(({ name, value }) => ({
+    triggerBinding?.spec?.params?.map(({ name, value }) => ({
       id: name,
       name,
       value
