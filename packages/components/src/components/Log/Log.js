@@ -68,7 +68,7 @@ export class LogContainer extends Component {
 
   componentWillUnmount() {
     window.removeEventListener('scroll', this.handleLogScroll, true);
-    clearInterval(this.timer);
+    clearTimeout(this.timer);
     this.cancelled = true;
   }
 
@@ -370,6 +370,7 @@ export class LogContainer extends Component {
           logs: logs ? logs.split('\n') : undefined
         });
         if (continuePolling) {
+          clearTimeout(this.timer);
           this.timer = setTimeout(this.loadLog, pollingInterval);
         }
       }
@@ -385,6 +386,7 @@ export class LogContainer extends Component {
         ]
       });
       if (continuePolling) {
+        clearTimeout(this.timer);
         this.timer = setTimeout(this.loadLog, pollingInterval);
       }
     }
