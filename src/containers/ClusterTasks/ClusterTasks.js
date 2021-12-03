@@ -24,6 +24,7 @@ import {
 import { Button, Link as CarbonLink } from 'carbon-components-react';
 import {
   TrashCan16 as DeleteIcon,
+  PlayOutline16 as RunIcon,
   Playlist16 as RunsIcon
 } from '@carbon/icons-react';
 import { getFilters, urls, useTitleSync } from '@tektoncd/dashboard-utils';
@@ -173,6 +174,28 @@ function ClusterTasksContainer({ intl }) {
             }
             renderIcon={DeleteIcon}
             size="sm"
+            tooltipAlignment="center"
+            tooltipPosition="left"
+          />
+        ) : null}
+        {!isReadOnly ? (
+          <Button
+            as={Link}
+            hasIconOnly
+            iconDescription={intl.formatMessage(
+              {
+                id: 'dashboard.actions.createRunButton',
+                defaultMessage: 'Create {kind}'
+              },
+              { kind: 'TaskRun' }
+            )}
+            kind="ghost"
+            renderIcon={RunIcon}
+            size="sm"
+            to={`${urls.taskRuns.create()}?${new URLSearchParams({
+              kind: 'ClusterTask',
+              taskName: clusterTask.metadata.name
+            }).toString()}`}
             tooltipAlignment="center"
             tooltipPosition="left"
           />

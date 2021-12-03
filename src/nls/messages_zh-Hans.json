@@ -23,6 +23,7 @@
     "dashboard.about.true": "True",
     "dashboard.about.version": "版本",
     "dashboard.actions.createButton": "创建",
+    "dashboard.actions.createRunButton": "",
     "dashboard.actions.deleteButton": "删除",
     "dashboard.app.loadingConfigError": "配置加载时发生错误",
     "dashboard.cancelPipelineRun.actionText": "停止",

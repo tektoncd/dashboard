@@ -271,11 +271,19 @@ export function PipelineRuns({ intl }) {
     ? []
     : [
         {
-          onClick: () =>
+          onClick: () => {
+            let queryString;
+            if (namespace !== ALL_NAMESPACES) {
+              queryString = new URLSearchParams({
+                namespace,
+                ...(pipelineName && { pipelineName })
+              }).toString();
+            }
             history.push(
               urls.pipelineRuns.create() +
-                (pipelineName ? `?pipelineName=${pipelineName}` : '')
-            ),
+                (queryString ? `?${queryString}` : '')
+            );
+          },
           text: intl.formatMessage({
             id: 'dashboard.actions.createButton',
             defaultMessage: 'Create'

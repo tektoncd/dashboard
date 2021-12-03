@@ -90,13 +90,21 @@ const initialResourcesState = resourceSpecs => {
 function CreatePipelineRun({ intl }) {
   const history = useHistory();
   const location = useLocation();
+  const { selectedNamespace: defaultNamespace } = useSelectedNamespace();
 
   function getPipelineName() {
     const urlSearchParams = new URLSearchParams(location.search);
     return urlSearchParams.get('pipelineName') || '';
   }
 
-  const { selectedNamespace: defaultNamespace } = useSelectedNamespace();
+  function getNamespace() {
+    const urlSearchParams = new URLSearchParams(location.search);
+    return (
+      urlSearchParams.get('namespace') ||
+      (defaultNamespace !== ALL_NAMESPACES ? defaultNamespace : '')
+    );
+  }
+
   const [
     {
       creating,
@@ -118,8 +126,8 @@ function CreatePipelineRun({ intl }) {
     setState
   ] = useState({
     ...initialState,
-    namespace: defaultNamespace !== ALL_NAMESPACES ? defaultNamespace : '',
-    pipelineRef: getPipelineName() || '',
+    namespace: getNamespace(),
+    pipelineRef: getPipelineName(),
     params: initialParamsState(null),
     resources: initialResourcesState(null)
   });
@@ -237,13 +245,13 @@ function CreatePipelineRun({ intl }) {
   function handleClose() {
     const pipelineName = getPipelineName();
     let url = urls.pipelineRuns.all();
-    if (pipelineName && defaultNamespace !== ALL_NAMESPACES) {
+    if (pipelineName && namespace && namespace !== ALL_NAMESPACES) {
       url = urls.pipelineRuns.byPipeline({
-        namespace: defaultNamespace,
+        namespace,
         pipelineName
       });
-    } else if (defaultNamespace !== ALL_NAMESPACES) {
-      url = urls.pipelineRuns.byNamespace({ namespace: defaultNamespace });
+    } else if (namespace && namespace !== ALL_NAMESPACES) {
+      url = urls.pipelineRuns.byNamespace({ namespace });
     }
     history.push(url);
   }
@@ -309,6 +317,16 @@ function CreatePipelineRun({ intl }) {
         ...initialState,
         namespace: text
       }));
+
+      const queryParams = new URLSearchParams(location.search);
+      if (text) {
+        queryParams.set('namespace', text);
+      } else {
+        queryParams.delete('namespace');
+      }
+      queryParams.delete('pipelineName');
+      const browserURL = location.pathname.concat(`?${queryParams.toString()}`);
+      history.push(browserURL);
     }
   }
 
@@ -324,6 +342,16 @@ function CreatePipelineRun({ intl }) {
 
   function handlePipelineChange({ selectedItem }) {
     const { text } = selectedItem || {};
+
+    const queryParams = new URLSearchParams(location.search);
+    if (text) {
+      queryParams.set('pipelineName', text);
+    } else {
+      queryParams.delete('pipelineName');
+    }
+    const browserURL = location.pathname.concat(`?${queryParams.toString()}`);
+    history.push(browserURL);
+
     if (text && text !== pipelineRef) {
       setState(state => {
         return {
@@ -416,33 +444,6 @@ function CreatePipelineRun({ intl }) {
             defaultMessage: 'Create PipelineRun'
           })}
         </h1>
-        <Button
-          iconDescription={intl.formatMessage({
-            id: 'dashboard.modal.cancelButton',
-            defaultMessage: 'Cancel'
-          })}
-          kind="secondary"
-          onClick={handleClose}
-          disabled={creating}
-        >
-          {intl.formatMessage({
-            id: 'dashboard.modal.cancelButton',
-            defaultMessage: 'Cancel'
-          })}
-        </Button>
-        <Button
-          iconDescription={intl.formatMessage({
-            id: 'dashboard.actions.createButton',
-            defaultMessage: 'Create'
-          })}
-          onClick={handleSubmit}
-          disabled={creating}
-        >
-          {intl.formatMessage({
-            id: 'dashboard.actions.createButton',
-            defaultMessage: 'Create'
-          })}
-        </Button>
       </div>
       <Form>
         {pipelineError && (
@@ -700,6 +701,35 @@ function CreatePipelineRun({ intl }) {
             })}
           />
         </FormGroup>
+
+        <Button
+          iconDescription={intl.formatMessage({
+            id: 'dashboard.actions.createButton',
+            defaultMessage: 'Create'
+          })}
+          onClick={handleSubmit}
+          disabled={creating}
+        >
+          {intl.formatMessage({
+            id: 'dashboard.actions.createButton',
+            defaultMessage: 'Create'
+          })}
+        </Button>
+
+        <Button
+          iconDescription={intl.formatMessage({
+            id: 'dashboard.modal.cancelButton',
+            defaultMessage: 'Cancel'
+          })}
+          kind="secondary"
+          onClick={handleClose}
+          disabled={creating}
+        >
+          {intl.formatMessage({
+            id: 'dashboard.modal.cancelButton',
+            defaultMessage: 'Cancel'
+          })}
+        </Button>
       </Form>
     </div>
   );
