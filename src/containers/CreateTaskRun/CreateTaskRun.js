@@ -103,6 +103,7 @@ const itemToString = ({ text }) => text;
 function CreateTaskRun({ intl }) {
   const history = useHistory();
   const location = useLocation();
+  const { selectedNamespace: defaultNamespace } = useSelectedNamespace();
 
   function getTaskDetails() {
     const urlSearchParams = new URLSearchParams(location.search);
@@ -112,7 +113,14 @@ function CreateTaskRun({ intl }) {
     };
   }
 
-  const { selectedNamespace: defaultNamespace } = useSelectedNamespace();
+  function getNamespace() {
+    const urlSearchParams = new URLSearchParams(location.search);
+    return (
+      urlSearchParams.get('namespace') ||
+      (defaultNamespace !== ALL_NAMESPACES ? defaultNamespace : '')
+    );
+  }
+
   const { kind: initialTaskKind, taskName: taskRefFromDetails } =
     getTaskDetails();
   const [
@@ -137,7 +145,7 @@ function CreateTaskRun({ intl }) {
   ] = useState({
     ...initialState,
     kind: initialTaskKind || 'Task',
-    namespace: defaultNamespace !== ALL_NAMESPACES ? defaultNamespace : '',
+    namespace: getNamespace(),
     taskRef: taskRefFromDetails,
     params: initialParamsState(null),
     resources: initialResourcesState(null)
@@ -245,15 +253,15 @@ function CreateTaskRun({ intl }) {
   function handleClose() {
     const { kind: taskKind, taskName } = getTaskDetails();
     let url = urls.taskRuns.all();
-    if (taskName && defaultNamespace !== ALL_NAMESPACES) {
+    if (taskName && namespace && namespace !== ALL_NAMESPACES) {
       url = urls.taskRuns[
         taskKind === 'ClusterTask' ? 'byClusterTask' : 'byTask'
       ]({
-        namespace: defaultNamespace,
+        namespace,
         taskName
       });
-    } else if (defaultNamespace !== ALL_NAMESPACES) {
-      url = urls.taskRuns.byNamespace({ namespace: defaultNamespace });
+    } else if (namespace && namespace !== ALL_NAMESPACES) {
+      url = urls.taskRuns.byNamespace({ namespace });
     }
     history.push(url);
   }
@@ -319,6 +327,16 @@ function CreateTaskRun({ intl }) {
         kind: state.kind,
         namespace: text
       }));
+
+      const queryParams = new URLSearchParams(location.search);
+      if (text) {
+        queryParams.set('namespace', text);
+      } else {
+        queryParams.delete('namespace');
+      }
+      queryParams.delete('taskName');
+      const browserURL = location.pathname.concat(`?${queryParams.toString()}`);
+      history.push(browserURL);
     }
   }
 
@@ -330,6 +348,13 @@ function CreateTaskRun({ intl }) {
         ...initialState,
         kind: text
       }));
+
+      const queryParams = new URLSearchParams(location.search);
+      queryParams.set('kind', text);
+      queryParams.delete('namespace');
+      queryParams.delete('taskName');
+      const browserURL = location.pathname.concat(`?${queryParams.toString()}`);
+      history.push(browserURL);
     }
   }
 
@@ -345,6 +370,16 @@ function CreateTaskRun({ intl }) {
 
   function handleTaskChange({ selectedItem }) {
     const { text } = selectedItem || {};
+
+    const queryParams = new URLSearchParams(location.search);
+    if (text) {
+      queryParams.set('taskName', text);
+    } else {
+      queryParams.delete('taskName');
+    }
+    const browserURL = location.pathname.concat(`?${queryParams.toString()}`);
+    history.push(browserURL);
+
     if (text && text !== taskRef) {
       setState(state => {
         return {
@@ -432,33 +467,6 @@ function CreateTaskRun({ intl }) {
             defaultMessage: 'Create TaskRun'
           })}
         </h1>
-        <Button
-          iconDescription={intl.formatMessage({
-            id: 'dashboard.modal.cancelButton',
-            defaultMessage: 'Cancel'
-          })}
-          kind="secondary"
-          onClick={handleClose}
-          disabled={creating}
-        >
-          {intl.formatMessage({
-            id: 'dashboard.modal.cancelButton',
-            defaultMessage: 'Cancel'
-          })}
-        </Button>
-        <Button
-          iconDescription={intl.formatMessage({
-            id: 'dashboard.actions.createButton',
-            defaultMessage: 'Create'
-          })}
-          onClick={handleSubmit}
-          disabled={creating}
-        >
-          {intl.formatMessage({
-            id: 'dashboard.actions.createButton',
-            defaultMessage: 'Create'
-          })}
-        </Button>
       </div>
       <Form>
         {taskError && (
@@ -759,6 +767,34 @@ function CreateTaskRun({ intl }) {
             }
           />
         </FormGroup>
+
+        <Button
+          iconDescription={intl.formatMessage({
+            id: 'dashboard.actions.createButton',
+            defaultMessage: 'Create'
+          })}
+          onClick={handleSubmit}
+          disabled={creating}
+        >
+          {intl.formatMessage({
+            id: 'dashboard.actions.createButton',
+            defaultMessage: 'Create'
+          })}
+        </Button>
+        <Button
+          iconDescription={intl.formatMessage({
+            id: 'dashboard.modal.cancelButton',
+            defaultMessage: 'Cancel'
+          })}
+          kind="secondary"
+          onClick={handleClose}
+          disabled={creating}
+        >
+          {intl.formatMessage({
+            id: 'dashboard.modal.cancelButton',
+            defaultMessage: 'Cancel'
+          })}
+        </Button>
       </Form>
     </div>
   );

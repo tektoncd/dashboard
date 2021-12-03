@@ -23,6 +23,7 @@
     "dashboard.about.true": "True",
     "dashboard.about.version": "Version",
     "dashboard.actions.createButton": "Create",
+    "dashboard.actions.createRunButton": "Create {kind}",
     "dashboard.actions.deleteButton": "Delete",
     "dashboard.app.loadingConfigError": "Error loading configuration",
     "dashboard.cancelPipelineRun.actionText": "Stop",

@@ -12,23 +12,7 @@ limitations under the License.
 */
 
 .tkn--create {
-  .tkn--create--heading {
-    display: flex;
-
-    h1 {
-      flex-grow: 1;
-    }
-
-    .bx--btn {
-      height: 100%;
-
-      &.bx--btn--secondary {
-        margin-right: $spacing-03;
-      }
-    }
-  }
-
-  .bx--fieldset {
+  .bx--fieldset:not(:last-of-type) {
     margin-bottom: 0;
   }
 
@@ -49,5 +33,9 @@ limitations under the License.
   .bx--form-item {
     margin-bottom: $spacing-06;
     max-width: 40rem;
+  }
+
+  .bx--btn.bx--btn--secondary {
+    margin-left: $spacing-03;
   }
 }

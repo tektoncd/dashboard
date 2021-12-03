@@ -30,6 +30,7 @@ import {
 } from '@tektoncd/dashboard-components';
 import {
   TrashCan16 as DeleteIcon,
+  PlayOutline16 as RunIcon,
   Playlist16 as RunsIcon
 } from '@carbon/icons-react';
 
@@ -196,6 +197,29 @@ function Tasks({ intl }) {
             }
             renderIcon={DeleteIcon}
             size="sm"
+            tooltipAlignment="center"
+            tooltipPosition="left"
+          />
+        ) : null}
+        {!isReadOnly ? (
+          <Button
+            as={Link}
+            hasIconOnly
+            iconDescription={intl.formatMessage(
+              {
+                id: 'dashboard.actions.createRunButton',
+                defaultMessage: 'Create {kind}'
+              },
+              { kind: 'TaskRun' }
+            )}
+            kind="ghost"
+            renderIcon={RunIcon}
+            size="sm"
+            to={`${urls.taskRuns.create()}?${new URLSearchParams({
+              kind: 'Task',
+              namespace: task.metadata.namespace,
+              taskName: task.metadata.name
+            }).toString()}`}
             tooltipAlignment="center"
             tooltipPosition="left"
           />

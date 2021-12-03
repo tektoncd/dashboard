@@ -23,6 +23,7 @@
     "dashboard.about.true": "",
     "dashboard.about.version": "",
     "dashboard.actions.createButton": "",
+    "dashboard.actions.createRunButton": "",
     "dashboard.actions.deleteButton": "",
     "dashboard.app.loadingConfigError": "",
     "dashboard.cancelPipelineRun.actionText": "Arrêter",

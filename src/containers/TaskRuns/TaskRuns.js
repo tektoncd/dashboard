@@ -260,11 +260,19 @@ function TaskRuns({ intl }) {
     ? []
     : [
         {
-          onClick: () =>
+          onClick: () => {
+            let queryString;
+            if (namespace !== ALL_NAMESPACES || kind !== 'Task') {
+              queryString = new URLSearchParams({
+                ...(namespace !== ALL_NAMESPACES && { namespace }),
+                ...(kind && { kind }),
+                ...(taskName && { taskName })
+              }).toString();
+            }
             history.push(
-              urls.taskRuns.create() +
-                (taskName ? `?taskName=${taskName}&kind=${kind}` : '')
-            ),
+              urls.taskRuns.create() + (queryString ? `?${queryString}` : '')
+            );
+          },
           text: intl.formatMessage({
             id: 'dashboard.actions.createButton',
             defaultMessage: 'Create'
