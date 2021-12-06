@@ -56,6 +56,7 @@ import {
   Extension,
   Extensions,
   ImportResources,
+  NotFound,
   PipelineResource,
   PipelineResources,
   PipelineRun,
@@ -411,7 +412,7 @@ export function App({ lang }) {
                       <CustomResourceDefinition />
                     </Route>
 
-                    <Redirect to={urls.pipelineRuns.all()} />
+                    <NotFound />
                   </Switch>
                 </PageErrorBoundary>
               </Content>

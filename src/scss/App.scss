@@ -19,6 +19,7 @@ limitations under the License.
 @import './Create.scss';
 @import '../containers/About/About.scss';
 @import '../containers/Settings/Settings.scss';
+@import '../containers/NotFound/NotFound.scss';
 @import '../containers/EventListener/EventListener.scss';
 @import '../containers/ImportResources/ImportResources.scss';
 @import '../containers/ListPageLayout/ListPageLayout.scss';
@@ -51,6 +52,22 @@ limitations under the License.
 @import '@tektoncd/dashboard-components/dist/components/TaskTree/TaskTree.scss';
 @import '@tektoncd/dashboard-components/dist/components/Trigger/Trigger.scss';
 @import '@tektoncd/dashboard-components/dist/components/ViewYAML/ViewYAML.scss';
+
+html,
+#root,
+.tkn--main-content {
+  height: 100%;
+}
+
+body {
+  // to prevent unwanted scroll when content doesn't fill full height
+  height: calc(100% - 3rem);
+}
+
+#main-content {
+  // height of the main header, added for accessibility of skip to main content link
+  scroll-margin-top: 3rem;
+}
 
 a {
   color: $link-01;
@@ -89,7 +106,7 @@ a {
 }
 
 .bx--modal-content {
-  margin-bottom: $spacing-07
+  margin-bottom: $spacing-07;
 }
 
 .bx--data-table-container {
@@ -119,9 +136,4 @@ a {
   .tkn--log {
     min-height: 100%;
   }
-}
-
-//height of the main header, added for accessibility of skip to main content link
-#main-content {
-  scroll-margin-top: 3rem;
 }
