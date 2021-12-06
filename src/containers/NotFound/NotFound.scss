@@ -1,0 +1,50 @@
+/*
+Copyright 2021 The Tekton Authors
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+.tkn--not-found {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  margin-top: -3rem;
+
+  img {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  h1 {
+    @include type-style('productive-heading-05');
+    color: $text-01;
+    margin-top: $spacing-07;
+    margin-bottom: $spacing-05;
+  }
+
+  p {
+    @include type-style('body-long-01');
+    color: $text-02;
+  }
+
+  ul li {
+    margin-top: $spacing-03;
+
+    &::before {
+      content: '↳ ';
+      font-size: 1.25em;
+    }
+
+    a {
+      @include type-style('body-short-02');
+    }
+  }
+}

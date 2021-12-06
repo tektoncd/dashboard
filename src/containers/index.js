@@ -31,6 +31,7 @@ export { default as ImportResources } from './ImportResources';
 export { default as LabelFilter } from './LabelFilter';
 export { default as ListPageLayout } from './ListPageLayout';
 export { default as NamespacesDropdown } from './NamespacesDropdown';
+export { default as NotFound } from './NotFound';
 export { default as PipelineResource } from './PipelineResource';
 export { default as PipelineResources } from './PipelineResources';
 export { default as PipelineResourcesDropdown } from './PipelineResourcesDropdown';
