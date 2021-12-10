@@ -40,7 +40,9 @@ const enableReactQueryDevTools =
 
 ReactDOM.render(
   <QueryClientProvider client={queryClient}>
-    <App lang={getLocale(navigator.language)} />
+    <React.StrictMode>
+      <App lang={getLocale(navigator.language)} />
+    </React.StrictMode>
     {enableReactQueryDevTools && <ReactQueryDevtools initialIsOpen={false} />}
   </QueryClientProvider>,
   document.getElementById('root')
