@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -62,7 +62,7 @@ const NamespacesDropdown = ({
 
   const items = tenantNamespace
     ? [tenantNamespace]
-    : namespaces.map(namespace => namespace.metadata.name);
+    : namespaces.map(namespace => namespace.metadata.name).sort();
   if (!tenantNamespace && showAllNamespaces) {
     items.unshift({ id: ALL_NAMESPACES, text: allNamespacesString });
   }
