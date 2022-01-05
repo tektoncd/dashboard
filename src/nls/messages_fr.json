@@ -183,7 +183,7 @@
     "dashboard.pipelineRun.notFound": "PipelineRun introuvable",
     "dashboard.pipelineRun.pipelineTaskName.retry": "",
     "dashboard.pipelineRun.stepCompleted": "Etape terminée",
-    "dashboard.pipelineRun.stepCompleted.withError": "",
+    "dashboard.pipelineRun.stepCompleted.exitCode": "",
     "dashboard.pipelineRun.stepFailed": "Echec de l'étape",
     "dashboard.pipelineRuns.error": "Une erreur s'est produite lors du chargement des ressources PipelineRun",
     "dashboard.pipelines.errorLoading": "",
