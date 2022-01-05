@@ -294,7 +294,7 @@ export class LogContainer extends Component {
         if (exitCode !== 0) {
           return intl.formatMessage(
             {
-              id: 'dashboard.pipelineRun.stepCompleted.withError',
+              id: 'dashboard.pipelineRun.stepCompleted.exitCode',
               defaultMessage: 'Step completed with exit code {exitCode}'
             },
             { exitCode }

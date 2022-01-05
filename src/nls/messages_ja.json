@@ -183,7 +183,7 @@
     "dashboard.pipelineRun.notFound": "PipelineRunが見つかりません",
     "dashboard.pipelineRun.pipelineTaskName.retry": "{pipelineTaskName}(retry{retryNumber,number})",
     "dashboard.pipelineRun.stepCompleted": "ステップが完了しました",
-    "dashboard.pipelineRun.stepCompleted.withError": "",
+    "dashboard.pipelineRun.stepCompleted.exitCode": "",
     "dashboard.pipelineRun.stepFailed": "ステップが失敗しました",
     "dashboard.pipelineRuns.error": "PipelineRunのロード中にエラーが発生しました",
     "dashboard.pipelines.errorLoading": "Pipelineのロード中にエラーが発生しました",

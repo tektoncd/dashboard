@@ -183,7 +183,7 @@
     "dashboard.pipelineRun.notFound": "No se ha encontrado PipelineRun",
     "dashboard.pipelineRun.pipelineTaskName.retry": "",
     "dashboard.pipelineRun.stepCompleted": "Paso completado",
-    "dashboard.pipelineRun.stepCompleted.withError": "",
+    "dashboard.pipelineRun.stepCompleted.exitCode": "",
     "dashboard.pipelineRun.stepFailed": "Paso fallido",
     "dashboard.pipelineRuns.error": "Error al cargar PipelineRuns",
     "dashboard.pipelines.errorLoading": "",
