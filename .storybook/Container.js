@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -20,13 +20,22 @@ import messages from '../src/nls/messages_en.json';
 
 import './Container.scss';
 
-export default function Container({ notes, path = '/', route = '/', story }) {
+export default function Container({
+  notes,
+  path = '/',
+  route = '/',
+  story: Story
+}) {
   return (
     <IntlProvider locale="en" defaultLocale="en" messages={messages['en']}>
       {notes && <p>{notes}</p>}
       <div data-floating-menu-container role="main">
         <Router history={createMemoryHistory({ initialEntries: [route] })}>
-          <Route path={path}>{() => story()}</Route>
+          <Route path={path}>
+            <React.StrictMode>
+              <Story />
+            </React.StrictMode>
+          </Route>
         </Router>
       </div>
     </IntlProvider>
