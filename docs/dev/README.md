@@ -52,31 +52,23 @@ git remote set-url --push upstream no_push
 _Adding the `upstream` remote sets you up nicely for regularly
 [syncing your fork](https://help.github.com/articles/syncing-a-fork/)._
 
-**Note:** If using Windows and you initially cloned your repo before this PR was merged: https://github.com/tektoncd/dashboard/pull/1707, you may need to clear your git cache to avoid line-ending problems when building the frontend.
-
-```
-git rm --cached -r .
-git reset --hard
-```
-
 ## Build the frontend
 
-First install and build the npm project.
-Install with a clean slate of dependencies, if a node_modules folder is already present in the project root it will be automatically removed before install.
+First install the required dependencies:
 
 ```bash
-npm ci 
+npm install
 ```
 
-There is a dedicated npm job for ko builds:
+Run the webpack build:
 
 ```bash
-npm run build_ko
+npm run build
 ```
 
 This will build the static resources and add them to the `kodata` directory.
 
-## Build the backend
+## Build the backend (optional: for local debugging)
 
 The backend uses `go modules` to manage its dependencies. To build the go backend, run:
 

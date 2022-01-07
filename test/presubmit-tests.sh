@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2018-2021 The Tekton Authors
+# Copyright 2018-2022 The Tekton Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -97,7 +97,7 @@ function pre_unit_tests() {
 function pre_integration_tests() {
     local failed=0
     node_npm_install || failed=1
-    npm run build_ko || failed=1
+    npm run build || failed=1
     return ${failed}
 }
 
