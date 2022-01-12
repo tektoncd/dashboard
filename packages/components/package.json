@@ -33,10 +33,10 @@
     "tlds": "^1.208.0"
   },
   "peerDependencies": {
-    "@carbon/icons-react": "^10.43.0",
-    "@carbon/themes": "^10.47.0",
-    "carbon-components": "^10.48.0",
-    "carbon-components-react": "^7.48.0",
+    "@carbon/icons-react": "^10.44.0",
+    "@carbon/themes": "^10.48.0",
+    "carbon-components": "^10.50.0",
+    "carbon-components-react": "^7.50.0",
     "react": "^16.14.0 || ^17.0.1",
     "react-dom": "^16.14.0 || ^17.0.1",
     "react-intl": "^5.10.2",
