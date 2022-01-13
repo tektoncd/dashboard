@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -48,7 +48,7 @@ function SideNav({ expanded, intl, showKubernetesResources }) {
   const location = useLocation();
   const { namespace } = useParams();
 
-  const { selectNamespace } = useSelectedNamespace();
+  const { selectedNamespace, selectNamespace } = useSelectedNamespace();
   const tenantNamespace = useTenantNamespace();
   const { data: extensions = [] } = useExtensions(
     {
@@ -74,8 +74,15 @@ function SideNav({ expanded, intl, showKubernetesResources }) {
   }
 
   function getPath(path, namespaced = true) {
-    if (namespaced && namespace && namespace !== ALL_NAMESPACES) {
-      return urls.byNamespace({ namespace, path });
+    if (
+      namespaced &&
+      selectedNamespace &&
+      selectedNamespace !== ALL_NAMESPACES
+    ) {
+      return urls.byNamespace({
+        namespace: selectedNamespace,
+        path
+      });
     }
 
     return path;
