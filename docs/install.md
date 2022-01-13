@@ -163,6 +163,32 @@ Notes:
 - The exact `Ingress` resource definition may vary a little depending on the ingress controller installed in the cluster. Some specific annotations may be required for the ingress controller to process the `Ingress` resource correctly
 - If you don't have access to a domain you can use the freely available [`nip.io`](https://nip.io/) service
 
+An example using the NGINX ingress controller to expose the Dashboard on a specific path instead of at the root of the domain:
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tekton-dashboard
+  namespace: tekton-pipelines
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+  - host: domain.tld
+    http:
+      paths:
+      - path: /tekton(/|$)(.*)
+        backend:
+          service:
+            name: tekton-dashboard
+            port:
+              number: 9097
+```
+
+You can then access the Dashboard UI at `http(s)://domain.tld/tekton/`
+
 ## Uninstalling the Dashboard on Kubernetes
 
 The Dashboard can be uninstalled by running the following command:
