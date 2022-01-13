@@ -7,12 +7,13 @@ your descriptive commit message(s)! -->
 
 # Submitter Checklist
 
-These are the criteria that every PR should meet, please check them off as you
-review them:
+As the author of this PR, please check off the items in this checklist:
 
-- [ ] Includes [tests](https://github.com/tektoncd/community/blob/main/standards.md#principles) (if functionality changed/added)
-- [ ] Includes [docs](https://github.com/tektoncd/community/blob/main/standards.md#principles) (if user facing)
-- [ ] Commit messages follow [commit message best practices](https://github.com/tektoncd/community/blob/main/standards.md#commit-messages)
+- [ ] [Docs](https://github.com/tektoncd/community/blob/main/standards.md#docs) included if any changes are user facing
+- [ ] [Tests](https://github.com/tektoncd/community/blob/main/standards.md#tests) included if any functionality added or changed
+- [ ] Follows the [commit message standard](https://github.com/tektoncd/community/blob/main/standards.md#commits)
+- [ ] Meets the [Tekton contributor standards](https://github.com/tektoncd/community/blob/main/standards.md) (including
+  functionality, content, code)
 
 _See [the contribution guide](https://github.com/tektoncd/dashboard/blob/main/CONTRIBUTING.md)
 for more details._
