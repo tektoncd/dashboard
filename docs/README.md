@@ -112,6 +112,6 @@ http://localhost:9097
 
 ## What's next
 
-Try out some of our [walkthroughs](./walkthrough) for more details on deploying and configuring the
+Try out some of our [walk-throughs](./walkthrough) for more details on deploying and configuring the
 Tekton Dashboard for some common scenarios. For more information, see the
 [Tekton Dashboard GitHub repository](https://github.com/tektoncd/dashboard).

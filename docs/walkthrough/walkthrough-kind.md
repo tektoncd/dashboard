@@ -1,4 +1,4 @@
-# Tekton Dashboard walkthrough - Kind
+# Tekton Dashboard walk-through - Kind
 
 This guide walks you through installing a working Tekton Dashboard locally from scratch. It covers the following topics:
 
@@ -20,7 +20,7 @@ Before you begin, make sure the following tools are installed:
 1. [`kind`](https://kind.sigs.k8s.io/): For creating a local cluster running on top of docker.
 1. [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/): For interacting with your kubernetes cluster.
 
-Nothing more is required to run the walkthrough !
+Nothing more is required to run the walk-through !
 
 ## Creating a local Kubernetes cluster
 
@@ -86,7 +86,7 @@ eaf0af7569e6        kindest/node:v1.17.0   "/usr/local/bin/entr…"   32 minutes
 
 Now that the cluster is up and running, you will need to install an ingress controller to expose services running inside the cluster to the outside world.
 
-The ingress controller used in this walkthrough is [ingress-nginx](https://github.com/kubernetes/ingress-nginx), see [Ingress Controllers](https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/) for other available solutions.
+The ingress controller used in this walk-through is [ingress-nginx](https://github.com/kubernetes/ingress-nginx), see [Ingress Controllers](https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/) for other available solutions.
 
 Install nginx ingress controller by running the following commands:
 

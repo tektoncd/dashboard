@@ -1,4 +1,4 @@
-# Tekton Dashboard walkthrough - OAuth2 Proxy
+# Tekton Dashboard walk-through - OAuth2 Proxy
 
 This guide walks you through installing a working Tekton Dashboard locally from scratch and securing it behind an oauth2 proxy. It covers the following topics:
 
@@ -19,11 +19,11 @@ Before you begin, make sure the following tools are installed:
 1. [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/): For interacting with your kubernetes cluster.
 1. [`helm`](https://helm.sh/docs/intro/install/): For installing helm charts in your kubernetes cluster.
 
-You will also need a [GitHub](https://github.com/) account to complete this walkthrough.
+You will also need a [GitHub](https://github.com/) account to complete this walk-through.
 
 ## Overview
 
-In this walkthrough you will deploy a centralized `oauth2-proxy` service to authenticate from a GitHub OAuth application.
+In this walk-through you will deploy a centralized `oauth2-proxy` service to authenticate from a GitHub OAuth application.
 
 You will then use this authentication service to secure the Tekton Dashboard ingress by letting `NGINX ingress controller` know that the ingress requires authentication and how to authenticate against the `oauth2-proxy` service.
 
@@ -35,7 +35,7 @@ The picture below illustrates the deployed components and interactions between t
 
 ## Installing a working Tekton Dashboard locally from scratch
 
-If you didn't follow the [Tekton Dashboard walkthrough with Kind](./walkthrough-kind.md) yet, start there to get a local cluster with a working Tekton Dashboard installed.
+If you didn't follow the [Tekton Dashboard walk-through with Kind](./walkthrough-kind.md) yet, start there to get a local cluster with a working Tekton Dashboard installed.
 
 The following steps will focus on getting `oauth2-proxy` installed in your cluster and securing the Tekton Dashboard `Ingress`.
 
@@ -104,7 +104,7 @@ Explanation of the parameters:
 - `extraArgs.cookie-secure` disables CSRF as we are using HTTP (not HTTPS)
 - `extraArgs.cookie-domain` is used to set the cookie for all `.127.0.0.1.nip.io` subdomains. As `oauth2-proxy` is deployed centrally, it will be exposed at `http://auth.127.0.0.1.nip.io` while the dashboard will be exposed at `http://tekton-dashboard.127.0.0.1.nip.io`. The cookie needs to be available to both URLs
 
-Although not used in this walkthrough, the GitHub provider supports restricting logins to members of an organisation, members of a team, or collaborators of a repository for more security.
+Although not used in this walk-through, the GitHub provider supports restricting logins to members of an organisation, members of a team, or collaborators of a repository for more security.
 
 For the full list of configuration options and other supported providers see the [oauth2-proxy documentation](https://oauth2-proxy.github.io/oauth2-proxy/docs/).
 
@@ -171,9 +171,9 @@ kubectl wait -n tekton-pipelines \
 
 ## Cleaning up
 
-Delete the GitHub Oauth application you created for this walkthrough.
+Delete the GitHub Oauth application you created for this walk-through.
 
-To clean up the local kind cluster, follow the [cleaning up instructions](./walkthrough-kind.md#cleaning-up) in Tekton Dashboard walkthrough with Kind.
+To clean up the local kind cluster, follow the [cleaning up instructions](./walkthrough-kind.md#cleaning-up) in Tekton Dashboard walk-through with Kind.
 
 ---
 
