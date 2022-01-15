@@ -231,7 +231,7 @@ Keep in mind that When running your Tekton Pipelines, if you see a `fatal: could
 
 You can read the dashboard backend [API docs](./api.md).
 
-Go though our [walk-throughs](../walkthrough/README.md) or learn about [extensions](../extensions.md).
+Try our [walk-throughs](../walkthrough/README.md) or learn about [extensions](../extensions.md).
 
 ---
 

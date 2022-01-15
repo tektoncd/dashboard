@@ -1,4 +1,4 @@
-# Tekton Dashboard walkthrough - Logs persistence
+# Tekton Dashboard walk-through - Logs persistence
 
 This guide walks you through installing a working Tekton Dashboard locally from scratch, collecting logs into an object storage solution like AWS S3, exposing those logs through a service and setting up the Tekton Dashboard to fallback on this service when the logs have been garbage collected by the cluster. It covers the following topics:
 
@@ -13,7 +13,7 @@ This guide walks you through installing a working Tekton Dashboard locally from 
 
 ## Before you begin
 
-**Note:** This walkthrough requires Kubernetes 1.19 or newer.
+**Note:** This walk-through requires Kubernetes 1.19 or newer.
 
 Before you begin, make sure the following tools are installed:
 
@@ -23,7 +23,7 @@ Before you begin, make sure the following tools are installed:
 
 ## Overview
 
-In this walkthrough you will deploy [minio](https://min.io), an object storage solution that can be accessed like AWS S3 or other cloud providers APIs.
+In this walk-through you will deploy [minio](https://min.io), an object storage solution that can be accessed like AWS S3 or other cloud providers APIs.
 
 You will use this object storage to store pod logs collected with [banzaicloud logging operator](https://github.com/banzaicloud/logging-operator) from your `TaskRun`s.
 
@@ -31,7 +31,7 @@ Then, you will create a service to serve those logs and will plug the Tekton Das
 
 ## Installing a working Tekton Dashboard locally from scratch
 
-If you didn't follow the [Tekton Dashboard walkthrough with Kind](./walkthrough-kind.md) yet, start there to get a local cluster with a working Tekton Dashboard installed.
+If you didn't follow the [Tekton Dashboard walk-through with Kind](./walkthrough-kind.md) yet, start there to get a local cluster with a working Tekton Dashboard installed.
 
 The following steps will focus on collecting, storing and serving pod logs to finally plug the logs service on the Tekton Dashboard.
 
@@ -71,7 +71,7 @@ EOF
 
 The deployed instance will use hard coded access and secret keys `ACCESSKEY` / `SECRETKEY` and the service will be exposed externally at `http://minio.127.0.0.1.nip.io`.
 
-For this walkthrough `minio` will use in-memory storage but you can enable persistent storage by changing the config.
+For this walk-through `minio` will use in-memory storage but you can enable persistent storage by changing the config.
 
 The `minio` dashboard is available at the URL `http://minio.127.0.0.1.nip.io`.
 
@@ -93,7 +93,7 @@ helm repo update
 helm upgrade --install --version 3.6.0 --wait --create-namespace --namespace tools logging-operator banzaicloud-stable/logging-operator --set createCustomResource=false
 ```
 
-**NOTE**: This will install `logging-operator` version `3.6.0`, there was a [breaking change](https://github.com/banzaicloud/logging-operator/releases/tag/3.6.0) in this release. The walkthrough will not work with earlier versions.
+**NOTE**: This will install `logging-operator` version `3.6.0`, there was a [breaking change](https://github.com/banzaicloud/logging-operator/releases/tag/3.6.0) in this release. The walk-through will not work with earlier versions.
 
 To start collecting logs you will need to create the logs pipeline using the available CRDs:
 
@@ -330,7 +330,7 @@ The logs server is available at `http://logs.127.0.0.1.nip.io`.
 
 ## Setting up the Dashboard logs fallback
 
-The last step in this walkthrough is to setup the Tekton Dashboard to use the logs server you created above. The logs server will act as a fallback when the logs are not available anymore because the underlying pods baking `TaskRun`s are gone away.
+The last step in this walk-through is to setup the Tekton Dashboard to use the logs server you created above. The logs server will act as a fallback when the logs are not available anymore because the underlying pods baking `TaskRun`s are gone away.
 
 First, delete the pods for your `TaskRun`s so that the Dashboard backend can't find the pod logs:
 
@@ -367,7 +367,7 @@ kubectl wait -n tekton-pipelines \
 
 ## Cleaning up
 
-To clean up the local kind cluster, follow the [cleaning up instructions](./walkthrough-kind.md#cleaning-up) in Tekton Dashboard walkthrough with Kind.
+To clean up the local kind cluster, follow the [cleaning up instructions](./walkthrough-kind.md#cleaning-up) in Tekton Dashboard walk-through with Kind.
 
 ---
 
