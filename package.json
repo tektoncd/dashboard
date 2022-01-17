@@ -91,7 +91,7 @@
     "file-loader": "^6.0.0",
     "glob": "^7.1.6",
     "html-webpack-plugin": "^5.0.0",
-    "jest": "^26.0.1",
+    "jest": "^27.4.7",
     "lerna": "4.0.0",
     "lodash.difference": "^4.5.0",
     "lodash.omit": "^4.5.0",

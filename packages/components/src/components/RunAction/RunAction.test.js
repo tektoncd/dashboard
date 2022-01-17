@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent } from '@testing-library/react';
+import { fireEvent, waitFor } from '@testing-library/react';
 import { renderWithRouter } from '../../utils/test';
 import RunAction from './RunAction';
 
@@ -40,7 +40,7 @@ const props = {
   showNotification() {}
 };
 
-it('Rerun button creates API call with correct parameters', done => {
+it('Rerun button creates API call with correct parameters', async () => {
   const response = Promise.resolve({ metadata: { name: fakeRunName } });
   const rerunMock = jest.fn().mockImplementation(() => response);
   jest.spyOn(props, 'getURL');
@@ -49,20 +49,18 @@ it('Rerun button creates API call with correct parameters', done => {
     <RunAction {...props} action="rerun" runaction={rerunMock} />
   );
   fireEvent.click(getByText('Rerun'));
-  setImmediate(() => {
-    expect(rerunMock).toHaveBeenCalledWith(props.run);
-    expect(props.getURL).toHaveBeenCalledWith({
-      name: fakeRunName,
-      namespace: fakeNamespace
-    });
-    expect(props.showNotification).toHaveBeenCalledWith(
-      expect.objectContaining({ kind: 'success', logsURL })
-    );
-    done();
+  await waitFor(() => expect(rerunMock).toHaveBeenCalled());
+  expect(rerunMock).toHaveBeenCalledWith(props.run);
+  expect(props.getURL).toHaveBeenCalledWith({
+    name: fakeRunName,
+    namespace: fakeNamespace
   });
+  expect(props.showNotification).toHaveBeenCalledWith(
+    expect.objectContaining({ kind: 'success', logsURL })
+  );
 });
 
-it('Rerun button handles API error', done => {
+it('Rerun button handles API error', async () => {
   const error = { response: { status: 500 } };
   const response = Promise.reject(error);
   const rerunMock = jest.fn().mockImplementation(() => response);
@@ -72,12 +70,10 @@ it('Rerun button handles API error', done => {
     <RunAction {...props} action="rerun" runaction={rerunMock} />
   );
   fireEvent.click(getByText('Rerun'));
-  setImmediate(() => {
-    expect(rerunMock).toHaveBeenCalledWith(props.run);
-    expect(props.getURL).not.toHaveBeenCalled();
-    expect(props.showNotification).toHaveBeenCalledWith(
-      expect.objectContaining({ kind: 'error' })
-    );
-    done();
-  });
+  await waitFor(() => expect(rerunMock).toHaveBeenCalled());
+  expect(rerunMock).toHaveBeenCalledWith(props.run);
+  expect(props.getURL).not.toHaveBeenCalled();
+  expect(props.showNotification).toHaveBeenCalledWith(
+    expect.objectContaining({ kind: 'error' })
+  );
 });
