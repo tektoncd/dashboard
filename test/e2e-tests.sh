@@ -219,7 +219,7 @@ if [ -z "$SKIP_BUILD_TEST" ]; then
 fi
 
 if [ -z "$PIPELINES_VERSION" ]; then
-  export PIPELINES_VERSION=v0.31.0
+  export PIPELINES_VERSION=v0.32.0
 fi
 
 if [ -z "$TRIGGERS_VERSION" ]; then
@@ -239,20 +239,28 @@ test_dashboard proxy ${PLATFORM}
 test_dashboard kubectl ${PLATFORM} --read-only
 
 header "Test Dashboard custom namespace"
-export DASHBOARD_NAMESPACE=tekton-dashboard
-export TEST_NAMESPACE=tekton-test
-export TENANT_NAMESPACE=""
+if [ -z "$TEST_CUSTOM_INSTALL_NAMESPACE" ]; then
+  echo "Skipping test"
+else
+  export DASHBOARD_NAMESPACE=tekton-dashboard
+  export TEST_NAMESPACE=tekton-test
+  export TENANT_NAMESPACE=""
 
-test_dashboard proxy ${PLATFORM} --namespace $DASHBOARD_NAMESPACE
-test_dashboard kubectl ${PLATFORM} --read-only --namespace $DASHBOARD_NAMESPACE
+  test_dashboard proxy ${PLATFORM} --namespace $DASHBOARD_NAMESPACE
+  test_dashboard kubectl ${PLATFORM} --read-only --namespace $DASHBOARD_NAMESPACE
+fi
 
-# TODO: this feature is incomplete, re-enable tests when ready
-# header "Test Dashboard single namespace visibility"
-# export DASHBOARD_NAMESPACE=tekton-dashboard
-# export TEST_NAMESPACE=tekton-tenant
-# export TENANT_NAMESPACE=tekton-tenant
+# TODO: this feature will be expanded to support multiple namespaces
+header "Test Dashboard namespace visibility"
+if [ -z "$TEST_NAMESPACE_VISIBILITY" ]; then
+  echo "Skipping test"
+else
+  export DASHBOARD_NAMESPACE=tekton-dashboard
+  export TEST_NAMESPACE=tekton-tenant
+  export TENANT_NAMESPACE=tekton-tenant
 
-# test_dashboard proxy --namespace $DASHBOARD_NAMESPACE --tenant-namespace $TENANT_NAMESPACE
-# test_dashboard kubectl --read-only --namespace $DASHBOARD_NAMESPACE --tenant-namespace $TENANT_NAMESPACE
+  test_dashboard proxy --namespace $DASHBOARD_NAMESPACE --tenant-namespace $TENANT_NAMESPACE
+  test_dashboard kubectl --read-only --namespace $DASHBOARD_NAMESPACE --tenant-namespace $TENANT_NAMESPACE
+fi
 
 success
