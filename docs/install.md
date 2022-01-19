@@ -199,6 +199,21 @@ By default the Dashboard accesses resources and performs actions in the cluster 
 
 Typically when configuring impersonation you would have the proxy forward its ServiceAccount token in the `Authorization` header, and details of the user and groups in the `Impersonate-User` and `Impersonate-Group` headers respectively. See the docs of your chosen solution for details.
 
+When using a reverse proxy, with impersonation headers or the user's account, you should remove the dashboard's privileges to better maintain a "least privileged" approach.  This will make it less likely that the dashboard's `ServiceAccount` will be abused:
+
+```
+kubectl delete clusterrole tekton-dashboard-backend
+kubectl delete clusterrole tekton-dashboard-dashboard
+kubectl delete clusterrole tekton-dashboard-pipelines
+kubectl delete clusterrole tekton-dashboard-tenant
+kubectl delete clusterrole tekton-dashboard-triggers
+kubectl delete clusterrolebinding tekton-dashboard-backend
+kubectl delete rolebinding tekton-dashboard-pipelines -n tekton-pipelines
+kubectl delete rolebinding tekton-dashboard-dashboard -n tekton-pipelines
+kubectl delete rolebinding tekton-dashboard-triggers -n tekton-pipelines
+kubectl delete clusterrolebinding tekton-dashboard-tenant
+```
+
 If you're using one of these proxies to provide authentication but still want to use the Dashboard's ServiceAccount to access the Kubernetes APIs you may need to modify the proxy config to prevent it from sending the `Authorization` header on upstream requests to the Dashboard. Some examples of relevant config:
 - oauth2-proxy: add the `--pass-authorization-header=false` command line argument or its equivalent to your config https://oauth2-proxy.github.io/oauth2-proxy/docs/configuration/overview#command-line-options
 - Istio EnvoyFilter: the external authentication service should return a custom header `x-envoy-auth-headers-to-remove: Authorization` https://www.envoyproxy.io/docs/envoy/latest/api-v3/service/auth/v3/external_auth.proto
