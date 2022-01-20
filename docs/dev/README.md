@@ -28,7 +28,7 @@ In order to run the Tekton Dashboard, please make sure the requirements in [the 
 You will also need the following tools in order to build the Dashboard locally and deploy it:
 1. [`go`](https://golang.org/doc/install): The language the Tekton Dashboard backend is built in
 1. [`git`](https://help.github.com/articles/set-up-git/): For source control
-1. [Node.js & npm](https://nodejs.org/): For building and running the frontend locally. See `engines` in [package.json](../../package.json) for versions used. _Node.js 14.x is recommended_
+1. [Node.js & npm](https://nodejs.org/): For building and running the frontend locally. See `engines` in [package.json](../../package.json) for versions used. _Node.js 16.x is recommended_
 1. [`ko`](https://github.com/google/ko): For development. `ko` version v0.7.2 or higher is required for `dashboard` to work correctly
 1. [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/): For interacting with your kube cluster
 1. [`kustomize`](https://kubernetes-sigs.github.io/kustomize/installation/): For building the Dashboard manifests. v3.5.4 is recommended, the installer script is not currently compatible with v4
