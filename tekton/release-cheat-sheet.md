@@ -88,7 +88,7 @@ Creating the release announcement is currently a manual process but will be auto
 
 1. Copy the format from an existing release and insert details of the relevant changes and contributors.
 
-1. Add any updgrade and deprecation notices as required.
+1. Add any upgrade and deprecation notices as required.
 
 1. Attach the release manifests to the release: `tekton-dashboard-*.yaml` and `openshift-tekton-dashboard-*.yaml`.
 
