@@ -35,7 +35,7 @@ Among other things, the Tekton Dashboard supports:
 | Version | Docs | Pipelines | Triggers |
 | ------- | ---- | --------- | -------- |
 | [HEAD](./DEVELOPMENT.md) | [Docs @ HEAD](./docs/README.md) | v0.25.x - v0.32.x | v0.15.x - 0.18.x |
-| [v0.24.0](https://github.com/tektoncd/dashboard/releases/tag/v0.24.0) | [Docs @ v0.24.0](https://github.com/tektoncd/dashboard/tree/v0.24.0/docs) | v0.25.x - v0.32.x | v0.15.x - 0.18.x |
+| [v0.24.1](https://github.com/tektoncd/dashboard/releases/tag/v0.24.1) | [Docs @ v0.24.1](https://github.com/tektoncd/dashboard/tree/v0.24.1/docs) | v0.25.x - v0.32.x | v0.15.x - 0.18.x |
 | [v0.23.0](https://github.com/tektoncd/dashboard/releases/tag/v0.23.0) | [Docs @ v0.23.0](https://github.com/tektoncd/dashboard/tree/v0.23.0/docs) | v0.25.x - v0.30.x | v0.15.x - 0.17.x |
 | [v0.22.0](https://github.com/tektoncd/dashboard/releases/tag/v0.22.0) | [Docs @ v0.22.0](https://github.com/tektoncd/dashboard/tree/v0.22.0/docs) | v0.25.x - v0.29.x | v0.15.x - 0.17.x |
 | [v0.21.0](https://github.com/tektoncd/dashboard/releases/tag/v0.21.0) | [Docs @ v0.21.0](https://github.com/tektoncd/dashboard/tree/v0.21.0/docs) | v0.20.x - v0.28.x | v0.10.x - 0.16.x |
@@ -64,6 +64,7 @@ Among other things, the Tekton Dashboard supports:
 
   | Version | Docs | Pipelines | Triggers |
   | ------- | ---- | --------- | -------- |
+  | [v0.24.0](https://github.com/tektoncd/dashboard/releases/tag/v0.24.0) | [Docs @ v0.24.0](https://github.com/tektoncd/dashboard/tree/v0.24.0/docs) | v0.25.x - v0.32.x | v0.15.x - 0.18.x |
   | [v0.18.0](https://github.com/tektoncd/dashboard/releases/tag/v0.18.0) | [Docs @ v0.18.0](https://github.com/tektoncd/dashboard/tree/v0.18.0/docs) | v0.20.x - v0.25.x | v0.10.x - 0.14.x |
   | [v0.16.0](https://github.com/tektoncd/dashboard/releases/tag/v0.16.0) | [Docs @ v0.16.0](https://github.com/tektoncd/dashboard/tree/v0.16.0/docs) | v0.20.x - v0.23.x | v0.10.x - 0.13.x |
   | [v0.11.0](https://github.com/tektoncd/dashboard/releases/tag/v0.11.0) | [Docs @ v0.11.0](https://github.com/tektoncd/dashboard/tree/v0.11.0/docs) | v0.11.x - v0.18.x | v0.5.x - 0.9.x |
