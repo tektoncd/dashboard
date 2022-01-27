@@ -71,3 +71,11 @@ rules:
       - get
       - list
       - watch
+  - apiGroups:
+      - policy
+    resources:
+      - podsecuritypolicies
+    resourceNames:
+      - tekton-pipelines
+    verbs:
+      - use
