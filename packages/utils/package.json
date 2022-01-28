@@ -6,15 +6,8 @@
   },
   "license": "Apache-2.0",
   "private": false,
-  "main": "./dist/utils/index.js",
-  "scripts": {
-    "build": "rimraf dist && cross-env NODE_ENV=production babel src --out-dir dist --root-mode upward --ignore \"src/**/*.test.js,src/**/*.stories.js\" --no-copy-ignored",
-    "clean": "rimraf dist",
-    "prepare": "npm run build"
-  },
-  "dependencies": {
-    "@babel/cli": "^7.15.4"
-  },
+  "main": "./src/utils/index.js",
+  "scripts": {},
   "peerDependencies": {
     "react-router-dom": "^5.0.0"
   },

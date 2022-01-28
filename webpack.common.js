@@ -34,7 +34,10 @@ module.exports = ({ mode }) => ({
       },
       {
         test: /\.js$/,
-        include: path.resolve(__dirname, 'src'),
+        include: [
+          path.resolve(__dirname, 'src'),
+          path.resolve(__dirname, 'packages')
+        ],
         use: [{ loader: 'babel-loader', options: { cacheDirectory: true } }]
       },
       {

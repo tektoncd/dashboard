@@ -1,5 +1,4 @@
-src/
-dist/utils/test.js
+src/utils/test.js
 *.stories.js
 *.test.js
 **/examples/

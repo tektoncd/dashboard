@@ -12,14 +12,12 @@
   ],
   "license": "Apache-2.0",
   "private": false,
-  "main": "./dist/components/index.js",
+  "main": "./src/components/index.js",
   "scripts": {
-    "build": "rimraf dist && cross-env NODE_ENV=production babel src --out-dir dist --copy-files --root-mode upward --ignore \"src/**/*.test.js,src/**/*.stories.js\" --no-copy-ignored",
-    "clean": "rimraf dist",
-    "prepare": "npm run build"
+    "version": "npm pkg set \"dependencies.@tektoncd/dashboard-utils=$npm_new_version\"",
+    "postpublish": "npm pkg set \"dependencies.@tektoncd/dashboard-utils=file:../utils\""
   },
   "dependencies": {
-    "@babel/cli": "^7.15.4",
     "@tektoncd/dashboard-utils": "file:../utils",
     "@visx/event": "^2.1.0",
     "@visx/network": "^2.1.0",

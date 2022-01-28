@@ -12,6 +12,7 @@ that we use.
 * [How to create a release](#create-an-official-release)
 * [Automated nightly releases](#nightly-releases)
 * [Setup releases](#setup)
+* [npm packages](#npm-packages)
 
 ## Create an official release
 
@@ -116,3 +117,14 @@ kubectl create secret generic $GENERIC_SECRET --from-file=./$KEY_FILE
 kubectl patch serviceaccount $ACCOUNT \
   -p "{\"secrets\": [{\"name\": \"$GENERIC_SECRET\"}]}"
 ```
+
+## NPM Packages
+
+To release a new version of the npm packages, e.g. `@tektoncd/dashboard-components`:
+
+1. ensure you have the relevant commit checked out and that you're at the root of the project
+1. `npm --workspaces version <version>` where version is a valid semver string, e.g. `0.24.1-alpha.0`
+1. `npm --workspaces publish`
+1. enter your OTP when prompted
+1. once the packages are published run `npm install`
+1. stage and commit the changes to the package.json and package-lock.json files and open a new PR to record the release
