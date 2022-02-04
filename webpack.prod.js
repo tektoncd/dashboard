@@ -21,6 +21,12 @@ const common = require('./webpack.common');
 const mode = 'production';
 
 module.exports = merge(common({ mode }), {
+  cache: {
+    type: 'filesystem',
+    buildDependencies: {
+      config: [__filename]
+    }
+  },
   mode,
   output: {
     filename: '[name].[contenthash].js',
