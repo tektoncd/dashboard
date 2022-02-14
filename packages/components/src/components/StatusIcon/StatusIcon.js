@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2021 The Tekton Authors
+Copyright 2020-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -27,14 +27,6 @@ import { isRunning } from '@tektoncd/dashboard-utils';
 import { Spinner } from '..';
 
 const icons = {
-  normal: {
-    cancelled: CloseFilled,
-    error: CloseFilled,
-    pending: Pending,
-    running: Spinner,
-    success: CheckmarkFilled,
-    warning: CheckmarkFilledWarning
-  },
   inverse: {
     cancelled: CloseOutline,
     error: CloseOutline,
@@ -42,7 +34,29 @@ const icons = {
     running: Spinner,
     success: CheckmarkOutline,
     warning: WarningFilled
+  },
+  normal: {
+    cancelled: CloseFilled,
+    error: CloseFilled,
+    pending: Pending,
+    running: Spinner,
+    success: CheckmarkFilled,
+    warning: CheckmarkFilledWarning
   }
+};
+
+const statusClassNames = {
+  cancelled: 'tkn--status-icon--cancelled',
+  error: 'tkn--status-icon--error',
+  pending: 'tkn--status-icon--pending',
+  running: 'tkn--status-icon--running',
+  success: 'tkn--status-icon--success',
+  warning: 'tkn--status-icon--warning'
+};
+
+const typeClassNames = {
+  inverse: 'tkn--status-icon--type-inverse',
+  normal: 'tkn--status-icon--type-normal'
 };
 
 export default function StatusIcon({
@@ -84,13 +98,9 @@ export default function StatusIcon({
 
   return Icon ? (
     <Icon
-      className={classNames(
-        'tkn--status-icon',
-        {
-          [`tkn--status-icon--${statusClass}`]: statusClass
-        },
-        `tkn--status-icon--type-${type}`
-      )}
+      className={classNames('tkn--status-icon', typeClassNames[type], {
+        [statusClassNames[statusClass]]: statusClass
+      })}
     >
       {title && <title>{title}</title>}
     </Icon>
