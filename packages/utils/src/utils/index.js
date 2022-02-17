@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -194,21 +194,12 @@ export function generateId(prefix) {
   return `${prefix}${Math.random().toString(36).substr(2, 9)}`;
 }
 
-export function formatLabels(labelsRaw) {
-  const labels = JSON.stringify(labelsRaw)
-    .replace('{', '')
-    .replace('}', '')
-    .replace(/['"]+/g, '')
-    .replace('$', '');
+export function formatLabels(labels) {
+  if (!labels) {
+    return [];
+  }
 
-  const formattedLabelsToRender = [];
-  const labelsSplitOnComma = labels.split(',');
-  labelsSplitOnComma.forEach(label => {
-    const [key, value] = label.split(':');
-    formattedLabelsToRender.push(`${key}: ${value}`);
-  });
-
-  return formattedLabelsToRender;
+  return Object.entries(labels).map(([key, value]) => `${key}: ${value}`);
 }
 
 // Update the status of steps that follow a step with an error or a running step

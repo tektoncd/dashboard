@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2021 The Tekton Authors
+Copyright 2020-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -59,10 +59,7 @@ const ResourceDetails = ({
     selectedTabIndex = 0;
   }
 
-  let formattedLabelsToRender = [];
-  if (resource.metadata.labels) {
-    formattedLabelsToRender = formatLabels(resource.metadata.labels);
-  }
+  const formattedLabels = formatLabels(resource.metadata.labels);
 
   return (
     <div className="tkn--resourcedetails">
@@ -102,12 +99,12 @@ const ResourceDetails = ({
                     defaultMessage: 'Labels:'
                   })}
                 </span>
-                {formattedLabelsToRender.length === 0
+                {formattedLabels.length === 0
                   ? intl.formatMessage({
                       id: 'dashboard.metadata.none',
                       defaultMessage: 'None'
                     })
-                  : formattedLabelsToRender.map(label => (
+                  : formattedLabels.map(label => (
                       <Tag key={label} size="sm" type="blue">
                         {label}
                       </Tag>

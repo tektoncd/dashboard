@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -35,13 +35,12 @@ export default class PipelineGraph extends Component {
   }
 
   onClickTask = taskName => {
-    const { expanded } = this.state;
-    this.setState({
+    this.setState(({ expanded }) => ({
       expanded: {
         ...expanded,
         [taskName]: !expanded[taskName]
       }
-    });
+    }));
     this.props.onClickTask(taskName);
   };
 
