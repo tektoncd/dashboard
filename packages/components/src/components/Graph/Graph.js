@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -70,7 +70,7 @@ export default class Graph extends Component {
 
   render() {
     const { isSubGraph, onClickStep, onClickTask } = this.props;
-    const { height, links, margin, nodes, width } = this.state;
+    const { height, links, nodes, width } = this.state;
 
     if (!nodes) {
       return null;
@@ -80,7 +80,6 @@ export default class Graph extends Component {
       <svg
         className="graph"
         height={height}
-        style={{ margin }}
         width={width}
         viewBox={`0 0 ${width} ${height}`}
         preserveAspectRatio="xMidYMin meet"
