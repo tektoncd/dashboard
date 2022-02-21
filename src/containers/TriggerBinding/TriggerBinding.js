@@ -90,7 +90,7 @@ export function TriggerBindingContainer({ intl }) {
         })}
         headers={headersForParameters}
         rows={rowsForParameters}
-        size="short"
+        size="sm"
         selectedNamespace={selectedNamespace}
         emptyTextAllNamespaces={emptyTextMessage}
         emptyTextSelectedNamespace={emptyTextMessage}

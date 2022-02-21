@@ -120,7 +120,7 @@ export /* istanbul ignore next */ function TriggerTemplateContainer({ intl }) {
           })}
           headers={headersForParameters}
           rows={rowsForParameters}
-          size="short"
+          size="sm"
           selectedNamespace={selectedNamespace}
           emptyTextAllNamespaces={emptyTextMessage}
           emptyTextSelectedNamespace={emptyTextMessage}
@@ -151,7 +151,7 @@ export /* istanbul ignore next */ function TriggerTemplateContainer({ intl }) {
                   header: 'Kind'
                 }
               ]}
-              size="short"
+              size="sm"
               render={({
                 rows,
                 headers,
