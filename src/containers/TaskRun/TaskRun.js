@@ -301,7 +301,6 @@ export function TaskRunContainer({ intl }) {
       )}
       <RunHeader
         lastTransitionTime={taskRun.status?.startTime}
-        loading={isLoadingTaskRun || isLoadingTask}
         message={taskRunStatusMessage}
         reason={taskRunStatusReason}
         runName={taskRun.metadata.name}

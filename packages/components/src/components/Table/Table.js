@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -229,7 +229,7 @@ const Table = props => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {!loading && dataRows.length === 0 && (
+                  {dataRows.length === 0 && (
                     <TableRow>
                       <TableCell colSpan={headers.length}>
                         <div className="noRows">
