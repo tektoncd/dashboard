@@ -84,7 +84,7 @@ export function ClusterTriggerBindingContainer({ intl }) {
         })}
         headers={headersForParameters}
         rows={rowsForParameters}
-        size="short"
+        size="sm"
         emptyTextAllNamespaces={emptyTextMessage}
         emptyTextSelectedNamespace={emptyTextMessage}
       />
