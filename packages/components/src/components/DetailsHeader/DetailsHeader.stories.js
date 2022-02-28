@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -48,11 +48,12 @@ export default {
   title: 'Components/DetailsHeader'
 };
 
-export const Running = args => (
+export const Cancelled = args => (
   <DetailsHeader
-    status="running"
+    reason="TaskRunCancelled"
+    status="terminated"
     displayName="build"
-    taskRun={getTaskRun({ reason: 'Running', status: 'Unknown' })}
+    taskRun={getTaskRun({ reason: 'TaskRunCancelled', status: 'False' })}
     {...args}
   />
 );
@@ -93,6 +94,15 @@ export const Failed = args => (
 export const Pending = args => (
   <DetailsHeader
     taskRun={getTaskRun({ reason: 'Pending', status: 'Unknown' })}
+    {...args}
+  />
+);
+
+export const Running = args => (
+  <DetailsHeader
+    status="running"
+    displayName="build"
+    taskRun={getTaskRun({ reason: 'Running', status: 'Unknown' })}
     {...args}
   />
 );

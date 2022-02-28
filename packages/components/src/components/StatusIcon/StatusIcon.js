@@ -82,7 +82,9 @@ export default function StatusIcon({
     statusClass = hasWarning ? 'warning' : 'success';
   } else if (
     status === 'False' &&
-    (reason === 'PipelineRunCancelled' || reason === 'TaskRunCancelled')
+    (reason === 'PipelineRunCancelled' ||
+      reason === 'Cancelled' ||
+      reason === 'TaskRunCancelled')
   ) {
     statusClass = 'cancelled';
   } else if (
