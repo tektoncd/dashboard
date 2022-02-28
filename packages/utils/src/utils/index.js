@@ -316,13 +316,16 @@ export function runMatchesStatusFilter({ run, statusFilter }) {
       return (
         (status === 'False' &&
           reason !== 'PipelineRunCancelled' &&
+          reason !== 'Cancelled' &&
           reason !== 'TaskRunCancelled') ||
         (status === 'Unknown' && reason === 'PipelineRunCouldntCancel')
       );
     case 'cancelled':
       return (
         status === 'False' &&
-        (reason === 'PipelineRunCancelled' || reason === 'TaskRunCancelled')
+        (reason === 'PipelineRunCancelled' ||
+          reason === 'Cancelled' ||
+          reason === 'TaskRunCancelled')
       );
     case 'completed':
       return status === 'True';

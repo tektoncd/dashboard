@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2021 The Tekton Authors
+Copyright 2020-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -34,11 +34,29 @@ export default {
   title: 'Components/StatusIcon'
 };
 
-export const Queued = args => <StatusIcon {...args} />;
+export const CancelledGraceful = args => (
+  <StatusIcon reason="Cancelled" status="False" {...args} />
+);
+CancelledGraceful.storyName =
+  'Cancelled - PipelineRun TEP-0058 graceful termination';
+
+export const CancelledPipelineRun = args => (
+  <StatusIcon reason="PipelineRunCancelled" status="False" {...args} />
+);
+CancelledPipelineRun.storyName = 'Cancelled - PipelineRun legacy';
+
+export const CancelledTaskRun = args => (
+  <StatusIcon reason="TaskRunCancelled" status="False" {...args} />
+);
+CancelledTaskRun.storyName = 'Cancelled - TaskRun';
+
+export const Failed = args => <StatusIcon status="False" {...args} />;
 
 export const Pending = args => (
   <StatusIcon reason="Pending" status="Unknown" {...args} />
 );
+
+export const Queued = args => <StatusIcon {...args} />;
 
 export const Running = args => (
   <StatusIcon reason="Running" status="Unknown" {...args} />
@@ -50,5 +68,3 @@ export const SucceededWithWarning = args => (
   <StatusIcon hasWarning status="True" {...args} />
 );
 SucceededWithWarning.storyName = 'Succeeded with warning';
-
-export const Failed = args => <StatusIcon status="False" {...args} />;
