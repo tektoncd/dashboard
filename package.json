@@ -113,6 +113,7 @@
   "//": "Workspaces must be listed explicitly to ensure they're processed in the correct order until npm natively supports detecting the topological order",
   "workspaces": [
     "packages/utils",
-    "packages/components"
+    "packages/components",
+    "packages/graph"
   ]
 }

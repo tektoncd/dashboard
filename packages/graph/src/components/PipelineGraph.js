@@ -12,7 +12,7 @@ limitations under the License.
 */
 /* istanbul ignore file */
 import React, { Component } from 'react';
-import { buildGraphData } from '@tektoncd/dashboard-utils';
+import buildGraphData from '../buildGraphData';
 
 import Graph from './Graph';
 
