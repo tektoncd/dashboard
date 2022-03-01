@@ -27,7 +27,7 @@ module.exports = {
   },
   stories: [
     '../src/**/*.stories.js',
-    '../packages/components/src/**/*.stories.js'
+    '../packages/**/*.stories.js'
   ],
   webpackFinal: async (config, { configType }) => {
     // `configType` has a value of 'DEVELOPMENT' or 'PRODUCTION'

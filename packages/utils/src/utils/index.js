@@ -14,7 +14,6 @@ limitations under the License.
 import { labels as labelConstants } from './constants';
 import { getStatus } from './status';
 
-export { default as buildGraphData } from './buildGraphData';
 export * from './constants';
 export * from './hooks';
 export { paths, urls } from './router';

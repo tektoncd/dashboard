@@ -1,5 +1,5 @@
 {
-  "name": "@tektoncd/dashboard-components",
+  "name": "@tektoncd/dashboard-graph",
   "version": "0.1.0",
   "author": {
     "name": "The Tekton Authors"
@@ -8,33 +8,30 @@
     "tekton",
     "tektoncd",
     "components",
+    "graph",
+    "visualization",
     "react"
   ],
   "license": "Apache-2.0",
   "private": false,
-  "main": "./src/components/index.js",
+  "main": "./src/index.js",
   "scripts": {
     "version": "npm pkg set \"dependencies.@tektoncd/dashboard-utils=$npm_new_version\"",
     "postpublish": "npm pkg set \"dependencies.@tektoncd/dashboard-utils=file:../utils\""
   },
   "dependencies": {
     "@tektoncd/dashboard-utils": "file:../utils",
-    "js-yaml": "^3.13.0",
-    "linkify-it": "^3.0.2",
-    "prop-types": "^15.7.2",
-    "react-intl-formatted-duration": "^4.0.0",
-    "react-window": "^1.8.6",
-    "tlds": "^1.208.0"
+    "@visx/event": "^2.1.0",
+    "@visx/network": "^2.1.0",
+    "classnames": "^2.2.6",
+    "d3-path": "^1.0.8",
+    "elkjs": "^0.5.1"
   },
   "peerDependencies": {
     "@carbon/icons-react": "^10.44.0",
-    "@carbon/themes": "^10.48.0",
-    "carbon-components": "^10.50.0",
     "carbon-components-react": "^7.50.0",
     "react": "^16.14.0 || ^17.0.1",
-    "react-dom": "^16.14.0 || ^17.0.1",
-    "react-intl": "^5.10.2",
-    "react-router-dom": "^5.0.0"
+    "react-intl": "^5.10.2"
   },
   "engines": {
     "node": "^16.13.2",
@@ -49,6 +46,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/tektoncd/dashboard.git",
-    "directory": "packages/components"
+    "directory": "packages/graph"
   }
 }
