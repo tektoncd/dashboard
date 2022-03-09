@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,7 +14,7 @@ limitations under the License.
 import React, { Component } from 'react';
 import { injectIntl } from 'react-intl';
 import { OverflowMenu, OverflowMenuItem } from 'carbon-components-react';
-import { Modal } from '@tektoncd/dashboard-components';
+import { Modal } from '..';
 
 class RunDropdown extends Component {
   state = { showDialog: false };

@@ -22,7 +22,7 @@ import {
   UnorderedList
 } from 'carbon-components-react';
 import { urls } from '@tektoncd/dashboard-utils';
-import { Table, ViewYAML } from '@tektoncd/dashboard-components';
+import { Table, ViewYAML } from '..';
 
 const Trigger = ({ intl, namespace, trigger }) => {
   const tableHeaders = [

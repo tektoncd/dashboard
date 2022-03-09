@@ -16,12 +16,7 @@ import PropTypes from 'prop-types';
 import { injectIntl } from 'react-intl';
 import { InlineNotification, SkeletonText, Tag } from 'carbon-components-react';
 import { formatLabels, getErrorMessage } from '@tektoncd/dashboard-utils';
-import {
-  FormattedDate,
-  Tab,
-  Tabs,
-  ViewYAML
-} from '@tektoncd/dashboard-components';
+import { FormattedDate, Tab, Tabs, ViewYAML } from '..';
 
 const tabs = ['overview', 'yaml'];
 

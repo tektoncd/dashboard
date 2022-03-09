@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@tektoncd/dashboard-utils": "file:../utils",
+    "classnames": "^2.3.1",
     "js-yaml": "^3.13.0",
     "linkify-it": "^3.0.2",
     "prop-types": "^15.7.2",
