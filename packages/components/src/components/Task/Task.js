@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,11 +16,12 @@ import {
   PendingFilled20 as DefaultIcon,
   ChevronDown20 as ExpandIcon
 } from '@carbon/icons-react';
-import { StatusIcon, Step } from '@tektoncd/dashboard-components';
 import {
   getStepStatusReason,
   updateUnexecutedSteps
 } from '@tektoncd/dashboard-utils';
+
+import { StatusIcon, Step } from '..';
 
 class Task extends Component {
   state = { hasWarning: false, selectedStepId: null };

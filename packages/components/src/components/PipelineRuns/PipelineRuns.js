@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,12 +14,17 @@ limitations under the License.
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
-import { StatusIcon, Table } from '@tektoncd/dashboard-components';
 import { getStatus, taskRunHasWarning, urls } from '@tektoncd/dashboard-utils';
 import { Pending24 as DefaultIcon } from '@carbon/icons-react';
 import { Link as CarbonLink } from 'carbon-components-react';
 
-import { FormattedDate, FormattedDuration, RunDropdown } from '..';
+import {
+  FormattedDate,
+  FormattedDuration,
+  RunDropdown,
+  StatusIcon,
+  Table
+} from '..';
 
 const PipelineRuns = ({
   batchActionButtons = [],

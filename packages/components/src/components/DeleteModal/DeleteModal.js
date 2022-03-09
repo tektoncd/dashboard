@@ -15,7 +15,7 @@ limitations under the License.
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { Modal } from 'carbon-components-react';
-import { Table } from '@tektoncd/dashboard-components';
+import { Table } from '..';
 
 const DeleteModal = ({
   onClose,
