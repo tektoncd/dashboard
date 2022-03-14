@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -242,7 +242,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       );
     }
 
-    const pipelineRunName = pipelineRun.metadata.name;
+    const pipelineRunName =
+      pipelineRun.metadata.name || pipelineRun.metadata.generateName;
     const pipelineRunError = this.getPipelineRunError();
 
     const {
