@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -20,6 +20,26 @@ import { Link as CarbonLink } from 'carbon-components-react';
 
 import { ListPageLayout } from '..';
 import { useSelectedNamespace, useTriggerTemplates } from '../../api';
+
+function getFormattedResources(resources) {
+  return resources.map(template => ({
+    id: `${template.metadata.namespace}:${template.metadata.name}`,
+    name: (
+      <Link
+        component={CarbonLink}
+        to={urls.triggerTemplates.byName({
+          namespace: template.metadata.namespace,
+          triggerTemplateName: template.metadata.name
+        })}
+        title={template.metadata.name}
+      >
+        {template.metadata.name}
+      </Link>
+    ),
+    namespace: template.metadata.namespace,
+    date: <FormattedDate date={template.metadata.creationTimestamp} relative />
+  }));
+}
 
 function TriggerTemplates({ intl }) {
   useTitleSync({ page: 'TriggerTemplates' });
@@ -65,51 +85,36 @@ function TriggerTemplates({ intl }) {
     }
   ];
 
-  const triggerTemplatesFormatted = triggerTemplates.map(template => ({
-    id: `${template.metadata.namespace}:${template.metadata.name}`,
-    name: (
-      <Link
-        component={CarbonLink}
-        to={urls.triggerTemplates.byName({
-          namespace: template.metadata.namespace,
-          triggerTemplateName: template.metadata.name
-        })}
-        title={template.metadata.name}
-      >
-        {template.metadata.name}
-      </Link>
-    ),
-    namespace: template.metadata.namespace,
-    date: <FormattedDate date={template.metadata.creationTimestamp} relative />
-  }));
-
   return (
     <ListPageLayout
       error={getError()}
       filters={filters}
+      resources={triggerTemplates}
       title="TriggerTemplates"
     >
-      <Table
-        headers={initialHeaders}
-        rows={triggerTemplatesFormatted}
-        loading={isLoading}
-        selectedNamespace={selectedNamespace}
-        emptyTextAllNamespaces={intl.formatMessage(
-          {
-            id: 'dashboard.emptyState.allNamespaces',
-            defaultMessage: 'No matching {kind} found'
-          },
-          { kind: 'TriggerTemplates' }
-        )}
-        emptyTextSelectedNamespace={intl.formatMessage(
-          {
-            id: 'dashboard.emptyState.selectedNamespace',
-            defaultMessage:
-              'No matching {kind} found in namespace {selectedNamespace}'
-          },
-          { kind: 'TriggerTemplates', selectedNamespace }
-        )}
-      />
+      {({ resources }) => (
+        <Table
+          headers={initialHeaders}
+          rows={getFormattedResources(resources)}
+          loading={isLoading}
+          selectedNamespace={selectedNamespace}
+          emptyTextAllNamespaces={intl.formatMessage(
+            {
+              id: 'dashboard.emptyState.allNamespaces',
+              defaultMessage: 'No matching {kind} found'
+            },
+            { kind: 'TriggerTemplates' }
+          )}
+          emptyTextSelectedNamespace={intl.formatMessage(
+            {
+              id: 'dashboard.emptyState.selectedNamespace',
+              defaultMessage:
+                'No matching {kind} found in namespace {selectedNamespace}'
+            },
+            { kind: 'TriggerTemplates', selectedNamespace }
+          )}
+        />
+      )}
     </ListPageLayout>
   );
 }

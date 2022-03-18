@@ -146,7 +146,7 @@ export default {
     route: `/namespaces/${namespace}/eventlisteners/${name}`
   },
   component: EventListenerContainer,
-  title: 'Containers/EventListenerContainer'
+  title: 'Containers/EventListener'
 };
 
 export const Base = () => <EventListenerContainer {...props} />;

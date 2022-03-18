@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2021 The Tekton Authors
+Copyright 2020-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,6 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { Table } from '@tektoncd/dashboard-components';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
 import ListPageLayoutContainer from './ListPageLayout';
@@ -42,6 +43,10 @@ const namespaceContext = {
 };
 
 export default {
+  args: {
+    hideNamespacesDropdown: false,
+    title: 'PipelineRuns'
+  },
   component: ListPageLayoutContainer,
   decorators: [
     Story => {
@@ -64,20 +69,27 @@ export default {
 
 export const Base = args => (
   <ListPageLayoutContainer {...args}>
-    page content goes here
+    {() => <span>page content goes here</span>}
   </ListPageLayoutContainer>
 );
-Base.args = {
-  hideNamespacesDropdown: false,
-  title: 'PipelineRuns'
-};
 
 export const WithFilters = args => (
   <ListPageLayoutContainer filters={[]} {...args}>
-    page content goes here
+    {() => <span>page content goes here</span>}
   </ListPageLayoutContainer>
 );
-WithFilters.args = {
-  hideNamespacesDropdown: false,
-  title: 'PipelineRuns'
-};
+
+export const WithPagination = args => (
+  <ListPageLayoutContainer
+    filters={[]}
+    resources={Array.from({ length: 30 }, (_, index) => ({
+      id: index,
+      value: `Row ${index + 1}`
+    }))}
+    {...args}
+  >
+    {({ resources }) => (
+      <Table headers={[{ key: 'value', header: 'Value' }]} rows={resources} />
+    )}
+  </ListPageLayoutContainer>
+);

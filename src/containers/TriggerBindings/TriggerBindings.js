@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -20,6 +20,26 @@ import { Link as CarbonLink } from 'carbon-components-react';
 
 import { ListPageLayout } from '..';
 import { useSelectedNamespace, useTriggerBindings } from '../../api';
+
+function getFormattedResources(resources) {
+  return resources.map(binding => ({
+    id: `${binding.metadata.namespace}:${binding.metadata.name}`,
+    name: (
+      <Link
+        component={CarbonLink}
+        to={urls.triggerBindings.byName({
+          namespace: binding.metadata.namespace,
+          triggerBindingName: binding.metadata.name
+        })}
+        title={binding.metadata.name}
+      >
+        {binding.metadata.name}
+      </Link>
+    ),
+    namespace: binding.metadata.namespace,
+    date: <FormattedDate date={binding.metadata.creationTimestamp} relative />
+  }));
+}
 
 export function TriggerBindings({ intl }) {
   const location = useLocation();
@@ -69,51 +89,36 @@ export function TriggerBindings({ intl }) {
     }
   ];
 
-  const triggerBindingsFormatted = triggerBindings.map(binding => ({
-    id: `${binding.metadata.namespace}:${binding.metadata.name}`,
-    name: (
-      <Link
-        component={CarbonLink}
-        to={urls.triggerBindings.byName({
-          namespace: binding.metadata.namespace,
-          triggerBindingName: binding.metadata.name
-        })}
-        title={binding.metadata.name}
-      >
-        {binding.metadata.name}
-      </Link>
-    ),
-    namespace: binding.metadata.namespace,
-    date: <FormattedDate date={binding.metadata.creationTimestamp} relative />
-  }));
-
   return (
     <ListPageLayout
       error={getError()}
       filters={filters}
+      resources={triggerBindings}
       title="TriggerBindings"
     >
-      <Table
-        headers={initialHeaders}
-        rows={triggerBindingsFormatted}
-        loading={isLoading}
-        selectedNamespace={selectedNamespace}
-        emptyTextAllNamespaces={intl.formatMessage(
-          {
-            id: 'dashboard.emptyState.allNamespaces',
-            defaultMessage: 'No matching {kind} found'
-          },
-          { kind: 'TriggerBindings' }
-        )}
-        emptyTextSelectedNamespace={intl.formatMessage(
-          {
-            id: 'dashboard.emptyState.selectedNamespace',
-            defaultMessage:
-              'No matching {kind} found in namespace {selectedNamespace}'
-          },
-          { kind: 'TriggerBindings', selectedNamespace }
-        )}
-      />
+      {({ resources }) => (
+        <Table
+          headers={initialHeaders}
+          rows={getFormattedResources(resources)}
+          loading={isLoading}
+          selectedNamespace={selectedNamespace}
+          emptyTextAllNamespaces={intl.formatMessage(
+            {
+              id: 'dashboard.emptyState.allNamespaces',
+              defaultMessage: 'No matching {kind} found'
+            },
+            { kind: 'TriggerBindings' }
+          )}
+          emptyTextSelectedNamespace={intl.formatMessage(
+            {
+              id: 'dashboard.emptyState.selectedNamespace',
+              defaultMessage:
+                'No matching {kind} found in namespace {selectedNamespace}'
+            },
+            { kind: 'TriggerBindings', selectedNamespace }
+          )}
+        />
+      )}
     </ListPageLayout>
   );
 }

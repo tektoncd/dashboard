@@ -21,6 +21,30 @@ import { Link as CarbonLink } from 'carbon-components-react';
 import { ListPageLayout } from '..';
 import { useClusterInterceptors } from '../../api';
 
+function getFormattedResources(resources) {
+  return resources.map(clusterInterceptor => ({
+    id: clusterInterceptor.metadata.uid,
+    name: (
+      <Link
+        component={CarbonLink}
+        to={urls.rawCRD.cluster({
+          name: clusterInterceptor.metadata.name,
+          type: 'clusterinterceptors'
+        })}
+        title={clusterInterceptor.metadata.name}
+      >
+        {clusterInterceptor.metadata.name}
+      </Link>
+    ),
+    createdTime: (
+      <FormattedDate
+        date={clusterInterceptor.metadata.creationTimestamp}
+        relative
+      />
+    )
+  }));
+}
+
 function ClusterInterceptors({ intl }) {
   const location = useLocation();
   const filters = getFilters(location);
@@ -67,56 +91,35 @@ function ClusterInterceptors({ intl }) {
     }
   ];
 
-  const clusterInterceptorsFormatted = clusterInterceptors.map(
-    clusterInterceptor => ({
-      id: clusterInterceptor.metadata.uid,
-      name: (
-        <Link
-          component={CarbonLink}
-          to={urls.rawCRD.cluster({
-            name: clusterInterceptor.metadata.name,
-            type: 'clusterinterceptors'
-          })}
-          title={clusterInterceptor.metadata.name}
-        >
-          {clusterInterceptor.metadata.name}
-        </Link>
-      ),
-      createdTime: (
-        <FormattedDate
-          date={clusterInterceptor.metadata.creationTimestamp}
-          relative
-        />
-      )
-    })
-  );
-
   return (
     <ListPageLayout
       error={getError()}
       filters={filters}
       hideNamespacesDropdown
+      resources={clusterInterceptors}
       title="ClusterInterceptors"
     >
-      <Table
-        headers={headers}
-        rows={clusterInterceptorsFormatted}
-        loading={isLoading}
-        emptyTextAllNamespaces={intl.formatMessage(
-          {
-            id: 'dashboard.emptyState.clusterResource',
-            defaultMessage: 'No matching {kind} found'
-          },
-          { kind: 'ClusterInterceptors' }
-        )}
-        emptyTextSelectedNamespace={intl.formatMessage(
-          {
-            id: 'dashboard.emptyState.clusterResource',
-            defaultMessage: 'No matching {kind} found'
-          },
-          { kind: 'ClusterInterceptors' }
-        )}
-      />
+      {({ resources }) => (
+        <Table
+          headers={headers}
+          rows={getFormattedResources(resources)}
+          loading={isLoading}
+          emptyTextAllNamespaces={intl.formatMessage(
+            {
+              id: 'dashboard.emptyState.clusterResource',
+              defaultMessage: 'No matching {kind} found'
+            },
+            { kind: 'ClusterInterceptors' }
+          )}
+          emptyTextSelectedNamespace={intl.formatMessage(
+            {
+              id: 'dashboard.emptyState.clusterResource',
+              defaultMessage: 'No matching {kind} found'
+            },
+            { kind: 'ClusterInterceptors' }
+          )}
+        />
+      )}
     </ListPageLayout>
   );
 }

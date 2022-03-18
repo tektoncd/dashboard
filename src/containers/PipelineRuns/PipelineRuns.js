@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -316,30 +316,39 @@ export function PipelineRuns({ intl }) {
   );
 
   return (
-    <ListPageLayout error={getError()} filters={filters} title="PipelineRuns">
-      <PipelineRunsList
-        batchActionButtons={batchActionButtons}
-        filters={filtersUI}
-        loading={isLoading}
-        pipelineRuns={pipelineRuns.filter(run => {
-          return runMatchesStatusFilter({
-            run,
-            statusFilter
-          });
-        })}
-        pipelineRunActions={pipelineRunActions()}
-        selectedNamespace={namespace}
-        toolbarButtons={toolbarButtons}
-      />
-      {showDeleteModal ? (
-        <DeleteModal
-          kind="PipelineRuns"
-          onClose={closeDeleteModal}
-          onSubmit={handleDelete}
-          resources={toBeDeleted}
-          showNamespace={namespace === ALL_NAMESPACES}
-        />
-      ) : null}
+    <ListPageLayout
+      error={getError()}
+      filters={filters}
+      resources={pipelineRuns.filter(run => {
+        return runMatchesStatusFilter({
+          run,
+          statusFilter
+        });
+      })}
+      title="PipelineRuns"
+    >
+      {({ resources }) => (
+        <>
+          <PipelineRunsList
+            batchActionButtons={batchActionButtons}
+            filters={filtersUI}
+            loading={isLoading}
+            pipelineRuns={resources}
+            pipelineRunActions={pipelineRunActions()}
+            selectedNamespace={namespace}
+            toolbarButtons={toolbarButtons}
+          />
+          {showDeleteModal ? (
+            <DeleteModal
+              kind="PipelineRuns"
+              onClose={closeDeleteModal}
+              onSubmit={handleDelete}
+              resources={toBeDeleted}
+              showNamespace={namespace === ALL_NAMESPACES}
+            />
+          ) : null}
+        </>
+      )}
     </ListPageLayout>
   );
 }

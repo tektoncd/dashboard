@@ -305,27 +305,36 @@ function TaskRuns({ intl }) {
   );
 
   return (
-    <ListPageLayout error={getError()} filters={filters} title="TaskRuns">
-      <TaskRunsList
-        batchActionButtons={batchActionButtons}
-        filters={statusFilters}
-        loading={isLoading}
-        selectedNamespace={namespace}
-        taskRuns={taskRuns.filter(run => {
-          return runMatchesStatusFilter({ run, statusFilter });
-        })}
-        taskRunActions={taskRunActions()}
-        toolbarButtons={toolbarButtons}
-      />
-      {showDeleteModal ? (
-        <DeleteModal
-          kind="TaskRuns"
-          onClose={closeDeleteModal}
-          onSubmit={handleDelete}
-          resources={toBeDeleted}
-          showNamespace={namespace === ALL_NAMESPACES}
-        />
-      ) : null}
+    <ListPageLayout
+      error={getError()}
+      filters={filters}
+      resources={taskRuns.filter(run => {
+        return runMatchesStatusFilter({ run, statusFilter });
+      })}
+      title="TaskRuns"
+    >
+      {({ resources }) => (
+        <>
+          <TaskRunsList
+            batchActionButtons={batchActionButtons}
+            filters={statusFilters}
+            loading={isLoading}
+            selectedNamespace={namespace}
+            taskRuns={resources}
+            taskRunActions={taskRunActions()}
+            toolbarButtons={toolbarButtons}
+          />
+          {showDeleteModal ? (
+            <DeleteModal
+              kind="TaskRuns"
+              onClose={closeDeleteModal}
+              onSubmit={handleDelete}
+              resources={toBeDeleted}
+              showNamespace={namespace === ALL_NAMESPACES}
+            />
+          ) : null}
+        </>
+      )}
     </ListPageLayout>
   );
 }

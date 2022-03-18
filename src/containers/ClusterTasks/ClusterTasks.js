@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -31,6 +31,95 @@ import { getFilters, urls, useTitleSync } from '@tektoncd/dashboard-utils';
 
 import { ListPageLayout } from '..';
 import { deleteClusterTask, useClusterTasks, useIsReadOnly } from '../../api';
+
+function getFormattedResources({
+  intl,
+  isReadOnly,
+  openDeleteModal,
+  resources
+}) {
+  return resources.map(clusterTask => ({
+    id: clusterTask.metadata.uid,
+    name: (
+      <Link
+        component={CarbonLink}
+        to={urls.rawCRD.cluster({
+          type: 'clustertasks',
+          name: clusterTask.metadata.name
+        })}
+        title={clusterTask.metadata.name}
+      >
+        {clusterTask.metadata.name}
+      </Link>
+    ),
+    createdTime: (
+      <FormattedDate date={clusterTask.metadata.creationTimestamp} relative />
+    ),
+    actions: (
+      <>
+        {!isReadOnly ? (
+          <Button
+            className="tkn--danger"
+            hasIconOnly
+            iconDescription={intl.formatMessage({
+              id: 'dashboard.actions.deleteButton',
+              defaultMessage: 'Delete'
+            })}
+            kind="ghost"
+            onClick={() =>
+              openDeleteModal([{ id: clusterTask.metadata.uid }], () => {})
+            }
+            renderIcon={DeleteIcon}
+            size="sm"
+            tooltipAlignment="center"
+            tooltipPosition="left"
+          />
+        ) : null}
+        {!isReadOnly ? (
+          <Button
+            as={Link}
+            hasIconOnly
+            iconDescription={intl.formatMessage(
+              {
+                id: 'dashboard.actions.createRunButton',
+                defaultMessage: 'Create {kind}'
+              },
+              { kind: 'TaskRun' }
+            )}
+            kind="ghost"
+            renderIcon={RunIcon}
+            size="sm"
+            to={`${urls.taskRuns.create()}?${new URLSearchParams({
+              kind: 'ClusterTask',
+              taskName: clusterTask.metadata.name
+            }).toString()}`}
+            tooltipAlignment="center"
+            tooltipPosition="left"
+          />
+        ) : null}
+        <Button
+          as={Link}
+          hasIconOnly
+          iconDescription={intl.formatMessage(
+            {
+              id: 'dashboard.resourceList.viewRuns',
+              defaultMessage: 'View {kind} of {resource}'
+            },
+            { kind: 'TaskRuns', resource: clusterTask.metadata.name }
+          )}
+          kind="ghost"
+          renderIcon={RunsIcon}
+          size="sm"
+          to={urls.taskRuns.byClusterTask({
+            taskName: clusterTask.metadata.name
+          })}
+          tooltipAlignment="center"
+          tooltipPosition="left"
+        />
+      </>
+    )
+  }));
+}
 
 function ClusterTasksContainer({ intl }) {
   const location = useLocation();
@@ -141,125 +230,53 @@ function ClusterTasksContainer({ intl }) {
     }
   ];
 
-  const clusterTasksFormatted = clusterTasks.map(clusterTask => ({
-    id: clusterTask.metadata.uid,
-    name: (
-      <Link
-        component={CarbonLink}
-        to={urls.rawCRD.cluster({
-          type: 'clustertasks',
-          name: clusterTask.metadata.name
-        })}
-        title={clusterTask.metadata.name}
-      >
-        {clusterTask.metadata.name}
-      </Link>
-    ),
-    createdTime: (
-      <FormattedDate date={clusterTask.metadata.creationTimestamp} relative />
-    ),
-    actions: (
-      <>
-        {!isReadOnly ? (
-          <Button
-            className="tkn--danger"
-            hasIconOnly
-            iconDescription={intl.formatMessage({
-              id: 'dashboard.actions.deleteButton',
-              defaultMessage: 'Delete'
-            })}
-            kind="ghost"
-            onClick={() =>
-              openDeleteModal([{ id: clusterTask.metadata.uid }], () => {})
-            }
-            renderIcon={DeleteIcon}
-            size="sm"
-            tooltipAlignment="center"
-            tooltipPosition="left"
-          />
-        ) : null}
-        {!isReadOnly ? (
-          <Button
-            as={Link}
-            hasIconOnly
-            iconDescription={intl.formatMessage(
-              {
-                id: 'dashboard.actions.createRunButton',
-                defaultMessage: 'Create {kind}'
-              },
-              { kind: 'TaskRun' }
-            )}
-            kind="ghost"
-            renderIcon={RunIcon}
-            size="sm"
-            to={`${urls.taskRuns.create()}?${new URLSearchParams({
-              kind: 'ClusterTask',
-              taskName: clusterTask.metadata.name
-            }).toString()}`}
-            tooltipAlignment="center"
-            tooltipPosition="left"
-          />
-        ) : null}
-        <Button
-          as={Link}
-          hasIconOnly
-          iconDescription={intl.formatMessage(
-            {
-              id: 'dashboard.resourceList.viewRuns',
-              defaultMessage: 'View {kind} of {resource}'
-            },
-            { kind: 'TaskRuns', resource: clusterTask.metadata.name }
-          )}
-          kind="ghost"
-          renderIcon={RunsIcon}
-          size="sm"
-          to={urls.taskRuns.byClusterTask({
-            taskName: clusterTask.metadata.name
-          })}
-          tooltipAlignment="center"
-          tooltipPosition="left"
-        />
-      </>
-    )
-  }));
-
   return (
     <ListPageLayout
       error={getError()}
       filters={filters}
       hideNamespacesDropdown
+      resources={clusterTasks}
       title="ClusterTasks"
     >
-      <Table
-        batchActionButtons={batchActionButtons}
-        className="tkn--table--inline-actions"
-        headers={initialHeaders}
-        rows={clusterTasksFormatted}
-        loading={isLoading}
-        emptyTextAllNamespaces={intl.formatMessage(
-          {
-            id: 'dashboard.emptyState.clusterResource',
-            defaultMessage: 'No matching {kind} found'
-          },
-          { kind: 'ClusterTasks' }
-        )}
-        emptyTextSelectedNamespace={intl.formatMessage(
-          {
-            id: 'dashboard.emptyState.clusterResource',
-            defaultMessage: 'No matching {kind} found'
-          },
-          { kind: 'ClusterTasks' }
-        )}
-      />
-      {showDeleteModal ? (
-        <DeleteModal
-          kind="ClusterTasks"
-          onClose={closeDeleteModal}
-          onSubmit={handleDelete}
-          resources={toBeDeleted}
-          showNamespace={false}
-        />
-      ) : null}
+      {({ resources }) => (
+        <>
+          <Table
+            batchActionButtons={batchActionButtons}
+            className="tkn--table--inline-actions"
+            headers={initialHeaders}
+            rows={getFormattedResources({
+              intl,
+              isReadOnly,
+              openDeleteModal,
+              resources
+            })}
+            loading={isLoading}
+            emptyTextAllNamespaces={intl.formatMessage(
+              {
+                id: 'dashboard.emptyState.clusterResource',
+                defaultMessage: 'No matching {kind} found'
+              },
+              { kind: 'ClusterTasks' }
+            )}
+            emptyTextSelectedNamespace={intl.formatMessage(
+              {
+                id: 'dashboard.emptyState.clusterResource',
+                defaultMessage: 'No matching {kind} found'
+              },
+              { kind: 'ClusterTasks' }
+            )}
+          />
+          {showDeleteModal ? (
+            <DeleteModal
+              kind="ClusterTasks"
+              onClose={closeDeleteModal}
+              onSubmit={handleDelete}
+              resources={toBeDeleted}
+              showNamespace={false}
+            />
+          ) : null}
+        </>
+      )}
     </ListPageLayout>
   );
 }

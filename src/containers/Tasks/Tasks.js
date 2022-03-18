@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -41,6 +41,99 @@ import {
   useSelectedNamespace,
   useTasks
 } from '../../api';
+
+function getFormattedResources({
+  intl,
+  isReadOnly,
+  openDeleteModal,
+  resources
+}) {
+  return resources.map(task => ({
+    id: task.metadata.uid,
+    name: (
+      <Link
+        component={CarbonLink}
+        to={urls.rawCRD.byNamespace({
+          namespace: task.metadata.namespace,
+          type: 'tasks',
+          name: task.metadata.name
+        })}
+        title={task.metadata.name}
+      >
+        {task.metadata.name}
+      </Link>
+    ),
+    namespace: task.metadata.namespace,
+    createdTime: (
+      <FormattedDate date={task.metadata.creationTimestamp} relative />
+    ),
+    actions: (
+      <>
+        {!isReadOnly ? (
+          <Button
+            className="tkn--danger"
+            hasIconOnly
+            iconDescription={intl.formatMessage({
+              id: 'dashboard.actions.deleteButton',
+              defaultMessage: 'Delete'
+            })}
+            kind="ghost"
+            onClick={() =>
+              openDeleteModal([{ id: task.metadata.uid }], () => {})
+            }
+            renderIcon={DeleteIcon}
+            size="sm"
+            tooltipAlignment="center"
+            tooltipPosition="left"
+          />
+        ) : null}
+        {!isReadOnly ? (
+          <Button
+            as={Link}
+            hasIconOnly
+            iconDescription={intl.formatMessage(
+              {
+                id: 'dashboard.actions.createRunButton',
+                defaultMessage: 'Create {kind}'
+              },
+              { kind: 'TaskRun' }
+            )}
+            kind="ghost"
+            renderIcon={RunIcon}
+            size="sm"
+            to={`${urls.taskRuns.create()}?${new URLSearchParams({
+              kind: 'Task',
+              namespace: task.metadata.namespace,
+              taskName: task.metadata.name
+            }).toString()}`}
+            tooltipAlignment="center"
+            tooltipPosition="left"
+          />
+        ) : null}
+        <Button
+          as={Link}
+          hasIconOnly
+          iconDescription={intl.formatMessage(
+            {
+              id: 'dashboard.resourceList.viewRuns',
+              defaultMessage: 'View {kind} of {resource}'
+            },
+            { kind: 'TaskRuns', resource: task.metadata.name }
+          )}
+          kind="ghost"
+          renderIcon={RunsIcon}
+          size="sm"
+          to={urls.taskRuns.byTask({
+            namespace: task.metadata.namespace,
+            taskName: task.metadata.name
+          })}
+          tooltipAlignment="center"
+          tooltipPosition="left"
+        />
+      </>
+    )
+  }));
+}
 
 function Tasks({ intl }) {
   const location = useLocation();
@@ -162,126 +255,54 @@ function Tasks({ intl }) {
     }
   ];
 
-  const tasksFormatted = tasks.map(task => ({
-    id: task.metadata.uid,
-    name: (
-      <Link
-        component={CarbonLink}
-        to={urls.rawCRD.byNamespace({
-          namespace: task.metadata.namespace,
-          type: 'tasks',
-          name: task.metadata.name
-        })}
-        title={task.metadata.name}
-      >
-        {task.metadata.name}
-      </Link>
-    ),
-    namespace: task.metadata.namespace,
-    createdTime: (
-      <FormattedDate date={task.metadata.creationTimestamp} relative />
-    ),
-    actions: (
-      <>
-        {!isReadOnly ? (
-          <Button
-            className="tkn--danger"
-            hasIconOnly
-            iconDescription={intl.formatMessage({
-              id: 'dashboard.actions.deleteButton',
-              defaultMessage: 'Delete'
-            })}
-            kind="ghost"
-            onClick={() =>
-              openDeleteModal([{ id: task.metadata.uid }], () => {})
-            }
-            renderIcon={DeleteIcon}
-            size="sm"
-            tooltipAlignment="center"
-            tooltipPosition="left"
-          />
-        ) : null}
-        {!isReadOnly ? (
-          <Button
-            as={Link}
-            hasIconOnly
-            iconDescription={intl.formatMessage(
-              {
-                id: 'dashboard.actions.createRunButton',
-                defaultMessage: 'Create {kind}'
-              },
-              { kind: 'TaskRun' }
-            )}
-            kind="ghost"
-            renderIcon={RunIcon}
-            size="sm"
-            to={`${urls.taskRuns.create()}?${new URLSearchParams({
-              kind: 'Task',
-              namespace: task.metadata.namespace,
-              taskName: task.metadata.name
-            }).toString()}`}
-            tooltipAlignment="center"
-            tooltipPosition="left"
-          />
-        ) : null}
-        <Button
-          as={Link}
-          hasIconOnly
-          iconDescription={intl.formatMessage(
-            {
-              id: 'dashboard.resourceList.viewRuns',
-              defaultMessage: 'View {kind} of {resource}'
-            },
-            { kind: 'TaskRuns', resource: task.metadata.name }
-          )}
-          kind="ghost"
-          renderIcon={RunsIcon}
-          size="sm"
-          to={urls.taskRuns.byTask({
-            namespace: task.metadata.namespace,
-            taskName: task.metadata.name
-          })}
-          tooltipAlignment="center"
-          tooltipPosition="left"
-        />
-      </>
-    )
-  }));
-
   return (
-    <ListPageLayout error={getError()} filters={filters} title="Tasks">
-      <Table
-        batchActionButtons={batchActionButtons}
-        className="tkn--table--inline-actions"
-        headers={initialHeaders}
-        rows={tasksFormatted}
-        loading={isLoading}
-        selectedNamespace={namespace}
-        emptyTextAllNamespaces={intl.formatMessage(
-          {
-            id: 'dashboard.emptyState.allNamespaces',
-            defaultMessage: 'No matching {kind} found'
-          },
-          { kind: 'Tasks' }
-        )}
-        emptyTextSelectedNamespace={intl.formatMessage(
-          {
-            id: 'dashboard.emptyState.selectedNamespace',
-            defaultMessage:
-              'No matching {kind} found in namespace {selectedNamespace}'
-          },
-          { kind: 'Tasks', selectedNamespace: namespace }
-        )}
-      />
-      {showDeleteModal ? (
-        <DeleteModal
-          kind="Tasks"
-          onClose={closeDeleteModal}
-          onSubmit={handleDelete}
-          resources={toBeDeleted}
-          showNamespace={namespace === ALL_NAMESPACES}
-        />
-      ) : null}
+    <ListPageLayout
+      error={getError()}
+      filters={filters}
+      resources={tasks}
+      title="Tasks"
+    >
+      {({ resources }) => (
+        <>
+          <Table
+            batchActionButtons={batchActionButtons}
+            className="tkn--table--inline-actions"
+            headers={initialHeaders}
+            rows={getFormattedResources({
+              intl,
+              isReadOnly,
+              openDeleteModal,
+              resources
+            })}
+            loading={isLoading}
+            selectedNamespace={namespace}
+            emptyTextAllNamespaces={intl.formatMessage(
+              {
+                id: 'dashboard.emptyState.allNamespaces',
+                defaultMessage: 'No matching {kind} found'
+              },
+              { kind: 'Tasks' }
+            )}
+            emptyTextSelectedNamespace={intl.formatMessage(
+              {
+                id: 'dashboard.emptyState.selectedNamespace',
+                defaultMessage:
+                  'No matching {kind} found in namespace {selectedNamespace}'
+              },
+              { kind: 'Tasks', selectedNamespace: namespace }
+            )}
+          />
+          {showDeleteModal ? (
+            <DeleteModal
+              kind="Tasks"
+              onClose={closeDeleteModal}
+              onSubmit={handleDelete}
+              resources={toBeDeleted}
+              showNamespace={namespace === ALL_NAMESPACES}
+            />
+          ) : null}
+        </>
+      )}
     </ListPageLayout>
   );
 }
