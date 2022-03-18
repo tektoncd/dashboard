@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -41,6 +41,98 @@ import {
   usePipelines,
   useSelectedNamespace
 } from '../../api';
+
+function getFormattedResources({
+  intl,
+  isReadOnly,
+  openDeleteModal,
+  resources
+}) {
+  return resources.map(pipeline => ({
+    id: pipeline.metadata.uid,
+    name: (
+      <Link
+        component={CarbonLink}
+        to={urls.rawCRD.byNamespace({
+          namespace: pipeline.metadata.namespace,
+          type: 'pipelines',
+          name: pipeline.metadata.name
+        })}
+        title={pipeline.metadata.name}
+      >
+        {pipeline.metadata.name}
+      </Link>
+    ),
+    namespace: pipeline.metadata.namespace,
+    createdTime: (
+      <FormattedDate date={pipeline.metadata.creationTimestamp} relative />
+    ),
+    actions: (
+      <>
+        {!isReadOnly ? (
+          <Button
+            className="tkn--danger"
+            hasIconOnly
+            iconDescription={intl.formatMessage({
+              id: 'dashboard.actions.deleteButton',
+              defaultMessage: 'Delete'
+            })}
+            kind="ghost"
+            onClick={() =>
+              openDeleteModal([{ id: pipeline.metadata.uid }], () => {})
+            }
+            renderIcon={DeleteIcon}
+            size="sm"
+            tooltipAlignment="center"
+            tooltipPosition="left"
+          />
+        ) : null}
+        {!isReadOnly ? (
+          <Button
+            as={Link}
+            hasIconOnly
+            iconDescription={intl.formatMessage(
+              {
+                id: 'dashboard.actions.createRunButton',
+                defaultMessage: 'Create {kind}'
+              },
+              { kind: 'PipelineRun' }
+            )}
+            kind="ghost"
+            renderIcon={RunIcon}
+            size="sm"
+            to={`${urls.pipelineRuns.create()}?${new URLSearchParams({
+              namespace: pipeline.metadata.namespace,
+              pipelineName: pipeline.metadata.name
+            }).toString()}`}
+            tooltipAlignment="center"
+            tooltipPosition="left"
+          />
+        ) : null}
+        <Button
+          as={Link}
+          hasIconOnly
+          iconDescription={intl.formatMessage(
+            {
+              id: 'dashboard.resourceList.viewRuns',
+              defaultMessage: 'View {kind} of {resource}'
+            },
+            { kind: 'PipelineRuns', resource: pipeline.metadata.name }
+          )}
+          kind="ghost"
+          renderIcon={RunsIcon}
+          size="sm"
+          to={urls.pipelineRuns.byPipeline({
+            namespace: pipeline.metadata.namespace,
+            pipelineName: pipeline.metadata.name
+          })}
+          tooltipAlignment="center"
+          tooltipPosition="left"
+        />
+      </>
+    )
+  }));
+}
 
 export function Pipelines({ intl }) {
   const location = useLocation();
@@ -165,125 +257,54 @@ export function Pipelines({ intl }) {
     }
   ];
 
-  const pipelinesFormatted = pipelines.map(pipeline => ({
-    id: pipeline.metadata.uid,
-    name: (
-      <Link
-        component={CarbonLink}
-        to={urls.rawCRD.byNamespace({
-          namespace: pipeline.metadata.namespace,
-          type: 'pipelines',
-          name: pipeline.metadata.name
-        })}
-        title={pipeline.metadata.name}
-      >
-        {pipeline.metadata.name}
-      </Link>
-    ),
-    namespace: pipeline.metadata.namespace,
-    createdTime: (
-      <FormattedDate date={pipeline.metadata.creationTimestamp} relative />
-    ),
-    actions: (
-      <>
-        {!isReadOnly ? (
-          <Button
-            className="tkn--danger"
-            hasIconOnly
-            iconDescription={intl.formatMessage({
-              id: 'dashboard.actions.deleteButton',
-              defaultMessage: 'Delete'
-            })}
-            kind="ghost"
-            onClick={() =>
-              openDeleteModal([{ id: pipeline.metadata.uid }], () => {})
-            }
-            renderIcon={DeleteIcon}
-            size="sm"
-            tooltipAlignment="center"
-            tooltipPosition="left"
-          />
-        ) : null}
-        {!isReadOnly ? (
-          <Button
-            as={Link}
-            hasIconOnly
-            iconDescription={intl.formatMessage(
-              {
-                id: 'dashboard.actions.createRunButton',
-                defaultMessage: 'Create {kind}'
-              },
-              { kind: 'PipelineRun' }
-            )}
-            kind="ghost"
-            renderIcon={RunIcon}
-            size="sm"
-            to={`${urls.pipelineRuns.create()}?${new URLSearchParams({
-              namespace: pipeline.metadata.namespace,
-              pipelineName: pipeline.metadata.name
-            }).toString()}`}
-            tooltipAlignment="center"
-            tooltipPosition="left"
-          />
-        ) : null}
-        <Button
-          as={Link}
-          hasIconOnly
-          iconDescription={intl.formatMessage(
-            {
-              id: 'dashboard.resourceList.viewRuns',
-              defaultMessage: 'View {kind} of {resource}'
-            },
-            { kind: 'PipelineRuns', resource: pipeline.metadata.name }
-          )}
-          kind="ghost"
-          renderIcon={RunsIcon}
-          size="sm"
-          to={urls.pipelineRuns.byPipeline({
-            namespace: pipeline.metadata.namespace,
-            pipelineName: pipeline.metadata.name
-          })}
-          tooltipAlignment="center"
-          tooltipPosition="left"
-        />
-      </>
-    )
-  }));
-
   return (
-    <ListPageLayout error={getError()} filters={filters} title="Pipelines">
-      <Table
-        batchActionButtons={batchActionButtons}
-        className="tkn--table--inline-actions"
-        headers={initialHeaders}
-        rows={pipelinesFormatted}
-        loading={isLoading}
-        selectedNamespace={namespace}
-        emptyTextAllNamespaces={intl.formatMessage(
-          {
-            id: 'dashboard.emptyState.allNamespaces',
-            defaultMessage: 'No matching {kind} found'
-          },
-          { kind: 'Pipelines' }
-        )}
-        emptyTextSelectedNamespace={intl.formatMessage(
-          {
-            id: 'dashboard.emptyState.selectedNamespace',
-            defaultMessage:
-              'No matching {kind} found in namespace {selectedNamespace}'
-          },
-          { kind: 'Pipelines', selectedNamespace: namespace }
-        )}
-      />
-      {showDeleteModal ? (
-        <DeleteModal
-          kind="Pipelines"
-          onClose={closeDeleteModal}
-          onSubmit={handleDelete}
-          resources={toBeDeleted}
-          showNamespace={namespace === ALL_NAMESPACES}
-        />
-      ) : null}
+    <ListPageLayout
+      error={getError()}
+      filters={filters}
+      resources={pipelines}
+      title="Pipelines"
+    >
+      {({ resources }) => (
+        <>
+          <Table
+            batchActionButtons={batchActionButtons}
+            className="tkn--table--inline-actions"
+            headers={initialHeaders}
+            rows={getFormattedResources({
+              intl,
+              isReadOnly,
+              openDeleteModal,
+              resources
+            })}
+            loading={isLoading}
+            selectedNamespace={namespace}
+            emptyTextAllNamespaces={intl.formatMessage(
+              {
+                id: 'dashboard.emptyState.allNamespaces',
+                defaultMessage: 'No matching {kind} found'
+              },
+              { kind: 'Pipelines' }
+            )}
+            emptyTextSelectedNamespace={intl.formatMessage(
+              {
+                id: 'dashboard.emptyState.selectedNamespace',
+                defaultMessage:
+                  'No matching {kind} found in namespace {selectedNamespace}'
+              },
+              { kind: 'Pipelines', selectedNamespace: namespace }
+            )}
+          />
+          {showDeleteModal ? (
+            <DeleteModal
+              kind="Pipelines"
+              onClose={closeDeleteModal}
+              onSubmit={handleDelete}
+              resources={toBeDeleted}
+              showNamespace={namespace === ALL_NAMESPACES}
+            />
+          ) : null}
+        </>
+      )}
     </ListPageLayout>
   );
 }

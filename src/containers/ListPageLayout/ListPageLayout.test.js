@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2021 The Tekton Authors
+Copyright 2020-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -36,7 +36,9 @@ describe('ListPageLayout', () => {
       <ListPageLayout
         namespace={ALL_NAMESPACES}
         selectNamespace={selectNamespace}
-      />,
+      >
+        {() => {}}
+      </ListPageLayout>,
       { path, route: path }
     );
     fireEvent.click(getByDisplayValue(/All Namespaces/i));
@@ -65,10 +67,9 @@ describe('ListPageLayout', () => {
     const selectNamespace = jest.fn();
     jest.spyOn(window.history, 'pushState');
     const { getByText, getByDisplayValue } = renderWithRouter(
-      <ListPageLayout
-        namespace={namespace}
-        selectNamespace={selectNamespace}
-      />,
+      <ListPageLayout namespace={namespace} selectNamespace={selectNamespace}>
+        {() => {}}
+      </ListPageLayout>,
       { path, route: `/namespaces/${namespace}/fake/path` }
     );
     fireEvent.click(getByDisplayValue(namespace));
@@ -94,10 +95,9 @@ describe('ListPageLayout', () => {
     jest.spyOn(window.history, 'pushState');
     const path = '/namespaces/:namespace/fake/path';
     const { getByText, getByDisplayValue } = renderWithRouter(
-      <ListPageLayout
-        namespace={namespace}
-        selectNamespace={selectNamespace}
-      />,
+      <ListPageLayout namespace={namespace} selectNamespace={selectNamespace}>
+        {() => {}}
+      </ListPageLayout>,
       {
         path,
         route: `/namespaces/${namespace}/fake/path`
@@ -126,10 +126,9 @@ describe('ListPageLayout', () => {
     jest.spyOn(window.history, 'pushState');
     const path = '/namespaces/:namespace/fake/path';
     const { getByTitle } = renderWithRouter(
-      <ListPageLayout
-        namespace={namespace}
-        selectNamespace={selectNamespace}
-      />,
+      <ListPageLayout namespace={namespace} selectNamespace={selectNamespace}>
+        {() => {}}
+      </ListPageLayout>,
       { path, route: `/namespaces/${namespace}/fake/path` }
     );
     fireEvent.click(getByTitle(/clear selected item/i));
@@ -144,26 +143,28 @@ describe('ListPageLayout', () => {
   it('does not render namespaces dropdown in single namespace visibility mode', () => {
     jest.spyOn(API, 'useTenantNamespace').mockImplementation(() => 'fake');
     const { queryByPlaceholderText } = renderWithRouter(
-      <ListPageLayout tenantNamespace="fake" />
+      <ListPageLayout tenantNamespace="fake">{() => {}}</ListPageLayout>
     );
     expect(queryByPlaceholderText(/select namespace/i)).toBeFalsy();
   });
 
   it('does not render namespaces dropdown when hideNamespacesDropdown is true', () => {
     const { queryByPlaceholderText } = renderWithRouter(
-      <ListPageLayout hideNamespacesDropdown />
+      <ListPageLayout hideNamespacesDropdown>{() => {}}</ListPageLayout>
     );
     expect(queryByPlaceholderText(/select namespace/i)).toBeFalsy();
   });
 
   it('does not render LabelFilter input by default', () => {
-    const { queryByLabelText } = renderWithRouter(<ListPageLayout />);
+    const { queryByLabelText } = renderWithRouter(
+      <ListPageLayout>{() => {}}</ListPageLayout>
+    );
     expect(queryByLabelText(/Input a label filter/i)).toBeFalsy();
   });
 
   it('renders LabelFilter input when filters prop is provided', () => {
     const { getAllByLabelText } = renderWithRouter(
-      <ListPageLayout filters={[]} />
+      <ListPageLayout filters={[]}>{() => {}}</ListPageLayout>
     );
     expect(getAllByLabelText(/Input a label filter/i)[0]).toBeTruthy();
   });

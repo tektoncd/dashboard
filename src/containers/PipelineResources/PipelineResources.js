@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -150,24 +150,29 @@ export function PipelineResources({ intl }) {
     <ListPageLayout
       error={getError()}
       filters={filters}
+      resources={pipelineResources}
       title="PipelineResources"
     >
-      <PipelineResourcesList
-        batchActionButtons={batchActionButtons}
-        loading={isLoading}
-        pipelineResources={pipelineResources}
-        selectedNamespace={namespace}
-        toolbarButtons={toolbarButtons}
-      />
-      {isDeleteModalOpen ? (
-        <DeleteModal
-          kind="PipelineResources"
-          onClose={closeDeleteModal}
-          onSubmit={handleDelete}
-          resources={toBeDeleted}
-          showNamespace={namespace === ALL_NAMESPACES}
-        />
-      ) : null}
+      {({ resources }) => (
+        <>
+          <PipelineResourcesList
+            batchActionButtons={batchActionButtons}
+            loading={isLoading}
+            pipelineResources={resources}
+            selectedNamespace={namespace}
+            toolbarButtons={toolbarButtons}
+          />
+          {isDeleteModalOpen ? (
+            <DeleteModal
+              kind="PipelineResources"
+              onClose={closeDeleteModal}
+              onSubmit={handleDelete}
+              resources={toBeDeleted}
+              showNamespace={namespace === ALL_NAMESPACES}
+            />
+          ) : null}
+        </>
+      )}
     </ListPageLayout>
   );
 }

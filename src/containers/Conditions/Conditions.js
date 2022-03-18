@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2021 The Tekton Authors
+Copyright 2020-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -20,6 +20,28 @@ import { Link as CarbonLink } from 'carbon-components-react';
 
 import { useConditions, useSelectedNamespace } from '../../api';
 import { ListPageLayout } from '..';
+
+function getFormattedResources(resources) {
+  return resources.map(condition => ({
+    id: condition.metadata.uid,
+    name: (
+      <Link
+        component={CarbonLink}
+        to={urls.conditions.byName({
+          namespace: condition.metadata.namespace,
+          conditionName: condition.metadata.name
+        })}
+        title={condition.metadata.name}
+      >
+        {condition.metadata.name}
+      </Link>
+    ),
+    namespace: condition.metadata.namespace,
+    createdTime: (
+      <FormattedDate date={condition.metadata.creationTimestamp} relative />
+    )
+  }));
+}
 
 function Conditions({ intl }) {
   const location = useLocation();
@@ -74,49 +96,36 @@ function Conditions({ intl }) {
     }
   ];
 
-  const conditionsFormatted = conditions.map(condition => ({
-    id: condition.metadata.uid,
-    name: (
-      <Link
-        component={CarbonLink}
-        to={urls.conditions.byName({
-          namespace: condition.metadata.namespace,
-          conditionName: condition.metadata.name
-        })}
-        title={condition.metadata.name}
-      >
-        {condition.metadata.name}
-      </Link>
-    ),
-    namespace: condition.metadata.namespace,
-    createdTime: (
-      <FormattedDate date={condition.metadata.creationTimestamp} relative />
-    )
-  }));
-
   return (
-    <ListPageLayout error={getError()} filters={filters} title="Conditions">
-      <Table
-        headers={headers}
-        rows={conditionsFormatted}
-        loading={isLoading}
-        selectedNamespace={namespace}
-        emptyTextAllNamespaces={intl.formatMessage(
-          {
-            id: 'dashboard.emptyState.allNamespaces',
-            defaultMessage: 'No matching {kind} found'
-          },
-          { kind: 'Conditions' }
-        )}
-        emptyTextSelectedNamespace={intl.formatMessage(
-          {
-            id: 'dashboard.emptyState.selectedNamespace',
-            defaultMessage:
-              'No matching {kind} found in namespace {selectedNamespace}'
-          },
-          { kind: 'Conditions', selectedNamespace: namespace }
-        )}
-      />
+    <ListPageLayout
+      error={getError()}
+      filters={filters}
+      resources={conditions}
+      title="Conditions"
+    >
+      {({ resources }) => (
+        <Table
+          headers={headers}
+          rows={getFormattedResources(resources)}
+          loading={isLoading}
+          selectedNamespace={namespace}
+          emptyTextAllNamespaces={intl.formatMessage(
+            {
+              id: 'dashboard.emptyState.allNamespaces',
+              defaultMessage: 'No matching {kind} found'
+            },
+            { kind: 'Conditions' }
+          )}
+          emptyTextSelectedNamespace={intl.formatMessage(
+            {
+              id: 'dashboard.emptyState.selectedNamespace',
+              defaultMessage:
+                'No matching {kind} found in namespace {selectedNamespace}'
+            },
+            { kind: 'Conditions', selectedNamespace: namespace }
+          )}
+        />
+      )}
     </ListPageLayout>
   );
 }
