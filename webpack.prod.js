@@ -13,7 +13,6 @@ limitations under the License.
 const { merge } = require('webpack-merge');
 const path = require('path');
 const webpack = require('webpack');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const common = require('./webpack.common');
@@ -29,6 +28,7 @@ module.exports = merge(common({ mode }), {
   },
   mode,
   output: {
+    clean: true,
     filename: '[name].[contenthash].js',
     path: path.resolve(__dirname, 'cmd/dashboard/kodata'),
     publicPath: './'
@@ -55,7 +55,6 @@ module.exports = merge(common({ mode }), {
     ]
   },
   plugins: [
-    new CleanWebpackPlugin(),
     new webpack.ids.HashedModuleIdsPlugin(),
     new MiniCssExtractPlugin({
       filename: '[name].[contenthash].css'
