@@ -34,7 +34,7 @@ Among other things, the Tekton Dashboard supports:
 
 | Version | Docs | Pipelines | Triggers |
 | ------- | ---- | --------- | -------- |
-| [HEAD](./DEVELOPMENT.md) | [Docs @ HEAD](./docs/README.md) | v0.25.x - v0.33.x | v0.15.x - 0.19.x |
+| [HEAD](./DEVELOPMENT.md) | [Docs @ HEAD](./docs/README.md) | v0.25.x - v0.34.x | v0.15.x - 0.19.x |
 | [v0.24.1](https://github.com/tektoncd/dashboard/releases/tag/v0.24.1) | [Docs @ v0.24.1](https://github.com/tektoncd/dashboard/tree/v0.24.1/docs) | v0.25.x - v0.32.x | v0.15.x - 0.18.x |
 | [v0.23.0](https://github.com/tektoncd/dashboard/releases/tag/v0.23.0) | [Docs @ v0.23.0](https://github.com/tektoncd/dashboard/tree/v0.23.0/docs) | v0.25.x - v0.30.x | v0.15.x - 0.17.x |
 | [v0.22.0](https://github.com/tektoncd/dashboard/releases/tag/v0.22.0) | [Docs @ v0.22.0](https://github.com/tektoncd/dashboard/tree/v0.22.0/docs) | v0.25.x - v0.29.x | v0.15.x - 0.17.x |
