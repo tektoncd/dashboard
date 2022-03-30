@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -172,7 +172,7 @@ func NewProxyHandler(apiProxyPrefix string, cfg *rest.Config, keepalive time.Dur
 	proxy.UseRequestLocation = true
 	proxy.UseLocationHost = true
 
-	proxyServer := http.Handler(proxy)
+	proxyServer := protectWebSocket(proxy)
 
 	return proxyServer, nil
 }
@@ -190,4 +190,39 @@ func (s *Server) ServeOnListener(l net.Listener) error {
 		Handler: CSRF(s.handler),
 	}
 	return server.Serve(l)
+}
+
+// isUpgradeRequest returns true if the given request is a connection upgrade request
+func isUpgradeRequest(req *http.Request) bool {
+	connection := req.Header.Get("Connection")
+	return strings.ToLower(connection) == "upgrade"
+}
+
+func checkUpgradeSameOrigin(req *http.Request) bool {
+	host := req.Host
+	origin := req.Header.Get("Origin")
+
+	if len(origin) == 0 || !isUpgradeRequest(req) {
+		return true
+	}
+
+	u, err := url.Parse(origin)
+	if err != nil {
+		return false
+	}
+
+	return u.Host == host
+}
+
+// Verify Origin header on Upgrade requests to prevent cross-origin websocket hijacking
+func protectWebSocket(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		if !checkUpgradeSameOrigin(req) {
+			logging.Log.Warnf("websocket: Connection upgrade blocked, Host: %s, Origin: %s", req.Host, req.Header.Get("Origin"))
+			http.Error(w, "websocket: request origin not allowed", http.StatusForbidden)
+			return
+		}
+
+		h.ServeHTTP(w, req)
+	})
 }
