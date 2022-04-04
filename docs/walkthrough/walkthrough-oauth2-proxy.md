@@ -64,9 +64,9 @@ These will be needed to configure `oauth2-proxy` in the next step.
 
 Now you have the OAuth application created on GitHub, you can deploy [oauth2-proxy](https://github.com/oauth2-proxy/oauth2-proxy) in your cluster.
 
-You will install it using helm. The helm chart used in this guide is hosted on the [helm official repository](https://github.com/helm/charts/tree/master/stable/oauth2-proxy).
+You will install it using helm. The helm chart used in this guide is hosted at https://github.com/oauth2-proxy/manifests.
 
-To install the chart, set the `Client ID` and `Client Secret` you obtained from GitHub and run the command below:
+To install the chart, set the `Client ID` and `Client Secret` you obtained from GitHub and run the commands below:
 
 ```bash
 # CLIENT_ID and CLIENT_SECRET are the Client ID and Client Secret obtained
@@ -74,7 +74,9 @@ To install the chart, set the `Client ID` and `Client Secret` you obtained from 
 CLIENT_ID=__THE_CLIENT_ID_OF_YOUR_GITHUB_OAUTH_APP__
 CLIENT_SECRET=__THE_CLIENT_SECRET_OF_YOUR_GITHUB_OAUTH_APP__
 
-helm upgrade --install --wait --create-namespace --namespace tools oauth2-proxy stable/oauth2-proxy --values - <<EOF
+helm repo add oauth2-proxy https://oauth2-proxy.github.io/manifests
+
+helm upgrade --install --wait --create-namespace --namespace tools oauth2-proxy oauth2-proxy/oauth2-proxy --values - <<EOF
 config:
   clientID: $CLIENT_ID
   clientSecret: $CLIENT_SECRET
