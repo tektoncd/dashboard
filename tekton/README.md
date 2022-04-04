@@ -10,6 +10,7 @@ Tekton! This directory contains the
 that we use.
 
 * [How to create a release](#create-an-official-release)
+* [How to create a patch release](#create-a-patch-release)
 * [Automated nightly releases](#nightly-releases)
 * [Setup releases](#setup)
 * [npm packages](#npm-packages)
@@ -17,6 +18,21 @@ that we use.
 ## Create an official release
 
 To create an official release, follow the steps in the [release-cheat-sheet](./release-cheat-sheet.md)
+
+## Create a patch release
+
+Sometimes we'll find bugs that we want to backport fixes for into previous releases
+or discover things that were missing from a release that are required by upstream
+consumers of a project. In that case we'll make a patch release. To make one:
+
+1. Create a branch for the release named `release-<version number>.x`, e.g. [`release-v0.18.x`](https://github.com/tektoncd/dashboard/tree/release-v0.18.x)
+   and push it to the repo https://github.com/tektoncd/dashboard (you may need help from
+   [an OWNER](../OWNERS) with permission to push) if that release branch does not exist.
+1. Use [git cherry-pick](https://git-scm.com/docs/git-cherry-pick) to cherry pick the
+   fixes from main into the release branch you have created (use `-x` to include
+   the original commit information).
+1. [Create an official release](#create-an-official-release) for the patch, with the
+   [patch version incremented](https://semver.org/)
 
 ## Nightly releases
 
