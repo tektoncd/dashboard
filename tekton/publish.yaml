@@ -86,6 +86,8 @@ spec:
         #!/usr/bin/env sh
         set -ex
 
+        go version
+
         # Setup docker-auth
         DOCKER_CONFIG=~/.docker
         mkdir -p ${DOCKER_CONFIG}
