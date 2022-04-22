@@ -234,33 +234,6 @@ export /* istanbul ignore next */ function CreatePipelineResource({ intl }) {
             defaultMessage: 'Create PipelineResource'
           })}
         </h1>
-        <Button
-          iconDescription={intl.formatMessage({
-            id: 'dashboard.modal.cancelButton',
-            defaultMessage: 'Cancel'
-          })}
-          kind="secondary"
-          onClick={handleClose}
-          disabled={creating}
-        >
-          {intl.formatMessage({
-            id: 'dashboard.modal.cancelButton',
-            defaultMessage: 'Cancel'
-          })}
-        </Button>
-        <Button
-          iconDescription={intl.formatMessage({
-            id: 'dashboard.actions.createButton',
-            defaultMessage: 'Create'
-          })}
-          onClick={handleSubmit}
-          disabled={creating}
-        >
-          {intl.formatMessage({
-            id: 'dashboard.actions.createButton',
-            defaultMessage: 'Create'
-          })}
-        </Button>
       </div>
 
       <form>
@@ -297,6 +270,34 @@ export /* istanbul ignore next */ function CreatePipelineResource({ intl }) {
             invalidFields={invalidFields}
           />
         )}
+
+        <Button
+          iconDescription={intl.formatMessage({
+            id: 'dashboard.actions.createButton',
+            defaultMessage: 'Create'
+          })}
+          onClick={handleSubmit}
+          disabled={creating}
+        >
+          {intl.formatMessage({
+            id: 'dashboard.actions.createButton',
+            defaultMessage: 'Create'
+          })}
+        </Button>
+        <Button
+          iconDescription={intl.formatMessage({
+            id: 'dashboard.modal.cancelButton',
+            defaultMessage: 'Cancel'
+          })}
+          kind="secondary"
+          onClick={handleClose}
+          disabled={creating}
+        >
+          {intl.formatMessage({
+            id: 'dashboard.modal.cancelButton',
+            defaultMessage: 'Cancel'
+          })}
+        </Button>
       </form>
     </div>
   );
