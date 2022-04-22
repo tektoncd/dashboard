@@ -26,3 +26,7 @@ Example payload response is formatted as so:
  "triggersVersion": "v0.3.1"
 }
 ```
+
+---
+
+All other APIs consumed by the Dashboard client are provided by the Kubernetes API server, Dashboard extensions, or external log providers.
