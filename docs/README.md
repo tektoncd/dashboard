@@ -14,7 +14,7 @@ cascade:
 
 Tekton Dashboard is a general-purpose, web-based UI for 
 [Tekton Pipelines](https://github.com/tektoncd/pipeline) and 
-[Tekton triggers](https://github.com/tektoncd/triggers) resources.
+[Tekton Triggers](https://github.com/tektoncd/triggers) resources.
 
 It allows users to manage and view Tekton resource creation, execution, and completion.
 
@@ -29,9 +29,7 @@ Some of the features the Dashboard supports:
 
 ## Tutorial
 
-Try out the [tutorial](https://katacoda.com/tektoncd/scenarios/dashboard) 
-on Katacoda to install the Dashboard in a guided sandbox environment and explore 
-some of its features.
+Try out the [tutorial](./tutorial) to install the Dashboard and explore some of its features.
 
 ## Installation
 
