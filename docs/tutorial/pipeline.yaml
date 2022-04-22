@@ -1,0 +1,20 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: hello-goodbye
+spec:
+  params:
+    - name: hello-greeting
+      default: Hello from a Pipeline
+  tasks:
+    - name: hello
+      taskRef:
+        name: hello
+      params:
+        - name: greeting
+          value: "$(params.hello-greeting)"
+    - name: goodbye
+      runAfter:
+        - hello
+      taskRef:
+        name: goodbye
