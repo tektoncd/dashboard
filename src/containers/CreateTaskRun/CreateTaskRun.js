@@ -62,7 +62,9 @@ const initialState = {
   taskRef: '',
   timeout: '60',
   validationError: false,
-  validTimeout: true
+  validTimeout: true,
+  taskRunName: '',
+  validTaskRunName: true
 };
 
 const initialParamsState = paramSpecs => {
@@ -139,7 +141,9 @@ function CreateTaskRun({ intl }) {
       taskRef,
       timeout,
       validationError,
-      validTimeout
+      validTimeout,
+      taskRunName,
+      validTaskRunName
     },
     setState
   ] = useState({
@@ -148,7 +152,8 @@ function CreateTaskRun({ intl }) {
     namespace: getNamespace(),
     taskRef: taskRefFromDetails,
     params: initialParamsState(null),
-    resources: initialResourcesState(null)
+    resources: initialResourcesState(null),
+    taskRunName: ''
   });
 
   const { data: task, error: taskError } = useTaskByKind(
@@ -195,6 +200,14 @@ function CreateTaskRun({ intl }) {
             typeof paramSpecMap[name]?.default !== 'undefined'),
         true
       );
+
+    // TaskRun name
+    const trimmed = taskRunName.trim();
+    const nameTest =
+      !trimmed ||
+      (/^([a-z\d][-a-z\d]*)?[a-z\d]$/.test(trimmed) && trimmed.length < 64);
+
+    setState(state => ({ ...state, validTaskRunName: nameTest }));
 
     // Timeout is a number and less than 1 year in minutes
     const isValidTimeout =
@@ -246,7 +259,8 @@ function CreateTaskRun({ intl }) {
       validParams &&
       isValidTimeout &&
       validLabels &&
-      validNodeSelector
+      validNodeSelector &&
+      nameTest
     );
   }
 
@@ -424,6 +438,7 @@ function CreateTaskRun({ intl }) {
       namespace,
       kind,
       taskName: taskRef,
+      name: taskRunName,
       resources,
       params,
       serviceAccount,
@@ -764,6 +779,23 @@ function CreateTaskRun({ intl }) {
             value={timeout}
             onChange={({ target: { value } }) =>
               setState(state => ({ ...state, timeout: value }))
+            }
+          />
+          <TextInput
+            id="create-taskrun--taskrunname"
+            labelText={intl.formatMessage({
+              id: 'dashboard.createRun.taskRunNameLabel',
+              defaultMessage: 'TaskRun name'
+            })}
+            invalid={validationError && !validTaskRunName}
+            invalidText={intl.formatMessage({
+              id: 'dashboard.createResource.nameError',
+              defaultMessage:
+                'Must be less than 64 characters and contain only lowercase alphanumeric characters or -'
+            })}
+            value={taskRunName}
+            onChange={({ target: { value } }) =>
+              setState(state => ({ ...state, taskRunName: value }))
             }
           />
         </FormGroup>

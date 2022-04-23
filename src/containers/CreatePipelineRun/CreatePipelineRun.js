@@ -62,7 +62,9 @@ const initialState = {
   submitError: '',
   timeout: '60',
   validationError: false,
-  validTimeout: true
+  validTimeout: true,
+  pipelineRunName: '',
+  validPipelineRunName: true
 };
 
 const initialParamsState = paramSpecs => {
@@ -121,7 +123,9 @@ function CreatePipelineRun({ intl }) {
       submitError,
       timeout,
       validationError,
-      validTimeout
+      validTimeout,
+      pipelineRunName,
+      validPipelineRunName
     },
     setState
   ] = useState({
@@ -177,6 +181,14 @@ function CreatePipelineRun({ intl }) {
         true
       );
 
+    // PipelineRun name
+    const trimmed = pipelineRunName.trim();
+    const nameTest =
+      !trimmed ||
+      (/^([a-z\d][-a-z\d]*)?[a-z\d]$/.test(trimmed) && trimmed.length < 64);
+
+    setState(state => ({ ...state, validPipelineRunName: nameTest }));
+
     // Timeout is a number and less than 1 year in minutes
     const timeoutTest =
       !Number.isNaN(timeout) && timeout < 525600 && timeout.trim() !== '';
@@ -227,7 +239,8 @@ function CreatePipelineRun({ intl }) {
       validParams &&
       timeoutTest &&
       validLabels &&
-      validNodeSelector
+      validNodeSelector &&
+      nameTest
     );
   }
 
@@ -400,6 +413,7 @@ function CreatePipelineRun({ intl }) {
     createPipelineRun({
       namespace,
       pipelineName: pipelineRef,
+      name: pipelineRunName,
       resources,
       params,
       pipelinePendingStatus,
@@ -681,6 +695,23 @@ function CreatePipelineRun({ intl }) {
             value={timeout}
             onChange={({ target: { value } }) =>
               setState(state => ({ ...state, timeout: value }))
+            }
+          />
+          <TextInput
+            id="create-pipelinerun--pipelinerunname"
+            labelText={intl.formatMessage({
+              id: 'dashboard.createRun.pipelineRunNameLabel',
+              defaultMessage: 'PipelineRun name'
+            })}
+            invalid={validationError && !validPipelineRunName}
+            invalidText={intl.formatMessage({
+              id: 'dashboard.createResource.nameError',
+              defaultMessage:
+                'Must be less than 64 characters and contain only lowercase alphanumeric characters or -'
+            })}
+            value={pipelineRunName}
+            onChange={({ target: { value } }) =>
+              setState(state => ({ ...state, pipelineRunName: value }))
             }
           />
           <Toggle

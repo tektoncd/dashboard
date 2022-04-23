@@ -78,6 +78,7 @@ export function cancelTaskRun({ name, namespace }) {
 export function createTaskRun({
   namespace,
   taskName,
+  name = `${taskName}-run-${Date.now()}`,
   kind,
   labels,
   params,
@@ -90,7 +91,7 @@ export function createTaskRun({
     apiVersion: 'tekton.dev/v1beta1',
     kind: 'TaskRun',
     metadata: {
-      name: `${taskName}-run-${Date.now()}`,
+      name,
       namespace,
       labels
     },
@@ -110,9 +111,9 @@ export function createTaskRun({
     payload.spec.podTemplate = { nodeSelector };
   }
   if (params) {
-    payload.spec.params = Object.keys(params).map(name => ({
-      name,
-      value: params[name]
+    payload.spec.params = Object.keys(params).map(paramName => ({
+      name: paramName,
+      value: params[paramName]
     }));
   }
   if (resources && resources.inputs) {

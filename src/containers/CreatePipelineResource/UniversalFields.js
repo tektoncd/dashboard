@@ -49,7 +49,7 @@ const UniversalFields = props => {
         onChange={handleChangeTextInput}
         invalid={'name' in invalidFields}
         invalidText={intl.formatMessage({
-          id: 'dashboard.createPipelineResource.nameError',
+          id: 'dashboard.createResource.nameError',
           defaultMessage:
             'Must be less than 64 characters and contain only lowercase alphanumeric characters or -'
         })}

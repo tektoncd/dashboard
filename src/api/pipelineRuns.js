@@ -78,6 +78,7 @@ export function deletePipelineRun({ name, namespace }) {
 export function createPipelineRun({
   namespace,
   pipelineName,
+  name = `${pipelineName}-run-${Date.now()}`,
   resources,
   params,
   pipelinePendingStatus,
@@ -92,20 +93,20 @@ export function createPipelineRun({
     apiVersion: 'tekton.dev/v1beta1',
     kind: 'PipelineRun',
     metadata: {
-      name: `${pipelineName}-run-${Date.now()}`,
+      name,
       labels
     },
     spec: {
       pipelineRef: {
         name: pipelineName
       },
-      resources: Object.keys(resources).map(name => ({
-        name,
-        resourceRef: { name: resources[name] }
+      resources: Object.keys(resources).map(resourceName => ({
+        name: resourceName,
+        resourceRef: { name: resources[resourceName] }
       })),
-      params: Object.keys(params).map(name => ({
-        name,
-        value: params[name]
+      params: Object.keys(params).map(paramName => ({
+        name: paramName,
+        value: params[paramName]
       })),
       status: pipelinePendingStatus
     }
