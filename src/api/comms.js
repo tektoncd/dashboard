@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -94,7 +94,12 @@ export function checkStatus(response = {}, stream = false) {
     }
   }
 
-  const error = new Error(response.statusText);
+  let { statusText } = response;
+  if (!statusText && response.status === 404) {
+    statusText = 'Not Found';
+  }
+
+  const error = new Error(statusText);
   error.response = response;
   throw error;
 }
