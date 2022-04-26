@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -117,6 +117,15 @@ describe('checkStatus', () => {
     );
   });
 
+  it('handles no content response', () => {
+    const status = 204;
+    const response = {
+      ok: true,
+      status
+    };
+    expect(checkStatus(response)).toEqual({});
+  });
+
   it('throws an error on failure', () => {
     const status = 400;
     expect(() => checkStatus({ status })).toThrow();
@@ -124,6 +133,11 @@ describe('checkStatus', () => {
 
   it('throws an error on empty response', () => {
     expect(() => checkStatus()).toThrow();
+  });
+
+  it('handles 404 with missing statusText', () => {
+    const status = 404;
+    expect(() => checkStatus({ status })).toThrowError('Not Found');
   });
 });
 
