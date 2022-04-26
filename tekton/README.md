@@ -41,6 +41,10 @@ The nightly release pipeline is
 
 This uses the same `Pipeline` and `Task`s as an official release.
 
+If you need to manually trigger a nightly release, switch to the `dogfooding` context and run the following (substituting the date/time with current values):
+
+`kubectl create job --from=cronjob/nightly-cron-trigger-dashboard-nightly-release dashboard-nightly-20220426-1314`
+
 ## Setup
 
 To start from scratch and use these `Pipeline`s and `Task`s:
