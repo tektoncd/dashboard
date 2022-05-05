@@ -172,6 +172,9 @@ const Table = props => {
                   >
                     {batchActionButtons.map(button => (
                       <TableBatchAction
+                        tabIndex={
+                          getBatchActionProps().shouldShowBatchActions ? 0 : -1
+                        }
                         renderIcon={button.icon}
                         key={`${button.text}Button`}
                         onClick={() => {
