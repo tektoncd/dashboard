@@ -19,15 +19,24 @@ import { Pending24 as DefaultIcon } from '@carbon/icons-react';
 import { Link as CarbonLink } from 'carbon-components-react';
 
 import {
+  Actions,
   FormattedDate,
   FormattedDuration,
-  RunDropdown,
   StatusIcon,
   Table
 } from '..';
 
 const PipelineRuns = ({
   batchActionButtons = [],
+  columns = [
+    'status',
+    'name',
+    'pipeline',
+    'namespace',
+    'createdTime',
+    'duration'
+  ],
+  customColumns = {},
   createPipelineRunURL = urls.pipelineRuns.byName,
   createPipelineRunDisplayName = ({ pipelineRunMetadata }) =>
     pipelineRunMetadata.name,
@@ -72,23 +81,15 @@ const PipelineRuns = ({
   getPipelineRunCreatedTime = pipelineRun =>
     pipelineRun.metadata.creationTimestamp,
   getPipelineRunId = pipelineRun => pipelineRun.metadata.uid,
-  columns = [
-    'status',
-    'name',
-    'pipeline',
-    'namespace',
-    'createdTime',
-    'duration'
-  ],
-  customColumns = {},
+  getRunActions = () => [],
   intl,
   loading,
-  selectedNamespace,
   pipelineRuns,
-  pipelineRunActions = [],
+  selectedNamespace,
   skeletonRowCount,
   toolbarButtons
 }) => {
+  let hasRunActions = false;
   const defaultHeaders = {
     status: intl.formatMessage({
       id: 'dashboard.tableHeader.status',
@@ -122,10 +123,6 @@ const PipelineRuns = ({
       header
     };
   });
-
-  if (pipelineRunActions.length) {
-    headers.push({ key: 'actions', header: '' });
-  }
 
   function getCustomColumnValues(pipelineRun) {
     return Object.keys(customColumns).reduce((acc, column) => {
@@ -170,6 +167,11 @@ const PipelineRuns = ({
       />
     );
 
+    const pipelineRunActions = getRunActions(pipelineRun);
+    if (pipelineRunActions.length) {
+      hasRunActions = true;
+    }
+
     return {
       id: getPipelineRunId(pipelineRun),
       name: pipelineRunURL ? (
@@ -213,11 +215,15 @@ const PipelineRuns = ({
       duration,
       type: pipelineRunType,
       actions: pipelineRunActions.length && (
-        <RunDropdown items={pipelineRunActions} resource={pipelineRun} />
+        <Actions items={pipelineRunActions} resource={pipelineRun} />
       ),
       ...getCustomColumnValues(pipelineRun)
     };
   });
+
+  if (hasRunActions) {
+    headers.push({ key: 'actions', header: '' });
+  }
 
   return (
     <Table

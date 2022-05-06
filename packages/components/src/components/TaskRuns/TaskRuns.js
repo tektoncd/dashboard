@@ -18,9 +18,9 @@ import { getStatus, taskRunHasWarning, urls } from '@tektoncd/dashboard-utils';
 import { Link as CarbonLink } from 'carbon-components-react';
 
 import {
+  Actions,
   FormattedDate,
   FormattedDuration,
-  RunDropdown,
   StatusIcon,
   Table
 } from '..';
@@ -34,6 +34,7 @@ const TaskRuns = ({
       ? urls.taskRuns.byClusterTask({ taskName })
       : urls.taskRuns.byTask({ namespace, taskName }),
   filters,
+  getRunActions = () => [],
   getTaskRunStatus = (taskRun, intl) => {
     const { reason } = getStatus(taskRun);
     return (
@@ -66,9 +67,9 @@ const TaskRuns = ({
   loading,
   selectedNamespace,
   taskRuns,
-  taskRunActions = [],
   toolbarButtons
 }) => {
+  let hasRunActions = false;
   const headers = [
     {
       key: 'status',
@@ -111,10 +112,6 @@ const TaskRuns = ({
     }
   ];
 
-  if (taskRunActions.length) {
-    headers.push({ key: 'actions', header: '' });
-  }
-
   const taskRunsFormatted = taskRuns.map(taskRun => {
     const { creationTimestamp, namespace } = taskRun.metadata;
     const taskRunName = createTaskRunsDisplayName({
@@ -147,6 +144,11 @@ const TaskRuns = ({
         milliseconds={endTime - new Date(creationTimestamp).getTime()}
       />
     );
+
+    const taskRunActions = getRunActions(taskRun);
+    if (taskRunActions.length) {
+      hasRunActions = true;
+    }
 
     return {
       id: taskRun.metadata.uid,
@@ -181,9 +183,13 @@ const TaskRuns = ({
         <FormattedDate date={taskRun.metadata.creationTimestamp} relative />
       ),
       duration,
-      actions: <RunDropdown items={taskRunActions} resource={taskRun} />
+      actions: <Actions items={taskRunActions} resource={taskRun} />
     };
   });
+
+  if (hasRunActions) {
+    headers.push({ key: 'actions', header: '' });
+  }
 
   return (
     <Table
