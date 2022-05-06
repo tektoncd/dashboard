@@ -54,7 +54,7 @@ export const Base = () => (
       pipelineRun.metadata.creationTimestamp
     }
     selectedNamespace="default"
-    pipelineRunActions={[
+    getRunActions={() => [
       {
         actionText: 'Cancel',
         action: resource => resource,
@@ -200,7 +200,7 @@ export const NoPipelineLink = () => (
       pipelineRun.metadata.creationTimestamp
     }
     selectedNamespace="default"
-    pipelineRunActions={[
+    getRunActions={() => [
       {
         actionText: 'Cancel',
         action: resource => resource,
@@ -269,7 +269,7 @@ export const BatchActions = () => (
       { onClick: action('handleDelete'), text: 'Delete', icon: Delete }
     ]}
     selectedNamespace="default"
-    pipelineRunActions={[
+    getRunActions={() => [
       {
         actionText: 'An Action',
         action: resource => resource,
@@ -351,7 +351,7 @@ export const CustomColumns = ({ showFilters }) => (
       }
     }}
     filters={getFilters(showFilters)}
-    pipelineRunActions={[
+    getRunActions={() => [
       {
         actionText: 'An Action',
         action: resource => resource,

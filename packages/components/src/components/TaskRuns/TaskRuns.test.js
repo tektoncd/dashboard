@@ -83,7 +83,7 @@ it('TaskRuns renders correct data', async () => {
           status: {}
         }
       ]}
-      taskRunActions={[
+      getRunActions={() => [
         {
           actionText: 'My Action',
           action: () => {}
@@ -143,7 +143,7 @@ it('TaskRuns renders pending', async () => {
           }
         }
       ]}
-      taskRunActions={[{ actionText: 'Delete' }, { actionText: 'Stop' }]}
+      getRunActions={() => [{ actionText: 'Delete' }, { actionText: 'Stop' }]}
     />
   );
   expect(queryByText(taskRunName)).toBeTruthy();

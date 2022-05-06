@@ -26,6 +26,7 @@ limitations under the License.
 @import '../containers/SideNav/SideNav.scss';
 
 @import '@tektoncd/dashboard-components/src/scss/Run.scss';
+@import '@tektoncd/dashboard-components/src/components/Actions/Actions.scss';
 @import '@tektoncd/dashboard-components/src/components/DataTableSkeleton/DataTableSkeleton.scss';
 @import '@tektoncd/dashboard-components/src/components/DeleteModal/DeleteModal.scss';
 @import '@tektoncd/dashboard-components/src/components/DetailsHeader/DetailsHeader.scss';
@@ -136,4 +137,8 @@ a {
   .tkn--log {
     min-height: 100%;
   }
+}
+
+.bx--overflow-menu-options:after {
+  display: none;
 }

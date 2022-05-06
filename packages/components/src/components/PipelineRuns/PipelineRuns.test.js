@@ -149,7 +149,7 @@ describe('PipelineRuns', () => {
             }
           }
         ]}
-        pipelineRunActions={[
+        getRunActions={() => [
           {
             actionText: 'TestAction'
           }
@@ -191,7 +191,7 @@ describe('PipelineRuns', () => {
             }
           }
         ]}
-        pipelineRunActions={[
+        getRunActions={() => [
           {
             actionText: 'TestAction'
           }

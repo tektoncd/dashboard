@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,15 +14,31 @@ limitations under the License.
 import React from 'react';
 import { fireEvent, waitFor } from '@testing-library/react';
 import { render } from '../../utils/test';
-import RunDropdown from './RunDropdown';
+import Actions from './Actions';
 
 const resource = {
   kind: 'test',
   name: 'resourceName'
 };
 
-describe('RunDropdown dropdown no modal', () => {
-  it('RunDropdown no modal click event', async () => {
+describe('Actions with single action', () => {
+  it('renders a Button when kind is button', () => {
+    const mockCallBack = jest.fn();
+    const items = [
+      {
+        actionText: 'Action',
+        disable: () => false,
+        action: () => mockCallBack()
+      }
+    ];
+    const { getByText } = render(
+      <Actions items={items} kind="button" resource={resource} />
+    );
+    fireEvent.click(getByText(`Action`));
+    expect(mockCallBack).toHaveBeenCalled();
+  });
+
+  it('renders an OverflowMenu when kind is not button', async () => {
     const mockCallBack = jest.fn();
     const items = [
       {
@@ -32,7 +48,7 @@ describe('RunDropdown dropdown no modal', () => {
       }
     ];
     const { getByText, getAllByTitle } = render(
-      <RunDropdown items={items} resource={resource} />
+      <Actions items={items} resource={resource} />
     );
     fireEvent.click(getAllByTitle('Actions')[0]);
     await waitFor(() => getByText('Action'));
@@ -41,17 +57,45 @@ describe('RunDropdown dropdown no modal', () => {
   });
 });
 
-describe('RunDropdown dropdown missing disable default behaviour', () => {
-  it('RunDropdown missing disable default behaviour click event', async () => {
+describe('Actions dropdown no modal', () => {
+  it('Actions no modal click event', async () => {
+    const mockCallBack = jest.fn();
+    const items = [
+      {
+        actionText: 'Action',
+        disable: () => false,
+        action: () => mockCallBack()
+      },
+      {
+        actionText: 'Other',
+        action: () => {}
+      }
+    ];
+    const { getByText, getAllByTitle } = render(
+      <Actions items={items} resource={resource} />
+    );
+    fireEvent.click(getAllByTitle('Actions')[0]);
+    await waitFor(() => getByText('Action'));
+    fireEvent.click(getByText(`Action`));
+    expect(mockCallBack).toHaveBeenCalled();
+  });
+});
+
+describe('Actions dropdown missing disable default behaviour', () => {
+  it('Actions missing disable default behaviour click event', async () => {
     const mockCallBack = jest.fn();
     const items = [
       {
         actionText: 'Action',
         action: () => mockCallBack()
+      },
+      {
+        actionText: 'Other',
+        action: () => {}
       }
     ];
     const { getByText, getAllByTitle } = render(
-      <RunDropdown items={items} resource={resource} />
+      <Actions items={items} kind="button" resource={resource} />
     );
     fireEvent.click(getAllByTitle('Actions')[0]);
     await waitFor(() => getByText('Action'));
@@ -60,18 +104,22 @@ describe('RunDropdown dropdown missing disable default behaviour', () => {
   });
 });
 
-describe('RunDropdown disabled field', () => {
-  it('RunDropdown disabled field click event', async () => {
+describe('Actions disabled field', () => {
+  it('Actions disabled field click event', async () => {
     const mockCallBack = jest.fn();
     const items = [
       {
         actionText: 'Action',
         disable: () => true,
         action: () => mockCallBack()
+      },
+      {
+        actionText: 'Other',
+        action: () => {}
       }
     ];
     const { getByText, getAllByTitle } = render(
-      <RunDropdown items={items} resource={resource} />
+      <Actions items={items} resource={resource} />
     );
     fireEvent.click(getAllByTitle('Actions')[0]);
     await waitFor(() => getByText('Action'));
@@ -80,8 +128,8 @@ describe('RunDropdown disabled field', () => {
   });
 });
 
-describe('RunDropdown with modal', () => {
-  it('RunDropdown with modal click through', async () => {
+describe('Actions with modal', () => {
+  it('Actions with modal click through', async () => {
     const mockCallBack = jest.fn();
     const items = [
       {
@@ -94,10 +142,14 @@ describe('RunDropdown with modal', () => {
           secondaryButtonText: 'secondary',
           body: () => 'modal body'
         }
+      },
+      {
+        actionText: 'Other',
+        action: () => {}
       }
     ];
     const { getByText, getAllByTitle } = render(
-      <RunDropdown items={items} resource={resource} />
+      <Actions items={items} resource={resource} />
     );
     fireEvent.click(getAllByTitle('Actions')[0]);
     await waitFor(() => getByText('Action'));
