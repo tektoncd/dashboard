@@ -30,6 +30,8 @@ module.exports = {
     }
   },
   moduleNameMapper: {
+    '(assets|user--interface)\\.svg$':
+      '<rootDir>/config_frontend/__mocks__/svgMock.js',
     '\\.(png|svg|woff|woff2)$':
       '<rootDir>/config_frontend/__mocks__/fileMock.js',
     '\\.(css|scss)$': '<rootDir>/config_frontend/__mocks__/styleMock.js'
