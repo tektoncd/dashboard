@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2018-2021 The Tekton Authors
+# Copyright 2018-2022 The Tekton Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,8 +31,8 @@ function print_diagnostic_info() {
 function install_kustomize() {
   if ! type "kustomize" > /dev/null; then
     echo ">> Installing kustomize"
-    tar=kustomize_v3.6.1_linux_amd64.tar.gz
-    curl -s -O -L https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v3.6.1/$tar
+    tar=kustomize_v4.5.4_linux_amd64.tar.gz
+    curl -s -O -L https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v4.5.4/$tar
     tar xzf ./$tar
 
     cp ./kustomize /usr/local/bin

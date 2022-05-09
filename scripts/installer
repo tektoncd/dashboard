@@ -88,7 +88,7 @@ compile() {
   fi
 
   debug "Building overlay $overlay ..."
-  kustomize build --load_restrictor none "$overlay" | ko resolve $KO_RESOLVE_OPTIONS -f - > "$TMP_FILE"
+  kustomize build --load-restrictor LoadRestrictionsNone "$overlay" | ko resolve $KO_RESOLVE_OPTIONS -f - > "$TMP_FILE"
 }
 
 download() {
