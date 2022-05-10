@@ -15,7 +15,12 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { getStatus, taskRunHasWarning, urls } from '@tektoncd/dashboard-utils';
-import { Pending24 as DefaultIcon } from '@carbon/icons-react';
+import {
+  Calendar16 as CalendarIcon,
+  Pending24 as DefaultIcon,
+  Time16 as TimeIcon,
+  Lightning16 as TriggersIcon
+} from '@carbon/icons-react';
 import { Link as CarbonLink } from 'carbon-components-react';
 
 import {
@@ -28,20 +33,15 @@ import {
 
 const PipelineRuns = ({
   batchActionButtons = [],
-  columns = [
-    'status',
-    'name',
-    'pipeline',
-    'namespace',
-    'createdTime',
-    'duration'
-  ],
+  columns = ['run', 'status', 'pipeline', 'time'],
   customColumns = {},
-  createPipelineRunURL = urls.pipelineRuns.byName,
-  createPipelineRunDisplayName = ({ pipelineRunMetadata }) =>
-    pipelineRunMetadata.name,
-  createPipelineRunsByPipelineURL = urls.pipelineRuns.byPipeline,
   filters,
+  getPipelineRunCreatedTime = pipelineRun =>
+    pipelineRun.metadata.creationTimestamp,
+  getPipelineRunDisplayName = ({ pipelineRunMetadata }) =>
+    pipelineRunMetadata.name,
+  getPipelineRunId = pipelineRun => pipelineRun.metadata.uid,
+  getPipelineRunsByPipelineURL = urls.pipelineRuns.byPipeline,
   getPipelineRunStatus = (pipelineRun, intl) => {
     const { reason } = getStatus(pipelineRun);
     return (
@@ -78,9 +78,28 @@ const PipelineRuns = ({
     }
     return `${reason}: ${message}`;
   },
-  getPipelineRunCreatedTime = pipelineRun =>
-    pipelineRun.metadata.creationTimestamp,
-  getPipelineRunId = pipelineRun => pipelineRun.metadata.uid,
+  getPipelineRunTriggerInfo = pipelineRun => {
+    const { labels = {} } = pipelineRun.metadata;
+    const eventListener = labels['triggers.tekton.dev/eventlistener'];
+    const trigger = labels['triggers.tekton.dev/trigger'];
+    if (!eventListener && !trigger) {
+      return null;
+    }
+
+    return (
+      <span
+        title={`EventListener: ${eventListener || '-'}\nTrigger: ${
+          trigger || '-'
+        }`}
+      >
+        <TriggersIcon />
+        {eventListener}
+        {eventListener && trigger ? ' | ' : ''}
+        {trigger}
+      </span>
+    );
+  },
+  getPipelineRunURL = urls.pipelineRuns.byName,
   getRunActions = () => [],
   intl,
   loading,
@@ -91,27 +110,16 @@ const PipelineRuns = ({
 }) => {
   let hasRunActions = false;
   const defaultHeaders = {
-    status: intl.formatMessage({
-      id: 'dashboard.tableHeader.status',
-      defaultMessage: 'Status'
-    }),
-    name: intl.formatMessage({
-      id: 'dashboard.tableHeader.name',
-      defaultMessage: 'Name'
-    }),
     pipeline: intl.formatMessage({
       id: 'dashboard.tableHeader.pipeline',
       defaultMessage: 'Pipeline'
     }),
-    namespace: 'Namespace',
-    createdTime: intl.formatMessage({
-      id: 'dashboard.tableHeader.createdTime',
-      defaultMessage: 'Created'
+    run: 'Run',
+    status: intl.formatMessage({
+      id: 'dashboard.tableHeader.status',
+      defaultMessage: 'Status'
     }),
-    duration: intl.formatMessage({
-      id: 'dashboard.tableHeader.duration',
-      defaultMessage: 'Duration'
-    })
+    time: ''
   };
 
   const headers = columns.map(column => {
@@ -136,22 +144,21 @@ const PipelineRuns = ({
   const pipelineRunsFormatted = pipelineRuns.map(pipelineRun => {
     const { annotations, namespace } = pipelineRun.metadata;
     const creationTimestamp = getPipelineRunCreatedTime(pipelineRun);
-    const pipelineRunName = createPipelineRunDisplayName({
+    const pipelineRunName = getPipelineRunDisplayName({
       pipelineRunMetadata: pipelineRun.metadata
     });
     const pipelineRefName =
       pipelineRun.spec.pipelineRef && pipelineRun.spec.pipelineRef.name;
-    const pipelineRunType = pipelineRun.spec.type;
     const { lastTransitionTime, reason, status } = getStatus(pipelineRun);
     const statusIcon = getPipelineRunStatusIcon(pipelineRun);
-    const pipelineRunURL = createPipelineRunURL({
+    const pipelineRunURL = getPipelineRunURL({
       namespace,
       pipelineRunName,
       annotations
     });
     const pipelineRunsByPipelineURL =
       pipelineRefName &&
-      createPipelineRunsByPipelineURL({
+      getPipelineRunsByPipelineURL({
         namespace,
         pipelineName: pipelineRefName
       });
@@ -174,46 +181,100 @@ const PipelineRuns = ({
 
     return {
       id: getPipelineRunId(pipelineRun),
-      name: pipelineRunURL ? (
-        <Link
-          component={CarbonLink}
-          to={pipelineRunURL}
-          title={pipelineRunName}
-        >
-          {pipelineRunName}
-        </Link>
-      ) : (
-        pipelineRunName
+      run: (
+        <div>
+          <span>
+            {pipelineRunURL ? (
+              <Link
+                component={CarbonLink}
+                to={pipelineRunURL}
+                title={pipelineRunName}
+              >
+                {pipelineRunName}
+              </Link>
+            ) : (
+              pipelineRunName
+            )}
+          </span>
+          <span className="tkn--table--sub">
+            {getPipelineRunTriggerInfo(pipelineRun)}&nbsp;
+          </span>
+        </div>
       ),
-      pipeline:
-        pipelineRefName &&
-        (pipelineRunsByPipelineURL ? (
-          <Link
-            component={CarbonLink}
-            to={pipelineRunsByPipelineURL}
-            title={pipelineRefName}
-          >
-            {pipelineRefName}
-          </Link>
-        ) : (
-          pipelineRefName
-        )),
-      namespace,
+      pipeline: (
+        <div>
+          <span>
+            {(pipelineRefName &&
+              (pipelineRunsByPipelineURL ? (
+                <Link
+                  component={CarbonLink}
+                  to={pipelineRunsByPipelineURL}
+                  title={pipelineRefName}
+                >
+                  {pipelineRefName}
+                </Link>
+              ) : (
+                <span title={`Pipeline: ${pipelineRefName || '-'}`}>
+                  {pipelineRefName}
+                </span>
+              ))) ||
+              '-'}
+          </span>
+          <span className="tkn--table--sub" title={`Namespace: ${namespace}`}>
+            {namespace}&nbsp;
+          </span>
+        </div>
+      ),
       status: (
-        <div className="tkn--definition">
-          <div
-            className="tkn--status"
-            data-status={status}
-            data-reason={reason}
-            title={getPipelineRunStatusTooltip(pipelineRun, intl)}
-          >
-            {statusIcon}
+        <div>
+          <div className="tkn--definition">
+            <div
+              className="tkn--status"
+              data-status={status}
+              data-reason={reason}
+              title={getPipelineRunStatusTooltip(pipelineRun, intl)}
+            >
+              {statusIcon}
+              {getPipelineRunStatus(pipelineRun, intl)}
+            </div>
+          </div>
+          {status === 'False' ? (
+            <span
+              className="tkn--table--sub"
+              title={getStatus(pipelineRun).message}
+            >
+              {getStatus(pipelineRun).message}&nbsp;
+            </span>
+          ) : (
+            <span className="tkn--table--sub">&nbsp;</span>
+          )}
+        </div>
+      ),
+      time: (
+        <div>
+          <span>
+            <CalendarIcon />
+            <FormattedDate
+              date={creationTimestamp}
+              formatTooltip={formattedDate =>
+                intl.formatMessage(
+                  {
+                    id: 'dashboard.resource.createdTime',
+                    defaultMessage: 'Created: {created}'
+                  },
+                  {
+                    created: formattedDate
+                  }
+                )
+              }
+            />
+          </span>
+          <div className="tkn--table--sub">
+            <TimeIcon />
+            {duration}
           </div>
         </div>
       ),
-      createdTime: <FormattedDate date={creationTimestamp} relative />,
-      duration,
-      type: pipelineRunType,
       actions: pipelineRunActions.length && (
         <Actions items={pipelineRunActions} resource={pipelineRun} />
       ),
@@ -229,6 +290,7 @@ const PipelineRuns = ({
     <Table
       batchActionButtons={batchActionButtons}
       filters={filters}
+      hasDetails
       headers={headers}
       rows={pipelineRunsFormatted}
       loading={loading}

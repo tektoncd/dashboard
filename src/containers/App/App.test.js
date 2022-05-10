@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -36,7 +36,6 @@ describe('App', () => {
     await waitFor(() => queryByText('Tekton resources'));
     fireEvent.click(queryAllByText('PipelineRuns')[0]);
 
-    expect(queryByText('Namespace')).toBeTruthy();
     expect(queryByText('Pipelines')).toBeTruthy();
     expect(queryByText('Tasks')).toBeTruthy();
   });
@@ -48,7 +47,6 @@ describe('App', () => {
     await waitFor(() => queryByText('Tekton resources'));
     fireEvent.click(queryAllByText('PipelineRuns')[0]);
 
-    expect(queryByText('Namespaces')).toBeFalsy();
     expect(queryByText('Pipelines')).toBeTruthy();
     expect(queryByText('Tasks')).toBeTruthy();
   });

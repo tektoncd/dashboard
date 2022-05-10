@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -20,18 +20,14 @@ describe('PipelineRuns', () => {
   it('renders empty state', () => {
     const { queryByText } = render(<PipelineRuns pipelineRuns={[]} />);
     expect(queryByText(/no matching pipelineruns/i)).toBeTruthy();
-    expect(queryByText('Namespace')).toBeTruthy();
   });
 
-  it('hides namespace when omitted from the list of columns', () => {
+  it('hides status when omitted from the list of columns', () => {
     const { queryByText } = render(
-      <PipelineRuns
-        columns={['status', 'name', 'pipeline']}
-        pipelineRuns={[]}
-      />
+      <PipelineRuns columns={['run', 'pipeline']} pipelineRuns={[]} />
     );
 
-    expect(queryByText('Namespace')).toBeFalsy();
+    expect(queryByText('Status')).toBeFalsy();
     expect(queryByText('Pipeline')).toBeTruthy();
     expect(queryByText(/no matching pipelineruns/i)).toBeTruthy();
   });
@@ -122,7 +118,8 @@ describe('PipelineRuns', () => {
 
   it('renders data', () => {
     const pipelineRunName = 'pipeline-run-20190816124708';
-    const { queryByText, queryByTitle } = renderWithRouter(
+    const eventListenerName = 'fake_eventListenerName';
+    const { queryAllByTitle, queryByText, queryByTitle } = renderWithRouter(
       <PipelineRuns
         pipelineRuns={[
           {
@@ -147,6 +144,32 @@ describe('PipelineRuns', () => {
                 }
               ]
             }
+          },
+          {
+            metadata: {
+              name: 'pipeline-run-20220510143107',
+              namespace: 'cb4552a6-b2d7-45e2-9773-3d4ca33909ff',
+              uid: '92cd308f-2cec-4d4c-93f6-7d6976b43275',
+              labels: {
+                'triggers.tekton.dev/eventlistener': eventListenerName
+              }
+            },
+            spec: {
+              pipelineRef: {
+                name: 'pipeline'
+              }
+            },
+            status: {
+              conditions: [
+                {
+                  lastTransitionTime: '2022-05-10T14:33:11Z',
+                  message: 'some message',
+                  reason: 'some reason',
+                  status: 'True',
+                  type: 'Succeeded'
+                }
+              ]
+            }
           }
         ]}
         getRunActions={() => [
@@ -157,8 +180,9 @@ describe('PipelineRuns', () => {
       />
     );
     expect(queryByText(pipelineRunName)).toBeTruthy();
+    expect(queryByText(eventListenerName)).toBeTruthy();
     expect(queryByTitle(/FAKE_REASON/i)).toBeTruthy();
-    expect(queryByTitle(/FAKE_MESSAGE/i)).toBeTruthy();
+    expect(queryAllByTitle(/FAKE_MESSAGE/i).length).toBeTruthy();
   });
 
   it('renders with custom link creators', () => {
@@ -196,8 +220,8 @@ describe('PipelineRuns', () => {
             actionText: 'TestAction'
           }
         ]}
-        createPipelineRunURL={() => null}
-        createPipelineRunsByPipelineURL={() => null}
+        getPipelineRunURL={() => null}
+        getPipelineRunsByPipelineURL={() => null}
       />
     );
     expect(queryByText(pipelineRunName)).toBeTruthy();

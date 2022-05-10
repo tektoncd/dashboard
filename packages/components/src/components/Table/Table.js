@@ -117,6 +117,7 @@ const Table = props => {
     emptyTextAllNamespaces,
     emptyTextSelectedNamespace,
     filters,
+    hasDetails,
     headers: dataHeaders,
     id,
     intl,
@@ -124,12 +125,11 @@ const Table = props => {
     loading,
     rows: dataRows,
     selectedNamespace,
-    size,
+    size = hasDetails ? 'xl' : undefined,
     skeletonRowCount,
     title,
     toolbarButtons
   } = props;
-
   const shouldRenderBatchActions = !!(
     dataRows.length && batchActionButtons.length
   );
@@ -139,6 +139,7 @@ const Table = props => {
     filters || toolbarButtons.length || shouldRenderBatchActions;
 
   const tableClassNames = classNames('tkn--table', className, {
+    'tkn--table-with-details': hasDetails,
     'tkn--table-with-filters': filters
   });
 
