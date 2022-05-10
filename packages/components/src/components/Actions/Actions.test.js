@@ -155,6 +155,37 @@ describe('Actions with modal', () => {
     await waitFor(() => getByText('Action'));
     fireEvent.click(getByText(`Action`));
     await waitFor(() => getByText('primary'));
+    getByText('secondary');
+    fireEvent.click(getByText(`primary`));
+    expect(mockCallBack).toHaveBeenCalled();
+  });
+
+  it('Actions with modal default button text', async () => {
+    const mockCallBack = jest.fn();
+    const items = [
+      {
+        actionText: 'Action',
+        action: () => mockCallBack(),
+        disable: () => false,
+        modalProperties: {
+          heading: 'Modal Heading',
+          primaryButtonText: 'primary',
+          body: () => 'modal body'
+        }
+      },
+      {
+        actionText: 'Other',
+        action: () => {}
+      }
+    ];
+    const { getByText, getAllByTitle } = render(
+      <Actions items={items} resource={resource} />
+    );
+    fireEvent.click(getAllByTitle('Actions')[0]);
+    await waitFor(() => getByText('Action'));
+    fireEvent.click(getByText(`Action`));
+    await waitFor(() => getByText('primary'));
+    getByText('Cancel');
     fireEvent.click(getByText(`primary`));
     expect(mockCallBack).toHaveBeenCalled();
   });
