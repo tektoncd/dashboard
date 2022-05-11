@@ -1,6 +1,5 @@
 # compiled output
 /coverage
-dist/
 /cmd/dashboard/kodata/
 /storybook-static
 /tmp
