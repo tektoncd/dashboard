@@ -231,11 +231,11 @@ export function About({ intl }) {
           <h2 className="tkn--section-title">
             {intl.formatMessage({
               id: 'dashboard.about.documentation',
-              defaultMessage: 'Documentation'
+              defaultMessage: 'Documentation and resources'
             })}
           </h2>
         </header>
-        <ClickableTile href="https://tekton.dev/docs/overview/">
+        <ClickableTile href="https://tekton.dev/docs/concepts/overview/">
           <div className="tkn--about-pictogram">
             <DocsPictogram />
           </div>
@@ -245,13 +245,13 @@ export function About({ intl }) {
             <ArrowIcon className="tkn--about-arrow" />
           </div>
         </ClickableTile>
-        <ClickableTile href="https://tekton.dev/docs/concepts/">
+        <ClickableTile href="https://tekton.dev/docs/concepts/concept-model/">
           <div className="tkn--about-pictogram">
             <DocsPictogram />
           </div>
           <div className="tkn--about-docs-description">
-            <h3>Concepts</h3>
-            <p>Technical information and architecture</p>
+            <h3>Concept model</h3>
+            <p>Basic Tekton components and data model</p>
             <ArrowIcon className="tkn--about-arrow" />
           </div>
         </ClickableTile>
