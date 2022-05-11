@@ -186,6 +186,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       customNotification,
       error,
       handleTaskSelected,
+      icon,
       intl,
       loading,
       onViewChange,
@@ -257,6 +258,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       return (
         <>
           <RunHeader
+            icon={icon}
             lastTransitionTime={lastTransitionTime}
             loading={loading}
             pipelineRun={pipelineRun}
@@ -314,6 +316,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     return (
       <>
         <RunHeader
+          icon={icon}
           lastTransitionTime={lastTransitionTime}
           loading={loading}
           message={pipelineRunStatusMessage}
