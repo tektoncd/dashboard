@@ -37,7 +37,11 @@ import {
   ViewYAML
 } from '..';
 
-function getDescriptions(array = []) {
+function getDescriptions(array) {
+  if (!array) {
+    return {};
+  }
+
   return array.reduce((accumulator, { name, description }) => {
     accumulator[name] = description;
     return accumulator;

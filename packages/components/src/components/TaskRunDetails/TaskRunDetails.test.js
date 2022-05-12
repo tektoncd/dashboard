@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2021 The Tekton Authors
+Copyright 2020-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -176,6 +176,32 @@ describe('TaskRunDetails', () => {
     expect(queryByText('Events')).toBeTruthy();
     fireEvent.click(queryByText('Events'));
     expect(queryByText(events)).toBeTruthy();
+  });
+
+  it('renders pod with no events', () => {
+    const pod = 'fake-pod';
+    const taskRun = {
+      metadata: { name: 'task-run-name' },
+      spec: {},
+      status: {}
+    };
+    const { queryByText } = render(
+      <TaskRunDetails
+        pod={{
+          resource: pod
+        }}
+        task={{
+          metadata: 'task',
+          spec: {}
+        }}
+        taskRun={taskRun}
+        view="pod"
+      />
+    );
+    expect(queryByText('Pod')).toBeTruthy();
+    expect(queryByText('Resource')).toBeFalsy();
+    expect(queryByText(pod)).toBeTruthy();
+    expect(queryByText('Events')).toBeFalsy();
   });
 
   it('renders both input and output resources', () => {
