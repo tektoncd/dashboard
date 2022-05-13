@@ -1,3 +1,10 @@
+<!--
+---
+linkTitle: "Extensions"
+weight: 3
+---
+-->
+
 # Tekton Dashboard extensions
 
 This guide explains what Tekton Dashboard extensions are and how to manage them. It covers the following topics:
@@ -89,10 +96,6 @@ Alternatively, if the `--extensions-rbac` is not used, omit the label from the C
 
 Now the Tekton Dashboard will show `CronJob`s in your cluster.
 
-![Resource based extension RBAC](./extensions-resource-based-rbac.png)
-
 ---
 
-Except as otherwise noted, the content of this page is licensed under the [Creative Commons Attribution 4.0 License](https://creativecommons.org/licenses/by/4.0/).
-
-Code samples are licensed under the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0).
+Except as otherwise noted, the content of this page is licensed under the [Creative Commons Attribution 4.0 License](https://creativecommons.org/licenses/by/4.0/). Code samples are licensed under the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0).
