@@ -191,14 +191,15 @@ const Table = props => {
                   </TableBatchActions>
                 )}
                 <TableToolbarContent>
-                  {toolbarButtons.map(button => (
+                  {toolbarButtons.map(({ icon, onClick, text, ...rest }) => (
                     <Button
                       disabled={loading}
-                      onClick={button.onClick}
-                      renderIcon={button.icon}
-                      key={`${button.text}Button`}
+                      key={`${text}Button`}
+                      onClick={onClick}
+                      renderIcon={icon}
+                      {...rest}
                     >
-                      {button.text}
+                      {text}
                     </Button>
                   ))}
                 </TableToolbarContent>

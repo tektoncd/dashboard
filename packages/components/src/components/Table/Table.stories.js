@@ -185,11 +185,16 @@ export const Sorting = args => {
       size={args.size}
       title={args.title}
       toolbarButtons={[
-        { onClick: action('handleNew'), text: 'Add', icon: Add },
         {
+          icon: RerunAll,
+          kind: 'secondary',
           onClick: action('handleRerunAll'),
-          text: 'RerunAll',
-          icon: RerunAll
+          text: 'RerunAll'
+        },
+        {
+          icon: Add,
+          onClick: action('handleNew'),
+          text: 'Add'
         }
       ]}
     />
