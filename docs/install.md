@@ -1,3 +1,10 @@
+<!--
+---
+linkTitle: "Install"
+weight: 2
+---
+-->
+
 # Installing Tekton Dashboard
 
 This guide explains how to install Tekton Dashboard. It covers the following topics:
@@ -36,8 +43,8 @@ or other projects may require a newer version.
 
 ## Which version should I use
 
-Every Tekton Dashboard version is meant to support specific Tekton Pipelines and Tekton Triggers versions.
-See the [docs on the main page](../README.md) to find the Tekton Dashboard version that suits your needs.
+Every Tekton Dashboard release is tested against specific Tekton Pipelines and Tekton Triggers versions.
+See the [docs on the main page](./README.md) to find the Tekton Dashboard version that suits your needs.
 
 Pay attention to annoucements like **deprecated versions** and/or **security related recommendations** when choosing the version you want to install.
 
@@ -52,7 +59,7 @@ To install Tekton Dashboard on a Kubernetes cluster:
    ```
 
    Previous versions are available at `previous/$VERSION_NUMBER/*.yaml`, e.g.
-   https://storage.googleapis.com/tekton-releases/dashboard/previous/v0.12.0/tekton-dashboard-release.yaml
+   https://storage.googleapis.com/tekton-releases/dashboard/previous/v0.26.0/tekton-dashboard-release.yaml
 
 1. Monitor the installation using the following command until all components show a `Running` status:
 
@@ -99,7 +106,7 @@ curl -sL https://raw.githubusercontent.com/tektoncd/dashboard/main/scripts/relea
 
 By default, the Dashboard is not exposed outside the cluster.
 
-There are several solutions to access the Dashboard UI depending on your setup described below.
+There are several solutions described below for accessing the Dashboard UI depending on your setup.
 
 ### Using kubectl proxy
 
@@ -224,12 +231,10 @@ The above command assumes that the latest version was installed, refer to [Insta
 
 ## Next steps
 
-To get started with Tekton Dashboard, see the [tutorial](./tutorial).
+To get started with Tekton Dashboard, see the [tutorial](./tutorial.md).
 
 To add more functionality to your Tekton Dashboard, see the [Tekton Dashboard extensions](./extensions.md)
 
 ---
 
-Except as otherwise noted, the content of this page is licensed under the [Creative Commons Attribution 4.0 License](https://creativecommons.org/licenses/by/4.0/).
-
-Code samples are licensed under the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0).
+Except as otherwise noted, the content of this page is licensed under the [Creative Commons Attribution 4.0 License](https://creativecommons.org/licenses/by/4.0/). Code samples are licensed under the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0).

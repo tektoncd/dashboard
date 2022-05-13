@@ -1,10 +1,12 @@
+<!--
 ---
 title: "Getting started with Tekton Dashboard"
-linkTitle: "Getting started with Tekton Dashboard"
+linkTitle: "Tutorial"
 weight: 1
 description: >
   Set up the Tekton Dashboard and explore some of its features
 ---
+-->
 
 This tutorial shows you how to 
 
@@ -211,7 +213,7 @@ The output confirms that your cluster was deleted:
 
 ## Further reading
 
-Try out some of our [walk-throughs](../walkthrough) for more details on deploying and configuring the
+Try out some of our [walk-throughs](./walkthrough) for more details on deploying and configuring the
 Tekton Dashboard for some common scenarios.
 
-See [Accessing the Dashboard](../install.md#accessing-the-dashboard) for details of alternative methods of exposing the Dashboard outside the cluster, including guidance for authentication and authorization.
+See [Accessing the Dashboard](./install.md#accessing-the-dashboard) for details of alternative methods of exposing the Dashboard outside the cluster, including guidance for authentication and authorization.
