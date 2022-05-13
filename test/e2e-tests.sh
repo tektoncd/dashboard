@@ -219,7 +219,7 @@ if [ -z "$SKIP_BUILD_TEST" ]; then
 fi
 
 if [ -z "$PIPELINES_VERSION" ]; then
-  export PIPELINES_VERSION=v0.35.0
+  export PIPELINES_VERSION=v0.35.1
 fi
 
 if [ -z "$TRIGGERS_VERSION" ]; then
