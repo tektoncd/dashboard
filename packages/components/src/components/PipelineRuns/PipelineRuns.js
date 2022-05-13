@@ -40,6 +40,17 @@ const PipelineRuns = ({
     pipelineRun.metadata.creationTimestamp,
   getPipelineRunDisplayName = ({ pipelineRunMetadata }) =>
     pipelineRunMetadata.name,
+  getPipelineRunDuration = pipelineRun => {
+    const creationTimestamp = getPipelineRunCreatedTime(pipelineRun);
+    const { lastTransitionTime, status } = getStatus(pipelineRun);
+
+    let endTime = Date.now();
+    if (status === 'False' || status === 'True') {
+      endTime = new Date(lastTransitionTime).getTime();
+    }
+
+    return endTime - new Date(creationTimestamp).getTime();
+  },
   getPipelineRunId = pipelineRun => pipelineRun.metadata.uid,
   getPipelineRunsByPipelineURL = urls.pipelineRuns.byPipeline,
   getPipelineRunStatus = (pipelineRun, intl) => {
@@ -149,7 +160,7 @@ const PipelineRuns = ({
     });
     const pipelineRefName =
       pipelineRun.spec.pipelineRef && pipelineRun.spec.pipelineRef.name;
-    const { lastTransitionTime, reason, status } = getStatus(pipelineRun);
+    const { reason, status } = getStatus(pipelineRun);
     const statusIcon = getPipelineRunStatusIcon(pipelineRun);
     const pipelineRunURL = getPipelineRunURL({
       namespace,
@@ -163,15 +174,8 @@ const PipelineRuns = ({
         pipelineName: pipelineRefName
       });
 
-    let endTime = Date.now();
-    if (status === 'False' || status === 'True') {
-      endTime = new Date(lastTransitionTime).getTime();
-    }
-
     const duration = (
-      <FormattedDuration
-        milliseconds={endTime - new Date(creationTimestamp).getTime()}
-      />
+      <FormattedDuration milliseconds={getPipelineRunDuration(pipelineRun)} />
     );
 
     const pipelineRunActions = getRunActions(pipelineRun);
