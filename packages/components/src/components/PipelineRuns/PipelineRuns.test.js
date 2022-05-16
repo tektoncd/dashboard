@@ -116,11 +116,36 @@ describe('PipelineRuns', () => {
     expect(queryByText(/Custom Column Value/i)).toBeTruthy();
   });
 
+  it('renders custom content', () => {
+    const statusDetail = 'custom status detail';
+    const { queryByText, queryByTitle } = render(
+      <PipelineRuns
+        columns={['status']}
+        getPipelineRunDuration={() => null}
+        getPipelineRunStatusDetail={() => statusDetail}
+        pipelineRuns={[
+          {
+            metadata: {
+              name: 'pipelineRunName',
+              namespace: 'default',
+              uid: '72160103-d8d4-43c7-bd98-170c6a7eb679'
+            },
+            spec: {}
+          }
+        ]}
+      />
+    );
+
+    expect(queryByText(statusDetail)).toBeTruthy();
+    expect(queryByTitle(/Duration:/i)).toBeFalsy();
+  });
+
   it('renders data', () => {
     const pipelineRunName = 'pipeline-run-20190816124708';
     const eventListenerName = 'fake_eventListenerName';
     const { queryAllByTitle, queryByText, queryByTitle } = renderWithRouter(
       <PipelineRuns
+        getPipelineRunStatusDetail={() => null} // should fallback to default
         pipelineRuns={[
           {
             metadata: {
@@ -165,7 +190,7 @@ describe('PipelineRuns', () => {
                   lastTransitionTime: '2022-05-10T14:33:11Z',
                   message: 'some message',
                   reason: 'some reason',
-                  status: 'True',
+                  status: 'False',
                   type: 'Succeeded'
                 }
               ]
@@ -183,6 +208,9 @@ describe('PipelineRuns', () => {
     expect(queryByText(eventListenerName)).toBeTruthy();
     expect(queryByTitle(/FAKE_REASON/i)).toBeTruthy();
     expect(queryAllByTitle(/FAKE_MESSAGE/i).length).toBeTruthy();
+    expect(queryByText('FAKE_MESSAGE')).toBeFalsy();
+    expect(queryByText('some message')).toBeTruthy(); // we only display message for failed / errored runs
+    expect(queryAllByTitle(/Duration:/i).length).toBeTruthy();
   });
 
   it('renders with custom link creators', () => {
