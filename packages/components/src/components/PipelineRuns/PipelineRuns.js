@@ -31,6 +31,17 @@ import {
   Table
 } from '..';
 
+function getDefaultPipelineRunStatusDetail(pipelineRun) {
+  const { status } = getStatus(pipelineRun);
+  return status === 'False' ? (
+    <span className="tkn--table--sub" title={getStatus(pipelineRun).message}>
+      {getStatus(pipelineRun).message}&nbsp;
+    </span>
+  ) : (
+    <span className="tkn--table--sub">&nbsp;</span>
+  );
+}
+
 const PipelineRuns = ({
   batchActionButtons = [],
   columns = ['run', 'status', 'pipeline', 'time'],
@@ -63,6 +74,7 @@ const PipelineRuns = ({
       })
     );
   },
+  getPipelineRunStatusDetail = getDefaultPipelineRunStatusDetail,
   getPipelineRunStatusIcon = pipelineRun => {
     const { reason, status } = getStatus(pipelineRun);
     let hasWarning = false;
@@ -174,9 +186,13 @@ const PipelineRuns = ({
         pipelineName: pipelineRefName
       });
 
-    const duration = (
-      <FormattedDuration milliseconds={getPipelineRunDuration(pipelineRun)} />
-    );
+    let duration = getPipelineRunDuration(pipelineRun);
+    // zero is a valid duration
+    if (duration == null) {
+      duration = '-';
+    } else {
+      duration = <FormattedDuration milliseconds={duration} />;
+    }
 
     const pipelineRunActions = getRunActions(pipelineRun);
     if (pipelineRunActions.length) {
@@ -242,16 +258,8 @@ const PipelineRuns = ({
               {getPipelineRunStatus(pipelineRun, intl)}
             </div>
           </div>
-          {status === 'False' ? (
-            <span
-              className="tkn--table--sub"
-              title={getStatus(pipelineRun).message}
-            >
-              {getStatus(pipelineRun).message}&nbsp;
-            </span>
-          ) : (
-            <span className="tkn--table--sub">&nbsp;</span>
-          )}
+          {getPipelineRunStatusDetail(pipelineRun) ||
+            getDefaultPipelineRunStatusDetail(pipelineRun)}
         </div>
       ),
       time: (
