@@ -214,3 +214,15 @@ export function setTheme(selectedTheme = getTheme()) {
   );
   localStorage.setItem('tkn-theme', theme);
 }
+
+export function getDefaultCancelSelection() {
+  const selection = localStorage.getItem('tkn-default-cancel');
+  if (selection) {
+    return selection;
+  }
+  return 'Cancelled';
+}
+
+export function setDefaultCancelSelection(selection) {
+  localStorage.setItem('tkn-default-cancel', selection);
+}

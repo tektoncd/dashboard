@@ -19,6 +19,7 @@ import keyBy from 'lodash.keyby';
 import {
   DeleteModal,
   PipelineRuns as PipelineRunsList,
+  RadioGroup,
   StatusFilterDropdown
 } from '@tektoncd/dashboard-components';
 import {
@@ -35,10 +36,14 @@ import {
   urls,
   useTitleSync
 } from '@tektoncd/dashboard-utils';
-import { Add16 as Add, TrashCan32 as Delete } from '@carbon/icons-react';
+import {
+  Add16 as Add,
+  TrashCan32 as Delete,
+  Information16 as Info
+} from '@carbon/icons-react';
 
 import { ListPageLayout } from '..';
-import { sortRunsByStartTime } from '../../utils';
+import { getDefaultCancelSelection, sortRunsByStartTime } from '../../utils';
 import {
   cancelPipelineRun,
   deletePipelineRun,
@@ -211,15 +216,57 @@ export function PipelineRuns({ intl }) {
             id: 'dashboard.modal.cancelButton',
             defaultMessage: 'Cancel'
           }),
-          body: resource =>
-            intl.formatMessage(
+          body: resource => {
+            const title = intl.formatMessage(
               {
                 id: 'dashboard.cancelPipelineRun.body',
                 defaultMessage:
                   'Are you sure you would like to stop PipelineRun {name}?'
               },
               { name: resource.metadata.name }
-            )
+            );
+
+            const cancelLabel = intl.formatMessage({
+              id: 'dashboard.canceledPipelineRunStatus.body',
+              defaultMessage: 'Cancel'
+            });
+
+            const canceledWithFinally = intl.formatMessage({
+              id: 'dashboard.canceledWithFinallyPipelineRun.body',
+              defaultMessage: 'Cancel with Finally'
+            });
+
+            const stoppedLabel = intl.formatMessage({
+              id: 'dashboard.stopWithFinallyPipelineRunStatus.body',
+              defaultMessage: 'Stop with Finally'
+            });
+
+            return (
+              <RadioGroup
+                orientation="vertical"
+                defaultSelected={getDefaultCancelSelection()}
+                getSelected={value => console.log(value)}
+                options={[
+                  {
+                    icon: Info,
+                    label: cancelLabel,
+                    value: 'Cancelled'
+                  },
+                  {
+                    icon: Info,
+                    label: canceledWithFinally,
+                    value: 'CancelledRunFinally'
+                  },
+                  {
+                    icon: Info,
+                    label: stoppedLabel,
+                    value: 'StoppedRunFinally'
+                  }
+                ]}
+                title={title}
+              />
+            );
+          }
         }
       },
       {
