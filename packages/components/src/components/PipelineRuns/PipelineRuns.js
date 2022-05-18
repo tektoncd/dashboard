@@ -51,6 +51,7 @@ const PipelineRuns = ({
     pipelineRun.metadata.creationTimestamp,
   getPipelineRunDisplayName = ({ pipelineRunMetadata }) =>
     pipelineRunMetadata.name,
+  getPipelineRunDisplayNameTooltip = getPipelineRunDisplayName,
   getPipelineRunDuration = pipelineRun => {
     const creationTimestamp = getPipelineRunCreatedTime(pipelineRun);
     const { lastTransitionTime, status } = getStatus(pipelineRun);
@@ -170,6 +171,9 @@ const PipelineRuns = ({
     const pipelineRunName = getPipelineRunDisplayName({
       pipelineRunMetadata: pipelineRun.metadata
     });
+    const pipelineRunNameTooltip = getPipelineRunDisplayNameTooltip({
+      pipelineRunMetadata: pipelineRun.metadata
+    });
     const pipelineRefName =
       pipelineRun.spec.pipelineRef && pipelineRun.spec.pipelineRef.name;
     const { reason, status } = getStatus(pipelineRun);
@@ -208,7 +212,7 @@ const PipelineRuns = ({
               <Link
                 component={CarbonLink}
                 to={pipelineRunURL}
-                title={pipelineRunName}
+                title={pipelineRunNameTooltip}
               >
                 {pipelineRunName}
               </Link>
