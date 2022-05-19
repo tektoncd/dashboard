@@ -40,7 +40,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
   getPipelineRunError = () => {
     const { pipelineRun } = this.props;
 
-    if (!(pipelineRun.status && pipelineRun.status.taskRuns)) {
+    if (!pipelineRun.status?.taskRuns) {
       return null;
     }
 
