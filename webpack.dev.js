@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -18,19 +18,6 @@ const { API_DOMAIN, PORT } = require('./config_frontend/config.json');
 const mode = 'development';
 const customAPIDomain = process.env.API_DOMAIN;
 
-const proxyOptions = {
-  changeOrigin: !!customAPIDomain,
-  onError(err) {
-    console.warn('webpack-dev-server proxy error:', err); // eslint-disable-line no-console
-  },
-  onProxyReqWs(proxyReq, req, socket, _options, _head) {
-    socket.on('error', function handleProxyWSError(_err) {});
-  },
-  secure: false,
-  target: customAPIDomain || API_DOMAIN,
-  ws: true
-};
-
 module.exports = merge(common({ mode }), {
   mode,
   devtool: 'eval-source-map',
@@ -46,15 +33,22 @@ module.exports = merge(common({ mode }), {
     hot: true,
     liveReload: false,
     port: process.env.PORT || PORT,
-    proxy: {
-      '/v1': {
-        ...proxyOptions
-      },
-      '/api': {
-        // also handles `/apis` since they have a common prefix
-        ...proxyOptions
+    proxy: [
+      {
+        changeOrigin: !!customAPIDomain,
+        // `/api` also handles `/apis` since they have a common prefix
+        context: ['/v1', '/api'],
+        onError(err) {
+          console.warn('webpack-dev-server proxy error:', err); // eslint-disable-line no-console
+        },
+        onProxyReqWs(proxyReq, req, socket, _options, _head) {
+          socket.on('error', function handleProxyWSError(_err) {});
+        },
+        secure: false,
+        target: customAPIDomain || API_DOMAIN,
+        ws: true
       }
-    }
+    ]
   },
   module: {
     rules: [
