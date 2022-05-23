@@ -215,10 +215,13 @@ export function setTheme(selectedTheme = getTheme()) {
   localStorage.setItem('tkn-theme', theme);
 }
 
-export function getDefaultCancelSelection() {
+export function getDefaultCancelSelection(updated) {
   const selection = localStorage.getItem('tkn-default-cancel');
   if (selection) {
     return selection;
+  }
+  if (!updated) {
+    
   }
   return 'Cancelled';
 }
