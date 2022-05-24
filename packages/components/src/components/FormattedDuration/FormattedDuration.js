@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, injectIntl } from 'react-intl';
 import FormattedDuration from 'react-intl-formatted-duration';
 
 defineMessages({
@@ -38,20 +38,40 @@ defineMessages({
   }
 });
 
-export default class FormattedDurationWrapper extends Component {
+class FormattedDurationWrapper extends Component {
   state = { tooltip: '' };
 
   componentDidMount() {
+    const { intl } = this.props;
+    const tooltip = intl.formatMessage(
+      {
+        id: 'dashboard.run.duration',
+        defaultMessage: 'Duration: {duration}'
+      },
+      {
+        duration: this.durationNode?.textContent
+      }
+    );
     this.setState({
-      tooltip: this.durationNode && this.durationNode.textContent
+      tooltip
     });
   }
 
   componentDidUpdate() {
+    const { intl } = this.props;
     const duration = this.durationNode.textContent;
-    if (this.state.tooltip !== duration) {
+    const tooltip = intl.formatMessage(
+      {
+        id: 'dashboard.run.duration',
+        defaultMessage: 'Duration: {duration}'
+      },
+      {
+        duration
+      }
+    );
+    if (this.state.tooltip !== tooltip) {
       this.setState({ // eslint-disable-line
-        tooltip: duration
+        tooltip
       });
     }
   }
@@ -66,10 +86,13 @@ export default class FormattedDurationWrapper extends Component {
         title={this.state.tooltip}
       >
         <FormattedDuration
-          seconds={milliseconds / 1000}
           format="{days} {hours} {minutes} {seconds}"
+          seconds={milliseconds / 1000}
+          unitDisplay="narrow"
         />
       </span>
     );
   }
 }
+
+export default injectIntl(FormattedDurationWrapper);

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "webpack --config webpack.prod.js",
-    "build:analyze": "webpack --config webpack.prod.js --profile --json > stats.json && npx webpack-bundle-analyzer stats.json dist/",
+    "build:analyze": "webpack --config webpack.prod.js --profile --json > stats.json && npx webpack-bundle-analyzer stats.json cmd/dashboard/kodata/",
     "eslint:check": "eslint --print-config src/index.js | eslint-config-prettier-check",
     "i18n:extract": "node scripts/i18n/extractMessages.js",
     "i18n:import": "node scripts/i18n/importFromProperties.js",

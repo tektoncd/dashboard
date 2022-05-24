@@ -41,6 +41,7 @@ module.exports = merge(common({ mode }), {
         warnings: false
       }
     },
+    compress: false,
     historyApiFallback: true,
     hot: true,
     liveReload: false,

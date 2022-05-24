@@ -24,6 +24,9 @@
 # Markdown linting failures don't show up properly in Gubernator resulting
 # in a net-negative contributor experience.
 export DISABLE_MD_LINTING=1
+# GitHub is currently rejecting requests from the link checker with 403 due
+# to missing header. Disable until the tooling is updated to account for this.
+export DISABLE_MD_LINK_CHECK=1
 
 # FIXME(vdemeester) we need to come with something better (like baking common scripts in our image, when we got one)
 go mod vendor || exit 1

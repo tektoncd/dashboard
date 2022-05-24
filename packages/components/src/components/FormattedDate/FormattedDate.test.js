@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -23,7 +23,16 @@ describe('FormattedDate', () => {
 
   it('handles absolute date formatting', () => {
     const { queryByText } = render(<FormattedDate date="2019/12/01" />);
-    expect(queryByText(/December 1, 2019/i)).toBeTruthy();
+    expect(queryByText(/Dec 1, 2019/i)).toBeTruthy();
+  });
+
+  it('handles absolute date formatting for current year', () => {
+    const currentYear = new Date().getFullYear();
+    const { queryByText } = render(
+      <FormattedDate date={`${currentYear}/12/01`} />
+    );
+    expect(queryByText(currentYear)).toBeFalsy();
+    expect(queryByText(/Dec 1/i)).toBeTruthy();
   });
 
   it('handles relative date formatting', () => {
@@ -34,6 +43,6 @@ describe('FormattedDate', () => {
       <FormattedDate date="2019/12/01" relative />
     );
     expect(container.firstChild).not.toBeNull();
-    expect(queryByText(/December 1, 2019/i)).toBeFalsy();
+    expect(queryByText(/Dec 1, 2019/i)).toBeFalsy();
   });
 });

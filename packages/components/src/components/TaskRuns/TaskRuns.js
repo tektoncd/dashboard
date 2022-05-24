@@ -14,26 +14,31 @@ limitations under the License.
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
+import {
+  Calendar16 as CalendarIcon,
+  Time16 as TimeIcon,
+  Lightning16 as TriggersIcon
+} from '@carbon/icons-react';
 import { getStatus, taskRunHasWarning, urls } from '@tektoncd/dashboard-utils';
 import { Link as CarbonLink } from 'carbon-components-react';
 
 import {
+  Actions,
   FormattedDate,
   FormattedDuration,
-  RunDropdown,
   StatusIcon,
   Table
 } from '..';
 
 const TaskRuns = ({
   batchActionButtons = [],
-  createTaskRunURL = urls.taskRuns.byName,
-  createTaskRunsDisplayName = ({ taskRunMetadata }) => taskRunMetadata.name,
-  createTaskRunsURL = ({ kind, namespace, taskName }) =>
+  filters,
+  getRunActions = () => [],
+  getTaskRunsDisplayName = ({ taskRunMetadata }) => taskRunMetadata.name,
+  getTaskRunsURL = ({ kind, namespace, taskName }) =>
     kind === 'ClusterTask'
       ? urls.taskRuns.byClusterTask({ taskName })
       : urls.taskRuns.byTask({ namespace, taskName }),
-  filters,
   getTaskRunStatus = (taskRun, intl) => {
     const { reason } = getStatus(taskRun);
     return (
@@ -62,26 +67,50 @@ const TaskRuns = ({
     }
     return `${reason}: ${message}`;
   },
+  getTaskRunTriggerInfo = taskRun => {
+    const { labels = {} } = taskRun.metadata;
+    const eventListener = labels['triggers.tekton.dev/eventlistener'];
+    const trigger = labels['triggers.tekton.dev/trigger'];
+    const pipelineRun = labels['tekton.dev/pipelineRun'];
+    if (!eventListener && !trigger && !pipelineRun) {
+      return null;
+    }
+
+    if (pipelineRun) {
+      return <span title={`PipelineRun: ${pipelineRun}`}>{pipelineRun}</span>;
+    }
+
+    return (
+      <span
+        title={`EventListener: ${eventListener || '-'}\nTrigger: ${
+          trigger || '-'
+        }`}
+      >
+        <TriggersIcon />
+        {eventListener}
+        {eventListener && trigger ? ' | ' : ''}
+        {trigger}
+      </span>
+    );
+  },
+  getTaskRunURL = urls.taskRuns.byName,
   intl,
   loading,
   selectedNamespace,
   taskRuns,
-  taskRunActions = [],
   toolbarButtons
 }) => {
+  let hasRunActions = false;
   const headers = [
+    {
+      key: 'run',
+      header: 'Run'
+    },
     {
       key: 'status',
       header: intl.formatMessage({
         id: 'dashboard.tableHeader.status',
         defaultMessage: 'Status'
-      })
-    },
-    {
-      key: 'name',
-      header: intl.formatMessage({
-        id: 'dashboard.tableHeader.name',
-        defaultMessage: 'Name'
       })
     },
     {
@@ -92,46 +121,28 @@ const TaskRuns = ({
       })
     },
     {
-      key: 'namespace',
-      header: 'Namespace'
-    },
-    {
-      key: 'createdTime',
-      header: intl.formatMessage({
-        id: 'dashboard.tableHeader.createdTime',
-        defaultMessage: 'Created'
-      })
-    },
-    {
-      key: 'duration',
-      header: intl.formatMessage({
-        id: 'dashboard.tableHeader.duration',
-        defaultMessage: 'Duration'
-      })
+      key: 'time',
+      header: ''
     }
   ];
 
-  if (taskRunActions.length) {
-    headers.push({ key: 'actions', header: '' });
-  }
-
   const taskRunsFormatted = taskRuns.map(taskRun => {
     const { creationTimestamp, namespace } = taskRun.metadata;
-    const taskRunName = createTaskRunsDisplayName({
+    const taskRunName = getTaskRunsDisplayName({
       taskRunMetadata: taskRun.metadata
     });
     const taskRefName = taskRun.spec.taskRef?.name;
     const taskRefKind = taskRun.spec.taskRef?.kind;
     const { lastTransitionTime, reason, status } = getStatus(taskRun);
     const statusIcon = getTaskRunStatusIcon(taskRun);
-    const taskRunURL = createTaskRunURL({
+    const taskRunURL = getTaskRunURL({
       namespace,
       taskRunName
     });
 
     const taskRunsURL =
       taskRefName &&
-      createTaskRunsURL({
+      getTaskRunsURL({
         kind: taskRefKind,
         namespace,
         taskName: taskRefName
@@ -148,50 +159,111 @@ const TaskRuns = ({
       />
     );
 
+    const taskRunActions = getRunActions(taskRun);
+    if (taskRunActions.length) {
+      hasRunActions = true;
+    }
+
     return {
       id: taskRun.metadata.uid,
-      name: taskRunURL ? (
-        <Link component={CarbonLink} to={taskRunURL} title={taskRunName}>
-          {taskRunName}
-        </Link>
-      ) : (
-        taskRunName
+      run: (
+        <div>
+          <span>
+            {taskRunURL ? (
+              <Link component={CarbonLink} to={taskRunURL} title={taskRunName}>
+                {taskRunName}
+              </Link>
+            ) : (
+              taskRunName
+            )}
+          </span>
+          <span className="tkn--table--sub">
+            {getTaskRunTriggerInfo(taskRun)}&nbsp;
+          </span>
+        </div>
       ),
-      task: taskRefName ? (
-        <Link component={CarbonLink} to={taskRunsURL} title={taskRefName}>
-          {taskRefName}
-        </Link>
-      ) : (
-        ''
+      task: (
+        <div>
+          <span>
+            {taskRefName ? (
+              <Link component={CarbonLink} to={taskRunsURL} title={taskRefName}>
+                {taskRefName}
+              </Link>
+            ) : (
+              '-'
+            )}
+          </span>
+          <span className="tkn--table--sub" title={`Namespace: ${namespace}`}>
+            {namespace}
+          </span>
+        </div>
       ),
-      namespace: taskRun.metadata.namespace,
       status: (
-        <div className="tkn--definition">
-          <div
-            className="tkn--status"
-            data-reason={reason}
-            data-status={status}
-            title={getTaskRunStatusTooltip(taskRun, intl)}
-          >
-            {statusIcon}
+        <div>
+          <div className="tkn--definition">
+            <div
+              className="tkn--status"
+              data-reason={reason}
+              data-status={status}
+              title={getTaskRunStatusTooltip(taskRun, intl)}
+            >
+              {statusIcon}
+              {getTaskRunStatus(taskRun, intl)}
+            </div>
+          </div>
+          {status === 'False' ? (
+            <span
+              className="tkn--table--sub"
+              title={getStatus(taskRun).message}
+            >
+              {getStatus(taskRun).message}&nbsp;
+            </span>
+          ) : (
+            <span className="tkn--table--sub">&nbsp;</span>
+          )}
+        </div>
+      ),
+      time: (
+        <div>
+          <span>
+            <CalendarIcon />
+            <FormattedDate
+              date={taskRun.metadata.creationTimestamp}
+              formatTooltip={formattedDate =>
+                intl.formatMessage(
+                  {
+                    id: 'dashboard.resource.createdTime',
+                    defaultMessage: 'Created: {created}'
+                  },
+                  {
+                    created: formattedDate
+                  }
+                )
+              }
+            />
+          </span>
+          <div className="tkn--table--sub">
+            <TimeIcon />
+            {duration}
           </div>
         </div>
       ),
-      createdTime: (
-        <FormattedDate date={taskRun.metadata.creationTimestamp} relative />
-      ),
-      duration,
-      actions: <RunDropdown items={taskRunActions} resource={taskRun} />
+      actions: <Actions items={taskRunActions} resource={taskRun} />
     };
   });
+
+  if (hasRunActions) {
+    headers.push({ key: 'actions', header: '' });
+  }
 
   return (
     <Table
       batchActionButtons={batchActionButtons}
       filters={filters}
+      hasDetails
       headers={headers}
-      rows={taskRunsFormatted}
       loading={loading}
+      rows={taskRunsFormatted}
       emptyTextAllNamespaces={intl.formatMessage(
         {
           id: 'dashboard.emptyState.allNamespaces',

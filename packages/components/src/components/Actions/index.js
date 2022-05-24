@@ -10,19 +10,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+/* istanbul ignore file */
 
-.tkn--definition .tkn--status {
-  display: flex;
-
-  .tkn--status-icon {
-    margin-right: 0.5em;
-    vertical-align: sub;
-    flex-shrink: 0;
-
-    &.tkn--status-icon--warning {
-      width: 24px;
-      height: 24px;
-      margin-right: 0.25em;
-    }
-  }
-}
+export { default } from './Actions';

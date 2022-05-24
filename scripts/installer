@@ -31,13 +31,23 @@ BASE_RELEASE_URL="https://storage.googleapis.com/tekton-releases/dashboard"
 
 # additional options passed to ko resolve
 KO_RESOLVE_OPTIONS=""
+PLATFORM=""
 
 initOS() {
   OS=$(echo `uname`|tr '[:upper:]' '[:lower:]')
 
   case "$OS" in
     # Minimalist GNU for Windows
-    mingw*) OS='windows';;
+    mingw*)
+      OS='windows'
+      ;;
+    darwin*)
+      ARCH=$(uname -m)
+      if [ "$ARCH" == "arm64" ] && [ -z "$PLATFORM" ]; then
+        debug "Detected Apple M1 and no custom platform specified"
+        PLATFORM="--platform linux/arm64"
+      fi
+      ;;
   esac
 
   debug "Detected OS: $OS"
@@ -88,7 +98,7 @@ compile() {
   fi
 
   debug "Building overlay $overlay ..."
-  kustomize build --load_restrictor none "$overlay" | ko resolve $KO_RESOLVE_OPTIONS -f - > "$TMP_FILE"
+  kustomize build --load-restrictor LoadRestrictionsNone "$overlay" | ko resolve $KO_RESOLVE_OPTIONS $PLATFORM -f - > "$TMP_FILE"
 }
 
 download() {
@@ -522,7 +532,7 @@ while [[ $# -gt 0 ]]; do
       ;;
     '--platform')
       shift
-      KO_RESOLVE_OPTIONS="$KO_RESOLVE_OPTIONS --platform=${1}"
+      PLATFORM="--platform ${1}"
       ;;
     '--tag')
       shift

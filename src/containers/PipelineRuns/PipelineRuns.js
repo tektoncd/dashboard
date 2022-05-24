@@ -322,10 +322,6 @@ export function PipelineRuns({ intl }) {
             id: 'dashboard.actions.deleteButton',
             defaultMessage: 'Delete'
           }),
-          secondaryButtonText: intl.formatMessage({
-            id: 'dashboard.modal.cancelButton',
-            defaultMessage: 'Cancel'
-          }),
           body: resource =>
             intl.formatMessage(
               {
@@ -407,9 +403,9 @@ export function PipelineRuns({ intl }) {
           <PipelineRunsList
             batchActionButtons={batchActionButtons}
             filters={filtersUI}
+            getRunActions={pipelineRunActions}
             loading={isLoading}
             pipelineRuns={resources}
-            pipelineRunActions={pipelineRunActions()}
             selectedNamespace={namespace}
             toolbarButtons={toolbarButtons}
           />

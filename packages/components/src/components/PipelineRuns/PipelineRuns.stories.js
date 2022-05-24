@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -41,10 +41,10 @@ export default {
 
 export const Base = () => (
   <PipelineRuns
-    createPipelineRunURL={({ namespace, pipelineRunName }) =>
+    getPipelineRunURL={({ namespace, pipelineRunName }) =>
       namespace ? `to-pipelineRun-${namespace}/${pipelineRunName}` : null
     }
-    createPipelineRunsByPipelineURL={({ namespace, pipelineName }) =>
+    getPipelineRunsByPipelineURL={({ namespace, pipelineName }) =>
       namespace
         ? `to-pipeline-${namespace}/${pipelineName}`
         : `to-pipeline/${pipelineName}`
@@ -54,7 +54,7 @@ export const Base = () => (
       pipelineRun.metadata.creationTimestamp
     }
     selectedNamespace="default"
-    pipelineRunActions={[
+    getRunActions={() => [
       {
         actionText: 'Cancel',
         action: resource => resource,
@@ -98,7 +98,11 @@ export const Base = () => (
           name: 'pipeline-run-20190816170431',
           namespace: '21cf1eac-7392-4e67-a4d0-f654506fe04d',
           uid: 'a7812005-f766-4877-abd4-b3d418b04f66',
-          creationTimestamp: '2019-08-16T17:09:12Z'
+          creationTimestamp: '2019-08-16T17:09:12Z',
+          labels: {
+            'triggers.tekton.dev/eventlistener': 'tekton-nightly',
+            'triggers.tekton.dev/trigger': 'dashboard-nightly-release'
+          }
         },
         spec: {
           pipelineRef: {
@@ -191,16 +195,16 @@ export const Base = () => (
 
 export const NoPipelineLink = () => (
   <PipelineRuns
-    createPipelineRunURL={({ namespace, pipelineRunName }) =>
+    getPipelineRunURL={({ namespace, pipelineRunName }) =>
       namespace ? `to-pipelineRun-${namespace}/${pipelineRunName}` : null
     }
-    createPipelineRunsByPipelineURL={() => null}
+    getPipelineRunsByPipelineURL={() => null}
     createPipelineRunTimestamp={pipelineRun =>
       getStatus(pipelineRun).lastTransitionTime ||
       pipelineRun.metadata.creationTimestamp
     }
     selectedNamespace="default"
-    pipelineRunActions={[
+    getRunActions={() => [
       {
         actionText: 'Cancel',
         action: resource => resource,
@@ -244,6 +248,7 @@ export const NoPipelineLink = () => (
         kind: 'PipelineRun',
         metadata: {
           name: 'output-pipeline-run',
+          namespace: '61fe5520-a56e-4c1d-b7c3-d933b0f3c6a8',
           creationTimestamp: '2019-10-09T17:10:49Z'
         },
         spec: {
@@ -269,7 +274,7 @@ export const BatchActions = () => (
       { onClick: action('handleDelete'), text: 'Delete', icon: Delete }
     ]}
     selectedNamespace="default"
-    pipelineRunActions={[
+    getRunActions={() => [
       {
         actionText: 'An Action',
         action: resource => resource,
@@ -320,38 +325,75 @@ export const BatchActions = () => (
   />
 );
 
+export const HideColumns = ({ showFilters }) => (
+  <PipelineRuns
+    columns={['run', 'status', 'time']}
+    filters={getFilters(showFilters)}
+    getRunActions={() => [
+      {
+        actionText: 'An Action',
+        action: resource => resource,
+        modalProperties: {
+          heading: 'An Action',
+          primaryButtonText: 'OK',
+          secondaryButtonText: 'Cancel',
+          body: () => 'Do something interesting'
+        }
+      }
+    ]}
+    pipelineRuns={[
+      {
+        metadata: {
+          name: 'pipeline-run-20190816124708',
+          namespace: 'cb4552a6-b2d7-45e2-9773-3d4ca33909ff',
+          creationTimestamp: '2019-08-16T12:48:00Z'
+        },
+        spec: {
+          pipelineRef: {
+            name: 'pipeline'
+          }
+        }
+      }
+    ]}
+  />
+);
+HideColumns.args = {
+  showFilters: false
+};
+
 export const CustomColumns = ({ showFilters }) => (
   <PipelineRuns
-    columns={[
-      'status',
-      'name',
-      'pipeline',
-      'trigger',
-      'createdTime',
-      'duration'
-    ]}
+    columns={['status', 'run', 'worker', 'time']}
     customColumns={{
       status: {
         getValue() {
           return (
-            <div className="tkn--definition">
-              <div className="tkn--status">
-                <StatusIcon /> Pending
+            <div>
+              <div className="tkn--definition">
+                <div className="tkn--status">
+                  <StatusIcon /> Pending
+                </div>
               </div>
+              <span>&nbsp;</span>
             </div>
           );
         }
       },
-      trigger: {
-        header: 'Trigger',
+      worker: {
+        header: 'Worker',
         getValue({ pipelineRun }) {
-          const trigger = pipelineRun.metadata.labels['tekton.dev/trigger'];
-          return <span title={trigger}>{trigger}</span>;
+          const worker = pipelineRun.metadata.labels['example.com/worker'];
+          return (
+            <div>
+              <span title={worker}>{worker}</span>
+              <span>&nbsp;</span>
+            </div>
+          );
         }
       }
     }}
     filters={getFilters(showFilters)}
-    pipelineRunActions={[
+    getRunActions={() => [
       {
         actionText: 'An Action',
         action: resource => resource,
@@ -370,7 +412,7 @@ export const CustomColumns = ({ showFilters }) => (
           namespace: 'cb4552a6-b2d7-45e2-9773-3d4ca33909ff',
           creationTimestamp: '2019-08-16T12:48:00Z',
           labels: {
-            'tekton.dev/trigger': 'my-trigger'
+            'example.com/worker': 'my-worker'
           }
         },
         spec: {

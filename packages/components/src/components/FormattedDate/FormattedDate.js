@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,7 +14,12 @@ limitations under the License.
 import React from 'react';
 import { FormattedDate, FormattedRelativeTime, injectIntl } from 'react-intl';
 
-const FormattedDateWrapper = ({ date, intl, relative }) => {
+const FormattedDateWrapper = ({
+  date,
+  formatTooltip = formattedDate => formattedDate,
+  intl,
+  relative
+}) => {
   if (!date) {
     return null;
   }
@@ -30,31 +35,31 @@ const FormattedDateWrapper = ({ date, intl, relative }) => {
       />
     );
   } else {
+    const yearFormat =
+      new Date().getFullYear() !== new Date(date).getFullYear()
+        ? 'numeric'
+        : undefined;
     content = (
       <FormattedDate
         value={date}
         day="numeric"
-        month="long"
-        year="numeric"
+        month="short"
+        year={yearFormat}
         hour="numeric"
         minute="numeric"
       />
     );
   }
 
-  return (
-    <span
-      title={intl.formatDate(date, {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric'
-      })}
-    >
-      {content}
-    </span>
-  );
+  const formattedDate = intl.formatDate(date, {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric'
+  });
+
+  return <span title={formatTooltip(formattedDate)}>{content}</span>;
 };
 
 export default injectIntl(FormattedDateWrapper);

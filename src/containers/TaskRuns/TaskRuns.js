@@ -196,10 +196,6 @@ function TaskRuns({ intl }) {
             id: 'dashboard.cancelTaskRun.primaryText',
             defaultMessage: 'Stop TaskRun'
           }),
-          secondaryButtonText: intl.formatMessage({
-            id: 'dashboard.modal.cancelButton',
-            defaultMessage: 'Cancel'
-          }),
           body: resource =>
             intl.formatMessage(
               {
@@ -235,10 +231,6 @@ function TaskRuns({ intl }) {
           primaryButtonText: intl.formatMessage({
             id: 'dashboard.actions.deleteButton',
             defaultMessage: 'Delete'
-          }),
-          secondaryButtonText: intl.formatMessage({
-            id: 'dashboard.modal.cancelButton',
-            defaultMessage: 'Cancel'
           }),
           body: resource =>
             intl.formatMessage(
@@ -318,10 +310,10 @@ function TaskRuns({ intl }) {
           <TaskRunsList
             batchActionButtons={batchActionButtons}
             filters={statusFilters}
+            getRunActions={taskRunActions}
             loading={isLoading}
             selectedNamespace={namespace}
             taskRuns={resources}
-            taskRunActions={taskRunActions()}
             toolbarButtons={toolbarButtons}
           />
           {showDeleteModal ? (

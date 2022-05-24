@@ -229,30 +229,8 @@ export /* istanbul ignore next */ function PipelineRunContainer({ intl }) {
     podDetails = (events || pod) && { events, resource: pod };
   }
 
-  if (!pipelineRun) {
-    return (
-      <PipelineRun
-        error={intl.formatMessage({
-          id: 'dashboard.pipelineRun.notFound',
-          defaultMessage: 'PipelineRun not found'
-        })}
-        loading={false}
-      />
-    );
-  }
-
-  if (!pipelineRun.status) {
-    pipelineRun.status = {
-      taskRuns: []
-    };
-  }
-  if (!pipelineRun.status.taskRuns) {
-    pipelineRun.status.taskRuns = [];
-  }
-
   let runAction = null;
-
-  if (!isReadOnly) {
+  if (pipelineRun && !isReadOnly) {
     if (pipelineRun.spec.status !== pipelineRunStatuses.PENDING) {
       runAction = (
         <RunAction

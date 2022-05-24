@@ -87,6 +87,8 @@ spec:
         set -ex
 
         go version
+        ko version
+        kustomize version
 
         # Setup docker-auth
         DOCKER_CONFIG=~/.docker
@@ -106,8 +108,8 @@ spec:
         cp ${PROJECT_ROOT}/scripts/installer $OUTPUT_RELEASE_DIR/installer
 
         # build manifests for installer
-        kustomize build overlays/installer/read-write --load_restrictor none | ko resolve --platform=$(params.platforms) --preserve-import-paths -t $(params.versionTag) -f - > $OUTPUT_RELEASE_DIR/installer-tekton-dashboard-release.yaml
-        kustomize build overlays/installer/read-only  --load_restrictor none | ko resolve --platform=$(params.platforms) --preserve-import-paths -t $(params.versionTag) -f - > $OUTPUT_RELEASE_DIR/installer-tekton-dashboard-release-readonly.yaml
+        kustomize build overlays/installer/read-write --load-restrictor LoadRestrictionsNone | ko resolve --platform=$(params.platforms) --preserve-import-paths -t $(params.versionTag) -f - > $OUTPUT_RELEASE_DIR/installer-tekton-dashboard-release.yaml
+        kustomize build overlays/installer/read-only  --load-restrictor LoadRestrictionsNone | ko resolve --platform=$(params.platforms) --preserve-import-paths -t $(params.versionTag) -f - > $OUTPUT_RELEASE_DIR/installer-tekton-dashboard-release-readonly.yaml
 
         # build pre configured manifests
         ./scripts/installer release --debug                         --platform $(params.platforms) --tag $(params.versionTag) --output $OUTPUT_RELEASE_DIR/tekton-dashboard-release.yaml
