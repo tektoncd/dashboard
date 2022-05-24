@@ -22,6 +22,7 @@
     "@babel/runtime": "^7.16.7",
     "@carbon/icons-react": "^10.47.0",
     "@carbon/themes": "^10.52.0",
+    "@tektoncd/dashboard-components": "^0.27.0-alpha.2",
     "@tektoncd/dashboard-utils": "*",
     "buffer": "^6.0.3",
     "carbon-components": "^10.52.0",
