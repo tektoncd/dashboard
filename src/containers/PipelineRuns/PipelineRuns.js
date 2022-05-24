@@ -90,7 +90,6 @@ export function PipelineRuns({ intl }) {
     setDeleteError(null);
     setShowDeleteModal(false);
     setToBeDeleted([]);
-    setCancelState(getDefaultCancelState(allowCancelOptions));
   }, [JSON.stringify(filters), namespace]);
 
   const {
