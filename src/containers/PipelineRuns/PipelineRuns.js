@@ -82,7 +82,6 @@ export function PipelineRuns({ intl }) {
   const [deleteError, setDeleteError] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [toBeDeleted, setToBeDeleted] = useState([]);
-  // const [] = useState('');
   const isReadOnly = useIsReadOnly();
 
   useTitleSync({ page: 'PipelineRuns' });
