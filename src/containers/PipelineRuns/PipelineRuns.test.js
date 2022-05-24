@@ -109,6 +109,17 @@ describe('PipelineRuns container', () => {
       .spyOn(PipelineRunsAPI, 'usePipelineRuns')
       .mockImplementation(() => ({ data: [...pipelineRuns] }));
     jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => true);
+    jest.spyOn(API, 'useProperties').mockImplementation(() => ({
+      data: {
+        dashboardNamespace: 'tekton-dashboard',
+        dashboardVersion: 'v0.100.0',
+        isReadOnly: true,
+        pipelinesNamespace: 'tekton-pipelines',
+        pipelinesVersion: 'v0.10.0',
+        triggersNamespace: 'tekton-triggers',
+        triggersVersion: 'v0.3.1'
+      }
+    }));
   });
 
   it('Duplicate label filters are prevented', async () => {
@@ -233,6 +244,29 @@ describe('PipelineRuns container', () => {
     await waitFor(() => getByText(/pipelineRunPending/i));
     fireEvent.click(await waitFor(() => getAllByTitle('Actions')[0]));
     await waitFor(() => getByText(/Start/i));
+    fireEvent.click(getByText('Start'));
+    expect(PipelineRunsAPI.startPipelineRun).toHaveBeenCalledTimes(1);
+    expect(PipelineRunsAPI.startPipelineRun).toHaveBeenCalledWith(
+      pipelineRuns[2]
+    );
+  });
+  it('handles Stop event in PipelineRuns page', async () => {
+    jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => false);
+    jest
+      .spyOn(PipelineRunsAPI, 'usePipelineRuns')
+      .mockImplementation(() => ({ data: [pipelineRuns[2]] }));
+    jest
+      .spyOn(PipelineRunsAPI, 'startPipelineRun')
+      .mockImplementation(() => []);
+    const { getAllByTitle, getByText } = renderWithRouter(
+      <PipelineRunsContainer />,
+      {
+        route: urls.pipelineRuns.all()
+      }
+    );
+    await waitFor(() => getByText(/pipelineRunPending/i));
+    fireEvent.click(await waitFor(() => getAllByTitle('Actions')[0]));
+    await waitFor(() => getByText(/Stop/i));
     fireEvent.click(getByText('Start'));
     expect(PipelineRunsAPI.startPipelineRun).toHaveBeenCalledTimes(1);
     expect(PipelineRunsAPI.startPipelineRun).toHaveBeenCalledWith(

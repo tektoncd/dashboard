@@ -43,7 +43,11 @@ import {
 } from '@carbon/icons-react';
 
 import { ListPageLayout } from '..';
-import { getDefaultCancelSelection, sortRunsByStartTime } from '../../utils';
+import {
+  getDefaultCancelState,
+  setDefaultCancelState,
+  sortRunsByStartTime
+} from '../../utils';
 import {
   cancelPipelineRun,
   deletePipelineRun,
@@ -51,6 +55,7 @@ import {
   startPipelineRun,
   useIsReadOnly,
   usePipelineRuns,
+  useProperties,
   useSelectedNamespace
 } from '../../api';
 
@@ -58,7 +63,14 @@ export function PipelineRuns({ intl }) {
   const history = useHistory();
   const location = useLocation();
   const params = useParams();
+  const { data } = useProperties();
 
+  const { pipelinesVersion } = data;
+  const versionCheck = parseInt(pipelinesVersion.split('.')[1], 10);
+  const allowCancelOptions = !Number.isNaN(versionCheck) && versionCheck > 34;
+  const [cancelState, setCancelState] = useState(
+    getDefaultCancelState(allowCancelOptions)
+  );
   const { selectedNamespace } = useSelectedNamespace();
   const { namespace = selectedNamespace } = params;
 
@@ -74,7 +86,7 @@ export function PipelineRuns({ intl }) {
   const [deleteError, setDeleteError] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [toBeDeleted, setToBeDeleted] = useState([]);
-
+  // const [] = useState('');
   const isReadOnly = useIsReadOnly();
 
   useTitleSync({ page: 'PipelineRuns' });
@@ -83,6 +95,7 @@ export function PipelineRuns({ intl }) {
     setDeleteError(null);
     setShowDeleteModal(false);
     setToBeDeleted([]);
+    setCancelState(getDefaultCancelState(allowCancelOptions));
   }, [JSON.stringify(filters), namespace]);
 
   const {
@@ -117,7 +130,11 @@ export function PipelineRuns({ intl }) {
 
   function cancel(pipelineRun) {
     const { name, namespace: resourceNamespace } = pipelineRun.metadata;
-    cancelPipelineRun({ name, namespace: resourceNamespace }).catch(err => {
+    cancelPipelineRun({
+      name,
+      namespace: resourceNamespace,
+      cancelState
+    }).catch(err => {
       err.response.text().then(text => {
         const statusCode = err.response.status;
         let errorMessage = `error code ${statusCode}`;
@@ -129,9 +146,51 @@ export function PipelineRuns({ intl }) {
     });
   }
 
+  function persistCancelState(state) {
+    setCancelState(state);
+    setDefaultCancelState(state);
+  }
+
   function closeDeleteModal() {
     setShowDeleteModal(false);
     setToBeDeleted([]);
+  }
+
+  function buildCancelStateList(allowChoice) {
+    const cancelLabel = intl.formatMessage({
+      id: 'dashboard.canceledPipelineRunStatus.body',
+      defaultMessage: 'Cancel'
+    });
+
+    const canceledWithFinally = intl.formatMessage({
+      id: 'dashboard.canceledWithFinallyPipelineRun.body',
+      defaultMessage: 'Cancel with Finally'
+    });
+
+    const stoppedLabel = intl.formatMessage({
+      id: 'dashboard.stopWithFinallyPipelineRunStatus.body',
+      defaultMessage: 'Stop with Finally'
+    });
+    const options = [
+      {
+        icon: Info,
+        label: cancelLabel,
+        value: allowChoice ? 'Cancelled' : 'PipelineRunCancelled'
+      },
+      {
+        icon: Info,
+        label: canceledWithFinally,
+        value: 'CancelledRunFinally',
+        disabled: !allowChoice
+      },
+      {
+        icon: Info,
+        label: stoppedLabel,
+        value: 'StoppedRunFinally',
+        disabled: !allowChoice
+      }
+    ];
+    return options;
   }
 
   function deleteRun(pipelineRun) {
@@ -198,7 +257,7 @@ export function PipelineRuns({ intl }) {
           id: 'dashboard.cancelPipelineRun.actionText',
           defaultMessage: 'Stop'
         }),
-        action: cancel,
+        action: pipeline => cancel(pipeline, cancelState),
         disable: resource => {
           const { reason, status } = getStatus(resource);
           return !isRunning(reason, status) && !isPending(reason, status);
@@ -226,43 +285,12 @@ export function PipelineRuns({ intl }) {
               { name: resource.metadata.name }
             );
 
-            const cancelLabel = intl.formatMessage({
-              id: 'dashboard.canceledPipelineRunStatus.body',
-              defaultMessage: 'Cancel'
-            });
-
-            const canceledWithFinally = intl.formatMessage({
-              id: 'dashboard.canceledWithFinallyPipelineRun.body',
-              defaultMessage: 'Cancel with Finally'
-            });
-
-            const stoppedLabel = intl.formatMessage({
-              id: 'dashboard.stopWithFinallyPipelineRunStatus.body',
-              defaultMessage: 'Stop with Finally'
-            });
-
             return (
               <RadioGroup
                 orientation="vertical"
-                defaultSelected={getDefaultCancelSelection()}
-                getSelected={value => console.log(value)}
-                options={[
-                  {
-                    icon: Info,
-                    label: cancelLabel,
-                    value: 'Cancelled'
-                  },
-                  {
-                    icon: Info,
-                    label: canceledWithFinally,
-                    value: 'CancelledRunFinally'
-                  },
-                  {
-                    icon: Info,
-                    label: stoppedLabel,
-                    value: 'StoppedRunFinally'
-                  }
-                ]}
+                defaultSelected={cancelState}
+                getSelected={persistCancelState}
+                options={buildCancelStateList(allowCancelOptions)}
                 title={title}
               />
             );

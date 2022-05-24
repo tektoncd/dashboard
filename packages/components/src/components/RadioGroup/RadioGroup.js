@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { createElement } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 import { injectIntl } from 'react-intl';
@@ -33,15 +33,13 @@ function RadioGroup({
       defaultSelected={defaultSelected}
     >
       {options.map(o => (
-        <>
-          <RadioButton
-            labelText={o.label}
-            value={o.value}
-            id={o.value}
-            disabled={o.disabled}
-          />
-          {createElement(o.icon, { className: 'radio-block-icon' })}
-        </>
+        <RadioButton
+          className="radio-block-icon"
+          labelText={o.label}
+          value={o.value}
+          id={o.value}
+          disabled={o.disabled}
+        />
       ))}
     </RadioButtonGroup>
   );

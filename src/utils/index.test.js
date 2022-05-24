@@ -25,7 +25,9 @@ import {
   getTheme,
   getViewChangeHandler,
   setTheme,
-  sortRunsByStartTime
+  sortRunsByStartTime,
+  setDefaultCancelState,
+  getDefaultCancelState
 } from '.';
 
 const { locales: localesConfig } = config;
@@ -363,5 +365,37 @@ describe('setTheme', () => {
     localStorage.removeItem('tkn-theme');
     setTheme('light');
     expect(localStorage.getItem('tkn-theme')).toEqual('light');
+  });
+});
+describe('setDefaultCancelState', () => {
+  it('defaults PipelineRunCancelled if not valid', () => {
+    localStorage.removeItem('tkn-default-cancel');
+    setDefaultCancelState('foo');
+    expect(localStorage.getItem('tkn-default-cancel')).toEqual(
+      'PipelineRunCancelled'
+    );
+  });
+
+  it('returns state if valid', () => {
+    localStorage.removeItem('tkn-default-cancel');
+    setDefaultCancelState('Cancelled');
+    expect(localStorage.getItem('tkn-default-cancel')).toEqual('Cancelled');
+  });
+});
+describe('getDefaultCancelState', () => {
+  it('defaults PipelineRunCancelled if <v0.34.0', () => {
+    const state = getDefaultCancelState(false);
+    expect(state).toEqual('PipelineRunCancelled');
+  });
+
+  it('defaults Cancelled if >v0.34.0, and nothing set', () => {
+    localStorage.removeItem('tkn-default-cancel');
+    const state = getDefaultCancelState(true);
+    expect(state).toEqual('Cancelled');
+  });
+  it('returns if valid set', () => {
+    localStorage.setItem('tkn-default-cancel', 'CancelledRunFinally');
+    const state = getDefaultCancelState(true);
+    expect(state).toEqual('CancelledRunFinally');
   });
 });

@@ -215,17 +215,30 @@ export function setTheme(selectedTheme = getTheme()) {
   localStorage.setItem('tkn-theme', theme);
 }
 
-export function getDefaultCancelSelection(updated) {
+function sanatizeCancelState(state) {
+  const valid = [
+    'Cancelled',
+    'CancelledRunFinally',
+    'StoppedRunFinally'
+  ].includes(state);
+  if (valid) {
+    return state;
+  }
+  return 'PipelineRunCancelled';
+}
+
+export function getDefaultCancelState(allowCancelOptions) {
+  if (!allowCancelOptions) {
+    return 'PipelineRunCancelled';
+  }
   const selection = localStorage.getItem('tkn-default-cancel');
   if (selection) {
-    return selection;
-  }
-  if (!updated) {
-    
+    return sanatizeCancelState(selection);
   }
   return 'Cancelled';
 }
 
-export function setDefaultCancelSelection(selection) {
-  localStorage.setItem('tkn-default-cancel', selection);
+export function setDefaultCancelState(selection) {
+  const clean = sanatizeCancelState(selection);
+  localStorage.setItem('tkn-default-cancel', clean);
 }

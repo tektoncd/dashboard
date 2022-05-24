@@ -24,7 +24,11 @@ it('cancelPipelineRun', () => {
   ];
   const returnedPipelineRun = { fake: 'PipelineRun' };
   fetchMock.patch(`end:${name}`, returnedPipelineRun);
-  return API.cancelPipelineRun({ name, namespace }).then(response => {
+  return API.cancelPipelineRun({
+    name,
+    namespace,
+    cancelState: payload[0].value
+  }).then(response => {
     expect(fetchMock.lastOptions()).toMatchObject({
       body: JSON.stringify(payload)
     });
