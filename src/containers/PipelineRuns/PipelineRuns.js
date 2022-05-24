@@ -36,11 +36,7 @@ import {
   urls,
   useTitleSync
 } from '@tektoncd/dashboard-utils';
-import {
-  Add16 as Add,
-  TrashCan32 as Delete,
-  Information16 as Info
-} from '@carbon/icons-react';
+import { Add16 as Add, TrashCan32 as Delete } from '@carbon/icons-react';
 
 import { ListPageLayout } from '..';
 import {
