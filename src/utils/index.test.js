@@ -19,15 +19,15 @@ import {
   fetchLogs,
   fetchLogsFallback,
   followLogs,
+  getDefaultCancelState,
   getLocale,
   getLogsRetriever,
   getLogsToolbar,
   getTheme,
   getViewChangeHandler,
-  setTheme,
-  sortRunsByStartTime,
   setDefaultCancelState,
-  getDefaultCancelState
+  setTheme,
+  sortRunsByStartTime
 } from '.';
 
 const { locales: localesConfig } = config;

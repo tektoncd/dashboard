@@ -15,7 +15,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { injectIntl } from 'react-intl';
-import { RadioButtonGroup, RadioButton, icons } from 'carbon-components-react';
+import { RadioButton, RadioButtonGroup } from 'carbon-components-react';
 
 function RadioGroup({
   title,
@@ -34,7 +34,6 @@ function RadioGroup({
     >
       {options.map(o => (
         <RadioButton
-          className="radio-block-icon"
           labelText={o.label}
           value={o.value}
           id={o.value}
@@ -53,11 +52,14 @@ RadioGroup.propTypes = {
       value: PropTypes.string.isRequired,
       id: PropTypes.string.isRequired,
       disabled: PropTypes.bool
-    }).isRequired
-  ),
+    })
+  ).isRequired,
   getSelected: PropTypes.func.isRequired,
-  defaultSelected: PropTypes.string,
+  defaultSelected: PropTypes.string.isRequired,
   orientation: PropTypes.string
 };
 
+RadioGroup.defaultProps = {
+  orientation: 'vertical'
+};
 export default injectIntl(RadioGroup);
