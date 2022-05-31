@@ -220,7 +220,9 @@ const PipelineRuns = ({
             ) : (
               pipelineRunName
             )}
-            {getPipelineRunIcon()}
+            {getPipelineRunIcon({
+              pipelineRunMetadata: pipelineRun.metadata
+            })}
           </span>
           <span className="tkn--table--sub">
             {getPipelineRunTriggerInfo(pipelineRun)}&nbsp;
