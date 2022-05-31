@@ -63,6 +63,7 @@ const PipelineRuns = ({
 
     return endTime - new Date(creationTimestamp).getTime();
   },
+  getPipelineRunIcon = () => null,
   getPipelineRunId = pipelineRun => pipelineRun.metadata.uid,
   getPipelineRunsByPipelineURL = urls.pipelineRuns.byPipeline,
   getPipelineRunStatus = (pipelineRun, intl) => {
@@ -219,6 +220,7 @@ const PipelineRuns = ({
             ) : (
               pipelineRunName
             )}
+            {getPipelineRunIcon()}
           </span>
           <span className="tkn--table--sub">
             {getPipelineRunTriggerInfo(pipelineRun)}&nbsp;
