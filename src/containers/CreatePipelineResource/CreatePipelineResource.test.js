@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -53,7 +53,7 @@ describe('CreatePipelineResource', () => {
   });
 
   const nameValidationErrorMsgRegExp =
-    /Must be less than 64 characters and contain only lowercase alphanumeric characters or -/i;
+    /Must consist of lower case alphanumeric characters, '-' or '.', start and end with an alphanumeric character, and be at most 63 characters/i;
   const namespaceValidationErrorRegExp = /Namespace required/i;
   const urlValidationErrorRegExp = /URL required/i;
   const revisionValidationErrorRegExp = /Revision required/i;
@@ -95,12 +95,12 @@ describe('CreatePipelineResource', () => {
     expect(queryByText(revisionValidationErrorRegExp)).toBeTruthy();
   });
 
-  it('errors when name contains "."', () => {
+  it('errors when name ends with a "."', () => {
     const { queryByText, getByPlaceholderText } = render(
       <CreatePipelineResource />
     );
     fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
-      target: { value: 'meow.meow' }
+      target: { value: 'meow.' }
     });
     fireEvent.click(queryByText('Create'));
     expect(queryByText(nameValidationErrorMsgRegExp)).toBeTruthy();
@@ -137,12 +137,12 @@ describe('CreatePipelineResource', () => {
     expect(queryByText(revisionValidationErrorRegExp)).toBeTruthy();
   });
 
-  it('doesn\'t error when contains "-" in the middle of the name', () => {
+  it('doesn\'t error when contains "-" or "." in the middle of the name', () => {
     const { queryByText, getByPlaceholderText } = render(
       <CreatePipelineResource />
     );
     fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
-      target: { value: 'the-cat-goes-meow' }
+      target: { value: 'the-cat.goes-meow' }
     });
     fireEvent.click(queryByText('Create'));
     expect(queryByText(nameValidationErrorMsgRegExp)).toBeFalsy();

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -76,21 +76,22 @@ export function cancelTaskRun({ name, namespace }) {
 }
 
 export function createTaskRun({
-  namespace,
-  taskName,
   kind,
   labels,
+  namespace,
+  nodeSelector,
   params,
   resources,
   serviceAccount,
-  timeout,
-  nodeSelector
+  taskName,
+  taskRunName = `${taskName}-run-${Date.now()}`,
+  timeout
 }) {
   const payload = {
     apiVersion: 'tekton.dev/v1beta1',
     kind: 'TaskRun',
     metadata: {
-      name: `${taskName}-run-${Date.now()}`,
+      name: taskRunName,
       namespace,
       labels
     },
