@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2021 The Tekton Authors
+Copyright 2020-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -27,6 +27,7 @@ import {
   ALL_NAMESPACES,
   generateId,
   getTranslateWithId,
+  resourceNameRegex,
   urls,
   useTitleSync
 } from '@tektoncd/dashboard-utils';
@@ -60,8 +61,10 @@ const initialState = {
   serviceAccount: '',
   submitError: '',
   taskRef: '',
+  taskRunName: '',
   timeout: '60',
   validationError: false,
+  validTaskRunName: true,
   validTimeout: true
 };
 
@@ -137,8 +140,10 @@ function CreateTaskRun({ intl }) {
       serviceAccount,
       submitError,
       taskRef,
+      taskRunName,
       timeout,
       validationError,
+      validTaskRunName,
       validTimeout
     },
     setState
@@ -196,6 +201,12 @@ function CreateTaskRun({ intl }) {
         true
       );
 
+    // TaskRun name
+    const taskRunNameTest =
+      !taskRunName ||
+      (resourceNameRegex.test(taskRunName) && taskRunName.length < 64);
+    setState(state => ({ ...state, validTaskRunName: taskRunNameTest }));
+
     // Timeout is a number and less than 1 year in minutes
     const isValidTimeout =
       !Number.isNaN(timeout) && timeout < 525600 && timeout.trim() !== '';
@@ -246,7 +257,8 @@ function CreateTaskRun({ intl }) {
       validParams &&
       isValidTimeout &&
       validLabels &&
-      validNodeSelector
+      validNodeSelector &&
+      taskRunNameTest
     );
   }
 
@@ -421,23 +433,24 @@ function CreateTaskRun({ intl }) {
 
     const timeoutInMins = `${timeout}m`;
     createTaskRun({
-      namespace,
       kind,
-      taskName: taskRef,
-      resources,
-      params,
-      serviceAccount,
-      timeout: timeoutInMins,
       labels: labels.reduce((acc, { key, value }) => {
         acc[key] = value;
         return acc;
       }, {}),
+      namespace,
       nodeSelector: nodeSelector.length
         ? nodeSelector.reduce((acc, { key, value }) => {
             acc[key] = value;
             return acc;
           }, {})
-        : null
+        : null,
+      params,
+      resources,
+      serviceAccount,
+      taskName: taskRef,
+      taskRunName: taskRunName || undefined,
+      timeout: timeoutInMins
     })
       .then(() => {
         history.push(urls.taskRuns.byNamespace({ namespace }));
@@ -764,6 +777,23 @@ function CreateTaskRun({ intl }) {
             value={timeout}
             onChange={({ target: { value } }) =>
               setState(state => ({ ...state, timeout: value }))
+            }
+          />
+          <TextInput
+            id="create-taskrun--taskrunname"
+            labelText={intl.formatMessage({
+              id: 'dashboard.createRun.taskRunNameLabel',
+              defaultMessage: 'TaskRun name'
+            })}
+            invalid={validationError && !validTaskRunName}
+            invalidText={intl.formatMessage({
+              id: 'dashboard.createResource.nameError',
+              defaultMessage:
+                "Must consist of lower case alphanumeric characters, '-' or '.', start and end with an alphanumeric character, and be at most 63 characters"
+            })}
+            value={taskRunName}
+            onChange={({ target: { value } }) =>
+              setState(state => ({ ...state, taskRunName: value.trim() }))
             }
           />
         </FormGroup>

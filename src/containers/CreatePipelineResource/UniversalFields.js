@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -49,9 +49,9 @@ const UniversalFields = props => {
         onChange={handleChangeTextInput}
         invalid={'name' in invalidFields}
         invalidText={intl.formatMessage({
-          id: 'dashboard.createPipelineResource.nameError',
+          id: 'dashboard.createResource.nameError',
           defaultMessage:
-            'Must be less than 64 characters and contain only lowercase alphanumeric characters or -'
+            "Must consist of lower case alphanumeric characters, '-' or '.', start and end with an alphanumeric character, and be at most 63 characters"
         })}
         autoComplete="off"
       />

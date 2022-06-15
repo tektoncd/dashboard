@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -26,6 +26,7 @@ import {
 import {
   ALL_NAMESPACES,
   generateId,
+  resourceNameRegex,
   urls,
   useTitleSync
 } from '@tektoncd/dashboard-utils';
@@ -56,12 +57,14 @@ const initialState = {
   pendingPipelineStatus: '',
   pipelineError: false,
   pipelineRef: '',
+  pipelineRunName: '',
   resources: {},
   resourceSpecs: [],
   serviceAccount: '',
   submitError: '',
   timeout: '60',
   validationError: false,
+  validPipelineRunName: true,
   validTimeout: true
 };
 
@@ -116,11 +119,13 @@ function CreatePipelineRun({ intl }) {
       params,
       pipelinePendingStatus,
       pipelineRef,
+      pipelineRunName,
       resources,
       serviceAccount,
       submitError,
       timeout,
       validationError,
+      validPipelineRunName,
       validTimeout
     },
     setState
@@ -177,6 +182,15 @@ function CreatePipelineRun({ intl }) {
         true
       );
 
+    // PipelineRun name
+    const pipelineRunNameTest =
+      !pipelineRunName ||
+      (resourceNameRegex.test(pipelineRunName) && pipelineRunName.length < 64);
+    setState(state => ({
+      ...state,
+      validPipelineRunName: pipelineRunNameTest
+    }));
+
     // Timeout is a number and less than 1 year in minutes
     const timeoutTest =
       !Number.isNaN(timeout) && timeout < 525600 && timeout.trim() !== '';
@@ -227,7 +241,8 @@ function CreatePipelineRun({ intl }) {
       validParams &&
       timeoutTest &&
       validLabels &&
-      validNodeSelector
+      validNodeSelector &&
+      pipelineRunNameTest
     );
   }
 
@@ -400,6 +415,7 @@ function CreatePipelineRun({ intl }) {
     createPipelineRun({
       namespace,
       pipelineName: pipelineRef,
+      pipelineRunName: pipelineRunName || undefined,
       resources,
       params,
       pipelinePendingStatus,
@@ -681,6 +697,23 @@ function CreatePipelineRun({ intl }) {
             value={timeout}
             onChange={({ target: { value } }) =>
               setState(state => ({ ...state, timeout: value }))
+            }
+          />
+          <TextInput
+            id="create-pipelinerun--pipelinerunname"
+            labelText={intl.formatMessage({
+              id: 'dashboard.createRun.pipelineRunNameLabel',
+              defaultMessage: 'PipelineRun name'
+            })}
+            invalid={validationError && !validPipelineRunName}
+            invalidText={intl.formatMessage({
+              id: 'dashboard.createResource.nameError',
+              defaultMessage:
+                "Must consist of lower case alphanumeric characters, '-' or '.', start and end with an alphanumeric character, and be at most 63 characters"
+            })}
+            value={pipelineRunName}
+            onChange={({ target: { value } }) =>
+              setState(state => ({ ...state, pipelineRunName: value.trim() }))
             }
           />
           <Toggle
