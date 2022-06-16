@@ -31,6 +31,8 @@ Then, you will create a service to serve those logs and will plug the Tekton Das
 
 ## Installing a working Tekton Dashboard locally from scratch
 
+This walkthrough has been tested on Kind v0.14 with Kubernetes v1.21.
+
 If you didn't follow the [Tekton Dashboard walk-through with Kind](./walkthrough-kind.md) yet, start there to get a local cluster with a working Tekton Dashboard installed.
 
 The following steps will focus on collecting, storing and serving pod logs to finally plug the logs service on the Tekton Dashboard.
