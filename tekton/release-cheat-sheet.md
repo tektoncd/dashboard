@@ -116,6 +116,8 @@ Creating the release announcement is currently a manual process but will be auto
 
 1. Announce the release in Slack channels #general, #announcements, and #dashboard.
 
+1. Update the website sync config to include the new release by adding the new tag to the top of the list in https://github.com/tektoncd/website/blob/main/sync/config/dashboard.yaml
+
 Congratulations, you're done!
 
 ## Setup dogfooding context
