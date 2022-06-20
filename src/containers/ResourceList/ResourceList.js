@@ -15,8 +15,11 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { getFilters, urls, useTitleSync } from '@tektoncd/dashboard-utils';
-import { FormattedDate, Table } from '@tektoncd/dashboard-components';
-import { Link as CarbonLink } from 'carbon-components-react';
+import {
+  Link as CustomLink,
+  FormattedDate,
+  Table
+} from '@tektoncd/dashboard-components';
 
 import { ListPageLayout } from '..';
 import {
@@ -127,7 +130,7 @@ export function ResourceListContainer({ intl }) {
               id: uid,
               name: (
                 <Link
-                  component={CarbonLink}
+                  component={CustomLink}
                   to={
                     resourceNamespace
                       ? urls.kubernetesResources.byName({

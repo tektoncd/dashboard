@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -15,7 +15,7 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { urls } from '@tektoncd/dashboard-utils';
-import { Link as CarbonLink } from 'carbon-components-react';
+import { Link as CustomLink } from '@tektoncd/dashboard-components';
 
 import { FormattedDate, Table } from '..';
 
@@ -71,7 +71,7 @@ const PipelineResources = ({
     return {
       id: pipelineResource.metadata.uid,
       name: url ? (
-        <Link component={CarbonLink} to={url} title={pipelineResourceName}>
+        <Link component={CustomLink} to={url} title={pipelineResourceName}>
           {pipelineResourceName}
         </Link>
       ) : (

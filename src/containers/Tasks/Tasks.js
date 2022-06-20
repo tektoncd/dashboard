@@ -16,7 +16,7 @@ import React, { useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import keyBy from 'lodash.keyby';
-import { Button, Link as CarbonLink } from 'carbon-components-react';
+import { Button } from 'carbon-components-react';
 import {
   ALL_NAMESPACES,
   getFilters,
@@ -24,6 +24,7 @@ import {
   useTitleSync
 } from '@tektoncd/dashboard-utils';
 import {
+  Link as CustomLink,
   DeleteModal,
   FormattedDate,
   Table
@@ -52,7 +53,7 @@ function getFormattedResources({
     id: task.metadata.uid,
     name: (
       <Link
-        component={CarbonLink}
+        component={CustomLink}
         to={urls.rawCRD.byNamespace({
           namespace: task.metadata.namespace,
           type: 'tasks',

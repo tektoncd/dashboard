@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -15,17 +15,14 @@ limitations under the License.
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
-import {
-  Link as CarbonLink,
-  InlineNotification
-} from 'carbon-components-react';
+import { InlineNotification } from 'carbon-components-react';
 import {
   ALL_NAMESPACES,
   getErrorMessage,
   urls,
   useTitleSync
 } from '@tektoncd/dashboard-utils';
-import { Table } from '@tektoncd/dashboard-components';
+import { Link as CustomLink, Table } from '@tektoncd/dashboard-components';
 
 import { useExtensions, useTenantNamespace } from '../../api';
 
@@ -89,7 +86,7 @@ function Extensions({ intl }) {
           id: name,
           name: (
             <Link
-              component={CarbonLink}
+              component={CustomLink}
               to={urls.kubernetesResources.all({
                 group: apiGroup,
                 version: apiVersion,
