@@ -23,6 +23,7 @@ export { default as FormattedDuration } from './FormattedDuration';
 export { default as Header } from './Header';
 export { default as KeyValueList } from './KeyValueList';
 export { default as LabelFilter } from './LabelFilter';
+export { default as Link } from './Link';
 export { default as LoadingShell } from './LoadingShell';
 export { default as Log } from './Log';
 export { default as LogFormat } from './LogFormat';

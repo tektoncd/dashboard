@@ -15,8 +15,11 @@ import React from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import { getFilters, urls, useTitleSync } from '@tektoncd/dashboard-utils';
-import { FormattedDate, Table } from '@tektoncd/dashboard-components';
-import { Link as CarbonLink } from 'carbon-components-react';
+import {
+  Link as CustomLink,
+  FormattedDate,
+  Table
+} from '@tektoncd/dashboard-components';
 
 import { useConditions, useSelectedNamespace } from '../../api';
 import { ListPageLayout } from '..';
@@ -26,7 +29,7 @@ function getFormattedResources(resources) {
     id: condition.metadata.uid,
     name: (
       <Link
-        component={CarbonLink}
+        component={CustomLink}
         to={urls.conditions.byName({
           namespace: condition.metadata.namespace,
           conditionName: condition.metadata.name

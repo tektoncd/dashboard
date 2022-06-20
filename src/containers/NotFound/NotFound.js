@@ -1,5 +1,5 @@
 /*
-Copyright 2021 The Tekton Authors
+Copyright 2021-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -15,7 +15,8 @@ limitations under the License.
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
-import { Link as CarbonLink, Column, Grid, Row } from 'carbon-components-react';
+import { Column, Grid, Row } from 'carbon-components-react';
+import { Link as CustomLink } from '@tektoncd/dashboard-components';
 import { urls } from '@tektoncd/dashboard-utils';
 
 import robocat from '../../images/robocat_404.svg';
@@ -61,7 +62,7 @@ function NotFound({ intl }) {
 
           <ul>
             <li>
-              <Link component={CarbonLink} to="/">
+              <Link component={CustomLink} to="/">
                 {intl.formatMessage({
                   id: 'dashboard.home.title',
                   defaultMessage: 'Home'
@@ -69,12 +70,12 @@ function NotFound({ intl }) {
               </Link>
             </li>
             <li>
-              <Link component={CarbonLink} to={urls.pipelineRuns.all()}>
+              <Link component={CustomLink} to={urls.pipelineRuns.all()}>
                 PipelineRuns
               </Link>
             </li>
             <li>
-              <Link component={CarbonLink} to={urls.taskRuns.all()}>
+              <Link component={CustomLink} to={urls.taskRuns.all()}>
                 TaskRuns
               </Link>
             </li>

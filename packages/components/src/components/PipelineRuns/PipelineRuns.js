@@ -21,10 +21,10 @@ import {
   Time16 as TimeIcon,
   Lightning16 as TriggersIcon
 } from '@carbon/icons-react';
-import { Link as CarbonLink } from 'carbon-components-react';
 
 import {
   Actions,
+  Link as CustomLink,
   FormattedDate,
   FormattedDuration,
   StatusIcon,
@@ -211,7 +211,7 @@ const PipelineRuns = ({
           <span>
             {pipelineRunURL ? (
               <Link
-                component={CarbonLink}
+                component={CustomLink}
                 to={pipelineRunURL}
                 title={pipelineRunNameTooltip}
               >
@@ -235,7 +235,7 @@ const PipelineRuns = ({
             {(pipelineRefName &&
               (pipelineRunsByPipelineURL ? (
                 <Link
-                  component={CarbonLink}
+                  component={CustomLink}
                   to={pipelineRunsByPipelineURL}
                   title={pipelineRefName}
                 >

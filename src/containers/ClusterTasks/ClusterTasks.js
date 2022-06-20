@@ -17,11 +17,12 @@ import { Link, useLocation } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import keyBy from 'lodash.keyby';
 import {
+  Link as CustomLink,
   DeleteModal,
   FormattedDate,
   Table
 } from '@tektoncd/dashboard-components';
-import { Button, Link as CarbonLink } from 'carbon-components-react';
+import { Button } from 'carbon-components-react';
 import {
   TrashCan16 as DeleteIcon,
   PlayOutline16 as RunIcon,
@@ -42,7 +43,7 @@ function getFormattedResources({
     id: clusterTask.metadata.uid,
     name: (
       <Link
-        component={CarbonLink}
+        component={CustomLink}
         to={urls.rawCRD.cluster({
           type: 'clustertasks',
           name: clusterTask.metadata.name

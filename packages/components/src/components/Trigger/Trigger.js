@@ -17,12 +17,11 @@ import { Link } from 'react-router-dom';
 import {
   Accordion,
   AccordionItem,
-  Link as CarbonLink,
   ListItem,
   UnorderedList
 } from 'carbon-components-react';
 import { urls } from '@tektoncd/dashboard-utils';
-import { Table, ViewYAML } from '..';
+import { Link as CustomLink, Table, ViewYAML } from '..';
 
 const Trigger = ({ intl, namespace, trigger }) => {
   const tableHeaders = [
@@ -67,7 +66,7 @@ const Trigger = ({ intl, namespace, trigger }) => {
                   {binding.ref ? (
                     <Link
                       className="tkn--trigger-resourcelink"
-                      component={CarbonLink}
+                      component={CustomLink}
                       to={
                         binding.kind === 'ClusterTriggerBinding'
                           ? urls.clusterTriggerBindings.byName({
@@ -102,7 +101,7 @@ const Trigger = ({ intl, namespace, trigger }) => {
           ) : (
             <Link
               className="tkn--trigger-resourcelink"
-              component={CarbonLink}
+              component={CustomLink}
               to={urls.triggerTemplates.byName({
                 namespace,
                 triggerTemplateName
@@ -320,7 +319,7 @@ const Trigger = ({ intl, namespace, trigger }) => {
                 const clusterInterceptorName = interceptor.ref.name;
                 content = (
                   <Link
-                    component={CarbonLink}
+                    component={CustomLink}
                     to={urls.clusterInterceptors.byName({
                       clusterInterceptorName
                     })}

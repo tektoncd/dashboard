@@ -20,10 +20,10 @@ import {
   Lightning16 as TriggersIcon
 } from '@carbon/icons-react';
 import { getStatus, taskRunHasWarning, urls } from '@tektoncd/dashboard-utils';
-import { Link as CarbonLink } from 'carbon-components-react';
 
 import {
   Actions,
+  Link as CustomLink,
   FormattedDate,
   FormattedDuration,
   StatusIcon,
@@ -170,7 +170,7 @@ const TaskRuns = ({
         <div>
           <span>
             {taskRunURL ? (
-              <Link component={CarbonLink} to={taskRunURL} title={taskRunName}>
+              <Link component={CustomLink} to={taskRunURL} title={taskRunName}>
                 {taskRunName}
               </Link>
             ) : (
@@ -186,7 +186,7 @@ const TaskRuns = ({
         <div>
           <span>
             {taskRefName ? (
-              <Link component={CarbonLink} to={taskRunsURL} title={taskRefName}>
+              <Link component={CustomLink} to={taskRunsURL} title={taskRefName}>
                 {taskRefName}
               </Link>
             ) : (

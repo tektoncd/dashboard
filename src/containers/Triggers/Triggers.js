@@ -15,8 +15,11 @@ import React from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import { getFilters, urls, useTitleSync } from '@tektoncd/dashboard-utils';
-import { FormattedDate, Table } from '@tektoncd/dashboard-components';
-import { Link as CarbonLink } from 'carbon-components-react';
+import {
+  Link as CustomLink,
+  FormattedDate,
+  Table
+} from '@tektoncd/dashboard-components';
 
 import { ListPageLayout } from '..';
 import { useSelectedNamespace, useTriggers } from '../../api';
@@ -26,7 +29,7 @@ function getFormattedResources(resources) {
     id: trigger.metadata.uid,
     name: (
       <Link
-        component={CarbonLink}
+        component={CustomLink}
         to={urls.triggers.byName({
           namespace: trigger.metadata.namespace,
           triggerName: trigger.metadata.name

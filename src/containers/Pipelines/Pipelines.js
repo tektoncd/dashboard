@@ -21,7 +21,7 @@ import {
 } from '@carbon/icons-react';
 import { injectIntl } from 'react-intl';
 import keyBy from 'lodash.keyby';
-import { Button, Link as CarbonLink } from 'carbon-components-react';
+import { Button } from 'carbon-components-react';
 import {
   ALL_NAMESPACES,
   getFilters,
@@ -29,6 +29,7 @@ import {
   useTitleSync
 } from '@tektoncd/dashboard-utils';
 import {
+  Link as CustomLink,
   DeleteModal,
   FormattedDate,
   Table
@@ -52,7 +53,7 @@ function getFormattedResources({
     id: pipeline.metadata.uid,
     name: (
       <Link
-        component={CarbonLink}
+        component={CustomLink}
         to={urls.rawCRD.byNamespace({
           namespace: pipeline.metadata.namespace,
           type: 'pipelines',

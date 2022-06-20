@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,8 +16,11 @@ import React from 'react';
 import { Link, useHistory, useLocation, useParams } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import { urls, useTitleSync } from '@tektoncd/dashboard-utils';
-import { ResourceDetails, Trigger } from '@tektoncd/dashboard-components';
-import { Link as CarbonLink } from 'carbon-components-react';
+import {
+  Link as CustomLink,
+  ResourceDetails,
+  Trigger
+} from '@tektoncd/dashboard-components';
 
 import { useEventListener } from '../../api';
 import { getViewChangeHandler } from '../../utils';
@@ -109,7 +112,7 @@ export function EventListenerContainer({ intl }) {
               <div className="tkn--trigger-resourcelinks">
                 <span>Trigger:</span>
                 <Link
-                  component={CarbonLink}
+                  component={CustomLink}
                   to={urls.triggers.byName({
                     namespace,
                     triggerName: trigger.triggerRef
