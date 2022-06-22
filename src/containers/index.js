@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -17,8 +17,6 @@ export { default as ClusterTasks } from './ClusterTasks';
 export { default as ClusterTasksDropdown } from './ClusterTasksDropdown';
 export { default as ClusterTriggerBinding } from './ClusterTriggerBinding';
 export { default as ClusterTriggerBindings } from './ClusterTriggerBindings';
-export { default as Condition } from './Condition';
-export { default as Conditions } from './Conditions';
 export { default as CustomResourceDefinition } from './CustomResourceDefinition';
 export { default as CreatePipelineResource } from './CreatePipelineResource';
 export { default as CreatePipelineRun } from './CreatePipelineRun';

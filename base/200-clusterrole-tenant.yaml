@@ -49,7 +49,6 @@ rules:
       - pipelines
       - pipelineruns
       - pipelineresources
-      - conditions
       - tasks/status
       - taskruns/status
       - pipelines/status

@@ -280,53 +280,6 @@
 			"response": []
 		},
 		{
-			"name": "/apis/tekton.dev/v1alpha1/conditions",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "dbed0ae7-d8e2-4d8a-8ee7-1167d3ffcce9",
-						"exec": [
-							"pm.test(\"Response must be valid and have a body\", function () {",
-							"     const tenant_namespace = pm.globals.get(\"tenant_namespace\");",
-							"     if (tenant_namespace === '')",
-							"     {",
-							"          pm.response.to.be.ok;",
-							"          pm.response.to.be.withBody;",
-							"          pm.response.to.be.json;",
-							"     }",
-							"     else",
-							"     {",
-							"          pm.response.to.have.status(403);",
-							"     }",
-							"});",
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://{{url}}:{{port}}/apis/tekton.dev/v1alpha1/conditions",
-					"protocol": "http",
-					"host": [
-						"{{url}}"
-					],
-					"port": "{{port}}",
-					"path": [
-						"apis",
-						"tekton.dev",
-						"v1alpha1",
-						"conditions"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "/apis/tekton.dev/v1alpha1/pipelineresources",
 			"event": [
 				{

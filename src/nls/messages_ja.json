@@ -43,7 +43,6 @@
     "dashboard.clusterTasksDropdown.empty": "ClusterTaskが見つかりません",
     "dashboard.clusterTasksDropdown.label": "ClusterTaskを選択",
     "dashboard.clusterTriggerBinding.noParams": "このClusterTriggerBindingのパラメータが見つかりません",
-    "dashboard.conditions.errorLoading": "条件のロード中にエラーが発生しました",
     "dashboard.createPipelineResource.name": "パイプラインリソース名を入力",
     "dashboard.createPipelineResource.nameLabel": "名前",
     "dashboard.createPipelineResource.namespaceError": "Namespaceが必要です",

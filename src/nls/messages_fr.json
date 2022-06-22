@@ -43,7 +43,6 @@
     "dashboard.clusterTasksDropdown.empty": "",
     "dashboard.clusterTasksDropdown.label": "",
     "dashboard.clusterTriggerBinding.noParams": "",
-    "dashboard.conditions.errorLoading": "",
     "dashboard.createPipelineResource.name": "",
     "dashboard.createPipelineResource.nameLabel": "",
     "dashboard.createPipelineResource.namespaceError": "",

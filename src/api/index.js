@@ -32,7 +32,6 @@ export { NamespaceContext, useSelectedNamespace } from './utils';
 export * from './clusterInterceptors';
 export * from './clusterTasks';
 export * from './clusterTriggerBindings';
-export * from './conditions';
 export * from './eventListeners';
 export * from './extensions';
 export * from './pipelineResources';
