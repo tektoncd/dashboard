@@ -24,7 +24,6 @@
       - pipelines
       - pipelineruns
       - pipelineresources
-      - conditions
       - taskruns/finalizers
       - pipelineruns/finalizers
       - tasks/status

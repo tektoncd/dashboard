@@ -43,7 +43,7 @@ export function ResourceListContainer({ intl }) {
     error: apiResourceError,
     isLoading: isLoadingAPIResource
   } = useAPIResource({ group, type, version });
-  const isNamespaced = !isLoadingAPIResource && apiResource.namespaced;
+  const isNamespaced = !isLoadingAPIResource && apiResource?.namespaced;
 
   const {
     data: resources,
@@ -58,7 +58,7 @@ export function ResourceListContainer({ intl }) {
       version
     },
     {
-      enabled: !isLoadingAPIResource
+      enabled: !isLoadingAPIResource && !apiResourceError
     }
   );
 

@@ -43,7 +43,6 @@
     "dashboard.clusterTasksDropdown.empty": "No ClusterTasks found",
     "dashboard.clusterTasksDropdown.label": "Select ClusterTask",
     "dashboard.clusterTriggerBinding.noParams": "No parameters found for this ClusterTriggerBinding.",
-    "dashboard.conditions.errorLoading": "Error loading Conditions",
     "dashboard.createPipelineResource.name": "pipeline-resource-name",
     "dashboard.createPipelineResource.nameLabel": "Name",
     "dashboard.createPipelineResource.namespaceError": "Namespace required",

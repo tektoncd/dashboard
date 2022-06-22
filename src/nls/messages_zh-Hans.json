@@ -43,7 +43,6 @@
     "dashboard.clusterTasksDropdown.empty": "未找到 ClusterTask",
     "dashboard.clusterTasksDropdown.label": "选择 ClusterTask",
     "dashboard.clusterTriggerBinding.noParams": "未找到该 ClusterTriggerBinding 的参数。",
-    "dashboard.conditions.errorLoading": "加载 Conditions 时发生错误",
     "dashboard.createPipelineResource.name": "pipeline-resource-name",
     "dashboard.createPipelineResource.nameLabel": "名称",
     "dashboard.createPipelineResource.namespaceError": "NameSpace 是必须的",

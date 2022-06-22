@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -45,8 +45,6 @@ import {
   ClusterTasks,
   ClusterTriggerBinding,
   ClusterTriggerBindings,
-  Condition,
-  Conditions,
   CreatePipelineResource,
   CreatePipelineRun,
   CreateTaskRun,
@@ -307,15 +305,6 @@ export function App({ lang }) {
                     </Route>
                     <Route path={paths.clusterTasks.all()} exact>
                       <ClusterTasks />
-                    </Route>
-                    <Route path={paths.conditions.all()}>
-                      <Conditions />
-                    </Route>
-                    <Route path={paths.conditions.byNamespace()} exact>
-                      <Conditions />
-                    </Route>
-                    <Route path={paths.conditions.byName()}>
-                      <Condition />
                     </Route>
 
                     <Route path={paths.about()}>
