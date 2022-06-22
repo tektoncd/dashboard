@@ -17,9 +17,9 @@ const ESLintPlugin = require('eslint-webpack-plugin');
 
 const contentSecurityPolicy = {
   development:
-    "default-src 'none'; img-src 'self'; script-src 'self' 'unsafe-eval'; style-src blob: 'nonce-tkn-dev'; connect-src 'self' wss: ws:; font-src 'self' https://fonts.gstatic.com;",
+    "default-src 'none'; img-src 'self'; script-src 'self' 'unsafe-eval'; style-src blob: 'nonce-tkn-dev'; connect-src 'self' wss: ws:; font-src 'self' https://1.www.s81c.com;",
   production:
-    "default-src 'none'; img-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self' wss: ws:; font-src 'self' https://fonts.gstatic.com;"
+    "default-src 'none'; img-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self' wss: ws:; font-src 'self' https://1.www.s81c.com;"
 };
 
 module.exports = ({ mode }) => ({
