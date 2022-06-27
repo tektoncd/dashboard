@@ -166,12 +166,16 @@ spec:
         results:
           - name: release
             description: The full URL of the release file in the bucket
+            type: string
           - name: release-readonly
             description: The full URL of the release file (read-only) in the bucket
+            type: string
           - name: release-openshift
             description: The full URL of the release file (OpenShift) in the bucket
+            type: string
           - name: release-openshift-readonly
             description: The full URL of the release file (OpenShift read-only) in the bucket
+            type: string
         steps:
           - name: create-results
             image: alpine
