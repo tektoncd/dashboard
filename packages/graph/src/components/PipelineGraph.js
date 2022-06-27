@@ -45,9 +45,15 @@ export default class PipelineGraph extends Component {
   };
 
   buildGraph() {
-    const { pipeline, pipelineRun, tasks } = this.props;
+    const { pipeline, pipelineRun, taskRuns, tasks } = this.props;
     const { expanded } = this.state;
-    const graph = buildGraphData({ expanded, pipeline, pipelineRun, tasks });
+    const graph = buildGraphData({
+      expanded,
+      pipeline,
+      pipelineRun,
+      taskRuns,
+      tasks
+    });
     this.setState({ graph });
   }
 

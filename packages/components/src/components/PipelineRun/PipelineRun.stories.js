@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -120,6 +120,41 @@ const pipelineRun = {
   }
 };
 
+const pipelineRunWithMinimalStatus = {
+  metadata: {
+    name: 'pipeline-run',
+    namespace: 'cb4552a6-b2d7-45e2-9773-3d4ca33909ff',
+    uid: '7c266264-4d4d-45e3-ace0-041be8f7d06e'
+  },
+  spec: {
+    pipelineRef: {
+      name: 'pipeline'
+    }
+  },
+  status: {
+    conditions: [
+      {
+        lastTransitionTime: '2019-08-16T12:49:28Z',
+        message: 'All Tasks have completed executing',
+        reason: 'Succeeded',
+        status: 'True',
+        type: 'Succeeded'
+      }
+    ],
+    startTime: '2019-08-21T17:12:20Z',
+    childReferences: [
+      {
+        name: 'sampleTaskRunName',
+        pipelineTaskName: 'task1'
+      },
+      {
+        name: 'sampleTaskRunName2',
+        pipelineTaskName: 'task2'
+      }
+    ]
+  }
+};
+
 export default {
   component: PipelineRun,
   decorators: [Story => <Story />],
@@ -137,6 +172,25 @@ export const Base = () => {
         setSelectedTaskId(taskId);
       }}
       pipelineRun={pipelineRun}
+      selectedStepId={selectedStepId}
+      selectedTaskId={selectedTaskId}
+      taskRuns={[taskRun, taskRunWithWarning]}
+      tasks={[task]}
+    />
+  );
+};
+
+export const WithMinimalStatus = () => {
+  const [selectedStepId, setSelectedStepId] = useState();
+  const [selectedTaskId, setSelectedTaskId] = useState();
+  return (
+    <PipelineRun
+      fetchLogs={() => 'sample log output'}
+      handleTaskSelected={(taskId, stepId) => {
+        setSelectedStepId(stepId);
+        setSelectedTaskId(taskId);
+      }}
+      pipelineRun={pipelineRunWithMinimalStatus}
       selectedStepId={selectedStepId}
       selectedTaskId={selectedTaskId}
       taskRuns={[taskRun, taskRunWithWarning]}

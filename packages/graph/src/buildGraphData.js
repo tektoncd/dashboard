@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -123,17 +123,22 @@ function addEdge({ child, graph, parent, singletonSource, singletonTarget }) {
   parent.nChildren++; // eslint-disable-line
 }
 
-function addNodes({ expanded, graph, pipeline, pipelineRun, tasks }) {
+function addNodes({
+  expanded,
+  graph,
+  pipeline,
+  pipelineRun, // eslint-disable-line no-unused-vars
+  taskRuns,
+  tasks
+}) {
   // map from Task.metadata.name to Task
   const taskByTaskName = tasks.reduce((accumulator, task) => {
     accumulator[task.metadata.name] = task;
     return accumulator;
   }, {});
 
-  const taskRunByPipelineTaskName = Object.values(
-    pipelineRun.status.taskRuns
-  ).reduce((accumulator, taskRun) => {
-    accumulator[taskRun.pipelineTaskName] = taskRun;
+  const taskRunByPipelineTaskName = taskRuns.reduce((accumulator, taskRun) => {
+    accumulator[taskRun.metadata.labels['tekton.dev/pipelineTask']] = taskRun;
     return accumulator;
   }, {});
 
@@ -221,10 +226,18 @@ export default function buildGraphData({
   expanded = {},
   pipeline,
   pipelineRun,
+  taskRuns,
   tasks
 }) {
   const { graph, start, end } = getBaseNodes();
-  const nodes = addNodes({ expanded, graph, pipeline, pipelineRun, tasks });
+  const nodes = addNodes({
+    expanded,
+    graph,
+    pipeline,
+    pipelineRun,
+    taskRuns,
+    tasks
+  });
 
   pipeline.spec.tasks.forEach(task => {
     if (task.runAfter) {
