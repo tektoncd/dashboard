@@ -18,6 +18,7 @@ import PipelineGraph from './PipelineGraph';
 
 import pipeline from './examples/pipeline.json';
 import pipelineRun from './examples/pipelineRun.json';
+import taskRuns from './examples/taskRuns.json';
 import tasks from './examples/tasks.json';
 
 export default {
@@ -35,6 +36,7 @@ export const Base = () => (
     onClickTask={action('onClickTask')}
     pipeline={pipeline}
     pipelineRun={pipelineRun}
+    taskRuns={taskRuns}
     tasks={tasks}
   />
 );

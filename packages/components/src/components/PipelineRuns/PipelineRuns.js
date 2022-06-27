@@ -14,7 +14,7 @@ limitations under the License.
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
-import { getStatus, taskRunHasWarning, urls } from '@tektoncd/dashboard-utils';
+import { getStatus, urls } from '@tektoncd/dashboard-utils';
 import {
   Calendar16 as CalendarIcon,
   Pending24 as DefaultIcon,
@@ -79,20 +79,9 @@ const PipelineRuns = ({
   getPipelineRunStatusDetail = getDefaultPipelineRunStatusDetail,
   getPipelineRunStatusIcon = pipelineRun => {
     const { reason, status } = getStatus(pipelineRun);
-    let hasWarning = false;
-    if (status === 'True' && reason === 'Succeeded') {
-      hasWarning = Object.values(pipelineRun.status?.taskRuns || {}).some(
-        taskRun => taskRunHasWarning(taskRun)
-      );
-    }
 
     return (
-      <StatusIcon
-        DefaultIcon={DefaultIcon}
-        hasWarning={hasWarning}
-        reason={reason}
-        status={status}
-      />
+      <StatusIcon DefaultIcon={DefaultIcon} reason={reason} status={status} />
     );
   },
   getPipelineRunStatusTooltip = (pipelineRun, intl) => {
