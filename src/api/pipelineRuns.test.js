@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -19,9 +19,7 @@ import * as utils from './utils';
 it('cancelPipelineRun', () => {
   const name = 'foo';
   const namespace = 'foospace';
-  const payload = [
-    { op: 'replace', path: '/spec/status', value: 'PipelineRunCancelled' }
-  ];
+  const payload = [{ op: 'replace', path: '/spec/status', value: 'Cancelled' }];
   const returnedPipelineRun = { fake: 'PipelineRun' };
   fetchMock.patch(`end:${name}`, returnedPipelineRun);
   return API.cancelPipelineRun({ name, namespace }).then(response => {
