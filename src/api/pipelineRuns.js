@@ -61,8 +61,8 @@ export function usePipelineRun(params, queryConfig) {
   });
 }
 
-export function cancelPipelineRun({ name, namespace }) {
-  const payload = [{ op: 'replace', path: '/spec/status', value: 'Cancelled' }];
+export function cancelPipelineRun({ name, namespace, status = 'Cancelled' }) {
+  const payload = [{ op: 'replace', path: '/spec/status', value: status }];
 
   const uri = getTektonAPI('pipelineruns', { name, namespace });
   return patch(uri, payload);

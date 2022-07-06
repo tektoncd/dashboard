@@ -26,3 +26,18 @@ limitations under the License.
     }
   }
 }
+
+.bx--modal .bx--tile-group {
+  margin-top: 2rem;
+
+  .bx--tile {
+    &:not(:last-child) {
+      margin-bottom: 0.5rem;
+    }
+
+    .tkn--tile--description {
+      margin-top: 1rem;
+      @include type-style('helper-text-01');
+    }
+  }
+}

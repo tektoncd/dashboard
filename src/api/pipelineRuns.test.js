@@ -31,6 +31,22 @@ it('cancelPipelineRun', () => {
   });
 });
 
+it('cancelPipelineRun with non-default status', () => {
+  const name = 'foo';
+  const namespace = 'foospace';
+  const status = 'StoppedRunFinally';
+  const payload = [{ op: 'replace', path: '/spec/status', value: status }];
+  const returnedPipelineRun = { fake: 'PipelineRun' };
+  fetchMock.patch(`end:${name}`, returnedPipelineRun);
+  return API.cancelPipelineRun({ name, namespace, status }).then(response => {
+    expect(fetchMock.lastOptions()).toMatchObject({
+      body: JSON.stringify(payload)
+    });
+    expect(response).toEqual(returnedPipelineRun);
+    fetchMock.restore();
+  });
+});
+
 it('createPipelineRun', () => {
   const mockDateNow = jest
     .spyOn(Date, 'now')
