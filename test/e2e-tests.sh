@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2018-2021 The Tekton Authors
+# Copyright 2018-2022 The Tekton Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -81,8 +81,6 @@ test_dashboard() {
   fi
 
   # API/resource configuration
-  export APP_SERVICE_ACCOUNT="e2e-tests"
-  export PIPELINE_NAME="simple-pipeline"
   export PIPELINE_RUN_NAME="e2e-pipelinerun"
   export POD_LABEL="tekton.dev/pipelineRun=$PIPELINE_RUN_NAME"
   export EXPECTED_RETURN_VALUE="Hello World!"
@@ -198,7 +196,6 @@ test_dashboard() {
     --global-var readonly=$readonly || fail_test "Postman Triggers collection tests failed"
 
   kill -9 $dashboardForwardPID
-  kill -9 $podForwardPID
 
   $tekton_repo_dir/scripts/installer uninstall ${@:2}
 
