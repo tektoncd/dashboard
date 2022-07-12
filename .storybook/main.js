@@ -19,7 +19,13 @@ module.exports = {
     '@storybook/addon-storysource'
   ],
   core: {
-    builder: 'webpack5'
+    builder: {
+      name: 'webpack5',
+      options: {
+        lazyCompilation: true,
+        fsCache: true
+      }
+    }
   },
   reactOptions: {
     fastRefresh: true,
@@ -38,6 +44,15 @@ module.exports = {
       test: /\.mjs$/,
       type: 'javascript/auto'
     },{
+      test: /\.js$/,
+      exclude: /node_modules/,
+      loader: 'babel-loader',
+      options: {
+        presets: [
+          ['@babel/preset-env', { modules: 'commonjs' }]
+        ]
+      }
+    }, {
       test: /\.scss$/,
       use: ['style-loader', 'css-loader', 'sass-loader'],
       include: path.resolve(__dirname, '../'),
