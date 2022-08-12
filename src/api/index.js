@@ -37,6 +37,7 @@ export * from './extensions';
 export * from './pipelineResources';
 export * from './pipelineRuns';
 export * from './pipelines';
+export * from './runs';
 export * from './serviceAccounts';
 export * from './taskRuns';
 export * from './tasks';

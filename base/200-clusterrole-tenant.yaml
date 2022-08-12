@@ -49,6 +49,7 @@ rules:
       - pipelines
       - pipelineruns
       - pipelineresources
+      - runs
     verbs:
       - get
       - list

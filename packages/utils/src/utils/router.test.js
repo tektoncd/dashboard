@@ -20,6 +20,7 @@ const namespace = 'fake_namespace';
 const pipelineName = 'fake_pipelineName';
 const pipelineResourceName = 'fake_pipelineResourceName';
 const pipelineRunName = 'fake_pipelineRunName';
+const runName = 'fake_runName';
 const taskName = 'fake_taskName';
 const taskRunName = 'fake_taskRunName';
 const triggerName = 'fake_triggerName';
@@ -272,6 +273,27 @@ describe('rawCRD', () => {
     const name = taskName;
     expect(urls.rawCRD.cluster({ type, name })).toEqual(
       generatePath(paths.rawCRD.cluster(), { type, name })
+    );
+  });
+});
+
+describe('runs', () => {
+  it('all', () => {
+    expect(urls.runs.all()).toEqual(generatePath(paths.runs.all()));
+  });
+
+  it('byName', () => {
+    expect(urls.runs.byName({ namespace, runName })).toEqual(
+      generatePath(paths.runs.byName(), {
+        namespace,
+        runName
+      })
+    );
+  });
+
+  it('byNamespace', () => {
+    expect(urls.runs.byNamespace({ namespace })).toEqual(
+      generatePath(paths.runs.byNamespace(), { namespace })
     );
   });
 });

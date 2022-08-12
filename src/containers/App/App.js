@@ -62,6 +62,8 @@ import {
   Pipelines,
   ReadWriteRoute,
   ResourceList,
+  Run,
+  Runs,
   Settings,
   SideNav,
   TaskRun,
@@ -303,6 +305,17 @@ export function App({ lang }) {
                     <Route path={paths.taskRuns.byName()} exact>
                       <TaskRun />
                     </Route>
+
+                    <Route path={paths.runs.all()}>
+                      <Runs />
+                    </Route>
+                    <Route path={paths.runs.byNamespace()} exact>
+                      <Runs />
+                    </Route>
+                    <Route path={paths.runs.byName()} exact>
+                      <Run />
+                    </Route>
+
                     <Route path={paths.clusterTasks.all()} exact>
                       <ClusterTasks />
                     </Route>
