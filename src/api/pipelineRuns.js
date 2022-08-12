@@ -133,7 +133,7 @@ export function rerunPipelineRun(pipelineRun) {
     generateName: getGenerateNamePrefixForRerun(name),
     labels: {
       ...labels,
-      reruns: name
+      'dashboard.tekton.dev/rerunOf': name
     },
     namespace
   };

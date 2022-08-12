@@ -52,4 +52,8 @@ limitations under the License.
   .bx--tag {
     margin-top: 0;
   }
+
+  & + h4 {
+    margin-bottom: 0.5rem;
+  }
 }

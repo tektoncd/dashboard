@@ -129,6 +129,17 @@ export const paths = {
       return '/:type/:name';
     }
   },
+  runs: {
+    all() {
+      return '/runs';
+    },
+    byName() {
+      return byNamespace({ path: '/runs/:runName' });
+    },
+    byNamespace() {
+      return byNamespace({ path: '/runs' });
+    }
+  },
   settings() {
     return '/settings';
   },

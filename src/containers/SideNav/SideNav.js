@@ -129,6 +129,9 @@ function SideNav({ expanded, intl, showKubernetesResources }) {
           <SideNavMenuItem {...getMenuItemProps(getPath(urls.taskRuns.all()))}>
             TaskRuns
           </SideNavMenuItem>
+          <SideNavMenuItem {...getMenuItemProps(getPath(urls.runs.all()))}>
+            Runs
+          </SideNavMenuItem>
           {isTriggersInstalled && (
             <SideNavMenuItem
               {...getMenuItemProps(getPath(urls.eventListeners.all()))}
