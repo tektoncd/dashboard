@@ -27,14 +27,14 @@ const ResourceDetails = ({
   intl,
   loading,
   onViewChange,
-  resource,
+  resource: originalResource,
   view
 }) => {
   if (loading) {
     return <SkeletonText heading width="60%" />;
   }
 
-  if (error || !resource) {
+  if (error || !originalResource) {
     return (
       <InlineNotification
         kind="error"
@@ -54,7 +54,12 @@ const ResourceDetails = ({
     selectedTabIndex = 0;
   }
 
-  const formattedLabels = formatLabels(resource.metadata.labels);
+  const formattedLabels = formatLabels(originalResource.metadata.labels);
+
+  const resource = { ...originalResource };
+  if (resource.metadata?.managedFields) {
+    delete resource.metadata.managedFields;
+  }
 
   return (
     <div className="tkn--resourcedetails">
