@@ -219,6 +219,7 @@
     "dashboard.resourceList.errorLoading": "{type}のロード中にエラーが発生しました",
     "dashboard.resourceList.viewRuns": "{resource}の{kind}を表示",
     "dashboard.run.duration": "実行時間：{duration}",
+    "dashboard.run.duration.label": "",
     "dashboard.run.rerunStatusMessage": "ステータスを表示",
     "dashboard.runs.error": "",
     "dashboard.serviceAccountLabel.optional": "ServiceAccount（オプション）",

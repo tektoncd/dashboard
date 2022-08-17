@@ -219,6 +219,7 @@
     "dashboard.resourceList.errorLoading": "加载 {type} 时发生错误",
     "dashboard.resourceList.viewRuns": "查看 {resource} 的 {kind}",
     "dashboard.run.duration": "持续时间：{duration}",
+    "dashboard.run.duration.label": "",
     "dashboard.run.rerunStatusMessage": "查看状态",
     "dashboard.runs.error": "",
     "dashboard.serviceAccountLabel.optional": "ServiceAccount（可选）",

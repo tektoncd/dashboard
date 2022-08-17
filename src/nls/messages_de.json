@@ -219,6 +219,7 @@
     "dashboard.resourceList.errorLoading": "",
     "dashboard.resourceList.viewRuns": "",
     "dashboard.run.duration": "Dauer: {duration}",
+    "dashboard.run.duration.label": "",
     "dashboard.run.rerunStatusMessage": "",
     "dashboard.runs.error": "",
     "dashboard.serviceAccountLabel.optional": "",

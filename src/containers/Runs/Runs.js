@@ -10,6 +10,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+/* istanbul ignore file */
 
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
@@ -28,9 +29,17 @@ import {
   Link as CustomLink,
   DeleteModal,
   FormattedDate,
+  FormattedDuration,
+  StatusIcon,
   Table
 } from '@tektoncd/dashboard-components';
-import { TrashCan32 as Delete } from '@carbon/icons-react';
+import {
+  Calendar16 as CalendarIcon,
+  TrashCan32 as DeleteIcon,
+  Time16 as TimeIcon,
+  Lightning16 as TriggersIcon,
+  UndefinedFilled20 as UndefinedIcon
+} from '@carbon/icons-react';
 
 import { ListPageLayout } from '..';
 import {
@@ -39,12 +48,60 @@ import {
   useRuns,
   useSelectedNamespace
 } from '../../api';
+import { sortRunsByStartTime } from '../../utils';
+
+function getRunTriggerInfo(run) {
+  const { labels = {} } = run.metadata;
+  const eventListener = labels['triggers.tekton.dev/eventlistener'];
+  const trigger = labels['triggers.tekton.dev/trigger'];
+  const pipelineRun = labels['tekton.dev/pipelineRun'];
+  if (!eventListener && !trigger && !pipelineRun) {
+    return null;
+  }
+
+  if (pipelineRun) {
+    return <span title={`PipelineRun: ${pipelineRun}`}>{pipelineRun}</span>;
+  }
+
+  return (
+    <span
+      title={`EventListener: ${eventListener || '-'}\nTrigger: ${
+        trigger || '-'
+      }`}
+    >
+      <TriggersIcon />
+      {eventListener}
+      {eventListener && trigger ? ' | ' : ''}
+      {trigger}
+    </span>
+  );
+}
+
+function getRunStatus(run) {
+  const { reason } = getStatus(run);
+  return reason;
+}
+
+function getRunStatusIcon(run) {
+  const { reason, status } = getStatus(run);
+  return (
+    <StatusIcon DefaultIcon={UndefinedIcon} reason={reason} status={status} />
+  );
+}
+
+function getRunStatusTooltip(run) {
+  const { message } = getStatus(run);
+  const reason = getRunStatus(run);
+  if (!message) {
+    return reason;
+  }
+  return `${reason}: ${message}`;
+}
 
 function Runs({ intl }) {
   const location = useLocation();
   const params = useParams();
   const filters = getFilters(location);
-  // TODO: add status filter (see PipelineRuns)
 
   useTitleSync({ page: 'Runs' });
 
@@ -72,6 +129,8 @@ function Runs({ intl }) {
     filters,
     namespace
   });
+
+  sortRunsByStartTime(runs);
 
   function getError() {
     if (error) {
@@ -185,16 +244,20 @@ function Runs({ intl }) {
             id: 'dashboard.actions.deleteButton',
             defaultMessage: 'Delete'
           }),
-          icon: Delete
+          icon: DeleteIcon
         }
       ];
 
   const initialHeaders = [
     {
-      key: 'name',
+      key: 'run',
+      header: 'Run'
+    },
+    {
+      key: 'status',
       header: intl.formatMessage({
-        id: 'dashboard.tableHeader.name',
-        defaultMessage: 'Name'
+        id: 'dashboard.tableHeader.status',
+        defaultMessage: 'Status'
       })
     },
     {
@@ -202,11 +265,8 @@ function Runs({ intl }) {
       header: 'Namespace'
     },
     {
-      key: 'date',
-      header: intl.formatMessage({
-        id: 'dashboard.tableHeader.createdTime',
-        defaultMessage: 'Created'
-      })
+      key: 'time',
+      header: ''
     }
   ];
 
@@ -223,24 +283,103 @@ function Runs({ intl }) {
     >
       {({ resources }) => {
         const runsFormatted = resources.map(run => {
+          const { creationTimestamp } = run.metadata;
+
+          const {
+            lastTransitionTime,
+            reason,
+            status,
+            message: statusMessage
+          } = getStatus(run);
+
+          const statusIcon = getRunStatusIcon(run);
+
+          let endTime = Date.now();
+          if (status === 'False' || status === 'True') {
+            endTime = new Date(lastTransitionTime).getTime();
+          }
+
+          const duration = (
+            <FormattedDuration
+              milliseconds={endTime - new Date(creationTimestamp).getTime()}
+            />
+          );
+
           const runActions = getRunActions(run);
+
           return {
             id: run.metadata.uid,
-            name: (
-              <Link
-                component={CustomLink}
-                to={urls.runs.byName({
-                  namespace: run.metadata.namespace,
-                  runName: run.metadata.name
-                })}
-                title={run.metadata.name}
-              >
-                {run.metadata.name}
-              </Link>
+            run: (
+              <div>
+                <span>
+                  <Link
+                    component={CustomLink}
+                    to={urls.runs.byName({
+                      namespace: run.metadata.namespace,
+                      runName: run.metadata.name
+                    })}
+                    title={run.metadata.name}
+                  >
+                    {run.metadata.name}
+                  </Link>
+                </span>
+                <span className="tkn--table--sub">
+                  {getRunTriggerInfo(run)}&nbsp;
+                </span>
+              </div>
             ),
-            namespace: run.metadata.namespace,
-            date: (
-              <FormattedDate date={run.metadata.creationTimestamp} relative />
+            status: (
+              <div>
+                <div className="tkn--definition">
+                  <div
+                    className="tkn--status"
+                    data-reason={reason}
+                    data-status={status}
+                    title={getRunStatusTooltip(run)}
+                  >
+                    {statusIcon}
+                    {getRunStatus(run)}
+                  </div>
+                </div>
+                {status === 'False' ? (
+                  <span className="tkn--table--sub" title={statusMessage}>
+                    {statusMessage}&nbsp;
+                  </span>
+                ) : (
+                  <span className="tkn--table--sub">&nbsp;</span>
+                )}
+              </div>
+            ),
+            namespace: (
+              <div>
+                <span>{run.metadata.namespace}</span>
+                <div className="tkn--table--sub">&nbsp;</div>
+              </div>
+            ),
+            time: (
+              <div>
+                <span>
+                  <CalendarIcon />
+                  <FormattedDate
+                    date={run.metadata.creationTimestamp}
+                    formatTooltip={formattedDate =>
+                      intl.formatMessage(
+                        {
+                          id: 'dashboard.resource.createdTime',
+                          defaultMessage: 'Created: {created}'
+                        },
+                        {
+                          created: formattedDate
+                        }
+                      )
+                    }
+                  />
+                </span>
+                <div className="tkn--table--sub">
+                  <TimeIcon />
+                  {duration}
+                </div>
+              </div>
             ),
             actions: runActions.length ? (
               <Actions items={runActions} resource={run} />
@@ -267,6 +406,7 @@ function Runs({ intl }) {
                 },
                 { kind: 'Runs', selectedNamespace }
               )}
+              hasDetails
               headers={initialHeaders}
               loading={isLoading}
               rows={runsFormatted}

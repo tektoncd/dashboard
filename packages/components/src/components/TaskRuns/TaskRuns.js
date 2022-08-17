@@ -133,7 +133,12 @@ const TaskRuns = ({
     });
     const taskRefName = taskRun.spec.taskRef?.name;
     const taskRefKind = taskRun.spec.taskRef?.kind;
-    const { lastTransitionTime, reason, status } = getStatus(taskRun);
+    const {
+      lastTransitionTime,
+      reason,
+      status,
+      message: statusMessage
+    } = getStatus(taskRun);
     const statusIcon = getTaskRunStatusIcon(taskRun);
     const taskRunURL = getTaskRunURL({
       namespace,
@@ -212,11 +217,8 @@ const TaskRuns = ({
             </div>
           </div>
           {status === 'False' ? (
-            <span
-              className="tkn--table--sub"
-              title={getStatus(taskRun).message}
-            >
-              {getStatus(taskRun).message}&nbsp;
+            <span className="tkn--table--sub" title={statusMessage}>
+              {statusMessage}&nbsp;
             </span>
           ) : (
             <span className="tkn--table--sub">&nbsp;</span>
