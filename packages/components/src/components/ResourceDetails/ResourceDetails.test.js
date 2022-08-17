@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2021 The Tekton Authors
+Copyright 2020-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -88,6 +88,7 @@ describe('ResourceDetails', () => {
     const namespace = 'fake_namespace';
     const resource = {
       metadata: {
+        managedFields: { fake: 'value' },
         name,
         namespace
       },
@@ -106,7 +107,8 @@ describe('ResourceDetails', () => {
         view="yaml"
       />
     );
-    waitFor(() => queryByText('otherContent'));
+    waitFor(() => queryByText(/otherContent/));
+    expect(queryByText(/managedFields/)).toBeFalsy();
     fireEvent.click(queryByText(/overview/i));
     expect(onViewChange).toHaveBeenCalledWith('overview');
   });
