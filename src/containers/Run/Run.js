@@ -10,17 +10,70 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+/* istanbul ignore file */
 
 import React from 'react';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
-import { ResourceDetails, Table } from '@tektoncd/dashboard-components';
-import { useTitleSync } from '@tektoncd/dashboard-utils';
+import { UndefinedFilled20 as UndefinedIcon } from '@carbon/icons-react';
+import {
+  FormattedDuration,
+  ResourceDetails,
+  StatusIcon,
+  Table
+} from '@tektoncd/dashboard-components';
+import { getStatus, useTitleSync } from '@tektoncd/dashboard-utils';
 
 import { useRun } from '../../api';
 import { getViewChangeHandler } from '../../utils';
 
-/* istanbul ignore next */
+function getRunDuration(run) {
+  if (!run) {
+    return null;
+  }
+
+  const { creationTimestamp } = run.metadata;
+  const { lastTransitionTime, status } = getStatus(run);
+
+  let endTime = Date.now();
+  if (status === 'False' || status === 'True') {
+    endTime = new Date(lastTransitionTime).getTime();
+  }
+
+  return (
+    <FormattedDuration
+      milliseconds={endTime - new Date(creationTimestamp).getTime()}
+    />
+  );
+}
+
+function getRunStatus(run) {
+  const { reason } = getStatus(run);
+  return reason;
+}
+
+function getRunStatusIcon(run) {
+  if (!run) {
+    return null;
+  }
+  const { reason, status } = getStatus(run);
+  return (
+    <StatusIcon DefaultIcon={UndefinedIcon} reason={reason} status={status} />
+  );
+}
+
+function getRunStatusTooltip(run) {
+  if (!run) {
+    return null;
+  }
+  const { message } = getStatus(run);
+  const reason = getRunStatus(run);
+  if (!message) {
+    return reason;
+  }
+  return `${reason} - ${message}`;
+}
+
 function Run({ intl }) {
   const history = useHistory();
   const location = useLocation();
@@ -72,7 +125,29 @@ function Run({ intl }) {
 
   return (
     <ResourceDetails
-      additionalMetadata={null}
+      additionalMetadata={
+        <>
+          <p>
+            <span>
+              {intl.formatMessage({
+                id: 'dashboard.run.duration.label',
+                defaultMessage: 'Duration:'
+              })}
+            </span>
+            {getRunDuration(run)}
+          </p>
+          <p>
+            <span>
+              {intl.formatMessage({
+                id: 'dashboard.filter.status.title',
+                defaultMessage: 'Status:'
+              })}
+            </span>
+            {getRunStatusIcon(run)}
+            {getRunStatusTooltip(run)}
+          </p>
+        </>
+      }
       error={error}
       loading={isFetching}
       onViewChange={getViewChangeHandler({ history, location })}
@@ -116,7 +191,6 @@ function Run({ intl }) {
               {customTaskName}
             </p>
           ) : null}
-          {/* TODO: status */}
         </div>
         {rowsForParameters.length ? (
           <Table

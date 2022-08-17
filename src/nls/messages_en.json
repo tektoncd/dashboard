@@ -219,6 +219,7 @@
     "dashboard.resourceList.errorLoading": "Error loading {type}",
     "dashboard.resourceList.viewRuns": "View {kind} of {resource}",
     "dashboard.run.duration": "Duration: {duration}",
+    "dashboard.run.duration.label": "Duration:",
     "dashboard.run.rerunStatusMessage": "View status",
     "dashboard.runs.error": "Error loading Runs",
     "dashboard.serviceAccountLabel.optional": "ServiceAccount (optional)",
