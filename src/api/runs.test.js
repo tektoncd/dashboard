@@ -16,6 +16,23 @@ import fetchMock from 'fetch-mock';
 import * as API from './runs';
 import * as utils from './utils';
 
+it('cancelRun', () => {
+  const name = 'foo';
+  const namespace = 'foospace';
+  const returnedRun = { fake: 'Run' };
+  const payload = [
+    { op: 'replace', path: '/spec/status', value: 'RunCancelled' }
+  ];
+  fetchMock.patch(`end:${name}`, returnedRun);
+  return API.cancelRun({ name, namespace }).then(response => {
+    expect(fetchMock.lastOptions()).toMatchObject({
+      body: JSON.stringify(payload)
+    });
+    expect(response).toEqual(returnedRun);
+    fetchMock.restore();
+  });
+});
+
 it('deleteRun', () => {
   const name = 'foo';
   const data = { fake: 'Run' };
@@ -84,4 +101,25 @@ it('useRun', () => {
       queryConfig
     })
   );
+});
+
+it('rerunRun', () => {
+  const filter = 'end:/runs/';
+  const originalRun = {
+    metadata: { name: 'fake_run' },
+    spec: { status: 'fake_status' },
+    status: 'fake_status'
+  };
+  const newRun = { metadata: { name: 'fake_run_rerun' } };
+  fetchMock.post(filter, { body: newRun, status: 201 });
+  return API.rerunRun(originalRun).then(data => {
+    const body = JSON.parse(fetchMock.lastCall(filter)[1].body);
+    expect(body.metadata.generateName).toMatch(
+      new RegExp(originalRun.metadata.name)
+    );
+    expect(body.status).toBeUndefined();
+    expect(body.spec.status).toBeUndefined();
+    expect(data).toEqual(newRun);
+    fetchMock.restore();
+  });
 });

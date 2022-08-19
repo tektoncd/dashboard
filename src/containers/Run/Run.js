@@ -58,7 +58,12 @@ function getRunStatusIcon(run) {
   }
   const { reason, status } = getStatus(run);
   return (
-    <StatusIcon DefaultIcon={UndefinedIcon} reason={reason} status={status} />
+    <StatusIcon
+      DefaultIcon={UndefinedIcon}
+      isCustomTask
+      reason={reason}
+      status={status}
+    />
   );
 }
 

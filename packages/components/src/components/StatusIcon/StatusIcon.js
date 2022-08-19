@@ -62,6 +62,7 @@ const typeClassNames = {
 export default function StatusIcon({
   DefaultIcon,
   hasWarning,
+  isCustomTask,
   reason,
   status,
   title,
@@ -73,8 +74,6 @@ export default function StatusIcon({
     (status === 'Unknown' && reason === 'Pending')
   ) {
     statusClass = 'pending';
-  } else if (isRunning(reason, status)) {
-    statusClass = 'running';
   } else if (
     status === 'True' ||
     (status === 'terminated' && reason === 'Completed')
@@ -94,6 +93,11 @@ export default function StatusIcon({
     (status === 'Unknown' && reason === 'PipelineRunCouldntCancel')
   ) {
     statusClass = 'error';
+  } else if (
+    isRunning(reason, status) ||
+    (isCustomTask && status === 'Unknown')
+  ) {
+    statusClass = 'running';
   }
 
   const Icon = icons[type]?.[statusClass] || DefaultIcon;
