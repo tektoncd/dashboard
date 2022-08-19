@@ -20,7 +20,6 @@ import {
   ALL_NAMESPACES,
   getFilters,
   getStatus,
-  isRunning,
   urls,
   useTitleSync
 } from '@tektoncd/dashboard-utils';
@@ -43,7 +42,9 @@ import {
 
 import { ListPageLayout } from '..';
 import {
+  cancelRun,
   deleteRun,
+  rerunRun,
   useIsReadOnly,
   useRuns,
   useSelectedNamespace
@@ -85,7 +86,12 @@ function getRunStatus(run) {
 function getRunStatusIcon(run) {
   const { reason, status } = getStatus(run);
   return (
-    <StatusIcon DefaultIcon={UndefinedIcon} reason={reason} status={status} />
+    <StatusIcon
+      DefaultIcon={UndefinedIcon}
+      isCustomTask
+      reason={reason}
+      status={status}
+    />
   );
 }
 
@@ -169,6 +175,17 @@ function Runs({ intl }) {
     setToBeDeleted([]);
   }
 
+  function cancel(run) {
+    cancelRun({
+      name: run.metadata.name,
+      namespace: run.metadata.namespace
+    });
+  }
+
+  function rerun(run) {
+    rerunRun(run);
+  }
+
   function deleteResource(run) {
     const { name, namespace: resourceNamespace } = run.metadata;
     return deleteRun({ name, namespace: resourceNamespace }).catch(err => {
@@ -196,7 +213,44 @@ function Runs({ intl }) {
     }
 
     return [
-      // TODO: rerun?
+      {
+        action: rerun,
+        actionText: intl.formatMessage({
+          id: 'dashboard.rerun.actionText',
+          defaultMessage: 'Rerun'
+        }),
+        disable: resource => !!resource.metadata.labels?.['tekton.dev/pipeline']
+      },
+      {
+        actionText: intl.formatMessage({
+          id: 'dashboard.cancelTaskRun.actionText',
+          defaultMessage: 'Stop'
+        }),
+        action: cancel,
+        disable: resource => {
+          const { status } = getStatus(resource);
+          return status && status !== 'Unknown';
+        },
+        modalProperties: {
+          heading: intl.formatMessage({
+            id: 'dashboard.cancelRun.heading',
+            defaultMessage: 'Stop Run'
+          }),
+          primaryButtonText: intl.formatMessage({
+            id: 'dashboard.cancelRun.primaryText',
+            defaultMessage: 'Stop Run'
+          }),
+          body: resource =>
+            intl.formatMessage(
+              {
+                id: 'dashboard.cancelRun.body',
+                defaultMessage:
+                  'Are you sure you would like to stop Run {name}?'
+              },
+              { name: resource.metadata.name }
+            )
+        }
+      },
       {
         actionText: intl.formatMessage({
           id: 'dashboard.actions.deleteButton',
@@ -205,9 +259,10 @@ function Runs({ intl }) {
         action: deleteResource,
         danger: true,
         disable: resource => {
-          const { reason, status } = getStatus(resource);
-          return isRunning(reason, status);
+          const { status } = getStatus(resource);
+          return status === 'Unknown';
         },
+        hasDivider: true,
         modalProperties: {
           danger: true,
           heading: intl.formatMessage(

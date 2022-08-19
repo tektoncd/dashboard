@@ -11,7 +11,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { deleteRequest, get } from './comms';
+import { getGenerateNamePrefixForRerun } from '@tektoncd/dashboard-utils';
+import deepClone from 'lodash.clonedeep';
+
+import { deleteRequest, get, patch, post } from './comms';
 import {
   getQueryParams,
   getTektonAPI,
@@ -61,4 +64,34 @@ export function useRun(params, queryConfig) {
     queryConfig,
     webSocketURL
   });
+}
+
+export function cancelRun({ name, namespace }) {
+  const payload = [
+    { op: 'replace', path: '/spec/status', value: 'RunCancelled' }
+  ];
+
+  const uri = getTektonAPI('runs', { name, namespace, version: 'v1alpha1' });
+  return patch(uri, payload);
+}
+
+export function rerunRun(run) {
+  const { annotations, labels, name, namespace } = run.metadata;
+
+  const payload = deepClone(run);
+  payload.metadata = {
+    annotations,
+    generateName: getGenerateNamePrefixForRerun(name),
+    labels: {
+      ...labels,
+      'dashboard.tekton.dev/rerunOf': name
+    },
+    namespace
+  };
+
+  delete payload.status;
+  delete payload.spec?.status;
+
+  const uri = getTektonAPI('runs', { namespace, version: 'v1alpha1' });
+  return post(uri, payload).then(({ body }) => body);
 }
