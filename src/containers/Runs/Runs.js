@@ -316,8 +316,11 @@ function Runs({ intl }) {
       })
     },
     {
-      key: 'namespace',
-      header: 'Namespace'
+      key: 'customTask',
+      header: intl.formatMessage({
+        id: 'dashboard.customTask.heading',
+        defaultMessage: 'Custom Task'
+      })
     },
     {
       key: 'time',
@@ -339,6 +342,28 @@ function Runs({ intl }) {
       {({ resources }) => {
         const runsFormatted = resources.map(run => {
           const { creationTimestamp } = run.metadata;
+
+          const additionalFields = run?.spec?.ref || run?.spec?.spec || {};
+          const { apiVersion, kind, name: customTaskName } = additionalFields;
+          const customTaskTooltipParts = [
+            `${intl.formatMessage({
+              id: 'dashboard.resource.apiVersion',
+              defaultMessage: 'API version:'
+            })} ${apiVersion}`,
+            `${intl.formatMessage({
+              id: 'dashboard.resource.kind',
+              defaultMessage: 'Kind:'
+            })} ${kind}`
+          ];
+          if (customTaskName) {
+            customTaskTooltipParts.push(
+              `${intl.formatMessage({
+                id: 'dashboard.resource.name',
+                defaultMessage: 'Name:'
+              })} ${customTaskName}`
+            );
+          }
+          const customTaskTooltip = customTaskTooltipParts.join('\n');
 
           const {
             lastTransitionTime,
@@ -405,10 +430,17 @@ function Runs({ intl }) {
                 )}
               </div>
             ),
-            namespace: (
+            customTask: (
               <div>
-                <span>{run.metadata.namespace}</span>
-                <div className="tkn--table--sub">&nbsp;</div>
+                <span title={customTaskTooltip}>
+                  {apiVersion} {kind}
+                </span>
+                <span
+                  className="tkn--table--sub"
+                  title={`Namespace: ${run.metadata.namespace}`}
+                >
+                  {run.metadata.namespace}
+                </span>
               </div>
             ),
             time: (
