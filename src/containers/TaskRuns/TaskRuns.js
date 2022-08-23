@@ -160,17 +160,13 @@ function TaskRuns({ intl }) {
     setCancelSelection(() => handleCancelSelection);
   }
 
-  function rerun(taskRun) {
-    rerunTaskRun(taskRun);
-  }
-
   function taskRunActions() {
     if (isReadOnly) {
       return [];
     }
     return [
       {
-        action: rerun,
+        action: rerunTaskRun,
         actionText: intl.formatMessage({
           id: 'dashboard.rerun.actionText',
           defaultMessage: 'Rerun'
