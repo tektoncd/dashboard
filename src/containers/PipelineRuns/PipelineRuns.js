@@ -32,6 +32,7 @@ import {
   isPending,
   isRunning,
   labels,
+  preferences,
   runMatchesStatusFilter,
   urls,
   useTitleSync
@@ -49,8 +50,6 @@ import {
   usePipelineRuns,
   useSelectedNamespace
 } from '../../api';
-
-const CANCEL_STATUS_KEY = 'tkn-pipelinerun-cancel-status';
 
 export function PipelineRuns({ intl }) {
   const history = useHistory();
@@ -79,14 +78,16 @@ export function PipelineRuns({ intl }) {
   useTitleSync({ page: 'PipelineRuns' });
 
   useEffect(() => {
-    const savedCancelStatus = localStorage.getItem(CANCEL_STATUS_KEY);
+    const savedCancelStatus = localStorage.getItem(
+      preferences.CANCEL_STATUS_KEY
+    );
     if (savedCancelStatus) {
       setCancelStatus(savedCancelStatus);
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem(CANCEL_STATUS_KEY, cancelStatus);
+    localStorage.setItem(preferences.CANCEL_STATUS_KEY, cancelStatus);
   }, [cancelStatus]);
 
   useEffect(() => {
@@ -127,7 +128,9 @@ export function PipelineRuns({ intl }) {
 
   function cancel(pipelineRun) {
     // use value from localStorage to avoid stale value from closure
-    const savedCancelStatus = localStorage.getItem(CANCEL_STATUS_KEY);
+    const savedCancelStatus = localStorage.getItem(
+      preferences.CANCEL_STATUS_KEY
+    );
     const { name, namespace: resourceNamespace } = pipelineRun.metadata;
     cancelPipelineRun({
       name,

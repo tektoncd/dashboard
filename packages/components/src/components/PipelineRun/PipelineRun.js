@@ -216,7 +216,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       onViewChange,
       pipelineRun,
       pod,
-      runaction,
+      runActions,
       selectedStepId,
       selectedTaskId,
       showIO,
@@ -349,7 +349,7 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           status={pipelineRunStatus}
           triggerHeader={triggerHeader}
         >
-          {runaction}
+          {runActions}
         </RunHeader>
         {customNotification}
         {taskRuns.length > 0 && (

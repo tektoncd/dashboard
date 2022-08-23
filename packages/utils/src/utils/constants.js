@@ -27,6 +27,10 @@ export const pipelineRunStatuses = {
   PENDING: 'PipelineRunPending'
 };
 
+export const preferences = {
+  CANCEL_STATUS_KEY: 'tkn-pipelinerun-cancel-status'
+};
+
 export const queryParams = {
   PIPELINE_TASK: 'pipelineTask',
   RETRY: 'retry',

@@ -26,6 +26,7 @@ class RunHeader extends Component {
 
   render() {
     const {
+      children,
       icon,
       intl,
       lastTransitionTime,
@@ -81,7 +82,7 @@ class RunHeader extends Component {
                         )
                       : null}
                   </span>
-                  {this.props.children}
+                  {children}
                 </h1>
                 <div className="tkn--status">
                   <span className="tkn--status-label">{reason}</span>

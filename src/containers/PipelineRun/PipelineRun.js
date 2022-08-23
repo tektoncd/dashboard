@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,21 +11,30 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useRef, useState } from 'react';
-import { PipelineRun, RunAction } from '@tektoncd/dashboard-components';
+import React, { useEffect, useRef, useState } from 'react';
+import { Actions, PipelineRun } from '@tektoncd/dashboard-components';
 import {
+  getStatus,
   getTaskRunsWithPlaceholders,
+  isPending,
+  isRunning,
   labels as labelConstants,
-  pipelineRunStatuses,
+  preferences,
   queryParams as queryParamConstants,
   urls,
   useTitleSync
 } from '@tektoncd/dashboard-utils';
-import { InlineNotification } from 'carbon-components-react';
+import {
+  InlineNotification,
+  RadioTile,
+  TileGroup
+} from 'carbon-components-react';
 import { Link, useHistory, useLocation, useParams } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 
 import {
+  cancelPipelineRun,
+  deletePipelineRun,
   rerunPipelineRun,
   startPipelineRun,
   useClusterTasks,
@@ -69,11 +78,25 @@ export /* istanbul ignore next */ function PipelineRunContainer({ intl }) {
   const isLogStreamingEnabled = useIsLogStreamingEnabled();
   const isReadOnly = useIsReadOnly();
   const [isUsingExternalLogs, setIsUsingExternalLogs] = useState(false);
+  const [cancelStatus, setCancelStatus] = useState('Cancelled');
 
   useTitleSync({
     page: 'PipelineRun',
     resourceName: pipelineRunName
   });
+
+  useEffect(() => {
+    const savedCancelStatus = localStorage.getItem(
+      preferences.CANCEL_STATUS_KEY
+    );
+    if (savedCancelStatus) {
+      setCancelStatus(savedCancelStatus);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(preferences.CANCEL_STATUS_KEY, cancelStatus);
+  }, [cancelStatus]);
 
   const {
     data: pipelineRun,
@@ -201,6 +224,228 @@ export /* istanbul ignore next */ function PipelineRunContainer({ intl }) {
     history.push(browserURL);
   }
 
+  function cancel() {
+    // use value from localStorage to avoid stale value from closure
+    const savedCancelStatus = localStorage.getItem(
+      preferences.CANCEL_STATUS_KEY
+    );
+    const { name, namespace: resourceNamespace } = pipelineRun.metadata;
+    cancelPipelineRun({
+      name,
+      namespace: resourceNamespace,
+      status: savedCancelStatus
+    }).catch(err => {
+      err.response.text().then(text => {
+        const statusCode = err.response.status;
+        let errorMessage = `error code ${statusCode}`;
+        if (text) {
+          errorMessage = `${text} (error code ${statusCode})`;
+        }
+        setShowRunActionNotification({ kind: 'error', message: errorMessage });
+      });
+    });
+  }
+
+  function deleteRun() {
+    const { name, namespace: resourceNamespace } = pipelineRun.metadata;
+    deletePipelineRun({ name, namespace: resourceNamespace })
+      .then(() => {
+        history.push(urls.pipelineRuns.byNamespace({ namespace }));
+      })
+      .catch(err => {
+        err.response.text().then(text => {
+          const statusCode = err.response.status;
+          let errorMessage = `error code ${statusCode}`;
+          if (text) {
+            errorMessage = `${text} (error code ${statusCode})`;
+          }
+          setShowRunActionNotification({
+            kind: 'error',
+            message: errorMessage
+          });
+        });
+      });
+  }
+
+  function rerun() {
+    rerunPipelineRun(pipelineRun)
+      .then(newRun => {
+        setShowRunActionNotification({
+          kind: 'success',
+          logsURL: urls.pipelineRuns.byName({
+            namespace,
+            pipelineRunName: newRun.metadata.name
+          }),
+          message: intl.formatMessage({
+            id: 'dashboard.rerun.triggered',
+            defaultMessage: 'Triggered rerun'
+          })
+        });
+      })
+      .catch(rerunError => {
+        setShowRunActionNotification({
+          kind: 'error',
+          message: intl.formatMessage(
+            {
+              id: 'dashboard.rerun.error',
+              defaultMessage:
+                'An error occurred when rerunning {runName}: check the dashboard logs for details. Status code: {statusCode}'
+            },
+            {
+              runName: pipelineRun.metadata.name,
+              statusCode: rerunError.response.status
+            }
+          )
+        });
+      });
+  }
+
+  function pipelineRunActions() {
+    if (isReadOnly) {
+      return [];
+    }
+
+    return [
+      {
+        actionText: intl.formatMessage({
+          id: 'dashboard.rerun.actionText',
+          defaultMessage: 'Rerun'
+        }),
+        action: rerun,
+        disable: resource => {
+          const { reason, status } = getStatus(resource);
+          return isPending(reason, status);
+        }
+      },
+      {
+        actionText: intl.formatMessage({
+          id: 'dashboard.startPipelineRun.actionText',
+          defaultMessage: 'Start'
+        }),
+        action: startPipelineRun,
+        disable: resource => {
+          const { reason, status } = getStatus(resource);
+          return !isPending(reason, status);
+        }
+      },
+      {
+        actionText: intl.formatMessage({
+          id: 'dashboard.cancelPipelineRun.actionText',
+          defaultMessage: 'Stop'
+        }),
+        action: cancel,
+        disable: resource => {
+          const { reason, status } = getStatus(resource);
+          return !isRunning(reason, status) && !isPending(reason, status);
+        },
+        modalProperties: {
+          heading: intl.formatMessage({
+            id: 'dashboard.cancelPipelineRun.heading',
+            defaultMessage: 'Stop PipelineRun'
+          }),
+          primaryButtonText: intl.formatMessage({
+            id: 'dashboard.cancelPipelineRun.primaryText',
+            defaultMessage: 'Stop PipelineRun'
+          }),
+          body: resource => (
+            <>
+              <p>
+                {intl.formatMessage(
+                  {
+                    id: 'dashboard.cancelPipelineRun.body',
+                    defaultMessage:
+                      'Are you sure you would like to stop PipelineRun {name}?'
+                  },
+                  { name: resource.metadata.name }
+                )}
+              </p>
+              <TileGroup
+                legend={intl.formatMessage({
+                  id: 'dashboard.tableHeader.status',
+                  defaultMessage: 'Status'
+                })}
+                name="cancelStatus-group"
+                valueSelected={cancelStatus}
+                onChange={status => setCancelStatus(status)}
+              >
+                <RadioTile light name="cancelStatus" value="Cancelled">
+                  <span>Cancelled</span>
+                  <p className="tkn--tile--description">
+                    {intl.formatMessage({
+                      id: 'dashboard.cancelPipelineRun.cancelled.description',
+                      defaultMessage:
+                        'Interrupt any currently executing tasks and skip finally tasks'
+                    })}
+                  </p>
+                </RadioTile>
+                <RadioTile
+                  light
+                  name="cancelStatus"
+                  value="CancelledRunFinally"
+                >
+                  <span>CancelledRunFinally</span>
+                  <p className="tkn--tile--description">
+                    {intl.formatMessage({
+                      id: 'dashboard.cancelPipelineRun.cancelledRunFinally.description',
+                      defaultMessage:
+                        'Interrupt any currently executing non-finally tasks, then execute finally tasks'
+                    })}
+                  </p>
+                </RadioTile>
+                <RadioTile light name="cancelStatus" value="StoppedRunFinally">
+                  <span>StoppedRunFinally</span>
+                  <p className="tkn--tile--description">
+                    {intl.formatMessage({
+                      id: 'dashboard.cancelPipelineRun.stoppedRunFinally.description',
+                      defaultMessage:
+                        'Allow any currently executing tasks to complete but do not schedule any new non-finally tasks, then execute finally tasks'
+                    })}
+                  </p>
+                </RadioTile>
+              </TileGroup>
+            </>
+          )
+        }
+      },
+      {
+        actionText: intl.formatMessage({
+          id: 'dashboard.actions.deleteButton',
+          defaultMessage: 'Delete'
+        }),
+        action: deleteRun,
+        danger: true,
+        disable: resource => {
+          const { reason, status } = getStatus(resource);
+          return isRunning(reason, status);
+        },
+        hasDivider: true,
+        modalProperties: {
+          danger: true,
+          heading: intl.formatMessage(
+            {
+              id: 'dashboard.deleteResources.heading',
+              defaultMessage: 'Delete {kind}'
+            },
+            { kind: 'PipelineRun' }
+          ),
+          primaryButtonText: intl.formatMessage({
+            id: 'dashboard.actions.deleteButton',
+            defaultMessage: 'Delete'
+          }),
+          body: resource =>
+            intl.formatMessage(
+              {
+                id: 'dashboard.deletePipelineRun.body',
+                defaultMessage:
+                  'Are you sure you would like to delete PipelineRun {name}?'
+              },
+              { name: resource.metadata.name }
+            )
+        }
+      }
+    ];
+  }
+
   const selectedTaskId = getSelectedTaskId(
     currentPipelineTaskName,
     currentRetry
@@ -229,34 +474,7 @@ export /* istanbul ignore next */ function PipelineRunContainer({ intl }) {
     podDetails = (events || pod) && { events, resource: pod };
   }
 
-  let runAction = null;
-  if (pipelineRun && !isReadOnly) {
-    if (pipelineRun.spec.status !== pipelineRunStatuses.PENDING) {
-      runAction = (
-        <RunAction
-          action="rerun"
-          getURL={({ name, namespace: resourceNamespace }) =>
-            urls.pipelineRuns.byName({
-              namespace: resourceNamespace,
-              pipelineRunName: name
-            })
-          }
-          run={pipelineRun}
-          runaction={rerunPipelineRun}
-          showNotification={value => setShowRunActionNotification(value)}
-        />
-      );
-    } else {
-      runAction = (
-        <RunAction
-          action="start"
-          run={pipelineRun}
-          runaction={startPipelineRun}
-          showNotification={value => setShowRunActionNotification(value)}
-        />
-      );
-    }
-  }
+  const runActions = pipelineRunActions();
 
   return (
     <>
@@ -312,7 +530,11 @@ export /* istanbul ignore next */ function PipelineRunContainer({ intl }) {
         onViewChange={getViewChangeHandler({ history, location })}
         pipelineRun={pipelineRun}
         pod={podDetails}
-        runaction={runAction}
+        runActions={
+          runActions.length ? (
+            <Actions items={runActions} kind="button" resource={pipelineRun} />
+          ) : null
+        }
         selectedStepId={currentSelectedStepId}
         selectedTaskId={selectedTaskId}
         showIO
