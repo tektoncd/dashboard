@@ -21,6 +21,7 @@ import { FormattedDate, Tab, Tabs, ViewYAML } from '..';
 const tabs = ['overview', 'yaml'];
 
 const ResourceDetails = ({
+  actions,
   additionalMetadata,
   children,
   error,
@@ -63,7 +64,10 @@ const ResourceDetails = ({
 
   return (
     <div className="tkn--resourcedetails">
-      <h1>{resource.metadata.name}</h1>
+      <div className="tkn--resourcedetails--header">
+        <h1>{resource.metadata.name}</h1>
+        {actions}
+      </div>
       <Tabs
         aria-label={intl.formatMessage({
           id: 'dashboard.resourceDetails.ariaLabel',
@@ -146,6 +150,7 @@ const ResourceDetails = ({
 };
 
 ResourceDetails.defaultProps = {
+  actions: null,
   additionalMetadata: null,
   children: null,
   error: null,
@@ -155,6 +160,7 @@ ResourceDetails.defaultProps = {
 };
 
 ResourceDetails.propTypes = {
+  actions: PropTypes.node,
   additionalMetadata: PropTypes.node,
   children: PropTypes.node,
   error: PropTypes.oneOfType([PropTypes.string, PropTypes.shape({})]),
