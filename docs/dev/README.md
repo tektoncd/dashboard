@@ -164,14 +164,14 @@ To run integration tests you will need additonal tools:
 
 Integration tests are located in the [/test/e2e-tests.sh](../../test/e2e-tests.sh) script.
 
-To run the integration tests locally, you can use the [/test/local-e2e-tests.sh](../../test/local-e2e-tests.sh) script. It will create a fresh `kind` cluster, deploy a docker registry in it, run the integration tests script, and drop the test cluster automatically.
+To run the integration tests locally, you can use the [/test/e2e-tests-local.sh](../../test/e2e-tests-local.sh) script. It will create a fresh `kind` cluster, deploy a docker registry in it, run the integration tests script, and drop the test cluster automatically.
 
 ```bash
 export KO_DOCKER_REPO='ko.local'
 # or use an external repository
 # export KO_DOCKER_REPO='docker.io/myusername'
 
-./test/local-e2e-tests.sh
+./test/e2e-tests-local.sh
 ```
 
 **Note:** You can override the Tekton Pipelines and/or Triggers versions deployed in the test cluster by providing `PIPELINES_VERSION` and/or `TRIGGERS_VERSION` environment variables.
