@@ -98,6 +98,11 @@ function pre_unit_tests() {
 
 function pre_integration_tests() {
     local failed=0
+    echo "Testing Cypress docker image"
+    # npx cypress verify
+    # npx cypress info
+    docker run -v $PWD:/e2e -w /e2e --entrypoint /bin/bash cypress/browsers:node16.14.2-slim-chrome103-ff102 -c "npx cypress verify && npx cypress info"
+
     node_npm_install || failed=1
     npm run build || failed=1
     return ${failed}
