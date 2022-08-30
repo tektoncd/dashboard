@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2020-2021 The Tekton Authors
+# Copyright 2020-2022 The Tekton Authors
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -72,7 +72,7 @@ teardown() {
 
 trap "fail_trap" EXIT
 
-export LOCAL_RUN="true"
+export SKIP_INITIALIZE="true"
 
 verifySupported
 setup

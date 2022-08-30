@@ -35,7 +35,7 @@ initOS() {
   esac
 }
 
-if [ -z "$LOCAL_RUN" ]; then
+if [ "${SKIP_INITIALIZE}" != "true" ]; then
   initialize $@
 else
   END=50
