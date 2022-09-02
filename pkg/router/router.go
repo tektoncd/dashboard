@@ -46,8 +46,10 @@ func registerWeb(resource endpoints.Resource, mux *http.ServeMux) {
 			w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
 		}
 
+		w.Header().Set("Content-Security-Policy", "default-src 'none'; img-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self' wss: ws:; font-src 'self' https://1.www.s81c.com;")
+
 		switch resource.Options.XFrameOptions {
-		case "": //DO nothing, no X-Frame-Options header
+		case "": // Do nothing, no X-Frame-Options header
 		case "SAMEORIGIN":
 			w.Header().Set("X-Frame-Options", "SAMEORIGIN")
 		default:
@@ -61,7 +63,6 @@ func registerWeb(resource endpoints.Resource, mux *http.ServeMux) {
 func registerHealthProbe(r endpoints.Resource, mux *http.ServeMux) {
 	logging.Log.Info("Adding API for health")
 	mux.HandleFunc("/health", r.CheckHealth)
-
 }
 
 // registerReadinessProbe registers the /readiness endpoint

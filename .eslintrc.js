@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -18,11 +18,23 @@ module.exports = {
     jest: true,
     node: true
   },
-  extends: ['airbnb', 'plugin:prettier/recommended'],
+  extends: [
+    'airbnb',
+    'plugin:prettier/recommended',
+    'plugin:cypress/recommended'
+  ],
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly'
   },
+  overrides: [
+    {
+      files: ['*.cy.js'],
+      rules: {
+        'func-names': 'off'
+      }
+    }
+  ],
   parserOptions: {
     ecmaFeatures: {
       jsx: true
@@ -33,6 +45,7 @@ module.exports = {
   plugins: ['notice', 'react'],
   rules: {
     curly: ['error', 'all'],
+    'cypress/assertion-before-screenshot': 'warn',
     'default-param-last': 'off',
     'import/prefer-default-export': 'off',
     'import/no-extraneous-dependencies': 'off',

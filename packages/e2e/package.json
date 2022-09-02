@@ -1,0 +1,31 @@
+{
+  "name": "@tektoncd/dashboard-e2e",
+  "version": "0.0.1",
+  "author": {
+    "name": "The Tekton Authors"
+  },
+  "keywords": [
+    "tekton",
+    "tektoncd",
+    "test",
+    "e2e"
+  ],
+  "license": "Apache-2.0",
+  "private": true,
+  "scripts": {
+    "test": "cypress open --e2e --browser chrome",
+    "test:ci": "cypress run"
+  },
+  "devDependencies": {
+    "cypress": "10.7.0"
+  },
+  "engines": {
+    "node": "^16.13.2",
+    "npm": "^8.1.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tektoncd/dashboard.git",
+    "directory": "packages/e2e"
+  }
+}
