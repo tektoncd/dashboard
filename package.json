@@ -5,6 +5,8 @@
   "scripts": {
     "build": "webpack --config webpack.prod.js",
     "build:analyze": "webpack --config webpack.prod.js --profile --json > stats.json && npx webpack-bundle-analyzer stats.json cmd/dashboard/kodata/",
+    "e2e": "npm test -w @tektoncd/dashboard-e2e",
+    "e2e:ci": "npm run test:ci -w @tektoncd/dashboard-e2e",
     "eslint:check": "eslint --print-config src/index.js | eslint-config-prettier-check",
     "i18n:extract": "node scripts/i18n/extractMessages.js",
     "i18n:import": "node scripts/i18n/importFromProperties.js",
@@ -70,6 +72,7 @@
     "eslint": "^8.2.0",
     "eslint-config-airbnb": "^19.0.0",
     "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-cypress": "2.12.1",
     "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-notice": "^0.9.10",
@@ -109,6 +112,7 @@
   "workspaces": [
     "packages/utils",
     "packages/components",
-    "packages/graph"
+    "packages/graph",
+    "packages/e2e"
   ]
 }

@@ -24,3 +24,9 @@ stats.json
 Thumbs.db
 
 /dashboard
+
+# e2e
+packages/e2e/cypress/downloads
+packages/e2e/cypress/results
+packages/e2e/cypress/screenshots
+packages/e2e/cypress/videos
