@@ -35,7 +35,7 @@ The picture below illustrates the deployed components and interactions between t
 
 ## Installing a working Tekton Dashboard locally from scratch
 
-This walkthrough has been tested on Kind v0.14 with Kubernetes v1.21.
+This walk-through has been tested on Kind v0.14 with Kubernetes v1.21.
 
 If you didn't follow the [Tekton Dashboard walk-through with Kind](./walkthrough-kind.md) yet, start there to get a local cluster with a working Tekton Dashboard installed.
 
@@ -64,6 +64,8 @@ These will be needed to configure `oauth2-proxy` in the next step.
 
 ## Installing and configuring oauth2-proxy
 
+This walk-through has been tested with oauth2-proxy 7.2.1 (helm chart version 6.2.1). There is a known issue with the GitHub provider in oauth2-proxy 7.3.0.
+
 Now you have the OAuth application created on GitHub, you can deploy [oauth2-proxy](https://github.com/oauth2-proxy/oauth2-proxy) in your cluster.
 
 You will install it using helm. The helm chart used in this guide is hosted at https://github.com/oauth2-proxy/manifests.
@@ -78,7 +80,7 @@ CLIENT_SECRET=__THE_CLIENT_SECRET_OF_YOUR_GITHUB_OAUTH_APP__
 
 helm repo add oauth2-proxy https://oauth2-proxy.github.io/manifests
 
-helm upgrade --install --wait --create-namespace --namespace tools oauth2-proxy oauth2-proxy/oauth2-proxy --values - <<EOF
+helm upgrade --install --wait --create-namespace --namespace tools oauth2-proxy oauth2-proxy/oauth2-proxy --version 6.2.1 --values - <<EOF
 config:
   clientID: $CLIENT_ID
   clientSecret: $CLIENT_SECRET
