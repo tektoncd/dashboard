@@ -13,6 +13,7 @@ FROM cypress/browsers:node16.14.2-slim-chrome103-ff102
 USER node
 WORKDIR /home/node
 ENV CI=true
+ENV NO_COLOR=true
 ENTRYPOINT ["npm", "run", "test:ci"]
 CMD ["--", "--browser", "chrome"]
 

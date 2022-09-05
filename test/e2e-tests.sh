@@ -43,7 +43,6 @@ fi
 
 initOS
 install_kustomize
-npm install -g newman@5.2.2
 
 test_dashboard() {
   # kubectl or proxy (to create the necessary resources)
@@ -58,14 +57,14 @@ test_dashboard() {
   kubectl create ns $TEST_NAMESPACE > /dev/null 2>&1 || true
 
   # Port forward the dashboard
-  kubectl port-forward svc/tekton-dashboard --namespace $DASHBOARD_NAMESPACE 9097:9097 &
+  kubectl port-forward svc/tekton-dashboard --namespace $DASHBOARD_NAMESPACE 8000:9097 > /dev/null 2>&1 &
   dashboardForwardPID=$!
 
   # Wait until dashboard is found
   dashboardReady=false
   for i in $(eval echo "{$START..$END}")
   do
-    resp=$(curl -k http://127.0.0.1:9097)
+    resp=$(curl -k http://127.0.0.1:8000)
     if [ "$resp" != "" ]; then
       dashboardReady=true
       echo "Dashboard ready"
@@ -84,7 +83,7 @@ test_dashboard() {
   export PIPELINE_RUN_NAME="e2e-pipelinerun"
   export POD_LABEL="tekton.dev/pipelineRun=$PIPELINE_RUN_NAME"
   export EXPECTED_RETURN_VALUE="Hello World!"
-  export TEKTON_PROXY_URL="http://localhost:9097/apis/tekton.dev/v1beta1/namespaces/$TEST_NAMESPACE"
+  export TEKTON_PROXY_URL="http://localhost:8000/apis/tekton.dev/v1beta1/namespaces/$TEST_NAMESPACE"
 
   # Kubectl static resources
   echo "Creating static resources using kubectl..."
@@ -163,37 +162,8 @@ test_dashboard() {
     fail_test "PipelineRun error, returned an incorrect message: $logs"
   fi
 
-  echo "Running postman collections..."
-
-  local readonly=false
-
-  if [ "$creationMethod" = "kubectl" ]; then
-    readonly=true
-  fi
-
-  newman run ${tekton_repo_dir}/test/postman/Dashboard.postman_collection.json \
-    -g ${tekton_repo_dir}/test/postman/globals.json \
-    --global-var dashboard_namespace=$DASHBOARD_NAMESPACE \
-    --global-var tenant_namespace=$TENANT_NAMESPACE \
-    --global-var pipelines_version=$PIPELINES_VERSION \
-    --global-var triggers_version=$TRIGGERS_VERSION \
-    --global-var readonly=$readonly || fail_test "Postman Dashboard collection tests failed"
-
-  newman run ${tekton_repo_dir}/test/postman/Pipelines.postman_collection.json \
-    -g ${tekton_repo_dir}/test/postman/globals.json \
-    --global-var dashboard_namespace=$DASHBOARD_NAMESPACE \
-    --global-var tenant_namespace=$TENANT_NAMESPACE \
-    --global-var pipelines_version=$PIPELINES_VERSION \
-    --global-var triggers_version=$TRIGGERS_VERSION \
-    --global-var readonly=$readonly || fail_test "Postman Pipelines collection tests failed"
-
-  newman run ${tekton_repo_dir}/test/postman/Triggers.postman_collection.json \
-    -g ${tekton_repo_dir}/test/postman/globals.json \
-    --global-var dashboard_namespace=$DASHBOARD_NAMESPACE \
-    --global-var tenant_namespace=$TENANT_NAMESPACE \
-    --global-var pipelines_version=$PIPELINES_VERSION \
-    --global-var triggers_version=$TRIGGERS_VERSION \
-    --global-var readonly=$readonly || fail_test "Postman Triggers collection tests failed"
+  echo "Running browser E2E tests…"
+  docker run --rm --network=host dashboard-e2e || fail_test "Browser E2E tests failed"
 
   kill -9 $dashboardForwardPID
 
@@ -214,6 +184,9 @@ if [ -z "$SKIP_BUILD_TEST" ]; then
 	echo "Building manifests for openshift --read-only"
 	$tekton_repo_dir/scripts/installer release --openshift --read-only  || fail_test "Failed to build manifests for openshift --read-only"
 fi
+
+header "Building browser E2E image"
+docker build -t dashboard-e2e packages/e2e
 
 if [ -z "$PIPELINES_VERSION" ]; then
   export PIPELINES_VERSION=v0.39.0
