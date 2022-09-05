@@ -15,6 +15,7 @@ This guide explains how to build, deploy and test the Tekton Dashboard. It cover
   - [Integration tests](#integration-tests)
 - [Run frontend tests](#run-frontend-tests)
   - [Frontend unit tests](#frontend-unit-tests)
+  - [Frontend E2E tests](#frontend-e2e-tests)
   - [Linter](#linter)
 - [i18n](#i18n)
 - [Storybook](#storybook)
@@ -185,6 +186,18 @@ Run `npm test` to execute the unit tests via [Jest](https://jestjs.io/) in inter
 Coverage threshold is set to 90%, if it falls below the threshold the test script will fail.
 
 Tests are defined in `*.test.js` files alongside the code under test.
+
+### Frontend E2E tests
+
+Run `npm run e2e` to execute the end-to-end UI tests via [Cypress](https://www.cypress.io/) in interactive mode.
+
+Tests are defined in `*.cy.js` files in `packages/e2e/cypress`.
+
+By default tests are run using Chrome but you can override this by specifying an alternative supported browser available on your system, for example:
+
+`npm run e2e -- -- --browser firefox`
+
+To find the list of supported browsers and versions on your system, run `npx cypress info`
 
 ### Linter
 
