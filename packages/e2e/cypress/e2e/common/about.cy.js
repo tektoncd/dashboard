@@ -27,6 +27,7 @@ describe('About page', () => {
       dashboardNamespace,
       dashboardVersion,
       isReadOnly,
+      logoutURL,
       pipelinesNamespace,
       pipelinesVersion,
       triggersNamespace,
@@ -35,8 +36,21 @@ describe('About page', () => {
 
     cy.get('#tkn--about--dashboard-tile').contains(dashboardNamespace);
     cy.get('#tkn--about--dashboard-tile').contains(dashboardVersion);
+
     if (isReadOnly) {
       cy.get('#tkn--about--dashboard-tile').contains('ReadOnly');
+    } else {
+      cy.get('#tkn--about--dashboard-tile')
+        .contains('ReadOnly')
+        .should('not.exist');
+    }
+
+    if (logoutURL) {
+      cy.get('#tkn--about--dashboard-tile').contains('LogoutURL');
+    } else {
+      cy.get('#tkn--about--dashboard-tile')
+        .contains('LogoutURL')
+        .should('not.exist');
     }
 
     cy.get('#tkn--about--pipelines-tile').contains(pipelinesNamespace);
