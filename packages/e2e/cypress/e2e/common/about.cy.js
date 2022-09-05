@@ -34,11 +34,11 @@ describe('About page', () => {
       triggersVersion
     } = this.installProperties;
 
-    cy.get('#tkn--about--dashboard-tile').contains(dashboardNamespace);
-    cy.get('#tkn--about--dashboard-tile').contains(dashboardVersion);
+    cy.contains('#tkn--about--dashboard-tile', dashboardNamespace);
+    cy.contains('#tkn--about--dashboard-tile', dashboardVersion);
 
     if (isReadOnly) {
-      cy.get('#tkn--about--dashboard-tile').contains('ReadOnly');
+      cy.contains('#tkn--about--dashboard-tile', 'ReadOnly');
     } else {
       cy.get('#tkn--about--dashboard-tile')
         .contains('ReadOnly')
@@ -46,17 +46,17 @@ describe('About page', () => {
     }
 
     if (logoutURL) {
-      cy.get('#tkn--about--dashboard-tile').contains('LogoutURL');
+      cy.contains('#tkn--about--dashboard-tile', 'LogoutURL');
     } else {
       cy.get('#tkn--about--dashboard-tile')
         .contains('LogoutURL')
         .should('not.exist');
     }
 
-    cy.get('#tkn--about--pipelines-tile').contains(pipelinesNamespace);
-    cy.get('#tkn--about--pipelines-tile').contains(pipelinesVersion);
+    cy.contains('#tkn--about--pipelines-tile', pipelinesNamespace);
+    cy.contains('#tkn--about--pipelines-tile', pipelinesVersion);
 
-    cy.get('#tkn--about--triggers-tile').contains(triggersNamespace);
-    cy.get('#tkn--about--triggers-tile').contains(triggersVersion);
+    cy.contains('#tkn--about--triggers-tile', triggersNamespace);
+    cy.contains('#tkn--about--triggers-tile', triggersVersion);
   });
 });

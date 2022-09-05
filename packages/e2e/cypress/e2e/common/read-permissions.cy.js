@@ -17,16 +17,14 @@ describe('Read permissions', () => {
   before(() => {
     cy.visit('/');
     cy.hash().should('equal', '#/about');
-    cy.get('h1').contains('About Tekton');
+    cy.contains('h1', 'About Tekton');
   });
 
   kinds.forEach(kind => {
     it(`should display ${kind.label} page`, () => {
-      cy.get('.bx--side-nav a')
-        .contains(new RegExp(`^${kind.label}$`))
-        .click();
+      cy.contains('.bx--side-nav a', new RegExp(`^${kind.label}$`)).click();
       cy.hash().should('equal', `#${kind.path}`);
-      cy.get('h1').contains(kind.label);
+      cy.contains('h1', kind.label);
       cy.get('table');
       cy.get('table.tkn--data-table-skeleton').should('not.exist');
       cy.contains('Forbidden').should('not.exist');
@@ -36,7 +34,7 @@ describe('Read permissions', () => {
   it('should display error for resources missing permissions', () => {
     const groupVersionKind = 'tekton.dev/v1alpha1/fake-kind';
     cy.visit(`/#/${groupVersionKind}`);
-    cy.get('h1').contains(groupVersionKind);
+    cy.contains('h1', groupVersionKind);
     cy.contains('Forbidden');
   });
 });
