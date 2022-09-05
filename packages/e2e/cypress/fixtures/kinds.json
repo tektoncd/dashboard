@@ -1,0 +1,15 @@
+[
+    { "label": "Pipelines", "path": "/pipelines" },
+    { "label": "PipelineRuns", "path": "/pipelineruns" },
+    { "label": "PipelineResources", "path": "/pipelineresources" },
+    { "label": "Tasks", "path": "/tasks" },
+    { "label": "ClusterTasks", "path": "/clustertasks" },
+    { "label": "TaskRuns", "path": "/taskruns" },
+    { "label": "Runs", "path": "/runs" },
+    { "label": "EventListeners", "path": "/eventlisteners" },
+    { "label": "Triggers", "path": "/triggers" },
+    { "label": "TriggerBindings", "path": "/triggerbindings" },
+    { "label": "ClusterTriggerBindings", "path": "/clustertriggerbindings" },
+    { "label": "TriggerTemplates", "path": "/triggertemplates" },
+    { "label": "ClusterInterceptors", "path": "/clusterinterceptors" }
+]
