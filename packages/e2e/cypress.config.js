@@ -17,9 +17,7 @@ const isCI = process.env.CI === 'true';
 
 module.exports = defineConfig({
   e2e: {
-    baseUrl: isCI
-      ? 'http://host.docker.internal:9097'
-      : 'http://localhost:8000',
+    baseUrl: 'http://localhost:8000',
     // experimentalSessionAndOrigin: true, // default is false
     experimentalStudio: true
   },
