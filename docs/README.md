@@ -48,7 +48,7 @@ Some of the features the Tekton Dashboard supports:
 
 | Version | Docs | Pipelines | Triggers |
 | ------- | ---- | --------- | -------- |
-| [HEAD](https://github.com/tektoncd/dashboard/blob/main/DEVELOPMENT.md) | [Docs @ HEAD](https://github.com/tektoncd/dashboard/tree/main/docs) | v0.35.x - v0.39.x | v0.15.x - 0.20.x |
+| [HEAD](https://github.com/tektoncd/dashboard/blob/main/DEVELOPMENT.md) | [Docs @ HEAD](https://github.com/tektoncd/dashboard/tree/main/docs) | v0.35.x - v0.39.x | v0.15.x - 0.21.x |
 | [v0.28.0](https://github.com/tektoncd/dashboard/releases/tag/v0.28.0) | [Docs @ v0.28.0](https://github.com/tektoncd/dashboard/tree/v0.28.0/docs) | v0.35.x - v0.37.x | v0.15.x - 0.20.x |
 | [v0.27.0](https://github.com/tektoncd/dashboard/releases/tag/v0.27.0) | [Docs @ v0.27.0](https://github.com/tektoncd/dashboard/tree/v0.27.0/docs) | v0.25.x - v0.36.x | v0.15.x - 0.20.x |
 | [v0.26.0](https://github.com/tektoncd/dashboard/releases/tag/v0.26.0) | [Docs @ v0.26.0](https://github.com/tektoncd/dashboard/tree/v0.26.0/docs) | v0.25.x - v0.35.x | v0.15.x - 0.19.x |
