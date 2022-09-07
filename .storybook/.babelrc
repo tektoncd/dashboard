@@ -3,7 +3,7 @@
     [
       "@babel/preset-env",
       {
-        "corejs": "3.20",
+        "corejs": "3.25",
         "useBuiltIns": "entry"
       }
     ],
