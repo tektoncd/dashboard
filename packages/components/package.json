@@ -20,11 +20,11 @@
   "dependencies": {
     "@tektoncd/dashboard-utils": "file:../utils",
     "classnames": "^2.3.1",
-    "js-yaml": "^3.13.0",
+    "js-yaml": "^4.1.0",
     "linkify-it": "^4.0.1",
     "prop-types": "^15.7.2",
     "react-intl-formatted-duration": "^4.0.0",
-    "react-window": "^1.8.6",
+    "react-window": "^1.8.7",
     "tlds": "^1.208.0"
   },
   "peerDependencies": {
