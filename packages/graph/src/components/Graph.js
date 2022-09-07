@@ -88,7 +88,6 @@ export default class Graph extends Component {
           <defs>
             <marker
               id="edge-arrow"
-              viewBox="0 0 100 100"
               markerUnits="strokeWidth"
               markerWidth="10"
               markerHeight="14"

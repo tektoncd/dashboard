@@ -70,6 +70,7 @@ module.exports = {
       }
     ],
     'react/destructuring-assignment': 'off',
+    'react/forbid-prop-types': 'off',
     'react/function-component-definition': 'off',
     'react/no-unstable-nested-components': 'off',
     'react/jsx-curly-newline': 'off',

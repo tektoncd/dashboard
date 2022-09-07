@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -47,8 +47,12 @@ function isValidGitURL(url) {
   if (!url || !url.trim()) {
     return false;
   }
-  const { name, owner, resource } = parseGitURL(url);
-  return !!(name && owner && resource);
+  try {
+    const { name, owner, resource } = parseGitURL(url);
+    return !!(name && owner && resource);
+  } catch {
+    return false;
+  }
 }
 
 const initialMethod = 'apply';
