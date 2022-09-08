@@ -1,6 +1,6 @@
 module github.com/tektoncd/dashboard
 
-go 1.17
+go 1.18
 
 // Pin k8s deps to v0.22.0
 replace (
@@ -10,7 +10,7 @@ replace (
 )
 
 require (
-	github.com/tektoncd/plumbing v0.0.0-20220329085922-d765a5cba75f
+	github.com/tektoncd/plumbing v0.0.0-20220907123230-d2c8ccb63d02
 	go.uber.org/zap v1.23.0
 	k8s.io/apimachinery v0.22.0
 	k8s.io/client-go v11.0.1-0.20190805182717-6502b5e7b1b5+incompatible
