@@ -39,8 +39,8 @@ it('createTaskRun uses correct kubernetes information', () => {
   return API.createTaskRun({}).then(response => {
     expect(response).toEqual(data);
     const sentBody = JSON.parse(fetchMock.lastOptions().body);
-    expect(sentBody).toHaveProperty('apiVersion', 'tekton.dev/v1beta1');
-    expect(sentBody).toHaveProperty('kind', 'TaskRun');
+    expect(sentBody.apiVersion).toEqual('tekton.dev/v1beta1');
+    expect(sentBody.kind).toEqual('TaskRun');
     expect(sentBody).toHaveProperty('metadata');
     expect(sentBody).toHaveProperty('spec');
     fetchMock.restore();
@@ -59,8 +59,8 @@ it('createTaskRun has correct metadata', () => {
     const sentMetadata = JSON.parse(fetchMock.lastOptions().body).metadata;
     expect(sentMetadata.name).toMatch(taskName); // include name
     expect(sentMetadata.name).toMatch('fake-timestamp'); // include timestamp
-    expect(sentMetadata).toHaveProperty('namespace', namespace);
-    expect(sentMetadata.labels).toHaveProperty('app', 'fake-app');
+    expect(sentMetadata.namespace).toEqual(namespace);
+    expect(sentMetadata.labels.app).toEqual('fake-app');
     fetchMock.restore();
     mockDateNow.mockRestore();
   });
@@ -71,8 +71,8 @@ it('createTaskRun handles taskRef', () => {
   fetchMock.post(/taskruns/, {});
   return API.createTaskRun({ taskName }).then(() => {
     const sentSpec = JSON.parse(fetchMock.lastOptions().body).spec;
-    expect(sentSpec.taskRef).toHaveProperty('name', taskName);
-    expect(sentSpec.taskRef).toHaveProperty('kind', 'Task');
+    expect(sentSpec.taskRef.name).toEqual(taskName);
+    expect(sentSpec.taskRef.kind).toEqual('Task');
     fetchMock.restore();
   });
 });
@@ -82,7 +82,7 @@ it('createTaskRun handles ClusterTask in taskRef', () => {
   fetchMock.post(/taskruns/, {});
   return API.createTaskRun({ taskName, kind: 'ClusterTask' }).then(() => {
     const sentSpec = JSON.parse(fetchMock.lastOptions().body).spec;
-    expect(sentSpec.taskRef).toHaveProperty('kind', 'ClusterTask');
+    expect(sentSpec.taskRef.kind).toEqual('ClusterTask');
     fetchMock.restore();
   });
 });
@@ -129,7 +129,7 @@ it('createTaskRun handles serviceAccount', () => {
   fetchMock.post(/taskruns/, {});
   return API.createTaskRun({ taskName, serviceAccount }).then(() => {
     const sentSpec = JSON.parse(fetchMock.lastOptions().body).spec;
-    expect(sentSpec).toHaveProperty('serviceAccountName', serviceAccount);
+    expect(sentSpec.serviceAccountName).toEqual(serviceAccount);
     fetchMock.restore();
   });
 });
@@ -140,7 +140,7 @@ it('createTaskRun handles nodeSelector', () => {
   fetchMock.post(/taskruns/, {});
   return API.createTaskRun({ taskName, nodeSelector }).then(() => {
     const sentSpec = JSON.parse(fetchMock.lastOptions().body).spec;
-    expect(sentSpec).toHaveProperty('podTemplate', { nodeSelector });
+    expect(sentSpec.podTemplate).toEqual({ nodeSelector });
     fetchMock.restore();
   });
 });
@@ -151,7 +151,7 @@ it('createTaskRun handles timeout', () => {
   fetchMock.post(/taskruns/, {});
   return API.createTaskRun({ taskName, timeout }).then(() => {
     const sentSpec = JSON.parse(fetchMock.lastOptions().body).spec;
-    expect(sentSpec).toHaveProperty('timeout', timeout);
+    expect(sentSpec.timeout).toEqual(timeout);
     fetchMock.restore();
   });
 });
