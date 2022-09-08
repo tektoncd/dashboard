@@ -48,7 +48,8 @@ module.exports = api => {
               }
             }
           ]
-        ]
+        ],
+        plugins: ['@babel/plugin-proposal-private-methods']
       }
     }
   };
