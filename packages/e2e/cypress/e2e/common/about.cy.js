@@ -21,7 +21,7 @@ describe('About page', () => {
   it('should display install metadata', function () {
     cy.visit('/');
     cy.hash().should('equal', '#/about');
-    cy.get('h1').contains('About Tekton');
+    cy.contains('h1', 'About Tekton');
 
     const {
       dashboardNamespace,
