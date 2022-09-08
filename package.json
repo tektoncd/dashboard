@@ -88,7 +88,7 @@
     "lodash.difference": "^4.5.0",
     "lodash.omit": "^4.5.0",
     "mini-css-extract-plugin": "^2.6.1",
-    "node-fetch": "^2.6.7",
+    "node-fetch": "^3.2.10",
     "prettier": "^2.7.1",
     "sass": "^1.54.9",
     "sass-loader": "^13.0.2",
