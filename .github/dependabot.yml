@@ -1,0 +1,32 @@
+version: 2
+updates:
+  - package-ecosystem: "docker"
+    directory: "/packages/e2e/"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+    labels:
+    - "area/dependency"
+    - "dependencies"
+    - "ok-to-test"
+    - "docker"
+  - package-ecosystem: "gomod"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+    labels:
+    - "area/dependency"
+    - "dependencies"
+    - "ok-to-test"
+    - "go"
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+    labels:
+    - "area/dependency"
+    - "dependencies"
+    - "ok-to-test"
+    - "javascript"
