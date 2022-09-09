@@ -19,8 +19,7 @@ describe('About page', () => {
   });
 
   it('should display install metadata', function () {
-    cy.visit('/');
-    cy.hash().should('equal', '#/about');
+    cy.visit('/#/about');
     cy.contains('h1', 'About Tekton');
 
     const {
