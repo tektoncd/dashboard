@@ -201,7 +201,12 @@ export function TaskRunContainer({ intl }) {
     }
 
     const browserURL = location.pathname.concat(`?${queryParams.toString()}`);
-    history.push(browserURL);
+    if (showTaskRunDetails || selectedStepId) {
+      history.push(browserURL);
+    } else {
+      // auto-selecting step on first load
+      history.replace(browserURL);
+    }
   }
 
   function cancel() {
