@@ -221,7 +221,12 @@ export /* istanbul ignore next */ function PipelineRunContainer({ intl }) {
     }
 
     const browserURL = location.pathname.concat(`?${queryParams.toString()}`);
-    history.push(browserURL);
+    if (currentPipelineTaskName) {
+      history.push(browserURL);
+    } else {
+      // auto-selecting task & step on first load
+      history.replace(browserURL);
+    }
   }
 
   function cancel() {
