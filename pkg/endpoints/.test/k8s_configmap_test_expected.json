@@ -1,0 +1,13 @@
+{
+  "kind": "ConfigMap",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "pipelines-info",
+    "namespace": "tekton-pipelines",
+    "labels": {
+      "app.kubernetes.io/instance": "default",
+      "app.kubernetes.io/part-of": "tekton-pipelines"
+    },
+    "resourceVersion": "458"
+  }
+}

@@ -28,6 +28,18 @@
   path: /rules/-
   value:
     apiGroups:
+      - ''
+    resources:
+      - secrets
+      - configmaps
+      - persistentvolumeclaims
+    verbs:
+      - list
+      - watch
+- op: add
+  path: /rules/-
+  value:
+    apiGroups:
       - dashboard.tekton.dev
     resources:
       - extensions

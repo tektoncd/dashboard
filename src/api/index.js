@@ -44,6 +44,9 @@ export * from './tasks';
 export * from './triggerBindings';
 export * from './triggers';
 export * from './triggerTemplates';
+export * from './secrets';
+export * from './configmaps';
+export * from './pvc';
 
 function getCustomResourcesAPI({
   filters,

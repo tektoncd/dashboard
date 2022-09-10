@@ -14,6 +14,8 @@ limitations under the License.
 package utils
 
 import (
+	"bytes"
+	"io"
 	"net/http"
 	"strings"
 
@@ -26,4 +28,13 @@ func RespondError(response http.ResponseWriter, err error, statusCode int) {
 	response.Header().Set("Content-Type", "text/plain")
 	response.WriteHeader(statusCode)
 	response.Write([]byte(err.Error()))
+}
+
+// ResponseError - logs and writes an error response with a desired status code
+func ResponseError(response *http.Response, err error, statusCode int) *http.Response {
+	logging.Log.Error("Error: ", strings.Replace(err.Error(), "/", "", -1))
+	response.Header.Set("Content-Type", "text/plain")
+	response.StatusCode = statusCode
+	response.Body = io.NopCloser(bytes.NewReader([]byte(err.Error())))
+	return response
 }

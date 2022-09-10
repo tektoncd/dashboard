@@ -1,0 +1,24 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: e2e-pipelinerun-with-ws
+  namespace: ${TEST_NAMESPACE}
+  labels:
+    app: e2e-pipelinerun-with-ws
+spec:
+  workspaces:
+    - name: configmap-ws
+      configMap:
+        name: configmap-test
+    - name: secret-ws
+      secret:
+        secretName: secret-test
+    - name: empDir-ws
+      emptyDir: {}
+    - name: optional-ws
+      configMap:
+        name: configmap-test
+  pipelineRef:
+    name: pipeline-with-ws
+  serviceAccountName: e2e-tests

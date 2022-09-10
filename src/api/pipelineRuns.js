@@ -82,6 +82,7 @@ export function createPipelineRun({
   pipelinePendingStatus,
   pipelineRunName = `${pipelineName}-run-${Date.now()}`,
   resources,
+  workspaces,
   serviceAccount,
   timeout
 }) {
@@ -106,6 +107,40 @@ export function createPipelineRun({
         name,
         value: params[name]
       })),
+      workspaces: Object.keys(workspaces).map(name => {
+        const ws = workspaces[name];
+        if (ws.kind === 'Secret') {
+          return {
+            name,
+            secret: {
+              secretName: ws.value
+            }
+          };
+        }
+        if (ws.kind === 'ConfigMap') {
+          return {
+            name,
+            configMap: {
+              name: ws.value
+            }
+          };
+        }
+        if (ws.kind === 'PersistentVolumeClaim') {
+          return {
+            name,
+            persistentVolumeClaim: {
+              claimName: ws.value
+            }
+          };
+        }
+        if (ws.kind === 'emptyDir') {
+          return {
+            name,
+            emptyDir: {}
+          };
+        }
+        throw Error(`unsupported workspace kind: ${ws.kind}`);
+      }),
       status: pipelinePendingStatus
     }
   };

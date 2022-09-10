@@ -168,7 +168,8 @@ func NewProxyHandler(apiProxyPrefix string, cfg *rest.Config, keepalive time.Dur
 	if err != nil {
 		return nil, err
 	}
-	proxy := proxy.NewUpgradeAwareHandler(target, transport, false, false, responder)
+	interceptorTransport := endpoints.NewK8sInterceptor(transport, target)
+	proxy := proxy.NewUpgradeAwareHandler(target, interceptorTransport, false, false, responder)
 	proxy.UpgradeTransport = upgradeTransport
 	proxy.UseRequestLocation = true
 	proxy.UseLocationHost = true
@@ -223,7 +224,6 @@ func protectWebSocket(h http.Handler) http.Handler {
 			http.Error(w, "websocket: request origin not allowed", http.StatusForbidden)
 			return
 		}
-
 		h.ServeHTTP(w, req)
 	})
 }

@@ -10,6 +10,7 @@ replace (
 )
 
 require (
+	github.com/stretchr/testify v1.8.0
 	github.com/tektoncd/plumbing v0.0.0-20220907123230-d2c8ccb63d02
 	go.uber.org/zap v1.23.0
 	k8s.io/apimachinery v0.22.0
@@ -29,6 +30,7 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/mxk/go-flowrate v0.0.0-20140419014527-cca7078d478f // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect

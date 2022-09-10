@@ -153,6 +153,122 @@ it('createPipelineRun with nodeSelector', () => {
   });
 });
 
+it('createPipelineRun with workspaces', () => {
+  const mockDateNow = jest
+    .spyOn(Date, 'now')
+    .mockImplementation(() => 'fake-timestamp');
+  const pipelineName = 'fake-pipelineName';
+  const resources = { 'fake-resource-name': 'fake-resource-value' };
+  const workspaces = {
+    'fake-workspace-secret-name': {
+      kind: 'Secret',
+      value: 'fake-ws-secret-value'
+    },
+    'fake-workspace-configmap-name': {
+      kind: 'ConfigMap',
+      value: 'fake-ws-configmap-value'
+    },
+    'fake-workspace-emptydir-name': {
+      kind: 'emptyDir'
+    },
+    'fake-workspace-pvc-name': {
+      kind: 'PersistentVolumeClaim',
+      value: 'fake-ws-pvc-value'
+    }
+  };
+  const params = { 'fake-param-name': 'fake-param-value' };
+  const serviceAccount = 'fake-serviceAccount';
+  const timeout = 'fake-timeout';
+  const payload = {
+    pipelineName,
+    resources,
+    workspaces,
+    params,
+    serviceAccount,
+    timeout
+  };
+  const data = {
+    apiVersion: 'tekton.dev/v1beta1',
+    kind: 'PipelineRun',
+    metadata: {
+      name: `${pipelineName}-run-${Date.now()}`
+    },
+    spec: {
+      pipelineRef: {
+        name: pipelineName
+      },
+      resources: Object.keys(resources).map(name => ({
+        name,
+        resourceRef: { name: resources[name] }
+      })),
+      params: Object.keys(params).map(name => ({
+        name,
+        value: params[name]
+      })),
+      workspaces: [
+        {
+          name: 'fake-workspace-secret-name',
+          secret: { secretName: workspaces['fake-workspace-secret-name'].value }
+        },
+        {
+          name: 'fake-workspace-configmap-name',
+          configMap: { name: workspaces['fake-workspace-configmap-name'].value }
+        },
+        {
+          name: 'fake-workspace-emptydir-name',
+          emptyDir: {}
+        },
+        {
+          name: 'fake-workspace-pvc-name',
+          persistentVolumeClaim: {
+            claimName: workspaces['fake-workspace-pvc-name'].value
+          }
+        }
+      ],
+      serviceAccountName: serviceAccount,
+      timeout
+    }
+  };
+  fetchMock.post('*', { body: data, status: 201 });
+  return API.createPipelineRun(payload).then(response => {
+    expect(response).toEqual(data);
+    expect(fetchMock.lastOptions()).toMatchObject({
+      body: JSON.stringify(data)
+    });
+    fetchMock.restore();
+    mockDateNow.mockRestore();
+  });
+});
+
+it('createPipelineRun when new workspace kind is unsupported then error', () => {
+  const mockDateNow = jest
+    .spyOn(Date, 'now')
+    .mockImplementation(() => 'fake-timestamp');
+  const pipelineName = 'fake-pipelineName';
+  const resources = { 'fake-resource-name': 'fake-resource-value' };
+  const workspaces = {
+    'fake-workspace-secret-name': {
+      kind: 'UnsupportedKind',
+      value: 'fake-ws-secret-value'
+    }
+  };
+  const params = { 'fake-param-name': 'fake-param-value' };
+  const serviceAccount = 'fake-serviceAccount';
+  const timeout = 'fake-timeout';
+  const payload = {
+    pipelineName,
+    resources,
+    workspaces,
+    params,
+    serviceAccount,
+    timeout
+  };
+  expect(() => {
+    API.createPipelineRun(payload);
+  }).toThrowError('unsupported workspace kind: UnsupportedKind');
+  mockDateNow.mockRestore();
+});
+
 it('deletePipelineRun', () => {
   const name = 'foo';
   const data = { fake: 'pipelineRun' };

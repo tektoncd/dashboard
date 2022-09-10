@@ -1,0 +1,21 @@
+{
+    "apiVersion": "v1",
+    "data": {
+        "version": "v0.39.0"
+    },
+    "kind": "ConfigMap",
+    "metadata": {
+        "annotations": {
+            "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"v1\",\"data\":{\"version\":\"v0.39.0\"},\"kind\":\"ConfigMap\",\"metadata\":{\"annotations\":{},\"labels\":{\"app.kubernetes.io/instance\":\"default\",\"app.kubernetes.io/part-of\":\"tekton-pipelines\"},\"name\":\"pipelines-info\",\"namespace\":\"tekton-pipelines\"}}\n"
+        },
+        "creationTimestamp": "2022-09-04T20:18:20Z",
+        "labels": {
+            "app.kubernetes.io/instance": "default",
+            "app.kubernetes.io/part-of": "tekton-pipelines"
+        },
+        "name": "pipelines-info",
+        "namespace": "tekton-pipelines",
+        "resourceVersion": "458",
+        "uid": "00554c67-fbe3-4d86-a3d4-3738ab16a300"
+    }
+}

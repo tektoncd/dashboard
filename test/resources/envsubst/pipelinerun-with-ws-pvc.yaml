@@ -1,0 +1,16 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: e2e-pipelinerun-with-ws-pvc
+  namespace: ${TEST_NAMESPACE}
+  labels:
+    app: e2e-pipelinerun-with-ws-pvc
+spec:
+  workspaces:
+    - name: pvc-ws
+      persistentVolumeClaim:
+        claimName: pvc-test
+  pipelineRef:
+    name: pipeline-with-ws-pvc
+  serviceAccountName: e2e-tests

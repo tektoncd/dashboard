@@ -1,0 +1,85 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: pipeline-with-ws
+  namespace: ${TEST_NAMESPACE}
+spec:
+  workspaces:
+    - name: configmap-ws
+    - name: secret-ws
+    - name: empDir-ws
+    - name: optional-ws
+      optional: true
+      description: Pipeline Workspace Description
+    - name: optional-unbound-ws
+      optional: true
+  tasks:
+    - name: hello
+      workspaces:
+        - name: configmap-ws
+          workspace: configmap-ws
+        - name: secret-ws
+          workspace: secret-ws
+        - name: empDir-ws
+          workspace: empDir-ws
+        - name: optional-ws
+          workspace: optional-ws
+        - name: optional-unbound-ws
+          workspace: optional-unbound-ws
+      taskSpec:
+        workspaces:
+          - name: configmap-ws
+          - name: secret-ws
+          - name: empDir-ws
+          - name: optional-ws
+            optional: true
+            description: Task Workspace Description
+          - name: optional-unbound-ws
+            optional: true
+        steps:
+          - name: write
+            image: busybox
+            script: |
+              #!/bin/ash
+              echo 'emptyDir-value' > $(workspaces.empDir-ws.path)/test
+              #echo 'volumeClaimTemplate-value' > $(workspaces.volumeClaimTemplate-ws.path)/test
+              echo "Hello World!"
+          - name: echo
+            image: busybox
+            script: |
+              #!/bin/sh
+              cat $(workspaces.configmap-ws.path)/version
+              actualConfigmap="$(cat $(workspaces.configmap-ws.path)/version)"
+              if [ "$actualConfigmap" != "configmap-version" ]; then
+                echo "Configmap. Actual: $actualConfigmap. Expected: configmap-version"
+                exit 1
+              fi
+              echo $actualConfigmap
+              actualSecret=$(cat $(workspaces.secret-ws.path)/kubeconfig)
+              if [ "$actualSecret" != "secret-kubeconfig" ]; then
+                echo "Secret. Actual: $actualSecret. Expected: secret-kubeconfig"
+                exit 1
+              fi
+              echo $actualSecret
+              actualEmptyDir=$(cat $(workspaces.empDir-ws.path)/test)
+              if [ "$actualEmptyDir" != "emptyDir-value" ]; then
+                echo "EmptyDir. Actual: $actualEmptyDir. Expected: emptyDir-value"
+                exit 1
+              fi
+              echo $actualEmptyDir
+              if [ "$(workspaces.optional-ws.bound)" == "true" ]
+              then
+                echo "optional-bound"
+              else
+                echo "'optional-ws' workspace is NOT bound, but should be"
+                exit 1
+              fi
+              if [ "$(workspaces.optional-unbound-ws.bound)" == "false" ]
+              then
+                echo "optional-unbound"
+              else
+                echo "'optional-unbound-ws' workspace is bound, but should NOT be"
+                exit 1
+              fi
+              echo "Hello World!"

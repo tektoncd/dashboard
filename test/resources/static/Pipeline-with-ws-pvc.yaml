@@ -1,0 +1,30 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: pipeline-with-ws-pvc
+  namespace: ${TEST_NAMESPACE}
+spec:
+  workspaces:
+    - name: pvc-ws
+  tasks:
+    - name: hello
+      workspaces:
+        - name: pvc-ws
+          workspace: pvc-ws
+      taskSpec:
+        workspaces:
+          - name: pvc-ws
+        steps:
+          - name: write
+            image: busybox
+            script: |
+              #!/bin/ash
+              echo 'pvc-value' > $(workspaces.pvc-ws.path)/test
+              echo "Hello World!"
+          - name: echo
+            image: busybox
+            script: |
+              #!/bin/ash
+              cat $(workspaces.pvc-ws.path)/test
+              echo "Hello World!"

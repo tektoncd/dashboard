@@ -44,6 +44,7 @@ import {
   useSelectedNamespace
 } from '../../api';
 import { isValidLabel } from '../../utils';
+import WorkspacesDropdown from '../WorkspacesDropdown/WorkspacesDropdown';
 
 const initialState = {
   creating: false,
@@ -60,6 +61,8 @@ const initialState = {
   pipelineRunName: '',
   resources: {},
   resourceSpecs: [],
+  workspaces: {},
+  workspaceSpecs: [],
   serviceAccount: '',
   submitError: '',
   timeout: '60',
@@ -77,6 +80,17 @@ const initialParamsState = paramSpecs => {
     [param.name]: param.default || ''
   });
   return paramSpecs.reduce(paramsReducer, {});
+};
+
+const initialWorkspaceState = workspaceSpecs => {
+  if (!workspaceSpecs) {
+    return {};
+  }
+  const workspaceReducer = (acc, resource) => ({
+    ...acc,
+    [resource.name]: {}
+  });
+  return workspaceSpecs.reduce(workspaceReducer, {});
 };
 
 const initialResourcesState = resourceSpecs => {
@@ -121,6 +135,7 @@ function CreatePipelineRun({ intl }) {
       pipelineRef,
       pipelineRunName,
       resources,
+      workspaces,
       serviceAccount,
       submitError,
       timeout,
@@ -134,7 +149,8 @@ function CreatePipelineRun({ intl }) {
     namespace: getNamespace(),
     pipelineRef: getPipelineName(),
     params: initialParamsState(null),
-    resources: initialResourcesState(null)
+    resources: initialResourcesState(null),
+    workspaces: initialWorkspaceState(null)
   });
 
   const { data: pipeline, error: pipelineError } = usePipeline(
@@ -144,8 +160,13 @@ function CreatePipelineRun({ intl }) {
 
   let paramSpecs;
   let resourceSpecs;
+  let workspaceSpecs;
   if (pipeline?.spec) {
-    ({ resources: resourceSpecs, params: paramSpecs } = pipeline.spec);
+    ({
+      resources: resourceSpecs,
+      params: paramSpecs,
+      workspaces: workspaceSpecs
+    } = pipeline.spec);
   }
 
   useTitleSync({
@@ -161,14 +182,24 @@ function CreatePipelineRun({ intl }) {
       pipelinePendingStatus: isPending ? 'PipelineRunPending' : ''
     }));
   };
+
   function checkFormValidation() {
-    // Namespace, PipelineRef, Resources, and Params must all have values
+    // Namespace, PipelineRef, Resources, Workspaces and Params must all have values
     const validNamespace = !!namespace;
     const validPipelineRef = !!pipelineRef;
     const validResources =
       !resources ||
       Object.keys(resources).reduce(
         (acc, name) => acc && !!resources[name],
+        true
+      );
+    const workspacesSpecMap = keyBy(workspaceSpecs, 'name');
+    const validWorkspaces =
+      !workspaces ||
+      Object.keys(workspacesSpecMap).reduce(
+        (acc, name) =>
+          acc &&
+          (!!workspaces[name] || workspacesSpecMap[name]?.optional === true),
         true
       );
     const paramSpecMap = keyBy(paramSpecs, 'name');
@@ -238,6 +269,7 @@ function CreatePipelineRun({ intl }) {
       validNamespace &&
       validPipelineRef &&
       validResources &&
+      validWorkspaces &&
       validParams &&
       timeoutTest &&
       validLabels &&
@@ -373,7 +405,8 @@ function CreatePipelineRun({ intl }) {
           ...state,
           pipelineRef: text,
           resources: initialResourcesState(resourceSpecs),
-          params: initialParamsState(paramSpecs)
+          params: initialParamsState(paramSpecs),
+          workspaces: initialParamsState(workspaceSpecs)
         };
       });
       return;
@@ -394,6 +427,27 @@ function CreatePipelineRun({ intl }) {
         [key]: value
       }
     }));
+  }
+
+  function initWorkspace(key) {
+    let workspace = workspaces[key];
+    if (workspace === undefined || workspace === '') {
+      workspaces[key] = {};
+      workspace = workspaces[key];
+    }
+    return workspace;
+  }
+
+  function handleWorkspaceChange(key, value, kind) {
+    setState(state => {
+      const workspace = initWorkspace(key);
+      workspace.value = value;
+      workspace.kind = kind;
+
+      return {
+        ...state
+      };
+    });
   }
 
   function handleSubmit(event) {
@@ -417,6 +471,7 @@ function CreatePipelineRun({ intl }) {
       pipelineName: pipelineRef,
       pipelineRunName: pipelineRunName || undefined,
       resources,
+      workspaces,
       params,
       pipelinePendingStatus,
       serviceAccount,
@@ -622,6 +677,46 @@ function CreatePipelineRun({ intl }) {
                   handleResourceChange(resourceSpec.name, text);
                 }}
               />
+            ))}
+          </FormGroup>
+        )}
+        {workspaceSpecs && workspaceSpecs.length !== 0 && (
+          <FormGroup legendText="Workspaces">
+            {workspaceSpecs.map(workspaceSpec => (
+              <>
+                <WorkspacesDropdown
+                  id={`create-pipelinerun--ws-dropdown-${workspaceSpec.name}`}
+                  key={`create-pipelinerun--ws-dropdown-${workspaceSpec.name}`}
+                  titleText={workspaceSpec.name}
+                  helperText={workspaceSpec.description}
+                  namespace={namespace}
+                  invalid={
+                    validationError &&
+                    (!workspaces[workspaceSpec.name] ||
+                      !workspaces[workspaceSpec.name].value) &&
+                    workspaceSpec.optional !== true
+                  }
+                  invalidText={intl.formatMessage({
+                    id: 'dashboard.createRun.invalidWorkspaces',
+                    defaultMessage: 'Workspaces cannot be empty'
+                  })}
+                  selectedItem={(() => {
+                    const ws = workspaces[workspaceSpec.name];
+                    return ws
+                      ? {
+                          id: ws.value,
+                          value: ws.value,
+                          text: ws.value,
+                          kind: ws.kind
+                        }
+                      : '';
+                  })()}
+                  onChange={({ selectedItem }) => {
+                    const { id, kind } = selectedItem || {};
+                    handleWorkspaceChange(workspaceSpec.name, id, kind);
+                  }}
+                />
+              </>
             ))}
           </FormGroup>
         )}

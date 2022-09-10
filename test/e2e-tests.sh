@@ -49,6 +49,10 @@ test_dashboard() {
   # kubectl or proxy (to create the necessary resources)
   local creationMethod=$1
 
+  readonly=false
+  if [[ "${@:2}" =~ "--read-only" ]]; then
+    readonly=true
+  fi
   header "Setting up environment (${@:2})"
   $tekton_repo_dir/scripts/installer install ${@:2}
   wait_dashboard_backend
@@ -81,16 +85,14 @@ test_dashboard() {
   fi
 
   # API/resource configuration
-  export PIPELINE_RUN_NAME="e2e-pipelinerun"
-  export POD_LABEL="tekton.dev/pipelineRun=$PIPELINE_RUN_NAME"
-  export EXPECTED_RETURN_VALUE="Hello World!"
   export TEKTON_PROXY_URL="http://localhost:8000/apis/tekton.dev/v1beta1/namespaces/$TEST_NAMESPACE"
 
   # Kubectl static resources
   echo "Creating static resources using kubectl..."
   staticFiles=($(find ${tekton_repo_dir}/test/resources/static -iname "*.yaml"))
   for file in ${staticFiles[@]};do
-    cat "${file}" | envsubst | kubectl apply --namespace $TEST_NAMESPACE -f - || fail_test "Failed to create static resource: ${file}"
+    # shellcheck disable=SC2016
+    cat "${file}" | envsubst '$TEST_NAMESPACE' | kubectl apply --namespace $TEST_NAMESPACE -f - || fail_test "Failed to create static resource: ${file}"
   done
 
   if [ "$creationMethod" = "kubectl" ]; then
@@ -98,7 +100,8 @@ test_dashboard() {
     echo "Creating resources using kubectl..."
     pipelineRunFiles=($(find ${tekton_repo_dir}/test/resources/envsubst -iname "pipelinerun*.yaml"))
     for file in ${pipelineRunFiles[@]};do
-      cat "${file}" | envsubst | kubectl apply --namespace $TEST_NAMESPACE -f - || fail_test "Failed to create pipelinerun: ${file}"
+      # shellcheck disable=SC2016
+      cat "${file}" | envsubst '$TEST_NAMESPACE' | kubectl apply --namespace $TEST_NAMESPACE -f - || fail_test "Failed to create pipelinerun: ${file}"
     done
   elif [ "$creationMethod" = "proxy" ]; then
     # Create envsubst resources through dashboard proxy
@@ -110,58 +113,25 @@ test_dashboard() {
   else
     fail_test "Unknown resources creation method: ${creationMethod}"
   fi
+  # Wait for PVC
+  echo "Wait for PVC to become bound..."
+  kubectl wait --for=jsonpath='{.status.phase}'=Bound --timeout=30s --namespace $TEST_NAMESPACE pvc/pvc-test
 
   print_diagnostic_info
-  # Wait for PipelineRun
+
   echo "Checking results..."
-  URL="${TEKTON_PROXY_URL}/pipelineruns/$PIPELINE_RUN_NAME"
-  pipelineRunFound=false
-  for i in {1..20}
-  do
-    # curl will exit with code 22 if not found
-    curl -sS -f -H "Content-Type: application/json" $URL
-    if [ "$?" = "0" ]; then
-      pipelineRunFound=true
-      echo "PipelineRun successfully retrieved"
-      break
-    else
-      echo "Sleeping 5 seconds before retry..."
-      sleep 5
-    fi
-  done
-
-  if [ "$pipelineRunFound" = "false" ]; then
-    fail_test "PipelineRun not found"
-  fi
-
-  echo "Waiting for run to complete..."
-  runCompleted=false
-  for i in $(eval echo "{$START..$END}")
-  do
-    wait=$(kubectl get pods --namespace $TEST_NAMESPACE -l $POD_LABEL -o 'jsonpath={..status.conditions[?(@.reason=="PodCompleted")]}')
-    if [ "$wait" != "" ]; then
-      runCompleted=true
-      echo "Run completed"
-      break
-    else
-      echo "Sleeping 5 seconds before retry..."
-      sleep 5
-    fi
-  done
-
-  if [ "$runCompleted" = "false" ]; then
-    echo "Here's the failed pod info"
-    kubectl get pod --namespace $TEST_NAMESPACE -l $POD_LABEL -o name -o yaml
-    kubectl describe pod --namespace $TEST_NAMESPACE -l $POD_LABEL
-    fail_test "Test Failure, TaskRun pod did not complete, see above for the PV and pod information"
-  fi
-
-  logs=$(kubectl logs --namespace $TEST_NAMESPACE -l $POD_LABEL)
-  if [ "$logs" = "$EXPECTED_RETURN_VALUE" ]; then
-    echo "PipelineRun successfully executed"
-  else
-    fail_test "PipelineRun error, returned an incorrect message: $logs"
-  fi
+  export PIPELINE_RUN_NAME="e2e-pipelinerun"
+  export POD_LABEL="tekton.dev/pipelineRun=$PIPELINE_RUN_NAME"
+  export EXPECTED_RETURN_VALUE="Hello World!"
+  waitPipelineRun
+  export PIPELINE_RUN_NAME="e2e-pipelinerun-with-ws"
+  export POD_LABEL="tekton.dev/pipelineRun=$PIPELINE_RUN_NAME"
+  export EXPECTED_RETURN_VALUE="Hello World!"
+  waitPipelineRun
+  export PIPELINE_RUN_NAME="e2e-pipelinerun-with-ws-pvc"
+  export POD_LABEL="tekton.dev/pipelineRun=$PIPELINE_RUN_NAME"
+  export EXPECTED_RETURN_VALUE="Hello World!"
+  waitPipelineRun
 
   echo "Running browser E2E tests…"
   VIDEO_PATH=$ARTIFACTS/videos
@@ -170,7 +140,11 @@ test_dashboard() {
   echo "Videos of failing tests will be stored at $VIDEO_PATH"
   # In case of failure we'll upload videos of the failing tests
   # Our Cypress config will delete videos of passing tests before exiting
-  docker run --rm --network=host -v $VIDEO_PATH:/home/node/cypress/videos dashboard-e2e || fail_test "Browser E2E tests failed"
+  if [[ "$readonly" == true ]]; then
+      docker run --rm --network=host -v $VIDEO_PATH:/home/node/cypress/videos dashboard-e2e -- --spec "cypress/e2e/common/*.js" || fail_test "Browser read-only E2E tests failed"
+  else
+      docker run --rm --network=host -v $VIDEO_PATH:/home/node/cypress/videos dashboard-e2e || fail_test "Browser E2E tests failed"
+  fi
 
   # If we get here the tests passed, no need to upload artifacts
   rm -rf $VIDEO_PATH
@@ -180,6 +154,59 @@ test_dashboard() {
 
   echo "Deleting namespace $TEST_NAMESPACE"
   kubectl delete ns $TEST_NAMESPACE
+}
+
+waitPipelineRun() {
+    URL="${TEKTON_PROXY_URL}/pipelineruns/$PIPELINE_RUN_NAME"
+    pipelineRunFound=false
+    for i in {1..20}
+    do
+      # curl will exit with code 22 if not found
+      curl -sS -f -H "Content-Type: application/json" $URL
+      if [ "$?" = "0" ]; then
+        pipelineRunFound=true
+        echo "PipelineRun successfully retrieved"
+        break
+      else
+        echo "Sleeping 5 seconds before retry..."
+        sleep 5
+      fi
+    done
+
+    if [ "$pipelineRunFound" = "false" ]; then
+      fail_test "PipelineRun not found"
+    fi
+
+    echo "Waiting for run to complete..."
+    runCompleted=false
+    for i in $(eval echo "{$START..$END}")
+    do
+      wait=$(kubectl get pods --namespace $TEST_NAMESPACE -l $POD_LABEL -o 'jsonpath={..status.conditions[?(@.reason=="PodCompleted")]}')
+      if [ "$wait" != "" ]; then
+        runCompleted=true
+        echo "Run completed"
+        break
+      else
+        echo "Sleeping 5 seconds before retry..."
+        sleep 5
+      fi
+    done
+
+    if [ "$runCompleted" = "false" ]; then
+      echo "Here's the failed pod info"
+      kubectl get pod --namespace $TEST_NAMESPACE -l $POD_LABEL -o name -o yaml
+      kubectl describe pod --namespace $TEST_NAMESPACE -l $POD_LABEL
+      fail_test "Test Failure, TaskRun pod did not complete, see above for the PV and pod information"
+    fi
+
+    logs=$(kubectl logs --namespace $TEST_NAMESPACE -l $POD_LABEL)
+    if echo "$logs" | grep "$EXPECTED_RETURN_VALUE"
+    then
+      echo "PipelineRun successfully executed"
+    else
+      fail_test "PipelineRun error, returned an incorrect message: $logs"
+    fi
+
 }
 
 if [ -z "$SKIP_BUILD_TEST" ]; then
