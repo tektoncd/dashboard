@@ -19,6 +19,7 @@ import { UndefinedFilled20 as UndefinedIcon } from '@carbon/icons-react';
 import {
   Actions,
   FormattedDuration,
+  Param,
   ResourceDetails,
   StatusIcon,
   Table
@@ -130,7 +131,7 @@ function Run({ intl }) {
     run?.spec?.params?.map(({ name, value }) => ({
       id: name,
       name,
-      value
+      value: <Param>{value}</Param>
     })) || [];
 
   function deleteResource() {
