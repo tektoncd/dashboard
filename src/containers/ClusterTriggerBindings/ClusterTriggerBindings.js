@@ -83,7 +83,6 @@ function ClusterTriggerBindings({ intl }) {
     <ListPageLayout
       error={getError()}
       filters={filters}
-      hideNamespacesDropdown
       resources={clusterTriggerBindings}
       title="ClusterTriggerBindings"
     >

@@ -53,7 +53,9 @@ import {
   EventListeners,
   Extension,
   Extensions,
+  HeaderBarContent,
   ImportResources,
+  NamespacedRoute,
   NotFound,
   PipelineResource,
   PipelineResources,
@@ -150,6 +152,7 @@ function HeaderNameLink(props) {
 export function App({ lang }) {
   const [isSideNavExpanded, setIsSideNavExpanded] = useState(true);
   const [selectedNamespace, setSelectedNamespace] = useState(ALL_NAMESPACES);
+  const [namespacedMatch, setNamespacedMatch] = useState(null);
 
   const {
     error: propertiesError,
@@ -197,8 +200,13 @@ export function App({ lang }) {
   const logoutButton = <LogoutButton getLogoutURL={() => logoutURL} />;
 
   const namespaceContext = useMemo(
-    () => ({ selectedNamespace, selectNamespace: setSelectedNamespace }),
-    [selectedNamespace]
+    () => ({
+      namespacedMatch,
+      selectedNamespace,
+      selectNamespace: setSelectedNamespace,
+      setNamespacedMatch
+    }),
+    [namespacedMatch, selectedNamespace]
   );
 
   return (
@@ -214,20 +222,25 @@ export function App({ lang }) {
         {!showLoadingState && (
           <Router>
             <>
-              <Header
-                headerNameProps={{
-                  element: HeaderNameLink
-                }}
-                isSideNavExpanded={isSideNavExpanded}
-                logoutButton={logoutButton}
-                onHeaderMenuButtonClick={() => {
-                  setIsSideNavExpanded(
-                    prevIsSideNavExpanded => !prevIsSideNavExpanded
-                  );
-                }}
-              />
               <Route path={paths.byNamespace({ path: '/*' })}>
-                {() => <SideNav expanded={isSideNavExpanded} />}
+                {() => (
+                  <>
+                    <Header
+                      headerNameProps={{
+                        element: HeaderNameLink
+                      }}
+                      isSideNavExpanded={isSideNavExpanded}
+                      onHeaderMenuButtonClick={() => {
+                        setIsSideNavExpanded(
+                          prevIsSideNavExpanded => !prevIsSideNavExpanded
+                        );
+                      }}
+                    >
+                      <HeaderBarContent logoutButton={logoutButton} />
+                    </Header>
+                    <SideNav expanded={isSideNavExpanded} />
+                  </>
+                )}
               </Route>
 
               <Content
@@ -243,12 +256,24 @@ export function App({ lang }) {
                       exact
                       render={() => <Redirect to={urls.about()} />}
                     />
-                    <Route path={paths.pipelines.all()} exact>
-                      <Pipelines />
-                    </Route>
-                    <Route path={paths.pipelines.byNamespace()} exact>
-                      <Pipelines />
-                    </Route>
+                    <Route
+                      path={paths.pipelines.all()}
+                      exact
+                      render={() => (
+                        <NamespacedRoute>
+                          <Pipelines />
+                        </NamespacedRoute>
+                      )}
+                    />
+                    <Route
+                      path={paths.pipelines.byNamespace()}
+                      exact
+                      render={() => (
+                        <NamespacedRoute>
+                          <Pipelines />
+                        </NamespacedRoute>
+                      )}
+                    />
                     <Route
                       path={paths.pipelineRuns.create()}
                       exact
@@ -258,27 +283,71 @@ export function App({ lang }) {
                         </ReadWriteRoute>
                       )}
                     />
-                    <Route path={paths.pipelineRuns.all()}>
-                      <PipelineRuns />
-                    </Route>
-                    <Route path={paths.pipelineRuns.byNamespace()} exact>
-                      <PipelineRuns />
-                    </Route>
-                    <Route path={paths.pipelineRuns.byPipeline()} exact>
-                      <PipelineRuns />
-                    </Route>
-                    <Route path={paths.pipelineRuns.byName()}>
-                      <PipelineRun />
-                    </Route>
-                    <Route path={paths.pipelineResources.all()} exact>
-                      <PipelineResources />
-                    </Route>
-                    <Route path={paths.pipelineResources.byNamespace()} exact>
-                      <PipelineResources />
-                    </Route>
-                    <Route path={paths.pipelineResources.byName()} exact>
-                      <PipelineResource />
-                    </Route>
+                    <Route
+                      path={paths.pipelineRuns.all()}
+                      render={() => (
+                        <NamespacedRoute>
+                          <PipelineRuns />
+                        </NamespacedRoute>
+                      )}
+                    />
+                    <Route
+                      path={paths.pipelineRuns.byNamespace()}
+                      exact
+                      render={() => (
+                        <NamespacedRoute>
+                          <PipelineRuns />
+                        </NamespacedRoute>
+                      )}
+                    />
+                    <Route
+                      path={paths.pipelineRuns.byPipeline()}
+                      exact
+                      render={() => (
+                        <NamespacedRoute>
+                          <PipelineRuns />
+                        </NamespacedRoute>
+                      )}
+                    />
+                    <Route
+                      path={paths.pipelineRuns.byName()}
+                      render={() => (
+                        <NamespacedRoute
+                          allNamespacesPath={paths.pipelineRuns.all()}
+                        >
+                          <PipelineRun />
+                        </NamespacedRoute>
+                      )}
+                    />
+                    <Route
+                      path={paths.pipelineResources.all()}
+                      exact
+                      render={() => (
+                        <NamespacedRoute>
+                          <PipelineResources />
+                        </NamespacedRoute>
+                      )}
+                    />
+                    <Route
+                      path={paths.pipelineResources.byNamespace()}
+                      exact
+                      render={() => (
+                        <NamespacedRoute>
+                          <PipelineResources />
+                        </NamespacedRoute>
+                      )}
+                    />
+                    <Route
+                      path={paths.pipelineResources.byName()}
+                      exact
+                      render={() => (
+                        <NamespacedRoute
+                          allNamespacesPath={paths.pipelineResources.all()}
+                        >
+                          <PipelineResource />
+                        </NamespacedRoute>
+                      )}
+                    />
                     <Route
                       path={paths.pipelineResources.create()}
                       exact
@@ -289,12 +358,24 @@ export function App({ lang }) {
                       )}
                     />
 
-                    <Route path={paths.tasks.all()} exact>
-                      <Tasks />
-                    </Route>
-                    <Route path={paths.tasks.byNamespace()} exact>
-                      <Tasks />
-                    </Route>
+                    <Route
+                      path={paths.tasks.all()}
+                      exact
+                      render={() => (
+                        <NamespacedRoute>
+                          <Tasks />
+                        </NamespacedRoute>
+                      )}
+                    />
+                    <Route
+                      path={paths.tasks.byNamespace()}
+                      exact
+                      render={() => (
+                        <NamespacedRoute>
+                          <Tasks />
+                        </NamespacedRoute>
+                      )}
+                    />
                     <Route
                       path={paths.taskRuns.create()}
                       exact
@@ -304,28 +385,70 @@ export function App({ lang }) {
                         </ReadWriteRoute>
                       )}
                     />
-                    <Route path={paths.taskRuns.all()}>
-                      <TaskRuns />
-                    </Route>
-                    <Route path={paths.taskRuns.byNamespace()} exact>
-                      <TaskRuns />
-                    </Route>
-                    <Route path={paths.taskRuns.byTask()} exact>
-                      <TaskRuns />
-                    </Route>
-                    <Route path={paths.taskRuns.byName()} exact>
-                      <TaskRun />
-                    </Route>
+                    <Route
+                      path={paths.taskRuns.all()}
+                      render={() => (
+                        <NamespacedRoute>
+                          <TaskRuns />
+                        </NamespacedRoute>
+                      )}
+                    />
+                    <Route
+                      path={paths.taskRuns.byNamespace()}
+                      exact
+                      render={() => (
+                        <NamespacedRoute>
+                          <TaskRuns />
+                        </NamespacedRoute>
+                      )}
+                    />
+                    <Route
+                      path={paths.taskRuns.byTask()}
+                      exact
+                      render={() => (
+                        <NamespacedRoute>
+                          <TaskRuns />
+                        </NamespacedRoute>
+                      )}
+                    />
+                    <Route
+                      path={paths.taskRuns.byName()}
+                      exact
+                      render={() => (
+                        <NamespacedRoute
+                          allNamespacesPath={paths.taskRuns.all()}
+                        >
+                          <TaskRun />
+                        </NamespacedRoute>
+                      )}
+                    />
 
-                    <Route path={paths.runs.all()}>
-                      <Runs />
-                    </Route>
-                    <Route path={paths.runs.byNamespace()} exact>
-                      <Runs />
-                    </Route>
-                    <Route path={paths.runs.byName()} exact>
-                      <Run />
-                    </Route>
+                    <Route
+                      path={paths.runs.all()}
+                      render={() => (
+                        <NamespacedRoute>
+                          <Runs />
+                        </NamespacedRoute>
+                      )}
+                    />
+                    <Route
+                      path={paths.runs.byNamespace()}
+                      exact
+                      render={() => (
+                        <NamespacedRoute>
+                          <Runs />
+                        </NamespacedRoute>
+                      )}
+                    />
+                    <Route
+                      path={paths.runs.byName()}
+                      exact
+                      render={() => (
+                        <NamespacedRoute allNamespacesPath={paths.runs.all()}>
+                          <Run />
+                        </NamespacedRoute>
+                      )}
+                    />
 
                     <Route path={paths.clusterTasks.all()} exact>
                       <ClusterTasks />
@@ -347,48 +470,128 @@ export function App({ lang }) {
                       )}
                     />
 
-                    <Route path={paths.eventListeners.all()} exact>
-                      <EventListeners />
-                    </Route>
-                    <Route path={paths.eventListeners.byNamespace()} exact>
-                      <EventListeners />
-                    </Route>
-                    <Route path={paths.eventListeners.byName()} exact>
-                      <EventListener />
-                    </Route>
-                    <Route path={paths.triggers.byName()} exact>
-                      <Trigger />
-                    </Route>
-                    <Route path={paths.triggers.all()} exact>
-                      <Triggers />
-                    </Route>
-                    <Route path={paths.triggers.byNamespace()} exact>
-                      <Triggers />
-                    </Route>
-                    <Route path={paths.triggerBindings.byName()} exact>
-                      <TriggerBinding />
-                    </Route>
-                    <Route path={paths.triggerBindings.all()} exact>
-                      <TriggerBindings />
-                    </Route>
-                    <Route path={paths.triggerBindings.byNamespace()} exact>
-                      <TriggerBindings />
-                    </Route>
+                    <Route
+                      path={paths.eventListeners.all()}
+                      exact
+                      render={() => (
+                        <NamespacedRoute>
+                          <EventListeners />
+                        </NamespacedRoute>
+                      )}
+                    />
+                    <Route
+                      path={paths.eventListeners.byNamespace()}
+                      exact
+                      render={() => (
+                        <NamespacedRoute>
+                          <EventListeners />
+                        </NamespacedRoute>
+                      )}
+                    />
+                    <Route
+                      path={paths.eventListeners.byName()}
+                      exact
+                      render={() => (
+                        <NamespacedRoute
+                          allNamespacesPath={paths.eventListeners.all()}
+                        >
+                          <EventListener />
+                        </NamespacedRoute>
+                      )}
+                    />
+                    <Route
+                      path={paths.triggers.byName()}
+                      exact
+                      render={() => (
+                        <NamespacedRoute
+                          allNamespacesPath={paths.triggers.all()}
+                        >
+                          <Trigger />
+                        </NamespacedRoute>
+                      )}
+                    />
+                    <Route
+                      path={paths.triggers.all()}
+                      exact
+                      render={() => (
+                        <NamespacedRoute>
+                          <Triggers />
+                        </NamespacedRoute>
+                      )}
+                    />
+                    <Route
+                      path={paths.triggers.byNamespace()}
+                      exact
+                      render={() => (
+                        <NamespacedRoute>
+                          <Triggers />
+                        </NamespacedRoute>
+                      )}
+                    />
+                    <Route
+                      path={paths.triggerBindings.byName()}
+                      exact
+                      render={() => (
+                        <NamespacedRoute
+                          allNamespacesPath={paths.triggerBindings.all()}
+                        >
+                          <TriggerBinding />
+                        </NamespacedRoute>
+                      )}
+                    />
+                    <Route
+                      path={paths.triggerBindings.all()}
+                      exact
+                      render={() => (
+                        <NamespacedRoute>
+                          <TriggerBindings />
+                        </NamespacedRoute>
+                      )}
+                    />
+                    <Route
+                      path={paths.triggerBindings.byNamespace()}
+                      exact
+                      render={() => (
+                        <NamespacedRoute>
+                          <TriggerBindings />
+                        </NamespacedRoute>
+                      )}
+                    />
                     <Route path={paths.clusterTriggerBindings.byName()} exact>
                       <ClusterTriggerBinding />
                     </Route>
                     <Route path={paths.clusterTriggerBindings.all()} exact>
                       <ClusterTriggerBindings />
                     </Route>
-                    <Route path={paths.triggerTemplates.byName()} exact>
-                      <TriggerTemplate />
-                    </Route>
-                    <Route path={paths.triggerTemplates.all()} exact>
-                      <TriggerTemplates />
-                    </Route>
-                    <Route path={paths.triggerTemplates.byNamespace()} exact>
-                      <TriggerTemplates />
-                    </Route>
+                    <Route
+                      path={paths.triggerTemplates.byName()}
+                      exact
+                      render={() => (
+                        <NamespacedRoute
+                          allNamespacesPath={paths.triggerTemplates.all()}
+                        >
+                          <TriggerTemplate />
+                        </NamespacedRoute>
+                      )}
+                    />
+                    <Route
+                      path={paths.triggerTemplates.all()}
+                      exact
+                      render={() => (
+                        <NamespacedRoute>
+                          <TriggerTemplates />
+                        </NamespacedRoute>
+                      )}
+                    />
+                    <Route
+                      path={paths.triggerTemplates.byNamespace()}
+                      exact
+                      render={() => (
+                        <NamespacedRoute>
+                          <TriggerTemplates />
+                        </NamespacedRoute>
+                      )}
+                    />
                     <Route path={paths.clusterInterceptors.all()} exact>
                       <ClusterInterceptors />
                     </Route>
@@ -409,21 +612,47 @@ export function App({ lang }) {
                         </Route>
                       ))}
 
-                    <Route path={paths.rawCRD.byNamespace()} exact>
-                      <CustomResourceDefinition />
-                    </Route>
+                    <Route
+                      path={paths.rawCRD.byNamespace()}
+                      exact
+                      render={() => (
+                        <NamespacedRoute allNamespacesPath={paths.rawCRD.all()}>
+                          <CustomResourceDefinition />
+                        </NamespacedRoute>
+                      )}
+                    />
                     <Route path={paths.rawCRD.cluster()} exact>
                       <CustomResourceDefinition />
                     </Route>
-                    <Route path={paths.kubernetesResources.all()} exact>
-                      <ResourceList />
-                    </Route>
-                    <Route path={paths.kubernetesResources.byNamespace()} exact>
-                      <ResourceList />
-                    </Route>
-                    <Route path={paths.kubernetesResources.byName()} exact>
-                      <CustomResourceDefinition />
-                    </Route>
+                    <Route
+                      path={paths.kubernetesResources.all()}
+                      exact
+                      render={() => (
+                        <NamespacedRoute>
+                          <ResourceList />
+                        </NamespacedRoute>
+                      )}
+                    />
+                    <Route
+                      path={paths.kubernetesResources.byNamespace()}
+                      exact
+                      render={() => (
+                        <NamespacedRoute>
+                          <ResourceList />
+                        </NamespacedRoute>
+                      )}
+                    />
+                    <Route
+                      path={paths.kubernetesResources.byName()}
+                      exact
+                      render={() => (
+                        <NamespacedRoute
+                          allNamespacesPath={paths.kubernetesResources.all()}
+                        >
+                          <CustomResourceDefinition />
+                        </NamespacedRoute>
+                      )}
+                    />
                     <Route path={paths.kubernetesResources.cluster()} exact>
                       <CustomResourceDefinition />
                     </Route>

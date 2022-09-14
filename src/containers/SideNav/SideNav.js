@@ -11,8 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect } from 'react';
-import { matchPath, NavLink, useLocation, useParams } from 'react-router-dom';
+import React from 'react';
+import { matchPath, NavLink, useLocation } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import {
   SideNav as CarbonSideNav,
@@ -46,9 +46,8 @@ function SideNav({ expanded, intl, showKubernetesResources }) {
   }
 
   const location = useLocation();
-  const { namespace } = useParams();
 
-  const { selectedNamespace, selectNamespace } = useSelectedNamespace();
+  const { selectedNamespace } = useSelectedNamespace();
   const tenantNamespace = useTenantNamespace();
   const { data: extensions = [] } = useExtensions(
     {
@@ -56,12 +55,6 @@ function SideNav({ expanded, intl, showKubernetesResources }) {
     },
     { disableWebSocket: true }
   );
-
-  useEffect(() => {
-    if (namespace) {
-      selectNamespace(namespace);
-    }
-  }, [namespace]);
 
   function getMenuItemProps(to) {
     return {

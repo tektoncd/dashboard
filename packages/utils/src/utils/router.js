@@ -122,6 +122,9 @@ export const paths = {
     }
   },
   rawCRD: {
+    all() {
+      return '/:type';
+    },
     byNamespace() {
       return byNamespace({ path: '/:type/:name' });
     },

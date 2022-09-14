@@ -14,10 +14,8 @@ limitations under the License.
 import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Table } from '@tektoncd/dashboard-components';
-import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
 import ListPageLayoutContainer from './ListPageLayout';
-import { NamespaceContext } from '../../api/utils';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -37,11 +35,6 @@ const namespaces = [
   'tekton-pipelines'
 ].map(namespace => ({ metadata: { name: namespace } }));
 
-const namespaceContext = {
-  selectedNamespace: ALL_NAMESPACES,
-  selectNamespace: () => {}
-};
-
 export default {
   args: {
     hideNamespacesDropdown: false,
@@ -57,9 +50,7 @@ export default {
 
       return (
         <QueryClientProvider client={queryClient}>
-          <NamespaceContext.Provider value={namespaceContext}>
-            <Story />
-          </NamespaceContext.Provider>
+          <Story />
         </QueryClientProvider>
       );
     }

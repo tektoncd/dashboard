@@ -13,40 +13,23 @@ limitations under the License.
 
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import {
-  generatePath,
-  useHistory,
-  useLocation,
-  useParams,
-  useRouteMatch
-} from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import { InlineNotification, Pagination } from 'carbon-components-react';
-import {
-  ALL_NAMESPACES,
-  getErrorMessage,
-  paths
-} from '@tektoncd/dashboard-utils';
+import { getErrorMessage } from '@tektoncd/dashboard-utils';
 
-import { LabelFilter, NamespacesDropdown } from '..';
-import { useSelectedNamespace, useTenantNamespace } from '../../api';
+import { LabelFilter } from '..';
 
 export const ListPageLayout = ({
   children,
   error,
   filters,
-  hideNamespacesDropdown,
   intl,
   resources = [],
   title
 }) => {
   const history = useHistory();
   const location = useLocation();
-  const match = useRouteMatch();
-  const params = useParams();
-  const tenantNamespace = useTenantNamespace();
-  const { selectedNamespace: namespace, selectNamespace } =
-    useSelectedNamespace();
 
   const [pageSize, setPageSize] = useState(100);
   const [page, setPage] = useState(1); // pagination component counts from 1
@@ -62,32 +45,6 @@ export const ListPageLayout = ({
     localStorage.setItem('tkn-page-size', pageSize);
   }, [pageSize]);
 
-  function setPath(path) {
-    history.push(`${path}${location.search}`);
-  }
-
-  function handleNamespaceSelected(event) {
-    const selectedNamespace = event.selectedItem?.id || ALL_NAMESPACES;
-
-    if (selectedNamespace === ALL_NAMESPACES) {
-      selectNamespace(selectedNamespace);
-      setPath(
-        generatePath(match.path.replace(paths.byNamespace(), ''), {
-          ...params
-        })
-      );
-      return;
-    }
-
-    const prefix = params?.namespace ? '' : paths.byNamespace();
-
-    const newURL = generatePath(`${prefix}${match.path}`, {
-      ...params,
-      namespace: selectedNamespace
-    });
-    setPath(newURL);
-  }
-
   const resourcesForCurrentPage = resources.slice(
     (page - 1) * pageSize,
     page * pageSize
@@ -97,16 +54,6 @@ export const ListPageLayout = ({
     <>
       <div className="tkn--list-page--header">
         <h1 id="main-content-header">{title}</h1>
-
-        {!(hideNamespacesDropdown || tenantNamespace) && (
-          <NamespacesDropdown
-            id="list-page-namespace-dropdown"
-            onChange={handleNamespaceSelected}
-            selectedItem={{ id: namespace, text: namespace }}
-            showAllNamespaces
-            titleText=""
-          />
-        )}
       </div>
       {filters && (
         <LabelFilter filters={filters} history={history} location={location} />
