@@ -98,7 +98,6 @@ function ClusterInterceptors({ intl }) {
     <ListPageLayout
       error={getError()}
       filters={filters}
-      hideNamespacesDropdown
       resources={clusterInterceptors}
       title="ClusterInterceptors"
     >

@@ -235,7 +235,6 @@ function ClusterTasksContainer({ intl }) {
     <ListPageLayout
       error={getError()}
       filters={filters}
-      hideNamespacesDropdown
       resources={clusterTasks}
       title="ClusterTasks"
     >

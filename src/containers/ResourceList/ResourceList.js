@@ -90,7 +90,6 @@ export function ResourceListContainer({ intl }) {
     <ListPageLayout
       error={getError()}
       filters={filters}
-      hideNamespacesDropdown={!isNamespaced}
       resources={resources}
       title={`${group}/${version}/${type}`}
     >

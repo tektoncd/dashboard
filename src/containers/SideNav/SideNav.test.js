@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,7 +16,6 @@ import { waitFor } from '@testing-library/react';
 
 import { renderWithRouter } from '../../utils/test';
 import * as API from '../../api';
-import * as APIUtils from '../../api/utils';
 import * as extensionsAPI from '../../api/extensions';
 import SideNav from './SideNav';
 
@@ -63,20 +62,6 @@ it('SideNav renders with triggers', async () => {
   await waitFor(() => queryByText('EventListeners'));
   expect(queryByText('TriggerTemplates')).toBeTruthy();
   expect(queryByText('TriggerBindings')).toBeTruthy();
-});
-
-it('SideNav selects namespace based on URL', () => {
-  const namespace = 'default';
-  const selectNamespace = jest.fn();
-  jest
-    .spyOn(APIUtils, 'useSelectedNamespace')
-    .mockImplementation(() => ({ selectedNamespace: null, selectNamespace }));
-  const path = '/namespaces/:namespace/foo';
-  renderWithRouter(<SideNav expanded selectNamespace={selectNamespace} />, {
-    path,
-    route: `/namespaces/${namespace}/foo`
-  });
-  expect(selectNamespace).toHaveBeenCalledWith(namespace);
 });
 
 it('SideNav renders import in the default read-write mode', async () => {

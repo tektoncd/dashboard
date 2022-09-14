@@ -260,6 +260,13 @@ describe('pipelines', () => {
 });
 
 describe('rawCRD', () => {
+  it('all', () => {
+    const type = 'tasks';
+    expect(urls.rawCRD.all({ type })).toEqual(
+      generatePath(paths.rawCRD.all(), { type })
+    );
+  });
+
   it('byNamespace', () => {
     const type = 'tasks';
     const name = taskName;
