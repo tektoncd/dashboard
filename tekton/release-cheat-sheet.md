@@ -138,6 +138,6 @@ Congratulations, you're done!
 
 ## Important: Switch `kubectl` back to your own cluster by default.
 
-    ```bash
-    kubectl config use-context my-dev-cluster
-    ```
+```bash
+kubectl config use-context my-dev-cluster
+```
