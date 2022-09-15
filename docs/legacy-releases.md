@@ -8,6 +8,7 @@ For details of more recent versions, see [Which version should I use?](./README.
 
 | Version | Docs | Pipelines | Triggers |
 | ------- | ---- | --------- | -------- |
+| [v0.29.1](https://github.com/tektoncd/dashboard/releases/tag/v0.29.1) | [Docs @ v0.29.1](https://github.com/tektoncd/dashboard/tree/v0.29.1/docs) | v0.35.x - v0.39.x | v0.15.x - 0.21.x |
 | [v0.29.0](https://github.com/tektoncd/dashboard/releases/tag/v0.29.0) | [Docs @ v0.29.0](https://github.com/tektoncd/dashboard/tree/v0.29.0/docs) | v0.35.x - v0.39.x | v0.15.x - 0.21.x |
 | [v0.24.1](https://github.com/tektoncd/dashboard/releases/tag/v0.24.1) | [Docs @ v0.24.1](https://github.com/tektoncd/dashboard/tree/v0.24.1/docs) | v0.25.x - v0.32.x | v0.15.x - 0.18.x |
 | [v0.24.0](https://github.com/tektoncd/dashboard/releases/tag/v0.24.0) | [Docs @ v0.24.0](https://github.com/tektoncd/dashboard/tree/v0.24.0/docs) | v0.25.x - v0.32.x | v0.15.x - 0.18.x |
