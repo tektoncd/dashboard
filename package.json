@@ -102,11 +102,6 @@
     "node": "^16.13.2",
     "npm": "^8.1.2"
   },
-  "overrides": {
-    "git-url-parse": {
-      "git-up": "4.0.2"
-    }
-  },
   "//": "Workspaces must be listed explicitly to ensure they're processed in the correct order until npm natively supports detecting the topological order",
   "workspaces": [
     "packages/utils",
