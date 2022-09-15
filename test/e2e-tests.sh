@@ -163,8 +163,15 @@ test_dashboard() {
   fi
 
   echo "Running browser E2E tests…"
-  docker run --rm --network=host dashboard-e2e || fail_test "Browser E2E tests failed"
+  VIDEO_PATH=$ARTIFACTS/videos
+  mkdir -p $VIDEO_PATH
+  chmod -R 777 $VIDEO_PATH
+  # In case of failure we'll upload videos of the failing tests
+  # Our Cypress config will delete videos of passing tests before exiting
+  docker run --rm --network=host -v $VIDEO_PATH:/home/node/cypress/videos dashboard-e2e || fail_test "Browser E2E tests failed"
 
+  # If we get here the tests passed, no need to upload artifacts
+  rm -rf $VIDEO_PATH
   kill -9 $dashboardForwardPID
 
   $tekton_repo_dir/scripts/installer uninstall ${@:2}
