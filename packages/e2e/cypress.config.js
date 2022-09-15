@@ -12,6 +12,7 @@ limitations under the License.
 */
 
 const { defineConfig } = require('cypress');
+const { unlink } = require('node:fs/promises');
 
 const isCI = process.env.CI === 'true';
 
@@ -19,10 +20,20 @@ module.exports = defineConfig({
   e2e: {
     baseUrl: 'http://localhost:8000',
     // experimentalSessionAndOrigin: true, // default is false
-    experimentalStudio: true
+    experimentalStudio: true,
+    setupNodeEvents(on, _config) {
+      on('after:spec', (spec, results) => {
+        if (isCI && results && results.video && results.stats.failures === 0) {
+          console.log('Deleting video for passing test'); // eslint-disable-line no-console
+          return unlink(results.video);
+        }
+
+        return null;
+      });
+    }
   },
   screenshotOnRunFailure: !isCI,
-  video: !isCI,
+  video: true,
   viewportHeight: 800, // default 660
   viewportWidth: 1280 // default 1000
   // waitForAnimations: true // disable to account for spinners?
