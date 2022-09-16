@@ -288,6 +288,24 @@ fi
 }
 
 ingress() {
+INGRESS_DEFAULT_CLASS_NAME_CONFIG=""
+if [ "$INGRESS_DEFAULT_CLASS" == "true" ]; then
+INGRESS_DEFAULT_CLASS_NAME_CONFIG="ingressClassName: nginx"
+cat <<EOF >> $TMP_FILE
+---
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  labels:
+    app.kubernetes.io/component: controller
+  name: nginx
+  annotations:
+    ingressclass.kubernetes.io/is-default-class: "true"
+spec:
+  controller: k8s.io/ingress-nginx
+EOF
+fi
+
 if [ ! -z "$INGRESS_URL" ] && [ ! -z "$INGRESS_SECRET" ]; then
 cat <<EOF >> $TMP_FILE
 ---
@@ -297,6 +315,7 @@ metadata:
   name: tekton-dashboard
   namespace: $INSTALL_NAMESPACE
 spec:
+  $INGRESS_DEFAULT_CLASS_NAME_CONFIG
   tls:
   - hosts:
     - $INGRESS_URL
@@ -321,6 +340,7 @@ metadata:
   name: tekton-dashboard
   namespace: $INSTALL_NAMESPACE
 spec:
+  $INGRESS_DEFAULT_CLASS_NAME_CONFIG
   rules:
   - host: $INGRESS_URL
     http:
@@ -514,6 +534,9 @@ while [[ $# -gt 0 ]]; do
     '--tenant-namespace')
       shift
       TENANT_NAMESPACE="${1}"
+      ;;
+    '--ingress-default-class')
+      INGRESS_DEFAULT_CLASS="true"
       ;;
     '--ingress-url')
       shift

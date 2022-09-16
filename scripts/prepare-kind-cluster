@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2020-2021 The Tekton Authors
+# Copyright 2020-2022 The Tekton Authors
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -16,16 +16,24 @@ set -e
 CLUSTERNAME=tekton-dashboard
 DEFAULT_OPTIONS="--log-format console"
 ENABLE_INGRESS="false"
+KUBERNETES_NODE_IMAGE="kindest/node:v1.24.4@sha256:adfaebada924a26c2c9308edd53c6e33b3d4e453782c0063dc0028bdebaddf98"
 
 create_cluster() {
 if [ "$ENABLE_INGRESS" == "false" ]; then
-  kind create cluster --name $CLUSTERNAME
+  kind create cluster --name $CLUSTERNAME --config - <<EOF
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+- role: control-plane
+  image: $KUBERNETES_NODE_IMAGE
+EOF
 else
   kind create cluster --name $CLUSTERNAME --config - <<EOF
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
 - role: control-plane
+  image: $KUBERNETES_NODE_IMAGE
   kubeadmConfigPatches:
   - |
     kind: InitConfiguration
@@ -58,7 +66,7 @@ header() {
 
 install_ingress_nginx() {
   header 'Installing ingress controller'
-  kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-0.32.0/deploy/static/provider/kind/deploy.yaml
+  kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.3.1/deploy/static/provider/kind/deploy.yaml
   sleep 20
   kubectl wait -n ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=90s
 }
@@ -102,7 +110,7 @@ case $1 in
     install_ingress_nginx
     install_pipelines
     install_triggers
-    install_dashboard --ingress-url tekton-dashboard.127.0.0.1.nip.io $@
+    install_dashboard --ingress-url tekton-dashboard.127.0.0.1.nip.io --ingress-default-class $@
     ;;
   'update'|u)
     shift
