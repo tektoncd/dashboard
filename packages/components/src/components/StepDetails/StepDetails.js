@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,9 +16,9 @@ import PropTypes from 'prop-types';
 import { injectIntl } from 'react-intl';
 import { getStatus, getStepStatusReason } from '@tektoncd/dashboard-utils';
 
-import { DetailsHeader, StepDefinition, StepStatus, Tab, Tabs } from '..';
+import { DetailsHeader, StepDefinition, Tab, Tabs } from '..';
 
-const tabs = ['logs', 'status', 'details'];
+const tabs = ['logs', 'details'];
 
 const StepDetails = props => {
   const {
@@ -66,15 +66,6 @@ const StepDetails = props => {
           })}
         >
           {logContainer}
-        </Tab>
-        <Tab
-          id={`${stepName}-status`}
-          label={intl.formatMessage({
-            id: 'dashboard.taskRun.status',
-            defaultMessage: 'Status'
-          })}
-        >
-          <StepStatus status={stepStatus} />
         </Tab>
         <Tab
           id={`${stepName}-details`}

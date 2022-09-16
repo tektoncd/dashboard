@@ -234,7 +234,6 @@
     "dashboard.skipToContent": "",
     "dashboard.startPipelineRun.actionText": "",
     "dashboard.step.definitionNotAvailable": "description : définition d'étape non disponible",
-    "dashboard.step.statusNotAvailable": "Aucun statut disponible",
     "dashboard.stepDefinition.inputResources": "",
     "dashboard.stepDefinition.outputResources": "",
     "dashboard.tableHeader.createdTime": "Création",

@@ -234,7 +234,6 @@
     "dashboard.skipToContent": "",
     "dashboard.startPipelineRun.actionText": "",
     "dashboard.step.definitionNotAvailable": "설명: 단계 정의를 사용할 수 없음",
-    "dashboard.step.statusNotAvailable": "사용 가능한 상태가 없음",
     "dashboard.stepDefinition.inputResources": "",
     "dashboard.stepDefinition.outputResources": "",
     "dashboard.tableHeader.createdTime": "작성일",
