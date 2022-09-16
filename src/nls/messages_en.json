@@ -234,7 +234,6 @@
     "dashboard.skipToContent": "Skip to main content",
     "dashboard.startPipelineRun.actionText": "Start",
     "dashboard.step.definitionNotAvailable": "Step definition not available",
-    "dashboard.step.statusNotAvailable": "Status not available",
     "dashboard.stepDefinition.inputResources": "Input resources",
     "dashboard.stepDefinition.outputResources": "Output resources",
     "dashboard.tableHeader.createdTime": "Created",

@@ -234,7 +234,6 @@
     "dashboard.skipToContent": "メインコンテンツへ",
     "dashboard.startPipelineRun.actionText": "",
     "dashboard.step.definitionNotAvailable": "利用可能な定義がありません",
-    "dashboard.step.statusNotAvailable": "ステータスは使用できません",
     "dashboard.stepDefinition.inputResources": "入力リソース",
     "dashboard.stepDefinition.outputResources": "出力リソース",
     "dashboard.tableHeader.createdTime": "作成日",

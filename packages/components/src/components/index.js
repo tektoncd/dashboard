@@ -45,7 +45,6 @@ export { default as StatusIcon } from './StatusIcon';
 export { default as Step } from './Step';
 export { default as StepDefinition } from './StepDefinition';
 export { default as StepDetails } from './StepDetails';
-export { default as StepStatus } from './StepStatus';
 export { default as Tab } from './Tab';
 export { default as Table } from './Table';
 export { default as Tabs } from './Tabs';
