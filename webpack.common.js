@@ -27,6 +27,7 @@ module.exports = ({ mode }) => ({
       },
       {
         test: /\.js$/,
+        exclude: [path.resolve(__dirname, 'packages', 'e2e')],
         include: [
           path.resolve(__dirname, 'src'),
           path.resolve(__dirname, 'packages')

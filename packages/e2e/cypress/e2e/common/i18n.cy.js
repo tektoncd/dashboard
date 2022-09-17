@@ -16,6 +16,7 @@ describe('Translations', () => {
     cy.visit('/#/about', {
       onBeforeLoad(win) {
         Object.defineProperty(win.navigator, 'language', {
+          configurable: true,
           value: 'zh-Hans'
         });
       }
