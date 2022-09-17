@@ -12,3 +12,14 @@ limitations under the License.
 */
 
 import './commands';
+
+beforeEach(() => {
+  cy.on('window:before:load', win => {
+    // we want to ensure the browser is using English as its language so tests
+    // that make assertions or locate elements by text content work as expected
+    Object.defineProperty(win.navigator, 'language', {
+      configurable: true,
+      value: 'en'
+    });
+  });
+});
