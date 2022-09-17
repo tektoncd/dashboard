@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,6 +14,7 @@ limitations under the License.
 import React from 'react';
 import { waitFor } from '@testing-library/react';
 import { createIntl } from 'react-intl';
+import { paths, urls } from '@tektoncd/dashboard-utils';
 
 import { renderWithRouter } from '../../utils/test';
 import * as PipelineRunsAPI from '../../api/pipelineRuns';
@@ -51,19 +52,29 @@ it('PipelineRunContainer renders data', async () => {
 });
 
 it('PipelineRunContainer renders not found state', async () => {
+  const namespace = 'fake_namespace';
+  const pipelineRunName = 'fake_pipelineRunName';
   jest
     .spyOn(PipelineRunsAPI, 'usePipelineRun')
     .mockImplementation(() => ({ data: null, error: null }));
 
-  const { getByText } = renderWithRouter(<PipelineRunContainer intl={intl} />);
-  await waitFor(() => getByText(`PipelineRun not found`));
+  const { getByText } = renderWithRouter(<PipelineRunContainer intl={intl} />, {
+    path: paths.pipelineRuns.byName(),
+    route: urls.pipelineRuns.byName({ pipelineRunName, namespace })
+  });
+  await waitFor(() => getByText(/Page not found/));
 });
 
 it('PipelineRunContainer renders error state', async () => {
+  const namespace = 'fake_namespace';
+  const pipelineRunName = 'fake_pipelineRunName';
   jest
     .spyOn(PipelineRunsAPI, 'usePipelineRun')
     .mockImplementation(() => ({ data: null, error: 'some error' }));
 
-  const { getByText } = renderWithRouter(<PipelineRunContainer intl={intl} />);
-  await waitFor(() => getByText('Error loading PipelineRun'));
+  const { getByText } = renderWithRouter(<PipelineRunContainer intl={intl} />, {
+    path: paths.pipelineRuns.byName(),
+    route: urls.pipelineRuns.byName({ pipelineRunName, namespace })
+  });
+  await waitFor(() => getByText(/Page not found/));
 });

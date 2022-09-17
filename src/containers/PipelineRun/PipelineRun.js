@@ -48,12 +48,12 @@ import {
   useTaskRuns,
   useTasks
 } from '../../api';
-
 import {
   getLogsRetriever,
   getLogsToolbar,
   getViewChangeHandler
 } from '../../utils';
+import { NotFound } from '..';
 
 const { PIPELINE_TASK, RETRY, STEP, VIEW } = queryParamConstants;
 
@@ -474,6 +474,26 @@ export /* istanbul ignore next */ function PipelineRunContainer({ intl }) {
     { enabled: !!podName && view === 'pod' }
   );
 
+  const isLoading =
+    isLoadingPipelineRun ||
+    isLoadingTaskRuns ||
+    isLoadingTasks ||
+    isLoadingClusterTasks ||
+    isLoadingPipeline;
+
+  if (!isLoading && (pipelineRunError || !pipelineRun)) {
+    return (
+      <NotFound
+        suggestions={[
+          {
+            text: 'PipelineRuns',
+            to: urls.pipelineRuns.byNamespace({ namespace })
+          }
+        ]}
+      />
+    );
+  }
+
   let podDetails;
   if (!currentSelectedStepId) {
     podDetails = (events || pod) && { events, resource: pod };
@@ -517,13 +537,7 @@ export /* istanbul ignore next */ function PipelineRunContainer({ intl }) {
           onFallback: setIsUsingExternalLogs
         })}
         handleTaskSelected={handleTaskSelected}
-        loading={
-          isLoadingPipelineRun ||
-          isLoadingTaskRuns ||
-          isLoadingTasks ||
-          isLoadingClusterTasks ||
-          isLoadingPipeline
-        }
+        loading={isLoading}
         getLogsToolbar={toolbarParams =>
           getLogsToolbar({
             ...toolbarParams,
