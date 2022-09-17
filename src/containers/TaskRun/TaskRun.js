@@ -40,7 +40,6 @@ import {
   getLogsToolbar,
   getViewChangeHandler
 } from '../../utils';
-
 import {
   cancelTaskRun,
   deleteTaskRun,
@@ -54,30 +53,9 @@ import {
   useTaskByKind,
   useTaskRun
 } from '../../api';
+import { NotFound } from '..';
 
 const { STEP, TASK_RUN_DETAILS, VIEW } = queryParamConstants;
-
-function notification({ intl, kind, message }) {
-  const titles = {
-    info: intl.formatMessage({
-      id: 'dashboard.taskRun.unavailable',
-      defaultMessage: 'TaskRun not available'
-    }),
-    error: intl.formatMessage({
-      id: 'dashboard.taskRun.errorLoading',
-      defaultMessage: 'Error loading TaskRun'
-    })
-  };
-  return (
-    <InlineNotification
-      kind={kind}
-      hideCloseButton
-      lowContrast
-      title={titles[kind]}
-      subtitle={message}
-    />
-  );
-}
 
 export function TaskRunContainer({ intl }) {
   const history = useHistory();
@@ -358,26 +336,17 @@ export function TaskRunContainer({ intl }) {
     return <SkeletonText heading width="60%" />;
   }
 
-  if (error) {
-    return notification({
-      intl,
-      kind: 'error',
-      message: intl.formatMessage({
-        id: 'dashboard.taskRun.errorLoading',
-        defaultMessage: 'Error loading TaskRun'
-      })
-    });
-  }
-
-  if (!taskRun) {
-    return notification({
-      intl,
-      kind: 'info',
-      message: intl.formatMessage({
-        id: 'dashboard.taskRun.unavailable',
-        defaultMessage: 'TaskRun not available'
-      })
-    });
+  if (error || !taskRun) {
+    return (
+      <NotFound
+        suggestions={[
+          {
+            text: 'TaskRuns',
+            to: urls.taskRuns.byNamespace({ namespace })
+          }
+        ]}
+      />
+    );
   }
 
   const definition = getStepDefinition({

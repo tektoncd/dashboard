@@ -29,6 +29,7 @@ import { InlineNotification } from 'carbon-components-react';
 
 import { deleteRun, rerunRun, useIsReadOnly, useRun } from '../../api';
 import { getViewChangeHandler } from '../../utils';
+import { NotFound } from '..';
 
 function getRunDuration(run) {
   if (!run) {
@@ -240,6 +241,19 @@ function Run({ intl }) {
         }
       }
     ];
+  }
+
+  if (!isFetching && (error || !run)) {
+    return (
+      <NotFound
+        suggestions={[
+          {
+            text: 'Runs',
+            to: urls.runs.byNamespace({ namespace })
+          }
+        ]}
+      />
+    );
   }
 
   return (

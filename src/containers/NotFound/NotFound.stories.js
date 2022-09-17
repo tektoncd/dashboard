@@ -1,5 +1,5 @@
 /*
-Copyright 2021 The Tekton Authors
+Copyright 2021-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,14 +13,21 @@ limitations under the License.
 
 import React from 'react';
 
+import { NamespaceContext } from '../../api';
 import NotFound from './NotFound';
+
+const namespaceContext = {
+  selectedNamespace: 'default'
+};
 
 export default {
   component: NotFound,
   decorators: [
     Story => (
       <div style={{ height: '100vh' }}>
-        <Story />
+        <NamespaceContext.Provider value={namespaceContext}>
+          <Story />
+        </NamespaceContext.Provider>
       </div>
     )
   ],
@@ -28,3 +35,12 @@ export default {
 };
 
 export const Base = () => <NotFound />;
+
+export const CustomSuggestions = () => (
+  <NotFound
+    suggestions={[
+      { text: 'CustomResources', to: '/customresources' },
+      { text: 'Another link', to: '/somewhereelse' }
+    ]}
+  />
+);

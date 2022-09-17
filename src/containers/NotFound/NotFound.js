@@ -17,15 +17,18 @@ import { injectIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { Column, Grid, Row } from 'carbon-components-react';
 import { Link as CustomLink } from '@tektoncd/dashboard-components';
-import { urls } from '@tektoncd/dashboard-utils';
+import { ALL_NAMESPACES, urls } from '@tektoncd/dashboard-utils';
 
+import { useSelectedNamespace } from '../../api';
 import robocat from '../../images/robocat_404.svg';
 
 const smallConfig = { offset: 1, span: 2 };
 const mediumConfig = { offset: 2, span: 4 };
 const largeConfig = { offset: 5, span: 6 };
 
-function NotFound({ intl }) {
+function NotFound({ intl, suggestions = [] }) {
+  const { selectedNamespace: namespace } = useSelectedNamespace();
+
   return (
     <Grid className="tkn--not-found">
       <Row narrow>
@@ -61,6 +64,13 @@ function NotFound({ intl }) {
           </p>
 
           <ul>
+            {suggestions.map(({ text, to }) => (
+              <li key={text}>
+                <Link component={CustomLink} to={to}>
+                  {text}
+                </Link>
+              </li>
+            ))}
             <li>
               <Link component={CustomLink} to="/">
                 {intl.formatMessage({
@@ -69,16 +79,34 @@ function NotFound({ intl }) {
                 })}
               </Link>
             </li>
-            <li>
-              <Link component={CustomLink} to={urls.pipelineRuns.all()}>
-                PipelineRuns
-              </Link>
-            </li>
-            <li>
-              <Link component={CustomLink} to={urls.taskRuns.all()}>
-                TaskRuns
-              </Link>
-            </li>
+            {suggestions.length === 0 ? (
+              <>
+                <li>
+                  <Link
+                    component={CustomLink}
+                    to={
+                      namespace !== ALL_NAMESPACES
+                        ? urls.pipelineRuns.byNamespace({ namespace })
+                        : urls.pipelineRuns.all()
+                    }
+                  >
+                    PipelineRuns
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    component={CustomLink}
+                    to={
+                      namespace !== ALL_NAMESPACES
+                        ? urls.taskRuns.byNamespace({ namespace })
+                        : urls.taskRuns.all()
+                    }
+                  >
+                    TaskRuns
+                  </Link>
+                </li>
+              </>
+            ) : null}
           </ul>
         </Column>
       </Row>
