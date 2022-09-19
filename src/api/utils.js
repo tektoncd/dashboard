@@ -115,6 +115,7 @@ export function getTektonAPI(
 }
 
 export const NamespaceContext = React.createContext();
+NamespaceContext.displayName = 'Namespace';
 
 function getResourceVersion(resource) {
   return parseInt(resource.metadata.resourceVersion, 10);
