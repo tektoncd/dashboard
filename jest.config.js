@@ -18,6 +18,7 @@ module.exports = {
     '<rootDir>/src/**/*.js',
     '<rootDir>/packages/**/src/**/*.js',
     '!<rootDir>/src/**/*.stories.js',
+    '!<rootDir>/packages/**/src/**/*.cy.js',
     '!<rootDir>/packages/**/src/**/*.stories.js'
   ],
   coverageReporters: ['html', 'text'],

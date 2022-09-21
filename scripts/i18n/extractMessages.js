@@ -20,6 +20,8 @@ const path = require('path');
 const basePath = process.cwd();
 const localeConfig = require(`${basePath}/config_frontend/config.json`).locales; // eslint-disable-line
 
+const babelConfig = require('../../babel.config')();
+
 const defaultMessages = {};
 const { default: defaultLocale, build: buildLocales } = localeConfig;
 const messagesFilePrefix = 'messages_';
@@ -51,24 +53,34 @@ function writeLocaleFile(locale, messages) {
 
 // ----------------------------------------------------------------------------
 
+babelConfig.plugins.push([
+  'formatjs',
+  {
+    onMsgExtracted(filePath, msgs) {
+      log(filePath);
+      msgs.forEach(({ id, defaultMessage }) => {
+        if (defaultMessages[id] && defaultMessages[id] !== defaultMessage) {
+          throw new Error(
+            `Duplicate message id with conflicting defaultMessage: '${id}'`
+          );
+        }
+        defaultMessages[id] = defaultMessage;
+      });
+    }
+  }
+]);
+
+// ----------------------------------------------------------------------------
+
 log('Extracting messages\n');
 
-glob.sync('./@(src|packages)/**/!(*.stories|*.test).js').forEach(filePath => {
-  log(filePath);
-  const { metadata } = babel.transformFileSync(path.normalize(filePath), {
-    plugins: [['react-intl', { extractFromFormatMessageCall: true }]]
+glob
+  .sync('./@(src|packages)/**/!(*.cy|*.stories|*.test).js', {
+    ignore: ['./**/node_modules/**/*.js', './packages/e2e/**/*.js']
+  })
+  .forEach(filePath => {
+    babel.transformFileSync(path.normalize(filePath), babelConfig);
   });
-
-  const { messages } = metadata['react-intl'];
-  messages.forEach(({ id, defaultMessage }) => {
-    if (defaultMessages[id] && defaultMessages[id] !== defaultMessage) {
-      throw new Error(
-        `Duplicate message id with conflicting defaultMessage: '${id}'`
-      );
-    }
-    defaultMessages[id] = defaultMessage;
-  });
-});
 
 log('\nDone extracting messages\n');
 
