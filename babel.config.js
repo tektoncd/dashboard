@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 module.exports = api => {
-  api.cache(true);
+  api?.cache(true);
 
   return {
     presets: [
