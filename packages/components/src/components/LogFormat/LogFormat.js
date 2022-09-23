@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2021 The Tekton Authors
+Copyright 2020-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -15,7 +15,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import tlds from 'tlds';
 import LinkifyIt from 'linkify-it';
-import classNames from 'classnames';
+import { classNames } from '@tektoncd/dashboard-utils';
+
 import { colors } from './defaults';
 
 const linkifyIt = LinkifyIt().tlds(tlds);

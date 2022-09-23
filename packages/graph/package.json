@@ -23,7 +23,6 @@
     "@tektoncd/dashboard-utils": "file:../utils",
     "@visx/event": "^2.1.0",
     "@visx/network": "^2.10.0",
-    "classnames": "^2.3.2",
     "d3-path": "^3.0.1",
     "elkjs": "^0.8.2"
   },

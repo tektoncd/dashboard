@@ -21,6 +21,28 @@ export { getStatus } from './status';
 
 export const ALL_NAMESPACES = '*';
 
+export function classNames(...args) {
+  const classes = [];
+  args.forEach(arg => {
+    if (!arg) {
+      return;
+    }
+
+    const argType = typeof arg;
+
+    if (argType === 'string') {
+      classes.push(arg);
+    } else if (argType === 'object') {
+      Object.keys(arg).forEach(key => {
+        if (arg[key]) {
+          classes.push(key);
+        }
+      });
+    }
+  });
+  return classes.join(' ');
+}
+
 /* istanbul ignore next */
 export const copyToClipboard = text => {
   const input = document.createElement('textarea');
