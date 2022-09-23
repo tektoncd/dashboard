@@ -14,7 +14,6 @@ limitations under the License.
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import {
   Button,
   DataTable,
@@ -26,7 +25,7 @@ import {
   TableToolbarContent
 } from 'carbon-components-react';
 
-import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
+import { ALL_NAMESPACES, classNames } from '@tektoncd/dashboard-utils';
 
 import { DataTableSkeleton } from '..';
 

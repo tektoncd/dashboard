@@ -12,7 +12,6 @@ limitations under the License.
 */
 
 import React from 'react';
-import classNames from 'classnames';
 import {
   CheckmarkFilled20 as CheckmarkFilled,
   CheckmarkFilledWarning20 as CheckmarkFilledWarning,
@@ -22,7 +21,7 @@ import {
   Time20 as Pending,
   WarningAltFilled20 as WarningFilled
 } from '@carbon/icons-react';
-import { isRunning } from '@tektoncd/dashboard-utils';
+import { classNames, isRunning } from '@tektoncd/dashboard-utils';
 
 import { Spinner } from '..';
 
