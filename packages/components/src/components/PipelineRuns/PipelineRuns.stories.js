@@ -126,7 +126,8 @@ export const Base = () => (
         kind: 'PipelineRun',
         metadata: {
           name: 'output-pipeline-run',
-          creationTimestamp: '2019-10-09T17:10:49Z'
+          creationTimestamp: '2019-10-09T17:10:49Z',
+          uid: '01cb5ea7-0158-4031-bc70-6bf017533a94'
         },
         spec: {
           pipelineRef: {
@@ -204,7 +205,8 @@ export const NoPipelineLink = () => (
         metadata: {
           name: 'output-pipeline-run',
           namespace: '61fe5520-a56e-4c1d-b7c3-d933b0f3c6a8',
-          creationTimestamp: '2019-10-09T17:10:49Z'
+          creationTimestamp: '2019-10-09T17:10:49Z',
+          uid: '905c1ab0-203d-49ce-ad8d-4553e5d06bf0'
         },
         spec: {
           serviceAccountName: 'default',
@@ -301,7 +303,8 @@ export const HideColumns = ({ showFilters }) => (
         metadata: {
           name: 'pipeline-run-20190816124708',
           namespace: 'cb4552a6-b2d7-45e2-9773-3d4ca33909ff',
-          creationTimestamp: '2019-08-16T12:48:00Z'
+          creationTimestamp: '2019-08-16T12:48:00Z',
+          uid: 'c5ef252a-4635-46b5-ad7b-32c9e04cb6d2'
         },
         spec: {
           pipelineRef: {
@@ -368,7 +371,8 @@ export const CustomColumns = ({ showFilters }) => (
           creationTimestamp: '2019-08-16T12:48:00Z',
           labels: {
             'example.com/worker': 'my-worker'
-          }
+          },
+          uid: 'b0461c38-90e1-4d83-b32d-293cf3d0ea72'
         },
         spec: {
           pipelineRef: {

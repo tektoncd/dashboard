@@ -74,7 +74,7 @@ export const WithPagination = args => (
   <ListPageLayoutContainer
     filters={[]}
     resources={Array.from({ length: 30 }, (_, index) => ({
-      id: index,
+      id: `${index}`,
       value: `Row ${index + 1}`
     }))}
     {...args}
