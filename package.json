@@ -67,7 +67,7 @@
     "babel-plugin-formatjs": "^10.3.28",
     "cross-env": "^7.0.2",
     "css-loader": "^6.7.1",
-    "eslint": "^8.23.1",
+    "eslint": "^8.24.0",
     "eslint-config-airbnb": "^19.0.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-cypress": "2.12.1",
