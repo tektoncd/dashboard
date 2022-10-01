@@ -12,7 +12,7 @@ limitations under the License.
 */
 /* istanbul ignore file */
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { getFilters, urls, useTitleSync } from '@tektoncd/dashboard-utils';
 import {
@@ -28,7 +28,8 @@ import {
   useSelectedNamespace
 } from '../../api';
 
-export function ResourceListContainer({ intl }) {
+export function ResourceListContainer() {
+  const intl = useIntl();
   const location = useLocation();
   const { group, namespace: namespaceParam, version, type } = useParams();
 
@@ -164,4 +165,4 @@ export function ResourceListContainer({ intl }) {
   );
 }
 
-export default injectIntl(ResourceListContainer);
+export default ResourceListContainer;

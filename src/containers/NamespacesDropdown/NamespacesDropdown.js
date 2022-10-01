@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 import { TooltipDropdown } from '@tektoncd/dashboard-components';
 
@@ -23,13 +23,13 @@ const NamespacesDropdown = ({
   children,
   dispatch,
   emptyText,
-  intl,
   isSideNavExpanded,
   label,
   selectedItem: originalSelectedItem,
   showAllNamespaces,
   ...rest
 }) => {
+  const intl = useIntl();
   const labelString =
     label ||
     intl.formatMessage({
@@ -85,4 +85,4 @@ NamespacesDropdown.defaultProps = {
   titleText: 'Namespace'
 };
 
-export default injectIntl(NamespacesDropdown);
+export default NamespacesDropdown;

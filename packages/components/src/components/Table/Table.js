@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import {
   Button,
@@ -110,6 +110,7 @@ function getTranslateWithId(intl) {
 }
 
 const Table = props => {
+  const intl = useIntl();
   const {
     batchActionButtons,
     className,
@@ -119,7 +120,6 @@ const Table = props => {
     hasDetails,
     headers: dataHeaders,
     id,
-    intl,
     isSortable,
     loading,
     rows: dataRows,
@@ -299,4 +299,4 @@ Table.propTypes = {
   toolbarButtons: PropTypes.arrayOf(PropTypes.object)
 };
 
-export default injectIntl(Table);
+export default Table;

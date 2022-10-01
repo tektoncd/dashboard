@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,7 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { DataTable } from 'carbon-components-react';
 import { ResourceDetails } from '@tektoncd/dashboard-components';
 import { useTitleSync } from '@tektoncd/dashboard-utils';
@@ -32,7 +32,8 @@ const {
 } = DataTable;
 
 /* istanbul ignore next */
-function PipelineResource({ intl }) {
+function PipelineResource() {
+  const intl = useIntl();
   const history = useHistory();
   const location = useLocation();
   const { namespace, pipelineResourceName: resourceName } = useParams();
@@ -196,4 +197,4 @@ function PipelineResource({ intl }) {
   );
 }
 
-export default injectIntl(PipelineResource);
+export default PipelineResource;

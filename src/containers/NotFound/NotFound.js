@@ -13,7 +13,7 @@ limitations under the License.
 /* istanbul ignore file */
 
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { Column, Grid, Row } from 'carbon-components-react';
 import { Link as CustomLink } from '@tektoncd/dashboard-components';
@@ -26,7 +26,8 @@ const smallConfig = { offset: 1, span: 2 };
 const mediumConfig = { offset: 2, span: 4 };
 const largeConfig = { offset: 5, span: 6 };
 
-function NotFound({ intl, suggestions = [] }) {
+function NotFound({ suggestions = [] }) {
+  const intl = useIntl();
   const { selectedNamespace: namespace } = useSelectedNamespace();
 
   return (
@@ -114,4 +115,4 @@ function NotFound({ intl, suggestions = [] }) {
   );
 }
 
-export default injectIntl(NotFound);
+export default NotFound;

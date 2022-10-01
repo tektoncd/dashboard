@@ -14,7 +14,7 @@ limitations under the License.
 
 import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import keyBy from 'lodash.keyby';
 import { RadioTile, TileGroup } from 'carbon-components-react';
 import {
@@ -51,7 +51,8 @@ import {
   useSelectedNamespace
 } from '../../api';
 
-export function PipelineRuns({ intl }) {
+export function PipelineRuns() {
+  const intl = useIntl();
   const history = useHistory();
   const location = useLocation();
   const params = useParams();
@@ -418,4 +419,4 @@ export function PipelineRuns({ intl }) {
   );
 }
 
-export default injectIntl(PipelineRuns);
+export default PipelineRuns;

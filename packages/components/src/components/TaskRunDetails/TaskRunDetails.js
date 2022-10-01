@@ -14,7 +14,7 @@ limitations under the License.
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import {
   getParams,
   getResources,
@@ -87,15 +87,8 @@ function resourceTable(title, namespace, resources, intl) {
   );
 }
 
-const TaskRunDetails = ({
-  intl,
-  onViewChange,
-  pod,
-  task,
-  taskRun,
-  view,
-  showIO
-}) => {
+const TaskRunDetails = ({ onViewChange, pod, task, taskRun, view, showIO }) => {
+  const intl = useIntl();
   const displayName = taskRun.metadata.name;
   const taskSpec = task?.spec || taskRun.spec.taskSpec;
 
@@ -330,4 +323,4 @@ TaskRunDetails.defaultProps = {
   showIO: false
 };
 
-export default injectIntl(TaskRunDetails);
+export default TaskRunDetails;

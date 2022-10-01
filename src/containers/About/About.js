@@ -13,7 +13,7 @@ limitations under the License.
 /* istanbul ignore file */
 
 import React, { Fragment } from 'react';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import {
   ClickableTile as CarbonClickableTile,
   InlineNotification,
@@ -40,7 +40,8 @@ function ClickableTile(props) {
   );
 }
 
-export function About({ intl }) {
+export function About() {
+  const intl = useIntl();
   useTitleSync({
     page: intl.formatMessage({
       id: 'dashboard.about.title',
@@ -280,4 +281,4 @@ export function About({ intl }) {
   );
 }
 
-export default injectIntl(About);
+export default About;

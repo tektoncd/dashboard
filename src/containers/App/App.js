@@ -22,7 +22,7 @@ import {
   Switch
 } from 'react-router-dom';
 
-import { injectIntl, IntlProvider } from 'react-intl';
+import { IntlProvider, useIntl } from 'react-intl';
 import { Content, InlineNotification } from 'carbon-components-react';
 
 import {
@@ -95,7 +95,8 @@ import '../../scss/App.scss';
 const { default: defaultLocale, supported: supportedLocales } = config.locales;
 
 /* istanbul ignore next */
-const ConfigErrorComponent = ({ intl, loadingConfigError }) => {
+const ConfigErrorComponent = ({ loadingConfigError }) => {
+  const intl = useIntl();
   if (!loadingConfigError) {
     return null;
   }
@@ -113,7 +114,7 @@ const ConfigErrorComponent = ({ intl, loadingConfigError }) => {
   );
 };
 
-const ConfigError = injectIntl(ConfigErrorComponent);
+const ConfigError = ConfigErrorComponent;
 
 async function loadMessages(lang) {
   const isSupportedLocale = supportedLocales.includes(lang);

@@ -19,7 +19,7 @@ import {
   PlayOutline16 as RunIcon,
   Playlist16 as RunsIcon
 } from '@carbon/icons-react';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import keyBy from 'lodash.keyby';
 import { Button } from 'carbon-components-react';
 import {
@@ -135,7 +135,8 @@ function getFormattedResources({
   }));
 }
 
-export function Pipelines({ intl }) {
+export function Pipelines() {
+  const intl = useIntl();
   const location = useLocation();
   const params = useParams();
   const filters = getFilters(location);
@@ -310,4 +311,4 @@ export function Pipelines({ intl }) {
   );
 }
 
-export default injectIntl(Pipelines);
+export default Pipelines;

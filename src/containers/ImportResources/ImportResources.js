@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React, { useState } from 'react';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import {
   Accordion,
   AccordionItem,
@@ -63,7 +63,8 @@ const HelpIcon = ({ title }) => (
   </TooltipIcon>
 );
 
-export function ImportResources({ intl }) {
+export function ImportResources() {
+  const intl = useIntl();
   const { selectedNamespace: navNamespace } = useSelectedNamespace();
   const dashboardNamespace = useDashboardNamespace();
 
@@ -433,4 +434,4 @@ export function ImportResources({ intl }) {
   );
 }
 
-export default injectIntl(ImportResources);
+export default ImportResources;

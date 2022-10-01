@@ -13,74 +13,76 @@ limitations under the License.
 /* istanbul ignore file */
 
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { Modal } from 'carbon-components-react';
 import { Table } from '..';
 
 const DeleteModal = ({
   onClose,
   onSubmit,
-  intl,
   kind,
   resources,
   showNamespace = true
-}) => (
-  <Modal
-    className="tkn--delete-modal"
-    open
-    primaryButtonText={intl.formatMessage({
-      id: 'dashboard.actions.deleteButton',
-      defaultMessage: 'Delete'
-    })}
-    secondaryButtonText={intl.formatMessage({
-      id: 'dashboard.modal.cancelButton',
-      defaultMessage: 'Cancel'
-    })}
-    modalHeading={intl.formatMessage(
-      {
-        id: 'dashboard.deleteResources.heading',
-        defaultMessage: 'Delete {kind}'
-      },
-      { kind }
-    )}
-    onSecondarySubmit={onClose}
-    onRequestSubmit={onSubmit}
-    onRequestClose={onClose}
-    danger
-  >
-    <p>
-      {intl.formatMessage(
+}) => {
+  const intl = useIntl();
+  return (
+    <Modal
+      className="tkn--delete-modal"
+      open
+      primaryButtonText={intl.formatMessage({
+        id: 'dashboard.actions.deleteButton',
+        defaultMessage: 'Delete'
+      })}
+      secondaryButtonText={intl.formatMessage({
+        id: 'dashboard.modal.cancelButton',
+        defaultMessage: 'Cancel'
+      })}
+      modalHeading={intl.formatMessage(
         {
-          id: 'dashboard.deleteResources.confirm',
-          defaultMessage: 'Are you sure you want to delete these {kind}?'
+          id: 'dashboard.deleteResources.heading',
+          defaultMessage: 'Delete {kind}'
         },
         { kind }
       )}
-    </p>
-    <Table
-      headers={[
-        {
-          key: 'name',
-          header: intl.formatMessage({
-            id: 'dashboard.tableHeader.name',
-            defaultMessage: 'Name'
-          })
-        },
-        showNamespace
-          ? {
-              key: 'namespace',
-              header: 'Namespace'
-            }
-          : null
-      ].filter(Boolean)}
-      rows={resources.map(resource => ({
-        id: resource.metadata.uid,
-        name: resource.metadata.name,
-        namespace: resource.metadata.namespace
-      }))}
-      size="sm"
-    />
-  </Modal>
-);
+      onSecondarySubmit={onClose}
+      onRequestSubmit={onSubmit}
+      onRequestClose={onClose}
+      danger
+    >
+      <p>
+        {intl.formatMessage(
+          {
+            id: 'dashboard.deleteResources.confirm',
+            defaultMessage: 'Are you sure you want to delete these {kind}?'
+          },
+          { kind }
+        )}
+      </p>
+      <Table
+        headers={[
+          {
+            key: 'name',
+            header: intl.formatMessage({
+              id: 'dashboard.tableHeader.name',
+              defaultMessage: 'Name'
+            })
+          },
+          showNamespace
+            ? {
+                key: 'namespace',
+                header: 'Namespace'
+              }
+            : null
+        ].filter(Boolean)}
+        rows={resources.map(resource => ({
+          id: resource.metadata.uid,
+          name: resource.metadata.name,
+          namespace: resource.metadata.namespace
+        }))}
+        size="sm"
+      />
+    </Modal>
+  );
+};
 
-export default injectIntl(DeleteModal);
+export default DeleteModal;

@@ -1,5 +1,5 @@
 /*
-Copyright 2021 The Tekton Authors
+Copyright 2021-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useTitleSync } from '@tektoncd/dashboard-utils';
 import { RadioTile, TileGroup, Toggle } from 'carbon-components-react';
 import {
@@ -27,7 +27,8 @@ import {
   setLogTimestampsEnabled
 } from '../../api/utils';
 
-export function Settings({ intl }) {
+export function Settings() {
+  const intl = useIntl();
   useTitleSync({
     page: intl.formatMessage({
       id: 'dashboard.settings.title',
@@ -98,4 +99,4 @@ export function Settings({ intl }) {
   );
 }
 
-export default injectIntl(Settings);
+export default Settings;

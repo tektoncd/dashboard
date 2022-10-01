@@ -30,7 +30,7 @@ import {
   TileGroup
 } from 'carbon-components-react';
 import { Link, useHistory, useLocation, useParams } from 'react-router-dom';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import {
   cancelPipelineRun,
@@ -57,7 +57,8 @@ import { NotFound } from '..';
 
 const { PIPELINE_TASK, RETRY, STEP, VIEW } = queryParamConstants;
 
-export /* istanbul ignore next */ function PipelineRunContainer({ intl }) {
+export /* istanbul ignore next */ function PipelineRunContainer() {
+  const intl = useIntl();
   const history = useHistory();
   const location = useLocation();
   const params = useParams();
@@ -565,4 +566,4 @@ export /* istanbul ignore next */ function PipelineRunContainer({ intl }) {
   );
 }
 
-export default injectIntl(PipelineRunContainer);
+export default PipelineRunContainer;

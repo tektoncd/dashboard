@@ -14,7 +14,7 @@ limitations under the License.
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useHistory, useLocation } from 'react-router-dom';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { InlineNotification, Pagination } from 'carbon-components-react';
 import { getErrorMessage } from '@tektoncd/dashboard-utils';
 
@@ -24,10 +24,10 @@ export const ListPageLayout = ({
   children,
   error,
   filters,
-  intl,
   resources = [],
   title
 }) => {
+  const intl = useIntl();
   const history = useHistory();
   const location = useLocation();
 
@@ -106,7 +106,7 @@ export const ListPageLayout = ({
   );
 };
 
-export default injectIntl(ListPageLayout);
+export default ListPageLayout;
 
 ListPageLayout.propTypes = {
   children: PropTypes.func.isRequired

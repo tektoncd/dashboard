@@ -13,7 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { InlineNotification, SkeletonText, Tag } from 'carbon-components-react';
 import { formatLabels, getErrorMessage } from '@tektoncd/dashboard-utils';
 import { FormattedDate, Tab, Tabs, ViewYAML } from '..';
@@ -25,12 +25,12 @@ const ResourceDetails = ({
   additionalMetadata,
   children,
   error,
-  intl,
   loading,
   onViewChange,
   resource: originalResource,
   view
 }) => {
+  const intl = useIntl();
   if (loading) {
     return <SkeletonText heading width="60%" />;
   }
@@ -169,4 +169,4 @@ ResourceDetails.propTypes = {
   view: PropTypes.string
 };
 
-export default injectIntl(ResourceDetails);
+export default ResourceDetails;

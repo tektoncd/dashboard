@@ -13,7 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { getFilters, urls, useTitleSync } from '@tektoncd/dashboard-utils';
 import {
   Link as CustomLink,
@@ -44,7 +44,8 @@ function getFormattedResources(resources) {
   }));
 }
 
-export function TriggerBindings({ intl }) {
+export function TriggerBindings() {
+  const intl = useIntl();
   const location = useLocation();
   const params = useParams();
   const filters = getFilters(location);
@@ -126,4 +127,4 @@ export function TriggerBindings({ intl }) {
   );
 }
 
-export default injectIntl(TriggerBindings);
+export default TriggerBindings;

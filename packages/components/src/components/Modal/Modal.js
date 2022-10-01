@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,17 +13,20 @@ limitations under the License.
 /* istanbul ignore file */
 
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { Modal as CarbonModal } from 'carbon-components-react';
 
-const Modal = ({ intl, ...rest }) => (
-  <CarbonModal
-    iconDescription={intl.formatMessage({
-      id: 'dashboard.modal.close',
-      defaultMessage: 'Close'
-    })}
-    {...rest}
-  />
-);
+const Modal = props => {
+  const intl = useIntl();
+  return (
+    <CarbonModal
+      iconDescription={intl.formatMessage({
+        id: 'dashboard.modal.close',
+        defaultMessage: 'Close'
+      })}
+      {...props}
+    />
+  );
+};
 
-export default injectIntl(Modal);
+export default Modal;

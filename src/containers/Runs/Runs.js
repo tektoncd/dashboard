@@ -14,7 +14,7 @@ limitations under the License.
 
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import keyBy from 'lodash.keyby';
 import {
   ALL_NAMESPACES,
@@ -104,7 +104,8 @@ function getRunStatusTooltip(run) {
   return `${reason}: ${message}`;
 }
 
-function Runs({ intl }) {
+function Runs() {
+  const intl = useIntl();
   const location = useLocation();
   const params = useParams();
   const filters = getFilters(location);
@@ -515,4 +516,4 @@ function Runs({ intl }) {
   );
 }
 
-export default injectIntl(Runs);
+export default Runs;

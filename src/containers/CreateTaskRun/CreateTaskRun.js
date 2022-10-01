@@ -32,7 +32,7 @@ import {
   useTitleSync
 } from '@tektoncd/dashboard-utils';
 import { KeyValueList } from '@tektoncd/dashboard-components';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import {
   ClusterTasksDropdown,
   NamespacesDropdown,
@@ -103,7 +103,8 @@ const initialResourcesState = resourceSpecs => {
 
 const itemToString = ({ text }) => text;
 
-function CreateTaskRun({ intl }) {
+function CreateTaskRun() {
+  const intl = useIntl();
   const history = useHistory();
   const location = useLocation();
   const { selectedNamespace: defaultNamespace } = useSelectedNamespace();
@@ -830,4 +831,4 @@ function CreateTaskRun({ intl }) {
   );
 }
 
-export default injectIntl(CreateTaskRun);
+export default CreateTaskRun;
