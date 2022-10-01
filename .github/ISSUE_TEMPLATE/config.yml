@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Tekton Slack Workspace
+    url: https://github.com/tektoncd/community/blob/master/contact.md#slack
+    about: Come chat with us!
+  - name: Tekton Mailing Lists
+    url: https://github.com/tektoncd/community/blob/master/contact.md#mailing-list
+    about: For developers and users of Tekton
+  - name: Tekton Community Resources
+    url: https://github.com/tektoncd/community/blob/master/contact.md
+    about: Find details of the Tekton calendar and shared drive
