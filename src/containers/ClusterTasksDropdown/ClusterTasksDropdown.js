@@ -12,12 +12,13 @@ limitations under the License.
 */
 
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { TooltipDropdown } from '@tektoncd/dashboard-components';
 
 import { useClusterTasks } from '../../api';
 
-function ClusterTasksDropdown({ disabled, intl, label, ...rest }) {
+function ClusterTasksDropdown({ disabled, label, ...rest }) {
+  const intl = useIntl();
   const { data: clusterTasks = [], isFetching } = useClusterTasks({});
 
   const items = clusterTasks.map(clusterTask => clusterTask.metadata.name);
@@ -50,4 +51,4 @@ ClusterTasksDropdown.defaultProps = {
   titleText: 'ClusterTask'
 };
 
-export default injectIntl(ClusterTasksDropdown);
+export default ClusterTasksDropdown;

@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,16 +12,12 @@ limitations under the License.
 */
 /* istanbul ignore file */
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { Dropdown } from 'carbon-components-react';
 import { statusFilterOrder } from '@tektoncd/dashboard-utils';
 
-const StatusFilterDropdown = ({
-  id,
-  initialSelectedStatus,
-  intl,
-  onChange
-}) => {
+const StatusFilterDropdown = ({ id, initialSelectedStatus, onChange }) => {
+  const intl = useIntl();
   const allItem = {
     id: '',
     text: intl.formatMessage({
@@ -86,4 +82,4 @@ const StatusFilterDropdown = ({
   );
 };
 
-export default injectIntl(StatusFilterDropdown);
+export default StatusFilterDropdown;

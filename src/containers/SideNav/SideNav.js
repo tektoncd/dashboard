@@ -13,7 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import { matchPath, NavLink, useLocation } from 'react-router-dom';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import {
   SideNav as CarbonSideNav,
   SideNavItems,
@@ -40,7 +40,8 @@ import {
 import { ReactComponent as KubernetesIcon } from '../../images/kubernetes.svg';
 import { ReactComponent as TektonIcon } from '../../images/tekton-logo-20x20.svg';
 
-function SideNav({ expanded, intl, showKubernetesResources }) {
+function SideNav({ expanded, showKubernetesResources }) {
+  const intl = useIntl();
   if (!expanded) {
     return null;
   }
@@ -254,4 +255,4 @@ SideNav.defaultProps = {
   showKubernetesResources: false
 };
 
-export default injectIntl(SideNav);
+export default SideNav;

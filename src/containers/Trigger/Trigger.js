@@ -1,5 +1,5 @@
 /*
-Copyright 2021 The Tekton Authors
+Copyright 2021-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,7 +13,6 @@ limitations under the License.
 
 import React from 'react';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
-import { injectIntl } from 'react-intl';
 import { useTitleSync } from '@tektoncd/dashboard-utils';
 import { ResourceDetails, Trigger } from '@tektoncd/dashboard-components';
 
@@ -60,4 +59,4 @@ export function TriggerContainer() {
   );
 }
 
-export default injectIntl(TriggerContainer);
+export default TriggerContainer;

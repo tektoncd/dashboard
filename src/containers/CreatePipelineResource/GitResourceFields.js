@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,10 +13,14 @@ limitations under the License.
 
 import React from 'react';
 import { TextInput } from 'carbon-components-react';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
-const GitResourceFields = props => {
-  const { revision, handleChangeTextInput, invalidFields, intl } = props;
+const GitResourceFields = ({
+  revision,
+  handleChangeTextInput,
+  invalidFields
+}) => {
+  const intl = useIntl();
 
   return (
     <TextInput
@@ -41,4 +45,4 @@ const GitResourceFields = props => {
   );
 };
 
-export default injectIntl(GitResourceFields);
+export default GitResourceFields;

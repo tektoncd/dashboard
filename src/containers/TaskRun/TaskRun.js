@@ -13,7 +13,7 @@ limitations under the License.
 /* istanbul ignore file */
 
 import React, { useRef, useState } from 'react';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { Link, useHistory, useLocation, useParams } from 'react-router-dom';
 import { InlineNotification, SkeletonText } from 'carbon-components-react';
 import {
@@ -57,7 +57,8 @@ import { NotFound } from '..';
 
 const { STEP, TASK_RUN_DETAILS, VIEW } = queryParamConstants;
 
-export function TaskRunContainer({ intl }) {
+export function TaskRunContainer() {
+  const intl = useIntl();
   const history = useHistory();
   const location = useLocation();
   const params = useParams();
@@ -450,4 +451,4 @@ export function TaskRunContainer({ intl }) {
   );
 }
 
-export default injectIntl(TaskRunContainer);
+export default TaskRunContainer;

@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import {
   Accordion,
@@ -23,7 +23,8 @@ import {
 import { urls } from '@tektoncd/dashboard-utils';
 import { Link as CustomLink, Table, ViewYAML } from '..';
 
-const Trigger = ({ intl, namespace, trigger }) => {
+const Trigger = ({ namespace, trigger }) => {
+  const intl = useIntl();
   const tableHeaders = [
     {
       key: 'name',
@@ -357,4 +358,4 @@ const Trigger = ({ intl, namespace, trigger }) => {
   );
 };
 
-export default injectIntl(Trigger);
+export default Trigger;

@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { getStatus, urls } from '@tektoncd/dashboard-utils';
 import {
@@ -115,13 +115,13 @@ const PipelineRuns = ({
   },
   getPipelineRunURL = urls.pipelineRuns.byName,
   getRunActions = () => [],
-  intl,
   loading,
   pipelineRuns,
   selectedNamespace,
   skeletonRowCount,
   toolbarButtons
 }) => {
+  const intl = useIntl();
   let hasRunActions = false;
   const defaultHeaders = {
     pipeline: intl.formatMessage({
@@ -325,4 +325,4 @@ const PipelineRuns = ({
   );
 };
 
-export default injectIntl(PipelineRuns);
+export default PipelineRuns;

@@ -14,7 +14,7 @@ limitations under the License.
 
 import React, { useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import keyBy from 'lodash.keyby';
 import { Button } from 'carbon-components-react';
 import {
@@ -136,7 +136,8 @@ function getFormattedResources({
   }));
 }
 
-function Tasks({ intl }) {
+function Tasks() {
+  const intl = useIntl();
   const location = useLocation();
   const params = useParams();
 
@@ -308,4 +309,4 @@ function Tasks({ intl }) {
   );
 }
 
-export default injectIntl(Tasks);
+export default Tasks;

@@ -13,25 +13,24 @@ limitations under the License.
 
 import React from 'react';
 import { Dropdown, TextInput } from 'carbon-components-react';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { getTranslateWithId } from '@tektoncd/dashboard-utils';
 
 import NamespacesDropdown from '../NamespacesDropdown';
 
 const itemToString = ({ text }) => text;
 
-const UniversalFields = props => {
-  const {
-    name,
-    handleChangeTextInput,
-    handleChangeNamespace,
-    selectedNamespace,
-    type,
-    handleChangeType,
-    url,
-    invalidFields,
-    intl
-  } = props;
+const UniversalFields = ({
+  name,
+  handleChangeTextInput,
+  handleChangeNamespace,
+  selectedNamespace,
+  type,
+  handleChangeType,
+  url,
+  invalidFields
+}) => {
+  const intl = useIntl();
 
   return (
     <>
@@ -113,4 +112,4 @@ const UniversalFields = props => {
   );
 };
 
-export default injectIntl(UniversalFields);
+export default UniversalFields;

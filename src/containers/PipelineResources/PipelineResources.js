@@ -14,7 +14,7 @@ limitations under the License.
 
 import React, { useState } from 'react';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import keyBy from 'lodash.keyby';
 import {
   ALL_NAMESPACES,
@@ -36,7 +36,8 @@ import {
   useSelectedNamespace
 } from '../../api';
 
-export function PipelineResources({ intl }) {
+export function PipelineResources() {
+  const intl = useIntl();
   const history = useHistory();
   const location = useLocation();
   const params = useParams();
@@ -177,4 +178,4 @@ export function PipelineResources({ intl }) {
   );
 }
 
-export default injectIntl(PipelineResources);
+export default PipelineResources;

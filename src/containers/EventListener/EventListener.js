@@ -14,7 +14,7 @@ limitations under the License.
 
 import React from 'react';
 import { Link, useHistory, useLocation, useParams } from 'react-router-dom';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { urls, useTitleSync } from '@tektoncd/dashboard-utils';
 import {
   Link as CustomLink,
@@ -25,7 +25,8 @@ import {
 import { useEventListener } from '../../api';
 import { getViewChangeHandler } from '../../utils';
 
-export function EventListenerContainer({ intl }) {
+export function EventListenerContainer() {
+  const intl = useIntl();
   const history = useHistory();
   const location = useLocation();
   const params = useParams();
@@ -145,4 +146,4 @@ export function EventListenerContainer({ intl }) {
   );
 }
 
-export default injectIntl(EventListenerContainer);
+export default EventListenerContainer;

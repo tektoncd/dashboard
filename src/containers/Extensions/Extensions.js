@@ -13,7 +13,7 @@ limitations under the License.
 /* istanbul ignore file */
 
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { InlineNotification } from 'carbon-components-react';
 import {
@@ -26,7 +26,8 @@ import { Link as CustomLink, Table } from '@tektoncd/dashboard-components';
 
 import { useExtensions, useTenantNamespace } from '../../api';
 
-function Extensions({ intl }) {
+function Extensions() {
+  const intl = useIntl();
   useTitleSync({
     page: intl.formatMessage({
       id: 'dashboard.extensions.title',
@@ -106,4 +107,4 @@ function Extensions({ intl }) {
   );
 }
 
-export default injectIntl(Extensions);
+export default Extensions;

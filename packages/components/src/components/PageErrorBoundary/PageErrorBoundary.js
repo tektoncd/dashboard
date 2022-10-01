@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,12 +12,13 @@ limitations under the License.
 */
 
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useLocation } from 'react-router-dom';
 
 import { ErrorBoundary } from '..';
 
-const PageErrorBoundary = ({ children, intl }) => {
+const PageErrorBoundary = ({ children }) => {
+  const intl = useIntl();
   const location = useLocation();
   const message = intl.formatMessage({
     id: 'dashboard.errorBoundary.pageError',
@@ -31,4 +32,4 @@ const PageErrorBoundary = ({ children, intl }) => {
   );
 };
 
-export default injectIntl(PageErrorBoundary);
+export default PageErrorBoundary;

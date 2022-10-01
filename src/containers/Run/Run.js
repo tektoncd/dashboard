@@ -14,7 +14,7 @@ limitations under the License.
 
 import React, { useState } from 'react';
 import { Link, useHistory, useLocation, useParams } from 'react-router-dom';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { UndefinedFilled20 as UndefinedIcon } from '@carbon/icons-react';
 import {
   Actions,
@@ -83,7 +83,8 @@ function getRunStatusTooltip(run) {
   return `${reason} - ${message}`;
 }
 
-function Run({ intl }) {
+function Run() {
+  const intl = useIntl();
   const history = useHistory();
   const location = useLocation();
   const { namespace, runName: resourceName } = useParams();
@@ -373,4 +374,4 @@ function Run({ intl }) {
   );
 }
 
-export default injectIntl(Run);
+export default Run;

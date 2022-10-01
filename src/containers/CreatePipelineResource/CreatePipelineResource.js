@@ -13,7 +13,7 @@ limitations under the License.
 
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { Button, InlineNotification } from 'carbon-components-react';
 import {
   ALL_NAMESPACES,
@@ -51,7 +51,8 @@ function validateInputs(value, id) {
   return true;
 }
 
-export /* istanbul ignore next */ function CreatePipelineResource({ intl }) {
+export /* istanbul ignore next */ function CreatePipelineResource() {
+  const intl = useIntl();
   const history = useHistory();
   const { selectedNamespace: defaultNamespace } = useSelectedNamespace();
   const [creating, setCreating] = useState(false);
@@ -304,4 +305,4 @@ export /* istanbul ignore next */ function CreatePipelineResource({ intl }) {
   );
 }
 
-export default injectIntl(CreatePipelineResource);
+export default CreatePipelineResource;

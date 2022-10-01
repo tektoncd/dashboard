@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import {
   Header as CarbonHeader,
   HeaderGlobalBar,
@@ -31,10 +31,10 @@ function skipToContentClick(event) {
 function Header({
   children,
   headerNameProps,
-  intl,
   isSideNavExpanded,
   onHeaderMenuButtonClick
 }) {
+  const intl = useIntl();
   return (
     <CarbonHeader aria-label="Tekton Dashboard" className="tkn--header">
       <SkipToContent href="#" onClick={skipToContentClick}>
@@ -68,4 +68,4 @@ function Header({
   );
 }
 
-export default injectIntl(Header);
+export default Header;

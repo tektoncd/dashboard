@@ -13,7 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { getStatus, getStepStatusReason } from '@tektoncd/dashboard-utils';
 
 import { DetailsHeader, StepDefinition, Tab, Tabs } from '..';
@@ -21,9 +21,9 @@ import { DetailsHeader, StepDefinition, Tab, Tabs } from '..';
 const tabs = ['logs', 'details'];
 
 const StepDetails = props => {
+  const intl = useIntl();
   const {
     definition,
-    intl,
     logContainer,
     onViewChange,
     stepName,
@@ -91,4 +91,4 @@ StepDetails.defaultProps = {
   taskRun: {}
 };
 
-export default injectIntl(StepDetails);
+export default StepDetails;

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,14 +13,15 @@ limitations under the License.
 
 import React from 'react';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { ResourceDetails, Table } from '@tektoncd/dashboard-components';
 import { useTitleSync } from '@tektoncd/dashboard-utils';
 
 import { useSelectedNamespace, useTriggerBinding } from '../../api';
 import { getViewChangeHandler } from '../../utils';
 
-export function TriggerBindingContainer({ intl }) {
+export function TriggerBindingContainer() {
+  const intl = useIntl();
   const history = useHistory();
   const location = useLocation();
   const params = useParams();
@@ -99,4 +100,4 @@ export function TriggerBindingContainer({ intl }) {
   );
 }
 
-export default injectIntl(TriggerBindingContainer);
+export default TriggerBindingContainer;

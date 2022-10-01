@@ -14,7 +14,7 @@ limitations under the License.
 
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import keyBy from 'lodash.keyby';
 import {
   Link as CustomLink,
@@ -122,7 +122,8 @@ function getFormattedResources({
   }));
 }
 
-function ClusterTasksContainer({ intl }) {
+function ClusterTasksContainer() {
+  const intl = useIntl();
   const location = useLocation();
   const [cancelSelection, setCancelSelection] = useState(null);
   const [deleteError, setDeleteError] = useState(null);
@@ -281,4 +282,4 @@ function ClusterTasksContainer({ intl }) {
   );
 }
 
-export default injectIntl(ClusterTasksContainer);
+export default ClusterTasksContainer;

@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import {
   Calendar16 as CalendarIcon,
@@ -94,12 +94,12 @@ const TaskRuns = ({
     );
   },
   getTaskRunURL = urls.taskRuns.byName,
-  intl,
   loading,
   selectedNamespace,
   taskRuns,
   toolbarButtons
 }) => {
+  const intl = useIntl();
   let hasRunActions = false;
   const headers = [
     {
@@ -287,4 +287,4 @@ const TaskRuns = ({
   );
 };
 
-export default injectIntl(TaskRuns);
+export default TaskRuns;

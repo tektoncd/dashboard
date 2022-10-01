@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,14 +13,15 @@ limitations under the License.
 /* istanbul ignore file */
 
 import React, { Suspense, useState } from 'react';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { ErrorBoundary } from '@tektoncd/dashboard-components';
 import { paths, urls, useTitleSync } from '@tektoncd/dashboard-utils';
 
 // TODO: restore this when adding support for custom UI extensions
 // import './globals';
 
-function Extension({ displayName: resourceName, intl, source }) {
+function Extension({ displayName: resourceName, source }) {
+  const intl = useIntl();
   const [ExtensionComponent] = useState(() =>
     React.lazy(() => import(/* webpackIgnore: true */ source))
   );
@@ -53,4 +54,4 @@ function Extension({ displayName: resourceName, intl, source }) {
   );
 }
 
-export default injectIntl(Extension);
+export default Extension;

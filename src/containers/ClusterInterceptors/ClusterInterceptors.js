@@ -13,7 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { getFilters, urls, useTitleSync } from '@tektoncd/dashboard-utils';
 import {
   Link as CustomLink,
@@ -48,7 +48,8 @@ function getFormattedResources(resources) {
   }));
 }
 
-function ClusterInterceptors({ intl }) {
+function ClusterInterceptors() {
+  const intl = useIntl();
   const location = useLocation();
   const filters = getFilters(location);
 
@@ -126,4 +127,4 @@ function ClusterInterceptors({ intl }) {
   );
 }
 
-export default injectIntl(ClusterInterceptors);
+export default ClusterInterceptors;

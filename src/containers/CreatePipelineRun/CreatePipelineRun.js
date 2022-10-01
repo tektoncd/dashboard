@@ -31,7 +31,7 @@ import {
   useTitleSync
 } from '@tektoncd/dashboard-utils';
 import { KeyValueList } from '@tektoncd/dashboard-components';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import {
   NamespacesDropdown,
   PipelineResourcesDropdown,
@@ -90,7 +90,8 @@ const initialResourcesState = resourceSpecs => {
   return resourceSpecs.reduce(resourcesReducer, {});
 };
 
-function CreatePipelineRun({ intl }) {
+function CreatePipelineRun() {
+  const intl = useIntl();
   const history = useHistory();
   const location = useLocation();
   const { selectedNamespace: defaultNamespace } = useSelectedNamespace();
@@ -768,4 +769,4 @@ function CreatePipelineRun({ intl }) {
   );
 }
 
-export default injectIntl(CreatePipelineRun);
+export default CreatePipelineRun;

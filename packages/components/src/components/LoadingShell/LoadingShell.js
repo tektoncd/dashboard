@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2021 The Tekton Authors
+Copyright 2020-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,7 +13,7 @@ limitations under the License.
 /* istanbul ignore file */
 
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import {
   SkeletonText as CarbonSkeletonText,
   Content,
@@ -29,7 +29,8 @@ const SkeletonText = ({ heading, paragraph }) => (
   <CarbonSkeletonText heading={heading} paragraph={paragraph} width="80%" />
 );
 
-const LoadingShell = ({ intl }) => {
+const LoadingShell = () => {
+  const intl = useIntl();
   const loadingMessage = intl.formatMessage({
     id: 'dashboard.loading.config',
     defaultMessage: 'Loading configuration…'
@@ -86,4 +87,4 @@ const LoadingShell = ({ intl }) => {
   );
 };
 
-export default injectIntl(LoadingShell);
+export default LoadingShell;

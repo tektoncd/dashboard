@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { urls } from '@tektoncd/dashboard-utils';
 import { Link as CustomLink } from '@tektoncd/dashboard-components';
@@ -24,12 +24,12 @@ const PipelineResources = ({
   createPipelineResourcesURL = urls.pipelineResources.byName,
   createPipelineResourceDisplayName = ({ pipelineResourceMetadata }) =>
     pipelineResourceMetadata.name,
-  intl,
   loading,
   pipelineResources,
   selectedNamespace,
   toolbarButtons
 }) => {
+  const intl = useIntl();
   const headers = [
     {
       key: 'name',
@@ -115,4 +115,4 @@ const PipelineResources = ({
   );
 };
 
-export default injectIntl(PipelineResources);
+export default PipelineResources;

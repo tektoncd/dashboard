@@ -13,7 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
-import { injectIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { DataTable } from 'carbon-components-react';
 import {
   Table as DashboardTable,
@@ -38,7 +38,8 @@ const {
   TableRow
 } = DataTable;
 
-export /* istanbul ignore next */ function TriggerTemplateContainer({ intl }) {
+export /* istanbul ignore next */ function TriggerTemplateContainer() {
+  const intl = useIntl();
   const history = useHistory();
   const location = useLocation();
   const { namespace, triggerTemplateName: resourceName } = useParams();
@@ -220,4 +221,4 @@ export /* istanbul ignore next */ function TriggerTemplateContainer({ intl }) {
   );
 }
 
-export default injectIntl(TriggerTemplateContainer);
+export default TriggerTemplateContainer;

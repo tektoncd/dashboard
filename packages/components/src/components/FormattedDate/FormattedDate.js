@@ -12,14 +12,15 @@ limitations under the License.
 */
 
 import React from 'react';
-import { FormattedDate, FormattedRelativeTime, injectIntl } from 'react-intl';
+import { FormattedDate, FormattedRelativeTime, useIntl } from 'react-intl';
 
 const FormattedDateWrapper = ({
   date,
   formatTooltip = formattedDate => formattedDate,
-  intl,
   relative
 }) => {
+  const intl = useIntl();
+
   if (!date) {
     return null;
   }
@@ -62,4 +63,4 @@ const FormattedDateWrapper = ({
   return <span title={formatTooltip(formattedDate)}>{content}</span>;
 };
 
-export default injectIntl(FormattedDateWrapper);
+export default FormattedDateWrapper;
