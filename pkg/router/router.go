@@ -219,7 +219,10 @@ func checkUpgradeSameOrigin(req *http.Request) bool {
 func protectWebSocket(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		if !checkUpgradeSameOrigin(req) {
-			logging.Log.Warnf("websocket: Connection upgrade blocked, Host: %s, Origin: %s", req.Host, req.Header.Get("Origin"))
+			origin := req.Header.Get("Origin")
+			origin = strings.Replace(origin, "\n", "", -1)
+			origin = strings.Replace(origin, "\r", "", -1)
+			logging.Log.Warnf("websocket: Connection upgrade blocked, Host: %s, Origin: %s", req.Host, origin)
 			http.Error(w, "websocket: request origin not allowed", http.StatusForbidden)
 			return
 		}
