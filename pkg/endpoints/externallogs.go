@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -21,6 +21,7 @@ import (
 	"github.com/tektoncd/dashboard/pkg/utils"
 )
 
+// LogsProxy forwards requests to the configured external log provider and proxies the response to the client
 func (r Resource) LogsProxy(response http.ResponseWriter, request *http.Request) {
 	parsedURL, err := url.Parse(request.URL.String())
 	if err != nil {

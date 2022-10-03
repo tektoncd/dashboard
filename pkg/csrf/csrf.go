@@ -1,5 +1,5 @@
 /*
-Copyright 2021 The Tekton Authors
+Copyright 2021-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -41,8 +41,10 @@ type options struct {
 	HeaderName   string
 }
 
+// Option contains configuration for the CSRF wrapper
 type Option func(*csrf)
 
+// Protect wraps the provided Handler with CSRF protection
 func Protect(opts ...Option) func(http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {
 		cs := parseOptions(h, opts...)
@@ -90,12 +92,14 @@ func parseOptions(h http.Handler, opts ...Option) *csrf {
 	return cs
 }
 
+// ErrorHandler configures the provided error handler on the CSRF wrapper
 func ErrorHandler(h http.Handler) Option {
 	return func(cs *csrf) {
 		cs.opts.ErrorHandler = h
 	}
 }
 
+// HeaderName configures the header name on the CSRF wrapper
 func HeaderName(header string) Option {
 	return func(cs *csrf) {
 		cs.opts.HeaderName = header

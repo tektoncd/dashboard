@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -21,9 +21,12 @@ import (
 // Log is our logger for use elsewhere
 var Log = zap.NewNop().Sugar()
 
+// InitLogger creates and exposes the logger instance
 func InitLogger(level, format string) {
 	logger := createLogger(level, format)
-	defer logger.Sync()
+	defer func() {
+		_ = logger.Sync()
+	}()
 	Log = logger
 }
 
@@ -37,7 +40,7 @@ func createLogger(level, format string) *zap.SugaredLogger {
 	}
 
 	coreLevel := zapcore.InfoLevel
-	coreLevel.Set(level)
+	_ = coreLevel.Set(level)
 
 	config.Level.SetLevel(coreLevel)
 

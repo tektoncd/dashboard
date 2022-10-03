@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -51,8 +51,7 @@ func (o Options) GetTriggersNamespace() string {
 	return o.InstallNamespace
 }
 
-// Store all types here that are reused throughout files
-// Wrapper around all necessary clients used for endpoints
+// Resource is a wrapper around all necessary clients and config used for endpoints
 type Resource struct {
 	Config    *rest.Config
 	K8sClient k8sclientset.Interface

@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -31,6 +31,7 @@ func (fw *flushWriter) Write(p []byte) (n int, err error) {
 	return
 }
 
+// MakeFlushWriter ensures content is flushed immediately after being written
 func MakeFlushWriter(writer io.Writer) io.Writer {
 	if flusher, ok := writer.(http.Flusher); ok {
 		return &flushWriter{

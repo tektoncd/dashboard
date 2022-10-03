@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -17,6 +17,7 @@ import (
 	"net/http"
 )
 
+// CheckHealth responds with a status code 200 signalling that the application can receive requests
 func (r Resource) CheckHealth(response http.ResponseWriter, request *http.Request) {
 	// A method here so there's scope for doing anything fancy e.g. checking anything else
 	response.WriteHeader(http.StatusOK)

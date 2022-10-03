@@ -20,6 +20,7 @@ import (
 	logging "github.com/tektoncd/dashboard/pkg/logging"
 )
 
+// Proxy forwards requests to an upstream provider and proxies the response content and headers back to the caller
 func Proxy(request *http.Request, response http.ResponseWriter, url string, client *http.Client) (int, error) {
 	req, err := http.NewRequest(request.Method, url, request.Body)
 
@@ -54,9 +55,13 @@ func Proxy(request *http.Request, response http.ResponseWriter, url string, clie
 	response.WriteHeader(resp.StatusCode)
 	contentLength := resp.Header.Get("Content-Length")
 	if contentLength == "" {
-		io.Copy(MakeFlushWriter(response), resp.Body)
+		if _, err := io.Copy(MakeFlushWriter(response), resp.Body); err != nil {
+			logging.Log.Error("Failed copying response")
+		}
 	} else {
-		io.Copy(response, resp.Body)
+		if _, err := io.Copy(response, resp.Body); err != nil {
+			logging.Log.Error("Failed copying response")
+		}
 	}
 
 	return resp.StatusCode, nil

@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2021 The Tekton Authors
+Copyright 2020-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -61,6 +61,7 @@ func getTriggersVersion(r Resource, namespace string) string {
 	return version
 }
 
+// IsTriggersInstalled returns true if it can detect a Triggers install in the cluster, false otherwise
 func IsTriggersInstalled(r Resource, namespace string) bool {
 	version := getTriggersVersion(r, namespace)
 	return version != ""

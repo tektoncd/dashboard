@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -22,8 +22,11 @@ import (
 
 // RespondError - logs and writes an error response with a desired status code
 func RespondError(response http.ResponseWriter, err error, statusCode int) {
-	logging.Log.Error("Error: ", strings.Replace(err.Error(), "/", "", -1))
+	logging.Log.Error("Error: ", strings.ReplaceAll(err.Error(), "/", ""))
 	response.Header().Set("Content-Type", "text/plain")
 	response.WriteHeader(statusCode)
-	response.Write([]byte(err.Error()))
+	_, err = response.Write([]byte(err.Error()))
+	if err != nil {
+		logging.Log.Error("Write failed: %v", err)
+	}
 }
