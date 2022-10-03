@@ -386,7 +386,7 @@ function Runs() {
             />
           );
 
-          const runActions = getRunActions(run);
+          const runActions = getRunActions();
 
           return {
             id: run.metadata.uid,
