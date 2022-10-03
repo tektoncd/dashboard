@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,6 +16,8 @@ package endpoints
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/tektoncd/dashboard/pkg/logging"
 )
 
 // Properties : properties we want to be able to retrieve via REST
@@ -69,5 +71,7 @@ func (r Resource) GetProperties(response http.ResponseWriter, request *http.Requ
 	response.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 	response.Header().Set("Pragma", "no-cache")
 	response.Header().Set("Expires", "0")
-	json.NewEncoder(response).Encode(properties)
+	if err := json.NewEncoder(response).Encode(properties); err != nil {
+		logging.Log.Error("Failed encoding properties")
+	}
 }

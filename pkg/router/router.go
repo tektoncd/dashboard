@@ -152,7 +152,7 @@ func Register(r endpoints.Resource, cfg *rest.Config) (*Server, error) {
 func NewProxyHandler(apiProxyPrefix string, cfg *rest.Config, keepalive time.Duration) (http.Handler, error) {
 	host := cfg.Host
 	if !strings.HasSuffix(host, "/") {
-		host = host + "/"
+		host += "/"
 	}
 	target, err := url.Parse(host)
 	if err != nil {
@@ -188,7 +188,8 @@ func (s *Server) ServeOnListener(l net.Listener) error {
 	CSRF := csrf.Protect()
 
 	server := http.Server{
-		Handler: CSRF(s.handler),
+		Handler:           CSRF(s.handler),
+		ReadHeaderTimeout: 30 * time.Second,
 	}
 	return server.Serve(l)
 }
@@ -220,8 +221,8 @@ func protectWebSocket(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		if !checkUpgradeSameOrigin(req) {
 			origin := req.Header.Get("Origin")
-			origin = strings.Replace(origin, "\n", "", -1)
-			origin = strings.Replace(origin, "\r", "", -1)
+			origin = strings.ReplaceAll(origin, "\n", "")
+			origin = strings.ReplaceAll(origin, "\r", "")
 			logging.Log.Warnf("websocket: Connection upgrade blocked, Host: %s, Origin: %s", req.Host, origin)
 			http.Error(w, "websocket: request origin not allowed", http.StatusForbidden)
 			return
