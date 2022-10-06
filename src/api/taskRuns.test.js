@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,10 +11,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import fetchMock from 'fetch-mock';
-
 import * as API from './taskRuns';
 import * as utils from './utils';
+import { rest, server } from '../../config_frontend/msw';
 
 it('cancelTaskRun', () => {
   const name = 'foo';
@@ -23,27 +22,32 @@ it('cancelTaskRun', () => {
   const payload = [
     { op: 'replace', path: '/spec/status', value: 'TaskRunCancelled' }
   ];
-  fetchMock.patch(`end:${name}`, returnedTaskRun);
+  server.use(
+    rest.patch(new RegExp(`/${name}$`), async (req, res, ctx) =>
+      (await req.text()) === JSON.stringify(payload)
+        ? res(ctx.json(returnedTaskRun))
+        : res(ctx.json(400))
+    )
+  );
   return API.cancelTaskRun({ name, namespace }).then(response => {
-    expect(fetchMock.lastOptions()).toMatchObject({
-      body: JSON.stringify(payload)
-    });
     expect(response).toEqual(returnedTaskRun);
-    fetchMock.restore();
   });
 });
 
 it('createTaskRun uses correct kubernetes information', () => {
   const data = { fake: 'createtaskrun' };
-  fetchMock.post(/taskruns/, { body: data, status: 201 });
+  server.use(
+    rest.post(/\/taskruns\//, async (req, res, ctx) => {
+      const sentBody = await req.json();
+      expect(sentBody.apiVersion).toEqual('tekton.dev/v1beta1');
+      expect(sentBody.kind).toEqual('TaskRun');
+      expect(sentBody).toHaveProperty('metadata');
+      expect(sentBody).toHaveProperty('spec');
+      return res(ctx.status(201), ctx.json(data));
+    })
+  );
   return API.createTaskRun({}).then(response => {
     expect(response).toEqual(data);
-    const sentBody = JSON.parse(fetchMock.lastOptions().body);
-    expect(sentBody.apiVersion).toEqual('tekton.dev/v1beta1');
-    expect(sentBody.kind).toEqual('TaskRun');
-    expect(sentBody).toHaveProperty('metadata');
-    expect(sentBody).toHaveProperty('spec');
-    fetchMock.restore();
   });
 });
 
@@ -54,51 +58,60 @@ it('createTaskRun has correct metadata', () => {
   const namespace = 'fake-namespace';
   const taskName = 'fake-task';
   const labels = { app: 'fake-app' };
-  fetchMock.post(/taskruns/, {});
+  server.use(
+    rest.post(/\/taskruns\//, async (req, res, ctx) => {
+      const { metadata: sentMetadata } = await req.json();
+      expect(sentMetadata.name).toMatch(taskName); // include name
+      expect(sentMetadata.name).toMatch('fake-timestamp'); // include timestamp
+      expect(sentMetadata.namespace).toEqual(namespace);
+      expect(sentMetadata.labels.app).toEqual('fake-app');
+      return res(ctx.status(201), ctx.json({}));
+    })
+  );
   return API.createTaskRun({ namespace, taskName, labels }).then(() => {
-    const sentMetadata = JSON.parse(fetchMock.lastOptions().body).metadata;
-    expect(sentMetadata.name).toMatch(taskName); // include name
-    expect(sentMetadata.name).toMatch('fake-timestamp'); // include timestamp
-    expect(sentMetadata.namespace).toEqual(namespace);
-    expect(sentMetadata.labels.app).toEqual('fake-app');
-    fetchMock.restore();
     mockDateNow.mockRestore();
   });
 });
 
 it('createTaskRun handles taskRef', () => {
   const taskName = 'fake-task';
-  fetchMock.post(/taskruns/, {});
-  return API.createTaskRun({ taskName }).then(() => {
-    const sentSpec = JSON.parse(fetchMock.lastOptions().body).spec;
-    expect(sentSpec.taskRef.name).toEqual(taskName);
-    expect(sentSpec.taskRef.kind).toEqual('Task');
-    fetchMock.restore();
-  });
+  server.use(
+    rest.post(/\/taskruns\//, async (req, res, ctx) => {
+      const { spec: sentSpec } = await req.json();
+      expect(sentSpec.taskRef.name).toEqual(taskName);
+      expect(sentSpec.taskRef.kind).toEqual('Task');
+      return res(ctx.status(201), ctx.json({}));
+    })
+  );
+  return API.createTaskRun({ taskName });
 });
 
 it('createTaskRun handles ClusterTask in taskRef', () => {
   const taskName = 'fake-task';
-  fetchMock.post(/taskruns/, {});
-  return API.createTaskRun({ taskName, kind: 'ClusterTask' }).then(() => {
-    const sentSpec = JSON.parse(fetchMock.lastOptions().body).spec;
-    expect(sentSpec.taskRef.kind).toEqual('ClusterTask');
-    fetchMock.restore();
-  });
+  server.use(
+    rest.post(/\/taskruns\//, async (req, res, ctx) => {
+      const { spec: sentSpec } = await req.json();
+      expect(sentSpec.taskRef.kind).toEqual('ClusterTask');
+      return res(ctx.status(201), ctx.json({}));
+    })
+  );
+  return API.createTaskRun({ taskName, kind: 'ClusterTask' });
 });
 
 it('createTaskRun handles parameters', () => {
   const taskName = 'fake-task';
   const params = { 'fake-param-name': 'fake-param-value' };
-  fetchMock.post(/taskruns/, {});
-  return API.createTaskRun({ taskName, params }).then(() => {
-    const sentSpec = JSON.parse(fetchMock.lastOptions().body).spec;
-    expect(sentSpec.params).toContainEqual({
-      name: 'fake-param-name',
-      value: 'fake-param-value'
-    });
-    fetchMock.restore();
-  });
+  server.use(
+    rest.post(/\/taskruns\//, async (req, res, ctx) => {
+      const { spec: sentSpec } = await req.json();
+      expect(sentSpec.params).toContainEqual({
+        name: 'fake-param-name',
+        value: 'fake-param-value'
+      });
+      return res(ctx.status(201), ctx.json({}));
+    })
+  );
+  return API.createTaskRun({ taskName, params });
 });
 
 it('createTaskRun handles resources', () => {
@@ -107,72 +120,83 @@ it('createTaskRun handles resources', () => {
     inputs: { 'fake-task-input': 'fake-input-resource' },
     outputs: { 'fake-task-output': 'fake-output-resource' }
   };
-  fetchMock.post(/taskruns/, {});
-  return API.createTaskRun({ taskName, resources }).then(() => {
-    const sentResources = JSON.parse(fetchMock.lastOptions().body).spec
-      .resources;
-    expect(sentResources.inputs).toContainEqual({
-      name: 'fake-task-input',
-      resourceRef: { name: 'fake-input-resource' }
-    });
-    expect(sentResources.outputs).toContainEqual({
-      name: 'fake-task-output',
-      resourceRef: { name: 'fake-output-resource' }
-    });
-    fetchMock.restore();
-  });
+  server.use(
+    rest.post(/\/taskruns\//, async (req, res, ctx) => {
+      const {
+        spec: { resources: sentResources }
+      } = await req.json();
+      expect(sentResources.inputs).toContainEqual({
+        name: 'fake-task-input',
+        resourceRef: { name: 'fake-input-resource' }
+      });
+      expect(sentResources.outputs).toContainEqual({
+        name: 'fake-task-output',
+        resourceRef: { name: 'fake-output-resource' }
+      });
+      return res(ctx.status(201), ctx.json({}));
+    })
+  );
+  return API.createTaskRun({ taskName, resources });
 });
 
 it('createTaskRun handles serviceAccount', () => {
   const taskName = 'fake-task';
   const serviceAccount = 'fake-service-account';
-  fetchMock.post(/taskruns/, {});
-  return API.createTaskRun({ taskName, serviceAccount }).then(() => {
-    const sentSpec = JSON.parse(fetchMock.lastOptions().body).spec;
-    expect(sentSpec.serviceAccountName).toEqual(serviceAccount);
-    fetchMock.restore();
-  });
+  server.use(
+    rest.post(/\/taskruns\//, async (req, res, ctx) => {
+      const { spec: sentSpec } = await req.json();
+      expect(sentSpec.serviceAccountName).toEqual(serviceAccount);
+      return res(ctx.status(201), ctx.json({}));
+    })
+  );
+  return API.createTaskRun({ taskName, serviceAccount });
 });
 
 it('createTaskRun handles nodeSelector', () => {
   const taskName = 'fake-task';
   const nodeSelector = { disk: 'ssd' };
-  fetchMock.post(/taskruns/, {});
-  return API.createTaskRun({ taskName, nodeSelector }).then(() => {
-    const sentSpec = JSON.parse(fetchMock.lastOptions().body).spec;
-    expect(sentSpec.podTemplate).toEqual({ nodeSelector });
-    fetchMock.restore();
-  });
+  server.use(
+    rest.post(/\/taskruns\//, async (req, res, ctx) => {
+      const { spec: sentSpec } = await req.json();
+      expect(sentSpec.podTemplate).toEqual({ nodeSelector });
+      return res(ctx.status(201), ctx.json({}));
+    })
+  );
+  return API.createTaskRun({ taskName, nodeSelector });
 });
 
 it('createTaskRun handles timeout', () => {
   const taskName = 'fake-task';
   const timeout = 'fake-timeout';
-  fetchMock.post(/taskruns/, {});
-  return API.createTaskRun({ taskName, timeout }).then(() => {
-    const sentSpec = JSON.parse(fetchMock.lastOptions().body).spec;
-    expect(sentSpec.timeout).toEqual(timeout);
-    fetchMock.restore();
-  });
+  server.use(
+    rest.post(/\/taskruns\//, async (req, res, ctx) => {
+      const { spec: sentSpec } = await req.json();
+      expect(sentSpec.timeout).toEqual(timeout);
+      return res(ctx.status(201), ctx.json({}));
+    })
+  );
+  return API.createTaskRun({ taskName, timeout });
 });
 
 it('deleteTaskRun', () => {
   const name = 'foo';
   const data = { fake: 'taskRun' };
-  fetchMock.delete(`end:${name}`, data);
+  server.use(
+    rest.delete(new RegExp(`/${name}$`), (req, res, ctx) => res(ctx.json(data)))
+  );
   return API.deleteTaskRun({ name }).then(taskRun => {
     expect(taskRun).toEqual(data);
-    fetchMock.restore();
   });
 });
 
 it('getTaskRun', () => {
   const name = 'foo';
   const data = { fake: 'taskRun' };
-  fetchMock.get(`end:${name}`, data);
+  server.use(
+    rest.get(new RegExp(`/${name}$`), (req, res, ctx) => res(ctx.json(data)))
+  );
   return API.getTaskRun({ name }).then(taskRun => {
     expect(taskRun).toEqual(data);
-    fetchMock.restore();
   });
 });
 
@@ -180,10 +204,9 @@ it('getTaskRuns', () => {
   const data = {
     items: 'taskRuns'
   };
-  fetchMock.get(/taskruns/, data);
+  server.use(rest.get(/\/taskruns\//, (req, res, ctx) => res(ctx.json(data))));
   return API.getTaskRuns().then(taskRuns => {
     expect(taskRuns).toEqual(data);
-    fetchMock.restore();
   });
 });
 
@@ -192,10 +215,9 @@ it('getTaskRuns With Query Params', () => {
   const data = {
     items: 'taskRuns'
   };
-  fetchMock.get(/taskruns/, data);
+  server.use(rest.get(/\/taskruns\//, (req, res, ctx) => res(ctx.json(data))));
   return API.getTaskRuns({ taskName }).then(taskRuns => {
     expect(taskRuns).toEqual(data);
-    fetchMock.restore();
   });
 });
 
@@ -239,22 +261,24 @@ it('useTaskRun', () => {
 });
 
 it('rerunTaskRun', () => {
-  const filter = 'end:/taskruns/';
   const originalTaskRun = {
     metadata: { name: 'fake_taskRun' },
     spec: { status: 'fake_status' },
     status: 'fake_status'
   };
   const newTaskRun = { metadata: { name: 'fake_taskRun_rerun' } };
-  fetchMock.post(filter, { body: newTaskRun, status: 201 });
+  server.use(
+    rest.post(/\/taskruns\/$/, async (req, res, ctx) => {
+      const { metadata, spec, status } = await req.json();
+      expect(metadata.generateName).toMatch(
+        new RegExp(originalTaskRun.metadata.name)
+      );
+      expect(spec.status).toBeUndefined();
+      expect(status).toBeUndefined();
+      return res(ctx.status(201), ctx.json(newTaskRun));
+    })
+  );
   return API.rerunTaskRun(originalTaskRun).then(data => {
-    const body = JSON.parse(fetchMock.lastCall(filter)[1].body);
-    expect(body.metadata.generateName).toMatch(
-      new RegExp(originalTaskRun.metadata.name)
-    );
-    expect(body.status).toBeUndefined();
-    expect(body.spec.status).toBeUndefined();
     expect(data).toEqual(newTaskRun);
-    fetchMock.restore();
   });
 });

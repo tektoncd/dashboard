@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -111,7 +111,7 @@ describe('fetchLogsFallback', () => {
     const stepName = 'fake_stepName';
     const stepStatus = { container };
     const taskRun = { metadata: { namespace }, status: { podName } };
-    jest.spyOn(comms, 'get');
+    jest.spyOn(comms, 'get').mockImplementation(() => {});
 
     const fallback = fetchLogsFallback(externalLogsURL);
     fallback(stepName, stepStatus, taskRun);
@@ -193,7 +193,7 @@ describe('getLogsRetriever', () => {
 
   it('should handle default logs retriever with external fallback enabled', async () => {
     const externalLogsURL = 'fake_externalLogsURL';
-    jest.spyOn(API, 'getPodLog');
+    jest.spyOn(API, 'getPodLog').mockImplementation(() => {});
     const onFallback = jest.fn();
     const logsRetriever = getLogsRetriever({ externalLogsURL, onFallback });
     expect(logsRetriever).toBeDefined();
@@ -212,6 +212,7 @@ describe('getLogsRetriever', () => {
     jest.spyOn(API, 'getPodLog').mockImplementation(() => {
       throw new Error();
     });
+    jest.spyOn(comms, 'get').mockImplementation(() => {});
     const onFallback = jest.fn();
     const logsRetriever = getLogsRetriever({ externalLogsURL, onFallback });
     expect(logsRetriever).toBeDefined();

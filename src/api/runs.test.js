@@ -11,10 +11,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import fetchMock from 'fetch-mock';
-
 import * as API from './runs';
 import * as utils from './utils';
+import { rest, server } from '../../config_frontend/msw';
 
 it('cancelRun', () => {
   const name = 'foo';
@@ -23,33 +22,41 @@ it('cancelRun', () => {
   const payload = [
     { op: 'replace', path: '/spec/status', value: 'RunCancelled' }
   ];
-  fetchMock.patch(`end:${name}`, returnedRun);
+  server.use(
+    rest.patch(new RegExp(`/${name}$`), async (req, res, ctx) =>
+      (await req.text()) === JSON.stringify(payload)
+        ? res(ctx.json(returnedRun))
+        : res(ctx.json(400))
+    )
+  );
   return API.cancelRun({ name, namespace }).then(response => {
-    expect(fetchMock.lastOptions()).toMatchObject({
-      body: JSON.stringify(payload)
-    });
     expect(response).toEqual(returnedRun);
-    fetchMock.restore();
   });
 });
 
 it('deleteRun', () => {
   const name = 'foo';
   const data = { fake: 'Run' };
-  fetchMock.delete(`end:${name}`, data);
+  server.use(
+    rest.delete(new RegExp(`/${name}$`), async (req, res, ctx) =>
+      res(ctx.json(data))
+    )
+  );
   return API.deleteRun({ name }).then(run => {
     expect(run).toEqual(data);
-    fetchMock.restore();
   });
 });
 
 it('getRun', () => {
   const name = 'foo';
   const data = { fake: 'Run' };
-  fetchMock.get(`end:${name}`, data);
+  server.use(
+    rest.get(new RegExp(`/${name}$`), async (req, res, ctx) =>
+      res(ctx.json(data))
+    )
+  );
   return API.getRun({ name }).then(run => {
     expect(run).toEqual(data);
-    fetchMock.restore();
   });
 });
 
@@ -57,10 +64,11 @@ it('getRuns', () => {
   const data = {
     items: 'Runs'
   };
-  fetchMock.get(/runs/, data);
+  server.use(
+    rest.get(/\/runs\//, async (req, res, ctx) => res(ctx.json(data)))
+  );
   return API.getRuns({ filters: [] }).then(runs => {
     expect(runs).toEqual(data);
-    fetchMock.restore();
   });
 });
 
@@ -104,22 +112,25 @@ it('useRun', () => {
 });
 
 it('rerunRun', () => {
-  const filter = 'end:/runs/';
   const originalRun = {
     metadata: { name: 'fake_run' },
     spec: { status: 'fake_status' },
     status: 'fake_status'
   };
   const newRun = { metadata: { name: 'fake_run_rerun' } };
-  fetchMock.post(filter, { body: newRun, status: 201 });
+  server.use(
+    rest.post(/\/runs\/$/, async (req, res, ctx) => {
+      const { metadata, spec, status } = await req.json();
+      expect(metadata.generateName).toMatch(
+        new RegExp(originalRun.metadata.name)
+      );
+      expect(spec.status).toBeUndefined();
+      expect(status).toBeUndefined();
+      return res(ctx.status(201), ctx.json(newRun));
+    })
+  );
+
   return API.rerunRun(originalRun).then(data => {
-    const body = JSON.parse(fetchMock.lastCall(filter)[1].body);
-    expect(body.metadata.generateName).toMatch(
-      new RegExp(originalRun.metadata.name)
-    );
-    expect(body.status).toBeUndefined();
-    expect(body.spec.status).toBeUndefined();
     expect(data).toEqual(newRun);
-    fetchMock.restore();
   });
 });

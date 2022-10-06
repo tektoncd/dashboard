@@ -11,23 +11,24 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import fetchMock from 'fetch-mock';
-
 import * as API from './pipelineRuns';
 import * as utils from './utils';
+import { rest, server } from '../../config_frontend/msw';
 
 it('cancelPipelineRun', () => {
   const name = 'foo';
   const namespace = 'foospace';
   const payload = [{ op: 'replace', path: '/spec/status', value: 'Cancelled' }];
   const returnedPipelineRun = { fake: 'PipelineRun' };
-  fetchMock.patch(`end:${name}`, returnedPipelineRun);
+  server.use(
+    rest.patch(new RegExp(`/${name}$`), async (req, res, ctx) =>
+      (await req.text()) === JSON.stringify(payload)
+        ? res(ctx.json(returnedPipelineRun))
+        : res(ctx.json(400))
+    )
+  );
   return API.cancelPipelineRun({ name, namespace }).then(response => {
-    expect(fetchMock.lastOptions()).toMatchObject({
-      body: JSON.stringify(payload)
-    });
     expect(response).toEqual(returnedPipelineRun);
-    fetchMock.restore();
   });
 });
 
@@ -37,13 +38,15 @@ it('cancelPipelineRun with non-default status', () => {
   const status = 'StoppedRunFinally';
   const payload = [{ op: 'replace', path: '/spec/status', value: status }];
   const returnedPipelineRun = { fake: 'PipelineRun' };
-  fetchMock.patch(`end:${name}`, returnedPipelineRun);
+  server.use(
+    rest.patch(new RegExp(`/${name}$`), async (req, res, ctx) =>
+      (await req.text()) === JSON.stringify(payload)
+        ? res(ctx.json(returnedPipelineRun))
+        : res(ctx.json(400))
+    )
+  );
   return API.cancelPipelineRun({ name, namespace, status }).then(response => {
-    expect(fetchMock.lastOptions()).toMatchObject({
-      body: JSON.stringify(payload)
-    });
     expect(response).toEqual(returnedPipelineRun);
-    fetchMock.restore();
   });
 });
 
@@ -85,13 +88,15 @@ it('createPipelineRun', () => {
       timeout
     }
   };
-  fetchMock.post('*', { body: data, status: 201 });
+  server.use(
+    rest.post(/\/pipelineruns/, async (req, res, ctx) => {
+      expect(await req.json()).toEqual(data);
+      return res(ctx.status(201), ctx.json(data));
+    })
+  );
+
   return API.createPipelineRun(payload).then(response => {
     expect(response).toEqual(data);
-    expect(fetchMock.lastOptions()).toMatchObject({
-      body: JSON.stringify(data)
-    });
-    fetchMock.restore();
     mockDateNow.mockRestore();
   });
 });
@@ -142,13 +147,15 @@ it('createPipelineRun with nodeSelector', () => {
       timeout
     }
   };
-  fetchMock.post('*', { body: data, status: 201 });
+  server.use(
+    rest.post(/\/pipelineruns/, async (req, res, ctx) => {
+      expect(await req.json()).toEqual(data);
+      return res(ctx.status(201), ctx.json(data));
+    })
+  );
+
   return API.createPipelineRun(payload).then(response => {
     expect(response).toEqual(data);
-    expect(fetchMock.lastOptions()).toMatchObject({
-      body: JSON.stringify(data)
-    });
-    fetchMock.restore();
     mockDateNow.mockRestore();
   });
 });
@@ -156,20 +163,22 @@ it('createPipelineRun with nodeSelector', () => {
 it('deletePipelineRun', () => {
   const name = 'foo';
   const data = { fake: 'pipelineRun' };
-  fetchMock.delete(`end:${name}`, data);
+  server.use(
+    rest.delete(new RegExp(`/${name}$`), (req, res, ctx) => res(ctx.json(data)))
+  );
   return API.deletePipelineRun({ name }).then(pipelineRun => {
     expect(pipelineRun).toEqual(data);
-    fetchMock.restore();
   });
 });
 
 it('getPipelineRun', () => {
   const name = 'foo';
   const data = { fake: 'pipelineRun' };
-  fetchMock.get(`end:${name}`, data);
+  server.use(
+    rest.get(new RegExp(`/${name}$`), (req, res, ctx) => res(ctx.json(data)))
+  );
   return API.getPipelineRun({ name }).then(pipelineRun => {
     expect(pipelineRun).toEqual(data);
-    fetchMock.restore();
   });
 });
 
@@ -177,10 +186,11 @@ it('getPipelineRuns', () => {
   const data = {
     items: 'pipelineRuns'
   };
-  fetchMock.get(/pipelineruns/, data);
+  server.use(
+    rest.get(/\/pipelineruns\//, (req, res, ctx) => res(ctx.json(data)))
+  );
   return API.getPipelineRuns({ filters: [] }).then(pipelineRuns => {
     expect(pipelineRuns).toEqual(data);
-    fetchMock.restore();
   });
 });
 
@@ -189,11 +199,12 @@ it('getPipelineRuns With Query Params', () => {
   const data = {
     items: 'pipelineRuns'
   };
-  fetchMock.get(/pipelineruns/, data);
+  server.use(
+    rest.get(/\/pipelineruns\//, (req, res, ctx) => res(ctx.json(data)))
+  );
   return API.getPipelineRuns({ pipelineName, filters: [] }).then(
     pipelineRuns => {
       expect(pipelineRuns).toEqual(data);
-      fetchMock.restore();
     }
   );
 });
@@ -238,23 +249,26 @@ it('usePipelineRun', () => {
 });
 
 it('rerunPipelineRun', () => {
-  const filter = 'end:/pipelineruns/';
   const originalPipelineRun = {
     metadata: { name: 'fake_pipelineRun' },
     spec: { status: 'fake_status' },
     status: 'fake_status'
   };
   const newPipelineRun = { metadata: { name: 'fake_pipelineRun_rerun' } };
-  fetchMock.post(filter, { body: newPipelineRun, status: 201 });
+  server.use(
+    rest.post(/\/pipelineruns\/$/, async (req, res, ctx) => {
+      const { metadata, spec, status } = await req.json();
+      expect(metadata.generateName).toMatch(
+        new RegExp(originalPipelineRun.metadata.name)
+      );
+      expect(spec.status).toBeUndefined();
+      expect(status).toBeUndefined();
+      return res(ctx.status(201), ctx.json(newPipelineRun));
+    })
+  );
+
   return API.rerunPipelineRun(originalPipelineRun).then(data => {
-    const body = JSON.parse(fetchMock.lastCall(filter)[1].body);
-    expect(body.metadata.generateName).toMatch(
-      new RegExp(originalPipelineRun.metadata.name)
-    );
-    expect(body.status).toBeUndefined();
-    expect(body.spec.status).toBeUndefined();
     expect(data).toEqual(newPipelineRun);
-    fetchMock.restore();
   });
 });
 
@@ -263,14 +277,16 @@ it('startPipelineRun', () => {
   const namespace = 'foospace';
   const returnedPipelineRun = { fake: 'PipelineRun' };
   const payload = [{ op: 'remove', path: '/spec/status' }];
-  fetchMock.patch(`end:${name}`, returnedPipelineRun);
+  server.use(
+    rest.patch(new RegExp(`/${name}$`), async (req, res, ctx) =>
+      (await req.text()) === JSON.stringify(payload)
+        ? res(ctx.json(returnedPipelineRun))
+        : res(ctx.json(400))
+    )
+  );
   return API.startPipelineRun({ metadata: { name, namespace } }).then(
     response => {
-      expect(fetchMock.lastOptions()).toMatchObject({
-        body: JSON.stringify(payload)
-      });
       expect(response).toEqual(returnedPipelineRun);
-      fetchMock.restore();
     }
   );
 });

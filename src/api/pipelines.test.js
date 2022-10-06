@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,38 +11,39 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import fetchMock from 'fetch-mock';
 import * as API from './pipelines';
 import * as utils from './utils';
+import { rest, server } from '../../config_frontend/msw';
 
 it('getPipelines', () => {
   const data = {
     items: 'pipelines'
   };
-  fetchMock.get(/pipelines/, data);
+  server.use(rest.get(/\/pipelines\//, (req, res, ctx) => res(ctx.json(data))));
   return API.getPipelines().then(pipelines => {
     expect(pipelines).toEqual(data);
-    fetchMock.restore();
   });
 });
 
 it('getPipeline', () => {
   const name = 'foo';
   const data = { fake: 'pipeline' };
-  fetchMock.get(`end:${name}`, data);
+  server.use(
+    rest.get(new RegExp(`/${name}$`), (req, res, ctx) => res(ctx.json(data)))
+  );
   return API.getPipeline({ name }).then(pipeline => {
     expect(pipeline).toEqual(data);
-    fetchMock.restore();
   });
 });
 
 it('deletePipeline', () => {
   const name = 'foo';
   const data = { fake: 'pipeline' };
-  fetchMock.delete(`end:${name}`, data);
+  server.use(
+    rest.delete(new RegExp(`/${name}$`), (req, res, ctx) => res(ctx.json(data)))
+  );
   return API.deletePipeline({ name }).then(pipeline => {
     expect(pipeline).toEqual(data);
-    fetchMock.restore();
   });
 });
 

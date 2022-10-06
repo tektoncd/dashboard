@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,16 +11,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import fetchMock from 'fetch-mock';
 import * as API from './serviceAccounts';
 import * as utils from './utils';
+import { rest, server } from '../../config_frontend/msw';
 
 it('getServiceAccounts returns the correct data', () => {
   const data = { items: 'serviceaccounts' };
-  fetchMock.get(/serviceaccounts/, data);
+  server.use(
+    rest.get(/\/serviceaccounts\//, (req, res, ctx) => res(ctx.json(data)))
+  );
   return API.getServiceAccounts().then(response => {
     expect(response).toEqual(data);
-    fetchMock.restore();
   });
 });
 

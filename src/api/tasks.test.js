@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,38 +11,39 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import fetchMock from 'fetch-mock';
 import * as API from './tasks';
 import * as utils from './utils';
+import { rest, server } from '../../config_frontend/msw';
 
 it('getTasks', () => {
   const data = {
     items: 'tasks'
   };
-  fetchMock.get(/tasks/, data);
+  server.use(rest.get(/\/tasks\//, (req, res, ctx) => res(ctx.json(data))));
   return API.getTasks().then(tasks => {
     expect(tasks).toEqual(data);
-    fetchMock.restore();
   });
 });
 
 it('getTask', () => {
   const name = 'foo';
   const data = { fake: 'task' };
-  fetchMock.get(`end:${name}`, data);
+  server.use(
+    rest.get(new RegExp(`/${name}$`), (req, res, ctx) => res(ctx.json(data)))
+  );
   return API.getTask({ name }).then(task => {
     expect(task).toEqual(data);
-    fetchMock.restore();
   });
 });
 
 it('deleteTask', () => {
   const name = 'foo';
   const data = { fake: 'task' };
-  fetchMock.delete(`end:${name}`, data);
+  server.use(
+    rest.delete(new RegExp(`/${name}$`), (req, res, ctx) => res(ctx.json(data)))
+  );
   return API.deleteTask({ name }).then(task => {
     expect(task).toEqual(data);
-    fetchMock.restore();
   });
 });
 
