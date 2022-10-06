@@ -11,11 +11,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import fetchMock from 'fetch-mock';
 import { renderHook } from '@testing-library/react-hooks';
 import { labels } from '@tektoncd/dashboard-utils';
 
 import { getAPIWrapper, getQueryClient } from '../utils/test';
+import { rest, server } from '../../config_frontend/msw';
 
 import * as API from '.';
 import * as ClusterTasksAPI from './clusterTasks';
@@ -29,11 +29,12 @@ it('getCustomResource', () => {
   const name = 'testresource';
   const namespace = 'testnamespace';
   const data = { fake: 'resourcedata' };
-  fetchMock.get(`end:${name}`, data);
+  server.use(
+    rest.get(new RegExp(`/${name}$`), (req, res, ctx) => res(ctx.json(data)))
+  );
   return API.getCustomResource({ group, version, type, namespace, name }).then(
     resource => {
       expect(resource).toEqual(data);
-      fetchMock.restore();
     }
   );
 });
@@ -44,11 +45,12 @@ it('getCustomResources', () => {
   const type = 'testtype';
   const namespace = 'testnamespace';
   const data = { items: 'resourcedata' };
-  fetchMock.get(`end:${type}/`, data);
+  server.use(
+    rest.get(new RegExp(`/${type}/$`), (req, res, ctx) => res(ctx.json(data)))
+  );
   return API.getCustomResources({ group, version, type, namespace }).then(
     resources => {
       expect(resources).toEqual(data);
-      fetchMock.restore();
     }
   );
 });
@@ -81,7 +83,9 @@ it('useCustomResources', async () => {
       { metadata: { name: 'resource2' } }
     ]
   };
-  fetchMock.get(/fake_type/, resources);
+  server.use(
+    rest.get(/\/fake_type\//, (req, res, ctx) => res(ctx.json(resources)))
+  );
   const { result, waitFor } = renderHook(
     () => API.useCustomResources({ group, type, version }),
     {
@@ -91,7 +95,6 @@ it('useCustomResources', async () => {
   await waitFor(() => result.current.isFetching);
   await waitFor(() => !result.current.isFetching);
   expect(result.current.data).toEqual(resources.items);
-  fetchMock.restore();
 });
 
 it('useAPIResource', () => {
@@ -150,10 +153,11 @@ it('getNamespaces returns the correct data', () => {
   const data = {
     items: 'namespaces'
   };
-  fetchMock.get(/namespaces/, data);
+  server.use(
+    rest.get(/\/namespaces\//, (req, res, ctx) => res(ctx.json(data)))
+  );
   return API.getNamespaces().then(response => {
     expect(response).toEqual(data);
-    fetchMock.restore();
   });
 });
 
@@ -165,14 +169,15 @@ it('useNamespaces', async () => {
       { metadata: { name: 'namespace2' } }
     ]
   };
-  fetchMock.get(/namespaces/, namespaces);
+  server.use(
+    rest.get(/\/namespaces\//, (req, res, ctx) => res(ctx.json(namespaces)))
+  );
   const { result, waitFor } = renderHook(() => API.useNamespaces(), {
     wrapper: getAPIWrapper()
   });
   await waitFor(() => result.current.isFetching);
   await waitFor(() => !result.current.isFetching);
   expect(result.current.data).toEqual(namespaces.items);
-  fetchMock.restore();
 });
 
 it('usePod', async () => {
@@ -182,7 +187,7 @@ it('usePod', async () => {
     metadata: {},
     spec: 'fake_spec'
   };
-  fetchMock.get(/pods/, pod);
+  server.use(rest.get(/\/pods\//, (req, res, ctx) => res(ctx.json(pod))));
   const { result, waitFor } = renderHook(
     () => API.usePod({ name, namespace }),
     {
@@ -192,7 +197,6 @@ it('usePod', async () => {
   await waitFor(() => result.current.isFetching);
   await waitFor(() => !result.current.isFetching);
   expect(result.current.data).toEqual(pod);
-  fetchMock.restore();
 });
 
 it('useEvents', async () => {
@@ -203,7 +207,7 @@ it('useEvents', async () => {
     metadata: {},
     items: [{ metadata: { name: 'event1' } }, { metadata: { name: 'event2' } }]
   };
-  fetchMock.get(/events/, events);
+  server.use(rest.get(/\/events\//, (req, res, ctx) => res(ctx.json(events))));
   const { result, waitFor } = renderHook(
     () => API.useEvents({ involvedObjectKind, involvedObjectName, namespace }),
     {
@@ -213,7 +217,6 @@ it('useEvents', async () => {
   await waitFor(() => result.current.isFetching);
   await waitFor(() => !result.current.isFetching);
   expect(result.current.data).toEqual(events.items);
-  fetchMock.restore();
 });
 
 it('getExternalLogURL', () => {
@@ -230,17 +233,13 @@ it('getPodLog', () => {
   const namespace = 'default';
   const name = 'foo';
   const data = 'logs';
-  const responseConfig = {
-    body: data,
-    status: 200,
-    headers: { 'Content-Type': 'text/plain' }
-  };
-  fetchMock.get(`end:${name}/log`, responseConfig, {
-    sendAsJson: false
-  });
+  server.use(
+    rest.get(new RegExp(`/${name}/log$`), (req, res, ctx) =>
+      res(ctx.text(data))
+    )
+  );
   return API.getPodLog({ name, namespace }).then(log => {
     expect(log).toEqual(data);
-    fetchMock.restore();
   });
 });
 
@@ -249,17 +248,15 @@ it('getPodLog with container name', () => {
   const name = 'foo';
   const container = 'containerName';
   const data = 'logs';
-  const responseConfig = {
-    body: data,
-    status: 200,
-    headers: { 'Content-Type': 'text/plain' }
-  };
-  fetchMock.get(`end:${name}/log?container=${container}`, responseConfig, {
-    sendAsJson: false
-  });
+  server.use(
+    rest.get(new RegExp(`/${name}/log$`), async (req, res, ctx) =>
+      req.url.searchParams.get('container') === container
+        ? res(await ctx.text(data))
+        : res(ctx.json(404))
+    )
+  );
   return API.getPodLog({ container, name, namespace }).then(log => {
     expect(log).toEqual(data);
-    fetchMock.restore();
   });
 });
 
@@ -407,11 +404,13 @@ it('importResources', () => {
     }
   };
 
-  fetchMock.post('*', { body: data, status: 201 });
+  server.use(
+    rest.post(/\/pipelineruns\//, async (req, res, ctx) =>
+      res(ctx.status(201), ctx.json(await req.json()))
+    )
+  );
   return API.importResources(payload).then(response => {
     expect(response).toEqual(data);
-    expect(JSON.parse(fetchMock.lastOptions().body)).toMatchObject(data);
-    fetchMock.restore();
     mockDateNow.mockRestore();
   });
 });
@@ -563,11 +562,13 @@ it('importResources with revision and no serviceAccount', () => {
     }
   };
 
-  fetchMock.post('*', { body: data, status: 201 });
+  server.use(
+    rest.post(/\/pipelineruns\//, async (req, res, ctx) =>
+      res(ctx.status(201), ctx.json(await req.json()))
+    )
+  );
   return API.importResources(payload).then(response => {
     expect(response).toEqual(data);
-    expect(JSON.parse(fetchMock.lastOptions().body)).toMatchObject(data);
-    fetchMock.restore();
     mockDateNow.mockRestore();
   });
 });
@@ -579,10 +580,13 @@ describe('getAPIResource', () => {
     const type = 'testtype';
     const apiResource = { name: type };
     const data = { resources: [apiResource] };
-    fetchMock.get(`end:/apis/${group}/${version}`, data);
+    server.use(
+      rest.get(new RegExp(`/apis/${group}/${version}$`), (req, res, ctx) =>
+        res(ctx.json(data))
+      )
+    );
     return API.getAPIResource({ group, version, type }).then(resource => {
       expect(resource).toEqual(apiResource);
-      fetchMock.restore();
     });
   });
 
@@ -592,10 +596,13 @@ describe('getAPIResource', () => {
     const type = 'testtype';
     const apiResource = { name: type };
     const data = { resources: [apiResource] };
-    fetchMock.get(`end:/api/${version}`, data);
+    server.use(
+      rest.get(new RegExp(`/api/${version}$`), (req, res, ctx) =>
+        res(ctx.json(data))
+      )
+    );
     return API.getAPIResource({ group, version, type }).then(resource => {
       expect(resource).toEqual(apiResource);
-      fetchMock.restore();
     });
   });
 });
@@ -603,42 +610,41 @@ describe('getAPIResource', () => {
 describe('getInstallProperties', () => {
   it('returns expected data', async () => {
     const data = { fake: 'properties' };
-    fetchMock.get(/properties/, data);
+    server.use(
+      rest.get(/\/properties$/, (req, res, ctx) => res(ctx.json(data)))
+    );
     const properties = await API.getInstallProperties();
     expect(properties).toEqual(data);
-    fetchMock.restore();
   });
 
   it('handles error in case of Dashboard client mode', async () => {
-    const error = new Error();
-    error.response = {
-      status: 404
-    };
-    fetchMock.get(/properties/, { throws: error });
+    server.use(
+      rest.get(/\/properties$/, (req, res, ctx) => res(ctx.status(404)))
+    );
     const properties = await API.getInstallProperties();
     expect(properties.dashboardVersion).toEqual('kubectl-proxy-client');
-    fetchMock.restore();
   });
 
   it('handles unexpected errors', async () => {
-    const error = new Error();
-    fetchMock.get(/properties/, { throws: error });
+    server.use(
+      rest.get(/\/properties$/, (req, res, ctx) => res(ctx.status(500)))
+    );
     const properties = await API.getInstallProperties();
     expect(properties).toBeUndefined();
-    fetchMock.restore();
   });
 });
 
 it('useProperties', async () => {
   const properties = { fake: 'properties' };
-  fetchMock.get(/properties/, properties);
+  server.use(
+    rest.get(/\/properties$/, (req, res, ctx) => res(ctx.json(properties)))
+  );
   const { result, waitFor } = renderHook(() => API.useProperties(), {
     wrapper: getAPIWrapper()
   });
   await waitFor(() => result.current.isFetching);
   await waitFor(() => !result.current.isFetching);
   expect(result.current.data).toEqual(properties);
-  fetchMock.restore();
 });
 
 it('other hooks that depend on useProperties', async () => {
@@ -663,7 +669,9 @@ it('other hooks that depend on useProperties', async () => {
     triggersNamespace,
     triggersVersion
   };
-  fetchMock.get(/properties/, properties);
+  server.use(
+    rest.get(/\/properties$/, (req, res, ctx) => res(ctx.json(properties)))
+  );
   const { result, waitFor } = renderHook(() => API.useProperties(), {
     wrapper: getAPIWrapper({ queryClient })
   });
@@ -720,6 +728,4 @@ it('other hooks that depend on useProperties', async () => {
     }
   );
   expect(isTriggersInstalledResult.current).toEqual(true);
-
-  fetchMock.restore();
 });

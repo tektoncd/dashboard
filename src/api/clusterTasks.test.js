@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,38 +11,42 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import fetchMock from 'fetch-mock';
 import * as API from './clusterTasks';
 import * as utils from './utils';
+import { rest, server } from '../../config_frontend/msw';
 
 it('getClusterTasks', () => {
   const data = {
     items: 'clustertasks'
   };
-  fetchMock.get(/clustertasks/, data);
+  server.use(
+    rest.get(/\/clustertasks\//, (req, res, ctx) => res(ctx.json(data)))
+  );
+
   return API.getClusterTasks().then(tasks => {
     expect(tasks).toEqual(data);
-    fetchMock.restore();
   });
 });
 
 it('getClusterTask', () => {
   const name = 'foo';
   const data = { fake: 'clustertask' };
-  fetchMock.get(`end:${name}`, data);
+  server.use(
+    rest.get(new RegExp(`/${name}$`), (req, res, ctx) => res(ctx.json(data)))
+  );
   return API.getClusterTask({ name }).then(task => {
     expect(task).toEqual(data);
-    fetchMock.restore();
   });
 });
 
 it('deletePipelineRun', () => {
   const name = 'foo';
   const data = { fake: 'clusterTask' };
-  fetchMock.delete(`end:${name}`, data);
+  server.use(
+    rest.delete(new RegExp(`/${name}$`), (req, res, ctx) => res(ctx.json(data)))
+  );
   return API.deleteClusterTask({ name }).then(clusterTask => {
     expect(clusterTask).toEqual(data);
-    fetchMock.restore();
   });
 });
 

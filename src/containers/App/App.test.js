@@ -63,7 +63,7 @@ describe('App', () => {
   });
 
   it('calls namespaces API in full cluster mode', async () => {
-    jest.spyOn(API, 'getNamespaces');
+    jest.spyOn(API, 'getNamespaces').mockImplementation(() => {});
     const { queryByText } = render(<App />);
 
     await waitFor(() => queryByText('Tekton resources'));
