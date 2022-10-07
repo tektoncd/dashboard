@@ -605,6 +605,21 @@ describe('getAPIResource', () => {
       expect(resource).toEqual(apiResource);
     });
   });
+
+  it('handles empty resources response', () => {
+    const group = 'core';
+    const version = 'testversion';
+    const type = 'testtype';
+    const data = { resources: [] };
+    server.use(
+      rest.get(new RegExp(`/api/${version}$`), (req, res, ctx) =>
+        res(ctx.json(data))
+      )
+    );
+    return API.getAPIResource({ group, version, type }).then(resource => {
+      expect(resource).toEqual({});
+    });
+  });
 });
 
 describe('getInstallProperties', () => {
