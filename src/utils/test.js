@@ -13,7 +13,7 @@ limitations under the License.
 /* istanbul ignore file */
 
 import React from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   render as baseRender,
   renderWithRouter as baseRenderWithRouter
@@ -30,6 +30,11 @@ export function getQueryClient() {
         retry: false,
         staleTime: Infinity
       }
+    },
+    logger: {
+      log: console.log, // eslint-disable-line no-console
+      warn: console.warn, // eslint-disable-line no-console
+      error: () => {}
     }
   });
 }

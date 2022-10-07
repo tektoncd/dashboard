@@ -49,7 +49,7 @@ export function ResourceListContainer() {
   const {
     data: resources,
     error: resourcesError,
-    isLoading: isLoadingResources
+    isInitialLoading: isLoadingResources
   } = useCustomResources(
     {
       filters,

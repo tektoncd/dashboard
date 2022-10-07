@@ -34,6 +34,7 @@ describe('App', () => {
     const { queryAllByText, queryByText } = render(<App lang="en" />);
 
     await waitFor(() => queryByText('Tekton resources'));
+    await waitFor(() => queryByText('PipelineRuns'));
     fireEvent.click(queryAllByText('PipelineRuns')[0]);
 
     expect(queryByText('Pipelines')).toBeTruthy();

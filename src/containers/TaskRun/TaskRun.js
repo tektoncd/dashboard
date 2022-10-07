@@ -96,7 +96,7 @@ export function TaskRunContainer() {
     namespace
   });
 
-  const { data: task, isLoading: isLoadingTask } = useTaskByKind(
+  const { data: task, isInitialLoading: isLoadingTask } = useTaskByKind(
     {
       kind: taskRun?.spec.taskRef?.kind,
       name: taskRun?.spec.taskRef?.name,

@@ -124,7 +124,7 @@ export /* istanbul ignore next */ function PipelineRunContainer() {
     useClusterTasks({});
 
   const pipelineName = pipelineRun?.spec.pipelineRef?.name;
-  const { data: pipeline, isLoading: isLoadingPipeline } = usePipeline(
+  const { data: pipeline, isInitialLoading: isLoadingPipeline } = usePipeline(
     { name: pipelineName, namespace },
     { enabled: !!pipelineName }
   );
