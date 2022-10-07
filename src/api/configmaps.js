@@ -33,7 +33,7 @@ export function getConfigMaps({ filters = [], namespace } = {}) {
 export function useConfigMaps(params) {
   const webSocketURL = getConfigMapAPI({
     ...params,
-    isWebSocket: true
+    isWebSocket: false
   });
   return useCollection({
     api: getConfigMaps,

@@ -33,7 +33,7 @@ export function getPVCs({ filters = [], namespace } = {}) {
 export function usePVCs(params) {
   const webSocketURL = getPVCAPI({
     ...params,
-    isWebSocket: true
+    isWebSocket: false
   });
   return useCollection({
     api: getPVCs,

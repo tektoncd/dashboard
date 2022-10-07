@@ -35,7 +35,6 @@
       - persistentvolumeclaims
     verbs:
       - list
-      - watch
 - op: add
   path: /rules/-
   value:

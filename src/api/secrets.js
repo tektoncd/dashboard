@@ -33,7 +33,7 @@ export function getSecrets({ filters = [], namespace } = {}) {
 export function useSecrets(params) {
   const webSocketURL = getSecretsAPI({
     ...params,
-    isWebSocket: true
+    isWebSocket: false
   });
   return useCollection({
     api: getSecrets,

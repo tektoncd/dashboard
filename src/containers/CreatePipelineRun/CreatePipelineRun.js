@@ -683,40 +683,38 @@ function CreatePipelineRun({ intl }) {
         {workspaceSpecs && workspaceSpecs.length !== 0 && (
           <FormGroup legendText="Workspaces">
             {workspaceSpecs.map(workspaceSpec => (
-              <>
-                <WorkspacesDropdown
-                  id={`create-pipelinerun--ws-dropdown-${workspaceSpec.name}`}
-                  key={`create-pipelinerun--ws-dropdown-${workspaceSpec.name}`}
-                  titleText={workspaceSpec.name}
-                  helperText={workspaceSpec.description}
-                  namespace={namespace}
-                  invalid={
-                    validationError &&
-                    (!workspaces[workspaceSpec.name] ||
-                      !workspaces[workspaceSpec.name].value) &&
-                    workspaceSpec.optional !== true
-                  }
-                  invalidText={intl.formatMessage({
-                    id: 'dashboard.createRun.invalidWorkspaces',
-                    defaultMessage: 'Workspaces cannot be empty'
-                  })}
-                  selectedItem={(() => {
-                    const ws = workspaces[workspaceSpec.name];
-                    return ws
-                      ? {
-                          id: ws.value,
-                          value: ws.value,
-                          text: ws.value,
-                          kind: ws.kind
-                        }
-                      : '';
-                  })()}
-                  onChange={({ selectedItem }) => {
-                    const { id, kind } = selectedItem || {};
-                    handleWorkspaceChange(workspaceSpec.name, id, kind);
-                  }}
-                />
-              </>
+              <WorkspacesDropdown
+                id={`create-pipelinerun--ws-dropdown-${workspaceSpec.name}`}
+                key={`create-pipelinerun--ws-dropdown-${workspaceSpec.name}`}
+                titleText={workspaceSpec.name}
+                helperText={workspaceSpec.description}
+                namespace={namespace}
+                invalid={
+                  validationError &&
+                  (!workspaces[workspaceSpec.name] ||
+                    !workspaces[workspaceSpec.name].value) &&
+                  workspaceSpec.optional !== true
+                }
+                invalidText={intl.formatMessage({
+                  id: 'dashboard.createRun.invalidWorkspaces',
+                  defaultMessage: 'Workspaces cannot be empty'
+                })}
+                selectedItem={(() => {
+                  const ws = workspaces[workspaceSpec.name];
+                  return ws
+                    ? {
+                        id: ws.value,
+                        value: ws.value,
+                        text: ws.value,
+                        kind: ws.kind
+                      }
+                    : '';
+                })()}
+                onChange={({ selectedItem }) => {
+                  const { id, kind } = selectedItem || {};
+                  handleWorkspaceChange(workspaceSpec.name, id, kind);
+                }}
+              />
             ))}
           </FormGroup>
         )}
