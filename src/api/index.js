@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { labels as labelConstants } from '@tektoncd/dashboard-utils';
 
 import { useClusterTask } from './clusterTasks';
@@ -368,8 +368,8 @@ export function getAPIResource({ group, version, type }) {
     group === 'core' ? `/api/${version}` : `/apis/${group}/${version}`
   ].join('');
 
-  return get(uri).then(({ resources }) =>
-    resources.find(({ name }) => name === type)
+  return get(uri).then(
+    ({ resources }) => resources.find(({ name }) => name === type) || {}
   );
 }
 
@@ -382,7 +382,7 @@ export function useAPIResource(params) {
 }
 
 export function useProperties() {
-  return useQuery('properties', getInstallProperties, {
+  return useQuery(['properties'], getInstallProperties, {
     placeholderData: { isReadOnly: true }
   });
 }

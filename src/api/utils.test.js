@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -156,7 +156,7 @@ describe('useWebSocket', () => {
     const existingResource = { metadata: { uid: 'existing-id' } };
     const newResource = { kind, metadata: { uid: 'new-uid' } };
 
-    queryClient.setQueryData(kind, () => ({
+    queryClient.setQueryData([kind], () => ({
       items: [existingResource],
       metadata: {}
     }));
@@ -178,7 +178,7 @@ describe('useWebSocket', () => {
         })
       });
     });
-    expect(queryClient.invalidateQueries).toHaveBeenCalledWith(kind);
+    expect(queryClient.invalidateQueries).toHaveBeenCalledWith([kind]);
   });
 
   it('should handle DELETED events', () => {
@@ -199,7 +199,7 @@ describe('useWebSocket', () => {
       metadata: { name: otherName, namespace, uid: 'existing-id-3' }
     };
 
-    queryClient.setQueryData(kind, () => ({
+    queryClient.setQueryData([kind], () => ({
       items: [resource1, resource2, resource3],
       metadata: {}
     }));
@@ -224,7 +224,7 @@ describe('useWebSocket', () => {
         })
       });
     });
-    expect(queryClient.getQueryData(kind)).toEqual({
+    expect(queryClient.getQueryData([kind])).toEqual({
       items: [resource1, resource3],
       metadata: {}
     });
@@ -256,7 +256,7 @@ describe('useWebSocket', () => {
       metadata: { ...existingResource.metadata, resourceVersion: '11' }
     };
 
-    queryClient.setQueryData(kind, () => ({
+    queryClient.setQueryData([kind], () => ({
       items: [existingResource],
       metadata: {}
     }));
@@ -276,7 +276,7 @@ describe('useWebSocket', () => {
         })
       });
     });
-    expect(queryClient.getQueryData(kind)).toEqual({
+    expect(queryClient.getQueryData([kind])).toEqual({
       items: [existingResource],
       metadata: {}
     });
@@ -294,7 +294,7 @@ describe('useWebSocket', () => {
         })
       });
     });
-    expect(queryClient.getQueryData(kind)).toEqual({
+    expect(queryClient.getQueryData([kind])).toEqual({
       items: [updatedResource],
       metadata: {}
     });
@@ -310,7 +310,7 @@ describe('useWebSocket', () => {
       metadata: { uid: 'existing-id' }
     };
 
-    queryClient.setQueryData(kind, () => ({
+    queryClient.setQueryData([kind], () => ({
       items: [existingResource],
       metadata: {}
     }));
@@ -328,7 +328,7 @@ describe('useWebSocket', () => {
         })
       });
     });
-    expect(queryClient.getQueryData(kind)).toEqual({
+    expect(queryClient.getQueryData([kind])).toEqual({
       items: [existingResource],
       metadata: {}
     });
@@ -338,7 +338,7 @@ describe('useWebSocket', () => {
         type: 'non-message-event'
       });
     });
-    expect(queryClient.getQueryData(kind)).toEqual({
+    expect(queryClient.getQueryData([kind])).toEqual({
       items: [existingResource],
       metadata: {}
     });

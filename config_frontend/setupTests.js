@@ -11,17 +11,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { setLogger } from 'react-query';
 import fetch from 'node-fetch';
 import { TextDecoder, TextEncoder } from 'util';
 
 import { server } from './msw';
-
-setLogger({
-  log: console.log, // eslint-disable-line no-console
-  warn: console.warn, // eslint-disable-line no-console
-  error: () => {}
-});
 
 // Establish API mocking before all tests.
 beforeAll(() =>

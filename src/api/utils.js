@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { useQuery, useQueryClient } from 'react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
 import { createWebSocket, getAPIRoot } from './comms';
@@ -122,7 +122,7 @@ function getResourceVersion(resource) {
 }
 
 function handleCreated({ kind, payload: _, queryClient }) {
-  queryClient.invalidateQueries(kind);
+  queryClient.invalidateQueries([kind]);
 }
 
 function handleDeleted({ kind, payload, queryClient }) {
@@ -132,7 +132,7 @@ function handleDeleted({ kind, payload, queryClient }) {
   // remove any matching details page cache
   queryClient.removeQueries([kind, { name, ...(namespace && { namespace }) }]);
   // remove resource from any list page caches
-  queryClient.setQueriesData(kind, data => {
+  queryClient.setQueriesData([kind], data => {
     if (!Array.isArray(data?.items)) {
       // another details page cache, but not the one we're looking for
       // since we've just deleted its query above
@@ -159,7 +159,7 @@ function handleUpdated({ kind, payload, queryClient }) {
   const {
     metadata: { uid }
   } = payload;
-  queryClient.setQueriesData(kind, data => {
+  queryClient.setQueriesData([kind], data => {
     if (data?.metadata?.uid === uid) {
       // it's a details page cache (i.e. a single resource)
       return updateResource({ existing: data, incoming: payload });
@@ -254,12 +254,11 @@ export function useCollection({
     reactQueryConfig
   );
 
+  let data = [];
   let resourceVersion;
   if (query.data?.items) {
     resourceVersion = query.data.metadata.resourceVersion;
-    query.data = query.data.items;
-  } else {
-    query.data = [];
+    data = query.data.items;
   }
 
   const { isWebSocketConnected } = useWebSocket({
@@ -272,7 +271,7 @@ export function useCollection({
     resourceVersion,
     url: webSocketURL
   });
-  return { ...query, isWebSocketConnected };
+  return { ...query, data, isWebSocketConnected };
 }
 
 export function useResource({

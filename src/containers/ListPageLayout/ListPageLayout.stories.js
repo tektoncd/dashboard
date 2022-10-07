@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Table } from '@tektoncd/dashboard-components';
 
 import ListPageLayoutContainer from './ListPageLayout';
@@ -43,7 +43,7 @@ export default {
   component: ListPageLayoutContainer,
   decorators: [
     Story => {
-      queryClient.setQueryData('Namespace', () => ({
+      queryClient.setQueryData(['Namespace'], () => ({
         items: namespaces,
         metadata: {}
       }));
