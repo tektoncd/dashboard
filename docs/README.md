@@ -33,41 +33,17 @@ Some of the features the Tekton Dashboard supports:
 
 ![Dashboard UI workloads page](dashboard-ui.jpg)
 
-## Getting Started
+## Read the docs
 
-- Try out the [tutorial](./tutorial.md) to install the Dashboard and explore some of its features
-
-- For more details about installation options, access control, and customisation, see the [install doc](./install.md)
-
-## Further reading
-
+- [Installing Tekton Dashboard](./install.md)
+- Jump in with [the "Getting started" tutorial!](./tutorial.md)
+- Take a look at our [roadmap](https://github.com/tektoncd/dashboard/blob/main/roadmap.md)
+- Discover our [releases](https://github.com/tektoncd/dashboard/blob/main/releases.md)
 - Try our [walk-throughs](./walkthrough/README.md) for more details on deploying and configuring the Tekton Dashboard for some common scenarios
 - Learn how to add additional resource types to the Tekton Dashboard using [extensions](./extensions.md)
-- Take a look at our [roadmap](https://github.com/tektoncd/dashboard/blob/main/roadmap.md)
 
-## Which version should I use?
-
-| Version | Docs | Pipelines | Triggers |
-| ------- | ---- | --------- | -------- |
-| [HEAD](https://github.com/tektoncd/dashboard/blob/main/DEVELOPMENT.md) | [Docs @ HEAD](https://github.com/tektoncd/dashboard/tree/main/docs) | v0.35.x - v0.40.x | v0.15.x - 0.21.x |
-| [v0.29.2](https://github.com/tektoncd/dashboard/releases/tag/v0.29.2) | [Docs @ v0.29.2](https://github.com/tektoncd/dashboard/tree/v0.29.2/docs) | v0.35.x - v0.39.x | v0.15.x - 0.21.x |
-| [v0.28.0](https://github.com/tektoncd/dashboard/releases/tag/v0.28.0) | [Docs @ v0.28.0](https://github.com/tektoncd/dashboard/tree/v0.28.0/docs) | v0.35.x - v0.37.x | v0.15.x - 0.20.x |
-| [v0.27.0](https://github.com/tektoncd/dashboard/releases/tag/v0.27.0) | [Docs @ v0.27.0](https://github.com/tektoncd/dashboard/tree/v0.27.0/docs) | v0.25.x - v0.36.x | v0.15.x - 0.20.x |
-| [v0.26.0](https://github.com/tektoncd/dashboard/releases/tag/v0.26.0) | [Docs @ v0.26.0](https://github.com/tektoncd/dashboard/tree/v0.26.0/docs) | v0.25.x - v0.35.x | v0.15.x - 0.19.x |
-| [v0.25.0](https://github.com/tektoncd/dashboard/releases/tag/v0.25.0) | [Docs @ v0.25.0](https://github.com/tektoncd/dashboard/tree/v0.25.0/docs) | v0.25.x - v0.34.x | v0.15.x - 0.19.x |
-| [v0.24.2](https://github.com/tektoncd/dashboard/releases/tag/v0.24.2) | [Docs @ v0.24.2](https://github.com/tektoncd/dashboard/tree/v0.24.2/docs) | v0.25.x - v0.32.x | v0.15.x - 0.18.x |
-| [v0.23.1](https://github.com/tektoncd/dashboard/releases/tag/v0.23.1) | [Docs @ v0.23.1](https://github.com/tektoncd/dashboard/tree/v0.23.1/docs) | v0.25.x - v0.30.x | v0.15.x - 0.17.x |
-| [v0.22.1](https://github.com/tektoncd/dashboard/releases/tag/v0.22.1) | [Docs @ v0.22.1](https://github.com/tektoncd/dashboard/tree/v0.22.1/docs) | v0.25.x - v0.29.x | v0.15.x - 0.17.x |
-
-<details>
-  <summary>Other versions</summary>
-
-  It is **strongly recommended** to use the **v0.22.1, v0.23.1, v0.24.2, or v0.25.0** releases or newer.
-  - These releases contain a security fix
-  - Earlier versions are deprecated and should be used for **development or isolated usage only**
-
-  For details of earlier versions, see [legacy releases](./legacy-releases.md)
-</details>
+Version specific links are available in the [releases](https://github.com/tektoncd/dashboard/blob/main/releases.md) page and on the
+[Tekton website](https://tekton.dev/docs).
 
 ## Browser support
 
