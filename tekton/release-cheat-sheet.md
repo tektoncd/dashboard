@@ -96,11 +96,27 @@ Creating the release announcement is currently a manual process but will be auto
 
 1. Publish the GitHub release once all notes are correct and in order.
 
+1. Create a branch for the release named `release-v<version number>x`, e.g. [`release-v0.28.x`](https://github.com/tektoncd/dashboard/tree/release-v0.28.x)
+   and push it to the repo https://github.com/tektoncd/dashboard.
+   (This can be done on the Github UI.)
+   Make sure to fetch the commit specified in `TEKTON_RELEASE_GIT_SHA` to create the released branch.
+
 ## Post-release tasks
 
-1. Edit `README.md` on `main` branch, add entry to docs table with latest release links.
+1. If the release requires a new minimum version of Kubernetes,
+   edit `install.md` on the `main` branch and add the new requirement in the
+   "Pre-requisites" section
 
-1. Push & make PR for updated `README.md`
+1. Edit `releases.md` on the `main` branch, add an entry for the release.
+   - In case of a patch release, replace the latest release with the new one,
+     including links to docs and examples. Append the new release to the list
+     of patch releases as well.
+   - In case of a minor or major release, add a new entry for the
+     release, including links to docs
+   - Check if any release is EOL, if so move it to the "End of Life Releases"
+     section
+
+1. Push & make PR for updated `releases.md` and `install.md`
 
 1. Test the release that you just made against your own cluster (note `--context my-dev-cluster`):
 

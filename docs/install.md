@@ -11,7 +11,6 @@ This guide explains how to install Tekton Dashboard. It covers the following top
 
 - [Before you begin](#before-you-begin)
 - [Pre-requisites](#pre-requisites)
-- [Which version should I use](#which-version-should-i-use)
 - [Installing Tekton Dashboard on Kubernetes](#installing-tekton-dashboard-on-kubernetes)
 - [Installing Tekton Dashboard on OpenShift](#installing-tekton-dashboard-on-openshift)
 - [Installing with the installer script](#installing-with-the-installer-script)
@@ -41,12 +40,9 @@ or other projects may require a newer version.
 - Tekton Pipelines must be installed in the cluster. See [Installing Tekton Pipelines](https://github.com/tektoncd/pipeline/blob/main/docs/install.md).
 - Optionally, install Tekton Triggers. See [Installing Tekton Triggers](https://github.com/tektoncd/triggers/blob/main/docs/install.md).
 
-## Which version should I use
+### Supported Tekton Pipelines and Tekton Triggers versions
 
-Every Tekton Dashboard release is tested against specific Tekton Pipelines and Tekton Triggers versions.
-See the [docs on the main page](./README.md) to find the Tekton Dashboard version that suits your needs.
-
-Pay attention to annoucements like **deprecated versions** and/or **security related recommendations** when choosing the version you want to install.
+Each Tekton Dashboard release is tested against specific Tekton Pipelines and Tekton Triggers versions. See the Tekton Dashboard release notes for details of the supported versions.
 
 ## Installing Tekton Dashboard on Kubernetes
 
