@@ -20,7 +20,7 @@
     "test:ci": "jest"
   },
   "dependencies": {
-    "@babel/runtime": "^7.19.0",
+    "@babel/runtime": "^7.19.4",
     "@carbon/icons-react": "^10.49.0",
     "@carbon/themes": "^10.55.0",
     "@tanstack/react-query": "^4.10.1",
