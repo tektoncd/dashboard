@@ -170,7 +170,7 @@ test_dashboard() {
   echo "Videos of failing tests will be stored at $VIDEO_PATH"
   # In case of failure we'll upload videos of the failing tests
   # Our Cypress config will delete videos of passing tests before exiting
-  docker run --rm --network=host -v $VIDEO_PATH:/home/node/cypress/videos dashboard-e2e || fail_test "Browser E2E tests failed"
+  docker run --rm --network=host -v $VIDEO_PATH:/root/cypress/videos dashboard-e2e || fail_test "Browser E2E tests failed"
 
   # If we get here the tests passed, no need to upload artifacts
   rm -rf $VIDEO_PATH
