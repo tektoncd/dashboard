@@ -65,7 +65,7 @@
     "@testing-library/react": "^12.1.5",
     "@testing-library/react-hooks": "^8.0.1",
     "babel-loader": "^8.2.5",
-    "babel-plugin-formatjs": "^10.3.29",
+    "babel-plugin-formatjs": "^10.3.30",
     "cross-env": "^7.0.2",
     "css-loader": "^6.7.1",
     "eslint": "^8.25.0",
