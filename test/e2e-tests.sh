@@ -22,7 +22,6 @@ source $(dirname $0)/e2e-common.sh
 
 # Script entry point.
 
-ARTIFACTS="${ARTIFACTS:-`mktemp -d`}"
 SED="sed"
 START=1
 END=30
@@ -164,16 +163,27 @@ test_dashboard() {
   fi
 
   echo "Running browser E2E tests…"
-  VIDEO_PATH=$ARTIFACTS/videos
-  mkdir -p $VIDEO_PATH
-  chmod -R 777 $VIDEO_PATH
-  echo "Videos of failing tests will be stored at $VIDEO_PATH"
+
+  VIDEO_PATH=""
+  CYPRESS_ENV=""
+  if [ ! -z "$ARTIFACTS" ]; then
+    VIDEO_PATH=$ARTIFACTS/videos
+    mkdir -p $VIDEO_PATH
+    chmod -R 777 $VIDEO_PATH
+    echo "Videos of failing tests will be stored at $VIDEO_PATH"
+  else
+    echo "ARTIFACTS environment variable not set, skipping recording videos"
+    CYPRESS_ENV="-e CYPRESS_video=false"
+  fi
+
   # In case of failure we'll upload videos of the failing tests
   # Our Cypress config will delete videos of passing tests before exiting
-  docker run --rm --network=host -v $VIDEO_PATH:/home/node/cypress/videos dashboard-e2e || fail_test "Browser E2E tests failed"
+  docker run --rm --network=host $CYPRESS_ENV -v $VIDEO_PATH:/home/node/cypress/videos dashboard-e2e || fail_test "Browser E2E tests failed"
 
   # If we get here the tests passed, no need to upload artifacts
-  rm -rf $VIDEO_PATH
+  if [ ! -z "$VIDEO_PATH" ]; then
+    rm -rf $VIDEO_PATH
+  fi
   kill -9 $dashboardForwardPID
 
   $tekton_repo_dir/scripts/installer uninstall ${@:2}
