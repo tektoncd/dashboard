@@ -9,7 +9,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM cypress/browsers:node16.14.2-slim-chrome103-ff102
+FROM cypress/browsers:node16.17.0-chrome106
 USER node
 WORKDIR /home/node
 ENV CI=true
