@@ -166,13 +166,13 @@ test_dashboard() {
 
   VIDEO_PATH=""
   CYPRESS_ENV=""
-  if [ ! -z "$ARTIFACTS" ]; then
+  if [ ! -z "$ARTIFACTS" ] && [ "$E2E_VIDEO" != "false" ]; then
     VIDEO_PATH=$ARTIFACTS/videos
     mkdir -p $VIDEO_PATH
     chmod -R 777 $VIDEO_PATH
     echo "Videos of failing tests will be stored at $VIDEO_PATH"
   else
-    echo "ARTIFACTS environment variable not set, skipping recording videos"
+    echo "Skipping recording videos"
     CYPRESS_ENV="-e CYPRESS_video=false"
   fi
 
