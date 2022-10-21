@@ -229,12 +229,12 @@ describe('getLogsRetriever', () => {
 
 it('getViewChangeHandler', () => {
   const url = 'someURL';
-  const history = { push: jest.fn() };
+  const navigate = jest.fn();
   const location = { pathname: url, search: '?nonViewQueryParam=someValue' };
-  const handleViewChange = getViewChangeHandler({ history, location });
+  const handleViewChange = getViewChangeHandler({ location, navigate });
   const view = 'someView';
   handleViewChange(view);
-  expect(history.push).toHaveBeenCalledWith(
+  expect(navigate).toHaveBeenCalledWith(
     `${url}?nonViewQueryParam=someValue&view=${view}`
   );
 });

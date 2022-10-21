@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -155,6 +155,7 @@ describe('CreateTaskRun', () => {
       queryAllByText,
       queryByPlaceholderText
     } = renderWithRouter(<CreateTaskRun />, {
+      path: '/taskruns/create',
       route: '/taskruns/create?kind=Task'
     });
     expect(queryByText(/create taskrun/i)).toBeTruthy();
@@ -250,6 +251,7 @@ describe('CreateTaskRun', () => {
     const { getByPlaceholderText, queryByText } = renderWithRouter(
       <CreateTaskRun />,
       {
+        path: '/taskruns/create',
         route: `/taskruns/create?taskName=${badTaskRef}`
       }
     );

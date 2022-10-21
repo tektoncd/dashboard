@@ -1,5 +1,5 @@
 /*
-Copyright 2021 The Tekton Authors
+Copyright 2021-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { urls } from '@tektoncd/dashboard-utils';
+import { paths, urls } from '@tektoncd/dashboard-utils';
 
 import { renderWithRouter } from '../../utils/test';
 import * as API from '../../api/triggers';
@@ -28,6 +28,7 @@ describe('Triggers', () => {
       .spyOn(API, 'useTriggers')
       .mockImplementation(() => ({ isLoading: true }));
     const { queryByText } = renderWithRouter(<TriggersContainer />, {
+      path: paths.triggers.all(),
       route: urls.triggers.all()
     });
     expect(queryByText('Triggers')).toBeTruthy();
@@ -49,6 +50,7 @@ describe('Triggers', () => {
       ]
     }));
     const { queryByText } = renderWithRouter(<TriggersContainer />, {
+      path: paths.triggers.all(),
       route: urls.triggers.all()
     });
 
@@ -61,6 +63,7 @@ describe('Triggers', () => {
       .spyOn(API, 'useTriggers')
       .mockImplementation(() => ({ error: errorMessage }));
     const { queryByText } = renderWithRouter(<TriggersContainer />, {
+      path: paths.triggers.all(),
       route: urls.triggers.all()
     });
 

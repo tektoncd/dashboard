@@ -13,7 +13,7 @@ limitations under the License.
 /* istanbul ignore file */
 
 import React, { useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import keyBy from 'lodash.keyby';
 import {
   Button,
@@ -105,8 +105,8 @@ const itemToString = ({ text }) => text;
 
 function CreateTaskRun() {
   const intl = useIntl();
-  const history = useHistory();
   const location = useLocation();
+  const navigate = useNavigate();
   const { selectedNamespace: defaultNamespace } = useSelectedNamespace();
 
   function getTaskDetails() {
@@ -276,7 +276,7 @@ function CreateTaskRun() {
     } else if (namespace && namespace !== ALL_NAMESPACES) {
       url = urls.taskRuns.byNamespace({ namespace });
     }
-    history.push(url);
+    navigate(url);
   }
 
   function handleAddLabel(prop) {
@@ -349,7 +349,7 @@ function CreateTaskRun() {
       }
       queryParams.delete('taskName');
       const browserURL = location.pathname.concat(`?${queryParams.toString()}`);
-      history.push(browserURL);
+      navigate(browserURL);
     }
   }
 
@@ -367,7 +367,7 @@ function CreateTaskRun() {
       queryParams.delete('namespace');
       queryParams.delete('taskName');
       const browserURL = location.pathname.concat(`?${queryParams.toString()}`);
-      history.push(browserURL);
+      navigate(browserURL);
     }
   }
 
@@ -391,7 +391,7 @@ function CreateTaskRun() {
       queryParams.delete('taskName');
     }
     const browserURL = location.pathname.concat(`?${queryParams.toString()}`);
-    history.push(browserURL);
+    navigate(browserURL);
 
     if (text && text !== taskRef) {
       setState(state => {
@@ -454,7 +454,7 @@ function CreateTaskRun() {
       timeout: timeoutInMins
     })
       .then(() => {
-        history.push(urls.taskRuns.byNamespace({ namespace }));
+        navigate(urls.taskRuns.byNamespace({ namespace }));
       })
       .catch(error => {
         error.response.text().then(text => {

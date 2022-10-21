@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,7 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import { fireEvent, waitFor } from '@testing-library/react';
-import { urls } from '@tektoncd/dashboard-utils';
+import { paths, urls } from '@tektoncd/dashboard-utils';
 
 import { renderWithRouter } from '../../utils/test';
 import * as API from '../../api';
@@ -118,7 +118,7 @@ describe('PipelineRuns container', () => {
         loading={false}
         namespace="namespace-1"
       />,
-      { route: '/pipelineruns' }
+      { path: '/pipelineruns', route: '/pipelineruns' }
     );
 
     const filterValue = 'baz:bam';
@@ -140,7 +140,7 @@ describe('PipelineRuns container', () => {
         loading={false}
         namespace="namespace-1"
       />,
-      { route: '/pipelineruns' }
+      { path: '/pipelineruns', route: '/pipelineruns' }
     );
 
     const filterValue = 'baz=bam';
@@ -164,7 +164,7 @@ describe('PipelineRuns container', () => {
         loading={false}
         namespace="namespace-1"
       />,
-      { route: '/pipelineruns' }
+      { path: '/pipelineruns', route: '/pipelineruns' }
     );
 
     // Let the page finish rendering so we know if we're in read-only mode or not
@@ -183,7 +183,7 @@ describe('PipelineRuns container', () => {
           loading={false}
           namespace="namespace-1"
         />,
-        { route: '/pipelineruns' }
+        { path: '/pipelineruns', route: '/pipelineruns' }
       );
     // Let the page finish rendering so we know if we're in read-only mode or not
     await waitFor(() => getByText('pipelineRunWithTwoLabels'));
@@ -203,6 +203,7 @@ describe('PipelineRuns container', () => {
     const { getAllByTitle, getByText } = renderWithRouter(
       <PipelineRunsContainer />,
       {
+        path: paths.pipelineRuns.all(),
         route: urls.pipelineRuns.all()
       }
     );
@@ -227,6 +228,7 @@ describe('PipelineRuns container', () => {
     const { getAllByTitle, getByText } = renderWithRouter(
       <PipelineRunsContainer />,
       {
+        path: paths.pipelineRuns.all(),
         route: urls.pipelineRuns.all()
       }
     );

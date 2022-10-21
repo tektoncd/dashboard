@@ -13,19 +13,20 @@ limitations under the License.
 import React, { useEffect } from 'react';
 import {
   generatePath,
-  useHistory,
   useLocation,
+  useNavigate,
   useParams
-} from 'react-router-dom';
-import { ALL_NAMESPACES, paths } from '@tektoncd/dashboard-utils';
+} from 'react-router-dom-v5-compat';
+import { ALL_NAMESPACES, paths, urls } from '@tektoncd/dashboard-utils';
 
 import { NamespacesDropdown } from '..';
 import { useSelectedNamespace, useTenantNamespace } from '../../api';
 
 export default function HeaderBarContent({ logoutButton }) {
-  const history = useHistory();
   const location = useLocation();
+  const navigate = useNavigate();
   const params = useParams();
+
   const {
     namespacedMatch,
     selectedNamespace: namespace,
@@ -40,7 +41,7 @@ export default function HeaderBarContent({ logoutButton }) {
   }, [params.namespace]);
 
   function setPath(path, { dropQueryParams } = {}) {
-    history.push(`${path}${dropQueryParams ? '' : location.search}`);
+    navigate(`${path}${dropQueryParams ? '' : location.search}`);
   }
 
   function handleNamespaceSelected(event) {
@@ -52,11 +53,13 @@ export default function HeaderBarContent({ logoutButton }) {
     }
 
     if (newNamespace === ALL_NAMESPACES) {
-      if (namespacedMatch.allNamespacesPath) {
+      if (namespacedMatch.isResourceDetails) {
         setPath(
-          generatePath(namespacedMatch.allNamespacesPath, {
-            ...namespacedMatch.params
-          }),
+          location.pathname
+            .replace(urls.byNamespace({ namespace }), '')
+            .split('/')
+            .slice(0, -1) // drop resource name
+            .join('/'),
           {
             dropQueryParams: true
           }

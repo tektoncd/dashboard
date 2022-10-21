@@ -243,16 +243,16 @@ export function getFilters({ search }) {
   return filters;
 }
 
-export function getAddFilterHandler({ history, location }) {
+export function getAddFilterHandler({ location, navigate }) {
   return function handleAddFilter(labelFilters) {
     const queryParams = new URLSearchParams(location.search);
     queryParams.set('labelSelector', labelFilters);
     const browserURL = location.pathname.concat(`?${queryParams.toString()}`);
-    history.push(browserURL);
+    navigate(browserURL);
   };
 }
 
-export function getDeleteFilterHandler({ history, location }) {
+export function getDeleteFilterHandler({ location, navigate }) {
   return function handleDeleteFilter(filter) {
     const queryParams = new URLSearchParams(location.search);
     const labelFilters = queryParams.getAll('labelSelector');
@@ -269,16 +269,16 @@ export function getDeleteFilterHandler({ history, location }) {
     const browserURL = location.pathname.concat(
       queryString ? `?${queryString}` : ''
     );
-    history.push(browserURL);
+    navigate(browserURL);
   };
 }
 
-export function getClearFiltersHandler({ history, location }) {
+export function getClearFiltersHandler({ location, navigate }) {
   return function handleClearFilters() {
     const queryParams = new URLSearchParams(location.search);
     queryParams.delete('labelSelector');
     const browserURL = location.pathname.concat(`?${queryParams.toString()}`);
-    history.push(browserURL);
+    navigate(browserURL);
   };
 }
 
@@ -299,7 +299,7 @@ export function getStatusFilter({ search }) {
   return status;
 }
 
-export function getStatusFilterHandler({ history, location }) {
+export function getStatusFilterHandler({ location, navigate }) {
   return function setStatusFilter(statusFilter) {
     const queryParams = new URLSearchParams(location.search);
     if (!statusFilter) {
@@ -308,7 +308,7 @@ export function getStatusFilterHandler({ history, location }) {
       queryParams.set('status', statusFilter);
     }
     const browserURL = location.pathname.concat(`?${queryParams.toString()}`);
-    history.push(browserURL);
+    navigate(browserURL);
   };
 }
 

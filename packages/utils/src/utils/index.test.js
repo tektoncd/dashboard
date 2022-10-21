@@ -218,12 +218,12 @@ it('getFilters', () => {
 
 it('getAddFilterHandler', () => {
   const url = 'someURL';
-  const history = { push: jest.fn() };
+  const navigate = jest.fn();
   const location = { pathname: url, search: '?nonFilterQueryParam=someValue' };
-  const handleAddFilter = getAddFilterHandler({ history, location });
+  const handleAddFilter = getAddFilterHandler({ location, navigate });
   const labelFilters = ['foo1=bar1', 'foo2=bar2'];
   handleAddFilter(labelFilters);
-  expect(history.push).toHaveBeenCalledWith(
+  expect(navigate).toHaveBeenCalledWith(
     `${url}?nonFilterQueryParam=someValue&labelSelector=${encodeURIComponent(
       'foo1=bar1,foo2=bar2'
     )}`
@@ -234,14 +234,14 @@ describe('getDeleteFilterHandler', () => {
   it('should redirect to unfiltered URL if no filters remain', () => {
     const search = `?labelSelector=${encodeURIComponent('foo=bar')}`;
     const url = 'someURL';
-    const history = { push: jest.fn() };
+    const navigate = jest.fn();
     const location = { pathname: url, search };
     const handleDeleteFilter = getDeleteFilterHandler({
-      history,
-      location
+      location,
+      navigate
     });
     handleDeleteFilter('foo=bar');
-    expect(history.push).toHaveBeenCalledWith(url);
+    expect(navigate).toHaveBeenCalledWith(url);
   });
 
   it('should correctly remove a filter from the URL', () => {
@@ -249,14 +249,14 @@ describe('getDeleteFilterHandler', () => {
       'foo1=bar1,foo2=bar2'
     )}`;
     const url = 'someURL';
-    const history = { push: jest.fn() };
+    const navigate = jest.fn();
     const location = { pathname: url, search };
     const handleDeleteFilter = getDeleteFilterHandler({
-      history,
-      location
+      location,
+      navigate
     });
     handleDeleteFilter('foo1=bar1');
-    expect(history.push).toHaveBeenCalledWith(
+    expect(navigate).toHaveBeenCalledWith(
       `${url}?labelSelector=${encodeURIComponent('foo2=bar2')}`
     );
   });
@@ -490,14 +490,14 @@ describe('getStatusFilter', () => {
       'foo1=bar1,foo2=bar2'
     )}`;
     const url = 'someURL';
-    const history = { push: jest.fn() };
+    const navigate = jest.fn();
     const location = { pathname: url, search };
     const handleDeleteFilter = getDeleteFilterHandler({
-      history,
-      location
+      location,
+      navigate
     });
     handleDeleteFilter('foo1=bar1');
-    expect(history.push).toHaveBeenCalledWith(
+    expect(navigate).toHaveBeenCalledWith(
       `${url}?labelSelector=${encodeURIComponent('foo2=bar2')}`
     );
   });
@@ -507,47 +507,47 @@ describe('getStatusFilterHandler', () => {
   it('should redirect to unfiltered URL if no status specified', () => {
     const search = '?nonFilterQueryParam=someValue&status=cancelled';
     const url = 'someURL';
-    const history = { push: jest.fn() };
+    const navigate = jest.fn();
     const location = { pathname: url, search };
     const setStatusFilter = getStatusFilterHandler({
-      history,
-      location
+      location,
+      navigate
     });
     setStatusFilter('');
-    expect(history.push).toHaveBeenCalledWith(
+    expect(navigate).toHaveBeenCalledWith(
       `${url}?nonFilterQueryParam=someValue`
     );
   });
 
   it('should set a valid status filter in the URL', () => {
     const url = 'someURL';
-    const history = { push: jest.fn() };
+    const navigate = jest.fn();
     const location = {
       pathname: url,
       search: '?nonFilterQueryParam=someValue'
     };
     const setStatusFilter = getStatusFilterHandler({
-      history,
-      location
+      location,
+      navigate
     });
     const statusFilter = 'cancelled';
     setStatusFilter(statusFilter);
-    expect(history.push).toHaveBeenCalledWith(
+    expect(navigate).toHaveBeenCalledWith(
       `${url}?nonFilterQueryParam=someValue&status=${statusFilter}`
     );
   });
 
   it('should update the status filter in the URL', () => {
     const url = 'someURL';
-    const history = { push: jest.fn() };
+    const navigate = jest.fn();
     const location = { pathname: url, search: '?status=cancelled' };
     const setStatusFilter = getStatusFilterHandler({
-      history,
-      location
+      location,
+      navigate
     });
     const statusFilter = 'completed';
     setStatusFilter(statusFilter);
-    expect(history.push).toHaveBeenCalledWith(`${url}?status=${statusFilter}`);
+    expect(navigate).toHaveBeenCalledWith(`${url}?status=${statusFilter}`);
   });
 });
 

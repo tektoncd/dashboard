@@ -82,8 +82,6 @@ const pipelineResource2 = {
   spec: { type: 'type-2' }
 };
 
-const history = { push: () => {} };
-
 describe('CreatePipelineRun', () => {
   beforeEach(() => {
     jest
@@ -109,8 +107,6 @@ describe('CreatePipelineRun', () => {
     jest
       .spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: 'namespace-1' }));
-
-    jest.spyOn(history, 'push');
   });
 
   it('renders labels', () => {

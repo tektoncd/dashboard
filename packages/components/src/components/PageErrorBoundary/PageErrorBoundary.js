@@ -13,7 +13,7 @@ limitations under the License.
 
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom-v5-compat';
 
 import { ErrorBoundary } from '..';
 

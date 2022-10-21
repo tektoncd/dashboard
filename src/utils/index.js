@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -121,14 +121,12 @@ export function isValidLabel(type, value) {
   return regex.test(value);
 }
 
-export function getViewChangeHandler({ history, location }) {
+export function getViewChangeHandler({ location, navigate }) {
   return function handleViewChange(view) {
     const queryParams = new URLSearchParams(location.search);
-
     queryParams.set('view', view);
-
     const browserURL = location.pathname.concat(`?${queryParams.toString()}`);
-    history.push(browserURL);
+    navigate(browserURL);
   };
 }
 

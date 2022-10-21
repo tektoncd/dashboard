@@ -13,7 +13,7 @@ limitations under the License.
 
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import { useIntl } from 'react-intl';
 import { InlineNotification, Pagination } from 'carbon-components-react';
 import { getErrorMessage } from '@tektoncd/dashboard-utils';
@@ -28,8 +28,8 @@ export const ListPageLayout = ({
   title
 }) => {
   const intl = useIntl();
-  const history = useHistory();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const [pageSize, setPageSize] = useState(100);
   const [page, setPage] = useState(1); // pagination component counts from 1
@@ -56,7 +56,11 @@ export const ListPageLayout = ({
         <h1 id="main-content-header">{title}</h1>
       </div>
       {filters && (
-        <LabelFilter filters={filters} history={history} location={location} />
+        <LabelFilter
+          filters={filters}
+          location={location}
+          navigate={navigate}
+        />
       )}
       {error && (
         <InlineNotification

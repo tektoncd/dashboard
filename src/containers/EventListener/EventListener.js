@@ -13,7 +13,12 @@ limitations under the License.
 /* istanbul ignore file */
 
 import React from 'react';
-import { Link, useHistory, useLocation, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import {
+  useLocation,
+  useNavigate,
+  useParams
+} from 'react-router-dom-v5-compat';
 import { useIntl } from 'react-intl';
 import { urls, useTitleSync } from '@tektoncd/dashboard-utils';
 import {
@@ -27,7 +32,7 @@ import { getViewChangeHandler } from '../../utils';
 
 export function EventListenerContainer() {
   const intl = useIntl();
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
   const params = useParams();
   const { eventListenerName, namespace } = params;
@@ -137,7 +142,7 @@ export function EventListenerContainer() {
       additionalMetadata={getAdditionalMetadata()}
       error={error}
       loading={isFetching}
-      onViewChange={getViewChangeHandler({ history, location })}
+      onViewChange={getViewChangeHandler({ location, navigate })}
       resource={eventListener}
       view={view}
     >

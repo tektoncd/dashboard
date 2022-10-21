@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2021 The Tekton Authors
+Copyright 2020-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -35,6 +35,7 @@ it('ClusterTriggerBindings renders with no bindings', () => {
   }));
 
   const { getByText } = renderWithRouter(<ClusterTriggerBindings />, {
+    path: '/clustertriggerbindings',
     route: '/clustertriggerbindings'
   });
 
@@ -48,6 +49,7 @@ it('ClusterTriggerBindings renders with one binding', () => {
     .mockImplementation(() => ({ data: [clusterTriggerBinding] }));
 
   const { queryByText } = renderWithRouter(<ClusterTriggerBindings />, {
+    path: '/clustertriggerbindings',
     route: '/clustertriggerbindings'
   });
 
@@ -65,6 +67,7 @@ it('ClusterTriggerBindings can be filtered on a single label filter', async () =
   const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
     <ClusterTriggerBindings />,
     {
+      path: '/clustertriggerbindings',
       route: '/clustertriggerbindings'
     }
   );
@@ -84,6 +87,7 @@ it('ClusterTriggerBindings renders in loading state', () => {
     .mockImplementation(() => ({ isLoading: true }));
 
   const { queryByText } = renderWithRouter(<ClusterTriggerBindings />, {
+    path: '/clustertriggerbindings',
     route: '/clustertriggerbindings'
   });
 
@@ -99,6 +103,7 @@ it('ClusterTriggerBindings renders in error state', () => {
     .mockImplementation(() => ({ error }));
 
   const { queryByText } = renderWithRouter(<ClusterTriggerBindings />, {
+    path: '/clustertriggerbindings',
     route: '/clustertriggerbindings'
   });
 

@@ -12,7 +12,8 @@ limitations under the License.
 */
 
 import React from 'react';
-import { matchPath, NavLink, useLocation } from 'react-router-dom';
+import { matchPath } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom-v5-compat';
 import { useIntl } from 'react-intl';
 import {
   SideNav as CarbonSideNav,

@@ -13,9 +13,9 @@ limitations under the License.
 
 import React from 'react';
 import { fireEvent } from '@testing-library/react';
-import { ALL_NAMESPACES, urls } from '@tektoncd/dashboard-utils';
+import { ALL_NAMESPACES, paths, urls } from '@tektoncd/dashboard-utils';
 
-import { render, renderWithRouter } from '../../utils/test';
+import { renderWithRouter } from '../../utils/test';
 import CreatePipelineResource from '.';
 import * as API from '../../api';
 import * as APIUtils from '../../api/utils';
@@ -31,7 +31,7 @@ describe('CreatePipelineResource', () => {
   });
 
   it('renders blank', () => {
-    const { queryByText } = render(<CreatePipelineResource />);
+    const { queryByText } = renderWithRouter(<CreatePipelineResource />);
     expect(queryByText('Create PipelineResource')).toBeTruthy();
     expect(queryByText('Cancel')).toBeTruthy();
     expect(queryByText('Create')).toBeTruthy();
@@ -42,6 +42,7 @@ describe('CreatePipelineResource', () => {
     jest.spyOn(window.history, 'pushState');
 
     const { queryByText } = renderWithRouter(<CreatePipelineResource />, {
+      path: paths.pipelineResources.create(),
       route: urls.pipelineResources.create()
     });
     fireEvent.click(queryByText(/cancel/i));
@@ -59,7 +60,7 @@ describe('CreatePipelineResource', () => {
   const revisionValidationErrorRegExp = /Revision required/i;
 
   it('validates all empty inputs', () => {
-    const { queryByText } = render(<CreatePipelineResource />);
+    const { queryByText } = renderWithRouter(<CreatePipelineResource />);
     fireEvent.click(queryByText('Create'));
     expect(queryByText(nameValidationErrorMsgRegExp)).toBeTruthy();
     expect(queryByText(namespaceValidationErrorRegExp)).toBeTruthy();
@@ -68,7 +69,7 @@ describe('CreatePipelineResource', () => {
   });
 
   it('errors when name starts with a "-"', () => {
-    const { queryByText, getByPlaceholderText } = render(
+    const { queryByText, getByPlaceholderText } = renderWithRouter(
       <CreatePipelineResource />
     );
     fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
@@ -82,7 +83,7 @@ describe('CreatePipelineResource', () => {
   });
 
   it('errors when name ends with a "-"', () => {
-    const { queryByText, getByPlaceholderText } = render(
+    const { queryByText, getByPlaceholderText } = renderWithRouter(
       <CreatePipelineResource />
     );
     fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
@@ -96,7 +97,7 @@ describe('CreatePipelineResource', () => {
   });
 
   it('errors when name ends with a "."', () => {
-    const { queryByText, getByPlaceholderText } = render(
+    const { queryByText, getByPlaceholderText } = renderWithRouter(
       <CreatePipelineResource />
     );
     fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
@@ -110,7 +111,7 @@ describe('CreatePipelineResource', () => {
   });
 
   it('errors when name contains spaces', () => {
-    const { queryByText, getByPlaceholderText } = render(
+    const { queryByText, getByPlaceholderText } = renderWithRouter(
       <CreatePipelineResource />
     );
     fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
@@ -124,7 +125,7 @@ describe('CreatePipelineResource', () => {
   });
 
   it('errors when name contains capital letters', () => {
-    const { queryByText, getByPlaceholderText } = render(
+    const { queryByText, getByPlaceholderText } = renderWithRouter(
       <CreatePipelineResource />
     );
     fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
@@ -138,7 +139,7 @@ describe('CreatePipelineResource', () => {
   });
 
   it('doesn\'t error when contains "-" or "." in the middle of the name', () => {
-    const { queryByText, getByPlaceholderText } = render(
+    const { queryByText, getByPlaceholderText } = renderWithRouter(
       <CreatePipelineResource />
     );
     fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
@@ -152,7 +153,7 @@ describe('CreatePipelineResource', () => {
   });
 
   it("doesn't error when name contains number", () => {
-    const { queryByText, getByPlaceholderText } = render(
+    const { queryByText, getByPlaceholderText } = renderWithRouter(
       <CreatePipelineResource />
     );
     fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
@@ -166,7 +167,7 @@ describe('CreatePipelineResource', () => {
   });
 
   it('errors when name contains 64 characters', () => {
-    const { queryByText, getByPlaceholderText } = render(
+    const { queryByText, getByPlaceholderText } = renderWithRouter(
       <CreatePipelineResource />
     );
     fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
@@ -183,7 +184,7 @@ describe('CreatePipelineResource', () => {
   });
 
   it("doesn't error when name contains 63 characters", () => {
-    const { queryByText, getByPlaceholderText } = render(
+    const { queryByText, getByPlaceholderText } = renderWithRouter(
       <CreatePipelineResource />
     );
     fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
@@ -199,7 +200,7 @@ describe('CreatePipelineResource', () => {
   });
 
   it("doesn't error when contains a valid namespace", () => {
-    const { queryByText, getByPlaceholderText, getByText } = render(
+    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
       <CreatePipelineResource />
     );
     fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
@@ -215,7 +216,7 @@ describe('CreatePipelineResource', () => {
   });
 
   it("doesn't error when a url is entered", () => {
-    const { queryByText, getByPlaceholderText, getByText } = render(
+    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
       <CreatePipelineResource />
     );
     fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
@@ -236,7 +237,7 @@ describe('CreatePipelineResource', () => {
   });
 
   it("doesn't error when a revision is entered", () => {
-    const { queryByText, getByPlaceholderText, getByText } = render(
+    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
       <CreatePipelineResource />
     );
     fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {
@@ -257,7 +258,7 @@ describe('CreatePipelineResource', () => {
   });
 
   it('handles type change', () => {
-    const { queryByText, getByPlaceholderText, getByText } = render(
+    const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
       <CreatePipelineResource />
     );
     fireEvent.change(getByPlaceholderText(/pipeline-resource-name/i), {

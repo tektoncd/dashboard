@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -41,12 +41,14 @@ describe('EventListeners', () => {
       .spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: ALL_NAMESPACES }));
   });
+
   it('renders with no bindings', () => {
     jest
       .spyOn(EventListenersAPI, 'useEventListeners')
       .mockImplementation(() => ({ data: [] }));
 
     const { getByText } = renderWithRouter(<EventListeners />, {
+      path: '/eventlisteners',
       route: '/eventlisteners'
     });
 
@@ -60,6 +62,7 @@ describe('EventListeners', () => {
       .mockImplementation(() => ({ data: [eventListener] }));
 
     const { queryByText, queryByTitle } = renderWithRouter(<EventListeners />, {
+      path: '/eventlisteners',
       route: '/eventlisteners'
     });
 
@@ -78,7 +81,7 @@ describe('EventListeners', () => {
 
     const { getByPlaceholderText, getByText, queryByText } = renderWithRouter(
       <EventListeners />,
-      { route: '/eventlisteners' }
+      { path: '/eventlisteners', route: '/eventlisteners' }
     );
 
     const filterValue = 'baz:bam';
@@ -96,6 +99,7 @@ describe('EventListeners', () => {
       .mockImplementation(() => ({ isLoading: true }));
 
     const { queryByText } = renderWithRouter(<EventListeners />, {
+      path: '/eventlisteners',
       route: '/eventlisteners'
     });
 
@@ -111,6 +115,7 @@ describe('EventListeners', () => {
       .mockImplementation(() => ({ error }));
 
     const { queryByText } = renderWithRouter(<EventListeners />, {
+      path: '/eventlisteners',
       route: '/eventlisteners'
     });
 
