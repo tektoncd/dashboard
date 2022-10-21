@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,18 +12,23 @@ limitations under the License.
 */
 /* istanbul ignore file */
 import React from 'react';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { BrowserRouter, Switch } from 'react-router-dom';
+import { CompatRoute, CompatRouter } from 'react-router-dom-v5-compat';
 import { render as baseRender } from '@testing-library/react';
 import { IntlProvider } from 'react-intl';
 
 function RouterWrapper({ children, path }) {
   return (
     <BrowserRouter>
-      <Route path={path}>
-        <IntlProvider locale="en" defaultLocale="en" messages={{}}>
-          {children}
-        </IntlProvider>
-      </Route>
+      <CompatRouter>
+        <Switch>
+          <CompatRoute path={path}>
+            <IntlProvider locale="en" defaultLocale="en" messages={{}}>
+              {children}
+            </IntlProvider>
+          </CompatRoute>
+        </Switch>
+      </CompatRouter>
     </BrowserRouter>
   );
 }

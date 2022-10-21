@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -45,7 +45,8 @@ it('TriggerTemplates renders with no templates', () => {
     .mockImplementation(() => ({ selectedNamespace: ALL_NAMESPACES }));
 
   const { queryByText } = renderWithRouter(<TriggerTemplates />, {
-    route: '/triggerTemplates'
+    path: '/triggertemplates',
+    route: '/triggertemplates'
   });
 
   expect(queryByText('TriggerTemplates')).toBeTruthy();
@@ -58,7 +59,8 @@ it('TriggerTemplates renders with one template', () => {
     .mockImplementation(() => ({ data: [triggerTemplate] }));
 
   const { queryByText } = renderWithRouter(<TriggerTemplates />, {
-    route: '/triggerTemplates'
+    path: '/triggertemplates',
+    route: '/triggertemplates'
   });
 
   expect(queryByText(/TriggerTemplates/i)).toBeTruthy();
@@ -75,7 +77,7 @@ it('TriggerTemplates can be filtered on a single label filter', async () => {
 
   const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
     <TriggerTemplates />,
-    { route: '/triggerTemplates' }
+    { path: '/triggertemplates', route: '/triggertemplates' }
   );
 
   const filterValue = 'baz:bam';
@@ -93,7 +95,8 @@ it('TriggerTemplates renders in loading state', () => {
     .mockImplementation(() => ({ isLoading: true }));
 
   const { queryByText } = renderWithRouter(<TriggerTemplates />, {
-    route: '/triggerTemplates'
+    path: '/triggertemplates',
+    route: '/triggertemplates'
   });
 
   expect(queryByText(/TriggerTemplates/i)).toBeTruthy();
@@ -107,7 +110,8 @@ it('TriggerTemplates renders in error state', () => {
     .mockImplementation(() => ({ error }));
 
   const { queryByText } = renderWithRouter(<TriggerTemplates />, {
-    route: '/triggerTemplates'
+    path: '/triggertemplates',
+    route: '/triggertemplates'
   });
 
   expect(queryByText(error)).toBeTruthy();

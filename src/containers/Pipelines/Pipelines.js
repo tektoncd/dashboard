@@ -13,7 +13,8 @@ limitations under the License.
 /* istanbul ignore file */
 
 import React, { useState } from 'react';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom-v5-compat';
 import {
   TrashCan16 as DeleteIcon,
   PlayOutline16 as RunIcon,

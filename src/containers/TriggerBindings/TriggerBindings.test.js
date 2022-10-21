@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -48,6 +48,7 @@ describe('TriggerBindings', () => {
       .mockImplementation(() => ({ data: [] }));
 
     const { getByText } = renderWithRouter(<TriggerBindings />, {
+      path: '/triggerbindings',
       route: '/triggerbindings'
     });
 
@@ -61,6 +62,7 @@ describe('TriggerBindings', () => {
       .mockImplementation(() => ({ data: [triggerBinding] }));
 
     const { queryByText } = renderWithRouter(<TriggerBindings />, {
+      path: '/triggerbindings',
       route: '/triggerbindings'
     });
 
@@ -78,7 +80,7 @@ describe('TriggerBindings', () => {
 
     const { queryByText, getByPlaceholderText, getByText } = renderWithRouter(
       <TriggerBindings />,
-      { route: '/triggerbindings' }
+      { path: '/triggerbindings', route: '/triggerbindings' }
     );
 
     const filterValue = 'baz:bam';
@@ -96,6 +98,7 @@ describe('TriggerBindings', () => {
       .mockImplementation(() => ({ isLoading: true }));
 
     const { queryByText } = renderWithRouter(<TriggerBindings />, {
+      path: '/triggerbindings',
       route: '/triggerbindings'
     });
 
@@ -111,6 +114,7 @@ describe('TriggerBindings', () => {
       .mockImplementation(() => ({ error }));
 
     const { queryByText } = renderWithRouter(<TriggerBindings />, {
+      path: '/triggerbindings',
       route: '/triggerbindings'
     });
 

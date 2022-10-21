@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2021 The Tekton Authors
+Copyright 2020-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,7 +14,7 @@ limitations under the License.
 import React from 'react';
 import { fireEvent, waitFor } from '@testing-library/react';
 import { createIntl } from 'react-intl';
-import { urls } from '@tektoncd/dashboard-utils';
+import { paths, urls } from '@tektoncd/dashboard-utils';
 
 import * as API from '../../api/clusterTriggerBindings';
 import { renderWithRouter } from '../../utils/test';
@@ -101,6 +101,7 @@ it('ClusterTriggerBindingContainer renders YAML', async () => {
   const { getByText } = renderWithRouter(
     <ClusterTriggerBindingContainer intl={intl} />,
     {
+      path: paths.clusterTriggerBindings.byName(),
       route: urls.clusterTriggerBindings.byName({
         clusterTriggerBindingName
       })

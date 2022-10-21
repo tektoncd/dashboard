@@ -12,7 +12,11 @@ limitations under the License.
 */
 
 import React from 'react';
-import { useHistory, useLocation, useParams } from 'react-router-dom';
+import {
+  useLocation,
+  useNavigate,
+  useParams
+} from 'react-router-dom-v5-compat';
 import { useTitleSync } from '@tektoncd/dashboard-utils';
 import { ResourceDetails, Trigger } from '@tektoncd/dashboard-components';
 
@@ -20,8 +24,8 @@ import { useTrigger } from '../../api';
 import { getViewChangeHandler } from '../../utils';
 
 export function TriggerContainer() {
-  const history = useHistory();
   const location = useLocation();
+  const navigate = useNavigate();
   const params = useParams();
   const { triggerName, namespace } = params;
 
@@ -46,7 +50,7 @@ export function TriggerContainer() {
     <ResourceDetails
       error={error}
       loading={isFetching}
-      onViewChange={getViewChangeHandler({ history, location })}
+      onViewChange={getViewChangeHandler({ location, navigate })}
       resource={trigger}
       view={view}
     >

@@ -13,7 +13,11 @@ limitations under the License.
 /* istanbul ignore file */
 
 import React, { useEffect, useState } from 'react';
-import { useHistory, useLocation, useParams } from 'react-router-dom';
+import {
+  useLocation,
+  useNavigate,
+  useParams
+} from 'react-router-dom-v5-compat';
 import { useIntl } from 'react-intl';
 import keyBy from 'lodash.keyby';
 import { RadioTile, TileGroup } from 'carbon-components-react';
@@ -53,8 +57,8 @@ import {
 
 export function PipelineRuns() {
   const intl = useIntl();
-  const history = useHistory();
   const location = useLocation();
+  const navigate = useNavigate();
   const params = useParams();
 
   const { selectedNamespace } = useSelectedNamespace();
@@ -62,7 +66,7 @@ export function PipelineRuns() {
 
   const filters = getFilters(location);
   const statusFilter = getStatusFilter(location);
-  const setStatusFilter = getStatusFilterHandler({ history, location });
+  const setStatusFilter = getStatusFilterHandler({ location, navigate });
 
   const pipelineFilter =
     filters.find(filter => filter.indexOf(`${labels.PIPELINE}=`) !== -1) || '';
@@ -345,7 +349,7 @@ export function PipelineRuns() {
                 ...(pipelineName && { pipelineName })
               }).toString();
             }
-            history.push(
+            navigate(
               urls.pipelineRuns.create() +
                 (queryString ? `?${queryString}` : '')
             );

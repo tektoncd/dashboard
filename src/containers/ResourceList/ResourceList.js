@@ -13,7 +13,8 @@ limitations under the License.
 /* istanbul ignore file */
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom-v5-compat';
 import { getFilters, urls, useTitleSync } from '@tektoncd/dashboard-utils';
 import {
   Link as CustomLink,

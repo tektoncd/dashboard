@@ -12,7 +12,11 @@ limitations under the License.
 */
 
 import React, { useEffect, useState } from 'react';
-import { useHistory, useLocation, useParams } from 'react-router-dom';
+import {
+  useLocation,
+  useNavigate,
+  useParams
+} from 'react-router-dom-v5-compat';
 import { useIntl } from 'react-intl';
 import keyBy from 'lodash.keyby';
 import {
@@ -51,8 +55,8 @@ const { CLUSTER_TASK, TASK } = labels;
 /* istanbul ignore next */
 function TaskRuns() {
   const intl = useIntl();
-  const history = useHistory();
   const location = useLocation();
+  const navigate = useNavigate();
   const params = useParams();
 
   const { namespace: namespaceParam } = params;
@@ -79,7 +83,7 @@ function TaskRuns() {
       ? clusterTaskFilter.replace(`${CLUSTER_TASK}=`, '')
       : taskFilter.replace(`${TASK}=`, '');
 
-  const setStatusFilter = getStatusFilterHandler({ history, location });
+  const setStatusFilter = getStatusFilterHandler({ location, navigate });
 
   useTitleSync({ page: 'TaskRuns' });
 
@@ -258,7 +262,7 @@ function TaskRuns() {
                 ...(taskName && { taskName })
               }).toString();
             }
-            history.push(
+            navigate(
               urls.taskRuns.create() + (queryString ? `?${queryString}` : '')
             );
           },

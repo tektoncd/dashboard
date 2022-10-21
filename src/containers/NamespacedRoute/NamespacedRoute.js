@@ -11,20 +11,41 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 /* istanbul ignore file */
-import { useEffect } from 'react';
-import { useRouteMatch } from 'react-router-dom';
+import { useContext, useEffect } from 'react';
+import {
+  UNSAFE_RouteContext, // eslint-disable-line camelcase
+  useParams
+} from 'react-router-dom-v5-compat';
 
 import { useSelectedNamespace } from '../../api';
 
-const NamespacedRoute = ({ allNamespacesPath, children }) => {
-  const match = useRouteMatch();
+/*
+  There is no equivalent of the v5 `useRouteMatch` in v6 so we have to provide
+  our own to get the currently matched route. A future release may provide something
+  we can use but for now we rely on an internal API that's provided as an escape
+  hatch for exactly this reason. We'll have to be careful with future updates to
+  ensure this continues to work or switch to an alternative if needed.
+*/
+function useCurrentPath() {
+  const routeContext = useContext(UNSAFE_RouteContext);
+  const match = routeContext.matches.at(-1); // we always want the last match
+
+  let { path } = match.route;
+  path = path.replace(/\/\*/, ''); // remove any trailing splat
+
+  return path;
+}
+
+const NamespacedRoute = ({ children, isResourceDetails }) => {
+  const params = useParams();
+  const path = useCurrentPath();
   const { setNamespacedMatch } = useSelectedNamespace();
 
   useEffect(() => {
     setNamespacedMatch({
-      allNamespacesPath,
-      params: match.params,
-      path: match.path
+      isResourceDetails,
+      params,
+      path
     });
 
     return () => {

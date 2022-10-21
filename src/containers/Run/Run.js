@@ -13,7 +13,12 @@ limitations under the License.
 /* istanbul ignore file */
 
 import React, { useState } from 'react';
-import { Link, useHistory, useLocation, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import {
+  useLocation,
+  useNavigate,
+  useParams
+} from 'react-router-dom-v5-compat';
 import { useIntl } from 'react-intl';
 import { UndefinedFilled20 as UndefinedIcon } from '@carbon/icons-react';
 import {
@@ -85,8 +90,8 @@ function getRunStatusTooltip(run) {
 
 function Run() {
   const intl = useIntl();
-  const history = useHistory();
   const location = useLocation();
+  const navigate = useNavigate();
   const { namespace, runName: resourceName } = useParams();
 
   const queryParams = new URLSearchParams(location.search);
@@ -142,7 +147,7 @@ function Run() {
       namespace: run.metadata.namespace
     })
       .then(() => {
-        history.push(urls.runs.byNamespace({ namespace }));
+        navigate(urls.runs.byNamespace({ namespace }));
       })
       .catch(err => {
         err.response.text().then(text => {
@@ -314,7 +319,7 @@ function Run() {
         }
         error={error}
         loading={isFetching}
-        onViewChange={getViewChangeHandler({ history, location })}
+        onViewChange={getViewChangeHandler({ location, navigate })}
         resource={run}
         view={view}
       >

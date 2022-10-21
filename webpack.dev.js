@@ -57,6 +57,11 @@ module.exports = merge(common({ mode }), {
   module: {
     rules: [
       {
+        test: /\.js$/,
+        include: /node_modules\/react-dom/,
+        use: ['react-hot-loader/webpack']
+      },
+      {
         test: /\.scss$/,
         use: [
           {

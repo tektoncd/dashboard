@@ -29,7 +29,12 @@ import {
   RadioTile,
   TileGroup
 } from 'carbon-components-react';
-import { Link, useHistory, useLocation, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import {
+  useLocation,
+  useNavigate,
+  useParams
+} from 'react-router-dom-v5-compat';
 import { useIntl } from 'react-intl';
 
 import {
@@ -59,8 +64,8 @@ const { PIPELINE_TASK, RETRY, STEP, VIEW } = queryParamConstants;
 
 export /* istanbul ignore next */ function PipelineRunContainer() {
   const intl = useIntl();
-  const history = useHistory();
   const location = useLocation();
+  const navigate = useNavigate();
   const params = useParams();
 
   const { namespace, pipelineRunName } = params;
@@ -223,10 +228,10 @@ export /* istanbul ignore next */ function PipelineRunContainer() {
 
     const browserURL = location.pathname.concat(`?${queryParams.toString()}`);
     if (currentPipelineTaskName) {
-      history.push(browserURL);
+      navigate(browserURL);
     } else {
       // auto-selecting task & step on first load
-      history.replace(browserURL);
+      navigate(browserURL, { replace: true });
     }
   }
 
@@ -256,7 +261,7 @@ export /* istanbul ignore next */ function PipelineRunContainer() {
     const { name, namespace: resourceNamespace } = pipelineRun.metadata;
     deletePipelineRun({ name, namespace: resourceNamespace })
       .then(() => {
-        history.push(urls.pipelineRuns.byNamespace({ namespace }));
+        navigate(urls.pipelineRuns.byNamespace({ namespace }));
       })
       .catch(err => {
         err.response.text().then(text => {
@@ -547,7 +552,7 @@ export /* istanbul ignore next */ function PipelineRunContainer() {
           })
         }
         maximizedLogsContainer={maximizedLogsContainer.current}
-        onViewChange={getViewChangeHandler({ history, location })}
+        onViewChange={getViewChangeHandler({ location, navigate })}
         pipelineRun={pipelineRun}
         pod={podDetails}
         runActions={

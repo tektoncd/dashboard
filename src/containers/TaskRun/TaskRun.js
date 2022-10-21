@@ -14,7 +14,12 @@ limitations under the License.
 
 import React, { useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { Link, useHistory, useLocation, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import {
+  useLocation,
+  useNavigate,
+  useParams
+} from 'react-router-dom-v5-compat';
 import { InlineNotification, SkeletonText } from 'carbon-components-react';
 import {
   Actions,
@@ -59,8 +64,8 @@ const { STEP, TASK_RUN_DETAILS, VIEW } = queryParamConstants;
 
 export function TaskRunContainer() {
   const intl = useIntl();
-  const history = useHistory();
   const location = useLocation();
+  const navigate = useNavigate();
   const params = useParams();
 
   const { namespace: namespaceParam, taskRunName } = params;
@@ -181,10 +186,10 @@ export function TaskRunContainer() {
 
     const browserURL = location.pathname.concat(`?${queryParams.toString()}`);
     if (showTaskRunDetails || selectedStepId) {
-      history.push(browserURL);
+      navigate(browserURL);
     } else {
       // auto-selecting step on first load
-      history.replace(browserURL);
+      navigate(browserURL, { replace: true });
     }
   }
 
@@ -201,7 +206,7 @@ export function TaskRunContainer() {
       namespace: taskRun.metadata.namespace
     })
       .then(() => {
-        history.push(urls.taskRuns.byNamespace({ namespace }));
+        navigate(urls.taskRuns.byNamespace({ namespace }));
       })
       .catch(err => {
         err.response.text().then(text => {
@@ -373,7 +378,7 @@ export function TaskRunContainer() {
     taskRun
   });
 
-  const onViewChange = getViewChangeHandler({ history, location });
+  const onViewChange = getViewChangeHandler({ location, navigate });
 
   const runActions = taskRunActions();
 
