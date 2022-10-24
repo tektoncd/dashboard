@@ -2,8 +2,7 @@
 
 # Changes
 
-<!-- Describe your changes here- ideally you can get that description straight from
-your descriptive commit message(s)! -->
+<!-- Describe your changes here- ideally you can get that description straight from your descriptive commit message(s)! -->
 
 # Submitter Checklist
 
@@ -14,6 +13,12 @@ As the author of this PR, please check off the items in this checklist:
 - [ ] Follows the [commit message standard](https://github.com/tektoncd/community/blob/main/standards.md#commits)
 - [ ] Meets the [Tekton contributor standards](https://github.com/tektoncd/community/blob/main/standards.md) (including
   functionality, content, code)
+- [ ] Has a kind label. You can add one by adding a comment on this PR that contains `/kind <type>`. Valid types are bug, cleanup, design, documentation, feature, flake, misc, question, tep
+- [ ] Release notes block below has been updated with any user facing changes (new features, significant UI changes, API changes, bug fixes, changes requiring upgrade notices or deprecation warnings)
+- [ ] Release notes contains the string "action required" if the change requires additional action from users switching to the new release
 
-_See [the contribution guide](https://github.com/tektoncd/dashboard/blob/main/CONTRIBUTING.md)
-for more details._
+# Release Notes
+
+```release-note
+NONE
+```
