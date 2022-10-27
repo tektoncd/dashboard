@@ -48,9 +48,6 @@ spec:
     spec:
       serviceAccountName: tekton-dashboard
       volumes: []
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 65532
       nodeSelector:
         kubernetes.io/os: linux
       containers:
@@ -73,3 +70,13 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - "ALL"
+            runAsUser: 65532
+            runAsGroup: 65532
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
