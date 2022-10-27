@@ -211,8 +211,65 @@ export const WithPodDetails = () => {
       }}
       pipelineRun={pipelineRun}
       pod={{
-        events: '<Pod events go here>',
-        resource: '<Pod resource goes here>'
+        events: [
+          {
+            metadata: {
+              name: 'guarded-pr-vkm6w-check-file-pod.1721f00ca1846de4',
+              namespace: 'test',
+              uid: '0f4218f0-270a-408d-b5bd-56fc35dda853',
+              resourceVersion: '2047658',
+              creationTimestamp: '2022-10-27T13:27:54Z'
+            },
+            involvedObject: {
+              kind: 'Pod',
+              namespace: 'test',
+              name: 'guarded-pr-vkm6w-check-file-pod',
+              uid: '939a4823-2203-4b5a-8c00-6a2c9f15549d',
+              apiVersion: 'v1',
+              resourceVersion: '2047624'
+            },
+            reason: 'Scheduled',
+            message:
+              'Successfully assigned test/guarded-pr-vkm6w-check-file-pod to tekton-dashboard-control-plane',
+            '…': ''
+          },
+          {
+            metadata: {
+              name: 'guarded-pr-vkm6w-check-file-pod.1721f00cb6ef6ea7',
+              namespace: 'test',
+              uid: 'd1c8e367-66d1-4cd7-a04b-e49bdf9f322e',
+              resourceVersion: '2047664',
+              creationTimestamp: '2022-10-27T13:27:54Z'
+            },
+            involvedObject: {
+              kind: 'Pod',
+              namespace: 'test',
+              name: 'guarded-pr-vkm6w-check-file-pod',
+              uid: '939a4823-2203-4b5a-8c00-6a2c9f15549d',
+              apiVersion: 'v1',
+              resourceVersion: '2047657',
+              fieldPath: 'spec.initContainers{prepare}'
+            },
+            reason: 'Pulled',
+            message:
+              'Container image "gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/entrypoint:v0.40.0@sha256:ee6c81fa567c97b4dba0fb315fa038c671a0250ac3a5d43e6ccf8a91e86e6352" already present on machine',
+            '…': ''
+          }
+        ],
+        resource: {
+          kind: 'Pod',
+          apiVersion: 'v1',
+          metadata: {
+            name: 'some-pod-name',
+            namespace: 'test',
+            uid: '939a4823-2203-4b5a-8c00-6a2c9f15549d',
+            resourceVersion: '2047732',
+            creationTimestamp: '2022-10-27T13:27:49Z'
+          },
+          spec: {
+            '…': ''
+          }
+        }
       }}
       selectedStepId={selectedStepId}
       selectedTaskId={selectedTaskId}
