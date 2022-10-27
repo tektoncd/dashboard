@@ -149,8 +149,16 @@ describe('TaskRunDetails', () => {
   });
 
   it('renders pod', () => {
-    const events = 'fake-events';
-    const pod = 'fake-pod';
+    const eventName = 'fake_event';
+    const podName = 'fake_pod';
+    const eventsManagedFields = 'fake_events_managedFields';
+    const podManagedFields = 'fake_pod_managedFields';
+    const events = [
+      { metadata: { name: eventName, managedFields: eventsManagedFields } }
+    ];
+    const pod = {
+      metadata: { name: podName, managedFields: podManagedFields }
+    };
     const taskRun = {
       metadata: { name: 'task-run-name' },
       spec: {},
@@ -172,14 +180,17 @@ describe('TaskRunDetails', () => {
     );
     expect(queryByText('Pod')).toBeTruthy();
     expect(queryByText('Resource')).toBeTruthy();
-    expect(queryByText(pod)).toBeTruthy();
+    expect(queryByText(podName)).toBeTruthy();
+    expect(queryByText(podManagedFields)).toBeFalsy();
     expect(queryByText('Events')).toBeTruthy();
     fireEvent.click(queryByText('Events'));
-    expect(queryByText(events)).toBeTruthy();
+    expect(queryByText(eventName)).toBeTruthy();
+    expect(queryByText(eventsManagedFields)).toBeFalsy();
   });
 
   it('renders pod with no events', () => {
-    const pod = 'fake-pod';
+    const podName = 'fake_pod';
+    const pod = { metadata: { name: podName } };
     const taskRun = {
       metadata: { name: 'task-run-name' },
       spec: {},
@@ -200,7 +211,7 @@ describe('TaskRunDetails', () => {
     );
     expect(queryByText('Pod')).toBeTruthy();
     expect(queryByText('Resource')).toBeFalsy();
-    expect(queryByText(pod)).toBeTruthy();
+    expect(queryByText(podName)).toBeTruthy();
     expect(queryByText('Events')).toBeFalsy();
   });
 

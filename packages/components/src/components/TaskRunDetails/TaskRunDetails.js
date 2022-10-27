@@ -98,6 +98,19 @@ const TaskRunDetails = ({ onViewChange, pod, task, taskRun, view, showIO }) => {
   const [podContent, setPodContent] = useState();
   const hasEvents = pod?.events?.length > 0;
 
+  const podResource = { ...pod?.resource };
+  if (podResource?.metadata?.managedFields) {
+    delete podResource.metadata.managedFields;
+  }
+  let podEvents;
+  if (hasEvents) {
+    podEvents = pod.events.map(event => {
+      const filteredEvent = { ...event };
+      delete filteredEvent.metadata?.managedFields;
+      return filteredEvent;
+    });
+  }
+
   useEffect(() => {
     setPodContent('resource');
   }, [displayName, view]);
@@ -295,11 +308,11 @@ const TaskRunDetails = ({ onViewChange, pod, task, taskRun, view, showIO }) => {
                 <ViewYAML
                   dark
                   enableSyntaxHighlighting
-                  resource={pod.resource}
+                  resource={podResource}
                 />
               ) : null}
               {hasEvents && podContent === 'events' ? (
-                <ViewYAML dark enableSyntaxHighlighting resource={pod.events} />
+                <ViewYAML dark enableSyntaxHighlighting resource={podEvents} />
               ) : null}
             </div>
           </Tab>
