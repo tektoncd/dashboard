@@ -47,6 +47,8 @@ Further documentation available:
 - **Initial Release**: [v0.29.0][v0-29-0] (2022-09-13)
 - **End of Life**: 2023-01-13
 - **Patch Releases**: [v0.29.0][v0-29-0], [v0.29.1][v0-29-1], [v0.29.2][v0-29-2]
+- **Supported Pipelines Releases**: v0.35.x - v0.39.x
+- **Supported Triggers Releases**: v0.15.x - v0.21.x
 
 ### v0.28
 
@@ -54,13 +56,8 @@ Further documentation available:
 - **Initial Release**: [v0.28.0][v0-28-0] (2022-07-12)
 - **End of Life**: 2022-11-12
 - **Patch Releases**: [v0.28.0][v0-28-0]
-
-### v0.27
-
-- **Latest Release**: [v0.27.0][v0-27-0] (2022-06-16) ([docs][v0-27-0-docs])
-- **Initial Release**: [v0.27.0][v0-27-0] (2022-06-16)
-- **End of Life**: 2022-10-16
-- **Patch Releases**: [v0.27.0][v0-27-0]
+- **Supported Pipelines Releases**: v0.35.x - v0.37.x
+- **Supported Triggers Releases**: v0.15.x - v0.20.x
 
 ## End of Life Releases
 
@@ -81,8 +78,6 @@ Older releases are EOL and available on [GitHub][tekton-dashboard-releases].
 [v0-29-1]: https://github.com/tektoncd/dashboard/releases/tag/v0.29.1
 [v0-29-0]: https://github.com/tektoncd/dashboard/releases/tag/v0.29.0
 [v0-28-0]: https://github.com/tektoncd/dashboard/releases/tag/v0.28.0
-[v0-27-0]: https://github.com/tektoncd/dashboard/releases/tag/v0.27.0
 
 [v0-29-2-docs]: https://github.com/tektoncd/dashboard/tree/v0.29.2/docs#tekton-dashboard
 [v0-28-0-docs]: https://github.com/tektoncd/dashboard/tree/v0.28.0/docs#tekton-dashboard
-[v0-27-0-docs]: https://github.com/tektoncd/dashboard/tree/v0.27.0/docs#tekton-dashboard
