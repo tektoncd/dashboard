@@ -69,6 +69,8 @@
     "dashboard.createPipelineRun.status.pending": "",
     "dashboard.createPipelineRun.timeoutHelperText": "PipelineRunのタイムアウト（分）",
     "dashboard.createPipelineRun.title": "PipelineRunを作成",
+    "dashboard.createPipelineRun.yaml.disabled": "",
+    "dashboard.createPipelineRun.yaml.enabled": "",
     "dashboard.createResource.nameError": "小文字英数字およびハイフン（64文字未満）",
     "dashboard.createRun.invalidNamespace": "Namespaceは必須です",
     "dashboard.createRun.invalidParams": "パラメータは必須です",

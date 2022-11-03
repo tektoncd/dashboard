@@ -30,8 +30,12 @@ module.exports = merge(common({ mode }), {
     },
     compress: false,
     headers: {
+      // monaco-editor
+      // https://github.com/microsoft/monaco-editor/issues/271
+      // style-src blob: 'nonce-tkn-dev';
+      // default-src 'none';
       'Content-Security-Policy':
-        "default-src 'none'; img-src 'self'; script-src 'self' 'unsafe-eval'; style-src blob: 'nonce-tkn-dev'; connect-src 'self' wss: ws:; font-src 'self' https://1.www.s81c.com;"
+        "img-src 'self'; script-src 'self' 'unsafe-eval'; connect-src 'self' wss: ws:; font-src 'self' https://1.www.s81c.com;"
     },
     historyApiFallback: true,
     hot: true,

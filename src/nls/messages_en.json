@@ -69,6 +69,8 @@
     "dashboard.createPipelineRun.status.pending": "Create PipelineRun in pending state",
     "dashboard.createPipelineRun.timeoutHelperText": "PipelineRun timeout in minutes",
     "dashboard.createPipelineRun.title": "Create PipelineRun",
+    "dashboard.createPipelineRun.yaml.disabled": "YAML Off",
+    "dashboard.createPipelineRun.yaml.enabled": "YAML On",
     "dashboard.createResource.nameError": "Must consist of lower case alphanumeric characters, '-' or '.', start and end with an alphanumeric character, and be at most 63 characters",
     "dashboard.createRun.invalidNamespace": "Namespace cannot be empty",
     "dashboard.createRun.invalidParams": "Params cannot be empty",

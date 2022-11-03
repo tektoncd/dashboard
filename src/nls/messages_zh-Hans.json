@@ -69,6 +69,8 @@
     "dashboard.createPipelineRun.status.pending": "创建处于暂挂状态的 PipelineRun",
     "dashboard.createPipelineRun.timeoutHelperText": "PipelineRun 的超时（分钟）",
     "dashboard.createPipelineRun.title": "创建 PipelineRun",
+    "dashboard.createPipelineRun.yaml.disabled": "",
+    "dashboard.createPipelineRun.yaml.enabled": "",
     "dashboard.createResource.nameError": "必须少于 64 个字符，且只包含小写字母、数字或 -",
     "dashboard.createRun.invalidNamespace": "Namespace 不能为空",
     "dashboard.createRun.invalidParams": "Params 不能为空",

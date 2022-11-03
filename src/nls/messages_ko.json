@@ -69,6 +69,8 @@
     "dashboard.createPipelineRun.status.pending": "",
     "dashboard.createPipelineRun.timeoutHelperText": "",
     "dashboard.createPipelineRun.title": "",
+    "dashboard.createPipelineRun.yaml.disabled": "",
+    "dashboard.createPipelineRun.yaml.enabled": "",
     "dashboard.createResource.nameError": "",
     "dashboard.createRun.invalidNamespace": "",
     "dashboard.createRun.invalidParams": "",

@@ -12,7 +12,7 @@ limitations under the License.
 */
 /* istanbul ignore file */
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import keyBy from 'lodash.keyby';
 import {
@@ -32,6 +32,8 @@ import {
 } from '@tektoncd/dashboard-utils';
 import { KeyValueList } from '@tektoncd/dashboard-components';
 import { injectIntl } from 'react-intl';
+import MonacoEditor from 'react-monaco-editor';
+import yaml from 'js-yaml';
 import {
   NamespacesDropdown,
   PipelineResourcesDropdown,
@@ -40,6 +42,7 @@ import {
 } from '..';
 import {
   createPipelineRun,
+  createPipelineRunJson,
   usePipeline,
   useSelectedNamespace
 } from '../../api';
@@ -64,8 +67,12 @@ const initialState = {
   submitError: '',
   timeout: '60',
   validationError: false,
+  // validationErrorMessages is for yaml only
+  validationErrorMessages: [],
   validPipelineRunName: true,
-  validTimeout: true
+  validTimeout: true,
+  mode: '',
+  code: ''
 };
 
 const initialParamsState = paramSpecs => {
@@ -125,8 +132,11 @@ function CreatePipelineRun({ intl }) {
       submitError,
       timeout,
       validationError,
+      validationErrorMessages,
       validPipelineRunName,
-      validTimeout
+      validTimeout,
+      mode,
+      code
     },
     setState
   ] = useState({
@@ -136,6 +146,10 @@ function CreatePipelineRun({ intl }) {
     params: initialParamsState(null),
     resources: initialResourcesState(null)
   });
+  const options = {
+    selectOnLineNumbers: true
+  };
+  const monacoEditor = useRef(null);
 
   const { data: pipeline, error: pipelineError } = usePipeline(
     { name: pipelineRef, namespace },
@@ -161,6 +175,26 @@ function CreatePipelineRun({ intl }) {
       pipelinePendingStatus: isPending ? 'PipelineRunPending' : ''
     }));
   };
+  const switchToYaml = isYaml => {
+    setState(state => ({
+      ...state,
+      mode: isYaml ? 'yaml' : ''
+    }));
+  };
+
+  function checkYAMLFormValidation(obj) {
+    return [
+      {
+        name: 'namespace',
+        valid: !!obj?.metadata?.namespace,
+        message: intl.formatMessage({
+          id: 'dashboard.createRun.invalidNamespace',
+          defaultMessage: 'Namespace cannot be empty'
+        })
+      }
+    ];
+  }
+
   function checkFormValidation() {
     // Namespace, PipelineRef, Resources, and Params must all have values
     const validNamespace = !!namespace;
@@ -398,7 +432,47 @@ function CreatePipelineRun({ intl }) {
 
   function handleSubmit(event) {
     event.preventDefault();
+    if (mode && mode === 'yaml') {
+      // Check form validation
+      const obj = yaml.load(code);
+      const validationResult = checkYAMLFormValidation(obj);
+      const checker = vd => vd.every(v => v.valid === true);
+      const allValid = checker(validationResult);
+      const errorMessages = validationResult.map(a => a.message);
+      setState(state => ({
+        ...state,
+        validationError: !allValid,
+        validationErrorMessages: errorMessages
+      }));
+      if (!allValid) {
+        return;
+      }
+      setState(state => ({ ...state, creating: true }));
+      const nspace = obj?.metadata?.namespace;
 
+      createPipelineRunJson({
+        namespace: nspace,
+        payload: obj
+      })
+        .then(() => {
+          history.push(urls.pipelineRuns.byNamespace({ namespace: nspace }));
+        })
+        .catch(error => {
+          error.response.text().then(text => {
+            const statusCode = error.response.status;
+            let errorMessage = `error code ${statusCode}`;
+            if (text) {
+              errorMessage = `${text} (error code ${statusCode})`;
+            }
+            setState(state => ({
+              ...state,
+              creating: false,
+              submitError: errorMessage
+            }));
+          });
+        });
+      return;
+    }
     // Check form validation
     const valid = checkFormValidation();
     setState(state => ({
@@ -451,6 +525,21 @@ function CreatePipelineRun({ intl }) {
       });
   }
 
+  function handleEditorMount(ed, _) {
+    ed.focus();
+    setState(state => ({
+      ...state,
+      ed
+    }));
+  }
+
+  function handleYAMLChange(newValue) {
+    setState(state => ({
+      ...state,
+      code: newValue
+    }));
+  }
+
   return (
     <div className="tkn--create">
       <div className="tkn--create--heading">
@@ -461,309 +550,394 @@ function CreatePipelineRun({ intl }) {
           })}
         </h1>
       </div>
-      <Form>
-        {pipelineError && (
-          <InlineNotification
-            kind="error"
-            title={intl.formatMessage({
-              id: 'dashboard.createPipelineRun.errorLoading',
-              defaultMessage: 'Error retrieving Pipeline information'
+      <Toggle
+        defaultToggled={false}
+        id="format-pipeline-toggle"
+        onToggle={switchToYaml}
+        labelA={intl.formatMessage({
+          id: 'dashboard.createPipelineRun.yaml.disabled',
+          defaultMessage: 'YAML Off'
+        })}
+        labelB={intl.formatMessage({
+          id: 'dashboard.createPipelineRun.yaml.enabled',
+          defaultMessage: 'YAML On'
+        })}
+      />
+      {mode && mode === 'yaml' && (
+        <Form>
+          {pipelineError && (
+            <InlineNotification
+              kind="error"
+              title={intl.formatMessage({
+                id: 'dashboard.createPipelineRun.errorLoading',
+                defaultMessage: 'Error retrieving Pipeline information'
+              })}
+              lowContrast
+            />
+          )}
+          {validationError &&
+            validationErrorMessages.map(vem => (
+              <InlineNotification
+                key="inline-notification-"
+                kind="error"
+                title={vem}
+                lowContrast
+              />
+            ))}
+          {submitError !== '' && (
+            <InlineNotification
+              kind="error"
+              title={intl.formatMessage({
+                id: 'dashboard.createPipelineRun.createError',
+                defaultMessage: 'Error creating PipelineRun'
+              })}
+              subtitle={submitError}
+              onCloseButtonClick={resetError}
+              lowContrast
+            />
+          )}
+          <FormGroup legendText="">
+            <MonacoEditor
+              ref={monacoEditor}
+              width="800"
+              height="600"
+              language="yaml"
+              theme="vs-dark"
+              value={code}
+              options={options}
+              onChange={e => {
+                handleYAMLChange(e);
+              }}
+              editorDidMount={(e, m) => {
+                handleEditorMount(e, m);
+              }}
+            />
+          </FormGroup>
+          <Button
+            iconDescription={intl.formatMessage({
+              id: 'dashboard.actions.createButton',
+              defaultMessage: 'Create'
             })}
-            lowContrast
-          />
-        )}
-        {validationError && (
-          <InlineNotification
-            kind="error"
-            title={intl.formatMessage({
-              id: 'dashboard.createRun.validationError',
-              defaultMessage: 'Please fix the fields with errors, then resubmit'
+            onClick={handleSubmit}
+            disabled={creating}
+          >
+            {intl.formatMessage({
+              id: 'dashboard.actions.createButton',
+              defaultMessage: 'Create'
             })}
-            lowContrast
-          />
-        )}
-        {submitError !== '' && (
-          <InlineNotification
-            kind="error"
-            title={intl.formatMessage({
-              id: 'dashboard.createPipelineRun.createError',
-              defaultMessage: 'Error creating PipelineRun'
-            })}
-            subtitle={submitError}
-            onCloseButtonClick={resetError}
-            lowContrast
-          />
-        )}
-        <FormGroup legendText="">
-          <NamespacesDropdown
-            id="create-pipelinerun--namespaces-dropdown"
-            invalid={validationError && !namespace}
-            invalidText={intl.formatMessage({
-              id: 'dashboard.createRun.invalidNamespace',
-              defaultMessage: 'Namespace cannot be empty'
-            })}
-            selectedItem={namespace ? { id: namespace, text: namespace } : ''}
-            onChange={handleNamespaceChange}
-          />
-          <PipelinesDropdown
-            id="create-pipelinerun--pipelines-dropdown"
-            namespace={namespace}
-            invalid={validationError && !pipelineRef}
-            invalidText={intl.formatMessage({
-              id: 'dashboard.createPipelineRun.invalidPipeline',
-              defaultMessage: 'Pipeline cannot be empty'
-            })}
-            selectedItem={
-              pipelineRef ? { id: pipelineRef, text: pipelineRef } : ''
-            }
-            disabled={isDisabled()}
-            onChange={handlePipelineChange}
-          />
-        </FormGroup>
-        <FormGroup legendText="">
-          <KeyValueList
-            legendText={intl.formatMessage({
-              id: 'dashboard.createRun.labels.legendText',
-              defaultMessage: 'Labels'
-            })}
-            invalidText={
-              <span
-                dangerouslySetInnerHTML /* eslint-disable-line react/no-danger */={{
-                  __html: intl.formatMessage(
-                    {
-                      id: 'dashboard.createRun.label.invalidText',
-                      defaultMessage:
-                        'Labels must follow the {0}kubernetes labels syntax{1}.'
-                    },
-                    [
-                      `<a
+          </Button>
+        </Form>
+      )}
+      {(!mode || mode !== 'yaml') && (
+        <Form>
+          {pipelineError && (
+            <InlineNotification
+              kind="error"
+              title={intl.formatMessage({
+                id: 'dashboard.createPipelineRun.errorLoading',
+                defaultMessage: 'Error retrieving Pipeline information'
+              })}
+              lowContrast
+            />
+          )}
+          {validationError && (
+            <InlineNotification
+              kind="error"
+              title={intl.formatMessage({
+                id: 'dashboard.createRun.validationError',
+                defaultMessage:
+                  'Please fix the fields with errors, then resubmit'
+              })}
+              lowContrast
+            />
+          )}
+          {submitError !== '' && (
+            <InlineNotification
+              kind="error"
+              title={intl.formatMessage({
+                id: 'dashboard.createPipelineRun.createError',
+                defaultMessage: 'Error creating PipelineRun'
+              })}
+              subtitle={submitError}
+              onCloseButtonClick={resetError}
+              lowContrast
+            />
+          )}
+
+          <FormGroup legendText="">
+            <NamespacesDropdown
+              id="create-pipelinerun--namespaces-dropdown"
+              invalid={validationError && !namespace}
+              invalidText={intl.formatMessage({
+                id: 'dashboard.createRun.invalidNamespace',
+                defaultMessage: 'Namespace cannot be empty'
+              })}
+              selectedItem={namespace ? { id: namespace, text: namespace } : ''}
+              onChange={handleNamespaceChange}
+            />
+            <PipelinesDropdown
+              id="create-pipelinerun--pipelines-dropdown"
+              namespace={namespace}
+              invalid={validationError && !pipelineRef}
+              invalidText={intl.formatMessage({
+                id: 'dashboard.createPipelineRun.invalidPipeline',
+                defaultMessage: 'Pipeline cannot be empty'
+              })}
+              selectedItem={
+                pipelineRef ? { id: pipelineRef, text: pipelineRef } : ''
+              }
+              disabled={isDisabled()}
+              onChange={handlePipelineChange}
+            />
+          </FormGroup>
+          <FormGroup legendText="">
+            <KeyValueList
+              legendText={intl.formatMessage({
+                id: 'dashboard.createRun.labels.legendText',
+                defaultMessage: 'Labels'
+              })}
+              invalidText={
+                <span
+                  dangerouslySetInnerHTML /* eslint-disable-line react/no-danger */={{
+                    __html: intl.formatMessage(
+                      {
+                        id: 'dashboard.createRun.label.invalidText',
+                        defaultMessage:
+                          'Labels must follow the {0}kubernetes labels syntax{1}.'
+                      },
+                      [
+                        `<a
                           href="https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set"
                           target="_blank"
                           rel="noopener noreferrer"
                         >`,
-                      '</a>'
-                    ]
-                  )
-                }}
-              />
-            }
-            keyValues={labels}
-            minKeyValues={0}
-            invalidFields={invalidLabels}
-            onChange={label =>
-              handleChangeLabel('labels', 'invalidLabels', label)
-            }
-            onRemove={index =>
-              handleRemoveLabel('labels', 'invalidLabels', index)
-            }
-            onAdd={() => handleAddLabel('labels')}
-          />
-        </FormGroup>
-        <FormGroup legendText="">
-          <KeyValueList
-            legendText={intl.formatMessage({
-              id: 'dashboard.createRun.nodeSelector.legendText',
-              defaultMessage: 'Node selector'
-            })}
-            invalidText={
-              <span
-                dangerouslySetInnerHTML /* eslint-disable-line react/no-danger */={{
-                  __html: intl.formatMessage(
-                    {
-                      id: 'dashboard.createRun.label.invalidText',
-                      defaultMessage:
-                        'Labels must follow the {0}kubernetes labels syntax{1}.'
-                    },
-                    [
-                      `<a
+                        '</a>'
+                      ]
+                    )
+                  }}
+                />
+              }
+              keyValues={labels}
+              minKeyValues={0}
+              invalidFields={invalidLabels}
+              onChange={label =>
+                handleChangeLabel('labels', 'invalidLabels', label)
+              }
+              onRemove={index =>
+                handleRemoveLabel('labels', 'invalidLabels', index)
+              }
+              onAdd={() => handleAddLabel('labels')}
+            />
+          </FormGroup>
+          <FormGroup legendText="">
+            <KeyValueList
+              legendText={intl.formatMessage({
+                id: 'dashboard.createRun.nodeSelector.legendText',
+                defaultMessage: 'Node selector'
+              })}
+              invalidText={
+                <span
+                  dangerouslySetInnerHTML /* eslint-disable-line react/no-danger */={{
+                    __html: intl.formatMessage(
+                      {
+                        id: 'dashboard.createRun.label.invalidText',
+                        defaultMessage:
+                          'Labels must follow the {0}kubernetes labels syntax{1}.'
+                      },
+                      [
+                        `<a
                           href="https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set"
                           target="_blank"
                           rel="noopener noreferrer"
                         >`,
-                      '</a>'
-                    ]
-                  )
-                }}
-              />
-            }
-            keyValues={nodeSelector}
-            minKeyValues={0}
-            invalidFields={invalidNodeSelector}
-            onChange={label =>
-              handleChangeLabel('nodeSelector', 'invalidNodeSelector', label)
-            }
-            onRemove={index =>
-              handleRemoveLabel('nodeSelector', 'invalidNodeSelector', index)
-            }
-            onAdd={() => handleAddLabel('nodeSelector')}
-          />
-        </FormGroup>
-        {resourceSpecs && resourceSpecs.length !== 0 && (
-          <FormGroup legendText="PipelineResources">
-            {resourceSpecs.map(resourceSpec => (
-              <PipelineResourcesDropdown
-                id={`create-pipelinerun--pr-dropdown-${resourceSpec.name}`}
-                key={`create-pipelinerun--pr-dropdown-${resourceSpec.name}`}
-                titleText={resourceSpec.name}
-                helperText={resourceSpec.type}
-                type={resourceSpec.type}
-                namespace={namespace}
-                invalid={validationError && !resources[resourceSpec.name]}
-                invalidText={intl.formatMessage({
-                  id: 'dashboard.createRun.invalidPipelineResources',
-                  defaultMessage: 'PipelineResources cannot be empty'
-                })}
-                selectedItem={(() => {
-                  const value = resources[resourceSpec.name];
-                  return value ? { id: value, text: value } : '';
-                })()}
-                onChange={({ selectedItem }) => {
-                  const { text } = selectedItem || {};
-                  handleResourceChange(resourceSpec.name, text);
-                }}
-              />
-            ))}
+                        '</a>'
+                      ]
+                    )
+                  }}
+                />
+              }
+              keyValues={nodeSelector}
+              minKeyValues={0}
+              invalidFields={invalidNodeSelector}
+              onChange={label =>
+                handleChangeLabel('nodeSelector', 'invalidNodeSelector', label)
+              }
+              onRemove={index =>
+                handleRemoveLabel('nodeSelector', 'invalidNodeSelector', index)
+              }
+              onAdd={() => handleAddLabel('nodeSelector')}
+            />
           </FormGroup>
-        )}
-        {paramSpecs && paramSpecs.length !== 0 && (
-          <FormGroup legendText="Params">
-            {paramSpecs.map(paramSpec => (
-              <TextInput
-                id={`create-pipelinerun--param-${paramSpec.name}`}
-                key={`create-pipelinerun--param-${paramSpec.name}`}
-                labelText={paramSpec.name}
-                helperText={paramSpec.description}
-                placeholder={paramSpec.default || paramSpec.name}
-                invalid={
-                  validationError &&
-                  !params[paramSpec.name] &&
-                  paramSpec.default !== ''
-                }
-                invalidText={intl.formatMessage({
-                  id: 'dashboard.createRun.invalidParams',
-                  defaultMessage: 'Params cannot be empty'
-                })}
-                value={params[paramSpec.name] || ''}
-                onChange={({ target: { value } }) =>
-                  handleParamChange(paramSpec.name, value)
-                }
-              />
-            ))}
+          {resourceSpecs && resourceSpecs.length !== 0 && (
+            <FormGroup legendText="PipelineResources">
+              {resourceSpecs.map(resourceSpec => (
+                <PipelineResourcesDropdown
+                  id={`create-pipelinerun--pr-dropdown-${resourceSpec.name}`}
+                  key={`create-pipelinerun--pr-dropdown-${resourceSpec.name}`}
+                  titleText={resourceSpec.name}
+                  helperText={resourceSpec.type}
+                  type={resourceSpec.type}
+                  namespace={namespace}
+                  invalid={validationError && !resources[resourceSpec.name]}
+                  invalidText={intl.formatMessage({
+                    id: 'dashboard.createRun.invalidPipelineResources',
+                    defaultMessage: 'PipelineResources cannot be empty'
+                  })}
+                  selectedItem={(() => {
+                    const value = resources[resourceSpec.name];
+                    return value ? { id: value, text: value } : '';
+                  })()}
+                  onChange={({ selectedItem }) => {
+                    const { text } = selectedItem || {};
+                    handleResourceChange(resourceSpec.name, text);
+                  }}
+                />
+              ))}
+            </FormGroup>
+          )}
+          {paramSpecs && paramSpecs.length !== 0 && (
+            <FormGroup legendText="Params">
+              {paramSpecs.map(paramSpec => (
+                <TextInput
+                  id={`create-pipelinerun--param-${paramSpec.name}`}
+                  key={`create-pipelinerun--param-${paramSpec.name}`}
+                  labelText={paramSpec.name}
+                  helperText={paramSpec.description}
+                  placeholder={paramSpec.default || paramSpec.name}
+                  invalid={
+                    validationError &&
+                    !params[paramSpec.name] &&
+                    paramSpec.default !== ''
+                  }
+                  invalidText={intl.formatMessage({
+                    id: 'dashboard.createRun.invalidParams',
+                    defaultMessage: 'Params cannot be empty'
+                  })}
+                  value={params[paramSpec.name] || ''}
+                  onChange={({ target: { value } }) =>
+                    handleParamChange(paramSpec.name, value)
+                  }
+                />
+              ))}
+            </FormGroup>
+          )}
+          <FormGroup
+            legendText={intl.formatMessage({
+              id: 'dashboard.createRun.optional.legendText',
+              defaultMessage: 'Optional values'
+            })}
+          >
+            <ServiceAccountsDropdown
+              id="create-pipelinerun--sa-dropdown"
+              titleText={intl.formatMessage({
+                id: 'dashboard.serviceAccountLabel.optional',
+                defaultMessage: 'ServiceAccount (optional)'
+              })}
+              helperText={intl.formatMessage({
+                id: 'dashboard.createPipelineRun.serviceAccountHelperText',
+                defaultMessage:
+                  'Ensure the selected ServiceAccount (or the default if none selected) has permissions for creating PipelineRuns and for anything else your PipelineRun interacts with.'
+              })}
+              namespace={namespace}
+              selectedItem={
+                serviceAccount
+                  ? { id: serviceAccount, text: serviceAccount }
+                  : ''
+              }
+              disabled={isDisabled()}
+              onChange={({ selectedItem }) => {
+                const { text } = selectedItem || {};
+                setState(state => ({ ...state, serviceAccount: text }));
+              }}
+            />
+            <TextInput
+              id="create-pipelinerun--timeout"
+              labelText={intl.formatMessage({
+                id: 'dashboard.createRun.timeoutLabel',
+                defaultMessage: 'Timeout'
+              })}
+              helperText={intl.formatMessage({
+                id: 'dashboard.createPipelineRun.timeoutHelperText',
+                defaultMessage: 'PipelineRun timeout in minutes'
+              })}
+              invalid={validationError && !validTimeout}
+              invalidText={intl.formatMessage({
+                id: 'dashboard.createRun.invalidTimeout',
+                defaultMessage:
+                  'Timeout must be a valid number less than 525600'
+              })}
+              placeholder="60"
+              value={timeout}
+              onChange={({ target: { value } }) =>
+                setState(state => ({ ...state, timeout: value }))
+              }
+            />
+            <TextInput
+              id="create-pipelinerun--pipelinerunname"
+              labelText={intl.formatMessage({
+                id: 'dashboard.createRun.pipelineRunNameLabel',
+                defaultMessage: 'PipelineRun name'
+              })}
+              invalid={validationError && !validPipelineRunName}
+              invalidText={intl.formatMessage({
+                id: 'dashboard.createResource.nameError',
+                defaultMessage:
+                  "Must consist of lower case alphanumeric characters, '-' or '.', start and end with an alphanumeric character, and be at most 63 characters"
+              })}
+              value={pipelineRunName}
+              onChange={({ target: { value } }) =>
+                setState(state => ({ ...state, pipelineRunName: value.trim() }))
+              }
+            />
+            <Toggle
+              defaultToggled={false}
+              id="pending-pipeline-toggle"
+              labelText={intl.formatMessage({
+                id: 'dashboard.createPipelineRun.status.pending',
+                defaultMessage: 'Create PipelineRun in pending state'
+              })}
+              onToggle={checked}
+              labelA={intl.formatMessage({
+                id: 'dashboard.createPipelineRun.disabled',
+                defaultMessage: 'Disabled'
+              })}
+              labelB={intl.formatMessage({
+                id: 'dashboard.createPipelineRun.enabled',
+                defaultMessage: 'Enabled'
+              })}
+            />
           </FormGroup>
-        )}
-        <FormGroup
-          legendText={intl.formatMessage({
-            id: 'dashboard.createRun.optional.legendText',
-            defaultMessage: 'Optional values'
-          })}
-        >
-          <ServiceAccountsDropdown
-            id="create-pipelinerun--sa-dropdown"
-            titleText={intl.formatMessage({
-              id: 'dashboard.serviceAccountLabel.optional',
-              defaultMessage: 'ServiceAccount (optional)'
-            })}
-            helperText={intl.formatMessage({
-              id: 'dashboard.createPipelineRun.serviceAccountHelperText',
-              defaultMessage:
-                'Ensure the selected ServiceAccount (or the default if none selected) has permissions for creating PipelineRuns and for anything else your PipelineRun interacts with.'
-            })}
-            namespace={namespace}
-            selectedItem={
-              serviceAccount ? { id: serviceAccount, text: serviceAccount } : ''
-            }
-            disabled={isDisabled()}
-            onChange={({ selectedItem }) => {
-              const { text } = selectedItem || {};
-              setState(state => ({ ...state, serviceAccount: text }));
-            }}
-          />
-          <TextInput
-            id="create-pipelinerun--timeout"
-            labelText={intl.formatMessage({
-              id: 'dashboard.createRun.timeoutLabel',
-              defaultMessage: 'Timeout'
-            })}
-            helperText={intl.formatMessage({
-              id: 'dashboard.createPipelineRun.timeoutHelperText',
-              defaultMessage: 'PipelineRun timeout in minutes'
-            })}
-            invalid={validationError && !validTimeout}
-            invalidText={intl.formatMessage({
-              id: 'dashboard.createRun.invalidTimeout',
-              defaultMessage: 'Timeout must be a valid number less than 525600'
-            })}
-            placeholder="60"
-            value={timeout}
-            onChange={({ target: { value } }) =>
-              setState(state => ({ ...state, timeout: value }))
-            }
-          />
-          <TextInput
-            id="create-pipelinerun--pipelinerunname"
-            labelText={intl.formatMessage({
-              id: 'dashboard.createRun.pipelineRunNameLabel',
-              defaultMessage: 'PipelineRun name'
-            })}
-            invalid={validationError && !validPipelineRunName}
-            invalidText={intl.formatMessage({
-              id: 'dashboard.createResource.nameError',
-              defaultMessage:
-                "Must consist of lower case alphanumeric characters, '-' or '.', start and end with an alphanumeric character, and be at most 63 characters"
-            })}
-            value={pipelineRunName}
-            onChange={({ target: { value } }) =>
-              setState(state => ({ ...state, pipelineRunName: value.trim() }))
-            }
-          />
-          <Toggle
-            defaultToggled={false}
-            id="pending-pipeline-toggle"
-            labelText={intl.formatMessage({
-              id: 'dashboard.createPipelineRun.status.pending',
-              defaultMessage: 'Create PipelineRun in pending state'
-            })}
-            onToggle={checked}
-            labelA={intl.formatMessage({
-              id: 'dashboard.createPipelineRun.disabled',
-              defaultMessage: 'Disabled'
-            })}
-            labelB={intl.formatMessage({
-              id: 'dashboard.createPipelineRun.enabled',
-              defaultMessage: 'Enabled'
-            })}
-          />
-        </FormGroup>
 
-        <Button
-          iconDescription={intl.formatMessage({
-            id: 'dashboard.actions.createButton',
-            defaultMessage: 'Create'
-          })}
-          onClick={handleSubmit}
-          disabled={creating}
-        >
-          {intl.formatMessage({
-            id: 'dashboard.actions.createButton',
-            defaultMessage: 'Create'
-          })}
-        </Button>
+          <Button
+            iconDescription={intl.formatMessage({
+              id: 'dashboard.actions.createButton',
+              defaultMessage: 'Create'
+            })}
+            onClick={handleSubmit}
+            disabled={creating}
+          >
+            {intl.formatMessage({
+              id: 'dashboard.actions.createButton',
+              defaultMessage: 'Create'
+            })}
+          </Button>
 
-        <Button
-          iconDescription={intl.formatMessage({
-            id: 'dashboard.modal.cancelButton',
-            defaultMessage: 'Cancel'
-          })}
-          kind="secondary"
-          onClick={handleClose}
-          disabled={creating}
-        >
-          {intl.formatMessage({
-            id: 'dashboard.modal.cancelButton',
-            defaultMessage: 'Cancel'
-          })}
-        </Button>
-      </Form>
+          <Button
+            iconDescription={intl.formatMessage({
+              id: 'dashboard.modal.cancelButton',
+              defaultMessage: 'Cancel'
+            })}
+            kind="secondary"
+            onClick={handleClose}
+            disabled={creating}
+          >
+            {intl.formatMessage({
+              id: 'dashboard.modal.cancelButton',
+              defaultMessage: 'Cancel'
+            })}
+          </Button>
+        </Form>
+      )}
     </div>
   );
 }

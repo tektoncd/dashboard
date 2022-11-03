@@ -14,6 +14,7 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 module.exports = ({ mode }) => ({
   output: {
@@ -30,7 +31,8 @@ module.exports = ({ mode }) => ({
         exclude: [path.resolve(__dirname, 'packages', 'e2e')],
         include: [
           path.resolve(__dirname, 'src'),
-          path.resolve(__dirname, 'packages')
+          path.resolve(__dirname, 'packages'),
+          path.resolve(__dirname, './node_modules/monaco-editor')
         ],
         use: [{ loader: 'babel-loader', options: { cacheDirectory: true } }]
       },
@@ -45,6 +47,15 @@ module.exports = ({ mode }) => ({
       {
         test: /\.(woff|woff2)$/,
         loader: 'file-loader'
+      },
+      {
+        test: /\.css$/,
+        include: path.resolve(__dirname, './node_modules/monaco-editor'),
+        use: ['style-loader', 'css-loader']
+      },
+      {
+        test: /\.ttf$/,
+        type: 'asset/resource'
       }
     ]
   },
@@ -60,6 +71,19 @@ module.exports = ({ mode }) => ({
       title: 'Tekton Dashboard',
       favicon: path.resolve(__dirname, 'src/images', 'favicon.png'),
       template: path.resolve(__dirname, 'src', 'index.template.html')
+    }),
+    new MonacoWebpackPlugin({
+      languages: ['yaml'],
+      customLanguages: [
+        {
+          label: 'yaml',
+          entry: 'monaco-yaml',
+          worker: {
+            id: 'monaco-yaml/yamlWorker',
+            entry: 'monaco-yaml/yaml.worker'
+          }
+        }
+      ]
     })
   ],
   resolve: {
