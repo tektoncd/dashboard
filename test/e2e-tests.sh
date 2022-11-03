@@ -48,6 +48,10 @@ test_dashboard() {
   # kubectl or proxy (to create the necessary resources)
   local creationMethod=$1
 
+  local readonly=false
+  if [[ "${@:2}" =~ "--read-only" ]]; then
+    readonly=true
+  fi
   header "Setting up environment (${@:2})"
   $tekton_repo_dir/scripts/installer install ${@:2}
   wait_dashboard_backend
@@ -178,8 +182,12 @@ test_dashboard() {
 
   # In case of failure we'll upload videos of the failing tests
   # Our Cypress config will delete videos of passing tests before exiting
-  docker run --rm --network=host $CYPRESS_ENV -v $VIDEO_PATH:/home/node/cypress/videos dashboard-e2e || fail_test "Browser E2E tests failed"
-
+  CYPRESS_SPEC=""
+  if $readonly; then
+    CYPRESS_SPEC='-- --spec cypress/e2e/common/**/*'
+  fi
+  chmod 644 ~/.kube/config
+  docker run --rm --network=host $CYPRESS_ENV -v ~/.kube/config:/home/node/.kube/config -v $VIDEO_PATH:/home/node/cypress/videos dashboard-e2e $CYPRESS_SPEC || fail_test "Browser E2E tests failed"
   # If we get here the tests passed, no need to upload artifacts
   if [ ! -z "$VIDEO_PATH" ]; then
     rm -rf $VIDEO_PATH

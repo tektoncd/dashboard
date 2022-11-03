@@ -10,6 +10,11 @@
 # limitations under the License.
 
 FROM cypress/browsers:node16.17.0-chrome106
+RUN curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg &&\
+    echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list &&\
+    apt-get update && apt-get install -y \
+    kubectl \
+    && rm -rf /var/lib/apt/lists/*
 USER node
 WORKDIR /home/node
 ENV CI=true
