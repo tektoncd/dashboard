@@ -23,7 +23,7 @@
     "linkify-it": "^4.0.1",
     "prop-types": "^15.7.2",
     "react-intl-formatted-duration": "^4.0.0",
-    "react-window": "^1.8.7",
+    "react-window": "^1.8.8",
     "tlds": "^1.233.0"
   },
   "peerDependencies": {
