@@ -13,7 +13,9 @@ This guide walks you through installing a working Tekton Dashboard locally from 
 
 ## Before you begin
 
-**Note:** This walk-through requires Kubernetes 1.19 or newer.
+**Note:** This walk-through requires Kubernetes 1.19 or newer. See below for versions of the tools that have been tested.
+
+**Note:** [2022/11/08] Latest releases of the BanzaiCloud logging operator are currently not compatible with Kubernetes 1.25+ due to use of PodSecurityPolicy resources which have been removed in Kubernetes 1.25.
 
 Before you begin, make sure the following tools are installed:
 
@@ -31,7 +33,7 @@ Then, you will create a service to serve those logs and will plug the Tekton Das
 
 ## Installing a working Tekton Dashboard locally from scratch
 
-This walkthrough has been tested on Kind v0.14 with Kubernetes v1.21.
+This walk-through has been tested on Kind v0.15 with Kubernetes v1.21.
 
 If you didn't follow the [Tekton Dashboard walk-through with Kind](./walkthrough-kind.md) yet, start there to get a local cluster with a working Tekton Dashboard installed.
 

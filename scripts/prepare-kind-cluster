@@ -16,7 +16,7 @@ set -e
 CLUSTERNAME=tekton-dashboard
 DEFAULT_OPTIONS="--log-format console"
 ENABLE_INGRESS="false"
-KUBERNETES_NODE_IMAGE="kindest/node:v1.24.4@sha256:adfaebada924a26c2c9308edd53c6e33b3d4e453782c0063dc0028bdebaddf98"
+KUBERNETES_NODE_IMAGE="kindest/node:v1.25.3@sha256:f52781bc0d7a19fb6c405c2af83abfeb311f130707a0e219175677e366cc45d1"
 
 create_cluster() {
 if [ "$ENABLE_INGRESS" == "false" ]; then
