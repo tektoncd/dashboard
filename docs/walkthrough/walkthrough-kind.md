@@ -28,7 +28,7 @@ The first thing to do is to create a Kubernetes cluster.
 
 Kind is an easy solution to run a local cluster, all it needs is to have `docker` installed.
 
-This walkthrough has been tested on Kind v0.14 with Kubernetes v1.21.
+This walk-through has been tested on Kind v0.15 with Kubernetes v1.25.
 
 Create a cluster by running the following command:
 
@@ -38,7 +38,7 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
 - role: control-plane
-  image: kindest/node:v1.21.12@sha256:f316b33dd88f8196379f38feb80545ef3ed44d9197dca1bfd48bcb1583210207
+  image: kindest/node:v1.25.3@sha256:f52781bc0d7a19fb6c405c2af83abfeb311f130707a0e219175677e366cc45d1
   kubeadmConfigPatches:
   - |
     kind: InitConfiguration
@@ -94,12 +94,12 @@ The ingress controller used in this walk-through is [ingress-nginx](https://gith
 Install nginx ingress controller by running the following commands:
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-0.32.0/deploy/static/provider/kind/deploy.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.4.0/deploy/static/provider/kind/deploy.yaml
 
 kubectl wait -n ingress-nginx \
   --for=condition=ready pod \
   --selector=app.kubernetes.io/component=controller \
-  --timeout=90s
+  --timeout=120s
 ```
 
 If the command exited successfully the ingress controller is now up and ready to process requests.
@@ -183,13 +183,35 @@ The Tekton Dashboard can import resources directly from a GitHub repository.
 
 The following steps demonstrate how to import a set of resources from a file hosted in a GitHub repository and view the resulting `PipelineRun`. The example contains some `Tasks`, a `Pipeline` that uses them, and a `PipelineRun` to execute it. To learn more about what the example does, take a look at the [example file](https://github.com/tektoncd/pipeline/blob/main/examples/v1beta1/pipelineruns/output-pipelinerun.yaml) we'll be using.
 
+Create a new namespace and grant the ServiceAccount permissions to create Tekton resources:
+
+```bash
+kubectl create namespace test
+
+kubectl apply -n test -f- <<EOF
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tekton-dashboard-walkthrough
+  namespace: test
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: tekton-aggregate-edit
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: test
+EOF
+```
+
 Open `http://tekton-dashboard.127.0.0.1.nip.io/#/importresources` and fill in the form:
 
 - **Repository URL**: https://github.com/tektoncd/pipeline
 - **Repository directory**: examples/v1beta1/pipelineruns/output-pipelinerun.yaml
-- **Target namespace**: tekton-pipelines
-- **Namespace**: tekton-pipelines
-- **ServiceAccount**: tekton-dashboard
+- **Target namespace**: test
+- **Namespace**: test
+- **ServiceAccount**: default
 
 Then click the **Import and Apply** button to launch the importing `PipelineRun`.
 

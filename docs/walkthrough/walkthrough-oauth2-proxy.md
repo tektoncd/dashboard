@@ -35,7 +35,7 @@ The picture below illustrates the deployed components and interactions between t
 
 ## Installing a working Tekton Dashboard locally from scratch
 
-This walk-through has been tested on Kind v0.14 with Kubernetes v1.21.
+This walk-through has been tested on Kind v0.15 with Kubernetes v1.25.
 
 If you didn't follow the [Tekton Dashboard walk-through with Kind](./walkthrough-kind.md) yet, start there to get a local cluster with a working Tekton Dashboard installed.
 
@@ -47,7 +47,7 @@ Before installing `oauth2-proxy`, you will need to create a OAuth App on your Gi
 
 This OAuth App will be used to authenticate users using GitHub.
 
-To create the OAuth App on GitHub, browse https://github.com/settings/developers and click the `New OAuth App` button.
+To create the OAuth App on GitHub, browse https://github.com/settings/developers and click the `Register a new application` button.
 
 Fill in the form and click the `Register application` button:
 - `Application name`: the name of the application
@@ -56,15 +56,15 @@ Fill in the form and click the `Register application` button:
 
 ![Register OAuth application](./walkthrough-oauth2-proxy-register.png)
 
-Once the application is registered, you will obtain a `Client ID` and `Client Secret`.
+Once the application is registered, click the `Generate a new client secret` button.
 
-These will be needed to configure `oauth2-proxy` in the next step.
+Record the `Client ID` and `Client secret` somewhere secure, these will be needed to configure `oauth2-proxy` in the next step.
 
 ![Registered OAuth application](./walkthrough-oauth2-proxy-registered.png)
 
 ## Installing and configuring oauth2-proxy
 
-This walk-through has been tested with oauth2-proxy 7.2.1 (helm chart version 6.2.1). There is a known issue with the GitHub provider in oauth2-proxy 7.3.0.
+**Note:** [2022/11/08] This walk-through has been tested with oauth2-proxy 7.2.1 (helm chart version 6.3.0). There is a known issue with the GitHub provider in oauth2-proxy 7.3.0 and later.
 
 Now you have the OAuth application created on GitHub, you can deploy [oauth2-proxy](https://github.com/oauth2-proxy/oauth2-proxy) in your cluster.
 
