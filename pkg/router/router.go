@@ -46,7 +46,7 @@ func registerWeb(resource endpoints.Resource, mux *http.ServeMux) {
 			w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
 		}
 
-		w.Header().Set("Content-Security-Policy", "default-src 'none'; img-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self' wss: ws:; font-src 'self' https://1.www.s81c.com;")
+		w.Header().Set("Content-Security-Policy", "default-src 'none'; img-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' wss: ws:; font-src 'self' https://1.www.s81c.com;")
 
 		switch resource.Options.XFrameOptions {
 		case "": // Do nothing, no X-Frame-Options header

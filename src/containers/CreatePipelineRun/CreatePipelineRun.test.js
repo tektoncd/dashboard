@@ -130,6 +130,14 @@ describe('CreatePipelineRun', () => {
     expect(queryByDisplayValue(/bar/i)).toBeFalsy();
   });
 
+  it('renders yaml mode', () => {
+    const { getByRole } = renderWithRouter(<CreatePipelineRun />, {
+      path: '/create',
+      route: '/create?mode=yaml'
+    });
+    expect(getByRole(/textbox/)).toBeTruthy();
+  });
+
   it('handles onClose event', () => {
     jest.spyOn(window.history, 'pushState');
     const { getByText } = renderWithRouter(<CreatePipelineRun />);

@@ -160,6 +160,45 @@ it('createPipelineRun with nodeSelector', () => {
   });
 });
 
+it('createPipelineRunRaw', () => {
+  const pipelineRunRaw = {
+    apiVersion: 'tekton.dev/v1beta1',
+    kind: 'PipelineRun',
+    metadata: { name: 'test-pipeline-run-name', namespace: 'test-namespace' },
+    spec: {
+      pipelineSpec: {
+        tasks: [
+          {
+            name: 'hello',
+            taskSpec: {
+              steps: [
+                {
+                  image: 'busybox',
+                  name: 'echo',
+                  script: '#!/bin/ash\necho "Hello World!"\n'
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  };
+  server.use(
+    rest.post(/\/pipelineruns/, async (req, res, ctx) => {
+      expect(await req.json()).toEqual(pipelineRunRaw);
+      return res(ctx.status(201), ctx.json(pipelineRunRaw));
+    })
+  );
+
+  return API.createPipelineRunRaw({
+    namespace: 'test-namespace',
+    payload: pipelineRunRaw
+  }).then(response => {
+    expect(response).toEqual(pipelineRunRaw);
+  });
+});
+
 it('deletePipelineRun', () => {
   const name = 'foo';
   const data = { fake: 'pipelineRun' };

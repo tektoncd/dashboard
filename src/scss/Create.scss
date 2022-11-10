@@ -39,3 +39,15 @@ limitations under the License.
     margin-left: $spacing-03;
   }
 }
+
+.tkn--create--heading {
+  display: flex;
+
+  .tkn--create--yaml-mode {
+    display: flex;
+    justify-content: flex-end;
+    flex: 1 1 0;
+  }
+}
+
+
