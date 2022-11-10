@@ -30,8 +30,10 @@ module.exports = merge(common({ mode }), {
     },
     compress: false,
     headers: {
+      // https://github.com/codemirror/codemirror5/issues/6707
+      // style-src blob: 'nonce-tkn-dev';
       'Content-Security-Policy':
-        "default-src 'none'; img-src 'self'; script-src 'self' 'unsafe-eval'; style-src blob: 'nonce-tkn-dev'; connect-src 'self' wss: ws:; font-src 'self' https://1.www.s81c.com;"
+        "default-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; connect-src 'self' wss: ws:; font-src 'self' https://1.www.s81c.com;"
     },
     historyApiFallback: true,
     hot: true,

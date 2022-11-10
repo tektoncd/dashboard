@@ -44,6 +44,7 @@ import {
   useSelectedNamespace
 } from '../../api';
 import { isValidLabel } from '../../utils';
+import { CreateYAMLEditor } from './YAMLEditor';
 
 const initialState = {
   creating: false,
@@ -109,6 +110,11 @@ function CreatePipelineRun() {
     );
   }
 
+  function isYAMLMode() {
+    const urlSearchParams = new URLSearchParams(location.search);
+    return urlSearchParams.get('mode') === 'yaml';
+  }
+
   const [
     {
       creating,
@@ -162,6 +168,14 @@ function CreatePipelineRun() {
       pipelinePendingStatus: isPending ? 'PipelineRunPending' : ''
     }));
   };
+
+  function switchToYamlMode() {
+    const queryParams = new URLSearchParams(location.search);
+    queryParams.set('mode', 'yaml');
+    const browserURL = location.pathname.concat(`?${queryParams.toString()}`);
+    navigate(browserURL);
+  }
+
   function checkFormValidation() {
     // Namespace, PipelineRef, Resources, and Params must all have values
     const validNamespace = !!namespace;
@@ -452,6 +466,10 @@ function CreatePipelineRun() {
       });
   }
 
+  if (isYAMLMode()) {
+    return <CreateYAMLEditor />;
+  }
+
   return (
     <div className="tkn--create">
       <div className="tkn--create--heading">
@@ -461,6 +479,18 @@ function CreatePipelineRun() {
             defaultMessage: 'Create PipelineRun'
           })}
         </h1>
+        <div className="tkn--create--yaml-mode">
+          <Button
+            kind="tertiary"
+            id="create-pipelinerun--mode-button"
+            onClick={switchToYamlMode}
+          >
+            {intl.formatMessage({
+              id: 'dashboard.createPipelineRun.yamlModeButton',
+              defaultMessage: 'YAML Mode'
+            })}
+          </Button>
+        </div>
       </div>
       <Form>
         {pipelineError && (

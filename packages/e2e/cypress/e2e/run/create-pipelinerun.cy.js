@@ -12,11 +12,16 @@ limitations under the License.
 */
 
 const namespace = 'e2e';
-describe('Create Simple Pipeline Run', () => {
+describe('Create Pipeline Run', () => {
   before(() => {
     cy.exec('kubectl version --client');
     cy.exec(`kubectl create namespace ${namespace} || true`);
   });
+
+  after(() => {
+    cy.exec(`kubectl delete namespace ${namespace} || true`);
+  });
+
   it('should create pipelinerun', function () {
     const uniqueNumber = Date.now();
 
@@ -54,6 +59,79 @@ describe('Create Simple Pipeline Run', () => {
     cy.contains('button', 'Create').click();
 
     cy.contains(`${pipelineName}-run`).parent().click();
+
+    cy.get('header[class="tkn--pipeline-run-header"]')
+      .find('span[class="tkn--status-label"]', { timeout: 15000 })
+      .should('have.text', 'Succeeded');
+  });
+
+  it('should create pipelinerun yaml mode', function () {
+    const uniqueNumber = Date.now();
+
+    const pipelineRunName = `yaml-mode-${uniqueNumber}`;
+    const pipelineRun = `
+      apiVersion: tekton.dev/v1beta1
+      kind: PipelineRun
+      metadata:
+        name: ${pipelineRunName}
+        namespace: ${namespace}
+      spec:
+        pipelineSpec:
+          tasks:
+            - name: hello
+              taskSpec:
+                steps:
+                  - name: echo
+                    image: busybox
+                    script: |
+                      #!/bin/ash
+                      echo "Hello World!"
+    `;
+    cy.visit(`/#/pipelineruns/create`);
+
+    cy.contains('button', 'YAML Mode').click();
+    cy.url().should('include', 'mode=yaml');
+
+    cy.get('.cm-content').type(pipelineRun);
+
+    cy.contains('button', 'Create').click();
+
+    cy.get(`[title=${pipelineRunName}]`).parent().click();
+
+    cy.get('header[class="tkn--pipeline-run-header"]')
+      .find('span[class="tkn--status-label"]', { timeout: 15000 })
+      .should('have.text', 'Succeeded');
+  });
+
+  it('should create pipelinerun yaml mode when open yaml mode directly', function () {
+    const uniqueNumber = Date.now();
+
+    const pipelineRunName = `yaml-mode-${uniqueNumber}`;
+    const pipelineRun = `
+      apiVersion: tekton.dev/v1beta1
+      kind: PipelineRun
+      metadata:
+        name: ${pipelineRunName}
+        namespace: ${namespace}
+      spec:
+        pipelineSpec:
+          tasks:
+            - name: hello
+              taskSpec:
+                steps:
+                  - name: echo
+                    image: busybox
+                    script: |
+                      #!/bin/ash
+                      echo "Hello World!"
+    `;
+    cy.visit(`/#/pipelineruns/create?mode=yaml`);
+
+    cy.get('.cm-content').type(pipelineRun);
+
+    cy.contains('button', 'Create').click();
+
+    cy.get(`[title=${pipelineRunName}]`).parent().click();
 
     cy.get('header[class="tkn--pipeline-run-header"]')
       .find('span[class="tkn--status-label"]', { timeout: 15000 })

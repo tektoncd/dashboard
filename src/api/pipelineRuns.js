@@ -73,6 +73,11 @@ export function deletePipelineRun({ name, namespace }) {
   return deleteRequest(uri);
 }
 
+export function createPipelineRunRaw({ namespace, payload }) {
+  const uri = getTektonAPI('pipelineruns', { namespace });
+  return post(uri, payload).then(({ body }) => body);
+}
+
 export function createPipelineRun({
   labels,
   namespace,
