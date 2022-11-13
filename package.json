@@ -22,7 +22,7 @@
   "dependencies": {
     "@babel/runtime": "^7.20.1",
     "@carbon/icons-react": "^10.49.0",
-    "@carbon/themes": "^10.55.0",
+    "@carbon/themes": "^10.55.1",
     "@tanstack/react-query": "^4.10.1",
     "@tanstack/react-query-devtools": "^4.14.5",
     "@tektoncd/dashboard-components": "*",
