@@ -101,8 +101,8 @@
     "webpack-merge": "^5.8.0"
   },
   "engines": {
-    "node": "^16.13.2",
-    "npm": "^8.1.2"
+    "node": "^16.18.1",
+    "npm": "^8.19.2"
   },
   "//": "Workspaces must be listed explicitly to ensure they're processed in the correct order until npm natively supports detecting the topological order",
   "workspaces": [
