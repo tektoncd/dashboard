@@ -90,7 +90,7 @@
     "lodash.omit": "^4.5.0",
     "mini-css-extract-plugin": "^2.6.1",
     "msw": "^0.47.4",
-    "node-fetch": "^3.2.10",
+    "node-fetch": "^3.3.0",
     "prettier": "^2.7.1",
     "sass": "^1.56.1",
     "sass-loader": "^13.1.0",
