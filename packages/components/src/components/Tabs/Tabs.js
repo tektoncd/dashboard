@@ -19,7 +19,7 @@ import {
 } from 'carbon-components-react';
 
 const TabContent = ({ selected, ...other }) =>
-  selected && <CarbonTabContent selected={selected} {...other} />;
+  selected ? <CarbonTabContent selected={selected} {...other} /> : <span></span>;
 
 const Tabs = ({ children, ...other }) => (
   <CarbonTabs {...other}>
