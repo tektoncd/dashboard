@@ -91,7 +91,7 @@
     "jest-environment-jsdom": "^29.3.1",
     "lodash.difference": "^4.5.0",
     "lodash.omit": "^4.5.0",
-    "mini-css-extract-plugin": "^2.6.1",
+    "mini-css-extract-plugin": "^2.7.0",
     "msw": "^0.47.4",
     "node-fetch": "^3.3.0",
     "prettier": "^2.7.1",
