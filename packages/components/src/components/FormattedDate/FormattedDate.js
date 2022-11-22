@@ -52,15 +52,19 @@ const FormattedDateWrapper = ({
     );
   }
 
-  const formattedDate = intl.formatDate(date, {
+  let formattedDate = intl.formatDate(date, {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
     hour: 'numeric',
     minute: 'numeric'
   });
-
-  return <span title={formatTooltip(formattedDate)}>{content}</span>;
+  formattedDate = formatTooltip(formattedDate);
+  return (
+    <span title={formattedDate} aria-label={formattedDate}>
+      {content}
+    </span>
+  );
 };
 
 export default FormattedDateWrapper;
