@@ -58,6 +58,7 @@ rules:
       - triggers.tekton.dev
     resources:
       - eventlisteners
+      - interceptors
       - triggerbindings
       - triggers
       - triggertemplates

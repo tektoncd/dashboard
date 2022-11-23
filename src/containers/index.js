@@ -27,6 +27,7 @@ export { default as Extension } from './Extension';
 export { default as Extensions } from './Extensions';
 export { default as HeaderBarContent } from './HeaderBarContent';
 export { default as ImportResources } from './ImportResources';
+export { default as Interceptors } from './Interceptors';
 export { default as LabelFilter } from './LabelFilter';
 export { default as ListPageLayout } from './ListPageLayout';
 export { default as NamespacedRoute } from './NamespacedRoute';

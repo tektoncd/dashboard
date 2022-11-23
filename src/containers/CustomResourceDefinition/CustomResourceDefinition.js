@@ -26,6 +26,7 @@ import {
   useClusterInterceptor,
   useClusterTask,
   useCustomResource,
+  useInterceptor,
   usePipeline,
   useTask
 } from '../../api';
@@ -36,6 +37,8 @@ function useResource({ group, name, namespace, type, version }) {
       return useClusterInterceptor({ name });
     case 'clustertasks':
       return useClusterTask({ name });
+    case 'interceptors':
+      return useInterceptor({ name, namespace });
     case 'pipelines':
       return usePipeline({ name, namespace });
     case 'tasks':

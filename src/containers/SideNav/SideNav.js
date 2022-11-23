@@ -164,6 +164,13 @@ function SideNav({ expanded, showKubernetesResources }) {
           )}
           {isTriggersInstalled && (
             <SideNavMenuItem
+              {...getMenuItemProps(getPath(urls.interceptors.all()))}
+            >
+              Interceptors
+            </SideNavMenuItem>
+          )}
+          {isTriggersInstalled && (
+            <SideNavMenuItem
               {...getMenuItemProps(urls.clusterInterceptors.all())}
             >
               ClusterInterceptors
