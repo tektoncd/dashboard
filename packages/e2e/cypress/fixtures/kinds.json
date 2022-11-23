@@ -11,5 +11,6 @@
     { "label": "TriggerBindings", "path": "/triggerbindings" },
     { "label": "ClusterTriggerBindings", "path": "/clustertriggerbindings" },
     { "label": "TriggerTemplates", "path": "/triggertemplates" },
+    { "label": "Interceptors", "path": "/interceptors" },
     { "label": "ClusterInterceptors", "path": "/clusterinterceptors" }
 ]

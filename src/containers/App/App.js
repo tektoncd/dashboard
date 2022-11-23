@@ -54,6 +54,7 @@ import {
   Extensions,
   HeaderBarContent,
   ImportResources,
+  Interceptors,
   NamespacedRoute,
   NotFound,
   PipelineResource,
@@ -467,6 +468,19 @@ export function App({ lang }) {
                       >
                         <NamespacedRoute>
                           <TriggerTemplates />
+                        </NamespacedRoute>
+                      </CompatRoute>
+                      <CompatRoute path={paths.interceptors.all()} exact>
+                        <NamespacedRoute>
+                          <Interceptors />
+                        </NamespacedRoute>
+                      </CompatRoute>
+                      <CompatRoute
+                        path={paths.interceptors.byNamespace()}
+                        exact
+                      >
+                        <NamespacedRoute>
+                          <Interceptors />
                         </NamespacedRoute>
                       </CompatRoute>
                       <CompatRoute path={paths.clusterInterceptors.all()} exact>

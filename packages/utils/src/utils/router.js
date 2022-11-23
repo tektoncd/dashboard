@@ -64,6 +64,17 @@ export const paths = {
   importResources() {
     return '/importresources';
   },
+  interceptors: {
+    all() {
+      return '/interceptors';
+    },
+    byName() {
+      return byNamespace({ path: '/interceptors/:interceptorName' });
+    },
+    byNamespace() {
+      return byNamespace({ path: '/interceptors' });
+    }
+  },
   kubernetesResources: {
     all() {
       return '/:group/:version/:type';

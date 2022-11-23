@@ -34,6 +34,7 @@ export * from './clusterTasks';
 export * from './clusterTriggerBindings';
 export * from './eventListeners';
 export * from './extensions';
+export * from './interceptors';
 export * from './pipelineResources';
 export * from './pipelineRuns';
 export * from './pipelines';
