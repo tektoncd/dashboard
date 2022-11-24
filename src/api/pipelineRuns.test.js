@@ -293,7 +293,12 @@ it('usePipelineRun', () => {
 
 it('rerunPipelineRun', () => {
   const originalPipelineRun = {
-    metadata: { name: 'fake_pipelineRun' },
+    metadata: {
+      labels: {
+        'tekton.dev/pipeline': 'foo'
+      },
+      name: 'fake_pipelineRun'
+    },
     spec: { status: 'fake_status' },
     status: 'fake_status'
   };

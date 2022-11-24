@@ -200,6 +200,7 @@
     "dashboard.pipelineRun.stepFailed": "ステップが失敗しました",
     "dashboard.pipelineRuns.error": "PipelineRunのロード中にエラーが発生しました",
     "dashboard.pipelines.errorLoading": "Pipelineのロード中にエラーが発生しました",
+    "dashboard.pipelines.v1Resources.label": "",
     "dashboard.pipelinesDropdown.empty.allNamespaces": "Pipelineが見つかりません",
     "dashboard.pipelinesDropdown.empty.selectedNamespace": "''{namespace}'' NamespaceにPipelineが見つかりません",
     "dashboard.pipelinesDropdown.label": "Pipelineを選択",

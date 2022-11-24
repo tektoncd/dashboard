@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -97,6 +97,18 @@ export function getQueryParams({
   return '';
 }
 
+export function isPipelinesV1ResourcesEnabled() {
+  return localStorage.getItem('tkn-pipelines-v1-resources') === 'true';
+}
+
+export function setPipelinesV1ResourcesEnabled(enabled) {
+  localStorage.setItem('tkn-pipelines-v1-resources', enabled);
+}
+
+export function getTektonPipelinesAPIVersion() {
+  return isPipelinesV1ResourcesEnabled() ? 'v1' : 'v1beta1';
+}
+
 export function getTektonAPI(
   type,
   {
@@ -104,7 +116,7 @@ export function getTektonAPI(
     isWebSocket,
     name = '',
     namespace,
-    version = 'v1beta1'
+    version = getTektonPipelinesAPIVersion()
   } = {},
   queryParams
 ) {
