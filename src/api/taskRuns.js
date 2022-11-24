@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -18,6 +18,7 @@ import { deleteRequest, get, patch, post } from './comms';
 import {
   getQueryParams,
   getTektonAPI,
+  getTektonPipelinesAPIVersion,
   useCollection,
   useResource
 } from './utils';
@@ -88,7 +89,7 @@ export function createTaskRun({
   timeout
 }) {
   const payload = {
-    apiVersion: 'tekton.dev/v1beta1',
+    apiVersion: `tekton.dev/${getTektonPipelinesAPIVersion()}`,
     kind: 'TaskRun',
     metadata: {
       name: taskRunName,
@@ -146,7 +147,8 @@ export function rerunTaskRun(taskRun) {
   const { annotations, labels, name, namespace } = taskRun.metadata;
 
   const payload = deepClone(taskRun);
-  payload.apiVersion = payload.apiVersion || 'tekton.dev/v1beta1';
+  payload.apiVersion =
+    payload.apiVersion || `tekton.dev/${getTektonPipelinesAPIVersion()}`;
   payload.kind = payload.kind || 'TaskRun';
   payload.metadata = {
     annotations,

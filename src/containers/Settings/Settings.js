@@ -1,5 +1,5 @@
 /*
-Copyright 2021-2022 The Tekton Authors
+Copyright 2021-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -24,7 +24,9 @@ import {
 import { getTheme, setTheme } from '../../utils';
 import {
   isLogTimestampsEnabled,
-  setLogTimestampsEnabled
+  isPipelinesV1ResourcesEnabled,
+  setLogTimestampsEnabled,
+  setPipelinesV1ResourcesEnabled
 } from '../../api/utils';
 
 export function Settings() {
@@ -93,6 +95,24 @@ export function Settings() {
             defaultMessage: 'On'
           })}
           onToggle={checked => setLogTimestampsEnabled(checked)}
+        />
+
+        <Toggle
+          defaultToggled={isPipelinesV1ResourcesEnabled()}
+          id="tkn--pipelines-v1-resources-toggle"
+          labelText={intl.formatMessage({
+            id: 'dashboard.pipelines.v1Resources.label',
+            defaultMessage: 'Use Tekton Pipelines API version v1'
+          })}
+          labelA={intl.formatMessage({
+            id: 'dashboard.toggle.off',
+            defaultMessage: 'Off'
+          })}
+          labelB={intl.formatMessage({
+            id: 'dashboard.toggle.on',
+            defaultMessage: 'On'
+          })}
+          onToggle={checked => setPipelinesV1ResourcesEnabled(checked)}
         />
       </div>
     </div>

@@ -200,6 +200,7 @@
     "dashboard.pipelineRun.stepFailed": "步骤失败",
     "dashboard.pipelineRuns.error": "加载 PipelineRun 时出错",
     "dashboard.pipelines.errorLoading": "加载 Pipelines 时出错",
+    "dashboard.pipelines.v1Resources.label": "",
     "dashboard.pipelinesDropdown.empty.allNamespaces": "未找到 Pipelines",
     "dashboard.pipelinesDropdown.empty.selectedNamespace": "在Namespace ''{namespace}'' 中未找到 Pipelines",
     "dashboard.pipelinesDropdown.label": "选择 Pipeline",

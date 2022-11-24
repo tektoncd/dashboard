@@ -1,5 +1,5 @@
 /*
-Copyright 2021 The Tekton Authors
+Copyright 2021-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent } from '@testing-library/react';
+import { fireEvent, within } from '@testing-library/react';
 
 import { render } from '../../utils/test';
 import * as Utils from '../../utils';
@@ -45,9 +45,25 @@ describe('Settings', () => {
 
     const { getByLabelText, getByText } = render(<Settings />);
 
-    expect(getByText(/show log timestamps/i)).toBeTruthy();
-    expect(getByText(/on/i)).toBeTruthy();
+    const logTimestampToggle = getByText(/show log timestamps/i);
+    expect(logTimestampToggle).toBeTruthy();
+    expect(within(logTimestampToggle).getByText('On')).toBeTruthy();
     fireEvent.click(getByLabelText(/show log timestamps/i));
     expect(APIUtils.setLogTimestampsEnabled).toHaveBeenCalledWith(false);
+  });
+
+  it('should render the v1 API settings correctly', () => {
+    jest
+      .spyOn(APIUtils, 'isPipelinesV1ResourcesEnabled')
+      .mockImplementation(() => true);
+    jest.spyOn(APIUtils, 'setPipelinesV1ResourcesEnabled');
+
+    const { getByLabelText, getByText } = render(<Settings />);
+
+    const apiVersionToggle = getByText(/api version v1/i);
+    expect(apiVersionToggle).toBeTruthy();
+    expect(within(apiVersionToggle).getByText('On')).toBeTruthy();
+    fireEvent.click(getByLabelText(/api version v1/i));
+    expect(APIUtils.setPipelinesV1ResourcesEnabled).toHaveBeenCalledWith(false);
   });
 });

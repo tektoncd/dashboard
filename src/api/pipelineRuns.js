@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -18,6 +18,7 @@ import { deleteRequest, get, patch, post } from './comms';
 import {
   getQueryParams,
   getTektonAPI,
+  getTektonPipelinesAPIVersion,
   useCollection,
   useResource
 } from './utils';
@@ -95,7 +96,7 @@ export function getPipelineRunPayload({
   timeoutsTasks
 }) {
   const payload = {
-    apiVersion: 'tekton.dev/v1beta1',
+    apiVersion: `tekton.dev/${getTektonPipelinesAPIVersion()}`,
     kind: 'PipelineRun',
     metadata: {
       name: pipelineRunName,
@@ -184,10 +185,11 @@ export function rerunPipelineRun(pipelineRun) {
   const { annotations, labels, name, namespace } = pipelineRun.metadata;
 
   const payload = deepClone(pipelineRun);
-  payload.apiVersion = payload.apiVersion || 'tekton.dev/v1beta1';
+  payload.apiVersion =
+    payload.apiVersion || `tekton.dev/${getTektonPipelinesAPIVersion()}`;
   payload.kind = payload.kind || 'PipelineRun';
   payload.metadata = {
-    annotations,
+    annotations: annotations || {},
     generateName: getGenerateNamePrefixForRerun(name),
     labels: {
       ...labels,
@@ -196,7 +198,28 @@ export function rerunPipelineRun(pipelineRun) {
     namespace
   };
 
-  delete payload.metadata.labels['tekton.dev/pipeline'];
+  Object.keys(payload.metadata.labels).forEach(label => {
+    if (label.startsWith('tekton.dev/')) {
+      delete payload.metadata.labels[label];
+    }
+  });
+
+  /*
+    This is used by Tekton Pipelines as part of the conversion between v1beta1
+    and v1 resources. Creating a run with this in place prevents it from actually
+    executing and instead adopts the status of the original TaskRuns.
+
+    Ideally we would just delete all `tekton.dev/*` annotations as we do with labels but
+    `tekton.dev/v1beta1Resources` is required for pipelines that use PipelineResources,
+    and there may be other similar annotations that are still required.
+
+    When v1beta1 has been fully removed from Tekton Pipelines we can revisit this
+    and remove all remaining `tekton.dev/*` annotations.
+  */
+  delete payload.metadata.annotations['tekton.dev/v1beta1TaskRuns'];
+  delete payload.metadata.annotations[
+    'kubectl.kubernetes.io/last-applied-configuration'
+  ];
 
   delete payload.status;
   delete payload.spec?.status;

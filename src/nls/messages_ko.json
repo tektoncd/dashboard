@@ -200,6 +200,7 @@
     "dashboard.pipelineRun.stepFailed": "단계 실패",
     "dashboard.pipelineRuns.error": "PipelineRun 로드 중 오류 발생",
     "dashboard.pipelines.errorLoading": "",
+    "dashboard.pipelines.v1Resources.label": "",
     "dashboard.pipelinesDropdown.empty.allNamespaces": "",
     "dashboard.pipelinesDropdown.empty.selectedNamespace": "",
     "dashboard.pipelinesDropdown.label": "",
