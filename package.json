@@ -80,7 +80,7 @@
     "eslint-plugin-jsx-a11y": "^6.6.1",
     "eslint-plugin-notice": "^0.9.10",
     "eslint-plugin-prettier": "^4.2.1",
-    "eslint-plugin-react": "^7.31.10",
+    "eslint-plugin-react": "^7.31.11",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-webpack-plugin": "^3.2.0",
     "file-loader": "^6.0.0",
