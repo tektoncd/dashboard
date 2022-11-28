@@ -26,22 +26,21 @@ describe('Create Pipeline Run', () => {
     const uniqueNumber = Date.now();
 
     const pipelineName = `simple-pipeline-${uniqueNumber}`;
-    const pipeline = `
-      apiVersion: tekton.dev/v1beta1
-      kind: Pipeline
-      metadata:
-        name: ${pipelineName}
-        namespace: ${namespace}
-      spec:
-        tasks:
-          - name: hello
-            taskSpec:
-              steps:
-                - name: echo
-                  image: busybox
-                  script: |
-                    #!/bin/ash
-                    echo "Hello World!"
+    const pipeline = `apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: ${pipelineName}
+  namespace: ${namespace}
+spec:
+  tasks:
+    - name: hello
+      taskSpec:
+        steps:
+          - name: echo
+            image: busybox
+            script: |
+              #!/bin/ash
+              echo "Hello World!"
     `;
     cy.exec(`echo "${pipeline}" | kubectl apply -f -`);
     cy.visit(
@@ -69,23 +68,22 @@ describe('Create Pipeline Run', () => {
     const uniqueNumber = Date.now();
 
     const pipelineRunName = `yaml-mode-${uniqueNumber}`;
-    const pipelineRun = `
-      apiVersion: tekton.dev/v1beta1
-      kind: PipelineRun
-      metadata:
-        name: ${pipelineRunName}
-        namespace: ${namespace}
-      spec:
-        pipelineSpec:
-          tasks:
-            - name: hello
-              taskSpec:
-                steps:
-                  - name: echo
-                    image: busybox
-                    script: |
-                      #!/bin/ash
-                      echo "Hello World!"
+    const pipelineRun = `apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: ${pipelineRunName}
+  namespace: ${namespace}
+spec:
+  pipelineSpec:
+    tasks:
+      - name: hello
+        taskSpec:
+          steps:
+            - name: echo
+              image: busybox
+              script: |
+                #!/bin/ash
+                echo "Hello World!"
     `;
     cy.visit(`/#/pipelineruns/create`);
 
@@ -107,23 +105,22 @@ describe('Create Pipeline Run', () => {
     const uniqueNumber = Date.now();
 
     const pipelineRunName = `yaml-mode-${uniqueNumber}`;
-    const pipelineRun = `
-      apiVersion: tekton.dev/v1beta1
-      kind: PipelineRun
-      metadata:
-        name: ${pipelineRunName}
-        namespace: ${namespace}
-      spec:
-        pipelineSpec:
-          tasks:
-            - name: hello
-              taskSpec:
-                steps:
-                  - name: echo
-                    image: busybox
-                    script: |
-                      #!/bin/ash
-                      echo "Hello World!"
+    const pipelineRun = `apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: ${pipelineRunName}
+  namespace: ${namespace}
+spec:
+  pipelineSpec:
+    tasks:
+      - name: hello
+        taskSpec:
+          steps:
+            - name: echo
+              image: busybox
+              script: |
+                #!/bin/ash
+                echo "Hello World!"
     `;
     cy.visit(`/#/pipelineruns/create?mode=yaml`);
 
