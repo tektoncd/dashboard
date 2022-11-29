@@ -8,6 +8,7 @@ updates:
     labels:
     - "area/dependency"
     - "dependencies"
+    - "kind/misc"
     - "ok-to-test"
     - "docker"
   - package-ecosystem: "gomod"
@@ -18,6 +19,7 @@ updates:
     labels:
     - "area/dependency"
     - "dependencies"
+    - "kind/misc"
     - "ok-to-test"
     - "go"
   - package-ecosystem: "npm"
@@ -28,5 +30,6 @@ updates:
     labels:
     - "area/dependency"
     - "dependencies"
+    - "kind/misc"
     - "ok-to-test"
     - "javascript"
