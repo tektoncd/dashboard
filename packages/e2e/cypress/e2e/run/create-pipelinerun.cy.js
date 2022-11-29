@@ -11,6 +11,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+function preserveIndentation(input) {
+  return input
+    .split('\n')
+    .map(line => `{home}${line}`) // {home} is interpreted by Cypress and returns the cursor to the start of the line
+    .join('\n');
+}
+
 const namespace = 'e2e';
 describe('Create Pipeline Run', () => {
   before(() => {
@@ -90,7 +97,7 @@ spec:
     cy.contains('button', 'YAML Mode').click();
     cy.url().should('include', 'mode=yaml');
 
-    cy.get('.cm-content').type(pipelineRun);
+    cy.get('.cm-content').type(preserveIndentation(pipelineRun));
 
     cy.contains('button', 'Create').click();
 
@@ -124,7 +131,7 @@ spec:
     `;
     cy.visit(`/#/pipelineruns/create?mode=yaml`);
 
-    cy.get('.cm-content').type(pipelineRun);
+    cy.get('.cm-content').type(preserveIndentation(pipelineRun));
 
     cy.contains('button', 'Create').click();
 
