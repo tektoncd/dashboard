@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2022 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -23,7 +23,7 @@ import {
 function getClusterTriggerBindingsAPI({ filters, isWebSocket, name }) {
   return getTektonAPI(
     'clustertriggerbindings',
-    { group: triggersAPIGroup, isWebSocket, version: 'v1alpha1' },
+    { group: triggersAPIGroup, isWebSocket, version: 'v1beta1' },
     getQueryParams({ filters, name })
   );
 }
@@ -37,7 +37,7 @@ export function getClusterTriggerBinding({ name }) {
   const uri = getTektonAPI('clustertriggerbindings', {
     group: triggersAPIGroup,
     name,
-    version: 'v1alpha1'
+    version: 'v1beta1'
   });
   return get(uri);
 }
