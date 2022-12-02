@@ -63,10 +63,11 @@ const initialState = {
   resourceSpecs: [],
   serviceAccount: '',
   submitError: '',
-  timeout: '60',
+  timeoutsFinally: '',
+  timeoutsPipeline: '',
+  timeoutsTasks: '',
   validationError: false,
-  validPipelineRunName: true,
-  validTimeout: true
+  validPipelineRunName: true
 };
 
 const initialParamsState = paramSpecs => {
@@ -130,10 +131,11 @@ function CreatePipelineRun() {
       resources,
       serviceAccount,
       submitError,
-      timeout,
+      timeoutsFinally,
+      timeoutsPipeline,
+      timeoutsTasks,
       validationError,
-      validPipelineRunName,
-      validTimeout
+      validPipelineRunName
     },
     setState
   ] = useState({
@@ -206,15 +208,6 @@ function CreatePipelineRun() {
       validPipelineRunName: pipelineRunNameTest
     }));
 
-    // Timeout is a number and less than 1 year in minutes
-    const timeoutTest =
-      !Number.isNaN(timeout) && timeout < 525600 && timeout.trim() !== '';
-    if (!timeoutTest) {
-      setState(state => ({ ...state, validTimeout: false }));
-    } else {
-      setState(state => ({ ...state, validTimeout: true }));
-    }
-
     // Labels
     let validLabels = true;
     labels.forEach(label => {
@@ -254,7 +247,6 @@ function CreatePipelineRun() {
       validPipelineRef &&
       validResources &&
       validParams &&
-      timeoutTest &&
       validLabels &&
       validNodeSelector &&
       pipelineRunNameTest
@@ -426,7 +418,6 @@ function CreatePipelineRun() {
 
     setState(state => ({ ...state, creating: true }));
 
-    const timeoutInMins = `${timeout}m`;
     createPipelineRun({
       namespace,
       pipelineName: pipelineRef,
@@ -435,7 +426,9 @@ function CreatePipelineRun() {
       params,
       pipelinePendingStatus,
       serviceAccount,
-      timeout: timeoutInMins,
+      timeoutsFinally,
+      timeoutsPipeline,
+      timeoutsTasks,
       labels: labels.reduce((acc, { key, value }) => {
         acc[key] = value;
         return acc;
@@ -690,10 +683,7 @@ function CreatePipelineRun() {
         >
           <ServiceAccountsDropdown
             id="create-pipelinerun--sa-dropdown"
-            titleText={intl.formatMessage({
-              id: 'dashboard.serviceAccountLabel.optional',
-              defaultMessage: 'ServiceAccount (optional)'
-            })}
+            titleText="ServiceAccount"
             helperText={intl.formatMessage({
               id: 'dashboard.createPipelineRun.serviceAccountHelperText',
               defaultMessage:
@@ -708,27 +698,6 @@ function CreatePipelineRun() {
               const { text } = selectedItem || {};
               setState(state => ({ ...state, serviceAccount: text }));
             }}
-          />
-          <TextInput
-            id="create-pipelinerun--timeout"
-            labelText={intl.formatMessage({
-              id: 'dashboard.createRun.timeoutLabel',
-              defaultMessage: 'Timeout'
-            })}
-            helperText={intl.formatMessage({
-              id: 'dashboard.createPipelineRun.timeoutHelperText',
-              defaultMessage: 'PipelineRun timeout in minutes'
-            })}
-            invalid={validationError && !validTimeout}
-            invalidText={intl.formatMessage({
-              id: 'dashboard.createRun.invalidTimeout',
-              defaultMessage: 'Timeout must be a valid number less than 525600'
-            })}
-            placeholder="60"
-            value={timeout}
-            onChange={({ target: { value } }) =>
-              setState(state => ({ ...state, timeout: value }))
-            }
           />
           <TextInput
             id="create-pipelinerun--pipelinerunname"
@@ -747,6 +716,37 @@ function CreatePipelineRun() {
               setState(state => ({ ...state, pipelineRunName: value.trim() }))
             }
           />
+          <FormGroup
+            legendText={intl.formatMessage({
+              id: 'dashboard.createRun.optional.timeouts',
+              defaultMessage: 'Timeouts'
+            })}
+          >
+            <TextInput
+              id="create-pipelinerun--timeouts--pipeline"
+              labelText="Pipeline"
+              value={timeoutsPipeline}
+              onChange={({ target: { value } }) =>
+                setState(state => ({ ...state, timeoutsPipeline: value }))
+              }
+            />
+            <TextInput
+              id="create-pipelinerun--timeouts--tasks"
+              labelText="Tasks"
+              value={timeoutsTasks}
+              onChange={({ target: { value } }) =>
+                setState(state => ({ ...state, timeoutsTasks: value }))
+              }
+            />
+            <TextInput
+              id="create-pipelinerun--timeouts--finally"
+              labelText="Finally"
+              value={timeoutsFinally}
+              onChange={({ target: { value } }) =>
+                setState(state => ({ ...state, timeoutsFinally: value }))
+              }
+            />
+          </FormGroup>
           <Toggle
             defaultToggled={false}
             id="pending-pipeline-toggle"

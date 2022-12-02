@@ -88,7 +88,9 @@ export function createPipelineRun({
   pipelineRunName = `${pipelineName}-run-${Date.now()}`,
   resources,
   serviceAccount,
-  timeout
+  timeoutsFinally,
+  timeoutsPipeline,
+  timeoutsTasks
 }) {
   // Create PipelineRun payload
   // expect params and resources to be objects with keys 'name' and values 'value'
@@ -120,8 +122,12 @@ export function createPipelineRun({
   if (serviceAccount) {
     payload.spec.serviceAccountName = serviceAccount;
   }
-  if (timeout) {
-    payload.spec.timeout = timeout;
+  if (timeoutsFinally || timeoutsPipeline || timeoutsTasks) {
+    payload.spec.timeouts = {
+      ...(timeoutsFinally && { finally: timeoutsFinally }),
+      ...(timeoutsPipeline && { pipeline: timeoutsPipeline }),
+      ...(timeoutsTasks && { tasks: timeoutsTasks })
+    };
   }
   const uri = getTektonAPI('pipelineruns', { namespace });
   return post(uri, payload).then(({ body }) => body);

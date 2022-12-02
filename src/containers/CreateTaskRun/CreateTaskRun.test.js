@@ -166,7 +166,6 @@ describe('CreateTaskRun', () => {
     expect(
       document.querySelector('[label="Select ServiceAccount"]').disabled
     ).toBe(true);
-    expect(queryByPlaceholderText(/60/i)).toBeTruthy();
     expect(queryByText(/cancel/i)).toBeTruthy();
     expect(submitButton(queryAllByText)).toBeTruthy();
 
