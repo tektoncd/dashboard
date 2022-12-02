@@ -62,10 +62,9 @@ const initialState = {
   submitError: '',
   taskRef: '',
   taskRunName: '',
-  timeout: '60',
+  timeout: '',
   validationError: false,
-  validTaskRunName: true,
-  validTimeout: true
+  validTaskRunName: true
 };
 
 const initialParamsState = paramSpecs => {
@@ -144,8 +143,7 @@ function CreateTaskRun() {
       taskRunName,
       timeout,
       validationError,
-      validTaskRunName,
-      validTimeout
+      validTaskRunName
     },
     setState
   ] = useState({
@@ -208,14 +206,6 @@ function CreateTaskRun() {
       (resourceNameRegex.test(taskRunName) && taskRunName.length < 64);
     setState(state => ({ ...state, validTaskRunName: taskRunNameTest }));
 
-    // Timeout is a number and less than 1 year in minutes
-    const isValidTimeout =
-      !Number.isNaN(timeout) && timeout < 525600 && timeout.trim() !== '';
-    setState(state => ({
-      ...state,
-      validTimeout: isValidTimeout
-    }));
-
     // Labels
     let validLabels = true;
     labels.forEach(label => {
@@ -256,7 +246,6 @@ function CreateTaskRun() {
       validInputResources &&
       validOutputResources &&
       validParams &&
-      isValidTimeout &&
       validLabels &&
       validNodeSelector &&
       taskRunNameTest
@@ -432,7 +421,6 @@ function CreateTaskRun() {
 
     setState(state => ({ ...state, creating: true }));
 
-    const timeoutInMins = `${timeout}m`;
     createTaskRun({
       kind,
       labels: labels.reduce((acc, { key, value }) => {
@@ -451,7 +439,7 @@ function CreateTaskRun() {
       serviceAccount,
       taskName: taskRef,
       taskRunName: taskRunName || undefined,
-      timeout: timeoutInMins
+      timeout
     })
       .then(() => {
         navigate(urls.taskRuns.byNamespace({ namespace }));
@@ -740,10 +728,7 @@ function CreateTaskRun() {
         >
           <ServiceAccountsDropdown
             id="create-taskrun--sa-dropdown"
-            titleText={intl.formatMessage({
-              id: 'dashboard.serviceAccountLabel.optional',
-              defaultMessage: 'ServiceAccount (optional)'
-            })}
+            titleText="ServiceAccount"
             helperText={intl.formatMessage({
               id: 'dashboard.createTaskRun.serviceAccountHelperText',
               defaultMessage:
@@ -765,16 +750,6 @@ function CreateTaskRun() {
               id: 'dashboard.createRun.timeoutLabel',
               defaultMessage: 'Timeout'
             })}
-            helperText={intl.formatMessage({
-              id: 'dashboard.createTaskRun.timeoutHelperText',
-              defaultMessage: 'TaskRun timeout in minutes'
-            })}
-            invalid={validationError && !validTimeout}
-            invalidText={intl.formatMessage({
-              id: 'dashboard.createRun.invalidTimeout',
-              defaultMessage: 'Timeout must be a valid number less than 525600'
-            })}
-            placeholder="60"
             value={timeout}
             onChange={({ target: { value } }) =>
               setState(state => ({ ...state, timeout: value }))

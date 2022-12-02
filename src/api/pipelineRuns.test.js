@@ -64,7 +64,7 @@ it('createPipelineRun', () => {
     resources,
     params,
     serviceAccount,
-    timeout
+    timeoutsPipeline: timeout
   };
   const data = {
     apiVersion: 'tekton.dev/v1beta1',
@@ -85,7 +85,9 @@ it('createPipelineRun', () => {
         value: params[name]
       })),
       serviceAccountName: serviceAccount,
-      timeout
+      timeouts: {
+        pipeline: timeout
+      }
     }
   };
   server.use(
@@ -115,7 +117,7 @@ it('createPipelineRun with nodeSelector', () => {
     resources,
     params,
     serviceAccount,
-    timeout,
+    timeoutsPipeline: timeout,
     nodeSelector: {
       disk: 'ssd'
     }
@@ -144,7 +146,9 @@ it('createPipelineRun with nodeSelector', () => {
         }
       },
       serviceAccountName: serviceAccount,
-      timeout
+      timeouts: {
+        pipeline: timeout
+      }
     }
   };
   server.use(

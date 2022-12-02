@@ -367,10 +367,7 @@ export function ImportResources() {
               onChange={handleServiceAccount}
               titleText={
                 <>
-                  {intl.formatMessage({
-                    id: 'dashboard.serviceAccountLabel.optional',
-                    defaultMessage: 'ServiceAccount (optional)'
-                  })}
+                  ServiceAccount
                   <HelpIcon
                     title={intl.formatMessage({
                       id: 'dashboard.importResources.serviceAccount.helperText',
