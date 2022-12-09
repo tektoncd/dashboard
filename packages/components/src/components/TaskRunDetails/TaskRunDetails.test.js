@@ -215,6 +215,31 @@ describe('TaskRunDetails', () => {
     expect(queryByText('Events')).toBeFalsy();
   });
 
+  it('renders pod waiting state', () => {
+    const waitingMessage = 'waiting for pod';
+    const taskRun = {
+      metadata: { name: 'task-run-name' },
+      spec: {},
+      status: {}
+    };
+    const { queryByText } = render(
+      <TaskRunDetails
+        pod={{
+          resource: waitingMessage
+        }}
+        task={{
+          metadata: 'task',
+          spec: {}
+        }}
+        taskRun={taskRun}
+        view="pod"
+      />
+    );
+    expect(queryByText('Pod')).toBeTruthy();
+    expect(queryByText('Resource')).toBeFalsy();
+    expect(queryByText(waitingMessage)).toBeTruthy();
+  });
+
   it('renders both input and output resources', () => {
     const inputResourceName = 'input-resource';
     const outputResourceName = 'output-resource';
