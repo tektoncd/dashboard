@@ -98,7 +98,8 @@ const TaskRunDetails = ({ onViewChange, pod, task, taskRun, view, showIO }) => {
   const [podContent, setPodContent] = useState();
   const hasEvents = pod?.events?.length > 0;
 
-  const podResource = { ...pod?.resource };
+  const podResource =
+    typeof pod?.resource === 'string' ? pod.resource : { ...pod?.resource };
   if (podResource?.metadata?.managedFields) {
     delete podResource.metadata.managedFields;
   }
