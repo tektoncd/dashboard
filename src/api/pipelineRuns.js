@@ -78,46 +78,61 @@ export function createPipelineRunRaw({ namespace, payload }) {
   return post(uri, payload).then(({ body }) => body);
 }
 
-export function createPipelineRun({
+export function getPipelineRunPayload({
+  params: inputParams,
+  resources: inputResources,
   labels,
   namespace,
   nodeSelector,
-  params,
   pipelineName,
   pipelinePendingStatus,
-  pipelineRunName = `${pipelineName}-run-${Date.now()}`,
-  resources,
+  pipelineRunName = `${
+    pipelineName ? `${pipelineName}-run` : 'run'
+  }-${Date.now()}`,
   serviceAccount,
   timeoutsFinally,
   timeoutsPipeline,
   timeoutsTasks
 }) {
-  // Create PipelineRun payload
-  // expect params and resources to be objects with keys 'name' and values 'value'
   const payload = {
     apiVersion: 'tekton.dev/v1beta1',
     kind: 'PipelineRun',
     metadata: {
       name: pipelineRunName,
-      labels
+      namespace
     },
     spec: {
       pipelineRef: {
         name: pipelineName
       },
-      resources: Object.keys(resources).map(name => ({
-        name,
-        resourceRef: { name: resources[name] }
-      })),
-      params: Object.keys(params).map(name => ({
-        name,
-        value: params[name]
-      })),
       status: pipelinePendingStatus
     }
   };
+
+  if (labels) {
+    payload.metadata.labels = labels;
+  }
+
+  const params = Object.keys(inputParams).map(name => ({
+    name,
+    value: inputParams[name]
+  }));
+  if (params.length) {
+    payload.spec.params = params;
+  }
+
+  const resources = Object.keys(inputResources).map(name => ({
+    name,
+    resourceRef: { name: inputResources[name] }
+  }));
+  if (resources.length) {
+    payload.spec.resources = resources;
+  }
+
   if (nodeSelector) {
-    payload.spec.podTemplate = { nodeSelector };
+    payload.spec.podTemplate = {
+      nodeSelector
+    };
   }
   if (serviceAccount) {
     payload.spec.serviceAccountName = serviceAccount;
@@ -129,6 +144,38 @@ export function createPipelineRun({
       ...(timeoutsTasks && { tasks: timeoutsTasks })
     };
   }
+
+  return payload;
+}
+
+export function createPipelineRun({
+  labels,
+  namespace,
+  nodeSelector,
+  params,
+  pipelineName,
+  pipelinePendingStatus,
+  pipelineRunName,
+  resources,
+  serviceAccount,
+  timeoutsFinally,
+  timeoutsPipeline,
+  timeoutsTasks
+}) {
+  const payload = getPipelineRunPayload({
+    labels,
+    namespace,
+    nodeSelector,
+    params,
+    pipelineName,
+    pipelinePendingStatus,
+    pipelineRunName,
+    resources,
+    serviceAccount,
+    timeoutsFinally,
+    timeoutsPipeline,
+    timeoutsTasks
+  });
   const uri = getTektonAPI('pipelineruns', { namespace });
   return post(uri, payload).then(({ body }) => body);
 }

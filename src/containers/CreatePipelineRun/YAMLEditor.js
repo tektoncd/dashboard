@@ -26,25 +26,18 @@ import { yaml as codeMirrorYAML } from '@codemirror/legacy-modes/mode/yaml';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { createPipelineRunRaw, useSelectedNamespace } from '../../api';
 
-const initialState = {
-  creating: false,
-  pipelineError: false,
-  submitError: '',
-  validationErrorMessage: '',
-  code: ''
-};
-
-export function CreateYAMLEditor() {
+export function CreateYAMLEditor({ code: initialCode = '' }) {
   const intl = useIntl();
   const navigate = useNavigate();
   const { selectedNamespace } = useSelectedNamespace();
 
-  const [
-    { creating, pipelineError, submitError, validationErrorMessage, code },
-    setState
-  ] = useState({
-    ...initialState
-  });
+  const [{ code, isCreating, submitError, validationErrorMessage }, setState] =
+    useState({
+      code: initialCode,
+      isCreating: false,
+      submitError: '',
+      validationErrorMessage: ''
+    });
 
   function validateNamespace(obj) {
     if (!obj?.metadata?.namespace) {
@@ -104,7 +97,7 @@ export function CreateYAMLEditor() {
       return;
     }
 
-    setState(state => ({ ...state, creating: true }));
+    setState(state => ({ ...state, isCreating: true }));
     const namespace = pipelineRun?.metadata?.namespace;
 
     createPipelineRunRaw({
@@ -123,7 +116,7 @@ export function CreateYAMLEditor() {
           }
           setState(state => ({
             ...state,
-            creating: false,
+            isCreating: false,
             submitError: errorMessage
           }));
         });
@@ -160,16 +153,6 @@ export function CreateYAMLEditor() {
         </h1>
       </div>
       <Form>
-        {pipelineError && (
-          <InlineNotification
-            kind="error"
-            title={intl.formatMessage({
-              id: 'dashboard.createPipelineRun.errorLoading',
-              defaultMessage: 'Error retrieving Pipeline information'
-            })}
-            lowContrast
-          />
-        )}
         {validationErrorMessage && (
           <InlineNotification
             kind="error"
@@ -208,7 +191,7 @@ export function CreateYAMLEditor() {
             defaultMessage: 'Create'
           })}
           onClick={handleSubmit}
-          disabled={creating}
+          disabled={isCreating}
         >
           {intl.formatMessage({
             id: 'dashboard.actions.createButton',
@@ -222,7 +205,7 @@ export function CreateYAMLEditor() {
           })}
           kind="secondary"
           onClick={handleClose}
-          disabled={creating}
+          disabled={isCreating}
         >
           {intl.formatMessage({
             id: 'dashboard.modal.cancelButton',

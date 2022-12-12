@@ -97,6 +97,7 @@ spec:
     cy.contains('button', 'YAML Mode').click();
     cy.url().should('include', 'mode=yaml');
 
+    cy.get('.cm-content').clear();
     cy.get('.cm-content').type(preserveIndentation(pipelineRun));
 
     cy.contains('button', 'Create').click();
@@ -131,6 +132,7 @@ spec:
     `;
     cy.visit(`/#/pipelineruns/create?mode=yaml`);
 
+    cy.get('.cm-content').clear();
     cy.get('.cm-content').type(preserveIndentation(pipelineRun));
 
     cy.contains('button', 'Create').click();
