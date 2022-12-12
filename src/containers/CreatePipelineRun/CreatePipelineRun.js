@@ -15,6 +15,7 @@ limitations under the License.
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import keyBy from 'lodash.keyby';
+import yaml from 'js-yaml';
 import {
   Button,
   Form,
@@ -40,6 +41,7 @@ import {
 } from '..';
 import {
   createPipelineRun,
+  getPipelineRunPayload,
   usePipeline,
   useSelectedNamespace
 } from '../../api';
@@ -460,7 +462,30 @@ function CreatePipelineRun() {
   }
 
   if (isYAMLMode()) {
-    return <CreateYAMLEditor />;
+    const pipelineRun = getPipelineRunPayload({
+      labels: labels.reduce((acc, { key, value }) => {
+        acc[key] = value;
+        return acc;
+      }, {}),
+      namespace,
+      nodeSelector: nodeSelector.length
+        ? nodeSelector.reduce((acc, { key, value }) => {
+            acc[key] = value;
+            return acc;
+          }, {})
+        : null,
+      pipelineName: pipelineRef,
+      pipelineRunName: pipelineRunName || undefined,
+      params,
+      pipelinePendingStatus,
+      resources,
+      serviceAccount,
+      timeoutsFinally,
+      timeoutsPipeline,
+      timeoutsTasks
+    });
+
+    return <CreateYAMLEditor code={yaml.dump(pipelineRun)} />;
   }
 
   return (

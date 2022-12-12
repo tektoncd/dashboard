@@ -36,6 +36,7 @@
     "carbon-icons": "^7.0.7",
     "core-js": "^3.26.1",
     "git-url-parse": "^13.1.0",
+    "js-yaml": "^4.1.0",
     "lodash.clonedeep": "^4.5.0",
     "lodash.keyby": "^4.6.0",
     "prop-types": "^15.7.2",
