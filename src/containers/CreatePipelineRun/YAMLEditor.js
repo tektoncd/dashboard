@@ -16,17 +16,22 @@ import {
   Button,
   Form,
   FormGroup,
-  InlineNotification
+  InlineNotification,
+  Loading
 } from 'carbon-components-react';
 import yaml from 'js-yaml';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { StreamLanguage } from '@codemirror/language';
 import { yaml as codeMirrorYAML } from '@codemirror/legacy-modes/mode/yaml';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { createPipelineRunRaw, useSelectedNamespace } from '../../api';
 
-export function CreateYAMLEditor({ code: initialCode = '' }) {
+export function CreateYAMLEditor({
+  code: initialCode,
+  loading = false,
+  loadingMessage = ''
+}) {
   const intl = useIntl();
   const navigate = useNavigate();
   const { selectedNamespace } = useSelectedNamespace();
@@ -38,6 +43,15 @@ export function CreateYAMLEditor({ code: initialCode = '' }) {
       submitError: '',
       validationErrorMessage: ''
     });
+
+  useEffect(() => {
+    if (!loading) {
+      setState(state => ({
+        ...state,
+        code: initialCode
+      }));
+    }
+  }, [loading]);
 
   function validateNamespace(obj) {
     if (!obj?.metadata?.namespace) {
@@ -176,14 +190,25 @@ export function CreateYAMLEditor({ code: initialCode = '' }) {
             lowContrast
           />
         )}
-        <FormGroup legendText="">
-          <CodeMirror
-            value={code}
-            height="800px"
-            theme="dark"
-            extensions={[StreamLanguage.define(codeMirrorYAML)]}
-            onChange={onChange}
-          />
+        <FormGroup legendText="" className="tkn--codemirror--form">
+          <>
+            {loading && (
+              <div className="tkn--data-loading-overlay">
+                <Loading description={loadingMessage} withOverlay={false} />
+                <span className="tkn--data-loading-text">{loadingMessage}</span>
+              </div>
+            )}
+            {!loading && (
+              <CodeMirror
+                value={code}
+                height="800px"
+                theme="dark"
+                extensions={[StreamLanguage.define(codeMirrorYAML)]}
+                onChange={onChange}
+                editable={!loading}
+              />
+            )}
+          </>
         </FormGroup>
         <Button
           iconDescription={intl.formatMessage({
@@ -191,7 +216,7 @@ export function CreateYAMLEditor({ code: initialCode = '' }) {
             defaultMessage: 'Create'
           })}
           onClick={handleSubmit}
-          disabled={isCreating}
+          disabled={isCreating || loading}
         >
           {intl.formatMessage({
             id: 'dashboard.actions.createButton',

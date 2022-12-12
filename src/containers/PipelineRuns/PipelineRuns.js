@@ -172,6 +172,14 @@ export function PipelineRuns() {
     });
   }
 
+  function editAndRun(pipelineRun) {
+    navigate(
+      `${urls.pipelineRuns.create()}?mode=yaml&pipelineRunName=${
+        pipelineRun.metadata.name
+      }&namespace=${pipelineRun.metadata.namespace}`
+    );
+  }
+
   async function handleDelete() {
     const deletions = toBeDeleted.map(resource => deleteRun(resource));
     closeDeleteModal();
@@ -205,6 +213,13 @@ export function PipelineRuns() {
           const { reason, status } = getStatus(resource);
           return isPending(reason, status);
         }
+      },
+      {
+        actionText: intl.formatMessage({
+          id: 'dashboard.editAndRun.actionText',
+          defaultMessage: 'Edit and run'
+        }),
+        action: editAndRun
       },
       {
         actionText: intl.formatMessage({

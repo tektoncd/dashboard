@@ -170,22 +170,32 @@ export function createPipelineRun({
   return post(uri, payload).then(({ body }) => body);
 }
 
-export function rerunPipelineRun(pipelineRun) {
-  const { annotations, labels, name, namespace } = pipelineRun.metadata;
+export function generateNewPipelineRunPayload({ pipelineRun, rerun }) {
+  const { annotations, labels, name, namespace, generateName } =
+    pipelineRun.metadata;
 
   const payload = deepClone(pipelineRun);
   payload.apiVersion =
     payload.apiVersion || `tekton.dev/${getTektonPipelinesAPIVersion()}`;
   payload.kind = payload.kind || 'PipelineRun';
+
+  function getGenerateName() {
+    if (rerun) {
+      return getGenerateNamePrefixForRerun(name);
+    }
+
+    return generateName || `${name}-`;
+  }
+
   payload.metadata = {
     annotations: annotations || {},
-    generateName: getGenerateNamePrefixForRerun(name),
-    labels: {
-      ...labels,
-      'dashboard.tekton.dev/rerunOf': name
-    },
+    generateName: getGenerateName(),
+    labels: labels || {},
     namespace
   };
+  if (rerun) {
+    payload.metadata.labels['dashboard.tekton.dev/rerunOf'] = name;
+  }
 
   Object.keys(payload.metadata.labels).forEach(label => {
     if (label.startsWith('tekton.dev/')) {
@@ -194,24 +204,36 @@ export function rerunPipelineRun(pipelineRun) {
   });
 
   /*
-    This is used by Tekton Pipelines as part of the conversion between v1beta1
-    and v1 resources. Creating a run with this in place prevents it from actually
-    executing and instead adopts the status of the original TaskRuns.
+  This is used by Tekton Pipelines as part of the conversion between v1beta1
+  and v1 resources. Creating a run with this in place prevents it from actually
+  executing and instead adopts the status of the original TaskRuns.
 
-    Ideally we would just delete all `tekton.dev/*` annotations as we do with labels but
-    `tekton.dev/v1beta1Resources` is required for pipelines that use PipelineResources,
-    and there may be other similar annotations that are still required.
+  Ideally we would just delete all `tekton.dev/*` annotations as we do with labels but
+  `tekton.dev/v1beta1Resources` is required for pipelines that use PipelineResources,
+  and there may be other similar annotations that are still required.
 
-    When v1beta1 has been fully removed from Tekton Pipelines we can revisit this
-    and remove all remaining `tekton.dev/*` annotations.
+  When v1beta1 has been fully removed from Tekton Pipelines we can revisit this
+  and remove all remaining `tekton.dev/*` annotations.
   */
   delete payload.metadata.annotations['tekton.dev/v1beta1TaskRuns'];
   delete payload.metadata.annotations[
     'kubectl.kubernetes.io/last-applied-configuration'
   ];
+  Object.keys(payload.metadata).forEach(
+    i => payload.metadata[i] === undefined && delete payload.metadata[i]
+  );
 
   delete payload.status;
+
   delete payload.spec?.status;
+  return { namespace, payload };
+}
+
+export function rerunPipelineRun(pipelineRun) {
+  const { namespace, payload } = generateNewPipelineRunPayload({
+    pipelineRun,
+    rerun: true
+  });
 
   const uri = getTektonAPI('pipelineruns', { namespace });
   return post(uri, payload).then(({ body }) => body);
