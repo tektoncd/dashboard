@@ -20,7 +20,6 @@ module.exports = defineConfig({
   e2e: {
     baseUrl: 'http://localhost:8000',
     experimentalRunAllSpecs: true,
-    // experimentalSessionAndOrigin: true, // default is false
     experimentalStudio: true,
     setupNodeEvents(on, _config) {
       on('after:spec', (spec, results) => {
