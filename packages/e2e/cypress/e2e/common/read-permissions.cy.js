@@ -13,7 +13,7 @@ limitations under the License.
 
 import kinds from '../../fixtures/kinds.json';
 
-describe('Read permissions', () => {
+describe('Read permissions', { testIsolation: false }, () => {
   before(() => {
     cy.visit('/');
     cy.hash().should('equal', '#/about');
