@@ -19,6 +19,7 @@ import { CreateYAMLEditor } from './YAMLEditor';
 import * as PipelineRunsAPI from '../../api/pipelineRuns';
 
 const submitButton = allByText => allByText('Create')[0];
+const cancelButton = allByText => allByText('Cancel')[0];
 const pipelineRun = `
       apiVersion: tekton.dev/v1beta1
       kind: PipelineRun
@@ -210,5 +211,14 @@ describe('YAMLEditor', () => {
     await waitFor(() => {
       expect(getByText(/Error creating PipelineRun/)).toBeTruthy();
     });
+  });
+
+  it('when loading then loading message should be displayed, create disabled, cancel enabled', () => {
+    const { getAllByText, queryAllByText } = renderWithRouter(
+      <CreateYAMLEditor loading loadingMessage="wait. test is in progress" />
+    );
+    expect(getAllByText(/wait. test is in progress/)).toBeTruthy();
+    expect(submitButton(queryAllByText).disabled).toBe(true);
+    expect(cancelButton(queryAllByText).disabled).toBe(false);
   });
 });

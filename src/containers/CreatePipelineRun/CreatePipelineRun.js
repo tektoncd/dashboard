@@ -40,8 +40,10 @@ import {
 } from '..';
 import {
   createPipelineRun,
+  generateNewPipelineRunPayload,
   getPipelineRunPayload,
   usePipeline,
+  usePipelineRun,
   useSelectedNamespace
 } from '../../api';
 import { isValidLabel } from '../../utils';
@@ -56,7 +58,7 @@ const initialState = {
   nodeSelector: [],
   params: {},
   paramSpecs: [],
-  pendingPipelineStatus: '',
+  pipelinePendingStatus: '',
   pipelineError: false,
   pipelineRef: '',
   pipelineRunName: '',
@@ -89,6 +91,11 @@ function CreatePipelineRun() {
   function getPipelineName() {
     const urlSearchParams = new URLSearchParams(location.search);
     return urlSearchParams.get('pipelineName') || '';
+  }
+
+  function getPipelineRunName() {
+    const urlSearchParams = new URLSearchParams(location.search);
+    return urlSearchParams.get('pipelineRunName') || '';
   }
 
   function getNamespace() {
@@ -426,6 +433,36 @@ function CreatePipelineRun() {
   }
 
   if (isYAMLMode()) {
+    const externalPipelineRunName = getPipelineRunName();
+    if (externalPipelineRunName) {
+      const { data: pipelineRunObject, isLoading } = usePipelineRun(
+        {
+          name: externalPipelineRunName,
+          namespace: getNamespace()
+        },
+        { disableWebSocket: true }
+      );
+      let payloadYaml = null;
+      if (pipelineRunObject) {
+        const { payload } = generateNewPipelineRunPayload({
+          pipelineRun: pipelineRunObject,
+          rerun: false
+        });
+        payloadYaml = yaml.dump(payload);
+      }
+      const loadingMessage = intl.formatMessage({
+        id: 'dashboard.pipelineRun.loading',
+        defaultMessage: 'Loading PipelineRun…'
+      });
+
+      return (
+        <CreateYAMLEditor
+          code={payloadYaml || ''}
+          loading={isLoading}
+          loadingMessage={loadingMessage}
+        />
+      );
+    }
     const pipelineRun = getPipelineRunPayload({
       labels: labels.reduce((acc, { key, value }) => {
         acc[key] = value;

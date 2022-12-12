@@ -311,6 +311,14 @@ export /* istanbul ignore next */ function PipelineRunContainer() {
       });
   }
 
+  function editAndRun() {
+    navigate(
+      `${urls.pipelineRuns.create()}?mode=yaml&pipelineRunName=${
+        pipelineRun.metadata.name
+      }&namespace=${pipelineRun.metadata.namespace}`
+    );
+  }
+
   function pipelineRunActions() {
     if (isReadOnly) {
       return [];
@@ -327,6 +335,13 @@ export /* istanbul ignore next */ function PipelineRunContainer() {
           const { reason, status } = getStatus(resource);
           return isPending(reason, status);
         }
+      },
+      {
+        actionText: intl.formatMessage({
+          id: 'dashboard.editAndRun.actionText',
+          defaultMessage: 'Edit and run'
+        }),
+        action: editAndRun
       },
       {
         actionText: intl.formatMessage({
