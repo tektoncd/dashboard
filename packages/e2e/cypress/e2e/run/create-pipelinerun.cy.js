@@ -71,6 +71,60 @@ spec:
       .should('have.text', 'Succeeded');
   });
 
+  it('should populate YAML editor based on form inputs', function () {
+    const uniqueNumber = Date.now();
+
+    const pipelineName = `simple-pipeline-${uniqueNumber}`;
+    const pipelineRunName = `run-${uniqueNumber}`;
+    const pipeline = `apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: ${pipelineName}
+  namespace: ${namespace}
+spec:
+  tasks:
+    - name: hello
+      taskSpec:
+        steps:
+          - name: echo
+            image: busybox
+            script: |
+              #!/bin/ash
+              echo "Hello World!"
+    `;
+    cy.exec(`echo "${pipeline}" | kubectl apply -f -`);
+    cy.visit(
+      `/#/pipelineruns/create?namespace=${namespace}&pipelineName=${pipelineName}`
+    );
+    cy.get('[id=create-pipelinerun--namespaces-dropdown]').should(
+      'have.value',
+      namespace
+    );
+    cy.get('[id=create-pipelinerun--pipelines-dropdown]').should(
+      'have.value',
+      pipelineName
+    );
+
+    cy.get('#create-pipelinerun--pipelinerunname').type(pipelineRunName);
+
+    cy.get('#create-pipelinerun--timeouts--pipeline').type('10m');
+
+    cy.contains('button', 'YAML Mode').click();
+    cy.url().should('include', 'mode=yaml');
+
+    cy.contains('.cm-content', `name: ${pipelineRunName}`);
+    cy.contains('.cm-content', `name: ${pipelineName}`);
+    cy.contains('.cm-content', 'pipeline: 10m');
+
+    cy.contains('button', 'Create').click();
+
+    cy.contains(pipelineRunName).parent().click();
+
+    cy.get('header[class="tkn--pipeline-run-header"]')
+      .find('span[class="tkn--status-label"]', { timeout: 15000 })
+      .should('have.text', 'Succeeded');
+  });
+
   it('should create pipelinerun yaml mode', function () {
     const uniqueNumber = Date.now();
 
