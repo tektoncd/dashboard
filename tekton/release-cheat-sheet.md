@@ -87,6 +87,7 @@ Creating the release announcement is currently a manual process but will be auto
 1. [Draft a new release](https://github.com/tektoncd/dashboard/releases/new)
 
 1. Copy the format from an existing release and insert details of the relevant changes and contributors.
+   - You can find the Rekor UUID by running `rekor-cli search --sha $DASHBOARD_IMAGE_SHA`
 
 1. Add any upgrade and deprecation notices as required.
 
