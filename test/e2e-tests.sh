@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2018-2022 The Tekton Authors
+# Copyright 2018-2023 The Tekton Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -216,7 +216,7 @@ header "Building browser E2E image"
 docker build -t dashboard-e2e packages/e2e
 
 if [ -z "$PIPELINES_VERSION" ]; then
-  export PIPELINES_VERSION=v0.42.0
+  export PIPELINES_VERSION=v0.43.0
 fi
 
 if [ -z "$TRIGGERS_VERSION" ]; then
