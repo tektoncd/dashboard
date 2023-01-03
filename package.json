@@ -72,7 +72,7 @@
     "babel-loader": "^9.1.0",
     "babel-plugin-formatjs": "^10.3.35",
     "cross-env": "^7.0.2",
-    "css-loader": "^6.7.2",
+    "css-loader": "^6.7.3",
     "eslint": "^8.31.0",
     "eslint-config-airbnb": "^19.0.0",
     "eslint-config-prettier": "^8.5.0",
