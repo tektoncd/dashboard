@@ -1,5 +1,5 @@
 /*
-Copyright 2022 The Tekton Authors
+Copyright 2022-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -64,7 +64,8 @@ spec:
 
     cy.contains('button', 'Create').click();
 
-    cy.contains(`${pipelineName}-run`).parent().click();
+    cy.contains('h1', 'PipelineRuns');
+    cy.contains('a', `${pipelineName}-run`).click();
 
     cy.get('header[class="tkn--pipeline-run-header"]')
       .find('span[class="tkn--status-label"]', { timeout: 15000 })
@@ -118,7 +119,8 @@ spec:
 
     cy.contains('button', 'Create').click();
 
-    cy.contains(pipelineRunName).parent().click();
+    cy.contains('h1', 'PipelineRuns');
+    cy.contains('a', pipelineRunName).click();
 
     cy.get('header[class="tkn--pipeline-run-header"]')
       .find('span[class="tkn--status-label"]', { timeout: 15000 })
@@ -156,7 +158,8 @@ spec:
 
     cy.contains('button', 'Create').click();
 
-    cy.get(`[title=${pipelineRunName}]`).parent().click();
+    cy.contains('h1', 'PipelineRuns');
+    cy.get(`[title=${pipelineRunName}]`).click();
 
     cy.get('header[class="tkn--pipeline-run-header"]')
       .find('span[class="tkn--status-label"]', { timeout: 15000 })
@@ -191,7 +194,8 @@ spec:
 
     cy.contains('button', 'Create').click();
 
-    cy.get(`[title=${pipelineRunName}]`).parent().click();
+    cy.contains('h1', 'PipelineRuns');
+    cy.get(`[title=${pipelineRunName}]`).click();
 
     cy.get('header[class="tkn--pipeline-run-header"]')
       .find('span[class="tkn--status-label"]', { timeout: 15000 })
