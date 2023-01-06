@@ -12,7 +12,6 @@ This guide explains how to install Tekton Dashboard. It covers the following top
 - [Before you begin](#before-you-begin)
 - [Pre-requisites](#pre-requisites)
 - [Installing Tekton Dashboard on Kubernetes](#installing-tekton-dashboard-on-kubernetes)
-- [Installing Tekton Dashboard on OpenShift](#installing-tekton-dashboard-on-openshift)
 - [Installing with the installer script](#installing-with-the-installer-script)
 - [Accessing the Dashboard](#accessing-the-dashboard)
 - [Uninstalling the Dashboard on Kubernetes](#uninstalling-the-dashboard-on-kubernetes)
@@ -66,24 +65,6 @@ To install Tekton Dashboard on a Kubernetes cluster:
    **Note:** Hit CTRL+C to stop monitoring.
 
 Congratulations! You have successfully installed Tekton Dashboard on your Kubernetes cluster.
-
-## Installing Tekton Dashboard on OpenShift
-
-To install Tekton Dashboard on an OpenShift cluster:
-
-1. Install the Openshift Pipeline Operator from the operator hub.
-
-1. Assuming you want to install the Dashboard into the `openshift-pipelines` namespace, which is the default one:
-
-   ```bash
-   kubectl apply --filename https://storage.googleapis.com/tekton-releases/dashboard/latest/openshift-tekton-dashboard-release.yaml --validate=false
-   ```
-
-Congratulations! You have successfully installed Tekton Dashboard on your OpenShift cluster.
-
-**Note for users installing Tekton Pipelines and Triggers outside the OpenShift Pipelines operator:**
-
-Tekton Dashboard on OpenShift works out of the box with the OpenShift Pipelines operator. If you installed Tekton Pipelines and Triggers without using the OpenShift Pipelines operator, you will need to change the following args `--pipelines-namespace=openshift-pipelines` and `--triggers-namespace=openshift-pipelines` and set their values to the namespace where Pipelines and Triggers were respectively deployed.
 
 ## Installing with the installer script
 

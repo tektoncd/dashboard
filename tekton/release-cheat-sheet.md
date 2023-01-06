@@ -67,8 +67,6 @@ the dashboard repo, a terminal window and a text editor.
     commit-sha                                   6ea31d92a97420d4b7af94745c45b02447ceaa19
     tekton-dashboard-release                     https://storage.googleapis.com/tekton-releases/dashboard/previous/v0.19.0/tekton-dashboard-release.yaml
     tekton-dashboard-release-readonly            https://storage.googleapis.com/tekton-releases/dashboard/previous/v0.19.0/tekton-dashboard-release-readonly.yaml
-    tekton-dashboard-openshift-release           https://storage.googleapis.com/tekton-releases/dashboard/previous/v0.19.0/openshift-tekton-dashboard-release.yaml
-    tekton-dashboard-openshift-release-readonly  https://storage.googleapis.com/tekton-releases/dashboard/previous/v0.19.0/openshift-tekton-dashboard-release-readonly.yaml
 
     (...)
     ```
@@ -91,7 +89,7 @@ Creating the release announcement is currently a manual process but will be auto
 
 1. Add any upgrade and deprecation notices as required.
 
-1. Attach the release manifests to the release: `tekton-dashboard-*.yaml` and `openshift-tekton-dashboard-*.yaml`.
+1. Attach the release manifests to the release: `tekton-dashboard-*.yaml`.
 
 1. Once the release notes are ready, un-check the "This is a pre-release" checkbox since you're making a legit for-reals release!
 

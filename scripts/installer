@@ -12,7 +12,6 @@
 # limitations under the License.
 
 # dashboard flavour
-OPENSHIFT="false"
 READONLY="false"
 
 # configuration default values
@@ -128,20 +127,14 @@ download() {
 setup() {
   if [ ! -z "$OVERRIDE_NAMESPACE" ]; then
     INSTALL_NAMESPACE="$OVERRIDE_NAMESPACE"
-  elif [ "$OPENSHIFT" == "true" ]; then
-    INSTALL_NAMESPACE="openshift-pipelines"
   fi
 
   if [ ! -z "$OVERRIDE_PIPELINES_NAMESPACE" ]; then
     PIPELINES_NAMESPACE="$OVERRIDE_PIPELINES_NAMESPACE"
-  elif [ "$OPENSHIFT" == "true" ]; then
-    PIPELINES_NAMESPACE="openshift-pipelines"
   fi
 
   if [ ! -z "$OVERRIDE_TRIGGERS_NAMESPACE" ]; then
     TRIGGERS_NAMESPACE="$OVERRIDE_TRIGGERS_NAMESPACE"
-  elif [ "$OPENSHIFT" == "true" ]; then
-    TRIGGERS_NAMESPACE="openshift-pipelines"
   fi
 }
 
@@ -423,7 +416,6 @@ help () {
   echo -e "\t[--logout-url <logout-url>]\t\tWill set up the logout URL"
   echo -e "\t[--namespace <namespace>]\t\tWill override install namespace"
   echo -e "\t[--nightly]\t\t\t\tWill download manifests from the nightly releases channel"
-  echo -e "\t[--openshift]\t\t\t\tWill build manifests for openshift"
   echo -e "\t[--output <file>]\t\t\tWill output built manifests in the file instead of in the console"
   echo -e "\t[--pipelines-namespace <namespace>]\tOverride the namespace where Tekton Pipelines is installed (defaults to tekton-pipelines)"
   echo -e "\t[--platform <platform>]\t\t\tOverride the platform to build for"
@@ -489,9 +481,6 @@ while [[ $# -gt 0 ]]; do
       ;;
     '--nightly')
       BASE_RELEASE_URL="https://storage.googleapis.com/tekton-releases-nightly/dashboard"
-      ;;
-    '--openshift')
-      OPENSHIFT="true"
       ;;
     '--read-only')
       READONLY="true"
