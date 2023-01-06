@@ -9,9 +9,8 @@ It covers the following topics:
 - [Install command](#install-command)
   - [Installing on Kubernetes](#installing-on-kubernetes)
   - [OpenShift with Tekton Pipelines and Triggers installed by OpenShift Pipelines Operator](#openshift-with-tekton-pipelines-and-triggers-installed-by-openshift-pipelines-operator)
-  - [OpenShift with Tekton Pipelines and Triggers installed manually using YAML manifests](#openshift-with-tekton-pipelines-and-triggers-installed-manually-using-yaml-manifests)
-  - [Read only install](#read-only-install)
   - [Installing in a custom namespace](#installing-in-a-custom-namespace)
+  - [Read only install](#read-only-install)
   - [Installing for single namespace visibility](#installing-for-single-namespace-visibility)
   - [Install ingress](#install-ingress)
 - [Uninstall command](#uninstall-command)
@@ -71,7 +70,6 @@ Accepted options:
         [--logout-url <logout-url>]             Will set up the logout URL
         [--namespace <namespace>]               Will override install namespace
         [--nightly]                             Will download manifests from the nightly releases channel
-        [--openshift]                           Will build manifests for openshift
         [--output <file>]                       Will output built manifests in the file instead of in the console
         [--pipelines-namespace <namespace>]     Override the namespace where Tekton Pipelines is installed (defaults to tekton-pipelines)
         [--platform <platform>]                 Override the platform to build for
@@ -87,14 +85,9 @@ Accepted options:
 
 The `install` command is used to install the Tekton Dashboard in a cluster. It supports both Kubernetes and OpenShift.
 
-Note that OpenShift supports two install methods:
-- Tekton Pipelines and Triggers installed by openshift pipelines operator
-- Tekton Pipelines and Triggers installed manually using YAML manifests
-
 Examples below illustrate the main `install` options:
 - [Installing on Kubernetes](#installing-on-kubernetes)
 - [OpenShift with Tekton Pipelines and Triggers installed by OpenShift Pipelines Operator](#openshift-with-tekton-pipelines-and-triggers-installed-by-openshift-pipelines-operator)
-- [OpenShift with Tekton Pipelines and Triggers installed manually using YAML manifests](#openshift-with-tekton-pipelines-and-triggers-installed-manually-using-yaml-manifests)
 - [Installing in a custom namespace](#installing-in-a-custom-namespace)
 - [Installing for single namespace visibility](#installing-for-single-namespace-visibility)
 - [Install ingress](#install-ingress)
@@ -114,35 +107,10 @@ This will install the Dashboard in the `tekton-pipelines` namespace and assumes 
 To install the Tekton Dashboard on OpenShift after installing Tekton Pipelines and Triggers using OpenShift Pipelines Operator, run the command:
 
 ```bash
-./scripts/installer install --openshift
+./scripts/installer install --namespace openshift-pipelines
 ```
 
-### OpenShift with Tekton Pipelines and Triggers installed manually using YAML manifests
-
-To install the Tekton Dashboard on OpenShift after installing Tekton Pipelines and Triggers manually using YAML manifests, you will need to override Tekton Pipelines and Triggers install namespaces.
-
-When installing from the manifests, Tekton Pipelines and Triggeers will be deployed in the `tekton-pipelines` namespace, whereas OpenShift Pipelines Operator uses the `openshift-pipelines` namespace.
-
-Therefore, you will need to add the `--pipelines-namespace tekton-pipelines` and `--triggers-namespace tekton-pipelines` options when calling the installer script:
-
-```bash
-./scripts/installer install --openshift --pipelines-namespace tekton-pipelines --triggers-namespace tekton-pipelines
-```
-
-### Read only install
-
-To install the Dashboard add the `--read-only` option when calling the `installer` script:
-
-```bash
-# for kubernetes
-./scripts/installer install --read-only
-
-# for openshift / openshift pipelines operator
-./scripts/installer install --openshift --read-only
-
-# for openshift / manifests
-./scripts/installer install --openshift --read-only --pipelines-namespace tekton-pipelines --triggers-namespace tekton-pipelines
-```
+Alternatively, take one of the official release manifests and replace any reference to the `tekton-pipelines` namespace with `openshift-pipelines` for the same result.
 
 ### Installing in a custom namespace
 
@@ -153,14 +121,15 @@ To tell the `installer` script the target namespace of your choice, add the `--n
 ```bash
 CUSTOM_NAMESPACE=my-namespace
 
-# for kubernetes
 ./scripts/installer install --namespace $CUSTOM_NAMESPACE
+```
 
-# for openshift / openshift pipelines operator
-./scripts/installer install --openshift --namespace $CUSTOM_NAMESPACE
+### Read only install
 
-# for openshift / manifests
-./scripts/installer install --openshift --pipelines-namespace tekton-pipelines --triggers-namespace tekton-pipelines --namespace $CUSTOM_NAMESPACE
+To install the Dashboard add the `--read-only` option when calling the `installer` script:
+
+```bash
+./scripts/installer install --read-only
 ```
 
 ### Installing for single namespace visibility
@@ -172,14 +141,7 @@ To install for single namespace visibility run the following command:
 ```bash
 TENANT_NAMESPACE=my-namespace
 
-# for kubernetes
 ./scripts/installer install --tenant-namespace $TENANT_NAMESPACE
-
-# for openshift / openshift pipelines operator
-./scripts/installer install --openshift --tenant-namespace $TENANT_NAMESPACE
-
-# for openshift / manifests
-./scripts/installer install --openshift --pipelines-namespace tekton-pipelines --triggers-namespace tekton-pipelines --tenant-namespace $TENANT_NAMESPACE
 ```
 
 ### Install ingress
@@ -203,14 +165,7 @@ To uninstall the Dashboard, use the `uninstall` instead of the `install` command
 The `installer` script can be used to build the Dashboard docker image and the YAML manifests (taking care of command line options) by using the `build` command when calling the script:
 
 ```bash
-# for kubernetes
 ./scripts/installer build
-
-# for openshift / openshift pipelines operator
-./scripts/installer build --openshift
-
-# for openshift / manifests
-./scripts/installer build --openshift --pipelines-namespace tekton-pipelines --triggers-namespace tekton-pipelines
 ```
 
 This will NOT deploy the resulting manifest in the target cluster but will build and push the Dashboard docker image to [whichever docker repo was configured](./README.md#build-and-deploy-with-kustomize-and-ko) for `ko` to work with and will display the YAML manifests in the console output.

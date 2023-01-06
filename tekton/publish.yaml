@@ -114,8 +114,6 @@ spec:
         # build pre configured manifests
         ./scripts/installer release --debug                         --platform $(params.platforms) --tag $(params.versionTag) --output $OUTPUT_RELEASE_DIR/tekton-dashboard-release.yaml
         ./scripts/installer release --debug --read-only             --platform $(params.platforms) --tag $(params.versionTag) --output $OUTPUT_RELEASE_DIR/tekton-dashboard-release-readonly.yaml
-        ./scripts/installer release --debug --openshift             --platform $(params.platforms) --tag $(params.versionTag) --output $OUTPUT_RELEASE_DIR/openshift-tekton-dashboard-release.yaml
-        ./scripts/installer release --debug --openshift --read-only --platform $(params.platforms) --tag $(params.versionTag) --output $OUTPUT_RELEASE_DIR/openshift-tekton-dashboard-release-readonly.yaml
 
     - name: koparse
       image: gcr.io/tekton-releases/dogfooding/koparse:latest

@@ -206,10 +206,6 @@ if [ -z "$SKIP_BUILD_TEST" ]; then
 	$tekton_repo_dir/scripts/installer release                          || fail_test "Failed to build manifests for k8s"
 	echo "Building manifests for k8s --read-only"
 	$tekton_repo_dir/scripts/installer release --read-only              || fail_test "Failed to build manifests for k8s --read-only"
-	echo "Building manifests for openshift"
-	$tekton_repo_dir/scripts/installer release --openshift              || fail_test "Failed to build manifests for openshift"
-	echo "Building manifests for openshift --read-only"
-	$tekton_repo_dir/scripts/installer release --openshift --read-only  || fail_test "Failed to build manifests for openshift --read-only"
 fi
 
 header "Building browser E2E image"
