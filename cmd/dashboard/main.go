@@ -32,7 +32,7 @@ var (
 	triggersNamespace  = flag.String("triggers-namespace", "", "Namespace where Tekton triggers is installed (assumes same namespace as dashboard if not specified)")
 	kubeConfigPath     = flag.String("kube-config", "", "Path to kube config file")
 	portNumber         = flag.Int("port", 8080, "Dashboard port number")
-	readOnly           = flag.Bool("read-only", false, "Enable or disable read only mode")
+	readOnly           = flag.Bool("read-only", true, "Enable or disable read-only mode")
 	logoutURL          = flag.String("logout-url", "", "If set, enables logout on the frontend and binds the logout button to this url")
 	tenantNamespace    = flag.String("namespace", "", "If set, limits the scope of resources watched to this namespace only")
 	logLevel           = flag.String("log-level", "info", "Minimum log level output by the logger")

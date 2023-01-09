@@ -47,14 +47,25 @@ Each Tekton Dashboard release is tested against specific Tekton Pipelines and Te
 
 To install Tekton Dashboard on a Kubernetes cluster:
 
-1. Run the following command to install Tekton Dashboard and its dependencies:
+1. Run the following command to install Tekton Dashboard:
 
    ```bash
-   kubectl apply --filename https://storage.googleapis.com/tekton-releases/dashboard/latest/tekton-dashboard-release.yaml
+   kubectl apply --filename https://storage.googleapis.com/tekton-releases/dashboard/latest/release.yaml
    ```
 
+   This will install the Dashboard in read-only mode by default.
+
    Previous versions are available at `previous/$VERSION_NUMBER/*.yaml`, e.g.
-   https://storage.googleapis.com/tekton-releases/dashboard/previous/v0.26.0/tekton-dashboard-release.yaml
+   https://storage.googleapis.com/tekton-releases/dashboard/previous/v0.32.0/release.yaml
+
+   To install in read/write mode, use release-full.yaml.
+
+   v0.31.0 and earlier used a different naming scheme for the release manifests:
+
+   | Mode | Current | v0.31.0 and earlier |
+   |------|---------|---------------------|
+   | read-only | release.yaml | tekton-dashboard-release-readonly.yaml |
+   | read/write | release-full.yaml | tekton-dashboard-release.yaml |
 
 1. Monitor the installation using the following command until all components show a `Running` status:
 
@@ -72,11 +83,11 @@ Congratulations! You have successfully installed Tekton Dashboard on your Kubern
 
 You can refer to the dev docs for more info on [how to use the installer](./dev/installer.md).
 
-For example, to install the latest release in read only mode:
+For example, to install the latest release in read/write mode:
 
 ```bash
 curl -sL https://raw.githubusercontent.com/tektoncd/dashboard/main/scripts/release-installer | \
-   bash -s -- install latest --read-only
+   bash -s -- install latest --read-write
 ```
 
 ## Accessing the Dashboard
@@ -201,10 +212,10 @@ If you're using one of these proxies to provide authentication but still want to
 The Dashboard can be uninstalled by running the following command:
 
 ```bash
-kubectl delete --filename https://storage.googleapis.com/tekton-releases/dashboard/latest/tekton-dashboard-release.yaml
+kubectl delete --filename https://storage.googleapis.com/tekton-releases/dashboard/latest/release.yaml
 ```
 
-The above command assumes that the latest version was installed, refer to [Installing Tekton Dashboard on Kubernetes](#installing-tekton-dashboard-on-kubernetes) to find the correct `--filename` argument if another version was installed.
+The above command assumes that the current latest version was installed, refer to [Installing Tekton Dashboard on Kubernetes](#installing-tekton-dashboard-on-kubernetes) to find the correct `--filename` argument if another version was installed.
 
 ## Next steps
 

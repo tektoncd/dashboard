@@ -48,9 +48,9 @@ test_dashboard() {
   # kubectl or proxy (to create the necessary resources)
   local creationMethod=$1
 
-  local readonly=false
-  if [[ "${@:2}" =~ "--read-only" ]]; then
-    readonly=true
+  local readonly=true
+  if [[ "${@:2}" =~ "--read-write" ]]; then
+    readonly=false
   fi
   header "Setting up environment (${@:2})"
   $tekton_repo_dir/scripts/installer install ${@:2}
@@ -204,8 +204,8 @@ if [ -z "$SKIP_BUILD_TEST" ]; then
 	header "Validating that we can build the release manifests"
 	echo "Building manifests for k8s"
 	$tekton_repo_dir/scripts/installer release                          || fail_test "Failed to build manifests for k8s"
-	echo "Building manifests for k8s --read-only"
-	$tekton_repo_dir/scripts/installer release --read-only              || fail_test "Failed to build manifests for k8s --read-only"
+	echo "Building manifests for k8s --read-write"
+	$tekton_repo_dir/scripts/installer release --read-write              || fail_test "Failed to build manifests for k8s --read-write"
 fi
 
 header "Building browser E2E image"
@@ -228,8 +228,8 @@ export DASHBOARD_NAMESPACE=tekton-pipelines
 export TEST_NAMESPACE=tekton-test
 export TENANT_NAMESPACE=""
 
-test_dashboard proxy ${PLATFORM}
-test_dashboard kubectl ${PLATFORM} --read-only
+test_dashboard proxy ${PLATFORM} --read-write
+test_dashboard kubectl ${PLATFORM}
 
 header "Test Dashboard custom namespace"
 if [ -z "$TEST_CUSTOM_INSTALL_NAMESPACE" ]; then
@@ -239,8 +239,8 @@ else
   export TEST_NAMESPACE=tekton-test
   export TENANT_NAMESPACE=""
 
-  test_dashboard proxy ${PLATFORM} --namespace $DASHBOARD_NAMESPACE
-  test_dashboard kubectl ${PLATFORM} --read-only --namespace $DASHBOARD_NAMESPACE
+  test_dashboard proxy ${PLATFORM} --read-write --namespace $DASHBOARD_NAMESPACE
+  test_dashboard kubectl ${PLATFORM} --namespace $DASHBOARD_NAMESPACE
 fi
 
 # TODO: this feature will be expanded to support multiple namespaces
@@ -252,8 +252,8 @@ else
   export TEST_NAMESPACE=tekton-tenant
   export TENANT_NAMESPACE=tekton-tenant
 
-  test_dashboard proxy --namespace $DASHBOARD_NAMESPACE --tenant-namespace $TENANT_NAMESPACE
-  test_dashboard kubectl --read-only --namespace $DASHBOARD_NAMESPACE --tenant-namespace $TENANT_NAMESPACE
+  test_dashboard proxy --read-write --namespace $DASHBOARD_NAMESPACE --tenant-namespace $TENANT_NAMESPACE
+  test_dashboard kubectl --namespace $DASHBOARD_NAMESPACE --tenant-namespace $TENANT_NAMESPACE
 fi
 
 success

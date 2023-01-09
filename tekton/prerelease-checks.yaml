@@ -32,7 +32,7 @@ spec:
         echo "Checking release file"
         # Check if the release file already exists
         # gsutil retuns 1 if the object was not found
-        if gsutil stat $(params.releaseBucket)/previous/$(params.versionTag)/tekton-dashboard-release.yaml; then
+        if gsutil stat $(params.releaseBucket)/previous/$(params.versionTag)/release.yaml; then
           echo "Release file already exists for $(params.versionTag) in the release bucket,"
           echo "but no git tag was found. To continue remove the release file first."
           exit 1
