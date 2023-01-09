@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2022 The Tekton Authors
+Copyright 2020-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -31,8 +31,9 @@ func getVersion(r Resource, projectName string, namespace string) string {
 	return configMap.Data["version"]
 }
 
-func getDashboardVersion(r Resource, namespace string) string {
-	version := getVersion(r, "dashboard", namespace)
+// GetDashboardVersion returns the version string for the Tekton Dashboard
+func (r Resource) GetDashboardVersion() string {
+	version := getVersion(r, "dashboard", r.Options.InstallNamespace)
 
 	if version == "" {
 		logging.Log.Error("Error getting the Tekton Dashboard deployment version. Version is unknown")
