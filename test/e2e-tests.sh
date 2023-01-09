@@ -212,7 +212,7 @@ header "Building browser E2E image"
 docker build -t dashboard-e2e packages/e2e
 
 if [ -z "$PIPELINES_VERSION" ]; then
-  export PIPELINES_VERSION=v0.43.0
+  export PIPELINES_VERSION=v0.43.1
 fi
 
 if [ -z "$TRIGGERS_VERSION" ]; then
