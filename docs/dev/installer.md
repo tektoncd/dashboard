@@ -10,7 +10,7 @@ It covers the following topics:
   - [Installing on Kubernetes](#installing-on-kubernetes)
   - [OpenShift with Tekton Pipelines and Triggers installed by OpenShift Pipelines Operator](#openshift-with-tekton-pipelines-and-triggers-installed-by-openshift-pipelines-operator)
   - [Installing in a custom namespace](#installing-in-a-custom-namespace)
-  - [Read only install](#read-only-install)
+  - [Read/write install](#read-write-install)
   - [Installing for single namespace visibility](#installing-for-single-namespace-visibility)
   - [Install ingress](#install-ingress)
 - [Uninstall command](#uninstall-command)
@@ -20,9 +20,7 @@ It covers the following topics:
 
 ## Before you begin
 
-Installing the Dashboard is not always easy, especially when the setup involves custom namespaces or a different installation process.
-
-The `installer` makes it easy to install the Tekton Dashboard by allowing command line options to customize the manifests at install time.
+The `installer` script makes it easy to install the Tekton Dashboard by allowing command line options to customize the manifests at install time.
 
 For example, this allows the `installer` script to ensure that the deployed Dashboard and the RBAC permissions are consistent.
 
@@ -71,13 +69,13 @@ Accepted options:
         [--namespace <namespace>]               Will override install namespace
         [--nightly]                             Will download manifests from the nightly releases channel
         [--output <file>]                       Will output built manifests in the file instead of in the console
-        [--pipelines-namespace <namespace>]     Override the namespace where Tekton Pipelines is installed (defaults to tekton-pipelines)
+        [--pipelines-namespace <namespace>]     Override the namespace where Tekton Pipelines is installed (defaults to Dashboard install namespace)
         [--platform <platform>]                 Override the platform to build for
-        [--read-only]                           Will build manifests for a readonly deployment
+        [--read-write]                          Will build manifests for a read/write deployment
         [--stream-logs false]                   Will disable log streaming and use polling instead
         [--tag <tag>]                           Tag used for the image produced by ko
         [--tenant-namespace <namespace>]        Will limit the visibility to the specified namespace only
-        [--triggers-namespace <namespace>]      Override the namespace where Tekton Triggers is installed (defaults to tekton-pipelines)
+        [--triggers-namespace <namespace>]      Override the namespace where Tekton Triggers is installed (defaults to Dashboard install namespace)
         [--version <version>]                   Will download manifests for specified version or build everything using kustomize/ko
 ```
 
@@ -124,12 +122,12 @@ CUSTOM_NAMESPACE=my-namespace
 ./scripts/installer install --namespace $CUSTOM_NAMESPACE
 ```
 
-### Read only install
+### Read/write install
 
-To install the Dashboard add the `--read-only` option when calling the `installer` script:
+To install the Dashboard add the `--read-write` option when calling the `installer` script:
 
 ```bash
-./scripts/installer install --read-only
+./scripts/installer install --read-write
 ```
 
 ### Installing for single namespace visibility

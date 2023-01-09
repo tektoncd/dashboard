@@ -93,7 +93,7 @@ Hit *Ctrl + C* to stop monitoring.
 
    ```bash
    kubectl apply --filename \
-   https://storage.googleapis.com/tekton-releases/dashboard/latest/tekton-dashboard-release.yaml
+   https://storage.googleapis.com/tekton-releases/dashboard/latest/release-full.yaml
    ```
 
 1. Monitor the installation:

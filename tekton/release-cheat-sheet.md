@@ -63,10 +63,9 @@ the dashboard repo, a terminal window and a text editor.
     (...)
     📝 Results
 
-    NAME                                         VALUE
-    commit-sha                                   6ea31d92a97420d4b7af94745c45b02447ceaa19
-    tekton-dashboard-release                     https://storage.googleapis.com/tekton-releases/dashboard/previous/v0.19.0/tekton-dashboard-release.yaml
-    tekton-dashboard-release-readonly            https://storage.googleapis.com/tekton-releases/dashboard/previous/v0.19.0/tekton-dashboard-release-readonly.yaml
+    NAME                    VALUE
+    release                 https://storage.googleapis.com/tekton-releases/dashboard/previous/v0.32.0/release.yaml
+    release-full            https://storage.googleapis.com/tekton-releases/dashboard/previous/v0.32.0/release-full.yaml
 
     (...)
     ```
@@ -121,12 +120,12 @@ Creating the release announcement is currently a manual process but will be auto
 
      ```bash
      # Test latest
-     kubectl --context my-dev-cluster apply --filename     https://storage.googleapis.com/tekton-releases/dashboard/latest/tekton-dashboard-release.yaml
+     kubectl --context my-dev-cluster apply --filename     https://storage.googleapis.com/tekton-releases/dashboard/latest/release-full.yaml
      ```
 
      ```bash
      # Test backport
-     kubectl --context my-dev-cluster apply --filename     https://storage.googleapis.com/tekton-releases/dashboard/previous/v0.19.2/tekton-dashboard-release.yaml
+     kubectl --context my-dev-cluster apply --filename     https://storage.googleapis.com/tekton-releases/dashboard/previous/v0.32.0/release-full.yaml
      ```
 
 1. Announce the release in Slack channels #general, #announcements, and #dashboard.
