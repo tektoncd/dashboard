@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -219,6 +219,10 @@ func checkUpgradeSameOrigin(req *http.Request) bool {
 // Verify Origin header on Upgrade requests to prevent cross-origin websocket hijacking
 func protectWebSocket(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		reqURL := req.URL.RequestURI()
+		reqURL = strings.ReplaceAll(reqURL, "\n", "")
+		reqURL = strings.ReplaceAll(reqURL, "\r", "")
+		logging.Log.Debugf("Proxying request: %s %s %s", req.RemoteAddr, req.Method, reqURL)
 		if !checkUpgradeSameOrigin(req) {
 			origin := req.Header.Get("Origin")
 			origin = strings.ReplaceAll(origin, "\n", "")
