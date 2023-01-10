@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -18,7 +18,6 @@ export { default as ClusterTasksDropdown } from './ClusterTasksDropdown';
 export { default as ClusterTriggerBinding } from './ClusterTriggerBinding';
 export { default as ClusterTriggerBindings } from './ClusterTriggerBindings';
 export { default as CustomResourceDefinition } from './CustomResourceDefinition';
-export { default as CreatePipelineResource } from './CreatePipelineResource';
 export { default as CreatePipelineRun } from './CreatePipelineRun';
 export { default as CreateTaskRun } from './CreateTaskRun';
 export { default as EventListener } from './EventListener';
@@ -33,9 +32,6 @@ export { default as ListPageLayout } from './ListPageLayout';
 export { default as NamespacedRoute } from './NamespacedRoute';
 export { default as NamespacesDropdown } from './NamespacesDropdown';
 export { default as NotFound } from './NotFound';
-export { default as PipelineResource } from './PipelineResource';
-export { default as PipelineResources } from './PipelineResources';
-export { default as PipelineResourcesDropdown } from './PipelineResourcesDropdown';
 export { default as PipelineRun } from './PipelineRun';
 export { default as PipelineRuns } from './PipelineRuns';
 export { default as Pipelines } from './Pipelines';

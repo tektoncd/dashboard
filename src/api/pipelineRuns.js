@@ -81,7 +81,6 @@ export function createPipelineRunRaw({ namespace, payload }) {
 
 export function getPipelineRunPayload({
   params: inputParams,
-  resources: inputResources,
   labels,
   namespace,
   nodeSelector,
@@ -122,14 +121,6 @@ export function getPipelineRunPayload({
     payload.spec.params = params;
   }
 
-  const resources = Object.keys(inputResources).map(name => ({
-    name,
-    resourceRef: { name: inputResources[name] }
-  }));
-  if (resources.length) {
-    payload.spec.resources = resources;
-  }
-
   if (nodeSelector) {
     payload.spec.podTemplate = {
       nodeSelector
@@ -157,7 +148,6 @@ export function createPipelineRun({
   pipelineName,
   pipelinePendingStatus,
   pipelineRunName,
-  resources,
   serviceAccount,
   timeoutsFinally,
   timeoutsPipeline,
@@ -171,7 +161,6 @@ export function createPipelineRun({
     pipelineName,
     pipelinePendingStatus,
     pipelineRunName,
-    resources,
     serviceAccount,
     timeoutsFinally,
     timeoutsPipeline,

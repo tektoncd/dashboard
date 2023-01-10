@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2022 The Tekton Authors
+Copyright 2020-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,27 +12,12 @@ limitations under the License.
 */
 
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { useIntl } from 'react-intl';
-import {
-  getParams,
-  getResources,
-  taskRunHasWarning,
-  urls
-} from '@tektoncd/dashboard-utils';
+import { getParams, taskRunHasWarning } from '@tektoncd/dashboard-utils';
 import { ContentSwitcher, Switch } from 'carbon-components-react';
 
-import {
-  Link as CustomLink,
-  DetailsHeader,
-  Param,
-  ResourceTable,
-  Tab,
-  Table,
-  Tabs,
-  ViewYAML
-} from '..';
+import { DetailsHeader, Param, Tab, Table, Tabs, ViewYAML } from '..';
 
 function getDescriptions(array) {
   if (!array) {
@@ -45,49 +30,7 @@ function getDescriptions(array) {
   }, {});
 }
 
-function resourceTable(title, namespace, resources, intl) {
-  return (
-    <ResourceTable
-      title={title}
-      rows={resources.map(({ name, resourceRef, resourceSpec }) => ({
-        id: name,
-        name,
-        value:
-          resourceRef && resourceRef.name ? (
-            <Link
-              component={CustomLink}
-              to={urls.pipelineResources.byName({
-                namespace,
-                pipelineResourceName: resourceRef.name
-              })}
-            >
-              {resourceRef.name}
-            </Link>
-          ) : (
-            <ViewYAML resource={resourceSpec} dark />
-          )
-      }))}
-      headers={[
-        {
-          key: 'name',
-          header: intl.formatMessage({
-            id: 'dashboard.tableHeader.name',
-            defaultMessage: 'Name'
-          })
-        },
-        {
-          key: 'value',
-          header: intl.formatMessage({
-            id: 'dashboard.tableHeader.value',
-            defaultMessage: 'Value'
-          })
-        }
-      ]}
-    />
-  );
-}
-
-const TaskRunDetails = ({ onViewChange, pod, task, taskRun, view, showIO }) => {
+const TaskRunDetails = ({ onViewChange, pod, task, taskRun, view }) => {
   const intl = useIntl();
   const displayName = taskRun.metadata.name;
   const taskSpec = task?.spec || taskRun.spec.taskSpec;
@@ -158,34 +101,6 @@ const TaskRunDetails = ({ onViewChange, pod, task, taskRun, view, showIO }) => {
     />
   ) : null;
 
-  const { namespace } = taskRun.metadata;
-  const { inputResources, outputResources } = getResources(taskRun.spec);
-
-  const resources = showIO && (inputResources || outputResources) && (
-    <>
-      {inputResources &&
-        resourceTable(
-          intl.formatMessage({
-            id: 'dashboard.stepDefinition.inputResources',
-            defaultMessage: 'Input resources'
-          }),
-          namespace,
-          inputResources,
-          intl
-        )}
-      {outputResources &&
-        resourceTable(
-          intl.formatMessage({
-            id: 'dashboard.stepDefinition.outputResources',
-            defaultMessage: 'Output resources'
-          }),
-          namespace,
-          outputResources,
-          intl
-        )}
-    </>
-  );
-
   const results = taskRun.status?.taskResults;
   const resultsTable = results?.length ? (
     <Table
@@ -207,7 +122,6 @@ const TaskRunDetails = ({ onViewChange, pod, task, taskRun, view, showIO }) => {
   const tabs = [
     paramsTable && 'params',
     resultsTable && 'results',
-    resources && 'resources',
     'status',
     pod && 'pod'
   ].filter(Boolean);
@@ -250,17 +164,6 @@ const TaskRunDetails = ({ onViewChange, pod, task, taskRun, view, showIO }) => {
             })}
           >
             <div className="tkn--step-status">{resultsTable}</div>
-          </Tab>
-        )}
-        {resources && (
-          <Tab
-            id={`${displayName}-resources`}
-            label={intl.formatMessage({
-              id: 'dashboard.taskRun.resources',
-              defaultMessage: 'Resources'
-            })}
-          >
-            <div className="tkn--step-status">{resources}</div>
           </Tab>
         )}
         <Tab
@@ -326,15 +229,13 @@ const TaskRunDetails = ({ onViewChange, pod, task, taskRun, view, showIO }) => {
 TaskRunDetails.propTypes = {
   onViewChange: PropTypes.func,
   task: PropTypes.shape({}),
-  taskRun: PropTypes.shape({}),
-  showIO: PropTypes.bool
+  taskRun: PropTypes.shape({})
 };
 
 TaskRunDetails.defaultProps = {
   onViewChange: /* istanbul ignore next */ () => {},
   task: {},
-  taskRun: {},
-  showIO: false
+  taskRun: {}
 };
 
 export default TaskRunDetails;

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -279,130 +279,6 @@ it('importResources', () => {
     repositoryURL,
     serviceAccount
   };
-  const data = {
-    apiVersion: 'tekton.dev/v1beta1',
-    kind: 'PipelineRun',
-    metadata: {
-      name: `import-resources-${Date.now()}`,
-      labels: {
-        app: 'tekton-app',
-        [labels.DASHBOARD_IMPORT]: 'true'
-      }
-    },
-    spec: {
-      params: [
-        {
-          name: 'path',
-          value: 'fake-directory'
-        },
-        {
-          name: 'target-namespace',
-          value: 'fake-namespace'
-        }
-      ],
-      pipelineSpec: {
-        params: [
-          {
-            default: '.',
-            description: 'The path from which resources are to be imported',
-            name: 'path',
-            type: 'string'
-          },
-          {
-            default: 'tekton-pipelines',
-            description:
-              'The namespace in which to create the resources being imported',
-            name: 'target-namespace',
-            type: 'string'
-          }
-        ],
-        resources: [
-          {
-            name: 'git-source',
-            type: 'git'
-          }
-        ],
-        tasks: [
-          {
-            name: 'import-resources',
-            params: [
-              {
-                name: 'path',
-                value: '$(params.path)'
-              },
-              {
-                name: 'target-namespace',
-                value: '$(params.target-namespace)'
-              }
-            ],
-            resources: {
-              inputs: [
-                {
-                  name: 'git-source',
-                  resource: 'git-source'
-                }
-              ]
-            },
-            taskSpec: {
-              params: [
-                {
-                  default: '.',
-                  description:
-                    'The path from which resources are to be imported',
-                  name: 'path',
-                  type: 'string'
-                },
-                {
-                  default: 'tekton-pipelines',
-                  description:
-                    'The namespace in which to create the resources being imported',
-                  name: 'target-namespace',
-                  type: 'string'
-                }
-              ],
-              resources: {
-                inputs: [
-                  {
-                    name: 'git-source',
-                    type: 'git'
-                  }
-                ]
-              },
-              steps: [
-                {
-                  args: [
-                    method,
-                    '-f',
-                    '$(resources.inputs.git-source.path)/$(params.path)',
-                    '-n',
-                    '$(params.target-namespace)'
-                  ],
-                  command: ['kubectl'],
-                  image: 'lachlanevenson/k8s-kubectl:latest',
-                  name: 'import'
-                }
-              ]
-            }
-          }
-        ]
-      },
-      resources: [
-        {
-          name: 'git-source',
-          resourceSpec: {
-            params: [
-              {
-                name: 'url',
-                value: 'https://github.com/test/testing'
-              }
-            ],
-            type: 'git'
-          }
-        }
-      ],
-      serviceAccountName: serviceAccount
-    }
-  };
 
   server.use(
     rest.post(/\/pipelineruns\//, async (req, res, ctx) =>
@@ -410,7 +286,20 @@ it('importResources', () => {
     )
   );
   return API.importResources(payload).then(response => {
-    expect(response).toEqual(data);
+    expect(response.metadata.name).toEqual(`import-resources-fake-timestamp`);
+    expect(response.metadata.labels).toEqual({
+      [labels.DASHBOARD_IMPORT]: 'true'
+    });
+    expect(response.spec.params).toEqual(
+      expect.arrayContaining([
+        { name: 'method', value: method },
+        { name: 'path', value: path },
+        { name: 'repositoryURL', value: repositoryURL },
+        { name: 'revision' },
+        { name: 'target-namespace', value: namespace }
+      ])
+    );
+    expect(response.spec.serviceAccountName).toEqual(serviceAccount);
     mockDateNow.mockRestore();
   });
 });
@@ -434,133 +323,6 @@ it('importResources with revision and no serviceAccount', () => {
     repositoryURL,
     revision
   };
-  const data = {
-    apiVersion: 'tekton.dev/v1beta1',
-    kind: 'PipelineRun',
-    metadata: {
-      name: `import-resources-${Date.now()}`,
-      labels: {
-        app: 'tekton-app',
-        [labels.DASHBOARD_IMPORT]: 'true'
-      }
-    },
-    spec: {
-      params: [
-        {
-          name: 'path',
-          value: 'fake-directory'
-        },
-        {
-          name: 'target-namespace',
-          value: 'fake-namespace'
-        }
-      ],
-      pipelineSpec: {
-        params: [
-          {
-            default: '.',
-            description: 'The path from which resources are to be imported',
-            name: 'path',
-            type: 'string'
-          },
-          {
-            default: 'tekton-pipelines',
-            description:
-              'The namespace in which to create the resources being imported',
-            name: 'target-namespace',
-            type: 'string'
-          }
-        ],
-        resources: [
-          {
-            name: 'git-source',
-            type: 'git'
-          }
-        ],
-        tasks: [
-          {
-            name: 'import-resources',
-            params: [
-              {
-                name: 'path',
-                value: '$(params.path)'
-              },
-              {
-                name: 'target-namespace',
-                value: '$(params.target-namespace)'
-              }
-            ],
-            resources: {
-              inputs: [
-                {
-                  name: 'git-source',
-                  resource: 'git-source'
-                }
-              ]
-            },
-            taskSpec: {
-              params: [
-                {
-                  default: '.',
-                  description:
-                    'The path from which resources are to be imported',
-                  name: 'path',
-                  type: 'string'
-                },
-                {
-                  default: 'tekton-pipelines',
-                  description:
-                    'The namespace in which to create the resources being imported',
-                  name: 'target-namespace',
-                  type: 'string'
-                }
-              ],
-              resources: {
-                inputs: [
-                  {
-                    name: 'git-source',
-                    type: 'git'
-                  }
-                ]
-              },
-              steps: [
-                {
-                  args: [
-                    method,
-                    '-f',
-                    '$(resources.inputs.git-source.path)/$(params.path)',
-                    '-n',
-                    '$(params.target-namespace)'
-                  ],
-                  command: ['kubectl'],
-                  image: 'lachlanevenson/k8s-kubectl:latest',
-                  name: 'import'
-                }
-              ]
-            }
-          }
-        ]
-      },
-      resources: [
-        {
-          name: 'git-source',
-          resourceSpec: {
-            params: [
-              {
-                name: 'url',
-                value: 'https://github.com/test/testing'
-              },
-              {
-                name: 'revision',
-                value: revision
-              }
-            ],
-            type: 'git'
-          }
-        }
-      ]
-    }
-  };
 
   server.use(
     rest.post(/\/pipelineruns\//, async (req, res, ctx) =>
@@ -568,7 +330,20 @@ it('importResources with revision and no serviceAccount', () => {
     )
   );
   return API.importResources(payload).then(response => {
-    expect(response).toEqual(data);
+    expect(response.metadata.name).toEqual(`import-resources-fake-timestamp`);
+    expect(response.metadata.labels).toEqual({
+      [labels.DASHBOARD_IMPORT]: 'true'
+    });
+    expect(response.spec.params).toEqual(
+      expect.arrayContaining([
+        { name: 'method', value: method },
+        { name: 'path', value: path },
+        { name: 'repositoryURL', value: repositoryURL },
+        { name: 'revision', value: revision },
+        { name: 'target-namespace', value: namespace }
+      ])
+    );
+    expect(response.spec.serviceAccountName).toBeUndefined();
     mockDateNow.mockRestore();
   });
 });

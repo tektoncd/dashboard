@@ -82,7 +82,6 @@ export function createTaskRun({
   namespace,
   nodeSelector,
   params,
-  resources,
   serviceAccount,
   taskName,
   taskRunName = `${taskName}-run-${Date.now()}`,
@@ -98,10 +97,6 @@ export function createTaskRun({
     },
     spec: {
       params: [],
-      resources: {
-        inputs: [],
-        outputs: []
-      },
       taskRef: {
         name: taskName,
         kind: kind || 'Task'
@@ -116,22 +111,6 @@ export function createTaskRun({
       name,
       value: params[name]
     }));
-  }
-  if (resources && resources.inputs) {
-    payload.spec.resources.inputs = Object.keys(resources.inputs).map(
-      inputName => ({
-        name: inputName,
-        resourceRef: { name: resources.inputs[inputName] }
-      })
-    );
-  }
-  if (resources && resources.outputs) {
-    payload.spec.resources.outputs = Object.keys(resources.outputs).map(
-      outputName => ({
-        name: outputName,
-        resourceRef: { name: resources.outputs[outputName] }
-      })
-    );
   }
   if (serviceAccount) {
     payload.spec.serviceAccountName = serviceAccount;

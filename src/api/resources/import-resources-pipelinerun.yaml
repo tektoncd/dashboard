@@ -1,0 +1,143 @@
+# Copyright 2023 The Tekton Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# version may be replaced in the API layer if the user has opted in to v1 resources
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  # name will be replaced in the API layer
+  name: import-resources
+  labels:
+    # additional labels will be added in the API layer
+    dashboard.tekton.dev/import: 'true'
+spec:
+  pipelineSpec:
+    params:
+      - name: method
+        description: Which kubectl command to use to import the resources (apply / create)
+        default: 'apply'
+        type: string
+      - name: path
+        description: The path from which resources are to be imported
+        default: '.'
+        type: string
+      - name: repositoryURL
+        description: The URL of the git repository from which resources are to be imported
+        type: string
+      - name: revision
+        description: The git revision from which resources are to be imported
+        default: ''
+        type: string
+      - name: target-namespace
+        description: The namespace in which to create the resources being imported
+        default: tekton-pipelines
+        type: string
+    tasks:
+      - name: fetch-repo
+        taskSpec:
+          params:
+            - name: repositoryURL
+              description: The URL of the git repository from which resources are to be imported
+              type: string
+            - name: revision
+              description: The git revision to clone
+              type: string
+          workspaces:
+            - name: repo
+          steps:
+            - name: clone
+              image: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/git-init:v0.41.0
+              env:
+                - name: PARAM_URL
+                  value: $(params.repositoryURL)
+                - name: PARAM_REVISION
+                  value: $(params.revision)
+                - name: WORKSPACE_PATH
+                  value: $(workspaces.repo.path)
+              securityContext:
+                runAsNonRoot: true
+                runAsUser: 65532
+              script: |
+                #!/usr/bin/env sh
+                set -eu
+                git config --global --add safe.directory "${WORKSPACE_PATH}"
+                /ko-app/git-init \
+                  -url="${PARAM_URL}" \
+                  -revision="${PARAM_REVISION}" \
+                  -path=${WORKSPACE_PATH}
+        params:
+          - name: repositoryURL
+            value: $(params.repositoryURL)
+          - name: revision
+            value: $(params.revision)
+        workspaces:
+          - name: repo
+            workspace: repo
+      - name: import-resources
+        runAfter: [fetch-repo]
+        taskSpec:
+          params:
+            - name: path
+              description: The path from which resources are to be imported
+              type: string
+            - name: target-namespace
+              description: The namespace in which to create the resources being imported
+              type: string
+            - name: method
+              description: Which kubectl command to use to import the resources (apply / create)
+              type: string
+          workspaces:
+            - name: repo
+          steps:
+            - name: import
+              image: lachlanevenson/k8s-kubectl:latest
+              command: ['kubectl']
+              args: [
+                '$(params.method)',
+                '-f',
+                '$(workspaces.repo.path)/$(params.path)',
+                '-n',
+                '$(params.target-namespace)'
+              ]
+        params:
+          - name: path
+            value: '$(params.path)'
+          - name: target-namespace
+            value: $(params.target-namespace)
+          - name: method
+            value: $(params.method)
+        workspaces:
+          - name: repo
+            workspace: repo
+  params:
+    # Values will be replaced in the API layer
+    - name: method
+      value: ''
+    - name: path
+      value: ''
+    - name: repositoryURL
+      value: ''
+    - name: revision
+      value: ''
+    - name: target-namespace
+      value: ''
+  workspaces:
+    - name: repo
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+          - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi

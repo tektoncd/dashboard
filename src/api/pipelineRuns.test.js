@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -55,13 +55,11 @@ it('createPipelineRun', () => {
     .spyOn(Date, 'now')
     .mockImplementation(() => 'fake-timestamp');
   const pipelineName = 'fake-pipelineName';
-  const resources = { 'fake-resource-name': 'fake-resource-value' };
   const params = { 'fake-param-name': 'fake-param-value' };
   const serviceAccount = 'fake-serviceAccount';
   const timeout = 'fake-timeout';
   const payload = {
     pipelineName,
-    resources,
     params,
     serviceAccount,
     timeoutsPipeline: timeout
@@ -76,10 +74,6 @@ it('createPipelineRun', () => {
       pipelineRef: {
         name: pipelineName
       },
-      resources: Object.keys(resources).map(name => ({
-        name,
-        resourceRef: { name: resources[name] }
-      })),
       params: Object.keys(params).map(name => ({
         name,
         value: params[name]
@@ -108,13 +102,11 @@ it('createPipelineRun with nodeSelector', () => {
     .spyOn(Date, 'now')
     .mockImplementation(() => 'fake-timestamp');
   const pipelineName = 'fake-pipelineName';
-  const resources = { 'fake-resource-name': 'fake-resource-value' };
   const params = { 'fake-param-name': 'fake-param-value' };
   const serviceAccount = 'fake-serviceAccount';
   const timeout = 'fake-timeout';
   const payload = {
     pipelineName,
-    resources,
     params,
     serviceAccount,
     timeoutsPipeline: timeout,
@@ -132,10 +124,6 @@ it('createPipelineRun with nodeSelector', () => {
       pipelineRef: {
         name: pipelineName
       },
-      resources: Object.keys(resources).map(name => ({
-        name,
-        resourceRef: { name: resources[name] }
-      })),
       params: Object.keys(params).map(name => ({
         name,
         value: params[name]

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -25,7 +25,6 @@ import {
   getGenerateNamePrefixForRerun,
   getParams,
   getPlaceholderTaskRun,
-  getResources,
   getStatus,
   getStatusFilter,
   getStatusFilterHandler,
@@ -285,29 +284,6 @@ describe('getParams', () => {
     const fakeParams = { fake: 'params' };
     const params = getParams({ params: fakeParams });
     expect(params).toEqual(fakeParams);
-  });
-});
-
-describe('getResources', () => {
-  it('supports v1alpha1 structure', () => {
-    const fakeInputResources = { fake: 'inputResources' };
-    const fakeOutputResources = { fake: 'outputResources' };
-    const { inputResources, outputResources } = getResources({
-      inputs: { resources: fakeInputResources },
-      outputs: { resources: fakeOutputResources }
-    });
-    expect(inputResources).toEqual(fakeInputResources);
-    expect(outputResources).toEqual(fakeOutputResources);
-  });
-
-  it('supports v1beta1 structure', () => {
-    const fakeInputResources = { fake: 'inputResources' };
-    const fakeOutputResources = { fake: 'outputResources' };
-    const { inputResources, outputResources } = getResources({
-      resources: { inputs: fakeInputResources, outputs: fakeOutputResources }
-    });
-    expect(inputResources).toEqual(fakeInputResources);
-    expect(outputResources).toEqual(fakeOutputResources);
   });
 });
 

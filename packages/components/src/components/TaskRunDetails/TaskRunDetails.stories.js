@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2022 The Tekton Authors
+Copyright 2020-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -24,15 +24,6 @@ const params = [
   }
 ];
 
-const resources = {
-  inputs: [
-    { name: 'input-resource', resourceRef: { name: 'input-resource-ref' } }
-  ],
-  outputs: [
-    { name: 'output-resource', resourceRef: { name: 'output-resource-ref' } }
-  ]
-};
-
 export default {
   component: TaskRunDetails,
   parameters: {
@@ -48,8 +39,7 @@ export const Base = () => (
     taskRun={{
       metadata: { name: 'my-task', namespace: 'my-namespace' },
       spec: {
-        params,
-        resources
+        params
       },
       status: {
         completionTime: '2021-03-03T15:25:34Z',
@@ -67,8 +57,7 @@ export const WithWarning = () => (
     taskRun={{
       metadata: { name: 'my-task', namespace: 'my-namespace' },
       spec: {
-        params,
-        resources
+        params
       },
       status: {
         completionTime: '2021-03-03T15:25:34Z',

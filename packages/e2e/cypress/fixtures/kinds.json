@@ -1,7 +1,6 @@
 [
     { "label": "Pipelines", "path": "/pipelines" },
     { "label": "PipelineRuns", "path": "/pipelineruns" },
-    { "label": "PipelineResources", "path": "/pipelineresources" },
     { "label": "Tasks", "path": "/tasks" },
     { "label": "ClusterTasks", "path": "/clustertasks" },
     { "label": "TaskRuns", "path": "/taskruns" },

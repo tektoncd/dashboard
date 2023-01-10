@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -357,45 +357,22 @@ export function getGenerateNamePrefixForRerun(name) {
 }
 
 /*
-    getParams and getResources below required to support 3rd-party consumers
-    of certain dashboard components (e.g. PipelineRun) while they migrate to
-    the Tekton beta.
+    getParams required to support 3rd-party consumers of certain dashboard
+    components (e.g. PipelineRun) while they migrate to the Tekton beta
 
     Support both the Pipelines beta (0.11+) structure
       {
-        params: ...,
-        resources: {
-          inputs: ...,
-          outputs: ...
-        }
+        params: ...
       }
     and the older alpha (<0.11) structure
       {
         inputs: {
           params: ...,
-          resources: ...
-        },
-        outputs: {
-          resources: ...
         }
       }
  */
 export function getParams({ params, inputs }) {
   return params || (inputs && inputs.params);
-}
-
-export function getResources({ resources, inputs, outputs }) {
-  if (resources) {
-    return {
-      inputResources: resources.inputs,
-      outputResources: resources.outputs
-    };
-  }
-
-  return {
-    inputResources: inputs && inputs.resources,
-    outputResources: outputs && outputs.resources
-  };
 }
 
 /* istanbul ignore next */

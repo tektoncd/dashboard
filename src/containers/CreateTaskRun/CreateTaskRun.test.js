@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -20,7 +20,6 @@ import { renderWithRouter } from '../../utils/test';
 import CreateTaskRun from './CreateTaskRun';
 import * as API from '../../api';
 import * as APIUtils from '../../api/utils';
-import * as PipelineResourcesAPI from '../../api/pipelineResources';
 import * as ServiceAccountsAPI from '../../api/serviceAccounts';
 import * as TaskRunsAPI from '../../api/taskRuns';
 import * as ClusterTasksAPI from '../../api/clusterTasks';
@@ -34,13 +33,6 @@ const tasks = [
       uid: 'id-task-1'
     },
     spec: {
-      resources: {
-        inputs: [
-          { name: 'resource-1', type: 'type-1' },
-          { name: 'resource-2', type: 'type-2' }
-        ],
-        outputs: [{ name: 'resource-3', type: 'type-3' }]
-      },
       params: [
         {
           name: 'param-1',
@@ -93,21 +85,6 @@ const serviceAccount = {
   }
 };
 
-const pipelineResource1 = {
-  metadata: { name: 'pipeline-resource-1' },
-  spec: { type: 'type-1' }
-};
-
-const pipelineResource2 = {
-  metadata: { name: 'pipeline-resource-2' },
-  spec: { type: 'type-2' }
-};
-
-const pipelineResource3 = {
-  metadata: { name: 'pipeline-resource-3' },
-  spec: { type: 'type-3' }
-};
-
 const taskRuns = {
   isFetching: false,
   byId: {},
@@ -127,11 +104,6 @@ describe('CreateTaskRun', () => {
     jest
       .spyOn(ClusterTasksAPI, 'useClusterTasks')
       .mockImplementation(() => ({ data: clusterTasks }));
-    jest
-      .spyOn(PipelineResourcesAPI, 'usePipelineResources')
-      .mockImplementation(() => ({
-        data: [pipelineResource1, pipelineResource2, pipelineResource3]
-      }));
     jest
       .spyOn(TaskRunsAPI, 'getTaskRuns')
       .mockImplementation(() => taskRuns.byId);

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -18,7 +18,6 @@ const clusterTriggerBindingName = 'fake_clusterTriggerBindingName';
 const eventListenerName = 'fake_eventListenerName';
 const namespace = 'fake_namespace';
 const pipelineName = 'fake_pipelineName';
-const pipelineResourceName = 'fake_pipelineResourceName';
 const pipelineRunName = 'fake_pipelineRunName';
 const runName = 'fake_runName';
 const taskName = 'fake_taskName';
@@ -177,37 +176,6 @@ describe('kubernetesResources', () => {
         type,
         version
       })
-    );
-  });
-});
-
-describe('pipelineResources', () => {
-  it('all', () => {
-    expect(urls.pipelineResources.all()).toEqual(
-      generatePath(paths.pipelineResources.all())
-    );
-  });
-
-  it('byName', () => {
-    expect(
-      urls.pipelineResources.byName({ namespace, pipelineResourceName })
-    ).toEqual(
-      generatePath(paths.pipelineResources.byName(), {
-        namespace,
-        pipelineResourceName
-      })
-    );
-  });
-
-  it('byNamespace', () => {
-    expect(urls.pipelineResources.byNamespace({ namespace })).toEqual(
-      generatePath(paths.pipelineResources.byNamespace(), { namespace })
-    );
-  });
-
-  it('create', () => {
-    expect(urls.pipelineResources.create()).toEqual(
-      generatePath(paths.pipelineResources.create())
     );
   });
 });
