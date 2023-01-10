@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2022 The Tekton Authors
+Copyright 2020-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -36,7 +36,6 @@ import { useIntl } from 'react-intl';
 import {
   ClusterTasksDropdown,
   NamespacesDropdown,
-  PipelineResourcesDropdown,
   ServiceAccountsDropdown,
   TasksDropdown
 } from '..';
@@ -56,8 +55,6 @@ const initialState = {
   nodeSelector: [],
   params: {},
   paramSpecs: [],
-  resources: { inputs: {}, outputs: {} },
-  resourceSpecs: [],
   serviceAccount: '',
   submitError: '',
   taskRef: '',
@@ -75,29 +72,6 @@ const initialParamsState = paramSpecs => {
     (acc, param) => ({ ...acc, [param.name]: param.default || '' }),
     {}
   );
-};
-
-const initialResourcesState = resourceSpecs => {
-  const resources = {
-    inputs: {},
-    outputs: {}
-  };
-  if (!resourceSpecs) {
-    return resources;
-  }
-  if (resourceSpecs.inputs) {
-    resources.inputs = resourceSpecs.inputs.reduce(
-      (acc, res) => ({ ...acc, [res.name]: '' }),
-      {}
-    );
-  }
-  if (resourceSpecs.outputs) {
-    resources.outputs = resourceSpecs.outputs.reduce(
-      (acc, res) => ({ ...acc, [res.name]: '' }),
-      {}
-    );
-  }
-  return resources;
 };
 
 const itemToString = ({ text }) => text;
@@ -136,7 +110,6 @@ function CreateTaskRun() {
       namespace,
       nodeSelector,
       params,
-      resources,
       serviceAccount,
       submitError,
       taskRef,
@@ -151,8 +124,7 @@ function CreateTaskRun() {
     kind: initialTaskKind || 'Task',
     namespace: getNamespace(),
     taskRef: taskRefFromDetails,
-    params: initialParamsState(null),
-    resources: initialResourcesState(null)
+    params: initialParamsState(null)
   });
 
   const { data: task, error: taskError } = useTaskByKind(
@@ -161,7 +133,6 @@ function CreateTaskRun() {
   );
 
   const paramSpecs = task?.spec?.params;
-  const resourceSpecs = task?.spec?.resources;
 
   useTitleSync({
     page: intl.formatMessage({
@@ -171,23 +142,9 @@ function CreateTaskRun() {
   });
 
   function checkFormValidation() {
-    // Namespace, PipelineRef, Resources, and Params must all have values
+    // Namespace, PipelineRef, and Params must all have values
     const validNamespace = !!namespace;
     const validTaskRef = !!taskRef;
-    const validInputResources =
-      !resources ||
-      !resources.inputs ||
-      Object.keys(resources.inputs).reduce(
-        (acc, name) => acc && !!resources.inputs[name],
-        true
-      );
-    const validOutputResources =
-      !resources ||
-      !resources.outputs ||
-      Object.keys(resources.outputs).reduce(
-        (acc, name) => acc && !!resources.outputs[name],
-        true
-      );
 
     const paramSpecMap = keyBy(paramSpecs, 'name');
     const validParams =
@@ -243,8 +200,6 @@ function CreateTaskRun() {
     return (
       validNamespace &&
       validTaskRef &&
-      validInputResources &&
-      validOutputResources &&
       validParams &&
       validLabels &&
       validNodeSelector &&
@@ -387,26 +342,17 @@ function CreateTaskRun() {
         return {
           ...state,
           taskRef: text,
-          resources: initialResourcesState(resourceSpecs),
           params: initialParamsState(paramSpecs)
         };
       });
       return;
     }
-    // Reset pipelineresources and params when no Task is selected
+    // Reset params when no Task is selected
     setState(state => ({
       ...state,
       ...initialState,
       namespace: state.namespace
     }));
-  }
-
-  function handleResourceChange(resourceKind, key, value) {
-    setState(state => {
-      const next = { ...state };
-      next.resources[resourceKind][key] = value;
-      return next;
-    });
   }
 
   function handleSubmit(event) {
@@ -435,7 +381,6 @@ function CreateTaskRun() {
           }, {})
         : null,
       params,
-      resources,
       serviceAccount,
       taskName: taskRef,
       taskRunName: taskRunName || undefined,
@@ -634,66 +579,6 @@ function CreateTaskRun() {
             onAdd={() => handleAddLabel('nodeSelector')}
           />
         </FormGroup>
-        {resourceSpecs?.inputs?.length > 0 && (
-          <FormGroup legendText="Input PipelineResources">
-            {resourceSpecs.inputs.map(spec => (
-              <PipelineResourcesDropdown
-                id={`create-taskrun--pr-dropdown-${spec.name}`}
-                key={`create-taskrun--pr-dropdown-${spec.name}`}
-                titleText={spec.name}
-                helperText={spec.type}
-                type={spec.type}
-                namespace={namespace}
-                invalid={validationError && !resources.inputs[spec.name]}
-                invalidText={intl.formatMessage({
-                  id: 'dashboard.createRun.invalidPipelineResources',
-                  defaultMessage: 'PipelineResources cannot be empty'
-                })}
-                selectedItem={(() => {
-                  let value = '';
-                  if (resources.inputs !== undefined) {
-                    value = resources.inputs[spec.name];
-                  }
-                  return value ? { id: value, text: value } : '';
-                })()}
-                onChange={({ selectedItem }) => {
-                  const { text } = selectedItem || {};
-                  handleResourceChange('inputs', spec.name, text);
-                }}
-              />
-            ))}
-          </FormGroup>
-        )}
-        {resourceSpecs?.outputs?.length > 0 && (
-          <FormGroup legendText="Output PipelineResources">
-            {resourceSpecs.outputs.map(spec => (
-              <PipelineResourcesDropdown
-                id={`create-taskrun--pr-dropdown-${spec.name}`}
-                key={`create-taskrun--pr-dropdown-${spec.name}`}
-                titleText={spec.name}
-                helperText={spec.type}
-                type={spec.type}
-                namespace={namespace}
-                invalid={validationError && !resources.outputs[spec.name]}
-                invalidText={intl.formatMessage({
-                  id: 'dashboard.createRun.invalidPipelineResources',
-                  defaultMessage: 'PipelineResources cannot be empty'
-                })}
-                selectedItem={(() => {
-                  let value = '';
-                  if (resources.outputs !== undefined) {
-                    value = resources.outputs[spec.name];
-                  }
-                  return value ? { id: value, text: value } : '';
-                })()}
-                onChange={({ selectedItem }) => {
-                  const { text } = selectedItem || {};
-                  handleResourceChange('outputs', spec.name, text);
-                }}
-              />
-            ))}
-          </FormGroup>
-        )}
         {paramSpecs && paramSpecs.length !== 0 && (
           <FormGroup legendText="Params">
             {paramSpecs.map(paramSpec => (

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -44,7 +44,6 @@ import {
   ClusterTasks,
   ClusterTriggerBinding,
   ClusterTriggerBindings,
-  CreatePipelineResource,
   CreatePipelineRun,
   CreateTaskRun,
   CustomResourceDefinition,
@@ -57,8 +56,6 @@ import {
   Interceptors,
   NamespacedRoute,
   NotFound,
-  PipelineResource,
-  PipelineResources,
   PipelineRun,
   PipelineRuns,
   Pipelines,
@@ -295,35 +292,6 @@ export function App({ lang }) {
                         <NamespacedRoute isResourceDetails>
                           <PipelineRun />
                         </NamespacedRoute>
-                      </CompatRoute>
-                      <CompatRoute path={paths.pipelineResources.all()} exact>
-                        <NamespacedRoute>
-                          <PipelineResources />
-                        </NamespacedRoute>
-                      </CompatRoute>
-                      <CompatRoute
-                        path={paths.pipelineResources.byNamespace()}
-                        exact
-                      >
-                        <NamespacedRoute>
-                          <PipelineResources />
-                        </NamespacedRoute>
-                      </CompatRoute>
-                      <CompatRoute
-                        path={paths.pipelineResources.byName()}
-                        exact
-                      >
-                        <NamespacedRoute isResourceDetails>
-                          <PipelineResource />
-                        </NamespacedRoute>
-                      </CompatRoute>
-                      <CompatRoute
-                        path={paths.pipelineResources.create()}
-                        exact
-                      >
-                        <ReadWriteRoute>
-                          <CreatePipelineResource />
-                        </ReadWriteRoute>
                       </CompatRoute>
                       <CompatRoute path={paths.tasks.all()} exact>
                         <NamespacedRoute>

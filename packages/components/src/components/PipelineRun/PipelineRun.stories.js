@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -29,8 +29,7 @@ const task = {
         args: ['-c', 'echo storybook;'],
         command: ['/bin/bash'],
         image: 'ubuntu',
-        name: 'build',
-        resources: {}
+        name: 'build'
       }
     ]
   }
@@ -41,10 +40,6 @@ function getTaskRun({ exitCode = 0, name }) {
     metadata: { labels: {}, name, namespace: 'default', uid: name },
     spec: {
       params: {},
-      resources: {
-        inputs: {},
-        outputs: {}
-      },
       serviceAccountName: 'default',
       taskRef: { kind: 'Task', name: 'task1' },
       timeout: '24h0m0s'

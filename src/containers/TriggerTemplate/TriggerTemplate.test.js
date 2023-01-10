@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -25,38 +25,22 @@ const intl = createIntl({
   defaultLocale: 'en'
 });
 
-const resourceTemplate1NameInfo = 'git-source';
+const resourceTemplate1NameInfo = 'git-clone';
 const resourceTemplate2NameInfo = 'simple-pipeline-run';
 const namespace = 'tekton-pipelines';
 const triggerTemplateName = 'pipeline-template';
 const resourceTemplate1Details = {
-  apiVersion: 'tekton.dev/v1alpha1',
-  kind: 'PipelineResource',
+  apiVersion: 'tekton.dev/v1',
+  kind: 'Task',
   metadata: {
-    name: 'git-source'
+    name: 'git-clone'
   },
-  spec: {
-    params: [
-      {
-        name: 'revision',
-        value: '$(params.gitrevision)'
-      },
-      {
-        name: 'url',
-        value: '$(params.gitrepositoryurl)'
-      }
-    ],
-    type: 'git'
-  }
+  spec: {}
 };
 const fakeTriggerTemplate = {
   apiVersion: 'triggers.tekton.dev/v1alpha1',
   kind: 'TriggerTemplate',
   metadata: {
-    annotations: {
-      'kubectl.kubernetes.io/last-applied-configuration':
-        '{"apiVersion":"tekton.dev/v1alpha1","kind":"TriggerTemplate","metadata":{"annotations":{},"name":"pipeline-template","namespace":"tekton-pipelines"},"spec":{"params":[{"default":"master","description":"The git revision","name":"gitrevision"},{"description":"The git repository url","name":"gitrepositoryurl"},{"default":"This is the default message","description":"The message to print","name":"message"},{"description":"The Content-Type of the event","name":"contenttype"}],"resourcetemplates":[{"apiVersion":"tekton.dev/v1alpha1","kind":"PipelineResource","metadata":{"name":"git-source"},"spec":{"params":[{"name":"revision","value":"$(params.gitrevision)"},{"name":"url","value":"$(params.gitrepositoryurl)"}],"type":"git"}},{"apiVersion":"tekton.dev/v1alpha1","kind":"PipelineRun","metadata":{"generateName":"simple-pipeline-run"},"spec":{"params":[{"name":"message","value":"$(params.message)"},{"name":"contenttype","value":"$(params.contenttype)"}],"pipelineRef":{"name":"simple-pipeline"},"resources":[{"name":"git-source","resourceRef":{"name":"git-source"}}]}}]}}\n'
-    },
     creationTimestamp: '2019-11-21T15:19:18Z',
     generation: 1,
     name: triggerTemplateName,
@@ -82,18 +66,7 @@ const fakeTriggerTemplate = {
       { description: 'The Content-Type of the event', name: 'contenttype' }
     ],
     resourcetemplates: [
-      {
-        apiVersion: 'tekton.dev/v1alpha1',
-        kind: 'PipelineResource',
-        metadata: { name: 'git-source' },
-        spec: {
-          params: [
-            { name: 'revision', value: '$(params.gitrevision)' },
-            { name: 'url', value: '$(params.gitrepositoryurl)' }
-          ],
-          type: 'git'
-        }
-      },
+      resourceTemplate1Details,
       {
         apiVersion: 'tekton.dev/v1alpha1',
         kind: 'PipelineRun',
@@ -103,10 +76,7 @@ const fakeTriggerTemplate = {
             { name: 'message', value: '$(params.message)' },
             { name: 'contenttype', value: '$(params.contenttype)' }
           ],
-          pipelineRef: { name: 'simple-pipeline' },
-          resources: [
-            { name: 'git-source', resourceRef: { name: 'git-source' } }
-          ]
+          pipelineRef: { name: 'simple-pipeline' }
         }
       }
     ]
@@ -117,10 +87,6 @@ const fakeTriggerTemplateWithLabels = {
   apiVersion: 'triggers.tekton.dev/v1alpha1',
   kind: 'TriggerTemplate',
   metadata: {
-    annotations: {
-      'kubectl.kubernetes.io/last-applied-configuration':
-        '{"apiVersion":"tekton.dev/v1alpha1","kind":"TriggerTemplate","metadata":{"annotations":{},"name":"pipeline-template","namespace":"tekton-pipelines"},"spec":{"params":[{"default":"master","description":"The git revision","name":"gitrevision"},{"description":"The git repository url","name":"gitrepositoryurl"},{"default":"This is the default message","description":"The message to print","name":"message"},{"description":"The Content-Type of the event","name":"contenttype"}],"resourcetemplates":[{"apiVersion":"tekton.dev/v1alpha1","kind":"PipelineResource","metadata":{"name":"git-source"},"spec":{"params":[{"name":"revision","value":"$(params.gitrevision)"},{"name":"url","value":"$(params.gitrepositoryurl)"}],"type":"git"}},{"apiVersion":"tekton.dev/v1alpha1","kind":"PipelineRun","metadata":{"generateName":"simple-pipeline-run"},"spec":{"params":[{"name":"message","value":"$(params.message)"},{"name":"contenttype","value":"$(params.contenttype)"}],"pipelineRef":{"name":"simple-pipeline"},"resources":[{"name":"git-source","resourceRef":{"name":"git-source"}}]}}]}}\n'
-    },
     labels: {
       mylabel: 'foo',
       myotherlabel: 'bar'
@@ -150,18 +116,7 @@ const fakeTriggerTemplateWithLabels = {
       { description: 'The Content-Type of the event', name: 'contenttype' }
     ],
     resourcetemplates: [
-      {
-        apiVersion: 'tekton.dev/v1alpha1',
-        kind: 'PipelineResource',
-        metadata: { name: 'git-source' },
-        spec: {
-          params: [
-            { name: 'revision', value: '$(params.gitrevision)' },
-            { name: 'url', value: '$(params.gitrepositoryurl)' }
-          ],
-          type: 'git'
-        }
-      },
+      resourceTemplate1Details,
       {
         apiVersion: 'tekton.dev/v1alpha1',
         kind: 'PipelineRun',
@@ -171,10 +126,7 @@ const fakeTriggerTemplateWithLabels = {
             { name: 'message', value: '$(params.message)' },
             { name: 'contenttype', value: '$(params.contenttype)' }
           ],
-          pipelineRef: { name: 'simple-pipeline' },
-          resources: [
-            { name: 'git-source', resourceRef: { name: 'git-source' } }
-          ]
+          pipelineRef: { name: 'simple-pipeline' }
         }
       }
     ]
@@ -255,7 +207,6 @@ it('TriggerTemplateContainer contains YAML tab with accurate information', async
   await waitFor(() => getByText('creationTimestamp:'));
   await waitFor(() => getByText('selfLink:'));
   await waitFor(() => getByText('pipelineRef:'));
-  await waitFor(() => getByText('resourceRef:'));
   await waitFor(() => getByText('generation:'));
   await waitFor(() => getByText('resourceVersion:'));
 });

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -32,12 +32,10 @@ export { default as LogsToolbar } from './LogsToolbar';
 export { default as Modal } from './Modal';
 export { default as PageErrorBoundary } from './PageErrorBoundary';
 export { default as Param } from './Param';
-export { default as PipelineResources } from './PipelineResources';
 export { default as PipelineRun } from './PipelineRun';
 export { default as PipelineRuns } from './PipelineRuns';
 export { default as Portal } from './Portal';
 export { default as ResourceDetails } from './ResourceDetails';
-export { default as ResourceTable } from './ResourceTable';
 export { default as RunHeader } from './RunHeader';
 export { default as Spinner } from './Spinner';
 export { default as StatusFilterDropdown } from './StatusFilterDropdown';

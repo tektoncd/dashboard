@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -133,15 +133,7 @@ export const Base = () => (
           pipelineRef: {
             name: 'output-pipeline'
           },
-          serviceAccountName: 'default',
-          resources: [
-            {
-              name: 'source-repo',
-              resourceRef: {
-                name: 'skaffold-git'
-              }
-            }
-          ]
+          serviceAccountName: 'default'
         }
       }
     ]}
@@ -209,15 +201,7 @@ export const NoPipelineLink = () => (
           uid: '905c1ab0-203d-49ce-ad8d-4553e5d06bf0'
         },
         spec: {
-          serviceAccountName: 'default',
-          resources: [
-            {
-              name: 'source-repo',
-              resourceRef: {
-                name: 'skaffold-git'
-              }
-            }
-          ]
+          serviceAccountName: 'default'
         }
       }
     ]}
@@ -267,15 +251,7 @@ export const BatchActions = () => (
           uid: '77e0f4a3-40e5-46f1-84cc-ab7aa93c382c'
         },
         spec: {
-          serviceAccountName: 'default',
-          resources: [
-            {
-              name: 'source-repo',
-              resourceRef: {
-                name: 'skaffold-git'
-              }
-            }
-          ]
+          serviceAccountName: 'default'
         }
       }
     ]}

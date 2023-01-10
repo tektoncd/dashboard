@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -19,7 +19,6 @@ import { renderWithRouter } from '../../utils/test';
 import CreatePipelineRun from './CreatePipelineRun';
 import * as API from '../../api';
 import * as APIUtils from '../../api/utils';
-import * as PipelineResourcesAPI from '../../api/pipelineResources';
 import * as PipelineRunsAPI from '../../api/pipelineRuns';
 import * as PipelinesAPI from '../../api/pipelines';
 import * as ServiceAccountsAPI from '../../api/serviceAccounts';
@@ -32,10 +31,6 @@ const pipelines = [
       uid: 'id-pipeline-1'
     },
     spec: {
-      resources: [
-        { name: 'resource-1', type: 'type-1' },
-        { name: 'resource-2', type: 'type-2' }
-      ],
       params: [
         {
           name: 'param-1',
@@ -72,16 +67,6 @@ const serviceAccount = {
   }
 };
 
-const pipelineResource1 = {
-  metadata: { name: 'pipeline-resource-1' },
-  spec: { type: 'type-1' }
-};
-
-const pipelineResource2 = {
-  metadata: { name: 'pipeline-resource-2' },
-  spec: { type: 'type-2' }
-};
-
 describe('CreatePipelineRun', () => {
   beforeEach(() => {
     jest
@@ -90,11 +75,6 @@ describe('CreatePipelineRun', () => {
     jest
       .spyOn(PipelinesAPI, 'usePipelines')
       .mockImplementation(() => ({ data: pipelines }));
-    jest
-      .spyOn(PipelineResourcesAPI, 'usePipelineResources')
-      .mockImplementation(() => ({
-        data: [pipelineResource1, pipelineResource2]
-      }));
     jest
       .spyOn(PipelineRunsAPI, 'usePipelineRuns')
       .mockImplementation(() => ({ data: [] }));

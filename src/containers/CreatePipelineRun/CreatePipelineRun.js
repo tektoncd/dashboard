@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -35,7 +35,6 @@ import { KeyValueList } from '@tektoncd/dashboard-components';
 import { useIntl } from 'react-intl';
 import {
   NamespacesDropdown,
-  PipelineResourcesDropdown,
   PipelinesDropdown,
   ServiceAccountsDropdown
 } from '..';
@@ -61,8 +60,6 @@ const initialState = {
   pipelineError: false,
   pipelineRef: '',
   pipelineRunName: '',
-  resources: {},
-  resourceSpecs: [],
   serviceAccount: '',
   submitError: '',
   timeoutsFinally: '',
@@ -81,17 +78,6 @@ const initialParamsState = paramSpecs => {
     [param.name]: param.default || ''
   });
   return paramSpecs.reduce(paramsReducer, {});
-};
-
-const initialResourcesState = resourceSpecs => {
-  if (!resourceSpecs) {
-    return {};
-  }
-  const resourcesReducer = (acc, resource) => ({
-    ...acc,
-    [resource.name]: ''
-  });
-  return resourceSpecs.reduce(resourcesReducer, {});
 };
 
 function CreatePipelineRun() {
@@ -130,7 +116,6 @@ function CreatePipelineRun() {
       pipelinePendingStatus,
       pipelineRef,
       pipelineRunName,
-      resources,
       serviceAccount,
       submitError,
       timeoutsFinally,
@@ -144,8 +129,7 @@ function CreatePipelineRun() {
     ...initialState,
     namespace: getNamespace(),
     pipelineRef: getPipelineName(),
-    params: initialParamsState(null),
-    resources: initialResourcesState(null)
+    params: initialParamsState(null)
   });
 
   const { data: pipeline, error: pipelineError } = usePipeline(
@@ -154,9 +138,8 @@ function CreatePipelineRun() {
   );
 
   let paramSpecs;
-  let resourceSpecs;
   if (pipeline?.spec) {
-    ({ resources: resourceSpecs, params: paramSpecs } = pipeline.spec);
+    ({ params: paramSpecs } = pipeline.spec);
   }
 
   useTitleSync({
@@ -181,15 +164,9 @@ function CreatePipelineRun() {
   }
 
   function checkFormValidation() {
-    // Namespace, PipelineRef, Resources, and Params must all have values
+    // Namespace, PipelineRef, and Params must all have values
     const validNamespace = !!namespace;
     const validPipelineRef = !!pipelineRef;
-    const validResources =
-      !resources ||
-      Object.keys(resources).reduce(
-        (acc, name) => acc && !!resources[name],
-        true
-      );
     const paramSpecMap = keyBy(paramSpecs, 'name');
     const validParams =
       !params ||
@@ -247,7 +224,6 @@ function CreatePipelineRun() {
     return (
       validNamespace &&
       validPipelineRef &&
-      validResources &&
       validParams &&
       validLabels &&
       validNodeSelector &&
@@ -381,27 +357,16 @@ function CreatePipelineRun() {
         return {
           ...state,
           pipelineRef: text,
-          resources: initialResourcesState(resourceSpecs),
           params: initialParamsState(paramSpecs)
         };
       });
       return;
     }
-    // Reset pipelineresources and params when no Pipeline is selected
+    // Reset params when no Pipeline is selected
     setState(state => ({
       ...state,
       ...initialState,
       namespace: state.namespace
-    }));
-  }
-
-  function handleResourceChange(key, value) {
-    setState(state => ({
-      ...state,
-      resources: {
-        ...state.resources,
-        [key]: value
-      }
     }));
   }
 
@@ -424,7 +389,6 @@ function CreatePipelineRun() {
       namespace,
       pipelineName: pipelineRef,
       pipelineRunName: pipelineRunName || undefined,
-      resources,
       params,
       pipelinePendingStatus,
       serviceAccount,
@@ -478,7 +442,6 @@ function CreatePipelineRun() {
       pipelineRunName: pipelineRunName || undefined,
       params,
       pipelinePendingStatus,
-      resources,
       serviceAccount,
       timeoutsFinally,
       timeoutsPipeline,
@@ -647,33 +610,6 @@ function CreatePipelineRun() {
             onAdd={() => handleAddLabel('nodeSelector')}
           />
         </FormGroup>
-        {resourceSpecs && resourceSpecs.length !== 0 && (
-          <FormGroup legendText="PipelineResources">
-            {resourceSpecs.map(resourceSpec => (
-              <PipelineResourcesDropdown
-                id={`create-pipelinerun--pr-dropdown-${resourceSpec.name}`}
-                key={`create-pipelinerun--pr-dropdown-${resourceSpec.name}`}
-                titleText={resourceSpec.name}
-                helperText={resourceSpec.type}
-                type={resourceSpec.type}
-                namespace={namespace}
-                invalid={validationError && !resources[resourceSpec.name]}
-                invalidText={intl.formatMessage({
-                  id: 'dashboard.createRun.invalidPipelineResources',
-                  defaultMessage: 'PipelineResources cannot be empty'
-                })}
-                selectedItem={(() => {
-                  const value = resources[resourceSpec.name];
-                  return value ? { id: value, text: value } : '';
-                })()}
-                onChange={({ selectedItem }) => {
-                  const { text } = selectedItem || {};
-                  handleResourceChange(resourceSpec.name, text);
-                }}
-              />
-            ))}
-          </FormGroup>
-        )}
         {paramSpecs && paramSpecs.length !== 0 && (
           <FormGroup legendText="Params">
             {paramSpecs.map(paramSpec => (

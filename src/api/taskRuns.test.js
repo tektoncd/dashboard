@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -112,31 +112,6 @@ it('createTaskRun handles parameters', () => {
     })
   );
   return API.createTaskRun({ taskName, params });
-});
-
-it('createTaskRun handles resources', () => {
-  const taskName = 'fake-task';
-  const resources = {
-    inputs: { 'fake-task-input': 'fake-input-resource' },
-    outputs: { 'fake-task-output': 'fake-output-resource' }
-  };
-  server.use(
-    rest.post(/\/taskruns\//, async (req, res, ctx) => {
-      const {
-        spec: { resources: sentResources }
-      } = await req.json();
-      expect(sentResources.inputs).toContainEqual({
-        name: 'fake-task-input',
-        resourceRef: { name: 'fake-input-resource' }
-      });
-      expect(sentResources.outputs).toContainEqual({
-        name: 'fake-task-output',
-        resourceRef: { name: 'fake-output-resource' }
-      });
-      return res(ctx.status(201), ctx.json({}));
-    })
-  );
-  return API.createTaskRun({ taskName, resources });
 });
 
 it('createTaskRun handles serviceAccount', () => {

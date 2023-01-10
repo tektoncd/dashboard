@@ -13,6 +13,7 @@ limitations under the License.
 
 import { useQuery } from '@tanstack/react-query';
 import { labels as labelConstants } from '@tektoncd/dashboard-utils';
+import deepClone from 'lodash.clonedeep';
 
 import { useClusterTask } from './clusterTasks';
 import { useTask } from './tasks';
@@ -23,10 +24,13 @@ import {
   getQueryParams,
   getResourcesAPI,
   getTektonAPI,
+  getTektonPipelinesAPIVersion,
   isLogTimestampsEnabled,
   useCollection,
   useResource
 } from './utils';
+
+import importResourcesPipelineRunTemplate from './resources/import-resources-pipelinerun.yaml';
 
 export { NamespaceContext, useSelectedNamespace } from './utils';
 export * from './clusterInterceptors';
@@ -35,7 +39,6 @@ export * from './clusterTriggerBindings';
 export * from './eventListeners';
 export * from './extensions';
 export * from './interceptors';
-export * from './pipelineResources';
 export * from './pipelineRuns';
 export * from './pipelines';
 export * from './runs';
@@ -217,153 +220,31 @@ export function importResources({
   revision,
   serviceAccount
 }) {
-  const taskSpec = {
-    resources: {
-      inputs: [
-        {
-          name: 'git-source',
-          type: 'git'
-        }
-      ]
-    },
-    params: [
-      {
-        name: 'path',
-        description: 'The path from which resources are to be imported',
-        default: '.',
-        type: 'string'
-      },
-      {
-        name: 'target-namespace',
-        description:
-          'The namespace in which to create the resources being imported',
-        default: 'tekton-pipelines',
-        type: 'string'
-      }
-    ],
-    steps: [
-      {
-        name: 'import',
-        image: 'lachlanevenson/k8s-kubectl:latest',
-        command: ['kubectl'],
-        args: [
-          method,
-          '-f',
-          '$(resources.inputs.git-source.path)/$(params.path)',
-          '-n',
-          '$(params.target-namespace)'
-        ]
-      }
-    ]
-  };
+  const pipelineRun = deepClone(importResourcesPipelineRunTemplate);
 
-  const pipelineSpec = {
-    resources: [
-      {
-        name: 'git-source',
-        type: 'git'
-      }
-    ],
-    params: [
-      {
-        name: 'path',
-        description: 'The path from which resources are to be imported',
-        default: '.',
-        type: 'string'
-      },
-      {
-        name: 'target-namespace',
-        description:
-          'The namespace in which to create the resources being imported',
-        default: 'tekton-pipelines',
-        type: 'string'
-      }
-    ],
-    tasks: [
-      {
-        name: 'import-resources',
-        taskSpec,
-        params: [
-          {
-            name: 'path',
-            value: '$(params.path)'
-          },
-          {
-            name: 'target-namespace',
-            value: '$(params.target-namespace)'
-          }
-        ],
-        resources: {
-          inputs: [
-            {
-              name: 'git-source',
-              resource: 'git-source'
-            }
-          ]
-        }
-      }
-    ]
+  pipelineRun.apiVersion = `tekton.dev/${getTektonPipelinesAPIVersion()}`;
+  pipelineRun.metadata.name = `import-resources-${Date.now()}`;
+  pipelineRun.metadata.labels = {
+    ...labels,
+    [labelConstants.DASHBOARD_IMPORT]: 'true'
   };
-
-  const resourceSpec = {
-    type: 'git',
-    params: [
-      {
-        name: 'url',
-        value: repositoryURL
-      },
-      revision
-        ? {
-            name: 'revision',
-            value: revision
-          }
-        : null
-    ].filter(Boolean)
-  };
-
-  const pipelineRunSpec = {
-    pipelineSpec,
-    resources: [
-      {
-        name: 'git-source',
-        resourceSpec
-      }
-    ],
-    params: [
-      {
-        name: 'path',
-        value: path
-      },
-      {
-        name: 'target-namespace',
-        value: namespace
-      }
-    ]
-  };
-
-  const payload = {
-    apiVersion: 'tekton.dev/v1beta1',
-    kind: 'PipelineRun',
-    metadata: {
-      name: `import-resources-${Date.now()}`,
-      labels: {
-        ...labels,
-        app: 'tekton-app',
-        [labelConstants.DASHBOARD_IMPORT]: 'true'
-      }
-    },
-    spec: pipelineRunSpec
-  };
+  pipelineRun.spec.params = [
+    { name: 'method', value: method },
+    { name: 'path', value: path },
+    { name: 'repositoryURL', value: repositoryURL },
+    { name: 'revision', value: revision },
+    { name: 'target-namespace', value: namespace }
+  ];
 
   if (serviceAccount) {
-    payload.spec.serviceAccountName = serviceAccount;
+    pipelineRun.spec.serviceAccountName = serviceAccount;
   }
 
   const uri = getTektonAPI('pipelineruns', {
     namespace: importerNamespace,
-    version: 'v1beta1'
+    version: getTektonPipelinesAPIVersion()
   });
-  return post(uri, payload).then(({ body }) => body);
+  return post(uri, pipelineRun).then(({ body }) => body);
 }
 
 export function getAPIResource({ group, version, type }) {

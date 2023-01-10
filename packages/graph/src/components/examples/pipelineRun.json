@@ -21,26 +21,6 @@
       "name": "demo-pipeline"
     },
     "podTemplate": {},
-    "resources": [
-      {
-        "name": "source-repo",
-        "resourceRef": {
-          "name": "skaffold-git"
-        }
-      },
-      {
-        "name": "web-image",
-        "resourceRef": {
-          "name": "skaffold-image-leeroy-web"
-        }
-      },
-      {
-        "name": "app-image",
-        "resourceRef": {
-          "name": "skaffold-image-leeroy-app"
-        }
-      }
-    ],
     "serviceAccountName": "default",
     "timeout": "1h0m0s"
   },
