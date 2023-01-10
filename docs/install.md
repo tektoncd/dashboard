@@ -107,7 +107,7 @@ Assuming `tekton-pipelines` is the install namespace for the Dashboard, run the 
 kubectl --namespace tekton-pipelines port-forward svc/tekton-dashboard 9097:9097
 ```
 
-Browse http://localhost:9097 to access your Dashboard.
+Browse [http://localhost:9097](http://localhost:9097) to access your Dashboard.
 
 ### Using an Ingress rule
 
