@@ -55,7 +55,7 @@ the dashboard repo, a terminal window and a text editor.
 
 1. Watch logs of dashboard-release.
 
-1. Once the pipeline run is complete, check its results:
+1. Once the PipelineRun is complete, check its results:
 
     ```bash
     tkn --context dogfooding pr describe <pipeline-run-name>

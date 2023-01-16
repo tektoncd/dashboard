@@ -19,7 +19,7 @@ function preserveIndentation(input) {
 }
 
 const namespace = 'tekton-dashboard-e2e';
-describe('Create Pipeline Run', () => {
+describe('Create PipelineRun', () => {
   before(() => {
     cy.exec('kubectl version --client');
     cy.exec(`kubectl create namespace ${namespace} || true`);
