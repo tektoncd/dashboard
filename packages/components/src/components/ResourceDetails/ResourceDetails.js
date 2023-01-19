@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2022 The Tekton Authors
+Copyright 2020-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -83,8 +83,8 @@ const ResourceDetails = ({
           })}
         >
           <div className="tkn--details">
-            <div className="tkn--resourcedetails-metadata">
-              <p>
+            <ul className="tkn--resourcedetails-metadata">
+              <li>
                 <span>
                   {intl.formatMessage({
                     id: 'dashboard.metadata.dateCreated',
@@ -95,8 +95,8 @@ const ResourceDetails = ({
                   date={resource.metadata.creationTimestamp}
                   relative
                 />
-              </p>
-              <p>
+              </li>
+              <li>
                 <span>
                   {intl.formatMessage({
                     id: 'dashboard.metadata.labels',
@@ -113,9 +113,9 @@ const ResourceDetails = ({
                         {label}
                       </Tag>
                     ))}
-              </p>
+              </li>
               {resource.metadata.namespace && (
-                <p>
+                <li>
                   <span>
                     {intl.formatMessage({
                       id: 'dashboard.metadata.namespace',
@@ -123,10 +123,10 @@ const ResourceDetails = ({
                     })}
                   </span>
                   {resource.metadata.namespace}
-                </p>
+                </li>
               )}
               {resource.spec?.description && (
-                <p>
+                <li>
                   <span>
                     {intl.formatMessage({
                       id: 'dashboard.resourceDetails.description',
@@ -134,10 +134,10 @@ const ResourceDetails = ({
                     })}
                   </span>
                   {resource.spec.description}
-                </p>
+                </li>
               )}
               {additionalMetadata}
-            </div>
+            </ul>
             {children}
           </div>
         </Tab>

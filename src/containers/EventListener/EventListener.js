@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -64,7 +64,7 @@ export function EventListenerContainer() {
     return (
       <>
         {serviceAccountName && (
-          <p>
+          <li>
             <span>
               {intl.formatMessage({
                 id: 'dashboard.eventListener.serviceAccount',
@@ -72,10 +72,10 @@ export function EventListenerContainer() {
               })}
             </span>
             {serviceAccountName}
-          </p>
+          </li>
         )}
         {serviceType && (
-          <p>
+          <li>
             <span>
               {intl.formatMessage({
                 id: 'dashboard.eventListener.serviceType',
@@ -83,10 +83,10 @@ export function EventListenerContainer() {
               })}
             </span>
             {serviceType}
-          </p>
+          </li>
         )}
         {namespaceSelector?.matchNames?.length ? (
-          <p>
+          <li>
             <span>
               {intl.formatMessage({
                 id: 'dashboard.eventListener.namespaceSelector',
@@ -94,7 +94,7 @@ export function EventListenerContainer() {
               })}
             </span>
             {namespaceSelector.matchNames.join(', ')}
-          </p>
+          </li>
         ) : null}
       </>
     );
