@@ -225,11 +225,9 @@ export function App({ lang }) {
     <NamespaceContext.Provider value={namespaceContext}>
       <IntlProvider
         defaultLocale={defaultLocale}
-        locale={messages[lang] ? lang : defaultLocale}
-        messages={messages[lang]}
+        locale={messages?.[lang] ? lang : defaultLocale}
+        messages={messages?.[lang]}
       >
-        <ConfigError loadingConfigError={loadingConfigError} />
-
         {showLoadingState && <LoadingShell />}
         {!showLoadingState && (
           <Router>
@@ -250,6 +248,7 @@ export function App({ lang }) {
                   aria-labelledby="main-content-header"
                   tabIndex="0"
                 >
+                  <ConfigError loadingConfigError={loadingConfigError} />
                   <PageErrorBoundary>
                     <Switch>
                       <CompatRoute path="/" exact>
