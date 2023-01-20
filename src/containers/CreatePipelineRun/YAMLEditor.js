@@ -1,5 +1,5 @@
 /*
-Copyright 2022 The Tekton Authors
+Copyright 2022-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -191,24 +191,21 @@ export function CreateYAMLEditor({
           />
         )}
         <FormGroup legendText="" className="tkn--codemirror--form">
-          <>
-            {loading && (
-              <div className="tkn--data-loading-overlay">
-                <Loading description={loadingMessage} withOverlay={false} />
-                <span className="tkn--data-loading-text">{loadingMessage}</span>
-              </div>
-            )}
-            {!loading && (
-              <CodeMirror
-                value={code}
-                height="800px"
-                theme="dark"
-                extensions={[StreamLanguage.define(codeMirrorYAML)]}
-                onChange={onChange}
-                editable={!loading}
-              />
-            )}
-          </>
+          {loading ? (
+            <div className="tkn--data-loading-overlay">
+              <Loading description={loadingMessage} withOverlay={false} />
+              <span className="tkn--data-loading-text">{loadingMessage}</span>
+            </div>
+          ) : (
+            <CodeMirror
+              value={code}
+              height="800px"
+              theme="dark"
+              extensions={[StreamLanguage.define(codeMirrorYAML)]}
+              onChange={onChange}
+              editable={!loading}
+            />
+          )}
         </FormGroup>
         <Button
           iconDescription={intl.formatMessage({

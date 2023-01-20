@@ -175,7 +175,7 @@ describe('CreatePipelineRun yaml mode', () => {
     jest.spyOn(window.history, 'pushState');
   });
 
-  it('renders yaml mode with namespace', async () => {
+  it('renders with namespace', async () => {
     jest
       .spyOn(PipelineRunsAPI, 'createPipelineRunRaw')
       .mockImplementation(() => Promise.resolve({ data: {} }));
@@ -194,7 +194,7 @@ describe('CreatePipelineRun yaml mode', () => {
     expect(actual.trim()).toEqual(expectedPipelineRunOneLine);
   });
 
-  it('handle submit. yaml mode with pipelinerun and namespace', async () => {
+  it('handle submit with pipelinerun and namespace', async () => {
     jest
       .spyOn(PipelineRunsAPI, 'createPipelineRunRaw')
       .mockImplementation(() => Promise.resolve({ data: {} }));
