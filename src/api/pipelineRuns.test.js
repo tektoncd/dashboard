@@ -329,25 +329,26 @@ it('startPipelineRun', () => {
   );
 });
 
-it('rerun. generate new pipeline run with minimum possible fields', () => {
-  const pipelineRun = {
-    apiVersion: 'tekton.dev/v1beta1',
-    kind: 'PipelineRun',
-    metadata: {
-      name: 'test',
-      namespace: 'test-namespace'
-    },
-    spec: {
-      pipelineRef: {
-        name: 'simple'
+describe('generateNewPipelineRunPayload', () => {
+  it('rerun with minimum possible fields', () => {
+    const pipelineRun = {
+      apiVersion: 'tekton.dev/v1beta1',
+      kind: 'PipelineRun',
+      metadata: {
+        name: 'test',
+        namespace: 'test-namespace'
+      },
+      spec: {
+        pipelineRef: {
+          name: 'simple'
+        }
       }
-    }
-  };
-  const { namespace, payload } = generateNewPipelineRunPayload({
-    pipelineRun,
-    rerun: true
-  });
-  const expected = `apiVersion: tekton.dev/v1beta1
+    };
+    const { namespace, payload } = generateNewPipelineRunPayload({
+      pipelineRun,
+      rerun: true
+    });
+    const expected = `apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
   annotations: {}
@@ -359,43 +360,43 @@ spec:
   pipelineRef:
     name: simple
 `;
-  expect(namespace).toEqual('test-namespace');
-  expect(yaml.dump(payload)).toEqual(expected);
-});
-
-it('rerun. generate new pipeline run with all processed fields', () => {
-  const pipelineRun = {
-    apiVersion: 'tekton.dev/v1beta1',
-    kind: 'PipelineRun',
-    metadata: {
-      name: 'test',
-      namespace: 'test-namespace',
-      annotations: {
-        keya: 'valuea',
-        'kubectl.kubernetes.io/last-applied-configuration':
-          '{"apiVersion": "tekton.dev/v1beta1", "keya": "valuea"}'
-      },
-      labels: {
-        key1: 'valuel',
-        key2: 'value2',
-        'tekton.dev/pipeline': 'foo'
-      },
-      uid: '111-233-33',
-      resourceVersion: 'aaaa'
-    },
-    spec: {
-      pipelineRef: {
-        name: 'simple'
-      },
-      params: [{ name: 'param-1' }, { name: 'param-2' }]
-    },
-    status: { startTime: '0' }
-  };
-  const { namespace, payload } = generateNewPipelineRunPayload({
-    pipelineRun,
-    rerun: true
+    expect(namespace).toEqual('test-namespace');
+    expect(yaml.dump(payload)).toEqual(expected);
   });
-  const expected = `apiVersion: tekton.dev/v1beta1
+
+  it('rerun with all processed fields', () => {
+    const pipelineRun = {
+      apiVersion: 'tekton.dev/v1beta1',
+      kind: 'PipelineRun',
+      metadata: {
+        name: 'test',
+        namespace: 'test-namespace',
+        annotations: {
+          keya: 'valuea',
+          'kubectl.kubernetes.io/last-applied-configuration':
+            '{"apiVersion": "tekton.dev/v1beta1", "keya": "valuea"}'
+        },
+        labels: {
+          key1: 'valuel',
+          key2: 'value2',
+          'tekton.dev/pipeline': 'foo'
+        },
+        uid: '111-233-33',
+        resourceVersion: 'aaaa'
+      },
+      spec: {
+        pipelineRef: {
+          name: 'simple'
+        },
+        params: [{ name: 'param-1' }, { name: 'param-2' }]
+      },
+      status: { startTime: '0' }
+    };
+    const { namespace, payload } = generateNewPipelineRunPayload({
+      pipelineRun,
+      rerun: true
+    });
+    const expected = `apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
   annotations:
@@ -413,29 +414,29 @@ spec:
     - name: param-1
     - name: param-2
 `;
-  expect(namespace).toEqual('test-namespace');
-  expect(yaml.dump(payload)).toEqual(expected);
-});
-
-it('edit. generate new pipeline run with minimum possible fields', () => {
-  const pipelineRun = {
-    apiVersion: 'tekton.dev/v1beta1',
-    kind: 'PipelineRun',
-    metadata: {
-      name: 'test',
-      namespace: 'test-namespace'
-    },
-    spec: {
-      pipelineRef: {
-        name: 'simple'
-      }
-    }
-  };
-  const { namespace, payload } = generateNewPipelineRunPayload({
-    pipelineRun,
-    rerun: false
+    expect(namespace).toEqual('test-namespace');
+    expect(yaml.dump(payload)).toEqual(expected);
   });
-  const expected = `apiVersion: tekton.dev/v1beta1
+
+  it('edit with minimum possible fields', () => {
+    const pipelineRun = {
+      apiVersion: 'tekton.dev/v1beta1',
+      kind: 'PipelineRun',
+      metadata: {
+        name: 'test',
+        namespace: 'test-namespace'
+      },
+      spec: {
+        pipelineRef: {
+          name: 'simple'
+        }
+      }
+    };
+    const { namespace, payload } = generateNewPipelineRunPayload({
+      pipelineRun,
+      rerun: false
+    });
+    const expected = `apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
   annotations: {}
@@ -446,43 +447,44 @@ spec:
   pipelineRef:
     name: simple
 `;
-  expect(namespace).toEqual('test-namespace');
-  expect(yaml.dump(payload)).toEqual(expected);
-});
-it('edit. generate new pipeline run with all processed fields', () => {
-  const pipelineRun = {
-    apiVersion: 'tekton.dev/v1beta1',
-    kind: 'PipelineRun',
-    metadata: {
-      annotations: {
-        keya: 'valuea',
-        'kubectl.kubernetes.io/last-applied-configuration':
-          '{"apiVersion": "tekton.dev/v1beta1", "keya": "valuea"}'
-      },
-      labels: {
-        key1: 'valuel',
-        key2: 'value2',
-        'tekton.dev/pipeline': 'foo',
-        'tekton.dev/run': 'bar'
-      },
-      name: 'test',
-      namespace: 'test-namespace',
-      uid: '111-233-33',
-      resourceVersion: 'aaaa'
-    },
-    spec: {
-      pipelineRef: {
-        name: 'simple'
-      },
-      params: [{ name: 'param-1' }, { name: 'param-2' }]
-    },
-    status: { startTime: '0' }
-  };
-  const { namespace, payload } = generateNewPipelineRunPayload({
-    pipelineRun,
-    rerun: false
+    expect(namespace).toEqual('test-namespace');
+    expect(yaml.dump(payload)).toEqual(expected);
   });
-  const expected = `apiVersion: tekton.dev/v1beta1
+
+  it('edit with all processed fields', () => {
+    const pipelineRun = {
+      apiVersion: 'tekton.dev/v1beta1',
+      kind: 'PipelineRun',
+      metadata: {
+        annotations: {
+          keya: 'valuea',
+          'kubectl.kubernetes.io/last-applied-configuration':
+            '{"apiVersion": "tekton.dev/v1beta1", "keya": "valuea"}'
+        },
+        labels: {
+          key1: 'valuel',
+          key2: 'value2',
+          'tekton.dev/pipeline': 'foo',
+          'tekton.dev/run': 'bar'
+        },
+        name: 'test',
+        namespace: 'test-namespace',
+        uid: '111-233-33',
+        resourceVersion: 'aaaa'
+      },
+      spec: {
+        pipelineRef: {
+          name: 'simple'
+        },
+        params: [{ name: 'param-1' }, { name: 'param-2' }]
+      },
+      status: { startTime: '0' }
+    };
+    const { namespace, payload } = generateNewPipelineRunPayload({
+      pipelineRun,
+      rerun: false
+    });
+    const expected = `apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
   annotations:
@@ -499,6 +501,7 @@ spec:
     - name: param-1
     - name: param-2
 `;
-  expect(namespace).toEqual('test-namespace');
-  expect(yaml.dump(payload)).toEqual(expected);
+    expect(namespace).toEqual('test-namespace');
+    expect(yaml.dump(payload)).toEqual(expected);
+  });
 });

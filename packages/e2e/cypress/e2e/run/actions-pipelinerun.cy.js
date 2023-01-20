@@ -1,5 +1,5 @@
 /*
-Copyright 2022 The Tekton Authors
+Copyright 2022-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-const namespace = 'e2e-actions';
+const namespace = 'tkn-dashboard-e2e-actions';
 describe('Edit and run Pipeline Run', () => {
   before(() => {
     cy.exec('kubectl version --client');
@@ -23,7 +23,6 @@ describe('Edit and run Pipeline Run', () => {
   });
 
   it('should create pipelinerun on edit and run', function () {
-    // given pipeline
     const uniqueNumber = Date.now();
     const pipelineName = `sp-${uniqueNumber}`;
     const pipeline = `apiVersion: tekton.dev/v1beta1
@@ -43,7 +42,6 @@ spec:
               echo "Hello World!"
     `;
     cy.exec(`echo "${pipeline}" | kubectl apply -f -`);
-    // when create first pipeline run
     cy.visit(
       `/#/pipelineruns/create?namespace=${namespace}&pipelineName=${pipelineName}`
     );
@@ -64,7 +62,6 @@ spec:
       { timeout: 15000 }
     ).should('have.length', 1);
 
-    // when edit and run to create second pipeline run
     cy.contains('a', `${pipelineName}-run`).click();
     cy.contains('button', 'Actions').click();
     cy.contains('button', 'Edit and run').click();
@@ -72,7 +69,6 @@ spec:
     cy.contains('button', 'Create').click();
     cy.contains('h1', 'PipelineRuns');
 
-    // then
     cy.get(
       `td:has(.bx--link[title*=${pipelineName}-run]) + td:has(.tkn--status[data-reason=Succeeded])`,
       { timeout: 15000 }
