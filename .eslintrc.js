@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -47,8 +47,9 @@ module.exports = {
     curly: ['error', 'all'],
     'cypress/assertion-before-screenshot': 'warn',
     'default-param-last': 'off',
-    'import/prefer-default-export': 'off',
+    'import/no-cycle': 'off',
     'import/no-extraneous-dependencies': 'off',
+    'import/prefer-default-export': 'off',
     'jsx-a11y/anchor-is-valid': 'off',
     'no-case-declarations': 'off',
     'no-restricted-exports': 'off',
@@ -72,11 +73,11 @@ module.exports = {
     'react/destructuring-assignment': 'off',
     'react/forbid-prop-types': 'off',
     'react/function-component-definition': 'off',
-    'react/no-unstable-nested-components': 'off',
     'react/jsx-curly-newline': 'off',
     'react/jsx-filename-extension': 'off',
     'react/jsx-no-bind': 'off',
     'react/jsx-props-no-spreading': 'off',
+    'react/no-unstable-nested-components': 'off',
     'react/prop-types': 'off',
     'react/state-in-constructor': 'off',
     'sort-imports': [
