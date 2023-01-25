@@ -577,7 +577,6 @@ export /* istanbul ignore next */ function PipelineRunContainer() {
         }
         selectedStepId={currentSelectedStepId}
         selectedTaskId={selectedTaskId}
-        showIO
         taskRuns={taskRuns}
         tasks={tasks.concat(clusterTasks)}
         view={view}

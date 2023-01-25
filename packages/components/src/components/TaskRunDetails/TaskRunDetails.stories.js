@@ -48,7 +48,6 @@ export const Base = () => (
         taskResults: [{ name: 'message', value: 'hello' }]
       }
     }}
-    showIO
   />
 );
 
@@ -81,7 +80,6 @@ export const WithWarning = () => (
         taskResults: [{ name: 'message', value: 'hello' }]
       }
     }}
-    showIO
   />
 );
 
