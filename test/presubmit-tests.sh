@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2018-2022 The Tekton Authors
+# Copyright 2018-2023 The Tekton Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -74,9 +74,9 @@ function get_node() {
   # denotes the Node.js and npm versions
   apt-get update
   apt-get install -y curl
-  curl -O https://nodejs.org/dist/v16.18.1/node-v16.18.1-linux-x64.tar.xz
-  tar xf node-v16.18.1-linux-x64.tar.xz
-  export PATH=$PATH:$(pwd)/node-v16.18.1-linux-x64/bin
+  curl -O https://nodejs.org/dist/v18.13.0/node-v18.13.0-linux-x64.tar.xz
+  tar xf node-v18.13.0-linux-x64.tar.xz
+  export PATH=$PATH:$(pwd)/node-v18.13.0-linux-x64/bin
 }
 
 function node_npm_install() {
