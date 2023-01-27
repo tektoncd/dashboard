@@ -25,6 +25,7 @@ module.exports = {
   ],
   globals: {
     Atomics: 'readonly',
+    globalThis: false,
     SharedArrayBuffer: 'readonly'
   },
   overrides: [

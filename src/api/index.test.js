@@ -20,6 +20,7 @@ import { rest, server } from '../../config_frontend/msw';
 import * as API from '.';
 import * as ClusterTasksAPI from './clusterTasks';
 import * as TasksAPI from './tasks';
+import * as comms from './comms';
 import * as utils from './utils';
 
 it('getCustomResource', () => {
@@ -260,91 +261,115 @@ it('getPodLog with container name', () => {
   });
 });
 
-it('importResources', () => {
-  const mockDateNow = jest
-    .spyOn(Date, 'now')
-    .mockImplementation(() => 'fake-timestamp');
-  const importerNamespace = 'fake-importer-namespace';
-  const method = 'apply';
-  const namespace = 'fake-namespace';
-  const path = 'fake-directory';
-  const repositoryURL = 'https://github.com/test/testing';
-  const serviceAccount = 'fake-serviceAccount';
+describe('importResources', () => {
+  it('basic', () => {
+    const mockDateNow = jest
+      .spyOn(Date, 'now')
+      .mockImplementation(() => 'fake-timestamp');
+    const importerNamespace = 'fake-importer-namespace';
+    const method = 'apply';
+    const namespace = 'fake-namespace';
+    const path = 'fake-directory';
+    const repositoryURL = 'https://github.com/test/testing';
+    const serviceAccount = 'fake-serviceAccount';
 
-  const payload = {
-    importerNamespace,
-    method,
-    namespace,
-    path,
-    repositoryURL,
-    serviceAccount
-  };
+    const payload = {
+      importerNamespace,
+      method,
+      namespace,
+      path,
+      repositoryURL,
+      serviceAccount
+    };
 
-  server.use(
-    rest.post(/\/pipelineruns\//, async (req, res, ctx) =>
-      res(ctx.status(201), ctx.json(await req.json()))
-    )
-  );
-  return API.importResources(payload).then(response => {
-    expect(response.metadata.name).toEqual(`import-resources-fake-timestamp`);
-    expect(response.metadata.labels).toEqual({
-      [labels.DASHBOARD_IMPORT]: 'true'
+    const fakeAPI = 'fake_api';
+    jest.spyOn(utils, 'getTektonAPI').mockImplementation(() => fakeAPI);
+    jest
+      .spyOn(comms, 'post')
+      .mockImplementation((uri, body) => Promise.resolve(body));
+    return API.importResources(payload).then(() => {
+      expect(comms.post).toHaveBeenCalledWith(
+        fakeAPI,
+        expect.objectContaining({
+          metadata: expect.objectContaining({
+            name: 'import-resources-fake-timestamp',
+            labels: {
+              [labels.DASHBOARD_IMPORT]: 'true'
+            }
+          }),
+          spec: expect.objectContaining({
+            params: expect.arrayContaining([
+              { name: 'method', value: method },
+              { name: 'path', value: path },
+              { name: 'repositoryURL', value: repositoryURL },
+              { name: 'revision', value: undefined },
+              { name: 'target-namespace', value: namespace }
+            ]),
+            serviceAccountName: serviceAccount
+          })
+        })
+      );
+      mockDateNow.mockRestore();
     });
-    expect(response.spec.params).toEqual(
-      expect.arrayContaining([
-        { name: 'method', value: method },
-        { name: 'path', value: path },
-        { name: 'repositoryURL', value: repositoryURL },
-        { name: 'revision' },
-        { name: 'target-namespace', value: namespace }
-      ])
-    );
-    expect(response.spec.serviceAccountName).toEqual(serviceAccount);
-    mockDateNow.mockRestore();
   });
-});
 
-it('importResources with revision and no serviceAccount', () => {
-  const mockDateNow = jest
-    .spyOn(Date, 'now')
-    .mockImplementation(() => 'fake-timestamp');
-  const importerNamespace = 'fake-importer-namespace';
-  const method = 'apply';
-  const namespace = 'fake-namespace';
-  const path = 'fake-directory';
-  const repositoryURL = 'https://github.com/test/testing';
-  const revision = 'some_git_revision';
+  it('with revision and no serviceAccount', () => {
+    const mockDateNow = jest
+      .spyOn(Date, 'now')
+      .mockImplementation(() => 'fake-timestamp');
+    const importerNamespace = 'fake-importer-namespace';
+    const method = 'apply';
+    const namespace = 'fake-namespace';
+    const path = 'fake-directory';
+    const repositoryURL = 'https://github.com/test/testing';
+    const revision = 'some_git_revision';
 
-  const payload = {
-    importerNamespace,
-    method,
-    namespace,
-    path,
-    repositoryURL,
-    revision
-  };
+    const payload = {
+      importerNamespace,
+      method,
+      namespace,
+      path,
+      repositoryURL,
+      revision
+    };
 
-  server.use(
-    rest.post(/\/pipelineruns\//, async (req, res, ctx) =>
-      res(ctx.status(201), ctx.json(await req.json()))
-    )
-  );
-  return API.importResources(payload).then(response => {
-    expect(response.metadata.name).toEqual(`import-resources-fake-timestamp`);
-    expect(response.metadata.labels).toEqual({
-      [labels.DASHBOARD_IMPORT]: 'true'
+    const fakeAPI = 'fake_api';
+    jest.spyOn(utils, 'getTektonAPI').mockImplementation(() => fakeAPI);
+    jest
+      .spyOn(comms, 'post')
+      .mockImplementation((uri, body) => Promise.resolve(body));
+
+    return API.importResources(payload).then(() => {
+      expect(comms.post).toHaveBeenCalledWith(
+        fakeAPI,
+        expect.objectContaining({
+          metadata: expect.objectContaining({
+            name: 'import-resources-fake-timestamp',
+            labels: {
+              [labels.DASHBOARD_IMPORT]: 'true'
+            }
+          }),
+          spec: expect.objectContaining({
+            params: expect.arrayContaining([
+              { name: 'method', value: method },
+              { name: 'path', value: path },
+              { name: 'repositoryURL', value: repositoryURL },
+              { name: 'revision', value: revision },
+              { name: 'target-namespace', value: namespace }
+            ])
+          })
+        })
+      );
+      expect(comms.post).not.toHaveBeenCalledWith(
+        fakeAPI,
+        expect.objectContaining({
+          spec: expect.objectContaining({
+            serviceAccountName: expect.any(String)
+          })
+        })
+      );
+      mockDateNow.mockRestore();
     });
-    expect(response.spec.params).toEqual(
-      expect.arrayContaining([
-        { name: 'method', value: method },
-        { name: 'path', value: path },
-        { name: 'repositoryURL', value: repositoryURL },
-        { name: 'revision', value: revision },
-        { name: 'target-namespace', value: namespace }
-      ])
-    );
-    expect(response.spec.serviceAccountName).toBeUndefined();
-    mockDateNow.mockRestore();
   });
 });
 
