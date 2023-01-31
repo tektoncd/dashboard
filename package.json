@@ -68,7 +68,7 @@
     "@svgr/webpack": "^6.5.1",
     "@testing-library/react": "^12.1.5",
     "@testing-library/react-hooks": "^8.0.1",
-    "babel-loader": "^9.1.0",
+    "babel-loader": "^9.1.2",
     "babel-plugin-formatjs": "^10.3.35",
     "css-loader": "^6.7.3",
     "eslint": "^8.33.0",
