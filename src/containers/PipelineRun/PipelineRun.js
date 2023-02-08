@@ -147,15 +147,7 @@ export /* istanbul ignore next */ function PipelineRunContainer() {
   function getSelectedTaskId(pipelineTaskName, retry) {
     const taskRun = taskRuns.find(
       ({ metadata }) =>
-        metadata.labels &&
-        ((metadata.labels[labelConstants.CONDITION_CHECK] &&
-          metadata.labels[labelConstants.CONDITION_CHECK] ===
-            pipelineTaskName) ||
-          // the `pipelineTask` label is present on both TaskRuns (the owning
-          // TaskRun and the TaskRun created for the condition check), ensure
-          // we only match on the owning TaskRun here and not another condition
-          (!metadata.labels[labelConstants.CONDITION_CHECK] &&
-            metadata.labels[labelConstants.PIPELINE_TASK] === pipelineTaskName))
+        metadata.labels?.[labelConstants.PIPELINE_TASK] === pipelineTaskName
     );
 
     if (!taskRun) {
@@ -174,10 +166,7 @@ export /* istanbul ignore next */ function PipelineRunContainer() {
   function getSelectedTaskRun(selectedTaskId) {
     const lookup = taskRuns.reduce((acc, taskRun) => {
       const { labels, uid } = taskRun.metadata;
-      const pipelineTaskName =
-        labels &&
-        (labels[labelConstants.CONDITION_CHECK] ||
-          labels[labelConstants.PIPELINE_TASK]);
+      const pipelineTaskName = labels?.[labelConstants.PIPELINE_TASK];
       const { podName, retriesStatus } = taskRun.status || {};
       acc[uid + podName] = {
         pipelineTaskName,
