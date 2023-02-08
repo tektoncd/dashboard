@@ -419,31 +419,19 @@ export function getTaskSpecFromTaskRef({ clusterTasks, pipelineTask, tasks }) {
   return definition?.spec || {};
 }
 
-export function getPlaceholderTaskRun({
-  clusterTasks,
-  condition,
-  pipelineTask,
-  tasks
-}) {
+export function getPlaceholderTaskRun({ clusterTasks, pipelineTask, tasks }) {
   const { name: pipelineTaskName, taskSpec } = pipelineTask;
   const specToDisplay =
     taskSpec || getTaskSpecFromTaskRef({ clusterTasks, pipelineTask, tasks });
   const { steps = [] } = specToDisplay;
 
-  const displayName =
-    pipelineTaskName + (condition ? `-${condition.conditionRef}` : '');
-
   return {
     metadata: {
-      name: displayName,
+      name: pipelineTaskName,
       labels: {
-        [labelConstants.PIPELINE_TASK]: pipelineTaskName,
-        ...(condition && {
-          [labelConstants.CONDITION_CHECK]: displayName,
-          [labelConstants.CONDITION_NAME]: condition.conditionRef
-        })
+        [labelConstants.PIPELINE_TASK]: pipelineTaskName
       },
-      uid: `_placeholder_${displayName}`
+      uid: `_placeholder_${pipelineTaskName}`
     },
     spec: {
       taskSpec: specToDisplay
@@ -483,26 +471,10 @@ export function getTaskRunsWithPlaceholders({
 
   const taskRunsToDisplay = [];
   pipelineTasks.forEach(pipelineTask => {
-    if (pipelineTask.conditions) {
-      pipelineTask.conditions.forEach(condition => {
-        const conditionTaskRun = taskRuns.find(
-          taskRun =>
-            taskRun.metadata.labels?.[labelConstants.PIPELINE_TASK] ===
-              pipelineTask.name &&
-            taskRun.metadata.labels?.[labelConstants.CONDITION_NAME] ===
-              condition.conditionRef
-        );
-        taskRunsToDisplay.push(
-          conditionTaskRun || getPlaceholderTaskRun({ pipelineTask, condition })
-        );
-      });
-    }
-
     const realTaskRun = taskRuns.find(
       taskRun =>
         taskRun.metadata.labels?.[labelConstants.PIPELINE_TASK] ===
-          pipelineTask.name &&
-        !taskRun.metadata.labels?.[labelConstants.CONDITION_CHECK]
+        pipelineTask.name
     );
 
     taskRunsToDisplay.push(

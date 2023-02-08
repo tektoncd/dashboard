@@ -161,18 +161,12 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
     }, []);
 
     return taskRuns.map(taskRun => {
-      const { labels, name: taskRunName, uid } = taskRun.metadata;
+      const { name: taskRunName, uid } = taskRun.metadata;
 
-      let pipelineTaskName;
-      const conditionCheck = labels[labelConstants.CONDITION_CHECK];
-      if (conditionCheck) {
-        pipelineTaskName = conditionCheck;
-      } else {
-        pipelineTaskName = getPipelineTaskName({
-          pipelineRun,
-          taskRunName
-        });
-      }
+      let pipelineTaskName = getPipelineTaskName({
+        pipelineRun,
+        taskRunName
+      });
 
       const { podName } = taskRun.status || {};
 

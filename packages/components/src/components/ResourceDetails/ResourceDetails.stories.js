@@ -16,24 +16,24 @@ import React from 'react';
 import ResourceDetails from '.';
 
 const resource = {
-  apiVersion: 'tekton.dev/v1alpha1',
-  kind: 'Condition',
+  apiVersion: 'tekton.dev/v1',
+  kind: 'Task',
   metadata: {
     creationTimestamp: '2020-05-19T16:49:30Z',
     labels: {
       'label-key': 'label-value'
     },
-    name: 'file-exists',
+    name: 'test',
     namespace: 'tekton-pipelines'
   },
   spec: {
-    check: {
-      image: 'alpine',
-      script: 'test -f $(resources.workspace.path)/$(params.path)'
-    },
-    description: 'Checks if a file exists at the specified path',
-    params: [{ name: 'path' }],
-    resources: [{ name: 'workspace', type: 'git' }]
+    steps: [
+      {
+        name: 'test',
+        image: 'alpine',
+        script: 'echo hello'
+      }
+    ]
   }
 };
 
