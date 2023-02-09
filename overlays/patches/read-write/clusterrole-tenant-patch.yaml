@@ -23,7 +23,7 @@
       - taskruns
       - pipelines
       - pipelineruns
-      - runs
+      - customruns
     verbs:
       - create
       - update

@@ -42,6 +42,17 @@ export const paths = {
       return '/clustertriggerbindings/:clusterTriggerBindingName';
     }
   },
+  customRuns: {
+    all() {
+      return '/customruns';
+    },
+    byName() {
+      return byNamespace({ path: '/customruns/:runName' });
+    },
+    byNamespace() {
+      return byNamespace({ path: '/customruns' });
+    }
+  },
   eventListeners: {
     all() {
       return '/eventlisteners';
@@ -127,17 +138,6 @@ export const paths = {
     },
     cluster() {
       return '/:type/:name';
-    }
-  },
-  runs: {
-    all() {
-      return '/runs';
-    },
-    byName() {
-      return byNamespace({ path: '/runs/:runName' });
-    },
-    byNamespace() {
-      return byNamespace({ path: '/runs' });
     }
   },
   settings() {

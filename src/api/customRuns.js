@@ -1,5 +1,5 @@
 /*
-Copyright 2022 The Tekton Authors
+Copyright 2022-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -22,60 +22,72 @@ import {
   useResource
 } from './utils';
 
-export function deleteRun({ name, namespace }) {
-  const uri = getTektonAPI('runs', { name, namespace, version: 'v1alpha1' });
+export function deleteCustomRun({ name, namespace }) {
+  const uri = getTektonAPI('customruns', {
+    name,
+    namespace,
+    version: 'v1beta1'
+  });
   return deleteRequest(uri);
 }
 
-function getRunsAPI({ filters, isWebSocket, name, namespace }) {
+function getCustomRunsAPI({ filters, isWebSocket, name, namespace }) {
   return getTektonAPI(
-    'runs',
-    { isWebSocket, namespace, version: 'v1alpha1' },
+    'customruns',
+    { isWebSocket, namespace, version: 'v1beta1' },
     getQueryParams({ filters, name })
   );
 }
 
-export function getRuns({ filters = [], namespace } = {}) {
-  const uri = getRunsAPI({ filters, namespace });
+export function getCustomRuns({ filters = [], namespace } = {}) {
+  const uri = getCustomRunsAPI({ filters, namespace });
   return get(uri);
 }
 
-export function getRun({ name, namespace }) {
-  const uri = getTektonAPI('runs', { name, namespace, version: 'v1alpha1' });
+export function getCustomRun({ name, namespace }) {
+  const uri = getTektonAPI('customruns', {
+    name,
+    namespace,
+    version: 'v1beta1'
+  });
   return get(uri);
 }
 
-export function useRuns(params) {
-  const webSocketURL = getRunsAPI({ ...params, isWebSocket: true });
+export function useCustomRuns(params) {
+  const webSocketURL = getCustomRunsAPI({ ...params, isWebSocket: true });
   return useCollection({
-    api: getRuns,
-    kind: 'Run',
+    api: getCustomRuns,
+    kind: 'CustomRun',
     params,
     webSocketURL
   });
 }
 
-export function useRun(params, queryConfig) {
-  const webSocketURL = getRunsAPI({ ...params, isWebSocket: true });
+export function useCustomRun(params, queryConfig) {
+  const webSocketURL = getCustomRunsAPI({ ...params, isWebSocket: true });
   return useResource({
-    api: getRun,
-    kind: 'Run',
+    api: getCustomRun,
+    kind: 'CustomRun',
     params,
     queryConfig,
     webSocketURL
   });
 }
 
-export function cancelRun({ name, namespace }) {
+export function cancelCustomRun({ name, namespace }) {
   const payload = [
     { op: 'replace', path: '/spec/status', value: 'RunCancelled' }
   ];
 
-  const uri = getTektonAPI('runs', { name, namespace, version: 'v1alpha1' });
+  const uri = getTektonAPI('customruns', {
+    name,
+    namespace,
+    version: 'v1beta1'
+  });
   return patch(uri, payload);
 }
 
-export function rerunRun(run) {
+export function rerunCustomRun(run) {
   const { annotations, labels, name, namespace } = run.metadata;
 
   const payload = deepClone(run);
@@ -92,6 +104,6 @@ export function rerunRun(run) {
   delete payload.status;
   delete payload.spec?.status;
 
-  const uri = getTektonAPI('runs', { namespace, version: 'v1alpha1' });
+  const uri = getTektonAPI('customruns', { namespace, version: 'v1beta1' });
   return post(uri, payload).then(({ body }) => body);
 }

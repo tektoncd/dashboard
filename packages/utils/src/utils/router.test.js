@@ -252,14 +252,14 @@ describe('rawCRD', () => {
   });
 });
 
-describe('runs', () => {
+describe('customRuns', () => {
   it('all', () => {
-    expect(urls.runs.all()).toEqual(generatePath(paths.runs.all()));
+    expect(urls.customRuns.all()).toEqual(generatePath(paths.customRuns.all()));
   });
 
   it('byName', () => {
-    expect(urls.runs.byName({ namespace, runName })).toEqual(
-      generatePath(paths.runs.byName(), {
+    expect(urls.customRuns.byName({ namespace, runName })).toEqual(
+      generatePath(paths.customRuns.byName(), {
         namespace,
         runName
       })
@@ -267,8 +267,8 @@ describe('runs', () => {
   });
 
   it('byNamespace', () => {
-    expect(urls.runs.byNamespace({ namespace })).toEqual(
-      generatePath(paths.runs.byNamespace(), { namespace })
+    expect(urls.customRuns.byNamespace({ namespace })).toEqual(
+      generatePath(paths.customRuns.byNamespace(), { namespace })
     );
   });
 });
