@@ -47,6 +47,8 @@ import {
   CreatePipelineRun,
   CreateTaskRun,
   CustomResourceDefinition,
+  CustomRun,
+  CustomRuns,
   EventListener,
   EventListeners,
   Extension,
@@ -61,8 +63,6 @@ import {
   Pipelines,
   ReadWriteRoute,
   ResourceList,
-  Run,
-  Runs,
   Settings,
   SideNav,
   TaskRun,
@@ -327,19 +327,19 @@ export function App({ lang }) {
                           <TaskRun />
                         </NamespacedRoute>
                       </CompatRoute>
-                      <CompatRoute path={paths.runs.all()}>
+                      <CompatRoute path={paths.customRuns.all()}>
                         <NamespacedRoute>
-                          <Runs />
+                          <CustomRuns />
                         </NamespacedRoute>
                       </CompatRoute>
-                      <CompatRoute path={paths.runs.byNamespace()} exact>
+                      <CompatRoute path={paths.customRuns.byNamespace()} exact>
                         <NamespacedRoute>
-                          <Runs />
+                          <CustomRuns />
                         </NamespacedRoute>
                       </CompatRoute>
-                      <CompatRoute path={paths.runs.byName()} exact>
+                      <CompatRoute path={paths.customRuns.byName()} exact>
                         <NamespacedRoute isResourceDetails>
-                          <Run />
+                          <CustomRun />
                         </NamespacedRoute>
                       </CompatRoute>
                       <CompatRoute path={paths.clusterTasks.all()} exact>

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -25,6 +25,7 @@ import {
   getTheme,
   getViewChangeHandler,
   setTheme,
+  sortRunsByCreationTime,
   sortRunsByStartTime
 } from '.';
 
@@ -56,6 +57,36 @@ describe('sortRunsByStartTime', () => {
     const runs = [a, b];
     const sortedRuns = [a, b];
     sortRunsByStartTime(runs);
+    expect(runs).toEqual(sortedRuns);
+  });
+});
+
+describe('sortRunsByCreationTime', () => {
+  it('should handle missing creation time or metadata', () => {
+    const a = { name: 'a', metadata: { creationTimestamp: '0' } };
+    const b = { name: 'b', metadata: {} };
+    const c = { name: 'c', metadata: { creationTimestamp: '2' } };
+    const d = { name: 'd', metadata: { creationTimestamp: '1' } };
+    const e = { name: 'e', metadata: {} };
+    const f = { name: 'f', metadata: { creationTimestamp: '3' } };
+    const g = { name: 'g' };
+
+    const runs = [a, b, c, d, e, f, g];
+    /*
+      sort is stable on all modern browsers so
+      input order is preserved for b and e
+     */
+    const sortedRuns = [b, e, g, f, c, d, a];
+    sortRunsByCreationTime(runs);
+    expect(runs).toEqual(sortedRuns);
+  });
+
+  it('should leave the order unchanged if no creationTimestamps specified', () => {
+    const a = { name: 'a' };
+    const b = { name: 'b' };
+    const runs = [a, b];
+    const sortedRuns = [a, b];
+    sortRunsByCreationTime(runs);
     expect(runs).toEqual(sortedRuns);
   });
 });

@@ -1,5 +1,5 @@
 /*
-Copyright 2022 The Tekton Authors
+Copyright 2022-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -43,14 +43,14 @@ import {
 
 import { ListPageLayout } from '..';
 import {
-  cancelRun,
-  deleteRun,
-  rerunRun,
+  cancelCustomRun,
+  deleteCustomRun,
+  rerunCustomRun,
+  useCustomRuns,
   useIsReadOnly,
-  useRuns,
   useSelectedNamespace
 } from '../../api';
-import { sortRunsByStartTime } from '../../utils';
+import { sortRunsByCreationTime } from '../../utils';
 
 function getRunTriggerInfo(run) {
   const { labels = {} } = run.metadata;
@@ -105,13 +105,13 @@ function getRunStatusTooltip(run) {
   return `${reason}: ${message}`;
 }
 
-function Runs() {
+function CustomRuns() {
   const intl = useIntl();
   const location = useLocation();
   const params = useParams();
   const filters = getFilters(location);
 
-  useTitleSync({ page: 'Runs' });
+  useTitleSync({ page: 'CustomRuns' });
 
   const { selectedNamespace } = useSelectedNamespace();
   const { namespace = selectedNamespace } = params;
@@ -133,20 +133,20 @@ function Runs() {
     data: runs = [],
     error,
     isLoading
-  } = useRuns({
+  } = useCustomRuns({
     filters,
     namespace
   });
 
-  sortRunsByStartTime(runs);
+  sortRunsByCreationTime(runs);
 
   function getError() {
     if (error) {
       return {
         error,
         title: intl.formatMessage({
-          id: 'dashboard.runs.error',
-          defaultMessage: 'Error loading Runs'
+          id: 'dashboard.customRuns.error',
+          defaultMessage: 'Error loading CustomRuns'
         })
       };
     }
@@ -178,28 +178,30 @@ function Runs() {
   }
 
   function cancel(run) {
-    cancelRun({
+    cancelCustomRun({
       name: run.metadata.name,
       namespace: run.metadata.namespace
     });
   }
 
   function rerun(run) {
-    rerunRun(run);
+    rerunCustomRun(run);
   }
 
   function deleteResource(run) {
     const { name, namespace: resourceNamespace } = run.metadata;
-    return deleteRun({ name, namespace: resourceNamespace }).catch(err => {
-      err.response.text().then(text => {
-        const statusCode = err.response.status;
-        let errorMessage = `error code ${statusCode}`;
-        if (text) {
-          errorMessage = `${text} (error code ${statusCode})`;
-        }
-        setDeleteError(errorMessage);
-      });
-    });
+    return deleteCustomRun({ name, namespace: resourceNamespace }).catch(
+      err => {
+        err.response.text().then(text => {
+          const statusCode = err.response.status;
+          let errorMessage = `error code ${statusCode}`;
+          if (text) {
+            errorMessage = `${text} (error code ${statusCode})`;
+          }
+          setDeleteError(errorMessage);
+        });
+      }
+    );
   }
 
   async function handleDelete() {
@@ -235,19 +237,19 @@ function Runs() {
         },
         modalProperties: {
           heading: intl.formatMessage({
-            id: 'dashboard.cancelRun.heading',
-            defaultMessage: 'Stop Run'
+            id: 'dashboard.cancelCustomRun.heading',
+            defaultMessage: 'Stop CustomRun'
           }),
           primaryButtonText: intl.formatMessage({
-            id: 'dashboard.cancelRun.primaryText',
-            defaultMessage: 'Stop Run'
+            id: 'dashboard.cancelCustomRun.primaryText',
+            defaultMessage: 'Stop CustomRun'
           }),
           body: resource =>
             intl.formatMessage(
               {
-                id: 'dashboard.cancelRun.body',
+                id: 'dashboard.cancelCustomRun.body',
                 defaultMessage:
-                  'Are you sure you would like to stop Run {name}?'
+                  'Are you sure you would like to stop CustomRun {name}?'
               },
               { name: resource.metadata.name }
             )
@@ -272,7 +274,7 @@ function Runs() {
               id: 'dashboard.deleteResources.heading',
               defaultMessage: 'Delete {kind}'
             },
-            { kind: 'Runs' }
+            { kind: 'CustomRuns' }
           ),
           primaryButtonText: intl.formatMessage({
             id: 'dashboard.actions.deleteButton',
@@ -281,9 +283,9 @@ function Runs() {
           body: resource =>
             intl.formatMessage(
               {
-                id: 'dashboard.deleteRun.body',
+                id: 'dashboard.deleteCustomRun.body',
                 defaultMessage:
-                  'Are you sure you would like to delete Run {name}?'
+                  'Are you sure you would like to delete CustomRun {name}?'
               },
               { name: resource.metadata.name }
             )
@@ -339,13 +341,14 @@ function Runs() {
       error={getError()}
       filters={filters}
       resources={runs}
-      title="Runs"
+      title="CustomRuns"
     >
       {({ resources }) => {
         const runsFormatted = resources.map(run => {
           const { creationTimestamp } = run.metadata;
 
-          const additionalFields = run?.spec?.ref || run?.spec?.spec || {};
+          const additionalFields =
+            run?.spec?.customRef || run?.spec?.customSpec || {};
           const { apiVersion, kind, name: customTaskName } = additionalFields;
           const customTaskTooltipParts = [
             `${intl.formatMessage({
@@ -396,7 +399,7 @@ function Runs() {
                 <span>
                   <Link
                     component={CustomLink}
-                    to={urls.runs.byName({
+                    to={urls.customRuns.byName({
                       namespace: run.metadata.namespace,
                       runName: run.metadata.name
                     })}
@@ -485,7 +488,7 @@ function Runs() {
                   id: 'dashboard.emptyState.allNamespaces',
                   defaultMessage: 'No matching {kind} found'
                 },
-                { kind: 'Runs' }
+                { kind: 'CustomRuns' }
               )}
               emptyTextSelectedNamespace={intl.formatMessage(
                 {
@@ -493,7 +496,7 @@ function Runs() {
                   defaultMessage:
                     'No matching {kind} found in namespace {selectedNamespace}'
                 },
-                { kind: 'Runs', selectedNamespace }
+                { kind: 'CustomRuns', selectedNamespace }
               )}
               hasDetails
               headers={initialHeaders}
@@ -503,7 +506,7 @@ function Runs() {
             />
             {showDeleteModal ? (
               <DeleteModal
-                kind="Runs"
+                kind="CustomRuns"
                 onClose={closeDeleteModal}
                 onSubmit={handleDelete}
                 resources={toBeDeleted}
@@ -517,4 +520,4 @@ function Runs() {
   );
 }
 
-export default Runs;
+export default CustomRuns;

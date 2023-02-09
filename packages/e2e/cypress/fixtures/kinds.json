@@ -4,7 +4,7 @@
     { "label": "Tasks", "path": "/tasks" },
     { "label": "ClusterTasks", "path": "/clustertasks" },
     { "label": "TaskRuns", "path": "/taskruns" },
-    { "label": "Runs", "path": "/runs" },
+    { "label": "CustomRuns", "path": "/customruns" },
     { "label": "EventListeners", "path": "/eventlisteners" },
     { "label": "Triggers", "path": "/triggers" },
     { "label": "TriggerBindings", "path": "/triggerbindings" },

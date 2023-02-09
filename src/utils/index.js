@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -30,6 +30,23 @@ export function sortRunsByStartTime(runs) {
   runs.sort((a, b) => {
     const aTime = (a.status || {}).startTime;
     const bTime = (b.status || {}).startTime;
+    if (!aTime && !bTime) {
+      return 0;
+    }
+    if (!aTime) {
+      return -1;
+    }
+    if (!bTime) {
+      return 1;
+    }
+    return -1 * aTime.localeCompare(bTime);
+  });
+}
+
+export function sortRunsByCreationTime(runs) {
+  runs.sort((a, b) => {
+    const aTime = (a.metadata || {}).creationTimestamp;
+    const bTime = (b.metadata || {}).creationTimestamp;
     if (!aTime && !bTime) {
       return 0;
     }

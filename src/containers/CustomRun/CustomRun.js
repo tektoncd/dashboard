@@ -32,7 +32,12 @@ import {
 import { getStatus, urls, useTitleSync } from '@tektoncd/dashboard-utils';
 import { InlineNotification } from 'carbon-components-react';
 
-import { deleteRun, rerunRun, useIsReadOnly, useRun } from '../../api';
+import {
+  deleteCustomRun,
+  rerunCustomRun,
+  useCustomRun,
+  useIsReadOnly
+} from '../../api';
 import { getViewChangeHandler } from '../../utils';
 import { NotFound } from '..';
 
@@ -88,7 +93,7 @@ function getRunStatusTooltip(run) {
   return `${reason} - ${message}`;
 }
 
-function Run() {
+function CustomRun() {
   const intl = useIntl();
   const location = useLocation();
   const navigate = useNavigate();
@@ -101,7 +106,7 @@ function Run() {
   const isReadOnly = useIsReadOnly();
 
   useTitleSync({
-    page: 'Run',
+    page: 'CustomRun',
     resourceName
   });
 
@@ -109,12 +114,12 @@ function Run() {
     data: run,
     error,
     isFetching
-  } = useRun({
+  } = useCustomRun({
     name: resourceName,
     namespace
   });
 
-  const additionalFields = run?.spec?.ref || run?.spec?.spec || {};
+  const additionalFields = run?.spec?.customRef || run?.spec?.customSpec || {};
   const { apiVersion, kind, name: customTaskName } = additionalFields;
 
   const headersForParameters = [
@@ -142,12 +147,12 @@ function Run() {
     })) || [];
 
   function deleteResource() {
-    deleteRun({
+    deleteCustomRun({
       name: run.metadata.name,
       namespace: run.metadata.namespace
     })
       .then(() => {
-        navigate(urls.runs.byNamespace({ namespace }));
+        navigate(urls.customRuns.byNamespace({ namespace }));
       })
       .catch(err => {
         err.response.text().then(text => {
@@ -165,11 +170,11 @@ function Run() {
   }
 
   function rerun() {
-    rerunRun(run)
+    rerunCustomRun(run)
       .then(newRun => {
         setShowNotification({
           kind: 'success',
-          logsURL: urls.runs.byName({
+          logsURL: urls.customRuns.byName({
             namespace,
             runName: newRun.metadata.name
           }),
@@ -229,7 +234,7 @@ function Run() {
               id: 'dashboard.deleteResources.heading',
               defaultMessage: 'Delete {kind}'
             },
-            { kind: 'Run' }
+            { kind: 'CustomRun' }
           ),
           primaryButtonText: intl.formatMessage({
             id: 'dashboard.actions.deleteButton',
@@ -238,9 +243,9 @@ function Run() {
           body: resource =>
             intl.formatMessage(
               {
-                id: 'dashboard.deleteRun.body',
+                id: 'dashboard.deleteCustomRun.body',
                 defaultMessage:
-                  'Are you sure you would like to delete Run {name}?'
+                  'Are you sure you would like to delete CustomRun {name}?'
               },
               { name: resource.metadata.name }
             )
@@ -254,8 +259,8 @@ function Run() {
       <NotFound
         suggestions={[
           {
-            text: 'Runs',
-            to: urls.runs.byNamespace({ namespace })
+            text: 'CustomRuns',
+            to: urls.customRuns.byNamespace({ namespace })
           }
         ]}
       />
@@ -379,4 +384,4 @@ function Run() {
   );
 }
 
-export default Run;
+export default CustomRun;
