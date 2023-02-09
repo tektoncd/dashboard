@@ -1,8 +1,11 @@
 <!--
 
 ---
+title: Dashboard
 linkTitle: Dashboard
 weight: 6
+description: >
+  Web-based UI for Tekton Pipelines and Tekton Triggers resources
 cascade:
   github_project_repo: https://github.com/tektoncd/dashboard
 ---
@@ -19,7 +22,7 @@ cascade:
   <img src="tekton-dashboard-color.svg" alt="Tekton Dashboard logo (Tekton cat inspecting resources with a magnifying glass)" width="200" />
 </p>
 
-Tekton Dashboard is a general purpose, web-based UI for [Tekton Pipelines](https://github.com/tektoncd/pipeline) and [Tekton triggers](https://github.com/tektoncd/triggers) resources.
+Tekton Dashboard is a general purpose, web-based UI for [Tekton Pipelines](https://github.com/tektoncd/pipeline) and [Tekton Triggers](https://github.com/tektoncd/triggers) resources.
 
 It allows users to manage and view Tekton resource creation, execution, and completion.
 
