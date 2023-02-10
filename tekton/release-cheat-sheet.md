@@ -85,6 +85,7 @@ Creating the release announcement is currently a manual process but will be auto
 
 1. Copy the format from an existing release and insert details of the relevant changes and contributors.
    - You can find the Rekor UUID by running `rekor-cli search --sha $DASHBOARD_IMAGE_SHA`
+   - For LTS releases ensure this is included in the title and description
 
 1. Add any upgrade and deprecation notices as required.
 
@@ -94,10 +95,12 @@ Creating the release announcement is currently a manual process but will be auto
 
 1. Publish the GitHub release once all notes are correct and in order.
 
-1. Create a branch for the release named `release-v<version number>x`, e.g. [`release-v0.28.x`](https://github.com/tektoncd/dashboard/tree/release-v0.28.x)
+1. Create a branch for the release named `release-v<version number>.x`, e.g. [`release-v0.28.x`](https://github.com/tektoncd/dashboard/tree/release-v0.28.x)
    and push it to the repo https://github.com/tektoncd/dashboard.
    (This can be done on the Github UI.)
    Make sure to fetch the commit specified in `TEKTON_RELEASE_GIT_SHA` to create the released branch.
+
+   For LTS releases the branch should be named `release-v<version number>.x-lts`, e.g. [`release-v0.32.x-lts`](https://github.com/tektoncd/dashboard/tree/release-v0.32.x-lts).
 
 ## Post-release tasks
 
