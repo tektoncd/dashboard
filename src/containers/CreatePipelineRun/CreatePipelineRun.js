@@ -36,10 +36,12 @@ import { useIntl } from 'react-intl';
 import {
   NamespacesDropdown,
   PipelinesDropdown,
-  ServiceAccountsDropdown
+  ServiceAccountsDropdown,
+  YAMLEditor
 } from '..';
 import {
   createPipelineRun,
+  createPipelineRunRaw,
   generateNewPipelineRunPayload,
   getPipelineRunPayload,
   usePipeline,
@@ -47,7 +49,6 @@ import {
   useSelectedNamespace
 } from '../../api';
 import { isValidLabel } from '../../utils';
-import { CreateYAMLEditor } from './YAMLEditor';
 
 const initialState = {
   creating: false,
@@ -315,6 +316,24 @@ function CreatePipelineRun() {
     });
   }
 
+  function handleCloseYAMLEditor() {
+    let url = urls.pipelineRuns.all();
+    if (defaultNamespace && defaultNamespace !== ALL_NAMESPACES) {
+      url = urls.pipelineRuns.byNamespace({ namespace: defaultNamespace });
+    }
+    navigate(url);
+  }
+
+  function handleCreate({ resource }) {
+    const resourceNamespace = resource?.metadata?.namespace;
+    return createPipelineRunRaw({
+      namespace: resourceNamespace,
+      payload: resource
+    }).then(() => {
+      navigate(urls.pipelineRuns.byNamespace({ namespace: resourceNamespace }));
+    });
+  }
+
   function handleNamespaceChange({ selectedItem }) {
     const { text = '' } = selectedItem || {};
     // Reset pipeline and ServiceAccount when namespace changes
@@ -456,8 +475,11 @@ function CreatePipelineRun() {
       });
 
       return (
-        <CreateYAMLEditor
+        <YAMLEditor
           code={payloadYaml || ''}
+          handleClose={handleCloseYAMLEditor}
+          handleCreate={handleCreate}
+          kind="PipelineRun"
           loading={isLoading}
           loadingMessage={loadingMessage}
         />
@@ -485,7 +507,14 @@ function CreatePipelineRun() {
       timeoutsTasks
     });
 
-    return <CreateYAMLEditor code={yaml.dump(pipelineRun)} />;
+    return (
+      <YAMLEditor
+        code={yaml.dump(pipelineRun)}
+        handleClose={handleCloseYAMLEditor}
+        handleCreate={handleCreate}
+        kind="PipelineRun"
+      />
+    );
   }
 
   return (
