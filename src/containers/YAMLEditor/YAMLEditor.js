@@ -11,7 +11,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 import { useIntl } from 'react-intl';
-import { ALL_NAMESPACES, urls } from '@tektoncd/dashboard-utils';
 import {
   Button,
   Form,
@@ -24,32 +23,25 @@ import React, { useEffect, useState } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { StreamLanguage } from '@codemirror/language';
 import { yaml as codeMirrorYAML } from '@codemirror/legacy-modes/mode/yaml';
-import { useNavigate } from 'react-router-dom-v5-compat';
-import { createPipelineRunRaw, useSelectedNamespace } from '../../api';
 
-export function CreateYAMLEditor({
+export default function YAMLEditor({
   code: initialCode,
+  handleClose,
+  handleCreate,
+  kind,
   loading = false,
   loadingMessage = ''
 }) {
   const intl = useIntl();
-  const navigate = useNavigate();
-  const { selectedNamespace } = useSelectedNamespace();
 
-  const [{ code, isCreating, submitError, validationErrorMessage }, setState] =
-    useState({
-      code: initialCode,
-      isCreating: false,
-      submitError: '',
-      validationErrorMessage: ''
-    });
+  const [code, setCode] = useState(initialCode);
+  const [isCreating, setIsCreating] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+  const [validationErrorMessage, setValidationErrorMessage] = useState('');
 
   useEffect(() => {
     if (!loading) {
-      setState(state => ({
-        ...state,
-        code: initialCode
-      }));
+      setCode(initialCode);
     }
   }, [loading]);
 
@@ -71,8 +63,8 @@ export function CreateYAMLEditor({
       return {
         valid: false,
         message: intl.formatMessage({
-          id: 'dashboard.createPipelineRun.empty',
-          defaultMessage: 'PipelineRun cannot be empty'
+          id: 'dashboard.editor.empty',
+          defaultMessage: 'Editor cannot be empty'
         })
       };
     }
@@ -84,86 +76,57 @@ export function CreateYAMLEditor({
     // Check form validation
     let validationResult = validateEmptyYaml();
     if (validationResult && !validationResult.valid) {
-      setState(state => ({
-        ...state,
-        validationErrorMessage: validationResult.message
-      }));
+      setValidationErrorMessage(validationResult.message);
       return;
     }
 
-    let pipelineRun;
+    let resource;
     try {
-      pipelineRun = yaml.load(code);
+      resource = yaml.load(code);
     } catch (e) {
-      setState(state => ({
-        ...state,
-        validationErrorMessage: e.message
-      }));
+      setValidationErrorMessage(e.message);
       return;
     }
 
-    validationResult = validateNamespace(pipelineRun);
+    validationResult = validateNamespace(resource);
     if (validationResult && !validationResult.valid) {
-      setState(state => ({
-        ...state,
-        validationErrorMessage: validationResult.message
-      }));
+      setValidationErrorMessage(validationResult.message);
       return;
     }
 
-    setState(state => ({ ...state, isCreating: true }));
-    const namespace = pipelineRun?.metadata?.namespace;
-
-    createPipelineRunRaw({
-      namespace,
-      payload: pipelineRun
-    })
-      .then(() => {
-        navigate(urls.pipelineRuns.byNamespace({ namespace }));
-      })
-      .catch(error => {
-        error.response.text().then(text => {
-          const statusCode = error.response.status;
-          let errorMessage = `error code ${statusCode}`;
-          if (text) {
-            errorMessage = `${text} (error code ${statusCode})`;
-          }
-          setState(state => ({
-            ...state,
-            isCreating: false,
-            submitError: errorMessage
-          }));
-        });
+    setIsCreating(true);
+    handleCreate({ resource }).catch(error => {
+      error.response.text().then(text => {
+        const statusCode = error.response.status;
+        let errorMessage = `error code ${statusCode}`;
+        if (text) {
+          errorMessage = `${text} (error code ${statusCode})`;
+        }
+        setIsCreating(false);
+        setSubmitError(errorMessage);
       });
+    });
   }
 
   function onChange(newValue, _viewUpdate) {
-    setState(state => ({
-      ...state,
-      code: newValue
-    }));
+    setCode(newValue);
   }
 
   function resetError() {
-    setState(state => ({ ...state, submitError: '' }));
-  }
-
-  function handleClose() {
-    let url = urls.pipelineRuns.all();
-    if (selectedNamespace && selectedNamespace !== ALL_NAMESPACES) {
-      url = urls.pipelineRuns.byNamespace({ namespace: selectedNamespace });
-    }
-    navigate(url);
+    setSubmitError('');
   }
 
   return (
     <div className="tkn--create">
       <div className="tkn--create--heading">
         <h1 id="main-content-header">
-          {intl.formatMessage({
-            id: 'dashboard.createPipelineRun.title',
-            defaultMessage: 'Create PipelineRun'
-          })}
+          {intl.formatMessage(
+            {
+              id: 'dashboard.editor.create.title',
+              defaultMessage: 'Create {kind}'
+            },
+            { kind }
+          )}
         </h1>
       </div>
       <Form>
@@ -171,7 +134,7 @@ export function CreateYAMLEditor({
           <InlineNotification
             kind="error"
             title={intl.formatMessage({
-              id: 'dashboard.createRun.yaml.validationError',
+              id: 'dashboard.editor.validationError',
               defaultMessage: 'Please fix errors, then resubmit'
             })}
             subtitle={validationErrorMessage}
@@ -181,10 +144,13 @@ export function CreateYAMLEditor({
         {submitError && (
           <InlineNotification
             kind="error"
-            title={intl.formatMessage({
-              id: 'dashboard.createPipelineRun.createError',
-              defaultMessage: 'Error creating PipelineRun'
-            })}
+            title={intl.formatMessage(
+              {
+                id: 'dashboard.editor.createError',
+                defaultMessage: 'Error creating {kind}'
+              },
+              { kind }
+            )}
             subtitle={submitError}
             onCloseButtonClick={resetError}
             lowContrast

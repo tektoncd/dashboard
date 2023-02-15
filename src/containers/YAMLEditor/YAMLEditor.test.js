@@ -15,8 +15,7 @@ import React from 'react';
 
 import { fireEvent, waitFor } from '@testing-library/react';
 import { renderWithRouter } from '../../utils/test';
-import { CreateYAMLEditor } from './YAMLEditor';
-import * as PipelineRunsAPI from '../../api/pipelineRuns';
+import YAMLEditor from './YAMLEditor';
 
 const submitButton = allByText => allByText('Create')[0];
 const cancelButton = allByText => allByText('Cancel')[0];
@@ -60,30 +59,6 @@ const pipelineRunWithoutNamespace = `
 const pipelineRunIncorrectYaml = `a: b
 dddd;a`;
 
-const pipelineRunRaw = {
-  apiVersion: 'tekton.dev/v1beta1',
-  kind: 'PipelineRun',
-  metadata: { name: 'test-pipeline-run-name', namespace: 'test-namespace' },
-  spec: {
-    pipelineSpec: {
-      tasks: [
-        {
-          name: 'hello',
-          taskSpec: {
-            steps: [
-              {
-                image: 'busybox',
-                name: 'echo',
-                script: '#!/bin/ash\necho "Hello World!"\n'
-              }
-            ]
-          }
-        }
-      ]
-    }
-  }
-};
-
 describe('YAMLEditor', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -105,15 +80,17 @@ describe('YAMLEditor', () => {
     });
   });
   it('handles onClose event', () => {
-    const { getByText } = renderWithRouter(<CreateYAMLEditor />);
+    const handleClose = jest.fn();
+    const { getByText } = renderWithRouter(
+      <YAMLEditor handleClose={handleClose} />
+    );
     fireEvent.click(getByText(/cancel/i));
-    // will be called once for render (from test utils) and once for navigation
-    expect(window.history.pushState).toHaveBeenCalledTimes(2);
+    expect(handleClose).toHaveBeenCalled();
   });
 
-  it('handle submit pipelinerun with empty pipelinerun', () => {
+  it('handle submit with empty editor', () => {
     const { queryAllByText, getByRole, getByText } = renderWithRouter(
-      <CreateYAMLEditor />
+      <YAMLEditor kind="PipelineRun" />
     );
     expect(getByRole(/textbox/)).toBeTruthy();
 
@@ -121,12 +98,12 @@ describe('YAMLEditor', () => {
 
     fireEvent.click(submitButton(queryAllByText));
     expect(getByText(/Please fix errors, then resubmit/)).toBeTruthy();
-    expect(getByText('PipelineRun cannot be empty')).toBeTruthy();
+    expect(getByText('Editor cannot be empty')).toBeTruthy();
   });
 
-  it('handle submit pipelinerun without namespace', () => {
+  it('handle submit resource without namespace', () => {
     const { queryAllByText, getByRole, getByText } = renderWithRouter(
-      <CreateYAMLEditor />
+      <YAMLEditor kind="PipelineRun" />
     );
 
     fireEvent.paste(getByRole(/textbox/), {
@@ -140,9 +117,9 @@ describe('YAMLEditor', () => {
     expect(getByText('Namespace cannot be empty')).toBeTruthy();
   });
 
-  it('handle submit pipelinerun incorrect yaml', () => {
+  it('handle submit resource incorrect yaml', () => {
     const { queryAllByText, getByRole, getByText } = renderWithRouter(
-      <CreateYAMLEditor />
+      <YAMLEditor kind="PipelineRun" />
     );
 
     fireEvent.paste(getByRole(/textbox/), {
@@ -156,12 +133,12 @@ describe('YAMLEditor', () => {
     expect(getByText(/can not read a block mapping entry/)).toBeTruthy();
   });
 
-  it('handle submit pipelinerun', async () => {
-    jest
-      .spyOn(PipelineRunsAPI, 'createPipelineRunRaw')
+  it('handle submit', async () => {
+    const handleCreate = jest
+      .fn()
       .mockImplementation(() => Promise.resolve({ data: {} }));
     const { queryAllByText, getByText, getByRole } = renderWithRouter(
-      <CreateYAMLEditor />
+      <YAMLEditor kind="PipelineRun" handleCreate={handleCreate} />
     );
     fireEvent.paste(getByRole(/textbox/), {
       target: { textContent: pipelineRun }
@@ -173,28 +150,19 @@ describe('YAMLEditor', () => {
     fireEvent.click(submitButton(queryAllByText));
 
     await waitFor(() => {
-      expect(PipelineRunsAPI.createPipelineRunRaw).toHaveBeenCalledTimes(1);
-    });
-    expect(PipelineRunsAPI.createPipelineRunRaw).toHaveBeenCalledWith(
-      expect.objectContaining({
-        namespace: 'test-namespace',
-        payload: pipelineRunRaw
-      })
-    );
-    await waitFor(() => {
-      expect(window.history.pushState).toHaveBeenCalledTimes(2);
+      expect(handleCreate).toHaveBeenCalledTimes(1);
     });
   });
 
-  it('handle submit pipelinerun when error', async () => {
+  it('handle submit error', async () => {
     const errorResponseMock = {
       response: { status: 404, text: () => Promise.resolve('Whoops!') }
     };
-    jest
-      .spyOn(PipelineRunsAPI, 'createPipelineRunRaw')
+    const handleCreate = jest
+      .fn()
       .mockImplementation(() => Promise.reject(errorResponseMock));
     const { queryAllByText, getByText, getByRole } = renderWithRouter(
-      <CreateYAMLEditor />
+      <YAMLEditor kind="PipelineRun" handleCreate={handleCreate} />
     );
     fireEvent.paste(getByRole(/textbox/), {
       target: { textContent: pipelineRun }
@@ -216,7 +184,7 @@ describe('YAMLEditor', () => {
   it('loading state', () => {
     const loadingMessage = 'wait. test is in progress';
     const { getAllByText, queryAllByText } = renderWithRouter(
-      <CreateYAMLEditor loading loadingMessage={loadingMessage} />
+      <YAMLEditor kind="PipelineRun" loading loadingMessage={loadingMessage} />
     );
     expect(getAllByText(loadingMessage)).toBeTruthy();
     expect(submitButton(queryAllByText).disabled).toBe(true);
