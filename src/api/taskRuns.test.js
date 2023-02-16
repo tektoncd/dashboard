@@ -11,6 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import yaml from 'js-yaml';
 import * as API from './taskRuns';
 import * as utils from './utils';
 import * as comms from './comms';
@@ -158,6 +159,36 @@ describe('createTaskRun', () => {
   });
 });
 
+it('createTaskRunRaw', () => {
+  const taskRunRaw = {
+    apiVersion: 'tekton.dev/v1beta1',
+    kind: 'TaskRun',
+    metadata: { name: 'test-task-run-name', namespace: 'test-namespace' },
+    spec: {
+      taskSpec: {
+        steps: [
+          {
+            image: 'busybox',
+            name: 'echo',
+            script: '#!/bin/ash\necho "Hello World!"\n'
+          }
+        ]
+      }
+    }
+  };
+  jest
+    .spyOn(comms, 'post')
+    .mockImplementation((uri, body) => Promise.resolve(body));
+
+  return API.createTaskRunRaw({
+    namespace: 'test-namespace',
+    payload: taskRunRaw
+  }).then(() => {
+    expect(comms.post).toHaveBeenCalled();
+    expect(comms.post.mock.lastCall[1]).toEqual(taskRunRaw);
+  });
+});
+
 it('deleteTaskRun', () => {
   const name = 'foo';
   const data = { fake: 'taskRun' };
@@ -254,7 +285,7 @@ it('rerunTaskRun', () => {
     apiVersion: 'tekton.dev/v1beta1',
     kind: 'TaskRun',
     metadata: {
-      annotations: undefined,
+      annotations: {},
       generateName: `${originalTaskRun.metadata.name}-r-`,
       labels: {
         'dashboard.tekton.dev/rerunOf': originalTaskRun.metadata.name
@@ -267,5 +298,182 @@ it('rerunTaskRun', () => {
   return API.rerunTaskRun(originalTaskRun).then(() => {
     expect(comms.post).toHaveBeenCalled();
     expect(comms.post.mock.lastCall[1]).toEqual(rerun);
+  });
+});
+
+describe('generateNewTaskRunPayload', () => {
+  it('rerun with minimum possible fields', () => {
+    const taskRun = {
+      apiVersion: 'tekton.dev/v1beta1',
+      kind: 'TaskRun',
+      metadata: {
+        name: 'test',
+        namespace: 'test-namespace'
+      },
+      spec: {
+        taskRef: {
+          name: 'simple'
+        }
+      }
+    };
+    const { namespace, payload } = API.generateNewTaskRunPayload({
+      taskRun,
+      rerun: true
+    });
+    const expected = `apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  annotations: {}
+  generateName: test-r-
+  labels:
+    dashboard.tekton.dev/rerunOf: test
+  namespace: test-namespace
+spec:
+  taskRef:
+    name: simple
+`;
+    expect(namespace).toEqual('test-namespace');
+    expect(yaml.dump(payload)).toEqual(expected);
+  });
+
+  it('rerun with all processed fields', () => {
+    const taskRun = {
+      apiVersion: 'tekton.dev/v1beta1',
+      kind: 'TaskRun',
+      metadata: {
+        name: 'test',
+        namespace: 'test-namespace',
+        annotations: {
+          keya: 'valuea',
+          'kubectl.kubernetes.io/last-applied-configuration':
+            '{"apiVersion": "tekton.dev/v1beta1", "keya": "valuea"}'
+        },
+        labels: {
+          key1: 'valuel',
+          key2: 'value2',
+          'tekton.dev/task': 'foo'
+        },
+        uid: '111-233-33',
+        resourceVersion: 'aaaa'
+      },
+      spec: {
+        taskRef: {
+          name: 'simple'
+        },
+        params: [{ name: 'param-1' }, { name: 'param-2' }]
+      },
+      status: { startTime: '0' }
+    };
+    const { namespace, payload } = API.generateNewTaskRunPayload({
+      taskRun,
+      rerun: true
+    });
+    const expected = `apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  annotations:
+    keya: valuea
+  generateName: test-r-
+  labels:
+    key1: valuel
+    key2: value2
+    dashboard.tekton.dev/rerunOf: test
+  namespace: test-namespace
+spec:
+  taskRef:
+    name: simple
+  params:
+    - name: param-1
+    - name: param-2
+`;
+    expect(namespace).toEqual('test-namespace');
+    expect(yaml.dump(payload)).toEqual(expected);
+  });
+
+  it('edit with minimum possible fields', () => {
+    const taskRun = {
+      apiVersion: 'tekton.dev/v1beta1',
+      kind: 'TaskRun',
+      metadata: {
+        name: 'test',
+        namespace: 'test-namespace'
+      },
+      spec: {
+        taskRef: {
+          name: 'simple'
+        }
+      }
+    };
+    const { namespace, payload } = API.generateNewTaskRunPayload({
+      taskRun,
+      rerun: false
+    });
+    const expected = `apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  annotations: {}
+  generateName: test-
+  labels: {}
+  namespace: test-namespace
+spec:
+  taskRef:
+    name: simple
+`;
+    expect(namespace).toEqual('test-namespace');
+    expect(yaml.dump(payload)).toEqual(expected);
+  });
+
+  it('edit with all processed fields', () => {
+    const taskRun = {
+      apiVersion: 'tekton.dev/v1beta1',
+      kind: 'TaskRun',
+      metadata: {
+        annotations: {
+          keya: 'valuea',
+          'kubectl.kubernetes.io/last-applied-configuration':
+            '{"apiVersion": "tekton.dev/v1beta1", "keya": "valuea"}'
+        },
+        labels: {
+          key1: 'valuel',
+          key2: 'value2',
+          'tekton.dev/task': 'foo',
+          'tekton.dev/run': 'bar'
+        },
+        name: 'test',
+        namespace: 'test-namespace',
+        uid: '111-233-33',
+        resourceVersion: 'aaaa'
+      },
+      spec: {
+        taskRef: {
+          name: 'simple'
+        },
+        params: [{ name: 'param-1' }, { name: 'param-2' }]
+      },
+      status: { startTime: '0' }
+    };
+    const { namespace, payload } = API.generateNewTaskRunPayload({
+      taskRun,
+      rerun: false
+    });
+    const expected = `apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  annotations:
+    keya: valuea
+  generateName: test-
+  labels:
+    key1: valuel
+    key2: value2
+  namespace: test-namespace
+spec:
+  taskRef:
+    name: simple
+  params:
+    - name: param-1
+    - name: param-2
+`;
+    expect(namespace).toEqual('test-namespace');
+    expect(yaml.dump(payload)).toEqual(expected);
   });
 });

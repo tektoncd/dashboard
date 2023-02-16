@@ -15,6 +15,7 @@ limitations under the License.
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import keyBy from 'lodash.keyby';
+import yaml from 'js-yaml';
 import {
   Button,
   Dropdown,
@@ -37,9 +38,18 @@ import {
   ClusterTasksDropdown,
   NamespacesDropdown,
   ServiceAccountsDropdown,
-  TasksDropdown
+  TasksDropdown,
+  YAMLEditor
 } from '..';
-import { createTaskRun, useSelectedNamespace, useTaskByKind } from '../../api';
+import {
+  createTaskRun,
+  createTaskRunRaw,
+  generateNewTaskRunPayload,
+  getTaskRunPayload,
+  useSelectedNamespace,
+  useTaskByKind,
+  useTaskRun
+} from '../../api';
 import { isValidLabel } from '../../utils';
 
 const clusterTaskItem = { id: 'clustertask', text: 'ClusterTask' };
@@ -90,12 +100,22 @@ function CreateTaskRun() {
     };
   }
 
+  function getTaskRunName() {
+    const urlSearchParams = new URLSearchParams(location.search);
+    return urlSearchParams.get('taskRunName') || '';
+  }
+
   function getNamespace() {
     const urlSearchParams = new URLSearchParams(location.search);
     return (
       urlSearchParams.get('namespace') ||
       (defaultNamespace !== ALL_NAMESPACES ? defaultNamespace : '')
     );
+  }
+
+  function isYAMLMode() {
+    const urlSearchParams = new URLSearchParams(location.search);
+    return urlSearchParams.get('mode') === 'yaml';
   }
 
   const { kind: initialTaskKind, taskName: taskRefFromDetails } =
@@ -141,8 +161,15 @@ function CreateTaskRun() {
     })
   });
 
+  function switchToYamlMode() {
+    const queryParams = new URLSearchParams(location.search);
+    queryParams.set('mode', 'yaml');
+    const browserURL = location.pathname.concat(`?${queryParams.toString()}`);
+    navigate(browserURL);
+  }
+
   function checkFormValidation() {
-    // Namespace, PipelineRef, and Params must all have values
+    // Namespace, taskRef, and Params must all have values
     const validNamespace = !!namespace;
     const validTaskRef = !!taskRef;
 
@@ -272,6 +299,24 @@ function CreateTaskRun() {
         [prop]: newLabels,
         [invalidProp]: newInvalidLabels
       };
+    });
+  }
+
+  function handleCloseYAMLEditor() {
+    let url = urls.taskRuns.all();
+    if (defaultNamespace && defaultNamespace !== ALL_NAMESPACES) {
+      url = urls.taskRuns.byNamespace({ namespace: defaultNamespace });
+    }
+    navigate(url);
+  }
+
+  function handleCreate({ resource }) {
+    const resourceNamespace = resource?.metadata?.namespace;
+    return createTaskRunRaw({
+      namespace: resourceNamespace,
+      payload: resource
+    }).then(() => {
+      navigate(urls.taskRuns.byNamespace({ namespace: resourceNamespace }));
     });
   }
 
@@ -405,6 +450,74 @@ function CreateTaskRun() {
       });
   }
 
+  if (isYAMLMode()) {
+    const externalTaskRunName = getTaskRunName();
+    if (externalTaskRunName) {
+      const { data: taskRunObject, isLoading } = useTaskRun(
+        {
+          name: externalTaskRunName,
+          namespace: getNamespace()
+        },
+        { disableWebSocket: true }
+      );
+      let payloadYaml = null;
+      if (taskRunObject) {
+        const { payload } = generateNewTaskRunPayload({
+          taskRun: taskRunObject,
+          rerun: false
+        });
+        payloadYaml = yaml.dump(payload);
+      }
+      const loadingMessage = intl.formatMessage(
+        {
+          id: 'dashboard.loading.resource',
+          defaultMessage: 'Loading {kind}…'
+        },
+        { kind: 'TaskRun' }
+      );
+
+      return (
+        <YAMLEditor
+          code={payloadYaml || ''}
+          handleClose={handleCloseYAMLEditor}
+          handleCreate={handleCreate}
+          kind="TaskRun"
+          loading={isLoading}
+          loadingMessage={loadingMessage}
+        />
+      );
+    }
+
+    const taskRun = getTaskRunPayload({
+      kind,
+      labels: labels.reduce((acc, { key, value }) => {
+        acc[key] = value;
+        return acc;
+      }, {}),
+      namespace,
+      nodeSelector: nodeSelector.length
+        ? nodeSelector.reduce((acc, { key, value }) => {
+            acc[key] = value;
+            return acc;
+          }, {})
+        : null,
+      params,
+      serviceAccount,
+      taskName: taskRef,
+      taskRunName: taskRunName || undefined,
+      timeout
+    });
+
+    return (
+      <YAMLEditor
+        code={yaml.dump(taskRun)}
+        handleClose={handleCloseYAMLEditor}
+        handleCreate={handleCreate}
+        kind="TaskRun"
+      />
+    );
+  }
+
   return (
     <div className="tkn--create">
       <div className="tkn--create--heading">
@@ -414,6 +527,18 @@ function CreateTaskRun() {
             defaultMessage: 'Create TaskRun'
           })}
         </h1>
+        <div className="tkn--create--yaml-mode">
+          <Button
+            kind="tertiary"
+            id="create-taskrun--mode-button"
+            onClick={switchToYamlMode}
+          >
+            {intl.formatMessage({
+              id: 'dashboard.create.yamlModeButton',
+              defaultMessage: 'YAML Mode'
+            })}
+          </Button>
+        </div>
       </div>
       <Form>
         {taskError && (

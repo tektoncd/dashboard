@@ -469,10 +469,13 @@ function CreatePipelineRun() {
         });
         payloadYaml = yaml.dump(payload);
       }
-      const loadingMessage = intl.formatMessage({
-        id: 'dashboard.pipelineRun.loading',
-        defaultMessage: 'Loading PipelineRun…'
-      });
+      const loadingMessage = intl.formatMessage(
+        {
+          id: 'dashboard.loading.resource',
+          defaultMessage: 'Loading {kind}…'
+        },
+        { kind: 'PipelineRun' }
+      );
 
       return (
         <YAMLEditor
@@ -533,7 +536,7 @@ function CreatePipelineRun() {
             onClick={switchToYamlMode}
           >
             {intl.formatMessage({
-              id: 'dashboard.createPipelineRun.yamlModeButton',
+              id: 'dashboard.create.yamlModeButton',
               defaultMessage: 'YAML Mode'
             })}
           </Button>

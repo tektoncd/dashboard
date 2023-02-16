@@ -58,7 +58,7 @@ export default function YAMLEditor({
     return null;
   }
 
-  function validateEmptyYaml() {
+  function validateEmptyYAML() {
     if (!code) {
       return {
         valid: false,
@@ -74,7 +74,7 @@ export default function YAMLEditor({
   function handleSubmit(event) {
     event.preventDefault();
     // Check form validation
-    let validationResult = validateEmptyYaml();
+    let validationResult = validateEmptyYAML();
     if (validationResult && !validationResult.valid) {
       setValidationErrorMessage(validationResult.message);
       return;

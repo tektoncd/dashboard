@@ -19,6 +19,7 @@ import {
   getQueryParams,
   getTektonAPI,
   getTektonPipelinesAPIVersion,
+  removeSystemLabels,
   useCollection,
   useResource
 } from './utils';
@@ -197,11 +198,7 @@ export function generateNewPipelineRunPayload({ pipelineRun, rerun }) {
     payload.metadata.labels['dashboard.tekton.dev/rerunOf'] = name;
   }
 
-  Object.keys(payload.metadata.labels).forEach(label => {
-    if (label.startsWith('tekton.dev/')) {
-      delete payload.metadata.labels[label];
-    }
-  });
+  removeSystemLabels(payload);
 
   /*
   This is used by Tekton Pipelines as part of the conversion between v1beta1

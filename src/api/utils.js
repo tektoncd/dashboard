@@ -324,3 +324,23 @@ export function isLogTimestampsEnabled() {
 export function setLogTimestampsEnabled(enabled) {
   localStorage.setItem('tkn-logs-timestamps', enabled);
 }
+
+export function removeSystemAnnotations(resource) {
+  Object.keys(resource.metadata.annotations).forEach(annotation => {
+    if (annotation.startsWith('tekton.dev/')) {
+      delete resource.metadata.annotations[annotation]; // eslint-disable-line no-param-reassign
+    }
+  });
+
+  delete resource.metadata.annotations[ // eslint-disable-line no-param-reassign
+    'kubectl.kubernetes.io/last-applied-configuration'
+  ];
+}
+
+export function removeSystemLabels(resource) {
+  Object.keys(resource.metadata.labels).forEach(label => {
+    if (label.startsWith('tekton.dev/')) {
+      delete resource.metadata.labels[label]; // eslint-disable-line no-param-reassign
+    }
+  });
+}

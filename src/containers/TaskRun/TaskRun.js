@@ -256,6 +256,14 @@ export function TaskRunContainer() {
       });
   }
 
+  function editAndRun() {
+    navigate(
+      `${urls.taskRuns.create()}?mode=yaml&taskRunName=${
+        taskRun.metadata.name
+      }&namespace=${taskRun.metadata.namespace}`
+    );
+  }
+
   function taskRunActions() {
     if (isReadOnly) {
       return [];
@@ -266,6 +274,14 @@ export function TaskRunContainer() {
         actionText: intl.formatMessage({
           id: 'dashboard.rerun.actionText',
           defaultMessage: 'Rerun'
+        }),
+        disable: resource => !!resource.metadata.labels?.['tekton.dev/pipeline']
+      },
+      {
+        action: editAndRun,
+        actionText: intl.formatMessage({
+          id: 'dashboard.editAndRun.actionText',
+          defaultMessage: 'Edit and run'
         }),
         disable: resource => !!resource.metadata.labels?.['tekton.dev/pipeline']
       },
