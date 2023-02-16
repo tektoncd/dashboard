@@ -165,6 +165,14 @@ function TaskRuns() {
     setCancelSelection(() => handleCancelSelection);
   }
 
+  function editAndRun(taskRun) {
+    navigate(
+      `${urls.taskRuns.create()}?mode=yaml&taskRunName=${
+        taskRun.metadata.name
+      }&namespace=${taskRun.metadata.namespace}`
+    );
+  }
+
   function taskRunActions() {
     if (isReadOnly) {
       return [];
@@ -176,6 +184,14 @@ function TaskRuns() {
           id: 'dashboard.rerun.actionText',
           defaultMessage: 'Rerun'
         }),
+        disable: resource => !!resource.metadata.labels?.['tekton.dev/pipeline']
+      },
+      {
+        actionText: intl.formatMessage({
+          id: 'dashboard.editAndRun.actionText',
+          defaultMessage: 'Edit and run'
+        }),
+        action: editAndRun,
         disable: resource => !!resource.metadata.labels?.['tekton.dev/pipeline']
       },
       {

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -17,6 +17,8 @@ import * as comms from './comms';
 import * as utils from './utils';
 import {
   getQueryParams,
+  removeSystemAnnotations,
+  removeSystemLabels,
   useCollection,
   useResource,
   useWebSocket
@@ -479,4 +481,41 @@ describe('setLogTimestampsEnabled', () => {
     utils.setLogTimestampsEnabled(false);
     expect(localStorage.getItem('tkn-logs-timestamps')).toEqual('false');
   });
+});
+
+it('removeSystemAnnotations', () => {
+  const customAnnotation = 'myCustomAnnotation';
+  const kubectlAnnotation = 'kubectl.kubernetes.io/last-applied-configuration';
+  const tektonAnnotation = 'tekton.dev/foo';
+  const resource = {
+    metadata: {
+      annotations: {
+        [tektonAnnotation]: 'true',
+        [customAnnotation]: 'true',
+        [kubectlAnnotation]: 'true'
+      }
+    }
+  };
+  removeSystemAnnotations(resource);
+
+  expect(resource.metadata.annotations[customAnnotation]).toBeDefined();
+  expect(resource.metadata.annotations[tektonAnnotation]).toBeUndefined();
+  expect(resource.metadata.annotations[kubectlAnnotation]).toBeUndefined();
+});
+
+it('removeSystemLabels', () => {
+  const customLabel = 'myCustomLabel';
+  const tektonLabel = 'tekton.dev/foo';
+  const resource = {
+    metadata: {
+      labels: {
+        [tektonLabel]: 'true',
+        [customLabel]: 'true'
+      }
+    }
+  };
+  removeSystemLabels(resource);
+
+  expect(resource.metadata.labels[customLabel]).toBeDefined();
+  expect(resource.metadata.labels[tektonLabel]).toBeUndefined();
 });
