@@ -125,7 +125,7 @@ Installing the latest Tekton Dashboard release is done by running the following 
 
 ```bash
 curl -sL https://raw.githubusercontent.com/tektoncd/dashboard/main/scripts/release-installer | \
-   bash -s -- install latest
+   bash -s -- install latest --read-write
 
 kubectl wait -n tekton-pipelines \
   --for=condition=ready pod \
@@ -169,7 +169,7 @@ Browse `http://tekton-dashboard.127.0.0.1.nip.io` to access your dashboard.
 
 ```bash
 curl -sL https://raw.githubusercontent.com/tektoncd/dashboard/main/scripts/release-installer | \
-   bash -s -- install latest --ingress-url tekton-dashboard.127.0.0.1.nip.io
+   bash -s -- install latest --read-write --ingress-url tekton-dashboard.127.0.0.1.nip.io
 
 kubectl wait -n tekton-pipelines \
   --for=condition=ready pod \

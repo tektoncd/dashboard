@@ -13,10 +13,6 @@ This guide walks you through installing a working Tekton Dashboard locally from 
 
 ## Before you begin
 
-**Note:** This walk-through requires Kubernetes 1.19 or newer. See below for versions of the tools that have been tested.
-
-**Note:** [2022/11/08] Latest releases of the BanzaiCloud logging operator are currently not compatible with Kubernetes 1.25+ due to use of PodSecurityPolicy resources which have been removed in Kubernetes 1.25.
-
 Before you begin, make sure the following tools are installed:
 
 1. [`kind`](https://kind.sigs.k8s.io/): For creating a local cluster running on top of docker.
@@ -33,7 +29,7 @@ Then, you will create a service to serve those logs and will plug the Tekton Das
 
 ## Installing a working Tekton Dashboard locally from scratch
 
-This walk-through has been tested on Kind v0.15 with Kubernetes v1.21.
+This walk-through has been tested on Kind v0.15 with Kubernetes v1.25.
 
 If you didn't follow the [Tekton Dashboard walk-through with Kind](./walkthrough-kind.md) yet, start there to get a local cluster with a working Tekton Dashboard installed.
 
@@ -48,32 +44,21 @@ Note that `minio` exposes other APIs similar to other cloud storage providers to
 To deploy `minio` in your cluster, run the following command to install the `minio` helm chart:
 
 ```bash
-helm repo add minio https://helm.min.io/
+helm repo remove minio
 
-helm repo update
+helm repo add minio https://charts.min.io/
 
-helm upgrade --install --version 8.0.9 --wait --create-namespace --namespace tools minio minio/minio --values - <<EOF
-nameOverride: minio
-fullnameOverride: minio
-
-persistence:
-  enabled: false
-
-accessKey: "ACCESSKEY"
-secretKey: "SECRETKEY"
-
-ingress:
-  enabled: true
-  hosts:
-    - minio.127.0.0.1.nip.io
-
-resources:
-  requests:
-    memory: 100M
-EOF
+helm install minio --create-namespace --namespace tools \
+  --set resources.requests.memory=100Mi \
+  --set replicas=1 \
+  --set persistence.enabled=false \
+  --set mode=standalone \
+  --set rootUser=rootuser,rootPassword=rootpass123 \
+  --set consoleIngress.enabled=true,consoleIngress.hosts[0]=minio.127.0.0.1.nip.io \
+  minio/minio
 ```
 
-The deployed instance will use hard coded access and secret keys `ACCESSKEY` / `SECRETKEY` and the service will be exposed externally at `http://minio.127.0.0.1.nip.io`.
+The deployed instance will use access and secret keys `console` / `console123` and the service will be exposed externally at `http://minio.127.0.0.1.nip.io`.
 
 For this walk-through `minio` will use in-memory storage but you can enable persistent storage by changing the config.
 
@@ -94,10 +79,8 @@ helm repo add banzaicloud-stable https://kubernetes-charts.banzaicloud.com
 
 helm repo update
 
-helm upgrade --install --version 3.6.0 --wait --create-namespace --namespace tools logging-operator banzaicloud-stable/logging-operator --set createCustomResource=false
+helm upgrade --install --version 3.17.10 --wait --create-namespace --namespace tools logging-operator banzaicloud-stable/logging-operator --set createCustomResource=false
 ```
-
-**NOTE**: This will install `logging-operator` version `3.6.0`, there was a [breaking change](https://github.com/banzaicloud/logging-operator/releases/tag/3.6.0) in this release. The walk-through will not work with earlier versions.
 
 To start collecting logs you will need to create the logs pipeline using the available CRDs:
 
@@ -118,7 +101,7 @@ EOF
 
 This is a very simple deployment, please note that the position database and buffer volumes are ephemeral, this will stream logs again if pods restart.
 
-- `ClusterOutput` defines the output of the logs pipeline. In our case AWS S3 (through `minio`):
+- `ClusterOutput` defines the output of the logs pipeline. In our case `minio` (API-compatible with AWS S3):
 
 ```bash
 kubectl -n tools apply -f - <<EOF
@@ -129,9 +112,9 @@ metadata:
 spec:
   s3:
     aws_key_id:
-      value: ACCESSKEY
+      value: console
     aws_sec_key:
-      value: SECRETKEY
+      value: console123
     s3_endpoint: http://minio.tools.svc.cluster.local:9000
     s3_bucket: tekton-logs
     s3_region: tekton
@@ -175,7 +158,7 @@ The `ClusterFlow` above takes all logs from pods that have the `app.kubernetes.i
 Running the `PipelineRun` below produces logs and you will see corresponding objects being added in `minio` as logs are collected and stored by the logs pipeline.
 
 ```bash
-kubectl -n tekton-pipelines create -f - <<EOF
+kubectl -n default create -f - <<EOF
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
@@ -199,7 +182,7 @@ spec:
               image: ubuntu
               script: |
                 #!/usr/bin/env bash
-                for i in {1..100}
+                for i in {1..20}
                 do
                   echo "Log line \$i"
                   sleep 1s
@@ -251,8 +234,8 @@ spec:
 
           aws.config.update({
             endpoint: 'minio.tools.svc.cluster.local:9000',
-            accessKeyId: 'ACCESSKEY',
-            secretAccessKey: 'SECRETKEY',
+            accessKeyId: 'console',
+            secretAccessKey: 'console123',
             region: 'tekton',
             s3ForcePathStyle: true,
             sslEnabled: false
@@ -339,7 +322,7 @@ The last step in this walk-through is to setup the Tekton Dashboard to use the l
 First, delete the pods for your `TaskRun`s so that the Dashboard backend can't find the pod logs:
 
 ```bash
-kubectl delete pod -l=app.kubernetes.io/managed-by=tekton-pipelines -n tekton-pipelines
+kubectl delete pod -l=app.kubernetes.io/managed-by=tekton-pipelines -n default
 ```
 
 The Dashboard displays the `Unable to fetch logs` message when browsing tasks.
