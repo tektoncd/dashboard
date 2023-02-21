@@ -1,5 +1,5 @@
 /*
-Copyright 2022 The Tekton Authors
+Copyright 2022-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -36,3 +36,15 @@ limitations under the License.
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+Cypress.Commands.overwrite('type', (originalFn, element, text, options) => {
+  let textToType = text;
+  if (options && options.preserveIndentation) {
+    textToType = text
+      .split('\n')
+      .map(line => `{home}${line}`) // {home} is interpreted by Cypress and returns the cursor to the start of the line
+      .join('\n');
+  }
+
+  return originalFn(element, textToType, options);
+});

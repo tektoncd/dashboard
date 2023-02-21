@@ -11,14 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-function preserveIndentation(input) {
-  return input
-    .split('\n')
-    .map(line => `{home}${line}`) // {home} is interpreted by Cypress and returns the cursor to the start of the line
-    .join('\n');
-}
-
-const namespace = 'tekton-dashboard-e2e';
+const namespace = 'tekton-dashboard-e2e-pipelinerun-create';
 describe('Create PipelineRun', () => {
   before(() => {
     cy.exec('kubectl version --client');
@@ -29,7 +22,7 @@ describe('Create PipelineRun', () => {
     cy.exec(`kubectl delete namespace ${namespace} || true`);
   });
 
-  it('should create pipelinerun', function () {
+  it('should create PipelineRun', function () {
     const uniqueNumber = Date.now();
 
     const pipelineName = `simple-pipeline-${uniqueNumber}`;
@@ -127,7 +120,7 @@ spec:
       .should('have.text', 'Succeeded');
   });
 
-  it('should create pipelinerun yaml mode', function () {
+  it('should create PipelineRun in YAML mode', function () {
     const uniqueNumber = Date.now();
 
     const pipelineRunName = `yaml-mode-${uniqueNumber}`;
@@ -154,7 +147,7 @@ spec:
     cy.url().should('include', 'mode=yaml');
 
     cy.get('.cm-content').clear();
-    cy.get('.cm-content').type(preserveIndentation(pipelineRun));
+    cy.get('.cm-content').type(pipelineRun, { preserveIndentation: true });
 
     cy.contains('button', 'Create').click();
 
@@ -166,7 +159,7 @@ spec:
       .should('have.text', 'Succeeded');
   });
 
-  it('should create pipelinerun yaml mode when open yaml mode directly', function () {
+  it('should create PipelineRun when open YAML mode directly', function () {
     const uniqueNumber = Date.now();
 
     const pipelineRunName = `yaml-mode-${uniqueNumber}`;
@@ -190,7 +183,7 @@ spec:
     cy.visit(`/#/pipelineruns/create?mode=yaml`);
 
     cy.get('.cm-content').clear();
-    cy.get('.cm-content').type(preserveIndentation(pipelineRun));
+    cy.get('.cm-content').type(pipelineRun, { preserveIndentation: true });
 
     cy.contains('button', 'Create').click();
 
