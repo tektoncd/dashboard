@@ -1,5 +1,5 @@
 /*
-Copyright 2022-2023 The Tekton Authors
+Copyright 2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,8 +11,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-const namespace = 'tkn-dashboard-e2e-actions';
-describe('Edit and run Pipeline Run', () => {
+const namespace = 'tkn-dashboard-e2e-taskrun-edit';
+describe('Edit and run TaskRun', () => {
   before(() => {
     cy.exec('kubectl version --client');
     cy.exec(`kubectl create namespace ${namespace} || true`);
@@ -22,55 +22,50 @@ describe('Edit and run Pipeline Run', () => {
     cy.exec(`kubectl delete namespace ${namespace} || true`);
   });
 
-  it('should create pipelinerun on edit and run', function () {
+  it('should create TaskRun on edit and run', function () {
     const uniqueNumber = Date.now();
-    const pipelineName = `sp-${uniqueNumber}`;
-    const pipeline = `apiVersion: tekton.dev/v1beta1
-kind: Pipeline
+    const taskName = `sp-${uniqueNumber}`;
+    const task = `apiVersion: tekton.dev/v1beta1
+kind: Task
 metadata:
-  name: ${pipelineName}
+  name: ${taskName}
   namespace: ${namespace}
 spec:
-  tasks:
-    - name: hello
-      taskSpec:
-        steps:
-          - name: echo
-            image: busybox
-            script: |
-              #!/bin/ash
-              echo "Hello World!"
+  steps:
+    - name: echo
+      image: busybox
+      script: |
+        #!/bin/ash
+        echo "Hello World!"
     `;
-    cy.exec(`echo "${pipeline}" | kubectl apply -f -`);
-    cy.visit(
-      `/#/pipelineruns/create?namespace=${namespace}&pipelineName=${pipelineName}`
-    );
-    cy.get('[id=create-pipelinerun--namespaces-dropdown]').should(
+    cy.exec(`echo "${task}" | kubectl apply -f -`);
+    cy.visit(`/#/taskruns/create?namespace=${namespace}&taskName=${taskName}`);
+    cy.get('[id=create-taskrun--namespaces-dropdown]').should(
       'have.value',
       namespace
     );
-    cy.get('[id=create-pipelinerun--pipelines-dropdown]').should(
+    cy.get('[id=create-taskrun--tasks-dropdown]').should(
       'have.value',
-      pipelineName
+      taskName
     );
     cy.contains('button', 'Create').click();
 
-    cy.contains('h1', 'PipelineRuns');
+    cy.contains('h1', 'TaskRuns');
 
     cy.get(
-      `td:has(.bx--link[title*=${pipelineName}-run]) + td:has(.tkn--status[data-reason=Succeeded])`,
+      `td:has(.bx--link[title*=${taskName}-run]) + td:has(.tkn--status[data-reason=Succeeded])`,
       { timeout: 15000 }
     ).should('have.length', 1);
 
-    cy.contains('a', `${pipelineName}-run`).click();
+    cy.contains('a', `${taskName}-run`).click();
     cy.contains('button', 'Actions').click();
     cy.contains('button', 'Edit and run').click();
-    cy.get('.cm-content').contains(`name: ${pipelineName}`);
+    cy.get('.cm-content').contains(`name: ${taskName}`);
     cy.contains('button', 'Create').click();
-    cy.contains('h1', 'PipelineRuns');
+    cy.contains('h1', 'TaskRuns');
 
     cy.get(
-      `td:has(.bx--link[title*=${pipelineName}-run]) + td:has(.tkn--status[data-reason=Succeeded])`,
+      `td:has(.bx--link[title*=${taskName}-run]) + td:has(.tkn--status[data-reason=Succeeded])`,
       { timeout: 15000 }
     ).should('have.length', 2);
   });
