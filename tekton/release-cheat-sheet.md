@@ -89,7 +89,7 @@ Creating the release announcement is currently a manual process but will be auto
 
 1. Add any upgrade and deprecation notices as required.
 
-1. Attach the release manifests to the release: `tekton-dashboard-*.yaml`.
+1. Attach the release manifests to the release: `release.yaml` and `release-full.yaml`.
 
 1. Once the release notes are ready, un-check the "This is a pre-release" checkbox since you're making a legit for-reals release!
 
