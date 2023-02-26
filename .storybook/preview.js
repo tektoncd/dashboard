@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2021 The Tekton Authors
+Copyright 2020-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -15,12 +15,11 @@ import React from 'react';
 
 import Container from './Container';
 
-export const parameters = {
+const parameters = {
   options: {
-    storySort: (a, b) =>
-      a[1].kind === b[1].kind
-        ? 0
-        : a[1].id.localeCompare(b[1].id, undefined, { numeric: true })
+    storySort: {
+      order: ['Components', 'Containers', '*', 'Experimental']
+    }
   },
   backgrounds: {
     default: 'gray10',
@@ -42,7 +41,7 @@ export const parameters = {
   controls: { hideNoControlsWarning: true }
 };
 
-export const decorators = [
+const decorators = [
   (story, context) => (
     <Container
       notes={context.parameters.notes}
@@ -52,3 +51,10 @@ export const decorators = [
     />
   )
 ];
+
+const preview = {
+  decorators,
+  parameters
+};
+
+export default preview;

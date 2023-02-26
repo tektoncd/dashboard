@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -23,62 +23,74 @@ export default {
     runName: 'simple-pipeline-run-1'
   },
   component: RunHeader,
-  title: 'Components/RunHeader'
+  title: 'RunHeader'
 };
 
-export const Base = args => <RunHeader {...args} />;
+export const Base = {};
 
-export const Running = args => (
-  <RunHeader
-    lastTransitionTime={now}
-    reason="Running"
-    status="Unknown"
-    {...args}
-  />
-);
-Running.args = {
-  message: 'Not all Tasks have completed executing'
+export const Running = {
+  render: args => (
+    <RunHeader
+      lastTransitionTime={now}
+      reason="Running"
+      status="Unknown"
+      {...args}
+    />
+  ),
+
+  args: {
+    message: 'Not all Tasks have completed executing'
+  }
 };
 
-export const Complete = args => (
-  <RunHeader
-    lastTransitionTime={now}
-    status="True"
-    reason="Completed"
-    {...args}
-  />
-);
-Complete.args = {
-  message: 'All Tasks have completed executing'
+export const Complete = {
+  render: args => (
+    <RunHeader
+      lastTransitionTime={now}
+      status="True"
+      reason="Completed"
+      {...args}
+    />
+  ),
+
+  args: {
+    message: 'All Tasks have completed executing'
+  }
 };
 
-export const Failed = args => (
-  <RunHeader
-    lastTransitionTime={now}
-    status="False"
-    reason="Failed"
-    {...args}
-  />
-);
-Failed.args = {
-  message: 'TaskRun demo-pipeline-run-1-build-skaffold-web-4dzrn has failed'
+export const Failed = {
+  render: args => (
+    <RunHeader
+      lastTransitionTime={now}
+      status="False"
+      reason="Failed"
+      {...args}
+    />
+  ),
+
+  args: {
+    message: 'TaskRun demo-pipeline-run-1-build-skaffold-web-4dzrn has failed'
+  }
 };
 
 export const Loading = () => <RunHeader loading />;
 
-export const WithTriggerInfo = args => (
-  <RunHeader
-    lastTransitionTime={now}
-    status="True"
-    reason="Completed"
-    triggerHeader={
-      <span>
-        Triggered by <a href="#">Update README.md</a>
-      </span>
-    }
-    {...args}
-  />
-);
-WithTriggerInfo.args = {
-  message: 'All Tasks have completed executing'
+export const WithTriggerInfo = {
+  render: args => (
+    <RunHeader
+      lastTransitionTime={now}
+      status="True"
+      reason="Completed"
+      triggerHeader={
+        <span>
+          Triggered by <a href="#">Update README.md</a>
+        </span>
+      }
+      {...args}
+    />
+  ),
+
+  args: {
+    message: 'All Tasks have completed executing'
+  }
 };

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -45,64 +45,77 @@ export default {
       default: 'white'
     }
   },
-  title: 'Components/DetailsHeader'
+  title: 'DetailsHeader'
 };
 
-export const Cancelled = args => (
-  <DetailsHeader
-    reason="TaskRunCancelled"
-    status="terminated"
-    displayName="build"
-    taskRun={getTaskRun({ reason: 'TaskRunCancelled', status: 'False' })}
-    {...args}
-  />
-);
+export const Cancelled = {
+  render: args => (
+    <DetailsHeader
+      reason="TaskRunCancelled"
+      status="terminated"
+      displayName="build"
+      taskRun={getTaskRun({ reason: 'TaskRunCancelled', status: 'False' })}
+      {...args}
+    />
+  )
+};
 
-export const Completed = args => (
-  <DetailsHeader
-    reason="Completed"
-    status="terminated"
-    displayName="build"
-    taskRun={getTaskRun({ reason: 'Succeeded', status: 'True' })}
-    {...args}
-  />
-);
+export const Completed = {
+  render: args => (
+    <DetailsHeader
+      reason="Completed"
+      status="terminated"
+      displayName="build"
+      taskRun={getTaskRun({ reason: 'Succeeded', status: 'True' })}
+      {...args}
+    />
+  )
+};
 
-export const CompletedWithWarning = args => (
-  <DetailsHeader
-    exitCode={1}
-    hasWarning
-    reason="Completed"
-    status="terminated"
-    displayName="build"
-    taskRun={getTaskRun({ reason: 'Succeeded', status: 'True' })}
-    {...args}
-  />
-);
-CompletedWithWarning.storyName = 'Completed with warning';
+export const CompletedWithWarning = {
+  render: args => (
+    <DetailsHeader
+      exitCode={1}
+      hasWarning
+      reason="Completed"
+      status="terminated"
+      displayName="build"
+      taskRun={getTaskRun({ reason: 'Succeeded', status: 'True' })}
+      {...args}
+    />
+  ),
 
-export const Failed = args => (
-  <DetailsHeader
-    reason="Error"
-    status="terminated"
-    displayName="build"
-    taskRun={getTaskRun({ reason: 'Failed', status: 'False' })}
-    {...args}
-  />
-);
+  name: 'Completed with warning'
+};
 
-export const Pending = args => (
-  <DetailsHeader
-    taskRun={getTaskRun({ reason: 'Pending', status: 'Unknown' })}
-    {...args}
-  />
-);
+export const Failed = {
+  render: args => (
+    <DetailsHeader
+      reason="Error"
+      status="terminated"
+      displayName="build"
+      taskRun={getTaskRun({ reason: 'Failed', status: 'False' })}
+      {...args}
+    />
+  )
+};
 
-export const Running = args => (
-  <DetailsHeader
-    status="running"
-    displayName="build"
-    taskRun={getTaskRun({ reason: 'Running', status: 'Unknown' })}
-    {...args}
-  />
-);
+export const Pending = {
+  render: args => (
+    <DetailsHeader
+      taskRun={getTaskRun({ reason: 'Pending', status: 'Unknown' })}
+      {...args}
+    />
+  )
+};
+
+export const Running = {
+  render: args => (
+    <DetailsHeader
+      status="running"
+      displayName="build"
+      taskRun={getTaskRun({ reason: 'Running', status: 'Unknown' })}
+      {...args}
+    />
+  )
+};

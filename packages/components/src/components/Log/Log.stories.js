@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -37,7 +37,7 @@ export default {
       </div>
     )
   ],
-  title: 'Components/Log'
+  title: 'Log'
 };
 
 export const Loading = () => <Log />;
@@ -57,13 +57,16 @@ export const Completed = () => (
   />
 );
 
-export const CompletedNonZero = () => (
-  <Log
-    stepStatus={{ terminated: { reason: 'Completed', exitCode: 1 } }}
-    fetchLogs={() => 'A log message'}
-  />
-);
-CompletedNonZero.storyName = 'Completed: non-zero exit code';
+export const CompletedNonZero = {
+  render: () => (
+    <Log
+      stepStatus={{ terminated: { reason: 'Completed', exitCode: 1 } }}
+      fetchLogs={() => 'A log message'}
+    />
+  ),
+
+  name: 'Completed: non-zero exit code'
+};
 
 export const Failed = () => (
   <Log
@@ -86,13 +89,16 @@ export const Windowed = () => (
   />
 );
 
-export const Performance = () => (
-  <Log
-    stepStatus={{ terminated: { reason: 'Completed', exitCode: 0 } }}
-    fetchLogs={() => performanceTest}
-  />
-);
-Performance.storyName = 'performance test (<20,000 lines with ANSI)';
+export const Performance = {
+  render: () => (
+    <Log
+      stepStatus={{ terminated: { reason: 'Completed', exitCode: 0 } }}
+      fetchLogs={() => performanceTest}
+    />
+  ),
+
+  name: 'performance test (<20,000 lines with ANSI)'
+};
 
 export const Toolbar = () => {
   const name = 'step_log_filename.txt';

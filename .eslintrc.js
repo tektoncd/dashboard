@@ -21,7 +21,8 @@ module.exports = {
   extends: [
     'airbnb',
     'plugin:prettier/recommended',
-    'plugin:cypress/recommended'
+    'plugin:cypress/recommended',
+    'plugin:storybook/recommended'
   ],
   globals: {
     Atomics: 'readonly',

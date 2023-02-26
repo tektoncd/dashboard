@@ -39,7 +39,7 @@ const resource = {
 
 export default {
   component: ResourceDetails,
-  title: 'Components/ResourceDetails'
+  title: 'ResourceDetails'
 };
 
 export const Error = () => <ResourceDetails error="A helpful error message" />;

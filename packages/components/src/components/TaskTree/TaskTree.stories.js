@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -75,22 +75,24 @@ export default {
       </div>
     )
   ],
-  title: 'Components/TaskTree'
+  title: 'TaskTree'
 };
 
-export const Base = args => {
-  const [selectedStepId, setSelectedStepId] = useState();
-  const [selectedTaskId, setSelectedTaskId] = useState();
+export const Base = {
+  render: args => {
+    const [selectedStepId, setSelectedStepId] = useState();
+    const [selectedTaskId, setSelectedTaskId] = useState();
 
-  return (
-    <TaskTree
-      {...args}
-      onSelect={(taskId, stepId) => {
-        setSelectedStepId(stepId);
-        setSelectedTaskId(taskId);
-      }}
-      selectedStepId={selectedStepId}
-      selectedTaskId={selectedTaskId}
-    />
-  );
+    return (
+      <TaskTree
+        {...args}
+        onSelect={(taskId, stepId) => {
+          setSelectedStepId(stepId);
+          setSelectedTaskId(taskId);
+        }}
+        selectedStepId={selectedStepId}
+        selectedTaskId={selectedTaskId}
+      />
+    );
+  }
 };

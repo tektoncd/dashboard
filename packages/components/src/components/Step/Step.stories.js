@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -29,25 +29,25 @@ export default {
       default: 'white'
     }
   },
-  title: 'Components/Step'
+  title: 'Step'
 };
 
 export const Base = () => <Step {...props} />;
-
 export const Selected = () => <Step {...props} selected />;
-
 export const Waiting = () => <Step {...props} status="waiting" />;
-
 export const Running = () => <Step {...props} status="running" />;
 
 export const Completed = () => (
   <Step {...props} status="terminated" reason="Completed" />
 );
 
-export const CompletedWithWarning = () => (
-  <Step {...props} exitCode={1} status="terminated" reason="Completed" />
-);
-CompletedWithWarning.storyName = 'Completed with warning';
+export const CompletedWithWarning = {
+  render: () => (
+    <Step {...props} exitCode={1} status="terminated" reason="Completed" />
+  ),
+
+  name: 'Completed with warning'
+};
 
 export const Error = () => (
   <Step {...props} status="terminated" reason="Error" />
