@@ -153,7 +153,7 @@ const pipelineRunWithMinimalStatus = {
 export default {
   component: PipelineRun,
   decorators: [Story => <Story />],
-  title: 'Components/PipelineRun'
+  title: 'PipelineRun'
 };
 
 export const Base = () => {

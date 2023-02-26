@@ -31,7 +31,7 @@ export default {
       default: 'white'
     }
   },
-  title: 'Components/TaskRunDetails'
+  title: 'TaskRunDetails'
 };
 
 export const Base = () => (

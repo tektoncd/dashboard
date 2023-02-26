@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -17,7 +17,7 @@ import LoadingShell from './LoadingShell';
 
 export default {
   component: LoadingShell,
-  title: 'Components/LoadingShell'
+  title: 'LoadingShell'
 };
 
 export const Base = () => <LoadingShell />;

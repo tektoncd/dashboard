@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2022 The Tekton Authors
+Copyright 2020-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -55,32 +55,38 @@ export default {
       );
     }
   ],
-  title: 'Containers/ListPageLayout'
+  title: 'ListPageLayout'
 };
 
-export const Base = args => (
-  <ListPageLayoutContainer {...args}>
-    {() => <span>page content goes here</span>}
-  </ListPageLayoutContainer>
-);
+export const Base = {
+  render: args => (
+    <ListPageLayoutContainer {...args}>
+      {() => <span>page content goes here</span>}
+    </ListPageLayoutContainer>
+  )
+};
 
-export const WithFilters = args => (
-  <ListPageLayoutContainer filters={[]} {...args}>
-    {() => <span>page content goes here</span>}
-  </ListPageLayoutContainer>
-);
+export const WithFilters = {
+  render: args => (
+    <ListPageLayoutContainer filters={[]} {...args}>
+      {() => <span>page content goes here</span>}
+    </ListPageLayoutContainer>
+  )
+};
 
-export const WithPagination = args => (
-  <ListPageLayoutContainer
-    filters={[]}
-    resources={Array.from({ length: 30 }, (_, index) => ({
-      id: `${index}`,
-      value: `Row ${index + 1}`
-    }))}
-    {...args}
-  >
-    {({ resources }) => (
-      <Table headers={[{ key: 'value', header: 'Value' }]} rows={resources} />
-    )}
-  </ListPageLayoutContainer>
-);
+export const WithPagination = {
+  render: args => (
+    <ListPageLayoutContainer
+      filters={[]}
+      resources={Array.from({ length: 30 }, (_, index) => ({
+        id: `${index}`,
+        value: `Row ${index + 1}`
+      }))}
+      {...args}
+    >
+      {({ resources }) => (
+        <Table headers={[{ key: 'value', header: 'Value' }]} rows={resources} />
+      )}
+    </ListPageLayoutContainer>
+  )
+};

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -25,9 +25,11 @@ export default {
     date: { control: { type: 'date' } }
   },
   component: FormattedDate,
-  title: 'Components/FormattedDate'
+  title: 'FormattedDate'
 };
 
-export const Relative = args => <FormattedDate relative {...args} />;
+export const Relative = {
+  render: args => <FormattedDate relative {...args} />
+};
 
-export const Absolute = args => <FormattedDate {...args} />;
+export const Absolute = {};

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -37,22 +37,24 @@ export default {
       </div>
     )
   ],
-  title: 'Components/Task'
+  title: 'Task'
 };
 
 export const Succeeded = () => <Task {...props} succeeded="True" />;
 
-export const SucceededWithWarning = () => (
-  <Task
-    {...props}
-    steps={[{ terminated: { exitCode: 1, reason: 'Completed' } }]}
-    succeeded="True"
-  />
-);
-SucceededWithWarning.storyName = 'Succeeded with warning';
+export const SucceededWithWarning = {
+  render: () => (
+    <Task
+      {...props}
+      steps={[{ terminated: { exitCode: 1, reason: 'Completed' } }]}
+      succeeded="True"
+    />
+  ),
+
+  name: 'Succeeded with warning'
+};
 
 export const Failed = () => <Task {...props} succeeded="False" />;
-
 export const Unknown = () => <Task {...props} succeeded="Unknown" />;
 
 export const Pending = () => (

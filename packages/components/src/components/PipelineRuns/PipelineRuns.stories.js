@@ -36,7 +36,7 @@ function getFilters(showFilters) {
 
 export default {
   component: PipelineRuns,
-  title: 'Components/PipelineRuns'
+  title: 'PipelineRuns'
 };
 
 export const Base = () => (
@@ -258,109 +258,115 @@ export const BatchActions = () => (
   />
 );
 
-export const HideColumns = ({ showFilters }) => (
-  <PipelineRuns
-    columns={['run', 'status', 'time']}
-    filters={getFilters(showFilters)}
-    getRunActions={() => [
-      {
-        actionText: 'An Action',
-        action: resource => resource,
-        modalProperties: {
-          heading: 'An Action',
-          primaryButtonText: 'OK',
-          secondaryButtonText: 'Cancel',
-          body: () => 'Do something interesting'
-        }
-      }
-    ]}
-    pipelineRuns={[
-      {
-        metadata: {
-          name: 'pipeline-run-20190816124708',
-          namespace: 'cb4552a6-b2d7-45e2-9773-3d4ca33909ff',
-          creationTimestamp: '2019-08-16T12:48:00Z',
-          uid: 'c5ef252a-4635-46b5-ad7b-32c9e04cb6d2'
-        },
-        spec: {
-          pipelineRef: {
-            name: 'pipeline'
+export const HideColumns = {
+  render: ({ showFilters }) => (
+    <PipelineRuns
+      columns={['run', 'status', 'time']}
+      filters={getFilters(showFilters)}
+      getRunActions={() => [
+        {
+          actionText: 'An Action',
+          action: resource => resource,
+          modalProperties: {
+            heading: 'An Action',
+            primaryButtonText: 'OK',
+            secondaryButtonText: 'Cancel',
+            body: () => 'Do something interesting'
           }
         }
-      }
-    ]}
-  />
-);
-HideColumns.args = {
-  showFilters: false
+      ]}
+      pipelineRuns={[
+        {
+          metadata: {
+            name: 'pipeline-run-20190816124708',
+            namespace: 'cb4552a6-b2d7-45e2-9773-3d4ca33909ff',
+            creationTimestamp: '2019-08-16T12:48:00Z',
+            uid: 'c5ef252a-4635-46b5-ad7b-32c9e04cb6d2'
+          },
+          spec: {
+            pipelineRef: {
+              name: 'pipeline'
+            }
+          }
+        }
+      ]}
+    />
+  ),
+
+  args: {
+    showFilters: false
+  }
 };
 
-export const CustomColumns = ({ showFilters }) => (
-  <PipelineRuns
-    columns={['status', 'run', 'worker', 'time']}
-    customColumns={{
-      status: {
-        getValue() {
-          return (
-            <div>
-              <div className="tkn--definition">
-                <div className="tkn--status">
-                  <StatusIcon /> Pending
+export const CustomColumns = {
+  render: ({ showFilters }) => (
+    <PipelineRuns
+      columns={['status', 'run', 'worker', 'time']}
+      customColumns={{
+        status: {
+          getValue() {
+            return (
+              <div>
+                <div className="tkn--definition">
+                  <div className="tkn--status">
+                    <StatusIcon /> Pending
+                  </div>
                 </div>
+                <span>&nbsp;</span>
               </div>
-              <span>&nbsp;</span>
-            </div>
-          );
-        }
-      },
-      worker: {
-        header: 'Worker',
-        getValue({ pipelineRun }) {
-          const worker = pipelineRun.metadata.labels['example.com/worker'];
-          return (
-            <div>
-              <span title={worker}>{worker}</span>
-              <span>&nbsp;</span>
-            </div>
-          );
-        }
-      }
-    }}
-    filters={getFilters(showFilters)}
-    getRunActions={() => [
-      {
-        actionText: 'An Action',
-        action: resource => resource,
-        modalProperties: {
-          heading: 'An Action',
-          primaryButtonText: 'OK',
-          secondaryButtonText: 'Cancel',
-          body: () => 'Do something interesting'
-        }
-      }
-    ]}
-    pipelineRuns={[
-      {
-        metadata: {
-          name: 'pipeline-run-20190816124708',
-          namespace: 'cb4552a6-b2d7-45e2-9773-3d4ca33909ff',
-          creationTimestamp: '2019-08-16T12:48:00Z',
-          labels: {
-            'example.com/worker': 'my-worker'
-          },
-          uid: 'b0461c38-90e1-4d83-b32d-293cf3d0ea72'
+            );
+          }
         },
-        spec: {
-          pipelineRef: {
-            name: 'pipeline'
+        worker: {
+          header: 'Worker',
+          getValue({ pipelineRun }) {
+            const worker = pipelineRun.metadata.labels['example.com/worker'];
+            return (
+              <div>
+                <span title={worker}>{worker}</span>
+                <span>&nbsp;</span>
+              </div>
+            );
           }
         }
-      }
-    ]}
-  />
-);
-CustomColumns.args = {
-  showFilters: false
+      }}
+      filters={getFilters(showFilters)}
+      getRunActions={() => [
+        {
+          actionText: 'An Action',
+          action: resource => resource,
+          modalProperties: {
+            heading: 'An Action',
+            primaryButtonText: 'OK',
+            secondaryButtonText: 'Cancel',
+            body: () => 'Do something interesting'
+          }
+        }
+      ]}
+      pipelineRuns={[
+        {
+          metadata: {
+            name: 'pipeline-run-20190816124708',
+            namespace: 'cb4552a6-b2d7-45e2-9773-3d4ca33909ff',
+            creationTimestamp: '2019-08-16T12:48:00Z',
+            labels: {
+              'example.com/worker': 'my-worker'
+            },
+            uid: 'b0461c38-90e1-4d83-b32d-293cf3d0ea72'
+          },
+          spec: {
+            pipelineRef: {
+              name: 'pipeline'
+            }
+          }
+        }
+      ]}
+    />
+  ),
+
+  args: {
+    showFilters: false
+  }
 };
 
 export const Loading = () => (

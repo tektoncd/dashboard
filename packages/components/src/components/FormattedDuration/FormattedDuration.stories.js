@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2020 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -17,18 +17,22 @@ import FormattedDuration from './FormattedDuration';
 
 export default {
   component: FormattedDuration,
-  title: 'Components/FormattedDuration'
+  title: 'FormattedDuration'
 };
 
-export const OneSecond = () => <FormattedDuration milliseconds={1000} />;
-OneSecond.storyName = '1 second';
+export const OneSecond = {
+  render: () => <FormattedDuration milliseconds={1000} />,
+  name: '1 second'
+};
 
-export const OneMinuteOneSecond = () => (
-  <FormattedDuration milliseconds={61000} />
-);
-OneMinuteOneSecond.storyName = '1 minute 1 second';
+export const OneMinuteOneSecond = {
+  render: () => <FormattedDuration milliseconds={61000} />,
 
-export const Other = args => <FormattedDuration {...args} />;
-Other.args = {
-  milliseconds: 2 * 60 * 60 * 1000 + 1 * 60 * 1000 + 10 * 1000 // 2h 1m 10s
+  name: '1 minute 1 second'
+};
+
+export const Other = {
+  args: {
+    milliseconds: 2 * 60 * 60 * 1000 + 1 * 60 * 1000 + 10 * 1000 // 2h 1m 10s
+  }
 };
