@@ -68,7 +68,7 @@
     "@testing-library/react": "^12.1.5",
     "@testing-library/react-hooks": "^8.0.1",
     "babel-loader": "^9.1.2",
-    "babel-plugin-formatjs": "^10.3.36",
+    "babel-plugin-formatjs": "^10.4.0",
     "css-loader": "^6.7.3",
     "eslint": "^8.34.0",
     "eslint-config-airbnb": "^19.0.0",
