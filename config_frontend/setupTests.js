@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import fetch from 'node-fetch';
+import 'whatwg-fetch';
 import { TextDecoder, TextEncoder } from 'util';
 
 import { server } from './msw';
@@ -27,10 +27,6 @@ beforeAll(() =>
 afterEach(() => server.resetHandlers());
 // Clean up after the tests are finished.
 afterAll(() => server.close());
-
-if (!globalThis.fetch) {
-  globalThis.fetch = fetch;
-}
 
 window.HTMLElement.prototype.scrollIntoView =
   function scrollIntoViewTestStub() {};
