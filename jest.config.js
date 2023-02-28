@@ -40,7 +40,7 @@ module.exports = {
   },
   restoreMocks: true,
   setupFilesAfterEnv: ['<rootDir>/config_frontend/setupTests.js'],
-  testEnvironment: 'jsdom',
+  testEnvironment: '<rootDir>/config_frontend/jsdom.js',
   testMatch: [
     '<rootDir>/src/**/*.test.js',
     '<rootDir>/packages/**/src/**/*.test.js'
