@@ -37,7 +37,7 @@ describe('App', () => {
     );
 
     await waitFor(() => queryByText('Tekton resources'));
-    await waitFor(() => findAllByText('PipelineRuns'));
+    await findAllByText('PipelineRuns');
     fireEvent.click(queryAllByText('PipelineRuns')[0]);
 
     expect(queryByText('Pipelines')).toBeTruthy();
@@ -51,7 +51,7 @@ describe('App', () => {
     );
 
     await waitFor(() => queryByText('Tekton resources'));
-    await waitFor(() => findAllByText('PipelineRuns'));
+    await findAllByText('PipelineRuns');
     fireEvent.click(queryAllByText('PipelineRuns')[0]);
 
     expect(queryByText('Pipelines')).toBeTruthy();
