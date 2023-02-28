@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -58,11 +58,14 @@ it('PipelineRunContainer renders not found state', async () => {
     .spyOn(PipelineRunsAPI, 'usePipelineRun')
     .mockImplementation(() => ({ data: null, error: null }));
 
-  const { getByText } = renderWithRouter(<PipelineRunContainer intl={intl} />, {
-    path: paths.pipelineRuns.byName(),
-    route: urls.pipelineRuns.byName({ pipelineRunName, namespace })
-  });
-  await waitFor(() => getByText(/Page not found/));
+  const { findByText } = renderWithRouter(
+    <PipelineRunContainer intl={intl} />,
+    {
+      path: paths.pipelineRuns.byName(),
+      route: urls.pipelineRuns.byName({ pipelineRunName, namespace })
+    }
+  );
+  await findByText(/Page not found/);
 });
 
 it('PipelineRunContainer renders error state', async () => {
@@ -72,9 +75,12 @@ it('PipelineRunContainer renders error state', async () => {
     .spyOn(PipelineRunsAPI, 'usePipelineRun')
     .mockImplementation(() => ({ data: null, error: 'some error' }));
 
-  const { getByText } = renderWithRouter(<PipelineRunContainer intl={intl} />, {
-    path: paths.pipelineRuns.byName(),
-    route: urls.pipelineRuns.byName({ pipelineRunName, namespace })
-  });
-  await waitFor(() => getByText(/Page not found/));
+  const { findByText } = renderWithRouter(
+    <PipelineRunContainer intl={intl} />,
+    {
+      path: paths.pipelineRuns.byName(),
+      route: urls.pipelineRuns.byName({ pipelineRunName, namespace })
+    }
+  );
+  await findByText(/Page not found/);
 });
