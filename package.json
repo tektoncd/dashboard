@@ -90,8 +90,7 @@
     "lodash.difference": "^4.5.0",
     "lodash.omit": "^4.5.0",
     "mini-css-extract-plugin": "^2.7.2",
-    "msw": "^1.0.1",
-    "node-fetch": "^3.3.0",
+    "msw": "^1.1.0",
     "prettier": "^2.8.4",
     "sass": "^1.58.3",
     "sass-loader": "^13.2.0",
@@ -101,6 +100,7 @@
     "webpack-cli": "^5.0.1",
     "webpack-dev-server": "^4.11.1",
     "webpack-merge": "^5.8.0",
+    "whatwg-fetch": "^3.6.2",
     "yaml-loader": "^0.8.0"
   },
   "engines": {

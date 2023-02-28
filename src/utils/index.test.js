@@ -211,7 +211,7 @@ describe('getLogsRetriever', () => {
   const taskRun = { metadata: { namespace }, status: { podName } };
 
   it('should handle default logs retriever', () => {
-    jest.spyOn(API, 'getPodLog');
+    jest.spyOn(API, 'getPodLog').mockImplementation(() => {});
     const logsRetriever = getLogsRetriever({});
     expect(logsRetriever).toBeDefined();
     logsRetriever(stepName, stepStatus, taskRun);
