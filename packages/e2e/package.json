@@ -17,7 +17,7 @@
     "test:ci": "cypress run"
   },
   "devDependencies": {
-    "cypress": "^12.6.0"
+    "cypress": "^12.7.0"
   },
   "engines": {
     "node": "^18.13.0",
