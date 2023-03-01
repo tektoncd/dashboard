@@ -102,6 +102,11 @@
     "webpack-merge": "^5.8.0",
     "yaml-loader": "^0.8.0"
   },
+  "overrides": {
+    "@storybook/core-common": {
+      "glob": "^8.0.3"
+    }
+  },
   "engines": {
     "node": "^18.13.0",
     "npm": "^8.19.3"
