@@ -19,7 +19,7 @@ module.exports = api => {
       [
         '@babel/preset-env',
         {
-          corejs: '3.28',
+          corejs: '3.29',
           exclude: ['@babel/plugin-transform-regenerator'],
           modules: false,
           useBuiltIns: 'entry'
