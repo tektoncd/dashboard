@@ -1,6 +1,6 @@
 module github.com/tektoncd/dashboard
 
-go 1.18
+go 1.19
 
 require (
 	github.com/tektoncd/plumbing v0.0.0-20221005125931-631bdcbca245
