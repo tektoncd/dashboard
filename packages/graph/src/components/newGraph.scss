@@ -1,0 +1,80 @@
+/*
+Copyright 2022-2023 The Tekton Authors
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+// TODO: resolve errors preventing the dark theme from being used here
+// @import '@carbon/elements/scss/themes/mixins';
+// @include carbon--theme($carbon--theme--g90) {
+//   $carbon--theme: $carbon--theme--g90;
+@import '@carbon/charts/styles/styles.scss';
+// }
+
+.bx--cc--card-node {
+  &.card-status-success {
+    border-color: $support-02;
+  }
+  &.card-status-success-warning {
+    border-color: $support-03;
+  }
+  &.card-status-failed {
+    border-color: $support-01;
+  }
+  &.card-status-unknown {
+    border-color: $ui-04;
+  }
+}
+
+.bx--cc--card-node__column {
+  overflow: hidden;
+}
+
+.bx--cc--card-node__title {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.bx--cc--shape-node__icon .bx--tooltip__label .bx--tooltip__trigger {
+  margin-left: 0;
+}
+
+.status-icon {
+  .bx--cc--shape-node__icon & {
+    width: 24px;
+    height: 24px;
+  }
+
+  &.status-icon-failed {
+    fill: $support-01;
+  }
+
+  &.status-icon-success {
+    fill: $support-02;
+  }
+
+  &.status-icon-success-warning {
+    fill: $support-02;
+
+    path:nth-child(2) {
+      fill: $support-03;
+    }
+  }
+}
+
+.tkn--pipeline-graph {
+  margin-block: 1rem;
+}
+
+.tkn--pipeline-graph > svg {
+  position: relative;
+  margin-top: 1rem;
+}
