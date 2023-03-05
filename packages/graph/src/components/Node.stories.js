@@ -69,7 +69,7 @@ export default {
       default: 'white'
     }
   },
-  title: 'Node'
+  title: 'legacy/Node'
 };
 
 export const Start = () => <Node type="Start" width="60" height="60" />;

@@ -27,7 +27,7 @@ export default {
       default: 'white'
     }
   },
-  title: 'PipelineGraph'
+  title: 'legacy/PipelineGraph'
 };
 
 export const Base = () => (

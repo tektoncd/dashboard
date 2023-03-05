@@ -27,7 +27,7 @@ export default {
       default: 'white'
     }
   },
-  title: 'ZoomablePipelineGraph'
+  title: 'legacy/ZoomablePipelineGraph'
 };
 
 export const Base = () => (

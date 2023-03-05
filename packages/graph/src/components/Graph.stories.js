@@ -23,7 +23,7 @@ export default {
       default: 'white'
     }
   },
-  title: 'Graph'
+  title: 'legacy/Graph'
 };
 
 export const Base = () => <Graph graph={graph} />;
