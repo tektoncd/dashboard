@@ -1,0 +1,376 @@
+{
+  "apiVersion": "tekton.dev/v1beta1",
+  "kind": "PipelineRun",
+  "metadata": {
+    "generateName": "guarded-pr-"
+  },
+  "spec": {
+    "serviceAccountName": "default",
+    "pipelineSpec": {
+      "params": [
+        {
+          "name": "path",
+          "type": "string",
+          "description": "The path of the file to be created"
+        },
+        {
+          "name": "branches",
+          "type": "array",
+          "description": "The list of branch names"
+        }
+      ],
+      "workspaces": [
+        {
+          "name": "source",
+          "description": "This workspace is shared among all the pipeline tasks to read/write common resources\n"
+        }
+      ],
+      "tasks": [
+        {
+          "name": "create-file",
+          "when": [
+            {
+              "input": "$(params.path)",
+              "operator": "in",
+              "values": ["README.md"]
+            }
+          ],
+          "workspaces": [
+            {
+              "name": "source",
+              "workspace": "source"
+            }
+          ],
+          "taskSpec": {
+            "workspaces": [
+              {
+                "name": "source",
+                "description": "The workspace to create the readme file in"
+              }
+            ],
+            "steps": [
+              {
+                "name": "write-new-stuff",
+                "image": "ubuntu",
+                "script": "touch $(workspaces.source.path)/README.md"
+              }
+            ]
+          }
+        },
+        {
+          "name": "check-file",
+          "params": [
+            {
+              "name": "path",
+              "value": "$(params.path)"
+            }
+          ],
+          "workspaces": [
+            {
+              "name": "source",
+              "workspace": "source"
+            }
+          ],
+          "runAfter": ["create-file"],
+          "taskSpec": {
+            "params": [
+              {
+                "name": "path"
+              }
+            ],
+            "workspaces": [
+              {
+                "name": "source",
+                "description": "The workspace to check for the file"
+              }
+            ],
+            "results": [
+              {
+                "name": "exists",
+                "description": "indicates whether the file exists or is missing"
+              }
+            ],
+            "steps": [
+              {
+                "name": "check-file",
+                "image": "alpine",
+                "script": "if test -f $(workspaces.source.path)/$(params.path); then\n  printf yes | tee /tekton/results/exists\nelse\n  printf no | tee /tekton/results/exists\nfi\n"
+              }
+            ]
+          }
+        },
+        {
+          "name": "echo-file-exists",
+          "when": [
+            {
+              "input": "$(tasks.check-file.results.exists)",
+              "operator": "in",
+              "values": ["yes"]
+            }
+          ],
+          "taskSpec": {
+            "steps": [
+              {
+                "name": "echo",
+                "image": "ubuntu",
+                "script": "echo file exists"
+              }
+            ]
+          }
+        },
+        {
+          "name": "sample-task-with-array-values",
+          "when": [
+            {
+              "input": "main",
+              "operator": "in",
+              "values": ["$(params.branches[*])"]
+            }
+          ],
+          "taskSpec": {
+            "steps": [
+              {
+                "name": "echo",
+                "image": "alpine",
+                "script": "echo hello"
+              }
+            ]
+          }
+        },
+        {
+          "name": "task-should-be-skipped-1",
+          "when": [
+            {
+              "input": "$(tasks.check-file.results.exists)",
+              "operator": "in",
+              "values": ["missing"]
+            }
+          ],
+          "taskSpec": {
+            "steps": [
+              {
+                "name": "echo",
+                "image": "ubuntu",
+                "script": "exit 1"
+              }
+            ]
+          }
+        },
+        {
+          "name": "task-should-be-skipped-2",
+          "when": [
+            {
+              "input": "$(params.path)",
+              "operator": "notin",
+              "values": ["README.md"]
+            }
+          ],
+          "taskSpec": {
+            "steps": [
+              {
+                "name": "echo",
+                "image": "ubuntu",
+                "script": "exit 1"
+              }
+            ]
+          }
+        },
+        {
+          "name": "task-should-be-skipped-3",
+          "runAfter": ["echo-file-exists"],
+          "when": [
+            {
+              "input": "monday",
+              "operator": "in",
+              "values": ["friday"]
+            }
+          ],
+          "taskSpec": {
+            "steps": [
+              {
+                "name": "echo",
+                "image": "ubuntu",
+                "script": "exit 1"
+              }
+            ]
+          }
+        },
+        {
+          "name": "task-should-be-skipped-4",
+          "when": [
+            {
+              "input": "master",
+              "operator": "in",
+              "values": ["$(params.branches[*])"]
+            }
+          ],
+          "taskSpec": {
+            "steps": [
+              {
+                "name": "echo",
+                "image": "alpine",
+                "script": "exit 1"
+              }
+            ]
+          }
+        }
+      ],
+      "finally": [
+        {
+          "name": "finally-task-should-be-skipped-1",
+          "when": [
+            {
+              "input": "$(tasks.echo-file-exists.status)",
+              "operator": "in",
+              "values": ["Failure"]
+            }
+          ],
+          "taskSpec": {
+            "steps": [
+              {
+                "name": "echo",
+                "image": "ubuntu",
+                "script": "exit 1"
+              }
+            ]
+          }
+        },
+        {
+          "name": "finally-task-should-be-skipped-2",
+          "when": [
+            {
+              "input": "$(tasks.check-file.results.exists)",
+              "operator": "in",
+              "values": ["missing"]
+            }
+          ],
+          "taskSpec": {
+            "steps": [
+              {
+                "name": "echo",
+                "image": "ubuntu",
+                "script": "exit 1"
+              }
+            ]
+          }
+        },
+        {
+          "name": "finally-task-should-be-skipped-3",
+          "when": [
+            {
+              "input": "$(params.path)",
+              "operator": "notin",
+              "values": ["README.md"]
+            }
+          ],
+          "taskSpec": {
+            "steps": [
+              {
+                "name": "echo",
+                "image": "ubuntu",
+                "script": "exit 1"
+              }
+            ]
+          }
+        },
+        {
+          "name": "finally-task-should-be-skipped-4",
+          "when": [
+            {
+              "input": "$(tasks.status)",
+              "operator": "in",
+              "values": ["Failure"]
+            }
+          ],
+          "taskSpec": {
+            "steps": [
+              {
+                "name": "echo",
+                "image": "ubuntu",
+                "script": "exit 1"
+              }
+            ]
+          }
+        },
+        {
+          "name": "finally-task-should-be-skipped-5",
+          "when": [
+            {
+              "input": "$(tasks.status)",
+              "operator": "in",
+              "values": ["Succeeded"]
+            }
+          ],
+          "taskSpec": {
+            "steps": [
+              {
+                "name": "echo",
+                "image": "ubuntu",
+                "script": "exit 1"
+              }
+            ]
+          }
+        },
+        {
+          "name": "finally-task-should-be-executed",
+          "when": [
+            {
+              "input": "$(tasks.echo-file-exists.status)",
+              "operator": "in",
+              "values": ["Succeeded"]
+            },
+            {
+              "input": "$(tasks.status)",
+              "operator": "in",
+              "values": ["Completed"]
+            },
+            {
+              "input": "$(tasks.check-file.results.exists)",
+              "operator": "in",
+              "values": ["yes"]
+            },
+            {
+              "input": "$(params.path)",
+              "operator": "in",
+              "values": ["README.md"]
+            }
+          ],
+          "taskSpec": {
+            "steps": [
+              {
+                "name": "echo",
+                "image": "ubuntu",
+                "script": "echo finally done"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "params": [
+      {
+        "name": "path",
+        "value": "README.md"
+      },
+      {
+        "name": "branches",
+        "value": ["main", "hotfix"]
+      }
+    ],
+    "workspaces": [
+      {
+        "name": "source",
+        "volumeClaimTemplate": {
+          "spec": {
+            "accessModes": ["ReadWriteOnce"],
+            "resources": {
+              "requests": {
+                "storage": "16Mi"
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

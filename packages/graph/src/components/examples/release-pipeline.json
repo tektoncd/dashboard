@@ -1,0 +1,432 @@
+{
+  "apiVersion": "tekton.dev/v1beta1",
+  "kind": "Pipeline",
+  "metadata": {
+    "annotations": {
+      "managed-by": "Tekton"
+    },
+    "creationTimestamp": "2021-02-09T13:44:00Z",
+    "generation": 1510,
+    "name": "pipeline-pipeline-release",
+    "namespace": "tekton-nightly",
+    "resourceVersion": "1323145068",
+    "uid": "e61738cc-a3c6-4eec-9b8c-938e6514e479"
+  },
+  "spec": {
+    "params": [
+      {
+        "default": "github.com/tektoncd/pipeline",
+        "description": "package to release",
+        "name": "package",
+        "type": "string"
+      },
+      {
+        "description": "the git revision to release",
+        "name": "gitRevision",
+        "type": "string"
+      },
+      {
+        "default": "gcr.io",
+        "description": "The target image registry",
+        "name": "imageRegistry",
+        "type": "string"
+      },
+      {
+        "default": "tekton-releases",
+        "description": "The path (project) in the image registry",
+        "name": "imageRegistryPath",
+        "type": "string"
+      },
+      {
+        "description": "The X.Y.Z version that the artifacts should be tagged with",
+        "name": "versionTag",
+        "type": "string"
+      },
+      {
+        "default": "gs://tekton-releases-nightly/pipeline",
+        "description": "bucket where the release is stored. The bucket must be project specific.",
+        "name": "releaseBucket",
+        "type": "string"
+      },
+      {
+        "default": "true",
+        "description": "Whether to tag and publish this release as Pipelines' latest",
+        "name": "releaseAsLatest",
+        "type": "string"
+      },
+      {
+        "default": "linux/amd64,linux/arm,linux/arm64,linux/s390x,linux/ppc64le",
+        "description": "Platforms to build images for (e.g. linux/amd64,linux/arm64)",
+        "name": "buildPlatforms",
+        "type": "string"
+      },
+      {
+        "default": "linux/amd64,linux/arm,linux/arm64,linux/s390x,linux/ppc64le,windows/amd64",
+        "description": "Platforms to publish images for (e.g. linux/amd64,linux/arm64,windows/amd64). This\ncan differ from buildPlatforms due to the fact that a windows-compatible base image\nis constructed for the publishing phase.\n",
+        "name": "publishPlatforms",
+        "type": "string"
+      },
+      {
+        "description": "The path to the service account file within the release-secret workspace",
+        "name": "serviceAccountPath",
+        "type": "string"
+      }
+    ],
+    "results": [
+      {
+        "description": "the sha of the commit that was released",
+        "name": "commit-sha",
+        "value": "$(tasks.git-clone.results.commit)"
+      },
+      {
+        "description": "the URL of the release file",
+        "name": "release-file",
+        "value": "$(tasks.report-bucket.results.release)"
+      },
+      {
+        "description": "the URL of the release file",
+        "name": "release-file-no-tag",
+        "value": "$(tasks.report-bucket.results.release-no-tag)"
+      }
+    ],
+    "tasks": [
+      {
+        "name": "git-clone",
+        "params": [
+          {
+            "name": "url",
+            "value": "https://$(params.package)"
+          },
+          {
+            "name": "revision",
+            "value": "$(params.gitRevision)"
+          }
+        ],
+        "taskRef": {
+          "kind": "Task",
+          "name": "git-clone"
+        },
+        "workspaces": [
+          {
+            "name": "output",
+            "subPath": "git",
+            "workspace": "workarea"
+          }
+        ]
+      },
+      {
+        "name": "precheck",
+        "params": [
+          {
+            "name": "package",
+            "value": "$(params.package)"
+          },
+          {
+            "name": "versionTag",
+            "value": "$(params.versionTag)"
+          },
+          {
+            "name": "releaseBucket",
+            "value": "$(params.releaseBucket)"
+          }
+        ],
+        "runAfter": ["git-clone"],
+        "taskRef": {
+          "kind": "Task",
+          "name": "prerelease-checks"
+        },
+        "workspaces": [
+          {
+            "name": "source-to-release",
+            "subPath": "git",
+            "workspace": "workarea"
+          }
+        ]
+      },
+      {
+        "name": "unit-tests",
+        "params": [
+          {
+            "name": "package",
+            "value": "$(params.package)"
+          },
+          {
+            "name": "flags",
+            "value": "-v -mod=vendor"
+          }
+        ],
+        "runAfter": ["precheck"],
+        "taskRef": {
+          "kind": "Task",
+          "name": "golang-test"
+        },
+        "workspaces": [
+          {
+            "name": "source",
+            "subPath": "git",
+            "workspace": "workarea"
+          }
+        ]
+      },
+      {
+        "name": "build",
+        "params": [
+          {
+            "name": "package",
+            "value": "$(params.package)"
+          },
+          {
+            "name": "packages",
+            "value": "./cmd/..."
+          }
+        ],
+        "runAfter": ["precheck"],
+        "taskRef": {
+          "kind": "Task",
+          "name": "golang-build"
+        },
+        "workspaces": [
+          {
+            "name": "source",
+            "subPath": "git",
+            "workspace": "workarea"
+          }
+        ]
+      },
+      {
+        "name": "build-base-image",
+        "params": [
+          {
+            "name": "package",
+            "value": "$(params.package)"
+          },
+          {
+            "name": "imageRegistry",
+            "value": "$(params.imageRegistry)"
+          },
+          {
+            "name": "imageRegistryPath",
+            "value": "$(params.imageRegistryPath)"
+          },
+          {
+            "name": "platforms",
+            "value": "$(params.buildPlatforms)"
+          },
+          {
+            "name": "serviceAccountPath",
+            "value": "$(params.serviceAccountPath)"
+          }
+        ],
+        "runAfter": ["build", "unit-tests"],
+        "taskRef": {
+          "kind": "Task",
+          "name": "pipeline-build-multiarch-base-image"
+        },
+        "workspaces": [
+          {
+            "name": "source",
+            "subPath": "git",
+            "workspace": "workarea"
+          },
+          {
+            "name": "release-secret",
+            "workspace": "release-secret"
+          }
+        ]
+      },
+      {
+        "name": "publish-images",
+        "params": [
+          {
+            "name": "package",
+            "value": "$(params.package)"
+          },
+          {
+            "name": "versionTag",
+            "value": "$(params.versionTag)"
+          },
+          {
+            "name": "imageRegistry",
+            "value": "$(params.imageRegistry)"
+          },
+          {
+            "name": "imageRegistryPath",
+            "value": "$(params.imageRegistryPath)"
+          },
+          {
+            "name": "releaseAsLatest",
+            "value": "$(params.releaseAsLatest)"
+          },
+          {
+            "name": "serviceAccountPath",
+            "value": "$(params.serviceAccountPath)"
+          },
+          {
+            "name": "platforms",
+            "value": "$(params.publishPlatforms)"
+          }
+        ],
+        "runAfter": ["build-base-image"],
+        "taskRef": {
+          "kind": "Task",
+          "name": "pipeline-publish-release"
+        },
+        "workspaces": [
+          {
+            "name": "source",
+            "subPath": "git",
+            "workspace": "workarea"
+          },
+          {
+            "name": "output",
+            "subPath": "bucket",
+            "workspace": "workarea"
+          },
+          {
+            "name": "release-secret",
+            "workspace": "release-secret"
+          }
+        ]
+      },
+      {
+        "name": "publish-to-bucket",
+        "params": [
+          {
+            "name": "location",
+            "value": "$(params.releaseBucket)/previous/$(params.versionTag)"
+          },
+          {
+            "name": "path",
+            "value": "$(params.versionTag)"
+          },
+          {
+            "name": "serviceAccountPath",
+            "value": "$(params.serviceAccountPath)"
+          }
+        ],
+        "runAfter": ["publish-images"],
+        "taskRef": {
+          "kind": "Task",
+          "name": "gcs-upload"
+        },
+        "workspaces": [
+          {
+            "name": "credentials",
+            "workspace": "release-secret"
+          },
+          {
+            "name": "source",
+            "subPath": "bucket",
+            "workspace": "workarea"
+          }
+        ]
+      },
+      {
+        "name": "publish-to-bucket-latest",
+        "params": [
+          {
+            "name": "location",
+            "value": "$(params.releaseBucket)/latest"
+          },
+          {
+            "name": "path",
+            "value": "$(params.versionTag)"
+          },
+          {
+            "name": "serviceAccountPath",
+            "value": "$(params.serviceAccountPath)"
+          }
+        ],
+        "runAfter": ["publish-images"],
+        "taskRef": {
+          "kind": "Task",
+          "name": "gcs-upload"
+        },
+        "when": [
+          {
+            "input": "$(params.releaseAsLatest)",
+            "operator": "in",
+            "values": ["true"]
+          }
+        ],
+        "workspaces": [
+          {
+            "name": "credentials",
+            "workspace": "release-secret"
+          },
+          {
+            "name": "source",
+            "subPath": "bucket",
+            "workspace": "workarea"
+          }
+        ]
+      },
+      {
+        "name": "report-bucket",
+        "params": [
+          {
+            "name": "releaseBucket",
+            "value": "$(params.releaseBucket)"
+          },
+          {
+            "name": "versionTag",
+            "value": "$(params.versionTag)"
+          }
+        ],
+        "runAfter": ["publish-to-bucket"],
+        "taskSpec": {
+          "metadata": {},
+          "params": [
+            {
+              "name": "releaseBucket",
+              "type": "string"
+            },
+            {
+              "name": "versionTag",
+              "type": "string"
+            }
+          ],
+          "results": [
+            {
+              "description": "The full URL of the release file in the bucket",
+              "name": "release"
+            },
+            {
+              "description": "The full URL of the release file (no tag) in the bucket",
+              "name": "release-no-tag"
+            }
+          ],
+          "spec": null,
+          "steps": [
+            {
+              "env": [
+                {
+                  "name": "RELEASE_BUCKET",
+                  "value": "$(params.releaseBucket)"
+                },
+                {
+                  "name": "VERSION_TAG",
+                  "value": "$(params.versionTag)"
+                }
+              ],
+              "image": "alpine",
+              "name": "create-results",
+              "resources": {},
+              "script": "BASE_URL=$(echo \"${RELEASE_BUCKET}/previous/${VERSION_TAG}\")\n# If the bucket is in the gs:// return the corresponding public https URL\nBASE_URL=$(echo ${BASE_URL} | sed 's,gs://,https://storage.googleapis.com/,g')\necho \"${BASE_URL}/release.yaml\" > $(results.release.path)\necho \"${BASE_URL}/release.notag.yaml\" > $(results.release-no-tag.path)\n"
+            }
+          ]
+        }
+      }
+    ],
+    "workspaces": [
+      {
+        "description": "The workspace where the repo will be cloned.",
+        "name": "workarea"
+      },
+      {
+        "description": "The secret that contains a service account authorized to push to the imageRegistry and to the output bucket",
+        "name": "release-secret"
+      }
+    ]
+  }
+}

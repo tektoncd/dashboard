@@ -1,0 +1,75 @@
+{
+  "apiVersion": "tekton.dev/v1beta1",
+  "kind": "Pipeline",
+  "metadata": {
+    "name": "clone-cleanup-workspace"
+  },
+  "spec": {
+    "workspaces": [
+      {
+        "name": "git-source"
+      }
+    ],
+    "tasks": [
+      {
+        "name": "clone-app-repo",
+        "taskRef": {
+          "name": "git-clone-from-catalog"
+        },
+        "params": [
+          {
+            "name": "url",
+            "value": "https://github.com/tektoncd/community.git"
+          },
+          {
+            "name": "subdirectory",
+            "value": "application"
+          }
+        ],
+        "workspaces": [
+          {
+            "name": "output",
+            "workspace": "git-source"
+          }
+        ]
+      }
+    ],
+    "finally": [
+      {
+        "name": "cleanup",
+        "taskRef": {
+          "name": "cleanup-workspace"
+        },
+        "workspaces": [
+          {
+            "name": "source",
+            "workspace": "git-source"
+          }
+        ]
+      },
+      {
+        "name": "check-git-commit",
+        "params": [
+          {
+            "name": "commit",
+            "value": "$(tasks.clone-app-repo.results.commit)"
+          }
+        ],
+        "taskSpec": {
+          "params": [
+            {
+              "name": "commit"
+            }
+          ],
+          "steps": [
+            {
+              "name": "check-commit-initialized",
+              "image": "alpine",
+              "script": "if [[ ! $(params.commit) ]]; then\n  exit 1\nfi\n"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

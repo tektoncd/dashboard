@@ -1,0 +1,44 @@
+{
+  "apiVersion": "tekton.dev/v1beta1",
+  "kind": "Pipeline",
+  "metadata": {
+    "name": "dag-example-from-docs"
+  },
+  "spec": {
+    "tasks": [
+      {
+        "name": "lint-repo",
+        "taskRef": {
+          "name": "pylint"
+        }
+      },
+      {
+        "name": "test-app",
+        "taskRef": {
+          "name": "make-test"
+        }
+      },
+      {
+        "name": "build-app",
+        "taskRef": {
+          "name": "kaniko-build-app"
+        },
+        "runAfter": ["test-app"]
+      },
+      {
+        "name": "build-frontend",
+        "taskRef": {
+          "name": "kaniko-build-frontend"
+        },
+        "runAfter": ["test-app"]
+      },
+      {
+        "name": "deploy-all",
+        "taskRef": {
+          "name": "deploy-kubectl"
+        },
+        "runAfter": ["build-app", "build-frontend"]
+      }
+    ]
+  }
+}
