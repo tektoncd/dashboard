@@ -12,15 +12,16 @@ limitations under the License.
 */
 
 import Node from './Node';
+import { cardHeight, cardWidth, shapeSize } from '../../constants';
 
 export default {
   component: Node,
   args: {
-    height: 50,
+    height: cardHeight,
     status: 'success',
     title: 'some-task',
     type: 'card',
-    width: 250,
+    width: cardWidth,
     x: 0,
     y: 0
   },
@@ -48,7 +49,7 @@ export default {
   },
   parameters: {
     backgrounds: {
-      default: 'white'
+      default: 'gray10'
     }
   },
   title: 'Node'
@@ -94,7 +95,7 @@ export const Trigger = {
   args: {
     status: 'trigger',
     type: 'icon',
-    width: 24
+    width: shapeSize
   }
 };
 
