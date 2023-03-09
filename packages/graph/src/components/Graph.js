@@ -88,14 +88,14 @@ export default class Graph extends Component {
           <defs>
             <marker
               id="edge-arrow"
-              markerUnits="strokeWidth"
-              markerWidth="10"
-              markerHeight="14"
+              markerUnits="userSpaceOnUse"
+              markerWidth="7.5"
+              markerHeight="8"
               orient="auto"
-              refY="50"
-              refX="86"
+              refY="4"
+              refX="7"
             >
-              <path d="M 0 0 L100 50 L 0 100" />
+              <path d="M0 0v8l7-4z" />
             </marker>
           </defs>
         )}
