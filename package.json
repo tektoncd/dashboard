@@ -12,7 +12,7 @@
     "i18n:import": "node scripts/i18n/importFromProperties.js",
     "lint": "eslint --ignore-path .gitignore .",
     "lint:fix": "npm run lint -- --fix",
-    "start": "webpack-dev-server --hot --config webpack.dev.js",
+    "start": "webpack serve --hot --config webpack.dev.js",
     "storybook": "storybook dev -p 5000",
     "storybook:build": "storybook build",
     "storybook:deploy": "npx -p @storybook/storybook-deployer storybook-to-ghpages -e storybook-static",

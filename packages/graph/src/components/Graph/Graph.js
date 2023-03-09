@@ -21,18 +21,17 @@ import Edge from '../Edge';
 import Node from '../Node/';
 
 function buildEdges({ direction, edges }) {
-  return edges.map((edge, i) => {
-    // eslint-disable-next-line react/no-array-index-key
-    return <Edge direction={direction} key={`edge_${i}`} edge={edge} />;
-  });
+  return edges.map(edge => (
+    <Edge direction={direction} key={edge.id} edge={edge} />
+  ));
 }
 
 function buildNodes(nodes) {
-  return nodes.map((node, i) => {
+  return nodes.map(node => {
     return (
       <Node
         id={node.id}
-        key={`node_${i}`} // eslint-disable-line react/no-array-index-key
+        key={node.id}
         x={node.x}
         y={node.y}
         height={node.height}
@@ -59,7 +58,7 @@ export default function Graph({
       'elk.edgeRouting': 'ORTHOGONAL',
       'elk.layered.mergeEdges': true, // avoid multiple input / output ports per node
       // TODO: test
-      // 'elk.layered.nodePlacement.bk.fixedAlignment': 'BALANCED',
+      // 'elk.layered.nodePlacement.bk.fixedAlignment': 'BALANCED', // LEFTDOWN
       // 'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF',
       // 'elk.layered.nodePlacement.strategy': 'NETWORK_SIMPLEX',
       // 'crossingMinimization.semiInteractive': true,
