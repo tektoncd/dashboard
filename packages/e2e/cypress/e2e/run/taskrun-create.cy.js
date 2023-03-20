@@ -14,12 +14,11 @@ limitations under the License.
 const namespace = 'tekton-dashboard-e2e-taskrun-create';
 describe('Create TaskRun', () => {
   before(() => {
-    cy.exec('kubectl version --client');
-    cy.exec(`kubectl create namespace ${namespace} || true`);
+    cy.createNamespace(namespace);
   });
 
   after(() => {
-    cy.exec(`kubectl delete namespace ${namespace} || true`);
+    cy.deleteNamespace(namespace);
   });
 
   it('should create TaskRun', function () {
@@ -39,7 +38,7 @@ spec:
         #!/bin/ash
         echo "Hello World!"
     `;
-    cy.exec(`echo "${task}" | kubectl apply -f -`);
+    cy.applyResource(task);
     cy.visit(`/#/taskruns/create?namespace=${namespace}&taskName=${taskName}`);
     cy.get('[id=create-taskrun--namespaces-dropdown]').should(
       'have.value',
@@ -78,7 +77,7 @@ spec:
         #!/bin/ash
         echo "Hello World!"
       `;
-    cy.exec(`echo "${task}" | kubectl apply -f -`);
+    cy.applyResource(task);
     cy.visit(`/#/taskruns/create?namespace=${namespace}&taskName=${taskName}`);
     cy.get('[id=create-taskrun--namespaces-dropdown]').should(
       'have.value',

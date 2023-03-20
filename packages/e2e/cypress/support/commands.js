@@ -37,6 +37,22 @@ limitations under the License.
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
+Cypress.Commands.add('applyResource', resource => {
+  cy.exec(`echo "${resource}" | kubectl apply -f -`);
+});
+
+Cypress.Commands.add('createNamespace', namespace => {
+  cy.exec(`kubectl create namespace ${namespace}`, {
+    failOnNonZeroExit: false
+  });
+});
+
+Cypress.Commands.add('deleteNamespace', namespace => {
+  cy.exec(`kubectl delete namespace ${namespace}`, {
+    failOnNonZeroExit: false
+  });
+});
+
 Cypress.Commands.overwrite('type', (originalFn, element, text, options) => {
   let textToType = text;
   if (options && options.preserveIndentation) {

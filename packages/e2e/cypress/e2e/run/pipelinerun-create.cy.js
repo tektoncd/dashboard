@@ -14,12 +14,11 @@ limitations under the License.
 const namespace = 'tekton-dashboard-e2e-pipelinerun-create';
 describe('Create PipelineRun', () => {
   before(() => {
-    cy.exec('kubectl version --client');
-    cy.exec(`kubectl create namespace ${namespace} || true`);
+    cy.createNamespace(namespace);
   });
 
   after(() => {
-    cy.exec(`kubectl delete namespace ${namespace} || true`);
+    cy.deleteNamespace(namespace);
   });
 
   it('should create PipelineRun', function () {
@@ -42,7 +41,7 @@ spec:
               #!/bin/ash
               echo "Hello World!"
     `;
-    cy.exec(`echo "${pipeline}" | kubectl apply -f -`);
+    cy.applyResource(pipeline);
     cy.visit(
       `/#/pipelineruns/create?namespace=${namespace}&pipelineName=${pipelineName}`
     );
@@ -86,7 +85,7 @@ spec:
               #!/bin/ash
               echo "Hello World!"
     `;
-    cy.exec(`echo "${pipeline}" | kubectl apply -f -`);
+    cy.applyResource(pipeline);
     cy.visit(
       `/#/pipelineruns/create?namespace=${namespace}&pipelineName=${pipelineName}`
     );

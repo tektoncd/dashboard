@@ -14,12 +14,11 @@ limitations under the License.
 const namespace = 'tkn-dashboard-e2e-taskrun-edit';
 describe('Edit and run TaskRun', () => {
   before(() => {
-    cy.exec('kubectl version --client');
-    cy.exec(`kubectl create namespace ${namespace} || true`);
+    cy.createNamespace(namespace);
   });
 
   after(() => {
-    cy.exec(`kubectl delete namespace ${namespace} || true`);
+    cy.deleteNamespace(namespace);
   });
 
   it('should create TaskRun on edit and run', function () {
@@ -38,7 +37,7 @@ spec:
         #!/bin/ash
         echo "Hello World!"
     `;
-    cy.exec(`echo "${task}" | kubectl apply -f -`);
+    cy.applyResource(task);
     cy.visit(`/#/taskruns/create?namespace=${namespace}&taskName=${taskName}`);
     cy.get('[id=create-taskrun--namespaces-dropdown]').should(
       'have.value',

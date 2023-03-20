@@ -14,12 +14,11 @@ limitations under the License.
 const namespace = 'tkn-dashboard-e2e-pipelinerun-edit';
 describe('Edit and run PipelineRun', () => {
   before(() => {
-    cy.exec('kubectl version --client');
-    cy.exec(`kubectl create namespace ${namespace} || true`);
+    cy.createNamespace(namespace);
   });
 
   after(() => {
-    cy.exec(`kubectl delete namespace ${namespace} || true`);
+    cy.deleteNamespace(namespace);
   });
 
   it('should create PipelineRun on edit and run', function () {
@@ -41,7 +40,7 @@ spec:
               #!/bin/ash
               echo "Hello World!"
     `;
-    cy.exec(`echo "${pipeline}" | kubectl apply -f -`);
+    cy.applyResource(pipeline);
     cy.visit(
       `/#/pipelineruns/create?namespace=${namespace}&pipelineName=${pipelineName}`
     );
