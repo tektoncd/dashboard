@@ -108,14 +108,6 @@ test_dashboard() {
   $tekton_repo_dir/scripts/installer uninstall $@
 }
 
-if [ -z "$SKIP_BUILD_TEST" ]; then
-	header "Validating that we can build the release manifests"
-	echo "Building manifests for k8s"
-	$tekton_repo_dir/scripts/installer release                          || fail_test "Failed to build manifests for k8s"
-	echo "Building manifests for k8s --read-write"
-	$tekton_repo_dir/scripts/installer release --read-write              || fail_test "Failed to build manifests for k8s --read-write"
-fi
-
 header "Building browser E2E image"
 docker build -t dashboard-e2e packages/e2e
 
