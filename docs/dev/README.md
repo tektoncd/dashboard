@@ -12,7 +12,6 @@ This guide explains how to build, deploy and test the Tekton Dashboard. It cover
 - [Quick setup for local cluster](#quick-setup-for-local-cluster)
 - [Run backend tests](#run-backend-tests)
   - [Backend unit tests](#backend-unit-tests)
-  - [Integration tests](#integration-tests)
 - [Run frontend tests](#run-frontend-tests)
   - [Frontend unit tests](#frontend-unit-tests)
   - [Frontend E2E tests](#frontend-e2e-tests)
@@ -156,26 +155,6 @@ To run unit tests with `-race`:
 # CGO_ENABLED=1 is needed for -race on go test
 CGO_ENABLED=1 NAMESPACE=default go test -race -v ./...
 ```
-
-### Integration tests
-
-To run integration tests you will need additonal tools:
-1. [`kind`](https://kind.sigs.k8s.io/): For creating a local cluster running on top of docker.
-1. [`helm`](https://helm.sh/docs/intro/install/): For installing helm charts in your kubernetes cluster.
-
-Integration tests are located in the [/test/e2e-tests.sh](../../test/e2e-tests.sh) script.
-
-To run the integration tests locally, you can use the [/test/e2e-tests-local.sh](../../test/e2e-tests-local.sh) script. It will create a fresh `kind` cluster, deploy a docker registry in it, run the integration tests script, and drop the test cluster automatically.
-
-```bash
-export KO_DOCKER_REPO='ko.local'
-# or use an external repository
-# export KO_DOCKER_REPO='docker.io/myusername'
-
-./test/e2e-tests-local.sh
-```
-
-**Note:** You can override the Tekton Pipelines and/or Triggers versions deployed in the test cluster by providing `PIPELINES_VERSION` and/or `TRIGGERS_VERSION` environment variables.
 
 ## Run frontend tests
 

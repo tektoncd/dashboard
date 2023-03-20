@@ -63,11 +63,6 @@ function post_build_tests() {
   results_banner "Go Lint" 0
 }
 
-function utility_install() {
-  # Install envsubst
-  apt-get install gettext-base
-}
-
 function get_node() {
   echo "Script is running as $(whoami) on $(hostname)"
   # It's Stretch and https://github.com/tektoncd/dashboard/blob/main/package.json
@@ -121,8 +116,6 @@ function extra_initialization() {
   npm --version
   echo ">> Node.js version"
   node --version
-  echo "Installing shell utilities"
-  utility_install
 }
 
 function unit_tests() {

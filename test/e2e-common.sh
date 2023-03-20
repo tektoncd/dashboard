@@ -72,18 +72,6 @@ function dump_extra_cluster_state() {
   kubectl -n tekton-pipelines logs $(get_app_pod tekton-pipelines-webhook tekton-pipelines)
   echo ">>> Dashboard backend log:"
   kubectl -n $DASHBOARD_NAMESPACE logs $(get_app_pod tekton-dashboard $DASHBOARD_NAMESPACE)
-
-  echo "Task info"
-  kubectl -n tekton-pipelines get Task -o yaml
-
-  echo "TaskRun info"
-  kubectl -n tekton-pipelines get TaskRun -o yaml
-
-  echo "PipelineRun info"
-  kubectl -n tekton-pipelines get PipelineRun -o yaml
-
-  echo "PipelineRun container info"
-  kubectl -n tekton-pipelines logs -l app=e2e-pipelinerun --all-containers
 }
 
 function wait_dashboard_backend() {
@@ -121,20 +109,6 @@ function dump_cluster_state() {
   echo "***         E2E TEST FAILED         ***"
   echo "***     End of information dump     ***"
   echo "***************************************"
-}
-
-# $1 = File name
-# $2 = HTTP Method
-# $3 = Endpoint
-# Assuming a yaml k8s resource file, do envsubst replacement. This payload is then curled as specified.
-function curl_envsubst_resource() {
-  if [ $# -ne 3 ];then
-    echo "File/HTTP-Method/Endpoint not found."
-    exit 1
-  fi
-  set -x
-  cat "$1" | envsubst | curl -sS -X "$2" --data-binary @- -H "Content-Type: application/yaml" "$3" -H "Tekton-Client: tektoncd/dashboard-e2e"
-  set +x
 }
 
 function fail_test() {
