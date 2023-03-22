@@ -109,7 +109,7 @@ test_dashboard() {
 }
 
 header "Building browser E2E image"
-docker build -t dashboard-e2e packages/e2e
+docker build -t dashboard-e2e packages/e2e || fail_test "Failed building browser E2E image"
 
 if [ -z "$PIPELINES_VERSION" ]; then
   export PIPELINES_VERSION=v0.46.0
