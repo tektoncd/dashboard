@@ -22,7 +22,7 @@ const config = {
   },
   features: {
     buildStoriesJson: true,
-    storyStoreV7: false
+    storyStoreV7: true
   },
   framework: {
     name: '@storybook/react-webpack5',
