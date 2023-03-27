@@ -14,7 +14,7 @@
   "private": true,
   "scripts": {
     "test": "cypress open --e2e --browser chrome",
-    "test:ci": "cypress run"
+    "test:ci": "node -e \"console.log('process.arch:', process.arch)\" && cypress run"
   },
   "devDependencies": {
     "cypress": "^12.8.1"
