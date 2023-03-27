@@ -75,7 +75,7 @@ babelConfig.plugins.push([
 log('Extracting messages\n');
 
 globSync('./@(src|packages)/**/!(*.cy|*.stories|*.test).js', {
-  ignore: ['./**/node_modules/**/*.js', './packages/e2e/**/*.js']
+  ignore: ['packages/**/node_modules/**', 'packages/e2e/**']
 }).forEach(filePath => {
   babel.transformFileSync(path.normalize(filePath), babelConfig);
 });
