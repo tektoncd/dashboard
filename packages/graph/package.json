@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@carbon/charts": "0.58.2",
-    "@carbon/charts-react": "0.58.2",
+    "@carbon/charts-react": "1.6.14",
     "@carbon/elements": "10.56.1",
     "@tektoncd/dashboard-utils": "file:../utils",
     "@visx/event": "^3.0.1",
