@@ -117,6 +117,48 @@ kubectl port-forward -n tekton-pipelines service/tekton-dashboard 9097:9097
 
 You can now open the Dashboard in your browser at http://localhost:9097
 
+## Grant required permissions
+
+The import must be executed using a ServiceAccount with permissions to create the resources being imported.
+
+For this tutorial we will create a ClusterRole granting permission to create a number of Tekton resources, and a RoleBinding configuring this for the `default` ServiceAccount in the `default` namespace.
+
+```bash
+kubectl apply -f - <<EOF
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: tekton-dashboard-tutorial
+rules:
+  - apiGroups:
+      - tekton.dev
+    resources:
+      - tasks
+      - taskruns
+      - pipelines
+      - pipelineruns
+    verbs:
+      - get
+      - create
+      - update
+      - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tekton-dashboard-tutorial
+  namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: tekton-dashboard-tutorial
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: default
+EOF
+```
+
 ## Import some Tekton resources using the Tekton Dashboard
 
 We will import [two simple Tasks and a Pipeline definition](https://github.com/tektoncd/dashboard/tree/main/docs/tutorial) to demonstrate some of the features of the Dashboard.
@@ -127,7 +169,8 @@ We will import [two simple Tasks and a Pipeline definition](https://github.com/t
    - Repository path: `docs/tutorial`
    - Target namespace: `default`
 1. Expand the 'Advanced configuration' section and fill in the following:
-   - Service Account: `tekton-dashboard`
+   - Namespace: `default`
+   - Service Account: `default`
 1. Leave the default values for the rest of the fields
 1. Click the `Import and Apply` button
 
