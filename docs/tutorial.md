@@ -121,7 +121,7 @@ You can now open the Dashboard in your browser at http://localhost:9097
 
 The import must be executed using a ServiceAccount with permissions to create the resources being imported.
 
-For this tutorial we will create a ClusterRole granting permission to create a number of Tekton resources, and a RoleBinding configuring this for the `default` ServiceAccount in the `default` namespace.
+For this tutorial we will create a ClusterRole granting permission to create a number of Tekton resources, and a RoleBinding configuring this so that the `default` ServiceAccount in the `tekton-dashboard` namespace can create resources in the `default` namespace.
 
 ```bash
 kubectl apply -f - <<EOF
@@ -155,7 +155,7 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: default
-    namespace: default
+    namespace: tekton-dashboard
 EOF
 ```
 
@@ -168,9 +168,7 @@ We will import [two simple Tasks and a Pipeline definition](https://github.com/t
    - Repository URL: `https://github.com/tektoncd/dashboard`
    - Repository path: `docs/tutorial`
    - Target namespace: `default`
-1. Expand the 'Advanced configuration' section and fill in the following:
-   - Namespace: `default`
-   - Service Account: `default`
+     - If selecting a different value, ensure the selected ServiceAccount has permission to create resources in this namespace
 1. Leave the default values for the rest of the fields
 1. Click the `Import and Apply` button
 

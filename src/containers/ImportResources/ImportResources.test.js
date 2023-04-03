@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -22,13 +22,10 @@ import * as APIUtils from '../../api/utils';
 
 describe('ImportResources component', () => {
   beforeEach(() => {
-    jest
-      .spyOn(API, 'useDashboardNamespace')
-      .mockImplementation(() => 'namespace1');
     jest.spyOn(API, 'useNamespaces').mockImplementation(() => ({
       data: [
-        { metadata: { name: 'namespace1' } },
-        { metadata: { name: 'default' } }
+        { metadata: { name: 'default' } },
+        { metadata: { name: 'tekton-dashboard' } }
       ]
     }));
     jest
@@ -71,7 +68,7 @@ describe('ImportResources component', () => {
     await waitFor(() => getByText(/Please select a Namespace/i));
   });
 
-  it('Valid data submit displays success notification ', async () => {
+  it('Valid data submit displays success notification', async () => {
     const pipelineRunName = 'fake-tekton-pipeline-run';
     const headers = {
       metadata: { name: pipelineRunName }
@@ -105,7 +102,7 @@ describe('ImportResources component', () => {
           expect(namespace).toEqual('default');
           expect(labels).toEqual(labelsShouldEqual);
           expect(serviceAccount).toEqual('');
-          expect(importerNamespace).toEqual('namespace1');
+          expect(importerNamespace).toEqual('tekton-dashboard');
 
           return Promise.resolve(headers);
         }
@@ -138,7 +135,7 @@ describe('ImportResources component', () => {
         .innerHTML
     ).toContain(
       urls.pipelineRuns.byName({
-        namespace: 'namespace1',
+        namespace: 'tekton-dashboard',
         pipelineRunName
       })
     );
@@ -158,7 +155,7 @@ describe('ImportResources component', () => {
     fireEvent.change(repoURLField, { target: { value: 'URL' } });
 
     fireEvent.click(getAllByPlaceholderText(/select namespace/i)[0]);
-    fireEvent.click(getByText('namespace1'));
+    fireEvent.click(getByText('tekton-dashboard'));
 
     fireEvent.click(getByText('Import'));
     await waitFor(() => getByText(/Please enter a valid Git URL/i));

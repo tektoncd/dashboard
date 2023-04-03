@@ -22,6 +22,13 @@ metadata:
     # additional labels will be added in the API layer
     dashboard.tekton.dev/import: 'true'
 spec:
+  podTemplate:
+    securityContext:
+      runAsUser: 65532
+      runAsGroup: 65532
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
   pipelineSpec:
     params:
       - name: method
@@ -66,8 +73,10 @@ spec:
                 - name: WORKSPACE_PATH
                   value: $(workspaces.repo.path)
               securityContext:
-                runAsNonRoot: true
-                runAsUser: 65532
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                  - "ALL"
               script: |
                 #!/usr/bin/env sh
                 set -eu
@@ -102,6 +111,11 @@ spec:
           steps:
             - name: import
               image: lachlanevenson/k8s-kubectl:latest
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                  - "ALL"
               command: ['kubectl']
               args: [
                 '$(params.method)',

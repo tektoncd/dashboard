@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -34,11 +34,7 @@ import {
   useTitleSync
 } from '@tektoncd/dashboard-utils';
 import parseGitURL from 'git-url-parse';
-import {
-  importResources,
-  useDashboardNamespace,
-  useSelectedNamespace
-} from '../../api';
+import { importResources, useSelectedNamespace } from '../../api';
 import { NamespacesDropdown, ServiceAccountsDropdown } from '..';
 
 const itemToString = ({ text }) => text;
@@ -66,10 +62,9 @@ const HelpIcon = ({ title }) => (
 export function ImportResources() {
   const intl = useIntl();
   const { selectedNamespace: navNamespace } = useSelectedNamespace();
-  const dashboardNamespace = useDashboardNamespace();
 
   const [importerNamespace, setImporterNamespace] =
-    useState(dashboardNamespace);
+    useState('tekton-dashboard');
   const [invalidImporterNamespace, setInvalidImporterNamespace] =
     useState(false);
   const [invalidInput, setInvalidInput] = useState(false);
