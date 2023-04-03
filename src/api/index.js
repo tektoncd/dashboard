@@ -221,8 +221,9 @@ export function importResources({
   serviceAccount
 }) {
   const pipelineRun = deepClone(importResourcesPipelineRunTemplate);
+  const pipelinesAPIVersion = getTektonPipelinesAPIVersion();
 
-  pipelineRun.apiVersion = `tekton.dev/${getTektonPipelinesAPIVersion()}`;
+  pipelineRun.apiVersion = `tekton.dev/${pipelinesAPIVersion}`;
   pipelineRun.metadata.name = `import-resources-${Date.now()}`;
   pipelineRun.metadata.labels = {
     ...labels,
@@ -237,12 +238,29 @@ export function importResources({
   ];
 
   if (serviceAccount) {
-    pipelineRun.spec.serviceAccountName = serviceAccount;
+    if (pipelinesAPIVersion === 'v1') {
+      pipelineRun.spec.taskRunTemplate = {
+        podTemplate: { ...pipelineRun.spec.podTemplate },
+        serviceAccountName: serviceAccount
+      };
+      delete pipelineRun.spec.podTemplate;
+    } else {
+      pipelineRun.spec.taskRunSpecs = [
+        {
+          pipelineTaskName: 'fetch-repo',
+          taskServiceAccountName: serviceAccount
+        },
+        {
+          pipelineTaskName: 'import-resources',
+          taskServiceAccountName: serviceAccount
+        }
+      ];
+    }
   }
 
   const uri = getTektonAPI('pipelineruns', {
     namespace: importerNamespace,
-    version: getTektonPipelinesAPIVersion()
+    version: pipelinesAPIVersion
   });
   return post(uri, pipelineRun).then(({ body }) => body);
 }

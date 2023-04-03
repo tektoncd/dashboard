@@ -305,7 +305,16 @@ describe('importResources', () => {
               { name: 'revision', value: undefined },
               { name: 'target-namespace', value: namespace }
             ]),
-            serviceAccountName: serviceAccount
+            taskRunSpecs: [
+              {
+                pipelineTaskName: 'fetch-repo',
+                taskServiceAccountName: serviceAccount
+              },
+              {
+                pipelineTaskName: 'import-resources',
+                taskServiceAccountName: serviceAccount
+              }
+            ]
           })
         })
       );
