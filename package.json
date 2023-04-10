@@ -93,7 +93,7 @@
     "msw": "^1.1.0",
     "prettier": "^2.8.7",
     "sass": "^1.58.3",
-    "sass-loader": "^13.2.0",
+    "sass-loader": "^13.2.2",
     "storybook": "^7.0.2",
     "style-loader": "^3.3.2",
     "webpack": "^5.78.0",
