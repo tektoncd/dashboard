@@ -125,8 +125,8 @@ For this tutorial we will create a ClusterRole granting permission to create a n
 
 ```bash
 kubectl apply -f - <<EOF
-kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
 metadata:
   name: tekton-dashboard-tutorial
 rules:
