@@ -108,11 +108,15 @@ function pre_unit_tests() {
 }
 
 function pre_integration_tests() {
-    local failed=0
+  local failed=0
+  if [ "${USE_NIGHTLY_RELEASE}" == "true" ]; then
+    echo "Using nightly release, skipping npm install and frontend build"
+  else
     node_npm_install || failed=1
     echo "Running frontend build"
     npm run build || failed=1
-    return ${failed}
+  fi
+  return ${failed}
 }
 
 function extra_initialization() {
