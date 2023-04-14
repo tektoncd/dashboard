@@ -42,6 +42,7 @@ else
 fi
 
 initOS
+install_buildx
 install_kustomize
 
 test_dashboard() {
@@ -109,7 +110,9 @@ test_dashboard() {
 }
 
 header "Building browser E2E image"
-docker build -t dashboard-e2e packages/e2e || fail_test "Failed building browser E2E image"
+echo "Started at $(date)"
+DOCKER_BUILDKIT=1 docker build -t dashboard-e2e packages/e2e || fail_test "Failed building browser E2E image"
+echo "Finished at $(date)"
 
 if [ -z "$PIPELINES_VERSION" ]; then
   export PIPELINES_VERSION=v0.46.0
