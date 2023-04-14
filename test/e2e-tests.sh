@@ -22,18 +22,9 @@ source $(dirname $0)/e2e-common.sh
 
 # Script entry point.
 
-SED="sed"
 START=1
 END=30
 PLATFORM=${PLATFORM:+"--platform $PLATFORM"}
-
-initOS() {
-  local OS=$(echo `uname`|tr '[:upper:]' '[:lower:]')
-
-  case "$OS" in
-    darwin*) SED='gsed';;
-  esac
-}
 
 if [ "${SKIP_INITIALIZE}" != "true" ]; then
   initialize $@
@@ -41,9 +32,10 @@ else
   END=50
 fi
 
-initOS
 install_buildx
-install_kustomize
+if [ "${USE_NIGHTLY_RELEASE}" != "true" ]; then
+  install_kustomize
+fi
 
 test_dashboard() {
   local readonly=true
@@ -51,7 +43,14 @@ test_dashboard() {
     readonly=false
   fi
   header "Setting up environment ($@)"
-  $tekton_repo_dir/scripts/installer install $@
+  if [ "${USE_NIGHTLY_RELEASE}" == "true" ]; then
+    echo "Installing nightly release"
+    $tekton_repo_dir/scripts/release-installer install --nightly latest $@
+  else
+    echo "Installing from HEAD"
+    $tekton_repo_dir/scripts/installer install $@
+  fi
+
   wait_dashboard_backend
   header "Running the e2e tests ($@)"
 

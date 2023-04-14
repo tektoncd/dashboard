@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2020 The Tekton Authors
+# Copyright 2020-2023 The Tekton Authors
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -12,6 +12,14 @@
 # limitations under the License.
 
 BASE_RELEASE_URL="https://storage.googleapis.com/tekton-releases/dashboard"
+
+download() {
+  if type "curl" > /dev/null 2>&1; then
+    curl -sL $@
+  else
+    wget -q $@
+  fi
+}
 
 verifySupported() {
   if ! type "curl" > /dev/null 2>&1 && ! type "wget" > /dev/null 2>&1; then
@@ -31,39 +39,23 @@ getReleaseURL() {
 
 build() {
   local VERSION=$1
-  if type "curl" > /dev/null 2>&1; then
-    curl -sL $(getReleaseURL $VERSION)/installer | bash -s -- build --version $@
-  elif type "wget" > /dev/null 2>&1; then
-    wget -q $(getReleaseURL $VERSION)/installer | bash -s -- build --version $@
-  fi
+  download $(getReleaseURL $VERSION)/installer | bash -s -- build --version $@
 }
 
 install() {
   local VERSION=$1
-  if type "curl" > /dev/null 2>&1; then
-    curl -sL $(getReleaseURL $VERSION)/installer | bash -s -- install --version $@
-  elif type "wget" > /dev/null 2>&1; then
-    wget -q $(getReleaseURL $VERSION)/installer | bash -s -- install --version $@
-  fi
+  download $(getReleaseURL $VERSION)/installer | bash -s -- install --version $@
 }
 
 uninstall() {
   local VERSION=$1
-  if type "curl" > /dev/null 2>&1; then
-    curl -sL $(getReleaseURL $VERSION)/installer | bash -s -- uninstall --version $@
-  elif type "wget" > /dev/null 2>&1; then
-    wget -q $(getReleaseURL $VERSION)/installer | bash -s -- uninstall --version $@
-  fi
+  download $(getReleaseURL $VERSION)/installer | bash -s -- uninstall --version $@
 }
 
 # help provides possible cli installation arguments
 help () {
   local VERSION=$1
-  if type "curl" > /dev/null 2>&1; then
-    curl -sL $(getReleaseURL $VERSION)/installer | bash -s -- "help"
-  elif type "wget" > /dev/null 2>&1; then
-    wget -q $(getReleaseURL $VERSION)/installer | bash -s -- "help"
-  fi
+  download $(getReleaseURL $VERSION)/installer | bash -s -- "help"
 }
 
 set -e
