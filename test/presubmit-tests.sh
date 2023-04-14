@@ -64,21 +64,25 @@ function post_build_tests() {
 }
 
 function get_node() {
-  echo "Script is running as $(whoami) on $(hostname)"
-  # It's Stretch and https://github.com/tektoncd/dashboard/blob/main/package.json
-  # denotes the Node.js and npm versions
+  echo "Installing Node.js"
   apt-get update
   apt-get install -y curl
   curl -O https://nodejs.org/dist/v18.13.0/node-v18.13.0-linux-x64.tar.xz
   tar xf node-v18.13.0-linux-x64.tar.xz
   export PATH=$PATH:$(pwd)/node-v18.13.0-linux-x64/bin
+  echo ">> Node.js version"
+  node --version
+  echo ">> npm version"
+  npm --version
 }
 
 function node_npm_install() {
   local failed=0
+  echo "Configuring npm"
   mkdir ~/.npm-global
   npm config set prefix '~/.npm-global'
   export PATH=$PATH:$HOME/.npm-global/bin
+  echo "Installing package dependencies"
   npm ci || failed=1 # similar to `npm install` but ensures all versions from lock file
   return ${failed}
 }
@@ -106,16 +110,14 @@ function pre_unit_tests() {
 function pre_integration_tests() {
     local failed=0
     node_npm_install || failed=1
+    echo "Running frontend build"
     npm run build || failed=1
     return ${failed}
 }
 
 function extra_initialization() {
+  echo "Script is running as $(whoami) on $(hostname)"
   get_node
-  echo ">> npm version"
-  npm --version
-  echo ">> Node.js version"
-  node --version
 }
 
 function unit_tests() {

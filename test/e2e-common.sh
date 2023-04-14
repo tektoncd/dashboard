@@ -29,7 +29,7 @@ function print_diagnostic_info() {
 }
 
 function install_kustomize() {
-  if ! type "kustomize" > /dev/null; then
+  if ! type "kustomize" > /dev/null 2>&1; then
     echo ">> Installing kustomize"
     tar=kustomize_v4.5.4_linux_amd64.tar.gz
     curl -s -O -L https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v4.5.4/$tar
@@ -37,6 +37,13 @@ function install_kustomize() {
 
     cp ./kustomize /usr/local/bin
   fi
+}
+
+function install_buildx() {
+  echo ">> Installing buildx plugin"
+  mkdir -p ~/.docker/cli-plugins \
+     && curl -fsSL https://github.com/docker/buildx/releases/download/v0.10.4/buildx-v0.10.4.linux-amd64 > ~/.docker/cli-plugins/docker-buildx \
+     && chmod u+x ~/.docker/cli-plugins/docker-buildx
 }
 
 function install_pipelines() {
