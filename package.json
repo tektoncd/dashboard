@@ -63,7 +63,7 @@
     "@storybook/react": "^7.0.2",
     "@storybook/react-webpack5": "^7.0.2",
     "@storybook/theming": "^7.0.2",
-    "@svgr/webpack": "^6.5.1",
+    "@svgr/webpack": "^7.0.0",
     "@testing-library/react": "^12.1.5",
     "@testing-library/react-hooks": "^8.0.1",
     "babel-loader": "^9.1.2",
