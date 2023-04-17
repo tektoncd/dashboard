@@ -61,7 +61,7 @@
     "@storybook/addon-storysource": "^7.0.2",
     "@storybook/addons": "^7.0.2",
     "@storybook/react": "^7.0.2",
-    "@storybook/react-webpack5": "^7.0.2",
+    "@storybook/react-webpack5": "^7.0.5",
     "@storybook/theming": "^7.0.2",
     "@svgr/webpack": "^7.0.0",
     "@testing-library/react": "^12.1.5",
