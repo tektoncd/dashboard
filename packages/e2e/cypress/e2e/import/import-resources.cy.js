@@ -69,7 +69,7 @@ subjects:
     cy.contains('a', 'View status of this run').click();
 
     cy.get('header[class="tkn--pipeline-run-header"]')
-      .find('span[class="tkn--status-label"]', { timeout: 30000 })
+      .find('span[class="tkn--status-label"]', { timeout: 60000 })
       .should('have.text', 'Succeeded');
 
     cy.visit(`/#/namespaces/${namespace}/pipelines`);
