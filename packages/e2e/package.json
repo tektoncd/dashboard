@@ -17,7 +17,7 @@
     "test:ci": "node -e \"console.log('process.arch:', process.arch)\" && cypress run"
   },
   "devDependencies": {
-    "cypress": "^12.8.1"
+    "cypress": "^12.10.0"
   },
   "engines": {
     "node": "^18.13.0",
