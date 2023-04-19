@@ -92,7 +92,7 @@ type Server struct {
 
 type responder struct{}
 
-func (r *responder) Error(w http.ResponseWriter, req *http.Request, err error) {
+func (r *responder) Error(w http.ResponseWriter, _ *http.Request, err error) {
 	logging.Log.Errorf("Error while proxying request: %v", err)
 	http.Error(w, err.Error(), http.StatusInternalServerError)
 }
@@ -126,17 +126,13 @@ func Register(r endpoints.Resource, cfg *rest.Config) (*Server, error) {
 	logging.Log.Info("Adding Kube API")
 	apiProxyPrefix := "/api/"
 	apisProxyPrefix := "/apis/"
-	proxyHandlerAPI, err := NewProxyHandler(apiProxyPrefix, cfg, 30*time.Second)
-	if err != nil {
-		return nil, err
-	}
-	proxyHandlerAPIs, err := NewProxyHandler(apisProxyPrefix, cfg, 30*time.Second)
+	proxyHandler, err := NewProxyHandler(cfg, 30*time.Second)
 	if err != nil {
 		return nil, err
 	}
 	mux := http.NewServeMux()
-	mux.Handle(apiProxyPrefix, proxyHandlerAPI)
-	mux.Handle(apisProxyPrefix, proxyHandlerAPIs)
+	mux.Handle(apiProxyPrefix, proxyHandler)
+	mux.Handle(apisProxyPrefix, proxyHandler)
 
 	logging.Log.Info("Adding Dashboard APIs")
 	registerWeb(r, mux)
@@ -149,7 +145,7 @@ func Register(r endpoints.Resource, cfg *rest.Config) (*Server, error) {
 }
 
 // NewProxyHandler creates an API proxy handler for the cluster
-func NewProxyHandler(apiProxyPrefix string, cfg *rest.Config, keepalive time.Duration) (http.Handler, error) {
+func NewProxyHandler(cfg *rest.Config, keepalive time.Duration) (http.Handler, error) {
 	host := cfg.Host
 	if !strings.HasSuffix(host, "/") {
 		host += "/"

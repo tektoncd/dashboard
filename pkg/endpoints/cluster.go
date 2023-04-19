@@ -38,7 +38,7 @@ type Properties struct {
 // GetProperties is used to get the installed namespace for the Dashboard,
 // the version of the Tekton Dashboard, the version of Tekton Pipelines,
 // when one's in read-only mode and Tekton Triggers version (if Installed)
-func (r Resource) GetProperties(response http.ResponseWriter, request *http.Request) {
+func (r Resource) GetProperties(response http.ResponseWriter, _ *http.Request) {
 	pipelineNamespace := r.Options.GetPipelinesNamespace()
 	triggersNamespace := r.Options.GetTriggersNamespace()
 	dashboardVersion := getDashboardVersion(r, r.Options.InstallNamespace)
