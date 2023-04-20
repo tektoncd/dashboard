@@ -82,19 +82,25 @@ function dump_extra_cluster_state() {
 }
 
 function wait_dashboard_backend() {
+  local ready=false
   # Wait until deployment is running before checking pods, stops timing error
   for i in {1..30}
   do
     wait=$(kubectl wait --namespace $DASHBOARD_NAMESPACE --for=condition=available deployments/tekton-dashboard --timeout=30s)
     echo "WAIT RESULT: $wait"
     if [ "$wait" = "deployment.apps/tekton-dashboard condition met" ]; then
+      ready=true
       break
     elif [ "$wait" = "deployment.extensions/tekton-dashboard condition met" ]; then
+      ready=true
       break
     else
       sleep 5
     fi
   done
+  if ! $ready; then
+    fail_test "Dashboard deployment not found"
+  fi
   # Wait for pods to be running in the namespaces we are deploying to
   wait_until_pods_running $DASHBOARD_NAMESPACE || fail_test "Dashboard backend did not come up"
 }
