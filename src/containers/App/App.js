@@ -116,9 +116,12 @@ const ConfigError = ConfigErrorComponent;
 async function loadMessages(lang) {
   const isSupportedLocale = supportedLocales.includes(lang);
   const targetLocale = isSupportedLocale ? lang : defaultLocale;
-  const { default: loadedMessages } = await import(
-    /* webpackChunkName: "[request]" */ `../../nls/messages_${targetLocale}.json`
-  );
+  // TODO: Can't use destructuring assignment due to https://github.com/webpack/webpack/issues/17042, revert when fixed
+  const loadedMessages = (
+    await import(
+      /* webpackChunkName: "[request]" */ `../../nls/messages_${targetLocale}.json`
+    )
+  ).default;
   /* istanbul ignore next */
   if (process.env.I18N_PSEUDO) {
     const startBoundary = '[[%';
