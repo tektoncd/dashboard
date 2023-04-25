@@ -38,7 +38,7 @@ describe('TaskRunDetails', () => {
     const paramValue = 'v';
     const params = [{ name: paramKey, value: paramValue }];
     const description = 'param_description';
-    const { queryByText } = render(
+    const { queryByLabelText, queryByText } = render(
       <TaskRunDetails
         task={{
           metadata: 'task',
@@ -51,6 +51,7 @@ describe('TaskRunDetails', () => {
     expect(queryByText(taskRunName)).toBeTruthy();
     expect(queryByText(paramKey)).toBeTruthy();
     expect(queryByText(paramValue)).toBeTruthy();
+    fireEvent.click(queryByLabelText('Description'));
     expect(queryByText(description)).toBeTruthy();
   });
 
@@ -61,7 +62,7 @@ describe('TaskRunDetails', () => {
     const paramValue = 'v';
     const params = [{ name: paramKey, value: paramValue }];
     const description = 'param_description';
-    const { queryByText } = render(
+    const { queryByLabelText, queryByText } = render(
       <TaskRunDetails
         taskRun={{
           metadata: { name: taskRunName },
@@ -76,6 +77,7 @@ describe('TaskRunDetails', () => {
 
     expect(queryByText(paramKey)).toBeTruthy();
     expect(queryByText(paramValue)).toBeTruthy();
+    fireEvent.click(queryByLabelText('Description'));
     expect(queryByText(description)).toBeTruthy();
   });
 
@@ -115,7 +117,7 @@ describe('TaskRunDetails', () => {
       spec: {},
       status: { taskResults: [{ name: resultName, value: 'hello' }] }
     };
-    const { queryByText } = render(
+    const { queryByLabelText, queryByText } = render(
       <TaskRunDetails
         task={{
           metadata: 'task',
@@ -128,6 +130,7 @@ describe('TaskRunDetails', () => {
     expect(queryByText(/results/i)).toBeTruthy();
     expect(queryByText(/message/)).toBeTruthy();
     expect(queryByText(/hello/)).toBeTruthy();
+    fireEvent.click(queryByLabelText('Description'));
     expect(queryByText(description)).toBeTruthy();
   });
 
@@ -141,9 +144,10 @@ describe('TaskRunDetails', () => {
       },
       status: { taskResults: [{ name: resultName, value: 'hello' }] }
     };
-    const { queryByText } = render(
+    const { queryByLabelText, queryByText } = render(
       <TaskRunDetails taskRun={taskRun} view="results" />
     );
+    fireEvent.click(queryByLabelText('Description'));
     expect(queryByText(description)).toBeTruthy();
   });
 
