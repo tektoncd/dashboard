@@ -21,4 +21,13 @@ limitations under the License.
   .bx--content-switcher {
     margin-bottom: 1rem;
   }
+
+  /*
+    Allow columns in the params and results tables to grow to better fit their content
+  */
+  .bx--data-table td {
+    &:not(.cell-actions):not(.bx--table-column-checkbox) {
+      max-width: none;
+    }
+  }
 }

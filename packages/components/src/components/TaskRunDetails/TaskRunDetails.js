@@ -15,9 +15,33 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from 'react-intl';
 import { getParams, taskRunHasWarning } from '@tektoncd/dashboard-utils';
-import { ContentSwitcher, Switch } from 'carbon-components-react';
+import { ContentSwitcher, Switch, Tooltip } from 'carbon-components-react';
+import { Information16 } from '@carbon/icons-react';
 
 import { DetailsHeader, Param, Tab, Table, Tabs, ViewYAML } from '..';
+
+function HelpIcon({ title }) {
+  const intl = useIntl();
+
+  if (!title) {
+    return null;
+  }
+
+  return (
+    <Tooltip
+      align="end"
+      direction="top"
+      iconDescription={intl.formatMessage({
+        id: 'dashboard.resourceDetails.description',
+        defaultMessage: 'Description'
+      })}
+      renderIcon={Information16}
+      showIcon
+    >
+      {title}
+    </Tooltip>
+  );
+}
 
 function getDescriptions(array) {
   if (!array) {
@@ -75,11 +99,8 @@ const TaskRunDetails = ({ onViewChange, pod, task, taskRun, view }) => {
       })
     },
     {
-      key: 'description',
-      header: intl.formatMessage({
-        id: 'dashboard.resourceDetails.description',
-        defaultMessage: 'Description'
-      })
+      key: 'actions',
+      header: ''
     }
   ];
 
@@ -91,7 +112,7 @@ const TaskRunDetails = ({ onViewChange, pod, task, taskRun, view }) => {
       rows={params.map(({ name, value }) => ({
         id: name,
         name,
-        description: paramsDescriptions[name],
+        actions: <HelpIcon title={paramsDescriptions[name]} />,
         value: (
           <span title={value}>
             <Param>{value}</Param>
@@ -109,7 +130,7 @@ const TaskRunDetails = ({ onViewChange, pod, task, taskRun, view }) => {
       rows={results.map(({ name, value }) => ({
         id: name,
         name,
-        description: resultsDescriptions[name],
+        actions: <HelpIcon title={resultsDescriptions[name]} />,
         value: (
           <span title={value}>
             <Param>{value}</Param>

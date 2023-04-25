@@ -23,6 +23,7 @@ const params = [
     value: paramValue
   }
 ];
+const taskResults = [{ name: 'message', value: 'hello' }];
 
 export default {
   component: TaskRunDetails,
@@ -39,13 +40,27 @@ export const Base = () => (
     taskRun={{
       metadata: { name: 'my-task', namespace: 'my-namespace' },
       spec: {
-        params
+        params,
+        taskSpec: {
+          params: [
+            {
+              name: params[0].name,
+              description: 'A useful description of the param…'
+            }
+          ],
+          results: [
+            {
+              name: taskResults[0].name,
+              description: 'A useful description of the result…'
+            }
+          ]
+        }
       },
       status: {
         completionTime: '2021-03-03T15:25:34Z',
         podName: 'my-task-h7d6j-pod-pdtb7',
         startTime: '2021-03-03T15:25:27Z',
-        taskResults: [{ name: 'message', value: 'hello' }]
+        taskResults
       }
     }}
   />
@@ -77,7 +92,7 @@ export const WithWarning = () => (
           }
         ],
         startTime: '2021-03-03T15:25:27Z',
-        taskResults: [{ name: 'message', value: 'hello' }]
+        taskResults
       }
     }}
   />
