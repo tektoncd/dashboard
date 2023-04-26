@@ -32,6 +32,9 @@ window.HTMLElement.prototype.scrollIntoView =
 window.TextDecoder = TextDecoder;
 window.TextEncoder = TextEncoder;
 
+const { getComputedStyle } = window;
+window.getComputedStyle = element => getComputedStyle(element);
+
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: jest.fn().mockImplementation(query => ({
