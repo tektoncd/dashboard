@@ -108,8 +108,8 @@
     }
   },
   "engines": {
-    "node": "^18.13.0",
-    "npm": "^8.19.3"
+    "node": "^18.16.0",
+    "npm": "^9.5.1"
   },
   "//": "Workspaces must be listed explicitly to ensure they're processed in the correct order until npm natively supports detecting the topological order",
   "workspaces": [
