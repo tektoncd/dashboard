@@ -8,7 +8,7 @@ spec:
     - name: source
   steps:
     - name: build-static
-      image: node:18.13-alpine
+      image: node:18.16-alpine
       workingDir: $(workspaces.source.path)
       env:
         - name: CI
