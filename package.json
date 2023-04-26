@@ -94,7 +94,7 @@
     "prettier": "^2.8.8",
     "sass": "^1.62.0",
     "sass-loader": "^13.2.2",
-    "storybook": "^7.0.6",
+    "storybook": "^7.0.7",
     "style-loader": "^3.3.2",
     "webpack": "^5.79.0",
     "webpack-cli": "^5.0.1",
