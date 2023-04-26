@@ -64,7 +64,7 @@ spec:
             - name: repo
           steps:
             - name: clone
-              image: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/git-init:v0.41.0
+              image: cgr.dev/chainguard/git:2.40
               env:
                 - name: PARAM_URL
                   value: $(params.repositoryURL)
@@ -80,11 +80,14 @@ spec:
               script: |
                 #!/usr/bin/env sh
                 set -eu
+                git config --global init.defaultBranch main
                 git config --global --add safe.directory "${WORKSPACE_PATH}"
-                /ko-app/git-init \
-                  -url="${PARAM_URL}" \
-                  -revision="${PARAM_REVISION}" \
-                  -path=${WORKSPACE_PATH}
+                cd "${WORKSPACE_PATH}"
+                git init
+                git remote add origin "${PARAM_URL}"
+                git fetch --depth=1 --recurse-submodules=yes origin "${PARAM_REVISION}"
+                git reset --hard FETCH_HEAD
+                git submodule update --init --recursive
         params:
           - name: repositoryURL
             value: $(params.repositoryURL)
