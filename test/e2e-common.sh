@@ -71,16 +71,6 @@ function install_triggers() {
   wait_until_pods_running tekton-pipelines || fail_test "Tekton Triggers did not come up"
 }
 
-# Called by `fail_test` (provided by `e2e-tests.sh`) to dump info on test failure
-function dump_extra_cluster_state() {
-  echo ">>> Pipeline controller log:"
-  kubectl -n tekton-pipelines logs $(get_app_pod tekton-pipelines-controller tekton-pipelines)
-  echo ">>> Pipeline webhook log:"
-  kubectl -n tekton-pipelines logs $(get_app_pod tekton-pipelines-webhook tekton-pipelines)
-  echo ">>> Dashboard backend log:"
-  kubectl -n $DASHBOARD_NAMESPACE logs $(get_app_pod tekton-dashboard $DASHBOARD_NAMESPACE)
-}
-
 function wait_dashboard_backend() {
   local ready=false
   # Wait until deployment is running before checking pods, stops timing error
@@ -105,27 +95,7 @@ function wait_dashboard_backend() {
   wait_until_pods_running $DASHBOARD_NAMESPACE || fail_test "Dashboard backend did not come up"
 }
 
-function dump_cluster_state() {
-  echo "***************************************"
-  echo "***         E2E TEST FAILED         ***"
-  echo "***    Start of information dump    ***"
-  echo "***************************************"
-  echo ">>> All resources:"
-  kubectl get all --all-namespaces
-  kubectl get tekton --all-namespaces
-  echo ">>> Services:"
-  kubectl get services --all-namespaces
-  echo ">>> Events:"
-  kubectl get events --all-namespaces
-  function_exists dump_extra_cluster_state && dump_extra_cluster_state
-  echo "***************************************"
-  echo "***         E2E TEST FAILED         ***"
-  echo "***     End of information dump     ***"
-  echo "***************************************"
-}
-
 function fail_test() {
   [[ -n $1 ]] && echo "ERROR: $1"
-  # dump_cluster_state
   exit 1
 }
