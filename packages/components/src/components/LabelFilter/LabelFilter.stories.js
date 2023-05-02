@@ -11,7 +11,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
 import { action } from '@storybook/addon-actions';
 
 import LabelFilter from '.';
@@ -21,11 +20,11 @@ export default {
   title: 'LabelFilter'
 };
 
-export const Base = () => (
-  <LabelFilter
-    filters={['tekton.dev/pipeline=output-pipeline']}
-    handleAddFilter={action('handleAddFilter')}
-    handleClearFilters={action('handleClearFilters')}
-    handleDeleteFilter={action('handleDeleteFilter')}
-  />
-);
+export const Base = {
+  args: {
+    filters: ['tekton.dev/pipeline=output-pipeline'],
+    handleAddFilter: action('handleAddFilter'),
+    handleClearFilters: action('handleClearFilters'),
+    handleDeleteFilter: action('handleDeleteFilter')
+  }
+};

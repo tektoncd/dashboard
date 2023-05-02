@@ -11,8 +11,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
-
 import FormattedDuration from './FormattedDuration';
 
 export default {
@@ -21,13 +19,12 @@ export default {
 };
 
 export const OneSecond = {
-  render: () => <FormattedDuration milliseconds={1000} />,
+  args: { milliseconds: 1000 },
   name: '1 second'
 };
 
 export const OneMinuteOneSecond = {
-  render: () => <FormattedDuration milliseconds={61000} />,
-
+  args: { milliseconds: 61000 },
   name: '1 minute 1 second'
 };
 

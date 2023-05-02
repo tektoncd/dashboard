@@ -11,8 +11,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
-
 import FormattedDate from './FormattedDate';
 
 const now = new Date();
@@ -29,7 +27,9 @@ export default {
 };
 
 export const Relative = {
-  render: args => <FormattedDate relative {...args} />
+  args: {
+    relative: true
+  }
 };
 
 export const Absolute = {};

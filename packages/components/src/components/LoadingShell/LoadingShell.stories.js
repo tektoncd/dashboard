@@ -11,8 +11,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
-
 import LoadingShell from './LoadingShell';
 
 export default {
@@ -20,4 +18,4 @@ export default {
   title: 'LoadingShell'
 };
 
-export const Base = () => <LoadingShell />;
+export const Base = {};

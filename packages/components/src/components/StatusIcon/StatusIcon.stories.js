@@ -21,9 +21,9 @@ export default {
   argTypes: {
     type: {
       control: {
-        type: 'inline-radio',
-        options: ['normal', 'inverse']
-      }
+        type: 'inline-radio'
+      },
+      options: ['normal', 'inverse']
     }
   },
   parameters: {

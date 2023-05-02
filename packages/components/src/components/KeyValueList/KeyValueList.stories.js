@@ -11,7 +11,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
 import { action } from '@storybook/addon-actions';
 
 import KeyValueList from './KeyValueList';
@@ -25,17 +24,8 @@ export default {
 };
 
 export const Base = {
-  render: args => (
-    <KeyValueList
-      invalidFields={{ '2-key': true, '3-value': true }}
-      onChange={action('onChange')}
-      onAdd={action('onAdd')}
-      onRemove={action('onRemove')}
-      {...args}
-    />
-  ),
-
   args: {
+    invalidFields: { '2-key': true, '3-value': true },
     invalidText: 'There are invalid KeyValue entries.',
     keyValues: [
       {
@@ -66,33 +56,29 @@ export const Base = {
         value: 'invalid value',
         valuePlaceholder: ''
       }
-    ]
+    ],
+    onAdd: action('onAdd'),
+    onChange: action('onChange'),
+    onRemove: action('onRemove')
   }
 };
 
 export const MinKeyValues = {
-  render: args => (
-    <KeyValueList
-      keyValues={[
-        {
-          id: '0',
-          key: 'foo',
-          keyPlaceholder: 'foo',
-          value: 'bar',
-          valuePlaceholder: 'bar'
-        }
-      ]}
-      invalidFields={{}}
-      onChange={action('onChange')}
-      onAdd={action('onAdd')}
-      onRemove={action('onRemove')}
-      {...args}
-    />
-  ),
-
   args: {
-    minKeyValues: 1
+    invalidFields: {},
+    keyValues: [
+      {
+        id: '0',
+        key: 'foo',
+        keyPlaceholder: 'foo',
+        value: 'bar',
+        valuePlaceholder: 'bar'
+      }
+    ],
+    minKeyValues: 1,
+    onAdd: action('onAdd'),
+    onChange: action('onChange'),
+    onRemove: action('onRemove')
   },
-
   name: 'minKeyValues'
 };
