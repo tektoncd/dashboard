@@ -63,10 +63,22 @@ const props = {
   ]
 };
 
-export const Base = () => <Actions {...props} />;
+export const Base = {
+  args: {
+    ...props
+  }
+};
 
-export const Button = () => <Actions {...props} kind="button" />;
+export const Button = {
+  args: {
+    ...props,
+    kind: 'button'
+  }
+};
 
-export const SingleAction = () => (
-  <Actions items={[deleteAction]} kind="button" />
-);
+export const SingleAction = {
+  args: {
+    items: [deleteAction],
+    kind: 'button'
+  }
+};

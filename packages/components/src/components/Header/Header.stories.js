@@ -21,10 +21,12 @@ export default {
   title: 'Header'
 };
 
-export const Base = () => <Header />;
+export const Base = {};
 
-export const WithLogout = () => (
-  <Header>
-    <LogoutButton getLogoutURL={() => Promise.resolve('/something')} />
-  </Header>
-);
+export const WithLogout = {
+  args: {
+    children: (
+      <LogoutButton getLogoutURL={() => Promise.resolve('/something')} />
+    )
+  }
+};

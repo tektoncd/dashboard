@@ -11,8 +11,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
-
 import DetailsHeader from './DetailsHeader';
 
 const getTaskRun = ({ reason, status }) => ({
@@ -34,9 +32,9 @@ export default {
   argTypes: {
     type: {
       control: {
-        type: 'inline-radio',
-        options: ['step', 'taskRun']
-      }
+        type: 'inline-radio'
+      },
+      options: ['step', 'taskRun']
     }
   },
   component: DetailsHeader,
@@ -49,73 +47,54 @@ export default {
 };
 
 export const Cancelled = {
-  render: args => (
-    <DetailsHeader
-      reason="TaskRunCancelled"
-      status="terminated"
-      displayName="build"
-      taskRun={getTaskRun({ reason: 'TaskRunCancelled', status: 'False' })}
-      {...args}
-    />
-  )
+  args: {
+    reason: 'TaskRunCancelled',
+    status: 'terminated',
+    displayName: 'build',
+    taskRun: getTaskRun({ reason: 'TaskRunCancelled', status: 'False' })
+  }
 };
 
 export const Completed = {
-  render: args => (
-    <DetailsHeader
-      reason="Completed"
-      status="terminated"
-      displayName="build"
-      taskRun={getTaskRun({ reason: 'Succeeded', status: 'True' })}
-      {...args}
-    />
-  )
+  args: {
+    reason: 'Completed',
+    status: 'terminated',
+    displayName: 'build',
+    taskRun: getTaskRun({ reason: 'Succeeded', status: 'True' })
+  }
 };
 
 export const CompletedWithWarning = {
-  render: args => (
-    <DetailsHeader
-      exitCode={1}
-      hasWarning
-      reason="Completed"
-      status="terminated"
-      displayName="build"
-      taskRun={getTaskRun({ reason: 'Succeeded', status: 'True' })}
-      {...args}
-    />
-  ),
-
+  args: {
+    displayName: 'build',
+    exitCode: 1,
+    hasWarning: true,
+    reason: 'Completed',
+    status: 'terminated',
+    taskRun: getTaskRun({ reason: 'Succeeded', status: 'True' })
+  },
   name: 'Completed with warning'
 };
 
 export const Failed = {
-  render: args => (
-    <DetailsHeader
-      reason="Error"
-      status="terminated"
-      displayName="build"
-      taskRun={getTaskRun({ reason: 'Failed', status: 'False' })}
-      {...args}
-    />
-  )
+  args: {
+    displayName: 'build',
+    reason: 'Error',
+    status: 'terminated',
+    taskRun: getTaskRun({ reason: 'Failed', status: 'False' })
+  }
 };
 
 export const Pending = {
-  render: args => (
-    <DetailsHeader
-      taskRun={getTaskRun({ reason: 'Pending', status: 'Unknown' })}
-      {...args}
-    />
-  )
+  args: {
+    taskRun: getTaskRun({ reason: 'Pending', status: 'Unknown' })
+  }
 };
 
 export const Running = {
-  render: args => (
-    <DetailsHeader
-      status="running"
-      displayName="build"
-      taskRun={getTaskRun({ reason: 'Running', status: 'Unknown' })}
-      {...args}
-    />
-  )
+  args: {
+    displayName: 'build',
+    status: 'running',
+    taskRun: getTaskRun({ reason: 'Running', status: 'Unknown' })
+  }
 };
