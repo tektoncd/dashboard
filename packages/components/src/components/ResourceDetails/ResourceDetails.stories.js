@@ -42,21 +42,20 @@ export default {
   title: 'ResourceDetails'
 };
 
-export const Error = () => <ResourceDetails error="A helpful error message" />;
+export const Error = { args: { error: 'A helpful error message' } };
 
-export const Loading = () => <ResourceDetails loading />;
+export const Loading = { args: { loading: true } };
 
-export const Base = () => <ResourceDetails resource={resource} />;
+export const Base = { args: { resource } };
 
-export const WithAdditionalContent = () => (
-  <ResourceDetails
-    resource={resource}
-    additionalMetadata={
+export const WithAdditionalContent = {
+  args: {
+    ...Base.args,
+    additionalMetadata: (
       <li>
         <span>Custom Field:</span>some additional metadata
       </li>
-    }
-  >
-    <p>some additional content</p>
-  </ResourceDetails>
-);
+    ),
+    children: <p>some additional content</p>
+  }
+};

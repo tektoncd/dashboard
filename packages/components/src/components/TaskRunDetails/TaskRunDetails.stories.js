@@ -11,8 +11,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
-
 import TaskRunDetails from './TaskRunDetails';
 
 const paramKey = 'k';
@@ -35,9 +33,9 @@ export default {
   title: 'TaskRunDetails'
 };
 
-export const Base = () => (
-  <TaskRunDetails
-    taskRun={{
+export const Base = {
+  args: {
+    taskRun: {
       metadata: { name: 'my-task', namespace: 'my-namespace' },
       spec: {
         params,
@@ -62,13 +60,13 @@ export const Base = () => (
         startTime: '2021-03-03T15:25:27Z',
         taskResults
       }
-    }}
-  />
-);
+    }
+  }
+};
 
-export const WithWarning = () => (
-  <TaskRunDetails
-    taskRun={{
+export const WithWarning = {
+  args: {
+    taskRun: {
       metadata: { name: 'my-task', namespace: 'my-namespace' },
       spec: {
         params
@@ -94,13 +92,13 @@ export const WithWarning = () => (
         startTime: '2021-03-03T15:25:27Z',
         taskResults
       }
-    }}
-  />
-);
+    }
+  }
+};
 
-export const Pod = () => (
-  <TaskRunDetails
-    pod={{
+export const Pod = {
+  args: {
+    pod: {
       events: [
         {
           metadata: {
@@ -160,8 +158,8 @@ export const Pod = () => (
           '…': ''
         }
       }
-    }}
-    taskRun={{
+    },
+    taskRun: {
       metadata: { name: 'my-task' },
       spec: {},
       status: {
@@ -169,6 +167,6 @@ export const Pod = () => (
         podName: 'my-task-h7d6j-pod-pdtb7',
         startTime: '2021-03-03T15:25:27Z'
       }
-    }}
-  />
-);
+    }
+  }
+};

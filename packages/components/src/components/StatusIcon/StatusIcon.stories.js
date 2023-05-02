@@ -11,8 +11,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
-
 import StatusIcon from './StatusIcon';
 
 export default {
@@ -35,47 +33,51 @@ export default {
 };
 
 export const CancelledGraceful = {
-  render: args => <StatusIcon reason="Cancelled" status="False" {...args} />,
-
+  args: {
+    reason: 'Cancelled',
+    status: 'False'
+  },
   name: 'Cancelled - PipelineRun TEP-0058 graceful termination'
 };
 
 export const CancelledPipelineRun = {
-  render: args => (
-    <StatusIcon reason="PipelineRunCancelled" status="False" {...args} />
-  ),
-
+  args: {
+    reason: 'PipelineRunCancelled',
+    status: 'False'
+  },
   name: 'Cancelled - PipelineRun legacy'
 };
 
 export const CancelledTaskRun = {
-  render: args => (
-    <StatusIcon reason="TaskRunCancelled" status="False" {...args} />
-  ),
-
+  args: {
+    reason: 'TaskRunCancelled',
+    status: 'False'
+  },
   name: 'Cancelled - TaskRun'
 };
 
 export const Failed = {
-  render: args => <StatusIcon status="False" {...args} />
+  args: { status: 'False' }
 };
 
 export const Pending = {
-  render: args => <StatusIcon reason="Pending" status="Unknown" {...args} />
+  args: {
+    reason: 'Pending',
+    status: 'Unknown'
+  }
 };
 
 export const Queued = {};
 
 export const Running = {
-  render: args => <StatusIcon reason="Running" status="Unknown" {...args} />
+  args: { reason: 'Running', status: 'Unknown' }
 };
 
 export const Succeeded = {
-  render: args => <StatusIcon status="True" {...args} />
+  args: { status: 'True' }
 };
 
 export const SucceededWithWarning = {
-  render: args => <StatusIcon hasWarning status="True" {...args} />,
-
+  args: { hasWarning: true, status: 'True' },
   name: 'Succeeded with warning'
 };

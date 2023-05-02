@@ -11,13 +11,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
-
 import Graph from './Graph';
 
 import graph from './examples/graph.json';
 
 export default {
+  component: Graph,
   parameters: {
     backgrounds: {
       default: 'white'
@@ -26,4 +25,4 @@ export default {
   title: 'legacy/Graph'
 };
 
-export const Base = () => <Graph graph={graph} />;
+export const Base = { args: { graph } };

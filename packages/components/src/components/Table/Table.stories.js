@@ -23,24 +23,12 @@ import {
 
 import Table from './Table';
 
-function getFilters(showFilters) {
-  return showFilters ? (
-    <Dropdown
-      id="status-filter"
-      initialSelectedItem="All"
-      items={['All', 'Succeeded', 'Failed']}
-      light
-      label="Status"
-      titleText="Status:"
-      type="inline"
-    />
-  ) : null;
-}
-
 export default {
   args: {
+    emptyTextAllNamespaces: 'No rows in any namespace',
+    emptyTextSelectedNamespace: 'No rows in selected namespace',
     loading: false,
-    showFilters: false,
+    size: 'md',
     title: 'Resource Name'
   },
   argTypes: {
@@ -54,57 +42,23 @@ export default {
 };
 
 export const Simple = {
-  render: args => (
-    <Table
-      emptyTextAllNamespaces="No rows in any namespace"
-      emptyTextSelectedNamespace="No rows in selected namespace"
-      filters={getFilters(args.showFilters)}
-      headers={args.headers}
-      loading={args.loading}
-      rows={[]}
-      selectedNamespace={args.selectedNamespace}
-      size={args.size}
-      title={args.title}
-    />
-  ),
-
   args: {
     headers: [
       { key: 'name', header: 'Name' },
       { key: 'namespace', header: 'Namespace' },
       { key: 'date', header: 'Date created' }
     ],
+    rows: [],
     selectedNamespace: '*'
   },
-
   parameters: {
     notes: 'simple table with title, no rows, no buttons'
   }
 };
 
 export const ToolbarButton = {
-  render: args => (
-    <Table
-      emptyTextAllNamespaces="No rows in any namespace"
-      emptyTextSelectedNamespace="No rows in selected namespace"
-      filters={getFilters(args.showFilters)}
-      headers={[
-        { key: 'name', header: 'Name' },
-        { key: 'namespace', header: 'Namespace' },
-        { key: 'date', header: 'Date created' }
-      ]}
-      loading={args.loading}
-      rows={args.rows}
-      selectedNamespace="*"
-      size={args.size}
-      title={args.title}
-      toolbarButtons={[
-        { onClick: action('handleNew'), text: 'Add', icon: Add }
-      ]}
-    />
-  ),
-
   args: {
+    ...Simple.args,
     rows: [
       {
         id: 'namespace1:resource-one',
@@ -112,7 +66,8 @@ export const ToolbarButton = {
         namespace: 'namespace1',
         date: '100 years ago'
       }
-    ]
+    ],
+    toolbarButtons: [{ onClick: action('handleNew'), text: 'Add', icon: Add }]
   },
 
   parameters: {
@@ -121,44 +76,27 @@ export const ToolbarButton = {
 };
 
 export const BatchActions = {
-  render: args => (
-    <Table
-      batchActionButtons={[
-        { onClick: action('handleDelete'), text: 'Delete', icon: Delete }
-      ]}
-      filters={getFilters(args.showFilters)}
-      headers={[
-        { key: 'name', header: 'Name' },
-        { key: 'namespace', header: 'Namespace' },
-        { key: 'date', header: 'Created' }
-      ]}
-      loading={args.loading}
-      rows={args.rows}
-      selectedNamespace="*"
-      size={args.size}
-      title={args.title}
-    />
-  ),
-
   args: {
-    rows: [
-      {
-        id: 'namespace1:resource-one',
-        name: 'resource-one',
-        namespace: 'namespace1',
-        date: '100 years ago'
-      }
+    ...Simple.args,
+    rows: ToolbarButton.args.rows,
+    batchActionButtons: [
+      { onClick: action('handleDelete'), text: 'Delete', icon: Delete }
     ]
   },
-
   parameters: {
     notes: 'table with 1 row, 1 batch action'
   }
 };
 
 export const Sorting = {
-  render: args => {
-    const rows = [
+  args: {
+    ...Simple.args,
+    batchActionButtons: [
+      { onClick: action('handleDelete'), text: 'Delete', icon: Delete },
+      { onClick: action('handleRerun'), text: 'Rerun', icon: Rerun }
+    ],
+    isSortable: true,
+    rows: [
       {
         id: 'namespace1:resource-one',
         name: 'resource-one',
@@ -177,50 +115,42 @@ export const Sorting = {
         namespace: 'tekton',
         date: '2 minutes ago'
       }
-    ];
-
-    return (
-      <Table
-        batchActionButtons={[
-          { onClick: action('handleDelete'), text: 'Delete', icon: Delete },
-          { onClick: action('handleRerun'), text: 'Rerun', icon: Rerun }
-        ]}
-        emptyTextAllNamespaces="No rows in any namespace"
-        emptyTextSelectedNamespace="No rows in selected namespace"
-        filters={getFilters(args.showFilters)}
-        headers={[
-          { key: 'name', header: 'Name' },
-          { key: 'namespace', header: 'Namespace' },
-          { key: 'date', header: 'Date created' }
-        ]}
-        isSortable={args.isSortable}
-        loading={args.loading}
-        rows={rows}
-        selectedNamespace="*"
-        size={args.size}
-        title={args.title}
-        toolbarButtons={[
-          {
-            icon: RerunAll,
-            kind: 'secondary',
-            onClick: action('handleRerunAll'),
-            text: 'RerunAll'
-          },
-          {
-            icon: Add,
-            onClick: action('handleNew'),
-            text: 'Add'
-          }
-        ]}
-      />
-    );
+    ],
+    toolbarButtons: [
+      {
+        icon: RerunAll,
+        kind: 'secondary',
+        onClick: action('handleRerunAll'),
+        text: 'RerunAll'
+      },
+      {
+        icon: Add,
+        onClick: action('handleNew'),
+        text: 'Add'
+      }
+    ]
   },
-
-  args: {
-    isSortable: true
-  },
-
   parameters: {
     notes: 'table with sortable rows, 2 batch actions, and 2 toolbar buttons'
+  }
+};
+
+export const Filters = {
+  args: {
+    ...ToolbarButton.args,
+    filters: (
+      <Dropdown
+        id="status-filter"
+        initialSelectedItem="All"
+        items={['All', 'Succeeded', 'Failed']}
+        light
+        label="Status"
+        titleText="Status:"
+        type="inline"
+      />
+    )
+  },
+  parameters: {
+    notes: 'table with filters'
   }
 };

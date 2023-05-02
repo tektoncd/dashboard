@@ -274,6 +274,6 @@ export const WithPodDetails = () => {
   );
 };
 
-export const Empty = () => <PipelineRun />;
+export const Empty = {};
 
-export const Error = () => <PipelineRun error="Internal server error" />;
+export const Error = { args: { error: 'Internal server error' } };
