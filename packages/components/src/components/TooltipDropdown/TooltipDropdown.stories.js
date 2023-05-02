@@ -15,15 +15,14 @@ import React from 'react';
 
 import TooltipDropdown from './TooltipDropdown';
 
-const props = {
-  id: 'tooltip-dropdown-id',
-  label: 'Select an item',
-  items: ['item 1', 'item 2', 'item 3', 'item 4', 'item 5', 'item 6'],
-  loading: false
-};
-
 export default {
-  args: { titleText: '' },
+  args: {
+    id: 'tooltip-dropdown-id',
+    label: 'Select an item',
+    items: ['item 1', 'item 2', 'item 3', 'item 4', 'item 5', 'item 6'],
+    loading: false,
+    titleText: ''
+  },
   component: TooltipDropdown,
   decorators: [
     Story => (
@@ -35,14 +34,12 @@ export default {
   title: 'TooltipDropdown'
 };
 
-export const Base = {
-  render: args => <TooltipDropdown {...props} {...args} />
-};
+export const Base = {};
 
 export const Loading = {
-  render: args => <TooltipDropdown {...props} loading {...args} />
+  args: { loading: true }
 };
 
 export const Empty = {
-  render: args => <TooltipDropdown {...props} items={[]} {...args} />
+  args: { items: [] }
 };

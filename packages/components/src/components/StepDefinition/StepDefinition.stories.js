@@ -11,8 +11,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
-
 import StepDefinition from './StepDefinition';
 
 export default {
@@ -20,11 +18,11 @@ export default {
   title: 'StepDefinition'
 };
 
-export const Base = () => <StepDefinition />;
+export const Base = {};
 
-export const WithContent = () => (
-  <StepDefinition
-    definition={{
+export const WithContent = {
+  args: {
+    definition: {
       args: [
         'build',
         '-f',
@@ -42,6 +40,6 @@ export const WithContent = () => (
           name: 'docker-socket'
         }
       ]
-    }}
-  />
-);
+    }
+  }
+};

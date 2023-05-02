@@ -11,8 +11,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
-
 import Graph from './Graph';
 import { cardHeight, cardWidth, shapeSize } from '../../constants';
 import { getDAG } from '../../newGraph';
@@ -158,6 +156,8 @@ export const DAG6NoTrigger = {
   }
 };
 
+// Uses data from https://reaflow.dev/?path=/story/demos-basic--many-nodes
+// See https://github.com/reaviz/reaflow/blob/b7a4e815e15a2dff0c9481e5841b4a1dd4bf5896/src/layout/elkLayout.ts for config comparison
 export const Order = {
   args: {
     direction: 'DOWN',
@@ -165,23 +165,5 @@ export const Order = {
       ...cardConfig,
       width: cardWidth / 2
     })
-  },
-  decorators: [
-    Story => (
-      <>
-        <p>
-          Uses data from{' '}
-          <a href="https://reaflow.dev/?path=/story/demos-basic--many-nodes">
-            reaflow &apos;many nodes&apos; story
-          </a>
-          . See{' '}
-          <a href="https://github.com/reaviz/reaflow/blob/b7a4e815e15a2dff0c9481e5841b4a1dd4bf5896/src/layout/elkLayout.ts">
-            config
-          </a>{' '}
-          for comparison.
-        </p>
-        {Story()}
-      </>
-    )
-  ]
+  }
 };

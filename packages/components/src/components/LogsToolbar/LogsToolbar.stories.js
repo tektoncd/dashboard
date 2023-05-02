@@ -11,8 +11,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
-
 import LogsToolbar from './LogsToolbar';
 
 export default {
@@ -20,6 +18,9 @@ export default {
   title: 'LogsToolbar'
 };
 
-export const Base = () => (
-  <LogsToolbar name="some_filename.txt" url="/some/logs/url" />
-);
+export const Base = {
+  args: {
+    name: 'some_filename.txt',
+    url: '/some/logs/url'
+  }
+};

@@ -34,13 +34,13 @@ export default {
   title: 'NotFound'
 };
 
-export const Base = () => <NotFound />;
+export const Base = {};
 
-export const CustomSuggestions = () => (
-  <NotFound
-    suggestions={[
+export const CustomSuggestions = {
+  args: {
+    suggestions: [
       { text: 'CustomResources', to: '/customresources' },
       { text: 'Another link', to: '/somewhereelse' }
-    ]}
-  />
-);
+    ]
+  }
+};

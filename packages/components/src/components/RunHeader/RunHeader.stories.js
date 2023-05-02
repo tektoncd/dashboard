@@ -29,68 +29,44 @@ export default {
 export const Base = {};
 
 export const Running = {
-  render: args => (
-    <RunHeader
-      lastTransitionTime={now}
-      reason="Running"
-      status="Unknown"
-      {...args}
-    />
-  ),
-
   args: {
-    message: 'Not all Tasks have completed executing'
+    lastTransitionTime: now,
+    message: 'Not all Tasks have completed executing',
+    reason: 'Running',
+    status: 'Unknown'
   }
 };
 
 export const Complete = {
-  render: args => (
-    <RunHeader
-      lastTransitionTime={now}
-      status="True"
-      reason="Completed"
-      {...args}
-    />
-  ),
-
   args: {
-    message: 'All Tasks have completed executing'
+    lastTransitionTime: now,
+    message: 'All Tasks have completed executing',
+    reason: 'Completed',
+    status: 'True'
   }
 };
 
 export const Failed = {
-  render: args => (
-    <RunHeader
-      lastTransitionTime={now}
-      status="False"
-      reason="Failed"
-      {...args}
-    />
-  ),
-
   args: {
-    message: 'TaskRun demo-pipeline-run-1-build-skaffold-web-4dzrn has failed'
+    lastTransitionTime: now,
+    message: 'TaskRun demo-pipeline-run-1-build-skaffold-web-4dzrn has failed',
+    reason: 'Failed',
+    status: 'False'
   }
 };
 
-export const Loading = () => <RunHeader loading />;
+export const Loading = { args: { loading: true } };
 
 export const WithTriggerInfo = {
-  render: args => (
-    <RunHeader
-      lastTransitionTime={now}
-      status="True"
-      reason="Completed"
-      triggerHeader={
-        <span>
-          Triggered by <a href="#">Update README.md</a>
-        </span>
-      }
-      {...args}
-    />
-  ),
-
   args: {
-    message: 'All Tasks have completed executing'
+    lastTransitionTime: now,
+    message: 'All Tasks have completed executing',
+    reason: 'Completed',
+    status: 'True',
+    triggerHeader: (
+      <span>
+        Triggered by <a href="#">Update README.md</a>
+      </span>
+    )
   }
 };

@@ -292,7 +292,6 @@ export const HideColumns = {
       ]}
     />
   ),
-
   args: {
     showFilters: false
   }
@@ -363,25 +362,22 @@ export const CustomColumns = {
       ]}
     />
   ),
-
   args: {
     showFilters: false
   }
 };
 
-export const Loading = () => (
-  <PipelineRuns
-    selectedNamespace="default"
-    loading
-    pipelineRuns={[]}
-    cancelPipelineRun={() => {}}
-  />
-);
+export const Empty = {
+  args: {
+    cancelPipelineRun: () => {},
+    pipelineRuns: [],
+    selectedNamespace: 'default'
+  }
+};
 
-export const Empty = () => (
-  <PipelineRuns
-    selectedNamespace="default"
-    pipelineRuns={[]}
-    cancelPipelineRun={() => {}}
-  />
-);
+export const Loading = {
+  args: {
+    ...Empty.args,
+    loading: true
+  }
+};

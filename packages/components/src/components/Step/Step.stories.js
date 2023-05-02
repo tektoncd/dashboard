@@ -11,18 +11,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
 import { action } from '@storybook/addon-actions';
 
 import Step from './Step';
 
-const props = {
-  exitCode: 0,
-  onSelect: action('selected'),
-  stepName: 'build'
-};
-
 export default {
+  args: {
+    exitCode: 0,
+    onSelect: action('selected'),
+    stepName: 'build'
+  },
   component: Step,
   parameters: {
     backgrounds: {
@@ -32,23 +30,21 @@ export default {
   title: 'Step'
 };
 
-export const Base = () => <Step {...props} />;
-export const Selected = () => <Step {...props} selected />;
-export const Waiting = () => <Step {...props} status="waiting" />;
-export const Running = () => <Step {...props} status="running" />;
+export const Base = {};
+export const Selected = { args: { selected: true } };
+export const Waiting = { args: { status: 'waiting' } };
+export const Running = { args: { status: 'running' } };
 
-export const Completed = () => (
-  <Step {...props} status="terminated" reason="Completed" />
-);
+export const Completed = {
+  args: { reason: 'Completed', status: 'terminated' }
+};
 
 export const CompletedWithWarning = {
-  render: () => (
-    <Step {...props} exitCode={1} status="terminated" reason="Completed" />
-  ),
-
+  args: {
+    ...Completed.args,
+    exitCode: 1
+  },
   name: 'Completed with warning'
 };
 
-export const Error = () => (
-  <Step {...props} status="terminated" reason="Error" />
-);
+export const Error = { args: { reason: 'Error', status: 'terminated' } };

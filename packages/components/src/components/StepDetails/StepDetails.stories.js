@@ -30,6 +30,11 @@ function getLogContainer({ exitCode = 0 } = {}) {
 }
 
 export default {
+  args: {
+    definition: 'this will show the Task.spec or TaskRun.spec.taskSpec',
+    stepName: 'build',
+    taskRun: {}
+  },
   component: StepDetails,
   parameters: {
     backgrounds: {
@@ -39,25 +44,16 @@ export default {
   title: 'StepDetails'
 };
 
-export const Base = () => (
-  <StepDetails
-    definition="this will show the Task.spec or TaskRun.spec.taskSpec"
-    logContainer={getLogContainer()}
-    stepName="build"
-    stepStatus={getStepStatus()}
-    taskRun={{}}
-  />
-);
+export const Base = {
+  args: {
+    logContainer: getLogContainer(),
+    stepStatus: getStepStatus()
+  }
+};
 
-export const WithWarning = () => {
-  const exitCode = 1;
-  return (
-    <StepDetails
-      definition="this will show the Task.spec or TaskRun.spec.taskSpec"
-      logContainer={getLogContainer({ exitCode })}
-      stepName="build"
-      stepStatus={getStepStatus({ exitCode })}
-      taskRun={{}}
-    />
-  );
+export const WithWarning = {
+  args: {
+    logContainer: getLogContainer({ exitCode: 1 }),
+    stepStatus: getStepStatus({ exitCode: 1 })
+  }
 };

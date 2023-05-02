@@ -16,19 +16,11 @@ import { action } from '@storybook/addon-actions';
 
 import Task from './Task';
 
-const props = {
-  displayName: 'A Task',
-  onSelect: action('selected')
-};
-
-const steps = [
-  { name: 'lint', terminated: { exitCode: 0, reason: 'Completed' } },
-  { name: 'test', terminated: { exitCode: 1, reason: 'Completed' } },
-  { name: 'build', running: {} },
-  { name: 'deploy', running: {} }
-];
-
 export default {
+  args: {
+    displayName: 'A Task',
+    onSelect: action('selected')
+  },
   component: Task,
   decorators: [
     Story => (
@@ -40,41 +32,38 @@ export default {
   title: 'Task'
 };
 
-export const Succeeded = () => <Task {...props} succeeded="True" />;
+export const Succeeded = { args: { succeeded: 'True' } };
 
 export const SucceededWithWarning = {
-  render: () => (
-    <Task
-      {...props}
-      steps={[{ terminated: { exitCode: 1, reason: 'Completed' } }]}
-      succeeded="True"
-    />
-  ),
-
+  args: {
+    ...Succeeded.args,
+    steps: [{ terminated: { exitCode: 1, reason: 'Completed' } }]
+  },
   name: 'Succeeded with warning'
 };
 
-export const Failed = () => <Task {...props} succeeded="False" />;
-export const Unknown = () => <Task {...props} succeeded="Unknown" />;
+export const Failed = { args: { succeeded: 'False' } };
+export const Unknown = { args: { succeeded: 'Unknown' } };
 
-export const Pending = () => (
-  <Task {...props} succeeded="Unknown" reason="Pending" />
-);
+export const Pending = { args: { ...Unknown.args, reason: 'Pending' } };
 
-export const Running = () => (
-  <Task {...props} succeeded="Unknown" reason="Running" />
-);
+export const Running = { args: { ...Unknown.args, reason: 'Running' } };
 
-export const Expanded = () => {
+export const Expanded = args => {
   const [selectedStepId, setSelectedStepId] = useState();
   return (
     <Task
-      {...props}
-      onSelect={(_, stepId) => setSelectedStepId(stepId)}
-      selectedStepId={selectedStepId}
+      {...args}
       expanded
+      onSelect={(_, stepId) => setSelectedStepId(stepId)}
       reason="Running"
-      steps={steps}
+      selectedStepId={selectedStepId}
+      steps={[
+        { name: 'lint', terminated: { exitCode: 0, reason: 'Completed' } },
+        { name: 'test', terminated: { exitCode: 1, reason: 'Completed' } },
+        { name: 'build', running: {} },
+        { name: 'deploy', running: {} }
+      ]}
       succeeded="Unknown"
     />
   );

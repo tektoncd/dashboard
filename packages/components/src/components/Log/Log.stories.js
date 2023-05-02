@@ -40,74 +40,64 @@ export default {
   title: 'Log'
 };
 
-export const Loading = () => <Log />;
+export const Loading = {};
 
-export const Pending = () => (
-  <Log
-    fetchLogs={() => 'partial logs'}
-    forcePolling
-    stepStatus={{ terminated: { reason: 'Completed' } }}
-  />
-);
+export const Pending = {
+  args: {
+    fetchLogs: () => 'partial logs',
+    forcePolling: true,
+    stepStatus: { terminated: { reason: 'Completed' } }
+  }
+};
 
-export const Completed = () => (
-  <Log
-    stepStatus={{ terminated: { reason: 'Completed', exitCode: 0 } }}
-    fetchLogs={() => 'A log message'}
-  />
-);
+export const Completed = {
+  args: {
+    fetchLogs: () => 'A log message',
+    stepStatus: { terminated: { reason: 'Completed', exitCode: 0 } }
+  }
+};
 
 export const CompletedNonZero = {
-  render: () => (
-    <Log
-      stepStatus={{ terminated: { reason: 'Completed', exitCode: 1 } }}
-      fetchLogs={() => 'A log message'}
-    />
-  ),
-
+  args: {
+    fetchLogs: () => 'A log message',
+    stepStatus: { terminated: { reason: 'Completed', exitCode: 1 } }
+  },
   name: 'Completed: non-zero exit code'
 };
 
-export const Failed = () => (
-  <Log
-    stepStatus={{ terminated: { reason: 'Error' } }}
-    fetchLogs={() => 'A log message'}
-  />
-);
+export const Failed = {
+  args: {
+    fetchLogs: () => 'A log message',
+    stepStatus: { terminated: { reason: 'Error' } }
+  }
+};
 
-export const ANSICodes = () => (
-  <Log
-    stepStatus={{ terminated: { reason: 'Completed', exitCode: 0 } }}
-    fetchLogs={() => ansiLog}
-  />
-);
+export const ANSICodes = {
+  args: {
+    fetchLogs: () => ansiLog,
+    stepStatus: { terminated: { reason: 'Completed', exitCode: 0 } }
+  }
+};
 
-export const Windowed = () => (
-  <Log
-    stepStatus={{ terminated: { reason: 'Completed', exitCode: 0 } }}
-    fetchLogs={() => long}
-  />
-);
+export const Windowed = {
+  args: {
+    fetchLogs: () => long,
+    stepStatus: { terminated: { reason: 'Completed', exitCode: 0 } }
+  }
+};
 
 export const Performance = {
-  render: () => (
-    <Log
-      stepStatus={{ terminated: { reason: 'Completed', exitCode: 0 } }}
-      fetchLogs={() => performanceTest}
-    />
-  ),
-
+  args: {
+    fetchLogs: () => performanceTest,
+    stepStatus: { terminated: { reason: 'Completed', exitCode: 0 } }
+  },
   name: 'performance test (<20,000 lines with ANSI)'
 };
 
-export const Toolbar = () => {
-  const name = 'step_log_filename.txt';
-  const url = '/step/log/url';
-  return (
-    <Log
-      fetchLogs={() => 'A log message'}
-      stepStatus={{ terminated: { reason: 'Completed', exitCode: 0 } }}
-      toolbar={<LogsToolbar name={name} url={url} />}
-    />
-  );
+export const Toolbar = {
+  args: {
+    fetchLogs: () => 'A log message',
+    stepStatus: { terminated: { reason: 'Completed', exitCode: 0 } },
+    toolbar: <LogsToolbar name="step_log_filename.txt" url="/step/log/url" />
+  }
 };

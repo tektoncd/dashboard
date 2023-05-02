@@ -11,8 +11,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
-
 import Trigger from './Trigger';
 
 const props = {
@@ -87,24 +85,42 @@ export default {
   title: 'Trigger'
 };
 
-export const Base = () => <Trigger {...props} />;
+export const Base = { args: props };
 
-export const NoName = () => (
-  <Trigger {...props} trigger={{ ...props.trigger, name: undefined }} />
-);
+export const NoName = {
+  args: {
+    ...props,
+    trigger: {
+      ...props.trigger,
+      name: undefined
+    }
+  }
+};
 
-export const NoBindings = () => (
-  <Trigger {...props} trigger={{ ...props.trigger, bindings: undefined }} />
-);
+export const NoBindings = {
+  args: {
+    ...props,
+    trigger: {
+      ...props.trigger,
+      bindings: undefined
+    }
+  }
+};
 
-export const NoInterceptors = () => (
-  <Trigger {...props} trigger={{ ...props.trigger, interceptors: undefined }} />
-);
+export const NoInterceptors = {
+  args: {
+    ...props,
+    trigger: {
+      ...props.trigger,
+      interceptors: undefined
+    }
+  }
+};
 
-export const NoHeadersInWebhookInterceptor = () => (
-  <Trigger
-    {...props}
-    trigger={{
+export const NoHeadersInWebhookInterceptor = {
+  args: {
+    ...props,
+    trigger: {
       ...props.trigger,
       interceptors: [
         {
@@ -115,6 +131,6 @@ export const NoHeadersInWebhookInterceptor = () => (
           }
         }
       ]
-    }}
-  />
-);
+    }
+  }
+};
