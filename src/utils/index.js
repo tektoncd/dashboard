@@ -98,10 +98,17 @@ export function fetchLogsFallback(externalLogsURL) {
 
   return (stepName, stepStatus, taskRun) => {
     const { namespace } = taskRun.metadata;
-    const { podName } = taskRun.status || {};
+    const { podName, startTime, completionTime } = taskRun.status || {};
     const { container } = stepStatus;
     return get(
-      getExternalLogURL({ container, externalLogsURL, namespace, podName }),
+      getExternalLogURL({
+        container,
+        externalLogsURL,
+        namespace,
+        podName,
+        startTime,
+        completionTime
+      }),
       {
         Accept: 'text/plain'
       }

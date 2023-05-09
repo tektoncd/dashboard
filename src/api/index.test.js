@@ -225,6 +225,52 @@ it('getExternalLogURL', () => {
   const externalLogsURL = 'fake_externalLogsURL';
   const namespace = 'fake_namespace';
   const podName = 'fake_podName';
+  const startTime = '2000-01-02T03:04:05Z';
+  const completionTime = '2006-07-08T09:10:11Z';
+  expect(
+    API.getExternalLogURL({
+      completionTime,
+      container,
+      externalLogsURL,
+      namespace,
+      podName,
+      startTime
+    })
+  ).toEqual(
+    `${externalLogsURL}/${namespace}/${podName}/${container}?startTime=${startTime.replaceAll(
+      ':',
+      '%3A'
+    )}&completionTime=${completionTime.replaceAll(':', '%3A')}`
+  );
+});
+
+it('getExternalLogURL with empty completionTime', () => {
+  const container = 'fake_container';
+  const externalLogsURL = 'fake_externalLogsURL';
+  const namespace = 'fake_namespace';
+  const podName = 'fake_podName';
+  const startTime = '2000-01-02T03:04:05Z';
+  expect(
+    API.getExternalLogURL({
+      container,
+      externalLogsURL,
+      namespace,
+      podName,
+      startTime
+    })
+  ).toEqual(
+    `${externalLogsURL}/${namespace}/${podName}/${container}?startTime=${startTime.replaceAll(
+      ':',
+      '%3A'
+    )}`
+  );
+});
+
+it('getExternalLogURL with empty startTime and completionTime', () => {
+  const container = 'fake_container';
+  const externalLogsURL = 'fake_externalLogsURL';
+  const namespace = 'fake_namespace';
+  const podName = 'fake_podName';
   expect(
     API.getExternalLogURL({ container, externalLogsURL, namespace, podName })
   ).toEqual(`${externalLogsURL}/${namespace}/${podName}/${container}`);
