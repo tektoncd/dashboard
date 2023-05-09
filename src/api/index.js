@@ -182,12 +182,25 @@ export function useEvents(
 }
 
 export function getExternalLogURL({
+  completionTime,
   container,
   externalLogsURL,
   namespace,
-  podName
+  podName,
+  startTime
 }) {
-  return `${externalLogsURL}/${namespace}/${podName}/${container}`;
+  const queryParams = new URLSearchParams();
+  if (startTime) {
+    queryParams.set('startTime', startTime);
+  }
+  if (completionTime) {
+    queryParams.set('completionTime', completionTime);
+  }
+  let queryString = queryParams.toString(); // returns the properly encoded string, or '' if no params
+  if (queryString) {
+    queryString = `?${queryString}`;
+  }
+  return `${externalLogsURL}/${namespace}/${podName}/${container}${queryString}`;
 }
 
 export function getPodLogURL({ container, name, namespace, follow }) {

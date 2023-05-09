@@ -140,6 +140,32 @@ describe('fetchLogsFallback', () => {
     const namespace = 'fake_namespace';
     const podName = 'fake_podName';
     const stepName = 'fake_stepName';
+    const startTime = '2000-01-02T03:04:05Z';
+    const completionTime = '2006-07-08T09:10:11Z';
+    const stepStatus = { container };
+    const taskRun = {
+      metadata: { namespace },
+      status: { podName, startTime, completionTime }
+    };
+    jest.spyOn(comms, 'get').mockImplementation(() => {});
+
+    const fallback = fetchLogsFallback(externalLogsURL);
+    fallback(stepName, stepStatus, taskRun);
+    expect(comms.get).toHaveBeenCalledWith(
+      `${externalLogsURL}/${namespace}/${podName}/${container}?startTime=${startTime.replaceAll(
+        ':',
+        '%3A'
+      )}&completionTime=${completionTime.replaceAll(':', '%3A')}`,
+      { Accept: 'text/plain' }
+    );
+  });
+
+  it('should handle a missing startTime and completionTime', () => {
+    const container = 'fake_container';
+    const externalLogsURL = 'fake_url';
+    const namespace = 'fake_namespace';
+    const podName = 'fake_podName';
+    const stepName = 'fake_stepName';
     const stepStatus = { container };
     const taskRun = { metadata: { namespace }, status: { podName } };
     jest.spyOn(comms, 'get').mockImplementation(() => {});
