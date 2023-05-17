@@ -61,7 +61,7 @@ const FormattedDateWrapper = ({
   });
   formattedDate = formatTooltip(formattedDate);
   return (
-    <span title={formattedDate} aria-label={formattedDate}>
+    <span title={formattedDate}>
       {content}
     </span>
   );

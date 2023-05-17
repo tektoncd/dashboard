@@ -84,7 +84,6 @@ class FormattedDurationWrapper extends Component {
           this.durationNode = ref;
         }}
         title={this.state.tooltip}
-        aria-label={this.state.tooltip}
       >
         <FormattedDuration
           format="{days} {hours} {minutes} {seconds}"
