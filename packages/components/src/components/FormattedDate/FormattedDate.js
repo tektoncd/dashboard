@@ -60,11 +60,7 @@ const FormattedDateWrapper = ({
     minute: 'numeric'
   });
   formattedDate = formatTooltip(formattedDate);
-  return (
-    <span title={formattedDate}>
-      {content}
-    </span>
-  );
+  return <span title={formattedDate}>{content}</span>;
 };
 
 export default FormattedDateWrapper;
