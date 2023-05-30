@@ -65,10 +65,11 @@ function mergeContainerField({
   step,
   stepTemplate
 }) {
-  const items = stepTemplate[field];
+  let items = stepTemplate[field];
   if (!items) {
     return;
   }
+  items = [...items]; // make a copy so we don't modify stepTemplate
 
   const stepItems = step[field];
   (stepItems || []).forEach(stepItem => {
