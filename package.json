@@ -68,7 +68,7 @@
     "@testing-library/react-hooks": "^8.0.1",
     "babel-loader": "^9.1.2",
     "babel-plugin-formatjs": "^10.5.0",
-    "css-loader": "^6.7.3",
+    "css-loader": "^6.8.1",
     "eslint": "^8.39.0",
     "eslint-config-airbnb": "^19.0.0",
     "eslint-config-prettier": "^8.8.0",
