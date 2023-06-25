@@ -92,7 +92,7 @@
     "mini-css-extract-plugin": "^2.7.6",
     "msw": "^1.2.1",
     "prettier": "^2.8.8",
-    "sass": "^1.62.1",
+    "sass": "^1.63.6",
     "sass-loader": "^13.3.1",
     "storybook": "^7.0.20",
     "style-loader": "^3.3.2",
