@@ -62,7 +62,7 @@
     "@storybook/addons": "^7.0.23",
     "@storybook/react": "^7.0.23",
     "@storybook/react-webpack5": "^7.0.23",
-    "@storybook/theming": "^7.0.23",
+    "@storybook/theming": "^7.0.24",
     "@svgr/webpack": "^8.0.1",
     "@testing-library/react": "^12.1.5",
     "@testing-library/react-hooks": "^8.0.1",
