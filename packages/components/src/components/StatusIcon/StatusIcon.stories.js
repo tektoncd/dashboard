@@ -11,7 +11,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import React from 'react';
+import {
+  Pending20 as DefaultStepIcon,
+  PendingFilled20 as DefaultTaskIcon,
+  UndefinedFilled20 as UndefinedIcon
+} from '@carbon/icons-react';
+
 import StatusIcon from './StatusIcon';
+
+import './StatusIcon.stories.scss';
 
 export default {
   component: StatusIcon,
@@ -20,6 +29,10 @@ export default {
     type: {
       control: {
         type: 'inline-radio'
+      },
+      if: {
+        arg: 'DefaultIcon',
+        exists: false
       },
       options: ['normal', 'inverse']
     }
@@ -80,4 +93,123 @@ export const Succeeded = {
 export const SucceededWithWarning = {
   args: { hasWarning: true, status: 'True' },
   name: 'Succeeded with warning'
+};
+
+export const DefaultTask = {
+  args: { DefaultIcon: DefaultTaskIcon },
+  name: 'Task default - no status received yet'
+};
+
+export const DefaultStep = {
+  args: { DefaultIcon: DefaultStepIcon },
+  name: 'Step default - no status received yet'
+};
+
+export const CustomRun = {
+  args: { DefaultIcon: UndefinedIcon },
+  name: 'CustomRun (unknown status)'
+};
+
+export const AllIcons = {
+  render() {
+    return (
+      <div className="status-icons-list">
+        <h3>PipelineRun</h3>
+        <ul>
+          <li>
+            <StatusIcon {...CancelledPipelineRun.args} />
+            <span>Cancelled</span>
+          </li>
+          <li>
+            <StatusIcon {...Failed.args} />
+            <span>Failed</span>
+          </li>
+          <li>
+            <StatusIcon {...Pending.args} />
+            <span>Pending</span>
+          </li>
+          <li>
+            <StatusIcon {...Queued.args} />
+            <span>Queued</span>
+          </li>
+          <li>
+            <StatusIcon {...Running.args} />
+            <span>Running</span>
+          </li>
+          <li>
+            <StatusIcon {...Succeeded.args} />
+            <span>Succeeded</span>
+          </li>
+          <li>
+            <StatusIcon {...SucceededWithWarning.args} />
+            <span>Succeeded with warning</span>
+          </li>
+        </ul>
+
+        <h3>TaskRun</h3>
+        <ul>
+          <li>
+            <StatusIcon {...CancelledPipelineRun.args} />
+            <span>Cancelled</span>
+          </li>
+          <li>
+            <StatusIcon {...Failed.args} />
+            <span>Failed</span>
+          </li>
+          <li>
+            <StatusIcon {...Pending.args} />
+            <span>Pending</span>
+          </li>
+          <li>
+            <StatusIcon {...Queued.args} />
+            <span>Queued</span>
+          </li>
+          <li>
+            <StatusIcon {...Running.args} />
+            <span>Running</span>
+          </li>
+          <li>
+            <StatusIcon {...Succeeded.args} />
+            <span>Succeeded</span>
+          </li>
+          <li>
+            <StatusIcon {...SucceededWithWarning.args} />
+            <span>Succeeded with warning</span>
+          </li>
+          <li>
+            <StatusIcon {...DefaultTask.args} />
+            <span>Default - no status received yet</span>
+          </li>
+          <li>
+            <StatusIcon {...CustomRun.args} />
+            <span>CustomRun - custom status</span>
+          </li>
+        </ul>
+
+        <h3>Step</h3>
+        <ul>
+          <li>
+            <StatusIcon {...Failed.args} type="inverse" />
+            <span>Failed</span>
+          </li>
+          <li>
+            <StatusIcon {...Running.args} type="inverse" />
+            <span>Running</span>
+          </li>
+          <li>
+            <StatusIcon {...Succeeded.args} type="inverse" />
+            <span>Succeeded</span>
+          </li>
+          <li>
+            <StatusIcon {...SucceededWithWarning.args} type="inverse" />
+            <span>Succeeded with warning</span>
+          </li>
+          <li>
+            <StatusIcon {...DefaultStep.args} />
+            <span>Default - no status received yet</span>
+          </li>
+        </ul>
+      </div>
+    );
+  }
 };
