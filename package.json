@@ -29,7 +29,7 @@
     "@tanstack/react-query-devtools": "^4.29.6",
     "@tektoncd/dashboard-components": "*",
     "@tektoncd/dashboard-utils": "*",
-    "@uiw/react-codemirror": "^4.19.16",
+    "@uiw/react-codemirror": "^4.21.7",
     "carbon-components": "^10.58.6",
     "carbon-components-react": "^7.59.8",
     "carbon-icons": "^7.0.7",
