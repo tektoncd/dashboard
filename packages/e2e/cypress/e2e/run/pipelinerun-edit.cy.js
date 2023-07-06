@@ -24,7 +24,7 @@ describe('Edit and run PipelineRun', () => {
   it('should create PipelineRun on edit and run', function () {
     const uniqueNumber = Date.now();
     const pipelineName = `sp-${uniqueNumber}`;
-    const pipeline = `apiVersion: tekton.dev/v1beta1
+    const pipeline = `apiVersion: tekton.dev/v1
 kind: Pipeline
 metadata:
   name: ${pipelineName}

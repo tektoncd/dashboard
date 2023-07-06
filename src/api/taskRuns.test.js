@@ -41,7 +41,7 @@ describe('createTaskRun', () => {
     return API.createTaskRun({}).then(() => {
       expect(comms.post).toHaveBeenCalled();
       const sentBody = comms.post.mock.lastCall[1];
-      expect(sentBody.apiVersion).toEqual('tekton.dev/v1beta1');
+      expect(sentBody.apiVersion).toEqual('tekton.dev/v1');
       expect(sentBody.kind).toEqual('TaskRun');
       expect(sentBody).toHaveProperty('metadata');
       expect(sentBody).toHaveProperty('spec');
@@ -282,7 +282,7 @@ it('rerunTaskRun', () => {
     .mockImplementation((uri, body) => Promise.resolve(body));
 
   const rerun = {
-    apiVersion: 'tekton.dev/v1beta1',
+    apiVersion: 'tekton.dev/v1',
     kind: 'TaskRun',
     metadata: {
       annotations: {},

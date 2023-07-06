@@ -156,7 +156,7 @@ const pipelineRunRawGenerateName = {
   }
 };
 
-const expectedPipelineRun = `apiVersion: tekton.dev/v1beta1
+const expectedPipelineRun = `apiVersion: tekton.dev/v1
 kind: PipelineRun
 metadata:
   name: run-1111111111

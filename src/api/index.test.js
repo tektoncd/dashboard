@@ -337,6 +337,8 @@ describe('importResources', () => {
       expect(comms.post).toHaveBeenCalledWith(
         fakeAPI,
         expect.objectContaining({
+          apiVersion: 'tekton.dev/v1',
+          kind: 'PipelineRun',
           metadata: expect.objectContaining({
             name: 'import-resources-fake-timestamp',
             labels: {
@@ -351,16 +353,14 @@ describe('importResources', () => {
               { name: 'revision', value: undefined },
               { name: 'target-namespace', value: namespace }
             ]),
-            taskRunSpecs: [
-              {
-                pipelineTaskName: 'fetch-repo',
-                taskServiceAccountName: serviceAccount
-              },
-              {
-                pipelineTaskName: 'import-resources',
-                taskServiceAccountName: serviceAccount
-              }
-            ]
+            pipelineSpec: expect.objectContaining({}),
+            taskRunTemplate: {
+              podTemplate: expect.objectContaining({
+                securityContext: expect.objectContaining({})
+              }),
+              serviceAccountName: serviceAccount
+            },
+            workspaces: expect.objectContaining({})
           })
         })
       );
