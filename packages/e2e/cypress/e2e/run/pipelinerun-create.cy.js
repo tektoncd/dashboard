@@ -25,7 +25,7 @@ describe('Create PipelineRun', () => {
     const uniqueNumber = Date.now();
 
     const pipelineName = `simple-pipeline-${uniqueNumber}`;
-    const pipeline = `apiVersion: tekton.dev/v1beta1
+    const pipeline = `apiVersion: tekton.dev/v1
 kind: Pipeline
 metadata:
   name: ${pipelineName}
@@ -69,7 +69,7 @@ spec:
 
     const pipelineName = `simple-pipeline-${uniqueNumber}`;
     const pipelineRunName = `run-${uniqueNumber}`;
-    const pipeline = `apiVersion: tekton.dev/v1beta1
+    const pipeline = `apiVersion: tekton.dev/v1
 kind: Pipeline
 metadata:
   name: ${pipelineName}
@@ -123,7 +123,7 @@ spec:
     const uniqueNumber = Date.now();
 
     const pipelineRunName = `yaml-mode-${uniqueNumber}`;
-    const pipelineRun = `apiVersion: tekton.dev/v1beta1
+    const pipelineRun = `apiVersion: tekton.dev/v1
 kind: PipelineRun
 metadata:
   name: ${pipelineRunName}
@@ -162,7 +162,7 @@ spec:
     const uniqueNumber = Date.now();
 
     const pipelineRunName = `yaml-mode-${uniqueNumber}`;
-    const pipelineRun = `apiVersion: tekton.dev/v1beta1
+    const pipelineRun = `apiVersion: tekton.dev/v1
 kind: PipelineRun
 metadata:
   name: ${pipelineRunName}

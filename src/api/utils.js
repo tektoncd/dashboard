@@ -98,7 +98,7 @@ export function getQueryParams({
 }
 
 export function isPipelinesV1ResourcesEnabled() {
-  return localStorage.getItem('tkn-pipelines-v1-resources') === 'true';
+  return localStorage.getItem('tkn-pipelines-v1-resources') !== 'false';
 }
 
 export function setPipelinesV1ResourcesEnabled(enabled) {

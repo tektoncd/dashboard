@@ -24,7 +24,7 @@ describe('Edit and run TaskRun', () => {
   it('should create TaskRun on edit and run', function () {
     const uniqueNumber = Date.now();
     const taskName = `sp-${uniqueNumber}`;
-    const task = `apiVersion: tekton.dev/v1beta1
+    const task = `apiVersion: tekton.dev/v1
 kind: Task
 metadata:
   name: ${taskName}

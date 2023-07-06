@@ -35,7 +35,6 @@ module.exports = {
       '<rootDir>/config_frontend/__mocks__/svgMock.js',
     '\\.(png|svg|woff|woff2)$':
       '<rootDir>/config_frontend/__mocks__/fileMock.js',
-    '\\.yaml$': '<rootDir>/config_frontend/__mocks__/resourceMock.js',
     '\\.(css|scss)$': '<rootDir>/config_frontend/__mocks__/styleMock.js'
   },
   restoreMocks: true,
@@ -45,5 +44,9 @@ module.exports = {
     '<rootDir>/src/**/*.test.js',
     '<rootDir>/packages/**/src/**/*.test.js'
   ],
+  transform: {
+    '\\.js$': 'babel-jest',
+    '\\.yaml$': '<rootDir>/config_frontend/yaml.js'
+  },
   transformIgnorePatterns: []
 };

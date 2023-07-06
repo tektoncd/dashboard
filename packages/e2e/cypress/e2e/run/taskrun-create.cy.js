@@ -25,7 +25,7 @@ describe('Create TaskRun', () => {
     const uniqueNumber = Date.now();
 
     const taskName = `simple-task-${uniqueNumber}`;
-    const task = `apiVersion: tekton.dev/v1beta1
+    const task = `apiVersion: tekton.dev/v1
 kind: Task
 metadata:
   name: ${taskName}
@@ -64,7 +64,7 @@ spec:
 
     const taskName = `simple-task-${uniqueNumber}`;
     const taskRunName = `run-${uniqueNumber}`;
-    const task = `apiVersion: tekton.dev/v1beta1
+    const task = `apiVersion: tekton.dev/v1
 kind: Task
 metadata:
   name: ${taskName}
@@ -113,7 +113,7 @@ spec:
     const uniqueNumber = Date.now();
 
     const taskRunName = `yaml-mode-${uniqueNumber}`;
-    const taskRun = `apiVersion: tekton.dev/v1beta1
+    const taskRun = `apiVersion: tekton.dev/v1
 kind: TaskRun
 metadata:
   name: ${taskRunName}
@@ -149,7 +149,7 @@ spec:
     const uniqueNumber = Date.now();
 
     const taskRunName = `yaml-mode-${uniqueNumber}`;
-    const taskRun = `apiVersion: tekton.dev/v1beta1
+    const taskRun = `apiVersion: tekton.dev/v1
 kind: TaskRun
 metadata:
   name: ${taskRunName}

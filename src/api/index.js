@@ -250,13 +250,16 @@ export function importResources({
     { name: 'target-namespace', value: namespace }
   ];
 
+  if (pipelinesAPIVersion === 'v1beta1') {
+    pipelineRun.spec.podTemplate = {
+      ...pipelineRun.spec.taskRunTemplate.podTemplate
+    };
+    delete pipelineRun.spec.taskRunTemplate.podTemplate;
+  }
+
   if (serviceAccount) {
     if (pipelinesAPIVersion === 'v1') {
-      pipelineRun.spec.taskRunTemplate = {
-        podTemplate: { ...pipelineRun.spec.podTemplate },
-        serviceAccountName: serviceAccount
-      };
-      delete pipelineRun.spec.podTemplate;
+      pipelineRun.spec.taskRunTemplate.serviceAccountName = serviceAccount;
     } else {
       pipelineRun.spec.taskRunSpecs = [
         {

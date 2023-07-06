@@ -11,7 +11,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+const crypto = require('crypto');
+const yaml = require('js-yaml');
+
 module.exports = {
-  metadata: {},
-  spec: {}
+  getCacheKey(sourceText, _sourcePath, _options) {
+    return crypto.createHash('md5').update(sourceText).digest('hex');
+  },
+  process(sourceText, _sourcePath, _options) {
+    const content = yaml.load(sourceText, { json: true });
+    return {
+      code: `module.exports = ${JSON.stringify(content, null, 2)};`
+    };
+  }
 };

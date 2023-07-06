@@ -59,7 +59,7 @@ describe('createPipelineRun', () => {
       timeoutsPipeline: timeout
     };
     const data = {
-      apiVersion: 'tekton.dev/v1beta1',
+      apiVersion: 'tekton.dev/v1',
       kind: 'PipelineRun',
       metadata: {
         name: `${pipelineName}-run-${Date.now()}`
@@ -108,7 +108,7 @@ describe('createPipelineRun', () => {
       }
     };
     const data = {
-      apiVersion: 'tekton.dev/v1beta1',
+      apiVersion: 'tekton.dev/v1',
       kind: 'PipelineRun',
       metadata: {
         name: `${pipelineName}-run-${Date.now()}`
@@ -285,7 +285,7 @@ it('rerunPipelineRun', () => {
     .mockImplementation((uri, body) => Promise.resolve(body));
 
   const rerun = {
-    apiVersion: 'tekton.dev/v1beta1',
+    apiVersion: 'tekton.dev/v1',
     kind: 'PipelineRun',
     metadata: {
       annotations: {},
