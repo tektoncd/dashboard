@@ -57,7 +57,7 @@ spec:
             - name: repo
           steps:
             - name: clone
-              image: cgr.dev/chainguard/git:2.40
+              image: cgr.dev/chainguard/git:latest@sha256:2c70afb3b34ca5feab37c5826c32dae6e0c48549486fdf6be93faf928b658efe # 2.41
               env:
                 - name: PARAM_URL
                   value: $(params.repositoryURL)
