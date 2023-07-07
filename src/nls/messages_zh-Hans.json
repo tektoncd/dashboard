@@ -202,6 +202,8 @@
     "dashboard.resourceDetails.ariaLabel": "资源详情",
     "dashboard.resourceDetails.description": "描述",
     "dashboard.resourceDetails.errorloading": "加载资源时发生错误",
+    "dashboard.resourceDetails.spec.description": "",
+    "dashboard.resourceDetails.spec.displayName": "",
     "dashboard.resourceList.emptyState": "没有为类型 {type} 找到匹配的资源",
     "dashboard.resourceList.errorLoading": "加载 {type} 时发生错误",
     "dashboard.resourceList.viewRuns": "查看 {resource} 的 {kind}",

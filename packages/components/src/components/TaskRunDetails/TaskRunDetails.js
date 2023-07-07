@@ -122,7 +122,8 @@ const TaskRunDetails = ({ onViewChange, pod, task, taskRun, view }) => {
     />
   ) : null;
 
-  const results = taskRun.status?.taskResults;
+  // taskResults renamed to results in v1
+  const results = taskRun.status?.taskResults || taskRun.status?.results;
   const resultsTable = results?.length ? (
     <Table
       size="sm"

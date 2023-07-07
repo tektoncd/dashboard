@@ -478,10 +478,26 @@ export function getTaskRunsWithPlaceholders({
         pipelineTask.name
     );
 
-    taskRunsToDisplay.push(
+    const taskRunToDisplay =
       realTaskRun ||
-        getPlaceholderTaskRun({ clusterTasks, pipelineTask, tasks })
-    );
+      getPlaceholderTaskRun({ clusterTasks, pipelineTask, tasks });
+
+    const { description, displayName } = pipelineTask;
+    taskRunToDisplay.metadata.labels = {
+      ...taskRunToDisplay.metadata.labels,
+      ...(description
+        ? {
+            [labelConstants.DASHBOARD_DESCRIPTION]: description
+          }
+        : null),
+      ...(displayName
+        ? {
+            [labelConstants.DASHBOARD_DISPLAY_NAME]: displayName
+          }
+        : null)
+    };
+
+    taskRunsToDisplay.push(taskRunToDisplay);
   });
 
   return taskRunsToDisplay;

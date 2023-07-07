@@ -202,6 +202,8 @@
     "dashboard.resourceDetails.ariaLabel": "Resource details",
     "dashboard.resourceDetails.description": "Description",
     "dashboard.resourceDetails.errorloading": "Error loading resource",
+    "dashboard.resourceDetails.spec.description": "Description:",
+    "dashboard.resourceDetails.spec.displayName": "Display name:",
     "dashboard.resourceList.emptyState": "No matching resources found for type {type}",
     "dashboard.resourceList.errorLoading": "Error loading {type}",
     "dashboard.resourceList.viewRuns": "View {kind} of {resource}",

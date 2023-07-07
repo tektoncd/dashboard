@@ -202,6 +202,8 @@
     "dashboard.resourceDetails.ariaLabel": "",
     "dashboard.resourceDetails.description": "",
     "dashboard.resourceDetails.errorloading": "",
+    "dashboard.resourceDetails.spec.description": "",
+    "dashboard.resourceDetails.spec.displayName": "",
     "dashboard.resourceList.emptyState": "",
     "dashboard.resourceList.errorLoading": "",
     "dashboard.resourceList.viewRuns": "",

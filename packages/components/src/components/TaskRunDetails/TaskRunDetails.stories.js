@@ -21,7 +21,7 @@ const params = [
     value: paramValue
   }
 ];
-const taskResults = [{ name: 'message', value: 'hello' }];
+const results = [{ name: 'message', value: 'hello' }];
 
 export default {
   component: TaskRunDetails,
@@ -48,7 +48,7 @@ export const Base = {
           ],
           results: [
             {
-              name: taskResults[0].name,
+              name: results[0].name,
               description: 'A useful description of the result…'
             }
           ]
@@ -58,7 +58,7 @@ export const Base = {
         completionTime: '2021-03-03T15:25:34Z',
         podName: 'my-task-h7d6j-pod-pdtb7',
         startTime: '2021-03-03T15:25:27Z',
-        taskResults
+        results
       }
     }
   }
@@ -90,7 +90,7 @@ export const WithWarning = {
           }
         ],
         startTime: '2021-03-03T15:25:27Z',
-        taskResults
+        results
       }
     }
   }

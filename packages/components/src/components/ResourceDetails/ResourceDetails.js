@@ -84,6 +84,28 @@ const ResourceDetails = ({
         >
           <div className="tkn--details">
             <ul className="tkn--resourcedetails-metadata">
+              {resource.spec?.displayName && (
+                <li>
+                  <span>
+                    {intl.formatMessage({
+                      id: 'dashboard.resourceDetails.spec.displayName',
+                      defaultMessage: 'Display name:'
+                    })}
+                  </span>
+                  {resource.spec.displayName}
+                </li>
+              )}
+              {resource.spec?.description && (
+                <li>
+                  <span>
+                    {intl.formatMessage({
+                      id: 'dashboard.resourceDetails.spec.description',
+                      defaultMessage: 'Description:'
+                    })}
+                  </span>
+                  {resource.spec.description}
+                </li>
+              )}
               <li>
                 <span>
                   {intl.formatMessage({
@@ -123,17 +145,6 @@ const ResourceDetails = ({
                     })}
                   </span>
                   {resource.metadata.namespace}
-                </li>
-              )}
-              {resource.spec?.description && (
-                <li>
-                  <span>
-                    {intl.formatMessage({
-                      id: 'dashboard.resourceDetails.description',
-                      defaultMessage: 'Description'
-                    })}
-                  </span>
-                  {resource.spec.description}
                 </li>
               )}
               {additionalMetadata}

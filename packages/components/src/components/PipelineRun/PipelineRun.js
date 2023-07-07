@@ -169,6 +169,8 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
       });
 
       const { podName } = taskRun.status || {};
+      let displayName =
+        taskRun.metadata.labels?.[labelConstants.DASHBOARD_DISPLAY_NAME];
 
       if (retryPodIndex[podName] || taskRun.status?.retriesStatus) {
         const retryNumber =
@@ -178,8 +180,11 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
             id: 'dashboard.pipelineRun.pipelineTaskName.retry',
             defaultMessage: '{pipelineTaskName} (retry {retryNumber, number})'
           },
-          { pipelineTaskName, retryNumber }
+          { pipelineTaskName: displayName || pipelineTaskName, retryNumber }
         );
+        if (displayName) {
+          displayName = pipelineTaskName;
+        }
       }
 
       return {
@@ -188,6 +193,11 @@ export /* istanbul ignore next */ class PipelineRunContainer extends Component {
           ...taskRun.metadata,
           labels: {
             ...taskRun.metadata.labels,
+            ...(displayName
+              ? {
+                  [labelConstants.DASHBOARD_DISPLAY_NAME]: displayName
+                }
+              : null),
             [labelConstants.DASHBOARD_RETRY_NAME]: pipelineTaskName
           },
           uid: `${uid}${podName}`
