@@ -27,6 +27,11 @@ updates:
     schedule:
       interval: "weekly"
       day: "sunday"
+    groups:
+      storybook:
+        patterns:
+          - "storybook"
+          - "@storybook/*"
     labels:
     - "area/dependency"
     - "dependencies"
