@@ -13,6 +13,8 @@ limitations under the License.
 
 export const labels = {
   CLUSTER_TASK: 'tekton.dev/clusterTask',
+  DASHBOARD_DESCRIPTION: 'dashboard.tekton.dev/description',
+  DASHBOARD_DISPLAY_NAME: 'dashboard.tekton.dev/displayName',
   DASHBOARD_IMPORT: 'dashboard.tekton.dev/import',
   DASHBOARD_RETRY_NAME: 'dashboard.tekton.dev/retryName',
   PIPELINE: 'tekton.dev/pipeline',

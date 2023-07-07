@@ -32,9 +32,11 @@ const TaskTree = ({ onSelect, selectedStepId, selectedTaskId, taskRuns }) => {
         }
         const { uid, labels, name } = taskRun.metadata;
         const {
+          [labelConstants.DASHBOARD_DISPLAY_NAME]: displayName,
           [labelConstants.PIPELINE_TASK]: pipelineTaskName,
           [labelConstants.DASHBOARD_RETRY_NAME]: retryName
         } = labels;
+
         const { reason, status } = getStatus(taskRun);
         const { steps } = taskRun.status || {};
         const expanded =
@@ -44,7 +46,7 @@ const TaskTree = ({ onSelect, selectedStepId, selectedTaskId, taskRuns }) => {
         const selectDefaultStep = !selectedTaskId;
         return (
           <Task
-            displayName={retryName || pipelineTaskName || name}
+            displayName={displayName || retryName || pipelineTaskName || name}
             expanded={expanded}
             id={uid}
             key={uid}
