@@ -14,7 +14,18 @@ limitations under the License.
 const path = require('path');
 
 const config = {
-  addons: ['@storybook/addon-essentials', '@storybook/addon-storysource'],
+  addons: [
+    '@storybook/addon-essentials',
+    '@storybook/addon-storysource',
+    {
+      name: '@storybook/addon-styling',
+      options: {
+        sass: {
+          implementation: require('sass'),
+        },
+      },
+    }
+  ],
   core: { disableTelemetry: true },
   docs: {
     autodocs: 'tag',
@@ -62,10 +73,6 @@ const config = {
     //   }
     // },
     {
-      test: /\.scss$/,
-      use: ['style-loader', 'css-loader', 'sass-loader'],
-      include: path.resolve(__dirname, '../')
-    }, {
       test: /\.yaml$/,
       type: 'json',
       loader: 'yaml-loader',

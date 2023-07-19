@@ -18,7 +18,7 @@ import { useIntl } from 'react-intl';
 import { InlineNotification, Pagination } from 'carbon-components-react';
 import { getErrorMessage } from '@tektoncd/dashboard-utils';
 
-import { LabelFilter } from '..';
+import LabelFilter from '../LabelFilter';
 
 export const ListPageLayout = ({
   children,
