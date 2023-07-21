@@ -54,7 +54,19 @@ function getDescriptions(array) {
   }, {});
 }
 
-const TaskRunDetails = ({ onViewChange, pod, task, taskRun, view }) => {
+const defaults = {
+  onViewChange: /* istanbul ignore next */ () => {},
+  task: {},
+  taskRun: {}
+};
+
+const TaskRunDetails = ({
+  onViewChange = defaults.onViewChange,
+  pod,
+  task = defaults.task,
+  taskRun = defaults.taskRun,
+  view
+}) => {
   const intl = useIntl();
   const displayName = taskRun.metadata.name;
   const taskSpec = task?.spec || taskRun.spec.taskSpec;
@@ -252,12 +264,6 @@ TaskRunDetails.propTypes = {
   onViewChange: PropTypes.func,
   task: PropTypes.shape({}),
   taskRun: PropTypes.shape({})
-};
-
-TaskRunDetails.defaultProps = {
-  onViewChange: /* istanbul ignore next */ () => {},
-  task: {},
-  taskRun: {}
 };
 
 export default TaskRunDetails;

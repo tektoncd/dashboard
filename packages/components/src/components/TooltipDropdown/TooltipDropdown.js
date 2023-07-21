@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -26,16 +26,20 @@ const itemToObject = item => {
   return item;
 };
 
+const defaults = {
+  items: []
+};
+
 const TooltipDropdown = ({
   className,
   disabled,
   emptyText,
   id,
   inline,
-  items,
+  items = defaults.items,
   label,
   light,
-  loading,
+  loading = false,
   onChange,
   selectedItem,
   titleText,
@@ -81,11 +85,6 @@ const TooltipDropdown = ({
       {...rest}
     />
   );
-};
-
-TooltipDropdown.defaultProps = {
-  items: [],
-  loading: false
 };
 
 export default TooltipDropdown;

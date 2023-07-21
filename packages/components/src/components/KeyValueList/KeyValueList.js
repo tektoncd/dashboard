@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,18 +16,17 @@ import { useIntl } from 'react-intl';
 import { Button, TextInput } from 'carbon-components-react';
 import { AddAlt24 as Add, SubtractAlt16 as Remove } from '@carbon/icons-react';
 
-const KeyValueList = props => {
+const KeyValueList = ({
+  invalidFields,
+  invalidText,
+  keyValues,
+  legendText,
+  minKeyValues = 0,
+  onAdd,
+  onChange,
+  onRemove
+}) => {
   const intl = useIntl();
-  const {
-    invalidFields,
-    invalidText,
-    keyValues,
-    legendText,
-    minKeyValues,
-    onAdd,
-    onChange,
-    onRemove
-  } = props;
 
   const addText = intl.formatMessage({
     id: 'dashboard.keyValueList.add',
@@ -103,10 +102,6 @@ const KeyValueList = props => {
       </Button>
     </div>
   );
-};
-
-KeyValueList.defaultProps = {
-  minKeyValues: 0
 };
 
 export default KeyValueList;

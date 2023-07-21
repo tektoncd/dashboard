@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2022 The Tekton Authors
+Copyright 2020-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -18,7 +18,12 @@ import { TooltipDropdown } from '@tektoncd/dashboard-components';
 
 import { useSelectedNamespace, useTasks } from '../../api';
 
-function TasksDropdown({ label, namespace: namespaceProp, ...rest }) {
+function TasksDropdown({
+  label,
+  namespace: namespaceProp,
+  titleText = 'Task',
+  ...rest
+}) {
   const intl = useIntl();
   const { selectedNamespace } = useSelectedNamespace();
   const namespace = namespaceProp || selectedNamespace;
@@ -55,12 +60,9 @@ function TasksDropdown({ label, namespace: namespaceProp, ...rest }) {
       items={items}
       label={labelString}
       loading={isFetching}
+      titleText={titleText}
     />
   );
 }
-
-TasksDropdown.defaultProps = {
-  titleText: 'Task'
-};
 
 export default TasksDropdown;
