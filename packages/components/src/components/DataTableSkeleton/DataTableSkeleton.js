@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2022 The Tekton Authors
+Copyright 2020-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -23,11 +23,15 @@ const tableSizeClassNames = {
   xl: 'bx--data-table--xl'
 };
 
+const defaults = {
+  headers: []
+};
+
 const DataTableSkeleton = ({
-  className,
-  columnCount,
-  headers,
-  rowCount,
+  className = '',
+  columnCount = 5,
+  headers = defaults.headers,
+  rowCount = 5,
   size,
   ...rest
 }) => {
@@ -82,12 +86,6 @@ DataTableSkeleton.propTypes = {
     })
   ]),
   rowCount: PropTypes.number
-};
-DataTableSkeleton.defaultProps = {
-  className: '',
-  columnCount: 5,
-  headers: [],
-  rowCount: 5
 };
 
 export default DataTableSkeleton;

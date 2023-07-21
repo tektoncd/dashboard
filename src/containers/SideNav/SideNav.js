@@ -41,7 +41,7 @@ import {
 import { ReactComponent as KubernetesIcon } from '../../images/kubernetes.svg';
 import { ReactComponent as TektonIcon } from '../../images/tekton-logo-20x20.svg';
 
-function SideNav({ expanded, showKubernetesResources }) {
+function SideNav({ expanded, showKubernetesResources = false }) {
   const intl = useIntl();
   if (!expanded) {
     return null;
@@ -255,9 +255,5 @@ function SideNav({ expanded, showKubernetesResources }) {
     </CarbonSideNav>
   );
 }
-
-SideNav.defaultProps = {
-  showKubernetesResources: false
-};
 
 export default SideNav;

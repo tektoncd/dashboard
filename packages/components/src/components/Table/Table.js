@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -109,26 +109,30 @@ function getTranslateWithId(intl) {
   };
 }
 
-const Table = props => {
+const defaults = {
+  batchActionButtons: [],
+  toolbarButtons: []
+};
+
+const Table = ({
+  batchActionButtons = defaults.batchActionButtons,
+  className,
+  emptyTextAllNamespaces = null,
+  emptyTextSelectedNamespace = null,
+  filters,
+  hasDetails,
+  headers: dataHeaders,
+  id = null,
+  isSortable = false,
+  loading = false,
+  rows: dataRows,
+  selectedNamespace = null,
+  size = hasDetails ? 'xl' : undefined,
+  skeletonRowCount,
+  title = null,
+  toolbarButtons = defaults.toolbarButtons
+}) => {
   const intl = useIntl();
-  const {
-    batchActionButtons,
-    className,
-    emptyTextAllNamespaces,
-    emptyTextSelectedNamespace,
-    filters,
-    hasDetails,
-    headers: dataHeaders,
-    id,
-    isSortable,
-    loading,
-    rows: dataRows,
-    selectedNamespace,
-    size = hasDetails ? 'xl' : undefined,
-    skeletonRowCount,
-    title,
-    toolbarButtons
-  } = props;
   const shouldRenderBatchActions = !!(
     dataRows.length && batchActionButtons.length
   );
@@ -271,18 +275,6 @@ const Table = props => {
       />
     </div>
   );
-};
-
-Table.defaultProps = {
-  batchActionButtons: [],
-  emptyTextAllNamespaces: null,
-  emptyTextSelectedNamespace: null,
-  id: null,
-  isSortable: false,
-  loading: false,
-  selectedNamespace: null,
-  title: null,
-  toolbarButtons: []
 };
 
 Table.propTypes = {

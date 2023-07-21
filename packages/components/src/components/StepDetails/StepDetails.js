@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -20,17 +20,21 @@ import { DetailsHeader, StepDefinition, Tab, Tabs } from '..';
 
 const tabs = ['logs', 'details'];
 
-const StepDetails = props => {
+const defaults = {
+  onViewChange: /* istanbul ignore next */ () => {},
+  taskRun: {}
+};
+
+const StepDetails = ({
+  definition,
+  logContainer,
+  onViewChange = defaults.onViewChange,
+  stepName,
+  stepStatus,
+  taskRun = defaults.taskRun,
+  view
+}) => {
   const intl = useIntl();
-  const {
-    definition,
-    logContainer,
-    onViewChange,
-    stepName,
-    stepStatus,
-    taskRun,
-    view
-  } = props;
   const { exitCode, reason, status } = getStepStatusReason(stepStatus);
   const statusValue =
     getStatus(taskRun).reason === 'TaskRunCancelled' && status !== 'terminated'
@@ -84,11 +88,6 @@ const StepDetails = props => {
 StepDetails.propTypes = {
   onViewChange: PropTypes.func,
   taskRun: PropTypes.shape({})
-};
-
-StepDetails.defaultProps = {
-  onViewChange: /* istanbul ignore next */ () => {},
-  taskRun: {}
 };
 
 export default StepDetails;

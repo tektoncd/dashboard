@@ -20,15 +20,19 @@ import { FormattedDate, Tab, Tabs, ViewYAML } from '..';
 
 const tabs = ['overview', 'yaml'];
 
+const defaults = {
+  onViewChange: /* istanbul ignore next */ () => {}
+};
+
 const ResourceDetails = ({
-  actions,
-  additionalMetadata,
-  children,
-  error,
+  actions = null,
+  additionalMetadata = null,
+  children = null,
+  error = null,
   loading,
-  onViewChange,
-  resource: originalResource,
-  view
+  onViewChange = defaults.onViewChange,
+  resource: originalResource = null,
+  view = null
 }) => {
   const intl = useIntl();
   if (loading) {
@@ -158,16 +162,6 @@ const ResourceDetails = ({
       </Tabs>
     </div>
   );
-};
-
-ResourceDetails.defaultProps = {
-  actions: null,
-  additionalMetadata: null,
-  children: null,
-  error: null,
-  onViewChange: /* istanbul ignore next */ () => {},
-  resource: null,
-  view: null
 };
 
 ResourceDetails.propTypes = {

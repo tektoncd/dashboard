@@ -81,6 +81,7 @@ module.exports = {
     'react/jsx-props-no-spreading': 'off',
     'react/no-unstable-nested-components': 'off',
     'react/prop-types': 'off',
+    'react/require-default-props': 'off', // defaultProps for functional components deprecated in react 18.3.0, to be removed in a future release
     'react/state-in-constructor': 'off',
     'sort-imports': [
       'error',
