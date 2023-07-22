@@ -80,3 +80,5 @@ spec:
             runAsNonRoot: true
             seccompProfile:
               type: RuntimeDefault
+          # empty volumeMounts is needed for resultsAPI cert mount
+          volumeMounts: []

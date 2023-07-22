@@ -23,6 +23,7 @@ import (
 	"github.com/tektoncd/dashboard/pkg/router"
 	k8sclientset "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
+	certutil "k8s.io/client-go/util/cert"
 )
 
 var (
@@ -38,6 +39,9 @@ var (
 	streamLogs         = flag.Bool("stream-logs", true, "Enable log streaming instead of polling")
 	externalLogs       = flag.String("external-logs", "", "External logs provider URL")
 	xFrameOptions      = flag.String("x-frame-options", "DENY", "Value for the X-Frame-Options response header, set '' to omit it")
+	resultsApiAddr     = flag.String("results-api-addr", "tekton-results-api-service.tekton-pipelines.svc.cluster.local:8080", "Address of Results API server")
+	enableResultsTLS   = flag.Bool("enable-results-tls", false, "Enable TLS verification when connecting to Results API server")
+	resultsTLSCertPath = flag.String("results-tls-cert-path", "/etc/tls/tls.crt", "TLS certs to the Results API server.")
 )
 
 func main() {
@@ -63,6 +67,11 @@ func main() {
 	}
 	tenants := strings.FieldsFunc(*tenantNamespaces, splitByComma)
 
+	resultsCfg, err := resultsConfig(*enableResultsTLS, *resultsTLSCertPath)
+	if err != nil {
+		logging.Log.Errorf("Error building results config: %s", err.Error())
+	}
+
 	options := endpoints.Options{
 		InstallNamespace:   installNamespace,
 		PipelinesNamespace: *pipelinesNamespace,
@@ -80,9 +89,10 @@ func main() {
 		Config:    cfg,
 		K8sClient: k8sClient,
 		Options:   options,
+		ResultsConfig: resultsCfg,
 	}
 
-	server, err := router.Register(resource, cfg)
+	server, err := router.Register(resource, cfg, resultsCfg)
 
 	if err != nil {
 		logging.Log.Errorf("Error creating proxy: %s", err.Error())
@@ -98,4 +108,26 @@ func main() {
 	logging.Log.Infof("Tekton Dashboard version %s", resource.GetDashboardVersion())
 	logging.Log.Infof("Starting to serve on %s", l.Addr().String())
 	logging.Log.Fatal(server.ServeOnListener(l))
+}
+
+func resultsConfig(enableResultsTLS bool, resultsTLSCertPath string) (*rest.Config, error) {
+	var cfg *rest.Config
+	var err error
+
+	if cfg, err = rest.InClusterConfig(); err != nil {
+		logging.Log.Errorf("Error building kubeconfig: %s", err.Error())
+		return nil, err
+	}
+	if enableResultsTLS {
+		if _, err := certutil.NewPool(resultsTLSCertPath); err != nil {
+			logging.Log.Errorf("Expected to load root CA config from %s, but got err: %v", resultsTLSCertPath, err)
+		} else {
+			cfg.TLSClientConfig.CAFile = resultsTLSCertPath
+		}
+	} else {
+		cfg.TLSClientConfig.Insecure = true
+		cfg.TLSClientConfig.CAFile = ""
+	}
+	cfg.Host = "https://" + *resultsApiAddr
+	return cfg, nil
 }

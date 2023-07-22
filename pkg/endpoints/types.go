@@ -54,7 +54,8 @@ func (o Options) GetTriggersNamespace() string {
 
 // Resource is a wrapper around all necessary clients and config used for endpoints
 type Resource struct {
-	Config    *rest.Config
-	K8sClient k8sclientset.Interface
-	Options   Options
+	Config        *rest.Config
+	K8sClient     k8sclientset.Interface
+	Options       Options
+	ResultsConfig *rest.Config
 }

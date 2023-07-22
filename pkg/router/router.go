@@ -122,7 +122,7 @@ func makeUpgradeTransport(config *rest.Config, keepalive time.Duration) (proxy.U
 }
 
 // Register returns a HTTP handler with the Dashboard and Kubernetes APIs registered
-func Register(r endpoints.Resource, cfg *rest.Config) (*Server, error) {
+func Register(r endpoints.Resource, cfg *rest.Config, resultsCfg *rest.Config) (*Server, error) {
 	logging.Log.Info("Adding Kube API")
 	apiProxyPrefix := "/api/"
 	apisProxyPrefix := "/apis/"
@@ -133,6 +133,14 @@ func Register(r endpoints.Resource, cfg *rest.Config) (*Server, error) {
 	mux := http.NewServeMux()
 	mux.Handle(apiProxyPrefix, proxyHandler)
 	mux.Handle(apisProxyPrefix, proxyHandler)
+
+	logging.Log.Info("Adding Results API")
+	resultsApiProxyPrefix := "/apis/results.tekton.dev/"
+	resultsProxyHandler, err := NewProxyHandler(resultsCfg, 30*time.Second)
+	if err != nil {
+		return nil, err
+	}
+	mux.Handle(resultsApiProxyPrefix, resultsProxyHandler)
 
 	logging.Log.Info("Adding Dashboard APIs")
 	registerWeb(r, mux)
@@ -158,14 +166,17 @@ func NewProxyHandler(cfg *rest.Config, keepalive time.Duration) (http.Handler, e
 	responder := &responder{}
 	transport, err := rest.TransportFor(cfg)
 	if err != nil {
-		return nil, err
-	}
-	upgradeTransport, err := makeUpgradeTransport(cfg, keepalive)
-	if err != nil {
+		logging.Log.Error(err)
 		return nil, err
 	}
 	proxy := proxy.NewUpgradeAwareHandler(target, transport, false, false, responder)
-	proxy.UpgradeTransport = upgradeTransport
+	if !cfg.TLSClientConfig.Insecure {
+		upgradeTransport, err := makeUpgradeTransport(cfg, keepalive)
+		if err != nil {
+			return nil, err
+		}
+		proxy.UpgradeTransport = upgradeTransport
+	}
 	proxy.UseRequestLocation = true
 	proxy.UseLocationHost = true
 
