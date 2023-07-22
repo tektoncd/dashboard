@@ -13,6 +13,7 @@
 
 # dashboard flavour
 READONLY="true"
+RESULTS_SUPPORT="false"
 
 # configuration default values
 DEBUG="false"
@@ -90,7 +91,9 @@ debug() {
 compile() {
   local overlay="overlays/installer"
 
-  if [ "$READONLY" == "true" ]; then
+  if [ "$RESULTS_SUPPORT" == "true" ]; then
+    overlay="$overlay/results"
+  elif [ "$READONLY" == "true" ]; then
     overlay="$overlay/read-only"
   else
     overlay="$overlay/read-write"
@@ -425,6 +428,7 @@ help () {
   echo -e "\t[--tenant-namespace <namespace>]\tWill limit the visibility to the specified namespace only"
   echo -e "\t[--triggers-namespace <namespace>]\tOverride the namespace where Tekton Triggers is installed (defaults to Dashboard install namespace)"
   echo -e "\t[--version <version>]\t\t\tWill download manifests for specified version or build everything using kustomize/ko"
+  echo -e "\t[--enable-results]\t\t\tWill build manifests that enable Tekton Results support"
 }
 
 # cleanup temporary files
@@ -549,6 +553,9 @@ while [[ $# -gt 0 ]]; do
     '--tag')
       shift
       KO_RESOLVE_OPTIONS="$KO_RESOLVE_OPTIONS -t ${1}"
+      ;;
+    '--enable-results')
+      RESULTS_SUPPORT="true"
       ;;
     *)
       echo "ERROR: Unknown option $1"

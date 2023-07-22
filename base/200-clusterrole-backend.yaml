@@ -54,3 +54,7 @@ rules:
       - get
       - list
       - watch
+  # Dashboard needs to be able to query existing results.
+  - apiGroups: ["results.tekton.dev"]
+    resources: ["logs", "results", "records"]
+    verbs: ["get", "list"]
