@@ -16,6 +16,7 @@ node_modules/
 # misc
 npm-debug.log
 yarn-error.log
+stats.html
 stats.json
 .vscode/
 

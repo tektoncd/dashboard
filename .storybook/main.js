@@ -18,16 +18,12 @@ const config = {
     '@storybook/addon-essentials',
     '@storybook/addon-links',
     '@storybook/addon-storysource',
-    {
-      name: '@storybook/addon-styling',
-      options: {
-        sass: {
-          implementation: require('sass'),
-        },
-      },
-    }
+    'storybook-addon-swc'
   ],
-  core: { disableTelemetry: true },
+  core: {
+    builder: '@storybook/builder-vite',
+    disableTelemetry: true
+  },
   docs: {
     autodocs: 'tag',
     defaultName: 'Documentation'
@@ -36,17 +32,7 @@ const config = {
     buildStoriesJson: true,
     storyStoreV7: true
   },
-  framework: {
-    name: '@storybook/react-webpack5',
-    options: {
-      fastRefresh: true,
-      strictMode: false,
-      builder: {
-        lazyCompilation: true,
-        fsCache: true
-      }
-    }
-  },
+  framework: '@storybook/react-vite',
   refs: (_config, { configType }) => {
     if (configType === 'DEVELOPMENT') {
       return {
@@ -66,46 +52,10 @@ const config = {
   },
   stories: [
     { directory: '.', files: 'Welcome.mdx' },
-    { directory: '../src', files: '**/*.stories.js', titlePrefix: 'Containers' },
-    { directory: '../packages/components', files: '**/*.stories.js', titlePrefix: 'Components' },
-    { directory: '../packages/graph', files: '**/*.stories.js', titlePrefix: 'Experimental/Graph' }
-  ],
-  webpackFinal: async (config, {
-    configType
-  }) => {
-    // `configType` has a value of 'DEVELOPMENT' or 'PRODUCTION'
-    // You can change the configuration based on that.
-    // 'PRODUCTION' is used when building the static version of storybook.
-
-    config.module.rules.push(
-    // {
-    //   test: /\.mjs$/,
-    //   type: 'javascript/auto'
-    // }, {
-    //   test: /\.js$/,
-    //   exclude: /node_modules/,
-    //   loader: 'babel-loader',
-    //   options: {
-    //     presets: [['@babel/preset-env', {
-    //       modules: 'commonjs'
-    //     }]]
-    //   }
-    // },
-    {
-      test: /\.yaml$/,
-      type: 'json',
-      loader: 'yaml-loader',
-      options: {
-        asJSON: true
-      }
-    });
-
-    // config.stats = {
-    //   ...config.stats,
-    //   children: true
-    // }
-    return config;
-  }
+    { directory: '../src', files: '**/*.stories.jsx', titlePrefix: 'Containers' },
+    { directory: '../packages/components', files: '**/*.stories.jsx', titlePrefix: 'Components' },
+    { directory: '../packages/graph', files: '**/*.stories.jsx', titlePrefix: 'Experimental/Graph' }
+  ]
 };
 
 export default config;

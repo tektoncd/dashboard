@@ -22,7 +22,7 @@ describe('cancelPipelineRun', () => {
   it('default', () => {
     const name = 'foo';
     const namespace = 'foospace';
-    jest.spyOn(comms, 'patch').mockImplementation((uri, payload) => {
+    vi.spyOn(comms, 'patch').mockImplementation((uri, payload) => {
       expect(payload).toEqual([
         { op: 'replace', path: '/spec/status', value: 'Cancelled' }
       ]);
@@ -34,7 +34,7 @@ describe('cancelPipelineRun', () => {
     const name = 'foo';
     const namespace = 'foospace';
     const status = 'StoppedRunFinally';
-    jest.spyOn(comms, 'patch').mockImplementation((uri, payload) => {
+    vi.spyOn(comms, 'patch').mockImplementation((uri, payload) => {
       expect(payload).toEqual([
         { op: 'replace', path: '/spec/status', value: status }
       ]);
@@ -45,7 +45,7 @@ describe('cancelPipelineRun', () => {
 
 describe('createPipelineRun', () => {
   it('basic', () => {
-    const mockDateNow = jest
+    const mockDateNow = vi
       .spyOn(Date, 'now')
       .mockImplementation(() => 'fake-timestamp');
     const pipelineName = 'fake-pipelineName';
@@ -79,9 +79,9 @@ describe('createPipelineRun', () => {
       }
     };
 
-    jest
-      .spyOn(comms, 'post')
-      .mockImplementation((uri, body) => Promise.resolve(body));
+    vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
+      Promise.resolve(body)
+    );
 
     return API.createPipelineRun(payload).then(() => {
       expect(comms.post).toHaveBeenCalled();
@@ -91,7 +91,7 @@ describe('createPipelineRun', () => {
   });
 
   it('with nodeSelector', () => {
-    const mockDateNow = jest
+    const mockDateNow = vi
       .spyOn(Date, 'now')
       .mockImplementation(() => 'fake-timestamp');
     const pipelineName = 'fake-pipelineName';
@@ -132,9 +132,9 @@ describe('createPipelineRun', () => {
         }
       }
     };
-    jest
-      .spyOn(comms, 'post')
-      .mockImplementation((uri, body) => Promise.resolve(body));
+    vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
+      Promise.resolve(body)
+    );
 
     return API.createPipelineRun(payload).then(() => {
       expect(comms.post).toHaveBeenCalled();
@@ -168,9 +168,9 @@ it('createPipelineRunRaw', () => {
       }
     }
   };
-  jest
-    .spyOn(comms, 'post')
-    .mockImplementation((uri, body) => Promise.resolve(body));
+  vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
+    Promise.resolve(body)
+  );
 
   return API.createPipelineRunRaw({
     namespace: 'test-namespace',
@@ -233,7 +233,7 @@ it('getPipelineRuns With Query Params', () => {
 it('usePipelineRuns', () => {
   const query = { fake: 'query' };
   const params = { fake: 'params' };
-  jest.spyOn(utils, 'useCollection').mockImplementation(() => query);
+  vi.spyOn(utils, 'useCollection').mockImplementation(() => query);
   expect(API.usePipelineRuns(params)).toEqual(query);
   expect(utils.useCollection).toHaveBeenCalledWith(
     expect.objectContaining({
@@ -247,7 +247,7 @@ it('usePipelineRuns', () => {
 it('usePipelineRun', () => {
   const query = { fake: 'query' };
   const params = { fake: 'params' };
-  jest.spyOn(utils, 'useResource').mockImplementation(() => query);
+  vi.spyOn(utils, 'useResource').mockImplementation(() => query);
   expect(API.usePipelineRun(params)).toEqual(query);
   expect(utils.useResource).toHaveBeenCalledWith(
     expect.objectContaining({
@@ -280,9 +280,9 @@ it('rerunPipelineRun', () => {
     spec: { status: 'fake_status' },
     status: 'fake_status'
   };
-  jest
-    .spyOn(comms, 'post')
-    .mockImplementation((uri, body) => Promise.resolve(body));
+  vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
+    Promise.resolve(body)
+  );
 
   const rerun = {
     apiVersion: 'tekton.dev/v1',
@@ -306,9 +306,9 @@ it('startPipelineRun', () => {
   const name = 'foo';
   const namespace = 'foospace';
   const payload = [{ op: 'remove', path: '/spec/status' }];
-  jest
-    .spyOn(comms, 'patch')
-    .mockImplementation((uri, body) => Promise.resolve(body));
+  vi.spyOn(comms, 'patch').mockImplementation((uri, body) =>
+    Promise.resolve(body)
+  );
   return API.startPipelineRun({ metadata: { name, namespace } }).then(() => {
     expect(comms.patch).toHaveBeenCalled();
     expect(comms.patch.mock.lastCall[1]).toEqual(payload);

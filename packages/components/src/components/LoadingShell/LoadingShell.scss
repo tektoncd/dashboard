@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2021 The Tekton Authors
+Copyright 2020-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -29,21 +29,6 @@ limitations under the License.
 
     .bx--skeleton__heading {
       margin-top: 1.5rem;
-    }
-  }
-
-  .bx--loading-overlay.tkn--config-loading-overlay {
-    top: 3rem;
-    flex-direction: column;
-
-    .bx--loading {
-      margin-top: -3rem;
-      margin-bottom: $spacing-05;
-    }
-
-    .tkn--config-loading-text {
-      color: $text-01;
-      z-index: 10000; // need to put this in front of the overlay
     }
   }
 

@@ -28,7 +28,7 @@ In order to run the Tekton Dashboard, please make sure the requirements in [the 
 You will also need the following tools in order to build the Dashboard locally and deploy it:
 1. [`go`](https://golang.org/doc/install): The language the Tekton Dashboard backend is built in
 1. [`git`](https://help.github.com/articles/set-up-git/): For source control
-1. [Node.js & npm](https://nodejs.org/): For building and running the frontend locally. See `engines` in [package.json](../../package.json) for versions used. _Node.js 18.x is recommended_
+1. [Node.js & npm](https://nodejs.org/): For building and running the frontend locally. See [`.nvmrc`](../../.nvmrc) for version used. _Node.js 18.x is recommended_
 1. [`ko`](https://github.com/google/ko): For development. `ko` version v0.7.2 or higher is required for `dashboard` to work correctly
 1. [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/): For interacting with your kube cluster
 1. [`kustomize`](https://kubectl.docs.kubernetes.io/installation/kustomize/): For building the Dashboard manifests. v4.5.4 is known to work
@@ -58,13 +58,19 @@ First install the required dependencies:
 npm install
 ```
 
-Run the webpack build:
+Run the production build:
 
 ```bash
 npm run build
 ```
 
-This will build the static resources and add them to the `kodata` directory.
+This will build the static resource bundles and add them to the `kodata` directory.
+
+To run the dev server with the production bundles:
+
+```bash
+npm run preview
+```
 
 ## Build the backend (optional: for local debugging)
 
@@ -190,9 +196,9 @@ This project uses `react-intl` for internationalization, and provides a script t
 
 **Note:** `src/nls/messages_en.json` should **NOT** be edited manually, instead edit the defaultMessage in the code and re-run the script.
 
-Configuration for the message bundles can be found in `config_frontend/config.json`:
-- `locales.build` lists the locales for which message bundles will be produced
-- `locales.supported` lists the locales that will be loaded at runtime based on browser language settings
+Configuration for the message bundles can be found in `.env`:
+- `VITE_LOCALES_BUILD` lists the locales for which message bundles will be produced
+- `VITE_LOCALES_SUPPORTED` lists the locales that will be loaded at runtime based on browser language settings
 
 For testing and development purposes the list of supported locales can be overridden to include all built locales by adding a known value to `localStorage`:
 

@@ -23,9 +23,9 @@ it('cancelTaskRun', () => {
   const payload = [
     { op: 'replace', path: '/spec/status', value: 'TaskRunCancelled' }
   ];
-  jest
-    .spyOn(comms, 'patch')
-    .mockImplementation((uri, body) => Promise.resolve(body));
+  vi.spyOn(comms, 'patch').mockImplementation((uri, body) =>
+    Promise.resolve(body)
+  );
   return API.cancelTaskRun({ name, namespace }).then(() => {
     expect(comms.patch).toHaveBeenCalled();
     expect(comms.patch.mock.lastCall[1]).toEqual(payload);
@@ -34,9 +34,9 @@ it('cancelTaskRun', () => {
 
 describe('createTaskRun', () => {
   it('uses correct kubernetes information', () => {
-    jest
-      .spyOn(comms, 'post')
-      .mockImplementation((uri, body) => Promise.resolve(body));
+    vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
+      Promise.resolve(body)
+    );
 
     return API.createTaskRun({}).then(() => {
       expect(comms.post).toHaveBeenCalled();
@@ -49,15 +49,15 @@ describe('createTaskRun', () => {
   });
 
   it('has correct metadata', () => {
-    const mockDateNow = jest
+    const mockDateNow = vi
       .spyOn(Date, 'now')
       .mockImplementation(() => 'fake-timestamp');
     const namespace = 'fake-namespace';
     const taskName = 'fake-task';
     const labels = { app: 'fake-app' };
-    jest
-      .spyOn(comms, 'post')
-      .mockImplementation((uri, body) => Promise.resolve(body));
+    vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
+      Promise.resolve(body)
+    );
 
     return API.createTaskRun({ namespace, taskName, labels }).then(() => {
       expect(comms.post).toHaveBeenCalled();
@@ -74,9 +74,9 @@ describe('createTaskRun', () => {
 
   it('handles taskRef', () => {
     const taskName = 'fake-task';
-    jest
-      .spyOn(comms, 'post')
-      .mockImplementation((uri, body) => Promise.resolve(body));
+    vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
+      Promise.resolve(body)
+    );
     return API.createTaskRun({ taskName }).then(() => {
       expect(comms.post).toHaveBeenCalled();
       const sentBody = comms.post.mock.lastCall[1];
@@ -88,9 +88,9 @@ describe('createTaskRun', () => {
 
   it('handles ClusterTask in taskRef', () => {
     const taskName = 'fake-task';
-    jest
-      .spyOn(comms, 'post')
-      .mockImplementation((uri, body) => Promise.resolve(body));
+    vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
+      Promise.resolve(body)
+    );
     return API.createTaskRun({ taskName, kind: 'ClusterTask' }).then(() => {
       expect(comms.post).toHaveBeenCalled();
       const sentBody = comms.post.mock.lastCall[1];
@@ -102,9 +102,9 @@ describe('createTaskRun', () => {
   it('handles parameters', () => {
     const taskName = 'fake-task';
     const params = { 'fake-param-name': 'fake-param-value' };
-    jest
-      .spyOn(comms, 'post')
-      .mockImplementation((uri, body) => Promise.resolve(body));
+    vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
+      Promise.resolve(body)
+    );
     return API.createTaskRun({ taskName, params }).then(() => {
       expect(comms.post).toHaveBeenCalled();
       const sentBody = comms.post.mock.lastCall[1];
@@ -119,9 +119,9 @@ describe('createTaskRun', () => {
   it('handles serviceAccount', () => {
     const taskName = 'fake-task';
     const serviceAccount = 'fake-service-account';
-    jest
-      .spyOn(comms, 'post')
-      .mockImplementation((uri, body) => Promise.resolve(body));
+    vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
+      Promise.resolve(body)
+    );
     return API.createTaskRun({ taskName, serviceAccount }).then(() => {
       expect(comms.post).toHaveBeenCalled();
       const sentBody = comms.post.mock.lastCall[1];
@@ -133,9 +133,9 @@ describe('createTaskRun', () => {
   it('handles nodeSelector', () => {
     const taskName = 'fake-task';
     const nodeSelector = { disk: 'ssd' };
-    jest
-      .spyOn(comms, 'post')
-      .mockImplementation((uri, body) => Promise.resolve(body));
+    vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
+      Promise.resolve(body)
+    );
     return API.createTaskRun({ taskName, nodeSelector }).then(() => {
       expect(comms.post).toHaveBeenCalled();
       const sentBody = comms.post.mock.lastCall[1];
@@ -147,9 +147,9 @@ describe('createTaskRun', () => {
   it('handles timeout', () => {
     const taskName = 'fake-task';
     const timeout = 'fake-timeout';
-    jest
-      .spyOn(comms, 'post')
-      .mockImplementation((uri, body) => Promise.resolve(body));
+    vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
+      Promise.resolve(body)
+    );
     return API.createTaskRun({ taskName, timeout }).then(() => {
       expect(comms.post).toHaveBeenCalled();
       const sentBody = comms.post.mock.lastCall[1];
@@ -176,9 +176,9 @@ it('createTaskRunRaw', () => {
       }
     }
   };
-  jest
-    .spyOn(comms, 'post')
-    .mockImplementation((uri, body) => Promise.resolve(body));
+  vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
+    Promise.resolve(body)
+  );
 
   return API.createTaskRunRaw({
     namespace: 'test-namespace',
@@ -235,7 +235,7 @@ it('getTaskRuns With Query Params', () => {
 it('useTaskRuns', () => {
   const query = { fake: 'query' };
   const params = { fake: 'params' };
-  jest.spyOn(utils, 'useCollection').mockImplementation(() => query);
+  vi.spyOn(utils, 'useCollection').mockImplementation(() => query);
   expect(API.useTaskRuns(params)).toEqual(query);
   expect(utils.useCollection).toHaveBeenCalledWith(
     expect.objectContaining({
@@ -249,7 +249,7 @@ it('useTaskRuns', () => {
 it('useTaskRun', () => {
   const query = { fake: 'query' };
   const params = { fake: 'params' };
-  jest.spyOn(utils, 'useResource').mockImplementation(() => query);
+  vi.spyOn(utils, 'useResource').mockImplementation(() => query);
   expect(API.useTaskRun(params)).toEqual(query);
   expect(utils.useResource).toHaveBeenCalledWith(
     expect.objectContaining({
@@ -277,9 +277,9 @@ it('rerunTaskRun', () => {
     spec: { status: 'fake_status' },
     status: 'fake_status'
   };
-  jest
-    .spyOn(comms, 'post')
-    .mockImplementation((uri, body) => Promise.resolve(body));
+  vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
+    Promise.resolve(body)
+  );
 
   const rerun = {
     apiVersion: 'tekton.dev/v1',

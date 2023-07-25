@@ -67,9 +67,9 @@ function get_node() {
   echo "Installing Node.js"
   apt-get update
   apt-get install -y curl
-  curl -O https://nodejs.org/dist/v18.16.0/node-v18.16.0-linux-x64.tar.xz
-  tar xf node-v18.16.0-linux-x64.tar.xz
-  export PATH=$PATH:$(pwd)/node-v18.16.0-linux-x64/bin
+  curl -O https://nodejs.org/dist/v18.17.0/node-v18.17.0-linux-x64.tar.xz
+  tar xf node-v18.17.0-linux-x64.tar.xz
+  export PATH=$PATH:$(pwd)/node-v18.17.0-linux-x64/bin
   echo ">> Node.js version"
   node --version
   echo ">> npm version"
@@ -98,7 +98,7 @@ function node_test() {
   git status
   git diff-index --patch --exit-code --no-color HEAD ./src/nls/ || failed=1
   echo "Running unit tests"
-  npm run test:ci || failed=1
+  npm test || failed=1
   echo ""
   return ${failed}
 }

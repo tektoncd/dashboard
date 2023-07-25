@@ -13,7 +13,6 @@ limitations under the License.
 
 import * as API from '../api';
 import * as comms from '../api/comms';
-import config from '../../config_frontend/config.json';
 
 import {
   fetchLogs,
@@ -24,12 +23,11 @@ import {
   getLogsToolbar,
   getTheme,
   getViewChangeHandler,
+  I18N_DEV_KEY,
   setTheme,
   sortRunsByCreationTime,
   sortRunsByStartTime
 } from '.';
-
-const { locales: localesConfig } = config;
 
 describe('sortRunsByStartTime', () => {
   it('should handle missing start time or status', () => {
@@ -103,7 +101,7 @@ describe('fetchLogs', () => {
     };
 
     const logs = 'fake logs';
-    jest.spyOn(API, 'getPodLog').mockImplementation(() => logs);
+    vi.spyOn(API, 'getPodLog').mockImplementation(() => logs);
 
     const returnedLogs = fetchLogs(stepName, stepStatus, taskRun);
     expect(API.getPodLog).toHaveBeenCalledWith(
@@ -122,7 +120,7 @@ describe('fetchLogs', () => {
     const stepName = 'kubectl-apply';
     const stepStatus = { container: 'step-kubectl-apply' };
     const taskRun = { metadata: { namespace: 'default' } };
-    jest.spyOn(API, 'getPodLog');
+    vi.spyOn(API, 'getPodLog');
 
     fetchLogs(stepName, stepStatus, taskRun);
     expect(API.getPodLog).not.toHaveBeenCalled();
@@ -147,7 +145,7 @@ describe('fetchLogsFallback', () => {
       metadata: { namespace },
       status: { podName, startTime, completionTime }
     };
-    jest.spyOn(comms, 'get').mockImplementation(() => {});
+    vi.spyOn(comms, 'get').mockImplementation(() => {});
 
     const fallback = fetchLogsFallback(externalLogsURL);
     fallback(stepName, stepStatus, taskRun);
@@ -168,7 +166,7 @@ describe('fetchLogsFallback', () => {
     const stepName = 'fake_stepName';
     const stepStatus = { container };
     const taskRun = { metadata: { namespace }, status: { podName } };
-    jest.spyOn(comms, 'get').mockImplementation(() => {});
+    vi.spyOn(comms, 'get').mockImplementation(() => {});
 
     const fallback = fetchLogsFallback(externalLogsURL);
     fallback(stepName, stepStatus, taskRun);
@@ -202,7 +200,7 @@ describe('followLogs', () => {
         };
       }
     };
-    jest.spyOn(API, 'getPodLog').mockImplementation(() => logs);
+    vi.spyOn(API, 'getPodLog').mockImplementation(() => logs);
 
     const returnedLogs = followLogs(stepName, stepStatus, taskRun);
     expect(API.getPodLog).toHaveBeenCalledWith(
@@ -222,7 +220,7 @@ describe('followLogs', () => {
     const stepName = 'kubectl-apply';
     const stepStatus = { container: 'step-kubectl-apply' };
     const taskRun = { metadata: { namespace: 'default' } };
-    jest.spyOn(API, 'getPodLog');
+    vi.spyOn(API, 'getPodLog');
 
     followLogs(stepName, stepStatus, taskRun);
     expect(API.getPodLog).not.toHaveBeenCalled();
@@ -237,7 +235,7 @@ describe('getLogsRetriever', () => {
   const taskRun = { metadata: { namespace }, status: { podName } };
 
   it('should handle default logs retriever', () => {
-    jest.spyOn(API, 'getPodLog').mockImplementation(() => {});
+    vi.spyOn(API, 'getPodLog').mockImplementation(() => {});
     const logsRetriever = getLogsRetriever({});
     expect(logsRetriever).toBeDefined();
     logsRetriever(stepName, stepStatus, taskRun);
@@ -250,8 +248,8 @@ describe('getLogsRetriever', () => {
 
   it('should handle default logs retriever with external fallback enabled', async () => {
     const externalLogsURL = 'fake_externalLogsURL';
-    jest.spyOn(API, 'getPodLog').mockImplementation(() => {});
-    const onFallback = jest.fn();
+    vi.spyOn(API, 'getPodLog').mockImplementation(() => {});
+    const onFallback = vi.fn();
     const logsRetriever = getLogsRetriever({ externalLogsURL, onFallback });
     expect(logsRetriever).toBeDefined();
     await logsRetriever(stepName, stepStatus, taskRun);
@@ -265,12 +263,12 @@ describe('getLogsRetriever', () => {
 
   it('should handle external logs fallback', async () => {
     const externalLogsURL = 'fake_externalLogsURL';
-    jest.spyOn(API, 'getExternalLogURL');
-    jest.spyOn(API, 'getPodLog').mockImplementation(() => {
+    vi.spyOn(API, 'getExternalLogURL');
+    vi.spyOn(API, 'getPodLog').mockImplementation(() => {
       throw new Error();
     });
-    jest.spyOn(comms, 'get').mockImplementation(() => {});
-    const onFallback = jest.fn();
+    vi.spyOn(comms, 'get').mockImplementation(() => {});
+    const onFallback = vi.fn();
     const logsRetriever = getLogsRetriever({ externalLogsURL, onFallback });
     expect(logsRetriever).toBeDefined();
     await logsRetriever(stepName, stepStatus, taskRun);
@@ -286,7 +284,7 @@ describe('getLogsRetriever', () => {
 
 it('getViewChangeHandler', () => {
   const url = 'someURL';
-  const navigate = jest.fn();
+  const navigate = vi.fn();
   const location = { pathname: url, search: '?nonViewQueryParam=someValue' };
   const handleViewChange = getViewChangeHandler({ location, navigate });
   const view = 'someView';
@@ -303,8 +301,8 @@ describe('getLogsToolbar', () => {
     const podName = 'fake_podname';
     const stepStatus = { container };
     const taskRun = { metadata: { namespace }, status: { podName } };
-    jest.spyOn(API, 'getPodLogURL');
-    jest.spyOn(API, 'getExternalLogURL');
+    vi.spyOn(API, 'getPodLogURL');
+    vi.spyOn(API, 'getExternalLogURL');
 
     const logsToolbar = getLogsToolbar({ stepStatus, taskRun });
 
@@ -324,8 +322,8 @@ describe('getLogsToolbar', () => {
     const podName = 'fake_podname';
     const stepStatus = { container };
     const taskRun = { metadata: { namespace }, status: { podName } };
-    jest.spyOn(API, 'getPodLogURL');
-    jest.spyOn(API, 'getExternalLogURL');
+    vi.spyOn(API, 'getPodLogURL');
+    vi.spyOn(API, 'getExternalLogURL');
 
     const logsToolbar = getLogsToolbar({
       externalLogsURL,
@@ -356,7 +354,7 @@ describe('getLocale', () => {
   });
 
   it('handles Chinese locales', () => {
-    localStorage.setItem(localesConfig.devOverrideKey, true);
+    localStorage.setItem(I18N_DEV_KEY, true);
     const locales = {
       zh: 'zh-Hans',
       'zh-CN': 'zh-Hans',
@@ -372,7 +370,7 @@ describe('getLocale', () => {
     Object.keys(locales).forEach(locale => {
       expect(getLocale(locale)).toEqual(locales[locale]);
     });
-    localStorage.removeItem(localesConfig.devOverrideKey);
+    localStorage.removeItem(I18N_DEV_KEY);
   });
 
   it('handles unsupported locales', () => {
