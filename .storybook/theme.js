@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Tekton Authors
+Copyright 2020-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -12,12 +12,12 @@ limitations under the License.
 */
 
 import { create } from '@storybook/theming/create';
-import brandImage from './tekton-horizontal-color.png';
+
+import PackageInfo from '../packages/components/package.json';
 
 export default create({
   base: 'light',
 
-  brandTitle: 'Tekton Components',
-  brandUrl: 'https://github.com/tektoncd/dashboard',
-  brandImage
+  brandTitle: `Tekton Dashboard packages @${PackageInfo.version}`,
+  brandUrl: 'https://github.com/tektoncd/dashboard/tree/main/packages'
 });
