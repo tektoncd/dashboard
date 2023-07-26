@@ -26,7 +26,7 @@ export default {
   title: 'Tabs'
 };
 
-export const Base = () => (
+export const Default = () => (
   <Tabs>
     <Tab label="label for tab1">content of tab 1</Tab>
     <Tab label="tab 2">content of tab 2</Tab>

@@ -18,4 +18,4 @@ export default {
   title: 'DotSpinner'
 };
 
-export const Base = {};
+export const Default = {};

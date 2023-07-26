@@ -58,7 +58,7 @@ export default {
   title: 'ListPageLayout'
 };
 
-export const Base = {
+export const Default = {
   render: args => (
     <ListPageLayoutContainer {...args}>
       {() => <span>page content goes here</span>}

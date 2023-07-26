@@ -26,7 +26,7 @@ export default {
   title: 'RunHeader'
 };
 
-export const Base = {};
+export const Default = {};
 
 export const Running = {
   args: {

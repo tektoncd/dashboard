@@ -156,7 +156,7 @@ export default {
   title: 'PipelineRun'
 };
 
-export const Base = () => {
+export const Default = () => {
   const [selectedStepId, setSelectedStepId] = useState();
   const [selectedTaskId, setSelectedTaskId] = useState();
   return (

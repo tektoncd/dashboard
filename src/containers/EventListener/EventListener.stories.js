@@ -149,7 +149,7 @@ export default {
   title: 'EventListener'
 };
 
-export const Base = {
+export const Default = {
   render: () => <EventListenerContainer {...props} />,
 
   decorators: [

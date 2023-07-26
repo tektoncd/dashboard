@@ -30,7 +30,7 @@ export default {
   title: 'legacy/PipelineGraph'
 };
 
-export const Base = () => (
+export const Default = () => (
   <PipelineGraph
     onClickStep={action('onClickStep')}
     onClickTask={action('onClickTask')}

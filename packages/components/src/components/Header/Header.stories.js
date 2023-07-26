@@ -21,7 +21,7 @@ export default {
   title: 'Header'
 };
 
-export const Base = {};
+export const Default = {};
 
 export const WithLogout = {
   args: {

@@ -46,11 +46,11 @@ export const Error = { args: { error: 'A helpful error message' } };
 
 export const Loading = { args: { loading: true } };
 
-export const Base = { args: { resource } };
+export const Default = { args: { resource } };
 
 export const WithAdditionalContent = {
   args: {
-    ...Base.args,
+    ...Default.args,
     additionalMetadata: (
       <li>
         <span>Custom Field:</span>some additional metadata

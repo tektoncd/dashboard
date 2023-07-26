@@ -39,7 +39,7 @@ export default {
   title: 'PipelineRuns'
 };
 
-export const Base = () => (
+export const Default = () => (
   <PipelineRuns
     getPipelineRunURL={({ namespace, pipelineRunName }) =>
       namespace ? `to-pipelineRun-${namespace}/${pipelineRunName}` : null

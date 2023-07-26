@@ -18,4 +18,4 @@ export default {
   title: 'LoadingShell'
 };
 
-export const Base = {};
+export const Default = {};

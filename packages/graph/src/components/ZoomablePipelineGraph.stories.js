@@ -30,7 +30,7 @@ export default {
   title: 'legacy/ZoomablePipelineGraph'
 };
 
-export const Base = () => (
+export const Default = () => (
   <ZoomablePipelineGraph
     onClickStep={action('onClickStep')}
     onClickTask={action('onClickTask')}

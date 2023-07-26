@@ -18,7 +18,7 @@ export default {
   title: 'StepDefinition'
 };
 
-export const Base = {};
+export const Default = {};
 
 export const WithContent = {
   args: {

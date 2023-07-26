@@ -18,4 +18,4 @@ export default {
   title: 'Spinner'
 };
 
-export const Base = {};
+export const Default = {};
