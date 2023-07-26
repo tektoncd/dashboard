@@ -80,9 +80,11 @@ test_dashboard() {
   echo "Running browser E2E tests…"
 
   VIDEO_PATH=""
+  VIDEO_VOLUME=""
   CYPRESS_ENV=""
   if [ ! -z "$ARTIFACTS" ] && [ "$E2E_VIDEO" != "false" ]; then
     VIDEO_PATH=$ARTIFACTS/videos
+    VIDEO_VOLUME="-v $VIDEO_PATH:/home/node/cypress/videos"
     mkdir -p $VIDEO_PATH
     chmod -R 777 $VIDEO_PATH
     echo "Videos of failing tests will be stored at $VIDEO_PATH"
@@ -98,7 +100,7 @@ test_dashboard() {
     CYPRESS_SPEC='-- --spec cypress/e2e/common/**/*'
   fi
   chmod 644 ~/.kube/config
-  docker run --rm --network=host $CYPRESS_ENV -v ~/.kube/config:/home/node/.kube/config -v $VIDEO_PATH:/home/node/cypress/videos dashboard-e2e $CYPRESS_SPEC || fail_test "Browser E2E tests failed"
+  docker run --rm --network=host $CYPRESS_ENV -v ~/.kube/config:/home/node/.kube/config $VIDEO_VOLUME dashboard-e2e $CYPRESS_SPEC || fail_test "Browser E2E tests failed"
   # If we get here the tests passed, no need to upload artifacts
   if [ ! -z "$VIDEO_PATH" ]; then
     rm -rf $VIDEO_PATH
