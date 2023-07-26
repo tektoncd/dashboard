@@ -16,6 +16,7 @@ const path = require('path');
 const config = {
   addons: [
     '@storybook/addon-essentials',
+    '@storybook/addon-links',
     '@storybook/addon-storysource',
     {
       name: '@storybook/addon-styling',
@@ -46,7 +47,25 @@ const config = {
       }
     }
   },
+  refs: (_config, { configType }) => {
+    if (configType === 'DEVELOPMENT') {
+      return {
+        carbon10: {
+          title: 'Carbon v10',
+          url: 'https://v7-react.carbondesignsystem.com/',
+          expanded: false
+        },
+        carbon11: {
+          title: 'Carbon v11 (do not use yet, for reference only)',
+          url: 'https://react.carbondesignsystem.com/',
+          expanded: false
+        }
+      };
+    }
+    return {};
+  },
   stories: [
+    { directory: '.', files: 'Welcome.mdx' },
     { directory: '../src', files: '**/*.stories.js', titlePrefix: 'Containers' },
     { directory: '../packages/components', files: '**/*.stories.js', titlePrefix: 'Components' },
     { directory: '../packages/graph', files: '**/*.stories.js', titlePrefix: 'Experimental/Graph' }

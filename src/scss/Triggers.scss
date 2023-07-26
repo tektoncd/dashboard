@@ -28,6 +28,10 @@ limitations under the License.
         font-weight: bold;
         margin-right: $spacing-02;
       }
+
+      .bx--link span {
+        font-weight: normal;
+      }
     }
 
     .tkn--table {
