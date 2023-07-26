@@ -18,7 +18,7 @@ export default {
   title: 'LogsToolbar'
 };
 
-export const Base = {
+export const Default = {
   args: {
     name: 'some_filename.txt',
     url: '/some/logs/url'

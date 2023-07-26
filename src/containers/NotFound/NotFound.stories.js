@@ -34,7 +34,7 @@ export default {
   title: 'NotFound'
 };
 
-export const Base = {};
+export const Default = {};
 
 export const CustomSuggestions = {
   args: {

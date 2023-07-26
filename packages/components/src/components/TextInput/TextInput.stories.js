@@ -25,7 +25,7 @@ export default {
   title: 'TextInput'
 };
 
-export const Base = {
+export const Default = {
   args: {
     labelText: 'foo',
     helperText: 'this is a description of input foo',

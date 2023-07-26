@@ -41,7 +41,7 @@ export default {
   title: 'ViewYAML'
 };
 
-export const Base = {};
+export const Default = {};
 
 export const SyntaxHighlighter = {
   args: {

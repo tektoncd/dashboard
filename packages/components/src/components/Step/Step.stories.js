@@ -30,7 +30,7 @@ export default {
   title: 'Step'
 };
 
-export const Base = {};
+export const Default = {};
 export const Selected = { args: { selected: true } };
 export const Waiting = { args: { status: 'waiting' } };
 export const Running = { args: { status: 'running' } };

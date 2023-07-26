@@ -63,7 +63,7 @@ const props = {
   ]
 };
 
-export const Base = {
+export const Default = {
   args: {
     ...props
   }

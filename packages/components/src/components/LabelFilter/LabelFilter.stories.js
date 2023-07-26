@@ -20,7 +20,7 @@ export default {
   title: 'LabelFilter'
 };
 
-export const Base = {
+export const Default = {
   args: {
     filters: ['tekton.dev/pipeline=output-pipeline'],
     handleAddFilter: action('handleAddFilter'),

@@ -85,7 +85,7 @@ export default {
   title: 'Trigger'
 };
 
-export const Base = { args: props };
+export const Default = { args: props };
 
 export const NoName = {
   args: {

@@ -23,7 +23,7 @@ export default {
   title: 'KeyValueList'
 };
 
-export const Base = {
+export const Default = {
   args: {
     invalidFields: { '2-key': true, '3-value': true },
     invalidText: 'There are invalid KeyValue entries.',

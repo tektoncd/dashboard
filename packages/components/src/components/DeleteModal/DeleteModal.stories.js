@@ -25,7 +25,7 @@ export default {
   title: 'DeleteModal'
 };
 
-export const Base = {
+export const Default = {
   args: {
     kind: 'Pipelines',
     onClose: action('onClose'),

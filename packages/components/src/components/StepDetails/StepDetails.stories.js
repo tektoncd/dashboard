@@ -44,7 +44,7 @@ export default {
   title: 'StepDetails'
 };
 
-export const Base = {
+export const Default = {
   args: {
     logContainer: getLogContainer(),
     stepStatus: getStepStatus()

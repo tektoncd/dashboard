@@ -34,7 +34,7 @@ export default {
   title: 'TooltipDropdown'
 };
 
-export const Base = {};
+export const Default = {};
 
 export const Loading = {
   args: { loading: true }

@@ -25,4 +25,4 @@ export default {
   title: 'legacy/Graph'
 };
 
-export const Base = { args: { graph } };
+export const Default = { args: { graph } };

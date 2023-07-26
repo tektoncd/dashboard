@@ -78,7 +78,7 @@ export default {
   title: 'TaskTree'
 };
 
-export const Base = {
+export const Default = {
   render: args => {
     const [selectedStepId, setSelectedStepId] = useState();
     const [selectedTaskId, setSelectedTaskId] = useState();

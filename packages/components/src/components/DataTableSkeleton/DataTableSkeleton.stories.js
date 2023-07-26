@@ -54,4 +54,4 @@ export default {
   title: 'DataTableSkeleton'
 };
 
-export const Base = {};
+export const Default = {};

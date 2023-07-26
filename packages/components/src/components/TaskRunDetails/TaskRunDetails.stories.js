@@ -33,7 +33,7 @@ export default {
   title: 'TaskRunDetails'
 };
 
-export const Base = {
+export const Default = {
   args: {
     taskRun: {
       metadata: { name: 'my-task', namespace: 'my-namespace' },
