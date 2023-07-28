@@ -433,25 +433,24 @@ describe('getStepDefinition', () => {
     expect(definition).toBeNull();
   });
 
-  it('handles taskRun using tekton bundle', () => {
-    const selectedStepId = 'a-bundle-step';
-    const bundleStep = { name: selectedStepId };
+  it('handles TaskRun with spec in status.taskSpec', () => {
+    const selectedStepId = 'a-step';
+    const step = { name: selectedStepId };
     const task = {};
     const taskRun = {
       spec: {
         taskRef: {
-          bundle: 'index.docker.io/fake/dummybundle@0.1',
           name: 'dummy-task'
         }
       },
       status: {
         taskSpec: {
-          steps: [bundleStep]
+          steps: [step]
         }
       }
     };
     const definition = getStepDefinition({ selectedStepId, task, taskRun });
-    expect(definition).toEqual(bundleStep);
+    expect(definition).toEqual(step);
   });
 });
 
@@ -779,14 +778,13 @@ describe('getTaskRunsWithPlaceholders', () => {
     );
   });
 
-  it('handles pipeline using tekton bundle', () => {
-    const finallyTaskName = 'bundleFinallyTaskName';
-    const pipelineTaskName = 'bundlePipelineTaskName';
+  it('handles PipelineRuns with spec in status.pipelineSpec', () => {
+    const finallyTaskName = 'aFinallyTaskName';
+    const pipelineTaskName = 'aPipelineTaskName';
 
     const pipelineRun = {
       spec: {
         pipelineRef: {
-          bundle: 'index.docker.io/fake/dummybundle@0.1',
           name: 'dummy-pipeline'
         }
       },
