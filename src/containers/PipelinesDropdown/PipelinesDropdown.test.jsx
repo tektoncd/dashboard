@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -69,8 +69,7 @@ const checkDropdownItems = ({
 
 describe('PipelinesDropdown', () => {
   it('renders items', () => {
-    jest
-      .spyOn(API, 'usePipelines')
+    vi.spyOn(API, 'usePipelines')
       .mockImplementation(() => ({ data: pipelines }));
     const { getByPlaceholderText, getAllByText, queryByText } = render(
       <PipelinesDropdown {...props} />
@@ -84,8 +83,7 @@ describe('PipelinesDropdown', () => {
   });
 
   it('renders controlled selection', () => {
-    jest
-      .spyOn(API, 'usePipelines')
+    vi.spyOn(API, 'usePipelines')
       .mockImplementation(() => ({ data: pipelines }));
     // Select item 'pipeline-1'
     const { queryByDisplayValue, queryByPlaceholderText, rerender } = render(
@@ -104,9 +102,8 @@ describe('PipelinesDropdown', () => {
   });
 
   it('renders empty', () => {
-    jest.spyOn(API, 'usePipelines').mockImplementation(() => ({ data: [] }));
-    jest
-      .spyOn(APIUtils, 'useSelectedNamespace')
+    vi.spyOn(API, 'usePipelines').mockImplementation(() => ({ data: [] }));
+    vi.spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: 'blue' }));
     const { queryByPlaceholderText } = render(<PipelinesDropdown {...props} />);
     expect(
@@ -116,7 +113,7 @@ describe('PipelinesDropdown', () => {
   });
 
   it('for all namespaces renders empty', () => {
-    jest.spyOn(API, 'usePipelines').mockImplementation(() => ({ data: [] }));
+    vi.spyOn(API, 'usePipelines').mockImplementation(() => ({ data: [] }));
     const { queryByPlaceholderText } = render(
       <PipelinesDropdown {...props} namespace={ALL_NAMESPACES} />
     );
@@ -125,18 +122,16 @@ describe('PipelinesDropdown', () => {
   });
 
   it('renders loading state', () => {
-    jest
-      .spyOn(API, 'usePipelines')
+    vi.spyOn(API, 'usePipelines')
       .mockImplementation(() => ({ isFetching: true }));
     const { queryByPlaceholderText } = render(<PipelinesDropdown {...props} />);
     expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
   });
 
   it('handles onChange event', () => {
-    jest
-      .spyOn(API, 'usePipelines')
+    vi.spyOn(API, 'usePipelines')
       .mockImplementation(() => ({ data: pipelines }));
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     const { getByPlaceholderText, getByText } = render(
       <PipelinesDropdown {...props} onChange={onChange} />
     );

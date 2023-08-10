@@ -22,14 +22,13 @@ import * as APIUtils from '../../api/utils';
 
 describe('ImportResources component', () => {
   beforeEach(() => {
-    jest.spyOn(API, 'useNamespaces').mockImplementation(() => ({
+    vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
       data: [
         { metadata: { name: 'default' } },
         { metadata: { name: 'tekton-dashboard' } }
       ]
     }));
-    jest
-      .spyOn(APIUtils, 'useSelectedNamespace')
+    vi.spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: ALL_NAMESPACES }));
   });
 
@@ -78,8 +77,7 @@ describe('ImportResources component', () => {
     const repositoryURLValue = 'https://github.com/test/testing';
     const revisionValue = 'main';
 
-    jest
-      .spyOn(API, 'importResources')
+    vi.spyOn(API, 'importResources')
       .mockImplementation(
         ({
           importerNamespace,
@@ -144,8 +142,7 @@ describe('ImportResources component', () => {
   it('Invalid data submit displays invalidText', async () => {
     const importResourcesResponseMock = { response: { status: 500 } };
 
-    jest
-      .spyOn(API, 'importResources')
+    vi.spyOn(API, 'importResources')
       .mockImplementation(() => Promise.reject(importResourcesResponseMock));
 
     const { getAllByPlaceholderText, getByPlaceholderText, getByText } =

@@ -1,5 +1,5 @@
 /*
-Copyright 2021-2022 The Tekton Authors
+Copyright 2021-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -30,7 +30,7 @@ const clusterInterceptor = {
 
 describe('ClusterInterceptors', () => {
   it('renders loading state', async () => {
-    jest
+    vi
       .spyOn(API, 'useClusterInterceptors')
       .mockImplementation(() => ({ isLoading: true }));
     const { queryByText } = renderWithRouter(<ClusterInterceptorsContainer />, {
@@ -41,7 +41,7 @@ describe('ClusterInterceptors', () => {
   });
 
   it('renders data', async () => {
-    jest
+    vi
       .spyOn(API, 'useClusterInterceptors')
       .mockImplementation(() => ({ data: [clusterInterceptor] }));
     const { queryByText } = renderWithRouter(<ClusterInterceptorsContainer />, {
@@ -54,7 +54,7 @@ describe('ClusterInterceptors', () => {
 
   it('handles error', async () => {
     const error = 'fake_errorMessage';
-    jest
+    vi
       .spyOn(API, 'useClusterInterceptors')
       .mockImplementation(() => ({ error }));
     const { queryByText } = renderWithRouter(<ClusterInterceptorsContainer />, {

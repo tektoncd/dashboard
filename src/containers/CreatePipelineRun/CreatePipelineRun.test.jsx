@@ -70,23 +70,19 @@ const serviceAccount = {
 
 describe('CreatePipelineRun', () => {
   beforeEach(() => {
-    jest
-      .spyOn(ServiceAccountsAPI, 'useServiceAccounts')
+    vi.spyOn(ServiceAccountsAPI, 'useServiceAccounts')
       .mockImplementation(() => ({ data: [serviceAccount] }));
-    jest
-      .spyOn(PipelinesAPI, 'usePipelines')
+    vi.spyOn(PipelinesAPI, 'usePipelines')
       .mockImplementation(() => ({ data: pipelines }));
-    jest
-      .spyOn(PipelineRunsAPI, 'usePipelineRuns')
+    vi.spyOn(PipelineRunsAPI, 'usePipelineRuns')
       .mockImplementation(() => ({ data: [] }));
-    jest.spyOn(API, 'useNamespaces').mockImplementation(() => ({
+    vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
       data: [
         { metadata: { name: 'namespace-1' } },
         { metadata: { name: 'namespace-2' } }
       ]
     }));
-    jest
-      .spyOn(APIUtils, 'useSelectedNamespace')
+    vi.spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: 'namespace-1' }));
   });
 
@@ -112,7 +108,7 @@ describe('CreatePipelineRun', () => {
   });
 
   it('handles onClose event', () => {
-    jest.spyOn(window.history, 'pushState');
+    vi.spyOn(window.history, 'pushState');
     const { getByText } = renderWithRouter(<CreatePipelineRun />);
     fireEvent.click(getByText(/cancel/i));
     // will be called once for render (from test utils) and once for navigation
@@ -120,7 +116,7 @@ describe('CreatePipelineRun', () => {
   });
 
   it('handles close', () => {
-    jest.spyOn(window.history, 'pushState');
+    vi.spyOn(window.history, 'pushState');
     const { getByText } = renderWithRouter(<CreatePipelineRun />);
     fireEvent.click(getByText(/cancel/i));
     expect(window.history.pushState).toHaveBeenCalledTimes(2);
@@ -170,17 +166,14 @@ const expectedPipelineRunOneLine = expectedPipelineRun.replace(/\r?\n|\r/g, '');
 const findNameRegexp = /name: run-\S+/;
 describe('CreatePipelineRun yaml mode', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-
-    jest.spyOn(window.history, 'pushState');
+    vi.clearAllMocks();
+    vi.spyOn(window.history, 'pushState');
   });
 
   it('renders with namespace', async () => {
-    jest
-      .spyOn(PipelineRunsAPI, 'createPipelineRunRaw')
+    vi.spyOn(PipelineRunsAPI, 'createPipelineRunRaw')
       .mockImplementation(() => Promise.resolve({ data: {} }));
-    jest
-      .spyOn(PipelineRunsAPI, 'usePipelineRun')
+    vi.spyOn(PipelineRunsAPI, 'usePipelineRun')
       .mockImplementation(() => ({ data: pipelineRunRawGenerateName }));
 
     const { getByRole } = renderWithRouter(<CreatePipelineRun />, {
@@ -195,11 +188,9 @@ describe('CreatePipelineRun yaml mode', () => {
   });
 
   it('handle submit with pipelinerun and namespace', async () => {
-    jest
-      .spyOn(PipelineRunsAPI, 'createPipelineRunRaw')
+    vi.spyOn(PipelineRunsAPI, 'createPipelineRunRaw')
       .mockImplementation(() => Promise.resolve({ data: {} }));
-    jest
-      .spyOn(PipelineRunsAPI, 'usePipelineRun')
+    vi.spyOn(PipelineRunsAPI, 'usePipelineRun')
       .mockImplementation(() => ({ data: pipelineRunRawGenerateName }));
 
     const { queryAllByText } = renderWithRouter(<CreatePipelineRun />, {

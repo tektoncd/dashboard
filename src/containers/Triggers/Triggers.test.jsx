@@ -1,5 +1,5 @@
 /*
-Copyright 2021-2022 The Tekton Authors
+Copyright 2021-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -20,12 +20,11 @@ import TriggersContainer from './Triggers';
 
 describe('Triggers', () => {
   beforeEach(() => {
-    jest.spyOn(API, 'getTriggers').mockImplementation(() => []);
+    vi.spyOn(API, 'getTriggers').mockImplementation(() => []);
   });
 
   it('renders loading state', async () => {
-    jest
-      .spyOn(API, 'useTriggers')
+    vi.spyOn(API, 'useTriggers')
       .mockImplementation(() => ({ isLoading: true }));
     const { queryByText } = renderWithRouter(<TriggersContainer />, {
       path: paths.triggers.all(),
@@ -35,7 +34,7 @@ describe('Triggers', () => {
   });
 
   it('renders resources', async () => {
-    jest.spyOn(API, 'useTriggers').mockImplementation(() => ({
+    vi.spyOn(API, 'useTriggers').mockImplementation(() => ({
       data: [
         {
           metadata: {
@@ -59,8 +58,7 @@ describe('Triggers', () => {
 
   it('handles error', async () => {
     const errorMessage = 'fake_errorMessage';
-    jest
-      .spyOn(API, 'useTriggers')
+    vi.spyOn(API, 'useTriggers')
       .mockImplementation(() => ({ error: errorMessage }));
     const { queryByText } = renderWithRouter(<TriggersContainer />, {
       path: paths.triggers.all(),

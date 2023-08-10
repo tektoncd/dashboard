@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2021 The Tekton Authors
+Copyright 2020-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -70,17 +70,15 @@ const checkDropdownItems = ({
 
 describe('TasksDropdown', () => {
   beforeEach(() => {
-    jest.spyOn(API, 'useNamespaces').mockImplementation(() => ({
+    vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
       data: [{ metadata: { name: 'blue' } }, { metadata: { name: 'green' } }]
     }));
-    jest
-      .spyOn(APIUtils, 'useSelectedNamespace')
+    vi.spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: 'blue' }));
   });
 
   it('renders items', () => {
-    jest
-      .spyOn(TasksAPI, 'useTasks')
+    vi.spyOn(TasksAPI, 'useTasks')
       .mockImplementation(() => ({ data: tasks }));
     const { getByPlaceholderText, getAllByText, queryByText } = render(
       <TasksDropdown {...props} />
@@ -95,8 +93,7 @@ describe('TasksDropdown', () => {
   });
 
   it('renders controlled selection', () => {
-    jest
-      .spyOn(TasksAPI, 'useTasks')
+    vi.spyOn(TasksAPI, 'useTasks')
       .mockImplementation(() => ({ data: tasks }));
     // Select item 'task-1'
     const { queryByDisplayValue, queryByPlaceholderText, rerender } = render(
@@ -114,7 +111,7 @@ describe('TasksDropdown', () => {
   });
 
   it('renders empty', () => {
-    jest.spyOn(TasksAPI, 'useTasks').mockImplementation(() => ({ data: [] }));
+    vi.spyOn(TasksAPI, 'useTasks').mockImplementation(() => ({ data: [] }));
     const { queryByPlaceholderText } = render(<TasksDropdown {...props} />);
     expect(
       queryByPlaceholderText(/no tasks found in the 'blue' namespace/i)
@@ -123,7 +120,7 @@ describe('TasksDropdown', () => {
   });
 
   it('for all namespaces renders empty', () => {
-    jest.spyOn(TasksAPI, 'useTasks').mockImplementation(() => ({ data: [] }));
+    vi.spyOn(TasksAPI, 'useTasks').mockImplementation(() => ({ data: [] }));
     const { queryByPlaceholderText } = render(
       <TasksDropdown {...props} namespace={ALL_NAMESPACES} />
     );
@@ -132,18 +129,16 @@ describe('TasksDropdown', () => {
   });
 
   it('renders loading state', () => {
-    jest
-      .spyOn(TasksAPI, 'useTasks')
+    vi.spyOn(TasksAPI, 'useTasks')
       .mockImplementation(() => ({ isFetching: true }));
     const { queryByPlaceholderText } = render(<TasksDropdown {...props} />);
     expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
   });
 
   it('handles onChange event', () => {
-    jest
-      .spyOn(TasksAPI, 'useTasks')
+    vi.spyOn(TasksAPI, 'useTasks')
       .mockImplementation(() => ({ data: tasks }));
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     const { getByPlaceholderText, getByText } = render(
       <TasksDropdown {...props} onChange={onChange} />
     );

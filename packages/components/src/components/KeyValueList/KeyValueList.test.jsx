@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -79,7 +79,7 @@ it('KeyValueList incorrect fields', () => {
 
 it('KeyValueList change key', () => {
   const props = {
-    onChange: jest.fn(),
+    onChange: vi.fn(),
     invalidFields: {},
     keyValues: [{ key: 'foo0', value: 'bar0', id: 'aaaa' }],
     onAdd() {},
@@ -101,7 +101,7 @@ it('KeyValueList change key', () => {
 
 it('KeyValueList change value', () => {
   const props = {
-    onChange: jest.fn(),
+    onChange: vi.fn(),
     invalidFields: {},
     keyValues: [{ key: 'foo0', value: 'bar0', id: 'aaaa' }],
     onAdd() {},
@@ -131,8 +131,8 @@ it('KeyValueList add and remove buttons work', () => {
       { key: 'foo2', value: 'bar2', id: 'cccc' },
       { key: 'foo3', value: 'bar3', id: 'dddd' }
     ],
-    onAdd: jest.fn(),
-    onRemove: jest.fn()
+    onAdd: vi.fn(),
+    onRemove: vi.fn()
   };
   const { getByText, getAllByText } = render(<KeyValueList {...props} />);
 

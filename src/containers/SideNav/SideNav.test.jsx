@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -44,8 +44,7 @@ it('SideNav renders only when expanded', () => {
 });
 
 it('SideNav renders with extensions', () => {
-  jest
-    .spyOn(extensionsAPI, 'useExtensions')
+  vi.spyOn(extensionsAPI, 'useExtensions')
     .mockImplementation(() => ({ data: mockExtensions }));
   const { queryByText } = renderWithRouter(<SideNav expanded />);
   expect(queryByText('Pipelines')).toBeTruthy();
@@ -54,7 +53,7 @@ it('SideNav renders with extensions', () => {
 });
 
 it('SideNav renders with triggers', async () => {
-  jest.spyOn(API, 'useIsTriggersInstalled').mockImplementation(() => true);
+  vi.spyOn(API, 'useIsTriggersInstalled').mockImplementation(() => true);
   const { queryByText } = renderWithRouter(<SideNav expanded />);
   await waitFor(() => queryByText(/about/i));
   expect(queryByText('Pipelines')).toBeTruthy();
@@ -70,7 +69,7 @@ it('SideNav renders import in the default read-write mode', async () => {
 });
 
 it('SideNav does not render import in read-only mode', async () => {
-  jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => true);
+  vi.spyOn(API, 'useIsReadOnly').mockImplementation(() => true);
   const { queryByText } = renderWithRouter(<SideNav expanded isReadOnly />);
   await waitFor(() => queryByText(/about/i));
   expect(queryByText(/import/i)).toBeFalsy();

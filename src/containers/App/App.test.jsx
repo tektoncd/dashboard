@@ -21,17 +21,16 @@ import * as PipelinesAPI from '../../api/pipelines';
 
 describe('App', () => {
   beforeEach(() => {
-    jest.spyOn(API, 'useProperties').mockImplementation(() => ({ data: {} }));
-    jest
-      .spyOn(PipelinesAPI, 'usePipelines')
+    vi.spyOn(API, 'useProperties').mockImplementation(() => ({ data: {} }));
+    vi.spyOn(PipelinesAPI, 'usePipelines')
       .mockImplementation(() => ({ data: [] }));
-    jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => true);
-    jest.spyOn(API, 'useIsTriggersInstalled').mockImplementation(() => false);
-    jest.spyOn(API, 'useNamespaces').mockImplementation(() => ({ data: [] }));
+    vi.spyOn(API, 'useIsReadOnly').mockImplementation(() => true);
+    vi.spyOn(API, 'useIsTriggersInstalled').mockImplementation(() => false);
+    vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({ data: [] }));
   });
 
   it('renders successfully in full cluster mode', async () => {
-    jest.spyOn(API, 'useTenantNamespace').mockImplementation(() => undefined);
+    vi.spyOn(API, 'useTenantNamespace').mockImplementation(() => undefined);
     const { findAllByText, queryAllByText, queryByText } = render(
       <App lang="en" />
     );
@@ -45,7 +44,7 @@ describe('App', () => {
   });
 
   it('renders successfully in single namespace mode', async () => {
-    jest.spyOn(API, 'useTenantNamespace').mockImplementation(() => 'fake');
+    vi.spyOn(API, 'useTenantNamespace').mockImplementation(() => 'fake');
     const { findAllByText, queryAllByText, queryByText } = render(
       <App lang="en" />
     );
@@ -59,8 +58,8 @@ describe('App', () => {
   });
 
   it('does not call namespaces API in single namespace mode', async () => {
-    jest.spyOn(API, 'getNamespaces');
-    jest.spyOn(API, 'useTenantNamespace').mockImplementation(() => 'fake');
+    vi.spyOn(API, 'getNamespaces');
+    vi.spyOn(API, 'useTenantNamespace').mockImplementation(() => 'fake');
     const { queryByText } = render(<App />);
 
     await waitFor(() => queryByText('Tekton resources'));
@@ -70,8 +69,8 @@ describe('App', () => {
   });
 
   it('calls namespaces API in full cluster mode', async () => {
-    jest.spyOn(API, 'getNamespaces').mockImplementation(() => {});
-    jest.spyOn(API, 'useTenantNamespace').mockImplementation(() => undefined);
+    vi.spyOn(API, 'getNamespaces').mockImplementation(() => {});
+    vi.spyOn(API, 'useTenantNamespace').mockImplementation(() => undefined);
     const { queryByText } = render(<App />);
 
     await waitFor(() => queryByText('Tekton resources'));

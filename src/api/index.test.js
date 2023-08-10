@@ -60,7 +60,7 @@ it('useCustomResource', () => {
   const type = 'fake_type';
   const params = { fake: 'params', type };
   const query = { fake: 'query' };
-  jest.spyOn(utils, 'useResource').mockImplementation(() => query);
+  vi.spyOn(utils, 'useResource').mockImplementation(() => query);
   const returnValue = API.useCustomResource(params);
 
   expect(utils.useResource).toHaveBeenCalledWith(
@@ -102,7 +102,7 @@ it('useAPIResource', () => {
   const type = 'fake_type';
   const params = { fake: 'params', type };
   const query = { fake: 'query' };
-  jest.spyOn(utils, 'useResource').mockImplementation(() => query);
+  vi.spyOn(utils, 'useResource').mockImplementation(() => query);
   const returnValue = API.useAPIResource(params);
 
   expect(utils.useResource).toHaveBeenCalledWith(
@@ -119,10 +119,9 @@ it('useTaskByKind', () => {
   const params = { fake: 'params' };
   const clusterTaskQuery = { fake: 'clusterTaskQuery' };
   const taskQuery = { fake: 'taskQuery' };
-  jest
-    .spyOn(ClusterTasksAPI, 'useClusterTask')
+  vi.spyOn(ClusterTasksAPI, 'useClusterTask')
     .mockImplementation(() => clusterTaskQuery);
-  jest.spyOn(TasksAPI, 'useTask').mockImplementation(() => taskQuery);
+  vi.spyOn(TasksAPI, 'useTask').mockImplementation(() => taskQuery);
 
   let returnValue = API.useTaskByKind({ ...params, kind: 'ClusterTask' });
   expect(ClusterTasksAPI.useClusterTask).toHaveBeenCalledWith(
@@ -309,8 +308,7 @@ it('getPodLog with container name', () => {
 
 describe('importResources', () => {
   it('basic', () => {
-    const mockDateNow = jest
-      .spyOn(Date, 'now')
+    const mockDateNow = vi.spyOn(Date, 'now')
       .mockImplementation(() => 'fake-timestamp');
     const importerNamespace = 'fake-importer-namespace';
     const method = 'apply';
@@ -329,9 +327,8 @@ describe('importResources', () => {
     };
 
     const fakeAPI = 'fake_api';
-    jest.spyOn(utils, 'getTektonAPI').mockImplementation(() => fakeAPI);
-    jest
-      .spyOn(comms, 'post')
+    vi.spyOn(utils, 'getTektonAPI').mockImplementation(() => fakeAPI);
+    vi.spyOn(comms, 'post')
       .mockImplementation((uri, body) => Promise.resolve(body));
     return API.importResources(payload).then(() => {
       expect(comms.post).toHaveBeenCalledWith(
@@ -369,8 +366,7 @@ describe('importResources', () => {
   });
 
   it('with revision and no serviceAccount', () => {
-    const mockDateNow = jest
-      .spyOn(Date, 'now')
+    const mockDateNow = vi.spyOn(Date, 'now')
       .mockImplementation(() => 'fake-timestamp');
     const importerNamespace = 'fake-importer-namespace';
     const method = 'apply';
@@ -389,9 +385,8 @@ describe('importResources', () => {
     };
 
     const fakeAPI = 'fake_api';
-    jest.spyOn(utils, 'getTektonAPI').mockImplementation(() => fakeAPI);
-    jest
-      .spyOn(comms, 'post')
+    vi.spyOn(utils, 'getTektonAPI').mockImplementation(() => fakeAPI);
+    vi.spyOn(comms, 'post')
       .mockImplementation((uri, body) => Promise.resolve(body));
 
     return API.importResources(payload).then(() => {

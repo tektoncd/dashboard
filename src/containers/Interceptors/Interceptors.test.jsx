@@ -1,5 +1,5 @@
 /*
-Copyright 2022 The Tekton Authors
+Copyright 2022-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -34,17 +34,15 @@ const interceptor = {
 
 describe('Interceptors', () => {
   beforeEach(() => {
-    jest.spyOn(API, 'useNamespaces').mockImplementation(() => ({
+    vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
       data: [{ metadata: { name: 'default' } }]
     }));
-    jest
-      .spyOn(APIUtils, 'useSelectedNamespace')
+    vi.spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: ALL_NAMESPACES }));
   });
 
   it('renders with no interceptors', () => {
-    jest
-      .spyOn(InterceptorsAPI, 'useInterceptors')
+    vi.spyOn(InterceptorsAPI, 'useInterceptors')
       .mockImplementation(() => ({ data: [] }));
 
     const { getByText } = renderWithRouter(<Interceptors />, {
@@ -57,8 +55,7 @@ describe('Interceptors', () => {
   });
 
   it('renders with one interceptor', () => {
-    jest
-      .spyOn(InterceptorsAPI, 'useInterceptors')
+    vi.spyOn(InterceptorsAPI, 'useInterceptors')
       .mockImplementation(() => ({ data: [interceptor] }));
 
     const { queryByText } = renderWithRouter(<Interceptors />, {
@@ -72,8 +69,7 @@ describe('Interceptors', () => {
   });
 
   it('can be filtered on a single label filter', async () => {
-    jest
-      .spyOn(InterceptorsAPI, 'useInterceptors')
+    vi.spyOn(InterceptorsAPI, 'useInterceptors')
       .mockImplementation(({ filters }) => ({
         data: filters.length ? [] : [interceptor]
       }));
@@ -93,8 +89,7 @@ describe('Interceptors', () => {
   });
 
   it('renders in loading state', () => {
-    jest
-      .spyOn(InterceptorsAPI, 'useInterceptors')
+    vi.spyOn(InterceptorsAPI, 'useInterceptors')
       .mockImplementation(() => ({ isLoading: true }));
 
     const { queryByText } = renderWithRouter(<Interceptors />, {
@@ -109,8 +104,7 @@ describe('Interceptors', () => {
 
   it('renders in error state', () => {
     const error = 'fake_error_message';
-    jest
-      .spyOn(InterceptorsAPI, 'useInterceptors')
+    vi.spyOn(InterceptorsAPI, 'useInterceptors')
       .mockImplementation(() => ({ error }));
 
     const { queryByText } = renderWithRouter(<Interceptors />, {

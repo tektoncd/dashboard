@@ -36,15 +36,12 @@ const pipelineRun = {
 };
 
 it('PipelineRunContainer renders data', async () => {
-  jest
-    .spyOn(PipelineRunsAPI, 'usePipelineRun')
+  vi.spyOn(PipelineRunsAPI, 'usePipelineRun')
     .mockImplementation(() => ({ data: pipelineRun }));
-  jest
-    .spyOn(TaskRunsAPI, 'useTaskRuns')
+  vi.spyOn(TaskRunsAPI, 'useTaskRuns')
     .mockImplementation(() => ({ data: [] }));
-  jest.spyOn(TasksAPI, 'useTasks').mockImplementation(() => ({ data: [] }));
-  jest
-    .spyOn(ClusterTasksAPI, 'useClusterTasks')
+  vi.spyOn(TasksAPI, 'useTasks').mockImplementation(() => ({ data: [] }));
+  vi.spyOn(ClusterTasksAPI, 'useClusterTasks')
     .mockImplementation(() => ({ data: [] }));
 
   const { getByText } = renderWithRouter(<PipelineRunContainer intl={intl} />);
@@ -54,8 +51,7 @@ it('PipelineRunContainer renders data', async () => {
 it('PipelineRunContainer renders not found state', async () => {
   const namespace = 'fake_namespace';
   const pipelineRunName = 'fake_pipelineRunName';
-  jest
-    .spyOn(PipelineRunsAPI, 'usePipelineRun')
+  vi.spyOn(PipelineRunsAPI, 'usePipelineRun')
     .mockImplementation(() => ({ data: null, error: null }));
 
   const { findByText } = renderWithRouter(
@@ -71,8 +67,7 @@ it('PipelineRunContainer renders not found state', async () => {
 it('PipelineRunContainer renders error state', async () => {
   const namespace = 'fake_namespace';
   const pipelineRunName = 'fake_pipelineRunName';
-  jest
-    .spyOn(PipelineRunsAPI, 'usePipelineRun')
+  vi.spyOn(PipelineRunsAPI, 'usePipelineRun')
     .mockImplementation(() => ({ data: null, error: 'some error' }));
 
   const { findByText } = renderWithRouter(

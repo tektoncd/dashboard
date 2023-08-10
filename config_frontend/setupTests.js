@@ -11,8 +11,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { TextDecoder, TextEncoder } from 'util';
-
 import { server } from './msw';
 
 // Establish API mocking before all tests.
@@ -27,24 +25,27 @@ afterEach(() => server.resetHandlers());
 // Clean up after the tests are finished.
 afterAll(() => server.close());
 
+// use Node.js native fetch
+global.fetch = fetch;
+global.Headers = Headers;
+global.Request = Request;
+global.Response = Response;
 window.HTMLElement.prototype.scrollIntoView =
   function scrollIntoViewTestStub() {};
-window.TextDecoder = TextDecoder;
-window.TextEncoder = TextEncoder;
 
 const { getComputedStyle } = window;
 window.getComputedStyle = element => getComputedStyle(element);
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: jest.fn().mockImplementation(query => ({
+  value: vi.fn().mockImplementation(query => ({
     matches: false,
     media: query,
     onchange: null,
-    addListener: jest.fn(), // deprecated
-    removeListener: jest.fn(), // deprecated
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn()
+    addListener: vi.fn(), // deprecated
+    removeListener: vi.fn(), // deprecated
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn()
   }))
 });

@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import { createHtmlPlugin } from 'vite-plugin-html';
 import react from '@vitejs/plugin-react-swc';
 import svgr from 'vite-plugin-svgr';
@@ -62,5 +62,24 @@ export default defineConfig(({ _mode }) => ({
       }
     },
     strictPort: true
+  },
+  test: {
+    clearMocks: true,
+    coverage: {
+      clean: true,
+      enabled: true,
+      provider: 'istanbul',
+      reporter: ['text', 'html'],
+
+      branches: 90,
+      functions: 90,
+      lines: 90,
+      statements: 90
+    },
+    environment: 'jsdom',
+    globals: true,
+    restoreMocks: true,
+    // slowTestThreshold: <num> // millis
+    setupFiles: '/config_frontend/setupTests.js'
   }
 }));

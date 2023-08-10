@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2021 The Tekton Authors
+Copyright 2020-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -61,7 +61,7 @@ const checkDropdownItems = ({
 
 describe('ClusterTasksDropdown', () => {
   it('renders items', () => {
-    jest
+    vi
       .spyOn(API, 'useClusterTasks')
       .mockImplementation(() => ({ data: clusterTasks }));
     const { getByPlaceholderText, getAllByText, queryByText } = render(
@@ -77,7 +77,7 @@ describe('ClusterTasksDropdown', () => {
   });
 
   it('renders controlled selection', () => {
-    jest
+    vi
       .spyOn(API, 'useClusterTasks')
       .mockImplementation(() => ({ data: clusterTasks }));
     // Select item 'clustertask-1'
@@ -103,7 +103,7 @@ describe('ClusterTasksDropdown', () => {
   });
 
   it('renders empty', () => {
-    jest.spyOn(API, 'useClusterTasks').mockImplementation(() => ({ data: [] }));
+    vi.spyOn(API, 'useClusterTasks').mockImplementation(() => ({ data: [] }));
 
     const { queryByPlaceholderText } = render(
       <ClusterTasksDropdown {...props} />
@@ -113,7 +113,7 @@ describe('ClusterTasksDropdown', () => {
   });
 
   it('renders loading state', () => {
-    jest
+    vi
       .spyOn(API, 'useClusterTasks')
       .mockImplementation(() => ({ isFetching: true }));
     const { queryByPlaceholderText } = render(
@@ -123,10 +123,10 @@ describe('ClusterTasksDropdown', () => {
   });
 
   it('handles onChange event', () => {
-    jest
+    vi
       .spyOn(API, 'useClusterTasks')
       .mockImplementation(() => ({ data: clusterTasks }));
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     const { getByPlaceholderText, getByText } = render(
       <ClusterTasksDropdown {...props} onChange={onChange} />
     );

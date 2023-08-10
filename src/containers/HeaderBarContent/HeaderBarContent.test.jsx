@@ -1,5 +1,5 @@
 /*
-Copyright 2022 The Tekton Authors
+Copyright 2022-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -23,9 +23,8 @@ import HeaderBarContent from './HeaderBarContent';
 describe('HeaderBarContent', () => {
   it('selects namespace based on URL', () => {
     const namespace = 'default';
-    const selectNamespace = jest.fn();
-    jest
-      .spyOn(APIUtils, 'useSelectedNamespace')
+    const selectNamespace = vi.fn();
+    vi.spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: null, selectNamespace }));
     const path = '/namespaces/:namespace/foo';
     renderWithRouter(<HeaderBarContent />, {
@@ -38,15 +37,15 @@ describe('HeaderBarContent', () => {
   it('adds namespace to URL when selected', async () => {
     const otherNamespace = 'foo';
     const path = '/fake/path';
-    jest.spyOn(API, 'useNamespaces').mockImplementation(() => ({
+    vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
       data: [{ metadata: { name: otherNamespace } }]
     }));
-    jest.spyOn(APIUtils, 'useSelectedNamespace').mockImplementation(() => ({
+    vi.spyOn(APIUtils, 'useSelectedNamespace').mockImplementation(() => ({
       namespacedMatch: { path },
       selectedNamespace: ALL_NAMESPACES,
       selectNamespace: () => {}
     }));
-    jest.spyOn(window.history, 'pushState');
+    vi.spyOn(window.history, 'pushState');
     const { getByText, getByDisplayValue } = renderWithRouter(
       <HeaderBarContent />,
       { path, route: path }
@@ -64,19 +63,19 @@ describe('HeaderBarContent', () => {
     const namespace = 'default';
     const otherNamespace = 'foo';
     const path = '/namespaces/:namespace/fake/path';
-    jest.spyOn(API, 'useNamespaces').mockImplementation(() => ({
+    vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
       data: [
         { metadata: { name: namespace } },
         { metadata: { name: otherNamespace } }
       ]
     }));
-    jest.spyOn(APIUtils, 'useSelectedNamespace').mockImplementation(() => ({
+    vi.spyOn(APIUtils, 'useSelectedNamespace').mockImplementation(() => ({
       namespacedMatch: { path, params: { namespace } },
       selectedNamespace: namespace,
       selectNamespace: () => {}
     }));
-    const selectNamespace = jest.fn();
-    jest.spyOn(window.history, 'pushState');
+    const selectNamespace = vi.fn();
+    vi.spyOn(window.history, 'pushState');
     const { getByText, getByDisplayValue } = renderWithRouter(
       <HeaderBarContent />,
       { path, route: `/namespaces/${namespace}/fake/path` }
@@ -94,16 +93,16 @@ describe('HeaderBarContent', () => {
   it('removes namespace from URL when ALL_NAMESPACES is selected', async () => {
     const namespace = 'default';
     const path = '/namespaces/:namespace/fake/path';
-    const selectNamespace = jest.fn();
-    jest.spyOn(API, 'useNamespaces').mockImplementation(() => ({
+    const selectNamespace = vi.fn();
+    vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
       data: [{ metadata: { name: namespace } }]
     }));
-    jest.spyOn(APIUtils, 'useSelectedNamespace').mockImplementation(() => ({
+    vi.spyOn(APIUtils, 'useSelectedNamespace').mockImplementation(() => ({
       namespacedMatch: { path, params: { namespace } },
       selectedNamespace: namespace,
       selectNamespace
     }));
-    jest.spyOn(window.history, 'pushState');
+    vi.spyOn(window.history, 'pushState');
     const { getByText, getByDisplayValue } = renderWithRouter(
       <HeaderBarContent />,
       {
@@ -124,16 +123,16 @@ describe('HeaderBarContent', () => {
   it('removes namespace from URL when clearing selection', async () => {
     const namespace = 'default';
     const path = '/namespaces/:namespace/fake/path';
-    const selectNamespace = jest.fn();
-    jest.spyOn(API, 'useNamespaces').mockImplementation(() => ({
+    const selectNamespace = vi.fn();
+    vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
       data: [{ metadata: { name: namespace } }]
     }));
-    jest.spyOn(APIUtils, 'useSelectedNamespace').mockImplementation(() => ({
+    vi.spyOn(APIUtils, 'useSelectedNamespace').mockImplementation(() => ({
       namespacedMatch: { path, params: { namespace } },
       selectedNamespace: namespace,
       selectNamespace
     }));
-    jest.spyOn(window.history, 'pushState');
+    vi.spyOn(window.history, 'pushState');
     const { getByTitle } = renderWithRouter(<HeaderBarContent />, {
       path,
       route: `/namespaces/${namespace}/fake/path`
@@ -149,11 +148,11 @@ describe('HeaderBarContent', () => {
 
   it('does not render namespaces dropdown in single namespace visibility mode', () => {
     const namespace = 'default';
-    jest.spyOn(API, 'useTenantNamespace').mockImplementation(() => 'fake');
-    jest.spyOn(API, 'useNamespaces').mockImplementation(() => ({
+    vi.spyOn(API, 'useTenantNamespace').mockImplementation(() => 'fake');
+    vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
       data: [{ metadata: { name: namespace } }]
     }));
-    jest.spyOn(APIUtils, 'useSelectedNamespace').mockImplementation(() => ({
+    vi.spyOn(APIUtils, 'useSelectedNamespace').mockImplementation(() => ({
       selectedNamespace: namespace
     }));
     const logoutButton = 'fake_logoutButton';

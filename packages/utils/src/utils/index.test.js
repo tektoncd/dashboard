@@ -217,7 +217,7 @@ it('getFilters', () => {
 
 it('getAddFilterHandler', () => {
   const url = 'someURL';
-  const navigate = jest.fn();
+  const navigate = vi.fn();
   const location = { pathname: url, search: '?nonFilterQueryParam=someValue' };
   const handleAddFilter = getAddFilterHandler({ location, navigate });
   const labelFilters = ['foo1=bar1', 'foo2=bar2'];
@@ -233,7 +233,7 @@ describe('getDeleteFilterHandler', () => {
   it('should redirect to unfiltered URL if no filters remain', () => {
     const search = `?labelSelector=${encodeURIComponent('foo=bar')}`;
     const url = 'someURL';
-    const navigate = jest.fn();
+    const navigate = vi.fn();
     const location = { pathname: url, search };
     const handleDeleteFilter = getDeleteFilterHandler({
       location,
@@ -248,7 +248,7 @@ describe('getDeleteFilterHandler', () => {
       'foo1=bar1,foo2=bar2'
     )}`;
     const url = 'someURL';
-    const navigate = jest.fn();
+    const navigate = vi.fn();
     const location = { pathname: url, search };
     const handleDeleteFilter = getDeleteFilterHandler({
       location,
@@ -506,7 +506,7 @@ describe('getStatusFilter', () => {
       'foo1=bar1,foo2=bar2'
     )}`;
     const url = 'someURL';
-    const navigate = jest.fn();
+    const navigate = vi.fn();
     const location = { pathname: url, search };
     const handleDeleteFilter = getDeleteFilterHandler({
       location,
@@ -523,7 +523,7 @@ describe('getStatusFilterHandler', () => {
   it('should redirect to unfiltered URL if no status specified', () => {
     const search = '?nonFilterQueryParam=someValue&status=cancelled';
     const url = 'someURL';
-    const navigate = jest.fn();
+    const navigate = vi.fn();
     const location = { pathname: url, search };
     const setStatusFilter = getStatusFilterHandler({
       location,
@@ -537,7 +537,7 @@ describe('getStatusFilterHandler', () => {
 
   it('should set a valid status filter in the URL', () => {
     const url = 'someURL';
-    const navigate = jest.fn();
+    const navigate = vi.fn();
     const location = {
       pathname: url,
       search: '?nonFilterQueryParam=someValue'
@@ -555,7 +555,7 @@ describe('getStatusFilterHandler', () => {
 
   it('should update the status filter in the URL', () => {
     const url = 'someURL';
-    const navigate = jest.fn();
+    const navigate = vi.fn();
     const location = { pathname: url, search: '?status=cancelled' };
     const setStatusFilter = getStatusFilterHandler({
       location,

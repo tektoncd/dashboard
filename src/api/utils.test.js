@@ -153,8 +153,8 @@ describe('useWebSocket', () => {
   it('should handle ADDED events', () => {
     const queryClient = getQueryClient();
     const webSocket = getWebSocket();
-    jest.spyOn(comms, 'createWebSocket').mockImplementation(() => webSocket);
-    jest.spyOn(queryClient, 'invalidateQueries');
+    vi.spyOn(comms, 'createWebSocket').mockImplementation(() => webSocket);
+    vi.spyOn(queryClient, 'invalidateQueries');
     const existingResource = { metadata: { uid: 'existing-id' } };
     const newResource = { kind, metadata: { uid: 'new-uid' } };
 
@@ -186,7 +186,7 @@ describe('useWebSocket', () => {
   it('should handle DELETED events', () => {
     const queryClient = getQueryClient();
     const webSocket = getWebSocket();
-    jest.spyOn(comms, 'createWebSocket').mockImplementation(() => webSocket);
+    vi.spyOn(comms, 'createWebSocket').mockImplementation(() => webSocket);
 
     const name = 'resource-name';
     const otherName = 'other-resource-name';
@@ -211,7 +211,7 @@ describe('useWebSocket', () => {
       () => resource3
     );
 
-    jest.spyOn(queryClient, 'removeQueries');
+    vi.spyOn(queryClient, 'removeQueries');
 
     renderHook(() => useWebSocket({ kind, resourceVersion, url }), {
       wrapper: getAPIWrapper({ queryClient })
@@ -242,7 +242,7 @@ describe('useWebSocket', () => {
   it('should handle MODIFIED events', () => {
     const queryClient = getQueryClient();
     const webSocket = getWebSocket();
-    jest.spyOn(comms, 'createWebSocket').mockImplementation(() => webSocket);
+    vi.spyOn(comms, 'createWebSocket').mockImplementation(() => webSocket);
     const name = 'resource-name';
 
     const existingResource = {
@@ -306,7 +306,7 @@ describe('useWebSocket', () => {
   it('should handle unsupported events', () => {
     const queryClient = getQueryClient();
     const webSocket = getWebSocket();
-    jest.spyOn(comms, 'createWebSocket').mockImplementation(() => webSocket);
+    vi.spyOn(comms, 'createWebSocket').mockImplementation(() => webSocket);
 
     const existingResource = {
       metadata: { uid: 'existing-id' }
@@ -355,7 +355,7 @@ describe('useCollection', () => {
   it('should return a valid query response', async () => {
     const queryClient = getQueryClient();
     const webSocket = getWebSocket();
-    jest.spyOn(comms, 'createWebSocket').mockImplementation(() => webSocket);
+    vi.spyOn(comms, 'createWebSocket').mockImplementation(() => webSocket);
 
     const existingResource = {
       kind,
@@ -398,7 +398,7 @@ describe('useResource', () => {
     const queryClient = getQueryClient();
     const webSocket = getWebSocket();
     const webSocketURL = 'http://localhost/fake_url';
-    jest.spyOn(comms, 'createWebSocket').mockImplementation(() => webSocket);
+    vi.spyOn(comms, 'createWebSocket').mockImplementation(() => webSocket);
 
     const name = 'resource-name';
     const existingResource = {

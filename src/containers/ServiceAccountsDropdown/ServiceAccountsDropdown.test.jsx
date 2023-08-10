@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -77,17 +77,15 @@ const checkDropdownItems = ({
 
 describe('ServiceAccountsDropdown', () => {
   beforeEach(() => {
-    jest.spyOn(API, 'useNamespaces').mockImplementation(() => ({
+    vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
       data: [{ metadata: { name: 'blue' } }, { metadata: { name: 'green' } }]
     }));
-    jest
-      .spyOn(APIUtils, 'useSelectedNamespace')
+    vi.spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: 'blue' }));
   });
 
   it('renders items', () => {
-    jest
-      .spyOn(ServiceAccountsAPI, 'useServiceAccounts')
+    vi.spyOn(ServiceAccountsAPI, 'useServiceAccounts')
       .mockImplementation(() => ({
         data: [serviceAccount1, serviceAccount2]
       }));
@@ -104,8 +102,7 @@ describe('ServiceAccountsDropdown', () => {
   });
 
   it('renders controlled selection', () => {
-    jest
-      .spyOn(ServiceAccountsAPI, 'useServiceAccounts')
+    vi.spyOn(ServiceAccountsAPI, 'useServiceAccounts')
       .mockImplementation(() => ({
         data: [serviceAccount1, serviceAccount2]
       }));
@@ -134,8 +131,7 @@ describe('ServiceAccountsDropdown', () => {
   });
 
   it('renders controlled namespace', () => {
-    jest
-      .spyOn(ServiceAccountsAPI, 'useServiceAccounts')
+    vi.spyOn(ServiceAccountsAPI, 'useServiceAccounts')
       .mockImplementation(({ namespace }) => ({
         data: namespace === 'green' ? [serviceAccount3] : []
       }));
@@ -152,8 +148,7 @@ describe('ServiceAccountsDropdown', () => {
   });
 
   it('renders empty', () => {
-    jest
-      .spyOn(ServiceAccountsAPI, 'useServiceAccounts')
+    vi.spyOn(ServiceAccountsAPI, 'useServiceAccounts')
       .mockImplementation(() => ({ data: [] }));
     // Select item 'service-account-1'
     const { queryByPlaceholderText } = render(
@@ -168,20 +163,18 @@ describe('ServiceAccountsDropdown', () => {
   });
 
   it('renders loading skeleton', () => {
-    jest
-      .spyOn(ServiceAccountsAPI, 'useServiceAccounts')
+    vi.spyOn(ServiceAccountsAPI, 'useServiceAccounts')
       .mockImplementation(() => ({ isFetching: true }));
     const { queryByText } = render(<ServiceAccountsDropdown {...props} />);
     expect(queryByText(initialTextRegExp)).toBeFalsy();
   });
 
   it('handles onChange event', () => {
-    jest
-      .spyOn(ServiceAccountsAPI, 'useServiceAccounts')
+    vi.spyOn(ServiceAccountsAPI, 'useServiceAccounts')
       .mockImplementation(() => ({
         data: [serviceAccount1, serviceAccount2]
       }));
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     const { getByPlaceholderText, getByText } = render(
       <ServiceAccountsDropdown {...props} onChange={onChange} />
     );

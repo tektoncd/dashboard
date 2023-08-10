@@ -95,20 +95,16 @@ const submitButton = allByText => allByText('Create')[0];
 
 describe('CreateTaskRun', () => {
   beforeEach(() => {
-    jest
-      .spyOn(ServiceAccountsAPI, 'useServiceAccounts')
+    vi.spyOn(ServiceAccountsAPI, 'useServiceAccounts')
       .mockImplementation(() => ({ data: [serviceAccount] }));
-    jest
-      .spyOn(TasksAPI, 'useTasks')
+    vi.spyOn(TasksAPI, 'useTasks')
       .mockImplementation(() => ({ data: tasks }));
-    jest
-      .spyOn(ClusterTasksAPI, 'useClusterTasks')
+    vi.spyOn(ClusterTasksAPI, 'useClusterTasks')
       .mockImplementation(() => ({ data: clusterTasks }));
-    jest
-      .spyOn(TaskRunsAPI, 'getTaskRuns')
+    vi.spyOn(TaskRunsAPI, 'getTaskRuns')
       .mockImplementation(() => taskRuns.byId);
 
-    jest.spyOn(API, 'useNamespaces').mockImplementation(() => ({
+    vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
       data: [
         { metadata: { name: 'namespace-1' } },
         { metadata: { name: 'namespace-2' } }
@@ -117,8 +113,7 @@ describe('CreateTaskRun', () => {
   });
 
   it('renders empty, dropdowns disabled when no namespace selected', async () => {
-    jest
-      .spyOn(APIUtils, 'useSelectedNamespace')
+    vi.spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: ALL_NAMESPACES }));
     const {
       getByPlaceholderText,
@@ -180,8 +175,7 @@ describe('CreateTaskRun', () => {
   });
 
   it('resets Task and ServiceAccount when namespace changes', async () => {
-    jest
-      .spyOn(APIUtils, 'useSelectedNamespace')
+    vi.spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: 'namespace-1' }));
 
     const { getByPlaceholderText, getByText, getByDisplayValue } =
@@ -207,10 +201,9 @@ describe('CreateTaskRun', () => {
   });
 
   it('handles onClose event', () => {
-    jest
-      .spyOn(APIUtils, 'useSelectedNamespace')
+    vi.spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: 'namespace-1' }));
-    jest.spyOn(window.history, 'pushState');
+    vi.spyOn(window.history, 'pushState');
     const { getByText } = renderWithRouter(<CreateTaskRun />);
     fireEvent.click(getByText(/cancel/i));
     // will be called once for render (from test utils) and once on navigation

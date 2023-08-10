@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2022 The Tekton Authors
+Copyright 2020-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -30,7 +30,7 @@ const clusterTriggerBinding = {
 };
 
 it('ClusterTriggerBindings renders with no bindings', () => {
-  jest.spyOn(API, 'useClusterTriggerBindings').mockImplementation(() => ({
+  vi.spyOn(API, 'useClusterTriggerBindings').mockImplementation(() => ({
     data: []
   }));
 
@@ -44,7 +44,7 @@ it('ClusterTriggerBindings renders with no bindings', () => {
 });
 
 it('ClusterTriggerBindings renders with one binding', () => {
-  jest
+  vi
     .spyOn(API, 'useClusterTriggerBindings')
     .mockImplementation(() => ({ data: [clusterTriggerBinding] }));
 
@@ -58,7 +58,7 @@ it('ClusterTriggerBindings renders with one binding', () => {
 });
 
 it('ClusterTriggerBindings can be filtered on a single label filter', async () => {
-  jest
+  vi
     .spyOn(API, 'useClusterTriggerBindings')
     .mockImplementation(({ filters }) => ({
       data: filters.length ? [] : [clusterTriggerBinding]
@@ -82,7 +82,7 @@ it('ClusterTriggerBindings can be filtered on a single label filter', async () =
 });
 
 it('ClusterTriggerBindings renders in loading state', () => {
-  jest
+  vi
     .spyOn(API, 'useClusterTriggerBindings')
     .mockImplementation(() => ({ isLoading: true }));
 
@@ -98,7 +98,7 @@ it('ClusterTriggerBindings renders in loading state', () => {
 
 it('ClusterTriggerBindings renders in error state', () => {
   const error = 'fake_error_message';
-  jest
+  vi
     .spyOn(API, 'useClusterTriggerBindings')
     .mockImplementation(() => ({ error }));
 

@@ -23,7 +23,7 @@ it('cancelTaskRun', () => {
   const payload = [
     { op: 'replace', path: '/spec/status', value: 'TaskRunCancelled' }
   ];
-  jest
+  vi
     .spyOn(comms, 'patch')
     .mockImplementation((uri, body) => Promise.resolve(body));
   return API.cancelTaskRun({ name, namespace }).then(() => {
@@ -34,7 +34,7 @@ it('cancelTaskRun', () => {
 
 describe('createTaskRun', () => {
   it('uses correct kubernetes information', () => {
-    jest
+    vi
       .spyOn(comms, 'post')
       .mockImplementation((uri, body) => Promise.resolve(body));
 
@@ -49,13 +49,13 @@ describe('createTaskRun', () => {
   });
 
   it('has correct metadata', () => {
-    const mockDateNow = jest
+    const mockDateNow = vi
       .spyOn(Date, 'now')
       .mockImplementation(() => 'fake-timestamp');
     const namespace = 'fake-namespace';
     const taskName = 'fake-task';
     const labels = { app: 'fake-app' };
-    jest
+    vi
       .spyOn(comms, 'post')
       .mockImplementation((uri, body) => Promise.resolve(body));
 
@@ -74,7 +74,7 @@ describe('createTaskRun', () => {
 
   it('handles taskRef', () => {
     const taskName = 'fake-task';
-    jest
+    vi
       .spyOn(comms, 'post')
       .mockImplementation((uri, body) => Promise.resolve(body));
     return API.createTaskRun({ taskName }).then(() => {
@@ -88,7 +88,7 @@ describe('createTaskRun', () => {
 
   it('handles ClusterTask in taskRef', () => {
     const taskName = 'fake-task';
-    jest
+    vi
       .spyOn(comms, 'post')
       .mockImplementation((uri, body) => Promise.resolve(body));
     return API.createTaskRun({ taskName, kind: 'ClusterTask' }).then(() => {
@@ -102,7 +102,7 @@ describe('createTaskRun', () => {
   it('handles parameters', () => {
     const taskName = 'fake-task';
     const params = { 'fake-param-name': 'fake-param-value' };
-    jest
+    vi
       .spyOn(comms, 'post')
       .mockImplementation((uri, body) => Promise.resolve(body));
     return API.createTaskRun({ taskName, params }).then(() => {
@@ -119,7 +119,7 @@ describe('createTaskRun', () => {
   it('handles serviceAccount', () => {
     const taskName = 'fake-task';
     const serviceAccount = 'fake-service-account';
-    jest
+    vi
       .spyOn(comms, 'post')
       .mockImplementation((uri, body) => Promise.resolve(body));
     return API.createTaskRun({ taskName, serviceAccount }).then(() => {
@@ -133,7 +133,7 @@ describe('createTaskRun', () => {
   it('handles nodeSelector', () => {
     const taskName = 'fake-task';
     const nodeSelector = { disk: 'ssd' };
-    jest
+    vi
       .spyOn(comms, 'post')
       .mockImplementation((uri, body) => Promise.resolve(body));
     return API.createTaskRun({ taskName, nodeSelector }).then(() => {
@@ -147,7 +147,7 @@ describe('createTaskRun', () => {
   it('handles timeout', () => {
     const taskName = 'fake-task';
     const timeout = 'fake-timeout';
-    jest
+    vi
       .spyOn(comms, 'post')
       .mockImplementation((uri, body) => Promise.resolve(body));
     return API.createTaskRun({ taskName, timeout }).then(() => {
@@ -176,7 +176,7 @@ it('createTaskRunRaw', () => {
       }
     }
   };
-  jest
+  vi
     .spyOn(comms, 'post')
     .mockImplementation((uri, body) => Promise.resolve(body));
 
@@ -235,7 +235,7 @@ it('getTaskRuns With Query Params', () => {
 it('useTaskRuns', () => {
   const query = { fake: 'query' };
   const params = { fake: 'params' };
-  jest.spyOn(utils, 'useCollection').mockImplementation(() => query);
+  vi.spyOn(utils, 'useCollection').mockImplementation(() => query);
   expect(API.useTaskRuns(params)).toEqual(query);
   expect(utils.useCollection).toHaveBeenCalledWith(
     expect.objectContaining({
@@ -249,7 +249,7 @@ it('useTaskRuns', () => {
 it('useTaskRun', () => {
   const query = { fake: 'query' };
   const params = { fake: 'params' };
-  jest.spyOn(utils, 'useResource').mockImplementation(() => query);
+  vi.spyOn(utils, 'useResource').mockImplementation(() => query);
   expect(API.useTaskRun(params)).toEqual(query);
   expect(utils.useResource).toHaveBeenCalledWith(
     expect.objectContaining({
@@ -277,7 +277,7 @@ it('rerunTaskRun', () => {
     spec: { status: 'fake_status' },
     status: 'fake_status'
   };
-  jest
+  vi
     .spyOn(comms, 'post')
     .mockImplementation((uri, body) => Promise.resolve(body));
 

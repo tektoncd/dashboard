@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -33,15 +33,12 @@ const triggerTemplate = {
 };
 
 it('TriggerTemplates renders with no templates', () => {
-  jest
-    .spyOn(TriggerTemplatesAPI, 'useTriggerTemplates')
+  vi.spyOn(TriggerTemplatesAPI, 'useTriggerTemplates')
     .mockImplementation(() => ({ data: [] }));
 
-  jest
-    .spyOn(API, 'useNamespaces')
+  vi.spyOn(API, 'useNamespaces')
     .mockImplementation(() => ({ data: [{ metadata: { name: 'default' } }] }));
-  jest
-    .spyOn(APIUtils, 'useSelectedNamespace')
+  vi.spyOn(APIUtils, 'useSelectedNamespace')
     .mockImplementation(() => ({ selectedNamespace: ALL_NAMESPACES }));
 
   const { queryByText } = renderWithRouter(<TriggerTemplates />, {
@@ -54,8 +51,7 @@ it('TriggerTemplates renders with no templates', () => {
 });
 
 it('TriggerTemplates renders with one template', () => {
-  jest
-    .spyOn(TriggerTemplatesAPI, 'useTriggerTemplates')
+  vi.spyOn(TriggerTemplatesAPI, 'useTriggerTemplates')
     .mockImplementation(() => ({ data: [triggerTemplate] }));
 
   const { queryByText } = renderWithRouter(<TriggerTemplates />, {
@@ -69,8 +65,7 @@ it('TriggerTemplates renders with one template', () => {
 });
 
 it('TriggerTemplates can be filtered on a single label filter', async () => {
-  jest
-    .spyOn(TriggerTemplatesAPI, 'useTriggerTemplates')
+  vi.spyOn(TriggerTemplatesAPI, 'useTriggerTemplates')
     .mockImplementation(({ filters }) => ({
       data: filters.length ? [] : [triggerTemplate]
     }));
@@ -90,8 +85,7 @@ it('TriggerTemplates can be filtered on a single label filter', async () => {
 });
 
 it('TriggerTemplates renders in loading state', () => {
-  jest
-    .spyOn(TriggerTemplatesAPI, 'useTriggerTemplates')
+  vi.spyOn(TriggerTemplatesAPI, 'useTriggerTemplates')
     .mockImplementation(() => ({ isLoading: true }));
 
   const { queryByText } = renderWithRouter(<TriggerTemplates />, {
@@ -105,8 +99,7 @@ it('TriggerTemplates renders in loading state', () => {
 
 it('TriggerTemplates renders in error state', () => {
   const error = 'fake_error_message';
-  jest
-    .spyOn(TriggerTemplatesAPI, 'useTriggerTemplates')
+  vi.spyOn(TriggerTemplatesAPI, 'useTriggerTemplates')
     .mockImplementation(() => ({ error }));
 
   const { queryByText } = renderWithRouter(<TriggerTemplates />, {

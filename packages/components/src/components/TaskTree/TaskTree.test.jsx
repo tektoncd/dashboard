@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -138,7 +138,7 @@ it('TaskTree renders and expands first error Task in TaskRun', () => {
 });
 
 it('TaskTree handles click event on Task', () => {
-  const onSelect = jest.fn();
+  const onSelect = vi.fn();
   const { getByText } = render(
     <TaskTree {...getProps()} onSelect={onSelect} />
   );
@@ -149,7 +149,7 @@ it('TaskTree handles click event on Task', () => {
 });
 
 it('TaskTree handles click event on Step', () => {
-  const onSelect = jest.fn();
+  const onSelect = vi.fn();
   const { getByText } = render(
     <TaskTree {...getProps()} selectedTaskId="task" onSelect={onSelect} />
   );
