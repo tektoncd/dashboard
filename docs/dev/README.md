@@ -58,13 +58,19 @@ First install the required dependencies:
 npm install
 ```
 
-Run the webpack build:
+Run the production build:
 
 ```bash
 npm run build
 ```
 
-This will build the static resources and add them to the `kodata` directory.
+This will build the static resource bundles and add them to the `kodata` directory.
+
+To run the dev server with the production bundles:
+
+```bash
+npm run preview
+```
 
 ## Build the backend (optional: for local debugging)
 
