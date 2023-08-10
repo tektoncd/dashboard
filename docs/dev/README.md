@@ -196,9 +196,9 @@ This project uses `react-intl` for internationalization, and provides a script t
 
 **Note:** `src/nls/messages_en.json` should **NOT** be edited manually, instead edit the defaultMessage in the code and re-run the script.
 
-Configuration for the message bundles can be found in `config_frontend/config.json`:
-- `locales.build` lists the locales for which message bundles will be produced
-- `locales.supported` lists the locales that will be loaded at runtime based on browser language settings
+Configuration for the message bundles can be found in `.env`:
+- `VITE_LOCALES_BUILD` lists the locales for which message bundles will be produced
+- `VITE_LOCALES_SUPPORTED` lists the locales that will be loaded at runtime based on browser language settings
 
 For testing and development purposes the list of supported locales can be overridden to include all built locales by adding a known value to `localStorage`:
 
@@ -207,6 +207,10 @@ For testing and development purposes the list of supported locales can be overri
 and refreshing the page. When done, to return to normal production behaviour, remove the override:
 
 `localStorage.removeItem('tkn-locale-dev');`
+
+You can also run the Dashboard in 'i18n mode' which enables all built locales via an override in `.env.i18n`:
+
+`npm run i18n:start`
 
 ## Storybook
 

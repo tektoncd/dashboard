@@ -23,7 +23,6 @@ import {
 } from 'react-router-dom-v5-compat';
 import { IntlProvider, useIntl } from 'react-intl';
 import { Content, InlineNotification } from 'carbon-components-react';
-
 import {
   Header,
   LoadingShell,
@@ -84,12 +83,9 @@ import {
   useProperties,
   useTenantNamespace
 } from '../../api';
-
-import config from '../../../config_frontend/config.json';
+import { defaultLocale } from '../../utils';
 
 import '../../scss/App.scss';
-
-const { default: defaultLocale, supported: supportedLocales } = config.locales;
 
 /* istanbul ignore next */
 const ConfigErrorComponent = ({ loadingConfigError }) => {
@@ -114,27 +110,21 @@ const ConfigErrorComponent = ({ loadingConfigError }) => {
 const ConfigError = ConfigErrorComponent;
 
 async function loadMessages(lang) {
-  const isSupportedLocale = supportedLocales.includes(lang);
-  const targetLocale = isSupportedLocale ? lang : defaultLocale;
-  // TODO: Can't use destructuring assignment due to https://github.com/webpack/webpack/issues/17042, revert when fixed
-  const loadedMessages = (await import(`../../nls/messages_${targetLocale}.json`)).default;
+  const loadedMessages = (await import(`../../nls/messages_${lang}.json`)).default;
   /* istanbul ignore next */
   if (import.meta.env.MODE === "i18n:pseudo") {
     const startBoundary = '[[%';
     const endBoundary = '%]]';
     // Make it easier to identify untranslated strings in the UI
-    Object.keys(loadedMessages).forEach(loadedLang => {
-      const messagesToDisplay = loadedMessages[loadedLang];
-      Object.keys(messagesToDisplay).forEach(messageId => {
-        if (messagesToDisplay[messageId].startsWith(startBoundary)) {
-          // avoid repeating the boundaries when
-          // hot reloading in dev mode
-          return;
-        }
-        messagesToDisplay[
-          messageId
-        ] = `${startBoundary}${messagesToDisplay[messageId]}${endBoundary}`;
-      });
+    Object.keys(loadedMessages).forEach(messageId => {
+      if (loadedMessages[messageId].startsWith(startBoundary)) {
+        // avoid repeating the boundaries when
+        // hot reloading in dev mode
+        return;
+      }
+      loadedMessages[
+        messageId
+      ] = `${startBoundary}${loadedMessages[messageId]}${endBoundary}`;
     });
   }
 
@@ -224,8 +214,8 @@ export function App({ lang }) {
     <NamespaceContext.Provider value={namespaceContext}>
       <IntlProvider
         defaultLocale={defaultLocale}
-        locale={messages?.[lang] ? lang : defaultLocale}
-        messages={messages?.[lang]}
+        locale={messages ? lang : defaultLocale}
+        messages={messages}
       >
         {showLoadingState && <LoadingShell />}
         {!showLoadingState && (
