@@ -16,15 +16,12 @@ import { LogsToolbar } from '@tektoncd/dashboard-components';
 
 import { getExternalLogURL, getPodLog, getPodLogURL } from '../api';
 import { get } from '../api/comms';
-import config from '../../config_frontend/config.json';
 
-const { locales: localesConfig } = config;
-const {
-  build: buildLocales,
-  default: defaultLocale,
-  devOverrideKey,
-  supported: supportedLocales
-} = localesConfig;
+const buildLocales = import.meta.env.VITE_LOCALES_BUILD.split(',');
+const supportedLocales = import.meta.env.VITE_LOCALES_SUPPORTED.split(',');
+
+export const defaultLocale = import.meta.env.VITE_LOCALES_DEFAULT;
+export const I18N_DEV_KEY = 'tkn-locale-dev';
 
 export function sortRunsByStartTime(runs) {
   runs.sort((a, b) => {
@@ -210,7 +207,7 @@ export function getSupportedLocale(requestedLocale, locales) {
 }
 
 export function getLocale(requestedLocale) {
-  const locales = localStorage.getItem(devOverrideKey)
+  const locales = localStorage.getItem(I18N_DEV_KEY)
     ? buildLocales
     : supportedLocales;
   return getSupportedLocale(requestedLocale, locales);

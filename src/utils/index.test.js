@@ -13,8 +13,6 @@ limitations under the License.
 
 import * as API from '../api';
 import * as comms from '../api/comms';
-import config from '../../config_frontend/config.json';
-
 import {
   fetchLogs,
   fetchLogsFallback,
@@ -24,12 +22,11 @@ import {
   getLogsToolbar,
   getTheme,
   getViewChangeHandler,
+  I18N_DEV_KEY,
   setTheme,
   sortRunsByCreationTime,
   sortRunsByStartTime
 } from '.';
-
-const { locales: localesConfig } = config;
 
 describe('sortRunsByStartTime', () => {
   it('should handle missing start time or status', () => {
@@ -356,7 +353,7 @@ describe('getLocale', () => {
   });
 
   it('handles Chinese locales', () => {
-    localStorage.setItem(localesConfig.devOverrideKey, true);
+    localStorage.setItem(I18N_DEV_KEY, true);
     const locales = {
       zh: 'zh-Hans',
       'zh-CN': 'zh-Hans',
@@ -372,7 +369,7 @@ describe('getLocale', () => {
     Object.keys(locales).forEach(locale => {
       expect(getLocale(locale)).toEqual(locales[locale]);
     });
-    localStorage.removeItem(localesConfig.devOverrideKey);
+    localStorage.removeItem(I18N_DEV_KEY);
   });
 
   it('handles unsupported locales', () => {

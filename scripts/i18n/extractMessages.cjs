@@ -10,22 +10,27 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-const babel = require('@babel/core');
+
+require('dotenv').config();
+
 const difference = require('lodash.difference');
 const fs = require('fs');
-const { globSync } = require('glob');
 const omit = require('lodash.omit');
 const path = require('path');
 
 const basePath = process.cwd();
-const localeConfig = require(`${basePath}/config_frontend/config.json`).locales; // eslint-disable-line
 
-const babelConfig = require('../../babel.config')();
-
-const defaultMessages = {};
-const { default: defaultLocale, build: buildLocales } = localeConfig;
+const defaultLocale = process.env.VITE_LOCALES_DEFAULT;
+const buildLocales = process.env.VITE_LOCALES_BUILD.split(',');
 const messagesFilePrefix = 'messages_';
 const messagesPath = path.resolve(basePath, 'src/nls/');
+
+const defaultMessages = require(
+  path.resolve(
+    messagesPath,
+    `${messagesFilePrefix}${defaultLocale}.json`
+  )
+);
 
 function log(...args) {
   console.log(...args); // eslint-disable-line no-console
@@ -48,53 +53,22 @@ function writeLocaleFile(locale, messages) {
     `${messagesFilePrefix}${locale}.json`
   );
   log('Updating message bundle:', localePath);
-  fs.writeFileSync(localePath, JSON.stringify({ [locale]: messages }, null, 2));
+  fs.writeFileSync(localePath, JSON.stringify(messages, null, 2));
 }
 
 // ----------------------------------------------------------------------------
 
-babelConfig.plugins.push([
-  'formatjs',
-  {
-    onMsgExtracted(filePath, msgs) {
-      log(filePath);
-      msgs.forEach(({ id, defaultMessage }) => {
-        if (defaultMessages[id] && defaultMessages[id] !== defaultMessage) {
-          throw new Error(
-            `Duplicate message id with conflicting defaultMessage: '${id}'`
-          );
-        }
-        defaultMessages[id] = defaultMessage;
-      });
-    }
-  }
-]);
-
-// ----------------------------------------------------------------------------
-
-log('Extracting messages\n');
-
-globSync('./@(src|packages)/**/!(*.cy|*.stories|*.test).js', {
-  ignore: ['packages/**/node_modules/**', 'packages/e2e/**']
-}).forEach(filePath => {
-  babel.transformFileSync(path.normalize(filePath), babelConfig);
-});
-
-log('\nDone extracting messages\n');
+log('Updating translation files\n');
 
 const messageKeys = Object.keys(defaultMessages);
-const sortedMessages = sortMessages(defaultMessages);
-writeLocaleFile(defaultLocale, sortedMessages);
 
 buildLocales
   .filter(locale => locale !== defaultLocale)
   .forEach(locale => {
-    let translations = { [locale]: {} };
+    let translations = {};
     try {
       translations =
-        require(`${basePath}/src/nls/${messagesFilePrefix}${locale}.json`)[ // eslint-disable-line
-          locale
-        ];
+        require(`${basePath}/src/nls/${messagesFilePrefix}${locale}.json`);
     } catch {
       log(`No message bundle found for '${locale}', one will be created.`);
     }

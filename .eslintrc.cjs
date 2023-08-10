@@ -45,11 +45,17 @@ module.exports = {
     ecmaVersion: 2021,
     sourceType: 'module'
   },
-  plugins: ['notice', 'react'],
+  plugins: ['notice', 'react', 'formatjs'],
   rules: {
     curly: ['error', 'all'],
     'cypress/assertion-before-screenshot': 'warn',
     'default-param-last': 'off',
+    'formatjs/enforce-default-message': 'error',
+    'formatjs/enforce-id': 'error',
+    'formatjs/no-complex-selectors': 'error',
+    'formatjs/no-literal-string-in-jsx': 'error',
+    'formatjs/no-multiple-whitespaces': 'error',
+    'formatjs/no-multiple-plurals': 'error',
     'import/named': 'off',
     'import/no-cycle': 'off',
     'import/no-extraneous-dependencies': 'off',
