@@ -23,9 +23,9 @@ it('cancelTaskRun', () => {
   const payload = [
     { op: 'replace', path: '/spec/status', value: 'TaskRunCancelled' }
   ];
-  vi
-    .spyOn(comms, 'patch')
-    .mockImplementation((uri, body) => Promise.resolve(body));
+  vi.spyOn(comms, 'patch').mockImplementation((uri, body) =>
+    Promise.resolve(body)
+  );
   return API.cancelTaskRun({ name, namespace }).then(() => {
     expect(comms.patch).toHaveBeenCalled();
     expect(comms.patch.mock.lastCall[1]).toEqual(payload);
@@ -34,9 +34,9 @@ it('cancelTaskRun', () => {
 
 describe('createTaskRun', () => {
   it('uses correct kubernetes information', () => {
-    vi
-      .spyOn(comms, 'post')
-      .mockImplementation((uri, body) => Promise.resolve(body));
+    vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
+      Promise.resolve(body)
+    );
 
     return API.createTaskRun({}).then(() => {
       expect(comms.post).toHaveBeenCalled();
@@ -55,9 +55,9 @@ describe('createTaskRun', () => {
     const namespace = 'fake-namespace';
     const taskName = 'fake-task';
     const labels = { app: 'fake-app' };
-    vi
-      .spyOn(comms, 'post')
-      .mockImplementation((uri, body) => Promise.resolve(body));
+    vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
+      Promise.resolve(body)
+    );
 
     return API.createTaskRun({ namespace, taskName, labels }).then(() => {
       expect(comms.post).toHaveBeenCalled();
@@ -74,9 +74,9 @@ describe('createTaskRun', () => {
 
   it('handles taskRef', () => {
     const taskName = 'fake-task';
-    vi
-      .spyOn(comms, 'post')
-      .mockImplementation((uri, body) => Promise.resolve(body));
+    vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
+      Promise.resolve(body)
+    );
     return API.createTaskRun({ taskName }).then(() => {
       expect(comms.post).toHaveBeenCalled();
       const sentBody = comms.post.mock.lastCall[1];
@@ -88,9 +88,9 @@ describe('createTaskRun', () => {
 
   it('handles ClusterTask in taskRef', () => {
     const taskName = 'fake-task';
-    vi
-      .spyOn(comms, 'post')
-      .mockImplementation((uri, body) => Promise.resolve(body));
+    vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
+      Promise.resolve(body)
+    );
     return API.createTaskRun({ taskName, kind: 'ClusterTask' }).then(() => {
       expect(comms.post).toHaveBeenCalled();
       const sentBody = comms.post.mock.lastCall[1];
@@ -102,9 +102,9 @@ describe('createTaskRun', () => {
   it('handles parameters', () => {
     const taskName = 'fake-task';
     const params = { 'fake-param-name': 'fake-param-value' };
-    vi
-      .spyOn(comms, 'post')
-      .mockImplementation((uri, body) => Promise.resolve(body));
+    vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
+      Promise.resolve(body)
+    );
     return API.createTaskRun({ taskName, params }).then(() => {
       expect(comms.post).toHaveBeenCalled();
       const sentBody = comms.post.mock.lastCall[1];
@@ -119,9 +119,9 @@ describe('createTaskRun', () => {
   it('handles serviceAccount', () => {
     const taskName = 'fake-task';
     const serviceAccount = 'fake-service-account';
-    vi
-      .spyOn(comms, 'post')
-      .mockImplementation((uri, body) => Promise.resolve(body));
+    vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
+      Promise.resolve(body)
+    );
     return API.createTaskRun({ taskName, serviceAccount }).then(() => {
       expect(comms.post).toHaveBeenCalled();
       const sentBody = comms.post.mock.lastCall[1];
@@ -133,9 +133,9 @@ describe('createTaskRun', () => {
   it('handles nodeSelector', () => {
     const taskName = 'fake-task';
     const nodeSelector = { disk: 'ssd' };
-    vi
-      .spyOn(comms, 'post')
-      .mockImplementation((uri, body) => Promise.resolve(body));
+    vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
+      Promise.resolve(body)
+    );
     return API.createTaskRun({ taskName, nodeSelector }).then(() => {
       expect(comms.post).toHaveBeenCalled();
       const sentBody = comms.post.mock.lastCall[1];
@@ -147,9 +147,9 @@ describe('createTaskRun', () => {
   it('handles timeout', () => {
     const taskName = 'fake-task';
     const timeout = 'fake-timeout';
-    vi
-      .spyOn(comms, 'post')
-      .mockImplementation((uri, body) => Promise.resolve(body));
+    vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
+      Promise.resolve(body)
+    );
     return API.createTaskRun({ taskName, timeout }).then(() => {
       expect(comms.post).toHaveBeenCalled();
       const sentBody = comms.post.mock.lastCall[1];
@@ -176,9 +176,9 @@ it('createTaskRunRaw', () => {
       }
     }
   };
-  vi
-    .spyOn(comms, 'post')
-    .mockImplementation((uri, body) => Promise.resolve(body));
+  vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
+    Promise.resolve(body)
+  );
 
   return API.createTaskRunRaw({
     namespace: 'test-namespace',
@@ -277,9 +277,9 @@ it('rerunTaskRun', () => {
     spec: { status: 'fake_status' },
     status: 'fake_status'
   };
-  vi
-    .spyOn(comms, 'post')
-    .mockImplementation((uri, body) => Promise.resolve(body));
+  vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
+    Promise.resolve(body)
+  );
 
   const rerun = {
     apiVersion: 'tekton.dev/v1',

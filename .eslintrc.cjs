@@ -11,10 +11,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 module.exports = {
-  parser: '@babel/eslint-parser',
   env: {
     browser: true,
-    es6: true,
+    es2021: true,
     node: true
   },
   extends: [
@@ -24,9 +23,12 @@ module.exports = {
     'plugin:storybook/recommended'
   ],
   globals: {
+    afterAll: true,
     Atomics: 'readonly',
+    beforeAll: true,
     globalThis: false,
-    SharedArrayBuffer: 'readonly'
+    SharedArrayBuffer: 'readonly',
+    vi: true
   },
   overrides: [
     {
@@ -40,7 +42,7 @@ module.exports = {
     ecmaFeatures: {
       jsx: true
     },
-    ecmaVersion: 2018,
+    ecmaVersion: 2021,
     sourceType: 'module'
   },
   plugins: ['notice', 'react'],
@@ -48,8 +50,11 @@ module.exports = {
     curly: ['error', 'all'],
     'cypress/assertion-before-screenshot': 'warn',
     'default-param-last': 'off',
+    'import/named': 'off',
     'import/no-cycle': 'off',
     'import/no-extraneous-dependencies': 'off',
+    'import/no-named-as-default': 'off',
+    'import/no-named-as-default-member': 'off',
     'import/prefer-default-export': 'off',
     'jsx-a11y/anchor-is-valid': 'off',
     'no-case-declarations': 'off',

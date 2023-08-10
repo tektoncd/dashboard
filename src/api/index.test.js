@@ -119,8 +119,9 @@ it('useTaskByKind', () => {
   const params = { fake: 'params' };
   const clusterTaskQuery = { fake: 'clusterTaskQuery' };
   const taskQuery = { fake: 'taskQuery' };
-  vi.spyOn(ClusterTasksAPI, 'useClusterTask')
-    .mockImplementation(() => clusterTaskQuery);
+  vi.spyOn(ClusterTasksAPI, 'useClusterTask').mockImplementation(
+    () => clusterTaskQuery
+  );
   vi.spyOn(TasksAPI, 'useTask').mockImplementation(() => taskQuery);
 
   let returnValue = API.useTaskByKind({ ...params, kind: 'ClusterTask' });
@@ -308,7 +309,8 @@ it('getPodLog with container name', () => {
 
 describe('importResources', () => {
   it('basic', () => {
-    const mockDateNow = vi.spyOn(Date, 'now')
+    const mockDateNow = vi
+      .spyOn(Date, 'now')
       .mockImplementation(() => 'fake-timestamp');
     const importerNamespace = 'fake-importer-namespace';
     const method = 'apply';
@@ -328,8 +330,9 @@ describe('importResources', () => {
 
     const fakeAPI = 'fake_api';
     vi.spyOn(utils, 'getTektonAPI').mockImplementation(() => fakeAPI);
-    vi.spyOn(comms, 'post')
-      .mockImplementation((uri, body) => Promise.resolve(body));
+    vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
+      Promise.resolve(body)
+    );
     return API.importResources(payload).then(() => {
       expect(comms.post).toHaveBeenCalledWith(
         fakeAPI,
@@ -366,7 +369,8 @@ describe('importResources', () => {
   });
 
   it('with revision and no serviceAccount', () => {
-    const mockDateNow = vi.spyOn(Date, 'now')
+    const mockDateNow = vi
+      .spyOn(Date, 'now')
       .mockImplementation(() => 'fake-timestamp');
     const importerNamespace = 'fake-importer-namespace';
     const method = 'apply';
@@ -386,8 +390,9 @@ describe('importResources', () => {
 
     const fakeAPI = 'fake_api';
     vi.spyOn(utils, 'getTektonAPI').mockImplementation(() => fakeAPI);
-    vi.spyOn(comms, 'post')
-      .mockImplementation((uri, body) => Promise.resolve(body));
+    vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
+      Promise.resolve(body)
+    );
 
     return API.importResources(payload).then(() => {
       expect(comms.post).toHaveBeenCalledWith(
