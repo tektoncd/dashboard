@@ -21,8 +21,7 @@ import {
 import yaml from 'js-yaml';
 import React, { useEffect, useState } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
-import { StreamLanguage } from '@codemirror/language';
-import { yaml as codeMirrorYAML } from '@codemirror/legacy-modes/mode/yaml';
+import { langs } from '@uiw/codemirror-extensions-langs';
 
 export default function YAMLEditor({
   code: initialCode,
@@ -167,7 +166,7 @@ export default function YAMLEditor({
               value={code}
               height="800px"
               theme="dark"
-              extensions={[StreamLanguage.define(codeMirrorYAML)]}
+              extensions={[langs.yaml()]}
               onChange={onChange}
               editable={!loading}
             />
