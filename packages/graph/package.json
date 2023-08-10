@@ -15,6 +15,7 @@
   "license": "Apache-2.0",
   "private": false,
   "main": "./src/index.js",
+  "type": "module",
   "scripts": {
     "version": "npm pkg set \"dependencies.@tektoncd/dashboard-utils=$npm_new_version\"",
     "postpublish": "npm pkg set \"dependencies.@tektoncd/dashboard-utils=file:../utils\""
