@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -68,7 +68,7 @@ const triggerBindingWithLabels = {
 
 it('TriggerBindingContainer handles error state', async () => {
   const error = 'fake_error_message';
-  jest.spyOn(API, 'useTriggerBinding').mockImplementation(() => ({ error }));
+  vi.spyOn(API, 'useTriggerBinding').mockImplementation(() => ({ error }));
 
   const { getByText } = renderWithRouter(
     <TriggerBindingContainer intl={intl} />
@@ -77,8 +77,7 @@ it('TriggerBindingContainer handles error state', async () => {
 });
 
 it('TriggerBindingContainer renders details', async () => {
-  jest
-    .spyOn(API, 'useTriggerBinding')
+  vi.spyOn(API, 'useTriggerBinding')
     .mockImplementation(() => ({ data: triggerBindingSimple }));
 
   const { getByText } = renderWithRouter(
@@ -95,8 +94,7 @@ it('TriggerBindingContainer renders details', async () => {
 });
 
 it('TriggerBindingContainer renders YAML', async () => {
-  jest
-    .spyOn(API, 'useTriggerBinding')
+  vi.spyOn(API, 'useTriggerBinding')
     .mockImplementation(() => ({ data: triggerBindingSimple }));
   const triggerBindingName = 'trigger-binding-simple';
 
@@ -123,8 +121,7 @@ it('TriggerBindingContainer renders YAML', async () => {
 });
 
 it('TriggerBindingContainer does not render label section if they are not present', async () => {
-  jest
-    .spyOn(API, 'useTriggerBinding')
+  vi.spyOn(API, 'useTriggerBinding')
     .mockImplementation(() => ({ data: triggerBindingSimple }));
 
   const { getByText } = renderWithRouter(
@@ -136,8 +133,7 @@ it('TriggerBindingContainer does not render label section if they are not presen
 });
 
 it('TriggerBindingContainer renders labels section if they are present', async () => {
-  jest
-    .spyOn(API, 'useTriggerBinding')
+  vi.spyOn(API, 'useTriggerBinding')
     .mockImplementation(() => ({ data: triggerBindingWithLabels }));
 
   const { getByText } = renderWithRouter(

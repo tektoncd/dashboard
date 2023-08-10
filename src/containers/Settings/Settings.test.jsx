@@ -22,8 +22,8 @@ import Settings from '.';
 
 describe('Settings', () => {
   it('should render theme settings correctly', () => {
-    jest.spyOn(Utils, 'getTheme').mockImplementation(() => 'light');
-    jest.spyOn(Utils, 'setTheme');
+    vi.spyOn(Utils, 'getTheme').mockImplementation(() => 'light');
+    vi.spyOn(Utils, 'setTheme');
 
     const { getByText } = render(<Settings />);
 
@@ -38,10 +38,9 @@ describe('Settings', () => {
   });
 
   it('should render the log timestamp settings correctly', () => {
-    jest
-      .spyOn(APIUtils, 'isLogTimestampsEnabled')
+    vi.spyOn(APIUtils, 'isLogTimestampsEnabled')
       .mockImplementation(() => true);
-    jest.spyOn(APIUtils, 'setLogTimestampsEnabled');
+    vi.spyOn(APIUtils, 'setLogTimestampsEnabled');
 
     const { getByLabelText, getByText } = render(<Settings />);
 
@@ -53,10 +52,9 @@ describe('Settings', () => {
   });
 
   it('should render the v1 API settings correctly', () => {
-    jest
-      .spyOn(APIUtils, 'isPipelinesV1ResourcesEnabled')
+    vi.spyOn(APIUtils, 'isPipelinesV1ResourcesEnabled')
       .mockImplementation(() => true);
-    jest.spyOn(APIUtils, 'setPipelinesV1ResourcesEnabled');
+    vi.spyOn(APIUtils, 'setPipelinesV1ResourcesEnabled');
 
     const { getByLabelText, getByText } = render(<Settings />);
 

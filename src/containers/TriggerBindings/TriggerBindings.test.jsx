@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -34,17 +34,15 @@ const triggerBinding = {
 
 describe('TriggerBindings', () => {
   beforeEach(() => {
-    jest.spyOn(API, 'useNamespaces').mockImplementation(() => ({
+    vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
       data: [{ metadata: { name: 'default' } }]
     }));
-    jest
-      .spyOn(APIUtils, 'useSelectedNamespace')
+    vi.spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: ALL_NAMESPACES }));
   });
 
   it('renders with no bindings', () => {
-    jest
-      .spyOn(TriggerBindingsAPI, 'useTriggerBindings')
+    vi.spyOn(TriggerBindingsAPI, 'useTriggerBindings')
       .mockImplementation(() => ({ data: [] }));
 
     const { getByText } = renderWithRouter(<TriggerBindings />, {
@@ -57,8 +55,7 @@ describe('TriggerBindings', () => {
   });
 
   it('renders with one binding', () => {
-    jest
-      .spyOn(TriggerBindingsAPI, 'useTriggerBindings')
+    vi.spyOn(TriggerBindingsAPI, 'useTriggerBindings')
       .mockImplementation(() => ({ data: [triggerBinding] }));
 
     const { queryByText } = renderWithRouter(<TriggerBindings />, {
@@ -72,8 +69,7 @@ describe('TriggerBindings', () => {
   });
 
   it('can be filtered on a single label filter', async () => {
-    jest
-      .spyOn(TriggerBindingsAPI, 'useTriggerBindings')
+    vi.spyOn(TriggerBindingsAPI, 'useTriggerBindings')
       .mockImplementation(({ filters }) => ({
         data: filters.length ? [] : [triggerBinding]
       }));
@@ -93,8 +89,7 @@ describe('TriggerBindings', () => {
   });
 
   it('renders in loading state', () => {
-    jest
-      .spyOn(TriggerBindingsAPI, 'useTriggerBindings')
+    vi.spyOn(TriggerBindingsAPI, 'useTriggerBindings')
       .mockImplementation(() => ({ isLoading: true }));
 
     const { queryByText } = renderWithRouter(<TriggerBindings />, {
@@ -109,8 +104,7 @@ describe('TriggerBindings', () => {
 
   it('renders in error state', () => {
     const error = 'fake_error_message';
-    jest
-      .spyOn(TriggerBindingsAPI, 'useTriggerBindings')
+    vi.spyOn(TriggerBindingsAPI, 'useTriggerBindings')
       .mockImplementation(() => ({ error }));
 
     const { queryByText } = renderWithRouter(<TriggerBindings />, {

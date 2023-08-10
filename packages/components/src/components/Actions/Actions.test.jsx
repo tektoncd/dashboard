@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -23,7 +23,7 @@ const resource = {
 
 describe('Actions with single action', () => {
   it('renders a Button when kind is button', () => {
-    const mockCallBack = jest.fn();
+    const mockCallBack = vi.fn();
     const items = [
       {
         actionText: 'Action',
@@ -39,7 +39,7 @@ describe('Actions with single action', () => {
   });
 
   it('renders an OverflowMenu when kind is not button', async () => {
-    const mockCallBack = jest.fn();
+    const mockCallBack = vi.fn();
     const items = [
       {
         actionText: 'Action',
@@ -59,7 +59,7 @@ describe('Actions with single action', () => {
 
 describe('Actions dropdown no modal', () => {
   it('Actions no modal click event', async () => {
-    const mockCallBack = jest.fn();
+    const mockCallBack = vi.fn();
     const items = [
       {
         actionText: 'Action',
@@ -83,7 +83,7 @@ describe('Actions dropdown no modal', () => {
 
 describe('Actions dropdown missing disable default behaviour', () => {
   it('Actions missing disable default behaviour click event', async () => {
-    const mockCallBack = jest.fn();
+    const mockCallBack = vi.fn();
     const items = [
       {
         actionText: 'Action',
@@ -106,7 +106,7 @@ describe('Actions dropdown missing disable default behaviour', () => {
 
 describe('Actions disabled field', () => {
   it('Actions disabled field click event', async () => {
-    const mockCallBack = jest.fn();
+    const mockCallBack = vi.fn();
     const items = [
       {
         actionText: 'Action',
@@ -130,7 +130,7 @@ describe('Actions disabled field', () => {
 
 describe('Actions with modal', () => {
   it('Actions with modal click through', async () => {
-    const mockCallBack = jest.fn();
+    const mockCallBack = vi.fn();
     const items = [
       {
         actionText: 'Action',
@@ -161,7 +161,7 @@ describe('Actions with modal', () => {
   });
 
   it('Actions with modal default button text', async () => {
-    const mockCallBack = jest.fn();
+    const mockCallBack = vi.fn();
     const items = [
       {
         actionText: 'Action',

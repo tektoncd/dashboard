@@ -101,13 +101,11 @@ const pipelineRuns = [
 
 describe('PipelineRuns container', () => {
   beforeEach(() => {
-    jest
-      .spyOn(PipelinesAPI, 'usePipelines')
+    vi.spyOn(PipelinesAPI, 'usePipelines')
       .mockImplementation(() => ({ data: pipelines }));
-    jest
-      .spyOn(PipelineRunsAPI, 'usePipelineRuns')
+    vi.spyOn(PipelineRunsAPI, 'usePipelineRuns')
       .mockImplementation(() => ({ data: [...pipelineRuns] }));
-    jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => true);
+    vi.spyOn(API, 'useIsReadOnly').mockImplementation(() => true);
   });
 
   it('Duplicate label filters are prevented', async () => {
@@ -155,7 +153,7 @@ describe('PipelineRuns container', () => {
   });
 
   it('Creation, deletion and stop events are possible when not in read-only mode', async () => {
-    jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => false);
+    vi.spyOn(API, 'useIsReadOnly').mockImplementation(() => false);
 
     const { getByText, getAllByTitle, queryAllByText } = renderWithRouter(
       <PipelineRunsContainer
@@ -173,7 +171,7 @@ describe('PipelineRuns container', () => {
   });
 
   it('Creation, deletion and stop events are not possible when in read-only mode', async () => {
-    jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => true);
+    vi.spyOn(API, 'useIsReadOnly').mockImplementation(() => true);
 
     const { getByText, queryAllByLabelText, queryAllByText, queryAllByTitle } =
       renderWithRouter(
@@ -192,12 +190,11 @@ describe('PipelineRuns container', () => {
   });
 
   it('handles rerun event in PipelineRuns page', async () => {
-    jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => false);
+    vi.spyOn(API, 'useIsReadOnly').mockImplementation(() => false);
     PipelineRunsAPI.usePipelineRuns.mockImplementation(() => ({
       data: [pipelineRuns[0]]
     }));
-    jest
-      .spyOn(PipelineRunsAPI, 'rerunPipelineRun')
+    vi.spyOn(PipelineRunsAPI, 'rerunPipelineRun')
       .mockImplementation(() => []);
     const { getAllByTitle, getByText } = renderWithRouter(
       <PipelineRunsContainer />,
@@ -217,12 +214,10 @@ describe('PipelineRuns container', () => {
   });
 
   it('handles start event in PipelineRuns page', async () => {
-    jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => false);
-    jest
-      .spyOn(PipelineRunsAPI, 'usePipelineRuns')
+    vi.spyOn(API, 'useIsReadOnly').mockImplementation(() => false);
+    vi.spyOn(PipelineRunsAPI, 'usePipelineRuns')
       .mockImplementation(() => ({ data: [pipelineRuns[2]] }));
-    jest
-      .spyOn(PipelineRunsAPI, 'startPipelineRun')
+    vi.spyOn(PipelineRunsAPI, 'startPipelineRun')
       .mockImplementation(() => []);
     const { getAllByTitle, getByText } = renderWithRouter(
       <PipelineRunsContainer />,

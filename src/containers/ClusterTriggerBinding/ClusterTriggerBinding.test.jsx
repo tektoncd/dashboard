@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2022 The Tekton Authors
+Copyright 2020-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -64,7 +64,7 @@ const clusterTriggerBindingWithLabels = {
 
 it('ClusterTriggerBindingContainer handles error state', async () => {
   const error = 'fake_error_message';
-  jest
+  vi
     .spyOn(API, 'useClusterTriggerBinding')
     .mockImplementation(() => ({ error }));
 
@@ -76,7 +76,7 @@ it('ClusterTriggerBindingContainer handles error state', async () => {
 });
 
 it('ClusterTriggerBindingContainer renders overview', async () => {
-  jest
+  vi
     .spyOn(API, 'useClusterTriggerBinding')
     .mockImplementation(() => ({ data: clusterTriggerBindingSimple }));
 
@@ -93,7 +93,7 @@ it('ClusterTriggerBindingContainer renders overview', async () => {
 });
 
 it('ClusterTriggerBindingContainer renders YAML', async () => {
-  jest
+  vi
     .spyOn(API, 'useClusterTriggerBinding')
     .mockImplementation(() => ({ data: clusterTriggerBindingSimple }));
   const clusterTriggerBindingName = 'cluster-trigger-binding-simple';
@@ -119,7 +119,7 @@ it('ClusterTriggerBindingContainer renders YAML', async () => {
 });
 
 it('ClusterTriggerBindingContainer does not render label section if they are not present', async () => {
-  jest
+  vi
     .spyOn(API, 'useClusterTriggerBinding')
     .mockImplementation(() => ({ data: clusterTriggerBindingSimple }));
 
@@ -132,7 +132,7 @@ it('ClusterTriggerBindingContainer does not render label section if they are not
 });
 
 it('ClusterTriggerBindingContainer renders labels section if they are present', async () => {
-  jest
+  vi
     .spyOn(API, 'useClusterTriggerBinding')
     .mockImplementation(() => ({ data: clusterTriggerBindingWithLabels }));
 

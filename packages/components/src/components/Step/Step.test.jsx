@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -81,7 +81,7 @@ it('Step renders error state', () => {
 });
 
 it('Step handles click event', () => {
-  const onSelect = jest.fn();
+  const onSelect = vi.fn();
   const { getByText } = render(<Step stepName="build" onSelect={onSelect} />);
   fireEvent.click(getByText(/build/i));
   expect(onSelect).toHaveBeenCalledTimes(1);

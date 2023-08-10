@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -62,8 +62,7 @@ const taskRuns = [
 
 describe('TaskRuns container', () => {
   beforeEach(() => {
-    jest
-      .spyOn(taskRunsAPI, 'useTaskRuns')
+    vi.spyOn(taskRunsAPI, 'useTaskRuns')
       .mockImplementation(() => ({ data: taskRuns }));
   });
 
@@ -112,7 +111,7 @@ describe('TaskRuns container', () => {
   });
 
   it('TaskRun actions are available when not in read-only mode', async () => {
-    jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => false);
+    vi.spyOn(API, 'useIsReadOnly').mockImplementation(() => false);
 
     const { getAllByTitle, getByText } = renderWithRouter(
       <TaskRunsContainer
@@ -128,7 +127,7 @@ describe('TaskRuns container', () => {
   });
 
   it('TaskRun actions are not available when in read-only mode', async () => {
-    jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => true);
+    vi.spyOn(API, 'useIsReadOnly').mockImplementation(() => true);
 
     const { getByText, queryAllByLabelText, queryAllByTitle } =
       renderWithRouter(
@@ -146,8 +145,8 @@ describe('TaskRuns container', () => {
   });
 
   it('handles rerun event in TaskRuns page', async () => {
-    jest.spyOn(API, 'useIsReadOnly').mockImplementation(() => false);
-    jest.spyOn(taskRunsAPI, 'rerunTaskRun').mockImplementation(() => []);
+    vi.spyOn(API, 'useIsReadOnly').mockImplementation(() => false);
+    vi.spyOn(taskRunsAPI, 'rerunTaskRun').mockImplementation(() => []);
     const { getAllByTitle, getByText } = renderWithRouter(
       <TaskRunsContainer />,
       { path: paths.taskRuns.all(), route: urls.taskRuns.all() }

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -34,17 +34,15 @@ const eventListener = {
 
 describe('EventListeners', () => {
   beforeEach(() => {
-    jest.spyOn(API, 'useNamespaces').mockImplementation(() => ({
+    vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
       data: [{ metadata: { name: 'default' } }]
     }));
-    jest
-      .spyOn(APIUtils, 'useSelectedNamespace')
+    vi.spyOn(APIUtils, 'useSelectedNamespace')
       .mockImplementation(() => ({ selectedNamespace: ALL_NAMESPACES }));
   });
 
   it('renders with no bindings', () => {
-    jest
-      .spyOn(EventListenersAPI, 'useEventListeners')
+    vi.spyOn(EventListenersAPI, 'useEventListeners')
       .mockImplementation(() => ({ data: [] }));
 
     const { getByText } = renderWithRouter(<EventListeners />, {
@@ -57,8 +55,7 @@ describe('EventListeners', () => {
   });
 
   it('renders with one binding', () => {
-    jest
-      .spyOn(EventListenersAPI, 'useEventListeners')
+    vi.spyOn(EventListenersAPI, 'useEventListeners')
       .mockImplementation(() => ({ data: [eventListener] }));
 
     const { queryByText, queryByTitle } = renderWithRouter(<EventListeners />, {
@@ -73,8 +70,7 @@ describe('EventListeners', () => {
   });
 
   it('can be filtered on a single label filter', async () => {
-    jest
-      .spyOn(EventListenersAPI, 'useEventListeners')
+    vi.spyOn(EventListenersAPI, 'useEventListeners')
       .mockImplementation(({ filters }) => ({
         data: filters.length ? [] : [eventListener]
       }));
@@ -94,8 +90,7 @@ describe('EventListeners', () => {
   });
 
   it('renders in loading state', () => {
-    jest
-      .spyOn(EventListenersAPI, 'useEventListeners')
+    vi.spyOn(EventListenersAPI, 'useEventListeners')
       .mockImplementation(() => ({ isLoading: true }));
 
     const { queryByText } = renderWithRouter(<EventListeners />, {
@@ -110,8 +105,7 @@ describe('EventListeners', () => {
 
   it('renders in error state', () => {
     const error = 'fake_error_message';
-    jest
-      .spyOn(EventListenersAPI, 'useEventListeners')
+    vi.spyOn(EventListenersAPI, 'useEventListeners')
       .mockImplementation(() => ({ error }));
 
     const { queryByText } = renderWithRouter(<EventListeners />, {

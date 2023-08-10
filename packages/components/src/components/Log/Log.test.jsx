@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -94,11 +94,10 @@ describe('Log', () => {
       { length: 199 },
       (_v, i) => `Line ${i + 2}\n`
     ).join('');
-    jest
-      .spyOn(Element.prototype, 'getBoundingClientRect')
+    vi.spyOn(Element.prototype, 'getBoundingClientRect')
       .mockReturnValue({ bottom: 2500 })
       .mockReturnValueOnce({ bottom: 0 });
-    const spiedFn = jest.spyOn(Element.prototype, 'scrollTop', 'set'); // the scrollTop value is changed in scrollToBottomLog
+    const spiedFn = vi.spyOn(Element.prototype, 'scrollTop', 'set'); // the scrollTop value is changed in scrollToBottomLog
 
     const { rerender } = render(
       <Log
@@ -124,14 +123,12 @@ describe('Log', () => {
       { length: 19999 },
       (_v, i) => `Line ${i + 1}\n`
     ).join('');
-    jest
-      .spyOn(Element.prototype, 'getBoundingClientRect')
+    vi.spyOn(Element.prototype, 'getBoundingClientRect')
       .mockReturnValue({ bottom: 0 });
-    jest
-      .spyOn(Element.prototype, 'scrollTop', 'get')
+    vi.spyOn(Element.prototype, 'scrollTop', 'get')
       .mockReturnValue(-1) // to ensure el.scrollHeight - el.clientHeight > el.scrollTop i.e. 0 - 0 > -1
       .mockReturnValueOnce(0);
-    const spiedFn = jest.spyOn(Element.prototype, 'scrollTop', 'set'); // the scrollTop value is changed in scrollToBottomLog
+    const spiedFn = vi.spyOn(Element.prototype, 'scrollTop', 'set'); // the scrollTop value is changed in scrollToBottomLog
 
     const { rerender } = render(
       <Log
@@ -157,14 +154,12 @@ describe('Log', () => {
       { length: 19999 },
       (_v, i) => `Line ${i + 1}\n`
     ).join('');
-    jest
-      .spyOn(Element.prototype, 'getBoundingClientRect')
+    vi.spyOn(Element.prototype, 'getBoundingClientRect')
       .mockReturnValue({ bottom: 0 });
-    jest
-      .spyOn(Element.prototype, 'scrollTop', 'get')
+    vi.spyOn(Element.prototype, 'scrollTop', 'get')
       .mockReturnValue(-1) // to ensure el.scrollHeight - el.clientHeight > el.scrollTop i.e. 0 - 0 > -1
       .mockReturnValueOnce(0);
-    const spiedFn = jest.spyOn(Element.prototype, 'scrollTop', 'set'); // the scrollTop value is changed in scrollToBottomLog
+    const spiedFn = vi.spyOn(Element.prototype, 'scrollTop', 'set'); // the scrollTop value is changed in scrollToBottomLog
 
     const { rerender } = render(
       <Log
@@ -190,11 +185,10 @@ describe('Log', () => {
       { length: 20000 },
       (_v, i) => `Line ${i + 1}\n`
     ).join('');
-    jest
-      .spyOn(Element.prototype, 'getBoundingClientRect')
+    vi.spyOn(Element.prototype, 'getBoundingClientRect')
       .mockReturnValue({ bottom: 0, top: 0, right: 0 });
-    jest.spyOn(Element.prototype, 'scrollTop', 'get').mockReturnValue(1);
-    const spiedFn = jest.spyOn(Element.prototype, 'scrollTop', 'set'); // the scrollTop value is changed in scrollToBottomLog
+    vi.spyOn(Element.prototype, 'scrollTop', 'get').mockReturnValue(1);
+    const spiedFn = vi.spyOn(Element.prototype, 'scrollTop', 'set'); // the scrollTop value is changed in scrollToBottomLog
 
     const { container } = render(
       <Log
@@ -217,12 +211,11 @@ describe('Log', () => {
       { length: 20000 },
       (_v, i) => `Line ${i + 1}\n`
     ).join('');
-    jest
-      .spyOn(Element.prototype, 'getBoundingClientRect')
+    vi.spyOn(Element.prototype, 'getBoundingClientRect')
       .mockReturnValue({ bottom: 0, top: 0, right: 0 });
-    jest.spyOn(Element.prototype, 'scrollTop', 'get').mockReturnValue(1);
-    jest.spyOn(Element.prototype, 'scrollHeight', 'get').mockReturnValue(2);
-    const spiedFn = jest.spyOn(Element.prototype, 'scrollTop', 'set'); // the scrollTop value is changed in scrollToBottomLog
+    vi.spyOn(Element.prototype, 'scrollTop', 'get').mockReturnValue(1);
+    vi.spyOn(Element.prototype, 'scrollHeight', 'get').mockReturnValue(2);
+    const spiedFn = vi.spyOn(Element.prototype, 'scrollTop', 'set'); // the scrollTop value is changed in scrollToBottomLog
 
     const { container } = render(
       <Log

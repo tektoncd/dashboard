@@ -22,8 +22,7 @@ it('cancelCustomRun', () => {
   const payload = [
     { op: 'replace', path: '/spec/status', value: 'RunCancelled' }
   ];
-  jest
-    .spyOn(comms, 'patch')
+  vi.spyOn(comms, 'patch')
     .mockImplementation((uri, body) => Promise.resolve(body));
   return API.cancelCustomRun({ name, namespace }).then(() => {
     expect(comms.patch).toHaveBeenCalled();
@@ -68,7 +67,7 @@ it('getCustomRuns', () => {
 it('useCustomRuns', () => {
   const query = { fake: 'query' };
   const params = { fake: 'params' };
-  jest.spyOn(utils, 'useCollection').mockImplementation(() => query);
+  vi.spyOn(utils, 'useCollection').mockImplementation(() => query);
   expect(API.useCustomRuns(params)).toEqual(query);
   expect(utils.useCollection).toHaveBeenCalledWith(
     expect.objectContaining({
@@ -82,7 +81,7 @@ it('useCustomRuns', () => {
 it('useCustomRun', () => {
   const query = { fake: 'query' };
   const params = { fake: 'params' };
-  jest.spyOn(utils, 'useResource').mockImplementation(() => query);
+  vi.spyOn(utils, 'useResource').mockImplementation(() => query);
   expect(API.useCustomRun(params)).toEqual(query);
   expect(utils.useResource).toHaveBeenCalledWith(
     expect.objectContaining({
@@ -110,8 +109,7 @@ it('rerunCustomRun', () => {
     spec: { status: 'fake_status' },
     status: 'fake_status'
   };
-  jest
-    .spyOn(comms, 'post')
+  vi.spyOn(comms, 'post')
     .mockImplementation((uri, body) => Promise.resolve(body));
 
   return API.rerunCustomRun(originalRun).then(() => {

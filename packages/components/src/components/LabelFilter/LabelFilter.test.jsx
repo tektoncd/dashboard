@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -32,7 +32,7 @@ it('LabelFilter renders error on empty filter', () => {
 
 it('LabelFilter handles adding a filter', () => {
   const filter = 'app:test';
-  const handleAddFilter = jest.fn();
+  const handleAddFilter = vi.fn();
   const { getByPlaceholderText, getByText } = render(
     <LabelFilter handleAddFilter={handleAddFilter} />
   );
@@ -46,7 +46,7 @@ it('LabelFilter handles adding a filter', () => {
 it('LabelFilter displays notification if character length is over 63 characters for labelValue', async () => {
   const filter =
     'app:1234567890123456789012345678901234567890123456789012345678901234';
-  const handleAddFilter = jest.fn();
+  const handleAddFilter = vi.fn();
   const { getByPlaceholderText, getByText, getByTitle, queryByText } = render(
     <LabelFilter handleAddFilter={handleAddFilter} />
   );
@@ -71,7 +71,7 @@ it('LabelFilter displays notification if character length is over 63 characters 
 it('LabelFilter handles adding a duplicate filter', async () => {
   const filter = 'app=test';
   const filterDisplayValue = 'app:test';
-  const handleAddFilter = jest.fn();
+  const handleAddFilter = vi.fn();
   const { getByPlaceholderText, getByText, getByTitle, queryByText } = render(
     <LabelFilter filters={[filter]} handleAddFilter={handleAddFilter} />
   );
@@ -87,7 +87,7 @@ it('LabelFilter handles adding a duplicate filter', async () => {
 
 it('LabelFilter handles deleting a filter', () => {
   const filter = 'tekton.dev/pipeline=demo-pipeline';
-  const handleDeleteFilter = jest.fn();
+  const handleDeleteFilter = vi.fn();
   const { getByText } = render(
     <LabelFilter filters={[filter]} handleDeleteFilter={handleDeleteFilter} />
   );
@@ -97,7 +97,7 @@ it('LabelFilter handles deleting a filter', () => {
 
 it('LabelFilter handles clearing all filters', () => {
   const filter = 'tekton.dev/pipeline=demo-pipeline';
-  const handleClearFilters = jest.fn();
+  const handleClearFilters = vi.fn();
   const { getByText } = render(
     <LabelFilter filters={[filter]} handleClearFilters={handleClearFilters} />
   );

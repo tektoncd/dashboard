@@ -135,7 +135,7 @@ const fakeTriggerTemplateWithLabels = {
 
 it('TriggerTemplateContainer handles error state', async () => {
   const error = 'fake_error_message';
-  jest.spyOn(API, 'useTriggerTemplate').mockImplementation(() => ({ error }));
+  vi.spyOn(API, 'useTriggerTemplate').mockImplementation(() => ({ error }));
 
   const { getByText } = renderWithRouter(
     <TriggerTemplateContainer intl={intl} />
@@ -144,8 +144,7 @@ it('TriggerTemplateContainer handles error state', async () => {
 });
 
 it('TriggerTemplateContainer renders', async () => {
-  jest
-    .spyOn(API, 'useTriggerTemplate')
+  vi.spyOn(API, 'useTriggerTemplate')
     .mockImplementation(() => ({ data: fakeTriggerTemplate }));
 
   const { getAllByText, getByText } = renderWithRouter(
@@ -172,8 +171,7 @@ it('TriggerTemplateContainer renders', async () => {
 });
 
 it('TriggerTemplateContainer contains overview tab with accurate information', async () => {
-  jest
-    .spyOn(API, 'useTriggerTemplate')
+  vi.spyOn(API, 'useTriggerTemplate')
     .mockImplementation(() => ({ data: fakeTriggerTemplate }));
 
   const { getByText } = renderWithRouter(
@@ -187,8 +185,7 @@ it('TriggerTemplateContainer contains overview tab with accurate information', a
 });
 
 it('TriggerTemplateContainer contains YAML tab with accurate information', async () => {
-  jest
-    .spyOn(API, 'useTriggerTemplate')
+  vi.spyOn(API, 'useTriggerTemplate')
     .mockImplementation(() => ({ data: fakeTriggerTemplate }));
   const { getByText } = renderWithRouter(
     <TriggerTemplateContainer intl={intl} />,
@@ -212,8 +209,7 @@ it('TriggerTemplateContainer contains YAML tab with accurate information', async
 });
 
 it('TriggerTemplateContainer does not render label section if they are not present', async () => {
-  jest
-    .spyOn(API, 'useTriggerTemplate')
+  vi.spyOn(API, 'useTriggerTemplate')
     .mockImplementation(() => ({ data: fakeTriggerTemplate }));
 
   const { getByText, queryByText } = renderWithRouter(
@@ -225,8 +221,7 @@ it('TriggerTemplateContainer does not render label section if they are not prese
 });
 
 it('TriggerTemplateContainer renders labels section if they are present', async () => {
-  jest
-    .spyOn(API, 'useTriggerTemplate')
+  vi.spyOn(API, 'useTriggerTemplate')
     .mockImplementation(() => ({ data: fakeTriggerTemplateWithLabels }));
 
   const { getByText } = renderWithRouter(
@@ -244,8 +239,7 @@ it('TriggerTemplateContainer renders labels section if they are present', async 
 });
 
 it('TriggerTemplateContainer contains formatted labels', async () => {
-  jest
-    .spyOn(API, 'useTriggerTemplate')
+  vi.spyOn(API, 'useTriggerTemplate')
     .mockImplementation(() => ({ data: fakeTriggerTemplateWithLabels }));
 
   const { getByText } = renderWithRouter(

@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2021 The Tekton Authors
+Copyright 2020-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -23,7 +23,7 @@ const triggersSelector = { selector: '#tkn--about--triggers-tile *' };
 
 describe('About', () => {
   it('should render correctly', () => {
-    jest.spyOn(api, 'useProperties').mockImplementation(() => ({
+    vi.spyOn(api, 'useProperties').mockImplementation(() => ({
       data: {
         dashboardNamespace: 'tekton-dashboard',
         dashboardVersion: 'v0.100.0',
@@ -56,7 +56,7 @@ describe('About', () => {
   });
 
   it('should render error when an expected property is missing', () => {
-    jest.spyOn(api, 'useProperties').mockImplementation(() => ({
+    vi.spyOn(api, 'useProperties').mockImplementation(() => ({
       data: {
         dashboardNamespace: 'tekton-dashboard',
         // DashboardVersion: '', this is intentionally missing
@@ -83,7 +83,7 @@ describe('About', () => {
   });
 
   it('should render error when multiple expected properties are missing', () => {
-    jest.spyOn(api, 'useProperties').mockImplementation(() => ({
+    vi.spyOn(api, 'useProperties').mockImplementation(() => ({
       data: {
         dashboardNamespace: 'tekton-dashboard'
       }
@@ -107,7 +107,7 @@ describe('About', () => {
   });
 
   it('should not display TiggersVersion when value is not returned in the API', () => {
-    jest.spyOn(api, 'useProperties').mockImplementation(() => ({
+    vi.spyOn(api, 'useProperties').mockImplementation(() => ({
       data: {
         dashboardNamespace: 'tekton-dashboard',
         dashboardVersion: 'v0.100.0',

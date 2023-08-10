@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -31,8 +31,7 @@ const namespaceResources = namespaces.map(namespace => ({
 const initialTextRegExp = /select namespace/i;
 
 it('NamespacesDropdown renders items', () => {
-  jest
-    .spyOn(API, 'useNamespaces')
+  vi.spyOn(API, 'useNamespaces')
     .mockImplementation(() => ({ data: namespaceResources }));
   const { getAllByText, getByPlaceholderText, queryByText } = render(
     <NamespacesDropdown {...props} />
@@ -48,8 +47,7 @@ it('NamespacesDropdown renders items', () => {
 });
 
 it('NamespacesDropdown renders controlled selection', () => {
-  jest
-    .spyOn(API, 'useNamespaces')
+  vi.spyOn(API, 'useNamespaces')
     .mockImplementation(() => ({ data: namespaceResources }));
   // Select item 'namespace-1'
   const { queryByPlaceholderText, queryByDisplayValue, rerender } = render(
@@ -68,24 +66,22 @@ it('NamespacesDropdown renders controlled selection', () => {
 });
 
 it('NamespacesDropdown renders empty', () => {
-  jest.spyOn(API, 'useNamespaces').mockImplementation(() => ({ data: [] }));
+  vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({ data: [] }));
   const { queryByPlaceholderText } = render(<NamespacesDropdown {...props} />);
   expect(queryByPlaceholderText(/no namespaces found/i)).toBeTruthy();
 });
 
 it('NamespacesDropdown renders loading skeleton', () => {
-  jest
-    .spyOn(API, 'useNamespaces')
+  vi.spyOn(API, 'useNamespaces')
     .mockImplementation(() => ({ isFetching: true }));
   const { queryByPlaceholderText } = render(<NamespacesDropdown {...props} />);
   expect(queryByPlaceholderText(initialTextRegExp)).toBeFalsy();
 });
 
 it('NamespacesDropdown handles onChange event', () => {
-  jest
-    .spyOn(API, 'useNamespaces')
+  vi.spyOn(API, 'useNamespaces')
     .mockImplementation(() => ({ data: namespaceResources }));
-  const onChange = jest.fn();
+  const onChange = vi.fn();
   const { getByPlaceholderText, getByText } = render(
     <NamespacesDropdown {...props} onChange={onChange} />
   );
@@ -95,8 +91,8 @@ it('NamespacesDropdown handles onChange event', () => {
 });
 
 it('NamespacesDropdown renders tenant namespace in single namespace mode', () => {
-  jest.spyOn(API, 'useTenantNamespace').mockImplementation(() => 'fake');
-  jest.spyOn(API, 'useNamespaces').mockImplementation(() => ({ data: [] }));
+  vi.spyOn(API, 'useTenantNamespace').mockImplementation(() => 'fake');
+  vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({ data: [] }));
   const { getByPlaceholderText, getByText } = render(
     <NamespacesDropdown {...props} />
   );

@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2021 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -301,7 +301,7 @@ describe('Table', () => {
   });
 
   it('batch action button specifies correct arguments for callback with one row selected', () => {
-    const handleDelete = jest.fn();
+    const handleDelete = vi.fn();
 
     const props = {
       batchActionButtons: batchActionButtons.slice(0, 1),
@@ -329,7 +329,7 @@ describe('Table', () => {
   });
 
   it('batch action button specifies correct arguments for callback with two rows selected', () => {
-    const handleDelete = jest.fn();
+    const handleDelete = vi.fn();
 
     const props = {
       batchActionButtons: batchActionButtons.slice(0, 1),
@@ -357,7 +357,7 @@ describe('Table', () => {
   });
 
   it('toolbar button responds correctly', () => {
-    const handleAdd = jest.fn();
+    const handleAdd = vi.fn();
 
     const props = {
       loading: false,

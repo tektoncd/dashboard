@@ -1,5 +1,5 @@
 /*
-Copyright 2019-2022 The Tekton Authors
+Copyright 2019-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -69,7 +69,7 @@ describe('getPatchHeaders', () => {
 describe('checkStatus', () => {
   it('returns json on success', () => {
     const data = 'fake data';
-    const json = jest.fn(() => data);
+    const json = vi.fn(() => data);
     expect(
       checkStatus({
         ok: true,
@@ -81,7 +81,7 @@ describe('checkStatus', () => {
 
   it('return text on success', () => {
     const data = 'fake data';
-    const text = jest.fn(() => data);
+    const text = vi.fn(() => data);
     expect(
       checkStatus({
         ok: true,
@@ -92,11 +92,11 @@ describe('checkStatus', () => {
   });
 
   it('returns headers on successful create', () => {
-    const headers = { get: jest.fn() };
+    const headers = { get: vi.fn() };
     const status = 201;
     const response = {
       headers,
-      json: jest.fn(),
+      json: vi.fn(),
       ok: true,
       status
     };
@@ -173,7 +173,7 @@ describe('get', () => {
 });
 
 // TODO: re-enable this after MSW update for Node.js 18 issues
-xdescribe('post', () => {
+describe.skip('post', () => {
   it('makes a post request with the default headers and provided body', () => {
     const data = {
       fake: 'data'

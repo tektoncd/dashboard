@@ -61,8 +61,8 @@ dddd;a`;
 
 describe('YAMLEditor', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    jest.spyOn(window.history, 'pushState');
+    vi.clearAllMocks();
+    vi.spyOn(window.history, 'pushState');
     // Workaround for codemirror vs jsdom https://github.com/jsdom/jsdom/issues/3002#issuecomment-1118039915
     // for textRange(...).getClientRects is not a function
     Range.prototype.getBoundingClientRect = () => ({
@@ -76,11 +76,11 @@ describe('YAMLEditor', () => {
     Range.prototype.getClientRects = () => ({
       item: () => null,
       length: 0,
-      [Symbol.iterator]: jest.fn()
+      [Symbol.iterator]: vi.fn()
     });
   });
   it('handles onClose event', () => {
-    const handleClose = jest.fn();
+    const handleClose = vi.fn();
     const { getByText } = renderWithRouter(
       <YAMLEditor handleClose={handleClose} />
     );
@@ -134,8 +134,7 @@ describe('YAMLEditor', () => {
   });
 
   it('handle submit', async () => {
-    const handleCreate = jest
-      .fn()
+    const handleCreate = vi.fn()
       .mockImplementation(() => Promise.resolve({ data: {} }));
     const { queryAllByText, getByText, getByRole } = renderWithRouter(
       <YAMLEditor kind="PipelineRun" handleCreate={handleCreate} />
@@ -158,8 +157,7 @@ describe('YAMLEditor', () => {
     const errorResponseMock = {
       response: { status: 404, text: () => Promise.resolve('Whoops!') }
     };
-    const handleCreate = jest
-      .fn()
+    const handleCreate = vi.fn()
       .mockImplementation(() => Promise.reject(errorResponseMock));
     const { queryAllByText, getByText, getByRole } = renderWithRouter(
       <YAMLEditor kind="PipelineRun" handleCreate={handleCreate} />
