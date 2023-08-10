@@ -98,7 +98,7 @@ function node_test() {
   git status
   git diff-index --patch --exit-code --no-color HEAD ./src/nls/ || failed=1
   echo "Running unit tests"
-  npm run test:ci || failed=1
+  npm test || failed=1
   echo ""
   return ${failed}
 }
