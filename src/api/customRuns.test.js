@@ -22,8 +22,9 @@ it('cancelCustomRun', () => {
   const payload = [
     { op: 'replace', path: '/spec/status', value: 'RunCancelled' }
   ];
-  vi.spyOn(comms, 'patch')
-    .mockImplementation((uri, body) => Promise.resolve(body));
+  vi.spyOn(comms, 'patch').mockImplementation((uri, body) =>
+    Promise.resolve(body)
+  );
   return API.cancelCustomRun({ name, namespace }).then(() => {
     expect(comms.patch).toHaveBeenCalled();
     expect(comms.patch.mock.lastCall[1]).toEqual(payload);
@@ -109,8 +110,9 @@ it('rerunCustomRun', () => {
     spec: { status: 'fake_status' },
     status: 'fake_status'
   };
-  vi.spyOn(comms, 'post')
-    .mockImplementation((uri, body) => Promise.resolve(body));
+  vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
+    Promise.resolve(body)
+  );
 
   return API.rerunCustomRun(originalRun).then(() => {
     expect(comms.post).toHaveBeenCalled();

@@ -79,9 +79,9 @@ describe('createPipelineRun', () => {
       }
     };
 
-    vi
-      .spyOn(comms, 'post')
-      .mockImplementation((uri, body) => Promise.resolve(body));
+    vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
+      Promise.resolve(body)
+    );
 
     return API.createPipelineRun(payload).then(() => {
       expect(comms.post).toHaveBeenCalled();
@@ -132,9 +132,9 @@ describe('createPipelineRun', () => {
         }
       }
     };
-    vi
-      .spyOn(comms, 'post')
-      .mockImplementation((uri, body) => Promise.resolve(body));
+    vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
+      Promise.resolve(body)
+    );
 
     return API.createPipelineRun(payload).then(() => {
       expect(comms.post).toHaveBeenCalled();
@@ -168,9 +168,9 @@ it('createPipelineRunRaw', () => {
       }
     }
   };
-  vi
-    .spyOn(comms, 'post')
-    .mockImplementation((uri, body) => Promise.resolve(body));
+  vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
+    Promise.resolve(body)
+  );
 
   return API.createPipelineRunRaw({
     namespace: 'test-namespace',
@@ -280,9 +280,9 @@ it('rerunPipelineRun', () => {
     spec: { status: 'fake_status' },
     status: 'fake_status'
   };
-  vi
-    .spyOn(comms, 'post')
-    .mockImplementation((uri, body) => Promise.resolve(body));
+  vi.spyOn(comms, 'post').mockImplementation((uri, body) =>
+    Promise.resolve(body)
+  );
 
   const rerun = {
     apiVersion: 'tekton.dev/v1',
@@ -306,9 +306,9 @@ it('startPipelineRun', () => {
   const name = 'foo';
   const namespace = 'foospace';
   const payload = [{ op: 'remove', path: '/spec/status' }];
-  vi
-    .spyOn(comms, 'patch')
-    .mockImplementation((uri, body) => Promise.resolve(body));
+  vi.spyOn(comms, 'patch').mockImplementation((uri, body) =>
+    Promise.resolve(body)
+  );
   return API.startPipelineRun({ metadata: { name, namespace } }).then(() => {
     expect(comms.patch).toHaveBeenCalled();
     expect(comms.patch.mock.lastCall[1]).toEqual(payload);
