@@ -92,8 +92,8 @@
     "vitest": "^0.34.1"
   },
   "engines": {
-    "node": "^18.16.0",
-    "npm": "^9.5.1"
+    "node": "^18.17.0",
+    "npm": "^9.6.7"
   },
   "//": "Workspaces must be listed explicitly to ensure they're processed in the correct order until npm natively supports detecting the topological order",
   "workspaces": [

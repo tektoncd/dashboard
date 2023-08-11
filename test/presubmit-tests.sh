@@ -67,13 +67,10 @@ function get_node() {
   echo "Installing Node.js"
   apt-get update
   apt-get install -y curl
-  curl -O https://nodejs.org/dist/v18.16.0/node-v18.16.0-linux-x64.tar.xz
-  tar xf node-v18.16.0-linux-x64.tar.xz
-  export PATH=$PATH:$(pwd)/node-v18.16.0-linux-x64/bin
-  echo ">> Node.js version"
-  node --version
-  echo ">> npm version"
-  npm --version
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
+  export NVM_DIR="$HOME/.nvm"
+  source "$NVM_DIR/nvm.sh"
+  nvm install
 }
 
 function node_npm_install() {
