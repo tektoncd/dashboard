@@ -168,6 +168,22 @@ describe('CreatePipelineRun yaml mode', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.spyOn(window.history, 'pushState');
+
+    // Workaround for codemirror vs jsdom https://github.com/jsdom/jsdom/issues/3002#issuecomment-1118039915
+    // for textRange(...).getClientRects is not a function
+    Range.prototype.getBoundingClientRect = () => ({
+      bottom: 0,
+      height: 0,
+      left: 0,
+      right: 0,
+      top: 0,
+      width: 0
+    });
+    Range.prototype.getClientRects = () => ({
+      item: () => null,
+      length: 0,
+      [Symbol.iterator]: vi.fn()
+    });
   });
 
   it('renders with namespace', async () => {
@@ -176,11 +192,14 @@ describe('CreatePipelineRun yaml mode', () => {
     vi.spyOn(PipelineRunsAPI, 'usePipelineRun')
       .mockImplementation(() => ({ data: pipelineRunRawGenerateName }));
 
-    const { getByRole } = renderWithRouter(<CreatePipelineRun />, {
-      path: '/create',
-      route: '/create?mode=yaml&namespace=test-namespace'
+    const { getByRole, queryAllByText } = renderWithRouter(<CreatePipelineRun />, {
+      path: '/pipelineruns/create',
+      route: '/pipelineruns/create?mode=yaml&namespace=test-namespace'
     });
 
+    await waitFor(() => {
+      expect(queryAllByText(/Loading/).length).toBe(0);
+    });
     await waitFor(() => {
       expect(getByRole(/textbox/)).toBeTruthy();
     });
@@ -196,11 +215,14 @@ describe('CreatePipelineRun yaml mode', () => {
       .mockImplementation(() => ({ data: pipelineRunRawGenerateName }));
 
     const { queryAllByText } = renderWithRouter(<CreatePipelineRun />, {
-      path: '/create',
+      path: '/pipelineruns/create',
       route:
-        '/create?mode=yaml&pipelineRunName=test-pipeline-run-name&namespace=test-namespace'
+        '/pipelineruns/create?mode=yaml&pipelineRunName=test-pipeline-run-name&namespace=test-namespace'
     });
 
+    await waitFor(() => {
+      expect(queryAllByText(/Loading/).length).toBe(0);
+    });
     expect(submitButton(queryAllByText)).toBeTruthy();
 
     fireEvent.click(submitButton(queryAllByText));

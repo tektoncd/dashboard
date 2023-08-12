@@ -12,7 +12,7 @@ limitations under the License.
 */
 /* istanbul ignore file */
 
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import keyBy from 'lodash.keyby';
 import yaml from 'js-yaml';
@@ -32,14 +32,14 @@ import {
   urls,
   useTitleSync
 } from '@tektoncd/dashboard-utils';
-import { KeyValueList } from '@tektoncd/dashboard-components';
+import { KeyValueList, Loading } from '@tektoncd/dashboard-components';
 import { useIntl } from 'react-intl';
+
 import {
   ClusterTasksDropdown,
   NamespacesDropdown,
   ServiceAccountsDropdown,
-  TasksDropdown,
-  YAMLEditor
+  TasksDropdown
 } from '..';
 import {
   createTaskRun,
@@ -51,6 +51,8 @@ import {
   useTaskRun
 } from '../../api';
 import { isValidLabel } from '../../utils';
+
+const YAMLEditor = React.lazy(() => import('../YAMLEditor'));
 
 const clusterTaskItem = { id: 'clustertask', text: 'ClusterTask' };
 const taskItem = { id: 'task', text: 'Task' };
@@ -477,14 +479,16 @@ function CreateTaskRun() {
       );
 
       return (
-        <YAMLEditor
-          code={payloadYaml || ''}
-          handleClose={handleCloseYAMLEditor}
-          handleCreate={handleCreate}
-          kind="TaskRun"
-          loading={isLoading}
-          loadingMessage={loadingMessage}
-        />
+        <Suspense fallback={<Loading />}>
+          <YAMLEditor
+            code={payloadYaml || ''}
+            handleClose={handleCloseYAMLEditor}
+            handleCreate={handleCreate}
+            kind="TaskRun"
+            loading={isLoading}
+            loadingMessage={loadingMessage}
+          />
+        </Suspense>
       );
     }
 
@@ -509,12 +513,14 @@ function CreateTaskRun() {
     });
 
     return (
-      <YAMLEditor
-        code={yaml.dump(taskRun)}
-        handleClose={handleCloseYAMLEditor}
-        handleCreate={handleCreate}
-        kind="TaskRun"
-      />
+      <Suspense fallback={<Loading />}>
+        <YAMLEditor
+          code={yaml.dump(taskRun)}
+          handleClose={handleCloseYAMLEditor}
+          handleCreate={handleCreate}
+          kind="TaskRun"
+        />
+      </Suspense>
     );
   }
 

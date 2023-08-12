@@ -53,4 +53,3 @@ export { default as Trigger } from './Trigger';
 export { default as Triggers } from './Triggers';
 export { default as TriggerTemplate } from './TriggerTemplate';
 export { default as TriggerTemplates } from './TriggerTemplates';
-export { default as YAMLEditor } from './YAMLEditor';

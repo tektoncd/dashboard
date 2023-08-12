@@ -11,16 +11,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { mergeConfig } from 'vite';
+import { defineConfig, mergeConfig } from 'vite';
 import { visualizer } from 'rollup-plugin-visualizer';
 
 import baseConfig from './vite.config';
 
-export default mergeConfig(baseConfig({}), {
-  plugins: [
-    visualizer({
-      open: true,
-      template: 'treemap'
-    })
-  ]
-});
+export default mergeConfig(
+  baseConfig({}),
+  defineConfig({
+    plugins: [
+      visualizer({
+        open: true,
+        template: 'treemap'
+      })
+    ]
+  })
+);
