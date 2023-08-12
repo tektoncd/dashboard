@@ -1,5 +1,5 @@
 /*
-Copyright 2020-2022 The Tekton Authors
+Copyright 2020-2023 The Tekton Authors
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -17,13 +17,12 @@ import { useIntl } from 'react-intl';
 import {
   SkeletonText as CarbonSkeletonText,
   Content,
-  Loading,
   SideNav,
   SideNavItems,
   SideNavLink,
   SideNavMenu
 } from 'carbon-components-react';
-import { Header } from '..';
+import { Header, Loading } from '..';
 
 const SkeletonText = ({ heading, paragraph }) => (
   <CarbonSkeletonText heading={heading} paragraph={paragraph} width="80%" />
@@ -78,10 +77,7 @@ const LoadingShell = () => {
         </SideNavItems>
       </SideNav>
       <Content>
-        <div className="bx--loading-overlay tkn--config-loading-overlay">
-          <Loading description={loadingMessage} withOverlay={false} />
-          <span className="tkn--config-loading-text">{loadingMessage}</span>
-        </div>
+        <Loading message={loadingMessage} />
       </Content>
     </div>
   );
