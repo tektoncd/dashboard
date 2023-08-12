@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { defineConfig } from 'vite';
+import { defineConfig, splitVendorChunkPlugin } from 'vite';
 import { createHtmlPlugin } from 'vite-plugin-html';
 import react from '@vitejs/plugin-react-swc';
 import svgr from 'vite-plugin-svgr';
@@ -31,7 +31,8 @@ export default defineConfig(({ _mode }) => ({
     // Relative to outDir
     assetsDir: '.',
     // Relative to the root
-    outDir: 'cmd/dashboard/kodata'
+    outDir: 'cmd/dashboard/kodata',
+    target: 'es2021'
   },
   css: {
     devSourcemap: true
@@ -39,7 +40,13 @@ export default defineConfig(({ _mode }) => ({
   esbuild: {
     target: 'es2021'
   },
-  plugins: [createHtmlPlugin({}), react(), svgr(), yaml()],
+  plugins: [
+    createHtmlPlugin({}),
+    react(),
+    svgr(),
+    yaml(),
+    splitVendorChunkPlugin()
+  ],
   server: {
     headers: {
       // https://github.com/codemirror/codemirror5/issues/6707

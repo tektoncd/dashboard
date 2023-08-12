@@ -15,13 +15,14 @@ import {
   Button,
   Form,
   FormGroup,
-  InlineNotification,
-  Loading
+  InlineNotification
 } from 'carbon-components-react';
 import yaml from 'js-yaml';
 import React, { useEffect, useState } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
-import { langs } from '@uiw/codemirror-extensions-langs';
+import { StreamLanguage } from '@codemirror/language';
+import { yaml as yamlMode } from '@codemirror/legacy-modes/mode/yaml';
+import { Loading } from '@tektoncd/dashboard-components';
 
 export default function YAMLEditor({
   code: initialCode,
@@ -156,17 +157,14 @@ export default function YAMLEditor({
           />
         )}
         <FormGroup legendText="" className="tkn--codemirror--form">
-          {loading ? (
-            <div className="tkn--data-loading-overlay">
-              <Loading description={loadingMessage} withOverlay={false} />
-              <span className="tkn--data-loading-text">{loadingMessage}</span>
-            </div>
-          ) : (
+          {loading ? <Loading message={loadingMessage} /> : (
             <CodeMirror
               value={code}
               height="800px"
               theme="dark"
-              extensions={[langs.yaml()]}
+              // there's an issue with CodeMirror in the unit tests when loading certain extensions
+              // but they're not relevant for the purposes of the tests so skip adding them
+              {...(import.meta.env.MODE === 'test' ? null : { extensions: [StreamLanguage.define(yamlMode)]})}
               onChange={onChange}
               editable={!loading}
             />

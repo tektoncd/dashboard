@@ -12,8 +12,8 @@ limitations under the License.
 */
 
 import React from 'react';
-
 import { fireEvent, waitFor } from '@testing-library/react';
+
 import { renderWithRouter } from '../../utils/test';
 import YAMLEditor from './YAMLEditor';
 

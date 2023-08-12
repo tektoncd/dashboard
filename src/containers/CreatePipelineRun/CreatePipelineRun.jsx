@@ -12,7 +12,7 @@ limitations under the License.
 */
 /* istanbul ignore file */
 
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import keyBy from 'lodash.keyby';
 import yaml from 'js-yaml';
@@ -31,13 +31,13 @@ import {
   urls,
   useTitleSync
 } from '@tektoncd/dashboard-utils';
-import { KeyValueList } from '@tektoncd/dashboard-components';
+import { KeyValueList, Loading } from '@tektoncd/dashboard-components';
 import { useIntl } from 'react-intl';
+
 import {
   NamespacesDropdown,
   PipelinesDropdown,
-  ServiceAccountsDropdown,
-  YAMLEditor
+  ServiceAccountsDropdown
 } from '..';
 import {
   createPipelineRun,
@@ -49,6 +49,8 @@ import {
   useSelectedNamespace
 } from '../../api';
 import { isValidLabel } from '../../utils';
+
+const YAMLEditor = React.lazy(() => import('../YAMLEditor'));
 
 const initialState = {
   creating: false,
@@ -478,14 +480,16 @@ function CreatePipelineRun() {
       );
 
       return (
-        <YAMLEditor
-          code={payloadYaml || ''}
-          handleClose={handleCloseYAMLEditor}
-          handleCreate={handleCreate}
-          kind="PipelineRun"
-          loading={isLoading}
-          loadingMessage={loadingMessage}
-        />
+        <Suspense fallback={<Loading />}>
+          <YAMLEditor
+            code={payloadYaml || ''}
+            handleClose={handleCloseYAMLEditor}
+            handleCreate={handleCreate}
+            kind="PipelineRun"
+            loading={isLoading}
+            loadingMessage={loadingMessage}
+          />
+        </Suspense>
       );
     }
     const pipelineRun = getPipelineRunPayload({
@@ -511,12 +515,14 @@ function CreatePipelineRun() {
     });
 
     return (
-      <YAMLEditor
-        code={yaml.dump(pipelineRun)}
-        handleClose={handleCloseYAMLEditor}
-        handleCreate={handleCreate}
-        kind="PipelineRun"
-      />
+      <Suspense fallback={<Loading />}>
+        <YAMLEditor
+          code={yaml.dump(pipelineRun)}
+          handleClose={handleCloseYAMLEditor}
+          handleCreate={handleCreate}
+          kind="PipelineRun"
+        />
+      </Suspense>
     );
   }
 
