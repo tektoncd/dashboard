@@ -65,8 +65,6 @@ function post_build_tests() {
 
 function get_node() {
   echo "Installing Node.js"
-  apt-get update
-  apt-get install -y curl
   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
   export NVM_DIR="$HOME/.nvm"
   source "$NVM_DIR/nvm.sh"
@@ -75,6 +73,7 @@ function get_node() {
 
 function node_npm_install() {
   local failed=0
+  get_node
   echo "Configuring npm"
   mkdir ~/.npm-global
   npm config set prefix '~/.npm-global'
@@ -118,7 +117,6 @@ function pre_integration_tests() {
 
 function extra_initialization() {
   echo "Script is running as $(whoami) on $(hostname)"
-  get_node
 }
 
 function unit_tests() {
