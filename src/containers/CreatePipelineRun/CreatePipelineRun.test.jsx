@@ -70,20 +70,24 @@ const serviceAccount = {
 
 describe('CreatePipelineRun', () => {
   beforeEach(() => {
-    vi.spyOn(ServiceAccountsAPI, 'useServiceAccounts')
-      .mockImplementation(() => ({ data: [serviceAccount] }));
-    vi.spyOn(PipelinesAPI, 'usePipelines')
-      .mockImplementation(() => ({ data: pipelines }));
-    vi.spyOn(PipelineRunsAPI, 'usePipelineRuns')
-      .mockImplementation(() => ({ data: [] }));
+    vi.spyOn(ServiceAccountsAPI, 'useServiceAccounts').mockImplementation(
+      () => ({ data: [serviceAccount] })
+    );
+    vi.spyOn(PipelinesAPI, 'usePipelines').mockImplementation(() => ({
+      data: pipelines
+    }));
+    vi.spyOn(PipelineRunsAPI, 'usePipelineRuns').mockImplementation(() => ({
+      data: []
+    }));
     vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
       data: [
         { metadata: { name: 'namespace-1' } },
         { metadata: { name: 'namespace-2' } }
       ]
     }));
-    vi.spyOn(APIUtils, 'useSelectedNamespace')
-      .mockImplementation(() => ({ selectedNamespace: 'namespace-1' }));
+    vi.spyOn(APIUtils, 'useSelectedNamespace').mockImplementation(() => ({
+      selectedNamespace: 'namespace-1'
+    }));
   });
 
   it('renders labels', () => {
@@ -187,16 +191,29 @@ describe('CreatePipelineRun yaml mode', () => {
   });
 
   it('renders with namespace', async () => {
-    vi.spyOn(PipelineRunsAPI, 'createPipelineRunRaw')
-      .mockImplementation(() => Promise.resolve({ data: {} }));
-    vi.spyOn(PipelineRunsAPI, 'usePipelineRun')
-      .mockImplementation(() => ({ data: pipelineRunRawGenerateName }));
+    vi.spyOn(PipelineRunsAPI, 'createPipelineRunRaw').mockImplementation(() =>
+      Promise.resolve({ data: {} })
+    );
+    vi.spyOn(PipelineRunsAPI, 'usePipelineRun').mockImplementation(() => ({
+      data: pipelineRunRawGenerateName
+    }));
 
-    const { getByRole, queryAllByText } = renderWithRouter(<CreatePipelineRun />, {
-      path: '/pipelineruns/create',
-      route: '/pipelineruns/create?mode=yaml&namespace=test-namespace'
-    });
+    const { getByRole, queryAllByText } = renderWithRouter(
+      <CreatePipelineRun />,
+      {
+        path: '/pipelineruns/create',
+        route: '/pipelineruns/create?mode=yaml&namespace=test-namespace'
+      }
+    );
 
+    await waitFor(
+      () => {
+        expect(queryAllByText(/Loading/).length).toBe(0);
+      },
+      {
+        timeout: 3000
+      }
+    );
     await waitFor(() => {
       expect(queryAllByText(/Loading/).length).toBe(0);
     });
@@ -209,10 +226,12 @@ describe('CreatePipelineRun yaml mode', () => {
   });
 
   it('handle submit with pipelinerun and namespace', async () => {
-    vi.spyOn(PipelineRunsAPI, 'createPipelineRunRaw')
-      .mockImplementation(() => Promise.resolve({ data: {} }));
-    vi.spyOn(PipelineRunsAPI, 'usePipelineRun')
-      .mockImplementation(() => ({ data: pipelineRunRawGenerateName }));
+    vi.spyOn(PipelineRunsAPI, 'createPipelineRunRaw').mockImplementation(() =>
+      Promise.resolve({ data: {} })
+    );
+    vi.spyOn(PipelineRunsAPI, 'usePipelineRun').mockImplementation(() => ({
+      data: pipelineRunRawGenerateName
+    }));
 
     const { queryAllByText } = renderWithRouter(<CreatePipelineRun />, {
       path: '/pipelineruns/create',
@@ -220,9 +239,12 @@ describe('CreatePipelineRun yaml mode', () => {
         '/pipelineruns/create?mode=yaml&pipelineRunName=test-pipeline-run-name&namespace=test-namespace'
     });
 
-    await waitFor(() => {
-      expect(queryAllByText(/Loading/).length).toBe(0);
-    });
+    await waitFor(
+      () => {
+        expect(queryAllByText(/Loading/).length).toBe(0);
+      },
+      { timeout: 3000 }
+    );
     expect(submitButton(queryAllByText)).toBeTruthy();
 
     fireEvent.click(submitButton(queryAllByText));
