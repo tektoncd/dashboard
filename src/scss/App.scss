@@ -23,6 +23,7 @@ limitations under the License.
 @import '../containers/EventListener/EventListener.scss';
 @import '../containers/ImportResources/ImportResources.scss';
 @import '../containers/SideNav/SideNav.scss';
+@import '../containers/LoadingShell/LoadingShell.scss';
 
 @import '@tektoncd/dashboard-components/src/scss/Run.scss';
 @import '@tektoncd/dashboard-components/src/components/Actions/Actions.scss';
@@ -34,7 +35,6 @@ limitations under the License.
 @import '@tektoncd/dashboard-components/src/components/KeyValueList/KeyValueList.scss';
 @import '@tektoncd/dashboard-components/src/components/LabelFilter/LabelFilter.scss';
 @import '@tektoncd/dashboard-components/src/components/Loading/Loading.scss';
-@import '@tektoncd/dashboard-components/src/components/LoadingShell/LoadingShell.scss';
 @import '@tektoncd/dashboard-components/src/components/Log/Log.scss';
 @import '@tektoncd/dashboard-components/src/components/LogFormat/LogFormat.scss';
 @import '@tektoncd/dashboard-components/src/components/LogoutButton/LogoutButton.scss';

@@ -25,7 +25,6 @@ export { default as KeyValueList } from './KeyValueList';
 export { default as LabelFilter } from './LabelFilter';
 export { default as Link } from './Link';
 export { default as Loading } from './Loading';
-export { default as LoadingShell } from './LoadingShell';
 export { default as Log } from './Log';
 export { default as LogFormat } from './LogFormat';
 export { default as LogoutButton } from './LogoutButton';
