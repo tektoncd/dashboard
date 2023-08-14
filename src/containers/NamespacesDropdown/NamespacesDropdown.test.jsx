@@ -90,8 +90,8 @@ it('NamespacesDropdown handles onChange event', () => {
   expect(onChange).toHaveBeenCalledTimes(1);
 });
 
-it('NamespacesDropdown renders tenant namespace in single namespace mode', () => {
-  vi.spyOn(API, 'useTenantNamespace').mockImplementation(() => 'fake');
+it('NamespacesDropdown renders tenant namespace in tenant namespace mode', () => {
+  vi.spyOn(API, 'useTenantNamespaces').mockImplementation(() => ['fake']);
   vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({ data: [] }));
   const { getByPlaceholderText, getByText } = render(
     <NamespacesDropdown {...props} />

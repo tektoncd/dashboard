@@ -28,7 +28,7 @@ In order to run the Tekton Dashboard, please make sure the requirements in [the 
 You will also need the following tools in order to build the Dashboard locally and deploy it:
 1. [`go`](https://golang.org/doc/install): The language the Tekton Dashboard backend is built in
 1. [`git`](https://help.github.com/articles/set-up-git/): For source control
-1. [Node.js & npm](https://nodejs.org/): For building and running the frontend locally. See [`.nvmrc`](/.nvmrc) for version used, or run `nvm use`. _Node.js 18.x is recommended_
+1. [Node.js & npm](https://nodejs.org/): For building and running the frontend locally. See [`.nvmrc`](/.nvmrc) for version, or run `nvm use`
 1. [`ko`](https://github.com/google/ko): For development. `ko` version v0.7.2 or higher is required for `dashboard` to work correctly
 1. [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/): For interacting with your kube cluster
 1. [`kustomize`](https://kubectl.docs.kubernetes.io/installation/kustomize/): For building the Dashboard manifests. v4.5.4 is known to work
@@ -58,13 +58,15 @@ First install the required dependencies:
 npm install
 ```
 
-Run the production build:
+See instructions for running the development server in the section below.
+
+To run the production build:
 
 ```bash
 npm run build
 ```
 
-This will build the static resource bundles and add them to the `kodata` directory.
+This will build the static resource bundles and add them to the `cmd/dashboard/kodata` directory.
 
 To run the dev server with the production bundles:
 
@@ -101,20 +103,18 @@ These options are documented below:
 | `--port` | Dashboard port number | `int` | `8080` |
 | `--read-only` | Enable or disable read-only mode | `bool` | `true` |
 | `--logout-url` | If set, enables logout on the frontend and binds the logout button to this url | `string` | `""` |
-| `--namespace` | If set, limits the scope of resources watched to this namespace only | `string` | `""` |
+| `--namespace` | Deprecated: use --namespaces instead. If set, limits the scope of resources displayed to this namespace only | `string` | `""` |
+| `--namespaces` | If set, limits the scope of resources displayed to this comma-separated list of namespaces only | `string` | `""` |
 | `--log-level` | Minimum log level output by the logger | `string` | `"info"` |
 | `--log-format` | Format for log output (json or console) | `string` | `"json"` |
 
 Run `dashboard --help` to show the supported command line arguments and their default values directly from the `dashboard` binary.
 
-**Important note:** using `--namespace` ensures that the dashboard is watching resources in the namespace specified (and drives the frontend).
-It doesn't limit actions that can be performed to this namespace only though. It's important that this flag is used **and** that RBAC rules are setup accordingly.
+**Important note:** using `--namespace` or `--namespaces` provides this list of namespaces to the frontend, but does not limit actions that can be performed to just these namespaces. It's important when these flags are used that RBAC rules are setup accordingly.
 
 ## Build and deploy with the installer script
 
 To build and deploy the Dashboard backend easily, you can use the [installer script](./installer.md).
-
-The installer script supports both Kubernetes and OpenShift, and it can adapt the YAML manifests for OpenShift Pipelines Operator or raw manifests install modes.
 
 ## Development server
 
@@ -220,10 +220,6 @@ Run `npm run storybook` to start [storybook](https://storybook.js.org/) in devel
 Stories are defined in `*.stories.js` files alongside their components.
 
 Run `npm run storybook:build` to build the static storybook files. The build artifacts will be stored in the `static-storybook/` directory and can be hosted on GitHub Pages or any other static resource server.
-
-## Troubleshooting
-
-Keep in mind that When running your Tekton Pipelines, if you see a `fatal: could not read Username for *GitHub repository*: No such device or address` message in your failing Task logs, this indicates there is no `tekton.dev/git` annotated GitHub secret in use by the ServiceAccount that launched this PipelineRun. It is advised to create one through the Tekton Dashboard. The annotation will be added and the specified ServiceAccount will be patched.
 
 ## Next steps
 

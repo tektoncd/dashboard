@@ -23,7 +23,7 @@ EXTENSIONS_RBAC="false"
 LOGOUT_URL=""
 LOG_LEVEL="info"
 LOG_FORMAT="json"
-TENANT_NAMESPACE=""
+TENANT_NAMESPACES=""
 STREAM_LOGS="true"
 EXTERNAL_LOGS=""
 BASE_RELEASE_URL="https://storage.googleapis.com/tekton-releases/dashboard"
@@ -31,6 +31,20 @@ BASE_RELEASE_URL="https://storage.googleapis.com/tekton-releases/dashboard"
 # additional options passed to ko resolve
 KO_RESOLVE_OPTIONS=""
 PLATFORM=""
+
+# Display a box banner.
+# Parameters: $1 - character to use for the box.
+#             $2 - banner message.
+make_banner() {
+    local msg="$1$1$1$1 WARNING: $2 $1$1$1$1"
+    local border="${msg//[-0-9A-Za-z _.,:\/()]/$1}"
+    echo -e "\n${border}\n${msg}\n${border}\n"
+}
+
+# Simple warning banner for logging purposes.
+warning() {
+  make_banner "!" "$1"
+}
 
 initOS() {
   OS=$(echo `uname`|tr '[:upper:]' '[:lower:]')
@@ -96,7 +110,7 @@ compile() {
     overlay="$overlay/read-write"
   fi
 
-  debug "Building overlay $overlay ..."
+  debug "Building overlay $overlay …"
   kustomize build --load-restrictor LoadRestrictionsNone "$overlay" | ko resolve $KO_RESOLVE_OPTIONS $PLATFORM -f - > "$TMP_FILE"
 }
 
@@ -115,7 +129,7 @@ download() {
 
   url="${url}.yaml"
 
-  debug "Downloading $url -> $TMP_FILE ..."
+  debug "Downloading $url -> $TMP_FILE …"
 
   if type "curl" > /dev/null 2>&1; then
     curl -s "$url" -o "$TMP_FILE"
@@ -158,10 +172,63 @@ patch() {
   replace "--log-format=--log-format" "--log-format=$LOG_FORMAT"
   replace "--logout-url=--logout-url" "--logout-url=$LOGOUT_URL"
   replace "--read-only=--read-only" "--read-only=$READONLY"
-  replace "--namespace=--tenant-namespace" "--namespace=$TENANT_NAMESPACE"
+  replace "--namespace=--tenant-namespace" "--namespace="
+  replace "--namespaces=--tenant-namespaces" "--namespaces=$TENANT_NAMESPACES"
   replace "--stream-logs=--stream-logs" "--stream-logs=$STREAM_LOGS"
   replace "--external-logs=--external-logs" "--external-logs=$EXTERNAL_LOGS"
   replace "namespace: tekton-dashboard" "namespace: $INSTALL_NAMESPACE"
+}
+
+role_binding() {
+  local name=$1
+  local namespace=$2
+
+cat <<EOF >> $TMP_FILE
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: dashboard
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/part-of: tekton-dashboard
+    rbac.dashboard.tekton.dev/subject: tekton-dashboard
+  name: $name
+  namespace: $namespace
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: $name
+subjects:
+  - kind: ServiceAccount
+    name: tekton-dashboard
+    namespace: $INSTALL_NAMESPACE
+EOF
+}
+
+cluster_role_binding() {
+  local name=$1
+
+cat <<EOF >> $TMP_FILE
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: dashboard
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/part-of: tekton-dashboard
+    rbac.dashboard.tekton.dev/subject: tekton-dashboard
+  name: $name
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: $name
+subjects:
+  - kind: ServiceAccount
+    name: tekton-dashboard
+    namespace: $INSTALL_NAMESPACE
+EOF
 }
 
 rbac() {
@@ -183,101 +250,23 @@ aggregationRule:
 EOF
 fi
 
-if [ ! -z "$TENANT_NAMESPACE" ]; then
+  if [ ! -z "$TENANT_NAMESPACES" ]; then
+    IFS=','
+    for namespace in ${TENANT_NAMESPACES}; do
+      role_binding tekton-dashboard-tenant $namespace
 
-cat <<EOF >> $TMP_FILE
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  labels:
-    app.kubernetes.io/component: dashboard
-    app.kubernetes.io/instance: default
-    app.kubernetes.io/part-of: tekton-dashboard
-    rbac.dashboard.tekton.dev/subject: tekton-dashboard
-  name: tekton-dashboard-tenant
-  namespace: $TENANT_NAMESPACE
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: tekton-dashboard-tenant
-subjects:
-  - kind: ServiceAccount
-    name: tekton-dashboard
-    namespace: $INSTALL_NAMESPACE
-EOF
+      if [ "$EXTENSIONS_RBAC" == "true" ]; then
+        role_binding tekton-dashboard-extensions $namespace
+      fi
+    done
+    unset IFS
+  else
+    cluster_role_binding tekton-dashboard-tenant
 
-if [ "$EXTENSIONS_RBAC" == "true" ]; then
-cat <<EOF >> $TMP_FILE
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  labels:
-    app.kubernetes.io/component: dashboard
-    app.kubernetes.io/instance: default
-    app.kubernetes.io/part-of: tekton-dashboard
-    rbac.dashboard.tekton.dev/subject: tekton-dashboard
-  name: tekton-dashboard-extensions
-  namespace: $TENANT_NAMESPACE
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: tekton-dashboard-extensions
-subjects:
-  - kind: ServiceAccount
-    name: tekton-dashboard
-    namespace: $INSTALL_NAMESPACE
-EOF
-fi
-
-else
-
-cat <<EOF >> $TMP_FILE
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  labels:
-    app.kubernetes.io/component: dashboard
-    app.kubernetes.io/instance: default
-    app.kubernetes.io/part-of: tekton-dashboard
-    rbac.dashboard.tekton.dev/subject: tekton-dashboard
-  name: tekton-dashboard-tenant
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: tekton-dashboard-tenant
-subjects:
-  - kind: ServiceAccount
-    name: tekton-dashboard
-    namespace: $INSTALL_NAMESPACE
-EOF
-
-if [ "$EXTENSIONS_RBAC" == "true" ]; then
-cat <<EOF >> $TMP_FILE
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  labels:
-    app.kubernetes.io/component: dashboard
-    app.kubernetes.io/instance: default
-    app.kubernetes.io/part-of: tekton-dashboard
-    rbac.dashboard.tekton.dev/subject: tekton-dashboard
-  name: tekton-dashboard-extensions
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: tekton-dashboard-extensions
-subjects:
-  - kind: ServiceAccount
-    name: tekton-dashboard
-    namespace: $INSTALL_NAMESPACE
-EOF
-fi
-
-fi
+    if [ "$EXTENSIONS_RBAC" == "true" ]; then
+      cluster_role_binding tekton-dashboard-extensions
+    fi
+  fi
 }
 
 ingress() {
@@ -350,18 +339,13 @@ fi
 
 # install invokes kubectl apply with the built manifest.
 install() {
-  echo "Installing ..."
-
-  if [ ! -z "$TENANT_NAMESPACE" ]; then
-    kubectl create ns $TENANT_NAMESPACE > /dev/null 2>&1 || true
-  fi
-
+  echo "Installing …"
   kubectl create ns $INSTALL_NAMESPACE > /dev/null 2>&1 || true
   kubectl apply -f $TMP_FILE
 }
 
 uninstall() {
-  echo "Uninstalling ..."
+  echo "Uninstalling …"
   resourceKinds=(
     "deployments.apps"
     "serviceaccounts"
@@ -422,7 +406,8 @@ help () {
   echo -e "\t[--read-write]\t\t\t\tWill build manifests for a read/write deployment"
   echo -e "\t[--stream-logs false]\t\t\tWill disable log streaming and use polling instead"
   echo -e "\t[--tag <tag>]\t\t\t\tTag used for the image produced by ko"
-  echo -e "\t[--tenant-namespace <namespace>]\tWill limit the visibility to the specified namespace only"
+  echo -e "\t[--tenant-namespace <namespace>]\t[DEPRECATED: use tenant-namespaces instead] Will limit the visibility to the specified namespace only"
+  echo -e "\t[--tenant-namespaces <namespaces>]\tWill limit the visibility to the specified comma-separated namespaces only"
   echo -e "\t[--triggers-namespace <namespace>]\tOverride the namespace where Tekton Triggers is installed (defaults to Dashboard install namespace)"
   echo -e "\t[--version <version>]\t\t\tWill download manifests for specified version or build everything using kustomize/ko"
 }
@@ -521,8 +506,13 @@ while [[ $# -gt 0 ]]; do
       OVERRIDE_TRIGGERS_NAMESPACE="${1}"
       ;;
     '--tenant-namespace')
+      warning "--tenant-namespace is deprecated, use --tenant-namespaces instead"
       shift
-      TENANT_NAMESPACE="${1}"
+      TENANT_NAMESPACES="${1}"
+      ;;
+    '--tenant-namespaces')
+      shift
+      TENANT_NAMESPACES="${1}"
       ;;
     '--ingress-default-class')
       INGRESS_DEFAULT_CLASS="true"

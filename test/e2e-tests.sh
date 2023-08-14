@@ -155,8 +155,8 @@ else
   # export TEST_NAMESPACE=tekton-tenant
   export TENANT_NAMESPACE=tekton-tenant
 
-  test_dashboard --read-write --namespace $DASHBOARD_NAMESPACE --tenant-namespace $TENANT_NAMESPACE
-  test_dashboard --namespace $DASHBOARD_NAMESPACE --tenant-namespace $TENANT_NAMESPACE
+  test_dashboard --read-write --namespace $DASHBOARD_NAMESPACE --tenant-namespaces $TENANT_NAMESPACE
+  test_dashboard --namespace $DASHBOARD_NAMESPACE --tenant-namespaces $TENANT_NAMESPACE
 fi
 
 success

@@ -336,7 +336,13 @@ export function useLogoutURL() {
   return data.logoutURL;
 }
 
-export function useTenantNamespace() {
+export function useTenantNamespaces() {
   const { data } = useProperties();
-  return data.tenantNamespace;
+  if (data.tenantNamespace) {
+    return [data.tenantNamespace];
+  }
+  if (data.tenantNamespaces) {
+    return data.tenantNamespaces;
+  }
+  return [];
 }

@@ -24,7 +24,7 @@ import {
 } from '@tektoncd/dashboard-utils';
 import { Link as CustomLink, Table } from '@tektoncd/dashboard-components';
 
-import { useExtensions, useTenantNamespace } from '../../api';
+import { useExtensions, useTenantNamespaces } from '../../api';
 
 function Extensions() {
   const intl = useIntl();
@@ -35,14 +35,14 @@ function Extensions() {
     })
   });
 
-  const tenantNamespace = useTenantNamespace();
+  const tenantNamespaces = useTenantNamespaces();
   const {
     data: extensions = [],
     error,
     isFetching
   } = useExtensions(
     {
-      namespace: tenantNamespace || ALL_NAMESPACES
+      namespace: tenantNamespaces[0] || ALL_NAMESPACES
     },
     { disableWebSocket: true }
   );

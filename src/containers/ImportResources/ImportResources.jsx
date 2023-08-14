@@ -34,7 +34,11 @@ import {
   useTitleSync
 } from '@tektoncd/dashboard-utils';
 import parseGitURL from 'git-url-parse';
-import { importResources, useSelectedNamespace } from '../../api';
+import {
+  importResources,
+  useSelectedNamespace,
+  useTenantNamespaces
+} from '../../api';
 import NamespacesDropdown from '../NamespacesDropdown';
 import ServiceAccountsDropdown from '../ServiceAccountsDropdown';
 
@@ -63,9 +67,11 @@ const HelpIcon = ({ title }) => (
 export function ImportResources() {
   const intl = useIntl();
   const { selectedNamespace: navNamespace } = useSelectedNamespace();
+  const tenantNamespaces = useTenantNamespaces();
 
-  const [importerNamespace, setImporterNamespace] =
-    useState('tekton-dashboard');
+  const [importerNamespace, setImporterNamespace] = useState(
+    tenantNamespaces[0] || 'tekton-dashboard'
+  );
   const [invalidImporterNamespace, setInvalidImporterNamespace] =
     useState(false);
   const [invalidInput, setInvalidInput] = useState(false);

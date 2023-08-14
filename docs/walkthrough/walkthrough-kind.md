@@ -221,7 +221,7 @@ You will see a `PipelineRun` running when looking at the PipelineRuns page (`htt
 
 ## Viewing and managing resources from the Dashboard
 
-You can view resource lists, individual resource details, `PipelineRun` and `TaskRun` logs, start new `PipelineRuns` or `TaskRuns`, delete resources, etc...
+You can view resource lists, individual resource details, `PipelineRun` and `TaskRun` logs, start new `PipelineRuns` or `TaskRuns`, delete resources, etc.
 
 ![Viewing and managing resources from the Dashboard](./walkthrough-kind-pipelineruns.png)
 

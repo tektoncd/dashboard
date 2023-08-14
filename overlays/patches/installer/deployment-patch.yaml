@@ -1,4 +1,4 @@
-# Copyright 2020-2021 The Tekton Authors
+# Copyright 2020-2023 The Tekton Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -41,6 +41,10 @@
   path: /spec/template/spec/containers/0/args/-
   value:
     --namespace=--tenant-namespace
+- op: add
+  path: /spec/template/spec/containers/0/args/-
+  value:
+    --namespaces=--tenant-namespaces
 - op: add
   path: /spec/template/spec/containers/0/args/-
   value:

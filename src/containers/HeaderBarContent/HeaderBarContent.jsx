@@ -20,19 +20,19 @@ import {
 import { ALL_NAMESPACES, paths, urls } from '@tektoncd/dashboard-utils';
 
 import NamespacesDropdown from '../NamespacesDropdown';
-import { useSelectedNamespace, useTenantNamespace } from '../../api';
+import { useSelectedNamespace, useTenantNamespaces } from '../../api';
 
-export default function HeaderBarContent({ logoutButton }) {
+export default function HeaderBarContent({ isFetchingConfig, logoutButton }) {
   const location = useLocation();
   const navigate = useNavigate();
   const params = useParams();
+  const tenantNamespaces = useTenantNamespaces();
 
   const {
     namespacedMatch,
     selectedNamespace: namespace,
     selectNamespace
   } = useSelectedNamespace();
-  const tenantNamespace = useTenantNamespace();
 
   useEffect(() => {
     if (params.namespace) {
@@ -45,7 +45,7 @@ export default function HeaderBarContent({ logoutButton }) {
   }
 
   function handleNamespaceSelected(event) {
-    const newNamespace = event.selectedItem?.id || ALL_NAMESPACES;
+    const newNamespace = event.selectedItem?.id || tenantNamespaces[0] || ALL_NAMESPACES;
     selectNamespace(newNamespace);
 
     if (!namespacedMatch) {
@@ -83,18 +83,16 @@ export default function HeaderBarContent({ logoutButton }) {
     setPath(newURL);
   }
 
-  return (
+  return isFetchingConfig ? null : (
     <>
-      {tenantNamespace ? null : (
-        <NamespacesDropdown
-          id="header-namespace-dropdown"
-          onChange={handleNamespaceSelected}
-          selectedItem={{ id: namespace, text: namespace }}
-          showAllNamespaces
-          size="sm"
-          titleText=""
-        />
-      )}
+      <NamespacesDropdown
+        id="header-namespace-dropdown"
+        onChange={handleNamespaceSelected}
+        selectedItem={{ id: namespace, text: namespace }}
+        showAllNamespaces
+        size="sm"
+        titleText=""
+      />
       {logoutButton}
     </>
   );

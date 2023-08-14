@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { fireEvent } from '@testing-library/react';
+import { fireEvent, waitFor } from '@testing-library/react';
 import { ALL_NAMESPACES } from '@tektoncd/dashboard-utils';
 
 import { renderWithRouter } from '../../utils/test';
@@ -146,20 +146,29 @@ describe('HeaderBarContent', () => {
     );
   });
 
-  it('does not render namespaces dropdown in single namespace visibility mode', () => {
-    const namespace = 'default';
-    vi.spyOn(API, 'useTenantNamespace').mockImplementation(() => 'fake');
-    vi.spyOn(API, 'useNamespaces').mockImplementation(() => ({
-      data: [{ metadata: { name: namespace } }]
-    }));
+  it('selects first namespace when clearing selection in tenant namespace visibility mode', async () => {
+    const tenantNamespace1 = 'fake_tenantNamespace1';
+    const tenantNamespace2 = 'fake_tenantNamespace2';
+    const path = '/namespaces/:namespace/fake/path';
+    const selectNamespace = vi.fn();
+    vi.spyOn(API, 'useTenantNamespaces').mockImplementation(() => [tenantNamespace1, tenantNamespace2]);
     vi.spyOn(APIUtils, 'useSelectedNamespace').mockImplementation(() => ({
-      selectedNamespace: namespace
+      namespacedMatch: { path, params: { namespace: tenantNamespace2 } },
+      selectedNamespace: tenantNamespace2,
+      selectNamespace
     }));
-    const logoutButton = 'fake_logoutButton';
-    const { queryByPlaceholderText, queryByText } = renderWithRouter(
-      <HeaderBarContent logoutButton={logoutButton} />
+    vi.spyOn(window.history, 'pushState');
+    const { getByDisplayValue, getByTitle } = renderWithRouter(<HeaderBarContent />, {
+      path,
+      route: `/namespaces/${tenantNamespace2}/fake/path`
+    });
+    await waitFor(() => getByDisplayValue(tenantNamespace2));
+    fireEvent.click(getByTitle(/clear selected item/i));
+    expect(selectNamespace).toHaveBeenCalledWith(tenantNamespace1);
+    expect(window.history.pushState).toHaveBeenCalledWith(
+      expect.anything(),
+      null,
+      `/namespaces/${tenantNamespace1}/fake/path`
     );
-    expect(queryByText(logoutButton)).toBeTruthy();
-    expect(queryByPlaceholderText(/select namespace/i)).toBeFalsy();
   });
 });
