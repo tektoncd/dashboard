@@ -22,7 +22,7 @@ import {
   SideNavLink,
   SideNavMenu
 } from 'carbon-components-react';
-import { Header, Loading } from '..';
+import { Header, Loading } from '@tektoncd/dashboard-components';
 
 const SkeletonText = ({ heading, paragraph }) => (
   <CarbonSkeletonText heading={heading} paragraph={paragraph} width="80%" />

@@ -25,7 +25,6 @@ import { IntlProvider, useIntl } from 'react-intl';
 import { Content, InlineNotification } from 'carbon-components-react';
 import {
   Header,
-  LoadingShell,
   LogoutButton,
   PageErrorBoundary
 } from '@tektoncd/dashboard-components';
@@ -55,6 +54,7 @@ import {
   HeaderBarContent,
   ImportResources,
   Interceptors,
+  LoadingShell,
   NamespacedRoute,
   NotFound,
   PipelineRun,
